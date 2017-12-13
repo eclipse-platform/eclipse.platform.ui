@@ -269,8 +269,8 @@ public class ElementTree {
 
 		/* first put all the trees in a hashtable */
 		HashMap<ElementTree, ElementTree> candidates = new HashMap<>((int) (trees.length * 1.5 + 1));
-		for (int i = 0; i < trees.length; i++) {
-			candidates.put(trees[i], trees[i]);
+		for (ElementTree tree2 : trees) {
+			candidates.put(tree2, tree2);
 		}
 
 		/* keep removing parents until only one tree remains */
@@ -597,8 +597,8 @@ public class ElementTree {
 				if (path.isRoot()) {
 					//copy all the children
 					IPath[] children = toMerge.getChildren(Path.ROOT);
-					for (int i = 0; i < children.length; i++) {
-						current.createSubtree(children[i], toMerge.getSubtree(children[i]));
+					for (IPath element : children) {
+						current.createSubtree(element, toMerge.getSubtree(element));
 					}
 				} else {
 					//just copy the specified node
@@ -714,12 +714,9 @@ public class ElementTree {
 	 */
 	public String toDebugString() {
 		final StringBuilder buffer = new StringBuilder("\n"); //$NON-NLS-1$
-		IElementContentVisitor visitor = new IElementContentVisitor() {
-			@Override
-			public boolean visitElement(ElementTree aTree, IPathRequestor elementID, Object elementContents) {
-				buffer.append(elementID.requestPath() + " " + elementContents + "\n"); //$NON-NLS-1$ //$NON-NLS-2$
-				return true;
-			}
+		IElementContentVisitor visitor = (aTree, elementID, elementContents) -> {
+			buffer.append(elementID.requestPath() + " " + elementContents + "\n"); //$NON-NLS-1$ //$NON-NLS-2$
+			return true;
 		};
 		new ElementTreeIterator(this, Path.ROOT).iterate(visitor);
 		return buffer.toString();

@@ -202,11 +202,11 @@ class Rules implements IResourceRuleFactory, ILifecycleListener {
 		//gather rules for each resource from appropriate factory
 		HashSet<ISchedulingRule> rules = new HashSet<>();
 		IResource[] oneResource = new IResource[1];
-		for (int i = 0; i < resources.length; i++) {
-			if (resources[i].getType() == IResource.ROOT)
+		for (IResource resource : resources) {
+			if (resource.getType() == IResource.ROOT)
 				return root;
-			oneResource[0] = resources[i];
-			ISchedulingRule rule = factoryFor(resources[i]).validateEditRule(oneResource);
+			oneResource[0] = resource;
+			ISchedulingRule rule = factoryFor(resource).validateEditRule(oneResource);
 			if (rule != null)
 				rules.add(rule);
 		}

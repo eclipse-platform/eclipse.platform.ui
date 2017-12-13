@@ -86,8 +86,8 @@ public class ResourceDeltaFactory {
 			return;
 		// recurse for ROOT
 		IResourceDelta[] children = delta.children;
-		for (int i = 0; i < children.length; i++)
-			checkForOpen((ResourceDelta) children[i], 1);
+		for (IResourceDelta element : children)
+			checkForOpen((ResourceDelta) element, 1);
 	}
 
 	/**
@@ -96,8 +96,8 @@ public class ResourceDeltaFactory {
 	 */
 	protected static NodeIDMap computeNodeIDMap(ResourceDelta delta, NodeIDMap nodeIDMap) {
 		IResourceDelta[] children = delta.children;
-		for (int i = 0; i < children.length; i++) {
-			ResourceDelta child = (ResourceDelta) children[i];
+		for (IResourceDelta element : children) {
+			ResourceDelta child = (ResourceDelta) element;
 			IPath path = child.getFullPath();
 			switch (child.getKind()) {
 				case IResourceDelta.ADDED :

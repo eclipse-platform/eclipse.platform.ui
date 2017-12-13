@@ -70,8 +70,7 @@ public class DataTreeReader {
 
 		/* if not the root node */
 		if (parentPath != null) {
-			if (parentPath.equals(Path.ROOT) &&
-					newProjectName.length() > 0 && name.length() > 0) {
+			if (parentPath.equals(Path.ROOT) && newProjectName.length() > 0 && name.length() > 0) {
 				/* use the supplied name for the project node */
 				name = newProjectName;
 			}

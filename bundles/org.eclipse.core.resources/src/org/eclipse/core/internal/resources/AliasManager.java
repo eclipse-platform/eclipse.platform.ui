@@ -176,8 +176,7 @@ public class AliasManager implements IManager, ILifecycleListener, IResourceChan
 			} else {
 				matching = map;
 			}
-			for (Iterator<Object> it = matching.values().iterator(); it.hasNext();) {
-				Object value = it.next();
+			for (Object value : matching.values()) {
 				if (value == null)
 					return;
 				if (value instanceof List) {
@@ -398,9 +397,9 @@ public class AliasManager implements IManager, ILifecycleListener, IResourceChan
 		nonDefaultResourceCount = 0;
 		//build table of IPath (file system location) -> IResource (project or linked resource)
 		IProject[] projects = workspace.getRoot().getProjects(IContainer.INCLUDE_HIDDEN);
-		for (int i = 0; i < projects.length; i++)
-			if (projects[i].isAccessible())
-				addToLocationsMap(projects[i]);
+		for (IProject project : projects)
+			if (project.isAccessible())
+				addToLocationsMap(project);
 	}
 
 	/**
@@ -447,12 +446,7 @@ public class AliasManager implements IManager, ILifecycleListener, IResourceChan
 	 */
 	public IResource[] findResources(IFileStore location) {
 		final ArrayList<IResource> resources = new ArrayList<>();
-		locationsMap.matchingResourcesDo(location, new Doit() {
-			@Override
-			public void doit(IResource resource) {
-				resources.add(resource);
-			}
-		});
+		locationsMap.matchingResourcesDo(location, resource -> resources.add(resource));
 		return resources.toArray(new IResource[0]);
 	}
 
@@ -474,9 +468,9 @@ public class AliasManager implements IManager, ILifecycleListener, IResourceChan
 			try {
 				IResource[] members = ((IProject) resource).members();
 				final FileSystemResourceManager localManager = workspace.getFileSystemManager();
-				for (int i = 0; i < members.length; i++) {
-					if (members[i].isLinked()) {
-						IFileStore linkLocation = localManager.getStore(members[i]);
+				for (IResource member : members) {
+					if (member.isLinked()) {
+						IFileStore linkLocation = localManager.getStore(member);
 						if (linkLocation != null)
 							locationsMap.matchingPrefixDo(linkLocation, addToCollection);
 					}
@@ -672,8 +666,8 @@ public class AliasManager implements IManager, ILifecycleListener, IResourceChan
 		// invalidate location map if any project has the description changed
 		// or was closed/opened
 		IResourceDelta[] changed = delta.getAffectedChildren(IResourceDelta.CHANGED, IContainer.INCLUDE_HIDDEN);
-		for (int i = 0; i < changed.length; i++) {
-			if ((changed[i].getFlags() & IResourceDelta.DESCRIPTION) == IResourceDelta.DESCRIPTION || (changed[i].getFlags() & IResourceDelta.OPEN) == IResourceDelta.OPEN) {
+		for (IResourceDelta element : changed) {
+			if ((element.getFlags() & IResourceDelta.DESCRIPTION) == IResourceDelta.DESCRIPTION || (element.getFlags() & IResourceDelta.OPEN) == IResourceDelta.OPEN) {
 				changedProjects = true;
 				break;
 			}
@@ -719,8 +713,7 @@ public class AliasManager implements IManager, ILifecycleListener, IResourceChan
 			return;
 		FileSystemResourceManager localManager = workspace.getFileSystemManager();
 		HashSet<IResource> aliasesCopy = (HashSet<IResource>) aliases.clone();
-		for (Iterator<IResource> it = aliasesCopy.iterator(); it.hasNext();) {
-			IResource alias = it.next();
+		for (IResource alias : aliasesCopy) {
 			monitor.subTask(NLS.bind(Messages.links_updatingDuplicate, alias.getFullPath()));
 			if (alias.getType() == IResource.PROJECT) {
 				if (checkDeletion((Project) alias, location))
@@ -745,8 +738,7 @@ public class AliasManager implements IManager, ILifecycleListener, IResourceChan
 			buildLocationsMap();
 		} else {
 			//incrementally update location map for changed links
-			for (Iterator<IResource> it = changedLinks.iterator(); it.hasNext();) {
-				IResource resource = it.next();
+			for (IResource resource : changedLinks) {
 				hadChanges = true;
 				if (!resource.isAccessible())
 					continue;

@@ -37,8 +37,8 @@ public abstract class Container extends Resource implements IContainer {
 			return;
 		super.convertToPhantom();
 		IResource[] members = members(IContainer.INCLUDE_PHANTOMS | IContainer.INCLUDE_TEAM_PRIVATE_MEMBERS | IContainer.INCLUDE_HIDDEN);
-		for (int i = 0; i < members.length; i++)
-			((Resource) members[i]).convertToPhantom();
+		for (IResource member : members)
+			((Resource) member).convertToPhantom();
 	}
 
 	@Override
@@ -124,8 +124,8 @@ public abstract class Container extends Resource implements IContainer {
 		if (!synchronizing(getResourceInfo(true, false)))
 			return;
 		IResource[] members = members(IContainer.INCLUDE_PHANTOMS | IContainer.INCLUDE_TEAM_PRIVATE_MEMBERS | IContainer.INCLUDE_HIDDEN);
-		for (int i = 0; i < members.length; i++)
-			((Resource) members[i]).fixupAfterMoveSource();
+		for (IResource member : members)
+			((Resource) member).fixupAfterMoveSource();
 	}
 
 	protected IResource[] getChildren(int memberFlags) {
@@ -140,10 +140,10 @@ public abstract class Container extends Resource implements IContainer {
 			return ICoreConstants.EMPTY_RESOURCE_ARRAY;
 		Resource[] result = new Resource[children.length];
 		int found = 0;
-		for (int i = 0; i < children.length; i++) {
-			ResourceInfo info = workspace.getResourceInfo(children[i], true, false);
+		for (IPath child : children) {
+			ResourceInfo info = workspace.getResourceInfo(child, true, false);
 			if (info != null && isMember(info.getFlags(), memberFlags))
-				result[found++] = workspace.newResource(children[i], info.getType());
+				result[found++] = workspace.newResource(child, info.getType());
 		}
 		if (found == result.length)
 			return result;

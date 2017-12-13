@@ -104,10 +104,9 @@ public class PathVariableManager implements IPathVariableManager, IManager {
 		if (list.size() == 0)
 			return;
 		// use a separate collection to avoid interference of simultaneous additions/removals
-		Object[] listenerArray = list.toArray();
+		IPathVariableChangeListener[] listenerArray = list.toArray(new IPathVariableChangeListener[list.size()]);
 		final PathVariableChangeEvent pve = new PathVariableChangeEvent(this, name, value, type);
-		for (int i = 0; i < listenerArray.length; ++i) {
-			final IPathVariableChangeListener l = (IPathVariableChangeListener) listenerArray[i];
+		for (final IPathVariableChangeListener listener : listenerArray) {
 			ISafeRunnable job = new ISafeRunnable() {
 				@Override
 				public void handleException(Throwable exception) {
@@ -116,7 +115,7 @@ public class PathVariableManager implements IPathVariableManager, IManager {
 
 				@Override
 				public void run() throws Exception {
-					l.pathVariableChanged(pve);
+					listener.pathVariableChanged(pve);
 				}
 			};
 			SafeRunner.run(job);
@@ -143,9 +142,9 @@ public class PathVariableManager implements IPathVariableManager, IManager {
 	public String[] getPathVariableNames() {
 		List<String> result = new LinkedList<>();
 		String[] names = preferences.propertyNames();
-		for (int i = 0; i < names.length; i++) {
-			if (names[i].startsWith(VARIABLE_PREFIX)) {
-				String key = names[i].substring(VARIABLE_PREFIX.length());
+		for (String name : names) {
+			if (name.startsWith(VARIABLE_PREFIX)) {
+				String key = name.substring(VARIABLE_PREFIX.length());
 				// filter out names for preferences which might be valid in the
 				// preference store but does not have valid path variable names
 				// and/or values. We can get in this state if the user has

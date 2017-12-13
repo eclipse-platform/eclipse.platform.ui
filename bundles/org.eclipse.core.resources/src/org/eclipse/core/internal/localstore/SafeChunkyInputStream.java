@@ -15,7 +15,6 @@ import java.io.*;
 /**
  * @see SafeChunkyOutputStream
  */
-
 public class SafeChunkyInputStream extends InputStream {
 	protected static final int BUFFER_SIZE = 8192;
 	protected byte[] buffer;
@@ -76,8 +75,8 @@ public class SafeChunkyInputStream extends InputStream {
 	}
 
 	protected boolean compare(byte[] source, byte[] target, int startIndex) {
-		for (int i = 0; i < target.length; i++) {
-			if (source[startIndex] != target[i])
+		for (byte element : target) {
+			if (source[startIndex] != element)
 				return false;
 			startIndex++;
 		}

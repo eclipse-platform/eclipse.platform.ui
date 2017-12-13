@@ -75,8 +75,7 @@ class MonitorManager implements ILifecycleListener, IPathVariableChangeListener,
 		IExtensionPoint extensionPoint = Platform.getExtensionRegistry().getExtensionPoint(ResourcesPlugin.PI_RESOURCES, ResourcesPlugin.PT_REFRESH_PROVIDERS);
 		IConfigurationElement[] infos = extensionPoint.getConfigurationElements();
 		List<RefreshProvider> providerList = new ArrayList<>(infos.length);
-		for (int i = 0; i < infos.length; i++) {
-			IConfigurationElement configurationElement = infos[i];
+		for (IConfigurationElement configurationElement : infos) {
 			RefreshProvider provider = null;
 			try {
 				provider = (RefreshProvider) configurationElement.createExecutableExtension("class"); //$NON-NLS-1$
@@ -105,9 +104,9 @@ class MonitorManager implements ILifecycleListener, IPathVariableChangeListener,
 			resourcesToMonitor.add(projects[i]);
 			try {
 				IResource[] members = projects[i].members();
-				for (int j = 0; j < members.length; j++) {
-					if (members[j].isLinked())
-						resourcesToMonitor.add(members[j]);
+				for (IResource member : members) {
+					if (member.isLinked())
+						resourcesToMonitor.add(member);
 				}
 			} catch (CoreException e) {
 				Policy.log(IStatus.WARNING, Messages.refresh_refreshErr, e);
@@ -147,8 +146,8 @@ class MonitorManager implements ILifecycleListener, IPathVariableChangeListener,
 		boolean pollingMonitorNeeded = true;
 		RefreshProvider[] refreshProviders = getRefreshProviders();
 		SubMonitor subMonitor = SubMonitor.convert(progressMonitor, refreshProviders.length);
-		for (int i = 0; i < refreshProviders.length; i++) {
-			IRefreshMonitor monitor = safeInstallMonitor(refreshProviders[i], resource, subMonitor.split(1));
+		for (RefreshProvider refreshProvider : refreshProviders) {
+			IRefreshMonitor monitor = safeInstallMonitor(refreshProvider, resource, subMonitor.split(1));
 			if (monitor != null) {
 				registerMonitor(monitor, resource);
 				pollingMonitorNeeded = false;
@@ -210,17 +209,14 @@ class MonitorManager implements ILifecycleListener, IPathVariableChangeListener,
 			}
 		}
 		if (!invalidResources.isEmpty()) {
-			MonitorJob.createSystem(Messages.refresh_restoreOnInvalid, invalidResources, new ICoreRunnable() {
-				@Override
-				public void run(IProgressMonitor monitor) {
-					SubMonitor subMonitor = SubMonitor.convert(monitor, invalidResources.size() * 2);
-					for (IResource resource : invalidResources) {
-						unmonitor(resource, subMonitor.split(1));
-						monitor(resource, subMonitor.split(1));
-						// Because the monitor is installed asynchronously we
-						// may have missed some changes, we need to refresh it.
-						refreshManager.refresh(resource);
-					}
+			MonitorJob.createSystem(Messages.refresh_restoreOnInvalid, invalidResources, (ICoreRunnable) monitor -> {
+				SubMonitor subMonitor = SubMonitor.convert(monitor, invalidResources.size() * 2);
+				for (IResource resource : invalidResources) {
+					unmonitor(resource, subMonitor.split(1));
+					monitor(resource, subMonitor.split(1));
+					// Because the monitor is installed asynchronously we
+					// may have missed some changes, we need to refresh it.
+					refreshManager.refresh(resource);
 				}
 			}).schedule();
 		}
@@ -340,9 +336,9 @@ class MonitorManager implements ILifecycleListener, IPathVariableChangeListener,
 		}
 		if (children != null && children.length > 0) {
 			SubMonitor subMonitor = SubMonitor.convert(progressMonitor, children.length);
-			for (int i = 0; i < children.length; i++) {
-				if (children[i].isLinked()) {
-					unmonitor(children[i], subMonitor.split(1));
+			for (IResource child : children) {
+				if (child.isLinked()) {
+					unmonitor(child, subMonitor.split(1));
 				}
 			}
 		}

@@ -104,12 +104,7 @@ public class FileUtil {
 				if (MACOSX) {
 					// IFileInfo.getName() may not return the real name of the file on Mac OS X.
 					// Obtain the real name of the file from a listing of its parent directory.
-					String[] names = realPath.toFile().list(new FilenameFilter() {
-						@Override
-						public boolean accept(File dir, String n) {
-							return n.equalsIgnoreCase(segment);
-						}
-					});
+					String[] names = realPath.toFile().list((dir, n) -> n.equalsIgnoreCase(segment));
 					String realName;
 					if (names == null || names.length == 0) {
 						// The remainder of the path doesn't exist on the file system - copy from

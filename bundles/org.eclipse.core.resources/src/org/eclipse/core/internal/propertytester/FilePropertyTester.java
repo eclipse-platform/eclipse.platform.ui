@@ -55,8 +55,8 @@ public class FilePropertyTester extends ResourcePropertyTester {
 	}
 
 	private boolean isArgumentUsed(Object[] args, String value) {
-		for (int i = 0; i < args.length; i++)
-			if (value.equals(args[i]))
+		for (Object arg : args)
+			if (value.equals(arg))
 				return true;
 		return false;
 	}

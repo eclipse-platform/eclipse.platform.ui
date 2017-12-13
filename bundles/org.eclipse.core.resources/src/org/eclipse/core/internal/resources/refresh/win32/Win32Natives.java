@@ -11,7 +11,6 @@
  *******************************************************************************/
 package org.eclipse.core.internal.resources.refresh.win32;
 
-
 /**
  * Hooks for native methods involved with win32 auto-refresh callbacks.
  */
@@ -108,33 +107,27 @@ public class Win32Natives {
 	 */
 	static {
 		System.loadLibrary("win32refresh"); //$NON-NLS-1$
-		UNICODE= IsUnicode();
-		INVALID_HANDLE_VALUE= INVALID_HANDLE_VALUE();
-		ERROR_SUCCESS= ERROR_SUCCESS();
-		ERROR_INVALID_HANDLE= ERROR_INVALID_HANDLE();
+		UNICODE = IsUnicode();
+		INVALID_HANDLE_VALUE = INVALID_HANDLE_VALUE();
+		ERROR_SUCCESS = ERROR_SUCCESS();
+		ERROR_INVALID_HANDLE = ERROR_INVALID_HANDLE();
 
-		MAXIMUM_WAIT_OBJECTS= MAXIMUM_WAIT_OBJECTS();
-		MAX_PATH= MAX_PATH();
-		INFINITE= INFINITE();
+		MAXIMUM_WAIT_OBJECTS = MAXIMUM_WAIT_OBJECTS();
+		MAX_PATH = MAX_PATH();
+		INFINITE = INFINITE();
 
-		WAIT_TIMEOUT= WAIT_TIMEOUT();
-		WAIT_OBJECT_0= WAIT_OBJECT_0();
-		WAIT_ABANDONED_0= WAIT_ABANDONED_0();
-		WAIT_FAILED= WAIT_FAILED();
+		WAIT_TIMEOUT = WAIT_TIMEOUT();
+		WAIT_OBJECT_0 = WAIT_OBJECT_0();
+		WAIT_ABANDONED_0 = WAIT_ABANDONED_0();
+		WAIT_FAILED = WAIT_FAILED();
 
-		FILE_NOTIFY_CHANGE_FILE_NAME= FILE_NOTIFY_CHANGE_FILE_NAME();
-		FILE_NOTIFY_CHANGE_DIR_NAME= FILE_NOTIFY_CHANGE_DIR_NAME();
-		FILE_NOTIFY_CHANGE_ATTRIBUTES= FILE_NOTIFY_CHANGE_ATTRIBUTES();
-		FILE_NOTIFY_CHANGE_SIZE= FILE_NOTIFY_CHANGE_SIZE();
-		FILE_NOTIFY_CHANGE_LAST_WRITE= FILE_NOTIFY_CHANGE_LAST_WRITE();
-		FILE_NOTIFY_CHANGE_SECURITY= FILE_NOTIFY_CHANGE_SECURITY();
-		FILE_NOTIFY_ALL=
-			FILE_NOTIFY_CHANGE_FILE_NAME |
-			FILE_NOTIFY_CHANGE_DIR_NAME |
-			FILE_NOTIFY_CHANGE_ATTRIBUTES |
-			FILE_NOTIFY_CHANGE_SIZE |
-			FILE_NOTIFY_CHANGE_LAST_WRITE |
-			FILE_NOTIFY_CHANGE_SECURITY;
+		FILE_NOTIFY_CHANGE_FILE_NAME = FILE_NOTIFY_CHANGE_FILE_NAME();
+		FILE_NOTIFY_CHANGE_DIR_NAME = FILE_NOTIFY_CHANGE_DIR_NAME();
+		FILE_NOTIFY_CHANGE_ATTRIBUTES = FILE_NOTIFY_CHANGE_ATTRIBUTES();
+		FILE_NOTIFY_CHANGE_SIZE = FILE_NOTIFY_CHANGE_SIZE();
+		FILE_NOTIFY_CHANGE_LAST_WRITE = FILE_NOTIFY_CHANGE_LAST_WRITE();
+		FILE_NOTIFY_CHANGE_SECURITY = FILE_NOTIFY_CHANGE_SECURITY();
+		FILE_NOTIFY_ALL = FILE_NOTIFY_CHANGE_FILE_NAME | FILE_NOTIFY_CHANGE_DIR_NAME | FILE_NOTIFY_CHANGE_ATTRIBUTES | FILE_NOTIFY_CHANGE_SIZE | FILE_NOTIFY_CHANGE_LAST_WRITE | FILE_NOTIFY_CHANGE_SECURITY;
 	}
 
 	/**
@@ -163,6 +156,7 @@ public class Win32Natives {
 			return FindFirstChangeNotificationW(lpPathName, bWatchSubtree, dwNotifyFilter);
 		return FindFirstChangeNotificationA(Convert.toPlatformBytes(lpPathName), bWatchSubtree, dwNotifyFilter);
 	}
+
 	/**
 	 * Creates a change notification object for the given path. This notification object
 	 * allows the client to monitor changes to the directory and the subtree
@@ -203,7 +197,6 @@ public class Win32Natives {
 	 *  ERROR_INVALID_HANDLE  if the attempt fails.
 	 */
 	private static native long FindFirstChangeNotificationA(byte[] lpPathName, boolean bWatchSubtree, int dwNotifyFilter);
-
 
 	/**
 	 * Stops and disposes of the change notification object that corresponds to the given

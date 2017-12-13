@@ -69,8 +69,7 @@ public final class ResourceChangeValidator {
 
 	private IStatus combineResults(IStatus[] result) {
 		List<IStatus> notOK = new ArrayList<>();
-		for (int i = 0; i < result.length; i++) {
-			IStatus status = result[i];
+		for (IStatus status : result) {
 			if (!status.isOK()) {
 				notOK.add(status);
 			}
@@ -97,8 +96,7 @@ public final class ResourceChangeValidator {
 	private ModelProvider[] getProviders(IResource[] resources) {
 		IModelProviderDescriptor[] descriptors = ModelProvider.getModelProviderDescriptors();
 		List<ModelProvider> result = new ArrayList<>();
-		for (int i = 0; i < descriptors.length; i++) {
-			IModelProviderDescriptor descriptor = descriptors[i];
+		for (IModelProviderDescriptor descriptor : descriptors) {
 			try {
 				IResource[] matchingResources = descriptor.getMatchingResources(resources);
 				if (matchingResources.length > 0) {
@@ -117,12 +115,7 @@ public final class ResourceChangeValidator {
 	private IResource[] getRootResources(IResourceDelta root) {
 		final ChangeDescription changeDescription = new ChangeDescription();
 		try {
-			root.accept(new IResourceDeltaVisitor() {
-				@Override
-				public boolean visit(IResourceDelta delta) {
-					return changeDescription.recordChange(delta);
-				}
-			});
+			root.accept(delta -> changeDescription.recordChange(delta));
 		} catch (CoreException e) {
 			// Shouldn't happen since the ProposedResourceDelta accept doesn't throw an
 			// exception and our visitor doesn't either

@@ -12,7 +12,8 @@
  *******************************************************************************/
 package org.eclipse.core.internal.resources.mapping;
 
-import java.util.*;
+import java.util.HashSet;
+import java.util.Set;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.mapping.*;
@@ -34,12 +35,10 @@ public final class ResourceModelProvider extends ModelProvider {
 	@Override
 	public ResourceMapping[] getMappings(ResourceTraversal[] traversals, ResourceMappingContext context, IProgressMonitor monitor) {
 		Set<IAdaptable> result = new HashSet<>();
-		for (int i = 0; i < traversals.length; i++) {
-			ResourceTraversal traversal = traversals[i];
+		for (ResourceTraversal traversal : traversals) {
 			IResource[] resources = traversal.getResources();
 			int depth = traversal.getDepth();
-			for (int j = 0; j < resources.length; j++) {
-				IResource resource = resources[j];
+			for (IResource resource : resources) {
 				switch (depth) {
 					case IResource.DEPTH_INFINITE :
 						result.add(resource);
@@ -60,8 +59,7 @@ public final class ResourceModelProvider extends ModelProvider {
 		}
 		ResourceMapping[] mappings = new ResourceMapping[result.size()];
 		int i = 0;
-		for (Iterator<?> iter = result.iterator(); iter.hasNext();) {
-			Object element = iter.next();
+		for (Object element : result) {
 			if (element instanceof IResource) {
 				mappings[i++] = new SimpleResourceMapping((IResource) element);
 			} else {

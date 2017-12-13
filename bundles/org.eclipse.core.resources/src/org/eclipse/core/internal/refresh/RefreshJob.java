@@ -91,13 +91,13 @@ public class RefreshJob extends WorkspaceJob {
 			//resource is not accessible - just return what we have
 			return children;
 		}
-		for (int i = 0; i < members.length; i++) {
-			if (members[i].getType() == IResource.FILE)
+		for (IResource member : members) {
+			if (member.getType() == IResource.FILE)
 				continue;
 			if (depth <= 1)
-				children.add(members[i]);
+				children.add(member);
 			else
-				collectChildrenToDepth(members[i], children, depth - 1);
+				collectChildrenToDepth(member, children, depth - 1);
 		}
 		return children;
 	}

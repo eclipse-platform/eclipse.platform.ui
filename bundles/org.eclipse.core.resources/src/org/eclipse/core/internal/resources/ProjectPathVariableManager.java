@@ -17,6 +17,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.*;
 import org.eclipse.core.filesystem.URIUtil;
+import org.eclipse.core.internal.resources.ProjectVariableProviderManager.Descriptor;
 import org.eclipse.core.internal.utils.Messages;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
@@ -76,11 +77,11 @@ public class ProjectPathVariableManager implements IPathVariableManager, IManage
 		} catch (CoreException e) {
 			return new String[0];
 		}
-		for (int i = 0; i < variableProviders.length; i++) {
-			String[] variableHints = variableProviders[i].getVariableNames(variableProviders[i].getName(), resource);
+		for (Descriptor variableProvider : variableProviders) {
+			String[] variableHints = variableProvider.getVariableNames(variableProvider.getName(), resource);
 			if (variableHints != null && variableHints.length > 0)
 				for (int k = 0; k < variableHints.length; k++)
-					result.add(variableProviders[i].getVariableNames(variableProviders[i].getName(), resource)[k]);
+					result.add(variableProvider.getVariableNames(variableProvider.getName(), resource)[k]);
 		}
 		if (map != null)
 			result.addAll(map.keySet());
@@ -147,13 +148,13 @@ public class ProjectPathVariableManager implements IPathVariableManager, IManage
 			name = varName.substring(0, index);
 		else
 			name = varName;
-		for (int i = 0; i < variableProviders.length; i++) {
-			if (variableProviders[i].getName().equals(name))
-				return variableProviders[i].getValue(varName, resource);
+		for (Descriptor variableProvider : variableProviders) {
+			if (variableProvider.getName().equals(name))
+				return variableProvider.getValue(varName, resource);
 		}
-		for (int i = 0; i < variableProviders.length; i++) {
-			if (name.startsWith(variableProviders[i].getName()))
-				return variableProviders[i].getValue(varName, resource);
+		for (Descriptor variableProvider : variableProviders) {
+			if (name.startsWith(variableProvider.getName()))
+				return variableProvider.getValue(varName, resource);
 		}
 		return null;
 	}
@@ -163,11 +164,11 @@ public class ProjectPathVariableManager implements IPathVariableManager, IManage
 	 */
 	@Override
 	public boolean isDefined(String varName) {
-		for (int i = 0; i < variableProviders.length; i++) {
+		for (Descriptor variableProvider : variableProviders) {
 			//			if (variableProviders[i].getName().equals(varName))
 			//				return true;
 
-			if (varName.startsWith(variableProviders[i].getName()))
+			if (varName.startsWith(variableProvider.getName()))
 				return true;
 		}
 
@@ -340,11 +341,11 @@ public class ProjectPathVariableManager implements IPathVariableManager, IManage
 			if (variableExists && currentValue.equals(newValue))
 				return;
 
-			for (int i = 0; i < variableProviders.length; i++) {
+			for (Descriptor variableProvider : variableProviders) {
 				//				if (variableProviders[i].getName().equals(varName))
 				//					return;
 
-				if (varName.startsWith(variableProviders[i].getName()))
+				if (varName.startsWith(variableProvider.getName()))
 					return;
 			}
 

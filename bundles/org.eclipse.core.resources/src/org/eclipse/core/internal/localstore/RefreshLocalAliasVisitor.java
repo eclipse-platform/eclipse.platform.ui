@@ -51,14 +51,13 @@ public class RefreshLocalAliasVisitor extends RefreshLocalVisitor {
 			boolean wasFilteredOut = false;
 			if (store.fetchInfo() != null && store.fetchInfo().exists())
 				wasFilteredOut = target.isFiltered();
-			for (int i = 0; i < aliases.length; i++) {
-				if (aliases[i].getProject().isOpen()) {
+			for (IResource aliase : aliases) {
+				if (aliase.getProject().isOpen()) {
 					if (wasFilteredOut) {
-						if (((Resource) aliases[i]).isFiltered())
-							super.deleteResource(node, (Resource) aliases[i]);
-					}
-					else
-						super.deleteResource(node, (Resource) aliases[i]);
+						if (((Resource) aliase).isFiltered())
+							super.deleteResource(node, (Resource) aliase);
+					} else
+						super.deleteResource(node, (Resource) aliase);
 				}
 			}
 		}
@@ -72,9 +71,9 @@ public class RefreshLocalAliasVisitor extends RefreshLocalVisitor {
 			return;
 		IResource[] aliases = workspace.getAliasManager().computeAliases(target, store);
 		if (aliases != null)
-			for (int i = 0; i < aliases.length; i++) {
-				if (aliases[i].getProject().isOpen())
-					super.resourceChanged(node, (Resource) aliases[i]);
+			for (IResource aliase : aliases) {
+				if (aliase.getProject().isOpen())
+					super.resourceChanged(node, (Resource) aliase);
 			}
 	}
 
@@ -86,8 +85,8 @@ public class RefreshLocalAliasVisitor extends RefreshLocalVisitor {
 			return;
 		IResource[] aliases = workspace.getAliasManager().computeAliases(target, store);
 		if (aliases != null)
-			for (int i = 0; i < aliases.length; i++)
-				super.fileToFolder(node, (Resource) aliases[i]);
+			for (IResource aliase : aliases)
+				super.fileToFolder(node, (Resource) aliase);
 	}
 
 	@Override
@@ -98,8 +97,8 @@ public class RefreshLocalAliasVisitor extends RefreshLocalVisitor {
 			return;
 		IResource[] aliases = workspace.getAliasManager().computeAliases(target, store);
 		if (aliases != null)
-			for (int i = 0; i < aliases.length; i++)
-				super.folderToFile(node, (Resource) aliases[i]);
+			for (IResource aliase : aliases)
+				super.folderToFile(node, (Resource) aliase);
 	}
 
 	@Override

@@ -141,9 +141,7 @@ public class LocationValidator {
 
 		// Iterate over each known project and ensure that the location does not
 		// conflict with any project locations or linked resource locations
-		IProject[] projects = workspace.getRoot().getProjects(IContainer.INCLUDE_HIDDEN);
-		for (int i = 0; i < projects.length; i++) {
-			IProject project = projects[i];
+		for (IProject project : workspace.getRoot().getProjects(IContainer.INCLUDE_HIDDEN)) {
 			// since we are iterating over the project in the workspace, we
 			// know that they have been created before and must have a description
 			IProjectDescription desc = ((Project) project).internalGetDescription();
@@ -163,9 +161,9 @@ public class LocationValidator {
 			}
 			if (children == null)
 				continue;
-			for (int j = 0; j < children.length; j++) {
-				if (children[j].isLinked()) {
-					testLocation = children[j].getLocationURI();
+			for (IResource child : children) {
+				if (child.isLinked()) {
+					testLocation = child.getLocationURI();
 					if (testLocation != null && FileUtil.isOverlapping(location, testLocation)) {
 						message = NLS.bind(Messages.links_overlappingResource, toString(location));
 						return new ResourceStatus(IResourceStatus.OVERLAPPING_LOCATION, resource.getFullPath(), message);
@@ -196,9 +194,9 @@ public class LocationValidator {
 
 		/* test invalid characters */
 		char[] chars = OS.INVALID_RESOURCE_CHARACTERS;
-		for (int i = 0; i < chars.length; i++)
-			if (segment.indexOf(chars[i]) != -1) {
-				message = NLS.bind(Messages.resources_invalidCharInName, String.valueOf(chars[i]), segment);
+		for (char c : chars)
+			if (segment.indexOf(c) != -1) {
+				message = NLS.bind(Messages.resources_invalidCharInName, String.valueOf(c), segment);
 				return new ResourceStatus(IResourceStatus.INVALID_VALUE, null, message);
 			}
 
@@ -376,8 +374,7 @@ public class LocationValidator {
 		// Iterate over each known project and ensure that the location does not
 		// conflict with any of their already defined locations.
 		IProject[] projects = workspace.getRoot().getProjects(IContainer.INCLUDE_HIDDEN);
-		for (int j = 0; j < projects.length; j++) {
-			IProject project = projects[j];
+		for (IProject project : projects) {
 			URI testLocation = project.getLocationURI();
 			if (context != null && project.equals(context)) {
 				//tolerate locations being the same if this is the project being tested
@@ -404,9 +401,9 @@ public class LocationValidator {
 				//ignore projects that cannot be accessed
 			}
 			if (children != null) {
-				for (int i = 0; i < children.length; i++) {
-					if (children[i].isLinked()) {
-						URI testLocation = children[i].getLocationURI();
+				for (IResource child : children) {
+					if (child.isLinked()) {
+						URI testLocation = child.getLocationURI();
 						if (testLocation != null && FileUtil.isPrefixOf(testLocation, location)) {
 							message = NLS.bind(Messages.links_locationOverlapsLink, toString(location));
 							return new ResourceStatus(IResourceStatus.OVERLAPPING_LOCATION, context.getFullPath(), message);

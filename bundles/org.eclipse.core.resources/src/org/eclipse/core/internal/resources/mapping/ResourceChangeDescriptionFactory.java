@@ -85,8 +85,8 @@ public class ResourceChangeDescriptionFactory implements IResourceChangeDescript
 		if (resource.getType() == IResource.ROOT) {
 			//the root itself cannot be deleted, so create deletions for each project
 			IProject[] projects = ((IWorkspaceRoot) resource).getProjects(IContainer.INCLUDE_HIDDEN);
-			for (int i = 0; i < projects.length; i++)
-				buildDeleteDelta(root, projects[i]);
+			for (IProject project : projects)
+				buildDeleteDelta(root, project);
 		} else {
 			buildDeleteDelta(getDelta(resource.getParent()), resource);
 		}
@@ -223,12 +223,7 @@ public class ResourceChangeDescriptionFactory implements IResourceChangeDescript
 		try {
 			//build delta for the entire sub-tree if available
 			if (resource.isAccessible()) {
-				resource.accept(new IResourceVisitor() {
-					@Override
-					public boolean visit(IResource child) {
-						return moveOrCopy(child, sourcePrefix, destinationPrefix, move);
-					}
-				});
+				resource.accept(child -> moveOrCopy(child, sourcePrefix, destinationPrefix, move));
 			} else {
 				//just build a delta for the single resource
 				moveOrCopy(resource, sourcePrefix, destination, move);

@@ -63,8 +63,8 @@ public class MarkerSet implements Cloneable, IStringPoolParticipant {
 	}
 
 	public void addAll(IMarkerSetElement[] toAdd) {
-		for (int i = 0; i < toAdd.length; i++)
-			add(toAdd[i]);
+		for (IMarkerSetElement element : toAdd)
+			add(element);
 	}
 
 	@Override
@@ -87,8 +87,7 @@ public class MarkerSet implements Cloneable, IStringPoolParticipant {
 	public IMarkerSetElement[] elements() {
 		IMarkerSetElement[] result = new IMarkerSetElement[elementCount];
 		int j = 0;
-		for (int i = 0; i < elements.length; i++) {
-			IMarkerSetElement element = elements[i];
+		for (IMarkerSetElement element : elements) {
 			if (element != null)
 				result[j++] = element;
 		}
@@ -102,8 +101,7 @@ public class MarkerSet implements Cloneable, IStringPoolParticipant {
 	protected void expand() {
 		IMarkerSetElement[] array = new IMarkerSetElement[elements.length * 2];
 		int maxArrayIndex = array.length - 1;
-		for (int i = 0; i < elements.length; i++) {
-			IMarkerSetElement element = elements[i];
+		for (IMarkerSetElement element : elements) {
 			if (element != null) {
 				int hash = hashFor(element.getId()) % array.length;
 				while (array[hash] != null) {
@@ -215,8 +213,8 @@ public class MarkerSet implements Cloneable, IStringPoolParticipant {
 	}
 
 	public void removeAll(IMarkerSetElement[] toRemove) {
-		for (int i = 0; i < toRemove.length; i++)
-			remove(toRemove[i]);
+		for (IMarkerSetElement element : toRemove)
+			remove(element);
 	}
 
 	private boolean shouldGrow() {

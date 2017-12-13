@@ -12,6 +12,7 @@
 package org.eclipse.core.internal.events;
 
 import java.util.*;
+import org.eclipse.core.internal.events.ResourceChangeListenerList.ListenerEntry;
 import org.eclipse.core.internal.resources.*;
 import org.eclipse.core.internal.utils.Messages;
 import org.eclipse.core.internal.utils.Policy;
@@ -22,11 +23,8 @@ import org.eclipse.core.runtime.jobs.Job;
 
 public class NotificationManager implements IManager, ILifecycleListener {
 	class NotifyJob extends Job {
-		private final ICoreRunnable noop = new ICoreRunnable() {
-			@Override
-			public void run(IProgressMonitor monitor) {
-				// do nothing
-			}
+		private final ICoreRunnable noop = monitor -> {
+			// do nothing
 		};
 
 		public NotifyJob() {
@@ -281,9 +279,9 @@ public class NotificationManager implements IManager, ILifecycleListener {
 		if (lockTree)
 			workspace.setTreeLocked(true);
 		try {
-			for (int i = 0; i < resourceListeners.length; i++) {
-				if ((type & resourceListeners[i].eventMask) != 0) {
-					final IResourceChangeListener listener = resourceListeners[i].listener;
+			for (ListenerEntry resourceListener : resourceListeners) {
+				if ((type & resourceListener.eventMask) != 0) {
+					final IResourceChangeListener listener = resourceListener.listener;
 					if (ResourceStats.TRACE_LISTENERS)
 						ResourceStats.startNotify(listener);
 					SafeRunner.run(new ISafeRunnable() {

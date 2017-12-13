@@ -116,10 +116,9 @@ public class StringPoolJob extends Job {
 
 	private int shareStrings(IStringPoolParticipant[] toRun, IProgressMonitor monitor) {
 		final StringPool pool = new StringPool();
-		for (int i = 0; i < toRun.length; i++) {
+		for (final IStringPoolParticipant current : toRun) {
 			if (monitor.isCanceled())
 				break;
-			final IStringPoolParticipant current = toRun[i];
 			SafeRunner.run(new ISafeRunnable() {
 				@Override
 				public void handleException(Throwable exception) {

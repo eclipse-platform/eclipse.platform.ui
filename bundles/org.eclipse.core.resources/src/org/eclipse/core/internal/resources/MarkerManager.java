@@ -99,8 +99,8 @@ public class MarkerManager implements IManager {
 			return NO_MARKER_INFO;
 		List<MarkerInfo> result = new ArrayList<>(size);
 		IMarkerSetElement[] elements = markers.elements();
-		for (int i = 0; i < elements.length; i++) {
-			MarkerInfo marker = (MarkerInfo) elements[i];
+		for (IMarkerSetElement element : elements) {
+			MarkerInfo marker = (MarkerInfo) element;
 			// if the type is null then we are looking for all types of markers
 			if (type == null)
 				result.add(marker);
@@ -126,8 +126,8 @@ public class MarkerManager implements IManager {
 		if (size <= 0)
 			return max;
 		IMarkerSetElement[] elements = markers.elements();
-		for (int i = 0; i < elements.length; i++) {
-			MarkerInfo marker = (MarkerInfo) elements[i];
+		for (IMarkerSetElement element : elements) {
+			MarkerInfo marker = (MarkerInfo) element;
 			// if the type is null then we are looking for all types of markers
 			if (type == null)
 				max = Math.max(max, getSeverity(marker));
@@ -210,8 +210,8 @@ public class MarkerManager implements IManager {
 			return;
 		IResource resource = workspace.newResource(path, type);
 		list.ensureCapacity(list.size() + markers.length);
-		for (int i = 0; i < markers.length; i++) {
-			list.add(new Marker(resource, ((MarkerInfo) markers[i]).getId()));
+		for (IMarkerSetElement marker : markers) {
+			list.add(new Marker(resource, ((MarkerInfo) marker).getId()));
 		}
 	}
 
@@ -350,34 +350,31 @@ public class MarkerManager implements IManager {
 		final int count = destination.getFullPath().segmentCount();
 
 		// we removed from the source and added to the destination
-		IResourceVisitor visitor = new IResourceVisitor() {
-			@Override
-			public boolean visit(IResource resource) {
-				Resource r = (Resource) resource;
-				ResourceInfo info = r.getResourceInfo(false, true);
-				MarkerSet markers = info.getMarkers(false);
-				if (markers == null)
-					return true;
-				info.set(ICoreConstants.M_MARKERS_SNAP_DIRTY);
-				IMarkerSetElement[] removed = new IMarkerSetElement[markers.size()];
-				IMarkerSetElement[] added = new IMarkerSetElement[markers.size()];
-				IPath path = resource.getFullPath().removeFirstSegments(count);
-				path = source.getFullPath().append(path);
-				IResource sourceChild = workspace.newResource(path, resource.getType());
-				IMarkerSetElement[] elements = markers.elements();
-				for (int i = 0; i < elements.length; i++) {
-					// calculate the ADDED delta
-					MarkerInfo markerInfo = (MarkerInfo) elements[i];
-					MarkerDelta delta = new MarkerDelta(IResourceDelta.ADDED, resource, markerInfo);
-					added[i] = delta;
-					// calculate the REMOVED delta
-					delta = new MarkerDelta(IResourceDelta.REMOVED, sourceChild, markerInfo);
-					removed[i] = delta;
-				}
-				changedMarkers(resource, added);
-				changedMarkers(sourceChild, removed);
+		IResourceVisitor visitor = resource -> {
+			Resource r = (Resource) resource;
+			ResourceInfo info = r.getResourceInfo(false, true);
+			MarkerSet markers = info.getMarkers(false);
+			if (markers == null)
 				return true;
+			info.set(ICoreConstants.M_MARKERS_SNAP_DIRTY);
+			IMarkerSetElement[] removed = new IMarkerSetElement[markers.size()];
+			IMarkerSetElement[] added = new IMarkerSetElement[markers.size()];
+			IPath path = resource.getFullPath().removeFirstSegments(count);
+			path = source.getFullPath().append(path);
+			IResource sourceChild = workspace.newResource(path, resource.getType());
+			IMarkerSetElement[] elements = markers.elements();
+			for (int i = 0; i < elements.length; i++) {
+				// calculate the ADDED delta
+				MarkerInfo markerInfo = (MarkerInfo) elements[i];
+				MarkerDelta delta = new MarkerDelta(IResourceDelta.ADDED, resource, markerInfo);
+				added[i] = delta;
+				// calculate the REMOVED delta
+				delta = new MarkerDelta(IResourceDelta.REMOVED, sourceChild, markerInfo);
+				removed[i] = delta;
 			}
+			changedMarkers(resource, added);
+			changedMarkers(sourceChild, removed);
+			return true;
 		};
 		destination.accept(visitor, depth, IContainer.INCLUDE_TEAM_PRIVATE_MEMBERS | IContainer.INCLUDE_HIDDEN);
 	}
@@ -406,9 +403,8 @@ public class MarkerManager implements IManager {
 			return;
 		if (depth == IResource.DEPTH_ONE)
 			depth = IResource.DEPTH_ZERO;
-		IPath[] children = workspace.getElementTree().getChildren(path);
-		for (int i = 0; i < children.length; i++) {
-			recursiveFindMarkers(children[i], list, type, includeSubtypes, depth);
+		for (IPath child : workspace.getElementTree().getChildren(path)) {
+			recursiveFindMarkers(child, list, type, includeSubtypes, depth);
 		}
 	}
 
@@ -435,9 +431,8 @@ public class MarkerManager implements IManager {
 			return max;
 		if (depth == IResource.DEPTH_ONE)
 			depth = IResource.DEPTH_ZERO;
-		IPath[] children = workspace.getElementTree().getChildren(path);
-		for (int i = 0; i < children.length; i++) {
-			max = Math.max(max, recursiveFindMaxSeverity(children[i], type, includeSubtypes, depth));
+		for (IPath child : workspace.getElementTree().getChildren(path)) {
+			max = Math.max(max, recursiveFindMaxSeverity(child, type, includeSubtypes, depth));
 			if (max >= IMarker.SEVERITY_ERROR) {
 				break;
 			}
@@ -469,9 +464,8 @@ public class MarkerManager implements IManager {
 			return;
 		if (depth == IResource.DEPTH_ONE)
 			depth = IResource.DEPTH_ZERO;
-		IPath[] children = workspace.getElementTree().getChildren(path);
-		for (int i = 0; i < children.length; i++) {
-			recursiveRemoveMarkers(children[i], type, includeSubtypes, depth);
+		for (IPath child : workspace.getElementTree().getChildren(path)) {
+			recursiveRemoveMarkers(child, type, includeSubtypes, depth);
 		}
 	}
 
@@ -597,25 +591,22 @@ public class MarkerManager implements IManager {
 	 * Adds the markers for a subtree of resources to the list.
 	 */
 	private void visitorFindMarkers(IPath path, final ArrayList<IMarker> list, final String type, final boolean includeSubtypes) {
-		IElementContentVisitor visitor = new IElementContentVisitor() {
-			@Override
-			public boolean visitElement(ElementTree tree, IPathRequestor requestor, Object elementContents) {
-				ResourceInfo info = (ResourceInfo) elementContents;
-				if (info == null)
-					return false;
-				MarkerSet markers = info.getMarkers(false);
+		IElementContentVisitor visitor = (tree, requestor, elementContents) -> {
+			ResourceInfo info = (ResourceInfo) elementContents;
+			if (info == null)
+				return false;
+			MarkerSet markers = info.getMarkers(false);
 
-				//add the matching markers for this resource
-				if (markers != null) {
-					IMarkerSetElement[] matching;
-					if (type == null)
-						matching = markers.elements();
-					else
-						matching = basicFindMatching(markers, type, includeSubtypes);
-					buildMarkers(matching, requestor.requestPath(), info.getType(), list);
-				}
-				return true;
+			//add the matching markers for this resource
+			if (markers != null) {
+				IMarkerSetElement[] matching;
+				if (type == null)
+					matching = markers.elements();
+				else
+					matching = basicFindMatching(markers, type, includeSubtypes);
+				buildMarkers(matching, requestor.requestPath(), info.getType(), list);
 			}
+			return true;
 		};
 		new ElementTreeIterator(workspace.getElementTree(), path).iterate(visitor);
 	}
@@ -654,15 +645,12 @@ public class MarkerManager implements IManager {
 	 * Adds the markers for a subtree of resources to the list.
 	 */
 	private void visitorRemoveMarkers(IPath path, final String type, final boolean includeSubtypes) {
-		IElementContentVisitor visitor = new IElementContentVisitor() {
-			@Override
-			public boolean visitElement(ElementTree tree, IPathRequestor requestor, Object elementContents) {
-				ResourceInfo info = (ResourceInfo) elementContents;
-				if (info == null)
-					return false;
-				basicRemoveMarkers(info, requestor, type, includeSubtypes);
-				return true;
-			}
+		IElementContentVisitor visitor = (tree, requestor, elementContents) -> {
+			ResourceInfo info = (ResourceInfo) elementContents;
+			if (info == null)
+				return false;
+			basicRemoveMarkers(info, requestor, type, includeSubtypes);
+			return true;
 		};
 		new ElementTreeIterator(workspace.getElementTree(), path).iterate(visitor);
 	}

@@ -348,8 +348,7 @@ public abstract class Bucket {
 			try {
 				destination.write(getVersion());
 				destination.writeInt(entries.size());
-				for (Iterator<Map.Entry<String, Object>> i = entries.entrySet().iterator(); i.hasNext();) {
-					Map.Entry<String, Object> entry = i.next();
+				for (java.util.Map.Entry<String, Object> entry : entries.entrySet()) {
 					writeEntryKey(destination, entry.getKey());
 					writeEntryValue(destination, entry.getValue());
 				}

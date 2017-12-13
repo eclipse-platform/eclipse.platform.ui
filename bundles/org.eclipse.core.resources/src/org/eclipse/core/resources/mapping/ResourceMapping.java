@@ -58,8 +58,8 @@ public abstract class ResourceMapping extends PlatformObject {
 	 */
 	public void accept(ResourceMappingContext context, IResourceVisitor visitor, IProgressMonitor monitor) throws CoreException {
 		ResourceTraversal[] traversals = getTraversals(context, monitor);
-		for (int i = 0; i < traversals.length; i++)
-			traversals[i].accept(visitor);
+		for (ResourceTraversal traversal : traversals)
+			traversal.accept(visitor);
 	}
 
 	/**
@@ -112,8 +112,8 @@ public abstract class ResourceMapping extends PlatformObject {
 	public IMarker[] findMarkers(String type, boolean includeSubtypes, IProgressMonitor monitor) throws CoreException {
 		final ResourceTraversal[] traversals = getTraversals(ResourceMappingContext.LOCAL_CONTEXT, monitor);
 		ArrayList<IMarker> result = new ArrayList<>();
-		for (int i = 0; i < traversals.length; i++)
-			traversals[i].doFindMarkers(result, type, includeSubtypes);
+		for (ResourceTraversal traversal : traversals)
+			traversal.doFindMarkers(result, type, includeSubtypes);
 		return result.toArray(new IMarker[result.size()]);
 	}
 

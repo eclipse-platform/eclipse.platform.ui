@@ -81,9 +81,7 @@ public class FileSystemResourceManager implements ICoreConstants, IManager, Pref
 			results.add(Path.ROOT);
 			return results;
 		}
-		IProject[] projects = root.getProjects(IContainer.INCLUDE_HIDDEN);
-		for (int i = 0; i < projects.length; i++) {
-			IProject project = projects[i];
+		for (IProject project : root.getProjects(IContainer.INCLUDE_HIDDEN)) {
 			if (!project.exists())
 				continue;
 			//check the project location
@@ -154,9 +152,9 @@ public class FileSystemResourceManager implements ICoreConstants, IManager, Pref
 		IFileStore fileStore = EFS.getStore(inputLocation);
 		while (fileStore != null) {
 			IResource[] resources = workspace.getAliasManager().findResources(fileStore);
-			for (int i = 0; i < resources.length; i++) {
-				if (resources[i].isLinked()) {
-					IPath path = resources[i].getFullPath();
+			for (IResource resource : resources) {
+				if (resource.isLinked()) {
+					IPath path = resource.getFullPath();
 					if (suffix != null)
 						path = path.append(suffix);
 					if (!results.contains(path))
@@ -301,8 +299,7 @@ public class FileSystemResourceManager implements ICoreConstants, IManager, Pref
 		int resultProjectPathSegments = 0;
 		IResource result = null;
 		IProject[] projects = getWorkspace().getRoot().getProjects(IContainer.INCLUDE_HIDDEN);
-		for (int i = 0; i < projects.length; i++) {
-			IProject project = projects[i];
+		for (IProject project : projects) {
 			IPath projectLocation = project.getLocation();
 			if (projectLocation != null && projectLocation.isPrefixOf(location)) {
 				int segmentsToRemove = projectLocation.segmentCount();
@@ -1001,8 +998,8 @@ public class FileSystemResourceManager implements ICoreConstants, IManager, Pref
 		boolean changed = false;
 		// drop the depth by one level since processing the root counts as one level.
 		depth = depth == IResource.DEPTH_ONE ? IResource.DEPTH_ZERO : depth;
-		for (int i = 0; i < projects.length; i++) {
-			changed |= refresh(projects[i], depth, updateAliases, subMonitor.newChild(1));
+		for (IProject project : projects) {
+			changed |= refresh(project, depth, updateAliases, subMonitor.newChild(1));
 		}
 		return changed;
 	}

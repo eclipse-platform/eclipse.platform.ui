@@ -263,13 +263,13 @@ public abstract class AbstractDataTreeNode {
 	 */
 	AbstractDataTreeNode childAtIgnoreCase(String localName) {
 		AbstractDataTreeNode result = null;
-		for (int i = 0; i < children.length; i++) {
-			if (children[i].getName().equalsIgnoreCase(localName)) {
+		for (AbstractDataTreeNode element : children) {
+			if (element.getName().equalsIgnoreCase(localName)) {
 				//if we find a deleted child, keep looking for a real child
-				if (children[i].isDeleted())
-					result = children[i];
+				if (element.isDeleted())
+					result = element;
 				else
-					return children[i];
+					return element;
 			}
 		}
 		return result;
@@ -350,8 +350,7 @@ public abstract class AbstractDataTreeNode {
 
 		AbstractDataTreeNode[] comparedNodes = new AbstractDataTreeNode[nodes.length];
 		int count = 0;
-		for (int i = 0; i < nodes.length; ++i) {
-			AbstractDataTreeNode node = nodes[i];
+		for (AbstractDataTreeNode node : nodes) {
 			AbstractDataTreeNode comparedNode = node.compareWithParent(key.append(node.getName()), parent, comparator);
 			NodeComparison comparison = (NodeComparison) comparedNode.getData();
 			// Skip it if it's an empty comparison (and no children).

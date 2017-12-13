@@ -140,15 +140,15 @@ public class MarkerDelta implements IMarkerDelta, IMarkerSetElement {
 	protected static MarkerSet merge(MarkerSet oldChanges, IMarkerSetElement[] newChanges) {
 		if (oldChanges == null) {
 			MarkerSet result = new MarkerSet(newChanges.length);
-			for (int i = 0; i < newChanges.length; i++)
-				result.add(newChanges[i]);
+			for (IMarkerSetElement newChange : newChanges)
+				result.add(newChange);
 			return result;
 		}
 		if (newChanges == null)
 			return oldChanges;
 
-		for (int i = 0; i < newChanges.length; i++) {
-			MarkerDelta newDelta = (MarkerDelta) newChanges[i];
+		for (IMarkerSetElement newChange : newChanges) {
+			MarkerDelta newDelta = (MarkerDelta) newChange;
 			MarkerDelta oldDelta = (MarkerDelta) oldChanges.get(newDelta.getId());
 			if (oldDelta == null) {
 				oldChanges.add(newDelta);

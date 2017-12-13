@@ -15,7 +15,6 @@ package org.eclipse.core.internal.resources;
 import java.util.*;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.Preferences;
-import org.eclipse.core.runtime.Preferences.PropertyChangeEvent;
 
 /**
  * This class provides the same interface as <code>WorkspaceDescription</code>
@@ -42,8 +41,8 @@ public class WorkspacePreferences extends WorkspaceDescription {
 		if (array == null || array.length == 0)
 			return ""; //$NON-NLS-1$
 		StringBuilder sb = new StringBuilder();
-		for (int i = 0; i < array.length; i++) {
-			sb.append(array[i]);
+		for (String element : array) {
+			sb.append(element);
 			sb.append(PROJECT_SEPARATOR);
 		}
 		sb.deleteCharAt(sb.length() - 1);
@@ -99,12 +98,7 @@ public class WorkspacePreferences extends WorkspaceDescription {
 
 		// This property listener ensures we are being updated properly when changes
 		// are done directly to the preference store.
-		preferences.addPropertyChangeListener(new Preferences.IPropertyChangeListener() {
-			@Override
-			public void propertyChange(PropertyChangeEvent event) {
-				synchronizeWithPreferences(event.getProperty());
-			}
-		});
+		preferences.addPropertyChangeListener(event -> synchronizeWithPreferences(event.getProperty()));
 	}
 
 	@Override

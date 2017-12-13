@@ -138,15 +138,15 @@ public class ProjectContentTypes {
 		if (enabledNatures.length == 0)
 			return Collections.EMPTY_SET;
 		Set<String> related = new HashSet<>(enabledNatures.length);
-		for (int i = 0; i < enabledNatures.length; i++) {
-			ProjectNatureDescriptor descriptor = (ProjectNatureDescriptor) workspace.getNatureDescriptor(enabledNatures[i]);
+		for (String enabledNature : enabledNatures) {
+			ProjectNatureDescriptor descriptor = (ProjectNatureDescriptor) workspace.getNatureDescriptor(enabledNature);
 			if (descriptor == null)
 				// no descriptor found for the nature, skip it
 				continue;
 			String[] natureContentTypes = descriptor.getContentTypeIds();
-			for (int j = 0; j < natureContentTypes.length; j++)
+			for (String natureContentType : natureContentTypes)
 				// collect associate content types
-				related.add(natureContentTypes[j]);
+				related.add(natureContentType);
 		}
 		return related;
 	}

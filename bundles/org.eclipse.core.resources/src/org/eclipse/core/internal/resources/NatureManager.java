@@ -70,8 +70,7 @@ public class NatureManager implements ILifecycleListener, IManager {
 				candidates.add(id);
 			//build set to nature map
 			String[] setIds = desc.getNatureSetIds();
-			for (int j = 0; j < setIds.length; j++) {
-				String set = setIds[j];
+			for (String set : setIds) {
 				ArrayList<String> current = setsToNatures.get(set);
 				if (current == null) {
 					current = new ArrayList<>(5);
@@ -81,8 +80,7 @@ public class NatureManager implements ILifecycleListener, IManager {
 			}
 		}
 		//now remove all natures that belong to sets with more than one member
-		for (Iterator<ArrayList<String>> it = setsToNatures.values().iterator(); it.hasNext();) {
-			ArrayList<String> setMembers = it.next();
+		for (ArrayList<String> setMembers : setsToNatures.values()) {
 			if (setMembers.size() > 1) {
 				candidates.removeAll(setMembers);
 			}
@@ -92,8 +90,7 @@ public class NatureManager implements ILifecycleListener, IManager {
 		//disabled for some other reason, we must ensure both A and B are disabled
 		String[] orderedCandidates = candidates.toArray(new String[candidates.size()]);
 		orderedCandidates = sortNatureSet(orderedCandidates);
-		for (int i = 0; i < orderedCandidates.length; i++) {
-			String id = orderedCandidates[i];
+		for (String id : orderedCandidates) {
 			IProjectNatureDescriptor desc = getNatureDescriptor(id);
 			String[] required = desc.getRequiredNatureIds();
 			for (int j = 0; j < required.length; j++) {
@@ -205,8 +202,8 @@ public class NatureManager implements ILifecycleListener, IManager {
 		}
 		if (additions.size() > 0) {
 			ordered = sortNatureSet(additions.toArray(new String[additions.size()]));
-			for (int i = 0; i < ordered.length; i++)
-				configureNature(project, ordered[i], status);
+			for (String element : ordered)
+				configureNature(project, element, status);
 		}
 	}
 
@@ -286,9 +283,9 @@ public class NatureManager implements ILifecycleListener, IManager {
 	private void detectCycles() {
 		Collection<IProjectNatureDescriptor> values = descriptors.values();
 		ProjectNatureDescriptor[] natures = values.toArray(new ProjectNatureDescriptor[values.size()]);
-		for (int i = 0; i < natures.length; i++)
-			if (natures[i].colour == WHITE)
-				hasCycles(natures[i]);
+		for (ProjectNatureDescriptor nature : natures)
+			if (nature.colour == WHITE)
+				hasCycles(nature);
 	}
 
 	/**
@@ -306,12 +303,12 @@ public class NatureManager implements ILifecycleListener, IManager {
 		if (buildersToNatures == null) {
 			buildersToNatures = new HashMap<>(10);
 			IProjectNatureDescriptor[] descs = getNatureDescriptors();
-			for (int i = 0; i < descs.length; i++) {
-				String natureId = descs[i].getNatureId();
-				String[] builders = ((ProjectNatureDescriptor) descs[i]).getBuilderIds();
-				for (int j = 0; j < builders.length; j++) {
+			for (IProjectNatureDescriptor desc : descs) {
+				String natureId = desc.getNatureId();
+				String[] builders = ((ProjectNatureDescriptor) desc).getBuilderIds();
+				for (String builder : builders) {
 					//FIXME: how to handle multiple natures specifying same builder
-					buildersToNatures.put(builders[j], natureId);
+					buildersToNatures.put(builder, natureId);
 				}
 			}
 		}
@@ -356,8 +353,8 @@ public class NatureManager implements ILifecycleListener, IManager {
 
 		//visit all dependents of nature i
 		String[] required = desc.getRequiredNatureIds();
-		for (int i = 0; i < required.length; i++) {
-			ProjectNatureDescriptor dependency = (ProjectNatureDescriptor) getNatureDescriptor(required[i]);
+		for (String element : required) {
+			ProjectNatureDescriptor dependency = (ProjectNatureDescriptor) getNatureDescriptor(element);
 			//missing dependencies cannot create cycles
 			if (dependency != null && hasCycles(dependency)) {
 				desc.hasCycle = true;
@@ -376,8 +373,8 @@ public class NatureManager implements ILifecycleListener, IManager {
 	protected boolean hasLinks(IProject project) {
 		try {
 			IResource[] children = project.members();
-			for (int i = 0; i < children.length; i++)
-				if (children[i].isLinked())
+			for (IResource element : children)
+				if (element.isLinked())
 					return true;
 		} catch (CoreException e) {
 			//not possible for project to be inaccessible
@@ -398,10 +395,10 @@ public class NatureManager implements ILifecycleListener, IManager {
 		//efficiency not so important because these sets are very small
 		String[] setsOne = one.getNatureSetIds();
 		String[] setsTwo = two.getNatureSetIds();
-		for (int iOne = 0; iOne < setsOne.length; iOne++) {
-			for (int iTwo = 0; iTwo < setsTwo.length; iTwo++) {
-				if (setsOne[iOne].equals(setsTwo[iTwo])) {
-					return setsOne[iOne];
+		for (String element : setsOne) {
+			for (String element2 : setsTwo) {
+				if (element.equals(element2)) {
+					return element;
 				}
 			}
 		}
@@ -419,8 +416,8 @@ public class NatureManager implements ILifecycleListener, IManager {
 		IProjectNatureDescriptor desc = getNatureDescriptor(id);
 		if (desc != null) {
 			String[] prereqs = desc.getRequiredNatureIds();
-			for (int i = 0; i < prereqs.length; i++)
-				insert(list, seen, prereqs[i]);
+			for (String prereq : prereqs)
+				insert(list, seen, prereq);
 		}
 		list.add(id);
 	}
@@ -432,8 +429,8 @@ public class NatureManager implements ILifecycleListener, IManager {
 	 */
 	public boolean isNatureEnabled(Project project, String id) {
 		String[] enabled = getEnabledNatures(project);
-		for (int i = 0; i < enabled.length; i++) {
-			if (enabled[i].equals(id))
+		for (String element : enabled) {
+			if (element.equals(id))
 				return true;
 		}
 		return false;
@@ -449,10 +446,10 @@ public class NatureManager implements ILifecycleListener, IManager {
 		IExtensionPoint point = Platform.getExtensionRegistry().getExtensionPoint(ResourcesPlugin.PI_RESOURCES, ResourcesPlugin.PT_NATURES);
 		IExtension[] extensions = point.getExtensions();
 		descriptors = new HashMap<>(extensions.length * 2 + 1);
-		for (int i = 0, imax = extensions.length; i < imax; i++) {
+		for (IExtension extension : extensions) {
 			IProjectNatureDescriptor desc = null;
 			try {
-				desc = new ProjectNatureDescriptor(extensions[i]);
+				desc = new ProjectNatureDescriptor(extension);
 			} catch (CoreException e) {
 				Policy.log(e.getStatus());
 			}
@@ -509,8 +506,7 @@ public class NatureManager implements ILifecycleListener, IManager {
 	protected IStatus validateAdditions(HashSet<String> newNatures, HashSet<String> additions, IProject project) {
 		Boolean hasLinks = null;//three states: true, false, null (not yet computed)
 		//perform checks in order from least expensive to most expensive
-		for (Iterator<String> added = additions.iterator(); added.hasNext();) {
-			String id = added.next();
+		for (String id : additions) {
 			// check for adding a nature that is not available.
 			IProjectNatureDescriptor desc = getNatureDescriptor(id);
 			if (desc == null) {
@@ -528,8 +524,7 @@ public class NatureManager implements ILifecycleListener, IManager {
 				}
 			}
 			// check for adding a nature that creates a duplicated set member.
-			for (Iterator<String> all = newNatures.iterator(); all.hasNext();) {
-				String current = all.next();
+			for (String current : newNatures) {
 				if (!current.equals(id)) {
 					String overlap = hasSetOverlap(desc, getNatureDescriptor(current));
 					if (overlap != null) {
@@ -558,8 +553,8 @@ public class NatureManager implements ILifecycleListener, IManager {
 	 * a corresponding nature definition will be ignored).
 	 */
 	public IStatus validateLinkCreation(String[] natureIds) {
-		for (int i = 0; i < natureIds.length; i++) {
-			IProjectNatureDescriptor desc = getNatureDescriptor(natureIds[i]);
+		for (String natureId : natureIds) {
+			IProjectNatureDescriptor desc = getNatureDescriptor(natureId);
 			if (desc != null && !desc.isLinkingAllowed()) {
 				String msg = NLS.bind(Messages.links_natureVeto, desc.getLabel());
 				return new ResourceStatus(IResourceStatus.LINKING_NOT_ALLOWED, msg);
@@ -580,14 +575,13 @@ public class NatureManager implements ILifecycleListener, IManager {
 	 */
 	protected IStatus validateRemovals(HashSet<String> newNatures, HashSet<String> deletions) {
 		//iterate over new nature set, and ensure that none of their prerequisites are being deleted
-		for (Iterator<String> it = newNatures.iterator(); it.hasNext();) {
-			String currentID = it.next();
+		for (String currentID : newNatures) {
 			IProjectNatureDescriptor desc = getNatureDescriptor(currentID);
 			if (desc != null) {
 				String[] required = desc.getRequiredNatureIds();
-				for (int i = 0; i < required.length; i++) {
-					if (deletions.contains(required[i])) {
-						return failure(NLS.bind(Messages.natures_invalidRemoval, required[i], currentID));
+				for (String element : required) {
+					if (deletions.contains(element)) {
+						return failure(NLS.bind(Messages.natures_invalidRemoval, element, currentID));
 					}
 				}
 			}

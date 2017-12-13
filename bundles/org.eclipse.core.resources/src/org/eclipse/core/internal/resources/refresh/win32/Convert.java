@@ -21,8 +21,7 @@ public class Convert {
 	/*
 	 * Obtains the default encoding on this platform
 	 */
-	private static String defaultEncoding=
-		new InputStreamReader(new ByteArrayInputStream(new byte[0])).getEncoding();
+	private static String defaultEncoding = new InputStreamReader(new ByteArrayInputStream(new byte[0])).getEncoding();
 
 	/**
 	 * Converts the given String to bytes using the platforms default

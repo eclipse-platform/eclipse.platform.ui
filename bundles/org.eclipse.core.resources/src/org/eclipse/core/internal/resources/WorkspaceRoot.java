@@ -174,10 +174,10 @@ public class WorkspaceRoot extends Container implements IWorkspaceRoot {
 			System.arraycopy(roots, 0, result, 0, roots.length);
 		} catch (ArrayStoreException ex) {
 			// Shouldn't happen since only projects should be children of the workspace root
-			for (int i = 0; i < roots.length; i++) {
-				if (roots[i].getType() != IResource.PROJECT)
+			for (IResource root2 : roots) {
+				if (root2.getType() != IResource.PROJECT)
 					Policy.log(IStatus.ERROR, NLS.bind("{0} is an invalid child of the workspace root.", //$NON-NLS-1$
-							roots[i]), null);
+							root2), null);
 
 			}
 			throw ex;
@@ -200,8 +200,8 @@ public class WorkspaceRoot extends Container implements IWorkspaceRoot {
 		// get the children via the workspace since we know that this
 		// resource exists (it is local).
 		IResource[] children = getChildren(IResource.NONE);
-		for (int i = 0; i < children.length; i++)
-			((Resource) children[i]).internalSetLocal(flag, depth);
+		for (IResource element : children)
+			((Resource) element).internalSetLocal(flag, depth);
 	}
 
 	@Override

@@ -382,11 +382,11 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 	private void recursivelyAddBuildConfigs(Collection/*<IBuildConfiguration>*/<IBuildConfiguration> configs, IBuildConfiguration config) {
 		try {
 			IBuildConfiguration[] referenced = config.getProject().getReferencedBuildConfigs(config.getName(), false);
-			for (int i = 0; i < referenced.length; i++) {
-				if (configs.contains(referenced[i]))
+			for (IBuildConfiguration element : referenced) {
+				if (configs.contains(element))
 					continue;
-				configs.add(referenced[i]);
-				recursivelyAddBuildConfigs(configs, referenced[i]);
+				configs.add(element);
+				recursivelyAddBuildConfigs(configs, element);
 			}
 		} catch (CoreException e) {
 			// Not possible, we've checked that the project + configuration are accessible.
@@ -461,9 +461,9 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 							// clean all accessible configurations
 							List<IBuildConfiguration> configArr = new ArrayList<>();
 							IProject[] prjs = getRoot().getProjects();
-							for (int i = 0; i < prjs.length; i++)
-								if (prjs[i].isAccessible())
-									configArr.addAll(Arrays.asList(prjs[i].getBuildConfigs()));
+							for (IProject prj : prjs)
+								if (prj.isAccessible())
+									configArr.addAll(Arrays.asList(prj.getBuildConfigs()));
 							configs = configArr.toArray(new IBuildConfiguration[configArr.size()]);
 						}
 					} else {
@@ -579,9 +579,9 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 				beginOperation(true);
 				IProject[] projects = getRoot().getProjects(IContainer.INCLUDE_HIDDEN);
 				subMonitor.setWorkRemaining(projects.length + 2);
-				for (int i = 0; i < projects.length; i++) {
+				for (IProject project : projects) {
 					//notify managers of closing so they can cleanup
-					broadcastEvent(LifecycleEvent.newEvent(LifecycleEvent.PRE_PROJECT_CLOSE, projects[i]));
+					broadcastEvent(LifecycleEvent.newEvent(LifecycleEvent.PRE_PROJECT_CLOSE, project));
 					subMonitor.worked(1);
 				}
 				//empty the workspace tree so we leave in a clean state
@@ -627,17 +627,12 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 	private VertexOrder computeFullProjectOrder() {
 		// determine the full set of accessible projects in the workspace
 		// order the set in descending alphabetical order of project name
-		SortedSet<IProject> allAccessibleProjects = new TreeSet<>(new Comparator<IProject>() {
-			@Override
-			public int compare(IProject px, IProject py) {
-				return py.getName().compareTo(px.getName());
-			}
-		});
+		SortedSet<IProject> allAccessibleProjects = new TreeSet<>((px, py) -> py.getName().compareTo(px.getName()));
 		IProject[] allProjects = getRoot().getProjects(IContainer.INCLUDE_HIDDEN);
 		// List<IProject[]> edges
 		List<IProject[]> edges = new ArrayList<>(allProjects.length);
-		for (int i = 0; i < allProjects.length; i++) {
-			Project project = (Project) allProjects[i];
+		for (IProject p : allProjects) {
+			Project project = (Project) p;
 			// ignore projects that are not accessible
 			if (!project.isAccessible())
 				continue;
@@ -647,8 +642,7 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 			//obtain both static and dynamic project references
 			IProject[] refs = desc.getAllReferences(false);
 			allAccessibleProjects.add(project);
-			for (int j = 0; j < refs.length; j++) {
-				IProject ref = refs[j];
+			for (IProject ref : refs) {
 				// ignore self references and references to projects that are not accessible
 				if (ref.isAccessible() && !ref.equals(project))
 					edges.add(new IProject[] {project, ref});
@@ -698,8 +692,8 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 		IProject[] allProjects = getRoot().getProjects(IContainer.INCLUDE_HIDDEN);
 		List<IBuildConfiguration[]> edges = new ArrayList<>(allProjects.length);
 
-		for (int i = 0; i < allProjects.length; i++) {
-			Project project = (Project) allProjects[i];
+		for (IProject allProject : allProjects) {
+			Project project = (Project) allProject;
 			// Ignore projects that are not accessible
 			if (!project.isAccessible())
 				continue;
@@ -718,9 +712,7 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 					// (it is guaranteed to be accessible as it was pushed onto the stack)
 					Project subProject = (Project) buildConfiguration.getProject();
 					IBuildConfiguration[] refs = subProject.internalGetReferencedBuildConfigs(buildConfiguration.getName(), false);
-					for (int j = 0; j < refs.length; j++) {
-						IBuildConfiguration ref = refs[j];
-
+					for (IBuildConfiguration ref : refs) {
 						// Ignore self references and references to projects that are not accessible
 						if (ref.equals(buildConfiguration))
 							continue;
@@ -774,20 +766,17 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 		IProject[] allProjects = getRoot().getProjects(IContainer.INCLUDE_HIDDEN);
 		List<IBuildConfiguration[]> edges = new ArrayList<>(allProjects.length);
 
-		for (int i = 0; i < allProjects.length; i++) {
-			Project project = (Project) allProjects[i];
+		for (IProject p : allProjects) {
+			Project project = (Project) p;
 			// Ignore projects that are not accessible
 			if (!project.isAccessible())
 				continue;
 
 			IBuildConfiguration[] configs = project.internalGetBuildConfigs(false);
-			for (int j = 0; j < configs.length; j++) {
-				IBuildConfiguration config = configs[j];
+			for (IBuildConfiguration config : configs) {
 				allAccessibleBuildConfigurations.add(config);
 				IBuildConfiguration[] refs = project.internalGetReferencedBuildConfigs(config.getName(), false);
-				for (int k = 0; k < refs.length; k++) {
-					IBuildConfiguration ref = refs[k];
-
+				for (IBuildConfiguration ref : refs) {
 					// Ignore self references
 					if (ref.equals(config))
 						continue;
@@ -847,10 +836,8 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 		Set<IProject> bad = new HashSet<>();
 		// Set<IProject> bad
 		Set<IProject> keepers = new HashSet<>(Arrays.asList(r.projects));
-		for (int i = 0; i < r.knots.length; i++) {
-			IProject[] knot = r.knots[i];
-			for (int j = 0; j < knot.length; j++) {
-				IProject project = knot[j];
+		for (IProject[] knot : r.knots) {
+			for (IProject project : knot) {
 				// keep only selected projects in knot
 				if (keepers.contains(project)) {
 					bad.add(project);
@@ -882,12 +869,7 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 		// Create a filter to remove all projects that are not in the list asked for
 		final Set<IProject> projectSet = new HashSet<>(projects.length);
 		projectSet.addAll(Arrays.asList(projects));
-		VertexFilter filter = new VertexFilter() {
-			@Override
-			public boolean matches(Object vertex) {
-				return !projectSet.contains(vertex);
-			}
-		};
+		VertexFilter filter = vertex -> !projectSet.contains(vertex);
 
 		// Filter the order and return it
 		return vertexOrderToProjectOrder(ComputeProjectOrder.filterVertexOrder(fullProjectOrder, filter));
@@ -934,12 +916,7 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 		// Create a filter to remove all project buildConfigs that are not in the list asked for
 		final Set<IBuildConfiguration> projectConfigSet = new HashSet<>(buildConfigs.length);
 		projectConfigSet.addAll(Arrays.asList(buildConfigs));
-		VertexFilter filter = new VertexFilter() {
-			@Override
-			public boolean matches(Object vertex) {
-				return !projectConfigSet.contains(vertex);
-			}
-		};
+		VertexFilter filter = vertex -> !projectConfigSet.contains(vertex);
 
 		// Filter the order and return it
 		return vertexOrderToProjectBuildConfigOrder(ComputeProjectOrder.filterVertexOrder(fullBuildConfigOrder, filter));
@@ -1111,11 +1088,11 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 				copyTree(dotProject, destination.append(dotProject.getName()), depth, updateFlags, keepSyncInfo, moveResources, movingProject);
 		}
 		IResource[] children = ((IContainer) source).members(IContainer.INCLUDE_TEAM_PRIVATE_MEMBERS | IContainer.INCLUDE_HIDDEN);
-		for (int i = 0, imax = children.length; i < imax; i++) {
-			String childName = children[i].getName();
+		for (IResource element : children) {
+			String childName = element.getName();
 			if (!projectCopy || !childName.equals(IProjectDescription.DESCRIPTION_FILE_NAME)) {
 				IPath childPath = destination.append(childName);
-				copyTree(children[i], childPath, depth, updateFlags, keepSyncInfo, moveResources, movingProject);
+				copyTree(element, childPath, depth, updateFlags, keepSyncInfo, moveResources, movingProject);
 			}
 		}
 	}
@@ -1153,7 +1130,7 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 
 		IPath srcValue = URIUtil.toPath(srcPathVariableManager.getURIValue(variable));
 		if (srcValue == null) // if the variable doesn't exist, return another
-									// variable that doesn't exist either
+								// variable that doesn't exist either
 			return PathVariableUtil.getUniqueVariableName(variable, dest);
 		IPath resolvedSrcValue = URIUtil.toPath(srcPathVariableManager.resolveURI(URIUtil.toURI(srcValue)));
 
@@ -1196,20 +1173,20 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 			if (!shouldConvertToRelative) {
 				String[] segments = PathVariableUtil.splitVariablesAndContent(srcValue.toPortableString());
 				StringBuilder result = new StringBuilder();
-				for (int i = 0; i < segments.length; i++) {
-					String var = PathVariableUtil.extractVariable(segments[i]);
+				for (String segment : segments) {
+					String var = PathVariableUtil.extractVariable(segment);
 					if (var.length() > 0) {
 						String copiedVariable = copyVariable(source, dest, var);
-						int index = segments[i].indexOf(var);
+						int index = segment.indexOf(var);
 						if (index != -1) {
-							result.append(segments[i].substring(0, index));
+							result.append(segment.substring(0, index));
 							result.append(copiedVariable);
 							int start = index + var.length();
-							int end = segments[i].length();
-							result.append(segments[i].substring(start, end));
+							int end = segment.length();
+							result.append(segment.substring(start, end));
 						}
 					} else
-						result.append(segments[i]);
+						result.append(segment);
 				}
 				srcValue = Path.fromPortableString(result.toString());
 			}
@@ -1240,13 +1217,10 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 				return 1 + tree.getChildCount(root);
 			case IResource.DEPTH_INFINITE :
 				final int[] count = new int[1];
-				IElementContentVisitor visitor = new IElementContentVisitor() {
-					@Override
-					public boolean visitElement(ElementTree aTree, IPathRequestor requestor, Object elementContents) {
-						if (phantom || !((ResourceInfo) elementContents).isSet(M_PHANTOM))
-							count[0]++;
-						return true;
-					}
+				IElementContentVisitor visitor = (aTree, requestor, elementContents) -> {
+					if (phantom || !((ResourceInfo) elementContents).isSet(M_PHANTOM))
+						count[0]++;
+					return true;
 				};
 				new ElementTreeIterator(tree, root).iterate(visitor);
 				return count[0];
@@ -1358,9 +1332,9 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 			try {
 				prepareOperation(getRoot(), monitor);
 				beginOperation(true);
-				for (int i = 0; i < resources.length; i++) {
+				for (IResource r : resources) {
 					Policy.checkCanceled(monitor);
-					Resource resource = (Resource) resources[i];
+					Resource resource = (Resource) r;
 					if (resource == null) {
 						monitor.worked(1);
 						continue;
@@ -1401,9 +1375,9 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 		try {
 			prepareOperation(null, null);
 			beginOperation(true);
-			for (int i = 0; i < markers.length; ++i)
-				if (markers[i] != null && markers[i].getResource() != null)
-					markerManager.removeMarker(markers[i].getResource(), markers[i].getId());
+			for (IMarker marker : markers)
+				if (marker != null && marker.getResource() != null)
+					markerManager.removeMarker(marker.getResource(), marker.getId());
 		} finally {
 			endOperation(null, false);
 		}
@@ -1420,8 +1394,8 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 		IPath path = resource.getFullPath();
 		if (path.equals(Path.ROOT)) {
 			IProject[] children = getRoot().getProjects(IContainer.INCLUDE_HIDDEN);
-			for (int i = 0; i < children.length; i++)
-				tree.deleteElement(children[i].getFullPath());
+			for (IProject element : children)
+				tree.deleteElement(element.getFullPath());
 		} else
 			tree.deleteElement(path);
 	}
@@ -1548,8 +1522,8 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 
 			// convert from project names to active project buildConfigs
 			// and eliminate non-existent and closed projects
-			for (int i = 0; i < order.length; i++) {
-				IProject project = getRoot().getProject(order[i]);
+			for (String element : order) {
+				IProject project = getRoot().getProject(element);
 				if (project.isAccessible())
 					configs.add(((Project) project).internalGetActiveBuildConfig());
 			}
@@ -2195,8 +2169,8 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 
 	protected boolean refreshRequested() {
 		String[] args = Platform.getCommandLineArgs();
-		for (int i = 0; i < args.length; i++)
-			if (args[i].equalsIgnoreCase(REFRESH_ON_STARTUP))
+		for (String arg : args)
+			if (arg.equalsIgnoreCase(REFRESH_ON_STARTUP))
 				return true;
 		return false;
 	}
@@ -2334,8 +2308,7 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 			String message = Messages.resources_shutdownProblems;
 			MultiStatus status = new MultiStatus(ResourcesPlugin.PI_RESOURCES, IResourceStatus.INTERNAL_ERROR, message, null);
 			// best effort to shutdown every object and free resources
-			for (int i = 0; i < managers.length; i++) {
-				IManager manager = managers[i];
+			for (IManager manager : managers) {
 				if (manager == null)
 					monitor.worked(1);
 				else {
@@ -2425,12 +2398,9 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 	public String toDebugString() {
 		final StringBuilder buffer = new StringBuilder("\nDump of " + toString() + ":\n"); //$NON-NLS-1$ //$NON-NLS-2$
 		buffer.append("  parent: " + tree.getParent()); //$NON-NLS-1$
-		IElementContentVisitor visitor = new IElementContentVisitor() {
-			@Override
-			public boolean visitElement(ElementTree aTree, IPathRequestor requestor, Object elementContents) {
-				buffer.append("\n  " + requestor.requestPath() + ": " + elementContents); //$NON-NLS-1$ //$NON-NLS-2$
-				return true;
-			}
+		IElementContentVisitor visitor = (aTree, requestor, elementContents) -> {
+			buffer.append("\n  " + requestor.requestPath() + ": " + elementContents); //$NON-NLS-1$ //$NON-NLS-2$
+			return true;
 		};
 		new ElementTreeIterator(tree, Path.ROOT).iterate(visitor);
 		return buffer.toString();
@@ -2446,9 +2416,9 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 		if (!shouldValidate) {
 			String message = Messages.resources_readOnly2;
 			MultiStatus result = new MultiStatus(ResourcesPlugin.PI_RESOURCES, IResourceStatus.READ_ONLY_LOCAL, message, null);
-			for (int i = 0; i < files.length; i++) {
-				if (files[i].isReadOnly()) {
-					IPath filePath = files[i].getFullPath();
+			for (IFile file : files) {
+				if (file.isReadOnly()) {
+					IPath filePath = file.getFullPath();
 					message = NLS.bind(Messages.resources_readOnly, filePath);
 					result.add(new ResourceStatus(IResourceStatus.READ_ONLY_LOCAL, filePath, message));
 				}

@@ -135,18 +135,15 @@ public class CharsetDeltaJob extends Job implements IContentTypeManager.IContent
 	}
 
 	private void processNextEvent(final ICharsetListenerFilter filter, IProgressMonitor monitor) throws CoreException {
-		IElementContentVisitor visitor = new IElementContentVisitor() {
-			@Override
-			public boolean visitElement(ElementTree tree, IPathRequestor requestor, Object elementContents) {
-				ResourceInfo info = (ResourceInfo) elementContents;
-				if (!filter.isAffected(info, requestor))
-					return true;
-				info = workspace.getResourceInfo(requestor.requestPath(), false, true);
-				if (info == null)
-					return false;
-				info.incrementCharsetGenerationCount();
+		IElementContentVisitor visitor = (tree, requestor, elementContents) -> {
+			ResourceInfo info = (ResourceInfo) elementContents;
+			if (!filter.isAffected(info, requestor))
 				return true;
-			}
+			info = workspace.getResourceInfo(requestor.requestPath(), false, true);
+			if (info == null)
+				return false;
+			info.incrementCharsetGenerationCount();
+			return true;
 		};
 		try {
 			IPath root = filter.getRoot();

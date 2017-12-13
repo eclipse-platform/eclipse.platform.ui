@@ -114,8 +114,8 @@ public class ModelObjectWriter implements IModelObjectConstants {
 			} else if (description.getArguments() instanceof FileInfoMatcherDescription[]) {
 				writer.startTag(ARGUMENTS, null);
 				FileInfoMatcherDescription[] array = (FileInfoMatcherDescription[]) description.getArguments();
-				for (int i = 0; i < array.length; i++) {
-					write(array[i], writer);
+				for (FileInfoMatcherDescription element : array) {
+					write(element, writer);
 				}
 				writer.endTag(ARGUMENTS);
 			} else
@@ -232,8 +232,8 @@ public class ModelObjectWriter implements IModelObjectConstants {
 			HashMap<IPath, LinkedList<FilterDescription>> filters = description.getFilters();
 			if (filters != null) {
 				List<FilterDescription> sorted = new ArrayList<>();
-				for (Iterator<LinkedList<FilterDescription>> it = filters.values().iterator(); it.hasNext();) {
-					List<FilterDescription> list = it.next();
+				for (LinkedList<FilterDescription> linkedList : filters.values()) {
+					List<FilterDescription> list = linkedList;
 					sorted.addAll(list);
 				}
 				Collections.sort(sorted);
@@ -266,8 +266,7 @@ public class ModelObjectWriter implements IModelObjectConstants {
 			List<String> sorted = new ArrayList<>(table.keySet());
 			Collections.sort(sorted);
 
-			for (Iterator<String> it = sorted.iterator(); it.hasNext();) {
-				String key = it.next();
+			for (String key : sorted) {
 				Object value = table.get(key);
 				writer.startTag(DICTIONARY, null);
 				{
@@ -282,8 +281,8 @@ public class ModelObjectWriter implements IModelObjectConstants {
 
 	protected void write(String name, String elementTagName, String[] array, XMLWriter writer) {
 		writer.startTag(name, null);
-		for (int i = 0; i < array.length; i++)
-			writer.printSimpleTag(elementTagName, array[i]);
+		for (String element : array)
+			writer.printSimpleTag(elementTagName, element);
 		writer.endTag(name);
 	}
 

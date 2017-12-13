@@ -46,8 +46,7 @@ public final class ProposedResourceDelta extends PlatformObject implements IReso
 	public void accept(IResourceDeltaVisitor visitor, int memberFlags) throws CoreException {
 		if (!visitor.visit(this))
 			return;
-		for (Iterator<ProposedResourceDelta> iter = children.values().iterator(); iter.hasNext();) {
-			ProposedResourceDelta childDelta = iter.next();
+		for (ProposedResourceDelta childDelta : children.values()) {
 			childDelta.accept(visitor, memberFlags);
 		}
 	}
@@ -100,8 +99,7 @@ public final class ProposedResourceDelta extends PlatformObject implements IReso
 	@Override
 	public IResourceDelta[] getAffectedChildren(int kindMask, int memberFlags) {
 		List<ProposedResourceDelta> result = new ArrayList<>();
-		for (Iterator<ProposedResourceDelta> iter = children.values().iterator(); iter.hasNext();) {
-			ProposedResourceDelta child = iter.next();
+		for (ProposedResourceDelta child : children.values()) {
 			if ((child.getKind() & kindMask) != 0)
 				result.add(child);
 		}

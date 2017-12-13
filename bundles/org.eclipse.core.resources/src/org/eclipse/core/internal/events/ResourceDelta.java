@@ -63,8 +63,7 @@ public class ResourceDelta extends PlatformObject implements IResourceDelta {
 			return;
 		if (!visitor.visit(this))
 			return;
-		for (int i = 0; i < children.length; i++) {
-			ResourceDelta childDelta = children[i];
+		for (ResourceDelta childDelta : children) {
 			// quietly exclude team-private, hidden and phantom members unless explicitly included
 			if (!includeTeamPrivate && childDelta.isTeamPrivate())
 				continue;
@@ -167,8 +166,8 @@ public class ResourceDelta extends PlatformObject implements IResourceDelta {
 		checkForMarkerDeltas();
 
 		//recurse on children
-		for (int i = 0; i < children.length; i++)
-			children[i].fixMovesAndMarkers(oldTree);
+		for (ResourceDelta element : children)
+			element.fixMovesAndMarkers(oldTree);
 	}
 
 	@Override
@@ -381,8 +380,8 @@ public class ResourceDelta extends PlatformObject implements IResourceDelta {
 	public String toDeepDebugString() {
 		final StringBuilder buffer = new StringBuilder("\n"); //$NON-NLS-1$
 		writeDebugString(buffer);
-		for (int i = 0; i < children.length; ++i)
-			buffer.append(children[i].toDeepDebugString());
+		for (ResourceDelta element : children)
+			buffer.append(element.toDeepDebugString());
 		return buffer.toString();
 	}
 
@@ -527,8 +526,8 @@ public class ResourceDelta extends PlatformObject implements IResourceDelta {
 				MarkerSet set = entry.getValue();
 				IMarkerSetElement[] deltas = set.elements();
 				boolean addComma = false;
-				for (int i = 0; i < deltas.length; i++) {
-					IMarkerDelta delta = (IMarkerDelta) deltas[i];
+				for (IMarkerSetElement delta2 : deltas) {
+					IMarkerDelta delta = (IMarkerDelta) delta2;
 					if (addComma)
 						buffer.append(',');
 					switch (delta.getKind()) {

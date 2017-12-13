@@ -88,8 +88,7 @@ public class PathVariableUtil {
 		IPath newPath = null;
 		int maxMatchLength = -1;
 		String[] existingVariables = pathVariableManager.getPathVariableNames();
-		for (int i = 0; i < existingVariables.length; i++) {
-			String variable = existingVariables[i];
+		for (String variable : existingVariables) {
 			if (skipWorkspace) {
 				// Variables relative to the workspace are not portable, and defeat the purpose of having linked resource locations,
 				// so they should not automatically be created relative to the workspace.
@@ -121,8 +120,7 @@ public class PathVariableUtil {
 			for (int j = 0; j <= originalSegmentCount; j++) {
 				IPath matchingPath = path.removeLastSegments(j);
 				int minDifference = Integer.MAX_VALUE;
-				for (int k = 0; k < existingVariables.length; k++) {
-					String variable = existingVariables[k];
+				for (String variable : existingVariables) {
 					if (skipWorkspace) {
 						if (variable.equals(WorkspaceLocationVariableResolver.NAME))
 							continue;
@@ -383,9 +381,9 @@ public class PathVariableUtil {
 				buffer.append(value.substring(index));
 		} else {
 			String components[] = splitVariablesAndContent(value);
-			for (int i = 0; i < components.length; i++) {
-				String variable = extractVariable(components[i]);
-				convertVariableToUserFormat(buffer, components[i], variable, true);
+			for (String component : components) {
+				String variable = extractVariable(component);
+				convertVariableToUserFormat(buffer, component, variable, true);
 			}
 		}
 		return buffer.toString();

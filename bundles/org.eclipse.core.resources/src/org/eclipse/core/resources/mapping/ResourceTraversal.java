@@ -65,10 +65,10 @@ public class ResourceTraversal {
 	 * </ul>
 	 */
 	public void accept(IResourceVisitor visitor) throws CoreException {
-		for (int i = 0, imax = resources.length; i < imax; i++)
+		for (IResource resource : resources)
 			try {
-				if (resources[i].exists())
-					resources[i].accept(visitor, depth, flags);
+				if (resource.exists())
+					resource.accept(visitor, depth, flags);
 			} catch (CoreException e) {
 				//ignore failure in the case of concurrent deletion
 				if (e.getStatus().getCode() != IResourceStatus.RESOURCE_NOT_FOUND)
@@ -86,8 +86,7 @@ public class ResourceTraversal {
 	 * <code>false</code> otherwise.
 	 */
 	public boolean contains(IResource resource) {
-		for (int i = 0; i < resources.length; i++) {
-			IResource member = resources[i];
+		for (IResource member : resources) {
 			if (contains(member, resource)) {
 				return true;
 			}
@@ -114,8 +113,8 @@ public class ResourceTraversal {
 	 */
 	void doFindMarkers(ArrayList<IMarker> result, String type, boolean includeSubtypes) {
 		MarkerManager markerMan = ((Workspace) ResourcesPlugin.getWorkspace()).getMarkerManager();
-		for (int i = 0; i < resources.length; i++)
-			markerMan.doFindMarkers(resources[i], result, type, includeSubtypes, depth);
+		for (IResource resource : resources)
+			markerMan.doFindMarkers(resource, result, type, includeSubtypes, depth);
 	}
 
 	/**

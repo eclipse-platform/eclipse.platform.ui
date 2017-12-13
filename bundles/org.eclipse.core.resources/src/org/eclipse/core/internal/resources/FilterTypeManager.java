@@ -32,17 +32,15 @@ class FilterTypeManager implements IManager {
 	public FilterTypeManager() {
 		IExtensionPoint point = RegistryFactory.getRegistry().getExtensionPoint(ResourcesPlugin.PI_RESOURCES, ResourcesPlugin.PT_FILTER_MATCHERS);
 		if (point != null) {
-			IExtension[] ext = point.getExtensions();
 			// initial population
-			for (int i = 0; i < ext.length; i++) {
-				IExtension extension = ext[i];
+			for (IExtension extension : point.getExtensions()) {
 				processExtension(extension);
 			}
 			RegistryFactory.getRegistry().addListener(new IRegistryEventListener() {
 				@Override
 				public void added(IExtension[] extensions) {
-					for (int i = 0; i < extensions.length; i++)
-						processExtension(extensions[i]);
+					for (IExtension extension : extensions)
+						processExtension(extension);
 				}
 
 				@Override
@@ -52,8 +50,8 @@ class FilterTypeManager implements IManager {
 
 				@Override
 				public void removed(IExtension[] extensions) {
-					for (int i = 0; i < extensions.length; i++)
-						processRemovedExtension(extensions[i]);
+					for (IExtension extension : extensions)
+						processRemovedExtension(extension);
 				}
 
 				@Override
@@ -74,8 +72,7 @@ class FilterTypeManager implements IManager {
 
 	protected void processExtension(IExtension extension) {
 		IConfigurationElement[] elements = extension.getConfigurationElements();
-		for (int i = 0; i < elements.length; i++) {
-			IConfigurationElement element = elements[i];
+		for (IConfigurationElement element : elements) {
 			if (element.getName().equalsIgnoreCase(FILTER_ELEMENT)) {
 				IFilterMatcherDescriptor desc = new FilterDescriptor(element);
 				factories.put(desc.getId(), desc);
@@ -85,8 +82,7 @@ class FilterTypeManager implements IManager {
 
 	protected void processRemovedExtension(IExtension extension) {
 		IConfigurationElement[] elements = extension.getConfigurationElements();
-		for (int i = 0; i < elements.length; i++) {
-			IConfigurationElement element = elements[i];
+		for (IConfigurationElement element : elements) {
 			if (element.getName().equalsIgnoreCase(FILTER_ELEMENT)) {
 				IFilterMatcherDescriptor desc = new FilterDescriptor(element, false);
 				factories.remove(desc.getId());

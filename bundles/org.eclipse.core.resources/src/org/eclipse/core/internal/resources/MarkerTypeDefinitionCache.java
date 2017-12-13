@@ -24,8 +24,7 @@ public class MarkerTypeDefinitionCache {
 
 		MarkerTypeDefinition(IExtension ext) {
 			IConfigurationElement[] elements = ext.getConfigurationElements();
-			for (int i = 0; i < elements.length; i++) {
-				IConfigurationElement element = elements[i];
+			for (IConfigurationElement element : elements) {
 				// supertype
 				final String elementName = element.getName();
 				if (elementName.equalsIgnoreCase("super")) { //$NON-NLS-1$
@@ -65,8 +64,7 @@ public class MarkerTypeDefinitionCache {
 	public MarkerTypeDefinitionCache() {
 		loadDefinitions();
 		HashSet<String> toCompute = new HashSet<>(definitions.keySet());
-		for (Iterator<String> i = definitions.keySet().iterator(); i.hasNext();) {
-			String markerId = i.next();
+		for (String markerId : definitions.keySet()) {
 			if (toCompute.contains(markerId))
 				computeSuperTypes(markerId, toCompute);
 		}
@@ -88,8 +86,7 @@ public class MarkerTypeDefinitionCache {
 			return null;
 		}
 		Set<String> transitiveSuperTypes = new HashSet<>(def.superTypes);
-		for (Iterator<String> it = def.superTypes.iterator(); it.hasNext();) {
-			String superId = it.next();
+		for (String superId : def.superTypes) {
 			Set<String> toAdd = null;
 			if (toCompute.contains(superId)) {
 				//this type's super types have not been compute yet. Do recursive call
@@ -131,12 +128,12 @@ public class MarkerTypeDefinitionCache {
 		IExtensionPoint point = Platform.getExtensionRegistry().getExtensionPoint(ResourcesPlugin.PI_RESOURCES, ResourcesPlugin.PT_MARKERS);
 		IExtension[] types = point.getExtensions();
 		definitions = new HashMap<>(types.length);
-		for (int i = 0; i < types.length; i++) {
-			String markerId = types[i].getUniqueIdentifier();
+		for (IExtension type : types) {
+			String markerId = type.getUniqueIdentifier();
 			if (markerId != null)
-				definitions.put(markerId.intern(), new MarkerTypeDefinition(types[i]));
+				definitions.put(markerId.intern(), new MarkerTypeDefinition(type));
 			else
-				Policy.log(IStatus.WARNING, "Missing marker id from plugin: " + types[i].getContributor().getName(), null); //$NON-NLS-1$
+				Policy.log(IStatus.WARNING, "Missing marker id from plugin: " + type.getContributor().getName(), null); //$NON-NLS-1$
 		}
 	}
 }

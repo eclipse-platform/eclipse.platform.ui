@@ -355,9 +355,9 @@ public class Project extends Container implements IProject {
 		ProjectInfo info = (ProjectInfo) getResourceInfo(false, false);
 		checkAccessible(getFlags(info));
 		IBuildConfiguration[] configs = internalGetBuildConfigs(false);
-		for (int i = 0; i < configs.length; i++) {
-			if (configs[i].getName().equals(configName)) {
-				return configs[i];
+		for (IBuildConfiguration config : configs) {
+			if (config.getName().equals(configName)) {
+				return config;
 			}
 		}
 		throw new ResourceException(IResourceStatus.BUILD_CONFIGURATION_NOT_FOUND, getFullPath(), null, null);
@@ -488,17 +488,17 @@ public class Project extends Container implements IProject {
 	public IProject[] getReferencingProjects() {
 		IProject[] projects = workspace.getRoot().getProjects(IContainer.INCLUDE_HIDDEN);
 		List<IProject> result = new ArrayList<>(projects.length);
-		for (int i = 0; i < projects.length; i++) {
-			Project project = (Project) projects[i];
+		for (IProject p : projects) {
+			Project project = (Project) p;
 			if (!project.isAccessible())
 				continue;
 			ProjectDescription description = project.internalGetDescription();
 			if (description == null)
 				continue;
 			IProject[] references = description.getAllReferences(false);
-			for (int j = 0; j < references.length; j++)
-				if (references[j].equals(this)) {
-					result.add(projects[i]);
+			for (IProject reference : references)
+				if (reference.equals(this)) {
+					result.add(project);
 					break;
 				}
 		}
@@ -614,8 +614,8 @@ public class Project extends Container implements IProject {
 		// DO NOT use resource.delete() as this will delete it from disk as well.
 		IResource[] members = members(IContainer.INCLUDE_PHANTOMS | IContainer.INCLUDE_TEAM_PRIVATE_MEMBERS | IContainer.INCLUDE_HIDDEN);
 		subMonitor.setWorkRemaining(members.length);
-		for (int i = 0; i < members.length; i++) {
-			Resource member = (Resource) members[i];
+		for (IResource member2 : members) {
+			Resource member = (Resource) member2;
 			workspace.deleteResource(member);
 			subMonitor.worked(1);
 		}
@@ -786,15 +786,15 @@ public class Project extends Container implements IProject {
 		ProjectDescription description = internalGetDescription();
 		IBuildConfiguration[] refs = description.getAllBuildConfigReferences(configName, false);
 		Collection<IBuildConfiguration> configs = new LinkedHashSet<>(refs.length);
-		for (int i = 0; i < refs.length; i++) {
+		for (IBuildConfiguration ref : refs) {
 			try {
-				configs.add((((BuildConfiguration) refs[i]).getBuildConfig()));
+				configs.add((((BuildConfiguration) ref).getBuildConfig()));
 			} catch (CoreException e) {
 				// The project isn't accessible, or the build configuration doesn't exist
 				// on the project.  If requested return the full set of build references which may
 				// be useful to API consumers
 				if (includeMissing)
-					configs.add(refs[i]);
+					configs.add(ref);
 			}
 		}
 		return configs.toArray(new IBuildConfiguration[configs.size()]);
@@ -834,8 +834,8 @@ public class Project extends Container implements IProject {
 		// get the children via the workspace since we know that this
 		// resource exists (it is local).
 		IResource[] children = getChildren(IResource.NONE);
-		for (int i = 0; i < children.length; i++)
-			((Resource) children[i]).internalSetLocal(flag, depth);
+		for (IResource element : children)
+			((Resource) element).internalSetLocal(flag, depth);
 	}
 
 	@Override
@@ -1120,8 +1120,7 @@ public class Project extends Container implements IProject {
 		if (oldDescription != null) {
 			HashMap<IPath, LinkDescription> oldLinks = oldDescription.getLinks();
 			if (oldLinks != null) {
-				for (Iterator<LinkDescription> it = oldLinks.values().iterator(); it.hasNext();) {
-					LinkDescription oldLink = it.next();
+				for (LinkDescription oldLink : oldLinks.values()) {
 					Resource oldLinkResource = (Resource) findMember(oldLink.getProjectRelativePath());
 					if (oldLinkResource == null || !oldLinkResource.isLinked())
 						continue;
@@ -1149,26 +1148,20 @@ public class Project extends Container implements IProject {
 		if (newLinks == null)
 			return status;
 		//sort links to avoid creating nested links before their parents
-		TreeSet<LinkDescription> newLinksAndGroups = new TreeSet<>(new Comparator<LinkDescription>() {
-			@Override
-			public int compare(LinkDescription arg0, LinkDescription arg1) {
-				int numberOfSegments0 = arg0.getProjectRelativePath().segmentCount();
-				int numberOfSegments1 = arg1.getProjectRelativePath().segmentCount();
-				if (numberOfSegments0 != numberOfSegments1)
-					return numberOfSegments0 - numberOfSegments1;
-				else if (arg0.equals(arg1))
-					return 0;
+		TreeSet<LinkDescription> newLinksAndGroups = new TreeSet<>((arg0, arg1) -> {
+			int numberOfSegments0 = arg0.getProjectRelativePath().segmentCount();
+			int numberOfSegments1 = arg1.getProjectRelativePath().segmentCount();
+			if (numberOfSegments0 != numberOfSegments1)
+				return numberOfSegments0 - numberOfSegments1;
+			else if (arg0.equals(arg1))
+				return 0;
 
-				return -1;
-			}
-
+			return -1;
 		});
 		if (newLinks != null)
 			newLinksAndGroups.addAll(newLinks.values());
 
-		for (Iterator<LinkDescription> it = newLinksAndGroups.iterator(); it.hasNext();) {
-			Object description = it.next();
-			LinkDescription newLink = (LinkDescription) description;
+		for (LinkDescription newLink : newLinksAndGroups) {
 			try {
 				Resource toLink = workspace.newResource(getFullPath().append(newLink.getProjectRelativePath()), newLink.getType());
 				IContainer parent = toLink.getParent();

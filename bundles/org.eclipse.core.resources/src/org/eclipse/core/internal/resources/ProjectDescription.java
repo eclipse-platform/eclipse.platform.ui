@@ -177,8 +177,8 @@ public class ProjectDescription extends ModelObject implements IProjectDescripti
 	 */
 	private Collection<BuildConfiguration> getBuildConfigReferencesFromProjects(IProject[] projects) {
 		List<BuildConfiguration> refs = new ArrayList<>(projects.length);
-		for (int i = 0; i < projects.length; i++)
-			refs.add(new BuildConfiguration(projects[i], null));
+		for (IProject project : projects)
+			refs.add(new BuildConfiguration(project, null));
 		return refs;
 	}
 
@@ -189,8 +189,8 @@ public class ProjectDescription extends ModelObject implements IProjectDescripti
 	 */
 	private Collection<IProject> getProjectsFromBuildConfigRefs(IBuildConfiguration[] refs) {
 		LinkedHashSet<IProject> projects = new LinkedHashSet<>(refs.length);
-		for (int i = 0; i < refs.length; i++)
-			projects.add(refs[i].getProject());
+		for (IBuildConfiguration ref : refs)
+			projects.add(ref.getProject());
 		return projects;
 	}
 
@@ -466,8 +466,8 @@ public class ProjectDescription extends ModelObject implements IProjectDescripti
 	@Override
 	public boolean hasNature(String natureID) {
 		String[] natureIDs = getNatureIds(false);
-		for (int i = 0; i < natureIDs.length; ++i)
-			if (natureIDs[i].equals(natureID))
+		for (String natureID2 : natureIDs)
+			if (natureID2.equals(natureID))
 				return true;
 		return false;
 	}
@@ -479,8 +479,7 @@ public class ProjectDescription extends ModelObject implements IProjectDescripti
 	private static boolean configRefsHaveChanges(Map<String, IBuildConfiguration[]> m1, Map<String, IBuildConfiguration[]> m2) {
 		if (m1.size() != m2.size())
 			return true;
-		for (Iterator<Entry<String, IBuildConfiguration[]>> it = m1.entrySet().iterator(); it.hasNext();) {
-			Entry<String, IBuildConfiguration[]> e = it.next();
+		for (Entry<String, IBuildConfiguration[]> e : m1.entrySet()) {
 			if (!m2.containsKey(e.getKey()))
 				return true;
 			if (!Arrays.equals(e.getValue(), m2.get(e.getKey())))
@@ -496,8 +495,8 @@ public class ProjectDescription extends ModelObject implements IProjectDescripti
 		Assert.isNotNull(buildConfigName);
 		if (configNames.length == 0)
 			return IBuildConfiguration.DEFAULT_CONFIG_NAME.equals(buildConfigName);
-		for (int i = 0; i < configNames.length; i++)
-			if (configNames[i].equals(buildConfigName))
+		for (String configName : configNames)
+			if (configName.equals(buildConfigName))
 				return true;
 		return false;
 	}
@@ -595,9 +594,9 @@ public class ProjectDescription extends ModelObject implements IProjectDescripti
 			result[i] = (ICommand) ((BuildCommand) value[i]).clone();
 			//copy the reference to any builder instance from the old build spec
 			//to preserve builder states if possible.
-			for (int j = 0; j < buildSpec.length; j++) {
-				if (result[i].equals(buildSpec[j])) {
-					((BuildCommand) result[i]).setBuilders(((BuildCommand) buildSpec[j]).getBuilders());
+			for (ICommand element : buildSpec) {
+				if (result[i].equals(element)) {
+					((BuildCommand) result[i]).setBuilders(((BuildCommand) element).getBuilders());
 					break;
 				}
 			}

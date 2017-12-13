@@ -57,14 +57,14 @@ public class SimpleResourceMapping extends ResourceMapping {
 	@Override
 	public IProject[] getProjects() {
 		if (resource.getType() == IResource.ROOT)
-			return ((IWorkspaceRoot)resource).getProjects();
+			return ((IWorkspaceRoot) resource).getProjects();
 		return new IProject[] {resource.getProject()};
 	}
 
 	@Override
 	public ResourceTraversal[] getTraversals(ResourceMappingContext context, IProgressMonitor monitor) {
 		if (resource.getType() == IResource.ROOT) {
-			return new ResourceTraversal[] {new ResourceTraversal(((IWorkspaceRoot)resource).getProjects(), IResource.DEPTH_INFINITE, IResource.NONE)};
+			return new ResourceTraversal[] {new ResourceTraversal(((IWorkspaceRoot) resource).getProjects(), IResource.DEPTH_INFINITE, IResource.NONE)};
 		}
 		return new ResourceTraversal[] {new ResourceTraversal(new IResource[] {resource}, IResource.DEPTH_INFINITE, IResource.NONE)};
 	}

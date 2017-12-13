@@ -38,8 +38,7 @@ public class SyncInfoWriter {
 	public void savePartners(DataOutputStream output) throws IOException {
 		Set<QualifiedName> registry = synchronizer.getRegistry();
 		output.writeInt(registry.size());
-		for (Iterator<QualifiedName> i = registry.iterator(); i.hasNext();) {
-			QualifiedName qname = i.next();
+		for (QualifiedName qname : registry) {
 			output.writeUTF(qname.getQualifier());
 			output.writeUTF(qname.getLocalName());
 		}

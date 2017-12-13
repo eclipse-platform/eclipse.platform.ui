@@ -45,8 +45,7 @@ public class ChangeDescription {
 
 	private void ensureResourceCovered(IResource resource, List<IResource> list) {
 		IPath path = resource.getFullPath();
-		for (Iterator<IResource> iter = list.iterator(); iter.hasNext();) {
-			IResource root = iter.next();
+		for (IResource root : list) {
 			if (root.getFullPath().isPrefixOf(path)) {
 				return;
 			}

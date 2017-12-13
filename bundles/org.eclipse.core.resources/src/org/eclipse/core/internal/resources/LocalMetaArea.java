@@ -472,14 +472,14 @@ public class LocalMetaArea implements ICoreConstants {
 				else
 					dataOut.writeUTF(URI_PREFIX + projectLocation.toString());
 				dataOut.writeInt(prjRefs.length);
-				for (int i = 0; i < prjRefs.length; i++)
-					dataOut.writeUTF(prjRefs[i].getName());
+				for (IProject prjRef : prjRefs)
+					dataOut.writeUTF(prjRef.getName());
 
 				// Since 3.7 - build configurations + references
 				// Write out the build configurations
 				dataOut.writeInt(buildConfigs.length);
-				for (int i = 0; i < buildConfigs.length; i++) {
-					dataOut.writeUTF(buildConfigs[i]);
+				for (String buildConfig : buildConfigs) {
+					dataOut.writeUTF(buildConfig);
 				}
 				// Write active configuration name
 				dataOut.writeUTF(desc.getActiveBuildConfig());
@@ -491,13 +491,13 @@ public class LocalMetaArea implements ICoreConstants {
 
 					dataOut.writeUTF(refdName);
 					dataOut.writeInt(refs.length);
-					for (int j = 0; j < refs.length; j++) {
-						dataOut.writeUTF(refs[j].getProject().getName());
-						if (refs[j].getName() == null) {
+					for (IBuildConfiguration ref : refs) {
+						dataOut.writeUTF(ref.getProject().getName());
+						if (ref.getName() == null) {
 							dataOut.writeBoolean(false);
 						} else {
 							dataOut.writeBoolean(true);
-							dataOut.writeUTF(refs[j].getName());
+							dataOut.writeUTF(ref.getName());
 						}
 					}
 				}

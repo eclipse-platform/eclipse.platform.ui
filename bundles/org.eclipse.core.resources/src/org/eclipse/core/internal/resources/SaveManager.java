@@ -256,8 +256,7 @@ public class SaveManager implements IElementInfoFlattener, IManager, IStringPool
 	 */
 	protected void clearSavedDelta() {
 		synchronized (saveParticipants) {
-			for (Iterator<String> i = saveParticipants.keySet().iterator(); i.hasNext();) {
-				String pluginId = i.next();
+			for (String pluginId : saveParticipants.keySet()) {
 				masterTable.setProperty(CLEAR_DELTA_PREFIX + pluginId, "true"); //$NON-NLS-1$
 			}
 		}
@@ -272,8 +271,7 @@ public class SaveManager implements IElementInfoFlattener, IManager, IStringPool
 
 		//forget saved trees, if they are not used by registered participants
 		synchronized (savedStates) {
-			for (Iterator<SaveContext> i = contexts.values().iterator(); i.hasNext();) {
-				SaveContext context = i.next();
+			for (SaveContext context : contexts.values()) {
 				forgetSavedTree(context.getPluginId());
 			}
 		}
@@ -281,8 +279,7 @@ public class SaveManager implements IElementInfoFlattener, IManager, IStringPool
 		//trees for plugin saved states
 		ArrayList<ElementTree> trees = new ArrayList<>();
 		synchronized (savedStates) {
-			for (Iterator<SavedState> i = savedStates.values().iterator(); i.hasNext();) {
-				SavedState state = i.next();
+			for (SavedState state : savedStates.values()) {
 				if (state.oldTree != null) {
 					trees.add(state.oldTree);
 				}
@@ -291,13 +288,11 @@ public class SaveManager implements IElementInfoFlattener, IManager, IStringPool
 
 		//trees for builders
 		IProject[] projects = workspace.getRoot().getProjects(IContainer.INCLUDE_HIDDEN);
-		for (int i = 0; i < projects.length; i++) {
-			IProject project = projects[i];
+		for (IProject project : projects) {
 			if (project.isOpen()) {
 				ArrayList<BuilderPersistentInfo> builderInfos = workspace.getBuildManager().createBuildersPersistentInfo(project);
 				if (builderInfos != null) {
-					for (Iterator<BuilderPersistentInfo> it = builderInfos.iterator(); it.hasNext();) {
-						BuilderPersistentInfo info = it.next();
+					for (BuilderPersistentInfo info : builderInfos) {
 						trees.add(info.getLastBuiltTree());
 					}
 				}
@@ -326,8 +321,8 @@ public class SaveManager implements IElementInfoFlattener, IManager, IStringPool
 	}
 
 	protected void commit(Map<String, SaveContext> contexts) throws CoreException {
-		for (Iterator<SaveContext> i = contexts.values().iterator(); i.hasNext();)
-			i.next().commit();
+		for (SaveContext saveContext : contexts.values())
+			saveContext.commit();
 	}
 
 	/**
@@ -337,8 +332,7 @@ public class SaveManager implements IElementInfoFlattener, IManager, IStringPool
 	 */
 	protected Map<String, SaveContext> computeSaveContexts(String[] pluginIds, int kind, IProject project) {
 		HashMap<String, SaveContext> result = new HashMap<>(pluginIds.length);
-		for (int i = 0; i < pluginIds.length; i++) {
-			String pluginId = pluginIds[i];
+		for (String pluginId : pluginIds) {
 			try {
 				SaveContext context = new SaveContext(pluginId, kind, project);
 				result.put(pluginId, context);
@@ -361,14 +355,12 @@ public class SaveManager implements IElementInfoFlattener, IManager, IStringPool
 	protected Map<String, ElementTree> computeStatesToSave(Map<String, SaveContext> contexts, ElementTree current) {
 		HashMap<String, ElementTree> result = new HashMap<>(savedStates.size() * 2);
 		synchronized (savedStates) {
-			for (Iterator<SavedState> i = savedStates.values().iterator(); i.hasNext();) {
-				SavedState state = i.next();
+			for (SavedState state : savedStates.values()) {
 				if (state.oldTree != null)
 					result.put(state.pluginId, state.oldTree);
 			}
 		}
-		for (Iterator<SaveContext> i = contexts.values().iterator(); i.hasNext();) {
-			SaveContext context = i.next();
+		for (SaveContext context : contexts.values()) {
 			if (!context.isDeltaNeeded())
 				continue;
 			String pluginId = context.getPluginId();
@@ -406,8 +398,8 @@ public class SaveManager implements IElementInfoFlattener, IManager, IStringPool
 	public void forgetSavedTree(String pluginId) {
 		if (pluginId == null) {
 			synchronized (savedStates) {
-				for (Iterator<SavedState> i = savedStates.values().iterator(); i.hasNext();)
-					i.next().forgetTrees();
+				for (SavedState savedState : savedStates.values())
+					savedState.forgetTrees();
 			}
 		} else {
 			SavedState state = savedStates.get(pluginId);
@@ -501,18 +493,15 @@ public class SaveManager implements IElementInfoFlattener, IManager, IStringPool
 		// Delete the snapshot files, if any.
 		IPath location = workspace.getMetaArea().getSnapshotLocationFor(workspace.getRoot());
 		java.io.File target = location.toFile().getParentFile();
-		FilenameFilter filter = new FilenameFilter() {
-			@Override
-			public boolean accept(java.io.File dir, String name) {
-				if (!name.endsWith(LocalMetaArea.F_SNAP))
+		FilenameFilter filter = (dir, name) -> {
+			if (!name.endsWith(LocalMetaArea.F_SNAP))
+				return false;
+			for (int i = 0; i < name.length() - LocalMetaArea.F_SNAP.length(); i++) {
+				char c = name.charAt(i);
+				if (c < '0' || c > '9')
 					return false;
-				for (int i = 0; i < name.length() - LocalMetaArea.F_SNAP.length(); i++) {
-					char c = name.charAt(i);
-					if (c < '0' || c > '9')
-						return false;
-				}
-				return true;
 			}
+			return true;
 		};
 		String[] candidates = target.list(filter);
 		if (candidates != null)
@@ -567,8 +556,7 @@ public class SaveManager implements IElementInfoFlattener, IManager, IStringPool
 	 */
 	protected void removeClearDeltaMarks() {
 		synchronized (saveParticipants) {
-			for (Iterator<String> i = saveParticipants.keySet().iterator(); i.hasNext();) {
-				String pluginId = i.next();
+			for (String pluginId : saveParticipants.keySet()) {
 				removeClearDeltaMarks(pluginId);
 			}
 		}
@@ -579,18 +567,18 @@ public class SaveManager implements IElementInfoFlattener, IManager, IStringPool
 	}
 
 	protected void removeFiles(java.io.File root, String[] candidates, List<String> exclude) {
-		for (int i = 0; i < candidates.length; i++) {
+		for (String candidate : candidates) {
 			boolean delete = true;
 			for (ListIterator<String> it = exclude.listIterator(); it.hasNext();) {
 				String s = it.next();
-				if (s.equals(candidates[i])) {
+				if (s.equals(candidate)) {
 					it.remove();
 					delete = false;
 					break;
 				}
 			}
 			if (delete)
-				new java.io.File(root, candidates[i]).delete();
+				new java.io.File(root, candidate).delete();
 		}
 	}
 
@@ -630,20 +618,15 @@ public class SaveManager implements IElementInfoFlattener, IManager, IStringPool
 		IPath location = workspace.getMetaArea().getTreeLocationFor(workspace.getRoot(), false);
 		valuables.add(location.lastSegment());
 		java.io.File target = location.toFile().getParentFile();
-		FilenameFilter filter = new FilenameFilter() {
-			@Override
-			public boolean accept(java.io.File dir, String name) {
-				return name.endsWith(LocalMetaArea.F_TREE);
-			}
-		};
+		FilenameFilter filter = (dir, name) -> name.endsWith(LocalMetaArea.F_TREE);
 		String[] candidates = target.list(filter);
 		if (candidates != null)
 			removeFiles(target, candidates, valuables);
 
 		// projects
 		IProject[] projects = workspace.getRoot().getProjects(IContainer.INCLUDE_HIDDEN);
-		for (int i = 0; i < projects.length; i++) {
-			location = workspace.getMetaArea().getTreeLocationFor(projects[i], false);
+		for (IProject project : projects) {
+			location = workspace.getMetaArea().getTreeLocationFor(project, false);
 			valuables.add(location.lastSegment());
 			target = location.toFile().getParentFile();
 			candidates = target.list(filter);
@@ -692,8 +675,8 @@ public class SaveManager implements IElementInfoFlattener, IManager, IStringPool
 		if (resource.getType() == IResource.PROJECT)
 			return;
 		IProject[] projects = ((IWorkspaceRoot) resource).getProjects(IContainer.INCLUDE_HIDDEN);
-		for (int i = 0; i < projects.length; i++)
-			resetSnapshots(projects[i]);
+		for (IProject project : projects)
+			resetSnapshots(project);
 	}
 
 	/**
@@ -734,8 +717,8 @@ public class SaveManager implements IElementInfoFlattener, IManager, IStringPool
 				// restore meta info last because it might close a project if its description is not readable
 				restoreMetaInfo(problems, Policy.subMonitorFor(monitor, 10));
 				IProject[] roots = workspace.getRoot().getProjects(IContainer.INCLUDE_HIDDEN);
-				for (int i = 0; i < roots.length; i++)
-					((Project) roots[i]).startup();
+				for (IProject root : roots)
+					((Project) root).startup();
 				if (!problems.isOK())
 					Policy.log(problems);
 			} finally {
@@ -835,9 +818,9 @@ public class SaveManager implements IElementInfoFlattener, IManager, IStringPool
 			return;
 		}
 		IProject[] projects = ((IWorkspaceRoot) resource).getProjects(IContainer.INCLUDE_HIDDEN);
-		for (int i = 0; i < projects.length; i++)
-			if (projects[i].isAccessible())
-				markerManager.restore(projects[i], generateDeltas, monitor);
+		for (IProject project : projects)
+			if (project.isAccessible())
+				markerManager.restore(project, generateDeltas, monitor);
 		if (Policy.DEBUG_RESTORE_MARKERS) {
 			Policy.debug("Restore Markers for workspace: " + (System.currentTimeMillis() - start) + "ms"); //$NON-NLS-1$ //$NON-NLS-2$
 		}
@@ -878,13 +861,13 @@ public class SaveManager implements IElementInfoFlattener, IManager, IStringPool
 			Policy.debug("Restore workspace metainfo: starting..."); //$NON-NLS-1$
 		long start = System.currentTimeMillis();
 		IProject[] roots = workspace.getRoot().getProjects(IContainer.INCLUDE_HIDDEN);
-		for (int i = 0; i < roots.length; i++) {
+		for (IProject root : roots) {
 			//fatal to throw exceptions during startup
 			try {
-				restoreMetaInfo((Project) roots[i], monitor);
+				restoreMetaInfo((Project) root, monitor);
 			} catch (CoreException e) {
-				String message = NLS.bind(Messages.resources_readMeta, roots[i].getName());
-				problems.merge(new ResourceStatus(IResourceStatus.FAILED_READ_METADATA, roots[i].getFullPath(), message, e));
+				String message = NLS.bind(Messages.resources_readMeta, root.getName());
+				problems.merge(new ResourceStatus(IResourceStatus.FAILED_READ_METADATA, root.getFullPath(), message, e));
 			}
 		}
 		if (Policy.DEBUG_RESTORE_METAINFO)
@@ -1028,9 +1011,9 @@ public class SaveManager implements IElementInfoFlattener, IManager, IStringPool
 			return;
 		}
 		IProject[] projects = ((IWorkspaceRoot) resource).getProjects(IContainer.INCLUDE_HIDDEN);
-		for (int i = 0; i < projects.length; i++)
-			if (projects[i].isAccessible())
-				synchronizer.restore(projects[i], monitor);
+		for (IProject project : projects)
+			if (project.isAccessible())
+				synchronizer.restore(project, monitor);
 		if (Policy.DEBUG_RESTORE_SYNCINFO) {
 			Policy.debug("Restore SyncInfo for workspace: " + (System.currentTimeMillis() - start) + "ms"); //$NON-NLS-1$ //$NON-NLS-2$
 		}
@@ -1310,9 +1293,9 @@ public class SaveManager implements IElementInfoFlattener, IManager, IStringPool
 		ResourcesPlugin.getPlugin().savePluginPreferences();
 		// save projects' meta info
 		IProject[] roots = workspace.getRoot().getProjects(IContainer.INCLUDE_HIDDEN);
-		for (int i = 0; i < roots.length; i++)
-			if (roots[i].isAccessible()) {
-				IStatus result = saveMetaInfo((Project) roots[i], null);
+		for (IProject root : roots)
+			if (root.isAccessible()) {
+				IStatus result = saveMetaInfo((Project) root, null);
 				if (!result.isOK())
 					problems.merge(result);
 			}
@@ -1675,33 +1658,30 @@ public class SaveManager implements IElementInfoFlattener, IManager, IStringPool
 		final long[] saveTimes = new long[2];
 
 		// Create the visitor
-		IElementContentVisitor visitor = new IElementContentVisitor() {
-			@Override
-			public boolean visitElement(ElementTree tree, IPathRequestor requestor, Object elementContents) {
-				ResourceInfo info = (ResourceInfo) elementContents;
-				if (info != null) {
-					try {
-						// save the markers
-						long start = System.currentTimeMillis();
-						markerManager.save(info, requestor, markersOutput, writtenTypes);
-						long markerSaveTime = System.currentTimeMillis() - start;
-						saveTimes[0] += markerSaveTime;
-						persistMarkers += markerSaveTime;
-						// save the sync info - if we have the workspace root then the output stream will be null
-						if (syncInfoOutput != null) {
-							start = System.currentTimeMillis();
-							synchronizer.saveSyncInfo(info, requestor, syncInfoOutput, writtenPartners);
-							long syncInfoSaveTime = System.currentTimeMillis() - start;
-							saveTimes[1] += syncInfoSaveTime;
-							persistSyncInfo += syncInfoSaveTime;
-						}
-					} catch (IOException e) {
-						throw new WrappedRuntimeException(e);
+		IElementContentVisitor visitor = (tree, requestor, elementContents) -> {
+			ResourceInfo info = (ResourceInfo) elementContents;
+			if (info != null) {
+				try {
+					// save the markers
+					long start = System.currentTimeMillis();
+					markerManager.save(info, requestor, markersOutput, writtenTypes);
+					long markerSaveTime = System.currentTimeMillis() - start;
+					saveTimes[0] += markerSaveTime;
+					persistMarkers += markerSaveTime;
+					// save the sync info - if we have the workspace root then the output stream will be null
+					if (syncInfoOutput != null) {
+						start = System.currentTimeMillis();
+						synchronizer.saveSyncInfo(info, requestor, syncInfoOutput, writtenPartners);
+						long syncInfoSaveTime = System.currentTimeMillis() - start;
+						saveTimes[1] += syncInfoSaveTime;
+						persistSyncInfo += syncInfoSaveTime;
 					}
+				} catch (IOException e) {
+					throw new WrappedRuntimeException(e);
 				}
-				// don't continue if the current resource is the workspace root, only continue for projects
-				return root.getType() != IResource.ROOT;
 			}
+			// don't continue if the current resource is the workspace root, only continue for projects
+			return root.getType() != IResource.ROOT;
 		};
 
 		// Call the visitor
@@ -1735,8 +1715,8 @@ public class SaveManager implements IElementInfoFlattener, IManager, IStringPool
 		if (root.getType() == IResource.PROJECT)
 			return;
 		IProject[] projects = ((IWorkspaceRoot) root).getProjects(IContainer.INCLUDE_HIDDEN);
-		for (int i = 0; i < projects.length; i++)
-			visitAndSave(projects[i]);
+		for (IProject project : projects)
+			visitAndSave(project);
 	}
 
 	/**
@@ -1789,33 +1769,30 @@ public class SaveManager implements IElementInfoFlattener, IManager, IStringPool
 		// for each resource otherwise.
 		final long[] snapTimes = new long[2];
 
-		IElementContentVisitor visitor = new IElementContentVisitor() {
-			@Override
-			public boolean visitElement(ElementTree tree, IPathRequestor requestor, Object elementContents) {
-				ResourceInfo info = (ResourceInfo) elementContents;
-				if (info != null) {
-					try {
-						// save the markers
-						long start = System.currentTimeMillis();
-						markerManager.snap(info, requestor, markersOutput);
-						long markerSnapTime = System.currentTimeMillis() - start;
-						snapTimes[0] += markerSnapTime;
-						persistMarkers += markerSnapTime;
-						// save the sync info - if we have the workspace root then the output stream will be null
-						if (syncInfoOutput != null) {
-							start = System.currentTimeMillis();
-							synchronizer.snapSyncInfo(info, requestor, syncInfoOutput);
-							long syncInfoSnapTime = System.currentTimeMillis() - start;
-							snapTimes[1] += syncInfoSnapTime;
-							persistSyncInfo += syncInfoSnapTime;
-						}
-					} catch (IOException e) {
-						throw new WrappedRuntimeException(e);
+		IElementContentVisitor visitor = (tree, requestor, elementContents) -> {
+			ResourceInfo info = (ResourceInfo) elementContents;
+			if (info != null) {
+				try {
+					// save the markers
+					long start = System.currentTimeMillis();
+					markerManager.snap(info, requestor, markersOutput);
+					long markerSnapTime = System.currentTimeMillis() - start;
+					snapTimes[0] += markerSnapTime;
+					persistMarkers += markerSnapTime;
+					// save the sync info - if we have the workspace root then the output stream will be null
+					if (syncInfoOutput != null) {
+						start = System.currentTimeMillis();
+						synchronizer.snapSyncInfo(info, requestor, syncInfoOutput);
+						long syncInfoSnapTime = System.currentTimeMillis() - start;
+						snapTimes[1] += syncInfoSnapTime;
+						persistSyncInfo += syncInfoSnapTime;
 					}
+				} catch (IOException e) {
+					throw new WrappedRuntimeException(e);
 				}
-				// don't continue if the current resource is the workspace root, only continue for projects
-				return root.getType() != IResource.ROOT;
 			}
+			// don't continue if the current resource is the workspace root, only continue for projects
+			return root.getType() != IResource.ROOT;
 		};
 
 		try {
@@ -1848,8 +1825,8 @@ public class SaveManager implements IElementInfoFlattener, IManager, IStringPool
 		if (root.getType() == IResource.PROJECT)
 			return;
 		IProject[] projects = ((IWorkspaceRoot) root).getProjects(IContainer.INCLUDE_HIDDEN);
-		for (int i = 0; i < projects.length; i++)
-			visitAndSnap(projects[i]);
+		for (IProject project : projects)
+			visitAndSnap(project);
 	}
 
 	/**
@@ -1876,8 +1853,8 @@ public class SaveManager implements IElementInfoFlattener, IManager, IStringPool
 				// write interesting projects
 				IProject[] interestingProjects = info.getInterestingProjects();
 				output.writeInt(interestingProjects.length);
-				for (int j = 0; j < interestingProjects.length; j++)
-					output.writeUTF(interestingProjects[j].getName());
+				for (IProject interestingProject : interestingProjects)
+					output.writeUTF(interestingProject.getName());
 			}
 		} finally {
 			monitor.done();
@@ -1915,8 +1892,7 @@ public class SaveManager implements IElementInfoFlattener, IManager, IStringPool
 			String activeConfigName = project.getActiveBuildConfig().getName();
 			List<BuilderPersistentInfo> infos = workspace.getBuildManager().createBuildersPersistentInfo(project);
 			if (infos != null) {
-				for (Iterator<BuilderPersistentInfo> it = infos.iterator(); it.hasNext();) {
-					BuilderPersistentInfo info = it.next();
+				for (BuilderPersistentInfo info : infos) {
 					// Nothing to persist if there isn't a previous delta tree.
 					// There used to be code which serialized the current workspace tree
 					// but this will result in the next build of the builder getting an empty delta...
@@ -1992,8 +1968,8 @@ public class SaveManager implements IElementInfoFlattener, IManager, IStringPool
 				List<ElementTree> additionalTrees = new ArrayList<>(projects.length * 2);
 				List<BuilderPersistentInfo> additionalBuilderInfos = new ArrayList<>(projects.length * 2);
 				List<String> additionalConfigNames = new ArrayList<>(projects.length);
-				for (int i = 0; i < projects.length; i++)
-					getTreesToSave(projects[i], trees, builderInfos, configNames, additionalTrees, additionalBuilderInfos, additionalConfigNames);
+				for (IProject project : projects)
+					getTreesToSave(project, trees, builderInfos, configNames, additionalTrees, additionalBuilderInfos, additionalConfigNames);
 
 				// Save the version 2 builders info
 				writeBuilderPersistentInfo(output, builderInfos, Policy.subMonitorFor(monitor, Policy.totalWork * 10 / 100));
@@ -2015,10 +1991,10 @@ public class SaveManager implements IElementInfoFlattener, IManager, IStringPool
 				writeBuilderPersistentInfo(output, additionalBuilderInfos, Policy.subMonitorFor(monitor, Policy.totalWork * 10 / 100));
 
 				// Save the configuration names for the builders in the order they were saved
-				for (Iterator<String> it = configNames.iterator(); it.hasNext();)
-					output.writeUTF(it.next());
-				for (Iterator<String> it = additionalConfigNames.iterator(); it.hasNext();)
-					output.writeUTF(it.next());
+				for (String string : configNames)
+					output.writeUTF(string);
+				for (String string : additionalConfigNames)
+					output.writeUTF(string);
 			} finally {
 				if (!wasImmutable)
 					workspace.newWorkingTree();
@@ -2086,10 +2062,10 @@ public class SaveManager implements IElementInfoFlattener, IManager, IStringPool
 				writeBuilderPersistentInfo(output, additionalBuilderInfos, Policy.subMonitorFor(monitor, Policy.totalWork * 20 / 100));
 
 				// Save configuration names for the builders in the order they were saved
-				for (Iterator<String> it = configNames.iterator(); it.hasNext();)
-					output.writeUTF(it.next());
-				for (Iterator<String> it = additionalConfigNames.iterator(); it.hasNext();)
-					output.writeUTF(it.next());
+				for (String string : configNames)
+					output.writeUTF(string);
+				for (String string : additionalConfigNames)
+					output.writeUTF(string);
 			} finally {
 				if (!wasImmutable)
 					workspace.newWorkingTree();

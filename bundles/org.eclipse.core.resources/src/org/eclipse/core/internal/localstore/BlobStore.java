@@ -79,8 +79,8 @@ public class BlobStore {
 	 */
 	private String bytesToHexString(byte[] b) {
 		StringBuilder buffer = new StringBuilder();
-		for (int i = 0; i < b.length; i++)
-			appendByteString(buffer, b[i]);
+		for (byte element : b)
+			appendByteString(buffer, element);
 		return buffer.toString();
 	}
 
@@ -131,8 +131,8 @@ public class BlobStore {
 	protected byte hashUUIDbytes(UniversalUniqueIdentifier uuid) {
 		byte[] bytes = uuid.toBytes();
 		byte hash = 0;
-		for (int i = 0; i < bytes.length; i++)
-			hash ^= randomArray[bytes[i] + 128]; // +128 makes sure the index is >0
+		for (byte b : bytes)
+			hash ^= randomArray[b + 128]; // +128 makes sure the index is >0
 		return hash;
 	}
 }

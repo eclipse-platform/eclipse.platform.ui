@@ -256,8 +256,8 @@ class Win32Monitor extends Job implements IRefreshMonitor {
 		@Override
 		public void destroy() {
 			super.destroy();
-			for (Iterator<FileHandle> i = fileHandleChain.iterator(); i.hasNext();) {
-				Handle handle = i.next();
+			for (FileHandle fileHandle : fileHandleChain) {
+				Handle handle = fileHandle;
 				handle.destroy();
 			}
 		}
@@ -424,8 +424,8 @@ class Win32Monitor extends Job implements IRefreshMonitor {
 			}
 			handles = new long[size];
 			int count = 0;
-			for (Iterator<Long> i = keys.iterator(); i.hasNext();) {
-				handles[count++] = i.next().longValue();
+			for (Long long2 : keys) {
+				handles[count++] = long2.longValue();
 			}
 		}
 		return balancedSplit(handles, Win32Natives.MAXIMUM_WAIT_OBJECTS);
@@ -437,8 +437,7 @@ class Win32Monitor extends Job implements IRefreshMonitor {
 		}
 		// synchronized: in order to protect the map during iteration
 		synchronized (fHandleValueToHandle) {
-			for (Iterator<Handle> i = fHandleValueToHandle.values().iterator(); i.hasNext();) {
-				Handle handle = i.next();
+			for (Handle handle : fHandleValueToHandle.values()) {
 				if (handle instanceof ResourceHandle) {
 					ResourceHandle resourceHandle = (ResourceHandle) handle;
 					if (resourceHandle.getResource().equals(resource)) {
@@ -510,8 +509,7 @@ class Win32Monitor extends Job implements IRefreshMonitor {
 	private void removeHandles(Collection<Handle> handles) {
 		// synchronized: protect the array, removal must be atomic
 		synchronized (this) {
-			for (Iterator<Handle> i = handles.iterator(); i.hasNext();) {
-				Handle handle = i.next();
+			for (Handle handle : handles) {
 				fHandleValueToHandle.remove(handle.getHandleValue());
 				handle.destroy();
 			}
@@ -532,10 +530,10 @@ class Win32Monitor extends Job implements IRefreshMonitor {
 			monitor.beginTask(Messages.WM_beginTask, handleArrays.length);
 			// If changes occur to the list of handles,
 			// ignore them until the next time through the loop.
-			for (int i = 0, length = handleArrays.length; i < length; i++) {
+			for (long[] handleArray : handleArrays) {
 				if (monitor.isCanceled())
 					return Status.CANCEL_STATUS;
-				waitForNotification(handleArrays[i]);
+				waitForNotification(handleArray);
 				monitor.worked(1);
 			}
 		} finally {

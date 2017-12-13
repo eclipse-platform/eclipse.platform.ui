@@ -74,12 +74,7 @@ public class RefreshManager implements IRefreshResult, IManager, Preferences.IPr
 			Preferences preferences = ResourcesPlugin.getPlugin().getPluginPreferences();
 			final boolean autoRefresh = preferences.getBoolean(ResourcesPlugin.PREF_AUTO_REFRESH);
 			String jobName = autoRefresh ? Messages.refresh_installMonitorsOnWorkspace : Messages.refresh_uninstallMonitorsOnWorkspace;
-			MonitorJob.createSystem(jobName, ResourcesPlugin.getWorkspace().getRoot(), new ICoreRunnable() {
-				@Override
-				public void run(IProgressMonitor monitor) {
-					manageAutoRefresh(autoRefresh, monitor);
-				}
-			}).schedule();
+			MonitorJob.createSystem(jobName, ResourcesPlugin.getWorkspace().getRoot(), (ICoreRunnable) monitor -> manageAutoRefresh(autoRefresh, monitor)).schedule();
 		}
 	}
 

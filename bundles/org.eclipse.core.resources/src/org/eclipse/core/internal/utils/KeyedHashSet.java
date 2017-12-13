@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.core.internal.utils;
 
-
 /** Adapted from a homonym class in org.eclipse.osgi. A hash table of
  * <code>KeyedElement</code>s.
  */
@@ -102,8 +101,7 @@ public class KeyedHashSet {
 		elements = new KeyedElement[elements.length * 2];
 
 		int maxArrayIndex = elements.length - 1;
-		for (int i = 0; i < oldElements.length; i++) {
-			KeyedElement element = oldElements[i];
+		for (KeyedElement element : oldElements) {
 			if (element != null) {
 				int hash = hash(element);
 				while (elements[hash] != null) {
@@ -228,13 +226,13 @@ public class KeyedHashSet {
 		StringBuilder result = new StringBuilder(100);
 		result.append('{');
 		boolean first = true;
-		for (int i = 0; i < elements.length; i++) {
-			if (elements[i] != null) {
+		for (KeyedElement element : elements) {
+			if (element != null) {
 				if (first)
 					first = false;
 				else
 					result.append(", "); //$NON-NLS-1$
-				result.append(elements[i]);
+				result.append(element);
 			}
 		}
 		result.append('}');

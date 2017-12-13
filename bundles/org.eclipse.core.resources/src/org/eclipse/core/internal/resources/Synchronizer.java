@@ -61,8 +61,8 @@ public class Synchronizer implements ISynchronizer {
 
 		// otherwise recurse over the children
 		IResource[] children = ((IContainer) resource).members();
-		for (int i = 0; i < children.length; i++)
-			accept(partner, children[i], visitor, depth);
+		for (IResource element : children)
+			accept(partner, element, visitor, depth);
 	}
 
 	/**
@@ -82,20 +82,14 @@ public class Synchronizer implements ISynchronizer {
 		Assert.isLegal(partner != null);
 		Assert.isLegal(root != null);
 
-		ICoreRunnable body = new ICoreRunnable() {
-			@Override
-			public void run(IProgressMonitor monitor) throws CoreException {
-				IResourceVisitor visitor = new IResourceVisitor() {
-					@Override
-					public boolean visit(IResource resource) throws CoreException {
-						//only need to flush sync info if there is sync info
-						if (getSyncInfo(partner, resource) != null)
-							setSyncInfo(partner, resource, null);
-						return true;
-					}
-				};
-				root.accept(visitor, depth, true);
-			}
+		ICoreRunnable body = monitor -> {
+			IResourceVisitor visitor = resource -> {
+				//only need to flush sync info if there is sync info
+				if (getSyncInfo(partner, resource) != null)
+					setSyncInfo(partner, resource, null);
+				return true;
+			};
+			root.accept(visitor, depth, true);
 		};
 		workspace.run(body, root, IResource.NONE, null);
 	}

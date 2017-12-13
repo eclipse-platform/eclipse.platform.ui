@@ -381,8 +381,8 @@ class ResourceTree implements IResourceTree {
 			return false;
 		}
 		boolean deletedChildren = true;
-		for (int i = 0; i < members.length; i++) {
-			IResource child = members[i];
+		for (IResource member : members) {
+			IResource child = member;
 			switch (child.getType()) {
 				case IResource.FILE :
 					// ignore the .project file for now and delete it last
@@ -765,13 +765,13 @@ class ResourceTree implements IResourceTree {
 			//if this is a deep move, move the contents of any linked resources
 			if ((flags & IResource.SHALLOW) == 0) {
 				IResource[] children = source.members();
-				for (int i = 0; i < children.length; i++) {
-					if (children[i].isLinked()) {
-						message = NLS.bind(Messages.resources_moving, children[i].getFullPath());
+				for (IResource element : children) {
+					if (element.isLinked()) {
+						message = NLS.bind(Messages.resources_moving, element.getFullPath());
 						monitor.subTask(message);
-						IFileStore linkDestination = destStore.getChild(children[i].getName());
+						IFileStore linkDestination = destStore.getChild(element.getName());
 						try {
-							localManager.move(children[i], linkDestination, flags, Policy.monitorFor(null));
+							localManager.move(element, linkDestination, flags, Policy.monitorFor(null));
 						} catch (CoreException ce) {
 							//log the failure, but keep trying on remaining links
 							failed(ce.getStatus());
@@ -1137,24 +1137,21 @@ class ResourceTree implements IResourceTree {
 	 * those in the file system. Used after a #move.
 	 */
 	private void updateTimestamps(IResource root, final boolean isDeep) {
-		IResourceVisitor visitor = new IResourceVisitor() {
-			@Override
-			public boolean visit(IResource resource) {
-				if (resource.isLinked()) {
-					if (isDeep && !((Resource) resource).isUnderVirtual()) {
-						//clear the linked resource bit, if any
-						ResourceInfo info = ((Resource) resource).getResourceInfo(false, true);
-						info.clear(ICoreConstants.M_LINK);
-					}
-					return true;
+		IResourceVisitor visitor = resource -> {
+			if (resource.isLinked()) {
+				if (isDeep && !((Resource) resource).isUnderVirtual()) {
+					//clear the linked resource bit, if any
+					ResourceInfo info = ((Resource) resource).getResourceInfo(false, true);
+					info.clear(ICoreConstants.M_LINK);
 				}
-				//only needed if underlying file system does not preserve timestamps
-				//				if (resource.getType() == IResource.FILE) {
-				//					IFile file = (IFile) resource;
-				//					updateMovedFileTimestamp(file, computeTimestamp(file));
-				//				}
 				return true;
 			}
+			//only needed if underlying file system does not preserve timestamps
+			//				if (resource.getType() == IResource.FILE) {
+			//					IFile file = (IFile) resource;
+			//					updateMovedFileTimestamp(file, computeTimestamp(file));
+			//				}
+			return true;
 		};
 		try {
 			root.accept(visitor, IResource.DEPTH_INFINITE, IContainer.INCLUDE_TEAM_PRIVATE_MEMBERS | IContainer.INCLUDE_HIDDEN);

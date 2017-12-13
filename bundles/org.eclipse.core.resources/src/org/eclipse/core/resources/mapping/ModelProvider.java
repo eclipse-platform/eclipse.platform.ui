@@ -45,8 +45,7 @@ public abstract class ModelProvider extends PlatformObject {
 	 */
 	public static IModelProviderDescriptor getModelProviderDescriptor(String id) {
 		IModelProviderDescriptor[] descs = ModelProviderManager.getDefault().getDescriptors();
-		for (int i = 0; i < descs.length; i++) {
-			IModelProviderDescriptor descriptor = descs[i];
+		for (IModelProviderDescriptor descriptor : descs) {
 			if (descriptor.getId().equals(id)) {
 				return descriptor;
 			}
@@ -135,8 +134,7 @@ public abstract class ModelProvider extends PlatformObject {
 	 */
 	public ResourceMapping[] getMappings(IResource[] resources, ResourceMappingContext context, IProgressMonitor monitor) throws CoreException {
 		Set<ResourceMapping> mappings = new HashSet<>();
-		for (int i = 0; i < resources.length; i++) {
-			IResource resource = resources[i];
+		for (IResource resource : resources) {
 			ResourceMapping[] resourceMappings = getMappings(resource, context, monitor);
 			if (resourceMappings.length > 0)
 				mappings.addAll(Arrays.asList(resourceMappings));
@@ -162,11 +160,10 @@ public abstract class ModelProvider extends PlatformObject {
 	 */
 	public ResourceMapping[] getMappings(ResourceTraversal[] traversals, ResourceMappingContext context, IProgressMonitor monitor) throws CoreException {
 		Set<ResourceMapping> result = new HashSet<>();
-		for (int i = 0; i < traversals.length; i++) {
-			ResourceTraversal traversal = traversals[i];
+		for (ResourceTraversal traversal : traversals) {
 			ResourceMapping[] mappings = getMappings(traversal.getResources(), context, monitor);
-			for (int j = 0; j < mappings.length; j++)
-				result.add(mappings[j]);
+			for (ResourceMapping mapping : mappings)
+				result.add(mapping);
 		}
 		return result.toArray(new ResourceMapping[result.size()]);
 	}
@@ -192,8 +189,7 @@ public abstract class ModelProvider extends PlatformObject {
 	public ResourceTraversal[] getTraversals(ResourceMapping[] mappings, ResourceMappingContext context, IProgressMonitor monitor) throws CoreException {
 		SubMonitor subMonitor = SubMonitor.convert(monitor, mappings.length);
 		List<ResourceTraversal> traversals = new ArrayList<>();
-		for (int i = 0; i < mappings.length; i++) {
-			ResourceMapping mapping = mappings[i];
+		for (ResourceMapping mapping : mappings) {
 			Collections.addAll(traversals, mapping.getTraversals(context, subMonitor.newChild(1)));
 		}
 		return traversals.toArray(new ResourceTraversal[traversals.size()]);

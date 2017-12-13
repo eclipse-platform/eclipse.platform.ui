@@ -90,8 +90,8 @@ public class ProjectVariableProviderManager {
 		IExtensionPoint point = Platform.getExtensionRegistry().getExtensionPoint(ResourcesPlugin.PI_RESOURCES, ResourcesPlugin.PT_VARIABLE_PROVIDERS);
 		IExtension[] extensions = point.getExtensions();
 		descriptors = new HashMap<>(extensions.length * 2 + 1);
-		for (int i = 0, imax = extensions.length; i < imax; i++) {
-			IConfigurationElement[] elements = extensions[i].getConfigurationElements();
+		for (IExtension extension : extensions) {
+			IConfigurationElement[] elements = extension.getConfigurationElements();
 			int count = elements.length;
 			for (int j = 0; j < count; j++) {
 				IConfigurationElement element = elements[j];
@@ -99,7 +99,7 @@ public class ProjectVariableProviderManager {
 				if (elementName.equalsIgnoreCase("variableResolver")) { //$NON-NLS-1$
 					Descriptor desc = null;
 					try {
-						desc = new Descriptor(extensions[i], element);
+						desc = new Descriptor(extension, element);
 					} catch (CoreException e) {
 						Policy.log(e);
 					}

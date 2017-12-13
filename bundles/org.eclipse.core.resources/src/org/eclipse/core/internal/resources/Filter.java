@@ -117,8 +117,7 @@ public class Filter {
 			IFileInfo[] result = new IFileInfo[list.length];
 			int outputIndex = 0;
 
-			for (int i = 0; i < list.length; i++) {
-				IFileInfo info = list[i];
+			for (IFileInfo info : list) {
 				Iterator<Filter> objIt = filters.iterator();
 				boolean filtersWereApplicable = false;
 				while (objIt.hasNext()) {
@@ -149,8 +148,7 @@ public class Filter {
 			IFileInfo[] result = new IFileInfo[list.length];
 			int outputIndex = 0;
 
-			for (int i = 0; i < list.length; i++) {
-				IFileInfo info = list[i];
+			for (IFileInfo info : list) {
 				Iterator<Filter> objIt = filters.iterator();
 				boolean shouldBeExcluded = false;
 				while (objIt.hasNext()) {

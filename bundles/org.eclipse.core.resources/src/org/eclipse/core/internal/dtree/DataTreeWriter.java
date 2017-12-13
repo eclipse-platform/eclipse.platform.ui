@@ -85,8 +85,8 @@ public class DataTreeWriter {
 
 			/* write the children */
 			int newDepth = (depth == D_INFINITE) ? D_INFINITE : depth - 1;
-			for (int i = 0, imax = children.length; i < imax; i++) {
-				writeNode(children[i], path.append(children[i].getName()), newDepth);
+			for (AbstractDataTreeNode element : children) {
+				writeNode(element, path.append(element.getName()), newDepth);
 			}
 		} else {
 			/* write the number of children */
@@ -157,9 +157,7 @@ public class DataTreeWriter {
 		AbstractDataTreeNode node = tree.getRootNode();
 		IPath currentPath = Path.ROOT;
 		String[] segments = path.segments();
-		for (int i = 0; i < segments.length; i++) {
-			String nextSegment = segments[i];
-
+		for (String nextSegment : segments) {
 			/* write this node to the output */
 			writeSingleNode(node, currentPath);
 

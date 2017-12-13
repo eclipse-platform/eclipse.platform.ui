@@ -21,7 +21,6 @@ import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.osgi.util.NLS;
 
-
 /**
  * @since 3,1
  */

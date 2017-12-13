@@ -26,6 +26,7 @@ public class IsSynchronizedVisitor extends CollectSyncStatusVisitor {
 	static class ResourceChangedException extends RuntimeException {
 		private static final long serialVersionUID = 1L;
 		public final IResource target;
+
 		public ResourceChangedException(IResource target) {
 			this.target = target;
 		}
@@ -48,12 +49,12 @@ public class IsSynchronizedVisitor extends CollectSyncStatusVisitor {
 
 	@Override
 	protected void fileToFolder(UnifiedTreeNode node, Resource target) {
-		changed((Resource)workspace.getRoot().getFolder(target.getFullPath()));
+		changed((Resource) workspace.getRoot().getFolder(target.getFullPath()));
 	}
 
 	@Override
 	protected void folderToFile(UnifiedTreeNode node, Resource target) {
 		// Pass correct gender to changed for notification and async-refresh
-		changed((Resource)workspace.getRoot().getFile(target.getFullPath()));
+		changed((Resource) workspace.getRoot().getFile(target.getFullPath()));
 	}
 }

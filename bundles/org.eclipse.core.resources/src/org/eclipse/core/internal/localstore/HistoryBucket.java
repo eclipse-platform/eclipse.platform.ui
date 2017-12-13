@@ -31,12 +31,7 @@ public class HistoryBucket extends Bucket {
 	 */
 	public static final class HistoryEntry extends Bucket.Entry {
 
-		final static Comparator<byte[]> COMPARATOR = new Comparator<byte[]>() {
-			@Override
-			public int compare(byte[] state1, byte[] state2) {
-				return compareStates(state1, state2);
-			}
-		};
+		final static Comparator<byte[]> COMPARATOR = (state1, state2) -> compareStates(state1, state2);
 
 		// the length of each component of the data array
 		private final static byte[][] EMPTY_DATA = new byte[0][];
@@ -311,8 +306,8 @@ public class HistoryBucket extends Bucket {
 	protected Object readEntryValue(DataInputStream source) throws IOException {
 		int length = source.readUnsignedShort();
 		byte[][] uuids = new byte[length][HistoryEntry.DATA_LENGTH];
-		for (int j = 0; j < uuids.length; j++)
-			source.read(uuids[j]);
+		for (byte[] uuid : uuids)
+			source.read(uuid);
 		return uuids;
 	}
 
@@ -320,7 +315,7 @@ public class HistoryBucket extends Bucket {
 	protected void writeEntryValue(DataOutputStream destination, Object entryValue) throws IOException {
 		byte[][] uuids = (byte[][]) entryValue;
 		destination.writeShort(uuids.length);
-		for (int j = 0; j < uuids.length; j++)
-			destination.write(uuids[j]);
+		for (byte[] uuid : uuids)
+			destination.write(uuid);
 	}
 }

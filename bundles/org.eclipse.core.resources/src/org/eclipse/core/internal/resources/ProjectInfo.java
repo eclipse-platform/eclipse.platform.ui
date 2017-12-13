@@ -50,8 +50,8 @@ public class ProjectInfo extends ResourceInfo {
 		propertyStore = null;
 		if (description != null) {
 			ICommand[] buildSpec = description.getBuildSpec(false);
-			for (int i = 0; i < buildSpec.length; i++)
-				((BuildCommand) buildSpec[i]).setBuilders(null);
+			for (ICommand element : buildSpec)
+				((BuildCommand) element).setBuilders(null);
 		}
 	}
 

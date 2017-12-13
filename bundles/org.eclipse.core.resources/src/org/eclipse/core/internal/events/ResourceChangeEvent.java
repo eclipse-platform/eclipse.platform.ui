@@ -61,8 +61,8 @@ public class ResourceChangeEvent extends EventObject implements IResourceChangeE
 		while (deltaSets.hasNext()) {
 			MarkerSet deltas = deltaSets.next();
 			IMarkerSetElement[] elements = deltas.elements();
-			for (int i = 0; i < elements.length; i++) {
-				MarkerDelta markerDelta = (MarkerDelta) elements[i];
+			for (IMarkerSetElement element : elements) {
+				MarkerDelta markerDelta = (MarkerDelta) element;
 				//our inclusion test depends on whether we are considering subtypes
 				if (findType == null || (includeSubtypes ? markerDelta.isSubtypeOf(findType) : markerDelta.getType().equals(findType)))
 					matching.add(markerDelta);

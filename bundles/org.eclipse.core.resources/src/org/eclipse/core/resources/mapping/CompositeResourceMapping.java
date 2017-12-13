@@ -43,8 +43,7 @@ public final class CompositeResourceMapping extends ResourceMapping {
 
 	@Override
 	public boolean contains(ResourceMapping mapping) {
-		for (int i = 0; i < mappings.length; i++) {
-			ResourceMapping childMapping = mappings[i];
+		for (ResourceMapping childMapping : mappings) {
 			if (childMapping.contains(mapping)) {
 				return true;
 			}
@@ -74,8 +73,7 @@ public final class CompositeResourceMapping extends ResourceMapping {
 	public IProject[] getProjects() {
 		if (projects == null) {
 			Set<IProject> result = new HashSet<>();
-			for (int i = 0; i < mappings.length; i++) {
-				ResourceMapping mapping = mappings[i];
+			for (ResourceMapping mapping : mappings) {
 				result.addAll(Arrays.asList(mapping.getProjects()));
 			}
 			projects = result.toArray(new IProject[result.size()]);
@@ -87,8 +85,7 @@ public final class CompositeResourceMapping extends ResourceMapping {
 	public ResourceTraversal[] getTraversals(ResourceMappingContext context, IProgressMonitor monitor) throws CoreException {
 		SubMonitor subMonitor = SubMonitor.convert(monitor, mappings.length);
 		List<ResourceTraversal> result = new ArrayList<>();
-		for (int i = 0; i < mappings.length; i++) {
-			ResourceMapping mapping = mappings[i];
+		for (ResourceMapping mapping : mappings) {
 			Collections.addAll(result, mapping.getTraversals(context, subMonitor.newChild(1)));
 		}
 		return result.toArray(new ResourceTraversal[result.size()]);

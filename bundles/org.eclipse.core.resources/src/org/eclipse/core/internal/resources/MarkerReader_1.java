@@ -82,9 +82,9 @@ public class MarkerReader_1 extends MarkerReader {
 					// and shrinking the array.
 					IMarkerSetElement[] infos = markers.elements;
 					ArrayList<MarkerDelta> deltas = new ArrayList<>(infos.length);
-					for (int i = 0; i < infos.length; i++)
-						if (infos[i] != null)
-							deltas.add(new MarkerDelta(IResourceDelta.ADDED, resource, (MarkerInfo) infos[i]));
+					for (IMarkerSetElement info2 : infos)
+						if (info2 != null)
+							deltas.add(new MarkerDelta(IResourceDelta.ADDED, resource, (MarkerInfo) info2));
 					workspace.getMarkerManager().changedMarkers(resource, deltas.toArray(new IMarkerSetElement[deltas.size()]));
 				}
 			}

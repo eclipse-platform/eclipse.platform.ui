@@ -233,8 +233,7 @@ class ComputeProjectOrder {
 			}
 			int len = vertexList.size();
 			Object[] r = new Object[len];
-			for (Iterator<Vertex> allV = vertexList.iterator(); allV.hasNext();) {
-				Vertex vertex = allV.next();
+			for (Vertex vertex : vertexList) {
 				int f = vertex.finishTime;
 				// note that finish times start at 1, not 0
 				if (increasing) {
@@ -277,8 +276,7 @@ class ComputeProjectOrder {
 			// find the roots of each component
 			// Map<Vertex,List<Object>> components
 			Map<Vertex, List<Object>> components = new HashMap<>();
-			for (Iterator<Vertex> it = vertexList.iterator(); it.hasNext();) {
-				Vertex vertex = it.next();
+			for (Vertex vertex : vertexList) {
 				if (vertex.predecessor == null) {
 					// this vertex is the root of a component
 					// if component is non-trivial we will hit a child
@@ -298,8 +296,7 @@ class ComputeProjectOrder {
 				}
 			}
 			List<Object[]> result = new ArrayList<>(components.size());
-			for (Iterator<List<Object>> it = components.values().iterator(); it.hasNext();) {
-				List<Object> component = it.next();
+			for (List<Object> component : components.values()) {
 				if (component.size() > 1) {
 					result.add(component.toArray());
 				}
@@ -512,12 +509,11 @@ class ComputeProjectOrder {
 		// Step 1: Create the graph object.
 		final Digraph g1 = new Digraph();
 		// add vertexes
-		for (Iterator<?> it = vertexes.iterator(); it.hasNext();) {
-			g1.addVertex(it.next());
+		for (Object name : vertexes) {
+			g1.addVertex(name);
 		}
 		// add edges
-		for (Iterator<? extends Object[]> it = references.iterator(); it.hasNext();) {
-			Object[] ref = it.next();
+		for (Object[] ref : references) {
 			Object p = ref[0];
 			Object q = ref[1];
 			// p has a reference to q
@@ -533,12 +529,11 @@ class ComputeProjectOrder {
 		final Digraph g2 = new Digraph();
 		// add vertexes
 		List<Object> resortedVertexes = g1.idsByDFSFinishTime(false);
-		for (Iterator<Object> it = resortedVertexes.iterator(); it.hasNext();) {
-			g2.addVertex(it.next());
+		for (Object object : resortedVertexes) {
+			g2.addVertex(object);
 		}
 		// add edges
-		for (Iterator<? extends Object[]> it = references.iterator(); it.hasNext();) {
-			Object[] ref = it.next();
+		for (Object[] ref : references) {
 			Object p = ref[0];
 			Object q = ref[1];
 			// p has a reference to q
@@ -601,11 +596,10 @@ class ComputeProjectOrder {
 
 		// and from the knots list
 		List<Object[]> reducedKnots = new ArrayList<>(order.knots.length);
-		for (int i = 0; i < order.knots.length; i++) {
-			Object[] knot = order.knots[i];
+		for (Object[] knot : order.knots) {
 			List<Object> knotList = new ArrayList<>(knot.length);
-			for (int j = 0; j < knot.length; j++) {
-				Object vertex = knot[j];
+			for (Object element : knot) {
+				Object vertex = element;
 				if (!filter.matches(vertex)) {
 					knotList.add(vertex);
 				}

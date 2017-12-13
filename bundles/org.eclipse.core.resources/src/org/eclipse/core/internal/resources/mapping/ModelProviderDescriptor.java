@@ -67,8 +67,7 @@ public class ModelProviderDescriptor implements IModelProviderDescriptor {
 	@Override
 	public IResource[] getMatchingResources(IResource[] resources) throws CoreException {
 		Set<IResource> result = new HashSet<>();
-		for (int i = 0; i < resources.length; i++) {
-			IResource resource = resources[i];
+		for (IResource resource : resources) {
 			EvaluationContext evalContext = createEvaluationContext(resource);
 			if (matches(evalContext)) {
 				result.add(resource);
@@ -82,8 +81,7 @@ public class ModelProviderDescriptor implements IModelProviderDescriptor {
 		if (provider == null) {
 			IExtension extension = Platform.getExtensionRegistry().getExtension(ResourcesPlugin.PI_RESOURCES, ResourcesPlugin.PT_MODEL_PROVIDERS, id);
 			IConfigurationElement[] elements = extension.getConfigurationElements();
-			for (int i = 0; i < elements.length; i++) {
-				IConfigurationElement element = elements[i];
+			for (IConfigurationElement element : elements) {
 				if (element.getName().equalsIgnoreCase("modelProvider")) { //$NON-NLS-1$
 					try {
 						provider = (ModelProvider) element.createExecutableExtension("class"); //$NON-NLS-1$
@@ -134,8 +132,7 @@ public class ModelProviderDescriptor implements IModelProviderDescriptor {
 	@Override
 	public ResourceTraversal[] getMatchingTraversals(ResourceTraversal[] traversals) throws CoreException {
 		List<ResourceTraversal> result = new ArrayList<>();
-		for (int i = 0; i < traversals.length; i++) {
-			ResourceTraversal traversal = traversals[i];
+		for (ResourceTraversal traversal : traversals) {
 			if (getMatchingResources(traversal.getResources()).length > 0) {
 				result.add(traversal);
 			}

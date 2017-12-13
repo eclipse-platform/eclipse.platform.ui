@@ -38,12 +38,12 @@ public class ShallowResourceMapping extends ResourceMapping {
 
 	@Override
 	public IProject[] getProjects() {
-		return new IProject[] { container.getResource().getProject() };
+		return new IProject[] {container.getResource().getProject()};
 	}
 
 	@Override
 	public ResourceTraversal[] getTraversals(ResourceMappingContext context, IProgressMonitor monitor) {
-		return new ResourceTraversal[] { new ResourceTraversal(new IResource[] { container.getResource() }, IResource.DEPTH_ONE, IResource.NONE)};
+		return new ResourceTraversal[] {new ResourceTraversal(new IResource[] {container.getResource()}, IResource.DEPTH_ONE, IResource.NONE)};
 	}
 
 	@Override
@@ -58,8 +58,7 @@ public class ShallowResourceMapping extends ResourceMapping {
 			}
 			if (object instanceof IResource) {
 				IResource other = (IResource) object;
-				return other.getType() == IResource.FILE
-					&& resource.getFullPath().equals(other.getFullPath().removeLastSegments(1));
+				return other.getType() == IResource.FILE && resource.getFullPath().equals(other.getFullPath().removeLastSegments(1));
 			}
 		}
 		return false;

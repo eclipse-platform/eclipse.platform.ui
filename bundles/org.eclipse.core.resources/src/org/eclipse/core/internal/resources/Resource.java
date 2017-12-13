@@ -60,34 +60,31 @@ public abstract class Resource extends PlatformObject implements IResource, ICor
 			checkAccessible(getFlags(getResourceInfo(includePhantoms, false)));
 
 		final ResourceProxy proxy = new ResourceProxy();
-		IElementContentVisitor elementVisitor = new IElementContentVisitor() {
-			@Override
-			public boolean visitElement(ElementTree tree, IPathRequestor requestor, Object contents) {
-				ResourceInfo info = (ResourceInfo) contents;
-				if (!isMember(getFlags(info), memberFlags))
-					return false;
-				proxy.requestor = requestor;
-				proxy.info = info;
-				try {
-					boolean shouldContinue = true;
-					switch (depth) {
-						case DEPTH_ZERO :
-							shouldContinue = false;
-							break;
-						case DEPTH_ONE :
-							shouldContinue = !path.equals(requestor.requestPath().removeLastSegments(1));
-							break;
-						case DEPTH_INFINITE :
-							shouldContinue = true;
-							break;
-					}
-					return visitor.visit(proxy) && shouldContinue;
-				} catch (CoreException e) {
-					// Throw an exception to bail out of the traversal.
-					throw new WrappedRuntimeException(e);
-				} finally {
-					proxy.reset();
+		IElementContentVisitor elementVisitor = (tree, requestor, contents) -> {
+			ResourceInfo info = (ResourceInfo) contents;
+			if (!isMember(getFlags(info), memberFlags))
+				return false;
+			proxy.requestor = requestor;
+			proxy.info = info;
+			try {
+				boolean shouldContinue = true;
+				switch (depth) {
+					case DEPTH_ZERO :
+						shouldContinue = false;
+						break;
+					case DEPTH_ONE :
+						shouldContinue = !path.equals(requestor.requestPath().removeLastSegments(1));
+						break;
+					case DEPTH_INFINITE :
+						shouldContinue = true;
+						break;
 				}
+				return visitor.visit(proxy) && shouldContinue;
+			} catch (CoreException e) {
+				// Throw an exception to bail out of the traversal.
+				throw new WrappedRuntimeException(e);
+			} finally {
+				proxy.reset();
 			}
 		};
 		try {
@@ -114,12 +111,7 @@ public abstract class Resource extends PlatformObject implements IResource, ICor
 	public void accept(final IResourceVisitor visitor, int depth, int memberFlags) throws CoreException {
 		// Use the fast visitor if visiting to infinite depth.
 		if (depth == IResource.DEPTH_INFINITE) {
-			accept(new IResourceProxyVisitor() {
-				@Override
-				public boolean visit(IResourceProxy proxy) throws CoreException {
-					return visitor.visit(proxy.requestResource());
-				}
-			}, memberFlags);
+			accept(proxy -> visitor.visit(proxy.requestResource()), memberFlags);
 			return;
 		}
 		// It is invalid to call accept on a phantom when INCLUDE_PHANTOMS is not specified.
@@ -146,8 +138,8 @@ public abstract class Resource extends PlatformObject implements IResource, ICor
 		// If we had a gender change we need to fix up the resource before asking for its members.
 		IContainer resource = getType() != type ? (IContainer) workspace.newResource(getFullPath(), type) : (IContainer) this;
 		IResource[] members = resource.members(memberFlags);
-		for (int i = 0; i < members.length; i++)
-			members[i].accept(visitor, DEPTH_ZERO, memberFlags | IContainer.DO_NOT_CHECK_EXISTENCE);
+		for (IResource member : members)
+			member.accept(visitor, DEPTH_ZERO, memberFlags | IContainer.DO_NOT_CHECK_EXISTENCE);
 	}
 
 	protected void assertCopyRequirements(IPath destination, int destinationType, int updateFlags) throws CoreException {
@@ -579,8 +571,8 @@ public abstract class Resource extends PlatformObject implements IResource, ICor
 			// Copy the children.
 			IResource[] children = ((IContainer) this).members(IContainer.INCLUDE_TEAM_PRIVATE_MEMBERS | IContainer.INCLUDE_HIDDEN);
 			SubMonitor loopProgress = SubMonitor.convert(progress.split(70), children.length);
-			for (int i = 0; i < children.length; i++) {
-				Resource child = (Resource) children[i];
+			for (IResource element : children) {
+				Resource child = (Resource) element;
 				child.copy(destPath.append(child.getName()), updateFlags, loopProgress.split(1));
 			}
 
@@ -815,8 +807,8 @@ public abstract class Resource extends PlatformObject implements IResource, ICor
 		List<Resource> links = findLinks();
 		// Pre-delete notification to internal infrastructure
 		if (links != null)
-			for (Iterator<Resource> it = links.iterator(); it.hasNext();)
-				workspace.broadcastEvent(LifecycleEvent.newEvent(LifecycleEvent.PRE_LINK_DELETE, it.next()));
+			for (Resource resource : links)
+				workspace.broadcastEvent(LifecycleEvent.newEvent(LifecycleEvent.PRE_LINK_DELETE, resource));
 
 		// Check if we deleted a preferences file.
 		ProjectPreferences.deleted(this);
@@ -827,8 +819,8 @@ public abstract class Resource extends PlatformObject implements IResource, ICor
 			ProjectDescription description = project.internalGetDescription();
 			if (description != null) {
 				boolean wasChanged = false;
-				for (Iterator<Resource> it = links.iterator(); it.hasNext();)
-					wasChanged |= description.setLinkLocation(it.next().getProjectRelativePath(), null);
+				for (Resource resource : links)
+					wasChanged |= description.setLinkLocation(resource.getProjectRelativePath(), null);
 				if (wasChanged) {
 					project.internalSetDescription(description, true);
 					try {
@@ -856,8 +848,8 @@ public abstract class Resource extends PlatformObject implements IResource, ICor
 			Project project = (Project) getProject();
 			ProjectDescription description = project.internalGetDescription();
 			if (description != null) {
-				for (Iterator<Resource> it = filters.iterator(); it.hasNext();)
-					description.setFilters(it.next().getProjectRelativePath(), null);
+				for (Resource resource : filters)
+					description.setFilters(resource.getProjectRelativePath(), null);
 				project.internalSetDescription(description, true);
 				project.writeDescription(IResource.FORCE);
 			}
@@ -889,8 +881,7 @@ public abstract class Resource extends PlatformObject implements IResource, ICor
 			return null;
 		List<Resource> links = null;
 		IPath myPath = getProjectRelativePath();
-		for (Iterator<LinkDescription> it = linkMap.values().iterator(); it.hasNext();) {
-			LinkDescription link = it.next();
+		for (LinkDescription link : linkMap.values()) {
 			IPath linkPath = link.getProjectRelativePath();
 			if (myPath.isPrefixOf(linkPath)) {
 				if (links == null)
@@ -912,8 +903,7 @@ public abstract class Resource extends PlatformObject implements IResource, ICor
 			HashMap<IPath, LinkedList<FilterDescription>> filterMap = description.getFilters();
 			if (filterMap != null) {
 				IPath myPath = getProjectRelativePath();
-				for (Iterator<IPath> it = filterMap.keySet().iterator(); it.hasNext();) {
-					IPath filterPath = it.next();
+				for (IPath filterPath : filterMap.keySet()) {
 					if (myPath.isPrefixOf(filterPath)) {
 						if (filters == null)
 							filters = new ArrayList<>();
@@ -999,9 +989,9 @@ public abstract class Resource extends PlatformObject implements IResource, ICor
 	 * the list if one is found, otherwise returns null.
 	 */
 	private String findVariant(String target, String[] list) {
-		for (int i = 0; i < list.length; i++) {
-			if (target.toUpperCase().equals(list[i].toUpperCase()))
-				return list[i];
+		for (String element : list) {
+			if (target.toUpperCase().equals(element.toUpperCase()))
+				return element;
 		}
 		return null;
 	}
@@ -1020,8 +1010,8 @@ public abstract class Resource extends PlatformObject implements IResource, ICor
 			// Delete resource filters.
 			Project project = (Project) getProject();
 			ProjectDescription description = project.internalGetDescription();
-			for (Iterator<Resource> it = filters.iterator(); it.hasNext();)
-				description.setFilters(it.next().getProjectRelativePath(), null);
+			for (Resource resource : filters)
+				description.setFilters(resource.getProjectRelativePath(), null);
 			project.writeDescription(IResource.NONE);
 		}
 
@@ -1239,8 +1229,8 @@ public abstract class Resource extends PlatformObject implements IResource, ICor
 		if (depth == IResource.DEPTH_ONE)
 			depth = IResource.DEPTH_ZERO;
 		IResource[] children = ((IContainer) this).members();
-		for (int i = 0; i < children.length; i++)
-			((Resource) children[i]).internalSetLocal(flag, depth);
+		for (IResource element : children)
+			((Resource) element).internalSetLocal(flag, depth);
 	}
 
 	@Override
@@ -1258,8 +1248,8 @@ public abstract class Resource extends PlatformObject implements IResource, ICor
 		if (rule instanceof MultiRule) {
 			MultiRule multi = (MultiRule) rule;
 			ISchedulingRule[] children = multi.getChildren();
-			for (int i = 0; i < children.length; i++)
-				if (isConflicting(children[i]))
+			for (ISchedulingRule element : children)
+				if (isConflicting(element))
 					return true;
 			return false;
 		}
@@ -1326,8 +1316,8 @@ public abstract class Resource extends PlatformObject implements IResource, ICor
 			if (links == null)
 				return false;
 			IPath myPath = getProjectRelativePath();
-			for (Iterator<LinkDescription> it = links.values().iterator(); it.hasNext();) {
-				if (it.next().getProjectRelativePath().isPrefixOf(myPath))
+			for (LinkDescription linkDescription : links.values()) {
+				if (linkDescription.getProjectRelativePath().isPrefixOf(myPath))
 					return true;
 			}
 			return false;
@@ -1835,8 +1825,8 @@ public abstract class Resource extends PlatformObject implements IResource, ICor
 			case IResource.ROOT :
 				// All root children including hidden projects will be deleted so notify.
 				IResource[] projects = ((Container) this).getChildren(IContainer.INCLUDE_HIDDEN);
-				for (int i = 0; i < projects.length; i++) {
-					workspace.broadcastEvent(LifecycleEvent.newEvent(LifecycleEvent.PRE_PROJECT_DELETE, projects[i]));
+				for (IResource project2 : projects) {
+					workspace.broadcastEvent(LifecycleEvent.newEvent(LifecycleEvent.PRE_PROJECT_DELETE, project2));
 				}
 				break;
 		}
@@ -1942,8 +1932,7 @@ public abstract class Resource extends PlatformObject implements IResource, ICor
 				relativePath = relativePath.removeLastSegments(1);
 			filters = description.getFilter(relativePath);
 			if (filters != null) {
-				for (Iterator<FilterDescription> it = filters.iterator(); it.hasNext();) {
-					FilterDescription desc = it.next();
+				for (FilterDescription desc : filters) {
 					if (firstSegment || desc.isInheritable()) {
 						Filter filter = new Filter(project, desc);
 						if (filter.isIncludeOnly()) {

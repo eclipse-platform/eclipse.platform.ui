@@ -126,8 +126,8 @@ public class CharsetManager implements IManager {
 			if ((parent.getFlags() & IResourceDelta.DERIVED_CHANGED) != 0) {
 				// if derived changed, move encoding to correct preferences
 				IPath parentPath = parent.getResource().getProjectRelativePath();
-				for (int i = 0; i < affectedResources.length; i++) {
-					IPath affectedPath = new Path(affectedResources[i]);
+				for (String affectedResource : affectedResources) {
+					IPath affectedPath = new Path(affectedResource);
 					// if parentPath is an ancestor of affectedPath
 					if (parentPath.isPrefixOf(affectedPath)) {
 						IResource member = currentProject.findMember(affectedPath);
@@ -136,9 +136,9 @@ public class CharsetManager implements IManager {
 							// if new preferences are different than current
 							if (!projectPrefs.absolutePath().equals(targetPrefs.absolutePath())) {
 								// remove encoding from old preferences and save in correct preferences
-								String currentValue = projectPrefs.get(affectedResources[i], null);
-								projectPrefs.remove(affectedResources[i]);
-								targetPrefs.put(affectedResources[i], currentValue);
+								String currentValue = projectPrefs.get(affectedResource, null);
+								projectPrefs.remove(affectedResource);
+								targetPrefs.put(affectedResource, currentValue);
 								resourceChanges = true;
 							}
 						}
@@ -146,9 +146,8 @@ public class CharsetManager implements IManager {
 				}
 			}
 
-			IResourceDelta[] children = parent.getAffectedChildren();
-			for (int i = 0; i < children.length; i++) {
-				resourceChanges = moveSettingsIfDerivedChanged(children[i], currentProject, projectPrefs, affectedResources) || resourceChanges;
+			for (IResourceDelta child : parent.getAffectedChildren()) {
+				resourceChanges = moveSettingsIfDerivedChanged(child, currentProject, projectPrefs, affectedResources) || resourceChanges;
 			}
 			return resourceChanges;
 		}
@@ -181,16 +180,16 @@ public class CharsetManager implements IManager {
 				Boolean isDerived = entry.getKey();
 				String[] affectedResources = entry.getValue();
 				Preferences projectPrefs = isDerived.booleanValue() ? projectDerivedPrefs : projectRegularPrefs;
-				for (int i = 0; i < affectedResources.length; i++) {
-					IResourceDelta memberDelta = projectDelta.findMember(new Path(affectedResources[i]));
+				for (String affectedResource : affectedResources) {
+					IResourceDelta memberDelta = projectDelta.findMember(new Path(affectedResource));
 					// no changes for the given resource
 					if (memberDelta == null)
 						continue;
 					if (memberDelta.getKind() == IResourceDelta.REMOVED) {
 						boolean shouldDisableCharsetDeltaJobForCurrentProject = false;
 						// remove the setting for the original location - save its value though
-						String currentValue = projectPrefs.get(affectedResources[i], null);
-						projectPrefs.remove(affectedResources[i]);
+						String currentValue = projectPrefs.get(affectedResource, null);
+						projectPrefs.remove(affectedResource);
 						if ((memberDelta.getFlags() & IResourceDelta.MOVED_TO) != 0) {
 							IPath movedToPath = memberDelta.getMovedToPath();
 							IResource resource = workspace.getRoot().findMember(movedToPath);
@@ -230,10 +229,10 @@ public class CharsetManager implements IManager {
 			IResourceDelta[] projectDeltas = delta.getAffectedChildren();
 			// process each project in the delta
 			Map<IProject, Boolean> projectsToSave = new HashMap<>();
-			for (int i = 0; i < projectDeltas.length; i++)
+			for (IResourceDelta projectDelta : projectDeltas)
 				//nothing to do if a project has been added/removed/moved
-				if (projectDeltas[i].getKind() == IResourceDelta.CHANGED && (projectDeltas[i].getFlags() & IResourceDelta.OPEN) == 0)
-					processEntryChanges(projectDeltas[i], projectsToSave);
+				if (projectDelta.getKind() == IResourceDelta.CHANGED && (projectDelta.getFlags() & IResourceDelta.OPEN) == 0)
+					processEntryChanges(projectDelta, projectsToSave);
 			job.addChanges(projectsToSave);
 		}
 	}
@@ -384,8 +383,7 @@ public class CharsetManager implements IManager {
 			boolean prefsChanged = false;
 			String[] affectedResources;
 			affectedResources = projectDerivedPrefs.keys();
-			for (int i = 0; i < affectedResources.length; i++) {
-				String path = affectedResources[i];
+			for (String path : affectedResources) {
 				String value = projectDerivedPrefs.get(path, null);
 				projectDerivedPrefs.remove(path);
 				// lazy creation of non-derived preferences
@@ -463,8 +461,7 @@ public class CharsetManager implements IManager {
 			boolean prefsChanged = false;
 			String[] affectedResources;
 			affectedResources = projectRegularPrefs.keys();
-			for (int i = 0; i < affectedResources.length; i++) {
-				String path = affectedResources[i];
+			for (String path : affectedResources) {
 				IResource resource = project.findMember(path);
 				if (resource != null) {
 					if (resource.isDerived(IResource.CHECK_ANCESTORS)) {

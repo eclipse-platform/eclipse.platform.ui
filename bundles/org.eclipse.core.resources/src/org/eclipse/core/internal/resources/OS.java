@@ -59,7 +59,7 @@ public abstract class OS {
 			final int length = name.length();
 			if (length == 0)
 				return false;
-			final char lastChar = name.charAt(length-1);
+			final char lastChar = name.charAt(length - 1);
 			// filenames ending in dot are not valid
 			if (lastChar == '.')
 				return false;

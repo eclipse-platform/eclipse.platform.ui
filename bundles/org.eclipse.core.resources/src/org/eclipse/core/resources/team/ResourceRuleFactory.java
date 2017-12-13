@@ -247,9 +247,9 @@ public class ResourceRuleFactory implements IResourceRuleFactory {
 			return isReadOnly(resources[0]) ? parent(resources[0]) : null;
 		//need a lock on the parents of all read-only files
 		HashSet<ISchedulingRule> rules = new HashSet<>();
-		for (int i = 0; i < resources.length; i++)
-			if (isReadOnly(resources[i]))
-				rules.add(parent(resources[i]));
+		for (IResource resource : resources)
+			if (isReadOnly(resource))
+				rules.add(parent(resource));
 		if (rules.isEmpty())
 			return null;
 		if (rules.size() == 1)

@@ -46,9 +46,9 @@ public class ResourceMappingPropertyTester extends ResourcePropertyTester {
 		}
 		QualifiedName key = toQualifedName(propertyName);
 		boolean found = false;
-		for (int i = 0; i < projects.length; i++) {
+		for (IProject project : projects) {
 			try {
-				Object actualVal = projects[i].getPersistentProperty(key);
+				Object actualVal = project.getPersistentProperty(key);
 				//the value is not set, so keep looking on other projects
 				if (actualVal == null)
 					continue;

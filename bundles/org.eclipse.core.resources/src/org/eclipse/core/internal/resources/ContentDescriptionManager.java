@@ -21,7 +21,8 @@ import org.eclipse.core.filesystem.IFileStore;
 import org.eclipse.core.internal.events.ILifecycleListener;
 import org.eclipse.core.internal.events.LifecycleEvent;
 import org.eclipse.core.internal.utils.*;
-import org.eclipse.core.internal.watson.*;
+import org.eclipse.core.internal.watson.ElementTreeIterator;
+import org.eclipse.core.internal.watson.IElementContentVisitor;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.content.*;
@@ -233,8 +234,8 @@ public class ContentDescriptionManager implements IManager, IRegistryChangeListe
 				clearContentFlags(Path.ROOT, monitor);
 			else {
 				// flush a project at a time
-				for (int i = 0; i < toClean.length; i++)
-					clearContentFlags(toClean[i], monitor);
+				for (IPath element : toClean)
+					clearContentFlags(element, monitor);
 			}
 		} catch (CoreException ce) {
 			setCacheState(INVALID_CACHE);
@@ -252,22 +253,19 @@ public class ContentDescriptionManager implements IManager, IRegistryChangeListe
 		if (Policy.DEBUG_CONTENT_TYPE_CACHE)
 			Policy.debug("Flushing content type cache for " + root); //$NON-NLS-1$
 		// discard content type related flags for all files in the tree
-		IElementContentVisitor visitor = new IElementContentVisitor() {
-			@Override
-			public boolean visitElement(ElementTree tree, IPathRequestor requestor, Object elementContents) {
-				if (monitor.isCanceled())
-					throw new OperationCanceledException();
-				if (elementContents == null)
-					return false;
-				ResourceInfo info = (ResourceInfo) elementContents;
-				if (info.getType() != IResource.FILE)
-					return true;
-				info = workspace.getResourceInfo(requestor.requestPath(), false, true);
-				if (info == null)
-					return false;
-				info.clear(ICoreConstants.M_CONTENT_CACHE);
+		IElementContentVisitor visitor = (tree, requestor, elementContents) -> {
+			if (monitor.isCanceled())
+				throw new OperationCanceledException();
+			if (elementContents == null)
+				return false;
+			ResourceInfo info = (ResourceInfo) elementContents;
+			if (info.getType() != IResource.FILE)
 				return true;
-			}
+			info = workspace.getResourceInfo(requestor.requestPath(), false, true);
+			if (info == null)
+				return false;
+			info.clear(ICoreConstants.M_CONTENT_CACHE);
+			return true;
 		};
 		new ElementTreeIterator(workspace.getElementTree(), root).iterate(visitor);
 		if (Policy.DEBUG_CONTENT_TYPE_CACHE)

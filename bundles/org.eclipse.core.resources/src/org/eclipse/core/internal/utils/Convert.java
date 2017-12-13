@@ -63,10 +63,10 @@ public class Convert {
 		long longValue = 0L;
 
 		// See method convertLongToBytes(long) for algorithm details.
-		for (int i = 0; i < value.length; i++) {
+		for (byte element : value) {
 			// Left shift has no effect thru first iteration of loop.
 			longValue <<= 8;
-			longValue ^= value[i] & 0xFF;
+			longValue ^= element & 0xFF;
 		}
 
 		return longValue;

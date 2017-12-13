@@ -23,12 +23,9 @@ import org.eclipse.osgi.util.NLS;
 public class PropertyBucket extends Bucket {
 	public static class PropertyEntry extends Entry {
 
-		private final static Comparator<String[]> COMPARATOR = new Comparator<String[]>() {
-			@Override
-			public int compare(String[] o1, String[] o2) {
-				int qualifierComparison = o1[0].compareTo(o2[0]);
-				return qualifierComparison != 0 ? qualifierComparison : o1[1].compareTo(o2[1]);
-			}
+		private final static Comparator<String[]> COMPARATOR = (o1, o2) -> {
+			int qualifierComparison = o1[0].compareTo(o2[0]);
+			return qualifierComparison != 0 ? qualifierComparison : o1[1].compareTo(o2[1]);
 		};
 		private static final String[][] EMPTY_DATA = new String[0][];
 		/**
@@ -330,21 +327,21 @@ public class PropertyBucket extends Bucket {
 	protected void writeEntryValue(DataOutputStream destination, Object entryValue) throws IOException {
 		String[][] properties = (String[][]) entryValue;
 		destination.writeShort(properties.length);
-		for (int j = 0; j < properties.length; j++) {
+		for (String[] propertie : properties) {
 			// writes the property key qualifier
-			int index = qualifierIndex.indexOf(properties[j][0]);
+			int index = qualifierIndex.indexOf(propertie[0]);
 			if (index == -1) {
 				destination.writeByte(QNAME);
-				destination.writeUTF(properties[j][0]);
-				qualifierIndex.add(properties[j][0]);
+				destination.writeUTF(propertie[0]);
+				qualifierIndex.add(propertie[0]);
 			} else {
 				destination.writeByte(INDEX);
 				destination.writeInt(index);
 			}
 			// then the local name
-			destination.writeUTF(properties[j][1]);
+			destination.writeUTF(propertie[1]);
 			// then the property value
-			destination.writeUTF(properties[j][2]);
+			destination.writeUTF(propertie[2]);
 		}
 	}
 }

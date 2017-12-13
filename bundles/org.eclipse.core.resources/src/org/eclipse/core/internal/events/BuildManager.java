@@ -354,11 +354,11 @@ public class BuildManager implements ICoreConstants, IManager, ILifecycleListene
 		for (int iter = 0; rebuildRequested && iter < maxIterations; iter++) {
 			rebuildRequested = false;
 			builtProjects.clear();
-			for (int i = 0; i < configs.length; i++) {
-				if (configs[i].getProject().isAccessible()) {
-					IBuildContext context = new BuildContext(configs[i], requestedConfigs, configs);
-					basicBuild(configs[i], trigger, context, status, Policy.subMonitorFor(monitor, projectWork));
-					builtProjects.add(configs[i].getProject());
+			for (IBuildConfiguration config : configs) {
+				if (config.getProject().isAccessible()) {
+					IBuildContext context = new BuildContext(config, requestedConfigs, configs);
+					basicBuild(config, trigger, context, status, Policy.subMonitorFor(monitor, projectWork));
+					builtProjects.add(config.getProject());
 				}
 			}
 			//subsequent builds should always be incremental
@@ -599,8 +599,7 @@ public class BuildManager implements ICoreConstants, IManager, ILifecycleListene
 		//try to match on builder index, but if not match is found, use the builder name and config name
 		//this is because older workspace versions did not store builder infos in build spec order
 		BuilderPersistentInfo nameMatch = null;
-		for (Iterator<BuilderPersistentInfo> it = infos.iterator(); it.hasNext();) {
-			BuilderPersistentInfo info = it.next();
+		for (BuilderPersistentInfo info : infos) {
 			// match on name, config name and build spec index if known
 			// Note: the config name may be null for builders that don't support configurations, or old workspaces
 			if (info.getBuilderName().equals(builderName) && (info.getConfigName() == null || info.getConfigName().equals(configName))) {
@@ -635,9 +634,9 @@ public class BuildManager implements ICoreConstants, IManager, ILifecycleListene
 	 */
 	private ICommand getCommand(IProject project, String builderName, Map<String, String> args) {
 		ICommand[] buildSpec = ((Project) project).internalGetDescription().getBuildSpec(false);
-		for (int i = 0; i < buildSpec.length; i++)
-			if (buildSpec[i].getBuilderName().equals(builderName))
-				return buildSpec[i];
+		for (ICommand element : buildSpec)
+			if (element.getBuilderName().equals(builderName))
+				return element;
 		//none found, so create a new command
 		BuildCommand result = new BuildCommand();
 		result.setBuilderName(builderName);
@@ -843,8 +842,8 @@ public class BuildManager implements ICoreConstants, IManager, ILifecycleListene
 		if (Policy.DEBUG_BUILD_INVOKING) {
 			overallTimeStamp = System.currentTimeMillis();
 			StringBuilder sb = new StringBuilder("Top-level build-start of: "); //$NON-NLS-1$
-			for (int i = 0; i < configs.length; i++)
-				sb.append(configs[i]).append(", "); //$NON-NLS-1$
+			for (IBuildConfiguration config : configs)
+				sb.append(config).append(", "); //$NON-NLS-1$
 			sb.append(debugTrigger(trigger));
 			Policy.debug(sb.toString());
 		}
@@ -940,8 +939,8 @@ public class BuildManager implements ICoreConstants, IManager, ILifecycleListene
 		if (project.equals(currentBuilder.getProject()))
 			return true;
 		IProject[] interestingProjects = currentBuilder.getInterestingProjects();
-		for (int i = 0; i < interestingProjects.length; i++) {
-			if (interestingProjects[i].equals(project)) {
+		for (IProject interestingProject : interestingProjects) {
+			if (interestingProject.equals(project)) {
 				return true;
 			}
 		}
@@ -997,10 +996,10 @@ public class BuildManager implements ICoreConstants, IManager, ILifecycleListene
 
 		//search for builder's interesting projects
 		IProject[] projects = builder.getInterestingProjects();
-		for (int i = 0; i < projects.length; i++) {
-			if (currentDelta.findNodeAt(projects[i].getFullPath()) != null) {
+		for (IProject project : projects) {
+			if (currentDelta.findNodeAt(project.getFullPath()) != null) {
 				if (Policy.DEBUG_BUILD_NEEDED)
-					Policy.debug(toString(builder) + " needs building because of changes in: " + projects[i].getName()); //$NON-NLS-1$
+					Policy.debug(toString(builder) + " needs building because of changes in: " + project.getName()); //$NON-NLS-1$
 				return true;
 			}
 		}
