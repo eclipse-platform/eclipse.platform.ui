@@ -162,9 +162,9 @@ public class ProjectPreferences extends EclipsePreferences {
 		if (Policy.DEBUG_PREFERENCES)
 			Policy.debug("Loading preferences from file: " + file.getFullPath()); //$NON-NLS-1$
 		Properties result = new Properties();
-		InputStream input = null;
-		try {
-			input = new BufferedInputStream(file.getContents(true));
+		try (
+			InputStream input = new BufferedInputStream(file.getContents(true));
+		) {
 			result.load(input);
 		} catch (CoreException e) {
 			if (e.getStatus().getCode() == IResourceStatus.RESOURCE_NOT_FOUND) {
@@ -179,8 +179,6 @@ public class ProjectPreferences extends EclipsePreferences {
 			String message = NLS.bind(Messages.preferences_loadException, file.getFullPath());
 			log(new Status(IStatus.ERROR, ResourcesPlugin.PI_RESOURCES, IStatus.ERROR, message, e));
 			throw new BackingStoreException(message);
-		} finally {
-			FileUtil.safeClose(input);
 		}
 		return result;
 	}
@@ -507,9 +505,9 @@ public class ProjectPreferences extends EclipsePreferences {
 		if (Policy.DEBUG_PREFERENCES)
 			Policy.debug("Loading preferences from file: " + localFile.getFullPath()); //$NON-NLS-1$
 		Properties fromDisk = new Properties();
-		InputStream input = null;
-		try {
-			input = new BufferedInputStream(localFile.getContents(true));
+		try (
+			InputStream input = new BufferedInputStream(localFile.getContents(true));
+		) {
 			fromDisk.load(input);
 			convertFromProperties(this, fromDisk, true);
 			loadedNodes.add(absolutePath());
@@ -530,8 +528,6 @@ public class ProjectPreferences extends EclipsePreferences {
 				log(new Status(IStatus.ERROR, ResourcesPlugin.PI_RESOURCES, IStatus.ERROR, message, e));
 				throw new BackingStoreException(message);
 			}
-		} finally {
-			FileUtil.safeClose(input);
 		}
 	}
 

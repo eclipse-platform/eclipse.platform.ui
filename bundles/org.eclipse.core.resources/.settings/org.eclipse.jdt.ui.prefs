@@ -1,7 +1,7 @@
 eclipse.preferences.version=1
 editor_save_participant_org.eclipse.jdt.ui.postsavelistener.cleanup=true
-formatter_profile=_core
-formatter_settings_version=11
+formatter_profile=_Unmanaged profile 'core' - 2
+formatter_settings_version=13
 internal.default.compliance=user
 org.eclipse.jdt.ui.ignorelowercasenames=true
 org.eclipse.jdt.ui.importorder=;

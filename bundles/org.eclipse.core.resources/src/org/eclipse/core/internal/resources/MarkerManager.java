@@ -533,12 +533,11 @@ public class MarkerManager implements IManager {
 		if (!sourceFile.exists() && !tempFile.exists())
 			return;
 		try {
-			DataInputStream input = new DataInputStream(new SafeFileInputStream(sourceLocation.toOSString(), tempLocation.toOSString()));
-			try {
+			try (
+				DataInputStream input = new DataInputStream(new SafeFileInputStream(sourceLocation.toOSString(), tempLocation.toOSString()));
+			) {
 				MarkerReader reader = new MarkerReader(workspace);
 				reader.read(input, generateDeltas);
-			} finally {
-				input.close();
 			}
 		} catch (Exception e) {
 			//don't let runtime exceptions such as ArrayIndexOutOfBounds prevent startup

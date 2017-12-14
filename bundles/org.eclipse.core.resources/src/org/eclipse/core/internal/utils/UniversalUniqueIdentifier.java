@@ -86,7 +86,7 @@ public class UniversalUniqueIdentifier implements java.io.Serializable {
 	 of the byte array is compatible with the <code>toBytes()</code> method.
 
 	 <p>The constructor returns the undefined uuid if the byte array is invalid.
-
+	
 	 @see #toBytes()
 	 @see #BYTES_SIZE
 	 */

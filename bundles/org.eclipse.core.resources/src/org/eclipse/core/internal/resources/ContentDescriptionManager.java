@@ -445,8 +445,9 @@ public class ContentDescriptionManager implements IManager, IRegistryChangeListe
 		if (Policy.DEBUG_CONTENT_TYPE)
 			Policy.debug("reading contents of " + file); //$NON-NLS-1$
 		// tries to obtain a description for this file contents
-		InputStream contents = new LazyFileInputStream(file.getStore());
-		try {
+		try (
+			InputStream contents = new LazyFileInputStream(file.getStore());
+		) {
 			IContentTypeMatcher matcher = getContentTypeMatcher((Project) file.getProject());
 			return matcher.getDescriptionFor(contents, file.getName(), IContentDescription.ALL);
 		} catch (FileNotFoundException e) {
@@ -455,8 +456,6 @@ public class ContentDescriptionManager implements IManager, IRegistryChangeListe
 		} catch (IOException e) {
 			String message = NLS.bind(Messages.resources_errorContentDescription, file.getFullPath());
 			throw new ResourceException(IResourceStatus.FAILED_DESCRIBING_CONTENTS, file.getFullPath(), message, e);
-		} finally {
-			FileUtil.safeClose(contents);
 		}
 	}
 

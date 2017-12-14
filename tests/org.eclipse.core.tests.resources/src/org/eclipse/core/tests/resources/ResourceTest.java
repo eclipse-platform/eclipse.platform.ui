@@ -19,7 +19,6 @@ import java.util.HashSet;
 import java.util.Set;
 import org.eclipse.core.filesystem.*;
 import org.eclipse.core.internal.resources.Resource;
-import org.eclipse.core.internal.utils.FileUtil;
 import org.eclipse.core.internal.utils.UniversalUniqueIdentifier;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
@@ -845,13 +844,8 @@ public abstract class ResourceTest extends CoreTest {
 		}
 		java.io.File osFile = location.toFile();
 		try {
-			FileOutputStream os = null;
-			try {
-				os = new FileOutputStream(osFile);
+			try (FileOutputStream os = new FileOutputStream(osFile);) {
 				os.write(newContent.getBytes("UTF8"));
-				os.close();
-			} finally {
-				FileUtil.safeClose(os);
 			}
 		} catch (IOException e) {
 			fail(m + "0.0", e);

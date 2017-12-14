@@ -283,9 +283,9 @@ public class FileUtil {
 	 */
 	public static String getLineSeparator(IFile file) {
 		if (file.exists()) {
-			InputStream input = null;
-			try {
-				input = file.getContents();
+			try (
+				InputStream input = file.getContents()
+			) {
 				int c = input.read();
 				while (c != -1 && c != '\r' && c != '\n')
 					c = input.read();
@@ -300,8 +300,6 @@ public class FileUtil {
 				// ignore
 			} catch (IOException e) {
 				// ignore
-			} finally {
-				safeClose(input);
 			}
 		}
 		Preferences rootNode = Platform.getPreferencesService().getRootNode();

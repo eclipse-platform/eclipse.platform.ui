@@ -152,12 +152,11 @@ public class Synchronizer implements ISynchronizer {
 		if (!sourceLocation.toFile().exists() && !tempLocation.toFile().exists())
 			return;
 		try {
-			DataInputStream input = new DataInputStream(new SafeFileInputStream(sourceLocation.toOSString(), tempLocation.toOSString()));
-			try {
+			try (
+				DataInputStream input = new DataInputStream(new SafeFileInputStream(sourceLocation.toOSString(), tempLocation.toOSString()));
+			) {
 				SyncInfoReader reader = new SyncInfoReader(workspace, this);
 				reader.readSyncInfo(input);
-			} finally {
-				input.close();
 			}
 		} catch (Exception e) {
 			//don't let runtime exceptions such as ArrayIndexOutOfBounds prevent startup

@@ -838,11 +838,10 @@ public class SaveManager implements IElementInfoFlattener, IManager, IStringPool
 				return;
 		}
 		try {
-			SafeChunkyInputStream input = new SafeChunkyInputStream(target);
-			try {
+			try (
+				SafeChunkyInputStream input = new SafeChunkyInputStream(target);
+			) {
 				masterTable.load(input);
-			} finally {
-				input.close();
 			}
 		} catch (IOException e) {
 			String message = Messages.resources_exMasterTable;
@@ -948,12 +947,12 @@ public class SaveManager implements IElementInfoFlattener, IManager, IStringPool
 				/* Read each of the snapshots and lay them on top of the current tree.*/
 				ElementTree complete = workspace.getElementTree();
 				complete.immutable();
-				DataInputStream input = new DataInputStream(new SafeChunkyInputStream(localFile));
-				try {
+				try (
+					DataInputStream input = new DataInputStream(new SafeChunkyInputStream(localFile));
+				) {
 					WorkspaceTreeReader reader = WorkspaceTreeReader.getReader(workspace, input.readInt());
 					complete = reader.readSnapshotTree(input, complete, monitor);
 				} finally {
-					FileUtil.safeClose(input);
 					//reader returned an immutable tree, but since we're inside
 					//an operation, we must return an open tree
 					lastSnap = complete;
@@ -1034,11 +1033,10 @@ public class SaveManager implements IElementInfoFlattener, IManager, IStringPool
 			return;
 		}
 		try {
-			DataInputStream input = new DataInputStream(new SafeFileInputStream(treeLocation.toOSString(), tempLocation.toOSString(), TREE_BUFFER_SIZE));
-			try {
+			try (
+				DataInputStream input = new DataInputStream(new SafeFileInputStream(treeLocation.toOSString(), tempLocation.toOSString(), TREE_BUFFER_SIZE));
+			) {
 				WorkspaceTreeReader.getReader(workspace, input.readInt()).readTree(input, monitor);
-			} finally {
-				input.close();
 			}
 		} catch (IOException e) {
 			String msg = NLS.bind(Messages.resources_readMeta, treeLocation.toOSString());
@@ -1068,12 +1066,11 @@ public class SaveManager implements IElementInfoFlattener, IManager, IStringPool
 			IPath tempLocation = workspace.getMetaArea().getBackupLocationFor(treeLocation);
 			if (!treeLocation.toFile().exists() && !tempLocation.toFile().exists())
 				return false;
-			DataInputStream input = new DataInputStream(new SafeFileInputStream(treeLocation.toOSString(), tempLocation.toOSString()));
-			try {
+			try (
+				DataInputStream input = new DataInputStream(new SafeFileInputStream(treeLocation.toOSString(), tempLocation.toOSString()));
+			) {
 				WorkspaceTreeReader reader = WorkspaceTreeReader.getReader(workspace, input.readInt());
 				reader.readTree(project, input, Policy.subMonitorFor(monitor, Policy.totalWork));
-			} finally {
-				input.close();
 			}
 		} catch (IOException e) {
 			message = NLS.bind(Messages.resources_readMeta, project.getFullPath());
@@ -1106,12 +1103,12 @@ public class SaveManager implements IElementInfoFlattener, IManager, IStringPool
 				zip.close();
 				return false;
 			}
-			DataInputStream input = new DataInputStream(zip);
-			try {
+			try (
+				DataInputStream input = new DataInputStream(zip);
+			) {
 				WorkspaceTreeReader reader = WorkspaceTreeReader.getReader(workspace, input.readInt(), true);
 				reader.readTree(project, input, Policy.subMonitorFor(monitor, Policy.totalWork));
 			} finally {
-				input.close();
 				zip.close();
 			}
 		} catch (IOException e) {
@@ -1266,13 +1263,11 @@ public class SaveManager implements IElementInfoFlattener, IManager, IStringPool
 		try {
 			if (kind == ISaveContext.FULL_SAVE || kind == ISaveContext.SNAPSHOT)
 				validateMasterTableBeforeSave(target);
-			SafeChunkyOutputStream output = new SafeChunkyOutputStream(target);
-			try {
+			try (
+				SafeChunkyOutputStream output = new SafeChunkyOutputStream(target);
+			) {
 				masterTable.store(output, "master table"); //$NON-NLS-1$
 				output.succeed();
-				output.close();
-			} finally {
-				FileUtil.safeClose(output);
 			}
 		} catch (IOException e) {
 			throw new ResourceException(IResourceStatus.INTERNAL_ERROR, null, NLS.bind(Messages.resources_exSaveMaster, location.toOSString()), e);
@@ -1342,13 +1337,11 @@ public class SaveManager implements IElementInfoFlattener, IManager, IStringPool
 		ZipOutputStream out = null;
 		try {
 			FileOutputStream fis = new FileOutputStream(tmpTree);
-			DataOutputStream output = new DataOutputStream(fis);
-			try {
+			try (
+				DataOutputStream output = new DataOutputStream(fis);
+			) {
 				output.writeInt(ICoreConstants.WORKSPACE_TREE_VERSION_2);
 				writeTree(project, output, monitor);
-				output.close();
-			} finally {
-				FileUtil.safeClose(output);
 			}
 			OutputStream snapOut = store.openOutputStream(EFS.NONE, monitor);
 			out = new ZipOutputStream(snapOut);
@@ -1357,15 +1350,13 @@ public class SaveManager implements IElementInfoFlattener, IManager, IStringPool
 			out.putNextEntry(e);
 			int read = 0;
 			byte[] buffer = new byte[4096];
-			InputStream in = new FileInputStream(tmpTree);
-			try {
+			try (
+				InputStream in = new FileInputStream(tmpTree);
+			) {
 				while ((read = in.read(buffer)) >= 0) {
 					out.write(buffer, 0, read);
 				}
 				out.closeEntry();
-				in.close();
-			} finally {
-				FileUtil.safeClose(in);
 			}
 			out.close();
 		} catch (IOException e) {
@@ -1388,13 +1379,11 @@ public class SaveManager implements IElementInfoFlattener, IManager, IStringPool
 		IPath treeLocation = workspace.getMetaArea().getTreeLocationFor(workspace.getRoot(), true);
 		try {
 			IPath tempLocation = workspace.getMetaArea().getBackupLocationFor(treeLocation);
-			DataOutputStream output = new DataOutputStream(new SafeFileOutputStream(treeLocation.toOSString(), tempLocation.toOSString()));
-			try {
+			try (
+				DataOutputStream output = new DataOutputStream(new SafeFileOutputStream(treeLocation.toOSString(), tempLocation.toOSString()));
+			) {
 				output.writeInt(ICoreConstants.WORKSPACE_TREE_VERSION_2);
 				writeTree(computeStatesToSave(contexts, workspace.getElementTree()), output, monitor);
-				output.close();
-			} finally {
-				FileUtil.safeClose(output);
 			}
 		} catch (Exception e) {
 			String msg = NLS.bind(Messages.resources_writeWorkspaceMeta, treeLocation);
@@ -1486,15 +1475,14 @@ public class SaveManager implements IElementInfoFlattener, IManager, IStringPool
 			java.io.File localFile = snapPath.toFile();
 			try {
 				SafeChunkyOutputStream safeStream = new SafeChunkyOutputStream(localFile);
-				DataOutputStream out = new DataOutputStream(safeStream);
-				try {
+				try (
+					DataOutputStream out = new DataOutputStream(safeStream);
+				) {
 					out.writeInt(ICoreConstants.WORKSPACE_TREE_VERSION_2);
 					writeWorkspaceFields(out, monitor);
 					writer.writeDelta(tree, lastSnap, Path.ROOT, ElementTreeWriter.D_INFINITE, out, ResourceComparator.getSaveComparator());
 					safeStream.succeed();
 					out.close();
-				} finally {
-					FileUtil.safeClose(out);
 				}
 			} catch (IOException e) {
 				message = NLS.bind(Messages.resources_writeWorkspaceMeta, localFile.getAbsolutePath());
@@ -1590,8 +1578,9 @@ public class SaveManager implements IElementInfoFlattener, IManager, IStringPool
 	private void validateMasterTableBeforeSave(java.io.File target) throws IOException {
 		if (target.exists()) {
 			MasterTable previousMasterTable = new MasterTable();
-			SafeChunkyInputStream input = new SafeChunkyInputStream(target);
-			try {
+			try (
+				SafeChunkyInputStream input = new SafeChunkyInputStream(target);
+			) {
 				previousMasterTable.load(input);
 				String stringValue = previousMasterTable.getProperty(ROOT_SEQUENCE_NUMBER_KEY);
 				// if there was a full save, then there must be a non-null entry for root
@@ -1603,8 +1592,6 @@ public class SaveManager implements IElementInfoFlattener, IManager, IStringPool
 					String message = "Cannot set lower sequence number for root (previous: " + valueInFile + ", new: " + valueInMemory + "). Location: " + target.getAbsolutePath(); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 					Assert.isLegal(valueInMemory >= valueInFile, message);
 				}
-			} finally {
-				input.close();
 			}
 		}
 	}
@@ -2081,13 +2068,11 @@ public class SaveManager implements IElementInfoFlattener, IManager, IStringPool
 		IPath tempLocation = workspace.getMetaArea().getBackupLocationFor(treeLocation);
 		try {
 			SafeFileOutputStream safe = new SafeFileOutputStream(treeLocation.toOSString(), tempLocation.toOSString());
-			DataOutputStream output = new DataOutputStream(safe);
-			try {
+			try (
+				DataOutputStream output = new DataOutputStream(safe);
+			) {
 				output.writeInt(ICoreConstants.WORKSPACE_TREE_VERSION_2);
 				writeTree(project, output, null);
-				output.close();
-			} finally {
-				FileUtil.safeClose(output);
 			}
 		} catch (IOException e) {
 			String msg = NLS.bind(Messages.resources_writeMeta, project.getFullPath());

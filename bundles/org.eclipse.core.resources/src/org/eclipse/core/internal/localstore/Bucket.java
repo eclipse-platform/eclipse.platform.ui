@@ -16,7 +16,6 @@ import java.io.*;
 import java.util.*;
 import org.eclipse.core.internal.resources.ResourceException;
 import org.eclipse.core.internal.resources.ResourceStatus;
-import org.eclipse.core.internal.utils.FileUtil;
 import org.eclipse.core.internal.utils.Messages;
 import org.eclipse.core.resources.IResourceStatus;
 import org.eclipse.core.runtime.*;
@@ -294,8 +293,7 @@ public abstract class Bucket {
 			this.entries.clear();
 			if (!this.location.isFile())
 				return;
-			DataInputStream source = new DataInputStream(new BufferedInputStream(new FileInputStream(location), 8192));
-			try {
+			try (DataInputStream source = new DataInputStream(new BufferedInputStream(new FileInputStream(location), 8192))) {
 				int version = source.readByte();
 				if (version != getVersion()) {
 					// unknown version
@@ -306,8 +304,6 @@ public abstract class Bucket {
 				int entryCount = source.readInt();
 				for (int i = 0; i < entryCount; i++)
 					this.entries.put(readEntryKey(source), readEntryValue(source));
-			} finally {
-				source.close();
 			}
 		} catch (IOException ioe) {
 			String message = NLS.bind(Messages.resources_readMeta, location.getAbsolutePath());
@@ -344,17 +340,13 @@ public abstract class Bucket {
 			if (parent == null)
 				throw new IOException();//caught and rethrown below
 			parent.mkdirs();
-			DataOutputStream destination = new DataOutputStream(new BufferedOutputStream(new FileOutputStream(location), 8192));
-			try {
+			try (DataOutputStream destination = new DataOutputStream(new BufferedOutputStream(new FileOutputStream(location), 8192))) {
 				destination.write(getVersion());
 				destination.writeInt(entries.size());
 				for (java.util.Map.Entry<String, Object> entry : entries.entrySet()) {
 					writeEntryKey(destination, entry.getKey());
 					writeEntryValue(destination, entry.getValue());
 				}
-				destination.close();
-			} finally {
-				FileUtil.safeClose(destination);
 			}
 			needSaving = false;
 		} catch (IOException ioe) {

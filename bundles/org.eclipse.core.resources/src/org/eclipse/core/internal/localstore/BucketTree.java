@@ -15,7 +15,6 @@ import java.io.*;
 import org.eclipse.core.internal.localstore.Bucket.Visitor;
 import org.eclipse.core.internal.resources.ResourceException;
 import org.eclipse.core.internal.resources.Workspace;
-import org.eclipse.core.internal.utils.FileUtil;
 import org.eclipse.core.internal.utils.Messages;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
@@ -139,16 +138,11 @@ public class BucketTree {
 		File versionFile = getVersionFile();
 		if (!versionFile.getParentFile().exists())
 			versionFile.getParentFile().mkdirs();
-		FileOutputStream stream = null;
-		try {
-			stream = new FileOutputStream(versionFile);
+		try (FileOutputStream stream = new FileOutputStream(versionFile)) {
 			stream.write(current.getVersion());
-			stream.close();
 		} catch (IOException e) {
 			String message = NLS.bind(Messages.resources_writeWorkspaceMeta, versionFile.getAbsolutePath());
 			throw new ResourceException(IResourceStatus.FAILED_WRITE_METADATA, null, message, e);
-		} finally {
-			FileUtil.safeClose(stream);
 		}
 	}
 

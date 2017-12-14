@@ -153,14 +153,11 @@ public class ModelObjectWriter implements IModelObjectConstants {
 	 * to be used in case we could not successfully write the new file.
 	 */
 	public void write(Object object, IPath location, IPath tempLocation, String lineSeparator) throws IOException {
-		SafeFileOutputStream file = null;
 		String tempPath = tempLocation == null ? null : tempLocation.toOSString();
-		try {
-			file = new SafeFileOutputStream(location.toOSString(), tempPath);
+		try (
+			SafeFileOutputStream file = new SafeFileOutputStream(location.toOSString(), tempPath);
+		) {
 			write(object, file, lineSeparator);
-			file.close();
-		} finally {
-			FileUtil.safeClose(file);
 		}
 	}
 
@@ -168,11 +165,11 @@ public class ModelObjectWriter implements IModelObjectConstants {
 	 * The OutputStream is closed in this method.
 	 */
 	public void write(Object object, OutputStream output, String lineSeparator) throws IOException {
-		try {
+		try (
 			XMLWriter writer = new XMLWriter(output, lineSeparator);
+		) {
 			write(object, writer);
 			writer.flush();
-			writer.close();
 			if (writer.checkError())
 				throw new IOException();
 		} finally {

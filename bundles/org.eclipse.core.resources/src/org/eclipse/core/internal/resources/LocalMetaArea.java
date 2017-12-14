@@ -22,7 +22,8 @@ import java.util.Map;
 import org.eclipse.core.filesystem.URIUtil;
 import org.eclipse.core.internal.localstore.SafeChunkyInputStream;
 import org.eclipse.core.internal.localstore.SafeChunkyOutputStream;
-import org.eclipse.core.internal.utils.*;
+import org.eclipse.core.internal.utils.Messages;
+import org.eclipse.core.internal.utils.Policy;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.osgi.util.NLS;
@@ -359,63 +360,57 @@ public class LocalMetaArea implements ICoreConstants {
 			if (!file.exists())
 				return;
 		}
-		try {
-			SafeChunkyInputStream input = new SafeChunkyInputStream(file, 500);
-			DataInputStream dataIn = new DataInputStream(input);
+		try (DataInputStream dataIn = new DataInputStream(new SafeChunkyInputStream(file, 500))) {
 			try {
-				try {
-					String location = dataIn.readUTF();
-					if (location.length() > 0) {
-						//location format < 3.2 was a local file system OS path
-						//location format >= 3.2 is: URI_PREFIX + uri.toString()
-						if (location.startsWith(URI_PREFIX))
-							description.setLocationURI(URI.create(location.substring(URI_PREFIX.length())));
-						else
-							description.setLocationURI(URIUtil.toURI(Path.fromOSString(location)));
-					}
-				} catch (Exception e) {
-					//don't allow failure to read the location to propagate
-					String msg = NLS.bind(Messages.resources_exReadProjectLocation, target.getName());
-					Policy.log(new ResourceStatus(IStatus.ERROR, IResourceStatus.FAILED_READ_METADATA, target.getFullPath(), msg, e));
+				String location = dataIn.readUTF();
+				if (location.length() > 0) {
+					//location format < 3.2 was a local file system OS path
+					//location format >= 3.2 is: URI_PREFIX + uri.toString()
+					if (location.startsWith(URI_PREFIX))
+						description.setLocationURI(URI.create(location.substring(URI_PREFIX.length())));
+					else
+						description.setLocationURI(URIUtil.toURI(Path.fromOSString(location)));
 				}
-				//try to read the dynamic references - will fail for old location files
-				int numRefs = dataIn.readInt();
-				IProject[] references = new IProject[numRefs];
-				IWorkspaceRoot root = getWorkspace().getRoot();
-				for (int i = 0; i < numRefs; i++)
-					references[i] = root.getProject(dataIn.readUTF());
-				description.setDynamicReferences(references);
-
-				// Since 3.7 -  Build Configurations
-				String[] configs = new String[dataIn.readInt()];
-				for (int i = 0; i < configs.length; i++)
-					configs[i] = dataIn.readUTF();
-				if (configs.length > 0)
-					// In the future we may decide this is better stored in the
-					// .project, so only set if configs.length > 0
-					description.setBuildConfigs(configs);
-				// Active configuration name
-				description.setActiveBuildConfig(dataIn.readUTF());
-				// Build configuration references?
-				int numBuildConifgsWithRefs = dataIn.readInt();
-				HashMap<String, IBuildConfiguration[]> m = new HashMap<>(numBuildConifgsWithRefs);
-				for (int i = 0; i < numBuildConifgsWithRefs; i++) {
-					String configName = dataIn.readUTF();
-					numRefs = dataIn.readInt();
-					IBuildConfiguration[] refs = new IBuildConfiguration[numRefs];
-					for (int j = 0; j < numRefs; j++) {
-						String projName = dataIn.readUTF();
-						if (dataIn.readBoolean())
-							refs[j] = new BuildConfiguration(root.getProject(projName), dataIn.readUTF());
-						else
-							refs[j] = new BuildConfiguration(root.getProject(projName), null);
-					}
-					m.put(configName, refs);
-				}
-				description.setBuildConfigReferences(m);
-			} finally {
-				dataIn.close();
+			} catch (Exception e) {
+				//don't allow failure to read the location to propagate
+				String msg = NLS.bind(Messages.resources_exReadProjectLocation, target.getName());
+				Policy.log(new ResourceStatus(IStatus.ERROR, IResourceStatus.FAILED_READ_METADATA, target.getFullPath(), msg, e));
 			}
+			//try to read the dynamic references - will fail for old location files
+			int numRefs = dataIn.readInt();
+			IProject[] references = new IProject[numRefs];
+			IWorkspaceRoot root = getWorkspace().getRoot();
+			for (int i = 0; i < numRefs; i++)
+				references[i] = root.getProject(dataIn.readUTF());
+			description.setDynamicReferences(references);
+
+			// Since 3.7 -  Build Configurations
+			String[] configs = new String[dataIn.readInt()];
+			for (int i = 0; i < configs.length; i++)
+				configs[i] = dataIn.readUTF();
+			if (configs.length > 0)
+				// In the future we may decide this is better stored in the
+				// .project, so only set if configs.length > 0
+				description.setBuildConfigs(configs);
+			// Active configuration name
+			description.setActiveBuildConfig(dataIn.readUTF());
+			// Build configuration references?
+			int numBuildConifgsWithRefs = dataIn.readInt();
+			HashMap<String, IBuildConfiguration[]> m = new HashMap<>(numBuildConifgsWithRefs);
+			for (int i = 0; i < numBuildConifgsWithRefs; i++) {
+				String configName = dataIn.readUTF();
+				numRefs = dataIn.readInt();
+				IBuildConfiguration[] refs = new IBuildConfiguration[numRefs];
+				for (int j = 0; j < numRefs; j++) {
+					String projName = dataIn.readUTF();
+					if (dataIn.readBoolean())
+						refs[j] = new BuildConfiguration(root.getProject(projName), dataIn.readUTF());
+					else
+						refs[j] = new BuildConfiguration(root.getProject(projName), null);
+				}
+				m.put(configName, refs);
+			}
+			description.setBuildConfigReferences(m);
 		} catch (IOException e) {
 			//ignore - this is an old location file or an exception occurred
 			// closing the stream
@@ -463,49 +458,42 @@ public class LocalMetaArea implements ICoreConstants {
 		if (projectLocation == null && prjRefs.length == 0 && buildConfigs.length == 0 && configRefs.isEmpty())
 			return;
 		//write the private metadata file
-		try {
-			SafeChunkyOutputStream output = new SafeChunkyOutputStream(file);
-			DataOutputStream dataOut = new DataOutputStream(output);
-			try {
-				if (projectLocation == null)
-					dataOut.writeUTF(""); //$NON-NLS-1$
-				else
-					dataOut.writeUTF(URI_PREFIX + projectLocation.toString());
-				dataOut.writeInt(prjRefs.length);
-				for (IProject prjRef : prjRefs)
-					dataOut.writeUTF(prjRef.getName());
+		try (SafeChunkyOutputStream output = new SafeChunkyOutputStream(file); DataOutputStream dataOut = new DataOutputStream(output);) {
+			if (projectLocation == null)
+				dataOut.writeUTF(""); //$NON-NLS-1$
+			else
+				dataOut.writeUTF(URI_PREFIX + projectLocation.toString());
+			dataOut.writeInt(prjRefs.length);
+			for (IProject prjRef : prjRefs)
+				dataOut.writeUTF(prjRef.getName());
 
-				// Since 3.7 - build configurations + references
-				// Write out the build configurations
-				dataOut.writeInt(buildConfigs.length);
-				for (String buildConfig : buildConfigs) {
-					dataOut.writeUTF(buildConfig);
-				}
-				// Write active configuration name
-				dataOut.writeUTF(desc.getActiveBuildConfig());
-				// Write out the configuration level references
-				dataOut.writeInt(configRefs.size());
-				for (Map.Entry<String, IBuildConfiguration[]> e : configRefs.entrySet()) {
-					String refdName = e.getKey();
-					IBuildConfiguration[] refs = e.getValue();
+			// Since 3.7 - build configurations + references
+			// Write out the build configurations
+			dataOut.writeInt(buildConfigs.length);
+			for (String buildConfig : buildConfigs) {
+				dataOut.writeUTF(buildConfig);
+			}
+			// Write active configuration name
+			dataOut.writeUTF(desc.getActiveBuildConfig());
+			// Write out the configuration level references
+			dataOut.writeInt(configRefs.size());
+			for (Map.Entry<String, IBuildConfiguration[]> e : configRefs.entrySet()) {
+				String refdName = e.getKey();
+				IBuildConfiguration[] refs = e.getValue();
 
-					dataOut.writeUTF(refdName);
-					dataOut.writeInt(refs.length);
-					for (IBuildConfiguration ref : refs) {
-						dataOut.writeUTF(ref.getProject().getName());
-						if (ref.getName() == null) {
-							dataOut.writeBoolean(false);
-						} else {
-							dataOut.writeBoolean(true);
-							dataOut.writeUTF(ref.getName());
-						}
+				dataOut.writeUTF(refdName);
+				dataOut.writeInt(refs.length);
+				for (IBuildConfiguration ref : refs) {
+					dataOut.writeUTF(ref.getProject().getName());
+					if (ref.getName() == null) {
+						dataOut.writeBoolean(false);
+					} else {
+						dataOut.writeBoolean(true);
+						dataOut.writeUTF(ref.getName());
 					}
 				}
-				output.succeed();
-				dataOut.close();
-			} finally {
-				FileUtil.safeClose(dataOut);
 			}
+			output.succeed();
 		} catch (IOException e) {
 			String message = NLS.bind(Messages.resources_exSaveProjectLocation, target.getName());
 			throw new ResourceException(IResourceStatus.INTERNAL_ERROR, null, message, e);

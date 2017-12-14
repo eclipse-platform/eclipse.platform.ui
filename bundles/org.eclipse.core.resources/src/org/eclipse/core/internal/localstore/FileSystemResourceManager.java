@@ -373,11 +373,11 @@ public class FileSystemResourceManager implements ICoreConstants, IManager, Pref
 	 * are not considered.
 	 */
 	private boolean descriptionChanged(IFile descriptionFile, byte[] newContents) {
-		InputStream oldStream = null;
-		try {
-			//buffer size: twice the description length, but maximum 8KB
-			int bufsize = newContents.length > 4096 ? 8192 : newContents.length * 2;
-			oldStream = new BufferedInputStream(descriptionFile.getContents(true), bufsize);
+		//buffer size: twice the description length, but maximum 8KB
+		int bufsize = newContents.length > 4096 ? 8192 : newContents.length * 2;
+		try (
+			InputStream oldStream = new BufferedInputStream(descriptionFile.getContents(true), bufsize);
+		) {
 			InputStream newStream = new ByteArrayInputStream(newContents);
 			//compare streams char by char, ignoring line endings
 			int newChar = newStream.read();
@@ -405,8 +405,6 @@ public class FileSystemResourceManager implements ICoreConstants, IManager, Pref
 		} catch (Exception e) {
 			Policy.log(e);
 			//if we failed to compare, just write the new contents
-		} finally {
-			FileUtil.safeClose(oldStream);
 		}
 		return true;
 	}
@@ -416,9 +414,9 @@ public class FileSystemResourceManager implements ICoreConstants, IManager, Pref
 	 */
 	@Deprecated
 	public int doGetEncoding(IFileStore store) throws CoreException {
-		InputStream input = null;
-		try {
-			input = store.openInputStream(EFS.NONE, null);
+		try (
+			InputStream input = store.openInputStream(EFS.NONE, null);
+		) {
 			int first = input.read();
 			int second = input.read();
 			if (first == -1 || second == -1)
@@ -440,8 +438,6 @@ public class FileSystemResourceManager implements ICoreConstants, IManager, Pref
 		} catch (IOException e) {
 			String message = NLS.bind(Messages.localstore_couldNotRead, store.toString());
 			throw new ResourceException(IResourceStatus.FAILED_READ_LOCAL, null, message, e);
-		} finally {
-			FileUtil.safeClose(input);
 		}
 	}
 
@@ -889,9 +885,9 @@ public class FileSystemResourceManager implements ICoreConstants, IManager, Pref
 		ProjectDescription description = null;
 		//hold onto any exceptions until after sync info is updated, then throw it
 		ResourceException error = null;
-		InputStream in = null;
-		try {
-			in = new BufferedInputStream(descriptionStore.openInputStream(EFS.NONE, SubMonitor.convert(null)));
+		try (
+			InputStream in = new BufferedInputStream(descriptionStore.openInputStream(EFS.NONE, SubMonitor.convert(null)));
+		) {
 			// IFileStore#openInputStream may cancel the monitor, thus the monitor state is checked
 			description = new ProjectDescriptionReader(target).read(new InputSource(in));
 		} catch (OperationCanceledException e) {
@@ -908,8 +904,8 @@ public class FileSystemResourceManager implements ICoreConstants, IManager, Pref
 			}
 			String msg = NLS.bind(Messages.resources_readProjectMeta, target.getName());
 			error = new ResourceException(IResourceStatus.FAILED_READ_METADATA, target.getFullPath(), msg, e);
-		} finally {
-			FileUtil.safeClose(in);
+		} catch (IOException ex) {
+			// ignore
 		}
 		if (error == null && description == null) {
 			String msg = NLS.bind(Messages.resources_readProjectMeta, target.getName());
@@ -1224,17 +1220,14 @@ public class FileSystemResourceManager implements ICoreConstants, IManager, Pref
 
 		//write the file that represents the project description
 		IFileStore fileStore = projectStore.getChild(IProjectDescription.DESCRIPTION_FILE_NAME);
-		OutputStream out = null;
-		try {
-			out = fileStore.openOutputStream(EFS.NONE, null);
+		try (
+			OutputStream out = fileStore.openOutputStream(EFS.NONE, null)
+		) {
 			IFile file = target.getFile(IProjectDescription.DESCRIPTION_FILE_NAME);
 			new ModelObjectWriter().write(desc, out, FileUtil.getLineSeparator(file));
-			out.close();
 		} catch (IOException e) {
 			String msg = NLS.bind(Messages.resources_writeMeta, target.getFullPath());
 			throw new ResourceException(IResourceStatus.FAILED_WRITE_METADATA, target.getFullPath(), msg, e);
-		} finally {
-			FileUtil.safeClose(out);
 		}
 		//for backwards compatibility, ensure the old .prj file is deleted
 		getWorkspace().getMetaArea().clearOldDescription(target);

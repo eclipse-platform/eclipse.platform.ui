@@ -14,7 +14,6 @@ package org.eclipse.core.internal.resources;
 import java.io.*;
 import java.util.Properties;
 import java.util.Set;
-import org.eclipse.core.internal.utils.FileUtil;
 import org.eclipse.core.internal.utils.Messages;
 import org.eclipse.core.resources.IResourceStatus;
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -64,11 +63,10 @@ public class SafeFileTable {
 		if (!target.exists())
 			return;
 		try {
-			FileInputStream input = new FileInputStream(target);
-			try {
+			try (
+				FileInputStream input = new FileInputStream(target);
+			) {
 				table.load(input);
-			} finally {
-				input.close();
 			}
 		} catch (IOException e) {
 			String message = Messages.resources_exSafeRead;
@@ -79,12 +77,10 @@ public class SafeFileTable {
 	public void save() throws CoreException {
 		java.io.File target = location.toFile();
 		try {
-			FileOutputStream output = new FileOutputStream(target);
-			try {
+			try (
+				FileOutputStream output = new FileOutputStream(target);
+			) {
 				table.store(output, "safe table"); //$NON-NLS-1$
-				output.close();
-			} finally {
-				FileUtil.safeClose(output);
 			}
 		} catch (IOException e) {
 			String message = Messages.resources_exSafeSave;

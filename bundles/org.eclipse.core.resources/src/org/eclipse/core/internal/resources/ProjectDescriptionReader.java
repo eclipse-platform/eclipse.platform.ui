@@ -23,7 +23,8 @@ import javax.xml.parsers.*;
 import org.eclipse.core.filesystem.URIUtil;
 import org.eclipse.core.internal.events.BuildCommand;
 import org.eclipse.core.internal.localstore.SafeFileInputStream;
-import org.eclipse.core.internal.utils.*;
+import org.eclipse.core.internal.utils.Messages;
+import org.eclipse.core.internal.utils.Policy;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.osgi.util.NLS;
@@ -952,12 +953,10 @@ public class ProjectDescriptionReader extends DefaultHandler implements IModelOb
 	 * Reads and returns a project description stored at the given location
 	 */
 	public ProjectDescription read(IPath location) throws IOException {
-		BufferedInputStream file = null;
-		try {
-			file = new BufferedInputStream(new FileInputStream(location.toFile()));
+		try (
+			BufferedInputStream file = new BufferedInputStream(new FileInputStream(location.toFile()));
+		) {
 			return read(new InputSource(file));
-		} finally {
-			FileUtil.safeClose(file);
 		}
 	}
 
@@ -966,11 +965,10 @@ public class ProjectDescriptionReader extends DefaultHandler implements IModelOb
 	 * temporary location.
 	 */
 	public ProjectDescription read(IPath location, IPath tempLocation) throws IOException {
-		SafeFileInputStream file = new SafeFileInputStream(location.toOSString(), tempLocation.toOSString());
-		try {
+		try (
+			SafeFileInputStream file = new SafeFileInputStream(location.toOSString(), tempLocation.toOSString());
+		) {
 			return read(new InputSource(file));
-		} finally {
-			file.close();
 		}
 	}
 

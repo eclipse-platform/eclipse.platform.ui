@@ -401,14 +401,10 @@ public class NatureTest extends ResourceTest {
 		description.append("</natures></projectDescription>\n");
 
 		// write the description
-		OutputStream output = null;
-		try {
-			output = descStore.openOutputStream(EFS.NONE, getMonitor());
+		try (OutputStream output = descStore.openOutputStream(EFS.NONE, getMonitor());) {
 			output.write(description.toString().getBytes());
 		} catch (CoreException e) {
 			fail("1.0");
-		} finally {
-			FileUtil.safeClose(output);
 		}
 
 		try {

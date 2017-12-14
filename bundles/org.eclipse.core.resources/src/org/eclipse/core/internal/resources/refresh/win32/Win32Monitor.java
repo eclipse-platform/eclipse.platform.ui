@@ -14,6 +14,7 @@
  *******************************************************************************/
 package org.eclipse.core.internal.resources.refresh.win32;
 
+import java.io.Closeable;
 import java.io.File;
 import java.util.*;
 import org.eclipse.core.internal.utils.Messages;
@@ -89,12 +90,10 @@ class Win32Monitor extends Job implements IRefreshMonitor {
 			if (next != null) {
 				if (next.isOpen()) {
 					if (!next.exists()) {
+						next.close();
 						if (next instanceof LinkedResourceHandle) {
-							next.close();
 							LinkedResourceHandle linkedResourceHandle = (LinkedResourceHandle) next;
 							linkedResourceHandle.postRefreshRequest();
-						} else {
-							next.close();
 						}
 						ChainedHandle previous = getPrevious();
 						if (previous != null)
@@ -137,13 +136,14 @@ class Win32Monitor extends Job implements IRefreshMonitor {
 		}
 	}
 
-	protected abstract class Handle {
+	protected abstract class Handle implements Closeable {
 		protected long handleValue;
 
 		public Handle() {
 			handleValue = Win32Natives.INVALID_HANDLE_VALUE;
 		}
 
+		@Override
 		public void close() {
 			if (isOpen()) {
 				if (!Win32Natives.FindCloseChangeNotification(handleValue)) {

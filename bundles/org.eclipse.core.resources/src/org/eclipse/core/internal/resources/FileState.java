@@ -13,7 +13,8 @@ package org.eclipse.core.internal.resources;
 
 import java.io.*;
 import org.eclipse.core.internal.localstore.IHistoryStore;
-import org.eclipse.core.internal.utils.*;
+import org.eclipse.core.internal.utils.Messages;
+import org.eclipse.core.internal.utils.UniversalUniqueIdentifier;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.content.IContentDescription;
@@ -48,16 +49,12 @@ public class FileState extends PlatformObject implements IFileState {
 
 		// tries to obtain a description for the file contents
 		IContentTypeManager contentTypeManager = Platform.getContentTypeManager();
-		InputStream contents = new BufferedInputStream(getContents());
-		try {
+		try (InputStream contents = new BufferedInputStream(getContents())) {
 			IContentDescription description = contentTypeManager.getDescriptionFor(contents, getName(), new QualifiedName[] {IContentDescription.CHARSET});
-			contents.close();
 			return description == null ? null : description.getCharset();
 		} catch (IOException e) {
 			String message = NLS.bind(Messages.history_errorContentDescription, getFullPath());
 			throw new ResourceException(IResourceStatus.FAILED_DESCRIBING_CONTENTS, getFullPath(), message, e);
-		} finally {
-			FileUtil.safeClose(contents);
 		}
 	}
 
