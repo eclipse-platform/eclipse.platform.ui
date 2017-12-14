@@ -12,7 +12,8 @@
 package org.eclipse.core.internal.localstore;
 
 import java.io.*;
-import org.eclipse.core.internal.utils.FileUtil;
+import java.nio.file.Files;
+import java.nio.file.StandardCopyOption;
 
 /**
  * This class should be used when there's a file already in the
@@ -54,7 +55,7 @@ public class SafeFileOutputStream extends OutputStream {
 			// If we do not have a file at target location, but we do have at temp location,
 			// it probably means something wrong happened the last time we tried to write it.
 			// So, try to recover the backup file. And, if successful, write the new one.
-			copy(temp, target);
+			Files.copy(temp.toPath(), target.toPath());
 		}
 		output = new BufferedOutputStream(new FileOutputStream(temp));
 	}
@@ -76,27 +77,8 @@ public class SafeFileOutputStream extends OutputStream {
 	protected void commit() throws IOException {
 		if (!temp.exists())
 			return;
-		target.delete();
-		copy(temp, target);
+		Files.copy(temp.toPath(), target.toPath(), StandardCopyOption.REPLACE_EXISTING);
 		temp.delete();
-	}
-
-	protected void copy(File sourceFile, File destinationFile) throws IOException {
-		if (!sourceFile.exists())
-			return;
-		if (sourceFile.renameTo(destinationFile))
-			return;
-		InputStream source = null;
-		OutputStream destination = null;
-		try {
-			source = new BufferedInputStream(new FileInputStream(sourceFile));
-			destination = new BufferedOutputStream(new FileOutputStream(destinationFile));
-			transferStreams(source, destination);
-			destination.close();
-		} finally {
-			FileUtil.safeClose(source);
-			FileUtil.safeClose(destination);
-		}
 	}
 
 	protected void createTempFile(String tempPath) {
@@ -117,16 +99,6 @@ public class SafeFileOutputStream extends OutputStream {
 
 	public String getTempFilePath() {
 		return temp.getAbsolutePath();
-	}
-
-	protected void transferStreams(InputStream source, OutputStream destination) throws IOException {
-		byte[] buffer = new byte[8192];
-		while (true) {
-			int bytesRead = source.read(buffer);
-			if (bytesRead == -1)
-				break;
-			destination.write(buffer, 0, bytesRead);
-		}
 	}
 
 	@Override
