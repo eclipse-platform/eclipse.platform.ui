@@ -1298,9 +1298,9 @@ public class StackRenderer extends LazyStackRenderer implements IPreferenceChang
 		// Ensure that the newly selected control is correctly sized
 		if (tabItem.getControl() instanceof Composite) {
 			Composite ctiComp = (Composite) tabItem.getControl();
-			// see bug 461573: call below is still needed to make view
+			// see bug 461573, 528720: call below is still needed to make view
 			// descriptions visible after unhiding the view with changed bounds
-			ctiComp.layout(false, true);
+			ctiComp.requestLayout();
 		}
 		tabFolder.setSelection(tabItem);
 		ignoreTabSelChanges = false;
