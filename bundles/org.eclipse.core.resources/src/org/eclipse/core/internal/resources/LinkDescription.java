@@ -60,7 +60,10 @@ public class LinkDescription implements Comparable<LinkDescription> {
 
 	@Override
 	public boolean equals(Object o) {
-		if (!(o.getClass() == LinkDescription.class))
+		if (o == null) {
+			return false;
+		}
+		if (o.getClass() != this.getClass())
 			return false;
 		LinkDescription other = (LinkDescription) o;
 		return localLocation.equals(other.localLocation) && path.equals(other.path) && type == other.type;

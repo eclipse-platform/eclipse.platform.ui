@@ -11,6 +11,7 @@
 package org.eclipse.core.tests.resources.content;
 
 import java.io.*;
+import java.util.Arrays;
 import junit.framework.Test;
 import junit.framework.TestSuite;
 import org.eclipse.core.runtime.Platform;
@@ -108,8 +109,8 @@ public class XMLContentDescriberTest extends ContentTypeTest {
 		for (boolean[] flag : flags) {
 			description = Platform.getContentTypeManager().getDescriptionFor(getReader(encodingInContent, flag[0], flag[1], flag[2]), "fake.xml", new QualifiedName[] {IContentDescription.CHARSET});
 			assertNotNull("1.0: " + flag[0] + " " + flag[1] + " " + flag[2], description);
-			assertEquals("1.1: " + flag, Platform.PI_RUNTIME + ".xml", description.getContentType().getId());
-			assertEquals("1.2: " + flag, expectedEncoding, description.getProperty(IContentDescription.CHARSET));
+			assertEquals("1.1: " + Arrays.toString(flag), Platform.PI_RUNTIME + ".xml", description.getContentType().getId());
+			assertEquals("1.2: " + Arrays.toString(flag), expectedEncoding, description.getProperty(IContentDescription.CHARSET));
 		}
 	}
 

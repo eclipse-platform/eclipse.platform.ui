@@ -27,17 +27,17 @@ public class PathVariableUtil {
 	static public String getUniqueVariableName(String variable, IResource resource) {
 		int index = 1;
 		variable = getValidVariableName(variable);
-		String destVariable = variable;
+		StringBuilder destVariable = new StringBuilder(variable);
 
 		IPathVariableManager pathVariableManager = resource.getPathVariableManager();
-		if (destVariable.startsWith(ParentVariableResolver.NAME) || destVariable.startsWith(ProjectLocationVariableResolver.NAME))
-			destVariable = "copy_" + destVariable; //$NON-NLS-1$
+		if (variable.startsWith(ParentVariableResolver.NAME) || variable.startsWith(ProjectLocationVariableResolver.NAME))
+			destVariable.insert(0, "copy_"); //$NON-NLS-1$
 
-		while (pathVariableManager.isDefined(destVariable)) {
-			destVariable = destVariable + index;
+		while (pathVariableManager.isDefined(destVariable.toString())) {
+			destVariable.append(index);
 			index++;
 		}
-		return destVariable;
+		return destVariable.toString();
 	}
 
 	public static String getValidVariableName(String variable) {

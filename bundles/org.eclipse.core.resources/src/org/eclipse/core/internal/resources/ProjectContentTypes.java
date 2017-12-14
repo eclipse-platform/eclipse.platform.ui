@@ -197,7 +197,7 @@ public class ProjectContentTypes {
 		ProjectInfo info = (ProjectInfo) project.getResourceInfo(false, false);
 		//fail if project has been deleted concurrently
 		if (info == null)
-			project.checkAccessible(project.getFlags(info));
+			project.checkAccessible(project.getFlags(null));
 		IContentTypeMatcher matcher = info.getMatcher();
 		if (matcher != null)
 			return matcher;

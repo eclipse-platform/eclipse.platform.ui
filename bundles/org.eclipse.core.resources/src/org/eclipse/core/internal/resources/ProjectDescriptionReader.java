@@ -503,7 +503,7 @@ public class ProjectDescriptionReader extends DefaultHandler implements IModelOb
 			String id = (String) matcher[0];
 			// the id can't be null
 			if (id == null) {
-				parseProblem(NLS.bind(Messages.projRead_badFilterID, id));
+				parseProblem(NLS.bind(Messages.projRead_badFilterID, null));
 				return;
 			}
 

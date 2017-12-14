@@ -19,6 +19,7 @@ import java.util.HashSet;
 import java.util.Set;
 import org.eclipse.core.filesystem.*;
 import org.eclipse.core.internal.resources.Resource;
+import org.eclipse.core.internal.utils.FileUtil;
 import org.eclipse.core.internal.utils.UniversalUniqueIdentifier;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
@@ -130,18 +131,8 @@ public abstract class ResourceTest extends CoreTest {
 				subMonitor.setWorkRemaining(100).split(1);
 			}
 		} finally {
-			try {
-				source.close();
-			} catch (IOException e) {
-				// ignore
-			} finally {
-				//close destination in finally in case source.close fails
-				try {
-					destination.close();
-				} catch (IOException e) {
-					// ignore
-				}
-			}
+			FileUtil.safeClose(source);
+			FileUtil.safeClose(destination);
 		}
 	}
 

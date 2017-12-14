@@ -18,7 +18,6 @@ import java.net.UnknownHostException;
 import java.security.SecureRandom;
 import java.util.GregorianCalendar;
 import java.util.Random;
-import org.eclipse.core.runtime.Assert;
 
 public class UniversalUniqueIdentifier implements java.io.Serializable {
 
@@ -84,7 +83,7 @@ public class UniversalUniqueIdentifier implements java.io.Serializable {
 	/**
 	 Constructor that accepts the bytes to use for the instance.&nbsp;&nbsp; The format
 	 of the byte array is compatible with the <code>toBytes()</code> method.
-
+	
 	 <p>The constructor returns the undefined uuid if the byte array is invalid.
 	
 	 @see #toBytes()
@@ -114,20 +113,6 @@ public class UniversalUniqueIdentifier implements java.io.Serializable {
 		BigInteger baseMillis = BigInteger.valueOf(now.getGregorianChange().getTime());
 
 		return (nowMillis.subtract(baseMillis).multiply(BigInteger.valueOf(10000L)));
-	}
-
-	/**
-	 Simply increases the visibility of <code>Object</code>'s clone.
-	 Otherwise, no new behaviour.
-	 */
-	@Override
-	public Object clone() {
-		try {
-			return super.clone();
-		} catch (CloneNotSupportedException e) {
-			Assert.isTrue(false, Messages.utils_clone);
-			return null;
-		}
 	}
 
 	public static int compareTime(byte[] fBits1, byte[] fBits2) {
@@ -198,7 +183,7 @@ public class UniversalUniqueIdentifier implements java.io.Serializable {
 	/**
 	 Answers the IP address of the local machine using the
 	 Java API class <code>InetAddress</code>.
-
+	
 	 @return byte[] the network address in network order
 	 @see    java.net.InetAddress#getLocalHost()
 	 @see    java.net.InetAddress#getAddress()
@@ -327,7 +312,7 @@ public class UniversalUniqueIdentifier implements java.io.Serializable {
 
 	/**
 	 This representation is compatible with the (byte[]) constructor.
-
+	
 	 @see #UniversalUniqueIdentifier(byte[])
 	 */
 	public byte[] toBytes() {

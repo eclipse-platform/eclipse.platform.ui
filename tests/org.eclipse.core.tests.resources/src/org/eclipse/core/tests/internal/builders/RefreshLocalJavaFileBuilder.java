@@ -13,6 +13,7 @@ package org.eclipse.core.tests.internal.builders;
 
 import java.io.FileOutputStream;
 import java.util.Map;
+import org.eclipse.core.internal.utils.FileUtil;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 
@@ -32,16 +33,18 @@ public class RefreshLocalJavaFileBuilder extends TestBuilder {
 		IFile file = project.getFile("A.java");
 		IPath localLocation = project.getLocation().append(file.getName());
 		java.io.File localFile = localLocation.toFile();
+		FileOutputStream out = null;
 		try {
 			if (localFile.exists()) {
 				localFile.delete();
 			}
-			FileOutputStream out = new FileOutputStream(localFile);
+			out = new FileOutputStream(localFile);
 			out.write("public class A {}".getBytes());
-			out.close();
 		} catch (Exception e) {
 			e.printStackTrace();
 			return null;
+		} finally {
+			FileUtil.safeClose(out);
 		}
 
 		project.refreshLocal(IResource.DEPTH_INFINITE, null);

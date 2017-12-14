@@ -11,12 +11,12 @@
  *******************************************************************************/
 package org.eclipse.core.tests.resources.usecase;
 
+import java.util.Arrays;
 import java.util.Hashtable;
 import junit.framework.Test;
 import junit.framework.TestSuite;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
-import org.eclipse.core.tests.resources.Comparator;
 
 public class IProjectTest extends IResourceTest {
 	public static String LOCAL_LOCATION_PATH_STRING_0;
@@ -221,7 +221,7 @@ public class IProjectTest extends IResourceTest {
 		desc.setBuildSpec(commands);
 
 		// Compare project buildspecs
-		assertTrue("15.5", Comparator.equals(desc.getBuildSpec(), commands));
+		assertTrue("15.5", Arrays.deepEquals(desc.getBuildSpec(), commands));
 
 		// IResource.isLocal(int)
 		assertTrue("18.0", proj.isLocal(IResource.DEPTH_ZERO));

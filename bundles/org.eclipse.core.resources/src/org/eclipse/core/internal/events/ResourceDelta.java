@@ -308,8 +308,7 @@ public class ResourceDelta extends PlatformObject implements IResourceDelta {
 			info = oldInfo;
 		else
 			info = newInfo;
-		if (info == null)
-			Assert.isNotNull(null, "Do not have resource info for resource in delta: " + path); //$NON-NLS-1$
+		Assert.isNotNull(info, "Do not have resource info for resource in delta: " + path); //$NON-NLS-1$
 		cachedResource = deltaInfo.getWorkspace().newResource(path, info.getType());
 		return cachedResource;
 	}

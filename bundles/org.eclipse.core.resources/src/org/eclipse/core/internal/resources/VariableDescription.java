@@ -35,7 +35,10 @@ public class VariableDescription implements Comparable<VariableDescription> {
 
 	@Override
 	public boolean equals(Object o) {
-		if (!(o.getClass() == VariableDescription.class))
+		if (o == null) {
+			return false;
+		}
+		if (o.getClass() != this.getClass())
 			return false;
 		VariableDescription other = (VariableDescription) o;
 		return name.equals(other.name) && value == other.value;
