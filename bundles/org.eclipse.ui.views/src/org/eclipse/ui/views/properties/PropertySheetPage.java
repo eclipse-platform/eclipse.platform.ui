@@ -303,6 +303,10 @@ public class PropertySheetPage extends Page implements IPropertySheetPage, IAdap
 			cellEditorActivationListener = null;
 			viewer = null;
 		}
+		if (cellEditorActionHandler != null) {
+			cellEditorActionHandler.dispose();
+			cellEditorActionHandler = null;
+		}
 		if (defaultsAction != null) {
 			defaultsAction.viewer = null;
 			defaultsAction = null;
