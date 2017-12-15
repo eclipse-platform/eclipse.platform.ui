@@ -62,7 +62,7 @@ public class XMLTextHover implements ITextHover, ITextHoverExtension, IInformati
 	 * Formats a message as HTML text. Expects the message to already be properly escaped
 	 */
 	private String formatMessage(String message) {
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 		HTMLPrinter.addPageProlog(buffer);
 		HTMLPrinter.addParagraph(buffer, message);
 		HTMLPrinter.addPageEpilog(buffer);
@@ -73,7 +73,7 @@ public class XMLTextHover implements ITextHover, ITextHoverExtension, IInformati
 	 * Formats a message as HTML text.
 	 */
 	private String formatPathMessage(String[] list) {
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 		HTMLPrinter.addPageProlog(buffer);
 		HTMLPrinter.addSmallHeader(buffer, AntEditorTextMessages.XMLTextHover_4);
 		HTMLPrinter.startBulletList(buffer);
@@ -85,11 +85,6 @@ public class XMLTextHover implements ITextHover, ITextHoverExtension, IInformati
 		return buffer.toString();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.jface.text.ITextHover#getHoverInfo(org.eclipse.jface.text.ITextViewer, org.eclipse.jface.text.IRegion)
-	 */
 	@Override
 	public String getHoverInfo(ITextViewer textViewer, IRegion hoverRegion) {
 
@@ -198,7 +193,7 @@ public class XMLTextHover implements ITextHover, ITextHoverExtension, IInformati
 	}
 
 	private String formatSetMessage(String[] includes, String[] excludes) {
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 		HTMLPrinter.addPageProlog(buffer);
 		if (includes != null && includes.length > 0) {
 			HTMLPrinter.addSmallHeader(buffer, AntEditorTextMessages.XMLTextHover_5);
@@ -218,11 +213,6 @@ public class XMLTextHover implements ITextHover, ITextHoverExtension, IInformati
 		return buffer.toString();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.jface.text.ITextHover#getHoverRegion(org.eclipse.jface.text.ITextViewer, int)
-	 */
 	@Override
 	public IRegion getHoverRegion(ITextViewer textViewer, int offset) {
 		if (textViewer != null) {

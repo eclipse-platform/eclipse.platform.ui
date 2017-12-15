@@ -17,9 +17,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.eclipse.ant.internal.ui.editor.AntEditorMessages;
-
 import org.eclipse.jface.internal.text.html.HTMLPrinter;
-
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.Position;
@@ -164,7 +162,7 @@ public class XMLAnnotationHover implements IAnnotationHover {
 	 * Formats a message as HTML text.
 	 */
 	private String formatSingleMessage(String message) {
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 		HTMLPrinter.addPageProlog(buffer);
 		HTMLPrinter.addParagraph(buffer, HTMLPrinter.convertToHTMLContent(message));
 		HTMLPrinter.addPageEpilog(buffer);
@@ -175,7 +173,7 @@ public class XMLAnnotationHover implements IAnnotationHover {
 	 * Formats several message as HTML text.
 	 */
 	private String formatMultipleMessages(List<String> messages) {
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 		HTMLPrinter.addPageProlog(buffer);
 		HTMLPrinter.addParagraph(buffer, HTMLPrinter.convertToHTMLContent(AntEditorMessages.getString("AntAnnotationHover.multipleMarkersAtThisLine"))); //$NON-NLS-1$
 
