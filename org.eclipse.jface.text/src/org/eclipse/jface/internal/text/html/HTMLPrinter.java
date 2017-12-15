@@ -342,7 +342,7 @@ public class HTMLPrinter {
 	 * @param buffer the output buffer
 	 * @param styles array with styles to be appended
 	 *
-	 * @deprecated migrate to new StringBuilder API
+	 * @deprecated As of 3.13, replaced by {@link #insertStyles(StringBuilder, String[])}
 	 */
 	@Deprecated
 	public static void insertStyles(StringBuffer buffer, String[] styles) {
