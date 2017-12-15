@@ -65,6 +65,12 @@ public interface IPresentationEngine {
 	public static final String NO_MOVE = "NoMove"; //$NON-NLS-1$
 
 	/**
+	 * When applied as a tag to an MUIElement inhibits detaching the element
+	 * (ie. through DnD...
+	 */
+	public static final String NO_DETACH = "NoDetach"; //$NON-NLS-1$
+
+	/**
 	 * This tag can be used by the renderer implementation to decide that the user interface element
 	 * has been hidden.
 	 *

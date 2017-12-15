@@ -43,7 +43,7 @@ public class DetachedDropAgent extends DropAgent {
 
 		if (dragElement instanceof MPart || dragElement instanceof MPlaceholder
 				|| dragElement instanceof MPartStack) {
-			return true;
+			return !dragElement.getTags().contains(IPresentationEngine.NO_DETACH);
 		}
 
 		return false;
