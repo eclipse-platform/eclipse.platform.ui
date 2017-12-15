@@ -59,7 +59,7 @@ public class ContextToModelProcessor {
 					contextModel = CommandsFactoryImpl.eINSTANCE.createBindingContext();
 					contexts.put(ctx.getId(), contextModel);
 				}
-				contextModel.setElementId(ctx.getId() + ".bindingcontext"); //$NON-NLS-1$
+				contextModel.setElementId(ctx.getId());
 				contextModel.setName(ctx.getName());
 				contextModel.setDescription(ctx.getDescription());
 

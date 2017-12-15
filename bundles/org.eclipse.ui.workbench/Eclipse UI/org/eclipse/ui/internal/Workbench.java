@@ -2183,7 +2183,7 @@ public final class Workbench extends EventManager implements IWorkbench,
 			if (result == null) {
 				// create
 				result = MCommandsFactory.INSTANCE.createBindingContext();
-				result.setElementId(id + ".bindingcontext"); //$NON-NLS-1$
+				result.setElementId(id);
 				result.setName("Auto::" + id); //$NON-NLS-1$
 				application.getRootContext().add(result);
 			}

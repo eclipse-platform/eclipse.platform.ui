@@ -779,7 +779,7 @@ public class MenuHelper {
 						ICommandImageService.TYPE_DEFAULT));
 			}
 			String itemId = cci.getId();
-			menuItem.setElementId((itemId == null ? command.getElementId() : itemId) + ".menuitem"); //$NON-NLS-1$
+			menuItem.setElementId(itemId == null ? command.getElementId() : itemId);
 			return menuItem;
 		}
 		return null;
@@ -838,7 +838,7 @@ public class MenuHelper {
 			}
 
 			String itemId = cci.getId();
-			toolItem.setElementId((itemId == null ? command.getElementId() : itemId) + ".toolitem"); //$NON-NLS-1$
+			toolItem.setElementId(itemId == null ? command.getElementId() : itemId);
 			return toolItem;
 		}
 		return null;
