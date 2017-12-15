@@ -16,6 +16,7 @@ import junit.framework.*;
 public class AllTests extends TestCase {
 	public static Test suite() {
 		TestSuite suite = new TestSuite(AllTests.class.getName());
+		suite.addTest(QueueTest.suite());
 		suite.addTest(ObjectMapTest.suite());
 		suite.addTest(CacheTest.suite());
 		suite.addTest(FileUtilTest.suite());
