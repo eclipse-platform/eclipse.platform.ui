@@ -16,7 +16,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.WeakHashMap;
-
 import org.eclipse.core.commands.IHandler;
 import org.eclipse.core.commands.common.EventManager;
 import org.eclipse.core.expressions.EvaluationResult;
@@ -264,6 +263,7 @@ public class SubActionBars extends EventManager implements IActionBars {
 		if (toolBarMgr != null) {
 			toolBarMgr.disposeManager();
 		}
+		updateActionBars(); // Notify listeners and parent
 		clearListeners();
 	}
 

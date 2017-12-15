@@ -91,9 +91,9 @@ public class SubActionBars2 extends SubActionBars implements IActionBars2 {
 
 	@Override
 	public void dispose() {
-		super.dispose();
 		if (coolBarMgr != null) {
 			coolBarMgr.removeAll();
 		}
+		super.dispose();
 	}
 }
