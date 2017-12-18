@@ -17,15 +17,34 @@ import java.nio.charset.StandardCharsets;
 import junit.framework.Test;
 import junit.framework.TestSuite;
 import org.eclipse.core.internal.preferences.EclipsePreferences;
+import org.eclipse.core.internal.resources.CharsetDeltaJob;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.content.*;
-import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.core.runtime.jobs.*;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.osgi.service.prefs.BackingStoreException;
 
 public class CharsetTest extends ResourceTest {
+
+	private final class JobChangeAdapterExtension extends JobChangeAdapter {
+		private IStatus result;
+
+		public JobChangeAdapterExtension() {
+		}
+
+		@Override
+		public void done(IJobChangeEvent event) {
+			if (event.getJob().belongsTo(CharsetDeltaJob.FAMILY_CHARSET_DELTA)) {
+				this.result = event.getResult();
+			}
+		}
+
+		IStatus getResult() {
+			return this.result;
+		}
+	}
 
 	public class CharsetVerifier extends ResourceDeltaVerifier {
 		final static int IGNORE_BACKGROUND_THREAD = 0x02;
@@ -1533,5 +1552,28 @@ public class CharsetTest extends ResourceTest {
 			// Ok, the resource does not exist.
 			assertEquals("1.3", IResourceStatus.RESOURCE_NOT_FOUND, e.getStatus().getCode());
 		}
+	}
+
+	public void testBug528827() throws CoreException, OperationCanceledException, InterruptedException {
+		IWorkspace workspace = getWorkspace();
+		IProject project = workspace.getRoot().getProject(getUniqueString());
+		ensureExistsInWorkspace(project, true);
+		JobChangeAdapterExtension listener = new JobChangeAdapterExtension();
+		Job.getJobManager().addJobChangeListener(listener);
+		try {
+			String otherCharset = getOtherCharset(workspace.getRoot().getDefaultCharset());
+			project.setDefaultCharset(otherCharset, getMonitor());
+			assertEquals(otherCharset, project.getDefaultCharset());
+			project.delete(false, getMonitor());
+			Thread.sleep(100); // leave some time for CharsetDeltaJob.to be scheduled;
+			Job.getJobManager().join(CharsetDeltaJob.FAMILY_CHARSET_DELTA, getMonitor());
+			assertTrue(listener.getResult().isOK());
+		} finally {
+			Job.getJobManager().removeJobChangeListener(listener);
+		}
+	}
+
+	private String getOtherCharset(String referenceCharset) {
+		return "MIK".equals(referenceCharset) ? "UTF-8" : "MIK";
 	}
 }
