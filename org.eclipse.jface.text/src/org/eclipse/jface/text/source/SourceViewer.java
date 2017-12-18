@@ -40,7 +40,6 @@ import org.eclipse.jface.text.DocumentRewriteSessionType;
 import org.eclipse.jface.text.IBlockTextSelection;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IDocumentExtension4;
-import org.eclipse.jface.text.IPainter;
 import org.eclipse.jface.text.IPositionUpdater;
 import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.IRewriteTarget;
@@ -1308,12 +1307,9 @@ public class SourceViewer extends TextViewer implements ISourceViewer, ISourceVi
 	}
 
 	@Override
-	public void addPainter(IPainter painter) {
-		if (painter instanceof AnnotationPainter) {
-			fAnnotationPainter= (AnnotationPainter) painter;
-			ensureCodeMiningManagerInstalled();
-		}
-		super.addPainter(painter);
+	public void setCodeMiningAnnotationPainter(AnnotationPainter painter) {
+		fAnnotationPainter= painter;
+		ensureCodeMiningManagerInstalled();
 	}
 
 }

@@ -26,6 +26,13 @@ import org.eclipse.jface.text.codemining.ICodeMiningProvider;
 public interface ISourceViewerExtension5 {
 
 	/**
+	 * Set the {@link AnnotationPainter} to use to draw code minings.
+	 *
+	 * @param painter the {@link AnnotationPainter} to use to draw code minings.
+	 */
+	void setCodeMiningAnnotationPainter(AnnotationPainter painter);
+
+	/**
 	 * Update the code minings.
 	 *
 	 * Clients and implementors are responsible of calling this method when needed. A typical

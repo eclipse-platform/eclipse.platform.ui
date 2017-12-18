@@ -102,6 +102,8 @@ public class CodeMiningDemo {
 		};
 		AnnotationPainter painter = new AnnotationPainter(viewer, annotationAccess);
 		((ITextViewerExtension2) viewer).addPainter(painter);
+		// Register this annotation painter as CodeMining annotation painter.
+		((ISourceViewerExtension5) viewer).setCodeMiningAnnotationPainter(painter);
 	}
 
 }

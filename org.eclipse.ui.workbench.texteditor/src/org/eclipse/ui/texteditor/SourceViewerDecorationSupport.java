@@ -40,6 +40,7 @@ import org.eclipse.jface.text.source.ICharacterPairMatcher;
 import org.eclipse.jface.text.source.IOverviewRuler;
 import org.eclipse.jface.text.source.ISharedTextColors;
 import org.eclipse.jface.text.source.ISourceViewer;
+import org.eclipse.jface.text.source.ISourceViewerExtension5;
 import org.eclipse.jface.text.source.MatchingCharacterPainter;
 
 
@@ -826,6 +827,8 @@ public class SourceViewerDecorationSupport {
 					((ITextViewerExtension4)fSourceViewer).addTextPresentationListener(fAnnotationPainter);
 				ITextViewerExtension2 extension= (ITextViewerExtension2) fSourceViewer;
 				extension.addPainter(fAnnotationPainter);
+				if (fSourceViewer instanceof ISourceViewerExtension5)
+					((ISourceViewerExtension5) fSourceViewer).setCodeMiningAnnotationPainter(fAnnotationPainter);
 			}
 			fAnnotationPainter.setAnnotationTypeColor(annotationType, getAnnotationTypeColor(annotationType));
 			Object decorationType= getAnnotationDecorationType(annotationType);
