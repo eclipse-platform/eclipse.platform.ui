@@ -33,6 +33,7 @@ import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.ISynchronizable;
+import org.eclipse.jface.text.ITextViewerExtension5;
 import org.eclipse.jface.text.Position;
 import org.eclipse.jface.text.source.Annotation;
 import org.eclipse.jface.text.source.AnnotationPainter;
@@ -297,6 +298,9 @@ public class InlinedAnnotationSupport implements StyledTextLineSpacingProvider {
 			return null;
 		}
 		try {
+			if (viewer instanceof ITextViewerExtension5) {
+				lineNumber= ((ITextViewerExtension5) viewer).widgetLine2ModelLine(lineNumber);
+			}
 			IRegion line= document.getLineInformation(lineNumber);
 			Iterator<Annotation> iter= (annotationModel instanceof IAnnotationModelExtension2)
 					? ((IAnnotationModelExtension2) annotationModel).getAnnotationIterator(line.getOffset(),
