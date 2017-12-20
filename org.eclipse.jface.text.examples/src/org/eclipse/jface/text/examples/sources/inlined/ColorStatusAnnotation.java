@@ -11,8 +11,8 @@
 package org.eclipse.jface.text.examples.sources.inlined;
 
 import org.eclipse.jface.text.Position;
+import org.eclipse.jface.text.source.ISourceViewer;
 import org.eclipse.jface.text.source.inlined.LineHeaderAnnotation;
-import org.eclipse.swt.custom.StyledText;
 
 /**
  * Color status annotation shows the result of rgb parse before each line which
@@ -20,8 +20,8 @@ import org.eclipse.swt.custom.StyledText;
  */
 public class ColorStatusAnnotation extends LineHeaderAnnotation {
 
-	public ColorStatusAnnotation(Position position, StyledText styledText) {
-		super(position, styledText);
+	public ColorStatusAnnotation(Position position, ISourceViewer viewer) {
+		super(position, viewer);
 	}
 
 	public void setStatus(String status) {

@@ -163,7 +163,7 @@ public class InlinedAnnotationDemo {
 					Position pos = Positions.of(i, document, true);
 					ColorStatusAnnotation statusAnnotation = support.findExistingAnnotation(pos);
 					if (statusAnnotation == null) {
-						statusAnnotation = new ColorStatusAnnotation(pos, viewer.getTextWidget());
+						statusAnnotation = new ColorStatusAnnotation(pos, viewer);
 					}
 					statusAnnotation.setStatus(status);
 					annotations.add(statusAnnotation);
@@ -173,7 +173,7 @@ public class InlinedAnnotationDemo {
 						Position colorPos = new Position(pos.offset + index + "color:".length(), rgb.length());
 						ColorAnnotation colorAnnotation = support.findExistingAnnotation(colorPos);
 						if (colorAnnotation == null) {
-							colorAnnotation = new ColorAnnotation(colorPos, viewer.getTextWidget());
+							colorAnnotation = new ColorAnnotation(colorPos, viewer);
 						}
 						colorAnnotation.setColor(color);
 						annotations.add(colorAnnotation);

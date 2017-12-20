@@ -13,6 +13,7 @@ package org.eclipse.jface.text.source.inlined;
 import org.eclipse.swt.custom.StyledText;
 
 import org.eclipse.jface.text.Position;
+import org.eclipse.jface.text.source.ISourceViewer;
 
 /**
  * Inlined annotation which is drawn before a line and which takes some place with a given height.
@@ -25,10 +26,10 @@ public class LineHeaderAnnotation extends AbstractInlinedAnnotation {
 	 * Line header annotation constructor.
 	 *
 	 * @param position the position where the annotation must be drawn.
-	 * @param textWidget the {@link StyledText} widget where the annotation must be drawn.
+	 * @param viewer the {@link ISourceViewer} where the annotation must be drawn.
 	 */
-	public LineHeaderAnnotation(Position position, StyledText textWidget) {
-		super(position, textWidget);
+	public LineHeaderAnnotation(Position position, ISourceViewer viewer) {
+		super(position, viewer);
 	}
 
 	/**

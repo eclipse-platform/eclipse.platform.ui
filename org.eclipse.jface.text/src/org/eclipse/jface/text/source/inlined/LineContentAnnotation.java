@@ -16,6 +16,7 @@ import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.GlyphMetrics;
 
 import org.eclipse.jface.text.Position;
+import org.eclipse.jface.text.source.ISourceViewer;
 
 /**
  * Inlined annotation which is drawn in the line content and which takes some place with a given
@@ -29,10 +30,10 @@ public class LineContentAnnotation extends AbstractInlinedAnnotation {
 	 * Line content annotation constructor.
 	 *
 	 * @param position the position where the annotation must be drawn.
-	 * @param textWidget the {@link StyledText} widget where the annotation must be drawn.
+	 * @param viewer the {@link ISourceViewer} where the annotation must be drawn.
 	 */
-	public LineContentAnnotation(Position position, StyledText textWidget) {
-		super(position, textWidget);
+	public LineContentAnnotation(Position position, ISourceViewer viewer) {
+		super(position, viewer);
 	}
 
 	/**

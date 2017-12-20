@@ -14,8 +14,10 @@ import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.GC;
 
+import org.eclipse.jface.text.ITextViewerExtension5;
 import org.eclipse.jface.text.Position;
 import org.eclipse.jface.text.source.Annotation;
+import org.eclipse.jface.text.source.ISourceViewer;
 
 /**
  * Abstract class for inlined annotation.
@@ -36,20 +38,20 @@ public abstract class AbstractInlinedAnnotation extends Annotation {
 	private final Position position;
 
 	/**
-	 * The {@link StyledText} widget where the annotation must be drawn.
+	 * The {@link ISourceViewer} where the annotation must be drawn.
 	 */
-	private final StyledText textWidget;
+	private ISourceViewer fViewer;
 
 	/**
 	 * Inlined annotation constructor.
 	 *
 	 * @param position the position where the annotation must be drawn.
-	 * @param textWidget the {@link StyledText} widget where the annotation must be drawn.
+	 * @param viewer the {@link ISourceViewer} where the annotation must be drawn.
 	 */
-	protected AbstractInlinedAnnotation(Position position, StyledText textWidget) {
+	protected AbstractInlinedAnnotation(Position position, ISourceViewer viewer) {
 		super(TYPE, false, ""); //$NON-NLS-1$
 		this.position= position;
-		this.textWidget= textWidget;
+		fViewer= viewer;
 	}
 
 	/**
@@ -67,7 +69,16 @@ public abstract class AbstractInlinedAnnotation extends Annotation {
 	 * @return the {@link StyledText} widget where the annotation must be drawn.
 	 */
 	public StyledText getTextWidget() {
-		return textWidget;
+		return fViewer.getTextWidget();
+	}
+
+	/**
+	 * Returns the {@link ISourceViewer} where the annotation must be drawn.
+	 *
+	 * @return the {@link ISourceViewer} where the annotation must be drawn.
+	 */
+	public ISourceViewer getViewer() {
+		return fViewer;
 	}
 
 	/**
@@ -77,7 +88,13 @@ public abstract class AbstractInlinedAnnotation extends Annotation {
 		StyledText text= getTextWidget();
 		InlinedAnnotationSupport.runInUIThread(text, (t) -> {
 			Position pos= getPosition();
-			InlinedAnnotationDrawingStrategy.draw(this, null, t, pos.getOffset(), pos.getLength(), null);
+			int offset= pos.getOffset();
+			ISourceViewer viewer= getViewer();
+			if (viewer instanceof ITextViewerExtension5) {
+				// adjust offset according folded content
+				offset= ((ITextViewerExtension5) viewer).modelOffset2WidgetOffset(offset);
+			}
+			InlinedAnnotationDrawingStrategy.draw(this, null, t, offset, pos.getLength(), null);
 		});
 	}
 

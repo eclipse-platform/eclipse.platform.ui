@@ -1,4 +1,4 @@
-/**
+/**s
  *  Copyright (c) 2017 Angelo ZERR.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
@@ -11,6 +11,7 @@
 package org.eclipse.jface.text.examples.sources.inlined;
 
 import org.eclipse.jface.text.Position;
+import org.eclipse.jface.text.source.ISourceViewer;
 import org.eclipse.jface.text.source.inlined.LineContentAnnotation;
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.graphics.Color;
@@ -25,8 +26,8 @@ public class ColorAnnotation extends LineContentAnnotation {
 
 	private Color color;
 
-	public ColorAnnotation(Position pos, StyledText styledText) {
-		super(pos, styledText);
+	public ColorAnnotation(Position pos, ISourceViewer viewer) {
+		super(pos, viewer);
 	}
 
 	@Override
