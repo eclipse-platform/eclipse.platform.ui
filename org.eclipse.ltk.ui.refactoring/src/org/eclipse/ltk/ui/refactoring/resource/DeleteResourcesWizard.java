@@ -112,8 +112,10 @@ public class DeleteResourcesWizard extends RefactoringWizard {
 
 			Image image= parent.getDisplay().getSystemImage(SWT.ICON_QUESTION);
 			Label imageLabel = new Label(composite, SWT.NULL);
-			imageLabel.setBackground(image.getBackground());
-			imageLabel.setImage(image);
+			if (image != null) {
+				imageLabel.setBackground(image.getBackground());
+				imageLabel.setImage(image);
+			}
 			imageLabel.setLayoutData(new GridData(SWT.CENTER, SWT.BEGINNING, false, false));
 
 			final IResource[] initialResources= fRefactoringProcessor.getResourcesToDelete();
