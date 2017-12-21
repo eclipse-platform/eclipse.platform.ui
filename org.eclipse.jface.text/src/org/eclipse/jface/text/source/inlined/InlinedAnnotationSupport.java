@@ -21,7 +21,6 @@ import java.util.Set;
 import java.util.function.Consumer;
 
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.custom.StyleRange;
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.custom.StyledTextLineSpacingProvider;
 import org.eclipse.swt.graphics.Color;
@@ -140,7 +139,6 @@ public class InlinedAnnotationSupport implements StyledTextLineSpacingProvider {
 		if (annotationModel == null) {
 			return;
 		}
-		StyledText styledText= fViewer.getTextWidget();
 		Map<AbstractInlinedAnnotation, Position> annotationsToAdd= new HashMap<>();
 		List<AbstractInlinedAnnotation> annotationsToRemove= fInlinedAnnotations != null
 				? new ArrayList<>(fInlinedAnnotations)
@@ -151,32 +149,11 @@ public class InlinedAnnotationSupport implements StyledTextLineSpacingProvider {
 				// The annotation was not created, add it
 				annotationsToAdd.put(ann, ann.getPosition());
 			}
-			if (ann instanceof LineContentAnnotation) {
-				// Create metrics with well width to add space where the inline annotation must
-				// be drawn.
-				runInUIThread(styledText, (text) -> {
-					StyleRange s= new StyleRange();
-					s.start= ann.getPosition().getOffset();
-					s.length= 1;
-					s.metrics= ((LineContentAnnotation) ann).createMetrics();
-					text.setStyleRange(s);
-				});
-			}
 		}
 		// Process annotations to remove
 		for (AbstractInlinedAnnotation ann : annotationsToRemove) {
 			// Mark annotation as deleted to ignore the draw
 			ann.markDeleted(true);
-			if (ann instanceof LineContentAnnotation) {
-				// Set metrics to null to remove space of the inline annotation
-				runInUIThread(styledText, (text) -> {
-					StyleRange s= new StyleRange();
-					s.start= ann.getPosition().getOffset();
-					s.length= 1;
-					s.metrics= null;
-					text.setStyleRange(s);
-				});
-			}
 		}
 		// Update annotation model
 		synchronized (getLockObject(annotationModel)) {
@@ -217,7 +194,7 @@ public class InlinedAnnotationSupport implements StyledTextLineSpacingProvider {
 			return null;
 		}
 		for (AbstractInlinedAnnotation ann : fInlinedAnnotations) {
-			if (ann.getPosition().offset == pos.offset) {
+			if (pos.equals(ann.getPosition()) && !ann.getPosition().isDeleted()) {
 				try {
 					return (T) ann;
 				} catch (ClassCastException e) {

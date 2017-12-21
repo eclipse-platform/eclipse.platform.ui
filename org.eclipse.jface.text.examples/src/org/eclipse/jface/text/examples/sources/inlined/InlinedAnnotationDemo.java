@@ -170,7 +170,7 @@ public class InlinedAnnotationDemo {
 
 					// Color annotation
 					if (color != null) {
-						Position colorPos = new Position(pos.offset + index + "color:".length(), rgb.length());
+						Position colorPos = new Position(pos.offset + index + "color:".length(), 1);
 						ColorAnnotation colorAnnotation = support.findExistingAnnotation(colorPos);
 						if (colorAnnotation == null) {
 							colorAnnotation = new ColorAnnotation(colorPos, viewer);
@@ -179,12 +179,65 @@ public class InlinedAnnotationDemo {
 						annotations.add(colorAnnotation);
 					}
 
+					// rgb parameter names annotations
+					int rgbIndex = line.indexOf("rgb");
+					if (rgbIndex != -1) {
+						rgbIndex = rgbIndex + "rgb".length();
+						int startOffset = pos.offset + rgbIndex;
+						String rgbContent = line.substring(rgbIndex, line.length());
+						int startIndex = addRGBParamNameAnnotation("red:", rgbContent, 0, startOffset, viewer, support,
+								annotations);
+						if (startIndex != -1) {
+							startIndex = addRGBParamNameAnnotation("green:", rgbContent, startIndex, startOffset, viewer,
+									support, annotations);
+							if (startIndex != -1) {
+								startIndex = addRGBParamNameAnnotation("blue:", rgbContent, startIndex, startOffset,
+										viewer, support, annotations);
+							}
+						}
+					}
+
 				} catch (BadLocationException e) {
 					e.printStackTrace();
 				}
 			}
 		}
 		return annotations;
+	}
+
+	/**
+	 * Add RGB parameter name annotation
+	 * 
+	 * @param paramName
+	 * @param rgbContent
+	 * @param startIndex
+	 * @param startOffset
+	 * @param viewer
+	 * @param support
+	 * @param annotations
+	 * @return the current parsed index
+	 */
+	private static int addRGBParamNameAnnotation(String paramName, String rgbContent, int startIndex, int startOffset,
+			ISourceViewer viewer, InlinedAnnotationSupport support, Set<AbstractInlinedAnnotation> annotations) {
+		char startChar = startIndex == 0 ? '(' : ',';
+		char[] chars = rgbContent.toCharArray();
+		for (int i = startIndex; i < chars.length; i++) {
+			char c = chars[i];
+			if (c == startChar) {
+				if (i == chars.length - 1) {
+					return -1;
+				}
+				Position paramPos = new Position(startOffset + i + 1, 1);
+				LineContentAnnotation colorParamAnnotation = support.findExistingAnnotation(paramPos);
+				if (colorParamAnnotation == null) {
+					colorParamAnnotation = new LineContentAnnotation(paramPos, viewer);
+				}
+				colorParamAnnotation.setText(paramName);
+				annotations.add(colorParamAnnotation);
+				return i + 1;
+			}
+		}
+		return -1;
 	}
 
 	/**

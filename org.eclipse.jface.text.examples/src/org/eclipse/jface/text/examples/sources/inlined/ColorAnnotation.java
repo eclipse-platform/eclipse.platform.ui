@@ -30,19 +30,17 @@ public class ColorAnnotation extends LineContentAnnotation {
 		super(pos, viewer);
 	}
 
-	@Override
-	public int getWidth() {
-		StyledText styledText = super.getTextWidget();
-		return getSquareWidth(styledText);
-	}
-
 	public void setColor(Color color) {
 		this.color = color;
 	}
 
 	@Override
-	public void draw(GC gc, StyledText textWidget, int offset, int length, Color color, int x, int y) {
-		int size = getSquareSize(gc.getFontMetrics());
+	protected int drawAndComputeWidth(GC gc, StyledText textWidget, int offset, int length, Color color, int x, int y) {
+		FontMetrics fontMetrics = gc.getFontMetrics();
+		int size = getSquareSize(fontMetrics);
+		x += fontMetrics.getLeading();
+		y += fontMetrics.getDescent();
+
 		Rectangle rect = new Rectangle(x, y, size, size);
 
 		// Fill square
@@ -52,6 +50,7 @@ public class ColorAnnotation extends LineContentAnnotation {
 		// Draw square box
 		gc.setForeground(textWidget.getForeground());
 		gc.drawRectangle(rect);
+		return getSquareWidth(gc.getFontMetrics());
 	}
 
 	/**
@@ -70,12 +69,9 @@ public class ColorAnnotation extends LineContentAnnotation {
 	 * @param styledText
 	 * @return the width of square
 	 */
-	private static int getSquareWidth(StyledText styledText) {
-		GC gc = new GC(styledText);
-		FontMetrics fontMetrics = gc.getFontMetrics();
+	private static int getSquareWidth(FontMetrics fontMetrics) {
 		// width = 2 spaces + size width of square
 		int width = 2 * fontMetrics.getAverageCharWidth() + getSquareSize(fontMetrics);
-		gc.dispose();
 		return width;
 	}
 }

@@ -11,9 +11,8 @@
 package org.eclipse.jface.text.source.inlined;
 
 import org.eclipse.swt.custom.StyledText;
-import org.eclipse.swt.graphics.FontMetrics;
+import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.GC;
-import org.eclipse.swt.graphics.GlyphMetrics;
 
 import org.eclipse.jface.text.Position;
 import org.eclipse.jface.text.source.ISourceViewer;
@@ -27,6 +26,11 @@ import org.eclipse.jface.text.source.ISourceViewer;
 public class LineContentAnnotation extends AbstractInlinedAnnotation {
 
 	/**
+	 * The annotation width
+	 */
+	private int width;
+
+	/**
 	 * Line content annotation constructor.
 	 *
 	 * @param position the position where the annotation must be drawn.
@@ -37,32 +41,41 @@ public class LineContentAnnotation extends AbstractInlinedAnnotation {
 	}
 
 	/**
-	 * Returns an instance of GlyphMetrics used to takes 'width' place when the annotation is drawn
-	 * inside the line.
-	 *
-	 * @return an instance of GlyphMetrics used to takes 'width' place when the annotation is drawn
-	 *         inside the line.
-	 */
-	public GlyphMetrics createMetrics() {
-		return new GlyphMetrics(0, 0, getWidth());
-	}
-
-	/**
 	 * Returns the annotation width. By default it computes the well width for the text annotation.
 	 *
 	 * @return the annotation width.
 	 */
-	public int getWidth() {
-		String text= super.getText();
-		if (text == null) {
-			return 0;
-		}
-		int nbChars= text.length() + 1;
-		StyledText styledText= super.getTextWidget();
-		GC gc= new GC(styledText);
-		FontMetrics fontMetrics= gc.getFontMetrics();
-		int width= nbChars * fontMetrics.getAverageCharWidth();
-		gc.dispose();
+	public final int getWidth() {
 		return width;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 * <p>
+	 * After drawn, compute the text width and update it.
+	 * </p>
+	 */
+	@Override
+	public final void draw(GC gc, StyledText textWidget, int offset, int length, Color color, int x, int y) {
+		width= drawAndComputeWidth(gc, textWidget, offset, length, color, x, y);
+	}
+
+	/**
+	 * Draw the inlined annotation. By default it draws the text of the annotation with gray color.
+	 * User can override this method to draw anything.
+	 *
+	 * @param gc the graphics context
+	 * @param textWidget the text widget to draw on
+	 * @param offset the offset of the line
+	 * @param length the length of the line
+	 * @param color the color of the line
+	 * @param x the x position of the annotation
+	 * @param y the y position of the annotation
+	 * @return the text width.
+	 */
+	protected int drawAndComputeWidth(GC gc, StyledText textWidget, int offset, int length, Color color, int x, int y) {
+		// Draw the text annotation and returns the width
+		super.draw(gc, textWidget, offset, length, color, x, y);
+		return gc.stringExtent(getText()).x + 2 * gc.getFontMetrics().getAverageCharWidth();
 	}
 }

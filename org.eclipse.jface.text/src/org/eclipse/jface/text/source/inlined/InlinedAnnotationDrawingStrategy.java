@@ -13,7 +13,6 @@ package org.eclipse.jface.text.source.inlined;
 import org.eclipse.swt.custom.StyleRange;
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.graphics.Color;
-import org.eclipse.swt.graphics.FontMetrics;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.GlyphMetrics;
 import org.eclipse.swt.graphics.Rectangle;
@@ -52,14 +51,6 @@ class InlinedAnnotationDrawingStrategy implements IDrawingStrategy {
 	 */
 	public static void draw(AbstractInlinedAnnotation annotation, GC gc, StyledText textWidget, int offset, int length,
 			Color color) {
-		if (annotation.isMarkedDeleted()) {
-			// When annotation is deleted, redraw the styled text to hide old draw of
-			// annotations
-			textWidget.redraw();
-			// update caret offset since line spacing has changed.
-			textWidget.setCaretOffset(textWidget.getCaretOffset());
-			return;
-		}
 		if (annotation instanceof LineHeaderAnnotation) {
 			draw((LineHeaderAnnotation) annotation, gc, textWidget, offset, length, color);
 		} else {
@@ -79,6 +70,14 @@ class InlinedAnnotationDrawingStrategy implements IDrawingStrategy {
 	 */
 	private static void draw(LineHeaderAnnotation annotation, GC gc, StyledText textWidget, int offset, int length,
 			Color color) {
+		if (annotation.isMarkedDeleted()) {
+			// When annotation is deleted, redraw the styled text to hide old draw of
+			// annotations
+			textWidget.redraw();
+			// update caret offset since line spacing has changed.
+			textWidget.setCaretOffset(textWidget.getCaretOffset());
+			return;
+		}
 		// compute current, previous line index.
 		int lineIndex= -1;
 		try {
@@ -92,6 +91,10 @@ class InlinedAnnotationDrawingStrategy implements IDrawingStrategy {
 		int firstLineIndex= JFaceTextUtil.getPartialTopIndex(viewer);
 		if (viewer instanceof ITextViewerExtension5) {
 			firstLineIndex= ((ITextViewerExtension5) viewer).modelLine2WidgetLine(firstLineIndex);
+		}
+		if (previousLineIndex < firstLineIndex) {
+			// the previous line index where annotation must be drawn in line spacing is hidden, don't draw it.
+			return;
 		}
 		if (gc != null) {
 			// Compute the location of the annotation
@@ -146,31 +149,65 @@ class InlinedAnnotationDrawingStrategy implements IDrawingStrategy {
 	 */
 	private static void draw(LineContentAnnotation annotation, GC gc, StyledText textWidget, int offset, int length,
 			Color color) {
+		StyleRange style= null;
+		try {
+			style= textWidget.getStyleRangeAtOffset(offset);
+		} catch (Exception e) {
+			return;
+		}
+		if (annotation.isMarkedDeleted()) {
+			// When annotation is deleted, update metrics to null to remove extra spaces of the line content annotation.
+			if (style != null) {
+				style.metrics= null;
+				textWidget.setStyleRange(style);
+			}
+			return;
+		}
 		if (gc != null) {
 			// Compute the location of the annotation
-			FontMetrics fontMetrics= gc.getFontMetrics();
 			Rectangle bounds= textWidget.getTextBounds(offset, offset);
-			int x= bounds.x + fontMetrics.getLeading();
-			int y= bounds.y + fontMetrics.getDescent();
+			int x= bounds.x;
+			int y= bounds.y;
 
 			// Draw the line content annotation
 			annotation.draw(gc, textWidget, offset, length, color, x, y);
-
-			// The inline annotation replaces one character by taking a place width
-			// GlyphMetrics
-			// Here we need to redraw this first character because GlyphMetrics clip this
-			// character.
-			String s= textWidget.getText(offset, offset);
-			StyleRange style= textWidget.getStyleRangeAtOffset(offset);
-			if (style != null) {
-				if (style.background != null) {
-					gc.setBackground(style.background);
+			// check the width annotation
+			int width= annotation.getWidth();
+			GlyphMetrics metrics= style != null ? style.metrics : null;
+			if (metrics == null || metrics.width != width) {
+				// The annotation drawn width is not the same than metrics width, update it.
+				if (metrics == null) {
+					metrics= new GlyphMetrics(0, 0, width);
+				} else {
+					metrics.width= width;
 				}
-				if (style.foreground != null) {
-					gc.setForeground(style.foreground);
+				if (style == null) {
+					style= new StyleRange();
+					style.start= offset;
+					style.length= 1;
+					style.background= textWidget.getBackground();
+					style.foreground= textWidget.getForeground();
 				}
+				style.metrics= metrics;
+				textWidget.setStyleRange(style);
+				return;
 			}
-			gc.drawString(s, bounds.x + bounds.width - gc.stringExtent(s).x, bounds.y, true);
+			if (width != 0) {
+				// The inline annotation replaces one character by taking a place width
+				// GlyphMetrics
+				// Here we need to redraw this first character because GlyphMetrics clip this
+				// character.
+				String s= textWidget.getText(offset, offset);
+				if (style != null) {
+					if (style.background != null) {
+						gc.setBackground(style.background);
+					}
+					if (style.foreground != null) {
+						gc.setForeground(style.foreground);
+					}
+				}
+				gc.drawString(s, bounds.x + bounds.width - gc.stringExtent(s).x, bounds.y, true);
+			}
 		} else {
 			textWidget.redrawRange(offset, length, true);
 		}
