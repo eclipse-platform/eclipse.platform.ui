@@ -18,6 +18,7 @@ import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.GlyphMetrics;
 import org.eclipse.swt.graphics.Rectangle;
 
+import org.eclipse.jface.text.JFaceTextUtil;
 import org.eclipse.jface.text.source.Annotation;
 import org.eclipse.jface.text.source.AnnotationPainter.IDrawingStrategy;
 
@@ -84,6 +85,12 @@ class InlinedAnnotationDrawingStrategy implements IDrawingStrategy {
 			return;
 		}
 		int previousLineIndex= lineIndex - 1;
+		// check the previous line index where annotation must be drawn in line spacing is not hidden
+		int firstLineIndex= JFaceTextUtil.getPartialTopIndex(annotation.getViewer());
+		if (previousLineIndex < firstLineIndex) {
+			// the previous line index where annotation must be drawn in line spacing is hidden, don't draw it.
+			return;
+		}
 		if (gc != null) {
 			// Compute the location of the annotation
 			int x= textWidget.getLocationAtOffset(offset).x;
