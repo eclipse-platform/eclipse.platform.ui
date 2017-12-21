@@ -16,7 +16,7 @@
   <parent>
     <artifactId>eclipse.platform.ui.tests</artifactId>
     <groupId>eclipse.platform.ui</groupId>
-    <version>4.7.2-SNAPSHOT</version>
+    <version>4.7.3-SNAPSHOT</version>
   </parent>
   <groupId>org.eclipse.ui</groupId>
   <artifactId>org.eclipse.ui.tests.navigator</artifactId>
