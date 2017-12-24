@@ -858,12 +858,17 @@ public class PartServiceImpl implements EPartService {
 			if (sharedPart == null) {
 				return null;
 			}
-			if (secondaryId && getActivePart() != null) {
-				MElementContainer<MUIElement> parent = getActivePart().getParent();
-				if (getActivePart().getCurSharedRef() != null) {
-					parent = getActivePart().getCurSharedRef().getParent();
+			MPart active = getActivePart();
+			if (secondaryId && active != null) {
+				MElementContainer<MUIElement> parent = active.getParent();
+				MPlaceholder sharedRef = active.getCurSharedRef();
+				if (sharedRef != null) {
+					parent = sharedRef.getParent();
 				}
 				while (!(MPerspective.class.isInstance(parent) || MWindow.class.isInstance(parent))) {
+					if (parent.getParent() == null) {
+						break;
+					}
 					parent = parent.getParent();
 				}
 
