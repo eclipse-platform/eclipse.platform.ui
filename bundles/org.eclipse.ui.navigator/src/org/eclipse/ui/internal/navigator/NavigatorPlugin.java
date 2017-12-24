@@ -75,7 +75,7 @@ public class NavigatorPlugin extends AbstractUIPlugin {
 		 *
 		 */
 		public LogJob() {
-			super("");  //$NON-NLS-1$
+			super(CommonNavigatorMessages.LoggingJob);
 			setSystem(true);
 		}
 

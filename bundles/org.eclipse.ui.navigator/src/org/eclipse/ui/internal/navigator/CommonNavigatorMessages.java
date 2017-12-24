@@ -133,6 +133,9 @@ public class CommonNavigatorMessages extends NLS {
 	/** */
 	public static String NavigatorContentService_problemSavingPreferences;
 
+	/** */
+	public static String LoggingJob;
+
 
 	static {
 		NLS.initializeMessages(BUNDLE_NAME, CommonNavigatorMessages.class);
