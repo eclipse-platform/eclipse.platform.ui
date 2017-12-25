@@ -166,7 +166,6 @@ public class DetailedProgressViewer extends AbstractProgressViewer {
 			item.setColor(i);
 		}
 
-		control.layout(true);
 		updateForShowingProgress();
 	}
 
@@ -181,6 +180,7 @@ public class DetailedProgressViewer extends AbstractProgressViewer {
 			scrolled.setMinSize(null);
 			scrolled.setContent(noEntryArea);
 		}
+		control.requestLayout();
 	}
 
 	/**
@@ -219,8 +219,6 @@ public class DetailedProgressViewer extends AbstractProgressViewer {
 			}
 		});
 
-		// Refresh to populate with the current tasks
-		item.refresh();
 		return item;
 	}
 
@@ -370,7 +368,6 @@ public class DetailedProgressViewer extends AbstractProgressViewer {
 			ProgressInfoItem item = (ProgressInfoItem) existingChildren[i];
 			item.setColor(i);
 		}
-		control.layout(true);
 		updateForShowingProgress();
 	}
 
@@ -424,7 +421,6 @@ public class DetailedProgressViewer extends AbstractProgressViewer {
 			item.setColor(i);
 		}
 
-		control.layout(true);
 		updateForShowingProgress();
 	}
 
@@ -448,7 +444,6 @@ public class DetailedProgressViewer extends AbstractProgressViewer {
 		Point size = control.computeSize(SWT.DEFAULT, SWT.DEFAULT);
 		size.x += IDialogConstants.HORIZONTAL_SPACING;
 		size.y += IDialogConstants.VERTICAL_SPACING;
-
 		scrolled.setMinSize(size);
 	}
 

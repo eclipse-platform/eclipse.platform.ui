@@ -594,7 +594,7 @@ public class ProgressInfoItem extends Composite {
 		setMainText();
 
 		if (currentProgressBar != progressBar) {
-			getParent().layout(new Control[] { this });
+			requestLayout();
 		}
 	}
 
@@ -890,11 +890,18 @@ public class ProgressInfoItem extends Composite {
 	 * @param link
 	 */
 	private void updateText(String taskString, Link link) {
-		taskString = Dialog.shortenText(taskString, link);
+		if(taskString == null){
+			taskString = "";  //$NON-NLS-1$
+		}
+		if (!taskString.isEmpty()) {
+			taskString = Dialog.shortenText(taskString, link);
+		}
 
 		// Put in a hyperlink if there is an action
-		link.setText(link.getData(TRIGGER_KEY) == null ? taskString : NLS.bind(
-				"<a>{0}</a>", taskString));//$NON-NLS-1$
+		String text = link.getData(TRIGGER_KEY) == null ? taskString : NLS.bind("<a>{0}</a>", taskString); //$NON-NLS-1$
+		if (!text.equals(link.getText())) {
+			link.setText(text);
+		}
 	}
 
 	/**
@@ -1085,7 +1092,7 @@ public class ProgressInfoItem extends Composite {
 
 		@Override
 		public boolean changed(IEclipseContext context) {
-			if (stop || isDisposed() || !isShowing) {
+			if (stop || isDisposed() || !link.isVisible()) {
 				// stop listening for changes
 				return false;
 			}
