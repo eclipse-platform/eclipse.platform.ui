@@ -128,21 +128,23 @@ public class DetailedProgressViewer extends AbstractProgressViewer {
 	}
 
 	@Override
-	public void add(Object[] elements) {
+	public void add(JobTreeElement... elements) {
 		ViewerComparator sorter = getComparator();
 
 		// Use a Set in case we are getting something added that exists
-		Set newItems = new HashSet(elements.length);
+		Set<JobTreeElement> newItems = new HashSet<>(elements.length);
 
 		Control[] existingChildren = control.getChildren();
 		for (Control child : existingChildren) {
-			if (child.getData() != null)
-				newItems.add(child.getData());
+			if (child.getData() != null) {
+				newItems.add((JobTreeElement) child.getData());
+			}
 		}
 
-		for (Object element : elements) {
-			if (element != null)
+		for (JobTreeElement element : elements) {
+			if (element != null) {
 				newItems.add(element);
+			}
 		}
 
 		JobTreeElement[] infos = new JobTreeElement[newItems.size()];
@@ -296,7 +298,8 @@ public class DetailedProgressViewer extends AbstractProgressViewer {
 			unmapElement(item);
 		}
 		item.dispose();
-		add(new Object[] { element });
+
+		add((JobTreeElement) element);
 	}
 
 	@Override
@@ -306,7 +309,7 @@ public class DetailedProgressViewer extends AbstractProgressViewer {
 
 	@Override
 	protected List getSelectionFromWidget() {
-		return new ArrayList(0);
+		return new ArrayList<>(0);
 	}
 
 	@Override
@@ -327,7 +330,7 @@ public class DetailedProgressViewer extends AbstractProgressViewer {
 		}
 		Widget widget = findItem(element);
 		if (widget == null) {
-			add(new Object[] { element });
+			add((JobTreeElement) element);
 			return;
 		}
 		((ProgressInfoItem) widget).refresh();
@@ -336,7 +339,7 @@ public class DetailedProgressViewer extends AbstractProgressViewer {
 	}
 
 	@Override
-	public void remove(Object[] elements) {
+	public void remove(JobTreeElement... elements) {
 
 		for (Object element : elements) {
 			JobTreeElement treeElement = (JobTreeElement) element;

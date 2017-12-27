@@ -193,7 +193,7 @@ public class ProgressAnimationItem extends AnimationItem implements
 	 * @param ji
 	 */
 	private void removeTopElement(JobInfo ji) {
-		JobTreeElement topElement = (JobTreeElement) ji.getParent();
+		JobTreeElement topElement = ji.getParent();
 		if (topElement == null) {
 			topElement = ji;
 		}

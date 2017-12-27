@@ -30,6 +30,10 @@ class GroupInfo extends JobTreeElement implements IProgressMonitor {
 	double total = -1;
 	double currentWork;
 
+	public GroupInfo() {
+		super();
+	}
+
 	@Override
 	boolean hasChildren() {
 		synchronized (lock) {

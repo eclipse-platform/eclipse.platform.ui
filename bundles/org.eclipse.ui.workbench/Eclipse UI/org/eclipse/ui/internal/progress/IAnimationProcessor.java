@@ -31,9 +31,10 @@ interface IAnimationProcessor {
     void removeItem(AnimationItem item);
 
     /**
-     * Return whether or not the receiver has any items.
-     * @return
-     */
+	 * Return whether or not the receiver has any items.
+	 *
+	 * @return true if there are items
+	 */
     boolean hasItems();
 
     /**
@@ -49,17 +50,18 @@ interface IAnimationProcessor {
     void animationFinished();
 
     /**
-     * Get the preferred width of the types of items this
-     * processor manages.
-     * @return
-     */
+	 * Get the preferred width of the types of items this processor manages.
+	 *
+	 * @return preferred width
+	 */
     int getPreferredWidth();
 
     /**
-     * Return whether or not this is a job used by the processor.
-     * @param job
-     * @return
-     */
+	 * Return whether or not this is a job used by the processor.
+	 * 
+	 * @param job
+	 * @return true if this job is used by the processor
+	 */
     boolean isProcessorJob(Job job);
 
 }

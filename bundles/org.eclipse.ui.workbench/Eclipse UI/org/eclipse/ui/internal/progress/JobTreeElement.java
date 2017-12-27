@@ -20,9 +20,9 @@ public abstract class JobTreeElement implements Comparable<JobTreeElement> {
 	/**
 	 * Returns the parent of this object.
 	 *
-	 * @return Object
+	 * @return JobTreeElement
 	 */
-	public Object getParent() {
+	public JobTreeElement getParent() {
 		return null;
 	}
 

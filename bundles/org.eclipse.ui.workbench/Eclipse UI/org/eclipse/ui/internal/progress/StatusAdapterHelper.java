@@ -12,7 +12,6 @@
 package org.eclipse.ui.internal.progress;
 
 import java.util.HashMap;
-
 import org.eclipse.ui.progress.IProgressConstants;
 import org.eclipse.ui.statushandlers.StatusAdapter;
 
@@ -24,7 +23,7 @@ import org.eclipse.ui.statushandlers.StatusAdapter;
 public class StatusAdapterHelper {
 	private static StatusAdapterHelper instance;
 
-	private HashMap map;
+	private HashMap<JobInfo, StatusAdapter> map;
 
 	private StatusAdapterHelper() {
 	}
@@ -47,21 +46,22 @@ public class StatusAdapterHelper {
 	 */
 	public void putStatusAdapter(JobInfo info, StatusAdapter statusAdapter) {
 		if (map == null) {
-			map = new HashMap();
+			map = new HashMap<>();
 		}
 		map.put(info, statusAdapter);
 	}
 
 	/**
 	 * Return the adapter for this info.
+	 * 
 	 * @param info
-	 * @return
+	 * @return can return null
 	 */
 	public StatusAdapter getStatusAdapter(JobInfo info) {
 		if (map == null) {
 			return null;
 		}
-		StatusAdapter statusAdapter = (StatusAdapter) map.remove(info);
+		StatusAdapter statusAdapter = map.remove(info);
 		statusAdapter.setProperty(
 				IProgressConstants.NO_IMMEDIATE_ERROR_PROMPT_PROPERTY,
 				Boolean.FALSE);

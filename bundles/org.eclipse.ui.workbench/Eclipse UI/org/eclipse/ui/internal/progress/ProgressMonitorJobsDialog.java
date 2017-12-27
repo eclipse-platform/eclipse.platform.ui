@@ -13,7 +13,6 @@ package org.eclipse.ui.internal.progress;
 import static org.eclipse.swt.events.SelectionListener.widgetSelectedAdapter;
 
 import java.lang.reflect.InvocationTargetException;
-
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IProgressMonitorWithBlocking;
 import org.eclipse.core.runtime.IStatus;
@@ -118,7 +117,8 @@ public class ProgressMonitorJobsDialog extends ProgressMonitorDialog {
             viewer = new DetailedProgressViewer(viewerComposite, SWT.MULTI
                     | SWT.H_SCROLL | SWT.V_SCROLL | SWT.BORDER);
             viewer.setComparator(new ViewerComparator() {
-                @Override
+				@SuppressWarnings({ "unchecked", "rawtypes" })
+				@Override
 				public int compare(Viewer testViewer, Object e1, Object e2) {
                     return ((Comparable) e1).compareTo(e2);
                 }

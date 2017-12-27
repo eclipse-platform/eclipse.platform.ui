@@ -299,7 +299,7 @@ public class JobInfo extends JobTreeElement {
     }
 
 	@Override
-	public Object getParent() {
+	public GroupInfo getParent() {
         return parent;
     }
 

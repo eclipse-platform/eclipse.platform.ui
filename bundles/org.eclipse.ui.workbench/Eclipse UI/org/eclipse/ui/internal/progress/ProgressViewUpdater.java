@@ -14,6 +14,7 @@ import java.time.Duration;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedHashSet;
 import org.eclipse.jface.util.Throttler;
 import org.eclipse.ui.IWorkbenchPreferenceConstants;
 import org.eclipse.ui.PlatformUI;
@@ -39,15 +40,15 @@ class ProgressViewUpdater implements IJobProgressManagerListener {
      * The UpdatesInfo is a private class for keeping track of the updates
      * required.
      */
-    class UpdatesInfo {
+	static class UpdatesInfo {
 
-        Collection additions = new HashSet();
+		Collection<JobTreeElement> additions = new LinkedHashSet<>();
 
-        Collection deletions = new HashSet();
+		Collection<JobTreeElement> deletions = new LinkedHashSet<>();
 
-        Collection refreshes = new HashSet();
+		Collection<JobTreeElement> refreshes = new LinkedHashSet<>();
 
-        boolean updateAll = false;
+		boolean updateAll;
 
         private UpdatesInfo() {
             //Create a new instance of the info
@@ -58,7 +59,7 @@ class ProgressViewUpdater implements IJobProgressManagerListener {
          *
          * @param addition
          */
-        void add(JobTreeElement addition) {
+		void add(JobTreeElement addition) {
             additions.add(addition);
         }
 
@@ -67,7 +68,7 @@ class ProgressViewUpdater implements IJobProgressManagerListener {
          *
          * @param removal
          */
-        void remove(JobTreeElement removal) {
+		void remove(JobTreeElement removal) {
             deletions.add(removal);
         }
 
@@ -76,26 +77,26 @@ class ProgressViewUpdater implements IJobProgressManagerListener {
          *
          * @param refresh
          */
-        void refresh(JobTreeElement refresh) {
+		void refresh(JobTreeElement refresh) {
             refreshes.add(refresh);
         }
 
         /**
          * Reset the caches after completion of an update.
          */
-        void reset() {
+		void reset() {
             additions.clear();
             deletions.clear();
             refreshes.clear();
             updateAll = false;
         }
 
-        void processForUpdate() {
-            HashSet staleAdditions = new HashSet();
+		void processForUpdate() {
+			HashSet<JobTreeElement> staleAdditions = new HashSet<>();
 
-            Iterator additionsIterator = additions.iterator();
+            Iterator<JobTreeElement> additionsIterator = additions.iterator();
             while (additionsIterator.hasNext()) {
-                JobTreeElement treeElement = (JobTreeElement) additionsIterator
+                JobTreeElement treeElement = additionsIterator
                         .next();
                 if (!treeElement.isActive()) {
                     if (deletions.contains(treeElement)) {
@@ -106,10 +107,10 @@ class ProgressViewUpdater implements IJobProgressManagerListener {
 
             additions.removeAll(staleAdditions);
 
-            HashSet obsoleteRefresh = new HashSet();
-            Iterator refreshIterator = refreshes.iterator();
+			HashSet<JobTreeElement> obsoleteRefresh = new HashSet<>();
+            Iterator<JobTreeElement> refreshIterator = refreshes.iterator();
             while (refreshIterator.hasNext()) {
-                JobTreeElement treeElement = (JobTreeElement) refreshIterator
+                JobTreeElement treeElement = refreshIterator
                         .next();
                 if (deletions.contains(treeElement)
                         || additions.contains(treeElement)) {
@@ -194,7 +195,7 @@ class ProgressViewUpdater implements IJobProgressManagerListener {
      * @param provider
      */
     void removeCollector(IProgressUpdateCollector provider) {
-        HashSet newCollectors = new HashSet();
+		HashSet<IProgressUpdateCollector> newCollectors = new HashSet<>();
         for (int i = 0; i < collectors.length; i++) {
             if (!collectors[i].equals(provider)) {
 				newCollectors.add(collectors[i]);
@@ -224,14 +225,15 @@ class ProgressViewUpdater implements IJobProgressManagerListener {
 
 		} else {
 			// Lock while getting local copies of the caches.
-			Object[] updateItems;
-			Object[] additionItems;
-			Object[] deletionItems;
+			JobTreeElement[] updateItems;
+			JobTreeElement[] additionItems;
+			JobTreeElement[] deletionItems;
+
 			currentInfo.processForUpdate();
 
-			updateItems = currentInfo.refreshes.toArray();
-			additionItems = currentInfo.additions.toArray();
-			deletionItems = currentInfo.deletions.toArray();
+			updateItems = currentInfo.refreshes.toArray(new JobTreeElement[0]);
+			additionItems = currentInfo.additions.toArray(new JobTreeElement[0]);
+			deletionItems = currentInfo.deletions.toArray(new JobTreeElement[0]);
 
 			currentInfo.reset();
 
@@ -248,15 +250,6 @@ class ProgressViewUpdater implements IJobProgressManagerListener {
 			}
 		}
 	}
-
-    /**
-     * Get the updates info that we are using in the receiver.
-     *
-     * @return Returns the currentInfo.
-     */
-    UpdatesInfo getCurrentInfo() {
-        return currentInfo;
-    }
 
     /**
      * Refresh the supplied JobInfo.
@@ -286,25 +279,20 @@ class ProgressViewUpdater implements IJobProgressManagerListener {
 		currentInfo.refresh(info);
         //Add in a 100ms delay so as to keep priority low
 		throttledUpdate.throttledExec();
-
     }
 
     @Override
 	public void addGroup(GroupInfo info) {
-
 		currentInfo.add(info);
 		throttledUpdate.throttledExec();
-
     }
 
     @Override
 	public void refreshAll() {
-
 		currentInfo.updateAll = true;
 
         //Add in a 100ms delay so as to keep priority low
 		throttledUpdate.throttledExec();
-
     }
 
     @Override
@@ -317,7 +305,6 @@ class ProgressViewUpdater implements IJobProgressManagerListener {
 			currentInfo.refresh(group);
         }
 		throttledUpdate.throttledExec();
-
     }
 
     @Override
@@ -335,7 +322,6 @@ class ProgressViewUpdater implements IJobProgressManagerListener {
 	public void removeGroup(GroupInfo group) {
 		currentInfo.remove(group);
 		throttledUpdate.throttledExec();
-
     }
 
     @Override

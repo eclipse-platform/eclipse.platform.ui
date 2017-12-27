@@ -10,9 +10,8 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.progress;
 
-import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
-
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.viewers.IBaseLabelProvider;
@@ -38,8 +37,6 @@ public class ProgressCanvasViewer extends AbstractProgressViewer {
     Canvas canvas;
 
     Object[] displayedItems = new Object[0];
-
-    private final static List EMPTY_LIST = new ArrayList();
 
     /**
      * Font metrics to use for determining pixel sizes.
@@ -106,7 +103,7 @@ public class ProgressCanvasViewer extends AbstractProgressViewer {
     @Override
 	protected List getSelectionFromWidget() {
         //No selection on a Canvas
-        return EMPTY_LIST;
+		return Collections.EMPTY_LIST;
     }
 
     @Override
@@ -210,13 +207,13 @@ public class ProgressCanvasViewer extends AbstractProgressViewer {
     }
 
 	@Override
-	public void add(Object[] elements) {
+	public void add(JobTreeElement... elements) {
 		refresh(true);
 
 	}
 
 	@Override
-	public void remove(Object[] elements) {
+	public void remove(JobTreeElement... elements) {
 		refresh(true);
 
 	}

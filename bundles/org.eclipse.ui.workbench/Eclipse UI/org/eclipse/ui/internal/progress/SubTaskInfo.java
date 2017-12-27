@@ -66,7 +66,7 @@ class SubTaskInfo extends JobTreeElement {
 	}
 
 	@Override
-	public Object getParent() {
+	public JobInfo getParent() {
 		return jobInfo;
 	}
 

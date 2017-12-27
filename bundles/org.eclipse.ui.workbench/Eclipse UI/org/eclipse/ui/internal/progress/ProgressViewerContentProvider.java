@@ -12,6 +12,7 @@ package org.eclipse.ui.internal.progress;
 
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedHashSet;
 import java.util.Set;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
@@ -66,7 +67,7 @@ public class ProgressViewerContentProvider extends ProgressContentProvider {
 				Job updateJob = new WorkbenchJob("Refresh finished") {//$NON-NLS-1$
 					@Override
 					public IStatus runInUIThread(IProgressMonitor monitor) {
-						refresh(new Object[] { element });
+						refresh(element);
 						return Status.OK_STATUS;
 					}
 
@@ -94,7 +95,7 @@ public class ProgressViewerContentProvider extends ProgressContentProvider {
 						if (element == null) {
 							refresh();
 						} else {
-							ProgressViewerContentProvider.this.remove(new Object[] { element });
+							remove(element);
 						}
 						return Status.OK_STATUS;
 					}
@@ -114,7 +115,7 @@ public class ProgressViewerContentProvider extends ProgressContentProvider {
 	}
 
 	@Override
-	public void refresh(Object[] elements) {
+	public void refresh(JobTreeElement... elements) {
 		for (Object refresh : getRoots(elements, true)) {
 			progressViewer.refresh(refresh, true);
 		}
@@ -124,47 +125,47 @@ public class ProgressViewerContentProvider extends ProgressContentProvider {
 	public Object[] getElements(Object inputElement) {
 		Object[] elements = super.getElements(inputElement);
 
-		if (!showFinished)
+		if (!showFinished) {
 			return elements;
+		}
 
-		Set kept = FinishedJobs.getInstance().getKeptAsSet();
+		Set<JobTreeElement> kept = FinishedJobs.getInstance().getKeptAsSet();
 
-		if (kept.size() == 0)
+		if (kept.size() == 0) {
 			return elements;
+		}
 
-		Set all = new HashSet();
+		Set<Object> all = new HashSet<>();
 
 		for (Object element : elements) {
 			all.add(element);
 		}
-
-		Iterator keptIterator = kept.iterator();
+		Iterator<JobTreeElement> keptIterator = kept.iterator();
 		while (keptIterator.hasNext()) {
-			JobTreeElement next = (JobTreeElement) keptIterator.next();
-			if (next.getParent() != null && all.contains(next.getParent()))
+			JobTreeElement next = keptIterator.next();
+			if (next.getParent() != null && all.contains(next.getParent())) {
 				continue;
+			}
 			all.add(next);
-
 		}
-
 		return all.toArray();
 	}
 
 	/**
-	 * Get the root elements of the passed elements as we only show roots.
-	 * Replace the element with its parent if subWithParent is true
+	 * Get the root elements of the passed elements as we only show roots. Replace
+	 * the element with its parent if subWithParent is true
 	 *
 	 * @param elements
 	 *            the array of elements.
 	 * @param subWithParent
 	 *            sub with parent flag.
-	 * @return Object[]
+	 * @return JobTreeElement[]
 	 */
-	private Object[] getRoots(Object[] elements, boolean subWithParent) {
+	private JobTreeElement[] getRoots(JobTreeElement[] elements, boolean subWithParent) {
 		if (elements.length == 0) {
 			return elements;
 		}
-		HashSet roots = new HashSet();
+		Set<JobTreeElement> roots = new LinkedHashSet<>();
 		for (Object element : elements) {
 			JobTreeElement jobTreeElement = (JobTreeElement) element;
 			if (jobTreeElement.isJobInfo()) {
@@ -180,17 +181,17 @@ public class ProgressViewerContentProvider extends ProgressContentProvider {
 				roots.add(jobTreeElement);
 			}
 		}
-		return roots.toArray();
+		return roots.toArray(new JobTreeElement[0]);
 	}
 
 	@Override
-	public void add(Object[] elements) {
+	public void add(JobTreeElement... elements) {
 		progressViewer.add(elements);
 
 	}
 
 	@Override
-	public void remove(Object[] elements) {
+	public void remove(JobTreeElement... elements) {
 		progressViewer.remove(elements);
 
 	}

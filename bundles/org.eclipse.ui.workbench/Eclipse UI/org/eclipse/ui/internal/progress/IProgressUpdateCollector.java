@@ -26,18 +26,18 @@ public interface IProgressUpdateCollector {
      * Refresh the elements.
      * @param elements
      */
-    void refresh(Object[] elements);
+	void refresh(JobTreeElement... elements);
 
     /**
      * Add the elements.
      * @param elements Array of JobTreeElement
      */
-    void add(Object[] elements);
+	void add(JobTreeElement... elements);
 
     /**
      * Remove the elements.
      * @param elements Array of JobTreeElement
      */
-    void remove(Object[] elements);
+	void remove(JobTreeElement... elements);
 
 }

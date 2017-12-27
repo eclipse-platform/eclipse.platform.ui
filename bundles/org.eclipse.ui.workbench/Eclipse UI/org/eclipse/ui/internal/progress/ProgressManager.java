@@ -32,7 +32,6 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
-import java.util.stream.StreamSupport;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IProgressMonitorWithBlocking;
@@ -254,14 +253,14 @@ public class ProgressManager extends ProgressProvider implements IProgressServic
 			info.beginTask(taskName, totalWork);
 			refreshJobInfo(info);
 			currentTaskName = taskName;
-			monitors.stream().forEach(listener -> listener.beginTask(taskName, totalWork));
+			monitors.forEach(listener -> listener.beginTask(taskName, totalWork));
 		}
 
 		@Override
 		public void done() {
 			info.clearTaskInfo();
 			info.clearChildren();
-			monitors.stream().forEach(IProgressMonitorWithBlocking::done);
+			monitors.forEach(IProgressMonitorWithBlocking::done);
 		}
 
 		@Override
@@ -270,7 +269,7 @@ public class ProgressManager extends ProgressProvider implements IProgressServic
 				info.addWork(work);
 				refreshJobInfo(info);
 			}
-			monitors.stream().forEach(listener -> listener.internalWorked(work));
+			monitors.forEach(listener -> listener.internalWorked(work));
 		}
 
 		@Override
@@ -284,7 +283,7 @@ public class ProgressManager extends ProgressProvider implements IProgressServic
 			if (value && !info.isCanceled()) {
 				info.cancel();
 				// Only inform the first time
-				monitors.stream().forEach(listener -> listener.setCanceled(value));
+				monitors.forEach(listener -> listener.setCanceled(value));
 			}
 		}
 
@@ -299,7 +298,7 @@ public class ProgressManager extends ProgressProvider implements IProgressServic
 			info.clearChildren();
 			refreshJobInfo(info);
 			currentTaskName = taskName;
-			monitors.stream().forEach(listener -> listener.setTaskName(taskName));
+			monitors.forEach(listener -> listener.setTaskName(taskName));
 		}
 
 		@Override
@@ -310,7 +309,7 @@ public class ProgressManager extends ProgressProvider implements IProgressServic
 			info.clearChildren();
 			info.addSubTask(name);
 			refreshJobInfo(info);
-			monitors.stream().forEach(listener -> listener.subTask(name));
+			monitors.forEach(listener -> listener.subTask(name));
 		}
 
 		@Override
@@ -322,14 +321,14 @@ public class ProgressManager extends ProgressProvider implements IProgressServic
 		public void clearBlocked() {
 			info.setBlockedStatus(null);
 			refreshJobInfo(info);
-			monitors.stream().forEach(IProgressMonitorWithBlocking::clearBlocked);
+			monitors.forEach(IProgressMonitorWithBlocking::clearBlocked);
 		}
 
 		@Override
 		public void setBlocked(IStatus reason) {
 			info.setBlockedStatus(reason);
 			refreshJobInfo(info);
-			monitors.stream().forEach(listener -> listener.setBlocked(reason));
+			monitors.forEach(listener -> listener.setBlocked(reason));
 		}
 	}
 
@@ -605,9 +604,7 @@ public class ProgressManager extends ProgressProvider implements IProgressServic
 	 * @return IProgressMonitor
 	 */
 	public JobMonitor progressFor(Job job) {
-		return runnableMonitors.computeIfAbsent(job, (j) -> {
-			return new JobMonitor(j, new JobInfo(j));
-		});
+		return runnableMonitors.computeIfAbsent(job, j -> new JobMonitor(j, new JobInfo(j)));
 	}
 
 	/**
@@ -705,7 +702,7 @@ public class ProgressManager extends ProgressProvider implements IProgressServic
 	private void rememberListenersForJob(JobInfo info, Map<JobInfo, Set<IJobProgressManagerListener>> listenersMap) {
 		Set<IJobProgressManagerListener> localListeners = listenersMap.computeIfAbsent(info,
 				k -> new LinkedHashSet<>());
-		StreamSupport.stream(listeners.spliterator(), false)
+		listeners.stream()
 				.filter(listener -> !isCurrentDisplaying(info.getJob(), listener.showsDebug()))
 				.forEach(localListeners::add);
 	}

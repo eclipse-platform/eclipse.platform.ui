@@ -35,7 +35,7 @@ class ProgressAnimationProcessor implements IAnimationProcessor {
         manager = animationManager;
     }
 
-	List items = new ArrayList();
+	List<AnimationItem> items = new ArrayList<>();
 
     public void startAnimationLoop(IProgressMonitor monitor) {
 

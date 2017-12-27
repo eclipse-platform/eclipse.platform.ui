@@ -52,9 +52,10 @@ interface IJobProgressManagerListener {
     void removeJob(final JobInfo info);
 
     /**
-     * Refresh the viewer as a result of a removal of group.
-     * @param info
-     */
+	 * Refresh the viewer as a result of a removal of group.
+	 * 
+	 * @param group
+	 */
     void removeGroup(final GroupInfo group);
 
     /**

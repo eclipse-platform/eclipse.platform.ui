@@ -107,10 +107,10 @@ public class AnimationManager {
     }
 
     /**
-     * Set whether or not the receiver is animated.
-     *
-     * @param boolean
-     */
+	 * Set whether or not the receiver is animated.
+	 *
+	 * @param bool
+	 */
     void setAnimated(final boolean bool) {
         animated = bool;
         animationUpdateJob.schedule(100);
