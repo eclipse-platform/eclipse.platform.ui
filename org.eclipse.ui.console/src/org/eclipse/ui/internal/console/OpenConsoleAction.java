@@ -10,10 +10,14 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.console;
 
+import java.util.Arrays;
+import java.util.Comparator;
+
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.ActionContributionItem;
 import org.eclipse.jface.action.IMenuCreator;
+import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
@@ -35,7 +39,7 @@ public class OpenConsoleAction extends Action implements IMenuCreator {
 	private Menu fMenu;
 
 	public OpenConsoleAction() {
-		fFactoryExtensions = ((ConsoleManager)ConsolePlugin.getDefault().getConsoleManager()).getConsoleFactoryExtensions();
+		fFactoryExtensions = getSortedFactories();
 		setText(ConsoleMessages.OpenConsoleAction_0);
 		setToolTipText(ConsoleMessages.OpenConsoleAction_1);
 		setImageDescriptor(ConsolePluginImages.getImageDescriptor(IInternalConsoleConstants.IMG_ELCL_NEW_CON));
@@ -44,18 +48,31 @@ public class OpenConsoleAction extends Action implements IMenuCreator {
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(this, IConsoleHelpContextIds.CONSOLE_OPEN_CONSOLE_ACTION);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.action.IMenuCreator#dispose()
-	 */
+	private ConsoleFactoryExtension[] getSortedFactories() {
+		ConsoleFactoryExtension[] factoryExtensions = ((ConsoleManager) ConsolePlugin.getDefault().getConsoleManager()).getConsoleFactoryExtensions();
+		Arrays.sort(factoryExtensions, new Comparator<ConsoleFactoryExtension>() {
+
+			@Override
+			public int compare(ConsoleFactoryExtension e1, ConsoleFactoryExtension e2) {
+				if (e1.isNewConsoleExtenson()) {
+					return -1;
+				}
+				if (e2.isNewConsoleExtenson()) {
+					return 1;
+				}
+				String first = e1.getLabel();
+				String second = e2.getLabel();
+				return first.compareTo(second);
+			}
+		});
+		return factoryExtensions;
+	}
+
 	@Override
 	public void dispose() {
 		fFactoryExtensions = null;
 	}
 
-	/*
-	 * @see org.eclipse.jface.action.Action#runWithEvent(org.eclipse.swt.widgets.Event)
-	 * @since 3.5
-	 */
 	@Override
 	public void runWithEvent(Event event) {
 		if (event.widget instanceof ToolItem) {
@@ -70,9 +87,6 @@ public class OpenConsoleAction extends Action implements IMenuCreator {
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.action.IMenuCreator#getMenu(org.eclipse.swt.widgets.Control)
-	 */
 	@Override
 	public Menu getMenu(Control parent) {
 		if (fMenu != null) {
@@ -88,6 +102,9 @@ public class OpenConsoleAction extends Action implements IMenuCreator {
 				ImageDescriptor image = extension.getImageDescriptor();
 				addActionToMenu(fMenu, new ConsoleFactoryAction(label, image, extension), accel);
 				accel++;
+				if (extension.isNewConsoleExtenson()) {
+					new Separator("new").fill(fMenu, -1); //$NON-NLS-1$
+				}
 			}
 		}
 		return fMenu;
@@ -108,9 +125,6 @@ public class OpenConsoleAction extends Action implements IMenuCreator {
 		item.fill(parent, -1);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.action.IMenuCreator#getMenu(org.eclipse.swt.widgets.Menu)
-	 */
 	@Override
 	public Menu getMenu(Menu parent) {
 		return null;
@@ -129,10 +143,6 @@ public class OpenConsoleAction extends Action implements IMenuCreator {
 			fConfig = extension;
 		}
 
-
-		/* (non-Javadoc)
-		 * @see org.eclipse.jface.action.IAction#run()
-		 */
 		@Override
 		public void run() {
 			try {
@@ -146,9 +156,6 @@ public class OpenConsoleAction extends Action implements IMenuCreator {
 			}
 		}
 
-		/* (non-Javadoc)
-		 * @see org.eclipse.jface.action.IAction#runWithEvent(org.eclipse.swt.widgets.Event)
-		 */
 		@Override
 		public void runWithEvent(Event event) {
 			run();

@@ -75,6 +75,7 @@ M4 = Platform-specific fourth key
           point="org.eclipse.ui.console.consoleFactories">
        <consoleFactory
              label="%consoleViewConsoleFactory.name"
+             icon="$nl$/icons/full/cview16/console_view.png"
              class="org.eclipse.ui.internal.console.ConsoleViewConsoleFactory"/>
     </extension>
     <extension

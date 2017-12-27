@@ -17,15 +17,12 @@ import org.eclipse.core.expressions.EvaluationResult;
 import org.eclipse.core.expressions.Expression;
 import org.eclipse.core.expressions.ExpressionConverter;
 import org.eclipse.core.expressions.ExpressionTagNames;
-
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
-
 import org.eclipse.jface.resource.ImageDescriptor;
-
 import org.eclipse.ui.IPluginContribution;
 import org.eclipse.ui.console.ConsolePlugin;
 import org.eclipse.ui.console.IConsoleFactory;
@@ -46,17 +43,19 @@ public class ConsoleFactoryExtension implements IPluginContribution {
 		fConfig = config;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IPluginContribution#getLocalId()
+	/**
+	 *
+	 * @return {@code true} if this is a "New Console" contribution
 	 */
+	public boolean isNewConsoleExtenson() {
+		return ConsoleViewConsoleFactory.class.getName().equals(fConfig.getAttribute("class")); //$NON-NLS-1$
+	}
+
 	@Override
 	public String getLocalId() {
 		return fConfig.getAttribute("id"); //$NON-NLS-1$
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IPluginContribution#getPluginId()
-	 */
 	@Override
 	public String getPluginId() {
 		return fConfig.getContributor().getName();
@@ -89,9 +88,15 @@ public class ConsoleFactoryExtension implements IPluginContribution {
 		return fEnablementExpression;
 	}
 
+	/**
+	 * @return console label, never null
+	 */
 	public String getLabel() {
 		if (fLabel == null) {
 			fLabel = fConfig.getAttribute("label"); //$NON-NLS-1$
+		}
+		if (fLabel == null) {
+			fLabel = "?"; //$NON-NLS-1$
 		}
 		return fLabel;
 	}
