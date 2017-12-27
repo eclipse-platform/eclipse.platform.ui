@@ -70,4 +70,6 @@ public class ConsoleMessages extends NLS {
 	public static String PatternMatchListenerExtension_4;
 
 	public static String PatternMatchListenerExtension_5;
+
+	public static String UpdatingConsoleState;
 }

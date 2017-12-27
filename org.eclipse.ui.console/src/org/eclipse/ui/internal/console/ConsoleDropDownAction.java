@@ -37,9 +37,6 @@ class ConsoleDropDownAction extends Action implements IMenuCreator, IConsoleList
 	private IConsoleView fView;
 	private Menu fMenu;
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.texteditor.IUpdate#update()
-	 */
 	@Override
 	public void update() {
 		IConsole[] consoles = ConsolePlugin.getDefault().getConsoleManager().getConsoles();
@@ -57,9 +54,6 @@ class ConsoleDropDownAction extends Action implements IMenuCreator, IConsoleList
 		update();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.action.IMenuCreator#dispose()
-	 */
 	@Override
 	public void dispose() {
 		if (fMenu != null) {
@@ -70,17 +64,11 @@ class ConsoleDropDownAction extends Action implements IMenuCreator, IConsoleList
 		ConsolePlugin.getDefault().getConsoleManager().removeConsoleListener(this);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.action.IMenuCreator#getMenu(org.eclipse.swt.widgets.Menu)
-	 */
 	@Override
 	public Menu getMenu(Menu parent) {
 		return null;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.action.IMenuCreator#getMenu(org.eclipse.swt.widgets.Control)
-	 */
 	@Override
 	public Menu getMenu(Control parent) {
 		if (fMenu != null) {
@@ -113,9 +101,6 @@ class ConsoleDropDownAction extends Action implements IMenuCreator, IConsoleList
 		item.fill(parent, -1);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.action.IAction#run()
-	 */
 	@Override
 	public void run() {
 		ConsoleView consoleView = (ConsoleView) fView;
@@ -146,12 +131,9 @@ class ConsoleDropDownAction extends Action implements IMenuCreator, IConsoleList
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.console.IConsoleListener#consolesAdded(org.eclipse.ui.console.IConsole[])
-	 */
 	@Override
 	public void consolesAdded(IConsole[] consoles) {
-		UIJob job = new UIJob("") { //$NON-NLS-1$
+		UIJob job = new UIJob(ConsoleMessages.UpdatingConsoleState) {
 			@Override
 			public IStatus runInUIThread(IProgressMonitor monitor) {
 				update();
@@ -172,7 +154,7 @@ class ConsoleDropDownAction extends Action implements IMenuCreator, IConsoleList
 	 */
 	@Override
 	public void consolesRemoved(IConsole[] consoles) {
-		UIJob job = new UIJob("") { //$NON-NLS-1$
+		UIJob job = new UIJob(ConsoleMessages.UpdatingConsoleState) {
 			@Override
 			public IStatus runInUIThread(IProgressMonitor monitor) {
 				if (fMenu != null) {
