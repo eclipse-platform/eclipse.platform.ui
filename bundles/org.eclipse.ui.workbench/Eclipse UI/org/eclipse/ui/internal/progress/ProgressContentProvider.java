@@ -30,7 +30,7 @@ public abstract class ProgressContentProvider implements
      * default values.
      */
     public ProgressContentProvider() {
-    	ProgressViewUpdater.getSingleton().addCollector(this);
+		super();
     }
 
     /**
@@ -46,13 +46,7 @@ public abstract class ProgressContentProvider implements
 
     @Override
 	public Object[] getElements(Object inputElement) {
-
         return ProgressManager.getInstance().getRootElements(debug());
-    }
-
-    @Override
-	public void dispose() {
-        ProgressViewUpdater.getSingleton().removeCollector(this);
     }
 
     @Override
@@ -71,7 +65,6 @@ public abstract class ProgressContentProvider implements
 			return false;
 		}
     	return ProgressViewUpdater.getSingleton().debug;
-
     }
 
 }

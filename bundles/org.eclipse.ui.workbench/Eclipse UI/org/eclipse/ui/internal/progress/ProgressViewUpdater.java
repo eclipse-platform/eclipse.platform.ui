@@ -15,6 +15,7 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
+import java.util.Set;
 import org.eclipse.jface.util.Throttler;
 import org.eclipse.ui.IWorkbenchPreferenceConstants;
 import org.eclipse.ui.PlatformUI;
@@ -27,7 +28,7 @@ class ProgressViewUpdater implements IJobProgressManagerListener {
 
     private static ProgressViewUpdater singleton;
 
-    private IProgressUpdateCollector[] collectors;
+	private Set<IProgressUpdateCollector> collectors;
 
     UpdatesInfo currentInfo = new UpdatesInfo();
 
@@ -170,7 +171,7 @@ class ProgressViewUpdater implements IJobProgressManagerListener {
      * Create a new instance of the receiver.
      */
     private ProgressViewUpdater() {
-        collectors = new IProgressUpdateCollector[0];
+		collectors = new LinkedHashSet<>();
         ProgressManager.getInstance().addListener(this);
         debug =
         	PrefUtil.getAPIPreferenceStore().
@@ -183,10 +184,7 @@ class ProgressViewUpdater implements IJobProgressManagerListener {
      * @param newCollector
      */
     void addCollector(IProgressUpdateCollector newCollector) {
-        IProgressUpdateCollector[] newCollectors = new IProgressUpdateCollector[collectors.length + 1];
-        System.arraycopy(collectors, 0, newCollectors, 0, collectors.length);
-        newCollectors[collectors.length] = newCollector;
-        collectors = newCollectors;
+		collectors.add(newCollector);
     }
 
     /**
@@ -195,25 +193,16 @@ class ProgressViewUpdater implements IJobProgressManagerListener {
      * @param provider
      */
     void removeCollector(IProgressUpdateCollector provider) {
-		HashSet<IProgressUpdateCollector> newCollectors = new HashSet<>();
-        for (int i = 0; i < collectors.length; i++) {
-            if (!collectors[i].equals(provider)) {
-				newCollectors.add(collectors[i]);
-			}
-        }
-        IProgressUpdateCollector[] newArray = new IProgressUpdateCollector[newCollectors
-                .size()];
-        newCollectors.toArray(newArray);
-        collectors = newArray;
+		collectors.remove(provider);
         //Remove ourselves if there is nothing to update
-        if (collectors.length == 0) {
+		if (collectors.isEmpty()) {
 			clearSingleton();
 		}
     }
 
 	private void update() {
 		// Abort the update if there isn't anything
-		if (collectors.length == 0) {
+		if (collectors.isEmpty()) {
 			return;
 		}
 

@@ -13,6 +13,8 @@ package org.eclipse.ui.tests.progress;
 
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.ui.IPageLayout;
+import org.eclipse.ui.internal.progress.FinishedJobs;
 import org.eclipse.ui.internal.progress.JobInfo;
 import org.eclipse.ui.internal.progress.JobTreeElement;
 import org.eclipse.ui.internal.progress.ProgressInfoItem;
@@ -33,9 +35,20 @@ public class ProgressViewTests extends ProgressTestCase {
 		super(testName);
 	}
 
+	@Override
+	protected void doSetUp() throws Exception {
+		super.doSetUp();
+		FinishedJobs.getInstance().clearAll();
+	}
+
+	@Override
+	protected void doTearDown() throws Exception {
+		FinishedJobs.getInstance().clearAll();
+		super.doTearDown();
+	}
+
 
 	public void testClearTaskInfo() throws Exception {
-
 		// test for
 		openProgressView();
 
@@ -47,9 +60,52 @@ public class ProgressViewTests extends ProgressTestCase {
 		openProgressView();
 
 		// now check the items in the view. The job should be listed only once
+		int count1 = countJobs(job1);
+		assertEquals(1, count1);
+		int count2 = countJobs(job2);
+		assertEquals(1, count2);
+	}
+
+	public void testNoUpdatesIfHidden() throws Exception {
+		// test for
+		openProgressView();
+		openView(IPageLayout.ID_TASK_LIST);
+
+		// run the jobs, view is hidden
+		Job job1 = runDummyJob();
+		Job job2 = runDummyJob();
+
+		// make sure we see "throttled" updates too
+		processEventsUntil(() -> false, 1000);
+
+		// now check the items in the view. The job should not be listed
+		int count1 = countJobs(job1);
+		assertEquals(0, count1);
+		int count2 = countJobs(job2);
+		assertEquals(0, count2);
+
+		openProgressView();
+
+		// we should see "kept" jobs now
+		count1 = countJobs(job1);
+		assertEquals(1, count1);
+		count2 = countJobs(job2);
+		assertEquals(1, count2);
+
+		FinishedJobs.getInstance().clearAll();
+
+		// make sure we see "throttled" updates too
+		processEventsUntil(() -> false, 1000);
+
+		count1 = countJobs(job1);
+		assertEquals(0, count1);
+		count2 = countJobs(job2);
+		assertEquals(0, count2);
+	}
+
+	private int countJobs(Job job) {
+		int count = 0;
 		ProgressInfoItem[] progressInfoItems = progressView.getViewer().getProgressInfoItems();
-		boolean job1Found = false;
-		boolean job2Found = false;
 		for (ProgressInfoItem progressInfoItem : progressInfoItems) {
 			JobTreeElement info = progressInfoItem.getInfo();
 			if(info instanceof TaskInfo) {
@@ -57,32 +113,27 @@ public class ProgressViewTests extends ProgressTestCase {
 				JobTreeElement parent = info.getParent();
 				if(parent instanceof JobInfo) {
 					JobInfo jobInfo = (JobInfo) parent;
-					job1Found = checkJob(job1, job1Found, jobInfo);
-					job2Found = checkJob(job2, job2Found, jobInfo);
+					if (containsJob(jobInfo, job)) {
+						count++;
+					}
 				}
-			}else {
+			} else {
 				JobInfo[] jobInfos = progressInfoItem.getJobInfos();
 				for (JobInfo jobInfo : jobInfos) {
-					job1Found = checkJob(job1, job1Found, jobInfo);
-					job2Found = checkJob(job2, job2Found, jobInfo);
+					if (containsJob(jobInfo, job)) {
+						count++;
+					}
 				}
 			}
 		}
+		return count;
 	}
 
-	protected boolean checkJob(Job job, boolean found, JobInfo jobInfo) {
-		if(job.equals(jobInfo.getJob())) {
-			if(found) {
-				fail("The job is listed twice");
-			} else {
-				found = true;
-			}
-		}
-		return found;
+	protected boolean containsJob(JobInfo jobInfo, Job job) {
+		return job.equals(jobInfo.getJob());
 	}
 
 	protected Job runDummyJob() throws InterruptedException {
-
 		DummyJob dummyJob = new DummyJob("Dummy Job", Status.OK_STATUS);
 		dummyJob.setProperty(IProgressConstants.KEEP_PROPERTY, Boolean.TRUE);
 
@@ -93,7 +144,6 @@ public class ProgressViewTests extends ProgressTestCase {
 		processEvents();
 
 		return dummyJob;
-
 	}
 
 }

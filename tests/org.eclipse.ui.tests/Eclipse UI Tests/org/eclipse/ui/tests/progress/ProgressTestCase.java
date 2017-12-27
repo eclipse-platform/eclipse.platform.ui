@@ -12,6 +12,7 @@
 package org.eclipse.ui.tests.progress;
 
 import org.eclipse.ui.IPageLayout;
+import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PartInitException;
@@ -24,9 +25,9 @@ import org.eclipse.ui.tests.harness.util.UITestCase;
  */
 public abstract class ProgressTestCase extends UITestCase {
 
-
 	protected ProgressView progressView;
 	private IWorkbenchWindow window;
+
 	/**
 	 * @param testName
 	 */
@@ -45,19 +46,21 @@ public abstract class ProgressTestCase extends UITestCase {
 	 *
 	 * @throws PartInitException
 	 */
-	public void openProgressView() throws PartInitException {
+	public void openProgressView() throws Exception {
+		progressView = (ProgressView) openView(IPageLayout.ID_PROGRESS_VIEW);
+	}
 
+	public IViewPart openView(String id) throws Exception {
 		IWorkbenchPage activePage = window.getActivePage();
-		progressView = (ProgressView) activePage.showView(IPageLayout.ID_PROGRESS_VIEW);
-		assertNotNull("Progress View is not created properly", progressView);
-
+		IViewPart view = activePage.showView(id);
+		assertNotNull("View is not created properly: " + id, view);
 		processEvents();
+		return view;
 	}
 
 	public void hideProgressView() {
 		window.getActivePage().hideView(progressView);
 		processEvents();
-
 	}
 
 }

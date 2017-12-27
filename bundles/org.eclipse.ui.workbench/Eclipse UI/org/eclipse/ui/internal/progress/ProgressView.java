@@ -24,7 +24,10 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.ui.IActionBars;
+import org.eclipse.ui.IPartListener2;
+import org.eclipse.ui.IViewSite;
 import org.eclipse.ui.IWorkbenchActionConstants;
+import org.eclipse.ui.IWorkbenchPartReference;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.IWorkbenchHelpContextIds;
 import org.eclipse.ui.internal.WorkbenchImages;
@@ -43,6 +46,59 @@ public class ProgressView extends ViewPart {
 
 	Action clearAllAction;
 
+	private IPartListener2 partListener;
+
+	boolean visible;
+
+	ProgressViewerContentProvider provider;
+
+	class ActivationListener implements IPartListener2 {
+
+		@Override
+		public void partActivated(IWorkbenchPartReference partRef) {
+		}
+
+		@Override
+		public void partBroughtToTop(IWorkbenchPartReference partRef) {
+		}
+
+		@Override
+		public void partClosed(IWorkbenchPartReference partRef) {
+		}
+
+		@Override
+		public void partDeactivated(IWorkbenchPartReference partRef) {
+		}
+
+		@Override
+		public void partOpened(IWorkbenchPartReference partRef) {
+		}
+
+		@Override
+		public void partHidden(IWorkbenchPartReference partRef) {
+			if (isMyPart(partRef)) {
+				visible = false;
+				provider.stopListening();
+			}
+		}
+
+		@Override
+		public void partVisible(IWorkbenchPartReference partRef) {
+			if (isMyPart(partRef)) {
+				visible = true;
+				provider.startListening();
+			}
+		}
+
+		@Override
+		public void partInputChanged(IWorkbenchPartReference partRef) {
+		}
+
+		boolean isMyPart(IWorkbenchPartReference partRef) {
+			return ProgressView.this == partRef.getPart(false);
+		}
+
+	}
 
 	@Override
 	public void createPartControl(Composite parent) {
@@ -59,6 +115,18 @@ public class ProgressView extends ViewPart {
 		initPulldownMenu();
 		initToolBar();
 		getSite().setSelectionProvider(viewer);
+		partListener = new ActivationListener();
+		getViewSite().getPage().addPartListener(partListener);
+	}
+
+	@Override
+	public void dispose() {
+		IViewSite site = getViewSite();
+		if (partListener != null && site != null) {
+			site.getPage().removePartListener(partListener);
+			partListener = null;
+		}
+		super.dispose();
 	}
 
 	@Override
@@ -72,7 +140,7 @@ public class ProgressView extends ViewPart {
 	 * Sets the content provider for the viewer.
 	 */
 	protected void initContentProvider() {
-		ProgressViewerContentProvider provider = new ProgressViewerContentProvider(viewer, true ,true);
+		provider = new ProgressViewerContentProvider(viewer, true ,true);
 		viewer.setContentProvider(provider);
 		viewer.setInput(ProgressManager.getInstance());
 	}

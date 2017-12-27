@@ -31,6 +31,9 @@ public class ProgressViewerContentProvider extends ProgressContentProvider {
 
 	private boolean showFinished;
 
+	/** flag if we need a full refresh */
+	private boolean refreshNeeded;
+
 	/**
 	 * Create a new instance of the receiver.
 	 *
@@ -49,64 +52,73 @@ public class ProgressViewerContentProvider extends ProgressContentProvider {
 		progressViewer = structured;
 		this.showFinished = showFinished;
 		if (showFinished) {
-			FinishedJobs.getInstance().addListener(getKeptJobListener());
+			keptJobListener = new FinishedJobsListener();
+		}
+		startListening();
+	}
+
+	public void stopListening() {
+		ProgressViewUpdater.getSingleton().removeCollector(this);
+		if (keptJobListener != null) {
+			FinishedJobs.getInstance().removeListener(keptJobListener);
+		}
+		refreshNeeded = true;
+	}
+
+	public void startListening() {
+		ProgressViewUpdater.getSingleton().addCollector(this);
+		if (keptJobListener != null) {
+			FinishedJobs.getInstance().addListener(keptJobListener);
+		}
+		if (refreshNeeded) {
+			refreshNeeded = false;
+			refresh();
 		}
 	}
 
-	/**
-	 * Return a listener for kept jobs.
-	 *
-	 * @return KeptJobsListener
-	 */
-	private KeptJobsListener getKeptJobListener() {
-		keptJobListener = new KeptJobsListener() {
+	class FinishedJobsListener implements KeptJobsListener {
 
-			@Override
-			public void finished(JobTreeElement jte) {
-				final JobTreeElement element = jte;
-				Job updateJob = new WorkbenchJob("Refresh finished") {//$NON-NLS-1$
-					@Override
-					public IStatus runInUIThread(IProgressMonitor monitor) {
-						refresh(element);
-						return Status.OK_STATUS;
+		@Override
+		public void finished(JobTreeElement jte) {
+			final JobTreeElement element = jte;
+			Job updateJob = new WorkbenchJob("Refresh finished") {//$NON-NLS-1$
+				@Override
+				public IStatus runInUIThread(IProgressMonitor monitor) {
+					refresh(element);
+					return Status.OK_STATUS;
+				}
+
+				@Override
+				public boolean shouldSchedule() {
+					return !progressViewer.getControl().isDisposed();
+				}
+
+				@Override
+				public boolean shouldRun() {
+					return !progressViewer.getControl().isDisposed();
+				}
+			};
+			updateJob.setSystem(true);
+			updateJob.schedule();
+		}
+
+		@Override
+		public void removed(JobTreeElement jte) {
+			final JobTreeElement element = jte;
+			Job updateJob = new WorkbenchJob("Remove finished") {//$NON-NLS-1$
+				@Override
+				public IStatus runInUIThread(IProgressMonitor monitor) {
+					if (element == null) {
+						refresh();
+					} else {
+						remove(element);
 					}
-
-					@Override
-					public boolean shouldSchedule() {
-						return !progressViewer.getControl().isDisposed();
-					}
-
-					@Override
-					public boolean shouldRun() {
-						return !progressViewer.getControl().isDisposed();
-					}
-				};
-				updateJob.setSystem(true);
-				updateJob.schedule();
-
-			}
-
-			@Override
-			public void removed(JobTreeElement jte) {
-				final JobTreeElement element = jte;
-				Job updateJob = new WorkbenchJob("Remove finished") {//$NON-NLS-1$
-					@Override
-					public IStatus runInUIThread(IProgressMonitor monitor) {
-						if (element == null) {
-							refresh();
-						} else {
-							remove(element);
-						}
-						return Status.OK_STATUS;
-					}
-				};
-				updateJob.setSystem(true);
-				updateJob.schedule();
-
-			}
-
-		};
-		return keptJobListener;
+					return Status.OK_STATUS;
+				}
+			};
+			updateJob.setSystem(true);
+			updateJob.schedule();
+		}
 	}
 
 	@Override
@@ -187,20 +199,16 @@ public class ProgressViewerContentProvider extends ProgressContentProvider {
 	@Override
 	public void add(JobTreeElement... elements) {
 		progressViewer.add(elements);
-
 	}
 
 	@Override
 	public void remove(JobTreeElement... elements) {
 		progressViewer.remove(elements);
-
 	}
 
 	@Override
 	public void dispose() {
+		stopListening();
 		super.dispose();
-		if (keptJobListener != null) {
-			FinishedJobs.getInstance().removeListener(keptJobListener);
-		}
 	}
 }
