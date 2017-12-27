@@ -88,11 +88,15 @@ public class E4HandlerProxy implements IHandler2, IHandlerListener, IElementUpda
 		}
 		ExecutionEvent event = new ExecutionEvent(command, parms == null ? Collections.EMPTY_MAP
 				: parms, trigger, appContext);
-		if (handler != null && handler.isHandled()) {
+		if (handler != null) {
+			if (handler.isHandled()) {
 				final Object returnValue = handler.execute(event);
 				return returnValue;
+			}
+			throw new NotHandledException("Handler " + handler //$NON-NLS-1$
+					+ " is not handled for for command " + command); //$NON-NLS-1$
 		}
-		return null;
+		throw new NotHandledException("There is no handler to execute for command " + command); //$NON-NLS-1$
 	}
 
 	public IHandler getHandler() {
