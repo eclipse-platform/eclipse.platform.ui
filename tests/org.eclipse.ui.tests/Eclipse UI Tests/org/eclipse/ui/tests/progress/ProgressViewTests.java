@@ -54,7 +54,7 @@ public class ProgressViewTests extends ProgressTestCase {
 			JobTreeElement info = progressInfoItem.getInfo();
 			if(info instanceof TaskInfo) {
 				// if task info then get the parent and check
-				Object parent = info.getParent();
+				JobTreeElement parent = info.getParent();
 				if(parent instanceof JobInfo) {
 					JobInfo jobInfo = (JobInfo) parent;
 					job1Found = checkJob(job1, job1Found, jobInfo);
