@@ -8,3 +8,4 @@ Bug 399749 - update to Orbit M7 S-build URL
 Bug 458595 - Add version 54.1.1 ICU4J for Mars release - need to touch org.eclipse.e4.rcp
 Bug 506953 - Update prereqs for Oxygen Milestones: Orbit URL - update to felix.scr need to touch this bundle
 Bug 526786 - Latest code is not getting picked up in integration build (I20171102-2000)
+Bug 529356 - Build failure in I20180102-2215
