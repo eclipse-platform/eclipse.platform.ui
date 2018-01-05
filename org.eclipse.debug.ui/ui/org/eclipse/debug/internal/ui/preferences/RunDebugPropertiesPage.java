@@ -299,12 +299,12 @@ public class RunDebugPropertiesPage extends PropertyPage {
 	 * @return resource
 	 */
 	protected IResource getResource() {
-		Object element = getElement();
+		IAdaptable element = getElement();
 		IResource resource = null;
 		if (element instanceof IResource) {
 			resource = (IResource) element;
-		} else if (element instanceof IAdaptable) {
-			resource = ((IAdaptable)element).getAdapter(IResource.class);
+		} else if (element != null) {
+			resource = element.getAdapter(IResource.class);
 		}
 		return resource;
 	}

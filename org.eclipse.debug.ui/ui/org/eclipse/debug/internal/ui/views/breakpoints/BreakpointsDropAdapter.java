@@ -60,9 +60,7 @@ public class BreakpointsDropAdapter extends ViewerDropAdapter {
     	} else if (fView != null) {
     		ISelection selection = LocalSelectionTransfer.getTransfer().getSelection();
     		if (fPath != null && selection instanceof ITreeSelection) {
-        		if (selection instanceof ITreeSelection) {
-        			return fView.performDrop(fPath, (ITreeSelection) LocalSelectionTransfer.getTransfer().getSelection());
-        		}
+				return fView.performDrop(fPath, (ITreeSelection) selection);
     		}
     	}
     	return false;
@@ -99,9 +97,7 @@ public class BreakpointsDropAdapter extends ViewerDropAdapter {
     	} else {
        		ISelection selection = LocalSelectionTransfer.getTransfer().getSelection();
     		if (fPath != null && selection instanceof ITreeSelection) {
-        		if (selection instanceof ITreeSelection) {
-        			return fView.canDrop(fPath, (ITreeSelection) LocalSelectionTransfer.getTransfer().getSelection());
-        		}
+				return fView.canDrop(fPath, (ITreeSelection) LocalSelectionTransfer.getTransfer().getSelection());
     		}
     	}
     	return false;

@@ -29,14 +29,13 @@ import org.eclipse.ui.IViewActionDelegate;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IViewSite;
 import org.eclipse.ui.IWorkbenchPage;
-import org.eclipse.ui.IWorkbenchPart;
 
 /**
  * Generic abstract class for the actions associated to the java watch
  * expressions.
  */
 public abstract class WatchExpressionAction implements IViewActionDelegate {
-	IWorkbenchPart fPart = null;
+	IViewPart fPart = null;
 
 	private static IWatchExpression[] EMPTY_EXPRESSION_ARRAY = new IWatchExpression[0];
 
@@ -110,8 +109,8 @@ public abstract class WatchExpressionAction implements IViewActionDelegate {
 		* @param message the message to display
 		*/
 	protected void showErrorMessage(String message) {
-		if (fPart instanceof IViewPart) {
-			IViewSite viewSite = ((IViewPart) fPart).getViewSite();
+		if (fPart != null) {
+			IViewSite viewSite = fPart.getViewSite();
 			IStatusLineManager manager = viewSite.getActionBars().getStatusLineManager();
 			manager.setErrorMessage(message);
 		}

@@ -143,22 +143,21 @@ public abstract class TreeViewerDropDown {
             @Override
 			public void mouseMove(MouseEvent e) {
                 if (tree.equals(e.getSource())) {
-                    Object o= tree.getItem(new Point(e.x, e.y));
-					if (fLastItem == null ^ o == null) {
-						tree.setCursor(o == null ? null : tree.getDisplay()
+					TreeItem currentItem = tree.getItem(new Point(e.x, e.y));
+					if (fLastItem == null ^ currentItem == null) {
+						tree.setCursor(currentItem == null ? null : tree.getDisplay()
 								.getSystemCursor(SWT.CURSOR_HAND));
 					}
-                    if (o instanceof TreeItem) {
-                        TreeItem currentItem= (TreeItem) o;
-                        if (!o.equals(fLastItem)) {
-                            fLastItem= (TreeItem) o;
+					if (currentItem != null) {
+						if (!currentItem.equals(fLastItem)) {
+							fLastItem = currentItem;
                             tree.setSelection(new TreeItem[] { fLastItem });
                         } else if (System.currentTimeMillis() > (fLastScrollTime + MOUSE_MOVE_SCROLL_DELAY)) {
                             if (e.y < tree.getItemHeight() / 4)
                             {
                                 // Scroll up
                                 if (currentItem.getParentItem() == null) {
-                                    int index= tree.indexOf((TreeItem) o);
+									int index = tree.indexOf(currentItem);
                                     if (index < 1) {
 										return;
 									}
@@ -177,7 +176,7 @@ public abstract class TreeViewerDropDown {
                             } else if (e.y > tree.getBounds().height - tree.getItemHeight() / 4) {
                                 // Scroll down
                                 if (currentItem.getParentItem() == null) {
-                                    int index= tree.indexOf((TreeItem) o);
+									int index = tree.indexOf(currentItem);
                                     if (index >= tree.getItemCount() - 1) {
 										return;
 									}
@@ -195,7 +194,7 @@ public abstract class TreeViewerDropDown {
                                 }
                             }
                         }
-					} else if (o == null) {
+					} else {
 						fLastItem = null;
                     }
                 }
