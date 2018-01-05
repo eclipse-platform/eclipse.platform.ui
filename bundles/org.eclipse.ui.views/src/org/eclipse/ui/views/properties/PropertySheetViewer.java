@@ -464,10 +464,10 @@ class PropertySheetViewer extends Viewer {
 	 */
 	private TreeItem findItem(IPropertySheetEntry entry, TreeItem item) {
 		// If we can find the TreeItem in the cache, just return it
-		Object mapItem = entryToItemMap.get(entry);
-		if (mapItem != null && mapItem instanceof TreeItem)
-			return (TreeItem) mapItem;
-
+		TreeItem treeItem = entryToItemMap.get(entry);
+		if (treeItem != null) {
+			return treeItem;
+		}
 		// compare with current item
 		if (entry == item.getData()) {
 			return item;

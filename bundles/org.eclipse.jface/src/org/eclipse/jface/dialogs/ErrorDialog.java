@@ -554,14 +554,14 @@ public class ErrorDialog extends IconAndMessageDialog {
 			return true;
 		}
 
-		if (!(t instanceof CoreException) && t != null) {
+		if (t != null && !(t instanceof CoreException)) {
 			return true;
 		}
 
 		boolean result = false;
 
 		// Look for a nested core exception
-		if (t instanceof CoreException) {
+		if (t != null) {
 			CoreException ce = (CoreException) t;
 			IStatus eStatus = ce.getStatus();
 			// Gets exception message if it is not contained in the

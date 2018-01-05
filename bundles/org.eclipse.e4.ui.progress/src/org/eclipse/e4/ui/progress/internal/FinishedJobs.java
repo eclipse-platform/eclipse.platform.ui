@@ -381,9 +381,9 @@ public class FinishedJobs extends EventManager {
 	 * @return Date
 	 */
 	public Date getFinishDate(JobTreeElement jte) {
-		Object o = finishedTime.get(jte);
-		if (o instanceof Long) {
-			return new Date(((Long) o).longValue());
+		Long value = finishedTime.get(jte);
+		if (value != null) {
+			return new Date(value.longValue());
 		}
 		return null;
 	}

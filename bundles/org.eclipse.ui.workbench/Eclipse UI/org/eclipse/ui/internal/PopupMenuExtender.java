@@ -518,13 +518,12 @@ public class PopupMenuExtender implements IMenuListener2,
 			staticActionBuilders = new HashMap<>();
 		}
 
-		Object object = staticActionBuilders.get(menuId);
-		if (!(object instanceof ViewerActionBuilder)) {
-			object = new ViewerActionBuilder();
-			staticActionBuilders.put(menuId, (ViewerActionBuilder) object);
+		ViewerActionBuilder builder = staticActionBuilders.get(menuId);
+		if (builder == null) {
+			builder = new ViewerActionBuilder();
+			staticActionBuilders.put(menuId, builder);
 		}
-		final ViewerActionBuilder staticActionBuilder = (ViewerActionBuilder) object;
-		staticActionBuilder.readViewerContributions(menuId, selProvider, part);
+		builder.readViewerContributions(menuId, selProvider, part);
 	}
 
     /**

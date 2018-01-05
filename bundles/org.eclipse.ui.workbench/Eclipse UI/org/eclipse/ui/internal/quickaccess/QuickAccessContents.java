@@ -794,17 +794,18 @@ public abstract class QuickAccessContents {
 			@Override
 			public void mouseMove(MouseEvent e) {
 				if (table.equals(e.getSource())) {
-					Object o = table.getItem(new Point(e.x, e.y));
-					if (lastItem == null ^ o == null) {
-						table.setCursor(o == null ? null : table.getDisplay().getSystemCursor(
+					TableItem tableItem = table.getItem(new Point(e.x, e.y));
+					if (lastItem == null ^ tableItem == null) {
+						table.setCursor(tableItem == null ? null
+								: table.getDisplay().getSystemCursor(
 								SWT.CURSOR_HAND));
 					}
-					if (o instanceof TableItem) {
-						if (!o.equals(lastItem)) {
-							lastItem = (TableItem) o;
+					if (tableItem != null) {
+						if (!tableItem.equals(lastItem)) {
+							lastItem = tableItem;
 							table.setSelection(new TableItem[] { lastItem });
 						}
-					} else if (o == null) {
+					} else {
 						lastItem = null;
 					}
 				}

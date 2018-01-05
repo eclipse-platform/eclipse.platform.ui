@@ -34,7 +34,7 @@ import org.eclipse.ui.services.IServiceLocator;
 
 public class ActionBars extends SubActionBars {
 
-	private IToolBarManager toolbarManager;
+	private ToolBarManager toolbarManager;
 
 	private IMenuManager menuManager;
 
@@ -69,26 +69,21 @@ public class ActionBars extends SubActionBars {
 		getMenuManager().update(false);
 		if (toolbarManager != null) {
 			//			System.err.println("update toolbar manager for " + part.getElementId()); //$NON-NLS-1$
-			if (toolbarManager instanceof ToolBarManager) {
-				ToolBarManager tbm = (ToolBarManager) toolbarManager;
-				Control tbCtrl = tbm.getControl();
-				if (tbCtrl == null || tbCtrl.isDisposed()) {
-					if (part.getContext() != null) {
-						// TODO what to do
-					}
-				} else {
-					tbm.update(true);
-					if (!tbCtrl.isDisposed()) {
-						Control packParent = getPackParent(tbCtrl);
-						packParent.pack();
-
-						// Specifically lay out the CTF
-						if (packParent.getParent() instanceof CTabFolder)
-							packParent.getParent().layout(true);
-					}
+			Control tbCtrl = toolbarManager.getControl();
+			if (tbCtrl == null || tbCtrl.isDisposed()) {
+				if (part.getContext() != null) {
+					// TODO what to do
 				}
 			} else {
-				toolbarManager.update(false);
+				toolbarManager.update(true);
+				if (!tbCtrl.isDisposed()) {
+					Control packParent = getPackParent(tbCtrl);
+					packParent.pack();
+
+					// Specifically lay out the CTF
+					if (packParent.getParent() instanceof CTabFolder)
+						packParent.getParent().layout(true);
+				}
 			}
 
 			MToolBar toolbar = part.getToolbar();
@@ -172,8 +167,8 @@ public class ActionBars extends SubActionBars {
 	@Override
 	public void dispose() {
 		menuManager.dispose();
-		if (toolbarManager instanceof ToolBarManager) {
-			((ToolBarManager) toolbarManager).dispose();
+		if (toolbarManager != null) {
+			toolbarManager.dispose();
 		}
 		super.dispose();
 	}

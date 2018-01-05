@@ -649,17 +649,17 @@ public class PreferenceDialog extends TrayDialog implements IPreferencePageConta
 
 			@Override
 			public void selectionChanged(SelectionChangedEvent event) {
-				final Object selection = getSingleSelection(event.getSelection());
-				if (selection instanceof IPreferenceNode) {
+				final IPreferenceNode node = getSingleSelection(event.getSelection());
+				if (node != null) {
 					BusyIndicator.showWhile(getShell().getDisplay(), () -> {
 						if (!isCurrentPageValid()) {
 							handleError();
-						} else if (!showPage((IPreferenceNode) selection)) {
+						} else if (!showPage(node)) {
 							// Page flipping wasn't successful
 							handleError();
 						} else {
 							// Everything went well
-							lastSuccessfulNode = (IPreferenceNode) selection;
+							lastSuccessfulNode = node;
 						}
 					});
 				}

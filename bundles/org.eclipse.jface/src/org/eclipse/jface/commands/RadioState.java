@@ -155,9 +155,8 @@ public class RadioState extends ToggleState {
 				return;
 			}
 
-			final Object currentValue = radioStatesById.get(identifier);
-			if (currentValue instanceof RadioGroup) {
-				final RadioGroup radioGroup = (RadioGroup) currentValue;
+			final RadioGroup radioGroup = radioStatesById.get(identifier);
+			if (radioGroup != null) {
 				radioGroup.activateMember(state);
 			}
 		}
@@ -177,11 +176,8 @@ public class RadioState extends ToggleState {
 				radioStatesById = new HashMap<>();
 			}
 
-			final Object currentValue = radioStatesById.get(identifier);
-			final RadioGroup radioGroup;
-			if (currentValue instanceof RadioGroup) {
-				radioGroup = (RadioGroup) currentValue;
-			} else {
+			RadioGroup radioGroup = radioStatesById.get(identifier);
+			if (radioGroup == null) {
 				radioGroup = new RadioGroup();
 				radioStatesById.put(identifier, radioGroup);
 			}
@@ -203,9 +199,8 @@ public class RadioState extends ToggleState {
 				return;
 			}
 
-			final Object currentValue = radioStatesById.get(identifier);
-			if (currentValue instanceof RadioGroup) {
-				final RadioGroup radioGroup = (RadioGroup) currentValue;
+			final RadioGroup radioGroup = radioStatesById.get(identifier);
+			if (radioGroup != null) {
 				radioGroup.removeMember(state);
 			}
 		}

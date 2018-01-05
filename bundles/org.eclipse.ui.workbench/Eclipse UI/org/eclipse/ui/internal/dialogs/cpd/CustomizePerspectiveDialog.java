@@ -1882,9 +1882,8 @@ public class CustomizePerspectiveDialog extends TrayDialog {
 
 		if (menu.getParent() != null) {
 			// Search for any dynamic menu entries which will be handled later
-			Object data = menuMngrRenderer.getManager(menu);
-			if (data instanceof IContributionManager) {
-				IContributionManager manager = (IContributionManager) data;
+			IContributionManager manager = menuMngrRenderer.getManager(menu);
+			if (manager != null) {
 				IContributionItem[] items = manager.getItems();
 				for (int i = 0; i < items.length; i++) {
 					IContributionItem ci = items[i];

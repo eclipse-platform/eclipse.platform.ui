@@ -16,11 +16,9 @@ import java.util.Set;
 
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.SafeRunner;
-
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.ILabelProviderListener;
 import org.eclipse.jface.viewers.ITreeContentProvider;
-
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.internal.navigator.NavigatorContentService;
 import org.eclipse.ui.internal.navigator.NavigatorSafeRunnable;
@@ -258,12 +256,12 @@ public class NavigatorContentExtension implements IMementoAware,
 	@Override
 	public void saveState(IMemento aMemento) {
 		synchronized (this) {
-			if (contentProvider != null
-					&& contentProvider instanceof IMementoAware)
-				((IMementoAware) contentProvider).saveState(aMemento);
-			if (labelProvider != null && labelProvider instanceof IMementoAware)
-				((IMementoAware) labelProvider).saveState(aMemento);
-
+			if (contentProvider != null) {
+				contentProvider.saveState(aMemento);
+			}
+			if (labelProvider != null) {
+				labelProvider.saveState(aMemento);
+			}
 		}
 	}
 

@@ -277,11 +277,6 @@ public class CNavigatorContentProvider implements
 				CElement element = new CContainer(this, container,
 						(CElement) _resourceToModel.get(container.getParent()));
 				if (element != null) {
-					// don't convert the root
-					if (!(element instanceof CElement)
-							&& !(element instanceof CProject)) {
-						modification.setParent(element);
-					}
 					final Set children = modification.getChildren();
 					return convertToCElements(children);
 				}

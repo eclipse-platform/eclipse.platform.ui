@@ -183,7 +183,6 @@ public class NewMWindowTest {
 				0);
 		MPartStack stack = (MPartStack) psc.getChildren().get(0);
 		MPart part = (MPart) stack.getChildren().get(0);
-		assertTrue("part is incorrect type " + part, part instanceof MPart);
 		return part;
 	}
 

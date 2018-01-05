@@ -18,7 +18,6 @@ import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.ui.internal.navigator.CommonNavigatorMessages;
@@ -78,14 +77,12 @@ public class UpdateActiveExtensionsOperation extends AbstractOperation {
 		// we sort the array in order to use Array.binarySearch();
 		Arrays.sort(contentExtensionsToActivate);
 
-		IStructuredSelection ssel = null;
+		IStructuredSelection selection = null;
 
 		try {
 			commonViewer.getControl().setRedraw(false);
 
-			ISelection selection = commonViewer.getStructuredSelection();
-			if(selection instanceof IStructuredSelection)
-				ssel = (IStructuredSelection) selection;
+			selection = commonViewer.getStructuredSelection();
 
 			INavigatorContentDescriptor[] visibleContentDescriptors = contentService
 					.getVisibleExtensions();
@@ -123,7 +120,7 @@ public class UpdateActiveExtensionsOperation extends AbstractOperation {
 
 				commonViewer.refresh();
 
-				Object[] originalObjects = ssel.toArray();
+				Object[] originalObjects = selection.toArray();
 
 				commonViewer.setExpandedElements(expandedElements);
 

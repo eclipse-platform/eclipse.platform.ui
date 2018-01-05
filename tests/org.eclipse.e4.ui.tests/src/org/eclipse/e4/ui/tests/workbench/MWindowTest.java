@@ -499,7 +499,6 @@ public class MWindowTest {
 		MPartSashContainer psc = (MPartSashContainer) window.getChildren().get(0);
 		MPartStack stack = (MPartStack) psc.getChildren().get(0);
 		MPart part = (MPart) stack.getChildren().get(0);
-		assertTrue("part is incorrect type " + part, part instanceof MPart);
 		return part;
 	}
 

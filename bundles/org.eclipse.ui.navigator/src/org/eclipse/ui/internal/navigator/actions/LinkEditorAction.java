@@ -15,7 +15,6 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.SafeRunner;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.action.Action;
-import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
@@ -63,21 +62,19 @@ public class LinkEditorAction extends Action implements
 		public IStatus runInUIThread(IProgressMonitor monitor) {
 
 			if (!commonViewer.getControl().isDisposed()) {
-				ISelection selection = commonViewer.getStructuredSelection();
-				if (selection != null && !selection.isEmpty()
-						&& selection instanceof IStructuredSelection) {
+				IStructuredSelection selection = commonViewer.getStructuredSelection();
+				if (selection != null && !selection.isEmpty()) {
 
-					final IStructuredSelection sSelection = (IStructuredSelection) selection;
-					if (sSelection.size() == 1) {
+					if (selection.size() == 1) {
 						final ILinkHelper[] helpers = linkService
-								.getLinkHelpersFor(sSelection.getFirstElement());
+								.getLinkHelpersFor(selection.getFirstElement());
 						if (helpers.length > 0) {
 							ignoreEditorActivation = true;
 							SafeRunner.run(new NavigatorSafeRunnable() {
 								@Override
 								public void run() throws Exception {
 									helpers[0].activateEditor(commonNavigator.getSite()
-											.getPage(), sSelection);
+											.getPage(), selection);
 								}
 							});
 							ignoreEditorActivation = false;
@@ -219,9 +216,8 @@ public class LinkEditorAction extends Action implements
 	 * Update the active editor based on the current selection in the Navigator.
 	 */
 	protected void activateEditor() {
-		ISelection selection = commonViewer.getStructuredSelection();
-		if (selection != null && !selection.isEmpty()
-				&& selection instanceof IStructuredSelection) {
+		IStructuredSelection selection = commonViewer.getStructuredSelection();
+		if (selection != null && !selection.isEmpty()) {
 			/*
 			 * Create and schedule a UI Job to activate the editor in a valid
 			 * Display thread

@@ -195,15 +195,16 @@ public abstract class AbstractTableInformationControl {
 				}
 				if (table.equals(e.getSource())
 						& ++divCount == ignoreEventCount) {
-					Object o = table.getItem(new Point(e.x, e.y));
-					if (fLastItem == null ^ o == null) {
-						table.setCursor(o == null ? null : table.getDisplay()
+					TableItem tableItem = table.getItem(new Point(e.x, e.y));
+					if (fLastItem == null ^ tableItem == null) {
+						table.setCursor(tableItem == null ? null
+								: table.getDisplay()
 								.getSystemCursor(SWT.CURSOR_HAND));
 					}
-					if (o instanceof TableItem && lastY != e.y) {
+					if (tableItem != null && lastY != e.y) {
 						lastY = e.y;
-						if (!o.equals(fLastItem)) {
-							fLastItem = (TableItem) o;
+						if (!tableItem.equals(fLastItem)) {
+							fLastItem = tableItem;
 							table.setSelection(new TableItem[] { fLastItem });
 						} else if (e.y < itemHeightdiv4) {
 							// Scroll up
@@ -222,7 +223,7 @@ public abstract class AbstractTableInformationControl {
 								table.setSelection(new TableItem[] { fLastItem });
 							}
 						}
-					} else if (o == null) {
+					} else if (tableItem == null) {
 						fLastItem = null;
 					}
 				}

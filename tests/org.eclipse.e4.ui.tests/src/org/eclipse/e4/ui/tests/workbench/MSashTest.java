@@ -91,8 +91,6 @@ public class MSashTest {
 		((Shell) topWidget).layout(true);
 		MPartSashContainer sash = (MPartSashContainer) window.getChildren()
 				.get(0);
-		assertTrue("Should be an MPartSashContainer",
-				sash instanceof MPartSashContainer);
 
 		MPart part0 = (MPart) sash.getChildren().get(0);
 		MPart part1 = (MPart) sash.getChildren().get(1);

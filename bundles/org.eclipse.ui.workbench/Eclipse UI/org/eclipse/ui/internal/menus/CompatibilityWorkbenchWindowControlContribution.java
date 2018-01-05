@@ -67,7 +67,7 @@ public class CompatibilityWorkbenchWindowControlContribution {
 					parent = parent.getParent();
 				}
 
-				if (parent instanceof MTrimBar) {
+				if (parent != null) {
 					switch (((MTrimBar) parent).getSide()) {
 					case BOTTOM:
 						contribution.setCurSide(SWT.BOTTOM);

@@ -272,17 +272,18 @@ public abstract class FilteredTableBaseHandler extends AbstractHandler implement
 			@Override
 			public void mouseMove(MouseEvent e) {
 				if (table.equals(e.getSource())) {
-					Object o = table.getItem(new Point(e.x, e.y));
-					if (fLastItem == null ^ o == null) {
-						table.setCursor(o == null ? null : table.getDisplay().getSystemCursor(
+					TableItem tableItem = table.getItem(new Point(e.x, e.y));
+					if (fLastItem == null ^ tableItem == null) {
+						table.setCursor(tableItem == null ? null
+								: table.getDisplay().getSystemCursor(
 								SWT.CURSOR_HAND));
 					}
-					if (o instanceof TableItem) {
-						if (!o.equals(fLastItem)) {
-							fLastItem = (TableItem) o;
+					if (tableItem != null) {
+						if (!tableItem.equals(fLastItem)) {
+							fLastItem = tableItem;
 							table.setSelection(new TableItem[] { fLastItem });
 						}
-					} else if (o == null) {
+					} else {
 						fLastItem = null;
 					}
 				}

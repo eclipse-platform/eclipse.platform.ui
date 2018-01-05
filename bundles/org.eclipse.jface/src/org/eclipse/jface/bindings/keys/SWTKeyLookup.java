@@ -270,48 +270,40 @@ public final class SWTKeyLookup implements IKeyLookup {
 
 	@Override
 	public final int formalKeyLookup(final String name) {
-		final Object value = naturalKeyTable.get(name);
-		if (value instanceof Integer) {
-			return ((Integer) value).intValue();
-		}
-
-		if (name.length() > 0) {
+		final Integer value = naturalKeyTable.get(name);
+		if (value == null) {
 			throw new IllegalArgumentException("Unrecognized formal key name: " //$NON-NLS-1$
 					+ name);
 		}
-
-		return name.charAt(0);
+		return value.intValue();
 	}
 
 	@Override
 	public final Integer formalKeyLookupInteger(final String name) {
-		final Object value = naturalKeyTable.get(name);
-		if (value instanceof Integer) {
-			return (Integer) value;
+		final Integer value = naturalKeyTable.get(name);
+		if (value == null) {
+			throw new IllegalArgumentException("Unrecognized formal key name: " //$NON-NLS-1$
+					+ name);
 		}
-
-		return Integer.valueOf(name.charAt(0));
+		return value;
 	}
 
 	@Override
 	public final int formalModifierLookup(final String name) {
-		final Object value = modifierKeyTable.get(name);
-		if (value instanceof Integer) {
-			return ((Integer) value).intValue();
+		final Integer value = modifierKeyTable.get(name);
+		if (value == null) {
+			return 0;
 		}
-
-		return 0;
+		return value.intValue();
 	}
 
 	@Override
 	public final String formalNameLookup(final int key) {
-		final Integer keyObject = Integer.valueOf(key);
-		final Object value = nameTable.get(keyObject);
-		if (value instanceof String) {
-			return (String) value;
+		final String value = nameTable.get(Integer.valueOf(key));
+		if (value == null) {
+			return Util.ZERO_LENGTH_STRING + ((char) key);
 		}
-
-		return Util.ZERO_LENGTH_STRING + ((char) key);
+		return value;
 	}
 
 	@Override
