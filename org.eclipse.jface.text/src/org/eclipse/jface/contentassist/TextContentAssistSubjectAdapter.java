@@ -160,8 +160,8 @@ public class TextContentAssistSubjectAdapter extends AbstractControlContentAssis
 	@Override
 	public void removeSelectionListener(SelectionListener selectionListener) {
 		fText.removeSelectionListener(selectionListener);
-		Object listener= fModifyListeners.get(selectionListener);
-		if (listener instanceof Listener)
-			fText.removeListener(SWT.Modify, (Listener)listener);
+		Listener listener= fModifyListeners.get(selectionListener);
+		if (listener != null)
+			fText.removeListener(SWT.Modify, listener);
 	}
 }

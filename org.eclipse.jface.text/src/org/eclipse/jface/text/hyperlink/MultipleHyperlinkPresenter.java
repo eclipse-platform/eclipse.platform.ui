@@ -272,14 +272,13 @@ public class MultipleHyperlinkPresenter extends DefaultHyperlinkPresenter implem
 				@Override
 				public void mouseMove(MouseEvent e) {
 					if (fTable.equals(e.getSource())) {
-						Object o= fTable.getItem(new Point(e.x, e.y));
-						if (fLastItem == null ^ o == null) {
-							fTable.setCursor(o == null ? null : fTable.getDisplay().getSystemCursor(SWT.CURSOR_HAND));
+						TableItem item= fTable.getItem(new Point(e.x, e.y));
+						if (fLastItem == null ^ item == null) {
+							fTable.setCursor(item == null ? null : fTable.getDisplay().getSystemCursor(SWT.CURSOR_HAND));
 						}
-						if (o instanceof TableItem) {
-							TableItem item= (TableItem) o;
-							if (!o.equals(fLastItem)) {
-								fLastItem= (TableItem) o;
+						if (item != null) {
+							if (!item.equals(fLastItem)) {
+								fLastItem= item;
 								fTable.setSelection(new TableItem[] { fLastItem });
 							} else if (e.y < fTable.getItemHeight() / 4) {
 								// Scroll up
@@ -296,7 +295,7 @@ public class MultipleHyperlinkPresenter extends DefaultHyperlinkPresenter implem
 									fTable.setSelection(new TableItem[] { fLastItem });
 								}
 							}
-						} else if (o == null) {
+						} else {
 							fLastItem= null;
 						}
 					}

@@ -14,7 +14,6 @@ package org.eclipse.jface.text;
 
 import org.eclipse.swt.graphics.FontData;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 
 import org.eclipse.jface.preference.FontFieldEditor;
@@ -79,9 +78,8 @@ public class PropagatingFontFieldEditor extends FontFieldEditor {
 	 */
 	private void checkForDefault() {
 		if (presentsDefaultValue()) {
-			Control c= getValueControl(fParent);
-			if (c instanceof Label)
-				((Label) c).setText(fDefaultFontLabel);
+			Label label= getValueControl(fParent);
+			label.setText(fDefaultFontLabel);
 		}
 	}
 
