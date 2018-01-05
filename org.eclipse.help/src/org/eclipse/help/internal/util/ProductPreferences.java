@@ -233,15 +233,15 @@ public class ProductPreferences {
 
 		@Override
 		public int compare(String o1, String o2) {
-			Object name1 = tocNames.get(o1);
-			Object name2 = tocNames.get(o2);
-			if (!(name1 instanceof String)) {
-				return (name2 instanceof String) ? -1 : 0;
+			String name1 = tocNames.get(o1);
+			String name2 = tocNames.get(o2);
+			if (name1 == null) {
+				return (name2 != null) ? -1 : 0;
 			}
-			if (!(name2 instanceof String)) {
+			if (name2 == null) {
 				return 1;
 			}
-			return Collator.getInstance().compare((String)name1, (String)name2);
+			return Collator.getInstance().compare(name1, name2);
 		}
 
 	}
