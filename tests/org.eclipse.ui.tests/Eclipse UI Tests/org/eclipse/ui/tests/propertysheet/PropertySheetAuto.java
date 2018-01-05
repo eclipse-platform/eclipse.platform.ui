@@ -318,6 +318,12 @@ public class PropertySheetAuto extends UITestCase {
 			processUiEvents();
             assertEquals(structuredSelection, propView.getShowInContext().getSelection());
         }
+
+		// After the 'selection provider' view is closed the properties view selection
+		// should be cleared
+		activePage.hideView(selectionProviderView);
+		processUiEvents();
+		assertNull(propView.getShowInContext().getSelection());
     }
 
     /**
