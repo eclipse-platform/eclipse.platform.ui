@@ -23,7 +23,12 @@ import java.util.function.Consumer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.custom.StyledTextLineSpacingProvider;
+import org.eclipse.swt.events.MouseEvent;
+import org.eclipse.swt.events.MouseListener;
+import org.eclipse.swt.events.MouseMoveListener;
+import org.eclipse.swt.events.MouseTrackListener;
 import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Display;
 
 import org.eclipse.core.runtime.Assert;
@@ -64,6 +69,78 @@ public class InlinedAnnotationSupport implements StyledTextLineSpacingProvider {
 	 */
 	private static final String INLINED_STRATEGY_ID= "inlined"; //$NON-NLS-1$
 
+	class MouseTracker implements MouseTrackListener, MouseMoveListener, MouseListener {
+
+		private AbstractInlinedAnnotation fAnnotation;
+
+		private Consumer<MouseEvent> fAction;
+
+		private void update(MouseEvent e) {
+			fAnnotation= null;
+			fAction= null;
+			AbstractInlinedAnnotation annotation= getInlinedAnnotationAtPoint(fViewer, new Point(e.x, e.y));
+			if (annotation != null) {
+				Consumer<MouseEvent> action= annotation.getAction(e);
+				if (action != null) {
+					fAnnotation= annotation;
+					fAction= action;
+				}
+			}
+		}
+
+		@Override
+		public void mouseHover(MouseEvent e) {
+			update(e);
+			if (fAnnotation != null) {
+				fAnnotation.onMouseHover(e);
+			}
+		}
+
+		@Override
+		public void mouseMove(MouseEvent e) {
+			if (fAnnotation != null) {
+				AbstractInlinedAnnotation oldAnnotation= fAnnotation;
+				update(e);
+				if (!oldAnnotation.equals(fAnnotation)) {
+					oldAnnotation.onMouseOut(e);
+					fAnnotation= null;
+					fAction= null;
+				}
+			}
+		}
+
+		@Override
+		public void mouseDoubleClick(MouseEvent e) {
+			// Do nothing
+		}
+
+		@Override
+		public void mouseDown(MouseEvent e) {
+			// Do nothing
+		}
+
+		@Override
+		public void mouseUp(MouseEvent e) {
+			if (e.button != 1) {
+				return;
+			}
+			if (fAction != null) {
+				fAction.accept(e);
+			}
+		}
+
+		@Override
+		public void mouseEnter(MouseEvent e) {
+			// Do nothing
+		}
+
+		@Override
+		public void mouseExit(MouseEvent e) {
+			// Do nothing
+		}
+
+	}
+
 	/**
 	 * The source viewer
 	 */
@@ -78,6 +155,11 @@ public class InlinedAnnotationSupport implements StyledTextLineSpacingProvider {
 	 * Holds the current inlined annotations.
 	 */
 	private Set<AbstractInlinedAnnotation> fInlinedAnnotations;
+
+	/**
+	 * The mouse tracker used to support hover, click on inlined annotation.
+	 */
+	private final MouseTracker fMouseTracker= new MouseTracker();
 
 	/**
 	 * Install the inlined annotation support for the given viewer.
@@ -95,6 +177,9 @@ public class InlinedAnnotationSupport implements StyledTextLineSpacingProvider {
 		if (text == null || text.isDisposed()) {
 			return;
 		}
+		text.addMouseListener(fMouseTracker);
+		text.addMouseTrackListener(fMouseTracker);
+		text.addMouseMoveListener(fMouseTracker);
 		setColor(text.getDisplay().getSystemColor(SWT.COLOR_DARK_GRAY));
 		text.setLineSpacingProvider(this);
 	}
@@ -120,6 +205,12 @@ public class InlinedAnnotationSupport implements StyledTextLineSpacingProvider {
 	 * Unisntall the inlined annotation support
 	 */
 	public void uninstall() {
+		StyledText text= this.fViewer.getTextWidget();
+		if (text != null && !text.isDisposed()) {
+			text.removeMouseListener(this.fMouseTracker);
+			text.removeMouseTrackListener(this.fMouseTracker);
+			text.removeMouseMoveListener(this.fMouseTracker);
+		}
 		fViewer= null;
 		fPainter= null;
 	}
@@ -261,7 +352,7 @@ public class InlinedAnnotationSupport implements StyledTextLineSpacingProvider {
 	 * @param lineIndex the line index.
 	 * @return the {@link AbstractInlinedAnnotation} from the given line index and null otherwise.
 	 */
-	public static AbstractInlinedAnnotation getInlinedAnnotationAtLine(ISourceViewer viewer, int lineIndex) {
+	private static AbstractInlinedAnnotation getInlinedAnnotationAtLine(ISourceViewer viewer, int lineIndex) {
 		if (viewer == null) {
 			return null;
 		}
@@ -279,23 +370,104 @@ public class InlinedAnnotationSupport implements StyledTextLineSpacingProvider {
 				lineNumber= ((ITextViewerExtension5) viewer).widgetLine2ModelLine(lineNumber);
 			}
 			IRegion line= document.getLineInformation(lineNumber);
-			Iterator<Annotation> iter= (annotationModel instanceof IAnnotationModelExtension2)
-					? ((IAnnotationModelExtension2) annotationModel).getAnnotationIterator(line.getOffset(),
-							line.getLength(), true, true)
-					: annotationModel.getAnnotationIterator();
-			while (iter.hasNext()) {
-				Annotation ann= iter.next();
-				if (ann instanceof AbstractInlinedAnnotation) {
-					Position p= annotationModel.getPosition(ann);
-					if (p != null) {
-						if (p.overlapsWith(line.getOffset(), line.getLength())) {
-							return (AbstractInlinedAnnotation) ann;
-						}
+			return getInlinedAnnotationAtOffset(viewer, line.getOffset(), line.getLength());
+		} catch (BadLocationException e) {
+			return null;
+		}
+	}
+
+	/**
+	 * Returns the {@link AbstractInlinedAnnotation} from the given point and null otherwise.
+	 *
+	 * @param viewer the source viewer
+	 * @param point the origin of character bounding box relative to the origin of the widget client
+	 *            area.
+	 * @return the {@link AbstractInlinedAnnotation} from the given point and null otherwise.
+	 */
+	private static AbstractInlinedAnnotation getInlinedAnnotationAtPoint(ISourceViewer viewer, Point point) {
+		AbstractInlinedAnnotation annotation= getLineContentAnnotationAtPoint(viewer, point);
+		if (annotation != null) {
+			return annotation;
+		}
+		return getLineHeaderAnnotationAtPoint(viewer, point);
+	}
+
+	/**
+	 * Returns the {@link AbstractInlinedAnnotation} line content from the given point and null
+	 * otherwise.
+	 *
+	 * @param viewer the source viewer
+	 * @param point the origin of character bounding box relative to the origin of the widget client
+	 *            area.
+	 * @return the {@link AbstractInlinedAnnotation} line content from the given point and null
+	 *         otherwise.
+	 */
+	private static AbstractInlinedAnnotation getLineContentAnnotationAtPoint(ISourceViewer viewer, Point point) {
+		StyledText styledText= viewer.getTextWidget();
+		int offset= styledText.getOffsetAtPoint(point);
+		if (offset == -1) {
+			return null;
+		}
+		if (viewer instanceof ITextViewerExtension5) {
+			offset= ((ITextViewerExtension5) viewer).widgetOffset2ModelOffset(offset);
+		}
+		AbstractInlinedAnnotation annotation= getInlinedAnnotationAtOffset(viewer, offset, 1);
+		if (annotation instanceof LineContentAnnotation) {
+			return annotation;
+		}
+		return null;
+	}
+
+	/**
+	 * Returns the {@link AbstractInlinedAnnotation} line header from the given point and null
+	 * otherwise.
+	 *
+	 * @param viewer the source viewer
+	 * @param point the origin of character bounding box relative to the origin of the widget client
+	 *            area.
+	 * @return the {@link AbstractInlinedAnnotation} line header from the given point and null
+	 *         otherwise.
+	 */
+	private static AbstractInlinedAnnotation getLineHeaderAnnotationAtPoint(ISourceViewer viewer, Point point) {
+		StyledText styledText= viewer.getTextWidget();
+		int lineIndex= styledText.getLineIndex(point.y);
+		AbstractInlinedAnnotation annotation= getInlinedAnnotationAtLine(viewer, lineIndex);
+		if (annotation instanceof LineHeaderAnnotation) {
+			return annotation;
+		}
+		return null;
+	}
+
+	/**
+	 * Returns the {@link AbstractInlinedAnnotation} from the given offset and null otherwise.
+	 *
+	 * @param viewer the source viewer
+	 * @param offset the start position of the region, must be >= 0
+	 * @param length the length of the region, must be >= 0
+	 * @return the {@link AbstractInlinedAnnotation} from the given offset and null otherwise.
+	 */
+	private static AbstractInlinedAnnotation getInlinedAnnotationAtOffset(ISourceViewer viewer, int offset, int length) {
+		if (viewer == null) {
+			return null;
+		}
+		IAnnotationModel annotationModel= viewer.getAnnotationModel();
+		if (annotationModel == null) {
+			return null;
+		}
+		Iterator<Annotation> iter= (annotationModel instanceof IAnnotationModelExtension2)
+				? ((IAnnotationModelExtension2) annotationModel).getAnnotationIterator(offset,
+						length, true, true)
+				: annotationModel.getAnnotationIterator();
+		while (iter.hasNext()) {
+			Annotation ann= iter.next();
+			if (ann instanceof AbstractInlinedAnnotation) {
+				Position p= annotationModel.getPosition(ann);
+				if (p != null) {
+					if (p.overlapsWith(offset, length)) {
+						return (AbstractInlinedAnnotation) ann;
 					}
 				}
 			}
-		} catch (BadLocationException e) {
-			return null;
 		}
 		return null;
 	}

@@ -11,8 +11,10 @@
 package org.eclipse.jface.text.codemining;
 
 import java.util.concurrent.CompletableFuture;
+import java.util.function.Consumer;
 
 import org.eclipse.swt.custom.StyledText;
+import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Point;
@@ -53,6 +55,11 @@ public abstract class AbstractCodeMining implements ICodeMining {
 	private String label;
 
 	/**
+	 * The action to execute when mining is clicked and null otherwise.
+	 */
+	private final Consumer<MouseEvent> action;
+
+	/**
 	 * CodeMining constructor to locate the code mining before the given line number.
 	 *
 	 * @param beforeLineNumber the line number where codemining must be drawn. Use 0 if you wish to
@@ -61,10 +68,25 @@ public abstract class AbstractCodeMining implements ICodeMining {
 	 * @param provider the owner codemining provider which creates this mining.
 	 * @throws BadLocationException when line number doesn't exists
 	 */
-	public AbstractCodeMining(int beforeLineNumber, IDocument document, ICodeMiningProvider provider)
+	public AbstractCodeMining(int beforeLineNumber, IDocument document, ICodeMiningProvider provider) throws BadLocationException {
+		this(beforeLineNumber, document, provider, null);
+	}
+
+	/**
+	 * CodeMining constructor to locate the code mining before the given line number.
+	 *
+	 * @param beforeLineNumber the line number where codemining must be drawn. Use 0 if you wish to
+	 *            locate the code mining before the first line number (1).
+	 * @param document the document.
+	 * @param provider the owner codemining provider which creates this mining.
+	 * @param action the action to execute when mining is clicked and null otherwise.
+	 * @throws BadLocationException when line number doesn't exists
+	 */
+	public AbstractCodeMining(int beforeLineNumber, IDocument document, ICodeMiningProvider provider, Consumer<MouseEvent> action)
 			throws BadLocationException {
 		this.position= Positions.of(beforeLineNumber, document, true);
 		this.provider= provider;
+		this.action= action;
 	}
 
 	@Override
@@ -140,5 +162,10 @@ public abstract class AbstractCodeMining implements ICodeMining {
 		String title= getLabel() != null ? getLabel() : "no command"; //$NON-NLS-1$
 		gc.drawText(title, x, y);
 		return gc.stringExtent(title);
+	}
+
+	@Override
+	public Consumer<MouseEvent> getAction() {
+		return action;
 	}
 }

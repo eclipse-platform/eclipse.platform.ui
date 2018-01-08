@@ -10,14 +10,24 @@
  */
 package org.eclipse.jface.text.examples.sources.inlined;
 
+import java.util.function.Consumer;
+
+import org.eclipse.jface.text.BadLocationException;
+import org.eclipse.jface.text.IDocument;
+import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.Position;
 import org.eclipse.jface.text.source.ISourceViewer;
 import org.eclipse.jface.text.source.inlined.LineContentAnnotation;
+import org.eclipse.jface.util.Geometry;
 import org.eclipse.swt.custom.StyledText;
+import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.FontMetrics;
 import org.eclipse.swt.graphics.GC;
+import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.graphics.Rectangle;
+import org.eclipse.swt.widgets.ColorDialog;
+import org.eclipse.swt.widgets.Shell;
 
 /**
  * Color annotation displays a colorized square before the rgb declaration.
@@ -25,6 +35,41 @@ import org.eclipse.swt.graphics.Rectangle;
 public class ColorAnnotation extends LineContentAnnotation {
 
 	private Color color;
+	
+	private Consumer<MouseEvent> action = e -> {
+		StyledText styledText = super.getTextWidget();
+		Shell shell = new Shell(styledText.getDisplay());
+		Rectangle location = Geometry.toDisplay(styledText, new Rectangle(e.x, e.y, 1, 1));
+		shell.setLocation(location.x, location.y);
+		// Open color dialog
+		ColorDialog dialog = new ColorDialog(shell);
+		// dialog.setRGB(annotation.getRGBA().rgb);
+		RGB color = dialog.open();
+		if (color != null) {
+			// Color was selected, update the viewer
+			try {
+				int offset = getPosition().getOffset();
+				IDocument document = getViewer().getDocument();
+				IRegion line = document.getLineInformation(document.getLineOfOffset(offset));
+				int length = line.getLength() - (offset - line.getOffset());
+				String rgb = formatToRGB(color);
+				document.replace(offset, length, rgb);
+			} catch (BadLocationException e1) {
+
+			}
+		}
+	};
+	
+	/**
+	 * Format the given rgb to hexa color.
+	 * 
+	 * @param rgb
+	 * @return the hexa color from the given rgb.
+	 */
+	private static String formatToRGB(RGB rgb) {
+		return new StringBuilder("rgb(").append(rgb.red).append(",").append(rgb.green).append(",").append(rgb.blue)
+				.append(")").toString();
+	}
 
 	public ColorAnnotation(Position pos, ISourceViewer viewer) {
 		super(pos, viewer);
@@ -73,5 +118,10 @@ public class ColorAnnotation extends LineContentAnnotation {
 		// width = 2 spaces + size width of square
 		int width = 2 * fontMetrics.getAverageCharWidth() + getSquareSize(fontMetrics);
 		return width;
+	}
+	
+	@Override
+	public Consumer<MouseEvent> getAction(MouseEvent e) {
+		return action;
 	}
 }

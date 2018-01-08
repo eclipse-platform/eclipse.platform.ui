@@ -10,7 +10,11 @@
  */
 package org.eclipse.jface.text.source.inlined;
 
+import java.util.function.Consumer;
+
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StyledText;
+import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.GC;
 
@@ -116,4 +120,27 @@ public abstract class AbstractInlinedAnnotation extends Annotation {
 		gc.drawText(getText(), x, y);
 	}
 
+	/**
+	 * Called when mouse over the inlined annotation.
+	 *
+	 * @param e the mouse event
+	 */
+	public void onMouseHover(MouseEvent e) {
+		StyledText styledText= (StyledText) e.widget;
+		styledText.setCursor(styledText.getDisplay().getSystemCursor(SWT.CURSOR_HAND));
+	}
+
+	/**
+	 * Called when mouse out the inlined annotation.
+	 *
+	 * @param e the mouse event
+	 */
+	public void onMouseOut(MouseEvent e) {
+		StyledText styledText= (StyledText) e.widget;
+		styledText.setCursor(null);
+	}
+
+	public Consumer<MouseEvent> getAction(MouseEvent e) {
+		return null;
+	}
 }

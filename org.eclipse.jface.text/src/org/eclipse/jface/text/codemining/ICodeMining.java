@@ -11,8 +11,10 @@
 package org.eclipse.jface.text.codemining;
 
 import java.util.concurrent.CompletableFuture;
+import java.util.function.Consumer;
 
 import org.eclipse.swt.custom.StyledText;
+import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Point;
@@ -91,6 +93,13 @@ public interface ICodeMining {
 	 * @return the size of the draw of mining.
 	 */
 	Point draw(GC gc, StyledText textWidget, Color color, int x, int y);
+
+	/**
+	 * Returns the action to execute when mining is clicked and null otherwise.
+	 *
+	 * @return the action to execute when mining is clicked and null otherwise.
+	 */
+	Consumer<MouseEvent> getAction();
 
 	/**
 	 * Dispose the mining. Typically shuts down or cancels all related asynchronous operations.

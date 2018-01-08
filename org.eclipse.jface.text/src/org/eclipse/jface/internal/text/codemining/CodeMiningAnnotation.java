@@ -12,10 +12,14 @@ package org.eclipse.jface.internal.text.codemining;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Consumer;
 
 import org.eclipse.swt.custom.StyledText;
+import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.GC;
+import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.graphics.Rectangle;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 
@@ -45,6 +49,11 @@ public class CodeMiningAnnotation extends LineHeaderAnnotation {
 	private final List<ICodeMining> fMinings;
 
 	/**
+	 * List of bounds minings
+	 */
+	private final List<Rectangle> fBounds;
+
+	/**
 	 * The current progress monitor
 	 */
 	private IProgressMonitor fMonitor;
@@ -59,6 +68,7 @@ public class CodeMiningAnnotation extends LineHeaderAnnotation {
 		super(position, viewer);
 		fResolvedMinings= null;
 		fMinings= new ArrayList<>();
+		fBounds= new ArrayList<>();
 	}
 
 	/**
@@ -93,12 +103,11 @@ public class CodeMiningAnnotation extends LineHeaderAnnotation {
 
 	@Override
 	public void draw(GC gc, StyledText textWidget, int offset, int length, Color color, int x, int y) {
-		gc.setForeground(color);
-		gc.setBackground(textWidget.getBackground());
 		List<ICodeMining> minings= new ArrayList<>(fMinings);
 		int nbDraw= 0;
 		int separatorWidth= -1;
 		boolean redrawn= false;
+		fBounds.clear();
 		for (int i= 0; i < minings.size(); i++) {
 			ICodeMining mining= minings.get(i);
 			if (!mining.isResolved()) {
@@ -122,15 +131,32 @@ public class CodeMiningAnnotation extends LineHeaderAnnotation {
 			}
 			// draw the mining
 			if (nbDraw > 0) {
+				initGC(textWidget, color, gc);
 				gc.drawText(SEPARATOR, x, y);
 				if (separatorWidth == -1) {
 					separatorWidth= gc.stringExtent(SEPARATOR).x;
 				}
 				x+= separatorWidth;
 			}
-			x+= mining.draw(gc, textWidget, color, x, y).x;
+			initGC(textWidget, color, gc);
+			Point loc= mining.draw(gc, textWidget, color, x, y);
+			fBounds.add(new Rectangle(x, y, loc.x, loc.y));
+			x+= loc.x;
 			nbDraw++;
 		}
+	}
+
+	/**
+	 * Initialize GC with given color and styled text background color and font.
+	 *
+	 * @param textWidget the text widget
+	 * @param color the color
+	 * @param gc the gc to initialize
+	 */
+	private void initGC(StyledText textWidget, Color color, GC gc) {
+		gc.setForeground(color);
+		gc.setBackground(textWidget.getBackground());
+		gc.setFont(textWidget.getFont());
 	}
 
 	@Override
@@ -150,4 +176,15 @@ public class CodeMiningAnnotation extends LineHeaderAnnotation {
 		super.redraw();
 	}
 
+	@Override
+	public Consumer<MouseEvent> getAction(MouseEvent e) {
+		for (int i= 0; i < fBounds.size(); i++) {
+			Rectangle bound= fBounds.get(i);
+			if (bound.contains(e.x, e.y)) {
+				ICodeMining mining= fMinings.get(i);
+				return mining.getAction();
+			}
+		}
+		return null;
+	}
 }
