@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011, 2013 IBM Corporation and others.
+ * Copyright (c) 2011, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -263,11 +263,12 @@ public class CoolBarToTrimManager extends ContributionManager implements ICoolBa
 	 * @see org.eclipse.jface.action.IContributionManager#find(java.lang.String)
 	 */
 	public IContributionItem find(String id) {
-		MTrimElement el = (MTrimElement) modelService.find(id, window);
-		if (el == null || !(el instanceof MToolBar))
+		List<MToolBar> toolbars = modelService.findElements(window, id, MToolBar.class, null);
+		if (toolbars.isEmpty()) {
 			return null;
+		}
 
-		final MToolBar model = (MToolBar) el;
+		final MToolBar model = toolbars.get(0);
 		if (model.getTransientData().get(OBJECT) != null) {
 			return (IContributionItem) model.getTransientData().get(OBJECT);
 		}
