@@ -115,6 +115,10 @@ public class ThemeEngine implements IThemeEngine {
 				try {
 					done.createNewFile();
 					File[] oldModifiedFiles = oldModDir.listFiles();
+					if (oldModifiedFiles == null) {
+						throw new IOException(
+								"Content from directory '" + oldModDir.getAbsolutePath() + "' can not be listed."); //$NON-NLS-1$ //$NON-NLS-2$
+					}
 					for (File oldModifiedFile : oldModifiedFiles) {
 						if (oldModifiedFile.getName().contains(".css")) {
 							copyFile(oldModifiedFile.getPath(), path
@@ -123,6 +127,7 @@ public class ThemeEngine implements IThemeEngine {
 						}
 					}
 				} catch (IOException e1) {
+					/* ignore */
 				}
 			}
 		}

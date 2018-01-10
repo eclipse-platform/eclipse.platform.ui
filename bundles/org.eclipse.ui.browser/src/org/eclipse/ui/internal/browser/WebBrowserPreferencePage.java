@@ -503,7 +503,9 @@ public class WebBrowserPreferencePage extends PreferencePage implements
 
 		String[] names = directory.list();
 		List<File> subDirs = new ArrayList<>();
-
+		if (names == null) {
+			names = new String[0];
+		}
 		for (String name : names) {
 			if (monitor.isCanceled())
 				return;
@@ -513,8 +515,7 @@ public class WebBrowserPreferencePage extends PreferencePage implements
 			if (existingPaths.contains(file.getAbsolutePath().toLowerCase()))
 				continue;
 
-			IBrowserDescriptorWorkingCopy wc = WebBrowserUtil
-					.createExternalBrowser(file);
+			IBrowserDescriptorWorkingCopy wc = WebBrowserUtil.createExternalBrowser(file);
 			if (wc != null)
 				foundBrowsers.add(wc);
 

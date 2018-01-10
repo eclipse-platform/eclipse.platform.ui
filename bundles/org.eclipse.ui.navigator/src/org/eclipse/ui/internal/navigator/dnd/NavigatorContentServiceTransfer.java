@@ -77,16 +77,13 @@ public class NavigatorContentServiceTransfer {
 		if(aViewerId == null || aViewerId.length() == 0) {
 			return null;
 		}
-		INavigatorContentService contentService;
 		for (Iterator<WeakReference<INavigatorContentService>> iter = registeredContentServices.iterator(); iter.hasNext();) {
-			WeakReference ref = iter.next();
-			if(ref.get() == null) {
+			WeakReference<INavigatorContentService> ref = iter.next();
+			INavigatorContentService contentService = ref.get();
+			if (contentService == null) {
 				iter.remove();
-			} else {
-				contentService = (INavigatorContentService)ref.get();
-				if(aViewerId.equals(contentService.getViewerId())) {
-					return contentService;
-				}
+			} else if (aViewerId.equals(contentService.getViewerId())) {
+				return contentService;
 			}
 		}
 		return null;

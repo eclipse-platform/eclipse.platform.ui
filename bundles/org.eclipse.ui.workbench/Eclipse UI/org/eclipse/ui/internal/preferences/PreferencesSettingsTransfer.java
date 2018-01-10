@@ -31,7 +31,12 @@ public class PreferencesSettingsTransfer extends WorkbenchSettingsTransfer{
 		}
 
 		if (srcFolder.isDirectory()) {
-			for (String file : srcFolder.list()) {
+			String[] files = srcFolder.list();
+			if (files == null) {
+				return new Status(IStatus.ERROR, PlatformUI.PLUGIN_ID,
+						"Content from directory '" + srcFolder.getAbsolutePath() + "' can not be listed."); //$NON-NLS-1$ //$NON-NLS-2$
+			}
+			for (String file : files) {
 				File srcFile = new File(srcFolder.getPath().toString(), file);
 				File destFile = new File(destFolder.getPath().toString(), file);
 

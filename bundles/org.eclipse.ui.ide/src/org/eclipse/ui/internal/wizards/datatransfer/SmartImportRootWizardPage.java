@@ -172,8 +172,9 @@ public class SmartImportRootWizardPage extends WizardPage {
 			Path filePath = file.toPath();
 			Path rootPath = getWizard().getImportJob().getRoot().toPath();
 			if (filePath.startsWith(rootPath)) {
-				if (rootPath.getParent() != null) {
-					Path relative = rootPath.getParent().relativize(filePath);
+				Path parent = rootPath.getParent();
+				if (parent != null) {
+					Path relative = parent.relativize(filePath);
 					if (relative.getNameCount() > 0) {
 						return relative.toString();
 					}
