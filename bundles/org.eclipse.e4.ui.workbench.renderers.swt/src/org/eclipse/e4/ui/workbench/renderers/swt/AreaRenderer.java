@@ -48,6 +48,10 @@ public class AreaRenderer extends SWTPartRenderer {
 
 		MArea areaModel = (MArea) event
 				.getProperty(UIEvents.EventTags.ELEMENT);
+
+		if (!(areaModel.getWidget() instanceof CTabFolder))
+			return;
+
 		CTabFolder ctf = (CTabFolder) areaModel.getWidget();
 		CTabItem areaItem = ctf.getItem(0);
 
