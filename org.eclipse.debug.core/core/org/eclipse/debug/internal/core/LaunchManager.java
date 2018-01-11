@@ -1043,7 +1043,7 @@ public class LaunchManager extends PlatformObject implements ILaunchManager, IRe
 				}
 			};
 			File[] configFiles = directory.listFiles(configFilter);
-			if (configFiles.length > 0) {
+			if (configFiles != null && configFiles.length > 0) {
 				LaunchConfiguration config = null;
 				for (int i = 0; i < configFiles.length; i++) {
 					config = new LaunchConfiguration(LaunchConfiguration.getSimpleName(configFiles[i].getName()), null, false);
@@ -1057,7 +1057,7 @@ public class LaunchManager extends PlatformObject implements ILaunchManager, IRe
 				}
 			};
 			File[] prototypeFiles = directory.listFiles(prototypeFilter);
-			if (prototypeFiles.length > 0) {
+			if (prototypeFiles != null && prototypeFiles.length > 0) {
 				LaunchConfiguration config = null;
 				for (int i = 0; i < prototypeFiles.length; i++) {
 					config = new LaunchConfiguration(LaunchConfiguration.getSimpleName(prototypeFiles[i].getName()), null, true);

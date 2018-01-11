@@ -524,7 +524,7 @@ public class ViewContextService implements IDebugContextListener, IPerspectiveLi
 
 					// Don't bring a minimized or fast view to front
 					IViewReference partRef = page.findViewReference(viewId);
-					if (partRef.isFastView() || IWorkbenchPage.STATE_MINIMIZED == page.getPartState(partRef)) {
+					if (partRef != null && (partRef.isFastView() || IWorkbenchPage.STATE_MINIMIZED == page.getPartState(partRef))) {
 						return;
 					}
 

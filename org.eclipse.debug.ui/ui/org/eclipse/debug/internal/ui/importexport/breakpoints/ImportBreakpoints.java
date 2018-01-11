@@ -58,6 +58,7 @@ public class ImportBreakpoints extends AbstractDebugActionDelegate {
 	 */
 	@Override
 	protected void update(IAction action, ISelection s) {
+		super.update(action, s);
 		getAction().setEnabled(true);
 	}
 

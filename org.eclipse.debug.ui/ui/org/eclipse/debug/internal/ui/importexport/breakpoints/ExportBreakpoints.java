@@ -15,26 +15,24 @@ import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.actions.AbstractDebugActionDelegate;
-import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.swt.widgets.Event;
-import org.eclipse.ui.IViewPart;
 
 /**
  * <p>
- * This class provides the aciton event for both the context menu in breakpoints view
- * and the drop down menu inn the breakpoints view.
+ * This class provides the action event for both the context menu in breakpoints
+ * view and the drop down menu in the breakpoints view.
  * </p>
  * <p>
- *  The action simply calls the wizard to export breakpoints.
- *  </p>
- *  @see WizardExportBreakpoints
- *  @see WizardExportBreakpointsPage
+ * The action simply calls the wizard to export breakpoints.
+ * </p>
+ * 
+ * @see WizardExportBreakpoints
+ * @see WizardExportBreakpointsPage
  *
- *  @since 3.2
+ * @since 3.2
  */
 public class ExportBreakpoints extends AbstractDebugActionDelegate {
 
@@ -45,9 +43,8 @@ public class ExportBreakpoints extends AbstractDebugActionDelegate {
 	 */
 	@Override
 	public void run(IAction action) {
-		IViewPart fViewpart = DebugUIPlugin.getActiveWorkbenchWindow().getActivePage().findView(IDebugUIConstants.ID_BREAKPOINT_VIEW);
 		WizardExportBreakpoints wiz = new WizardExportBreakpoints();
-		wiz.init(DebugUIPlugin.getDefault().getWorkbench(), (IStructuredSelection)fViewpart.getViewSite().getSelectionProvider().getSelection());
+		wiz.init(DebugUIPlugin.getDefault().getWorkbench(), getSelection());
 		WizardDialog wizdialog = new WizardDialog(DebugUIPlugin.getShell(), wiz);
 		wizdialog.setBlockOnOpen(true);
 		wizdialog.open();
@@ -58,6 +55,7 @@ public class ExportBreakpoints extends AbstractDebugActionDelegate {
 	 */
 	@Override
 	protected void update(IAction action, ISelection s) {
+		super.update(action, s);
 		getAction().setEnabled(DebugPlugin.getDefault().getBreakpointManager().hasBreakpoints());
 	}
 
