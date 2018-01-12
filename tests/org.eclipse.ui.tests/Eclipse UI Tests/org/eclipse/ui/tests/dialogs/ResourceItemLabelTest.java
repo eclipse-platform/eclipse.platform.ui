@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2017 Red Hat Inc. and others.
+ * Copyright (c) 2017, 2018 Red Hat Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -114,6 +114,19 @@ public class ResourceItemLabelTest extends UITestCase {
 
 		Position[] withDigits = { new Position(0, 1), new Position(2, 2), new Position(7, 3) };
 		compareStyleRanges(withDigits, getStyleRanges("t?s3*x3t", "tes3t.tx3t"));
+	}
+
+	/**
+	 * Tests that regex symbols do not break search
+	 *
+	 * @throws Exception
+	 */
+	public void testBug529451() throws Exception {
+		Position[] basic = { new Position(4, 1) };
+		compareStyleRanges(basic, getStyleRanges("*$", "test$.txt"));
+
+		Position[] multiple = { new Position(0, 3), new Position(7, 9), new Position(17, 1) };
+		compareStyleRanges(multiple, getStyleRanges("^${*}[])(+|><?-", "^${skip}[])(+|><s-"));
 	}
 
 	/**

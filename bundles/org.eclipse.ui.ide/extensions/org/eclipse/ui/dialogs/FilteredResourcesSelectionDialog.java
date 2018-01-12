@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2017 IBM Corporation and others.
+ * Copyright (c) 2000, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -18,6 +18,7 @@ import java.io.IOException;
 import java.io.StringReader;
 import java.io.StringWriter;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Comparator;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -637,7 +638,11 @@ public class FilteredResourcesSelectionDialog extends
 			}
 
 			IResource resource = (IResource) element;
-			String searchFieldString = ((Text) getPatternControl()).getText();
+			String searchFieldString = escapeRegexCharacters(((Text) getPatternControl()).getText());
+			int fileNameIndex = searchFieldString.lastIndexOf('/');
+			if (fileNameIndex != -1 && fileNameIndex != searchFieldString.length() - 1) {
+				searchFieldString = searchFieldString.substring(fileNameIndex + 1);
+			}
 			String resourceName = resource.getName();
 			Styler boldStyler = new Styler() {
 				@Override
@@ -677,7 +682,7 @@ public class FilteredResourcesSelectionDialog extends
 			if (matching.indexOf('?') == -1 && matching.indexOf('*') == -1) {
 				matching = String.join("*", matching.split("(?=[A-Z0-9])")) + "*"; //$NON-NLS-1$//$NON-NLS-2$ //$NON-NLS-3$
 			} else {
-				matching = matching.toLowerCase();
+				matching = matching.toLowerCase().replaceAll("\\\\\\\\", "\\\\"); //$NON-NLS-1$ //$NON-NLS-2$
 				string = string.toLowerCase();
 			}
 
@@ -705,19 +710,8 @@ public class FilteredResourcesSelectionDialog extends
 						restart = true;
 						break;
 					}
-					int regionIndex = 0;
+					int regionIndex = region.replace("\\\\", "1").replace("\\", "").length(); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 					currentIndex += startlocation;
-					for (char regionChar : region.toCharArray()) {
-						if (regionChar == '\\') {
-							continue;
-						}
-						regionIndex++;
-						if (regionChar == '.' && regionIndex != 1) {
-							positions.add(new Position(currentIndex, regionIndex - 1));
-							currentIndex += regionIndex;
-							regionIndex = 0;
-						}
-					}
 					positions.add(new Position(currentIndex, regionIndex));
 					currentIndex += regionIndex;
 					usedRegions++;
@@ -733,6 +727,19 @@ public class FilteredResourcesSelectionDialog extends
 		private int indexOf(Pattern pattern, String s) {
 			Matcher matcher = pattern.matcher(s);
 			return matcher.find() ? matcher.start() : -1;
+		}
+
+		private String escapeRegexCharacters(String inputString) {
+			final List<Character> metaCharacters = Arrays.asList('\\', '^', '$', '{', '}', '[', ']', '(', ')', '+', '|',
+					'<', '>', '-', '&');
+			StringBuilder output = new StringBuilder();
+			for (char character : inputString.toCharArray()) {
+				if (metaCharacters.contains(character)) {
+					output.append('\\');
+				}
+				output.append(character);
+			}
+			return output.toString();
 		}
 
 		@Override
