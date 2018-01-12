@@ -64,9 +64,7 @@ public class Accessor {
 		fInstance= instance;
 		try {
 			fClass= Class.forName(className, true, classLoader);
-		} catch (ClassNotFoundException e) {
-			fail(e);
-		} catch (ExceptionInInitializerError e) {
+		} catch (ClassNotFoundException | ExceptionInInitializerError e) {
 			fail(e);
 		}
 	}
@@ -98,30 +96,20 @@ public class Accessor {
 	public Accessor(String className, ClassLoader classLoader, Class<?>[] constructorTypes, Object[] constructorArgs) {
 		try {
 			fClass= Class.forName(className, true, classLoader);
-		} catch (ClassNotFoundException e) {
-			fail(e);
-		} catch (ExceptionInInitializerError e) {
+		} catch (ClassNotFoundException | ExceptionInInitializerError e) {
 			fail(e);
 		}
 		Constructor<?> constructor= null;
 		try {
 			constructor= fClass.getDeclaredConstructor(constructorTypes);
-		} catch (SecurityException e) {
-			fail(e);
-		} catch (NoSuchMethodException e) {
+		} catch (SecurityException | NoSuchMethodException e) {
 			fail(e);
 		}
 		Assert.isNotNull(constructor);
 		constructor.setAccessible(true);
 		try {
 			fInstance= constructor.newInstance(constructorArgs);
-		} catch (IllegalArgumentException e) {
-			fail(e);
-		} catch (InvocationTargetException e) {
-			fail(e);
-		} catch (InstantiationException e) {
-			fail(e);
-		} catch (IllegalAccessException e) {
+		} catch (IllegalArgumentException | InvocationTargetException | InstantiationException | IllegalAccessException e) {
 			fail(e);
 		}
 	}
@@ -138,9 +126,7 @@ public class Accessor {
 	public Accessor(String className, ClassLoader classLoader) {
 		try {
 			fClass= Class.forName(className, true, classLoader);
-		} catch (ClassNotFoundException e) {
-			fail(e);
-		} catch (ExceptionInInitializerError e) {
+		} catch (ClassNotFoundException | ExceptionInInitializerError e) {
 			fail(e);
 		}
 	}
@@ -173,20 +159,14 @@ public class Accessor {
 		Method method= null;
 		try {
 			method= fClass.getDeclaredMethod(methodName, types);
-		} catch (SecurityException e) {
-			fail(e);
-		} catch (NoSuchMethodException e) {
+		} catch (SecurityException | NoSuchMethodException e) {
 			fail(e);
 		}
 		Assert.isNotNull(method);
 		method.setAccessible(true);
 		try {
 			return method.invoke(fInstance, arguments);
-		} catch (IllegalArgumentException e) {
-			fail(e);
-		} catch (InvocationTargetException e) {
-			fail(e);
-		} catch (IllegalAccessException e) {
+		} catch (IllegalArgumentException | InvocationTargetException | IllegalAccessException e) {
 			fail(e);
 		}
 		return null;
@@ -202,9 +182,7 @@ public class Accessor {
 		Field field= getField(fieldName);
 		try {
 			field.set(fInstance, value);
-		} catch (IllegalArgumentException e) {
-			fail(e);
-		} catch (IllegalAccessException e) {
+		} catch (IllegalArgumentException | IllegalAccessException e) {
 			fail(e);
 		}
 	}
@@ -219,9 +197,7 @@ public class Accessor {
 		Field field= getField(fieldName);
 		try {
 			field.setBoolean(fInstance, value);
-		} catch (IllegalArgumentException e) {
-			fail(e);
-		} catch (IllegalAccessException e) {
+		} catch (IllegalArgumentException | IllegalAccessException e) {
 			fail(e);
 		}
 	}
@@ -236,9 +212,7 @@ public class Accessor {
 		Field field= getField(fieldName);
 		try {
 			field.setInt(fInstance, value);
-		} catch (IllegalArgumentException e) {
-			fail(e);
-		} catch (IllegalAccessException e) {
+		} catch (IllegalArgumentException | IllegalAccessException e) {
 			fail(e);
 		}
 	}
@@ -253,9 +227,7 @@ public class Accessor {
 		Field field= getField(fieldName);
 		try {
 			return field.get(fInstance);
-		} catch (IllegalArgumentException e) {
-			fail(e);
-		} catch (IllegalAccessException e) {
+		} catch (IllegalArgumentException | IllegalAccessException e) {
 			fail(e);
 		}
 		// Unreachable code
@@ -272,9 +244,7 @@ public class Accessor {
 		Field field= getField(fieldName);
 		try {
 			return field.getBoolean(fInstance);
-		} catch (IllegalArgumentException e) {
-			fail(e);
-		} catch (IllegalAccessException e) {
+		} catch (IllegalArgumentException | IllegalAccessException e) {
 			fail(e);
 		}
 		// Unreachable code
@@ -291,9 +261,7 @@ public class Accessor {
 		Field field= getField(fieldName);
 		try {
 			return field.getInt(fInstance);
-		} catch (IllegalArgumentException e) {
-			fail(e);
-		} catch (IllegalAccessException e) {
+		} catch (IllegalArgumentException | IllegalAccessException e) {
 			fail(e);
 		}
 		// Unreachable code
@@ -304,9 +272,7 @@ public class Accessor {
 		Field field= null;
 		try {
 			field= fClass.getDeclaredField(fieldName);
-		} catch (SecurityException e) {
-			fail(e);
-		} catch (NoSuchFieldException e) {
+		} catch (SecurityException | NoSuchFieldException e) {
 			fail(e);
 		}
 		field.setAccessible(true);
