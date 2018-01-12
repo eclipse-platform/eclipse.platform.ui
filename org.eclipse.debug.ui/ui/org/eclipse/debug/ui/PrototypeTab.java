@@ -78,7 +78,7 @@ import org.eclipse.ui.dialogs.ElementListSelectionDialog;
  * @since 3.13
  * @noextend This class is not intended to be subclassed by clients.
  */
-public class ProtoypeTab extends AbstractLaunchConfigurationTab {
+public class PrototypeTab extends AbstractLaunchConfigurationTab {
 
 	private static final String PROTOTYPE_TAB_ID = "org.eclipse.debug.ui.prototypeTab"; //$NON-NLS-1$
 
@@ -109,7 +109,7 @@ public class ProtoypeTab extends AbstractLaunchConfigurationTab {
 	/**
 	 * Constructs a new tab with default context help.
 	 */
-	public ProtoypeTab() {
+	public PrototypeTab() {
 		setHelpContextId(IDebugHelpContextIds.LAUNCH_CONFIGURATION_DIALOG_PROTOTYPE_TAB);
 	}
 
@@ -422,8 +422,8 @@ public class ProtoypeTab extends AbstractLaunchConfigurationTab {
 	 * Initialize this tab with the given configuration.
 	 *
 	 * @param configuration the given configuration
-	 * @see ProtoypeTab#activated(ILaunchConfigurationWorkingCopy)
-	 * @see ProtoypeTab#initializeFrom(ILaunchConfiguration)
+	 * @see PrototypeTab#activated(ILaunchConfigurationWorkingCopy)
+	 * @see PrototypeTab#initializeFrom(ILaunchConfiguration)
 	 */
 	private void initialize(ILaunchConfiguration configuration) {
 		try {
