@@ -679,6 +679,16 @@ public class FilteredResourcesSelectionDialog extends
 		private List<Position> getMatchPositions(String string, String matching) {
 			final String originalMatching = matching;
 			List<Position> positions = new ArrayList<>();
+			if (matching.length() == 0 || string.length() == 0) {
+				return positions;
+			}
+
+			char lastChar = matching.charAt(matching.length() - 1);
+			if (lastChar == ' ') {
+				matching = matching.substring(0, matching.length() - 1);
+			} else if (lastChar == '<') {
+				matching = matching.substring(0, matching.length() - 2);
+			}
 			if (matching.indexOf('?') == -1 && matching.indexOf('*') == -1) {
 				matching = String.join("*", matching.split("(?=[A-Z0-9])")) + "*"; //$NON-NLS-1$//$NON-NLS-2$ //$NON-NLS-3$
 			} else {
