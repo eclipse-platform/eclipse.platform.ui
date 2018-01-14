@@ -117,6 +117,9 @@ public interface IPreferenceConstants {
 
     public static final int EDITORLIST_MRU_SORT = 1;
 
+	// Max entries shown in the progress view (see DetailedProgressViewer)
+	public static final String MAX_PROGRESS_ENTRIES = "MAX_PROGRESS_ENTRIES"; //$NON-NLS-1$
+
     /**
      * Boolean; true = EditorList displays full path
      */

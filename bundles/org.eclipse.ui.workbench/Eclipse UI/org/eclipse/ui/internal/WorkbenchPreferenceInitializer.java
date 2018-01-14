@@ -118,6 +118,9 @@ public class WorkbenchPreferenceInitializer extends AbstractPreferenceInitialize
 		node.putBoolean(IPreferenceConstants.SAVE_AUTOMATICALLY, false);
 		node.putInt(IPreferenceConstants.SAVE_AUTOMATICALLY_INTERVAL, 20);
 
+		// Progress view
+		node.putInt(IPreferenceConstants.MAX_PROGRESS_ENTRIES, 20);
+
 		IEclipsePreferences rootNode = (IEclipsePreferences) Platform
 				.getPreferencesService().getRootNode()
 				.node(InstanceScope.SCOPE);

@@ -15,7 +15,10 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import org.eclipse.jface.dialogs.IDialogConstants;
+import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.resource.JFaceResources;
+import org.eclipse.jface.util.IPropertyChangeListener;
+import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.viewers.ViewerComparator;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.ScrolledComposite;
@@ -31,7 +34,9 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.Widget;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.internal.IPreferenceConstants;
 import org.eclipse.ui.internal.IWorkbenchHelpContextIds;
+import org.eclipse.ui.internal.WorkbenchPlugin;
 
 /**
  * The DetailedProgressViewer is a viewer that shows the details of all in
@@ -43,7 +48,7 @@ import org.eclipse.ui.internal.IWorkbenchHelpContextIds;
 public class DetailedProgressViewer extends AbstractProgressViewer {
 
 	//Maximum number of entries to display so that the view does not flood the UI with events
-	private static final int MAX_DISPLAYED = 20;
+	private int maxDisplayed;
 
 	Composite control;
 
@@ -125,6 +130,23 @@ public class DetailedProgressViewer extends AbstractProgressViewer {
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(noEntryLabel,
 				IWorkbenchHelpContextIds.RESPONSIVE_UI);
 
+		IPreferenceStore prefs = WorkbenchPlugin.getDefault().getPreferenceStore();
+		updateMaxDisplayedValue(prefs);
+		IPropertyChangeListener listener = x -> propertyChange(x);
+		prefs.addPropertyChangeListener(listener);
+		scrolled.addDisposeListener(x -> prefs.removePropertyChangeListener(listener));
+	}
+
+	public void propertyChange(PropertyChangeEvent event) {
+		if (!IPreferenceConstants.MAX_PROGRESS_ENTRIES.equals(event.getProperty())) {
+			return;
+		}
+		updateMaxDisplayedValue(WorkbenchPlugin.getDefault().getPreferenceStore());
+    }
+
+	private void updateMaxDisplayedValue(IPreferenceStore prefs) {
+		int newValue = Math.max(1, prefs.getInt(IPreferenceConstants.MAX_PROGRESS_ENTRIES));
+		setMaxDisplayed(newValue);
 	}
 
 	@Override
@@ -159,7 +181,7 @@ public class DetailedProgressViewer extends AbstractProgressViewer {
 			((ProgressInfoItem) child).dispose();
 		}
 
-		int totalSize = Math.min(newItems.size(), MAX_DISPLAYED);
+		int totalSize = Math.min(newItems.size(), getMaxDisplayed());
 
 		for (int i = 0; i < totalSize; i++) {
 			ProgressInfoItem item = createNewItem(infos[i]);
@@ -414,7 +436,7 @@ public class DetailedProgressViewer extends AbstractProgressViewer {
 
 		}
 
-		int maxLength = Math.min(infos.length,MAX_DISPLAYED);
+		int maxLength = Math.min(infos.length, getMaxDisplayed());
 		// Create new ones if required
 		for (int i = 0; i < maxLength; i++) {
 			ProgressInfoItem item = createNewItem((JobTreeElement) infos[i]);
@@ -452,6 +474,21 @@ public class DetailedProgressViewer extends AbstractProgressViewer {
 		ProgressInfoItem[] progressInfoItems = new ProgressInfoItem[children.length];
 		System.arraycopy(children, 0, progressInfoItems, 0, children.length);
 		return progressInfoItems;
+	}
+
+	/**
+	 * @return Returns the maximal number of displayed items.
+	 */
+	public int getMaxDisplayed() {
+		return maxDisplayed;
+	}
+
+	/**
+	 * @param maxDisplayed
+	 *            The maximal number of displayed items.
+	 */
+	public void setMaxDisplayed(int maxDisplayed) {
+		this.maxDisplayed = maxDisplayed;
 	}
 
 }
