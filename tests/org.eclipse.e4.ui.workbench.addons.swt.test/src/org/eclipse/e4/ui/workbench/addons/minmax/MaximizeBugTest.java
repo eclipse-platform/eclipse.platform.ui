@@ -56,7 +56,7 @@ public class MaximizeBugTest {
 
 	@Parameters(name = "org.eclipse.ui.editorss: {0} - subwindowPerspective: {1} - maximizeMainFirst: {2} - addSubwindowToPerspective:{3}")
 	public static Collection<Object[]> data() {
-		final List<Object[]> data = new ArrayList<Object[]>();
+		final List<Object[]> data = new ArrayList<>();
 		// useCorrectPlaceholderId,usePerspektiveInSubWindow,maximizeMainFirst,addSubwindowToPerspective
 		// working
 		data.add(new Object[] { true, true, true, true });

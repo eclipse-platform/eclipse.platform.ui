@@ -7,6 +7,7 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+
 import org.eclipse.e4.core.contexts.ContextInjectionFactory;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.ui.di.UISynchronize;
@@ -52,7 +53,7 @@ public class MaximizePartSashContainerPlaceholderTest {
 
 	@Parameters(name = "org.eclipse.ui.editorss: {0}")
 	public static Collection<Object[]> data() {
-		final List<Object[]> data = new ArrayList<Object[]>();
+		final List<Object[]> data = new ArrayList<>();
 		// useCorrectPlaceholderId
 		data.add(new Object[] { true });
 		data.add(new Object[] { false });
@@ -151,10 +152,12 @@ public class MaximizePartSashContainerPlaceholderTest {
 		appContext.set(MWindow.class, window);
 		appContext.set(UISynchronize.class, new UISynchronize() {
 
+			@Override
 			public void syncExec(Runnable runnable) {
 				runnable.run();
 			}
 
+			@Override
 			public void asyncExec(Runnable runnable) {
 				runnable.run();
 			}
