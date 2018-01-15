@@ -12,6 +12,8 @@ package org.eclipse.core.filebuffers.tests;
 
 import static org.junit.Assert.*;
 
+import java.io.IOException;
+
 import org.junit.After;
 import org.junit.Test;
 
@@ -66,7 +68,11 @@ public class FileStoreFileBuffersForNonExistingWorkspaceFiles extends FileStoreF
 
 	@Test
 	public void testBug118199_fixed() throws Exception {
-		IFile file= getProject().getWorkspace().getRoot().getFileForLocation(getPath());
+		IPath location= getPath();
+		IFile file= getProject().getWorkspace().getRoot().getFileForLocation(location);
+		if (file == null) {
+			throw new IOException("File '" + location + "' can not be found."); //$NON-NLS-1$ //$NON-NLS-2$
+		}
 		IPath path= file.getFullPath();
 		assertFalse(file.exists());
 		fManager.connect(path, LocationKind.IFILE, null);

@@ -141,6 +141,9 @@ public class FileTool {
 	public static void copy(File src, File dst) throws IOException {
 		if(src.isDirectory()){
 			String[] srcChildren = src.list();
+			if (srcChildren == null) {
+				throw new IOException("Content from directory '" + src.getAbsolutePath() + "' can not be listed."); //$NON-NLS-1$ //$NON-NLS-2$
+			}
 			for(int i = 0; i < srcChildren.length; ++i){
 				File srcChild= new File(src, srcChildren[i]);
 				File dstChild= new File(dst, srcChildren[i]);

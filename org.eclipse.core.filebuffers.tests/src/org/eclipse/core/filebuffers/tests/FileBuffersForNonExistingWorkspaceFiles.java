@@ -14,6 +14,8 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
+import java.io.IOException;
+
 import org.junit.After;
 import org.junit.Test;
 
@@ -68,7 +70,11 @@ public class FileBuffersForNonExistingWorkspaceFiles extends FileBufferFunctions
 
 	@Test
 	public void testBug118199_fixed() throws Exception {
-		IFile file= getProject().getWorkspace().getRoot().getFileForLocation(getPath());
+		IPath location= getPath();
+		IFile file= getProject().getWorkspace().getRoot().getFileForLocation(location);
+		if (file == null) {
+			throw new IOException("File '" + location + "' can not be found."); //$NON-NLS-1$ //$NON-NLS-2$
+		}
 		IPath path= file.getFullPath();
 		assertFalse(file.exists());
 		fManager.connect(path, LocationKind.IFILE, null);
