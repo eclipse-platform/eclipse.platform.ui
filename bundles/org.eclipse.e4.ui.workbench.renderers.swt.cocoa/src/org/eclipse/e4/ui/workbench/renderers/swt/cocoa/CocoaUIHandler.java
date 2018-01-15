@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2015 Adobe Systems, Inc. and others.
+ * Copyright (c) 2008, 2018 Adobe Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -297,8 +297,8 @@ public class CocoaUIHandler {
 	}
 
 	/*
-	 * Listeners to tweak newly-opened workbench window shells with the proper
-	 * OS flags.
+	 * Listeners to tweak newly-opened workbench window shells with the proper OS
+	 * flags.
 	 */
 
 	/** Watch for a window's "widget" attribute being flipped to a shell */
@@ -315,9 +315,9 @@ public class CocoaUIHandler {
 
 	/**
 	 * Handle the Eclipse 4.0 compatibility case, where the window is created
-	 * without a main menu or trim first, and then later when the main menu is
-	 * being set it is time for us to do our work. It also handles dynamically
-	 * created windows too.
+	 * without a main menu or trim first, and then later when the main menu is being
+	 * set it is time for us to do our work. It also handles dynamically created
+	 * windows too.
 	 */
 	@Inject
 	@Optional
@@ -614,7 +614,7 @@ public class CocoaUIHandler {
 			statusReporter.get()
 					.report(new Status(IStatus.WARNING, CocoaUIProcessor.FRAGMENT_ID,
 							"Unhandled menu type: " + item.getClass() + ": " + item), //$NON-NLS-1$ //$NON-NLS-2$
-					StatusReporter.LOG);
+							StatusReporter.LOG);
 		}
 	}
 
@@ -636,7 +636,8 @@ public class CocoaUIHandler {
 			return false;
 		}
 		Map<String, Object> params = COMMAND_ID_QUIT.equals(commandId)
-				? Collections.singletonMap(COMMAND_PARAMETER_ID_MAY_PROMPT, (Object) "true") : null; //$NON-NLS-1$
+				? Collections.singletonMap(COMMAND_PARAMETER_ID_MAY_PROMPT, (Object) "true") //$NON-NLS-1$
+				: null;
 		ParameterizedCommand cmd = commandService.createCommand(commandId, params);
 		if (cmd == null) {
 			return false;
@@ -649,9 +650,8 @@ public class CocoaUIHandler {
 	}
 
 	/**
-	 * Find the action with the given ID by recursively crawling the provided
-	 * menu manager. If the action cannot be found <code>null</code> is
-	 * returned.
+	 * Find the action with the given ID by recursively crawling the provided menu
+	 * manager. If the action cannot be found <code>null</code> is returned.
 	 *
 	 * @param actionId
 	 *            the id to search for
@@ -750,8 +750,8 @@ public class CocoaUIHandler {
 	}
 
 	/**
-	 * Specialized method. It's behavior is isolated and different enough from
-	 * the usual invocation that custom code is warranted.
+	 * Specialized method. It's behavior is isolated and different enough from the
+	 * usual invocation that custom code is warranted.
 	 */
 	@SuppressWarnings("restriction")
 	private static long[] OS_object_getInstanceVariable(long delegateId, byte[] name) throws IllegalArgumentException,
@@ -824,7 +824,7 @@ public class CocoaUIHandler {
 		Map<String, Object> parameters = null;
 		List<MParameter> modelParms = item.getParameters();
 		if (modelParms != null && !modelParms.isEmpty()) {
-			parameters = new HashMap<String, Object>();
+			parameters = new HashMap<>();
 			for (MParameter mParm : modelParms) {
 				parameters.put(mParm.getName(), mParm.getValue());
 			}
