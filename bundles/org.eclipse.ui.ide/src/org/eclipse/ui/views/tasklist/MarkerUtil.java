@@ -35,7 +35,7 @@ import com.ibm.icu.text.MessageFormat;
  */
 class MarkerUtil implements IMarkerConstants {
 
-   private static Map imageDescriptors;
+	private static Map<String, ImageDescriptor> imageDescriptors;
 
     private static ImageRegistry imageRegistry = new ImageRegistry();
 
@@ -59,7 +59,7 @@ class MarkerUtil implements IMarkerConstants {
      */
     static void createImageDescriptors() {
 
-        imageDescriptors = new HashMap(51);
+		imageDescriptors = new HashMap<>(51);
         imageDescriptors
                 .put(
                         "header_complete", IDEWorkbenchPlugin.getIDEImageDescriptor("obj16/header_complete.png"));//$NON-NLS-2$//$NON-NLS-1$
@@ -251,7 +251,7 @@ class MarkerUtil implements IMarkerConstants {
      * Returns the image descriptor with the given key, or <code>null</code> if not found.
      */
     static ImageDescriptor getImageDescriptor(String key) {
-        ImageDescriptor desc = (ImageDescriptor) imageDescriptors.get(key);
+        ImageDescriptor desc = imageDescriptors.get(key);
         if (desc == null) {
         		IDEWorkbenchPlugin.log("TaskList: No image descriptor for " + key); //$NON-NLS-1$
         }
