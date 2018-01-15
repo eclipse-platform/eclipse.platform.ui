@@ -10,9 +10,20 @@
  *******************************************************************************/
 package org.eclipse.core.tests.runtime;
 
-import java.io.*;
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
+import java.io.File;
+import java.io.FileFilter;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.net.URL;
-import org.eclipse.core.runtime.*;
+
+import org.eclipse.core.runtime.FileLocator;
+import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.Plugin;
 import org.osgi.framework.BundleContext;
 
 public class RuntimeTestsPlugin extends Plugin {
@@ -50,6 +61,9 @@ public class RuntimeTestsPlugin extends Plugin {
 			return true;
 		if (file.isDirectory()) {
 			File[] children = file.listFiles();
+			if(children == null) {
+				children = new File[0];
+			}
 			for (File element : children)
 				delete(element);
 		}
@@ -116,6 +130,9 @@ public class RuntimeTestsPlugin extends Plugin {
 			if (!target.exists())
 				target.mkdirs();
 			File[] children = source.listFiles(filter);
+			if(children == null) {
+				throw new IOException("Content from directory '" + source.getAbsolutePath() + "' can not be listed."); //$NON-NLS-1$ //$NON-NLS-2$
+			}
 			for (File element : children)
 				copy(element, new File(target, element.getName()));
 			return;

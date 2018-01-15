@@ -13,13 +13,23 @@ package org.eclipse.core.tests.internal.registry;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
-import junit.framework.*;
-import org.eclipse.core.runtime.*;
+
+import org.eclipse.core.runtime.ContributorFactoryOSGi;
+import org.eclipse.core.runtime.ContributorFactorySimple;
+import org.eclipse.core.runtime.IContributor;
+import org.eclipse.core.runtime.IExtension;
+import org.eclipse.core.runtime.IExtensionPoint;
+import org.eclipse.core.runtime.IExtensionRegistry;
+import org.eclipse.core.runtime.RegistryFactory;
 import org.eclipse.core.runtime.spi.IDynamicExtensionRegistry;
 import org.eclipse.core.tests.harness.BundleTestingHelper;
 import org.eclipse.core.tests.runtime.RuntimeTestsPlugin;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleException;
+
+import junit.framework.Test;
+import junit.framework.TestCase;
+import junit.framework.TestSuite;
 
 /**
  * Tests contributor resolution for Bundle-based contributors.
@@ -157,6 +167,9 @@ public class ContributorsTest extends TestCase {
 	private boolean addContribution(IExtensionRegistry registry, String fileName) throws IOException {
 		String fullPath = RuntimeTestsPlugin.TEST_FILES_ROOT + "registry/elementsByContributor/" + fileName + "/plugin.xml";
 		URL urlA = RuntimeTestsPlugin.getContext().getBundle().getEntry(fullPath);
+		if (urlA == null) {
+			throw new IOException("No entry to '"+fullPath+"' could be found or caller does not have the appropriate permissions.");//$NON-NLS-1$ //$NON-NLS-2$
+		}
 		InputStream is = urlA.openStream();
 		IContributor nonBundleContributor = ContributorFactorySimple.createContributor(fileName);
 		return registry.addContribution(is, nonBundleContributor, false, urlA.getFile(), null, null);
