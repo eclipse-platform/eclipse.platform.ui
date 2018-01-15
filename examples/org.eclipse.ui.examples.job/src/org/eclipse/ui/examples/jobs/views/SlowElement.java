@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2005 IBM Corporation and others.
+ * Copyright (c) 2004, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,8 +10,9 @@
  *******************************************************************************/
 package org.eclipse.ui.examples.jobs.views;
 
-import java.util.*;
-
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
 import org.eclipse.core.runtime.PlatformObject;
 
 public class SlowElement extends PlatformObject {
@@ -42,10 +43,10 @@ public class SlowElement extends PlatformObject {
 	public SlowElement[] getChildren() {
 		Random r = new Random();
 		int random = r.nextInt(15);
-		List children = new ArrayList();
+		List<SlowElement> children = new ArrayList<>();
 		for(int i = 0; i < random; i++) {
 			children.add(new SlowElement("child" + i)); //$NON-NLS-1$
 		}
-		return (SlowElement[]) children.toArray(new SlowElement[children.size()]);
+		return children.toArray(new SlowElement[children.size()]);
 	}
 }

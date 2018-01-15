@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004 IBM Corporation and others.
+ * Copyright (c) 2004, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,8 +11,7 @@
 package org.eclipse.ui.examples.jobs.views;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -53,23 +52,15 @@ public class LazyTreeView extends ViewPart {
 		serializeButton.setText("Serialize fetch jobs"); //$NON-NLS-1$
 //		serializeButton.setBackground(WorkbenchColors.getSystemColor(SWT.COLOR_WHITE));
 		serializeButton.setSelection(SlowElementAdapter.isSerializeFetching());
-		serializeButton.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				SlowElementAdapter.setSerializeFetching(serializeButton.getSelection());
-			}
-		});
+		serializeButton.addSelectionListener(SelectionListener
+				.widgetSelectedAdapter(e -> SlowElementAdapter.setSerializeFetching(serializeButton.getSelection())));
 		serializeButton.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		batchButton = new Button(parent, SWT.CHECK | SWT.FLAT);
 		batchButton.setText("Batch returned children"); //$NON-NLS-1$
 //		batchButton.setBackground(WorkbenchColors.getSystemColor(SWT.COLOR_WHITE));
 		serializeButton.setSelection(SlowElementAdapter.isBatchFetchedChildren());
-		batchButton.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				SlowElementAdapter.setBatchFetchedChildren(batchButton.getSelection());
-			}
-		});
+		batchButton.addSelectionListener(SelectionListener
+				.widgetSelectedAdapter(e -> SlowElementAdapter.setBatchFetchedChildren(batchButton.getSelection())));
 		batchButton.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		viewer = new TreeViewer(parent, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL);
 		viewer.setContentProvider(new DeferredContentProvider());

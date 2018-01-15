@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,7 +13,6 @@ package org.eclipse.ui.examples.jobs.actions;
 import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.dialogs.IDialogConstants;
-import org.eclipse.jface.dialogs.IInputValidator;
 import org.eclipse.jface.dialogs.InputDialog;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.ISelection;
@@ -31,16 +30,14 @@ public class CreateJobsAction implements IWorkbenchWindowActionDelegate {
 	private IWorkbenchWindow window;
 
 	private long askForDuration() {
-		InputDialog dialog = new InputDialog(window.getShell(), "How long?", "Enter the number of milliseconds per job", "1000", new IInputValidator() { //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-					@Override
-					public String isValid(String newText) {
-						try {
-							Long.parseLong(newText);
-						} catch (NumberFormatException e) {
-							return "Not a number"; //$NON-NLS-1$
-						}
-						return null;
+		InputDialog dialog = new InputDialog(window.getShell(), "How long?", "Enter the number of milliseconds per job", //$NON-NLS-1$ //$NON-NLS-2$
+				"1000", newText -> { //$NON-NLS-1$
+					try {
+						Long.parseLong(newText);
+					} catch (NumberFormatException e) {
+						return "Not a number"; //$NON-NLS-1$
 					}
+					return null;
 				});
 		if (dialog.open() == Window.CANCEL)
 			throw new OperationCanceledException();
@@ -63,16 +60,14 @@ public class CreateJobsAction implements IWorkbenchWindowActionDelegate {
 	}
 
 	private int askForJobCount() {
-		InputDialog dialog = new InputDialog(window.getShell(), "How much work?", "Enter the number of jobs to run", "100", new IInputValidator() { //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-					@Override
-					public String isValid(String newText) {
-						try {
-							Integer.parseInt(newText);
-						} catch (NumberFormatException e) {
-							return "Not a number"; //$NON-NLS-1$
-						}
-						return null;
+		InputDialog dialog = new InputDialog(window.getShell(), "How much work?", "Enter the number of jobs to run", //$NON-NLS-1$ //$NON-NLS-2$
+				"100", newText -> { //$NON-NLS-1$
+					try {
+						Integer.parseInt(newText);
+					} catch (NumberFormatException e) {
+						return "Not a number"; //$NON-NLS-1$
 					}
+					return null;
 				});
 		if (dialog.open() == Window.CANCEL)
 			throw new OperationCanceledException();

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004,2006 IBM Corporation and others.
+ * Copyright (c) 2004, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,7 +13,6 @@ package org.eclipse.ui.examples.jobs.actions;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.resources.WorkspaceJob;
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
@@ -37,7 +36,7 @@ public class JobAction implements IWorkbenchWindowActionDelegate {
 		final IWorkspace workspace = ResourcesPlugin.getWorkspace();
 		Job job = new WorkspaceJob("Background job") { //$NON-NLS-1$
 			@Override
-			public IStatus runInWorkspace(IProgressMonitor monitor) throws CoreException {
+			public IStatus runInWorkspace(IProgressMonitor monitor) {
 				monitor.beginTask("Doing something in background", 100); //$NON-NLS-1$
 				for (int i = 0; i < 100; i++) {
 					try {

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004 IBM Corporation and others.
+ * Copyright (c) 2004, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,8 +10,10 @@
  *******************************************************************************/
 package org.eclipse.ui.examples.jobs.actions;
 
-import org.eclipse.core.resources.*;
-import org.eclipse.core.runtime.*;
+import org.eclipse.core.resources.IWorkspaceRunnable;
+import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.ui.IWorkbenchWindow;
@@ -21,11 +23,8 @@ public class ForegroundAction implements IWorkbenchWindowActionDelegate {
 	@Override
 	public void run(IAction action) {
 		try {
-			ResourcesPlugin.getWorkspace().run(new IWorkspaceRunnable() {
-				@Override
-				public void run(IProgressMonitor monitor) {
-					//no-op
-				}
+			ResourcesPlugin.getWorkspace().run((IWorkspaceRunnable) monitor -> {
+				// no-op
 			}, null);
 		} catch (OperationCanceledException e) {
 			e.printStackTrace();

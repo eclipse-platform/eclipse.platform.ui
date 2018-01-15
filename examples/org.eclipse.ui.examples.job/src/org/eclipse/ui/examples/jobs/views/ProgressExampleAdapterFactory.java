@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2005 IBM Corporation and others.
+ * Copyright (c) 2004, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -18,16 +18,16 @@ public class ProgressExampleAdapterFactory implements IAdapterFactory {
 	private SlowElementAdapter slowElementAdapter = new SlowElementAdapter();
 
 	@Override
-	public Object getAdapter(Object object, Class type) {
+	public <T> T getAdapter(Object object, Class<T> type) {
 		if(object instanceof SlowElement) {
 			if(type == SlowElement.class || type == IDeferredWorkbenchAdapter.class || type == IWorkbenchAdapter.class)
-				return slowElementAdapter;
+				return type.cast(slowElementAdapter);
 		}
 		return null;
 	}
 
 	@Override
-	public Class[] getAdapterList() {
+	public Class<?>[] getAdapterList() {
 		return new Class[] {
 				SlowElement.class, IDeferredWorkbenchAdapter.class, IWorkbenchAdapter.class
 				};
