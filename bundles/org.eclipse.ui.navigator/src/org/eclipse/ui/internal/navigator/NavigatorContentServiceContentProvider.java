@@ -503,7 +503,7 @@ public class NavigatorContentServiceContentProvider implements ITreeContentProvi
 		return parentElementOrPath;
 	}
 
-	class CyclicPathException extends Exception {
+	static class CyclicPathException extends Exception {
 
 		private static final long serialVersionUID = 2111962579612444989L;
 

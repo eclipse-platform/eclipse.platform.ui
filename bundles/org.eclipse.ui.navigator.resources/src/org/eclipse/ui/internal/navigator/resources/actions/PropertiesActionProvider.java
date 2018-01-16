@@ -12,7 +12,6 @@ package org.eclipse.ui.internal.navigator.resources.actions;
 
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.Platform;
-
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
@@ -20,9 +19,7 @@ import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.window.IShellProvider;
-
 import org.eclipse.swt.widgets.Shell;
-
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IWorkbenchCommandConstants;
 import org.eclipse.ui.actions.ActionContext;
@@ -84,7 +81,7 @@ public class PropertiesActionProvider extends CommonActionProvider {
 
 	}
 
-	private class DelegateIAdaptable implements IAdaptable {
+	private static class DelegateIAdaptable implements IAdaptable {
 
 		private Object delegate;
 

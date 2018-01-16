@@ -267,7 +267,7 @@ public class CommonFiltersTab extends CustomizationTab {
 		}
 	}
 
-	private class CommonFilterComparator extends ViewerComparator {
+	private static class CommonFilterComparator extends ViewerComparator {
 
 		@Override
 		public void sort(Viewer viewer, Object[] elements) {
