@@ -62,7 +62,7 @@ public class DeferredTreeContentManager {
 	 * @since 3.1
 	 *
 	 */
-	class DeferredContentFamily {
+	static class DeferredContentFamily {
 		protected DeferredTreeContentManager manager;
 		protected Object element;
 

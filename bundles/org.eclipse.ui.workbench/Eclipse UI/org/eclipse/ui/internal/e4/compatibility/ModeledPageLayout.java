@@ -99,7 +99,7 @@ public class ModeledPageLayout implements IPageLayout {
 
 	private ModeledPageLayoutUtils layoutUtils;
 
-	private class ViewActivator implements IIdentifierListener {
+	private static class ViewActivator implements IIdentifierListener {
 		private MUIElement element;
 
 		public ViewActivator(MUIElement element) {

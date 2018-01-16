@@ -928,7 +928,7 @@ public abstract class FilteredTableBaseHandler extends AbstractHandler implement
 	}
 
 	/** Class used to store items to be displayed */
-	public class FilteredTableItem {
+	public static class FilteredTableItem {
 		String text;
 		Image image;
 		String tooltipText;

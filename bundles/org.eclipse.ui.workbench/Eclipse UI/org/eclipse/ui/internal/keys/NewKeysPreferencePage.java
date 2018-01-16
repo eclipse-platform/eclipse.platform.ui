@@ -191,7 +191,7 @@ public class NewKeysPreferencePage extends PreferencePage implements IWorkbenchP
 	 * display elements in the tree according to the selected criteria.
 	 *
 	 */
-	protected class CategoryFilterTree extends FilteredTree {
+	protected static class CategoryFilterTree extends FilteredTree {
 
 		private CategoryPatternFilter filter;
 

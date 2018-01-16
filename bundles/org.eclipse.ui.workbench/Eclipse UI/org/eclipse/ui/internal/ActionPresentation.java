@@ -33,7 +33,7 @@ public class ActionPresentation {
 
     private HashMap invisibleBars = new HashMap(3);
 
-    private class SetRec {
+	private static class SetRec {
         public SetRec(IActionSet set,
                 SubActionBars bars) {
             this.set = set;

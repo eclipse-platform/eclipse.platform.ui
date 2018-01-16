@@ -113,7 +113,7 @@ public class ContentTypesPreferencePage extends PreferencePage implements
 
 	private Set<Image> disposableEditorIcons = new HashSet<>();
 
-	private class Spec {
+	private static class Spec {
 		/**
 		 * the spec text: file name, extension or pattern
 		 */

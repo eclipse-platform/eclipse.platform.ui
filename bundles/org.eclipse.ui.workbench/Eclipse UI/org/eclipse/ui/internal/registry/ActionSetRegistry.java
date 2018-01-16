@@ -36,7 +36,7 @@ public class ActionSetRegistry implements IExtensionChangeHandler {
     /**
      * @since 3.1
      */
-    private class ActionSetPartAssociation {
+	private static class ActionSetPartAssociation {
         /**
          * @param partId
          * @param actionSetId

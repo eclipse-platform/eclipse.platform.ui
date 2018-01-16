@@ -1749,7 +1749,7 @@ public abstract class FilteredItemsSelectionDialog extends SelectionStatusDialog
 	 * Used in ItemsListContentProvider, separates history and non-history
 	 * items.
 	 */
-	private class ItemsListSeparator {
+	private static class ItemsListSeparator {
 
 		private String name;
 

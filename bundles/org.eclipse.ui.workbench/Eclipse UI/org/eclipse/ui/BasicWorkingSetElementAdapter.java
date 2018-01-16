@@ -14,7 +14,6 @@ package org.eclipse.ui;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.StringTokenizer;
-
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IAdapterManager;
 import org.eclipse.core.runtime.IConfigurationElement;
@@ -53,7 +52,7 @@ import org.osgi.util.tracker.ServiceTracker;
 public final class BasicWorkingSetElementAdapter implements
 		IWorkingSetElementAdapter, IExecutableExtension {
 
-	private class Type {
+	private static class Type {
 		private static final int NONE = 0;
 		private static final int ADAPT = 1;
 		String className;

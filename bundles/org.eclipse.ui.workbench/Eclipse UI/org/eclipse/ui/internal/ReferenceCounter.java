@@ -30,7 +30,7 @@ public class ReferenceCounter {
     /**
      * Capture the information about an object.
      */
-    public class RefRec {
+    public static class RefRec {
         public RefRec(Object id, Object value) {
             this.id = id;
             this.value = value;

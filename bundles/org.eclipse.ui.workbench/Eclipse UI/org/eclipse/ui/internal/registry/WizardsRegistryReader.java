@@ -67,7 +67,7 @@ public class WizardsRegistryReader extends RegistryReader {
 
     private WorkbenchWizardElement[] primaryWizards = new WorkbenchWizardElement[0];
 
-    private class CategoryNode {
+	private static class CategoryNode {
         private Category category;
 
         private String path;

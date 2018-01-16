@@ -18,7 +18,6 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExecutableExtension;
@@ -55,7 +54,7 @@ import org.eclipse.ui.internal.WorkbenchPlugin;
 public class ModifyWorkingSetDelegate extends
 		AbstractWorkingSetPulldownDelegate implements IExecutableExtension, IActionDelegate2 {
 
-	public class NewWorkingSetAction extends Action {
+	public static class NewWorkingSetAction extends Action {
 
 		/**
 		 * Create a new instance of this action.

@@ -141,7 +141,7 @@ public class PreferenceTransferElement extends WorkbenchAdapter implements
 				.getContributor().getName() : null;
 	}
 
-	class PreferenceFilter implements IPreferenceFilter {
+	static class PreferenceFilter implements IPreferenceFilter {
 
 		private String[] scopes;
 		private Map mappings;

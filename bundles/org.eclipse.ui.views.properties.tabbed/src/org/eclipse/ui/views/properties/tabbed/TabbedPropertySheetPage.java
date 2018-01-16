@@ -135,7 +135,7 @@ public class TabbedPropertySheetPage
 		}
 	};
 
-	private class TabbedPropertySheetPageContributorFromSelection
+	private static class TabbedPropertySheetPageContributorFromSelection
 		implements ITabbedPropertySheetPageContributor {
 
 		private String contributorId;
@@ -165,7 +165,7 @@ public class TabbedPropertySheetPage
 	/**
 	 * Label provider for the ListViewer.
 	 */
-	class TabbedPropertySheetPageLabelProvider
+	static class TabbedPropertySheetPageLabelProvider
 		extends LabelProvider {
 
 		@Override

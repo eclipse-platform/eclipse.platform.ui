@@ -63,7 +63,7 @@ import org.eclipse.ui.menus.CommandContributionItem;
  */
 public class CoolBarToTrimManager extends ContributionManager implements ICoolBarManager2 {
 
-	private final class ToolBarContributionItemExtension extends ToolBarContributionItem {
+	private static final class ToolBarContributionItemExtension extends ToolBarContributionItem {
 		private final MToolBar tb;
 
 		private ToolBarContributionItemExtension(IToolBarManager toolBarManager, MToolBar tb) {

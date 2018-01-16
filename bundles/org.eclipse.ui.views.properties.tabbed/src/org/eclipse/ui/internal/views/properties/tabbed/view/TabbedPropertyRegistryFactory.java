@@ -25,7 +25,7 @@ import org.eclipse.ui.views.properties.tabbed.ITabbedPropertySheetPageContributo
  */
 public class TabbedPropertyRegistryFactory {
 
-	class CacheData {
+	static class CacheData {
 		TabbedPropertyRegistry registry;
 		List references;
 	}

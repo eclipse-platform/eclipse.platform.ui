@@ -13,7 +13,6 @@ package org.eclipse.ui.internal;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-
 import org.eclipse.jface.util.Geometry;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.GC;
@@ -23,7 +22,6 @@ import org.eclipse.swt.widgets.Canvas;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.ui.internal.AnimationEngine;
 
 /**
  * Creates an animation effect where the interpolated rectangles are displayed using Canvas
@@ -35,7 +33,7 @@ import org.eclipse.ui.internal.AnimationEngine;
  */
 public class RectangleAnimationImageFeedback extends
 		RectangleAnimationFeedbackBase {
-	private class ImageCanvas extends Canvas {
+	private static class ImageCanvas extends Canvas {
 		private Image image;
 
 		/**

@@ -580,7 +580,7 @@ public class HeapStatus extends Composite {
         }
     }
 
-    class CloseHeapStatusAction extends Action{
+    static class CloseHeapStatusAction extends Action{
 
     	CloseHeapStatusAction(){
     		super(WorkbenchMessages.WorkbenchWindow_close );

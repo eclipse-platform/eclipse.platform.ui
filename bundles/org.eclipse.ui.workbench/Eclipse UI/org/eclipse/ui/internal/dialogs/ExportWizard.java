@@ -39,7 +39,7 @@ public class ExportWizard extends Wizard {
     private IStructuredSelection selection;
 
     //the list selection page
-    class SelectionPage extends WorkbenchWizardListSelectionPage {
+    static class SelectionPage extends WorkbenchWizardListSelectionPage {
         SelectionPage(IWorkbench w, IStructuredSelection ss, AdaptableList e,
                 String s) {
             super(w, ss, e, s, WorkbenchTriggerPoints.EXPORT_WIZARDS);

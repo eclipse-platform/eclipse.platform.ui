@@ -58,7 +58,7 @@ public abstract class ObjectContributorManager implements IExtensionChangeHandle
 	/**
 	 * @since 3.1
 	 */
-	private class ContributorRecord {
+	private static class ContributorRecord {
 		/**
 		 * @param contributor
 		 * @param targetType

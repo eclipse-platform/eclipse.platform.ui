@@ -55,7 +55,7 @@ public abstract class ImportExportPage extends WorkbenchWizardSelectionPage{
 	/*
 	 * Class to create a control that shows a categorized tree of wizard types.
 	 */
-	protected class CategorizedWizardSelectionTree {
+	protected static class CategorizedWizardSelectionTree {
 		private final static int SIZING_LISTS_HEIGHT = 200;
 
 		private IWizardCategory wizardCategories;

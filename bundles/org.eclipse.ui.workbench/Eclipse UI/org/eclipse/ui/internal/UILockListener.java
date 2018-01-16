@@ -29,7 +29,7 @@ public class UILockListener extends LockListener {
     /**
      * The Queue is the construct that keeps track of Semaphores.
      */
-    public class Queue {
+    public static class Queue {
         private static final int BASE_SIZE = 8;
 
         protected PendingSyncExec[] elements = new PendingSyncExec[BASE_SIZE];

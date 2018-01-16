@@ -1102,7 +1102,7 @@ public class ProgressManager extends ProgressProvider implements IProgressServic
 		updater.refreshAll();
 	}
 
-	private class RunnableWithStatus implements Runnable {
+	private static class RunnableWithStatus implements Runnable {
 		IStatus status = Status.OK_STATUS;
 		private final IRunnableContext context;
 		private final IRunnableWithProgress runnable;

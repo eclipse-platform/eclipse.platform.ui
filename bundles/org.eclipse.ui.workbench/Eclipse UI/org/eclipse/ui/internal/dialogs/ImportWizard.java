@@ -37,7 +37,7 @@ import org.eclipse.ui.wizards.IWizardCategory;
 public class ImportWizard extends Wizard {
 
     //the list selection page
-    class SelectionPage extends WorkbenchWizardListSelectionPage {
+	static class SelectionPage extends WorkbenchWizardListSelectionPage {
         SelectionPage(IWorkbench w, IStructuredSelection ss, AdaptableList e,
                 String s) {
             super(w, ss, e, s, WorkbenchTriggerPoints.IMPORT_WIZARDS);

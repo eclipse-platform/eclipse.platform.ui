@@ -38,7 +38,7 @@ import org.eclipse.ui.internal.registry.PropertyPagesRegistryReader;
 public class PropertyPageContributorManager extends ObjectContributorManager {
 	private static PropertyPageContributorManager sharedInstance = null;
 
-	private class CategorizedPageNode {
+	private static class CategorizedPageNode {
 		RegistryPageContributor contributor;
 
 		CategorizedPageNode parent;
