@@ -47,7 +47,7 @@ public class ProgressViewUpdater implements IJobProgressManagerListener {
     @Inject
     ProgressManager progressManager;
 
-	class MutableBoolean {
+	static class MutableBoolean {
 		boolean value;
 	}
 
@@ -62,7 +62,7 @@ public class ProgressViewUpdater implements IJobProgressManagerListener {
      * The UpdatesInfo is a private class for keeping track of the updates
      * required.
      */
-    class UpdatesInfo {
+    static class UpdatesInfo {
 
         Collection<JobTreeElement> additions = new HashSet<>();
 

@@ -186,7 +186,7 @@ public class ProgressServiceImpl implements IProgressService {
 		return Preferences.getBoolean(IProgressConstants.RUN_IN_BACKGROUND);
 	}
 
-	private class RunnableWithStatus implements Runnable {
+	private static class RunnableWithStatus implements Runnable {
 
 		IStatus status = Status.OK_STATUS;
 		private final IRunnableContext context;
