@@ -49,7 +49,7 @@ import org.eclipse.ui.views.markers.internal.MarkerMessages;
  */
 public class QuickFixHandler extends MarkerViewHandler {
 
-	private class QuickFixWizardDialog extends WizardDialog {
+	private static class QuickFixWizardDialog extends WizardDialog {
 
 		/**
 		 * @param parentShell

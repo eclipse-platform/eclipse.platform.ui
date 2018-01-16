@@ -36,7 +36,7 @@ import org.eclipse.ui.views.markers.internal.MarkerMessages;
  */
 public class MarkerPriorityField extends MarkerField {
 
-	private class PriorityEditingSupport extends EditingSupport {
+	private static class PriorityEditingSupport extends EditingSupport {
 
 		private ComboBoxCellEditor editor;
 

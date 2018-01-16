@@ -87,7 +87,7 @@ import org.eclipse.ui.progress.IProgressConstants2;
  */
 public class CleanDialog extends MessageDialog {
 
-    private class ProjectSubsetBuildAction extends BuildAction {
+    private static class ProjectSubsetBuildAction extends BuildAction {
 
         private IProject[] projectsToBuild = new IProject[0];
 

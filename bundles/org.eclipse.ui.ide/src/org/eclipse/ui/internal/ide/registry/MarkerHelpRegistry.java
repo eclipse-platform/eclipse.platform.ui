@@ -70,7 +70,7 @@ public class MarkerHelpRegistry implements IMarkerHelpRegistry {
 	 */
 	private static final String ATT_CLASS = "class"; //$NON-NLS-1$
 
-	private class QueryComparator implements Comparator<MarkerQuery> {
+	private static class QueryComparator implements Comparator<MarkerQuery> {
 		@Override
 		public boolean equals(Object o) {
 			if (!(o instanceof QueryComparator)) {

@@ -43,7 +43,7 @@ public class MarkerImageProviderRegistry {
 
     private ArrayList descriptors = new ArrayList();
 
-    class Descriptor {
+    static class Descriptor {
         String id;
 
         String markerType;

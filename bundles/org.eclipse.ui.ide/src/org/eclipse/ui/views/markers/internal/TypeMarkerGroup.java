@@ -136,7 +136,7 @@ public class TypeMarkerGroup extends MarkerGroup {
 		return (o1, o2) -> o1.getLabel().compareTo(o2.getLabel());
 	}
 
-	private class TypesMarkerGroupingEntry extends MarkerGroupingEntry {
+	private static class TypesMarkerGroupingEntry extends MarkerGroupingEntry {
 		public TypesMarkerGroupingEntry(String label) {
 			super(label);
 		}

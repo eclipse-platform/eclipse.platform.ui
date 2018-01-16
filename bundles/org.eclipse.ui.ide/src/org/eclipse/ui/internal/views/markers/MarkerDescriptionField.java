@@ -32,7 +32,7 @@ import com.ibm.icu.text.CollationKey;
  */
 public class MarkerDescriptionField extends MarkerField {
 
-	private class DescriptionEditingSupport extends EditingSupport {
+	private static class DescriptionEditingSupport extends EditingSupport {
 
 		private TextCellEditor editor;
 

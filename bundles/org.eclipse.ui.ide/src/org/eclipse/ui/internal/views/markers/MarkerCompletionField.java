@@ -33,7 +33,7 @@ import org.eclipse.ui.views.markers.MarkerItem;
  */
 public class MarkerCompletionField extends MarkerField {
 
-	private class CompletionEditingSupport extends EditingSupport {
+	private static class CompletionEditingSupport extends EditingSupport {
 
 		private CheckboxCellEditor editor;
 

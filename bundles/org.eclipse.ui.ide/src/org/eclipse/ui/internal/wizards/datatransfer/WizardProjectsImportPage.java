@@ -308,7 +308,7 @@ public class WizardProjectsImportPage extends WizardDataTransferPage {
 	/**
 	 * A filter to remove conflicting projects
 	 */
-	class ConflictingProjectFilter extends ViewerFilter {
+	static class ConflictingProjectFilter extends ViewerFilter {
 
 		@Override
 		public boolean select(Viewer viewer, Object parentElement,

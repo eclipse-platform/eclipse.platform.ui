@@ -26,7 +26,7 @@ import org.eclipse.swt.widgets.Group;
  */
 public class ResourceDragAndDropEditor {
 
-	class PreferenceGroup
+	static class PreferenceGroup
 	{
 		Group group;
 		String preferenceKey;

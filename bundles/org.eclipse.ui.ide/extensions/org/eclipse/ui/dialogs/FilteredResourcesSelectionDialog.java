@@ -824,7 +824,7 @@ public class FilteredResourcesSelectionDialog extends
 	/**
 	 * Viewer filter which filters resources due to current working set
 	 */
-	private class CustomWorkingSetFilter extends ViewerFilter {
+	private static class CustomWorkingSetFilter extends ViewerFilter {
 		private ResourceWorkingSetFilter resourceWorkingSetFilter = new ResourceWorkingSetFilter();
 
 		/**
@@ -850,7 +850,7 @@ public class FilteredResourcesSelectionDialog extends
 	 * During visit resources it updates progress monitor and adds matched
 	 * resources to ContentProvider instance.
 	 */
-	private class ResourceProxyVisitor implements IResourceProxyVisitor {
+	private static class ResourceProxyVisitor implements IResourceProxyVisitor {
 
 		private AbstractContentProvider proxyContentProvider;
 

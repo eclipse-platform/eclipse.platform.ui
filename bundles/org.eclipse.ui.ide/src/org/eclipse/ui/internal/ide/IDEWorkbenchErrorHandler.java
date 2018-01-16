@@ -261,7 +261,7 @@ public class IDEWorkbenchErrorHandler extends WorkbenchErrorHandler {
 		}
 	}
 
-	private class FatalErrorDialog extends InternalErrorDialog {
+	private static class FatalErrorDialog extends InternalErrorDialog {
 
 		/**
 		 * @param parentShell

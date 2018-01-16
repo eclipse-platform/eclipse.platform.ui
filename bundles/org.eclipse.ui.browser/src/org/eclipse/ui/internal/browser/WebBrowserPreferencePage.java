@@ -80,7 +80,7 @@ public class WebBrowserPreferencePage extends PreferencePage implements
 
 	protected IBrowserDescriptor checkedBrowser;
 
-	class BrowserTableContentProvider implements IStructuredContentProvider {
+	static class BrowserTableContentProvider implements IStructuredContentProvider {
 		private BrowserManager input;
 
 		@Override
@@ -94,7 +94,7 @@ public class WebBrowserPreferencePage extends PreferencePage implements
 		}
 	}
 
-	class BrowserTableLabelProvider implements ITableLabelProvider {
+	static class BrowserTableLabelProvider implements ITableLabelProvider {
 		@Override
 		public Image getColumnImage(Object element, int columnIndex) {
 			return null;

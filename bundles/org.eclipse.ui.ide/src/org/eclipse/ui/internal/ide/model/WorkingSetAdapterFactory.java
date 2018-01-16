@@ -31,7 +31,7 @@ public class WorkingSetAdapterFactory implements IAdapterFactory {
 	 * Adapter for converting a working set to a resource mapping for use by
 	 * object contributions.
 	 */
-	class ContributorResourceAdapter implements IContributorResourceAdapter2 {
+	static class ContributorResourceAdapter implements IContributorResourceAdapter2 {
 
 		@Override
 		public ResourceMapping getAdaptedResourceMapping(IAdaptable adaptable) {
@@ -58,7 +58,7 @@ public class WorkingSetAdapterFactory implements IAdapterFactory {
 
 	}
 
-	class WorkbenchAdapter implements IWorkbenchAdapter {
+	static class WorkbenchAdapter implements IWorkbenchAdapter {
 
 		@Override
 		public Object[] getChildren(Object o) {

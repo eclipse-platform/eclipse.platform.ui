@@ -36,7 +36,7 @@ public class FormFonts {
 	private FormFonts() {
 	}
 
-	private class BoldFontDescriptor extends FontDescriptor {
+	private static class BoldFontDescriptor extends FontDescriptor {
 		private FontData[] fFontData;
 
 		BoldFontDescriptor (Font font) {

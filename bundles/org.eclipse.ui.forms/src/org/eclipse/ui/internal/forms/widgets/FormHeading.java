@@ -116,7 +116,7 @@ public class FormHeading extends Canvas {
 		}
 	}
 
-	private class GradientInfo {
+	private static class GradientInfo {
 		Color[] gradientColors;
 
 		int[] percents;
