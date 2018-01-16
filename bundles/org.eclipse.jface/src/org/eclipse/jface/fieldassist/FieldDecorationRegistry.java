@@ -167,7 +167,7 @@ public class FieldDecorationRegistry {
 	 * Data structure that holds onto the decoration image info and description,
 	 * and can produce a decorator on request.
 	 */
-	class Entry {
+	static class Entry {
 		private String description;
 
 		private String imageId;

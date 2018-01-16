@@ -36,7 +36,7 @@ public class ControlEnableState {
      * Internal class for recording the enable/disable state of a single
      * control.
      */
-    private class ItemState {
+	private static class ItemState {
     	/** the control */
         protected Control item;
 

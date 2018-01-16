@@ -50,7 +50,7 @@ public class ControlFocusedProperty extends WidgetBooleanValueProperty {
 		return new ControlFocusListener(this, listener, events, null);
 	}
 
-	private class ControlFocusListener extends WidgetListener {
+	private static class ControlFocusListener extends WidgetListener {
 		/**
 		 * @param property
 		 * @param listener

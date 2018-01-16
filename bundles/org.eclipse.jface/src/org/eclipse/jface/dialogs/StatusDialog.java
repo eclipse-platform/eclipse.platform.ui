@@ -52,7 +52,7 @@ public abstract class StatusDialog extends TrayDialog {
 	/**
 	 * A message line displaying a status.
 	 */
-	private class MessageLine extends CLabel {
+	private static class MessageLine extends CLabel {
 
 		/**
 		 * Creates a new message line as a child of the given parent.

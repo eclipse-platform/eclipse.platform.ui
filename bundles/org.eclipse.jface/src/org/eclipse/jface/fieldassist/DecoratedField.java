@@ -87,7 +87,7 @@ public class DecoratedField {
 	 * field decorations as labels attached to the field. Clients should use
 	 * <code>FieldDecoration</code> for specifying a decoration.
 	 */
-	private class FieldDecorationData {
+	private static class FieldDecorationData {
 
 		/* Package */FieldDecoration decoration;
 

@@ -80,7 +80,7 @@ public class ConfigureColumns {
 		private Text text;
 		private boolean moveableColumnsFound;
 
-		class ColumnObject {
+		static class ColumnObject {
 			Item column;
 			int index;
 			String name;
