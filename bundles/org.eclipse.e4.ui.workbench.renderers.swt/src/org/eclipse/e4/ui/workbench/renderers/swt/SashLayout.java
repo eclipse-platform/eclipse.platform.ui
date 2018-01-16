@@ -40,7 +40,7 @@ public class SashLayout extends Layout {
 	MUIElement root;
 	private Composite host;
 
-	class SashRect {
+	static class SashRect {
 		Rectangle rect;
 		MGenericTile<?> container;
 		MUIElement left;

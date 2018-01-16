@@ -145,7 +145,7 @@ public class ModelFragmentComparator implements Comparator<ModelFragmentWrapper>
 	 * Inner Class used to describe the Position to which the fragment should be
 	 * sorted.
 	 */
-	private class PositionDescription {
+	private static class PositionDescription {
 		private final PositionPlace place;
 		private final String reference;
 
