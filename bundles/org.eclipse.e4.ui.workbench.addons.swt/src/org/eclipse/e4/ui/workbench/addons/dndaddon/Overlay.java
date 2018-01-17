@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2013, 2014 IBM Corporation and others.
+ * Copyright (c) 2013, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,8 +13,6 @@ package org.eclipse.e4.ui.workbench.addons.dndaddon;
 import java.util.ArrayList;
 import java.util.List;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.PaintEvent;
-import org.eclipse.swt.events.PaintListener;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Rectangle;
@@ -82,7 +80,7 @@ class Overlay {
 		}
 	}
 
-	List<Adornment> adornments = new ArrayList<Adornment>();
+	List<Adornment> adornments = new ArrayList<>();
 
 	public void addAdornment(Adornment a) {
 		adornments.add(a);
@@ -126,14 +124,11 @@ class Overlay {
 		overlayShell.setAlpha(128);
 
 		blue = new Color(baseShell.getDisplay(), 0, 0, 128);
-		overlayShell.addPaintListener(new PaintListener() {
-			@Override
-			public void paintControl(PaintEvent e) {
-				e.gc.setForeground(blue);
-				e.gc.setBackground(blue);
-				for (Adornment adornment : adornments) {
-					adornment.drawAdornment(e.gc);
-				}
+		overlayShell.addPaintListener(e -> {
+			e.gc.setForeground(blue);
+			e.gc.setBackground(blue);
+			for (Adornment adornment : adornments) {
+				adornment.drawAdornment(e.gc);
 			}
 		});
 	}

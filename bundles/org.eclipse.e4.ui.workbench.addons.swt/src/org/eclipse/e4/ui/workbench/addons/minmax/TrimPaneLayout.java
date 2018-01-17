@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2015 IBM Corporation and others.
+ * Copyright (c) 2010, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,9 +13,8 @@ package org.eclipse.e4.ui.workbench.addons.minmax;
 
 import org.eclipse.e4.ui.model.application.ui.menu.MToolControl;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
-import org.eclipse.swt.events.MouseListener;
-import org.eclipse.swt.events.MouseMoveListener;
 import org.eclipse.swt.events.MouseTrackListener;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
@@ -117,23 +116,20 @@ public class TrimPaneLayout extends Layout {
 			return;
 		}
 
-		composite.addMouseMoveListener(new MouseMoveListener() {
-			@Override
-			public void mouseMove(MouseEvent e) {
-				Point p = e.display.getCursorLocation();
-				if (trackState == NOT_SIZING) {
-					setCursor(composite, new Point(e.x, e.y));
-				} else if (trackState == HORIZONTAL_SIZING) {
-					dragHorizontal(composite, p);
-				} else if (trackState == VERTICAL_SIZING) {
-					dragVertical(composite, p);
-				} else if (trackState == CORNER_SIZING) {
-					dragCorner(composite, p);
-				}
+		composite.addMouseMoveListener(e -> {
+			Point p = e.display.getCursorLocation();
+			if (trackState == NOT_SIZING) {
+				setCursor(composite, new Point(e.x, e.y));
+			} else if (trackState == HORIZONTAL_SIZING) {
+				dragHorizontal(composite, p);
+			} else if (trackState == VERTICAL_SIZING) {
+				dragVertical(composite, p);
+			} else if (trackState == CORNER_SIZING) {
+				dragCorner(composite, p);
 			}
 		});
 
-		composite.addMouseListener(new MouseListener() {
+		composite.addMouseListener(new MouseAdapter() {
 
 			@Override
 			public void mouseUp(MouseEvent e) {
@@ -166,27 +162,12 @@ public class TrimPaneLayout extends Layout {
 					composite.setCapture(true);
 				}
 			}
-
-			@Override
-			public void mouseDoubleClick(MouseEvent e) {
-			}
 		});
 
-		composite.addMouseTrackListener(new MouseTrackListener() {
-			@Override
-			public void mouseHover(MouseEvent e) {
-			}
-
-			@Override
-			public void mouseExit(MouseEvent e) {
-				Composite comp = (Composite) e.widget;
-				comp.setCursor(null);
-			}
-
-			@Override
-			public void mouseEnter(MouseEvent e) {
-			}
-		});
+		composite.addMouseTrackListener(MouseTrackListener.mouseExitAdapter(e -> {
+			Composite comp = (Composite) e.widget;
+			comp.setCursor(null);
+		}));
 
 		resizeInstalled = true;
 	}

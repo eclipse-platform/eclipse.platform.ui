@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2015 IBM Corporation and others.
+ * Copyright (c) 2010, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,11 +8,9 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  ******************************************************************************/
-
 package org.eclipse.e4.ui.workbench.addons.dndaddon;
 
 import java.util.List;
-import org.eclipse.e4.ui.model.application.MApplicationElement;
 import org.eclipse.e4.ui.model.application.ui.MUIElement;
 import org.eclipse.e4.ui.model.application.ui.advanced.MArea;
 import org.eclipse.e4.ui.model.application.ui.advanced.MPerspective;
@@ -22,7 +20,6 @@ import org.eclipse.e4.ui.model.application.ui.basic.MStackElement;
 import org.eclipse.e4.ui.model.application.ui.basic.MWindow;
 import org.eclipse.e4.ui.model.application.ui.basic.impl.BasicFactoryImpl;
 import org.eclipse.e4.ui.workbench.IPresentationEngine;
-import org.eclipse.e4.ui.workbench.Selector;
 import org.eclipse.e4.ui.workbench.modeling.EModelService;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CTabFolder;
@@ -108,49 +105,46 @@ public class SplitDropAgent2 extends DropAgent {
 		// Collect up the elements we can be split 'relative to'
 		final EModelService ms = dndManager.getModelService();
 		List<MPartStack> stacks = ms.findElements(ms.getTopLevelWindowFor(dragElement),
-				MPartStack.class, EModelService.PRESENTATION, new Selector() {
-					@Override
-					public boolean select(MApplicationElement element) {
-						MPartStack stack = (MPartStack) element;
+				MPartStack.class, EModelService.PRESENTATION, element -> {
+					MPartStack stack = (MPartStack) element;
 
-						// Has to be visible...
-						if (!stack.isVisible() || !(stack.getWidget() instanceof CTabFolder)) {
-							return false;
-						}
-
-						// ...not disposed...
-						CTabFolder ctf = (CTabFolder) stack.getWidget();
-						if (ctf.isDisposed()) {
-							return false;
-						}
-
-						// ...and in the shell the cursor is over
-						if (!isInCursorShell(info, ctf)) {
-							return false;
-						}
-
-						// ...and the cursor must be in the CTF's client area
-						Rectangle bb = ctf.getClientArea();
-						bb = ctf.getDisplay().map(ctf, null, bb);
-						if (!bb.contains(info.cursorPos)) {
-							return false;
-						}
-
-						// Can't split with ourselves if we're dragging a stack
-						if (dragElement instanceof MPartStack && stack == dragElement) {
-							return false;
-						}
-
-						// Can't split with ourselves if we're dragging the only visible element in
-						// a stack
-						MUIElement deParent = dragElement.getParent();
-						if (dragElement instanceof MStackElement && stack == deParent
-								&& ms.countRenderableChildren(deParent) == 1) {
-							return false;
-						}
-
-						return true;
+					// Has to be visible...
+					if (!stack.isVisible() || !(stack.getWidget() instanceof CTabFolder)) {
+						return false;
 					}
+
+					// ...not disposed...
+					CTabFolder ctf = (CTabFolder) stack.getWidget();
+					if (ctf.isDisposed()) {
+						return false;
+					}
+
+					// ...and in the shell the cursor is over
+					if (!isInCursorShell(info, ctf)) {
+						return false;
+					}
+
+					// ...and the cursor must be in the CTF's client area
+					Rectangle bb = ctf.getClientArea();
+					bb = ctf.getDisplay().map(ctf, null, bb);
+					if (!bb.contains(info.cursorPos)) {
+						return false;
+					}
+
+					// Can't split with ourselves if we're dragging a stack
+					if (dragElement instanceof MPartStack && stack == dragElement) {
+						return false;
+					}
+
+					// Can't split with ourselves if we're dragging the only visible element in
+					// a stack
+					MUIElement deParent = dragElement.getParent();
+					if (dragElement instanceof MStackElement && stack == deParent
+							&& ms.countRenderableChildren(deParent) == 1) {
+						return false;
+					}
+
+					return true;
 				});
 
 		if (stacks.size() > 0) {

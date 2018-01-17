@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2015 EclipseSource Munich GmbH and others.
+ * Copyright (c) 2015, 2018 EclipseSource Munich GmbH and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -55,7 +55,7 @@ public class TrimStackIdHelper {
 	public static Map<TrimStackIdPart, String> parseTrimStackId(String trimStackId) {
 		int index = trimStackId.indexOf('(');
 		String stackId = trimStackId.substring(0, index);
-		Map<TrimStackIdPart, String> result = new LinkedHashMap<TrimStackIdHelper.TrimStackIdPart, String>();
+		Map<TrimStackIdPart, String> result = new LinkedHashMap<>();
 		result.put(TrimStackIdPart.ELEMENT_ID, stackId);
 		String suffix = trimStackId.substring(index);
 		if (ID_SUFFIX.equalsIgnoreCase(suffix)) {

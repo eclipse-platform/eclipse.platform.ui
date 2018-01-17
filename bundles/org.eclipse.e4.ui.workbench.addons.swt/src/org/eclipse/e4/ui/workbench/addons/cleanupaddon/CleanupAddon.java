@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011, 2016 IBM Corporation and others.
+ * Copyright (c) 2011, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -85,62 +85,59 @@ public class CleanupAddon {
 
 		// Stall the removal to handle cases where the container is only
 		// transiently empty
-		Display.getCurrent().asyncExec(new Runnable() {
-			@Override
-			public void run() {
-				// Remove it from the display if no visible children
-				int tbrCount = modelService.toBeRenderedCount(container);
+		Display.getCurrent().asyncExec(() -> {
+			// Remove it from the display if no visible children
+			int tbrCount = modelService.toBeRenderedCount(container);
 
-				// Cache the value since setting the TBR may change the
-				// result
-				boolean lastStack = isLastEditorStack(container);
-				if (tbrCount == 0 && !lastStack) {
+			// Cache the value since setting the TBR may change the
+			// result
+			boolean lastStack = isLastEditorStack(container);
+			if (tbrCount == 0 && !lastStack) {
+				container.setToBeRendered(false);
+			}
+
+			// Remove it from the model if it has no children at all
+			MElementContainer<?> lclContainer = container;
+			if (lclContainer.getChildren().size() == 0) {
+				MElementContainer<MUIElement> parent = container.getParent();
+				if (parent != null && !lastStack) {
 					container.setToBeRendered(false);
+					parent.getChildren().remove(container);
+				} else if (container instanceof MWindow) {
+					// Must be a Detached Window
+					MUIElement eParent = (MUIElement) ((EObject) container).eContainer();
+					if (eParent instanceof MPerspective) {
+						((MPerspective) eParent).getWindows().remove(container);
+					} else if (eParent instanceof MWindow) {
+						((MWindow) eParent).getWindows().remove(container);
+					}
 				}
+			} else if (container.getChildren().size() == 1 && container instanceof MPartSashContainer) {
+				// if a sash container has only one element then remove
+				// it and move
+				// its child up to where it used to be
+				MUIElement theChild = container.getChildren().get(0);
+				MElementContainer<MUIElement> parentContainer = container.getParent();
+				if (parentContainer != null) {
+					int index = parentContainer.getChildren().indexOf(container);
 
-				// Remove it from the model if it has no children at all
-				MElementContainer<?> lclContainer = container;
-				if (lclContainer.getChildren().size() == 0) {
-					MElementContainer<MUIElement> parent = container.getParent();
-					if (parent != null && !lastStack) {
-						container.setToBeRendered(false);
-						parent.getChildren().remove(container);
-					} else if (container instanceof MWindow) {
-						// Must be a Detached Window
-						MUIElement eParent = (MUIElement) ((EObject) container).eContainer();
-						if (eParent instanceof MPerspective) {
-							((MPerspective) eParent).getWindows().remove(container);
-						} else if (eParent instanceof MWindow) {
-							((MWindow) eParent).getWindows().remove(container);
+					// Magic check, are we unwrapping a sash container
+					if (theChild instanceof MPartSashContainer) {
+						if (container.getWidget() instanceof Composite) {
+							Composite theComp = (Composite) container.getWidget();
+							Object tmp = theChild.getWidget();
+							theChild.setWidget(theComp);
+							theComp.setLayout(new SashLayout(theComp, theChild));
+							theComp.setData(AbstractPartRenderer.OWNING_ME, theChild);
+							container.setWidget(tmp);
 						}
 					}
-				} else if (container.getChildren().size() == 1 && container instanceof MPartSashContainer) {
-					// if a sash container has only one element then remove
-					// it and move
-					// its child up to where it used to be
-					MUIElement theChild = container.getChildren().get(0);
-					MElementContainer<MUIElement> parentContainer = container.getParent();
-					if (parentContainer != null) {
-						int index = parentContainer.getChildren().indexOf(container);
 
-						// Magic check, are we unwrapping a sash container
-						if (theChild instanceof MPartSashContainer) {
-							if (container.getWidget() instanceof Composite) {
-								Composite theComp = (Composite) container.getWidget();
-								Object tmp = theChild.getWidget();
-								theChild.setWidget(theComp);
-								theComp.setLayout(new SashLayout(theComp, theChild));
-								theComp.setData(AbstractPartRenderer.OWNING_ME, theChild);
-								container.setWidget(tmp);
-							}
-						}
-
-						theChild.setContainerData(container.getContainerData());
-						container.getChildren().remove(theChild);
-						parentContainer.getChildren().add(index, theChild);
-						container.setToBeRendered(false);
-						parentContainer.getChildren().remove(container);
-					}
+					theChild.setContainerData(container.getContainerData());
+					container.getChildren().remove(theChild);
+					parentContainer.getChildren().add(index, theChild);
+					container.setToBeRendered(false);
+					parentContainer.getChildren().remove(container);
 				}
 			}
 		});
@@ -329,13 +326,10 @@ public class CleanupAddon {
 				// model)
 				final MElementContainer<MUIElement> theContainer = container;
 				if (visCount == 0) {
-					Display.getCurrent().asyncExec(new Runnable() {
-						@Override
-						public void run() {
-							int visCount = modelService.countRenderableChildren(theContainer);
-							if (!isLastEditorStack(theContainer) && visCount == 0) {
-								theContainer.setToBeRendered(false);
-							}
+				Display.getCurrent().asyncExec(() -> {
+					int visCount1 = modelService.countRenderableChildren(theContainer);
+					if (!isLastEditorStack(theContainer) && visCount1 == 0) {
+						theContainer.setToBeRendered(false);
 						}
 					});
 				} else {

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2016 IBM Corporation and others.
+ * Copyright (c) 2010, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -129,7 +129,7 @@ public class StackDropAgent extends DropAgent {
 	private static ArrayList<Rectangle> getItemRects(CTabFolder dropCTF, List<CTabItem> visibleItems,
 			Rectangle tabArea) {
 		// for dropping, we consider visible tab only
-		ArrayList<Rectangle> itemRects = new ArrayList<Rectangle>();
+		ArrayList<Rectangle> itemRects = new ArrayList<>();
 		CTabItem item;
 		if (visibleItems.size() > 0) {
 			// First rect is from left to the center of the item

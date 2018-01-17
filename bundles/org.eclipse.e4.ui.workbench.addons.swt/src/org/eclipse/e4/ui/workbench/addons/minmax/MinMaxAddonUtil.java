@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2016 IBM Corporation and others.
+ * Copyright (c) 2016, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -114,7 +114,7 @@ public class MinMaxAddonUtil {
 			List<MUIElement> curMax) {
 		if (element instanceof MPlaceholder
 				&& ((MPlaceholder) element).getRef().getTags().contains(MIN_MAXIMIZEABLE_CHILDREN_AREA_TAG)) {
-			Set<MUIElement> toRemove = new LinkedHashSet<MUIElement>();
+			Set<MUIElement> toRemove = new LinkedHashSet<>();
 			for (MUIElement maxElement : curMax) {
 				if (modelService.find(maxElement.getElementId(), element) != null) {
 					toRemove.add(maxElement);
@@ -185,14 +185,10 @@ public class MinMaxAddonUtil {
 				final List<MPartStack> maximizedAreaChildren = minMaxAddon.modelService.findElements(area, null,
 						MPartStack.class,
 						maximizeTag);
-				minMaxAddon.executeWithIgnoredTagChanges(new Runnable() {
-
-					@Override
-					public void run() {
-						for (MPartStack partStack : maximizedAreaChildren) {
-							partStack.getTags().remove(IPresentationEngine.MAXIMIZED);
-							minMaxAddon.adjustCTFButtons(partStack);
-						}
+				minMaxAddon.executeWithIgnoredTagChanges(() -> {
+					for (MPartStack partStack : maximizedAreaChildren) {
+						partStack.getTags().remove(IPresentationEngine.MAXIMIZED);
+						minMaxAddon.adjustCTFButtons(partStack);
 					}
 				});
 			}
@@ -213,13 +209,8 @@ public class MinMaxAddonUtil {
 			MArea area = getAreaFor((MPartStack) element);
 			if (area != null && area.getTags().contains(MIN_MAXIMIZEABLE_CHILDREN_AREA_TAG)) {
 				final MPlaceholder placeholder = area.getCurSharedRef();
-				minMaxAddon.executeWithIgnoredTagChanges(new Runnable() {
-
-					@Override
-					public void run() {
-						placeholder.getTags().add(IPresentationEngine.MAXIMIZED);
-					}
-				});
+				minMaxAddon
+						.executeWithIgnoredTagChanges(() -> placeholder.getTags().add(IPresentationEngine.MAXIMIZED));
 				minMaxAddon.adjustCTFButtons(placeholder);
 			}
 		}
@@ -269,7 +260,7 @@ public class MinMaxAddonUtil {
 			}
 		}
 		if (foundRelevantArea) {
-			List<MUIElement> elementsToRemove = new ArrayList<MUIElement>();
+			List<MUIElement> elementsToRemove = new ArrayList<>();
 			for (MUIElement elementMUI : elementsToMinimize) {
 				List<Object> findElements = modelService.findElements(elementMUI, element.getElementId(),
 						null, null);
@@ -295,13 +286,8 @@ public class MinMaxAddonUtil {
 			MArea area = getAreaFor((MPartStack) element);
 			if (area != null && area.getTags().contains(MIN_MAXIMIZEABLE_CHILDREN_AREA_TAG)) {
 				final MPlaceholder placeholder = area.getCurSharedRef();
-				minMaxAddon.executeWithIgnoredTagChanges(new Runnable() {
-
-					@Override
-					public void run() {
-						placeholder.getTags().remove(IPresentationEngine.MAXIMIZED);
-					}
-				});
+				minMaxAddon.executeWithIgnoredTagChanges(
+						() -> placeholder.getTags().remove(IPresentationEngine.MAXIMIZED));
 				minMaxAddon.adjustCTFButtons(placeholder);
 			}
 		}

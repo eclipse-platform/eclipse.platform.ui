@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2015 IBM Corporation and others.
+ * Copyright (c) 2010, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -27,14 +27,9 @@ import org.eclipse.jface.util.Geometry;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.custom.CTabItem;
-import org.eclipse.swt.events.DisposeEvent;
-import org.eclipse.swt.events.DisposeListener;
-import org.eclipse.swt.events.DragDetectEvent;
 import org.eclipse.swt.events.DragDetectListener;
 import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.KeyListener;
-import org.eclipse.swt.events.PaintEvent;
-import org.eclipse.swt.events.PaintListener;
 import org.eclipse.swt.graphics.Cursor;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Rectangle;
@@ -43,8 +38,6 @@ import org.eclipse.swt.graphics.Resource;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Event;
-import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Tracker;
 import org.osgi.service.event.EventHandler;
@@ -57,8 +50,8 @@ class DnDManager {
 	public static final int SIMPLE = 3;
 	private int feedbackStyle = SIMPLE;
 
-	Collection<DragAgent> dragAgents = new ArrayList<DragAgent>();
-	Collection<DropAgent> dropAgents = new ArrayList<DropAgent>();
+	Collection<DragAgent> dragAgents = new ArrayList<>();
+	Collection<DropAgent> dropAgents = new ArrayList<>();
 
 	DnDInfo info;
 	DragAgent dragAgent;
@@ -72,25 +65,22 @@ class DnDManager {
 	boolean dragging = false;
 
 	private Shell overlayFrame;
-	private List<Rectangle> frames = new ArrayList<Rectangle>();
+	private List<Rectangle> frames = new ArrayList<>();
 
-	DragDetectListener dragDetector = new DragDetectListener() {
-		@Override
-		public void dragDetected(DragDetectEvent e) {
-			if (dragging || e.widget.isDisposed()) {
-				return;
-			}
+	DragDetectListener dragDetector = e -> {
+		if (dragging || e.widget.isDisposed()) {
+			return;
+		}
 
-			info.update(e);
-			dragAgent = getDragAgent(info);
-			if (dragAgent != null) {
-				try {
-					dragging = true;
-					isModified = (e.stateMask & SWT.MOD1) != 0;
-					startDrag();
-				} finally {
-					dragging = false;
-				}
+		info.update(e);
+		dragAgent = getDragAgent(info);
+		if (dragAgent != null) {
+			try {
+				dragging = true;
+				isModified = (e.stateMask & SWT.MOD1) != 0;
+				startDrag();
+			} finally {
+				dragging = false;
 			}
 		}
 	};
@@ -100,8 +90,8 @@ class DnDManager {
 		updateOverlay();
 	}
 
-	private List<Image> images = new ArrayList<Image>();
-	private List<Rectangle> imageRects = new ArrayList<Rectangle>();
+	private List<Image> images = new ArrayList<>();
+	private List<Rectangle> imageRects = new ArrayList<>();
 
 	protected boolean isModified;
 
@@ -129,12 +119,7 @@ class DnDManager {
 		// Register a 'dragDetect' against any stacks that get created
 		hookWidgets();
 
-		getDragShell().addDisposeListener(new DisposeListener() {
-			@Override
-			public void widgetDisposed(DisposeEvent e) {
-				dispose();
-			}
-		});
+		getDragShell().addDisposeListener(e -> dispose());
 	}
 
 	/**
@@ -142,26 +127,22 @@ class DnDManager {
 	 * specific platform by moving this code into an SWT-specific subclass
 	 */
 	private void hookWidgets() {
-		EventHandler stackWidgetHandler = new EventHandler() {
-			@Override
-			public void handleEvent(org.osgi.service.event.Event event) {
-				MUIElement element = (MUIElement) event.getProperty(UIEvents.EventTags.ELEMENT);
+		EventHandler stackWidgetHandler = event -> {
+			MUIElement element = (MUIElement) event.getProperty(UIEvents.EventTags.ELEMENT);
 
-				// Only add listeners for stacks in *this* window
-				MWindow elementWin = getModelService().getTopLevelWindowFor(element);
-				if (elementWin != dragWindow) {
-					return;
-				}
+			// Only add listeners for stacks in *this* window
+			MWindow elementWin = getModelService().getTopLevelWindowFor(element);
+			if (elementWin != dragWindow) {
+				return;
+			}
 
-				// Listen for drags starting in CTabFolders
-				if (element.getWidget() instanceof CTabFolder
-						|| element.getWidget() instanceof ImageBasedFrame) {
-					Control ctrl = (Control) element.getWidget();
+			// Listen for drags starting in CTabFolders
+			if (element.getWidget() instanceof CTabFolder || element.getWidget() instanceof ImageBasedFrame) {
+				Control ctrl = (Control) element.getWidget();
 
-					// Ensure there's only one drag detect listener per ctrl
-					ctrl.removeDragDetectListener(dragDetector);
-					ctrl.addDragDetectListener(dragDetector);
-				}
+				// Ensure there's only one drag detect listener per ctrl
+				ctrl.removeDragDetectListener(dragDetector);
+				ctrl.addDragDetectListener(dragDetector);
 			}
 		};
 
@@ -198,15 +179,12 @@ class DnDManager {
 	}
 
 	private void track() {
-		Display.getCurrent().syncExec(new Runnable() {
-			@Override
-			public void run() {
-				info.update();
-				dragAgent.track(info);
+		Display.getCurrent().syncExec(() -> {
+			info.update();
+			dragAgent.track(info);
 
-				// Hack: Spin the event loop
-				update();
-			}
+			// Hack: Spin the event loop
+			update();
 		});
 	}
 
@@ -234,12 +212,7 @@ class DnDManager {
 			}
 		});
 
-		tracker.addListener(SWT.Move, new Listener() {
-			@Override
-			public void handleEvent(final Event event) {
-				track();
-			}
-		});
+		tracker.addListener(SWT.Move, event -> track());
 
 		// Some control needs to capture the mouse during the drag or
 		// other controls will interfere with the cursor
@@ -419,14 +392,11 @@ class DnDManager {
 			stylingEngine.setClassname(overlayFrame, "DragFeedback"); //$NON-NLS-1$
 			stylingEngine.style(overlayFrame);
 
-			overlayFrame.addPaintListener(new PaintListener() {
-				@Override
-				public void paintControl(PaintEvent e) {
-					for (int i = 0; i < images.size(); i++) {
-						Image image = images.get(i);
-						Rectangle iRect = imageRects.get(i);
-						e.gc.drawImage(image, iRect.x, iRect.y);
-					}
+			overlayFrame.addPaintListener(e -> {
+				for (int i = 0; i < images.size(); i++) {
+					Image image = images.get(i);
+					Rectangle iRect = imageRects.get(i);
+					e.gc.drawImage(image, iRect.x, iRect.y);
 				}
 			});
 		}
@@ -476,13 +446,9 @@ class DnDManager {
 	}
 
 	private void addResourceDisposeListener(Control control, final Resource resource) {
-		control.addDisposeListener(new DisposeListener() {
-
-			@Override
-			public void widgetDisposed(DisposeEvent e) {
-				if (!resource.isDisposed()) {
-					resource.dispose();
-				}
+		control.addDisposeListener(e -> {
+			if (!resource.isDisposed()) {
+				resource.dispose();
 			}
 		});
 	}
