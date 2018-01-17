@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2014 The Pampered Chef, Inc. and others.
+ * Copyright (c) 2006, 2017 The Pampered Chef, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,10 +10,12 @@
  *     Brad Reynolds - bug 116920
  *     Benjamin Cabe - bug 252219
  *     Matthew Hall - bug 260329
- *     Lars Vogel <Lars.Vogel@gmail.com> - Bug 434283
+ *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 434283, 529926
  ******************************************************************************/
 
 package org.eclipse.jface.examples.databinding.snippets;
+
+import static org.eclipse.swt.events.SelectionListener.widgetSelectedAdapter;
 
 import org.eclipse.core.databinding.DataBindingContext;
 import org.eclipse.core.databinding.beans.PojoProperties;
@@ -21,7 +23,9 @@ import org.eclipse.core.databinding.observable.Realm;
 import org.eclipse.jface.databinding.swt.DisplayRealm;
 import org.eclipse.jface.databinding.swt.WidgetProperties;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.layout.RowLayout;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
@@ -74,6 +78,11 @@ public class Snippet000HelloWorld {
 		public void setName(String name) {
 			this.name = name;
 		}
+
+		@Override
+		public String toString() {
+			return name;
+		}
 	}
 
 	// The View's model--the root of our Model graph for this particular GUI.
@@ -95,6 +104,7 @@ public class Snippet000HelloWorld {
 	static class View {
 		private ViewModel viewModel;
 		private Text name;
+		private Person person;
 
 		public View(ViewModel viewModel) {
 			this.viewModel = viewModel;
@@ -103,11 +113,15 @@ public class Snippet000HelloWorld {
 		public Shell createShell() {
 			Display display = Display.getDefault();
 			Shell shell = new Shell(display);
-			shell.setLayout(new RowLayout(SWT.VERTICAL));
+			shell.setLayout(new GridLayout(1, false));
 			name = new Text(shell, SWT.BORDER);
+			Button button = new Button(shell, SWT.PUSH);
+			button.setLayoutData(new GridData(SWT.BEGINNING, SWT.CENTER, false, false));
+			button.setText("Print to console");
+			button.addSelectionListener(widgetSelectedAdapter(e -> System.out.println(person)));
 
 			DataBindingContext bindingContext = new DataBindingContext();
-			Person person = viewModel.getPerson();
+			person = viewModel.getPerson();
 
 			bindingContext.bindValue(
 					WidgetProperties.text(SWT.Modify).observe(name),
