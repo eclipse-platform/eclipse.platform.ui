@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 IBM Corporation and others.
+ * Copyright (c) 2000, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Mickael Istria (Red Hat Inc.) - Bug 486901
+ *     Philip Langer (EclipseSource) - Bug 529927
  *******************************************************************************/
 package org.eclipse.ui.internal.wizards.datatransfer;
 
@@ -145,6 +146,8 @@ public class WizardFileSystemResourceImportPage1 extends WizardResourceImportPag
 
 	private Composite linkedResourceParent;
 
+	/** The currently selected source name. */
+	private String currentSourceName;
 
     /**
      *	Creates an instance of this class
@@ -533,8 +536,14 @@ public class WizardFileSystemResourceImportPage1 extends WizardResourceImportPag
      */
 
     private void updateFromSourceField() {
+		String sourceNameFieldText = sourceNameField.getText();
 
-        setSourceName(sourceNameField.getText());
+		// Do not update from source field if the source field hasn't changed
+		if (sourceNameFieldText.equals(currentSourceName)) {
+			return;
+		}
+
+		setSourceName(sourceNameFieldText);
         //Update enablements when this is selected
         updateWidgetEnablements();
         fileSystemStructureProvider.clearVisitedDirs();
@@ -1068,6 +1077,7 @@ public class WizardFileSystemResourceImportPage1 extends WizardResourceImportPag
 
         if (path.length() > 0) {
 
+        	this.currentSourceName = path;
             String[] currentItems = this.sourceNameField.getItems();
             int selectionIndex = -1;
             for (int i = 0; i < currentItems.length; i++) {
