@@ -10,7 +10,9 @@
  *******************************************************************************/
 package org.eclipse.ua.tests.help.dynamic;
 
+import java.io.IOException;
 import java.io.InputStream;
+import java.net.URL;
 
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.help.internal.base.HelpEvaluationContext;
@@ -45,8 +47,16 @@ public class XMLProcessorTest {
 		};
 		XMLProcessor processor = new XMLProcessor(handlers);
 		Bundle bundle = UserAssistanceTestPlugin.getDefault().getBundle();
-		try (InputStream in = bundle.getEntry(FileUtil.getResultFile(path)).openStream();
-				InputStream in2 = processor.process(bundle.getEntry(path).openStream(),
+		URL url1 = bundle.getEntry(FileUtil.getResultFile(path));
+		if(url1 == null) {
+			throw new IOException("No entry to '"+FileUtil.getResultFile(path)+"' could be found or caller does not have the appropriate permissions.");//$NON-NLS-1$ //$NON-NLS-2$
+		}
+		URL url2 = bundle.getEntry(path);
+		if(url2 == null) {
+			throw new IOException("No entry to '"+path+"' could be found or caller does not have the appropriate permissions.");//$NON-NLS-1$ //$NON-NLS-2$
+		}
+		try (InputStream in = url1.openStream();
+				InputStream in2 = processor.process(url2.openStream(),
 						'/' + bundle.getSymbolicName() + '/' + path, "UTF-8")) {
 			XMLUtil.assertXMLEquals("XML content was not processed correctly: " + path, in, in2);
 		}

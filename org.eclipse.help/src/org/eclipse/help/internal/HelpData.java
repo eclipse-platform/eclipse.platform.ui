@@ -152,7 +152,13 @@ public class HelpData {
 	 * Allow unit tests to override for providing test data.
 	 */
 	public InputStream getHelpDataFile(String filePath) throws IOException {
-		return Platform.getProduct().getDefiningBundle().getEntry(filePath).openStream();
+		IProduct product = Platform.getProduct();
+		Bundle definingBundle = product != null ? product.getDefiningBundle() : null;
+		URL entry = definingBundle != null ? definingBundle.getEntry(filePath) : null;
+		if(entry == null) {
+			throw new IOException("No entry to '"+filePath+"' could be found or caller does not have the appropriate permissions.");//$NON-NLS-1$ //$NON-NLS-2$
+		}
+		return entry.openStream();
 	}
 
 	/*

@@ -100,6 +100,9 @@ public class IndexToolApplication implements IApplication {
 	private static void delete(File file) throws IOException {
 		if (file.isDirectory()) {
 			File files[] = file.listFiles();
+			if(files == null) {
+				throw new IOException("Content from directory '" + file.getAbsolutePath() + "' can not be listed."); //$NON-NLS-1$ //$NON-NLS-2$
+			}
 			for (int i = 0; i < files.length; i++) {
 				delete(files[i]);
 			}

@@ -210,6 +210,9 @@ public class SearchIndex implements IHelpSearchIndex {
 
 	private void deleteDir(File indexDir) {
 		File[] files = indexDir.listFiles();
+		if(files == null) {
+			files = new File[0];
+		}
 		for (File file : files) {
 			if (file.isDirectory())
 				deleteDir(file);

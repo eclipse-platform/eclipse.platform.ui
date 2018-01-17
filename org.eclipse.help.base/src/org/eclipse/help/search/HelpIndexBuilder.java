@@ -352,7 +352,7 @@ public class HelpIndexBuilder {
 	 * nl/language/country/ locale dirs that contain files. We will
 	 * produce an index for each one.
 	 */
-	private void computeLocaleDirs(boolean fragment) {
+	private void computeLocaleDirs(boolean fragment) throws CoreException {
 		if (!fragment) {
 			LocaleDir dir = new LocaleDir(null, "/"); //$NON-NLS-1$
 			dir.addDirectory(destination);
@@ -366,7 +366,7 @@ public class HelpIndexBuilder {
 		File nl = new File(destination, "nl"); //$NON-NLS-1$
 		if (!nl.exists() || !nl.isDirectory())
 			return;
-		File [] languages = nl.listFiles();
+		File [] languages = listFiles(nl);
 		HashSet<String> locales = new HashSet<>();
 		for (int i=0; i<languages.length; i++) {
 			File language = languages[i];
@@ -374,7 +374,7 @@ public class HelpIndexBuilder {
 				continue;
 			if (!isValidLanguage(language.getName()))
 				continue;
-			File [] countries = language.listFiles();
+			File [] countries = listFiles(language);
 			for (int j=0; j<countries.length; j++) {
 				File country = countries[j];
 				String locale;
@@ -403,10 +403,10 @@ public class HelpIndexBuilder {
 		}
 	}
 
-	private void computeSystem(File systemRoot, String [] values) {
+	private void computeSystem(File systemRoot, String [] values) throws CoreException {
 		if (systemRoot.exists() && systemRoot.isDirectory()) {
 			// check
-			File [] files = systemRoot.listFiles();
+			File [] files = listFiles(systemRoot);
 			for (int i=0; i<files.length; i++) {
 				File sdir = files[i];
 				if (!sdir.isDirectory())
@@ -643,7 +643,7 @@ public class HelpIndexBuilder {
 
 	private void prepareDirectory(File indexDirectory) throws CoreException {
 		if (indexDirectory.exists()) {
-			File[] files = indexDirectory.listFiles();
+			File[] files = listFiles(indexDirectory);
 			for (int i = 0; i < files.length; i++) {
 				File file = files[i];
 				boolean result = file.delete();
@@ -765,5 +765,13 @@ public class HelpIndexBuilder {
 		IStatus status = new Status(IStatus.ERROR, HelpBasePlugin.PLUGIN_ID,
 				IStatus.OK, message, t);
 		throw new CoreException(status);
+	}
+	
+	private File[] listFiles(File file) throws CoreException {
+		File[] fileList = file.listFiles();
+		if(fileList == null) {
+			throwCoreException("Content from directory '" + file.getAbsolutePath() + "' can not be listed.", null); //$NON-NLS-1$ //$NON-NLS-2$
+		}
+		return fileList;
 	}
 }

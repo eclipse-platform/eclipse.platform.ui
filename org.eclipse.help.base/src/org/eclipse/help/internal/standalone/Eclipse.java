@@ -10,7 +10,11 @@
  *******************************************************************************/
 package org.eclipse.help.internal.standalone;
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.List;
 
 /**
@@ -176,6 +180,9 @@ public class Eclipse extends Thread {
 			throw new Exception("Plugins directory " + pluginsDir.getAbsolutePath() //$NON-NLS-1$
 				+ " does not exists.  Pass a correct -eclipsehome option"); //$NON-NLS-1$
 		File[] plugins = pluginsDir.listFiles();
+		if(plugins == null) {
+			throw new IOException("Content from plugins directory '" + pluginsDir.getAbsolutePath() + "' can not be listed."); //$NON-NLS-1$ //$NON-NLS-2$
+		}
 		for (int i = 0; i < plugins.length; i++) {
 			String file = plugins[i].getName();
 			if (file.startsWith("org.eclipse.equinox.launcher_") && file.endsWith(".jar") && !plugins[i].isDirectory()) //$NON-NLS-1$ //$NON-NLS-2$

@@ -15,6 +15,7 @@ import static org.junit.Assert.assertTrue;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.net.URL;
 import java.nio.charset.StandardCharsets;
 
 import javax.xml.parsers.ParserConfigurationException;
@@ -48,7 +49,11 @@ public class DynamicXHTMLProcessorTest {
 	protected InputStream getProcessedInput(String path, Bundle bundle)
 			throws IOException, SAXException, ParserConfigurationException,
 			TransformerException, TransformerConfigurationException {
-		try (InputStream in = bundle.getEntry(path).openStream()) {
+		URL url = bundle.getEntry(path);
+		if(url == null ) {
+			throw new IOException("No entry to '"+path+"' could be found or caller does not have the appropriate permissions.");//$NON-NLS-1$ //$NON-NLS-2$
+		}
+		try (InputStream in = url.openStream()) {
 			String href = '/' + bundle.getBundleId() + path;
 			return DynamicXHTMLProcessor.process(href, in, "en", true);
 		}
