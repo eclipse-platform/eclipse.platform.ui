@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2016 IBM Corporation and others.
+ * Copyright (c) 2008, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -66,14 +66,12 @@ import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.accessibility.ACC;
 import org.eclipse.swt.accessibility.Accessible;
-import org.eclipse.swt.accessibility.AccessibleAdapter;
-import org.eclipse.swt.accessibility.AccessibleEvent;
+import org.eclipse.swt.accessibility.AccessibleListener;
 import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.custom.CTabFolder2Adapter;
 import org.eclipse.swt.custom.CTabFolderEvent;
 import org.eclipse.swt.custom.CTabItem;
-import org.eclipse.swt.events.ControlAdapter;
-import org.eclipse.swt.events.ControlEvent;
+import org.eclipse.swt.events.ControlListener;
 import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.MouseListener;
@@ -722,21 +720,18 @@ public class StackRenderer extends LazyStackRenderer implements IPreferenceChang
 				showMenu((ToolItem) e.widget);
 			}
 		});
-		menuTB.getAccessible().addAccessibleListener(new AccessibleAdapter() {
-			@Override
-			public void getName(AccessibleEvent e) {
-				if (e.childID != ACC.CHILDID_SELF) {
-					Accessible accessible = (Accessible) e.getSource();
-					ToolBar toolBar = (ToolBar) accessible.getControl();
-					if (0 <= e.childID && e.childID < toolBar.getItemCount()) {
-						ToolItem item = toolBar.getItem(e.childID);
-						if (item != null) {
-							e.result = item.getToolTipText();
-						}
+		menuTB.getAccessible().addAccessibleListener(AccessibleListener.getNameAdapter(e -> {
+			if (e.childID != ACC.CHILDID_SELF) {
+				Accessible accessible = (Accessible) e.getSource();
+				ToolBar toolBar = (ToolBar) accessible.getControl();
+				if (0 <= e.childID && e.childID < toolBar.getItemCount()) {
+					ToolItem item = toolBar.getItem(e.childID);
+					if (item != null) {
+						e.result = item.getToolTipText();
 					}
 				}
 			}
-		});
+		}));
 
 		// Set an initial bounds
 		trComp.pack();
@@ -1038,25 +1033,18 @@ public class StackRenderer extends LazyStackRenderer implements IPreferenceChang
 			}
 		});
 
-		tabFolder.addSelectionListener(new SelectionListener() {
-			@Override
-			public void widgetDefaultSelected(SelectionEvent e) {
-			}
+		tabFolder.addSelectionListener(SelectionListener.widgetSelectedAdapter(e -> {
+			// prevent recursions
+			if (ignoreTabSelChanges)
+				return;
 
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				// prevent recursions
-				if (ignoreTabSelChanges)
-					return;
-
-				MUIElement ele = (MUIElement) e.item.getData(OWNING_ME);
-				ele.getParent().setSelectedElement(ele);
-				if (ele instanceof MPlaceholder)
-					ele = ((MPlaceholder) ele).getRef();
-				if (ele instanceof MPart)
-					activate((MPart) ele);
-			}
-		});
+			MUIElement ele = (MUIElement) e.item.getData(OWNING_ME);
+			ele.getParent().setSelectedElement(ele);
+			if (ele instanceof MPlaceholder)
+				ele = ((MPlaceholder) ele).getRef();
+			if (ele instanceof MPart)
+				activate((MPart) ele);
+		}));
 
 		MouseListener mouseListener = new MouseAdapter() {
 
@@ -1150,12 +1138,7 @@ public class StackRenderer extends LazyStackRenderer implements IPreferenceChang
 			}
 		});
 
-		tabFolder.addControlListener(new ControlAdapter() {
-			@Override
-			public void controlResized(ControlEvent e) {
-				updateMRUValue(tabFolder);
-			}
-		});
+		tabFolder.addControlListener(ControlListener.controlResizedAdapter(e -> updateMRUValue(tabFolder)));
 	}
 
 	/**
@@ -1492,13 +1475,10 @@ public class StackRenderer extends LazyStackRenderer implements IPreferenceChang
 
 				MenuItem menuItemAll = new MenuItem(menu, SWT.NONE);
 				menuItemAll.setText(SWTRenderersMessages.menuCloseAll);
-				menuItemAll.addSelectionListener(new SelectionAdapter() {
-					@Override
-					public void widgetSelected(SelectionEvent e) {
-						MPart part = (MPart) menu.getData(STACK_SELECTED_PART);
-						closeSiblingParts(part, false);
-					}
-				});
+				menuItemAll.addSelectionListener(SelectionListener.widgetSelectedAdapter(e -> {
+					MPart part1 = (MPart) menu.getData(STACK_SELECTED_PART);
+					closeSiblingParts(part1, false);
+				}));
 			}
 		}
 	}

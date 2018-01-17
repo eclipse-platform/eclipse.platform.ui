@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2015 IBM Corporation and others.
+ * Copyright (c) 2003, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -19,13 +19,10 @@ import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.KeyListener;
-import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
+import org.eclipse.swt.events.MouseListener;
 import org.eclipse.swt.events.MouseMoveListener;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.FontMetrics;
@@ -121,52 +118,34 @@ public abstract class AbstractTableInformationControl {
 		fTableViewer = createTableViewer(fComposite, controlStyle);
 
 		final Table table = fTableViewer.getTable();
-		table.addKeyListener(new KeyListener() {
-			@Override
-			public void keyPressed(KeyEvent e) {
-				switch (e.keyCode) {
-				case SWT.ESC:
-					dispose();
-					break;
-				case SWT.DEL:
-					removeSelectedItem(null);
-					e.character = SWT.NONE;
-					e.doit = false;
-					break;
-				case SWT.ARROW_UP:
-					if (table.getSelectionIndex() == 0) {
-						// on the first item, going up should grant focus to
-						// text field
-						fFilterText.setFocus();
-					}
-					break;
-				case SWT.ARROW_DOWN:
-					if (table.getSelectionIndex() == table.getItemCount() - 1) {
-						// on the last item, going down should grant focus to
-						// the text field
-						fFilterText.setFocus();
-					}
-					break;
+		table.addKeyListener(KeyListener.keyPressedAdapter(e -> {
+			switch (e.keyCode) {
+			case SWT.ESC:
+				dispose();
+				break;
+			case SWT.DEL:
+				removeSelectedItem(null);
+				e.character = SWT.NONE;
+				e.doit = false;
+				break;
+			case SWT.ARROW_UP:
+				if (table.getSelectionIndex() == 0) {
+					// on the first item, going up should grant focus to
+					// text field
+					fFilterText.setFocus();
 				}
+				break;
+			case SWT.ARROW_DOWN:
+				if (table.getSelectionIndex() == table.getItemCount() - 1) {
+					// on the last item, going down should grant focus to
+					// the text field
+					fFilterText.setFocus();
+				}
+				break;
 			}
+		}));
 
-			@Override
-			public void keyReleased(KeyEvent e) {
-				// do nothing
-			}
-		});
-
-		table.addSelectionListener(new SelectionListener() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				// do nothing;
-			}
-
-			@Override
-			public void widgetDefaultSelected(SelectionEvent e) {
-				gotoSelectedElement();
-			}
-		});
+		table.addSelectionListener(SelectionListener.widgetDefaultSelectedAdapter(e -> gotoSelectedElement()));
 
 		/*
 		 * Bug in GTK, see SWT bug: 62405 Editor drop down performance slow on
@@ -230,41 +209,32 @@ public abstract class AbstractTableInformationControl {
 			}
 		});
 
-		table.addMouseListener(new MouseAdapter() {
-			@Override
-			public void mouseUp(MouseEvent e) {
-				if (table.getSelectionCount() < 1) {
-					return;
-				}
+		table.addMouseListener(MouseListener.mouseUpAdapter(e -> {
+			if (table.getSelectionCount() < 1) {
+				return;
+			}
 
-				if (e.button == 1) {
-					if (table.equals(e.getSource())) {
-						Object o = table.getItem(new Point(e.x, e.y));
-						TableItem selection = table.getSelection()[0];
-						if (selection.equals(o)) {
-							gotoSelectedElement();
-						}
-					}
-				}
-				if (e.button == 3) {
-					TableItem tItem = fTableViewer.getTable().getItem(
-							new Point(e.x, e.y));
-					if (tItem != null) {
-						Menu menu = new Menu(fTableViewer.getTable());
-						MenuItem mItem = new MenuItem(menu, SWT.NONE);
-						mItem.setText(SWTRenderersMessages.menuClose);
-						mItem.addSelectionListener(new SelectionAdapter() {
-							@Override
-							public void widgetSelected(
-									SelectionEvent selectionEvent) {
-								removeSelectedItem(tItem.getData());
-							}
-						});
-						menu.setVisible(true);
+			if (e.button == 1) {
+				if (table.equals(e.getSource())) {
+					Object o = table.getItem(new Point(e.x, e.y));
+					TableItem selection = table.getSelection()[0];
+					if (selection.equals(o)) {
+						gotoSelectedElement();
 					}
 				}
 			}
-		});
+			if (e.button == 3) {
+				TableItem tItem = fTableViewer.getTable().getItem(new Point(e.x, e.y));
+				if (tItem != null) {
+					Menu menu = new Menu(fTableViewer.getTable());
+					MenuItem mItem = new MenuItem(menu, SWT.NONE);
+					mItem.setText(SWTRenderersMessages.menuClose);
+					mItem.addSelectionListener(SelectionListener
+							.widgetSelectedAdapter(selectionEvent -> removeSelectedItem(tItem.getData())));
+					menu.setVisible(true);
+				}
+			}
+		}));
 
 		fShell.addTraverseListener(e -> {
 			switch (e.detail) {
@@ -347,34 +317,25 @@ public abstract class AbstractTableInformationControl {
 		data.verticalAlignment = GridData.BEGINNING;
 		fFilterText.setLayoutData(data);
 
-		fFilterText.addKeyListener(new KeyListener() {
-			@Override
-			public void keyPressed(KeyEvent e) {
-				switch (e.keyCode) {
-				case SWT.CR:
-				case SWT.KEYPAD_CR:
-					gotoSelectedElement();
-					break;
-				case SWT.ARROW_DOWN:
-					fTableViewer.getTable().setFocus();
-					fTableViewer.getTable().setSelection(0);
-					break;
-				case SWT.ARROW_UP:
-					fTableViewer.getTable().setFocus();
-					fTableViewer.getTable().setSelection(
-							fTableViewer.getTable().getItemCount() - 1);
-					break;
-				case SWT.ESC:
-					dispose();
-					break;
-				}
+		fFilterText.addKeyListener(KeyListener.keyPressedAdapter(e -> {
+			switch (e.keyCode) {
+			case SWT.CR:
+			case SWT.KEYPAD_CR:
+				gotoSelectedElement();
+				break;
+			case SWT.ARROW_DOWN:
+				fTableViewer.getTable().setFocus();
+				fTableViewer.getTable().setSelection(0);
+				break;
+			case SWT.ARROW_UP:
+				fTableViewer.getTable().setFocus();
+				fTableViewer.getTable().setSelection(fTableViewer.getTable().getItemCount() - 1);
+				break;
+			case SWT.ESC:
+				dispose();
+				break;
 			}
-
-			@Override
-			public void keyReleased(KeyEvent e) {
-				// do nothing
-			}
-		});
+		}));
 
 		// Horizontal separator line
 		Label separator = new Label(parent, SWT.SEPARATOR | SWT.HORIZONTAL);

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2017 IBM Corporation and others.
+ * Copyright (c) 2008, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -32,8 +32,7 @@ import org.eclipse.e4.ui.workbench.IResourceUtilities;
 import org.eclipse.e4.ui.workbench.swt.util.ISWTResourceUtilities;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EObject;
-import org.eclipse.swt.accessibility.AccessibleAdapter;
-import org.eclipse.swt.accessibility.AccessibleEvent;
+import org.eclipse.swt.accessibility.AccessibleListener;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
@@ -193,12 +192,7 @@ public abstract class SWTPartRenderer extends AbstractPartRenderer {
 		// (factory?)
 		if (widget instanceof Control && me instanceof MUILabel) {
 			((Control) widget).getAccessible().addAccessibleListener(
-					new AccessibleAdapter() {
-						@Override
-						public void getName(AccessibleEvent e) {
-							e.result = ((MUILabel) me).getLocalizedLabel();
-						}
-					});
+					AccessibleListener.getNameAdapter(e -> e.result = ((MUILabel) me).getLocalizedLabel()));
 		}
 	}
 

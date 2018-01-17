@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2017 IBM Corporation and others.
+ * Copyright (c) 2008, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -67,8 +67,7 @@ import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ControlEvent;
 import org.eclipse.swt.events.ControlListener;
-import org.eclipse.swt.events.ShellAdapter;
-import org.eclipse.swt.events.ShellEvent;
+import org.eclipse.swt.events.ShellListener;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.Image;
@@ -603,20 +602,17 @@ public class WBWRenderer extends SWTPartRenderer {
 				}
 			});
 
-			shell.addShellListener(new ShellAdapter() {
-				@Override
-				public void shellClosed(ShellEvent e) {
-					// override the shell close event
-					e.doit = false;
-					MWindow window = (MWindow) e.widget.getData(OWNING_ME);
-					IWindowCloseHandler closeHandler = window.getContext().get(IWindowCloseHandler.class);
-					// if there's no handler or the handler permits the close
-					// request, clean-up as necessary
-					if (closeHandler == null || closeHandler.close(window)) {
-						cleanUp(window);
-					}
+			shell.addShellListener(ShellListener.shellClosedAdapter(e -> {
+				// override the shell close event
+				e.doit = false;
+				MWindow window = (MWindow) e.widget.getData(OWNING_ME);
+				IWindowCloseHandler closeHandler = window.getContext().get(IWindowCloseHandler.class);
+				// if there's no handler or the handler permits the close
+				// request, clean-up as necessary
+				if (closeHandler == null || closeHandler.close(window)) {
+					cleanUp(window);
 				}
-			});
+			}));
 			shell.addListener(SWT.Activate, event -> {
 				MUIElement parentME = w.getParent();
 				if (parentME instanceof MApplication) {
