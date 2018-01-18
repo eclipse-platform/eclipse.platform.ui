@@ -108,7 +108,7 @@ public class HTMLPrinter {
 	 * @return the string with escaped characters
 	 *
 	 * @see #convertToHTMLContentWithWhitespace(String) for use in browsers
-	 * @see #addPreFormatted(StringBuffer, String) for rendering with an {@link HTML2TextReader}
+	 * @see #addPreFormatted(StringBuilder, String) for rendering with an {@link HTML2TextReader}
 	 */
 	public static String convertToHTMLContent(String content) {
 		content= replace(content, '&', "&amp;"); //$NON-NLS-1$
@@ -118,16 +118,17 @@ public class HTMLPrinter {
 	}
 
 	/**
-	 * Escapes reserved HTML characters in the given string
-	 * and returns them in a way that preserves whitespace in a browser.
+	 * Escapes reserved HTML characters in the given string and returns them in a way that preserves
+	 * whitespace in a browser.
 	 * <p>
-	 * <b>Warning:</b> Whitespace will not be preserved when rendered with an {@link HTML2TextReader}
-	 * (e.g. in a {@link DefaultInformationControl} that renders simple HTML).
-
+	 * <b>Warning:</b> Whitespace will not be preserved when rendered with an
+	 * {@link HTML2TextReader} (e.g. in a {@link DefaultInformationControl} that renders simple
+	 * HTML).
+	 *
 	 * @param content the input string
 	 * @return the processed string
 	 *
-	 * @see #addPreFormatted(StringBuffer, String)
+	 * @see #addPreFormatted(StringBuilder, String)
 	 * @see #convertToHTMLContent(String)
 	 * @since 3.7
 	 */
