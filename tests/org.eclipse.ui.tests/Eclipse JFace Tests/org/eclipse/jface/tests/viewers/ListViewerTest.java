@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2016 IBM Corporation and others.
+ * Copyright (c) 2000, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,6 +10,7 @@
  *     Tom Schindl <tom.schindl@bestsolution.at> - test case for bug 157309, 177619
  *     Brad Reynolds - test case for bug 141435
  *     Jan-Ove Weichel <janove.weichel@vogella.com> - Bug 481490
+ *     Lucas Bullen (Red Hat Inc.) - Bug 493357
  *******************************************************************************/
 package org.eclipse.jface.tests.viewers;
 
@@ -21,6 +22,7 @@ import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.List;
+import org.eclipse.ui.tests.harness.util.DisplayHelper;
 
 public class ListViewerTest extends StructuredViewerTest {
 
@@ -149,15 +151,18 @@ public class ListViewerTest extends StructuredViewerTest {
 	}
 
     public void testSelectionRevealBug177619() throws Exception {
-		if (disableTestsBug493357) {
-			System.out.println(getName() + " disabled due to Bug 493357");
-			return;
-		}
     	TestElement model = TestElement.createModel(1, 100);
 		fViewer.setInput(model);
 
     	fViewer.setSelection(new StructuredSelection(((ListViewer)fViewer).getElementAt(50)),true);
-    	assertTrue(((ListViewer)fViewer).getList().getTopIndex() != 0);
+		List list = ((ListViewer) fViewer).getList();
+		new DisplayHelper() {
+			@Override
+			protected boolean condition() {
+				return list.getTopIndex() != 0;
+			}
+		}.waitForCondition(fViewer.getControl().getDisplay(), 3000);
+		assertTrue(list.getTopIndex() != 0);
 	}
 
 	public void testSelectionNoRevealBug177619() throws Exception {

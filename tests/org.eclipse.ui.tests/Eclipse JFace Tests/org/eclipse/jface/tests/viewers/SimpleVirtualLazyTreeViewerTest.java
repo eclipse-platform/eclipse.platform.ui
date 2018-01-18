@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2017 IBM Corporation and others.
+ * Copyright (c) 2005, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Jeanderson Candido <http://jeandersonbc.github.io> - Bug 118919
+ *     Lucas Bullen (Red Hat Inc.) - Bug 493357
  *******************************************************************************/
 package org.eclipse.jface.tests.viewers;
 
@@ -23,6 +24,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeItem;
+import org.eclipse.ui.tests.harness.util.DisplayHelper;
 
 /**
  * Tests TreeViewer's VIRTUAL support with a lazy content provider.
@@ -188,12 +190,10 @@ public class SimpleVirtualLazyTreeViewerTest extends ViewerTestCase {
 
 	/* test TreeViewer.remove(parent, index) */
 	public void testRemoveAt() {
+		assertTrue("expected less than " + (NUM_ROOTS / 2) + " but got " + updateElementCallCount,
+				updateElementCallCount < NUM_ROOTS / 2);
 		if (disableTestsBug347491) {
 			System.out.println(getName() + " disabled due to Bug 347491");
-			return;
-		}
-		if (disableTestsBug493357) {
-			System.out.println(getName() + " disabled due to Bug 493357");
 			return;
 		}
 		assertTrue("SWT.SetData not received", setDataCalled);
@@ -206,19 +206,27 @@ public class SimpleVirtualLazyTreeViewerTest extends ViewerTestCase {
 		treeViewer.setSelection(new StructuredSelection(new Object[] { "R-0",
 				"R-1" }));
 		assertEquals(2, treeViewer.getStructuredSelection().size());
-		processEvents();
-		assertTrue("expected less than " + (NUM_ROOTS / 2) + " but got "
-				+ updateElementCallCount,
-				updateElementCallCount < NUM_ROOTS / 2);
-		updateElementCallCount = 0;
+		processEventsUntilElementUpdated();
 		// printCallbacks = true;
 		// correct what the content provider is answering with
 		offset = 2;
 		treeViewer.remove(treeViewer.getInput(), 1);
 		assertEquals(NUM_ROOTS - 2, treeViewer.getTree().getItemCount());
-		processEvents();
+		processEventsUntilElementUpdated();
 		assertEquals(1, treeViewer.getStructuredSelection().size());
-		assertEquals(1, updateElementCallCount);
 		// printCallbacks = false;
+	}
+
+	private void processEventsUntilElementUpdated() {
+		updateElementCallCount = 0;
+		new DisplayHelper() {
+			@Override
+			protected boolean condition() {
+				// Keep processing events until the element updated event is queued and run
+				processEvents();
+				return updateElementCallCount == 1;
+			}
+		}.waitForCondition(fViewer.getControl().getDisplay(), 3000);
+		assertEquals(1, updateElementCallCount);
 	}
 }

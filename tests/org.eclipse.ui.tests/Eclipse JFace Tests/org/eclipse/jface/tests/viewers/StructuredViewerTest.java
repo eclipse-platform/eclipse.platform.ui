@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2017 IBM Corporation and others.
+ * Copyright (c) 2000, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,6 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *     Tom Schindl - bug 151205
  *     Jan-Ove Weichel <janove.weichel@vogella.com> - Bug 481490
+ *     Lucas Bullen (Red Hat Inc.) - Bug 493357
  *******************************************************************************/
 package org.eclipse.jface.tests.viewers;
 
@@ -26,6 +27,7 @@ import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerComparator;
 import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.ui.tests.harness.util.DisplayHelper;
 
 public abstract class StructuredViewerTest extends ViewerTestCase {
     public static class TestLabelFilter extends ViewerFilter {
@@ -110,7 +112,14 @@ public abstract class StructuredViewerTest extends ViewerTestCase {
         TestElement newElement = first.getContainer().basicAddChild();
         fRootElement.basicDeleteChild(first);
         fModel.fireModelChanged(eventToFire);
-        processEvents();
+		processEvents();
+		// Wait for events to be processed
+		new DisplayHelper() {
+			@Override
+			protected boolean condition() {
+				return fViewer.testFindItem(newElement) != null;
+			}
+		}.waitForCondition(fViewer.getControl().getDisplay(), 3000);
         assertNotNull("new sibling is visible", fViewer
                 .testFindItem(newElement));
         assertNull("first child is not visible", fViewer.testFindItem(first));
@@ -312,6 +321,13 @@ public abstract class StructuredViewerTest extends ViewerTestCase {
     public void testInsertSibling() {
         TestElement newElement = fRootElement.addChild(TestModelChange.INSERT);
         processEvents();
+		// Wait for events to be processed
+		new DisplayHelper() {
+			@Override
+			protected boolean condition() {
+				return fViewer.testFindItem(newElement) != null;
+			}
+		}.waitForCondition(fViewer.getControl().getDisplay(), 3000);
         assertNotNull("new sibling is visible", fViewer
                 .testFindItem(newElement));
     }
@@ -327,6 +343,13 @@ public abstract class StructuredViewerTest extends ViewerTestCase {
         TestElement[] newElements = fRootElement
                 .addChildren(TestModelChange.INSERT);
         processEvents();
+		// Wait for events to be processed
+		new DisplayHelper() {
+			@Override
+			protected boolean condition() {
+				return fViewer.testFindItem(newElements[newElements.length - 1]) != null;
+			}
+		}.waitForCondition(fViewer.getControl().getDisplay(), 3000);
         for (TestElement newElement : newElements) {
 			assertNotNull("new siblings are visible", fViewer
                     .testFindItem(newElement));
@@ -337,6 +360,13 @@ public abstract class StructuredViewerTest extends ViewerTestCase {
         TestElement newElement = fRootElement.addChild(TestModelChange.INSERT
                 | TestModelChange.REVEAL | TestModelChange.SELECT);
         processEvents();
+		// Wait for events to be processed
+		new DisplayHelper() {
+			@Override
+			protected boolean condition() {
+				return fViewer.testFindItem(newElement) != null;
+			}
+		}.waitForCondition(fViewer.getControl().getDisplay(), 3000);
         assertNotNull("new sibling is visible", fViewer
                 .testFindItem(newElement));
         assertSelectionEquals("new element is selected", newElement);
@@ -454,6 +484,13 @@ public abstract class StructuredViewerTest extends ViewerTestCase {
         fRootElement = first;
         setInput();
         processEvents();
+		// Wait for events to be processed
+		new DisplayHelper() {
+			@Override
+			protected boolean condition() {
+				return fViewer.testFindItem(firstfirst) != null;
+			}
+		}.waitForCondition(fViewer.getControl().getDisplay(), 3000);
         assertNotNull("first child is visible", fViewer
                 .testFindItem(firstfirst));
     }

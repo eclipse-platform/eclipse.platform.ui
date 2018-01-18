@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2017 Brad Reynolds, IBM Corporation and others.
+ * Copyright (c) 2006, 2018 Brad Reynolds, IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *    Brad Reynolds - initial API and implementation
  *    IBM Corporation - Bug 493357
+ *    Lucas Bullen (Red Hat Inc.) - Revert disabling tests from Bug 493357
  *******************************************************************************/
 package org.eclipse.jface.tests.viewers;
 
@@ -40,12 +41,8 @@ public class ListViewerRefreshTest extends TestCase {
 
 	private ArrayList<String> input = null;
 
-	protected boolean disableTestsBug493357 = false;
-
-
 	@Override
 	protected void setUp() throws Exception {
-		disableTestsBug493357 = System.getProperty("org.eclipse.swt.internal.gtk.version", "").startsWith("3."); // $NON-NLS-1//$NON-NLS-2//$NON-NLS-3
 		shell = new Shell();
 		shell.setSize(400, 200);
 		shell.setLayout(new FillLayout());
@@ -76,11 +73,6 @@ public class ListViewerRefreshTest extends TestCase {
 	 * @throws Exception
 	 */
 	public void testNoSelectionRefresh() throws Exception {
-		if (disableTestsBug493357) {
-			System.out.println(getName() + " disabled due to Bug 493357");
-			return;
-		}
-
 		shell.setText("Lost Scrolled Position Test"); //$NON-NLS-1$
 		readAndDispatch();
 
@@ -99,10 +91,6 @@ public class ListViewerRefreshTest extends TestCase {
 	 * @throws Exception
 	 */
 	public void testSelectionRefresh() throws Exception {
-		if (disableTestsBug493357) {
-			System.out.println(getName() + " disabled due to Bug 493357");
-			return;
-		}
 		shell.setText("Preserved Scrolled Position Test"); //$NON-NLS-1$
 		readAndDispatch();
 
