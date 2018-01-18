@@ -36,6 +36,9 @@ public class AntClasspathProvider extends StandardClasspathProvider {
 			IRuntimeClasspathEntry jreEntry = null;
 			try {
 				jreEntry = JavaRuntime.computeJREEntry(configuration);
+				if (jreEntry != null) {
+					jreEntry.setClasspathProperty(IRuntimeClasspathEntry.STANDARD_CLASSES);
+				}
 			}
 			catch (CoreException e) {
 				// not a java project
