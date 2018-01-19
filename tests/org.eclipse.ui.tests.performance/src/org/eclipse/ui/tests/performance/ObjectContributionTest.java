@@ -14,7 +14,6 @@ import java.io.ByteArrayInputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
@@ -32,13 +31,11 @@ import org.eclipse.jface.action.SubContributionItem;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.ISelectionProvider;
-import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.PartSite;
-import org.eclipse.ui.internal.PluginActionContributionItem;
 import org.eclipse.ui.internal.PopupMenuExtender;
 import org.eclipse.ui.internal.WorkbenchWindow;
 import org.eclipse.ui.tests.harness.util.UITestCase;
@@ -419,17 +416,6 @@ public final class ObjectContributionTest extends UITestCase {
 				IContributionItem item = contributionItem;
 				if (item instanceof SubContributionItem) {
 					item = ((SubContributionItem) contributionItem).getInnerItem();
-				}
-				if (item instanceof PluginActionContributionItem) {
-					// Verify that the selection passed to the action has been
-					// converted
-					ISelection s = null;
-					if (s instanceof IStructuredSelection) {
-						for (Iterator<?> it = ((IStructuredSelection) s).iterator(); it.hasNext();) {
-							Object element = it.next();
-							assertTrue(name + " selection not converted", selectionType.isInstance(element));
-						}
-					}
 				}
 			}
            // Step 2: remember that we saw this element
