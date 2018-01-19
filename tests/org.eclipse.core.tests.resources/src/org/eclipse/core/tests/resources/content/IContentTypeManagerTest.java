@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2017 IBM Corporation and others.
+ * Copyright (c) 2004, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,6 +12,7 @@
 package org.eclipse.core.tests.resources.content;
 
 import java.io.*;
+import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.HashSet;
 import java.util.Set;
@@ -114,7 +115,7 @@ public class IContentTypeManagerTest extends ContentTypeTest {
 		return false;
 	}
 
-	private IContentDescription getDescriptionFor(IContentTypeMatcher finder, String contents, String encoding, String fileName, QualifiedName[] options, boolean text) throws UnsupportedEncodingException, IOException {
+	private IContentDescription getDescriptionFor(IContentTypeMatcher finder, String contents, Charset encoding, String fileName, QualifiedName[] options, boolean text) throws IOException {
 		return text ? finder.getDescriptionFor(getReader(contents), fileName, options) : finder.getDescriptionFor(getInputStream(contents, encoding), fileName, options);
 	}
 
@@ -139,7 +140,7 @@ public class IContentTypeManagerTest extends ContentTypeTest {
 		return new ByteArrayInputStream(contents.getBytes());
 	}
 
-	public InputStream getInputStream(String contents, String encoding) throws UnsupportedEncodingException {
+	public InputStream getInputStream(String contents, Charset encoding) {
 		return new ByteArrayInputStream(encoding == null ? contents.getBytes() : contents.getBytes(encoding));
 	}
 
@@ -467,52 +468,52 @@ public class IContentTypeManagerTest extends ContentTypeTest {
 			String sufix = text ? "-text" : "-binary";
 			IContentDescription description;
 
-			description = getDescriptionFor(finder, MINIMAL_XML, "UTF-8", "foo.xml", IContentDescription.ALL, text);
+			description = getDescriptionFor(finder, MINIMAL_XML, StandardCharsets.UTF_8, "foo.xml", IContentDescription.ALL, text);
 			assertNotNull("1.0" + sufix, description);
 			assertEquals("1.1" + sufix, xmlType, description.getContentType());
 			assertSame("1.2", xmlType.getDefaultDescription(), description);
 
-			description = getDescriptionFor(finder, MINIMAL_XML, "UTF-8", "foo.xml", new QualifiedName[] {IContentDescription.CHARSET}, text);
+			description = getDescriptionFor(finder, MINIMAL_XML, StandardCharsets.UTF_8, "foo.xml", new QualifiedName[] {IContentDescription.CHARSET}, text);
 			assertNotNull("2.0" + sufix, description);
 			assertEquals("2.1" + sufix, xmlType, description.getContentType());
 			// the default charset should have been filled by the content type manager
 			assertEquals("2.2" + sufix, "UTF-8", description.getProperty(IContentDescription.CHARSET));
 			assertSame("2.3", xmlType.getDefaultDescription(), description);
 
-			description = getDescriptionFor(finder, XML_ISO_8859_1, "ISO-8859-1", "foo.xml", new QualifiedName[] {IContentDescription.CHARSET}, text);
+			description = getDescriptionFor(finder, XML_ISO_8859_1, StandardCharsets.ISO_8859_1, "foo.xml", new QualifiedName[] {IContentDescription.CHARSET}, text);
 			assertNotNull("2.3a" + sufix, description);
 			assertEquals("2.3b" + sufix, xmlType, description.getContentType());
 			assertEquals("2.3c" + sufix, "ISO-8859-1", description.getProperty(IContentDescription.CHARSET));
 			assertNotSame("2.3d", xmlType.getDefaultDescription(), description);
 
 			// ensure we handle single quotes properly (bug 65443)
-			description = getDescriptionFor(finder, XML_ISO_8859_1_SINGLE_QUOTES, "ISO-8859-1", "foo.xml", new QualifiedName[] {IContentDescription.CHARSET}, text);
+			description = getDescriptionFor(finder, XML_ISO_8859_1_SINGLE_QUOTES, StandardCharsets.ISO_8859_1, "foo.xml", new QualifiedName[] {IContentDescription.CHARSET}, text);
 			assertNotNull("2.3e" + sufix, description);
 			assertEquals("2.3f" + sufix, xmlType, description.getContentType());
 			assertEquals("2.3g" + sufix, "ISO-8859-1", description.getProperty(IContentDescription.CHARSET));
 			assertNotSame("2.3h", xmlType.getDefaultDescription(), description);
 
-			description = getDescriptionFor(finder, XML_UTF_16, "UTF-16", "foo.xml", new QualifiedName[] {IContentDescription.CHARSET, IContentDescription.BYTE_ORDER_MARK}, text);
+			description = getDescriptionFor(finder, XML_UTF_16, StandardCharsets.UTF_16, "foo.xml", new QualifiedName[] {IContentDescription.CHARSET, IContentDescription.BYTE_ORDER_MARK}, text);
 			assertNotNull("2.4a" + sufix, description);
 			assertEquals("2.4b" + sufix, xmlType, description.getContentType());
 			assertEquals("2.4c" + sufix, "UTF-16", description.getProperty(IContentDescription.CHARSET));
 			assertTrue("2.4d" + sufix, text || IContentDescription.BOM_UTF_16BE == description.getProperty(IContentDescription.BYTE_ORDER_MARK));
 			assertNotSame("2.4e", xmlType.getDefaultDescription(), description);
 
-			description = getDescriptionFor(finder, XML_UTF_16BE, "UTF-8", "foo.xml", new QualifiedName[] {IContentDescription.CHARSET}, text);
+			description = getDescriptionFor(finder, XML_UTF_16BE, StandardCharsets.UTF_8, "foo.xml", new QualifiedName[] {IContentDescription.CHARSET}, text);
 			assertNotNull("2.5a" + sufix, description);
 			assertEquals("2.5b" + sufix, xmlType, description.getContentType());
 			assertEquals("2.5c" + sufix, "UTF-16BE", description.getProperty(IContentDescription.CHARSET));
 			assertNotSame("2.5d", xmlType.getDefaultDescription(), description);
 
-			description = getDescriptionFor(finder, XML_UTF_16LE, "UTF-8", "foo.xml", new QualifiedName[] {IContentDescription.CHARSET}, text);
+			description = getDescriptionFor(finder, XML_UTF_16LE, StandardCharsets.UTF_8, "foo.xml", new QualifiedName[] {IContentDescription.CHARSET}, text);
 			assertNotNull("2.6a" + sufix, description);
 			assertEquals("2.6b" + sufix, xmlType, description.getContentType());
 			// the default charset should have been filled by the content type manager
 			assertEquals("2.6c" + sufix, "UTF-16LE", description.getProperty(IContentDescription.CHARSET));
 			assertNotSame("2.6d", xmlType.getDefaultDescription(), description);
 
-			description = getDescriptionFor(finder, MINIMAL_XML, "UTF-8", "foo.xml", IContentDescription.ALL, text);
+			description = getDescriptionFor(finder, MINIMAL_XML, StandardCharsets.UTF_8, "foo.xml", IContentDescription.ALL, text);
 			assertNotNull("4.0" + sufix, description);
 			assertEquals("4.1" + sufix, xmlType, description.getContentType());
 			assertEquals("4.2" + sufix, "UTF-8", description.getProperty(IContentDescription.CHARSET));
@@ -542,7 +543,7 @@ public class IContentTypeManagerTest extends ContentTypeTest {
 			assertSame("5.13", mytext.getDefaultDescription(), description);
 
 			// see https://bugs.eclipse.org/bugs/show_bug.cgi?id=176354
-			description = getDescriptionFor(finder, "<?xml version=\'1.0\' encoding=\'UTF-8\'?><soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:tns=\"http://www.example.org/\" xmlns:ns0=\"http://another.example.org/\"><soapenv:Header /><soapenv:Body><ns0:x /></soapenv:Body></soapenv:Envelope>", "UTF-8", "foo.xml", new QualifiedName[] {IContentDescription.CHARSET}, text);
+			description = getDescriptionFor(finder, "<?xml version=\'1.0\' encoding=\'UTF-8\'?><soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:tns=\"http://www.example.org/\" xmlns:ns0=\"http://another.example.org/\"><soapenv:Header /><soapenv:Body><ns0:x /></soapenv:Body></soapenv:Envelope>", StandardCharsets.UTF_8, "foo.xml", new QualifiedName[] {IContentDescription.CHARSET}, text);
 			assertNotNull("5.14" + sufix, description);
 			assertEquals("5.15" + sufix, xmlType, description.getContentType());
 			assertEquals("5.16" + sufix, "UTF-8", description.getProperty(IContentDescription.CHARSET));
@@ -865,7 +866,7 @@ public class IContentTypeManagerTest extends ContentTypeTest {
 		}
 	}
 
-	public void testFindContentType() throws UnsupportedEncodingException, IOException {
+	public void testFindContentType() throws IOException {
 		IContentTypeManager contentTypeManager = Platform.getContentTypeManager();
 		IContentTypeMatcher finder = contentTypeManager.getMatcher(new LocalSelectionPolicy(), null);
 
@@ -878,15 +879,15 @@ public class IContentTypeManagerTest extends ContentTypeTest {
 		assertNotNull("1.0", single);
 		assertEquals("1.1", textContentType, single);
 
-		single = finder.findContentTypeFor(getInputStream(XML_UTF_8, "UTF-8"), changeCase("foo.xml"));
+		single = finder.findContentTypeFor(getInputStream(XML_UTF_8, StandardCharsets.UTF_8), changeCase("foo.xml"));
 		assertNotNull("2.0", single);
 		assertEquals("2.1", xmlContentType, single);
 
-		IContentType[] multiple = finder.findContentTypesFor(getInputStream(XML_UTF_8, "UTF-8"), null);
+		IContentType[] multiple = finder.findContentTypesFor(getInputStream(XML_UTF_8, StandardCharsets.UTF_8), null);
 		assertTrue("3.0", contains(multiple, xmlContentType));
 	}
 
-	public void testFindContentTypPredefinedRegexp() throws UnsupportedEncodingException, IOException, CoreException {
+	public void testFindContentTypPredefinedRegexp() throws IOException, CoreException {
 		IContentTypeManager contentTypeManager = Platform.getContentTypeManager();
 		IContentTypeMatcher finder = contentTypeManager.getMatcher(new LocalSelectionPolicy(), null);
 
@@ -901,7 +902,7 @@ public class IContentTypeManagerTest extends ContentTypeTest {
 		assertEquals(targetContentType, single);
 	}
 
-	public void testFindContentTypeUserRegexp() throws UnsupportedEncodingException, IOException, CoreException {
+	public void testFindContentTypeUserRegexp() throws IOException, CoreException {
 		IContentTypeManager contentTypeManager = Platform.getContentTypeManager();
 		IContentTypeMatcher finder = contentTypeManager.getMatcher(new LocalSelectionPolicy(), null);
 
@@ -960,7 +961,7 @@ public class IContentTypeManagerTest extends ContentTypeTest {
 		IContentType rootElement = manager.getContentType(PI_RESOURCES_TESTS + ".root-element");
 		IContentType[] selected = null;
 		try {
-			selected = manager.findContentTypesFor(getInputStream(XML_US_ASCII_INVALID, "ISO-8859-1"), "test.xml");
+			selected = manager.findContentTypesFor(getInputStream(XML_US_ASCII_INVALID, StandardCharsets.ISO_8859_1), "test.xml");
 		} catch (IOException ioe) {
 			// a SAXException is usually caught (and silently ignored) in XMLRootElementDescriber in these cases
 			fail("1.0", ioe);
@@ -1081,7 +1082,7 @@ public class IContentTypeManagerTest extends ContentTypeTest {
 		assertEquals("10.4", "", list[3]);
 	}
 
-	public void testMyContentDescriber() throws UnsupportedEncodingException, IOException {
+	public void testMyContentDescriber() throws IOException {
 		IContentTypeManager manager = Platform.getContentTypeManager();
 		IContentType myContent = manager.getContentType(PI_RESOURCES_TESTS + '.' + "myContent");
 		assertNotNull("0.5", myContent);
@@ -1089,7 +1090,7 @@ public class IContentTypeManagerTest extends ContentTypeTest {
 		assertEquals("0.7", myContent, manager.findContentTypeFor("myContent.mc2"));
 		assertEquals("0.8", myContent, manager.findContentTypeFor("foo.myContent1"));
 		assertEquals("0.9", myContent, manager.findContentTypeFor("bar.myContent2"));
-		IContentDescription description = manager.getDescriptionFor(getInputStream(MyContentDescriber.SIGNATURE, "US-ASCII"), "myContent.mc1", IContentDescription.ALL);
+		IContentDescription description = manager.getDescriptionFor(getInputStream(MyContentDescriber.SIGNATURE, StandardCharsets.US_ASCII), "myContent.mc1", IContentDescription.ALL);
 		assertNotNull("1.0", description);
 		assertEquals("1.1", myContent, description.getContentType());
 		assertNotSame("1.2", myContent.getDefaultDescription(), description);
@@ -1328,50 +1329,50 @@ public class IContentTypeManagerTest extends ContentTypeTest {
 		IContentType emptyNsRootElement = contentTypeManager.getContentType(PI_RESOURCES_TESTS + ".empty-ns-root-element");
 		IContentType xmlType = contentTypeManager.getContentType(Platform.PI_RUNTIME + ".xml");
 
-		IContentType[] contentTypes = contentTypeManager.findContentTypesFor(getInputStream(XML_ROOT_ELEMENT_ISO_8859_1, "ISO-8859-1"), "fake.xml");
+		IContentType[] contentTypes = contentTypeManager.findContentTypesFor(getInputStream(XML_ROOT_ELEMENT_ISO_8859_1, StandardCharsets.ISO_8859_1), "fake.xml");
 		assertTrue("1.0", contentTypes.length > 0);
 		assertEquals("1.1", rootElement, contentTypes[0]);
 
 		// bugs 64053 and 63298
-		contentTypes = contentTypeManager.findContentTypesFor(getInputStream(XML_ROOT_ELEMENT_EXTERNAL_ENTITY, "UTF-8"), "fake.xml");
+		contentTypes = contentTypeManager.findContentTypesFor(getInputStream(XML_ROOT_ELEMENT_EXTERNAL_ENTITY, StandardCharsets.UTF_8), "fake.xml");
 		assertTrue("2.0", contentTypes.length > 0);
 		assertEquals("2.1", rootElement, contentTypes[0]);
 
 		// bug 63625
-		contentTypes = contentTypeManager.findContentTypesFor(getInputStream(XML_ROOT_ELEMENT_EXTERNAL_ENTITY2, "UTF-8"), "fake.xml");
+		contentTypes = contentTypeManager.findContentTypesFor(getInputStream(XML_ROOT_ELEMENT_EXTERNAL_ENTITY2, StandardCharsets.UTF_8), "fake.xml");
 		assertTrue("3.0", contentTypes.length > 0);
 		assertEquals("3.1", rootElement, contentTypes[0]);
 
 		// bug 135575
-		contentTypes = contentTypeManager.findContentTypesFor(getInputStream(XML_ROOT_ELEMENT_NS_MATCH1, "UTF-8"), "fake.xml");
+		contentTypes = contentTypeManager.findContentTypesFor(getInputStream(XML_ROOT_ELEMENT_NS_MATCH1, StandardCharsets.UTF_8), "fake.xml");
 		assertTrue("4.0", contentTypes.length > 0);
 		assertEquals("4.1", nsRootElement, contentTypes[0]);
-		contentTypes = contentTypeManager.findContentTypesFor(getInputStream(XML_ROOT_ELEMENT_NS_MATCH2, "UTF-8"), "fake.xml");
+		contentTypes = contentTypeManager.findContentTypesFor(getInputStream(XML_ROOT_ELEMENT_NS_MATCH2, StandardCharsets.UTF_8), "fake.xml");
 		assertTrue("4.2", contentTypes.length > 0);
 		assertEquals("4.3", nsRootElement, contentTypes[0]);
-		contentTypes = contentTypeManager.findContentTypesFor(getInputStream(XML_ROOT_ELEMENT_NS_WRONG_ELEM, "UTF-8"), "fake.xml");
+		contentTypes = contentTypeManager.findContentTypesFor(getInputStream(XML_ROOT_ELEMENT_NS_WRONG_ELEM, StandardCharsets.UTF_8), "fake.xml");
 		assertTrue("4.4", contentTypes.length > 0);
 		assertEquals("4.5", xmlType, contentTypes[0]);
-		contentTypes = contentTypeManager.findContentTypesFor(getInputStream(XML_ROOT_ELEMENT_NS_WRONG_NS, "UTF-8"), "fake.xml");
+		contentTypes = contentTypeManager.findContentTypesFor(getInputStream(XML_ROOT_ELEMENT_NS_WRONG_NS, StandardCharsets.UTF_8), "fake.xml");
 		assertTrue("4.6", contentTypes.length > 0);
 		assertEquals("4.7", xmlType, contentTypes[0]);
-		contentTypes = contentTypeManager.findContentTypesFor(getInputStream(XML_ROOT_ELEMENT_NS_MIXUP, "UTF-8"), "fake.xml");
+		contentTypes = contentTypeManager.findContentTypesFor(getInputStream(XML_ROOT_ELEMENT_NS_MIXUP, StandardCharsets.UTF_8), "fake.xml");
 		assertTrue("4.8", contentTypes.length > 0);
 		assertEquals("4.9", xmlType, contentTypes[0]);
-		contentTypes = contentTypeManager.findContentTypesFor(getInputStream(XML_ROOT_ELEMENT_NS_WILDCARD, "UTF-8"), "fake.xml");
+		contentTypes = contentTypeManager.findContentTypesFor(getInputStream(XML_ROOT_ELEMENT_NS_WILDCARD, StandardCharsets.UTF_8), "fake.xml");
 		assertTrue("4.10", contentTypes.length > 0);
 		assertEquals("4.11", nsWildcard, contentTypes[0]);
-		contentTypes = contentTypeManager.findContentTypesFor(getInputStream(XML_ROOT_ELEMENT_NS_WILDCARD2, "UTF-8"), "fake.xml");
+		contentTypes = contentTypeManager.findContentTypesFor(getInputStream(XML_ROOT_ELEMENT_NS_WILDCARD2, StandardCharsets.UTF_8), "fake.xml");
 		assertTrue("4.12", contentTypes.length > 0);
 		assertEquals("4.13", nsWildcard, contentTypes[0]);
-		contentTypes = contentTypeManager.findContentTypesFor(getInputStream(XML_ROOT_ELEMENT_EMPTY_NS, "UTF-8"), "fake.xml");
+		contentTypes = contentTypeManager.findContentTypesFor(getInputStream(XML_ROOT_ELEMENT_EMPTY_NS, StandardCharsets.UTF_8), "fake.xml");
 		assertTrue("4.14", contentTypes.length > 0);
 		assertEquals("4.15", emptyNsRootElement, contentTypes[0]);
 
-		contentTypes = contentTypeManager.findContentTypesFor(getInputStream(XML_DTD_US_ASCII, "US-ASCII"), "fake.xml");
+		contentTypes = contentTypeManager.findContentTypesFor(getInputStream(XML_DTD_US_ASCII, StandardCharsets.US_ASCII), "fake.xml");
 		assertTrue("5.0", contentTypes.length > 0);
 		assertEquals("5.1", dtdElement, contentTypes[0]);
-		contentTypes = contentTypeManager.findContentTypesFor(getInputStream(XML_DTD_EXTERNAL_ENTITY, "UTF-8"), "fake.xml");
+		contentTypes = contentTypeManager.findContentTypesFor(getInputStream(XML_DTD_EXTERNAL_ENTITY, StandardCharsets.UTF_8), "fake.xml");
 		assertTrue("5.4", contentTypes.length > 0);
 		assertEquals("5.5", dtdElement, contentTypes[0]);
 
@@ -1393,7 +1394,7 @@ public class IContentTypeManagerTest extends ContentTypeTest {
 		//		assertEquals("7.2", IContentDescription.BOM_UTF_8, description.getProperty(IContentDescription.BYTE_ORDER_MARK));
 
 		// bug 84354
-		contentTypes = contentTypeManager.findContentTypesFor(getInputStream(XML_ROOT_ELEMENT_NO_DECL, "UTF-8"), "test.txt");
+		contentTypes = contentTypeManager.findContentTypesFor(getInputStream(XML_ROOT_ELEMENT_NO_DECL, StandardCharsets.UTF_8), "test.txt");
 		assertTrue("8.0", contentTypes.length > 0);
 		assertEquals("8.1", contentTypeManager.getContentType(IContentTypeManager.CT_TEXT), contentTypes[0]);
 	}
@@ -1411,7 +1412,7 @@ public class IContentTypeManagerTest extends ContentTypeTest {
 		comment.append("-->");
 		IContentTypeManager manager = Platform.getContentTypeManager();
 		IContentType rootElement = manager.getContentType(PI_RESOURCES_TESTS + ".root-element");
-		IContentType selected = manager.findContentTypeFor(getInputStream(comment + XML_ROOT_ELEMENT_NO_DECL, "US-ASCII"), "fake.xml");
+		IContentType selected = manager.findContentTypeFor(getInputStream(comment + XML_ROOT_ELEMENT_NO_DECL, StandardCharsets.US_ASCII), "fake.xml");
 		assertNotNull("1.0", selected);
 		assertEquals("1.1", rootElement, selected);
 	}
@@ -1451,12 +1452,12 @@ public class IContentTypeManagerTest extends ContentTypeTest {
 		assertNull("3.0", result);
 	}
 
-	public void testDescriberInvalidation() throws UnsupportedEncodingException, IOException {
+	public void testDescriberInvalidation() throws IOException {
 		IContentTypeManager contentTypeManager = Platform.getContentTypeManager();
 		IContentType type_bug182337_A = contentTypeManager.getContentType(PI_RESOURCES_TESTS + ".Bug182337_A");
 		IContentType type_bug182337_B = contentTypeManager.getContentType(PI_RESOURCES_TESTS + ".Bug182337_B");
 
-		IContentType[] contentTypes = contentTypeManager.findContentTypesFor(getInputStream(XML_ROOT_ELEMENT_NS_MATCH2, "UTF-8"), "Bug182337.Bug182337");
+		IContentType[] contentTypes = contentTypeManager.findContentTypesFor(getInputStream(XML_ROOT_ELEMENT_NS_MATCH2, StandardCharsets.UTF_8), "Bug182337.Bug182337");
 		assertTrue("1.0", contentTypes.length == 2);
 		assertEquals("1.1", type_bug182337_A, contentTypes[0]);
 		assertEquals("1.1", type_bug182337_B, contentTypes[1]);
@@ -1472,7 +1473,7 @@ public class IContentTypeManagerTest extends ContentTypeTest {
 		assertTrue("1.2", contentTypes.length == 0);
 
 		// Describer should be invalidated by now
-		contentTypes = contentTypeManager.findContentTypesFor(getInputStream(XML_ROOT_ELEMENT_NS_MATCH2, "UTF-8"), "Bug182337.Bug182337");
+		contentTypes = contentTypeManager.findContentTypesFor(getInputStream(XML_ROOT_ELEMENT_NS_MATCH2, StandardCharsets.UTF_8), "Bug182337.Bug182337");
 		assertTrue("1.3", contentTypes.length == 0);
 	}
 
