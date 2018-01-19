@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2015 IBM Corporation and others.
+ * Copyright (c) 2004, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -15,7 +15,6 @@ import java.nio.charset.IllegalCharsetNameException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -72,8 +71,8 @@ public final class IDEEncoding {
 	 *
 	 * @return List of String
 	 */
-	public static List getIDEEncodings() {
-		List encodings = getIDEEncodingsPreference();
+	public static List<String> getIDEEncodings() {
+		List<String> encodings = getIDEEncodingsPreference();
 		encodings.addAll(WorkbenchEncoding.getDefinedEncodings());
 
 		String enc = getResourceEncoding();
@@ -123,15 +122,13 @@ public final class IDEEncoding {
 	 * @param value String or <code>null</code>
 	 * @param encodings The list of encodings to write
 	 */
-	private static void writeEncodingsPreference(String value, Collection encodings) {
+	private static void writeEncodingsPreference(String value, Collection<String> encodings) {
 		boolean addValue = (value != null);
 
 		StringBuilder result = new StringBuilder();
 
-		Iterator currentEncodings = encodings.iterator();
 
-		while (currentEncodings.hasNext()) {
-			String string = (String) currentEncodings.next();
+		for (String string : encodings) {
 			result.append(string);
 			result.append(PREFERENCE_SEPARATOR);
 			if (addValue && string.equals(value)) {
@@ -152,7 +149,7 @@ public final class IDEEncoding {
 	 *
 	 * @return List
 	 */
-	private static List getIDEEncodingsPreference() {
+	private static List<String> getIDEEncodingsPreference() {
 
 		boolean updateRequired = false;
 
@@ -160,10 +157,10 @@ public final class IDEEncoding {
 				IDE_ENCODINGS_PREFERENCE);
 
 		if (encodings == null || encodings.length() == 0) {
-			return new ArrayList();
+			return new ArrayList<>();
 		}
 
-		ArrayList result = new ArrayList();
+		ArrayList<String> result = new ArrayList<>();
 
 		//Drop any encodings that are not valid
 		for (String string : encodings.split(PREFERENCE_SEPARATOR)) {

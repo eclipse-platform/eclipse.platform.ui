@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2017 IBM Corporation and others.
+ * Copyright (c) 2004, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -123,7 +123,7 @@ public abstract class AbstractEncodingFieldEditor extends FieldEditor {
 	@Override
 	protected void doLoad() {
 		if (encodingCombo != null) {
-			List encodings = IDEEncoding.getIDEEncodings();
+			List<String> encodings = IDEEncoding.getIDEEncodings();
 			String resourcePreference = getStoredValue();
 			populateEncodingsCombo(encodings, resourcePreference);
 			updateEncodingState(resourcePreference == null);
