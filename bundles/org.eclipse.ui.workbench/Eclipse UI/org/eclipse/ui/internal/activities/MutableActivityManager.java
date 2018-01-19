@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 IBM Corporation and others.
+ * Copyright (c) 2000, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -32,7 +32,6 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.IJobFunction;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.util.IPropertyChangeListener;
-import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.activities.ActivityEvent;
 import org.eclipse.ui.activities.ActivityManagerEvent;
@@ -98,13 +97,7 @@ public final class MutableActivityManager extends AbstractActivityManager
      */
     private Job deferredIdentifierJob = null;
 
-    private final IActivityRegistryListener activityRegistryListener = new IActivityRegistryListener() {
-                @Override
-				public void activityRegistryChanged(
-                        ActivityRegistryEvent activityRegistryEvent) {
-                    readRegistry(false);
-                }
-            };
+	private final IActivityRegistryListener activityRegistryListener = activityRegistryEvent -> readRegistry(false);
 
 	private Map refsByActivityDefinition = new HashMap();
 
@@ -268,9 +261,6 @@ public final class MutableActivityManager extends AbstractActivityManager
     }
 
     private void readRegistry(boolean setDefaults) {
-    	if (!isRegexpSupported()) {
-    		return;
-    	}
     	clearExpressions();
         Collection activityDefinitions = new ArrayList();
         activityDefinitions.addAll(activityRegistry.getActivityDefinitions());
@@ -513,24 +503,6 @@ public final class MutableActivityManager extends AbstractActivityManager
 		refsByActivityDefinition.clear();
 	}
 
-	/**
-     * Returns whether the Java 1.4 regular expression support is available.
-     * Regexp support will not be available when running against JCL Foundation (see bug 80053).
-     *
-	 * @return <code>true</code> if regexps are supported, <code>false</code> otherwise.
-	 *
-	 * @since 3.1
-	 */
-	private boolean isRegexpSupported() {
-		try {
-			Class.forName("java.util.regex.Pattern"); //$NON-NLS-1$
-			return true;
-		}
-		catch (Exception e) {
-			return false;
-		}
-	}
-
 	@Override
 	synchronized public void setEnabledActivityIds(Set enabledActivityIds) {
         enabledActivityIds = new HashSet(enabledActivityIds);
@@ -678,24 +650,20 @@ public final class MutableActivityManager extends AbstractActivityManager
         return activityEventsByActivityId;
     }
 
-    private IPropertyChangeListener enabledWhenListener = new IPropertyChangeListener() {
-		@Override
-		public void propertyChange(PropertyChangeEvent event) {
-			if (addingEvaluationListener) {
-				return;
-			}
+	private IPropertyChangeListener enabledWhenListener = event -> {
+		if (addingEvaluationListener) {
+			return;
+		}
 
-			Object nv = event.getNewValue();
-			boolean enabledWhen = nv == null ? false : ((Boolean) nv)
-					.booleanValue();
-			String id = event.getProperty();
-			IActivity activity = (IActivity)activitiesById.get(id);
-			if (activity.isEnabled() != enabledWhen) {
-				if (enabledWhen) {
-					addExpressionEnabledActivity(id);
-				} else {
-					removeExpressionEnabledActivity(id);
-				}
+		Object nv = event.getNewValue();
+		boolean enabledWhen = nv == null ? false : ((Boolean) nv).booleanValue();
+		String id = event.getProperty();
+		IActivity activity = (IActivity) activitiesById.get(id);
+		if (activity.isEnabled() != enabledWhen) {
+			if (enabledWhen) {
+				addExpressionEnabledActivity(id);
+			} else {
+				removeExpressionEnabledActivity(id);
 			}
 		}
 	};
@@ -928,45 +896,39 @@ public final class MutableActivityManager extends AbstractActivityManager
      */
     private Job getUpdateJob() {
         if (deferredIdentifierJob == null) {
-			deferredIdentifierJob = Job.create("Activity Identifier Update", new IJobFunction() { //$NON-NLS-1$
-                @Override
-				public IStatus run(IProgressMonitor monitor) {
-					final Map identifierEventsByIdentifierId = new HashMap();
+			deferredIdentifierJob = Job.create("Activity Identifier Update", (IJobFunction) monitor -> { //$NON-NLS-1$
+				final Map identifierEventsByIdentifierId = new HashMap();
 
-                    while (!deferredIdentifiers.isEmpty()) {
-                        Identifier identifier = (Identifier) deferredIdentifiers.remove(0);
-                        Set activityIds = new HashSet();
-                        for (Iterator iterator = definedActivityIds.iterator(); iterator
-                                .hasNext();) {
-                            String activityId = (String) iterator.next();
-                            Activity activity = (Activity) getActivity(activityId);
+				while (!deferredIdentifiers.isEmpty()) {
+					Identifier identifier = (Identifier) deferredIdentifiers.remove(0);
+					Set activityIds = new HashSet();
+					for (Iterator iterator = definedActivityIds.iterator(); iterator.hasNext();) {
+						String activityId = (String) iterator.next();
+						Activity activity = (Activity) getActivity(activityId);
 
-                            if (activity.isMatch(identifier.getId())) {
-                                activityIds.add(activityId);
-                            }
-                        }
-
-                        boolean activityIdsChanged = identifier.setActivityIds(activityIds);
-                        if (activityIdsChanged) {
-                            IdentifierEvent identifierEvent = new IdentifierEvent(identifier, activityIdsChanged,
-                                    false);
-                            identifierEventsByIdentifierId.put(identifier.getId(),
-                                    identifierEvent);
+						if (activity.isMatch(identifier.getId())) {
+							activityIds.add(activityId);
 						}
 					}
-					if (!identifierEventsByIdentifierId.isEmpty()) {
-						UIJob notifyJob = new UIJob("Activity Identifier Update UI") { //$NON-NLS-1$
-							@Override
-							public IStatus runInUIThread(IProgressMonitor monitor) {
-								notifyIdentifiers(identifierEventsByIdentifierId);
-								return Status.OK_STATUS;
-							}
-						};
-						notifyJob.setSystem(true);
-						notifyJob.schedule();
-                    }
-                    return Status.OK_STATUS;
-                }
+
+					boolean activityIdsChanged = identifier.setActivityIds(activityIds);
+					if (activityIdsChanged) {
+						IdentifierEvent identifierEvent = new IdentifierEvent(identifier, activityIdsChanged, false);
+						identifierEventsByIdentifierId.put(identifier.getId(), identifierEvent);
+					}
+				}
+				if (!identifierEventsByIdentifierId.isEmpty()) {
+					UIJob notifyJob = new UIJob("Activity Identifier Update UI") { //$NON-NLS-1$
+						@Override
+						public IStatus runInUIThread(IProgressMonitor monitor) {
+							notifyIdentifiers(identifierEventsByIdentifierId);
+							return Status.OK_STATUS;
+						}
+					};
+					notifyJob.setSystem(true);
+					notifyJob.schedule();
+				}
+				return Status.OK_STATUS;
 			});
             deferredIdentifierJob.setSystem(true);
         }
