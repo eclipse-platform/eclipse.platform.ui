@@ -1055,6 +1055,7 @@ public class VariablesView extends AbstractDebugView implements IDebugContextLis
 				layoutSubMenu.add(fToggleDetailPaneActions[1]);
 				layoutSubMenu.add(fToggleDetailPaneActions[2]);
 				layoutSubMenu.add(fToggleDetailPaneActions[3]);
+				layoutSubMenu.add(new Separator());
 				IAction action = getAction("ToggleColmns"); //$NON-NLS-1$
 				((IUpdate)action).update();
 				if (action.isEnabled()) {
