@@ -71,6 +71,7 @@ public class FragmentPackageImpl extends EPackageImpl {
 	 * <!-- end-user-doc -->
 	 * @see org.eclipse.e4.ui.model.fragment.impl.ModelFragmentsImpl
 	 * @see org.eclipse.e4.ui.model.fragment.impl.FragmentPackageImpl#getModelFragments()
+	 * @since 1.0
 	 * @generated
 	 */
 	public static final int MODEL_FRAGMENTS = 0;
@@ -79,6 +80,7 @@ public class FragmentPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Imports</b></em>' containment reference list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -88,6 +90,7 @@ public class FragmentPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Fragments</b></em>' containment reference list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -97,6 +100,7 @@ public class FragmentPackageImpl extends EPackageImpl {
 	 * The number of structural features of the '<em>Model Fragments</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -108,6 +112,7 @@ public class FragmentPackageImpl extends EPackageImpl {
 	 * <!-- end-user-doc -->
 	 * @see org.eclipse.e4.ui.model.fragment.impl.ModelFragmentImpl
 	 * @see org.eclipse.e4.ui.model.fragment.impl.FragmentPackageImpl#getModelFragment()
+	 * @since 1.0
 	 * @generated
 	 */
 	public static final int MODEL_FRAGMENT = 1;
@@ -116,6 +121,7 @@ public class FragmentPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Elements</b></em>' containment reference list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -125,6 +131,7 @@ public class FragmentPackageImpl extends EPackageImpl {
 	 * The number of structural features of the '<em>Model Fragment</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -136,6 +143,7 @@ public class FragmentPackageImpl extends EPackageImpl {
 	 * <!-- end-user-doc -->
 	 * @see org.eclipse.e4.ui.model.fragment.impl.StringModelFragmentImpl
 	 * @see org.eclipse.e4.ui.model.fragment.impl.FragmentPackageImpl#getStringModelFragment()
+	 * @since 1.0
 	 * @generated
 	 */
 	public static final int STRING_MODEL_FRAGMENT = 2;
@@ -144,6 +152,7 @@ public class FragmentPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Elements</b></em>' containment reference list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -153,6 +162,7 @@ public class FragmentPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Featurename</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -162,6 +172,7 @@ public class FragmentPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Parent Element Id</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -171,6 +182,7 @@ public class FragmentPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Position In List</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -180,6 +192,7 @@ public class FragmentPackageImpl extends EPackageImpl {
 	 * The number of structural features of the '<em>String Model Fragment</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -188,6 +201,7 @@ public class FragmentPackageImpl extends EPackageImpl {
 	/**
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 */
 	private EClass modelFragmentsEClass = null;
@@ -195,6 +209,7 @@ public class FragmentPackageImpl extends EPackageImpl {
 	/**
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 */
 	private EClass modelFragmentEClass = null;
@@ -202,6 +217,7 @@ public class FragmentPackageImpl extends EPackageImpl {
 	/**
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 */
 	private EClass stringModelFragmentEClass = null;
@@ -234,7 +250,7 @@ public class FragmentPackageImpl extends EPackageImpl {
 
 	/**
 	 * Creates, registers, and initializes the <b>Package</b> for this model, and for any others upon which it depends.
-	 * 
+	 *
 	 * <p>This method is used to initialize {@link FragmentPackageImpl#eINSTANCE} when that field is accessed.
 	 * Clients should not invoke it directly. Instead, they should simply access that field to obtain the package.
 	 * <!-- begin-user-doc -->
@@ -248,7 +264,8 @@ public class FragmentPackageImpl extends EPackageImpl {
 		if (isInited) return (FragmentPackageImpl)EPackage.Registry.INSTANCE.getEPackage(FragmentPackageImpl.eNS_URI);
 
 		// Obtain or create and register package
-		FragmentPackageImpl theFragmentPackage = (FragmentPackageImpl)(EPackage.Registry.INSTANCE.get(eNS_URI) instanceof FragmentPackageImpl ? EPackage.Registry.INSTANCE.get(eNS_URI) : new FragmentPackageImpl());
+		Object registeredFragmentPackage = EPackage.Registry.INSTANCE.get(eNS_URI);
+		FragmentPackageImpl theFragmentPackage = registeredFragmentPackage instanceof FragmentPackageImpl ? (FragmentPackageImpl)registeredFragmentPackage : new FragmentPackageImpl();
 
 		isInited = true;
 
@@ -264,7 +281,6 @@ public class FragmentPackageImpl extends EPackageImpl {
 		// Mark meta-data to indicate it can't be changed
 		theFragmentPackage.freeze();
 
-  
 		// Update the registry and return the package
 		EPackage.Registry.INSTANCE.put(FragmentPackageImpl.eNS_URI, theFragmentPackage);
 		return theFragmentPackage;
@@ -276,6 +292,7 @@ public class FragmentPackageImpl extends EPackageImpl {
 	 * <!-- end-user-doc -->
 	 * @return the meta object for class '<em>Model Fragments</em>'.
 	 * @see org.eclipse.e4.ui.model.fragment.MModelFragments
+	 * @since 1.0
 	 * @generated
 	 */
 	public EClass getModelFragments() {
@@ -289,6 +306,7 @@ public class FragmentPackageImpl extends EPackageImpl {
 	 * @return the meta object for the containment reference list '<em>Imports</em>'.
 	 * @see org.eclipse.e4.ui.model.fragment.MModelFragments#getImports()
 	 * @see #getModelFragments()
+	 * @since 1.0
 	 * @generated
 	 */
 	public EReference getModelFragments_Imports() {
@@ -302,6 +320,7 @@ public class FragmentPackageImpl extends EPackageImpl {
 	 * @return the meta object for the containment reference list '<em>Fragments</em>'.
 	 * @see org.eclipse.e4.ui.model.fragment.MModelFragments#getFragments()
 	 * @see #getModelFragments()
+	 * @since 1.0
 	 * @generated
 	 */
 	public EReference getModelFragments_Fragments() {
@@ -314,6 +333,7 @@ public class FragmentPackageImpl extends EPackageImpl {
 	 * <!-- end-user-doc -->
 	 * @return the meta object for class '<em>Model Fragment</em>'.
 	 * @see org.eclipse.e4.ui.model.fragment.MModelFragment
+	 * @since 1.0
 	 * @generated
 	 */
 	public EClass getModelFragment() {
@@ -327,6 +347,7 @@ public class FragmentPackageImpl extends EPackageImpl {
 	 * @return the meta object for the containment reference list '<em>Elements</em>'.
 	 * @see org.eclipse.e4.ui.model.fragment.MModelFragment#getElements()
 	 * @see #getModelFragment()
+	 * @since 1.0
 	 * @generated
 	 */
 	public EReference getModelFragment_Elements() {
@@ -339,6 +360,7 @@ public class FragmentPackageImpl extends EPackageImpl {
 	 * <!-- end-user-doc -->
 	 * @return the meta object for class '<em>String Model Fragment</em>'.
 	 * @see org.eclipse.e4.ui.model.fragment.MStringModelFragment
+	 * @since 1.0
 	 * @generated
 	 */
 	public EClass getStringModelFragment() {
@@ -352,6 +374,7 @@ public class FragmentPackageImpl extends EPackageImpl {
 	 * @return the meta object for the attribute '<em>Featurename</em>'.
 	 * @see org.eclipse.e4.ui.model.fragment.MStringModelFragment#getFeaturename()
 	 * @see #getStringModelFragment()
+	 * @since 1.0
 	 * @generated
 	 */
 	public EAttribute getStringModelFragment_Featurename() {
@@ -365,6 +388,7 @@ public class FragmentPackageImpl extends EPackageImpl {
 	 * @return the meta object for the attribute '<em>Parent Element Id</em>'.
 	 * @see org.eclipse.e4.ui.model.fragment.MStringModelFragment#getParentElementId()
 	 * @see #getStringModelFragment()
+	 * @since 1.0
 	 * @generated
 	 */
 	public EAttribute getStringModelFragment_ParentElementId() {
@@ -378,6 +402,7 @@ public class FragmentPackageImpl extends EPackageImpl {
 	 * @return the meta object for the attribute '<em>Position In List</em>'.
 	 * @see org.eclipse.e4.ui.model.fragment.MStringModelFragment#getPositionInList()
 	 * @see #getStringModelFragment()
+	 * @since 1.0
 	 * @generated
 	 */
 	public EAttribute getStringModelFragment_PositionInList() {
@@ -499,6 +524,7 @@ public class FragmentPackageImpl extends EPackageImpl {
 		 * <!-- end-user-doc -->
 		 * @see org.eclipse.e4.ui.model.fragment.impl.ModelFragmentsImpl
 		 * @see org.eclipse.e4.ui.model.fragment.impl.FragmentPackageImpl#getModelFragments()
+		 * @since 1.0
 		 * @generated
 		 */
 		public static final EClass MODEL_FRAGMENTS = eINSTANCE.getModelFragments();
@@ -507,6 +533,7 @@ public class FragmentPackageImpl extends EPackageImpl {
 		 * The meta object literal for the '<em><b>Imports</b></em>' containment reference list feature.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
+		 * @since 1.0
 		 * @generated
 		 */
 		public static final EReference MODEL_FRAGMENTS__IMPORTS = eINSTANCE.getModelFragments_Imports();
@@ -515,6 +542,7 @@ public class FragmentPackageImpl extends EPackageImpl {
 		 * The meta object literal for the '<em><b>Fragments</b></em>' containment reference list feature.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
+		 * @since 1.0
 		 * @generated
 		 */
 		public static final EReference MODEL_FRAGMENTS__FRAGMENTS = eINSTANCE.getModelFragments_Fragments();
@@ -525,6 +553,7 @@ public class FragmentPackageImpl extends EPackageImpl {
 		 * <!-- end-user-doc -->
 		 * @see org.eclipse.e4.ui.model.fragment.impl.ModelFragmentImpl
 		 * @see org.eclipse.e4.ui.model.fragment.impl.FragmentPackageImpl#getModelFragment()
+		 * @since 1.0
 		 * @generated
 		 */
 		public static final EClass MODEL_FRAGMENT = eINSTANCE.getModelFragment();
@@ -533,6 +562,7 @@ public class FragmentPackageImpl extends EPackageImpl {
 		 * The meta object literal for the '<em><b>Elements</b></em>' containment reference list feature.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
+		 * @since 1.0
 		 * @generated
 		 */
 		public static final EReference MODEL_FRAGMENT__ELEMENTS = eINSTANCE.getModelFragment_Elements();
@@ -543,6 +573,7 @@ public class FragmentPackageImpl extends EPackageImpl {
 		 * <!-- end-user-doc -->
 		 * @see org.eclipse.e4.ui.model.fragment.impl.StringModelFragmentImpl
 		 * @see org.eclipse.e4.ui.model.fragment.impl.FragmentPackageImpl#getStringModelFragment()
+		 * @since 1.0
 		 * @generated
 		 */
 		public static final EClass STRING_MODEL_FRAGMENT = eINSTANCE.getStringModelFragment();
@@ -551,6 +582,7 @@ public class FragmentPackageImpl extends EPackageImpl {
 		 * The meta object literal for the '<em><b>Featurename</b></em>' attribute feature.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
+		 * @since 1.0
 		 * @generated
 		 */
 		public static final EAttribute STRING_MODEL_FRAGMENT__FEATURENAME = eINSTANCE.getStringModelFragment_Featurename();
@@ -559,6 +591,7 @@ public class FragmentPackageImpl extends EPackageImpl {
 		 * The meta object literal for the '<em><b>Parent Element Id</b></em>' attribute feature.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
+		 * @since 1.0
 		 * @generated
 		 */
 		public static final EAttribute STRING_MODEL_FRAGMENT__PARENT_ELEMENT_ID = eINSTANCE.getStringModelFragment_ParentElementId();
@@ -567,6 +600,7 @@ public class FragmentPackageImpl extends EPackageImpl {
 		 * The meta object literal for the '<em><b>Position In List</b></em>' attribute feature.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
+		 * @since 1.0
 		 * @generated
 		 */
 		public static final EAttribute STRING_MODEL_FRAGMENT__POSITION_IN_LIST = eINSTANCE.getStringModelFragment_PositionInList();

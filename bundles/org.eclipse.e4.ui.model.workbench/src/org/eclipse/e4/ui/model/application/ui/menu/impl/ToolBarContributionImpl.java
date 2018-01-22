@@ -33,6 +33,7 @@ import org.eclipse.emf.ecore.util.EObjectContainmentWithInverseEList;
  *   <li>{@link org.eclipse.e4.ui.model.application.ui.menu.impl.ToolBarContributionImpl#getPositionInParent <em>Position In Parent</em>}</li>
  * </ul>
  *
+ * @since 1.0
  * @generated
  */
 public class ToolBarContributionImpl extends ElementContainerImpl<MToolBarElement> implements MToolBarContribution {
@@ -236,7 +237,7 @@ public class ToolBarContributionImpl extends ElementContainerImpl<MToolBarElemen
 	public String toString() {
 		if (eIsProxy()) return super.toString();
 
-		StringBuffer result = new StringBuffer(super.toString());
+		StringBuilder result = new StringBuilder(super.toString());
 		result.append(" (parentId: "); //$NON-NLS-1$
 		result.append(parentId);
 		result.append(", positionInParent: "); //$NON-NLS-1$

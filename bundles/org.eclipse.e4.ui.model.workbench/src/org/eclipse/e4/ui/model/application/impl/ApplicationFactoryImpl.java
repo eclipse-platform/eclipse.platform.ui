@@ -119,6 +119,7 @@ public class ApplicationFactoryImpl extends EFactoryImpl implements MApplication
 	/**
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 */
 	public MApplication createApplication() {
@@ -129,6 +130,7 @@ public class ApplicationFactoryImpl extends EFactoryImpl implements MApplication
 	/**
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 */
 	public MAddon createAddon() {

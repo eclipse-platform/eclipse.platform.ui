@@ -233,6 +233,7 @@ public class MenuAdapterFactory extends AdapterFactoryImpl {
 	 * <!-- end-user-doc -->
 	 * @return the new adapter.
 	 * @see org.eclipse.e4.ui.model.application.ui.menu.MItem
+	 * @since 1.0
 	 * @generated
 	 */
 	public Adapter createItemAdapter() {
@@ -247,6 +248,7 @@ public class MenuAdapterFactory extends AdapterFactoryImpl {
 	 * <!-- end-user-doc -->
 	 * @return the new adapter.
 	 * @see org.eclipse.e4.ui.model.application.ui.menu.MHandledItem
+	 * @since 1.0
 	 * @generated
 	 */
 	public Adapter createHandledItemAdapter() {
@@ -261,6 +263,7 @@ public class MenuAdapterFactory extends AdapterFactoryImpl {
 	 * <!-- end-user-doc -->
 	 * @return the new adapter.
 	 * @see org.eclipse.e4.ui.model.application.ui.menu.MMenuElement
+	 * @since 1.0
 	 * @generated
 	 */
 	public Adapter createMenuElementAdapter() {
@@ -275,6 +278,7 @@ public class MenuAdapterFactory extends AdapterFactoryImpl {
 	 * <!-- end-user-doc -->
 	 * @return the new adapter.
 	 * @see org.eclipse.e4.ui.model.application.ui.menu.MMenuItem
+	 * @since 1.0
 	 * @generated
 	 */
 	public Adapter createMenuItemAdapter() {
@@ -289,6 +293,7 @@ public class MenuAdapterFactory extends AdapterFactoryImpl {
 	 * <!-- end-user-doc -->
 	 * @return the new adapter.
 	 * @see org.eclipse.e4.ui.model.application.ui.menu.MMenuSeparator
+	 * @since 1.0
 	 * @generated
 	 */
 	public Adapter createMenuSeparatorAdapter() {
@@ -303,6 +308,7 @@ public class MenuAdapterFactory extends AdapterFactoryImpl {
 	 * <!-- end-user-doc -->
 	 * @return the new adapter.
 	 * @see org.eclipse.e4.ui.model.application.ui.menu.MMenu
+	 * @since 1.0
 	 * @generated
 	 */
 	public Adapter createMenuAdapter() {
@@ -317,6 +323,7 @@ public class MenuAdapterFactory extends AdapterFactoryImpl {
 	 * <!-- end-user-doc -->
 	 * @return the new adapter.
 	 * @see org.eclipse.e4.ui.model.application.ui.menu.MMenuContribution
+	 * @since 1.0
 	 * @generated
 	 */
 	public Adapter createMenuContributionAdapter() {
@@ -331,6 +338,7 @@ public class MenuAdapterFactory extends AdapterFactoryImpl {
 	 * <!-- end-user-doc -->
 	 * @return the new adapter.
 	 * @see org.eclipse.e4.ui.model.application.ui.menu.MPopupMenu
+	 * @since 1.0
 	 * @generated
 	 */
 	public Adapter createPopupMenuAdapter() {
@@ -345,6 +353,7 @@ public class MenuAdapterFactory extends AdapterFactoryImpl {
 	 * <!-- end-user-doc -->
 	 * @return the new adapter.
 	 * @see org.eclipse.e4.ui.model.application.ui.menu.MDirectMenuItem
+	 * @since 1.0
 	 * @generated
 	 */
 	public Adapter createDirectMenuItemAdapter() {
@@ -359,6 +368,7 @@ public class MenuAdapterFactory extends AdapterFactoryImpl {
 	 * <!-- end-user-doc -->
 	 * @return the new adapter.
 	 * @see org.eclipse.e4.ui.model.application.ui.menu.MHandledMenuItem
+	 * @since 1.0
 	 * @generated
 	 */
 	public Adapter createHandledMenuItemAdapter() {
@@ -373,6 +383,7 @@ public class MenuAdapterFactory extends AdapterFactoryImpl {
 	 * <!-- end-user-doc -->
 	 * @return the new adapter.
 	 * @see org.eclipse.e4.ui.model.application.ui.menu.MToolItem
+	 * @since 1.0
 	 * @generated
 	 */
 	public Adapter createToolItemAdapter() {
@@ -387,6 +398,7 @@ public class MenuAdapterFactory extends AdapterFactoryImpl {
 	 * <!-- end-user-doc -->
 	 * @return the new adapter.
 	 * @see org.eclipse.e4.ui.model.application.ui.menu.MToolBar
+	 * @since 1.0
 	 * @generated
 	 */
 	public Adapter createToolBarAdapter() {
@@ -401,6 +413,7 @@ public class MenuAdapterFactory extends AdapterFactoryImpl {
 	 * <!-- end-user-doc -->
 	 * @return the new adapter.
 	 * @see org.eclipse.e4.ui.model.application.ui.menu.MToolBarElement
+	 * @since 1.0
 	 * @generated
 	 */
 	public Adapter createToolBarElementAdapter() {
@@ -415,6 +428,7 @@ public class MenuAdapterFactory extends AdapterFactoryImpl {
 	 * <!-- end-user-doc -->
 	 * @return the new adapter.
 	 * @see org.eclipse.e4.ui.model.application.ui.menu.MToolControl
+	 * @since 1.0
 	 * @generated
 	 */
 	public Adapter createToolControlAdapter() {
@@ -429,6 +443,7 @@ public class MenuAdapterFactory extends AdapterFactoryImpl {
 	 * <!-- end-user-doc -->
 	 * @return the new adapter.
 	 * @see org.eclipse.e4.ui.model.application.ui.menu.MHandledToolItem
+	 * @since 1.0
 	 * @generated
 	 */
 	public Adapter createHandledToolItemAdapter() {
@@ -443,6 +458,7 @@ public class MenuAdapterFactory extends AdapterFactoryImpl {
 	 * <!-- end-user-doc -->
 	 * @return the new adapter.
 	 * @see org.eclipse.e4.ui.model.application.ui.menu.MDirectToolItem
+	 * @since 1.0
 	 * @generated
 	 */
 	public Adapter createDirectToolItemAdapter() {
@@ -457,6 +473,7 @@ public class MenuAdapterFactory extends AdapterFactoryImpl {
 	 * <!-- end-user-doc -->
 	 * @return the new adapter.
 	 * @see org.eclipse.e4.ui.model.application.ui.menu.MToolBarSeparator
+	 * @since 1.0
 	 * @generated
 	 */
 	public Adapter createToolBarSeparatorAdapter() {
@@ -471,6 +488,7 @@ public class MenuAdapterFactory extends AdapterFactoryImpl {
 	 * <!-- end-user-doc -->
 	 * @return the new adapter.
 	 * @see org.eclipse.e4.ui.model.application.ui.menu.MMenuContributions
+	 * @since 1.0
 	 * @generated
 	 */
 	public Adapter createMenuContributionsAdapter() {
@@ -485,6 +503,7 @@ public class MenuAdapterFactory extends AdapterFactoryImpl {
 	 * <!-- end-user-doc -->
 	 * @return the new adapter.
 	 * @see org.eclipse.e4.ui.model.application.ui.menu.MToolBarContribution
+	 * @since 1.0
 	 * @generated
 	 */
 	public Adapter createToolBarContributionAdapter() {
@@ -499,6 +518,7 @@ public class MenuAdapterFactory extends AdapterFactoryImpl {
 	 * <!-- end-user-doc -->
 	 * @return the new adapter.
 	 * @see org.eclipse.e4.ui.model.application.ui.menu.MToolBarContributions
+	 * @since 1.0
 	 * @generated
 	 */
 	public Adapter createToolBarContributionsAdapter() {
@@ -513,6 +533,7 @@ public class MenuAdapterFactory extends AdapterFactoryImpl {
 	 * <!-- end-user-doc -->
 	 * @return the new adapter.
 	 * @see org.eclipse.e4.ui.model.application.ui.menu.MTrimContribution
+	 * @since 1.0
 	 * @generated
 	 */
 	public Adapter createTrimContributionAdapter() {
@@ -527,6 +548,7 @@ public class MenuAdapterFactory extends AdapterFactoryImpl {
 	 * <!-- end-user-doc -->
 	 * @return the new adapter.
 	 * @see org.eclipse.e4.ui.model.application.ui.menu.MTrimContributions
+	 * @since 1.0
 	 * @generated
 	 */
 	public Adapter createTrimContributionsAdapter() {
@@ -541,6 +563,7 @@ public class MenuAdapterFactory extends AdapterFactoryImpl {
 	 * <!-- end-user-doc -->
 	 * @return the new adapter.
 	 * @see org.eclipse.e4.ui.model.application.ui.menu.MDynamicMenuContribution
+	 * @since 1.0
 	 * @generated
 	 */
 	public Adapter createDynamicMenuContributionAdapter() {
@@ -555,6 +578,7 @@ public class MenuAdapterFactory extends AdapterFactoryImpl {
 	 * <!-- end-user-doc -->
 	 * @return the new adapter.
 	 * @see org.eclipse.e4.ui.model.application.MApplicationElement
+	 * @since 1.0
 	 * @generated
 	 */
 	public Adapter createApplicationElementAdapter() {
@@ -569,6 +593,7 @@ public class MenuAdapterFactory extends AdapterFactoryImpl {
 	 * <!-- end-user-doc -->
 	 * @return the new adapter.
 	 * @see org.eclipse.e4.ui.model.application.ui.MUIElement
+	 * @since 1.0
 	 * @generated
 	 */
 	public Adapter createUIElementAdapter() {
@@ -583,6 +608,7 @@ public class MenuAdapterFactory extends AdapterFactoryImpl {
 	 * <!-- end-user-doc -->
 	 * @return the new adapter.
 	 * @see org.eclipse.e4.ui.model.application.ui.MLocalizable
+	 * @since 1.1
 	 * @generated
 	 */
 	public Adapter createLocalizableAdapter() {
@@ -597,6 +623,7 @@ public class MenuAdapterFactory extends AdapterFactoryImpl {
 	 * <!-- end-user-doc -->
 	 * @return the new adapter.
 	 * @see org.eclipse.e4.ui.model.application.ui.MUILabel
+	 * @since 1.0
 	 * @generated
 	 */
 	public Adapter createUILabelAdapter() {
@@ -611,6 +638,7 @@ public class MenuAdapterFactory extends AdapterFactoryImpl {
 	 * <!-- end-user-doc -->
 	 * @return the new adapter.
 	 * @see org.eclipse.e4.ui.model.application.ui.MElementContainer
+	 * @since 1.0
 	 * @generated
 	 */
 	public Adapter createElementContainerAdapter() {
@@ -625,6 +653,7 @@ public class MenuAdapterFactory extends AdapterFactoryImpl {
 	 * <!-- end-user-doc -->
 	 * @return the new adapter.
 	 * @see org.eclipse.e4.ui.model.application.ui.MContext
+	 * @since 1.0
 	 * @generated
 	 */
 	public Adapter createContextAdapter() {
@@ -639,6 +668,7 @@ public class MenuAdapterFactory extends AdapterFactoryImpl {
 	 * <!-- end-user-doc -->
 	 * @return the new adapter.
 	 * @see org.eclipse.e4.ui.model.application.MContribution
+	 * @since 1.0
 	 * @generated
 	 */
 	public Adapter createContributionAdapter() {
@@ -653,6 +683,7 @@ public class MenuAdapterFactory extends AdapterFactoryImpl {
 	 * <!-- end-user-doc -->
 	 * @return the new adapter.
 	 * @see org.eclipse.e4.ui.model.application.ui.basic.MTrimElement
+	 * @since 1.0
 	 * @generated
 	 */
 	public Adapter createTrimElementAdapter() {

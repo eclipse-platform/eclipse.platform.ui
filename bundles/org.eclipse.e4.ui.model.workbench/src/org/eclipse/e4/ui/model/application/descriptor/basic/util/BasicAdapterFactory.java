@@ -134,6 +134,7 @@ public class BasicAdapterFactory extends AdapterFactoryImpl {
 	 * <!-- end-user-doc -->
 	 * @return the new adapter.
 	 * @see org.eclipse.e4.ui.model.application.descriptor.basic.MPartDescriptor
+	 * @since 1.0
 	 * @generated
 	 */
 	public Adapter createPartDescriptorAdapter() {
@@ -148,6 +149,7 @@ public class BasicAdapterFactory extends AdapterFactoryImpl {
 	 * <!-- end-user-doc -->
 	 * @return the new adapter.
 	 * @see org.eclipse.e4.ui.model.application.descriptor.basic.MPartDescriptorContainer
+	 * @since 1.0
 	 * @generated
 	 */
 	public Adapter createPartDescriptorContainerAdapter() {
@@ -162,6 +164,7 @@ public class BasicAdapterFactory extends AdapterFactoryImpl {
 	 * <!-- end-user-doc -->
 	 * @return the new adapter.
 	 * @see org.eclipse.e4.ui.model.application.ui.MUILabel
+	 * @since 1.0
 	 * @generated
 	 */
 	public Adapter createUILabelAdapter() {
@@ -176,6 +179,7 @@ public class BasicAdapterFactory extends AdapterFactoryImpl {
 	 * <!-- end-user-doc -->
 	 * @return the new adapter.
 	 * @see org.eclipse.e4.ui.model.application.commands.MHandlerContainer
+	 * @since 1.0
 	 * @generated
 	 */
 	public Adapter createHandlerContainerAdapter() {
@@ -190,6 +194,7 @@ public class BasicAdapterFactory extends AdapterFactoryImpl {
 	 * <!-- end-user-doc -->
 	 * @return the new adapter.
 	 * @see org.eclipse.e4.ui.model.application.commands.MBindings
+	 * @since 1.0
 	 * @generated
 	 */
 	public Adapter createBindingsAdapter() {
@@ -204,6 +209,7 @@ public class BasicAdapterFactory extends AdapterFactoryImpl {
 	 * <!-- end-user-doc -->
 	 * @return the new adapter.
 	 * @see org.eclipse.e4.ui.model.application.MApplicationElement
+	 * @since 1.0
 	 * @generated
 	 */
 	public Adapter createApplicationElementAdapter() {
@@ -218,6 +224,7 @@ public class BasicAdapterFactory extends AdapterFactoryImpl {
 	 * <!-- end-user-doc -->
 	 * @return the new adapter.
 	 * @see org.eclipse.e4.ui.model.application.ui.MLocalizable
+	 * @since 1.1
 	 * @generated
 	 */
 	public Adapter createLocalizableAdapter() {

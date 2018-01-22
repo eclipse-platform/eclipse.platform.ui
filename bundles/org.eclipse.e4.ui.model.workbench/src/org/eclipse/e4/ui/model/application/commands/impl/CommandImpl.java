@@ -46,6 +46,7 @@ import org.eclipse.emf.ecore.util.InternalEList;
  *   <li>{@link org.eclipse.e4.ui.model.application.commands.impl.CommandImpl#getLocalizedDescription <em>Localized Description</em>}</li>
  * </ul>
  *
+ * @since 1.0
  * @generated
  */
 public class CommandImpl extends ApplicationElementImpl implements MCommand {
@@ -422,7 +423,7 @@ public class CommandImpl extends ApplicationElementImpl implements MCommand {
 	public String toString() {
 		if (eIsProxy()) return super.toString();
 
-		StringBuffer result = new StringBuffer(super.toString());
+		StringBuilder result = new StringBuilder(super.toString());
 		result.append(" (commandName: "); //$NON-NLS-1$
 		result.append(commandName);
 		result.append(", description: "); //$NON-NLS-1$

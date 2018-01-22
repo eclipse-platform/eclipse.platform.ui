@@ -19,6 +19,7 @@ import org.eclipse.emf.ecore.EClass;
  * An implementation of the model object '<em><b>Tool Bar Element</b></em>'.
  * <!-- end-user-doc -->
  *
+ * @since 1.0
  * @generated
  */
 public abstract class ToolBarElementImpl extends UIElementImpl implements MToolBarElement {

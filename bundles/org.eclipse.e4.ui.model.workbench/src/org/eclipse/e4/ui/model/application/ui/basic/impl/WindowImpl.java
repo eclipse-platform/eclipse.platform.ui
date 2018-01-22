@@ -74,6 +74,7 @@ import org.eclipse.emf.ecore.util.InternalEList;
  *   <li>{@link org.eclipse.e4.ui.model.application.ui.basic.impl.WindowImpl#getSharedElements <em>Shared Elements</em>}</li>
  * </ul>
  *
+ * @since 1.0
  * @generated
  */
 public class WindowImpl extends ElementContainerImpl<MWindowElement> implements MWindow {
@@ -82,6 +83,7 @@ public class WindowImpl extends ElementContainerImpl<MWindowElement> implements 
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @see #getLabel()
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -92,6 +94,7 @@ public class WindowImpl extends ElementContainerImpl<MWindowElement> implements 
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @see #getLabel()
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -102,6 +105,7 @@ public class WindowImpl extends ElementContainerImpl<MWindowElement> implements 
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @see #getIconURI()
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -112,6 +116,7 @@ public class WindowImpl extends ElementContainerImpl<MWindowElement> implements 
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @see #getIconURI()
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -122,6 +127,7 @@ public class WindowImpl extends ElementContainerImpl<MWindowElement> implements 
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @see #getTooltip()
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -132,6 +138,7 @@ public class WindowImpl extends ElementContainerImpl<MWindowElement> implements 
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @see #getTooltip()
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -384,6 +391,7 @@ public class WindowImpl extends ElementContainerImpl<MWindowElement> implements 
 	/**
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 */
 	public String getLabel() {
@@ -393,6 +401,7 @@ public class WindowImpl extends ElementContainerImpl<MWindowElement> implements 
 	/**
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 */
 	public void setLabel(String newLabel) {
@@ -405,6 +414,7 @@ public class WindowImpl extends ElementContainerImpl<MWindowElement> implements 
 	/**
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 */
 	public String getIconURI() {
@@ -414,6 +424,7 @@ public class WindowImpl extends ElementContainerImpl<MWindowElement> implements 
 	/**
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 */
 	public void setIconURI(String newIconURI) {
@@ -426,6 +437,7 @@ public class WindowImpl extends ElementContainerImpl<MWindowElement> implements 
 	/**
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 */
 	public String getTooltip() {
@@ -435,6 +447,7 @@ public class WindowImpl extends ElementContainerImpl<MWindowElement> implements 
 	/**
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 */
 	public void setTooltip(String newTooltip) {
@@ -1056,7 +1069,7 @@ public class WindowImpl extends ElementContainerImpl<MWindowElement> implements 
 	public String toString() {
 		if (eIsProxy()) return super.toString();
 
-		StringBuffer result = new StringBuffer(super.toString());
+		StringBuilder result = new StringBuilder(super.toString());
 		result.append(" (label: "); //$NON-NLS-1$
 		result.append(label);
 		result.append(", iconURI: "); //$NON-NLS-1$

@@ -19,6 +19,7 @@ import org.eclipse.emf.ecore.EClass;
  * An implementation of the model object '<em><b>Generic Stack</b></em>'.
  * <!-- end-user-doc -->
  *
+ * @since 1.0
  * @generated
  */
 public abstract class GenericStackImpl<T extends MUIElement> extends ElementContainerImpl<T> implements MGenericStack<T> {

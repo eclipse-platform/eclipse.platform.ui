@@ -24,6 +24,7 @@ import org.eclipse.emf.ecore.plugin.EcorePlugin;
  * <!-- end-user-doc -->
  * @generated
  */
+@SuppressWarnings("deprecation")
 public class UiFactoryImpl extends EFactoryImpl implements MUiFactory {
 	/**
 	 * The singleton instance of the factory.
@@ -110,6 +111,7 @@ public class UiFactoryImpl extends EFactoryImpl implements MUiFactory {
 	/**
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 */
 	public MCoreExpression createCoreExpression() {
@@ -130,6 +132,7 @@ public class UiFactoryImpl extends EFactoryImpl implements MUiFactory {
 	/**
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 */
 	public SideValue createSideValueFromString(EDataType eDataType, String initialValue) {
@@ -141,6 +144,7 @@ public class UiFactoryImpl extends EFactoryImpl implements MUiFactory {
 	/**
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 */
 	public String convertSideValueToString(EDataType eDataType, Object instanceValue) {

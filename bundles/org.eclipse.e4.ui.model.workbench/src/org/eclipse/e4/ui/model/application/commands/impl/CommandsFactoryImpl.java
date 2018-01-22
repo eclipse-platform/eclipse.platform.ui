@@ -112,6 +112,7 @@ public class CommandsFactoryImpl extends EFactoryImpl implements MCommandsFactor
 	/**
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 */
 	public MBindingContext createBindingContext() {
@@ -122,6 +123,7 @@ public class CommandsFactoryImpl extends EFactoryImpl implements MCommandsFactor
 	/**
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 */
 	public MBindingTable createBindingTable() {
@@ -132,6 +134,7 @@ public class CommandsFactoryImpl extends EFactoryImpl implements MCommandsFactor
 	/**
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 */
 	public MCommand createCommand() {
@@ -142,6 +145,7 @@ public class CommandsFactoryImpl extends EFactoryImpl implements MCommandsFactor
 	/**
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 */
 	public MCommandParameter createCommandParameter() {
@@ -152,6 +156,7 @@ public class CommandsFactoryImpl extends EFactoryImpl implements MCommandsFactor
 	/**
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 */
 	public MHandler createHandler() {
@@ -162,6 +167,7 @@ public class CommandsFactoryImpl extends EFactoryImpl implements MCommandsFactor
 	/**
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 */
 	public MKeyBinding createKeyBinding() {
@@ -172,6 +178,7 @@ public class CommandsFactoryImpl extends EFactoryImpl implements MCommandsFactor
 	/**
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 */
 	public MParameter createParameter() {
@@ -182,6 +189,7 @@ public class CommandsFactoryImpl extends EFactoryImpl implements MCommandsFactor
 	/**
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 */
 	public MCategory createCategory() {

@@ -33,6 +33,7 @@ public interface MAdvancedFactory {
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @return a new object of class '<em>Placeholder</em>'.
+	 * @since 1.0
 	 * @generated
 	 */
 	MPlaceholder createPlaceholder();
@@ -42,6 +43,7 @@ public interface MAdvancedFactory {
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @return a new object of class '<em>Perspective</em>'.
+	 * @since 1.0
 	 * @generated
 	 */
 	MPerspective createPerspective();
@@ -51,6 +53,7 @@ public interface MAdvancedFactory {
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @return a new object of class '<em>Perspective Stack</em>'.
+	 * @since 1.0
 	 * @generated
 	 */
 	MPerspectiveStack createPerspectiveStack();
@@ -60,6 +63,7 @@ public interface MAdvancedFactory {
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @return a new object of class '<em>Area</em>'.
+	 * @since 1.0
 	 * @generated
 	 */
 	MArea createArea();

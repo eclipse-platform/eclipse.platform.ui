@@ -30,6 +30,7 @@ import org.eclipse.emf.ecore.impl.ENotificationImpl;
  *   <li>{@link org.eclipse.e4.ui.model.application.commands.impl.HandlerImpl#getCommand <em>Command</em>}</li>
  * </ul>
  *
+ * @since 1.0
  * @generated
  */
 public class HandlerImpl extends ContributionImpl implements MHandler {

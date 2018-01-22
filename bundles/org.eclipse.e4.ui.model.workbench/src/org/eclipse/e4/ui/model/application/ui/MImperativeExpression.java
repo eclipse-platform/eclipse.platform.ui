@@ -20,13 +20,11 @@ import org.eclipse.e4.ui.model.application.MContribution;
  * The following features are supported:
  * </p>
  * <ul>
- * <li>{@link org.eclipse.e4.ui.model.application.ui.MImperativeExpression#isTracking
- * <em>Tracking</em>}</li>
+ *   <li>{@link org.eclipse.e4.ui.model.application.ui.MImperativeExpression#isTracking <em>Tracking</em>}</li>
  * </ul>
  *
  * @model
  * @generated
- * @since 2.0
  */
 public interface MImperativeExpression extends MExpression, MContribution {
 

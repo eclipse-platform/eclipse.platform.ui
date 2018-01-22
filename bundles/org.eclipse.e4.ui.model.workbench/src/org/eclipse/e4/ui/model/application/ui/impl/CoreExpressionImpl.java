@@ -27,6 +27,7 @@ import org.eclipse.emf.ecore.impl.ENotificationImpl;
  *   <li>{@link org.eclipse.e4.ui.model.application.ui.impl.CoreExpressionImpl#getCoreExpression <em>Core Expression</em>}</li>
  * </ul>
  *
+ * @since 1.0
  * @generated
  */
 public class CoreExpressionImpl extends ExpressionImpl implements MCoreExpression {
@@ -208,7 +209,7 @@ public class CoreExpressionImpl extends ExpressionImpl implements MCoreExpressio
 	public String toString() {
 		if (eIsProxy()) return super.toString();
 
-		StringBuffer result = new StringBuffer(super.toString());
+		StringBuilder result = new StringBuilder(super.toString());
 		result.append(" (coreExpressionId: "); //$NON-NLS-1$
 		result.append(coreExpressionId);
 		result.append(", coreExpression: "); //$NON-NLS-1$

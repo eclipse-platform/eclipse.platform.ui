@@ -27,6 +27,7 @@ import org.eclipse.emf.ecore.EObject;
  * @see org.eclipse.e4.ui.model.application.ui.impl.UiPackageImpl
  * @generated
  */
+@SuppressWarnings("deprecation")
 public class UiAdapterFactory extends AdapterFactoryImpl {
 	/**
 	 * The cached model package.
@@ -167,6 +168,7 @@ public class UiAdapterFactory extends AdapterFactoryImpl {
 	 * <!-- end-user-doc -->
 	 * @return the new adapter.
 	 * @see org.eclipse.e4.ui.model.application.ui.MContext
+	 * @since 1.0
 	 * @generated
 	 */
 	public Adapter createContextAdapter() {
@@ -181,6 +183,7 @@ public class UiAdapterFactory extends AdapterFactoryImpl {
 	 * <!-- end-user-doc -->
 	 * @return the new adapter.
 	 * @see org.eclipse.e4.ui.model.application.ui.MDirtyable
+	 * @since 1.0
 	 * @generated
 	 */
 	public Adapter createDirtyableAdapter() {
@@ -195,8 +198,11 @@ public class UiAdapterFactory extends AdapterFactoryImpl {
 	 * <!-- end-user-doc -->
 	 * @return the new adapter.
 	 * @see org.eclipse.e4.ui.model.application.ui.MInput
+	 * @since 1.0
+	 * @deprecated See {@link MInput model documentation} for details.
 	 * @generated
 	 */
+	@Deprecated
 	public Adapter createInputAdapter() {
 		return null;
 	}
@@ -209,6 +215,7 @@ public class UiAdapterFactory extends AdapterFactoryImpl {
 	 * <!-- end-user-doc -->
 	 * @return the new adapter.
 	 * @see org.eclipse.e4.ui.model.application.ui.MUIElement
+	 * @since 1.0
 	 * @generated
 	 */
 	public Adapter createUIElementAdapter() {
@@ -223,6 +230,7 @@ public class UiAdapterFactory extends AdapterFactoryImpl {
 	 * <!-- end-user-doc -->
 	 * @return the new adapter.
 	 * @see org.eclipse.e4.ui.model.application.ui.MUILabel
+	 * @since 1.0
 	 * @generated
 	 */
 	public Adapter createUILabelAdapter() {
@@ -237,6 +245,7 @@ public class UiAdapterFactory extends AdapterFactoryImpl {
 	 * <!-- end-user-doc -->
 	 * @return the new adapter.
 	 * @see org.eclipse.e4.ui.model.application.ui.MElementContainer
+	 * @since 1.0
 	 * @generated
 	 */
 	public Adapter createElementContainerAdapter() {
@@ -251,6 +260,7 @@ public class UiAdapterFactory extends AdapterFactoryImpl {
 	 * <!-- end-user-doc -->
 	 * @return the new adapter.
 	 * @see org.eclipse.e4.ui.model.application.ui.MGenericStack
+	 * @since 1.0
 	 * @generated
 	 */
 	public Adapter createGenericStackAdapter() {
@@ -265,6 +275,7 @@ public class UiAdapterFactory extends AdapterFactoryImpl {
 	 * <!-- end-user-doc -->
 	 * @return the new adapter.
 	 * @see org.eclipse.e4.ui.model.application.ui.MGenericTile
+	 * @since 1.0
 	 * @generated
 	 */
 	public Adapter createGenericTileAdapter() {
@@ -279,6 +290,7 @@ public class UiAdapterFactory extends AdapterFactoryImpl {
 	 * <!-- end-user-doc -->
 	 * @return the new adapter.
 	 * @see org.eclipse.e4.ui.model.application.ui.MGenericTrimContainer
+	 * @since 1.0
 	 * @generated
 	 */
 	public Adapter createGenericTrimContainerAdapter() {
@@ -293,6 +305,7 @@ public class UiAdapterFactory extends AdapterFactoryImpl {
 	 * <!-- end-user-doc -->
 	 * @return the new adapter.
 	 * @see org.eclipse.e4.ui.model.application.ui.MExpression
+	 * @since 1.0
 	 * @generated
 	 */
 	public Adapter createExpressionAdapter() {
@@ -307,6 +320,7 @@ public class UiAdapterFactory extends AdapterFactoryImpl {
 	 * <!-- end-user-doc -->
 	 * @return the new adapter.
 	 * @see org.eclipse.e4.ui.model.application.ui.MCoreExpression
+	 * @since 1.0
 	 * @generated
 	 */
 	public Adapter createCoreExpressionAdapter() {
@@ -335,6 +349,7 @@ public class UiAdapterFactory extends AdapterFactoryImpl {
 	 * <!-- end-user-doc -->
 	 * @return the new adapter.
 	 * @see org.eclipse.e4.ui.model.application.ui.MSnippetContainer
+	 * @since 1.0
 	 * @generated
 	 */
 	public Adapter createSnippetContainerAdapter() {
@@ -349,6 +364,7 @@ public class UiAdapterFactory extends AdapterFactoryImpl {
 	 * <!-- end-user-doc -->
 	 * @return the new adapter.
 	 * @see org.eclipse.e4.ui.model.application.ui.MLocalizable
+	 * @since 1.1
 	 * @generated
 	 */
 	public Adapter createLocalizableAdapter() {
@@ -363,6 +379,7 @@ public class UiAdapterFactory extends AdapterFactoryImpl {
 	 * <!-- end-user-doc -->
 	 * @return the new adapter.
 	 * @see org.eclipse.e4.ui.model.application.MApplicationElement
+	 * @since 1.0
 	 * @generated
 	 */
 	public Adapter createApplicationElementAdapter() {
@@ -377,6 +394,7 @@ public class UiAdapterFactory extends AdapterFactoryImpl {
 	 * <!-- end-user-doc -->
 	 * @return the new adapter.
 	 * @see org.eclipse.e4.ui.model.application.MContribution
+	 * @since 1.0
 	 * @generated
 	 */
 	public Adapter createContributionAdapter() {

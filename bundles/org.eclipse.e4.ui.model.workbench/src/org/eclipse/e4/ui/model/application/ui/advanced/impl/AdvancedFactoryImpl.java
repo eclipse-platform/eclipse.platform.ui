@@ -81,6 +81,7 @@ public class AdvancedFactoryImpl extends EFactoryImpl implements MAdvancedFactor
 	/**
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 */
 	public MPlaceholder createPlaceholder() {
@@ -91,6 +92,7 @@ public class AdvancedFactoryImpl extends EFactoryImpl implements MAdvancedFactor
 	/**
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 */
 	public MPerspective createPerspective() {
@@ -101,6 +103,7 @@ public class AdvancedFactoryImpl extends EFactoryImpl implements MAdvancedFactor
 	/**
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 */
 	public MPerspectiveStack createPerspectiveStack() {
@@ -111,6 +114,7 @@ public class AdvancedFactoryImpl extends EFactoryImpl implements MAdvancedFactor
 	/**
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 */
 	public MArea createArea() {

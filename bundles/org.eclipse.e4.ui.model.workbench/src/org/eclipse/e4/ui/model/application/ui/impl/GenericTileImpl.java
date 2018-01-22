@@ -27,6 +27,7 @@ import org.eclipse.emf.ecore.impl.ENotificationImpl;
  *   <li>{@link org.eclipse.e4.ui.model.application.ui.impl.GenericTileImpl#isHorizontal <em>Horizontal</em>}</li>
  * </ul>
  *
+ * @since 1.0
  * @generated
  */
 public abstract class GenericTileImpl<T extends MUIElement> extends ElementContainerImpl<T> implements MGenericTile<T> {
@@ -157,7 +158,7 @@ public abstract class GenericTileImpl<T extends MUIElement> extends ElementConta
 	public String toString() {
 		if (eIsProxy()) return super.toString();
 
-		StringBuffer result = new StringBuffer(super.toString());
+		StringBuilder result = new StringBuilder(super.toString());
 		result.append(" (horizontal: "); //$NON-NLS-1$
 		result.append(horizontal);
 		result.append(')');

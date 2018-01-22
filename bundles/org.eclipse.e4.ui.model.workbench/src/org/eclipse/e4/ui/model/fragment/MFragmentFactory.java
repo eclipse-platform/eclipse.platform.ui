@@ -34,6 +34,7 @@ public interface MFragmentFactory {
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @return a new object of class '<em>Model Fragments</em>'.
+	 * @since 1.0
 	 * @generated
 	 */
 	MModelFragments createModelFragments();
@@ -43,6 +44,7 @@ public interface MFragmentFactory {
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @return a new object of class '<em>String Model Fragment</em>'.
+	 * @since 1.0
 	 * @generated
 	 */
 	MStringModelFragment createStringModelFragment();

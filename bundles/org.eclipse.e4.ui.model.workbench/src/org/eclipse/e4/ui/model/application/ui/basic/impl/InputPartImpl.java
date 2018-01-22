@@ -28,8 +28,11 @@ import org.eclipse.emf.ecore.impl.ENotificationImpl;
  *   <li>{@link org.eclipse.e4.ui.model.application.ui.basic.impl.InputPartImpl#getInputURI <em>Input URI</em>}</li>
  * </ul>
  *
+ * @since 1.0
+ * @deprecated See {@link MInputPart model documentation} for details.
  * @generated
  */
+@Deprecated
 public class InputPartImpl extends PartImpl implements MInputPart {
 	/**
 	 * The default value of the '{@link #getInputURI() <em>Input URI</em>}' attribute.
@@ -190,7 +193,7 @@ public class InputPartImpl extends PartImpl implements MInputPart {
 	public String toString() {
 		if (eIsProxy()) return super.toString();
 
-		StringBuffer result = new StringBuffer(super.toString());
+		StringBuilder result = new StringBuilder(super.toString());
 		result.append(" (inputURI: "); //$NON-NLS-1$
 		result.append(inputURI);
 		result.append(')');

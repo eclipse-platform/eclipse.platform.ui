@@ -38,6 +38,7 @@ import org.eclipse.emf.ecore.util.InternalEList;
  *   <li>{@link org.eclipse.e4.ui.model.application.commands.impl.BindingTableImpl#getBindingContext <em>Binding Context</em>}</li>
  * </ul>
  *
+ * @since 1.0
  * @generated
  */
 public class BindingTableImpl extends ApplicationElementImpl implements MBindingTable {

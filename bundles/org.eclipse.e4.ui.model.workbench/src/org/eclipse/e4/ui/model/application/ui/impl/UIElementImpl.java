@@ -48,6 +48,7 @@ import org.eclipse.emf.ecore.util.EcoreUtil;
  *   <li>{@link org.eclipse.e4.ui.model.application.ui.impl.UIElementImpl#getLocalizedAccessibilityPhrase <em>Localized Accessibility Phrase</em>}</li>
  * </ul>
  *
+ * @since 1.0
  * @generated
  */
 public abstract class UIElementImpl extends ApplicationElementImpl implements MUIElement {
@@ -770,7 +771,7 @@ public abstract class UIElementImpl extends ApplicationElementImpl implements MU
 	public String toString() {
 		if (eIsProxy()) return super.toString();
 
-		StringBuffer result = new StringBuffer(super.toString());
+		StringBuilder result = new StringBuilder(super.toString());
 		result.append(" (widget: "); //$NON-NLS-1$
 		result.append(widget);
 		result.append(", renderer: "); //$NON-NLS-1$

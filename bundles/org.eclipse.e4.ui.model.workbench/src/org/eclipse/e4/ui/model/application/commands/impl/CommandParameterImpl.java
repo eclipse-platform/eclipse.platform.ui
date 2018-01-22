@@ -29,6 +29,7 @@ import org.eclipse.emf.ecore.impl.ENotificationImpl;
  *   <li>{@link org.eclipse.e4.ui.model.application.commands.impl.CommandParameterImpl#isOptional <em>Optional</em>}</li>
  * </ul>
  *
+ * @since 1.0
  * @generated
  */
 public class CommandParameterImpl extends ApplicationElementImpl implements MCommandParameter {
@@ -261,7 +262,7 @@ public class CommandParameterImpl extends ApplicationElementImpl implements MCom
 	public String toString() {
 		if (eIsProxy()) return super.toString();
 
-		StringBuffer result = new StringBuffer(super.toString());
+		StringBuilder result = new StringBuilder(super.toString());
 		result.append(" (name: "); //$NON-NLS-1$
 		result.append(name);
 		result.append(", typeId: "); //$NON-NLS-1$

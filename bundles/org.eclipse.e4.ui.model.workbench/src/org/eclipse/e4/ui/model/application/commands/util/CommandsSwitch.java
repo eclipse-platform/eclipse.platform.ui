@@ -173,6 +173,7 @@ public class CommandsSwitch<T> extends Switch<T> {
 	 * @param object the target of the switch.
 	 * @return the result of interpreting the object as an instance of '<em>Binding Table Container</em>'.
 	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+	 * @since 1.0
 	 * @generated
 	 */
 	public T caseBindingTableContainer(MBindingTableContainer object) {
@@ -188,6 +189,7 @@ public class CommandsSwitch<T> extends Switch<T> {
 	 * @param object the target of the switch.
 	 * @return the result of interpreting the object as an instance of '<em>Bindings</em>'.
 	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+	 * @since 1.0
 	 * @generated
 	 */
 	public T caseBindings(MBindings object) {
@@ -203,6 +205,7 @@ public class CommandsSwitch<T> extends Switch<T> {
 	 * @param object the target of the switch.
 	 * @return the result of interpreting the object as an instance of '<em>Binding Context</em>'.
 	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+	 * @since 1.0
 	 * @generated
 	 */
 	public T caseBindingContext(MBindingContext object) {
@@ -218,6 +221,7 @@ public class CommandsSwitch<T> extends Switch<T> {
 	 * @param object the target of the switch.
 	 * @return the result of interpreting the object as an instance of '<em>Binding Table</em>'.
 	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+	 * @since 1.0
 	 * @generated
 	 */
 	public T caseBindingTable(MBindingTable object) {
@@ -233,6 +237,7 @@ public class CommandsSwitch<T> extends Switch<T> {
 	 * @param object the target of the switch.
 	 * @return the result of interpreting the object as an instance of '<em>Command</em>'.
 	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+	 * @since 1.0
 	 * @generated
 	 */
 	public T caseCommand(MCommand object) {
@@ -248,6 +253,7 @@ public class CommandsSwitch<T> extends Switch<T> {
 	 * @param object the target of the switch.
 	 * @return the result of interpreting the object as an instance of '<em>Command Parameter</em>'.
 	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+	 * @since 1.0
 	 * @generated
 	 */
 	public T caseCommandParameter(MCommandParameter object) {
@@ -263,6 +269,7 @@ public class CommandsSwitch<T> extends Switch<T> {
 	 * @param object the target of the switch.
 	 * @return the result of interpreting the object as an instance of '<em>Handler</em>'.
 	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+	 * @since 1.0
 	 * @generated
 	 */
 	public T caseHandler(MHandler object) {
@@ -278,6 +285,7 @@ public class CommandsSwitch<T> extends Switch<T> {
 	 * @param object the target of the switch.
 	 * @return the result of interpreting the object as an instance of '<em>Handler Container</em>'.
 	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+	 * @since 1.0
 	 * @generated
 	 */
 	public T caseHandlerContainer(MHandlerContainer object) {
@@ -293,6 +301,7 @@ public class CommandsSwitch<T> extends Switch<T> {
 	 * @param object the target of the switch.
 	 * @return the result of interpreting the object as an instance of '<em>Key Binding</em>'.
 	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+	 * @since 1.0
 	 * @generated
 	 */
 	public T caseKeyBinding(MKeyBinding object) {
@@ -308,6 +317,7 @@ public class CommandsSwitch<T> extends Switch<T> {
 	 * @param object the target of the switch.
 	 * @return the result of interpreting the object as an instance of '<em>Key Sequence</em>'.
 	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+	 * @since 1.0
 	 * @generated
 	 */
 	public T caseKeySequence(MKeySequence object) {
@@ -323,6 +333,7 @@ public class CommandsSwitch<T> extends Switch<T> {
 	 * @param object the target of the switch.
 	 * @return the result of interpreting the object as an instance of '<em>Parameter</em>'.
 	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+	 * @since 1.0
 	 * @generated
 	 */
 	public T caseParameter(MParameter object) {
@@ -338,6 +349,7 @@ public class CommandsSwitch<T> extends Switch<T> {
 	 * @param object the target of the switch.
 	 * @return the result of interpreting the object as an instance of '<em>Category</em>'.
 	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+	 * @since 1.0
 	 * @generated
 	 */
 	public T caseCategory(MCategory object) {
@@ -353,6 +365,7 @@ public class CommandsSwitch<T> extends Switch<T> {
 	 * @param object the target of the switch.
 	 * @return the result of interpreting the object as an instance of '<em>Element</em>'.
 	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+	 * @since 1.0
 	 * @generated
 	 */
 	public T caseApplicationElement(MApplicationElement object) {
@@ -368,6 +381,7 @@ public class CommandsSwitch<T> extends Switch<T> {
 	 * @param object the target of the switch.
 	 * @return the result of interpreting the object as an instance of '<em>Localizable</em>'.
 	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+	 * @since 1.1
 	 * @generated
 	 */
 	public T caseLocalizable(MLocalizable object) {
@@ -383,6 +397,7 @@ public class CommandsSwitch<T> extends Switch<T> {
 	 * @param object the target of the switch.
 	 * @return the result of interpreting the object as an instance of '<em>Contribution</em>'.
 	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+	 * @since 1.0
 	 * @generated
 	 */
 	public T caseContribution(MContribution object) {

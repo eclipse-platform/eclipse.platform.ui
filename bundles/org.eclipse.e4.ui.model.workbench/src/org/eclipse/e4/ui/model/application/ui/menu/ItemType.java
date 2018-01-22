@@ -135,7 +135,8 @@ public enum ItemType implements InternalItemType {
 	 * @generated
 	 */
 	public static ItemType get(String literal) {
-		for (ItemType result : VALUES_ARRAY) {
+		for (int i = 0; i < VALUES_ARRAY.length; ++i) {
+			ItemType result = VALUES_ARRAY[i];
 			if (result.toString().equals(literal)) {
 				return result;
 			}
@@ -152,7 +153,8 @@ public enum ItemType implements InternalItemType {
 	 * @generated
 	 */
 	public static ItemType getByName(String name) {
-		for (ItemType result : VALUES_ARRAY) {
+		for (int i = 0; i < VALUES_ARRAY.length; ++i) {
+			ItemType result = VALUES_ARRAY[i];
 			if (result.getName().equals(name)) {
 				return result;
 			}

@@ -29,6 +29,7 @@ import org.eclipse.emf.ecore.impl.ENotificationImpl;
  *   <li>{@link org.eclipse.e4.ui.model.application.ui.menu.impl.DirectToolItemImpl#getObject <em>Object</em>}</li>
  * </ul>
  *
+ * @since 1.0
  * @generated
  */
 public class DirectToolItemImpl extends ToolItemImpl implements MDirectToolItem {
@@ -37,6 +38,7 @@ public class DirectToolItemImpl extends ToolItemImpl implements MDirectToolItem 
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @see #getContributionURI()
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -47,6 +49,7 @@ public class DirectToolItemImpl extends ToolItemImpl implements MDirectToolItem 
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @see #getContributionURI()
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -94,6 +97,7 @@ public class DirectToolItemImpl extends ToolItemImpl implements MDirectToolItem 
 	/**
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 */
 	public String getContributionURI() {
@@ -103,6 +107,7 @@ public class DirectToolItemImpl extends ToolItemImpl implements MDirectToolItem 
 	/**
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 */
 	public void setContributionURI(String newContributionURI) {
@@ -244,7 +249,7 @@ public class DirectToolItemImpl extends ToolItemImpl implements MDirectToolItem 
 	public String toString() {
 		if (eIsProxy()) return super.toString();
 
-		StringBuffer result = new StringBuffer(super.toString());
+		StringBuilder result = new StringBuilder(super.toString());
 		result.append(" (contributionURI: "); //$NON-NLS-1$
 		result.append(contributionURI);
 		result.append(", object: "); //$NON-NLS-1$

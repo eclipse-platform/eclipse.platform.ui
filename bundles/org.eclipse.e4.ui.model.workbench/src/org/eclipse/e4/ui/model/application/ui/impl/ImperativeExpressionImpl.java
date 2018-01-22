@@ -38,6 +38,7 @@ public class ImperativeExpressionImpl extends ExpressionImpl implements MImperat
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @see #getContributionURI()
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -48,6 +49,7 @@ public class ImperativeExpressionImpl extends ExpressionImpl implements MImperat
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @see #getContributionURI()
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -115,6 +117,7 @@ public class ImperativeExpressionImpl extends ExpressionImpl implements MImperat
 	/**
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 */
 	public String getContributionURI() {
@@ -124,6 +127,7 @@ public class ImperativeExpressionImpl extends ExpressionImpl implements MImperat
 	/**
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 */
 	public void setContributionURI(String newContributionURI) {
@@ -183,12 +187,12 @@ public class ImperativeExpressionImpl extends ExpressionImpl implements MImperat
 	@Override
 	public Object eGet(int featureID, boolean resolve, boolean coreType) {
 		switch (featureID) {
-		case UiPackageImpl.IMPERATIVE_EXPRESSION__CONTRIBUTION_URI:
-			return getContributionURI();
-		case UiPackageImpl.IMPERATIVE_EXPRESSION__OBJECT:
-			return getObject();
-		case UiPackageImpl.IMPERATIVE_EXPRESSION__TRACKING:
-			return isTracking();
+			case UiPackageImpl.IMPERATIVE_EXPRESSION__CONTRIBUTION_URI:
+				return getContributionURI();
+			case UiPackageImpl.IMPERATIVE_EXPRESSION__OBJECT:
+				return getObject();
+			case UiPackageImpl.IMPERATIVE_EXPRESSION__TRACKING:
+				return isTracking();
 		}
 		return super.eGet(featureID, resolve, coreType);
 	}
@@ -201,15 +205,15 @@ public class ImperativeExpressionImpl extends ExpressionImpl implements MImperat
 	@Override
 	public void eSet(int featureID, Object newValue) {
 		switch (featureID) {
-		case UiPackageImpl.IMPERATIVE_EXPRESSION__CONTRIBUTION_URI:
-			setContributionURI((String)newValue);
-			return;
-		case UiPackageImpl.IMPERATIVE_EXPRESSION__OBJECT:
-			setObject(newValue);
-			return;
-		case UiPackageImpl.IMPERATIVE_EXPRESSION__TRACKING:
-			setTracking((Boolean)newValue);
-			return;
+			case UiPackageImpl.IMPERATIVE_EXPRESSION__CONTRIBUTION_URI:
+				setContributionURI((String)newValue);
+				return;
+			case UiPackageImpl.IMPERATIVE_EXPRESSION__OBJECT:
+				setObject(newValue);
+				return;
+			case UiPackageImpl.IMPERATIVE_EXPRESSION__TRACKING:
+				setTracking((Boolean)newValue);
+				return;
 		}
 		super.eSet(featureID, newValue);
 	}
@@ -222,15 +226,15 @@ public class ImperativeExpressionImpl extends ExpressionImpl implements MImperat
 	@Override
 	public void eUnset(int featureID) {
 		switch (featureID) {
-		case UiPackageImpl.IMPERATIVE_EXPRESSION__CONTRIBUTION_URI:
-			setContributionURI(CONTRIBUTION_URI_EDEFAULT);
-			return;
-		case UiPackageImpl.IMPERATIVE_EXPRESSION__OBJECT:
-			setObject(OBJECT_EDEFAULT);
-			return;
-		case UiPackageImpl.IMPERATIVE_EXPRESSION__TRACKING:
-			setTracking(TRACKING_EDEFAULT);
-			return;
+			case UiPackageImpl.IMPERATIVE_EXPRESSION__CONTRIBUTION_URI:
+				setContributionURI(CONTRIBUTION_URI_EDEFAULT);
+				return;
+			case UiPackageImpl.IMPERATIVE_EXPRESSION__OBJECT:
+				setObject(OBJECT_EDEFAULT);
+				return;
+			case UiPackageImpl.IMPERATIVE_EXPRESSION__TRACKING:
+				setTracking(TRACKING_EDEFAULT);
+				return;
 		}
 		super.eUnset(featureID);
 	}
@@ -243,12 +247,12 @@ public class ImperativeExpressionImpl extends ExpressionImpl implements MImperat
 	@Override
 	public boolean eIsSet(int featureID) {
 		switch (featureID) {
-		case UiPackageImpl.IMPERATIVE_EXPRESSION__CONTRIBUTION_URI:
-			return CONTRIBUTION_URI_EDEFAULT == null ? contributionURI != null : !CONTRIBUTION_URI_EDEFAULT.equals(contributionURI);
-		case UiPackageImpl.IMPERATIVE_EXPRESSION__OBJECT:
-			return OBJECT_EDEFAULT == null ? object != null : !OBJECT_EDEFAULT.equals(object);
-		case UiPackageImpl.IMPERATIVE_EXPRESSION__TRACKING:
-			return tracking != TRACKING_EDEFAULT;
+			case UiPackageImpl.IMPERATIVE_EXPRESSION__CONTRIBUTION_URI:
+				return CONTRIBUTION_URI_EDEFAULT == null ? contributionURI != null : !CONTRIBUTION_URI_EDEFAULT.equals(contributionURI);
+			case UiPackageImpl.IMPERATIVE_EXPRESSION__OBJECT:
+				return OBJECT_EDEFAULT == null ? object != null : !OBJECT_EDEFAULT.equals(object);
+			case UiPackageImpl.IMPERATIVE_EXPRESSION__TRACKING:
+				return tracking != TRACKING_EDEFAULT;
 		}
 		return super.eIsSet(featureID);
 	}
@@ -262,9 +266,9 @@ public class ImperativeExpressionImpl extends ExpressionImpl implements MImperat
 	public int eBaseStructuralFeatureID(int derivedFeatureID, Class<?> baseClass) {
 		if (baseClass == MContribution.class) {
 			switch (derivedFeatureID) {
-			case UiPackageImpl.IMPERATIVE_EXPRESSION__CONTRIBUTION_URI: return ApplicationPackageImpl.CONTRIBUTION__CONTRIBUTION_URI;
-			case UiPackageImpl.IMPERATIVE_EXPRESSION__OBJECT: return ApplicationPackageImpl.CONTRIBUTION__OBJECT;
-			default: return -1;
+				case UiPackageImpl.IMPERATIVE_EXPRESSION__CONTRIBUTION_URI: return ApplicationPackageImpl.CONTRIBUTION__CONTRIBUTION_URI;
+				case UiPackageImpl.IMPERATIVE_EXPRESSION__OBJECT: return ApplicationPackageImpl.CONTRIBUTION__OBJECT;
+				default: return -1;
 			}
 		}
 		return super.eBaseStructuralFeatureID(derivedFeatureID, baseClass);
@@ -279,9 +283,9 @@ public class ImperativeExpressionImpl extends ExpressionImpl implements MImperat
 	public int eDerivedStructuralFeatureID(int baseFeatureID, Class<?> baseClass) {
 		if (baseClass == MContribution.class) {
 			switch (baseFeatureID) {
-			case ApplicationPackageImpl.CONTRIBUTION__CONTRIBUTION_URI: return UiPackageImpl.IMPERATIVE_EXPRESSION__CONTRIBUTION_URI;
-			case ApplicationPackageImpl.CONTRIBUTION__OBJECT: return UiPackageImpl.IMPERATIVE_EXPRESSION__OBJECT;
-			default: return -1;
+				case ApplicationPackageImpl.CONTRIBUTION__CONTRIBUTION_URI: return UiPackageImpl.IMPERATIVE_EXPRESSION__CONTRIBUTION_URI;
+				case ApplicationPackageImpl.CONTRIBUTION__OBJECT: return UiPackageImpl.IMPERATIVE_EXPRESSION__OBJECT;
+				default: return -1;
 			}
 		}
 		return super.eDerivedStructuralFeatureID(baseFeatureID, baseClass);
@@ -296,7 +300,7 @@ public class ImperativeExpressionImpl extends ExpressionImpl implements MImperat
 	public String toString() {
 		if (eIsProxy()) return super.toString();
 
-		StringBuffer result = new StringBuffer(super.toString());
+		StringBuilder result = new StringBuilder(super.toString());
 		result.append(" (contributionURI: "); //$NON-NLS-1$
 		result.append(contributionURI);
 		result.append(", object: "); //$NON-NLS-1$

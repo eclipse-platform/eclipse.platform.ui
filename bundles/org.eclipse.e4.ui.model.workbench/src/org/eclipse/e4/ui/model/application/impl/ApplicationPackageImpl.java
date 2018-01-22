@@ -131,6 +131,7 @@ public class ApplicationPackageImpl extends EPackageImpl {
 	 * <!-- end-user-doc -->
 	 * @see org.eclipse.e4.ui.model.application.impl.ApplicationElementImpl
 	 * @see org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl#getApplicationElement()
+	 * @since 1.0
 	 * @generated
 	 */
 	public static final int APPLICATION_ELEMENT = 2;
@@ -139,6 +140,7 @@ public class ApplicationPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Element Id</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -148,6 +150,7 @@ public class ApplicationPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Persisted State</b></em>' map.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -157,6 +160,7 @@ public class ApplicationPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Tags</b></em>' attribute list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -166,6 +170,7 @@ public class ApplicationPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Contributor URI</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -175,6 +180,7 @@ public class ApplicationPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Transient Data</b></em>' map.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -184,6 +190,7 @@ public class ApplicationPackageImpl extends EPackageImpl {
 	 * The number of structural features of the '<em>Element</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -193,6 +200,7 @@ public class ApplicationPackageImpl extends EPackageImpl {
 	 * The number of operations of the '<em>Element</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -204,6 +212,7 @@ public class ApplicationPackageImpl extends EPackageImpl {
 	 * <!-- end-user-doc -->
 	 * @see org.eclipse.e4.ui.model.application.impl.ApplicationImpl
 	 * @see org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl#getApplication()
+	 * @since 1.0
 	 * @generated
 	 */
 	public static final int APPLICATION = 1;
@@ -212,6 +221,7 @@ public class ApplicationPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Element Id</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -221,6 +231,7 @@ public class ApplicationPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Persisted State</b></em>' map.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -230,6 +241,7 @@ public class ApplicationPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Tags</b></em>' attribute list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -239,6 +251,7 @@ public class ApplicationPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Contributor URI</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -248,6 +261,7 @@ public class ApplicationPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Transient Data</b></em>' map.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -257,6 +271,7 @@ public class ApplicationPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Widget</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -266,6 +281,7 @@ public class ApplicationPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Renderer</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -275,6 +291,7 @@ public class ApplicationPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>To Be Rendered</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -284,6 +301,7 @@ public class ApplicationPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>On Top</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -293,6 +311,7 @@ public class ApplicationPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Visible</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -302,6 +321,7 @@ public class ApplicationPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Parent</b></em>' container reference.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -311,6 +331,7 @@ public class ApplicationPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Container Data</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -320,6 +341,7 @@ public class ApplicationPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Cur Shared Ref</b></em>' reference.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -329,6 +351,7 @@ public class ApplicationPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Visible When</b></em>' containment reference.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -338,6 +361,7 @@ public class ApplicationPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Accessibility Phrase</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -347,6 +371,7 @@ public class ApplicationPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Localized Accessibility Phrase</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -356,6 +381,7 @@ public class ApplicationPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Children</b></em>' containment reference list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -365,6 +391,7 @@ public class ApplicationPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Selected Element</b></em>' reference.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -374,6 +401,7 @@ public class ApplicationPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Context</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -383,6 +411,7 @@ public class ApplicationPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Variables</b></em>' attribute list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -392,6 +421,7 @@ public class ApplicationPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Properties</b></em>' map.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -401,6 +431,7 @@ public class ApplicationPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Handlers</b></em>' containment reference list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -410,6 +441,7 @@ public class ApplicationPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Binding Tables</b></em>' containment reference list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -419,6 +451,7 @@ public class ApplicationPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Root Context</b></em>' containment reference list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -428,6 +461,7 @@ public class ApplicationPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Descriptors</b></em>' containment reference list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -437,6 +471,7 @@ public class ApplicationPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Binding Contexts</b></em>' reference list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -446,6 +481,7 @@ public class ApplicationPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Menu Contributions</b></em>' containment reference list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -455,6 +491,7 @@ public class ApplicationPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Tool Bar Contributions</b></em>' containment reference list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -464,6 +501,7 @@ public class ApplicationPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Trim Contributions</b></em>' containment reference list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -473,6 +511,7 @@ public class ApplicationPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Snippets</b></em>' containment reference list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -482,6 +521,7 @@ public class ApplicationPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Commands</b></em>' containment reference list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -491,6 +531,7 @@ public class ApplicationPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Addons</b></em>' containment reference list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -500,6 +541,7 @@ public class ApplicationPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Categories</b></em>' containment reference list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -509,6 +551,7 @@ public class ApplicationPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Dialogs</b></em>' reference list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.1
 	 * @generated
 	 * @ordered
 	 */
@@ -518,6 +561,7 @@ public class ApplicationPackageImpl extends EPackageImpl {
 	 * The number of structural features of the '<em>Application</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -527,6 +571,7 @@ public class ApplicationPackageImpl extends EPackageImpl {
 	 * The operation id for the '<em>Update Localization</em>' operation.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.1
 	 * @generated
 	 * @ordered
 	 */
@@ -536,6 +581,7 @@ public class ApplicationPackageImpl extends EPackageImpl {
 	 * The number of operations of the '<em>Application</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -547,6 +593,7 @@ public class ApplicationPackageImpl extends EPackageImpl {
 	 * <!-- end-user-doc -->
 	 * @see org.eclipse.e4.ui.model.application.impl.ContributionImpl
 	 * @see org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl#getContribution()
+	 * @since 1.0
 	 * @generated
 	 */
 	public static final int CONTRIBUTION = 3;
@@ -555,6 +602,7 @@ public class ApplicationPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Element Id</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -564,6 +612,7 @@ public class ApplicationPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Persisted State</b></em>' map.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -573,6 +622,7 @@ public class ApplicationPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Tags</b></em>' attribute list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -582,6 +632,7 @@ public class ApplicationPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Contributor URI</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -591,6 +642,7 @@ public class ApplicationPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Transient Data</b></em>' map.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -600,6 +652,7 @@ public class ApplicationPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Contribution URI</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -609,6 +662,7 @@ public class ApplicationPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Object</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -618,6 +672,7 @@ public class ApplicationPackageImpl extends EPackageImpl {
 	 * The number of structural features of the '<em>Contribution</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -627,6 +682,7 @@ public class ApplicationPackageImpl extends EPackageImpl {
 	 * The number of operations of the '<em>Contribution</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -638,6 +694,7 @@ public class ApplicationPackageImpl extends EPackageImpl {
 	 * <!-- end-user-doc -->
 	 * @see org.eclipse.e4.ui.model.application.impl.AddonImpl
 	 * @see org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl#getAddon()
+	 * @since 1.0
 	 * @generated
 	 */
 	public static final int ADDON = 4;
@@ -646,6 +703,7 @@ public class ApplicationPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Element Id</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -655,6 +713,7 @@ public class ApplicationPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Persisted State</b></em>' map.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -664,6 +723,7 @@ public class ApplicationPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Tags</b></em>' attribute list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -673,6 +733,7 @@ public class ApplicationPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Contributor URI</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -682,6 +743,7 @@ public class ApplicationPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Transient Data</b></em>' map.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -691,6 +753,7 @@ public class ApplicationPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Contribution URI</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -700,6 +763,7 @@ public class ApplicationPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Object</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -709,6 +773,7 @@ public class ApplicationPackageImpl extends EPackageImpl {
 	 * The number of structural features of the '<em>Addon</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -718,6 +783,7 @@ public class ApplicationPackageImpl extends EPackageImpl {
 	 * The number of operations of the '<em>Addon</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -789,6 +855,7 @@ public class ApplicationPackageImpl extends EPackageImpl {
 	/**
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 */
 	private EClass applicationEClass = null;
@@ -796,6 +863,7 @@ public class ApplicationPackageImpl extends EPackageImpl {
 	/**
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 */
 	private EClass applicationElementEClass = null;
@@ -803,6 +871,7 @@ public class ApplicationPackageImpl extends EPackageImpl {
 	/**
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 */
 	private EClass contributionEClass = null;
@@ -810,6 +879,7 @@ public class ApplicationPackageImpl extends EPackageImpl {
 	/**
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 */
 	private EClass addonEClass = null;
@@ -856,7 +926,7 @@ public class ApplicationPackageImpl extends EPackageImpl {
 
 	/**
 	 * Creates, registers, and initializes the <b>Package</b> for this model, and for any others upon which it depends.
-	 * 
+	 *
 	 * <p>This method is used to initialize {@link ApplicationPackageImpl#eINSTANCE} when that field is accessed.
 	 * Clients should not invoke it directly. Instead, they should simply access that field to obtain the package.
 	 * <!-- begin-user-doc -->
@@ -870,17 +940,24 @@ public class ApplicationPackageImpl extends EPackageImpl {
 		if (isInited) return (ApplicationPackageImpl)EPackage.Registry.INSTANCE.getEPackage(ApplicationPackageImpl.eNS_URI);
 
 		// Obtain or create and register package
-		ApplicationPackageImpl theApplicationPackage = (ApplicationPackageImpl)(EPackage.Registry.INSTANCE.get(eNS_URI) instanceof ApplicationPackageImpl ? EPackage.Registry.INSTANCE.get(eNS_URI) : new ApplicationPackageImpl());
+		Object registeredApplicationPackage = EPackage.Registry.INSTANCE.get(eNS_URI);
+		ApplicationPackageImpl theApplicationPackage = registeredApplicationPackage instanceof ApplicationPackageImpl ? (ApplicationPackageImpl)registeredApplicationPackage : new ApplicationPackageImpl();
 
 		isInited = true;
 
 		// Obtain or create and register interdependencies
-		CommandsPackageImpl theCommandsPackage = (CommandsPackageImpl)(EPackage.Registry.INSTANCE.getEPackage(CommandsPackageImpl.eNS_URI) instanceof CommandsPackageImpl ? EPackage.Registry.INSTANCE.getEPackage(CommandsPackageImpl.eNS_URI) : CommandsPackageImpl.eINSTANCE);
-		UiPackageImpl theUiPackage = (UiPackageImpl)(EPackage.Registry.INSTANCE.getEPackage(UiPackageImpl.eNS_URI) instanceof UiPackageImpl ? EPackage.Registry.INSTANCE.getEPackage(UiPackageImpl.eNS_URI) : UiPackageImpl.eINSTANCE);
-		MenuPackageImpl theMenuPackage = (MenuPackageImpl)(EPackage.Registry.INSTANCE.getEPackage(MenuPackageImpl.eNS_URI) instanceof MenuPackageImpl ? EPackage.Registry.INSTANCE.getEPackage(MenuPackageImpl.eNS_URI) : MenuPackageImpl.eINSTANCE);
-		BasicPackageImpl theBasicPackage = (BasicPackageImpl)(EPackage.Registry.INSTANCE.getEPackage(BasicPackageImpl.eNS_URI) instanceof BasicPackageImpl ? EPackage.Registry.INSTANCE.getEPackage(BasicPackageImpl.eNS_URI) : BasicPackageImpl.eINSTANCE);
-		AdvancedPackageImpl theAdvancedPackage = (AdvancedPackageImpl)(EPackage.Registry.INSTANCE.getEPackage(AdvancedPackageImpl.eNS_URI) instanceof AdvancedPackageImpl ? EPackage.Registry.INSTANCE.getEPackage(AdvancedPackageImpl.eNS_URI) : AdvancedPackageImpl.eINSTANCE);
-		org.eclipse.e4.ui.model.application.descriptor.basic.impl.BasicPackageImpl theBasicPackage_1 = (org.eclipse.e4.ui.model.application.descriptor.basic.impl.BasicPackageImpl)(EPackage.Registry.INSTANCE.getEPackage(org.eclipse.e4.ui.model.application.descriptor.basic.impl.BasicPackageImpl.eNS_URI) instanceof org.eclipse.e4.ui.model.application.descriptor.basic.impl.BasicPackageImpl ? EPackage.Registry.INSTANCE.getEPackage(org.eclipse.e4.ui.model.application.descriptor.basic.impl.BasicPackageImpl.eNS_URI) : org.eclipse.e4.ui.model.application.descriptor.basic.impl.BasicPackageImpl.eINSTANCE);
+		Object registeredPackage = EPackage.Registry.INSTANCE.getEPackage(CommandsPackageImpl.eNS_URI);
+		CommandsPackageImpl theCommandsPackage = (CommandsPackageImpl)(registeredPackage instanceof CommandsPackageImpl ? registeredPackage : CommandsPackageImpl.eINSTANCE);
+		registeredPackage = EPackage.Registry.INSTANCE.getEPackage(UiPackageImpl.eNS_URI);
+		UiPackageImpl theUiPackage = (UiPackageImpl)(registeredPackage instanceof UiPackageImpl ? registeredPackage : UiPackageImpl.eINSTANCE);
+		registeredPackage = EPackage.Registry.INSTANCE.getEPackage(MenuPackageImpl.eNS_URI);
+		MenuPackageImpl theMenuPackage = (MenuPackageImpl)(registeredPackage instanceof MenuPackageImpl ? registeredPackage : MenuPackageImpl.eINSTANCE);
+		registeredPackage = EPackage.Registry.INSTANCE.getEPackage(BasicPackageImpl.eNS_URI);
+		BasicPackageImpl theBasicPackage = (BasicPackageImpl)(registeredPackage instanceof BasicPackageImpl ? registeredPackage : BasicPackageImpl.eINSTANCE);
+		registeredPackage = EPackage.Registry.INSTANCE.getEPackage(AdvancedPackageImpl.eNS_URI);
+		AdvancedPackageImpl theAdvancedPackage = (AdvancedPackageImpl)(registeredPackage instanceof AdvancedPackageImpl ? registeredPackage : AdvancedPackageImpl.eINSTANCE);
+		registeredPackage = EPackage.Registry.INSTANCE.getEPackage(org.eclipse.e4.ui.model.application.descriptor.basic.impl.BasicPackageImpl.eNS_URI);
+		org.eclipse.e4.ui.model.application.descriptor.basic.impl.BasicPackageImpl theBasicPackage_1 = (org.eclipse.e4.ui.model.application.descriptor.basic.impl.BasicPackageImpl)(registeredPackage instanceof org.eclipse.e4.ui.model.application.descriptor.basic.impl.BasicPackageImpl ? registeredPackage : org.eclipse.e4.ui.model.application.descriptor.basic.impl.BasicPackageImpl.eINSTANCE);
 
 		// Create package meta-data objects
 		theApplicationPackage.createPackageContents();
@@ -903,7 +980,6 @@ public class ApplicationPackageImpl extends EPackageImpl {
 		// Mark meta-data to indicate it can't be changed
 		theApplicationPackage.freeze();
 
-  
 		// Update the registry and return the package
 		EPackage.Registry.INSTANCE.put(ApplicationPackageImpl.eNS_URI, theApplicationPackage);
 		return theApplicationPackage;
@@ -956,6 +1032,7 @@ public class ApplicationPackageImpl extends EPackageImpl {
 	 * <!-- end-user-doc -->
 	 * @return the meta object for class '<em>Application</em>'.
 	 * @see org.eclipse.e4.ui.model.application.MApplication
+	 * @since 1.0
 	 * @generated
 	 */
 	public EClass getApplication() {
@@ -969,6 +1046,7 @@ public class ApplicationPackageImpl extends EPackageImpl {
 	 * @return the meta object for the containment reference list '<em>Commands</em>'.
 	 * @see org.eclipse.e4.ui.model.application.MApplication#getCommands()
 	 * @see #getApplication()
+	 * @since 1.0
 	 * @generated
 	 */
 	public EReference getApplication_Commands() {
@@ -982,6 +1060,7 @@ public class ApplicationPackageImpl extends EPackageImpl {
 	 * @return the meta object for the containment reference list '<em>Addons</em>'.
 	 * @see org.eclipse.e4.ui.model.application.MApplication#getAddons()
 	 * @see #getApplication()
+	 * @since 1.0
 	 * @generated
 	 */
 	public EReference getApplication_Addons() {
@@ -995,6 +1074,7 @@ public class ApplicationPackageImpl extends EPackageImpl {
 	 * @return the meta object for the containment reference list '<em>Categories</em>'.
 	 * @see org.eclipse.e4.ui.model.application.MApplication#getCategories()
 	 * @see #getApplication()
+	 * @since 1.0
 	 * @generated
 	 */
 	public EReference getApplication_Categories() {
@@ -1009,6 +1089,7 @@ public class ApplicationPackageImpl extends EPackageImpl {
 	 * @return the meta object for the reference list '<em>Dialogs</em>'.
 	 * @see org.eclipse.e4.ui.model.application.MApplication#getDialogs()
 	 * @see #getApplication()
+	 * @since 1.1
 	 * @generated
 	 */
 	public EReference getApplication_Dialogs() {
@@ -1022,6 +1103,7 @@ public class ApplicationPackageImpl extends EPackageImpl {
 	 * <!-- end-user-doc -->
 	 * @return the meta object for class '<em>Element</em>'.
 	 * @see org.eclipse.e4.ui.model.application.MApplicationElement
+	 * @since 1.0
 	 * @generated
 	 */
 	public EClass getApplicationElement() {
@@ -1035,6 +1117,7 @@ public class ApplicationPackageImpl extends EPackageImpl {
 	 * @return the meta object for the attribute '<em>Element Id</em>'.
 	 * @see org.eclipse.e4.ui.model.application.MApplicationElement#getElementId()
 	 * @see #getApplicationElement()
+	 * @since 1.0
 	 * @generated
 	 */
 	public EAttribute getApplicationElement_ElementId() {
@@ -1048,6 +1131,7 @@ public class ApplicationPackageImpl extends EPackageImpl {
 	 * @return the meta object for the map '<em>Persisted State</em>'.
 	 * @see org.eclipse.e4.ui.model.application.MApplicationElement#getPersistedState()
 	 * @see #getApplicationElement()
+	 * @since 1.0
 	 * @generated
 	 */
 	public EReference getApplicationElement_PersistedState() {
@@ -1062,6 +1146,7 @@ public class ApplicationPackageImpl extends EPackageImpl {
 	 * @return the meta object for the attribute list '<em>Tags</em>'.
 	 * @see org.eclipse.e4.ui.model.application.MApplicationElement#getTags()
 	 * @see #getApplicationElement()
+	 * @since 1.0
 	 * @generated
 	 */
 	public EAttribute getApplicationElement_Tags() {
@@ -1075,6 +1160,7 @@ public class ApplicationPackageImpl extends EPackageImpl {
 	 * @return the meta object for the attribute '<em>Contributor URI</em>'.
 	 * @see org.eclipse.e4.ui.model.application.MApplicationElement#getContributorURI()
 	 * @see #getApplicationElement()
+	 * @since 1.0
 	 * @generated
 	 */
 	public EAttribute getApplicationElement_ContributorURI() {
@@ -1089,6 +1175,7 @@ public class ApplicationPackageImpl extends EPackageImpl {
 	 * @return the meta object for the map '<em>Transient Data</em>'.
 	 * @see org.eclipse.e4.ui.model.application.MApplicationElement#getTransientData()
 	 * @see #getApplicationElement()
+	 * @since 1.0
 	 * @generated
 	 */
 	public EReference getApplicationElement_TransientData() {
@@ -1102,6 +1189,7 @@ public class ApplicationPackageImpl extends EPackageImpl {
 	 * <!-- end-user-doc -->
 	 * @return the meta object for class '<em>Contribution</em>'.
 	 * @see org.eclipse.e4.ui.model.application.MContribution
+	 * @since 1.0
 	 * @generated
 	 */
 	public EClass getContribution() {
@@ -1115,6 +1203,7 @@ public class ApplicationPackageImpl extends EPackageImpl {
 	 * @return the meta object for the attribute '<em>Contribution URI</em>'.
 	 * @see org.eclipse.e4.ui.model.application.MContribution#getContributionURI()
 	 * @see #getContribution()
+	 * @since 1.0
 	 * @generated
 	 */
 	public EAttribute getContribution_ContributionURI() {
@@ -1128,6 +1217,7 @@ public class ApplicationPackageImpl extends EPackageImpl {
 	 * @return the meta object for the attribute '<em>Object</em>'.
 	 * @see org.eclipse.e4.ui.model.application.MContribution#getObject()
 	 * @see #getContribution()
+	 * @since 1.0
 	 * @generated
 	 */
 	public EAttribute getContribution_Object() {
@@ -1140,6 +1230,7 @@ public class ApplicationPackageImpl extends EPackageImpl {
 	 * <!-- end-user-doc -->
 	 * @return the meta object for class '<em>Addon</em>'.
 	 * @see org.eclipse.e4.ui.model.application.MAddon
+	 * @since 1.0
 	 * @generated
 	 */
 	public EClass getAddon() {
@@ -1408,6 +1499,7 @@ public class ApplicationPackageImpl extends EPackageImpl {
 		 * <!-- end-user-doc -->
 		 * @see org.eclipse.e4.ui.model.application.impl.ApplicationImpl
 		 * @see org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl#getApplication()
+		 * @since 1.0
 		 * @generated
 		 */
 		public static final EClass APPLICATION = eINSTANCE.getApplication();
@@ -1416,6 +1508,7 @@ public class ApplicationPackageImpl extends EPackageImpl {
 		 * The meta object literal for the '<em><b>Commands</b></em>' containment reference list feature.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
+		 * @since 1.0
 		 * @generated
 		 */
 		public static final EReference APPLICATION__COMMANDS = eINSTANCE.getApplication_Commands();
@@ -1424,6 +1517,7 @@ public class ApplicationPackageImpl extends EPackageImpl {
 		 * The meta object literal for the '<em><b>Addons</b></em>' containment reference list feature.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
+		 * @since 1.0
 		 * @generated
 		 */
 		public static final EReference APPLICATION__ADDONS = eINSTANCE.getApplication_Addons();
@@ -1432,6 +1526,7 @@ public class ApplicationPackageImpl extends EPackageImpl {
 		 * The meta object literal for the '<em><b>Categories</b></em>' containment reference list feature.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
+		 * @since 1.0
 		 * @generated
 		 */
 		public static final EReference APPLICATION__CATEGORIES = eINSTANCE.getApplication_Categories();
@@ -1440,6 +1535,7 @@ public class ApplicationPackageImpl extends EPackageImpl {
 		 * The meta object literal for the '<em><b>Dialogs</b></em>' reference list feature.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
+		 * @since 1.1
 		 * @generated
 		 */
 		public static final EReference APPLICATION__DIALOGS = eINSTANCE.getApplication_Dialogs();
@@ -1450,6 +1546,7 @@ public class ApplicationPackageImpl extends EPackageImpl {
 		 * <!-- end-user-doc -->
 		 * @see org.eclipse.e4.ui.model.application.impl.ApplicationElementImpl
 		 * @see org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl#getApplicationElement()
+		 * @since 1.0
 		 * @generated
 		 */
 		public static final EClass APPLICATION_ELEMENT = eINSTANCE.getApplicationElement();
@@ -1458,6 +1555,7 @@ public class ApplicationPackageImpl extends EPackageImpl {
 		 * The meta object literal for the '<em><b>Element Id</b></em>' attribute feature.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
+		 * @since 1.0
 		 * @generated
 		 */
 		public static final EAttribute APPLICATION_ELEMENT__ELEMENT_ID = eINSTANCE.getApplicationElement_ElementId();
@@ -1466,6 +1564,7 @@ public class ApplicationPackageImpl extends EPackageImpl {
 		 * The meta object literal for the '<em><b>Persisted State</b></em>' map feature.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
+		 * @since 1.0
 		 * @generated
 		 */
 		public static final EReference APPLICATION_ELEMENT__PERSISTED_STATE = eINSTANCE.getApplicationElement_PersistedState();
@@ -1474,6 +1573,7 @@ public class ApplicationPackageImpl extends EPackageImpl {
 		 * The meta object literal for the '<em><b>Tags</b></em>' attribute list feature.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
+		 * @since 1.0
 		 * @generated
 		 */
 		public static final EAttribute APPLICATION_ELEMENT__TAGS = eINSTANCE.getApplicationElement_Tags();
@@ -1482,6 +1582,7 @@ public class ApplicationPackageImpl extends EPackageImpl {
 		 * The meta object literal for the '<em><b>Contributor URI</b></em>' attribute feature.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
+		 * @since 1.0
 		 * @generated
 		 */
 		public static final EAttribute APPLICATION_ELEMENT__CONTRIBUTOR_URI = eINSTANCE.getApplicationElement_ContributorURI();
@@ -1490,6 +1591,7 @@ public class ApplicationPackageImpl extends EPackageImpl {
 		 * The meta object literal for the '<em><b>Transient Data</b></em>' map feature.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
+		 * @since 1.0
 		 * @generated
 		 */
 		public static final EReference APPLICATION_ELEMENT__TRANSIENT_DATA = eINSTANCE.getApplicationElement_TransientData();
@@ -1500,6 +1602,7 @@ public class ApplicationPackageImpl extends EPackageImpl {
 		 * <!-- end-user-doc -->
 		 * @see org.eclipse.e4.ui.model.application.impl.ContributionImpl
 		 * @see org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl#getContribution()
+		 * @since 1.0
 		 * @generated
 		 */
 		public static final EClass CONTRIBUTION = eINSTANCE.getContribution();
@@ -1508,6 +1611,7 @@ public class ApplicationPackageImpl extends EPackageImpl {
 		 * The meta object literal for the '<em><b>Contribution URI</b></em>' attribute feature.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
+		 * @since 1.0
 		 * @generated
 		 */
 		public static final EAttribute CONTRIBUTION__CONTRIBUTION_URI = eINSTANCE.getContribution_ContributionURI();
@@ -1516,6 +1620,7 @@ public class ApplicationPackageImpl extends EPackageImpl {
 		 * The meta object literal for the '<em><b>Object</b></em>' attribute feature.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
+		 * @since 1.0
 		 * @generated
 		 */
 		public static final EAttribute CONTRIBUTION__OBJECT = eINSTANCE.getContribution_Object();
@@ -1526,6 +1631,7 @@ public class ApplicationPackageImpl extends EPackageImpl {
 		 * <!-- end-user-doc -->
 		 * @see org.eclipse.e4.ui.model.application.impl.AddonImpl
 		 * @see org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl#getAddon()
+		 * @since 1.0
 		 * @generated
 		 */
 		public static final EClass ADDON = eINSTANCE.getAddon();

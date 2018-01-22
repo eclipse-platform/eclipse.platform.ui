@@ -34,6 +34,7 @@ import org.eclipse.emf.ecore.impl.ENotificationImpl;
  *   <li>{@link org.eclipse.e4.ui.model.application.ui.advanced.impl.AreaImpl#getLocalizedTooltip <em>Localized Tooltip</em>}</li>
  * </ul>
  *
+ * @since 1.0
  * @generated
  */
 public class AreaImpl extends PartSashContainerImpl implements MArea {
@@ -42,6 +43,7 @@ public class AreaImpl extends PartSashContainerImpl implements MArea {
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @see #getLabel()
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -52,6 +54,7 @@ public class AreaImpl extends PartSashContainerImpl implements MArea {
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @see #getLabel()
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -62,6 +65,7 @@ public class AreaImpl extends PartSashContainerImpl implements MArea {
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @see #getIconURI()
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -72,6 +76,7 @@ public class AreaImpl extends PartSashContainerImpl implements MArea {
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @see #getIconURI()
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -82,6 +87,7 @@ public class AreaImpl extends PartSashContainerImpl implements MArea {
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @see #getTooltip()
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -92,6 +98,7 @@ public class AreaImpl extends PartSashContainerImpl implements MArea {
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @see #getTooltip()
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -139,6 +146,7 @@ public class AreaImpl extends PartSashContainerImpl implements MArea {
 	/**
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 */
 	public String getLabel() {
@@ -148,6 +156,7 @@ public class AreaImpl extends PartSashContainerImpl implements MArea {
 	/**
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 */
 	public void setLabel(String newLabel) {
@@ -160,6 +169,7 @@ public class AreaImpl extends PartSashContainerImpl implements MArea {
 	/**
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 */
 	public String getIconURI() {
@@ -169,6 +179,7 @@ public class AreaImpl extends PartSashContainerImpl implements MArea {
 	/**
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 */
 	public void setIconURI(String newIconURI) {
@@ -181,6 +192,7 @@ public class AreaImpl extends PartSashContainerImpl implements MArea {
 	/**
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 */
 	public String getTooltip() {
@@ -190,6 +202,7 @@ public class AreaImpl extends PartSashContainerImpl implements MArea {
 	/**
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 */
 	public void setTooltip(String newTooltip) {
@@ -364,7 +377,7 @@ public class AreaImpl extends PartSashContainerImpl implements MArea {
 	public String toString() {
 		if (eIsProxy()) return super.toString();
 
-		StringBuffer result = new StringBuffer(super.toString());
+		StringBuilder result = new StringBuilder(super.toString());
 		result.append(" (label: "); //$NON-NLS-1$
 		result.append(label);
 		result.append(", iconURI: "); //$NON-NLS-1$

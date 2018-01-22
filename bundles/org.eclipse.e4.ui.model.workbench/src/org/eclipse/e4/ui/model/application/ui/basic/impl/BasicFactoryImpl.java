@@ -23,6 +23,7 @@ import org.eclipse.emf.ecore.plugin.EcorePlugin;
  * <!-- end-user-doc -->
  * @generated
  */
+@SuppressWarnings("deprecation")
 public class BasicFactoryImpl extends EFactoryImpl implements MBasicFactory {
 	/**
 	 * The singleton instance of the factory.
@@ -87,6 +88,7 @@ public class BasicFactoryImpl extends EFactoryImpl implements MBasicFactory {
 	/**
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 */
 	public MPart createPart() {
@@ -97,6 +99,7 @@ public class BasicFactoryImpl extends EFactoryImpl implements MBasicFactory {
 	/**
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.1
 	 * @generated
 	 */
 	public MCompositePart createCompositePart() {
@@ -107,8 +110,11 @@ public class BasicFactoryImpl extends EFactoryImpl implements MBasicFactory {
 	/**
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
+	 * @deprecated See {@link MInputPart model documentation} for details.
 	 * @generated
 	 */
+	@Deprecated
 	public MInputPart createInputPart() {
 		InputPartImpl inputPart = new InputPartImpl();
 		return inputPart;
@@ -117,6 +123,7 @@ public class BasicFactoryImpl extends EFactoryImpl implements MBasicFactory {
 	/**
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 */
 	public MPartStack createPartStack() {
@@ -127,6 +134,7 @@ public class BasicFactoryImpl extends EFactoryImpl implements MBasicFactory {
 	/**
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 */
 	public MPartSashContainer createPartSashContainer() {
@@ -137,6 +145,7 @@ public class BasicFactoryImpl extends EFactoryImpl implements MBasicFactory {
 	/**
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 */
 	public MWindow createWindow() {
@@ -147,6 +156,7 @@ public class BasicFactoryImpl extends EFactoryImpl implements MBasicFactory {
 	/**
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 */
 	public MTrimmedWindow createTrimmedWindow() {
@@ -157,6 +167,7 @@ public class BasicFactoryImpl extends EFactoryImpl implements MBasicFactory {
 	/**
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 */
 	public MTrimBar createTrimBar() {
@@ -167,6 +178,7 @@ public class BasicFactoryImpl extends EFactoryImpl implements MBasicFactory {
 	/**
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.1
 	 * @generated
 	 */
 	public MDialog createDialog() {
@@ -177,6 +189,7 @@ public class BasicFactoryImpl extends EFactoryImpl implements MBasicFactory {
 	/**
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.1
 	 * @generated
 	 */
 	public MWizardDialog createWizardDialog() {

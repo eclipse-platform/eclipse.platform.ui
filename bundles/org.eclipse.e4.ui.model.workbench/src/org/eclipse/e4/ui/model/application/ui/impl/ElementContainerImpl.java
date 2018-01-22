@@ -38,6 +38,7 @@ import org.eclipse.emf.ecore.util.InternalEList;
  *   <li>{@link org.eclipse.e4.ui.model.application.ui.impl.ElementContainerImpl#getSelectedElement <em>Selected Element</em>}</li>
  * </ul>
  *
+ * @since 1.0
  * @generated
  */
 public abstract class ElementContainerImpl<T extends MUIElement> extends UIElementImpl implements MElementContainer<T> {

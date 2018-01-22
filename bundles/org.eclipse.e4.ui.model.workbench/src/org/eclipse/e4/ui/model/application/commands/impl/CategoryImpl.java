@@ -35,6 +35,7 @@ import org.eclipse.emf.ecore.impl.ENotificationImpl;
  *   <li>{@link org.eclipse.e4.ui.model.application.commands.impl.CategoryImpl#getLocalizedDescription <em>Localized Description</em>}</li>
  * </ul>
  *
+ * @since 1.0
  * @generated
  */
 public class CategoryImpl extends ApplicationElementImpl implements MCategory {
@@ -304,7 +305,7 @@ public class CategoryImpl extends ApplicationElementImpl implements MCategory {
 	public String toString() {
 		if (eIsProxy()) return super.toString();
 
-		StringBuffer result = new StringBuffer(super.toString());
+		StringBuilder result = new StringBuilder(super.toString());
 		result.append(" (name: "); //$NON-NLS-1$
 		result.append(name);
 		result.append(", description: "); //$NON-NLS-1$

@@ -200,6 +200,7 @@ public class ApplicationAdapterFactory extends AdapterFactoryImpl {
 	 * <!-- end-user-doc -->
 	 * @return the new adapter.
 	 * @see org.eclipse.e4.ui.model.application.MApplication
+	 * @since 1.0
 	 * @generated
 	 */
 	public Adapter createApplicationAdapter() {
@@ -214,6 +215,7 @@ public class ApplicationAdapterFactory extends AdapterFactoryImpl {
 	 * <!-- end-user-doc -->
 	 * @return the new adapter.
 	 * @see org.eclipse.e4.ui.model.application.MApplicationElement
+	 * @since 1.0
 	 * @generated
 	 */
 	public Adapter createApplicationElementAdapter() {
@@ -228,6 +230,7 @@ public class ApplicationAdapterFactory extends AdapterFactoryImpl {
 	 * <!-- end-user-doc -->
 	 * @return the new adapter.
 	 * @see org.eclipse.e4.ui.model.application.MContribution
+	 * @since 1.0
 	 * @generated
 	 */
 	public Adapter createContributionAdapter() {
@@ -242,6 +245,7 @@ public class ApplicationAdapterFactory extends AdapterFactoryImpl {
 	 * <!-- end-user-doc -->
 	 * @return the new adapter.
 	 * @see org.eclipse.e4.ui.model.application.MAddon
+	 * @since 1.0
 	 * @generated
 	 */
 	public Adapter createAddonAdapter() {
@@ -270,6 +274,7 @@ public class ApplicationAdapterFactory extends AdapterFactoryImpl {
 	 * <!-- end-user-doc -->
 	 * @return the new adapter.
 	 * @see org.eclipse.e4.ui.model.application.ui.MLocalizable
+	 * @since 1.1
 	 * @generated
 	 */
 	public Adapter createLocalizableAdapter() {
@@ -284,6 +289,7 @@ public class ApplicationAdapterFactory extends AdapterFactoryImpl {
 	 * <!-- end-user-doc -->
 	 * @return the new adapter.
 	 * @see org.eclipse.e4.ui.model.application.ui.MUIElement
+	 * @since 1.0
 	 * @generated
 	 */
 	public Adapter createUIElementAdapter() {
@@ -298,6 +304,7 @@ public class ApplicationAdapterFactory extends AdapterFactoryImpl {
 	 * <!-- end-user-doc -->
 	 * @return the new adapter.
 	 * @see org.eclipse.e4.ui.model.application.ui.MElementContainer
+	 * @since 1.0
 	 * @generated
 	 */
 	public Adapter createElementContainerAdapter() {
@@ -312,6 +319,7 @@ public class ApplicationAdapterFactory extends AdapterFactoryImpl {
 	 * <!-- end-user-doc -->
 	 * @return the new adapter.
 	 * @see org.eclipse.e4.ui.model.application.ui.MContext
+	 * @since 1.0
 	 * @generated
 	 */
 	public Adapter createContextAdapter() {
@@ -326,6 +334,7 @@ public class ApplicationAdapterFactory extends AdapterFactoryImpl {
 	 * <!-- end-user-doc -->
 	 * @return the new adapter.
 	 * @see org.eclipse.e4.ui.model.application.commands.MHandlerContainer
+	 * @since 1.0
 	 * @generated
 	 */
 	public Adapter createHandlerContainerAdapter() {
@@ -340,6 +349,7 @@ public class ApplicationAdapterFactory extends AdapterFactoryImpl {
 	 * <!-- end-user-doc -->
 	 * @return the new adapter.
 	 * @see org.eclipse.e4.ui.model.application.commands.MBindingTableContainer
+	 * @since 1.0
 	 * @generated
 	 */
 	public Adapter createBindingTableContainerAdapter() {
@@ -354,6 +364,7 @@ public class ApplicationAdapterFactory extends AdapterFactoryImpl {
 	 * <!-- end-user-doc -->
 	 * @return the new adapter.
 	 * @see org.eclipse.e4.ui.model.application.descriptor.basic.MPartDescriptorContainer
+	 * @since 1.0
 	 * @generated
 	 */
 	public Adapter createPartDescriptorContainerAdapter() {
@@ -368,6 +379,7 @@ public class ApplicationAdapterFactory extends AdapterFactoryImpl {
 	 * <!-- end-user-doc -->
 	 * @return the new adapter.
 	 * @see org.eclipse.e4.ui.model.application.commands.MBindings
+	 * @since 1.0
 	 * @generated
 	 */
 	public Adapter createBindingsAdapter() {
@@ -382,6 +394,7 @@ public class ApplicationAdapterFactory extends AdapterFactoryImpl {
 	 * <!-- end-user-doc -->
 	 * @return the new adapter.
 	 * @see org.eclipse.e4.ui.model.application.ui.menu.MMenuContributions
+	 * @since 1.0
 	 * @generated
 	 */
 	public Adapter createMenuContributionsAdapter() {
@@ -396,6 +409,7 @@ public class ApplicationAdapterFactory extends AdapterFactoryImpl {
 	 * <!-- end-user-doc -->
 	 * @return the new adapter.
 	 * @see org.eclipse.e4.ui.model.application.ui.menu.MToolBarContributions
+	 * @since 1.0
 	 * @generated
 	 */
 	public Adapter createToolBarContributionsAdapter() {
@@ -410,6 +424,7 @@ public class ApplicationAdapterFactory extends AdapterFactoryImpl {
 	 * <!-- end-user-doc -->
 	 * @return the new adapter.
 	 * @see org.eclipse.e4.ui.model.application.ui.menu.MTrimContributions
+	 * @since 1.0
 	 * @generated
 	 */
 	public Adapter createTrimContributionsAdapter() {
@@ -424,6 +439,7 @@ public class ApplicationAdapterFactory extends AdapterFactoryImpl {
 	 * <!-- end-user-doc -->
 	 * @return the new adapter.
 	 * @see org.eclipse.e4.ui.model.application.ui.MSnippetContainer
+	 * @since 1.0
 	 * @generated
 	 */
 	public Adapter createSnippetContainerAdapter() {

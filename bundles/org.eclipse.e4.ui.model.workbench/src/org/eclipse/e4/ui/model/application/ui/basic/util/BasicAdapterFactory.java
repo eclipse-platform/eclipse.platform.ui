@@ -40,6 +40,7 @@ import org.eclipse.emf.ecore.EObject;
  * @see org.eclipse.e4.ui.model.application.ui.basic.impl.BasicPackageImpl
  * @generated
  */
+@SuppressWarnings("deprecation")
 public class BasicAdapterFactory extends AdapterFactoryImpl {
 	/**
 	 * The cached model package.
@@ -232,6 +233,7 @@ public class BasicAdapterFactory extends AdapterFactoryImpl {
 	 * <!-- end-user-doc -->
 	 * @return the new adapter.
 	 * @see org.eclipse.e4.ui.model.application.ui.basic.MPart
+	 * @since 1.0
 	 * @generated
 	 */
 	public Adapter createPartAdapter() {
@@ -246,6 +248,7 @@ public class BasicAdapterFactory extends AdapterFactoryImpl {
 	 * <!-- end-user-doc -->
 	 * @return the new adapter.
 	 * @see org.eclipse.e4.ui.model.application.ui.basic.MCompositePart
+	 * @since 1.1
 	 * @generated
 	 */
 	public Adapter createCompositePartAdapter() {
@@ -260,8 +263,11 @@ public class BasicAdapterFactory extends AdapterFactoryImpl {
 	 * <!-- end-user-doc -->
 	 * @return the new adapter.
 	 * @see org.eclipse.e4.ui.model.application.ui.basic.MInputPart
+	 * @since 1.0
+	 * @deprecated See {@link MInputPart model documentation} for details.
 	 * @generated
 	 */
+	@Deprecated
 	public Adapter createInputPartAdapter() {
 		return null;
 	}
@@ -274,6 +280,7 @@ public class BasicAdapterFactory extends AdapterFactoryImpl {
 	 * <!-- end-user-doc -->
 	 * @return the new adapter.
 	 * @see org.eclipse.e4.ui.model.application.ui.basic.MPartStack
+	 * @since 1.0
 	 * @generated
 	 */
 	public Adapter createPartStackAdapter() {
@@ -288,6 +295,7 @@ public class BasicAdapterFactory extends AdapterFactoryImpl {
 	 * <!-- end-user-doc -->
 	 * @return the new adapter.
 	 * @see org.eclipse.e4.ui.model.application.ui.basic.MPartSashContainer
+	 * @since 1.0
 	 * @generated
 	 */
 	public Adapter createPartSashContainerAdapter() {
@@ -302,6 +310,7 @@ public class BasicAdapterFactory extends AdapterFactoryImpl {
 	 * <!-- end-user-doc -->
 	 * @return the new adapter.
 	 * @see org.eclipse.e4.ui.model.application.ui.basic.MWindow
+	 * @since 1.0
 	 * @generated
 	 */
 	public Adapter createWindowAdapter() {
@@ -316,6 +325,7 @@ public class BasicAdapterFactory extends AdapterFactoryImpl {
 	 * <!-- end-user-doc -->
 	 * @return the new adapter.
 	 * @see org.eclipse.e4.ui.model.application.ui.basic.MTrimmedWindow
+	 * @since 1.0
 	 * @generated
 	 */
 	public Adapter createTrimmedWindowAdapter() {
@@ -330,6 +340,7 @@ public class BasicAdapterFactory extends AdapterFactoryImpl {
 	 * <!-- end-user-doc -->
 	 * @return the new adapter.
 	 * @see org.eclipse.e4.ui.model.application.ui.basic.MTrimElement
+	 * @since 1.0
 	 * @generated
 	 */
 	public Adapter createTrimElementAdapter() {
@@ -344,6 +355,7 @@ public class BasicAdapterFactory extends AdapterFactoryImpl {
 	 * <!-- end-user-doc -->
 	 * @return the new adapter.
 	 * @see org.eclipse.e4.ui.model.application.ui.basic.MPartSashContainerElement
+	 * @since 1.0
 	 * @generated
 	 */
 	public Adapter createPartSashContainerElementAdapter() {
@@ -358,6 +370,7 @@ public class BasicAdapterFactory extends AdapterFactoryImpl {
 	 * <!-- end-user-doc -->
 	 * @return the new adapter.
 	 * @see org.eclipse.e4.ui.model.application.ui.basic.MWindowElement
+	 * @since 1.0
 	 * @generated
 	 */
 	public Adapter createWindowElementAdapter() {
@@ -372,6 +385,7 @@ public class BasicAdapterFactory extends AdapterFactoryImpl {
 	 * <!-- end-user-doc -->
 	 * @return the new adapter.
 	 * @see org.eclipse.e4.ui.model.application.ui.basic.MTrimBar
+	 * @since 1.0
 	 * @generated
 	 */
 	public Adapter createTrimBarAdapter() {
@@ -386,6 +400,7 @@ public class BasicAdapterFactory extends AdapterFactoryImpl {
 	 * <!-- end-user-doc -->
 	 * @return the new adapter.
 	 * @see org.eclipse.e4.ui.model.application.ui.basic.MStackElement
+	 * @since 1.0
 	 * @generated
 	 */
 	public Adapter createStackElementAdapter() {
@@ -400,6 +415,7 @@ public class BasicAdapterFactory extends AdapterFactoryImpl {
 	 * <!-- end-user-doc -->
 	 * @return the new adapter.
 	 * @see org.eclipse.e4.ui.model.application.ui.basic.MDialog
+	 * @since 1.1
 	 * @generated
 	 */
 	public Adapter createDialogAdapter() {
@@ -414,6 +430,7 @@ public class BasicAdapterFactory extends AdapterFactoryImpl {
 	 * <!-- end-user-doc -->
 	 * @return the new adapter.
 	 * @see org.eclipse.e4.ui.model.application.ui.basic.MWizardDialog
+	 * @since 1.1
 	 * @generated
 	 */
 	public Adapter createWizardDialogAdapter() {
@@ -428,6 +445,7 @@ public class BasicAdapterFactory extends AdapterFactoryImpl {
 	 * <!-- end-user-doc -->
 	 * @return the new adapter.
 	 * @see org.eclipse.e4.ui.model.application.MApplicationElement
+	 * @since 1.0
 	 * @generated
 	 */
 	public Adapter createApplicationElementAdapter() {
@@ -442,6 +460,7 @@ public class BasicAdapterFactory extends AdapterFactoryImpl {
 	 * <!-- end-user-doc -->
 	 * @return the new adapter.
 	 * @see org.eclipse.e4.ui.model.application.MContribution
+	 * @since 1.0
 	 * @generated
 	 */
 	public Adapter createContributionAdapter() {
@@ -456,6 +475,7 @@ public class BasicAdapterFactory extends AdapterFactoryImpl {
 	 * <!-- end-user-doc -->
 	 * @return the new adapter.
 	 * @see org.eclipse.e4.ui.model.application.ui.MContext
+	 * @since 1.0
 	 * @generated
 	 */
 	public Adapter createContextAdapter() {
@@ -470,6 +490,7 @@ public class BasicAdapterFactory extends AdapterFactoryImpl {
 	 * <!-- end-user-doc -->
 	 * @return the new adapter.
 	 * @see org.eclipse.e4.ui.model.application.ui.MUIElement
+	 * @since 1.0
 	 * @generated
 	 */
 	public Adapter createUIElementAdapter() {
@@ -484,6 +505,7 @@ public class BasicAdapterFactory extends AdapterFactoryImpl {
 	 * <!-- end-user-doc -->
 	 * @return the new adapter.
 	 * @see org.eclipse.e4.ui.model.application.ui.MUILabel
+	 * @since 1.0
 	 * @generated
 	 */
 	public Adapter createUILabelAdapter() {
@@ -498,6 +520,7 @@ public class BasicAdapterFactory extends AdapterFactoryImpl {
 	 * <!-- end-user-doc -->
 	 * @return the new adapter.
 	 * @see org.eclipse.e4.ui.model.application.commands.MHandlerContainer
+	 * @since 1.0
 	 * @generated
 	 */
 	public Adapter createHandlerContainerAdapter() {
@@ -512,6 +535,7 @@ public class BasicAdapterFactory extends AdapterFactoryImpl {
 	 * <!-- end-user-doc -->
 	 * @return the new adapter.
 	 * @see org.eclipse.e4.ui.model.application.ui.MDirtyable
+	 * @since 1.0
 	 * @generated
 	 */
 	public Adapter createDirtyableAdapter() {
@@ -526,6 +550,7 @@ public class BasicAdapterFactory extends AdapterFactoryImpl {
 	 * <!-- end-user-doc -->
 	 * @return the new adapter.
 	 * @see org.eclipse.e4.ui.model.application.commands.MBindings
+	 * @since 1.0
 	 * @generated
 	 */
 	public Adapter createBindingsAdapter() {
@@ -540,6 +565,7 @@ public class BasicAdapterFactory extends AdapterFactoryImpl {
 	 * <!-- end-user-doc -->
 	 * @return the new adapter.
 	 * @see org.eclipse.e4.ui.model.application.ui.MLocalizable
+	 * @since 1.1
 	 * @generated
 	 */
 	public Adapter createLocalizableAdapter() {
@@ -554,8 +580,11 @@ public class BasicAdapterFactory extends AdapterFactoryImpl {
 	 * <!-- end-user-doc -->
 	 * @return the new adapter.
 	 * @see org.eclipse.e4.ui.model.application.ui.MInput
+	 * @since 1.0
+	 * @deprecated See {@link MInput model documentation} for details.
 	 * @generated
 	 */
+	@Deprecated
 	public Adapter createInputAdapter() {
 		return null;
 	}
@@ -568,6 +597,7 @@ public class BasicAdapterFactory extends AdapterFactoryImpl {
 	 * <!-- end-user-doc -->
 	 * @return the new adapter.
 	 * @see org.eclipse.e4.ui.model.application.ui.MElementContainer
+	 * @since 1.0
 	 * @generated
 	 */
 	public Adapter createElementContainerAdapter() {
@@ -582,6 +612,7 @@ public class BasicAdapterFactory extends AdapterFactoryImpl {
 	 * <!-- end-user-doc -->
 	 * @return the new adapter.
 	 * @see org.eclipse.e4.ui.model.application.ui.MGenericStack
+	 * @since 1.0
 	 * @generated
 	 */
 	public Adapter createGenericStackAdapter() {
@@ -596,6 +627,7 @@ public class BasicAdapterFactory extends AdapterFactoryImpl {
 	 * <!-- end-user-doc -->
 	 * @return the new adapter.
 	 * @see org.eclipse.e4.ui.model.application.ui.MGenericTile
+	 * @since 1.0
 	 * @generated
 	 */
 	public Adapter createGenericTileAdapter() {
@@ -610,6 +642,7 @@ public class BasicAdapterFactory extends AdapterFactoryImpl {
 	 * <!-- end-user-doc -->
 	 * @return the new adapter.
 	 * @see org.eclipse.e4.ui.model.application.ui.MSnippetContainer
+	 * @since 1.0
 	 * @generated
 	 */
 	public Adapter createSnippetContainerAdapter() {
@@ -624,6 +657,7 @@ public class BasicAdapterFactory extends AdapterFactoryImpl {
 	 * <!-- end-user-doc -->
 	 * @return the new adapter.
 	 * @see org.eclipse.e4.ui.model.application.ui.MGenericTrimContainer
+	 * @since 1.0
 	 * @generated
 	 */
 	public Adapter createGenericTrimContainerAdapter() {

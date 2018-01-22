@@ -20,6 +20,7 @@ import org.eclipse.emf.ecore.EClass;
  * An implementation of the model object '<em><b>Part Sash Container</b></em>'.
  * <!-- end-user-doc -->
  *
+ * @since 1.0
  * @generated
  */
 public class PartSashContainerImpl extends GenericTileImpl<MPartSashContainerElement> implements MPartSashContainer {

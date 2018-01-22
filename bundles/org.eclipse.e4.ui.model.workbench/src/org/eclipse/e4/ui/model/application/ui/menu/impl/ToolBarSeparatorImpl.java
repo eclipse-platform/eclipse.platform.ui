@@ -18,6 +18,7 @@ import org.eclipse.emf.ecore.EClass;
  * An implementation of the model object '<em><b>Tool Bar Separator</b></em>'.
  * <!-- end-user-doc -->
  *
+ * @since 1.0
  * @generated
  */
 public class ToolBarSeparatorImpl extends ToolBarElementImpl implements MToolBarSeparator {

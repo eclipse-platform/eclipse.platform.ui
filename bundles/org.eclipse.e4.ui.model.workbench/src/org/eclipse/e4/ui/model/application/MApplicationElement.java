@@ -96,7 +96,7 @@ public interface MApplicationElement {
 	 * </p>
 	 * <!-- end-model-doc -->
 	 * @return the value of the '<em>Persisted State</em>' map.
-	 * @model mapType="org.eclipse.e4.ui.model.application.StringToStringMap<org.eclipse.emf.ecore.EString, org.eclipse.emf.ecore.EString>"
+	 * @model mapType="org.eclipse.e4.ui.model.application.StringToStringMap&lt;org.eclipse.emf.ecore.EString, org.eclipse.emf.ecore.EString&gt;"
 	 * @generated
 	 */
 	Map<String, String> getPersistedState();
@@ -161,7 +161,7 @@ public interface MApplicationElement {
 	 * </p>
 	 * <!-- end-model-doc -->
 	 * @return the value of the '<em>Transient Data</em>' map.
-	 * @model mapType="org.eclipse.e4.ui.model.application.StringToObjectMap<org.eclipse.emf.ecore.EString, org.eclipse.emf.ecore.EJavaObject>" transient="true"
+	 * @model mapType="org.eclipse.e4.ui.model.application.StringToObjectMap&lt;org.eclipse.emf.ecore.EString, org.eclipse.emf.ecore.EJavaObject&gt;" transient="true"
 	 * @generated
 	 */
 	Map<String, Object> getTransientData();

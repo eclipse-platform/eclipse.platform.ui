@@ -19,6 +19,7 @@ import org.eclipse.emf.ecore.EClass;
  * An implementation of the model object '<em><b>Wizard Dialog</b></em>'.
  * <!-- end-user-doc -->
  *
+ * @since 1.1
  * @generated
  */
 public class WizardDialogImpl extends DialogImpl implements MWizardDialog {

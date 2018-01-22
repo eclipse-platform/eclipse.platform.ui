@@ -164,6 +164,7 @@ public class CommandsAdapterFactory extends AdapterFactoryImpl {
 	 * <!-- end-user-doc -->
 	 * @return the new adapter.
 	 * @see org.eclipse.e4.ui.model.application.commands.MBindingTableContainer
+	 * @since 1.0
 	 * @generated
 	 */
 	public Adapter createBindingTableContainerAdapter() {
@@ -178,6 +179,7 @@ public class CommandsAdapterFactory extends AdapterFactoryImpl {
 	 * <!-- end-user-doc -->
 	 * @return the new adapter.
 	 * @see org.eclipse.e4.ui.model.application.commands.MBindings
+	 * @since 1.0
 	 * @generated
 	 */
 	public Adapter createBindingsAdapter() {
@@ -192,6 +194,7 @@ public class CommandsAdapterFactory extends AdapterFactoryImpl {
 	 * <!-- end-user-doc -->
 	 * @return the new adapter.
 	 * @see org.eclipse.e4.ui.model.application.commands.MBindingContext
+	 * @since 1.0
 	 * @generated
 	 */
 	public Adapter createBindingContextAdapter() {
@@ -206,6 +209,7 @@ public class CommandsAdapterFactory extends AdapterFactoryImpl {
 	 * <!-- end-user-doc -->
 	 * @return the new adapter.
 	 * @see org.eclipse.e4.ui.model.application.commands.MBindingTable
+	 * @since 1.0
 	 * @generated
 	 */
 	public Adapter createBindingTableAdapter() {
@@ -220,6 +224,7 @@ public class CommandsAdapterFactory extends AdapterFactoryImpl {
 	 * <!-- end-user-doc -->
 	 * @return the new adapter.
 	 * @see org.eclipse.e4.ui.model.application.commands.MCommand
+	 * @since 1.0
 	 * @generated
 	 */
 	public Adapter createCommandAdapter() {
@@ -234,6 +239,7 @@ public class CommandsAdapterFactory extends AdapterFactoryImpl {
 	 * <!-- end-user-doc -->
 	 * @return the new adapter.
 	 * @see org.eclipse.e4.ui.model.application.commands.MCommandParameter
+	 * @since 1.0
 	 * @generated
 	 */
 	public Adapter createCommandParameterAdapter() {
@@ -248,6 +254,7 @@ public class CommandsAdapterFactory extends AdapterFactoryImpl {
 	 * <!-- end-user-doc -->
 	 * @return the new adapter.
 	 * @see org.eclipse.e4.ui.model.application.commands.MHandler
+	 * @since 1.0
 	 * @generated
 	 */
 	public Adapter createHandlerAdapter() {
@@ -262,6 +269,7 @@ public class CommandsAdapterFactory extends AdapterFactoryImpl {
 	 * <!-- end-user-doc -->
 	 * @return the new adapter.
 	 * @see org.eclipse.e4.ui.model.application.commands.MHandlerContainer
+	 * @since 1.0
 	 * @generated
 	 */
 	public Adapter createHandlerContainerAdapter() {
@@ -276,6 +284,7 @@ public class CommandsAdapterFactory extends AdapterFactoryImpl {
 	 * <!-- end-user-doc -->
 	 * @return the new adapter.
 	 * @see org.eclipse.e4.ui.model.application.commands.MKeyBinding
+	 * @since 1.0
 	 * @generated
 	 */
 	public Adapter createKeyBindingAdapter() {
@@ -290,6 +299,7 @@ public class CommandsAdapterFactory extends AdapterFactoryImpl {
 	 * <!-- end-user-doc -->
 	 * @return the new adapter.
 	 * @see org.eclipse.e4.ui.model.application.commands.MKeySequence
+	 * @since 1.0
 	 * @generated
 	 */
 	public Adapter createKeySequenceAdapter() {
@@ -304,6 +314,7 @@ public class CommandsAdapterFactory extends AdapterFactoryImpl {
 	 * <!-- end-user-doc -->
 	 * @return the new adapter.
 	 * @see org.eclipse.e4.ui.model.application.commands.MParameter
+	 * @since 1.0
 	 * @generated
 	 */
 	public Adapter createParameterAdapter() {
@@ -318,6 +329,7 @@ public class CommandsAdapterFactory extends AdapterFactoryImpl {
 	 * <!-- end-user-doc -->
 	 * @return the new adapter.
 	 * @see org.eclipse.e4.ui.model.application.commands.MCategory
+	 * @since 1.0
 	 * @generated
 	 */
 	public Adapter createCategoryAdapter() {
@@ -332,6 +344,7 @@ public class CommandsAdapterFactory extends AdapterFactoryImpl {
 	 * <!-- end-user-doc -->
 	 * @return the new adapter.
 	 * @see org.eclipse.e4.ui.model.application.MApplicationElement
+	 * @since 1.0
 	 * @generated
 	 */
 	public Adapter createApplicationElementAdapter() {
@@ -346,6 +359,7 @@ public class CommandsAdapterFactory extends AdapterFactoryImpl {
 	 * <!-- end-user-doc -->
 	 * @return the new adapter.
 	 * @see org.eclipse.e4.ui.model.application.ui.MLocalizable
+	 * @since 1.1
 	 * @generated
 	 */
 	public Adapter createLocalizableAdapter() {
@@ -360,6 +374,7 @@ public class CommandsAdapterFactory extends AdapterFactoryImpl {
 	 * <!-- end-user-doc -->
 	 * @return the new adapter.
 	 * @see org.eclipse.e4.ui.model.application.MContribution
+	 * @since 1.0
 	 * @generated
 	 */
 	public Adapter createContributionAdapter() {

@@ -79,6 +79,7 @@ public class BasicPackageImpl extends EPackageImpl {
 	 * <!-- end-user-doc -->
 	 * @see org.eclipse.e4.ui.model.application.descriptor.basic.impl.PartDescriptorImpl
 	 * @see org.eclipse.e4.ui.model.application.descriptor.basic.impl.BasicPackageImpl#getPartDescriptor()
+	 * @since 1.0
 	 * @generated
 	 */
 	public static final int PART_DESCRIPTOR = 0;
@@ -87,6 +88,7 @@ public class BasicPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Element Id</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -96,6 +98,7 @@ public class BasicPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Persisted State</b></em>' map.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -105,6 +108,7 @@ public class BasicPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Tags</b></em>' attribute list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -114,6 +118,7 @@ public class BasicPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Contributor URI</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -123,6 +128,7 @@ public class BasicPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Transient Data</b></em>' map.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -132,6 +138,7 @@ public class BasicPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Label</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -141,6 +148,7 @@ public class BasicPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Icon URI</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -150,6 +158,7 @@ public class BasicPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Tooltip</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -159,6 +168,7 @@ public class BasicPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Localized Label</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -168,6 +178,7 @@ public class BasicPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Localized Tooltip</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -177,6 +188,7 @@ public class BasicPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Handlers</b></em>' containment reference list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -186,6 +198,7 @@ public class BasicPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Binding Contexts</b></em>' reference list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -195,6 +208,7 @@ public class BasicPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Allow Multiple</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -204,6 +218,7 @@ public class BasicPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Category</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -213,6 +228,7 @@ public class BasicPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Menus</b></em>' containment reference list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -222,6 +238,7 @@ public class BasicPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Toolbar</b></em>' containment reference.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -231,6 +248,7 @@ public class BasicPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Closeable</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -240,6 +258,7 @@ public class BasicPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Dirtyable</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -249,6 +268,7 @@ public class BasicPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Contribution URI</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -258,6 +278,7 @@ public class BasicPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Description</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -267,6 +288,7 @@ public class BasicPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Localized Description</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -276,6 +298,7 @@ public class BasicPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Variables</b></em>' attribute list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -285,6 +308,7 @@ public class BasicPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Properties</b></em>' map.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -294,6 +318,8 @@ public class BasicPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Trim Bars</b></em>' containment reference list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.3
+	 * </p>
 	 * @generated
 	 * @ordered
 	 */
@@ -303,6 +329,7 @@ public class BasicPackageImpl extends EPackageImpl {
 	 * The number of structural features of the '<em>Part Descriptor</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -312,6 +339,7 @@ public class BasicPackageImpl extends EPackageImpl {
 	 * The operation id for the '<em>Update Localization</em>' operation.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.1
 	 * @generated
 	 * @ordered
 	 */
@@ -321,6 +349,7 @@ public class BasicPackageImpl extends EPackageImpl {
 	 * The number of operations of the '<em>Part Descriptor</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -332,6 +361,7 @@ public class BasicPackageImpl extends EPackageImpl {
 	 * <!-- end-user-doc -->
 	 * @see org.eclipse.e4.ui.model.application.descriptor.basic.MPartDescriptorContainer
 	 * @see org.eclipse.e4.ui.model.application.descriptor.basic.impl.BasicPackageImpl#getPartDescriptorContainer()
+	 * @since 1.0
 	 * @generated
 	 */
 	public static final int PART_DESCRIPTOR_CONTAINER = 1;
@@ -340,6 +370,7 @@ public class BasicPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Descriptors</b></em>' containment reference list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -349,6 +380,7 @@ public class BasicPackageImpl extends EPackageImpl {
 	 * The number of structural features of the '<em>Part Descriptor Container</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -358,6 +390,7 @@ public class BasicPackageImpl extends EPackageImpl {
 	 * The number of operations of the '<em>Part Descriptor Container</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -366,6 +399,7 @@ public class BasicPackageImpl extends EPackageImpl {
 	/**
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 */
 	private EClass partDescriptorEClass = null;
@@ -373,6 +407,7 @@ public class BasicPackageImpl extends EPackageImpl {
 	/**
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 */
 	private EClass partDescriptorContainerEClass = null;
@@ -405,7 +440,7 @@ public class BasicPackageImpl extends EPackageImpl {
 
 	/**
 	 * Creates, registers, and initializes the <b>Package</b> for this model, and for any others upon which it depends.
-	 * 
+	 *
 	 * <p>This method is used to initialize {@link BasicPackageImpl#eINSTANCE} when that field is accessed.
 	 * Clients should not invoke it directly. Instead, they should simply access that field to obtain the package.
 	 * <!-- begin-user-doc -->
@@ -419,17 +454,24 @@ public class BasicPackageImpl extends EPackageImpl {
 		if (isInited) return (BasicPackageImpl)EPackage.Registry.INSTANCE.getEPackage(BasicPackageImpl.eNS_URI);
 
 		// Obtain or create and register package
-		BasicPackageImpl theBasicPackage = (BasicPackageImpl)(EPackage.Registry.INSTANCE.get(eNS_URI) instanceof BasicPackageImpl ? EPackage.Registry.INSTANCE.get(eNS_URI) : new BasicPackageImpl());
+		Object registeredBasicPackage = EPackage.Registry.INSTANCE.get(eNS_URI);
+		BasicPackageImpl theBasicPackage = registeredBasicPackage instanceof BasicPackageImpl ? (BasicPackageImpl)registeredBasicPackage : new BasicPackageImpl();
 
 		isInited = true;
 
 		// Obtain or create and register interdependencies
-		ApplicationPackageImpl theApplicationPackage = (ApplicationPackageImpl)(EPackage.Registry.INSTANCE.getEPackage(ApplicationPackageImpl.eNS_URI) instanceof ApplicationPackageImpl ? EPackage.Registry.INSTANCE.getEPackage(ApplicationPackageImpl.eNS_URI) : ApplicationPackageImpl.eINSTANCE);
-		CommandsPackageImpl theCommandsPackage = (CommandsPackageImpl)(EPackage.Registry.INSTANCE.getEPackage(CommandsPackageImpl.eNS_URI) instanceof CommandsPackageImpl ? EPackage.Registry.INSTANCE.getEPackage(CommandsPackageImpl.eNS_URI) : CommandsPackageImpl.eINSTANCE);
-		UiPackageImpl theUiPackage = (UiPackageImpl)(EPackage.Registry.INSTANCE.getEPackage(UiPackageImpl.eNS_URI) instanceof UiPackageImpl ? EPackage.Registry.INSTANCE.getEPackage(UiPackageImpl.eNS_URI) : UiPackageImpl.eINSTANCE);
-		MenuPackageImpl theMenuPackage = (MenuPackageImpl)(EPackage.Registry.INSTANCE.getEPackage(MenuPackageImpl.eNS_URI) instanceof MenuPackageImpl ? EPackage.Registry.INSTANCE.getEPackage(MenuPackageImpl.eNS_URI) : MenuPackageImpl.eINSTANCE);
-		org.eclipse.e4.ui.model.application.ui.basic.impl.BasicPackageImpl theBasicPackage_1 = (org.eclipse.e4.ui.model.application.ui.basic.impl.BasicPackageImpl)(EPackage.Registry.INSTANCE.getEPackage(org.eclipse.e4.ui.model.application.ui.basic.impl.BasicPackageImpl.eNS_URI) instanceof org.eclipse.e4.ui.model.application.ui.basic.impl.BasicPackageImpl ? EPackage.Registry.INSTANCE.getEPackage(org.eclipse.e4.ui.model.application.ui.basic.impl.BasicPackageImpl.eNS_URI) : org.eclipse.e4.ui.model.application.ui.basic.impl.BasicPackageImpl.eINSTANCE);
-		AdvancedPackageImpl theAdvancedPackage = (AdvancedPackageImpl)(EPackage.Registry.INSTANCE.getEPackage(AdvancedPackageImpl.eNS_URI) instanceof AdvancedPackageImpl ? EPackage.Registry.INSTANCE.getEPackage(AdvancedPackageImpl.eNS_URI) : AdvancedPackageImpl.eINSTANCE);
+		Object registeredPackage = EPackage.Registry.INSTANCE.getEPackage(ApplicationPackageImpl.eNS_URI);
+		ApplicationPackageImpl theApplicationPackage = (ApplicationPackageImpl)(registeredPackage instanceof ApplicationPackageImpl ? registeredPackage : ApplicationPackageImpl.eINSTANCE);
+		registeredPackage = EPackage.Registry.INSTANCE.getEPackage(CommandsPackageImpl.eNS_URI);
+		CommandsPackageImpl theCommandsPackage = (CommandsPackageImpl)(registeredPackage instanceof CommandsPackageImpl ? registeredPackage : CommandsPackageImpl.eINSTANCE);
+		registeredPackage = EPackage.Registry.INSTANCE.getEPackage(UiPackageImpl.eNS_URI);
+		UiPackageImpl theUiPackage = (UiPackageImpl)(registeredPackage instanceof UiPackageImpl ? registeredPackage : UiPackageImpl.eINSTANCE);
+		registeredPackage = EPackage.Registry.INSTANCE.getEPackage(MenuPackageImpl.eNS_URI);
+		MenuPackageImpl theMenuPackage = (MenuPackageImpl)(registeredPackage instanceof MenuPackageImpl ? registeredPackage : MenuPackageImpl.eINSTANCE);
+		registeredPackage = EPackage.Registry.INSTANCE.getEPackage(org.eclipse.e4.ui.model.application.ui.basic.impl.BasicPackageImpl.eNS_URI);
+		org.eclipse.e4.ui.model.application.ui.basic.impl.BasicPackageImpl theBasicPackage_1 = (org.eclipse.e4.ui.model.application.ui.basic.impl.BasicPackageImpl)(registeredPackage instanceof org.eclipse.e4.ui.model.application.ui.basic.impl.BasicPackageImpl ? registeredPackage : org.eclipse.e4.ui.model.application.ui.basic.impl.BasicPackageImpl.eINSTANCE);
+		registeredPackage = EPackage.Registry.INSTANCE.getEPackage(AdvancedPackageImpl.eNS_URI);
+		AdvancedPackageImpl theAdvancedPackage = (AdvancedPackageImpl)(registeredPackage instanceof AdvancedPackageImpl ? registeredPackage : AdvancedPackageImpl.eINSTANCE);
 
 		// Create package meta-data objects
 		theBasicPackage.createPackageContents();
@@ -452,7 +494,6 @@ public class BasicPackageImpl extends EPackageImpl {
 		// Mark meta-data to indicate it can't be changed
 		theBasicPackage.freeze();
 
-  
 		// Update the registry and return the package
 		EPackage.Registry.INSTANCE.put(BasicPackageImpl.eNS_URI, theBasicPackage);
 		return theBasicPackage;
@@ -465,6 +506,7 @@ public class BasicPackageImpl extends EPackageImpl {
 	 * <!-- end-user-doc -->
 	 * @return the meta object for class '<em>Part Descriptor</em>'.
 	 * @see org.eclipse.e4.ui.model.application.descriptor.basic.MPartDescriptor
+	 * @since 1.0
 	 * @generated
 	 */
 	public EClass getPartDescriptor() {
@@ -478,6 +520,7 @@ public class BasicPackageImpl extends EPackageImpl {
 	 * @return the meta object for the attribute '<em>Allow Multiple</em>'.
 	 * @see org.eclipse.e4.ui.model.application.descriptor.basic.MPartDescriptor#isAllowMultiple()
 	 * @see #getPartDescriptor()
+	 * @since 1.0
 	 * @generated
 	 */
 	public EAttribute getPartDescriptor_AllowMultiple() {
@@ -491,6 +534,7 @@ public class BasicPackageImpl extends EPackageImpl {
 	 * @return the meta object for the attribute '<em>Category</em>'.
 	 * @see org.eclipse.e4.ui.model.application.descriptor.basic.MPartDescriptor#getCategory()
 	 * @see #getPartDescriptor()
+	 * @since 1.0
 	 * @generated
 	 */
 	public EAttribute getPartDescriptor_Category() {
@@ -504,6 +548,7 @@ public class BasicPackageImpl extends EPackageImpl {
 	 * @return the meta object for the containment reference list '<em>Menus</em>'.
 	 * @see org.eclipse.e4.ui.model.application.descriptor.basic.MPartDescriptor#getMenus()
 	 * @see #getPartDescriptor()
+	 * @since 1.0
 	 * @generated
 	 */
 	public EReference getPartDescriptor_Menus() {
@@ -517,6 +562,7 @@ public class BasicPackageImpl extends EPackageImpl {
 	 * @return the meta object for the containment reference '<em>Toolbar</em>'.
 	 * @see org.eclipse.e4.ui.model.application.descriptor.basic.MPartDescriptor#getToolbar()
 	 * @see #getPartDescriptor()
+	 * @since 1.0
 	 * @generated
 	 */
 	public EReference getPartDescriptor_Toolbar() {
@@ -530,6 +576,7 @@ public class BasicPackageImpl extends EPackageImpl {
 	 * @return the meta object for the attribute '<em>Closeable</em>'.
 	 * @see org.eclipse.e4.ui.model.application.descriptor.basic.MPartDescriptor#isCloseable()
 	 * @see #getPartDescriptor()
+	 * @since 1.0
 	 * @generated
 	 */
 	public EAttribute getPartDescriptor_Closeable() {
@@ -543,6 +590,7 @@ public class BasicPackageImpl extends EPackageImpl {
 	 * @return the meta object for the attribute '<em>Dirtyable</em>'.
 	 * @see org.eclipse.e4.ui.model.application.descriptor.basic.MPartDescriptor#isDirtyable()
 	 * @see #getPartDescriptor()
+	 * @since 1.0
 	 * @generated
 	 */
 	public EAttribute getPartDescriptor_Dirtyable() {
@@ -556,6 +604,7 @@ public class BasicPackageImpl extends EPackageImpl {
 	 * @return the meta object for the attribute '<em>Contribution URI</em>'.
 	 * @see org.eclipse.e4.ui.model.application.descriptor.basic.MPartDescriptor#getContributionURI()
 	 * @see #getPartDescriptor()
+	 * @since 1.0
 	 * @generated
 	 */
 	public EAttribute getPartDescriptor_ContributionURI() {
@@ -569,6 +618,7 @@ public class BasicPackageImpl extends EPackageImpl {
 	 * @return the meta object for the attribute '<em>Description</em>'.
 	 * @see org.eclipse.e4.ui.model.application.descriptor.basic.MPartDescriptor#getDescription()
 	 * @see #getPartDescriptor()
+	 * @since 1.0
 	 * @generated
 	 */
 	public EAttribute getPartDescriptor_Description() {
@@ -583,6 +633,7 @@ public class BasicPackageImpl extends EPackageImpl {
 	 * @return the meta object for the attribute '<em>Localized Description</em>'.
 	 * @see org.eclipse.e4.ui.model.application.descriptor.basic.MPartDescriptor#getLocalizedDescription()
 	 * @see #getPartDescriptor()
+	 * @since 1.0
 	 * @generated
 	 */
 	public EAttribute getPartDescriptor_LocalizedDescription() {
@@ -597,6 +648,7 @@ public class BasicPackageImpl extends EPackageImpl {
 	 * @return the meta object for the attribute list '<em>Variables</em>'.
 	 * @see org.eclipse.e4.ui.model.application.descriptor.basic.MPartDescriptor#getVariables()
 	 * @see #getPartDescriptor()
+	 * @since 1.0
 	 * @generated
 	 */
 	public EAttribute getPartDescriptor_Variables() {
@@ -611,6 +663,7 @@ public class BasicPackageImpl extends EPackageImpl {
 	 * @return the meta object for the map '<em>Properties</em>'.
 	 * @see org.eclipse.e4.ui.model.application.descriptor.basic.MPartDescriptor#getProperties()
 	 * @see #getPartDescriptor()
+	 * @since 1.0
 	 * @generated
 	 */
 	public EReference getPartDescriptor_Properties() {
@@ -625,6 +678,8 @@ public class BasicPackageImpl extends EPackageImpl {
 	 * @return the meta object for the containment reference list '<em>Trim Bars</em>'.
 	 * @see org.eclipse.e4.ui.model.application.descriptor.basic.MPartDescriptor#getTrimBars()
 	 * @see #getPartDescriptor()
+	 * @since 1.3
+	 * </p>
 	 * @generated
 	 */
 	public EReference getPartDescriptor_TrimBars() {
@@ -638,6 +693,7 @@ public class BasicPackageImpl extends EPackageImpl {
 	 * <!-- end-user-doc -->
 	 * @return the meta object for class '<em>Part Descriptor Container</em>'.
 	 * @see org.eclipse.e4.ui.model.application.descriptor.basic.MPartDescriptorContainer
+	 * @since 1.0
 	 * @generated
 	 */
 	public EClass getPartDescriptorContainer() {
@@ -651,6 +707,7 @@ public class BasicPackageImpl extends EPackageImpl {
 	 * @return the meta object for the containment reference list '<em>Descriptors</em>'.
 	 * @see org.eclipse.e4.ui.model.application.descriptor.basic.MPartDescriptorContainer#getDescriptors()
 	 * @see #getPartDescriptorContainer()
+	 * @since 1.0
 	 * @generated
 	 */
 	public EReference getPartDescriptorContainer_Descriptors() {
@@ -783,6 +840,7 @@ public class BasicPackageImpl extends EPackageImpl {
 		 * <!-- end-user-doc -->
 		 * @see org.eclipse.e4.ui.model.application.descriptor.basic.impl.PartDescriptorImpl
 		 * @see org.eclipse.e4.ui.model.application.descriptor.basic.impl.BasicPackageImpl#getPartDescriptor()
+		 * @since 1.0
 		 * @generated
 		 */
 		public static final EClass PART_DESCRIPTOR = eINSTANCE.getPartDescriptor();
@@ -791,6 +849,7 @@ public class BasicPackageImpl extends EPackageImpl {
 		 * The meta object literal for the '<em><b>Allow Multiple</b></em>' attribute feature.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
+		 * @since 1.0
 		 * @generated
 		 */
 		public static final EAttribute PART_DESCRIPTOR__ALLOW_MULTIPLE = eINSTANCE.getPartDescriptor_AllowMultiple();
@@ -799,6 +858,7 @@ public class BasicPackageImpl extends EPackageImpl {
 		 * The meta object literal for the '<em><b>Category</b></em>' attribute feature.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
+		 * @since 1.0
 		 * @generated
 		 */
 		public static final EAttribute PART_DESCRIPTOR__CATEGORY = eINSTANCE.getPartDescriptor_Category();
@@ -807,6 +867,7 @@ public class BasicPackageImpl extends EPackageImpl {
 		 * The meta object literal for the '<em><b>Menus</b></em>' containment reference list feature.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
+		 * @since 1.0
 		 * @generated
 		 */
 		public static final EReference PART_DESCRIPTOR__MENUS = eINSTANCE.getPartDescriptor_Menus();
@@ -815,6 +876,7 @@ public class BasicPackageImpl extends EPackageImpl {
 		 * The meta object literal for the '<em><b>Toolbar</b></em>' containment reference feature.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
+		 * @since 1.0
 		 * @generated
 		 */
 		public static final EReference PART_DESCRIPTOR__TOOLBAR = eINSTANCE.getPartDescriptor_Toolbar();
@@ -823,6 +885,7 @@ public class BasicPackageImpl extends EPackageImpl {
 		 * The meta object literal for the '<em><b>Closeable</b></em>' attribute feature.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
+		 * @since 1.0
 		 * @generated
 		 */
 		public static final EAttribute PART_DESCRIPTOR__CLOSEABLE = eINSTANCE.getPartDescriptor_Closeable();
@@ -831,6 +894,7 @@ public class BasicPackageImpl extends EPackageImpl {
 		 * The meta object literal for the '<em><b>Dirtyable</b></em>' attribute feature.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
+		 * @since 1.0
 		 * @generated
 		 */
 		public static final EAttribute PART_DESCRIPTOR__DIRTYABLE = eINSTANCE.getPartDescriptor_Dirtyable();
@@ -839,6 +903,7 @@ public class BasicPackageImpl extends EPackageImpl {
 		 * The meta object literal for the '<em><b>Contribution URI</b></em>' attribute feature.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
+		 * @since 1.0
 		 * @generated
 		 */
 		public static final EAttribute PART_DESCRIPTOR__CONTRIBUTION_URI = eINSTANCE.getPartDescriptor_ContributionURI();
@@ -847,6 +912,7 @@ public class BasicPackageImpl extends EPackageImpl {
 		 * The meta object literal for the '<em><b>Description</b></em>' attribute feature.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
+		 * @since 1.0
 		 * @generated
 		 */
 		public static final EAttribute PART_DESCRIPTOR__DESCRIPTION = eINSTANCE.getPartDescriptor_Description();
@@ -855,6 +921,7 @@ public class BasicPackageImpl extends EPackageImpl {
 		 * The meta object literal for the '<em><b>Localized Description</b></em>' attribute feature.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
+		 * @since 1.0
 		 * @generated
 		 */
 		public static final EAttribute PART_DESCRIPTOR__LOCALIZED_DESCRIPTION = eINSTANCE.getPartDescriptor_LocalizedDescription();
@@ -863,6 +930,7 @@ public class BasicPackageImpl extends EPackageImpl {
 		 * The meta object literal for the '<em><b>Variables</b></em>' attribute list feature.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
+		 * @since 1.0
 		 * @generated
 		 */
 		public static final EAttribute PART_DESCRIPTOR__VARIABLES = eINSTANCE.getPartDescriptor_Variables();
@@ -871,6 +939,7 @@ public class BasicPackageImpl extends EPackageImpl {
 		 * The meta object literal for the '<em><b>Properties</b></em>' map feature.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
+		 * @since 1.0
 		 * @generated
 		 */
 		public static final EReference PART_DESCRIPTOR__PROPERTIES = eINSTANCE.getPartDescriptor_Properties();
@@ -879,6 +948,8 @@ public class BasicPackageImpl extends EPackageImpl {
 		 * The meta object literal for the '<em><b>Trim Bars</b></em>' containment reference list feature.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
+		 * @since 1.3
+		 * </p>
 		 * @generated
 		 */
 		public static final EReference PART_DESCRIPTOR__TRIM_BARS = eINSTANCE.getPartDescriptor_TrimBars();
@@ -889,6 +960,7 @@ public class BasicPackageImpl extends EPackageImpl {
 		 * <!-- end-user-doc -->
 		 * @see org.eclipse.e4.ui.model.application.descriptor.basic.MPartDescriptorContainer
 		 * @see org.eclipse.e4.ui.model.application.descriptor.basic.impl.BasicPackageImpl#getPartDescriptorContainer()
+		 * @since 1.0
 		 * @generated
 		 */
 		public static final EClass PART_DESCRIPTOR_CONTAINER = eINSTANCE.getPartDescriptorContainer();
@@ -897,6 +969,7 @@ public class BasicPackageImpl extends EPackageImpl {
 		 * The meta object literal for the '<em><b>Descriptors</b></em>' containment reference list feature.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
+		 * @since 1.0
 		 * @generated
 		 */
 		public static final EReference PART_DESCRIPTOR_CONTAINER__DESCRIPTORS = eINSTANCE.getPartDescriptorContainer_Descriptors();

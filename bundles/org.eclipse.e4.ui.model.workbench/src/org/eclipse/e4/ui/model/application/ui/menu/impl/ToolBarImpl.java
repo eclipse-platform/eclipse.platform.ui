@@ -24,6 +24,7 @@ import org.eclipse.emf.ecore.util.EObjectContainmentWithInverseEList;
  * An implementation of the model object '<em><b>Tool Bar</b></em>'.
  * <!-- end-user-doc -->
  *
+ * @since 1.0
  * @generated
  */
 public class ToolBarImpl extends ElementContainerImpl<MToolBarElement> implements MToolBar {

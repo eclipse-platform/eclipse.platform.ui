@@ -80,6 +80,7 @@ public class FragmentFactoryImpl extends EFactoryImpl implements MFragmentFactor
 	/**
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 */
 	public MModelFragments createModelFragments() {
@@ -90,6 +91,7 @@ public class FragmentFactoryImpl extends EFactoryImpl implements MFragmentFactor
 	/**
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 */
 	public MStringModelFragment createStringModelFragment() {

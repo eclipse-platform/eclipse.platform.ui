@@ -33,6 +33,7 @@ public interface MMenuFactory {
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @return a new object of class '<em>Separator</em>'.
+	 * @since 1.0
 	 * @generated
 	 */
 	MMenuSeparator createMenuSeparator();
@@ -42,6 +43,7 @@ public interface MMenuFactory {
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @return a new object of class '<em>Menu</em>'.
+	 * @since 1.0
 	 * @generated
 	 */
 	MMenu createMenu();
@@ -51,6 +53,7 @@ public interface MMenuFactory {
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @return a new object of class '<em>Contribution</em>'.
+	 * @since 1.0
 	 * @generated
 	 */
 	MMenuContribution createMenuContribution();
@@ -60,6 +63,7 @@ public interface MMenuFactory {
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @return a new object of class '<em>Popup Menu</em>'.
+	 * @since 1.0
 	 * @generated
 	 */
 	MPopupMenu createPopupMenu();
@@ -69,6 +73,7 @@ public interface MMenuFactory {
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @return a new object of class '<em>Direct Menu Item</em>'.
+	 * @since 1.0
 	 * @generated
 	 */
 	MDirectMenuItem createDirectMenuItem();
@@ -78,6 +83,7 @@ public interface MMenuFactory {
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @return a new object of class '<em>Handled Menu Item</em>'.
+	 * @since 1.0
 	 * @generated
 	 */
 	MHandledMenuItem createHandledMenuItem();
@@ -87,6 +93,7 @@ public interface MMenuFactory {
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @return a new object of class '<em>Tool Bar</em>'.
+	 * @since 1.0
 	 * @generated
 	 */
 	MToolBar createToolBar();
@@ -96,6 +103,7 @@ public interface MMenuFactory {
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @return a new object of class '<em>Tool Control</em>'.
+	 * @since 1.0
 	 * @generated
 	 */
 	MToolControl createToolControl();
@@ -105,6 +113,7 @@ public interface MMenuFactory {
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @return a new object of class '<em>Handled Tool Item</em>'.
+	 * @since 1.0
 	 * @generated
 	 */
 	MHandledToolItem createHandledToolItem();
@@ -114,6 +123,7 @@ public interface MMenuFactory {
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @return a new object of class '<em>Direct Tool Item</em>'.
+	 * @since 1.0
 	 * @generated
 	 */
 	MDirectToolItem createDirectToolItem();
@@ -123,6 +133,7 @@ public interface MMenuFactory {
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @return a new object of class '<em>Tool Bar Separator</em>'.
+	 * @since 1.0
 	 * @generated
 	 */
 	MToolBarSeparator createToolBarSeparator();
@@ -132,6 +143,7 @@ public interface MMenuFactory {
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @return a new object of class '<em>Tool Bar Contribution</em>'.
+	 * @since 1.0
 	 * @generated
 	 */
 	MToolBarContribution createToolBarContribution();
@@ -141,6 +153,7 @@ public interface MMenuFactory {
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @return a new object of class '<em>Trim Contribution</em>'.
+	 * @since 1.0
 	 * @generated
 	 */
 	MTrimContribution createTrimContribution();
@@ -150,6 +163,7 @@ public interface MMenuFactory {
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @return a new object of class '<em>Dynamic Menu Contribution</em>'.
+	 * @since 1.0
 	 * @generated
 	 */
 	MDynamicMenuContribution createDynamicMenuContribution();

@@ -29,6 +29,7 @@ import org.eclipse.emf.ecore.impl.ENotificationImpl;
  *   <li>{@link org.eclipse.e4.ui.model.application.ui.menu.impl.ToolItemImpl#getMenu <em>Menu</em>}</li>
  * </ul>
  *
+ * @since 1.0
  * @generated
  */
 public abstract class ToolItemImpl extends ItemImpl implements MToolItem {

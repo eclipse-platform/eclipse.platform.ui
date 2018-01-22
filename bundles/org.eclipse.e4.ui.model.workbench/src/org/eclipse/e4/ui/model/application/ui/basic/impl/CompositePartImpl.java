@@ -41,6 +41,7 @@ import org.eclipse.emf.ecore.util.InternalEList;
  *   <li>{@link org.eclipse.e4.ui.model.application.ui.basic.impl.CompositePartImpl#isHorizontal <em>Horizontal</em>}</li>
  * </ul>
  *
+ * @since 1.1
  * @generated
  */
 public class CompositePartImpl extends PartImpl implements MCompositePart {
@@ -339,7 +340,7 @@ public class CompositePartImpl extends PartImpl implements MCompositePart {
 	public String toString() {
 		if (eIsProxy()) return super.toString();
 
-		StringBuffer result = new StringBuffer(super.toString());
+		StringBuilder result = new StringBuilder(super.toString());
 		result.append(" (horizontal: "); //$NON-NLS-1$
 		result.append(horizontal);
 		result.append(')');

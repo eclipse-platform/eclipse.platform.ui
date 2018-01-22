@@ -106,6 +106,7 @@ public class FragmentSwitch<T> extends Switch<T> {
 	 * @param object the target of the switch.
 	 * @return the result of interpreting the object as an instance of '<em>Model Fragments</em>'.
 	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+	 * @since 1.0
 	 * @generated
 	 */
 	public T caseModelFragments(MModelFragments object) {
@@ -121,6 +122,7 @@ public class FragmentSwitch<T> extends Switch<T> {
 	 * @param object the target of the switch.
 	 * @return the result of interpreting the object as an instance of '<em>Model Fragment</em>'.
 	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+	 * @since 1.0
 	 * @generated
 	 */
 	public T caseModelFragment(MModelFragment object) {
@@ -136,6 +138,7 @@ public class FragmentSwitch<T> extends Switch<T> {
 	 * @param object the target of the switch.
 	 * @return the result of interpreting the object as an instance of '<em>String Model Fragment</em>'.
 	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+	 * @since 1.0
 	 * @generated
 	 */
 	public T caseStringModelFragment(MStringModelFragment object) {

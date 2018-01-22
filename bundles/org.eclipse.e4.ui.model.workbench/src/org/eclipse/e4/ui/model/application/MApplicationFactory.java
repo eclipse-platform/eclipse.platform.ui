@@ -33,6 +33,7 @@ public interface MApplicationFactory {
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @return a new object of class '<em>Application</em>'.
+	 * @since 1.0
 	 * @generated
 	 */
 	MApplication createApplication();
@@ -42,6 +43,7 @@ public interface MApplicationFactory {
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @return a new object of class '<em>Addon</em>'.
+	 * @since 1.0
 	 * @generated
 	 */
 	MAddon createAddon();

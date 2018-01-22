@@ -30,6 +30,7 @@ import org.eclipse.emf.ecore.util.EObjectResolvingEList;
  *   <li>{@link org.eclipse.e4.ui.model.application.ui.basic.impl.TrimBarImpl#getPendingCleanup <em>Pending Cleanup</em>}</li>
  * </ul>
  *
+ * @since 1.0
  * @generated
  */
 public class TrimBarImpl extends GenericTrimContainerImpl<MTrimElement> implements MTrimBar {

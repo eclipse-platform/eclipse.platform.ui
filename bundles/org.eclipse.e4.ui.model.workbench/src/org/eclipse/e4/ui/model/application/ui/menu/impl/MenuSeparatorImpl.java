@@ -18,6 +18,7 @@ import org.eclipse.emf.ecore.EClass;
  * An implementation of the model object '<em><b>Separator</b></em>'.
  * <!-- end-user-doc -->
  *
+ * @since 1.0
  * @generated
  */
 public class MenuSeparatorImpl extends MenuElementImpl implements MMenuSeparator {

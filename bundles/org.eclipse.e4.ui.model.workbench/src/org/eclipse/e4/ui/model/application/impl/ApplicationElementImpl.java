@@ -41,6 +41,7 @@ import org.eclipse.emf.ecore.util.InternalEList;
  *   <li>{@link org.eclipse.e4.ui.model.application.impl.ApplicationElementImpl#getTransientData <em>Transient Data</em>}</li>
  * </ul>
  *
+ * @since 1.0
  * @generated
  */
 public abstract class ApplicationElementImpl extends org.eclipse.emf.ecore.impl.MinimalEObjectImpl.Container implements MApplicationElement {
@@ -337,7 +338,7 @@ public abstract class ApplicationElementImpl extends org.eclipse.emf.ecore.impl.
 	public String toString() {
 		if (eIsProxy()) return super.toString();
 
-		StringBuffer result = new StringBuffer(super.toString());
+		StringBuilder result = new StringBuilder(super.toString());
 		result.append(" (elementId: "); //$NON-NLS-1$
 		result.append(elementId);
 		result.append(", tags: "); //$NON-NLS-1$

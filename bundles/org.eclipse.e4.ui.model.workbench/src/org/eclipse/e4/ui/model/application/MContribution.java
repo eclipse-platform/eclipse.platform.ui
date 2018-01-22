@@ -61,6 +61,7 @@ public interface MContribution extends MApplicationElement {
 	 * <!-- end-user-doc -->
 	 * @param value the new value of the '<em>Contribution URI</em>' attribute.
 	 * @see #getContributionURI()
+	 * @since 1.0
 	 * @generated
 	 */
 	void setContributionURI(String value);

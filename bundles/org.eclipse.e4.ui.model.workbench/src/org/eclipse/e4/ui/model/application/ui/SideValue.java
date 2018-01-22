@@ -162,7 +162,8 @@ public enum SideValue implements InternalSideValue {
 	 * @generated
 	 */
 	public static SideValue get(String literal) {
-		for (SideValue result : VALUES_ARRAY) {
+		for (int i = 0; i < VALUES_ARRAY.length; ++i) {
+			SideValue result = VALUES_ARRAY[i];
 			if (result.toString().equals(literal)) {
 				return result;
 			}
@@ -179,7 +180,8 @@ public enum SideValue implements InternalSideValue {
 	 * @generated
 	 */
 	public static SideValue getByName(String name) {
-		for (SideValue result : VALUES_ARRAY) {
+		for (int i = 0; i < VALUES_ARRAY.length; ++i) {
+			SideValue result = VALUES_ARRAY[i];
 			if (result.getName().equals(name)) {
 				return result;
 			}

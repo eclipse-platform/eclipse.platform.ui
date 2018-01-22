@@ -34,6 +34,7 @@ import org.eclipse.emf.ecore.util.InternalEList;
  *   <li>{@link org.eclipse.e4.ui.model.fragment.impl.ModelFragmentImpl#getElements <em>Elements</em>}</li>
  * </ul>
  *
+ * @since 1.0
  * @generated
  */
 public abstract class ModelFragmentImpl extends org.eclipse.emf.ecore.impl.MinimalEObjectImpl.Container implements MModelFragment {

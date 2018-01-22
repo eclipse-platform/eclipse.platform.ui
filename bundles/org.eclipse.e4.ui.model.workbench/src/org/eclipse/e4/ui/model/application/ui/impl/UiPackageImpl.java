@@ -57,6 +57,7 @@ import org.eclipse.emf.ecore.impl.EPackageImpl;
  * @model kind="package"
  * @generated
  */
+@SuppressWarnings("deprecation")
 public class UiPackageImpl extends EPackageImpl {
 	/**
 	 * The package name.
@@ -96,6 +97,7 @@ public class UiPackageImpl extends EPackageImpl {
 	 * <!-- end-user-doc -->
 	 * @see org.eclipse.e4.ui.model.application.ui.MContext
 	 * @see org.eclipse.e4.ui.model.application.ui.impl.UiPackageImpl#getContext()
+	 * @since 1.0
 	 * @generated
 	 */
 	public static final int CONTEXT = 0;
@@ -104,6 +106,7 @@ public class UiPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Context</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -113,6 +116,7 @@ public class UiPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Variables</b></em>' attribute list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -122,6 +126,7 @@ public class UiPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Properties</b></em>' map.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -131,6 +136,7 @@ public class UiPackageImpl extends EPackageImpl {
 	 * The number of structural features of the '<em>Context</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -140,6 +146,7 @@ public class UiPackageImpl extends EPackageImpl {
 	 * The number of operations of the '<em>Context</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -151,6 +158,7 @@ public class UiPackageImpl extends EPackageImpl {
 	 * <!-- end-user-doc -->
 	 * @see org.eclipse.e4.ui.model.application.ui.MDirtyable
 	 * @see org.eclipse.e4.ui.model.application.ui.impl.UiPackageImpl#getDirtyable()
+	 * @since 1.0
 	 * @generated
 	 */
 	public static final int DIRTYABLE = 1;
@@ -159,6 +167,7 @@ public class UiPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Dirty</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -168,6 +177,7 @@ public class UiPackageImpl extends EPackageImpl {
 	 * The number of structural features of the '<em>Dirtyable</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -177,6 +187,7 @@ public class UiPackageImpl extends EPackageImpl {
 	 * The number of operations of the '<em>Dirtyable</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -188,35 +199,47 @@ public class UiPackageImpl extends EPackageImpl {
 	 * <!-- end-user-doc -->
 	 * @see org.eclipse.e4.ui.model.application.ui.MInput
 	 * @see org.eclipse.e4.ui.model.application.ui.impl.UiPackageImpl#getInput()
+	 * @since 1.0
+	 * @deprecated See {@link MInput model documentation} for details.
 	 * @generated
 	 */
+	@Deprecated
 	public static final int INPUT = 2;
 
 	/**
 	 * The feature id for the '<em><b>Input URI</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
+	 * @deprecated See {@link MInput model documentation} for details.
 	 * @generated
 	 * @ordered
 	 */
+	@Deprecated
 	public static final int INPUT__INPUT_URI = 0;
 
 	/**
 	 * The number of structural features of the '<em>Input</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
+	 * @deprecated See {@link MInput model documentation} for details.
 	 * @generated
 	 * @ordered
 	 */
+	@Deprecated
 	public static final int INPUT_FEATURE_COUNT = 1;
 
 	/**
 	 * The number of operations of the '<em>Input</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
+	 * @deprecated See {@link MInput model documentation} for details.
 	 * @generated
 	 * @ordered
 	 */
+	@Deprecated
 	public static final int INPUT_OPERATION_COUNT = 0;
 
 	/**
@@ -225,6 +248,7 @@ public class UiPackageImpl extends EPackageImpl {
 	 * <!-- end-user-doc -->
 	 * @see org.eclipse.e4.ui.model.application.ui.impl.UIElementImpl
 	 * @see org.eclipse.e4.ui.model.application.ui.impl.UiPackageImpl#getUIElement()
+	 * @since 1.0
 	 * @generated
 	 */
 	public static final int UI_ELEMENT = 3;
@@ -233,6 +257,7 @@ public class UiPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Element Id</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -242,6 +267,7 @@ public class UiPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Persisted State</b></em>' map.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -251,6 +277,7 @@ public class UiPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Tags</b></em>' attribute list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -260,6 +287,7 @@ public class UiPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Contributor URI</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -269,6 +297,7 @@ public class UiPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Transient Data</b></em>' map.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -278,6 +307,7 @@ public class UiPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Widget</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -287,6 +317,7 @@ public class UiPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Renderer</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -296,6 +327,7 @@ public class UiPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>To Be Rendered</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -305,6 +337,7 @@ public class UiPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>On Top</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -314,6 +347,7 @@ public class UiPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Visible</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -323,6 +357,7 @@ public class UiPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Parent</b></em>' container reference.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -332,6 +367,7 @@ public class UiPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Container Data</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -341,6 +377,7 @@ public class UiPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Cur Shared Ref</b></em>' reference.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -350,6 +387,7 @@ public class UiPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Visible When</b></em>' containment reference.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -359,6 +397,7 @@ public class UiPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Accessibility Phrase</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -368,6 +407,7 @@ public class UiPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Localized Accessibility Phrase</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -377,6 +417,7 @@ public class UiPackageImpl extends EPackageImpl {
 	 * The number of structural features of the '<em>UI Element</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -386,6 +427,7 @@ public class UiPackageImpl extends EPackageImpl {
 	 * The operation id for the '<em>Update Localization</em>' operation.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.1
 	 * @generated
 	 * @ordered
 	 */
@@ -395,6 +437,7 @@ public class UiPackageImpl extends EPackageImpl {
 	 * The number of operations of the '<em>UI Element</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -406,6 +449,7 @@ public class UiPackageImpl extends EPackageImpl {
 	 * <!-- end-user-doc -->
 	 * @see org.eclipse.e4.ui.model.application.ui.MUILabel
 	 * @see org.eclipse.e4.ui.model.application.ui.impl.UiPackageImpl#getUILabel()
+	 * @since 1.0
 	 * @generated
 	 */
 	public static final int UI_LABEL = 5;
@@ -416,6 +460,7 @@ public class UiPackageImpl extends EPackageImpl {
 	 * <!-- end-user-doc -->
 	 * @see org.eclipse.e4.ui.model.application.ui.impl.ElementContainerImpl
 	 * @see org.eclipse.e4.ui.model.application.ui.impl.UiPackageImpl#getElementContainer()
+	 * @since 1.0
 	 * @generated
 	 */
 	public static final int ELEMENT_CONTAINER = 4;
@@ -424,6 +469,7 @@ public class UiPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Element Id</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -433,6 +479,7 @@ public class UiPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Persisted State</b></em>' map.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -442,6 +489,7 @@ public class UiPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Tags</b></em>' attribute list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -451,6 +499,7 @@ public class UiPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Contributor URI</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -460,6 +509,7 @@ public class UiPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Transient Data</b></em>' map.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -469,6 +519,7 @@ public class UiPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Widget</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -478,6 +529,7 @@ public class UiPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Renderer</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -487,6 +539,7 @@ public class UiPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>To Be Rendered</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -496,6 +549,7 @@ public class UiPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>On Top</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -505,6 +559,7 @@ public class UiPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Visible</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -514,6 +569,7 @@ public class UiPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Parent</b></em>' container reference.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -523,6 +579,7 @@ public class UiPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Container Data</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -532,6 +589,7 @@ public class UiPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Cur Shared Ref</b></em>' reference.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -541,6 +599,7 @@ public class UiPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Visible When</b></em>' containment reference.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -550,6 +609,7 @@ public class UiPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Accessibility Phrase</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -559,6 +619,7 @@ public class UiPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Localized Accessibility Phrase</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -568,6 +629,7 @@ public class UiPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Children</b></em>' containment reference list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -577,6 +639,7 @@ public class UiPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Selected Element</b></em>' reference.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -586,6 +649,7 @@ public class UiPackageImpl extends EPackageImpl {
 	 * The number of structural features of the '<em>Element Container</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -595,6 +659,7 @@ public class UiPackageImpl extends EPackageImpl {
 	 * The operation id for the '<em>Update Localization</em>' operation.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.1
 	 * @generated
 	 * @ordered
 	 */
@@ -604,6 +669,7 @@ public class UiPackageImpl extends EPackageImpl {
 	 * The number of operations of the '<em>Element Container</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -615,6 +681,7 @@ public class UiPackageImpl extends EPackageImpl {
 	 * <!-- end-user-doc -->
 	 * @see org.eclipse.e4.ui.model.application.ui.impl.GenericStackImpl
 	 * @see org.eclipse.e4.ui.model.application.ui.impl.UiPackageImpl#getGenericStack()
+	 * @since 1.0
 	 * @generated
 	 */
 	public static final int GENERIC_STACK = 6;
@@ -625,6 +692,7 @@ public class UiPackageImpl extends EPackageImpl {
 	 * <!-- end-user-doc -->
 	 * @see org.eclipse.e4.ui.model.application.ui.impl.GenericTileImpl
 	 * @see org.eclipse.e4.ui.model.application.ui.impl.UiPackageImpl#getGenericTile()
+	 * @since 1.0
 	 * @generated
 	 */
 	public static final int GENERIC_TILE = 7;
@@ -635,6 +703,7 @@ public class UiPackageImpl extends EPackageImpl {
 	 * <!-- end-user-doc -->
 	 * @see org.eclipse.e4.ui.model.application.ui.impl.GenericTrimContainerImpl
 	 * @see org.eclipse.e4.ui.model.application.ui.impl.UiPackageImpl#getGenericTrimContainer()
+	 * @since 1.0
 	 * @generated
 	 */
 	public static final int GENERIC_TRIM_CONTAINER = 8;
@@ -645,6 +714,7 @@ public class UiPackageImpl extends EPackageImpl {
 	 * <!-- end-user-doc -->
 	 * @see org.eclipse.e4.ui.model.application.ui.impl.ExpressionImpl
 	 * @see org.eclipse.e4.ui.model.application.ui.impl.UiPackageImpl#getExpression()
+	 * @since 1.0
 	 * @generated
 	 */
 	public static final int EXPRESSION = 9;
@@ -655,6 +725,7 @@ public class UiPackageImpl extends EPackageImpl {
 	 * <!-- end-user-doc -->
 	 * @see org.eclipse.e4.ui.model.application.ui.impl.CoreExpressionImpl
 	 * @see org.eclipse.e4.ui.model.application.ui.impl.UiPackageImpl#getCoreExpression()
+	 * @since 1.0
 	 * @generated
 	 */
 	public static final int CORE_EXPRESSION = 10;
@@ -665,6 +736,7 @@ public class UiPackageImpl extends EPackageImpl {
 	 * <!-- end-user-doc -->
 	 * @see org.eclipse.e4.ui.model.application.ui.MSnippetContainer
 	 * @see org.eclipse.e4.ui.model.application.ui.impl.UiPackageImpl#getSnippetContainer()
+	 * @since 1.0
 	 * @generated
 	 */
 	public static final int SNIPPET_CONTAINER = 12;
@@ -675,6 +747,7 @@ public class UiPackageImpl extends EPackageImpl {
 	 * <!-- end-user-doc -->
 	 * @see org.eclipse.e4.ui.model.application.ui.MLocalizable
 	 * @see org.eclipse.e4.ui.model.application.ui.impl.UiPackageImpl#getLocalizable()
+	 * @since 1.1
 	 * @generated
 	 */
 	public static final int LOCALIZABLE = 13;
@@ -683,6 +756,7 @@ public class UiPackageImpl extends EPackageImpl {
 	 * The number of structural features of the '<em>Localizable</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.1
 	 * @generated
 	 * @ordered
 	 */
@@ -692,6 +766,7 @@ public class UiPackageImpl extends EPackageImpl {
 	 * The operation id for the '<em>Update Localization</em>' operation.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.1
 	 * @generated
 	 * @ordered
 	 */
@@ -701,6 +776,7 @@ public class UiPackageImpl extends EPackageImpl {
 	 * The number of operations of the '<em>Localizable</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.1
 	 * @generated
 	 * @ordered
 	 */
@@ -710,6 +786,7 @@ public class UiPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Label</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -719,6 +796,7 @@ public class UiPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Icon URI</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -728,6 +806,7 @@ public class UiPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Tooltip</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -737,6 +816,7 @@ public class UiPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Localized Label</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -746,6 +826,7 @@ public class UiPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Localized Tooltip</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -755,6 +836,7 @@ public class UiPackageImpl extends EPackageImpl {
 	 * The number of structural features of the '<em>UI Label</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -764,6 +846,7 @@ public class UiPackageImpl extends EPackageImpl {
 	 * The operation id for the '<em>Update Localization</em>' operation.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.1
 	 * @generated
 	 * @ordered
 	 */
@@ -773,6 +856,7 @@ public class UiPackageImpl extends EPackageImpl {
 	 * The number of operations of the '<em>UI Label</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -782,6 +866,7 @@ public class UiPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Element Id</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -791,6 +876,7 @@ public class UiPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Persisted State</b></em>' map.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -800,6 +886,7 @@ public class UiPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Tags</b></em>' attribute list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -809,6 +896,7 @@ public class UiPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Contributor URI</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -818,6 +906,7 @@ public class UiPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Transient Data</b></em>' map.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -827,6 +916,7 @@ public class UiPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Widget</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -836,6 +926,7 @@ public class UiPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Renderer</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -845,6 +936,7 @@ public class UiPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>To Be Rendered</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -854,6 +946,7 @@ public class UiPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>On Top</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -863,6 +956,7 @@ public class UiPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Visible</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -872,6 +966,7 @@ public class UiPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Parent</b></em>' container reference.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -881,6 +976,7 @@ public class UiPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Container Data</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -890,6 +986,7 @@ public class UiPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Cur Shared Ref</b></em>' reference.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -899,6 +996,7 @@ public class UiPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Visible When</b></em>' containment reference.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -908,6 +1006,7 @@ public class UiPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Accessibility Phrase</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -917,6 +1016,7 @@ public class UiPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Localized Accessibility Phrase</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -926,6 +1026,7 @@ public class UiPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Children</b></em>' containment reference list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -935,6 +1036,7 @@ public class UiPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Selected Element</b></em>' reference.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -944,6 +1046,7 @@ public class UiPackageImpl extends EPackageImpl {
 	 * The number of structural features of the '<em>Generic Stack</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -953,6 +1056,7 @@ public class UiPackageImpl extends EPackageImpl {
 	 * The operation id for the '<em>Update Localization</em>' operation.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.1
 	 * @generated
 	 * @ordered
 	 */
@@ -962,6 +1066,7 @@ public class UiPackageImpl extends EPackageImpl {
 	 * The number of operations of the '<em>Generic Stack</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -971,6 +1076,7 @@ public class UiPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Element Id</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -980,6 +1086,7 @@ public class UiPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Persisted State</b></em>' map.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -989,6 +1096,7 @@ public class UiPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Tags</b></em>' attribute list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -998,6 +1106,7 @@ public class UiPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Contributor URI</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -1007,6 +1116,7 @@ public class UiPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Transient Data</b></em>' map.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -1016,6 +1126,7 @@ public class UiPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Widget</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -1025,6 +1136,7 @@ public class UiPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Renderer</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -1034,6 +1146,7 @@ public class UiPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>To Be Rendered</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -1043,6 +1156,7 @@ public class UiPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>On Top</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -1052,6 +1166,7 @@ public class UiPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Visible</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -1061,6 +1176,7 @@ public class UiPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Parent</b></em>' container reference.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -1070,6 +1186,7 @@ public class UiPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Container Data</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -1079,6 +1196,7 @@ public class UiPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Cur Shared Ref</b></em>' reference.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -1088,6 +1206,7 @@ public class UiPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Visible When</b></em>' containment reference.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -1097,6 +1216,7 @@ public class UiPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Accessibility Phrase</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -1106,6 +1226,7 @@ public class UiPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Localized Accessibility Phrase</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -1115,6 +1236,7 @@ public class UiPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Children</b></em>' containment reference list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -1124,6 +1246,7 @@ public class UiPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Selected Element</b></em>' reference.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -1133,6 +1256,7 @@ public class UiPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Horizontal</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -1142,6 +1266,7 @@ public class UiPackageImpl extends EPackageImpl {
 	 * The number of structural features of the '<em>Generic Tile</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -1151,6 +1276,7 @@ public class UiPackageImpl extends EPackageImpl {
 	 * The operation id for the '<em>Update Localization</em>' operation.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.1
 	 * @generated
 	 * @ordered
 	 */
@@ -1160,6 +1286,7 @@ public class UiPackageImpl extends EPackageImpl {
 	 * The number of operations of the '<em>Generic Tile</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -1169,6 +1296,7 @@ public class UiPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Element Id</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -1178,6 +1306,7 @@ public class UiPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Persisted State</b></em>' map.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -1187,6 +1316,7 @@ public class UiPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Tags</b></em>' attribute list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -1196,6 +1326,7 @@ public class UiPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Contributor URI</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -1205,6 +1336,7 @@ public class UiPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Transient Data</b></em>' map.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -1214,6 +1346,7 @@ public class UiPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Widget</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -1223,6 +1356,7 @@ public class UiPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Renderer</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -1232,6 +1366,7 @@ public class UiPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>To Be Rendered</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -1241,6 +1376,7 @@ public class UiPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>On Top</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -1250,6 +1386,7 @@ public class UiPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Visible</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -1259,6 +1396,7 @@ public class UiPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Parent</b></em>' container reference.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -1268,6 +1406,7 @@ public class UiPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Container Data</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -1277,6 +1416,7 @@ public class UiPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Cur Shared Ref</b></em>' reference.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -1286,6 +1426,7 @@ public class UiPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Visible When</b></em>' containment reference.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -1295,6 +1436,7 @@ public class UiPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Accessibility Phrase</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -1304,6 +1446,7 @@ public class UiPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Localized Accessibility Phrase</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -1313,6 +1456,7 @@ public class UiPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Children</b></em>' containment reference list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -1322,6 +1466,7 @@ public class UiPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Selected Element</b></em>' reference.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -1331,6 +1476,7 @@ public class UiPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Side</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -1340,6 +1486,7 @@ public class UiPackageImpl extends EPackageImpl {
 	 * The number of structural features of the '<em>Generic Trim Container</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -1349,6 +1496,7 @@ public class UiPackageImpl extends EPackageImpl {
 	 * The operation id for the '<em>Update Localization</em>' operation.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.1
 	 * @generated
 	 * @ordered
 	 */
@@ -1358,6 +1506,7 @@ public class UiPackageImpl extends EPackageImpl {
 	 * The number of operations of the '<em>Generic Trim Container</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -1367,6 +1516,7 @@ public class UiPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Element Id</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -1376,6 +1526,7 @@ public class UiPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Persisted State</b></em>' map.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -1385,6 +1536,7 @@ public class UiPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Tags</b></em>' attribute list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -1394,6 +1546,7 @@ public class UiPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Contributor URI</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -1403,6 +1556,7 @@ public class UiPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Transient Data</b></em>' map.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -1412,6 +1566,7 @@ public class UiPackageImpl extends EPackageImpl {
 	 * The number of structural features of the '<em>Expression</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -1421,6 +1576,7 @@ public class UiPackageImpl extends EPackageImpl {
 	 * The number of operations of the '<em>Expression</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -1430,6 +1586,7 @@ public class UiPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Element Id</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -1439,6 +1596,7 @@ public class UiPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Persisted State</b></em>' map.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -1448,6 +1606,7 @@ public class UiPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Tags</b></em>' attribute list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -1457,6 +1616,7 @@ public class UiPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Contributor URI</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -1466,6 +1626,7 @@ public class UiPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Transient Data</b></em>' map.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -1475,6 +1636,7 @@ public class UiPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Core Expression Id</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -1484,6 +1646,7 @@ public class UiPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Core Expression</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -1493,6 +1656,7 @@ public class UiPackageImpl extends EPackageImpl {
 	 * The number of structural features of the '<em>Core Expression</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -1502,6 +1666,7 @@ public class UiPackageImpl extends EPackageImpl {
 	 * The number of operations of the '<em>Core Expression</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -1521,6 +1686,7 @@ public class UiPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Element Id</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -1530,6 +1696,7 @@ public class UiPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Persisted State</b></em>' map.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -1539,6 +1706,7 @@ public class UiPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Tags</b></em>' attribute list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -1548,6 +1716,7 @@ public class UiPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Contributor URI</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -1557,6 +1726,7 @@ public class UiPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Transient Data</b></em>' map.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -1566,6 +1736,7 @@ public class UiPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Contribution URI</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -1575,6 +1746,7 @@ public class UiPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Object</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -1611,6 +1783,7 @@ public class UiPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Snippets</b></em>' containment reference list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -1620,6 +1793,7 @@ public class UiPackageImpl extends EPackageImpl {
 	 * The number of structural features of the '<em>Snippet Container</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -1629,6 +1803,7 @@ public class UiPackageImpl extends EPackageImpl {
 	 * The number of operations of the '<em>Snippet Container</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -1640,6 +1815,7 @@ public class UiPackageImpl extends EPackageImpl {
 	 * <!-- end-user-doc -->
 	 * @see org.eclipse.e4.ui.model.application.ui.SideValue
 	 * @see org.eclipse.e4.ui.model.application.ui.impl.UiPackageImpl#getSideValue()
+	 * @since 1.0
 	 * @generated
 	 */
 	public static final int SIDE_VALUE = 14;
@@ -1647,6 +1823,7 @@ public class UiPackageImpl extends EPackageImpl {
 	/**
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 */
 	private EClass contextEClass = null;
@@ -1654,6 +1831,7 @@ public class UiPackageImpl extends EPackageImpl {
 	/**
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 */
 	private EClass dirtyableEClass = null;
@@ -1661,13 +1839,17 @@ public class UiPackageImpl extends EPackageImpl {
 	/**
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
+	 * @deprecated See {@link MInput model documentation} for details.
 	 * @generated
 	 */
+	@Deprecated
 	private EClass inputEClass = null;
 
 	/**
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 */
 	private EClass uiElementEClass = null;
@@ -1675,6 +1857,7 @@ public class UiPackageImpl extends EPackageImpl {
 	/**
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 */
 	private EClass uiLabelEClass = null;
@@ -1682,6 +1865,7 @@ public class UiPackageImpl extends EPackageImpl {
 	/**
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 */
 	private EClass elementContainerEClass = null;
@@ -1689,6 +1873,7 @@ public class UiPackageImpl extends EPackageImpl {
 	/**
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 */
 	private EClass genericStackEClass = null;
@@ -1696,6 +1881,7 @@ public class UiPackageImpl extends EPackageImpl {
 	/**
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 */
 	private EClass genericTileEClass = null;
@@ -1703,6 +1889,7 @@ public class UiPackageImpl extends EPackageImpl {
 	/**
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 */
 	private EClass genericTrimContainerEClass = null;
@@ -1710,6 +1897,7 @@ public class UiPackageImpl extends EPackageImpl {
 	/**
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 */
 	private EClass expressionEClass = null;
@@ -1717,6 +1905,7 @@ public class UiPackageImpl extends EPackageImpl {
 	/**
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 */
 	private EClass coreExpressionEClass = null;
@@ -1731,6 +1920,7 @@ public class UiPackageImpl extends EPackageImpl {
 	/**
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 */
 	private EClass snippetContainerEClass = null;
@@ -1738,6 +1928,7 @@ public class UiPackageImpl extends EPackageImpl {
 	/**
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.1
 	 * @generated
 	 */
 	private EClass localizableEClass = null;
@@ -1745,6 +1936,7 @@ public class UiPackageImpl extends EPackageImpl {
 	/**
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 */
 	private EEnum sideValueEEnum = null;
@@ -1777,7 +1969,7 @@ public class UiPackageImpl extends EPackageImpl {
 
 	/**
 	 * Creates, registers, and initializes the <b>Package</b> for this model, and for any others upon which it depends.
-	 * 
+	 *
 	 * <p>This method is used to initialize {@link UiPackageImpl#eINSTANCE} when that field is accessed.
 	 * Clients should not invoke it directly. Instead, they should simply access that field to obtain the package.
 	 * <!-- begin-user-doc -->
@@ -1791,17 +1983,24 @@ public class UiPackageImpl extends EPackageImpl {
 		if (isInited) return (UiPackageImpl)EPackage.Registry.INSTANCE.getEPackage(UiPackageImpl.eNS_URI);
 
 		// Obtain or create and register package
-		UiPackageImpl theUiPackage = (UiPackageImpl)(EPackage.Registry.INSTANCE.get(eNS_URI) instanceof UiPackageImpl ? EPackage.Registry.INSTANCE.get(eNS_URI) : new UiPackageImpl());
+		Object registeredUiPackage = EPackage.Registry.INSTANCE.get(eNS_URI);
+		UiPackageImpl theUiPackage = registeredUiPackage instanceof UiPackageImpl ? (UiPackageImpl)registeredUiPackage : new UiPackageImpl();
 
 		isInited = true;
 
 		// Obtain or create and register interdependencies
-		ApplicationPackageImpl theApplicationPackage = (ApplicationPackageImpl)(EPackage.Registry.INSTANCE.getEPackage(ApplicationPackageImpl.eNS_URI) instanceof ApplicationPackageImpl ? EPackage.Registry.INSTANCE.getEPackage(ApplicationPackageImpl.eNS_URI) : ApplicationPackageImpl.eINSTANCE);
-		CommandsPackageImpl theCommandsPackage = (CommandsPackageImpl)(EPackage.Registry.INSTANCE.getEPackage(CommandsPackageImpl.eNS_URI) instanceof CommandsPackageImpl ? EPackage.Registry.INSTANCE.getEPackage(CommandsPackageImpl.eNS_URI) : CommandsPackageImpl.eINSTANCE);
-		MenuPackageImpl theMenuPackage = (MenuPackageImpl)(EPackage.Registry.INSTANCE.getEPackage(MenuPackageImpl.eNS_URI) instanceof MenuPackageImpl ? EPackage.Registry.INSTANCE.getEPackage(MenuPackageImpl.eNS_URI) : MenuPackageImpl.eINSTANCE);
-		BasicPackageImpl theBasicPackage = (BasicPackageImpl)(EPackage.Registry.INSTANCE.getEPackage(BasicPackageImpl.eNS_URI) instanceof BasicPackageImpl ? EPackage.Registry.INSTANCE.getEPackage(BasicPackageImpl.eNS_URI) : BasicPackageImpl.eINSTANCE);
-		AdvancedPackageImpl theAdvancedPackage = (AdvancedPackageImpl)(EPackage.Registry.INSTANCE.getEPackage(AdvancedPackageImpl.eNS_URI) instanceof AdvancedPackageImpl ? EPackage.Registry.INSTANCE.getEPackage(AdvancedPackageImpl.eNS_URI) : AdvancedPackageImpl.eINSTANCE);
-		org.eclipse.e4.ui.model.application.descriptor.basic.impl.BasicPackageImpl theBasicPackage_1 = (org.eclipse.e4.ui.model.application.descriptor.basic.impl.BasicPackageImpl)(EPackage.Registry.INSTANCE.getEPackage(org.eclipse.e4.ui.model.application.descriptor.basic.impl.BasicPackageImpl.eNS_URI) instanceof org.eclipse.e4.ui.model.application.descriptor.basic.impl.BasicPackageImpl ? EPackage.Registry.INSTANCE.getEPackage(org.eclipse.e4.ui.model.application.descriptor.basic.impl.BasicPackageImpl.eNS_URI) : org.eclipse.e4.ui.model.application.descriptor.basic.impl.BasicPackageImpl.eINSTANCE);
+		Object registeredPackage = EPackage.Registry.INSTANCE.getEPackage(ApplicationPackageImpl.eNS_URI);
+		ApplicationPackageImpl theApplicationPackage = (ApplicationPackageImpl)(registeredPackage instanceof ApplicationPackageImpl ? registeredPackage : ApplicationPackageImpl.eINSTANCE);
+		registeredPackage = EPackage.Registry.INSTANCE.getEPackage(CommandsPackageImpl.eNS_URI);
+		CommandsPackageImpl theCommandsPackage = (CommandsPackageImpl)(registeredPackage instanceof CommandsPackageImpl ? registeredPackage : CommandsPackageImpl.eINSTANCE);
+		registeredPackage = EPackage.Registry.INSTANCE.getEPackage(MenuPackageImpl.eNS_URI);
+		MenuPackageImpl theMenuPackage = (MenuPackageImpl)(registeredPackage instanceof MenuPackageImpl ? registeredPackage : MenuPackageImpl.eINSTANCE);
+		registeredPackage = EPackage.Registry.INSTANCE.getEPackage(BasicPackageImpl.eNS_URI);
+		BasicPackageImpl theBasicPackage = (BasicPackageImpl)(registeredPackage instanceof BasicPackageImpl ? registeredPackage : BasicPackageImpl.eINSTANCE);
+		registeredPackage = EPackage.Registry.INSTANCE.getEPackage(AdvancedPackageImpl.eNS_URI);
+		AdvancedPackageImpl theAdvancedPackage = (AdvancedPackageImpl)(registeredPackage instanceof AdvancedPackageImpl ? registeredPackage : AdvancedPackageImpl.eINSTANCE);
+		registeredPackage = EPackage.Registry.INSTANCE.getEPackage(org.eclipse.e4.ui.model.application.descriptor.basic.impl.BasicPackageImpl.eNS_URI);
+		org.eclipse.e4.ui.model.application.descriptor.basic.impl.BasicPackageImpl theBasicPackage_1 = (org.eclipse.e4.ui.model.application.descriptor.basic.impl.BasicPackageImpl)(registeredPackage instanceof org.eclipse.e4.ui.model.application.descriptor.basic.impl.BasicPackageImpl ? registeredPackage : org.eclipse.e4.ui.model.application.descriptor.basic.impl.BasicPackageImpl.eINSTANCE);
 
 		// Create package meta-data objects
 		theUiPackage.createPackageContents();
@@ -1824,7 +2023,6 @@ public class UiPackageImpl extends EPackageImpl {
 		// Mark meta-data to indicate it can't be changed
 		theUiPackage.freeze();
 
-  
 		// Update the registry and return the package
 		EPackage.Registry.INSTANCE.put(UiPackageImpl.eNS_URI, theUiPackage);
 		return theUiPackage;
@@ -1837,6 +2035,7 @@ public class UiPackageImpl extends EPackageImpl {
 	 * <!-- end-user-doc -->
 	 * @return the meta object for class '<em>Context</em>'.
 	 * @see org.eclipse.e4.ui.model.application.ui.MContext
+	 * @since 1.0
 	 * @generated
 	 */
 	public EClass getContext() {
@@ -1850,6 +2049,7 @@ public class UiPackageImpl extends EPackageImpl {
 	 * @return the meta object for the attribute '<em>Context</em>'.
 	 * @see org.eclipse.e4.ui.model.application.ui.MContext#getContext()
 	 * @see #getContext()
+	 * @since 1.0
 	 * @generated
 	 */
 	public EAttribute getContext_Context() {
@@ -1863,6 +2063,7 @@ public class UiPackageImpl extends EPackageImpl {
 	 * @return the meta object for the attribute list '<em>Variables</em>'.
 	 * @see org.eclipse.e4.ui.model.application.ui.MContext#getVariables()
 	 * @see #getContext()
+	 * @since 1.0
 	 * @generated
 	 */
 	public EAttribute getContext_Variables() {
@@ -1876,6 +2077,7 @@ public class UiPackageImpl extends EPackageImpl {
 	 * @return the meta object for the map '<em>Properties</em>'.
 	 * @see org.eclipse.e4.ui.model.application.ui.MContext#getProperties()
 	 * @see #getContext()
+	 * @since 1.0
 	 * @generated
 	 */
 	public EReference getContext_Properties() {
@@ -1888,6 +2090,7 @@ public class UiPackageImpl extends EPackageImpl {
 	 * <!-- end-user-doc -->
 	 * @return the meta object for class '<em>Dirtyable</em>'.
 	 * @see org.eclipse.e4.ui.model.application.ui.MDirtyable
+	 * @since 1.0
 	 * @generated
 	 */
 	public EClass getDirtyable() {
@@ -1901,6 +2104,7 @@ public class UiPackageImpl extends EPackageImpl {
 	 * @return the meta object for the attribute '<em>Dirty</em>'.
 	 * @see org.eclipse.e4.ui.model.application.ui.MDirtyable#isDirty()
 	 * @see #getDirtyable()
+	 * @since 1.0
 	 * @generated
 	 */
 	public EAttribute getDirtyable_Dirty() {
@@ -1913,8 +2117,11 @@ public class UiPackageImpl extends EPackageImpl {
 	 * <!-- end-user-doc -->
 	 * @return the meta object for class '<em>Input</em>'.
 	 * @see org.eclipse.e4.ui.model.application.ui.MInput
+	 * @since 1.0
+	 * @deprecated See {@link MInput model documentation} for details.
 	 * @generated
 	 */
+	@Deprecated
 	public EClass getInput() {
 		return inputEClass;
 	}
@@ -1926,8 +2133,11 @@ public class UiPackageImpl extends EPackageImpl {
 	 * @return the meta object for the attribute '<em>Input URI</em>'.
 	 * @see org.eclipse.e4.ui.model.application.ui.MInput#getInputURI()
 	 * @see #getInput()
+	 * @since 1.0
+	 * @deprecated See {@link MInput model documentation} for details.
 	 * @generated
 	 */
+	@Deprecated
 	public EAttribute getInput_InputURI() {
 		return (EAttribute)inputEClass.getEStructuralFeatures().get(0);
 	}
@@ -1938,6 +2148,7 @@ public class UiPackageImpl extends EPackageImpl {
 	 * <!-- end-user-doc -->
 	 * @return the meta object for class '<em>UI Element</em>'.
 	 * @see org.eclipse.e4.ui.model.application.ui.MUIElement
+	 * @since 1.0
 	 * @generated
 	 */
 	public EClass getUIElement() {
@@ -1951,6 +2162,7 @@ public class UiPackageImpl extends EPackageImpl {
 	 * @return the meta object for the attribute '<em>Widget</em>'.
 	 * @see org.eclipse.e4.ui.model.application.ui.MUIElement#getWidget()
 	 * @see #getUIElement()
+	 * @since 1.0
 	 * @generated
 	 */
 	public EAttribute getUIElement_Widget() {
@@ -1964,6 +2176,7 @@ public class UiPackageImpl extends EPackageImpl {
 	 * @return the meta object for the attribute '<em>Renderer</em>'.
 	 * @see org.eclipse.e4.ui.model.application.ui.MUIElement#getRenderer()
 	 * @see #getUIElement()
+	 * @since 1.0
 	 * @generated
 	 */
 	public EAttribute getUIElement_Renderer() {
@@ -1977,6 +2190,7 @@ public class UiPackageImpl extends EPackageImpl {
 	 * @return the meta object for the attribute '<em>To Be Rendered</em>'.
 	 * @see org.eclipse.e4.ui.model.application.ui.MUIElement#isToBeRendered()
 	 * @see #getUIElement()
+	 * @since 1.0
 	 * @generated
 	 */
 	public EAttribute getUIElement_ToBeRendered() {
@@ -1990,6 +2204,7 @@ public class UiPackageImpl extends EPackageImpl {
 	 * @return the meta object for the attribute '<em>On Top</em>'.
 	 * @see org.eclipse.e4.ui.model.application.ui.MUIElement#isOnTop()
 	 * @see #getUIElement()
+	 * @since 1.0
 	 * @generated
 	 */
 	public EAttribute getUIElement_OnTop() {
@@ -2003,6 +2218,7 @@ public class UiPackageImpl extends EPackageImpl {
 	 * @return the meta object for the attribute '<em>Visible</em>'.
 	 * @see org.eclipse.e4.ui.model.application.ui.MUIElement#isVisible()
 	 * @see #getUIElement()
+	 * @since 1.0
 	 * @generated
 	 */
 	public EAttribute getUIElement_Visible() {
@@ -2016,6 +2232,7 @@ public class UiPackageImpl extends EPackageImpl {
 	 * @return the meta object for the container reference '<em>Parent</em>'.
 	 * @see org.eclipse.e4.ui.model.application.ui.MUIElement#getParent()
 	 * @see #getUIElement()
+	 * @since 1.0
 	 * @generated
 	 */
 	public EReference getUIElement_Parent() {
@@ -2029,6 +2246,7 @@ public class UiPackageImpl extends EPackageImpl {
 	 * @return the meta object for the attribute '<em>Container Data</em>'.
 	 * @see org.eclipse.e4.ui.model.application.ui.MUIElement#getContainerData()
 	 * @see #getUIElement()
+	 * @since 1.0
 	 * @generated
 	 */
 	public EAttribute getUIElement_ContainerData() {
@@ -2042,6 +2260,7 @@ public class UiPackageImpl extends EPackageImpl {
 	 * @return the meta object for the reference '<em>Cur Shared Ref</em>'.
 	 * @see org.eclipse.e4.ui.model.application.ui.MUIElement#getCurSharedRef()
 	 * @see #getUIElement()
+	 * @since 1.0
 	 * @generated
 	 */
 	public EReference getUIElement_CurSharedRef() {
@@ -2056,6 +2275,7 @@ public class UiPackageImpl extends EPackageImpl {
 	 * @return the meta object for the containment reference '<em>Visible When</em>'.
 	 * @see org.eclipse.e4.ui.model.application.ui.MUIElement#getVisibleWhen()
 	 * @see #getUIElement()
+	 * @since 1.0
 	 * @generated
 	 */
 	public EReference getUIElement_VisibleWhen() {
@@ -2070,6 +2290,7 @@ public class UiPackageImpl extends EPackageImpl {
 	 * @return the meta object for the attribute '<em>Accessibility Phrase</em>'.
 	 * @see org.eclipse.e4.ui.model.application.ui.MUIElement#getAccessibilityPhrase()
 	 * @see #getUIElement()
+	 * @since 1.0
 	 * @generated
 	 */
 	public EAttribute getUIElement_AccessibilityPhrase() {
@@ -2084,6 +2305,7 @@ public class UiPackageImpl extends EPackageImpl {
 	 * @return the meta object for the attribute '<em>Localized Accessibility Phrase</em>'.
 	 * @see org.eclipse.e4.ui.model.application.ui.MUIElement#getLocalizedAccessibilityPhrase()
 	 * @see #getUIElement()
+	 * @since 1.0
 	 * @generated
 	 */
 	public EAttribute getUIElement_LocalizedAccessibilityPhrase() {
@@ -2097,6 +2319,7 @@ public class UiPackageImpl extends EPackageImpl {
 	 * <!-- end-user-doc -->
 	 * @return the meta object for class '<em>UI Label</em>'.
 	 * @see org.eclipse.e4.ui.model.application.ui.MUILabel
+	 * @since 1.0
 	 * @generated
 	 */
 	public EClass getUILabel() {
@@ -2110,6 +2333,7 @@ public class UiPackageImpl extends EPackageImpl {
 	 * @return the meta object for the attribute '<em>Label</em>'.
 	 * @see org.eclipse.e4.ui.model.application.ui.MUILabel#getLabel()
 	 * @see #getUILabel()
+	 * @since 1.0
 	 * @generated
 	 */
 	public EAttribute getUILabel_Label() {
@@ -2123,6 +2347,7 @@ public class UiPackageImpl extends EPackageImpl {
 	 * @return the meta object for the attribute '<em>Icon URI</em>'.
 	 * @see org.eclipse.e4.ui.model.application.ui.MUILabel#getIconURI()
 	 * @see #getUILabel()
+	 * @since 1.0
 	 * @generated
 	 */
 	public EAttribute getUILabel_IconURI() {
@@ -2136,6 +2361,7 @@ public class UiPackageImpl extends EPackageImpl {
 	 * @return the meta object for the attribute '<em>Tooltip</em>'.
 	 * @see org.eclipse.e4.ui.model.application.ui.MUILabel#getTooltip()
 	 * @see #getUILabel()
+	 * @since 1.0
 	 * @generated
 	 */
 	public EAttribute getUILabel_Tooltip() {
@@ -2149,6 +2375,7 @@ public class UiPackageImpl extends EPackageImpl {
 	 * @return the meta object for the attribute '<em>Localized Label</em>'.
 	 * @see org.eclipse.e4.ui.model.application.ui.MUILabel#getLocalizedLabel()
 	 * @see #getUILabel()
+	 * @since 1.0
 	 * @generated
 	 */
 	public EAttribute getUILabel_LocalizedLabel() {
@@ -2163,6 +2390,7 @@ public class UiPackageImpl extends EPackageImpl {
 	 * @return the meta object for the attribute '<em>Localized Tooltip</em>'.
 	 * @see org.eclipse.e4.ui.model.application.ui.MUILabel#getLocalizedTooltip()
 	 * @see #getUILabel()
+	 * @since 1.0
 	 * @generated
 	 */
 	public EAttribute getUILabel_LocalizedTooltip() {
@@ -2176,6 +2404,7 @@ public class UiPackageImpl extends EPackageImpl {
 	 * <!-- end-user-doc -->
 	 * @return the meta object for class '<em>Element Container</em>'.
 	 * @see org.eclipse.e4.ui.model.application.ui.MElementContainer
+	 * @since 1.0
 	 * @generated
 	 */
 	public EClass getElementContainer() {
@@ -2189,6 +2418,7 @@ public class UiPackageImpl extends EPackageImpl {
 	 * @return the meta object for the containment reference list '<em>Children</em>'.
 	 * @see org.eclipse.e4.ui.model.application.ui.MElementContainer#getChildren()
 	 * @see #getElementContainer()
+	 * @since 1.0
 	 * @generated
 	 */
 	public EReference getElementContainer_Children() {
@@ -2202,6 +2432,7 @@ public class UiPackageImpl extends EPackageImpl {
 	 * @return the meta object for the reference '<em>Selected Element</em>'.
 	 * @see org.eclipse.e4.ui.model.application.ui.MElementContainer#getSelectedElement()
 	 * @see #getElementContainer()
+	 * @since 1.0
 	 * @generated
 	 */
 	public EReference getElementContainer_SelectedElement() {
@@ -2214,6 +2445,7 @@ public class UiPackageImpl extends EPackageImpl {
 	 * <!-- end-user-doc -->
 	 * @return the meta object for class '<em>Generic Stack</em>'.
 	 * @see org.eclipse.e4.ui.model.application.ui.MGenericStack
+	 * @since 1.0
 	 * @generated
 	 */
 	public EClass getGenericStack() {
@@ -2226,6 +2458,7 @@ public class UiPackageImpl extends EPackageImpl {
 	 * <!-- end-user-doc -->
 	 * @return the meta object for class '<em>Generic Tile</em>'.
 	 * @see org.eclipse.e4.ui.model.application.ui.MGenericTile
+	 * @since 1.0
 	 * @generated
 	 */
 	public EClass getGenericTile() {
@@ -2239,6 +2472,7 @@ public class UiPackageImpl extends EPackageImpl {
 	 * @return the meta object for the attribute '<em>Horizontal</em>'.
 	 * @see org.eclipse.e4.ui.model.application.ui.MGenericTile#isHorizontal()
 	 * @see #getGenericTile()
+	 * @since 1.0
 	 * @generated
 	 */
 	public EAttribute getGenericTile_Horizontal() {
@@ -2251,6 +2485,7 @@ public class UiPackageImpl extends EPackageImpl {
 	 * <!-- end-user-doc -->
 	 * @return the meta object for class '<em>Generic Trim Container</em>'.
 	 * @see org.eclipse.e4.ui.model.application.ui.MGenericTrimContainer
+	 * @since 1.0
 	 * @generated
 	 */
 	public EClass getGenericTrimContainer() {
@@ -2264,6 +2499,7 @@ public class UiPackageImpl extends EPackageImpl {
 	 * @return the meta object for the attribute '<em>Side</em>'.
 	 * @see org.eclipse.e4.ui.model.application.ui.MGenericTrimContainer#getSide()
 	 * @see #getGenericTrimContainer()
+	 * @since 1.0
 	 * @generated
 	 */
 	public EAttribute getGenericTrimContainer_Side() {
@@ -2276,6 +2512,7 @@ public class UiPackageImpl extends EPackageImpl {
 	 * <!-- end-user-doc -->
 	 * @return the meta object for class '<em>Expression</em>'.
 	 * @see org.eclipse.e4.ui.model.application.ui.MExpression
+	 * @since 1.0
 	 * @generated
 	 */
 	public EClass getExpression() {
@@ -2289,6 +2526,7 @@ public class UiPackageImpl extends EPackageImpl {
 	 * <!-- end-user-doc -->
 	 * @return the meta object for class '<em>Core Expression</em>'.
 	 * @see org.eclipse.e4.ui.model.application.ui.MCoreExpression
+	 * @since 1.0
 	 * @generated
 	 */
 	public EClass getCoreExpression() {
@@ -2303,6 +2541,7 @@ public class UiPackageImpl extends EPackageImpl {
 	 * @return the meta object for the attribute '<em>Core Expression Id</em>'.
 	 * @see org.eclipse.e4.ui.model.application.ui.MCoreExpression#getCoreExpressionId()
 	 * @see #getCoreExpression()
+	 * @since 1.0
 	 * @generated
 	 */
 	public EAttribute getCoreExpression_CoreExpressionId() {
@@ -2317,6 +2556,7 @@ public class UiPackageImpl extends EPackageImpl {
 	 * @return the meta object for the attribute '<em>Core Expression</em>'.
 	 * @see org.eclipse.e4.ui.model.application.ui.MCoreExpression#getCoreExpression()
 	 * @see #getCoreExpression()
+	 * @since 1.0
 	 * @generated
 	 */
 	public EAttribute getCoreExpression_CoreExpression() {
@@ -2357,6 +2597,7 @@ public class UiPackageImpl extends EPackageImpl {
 	 * <!-- end-user-doc -->
 	 * @return the meta object for class '<em>Snippet Container</em>'.
 	 * @see org.eclipse.e4.ui.model.application.ui.MSnippetContainer
+	 * @since 1.0
 	 * @generated
 	 */
 	public EClass getSnippetContainer() {
@@ -2371,6 +2612,7 @@ public class UiPackageImpl extends EPackageImpl {
 	 * @return the meta object for the containment reference list '<em>Snippets</em>'.
 	 * @see org.eclipse.e4.ui.model.application.ui.MSnippetContainer#getSnippets()
 	 * @see #getSnippetContainer()
+	 * @since 1.0
 	 * @generated
 	 */
 	public EReference getSnippetContainer_Snippets() {
@@ -2384,6 +2626,7 @@ public class UiPackageImpl extends EPackageImpl {
 	 * <!-- end-user-doc -->
 	 * @return the meta object for class '<em>Localizable</em>'.
 	 * @see org.eclipse.e4.ui.model.application.ui.MLocalizable
+	 * @since 1.1
 	 * @generated
 	 */
 	public EClass getLocalizable() {
@@ -2397,6 +2640,7 @@ public class UiPackageImpl extends EPackageImpl {
 	 * <!-- end-user-doc -->
 	 * @return the meta object for the '<em>Update Localization</em>' operation.
 	 * @see org.eclipse.e4.ui.model.application.ui.MLocalizable#updateLocalization()
+	 * @since 1.1
 	 * @generated
 	 */
 	public EOperation getLocalizable__UpdateLocalization() {
@@ -2410,6 +2654,7 @@ public class UiPackageImpl extends EPackageImpl {
 	 * <!-- end-user-doc -->
 	 * @return the meta object for enum '<em>Side Value</em>'.
 	 * @see org.eclipse.e4.ui.model.application.ui.SideValue
+	 * @since 1.0
 	 * @generated
 	 */
 	public EEnum getSideValue() {
@@ -2672,6 +2917,7 @@ public class UiPackageImpl extends EPackageImpl {
 		 * <!-- end-user-doc -->
 		 * @see org.eclipse.e4.ui.model.application.ui.MContext
 		 * @see org.eclipse.e4.ui.model.application.ui.impl.UiPackageImpl#getContext()
+		 * @since 1.0
 		 * @generated
 		 */
 		public static final EClass CONTEXT = eINSTANCE.getContext();
@@ -2680,6 +2926,7 @@ public class UiPackageImpl extends EPackageImpl {
 		 * The meta object literal for the '<em><b>Context</b></em>' attribute feature.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
+		 * @since 1.0
 		 * @generated
 		 */
 		public static final EAttribute CONTEXT__CONTEXT = eINSTANCE.getContext_Context();
@@ -2688,6 +2935,7 @@ public class UiPackageImpl extends EPackageImpl {
 		 * The meta object literal for the '<em><b>Variables</b></em>' attribute list feature.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
+		 * @since 1.0
 		 * @generated
 		 */
 		public static final EAttribute CONTEXT__VARIABLES = eINSTANCE.getContext_Variables();
@@ -2696,6 +2944,7 @@ public class UiPackageImpl extends EPackageImpl {
 		 * The meta object literal for the '<em><b>Properties</b></em>' map feature.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
+		 * @since 1.0
 		 * @generated
 		 */
 		public static final EReference CONTEXT__PROPERTIES = eINSTANCE.getContext_Properties();
@@ -2706,6 +2955,7 @@ public class UiPackageImpl extends EPackageImpl {
 		 * <!-- end-user-doc -->
 		 * @see org.eclipse.e4.ui.model.application.ui.MDirtyable
 		 * @see org.eclipse.e4.ui.model.application.ui.impl.UiPackageImpl#getDirtyable()
+		 * @since 1.0
 		 * @generated
 		 */
 		public static final EClass DIRTYABLE = eINSTANCE.getDirtyable();
@@ -2714,6 +2964,7 @@ public class UiPackageImpl extends EPackageImpl {
 		 * The meta object literal for the '<em><b>Dirty</b></em>' attribute feature.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
+		 * @since 1.0
 		 * @generated
 		 */
 		public static final EAttribute DIRTYABLE__DIRTY = eINSTANCE.getDirtyable_Dirty();
@@ -2724,16 +2975,22 @@ public class UiPackageImpl extends EPackageImpl {
 		 * <!-- end-user-doc -->
 		 * @see org.eclipse.e4.ui.model.application.ui.MInput
 		 * @see org.eclipse.e4.ui.model.application.ui.impl.UiPackageImpl#getInput()
+		 * @since 1.0
+		 * @deprecated See {@link MInput model documentation} for details.
 		 * @generated
 		 */
+		@Deprecated
 		public static final EClass INPUT = eINSTANCE.getInput();
 
 		/**
 		 * The meta object literal for the '<em><b>Input URI</b></em>' attribute feature.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
+		 * @since 1.0
+		 * @deprecated See {@link MInput model documentation} for details.
 		 * @generated
 		 */
+		@Deprecated
 		public static final EAttribute INPUT__INPUT_URI = eINSTANCE.getInput_InputURI();
 
 		/**
@@ -2742,6 +2999,7 @@ public class UiPackageImpl extends EPackageImpl {
 		 * <!-- end-user-doc -->
 		 * @see org.eclipse.e4.ui.model.application.ui.impl.UIElementImpl
 		 * @see org.eclipse.e4.ui.model.application.ui.impl.UiPackageImpl#getUIElement()
+		 * @since 1.0
 		 * @generated
 		 */
 		public static final EClass UI_ELEMENT = eINSTANCE.getUIElement();
@@ -2750,6 +3008,7 @@ public class UiPackageImpl extends EPackageImpl {
 		 * The meta object literal for the '<em><b>Widget</b></em>' attribute feature.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
+		 * @since 1.0
 		 * @generated
 		 */
 		public static final EAttribute UI_ELEMENT__WIDGET = eINSTANCE.getUIElement_Widget();
@@ -2758,6 +3017,7 @@ public class UiPackageImpl extends EPackageImpl {
 		 * The meta object literal for the '<em><b>Renderer</b></em>' attribute feature.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
+		 * @since 1.0
 		 * @generated
 		 */
 		public static final EAttribute UI_ELEMENT__RENDERER = eINSTANCE.getUIElement_Renderer();
@@ -2766,6 +3026,7 @@ public class UiPackageImpl extends EPackageImpl {
 		 * The meta object literal for the '<em><b>To Be Rendered</b></em>' attribute feature.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
+		 * @since 1.0
 		 * @generated
 		 */
 		public static final EAttribute UI_ELEMENT__TO_BE_RENDERED = eINSTANCE.getUIElement_ToBeRendered();
@@ -2774,6 +3035,7 @@ public class UiPackageImpl extends EPackageImpl {
 		 * The meta object literal for the '<em><b>On Top</b></em>' attribute feature.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
+		 * @since 1.0
 		 * @generated
 		 */
 		public static final EAttribute UI_ELEMENT__ON_TOP = eINSTANCE.getUIElement_OnTop();
@@ -2782,6 +3044,7 @@ public class UiPackageImpl extends EPackageImpl {
 		 * The meta object literal for the '<em><b>Visible</b></em>' attribute feature.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
+		 * @since 1.0
 		 * @generated
 		 */
 		public static final EAttribute UI_ELEMENT__VISIBLE = eINSTANCE.getUIElement_Visible();
@@ -2790,6 +3053,7 @@ public class UiPackageImpl extends EPackageImpl {
 		 * The meta object literal for the '<em><b>Parent</b></em>' container reference feature.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
+		 * @since 1.0
 		 * @generated
 		 */
 		public static final EReference UI_ELEMENT__PARENT = eINSTANCE.getUIElement_Parent();
@@ -2798,6 +3062,7 @@ public class UiPackageImpl extends EPackageImpl {
 		 * The meta object literal for the '<em><b>Container Data</b></em>' attribute feature.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
+		 * @since 1.0
 		 * @generated
 		 */
 		public static final EAttribute UI_ELEMENT__CONTAINER_DATA = eINSTANCE.getUIElement_ContainerData();
@@ -2806,6 +3071,7 @@ public class UiPackageImpl extends EPackageImpl {
 		 * The meta object literal for the '<em><b>Cur Shared Ref</b></em>' reference feature.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
+		 * @since 1.0
 		 * @generated
 		 */
 		public static final EReference UI_ELEMENT__CUR_SHARED_REF = eINSTANCE.getUIElement_CurSharedRef();
@@ -2814,6 +3080,7 @@ public class UiPackageImpl extends EPackageImpl {
 		 * The meta object literal for the '<em><b>Visible When</b></em>' containment reference feature.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
+		 * @since 1.0
 		 * @generated
 		 */
 		public static final EReference UI_ELEMENT__VISIBLE_WHEN = eINSTANCE.getUIElement_VisibleWhen();
@@ -2822,6 +3089,7 @@ public class UiPackageImpl extends EPackageImpl {
 		 * The meta object literal for the '<em><b>Accessibility Phrase</b></em>' attribute feature.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
+		 * @since 1.0
 		 * @generated
 		 */
 		public static final EAttribute UI_ELEMENT__ACCESSIBILITY_PHRASE = eINSTANCE.getUIElement_AccessibilityPhrase();
@@ -2830,6 +3098,7 @@ public class UiPackageImpl extends EPackageImpl {
 		 * The meta object literal for the '<em><b>Localized Accessibility Phrase</b></em>' attribute feature.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
+		 * @since 1.0
 		 * @generated
 		 */
 		public static final EAttribute UI_ELEMENT__LOCALIZED_ACCESSIBILITY_PHRASE = eINSTANCE.getUIElement_LocalizedAccessibilityPhrase();
@@ -2840,6 +3109,7 @@ public class UiPackageImpl extends EPackageImpl {
 		 * <!-- end-user-doc -->
 		 * @see org.eclipse.e4.ui.model.application.ui.MUILabel
 		 * @see org.eclipse.e4.ui.model.application.ui.impl.UiPackageImpl#getUILabel()
+		 * @since 1.0
 		 * @generated
 		 */
 		public static final EClass UI_LABEL = eINSTANCE.getUILabel();
@@ -2848,6 +3118,7 @@ public class UiPackageImpl extends EPackageImpl {
 		 * The meta object literal for the '<em><b>Label</b></em>' attribute feature.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
+		 * @since 1.0
 		 * @generated
 		 */
 		public static final EAttribute UI_LABEL__LABEL = eINSTANCE.getUILabel_Label();
@@ -2856,6 +3127,7 @@ public class UiPackageImpl extends EPackageImpl {
 		 * The meta object literal for the '<em><b>Icon URI</b></em>' attribute feature.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
+		 * @since 1.0
 		 * @generated
 		 */
 		public static final EAttribute UI_LABEL__ICON_URI = eINSTANCE.getUILabel_IconURI();
@@ -2864,6 +3136,7 @@ public class UiPackageImpl extends EPackageImpl {
 		 * The meta object literal for the '<em><b>Tooltip</b></em>' attribute feature.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
+		 * @since 1.0
 		 * @generated
 		 */
 		public static final EAttribute UI_LABEL__TOOLTIP = eINSTANCE.getUILabel_Tooltip();
@@ -2872,6 +3145,7 @@ public class UiPackageImpl extends EPackageImpl {
 		 * The meta object literal for the '<em><b>Localized Label</b></em>' attribute feature.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
+		 * @since 1.0
 		 * @generated
 		 */
 		public static final EAttribute UI_LABEL__LOCALIZED_LABEL = eINSTANCE.getUILabel_LocalizedLabel();
@@ -2880,6 +3154,7 @@ public class UiPackageImpl extends EPackageImpl {
 		 * The meta object literal for the '<em><b>Localized Tooltip</b></em>' attribute feature.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
+		 * @since 1.0
 		 * @generated
 		 */
 		public static final EAttribute UI_LABEL__LOCALIZED_TOOLTIP = eINSTANCE.getUILabel_LocalizedTooltip();
@@ -2890,6 +3165,7 @@ public class UiPackageImpl extends EPackageImpl {
 		 * <!-- end-user-doc -->
 		 * @see org.eclipse.e4.ui.model.application.ui.impl.ElementContainerImpl
 		 * @see org.eclipse.e4.ui.model.application.ui.impl.UiPackageImpl#getElementContainer()
+		 * @since 1.0
 		 * @generated
 		 */
 		public static final EClass ELEMENT_CONTAINER = eINSTANCE.getElementContainer();
@@ -2898,6 +3174,7 @@ public class UiPackageImpl extends EPackageImpl {
 		 * The meta object literal for the '<em><b>Children</b></em>' containment reference list feature.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
+		 * @since 1.0
 		 * @generated
 		 */
 		public static final EReference ELEMENT_CONTAINER__CHILDREN = eINSTANCE.getElementContainer_Children();
@@ -2906,6 +3183,7 @@ public class UiPackageImpl extends EPackageImpl {
 		 * The meta object literal for the '<em><b>Selected Element</b></em>' reference feature.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
+		 * @since 1.0
 		 * @generated
 		 */
 		public static final EReference ELEMENT_CONTAINER__SELECTED_ELEMENT = eINSTANCE.getElementContainer_SelectedElement();
@@ -2916,6 +3194,7 @@ public class UiPackageImpl extends EPackageImpl {
 		 * <!-- end-user-doc -->
 		 * @see org.eclipse.e4.ui.model.application.ui.impl.GenericStackImpl
 		 * @see org.eclipse.e4.ui.model.application.ui.impl.UiPackageImpl#getGenericStack()
+		 * @since 1.0
 		 * @generated
 		 */
 		public static final EClass GENERIC_STACK = eINSTANCE.getGenericStack();
@@ -2926,6 +3205,7 @@ public class UiPackageImpl extends EPackageImpl {
 		 * <!-- end-user-doc -->
 		 * @see org.eclipse.e4.ui.model.application.ui.impl.GenericTileImpl
 		 * @see org.eclipse.e4.ui.model.application.ui.impl.UiPackageImpl#getGenericTile()
+		 * @since 1.0
 		 * @generated
 		 */
 		public static final EClass GENERIC_TILE = eINSTANCE.getGenericTile();
@@ -2934,6 +3214,7 @@ public class UiPackageImpl extends EPackageImpl {
 		 * The meta object literal for the '<em><b>Horizontal</b></em>' attribute feature.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
+		 * @since 1.0
 		 * @generated
 		 */
 		public static final EAttribute GENERIC_TILE__HORIZONTAL = eINSTANCE.getGenericTile_Horizontal();
@@ -2944,6 +3225,7 @@ public class UiPackageImpl extends EPackageImpl {
 		 * <!-- end-user-doc -->
 		 * @see org.eclipse.e4.ui.model.application.ui.impl.GenericTrimContainerImpl
 		 * @see org.eclipse.e4.ui.model.application.ui.impl.UiPackageImpl#getGenericTrimContainer()
+		 * @since 1.0
 		 * @generated
 		 */
 		public static final EClass GENERIC_TRIM_CONTAINER = eINSTANCE.getGenericTrimContainer();
@@ -2952,6 +3234,7 @@ public class UiPackageImpl extends EPackageImpl {
 		 * The meta object literal for the '<em><b>Side</b></em>' attribute feature.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
+		 * @since 1.0
 		 * @generated
 		 */
 		public static final EAttribute GENERIC_TRIM_CONTAINER__SIDE = eINSTANCE.getGenericTrimContainer_Side();
@@ -2962,6 +3245,7 @@ public class UiPackageImpl extends EPackageImpl {
 		 * <!-- end-user-doc -->
 		 * @see org.eclipse.e4.ui.model.application.ui.impl.ExpressionImpl
 		 * @see org.eclipse.e4.ui.model.application.ui.impl.UiPackageImpl#getExpression()
+		 * @since 1.0
 		 * @generated
 		 */
 		public static final EClass EXPRESSION = eINSTANCE.getExpression();
@@ -2972,6 +3256,7 @@ public class UiPackageImpl extends EPackageImpl {
 		 * <!-- end-user-doc -->
 		 * @see org.eclipse.e4.ui.model.application.ui.impl.CoreExpressionImpl
 		 * @see org.eclipse.e4.ui.model.application.ui.impl.UiPackageImpl#getCoreExpression()
+		 * @since 1.0
 		 * @generated
 		 */
 		public static final EClass CORE_EXPRESSION = eINSTANCE.getCoreExpression();
@@ -2980,6 +3265,7 @@ public class UiPackageImpl extends EPackageImpl {
 		 * The meta object literal for the '<em><b>Core Expression Id</b></em>' attribute feature.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
+		 * @since 1.0
 		 * @generated
 		 */
 		public static final EAttribute CORE_EXPRESSION__CORE_EXPRESSION_ID = eINSTANCE.getCoreExpression_CoreExpressionId();
@@ -2988,6 +3274,7 @@ public class UiPackageImpl extends EPackageImpl {
 		 * The meta object literal for the '<em><b>Core Expression</b></em>' attribute feature.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
+		 * @since 1.0
 		 * @generated
 		 */
 		public static final EAttribute CORE_EXPRESSION__CORE_EXPRESSION = eINSTANCE.getCoreExpression_CoreExpression();
@@ -3016,6 +3303,7 @@ public class UiPackageImpl extends EPackageImpl {
 		 * <!-- end-user-doc -->
 		 * @see org.eclipse.e4.ui.model.application.ui.MSnippetContainer
 		 * @see org.eclipse.e4.ui.model.application.ui.impl.UiPackageImpl#getSnippetContainer()
+		 * @since 1.0
 		 * @generated
 		 */
 		public static final EClass SNIPPET_CONTAINER = eINSTANCE.getSnippetContainer();
@@ -3024,6 +3312,7 @@ public class UiPackageImpl extends EPackageImpl {
 		 * The meta object literal for the '<em><b>Snippets</b></em>' containment reference list feature.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
+		 * @since 1.0
 		 * @generated
 		 */
 		public static final EReference SNIPPET_CONTAINER__SNIPPETS = eINSTANCE.getSnippetContainer_Snippets();
@@ -3034,6 +3323,7 @@ public class UiPackageImpl extends EPackageImpl {
 		 * <!-- end-user-doc -->
 		 * @see org.eclipse.e4.ui.model.application.ui.MLocalizable
 		 * @see org.eclipse.e4.ui.model.application.ui.impl.UiPackageImpl#getLocalizable()
+		 * @since 1.1
 		 * @generated
 		 */
 		public static final EClass LOCALIZABLE = eINSTANCE.getLocalizable();
@@ -3042,6 +3332,7 @@ public class UiPackageImpl extends EPackageImpl {
 		 * The meta object literal for the '<em><b>Update Localization</b></em>' operation.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
+		 * @since 1.1
 		 * @generated
 		 */
 		public static final EOperation LOCALIZABLE___UPDATE_LOCALIZATION = eINSTANCE.getLocalizable__UpdateLocalization();
@@ -3052,6 +3343,7 @@ public class UiPackageImpl extends EPackageImpl {
 		 * <!-- end-user-doc -->
 		 * @see org.eclipse.e4.ui.model.application.ui.SideValue
 		 * @see org.eclipse.e4.ui.model.application.ui.impl.UiPackageImpl#getSideValue()
+		 * @since 1.0
 		 * @generated
 		 */
 		public static final EEnum SIDE_VALUE = eINSTANCE.getSideValue();

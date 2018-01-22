@@ -33,6 +33,7 @@ public interface MUiFactory {
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @return a new object of class '<em>Core Expression</em>'.
+	 * @since 1.0
 	 * @generated
 	 */
 	MCoreExpression createCoreExpression();

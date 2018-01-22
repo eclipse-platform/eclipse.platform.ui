@@ -108,6 +108,7 @@ public class BasicSwitch<T> extends Switch<T> {
 	 * @param object the target of the switch.
 	 * @return the result of interpreting the object as an instance of '<em>Part Descriptor</em>'.
 	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+	 * @since 1.0
 	 * @generated
 	 */
 	public T casePartDescriptor(MPartDescriptor object) {
@@ -123,6 +124,7 @@ public class BasicSwitch<T> extends Switch<T> {
 	 * @param object the target of the switch.
 	 * @return the result of interpreting the object as an instance of '<em>Part Descriptor Container</em>'.
 	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+	 * @since 1.0
 	 * @generated
 	 */
 	public T casePartDescriptorContainer(MPartDescriptorContainer object) {
@@ -138,6 +140,7 @@ public class BasicSwitch<T> extends Switch<T> {
 	 * @param object the target of the switch.
 	 * @return the result of interpreting the object as an instance of '<em>UI Label</em>'.
 	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+	 * @since 1.0
 	 * @generated
 	 */
 	public T caseUILabel(MUILabel object) {
@@ -153,6 +156,7 @@ public class BasicSwitch<T> extends Switch<T> {
 	 * @param object the target of the switch.
 	 * @return the result of interpreting the object as an instance of '<em>Handler Container</em>'.
 	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+	 * @since 1.0
 	 * @generated
 	 */
 	public T caseHandlerContainer(MHandlerContainer object) {
@@ -168,6 +172,7 @@ public class BasicSwitch<T> extends Switch<T> {
 	 * @param object the target of the switch.
 	 * @return the result of interpreting the object as an instance of '<em>Bindings</em>'.
 	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+	 * @since 1.0
 	 * @generated
 	 */
 	public T caseBindings(MBindings object) {
@@ -183,6 +188,7 @@ public class BasicSwitch<T> extends Switch<T> {
 	 * @param object the target of the switch.
 	 * @return the result of interpreting the object as an instance of '<em>Element</em>'.
 	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+	 * @since 1.0
 	 * @generated
 	 */
 	public T caseApplicationElement(MApplicationElement object) {
@@ -198,6 +204,7 @@ public class BasicSwitch<T> extends Switch<T> {
 	 * @param object the target of the switch.
 	 * @return the result of interpreting the object as an instance of '<em>Localizable</em>'.
 	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+	 * @since 1.1
 	 * @generated
 	 */
 	public T caseLocalizable(MLocalizable object) {

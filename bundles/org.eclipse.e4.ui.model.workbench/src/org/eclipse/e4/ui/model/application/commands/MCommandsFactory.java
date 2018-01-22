@@ -33,6 +33,7 @@ public interface MCommandsFactory {
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @return a new object of class '<em>Binding Context</em>'.
+	 * @since 1.0
 	 * @generated
 	 */
 	MBindingContext createBindingContext();
@@ -42,6 +43,7 @@ public interface MCommandsFactory {
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @return a new object of class '<em>Binding Table</em>'.
+	 * @since 1.0
 	 * @generated
 	 */
 	MBindingTable createBindingTable();
@@ -51,6 +53,7 @@ public interface MCommandsFactory {
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @return a new object of class '<em>Command</em>'.
+	 * @since 1.0
 	 * @generated
 	 */
 	MCommand createCommand();
@@ -60,6 +63,7 @@ public interface MCommandsFactory {
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @return a new object of class '<em>Command Parameter</em>'.
+	 * @since 1.0
 	 * @generated
 	 */
 	MCommandParameter createCommandParameter();
@@ -69,6 +73,7 @@ public interface MCommandsFactory {
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @return a new object of class '<em>Handler</em>'.
+	 * @since 1.0
 	 * @generated
 	 */
 	MHandler createHandler();
@@ -78,6 +83,7 @@ public interface MCommandsFactory {
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @return a new object of class '<em>Key Binding</em>'.
+	 * @since 1.0
 	 * @generated
 	 */
 	MKeyBinding createKeyBinding();
@@ -87,6 +93,7 @@ public interface MCommandsFactory {
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @return a new object of class '<em>Parameter</em>'.
+	 * @since 1.0
 	 * @generated
 	 */
 	MParameter createParameter();
@@ -96,6 +103,7 @@ public interface MCommandsFactory {
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @return a new object of class '<em>Category</em>'.
+	 * @since 1.0
 	 * @generated
 	 */
 	MCategory createCategory();

@@ -44,6 +44,7 @@ import org.eclipse.emf.ecore.util.Switch;
  * @see org.eclipse.e4.ui.model.application.ui.basic.impl.BasicPackageImpl
  * @generated
  */
+@SuppressWarnings("deprecation")
 public class BasicSwitch<T1> extends Switch<T1> {
 	/**
 	 * The cached model package
@@ -297,6 +298,7 @@ public class BasicSwitch<T1> extends Switch<T1> {
 	 * @param object the target of the switch.
 	 * @return the result of interpreting the object as an instance of '<em>Part</em>'.
 	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+	 * @since 1.0
 	 * @generated
 	 */
 	public T1 casePart(MPart object) {
@@ -312,6 +314,7 @@ public class BasicSwitch<T1> extends Switch<T1> {
 	 * @param object the target of the switch.
 	 * @return the result of interpreting the object as an instance of '<em>Composite Part</em>'.
 	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+	 * @since 1.1
 	 * @generated
 	 */
 	public T1 caseCompositePart(MCompositePart object) {
@@ -327,8 +330,11 @@ public class BasicSwitch<T1> extends Switch<T1> {
 	 * @param object the target of the switch.
 	 * @return the result of interpreting the object as an instance of '<em>Input Part</em>'.
 	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+	 * @since 1.0
+	 * @deprecated See {@link MInputPart model documentation} for details.
 	 * @generated
 	 */
+	@Deprecated
 	public T1 caseInputPart(MInputPart object) {
 		return null;
 	}
@@ -342,6 +348,7 @@ public class BasicSwitch<T1> extends Switch<T1> {
 	 * @param object the target of the switch.
 	 * @return the result of interpreting the object as an instance of '<em>Part Stack</em>'.
 	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+	 * @since 1.0
 	 * @generated
 	 */
 	public T1 casePartStack(MPartStack object) {
@@ -357,6 +364,7 @@ public class BasicSwitch<T1> extends Switch<T1> {
 	 * @param object the target of the switch.
 	 * @return the result of interpreting the object as an instance of '<em>Part Sash Container</em>'.
 	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+	 * @since 1.0
 	 * @generated
 	 */
 	public T1 casePartSashContainer(MPartSashContainer object) {
@@ -372,6 +380,7 @@ public class BasicSwitch<T1> extends Switch<T1> {
 	 * @param object the target of the switch.
 	 * @return the result of interpreting the object as an instance of '<em>Window</em>'.
 	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+	 * @since 1.0
 	 * @generated
 	 */
 	public T1 caseWindow(MWindow object) {
@@ -387,6 +396,7 @@ public class BasicSwitch<T1> extends Switch<T1> {
 	 * @param object the target of the switch.
 	 * @return the result of interpreting the object as an instance of '<em>Trimmed Window</em>'.
 	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+	 * @since 1.0
 	 * @generated
 	 */
 	public T1 caseTrimmedWindow(MTrimmedWindow object) {
@@ -402,6 +412,7 @@ public class BasicSwitch<T1> extends Switch<T1> {
 	 * @param object the target of the switch.
 	 * @return the result of interpreting the object as an instance of '<em>Trim Element</em>'.
 	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+	 * @since 1.0
 	 * @generated
 	 */
 	public T1 caseTrimElement(MTrimElement object) {
@@ -417,6 +428,7 @@ public class BasicSwitch<T1> extends Switch<T1> {
 	 * @param object the target of the switch.
 	 * @return the result of interpreting the object as an instance of '<em>Part Sash Container Element</em>'.
 	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+	 * @since 1.0
 	 * @generated
 	 */
 	public T1 casePartSashContainerElement(MPartSashContainerElement object) {
@@ -432,6 +444,7 @@ public class BasicSwitch<T1> extends Switch<T1> {
 	 * @param object the target of the switch.
 	 * @return the result of interpreting the object as an instance of '<em>Window Element</em>'.
 	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+	 * @since 1.0
 	 * @generated
 	 */
 	public T1 caseWindowElement(MWindowElement object) {
@@ -447,6 +460,7 @@ public class BasicSwitch<T1> extends Switch<T1> {
 	 * @param object the target of the switch.
 	 * @return the result of interpreting the object as an instance of '<em>Trim Bar</em>'.
 	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+	 * @since 1.0
 	 * @generated
 	 */
 	public T1 caseTrimBar(MTrimBar object) {
@@ -462,6 +476,7 @@ public class BasicSwitch<T1> extends Switch<T1> {
 	 * @param object the target of the switch.
 	 * @return the result of interpreting the object as an instance of '<em>Stack Element</em>'.
 	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+	 * @since 1.0
 	 * @generated
 	 */
 	public T1 caseStackElement(MStackElement object) {
@@ -477,6 +492,7 @@ public class BasicSwitch<T1> extends Switch<T1> {
 	 * @param object the target of the switch.
 	 * @return the result of interpreting the object as an instance of '<em>Dialog</em>'.
 	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+	 * @since 1.1
 	 * @generated
 	 */
 	public T1 caseDialog(MDialog object) {
@@ -492,6 +508,7 @@ public class BasicSwitch<T1> extends Switch<T1> {
 	 * @param object the target of the switch.
 	 * @return the result of interpreting the object as an instance of '<em>Wizard Dialog</em>'.
 	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+	 * @since 1.1
 	 * @generated
 	 */
 	public T1 caseWizardDialog(MWizardDialog object) {
@@ -507,6 +524,7 @@ public class BasicSwitch<T1> extends Switch<T1> {
 	 * @param object the target of the switch.
 	 * @return the result of interpreting the object as an instance of '<em>Element</em>'.
 	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+	 * @since 1.0
 	 * @generated
 	 */
 	public T1 caseApplicationElement(MApplicationElement object) {
@@ -522,6 +540,7 @@ public class BasicSwitch<T1> extends Switch<T1> {
 	 * @param object the target of the switch.
 	 * @return the result of interpreting the object as an instance of '<em>Contribution</em>'.
 	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+	 * @since 1.0
 	 * @generated
 	 */
 	public T1 caseContribution(MContribution object) {
@@ -537,6 +556,7 @@ public class BasicSwitch<T1> extends Switch<T1> {
 	 * @param object the target of the switch.
 	 * @return the result of interpreting the object as an instance of '<em>Context</em>'.
 	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+	 * @since 1.0
 	 * @generated
 	 */
 	public T1 caseContext(MContext object) {
@@ -552,6 +572,7 @@ public class BasicSwitch<T1> extends Switch<T1> {
 	 * @param object the target of the switch.
 	 * @return the result of interpreting the object as an instance of '<em>UI Element</em>'.
 	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+	 * @since 1.0
 	 * @generated
 	 */
 	public T1 caseUIElement(MUIElement object) {
@@ -567,6 +588,7 @@ public class BasicSwitch<T1> extends Switch<T1> {
 	 * @param object the target of the switch.
 	 * @return the result of interpreting the object as an instance of '<em>UI Label</em>'.
 	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+	 * @since 1.0
 	 * @generated
 	 */
 	public T1 caseUILabel(MUILabel object) {
@@ -582,6 +604,7 @@ public class BasicSwitch<T1> extends Switch<T1> {
 	 * @param object the target of the switch.
 	 * @return the result of interpreting the object as an instance of '<em>Handler Container</em>'.
 	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+	 * @since 1.0
 	 * @generated
 	 */
 	public T1 caseHandlerContainer(MHandlerContainer object) {
@@ -597,6 +620,7 @@ public class BasicSwitch<T1> extends Switch<T1> {
 	 * @param object the target of the switch.
 	 * @return the result of interpreting the object as an instance of '<em>Dirtyable</em>'.
 	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+	 * @since 1.0
 	 * @generated
 	 */
 	public T1 caseDirtyable(MDirtyable object) {
@@ -612,6 +636,7 @@ public class BasicSwitch<T1> extends Switch<T1> {
 	 * @param object the target of the switch.
 	 * @return the result of interpreting the object as an instance of '<em>Bindings</em>'.
 	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+	 * @since 1.0
 	 * @generated
 	 */
 	public T1 caseBindings(MBindings object) {
@@ -627,6 +652,7 @@ public class BasicSwitch<T1> extends Switch<T1> {
 	 * @param object the target of the switch.
 	 * @return the result of interpreting the object as an instance of '<em>Localizable</em>'.
 	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+	 * @since 1.1
 	 * @generated
 	 */
 	public T1 caseLocalizable(MLocalizable object) {
@@ -642,8 +668,11 @@ public class BasicSwitch<T1> extends Switch<T1> {
 	 * @param object the target of the switch.
 	 * @return the result of interpreting the object as an instance of '<em>Input</em>'.
 	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+	 * @since 1.0
+	 * @deprecated See {@link MInput model documentation} for details.
 	 * @generated
 	 */
+	@Deprecated
 	public T1 caseInput(MInput object) {
 		return null;
 	}
@@ -657,6 +686,7 @@ public class BasicSwitch<T1> extends Switch<T1> {
 	 * @param object the target of the switch.
 	 * @return the result of interpreting the object as an instance of '<em>Element Container</em>'.
 	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+	 * @since 1.0
 	 * @generated
 	 */
 	public <T extends MUIElement> T1 caseElementContainer(MElementContainer<T> object) {
@@ -672,6 +702,7 @@ public class BasicSwitch<T1> extends Switch<T1> {
 	 * @param object the target of the switch.
 	 * @return the result of interpreting the object as an instance of '<em>Generic Stack</em>'.
 	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+	 * @since 1.0
 	 * @generated
 	 */
 	public <T extends MUIElement> T1 caseGenericStack(MGenericStack<T> object) {
@@ -687,6 +718,7 @@ public class BasicSwitch<T1> extends Switch<T1> {
 	 * @param object the target of the switch.
 	 * @return the result of interpreting the object as an instance of '<em>Generic Tile</em>'.
 	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+	 * @since 1.0
 	 * @generated
 	 */
 	public <T extends MUIElement> T1 caseGenericTile(MGenericTile<T> object) {
@@ -702,6 +734,7 @@ public class BasicSwitch<T1> extends Switch<T1> {
 	 * @param object the target of the switch.
 	 * @return the result of interpreting the object as an instance of '<em>Snippet Container</em>'.
 	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+	 * @since 1.0
 	 * @generated
 	 */
 	public T1 caseSnippetContainer(MSnippetContainer object) {
@@ -717,6 +750,7 @@ public class BasicSwitch<T1> extends Switch<T1> {
 	 * @param object the target of the switch.
 	 * @return the result of interpreting the object as an instance of '<em>Generic Trim Container</em>'.
 	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+	 * @since 1.0
 	 * @generated
 	 */
 	public <T extends MUIElement> T1 caseGenericTrimContainer(MGenericTrimContainer<T> object) {

@@ -43,6 +43,7 @@ import org.eclipse.emf.ecore.util.InternalEList;
  *   <li>{@link org.eclipse.e4.ui.model.application.ui.advanced.impl.PerspectiveStackImpl#getSelectedElement <em>Selected Element</em>}</li>
  * </ul>
  *
+ * @since 1.0
  * @generated
  */
 public class PerspectiveStackImpl extends UIElementImpl implements MPerspectiveStack {

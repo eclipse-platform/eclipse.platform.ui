@@ -34,6 +34,7 @@ public interface MBasicFactory {
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @return a new object of class '<em>Part</em>'.
+	 * @since 1.0
 	 * @generated
 	 */
 	MPart createPart();
@@ -44,6 +45,7 @@ public interface MBasicFactory {
 	 * @since 1.1
 	 * <!-- end-user-doc -->
 	 * @return a new object of class '<em>Composite Part</em>'.
+	 * @since 1.1
 	 * @generated
 	 */
 	MCompositePart createCompositePart();
@@ -53,8 +55,11 @@ public interface MBasicFactory {
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @return a new object of class '<em>Input Part</em>'.
+	 * @since 1.0
+	 * @deprecated See {@link MInputPart model documentation} for details.
 	 * @generated
 	 */
+	@Deprecated
 	MInputPart createInputPart();
 
 	/**
@@ -62,6 +67,7 @@ public interface MBasicFactory {
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @return a new object of class '<em>Part Stack</em>'.
+	 * @since 1.0
 	 * @generated
 	 */
 	MPartStack createPartStack();
@@ -71,6 +77,7 @@ public interface MBasicFactory {
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @return a new object of class '<em>Part Sash Container</em>'.
+	 * @since 1.0
 	 * @generated
 	 */
 	MPartSashContainer createPartSashContainer();
@@ -80,6 +87,7 @@ public interface MBasicFactory {
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @return a new object of class '<em>Window</em>'.
+	 * @since 1.0
 	 * @generated
 	 */
 	MWindow createWindow();
@@ -89,6 +97,7 @@ public interface MBasicFactory {
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @return a new object of class '<em>Trimmed Window</em>'.
+	 * @since 1.0
 	 * @generated
 	 */
 	MTrimmedWindow createTrimmedWindow();
@@ -98,6 +107,7 @@ public interface MBasicFactory {
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @return a new object of class '<em>Trim Bar</em>'.
+	 * @since 1.0
 	 * @generated
 	 */
 	MTrimBar createTrimBar();
@@ -108,6 +118,7 @@ public interface MBasicFactory {
 	 * @since 1.1
 	 * <!-- end-user-doc -->
 	 * @return a new object of class '<em>Dialog</em>'.
+	 * @since 1.1
 	 * @generated
 	 */
 	MDialog createDialog();
@@ -118,6 +129,7 @@ public interface MBasicFactory {
 	 * @since 1.1
 	 * <!-- end-user-doc -->
 	 * @return a new object of class '<em>Wizard Dialog</em>'.
+	 * @since 1.1
 	 * @generated
 	 */
 	MWizardDialog createWizardDialog();

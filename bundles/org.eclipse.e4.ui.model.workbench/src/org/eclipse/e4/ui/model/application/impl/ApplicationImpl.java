@@ -84,6 +84,7 @@ import org.eclipse.emf.ecore.util.InternalEList;
  *   <li>{@link org.eclipse.e4.ui.model.application.impl.ApplicationImpl#getDialogs <em>Dialogs</em>}</li>
  * </ul>
  *
+ * @since 1.0
  * @generated
  */
 public class ApplicationImpl extends ElementContainerImpl<MWindow> implements MApplication {
@@ -252,6 +253,7 @@ public class ApplicationImpl extends ElementContainerImpl<MWindow> implements MA
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @see #getDialogs()
+	 * @since 1.1
 	 * @generated
 	 * @ordered
 	 */
@@ -520,6 +522,7 @@ public class ApplicationImpl extends ElementContainerImpl<MWindow> implements MA
 	/**
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.1
 	 * @generated
 	 */
 	public List<MDialog> getDialogs() {
@@ -932,7 +935,7 @@ public class ApplicationImpl extends ElementContainerImpl<MWindow> implements MA
 	public String toString() {
 		if (eIsProxy()) return super.toString();
 
-		StringBuffer result = new StringBuffer(super.toString());
+		StringBuilder result = new StringBuilder(super.toString());
 		result.append(" (context: "); //$NON-NLS-1$
 		result.append(context);
 		result.append(", variables: "); //$NON-NLS-1$

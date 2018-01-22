@@ -153,6 +153,7 @@ public class AdvancedSwitch<T1> extends Switch<T1> {
 	 * @param object the target of the switch.
 	 * @return the result of interpreting the object as an instance of '<em>Placeholder</em>'.
 	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+	 * @since 1.0
 	 * @generated
 	 */
 	public T1 casePlaceholder(MPlaceholder object) {
@@ -168,6 +169,7 @@ public class AdvancedSwitch<T1> extends Switch<T1> {
 	 * @param object the target of the switch.
 	 * @return the result of interpreting the object as an instance of '<em>Perspective</em>'.
 	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+	 * @since 1.0
 	 * @generated
 	 */
 	public T1 casePerspective(MPerspective object) {
@@ -183,6 +185,7 @@ public class AdvancedSwitch<T1> extends Switch<T1> {
 	 * @param object the target of the switch.
 	 * @return the result of interpreting the object as an instance of '<em>Perspective Stack</em>'.
 	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+	 * @since 1.0
 	 * @generated
 	 */
 	public T1 casePerspectiveStack(MPerspectiveStack object) {
@@ -198,6 +201,7 @@ public class AdvancedSwitch<T1> extends Switch<T1> {
 	 * @param object the target of the switch.
 	 * @return the result of interpreting the object as an instance of '<em>Area</em>'.
 	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+	 * @since 1.0
 	 * @generated
 	 */
 	public T1 caseArea(MArea object) {
@@ -213,6 +217,7 @@ public class AdvancedSwitch<T1> extends Switch<T1> {
 	 * @param object the target of the switch.
 	 * @return the result of interpreting the object as an instance of '<em>Element</em>'.
 	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+	 * @since 1.0
 	 * @generated
 	 */
 	public T1 caseApplicationElement(MApplicationElement object) {
@@ -228,6 +233,7 @@ public class AdvancedSwitch<T1> extends Switch<T1> {
 	 * @param object the target of the switch.
 	 * @return the result of interpreting the object as an instance of '<em>UI Element</em>'.
 	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+	 * @since 1.0
 	 * @generated
 	 */
 	public T1 caseUIElement(MUIElement object) {
@@ -243,6 +249,7 @@ public class AdvancedSwitch<T1> extends Switch<T1> {
 	 * @param object the target of the switch.
 	 * @return the result of interpreting the object as an instance of '<em>Part Sash Container Element</em>'.
 	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+	 * @since 1.0
 	 * @generated
 	 */
 	public T1 casePartSashContainerElement(MPartSashContainerElement object) {
@@ -258,6 +265,7 @@ public class AdvancedSwitch<T1> extends Switch<T1> {
 	 * @param object the target of the switch.
 	 * @return the result of interpreting the object as an instance of '<em>Stack Element</em>'.
 	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+	 * @since 1.0
 	 * @generated
 	 */
 	public T1 caseStackElement(MStackElement object) {
@@ -273,6 +281,7 @@ public class AdvancedSwitch<T1> extends Switch<T1> {
 	 * @param object the target of the switch.
 	 * @return the result of interpreting the object as an instance of '<em>Element Container</em>'.
 	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+	 * @since 1.0
 	 * @generated
 	 */
 	public <T extends MUIElement> T1 caseElementContainer(MElementContainer<T> object) {
@@ -288,6 +297,7 @@ public class AdvancedSwitch<T1> extends Switch<T1> {
 	 * @param object the target of the switch.
 	 * @return the result of interpreting the object as an instance of '<em>Localizable</em>'.
 	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+	 * @since 1.1
 	 * @generated
 	 */
 	public T1 caseLocalizable(MLocalizable object) {
@@ -303,6 +313,7 @@ public class AdvancedSwitch<T1> extends Switch<T1> {
 	 * @param object the target of the switch.
 	 * @return the result of interpreting the object as an instance of '<em>UI Label</em>'.
 	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+	 * @since 1.0
 	 * @generated
 	 */
 	public T1 caseUILabel(MUILabel object) {
@@ -318,6 +329,7 @@ public class AdvancedSwitch<T1> extends Switch<T1> {
 	 * @param object the target of the switch.
 	 * @return the result of interpreting the object as an instance of '<em>Context</em>'.
 	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+	 * @since 1.0
 	 * @generated
 	 */
 	public T1 caseContext(MContext object) {
@@ -333,6 +345,7 @@ public class AdvancedSwitch<T1> extends Switch<T1> {
 	 * @param object the target of the switch.
 	 * @return the result of interpreting the object as an instance of '<em>Handler Container</em>'.
 	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+	 * @since 1.0
 	 * @generated
 	 */
 	public T1 caseHandlerContainer(MHandlerContainer object) {
@@ -348,6 +361,7 @@ public class AdvancedSwitch<T1> extends Switch<T1> {
 	 * @param object the target of the switch.
 	 * @return the result of interpreting the object as an instance of '<em>Bindings</em>'.
 	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+	 * @since 1.0
 	 * @generated
 	 */
 	public T1 caseBindings(MBindings object) {
@@ -363,6 +377,7 @@ public class AdvancedSwitch<T1> extends Switch<T1> {
 	 * @param object the target of the switch.
 	 * @return the result of interpreting the object as an instance of '<em>Generic Stack</em>'.
 	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+	 * @since 1.0
 	 * @generated
 	 */
 	public <T extends MUIElement> T1 caseGenericStack(MGenericStack<T> object) {
@@ -378,6 +393,7 @@ public class AdvancedSwitch<T1> extends Switch<T1> {
 	 * @param object the target of the switch.
 	 * @return the result of interpreting the object as an instance of '<em>Window Element</em>'.
 	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+	 * @since 1.0
 	 * @generated
 	 */
 	public T1 caseWindowElement(MWindowElement object) {
@@ -393,6 +409,7 @@ public class AdvancedSwitch<T1> extends Switch<T1> {
 	 * @param object the target of the switch.
 	 * @return the result of interpreting the object as an instance of '<em>Generic Tile</em>'.
 	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+	 * @since 1.0
 	 * @generated
 	 */
 	public <T extends MUIElement> T1 caseGenericTile(MGenericTile<T> object) {
@@ -408,6 +425,7 @@ public class AdvancedSwitch<T1> extends Switch<T1> {
 	 * @param object the target of the switch.
 	 * @return the result of interpreting the object as an instance of '<em>Part Sash Container</em>'.
 	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+	 * @since 1.0
 	 * @generated
 	 */
 	public T1 casePartSashContainer(MPartSashContainer object) {

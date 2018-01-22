@@ -28,6 +28,7 @@ import org.eclipse.emf.ecore.impl.ENotificationImpl;
  *   <li>{@link org.eclipse.e4.ui.model.application.commands.impl.ParameterImpl#getValue <em>Value</em>}</li>
  * </ul>
  *
+ * @since 1.0
  * @generated
  */
 public class ParameterImpl extends ApplicationElementImpl implements MParameter {
@@ -209,7 +210,7 @@ public class ParameterImpl extends ApplicationElementImpl implements MParameter 
 	public String toString() {
 		if (eIsProxy()) return super.toString();
 
-		StringBuffer result = new StringBuffer(super.toString());
+		StringBuilder result = new StringBuilder(super.toString());
 		result.append(" (name: "); //$NON-NLS-1$
 		result.append(name);
 		result.append(", value: "); //$NON-NLS-1$

@@ -114,6 +114,7 @@ public class FragmentAdapterFactory extends AdapterFactoryImpl {
 	 * <!-- end-user-doc -->
 	 * @return the new adapter.
 	 * @see org.eclipse.e4.ui.model.fragment.MModelFragments
+	 * @since 1.0
 	 * @generated
 	 */
 	public Adapter createModelFragmentsAdapter() {
@@ -128,6 +129,7 @@ public class FragmentAdapterFactory extends AdapterFactoryImpl {
 	 * <!-- end-user-doc -->
 	 * @return the new adapter.
 	 * @see org.eclipse.e4.ui.model.fragment.MModelFragment
+	 * @since 1.0
 	 * @generated
 	 */
 	public Adapter createModelFragmentAdapter() {
@@ -142,6 +144,7 @@ public class FragmentAdapterFactory extends AdapterFactoryImpl {
 	 * <!-- end-user-doc -->
 	 * @return the new adapter.
 	 * @see org.eclipse.e4.ui.model.fragment.MStringModelFragment
+	 * @since 1.0
 	 * @generated
 	 */
 	public Adapter createStringModelFragmentAdapter() {

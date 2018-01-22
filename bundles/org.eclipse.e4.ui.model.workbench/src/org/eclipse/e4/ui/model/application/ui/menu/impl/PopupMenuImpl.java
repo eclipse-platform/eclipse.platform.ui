@@ -44,6 +44,7 @@ import org.eclipse.emf.ecore.util.InternalEList;
  *   <li>{@link org.eclipse.e4.ui.model.application.ui.menu.impl.PopupMenuImpl#getProperties <em>Properties</em>}</li>
  * </ul>
  *
+ * @since 1.0
  * @generated
  */
 public class PopupMenuImpl extends MenuImpl implements MPopupMenu {
@@ -291,7 +292,7 @@ public class PopupMenuImpl extends MenuImpl implements MPopupMenu {
 	public String toString() {
 		if (eIsProxy()) return super.toString();
 
-		StringBuffer result = new StringBuffer(super.toString());
+		StringBuilder result = new StringBuilder(super.toString());
 		result.append(" (context: "); //$NON-NLS-1$
 		result.append(context);
 		result.append(", variables: "); //$NON-NLS-1$

@@ -33,6 +33,7 @@ public interface MBasicFactory {
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @return a new object of class '<em>Part Descriptor</em>'.
+	 * @since 1.0
 	 * @generated
 	 */
 	MPartDescriptor createPartDescriptor();

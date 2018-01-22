@@ -32,6 +32,7 @@ import org.eclipse.emf.ecore.util.InternalEList;
  *   <li>{@link org.eclipse.e4.ui.model.application.ui.basic.impl.TrimmedWindowImpl#getTrimBars <em>Trim Bars</em>}</li>
  * </ul>
  *
+ * @since 1.0
  * @generated
  */
 public class TrimmedWindowImpl extends WindowImpl implements MTrimmedWindow {

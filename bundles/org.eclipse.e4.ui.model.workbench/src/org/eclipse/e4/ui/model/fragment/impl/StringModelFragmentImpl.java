@@ -43,6 +43,7 @@ import org.eclipse.emf.ecore.util.EcoreUtil;
  *   <li>{@link org.eclipse.e4.ui.model.fragment.impl.StringModelFragmentImpl#getPositionInList <em>Position In List</em>}</li>
  * </ul>
  *
+ * @since 1.0
  * @generated
  */
 public class StringModelFragmentImpl extends ModelFragmentImpl implements MStringModelFragment {
@@ -277,7 +278,7 @@ public class StringModelFragmentImpl extends ModelFragmentImpl implements MStrin
 	public String toString() {
 		if (eIsProxy()) return super.toString();
 
-		StringBuffer result = new StringBuffer(super.toString());
+		StringBuilder result = new StringBuilder(super.toString());
 		result.append(" (featurename: "); //$NON-NLS-1$
 		result.append(featurename);
 		result.append(", parentElementId: "); //$NON-NLS-1$

@@ -31,6 +31,7 @@ import org.eclipse.emf.ecore.impl.ENotificationImpl;
  *   <li>{@link org.eclipse.e4.ui.model.application.ui.advanced.impl.PlaceholderImpl#isCloseable <em>Closeable</em>}</li>
  * </ul>
  *
+ * @since 1.0
  * @generated
  */
 public class PlaceholderImpl extends UIElementImpl implements MPlaceholder {
@@ -219,7 +220,7 @@ public class PlaceholderImpl extends UIElementImpl implements MPlaceholder {
 	public String toString() {
 		if (eIsProxy()) return super.toString();
 
-		StringBuffer result = new StringBuffer(super.toString());
+		StringBuilder result = new StringBuilder(super.toString());
 		result.append(" (closeable: "); //$NON-NLS-1$
 		result.append(closeable);
 		result.append(')');

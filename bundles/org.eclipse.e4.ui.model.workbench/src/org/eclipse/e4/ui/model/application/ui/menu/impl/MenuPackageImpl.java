@@ -104,6 +104,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * <!-- end-user-doc -->
 	 * @see org.eclipse.e4.ui.model.application.ui.menu.impl.ItemImpl
 	 * @see org.eclipse.e4.ui.model.application.ui.menu.impl.MenuPackageImpl#getItem()
+	 * @since 1.0
 	 * @generated
 	 */
 	public static final int ITEM = 0;
@@ -112,6 +113,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Element Id</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -121,6 +123,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Persisted State</b></em>' map.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -130,6 +133,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Tags</b></em>' attribute list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -139,6 +143,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Contributor URI</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -148,6 +153,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Transient Data</b></em>' map.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -157,6 +163,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Widget</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -166,6 +173,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Renderer</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -175,6 +183,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>To Be Rendered</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -184,6 +193,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>On Top</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -193,6 +203,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Visible</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -202,6 +213,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Parent</b></em>' container reference.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -211,6 +223,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Container Data</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -220,6 +233,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Cur Shared Ref</b></em>' reference.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -229,6 +243,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Visible When</b></em>' containment reference.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -238,6 +253,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Accessibility Phrase</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -247,6 +263,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Localized Accessibility Phrase</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -256,6 +273,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Label</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -265,6 +283,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Icon URI</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -274,6 +293,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Tooltip</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -283,6 +303,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Localized Label</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -292,6 +313,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Localized Tooltip</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -301,6 +323,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Enabled</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -310,6 +333,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Selected</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -319,6 +343,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Type</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -328,6 +353,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The number of structural features of the '<em>Item</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -337,6 +363,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The operation id for the '<em>Update Localization</em>' operation.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.1
 	 * @generated
 	 * @ordered
 	 */
@@ -346,6 +373,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The number of operations of the '<em>Item</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -357,6 +385,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * <!-- end-user-doc -->
 	 * @see org.eclipse.e4.ui.model.application.ui.menu.impl.HandledItemImpl
 	 * @see org.eclipse.e4.ui.model.application.ui.menu.impl.MenuPackageImpl#getHandledItem()
+	 * @since 1.0
 	 * @generated
 	 */
 	public static final int HANDLED_ITEM = 1;
@@ -365,6 +394,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Element Id</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -374,6 +404,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Persisted State</b></em>' map.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -383,6 +414,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Tags</b></em>' attribute list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -392,6 +424,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Contributor URI</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -401,6 +434,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Transient Data</b></em>' map.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -410,6 +444,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Widget</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -419,6 +454,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Renderer</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -428,6 +464,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>To Be Rendered</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -437,6 +474,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>On Top</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -446,6 +484,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Visible</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -455,6 +494,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Parent</b></em>' container reference.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -464,6 +504,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Container Data</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -473,6 +514,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Cur Shared Ref</b></em>' reference.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -482,6 +524,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Visible When</b></em>' containment reference.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -491,6 +534,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Accessibility Phrase</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -500,6 +544,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Localized Accessibility Phrase</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -509,6 +554,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Label</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -518,6 +564,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Icon URI</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -527,6 +574,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Tooltip</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -536,6 +584,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Localized Label</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -545,6 +594,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Localized Tooltip</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -554,6 +604,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Enabled</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -563,6 +614,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Selected</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -572,6 +624,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Type</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -581,6 +634,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Command</b></em>' reference.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -590,6 +644,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Wb Command</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -599,6 +654,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Parameters</b></em>' containment reference list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -608,6 +664,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The number of structural features of the '<em>Handled Item</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -617,6 +674,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The operation id for the '<em>Update Localization</em>' operation.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.1
 	 * @generated
 	 * @ordered
 	 */
@@ -626,6 +684,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The number of operations of the '<em>Handled Item</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -637,6 +696,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * <!-- end-user-doc -->
 	 * @see org.eclipse.e4.ui.model.application.ui.menu.impl.MenuElementImpl
 	 * @see org.eclipse.e4.ui.model.application.ui.menu.impl.MenuPackageImpl#getMenuElement()
+	 * @since 1.0
 	 * @generated
 	 */
 	public static final int MENU_ELEMENT = 2;
@@ -645,6 +705,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Element Id</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -654,6 +715,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Persisted State</b></em>' map.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -663,6 +725,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Tags</b></em>' attribute list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -672,6 +735,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Contributor URI</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -681,6 +745,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Transient Data</b></em>' map.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -690,6 +755,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Widget</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -699,6 +765,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Renderer</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -708,6 +775,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>To Be Rendered</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -717,6 +785,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>On Top</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -726,6 +795,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Visible</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -735,6 +805,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Parent</b></em>' container reference.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -744,6 +815,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Container Data</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -753,6 +825,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Cur Shared Ref</b></em>' reference.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -762,6 +835,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Visible When</b></em>' containment reference.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -771,6 +845,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Accessibility Phrase</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -780,6 +855,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Localized Accessibility Phrase</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -789,6 +865,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Label</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -798,6 +875,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Icon URI</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -807,6 +885,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Tooltip</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -816,6 +895,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Localized Label</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -825,6 +905,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Localized Tooltip</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -834,6 +915,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Mnemonics</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -843,6 +925,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The number of structural features of the '<em>Element</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -852,6 +935,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The operation id for the '<em>Update Localization</em>' operation.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.1
 	 * @generated
 	 * @ordered
 	 */
@@ -861,6 +945,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The operation id for the '<em>Get Localized Mnemonics</em>' operation.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -870,6 +955,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The number of operations of the '<em>Element</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -881,6 +967,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * <!-- end-user-doc -->
 	 * @see org.eclipse.e4.ui.model.application.ui.menu.impl.MenuItemImpl
 	 * @see org.eclipse.e4.ui.model.application.ui.menu.impl.MenuPackageImpl#getMenuItem()
+	 * @since 1.0
 	 * @generated
 	 */
 	public static final int MENU_ITEM = 3;
@@ -889,6 +976,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Element Id</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -898,6 +986,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Persisted State</b></em>' map.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -907,6 +996,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Tags</b></em>' attribute list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -916,6 +1006,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Contributor URI</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -925,6 +1016,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Transient Data</b></em>' map.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -934,6 +1026,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Widget</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -943,6 +1036,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Renderer</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -952,6 +1046,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>To Be Rendered</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -961,6 +1056,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>On Top</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -970,6 +1066,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Visible</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -979,6 +1076,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Parent</b></em>' container reference.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -988,6 +1086,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Container Data</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -997,6 +1096,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Cur Shared Ref</b></em>' reference.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -1006,6 +1106,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Visible When</b></em>' containment reference.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -1015,6 +1116,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Accessibility Phrase</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -1024,6 +1126,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Localized Accessibility Phrase</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -1033,6 +1136,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Label</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -1042,6 +1146,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Icon URI</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -1051,6 +1156,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Tooltip</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -1060,6 +1166,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Localized Label</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -1069,6 +1176,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Localized Tooltip</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -1078,6 +1186,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Enabled</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -1087,6 +1196,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Selected</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -1096,6 +1206,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Type</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -1105,6 +1216,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Mnemonics</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -1114,6 +1226,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The number of structural features of the '<em>Item</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -1123,6 +1236,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The operation id for the '<em>Update Localization</em>' operation.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.1
 	 * @generated
 	 * @ordered
 	 */
@@ -1132,6 +1246,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The operation id for the '<em>Get Localized Mnemonics</em>' operation.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -1141,6 +1256,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The number of operations of the '<em>Item</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -1152,6 +1268,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * <!-- end-user-doc -->
 	 * @see org.eclipse.e4.ui.model.application.ui.menu.impl.MenuSeparatorImpl
 	 * @see org.eclipse.e4.ui.model.application.ui.menu.impl.MenuPackageImpl#getMenuSeparator()
+	 * @since 1.0
 	 * @generated
 	 */
 	public static final int MENU_SEPARATOR = 4;
@@ -1160,6 +1277,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Element Id</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -1169,6 +1287,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Persisted State</b></em>' map.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -1178,6 +1297,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Tags</b></em>' attribute list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -1187,6 +1307,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Contributor URI</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -1196,6 +1317,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Transient Data</b></em>' map.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -1205,6 +1327,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Widget</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -1214,6 +1337,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Renderer</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -1223,6 +1347,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>To Be Rendered</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -1232,6 +1357,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>On Top</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -1241,6 +1367,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Visible</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -1250,6 +1377,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Parent</b></em>' container reference.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -1259,6 +1387,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Container Data</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -1268,6 +1397,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Cur Shared Ref</b></em>' reference.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -1277,6 +1407,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Visible When</b></em>' containment reference.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -1286,6 +1417,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Accessibility Phrase</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -1295,6 +1427,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Localized Accessibility Phrase</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -1304,6 +1437,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Label</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -1313,6 +1447,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Icon URI</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -1322,6 +1457,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Tooltip</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -1331,6 +1467,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Localized Label</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -1340,6 +1477,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Localized Tooltip</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -1349,6 +1487,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Mnemonics</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -1358,6 +1497,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The number of structural features of the '<em>Separator</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -1367,6 +1507,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The operation id for the '<em>Update Localization</em>' operation.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.1
 	 * @generated
 	 * @ordered
 	 */
@@ -1376,6 +1517,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The operation id for the '<em>Get Localized Mnemonics</em>' operation.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -1385,6 +1527,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The number of operations of the '<em>Separator</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -1396,6 +1539,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * <!-- end-user-doc -->
 	 * @see org.eclipse.e4.ui.model.application.ui.menu.impl.MenuImpl
 	 * @see org.eclipse.e4.ui.model.application.ui.menu.impl.MenuPackageImpl#getMenu()
+	 * @since 1.0
 	 * @generated
 	 */
 	public static final int MENU = 5;
@@ -1404,6 +1548,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Element Id</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -1413,6 +1558,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Persisted State</b></em>' map.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -1422,6 +1568,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Tags</b></em>' attribute list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -1431,6 +1578,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Contributor URI</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -1440,6 +1588,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Transient Data</b></em>' map.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -1449,6 +1598,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Widget</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -1458,6 +1608,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Renderer</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -1467,6 +1618,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>To Be Rendered</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -1476,6 +1628,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>On Top</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -1485,6 +1638,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Visible</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -1494,6 +1648,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Parent</b></em>' container reference.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -1503,6 +1658,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Container Data</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -1512,6 +1668,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Cur Shared Ref</b></em>' reference.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -1521,6 +1678,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Visible When</b></em>' containment reference.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -1530,6 +1688,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Accessibility Phrase</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -1539,6 +1698,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Localized Accessibility Phrase</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -1548,6 +1708,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Label</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -1557,6 +1718,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Icon URI</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -1566,6 +1728,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Tooltip</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -1575,6 +1738,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Localized Label</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -1584,6 +1748,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Localized Tooltip</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -1593,6 +1758,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Mnemonics</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -1602,6 +1768,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Children</b></em>' containment reference list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -1611,6 +1778,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Selected Element</b></em>' reference.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -1620,6 +1788,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Enabled</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -1629,6 +1798,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The number of structural features of the '<em>Menu</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -1638,6 +1808,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The operation id for the '<em>Update Localization</em>' operation.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.1
 	 * @generated
 	 * @ordered
 	 */
@@ -1647,6 +1818,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The operation id for the '<em>Get Localized Mnemonics</em>' operation.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -1656,6 +1828,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The number of operations of the '<em>Menu</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -1667,6 +1840,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * <!-- end-user-doc -->
 	 * @see org.eclipse.e4.ui.model.application.ui.menu.impl.MenuContributionImpl
 	 * @see org.eclipse.e4.ui.model.application.ui.menu.impl.MenuPackageImpl#getMenuContribution()
+	 * @since 1.0
 	 * @generated
 	 */
 	public static final int MENU_CONTRIBUTION = 6;
@@ -1675,6 +1849,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Element Id</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -1684,6 +1859,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Persisted State</b></em>' map.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -1693,6 +1869,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Tags</b></em>' attribute list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -1702,6 +1879,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Contributor URI</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -1711,6 +1889,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Transient Data</b></em>' map.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -1720,6 +1899,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Widget</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -1729,6 +1909,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Renderer</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -1738,6 +1919,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>To Be Rendered</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -1747,6 +1929,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>On Top</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -1756,6 +1939,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Visible</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -1765,6 +1949,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Parent</b></em>' container reference.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -1774,6 +1959,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Container Data</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -1783,6 +1969,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Cur Shared Ref</b></em>' reference.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -1792,6 +1979,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Visible When</b></em>' containment reference.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -1801,6 +1989,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Accessibility Phrase</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -1810,6 +1999,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Localized Accessibility Phrase</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -1819,6 +2009,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Children</b></em>' containment reference list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -1828,6 +2019,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Selected Element</b></em>' reference.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -1837,6 +2029,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Position In Parent</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -1846,6 +2039,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Parent Id</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -1855,6 +2049,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The number of structural features of the '<em>Contribution</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -1864,6 +2059,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The operation id for the '<em>Update Localization</em>' operation.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.1
 	 * @generated
 	 * @ordered
 	 */
@@ -1873,6 +2069,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The number of operations of the '<em>Contribution</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -1884,6 +2081,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * <!-- end-user-doc -->
 	 * @see org.eclipse.e4.ui.model.application.ui.menu.impl.PopupMenuImpl
 	 * @see org.eclipse.e4.ui.model.application.ui.menu.impl.MenuPackageImpl#getPopupMenu()
+	 * @since 1.0
 	 * @generated
 	 */
 	public static final int POPUP_MENU = 7;
@@ -1892,6 +2090,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Element Id</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -1901,6 +2100,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Persisted State</b></em>' map.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -1910,6 +2110,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Tags</b></em>' attribute list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -1919,6 +2120,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Contributor URI</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -1928,6 +2130,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Transient Data</b></em>' map.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -1937,6 +2140,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Widget</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -1946,6 +2150,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Renderer</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -1955,6 +2160,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>To Be Rendered</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -1964,6 +2170,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>On Top</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -1973,6 +2180,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Visible</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -1982,6 +2190,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Parent</b></em>' container reference.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -1991,6 +2200,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Container Data</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -2000,6 +2210,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Cur Shared Ref</b></em>' reference.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -2009,6 +2220,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Visible When</b></em>' containment reference.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -2018,6 +2230,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Accessibility Phrase</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -2027,6 +2240,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Localized Accessibility Phrase</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -2036,6 +2250,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Label</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -2045,6 +2260,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Icon URI</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -2054,6 +2270,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Tooltip</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -2063,6 +2280,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Localized Label</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -2072,6 +2290,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Localized Tooltip</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -2081,6 +2300,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Mnemonics</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -2090,6 +2310,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Children</b></em>' containment reference list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -2099,6 +2320,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Selected Element</b></em>' reference.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -2108,6 +2330,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Enabled</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -2117,6 +2340,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Context</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -2126,6 +2350,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Variables</b></em>' attribute list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -2135,6 +2360,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Properties</b></em>' map.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -2144,6 +2370,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The number of structural features of the '<em>Popup Menu</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -2153,6 +2380,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The operation id for the '<em>Update Localization</em>' operation.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.1
 	 * @generated
 	 * @ordered
 	 */
@@ -2162,6 +2390,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The operation id for the '<em>Get Localized Mnemonics</em>' operation.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -2171,6 +2400,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The number of operations of the '<em>Popup Menu</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -2182,6 +2412,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * <!-- end-user-doc -->
 	 * @see org.eclipse.e4.ui.model.application.ui.menu.impl.DirectMenuItemImpl
 	 * @see org.eclipse.e4.ui.model.application.ui.menu.impl.MenuPackageImpl#getDirectMenuItem()
+	 * @since 1.0
 	 * @generated
 	 */
 	public static final int DIRECT_MENU_ITEM = 8;
@@ -2190,6 +2421,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Element Id</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -2199,6 +2431,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Persisted State</b></em>' map.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -2208,6 +2441,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Tags</b></em>' attribute list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -2217,6 +2451,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Contributor URI</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -2226,6 +2461,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Transient Data</b></em>' map.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -2235,6 +2471,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Widget</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -2244,6 +2481,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Renderer</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -2253,6 +2491,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>To Be Rendered</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -2262,6 +2501,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>On Top</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -2271,6 +2511,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Visible</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -2280,6 +2521,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Parent</b></em>' container reference.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -2289,6 +2531,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Container Data</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -2298,6 +2541,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Cur Shared Ref</b></em>' reference.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -2307,6 +2551,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Visible When</b></em>' containment reference.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -2316,6 +2561,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Accessibility Phrase</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -2325,6 +2571,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Localized Accessibility Phrase</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -2334,6 +2581,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Label</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -2343,6 +2591,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Icon URI</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -2352,6 +2601,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Tooltip</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -2361,6 +2611,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Localized Label</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -2370,6 +2621,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Localized Tooltip</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -2379,6 +2631,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Enabled</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -2388,6 +2641,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Selected</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -2397,6 +2651,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Type</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -2406,6 +2661,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Mnemonics</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -2415,6 +2671,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Contribution URI</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -2424,6 +2681,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Object</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -2433,6 +2691,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The number of structural features of the '<em>Direct Menu Item</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -2442,6 +2701,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The operation id for the '<em>Update Localization</em>' operation.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.1
 	 * @generated
 	 * @ordered
 	 */
@@ -2451,6 +2711,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The operation id for the '<em>Get Localized Mnemonics</em>' operation.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -2460,6 +2721,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The number of operations of the '<em>Direct Menu Item</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -2471,6 +2733,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * <!-- end-user-doc -->
 	 * @see org.eclipse.e4.ui.model.application.ui.menu.impl.HandledMenuItemImpl
 	 * @see org.eclipse.e4.ui.model.application.ui.menu.impl.MenuPackageImpl#getHandledMenuItem()
+	 * @since 1.0
 	 * @generated
 	 */
 	public static final int HANDLED_MENU_ITEM = 9;
@@ -2479,6 +2742,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Element Id</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -2488,6 +2752,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Persisted State</b></em>' map.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -2497,6 +2762,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Tags</b></em>' attribute list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -2506,6 +2772,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Contributor URI</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -2515,6 +2782,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Transient Data</b></em>' map.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -2524,6 +2792,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Widget</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -2533,6 +2802,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Renderer</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -2542,6 +2812,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>To Be Rendered</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -2551,6 +2822,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>On Top</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -2560,6 +2832,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Visible</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -2569,6 +2842,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Parent</b></em>' container reference.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -2578,6 +2852,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Container Data</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -2587,6 +2862,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Cur Shared Ref</b></em>' reference.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -2596,6 +2872,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Visible When</b></em>' containment reference.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -2605,6 +2882,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Accessibility Phrase</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -2614,6 +2892,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Localized Accessibility Phrase</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -2623,6 +2902,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Label</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -2632,6 +2912,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Icon URI</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -2641,6 +2922,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Tooltip</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -2650,6 +2932,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Localized Label</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -2659,6 +2942,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Localized Tooltip</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -2668,6 +2952,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Enabled</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -2677,6 +2962,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Selected</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -2686,6 +2972,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Type</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -2695,6 +2982,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Mnemonics</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -2704,6 +2992,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Command</b></em>' reference.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -2713,6 +3002,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Wb Command</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -2722,6 +3012,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Parameters</b></em>' containment reference list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -2731,6 +3022,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The number of structural features of the '<em>Handled Menu Item</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -2740,6 +3032,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The operation id for the '<em>Update Localization</em>' operation.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.1
 	 * @generated
 	 * @ordered
 	 */
@@ -2749,6 +3042,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The operation id for the '<em>Get Localized Mnemonics</em>' operation.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -2758,6 +3052,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The number of operations of the '<em>Handled Menu Item</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -2769,6 +3064,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * <!-- end-user-doc -->
 	 * @see org.eclipse.e4.ui.model.application.ui.menu.impl.ToolItemImpl
 	 * @see org.eclipse.e4.ui.model.application.ui.menu.impl.MenuPackageImpl#getToolItem()
+	 * @since 1.0
 	 * @generated
 	 */
 	public static final int TOOL_ITEM = 10;
@@ -2777,6 +3073,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Element Id</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -2786,6 +3083,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Persisted State</b></em>' map.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -2795,6 +3093,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Tags</b></em>' attribute list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -2804,6 +3103,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Contributor URI</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -2813,6 +3113,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Transient Data</b></em>' map.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -2822,6 +3123,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Widget</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -2831,6 +3133,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Renderer</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -2840,6 +3143,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>To Be Rendered</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -2849,6 +3153,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>On Top</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -2858,6 +3163,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Visible</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -2867,6 +3173,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Parent</b></em>' container reference.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -2876,6 +3183,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Container Data</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -2885,6 +3193,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Cur Shared Ref</b></em>' reference.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -2894,6 +3203,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Visible When</b></em>' containment reference.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -2903,6 +3213,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Accessibility Phrase</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -2912,6 +3223,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Localized Accessibility Phrase</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -2921,6 +3233,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Label</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -2930,6 +3243,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Icon URI</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -2939,6 +3253,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Tooltip</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -2948,6 +3263,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Localized Label</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -2957,6 +3273,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Localized Tooltip</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -2966,6 +3283,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Enabled</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -2975,6 +3293,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Selected</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -2984,6 +3303,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Type</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -2993,6 +3313,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Menu</b></em>' containment reference.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -3002,6 +3323,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The number of structural features of the '<em>Tool Item</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -3011,6 +3333,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The operation id for the '<em>Update Localization</em>' operation.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.1
 	 * @generated
 	 * @ordered
 	 */
@@ -3020,6 +3343,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The number of operations of the '<em>Tool Item</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -3031,6 +3355,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * <!-- end-user-doc -->
 	 * @see org.eclipse.e4.ui.model.application.ui.menu.impl.ToolBarImpl
 	 * @see org.eclipse.e4.ui.model.application.ui.menu.impl.MenuPackageImpl#getToolBar()
+	 * @since 1.0
 	 * @generated
 	 */
 	public static final int TOOL_BAR = 11;
@@ -3039,6 +3364,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Element Id</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -3048,6 +3374,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Persisted State</b></em>' map.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -3057,6 +3384,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Tags</b></em>' attribute list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -3066,6 +3394,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Contributor URI</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -3075,6 +3404,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Transient Data</b></em>' map.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -3084,6 +3414,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Widget</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -3093,6 +3424,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Renderer</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -3102,6 +3434,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>To Be Rendered</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -3111,6 +3444,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>On Top</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -3120,6 +3454,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Visible</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -3129,6 +3464,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Parent</b></em>' container reference.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -3138,6 +3474,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Container Data</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -3147,6 +3484,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Cur Shared Ref</b></em>' reference.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -3156,6 +3494,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Visible When</b></em>' containment reference.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -3165,6 +3504,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Accessibility Phrase</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -3174,6 +3514,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Localized Accessibility Phrase</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -3183,6 +3524,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Children</b></em>' containment reference list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -3192,6 +3534,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Selected Element</b></em>' reference.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -3201,6 +3544,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The number of structural features of the '<em>Tool Bar</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -3210,6 +3554,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The operation id for the '<em>Update Localization</em>' operation.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.1
 	 * @generated
 	 * @ordered
 	 */
@@ -3219,6 +3564,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The number of operations of the '<em>Tool Bar</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -3230,6 +3576,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * <!-- end-user-doc -->
 	 * @see org.eclipse.e4.ui.model.application.ui.menu.impl.ToolBarElementImpl
 	 * @see org.eclipse.e4.ui.model.application.ui.menu.impl.MenuPackageImpl#getToolBarElement()
+	 * @since 1.0
 	 * @generated
 	 */
 	public static final int TOOL_BAR_ELEMENT = 12;
@@ -3238,6 +3585,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Element Id</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -3247,6 +3595,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Persisted State</b></em>' map.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -3256,6 +3605,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Tags</b></em>' attribute list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -3265,6 +3615,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Contributor URI</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -3274,6 +3625,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Transient Data</b></em>' map.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -3283,6 +3635,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Widget</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -3292,6 +3645,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Renderer</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -3301,6 +3655,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>To Be Rendered</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -3310,6 +3665,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>On Top</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -3319,6 +3675,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Visible</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -3328,6 +3685,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Parent</b></em>' container reference.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -3337,6 +3695,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Container Data</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -3346,6 +3705,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Cur Shared Ref</b></em>' reference.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -3355,6 +3715,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Visible When</b></em>' containment reference.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -3364,6 +3725,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Accessibility Phrase</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -3373,6 +3735,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Localized Accessibility Phrase</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -3382,6 +3745,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The number of structural features of the '<em>Tool Bar Element</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -3391,6 +3755,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The operation id for the '<em>Update Localization</em>' operation.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.1
 	 * @generated
 	 * @ordered
 	 */
@@ -3400,6 +3765,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The number of operations of the '<em>Tool Bar Element</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -3411,6 +3777,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * <!-- end-user-doc -->
 	 * @see org.eclipse.e4.ui.model.application.ui.menu.impl.ToolControlImpl
 	 * @see org.eclipse.e4.ui.model.application.ui.menu.impl.MenuPackageImpl#getToolControl()
+	 * @since 1.0
 	 * @generated
 	 */
 	public static final int TOOL_CONTROL = 13;
@@ -3419,6 +3786,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Element Id</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -3428,6 +3796,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Persisted State</b></em>' map.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -3437,6 +3806,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Tags</b></em>' attribute list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -3446,6 +3816,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Contributor URI</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -3455,6 +3826,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Transient Data</b></em>' map.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -3464,6 +3836,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Widget</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -3473,6 +3846,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Renderer</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -3482,6 +3856,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>To Be Rendered</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -3491,6 +3866,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>On Top</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -3500,6 +3876,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Visible</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -3509,6 +3886,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Parent</b></em>' container reference.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -3518,6 +3896,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Container Data</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -3527,6 +3906,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Cur Shared Ref</b></em>' reference.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -3536,6 +3916,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Visible When</b></em>' containment reference.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -3545,6 +3926,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Accessibility Phrase</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -3554,6 +3936,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Localized Accessibility Phrase</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -3563,6 +3946,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Contribution URI</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -3572,6 +3956,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Object</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -3581,6 +3966,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The number of structural features of the '<em>Tool Control</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -3590,6 +3976,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The operation id for the '<em>Update Localization</em>' operation.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.1
 	 * @generated
 	 * @ordered
 	 */
@@ -3599,6 +3986,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The number of operations of the '<em>Tool Control</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -3610,6 +3998,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * <!-- end-user-doc -->
 	 * @see org.eclipse.e4.ui.model.application.ui.menu.impl.HandledToolItemImpl
 	 * @see org.eclipse.e4.ui.model.application.ui.menu.impl.MenuPackageImpl#getHandledToolItem()
+	 * @since 1.0
 	 * @generated
 	 */
 	public static final int HANDLED_TOOL_ITEM = 14;
@@ -3618,6 +4007,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Element Id</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -3627,6 +4017,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Persisted State</b></em>' map.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -3636,6 +4027,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Tags</b></em>' attribute list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -3645,6 +4037,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Contributor URI</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -3654,6 +4047,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Transient Data</b></em>' map.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -3663,6 +4057,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Widget</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -3672,6 +4067,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Renderer</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -3681,6 +4077,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>To Be Rendered</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -3690,6 +4087,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>On Top</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -3699,6 +4097,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Visible</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -3708,6 +4107,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Parent</b></em>' container reference.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -3717,6 +4117,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Container Data</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -3726,6 +4127,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Cur Shared Ref</b></em>' reference.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -3735,6 +4137,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Visible When</b></em>' containment reference.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -3744,6 +4147,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Accessibility Phrase</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -3753,6 +4157,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Localized Accessibility Phrase</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -3762,6 +4167,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Label</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -3771,6 +4177,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Icon URI</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -3780,6 +4187,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Tooltip</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -3789,6 +4197,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Localized Label</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -3798,6 +4207,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Localized Tooltip</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -3807,6 +4217,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Enabled</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -3816,6 +4227,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Selected</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -3825,6 +4237,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Type</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -3834,6 +4247,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Menu</b></em>' containment reference.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -3843,6 +4257,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Command</b></em>' reference.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -3852,6 +4267,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Wb Command</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -3861,6 +4277,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Parameters</b></em>' containment reference list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -3870,6 +4287,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The number of structural features of the '<em>Handled Tool Item</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -3879,6 +4297,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The operation id for the '<em>Update Localization</em>' operation.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.1
 	 * @generated
 	 * @ordered
 	 */
@@ -3888,6 +4307,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The number of operations of the '<em>Handled Tool Item</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -3899,6 +4319,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * <!-- end-user-doc -->
 	 * @see org.eclipse.e4.ui.model.application.ui.menu.impl.DirectToolItemImpl
 	 * @see org.eclipse.e4.ui.model.application.ui.menu.impl.MenuPackageImpl#getDirectToolItem()
+	 * @since 1.0
 	 * @generated
 	 */
 	public static final int DIRECT_TOOL_ITEM = 15;
@@ -3907,6 +4328,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Element Id</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -3916,6 +4338,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Persisted State</b></em>' map.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -3925,6 +4348,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Tags</b></em>' attribute list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -3934,6 +4358,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Contributor URI</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -3943,6 +4368,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Transient Data</b></em>' map.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -3952,6 +4378,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Widget</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -3961,6 +4388,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Renderer</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -3970,6 +4398,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>To Be Rendered</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -3979,6 +4408,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>On Top</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -3988,6 +4418,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Visible</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -3997,6 +4428,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Parent</b></em>' container reference.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -4006,6 +4438,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Container Data</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -4015,6 +4448,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Cur Shared Ref</b></em>' reference.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -4024,6 +4458,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Visible When</b></em>' containment reference.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -4033,6 +4468,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Accessibility Phrase</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -4042,6 +4478,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Localized Accessibility Phrase</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -4051,6 +4488,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Label</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -4060,6 +4498,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Icon URI</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -4069,6 +4508,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Tooltip</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -4078,6 +4518,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Localized Label</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -4087,6 +4528,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Localized Tooltip</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -4096,6 +4538,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Enabled</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -4105,6 +4548,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Selected</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -4114,6 +4558,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Type</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -4123,6 +4568,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Menu</b></em>' containment reference.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -4132,6 +4578,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Contribution URI</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -4141,6 +4588,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Object</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -4150,6 +4598,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The number of structural features of the '<em>Direct Tool Item</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -4159,6 +4608,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The operation id for the '<em>Update Localization</em>' operation.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.1
 	 * @generated
 	 * @ordered
 	 */
@@ -4168,6 +4618,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The number of operations of the '<em>Direct Tool Item</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -4179,6 +4630,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * <!-- end-user-doc -->
 	 * @see org.eclipse.e4.ui.model.application.ui.menu.impl.ToolBarSeparatorImpl
 	 * @see org.eclipse.e4.ui.model.application.ui.menu.impl.MenuPackageImpl#getToolBarSeparator()
+	 * @since 1.0
 	 * @generated
 	 */
 	public static final int TOOL_BAR_SEPARATOR = 16;
@@ -4187,6 +4639,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Element Id</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -4196,6 +4649,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Persisted State</b></em>' map.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -4205,6 +4659,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Tags</b></em>' attribute list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -4214,6 +4669,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Contributor URI</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -4223,6 +4679,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Transient Data</b></em>' map.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -4232,6 +4689,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Widget</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -4241,6 +4699,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Renderer</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -4250,6 +4709,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>To Be Rendered</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -4259,6 +4719,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>On Top</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -4268,6 +4729,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Visible</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -4277,6 +4739,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Parent</b></em>' container reference.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -4286,6 +4749,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Container Data</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -4295,6 +4759,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Cur Shared Ref</b></em>' reference.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -4304,6 +4769,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Visible When</b></em>' containment reference.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -4313,6 +4779,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Accessibility Phrase</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -4322,6 +4789,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Localized Accessibility Phrase</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -4331,6 +4799,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The number of structural features of the '<em>Tool Bar Separator</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -4340,6 +4809,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The operation id for the '<em>Update Localization</em>' operation.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.1
 	 * @generated
 	 * @ordered
 	 */
@@ -4349,6 +4819,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The number of operations of the '<em>Tool Bar Separator</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -4360,6 +4831,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * <!-- end-user-doc -->
 	 * @see org.eclipse.e4.ui.model.application.ui.menu.MMenuContributions
 	 * @see org.eclipse.e4.ui.model.application.ui.menu.impl.MenuPackageImpl#getMenuContributions()
+	 * @since 1.0
 	 * @generated
 	 */
 	public static final int MENU_CONTRIBUTIONS = 17;
@@ -4368,6 +4840,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Menu Contributions</b></em>' containment reference list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -4377,6 +4850,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The number of structural features of the '<em>Contributions</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -4386,6 +4860,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The number of operations of the '<em>Contributions</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -4397,6 +4872,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * <!-- end-user-doc -->
 	 * @see org.eclipse.e4.ui.model.application.ui.menu.impl.ToolBarContributionImpl
 	 * @see org.eclipse.e4.ui.model.application.ui.menu.impl.MenuPackageImpl#getToolBarContribution()
+	 * @since 1.0
 	 * @generated
 	 */
 	public static final int TOOL_BAR_CONTRIBUTION = 18;
@@ -4405,6 +4881,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Element Id</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -4414,6 +4891,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Persisted State</b></em>' map.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -4423,6 +4901,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Tags</b></em>' attribute list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -4432,6 +4911,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Contributor URI</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -4441,6 +4921,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Transient Data</b></em>' map.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -4450,6 +4931,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Widget</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -4459,6 +4941,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Renderer</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -4468,6 +4951,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>To Be Rendered</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -4477,6 +4961,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>On Top</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -4486,6 +4971,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Visible</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -4495,6 +4981,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Parent</b></em>' container reference.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -4504,6 +4991,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Container Data</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -4513,6 +5001,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Cur Shared Ref</b></em>' reference.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -4522,6 +5011,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Visible When</b></em>' containment reference.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -4531,6 +5021,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Accessibility Phrase</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -4540,6 +5031,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Localized Accessibility Phrase</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -4549,6 +5041,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Children</b></em>' containment reference list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -4558,6 +5051,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Selected Element</b></em>' reference.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -4567,6 +5061,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Parent Id</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -4576,6 +5071,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Position In Parent</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -4585,6 +5081,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The number of structural features of the '<em>Tool Bar Contribution</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -4594,6 +5091,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The operation id for the '<em>Update Localization</em>' operation.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.1
 	 * @generated
 	 * @ordered
 	 */
@@ -4603,6 +5101,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The number of operations of the '<em>Tool Bar Contribution</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -4614,6 +5113,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * <!-- end-user-doc -->
 	 * @see org.eclipse.e4.ui.model.application.ui.menu.MToolBarContributions
 	 * @see org.eclipse.e4.ui.model.application.ui.menu.impl.MenuPackageImpl#getToolBarContributions()
+	 * @since 1.0
 	 * @generated
 	 */
 	public static final int TOOL_BAR_CONTRIBUTIONS = 19;
@@ -4622,6 +5122,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Tool Bar Contributions</b></em>' containment reference list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -4631,6 +5132,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The number of structural features of the '<em>Tool Bar Contributions</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -4640,6 +5142,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The number of operations of the '<em>Tool Bar Contributions</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -4651,6 +5154,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * <!-- end-user-doc -->
 	 * @see org.eclipse.e4.ui.model.application.ui.menu.impl.TrimContributionImpl
 	 * @see org.eclipse.e4.ui.model.application.ui.menu.impl.MenuPackageImpl#getTrimContribution()
+	 * @since 1.0
 	 * @generated
 	 */
 	public static final int TRIM_CONTRIBUTION = 20;
@@ -4659,6 +5163,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Element Id</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -4668,6 +5173,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Persisted State</b></em>' map.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -4677,6 +5183,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Tags</b></em>' attribute list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -4686,6 +5193,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Contributor URI</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -4695,6 +5203,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Transient Data</b></em>' map.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -4704,6 +5213,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Widget</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -4713,6 +5223,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Renderer</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -4722,6 +5233,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>To Be Rendered</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -4731,6 +5243,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>On Top</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -4740,6 +5253,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Visible</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -4749,6 +5263,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Parent</b></em>' container reference.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -4758,6 +5273,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Container Data</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -4767,6 +5283,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Cur Shared Ref</b></em>' reference.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -4776,6 +5293,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Visible When</b></em>' containment reference.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -4785,6 +5303,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Accessibility Phrase</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -4794,6 +5313,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Localized Accessibility Phrase</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -4803,6 +5323,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Children</b></em>' containment reference list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -4812,6 +5333,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Selected Element</b></em>' reference.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -4821,6 +5343,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Parent Id</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -4830,6 +5353,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Position In Parent</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -4839,6 +5363,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The number of structural features of the '<em>Trim Contribution</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -4848,6 +5373,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The operation id for the '<em>Update Localization</em>' operation.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.1
 	 * @generated
 	 * @ordered
 	 */
@@ -4857,6 +5383,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The number of operations of the '<em>Trim Contribution</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -4868,6 +5395,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * <!-- end-user-doc -->
 	 * @see org.eclipse.e4.ui.model.application.ui.menu.MTrimContributions
 	 * @see org.eclipse.e4.ui.model.application.ui.menu.impl.MenuPackageImpl#getTrimContributions()
+	 * @since 1.0
 	 * @generated
 	 */
 	public static final int TRIM_CONTRIBUTIONS = 21;
@@ -4876,6 +5404,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Trim Contributions</b></em>' containment reference list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -4885,6 +5414,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The number of structural features of the '<em>Trim Contributions</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -4894,6 +5424,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The number of operations of the '<em>Trim Contributions</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -4905,6 +5436,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * <!-- end-user-doc -->
 	 * @see org.eclipse.e4.ui.model.application.ui.menu.impl.DynamicMenuContributionImpl
 	 * @see org.eclipse.e4.ui.model.application.ui.menu.impl.MenuPackageImpl#getDynamicMenuContribution()
+	 * @since 1.0
 	 * @generated
 	 */
 	public static final int DYNAMIC_MENU_CONTRIBUTION = 22;
@@ -4913,6 +5445,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Element Id</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -4922,6 +5455,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Persisted State</b></em>' map.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -4931,6 +5465,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Tags</b></em>' attribute list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -4940,6 +5475,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Contributor URI</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -4949,6 +5485,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Transient Data</b></em>' map.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -4958,6 +5495,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Widget</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -4967,6 +5505,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Renderer</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -4976,6 +5515,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>To Be Rendered</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -4985,6 +5525,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>On Top</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -4994,6 +5535,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Visible</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -5003,6 +5545,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Parent</b></em>' container reference.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -5012,6 +5555,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Container Data</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -5021,6 +5565,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Cur Shared Ref</b></em>' reference.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -5030,6 +5575,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Visible When</b></em>' containment reference.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -5039,6 +5585,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Accessibility Phrase</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -5048,6 +5595,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Localized Accessibility Phrase</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -5057,6 +5605,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Label</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -5066,6 +5615,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Icon URI</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -5075,6 +5625,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Tooltip</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -5084,6 +5635,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Localized Label</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -5093,6 +5645,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Localized Tooltip</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -5102,6 +5655,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Enabled</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -5111,6 +5665,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Selected</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -5120,6 +5675,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Type</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -5129,6 +5685,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Mnemonics</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -5138,6 +5695,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Contribution URI</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -5147,6 +5705,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Object</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -5156,6 +5715,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The number of structural features of the '<em>Dynamic Menu Contribution</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -5165,6 +5725,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The operation id for the '<em>Update Localization</em>' operation.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.1
 	 * @generated
 	 * @ordered
 	 */
@@ -5174,6 +5735,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The operation id for the '<em>Get Localized Mnemonics</em>' operation.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -5183,6 +5745,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * The number of operations of the '<em>Dynamic Menu Contribution</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -5194,6 +5757,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * <!-- end-user-doc -->
 	 * @see org.eclipse.e4.ui.model.application.ui.menu.ItemType
 	 * @see org.eclipse.e4.ui.model.application.ui.menu.impl.MenuPackageImpl#getItemType()
+	 * @since 1.0
 	 * @generated
 	 */
 	public static final int ITEM_TYPE = 23;
@@ -5201,6 +5765,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	/**
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 */
 	private EClass itemEClass = null;
@@ -5208,6 +5773,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	/**
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 */
 	private EClass handledItemEClass = null;
@@ -5215,6 +5781,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	/**
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 */
 	private EClass menuElementEClass = null;
@@ -5222,6 +5789,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	/**
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 */
 	private EClass menuItemEClass = null;
@@ -5229,6 +5797,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	/**
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 */
 	private EClass menuSeparatorEClass = null;
@@ -5236,6 +5805,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	/**
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 */
 	private EClass menuEClass = null;
@@ -5243,6 +5813,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	/**
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 */
 	private EClass menuContributionEClass = null;
@@ -5250,6 +5821,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	/**
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 */
 	private EClass popupMenuEClass = null;
@@ -5257,6 +5829,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	/**
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 */
 	private EClass directMenuItemEClass = null;
@@ -5264,6 +5837,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	/**
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 */
 	private EClass handledMenuItemEClass = null;
@@ -5271,6 +5845,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	/**
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 */
 	private EClass toolItemEClass = null;
@@ -5278,6 +5853,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	/**
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 */
 	private EClass toolBarEClass = null;
@@ -5285,6 +5861,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	/**
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 */
 	private EClass toolBarElementEClass = null;
@@ -5292,6 +5869,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	/**
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 */
 	private EClass toolControlEClass = null;
@@ -5299,6 +5877,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	/**
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 */
 	private EClass handledToolItemEClass = null;
@@ -5306,6 +5885,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	/**
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 */
 	private EClass directToolItemEClass = null;
@@ -5313,6 +5893,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	/**
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 */
 	private EClass toolBarSeparatorEClass = null;
@@ -5320,6 +5901,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	/**
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 */
 	private EClass menuContributionsEClass = null;
@@ -5327,6 +5909,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	/**
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 */
 	private EClass toolBarContributionEClass = null;
@@ -5334,6 +5917,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	/**
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 */
 	private EClass toolBarContributionsEClass = null;
@@ -5341,6 +5925,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	/**
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 */
 	private EClass trimContributionEClass = null;
@@ -5348,6 +5933,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	/**
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 */
 	private EClass trimContributionsEClass = null;
@@ -5355,6 +5941,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	/**
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 */
 	private EClass dynamicMenuContributionEClass = null;
@@ -5362,6 +5949,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	/**
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 */
 	private EEnum itemTypeEEnum = null;
@@ -5394,7 +5982,7 @@ public class MenuPackageImpl extends EPackageImpl {
 
 	/**
 	 * Creates, registers, and initializes the <b>Package</b> for this model, and for any others upon which it depends.
-	 * 
+	 *
 	 * <p>This method is used to initialize {@link MenuPackageImpl#eINSTANCE} when that field is accessed.
 	 * Clients should not invoke it directly. Instead, they should simply access that field to obtain the package.
 	 * <!-- begin-user-doc -->
@@ -5408,17 +5996,24 @@ public class MenuPackageImpl extends EPackageImpl {
 		if (isInited) return (MenuPackageImpl)EPackage.Registry.INSTANCE.getEPackage(MenuPackageImpl.eNS_URI);
 
 		// Obtain or create and register package
-		MenuPackageImpl theMenuPackage = (MenuPackageImpl)(EPackage.Registry.INSTANCE.get(eNS_URI) instanceof MenuPackageImpl ? EPackage.Registry.INSTANCE.get(eNS_URI) : new MenuPackageImpl());
+		Object registeredMenuPackage = EPackage.Registry.INSTANCE.get(eNS_URI);
+		MenuPackageImpl theMenuPackage = registeredMenuPackage instanceof MenuPackageImpl ? (MenuPackageImpl)registeredMenuPackage : new MenuPackageImpl();
 
 		isInited = true;
 
 		// Obtain or create and register interdependencies
-		ApplicationPackageImpl theApplicationPackage = (ApplicationPackageImpl)(EPackage.Registry.INSTANCE.getEPackage(ApplicationPackageImpl.eNS_URI) instanceof ApplicationPackageImpl ? EPackage.Registry.INSTANCE.getEPackage(ApplicationPackageImpl.eNS_URI) : ApplicationPackageImpl.eINSTANCE);
-		CommandsPackageImpl theCommandsPackage = (CommandsPackageImpl)(EPackage.Registry.INSTANCE.getEPackage(CommandsPackageImpl.eNS_URI) instanceof CommandsPackageImpl ? EPackage.Registry.INSTANCE.getEPackage(CommandsPackageImpl.eNS_URI) : CommandsPackageImpl.eINSTANCE);
-		UiPackageImpl theUiPackage = (UiPackageImpl)(EPackage.Registry.INSTANCE.getEPackage(UiPackageImpl.eNS_URI) instanceof UiPackageImpl ? EPackage.Registry.INSTANCE.getEPackage(UiPackageImpl.eNS_URI) : UiPackageImpl.eINSTANCE);
-		BasicPackageImpl theBasicPackage = (BasicPackageImpl)(EPackage.Registry.INSTANCE.getEPackage(BasicPackageImpl.eNS_URI) instanceof BasicPackageImpl ? EPackage.Registry.INSTANCE.getEPackage(BasicPackageImpl.eNS_URI) : BasicPackageImpl.eINSTANCE);
-		AdvancedPackageImpl theAdvancedPackage = (AdvancedPackageImpl)(EPackage.Registry.INSTANCE.getEPackage(AdvancedPackageImpl.eNS_URI) instanceof AdvancedPackageImpl ? EPackage.Registry.INSTANCE.getEPackage(AdvancedPackageImpl.eNS_URI) : AdvancedPackageImpl.eINSTANCE);
-		org.eclipse.e4.ui.model.application.descriptor.basic.impl.BasicPackageImpl theBasicPackage_1 = (org.eclipse.e4.ui.model.application.descriptor.basic.impl.BasicPackageImpl)(EPackage.Registry.INSTANCE.getEPackage(org.eclipse.e4.ui.model.application.descriptor.basic.impl.BasicPackageImpl.eNS_URI) instanceof org.eclipse.e4.ui.model.application.descriptor.basic.impl.BasicPackageImpl ? EPackage.Registry.INSTANCE.getEPackage(org.eclipse.e4.ui.model.application.descriptor.basic.impl.BasicPackageImpl.eNS_URI) : org.eclipse.e4.ui.model.application.descriptor.basic.impl.BasicPackageImpl.eINSTANCE);
+		Object registeredPackage = EPackage.Registry.INSTANCE.getEPackage(ApplicationPackageImpl.eNS_URI);
+		ApplicationPackageImpl theApplicationPackage = (ApplicationPackageImpl)(registeredPackage instanceof ApplicationPackageImpl ? registeredPackage : ApplicationPackageImpl.eINSTANCE);
+		registeredPackage = EPackage.Registry.INSTANCE.getEPackage(CommandsPackageImpl.eNS_URI);
+		CommandsPackageImpl theCommandsPackage = (CommandsPackageImpl)(registeredPackage instanceof CommandsPackageImpl ? registeredPackage : CommandsPackageImpl.eINSTANCE);
+		registeredPackage = EPackage.Registry.INSTANCE.getEPackage(UiPackageImpl.eNS_URI);
+		UiPackageImpl theUiPackage = (UiPackageImpl)(registeredPackage instanceof UiPackageImpl ? registeredPackage : UiPackageImpl.eINSTANCE);
+		registeredPackage = EPackage.Registry.INSTANCE.getEPackage(BasicPackageImpl.eNS_URI);
+		BasicPackageImpl theBasicPackage = (BasicPackageImpl)(registeredPackage instanceof BasicPackageImpl ? registeredPackage : BasicPackageImpl.eINSTANCE);
+		registeredPackage = EPackage.Registry.INSTANCE.getEPackage(AdvancedPackageImpl.eNS_URI);
+		AdvancedPackageImpl theAdvancedPackage = (AdvancedPackageImpl)(registeredPackage instanceof AdvancedPackageImpl ? registeredPackage : AdvancedPackageImpl.eINSTANCE);
+		registeredPackage = EPackage.Registry.INSTANCE.getEPackage(org.eclipse.e4.ui.model.application.descriptor.basic.impl.BasicPackageImpl.eNS_URI);
+		org.eclipse.e4.ui.model.application.descriptor.basic.impl.BasicPackageImpl theBasicPackage_1 = (org.eclipse.e4.ui.model.application.descriptor.basic.impl.BasicPackageImpl)(registeredPackage instanceof org.eclipse.e4.ui.model.application.descriptor.basic.impl.BasicPackageImpl ? registeredPackage : org.eclipse.e4.ui.model.application.descriptor.basic.impl.BasicPackageImpl.eINSTANCE);
 
 		// Create package meta-data objects
 		theMenuPackage.createPackageContents();
@@ -5441,7 +6036,6 @@ public class MenuPackageImpl extends EPackageImpl {
 		// Mark meta-data to indicate it can't be changed
 		theMenuPackage.freeze();
 
-  
 		// Update the registry and return the package
 		EPackage.Registry.INSTANCE.put(MenuPackageImpl.eNS_URI, theMenuPackage);
 		return theMenuPackage;
@@ -5454,6 +6048,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * <!-- end-user-doc -->
 	 * @return the meta object for class '<em>Item</em>'.
 	 * @see org.eclipse.e4.ui.model.application.ui.menu.MItem
+	 * @since 1.0
 	 * @generated
 	 */
 	public EClass getItem() {
@@ -5467,6 +6062,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * @return the meta object for the attribute '<em>Enabled</em>'.
 	 * @see org.eclipse.e4.ui.model.application.ui.menu.MItem#isEnabled()
 	 * @see #getItem()
+	 * @since 1.0
 	 * @generated
 	 */
 	public EAttribute getItem_Enabled() {
@@ -5480,6 +6076,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * @return the meta object for the attribute '<em>Selected</em>'.
 	 * @see org.eclipse.e4.ui.model.application.ui.menu.MItem#isSelected()
 	 * @see #getItem()
+	 * @since 1.0
 	 * @generated
 	 */
 	public EAttribute getItem_Selected() {
@@ -5493,6 +6090,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * @return the meta object for the attribute '<em>Type</em>'.
 	 * @see org.eclipse.e4.ui.model.application.ui.menu.MItem#getType()
 	 * @see #getItem()
+	 * @since 1.0
 	 * @generated
 	 */
 	public EAttribute getItem_Type() {
@@ -5505,6 +6103,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * <!-- end-user-doc -->
 	 * @return the meta object for class '<em>Handled Item</em>'.
 	 * @see org.eclipse.e4.ui.model.application.ui.menu.MHandledItem
+	 * @since 1.0
 	 * @generated
 	 */
 	public EClass getHandledItem() {
@@ -5518,6 +6117,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * @return the meta object for the reference '<em>Command</em>'.
 	 * @see org.eclipse.e4.ui.model.application.ui.menu.MHandledItem#getCommand()
 	 * @see #getHandledItem()
+	 * @since 1.0
 	 * @generated
 	 */
 	public EReference getHandledItem_Command() {
@@ -5531,6 +6131,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * @return the meta object for the attribute '<em>Wb Command</em>'.
 	 * @see org.eclipse.e4.ui.model.application.ui.menu.MHandledItem#getWbCommand()
 	 * @see #getHandledItem()
+	 * @since 1.0
 	 * @generated
 	 */
 	public EAttribute getHandledItem_WbCommand() {
@@ -5544,6 +6145,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * @return the meta object for the containment reference list '<em>Parameters</em>'.
 	 * @see org.eclipse.e4.ui.model.application.ui.menu.MHandledItem#getParameters()
 	 * @see #getHandledItem()
+	 * @since 1.0
 	 * @generated
 	 */
 	public EReference getHandledItem_Parameters() {
@@ -5556,6 +6158,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * <!-- end-user-doc -->
 	 * @return the meta object for class '<em>Element</em>'.
 	 * @see org.eclipse.e4.ui.model.application.ui.menu.MMenuElement
+	 * @since 1.0
 	 * @generated
 	 */
 	public EClass getMenuElement() {
@@ -5569,6 +6172,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * @return the meta object for the attribute '<em>Mnemonics</em>'.
 	 * @see org.eclipse.e4.ui.model.application.ui.menu.MMenuElement#getMnemonics()
 	 * @see #getMenuElement()
+	 * @since 1.0
 	 * @generated
 	 */
 	public EAttribute getMenuElement_Mnemonics() {
@@ -5582,6 +6186,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * <!-- end-user-doc -->
 	 * @return the meta object for the '<em>Get Localized Mnemonics</em>' operation.
 	 * @see org.eclipse.e4.ui.model.application.ui.menu.MMenuElement#getLocalizedMnemonics()
+	 * @since 1.0
 	 * @generated
 	 */
 	public EOperation getMenuElement__GetLocalizedMnemonics() {
@@ -5595,6 +6200,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * <!-- end-user-doc -->
 	 * @return the meta object for class '<em>Item</em>'.
 	 * @see org.eclipse.e4.ui.model.application.ui.menu.MMenuItem
+	 * @since 1.0
 	 * @generated
 	 */
 	public EClass getMenuItem() {
@@ -5607,6 +6213,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * <!-- end-user-doc -->
 	 * @return the meta object for class '<em>Separator</em>'.
 	 * @see org.eclipse.e4.ui.model.application.ui.menu.MMenuSeparator
+	 * @since 1.0
 	 * @generated
 	 */
 	public EClass getMenuSeparator() {
@@ -5619,6 +6226,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * <!-- end-user-doc -->
 	 * @return the meta object for class '<em>Menu</em>'.
 	 * @see org.eclipse.e4.ui.model.application.ui.menu.MMenu
+	 * @since 1.0
 	 * @generated
 	 */
 	public EClass getMenu() {
@@ -5632,6 +6240,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * @return the meta object for the attribute '<em>Enabled</em>'.
 	 * @see org.eclipse.e4.ui.model.application.ui.menu.MMenu#isEnabled()
 	 * @see #getMenu()
+	 * @since 1.0
 	 * @generated
 	 */
 	public EAttribute getMenu_Enabled() {
@@ -5644,6 +6253,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * <!-- end-user-doc -->
 	 * @return the meta object for class '<em>Contribution</em>'.
 	 * @see org.eclipse.e4.ui.model.application.ui.menu.MMenuContribution
+	 * @since 1.0
 	 * @generated
 	 */
 	public EClass getMenuContribution() {
@@ -5658,6 +6268,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * @return the meta object for the attribute '<em>Position In Parent</em>'.
 	 * @see org.eclipse.e4.ui.model.application.ui.menu.MMenuContribution#getPositionInParent()
 	 * @see #getMenuContribution()
+	 * @since 1.0
 	 * @generated
 	 */
 	public EAttribute getMenuContribution_PositionInParent() {
@@ -5672,6 +6283,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * @return the meta object for the attribute '<em>Parent Id</em>'.
 	 * @see org.eclipse.e4.ui.model.application.ui.menu.MMenuContribution#getParentId()
 	 * @see #getMenuContribution()
+	 * @since 1.0
 	 * @generated
 	 */
 	public EAttribute getMenuContribution_ParentId() {
@@ -5685,6 +6297,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * <!-- end-user-doc -->
 	 * @return the meta object for class '<em>Popup Menu</em>'.
 	 * @see org.eclipse.e4.ui.model.application.ui.menu.MPopupMenu
+	 * @since 1.0
 	 * @generated
 	 */
 	public EClass getPopupMenu() {
@@ -5698,6 +6311,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * <!-- end-user-doc -->
 	 * @return the meta object for class '<em>Direct Menu Item</em>'.
 	 * @see org.eclipse.e4.ui.model.application.ui.menu.MDirectMenuItem
+	 * @since 1.0
 	 * @generated
 	 */
 	public EClass getDirectMenuItem() {
@@ -5710,6 +6324,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * <!-- end-user-doc -->
 	 * @return the meta object for class '<em>Handled Menu Item</em>'.
 	 * @see org.eclipse.e4.ui.model.application.ui.menu.MHandledMenuItem
+	 * @since 1.0
 	 * @generated
 	 */
 	public EClass getHandledMenuItem() {
@@ -5722,6 +6337,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * <!-- end-user-doc -->
 	 * @return the meta object for class '<em>Tool Item</em>'.
 	 * @see org.eclipse.e4.ui.model.application.ui.menu.MToolItem
+	 * @since 1.0
 	 * @generated
 	 */
 	public EClass getToolItem() {
@@ -5735,6 +6351,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * @return the meta object for the containment reference '<em>Menu</em>'.
 	 * @see org.eclipse.e4.ui.model.application.ui.menu.MToolItem#getMenu()
 	 * @see #getToolItem()
+	 * @since 1.0
 	 * @generated
 	 */
 	public EReference getToolItem_Menu() {
@@ -5748,6 +6365,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * <!-- end-user-doc -->
 	 * @return the meta object for class '<em>Tool Bar</em>'.
 	 * @see org.eclipse.e4.ui.model.application.ui.menu.MToolBar
+	 * @since 1.0
 	 * @generated
 	 */
 	public EClass getToolBar() {
@@ -5760,6 +6378,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * <!-- end-user-doc -->
 	 * @return the meta object for class '<em>Tool Bar Element</em>'.
 	 * @see org.eclipse.e4.ui.model.application.ui.menu.MToolBarElement
+	 * @since 1.0
 	 * @generated
 	 */
 	public EClass getToolBarElement() {
@@ -5772,6 +6391,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * <!-- end-user-doc -->
 	 * @return the meta object for class '<em>Tool Control</em>'.
 	 * @see org.eclipse.e4.ui.model.application.ui.menu.MToolControl
+	 * @since 1.0
 	 * @generated
 	 */
 	public EClass getToolControl() {
@@ -5784,6 +6404,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * <!-- end-user-doc -->
 	 * @return the meta object for class '<em>Handled Tool Item</em>'.
 	 * @see org.eclipse.e4.ui.model.application.ui.menu.MHandledToolItem
+	 * @since 1.0
 	 * @generated
 	 */
 	public EClass getHandledToolItem() {
@@ -5796,6 +6417,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * <!-- end-user-doc -->
 	 * @return the meta object for class '<em>Direct Tool Item</em>'.
 	 * @see org.eclipse.e4.ui.model.application.ui.menu.MDirectToolItem
+	 * @since 1.0
 	 * @generated
 	 */
 	public EClass getDirectToolItem() {
@@ -5808,6 +6430,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * <!-- end-user-doc -->
 	 * @return the meta object for class '<em>Tool Bar Separator</em>'.
 	 * @see org.eclipse.e4.ui.model.application.ui.menu.MToolBarSeparator
+	 * @since 1.0
 	 * @generated
 	 */
 	public EClass getToolBarSeparator() {
@@ -5820,6 +6443,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * <!-- end-user-doc -->
 	 * @return the meta object for class '<em>Contributions</em>'.
 	 * @see org.eclipse.e4.ui.model.application.ui.menu.MMenuContributions
+	 * @since 1.0
 	 * @generated
 	 */
 	public EClass getMenuContributions() {
@@ -5834,6 +6458,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * @return the meta object for the containment reference list '<em>Menu Contributions</em>'.
 	 * @see org.eclipse.e4.ui.model.application.ui.menu.MMenuContributions#getMenuContributions()
 	 * @see #getMenuContributions()
+	 * @since 1.0
 	 * @generated
 	 */
 	public EReference getMenuContributions_MenuContributions() {
@@ -5847,6 +6472,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * <!-- end-user-doc -->
 	 * @return the meta object for class '<em>Tool Bar Contribution</em>'.
 	 * @see org.eclipse.e4.ui.model.application.ui.menu.MToolBarContribution
+	 * @since 1.0
 	 * @generated
 	 */
 	public EClass getToolBarContribution() {
@@ -5861,6 +6487,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * @return the meta object for the attribute '<em>Parent Id</em>'.
 	 * @see org.eclipse.e4.ui.model.application.ui.menu.MToolBarContribution#getParentId()
 	 * @see #getToolBarContribution()
+	 * @since 1.0
 	 * @generated
 	 */
 	public EAttribute getToolBarContribution_ParentId() {
@@ -5875,6 +6502,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * @return the meta object for the attribute '<em>Position In Parent</em>'.
 	 * @see org.eclipse.e4.ui.model.application.ui.menu.MToolBarContribution#getPositionInParent()
 	 * @see #getToolBarContribution()
+	 * @since 1.0
 	 * @generated
 	 */
 	public EAttribute getToolBarContribution_PositionInParent() {
@@ -5888,6 +6516,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * <!-- end-user-doc -->
 	 * @return the meta object for class '<em>Tool Bar Contributions</em>'.
 	 * @see org.eclipse.e4.ui.model.application.ui.menu.MToolBarContributions
+	 * @since 1.0
 	 * @generated
 	 */
 	public EClass getToolBarContributions() {
@@ -5902,6 +6531,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * @return the meta object for the containment reference list '<em>Tool Bar Contributions</em>'.
 	 * @see org.eclipse.e4.ui.model.application.ui.menu.MToolBarContributions#getToolBarContributions()
 	 * @see #getToolBarContributions()
+	 * @since 1.0
 	 * @generated
 	 */
 	public EReference getToolBarContributions_ToolBarContributions() {
@@ -5915,6 +6545,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * <!-- end-user-doc -->
 	 * @return the meta object for class '<em>Trim Contribution</em>'.
 	 * @see org.eclipse.e4.ui.model.application.ui.menu.MTrimContribution
+	 * @since 1.0
 	 * @generated
 	 */
 	public EClass getTrimContribution() {
@@ -5929,6 +6560,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * @return the meta object for the attribute '<em>Parent Id</em>'.
 	 * @see org.eclipse.e4.ui.model.application.ui.menu.MTrimContribution#getParentId()
 	 * @see #getTrimContribution()
+	 * @since 1.0
 	 * @generated
 	 */
 	public EAttribute getTrimContribution_ParentId() {
@@ -5943,6 +6575,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * @return the meta object for the attribute '<em>Position In Parent</em>'.
 	 * @see org.eclipse.e4.ui.model.application.ui.menu.MTrimContribution#getPositionInParent()
 	 * @see #getTrimContribution()
+	 * @since 1.0
 	 * @generated
 	 */
 	public EAttribute getTrimContribution_PositionInParent() {
@@ -5956,6 +6589,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * <!-- end-user-doc -->
 	 * @return the meta object for class '<em>Trim Contributions</em>'.
 	 * @see org.eclipse.e4.ui.model.application.ui.menu.MTrimContributions
+	 * @since 1.0
 	 * @generated
 	 */
 	public EClass getTrimContributions() {
@@ -5970,6 +6604,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * @return the meta object for the containment reference list '<em>Trim Contributions</em>'.
 	 * @see org.eclipse.e4.ui.model.application.ui.menu.MTrimContributions#getTrimContributions()
 	 * @see #getTrimContributions()
+	 * @since 1.0
 	 * @generated
 	 */
 	public EReference getTrimContributions_TrimContributions() {
@@ -5983,6 +6618,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * <!-- end-user-doc -->
 	 * @return the meta object for class '<em>Dynamic Menu Contribution</em>'.
 	 * @see org.eclipse.e4.ui.model.application.ui.menu.MDynamicMenuContribution
+	 * @since 1.0
 	 * @generated
 	 */
 	public EClass getDynamicMenuContribution() {
@@ -5996,6 +6632,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * <!-- end-user-doc -->
 	 * @return the meta object for enum '<em>Item Type</em>'.
 	 * @see org.eclipse.e4.ui.model.application.ui.menu.ItemType
+	 * @since 1.0
 	 * @generated
 	 */
 	public EEnum getItemType() {
@@ -6280,6 +6917,7 @@ public class MenuPackageImpl extends EPackageImpl {
 		 * <!-- end-user-doc -->
 		 * @see org.eclipse.e4.ui.model.application.ui.menu.impl.ItemImpl
 		 * @see org.eclipse.e4.ui.model.application.ui.menu.impl.MenuPackageImpl#getItem()
+		 * @since 1.0
 		 * @generated
 		 */
 		public static final EClass ITEM = eINSTANCE.getItem();
@@ -6288,6 +6926,7 @@ public class MenuPackageImpl extends EPackageImpl {
 		 * The meta object literal for the '<em><b>Enabled</b></em>' attribute feature.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
+		 * @since 1.0
 		 * @generated
 		 */
 		public static final EAttribute ITEM__ENABLED = eINSTANCE.getItem_Enabled();
@@ -6296,6 +6935,7 @@ public class MenuPackageImpl extends EPackageImpl {
 		 * The meta object literal for the '<em><b>Selected</b></em>' attribute feature.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
+		 * @since 1.0
 		 * @generated
 		 */
 		public static final EAttribute ITEM__SELECTED = eINSTANCE.getItem_Selected();
@@ -6304,6 +6944,7 @@ public class MenuPackageImpl extends EPackageImpl {
 		 * The meta object literal for the '<em><b>Type</b></em>' attribute feature.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
+		 * @since 1.0
 		 * @generated
 		 */
 		public static final EAttribute ITEM__TYPE = eINSTANCE.getItem_Type();
@@ -6314,6 +6955,7 @@ public class MenuPackageImpl extends EPackageImpl {
 		 * <!-- end-user-doc -->
 		 * @see org.eclipse.e4.ui.model.application.ui.menu.impl.HandledItemImpl
 		 * @see org.eclipse.e4.ui.model.application.ui.menu.impl.MenuPackageImpl#getHandledItem()
+		 * @since 1.0
 		 * @generated
 		 */
 		public static final EClass HANDLED_ITEM = eINSTANCE.getHandledItem();
@@ -6322,6 +6964,7 @@ public class MenuPackageImpl extends EPackageImpl {
 		 * The meta object literal for the '<em><b>Command</b></em>' reference feature.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
+		 * @since 1.0
 		 * @generated
 		 */
 		public static final EReference HANDLED_ITEM__COMMAND = eINSTANCE.getHandledItem_Command();
@@ -6330,6 +6973,7 @@ public class MenuPackageImpl extends EPackageImpl {
 		 * The meta object literal for the '<em><b>Wb Command</b></em>' attribute feature.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
+		 * @since 1.0
 		 * @generated
 		 */
 		public static final EAttribute HANDLED_ITEM__WB_COMMAND = eINSTANCE.getHandledItem_WbCommand();
@@ -6338,6 +6982,7 @@ public class MenuPackageImpl extends EPackageImpl {
 		 * The meta object literal for the '<em><b>Parameters</b></em>' containment reference list feature.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
+		 * @since 1.0
 		 * @generated
 		 */
 		public static final EReference HANDLED_ITEM__PARAMETERS = eINSTANCE.getHandledItem_Parameters();
@@ -6348,6 +6993,7 @@ public class MenuPackageImpl extends EPackageImpl {
 		 * <!-- end-user-doc -->
 		 * @see org.eclipse.e4.ui.model.application.ui.menu.impl.MenuElementImpl
 		 * @see org.eclipse.e4.ui.model.application.ui.menu.impl.MenuPackageImpl#getMenuElement()
+		 * @since 1.0
 		 * @generated
 		 */
 		public static final EClass MENU_ELEMENT = eINSTANCE.getMenuElement();
@@ -6356,6 +7002,7 @@ public class MenuPackageImpl extends EPackageImpl {
 		 * The meta object literal for the '<em><b>Mnemonics</b></em>' attribute feature.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
+		 * @since 1.0
 		 * @generated
 		 */
 		public static final EAttribute MENU_ELEMENT__MNEMONICS = eINSTANCE.getMenuElement_Mnemonics();
@@ -6364,6 +7011,7 @@ public class MenuPackageImpl extends EPackageImpl {
 		 * The meta object literal for the '<em><b>Get Localized Mnemonics</b></em>' operation.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
+		 * @since 1.0
 		 * @generated
 		 */
 		public static final EOperation MENU_ELEMENT___GET_LOCALIZED_MNEMONICS = eINSTANCE.getMenuElement__GetLocalizedMnemonics();
@@ -6374,6 +7022,7 @@ public class MenuPackageImpl extends EPackageImpl {
 		 * <!-- end-user-doc -->
 		 * @see org.eclipse.e4.ui.model.application.ui.menu.impl.MenuItemImpl
 		 * @see org.eclipse.e4.ui.model.application.ui.menu.impl.MenuPackageImpl#getMenuItem()
+		 * @since 1.0
 		 * @generated
 		 */
 		public static final EClass MENU_ITEM = eINSTANCE.getMenuItem();
@@ -6384,6 +7033,7 @@ public class MenuPackageImpl extends EPackageImpl {
 		 * <!-- end-user-doc -->
 		 * @see org.eclipse.e4.ui.model.application.ui.menu.impl.MenuSeparatorImpl
 		 * @see org.eclipse.e4.ui.model.application.ui.menu.impl.MenuPackageImpl#getMenuSeparator()
+		 * @since 1.0
 		 * @generated
 		 */
 		public static final EClass MENU_SEPARATOR = eINSTANCE.getMenuSeparator();
@@ -6394,6 +7044,7 @@ public class MenuPackageImpl extends EPackageImpl {
 		 * <!-- end-user-doc -->
 		 * @see org.eclipse.e4.ui.model.application.ui.menu.impl.MenuImpl
 		 * @see org.eclipse.e4.ui.model.application.ui.menu.impl.MenuPackageImpl#getMenu()
+		 * @since 1.0
 		 * @generated
 		 */
 		public static final EClass MENU = eINSTANCE.getMenu();
@@ -6402,6 +7053,7 @@ public class MenuPackageImpl extends EPackageImpl {
 		 * The meta object literal for the '<em><b>Enabled</b></em>' attribute feature.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
+		 * @since 1.0
 		 * @generated
 		 */
 		public static final EAttribute MENU__ENABLED = eINSTANCE.getMenu_Enabled();
@@ -6412,6 +7064,7 @@ public class MenuPackageImpl extends EPackageImpl {
 		 * <!-- end-user-doc -->
 		 * @see org.eclipse.e4.ui.model.application.ui.menu.impl.MenuContributionImpl
 		 * @see org.eclipse.e4.ui.model.application.ui.menu.impl.MenuPackageImpl#getMenuContribution()
+		 * @since 1.0
 		 * @generated
 		 */
 		public static final EClass MENU_CONTRIBUTION = eINSTANCE.getMenuContribution();
@@ -6420,6 +7073,7 @@ public class MenuPackageImpl extends EPackageImpl {
 		 * The meta object literal for the '<em><b>Position In Parent</b></em>' attribute feature.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
+		 * @since 1.0
 		 * @generated
 		 */
 		public static final EAttribute MENU_CONTRIBUTION__POSITION_IN_PARENT = eINSTANCE.getMenuContribution_PositionInParent();
@@ -6428,6 +7082,7 @@ public class MenuPackageImpl extends EPackageImpl {
 		 * The meta object literal for the '<em><b>Parent Id</b></em>' attribute feature.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
+		 * @since 1.0
 		 * @generated
 		 */
 		public static final EAttribute MENU_CONTRIBUTION__PARENT_ID = eINSTANCE.getMenuContribution_ParentId();
@@ -6438,6 +7093,7 @@ public class MenuPackageImpl extends EPackageImpl {
 		 * <!-- end-user-doc -->
 		 * @see org.eclipse.e4.ui.model.application.ui.menu.impl.PopupMenuImpl
 		 * @see org.eclipse.e4.ui.model.application.ui.menu.impl.MenuPackageImpl#getPopupMenu()
+		 * @since 1.0
 		 * @generated
 		 */
 		public static final EClass POPUP_MENU = eINSTANCE.getPopupMenu();
@@ -6448,6 +7104,7 @@ public class MenuPackageImpl extends EPackageImpl {
 		 * <!-- end-user-doc -->
 		 * @see org.eclipse.e4.ui.model.application.ui.menu.impl.DirectMenuItemImpl
 		 * @see org.eclipse.e4.ui.model.application.ui.menu.impl.MenuPackageImpl#getDirectMenuItem()
+		 * @since 1.0
 		 * @generated
 		 */
 		public static final EClass DIRECT_MENU_ITEM = eINSTANCE.getDirectMenuItem();
@@ -6458,6 +7115,7 @@ public class MenuPackageImpl extends EPackageImpl {
 		 * <!-- end-user-doc -->
 		 * @see org.eclipse.e4.ui.model.application.ui.menu.impl.HandledMenuItemImpl
 		 * @see org.eclipse.e4.ui.model.application.ui.menu.impl.MenuPackageImpl#getHandledMenuItem()
+		 * @since 1.0
 		 * @generated
 		 */
 		public static final EClass HANDLED_MENU_ITEM = eINSTANCE.getHandledMenuItem();
@@ -6468,6 +7126,7 @@ public class MenuPackageImpl extends EPackageImpl {
 		 * <!-- end-user-doc -->
 		 * @see org.eclipse.e4.ui.model.application.ui.menu.impl.ToolItemImpl
 		 * @see org.eclipse.e4.ui.model.application.ui.menu.impl.MenuPackageImpl#getToolItem()
+		 * @since 1.0
 		 * @generated
 		 */
 		public static final EClass TOOL_ITEM = eINSTANCE.getToolItem();
@@ -6476,6 +7135,7 @@ public class MenuPackageImpl extends EPackageImpl {
 		 * The meta object literal for the '<em><b>Menu</b></em>' containment reference feature.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
+		 * @since 1.0
 		 * @generated
 		 */
 		public static final EReference TOOL_ITEM__MENU = eINSTANCE.getToolItem_Menu();
@@ -6486,6 +7146,7 @@ public class MenuPackageImpl extends EPackageImpl {
 		 * <!-- end-user-doc -->
 		 * @see org.eclipse.e4.ui.model.application.ui.menu.impl.ToolBarImpl
 		 * @see org.eclipse.e4.ui.model.application.ui.menu.impl.MenuPackageImpl#getToolBar()
+		 * @since 1.0
 		 * @generated
 		 */
 		public static final EClass TOOL_BAR = eINSTANCE.getToolBar();
@@ -6496,6 +7157,7 @@ public class MenuPackageImpl extends EPackageImpl {
 		 * <!-- end-user-doc -->
 		 * @see org.eclipse.e4.ui.model.application.ui.menu.impl.ToolBarElementImpl
 		 * @see org.eclipse.e4.ui.model.application.ui.menu.impl.MenuPackageImpl#getToolBarElement()
+		 * @since 1.0
 		 * @generated
 		 */
 		public static final EClass TOOL_BAR_ELEMENT = eINSTANCE.getToolBarElement();
@@ -6506,6 +7168,7 @@ public class MenuPackageImpl extends EPackageImpl {
 		 * <!-- end-user-doc -->
 		 * @see org.eclipse.e4.ui.model.application.ui.menu.impl.ToolControlImpl
 		 * @see org.eclipse.e4.ui.model.application.ui.menu.impl.MenuPackageImpl#getToolControl()
+		 * @since 1.0
 		 * @generated
 		 */
 		public static final EClass TOOL_CONTROL = eINSTANCE.getToolControl();
@@ -6516,6 +7179,7 @@ public class MenuPackageImpl extends EPackageImpl {
 		 * <!-- end-user-doc -->
 		 * @see org.eclipse.e4.ui.model.application.ui.menu.impl.HandledToolItemImpl
 		 * @see org.eclipse.e4.ui.model.application.ui.menu.impl.MenuPackageImpl#getHandledToolItem()
+		 * @since 1.0
 		 * @generated
 		 */
 		public static final EClass HANDLED_TOOL_ITEM = eINSTANCE.getHandledToolItem();
@@ -6526,6 +7190,7 @@ public class MenuPackageImpl extends EPackageImpl {
 		 * <!-- end-user-doc -->
 		 * @see org.eclipse.e4.ui.model.application.ui.menu.impl.DirectToolItemImpl
 		 * @see org.eclipse.e4.ui.model.application.ui.menu.impl.MenuPackageImpl#getDirectToolItem()
+		 * @since 1.0
 		 * @generated
 		 */
 		public static final EClass DIRECT_TOOL_ITEM = eINSTANCE.getDirectToolItem();
@@ -6536,6 +7201,7 @@ public class MenuPackageImpl extends EPackageImpl {
 		 * <!-- end-user-doc -->
 		 * @see org.eclipse.e4.ui.model.application.ui.menu.impl.ToolBarSeparatorImpl
 		 * @see org.eclipse.e4.ui.model.application.ui.menu.impl.MenuPackageImpl#getToolBarSeparator()
+		 * @since 1.0
 		 * @generated
 		 */
 		public static final EClass TOOL_BAR_SEPARATOR = eINSTANCE.getToolBarSeparator();
@@ -6546,6 +7212,7 @@ public class MenuPackageImpl extends EPackageImpl {
 		 * <!-- end-user-doc -->
 		 * @see org.eclipse.e4.ui.model.application.ui.menu.MMenuContributions
 		 * @see org.eclipse.e4.ui.model.application.ui.menu.impl.MenuPackageImpl#getMenuContributions()
+		 * @since 1.0
 		 * @generated
 		 */
 		public static final EClass MENU_CONTRIBUTIONS = eINSTANCE.getMenuContributions();
@@ -6554,6 +7221,7 @@ public class MenuPackageImpl extends EPackageImpl {
 		 * The meta object literal for the '<em><b>Menu Contributions</b></em>' containment reference list feature.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
+		 * @since 1.0
 		 * @generated
 		 */
 		public static final EReference MENU_CONTRIBUTIONS__MENU_CONTRIBUTIONS = eINSTANCE.getMenuContributions_MenuContributions();
@@ -6564,6 +7232,7 @@ public class MenuPackageImpl extends EPackageImpl {
 		 * <!-- end-user-doc -->
 		 * @see org.eclipse.e4.ui.model.application.ui.menu.impl.ToolBarContributionImpl
 		 * @see org.eclipse.e4.ui.model.application.ui.menu.impl.MenuPackageImpl#getToolBarContribution()
+		 * @since 1.0
 		 * @generated
 		 */
 		public static final EClass TOOL_BAR_CONTRIBUTION = eINSTANCE.getToolBarContribution();
@@ -6572,6 +7241,7 @@ public class MenuPackageImpl extends EPackageImpl {
 		 * The meta object literal for the '<em><b>Parent Id</b></em>' attribute feature.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
+		 * @since 1.0
 		 * @generated
 		 */
 		public static final EAttribute TOOL_BAR_CONTRIBUTION__PARENT_ID = eINSTANCE.getToolBarContribution_ParentId();
@@ -6580,6 +7250,7 @@ public class MenuPackageImpl extends EPackageImpl {
 		 * The meta object literal for the '<em><b>Position In Parent</b></em>' attribute feature.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
+		 * @since 1.0
 		 * @generated
 		 */
 		public static final EAttribute TOOL_BAR_CONTRIBUTION__POSITION_IN_PARENT = eINSTANCE.getToolBarContribution_PositionInParent();
@@ -6590,6 +7261,7 @@ public class MenuPackageImpl extends EPackageImpl {
 		 * <!-- end-user-doc -->
 		 * @see org.eclipse.e4.ui.model.application.ui.menu.MToolBarContributions
 		 * @see org.eclipse.e4.ui.model.application.ui.menu.impl.MenuPackageImpl#getToolBarContributions()
+		 * @since 1.0
 		 * @generated
 		 */
 		public static final EClass TOOL_BAR_CONTRIBUTIONS = eINSTANCE.getToolBarContributions();
@@ -6598,6 +7270,7 @@ public class MenuPackageImpl extends EPackageImpl {
 		 * The meta object literal for the '<em><b>Tool Bar Contributions</b></em>' containment reference list feature.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
+		 * @since 1.0
 		 * @generated
 		 */
 		public static final EReference TOOL_BAR_CONTRIBUTIONS__TOOL_BAR_CONTRIBUTIONS = eINSTANCE.getToolBarContributions_ToolBarContributions();
@@ -6608,6 +7281,7 @@ public class MenuPackageImpl extends EPackageImpl {
 		 * <!-- end-user-doc -->
 		 * @see org.eclipse.e4.ui.model.application.ui.menu.impl.TrimContributionImpl
 		 * @see org.eclipse.e4.ui.model.application.ui.menu.impl.MenuPackageImpl#getTrimContribution()
+		 * @since 1.0
 		 * @generated
 		 */
 		public static final EClass TRIM_CONTRIBUTION = eINSTANCE.getTrimContribution();
@@ -6616,6 +7290,7 @@ public class MenuPackageImpl extends EPackageImpl {
 		 * The meta object literal for the '<em><b>Parent Id</b></em>' attribute feature.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
+		 * @since 1.0
 		 * @generated
 		 */
 		public static final EAttribute TRIM_CONTRIBUTION__PARENT_ID = eINSTANCE.getTrimContribution_ParentId();
@@ -6624,6 +7299,7 @@ public class MenuPackageImpl extends EPackageImpl {
 		 * The meta object literal for the '<em><b>Position In Parent</b></em>' attribute feature.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
+		 * @since 1.0
 		 * @generated
 		 */
 		public static final EAttribute TRIM_CONTRIBUTION__POSITION_IN_PARENT = eINSTANCE.getTrimContribution_PositionInParent();
@@ -6634,6 +7310,7 @@ public class MenuPackageImpl extends EPackageImpl {
 		 * <!-- end-user-doc -->
 		 * @see org.eclipse.e4.ui.model.application.ui.menu.MTrimContributions
 		 * @see org.eclipse.e4.ui.model.application.ui.menu.impl.MenuPackageImpl#getTrimContributions()
+		 * @since 1.0
 		 * @generated
 		 */
 		public static final EClass TRIM_CONTRIBUTIONS = eINSTANCE.getTrimContributions();
@@ -6642,6 +7319,7 @@ public class MenuPackageImpl extends EPackageImpl {
 		 * The meta object literal for the '<em><b>Trim Contributions</b></em>' containment reference list feature.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
+		 * @since 1.0
 		 * @generated
 		 */
 		public static final EReference TRIM_CONTRIBUTIONS__TRIM_CONTRIBUTIONS = eINSTANCE.getTrimContributions_TrimContributions();
@@ -6652,6 +7330,7 @@ public class MenuPackageImpl extends EPackageImpl {
 		 * <!-- end-user-doc -->
 		 * @see org.eclipse.e4.ui.model.application.ui.menu.impl.DynamicMenuContributionImpl
 		 * @see org.eclipse.e4.ui.model.application.ui.menu.impl.MenuPackageImpl#getDynamicMenuContribution()
+		 * @since 1.0
 		 * @generated
 		 */
 		public static final EClass DYNAMIC_MENU_CONTRIBUTION = eINSTANCE.getDynamicMenuContribution();
@@ -6662,6 +7341,7 @@ public class MenuPackageImpl extends EPackageImpl {
 		 * <!-- end-user-doc -->
 		 * @see org.eclipse.e4.ui.model.application.ui.menu.ItemType
 		 * @see org.eclipse.e4.ui.model.application.ui.menu.impl.MenuPackageImpl#getItemType()
+		 * @since 1.0
 		 * @generated
 		 */
 		public static final EEnum ITEM_TYPE = eINSTANCE.getItemType();

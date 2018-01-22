@@ -91,6 +91,7 @@ public class CommandsPackageImpl extends EPackageImpl {
 	 * <!-- end-user-doc -->
 	 * @see org.eclipse.e4.ui.model.application.commands.MBindingTableContainer
 	 * @see org.eclipse.e4.ui.model.application.commands.impl.CommandsPackageImpl#getBindingTableContainer()
+	 * @since 1.0
 	 * @generated
 	 */
 	public static final int BINDING_TABLE_CONTAINER = 0;
@@ -99,6 +100,7 @@ public class CommandsPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Binding Tables</b></em>' containment reference list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -108,6 +110,7 @@ public class CommandsPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Root Context</b></em>' containment reference list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -117,6 +120,7 @@ public class CommandsPackageImpl extends EPackageImpl {
 	 * The number of structural features of the '<em>Binding Table Container</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -126,6 +130,7 @@ public class CommandsPackageImpl extends EPackageImpl {
 	 * The number of operations of the '<em>Binding Table Container</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -137,6 +142,7 @@ public class CommandsPackageImpl extends EPackageImpl {
 	 * <!-- end-user-doc -->
 	 * @see org.eclipse.e4.ui.model.application.commands.MBindings
 	 * @see org.eclipse.e4.ui.model.application.commands.impl.CommandsPackageImpl#getBindings()
+	 * @since 1.0
 	 * @generated
 	 */
 	public static final int BINDINGS = 1;
@@ -145,6 +151,7 @@ public class CommandsPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Binding Contexts</b></em>' reference list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -154,6 +161,7 @@ public class CommandsPackageImpl extends EPackageImpl {
 	 * The number of structural features of the '<em>Bindings</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -163,6 +171,7 @@ public class CommandsPackageImpl extends EPackageImpl {
 	 * The number of operations of the '<em>Bindings</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -174,6 +183,7 @@ public class CommandsPackageImpl extends EPackageImpl {
 	 * <!-- end-user-doc -->
 	 * @see org.eclipse.e4.ui.model.application.commands.impl.BindingContextImpl
 	 * @see org.eclipse.e4.ui.model.application.commands.impl.CommandsPackageImpl#getBindingContext()
+	 * @since 1.0
 	 * @generated
 	 */
 	public static final int BINDING_CONTEXT = 2;
@@ -182,6 +192,7 @@ public class CommandsPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Element Id</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -191,6 +202,7 @@ public class CommandsPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Persisted State</b></em>' map.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -200,6 +212,7 @@ public class CommandsPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Tags</b></em>' attribute list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -209,6 +222,7 @@ public class CommandsPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Contributor URI</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -218,6 +232,7 @@ public class CommandsPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Transient Data</b></em>' map.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -227,6 +242,7 @@ public class CommandsPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Name</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -236,6 +252,7 @@ public class CommandsPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Description</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -245,6 +262,7 @@ public class CommandsPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Children</b></em>' containment reference list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -254,6 +272,7 @@ public class CommandsPackageImpl extends EPackageImpl {
 	 * The number of structural features of the '<em>Binding Context</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -263,6 +282,7 @@ public class CommandsPackageImpl extends EPackageImpl {
 	 * The number of operations of the '<em>Binding Context</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -274,6 +294,7 @@ public class CommandsPackageImpl extends EPackageImpl {
 	 * <!-- end-user-doc -->
 	 * @see org.eclipse.e4.ui.model.application.commands.impl.BindingTableImpl
 	 * @see org.eclipse.e4.ui.model.application.commands.impl.CommandsPackageImpl#getBindingTable()
+	 * @since 1.0
 	 * @generated
 	 */
 	public static final int BINDING_TABLE = 3;
@@ -282,6 +303,7 @@ public class CommandsPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Element Id</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -291,6 +313,7 @@ public class CommandsPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Persisted State</b></em>' map.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -300,6 +323,7 @@ public class CommandsPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Tags</b></em>' attribute list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -309,6 +333,7 @@ public class CommandsPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Contributor URI</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -318,6 +343,7 @@ public class CommandsPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Transient Data</b></em>' map.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -327,6 +353,7 @@ public class CommandsPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Bindings</b></em>' containment reference list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -336,6 +363,7 @@ public class CommandsPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Binding Context</b></em>' reference.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -345,6 +373,7 @@ public class CommandsPackageImpl extends EPackageImpl {
 	 * The number of structural features of the '<em>Binding Table</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -354,6 +383,7 @@ public class CommandsPackageImpl extends EPackageImpl {
 	 * The number of operations of the '<em>Binding Table</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -365,6 +395,7 @@ public class CommandsPackageImpl extends EPackageImpl {
 	 * <!-- end-user-doc -->
 	 * @see org.eclipse.e4.ui.model.application.commands.impl.CommandImpl
 	 * @see org.eclipse.e4.ui.model.application.commands.impl.CommandsPackageImpl#getCommand()
+	 * @since 1.0
 	 * @generated
 	 */
 	public static final int COMMAND = 4;
@@ -373,6 +404,7 @@ public class CommandsPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Element Id</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -382,6 +414,7 @@ public class CommandsPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Persisted State</b></em>' map.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -391,6 +424,7 @@ public class CommandsPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Tags</b></em>' attribute list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -400,6 +434,7 @@ public class CommandsPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Contributor URI</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -409,6 +444,7 @@ public class CommandsPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Transient Data</b></em>' map.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -418,6 +454,7 @@ public class CommandsPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Command Name</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -427,6 +464,7 @@ public class CommandsPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Description</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -436,6 +474,7 @@ public class CommandsPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Parameters</b></em>' containment reference list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -445,6 +484,7 @@ public class CommandsPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Category</b></em>' reference.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -454,6 +494,7 @@ public class CommandsPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Localized Command Name</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -463,6 +504,7 @@ public class CommandsPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Localized Description</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -472,6 +514,7 @@ public class CommandsPackageImpl extends EPackageImpl {
 	 * The number of structural features of the '<em>Command</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -481,6 +524,7 @@ public class CommandsPackageImpl extends EPackageImpl {
 	 * The operation id for the '<em>Update Localization</em>' operation.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.1
 	 * @generated
 	 * @ordered
 	 */
@@ -490,6 +534,7 @@ public class CommandsPackageImpl extends EPackageImpl {
 	 * The number of operations of the '<em>Command</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -501,6 +546,7 @@ public class CommandsPackageImpl extends EPackageImpl {
 	 * <!-- end-user-doc -->
 	 * @see org.eclipse.e4.ui.model.application.commands.impl.CommandParameterImpl
 	 * @see org.eclipse.e4.ui.model.application.commands.impl.CommandsPackageImpl#getCommandParameter()
+	 * @since 1.0
 	 * @generated
 	 */
 	public static final int COMMAND_PARAMETER = 5;
@@ -509,6 +555,7 @@ public class CommandsPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Element Id</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -518,6 +565,7 @@ public class CommandsPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Persisted State</b></em>' map.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -527,6 +575,7 @@ public class CommandsPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Tags</b></em>' attribute list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -536,6 +585,7 @@ public class CommandsPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Contributor URI</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -545,6 +595,7 @@ public class CommandsPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Transient Data</b></em>' map.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -554,6 +605,7 @@ public class CommandsPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Name</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -563,6 +615,7 @@ public class CommandsPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Type Id</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -572,6 +625,7 @@ public class CommandsPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Optional</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -581,6 +635,7 @@ public class CommandsPackageImpl extends EPackageImpl {
 	 * The number of structural features of the '<em>Command Parameter</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -590,6 +645,7 @@ public class CommandsPackageImpl extends EPackageImpl {
 	 * The number of operations of the '<em>Command Parameter</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -601,6 +657,7 @@ public class CommandsPackageImpl extends EPackageImpl {
 	 * <!-- end-user-doc -->
 	 * @see org.eclipse.e4.ui.model.application.commands.impl.HandlerImpl
 	 * @see org.eclipse.e4.ui.model.application.commands.impl.CommandsPackageImpl#getHandler()
+	 * @since 1.0
 	 * @generated
 	 */
 	public static final int HANDLER = 6;
@@ -609,6 +666,7 @@ public class CommandsPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Element Id</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -618,6 +676,7 @@ public class CommandsPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Persisted State</b></em>' map.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -627,6 +686,7 @@ public class CommandsPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Tags</b></em>' attribute list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -636,6 +696,7 @@ public class CommandsPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Contributor URI</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -645,6 +706,7 @@ public class CommandsPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Transient Data</b></em>' map.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -654,6 +716,7 @@ public class CommandsPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Contribution URI</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -663,6 +726,7 @@ public class CommandsPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Object</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -672,6 +736,7 @@ public class CommandsPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Command</b></em>' reference.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -681,6 +746,7 @@ public class CommandsPackageImpl extends EPackageImpl {
 	 * The number of structural features of the '<em>Handler</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -690,6 +756,7 @@ public class CommandsPackageImpl extends EPackageImpl {
 	 * The number of operations of the '<em>Handler</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -701,6 +768,7 @@ public class CommandsPackageImpl extends EPackageImpl {
 	 * <!-- end-user-doc -->
 	 * @see org.eclipse.e4.ui.model.application.commands.MHandlerContainer
 	 * @see org.eclipse.e4.ui.model.application.commands.impl.CommandsPackageImpl#getHandlerContainer()
+	 * @since 1.0
 	 * @generated
 	 */
 	public static final int HANDLER_CONTAINER = 7;
@@ -709,6 +777,7 @@ public class CommandsPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Handlers</b></em>' containment reference list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -718,6 +787,7 @@ public class CommandsPackageImpl extends EPackageImpl {
 	 * The number of structural features of the '<em>Handler Container</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -727,6 +797,7 @@ public class CommandsPackageImpl extends EPackageImpl {
 	 * The number of operations of the '<em>Handler Container</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -738,6 +809,7 @@ public class CommandsPackageImpl extends EPackageImpl {
 	 * <!-- end-user-doc -->
 	 * @see org.eclipse.e4.ui.model.application.commands.MKeySequence
 	 * @see org.eclipse.e4.ui.model.application.commands.impl.CommandsPackageImpl#getKeySequence()
+	 * @since 1.0
 	 * @generated
 	 */
 	public static final int KEY_SEQUENCE = 9;
@@ -748,6 +820,7 @@ public class CommandsPackageImpl extends EPackageImpl {
 	 * <!-- end-user-doc -->
 	 * @see org.eclipse.e4.ui.model.application.commands.impl.KeyBindingImpl
 	 * @see org.eclipse.e4.ui.model.application.commands.impl.CommandsPackageImpl#getKeyBinding()
+	 * @since 1.0
 	 * @generated
 	 */
 	public static final int KEY_BINDING = 8;
@@ -756,6 +829,7 @@ public class CommandsPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Element Id</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -765,6 +839,7 @@ public class CommandsPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Persisted State</b></em>' map.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -774,6 +849,7 @@ public class CommandsPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Tags</b></em>' attribute list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -783,6 +859,7 @@ public class CommandsPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Contributor URI</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -792,6 +869,7 @@ public class CommandsPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Transient Data</b></em>' map.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -801,6 +879,7 @@ public class CommandsPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Key Sequence</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -810,6 +889,7 @@ public class CommandsPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Command</b></em>' reference.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -819,6 +899,7 @@ public class CommandsPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Parameters</b></em>' containment reference list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -828,6 +909,7 @@ public class CommandsPackageImpl extends EPackageImpl {
 	 * The number of structural features of the '<em>Key Binding</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -837,6 +919,7 @@ public class CommandsPackageImpl extends EPackageImpl {
 	 * The number of operations of the '<em>Key Binding</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -846,6 +929,7 @@ public class CommandsPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Key Sequence</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -855,6 +939,7 @@ public class CommandsPackageImpl extends EPackageImpl {
 	 * The number of structural features of the '<em>Key Sequence</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -864,6 +949,7 @@ public class CommandsPackageImpl extends EPackageImpl {
 	 * The number of operations of the '<em>Key Sequence</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -875,6 +961,7 @@ public class CommandsPackageImpl extends EPackageImpl {
 	 * <!-- end-user-doc -->
 	 * @see org.eclipse.e4.ui.model.application.commands.impl.ParameterImpl
 	 * @see org.eclipse.e4.ui.model.application.commands.impl.CommandsPackageImpl#getParameter()
+	 * @since 1.0
 	 * @generated
 	 */
 	public static final int PARAMETER = 10;
@@ -883,6 +970,7 @@ public class CommandsPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Element Id</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -892,6 +980,7 @@ public class CommandsPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Persisted State</b></em>' map.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -901,6 +990,7 @@ public class CommandsPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Tags</b></em>' attribute list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -910,6 +1000,7 @@ public class CommandsPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Contributor URI</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -919,6 +1010,7 @@ public class CommandsPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Transient Data</b></em>' map.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -928,6 +1020,7 @@ public class CommandsPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Name</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -937,6 +1030,7 @@ public class CommandsPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Value</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -946,6 +1040,7 @@ public class CommandsPackageImpl extends EPackageImpl {
 	 * The number of structural features of the '<em>Parameter</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -955,6 +1050,7 @@ public class CommandsPackageImpl extends EPackageImpl {
 	 * The number of operations of the '<em>Parameter</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -966,6 +1062,7 @@ public class CommandsPackageImpl extends EPackageImpl {
 	 * <!-- end-user-doc -->
 	 * @see org.eclipse.e4.ui.model.application.commands.impl.CategoryImpl
 	 * @see org.eclipse.e4.ui.model.application.commands.impl.CommandsPackageImpl#getCategory()
+	 * @since 1.0
 	 * @generated
 	 */
 	public static final int CATEGORY = 11;
@@ -974,6 +1071,7 @@ public class CommandsPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Element Id</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -983,6 +1081,7 @@ public class CommandsPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Persisted State</b></em>' map.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -992,6 +1091,7 @@ public class CommandsPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Tags</b></em>' attribute list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -1001,6 +1101,7 @@ public class CommandsPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Contributor URI</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -1010,6 +1111,7 @@ public class CommandsPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Transient Data</b></em>' map.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -1019,6 +1121,7 @@ public class CommandsPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Name</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -1028,6 +1131,7 @@ public class CommandsPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Description</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -1037,6 +1141,7 @@ public class CommandsPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Localized Name</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -1046,6 +1151,7 @@ public class CommandsPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Localized Description</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -1055,6 +1161,7 @@ public class CommandsPackageImpl extends EPackageImpl {
 	 * The number of structural features of the '<em>Category</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -1064,6 +1171,7 @@ public class CommandsPackageImpl extends EPackageImpl {
 	 * The operation id for the '<em>Update Localization</em>' operation.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.1
 	 * @generated
 	 * @ordered
 	 */
@@ -1073,6 +1181,7 @@ public class CommandsPackageImpl extends EPackageImpl {
 	 * The number of operations of the '<em>Category</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -1091,6 +1200,7 @@ public class CommandsPackageImpl extends EPackageImpl {
 	/**
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 */
 	private EClass bindingTableContainerEClass = null;
@@ -1098,6 +1208,7 @@ public class CommandsPackageImpl extends EPackageImpl {
 	/**
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 */
 	private EClass bindingsEClass = null;
@@ -1105,6 +1216,7 @@ public class CommandsPackageImpl extends EPackageImpl {
 	/**
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 */
 	private EClass bindingContextEClass = null;
@@ -1112,6 +1224,7 @@ public class CommandsPackageImpl extends EPackageImpl {
 	/**
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 */
 	private EClass bindingTableEClass = null;
@@ -1119,6 +1232,7 @@ public class CommandsPackageImpl extends EPackageImpl {
 	/**
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 */
 	private EClass commandEClass = null;
@@ -1126,6 +1240,7 @@ public class CommandsPackageImpl extends EPackageImpl {
 	/**
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 */
 	private EClass commandParameterEClass = null;
@@ -1133,6 +1248,7 @@ public class CommandsPackageImpl extends EPackageImpl {
 	/**
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 */
 	private EClass handlerEClass = null;
@@ -1140,6 +1256,7 @@ public class CommandsPackageImpl extends EPackageImpl {
 	/**
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 */
 	private EClass handlerContainerEClass = null;
@@ -1147,6 +1264,7 @@ public class CommandsPackageImpl extends EPackageImpl {
 	/**
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 */
 	private EClass keyBindingEClass = null;
@@ -1154,6 +1272,7 @@ public class CommandsPackageImpl extends EPackageImpl {
 	/**
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 */
 	private EClass keySequenceEClass = null;
@@ -1161,6 +1280,7 @@ public class CommandsPackageImpl extends EPackageImpl {
 	/**
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 */
 	private EClass parameterEClass = null;
@@ -1168,6 +1288,7 @@ public class CommandsPackageImpl extends EPackageImpl {
 	/**
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 */
 	private EClass categoryEClass = null;
@@ -1207,7 +1328,7 @@ public class CommandsPackageImpl extends EPackageImpl {
 
 	/**
 	 * Creates, registers, and initializes the <b>Package</b> for this model, and for any others upon which it depends.
-	 * 
+	 *
 	 * <p>This method is used to initialize {@link CommandsPackageImpl#eINSTANCE} when that field is accessed.
 	 * Clients should not invoke it directly. Instead, they should simply access that field to obtain the package.
 	 * <!-- begin-user-doc -->
@@ -1221,17 +1342,24 @@ public class CommandsPackageImpl extends EPackageImpl {
 		if (isInited) return (CommandsPackageImpl)EPackage.Registry.INSTANCE.getEPackage(CommandsPackageImpl.eNS_URI);
 
 		// Obtain or create and register package
-		CommandsPackageImpl theCommandsPackage = (CommandsPackageImpl)(EPackage.Registry.INSTANCE.get(eNS_URI) instanceof CommandsPackageImpl ? EPackage.Registry.INSTANCE.get(eNS_URI) : new CommandsPackageImpl());
+		Object registeredCommandsPackage = EPackage.Registry.INSTANCE.get(eNS_URI);
+		CommandsPackageImpl theCommandsPackage = registeredCommandsPackage instanceof CommandsPackageImpl ? (CommandsPackageImpl)registeredCommandsPackage : new CommandsPackageImpl();
 
 		isInited = true;
 
 		// Obtain or create and register interdependencies
-		ApplicationPackageImpl theApplicationPackage = (ApplicationPackageImpl)(EPackage.Registry.INSTANCE.getEPackage(ApplicationPackageImpl.eNS_URI) instanceof ApplicationPackageImpl ? EPackage.Registry.INSTANCE.getEPackage(ApplicationPackageImpl.eNS_URI) : ApplicationPackageImpl.eINSTANCE);
-		UiPackageImpl theUiPackage = (UiPackageImpl)(EPackage.Registry.INSTANCE.getEPackage(UiPackageImpl.eNS_URI) instanceof UiPackageImpl ? EPackage.Registry.INSTANCE.getEPackage(UiPackageImpl.eNS_URI) : UiPackageImpl.eINSTANCE);
-		MenuPackageImpl theMenuPackage = (MenuPackageImpl)(EPackage.Registry.INSTANCE.getEPackage(MenuPackageImpl.eNS_URI) instanceof MenuPackageImpl ? EPackage.Registry.INSTANCE.getEPackage(MenuPackageImpl.eNS_URI) : MenuPackageImpl.eINSTANCE);
-		BasicPackageImpl theBasicPackage = (BasicPackageImpl)(EPackage.Registry.INSTANCE.getEPackage(BasicPackageImpl.eNS_URI) instanceof BasicPackageImpl ? EPackage.Registry.INSTANCE.getEPackage(BasicPackageImpl.eNS_URI) : BasicPackageImpl.eINSTANCE);
-		AdvancedPackageImpl theAdvancedPackage = (AdvancedPackageImpl)(EPackage.Registry.INSTANCE.getEPackage(AdvancedPackageImpl.eNS_URI) instanceof AdvancedPackageImpl ? EPackage.Registry.INSTANCE.getEPackage(AdvancedPackageImpl.eNS_URI) : AdvancedPackageImpl.eINSTANCE);
-		org.eclipse.e4.ui.model.application.descriptor.basic.impl.BasicPackageImpl theBasicPackage_1 = (org.eclipse.e4.ui.model.application.descriptor.basic.impl.BasicPackageImpl)(EPackage.Registry.INSTANCE.getEPackage(org.eclipse.e4.ui.model.application.descriptor.basic.impl.BasicPackageImpl.eNS_URI) instanceof org.eclipse.e4.ui.model.application.descriptor.basic.impl.BasicPackageImpl ? EPackage.Registry.INSTANCE.getEPackage(org.eclipse.e4.ui.model.application.descriptor.basic.impl.BasicPackageImpl.eNS_URI) : org.eclipse.e4.ui.model.application.descriptor.basic.impl.BasicPackageImpl.eINSTANCE);
+		Object registeredPackage = EPackage.Registry.INSTANCE.getEPackage(ApplicationPackageImpl.eNS_URI);
+		ApplicationPackageImpl theApplicationPackage = (ApplicationPackageImpl)(registeredPackage instanceof ApplicationPackageImpl ? registeredPackage : ApplicationPackageImpl.eINSTANCE);
+		registeredPackage = EPackage.Registry.INSTANCE.getEPackage(UiPackageImpl.eNS_URI);
+		UiPackageImpl theUiPackage = (UiPackageImpl)(registeredPackage instanceof UiPackageImpl ? registeredPackage : UiPackageImpl.eINSTANCE);
+		registeredPackage = EPackage.Registry.INSTANCE.getEPackage(MenuPackageImpl.eNS_URI);
+		MenuPackageImpl theMenuPackage = (MenuPackageImpl)(registeredPackage instanceof MenuPackageImpl ? registeredPackage : MenuPackageImpl.eINSTANCE);
+		registeredPackage = EPackage.Registry.INSTANCE.getEPackage(BasicPackageImpl.eNS_URI);
+		BasicPackageImpl theBasicPackage = (BasicPackageImpl)(registeredPackage instanceof BasicPackageImpl ? registeredPackage : BasicPackageImpl.eINSTANCE);
+		registeredPackage = EPackage.Registry.INSTANCE.getEPackage(AdvancedPackageImpl.eNS_URI);
+		AdvancedPackageImpl theAdvancedPackage = (AdvancedPackageImpl)(registeredPackage instanceof AdvancedPackageImpl ? registeredPackage : AdvancedPackageImpl.eINSTANCE);
+		registeredPackage = EPackage.Registry.INSTANCE.getEPackage(org.eclipse.e4.ui.model.application.descriptor.basic.impl.BasicPackageImpl.eNS_URI);
+		org.eclipse.e4.ui.model.application.descriptor.basic.impl.BasicPackageImpl theBasicPackage_1 = (org.eclipse.e4.ui.model.application.descriptor.basic.impl.BasicPackageImpl)(registeredPackage instanceof org.eclipse.e4.ui.model.application.descriptor.basic.impl.BasicPackageImpl ? registeredPackage : org.eclipse.e4.ui.model.application.descriptor.basic.impl.BasicPackageImpl.eINSTANCE);
 
 		// Create package meta-data objects
 		theCommandsPackage.createPackageContents();
@@ -1254,7 +1382,6 @@ public class CommandsPackageImpl extends EPackageImpl {
 		// Mark meta-data to indicate it can't be changed
 		theCommandsPackage.freeze();
 
-  
 		// Update the registry and return the package
 		EPackage.Registry.INSTANCE.put(CommandsPackageImpl.eNS_URI, theCommandsPackage);
 		return theCommandsPackage;
@@ -1267,6 +1394,7 @@ public class CommandsPackageImpl extends EPackageImpl {
 	 * <!-- end-user-doc -->
 	 * @return the meta object for class '<em>Binding Table Container</em>'.
 	 * @see org.eclipse.e4.ui.model.application.commands.MBindingTableContainer
+	 * @since 1.0
 	 * @generated
 	 */
 	public EClass getBindingTableContainer() {
@@ -1280,6 +1408,7 @@ public class CommandsPackageImpl extends EPackageImpl {
 	 * @return the meta object for the containment reference list '<em>Binding Tables</em>'.
 	 * @see org.eclipse.e4.ui.model.application.commands.MBindingTableContainer#getBindingTables()
 	 * @see #getBindingTableContainer()
+	 * @since 1.0
 	 * @generated
 	 */
 	public EReference getBindingTableContainer_BindingTables() {
@@ -1293,6 +1422,7 @@ public class CommandsPackageImpl extends EPackageImpl {
 	 * @return the meta object for the containment reference list '<em>Root Context</em>'.
 	 * @see org.eclipse.e4.ui.model.application.commands.MBindingTableContainer#getRootContext()
 	 * @see #getBindingTableContainer()
+	 * @since 1.0
 	 * @generated
 	 */
 	public EReference getBindingTableContainer_RootContext() {
@@ -1306,6 +1436,7 @@ public class CommandsPackageImpl extends EPackageImpl {
 	 * <!-- end-user-doc -->
 	 * @return the meta object for class '<em>Bindings</em>'.
 	 * @see org.eclipse.e4.ui.model.application.commands.MBindings
+	 * @since 1.0
 	 * @generated
 	 */
 	public EClass getBindings() {
@@ -1319,6 +1450,7 @@ public class CommandsPackageImpl extends EPackageImpl {
 	 * @return the meta object for the reference list '<em>Binding Contexts</em>'.
 	 * @see org.eclipse.e4.ui.model.application.commands.MBindings#getBindingContexts()
 	 * @see #getBindings()
+	 * @since 1.0
 	 * @generated
 	 */
 	public EReference getBindings_BindingContexts() {
@@ -1331,6 +1463,7 @@ public class CommandsPackageImpl extends EPackageImpl {
 	 * <!-- end-user-doc -->
 	 * @return the meta object for class '<em>Binding Context</em>'.
 	 * @see org.eclipse.e4.ui.model.application.commands.MBindingContext
+	 * @since 1.0
 	 * @generated
 	 */
 	public EClass getBindingContext() {
@@ -1344,6 +1477,7 @@ public class CommandsPackageImpl extends EPackageImpl {
 	 * @return the meta object for the attribute '<em>Name</em>'.
 	 * @see org.eclipse.e4.ui.model.application.commands.MBindingContext#getName()
 	 * @see #getBindingContext()
+	 * @since 1.0
 	 * @generated
 	 */
 	public EAttribute getBindingContext_Name() {
@@ -1357,6 +1491,7 @@ public class CommandsPackageImpl extends EPackageImpl {
 	 * @return the meta object for the attribute '<em>Description</em>'.
 	 * @see org.eclipse.e4.ui.model.application.commands.MBindingContext#getDescription()
 	 * @see #getBindingContext()
+	 * @since 1.0
 	 * @generated
 	 */
 	public EAttribute getBindingContext_Description() {
@@ -1370,6 +1505,7 @@ public class CommandsPackageImpl extends EPackageImpl {
 	 * @return the meta object for the containment reference list '<em>Children</em>'.
 	 * @see org.eclipse.e4.ui.model.application.commands.MBindingContext#getChildren()
 	 * @see #getBindingContext()
+	 * @since 1.0
 	 * @generated
 	 */
 	public EReference getBindingContext_Children() {
@@ -1382,6 +1518,7 @@ public class CommandsPackageImpl extends EPackageImpl {
 	 * <!-- end-user-doc -->
 	 * @return the meta object for class '<em>Binding Table</em>'.
 	 * @see org.eclipse.e4.ui.model.application.commands.MBindingTable
+	 * @since 1.0
 	 * @generated
 	 */
 	public EClass getBindingTable() {
@@ -1395,6 +1532,7 @@ public class CommandsPackageImpl extends EPackageImpl {
 	 * @return the meta object for the containment reference list '<em>Bindings</em>'.
 	 * @see org.eclipse.e4.ui.model.application.commands.MBindingTable#getBindings()
 	 * @see #getBindingTable()
+	 * @since 1.0
 	 * @generated
 	 */
 	public EReference getBindingTable_Bindings() {
@@ -1408,6 +1546,7 @@ public class CommandsPackageImpl extends EPackageImpl {
 	 * @return the meta object for the reference '<em>Binding Context</em>'.
 	 * @see org.eclipse.e4.ui.model.application.commands.MBindingTable#getBindingContext()
 	 * @see #getBindingTable()
+	 * @since 1.0
 	 * @generated
 	 */
 	public EReference getBindingTable_BindingContext() {
@@ -1421,6 +1560,7 @@ public class CommandsPackageImpl extends EPackageImpl {
 	 * <!-- end-user-doc -->
 	 * @return the meta object for class '<em>Command</em>'.
 	 * @see org.eclipse.e4.ui.model.application.commands.MCommand
+	 * @since 1.0
 	 * @generated
 	 */
 	public EClass getCommand() {
@@ -1434,6 +1574,7 @@ public class CommandsPackageImpl extends EPackageImpl {
 	 * @return the meta object for the attribute '<em>Command Name</em>'.
 	 * @see org.eclipse.e4.ui.model.application.commands.MCommand#getCommandName()
 	 * @see #getCommand()
+	 * @since 1.0
 	 * @generated
 	 */
 	public EAttribute getCommand_CommandName() {
@@ -1447,6 +1588,7 @@ public class CommandsPackageImpl extends EPackageImpl {
 	 * @return the meta object for the attribute '<em>Description</em>'.
 	 * @see org.eclipse.e4.ui.model.application.commands.MCommand#getDescription()
 	 * @see #getCommand()
+	 * @since 1.0
 	 * @generated
 	 */
 	public EAttribute getCommand_Description() {
@@ -1460,6 +1602,7 @@ public class CommandsPackageImpl extends EPackageImpl {
 	 * @return the meta object for the containment reference list '<em>Parameters</em>'.
 	 * @see org.eclipse.e4.ui.model.application.commands.MCommand#getParameters()
 	 * @see #getCommand()
+	 * @since 1.0
 	 * @generated
 	 */
 	public EReference getCommand_Parameters() {
@@ -1473,6 +1616,7 @@ public class CommandsPackageImpl extends EPackageImpl {
 	 * @return the meta object for the reference '<em>Category</em>'.
 	 * @see org.eclipse.e4.ui.model.application.commands.MCommand#getCategory()
 	 * @see #getCommand()
+	 * @since 1.0
 	 * @generated
 	 */
 	public EReference getCommand_Category() {
@@ -1487,6 +1631,7 @@ public class CommandsPackageImpl extends EPackageImpl {
 	 * @return the meta object for the attribute '<em>Localized Command Name</em>'.
 	 * @see org.eclipse.e4.ui.model.application.commands.MCommand#getLocalizedCommandName()
 	 * @see #getCommand()
+	 * @since 1.0
 	 * @generated
 	 */
 	public EAttribute getCommand_LocalizedCommandName() {
@@ -1501,6 +1646,7 @@ public class CommandsPackageImpl extends EPackageImpl {
 	 * @return the meta object for the attribute '<em>Localized Description</em>'.
 	 * @see org.eclipse.e4.ui.model.application.commands.MCommand#getLocalizedDescription()
 	 * @see #getCommand()
+	 * @since 1.0
 	 * @generated
 	 */
 	public EAttribute getCommand_LocalizedDescription() {
@@ -1514,6 +1660,7 @@ public class CommandsPackageImpl extends EPackageImpl {
 	 * <!-- end-user-doc -->
 	 * @return the meta object for class '<em>Command Parameter</em>'.
 	 * @see org.eclipse.e4.ui.model.application.commands.MCommandParameter
+	 * @since 1.0
 	 * @generated
 	 */
 	public EClass getCommandParameter() {
@@ -1527,6 +1674,7 @@ public class CommandsPackageImpl extends EPackageImpl {
 	 * @return the meta object for the attribute '<em>Name</em>'.
 	 * @see org.eclipse.e4.ui.model.application.commands.MCommandParameter#getName()
 	 * @see #getCommandParameter()
+	 * @since 1.0
 	 * @generated
 	 */
 	public EAttribute getCommandParameter_Name() {
@@ -1540,6 +1688,7 @@ public class CommandsPackageImpl extends EPackageImpl {
 	 * @return the meta object for the attribute '<em>Type Id</em>'.
 	 * @see org.eclipse.e4.ui.model.application.commands.MCommandParameter#getTypeId()
 	 * @see #getCommandParameter()
+	 * @since 1.0
 	 * @generated
 	 */
 	public EAttribute getCommandParameter_TypeId() {
@@ -1553,6 +1702,7 @@ public class CommandsPackageImpl extends EPackageImpl {
 	 * @return the meta object for the attribute '<em>Optional</em>'.
 	 * @see org.eclipse.e4.ui.model.application.commands.MCommandParameter#isOptional()
 	 * @see #getCommandParameter()
+	 * @since 1.0
 	 * @generated
 	 */
 	public EAttribute getCommandParameter_Optional() {
@@ -1565,6 +1715,7 @@ public class CommandsPackageImpl extends EPackageImpl {
 	 * <!-- end-user-doc -->
 	 * @return the meta object for class '<em>Handler</em>'.
 	 * @see org.eclipse.e4.ui.model.application.commands.MHandler
+	 * @since 1.0
 	 * @generated
 	 */
 	public EClass getHandler() {
@@ -1578,6 +1729,7 @@ public class CommandsPackageImpl extends EPackageImpl {
 	 * @return the meta object for the reference '<em>Command</em>'.
 	 * @see org.eclipse.e4.ui.model.application.commands.MHandler#getCommand()
 	 * @see #getHandler()
+	 * @since 1.0
 	 * @generated
 	 */
 	public EReference getHandler_Command() {
@@ -1590,6 +1742,7 @@ public class CommandsPackageImpl extends EPackageImpl {
 	 * <!-- end-user-doc -->
 	 * @return the meta object for class '<em>Handler Container</em>'.
 	 * @see org.eclipse.e4.ui.model.application.commands.MHandlerContainer
+	 * @since 1.0
 	 * @generated
 	 */
 	public EClass getHandlerContainer() {
@@ -1603,6 +1756,7 @@ public class CommandsPackageImpl extends EPackageImpl {
 	 * @return the meta object for the containment reference list '<em>Handlers</em>'.
 	 * @see org.eclipse.e4.ui.model.application.commands.MHandlerContainer#getHandlers()
 	 * @see #getHandlerContainer()
+	 * @since 1.0
 	 * @generated
 	 */
 	public EReference getHandlerContainer_Handlers() {
@@ -1615,6 +1769,7 @@ public class CommandsPackageImpl extends EPackageImpl {
 	 * <!-- end-user-doc -->
 	 * @return the meta object for class '<em>Key Binding</em>'.
 	 * @see org.eclipse.e4.ui.model.application.commands.MKeyBinding
+	 * @since 1.0
 	 * @generated
 	 */
 	public EClass getKeyBinding() {
@@ -1628,6 +1783,7 @@ public class CommandsPackageImpl extends EPackageImpl {
 	 * @return the meta object for the reference '<em>Command</em>'.
 	 * @see org.eclipse.e4.ui.model.application.commands.MKeyBinding#getCommand()
 	 * @see #getKeyBinding()
+	 * @since 1.0
 	 * @generated
 	 */
 	public EReference getKeyBinding_Command() {
@@ -1641,6 +1797,7 @@ public class CommandsPackageImpl extends EPackageImpl {
 	 * @return the meta object for the containment reference list '<em>Parameters</em>'.
 	 * @see org.eclipse.e4.ui.model.application.commands.MKeyBinding#getParameters()
 	 * @see #getKeyBinding()
+	 * @since 1.0
 	 * @generated
 	 */
 	public EReference getKeyBinding_Parameters() {
@@ -1653,6 +1810,7 @@ public class CommandsPackageImpl extends EPackageImpl {
 	 * <!-- end-user-doc -->
 	 * @return the meta object for class '<em>Key Sequence</em>'.
 	 * @see org.eclipse.e4.ui.model.application.commands.MKeySequence
+	 * @since 1.0
 	 * @generated
 	 */
 	public EClass getKeySequence() {
@@ -1666,6 +1824,7 @@ public class CommandsPackageImpl extends EPackageImpl {
 	 * @return the meta object for the attribute '<em>Key Sequence</em>'.
 	 * @see org.eclipse.e4.ui.model.application.commands.MKeySequence#getKeySequence()
 	 * @see #getKeySequence()
+	 * @since 1.0
 	 * @generated
 	 */
 	public EAttribute getKeySequence_KeySequence() {
@@ -1678,6 +1837,7 @@ public class CommandsPackageImpl extends EPackageImpl {
 	 * <!-- end-user-doc -->
 	 * @return the meta object for class '<em>Parameter</em>'.
 	 * @see org.eclipse.e4.ui.model.application.commands.MParameter
+	 * @since 1.0
 	 * @generated
 	 */
 	public EClass getParameter() {
@@ -1691,6 +1851,7 @@ public class CommandsPackageImpl extends EPackageImpl {
 	 * @return the meta object for the attribute '<em>Name</em>'.
 	 * @see org.eclipse.e4.ui.model.application.commands.MParameter#getName()
 	 * @see #getParameter()
+	 * @since 1.0
 	 * @generated
 	 */
 	public EAttribute getParameter_Name() {
@@ -1704,6 +1865,7 @@ public class CommandsPackageImpl extends EPackageImpl {
 	 * @return the meta object for the attribute '<em>Value</em>'.
 	 * @see org.eclipse.e4.ui.model.application.commands.MParameter#getValue()
 	 * @see #getParameter()
+	 * @since 1.0
 	 * @generated
 	 */
 	public EAttribute getParameter_Value() {
@@ -1716,6 +1878,7 @@ public class CommandsPackageImpl extends EPackageImpl {
 	 * <!-- end-user-doc -->
 	 * @return the meta object for class '<em>Category</em>'.
 	 * @see org.eclipse.e4.ui.model.application.commands.MCategory
+	 * @since 1.0
 	 * @generated
 	 */
 	public EClass getCategory() {
@@ -1730,6 +1893,7 @@ public class CommandsPackageImpl extends EPackageImpl {
 	 * @return the meta object for the attribute '<em>Name</em>'.
 	 * @see org.eclipse.e4.ui.model.application.commands.MCategory#getName()
 	 * @see #getCategory()
+	 * @since 1.0
 	 * @generated
 	 */
 	public EAttribute getCategory_Name() {
@@ -1744,6 +1908,7 @@ public class CommandsPackageImpl extends EPackageImpl {
 	 * @return the meta object for the attribute '<em>Description</em>'.
 	 * @see org.eclipse.e4.ui.model.application.commands.MCategory#getDescription()
 	 * @see #getCategory()
+	 * @since 1.0
 	 * @generated
 	 */
 	public EAttribute getCategory_Description() {
@@ -1758,6 +1923,7 @@ public class CommandsPackageImpl extends EPackageImpl {
 	 * @return the meta object for the attribute '<em>Localized Name</em>'.
 	 * @see org.eclipse.e4.ui.model.application.commands.MCategory#getLocalizedName()
 	 * @see #getCategory()
+	 * @since 1.0
 	 * @generated
 	 */
 	public EAttribute getCategory_LocalizedName() {
@@ -1772,6 +1938,7 @@ public class CommandsPackageImpl extends EPackageImpl {
 	 * @return the meta object for the attribute '<em>Localized Description</em>'.
 	 * @see org.eclipse.e4.ui.model.application.commands.MCategory#getLocalizedDescription()
 	 * @see #getCategory()
+	 * @since 1.0
 	 * @generated
 	 */
 	public EAttribute getCategory_LocalizedDescription() {
@@ -1998,6 +2165,7 @@ public class CommandsPackageImpl extends EPackageImpl {
 		 * <!-- end-user-doc -->
 		 * @see org.eclipse.e4.ui.model.application.commands.MBindingTableContainer
 		 * @see org.eclipse.e4.ui.model.application.commands.impl.CommandsPackageImpl#getBindingTableContainer()
+		 * @since 1.0
 		 * @generated
 		 */
 		public static final EClass BINDING_TABLE_CONTAINER = eINSTANCE.getBindingTableContainer();
@@ -2006,6 +2174,7 @@ public class CommandsPackageImpl extends EPackageImpl {
 		 * The meta object literal for the '<em><b>Binding Tables</b></em>' containment reference list feature.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
+		 * @since 1.0
 		 * @generated
 		 */
 		public static final EReference BINDING_TABLE_CONTAINER__BINDING_TABLES = eINSTANCE.getBindingTableContainer_BindingTables();
@@ -2014,6 +2183,7 @@ public class CommandsPackageImpl extends EPackageImpl {
 		 * The meta object literal for the '<em><b>Root Context</b></em>' containment reference list feature.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
+		 * @since 1.0
 		 * @generated
 		 */
 		public static final EReference BINDING_TABLE_CONTAINER__ROOT_CONTEXT = eINSTANCE.getBindingTableContainer_RootContext();
@@ -2024,6 +2194,7 @@ public class CommandsPackageImpl extends EPackageImpl {
 		 * <!-- end-user-doc -->
 		 * @see org.eclipse.e4.ui.model.application.commands.MBindings
 		 * @see org.eclipse.e4.ui.model.application.commands.impl.CommandsPackageImpl#getBindings()
+		 * @since 1.0
 		 * @generated
 		 */
 		public static final EClass BINDINGS = eINSTANCE.getBindings();
@@ -2032,6 +2203,7 @@ public class CommandsPackageImpl extends EPackageImpl {
 		 * The meta object literal for the '<em><b>Binding Contexts</b></em>' reference list feature.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
+		 * @since 1.0
 		 * @generated
 		 */
 		public static final EReference BINDINGS__BINDING_CONTEXTS = eINSTANCE.getBindings_BindingContexts();
@@ -2042,6 +2214,7 @@ public class CommandsPackageImpl extends EPackageImpl {
 		 * <!-- end-user-doc -->
 		 * @see org.eclipse.e4.ui.model.application.commands.impl.BindingContextImpl
 		 * @see org.eclipse.e4.ui.model.application.commands.impl.CommandsPackageImpl#getBindingContext()
+		 * @since 1.0
 		 * @generated
 		 */
 		public static final EClass BINDING_CONTEXT = eINSTANCE.getBindingContext();
@@ -2050,6 +2223,7 @@ public class CommandsPackageImpl extends EPackageImpl {
 		 * The meta object literal for the '<em><b>Name</b></em>' attribute feature.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
+		 * @since 1.0
 		 * @generated
 		 */
 		public static final EAttribute BINDING_CONTEXT__NAME = eINSTANCE.getBindingContext_Name();
@@ -2058,6 +2232,7 @@ public class CommandsPackageImpl extends EPackageImpl {
 		 * The meta object literal for the '<em><b>Description</b></em>' attribute feature.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
+		 * @since 1.0
 		 * @generated
 		 */
 		public static final EAttribute BINDING_CONTEXT__DESCRIPTION = eINSTANCE.getBindingContext_Description();
@@ -2066,6 +2241,7 @@ public class CommandsPackageImpl extends EPackageImpl {
 		 * The meta object literal for the '<em><b>Children</b></em>' containment reference list feature.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
+		 * @since 1.0
 		 * @generated
 		 */
 		public static final EReference BINDING_CONTEXT__CHILDREN = eINSTANCE.getBindingContext_Children();
@@ -2076,6 +2252,7 @@ public class CommandsPackageImpl extends EPackageImpl {
 		 * <!-- end-user-doc -->
 		 * @see org.eclipse.e4.ui.model.application.commands.impl.BindingTableImpl
 		 * @see org.eclipse.e4.ui.model.application.commands.impl.CommandsPackageImpl#getBindingTable()
+		 * @since 1.0
 		 * @generated
 		 */
 		public static final EClass BINDING_TABLE = eINSTANCE.getBindingTable();
@@ -2084,6 +2261,7 @@ public class CommandsPackageImpl extends EPackageImpl {
 		 * The meta object literal for the '<em><b>Bindings</b></em>' containment reference list feature.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
+		 * @since 1.0
 		 * @generated
 		 */
 		public static final EReference BINDING_TABLE__BINDINGS = eINSTANCE.getBindingTable_Bindings();
@@ -2092,6 +2270,7 @@ public class CommandsPackageImpl extends EPackageImpl {
 		 * The meta object literal for the '<em><b>Binding Context</b></em>' reference feature.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
+		 * @since 1.0
 		 * @generated
 		 */
 		public static final EReference BINDING_TABLE__BINDING_CONTEXT = eINSTANCE.getBindingTable_BindingContext();
@@ -2102,6 +2281,7 @@ public class CommandsPackageImpl extends EPackageImpl {
 		 * <!-- end-user-doc -->
 		 * @see org.eclipse.e4.ui.model.application.commands.impl.CommandImpl
 		 * @see org.eclipse.e4.ui.model.application.commands.impl.CommandsPackageImpl#getCommand()
+		 * @since 1.0
 		 * @generated
 		 */
 		public static final EClass COMMAND = eINSTANCE.getCommand();
@@ -2110,6 +2290,7 @@ public class CommandsPackageImpl extends EPackageImpl {
 		 * The meta object literal for the '<em><b>Command Name</b></em>' attribute feature.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
+		 * @since 1.0
 		 * @generated
 		 */
 		public static final EAttribute COMMAND__COMMAND_NAME = eINSTANCE.getCommand_CommandName();
@@ -2118,6 +2299,7 @@ public class CommandsPackageImpl extends EPackageImpl {
 		 * The meta object literal for the '<em><b>Description</b></em>' attribute feature.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
+		 * @since 1.0
 		 * @generated
 		 */
 		public static final EAttribute COMMAND__DESCRIPTION = eINSTANCE.getCommand_Description();
@@ -2126,6 +2308,7 @@ public class CommandsPackageImpl extends EPackageImpl {
 		 * The meta object literal for the '<em><b>Parameters</b></em>' containment reference list feature.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
+		 * @since 1.0
 		 * @generated
 		 */
 		public static final EReference COMMAND__PARAMETERS = eINSTANCE.getCommand_Parameters();
@@ -2134,6 +2317,7 @@ public class CommandsPackageImpl extends EPackageImpl {
 		 * The meta object literal for the '<em><b>Category</b></em>' reference feature.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
+		 * @since 1.0
 		 * @generated
 		 */
 		public static final EReference COMMAND__CATEGORY = eINSTANCE.getCommand_Category();
@@ -2142,6 +2326,7 @@ public class CommandsPackageImpl extends EPackageImpl {
 		 * The meta object literal for the '<em><b>Localized Command Name</b></em>' attribute feature.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
+		 * @since 1.0
 		 * @generated
 		 */
 		public static final EAttribute COMMAND__LOCALIZED_COMMAND_NAME = eINSTANCE.getCommand_LocalizedCommandName();
@@ -2150,6 +2335,7 @@ public class CommandsPackageImpl extends EPackageImpl {
 		 * The meta object literal for the '<em><b>Localized Description</b></em>' attribute feature.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
+		 * @since 1.0
 		 * @generated
 		 */
 		public static final EAttribute COMMAND__LOCALIZED_DESCRIPTION = eINSTANCE.getCommand_LocalizedDescription();
@@ -2160,6 +2346,7 @@ public class CommandsPackageImpl extends EPackageImpl {
 		 * <!-- end-user-doc -->
 		 * @see org.eclipse.e4.ui.model.application.commands.impl.CommandParameterImpl
 		 * @see org.eclipse.e4.ui.model.application.commands.impl.CommandsPackageImpl#getCommandParameter()
+		 * @since 1.0
 		 * @generated
 		 */
 		public static final EClass COMMAND_PARAMETER = eINSTANCE.getCommandParameter();
@@ -2168,6 +2355,7 @@ public class CommandsPackageImpl extends EPackageImpl {
 		 * The meta object literal for the '<em><b>Name</b></em>' attribute feature.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
+		 * @since 1.0
 		 * @generated
 		 */
 		public static final EAttribute COMMAND_PARAMETER__NAME = eINSTANCE.getCommandParameter_Name();
@@ -2176,6 +2364,7 @@ public class CommandsPackageImpl extends EPackageImpl {
 		 * The meta object literal for the '<em><b>Type Id</b></em>' attribute feature.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
+		 * @since 1.0
 		 * @generated
 		 */
 		public static final EAttribute COMMAND_PARAMETER__TYPE_ID = eINSTANCE.getCommandParameter_TypeId();
@@ -2184,6 +2373,7 @@ public class CommandsPackageImpl extends EPackageImpl {
 		 * The meta object literal for the '<em><b>Optional</b></em>' attribute feature.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
+		 * @since 1.0
 		 * @generated
 		 */
 		public static final EAttribute COMMAND_PARAMETER__OPTIONAL = eINSTANCE.getCommandParameter_Optional();
@@ -2194,6 +2384,7 @@ public class CommandsPackageImpl extends EPackageImpl {
 		 * <!-- end-user-doc -->
 		 * @see org.eclipse.e4.ui.model.application.commands.impl.HandlerImpl
 		 * @see org.eclipse.e4.ui.model.application.commands.impl.CommandsPackageImpl#getHandler()
+		 * @since 1.0
 		 * @generated
 		 */
 		public static final EClass HANDLER = eINSTANCE.getHandler();
@@ -2202,6 +2393,7 @@ public class CommandsPackageImpl extends EPackageImpl {
 		 * The meta object literal for the '<em><b>Command</b></em>' reference feature.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
+		 * @since 1.0
 		 * @generated
 		 */
 		public static final EReference HANDLER__COMMAND = eINSTANCE.getHandler_Command();
@@ -2212,6 +2404,7 @@ public class CommandsPackageImpl extends EPackageImpl {
 		 * <!-- end-user-doc -->
 		 * @see org.eclipse.e4.ui.model.application.commands.MHandlerContainer
 		 * @see org.eclipse.e4.ui.model.application.commands.impl.CommandsPackageImpl#getHandlerContainer()
+		 * @since 1.0
 		 * @generated
 		 */
 		public static final EClass HANDLER_CONTAINER = eINSTANCE.getHandlerContainer();
@@ -2220,6 +2413,7 @@ public class CommandsPackageImpl extends EPackageImpl {
 		 * The meta object literal for the '<em><b>Handlers</b></em>' containment reference list feature.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
+		 * @since 1.0
 		 * @generated
 		 */
 		public static final EReference HANDLER_CONTAINER__HANDLERS = eINSTANCE.getHandlerContainer_Handlers();
@@ -2230,6 +2424,7 @@ public class CommandsPackageImpl extends EPackageImpl {
 		 * <!-- end-user-doc -->
 		 * @see org.eclipse.e4.ui.model.application.commands.impl.KeyBindingImpl
 		 * @see org.eclipse.e4.ui.model.application.commands.impl.CommandsPackageImpl#getKeyBinding()
+		 * @since 1.0
 		 * @generated
 		 */
 		public static final EClass KEY_BINDING = eINSTANCE.getKeyBinding();
@@ -2238,6 +2433,7 @@ public class CommandsPackageImpl extends EPackageImpl {
 		 * The meta object literal for the '<em><b>Command</b></em>' reference feature.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
+		 * @since 1.0
 		 * @generated
 		 */
 		public static final EReference KEY_BINDING__COMMAND = eINSTANCE.getKeyBinding_Command();
@@ -2246,6 +2442,7 @@ public class CommandsPackageImpl extends EPackageImpl {
 		 * The meta object literal for the '<em><b>Parameters</b></em>' containment reference list feature.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
+		 * @since 1.0
 		 * @generated
 		 */
 		public static final EReference KEY_BINDING__PARAMETERS = eINSTANCE.getKeyBinding_Parameters();
@@ -2256,6 +2453,7 @@ public class CommandsPackageImpl extends EPackageImpl {
 		 * <!-- end-user-doc -->
 		 * @see org.eclipse.e4.ui.model.application.commands.MKeySequence
 		 * @see org.eclipse.e4.ui.model.application.commands.impl.CommandsPackageImpl#getKeySequence()
+		 * @since 1.0
 		 * @generated
 		 */
 		public static final EClass KEY_SEQUENCE = eINSTANCE.getKeySequence();
@@ -2264,6 +2462,7 @@ public class CommandsPackageImpl extends EPackageImpl {
 		 * The meta object literal for the '<em><b>Key Sequence</b></em>' attribute feature.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
+		 * @since 1.0
 		 * @generated
 		 */
 		public static final EAttribute KEY_SEQUENCE__KEY_SEQUENCE = eINSTANCE.getKeySequence_KeySequence();
@@ -2274,6 +2473,7 @@ public class CommandsPackageImpl extends EPackageImpl {
 		 * <!-- end-user-doc -->
 		 * @see org.eclipse.e4.ui.model.application.commands.impl.ParameterImpl
 		 * @see org.eclipse.e4.ui.model.application.commands.impl.CommandsPackageImpl#getParameter()
+		 * @since 1.0
 		 * @generated
 		 */
 		public static final EClass PARAMETER = eINSTANCE.getParameter();
@@ -2282,6 +2482,7 @@ public class CommandsPackageImpl extends EPackageImpl {
 		 * The meta object literal for the '<em><b>Name</b></em>' attribute feature.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
+		 * @since 1.0
 		 * @generated
 		 */
 		public static final EAttribute PARAMETER__NAME = eINSTANCE.getParameter_Name();
@@ -2290,6 +2491,7 @@ public class CommandsPackageImpl extends EPackageImpl {
 		 * The meta object literal for the '<em><b>Value</b></em>' attribute feature.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
+		 * @since 1.0
 		 * @generated
 		 */
 		public static final EAttribute PARAMETER__VALUE = eINSTANCE.getParameter_Value();
@@ -2300,6 +2502,7 @@ public class CommandsPackageImpl extends EPackageImpl {
 		 * <!-- end-user-doc -->
 		 * @see org.eclipse.e4.ui.model.application.commands.impl.CategoryImpl
 		 * @see org.eclipse.e4.ui.model.application.commands.impl.CommandsPackageImpl#getCategory()
+		 * @since 1.0
 		 * @generated
 		 */
 		public static final EClass CATEGORY = eINSTANCE.getCategory();
@@ -2308,6 +2511,7 @@ public class CommandsPackageImpl extends EPackageImpl {
 		 * The meta object literal for the '<em><b>Name</b></em>' attribute feature.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
+		 * @since 1.0
 		 * @generated
 		 */
 		public static final EAttribute CATEGORY__NAME = eINSTANCE.getCategory_Name();
@@ -2316,6 +2520,7 @@ public class CommandsPackageImpl extends EPackageImpl {
 		 * The meta object literal for the '<em><b>Description</b></em>' attribute feature.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
+		 * @since 1.0
 		 * @generated
 		 */
 		public static final EAttribute CATEGORY__DESCRIPTION = eINSTANCE.getCategory_Description();
@@ -2324,6 +2529,7 @@ public class CommandsPackageImpl extends EPackageImpl {
 		 * The meta object literal for the '<em><b>Localized Name</b></em>' attribute feature.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
+		 * @since 1.0
 		 * @generated
 		 */
 		public static final EAttribute CATEGORY__LOCALIZED_NAME = eINSTANCE.getCategory_LocalizedName();
@@ -2332,6 +2538,7 @@ public class CommandsPackageImpl extends EPackageImpl {
 		 * The meta object literal for the '<em><b>Localized Description</b></em>' attribute feature.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
+		 * @since 1.0
 		 * @generated
 		 */
 		public static final EAttribute CATEGORY__LOCALIZED_DESCRIPTION = eINSTANCE.getCategory_LocalizedDescription();

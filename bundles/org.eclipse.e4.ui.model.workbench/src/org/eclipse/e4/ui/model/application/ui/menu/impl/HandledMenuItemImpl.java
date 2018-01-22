@@ -40,6 +40,7 @@ import org.eclipse.emf.ecore.util.InternalEList;
  *   <li>{@link org.eclipse.e4.ui.model.application.ui.menu.impl.HandledMenuItemImpl#getParameters <em>Parameters</em>}</li>
  * </ul>
  *
+ * @since 1.0
  * @generated
  */
 public class HandledMenuItemImpl extends MenuItemImpl implements MHandledMenuItem {
@@ -313,7 +314,7 @@ public class HandledMenuItemImpl extends MenuItemImpl implements MHandledMenuIte
 	public String toString() {
 		if (eIsProxy()) return super.toString();
 
-		StringBuffer result = new StringBuffer(super.toString());
+		StringBuilder result = new StringBuilder(super.toString());
 		result.append(" (wbCommand: "); //$NON-NLS-1$
 		result.append(wbCommand);
 		result.append(')');

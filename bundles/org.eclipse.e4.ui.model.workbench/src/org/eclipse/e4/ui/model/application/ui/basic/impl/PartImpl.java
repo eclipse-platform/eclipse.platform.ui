@@ -78,6 +78,7 @@ import org.eclipse.emf.ecore.util.InternalEList;
  *   <li>{@link org.eclipse.e4.ui.model.application.ui.basic.impl.PartImpl#getTrimBars <em>Trim Bars</em>}</li>
  * </ul>
  *
+ * @since 1.0
  * @generated
  */
 public class PartImpl extends UIElementImpl implements MPart {
@@ -86,6 +87,7 @@ public class PartImpl extends UIElementImpl implements MPart {
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @see #getContributionURI()
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -96,6 +98,7 @@ public class PartImpl extends UIElementImpl implements MPart {
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @see #getContributionURI()
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -166,6 +169,7 @@ public class PartImpl extends UIElementImpl implements MPart {
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @see #getLabel()
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -176,6 +180,7 @@ public class PartImpl extends UIElementImpl implements MPart {
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @see #getLabel()
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -186,6 +191,7 @@ public class PartImpl extends UIElementImpl implements MPart {
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @see #getIconURI()
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -196,6 +202,7 @@ public class PartImpl extends UIElementImpl implements MPart {
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @see #getIconURI()
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -206,6 +213,7 @@ public class PartImpl extends UIElementImpl implements MPart {
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @see #getTooltip()
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -216,6 +224,7 @@ public class PartImpl extends UIElementImpl implements MPart {
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @see #getTooltip()
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -356,6 +365,8 @@ public class PartImpl extends UIElementImpl implements MPart {
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @see #getTrimBars()
+	 * @since 1.3
+	 * </p>
 	 * @generated
 	 * @ordered
 	 */
@@ -383,6 +394,7 @@ public class PartImpl extends UIElementImpl implements MPart {
 	/**
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 */
 	public String getContributionURI() {
@@ -392,6 +404,7 @@ public class PartImpl extends UIElementImpl implements MPart {
 	/**
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 */
 	public void setContributionURI(String newContributionURI) {
@@ -470,6 +483,7 @@ public class PartImpl extends UIElementImpl implements MPart {
 	/**
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 */
 	public String getLabel() {
@@ -479,6 +493,7 @@ public class PartImpl extends UIElementImpl implements MPart {
 	/**
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 */
 	public void setLabel(String newLabel) {
@@ -491,6 +506,7 @@ public class PartImpl extends UIElementImpl implements MPart {
 	/**
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 */
 	public String getIconURI() {
@@ -500,6 +516,7 @@ public class PartImpl extends UIElementImpl implements MPart {
 	/**
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 */
 	public void setIconURI(String newIconURI) {
@@ -512,6 +529,7 @@ public class PartImpl extends UIElementImpl implements MPart {
 	/**
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 */
 	public String getTooltip() {
@@ -521,6 +539,7 @@ public class PartImpl extends UIElementImpl implements MPart {
 	/**
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 */
 	public void setTooltip(String newTooltip) {
@@ -683,6 +702,8 @@ public class PartImpl extends UIElementImpl implements MPart {
 	/**
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.3
+	 * </p>
 	 * @generated
 	 */
 	public List<MTrimBar> getTrimBars() {
@@ -1118,7 +1139,7 @@ public class PartImpl extends UIElementImpl implements MPart {
 	public String toString() {
 		if (eIsProxy()) return super.toString();
 
-		StringBuffer result = new StringBuffer(super.toString());
+		StringBuilder result = new StringBuilder(super.toString());
 		result.append(" (contributionURI: "); //$NON-NLS-1$
 		result.append(contributionURI);
 		result.append(", object: "); //$NON-NLS-1$

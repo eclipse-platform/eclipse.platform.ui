@@ -82,6 +82,7 @@ public class AdvancedPackageImpl extends EPackageImpl {
 	 * <!-- end-user-doc -->
 	 * @see org.eclipse.e4.ui.model.application.ui.advanced.impl.PlaceholderImpl
 	 * @see org.eclipse.e4.ui.model.application.ui.advanced.impl.AdvancedPackageImpl#getPlaceholder()
+	 * @since 1.0
 	 * @generated
 	 */
 	public static final int PLACEHOLDER = 0;
@@ -90,6 +91,7 @@ public class AdvancedPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Element Id</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -99,6 +101,7 @@ public class AdvancedPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Persisted State</b></em>' map.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -108,6 +111,7 @@ public class AdvancedPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Tags</b></em>' attribute list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -117,6 +121,7 @@ public class AdvancedPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Contributor URI</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -126,6 +131,7 @@ public class AdvancedPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Transient Data</b></em>' map.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -135,6 +141,7 @@ public class AdvancedPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Widget</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -144,6 +151,7 @@ public class AdvancedPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Renderer</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -153,6 +161,7 @@ public class AdvancedPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>To Be Rendered</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -162,6 +171,7 @@ public class AdvancedPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>On Top</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -171,6 +181,7 @@ public class AdvancedPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Visible</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -180,6 +191,7 @@ public class AdvancedPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Parent</b></em>' container reference.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -189,6 +201,7 @@ public class AdvancedPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Container Data</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -198,6 +211,7 @@ public class AdvancedPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Cur Shared Ref</b></em>' reference.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -207,6 +221,7 @@ public class AdvancedPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Visible When</b></em>' containment reference.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -216,6 +231,7 @@ public class AdvancedPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Accessibility Phrase</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -225,6 +241,7 @@ public class AdvancedPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Localized Accessibility Phrase</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -234,6 +251,7 @@ public class AdvancedPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Ref</b></em>' reference.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -243,6 +261,7 @@ public class AdvancedPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Closeable</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -252,6 +271,7 @@ public class AdvancedPackageImpl extends EPackageImpl {
 	 * The number of structural features of the '<em>Placeholder</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -261,6 +281,7 @@ public class AdvancedPackageImpl extends EPackageImpl {
 	 * The operation id for the '<em>Update Localization</em>' operation.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.1
 	 * @generated
 	 * @ordered
 	 */
@@ -270,6 +291,7 @@ public class AdvancedPackageImpl extends EPackageImpl {
 	 * The number of operations of the '<em>Placeholder</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -281,6 +303,7 @@ public class AdvancedPackageImpl extends EPackageImpl {
 	 * <!-- end-user-doc -->
 	 * @see org.eclipse.e4.ui.model.application.ui.advanced.impl.PerspectiveImpl
 	 * @see org.eclipse.e4.ui.model.application.ui.advanced.impl.AdvancedPackageImpl#getPerspective()
+	 * @since 1.0
 	 * @generated
 	 */
 	public static final int PERSPECTIVE = 1;
@@ -289,6 +312,7 @@ public class AdvancedPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Element Id</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -298,6 +322,7 @@ public class AdvancedPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Persisted State</b></em>' map.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -307,6 +332,7 @@ public class AdvancedPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Tags</b></em>' attribute list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -316,6 +342,7 @@ public class AdvancedPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Contributor URI</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -325,6 +352,7 @@ public class AdvancedPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Transient Data</b></em>' map.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -334,6 +362,7 @@ public class AdvancedPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Widget</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -343,6 +372,7 @@ public class AdvancedPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Renderer</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -352,6 +382,7 @@ public class AdvancedPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>To Be Rendered</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -361,6 +392,7 @@ public class AdvancedPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>On Top</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -370,6 +402,7 @@ public class AdvancedPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Visible</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -379,6 +412,7 @@ public class AdvancedPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Parent</b></em>' container reference.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -388,6 +422,7 @@ public class AdvancedPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Container Data</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -397,6 +432,7 @@ public class AdvancedPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Cur Shared Ref</b></em>' reference.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -406,6 +442,7 @@ public class AdvancedPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Visible When</b></em>' containment reference.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -415,6 +452,7 @@ public class AdvancedPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Accessibility Phrase</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -424,6 +462,7 @@ public class AdvancedPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Localized Accessibility Phrase</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -433,6 +472,7 @@ public class AdvancedPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Children</b></em>' containment reference list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -442,6 +482,7 @@ public class AdvancedPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Selected Element</b></em>' reference.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -451,6 +492,7 @@ public class AdvancedPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Label</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -460,6 +502,7 @@ public class AdvancedPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Icon URI</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -469,6 +512,7 @@ public class AdvancedPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Tooltip</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -478,6 +522,7 @@ public class AdvancedPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Localized Label</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -487,6 +532,7 @@ public class AdvancedPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Localized Tooltip</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -496,6 +542,7 @@ public class AdvancedPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Context</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -505,6 +552,7 @@ public class AdvancedPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Variables</b></em>' attribute list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -514,6 +562,7 @@ public class AdvancedPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Properties</b></em>' map.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -523,6 +572,7 @@ public class AdvancedPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Handlers</b></em>' containment reference list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -532,6 +582,7 @@ public class AdvancedPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Binding Contexts</b></em>' reference list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -541,6 +592,7 @@ public class AdvancedPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Windows</b></em>' containment reference list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -550,6 +602,8 @@ public class AdvancedPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Trim Bars</b></em>' containment reference list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.3
+	 * </p>
 	 * @generated
 	 * @ordered
 	 */
@@ -559,6 +613,7 @@ public class AdvancedPackageImpl extends EPackageImpl {
 	 * The number of structural features of the '<em>Perspective</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -568,6 +623,7 @@ public class AdvancedPackageImpl extends EPackageImpl {
 	 * The operation id for the '<em>Update Localization</em>' operation.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.1
 	 * @generated
 	 * @ordered
 	 */
@@ -577,6 +633,7 @@ public class AdvancedPackageImpl extends EPackageImpl {
 	 * The number of operations of the '<em>Perspective</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -588,6 +645,7 @@ public class AdvancedPackageImpl extends EPackageImpl {
 	 * <!-- end-user-doc -->
 	 * @see org.eclipse.e4.ui.model.application.ui.advanced.impl.PerspectiveStackImpl
 	 * @see org.eclipse.e4.ui.model.application.ui.advanced.impl.AdvancedPackageImpl#getPerspectiveStack()
+	 * @since 1.0
 	 * @generated
 	 */
 	public static final int PERSPECTIVE_STACK = 2;
@@ -596,6 +654,7 @@ public class AdvancedPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Element Id</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -605,6 +664,7 @@ public class AdvancedPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Persisted State</b></em>' map.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -614,6 +674,7 @@ public class AdvancedPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Tags</b></em>' attribute list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -623,6 +684,7 @@ public class AdvancedPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Contributor URI</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -632,6 +694,7 @@ public class AdvancedPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Transient Data</b></em>' map.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -641,6 +704,7 @@ public class AdvancedPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Widget</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -650,6 +714,7 @@ public class AdvancedPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Renderer</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -659,6 +724,7 @@ public class AdvancedPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>To Be Rendered</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -668,6 +734,7 @@ public class AdvancedPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>On Top</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -677,6 +744,7 @@ public class AdvancedPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Visible</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -686,6 +754,7 @@ public class AdvancedPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Parent</b></em>' container reference.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -695,6 +764,7 @@ public class AdvancedPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Container Data</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -704,6 +774,7 @@ public class AdvancedPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Cur Shared Ref</b></em>' reference.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -713,6 +784,7 @@ public class AdvancedPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Visible When</b></em>' containment reference.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -722,6 +794,7 @@ public class AdvancedPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Accessibility Phrase</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -731,6 +804,7 @@ public class AdvancedPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Localized Accessibility Phrase</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -740,6 +814,7 @@ public class AdvancedPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Children</b></em>' containment reference list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -749,6 +824,7 @@ public class AdvancedPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Selected Element</b></em>' reference.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -758,6 +834,7 @@ public class AdvancedPackageImpl extends EPackageImpl {
 	 * The number of structural features of the '<em>Perspective Stack</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -767,6 +844,7 @@ public class AdvancedPackageImpl extends EPackageImpl {
 	 * The operation id for the '<em>Update Localization</em>' operation.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.1
 	 * @generated
 	 * @ordered
 	 */
@@ -776,6 +854,7 @@ public class AdvancedPackageImpl extends EPackageImpl {
 	 * The number of operations of the '<em>Perspective Stack</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -787,6 +866,7 @@ public class AdvancedPackageImpl extends EPackageImpl {
 	 * <!-- end-user-doc -->
 	 * @see org.eclipse.e4.ui.model.application.ui.advanced.impl.AreaImpl
 	 * @see org.eclipse.e4.ui.model.application.ui.advanced.impl.AdvancedPackageImpl#getArea()
+	 * @since 1.0
 	 * @generated
 	 */
 	public static final int AREA = 3;
@@ -795,6 +875,7 @@ public class AdvancedPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Element Id</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -804,6 +885,7 @@ public class AdvancedPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Persisted State</b></em>' map.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -813,6 +895,7 @@ public class AdvancedPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Tags</b></em>' attribute list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -822,6 +905,7 @@ public class AdvancedPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Contributor URI</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -831,6 +915,7 @@ public class AdvancedPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Transient Data</b></em>' map.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -840,6 +925,7 @@ public class AdvancedPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Widget</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -849,6 +935,7 @@ public class AdvancedPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Renderer</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -858,6 +945,7 @@ public class AdvancedPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>To Be Rendered</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -867,6 +955,7 @@ public class AdvancedPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>On Top</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -876,6 +965,7 @@ public class AdvancedPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Visible</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -885,6 +975,7 @@ public class AdvancedPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Parent</b></em>' container reference.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -894,6 +985,7 @@ public class AdvancedPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Container Data</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -903,6 +995,7 @@ public class AdvancedPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Cur Shared Ref</b></em>' reference.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -912,6 +1005,7 @@ public class AdvancedPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Visible When</b></em>' containment reference.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -921,6 +1015,7 @@ public class AdvancedPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Accessibility Phrase</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -930,6 +1025,7 @@ public class AdvancedPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Localized Accessibility Phrase</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -939,6 +1035,7 @@ public class AdvancedPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Children</b></em>' containment reference list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -948,6 +1045,7 @@ public class AdvancedPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Selected Element</b></em>' reference.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -957,6 +1055,7 @@ public class AdvancedPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Horizontal</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -966,6 +1065,7 @@ public class AdvancedPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Label</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -975,6 +1075,7 @@ public class AdvancedPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Icon URI</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -984,6 +1085,7 @@ public class AdvancedPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Tooltip</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -993,6 +1095,7 @@ public class AdvancedPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Localized Label</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -1002,6 +1105,7 @@ public class AdvancedPackageImpl extends EPackageImpl {
 	 * The feature id for the '<em><b>Localized Tooltip</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -1011,6 +1115,7 @@ public class AdvancedPackageImpl extends EPackageImpl {
 	 * The number of structural features of the '<em>Area</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -1020,6 +1125,7 @@ public class AdvancedPackageImpl extends EPackageImpl {
 	 * The operation id for the '<em>Update Localization</em>' operation.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.1
 	 * @generated
 	 * @ordered
 	 */
@@ -1029,6 +1135,7 @@ public class AdvancedPackageImpl extends EPackageImpl {
 	 * The number of operations of the '<em>Area</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -1037,6 +1144,7 @@ public class AdvancedPackageImpl extends EPackageImpl {
 	/**
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 */
 	private EClass placeholderEClass = null;
@@ -1044,6 +1152,7 @@ public class AdvancedPackageImpl extends EPackageImpl {
 	/**
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 */
 	private EClass perspectiveEClass = null;
@@ -1051,6 +1160,7 @@ public class AdvancedPackageImpl extends EPackageImpl {
 	/**
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 */
 	private EClass perspectiveStackEClass = null;
@@ -1058,6 +1168,7 @@ public class AdvancedPackageImpl extends EPackageImpl {
 	/**
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 */
 	private EClass areaEClass = null;
@@ -1090,7 +1201,7 @@ public class AdvancedPackageImpl extends EPackageImpl {
 
 	/**
 	 * Creates, registers, and initializes the <b>Package</b> for this model, and for any others upon which it depends.
-	 * 
+	 *
 	 * <p>This method is used to initialize {@link AdvancedPackageImpl#eINSTANCE} when that field is accessed.
 	 * Clients should not invoke it directly. Instead, they should simply access that field to obtain the package.
 	 * <!-- begin-user-doc -->
@@ -1104,17 +1215,24 @@ public class AdvancedPackageImpl extends EPackageImpl {
 		if (isInited) return (AdvancedPackageImpl)EPackage.Registry.INSTANCE.getEPackage(AdvancedPackageImpl.eNS_URI);
 
 		// Obtain or create and register package
-		AdvancedPackageImpl theAdvancedPackage = (AdvancedPackageImpl)(EPackage.Registry.INSTANCE.get(eNS_URI) instanceof AdvancedPackageImpl ? EPackage.Registry.INSTANCE.get(eNS_URI) : new AdvancedPackageImpl());
+		Object registeredAdvancedPackage = EPackage.Registry.INSTANCE.get(eNS_URI);
+		AdvancedPackageImpl theAdvancedPackage = registeredAdvancedPackage instanceof AdvancedPackageImpl ? (AdvancedPackageImpl)registeredAdvancedPackage : new AdvancedPackageImpl();
 
 		isInited = true;
 
 		// Obtain or create and register interdependencies
-		ApplicationPackageImpl theApplicationPackage = (ApplicationPackageImpl)(EPackage.Registry.INSTANCE.getEPackage(ApplicationPackageImpl.eNS_URI) instanceof ApplicationPackageImpl ? EPackage.Registry.INSTANCE.getEPackage(ApplicationPackageImpl.eNS_URI) : ApplicationPackageImpl.eINSTANCE);
-		CommandsPackageImpl theCommandsPackage = (CommandsPackageImpl)(EPackage.Registry.INSTANCE.getEPackage(CommandsPackageImpl.eNS_URI) instanceof CommandsPackageImpl ? EPackage.Registry.INSTANCE.getEPackage(CommandsPackageImpl.eNS_URI) : CommandsPackageImpl.eINSTANCE);
-		UiPackageImpl theUiPackage = (UiPackageImpl)(EPackage.Registry.INSTANCE.getEPackage(UiPackageImpl.eNS_URI) instanceof UiPackageImpl ? EPackage.Registry.INSTANCE.getEPackage(UiPackageImpl.eNS_URI) : UiPackageImpl.eINSTANCE);
-		MenuPackageImpl theMenuPackage = (MenuPackageImpl)(EPackage.Registry.INSTANCE.getEPackage(MenuPackageImpl.eNS_URI) instanceof MenuPackageImpl ? EPackage.Registry.INSTANCE.getEPackage(MenuPackageImpl.eNS_URI) : MenuPackageImpl.eINSTANCE);
-		BasicPackageImpl theBasicPackage = (BasicPackageImpl)(EPackage.Registry.INSTANCE.getEPackage(BasicPackageImpl.eNS_URI) instanceof BasicPackageImpl ? EPackage.Registry.INSTANCE.getEPackage(BasicPackageImpl.eNS_URI) : BasicPackageImpl.eINSTANCE);
-		org.eclipse.e4.ui.model.application.descriptor.basic.impl.BasicPackageImpl theBasicPackage_1 = (org.eclipse.e4.ui.model.application.descriptor.basic.impl.BasicPackageImpl)(EPackage.Registry.INSTANCE.getEPackage(org.eclipse.e4.ui.model.application.descriptor.basic.impl.BasicPackageImpl.eNS_URI) instanceof org.eclipse.e4.ui.model.application.descriptor.basic.impl.BasicPackageImpl ? EPackage.Registry.INSTANCE.getEPackage(org.eclipse.e4.ui.model.application.descriptor.basic.impl.BasicPackageImpl.eNS_URI) : org.eclipse.e4.ui.model.application.descriptor.basic.impl.BasicPackageImpl.eINSTANCE);
+		Object registeredPackage = EPackage.Registry.INSTANCE.getEPackage(ApplicationPackageImpl.eNS_URI);
+		ApplicationPackageImpl theApplicationPackage = (ApplicationPackageImpl)(registeredPackage instanceof ApplicationPackageImpl ? registeredPackage : ApplicationPackageImpl.eINSTANCE);
+		registeredPackage = EPackage.Registry.INSTANCE.getEPackage(CommandsPackageImpl.eNS_URI);
+		CommandsPackageImpl theCommandsPackage = (CommandsPackageImpl)(registeredPackage instanceof CommandsPackageImpl ? registeredPackage : CommandsPackageImpl.eINSTANCE);
+		registeredPackage = EPackage.Registry.INSTANCE.getEPackage(UiPackageImpl.eNS_URI);
+		UiPackageImpl theUiPackage = (UiPackageImpl)(registeredPackage instanceof UiPackageImpl ? registeredPackage : UiPackageImpl.eINSTANCE);
+		registeredPackage = EPackage.Registry.INSTANCE.getEPackage(MenuPackageImpl.eNS_URI);
+		MenuPackageImpl theMenuPackage = (MenuPackageImpl)(registeredPackage instanceof MenuPackageImpl ? registeredPackage : MenuPackageImpl.eINSTANCE);
+		registeredPackage = EPackage.Registry.INSTANCE.getEPackage(BasicPackageImpl.eNS_URI);
+		BasicPackageImpl theBasicPackage = (BasicPackageImpl)(registeredPackage instanceof BasicPackageImpl ? registeredPackage : BasicPackageImpl.eINSTANCE);
+		registeredPackage = EPackage.Registry.INSTANCE.getEPackage(org.eclipse.e4.ui.model.application.descriptor.basic.impl.BasicPackageImpl.eNS_URI);
+		org.eclipse.e4.ui.model.application.descriptor.basic.impl.BasicPackageImpl theBasicPackage_1 = (org.eclipse.e4.ui.model.application.descriptor.basic.impl.BasicPackageImpl)(registeredPackage instanceof org.eclipse.e4.ui.model.application.descriptor.basic.impl.BasicPackageImpl ? registeredPackage : org.eclipse.e4.ui.model.application.descriptor.basic.impl.BasicPackageImpl.eINSTANCE);
 
 		// Create package meta-data objects
 		theAdvancedPackage.createPackageContents();
@@ -1137,7 +1255,6 @@ public class AdvancedPackageImpl extends EPackageImpl {
 		// Mark meta-data to indicate it can't be changed
 		theAdvancedPackage.freeze();
 
-  
 		// Update the registry and return the package
 		EPackage.Registry.INSTANCE.put(AdvancedPackageImpl.eNS_URI, theAdvancedPackage);
 		return theAdvancedPackage;
@@ -1150,6 +1267,7 @@ public class AdvancedPackageImpl extends EPackageImpl {
 	 * <!-- end-user-doc -->
 	 * @return the meta object for class '<em>Placeholder</em>'.
 	 * @see org.eclipse.e4.ui.model.application.ui.advanced.MPlaceholder
+	 * @since 1.0
 	 * @generated
 	 */
 	public EClass getPlaceholder() {
@@ -1163,6 +1281,7 @@ public class AdvancedPackageImpl extends EPackageImpl {
 	 * @return the meta object for the reference '<em>Ref</em>'.
 	 * @see org.eclipse.e4.ui.model.application.ui.advanced.MPlaceholder#getRef()
 	 * @see #getPlaceholder()
+	 * @since 1.0
 	 * @generated
 	 */
 	public EReference getPlaceholder_Ref() {
@@ -1176,6 +1295,7 @@ public class AdvancedPackageImpl extends EPackageImpl {
 	 * @return the meta object for the attribute '<em>Closeable</em>'.
 	 * @see org.eclipse.e4.ui.model.application.ui.advanced.MPlaceholder#isCloseable()
 	 * @see #getPlaceholder()
+	 * @since 1.0
 	 * @generated
 	 */
 	public EAttribute getPlaceholder_Closeable() {
@@ -1189,6 +1309,7 @@ public class AdvancedPackageImpl extends EPackageImpl {
 	 * <!-- end-user-doc -->
 	 * @return the meta object for class '<em>Perspective</em>'.
 	 * @see org.eclipse.e4.ui.model.application.ui.advanced.MPerspective
+	 * @since 1.0
 	 * @generated
 	 */
 	public EClass getPerspective() {
@@ -1202,6 +1323,7 @@ public class AdvancedPackageImpl extends EPackageImpl {
 	 * @return the meta object for the containment reference list '<em>Windows</em>'.
 	 * @see org.eclipse.e4.ui.model.application.ui.advanced.MPerspective#getWindows()
 	 * @see #getPerspective()
+	 * @since 1.0
 	 * @generated
 	 */
 	public EReference getPerspective_Windows() {
@@ -1215,6 +1337,8 @@ public class AdvancedPackageImpl extends EPackageImpl {
 	 * @return the meta object for the containment reference list '<em>Trim Bars</em>'.
 	 * @see org.eclipse.e4.ui.model.application.ui.advanced.MPerspective#getTrimBars()
 	 * @see #getPerspective()
+	 * @since 1.3
+	 * </p>
 	 * @generated
 	 */
 	public EReference getPerspective_TrimBars() {
@@ -1228,6 +1352,7 @@ public class AdvancedPackageImpl extends EPackageImpl {
 	 * <!-- end-user-doc -->
 	 * @return the meta object for class '<em>Perspective Stack</em>'.
 	 * @see org.eclipse.e4.ui.model.application.ui.advanced.MPerspectiveStack
+	 * @since 1.0
 	 * @generated
 	 */
 	public EClass getPerspectiveStack() {
@@ -1240,6 +1365,7 @@ public class AdvancedPackageImpl extends EPackageImpl {
 	 * <!-- end-user-doc -->
 	 * @return the meta object for class '<em>Area</em>'.
 	 * @see org.eclipse.e4.ui.model.application.ui.advanced.MArea
+	 * @since 1.0
 	 * @generated
 	 */
 	public EClass getArea() {
@@ -1383,6 +1509,7 @@ public class AdvancedPackageImpl extends EPackageImpl {
 		 * <!-- end-user-doc -->
 		 * @see org.eclipse.e4.ui.model.application.ui.advanced.impl.PlaceholderImpl
 		 * @see org.eclipse.e4.ui.model.application.ui.advanced.impl.AdvancedPackageImpl#getPlaceholder()
+		 * @since 1.0
 		 * @generated
 		 */
 		public static final EClass PLACEHOLDER = eINSTANCE.getPlaceholder();
@@ -1391,6 +1518,7 @@ public class AdvancedPackageImpl extends EPackageImpl {
 		 * The meta object literal for the '<em><b>Ref</b></em>' reference feature.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
+		 * @since 1.0
 		 * @generated
 		 */
 		public static final EReference PLACEHOLDER__REF = eINSTANCE.getPlaceholder_Ref();
@@ -1399,6 +1527,7 @@ public class AdvancedPackageImpl extends EPackageImpl {
 		 * The meta object literal for the '<em><b>Closeable</b></em>' attribute feature.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
+		 * @since 1.0
 		 * @generated
 		 */
 		public static final EAttribute PLACEHOLDER__CLOSEABLE = eINSTANCE.getPlaceholder_Closeable();
@@ -1409,6 +1538,7 @@ public class AdvancedPackageImpl extends EPackageImpl {
 		 * <!-- end-user-doc -->
 		 * @see org.eclipse.e4.ui.model.application.ui.advanced.impl.PerspectiveImpl
 		 * @see org.eclipse.e4.ui.model.application.ui.advanced.impl.AdvancedPackageImpl#getPerspective()
+		 * @since 1.0
 		 * @generated
 		 */
 		public static final EClass PERSPECTIVE = eINSTANCE.getPerspective();
@@ -1417,6 +1547,7 @@ public class AdvancedPackageImpl extends EPackageImpl {
 		 * The meta object literal for the '<em><b>Windows</b></em>' containment reference list feature.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
+		 * @since 1.0
 		 * @generated
 		 */
 		public static final EReference PERSPECTIVE__WINDOWS = eINSTANCE.getPerspective_Windows();
@@ -1425,6 +1556,8 @@ public class AdvancedPackageImpl extends EPackageImpl {
 		 * The meta object literal for the '<em><b>Trim Bars</b></em>' containment reference list feature.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
+		 * @since 1.3
+		 * </p>
 		 * @generated
 		 */
 		public static final EReference PERSPECTIVE__TRIM_BARS = eINSTANCE.getPerspective_TrimBars();
@@ -1435,6 +1568,7 @@ public class AdvancedPackageImpl extends EPackageImpl {
 		 * <!-- end-user-doc -->
 		 * @see org.eclipse.e4.ui.model.application.ui.advanced.impl.PerspectiveStackImpl
 		 * @see org.eclipse.e4.ui.model.application.ui.advanced.impl.AdvancedPackageImpl#getPerspectiveStack()
+		 * @since 1.0
 		 * @generated
 		 */
 		public static final EClass PERSPECTIVE_STACK = eINSTANCE.getPerspectiveStack();
@@ -1445,6 +1579,7 @@ public class AdvancedPackageImpl extends EPackageImpl {
 		 * <!-- end-user-doc -->
 		 * @see org.eclipse.e4.ui.model.application.ui.advanced.impl.AreaImpl
 		 * @see org.eclipse.e4.ui.model.application.ui.advanced.impl.AdvancedPackageImpl#getArea()
+		 * @since 1.0
 		 * @generated
 		 */
 		public static final EClass AREA = eINSTANCE.getArea();

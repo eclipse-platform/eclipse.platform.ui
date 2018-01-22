@@ -78,6 +78,7 @@ public class BasicFactoryImpl extends EFactoryImpl implements MBasicFactory {
 	/**
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 */
 	public MPartDescriptor createPartDescriptor() {

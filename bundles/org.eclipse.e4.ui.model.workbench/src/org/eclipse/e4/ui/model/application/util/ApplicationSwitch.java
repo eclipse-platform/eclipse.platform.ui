@@ -166,6 +166,7 @@ public class ApplicationSwitch<T1> extends Switch<T1> {
 	 * @param object the target of the switch.
 	 * @return the result of interpreting the object as an instance of '<em>Application</em>'.
 	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+	 * @since 1.0
 	 * @generated
 	 */
 	public T1 caseApplication(MApplication object) {
@@ -181,6 +182,7 @@ public class ApplicationSwitch<T1> extends Switch<T1> {
 	 * @param object the target of the switch.
 	 * @return the result of interpreting the object as an instance of '<em>Element</em>'.
 	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+	 * @since 1.0
 	 * @generated
 	 */
 	public T1 caseApplicationElement(MApplicationElement object) {
@@ -196,6 +198,7 @@ public class ApplicationSwitch<T1> extends Switch<T1> {
 	 * @param object the target of the switch.
 	 * @return the result of interpreting the object as an instance of '<em>Contribution</em>'.
 	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+	 * @since 1.0
 	 * @generated
 	 */
 	public T1 caseContribution(MContribution object) {
@@ -211,6 +214,7 @@ public class ApplicationSwitch<T1> extends Switch<T1> {
 	 * @param object the target of the switch.
 	 * @return the result of interpreting the object as an instance of '<em>Addon</em>'.
 	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+	 * @since 1.0
 	 * @generated
 	 */
 	public T1 caseAddon(MAddon object) {
@@ -241,6 +245,7 @@ public class ApplicationSwitch<T1> extends Switch<T1> {
 	 * @param object the target of the switch.
 	 * @return the result of interpreting the object as an instance of '<em>Localizable</em>'.
 	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+	 * @since 1.1
 	 * @generated
 	 */
 	public T1 caseLocalizable(MLocalizable object) {
@@ -256,6 +261,7 @@ public class ApplicationSwitch<T1> extends Switch<T1> {
 	 * @param object the target of the switch.
 	 * @return the result of interpreting the object as an instance of '<em>UI Element</em>'.
 	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+	 * @since 1.0
 	 * @generated
 	 */
 	public T1 caseUIElement(MUIElement object) {
@@ -271,6 +277,7 @@ public class ApplicationSwitch<T1> extends Switch<T1> {
 	 * @param object the target of the switch.
 	 * @return the result of interpreting the object as an instance of '<em>Element Container</em>'.
 	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+	 * @since 1.0
 	 * @generated
 	 */
 	public <T extends MUIElement> T1 caseElementContainer(MElementContainer<T> object) {
@@ -286,6 +293,7 @@ public class ApplicationSwitch<T1> extends Switch<T1> {
 	 * @param object the target of the switch.
 	 * @return the result of interpreting the object as an instance of '<em>Context</em>'.
 	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+	 * @since 1.0
 	 * @generated
 	 */
 	public T1 caseContext(MContext object) {
@@ -301,6 +309,7 @@ public class ApplicationSwitch<T1> extends Switch<T1> {
 	 * @param object the target of the switch.
 	 * @return the result of interpreting the object as an instance of '<em>Handler Container</em>'.
 	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+	 * @since 1.0
 	 * @generated
 	 */
 	public T1 caseHandlerContainer(MHandlerContainer object) {
@@ -316,6 +325,7 @@ public class ApplicationSwitch<T1> extends Switch<T1> {
 	 * @param object the target of the switch.
 	 * @return the result of interpreting the object as an instance of '<em>Binding Table Container</em>'.
 	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+	 * @since 1.0
 	 * @generated
 	 */
 	public T1 caseBindingTableContainer(MBindingTableContainer object) {
@@ -331,6 +341,7 @@ public class ApplicationSwitch<T1> extends Switch<T1> {
 	 * @param object the target of the switch.
 	 * @return the result of interpreting the object as an instance of '<em>Part Descriptor Container</em>'.
 	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+	 * @since 1.0
 	 * @generated
 	 */
 	public T1 casePartDescriptorContainer(MPartDescriptorContainer object) {
@@ -346,6 +357,7 @@ public class ApplicationSwitch<T1> extends Switch<T1> {
 	 * @param object the target of the switch.
 	 * @return the result of interpreting the object as an instance of '<em>Bindings</em>'.
 	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+	 * @since 1.0
 	 * @generated
 	 */
 	public T1 caseBindings(MBindings object) {
@@ -361,6 +373,7 @@ public class ApplicationSwitch<T1> extends Switch<T1> {
 	 * @param object the target of the switch.
 	 * @return the result of interpreting the object as an instance of '<em>Contributions</em>'.
 	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+	 * @since 1.0
 	 * @generated
 	 */
 	public T1 caseMenuContributions(MMenuContributions object) {
@@ -376,6 +389,7 @@ public class ApplicationSwitch<T1> extends Switch<T1> {
 	 * @param object the target of the switch.
 	 * @return the result of interpreting the object as an instance of '<em>Tool Bar Contributions</em>'.
 	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+	 * @since 1.0
 	 * @generated
 	 */
 	public T1 caseToolBarContributions(MToolBarContributions object) {
@@ -391,6 +405,7 @@ public class ApplicationSwitch<T1> extends Switch<T1> {
 	 * @param object the target of the switch.
 	 * @return the result of interpreting the object as an instance of '<em>Trim Contributions</em>'.
 	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+	 * @since 1.0
 	 * @generated
 	 */
 	public T1 caseTrimContributions(MTrimContributions object) {
@@ -406,6 +421,7 @@ public class ApplicationSwitch<T1> extends Switch<T1> {
 	 * @param object the target of the switch.
 	 * @return the result of interpreting the object as an instance of '<em>Snippet Container</em>'.
 	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+	 * @since 1.0
 	 * @generated
 	 */
 	public T1 caseSnippetContainer(MSnippetContainer object) {

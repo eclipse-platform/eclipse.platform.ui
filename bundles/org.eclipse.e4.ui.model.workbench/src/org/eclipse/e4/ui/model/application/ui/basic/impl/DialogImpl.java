@@ -19,6 +19,7 @@ import org.eclipse.emf.ecore.EClass;
  * An implementation of the model object '<em><b>Dialog</b></em>'.
  * <!-- end-user-doc -->
  *
+ * @since 1.1
  * @generated
  */
 public class DialogImpl extends WindowImpl implements MDialog {

@@ -122,6 +122,7 @@ public class MenuFactoryImpl extends EFactoryImpl implements MMenuFactory {
 	/**
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 */
 	public MMenuSeparator createMenuSeparator() {
@@ -132,6 +133,7 @@ public class MenuFactoryImpl extends EFactoryImpl implements MMenuFactory {
 	/**
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 */
 	public MMenu createMenu() {
@@ -142,6 +144,7 @@ public class MenuFactoryImpl extends EFactoryImpl implements MMenuFactory {
 	/**
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 */
 	public MMenuContribution createMenuContribution() {
@@ -152,6 +155,7 @@ public class MenuFactoryImpl extends EFactoryImpl implements MMenuFactory {
 	/**
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 */
 	public MPopupMenu createPopupMenu() {
@@ -162,6 +166,7 @@ public class MenuFactoryImpl extends EFactoryImpl implements MMenuFactory {
 	/**
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 */
 	public MDirectMenuItem createDirectMenuItem() {
@@ -172,6 +177,7 @@ public class MenuFactoryImpl extends EFactoryImpl implements MMenuFactory {
 	/**
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 */
 	public MHandledMenuItem createHandledMenuItem() {
@@ -182,6 +188,7 @@ public class MenuFactoryImpl extends EFactoryImpl implements MMenuFactory {
 	/**
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 */
 	public MToolBar createToolBar() {
@@ -192,6 +199,7 @@ public class MenuFactoryImpl extends EFactoryImpl implements MMenuFactory {
 	/**
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 */
 	public MToolControl createToolControl() {
@@ -202,6 +210,7 @@ public class MenuFactoryImpl extends EFactoryImpl implements MMenuFactory {
 	/**
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 */
 	public MHandledToolItem createHandledToolItem() {
@@ -212,6 +221,7 @@ public class MenuFactoryImpl extends EFactoryImpl implements MMenuFactory {
 	/**
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 */
 	public MDirectToolItem createDirectToolItem() {
@@ -222,6 +232,7 @@ public class MenuFactoryImpl extends EFactoryImpl implements MMenuFactory {
 	/**
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 */
 	public MToolBarSeparator createToolBarSeparator() {
@@ -232,6 +243,7 @@ public class MenuFactoryImpl extends EFactoryImpl implements MMenuFactory {
 	/**
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 */
 	public MToolBarContribution createToolBarContribution() {
@@ -242,6 +254,7 @@ public class MenuFactoryImpl extends EFactoryImpl implements MMenuFactory {
 	/**
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 */
 	public MTrimContribution createTrimContribution() {
@@ -252,6 +265,7 @@ public class MenuFactoryImpl extends EFactoryImpl implements MMenuFactory {
 	/**
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 */
 	public MDynamicMenuContribution createDynamicMenuContribution() {
@@ -262,6 +276,7 @@ public class MenuFactoryImpl extends EFactoryImpl implements MMenuFactory {
 	/**
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 */
 	public ItemType createItemTypeFromString(EDataType eDataType, String initialValue) {
@@ -273,6 +288,7 @@ public class MenuFactoryImpl extends EFactoryImpl implements MMenuFactory {
 	/**
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 */
 	public String convertItemTypeToString(EDataType eDataType, Object instanceValue) {

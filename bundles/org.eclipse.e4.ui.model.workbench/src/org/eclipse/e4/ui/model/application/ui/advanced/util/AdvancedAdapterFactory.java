@@ -187,6 +187,7 @@ public class AdvancedAdapterFactory extends AdapterFactoryImpl {
 	 * <!-- end-user-doc -->
 	 * @return the new adapter.
 	 * @see org.eclipse.e4.ui.model.application.ui.advanced.MPlaceholder
+	 * @since 1.0
 	 * @generated
 	 */
 	public Adapter createPlaceholderAdapter() {
@@ -201,6 +202,7 @@ public class AdvancedAdapterFactory extends AdapterFactoryImpl {
 	 * <!-- end-user-doc -->
 	 * @return the new adapter.
 	 * @see org.eclipse.e4.ui.model.application.ui.advanced.MPerspective
+	 * @since 1.0
 	 * @generated
 	 */
 	public Adapter createPerspectiveAdapter() {
@@ -215,6 +217,7 @@ public class AdvancedAdapterFactory extends AdapterFactoryImpl {
 	 * <!-- end-user-doc -->
 	 * @return the new adapter.
 	 * @see org.eclipse.e4.ui.model.application.ui.advanced.MPerspectiveStack
+	 * @since 1.0
 	 * @generated
 	 */
 	public Adapter createPerspectiveStackAdapter() {
@@ -229,6 +232,7 @@ public class AdvancedAdapterFactory extends AdapterFactoryImpl {
 	 * <!-- end-user-doc -->
 	 * @return the new adapter.
 	 * @see org.eclipse.e4.ui.model.application.ui.advanced.MArea
+	 * @since 1.0
 	 * @generated
 	 */
 	public Adapter createAreaAdapter() {
@@ -243,6 +247,7 @@ public class AdvancedAdapterFactory extends AdapterFactoryImpl {
 	 * <!-- end-user-doc -->
 	 * @return the new adapter.
 	 * @see org.eclipse.e4.ui.model.application.MApplicationElement
+	 * @since 1.0
 	 * @generated
 	 */
 	public Adapter createApplicationElementAdapter() {
@@ -257,6 +262,7 @@ public class AdvancedAdapterFactory extends AdapterFactoryImpl {
 	 * <!-- end-user-doc -->
 	 * @return the new adapter.
 	 * @see org.eclipse.e4.ui.model.application.ui.MUIElement
+	 * @since 1.0
 	 * @generated
 	 */
 	public Adapter createUIElementAdapter() {
@@ -271,6 +277,7 @@ public class AdvancedAdapterFactory extends AdapterFactoryImpl {
 	 * <!-- end-user-doc -->
 	 * @return the new adapter.
 	 * @see org.eclipse.e4.ui.model.application.ui.basic.MPartSashContainerElement
+	 * @since 1.0
 	 * @generated
 	 */
 	public Adapter createPartSashContainerElementAdapter() {
@@ -285,6 +292,7 @@ public class AdvancedAdapterFactory extends AdapterFactoryImpl {
 	 * <!-- end-user-doc -->
 	 * @return the new adapter.
 	 * @see org.eclipse.e4.ui.model.application.ui.basic.MStackElement
+	 * @since 1.0
 	 * @generated
 	 */
 	public Adapter createStackElementAdapter() {
@@ -299,6 +307,7 @@ public class AdvancedAdapterFactory extends AdapterFactoryImpl {
 	 * <!-- end-user-doc -->
 	 * @return the new adapter.
 	 * @see org.eclipse.e4.ui.model.application.ui.MElementContainer
+	 * @since 1.0
 	 * @generated
 	 */
 	public Adapter createElementContainerAdapter() {
@@ -313,6 +322,7 @@ public class AdvancedAdapterFactory extends AdapterFactoryImpl {
 	 * <!-- end-user-doc -->
 	 * @return the new adapter.
 	 * @see org.eclipse.e4.ui.model.application.ui.MLocalizable
+	 * @since 1.1
 	 * @generated
 	 */
 	public Adapter createLocalizableAdapter() {
@@ -327,6 +337,7 @@ public class AdvancedAdapterFactory extends AdapterFactoryImpl {
 	 * <!-- end-user-doc -->
 	 * @return the new adapter.
 	 * @see org.eclipse.e4.ui.model.application.ui.MUILabel
+	 * @since 1.0
 	 * @generated
 	 */
 	public Adapter createUILabelAdapter() {
@@ -341,6 +352,7 @@ public class AdvancedAdapterFactory extends AdapterFactoryImpl {
 	 * <!-- end-user-doc -->
 	 * @return the new adapter.
 	 * @see org.eclipse.e4.ui.model.application.ui.MContext
+	 * @since 1.0
 	 * @generated
 	 */
 	public Adapter createContextAdapter() {
@@ -355,6 +367,7 @@ public class AdvancedAdapterFactory extends AdapterFactoryImpl {
 	 * <!-- end-user-doc -->
 	 * @return the new adapter.
 	 * @see org.eclipse.e4.ui.model.application.commands.MHandlerContainer
+	 * @since 1.0
 	 * @generated
 	 */
 	public Adapter createHandlerContainerAdapter() {
@@ -369,6 +382,7 @@ public class AdvancedAdapterFactory extends AdapterFactoryImpl {
 	 * <!-- end-user-doc -->
 	 * @return the new adapter.
 	 * @see org.eclipse.e4.ui.model.application.commands.MBindings
+	 * @since 1.0
 	 * @generated
 	 */
 	public Adapter createBindingsAdapter() {
@@ -383,6 +397,7 @@ public class AdvancedAdapterFactory extends AdapterFactoryImpl {
 	 * <!-- end-user-doc -->
 	 * @return the new adapter.
 	 * @see org.eclipse.e4.ui.model.application.ui.MGenericStack
+	 * @since 1.0
 	 * @generated
 	 */
 	public Adapter createGenericStackAdapter() {
@@ -397,6 +412,7 @@ public class AdvancedAdapterFactory extends AdapterFactoryImpl {
 	 * <!-- end-user-doc -->
 	 * @return the new adapter.
 	 * @see org.eclipse.e4.ui.model.application.ui.basic.MWindowElement
+	 * @since 1.0
 	 * @generated
 	 */
 	public Adapter createWindowElementAdapter() {
@@ -411,6 +427,7 @@ public class AdvancedAdapterFactory extends AdapterFactoryImpl {
 	 * <!-- end-user-doc -->
 	 * @return the new adapter.
 	 * @see org.eclipse.e4.ui.model.application.ui.MGenericTile
+	 * @since 1.0
 	 * @generated
 	 */
 	public Adapter createGenericTileAdapter() {
@@ -425,6 +442,7 @@ public class AdvancedAdapterFactory extends AdapterFactoryImpl {
 	 * <!-- end-user-doc -->
 	 * @return the new adapter.
 	 * @see org.eclipse.e4.ui.model.application.ui.basic.MPartSashContainer
+	 * @since 1.0
 	 * @generated
 	 */
 	public Adapter createPartSashContainerAdapter() {

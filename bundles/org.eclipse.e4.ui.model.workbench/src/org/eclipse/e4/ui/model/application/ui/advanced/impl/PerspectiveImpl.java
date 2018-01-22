@@ -68,6 +68,7 @@ import org.eclipse.emf.ecore.util.InternalEList;
  *   <li>{@link org.eclipse.e4.ui.model.application.ui.advanced.impl.PerspectiveImpl#getTrimBars <em>Trim Bars</em>}</li>
  * </ul>
  *
+ * @since 1.0
  * @generated
  */
 public class PerspectiveImpl extends ElementContainerImpl<MPartSashContainerElement> implements MPerspective {
@@ -76,6 +77,7 @@ public class PerspectiveImpl extends ElementContainerImpl<MPartSashContainerElem
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @see #getLabel()
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -86,6 +88,7 @@ public class PerspectiveImpl extends ElementContainerImpl<MPartSashContainerElem
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @see #getLabel()
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -96,6 +99,7 @@ public class PerspectiveImpl extends ElementContainerImpl<MPartSashContainerElem
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @see #getIconURI()
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -106,6 +110,7 @@ public class PerspectiveImpl extends ElementContainerImpl<MPartSashContainerElem
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @see #getIconURI()
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -116,6 +121,7 @@ public class PerspectiveImpl extends ElementContainerImpl<MPartSashContainerElem
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @see #getTooltip()
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -126,6 +132,7 @@ public class PerspectiveImpl extends ElementContainerImpl<MPartSashContainerElem
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @see #getTooltip()
+	 * @since 1.0
 	 * @generated
 	 * @ordered
 	 */
@@ -226,6 +233,8 @@ public class PerspectiveImpl extends ElementContainerImpl<MPartSashContainerElem
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @see #getTrimBars()
+	 * @since 1.3
+	 * </p>
 	 * @generated
 	 * @ordered
 	 */
@@ -278,6 +287,7 @@ public class PerspectiveImpl extends ElementContainerImpl<MPartSashContainerElem
 	/**
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 */
 	public String getLabel() {
@@ -287,6 +297,7 @@ public class PerspectiveImpl extends ElementContainerImpl<MPartSashContainerElem
 	/**
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 */
 	public void setLabel(String newLabel) {
@@ -299,6 +310,7 @@ public class PerspectiveImpl extends ElementContainerImpl<MPartSashContainerElem
 	/**
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 */
 	public String getIconURI() {
@@ -308,6 +320,7 @@ public class PerspectiveImpl extends ElementContainerImpl<MPartSashContainerElem
 	/**
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 */
 	public void setIconURI(String newIconURI) {
@@ -320,6 +333,7 @@ public class PerspectiveImpl extends ElementContainerImpl<MPartSashContainerElem
 	/**
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 */
 	public String getTooltip() {
@@ -329,6 +343,7 @@ public class PerspectiveImpl extends ElementContainerImpl<MPartSashContainerElem
 	/**
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.0
 	 * @generated
 	 */
 	public void setTooltip(String newTooltip) {
@@ -422,6 +437,8 @@ public class PerspectiveImpl extends ElementContainerImpl<MPartSashContainerElem
 	/**
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.3
+	 * </p>
 	 * @generated
 	 */
 	public List<MTrimBar> getTrimBars() {
@@ -733,7 +750,7 @@ public class PerspectiveImpl extends ElementContainerImpl<MPartSashContainerElem
 	public String toString() {
 		if (eIsProxy()) return super.toString();
 
-		StringBuffer result = new StringBuffer(super.toString());
+		StringBuilder result = new StringBuilder(super.toString());
 		result.append(" (label: "); //$NON-NLS-1$
 		result.append(label);
 		result.append(", iconURI: "); //$NON-NLS-1$

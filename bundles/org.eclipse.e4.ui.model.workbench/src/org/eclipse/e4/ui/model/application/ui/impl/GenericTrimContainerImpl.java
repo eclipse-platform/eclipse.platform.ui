@@ -28,6 +28,7 @@ import org.eclipse.emf.ecore.impl.ENotificationImpl;
  *   <li>{@link org.eclipse.e4.ui.model.application.ui.impl.GenericTrimContainerImpl#getSide <em>Side</em>}</li>
  * </ul>
  *
+ * @since 1.0
  * @generated
  */
 public abstract class GenericTrimContainerImpl<T extends MUIElement> extends ElementContainerImpl<T> implements MGenericTrimContainer<T> {
@@ -158,7 +159,7 @@ public abstract class GenericTrimContainerImpl<T extends MUIElement> extends Ele
 	public String toString() {
 		if (eIsProxy()) return super.toString();
 
-		StringBuffer result = new StringBuffer(super.toString());
+		StringBuilder result = new StringBuilder(super.toString());
 		result.append(" (side: "); //$NON-NLS-1$
 		result.append(side);
 		result.append(')');

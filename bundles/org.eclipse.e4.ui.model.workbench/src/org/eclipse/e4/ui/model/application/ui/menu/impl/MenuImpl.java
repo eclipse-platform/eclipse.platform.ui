@@ -40,6 +40,7 @@ import org.eclipse.emf.ecore.util.InternalEList;
  *   <li>{@link org.eclipse.e4.ui.model.application.ui.menu.impl.MenuImpl#isEnabled <em>Enabled</em>}</li>
  * </ul>
  *
+ * @since 1.0
  * @generated
  */
 public class MenuImpl extends MenuElementImpl implements MMenu {
@@ -326,7 +327,7 @@ public class MenuImpl extends MenuElementImpl implements MMenu {
 	public String toString() {
 		if (eIsProxy()) return super.toString();
 
-		StringBuffer result = new StringBuffer(super.toString());
+		StringBuilder result = new StringBuilder(super.toString());
 		result.append(" (enabled: "); //$NON-NLS-1$
 		result.append(enabled);
 		result.append(')');

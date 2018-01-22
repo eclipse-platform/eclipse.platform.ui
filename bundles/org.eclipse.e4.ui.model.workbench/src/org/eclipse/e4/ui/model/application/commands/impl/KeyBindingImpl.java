@@ -40,6 +40,7 @@ import org.eclipse.emf.ecore.util.InternalEList;
  *   <li>{@link org.eclipse.e4.ui.model.application.commands.impl.KeyBindingImpl#getParameters <em>Parameters</em>}</li>
  * </ul>
  *
+ * @since 1.0
  * @generated
  */
 public class KeyBindingImpl extends ApplicationElementImpl implements MKeyBinding {
@@ -309,7 +310,7 @@ public class KeyBindingImpl extends ApplicationElementImpl implements MKeyBindin
 	public String toString() {
 		if (eIsProxy()) return super.toString();
 
-		StringBuffer result = new StringBuffer(super.toString());
+		StringBuilder result = new StringBuilder(super.toString());
 		result.append(" (keySequence: "); //$NON-NLS-1$
 		result.append(keySequence);
 		result.append(')');

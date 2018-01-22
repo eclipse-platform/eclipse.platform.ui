@@ -74,7 +74,7 @@ public interface MPerspective extends MElementContainer<MPartSashContainerElemen
 	 * <!-- begin-model-doc -->
 	 * <p>
 	 * The collection of TrimBars associated with this perspective.
-	 * @since 2.0
+	 * @since 1.3
 	 * </p>
 	 * <!-- end-model-doc -->
 	 * @return the value of the '<em>Trim Bars</em>' containment reference list.

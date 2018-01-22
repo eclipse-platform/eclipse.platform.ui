@@ -64,6 +64,7 @@ public interface MUILabel extends MLocalizable {
 	 * <!-- end-user-doc -->
 	 * @param value the new value of the '<em>Label</em>' attribute.
 	 * @see #getLabel()
+	 * @since 1.0
 	 * @generated
 	 */
 	void setLabel(String value);
@@ -92,6 +93,7 @@ public interface MUILabel extends MLocalizable {
 	 * <!-- end-user-doc -->
 	 * @param value the new value of the '<em>Icon URI</em>' attribute.
 	 * @see #getIconURI()
+	 * @since 1.0
 	 * @generated
 	 */
 	void setIconURI(String value);
@@ -120,6 +122,7 @@ public interface MUILabel extends MLocalizable {
 	 * <!-- end-user-doc -->
 	 * @param value the new value of the '<em>Tooltip</em>' attribute.
 	 * @see #getTooltip()
+	 * @since 1.0
 	 * @generated
 	 */
 	void setTooltip(String value);
