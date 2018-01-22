@@ -160,6 +160,9 @@
         <genFeatures createChild="false" ecoreFeature="ecore:EAttribute UIElements.ecore#//ui/CoreExpression/coreExpressionId"/>
         <genFeatures createChild="false" ecoreFeature="ecore:EAttribute UIElements.ecore#//ui/CoreExpression/coreExpression"/>
       </genClasses>
+      <genClasses ecoreClass="UIElements.ecore#//ui/ImperativeExpression">
+        <genFeatures createChild="false" ecoreFeature="ecore:EAttribute UIElements.ecore#//ui/ImperativeExpression/tracking"/>
+      </genClasses>
       <genClasses image="false" ecoreClass="UIElements.ecore#//ui/SnippetContainer">
         <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference UIElements.ecore#//ui/SnippetContainer/snippets"/>
       </genClasses>
@@ -237,6 +240,7 @@
           <genFeatures createChild="false" ecoreFeature="ecore:EAttribute UIElements.ecore#//ui/basic/Part/closeable"/>
           <genFeatures createChild="false" ecoreFeature="ecore:EAttribute UIElements.ecore#//ui/basic/Part/description"/>
           <genFeatures property="Readonly" createChild="false" ecoreFeature="ecore:EAttribute UIElements.ecore#//ui/basic/Part/localizedDescription"/>
+          <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference UIElements.ecore#//ui/basic/Part/trimBars"/>
         </genClasses>
         <genClasses ecoreClass="UIElements.ecore#//ui/basic/CompositePart"/>
         <genClasses ecoreClass="UIElements.ecore#//ui/basic/InputPart" labelFeature="#//application/Contribution/contributionURI"/>
@@ -274,6 +278,7 @@
         </genClasses>
         <genClasses ecoreClass="UIElements.ecore#//ui/advanced/Perspective" labelFeature="#//application/ui/UILabel/label">
           <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference UIElements.ecore#//ui/advanced/Perspective/windows"/>
+          <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference UIElements.ecore#//ui/advanced/Perspective/trimBars"/>
         </genClasses>
         <genClasses ecoreClass="UIElements.ecore#//ui/advanced/PerspectiveStack"/>
         <genClasses ecoreClass="UIElements.ecore#//ui/advanced/Area"/>
@@ -295,6 +300,7 @@
           <genFeatures property="Readonly" createChild="false" ecoreFeature="ecore:EAttribute UIElements.ecore#//descriptor/basic/PartDescriptor/localizedDescription"/>
           <genFeatures createChild="false" ecoreFeature="ecore:EAttribute UIElements.ecore#//descriptor/basic/PartDescriptor/variables"/>
           <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference UIElements.ecore#//descriptor/basic/PartDescriptor/properties"/>
+          <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference UIElements.ecore#//descriptor/basic/PartDescriptor/trimBars"/>
         </genClasses>
         <genClasses ecoreClass="UIElements.ecore#//descriptor/basic/PartDescriptorContainer">
           <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference UIElements.ecore#//descriptor/basic/PartDescriptorContainer/descriptors"/>
