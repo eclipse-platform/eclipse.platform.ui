@@ -179,7 +179,7 @@ public class MoveResourcesProcessor extends MoveProcessor {
 		if (fResourcesToMove.length == 1) {
 			return Messages.format(RefactoringCoreMessages.MoveResourceProcessor_description_single, new String[] { BasicElementLabels.getResourceName(fResourcesToMove[0]), BasicElementLabels.getResourceName(fDestination) });
 		} else {
-			return Messages.format(RefactoringCoreMessages.MoveResourceProcessor_description_multiple, new Object[] { new Integer(fResourcesToMove.length), BasicElementLabels.getResourceName(fDestination) });
+			return Messages.format(RefactoringCoreMessages.MoveResourceProcessor_description_multiple, new Object[] { Integer.valueOf(fResourcesToMove.length), BasicElementLabels.getResourceName(fDestination) });
 		}
 	}
 

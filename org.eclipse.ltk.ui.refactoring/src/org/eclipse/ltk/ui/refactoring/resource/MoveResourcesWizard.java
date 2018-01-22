@@ -93,7 +93,7 @@ public class MoveResourcesWizard extends RefactoringWizard {
 			if (resourcesToMove.length == 1) {
 				label.setText(Messages.format(RefactoringUIMessages.MoveResourcesWizard_description_single, resourcesToMove[0].getName()));
 			} else {
-				label.setText(Messages.format(RefactoringUIMessages.MoveResourcesWizard_description_multiple, new Integer(resourcesToMove.length)));
+				label.setText(Messages.format(RefactoringUIMessages.MoveResourcesWizard_description_multiple, Integer.valueOf(resourcesToMove.length)));
 			}
 			label.setLayoutData(new GridData());
 

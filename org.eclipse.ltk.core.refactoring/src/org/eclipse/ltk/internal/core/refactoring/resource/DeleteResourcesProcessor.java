@@ -267,7 +267,7 @@ public class DeleteResourcesProcessor extends DeleteProcessor {
 		if (fResources.length == 1) {
 			return Messages.format(RefactoringCoreMessages.DeleteResourcesProcessor_description_single, BasicElementLabels.getPathLabel(fResources[0].getFullPath(), false));
 		}
-		return Messages.format(RefactoringCoreMessages.DeleteResourcesProcessor_description_multi, new Integer(fResources.length));
+		return Messages.format(RefactoringCoreMessages.DeleteResourcesProcessor_description_multi, Integer.valueOf(fResources.length));
 	}
 
 	@Override

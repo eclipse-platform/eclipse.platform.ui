@@ -126,19 +126,19 @@ public class DeleteResourcesWizard extends RefactoringWizard {
 				if (initialResources.length == 1) {
 					label.setText(Messages.format(RefactoringUIMessages.DeleteResourcesWizard_label_single_project, BasicElementLabels.getResourceName(initialResources[0])));
 				} else {
-					label.setText(Messages.format(RefactoringUIMessages.DeleteResourcesWizard_label_multi_projects, new Integer(initialResources.length)));
+					label.setText(Messages.format(RefactoringUIMessages.DeleteResourcesWizard_label_multi_projects, Integer.valueOf(initialResources.length)));
 				}
 			} else if (containsLinkedResource(initialResources)) {
 				if (initialResources.length == 1) {
 					label.setText(Messages.format(RefactoringUIMessages.DeleteResourcesWizard_label_single_linked, BasicElementLabels.getResourceName(initialResources[0])));
 				} else {
-					label.setText(Messages.format(RefactoringUIMessages.DeleteResourcesWizard_label_multi_linked, new Integer(initialResources.length)));
+					label.setText(Messages.format(RefactoringUIMessages.DeleteResourcesWizard_label_multi_linked, Integer.valueOf(initialResources.length)));
 				}
 			} else {
 				if (initialResources.length == 1) {
 					label.setText(Messages.format(RefactoringUIMessages.DeleteResourcesWizard_label_single, BasicElementLabels.getResourceName(initialResources[0])));
 				} else {
-					label.setText(Messages.format(RefactoringUIMessages.DeleteResourcesWizard_label_multi, new Integer(initialResources.length)));
+					label.setText(Messages.format(RefactoringUIMessages.DeleteResourcesWizard_label_multi, Integer.valueOf(initialResources.length)));
 				}
 			}
 			GridData gridData= new GridData(SWT.FILL, SWT.FILL, true, false);

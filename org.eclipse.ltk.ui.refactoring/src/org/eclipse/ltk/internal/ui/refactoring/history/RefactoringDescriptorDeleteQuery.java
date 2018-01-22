@@ -86,7 +86,7 @@ public final class RefactoringDescriptorDeleteQuery implements IRefactoringDescr
 					@Override
 					public final void run() {
 						if (!fShell.isDisposed()) {
-							final String count= new Integer(fCount).toString();
+							final String count= Integer.valueOf(fCount).toString();
 							String message= null;
 							if (fProject != null) {
 								if (fCount == 1) {

@@ -150,7 +150,7 @@ public final class RefactoringSessionTransformer {
 				fRefactoringArguments.add(attribute);
 				if (stamp >= 0) {
 					attribute= fDocument.createAttribute(IRefactoringSerializationConstants.ATTRIBUTE_STAMP);
-					attribute.setValue(new Long(stamp).toString());
+					attribute.setValue(Long.valueOf(stamp).toString());
 					fRefactoringArguments.add(attribute);
 				}
 				if (flags != RefactoringDescriptor.NONE) {
