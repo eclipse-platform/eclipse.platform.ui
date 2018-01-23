@@ -32,7 +32,7 @@ public class Activator implements BundleActivator {
 	 */
 	public static final String PLUGIN_ID = "org.eclipse.core.databinding"; //$NON-NLS-1$
 
-	private volatile static ServiceTracker _frameworkLogTracker;
+	private volatile ServiceTracker _frameworkLogTracker;
 
 	/**
 	 * The constructor

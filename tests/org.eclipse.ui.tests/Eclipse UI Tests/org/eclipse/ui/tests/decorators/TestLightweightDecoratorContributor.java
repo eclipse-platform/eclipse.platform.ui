@@ -28,7 +28,6 @@ import org.eclipse.ui.tests.TestPlugin;
 public class TestLightweightDecoratorContributor implements
         ILightweightLabelDecorator {
 
-    public static TestLightweightDecoratorContributor contributor;
 
 	private Set<ILabelProviderListener> listeners = new HashSet<>();
 
@@ -39,7 +38,6 @@ public class TestLightweightDecoratorContributor implements
     private ImageDescriptor descriptor;
 
     public TestLightweightDecoratorContributor() {
-        contributor = this;
     }
 
     @Override
@@ -49,7 +47,6 @@ public class TestLightweightDecoratorContributor implements
 
     @Override
 	public void dispose() {
-        contributor = null;
 		listeners = new HashSet<>();
     }
 

@@ -45,8 +45,6 @@ public class OpenCloseTest extends UITestCase {
 	 */
 	private static final String ORG_ECLIPSE_JDT_UI_JAVA_PERSPECTIVE = "org.eclipse.jdt.ui.JavaPerspective";
 
-	private static int index;
-
     private static final int numIterations = 10;
 
     private WorkbenchWindow workbenchWindow;
@@ -75,7 +73,7 @@ public class OpenCloseTest extends UITestCase {
 			testProject.open(null);
 			IEditorInput editorInput = new FileEditorInput(testProject.getFile("tempFile.txt"));
 			IEditorPart editorPart = null;
-			for (index = 0; index < numIterations; index++) {
+			for (int index = 0; index < numIterations; index++) {
 				editorPart = page.openEditor(editorInput, "org.eclipse.ui.DefaultTextEditor"); //$NON-NLS-1$
 				page.closeEditor(editorPart, false);
 			}
@@ -92,7 +90,7 @@ public class OpenCloseTest extends UITestCase {
     public void testOpenCloseWorkbenchWindow() {
         IWorkbenchWindow secondWorkbenchWindow = null;
         try {
-			for (index = 0; index < numIterations; index++) {
+			for (int index = 0; index < numIterations; index++) {
 				secondWorkbenchWindow = PlatformUI.getWorkbench().openWorkbenchWindow(getPageInput());
 				secondWorkbenchWindow.close();
 			}
@@ -117,7 +115,7 @@ public class OpenCloseTest extends UITestCase {
 
 		IHandlerService handlerService = workbenchWindow.getService(IHandlerService.class);
 
-		for (index = 0; index < numIterations; index++) {
+		for (int index = 0; index < numIterations; index++) {
 			try {
 				PlatformUI.getWorkbench().showPerspective(ORG_ECLIPSE_JDT_UI_JAVA_PERSPECTIVE, workbenchWindow);
 				try {
@@ -142,7 +140,7 @@ public class OpenCloseTest extends UITestCase {
         try {
 			IWorkbenchPage page = PlatformUI.getWorkbench().showPerspective(ORG_ECLIPSE_JDT_UI_JAVA_PERSPECTIVE,
 					workbenchWindow);
-			for (index = 0; index < numIterations; index++) {
+			for (int index = 0; index < numIterations; index++) {
 				consoleView = page.showView("org.eclipse.ui.views.ResourceNavigator");
 				page.hideView(consoleView);
 			}
@@ -157,7 +155,7 @@ public class OpenCloseTest extends UITestCase {
      */
     public void testOpenCloseIntro() {
         IIntroPart introPart = null;
-        for (index = 0; index < numIterations; index++) {
+        for (int index = 0; index < numIterations; index++) {
 			introPart = PlatformUI.getWorkbench().getIntroManager().showIntro(workbenchWindow, false);
 			PlatformUI.getWorkbench().getIntroManager().closeIntro(introPart);
         }

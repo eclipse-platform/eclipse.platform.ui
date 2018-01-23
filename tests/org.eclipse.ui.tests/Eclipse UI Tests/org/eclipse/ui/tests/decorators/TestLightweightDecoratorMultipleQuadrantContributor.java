@@ -32,15 +32,12 @@ import org.eclipse.ui.tests.TestPlugin;
 
 public class TestLightweightDecoratorMultipleQuadrantContributor implements
         ILightweightLabelDecorator {
-
-    public static TestLightweightDecoratorMultipleQuadrantContributor contributor;
-
+	
 	private Set<ILabelProviderListener> listeners = new HashSet<>();
 
     private ImageDescriptor descriptor;
 
     public TestLightweightDecoratorMultipleQuadrantContributor() {
-        contributor = this;
     }
 
     @Override
@@ -50,7 +47,6 @@ public class TestLightweightDecoratorMultipleQuadrantContributor implements
 
     @Override
 	public void dispose() {
-        contributor = null;
 		listeners = new HashSet<>();
     }
 

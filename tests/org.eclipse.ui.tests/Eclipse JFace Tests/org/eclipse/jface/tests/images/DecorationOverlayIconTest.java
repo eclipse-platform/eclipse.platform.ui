@@ -28,12 +28,12 @@ import junit.framework.TestCase;
  */
 public class DecorationOverlayIconTest extends TestCase {
 
-	private static ImageDescriptor baseDescriptor1;
-	private static Image baseImage1;
-	private static ImageDescriptor baseDescriptor2;
-	private static Image baseImage2;
-	private static ImageDescriptor overlayDescriptor1;
-	private static ImageDescriptor overlayDescriptor2;
+	private ImageDescriptor baseDescriptor1;
+	private Image baseImage1;
+	private ImageDescriptor baseDescriptor2;
+	private Image baseImage2;
+	private ImageDescriptor overlayDescriptor1;
+	private ImageDescriptor overlayDescriptor2;
 
 	@Override
 	@Before

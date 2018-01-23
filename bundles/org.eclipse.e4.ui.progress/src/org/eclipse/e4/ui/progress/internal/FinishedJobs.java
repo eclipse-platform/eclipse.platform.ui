@@ -63,7 +63,7 @@ public class FinishedJobs extends EventManager {
 
 	private HashMap<Object, Long> finishedTime = new HashMap<>();
 
-	private static JobTreeElement[] EMPTY_INFOS;
+	private static final JobTreeElement[] EMPTY_INFOS = new JobTreeElement[0];
 
 	@Inject
 	ProgressManager progressManager;
@@ -71,7 +71,6 @@ public class FinishedJobs extends EventManager {
 	@PostConstruct
 	void init(MApplication application) {
 		progressManager.addListener(listener);
-		EMPTY_INFOS = new JobTreeElement[0];
 		// TODO E4 workaround for @creatable problem
 		application.getContext().set(FinishedJobs.class, this);
 	}
