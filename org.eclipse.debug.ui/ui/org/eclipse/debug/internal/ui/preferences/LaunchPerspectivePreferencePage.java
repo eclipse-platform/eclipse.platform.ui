@@ -202,10 +202,10 @@ public class LaunchPerspectivePreferencePage extends PreferencePage implements I
 	/**
 	 * Caches
 	 */
-	private static String[] fgPerspectiveLabels = null;
-	private static Map<String, String> fgPerspectiveIdMap = null;
-	private static HashSet<PerspectiveChange> fgChangeSet = null;
-	private static HashSet<Object> fgCurrentWorkingContext = null;
+	private String[] fgPerspectiveLabels = null;
+	private Map<String, String> fgPerspectiveIdMap = null;
+	private HashSet<PerspectiveChange> fgChangeSet = null;
+	private HashSet<Object> fgCurrentWorkingContext = null;
 
 	/**
 	 * A default selection listener to be reused by all combo boxes presenting perspective data

@@ -52,9 +52,9 @@ public final class ExternalToolsPlugin extends AbstractUIPlugin implements
 
 	private static ExternalToolsPlugin plugin;
 
-	private static IWindowListener fWindowListener;
+	private IWindowListener fWindowListener;
 
-	private static ILaunchManager launchManager;
+	private ILaunchManager launchManager;
 
 	/**
 	 * A window listener that warns the user about any running programs when the
