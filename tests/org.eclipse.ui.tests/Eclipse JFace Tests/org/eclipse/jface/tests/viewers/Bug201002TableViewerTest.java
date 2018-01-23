@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2017 IBM Corporation and others.
+ * Copyright (c) 2007, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,13 +7,13 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Lucas Bullen (Red Hat Inc.) - Bug 497767
  ******************************************************************************/
 
 package org.eclipse.jface.tests.viewers;
 
 import static org.junit.Assert.assertNotEquals;
 
-import org.eclipse.jface.util.Util;
 import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.CellEditor;
 import org.eclipse.jface.viewers.ICellModifier;
@@ -23,6 +23,7 @@ import org.eclipse.jface.viewers.TextCellEditor;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.TableColumn;
+import org.eclipse.ui.tests.harness.util.DisplayHelper;
 
 /**
  * @since 3.3
@@ -87,18 +88,21 @@ public class Bug201002TableViewerTest extends ViewerTestCase {
 
 	public void testBug201002() {
 		getTableViewer().getTable().setTopIndex(0);
+		waitForTopIndexUpdate(true);
 		getTableViewer().editElement(getTableViewer().getElementAt(90), 0);
-
-		// GTK-Issue where call to getTopItem() immediately
-		// afterwards will fail
-		while( getTableViewer().getTable().getDisplay().readAndDispatch () ) {
-
-		}
+		waitForTopIndexUpdate(false);
 		int topIndex = getTableViewer().getTable().getTopIndex();
-		if (topIndex == 0 && Util.isGtk()) {
-			// Fix needed: https://bugs.eclipse.org/bugs/show_bug.cgi?id=497767
-			return;
-		}
 		assertNotEquals("TableViewer top index shouldn't be 0", 0, topIndex);
+	}
+
+	private void waitForTopIndexUpdate(boolean isTopZero) {
+		new DisplayHelper() {
+			@Override
+			protected boolean condition() {
+				while (getTableViewer().getTable().getDisplay().readAndDispatch()) {
+				}
+				return isTopZero == (getTableViewer().getTable().getTopIndex() == 0);
+			}
+		}.waitForCondition(fViewer.getControl().getDisplay(), 3000);
 	}
 }
