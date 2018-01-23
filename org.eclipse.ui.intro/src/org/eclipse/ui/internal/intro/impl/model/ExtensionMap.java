@@ -23,7 +23,7 @@ import java.util.Map;
 public class ExtensionMap {
 
 	private static ExtensionMap instance;
-	private static String startPage;
+	private String startPage;
 	private Map<String, String> extensions = new HashMap<>();
 
 	private ExtensionMap() {

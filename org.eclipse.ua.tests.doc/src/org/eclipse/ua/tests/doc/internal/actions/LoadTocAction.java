@@ -41,10 +41,9 @@ import org.eclipse.ui.PlatformUI;
 public class LoadTocAction implements IWorkbenchWindowActionDelegate {
 	private IWorkbenchWindow window;
 	private static ArrayList<String> topicList;
-	private static String firstHref;
-	public static List<String> errors = new ArrayList<>();
-    public static String lastPage;
-    public static String currentPage;
+	private String firstHref;
+	private static List<String> errors = new ArrayList<>();
+	private String lastPage;
 
     private class MonitorThread extends Thread {
 		String lastHref;
@@ -130,11 +129,11 @@ public class LoadTocAction implements IWorkbenchWindowActionDelegate {
 			}
 			lastLink++;
 			if (lastLink < links.size()) {
-				currentPage = links.get(lastLink);
+				String currentPage = links.get(lastLink);
 				//System.out.println("Current page is " + currentPage);
 				return currentPage;
 			} else if (lastLink == links.size()) {
-				currentPage =  links.get(lastLink - 1);
+				String currentPage = links.get(lastLink - 1);
 				//System.out.println("Current page is " + currentPage);
 				return currentPage;
 			}
