@@ -12,27 +12,62 @@
  *******************************************************************************/
 package org.eclipse.core.internal.runtime;
 
-import java.io.*;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Date;
+import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.Hashtable;
+import java.util.List;
+import java.util.Map;
+import java.util.Properties;
+import java.util.ResourceBundle;
+import java.util.StringTokenizer;
+
 import org.eclipse.core.internal.preferences.exchange.ILegacyPreferences;
 import org.eclipse.core.internal.preferences.exchange.IProductPreferencesService;
 import org.eclipse.core.internal.preferences.legacy.InitLegacyPreferences;
 import org.eclipse.core.internal.preferences.legacy.ProductPreferencesService;
-import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.Assert;
+import org.eclipse.core.runtime.IAdapterManager;
+import org.eclipse.core.runtime.IBundleGroupProvider;
+import org.eclipse.core.runtime.IExtensionRegistry;
+import org.eclipse.core.runtime.ILog;
+import org.eclipse.core.runtime.ILogListener;
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.IProduct;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.Plugin;
+import org.eclipse.core.runtime.RegistryFactory;
 import org.eclipse.core.runtime.content.IContentTypeManager;
 import org.eclipse.core.runtime.preferences.IPreferencesService;
 import org.eclipse.equinox.app.IApplicationContext;
-import org.eclipse.equinox.internal.app.*;
 import org.eclipse.equinox.internal.app.Activator;
-import org.eclipse.equinox.log.*;
+import org.eclipse.equinox.internal.app.CommandLineArgs;
+import org.eclipse.equinox.internal.app.EclipseAppContainer;
+import org.eclipse.equinox.internal.app.IBranding;
+import org.eclipse.equinox.log.ExtendedLogReaderService;
+import org.eclipse.equinox.log.ExtendedLogService;
+import org.eclipse.equinox.log.Logger;
 import org.eclipse.osgi.framework.log.FrameworkLog;
 import org.eclipse.osgi.service.datalocation.Location;
 import org.eclipse.osgi.service.debug.DebugOptions;
 import org.eclipse.osgi.service.environment.EnvironmentInfo;
 import org.eclipse.osgi.service.resolver.PlatformAdmin;
-import org.osgi.framework.*;
+import org.osgi.framework.Bundle;
+import org.osgi.framework.BundleContext;
+import org.osgi.framework.BundleException;
+import org.osgi.framework.Filter;
+import org.osgi.framework.InvalidSyntaxException;
+import org.osgi.framework.ServiceReference;
+import org.osgi.framework.ServiceRegistration;
 import org.osgi.service.packageadmin.PackageAdmin;
 import org.osgi.util.tracker.ServiceTracker;
 
@@ -54,16 +89,16 @@ public final class InternalPlatform {
 	public static boolean DEBUG = false;
 	public static boolean DEBUG_PLUGIN_PREFERENCES = false;
 
-	static boolean splashEnded = false;
-	private static boolean initialized;
+	private boolean splashEnded = false;
+	private boolean initialized;
 	private static final String KEYRING = "-keyring"; //$NON-NLS-1$
-	private static String keyringFile;
+	private String keyringFile;
 
 	//XXX This is not synchronized
-	private static Map<Bundle,Log> logs = new HashMap<>(5);
+	private Map<Bundle,Log> logs = new HashMap<>(5);
 
 	private static final String[] OS_LIST = {Platform.OS_AIX, Platform.OS_HPUX, Platform.OS_LINUX, Platform.OS_MACOSX, Platform.OS_QNX, Platform.OS_SOLARIS, Platform.OS_WIN32};
-	private static String password = ""; //$NON-NLS-1$
+	private String password = ""; //$NON-NLS-1$
 	private static final String PASSWORD = "-password"; //$NON-NLS-1$
 
 	private static final String PLUGIN_PATH = ".plugin-path"; //$NON-NLS-1$
