@@ -78,7 +78,7 @@ public class ProgressIndicator extends Composite {
     public void beginAnimatedTask() {
         done();
         layout.topControl = indeterminateProgressBar;
-        requestLayout();
+		layout();
         animated = true;
     }
 
@@ -96,7 +96,7 @@ public class ProgressIndicator extends Composite {
         determinateProgressBar.setMaximum(PROGRESS_MAX);
         determinateProgressBar.setSelection(0);
         layout.topControl = determinateProgressBar;
-        requestLayout();
+		layout();
         animated = false;
     }
 
@@ -110,7 +110,7 @@ public class ProgressIndicator extends Composite {
             determinateProgressBar.setSelection(0);
         }
         layout.topControl = null;
-        requestLayout();
+		layout();
     }
 
     /**
