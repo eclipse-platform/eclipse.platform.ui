@@ -17,6 +17,7 @@ import org.eclipse.e4.core.internal.di.InjectorImpl;
  * Use this class to obtain an instance of the dependency injector.
  *
  * @noinstantiate This class is not intended to be instantiated by clients.
+ * @since 1.7.0
  */
 final public class InjectorFactory {
 

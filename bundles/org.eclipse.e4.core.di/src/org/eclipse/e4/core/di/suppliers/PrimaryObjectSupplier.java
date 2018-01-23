@@ -13,16 +13,20 @@ package org.eclipse.e4.core.di.suppliers;
 import java.lang.ref.WeakReference;
 
 /**
- * The base class for an "object supplier" - something that knows how to instantiate objects
- * corresponding to the object descriptor.
+ * The base class for an "object supplier" - something that knows how to
+ * instantiate objects corresponding to the object descriptor.
  * <p>
- * If supplier is asked to track changes, it should notify requestor whenever any of the objects
- * produced by the {@link #get(IObjectDescriptor[], Object[], IRequestor, boolean, boolean, boolean)} method change.
- * The supplier can do this by performing calls to the {@link IRequestor#resolveArguments(boolean)} and
+ * If supplier is asked to track changes, it should notify requestor whenever
+ * any of the objects produced by the
+ * {@link #get(IObjectDescriptor[], Object[], IRequestor, boolean, boolean, boolean)}
+ * method change. The supplier can do this by performing calls to the
+ * {@link IRequestor#resolveArguments(boolean)} and
  * {@link IRequestor#execute()}.
  * </p>
- *  @see IRequestor#resolveArguments(boolean)
- *  @see IRequestor#execute()
+ * 
+ * @see IRequestor#resolveArguments(boolean)
+ * @see IRequestor#execute()
+ * @since 1.7.0
  */
 abstract public class PrimaryObjectSupplier {
 

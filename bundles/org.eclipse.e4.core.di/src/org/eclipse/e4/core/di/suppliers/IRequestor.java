@@ -20,11 +20,14 @@ import org.eclipse.e4.core.di.InjectionException;
  * When an injector is asked to do a task, it splits work into a set of
  * requestors. Requestors are passed to relevant object suppliers so that
  * requestors can be executed when values in the supplier change. (For instance,
- * an object supplier that provided the value for the injected field, is expected
- * to execute requestor again when it detects change in the injected value).
+ * an object supplier that provided the value for the injected field, is
+ * expected to execute requestor again when it detects change in the injected
+ * value).
  * </p>
+ * 
  * @noimplement This interface is not intended to be implemented by clients.
  * @noextend This interface is not intended to be extended by clients.
+ * @since 1.7.0
  */
 public interface IRequestor {
 

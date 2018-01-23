@@ -11,12 +11,14 @@
 package org.eclipse.e4.core.di;
 
 /**
- * Describes binding between object description and its implementation to be used by
- * the dependency injection.
+ * Describes binding between object description and its implementation to be
+ * used by the dependency injection.
+ * 
  * @see IInjector#addBinding(Class)
  * @see IInjector#addBinding(IBinding)
  * @noimplement This interface is not intended to be implemented by clients.
  * @noextend This interface is not intended to be extended by clients.
+ * @since 1.7.0
  */
 public interface IBinding {
 

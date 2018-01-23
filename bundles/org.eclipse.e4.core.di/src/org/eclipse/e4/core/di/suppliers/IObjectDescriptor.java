@@ -17,12 +17,14 @@ import javax.inject.Qualifier;
 /**
  * This interface describes objects created by the dependency injection.
  * <p>
- * From the view point of the injector, objects are described by a type
- * with a set of optional qualifiers.
+ * From the view point of the injector, objects are described by a type with a
+ * set of optional qualifiers.
  * </p>
+ * 
  * @see Qualifier
  * @noextend This interface is not intended to be extended by clients.
  * @noimplement This interface is not intended to be implemented by clients.
+ * @since 1.7.0
  */
 public interface IObjectDescriptor {
 
