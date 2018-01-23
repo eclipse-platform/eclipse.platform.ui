@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.browser;
 
+import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.events.PaintEvent;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Image;
@@ -22,11 +23,13 @@ import org.eclipse.swt.widgets.Display;
  * An animated image to show busy status of the Web browser.
  */
 public class BusyIndicator extends Canvas {
-	protected Image[] images;
+	protected Image[] images = new Image[13];
 	protected Image image;
 
 	protected Thread busyThread;
 	protected boolean stop;
+
+	private static final String URL_BUSY = "$nl$/icons/obj16/busy/"; //$NON-NLS-1$
 
 	/**
 	 * BusyWidget constructor comment.
@@ -36,7 +39,14 @@ public class BusyIndicator extends Canvas {
 	public BusyIndicator(Composite parent, int style) {
 		super(parent, style);
 
-		images = ImageResource.getBusyImages();
+		ImageResourceManager imageManager = new ImageResourceManager(this);
+
+		for (int i = 0; i < 13; i++) {
+			ImageDescriptor id = ImageResourceManager.
+					getImageDescriptor(URL_BUSY + (i + 1) + ".gif"); //$NON-NLS-1$
+
+			images[i] = imageManager.getImage(id);
+		}
 
 		addPaintListener(event -> onPaint(event));
 

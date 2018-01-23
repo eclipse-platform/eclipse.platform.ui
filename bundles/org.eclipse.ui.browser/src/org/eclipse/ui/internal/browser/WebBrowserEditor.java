@@ -20,7 +20,6 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.osgi.util.NLS;
-import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IActionBars;
@@ -46,7 +45,7 @@ public class WebBrowserEditor extends EditorPart implements IBrowserViewerContai
 
 	protected BrowserViewer webBrowser;
 	protected String initialURL;
-	protected Image image;
+	protected ImageDescriptor imageDescriptor;
 
 	protected TextAction cutAction;
 	protected TextAction copyAction;
@@ -78,6 +77,9 @@ public class WebBrowserEditor extends EditorPart implements IBrowserViewerContai
 		webBrowser.setURL(initialURL);
 		webBrowser.setContainer(this);
 
+		ImageResourceManager manager = new ImageResourceManager(webBrowser);
+		setTitleImage(manager.getImage(imageDescriptor));
+
 		if (input == null || input.isLocationBarLocal()) {
 			cutAction = new TextAction(webBrowser, TextAction.CUT);
 			copyAction = new TextAction(webBrowser, TextAction.COPY);
@@ -96,10 +98,6 @@ public class WebBrowserEditor extends EditorPart implements IBrowserViewerContai
 
 	@Override
 	public void dispose() {
-		if (image != null && !image.isDisposed())
-			image.dispose();
-		image = null;
-
 		super.dispose();
 		// mark this instance as disposed to avoid stale references
 		disposed = true;
@@ -185,13 +183,7 @@ public class WebBrowserEditor extends EditorPart implements IBrowserViewerContai
 			if (url != null)
 				setTitleToolTip(url.getFile());
 
-			Image oldImage = image;
-			ImageDescriptor id = ImageResource.getImageDescriptor(ImageResource.IMG_INTERNAL_BROWSER);
-			image = id.createImage();
-
-			setTitleImage(image);
-			if (oldImage != null && !oldImage.isDisposed())
-				oldImage.dispose();
+			imageDescriptor = ImageResourceManager.getImageDescriptor("$nl$/icons/obj16/" + "internal_browser.png"); //$NON-NLS-1$ //$NON-NLS-2$
 			//addResourceListener(file);
 		} else if (input instanceof WebBrowserEditorInput) {
 			WebBrowserEditorInput wbei = (WebBrowserEditorInput) input;
@@ -207,13 +199,7 @@ public class WebBrowserEditor extends EditorPart implements IBrowserViewerContai
 			setTitleToolTip(wbei.getToolTipText());
 			lockName = wbei.isNameLocked();
 
-			Image oldImage = image;
-			ImageDescriptor id = wbei.getImageDescriptor();
-			image = id.createImage();
-
-			setTitleImage(image);
-			if (oldImage != null && !oldImage.isDisposed())
-				oldImage.dispose();
+			imageDescriptor = wbei.getImageDescriptor();
 		} else {
 			IPathEditorInput pinput = Adapters.adapt(input, IPathEditorInput.class);
 			if (pinput != null) {

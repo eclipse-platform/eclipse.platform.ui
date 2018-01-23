@@ -28,6 +28,7 @@ import java.util.List;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.action.IStatusLineManager;
+import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.SWTError;
 import org.eclipse.swt.SWTException;
@@ -43,6 +44,7 @@ import org.eclipse.swt.dnd.Clipboard;
 import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.SelectionListener;
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -153,6 +155,13 @@ public class BrowserViewer extends Composite {
 
     public IBackNextListener backNextListener;
 
+	private ImageResourceManager imageManager;
+
+	private static final String URL_PREFIX = "$nl$/icons/"; //$NON-NLS-1$
+	private static final String URL_ELCL = URL_PREFIX + "elcl16/"; //$NON-NLS-1$
+	private static final String URL_CLCL = URL_PREFIX + "clcl16/"; //$NON-NLS-1$
+	private static final String URL_DLCL = URL_PREFIX + "dlcl16/"; //$NON-NLS-1$
+
     /**
      * Creates a new Web browser given its parent and a style value describing
      * its behavior and appearance.
@@ -193,6 +202,7 @@ public class BrowserViewer extends Composite {
 
 		if (showToolbar || showURLbar) {
 			Composite toolbarComp = new Composite(this, SWT.NONE);
+			imageManager = new ImageResourceManager(toolbarComp);
 			toolbarComp.setLayout(new ToolbarLayout());
 			toolbarComp.setLayoutData(new GridData(GridData.VERTICAL_ALIGN_BEGINNING | GridData.FILL_HORIZONTAL));
 
@@ -746,10 +756,9 @@ public class BrowserViewer extends Composite {
         ToolBar toolbar = new ToolBar(parent, SWT.FLAT);
 
         ToolItem go = new ToolItem(toolbar, SWT.NONE);
-        go.setImage(ImageResource.getImage(ImageResource.IMG_ELCL_NAV_GO));
-        go.setHotImage(ImageResource.getImage(ImageResource.IMG_CLCL_NAV_GO));
-        go.setDisabledImage(ImageResource
-                .getImage(ImageResource.IMG_DLCL_NAV_GO));
+		go.setImage(getImage(URL_ELCL, "nav_go.png")); //$NON-NLS-1$
+		go.setHotImage(getImage(URL_CLCL, "nav_go.png")); //$NON-NLS-1$
+		go.setDisabledImage(getImage(URL_DLCL, "nav_go.png")); //$NON-NLS-1$
         go.setToolTipText(Messages.actionWebBrowserGo);
 		go.addSelectionListener(SelectionListener.widgetSelectedAdapter(e -> setURL(combo.getText())));
 
@@ -761,39 +770,31 @@ public class BrowserViewer extends Composite {
 
         // create back and forward actions
         back = new ToolItem(toolbar, SWT.NONE);
-        back.setImage(ImageResource
-                .getImage(ImageResource.IMG_ELCL_NAV_BACKWARD));
-        back.setHotImage(ImageResource
-                .getImage(ImageResource.IMG_CLCL_NAV_BACKWARD));
-        back.setDisabledImage(ImageResource
-                .getImage(ImageResource.IMG_DLCL_NAV_BACKWARD));
+		back.setImage(getImage(URL_ELCL, "nav_backward.png")); //$NON-NLS-1$
+		back.setHotImage(getImage(URL_CLCL, "nav_backward.png")); //$NON-NLS-1$
+		back.setDisabledImage(getImage(URL_DLCL, "nav_backward.png")); //$NON-NLS-1$
         back.setToolTipText(Messages.actionWebBrowserBack);
 		back.addSelectionListener(SelectionListener.widgetSelectedAdapter(e -> back()));
 
         forward = new ToolItem(toolbar, SWT.NONE);
-        forward.setImage(ImageResource
-                .getImage(ImageResource.IMG_ELCL_NAV_FORWARD));
-        forward.setHotImage(ImageResource
-                .getImage(ImageResource.IMG_CLCL_NAV_FORWARD));
-        forward.setDisabledImage(ImageResource
-                .getImage(ImageResource.IMG_DLCL_NAV_FORWARD));
+		forward.setImage(getImage(URL_ELCL, "nav_forward.png")); //$NON-NLS-1$
+		forward.setHotImage(getImage(URL_CLCL, "nav_forward.png")); //$NON-NLS-1$
+		forward.setDisabledImage(getImage(URL_DLCL, "nav_forward.png")); //$NON-NLS-1$
         forward.setToolTipText(Messages.actionWebBrowserForward);
 		forward.addSelectionListener(SelectionListener.widgetSelectedAdapter(e -> forward()));
 
         // create refresh, stop, and print actions
         ToolItem stop = new ToolItem(toolbar, SWT.NONE);
-        stop.setImage(ImageResource.getImage(ImageResource.IMG_ELCL_NAV_STOP));
-        stop.setHotImage(ImageResource
-                .getImage(ImageResource.IMG_CLCL_NAV_STOP));
-        stop.setDisabledImage(ImageResource
-                .getImage(ImageResource.IMG_DLCL_NAV_STOP));
+		stop.setImage(getImage(URL_ELCL, "nav_stop.png")); //$NON-NLS-1$
+		stop.setHotImage(getImage(URL_CLCL, "nav_stop.png")); //$NON-NLS-1$
+		stop.setDisabledImage(getImage(URL_DLCL, "nav_stop.png")); //$NON-NLS-1$
         stop.setToolTipText(Messages.actionWebBrowserStop);
 		stop.addSelectionListener(SelectionListener.widgetSelectedAdapter(e -> stop()));
 
         ToolItem refresh = new ToolItem(toolbar, SWT.DROP_DOWN);
-        refresh.setImage(ImageResource.getImage(ImageResource.IMG_ELCL_NAV_REFRESH));
-        refresh.setHotImage(ImageResource.getImage(ImageResource.IMG_CLCL_NAV_REFRESH));
-        refresh.setDisabledImage(ImageResource.getImage(ImageResource.IMG_DLCL_NAV_REFRESH));
+		refresh.setImage(getImage(URL_ELCL, "nav_refresh.png")); //$NON-NLS-1$
+		refresh.setHotImage(getImage(URL_CLCL, "nav_refresh.png")); //$NON-NLS-1$
+		refresh.setDisabledImage(getImage(URL_DLCL, "nav_refresh.png")); //$NON-NLS-1$
         refresh.setToolTipText(Messages.actionWebBrowserRefresh);
 
         // create auto-refresh action
@@ -812,6 +813,11 @@ public class BrowserViewer extends Composite {
 
         return toolbar;
     }
+
+	private Image getImage(String folder, String name) {
+		ImageDescriptor id = ImageResourceManager.getImageDescriptor(folder + name);
+		return imageManager.getImage(id);
+	}
 
     /**
      * Returns the current URL. Convenience method that calls the underlying SWT
