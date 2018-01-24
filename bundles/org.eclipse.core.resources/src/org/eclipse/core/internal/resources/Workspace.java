@@ -21,6 +21,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.*;
 import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.function.Predicate;
 import org.eclipse.core.filesystem.EFS;
 import org.eclipse.core.filesystem.IFileStore;
 import org.eclipse.core.filesystem.URIUtil;
@@ -29,7 +30,6 @@ import org.eclipse.core.internal.localstore.FileSystemResourceManager;
 import org.eclipse.core.internal.properties.IPropertyManager;
 import org.eclipse.core.internal.properties.PropertyManager2;
 import org.eclipse.core.internal.refresh.RefreshManager;
-import org.eclipse.core.internal.resources.ComputeProjectOrder.VertexFilter;
 import org.eclipse.core.internal.resources.ComputeProjectOrder.VertexOrder;
 import org.eclipse.core.internal.utils.*;
 import org.eclipse.core.internal.watson.*;
@@ -624,7 +624,7 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 	 * @return result describing the global project order
 	 * @since 2.1
 	 */
-	private VertexOrder computeFullProjectOrder() {
+	private VertexOrder<IProject> computeFullProjectOrder() {
 		// determine the full set of accessible projects in the workspace
 		// order the set in descending alphabetical order of project name
 		SortedSet<IProject> allAccessibleProjects = new TreeSet<>((px, py) -> py.getName().compareTo(px.getName()));
@@ -648,7 +648,7 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 					edges.add(new IProject[] {project, ref});
 			}
 		}
-		return ComputeProjectOrder.computeVertexOrder(allAccessibleProjects, edges);
+		return ComputeProjectOrder.computeVertexOrder(allAccessibleProjects, edges, IProject.class);
 	}
 
 	/**
@@ -676,7 +676,7 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 	 *
 	 * @return result describing the global active build configuration order
 	 */
-	private VertexOrder computeActiveBuildConfigOrder() {
+	private VertexOrder<IBuildConfiguration> computeActiveBuildConfigOrder() {
 		// Determine the full set of accessible active project buildConfigs in the workspace,
 		// and all the accessible project buildConfigs that they reference. This forms a set
 		// of all the project buildConfigs that will be returned.
@@ -732,7 +732,7 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 				}
 			}
 		}
-		return ComputeProjectOrder.computeVertexOrder(allAccessibleBuildConfigs, edges);
+		return ComputeProjectOrder.computeVertexOrder(allAccessibleBuildConfigs, edges, IBuildConfiguration.class);
 	}
 
 	/**
@@ -759,7 +759,7 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 	 *
 	 * @return result describing the global project build configuration order
 	 */
-	private VertexOrder computeFullBuildConfigOrder() {
+	private VertexOrder<IBuildConfiguration> computeFullBuildConfigOrder() {
 		// Compute the order for all accessible project buildConfigs
 		SortedSet<IBuildConfiguration> allAccessibleBuildConfigurations = new TreeSet<>(new BuildConfigurationComparator());
 
@@ -787,10 +787,10 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 				}
 			}
 		}
-		return ComputeProjectOrder.computeVertexOrder(allAccessibleBuildConfigurations, edges);
+		return ComputeProjectOrder.computeVertexOrder(allAccessibleBuildConfigurations, edges, IBuildConfiguration.class);
 	}
 
-	private static ProjectOrder vertexOrderToProjectOrder(VertexOrder order) {
+	private static ProjectOrder vertexOrderToProjectOrder(VertexOrder<IProject> order) {
 		IProject[] projects = new IProject[order.vertexes.length];
 		System.arraycopy(order.vertexes, 0, projects, 0, order.vertexes.length);
 		IProject[][] knots = new IProject[order.knots.length][];
@@ -801,7 +801,7 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 		return new ProjectOrder(projects, order.hasCycles, knots);
 	}
 
-	private static ProjectBuildConfigOrder vertexOrderToProjectBuildConfigOrder(VertexOrder order) {
+	private static ProjectBuildConfigOrder vertexOrderToProjectBuildConfigOrder(VertexOrder<IBuildConfiguration> order) {
 		IBuildConfiguration[] buildConfigs = new IBuildConfiguration[order.vertexes.length];
 		System.arraycopy(order.vertexes, 0, buildConfigs, 0, order.vertexes.length);
 		IBuildConfiguration[][] knots = new IBuildConfiguration[order.knots.length][];
@@ -864,15 +864,15 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 	@Override
 	public ProjectOrder computeProjectOrder(IProject[] projects) {
 		// Compute the full project order for all accessible projects
-		VertexOrder fullProjectOrder = computeFullProjectOrder();
+		VertexOrder<IProject> fullProjectOrder = computeFullProjectOrder();
 
 		// Create a filter to remove all projects that are not in the list asked for
 		final Set<IProject> projectSet = new HashSet<>(projects.length);
 		projectSet.addAll(Arrays.asList(projects));
-		VertexFilter filter = vertex -> !projectSet.contains(vertex);
+		Predicate<IProject> filter = vertex -> !projectSet.contains(vertex);
 
 		// Filter the order and return it
-		return vertexOrderToProjectOrder(ComputeProjectOrder.filterVertexOrder(fullProjectOrder, filter));
+		return vertexOrderToProjectOrder(ComputeProjectOrder.filterVertexOrder(fullProjectOrder, filter, IProject.class));
 	}
 
 	/**
@@ -911,15 +911,15 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 	 */
 	public ProjectBuildConfigOrder computeProjectBuildConfigOrder(IBuildConfiguration[] buildConfigs) {
 		// Compute the full project order for all accessible projects
-		VertexOrder fullBuildConfigOrder = computeFullBuildConfigOrder();
+		VertexOrder<IBuildConfiguration> fullBuildConfigOrder = computeFullBuildConfigOrder();
 
 		// Create a filter to remove all project buildConfigs that are not in the list asked for
 		final Set<IBuildConfiguration> projectConfigSet = new HashSet<>(buildConfigs.length);
 		projectConfigSet.addAll(Arrays.asList(buildConfigs));
-		VertexFilter filter = vertex -> !projectConfigSet.contains(vertex);
+		Predicate<IBuildConfiguration> filter = vertex -> !projectConfigSet.contains(vertex);
 
 		// Filter the order and return it
-		return vertexOrderToProjectBuildConfigOrder(ComputeProjectOrder.filterVertexOrder(fullBuildConfigOrder, filter));
+		return vertexOrderToProjectBuildConfigOrder(ComputeProjectOrder.filterVertexOrder(fullBuildConfigOrder, filter, IBuildConfiguration.class));
 	}
 
 	@Override

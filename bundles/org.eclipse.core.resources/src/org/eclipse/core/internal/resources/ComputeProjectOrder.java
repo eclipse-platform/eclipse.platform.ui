@@ -13,7 +13,9 @@
  *******************************************************************************/
 package org.eclipse.core.internal.resources;
 
+import java.lang.reflect.Array;
 import java.util.*;
+import java.util.function.Predicate;
 
 /**
  * Implementation of a sort algorithm for computing the order of vertexes that are part
@@ -41,12 +43,12 @@ class ComputeProjectOrder {
 	 * McGraw-Hill, 1990. The depth-first search algorithm is in section 23.3.
 	 * </p>
 	 */
-	private static class Digraph {
+	private static class Digraph<T> {
 		/**
 		 * struct-like object for representing a vertex along with various
 		 * values computed during depth-first search (DFS).
 		 */
-		public static class Vertex {
+		public static class Vertex<T> {
 			/**
 			 * White is for marking vertexes as unvisited.
 			 */
@@ -74,7 +76,7 @@ class ComputeProjectOrder {
 			 * The DFS predecessor vertex, or <code>null</code> if there is no
 			 * predecessor. <code>null</code> initially.
 			 */
-			public Vertex predecessor = null;
+			public Vertex<T> predecessor = null;
 
 			/**
 			 * Timestamp indicating when the vertex was finished (became BLACK)
@@ -86,7 +88,7 @@ class ComputeProjectOrder {
 			/**
 			 * The id of this vertex.
 			 */
-			public Object id;
+			public T id;
 
 			/**
 			 * Ordered list of adjacent vertexes. In other words, "this" is the
@@ -95,14 +97,14 @@ class ComputeProjectOrder {
 			 *
 			 * Element type: <code>Vertex</code>
 			 */
-			public List<Vertex> adjacent = new ArrayList<>(3);
+			public List<Vertex<T>> adjacent = new ArrayList<>(3);
 
 			/**
 			 * Creates a new vertex with the given id.
 			 *
 			 * @param id the vertex id
 			 */
-			public Vertex(Object id) {
+			public Vertex(T id) {
 				this.id = id;
 			}
 		}
@@ -112,14 +114,14 @@ class ComputeProjectOrder {
 		 *
 		 * Element type: <code>Vertex</code>
 		 */
-		private List<Vertex> vertexList = new ArrayList<>(100);
+		private List<Vertex<T>> vertexList = new ArrayList<>(100);
 
 		/**
 		 * Map from id to vertex.
 		 *
-		 * Key type: <code>Object</code>; value type: <code>Vertex</code>
+		 * Key type: <code>T</code>; value type: <code>Vertex</code>
 		 */
-		private Map<Object, Vertex> vertexMap = new HashMap<>(100);
+		private Map<T, Vertex<T>> vertexMap = new HashMap<>(100);
 
 		/**
 		 * DFS visit time. Non-negative.
@@ -138,6 +140,8 @@ class ComputeProjectOrder {
 		 */
 		private boolean cycles = false;
 
+		private Class<T> clazz;
+
 		/**
 		 * Creates a new empty directed graph object.
 		 * <p>
@@ -148,8 +152,9 @@ class ComputeProjectOrder {
 		 * by DFS finish time.
 		 * </p>
 		 */
-		public Digraph() {
+		public Digraph(Class<T> clazz) {
 			super();
+			this.clazz = clazz;
 		}
 
 		/**
@@ -174,12 +179,12 @@ class ComputeProjectOrder {
 		 * @exception IllegalArgumentException if the vertex id is
 		 * already defined or if the graph is frozen
 		 */
-		public void addVertex(Object id) throws IllegalArgumentException {
+		public void addVertex(T id) throws IllegalArgumentException {
 			if (initialized) {
 				throw new IllegalArgumentException();
 			}
-			Vertex vertex = new Vertex(id);
-			Object existing = vertexMap.put(id, vertex);
+			Vertex<T> vertex = new Vertex<>(id);
+			Vertex<T> existing = vertexMap.put(id, vertex);
 			// nip problems with duplicate vertexes in the bud
 			if (existing != null) {
 				throw new IllegalArgumentException();
@@ -199,12 +204,12 @@ class ComputeProjectOrder {
 		 * @exception IllegalArgumentException if either vertex is undefined or
 		 * if the graph is frozen
 		 */
-		public void addEdge(Object fromId, Object toId) throws IllegalArgumentException {
+		public void addEdge(T fromId, T toId) throws IllegalArgumentException {
 			if (initialized) {
 				throw new IllegalArgumentException();
 			}
-			Vertex fromVertex = vertexMap.get(fromId);
-			Vertex toVertex = vertexMap.get(toId);
+			Vertex<T> fromVertex = vertexMap.get(fromId);
+			Vertex<T> toVertex = vertexMap.get(toId);
 			// nip problems with bogus vertexes in the bud
 			if (fromVertex == null) {
 				throw new IllegalArgumentException();
@@ -227,13 +232,14 @@ class ComputeProjectOrder {
 		 * (element type: <code>Object</code>)
 		 * @exception IllegalArgumentException if the graph is not frozen
 		 */
-		public List<Object> idsByDFSFinishTime(boolean increasing) {
+		public List<T> idsByDFSFinishTime(boolean increasing) {
 			if (!initialized) {
 				throw new IllegalArgumentException();
 			}
 			int len = vertexList.size();
-			Object[] r = new Object[len];
-			for (Vertex vertex : vertexList) {
+			@SuppressWarnings("unchecked")
+			T[] r = (T[]) Array.newInstance(clazz, len);
+			for (Vertex<T> vertex : vertexList) {
 				int f = vertex.finishTime;
 				// note that finish times start at 1, not 0
 				if (increasing) {
@@ -269,24 +275,25 @@ class ComputeProjectOrder {
 		 * <code>Object[]</code>)
 		 * @exception IllegalArgumentException if the graph is not frozen
 		 */
-		public List<Object[]> nonTrivialComponents() {
+		@SuppressWarnings("unchecked")
+		public List<T[]> nonTrivialComponents() {
 			if (!initialized) {
 				throw new IllegalArgumentException();
 			}
 			// find the roots of each component
 			// Map<Vertex,List<Object>> components
-			Map<Vertex, List<Object>> components = new HashMap<>();
-			for (Vertex vertex : vertexList) {
+			Map<Vertex<T>, List<T>> components = new HashMap<>();
+			for (Vertex<T> vertex : vertexList) {
 				if (vertex.predecessor == null) {
 					// this vertex is the root of a component
 					// if component is non-trivial we will hit a child
 				} else {
 					// find the root ancestor of this vertex
-					Vertex root = vertex;
+					Vertex<T> root = vertex;
 					while (root.predecessor != null) {
 						root = root.predecessor;
 					}
-					List<Object> component = components.get(root);
+					List<T> component = components.get(root);
 					if (component == null) {
 						component = new ArrayList<>(2);
 						component.add(root.id);
@@ -295,10 +302,10 @@ class ComputeProjectOrder {
 					component.add(vertex.id);
 				}
 			}
-			List<Object[]> result = new ArrayList<>(components.size());
-			for (List<Object> component : components.values()) {
+			List<T[]> result = new ArrayList<>(components.size());
+			for (List<T> component : components.values()) {
 				if (component.size() > 1) {
-					result.add(component.toArray());
+					result.add(component.toArray((T[]) Array.newInstance(clazz, component.size())));
 				}
 			}
 			return result;
@@ -374,9 +381,9 @@ class ComputeProjectOrder {
 			time = 0;
 			// for a stack, append to the end of an array-based list
 			List<Object> stack = new ArrayList<>(Math.max(1, vertexList.size()));
-			Iterator<Vertex> allAdjacent = null;
-			Vertex vertex = null;
-			Iterator<Vertex> allV = vertexList.iterator();
+			Iterator<Vertex<T>> allAdjacent = null;
+			Vertex<T> vertex = null;
+			Iterator<Vertex<T>> allV = vertexList.iterator();
 			state = NEXT_VERTEX;
 			nextStateLoop: while (true) {
 				switch (state) {
@@ -386,7 +393,7 @@ class ComputeProjectOrder {
 							// all done
 							break nextStateLoop;
 						}
-						Vertex nextVertex = allV.next();
+						Vertex<T> nextVertex = allV.next();
 						if (nextVertex.color == Vertex.WHITE) {
 							stack.add(NEXT_VERTEX_OBJECT);
 							vertex = nextVertex;
@@ -408,7 +415,7 @@ class ComputeProjectOrder {
 						// on entry, "allAdjacent" contains adjacent vertexes to
 						// be visited; "vertex" contains vertex being visited
 						if (allAdjacent.hasNext()) {
-							Vertex adjVertex = allAdjacent.next();
+							Vertex<T> adjVertex = allAdjacent.next();
 							if (adjVertex.color == Vertex.WHITE) {
 								// explore edge from vertex to adjVertex
 								adjVertex.predecessor = vertex;
@@ -434,8 +441,8 @@ class ComputeProjectOrder {
 						continue nextStateLoop;
 					case AFTER_NEXTED_DFS_VISIT :
 						// on entry, stack contains "vertex" and "allAjacent"
-						vertex = (Vertex) stack.remove(stack.size() - 1);
-						allAdjacent = (Iterator<Vertex>) stack.remove(stack.size() - 1);
+						vertex = (Vertex<T>) stack.remove(stack.size() - 1);
+						allAdjacent = (Iterator<Vertex<T>>) stack.remove(stack.size() - 1);
 						state = NEXT_ADJACENT;
 						continue nextStateLoop;
 				}
@@ -448,14 +455,14 @@ class ComputeProjectOrder {
 	 * Data structure for holding the multi-part outcome of
 	 * <code>ComputeVertexOrder.computeVertexOrder</code>.
 	 */
-	static final class VertexOrder {
+	static final class VertexOrder<T> {
 		/**
 		 * Creates an instance with the given values.
 		 * @param vertexes initial value of <code>vertexes</code> field
 		 * @param hasCycles initial value of <code>hasCycles</code> field
 		 * @param knots initial value of <code>knots</code> field
 		 */
-		public VertexOrder(Object[] vertexes, boolean hasCycles, Object[][] knots) {
+		public VertexOrder(T[] vertexes, boolean hasCycles, T[][] knots) {
 			this.vertexes = vertexes;
 			this.hasCycles = hasCycles;
 			this.knots = knots;
@@ -465,7 +472,7 @@ class ComputeProjectOrder {
 		 * A list of vertexes ordered so as to honor the reference
 		 * relationships between them wherever possible.
 		 */
-		public Object[] vertexes;
+		public T[] vertexes;
 		/**
 		 * <code>true</code> if any of the vertexes in <code>vertexes</code>
 		 * are involved in non-trivial cycles in the reference graph.
@@ -477,7 +484,7 @@ class ComputeProjectOrder {
 		 * contains cycles, each element is a knot of two or more vertexes that
 		 * are involved in a cycle of mutually dependent references.
 		 */
-		public Object[][] knots;
+		public T[][] knots;
 	}
 
 	/**
@@ -504,18 +511,19 @@ class ComputeProjectOrder {
 	 * @param references a list of pairs [A,B] meaning that A references B
 	 * @return an object describing the resulting order
 	 */
-	static VertexOrder computeVertexOrder(SortedSet<? extends Object> vertexes, List<? extends Object[]> references) {
+	@SuppressWarnings("unchecked")
+	static <T> VertexOrder<T> computeVertexOrder(SortedSet<? extends T> vertexes, List<? extends T[]> references, Class<T> clazz) {
 
 		// Step 1: Create the graph object.
-		final Digraph g1 = new Digraph();
+		final Digraph<T> g1 = new Digraph<>(clazz);
 		// add vertexes
-		for (Object name : vertexes) {
+		for (T name : vertexes) {
 			g1.addVertex(name);
 		}
 		// add edges
-		for (Object[] ref : references) {
-			Object p = ref[0];
-			Object q = ref[1];
+		for (T[] ref : references) {
+			T p = ref[0];
+			T q = ref[1];
 			// p has a reference to q
 			// therefore create an edge from q to p
 			// to cause q to come before p in eventual result
@@ -526,16 +534,16 @@ class ComputeProjectOrder {
 		// Step 2: Create the transposed graph. This time, define the vertexes
 		// in decreasing order of depth-first finish time in g1
 		// interchange "to" and "from" to reverse edges from g1
-		final Digraph g2 = new Digraph();
+		final Digraph<T> g2 = new Digraph<>(clazz);
 		// add vertexes
-		List<Object> resortedVertexes = g1.idsByDFSFinishTime(false);
-		for (Object object : resortedVertexes) {
+		List<T> resortedVertexes = g1.idsByDFSFinishTime(false);
+		for (T object : resortedVertexes) {
 			g2.addVertex(object);
 		}
 		// add edges
-		for (Object[] ref : references) {
-			Object p = ref[0];
-			Object q = ref[1];
+		for (T[] ref : references) {
+			T p = ref[0];
+			T q = ref[1];
 			// p has a reference to q
 			// therefore create an edge from p to q
 			// N.B. this is the reverse of step 1
@@ -545,36 +553,34 @@ class ComputeProjectOrder {
 
 		// Step 3: Return the vertexes in increasing order of depth-first finish
 		// time in g2
-		List<Object> sortedVertexList = g2.idsByDFSFinishTime(true);
-		Object[] orderedVertexes = new Object[sortedVertexList.size()];
+		List<T> sortedVertexList = g2.idsByDFSFinishTime(true);
+		T[] orderedVertexes = (T[]) Array.newInstance(clazz, sortedVertexList.size());
 		sortedVertexList.toArray(orderedVertexes);
-		Object[][] knots;
+		T[][] knots;
 		boolean hasCycles = g2.containsCycles();
 		if (hasCycles) {
-			List<Object[]> knotList = g2.nonTrivialComponents();
-			knots = new Object[knotList.size()][];
+			List<T[]> knotList = g2.nonTrivialComponents();
+			Class<?> arrayClass = Array.newInstance(clazz, 0).getClass();
+			knots = (T[][]) Array.newInstance(arrayClass, knotList.size());
 			knotList.toArray(knots);
 		} else {
-			knots = new Object[][] {};
+			knots = (T[][]) Array.newInstance(clazz, 0, 0);
 		}
-		return new VertexOrder(orderedVertexes, hasCycles, knots);
-	}
-
-	static interface VertexFilter {
-		boolean matches(Object vertex);
+		return new VertexOrder<>(orderedVertexes, hasCycles, knots);
 	}
 
 	/**
 	 * Given a VertexOrder and a VertexFilter, remove all vertexes
 	 * matching the filter from the ordering.
 	 */
-	static VertexOrder filterVertexOrder(VertexOrder order, VertexFilter filter) {
+	@SuppressWarnings("unchecked")
+	static <T> VertexOrder<T> filterVertexOrder(VertexOrder<T> order, Predicate<T> filter, Class<T> clazz) {
 		// Optimize common case where nothing is to be filtered
 		// and cache the results of applying the filter
 		int filteredCount = 0;
 		boolean[] filterMatches = new boolean[order.vertexes.length];
 		for (int i = 0; i < order.vertexes.length; i++) {
-			filterMatches[i] = filter.matches(order.vertexes[i]);
+			filterMatches[i] = filter.test(order.vertexes[i]);
 			if (filterMatches[i])
 				filteredCount++;
 		}
@@ -586,7 +592,7 @@ class ComputeProjectOrder {
 
 		// Otherwise we need to eliminate mention of vertexes matching the filter
 		// from the list of vertexes
-		Object[] reducedVertexes = new Object[order.vertexes.length - filteredCount];
+		T[] reducedVertexes = (T[]) Array.newInstance(clazz, order.vertexes.length - filteredCount);
 		for (int i = 0, j = 0; i < order.vertexes.length; i++) {
 			if (!filterMatches[i]) {
 				reducedVertexes[j] = order.vertexes[i];
@@ -595,21 +601,20 @@ class ComputeProjectOrder {
 		}
 
 		// and from the knots list
-		List<Object[]> reducedKnots = new ArrayList<>(order.knots.length);
-		for (Object[] knot : order.knots) {
-			List<Object> knotList = new ArrayList<>(knot.length);
-			for (Object element : knot) {
-				Object vertex = element;
-				if (!filter.matches(vertex)) {
+		List<T[]> reducedKnots = new ArrayList<>(order.knots.length);
+		for (T[] knot : order.knots) {
+			List<T> knotList = new ArrayList<>(knot.length);
+			for (T vertex : knot) {
+				if (!filter.test(vertex)) {
 					knotList.add(vertex);
 				}
 			}
 			// Keep knots containing 2 or more vertexes in the specified subset
 			if (knotList.size() > 1) {
-				reducedKnots.add(knotList.toArray());
+				reducedKnots.add(knotList.toArray((T[]) Array.newInstance(clazz, knotList.size())));
 			}
 		}
-
-		return new VertexOrder(reducedVertexes, reducedKnots.size() > 0, reducedKnots.toArray(new Object[reducedKnots.size()][]));
+		Class<?> arrayClass = Array.newInstance(clazz, 0).getClass();
+		return new VertexOrder<>(reducedVertexes, reducedKnots.size() > 0, reducedKnots.toArray((T[][]) Array.newInstance(arrayClass, reducedKnots.size())));
 	}
 }
