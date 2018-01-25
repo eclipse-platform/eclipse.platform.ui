@@ -17,7 +17,6 @@ import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.jface.resource.ImageRegistry;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.resource.ResourceManager;
 import org.eclipse.jface.viewers.ColumnViewer;
@@ -27,6 +26,7 @@ import org.eclipse.jface.viewers.IDecoration;
 import org.eclipse.jface.viewers.ViewerCell;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.ide.IDEInternalWorkbenchImages;
@@ -45,7 +45,6 @@ public abstract class MarkerField {
 
 	private IConfigurationElement configurationElement;
 	private ResourceManager imageManager;
-	private ImageRegistry imageRegistry;
 
 	/**
 	 * Annotate the image with indicators for whether or not help or quick fix
@@ -68,53 +67,35 @@ public abstract class MarkerField {
 				if (contextId != null) {
 					if (image == null)
 						image = JFaceResources.getImage(Dialog.DLG_IMG_HELP);
-					else{
-						descriptors[IDecoration.TOP_RIGHT] =
-							getIDEImageDescriptor(MarkerSupportInternalUtilities.IMG_MARKERS_HELP_DECORATION_PATH);
+					else {
+						descriptors[IDecoration.TOP_RIGHT] = IDEWorkbenchPlugin
+								.getIDEImageDescriptor(MarkerSupportInternalUtilities.IMG_MARKERS_HELP_DECORATION_PATH);
 					}
 				}
 				if (IDE.getMarkerHelpRegistry().hasResolutions(marker)) {
+					ISharedImages sharedImages = WorkbenchPlugin.getDefault().getSharedImages();
 					if (image == MarkerSupportInternalUtilities.getSeverityImage(IMarker.SEVERITY_WARNING)) {
-						image = WorkbenchPlugin.getDefault().getSharedImages().getImage(IDEInternalWorkbenchImages.IMG_OBJS_FIXABLE_WARNING);
+						image = sharedImages.getImage(IDEInternalWorkbenchImages.IMG_OBJS_FIXABLE_WARNING);
 					} else if (image == MarkerSupportInternalUtilities.getSeverityImage(IMarker.SEVERITY_ERROR)) {
-						image = WorkbenchPlugin.getDefault().getSharedImages().getImage(IDEInternalWorkbenchImages.IMG_OBJS_FIXABLE_ERROR);
+						image = sharedImages.getImage(IDEInternalWorkbenchImages.IMG_OBJS_FIXABLE_ERROR);
 					} else if (image == MarkerSupportInternalUtilities.getSeverityImage(IMarker.SEVERITY_INFO)) {
-						image = WorkbenchPlugin.getDefault().getSharedImages().getImage(IDEInternalWorkbenchImages.IMG_OBJS_FIXABLE_INFO);
+						image = sharedImages.getImage(IDEInternalWorkbenchImages.IMG_OBJS_FIXABLE_INFO);
 					} else if (image != null) {
-						descriptors[IDecoration.BOTTOM_RIGHT] = getIDEImageDescriptor(MarkerSupportInternalUtilities.IMG_MARKERS_QUICK_FIX_DECORATION_PATH);
+						descriptors[IDecoration.BOTTOM_RIGHT] = IDEWorkbenchPlugin.getIDEImageDescriptor(
+								MarkerSupportInternalUtilities.IMG_MARKERS_QUICK_FIX_DECORATION_PATH);
 					}
 					if (image == null) {
-						image = WorkbenchPlugin.getDefault().getSharedImages().getImage(IDEInternalWorkbenchImages.IMG_ELCL_QUICK_FIX_ENABLED);
+						image = sharedImages.getImage(IDEInternalWorkbenchImages.IMG_ELCL_QUICK_FIX_ENABLED);
 					}
 				}
-
-				if (descriptors[IDecoration.TOP_RIGHT] != null
-						|| descriptors[IDecoration.BOTTOM_RIGHT] != null)
-					image = getImageManager().createImage(
-							new DecorationOverlayIcon(image, descriptors));
+				if (descriptors[IDecoration.TOP_RIGHT] != null || descriptors[IDecoration.BOTTOM_RIGHT] != null)
+					image = getImageManager().createImage(new DecorationOverlayIcon(image, descriptors));
 			}
 		}
 		return image;
 
 	}
 
-	/**
-	 * Get the workbench image with the given path relative to
-	 * ICON_PATH from the plugins image registry .
-	 * @param relativePath
-	 * @return ImageDescriptor
-	 */
-	ImageDescriptor getIDEImageDescriptor(String relativePath){
-		if(imageRegistry==null){
-			imageRegistry=IDEWorkbenchPlugin.getDefault().getImageRegistry();
-		}
-		ImageDescriptor descriptor=imageRegistry.getDescriptor(relativePath);
-		if(descriptor==null){
-			descriptor=IDEWorkbenchPlugin.getIDEImageDescriptor(relativePath);
-			imageRegistry.put(relativePath, descriptor);
-		}
-		return descriptor;
-	}
 	/**
 	 * Compare item1 and item2 for sorting purposes.
 	 *
