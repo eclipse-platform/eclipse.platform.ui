@@ -140,7 +140,7 @@ class Binding {
 																.getUniqueIdentifier(),
 														element
 																.getDeclaringExtension()
-																.getNamespaceIdentifier() }),
+																.getContributor().getName() }),
 								null);
 			} else {
 				compiledPattern = Pattern.compile(patternString);
@@ -179,7 +179,7 @@ class Binding {
 																.getUniqueIdentifier(),
 														element
 																.getDeclaringExtension()
-																.getNamespaceIdentifier() }),
+																.getContributor().getName() }),
 								null);
 			} else {
 				compiledPattern = Pattern.compile(patternString);

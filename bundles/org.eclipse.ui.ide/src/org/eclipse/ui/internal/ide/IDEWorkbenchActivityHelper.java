@@ -122,7 +122,7 @@ public class IDEWorkbenchActivityHelper {
                 .getExtensionPoint("org.eclipse.core.resources.natures"); //$NON-NLS-1$
 		for (IExtension extension : point.getExtensions()) {
             final String localId = extension.getSimpleIdentifier();
-            final String pluginId = extension.getNamespaceIdentifier();
+			final String pluginId = extension.getContributor().getName();
             String natureId = extension.getUniqueIdentifier();
             natureMap.put(natureId, new IPluginContribution() {
                 @Override

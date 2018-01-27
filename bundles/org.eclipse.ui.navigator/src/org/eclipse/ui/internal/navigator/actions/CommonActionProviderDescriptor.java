@@ -172,7 +172,7 @@ public class CommonActionProviderDescriptor implements
 						+ " in navigator extension: " + //$NON-NLS-1$
 						configurationElement.getDeclaringExtension()
 								.getUniqueIdentifier() + " in plugin " + //$NON-NLS-1$
-								configurationElement.getDeclaringExtension().getNamespaceIdentifier());
+						configurationElement.getDeclaringExtension().getContributor().getName());
 			}
 		} catch (CoreException e) {
 			NavigatorPlugin.log(IStatus.ERROR, 0, e.getMessage(), e);

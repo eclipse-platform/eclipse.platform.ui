@@ -523,7 +523,7 @@ public class TabbedPropertyRegistry {
 	private void handleTabError(IConfigurationElement configurationElement,
 			String category) {
 		String pluginId = configurationElement.getDeclaringExtension()
-				.getNamespaceIdentifier();
+				.getContributor().getName();
 		String message = MessageFormat.format(TAB_ERROR, pluginId, category );
 		IStatus status = new Status(IStatus.ERROR, pluginId,
 				TabbedPropertyViewStatusCodes.TAB_ERROR, message, null);

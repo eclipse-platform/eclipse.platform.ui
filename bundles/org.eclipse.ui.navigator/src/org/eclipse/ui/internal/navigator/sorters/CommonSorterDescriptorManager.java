@@ -156,7 +156,7 @@ public class CommonSorterDescriptorManager {
 																id,
 																element
 																		.getDeclaringExtension()
-																		.getNamespaceIdentifier() }),
+																		.getContributor().getName() }),
 										null);
 					}
 				} else {

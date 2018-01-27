@@ -163,13 +163,13 @@ public class CommonWizardDescriptor implements INavigatorContentExtPtConstants, 
 		if (wizardId == null || wizardId.length() == 0) {
 			throw new WorkbenchException("Missing attribute: " + //$NON-NLS-1$
 					ATT_WIZARD_ID + " in common wizard extension: " + //$NON-NLS-1$
-					configElement.getDeclaringExtension().getNamespaceIdentifier());
+					configElement.getDeclaringExtension().getContributor().getName());
 		}
 
 		if (type == null || type.length() == 0) {
 			throw new WorkbenchException("Missing attribute: " + //$NON-NLS-1$
 					ATT_TYPE + " in common wizard extension: " + //$NON-NLS-1$
-					configElement.getDeclaringExtension().getNamespaceIdentifier());
+					configElement.getDeclaringExtension().getContributor().getName());
 		}
 
 		IConfigurationElement[] children = configElement

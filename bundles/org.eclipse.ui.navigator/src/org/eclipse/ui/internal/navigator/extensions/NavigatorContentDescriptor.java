@@ -18,22 +18,18 @@ import java.util.ListIterator;
 import java.util.Set;
 import java.util.TreeSet;
 
-import org.eclipse.osgi.util.NLS;
-
 import org.eclipse.core.expressions.ElementHandler;
 import org.eclipse.core.expressions.EvaluationResult;
 import org.eclipse.core.expressions.Expression;
 import org.eclipse.core.expressions.ExpressionConverter;
 import org.eclipse.core.expressions.IEvaluationContext;
-
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IStatus;
-
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.ITreeContentProvider;
-
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.ui.IPluginContribution;
 import org.eclipse.ui.WorkbenchException;
 import org.eclipse.ui.internal.navigator.CommonNavigatorMessages;
@@ -217,7 +213,7 @@ public final class NavigatorContentDescriptor implements
 							ATT_ID,
 							id,
 							configElement.getDeclaringExtension()
-									.getNamespaceIdentifier() }));
+									.getContributor().getName() }));
 		}
 
 		contribution = new IPluginContribution() {
@@ -229,7 +225,7 @@ public final class NavigatorContentDescriptor implements
 
 			@Override
 			public String getPluginId() {
-				return configElement.getDeclaringExtension().getNamespaceIdentifier();
+				return configElement.getDeclaringExtension().getContributor().getName();
 			}
 
 		};
@@ -244,7 +240,7 @@ public final class NavigatorContentDescriptor implements
 				throw new WorkbenchException(NLS.bind(
 						CommonNavigatorMessages.Attribute_Missing_Warning, new Object[] {
 								TAG_INITIAL_ACTIVATION, id,
-								configElement.getDeclaringExtension().getNamespaceIdentifier() }));
+								configElement.getDeclaringExtension().getContributor().getName() }));
 			}
 		}
 
@@ -264,7 +260,7 @@ public final class NavigatorContentDescriptor implements
 								TAG_TRIGGER_POINTS,
 								id,
 								configElement.getDeclaringExtension()
-										.getNamespaceIdentifier() }));
+										.getContributor().getName() }));
 			}
 
 			children = configElement.getChildren(TAG_POSSIBLE_CHILDREN);
@@ -277,7 +273,7 @@ public final class NavigatorContentDescriptor implements
 								TAG_POSSIBLE_CHILDREN,
 								id,
 								configElement.getDeclaringExtension()
-										.getNamespaceIdentifier() }));
+										.getContributor().getName() }));
 			}
 		} else if (children.length == 1) {
 			try {
@@ -293,7 +289,7 @@ public final class NavigatorContentDescriptor implements
 							TAG_ENABLEMENT,
 							id,
 							configElement.getDeclaringExtension()
-									.getNamespaceIdentifier() }));
+									.getContributor().getName() }));
 		}
 
 		children = configElement.getChildren(TAG_OVERRIDE);
@@ -310,7 +306,7 @@ public final class NavigatorContentDescriptor implements
 					new Object[] {
 							TAG_OVERRIDE,
 							id,configElement.getDeclaringExtension()
-							.getNamespaceIdentifier() }));
+									.getContributor().getName() }));
 		}
 
 	}

@@ -78,7 +78,7 @@ public class TabDescriptor extends AbstractTabDescriptor {
 			if (imageString != null) {
 				image = AbstractUIPlugin.imageDescriptorFromPlugin(
 						configurationElement.getDeclaringExtension()
-								.getNamespaceIdentifier(), imageString)
+								.getContributor().getName(), imageString)
 						.createImage();
 			}
 			String indentedString = configurationElement
@@ -204,7 +204,7 @@ public class TabDescriptor extends AbstractTabDescriptor {
 	private void handleTabError(IConfigurationElement configurationElement,
 			CoreException exception) {
 		String pluginId = configurationElement.getDeclaringExtension()
-				.getNamespaceIdentifier();
+				.getContributor().getName();
 		String message = MessageFormat.format(TAB_ERROR, pluginId);
 		IStatus status = new Status(IStatus.ERROR, pluginId,
 				TabbedPropertyViewStatusCodes.TAB_ERROR, message, exception);

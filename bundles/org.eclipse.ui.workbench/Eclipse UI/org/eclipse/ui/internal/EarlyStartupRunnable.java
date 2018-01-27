@@ -44,7 +44,7 @@ public class EarlyStartupRunnable extends SafeRunnable {
 		IConfigurationElement[] configElements = extension.getConfigurationElements();
 		if (configElements.length == 0) {
 			missingStartupElementMessage("The org.eclipse.ui.IStartup extension from '" + //$NON-NLS-1$
-						extension.getNamespaceIdentifier() + "' does not provide a valid '" //$NON-NLS-1$
+					extension.getContributor().getName() + "' does not provide a valid '" //$NON-NLS-1$
 					+ IWorkbenchConstants.TAG_STARTUP + "' element."); //$NON-NLS-1$
 		}
         // look for the startup tag in each element and run the extension
@@ -64,7 +64,7 @@ public class EarlyStartupRunnable extends SafeRunnable {
 	public void handleException(Throwable exception) {
 		IStatus status = new Status(IStatus.ERROR, PlatformUI.PLUGIN_ID, 0,
 				"Unable to execute early startup code for the org.eclipse.ui.IStartup extension contributed by the '" //$NON-NLS-1$
-						+ extension.getNamespaceIdentifier() + "' plug-in.", //$NON-NLS-1$
+						+ extension.getContributor().getName() + "' plug-in.", //$NON-NLS-1$
                 exception);
 		WorkbenchPlugin.log(status);
     }
@@ -80,7 +80,7 @@ public class EarlyStartupRunnable extends SafeRunnable {
 			}
 		} else {
 			String message = executableExtension == null ?
-					"The org.eclipse.ui.IStartup extension from '" + extension.getNamespaceIdentifier() //$NON-NLS-1$
+					"The org.eclipse.ui.IStartup extension from '" + extension.getContributor().getName() //$NON-NLS-1$
 					+ "' does not provide a valid class attribute." : //$NON-NLS-1$
 					MessageFormat.format("Startup class {0} must implement org.eclipse.ui.IStartup", //$NON-NLS-1$
 							executableExtension.getClass().getName());

@@ -2687,7 +2687,7 @@ public final class Workbench extends EventManager implements IWorkbench,
 		IExtension[] extensions = point.getExtensions();
 		ArrayList<String> pluginIds = new ArrayList<>(extensions.length);
 		for (IExtension extension : extensions) {
-			String id = extension.getNamespaceIdentifier();
+			String id = extension.getContributor().getName();
 			if (!pluginIds.contains(id)) {
 				pluginIds.add(id);
 			}
@@ -2743,8 +2743,8 @@ public final class Workbench extends EventManager implements IWorkbench,
 
 					// if the plugin is not in the set of disabled plugins, then
 					// execute the code to start it
-					if (!disabledPlugins.contains(extension.getNamespaceIdentifier())) {
-						monitor.subTask(extension.getNamespaceIdentifier());
+					if (!disabledPlugins.contains(extension.getContributor().getName())) {
+						monitor.subTask(extension.getContributor().getName());
 						SafeRunner.run(new EarlyStartupRunnable(extension));
 					}
 					monitor.worked(1);
@@ -3311,7 +3311,7 @@ public final class Workbench extends EventManager implements IWorkbench,
 			// if the plugin is not in the set of disabled plugins,
 			// then
 			// execute the code to start it
-			if (disabledPlugins.indexOf(extension.getNamespaceIdentifier()) == -1) {
+			if (disabledPlugins.indexOf(extension.getContributor().getName()) == -1) {
 				SafeRunner.run(new EarlyStartupRunnable(extension));
 			}
 		}

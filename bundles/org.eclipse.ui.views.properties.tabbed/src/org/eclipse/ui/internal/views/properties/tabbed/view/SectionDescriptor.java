@@ -110,7 +110,7 @@ public class SectionDescriptor extends AbstractSectionDescriptor {
 	 */
 	private void handleSectionError(CoreException exception) {
 		String pluginId = getConfigurationElement().getDeclaringExtension()
-				.getNamespaceIdentifier();
+				.getContributor().getName();
 		String message = TabbedPropertyMessages.SectionDescriptor_Section_error;
 		if (exception == null) {
 			message = MessageFormat.format(TabbedPropertyMessages.SectionDescriptor_Section_error, pluginId);
