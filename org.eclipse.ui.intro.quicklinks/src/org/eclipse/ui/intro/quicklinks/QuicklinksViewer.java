@@ -163,6 +163,7 @@ public class QuicklinksViewer implements IIntroContentProvider {
 		 *
 		 * @return
 		 */
+		@Override
 		public List<Quicklink> get() {
 			IExtension extensions[] = getExtensions(QL_EXT_PT);
 
@@ -170,7 +171,7 @@ public class QuicklinksViewer implements IIntroContentProvider {
 			Bundle productBundle = Platform.getProduct().getDefiningBundle();
 			if(productBundle != null) {
 				for (IExtension ext : extensions) {
-					if (productBundle.getSymbolicName().equals(ext.getNamespaceIdentifier())) {
+					if (productBundle.getSymbolicName().equals(ext.getContributor().getName())) {
 						for (IConfigurationElement ce : ext.getConfigurationElements()) {
 							processDefinition(ce);
 						}
@@ -179,7 +180,7 @@ public class QuicklinksViewer implements IIntroContentProvider {
 			}
 
 			for (IExtension ext : extensions) {
-				if (productBundle == null || !productBundle.getSymbolicName().equals(ext.getNamespaceIdentifier())) {
+				if (productBundle == null || !productBundle.getSymbolicName().equals(ext.getContributor().getName())) {
 					for (IConfigurationElement ce : ext.getConfigurationElements()) {
 						processDefinition(ce);
 					}
@@ -308,6 +309,7 @@ public class QuicklinksViewer implements IIntroContentProvider {
 	private ICommandImageService images;
 	private Supplier<List<Quicklink>> model;
 
+	@Override
 	public void init(IIntroContentProviderSite site) {
 		this.site = site;
 		// IIntroContentProviderSite should provide services.
@@ -337,6 +339,7 @@ public class QuicklinksViewer implements IIntroContentProvider {
 		return null;
 	}
 
+	@Override
 	public void createContent(String id, PrintWriter out) {
 		// Content is already embedded within a <div id="...">
 		getQuicklinks().forEach(ql -> {
@@ -459,6 +462,7 @@ public class QuicklinksViewer implements IIntroContentProvider {
 		}
 	}
 
+	@Override
 	public void createContent(String id, Composite parent, FormToolkit toolkit) {
 		Section section = toolkit.createSection(parent, Section.EXPANDED);
 		TableViewer tableViewer = new TableViewer(toolkit.createTable(section, SWT.FULL_SELECTION));
@@ -558,6 +562,7 @@ public class QuicklinksViewer implements IIntroContentProvider {
 				forCommand("org.eclipse.ui.edit.text.openLocalFile", Importance.LOW)); //$NON-NLS-1$
 	}
 
+	@Override
 	public void dispose() {
 	}
 }

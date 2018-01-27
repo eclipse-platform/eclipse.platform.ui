@@ -95,7 +95,7 @@ public class IntroData {
 		String fileName = element.getAttribute("content"); //$NON-NLS-1$
 		if (fileName==null)
 			return;
-		String bundleId = element.getDeclaringExtension().getNamespaceIdentifier();
+		String bundleId = element.getDeclaringExtension().getContributor().getName();
 		Bundle bundle = Platform.getBundle(bundleId);
 		if (bundle==null)
 			return;

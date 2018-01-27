@@ -689,7 +689,7 @@ public class SearchIndex implements IHelpSearchIndex {
 			IExtension[] extensions = extensionPoint.getExtensions();
 			for (int i=0;i<extensions.length;++i) {
 				try {
-					totalIds.add(extensions[i].getNamespaceIdentifier());
+					totalIds.add(extensions[i].getContributor().getName());
 				}
 				catch (InvalidRegistryObjectException e) {
 					// ignore this extension and move on

@@ -404,7 +404,7 @@ public class CustomizationContentsArea {
 			if (previewImage==null) {
 				String path = element.getAttribute("previewImage"); //$NON-NLS-1$
 				if (path!=null) {
-				    String bid = element.getDeclaringExtension().getNamespaceIdentifier();
+				    String bid = element.getDeclaringExtension().getContributor().getName();
 				    Bundle bundle = Platform.getBundle(bid);
 				    if (bundle!=null) {
 				    	ImageDescriptor desc = ImageUtil.createImageDescriptor(bundle, path);
