@@ -41,8 +41,8 @@ public abstract class IDERegistryReader {
 	protected static Hashtable<String, IExtension[]> extensionPoints = new Hashtable<>();
 
 	private static final Comparator<IExtension> comparer = (i1, i2) -> {
-		String s1 = i1.getNamespace();
-		String s2 = i2.getNamespace();
+		String s1 = i1.getContributor().getName();
+		String s2 = i2.getContributor().getName();
 		return s1.compareToIgnoreCase(s2);
 	};
 
@@ -72,7 +72,7 @@ public abstract class IDERegistryReader {
      */
     protected void logError(IConfigurationElement element, String text) {
 		IExtension extension = element.getDeclaringExtension();
-		String pluginId = extension.getNamespace();
+		String pluginId = extension.getContributor().getName();
 		StringBuilder buf = new StringBuilder();
 		buf.append("Plugin " + pluginId + ", extension " //$NON-NLS-2$//$NON-NLS-1$
 				+ extension.getExtensionPointUniqueIdentifier());

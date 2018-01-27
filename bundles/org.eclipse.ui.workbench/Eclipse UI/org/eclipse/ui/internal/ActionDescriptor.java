@@ -213,7 +213,7 @@ public class ActionDescriptor implements IPluginContribution {
         }
 
         String extendingPluginId = actionElement.getDeclaringExtension()
-                .getNamespace();
+				.getContributor().getName();
 
         if (icon != null) {
             action.setImageDescriptor(AbstractUIPlugin

@@ -162,7 +162,7 @@ public class ThemeRegistryReader extends RegistryReader {
 
         return new ColorDefinition(name, id, defaultMapping, value, categoryId,
                 isEditable, description, element.getDeclaringExtension()
-                        .getNamespace());
+						.getContributor().getName());
     }
 
     /**

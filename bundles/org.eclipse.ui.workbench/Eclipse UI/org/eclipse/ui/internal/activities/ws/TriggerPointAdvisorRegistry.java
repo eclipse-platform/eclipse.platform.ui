@@ -146,7 +146,7 @@ public class TriggerPointAdvisorRegistry {
 						IStatus status = new Status(
 								IStatus.ERROR,
 								element.getDeclaringExtension()
-										.getNamespace(),
+										.getContributor().getName(),
 								IStatus.ERROR,
 								"triggerPointAdvisorId and productId must be defined.", new IllegalArgumentException()); //$NON-NLS-1$
 						WorkbenchPlugin

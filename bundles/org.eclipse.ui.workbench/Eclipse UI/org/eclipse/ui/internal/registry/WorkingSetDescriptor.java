@@ -13,7 +13,6 @@ package org.eclipse.ui.internal.registry;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtension;
@@ -179,7 +178,7 @@ public class WorkingSetDescriptor implements IPluginContribution {
 		}
 
         IExtension extension = configElement.getDeclaringExtension();
-        String extendingPluginId = extension.getNamespace();
+		String extendingPluginId = extension.getContributor().getName();
         return AbstractUIPlugin.imageDescriptorFromPlugin(extendingPluginId,
                 icon);
     }
