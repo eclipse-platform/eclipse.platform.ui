@@ -452,23 +452,20 @@ public class MinMaxAddon {
 
 	private String getTrimCache(MPerspective savedPersp) {
 		MWindow topWin = modelService.getTopLevelWindowFor(savedPersp);
-
-		String cache = getWinCache(topWin, savedPersp);
+		StringBuilder cache = new StringBuilder(getWinCache(topWin, savedPersp));
 		for (MWindow dw : savedPersp.getWindows()) {
-			cache += getWinCache(dw, savedPersp);
+			cache.append(getWinCache(dw, savedPersp));
 		}
-
-		return cache;
+		return cache.toString();
 	}
 
 	private String getWinCache(MWindow win, MPerspective perspective) {
-		String winStr = ""; //$NON-NLS-1$
-
+		StringBuilder winStrBuilder = new StringBuilder();
 		List<MPartStack> stackList = modelService.findElements(win, null, MPartStack.class, null);
 		for (MPartStack stack : stackList) {
-			winStr += getStackTrimLoc(stack, perspective);
+			winStrBuilder.append(getStackTrimLoc(stack, perspective));
 		}
-		return winStr;
+		return winStrBuilder.toString();
 	}
 
 	private String getStackTrimLoc(MPartStack stack, MPerspective perspective) {
