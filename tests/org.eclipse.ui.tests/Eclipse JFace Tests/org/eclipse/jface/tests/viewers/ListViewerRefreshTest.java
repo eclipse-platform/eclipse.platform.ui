@@ -24,6 +24,7 @@ import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.ui.tests.harness.util.DisplayHelper;
 
 import junit.framework.TestCase;
 
@@ -105,6 +106,13 @@ public class ListViewerRefreshTest extends TestCase {
 		assertTrue(viewer.getList().getTopIndex() == 0);
 
 		viewer.getList().showSelection();
+
+		new DisplayHelper() {
+			@Override
+			protected boolean condition() {
+				return viewer.getList().getTopIndex() != 0;
+			}
+		}.waitForCondition(viewer.getControl().getDisplay(), 3000);
 
 		assertTrue(viewer.getList().getTopIndex() != 0);
 	}
