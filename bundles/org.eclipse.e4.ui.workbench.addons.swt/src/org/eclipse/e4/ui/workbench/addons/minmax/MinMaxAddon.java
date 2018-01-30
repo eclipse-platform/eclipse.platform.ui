@@ -472,7 +472,7 @@ public class MinMaxAddon {
 	}
 
 	private String getStackTrimLoc(MPartStack stack, MPerspective perspective) {
-		MWindow stackWin = modelService.getTopLevelWindowFor(stack);// getContainingWindow(stack);
+		MWindow stackWin = modelService.getTopLevelWindowFor(stack);
 		MUIElement tcElement = modelService.find(TrimStackIdHelper.createTrimStackId(stack, perspective, stackWin),
 				stackWin);
 		if (tcElement == null)
