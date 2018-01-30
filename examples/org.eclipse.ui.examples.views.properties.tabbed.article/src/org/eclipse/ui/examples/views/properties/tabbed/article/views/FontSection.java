@@ -12,7 +12,7 @@ package org.eclipse.ui.examples.views.properties.tabbed.article.views;
 
 import org.eclipse.core.runtime.Adapters;
 import org.eclipse.jface.resource.StringConverter;
-import org.eclipse.jface.util.Assert;
+import org.eclipse.core.runtime.Assert;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.SWT;
