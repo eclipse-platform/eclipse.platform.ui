@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<component id="org.eclipse.jface" version="2">
+    <resource path="src/org/eclipse/jface/util/Assert.java" type="org.eclipse.jface.util.Assert">
+        <filter comment="Planned for deletion. See Bug 528191" id="338944126">
+            <message_arguments>
+                <message_argument value="org.eclipse.jface.util.Assert"/>
+                <message_argument value="isLegal(boolean)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Planned for deletion. See Bug 528191" id="338944126">
+            <message_arguments>
+                <message_argument value="org.eclipse.jface.util.Assert"/>
+                <message_argument value="isLegal(boolean, String)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Planned for deletion. See Bug 528191" id="338944126">
+            <message_arguments>
+                <message_argument value="org.eclipse.jface.util.Assert"/>
+                <message_argument value="isNotNull(Object)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Planned for deletion. See Bug 528191" id="338944126">
+            <message_arguments>
+                <message_argument value="org.eclipse.jface.util.Assert"/>
+                <message_argument value="isNotNull(Object, String)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Planned for deletion. See Bug 528191" id="338944126">
+            <message_arguments>
+                <message_argument value="org.eclipse.jface.util.Assert"/>
+                <message_argument value="isTrue(boolean)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Planned for deletion. See Bug 528191" id="338944126">
+            <message_arguments>
+                <message_argument value="org.eclipse.jface.util.Assert"/>
+                <message_argument value="isTrue(boolean, String)"/>
+            </message_arguments>
+        </filter>
+    </resource>
+</component>
