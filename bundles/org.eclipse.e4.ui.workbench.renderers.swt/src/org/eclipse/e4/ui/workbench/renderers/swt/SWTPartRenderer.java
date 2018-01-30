@@ -98,8 +98,9 @@ public abstract class SWTPartRenderer extends AbstractPartRenderer {
 		// Put all the tags into the class string
 		EObject eObj = (EObject) me;
 		StringBuilder builder = new StringBuilder('M' + eObj.eClass().getName());
-		for (String tag : me.getTags())
-			builder.append(' ' + tag);
+		for (String tag : me.getTags()) {
+			builder.append(' ').append(tag);
+		}
 
 		// this will trigger style()
 		String id = me.getElementId();
