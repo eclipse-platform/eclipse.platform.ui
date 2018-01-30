@@ -29,7 +29,7 @@ public class TimerBuilder extends IncrementalProjectBuilder {
 	private static int maxSimultaneousBuilds = 0;
 
 	public static enum RuleType {
-		NO_CONFLICT, CURRENT_PROJECT, WORKSPACE_ROOT, NO_CONFLICT_RELAXED, CURRENT_PROJECT_RELAXED;
+		NO_CONFLICT, CURRENT_PROJECT, WORKSPACE_ROOT, CURRENT_PROJECT_RELAXED;
 	}
 
 	final ISchedulingRule noConflictRule = new ISchedulingRule() {
