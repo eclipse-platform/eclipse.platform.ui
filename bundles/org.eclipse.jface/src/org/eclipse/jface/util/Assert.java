@@ -27,6 +27,9 @@ package org.eclipse.jface.util;
  * Java language in JDK 1.4, rending this class obsolete.
  *
  * @deprecated As of 3.3, replaced by {@link org.eclipse.core.runtime.Assert}
+ *
+ * @noreference This class is planned to be deleted, see Bug 528191
+ *
  * </p>
  */
 @Deprecated
