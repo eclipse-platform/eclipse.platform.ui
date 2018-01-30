@@ -97,16 +97,16 @@ public abstract class SWTPartRenderer extends AbstractPartRenderer {
 
 		// Put all the tags into the class string
 		EObject eObj = (EObject) me;
-		String cssClassStr = 'M' + eObj.eClass().getName();
+		StringBuilder builder = new StringBuilder('M' + eObj.eClass().getName());
 		for (String tag : me.getTags())
-			cssClassStr += ' ' + tag;
+			builder.append(' ' + tag);
 
 		// this will trigger style()
 		String id = me.getElementId();
 		if (id != null) {
 			id = id.replace('.', '-');
 		}
-		engine.setClassnameAndId(widget, cssClassStr, id);
+		engine.setClassnameAndId(widget, builder.toString(), id);
 	}
 
 	@SuppressWarnings("restriction")
