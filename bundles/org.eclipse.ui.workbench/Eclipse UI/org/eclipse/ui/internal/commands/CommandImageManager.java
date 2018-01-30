@@ -15,7 +15,6 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
-
 import org.eclipse.core.commands.common.EventManager;
 import org.eclipse.jface.resource.ImageDescriptor;
 
@@ -213,14 +212,14 @@ public final class CommandImageManager extends EventManager {
 		if (!existingStyles.contains(null)) {
 			return null;
 		}
-
-		String generatedStyle = "AUTOGEN:::"; //$NON-NLS-1$
+		StringBuilder generatedStyle = new StringBuilder("AUTOGEN:::");  //$NON-NLS-1$
 		int index = 0;
 		while (existingStyles.contains(generatedStyle)) {
-			generatedStyle += (index++ % 10);
+			generatedStyle.append(index % 10);
+			index++;
 		}
 
-		return generatedStyle;
+		return generatedStyle.toString();
 	}
 
 	/**
