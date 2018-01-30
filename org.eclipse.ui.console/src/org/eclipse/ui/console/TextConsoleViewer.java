@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2017 IBM Corporation and others.
+ * Copyright (c) 2000, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -151,7 +151,9 @@ public class TextConsoleViewer extends SourceViewer implements LineStyleListener
 		}
 	}
 
-	// set the scroll Lock setting for Console Viewer and Console View
+	/*
+	 * Checks if at the end of document
+	 */
 	private boolean checkEndOfDocument() {
 		StyledText textWidget = getTextWidget();
 		if (textWidget != null && !textWidget.isDisposed()) {
@@ -163,10 +165,28 @@ public class TextConsoleViewer extends SourceViewer implements LineStyleListener
 		return false;
 	}
 
+	/*
+	 * Check if the document is empty or the line count is smaller than each
+	 * vertical scroll
+	 */
 	private boolean isEmptyDocument() {
 		StyledText textWidget = getTextWidget();
 		if (textWidget != null && !textWidget.isDisposed()) {
-			return (textWidget.getLineCount() <= 1);
+			return (textWidget.getLineCount() <= textWidget.getVerticalBar().getIncrement());
+		}
+		return false;
+	}
+
+	/*
+	 * Checks if at the start of document
+	 */
+	private boolean checkStartOfDocument() {
+		StyledText textWidget = getTextWidget();
+		if (textWidget != null && !textWidget.isDisposed()) {
+			int partialTopIndex = JFaceTextUtil.getPartialTopIndex(textWidget);
+			int lineCount = textWidget.getLineCount();
+			int delta = textWidget.getVerticalBar().getIncrement();
+			return lineCount - partialTopIndex < delta;
 		}
 		return false;
 	}
@@ -234,6 +254,9 @@ public class TextConsoleViewer extends SourceViewer implements LineStyleListener
 		styledText.getVerticalBar().addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
+				if (isEmptyDocument()) {
+					return;
+				}
 				// scroll lock if vertical scroll bar dragged, OR selection on
 				// vertical bar used
 				if (e.detail == SWT.TOP || e.detail == SWT.HOME) {
@@ -241,11 +264,7 @@ public class TextConsoleViewer extends SourceViewer implements LineStyleListener
 					setScrollLock(true);
 				}
 				if (e.detail == SWT.ARROW_UP || e.detail == SWT.PAGE_UP) {
-					if (isEmptyDocument()) {
-						setScrollLock(false);
-					} else {
-						setScrollLock(true);
-					}
+					setScrollLock(true);
 				} else if (e.detail == SWT.END || e.detail == SWT.BOTTOM) {
 					// selecting BOTTOM or END from vertical scroll makes it
 					// reveal the end
@@ -265,16 +284,14 @@ public class TextConsoleViewer extends SourceViewer implements LineStyleListener
 		styledText.addKeyListener(new KeyAdapter() {
 			@Override
 			public void keyPressed(KeyEvent e) {
+				if (isEmptyDocument()) {
+					return;
+				}
 				// lock the scroll if PAGE_UP ,HOME or TOP selected
 				if (e.keyCode == SWT.HOME || e.keyCode == SWT.TOP) {
 					setScrollLock(true);
-				} else if ((e.keyCode == SWT.PAGE_UP || e.keyCode == SWT.ARROW_UP)) {
-					if (isEmptyDocument()) {
-						setScrollLock(false);
-					} else {
-						setScrollLock(true);
-					}
-
+				} else if ((e.keyCode == SWT.PAGE_UP || e.keyCode == SWT.ARROW_UP) && !checkStartOfDocument()) {
+					setScrollLock(true);
 				} else if (e.keyCode == SWT.END || e.keyCode == SWT.BOTTOM) {
 					setScrollLock(false);// selecting END makes it reveal the
 					// end
@@ -287,16 +304,15 @@ public class TextConsoleViewer extends SourceViewer implements LineStyleListener
 		styledText.addMouseWheelListener(new MouseWheelListener() {
 			@Override
 			public void mouseScrolled(MouseEvent e) {
+				if (isEmptyDocument()) {
+					return;
+				}
 				if (e.count < 0) { // Mouse dragged down
 					if (checkEndOfDocument()) {
 						setScrollLock(false);
 					}
 				} else if (!userHoldsScrollLock.get()) {
-					if (isEmptyDocument()) {
-						setScrollLock(false);
-					} else {
-						setScrollLock(true);
-					}
+					setScrollLock(true);
 				}
 			}
 		});
