@@ -22,6 +22,7 @@ import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
@@ -191,10 +192,11 @@ public class ModelAssembler {
 	private List<ModelFragmentWrapper> createUnifiedFragmentList(Map<String, Bucket> elementIdToBucket) {
 		List<ModelFragmentWrapper> fragmentList = new ArrayList<>();
 		Set<String> checkedElementIds = new LinkedHashSet<>();
-		for (String elementId : elementIdToBucket.keySet()) {
-			if (checkedElementIds.contains(elementId))
+		for (Entry<String, Bucket> entry : elementIdToBucket.entrySet()) {
+			if (checkedElementIds.contains(entry.getKey())) {
 				continue;
-			Bucket bucket = elementIdToBucket.get(elementId);
+			}
+			Bucket bucket = entry.getValue();
 			while (bucket.dependentOn != null) {
 				bucket = bucket.dependentOn;
 			}
