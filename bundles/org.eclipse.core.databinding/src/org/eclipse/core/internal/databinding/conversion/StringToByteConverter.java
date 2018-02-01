@@ -77,7 +77,8 @@ public class StringToByteConverter extends NumberFormatConverter {
 		synchronized (this) {
 			if (outOfRangeMessage == null) {
 				outOfRangeMessage = StringToNumberParser
-				.createOutOfRangeMessage(new Byte(Byte.MIN_VALUE), new Byte(Byte.MAX_VALUE), numberFormat);
+						.createOutOfRangeMessage(Byte.valueOf(Byte.MIN_VALUE), Byte.valueOf(Byte.MAX_VALUE),
+								numberFormat);
 			}
 
 			throw new IllegalArgumentException(outOfRangeMessage);

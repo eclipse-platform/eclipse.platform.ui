@@ -258,7 +258,7 @@ public class FinishedJobs extends EventManager {
 				if (element == info && !keptjobinfos.contains(tinfo)) {
 					toBeRemoved = findJobsToRemove(element);
 					keptjobinfos.add(tinfo);
-					finishedTime.put(tinfo, new Long(System.currentTimeMillis()));
+					finishedTime.put(tinfo, Long.valueOf(System.currentTimeMillis()));
 				}
 
 				if (toBeRemoved != null) {

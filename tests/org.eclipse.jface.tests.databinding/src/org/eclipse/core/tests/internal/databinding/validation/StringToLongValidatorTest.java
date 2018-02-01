@@ -24,7 +24,7 @@ import com.ibm.icu.text.NumberFormat;
 public class StringToLongValidatorTest extends StringToNumberValidatorTestHarness {
 	@Override
 	protected Number getInRangeNumber() {
-		return new Long(1);
+		return Long.valueOf(1);
 	}
 
 	@Override
