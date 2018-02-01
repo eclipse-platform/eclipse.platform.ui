@@ -96,18 +96,32 @@ public class ComputeProjectOrderTest {
 		Object a = new Object();
 		Object b = new Object();
 		Object c = new Object();
+		Object d = new Object();
+		Object e = new Object();
+		Object f = new Object();
 		digraph.addVertex(a);
 		digraph.addVertex(b);
 		digraph.addEdge(a, b);
 		digraph.addVertex(c);
 		digraph.addEdge(b, c);
+		digraph.addVertex(d);
+		digraph.addEdge(c, d);
+		digraph.addVertex(e);
+		digraph.addEdge(d, e);
+		digraph.addVertex(f);
+		digraph.addEdge(e, f);
 		//
-		Digraph<Object> filtered = ComputeProjectOrder.buildFilteredDigraph(digraph, Predicate.isEqual(b), Object.class);
-		Set<Object> filteredVertexes = new HashSet<>(2, (float) 1.);
-		filteredVertexes.add(a);
-		filteredVertexes.add(c);
-		assertEquals(filteredVertexes, filtered.vertexMap.keySet());
-		Collection<Edge<Object>> filteredEdges = filtered.getEdges();
-		assertEquals(Collections.singleton(new Edge<>(a, c)), filteredEdges);
+		Digraph<Object> filtered = ComputeProjectOrder.buildFilteredDigraph(digraph, v -> v == b || v == e, Object.class);
+		Set<Object> expectedVertexes = new HashSet<>(2, (float) 1.);
+		expectedVertexes.add(a);
+		expectedVertexes.add(c);
+		expectedVertexes.add(d);
+		expectedVertexes.add(f);
+		assertEquals(expectedVertexes, filtered.vertexMap.keySet());
+		Set<Edge<Object>> expectedEdges = new HashSet<>(3, (float) 1.);
+		expectedEdges.add(new Edge<>(a, c));
+		expectedEdges.add(new Edge<>(c, d));
+		expectedEdges.add(new Edge<>(d, f));
+		assertEquals(expectedEdges, filtered.getEdges());
 	}
 }

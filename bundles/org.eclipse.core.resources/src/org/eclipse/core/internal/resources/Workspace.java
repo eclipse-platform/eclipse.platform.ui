@@ -37,8 +37,7 @@ import org.eclipse.core.internal.watson.*;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.resources.team.*;
 import org.eclipse.core.runtime.*;
-import org.eclipse.core.runtime.jobs.ISchedulingRule;
-import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.core.runtime.jobs.*;
 import org.eclipse.osgi.util.NLS;
 import org.osgi.framework.Bundle;
 import org.xml.sax.InputSource;
@@ -93,6 +92,7 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 	protected BuildManager buildManager;
 	protected volatile IBuildConfiguration[] buildOrder = null;
 	protected volatile Digraph<IBuildConfiguration> buildOrderGraph;
+	protected JobGroup buildJobGroup;
 	protected CharsetManager charsetManager;
 	protected ContentDescriptionManager contentDescriptionManager;
 	/** indicates if the workspace crashed in a previous session */
@@ -410,20 +410,21 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 
 	/**
 	 * Build the passed in configurations or the whole workspace.
-	 * @param configs to build or EMPTY_BUILD_CONFIG_ARRAY for the whole workspace
+	 * @param requestedConfigs to build or EMPTY_BUILD_CONFIG_ARRAY for the whole workspace
 	 * @param trigger build trigger
 	 * @param buildReferences transitively build referenced build configurations
 	 */
-	private void buildInternal(IBuildConfiguration[] configs, int trigger, boolean buildReferences, IProgressMonitor monitor) throws CoreException {
+	private void buildInternal(IBuildConfiguration[] requestedConfigs, int trigger, boolean buildReferences, IProgressMonitor monitor) throws CoreException {
 		monitor = Policy.monitorFor(monitor);
 		// Bug 343256 use a relaxed scheduling rule if the config we're building uses a relaxed rule.
 		// Otherwise fall-back to WR.
 		// PRE + POST_BUILD, and the build itself are allowed to modify resources, so require the current thread's scheduling rule
 		// to either contain the WR or be null. Therefore, if not null, ensure it contains the WR rule...
-		boolean noEnclosingRule = Job.getJobManager().currentRule() == null;
-		boolean relaxed = noEnclosingRule && configs.length > 0 && Arrays.stream(configs).map(cfg -> getBuildManager().getRule(cfg, trigger, null, null)).allMatch(this::isRelaxedRule);
+		final boolean noEnclosingRule = Job.getJobManager().currentRule() == null;
+		boolean relaxed = noEnclosingRule && requestedConfigs.length > 0 && allRelaxed(requestedConfigs, trigger);
 		final ISchedulingRule notificationRule = getRuleFactory().buildRule();
 		ISchedulingRule currentRule = null;
+		boolean buildParallel = noEnclosingRule && getDescription().getMaxConcurrentBuilds() > 1 && getDescription().getBuildOrder() == null;
 		try {
 			monitor.beginTask("", Policy.opWork); //$NON-NLS-1$
 			try {
@@ -448,12 +449,12 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 				try {
 					// Calculate the build-order having called the pre-build notification (which may change build order)
 					// If configs == EMPTY_BUILD_CONFIG_ARRAY => This is a full workspace build.
-					IBuildConfiguration[] requestedConfigs = configs;
+					IBuildConfiguration[] allConfigs = requestedConfigs;
 					Digraph<IBuildConfiguration> buildGraph = null;
-					if (configs == EMPTY_BUILD_CONFIG_ARRAY) {
+					if (allConfigs == EMPTY_BUILD_CONFIG_ARRAY) {
 						if (trigger != IncrementalProjectBuilder.CLEAN_BUILD) {
 							if (getDescription().getBuildOrder() != null) {
-								configs = getBuildOrder();
+								allConfigs = getBuildOrder();
 							} else {
 								buildGraph = getBuildGraph();
 							}
@@ -464,19 +465,19 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 							for (IProject prj : prjs)
 								if (prj.isAccessible())
 									configArr.addAll(Arrays.asList(prj.getBuildConfigs()));
-							configs = configArr.toArray(new IBuildConfiguration[configArr.size()]);
+							allConfigs = configArr.toArray(new IBuildConfiguration[configArr.size()]);
 						}
 					} else {
 						// Order the passed in build configurations + resolve references if requested
 						Set<IBuildConfiguration> refsList = new HashSet<>();
-						for (int i = 0; i < configs.length; i++) {
+						for (IBuildConfiguration config : allConfigs) {
 							// Check project + build configuration are accessible.
-							if (!configs[i].getProject().isAccessible() || !configs[i].getProject().hasBuildConfig(configs[i].getName()))
+							if (!config.getProject().isAccessible() || !config.getProject().hasBuildConfig(config.getName()))
 								continue;
-							refsList.add(configs[i]);
+							refsList.add(config);
 							// Find transitive closure of referenced project buildConfigs
 							if (buildReferences)
-								recursivelyAddBuildConfigs(refsList, configs[i]);
+								recursivelyAddBuildConfigs(refsList, config);
 						}
 
 						// Order the referenced project buildConfigs
@@ -484,13 +485,27 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 					}
 					if (buildGraph != null) {
 						buildGraph.freeze();
-						configs = ComputeProjectOrder.computeVertexOrder(buildGraph, IBuildConfiguration.class).vertexes;
+						allConfigs = ComputeProjectOrder.computeVertexOrder(buildGraph, IBuildConfiguration.class).vertexes;
 					}
-					result = getBuildManager().build(configs, requestedConfigs, trigger, Policy.subMonitorFor(monitor, Policy.opWork));
+
+					buildParallel &= (buildGraph != null && buildGraph.vertexList.size() > 1);
+					if (buildParallel) {
+						relaxed = noEnclosingRule && allRelaxed(allConfigs, trigger);
+						buildParallel &= relaxed;
+					}
+					if (buildParallel) {
+						endOperation(currentRule, false); // operation needs to be ended to allow concurrent edits
+						currentRule = null;
+						result = getBuildManager().buildParallel(buildGraph, requestedConfigs, trigger, getBuildJobGroup(), Policy.subMonitorFor(monitor, Policy.opWork));
+					} else {
+						result = getBuildManager().build(allConfigs, requestedConfigs, trigger, Policy.subMonitorFor(monitor, Policy.opWork));
+					}
 				} finally {
 					// Run the POST_BUILD with the WRule held
 					if (relaxed) {
-						endOperation(currentRule, false);
+						if (!buildParallel) {
+							endOperation(currentRule, false);
+						}
 						prepareOperation(notificationRule, monitor);
 						currentRule = notificationRule;
 						beginOperation(false);
@@ -510,6 +525,17 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 		} finally {
 			monitor.done();
 		}
+	}
+
+	private JobGroup getBuildJobGroup() {
+		if (buildJobGroup == null || buildJobGroup.getMaxThreads() != description.getMaxConcurrentBuilds()) {
+			buildJobGroup = new JobGroup(getClass().getName(), description.getMaxConcurrentBuilds(), 0);
+		}
+		return buildJobGroup;
+	}
+
+	private boolean allRelaxed(IBuildConfiguration[] requestedConfigs, int trigger) {
+		return Arrays.stream(requestedConfigs).map(cfg -> getBuildManager().getRule(cfg, trigger, null, null)).allMatch(this::isRelaxedRule);
 	}
 
 	boolean isRelaxedRule(ISchedulingRule rule) {

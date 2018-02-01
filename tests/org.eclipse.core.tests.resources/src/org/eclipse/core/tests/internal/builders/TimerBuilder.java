@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.core.tests.internal.builders;
 
-import java.util.Map;
+import java.util.*;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -27,6 +27,7 @@ public class TimerBuilder extends IncrementalProjectBuilder {
 	private static int totalBuilds = 0;
 	private static int currentBuilds = 0;
 	private static int maxSimultaneousBuilds = 0;
+	public static final List<Object> events = Collections.synchronizedList(new ArrayList<>());
 
 	public static enum RuleType {
 		NO_CONFLICT, CURRENT_PROJECT, WORKSPACE_ROOT, CURRENT_PROJECT_RELAXED;
@@ -63,6 +64,7 @@ public class TimerBuilder extends IncrementalProjectBuilder {
 			totalBuilds++;
 			currentBuilds++;
 			maxSimultaneousBuilds = Math.max(currentBuilds, maxSimultaneousBuilds);
+			events.add(buildStartEvent(getProject()));
 		}
 		int duration = 0;
 		try {
@@ -73,8 +75,17 @@ public class TimerBuilder extends IncrementalProjectBuilder {
 		}
 		synchronized (TimerBuilder.class) {
 			currentBuilds--;
+			events.add(buildCompleteEvent(getProject()));
 		}
 		return new IProject[] {getProject()};
+	}
+
+	public static Object buildCompleteEvent(IProject project) {
+		return "Compete " + project.getName();
+	}
+
+	public static Object buildStartEvent(IProject project) {
+		return "Started " + project.getName();
 	}
 
 	@Override
@@ -107,11 +118,12 @@ public class TimerBuilder extends IncrementalProjectBuilder {
 		}
 	}
 
-	public static void resetCount() {
+	public static void reset() {
 		synchronized (TimerBuilder.class) {
 			totalBuilds = 0;
 			currentBuilds = 0;
 			maxSimultaneousBuilds = 0;
+			events.clear();
 		}
 	}
 }

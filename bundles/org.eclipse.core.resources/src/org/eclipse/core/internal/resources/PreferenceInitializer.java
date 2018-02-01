@@ -47,6 +47,11 @@ public class PreferenceInitializer extends AbstractPreferenceInitializer {
 	 */
 	public static final int PREF_MISSING_NATURE_MARKER_SEVERITY_DEFAULT = IMarker.SEVERITY_WARNING;
 
+	/**
+	 * @since 3.13
+	 */
+	public static final int PREF_MAX_CONCURRENT_BUILDS_DEFAULT = 1;
+
 	public PreferenceInitializer() {
 		super();
 	}
@@ -81,6 +86,9 @@ public class PreferenceInitializer extends AbstractPreferenceInitializer {
 
 		// encoding defaults
 		node.put(ResourcesPlugin.PREF_ENCODING, PREF_ENCODING_DEFAULT);
+
+		// parallel builds defaults
+		node.putInt(ResourcesPlugin.PREF_MAX_CONCURRENT_BUILDS, PREF_MAX_CONCURRENT_BUILDS_DEFAULT);
 	}
 
 }

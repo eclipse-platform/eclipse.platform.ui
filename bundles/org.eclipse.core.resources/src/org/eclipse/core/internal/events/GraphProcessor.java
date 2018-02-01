@@ -96,7 +96,7 @@ class GraphProcessor<T> {
 		return this.sequentialOrder.vertexes;
 	}
 
-	public void processGraphWithParallelJobs() {
+	public synchronized void processGraphWithParallelJobs() {
 		if (!complete()) {
 			if (!allTriggered()) {
 				Set<T> readyToBuild = computeReadyVertexes();

@@ -265,4 +265,17 @@ public interface IWorkspaceDescription {
 	 * @since 2.0
 	 */
 	public void setSnapshotInterval(long delay);
+
+	/**
+	 * Set the max number of builds that can happen concurrently during workspace build.
+	 * @param n max number of jobs simultaneously allocated to workspace build. 1 means no job (current thread).
+	 * @since 3.13
+	 */
+	public void setMaxConcurrentBuilds(int n);
+
+	/**
+	 * @return the max number of builds that can happen concurrently during workspace build. 1 means no job (current thread).
+	 * @since 3.13
+	 */
+	public int getMaxConcurrentBuilds();
 }

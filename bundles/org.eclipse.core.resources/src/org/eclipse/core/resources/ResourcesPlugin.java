@@ -336,6 +336,12 @@ public final class ResourcesPlugin extends Plugin {
 	public static final String PREF_MISSING_NATURE_MARKER_SEVERITY = "missingNatureMarkerSeverity"; //$NON-NLS-1$
 
 	/**
+	 * Name of the preference to set max number of concurrent jobs running the workspace build.
+	 * @since 3.13
+	 */
+	public static final String PREF_MAX_CONCURRENT_BUILDS = "maxConcurrentBuilds"; //$NON-NLS-1$
+
+	/**
 	 * The single instance of this plug-in runtime class.
 	 */
 	private static ResourcesPlugin plugin;

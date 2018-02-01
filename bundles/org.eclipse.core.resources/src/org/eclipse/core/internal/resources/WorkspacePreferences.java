@@ -75,6 +75,7 @@ public class WorkspacePreferences extends WorkspaceDescription {
 		target.setSnapshotInterval(source.getSnapshotInterval());
 		target.setOperationsPerSnapshot(source.getOperationsPerSnapshot());
 		target.setDeltaExpiration(source.getDeltaExpiration());
+		target.setMaxConcurrentBuilds(source.getMaxConcurrentBuilds());
 	}
 
 	public WorkspacePreferences() {
@@ -95,6 +96,7 @@ public class WorkspacePreferences extends WorkspaceDescription {
 		super.setFileStateLongevity(preferences.getLong(ResourcesPlugin.PREF_FILE_STATE_LONGEVITY));
 		super.setOperationsPerSnapshot(preferences.getInt(PreferenceInitializer.PREF_OPERATIONS_PER_SNAPSHOT));
 		super.setDeltaExpiration(preferences.getLong(PreferenceInitializer.PREF_DELTA_EXPIRATION));
+		super.setMaxConcurrentBuilds(preferences.getInt(ResourcesPlugin.PREF_MAX_CONCURRENT_BUILDS));
 
 		// This property listener ensures we are being updated properly when changes
 		// are done directly to the preference store.
@@ -206,6 +208,11 @@ public class WorkspacePreferences extends WorkspaceDescription {
 		preferences.setValue(PreferenceInitializer.PREF_OPERATIONS_PER_SNAPSHOT, value);
 	}
 
+	@Override
+	public void setMaxConcurrentBuilds(int n) {
+		preferences.setValue(ResourcesPlugin.PREF_MAX_CONCURRENT_BUILDS, n);
+	}
+
 	/**
 	 * @see org.eclipse.core.resources.IWorkspaceDescription#setSnapshotInterval(long)
 	 */
@@ -236,6 +243,9 @@ public class WorkspacePreferences extends WorkspaceDescription {
 			super.setOperationsPerSnapshot(preferences.getInt(PreferenceInitializer.PREF_OPERATIONS_PER_SNAPSHOT));
 		else if (property.equals(PreferenceInitializer.PREF_DELTA_EXPIRATION))
 			super.setDeltaExpiration(preferences.getLong(PreferenceInitializer.PREF_DELTA_EXPIRATION));
+		else if (property.equals(ResourcesPlugin.PREF_MAX_CONCURRENT_BUILDS)) {
+			super.setMaxConcurrentBuilds(preferences.getInt(ResourcesPlugin.PREF_MAX_CONCURRENT_BUILDS));
+		}
 	}
 
 	private void upgradeVersion(String oldVersion) {

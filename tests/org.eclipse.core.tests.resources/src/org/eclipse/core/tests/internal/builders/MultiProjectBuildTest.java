@@ -11,6 +11,7 @@
  *******************************************************************************/
 package org.eclipse.core.tests.internal.builders;
 
+import java.lang.reflect.Array;
 import java.util.*;
 import junit.framework.Test;
 import junit.framework.TestSuite;
@@ -48,9 +49,9 @@ public class MultiProjectBuildTest extends AbstractBuilderTest {
 	/**
 	 * Returns an array of interesting project combinations.
 	 */
-	protected Object[] interestingProjects() {
+	protected IProject[][] interestingProjects() {
 		//mix things up, because requests from one run affect results in the next.
-		return new Object[] {new IProject[] {}, new IProject[] {project3}, new IProject[] {project1}, new IProject[] {project1, project2, project3}, new IProject[] {project2}, new IProject[] {project3}, new IProject[] {project4}, new IProject[] {project1, project2}, new IProject[] {project1, project3}, new IProject[] {project3}, new IProject[] {project2, project3}, new IProject[] {project1, project2, project3}, new IProject[] {project1, project2, project4}, new IProject[] {project1}, new IProject[] {project1, project3, project4}, new IProject[] {project1, project2}, new IProject[] {project2, project3, project4}, new IProject[] {project3, project4}, new IProject[] {project1, project2, project3, project4},};
+		return new IProject[][] {new IProject[] {}, new IProject[] {project3}, new IProject[] {project1}, new IProject[] {project1, project2, project3}, new IProject[] {project2}, new IProject[] {project3}, new IProject[] {project4}, new IProject[] {project1, project2}, new IProject[] {project1, project3}, new IProject[] {project3}, new IProject[] {project2, project3}, new IProject[] {project1, project2, project3}, new IProject[] {project1, project2, project4}, new IProject[] {project1}, new IProject[] {project1, project3, project4}, new IProject[] {project1, project2}, new IProject[] {project2, project3, project4}, new IProject[] {project3, project4}, new IProject[] {project1, project2, project3, project4},};
 	}
 
 	public static Test suite() {
@@ -77,12 +78,12 @@ public class MultiProjectBuildTest extends AbstractBuilderTest {
 	/**
 	 * Returns an array reversed.
 	 */
-	Object[] reverse(Object[] input) {
+	IProject[][] reverse(IProject[][] input) {
 		if (input == null) {
 			return null;
 		}
 		int len = input.length;
-		Object[] output = new Object[len];
+		IProject[][] output = (IProject[][]) Array.newInstance(IProject[].class, len);
 		for (int i = 0; i < len; i++) {
 			output[len - i - 1] = input[i];
 		}

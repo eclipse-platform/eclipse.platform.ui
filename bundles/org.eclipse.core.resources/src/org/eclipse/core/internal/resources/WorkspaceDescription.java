@@ -29,6 +29,7 @@ public class WorkspaceDescription extends ModelObject implements IWorkspaceDescr
 	private long snapshotInterval;
 	protected int operationsPerSnapshot;
 	protected long deltaExpiration;
+	private int parallelBuildsCount;
 
 	public WorkspaceDescription(String name) {
 		super(name);
@@ -43,6 +44,7 @@ public class WorkspaceDescription extends ModelObject implements IWorkspaceDescr
 		snapshotInterval = node.getLong(ResourcesPlugin.PREF_SNAPSHOT_INTERVAL, PreferenceInitializer.PREF_SNAPSHOT_INTERVAL_DEFAULT);
 		operationsPerSnapshot = node.getInt(PreferenceInitializer.PREF_OPERATIONS_PER_SNAPSHOT, PreferenceInitializer.PREF_OPERATIONS_PER_SNAPSHOT_DEFAULT);
 		deltaExpiration = node.getLong(PreferenceInitializer.PREF_DELTA_EXPIRATION, PreferenceInitializer.PREF_DELTA_EXPIRATION_DEFAULT);
+		parallelBuildsCount = node.getInt(ResourcesPlugin.PREF_MAX_CONCURRENT_BUILDS, PreferenceInitializer.PREF_MAX_CONCURRENT_BUILDS_DEFAULT);
 	}
 
 	/**
@@ -197,5 +199,15 @@ public class WorkspaceDescription extends ModelObject implements IWorkspaceDescr
 	@Override
 	public void setSnapshotInterval(long snapshotInterval) {
 		this.snapshotInterval = snapshotInterval;
+	}
+
+	@Override
+	public int getMaxConcurrentBuilds() {
+		return this.parallelBuildsCount;
+	}
+
+	@Override
+	public void setMaxConcurrentBuilds(int n) {
+		this.parallelBuildsCount = n;
 	}
 }

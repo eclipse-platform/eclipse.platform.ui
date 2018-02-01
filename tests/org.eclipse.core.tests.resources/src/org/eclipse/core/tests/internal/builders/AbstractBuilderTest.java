@@ -22,6 +22,7 @@ import org.eclipse.core.tests.resources.ResourceTest;
 public abstract class AbstractBuilderTest extends ResourceTest {
 
 	private boolean autoBuilding;
+	private int simultaneousBuilds;
 
 	public AbstractBuilderTest(String name) {
 		super(name);
@@ -104,7 +105,7 @@ public abstract class AbstractBuilderTest extends ResourceTest {
 	protected void setUp() throws Exception {
 		super.setUp();
 		autoBuilding = getWorkspace().isAutoBuilding();
-
+		simultaneousBuilds = getWorkspace().getDescription().getMaxConcurrentBuilds();
 	}
 
 	/**
@@ -116,6 +117,7 @@ public abstract class AbstractBuilderTest extends ResourceTest {
 		IWorkspace workspace = getWorkspace();
 		IWorkspaceDescription desc = workspace.getDescription();
 		desc.setBuildOrder(null);
+		desc.setMaxConcurrentBuilds(simultaneousBuilds);
 		workspace.setDescription(desc);
 		waitForBuild();
 		setAutoBuilding(autoBuilding);
