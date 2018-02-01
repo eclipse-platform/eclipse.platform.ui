@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2015 IBM Corporation and others.
+ * Copyright (c) 2003, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -82,7 +82,7 @@ public class JstPipelineTest extends NavigatorTestBase {
 		assertTrue(
 				"The root object should be an IJavaProject, which is IAdaptable.", rootItems[0].getData() instanceof IAdaptable); //$NON-NLS-1$
 
-		IProject adaptedProject = (IProject) ((IAdaptable) rootItems[_projectInd]
+		IProject adaptedProject = ((IAdaptable) rootItems[_projectInd]
 				.getData()).getAdapter(IProject.class);
 		assertEquals(_project, adaptedProject);
 
@@ -95,9 +95,15 @@ public class JstPipelineTest extends NavigatorTestBase {
 			DisplayHelper.sleep(1000000);
 
 		boolean foundJava = false;
-		boolean foundLib = false;
-		boolean foundCharset = false;
+		boolean foundCompressedLibrary = false;
+		boolean foundJavaLibrary = false;
 
+		// The code below looks for the below children in the Project Tree: //
+		// 1) `Compressed Java`
+		// 2) `Compressed Libraries`
+		// and 3a) `charset.jar` if the java project uses JRE of java8 or below
+		// or 3b) `java.base` if the java project uses JRE of java9 or above
+		// and checks if the ContentProvider and LabelProvider are working as expected.
 		for (int i = 0; i < projectChildren.length; i++) {
 			if (projectChildren[i].getText().startsWith("Compressed Java")) {
 				foundJava = true;
@@ -107,16 +113,17 @@ public class JstPipelineTest extends NavigatorTestBase {
 				for (int j = 0; j < srcChildren.length; j++) {
 					if (srcChildren[j].getText().startsWith(
 							"Compressed Libraries"))
-						foundLib = true;
-					if (srcChildren[j].getText().startsWith("charsets.jar"))
-						foundCharset = true;
+						foundCompressedLibrary = true;
+					if (srcChildren[j].getText().startsWith("charsets.jar")
+							|| srcChildren[j].getText().startsWith("java.base"))
+						foundJavaLibrary = true;
 				}
 			}
 		}
 
 		assertTrue(foundJava);
-		assertTrue(foundLib);
-		assertTrue(foundCharset);
+		assertTrue(foundCompressedLibrary);
+		assertTrue(foundJavaLibrary);
 	}
 
 }
