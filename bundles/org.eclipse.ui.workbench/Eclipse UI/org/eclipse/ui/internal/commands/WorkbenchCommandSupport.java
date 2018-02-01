@@ -17,6 +17,8 @@ import java.util.Map;
 import org.eclipse.core.commands.CommandManager;
 import org.eclipse.core.commands.contexts.ContextManager;
 import org.eclipse.jface.bindings.BindingManager;
+import org.eclipse.jface.bindings.keys.SWTKeySupport;
+import org.eclipse.jface.bindings.keys.formatting.KeyFormatterFactory;
 import org.eclipse.ui.LegacyHandlerSubmissionExpression;
 import org.eclipse.ui.commands.HandlerSubmission;
 import org.eclipse.ui.commands.ICommandManager;
@@ -81,9 +83,7 @@ public class WorkbenchCommandSupport implements IWorkbenchCommandSupport {
 				bindingManager, commandManager, contextManager);
 
 		// Initialize the old key formatter settings.
-		org.eclipse.ui.keys.KeyFormatterFactory
-				.setDefault(org.eclipse.ui.keys.SWTKeySupport
-						.getKeyFormatterForPlatform());
+		KeyFormatterFactory.setDefault(SWTKeySupport.getKeyFormatterForPlatform());
 	}
 
 	@Override
