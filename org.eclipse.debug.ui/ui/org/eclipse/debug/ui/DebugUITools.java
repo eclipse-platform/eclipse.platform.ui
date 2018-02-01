@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2016 IBM Corporation and others.
+ * Copyright (c) 2000, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -62,6 +62,7 @@ import org.eclipse.debug.internal.ui.contexts.DebugContextManager;
 import org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationDialog;
 import org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationManager;
 import org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationPropertiesDialog;
+import org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationTabGroupViewer;
 import org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationsDialog;
 import org.eclipse.debug.internal.ui.launchConfigurations.LaunchGroupExtension;
 import org.eclipse.debug.internal.ui.launchConfigurations.LaunchShortcutExtension;
@@ -1349,5 +1350,27 @@ public class DebugUITools {
     public static IToggleBreakpointsTargetManager getToggleBreakpointsTargetManager() {
         return ToggleBreakpointsTargetManager.getDefault();
     }
+
+	/**
+	 * Returns the ILaunchConfiguration corresponding to
+	 * ILaunchConfigurationDialog
+	 *
+	 * @param dialog The input launch configuration dialog
+	 * @return {@link ILaunchConfiguration} Corresponding launch configuration
+	 * @since 3.13
+	 */
+	public static ILaunchConfiguration getLaunchConfiguration(ILaunchConfigurationDialog dialog) {
+		if (dialog instanceof LaunchConfigurationsDialog) {
+			LaunchConfigurationTabGroupViewer tabViewer = ((LaunchConfigurationsDialog) dialog).getTabViewer();
+			if (tabViewer != null) {
+				Object input = tabViewer.getInput();
+				if (input instanceof ILaunchConfiguration) {
+					ILaunchConfiguration configuration = (ILaunchConfiguration) input;
+					return configuration;
+				}
+			}
+		}
+		return null;
+	}
 
 }
