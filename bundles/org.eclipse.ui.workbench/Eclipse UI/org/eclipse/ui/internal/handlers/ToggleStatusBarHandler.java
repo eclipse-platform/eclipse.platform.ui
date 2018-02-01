@@ -12,6 +12,7 @@ package org.eclipse.ui.internal.handlers;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Map.Entry;
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.e4.core.services.events.IEventBroker;
@@ -90,9 +91,9 @@ public class ToggleStatusBarHandler extends AbstractHandler implements IElementU
 
 	@Override
 	public void dispose() {
-		for (IWorkbenchWindow w : eventHandlers.keySet()) {
-			IEventBroker eventBroker = eventBrokers.get(w);
-			EventHandler eventHandler = eventHandlers.get(w);
+		for (Entry<IWorkbenchWindow, EventHandler> w : eventHandlers.entrySet()) {
+			IEventBroker eventBroker = eventBrokers.get(w.getKey());
+			EventHandler eventHandler = w.getValue();
 			if (eventBroker != null && eventHandler != null) {
 				eventBroker.unsubscribe(eventHandler);
 			}

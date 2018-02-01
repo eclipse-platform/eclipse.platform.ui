@@ -828,16 +828,14 @@ public class ProgressManager extends ProgressProvider {
 	 */
 	void removeListener(IJobBusyListener listener) {
 		synchronized (familyListeners) {
-			Iterator<Object> families = familyListeners.keySet().iterator();
-			while (families.hasNext()) {
-				Object next = families.next();
-				Collection<IJobBusyListener> currentListeners = familyListeners
-						.get(next);
+			Iterator<Collection<IJobBusyListener>> familyListeners = this.familyListeners.values().iterator();
+			while (familyListeners.hasNext()) {
+				Collection<IJobBusyListener> currentListeners = familyListeners.next();
 				currentListeners.remove(listener);
 
 				// Remove any empty listeners
 				if (currentListeners.isEmpty()) {
-					families.remove();
+					familyListeners.remove();
 				}
 			}
 		}
@@ -860,13 +858,10 @@ public class ProgressManager extends ProgressProvider {
 				return Collections.EMPTY_LIST;
 			}
 
-			Iterator<Object> families = familyListeners.keySet().iterator();
 			Collection<IJobBusyListener> returnValue = new HashSet<>();
-			while (families.hasNext()) {
-				Object next = families.next();
-				if (job.belongsTo(next)) {
-					Collection<IJobBusyListener> currentListeners = familyListeners
-							.get(next);
+			for (Entry<Object, Collection<IJobBusyListener>> entry : familyListeners.entrySet()) {
+				if (job.belongsTo(entry.getKey())) {
+					Collection<IJobBusyListener> currentListeners = entry.getValue();
 					returnValue.addAll(currentListeners);
 				}
 			}

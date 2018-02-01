@@ -28,6 +28,7 @@ import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
@@ -926,15 +927,14 @@ public class ProgressManager extends ProgressProvider implements IProgressServic
 	 */
 	void removeListener(IJobBusyListener listener) {
 		synchronized (familyListeners) {
-			Iterator<Object> families = familyListeners.keySet().iterator();
-			while (families.hasNext()) {
-				Object next = families.next();
-				Collection<IJobBusyListener> currentListeners = familyListeners.get(next);
+			Iterator<Collection<IJobBusyListener>> familyListeners = this.familyListeners.values().iterator();
+			while (familyListeners.hasNext()) {
+				Collection<IJobBusyListener> currentListeners = familyListeners.next();
 				currentListeners.remove(listener);
 
 				// Remove any empty listeners.
 				if (currentListeners.isEmpty()) {
-					families.remove();
+					familyListeners.remove();
 				}
 			}
 		}
@@ -955,12 +955,10 @@ public class ProgressManager extends ProgressProvider implements IProgressServic
 				return Collections.EMPTY_LIST;
 			}
 
-			Iterator<Object> families = familyListeners.keySet().iterator();
 			Collection<IJobBusyListener> returnValue = new LinkedHashSet<>();
-			while (families.hasNext()) {
-				Object next = families.next();
-				if (job.belongsTo(next)) {
-					Collection<IJobBusyListener> currentListeners = familyListeners.get(next);
+			for (Entry<Object, Collection<IJobBusyListener>> entry : familyListeners.entrySet()) {
+				if (job.belongsTo(entry.getKey())) {
+					Collection<IJobBusyListener> currentListeners = entry.getValue();
 					returnValue.addAll(currentListeners);
 				}
 			}
