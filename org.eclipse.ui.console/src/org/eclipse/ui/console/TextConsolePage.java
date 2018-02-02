@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 IBM Corporation and others.
+ * Copyright (c) 2000, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -258,6 +258,8 @@ public class TextConsolePage implements IPageBookViewPage, IPropertyChangeListen
 			} else if (source.equals(fConsole) && property.equals(IConsoleConstants.P_TAB_SIZE)) {
 				Integer tabSize = (Integer)event.getNewValue();
 				fViewer.setTabWidth(tabSize.intValue());
+			} else if (source.equals(fConsole) && property.equals(IConsoleConstants.P_CONSOLE_AUTO_SCROLL_LOCK)) {
+				fViewer.setConsoleAutoScrollLock(fConsole.isConsoleAutoScrollLock());
 			} else if (source.equals(fConsole) && property.equals(IConsoleConstants.P_CONSOLE_WIDTH)) {
 				fViewer.setConsoleWidth(fConsole.getConsoleWidth());
 			} else if (IConsoleConstants.P_BACKGROUND_COLOR.equals(property)) {

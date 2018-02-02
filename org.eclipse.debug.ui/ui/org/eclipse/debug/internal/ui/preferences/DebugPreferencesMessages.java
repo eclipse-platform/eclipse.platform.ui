@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2016 IBM Corporation and others.
+ *  Copyright (c) 2000, 2018 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -20,6 +20,7 @@ public class DebugPreferencesMessages extends NLS {
 	public static String ConsolePreferencePage_Console_settings;
 	public static String ConsolePreferencePage_Show__Console_View_when_there_is_program_error_3;
 	public static String ConsolePreferencePage_Show__Console_View_when_there_is_program_output_3;
+	public static String ConsolePreferencePage_Show__Console_View_enable_auto_scroll_lock;
 	public static String ConsolePreferencePage_Standard_Error__3;
 	public static String ConsolePreferencePage_Standard_In__4;
 	public static String ConsolePreferencePage_Standard_Out__2;

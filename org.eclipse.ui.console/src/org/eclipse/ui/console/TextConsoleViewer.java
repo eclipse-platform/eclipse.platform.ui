@@ -89,6 +89,9 @@ public class TextConsoleViewer extends SourceViewer implements LineStyleListener
 
 	private TextConsole console;
 
+	private boolean consoleAutoScrollLock = true;
+
+
 	private IPropertyChangeListener propertyChangeListener;
 
 	private IScrollLockStateProvider scrollLockStateProvider;
@@ -166,10 +169,13 @@ public class TextConsoleViewer extends SourceViewer implements LineStyleListener
 	}
 
 	/*
-	 * Check if the document is empty or the line count is smaller than each
+	 * Check if user preference is enabled for auto scroll lock and the document is empty or the line count is smaller than each
 	 * vertical scroll
 	 */
-	private boolean isEmptyDocument() {
+	private boolean isAutoScrollLockNotApplicable() {
+		if (!consoleAutoScrollLock) {
+			return true;
+		}
 		StyledText textWidget = getTextWidget();
 		if (textWidget != null && !textWidget.isDisposed()) {
 			return (textWidget.getLineCount() <= textWidget.getVerticalBar().getIncrement());
@@ -237,6 +243,7 @@ public class TextConsoleViewer extends SourceViewer implements LineStyleListener
 	public TextConsoleViewer(Composite parent, TextConsole console) {
 		super(parent, null, SWT.V_SCROLL | SWT.H_SCROLL);
 		this.console = console;
+		this.consoleAutoScrollLock = console.isConsoleAutoScrollLock();
 
 		IDocument document = console.getDocument();
 		setDocument(document);
@@ -254,7 +261,7 @@ public class TextConsoleViewer extends SourceViewer implements LineStyleListener
 		styledText.getVerticalBar().addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				if (isEmptyDocument()) {
+				if (isAutoScrollLockNotApplicable()) {
 					return;
 				}
 				// scroll lock if vertical scroll bar dragged, OR selection on
@@ -284,7 +291,7 @@ public class TextConsoleViewer extends SourceViewer implements LineStyleListener
 		styledText.addKeyListener(new KeyAdapter() {
 			@Override
 			public void keyPressed(KeyEvent e) {
-				if (isEmptyDocument()) {
+				if (isAutoScrollLockNotApplicable()) {
 					return;
 				}
 				// lock the scroll if PAGE_UP ,HOME or TOP selected
@@ -304,7 +311,7 @@ public class TextConsoleViewer extends SourceViewer implements LineStyleListener
 		styledText.addMouseWheelListener(new MouseWheelListener() {
 			@Override
 			public void mouseScrolled(MouseEvent e) {
-				if (isEmptyDocument()) {
+				if (isAutoScrollLockNotApplicable()) {
 					return;
 				}
 				if (e.count < 0) { // Mouse dragged down
@@ -721,6 +728,18 @@ public class TextConsoleViewer extends SourceViewer implements LineStyleListener
 			documentAdapter = new ConsoleDocumentAdapter(consoleWidth = -1);
 		}
 		return documentAdapter;
+	}
+
+	/**
+	 * Sets the user preference for console auto scroll lock.
+	 *
+	 * @param autoScrollLock user preference for console auto scroll lock
+	 * @since 3.8
+	 */
+	public void setConsoleAutoScrollLock(boolean autoScrollLock) {
+		if (consoleAutoScrollLock != autoScrollLock) {
+			consoleAutoScrollLock = autoScrollLock;
+		}
 	}
 
 	/**

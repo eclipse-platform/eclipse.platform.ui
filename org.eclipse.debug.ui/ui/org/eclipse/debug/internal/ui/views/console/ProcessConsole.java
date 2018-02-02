@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2015 IBM Corporation and others.
+ *  Copyright (c) 2000, 2018 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -320,6 +320,9 @@ public class ProcessConsole extends IOConsole implements IConsole, IDebugEventSe
         } else if (property.equals(IDebugPreferenceConstants.CONSOLE_TAB_WIDTH)) {
             int tabWidth = store.getInt(IDebugPreferenceConstants.CONSOLE_TAB_WIDTH);
             setTabWidth(tabWidth);
+		} else if (property.equals(IDebugPreferenceConstants.CONSOLE_AUTO_SCROLL_LOCK)) {
+			boolean autoScrollLock = store.getBoolean(IDebugPreferenceConstants.CONSOLE_AUTO_SCROLL_LOCK);
+			setConsoleAutoScrollLock(autoScrollLock);
         } else if (property.equals(IDebugPreferenceConstants.CONSOLE_OPEN_ON_OUT)) {
             boolean activateOnOut = store.getBoolean(IDebugPreferenceConstants.CONSOLE_OPEN_ON_OUT);
 			@SuppressWarnings("resource")
@@ -449,6 +452,7 @@ public class ProcessConsole extends IOConsole implements IConsole, IDebugEventSe
             setConsoleWidth(store.getInt(IDebugPreferenceConstants.CONSOLE_WIDTH));
         }
         setTabWidth(store.getInt(IDebugPreferenceConstants.CONSOLE_TAB_WIDTH));
+		setConsoleAutoScrollLock(store.getBoolean(IDebugPreferenceConstants.CONSOLE_AUTO_SCROLL_LOCK));
 
         if (store.getBoolean(IDebugPreferenceConstants.CONSOLE_LIMIT_CONSOLE_OUTPUT)) {
             int highWater = store.getInt(IDebugPreferenceConstants.CONSOLE_HIGH_WATER_MARK);

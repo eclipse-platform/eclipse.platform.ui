@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2013 IBM Corporation and others.
+ * Copyright (c) 2000, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -58,6 +58,11 @@ public interface IDebugPreferenceConstants {
 	 * (int) The maximum console character width, if wrapping.
 	 */
 	public static final String CONSOLE_WIDTH = "Console.width"; //$NON-NLS-1$
+
+	/**
+	 * (boolean) Whether or not the console view will enable auto scroll lock
+	 */
+	public static final String CONSOLE_AUTO_SCROLL_LOCK = "DEBUG.autoScrollLock"; //$NON-NLS-1$
 
 	/**
 	 * (boolean) Whether or not the console view is shown

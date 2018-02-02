@@ -126,6 +126,13 @@ public interface IConsoleConstants {
 	public static final String P_TAB_SIZE = ConsolePlugin.getUniqueIdentifier()  + ".P_TAB_SIZE";	 //$NON-NLS-1$
 
 	/**
+	 * Property constant indicating the user preference for auto scroll lock enabling.
+	 *
+	 * @since 3.8
+	 */
+	public static final String P_CONSOLE_AUTO_SCROLL_LOCK = ConsolePlugin.getUniqueIdentifier() + ".P_CONSOLE_AUTO_SCROLL_LOCK"; //$NON-NLS-1$
+
+	/**
 	 * Property constant indicating the width of a fixed width console has changed.
 	 *
 	 * @since 3.1

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 IBM Corporation and others.
+ * Copyright (c) 2000, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -89,6 +89,8 @@ public abstract class TextConsole extends AbstractConsole {
 	 */
 	private boolean fCompleteFired = false;
 
+	private boolean fConsoleAutoScrollLock = true;
+
 
 	/**
 	 * Map of client defined attributes
@@ -161,11 +163,36 @@ public abstract class TextConsole extends AbstractConsole {
 	}
 
 	/**
+	 * Returns the user preference for enabling auto scroll lock feature.
+	 *
+	 * @return auto scroll lock
+	 * @since 3.8
+	 */
+	public boolean isConsoleAutoScrollLock() {
+		return fConsoleAutoScrollLock;
+	}
+
+	/**
+	 * Sets the auto scroll lock preference.
+	 *
+	 * @param autoScrollLockPref enable auto scroll lock preference.
+	 * @since 3.8
+	 */
+	public void setConsoleAutoScrollLock(boolean autoScrollLockPref) {
+		if (fConsoleAutoScrollLock != autoScrollLockPref) {
+			boolean old = fConsoleAutoScrollLock;
+			fConsoleAutoScrollLock = autoScrollLockPref;
+
+			firePropertyChange(this, IConsoleConstants.P_CONSOLE_AUTO_SCROLL_LOCK, Boolean.valueOf(old), Boolean.valueOf(fConsoleAutoScrollLock));
+		}
+	}
+
+	/**
 	 * Sets the width of this console in characters. Any value greater than zero
 	 * will cause this console to have a fixed width.
 	 *
 	 * @param width the width to make this console. Values of 0 or less imply
-	 * the console does not have any fixed width.
+	 *            the console does not have any fixed width.
 	 */
 	public void setConsoleWidth(int width) {
 		if (fConsoleWidth != width) {

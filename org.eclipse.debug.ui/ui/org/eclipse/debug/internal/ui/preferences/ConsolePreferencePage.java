@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 IBM Corporation and others.
+ * Copyright (c) 2000, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -140,6 +140,7 @@ public class ConsolePreferencePage extends FieldEditorPreferencePage implements 
 		fTabSizeEditor.setValidRange(1,100);
 		fTabSizeEditor.setErrorMessage(DebugPreferencesMessages.ConsolePreferencePage_13);
 
+		addField(new BooleanFieldEditor(IDebugPreferenceConstants.CONSOLE_AUTO_SCROLL_LOCK, DebugPreferencesMessages.ConsolePreferencePage_Show__Console_View_enable_auto_scroll_lock, SWT.NONE, getFieldEditorParent()));
 		addField(new BooleanFieldEditor(IDebugPreferenceConstants.CONSOLE_OPEN_ON_OUT, DebugPreferencesMessages.ConsolePreferencePage_Show__Console_View_when_there_is_program_output_3, SWT.NONE, getFieldEditorParent()));
 		addField(new BooleanFieldEditor(IDebugPreferenceConstants.CONSOLE_OPEN_ON_ERR, DebugPreferencesMessages.ConsolePreferencePage_Show__Console_View_when_there_is_program_error_3, SWT.NONE, getFieldEditorParent()));
 
