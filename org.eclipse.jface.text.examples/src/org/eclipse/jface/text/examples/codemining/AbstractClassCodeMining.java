@@ -12,14 +12,14 @@ package org.eclipse.jface.text.examples.codemining;
 
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
-import org.eclipse.jface.text.codemining.AbstractCodeMining;
 import org.eclipse.jface.text.codemining.ICodeMiningProvider;
+import org.eclipse.jface.text.codemining.LineHeaderCodeMining;
 
 /**
  * Abstract class for class name mining.
  *
  */
-public abstract class AbstractClassCodeMining extends AbstractCodeMining {
+public abstract class AbstractClassCodeMining extends LineHeaderCodeMining {
 
 	private final String className;
 

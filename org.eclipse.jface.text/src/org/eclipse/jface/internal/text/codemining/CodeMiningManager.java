@@ -32,6 +32,7 @@ import org.eclipse.jface.text.JFaceTextUtil;
 import org.eclipse.jface.text.Position;
 import org.eclipse.jface.text.codemining.ICodeMining;
 import org.eclipse.jface.text.codemining.ICodeMiningProvider;
+import org.eclipse.jface.text.codemining.LineHeaderCodeMining;
 import org.eclipse.jface.text.source.ISourceViewer;
 import org.eclipse.jface.text.source.inlined.AbstractInlinedAnnotation;
 import org.eclipse.jface.text.source.inlined.InlinedAnnotationSupport;
@@ -143,7 +144,7 @@ public class CodeMiningManager implements Runnable {
 		 * @param ann the codemining annotation
 		 * @return true if the given annotation is in visible lines and false otherwise.
 		 */
-		public boolean isInVisibleLines(CodeMiningAnnotation ann) {
+		public boolean isInVisibleLines(AbstractInlinedAnnotation ann) {
 			return ann.getPosition().getOffset() >= startOffset && ann.getPosition().getOffset() <= endOffset;
 		}
 	}
@@ -292,7 +293,7 @@ public class CodeMiningManager implements Runnable {
 			// done.
 			return;
 		}
-		Set<CodeMiningAnnotation> annotationsToRedraw= new HashSet<>();
+		Set<ICodeMiningAnnotation> annotationsToRedraw= new HashSet<>();
 		Set<AbstractInlinedAnnotation> currentAnnotations= new HashSet<>();
 		// Loop for grouped code minings
 		groups.entrySet().stream().forEach(g -> {
@@ -301,16 +302,17 @@ public class CodeMiningManager implements Runnable {
 
 			Position pos= new Position(g.getKey().offset, g.getKey().length);
 			List<ICodeMining> minings= g.getValue();
+			boolean inLineHeader= minings.size() > 0 ? (minings.get(0) instanceof LineHeaderCodeMining) : true;
 			// Try to find existing annotation
-			CodeMiningAnnotation ann= fInlinedAnnotationSupport.findExistingAnnotation(pos);
+			AbstractInlinedAnnotation ann= fInlinedAnnotationSupport.findExistingAnnotation(pos);
 			if (ann == null) {
 				// The annotation doesn't exists, create it.
-				ann= new CodeMiningAnnotation(pos, viewer);
-			} else if (visibleLines.isInVisibleLines(ann)) {
+				ann= inLineHeader ? new CodeMiningLineHeaderAnnotation(pos, viewer) : new CodeMiningLineContentAnnotation(pos, viewer);
+			} else if (visibleLines.isInVisibleLines(ann) && ann instanceof ICodeMiningAnnotation) {
 				// annotation is in visible lines
-				annotationsToRedraw.add(ann);
+				annotationsToRedraw.add((ICodeMiningAnnotation) ann);
 			}
-			ann.update(minings, monitor);
+			((ICodeMiningAnnotation) ann).update(minings, monitor);
 			currentAnnotations.add(ann);
 		});
 		// check if request was canceled.

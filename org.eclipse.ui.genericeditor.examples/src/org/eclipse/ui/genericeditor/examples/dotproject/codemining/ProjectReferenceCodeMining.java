@@ -18,13 +18,13 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.ITextViewer;
-import org.eclipse.jface.text.codemining.AbstractCodeMining;
 import org.eclipse.jface.text.codemining.ICodeMiningProvider;
+import org.eclipse.jface.text.codemining.LineHeaderCodeMining;
 
 /**
  * Project reference mining.
  */
-public class ProjectReferenceCodeMining extends AbstractCodeMining {
+public class ProjectReferenceCodeMining extends LineHeaderCodeMining {
 
 	private final String projectName;
 

@@ -21,11 +21,8 @@ import org.eclipse.swt.graphics.Point;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 
-import org.eclipse.jface.text.BadLocationException;
-import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.ITextViewer;
 import org.eclipse.jface.text.Position;
-import org.eclipse.jface.text.source.inlined.Positions;
 
 /**
  * Abstract class for {@link ICodeMining}.
@@ -60,31 +57,14 @@ public abstract class AbstractCodeMining implements ICodeMining {
 	private final Consumer<MouseEvent> action;
 
 	/**
-	 * CodeMining constructor to locate the code mining before the given line number.
+	 * CodeMining constructor to locate the code mining in a given position.
 	 *
-	 * @param beforeLineNumber the line number where codemining must be drawn. Use 0 if you wish to
-	 *            locate the code mining before the first line number (1).
-	 * @param document the document.
-	 * @param provider the owner codemining provider which creates this mining.
-	 * @throws BadLocationException when line number doesn't exists
-	 */
-	public AbstractCodeMining(int beforeLineNumber, IDocument document, ICodeMiningProvider provider) throws BadLocationException {
-		this(beforeLineNumber, document, provider, null);
-	}
-
-	/**
-	 * CodeMining constructor to locate the code mining before the given line number.
-	 *
-	 * @param beforeLineNumber the line number where codemining must be drawn. Use 0 if you wish to
-	 *            locate the code mining before the first line number (1).
-	 * @param document the document.
+	 * @param position the position where the mining must be drawn.
 	 * @param provider the owner codemining provider which creates this mining.
 	 * @param action the action to execute when mining is clicked and null otherwise.
-	 * @throws BadLocationException when line number doesn't exists
 	 */
-	public AbstractCodeMining(int beforeLineNumber, IDocument document, ICodeMiningProvider provider, Consumer<MouseEvent> action)
-			throws BadLocationException {
-		this.position= Positions.of(beforeLineNumber, document, true);
+	protected AbstractCodeMining(Position position, ICodeMiningProvider provider, Consumer<MouseEvent> action) {
+		this.position= position;
 		this.provider= provider;
 		this.action= action;
 	}
