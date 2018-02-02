@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2017 IBM Corporation and others.
+ * Copyright (c) 2005, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -16,7 +16,7 @@
  * Alain Bernard <alain.bernard1224@gmail.com> - Bug 281490
  * Patrik Suzzi <psuzzi@gmail.com> - Bug 491785, 368977, 501811, 511198
  * Kaloyan Raev <kaloyan.r@zend.com> - Bug 322002
- * Lucas Bullen (Red Hat Inc.) - Bug 500051
+ * Lucas Bullen (Red Hat Inc.) - Bug 500051, 530654
  *******************************************************************************/
 package org.eclipse.ui.internal;
 
@@ -453,8 +453,6 @@ public class WorkbenchMessages extends NLS {
 	public static String PreferenceNode_errorMessage;
     public static String PreferenceNode_NotFound;
 	public static String Preference_note;
-	public static String Preference_importTooltip;
-	public static String Preference_exportTooltip;
 	public static String Preference_import;
 	public static String Preference_export;
 

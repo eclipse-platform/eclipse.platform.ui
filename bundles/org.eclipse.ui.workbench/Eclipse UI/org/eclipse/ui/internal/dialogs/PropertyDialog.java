@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 IBM Corporation and others.
+ * Copyright (c) 2000, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     James Blackburn (Broadcom Corp.) - Bug 294628 multiple selection
+ *     Lucas Bullen (Red Hat Inc.) - Bug 530654 - Import/Export Preferences buttons visible on other dialogs
  *******************************************************************************/
 package org.eclipse.ui.internal.dialogs;
 
@@ -19,6 +20,7 @@ import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.osgi.util.NLS;
+import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.IWorkbenchHelpContextIds;
@@ -89,6 +91,11 @@ public class PropertyDialog extends FilteredPreferenceDialog {
 
 		return propertyDialog;
 
+	}
+
+	@Override
+	protected void addButtonsToHelpControl(Control control) {
+		// Overridden to remove import/export buttons
 	}
 
 	/**

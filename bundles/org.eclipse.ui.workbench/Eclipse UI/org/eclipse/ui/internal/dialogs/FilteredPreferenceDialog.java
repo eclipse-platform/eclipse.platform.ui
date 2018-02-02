@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2014, 2015 IBM Corporation and others.
+ * Copyright (c) 2003, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,7 +10,7 @@
  *     Oakland Software (Francis Upton) <francisu@ieee.org> - bug 219273
  *     Lars Vogel <Lars.Vogel@gmail.com> - Bug 440810
  *     Stefan Xenos <sxenos@google.com> - Bug 466793
- *     Lucas Bullen (Red Hat Inc.) - Bug 500051
+ *     Lucas Bullen (Red Hat Inc.) - Bug 500051, 530654
  *******************************************************************************/
 package org.eclipse.ui.internal.dialogs;
 
@@ -371,6 +371,12 @@ public abstract class FilteredPreferenceDialog extends PreferenceDialog
 	@Override
 	protected Control createHelpControl(Composite parent) {
 		Control control = super.createHelpControl(parent);
+		addButtonsToHelpControl(control);
+		return control;
+	}
+
+	protected void addButtonsToHelpControl(Control control) {
+		Composite parent = control.getParent();
 		if (control instanceof ToolBar) {
 			ToolBar toolBar = (ToolBar) control;
 
@@ -378,14 +384,14 @@ public abstract class FilteredPreferenceDialog extends PreferenceDialog
 			importImage = WorkbenchImages.getImageDescriptor(IWorkbenchGraphicConstants.IMG_PREF_IMPORT)
 					.createImage();
 			importButton.setImage(importImage);
-			importButton.setToolTipText(WorkbenchMessages.Preference_importTooltip);
+			importButton.setToolTipText(WorkbenchMessages.Preference_import);
 			importButton.addListener(SWT.Selection, e -> openImportWizard(parent));
 
 			ToolItem exportButton = new ToolItem(toolBar, SWT.PUSH);
 			exportImage = WorkbenchImages.getImageDescriptor(IWorkbenchGraphicConstants.IMG_PREF_EXPORT)
 					.createImage();
 			exportButton.setImage(exportImage);
-			exportButton.setToolTipText(WorkbenchMessages.Preference_exportTooltip);
+			exportButton.setToolTipText(WorkbenchMessages.Preference_export);
 			exportButton.addListener(SWT.Selection, e -> openExportWizard(parent));
 		} else if (control instanceof Link) {
 			Composite linkParent = ((Link) control).getParent();
@@ -401,7 +407,6 @@ public abstract class FilteredPreferenceDialog extends PreferenceDialog
 			exportLink.setText(" <a>" + WorkbenchMessages.Preference_export + "</a>"); //$NON-NLS-1$ //$NON-NLS-2$
 			exportLink.addListener(SWT.Selection, e -> openExportWizard(parent));
 		}
-		return control;
 	}
 
 	private void openImportWizard(Composite parent) {
