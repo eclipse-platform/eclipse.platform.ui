@@ -9,7 +9,7 @@
  * Tom Schindl <tom.schindl@bestsolution.at> - initial API and implementation
  * Steven Spungin <steve@spungin.tv> - Ongoing Maintenance, Bug 439532, Bug 443945
  * Patrik Suzzi <psuzzi@gmail.com> - Bug 467262
- * Olivier Prouvost <olivier.prouvost@opcoach.com> - Bug 509488
+ * Olivier Prouvost <olivier.prouvost@opcoach.com> - Bug 509488, 525986
  * Patrik Suzzi <psuzzi@gmail.com> - Bug 509606
  ******************************************************************************/
 package org.eclipse.e4.tools.emf.ui.internal.common.component;
@@ -111,6 +111,7 @@ public class StringModelFragment extends AbstractComponentEditor {
 
 	// The pickList to select the kind of children to add (must be refreshed)
 	private E4PickList pickList;
+	private Text featureText;
 
 	@Inject
 	public StringModelFragment() {
@@ -342,17 +343,17 @@ public class StringModelFragment extends AbstractComponentEditor {
 			gl.marginLeft = gl.marginBottom = gl.marginRight = gl.marginTop = 0;
 			comp.setLayout(gl);
 
-			final Text t = new Text(comp, SWT.BORDER);
-			TextPasteHandler.createFor(t);
+			featureText = new Text(comp, SWT.BORDER);
+			TextPasteHandler.createFor(featureText);
 			gd = new GridData(GridData.FILL_HORIZONTAL);
-			t.setLayoutData(gd);
-			context.bindValue(textProp.observeDelayed(200, t),
+			featureText.setLayoutData(gd);
+			context.bindValue(textProp.observeDelayed(200, featureText),
 					EMFEditProperties
 					.value(getEditingDomain(), FragmentPackageImpl.Literals.STRING_MODEL_FRAGMENT__FEATURENAME)
 					.observeDetail(getMaster()));
 
 			// create the decoration for the text component
-			final ControlDecoration deco = new ControlDecoration(t, SWT.TOP | SWT.LEFT);
+			final ControlDecoration deco = new ControlDecoration(featureText, SWT.TOP | SWT.LEFT);
 
 			// use an existing image
 			Image image = FieldDecorationRegistry.getDefault()
@@ -366,7 +367,7 @@ public class StringModelFragment extends AbstractComponentEditor {
 			deco.setShowOnlyOnFocus(false);
 
 			// hide the decoration if the text component has content
-			t.addModifyListener(e -> {
+			featureText.addModifyListener(e -> {
 				Text text = (Text) e.getSource();
 				if (!text.getText().isEmpty()) {
 					deco.hide();
@@ -378,13 +379,13 @@ public class StringModelFragment extends AbstractComponentEditor {
 			KeyStroke keyStroke;
 			try {
 				keyStroke = KeyStroke.getInstance("Ctrl+Space");
-				ContentProposalAdapter adapter = new ContentProposalAdapter(t, new TextContentAdapter(),
-						new StringModelFragmentProposalProvider(this, t), keyStroke, null);
+				ContentProposalAdapter adapter = new ContentProposalAdapter(featureText, new TextContentAdapter(),
+						new StringModelFragmentProposalProvider(this, featureText), keyStroke, null);
 				adapter.setProposalAcceptanceStyle(ContentProposalAdapter.PROPOSAL_REPLACE);
 			} catch (ParseException e) {
 				e.printStackTrace();
 			}
-			t.addModifyListener(e -> updateChildrenChoice());
+			featureText.addModifyListener(e -> updateChildrenChoice());
 
 			final Button button = new Button(comp, SWT.PUSH | SWT.FLAT);
 			button.setText(Messages.ModelTooling_Common_FindEllipsis);
@@ -620,7 +621,7 @@ public class StringModelFragment extends AbstractComponentEditor {
 		List<FeatureClass> targetChildrenClasses = new ArrayList<>();
 		if (selectedContainer != null) {
 			List<FeatureClass> childTypes = getTargetChildrenClasses(selectedContainer,
-					getStringModelFragment().getFeaturename());
+					featureText.getText());
 			targetChildrenClasses.addAll(childTypes);
 		}
 		return targetChildrenClasses;
