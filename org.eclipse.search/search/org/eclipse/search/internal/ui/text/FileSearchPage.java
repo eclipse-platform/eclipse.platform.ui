@@ -126,12 +126,7 @@ public class FileSearchPage extends AbstractTextSearchViewPage implements IAdapt
 
 
 	private static final String[] SHOW_IN_TARGETS= new String[] { IPageLayout.ID_RES_NAV };
-	private  static final IShowInTargetList SHOW_IN_TARGET_LIST= new IShowInTargetList() {
-		@Override
-		public String[] getShowInTargetIds() {
-			return SHOW_IN_TARGETS;
-		}
-	};
+	private  static final IShowInTargetList SHOW_IN_TARGET_LIST= () -> SHOW_IN_TARGETS;
 
 	public FileSearchPage() {
 		fSortByNameAction= new SortAction(SearchMessages.FileSearchPage_sort_name_label, this, FileLabelProvider.SHOW_LABEL_PATH);
@@ -393,12 +388,7 @@ public class FileSearchPage extends AbstractTextSearchViewPage implements IAdapt
 					newSelection.add(element);
 				}
 
-				return (T) new IShowInSource() {
-					@Override
-					public ShowInContext getShowInContext() {
-						return new ShowInContext(null, new StructuredSelection(new ArrayList<>(newSelection)));
-					}
-				};
+				return (T) (IShowInSource) () -> new ShowInContext(null, new StructuredSelection(new ArrayList<>(newSelection)));
 			}
 			return null;
 		}

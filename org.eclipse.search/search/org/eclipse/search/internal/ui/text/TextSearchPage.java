@@ -26,8 +26,6 @@ import java.util.regex.PatternSyntaxException;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CLabel;
-import org.eclipse.swt.events.ModifyEvent;
-import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
@@ -292,16 +290,13 @@ public class TextSearchPage extends DialogPage implements ISearchPage, IReplaceP
 				ErrorDialog.openError(getShell(), SearchMessages.TextSearchPage_replace_searchproblems_title, SearchMessages.TextSearchPage_replace_runproblem_message, status);
 			}
 
-			Display.getCurrent().asyncExec(new Runnable() {
-				@Override
-				public void run() {
-					ISearchResultViewPart view= NewSearchUI.activateSearchResultView();
-					if (view != null) {
-						ISearchResultPage page= view.getActivePage();
-						if (page instanceof FileSearchPage) {
-							FileSearchPage filePage= (FileSearchPage) page;
-							new ReplaceAction(filePage.getSite().getShell(), (FileSearchResult)filePage.getInput(), null).run();
-						}
+			Display.getCurrent().asyncExec(() -> {
+				ISearchResultViewPart view= NewSearchUI.activateSearchResultView();
+				if (view != null) {
+					ISearchResultPage page= view.getActivePage();
+					if (page instanceof FileSearchPage) {
+						FileSearchPage filePage= (FileSearchPage) page;
+						new ReplaceAction(filePage.getSite().getShell(), (FileSearchResult)filePage.getInput(), null).run();
 					}
 				}
 			});
@@ -518,12 +513,7 @@ public class TextSearchPage extends DialogPage implements ISearchPage, IReplaceP
 			}
 		});
 		// add some listeners for regex syntax checking
-		fPattern.addModifyListener(new ModifyListener() {
-			@Override
-			public void modifyText(ModifyEvent e) {
-				updateOKStatus();
-			}
-		});
+		fPattern.addModifyListener(e -> updateOKStatus());
 		fPattern.setFont(group.getFont());
 		GridData data= new GridData(GridData.FILL, GridData.FILL, true, false, 1, 2);
 		data.widthHint= convertWidthInCharsToPixels(50);
@@ -695,12 +685,7 @@ public class TextSearchPage extends DialogPage implements ISearchPage, IReplaceP
 		label.setFont(group.getFont());
 
 		fExtensions= new Combo(group, SWT.SINGLE | SWT.BORDER);
-		fExtensions.addModifyListener(new ModifyListener() {
-			@Override
-			public void modifyText(ModifyEvent e) {
-				updateOKStatus();
-			}
-		});
+		fExtensions.addModifyListener(e -> updateOKStatus());
 		GridData data= new GridData(GridData.FILL, GridData.FILL, true, false, 1, 1);
 		data.widthHint= convertWidthInCharsToPixels(50);
 		fExtensions.setLayoutData(data);

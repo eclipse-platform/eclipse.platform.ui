@@ -14,8 +14,6 @@ import java.util.ArrayList;
 import java.util.regex.PatternSyntaxException;
 
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.ModifyEvent;
-import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
@@ -103,12 +101,7 @@ public class ReplaceConfigurationPage extends UserInputWizardPage {
 		gd.widthHint= convertWidthInCharsToPixels(50);
 		fTextField.setLayoutData(gd);
 		fTextField.setFocus();
-		fTextField.addModifyListener(new ModifyListener() {
-			@Override
-			public void modifyText(ModifyEvent e) {
-				updateOKStatus();
-			}
-		});
+		fTextField.addModifyListener(e -> updateOKStatus());
 
 		IDialogSettings settings= SearchPlugin.getDefault().getDialogSettings().getSection(SETTINGS_GROUP);
 		if (settings != null) {

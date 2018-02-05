@@ -19,7 +19,6 @@ import java.nio.charset.UnsupportedCharsetException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -375,23 +374,20 @@ public class TextSearchVisitor {
 				System.arraycopy(files, 0, filesByLocation, 0, files.length);
 				// Sorting files to search by location allows to more easily reuse
 				// search results from one file to the other when they have same location
-				Arrays.sort(filesByLocation, new Comparator<IFile>() {
-					@Override
-					public int compare(IFile o1, IFile o2) {
-						if (o1 == o2) {
-							return 0;
-						}
-						if (o1.getLocation() == o2.getLocation()) {
-							return 0;
-						}
-						if (o1.getLocation() == null) {
-							return +1;
-						}
-						if (o2.getLocation() == null) {
-							return -1;
-						}
-						return o1.getLocation().toString().compareTo(o2.getLocation().toString());
+				Arrays.sort(filesByLocation, (o1, o2) -> {
+					if (o1 == o2) {
+						return 0;
 					}
+					if (o1.getLocation() == o2.getLocation()) {
+						return 0;
+					}
+					if (o1.getLocation() == null) {
+						return +1;
+					}
+					if (o2.getLocation() == null) {
+						return -1;
+					}
+					return o1.getLocation().toString().compareTo(o2.getLocation().toString());
 				});
 				for (int first= 0; first < filesByLocation.length; first += filesPerJob) {
 					int end= Math.min(filesByLocation.length, first + filesPerJob);

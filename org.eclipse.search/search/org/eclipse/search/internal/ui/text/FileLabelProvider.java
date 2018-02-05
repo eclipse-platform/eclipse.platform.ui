@@ -59,12 +59,7 @@ public class FileLabelProvider extends LabelProvider implements IStyledLabelProv
 		fOrder= orderFlag;
 		fPage= page;
 		fLineMatchImage= SearchPluginImages.get(SearchPluginImages.IMG_OBJ_TEXT_SEARCH_LINE);
-		fMatchComparator= new Comparator<FileMatch>() {
-			@Override
-			public int compare(FileMatch o1, FileMatch o2) {
-				return o1.getOriginalOffset() - o2.getOriginalOffset();
-			}
-		};
+		fMatchComparator= (o1, o2) -> o1.getOriginalOffset() - o2.getOriginalOffset();
 	}
 
 	public void setOrder(int orderFlag) {

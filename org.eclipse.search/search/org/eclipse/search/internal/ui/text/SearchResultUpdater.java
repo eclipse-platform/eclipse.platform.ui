@@ -17,7 +17,6 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceChangeEvent;
 import org.eclipse.core.resources.IResourceChangeListener;
 import org.eclipse.core.resources.IResourceDelta;
-import org.eclipse.core.resources.IResourceDeltaVisitor;
 import org.eclipse.core.resources.ResourcesPlugin;
 
 import org.eclipse.search.internal.ui.SearchPlugin;
@@ -45,25 +44,22 @@ public class SearchResultUpdater implements IResourceChangeListener, IQueryListe
 
 	private void handleDelta(IResourceDelta d) {
 		try {
-			d.accept(new IResourceDeltaVisitor() {
-				@Override
-				public boolean visit(IResourceDelta delta) throws CoreException {
-					switch (delta.getKind()) {
-						case IResourceDelta.ADDED :
-							return false;
-						case IResourceDelta.REMOVED :
-							IResource res= delta.getResource();
-							if (res instanceof IFile) {
-								Match[] matches= fResult.getMatches(res);
-								fResult.removeMatches(matches);
-							}
-							break;
-						case IResourceDelta.CHANGED :
-							// handle changed resource
-							break;
-					}
-					return true;
+			d.accept(delta -> {
+				switch (delta.getKind()) {
+					case IResourceDelta.ADDED :
+						return false;
+					case IResourceDelta.REMOVED :
+						IResource res= delta.getResource();
+						if (res instanceof IFile) {
+							Match[] matches= fResult.getMatches(res);
+							fResult.removeMatches(matches);
+						}
+						break;
+					case IResourceDelta.CHANGED :
+						// handle changed resource
+						break;
 				}
+				return true;
 			});
 		} catch (CoreException e) {
 			SearchPlugin.log(e);
