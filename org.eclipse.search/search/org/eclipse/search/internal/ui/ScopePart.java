@@ -209,7 +209,7 @@ public class ScopePart {
 					fSearchDialog.getWorkbenchWindow().getActivePage().getActivePart().getTitle());
 		}
 		if (size > 1)
-			return NLS.bind(SearchMessages.ScopePart_selectedResourcesScope_text_plural, new Integer(size),
+			return NLS.bind(SearchMessages.ScopePart_selectedResourcesScope_text_plural, Integer.valueOf(size),
 					fSearchDialog.getWorkbenchWindow().getActivePage().getActivePart().getTitle());
 		return SearchMessages.ScopePart_selectedResourcesScope_text;
 	}
@@ -219,7 +219,7 @@ public class ScopePart {
 		if (size == 1)
 			return SearchMessages.ScopePart_enclosingProjectsScope_text_singular;
 		if (size > 1)
-			return NLS.bind(SearchMessages.ScopePart_enclosingProjectsScope_text_plural, new Integer(size));
+			return NLS.bind(SearchMessages.ScopePart_enclosingProjectsScope_text_plural, Integer.valueOf(size));
 		return SearchMessages.ScopePart_enclosingProjectsScope_text;
 	}
 
