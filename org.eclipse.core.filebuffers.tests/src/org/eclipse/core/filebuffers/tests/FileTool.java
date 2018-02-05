@@ -64,25 +64,8 @@ public class FileTool {
 				String entryName = entry.getName();
 				File file = new File(dstDir, changeSeparator(entryName, '/', File.separatorChar));
 				file.getParentFile().mkdirs();
-				InputStream src = null;
-				OutputStream dst = null;
-				try {
-					src = zipFile.getInputStream(entry);
-					dst = new FileOutputStream(file);
+				try (InputStream src= zipFile.getInputStream(entry); OutputStream dst= new FileOutputStream(file)) {
 					transferData(src, dst);
-				} finally {
-					if(dst != null){
-						try {
-							dst.close();
-						} catch(IOException e){
-						}
-					}
-					if(src != null){
-						try {
-							src.close();
-						} catch(IOException e){
-						}
-					}
 				}
 			}
 		} finally {
