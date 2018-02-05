@@ -3000,8 +3000,6 @@ class MultiMatcherCustomFilterArgumentUI implements ICustomFilterArgumentUI {
 			argument.key = selectedKey;
 			argument.operator = selectedOperator;
 
-			if (intiantiatedKeyOperatorType.equals(Date.class) && argumentsDate != null) {
-			}
 			if (intiantiatedKeyOperatorType.equals(String.class) && arguments != null) {
 				argument.pattern = arguments.getText();
 				if (argumentsRegularExpresion != null)
