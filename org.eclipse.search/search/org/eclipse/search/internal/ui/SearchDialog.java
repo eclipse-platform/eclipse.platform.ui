@@ -23,8 +23,6 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.custom.CTabItem;
-import org.eclipse.swt.events.DisposeEvent;
-import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
@@ -62,9 +60,7 @@ import org.eclipse.jface.operation.IRunnableContext;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.util.SafeRunnable;
 import org.eclipse.jface.viewers.ArrayContentProvider;
-import org.eclipse.jface.viewers.CheckStateChangedEvent;
 import org.eclipse.jface.viewers.CheckboxTableViewer;
-import org.eclipse.jface.viewers.ICheckStateListener;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -342,12 +338,7 @@ public class SearchDialog extends ExtendedDialogWindow implements ISearchPageCon
 				super.create();
 				final CheckboxTableViewer viewer= getViewer();
 				final Button okButton= this.getOkButton();
-				viewer.addCheckStateListener(new ICheckStateListener() {
-					@Override
-					public void checkStateChanged(CheckStateChangedEvent event) {
-						okButton.setEnabled(viewer.getCheckedElements().length > 0);
-					}
-				});
+				viewer.addCheckStateListener(event -> okButton.setEnabled(viewer.getCheckedElements().length > 0));
 				SelectionListener listener = new SelectionAdapter() {
 					@Override
 					public void widgetSelected(SelectionEvent e) {
@@ -381,12 +372,7 @@ public class SearchDialog extends ExtendedDialogWindow implements ISearchPageCon
 			close();
 			if (display != null && !display.isDisposed()) {
 				display.asyncExec(
-						new Runnable() {
-							@Override
-							public void run() {
-								new OpenSearchDialogAction().run();
-							}
-						});
+						() -> new OpenSearchDialogAction().run());
 			}
 		}
 		destroyImages(createdImages);
@@ -447,13 +433,10 @@ public class SearchDialog extends ExtendedDialogWindow implements ISearchPageCon
 			final CTabItem item = new CTabItem(folder, SWT.NONE);
 			item.setData("descriptor", descriptor); //$NON-NLS-1$
 			item.setText(descriptor.getLabel());
-			item.addDisposeListener(new DisposeListener() {
-				@Override
-				public void widgetDisposed(DisposeEvent e) {
-					item.setData("descriptor", null); //$NON-NLS-1$
-					if (item.getImage() != null)
-						item.getImage().dispose();
-				}
+			item.addDisposeListener(e -> {
+				item.setData("descriptor", null); //$NON-NLS-1$
+				if (item.getImage() != null)
+					item.getImage().dispose();
 			});
 			ImageDescriptor imageDesc= descriptor.getImage();
 			if (imageDesc != null)
@@ -757,29 +740,24 @@ public class SearchDialog extends ExtendedDialogWindow implements ISearchPageCon
 
 		applyDialogFont(pageWrapper);
 
-		BusyIndicator.showWhile(getShell().getDisplay(), new Runnable() {
+		BusyIndicator.showWhile(getShell().getDisplay(), () -> SafeRunner.run(new ISafeRunnable() {
 			@Override
-			public void run() {
-				SafeRunner.run(new ISafeRunnable() {
-					@Override
-					public void run() throws Exception {
-						// create page and control
-						ISearchPage page= descriptor.createObject(SearchDialog.this);
-						if (page != null) {
-							page.createControl(pageWrapper);
-						}
-					}
-					@Override
-					public void handleException(Throwable ex) {
-						if (ex instanceof CoreException) {
-							ExceptionHandler.handle((CoreException) ex, getShell(), SearchMessages.Search_Error_createSearchPage_title, Messages.format(SearchMessages.Search_Error_createSearchPage_message, descriptor.getLabel()));
-						} else {
-							ExceptionHandler.displayMessageDialog(ex, getShell(), SearchMessages.Search_Error_createSearchPage_title, Messages.format(SearchMessages.Search_Error_createSearchPage_message, descriptor.getLabel()));
-						}
-					}
-				});
+			public void run() throws Exception {
+				// create page and control
+				ISearchPage page= descriptor.createObject(SearchDialog.this);
+				if (page != null) {
+					page.createControl(pageWrapper);
+				}
 			}
-		});
+			@Override
+			public void handleException(Throwable ex) {
+				if (ex instanceof CoreException) {
+					ExceptionHandler.handle((CoreException) ex, getShell(), SearchMessages.Search_Error_createSearchPage_title, Messages.format(SearchMessages.Search_Error_createSearchPage_message, descriptor.getLabel()));
+				} else {
+					ExceptionHandler.displayMessageDialog(ex, getShell(), SearchMessages.Search_Error_createSearchPage_title, Messages.format(SearchMessages.Search_Error_createSearchPage_message, descriptor.getLabel()));
+				}
+			}
+		}));
 
 		ISearchPage page= descriptor.getPage();
 		if (page == null || page.getControl() == null) {

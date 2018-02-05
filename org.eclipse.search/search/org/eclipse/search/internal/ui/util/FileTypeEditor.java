@@ -38,16 +38,13 @@ public class FileTypeEditor extends SelectionAdapter implements DisposeListener 
 	private final static String TYPE_DELIMITER= SearchMessages.FileTypeEditor_typeDelimiter;
 	public final static String FILE_PATTERN_NEGATOR= "!"; //$NON-NLS-1$
 
-	private static final Comparator<String> FILE_TYPES_COMPARATOR= new Comparator<String>() {
-		@Override
-		public int compare(String fp1, String fp2) {
-			boolean isNegative1= fp1.startsWith(FILE_PATTERN_NEGATOR);
-			boolean isNegative2= fp2.startsWith(FILE_PATTERN_NEGATOR);
-			if (isNegative1 != isNegative2) {
-				return isNegative1 ? 1 : -1;
-			}
-			return fp1.compareTo(fp2);
+	private static final Comparator<String> FILE_TYPES_COMPARATOR= (fp1, fp2) -> {
+		boolean isNegative1= fp1.startsWith(FILE_PATTERN_NEGATOR);
+		boolean isNegative2= fp2.startsWith(FILE_PATTERN_NEGATOR);
+		if (isNegative1 != isNegative2) {
+			return isNegative1 ? 1 : -1;
 		}
+		return fp1.compareTo(fp2);
 	};
 
 	public FileTypeEditor(Combo textField, Button browseButton) {

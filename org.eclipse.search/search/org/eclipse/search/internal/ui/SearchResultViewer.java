@@ -38,7 +38,6 @@ import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IResource;
 
 import org.eclipse.jface.action.IAction;
-import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.MenuManager;
@@ -46,13 +45,9 @@ import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.IBaseLabelProvider;
 import org.eclipse.jface.viewers.ILabelProvider;
-import org.eclipse.jface.viewers.IOpenListener;
 import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.LabelProviderChangedEvent;
-import org.eclipse.jface.viewers.OpenEvent;
-import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TableViewer;
 
@@ -144,33 +139,22 @@ public class SearchResultViewer extends TableViewer {
 		fCopyToClipboardAction= new CopyToClipboardAction(this);
 
 		addSelectionChangedListener(
-			new ISelectionChangedListener() {
-				@Override
-				public void selectionChanged(SelectionChangedEvent event) {
-					if (fLastSelection == null || !fLastSelection.equals(event.getSelection())) {
-						fLastSelection= event.getSelection();
-						handleSelectionChanged();
-					}
+			event -> {
+				if (fLastSelection == null || !fLastSelection.equals(event.getSelection())) {
+					fLastSelection= event.getSelection();
+					handleSelectionChanged();
 				}
 			}
 		);
 
-		addOpenListener(new IOpenListener() {
-			@Override
-			public void open(OpenEvent event) {
-				showResult();
-			}
-		});
+		addOpenListener(event -> showResult());
 
 		MenuManager menuMgr= new MenuManager("#PopUp"); //$NON-NLS-1$
 		menuMgr.setRemoveAllWhenShown(true);
 		menuMgr.addMenuListener(
-			new IMenuListener() {
-				@Override
-				public void menuAboutToShow(IMenuManager mgr) {
-					SearchPlugin.createStandardGroups(mgr);
-					fillContextMenu(mgr);
-				}
+			mgr -> {
+				SearchPlugin.createStandardGroups(mgr);
+				fillContextMenu(mgr);
 			});
 		Menu menu= menuMgr.createContextMenu(getTable());
 		getTable().setMenu(menu);

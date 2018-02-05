@@ -52,14 +52,11 @@ class RemoveResultAction extends Action {
 	public void run() {
 		final IMarker[] markers= getMarkers(fSelectionProvider.getSelection());
 		if (markers != null) {
-			BusyIndicator.showWhile(SearchPlugin.getActiveWorkbenchShell().getDisplay(), new Runnable() {
-				@Override
-				public void run() {
-					try {
-						SearchPlugin.getWorkspace().deleteMarkers(markers);
-					} catch (CoreException ex) {
-						ExceptionHandler.handle(ex, SearchMessages.Search_Error_deleteMarkers_title, SearchMessages.Search_Error_deleteMarkers_message);
-					}
+			BusyIndicator.showWhile(SearchPlugin.getActiveWorkbenchShell().getDisplay(), () -> {
+				try {
+					SearchPlugin.getWorkspace().deleteMarkers(markers);
+				} catch (CoreException ex) {
+					ExceptionHandler.handle(ex, SearchMessages.Search_Error_deleteMarkers_title, SearchMessages.Search_Error_deleteMarkers_message);
 				}
 			});
 		}

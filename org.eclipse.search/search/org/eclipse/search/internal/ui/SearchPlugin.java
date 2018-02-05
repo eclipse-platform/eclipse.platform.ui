@@ -113,12 +113,7 @@ public class SearchPlugin extends AbstractUIPlugin {
 		IWorkbenchWindow window= fgSearchPlugin.getWorkbench().getActiveWorkbenchWindow();
 		if (window == null) {
 			final WindowRef windowRef= new WindowRef();
-			Display.getDefault().syncExec(new Runnable() {
-				@Override
-				public void run() {
-					setActiveWorkbenchWindow(windowRef);
-				}
-			});
+			Display.getDefault().syncExec(() -> setActiveWorkbenchWindow(windowRef));
 			return windowRef.window;
 		}
 		return window;

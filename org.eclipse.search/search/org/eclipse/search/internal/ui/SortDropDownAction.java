@@ -110,12 +110,7 @@ class SortDropDownAction extends Action implements IMenuCreator {
 					public void run() {
 						if (!checkedId.equals(sorterDesc.getId())) {
 							SortDropDownAction.this.setChecked(sorterDesc);
-							BusyIndicator.showWhile(parent.getDisplay(), new Runnable() {
-								@Override
-								public void run() {
-									fViewer.setSorter(sorter);
-								}
-							});
+							BusyIndicator.showWhile(parent.getDisplay(), () -> fViewer.setSorter(sorter));
 						}
 					}
 				};

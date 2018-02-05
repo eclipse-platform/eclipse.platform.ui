@@ -31,7 +31,6 @@ import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.util.IPropertyChangeListener;
-import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.viewers.IBaseLabelProvider;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.ISelection;
@@ -111,13 +110,10 @@ public class SearchResultView extends ViewPart implements ISearchResultView {
 
 		fillActionBars(getViewSite().getActionBars());
 
-		fPropertyChangeListener= new IPropertyChangeListener() {
-			@Override
-			public void propertyChange(PropertyChangeEvent event) {
-				if (SearchPreferencePage.POTENTIAL_MATCH_FG_COLOR.equals(event.getProperty()) || SearchPreferencePage.EMPHASIZE_POTENTIAL_MATCHES.equals(event.getProperty()))
-					if (fViewer != null)
-						fViewer.updatedPotentialMatchFgColor();
-			}
+		fPropertyChangeListener= event -> {
+			if (SearchPreferencePage.POTENTIAL_MATCH_FG_COLOR.equals(event.getProperty()) || SearchPreferencePage.EMPHASIZE_POTENTIAL_MATCHES.equals(event.getProperty()))
+				if (fViewer != null)
+					fViewer.updatedPotentialMatchFgColor();
 		};
 
 		SearchPlugin.getDefault().getPreferenceStore().addPropertyChangeListener(fPropertyChangeListener);
@@ -200,12 +196,7 @@ public class SearchResultView extends ViewPart implements ISearchResultView {
 
 	private void setGotoMarkerAction(final IAction gotoMarkerAction) {
 		// Make sure we are doing it in the right thread.
-		getDisplay().syncExec(new Runnable() {
-			@Override
-			public void run() {
-				getViewer().setGotoMarkerAction(gotoMarkerAction);
-			}
-		});
+		getDisplay().syncExec(() -> getViewer().setGotoMarkerAction(gotoMarkerAction));
 	}
 
 

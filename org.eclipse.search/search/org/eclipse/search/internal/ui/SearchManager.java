@@ -236,12 +236,7 @@ public class SearchManager implements IResourceChangeListener {
 			if (display != null && !display.isDisposed()) {
 				final String warningTitle= SearchMessages.SearchManager_resourceChangedWarning;
 				final String warningMsg= warningMessage;
-				display.syncExec(new Runnable() {
-					@Override
-					public void run() {
-						MessageDialog.openWarning(getShell(), warningTitle, warningMsg);
-					}
-				});
+				display.syncExec(() -> MessageDialog.openWarning(getShell(), warningTitle, warningMsg));
 			}
 		}
 
@@ -251,20 +246,17 @@ public class SearchManager implements IResourceChangeListener {
 			final Viewer visibleViewer= ((SearchResultView)SearchUI.getSearchResultView()).getViewer();
 			while (iter2.hasNext()) {
 				final SearchResultViewer viewer= iter2.next();
-				display.syncExec(new Runnable() {
-					@Override
-					public void run() {
-						if (previousSearch != null && viewer == visibleViewer)
-							previousSearch.setSelection(viewer.getSelection());
-						viewer.setInput(null);
-						viewer.setPageId(search.getPageId());
-						viewer.setGotoMarkerAction(search.getGotoMarkerAction());
-						viewer.setContextMenuTarget(search.getContextMenuContributor());
-						viewer.setActionGroupFactory(null);
-						viewer.setInput(getCurrentResults());
-						viewer.setActionGroupFactory(search.getActionGroupFactory());
-						viewer.setSelection(fCurrentSearch.getSelection(), true);
-					}
+				display.syncExec(() -> {
+					if (previousSearch != null && viewer == visibleViewer)
+						previousSearch.setSelection(viewer.getSelection());
+					viewer.setInput(null);
+					viewer.setPageId(search.getPageId());
+					viewer.setGotoMarkerAction(search.getGotoMarkerAction());
+					viewer.setContextMenuTarget(search.getContextMenuContributor());
+					viewer.setActionGroupFactory(null);
+					viewer.setInput(getCurrentResults());
+					viewer.setActionGroupFactory(search.getActionGroupFactory());
+					viewer.setSelection(fCurrentSearch.getSelection(), true);
 				});
 			}
 		}
@@ -302,13 +294,10 @@ public class SearchManager implements IResourceChangeListener {
 			final Viewer visibleViewer= ((SearchResultView)SearchUI.getSearchResultView()).getViewer();
 			while (iter.hasNext()) {
 				final SearchResultViewer viewer= iter.next();
-				display.syncExec(new Runnable() {
-					@Override
-					public void run() {
-						if (fCurrentSearch != null && viewer == visibleViewer)
-							fCurrentSearch.setSelection(viewer.getSelection());
-						setNewSearch(viewer, newSearch);
-					}
+				display.syncExec(() -> {
+					if (fCurrentSearch != null && viewer == visibleViewer)
+						fCurrentSearch.setSelection(viewer.getSelection());
+					setNewSearch(viewer, newSearch);
 				});
 			}
 		}
@@ -341,12 +330,7 @@ public class SearchManager implements IResourceChangeListener {
 		if (Thread.currentThread() == display.getThread())
 			handleNewSearchResult();
 		else {
-			display.syncExec(new Runnable() {
-				@Override
-				public void run() {
-					handleNewSearchResult();
-				}
-			});
+			display.syncExec(() -> handleNewSearchResult());
 		}
 		SearchPlugin.getWorkspace().addResourceChangeListener(this);
 	}
@@ -473,18 +457,15 @@ public class SearchManager implements IResourceChangeListener {
 		if (display == null || display.isDisposed())
 			return;
 
-		Runnable runnable= new Runnable() {
-			@Override
-			public void run() {
-				if (getCurrentSearch() != null) {
-					handleSearchMarkersChanged(markerDeltas);
-					// update title and actions
-					Iterator<SearchResultViewer> iter= fListeners.iterator();
-					while (iter.hasNext()) {
-						SearchResultViewer viewer= iter.next();
-						viewer.enableActions();
-						viewer.updateTitle();
-					}
+		Runnable runnable= () -> {
+			if (getCurrentSearch() != null) {
+				handleSearchMarkersChanged(markerDeltas);
+				// update title and actions
+				Iterator<SearchResultViewer> iter= fListeners.iterator();
+				while (iter.hasNext()) {
+					SearchResultViewer viewer= iter.next();
+					viewer.enableActions();
+					viewer.updateTitle();
 				}
 			}
 		};

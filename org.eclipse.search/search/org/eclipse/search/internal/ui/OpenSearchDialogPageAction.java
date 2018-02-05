@@ -85,12 +85,7 @@ public class OpenSearchDialogPageAction implements IWorkbenchWindowPulldownDeleg
 		localMenu.addMenuListener(new MenuAdapter() {
 			@Override
 			public void menuHidden(MenuEvent e) {
-				e.display.asyncExec(new Runnable() {
-					@Override
-					public void run() {
-						localMenu.dispose();
-					}
-				});
+				e.display.asyncExec(() -> localMenu.dispose());
 			}
 		});
 
