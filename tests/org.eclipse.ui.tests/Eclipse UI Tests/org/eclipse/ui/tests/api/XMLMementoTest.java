@@ -410,10 +410,8 @@ public class XMLMementoTest extends TestCase {
 				public void prepareAndCheckBeforeSerialization(
 						XMLMemento mementoToSerialize) {
 					assertEquals(null, mementoToSerialize.getString(key));
-					String helper = value;
 					mementoToSerialize.putString(key, value);
 					assertEquals(value, mementoToSerialize.getString(key));
-					helper.toString();
 				}
 
 				@Override
