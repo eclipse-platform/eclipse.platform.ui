@@ -260,7 +260,9 @@ public class FindParentReferenceElementDialog extends TitleAreaDialog {
 			extendableClasses = new ArrayList<>();
 			for (final InternalPackage p : Util.loadPackages()) {
 				for (EClass c : p.getAllClasses()) {
-					if (Util.canBeExtendedInAFragment(c)) {
+					// Fix 530772 : as far as MInput is still in Application meta model, it should
+					// removed manually ! (see also 509868)
+					if (Util.canBeExtendedInAFragment(c) && !"InputPart".equals(c.getName())) { //$NON-NLS-1$
 						extendableClasses.add(c);
 					}
 				}
