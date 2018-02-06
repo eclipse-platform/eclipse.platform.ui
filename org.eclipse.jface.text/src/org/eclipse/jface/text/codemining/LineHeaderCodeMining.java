@@ -20,6 +20,8 @@ import org.eclipse.jface.text.source.inlined.Positions;
 
 /**
  * Abstract class for line header code mining.
+ * 
+ * @since 3.13
  *
  */
 public abstract class LineHeaderCodeMining extends AbstractCodeMining {
