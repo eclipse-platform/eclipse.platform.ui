@@ -55,11 +55,9 @@ public class ModelRobustnessTest {
 		assertEquals(2, w.getChildren().size());
 		MPartStack stack = (MPartStack) w.getChildren().get(0);
 		assertEquals("window1.partstack1", stack.getElementId());
-		assertEquals(2, stack.getChildren().size());
+		assertEquals(1, stack.getChildren().size());
 		assertEquals("window1.partstack1.part1", stack.getChildren().get(0)
 				.getElementId());
-		assertEquals("window1.partstack1.inputpart1", stack.getChildren()
-				.get(1).getElementId());
 
 		stack = (MPartStack) w.getChildren().get(1);
 		assertEquals("window1.partstack2", stack.getElementId());

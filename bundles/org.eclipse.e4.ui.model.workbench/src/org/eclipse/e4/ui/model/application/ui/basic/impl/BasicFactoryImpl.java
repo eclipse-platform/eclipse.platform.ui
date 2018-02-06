@@ -10,7 +10,17 @@
  */
 package org.eclipse.e4.ui.model.application.ui.basic.impl;
 
-import org.eclipse.e4.ui.model.application.ui.basic.*;
+import org.eclipse.e4.ui.model.application.ui.basic.MBasicFactory;
+import org.eclipse.e4.ui.model.application.ui.basic.MCompositePart;
+import org.eclipse.e4.ui.model.application.ui.basic.MDialog;
+import org.eclipse.e4.ui.model.application.ui.basic.MInputPart;
+import org.eclipse.e4.ui.model.application.ui.basic.MPart;
+import org.eclipse.e4.ui.model.application.ui.basic.MPartSashContainer;
+import org.eclipse.e4.ui.model.application.ui.basic.MPartStack;
+import org.eclipse.e4.ui.model.application.ui.basic.MTrimBar;
+import org.eclipse.e4.ui.model.application.ui.basic.MTrimmedWindow;
+import org.eclipse.e4.ui.model.application.ui.basic.MWindow;
+import org.eclipse.e4.ui.model.application.ui.basic.MWizardDialog;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EPackage;
@@ -70,18 +80,17 @@ public class BasicFactoryImpl extends EFactoryImpl implements MBasicFactory {
 	@Override
 	public EObject create(EClass eClass) {
 		switch (eClass.getClassifierID()) {
-			case BasicPackageImpl.PART: return (EObject)createPart();
-			case BasicPackageImpl.COMPOSITE_PART: return (EObject)createCompositePart();
-			case BasicPackageImpl.INPUT_PART: return (EObject)createInputPart();
-			case BasicPackageImpl.PART_STACK: return (EObject)createPartStack();
-			case BasicPackageImpl.PART_SASH_CONTAINER: return (EObject)createPartSashContainer();
-			case BasicPackageImpl.WINDOW: return (EObject)createWindow();
-			case BasicPackageImpl.TRIMMED_WINDOW: return (EObject)createTrimmedWindow();
-			case BasicPackageImpl.TRIM_BAR: return (EObject)createTrimBar();
-			case BasicPackageImpl.DIALOG: return (EObject)createDialog();
-			case BasicPackageImpl.WIZARD_DIALOG: return (EObject)createWizardDialog();
-			default:
-				throw new IllegalArgumentException("The class '" + eClass.getName() + "' is not a valid classifier"); //$NON-NLS-1$ //$NON-NLS-2$
+		case BasicPackageImpl.PART: return (EObject)createPart();
+		case BasicPackageImpl.COMPOSITE_PART: return (EObject)createCompositePart();
+		case BasicPackageImpl.PART_STACK: return (EObject)createPartStack();
+		case BasicPackageImpl.PART_SASH_CONTAINER: return (EObject)createPartSashContainer();
+		case BasicPackageImpl.WINDOW: return (EObject)createWindow();
+		case BasicPackageImpl.TRIMMED_WINDOW: return (EObject)createTrimmedWindow();
+		case BasicPackageImpl.TRIM_BAR: return (EObject)createTrimBar();
+		case BasicPackageImpl.DIALOG: return (EObject)createDialog();
+		case BasicPackageImpl.WIZARD_DIALOG: return (EObject)createWizardDialog();
+		default:
+			throw new IllegalArgumentException("The class '" + eClass.getName() + "' is not a valid classifier"); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 	}
 
@@ -108,11 +117,16 @@ public class BasicFactoryImpl extends EFactoryImpl implements MBasicFactory {
 	}
 
 	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+	 * <!-- begin-user-doc --> <!-- end-user-doc -->
+	 * 
 	 * @since 1.0
 	 * @deprecated See {@link MInputPart model documentation} for details.
-	 * @generated
+	 * @generated NOT
+	 * @nooverride This method is not intended to be re-implemented or extended by
+	 *             clients.
+	 * @noreference This method is not intended to be referenced by clients.
+	 * @see <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=509868">Bug
+	 *      509868</a>
 	 */
 	@Deprecated
 	public MInputPart createInputPart() {

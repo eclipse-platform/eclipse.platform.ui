@@ -94,8 +94,6 @@ public class TestSwitch<T1> extends Switch<T1> {
 			if (result == null)
 				result = caseParameter(testHarness);
 			if (result == null)
-				result = caseInput(testHarness);
-			if (result == null)
 				result = caseUILabel(testHarness);
 			if (result == null)
 				result = caseDirtyable(testHarness);

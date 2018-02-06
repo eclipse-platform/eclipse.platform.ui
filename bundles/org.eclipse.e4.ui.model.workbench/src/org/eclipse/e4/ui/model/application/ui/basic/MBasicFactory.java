@@ -51,13 +51,16 @@ public interface MBasicFactory {
 	MCompositePart createCompositePart();
 
 	/**
-	 * Returns a new object of class '<em>Input Part</em>'.
-	 * <!-- begin-user-doc -->
+	 * Returns a new object of class '<em>Input Part</em>'. <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * 
 	 * @return a new object of class '<em>Input Part</em>'.
 	 * @since 1.0
-	 * @deprecated See {@link MInputPart model documentation} for details.
-	 * @generated
+	 * @deprecated See {@link MInputPart model documentation} for details
+	 * @see <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=509868">Bug
+	 *      509868</a>
+	 * @generated NOT
+	 * @noreference This method is not intended to be referenced by clients.
 	 */
 	@Deprecated
 	MInputPart createInputPart();

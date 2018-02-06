@@ -23,7 +23,6 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
-import org.eclipse.core.runtime.AssertionFailedException;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.ui.di.Focus;
 import org.eclipse.e4.ui.internal.workbench.PartServiceImpl;
@@ -35,7 +34,6 @@ import org.eclipse.e4.ui.model.application.ui.advanced.MArea;
 import org.eclipse.e4.ui.model.application.ui.advanced.MPerspective;
 import org.eclipse.e4.ui.model.application.ui.advanced.MPerspectiveStack;
 import org.eclipse.e4.ui.model.application.ui.advanced.MPlaceholder;
-import org.eclipse.e4.ui.model.application.ui.basic.MInputPart;
 import org.eclipse.e4.ui.model.application.ui.basic.MPart;
 import org.eclipse.e4.ui.model.application.ui.basic.MPartSashContainer;
 import org.eclipse.e4.ui.model.application.ui.basic.MPartStack;
@@ -674,133 +672,6 @@ public class EPartServiceTest extends UITest {
 		assertTrue(parts.contains(partC));
 	}
 
-	@Test
-	public void testGetInputParts_Bug334559_01() {
-		MWindow window = ems.createModelElement(MWindow.class);
-		application.getChildren().add(window);
-		application.setSelectedElement(window);
-
-		MPerspectiveStack perspectiveStack = ems.createModelElement(MPerspectiveStack.class);
-		window.getChildren().add(perspectiveStack);
-		window.setSelectedElement(perspectiveStack);
-
-		MPerspective perspective = ems.createModelElement(MPerspective.class);
-		perspectiveStack.getChildren().add(perspective);
-		perspectiveStack.setSelectedElement(perspective);
-
-		MInputPart partA = ems.createModelElement(MInputPart.class);
-		partA.setInputURI("http://www.eclipse.org");
-		window.getChildren().add(partA);
-		window.setSelectedElement(partA);
-
-		MWindow detachedWindow = ems.createModelElement(MWindow.class);
-		perspective.getWindows().add(detachedWindow);
-
-		MInputPart partB = ems.createModelElement(MInputPart.class);
-		partB.setInputURI("http://www.eclipse.org");
-		detachedWindow.getChildren().add(partB);
-		detachedWindow.setSelectedElement(partB);
-
-		MInputPart partC = ems.createModelElement(MInputPart.class);
-		partC.setInputURI("http://www.eclipse.org");
-		detachedWindow.getChildren().add(partC);
-
-		initialize();
-		getEngine().createGui(window);
-
-		EPartService partService = window.getContext().get(EPartService.class);
-		Collection<MInputPart> parts = partService.getInputParts("http://www.eclipse.org");
-		assertEquals(3, parts.size());
-		assertTrue(parts.contains(partA));
-		assertTrue(parts.contains(partB));
-		assertTrue(parts.contains(partC));
-	}
-
-	@Test
-	public void testGetInputParts_Bug334559_02() {
-		MWindow window = ems.createModelElement(MWindow.class);
-		application.getChildren().add(window);
-		application.setSelectedElement(window);
-
-		MPerspectiveStack perspectiveStack = ems.createModelElement(MPerspectiveStack.class);
-		window.getChildren().add(perspectiveStack);
-		window.setSelectedElement(perspectiveStack);
-
-		MPerspective perspective = ems.createModelElement(MPerspective.class);
-		perspectiveStack.getChildren().add(perspective);
-		perspectiveStack.setSelectedElement(perspective);
-
-		MInputPart partA = ems.createModelElement(MInputPart.class);
-		partA.setInputURI("http://www.eclipse.org");
-		window.getChildren().add(partA);
-
-		MWindow detachedWindow = ems.createModelElement(MWindow.class);
-		perspective.getWindows().add(detachedWindow);
-
-		MInputPart partB = ems.createModelElement(MInputPart.class);
-		partB.setInputURI("http://www.eclipse.org");
-		detachedWindow.getChildren().add(partB);
-		detachedWindow.setSelectedElement(partB);
-
-		MInputPart partC = ems.createModelElement(MInputPart.class);
-		partC.setInputURI("http://www.eclipse.org");
-		detachedWindow.getChildren().add(partC);
-
-		initialize();
-		getEngine().createGui(window);
-
-		EPartService partService = window.getContext().get(EPartService.class);
-		Collection<MInputPart> parts = partService.getInputParts("http://www.eclipse.org");
-		assertEquals(3, parts.size());
-		assertTrue(parts.contains(partA));
-		assertTrue(parts.contains(partB));
-		assertTrue(parts.contains(partC));
-	}
-
-	@Test
-	public void testGetInputParts() {
-		final String uri1 = "file:///a.txt";
-		final String uri2 = "file:///b.txt";
-
-		MWindow window = ems.createModelElement(MWindow.class);
-		application.getChildren().add(window);
-		application.setSelectedElement(window);
-
-		MPart part = ems.createModelElement(MPart.class);
-		window.getChildren().add(part);
-
-		MInputPart inputPart = ems.createModelElement(MInputPart.class);
-		inputPart.setInputURI(uri1);
-		window.getChildren().add(inputPart);
-
-		part = ems.createModelElement(MPart.class);
-		window.getChildren().add(part);
-
-		inputPart = ems.createModelElement(MInputPart.class);
-		inputPart.setInputURI(uri2);
-		window.getChildren().add(inputPart);
-
-		inputPart = ems.createModelElement(MInputPart.class);
-		inputPart.setInputURI(uri1);
-		window.getChildren().add(inputPart);
-
-		part = ems.createModelElement(MPart.class);
-		window.getChildren().add(part);
-
-		initialize();
-		getEngine().createGui(window);
-
-		EPartService partService = window.getContext().get(EPartService.class);
-		assertEquals(6, partService.getParts().size());
-		assertEquals(2, partService.getInputParts(uri1).size());
-		assertEquals(1, partService.getInputParts(uri2).size());
-		assertEquals(0, partService.getInputParts("totally unknown").size());
-		try {
-			partService.getInputParts(null);
-			fail("Passing null should throw an AssertionFailedException");
-		} catch (AssertionFailedException e) {
-		}
-	}
 
 	@Test
 	public void testGetActivePart() {

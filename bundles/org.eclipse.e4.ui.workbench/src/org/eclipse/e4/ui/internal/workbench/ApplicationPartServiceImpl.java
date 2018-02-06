@@ -165,6 +165,12 @@ public class ApplicationPartServiceImpl implements EPartService {
 		return getActiveWindowService().saveAll(confirm);
 	}
 
+	/**
+	 * @noreference This method is not intended to be referenced by clients.
+	 * @see <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=509868">Bug
+	 *      509868</a>
+	 */
+	@Deprecated
 	@Override
 	public Collection<MInputPart> getInputParts(String inputUri) {
 		return getActiveWindowService().getInputParts(inputUri);

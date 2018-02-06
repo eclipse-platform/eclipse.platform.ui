@@ -1432,7 +1432,13 @@ public class PartServiceImpl implements EPartService {
 		return true;
 	}
 
-	@Override
+	@SuppressWarnings("deprecation")
+	/**
+	 * @noreference This method is not intended to be referenced by clients.
+	 * @see <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=509868">Bug
+	 *      509868</a>
+	 */
+	@Deprecated
 	public Collection<MInputPart> getInputParts(String inputUri) {
 		Assert.isNotNull(inputUri, "Input uri must not be null"); //$NON-NLS-1$
 

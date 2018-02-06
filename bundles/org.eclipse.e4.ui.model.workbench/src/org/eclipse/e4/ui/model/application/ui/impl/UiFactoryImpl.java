@@ -10,7 +10,10 @@
  */
 package org.eclipse.e4.ui.model.application.ui.impl;
 
-import org.eclipse.e4.ui.model.application.ui.*;
+import org.eclipse.e4.ui.model.application.ui.MCoreExpression;
+import org.eclipse.e4.ui.model.application.ui.MImperativeExpression;
+import org.eclipse.e4.ui.model.application.ui.MUiFactory;
+import org.eclipse.e4.ui.model.application.ui.SideValue;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EDataType;
 import org.eclipse.emf.ecore.EObject;
@@ -24,7 +27,6 @@ import org.eclipse.emf.ecore.plugin.EcorePlugin;
  * <!-- end-user-doc -->
  * @generated
  */
-@SuppressWarnings("deprecation")
 public class UiFactoryImpl extends EFactoryImpl implements MUiFactory {
 	/**
 	 * The singleton instance of the factory.
