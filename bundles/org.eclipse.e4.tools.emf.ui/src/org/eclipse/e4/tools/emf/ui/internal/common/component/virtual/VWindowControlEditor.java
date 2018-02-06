@@ -164,7 +164,7 @@ public class VWindowControlEditor extends AbstractComponentEditor {
 			pickList
 			.setInput(new EClass[] { AdvancedPackageImpl.Literals.PERSPECTIVE_STACK,
 					BasicPackageImpl.Literals.PART_SASH_CONTAINER, BasicPackageImpl.Literals.PART_STACK,
-					BasicPackageImpl.Literals.PART, BasicPackageImpl.Literals.INPUT_PART,
+							BasicPackageImpl.Literals.PART,
 					AdvancedPackageImpl.Literals.AREA });
 			pickList.setSelection(new StructuredSelection(AdvancedPackageImpl.Literals.PERSPECTIVE_STACK));
 		}

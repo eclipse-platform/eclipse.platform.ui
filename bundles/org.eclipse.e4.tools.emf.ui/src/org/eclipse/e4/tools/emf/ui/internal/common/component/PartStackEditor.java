@@ -32,7 +32,6 @@ import org.eclipse.e4.tools.emf.ui.internal.common.uistructure.UIViewer;
 import org.eclipse.e4.tools.emf.ui.internal.imp.ModelImportWizard;
 import org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl;
 import org.eclipse.e4.ui.model.application.ui.advanced.impl.AdvancedPackageImpl;
-import org.eclipse.e4.ui.model.application.ui.basic.MInputPart;
 import org.eclipse.e4.ui.model.application.ui.basic.MPart;
 import org.eclipse.e4.ui.model.application.ui.basic.MPartStack;
 import org.eclipse.e4.ui.model.application.ui.basic.impl.BasicPackageImpl;
@@ -137,7 +136,7 @@ public class PartStackEditor extends AbstractComponentEditor {
 		.add(new Action(Messages.PartStackEditor_Editors, createImageDescriptor(ResourceProvider.IMG_Part)) {
 			@Override
 			public void run() {
-				handleImportChild(BasicPackageImpl.Literals.INPUT_PART);
+						handleImportChild(BasicPackageImpl.Literals.PART);
 			}
 		});
 
@@ -345,16 +344,6 @@ public class PartStackEditor extends AbstractComponentEditor {
 			}
 		}
 
-		if (eClass == BasicPackageImpl.Literals.INPUT_PART) {
-			final ModelImportWizard wizard = new ModelImportWizard(MInputPart.class, this, resourcePool);
-			final WizardDialog wizardDialog = new WizardDialog(viewer.getControl().getShell(), wizard);
-			if (wizardDialog.open() == Window.OK) {
-				final MPart[] parts = (MPart[]) wizard.getElements(MInputPart.class);
-				for (final MPart part : parts) {
-					addToModel((EObject) part);
-				}
-			}
-		}
 	}
 
 	@Override

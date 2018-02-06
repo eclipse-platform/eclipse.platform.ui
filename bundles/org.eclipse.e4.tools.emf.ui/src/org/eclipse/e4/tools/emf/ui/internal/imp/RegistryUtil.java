@@ -31,7 +31,6 @@ import org.eclipse.e4.ui.model.application.commands.MHandler;
 import org.eclipse.e4.ui.model.application.descriptor.basic.MPartDescriptor;
 import org.eclipse.e4.ui.model.application.ui.advanced.MAdvancedFactory;
 import org.eclipse.e4.ui.model.application.ui.advanced.MPerspective;
-import org.eclipse.e4.ui.model.application.ui.basic.MInputPart;
 import org.eclipse.e4.ui.model.application.ui.basic.MPart;
 import org.eclipse.e4.ui.model.application.ui.basic.impl.BasicPackageImpl;
 import org.eclipse.e4.ui.model.application.ui.menu.MMenu;
@@ -90,8 +89,6 @@ public class RegistryUtil {
 			return getViewsAsCompatibilityViews(elements);
 		} else if (t.equals(MPart.class)) {
 			return getViews(elements);
-		} else if (t.equals(MInputPart.class)) {
-			return getEditors(elements);
 		} else if (t.equals(MHandler.class)) {
 			return getHandlers(elements, application);
 		} else if (t.equals(MPartDescriptor.class) && HINT_EDITOR.equals(hint)) {
@@ -439,10 +436,6 @@ public class RegistryUtil {
 			return new RegistryStruct(EMPTY_STRING, "org.eclipse.ui.handlers", "handler", COMMAND_ID); //$NON-NLS-1$ //$NON-NLS-2$
 		} else if (applicationElement == MPart.class) {
 			return new RegistryStruct(EMPTY_STRING, "org.eclipse.ui.views", "view", NAME); //$NON-NLS-1$ //$NON-NLS-2$
-		}
-
-		else if (applicationElement == MInputPart.class) {
-			return new RegistryStruct("", "org.eclipse.ui.editors", "editor", "name"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 		}
 
 		else if (applicationElement == MPartDescriptor.class) {

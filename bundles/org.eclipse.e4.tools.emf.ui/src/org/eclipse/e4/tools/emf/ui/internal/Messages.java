@@ -17,7 +17,7 @@ package org.eclipse.e4.tools.emf.ui.internal;
 
 public class Messages {
 
-	public String PartEditor_InputPart;
+	public String PartEditor_Part;
 	public String XmiTab_TypeTextToSearch;
 	public String ModelEditor_Import3x;
 	public String E4StringPickList_Replace;

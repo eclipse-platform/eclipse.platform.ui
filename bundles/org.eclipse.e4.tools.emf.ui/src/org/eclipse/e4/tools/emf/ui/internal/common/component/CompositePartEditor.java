@@ -160,7 +160,7 @@ public class CompositePartEditor extends AbstractComponentEditor {
 		actionsImport.add(new Action("Editors", createImageDescriptor(ResourceProvider.IMG_Part)) { //$NON-NLS-1$
 			@Override
 			public void run() {
-				handleImportChild(BasicPackageImpl.Literals.INPUT_PART, RegistryUtil.HINT_EDITOR);
+				handleImportChild(BasicPackageImpl.Literals.PART, RegistryUtil.HINT_EDITOR);
 			}
 		});
 
@@ -335,7 +335,6 @@ public class CompositePartEditor extends AbstractComponentEditor {
 			eClassList.add(new FeatureClass("PartSashContainer", BasicPackageImpl.Literals.PART_SASH_CONTAINER)); //$NON-NLS-1$
 			eClassList.add(new FeatureClass("PartStack", BasicPackageImpl.Literals.PART_STACK)); //$NON-NLS-1$
 			eClassList.add(new FeatureClass("Part", BasicPackageImpl.Literals.PART)); //$NON-NLS-1$
-			eClassList.add(new FeatureClass("InputPart", BasicPackageImpl.Literals.INPUT_PART)); //$NON-NLS-1$
 			eClassList.add(new FeatureClass("Area", AdvancedPackageImpl.Literals.AREA)); //$NON-NLS-1$
 			eClassList.add(new FeatureClass("Placeholder", AdvancedPackageImpl.Literals.PLACEHOLDER)); //$NON-NLS-1$
 			eClassList.addAll(getEditor().getFeatureClasses(BasicPackageImpl.Literals.COMPOSITE_PART,

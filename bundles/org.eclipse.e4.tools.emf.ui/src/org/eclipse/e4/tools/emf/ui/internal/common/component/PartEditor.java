@@ -103,8 +103,8 @@ public class PartEditor extends AbstractComponentEditor {
 
 	@Override
 	public String getLabel(Object element) {
-		if (element == BasicPackageImpl.Literals.INPUT_PART) {
-			return Messages.PartEditor_InputPart;
+		if (element == BasicPackageImpl.Literals.PART) {
+			return Messages.PartEditor_Part;
 		}
 		return Messages.PartEditor_Label;
 	}

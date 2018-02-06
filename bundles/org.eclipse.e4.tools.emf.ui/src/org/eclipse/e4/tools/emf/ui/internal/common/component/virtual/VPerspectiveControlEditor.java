@@ -143,7 +143,9 @@ public class VPerspectiveControlEditor extends AbstractComponentEditor {
 
 			pickList.setContentProvider(new ArrayContentProvider());
 			pickList.setLabelProvider(new EClassLabelProvider(getEditor()));
-			pickList.setInput(new EClass[] { BasicPackageImpl.Literals.PART_SASH_CONTAINER, BasicPackageImpl.Literals.PART_STACK, BasicPackageImpl.Literals.PART, BasicPackageImpl.Literals.INPUT_PART, AdvancedPackageImpl.Literals.AREA, AdvancedPackageImpl.Literals.PLACEHOLDER });
+			pickList.setInput(new EClass[] { BasicPackageImpl.Literals.PART_SASH_CONTAINER,
+					BasicPackageImpl.Literals.PART_STACK, BasicPackageImpl.Literals.PART,
+					AdvancedPackageImpl.Literals.AREA, AdvancedPackageImpl.Literals.PLACEHOLDER });
 			pickList.setSelection(new StructuredSelection(BasicPackageImpl.Literals.PART_SASH_CONTAINER));
 		}
 

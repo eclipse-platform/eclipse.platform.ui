@@ -109,7 +109,7 @@ public class VWindowSharedElementsEditor extends AbstractComponentEditor {
 		actionsImport.add(new Action(Messages.VWindowSharedElementsEditor_Editors, createImageDescriptor(ResourceProvider.IMG_Part)) {
 			@Override
 			public void run() {
-				handleImport(BasicPackageImpl.Literals.INPUT_PART, RegistryUtil.HINT_EDITOR);
+				handleImport(BasicPackageImpl.Literals.PART, RegistryUtil.HINT_EDITOR);
 			}
 		});
 
@@ -178,7 +178,9 @@ public class VWindowSharedElementsEditor extends AbstractComponentEditor {
 			viewer.setInput(prop.observeDetail(getMaster()));
 
 			pickList.setLabelProvider(new EClassLabelProvider(getEditor()));
-			pickList.setInput(new EClass[] { BasicPackageImpl.Literals.PART_SASH_CONTAINER, BasicPackageImpl.Literals.PART, BasicPackageImpl.Literals.INPUT_PART, BasicPackageImpl.Literals.PART_STACK, AdvancedPackageImpl.Literals.AREA });
+			pickList.setInput(
+					new EClass[] { BasicPackageImpl.Literals.PART_SASH_CONTAINER, BasicPackageImpl.Literals.PART,
+							BasicPackageImpl.Literals.PART_STACK, AdvancedPackageImpl.Literals.AREA });
 			pickList.setSelection(new StructuredSelection(BasicPackageImpl.Literals.PART));
 		}
 

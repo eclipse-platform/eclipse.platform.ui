@@ -155,7 +155,7 @@ public class PartSashContainerEditor extends AbstractComponentEditor {
 		actionsImport.add(new Action("Editors", createImageDescriptor(ResourceProvider.IMG_Part)) { //$NON-NLS-1$
 			@Override
 			public void run() {
-				handleImportChild(BasicPackageImpl.Literals.INPUT_PART, RegistryUtil.HINT_EDITOR);
+				handleImportChild(BasicPackageImpl.Literals.PART, RegistryUtil.HINT_EDITOR);
 			}
 		});
 

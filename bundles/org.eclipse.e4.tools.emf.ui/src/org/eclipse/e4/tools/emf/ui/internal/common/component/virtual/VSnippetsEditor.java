@@ -202,7 +202,7 @@ public class VSnippetsEditor extends AbstractComponentEditor {
 		pickList.setInput(new EClass[] { BasicPackageImpl.Literals.TRIMMED_WINDOW, BasicPackageImpl.Literals.WINDOW,
 				AdvancedPackageImpl.Literals.PERSPECTIVE_STACK, AdvancedPackageImpl.Literals.PERSPECTIVE,
 				AdvancedPackageImpl.Literals.AREA, BasicPackageImpl.Literals.PART_SASH_CONTAINER,
-				BasicPackageImpl.Literals.PART_STACK, BasicPackageImpl.Literals.PART, BasicPackageImpl.Literals.INPUT_PART,
+				BasicPackageImpl.Literals.PART_STACK, BasicPackageImpl.Literals.PART,
 				BasicPackageImpl.Literals.TRIM_BAR, BasicPackageImpl.Literals.TRIM_ELEMENT, });
 		pickList.setSelection(new StructuredSelection(AdvancedPackageImpl.Literals.PERSPECTIVE));
 
