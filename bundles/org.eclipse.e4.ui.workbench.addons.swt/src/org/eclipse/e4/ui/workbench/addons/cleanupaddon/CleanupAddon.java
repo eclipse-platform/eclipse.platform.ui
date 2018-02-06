@@ -332,7 +332,7 @@ public class CleanupAddon {
 						theContainer.setToBeRendered(false);
 						}
 					});
-				} else {
+				} else if (container.getParent() != null) { // omit detached windows
 					// if there are rendered elements but none are 'visible' we should
 					// make the container invisible as well
 					boolean makeInvisible = true;
