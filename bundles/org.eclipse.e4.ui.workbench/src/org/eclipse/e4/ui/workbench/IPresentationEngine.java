@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2015 BestSolution.at and others.
+ * Copyright (c) 2009, 2018 BestSolution.at and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -65,8 +65,10 @@ public interface IPresentationEngine {
 	public static final String NO_MOVE = "NoMove"; //$NON-NLS-1$
 
 	/**
-	 * When applied as a tag to an MUIElement inhibits detaching the element
-	 * (ie. through DnD...
+	 * When applied as a tag to an MUIElement inhibits detaching the element (ie.
+	 * through DnD...
+	 * 
+	 * @since 1.6
 	 */
 	public static final String NO_DETACH = "NoDetach"; //$NON-NLS-1$
 
