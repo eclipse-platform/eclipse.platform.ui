@@ -12,6 +12,10 @@ package org.eclipse.e4.ui.internal.workbench.renderers.swt;
 
 import org.eclipse.e4.ui.workbench.swt.internal.copy.SearchPattern;
 import org.eclipse.e4.ui.workbench.swt.internal.copy.WorkbenchSWTMessages;
+import org.eclipse.jface.preference.JFacePreferences;
+import org.eclipse.jface.resource.ColorRegistry;
+import org.eclipse.jface.resource.JFaceColors;
+import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.util.Util;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.StructuredSelection;
@@ -33,7 +37,6 @@ import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Item;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Menu;
@@ -345,9 +348,20 @@ public abstract class AbstractTableInformationControl {
 	}
 
 	private void setInfoSystemColor() {
-		Display display = fShell.getDisplay();
-		setForegroundColor(display.getSystemColor(SWT.COLOR_INFO_FOREGROUND));
-		setBackgroundColor(display.getSystemColor(SWT.COLOR_INFO_BACKGROUND));
+		ColorRegistry colorRegistry = JFaceResources.getColorRegistry();
+
+		Color foreground = colorRegistry.get(JFacePreferences.INFORMATION_FOREGROUND_COLOR);
+		if (foreground == null) {
+			foreground = JFaceColors.getInformationViewerForegroundColor(fShell.getDisplay());
+		}
+
+		Color background = colorRegistry.get(JFacePreferences.INFORMATION_BACKGROUND_COLOR);
+		if (background == null) {
+			background = JFaceColors.getInformationViewerBackgroundColor(fShell.getDisplay());
+		}
+
+		setForegroundColor(foreground);
+		setBackgroundColor(background);
 	}
 
 	private void installFilter() {
