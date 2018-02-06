@@ -9,7 +9,7 @@
  * Tom Schindl <tom.schindl@bestsolution.at> - initial API and implementation
  * Steven Spungin <steven@spungin.tv> - Bug 437469
  * Patrik Suzzi <psuzzi@gmail.com> - Bug 467262
- * Olivier Prouvost <olivier.prouvost@opcoach.com> - Bug 509488, 509551
+ * Olivier Prouvost <olivier.prouvost@opcoach.com> - Bug 509488, 509551, 530749
  ******************************************************************************/
 package org.eclipse.e4.tools.emf.ui.internal.common.component.dialogs;
 
@@ -24,7 +24,9 @@ import org.eclipse.e4.tools.emf.ui.common.Util.InternalPackage;
 import org.eclipse.e4.tools.emf.ui.common.component.AbstractComponentEditor;
 import org.eclipse.e4.tools.emf.ui.internal.Messages;
 import org.eclipse.e4.tools.emf.ui.internal.common.ClassContributionCollector;
+import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.MApplicationElement;
+import org.eclipse.e4.ui.model.application.MApplicationFactory;
 import org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl;
 import org.eclipse.e4.ui.model.fragment.MStringModelFragment;
 import org.eclipse.e4.ui.model.fragment.impl.FragmentPackageImpl;
@@ -66,6 +68,9 @@ import org.osgi.framework.FrameworkUtil;
 import org.osgi.framework.ServiceReference;
 
 public class FindParentReferenceElementDialog extends TitleAreaDialog {
+
+	private static final String XPATH_URI = "xpath:/"; //$NON-NLS-1$
+
 	private final MStringModelFragment fragment;
 	private final AbstractComponentEditor editor;
 	private TableViewer viewer;
@@ -206,7 +211,9 @@ public class FindParentReferenceElementDialog extends TitleAreaDialog {
 					styledString.append(" - " + detailLabel, StyledString.DECORATIONS_STYLER); //$NON-NLS-1$
 				}
 
-				styledString.append(" - " + o.eResource().getURI(), StyledString.COUNTER_STYLER); //$NON-NLS-1$
+				String resName = (o.eResource() == null ? Messages.FindParentReferenceElementDialog_AnyApplication
+						: o.eResource().getURI().toString());
+				styledString.append(" - " + resName, StyledString.COUNTER_STYLER); //$NON-NLS-1$
 				cell.setStyleRanges(styledString.getStyleRanges());
 				cell.setText(styledString.getString());
 			}
@@ -270,8 +277,16 @@ public class FindParentReferenceElementDialog extends TitleAreaDialog {
 		}
 		list.clear();
 
+		// Fix bug 530749 : add xpath:/ for application.
+		EClass selectedEClass = (EClass) ((IStructuredSelection) eClassViewer.getSelection()).getFirstElement();
+		if (selectedEClass.getName().equals("Application")) { //$NON-NLS-1$
+			MApplication anyAppli = MApplicationFactory.INSTANCE.createApplication();
+			anyAppli.setElementId(XPATH_URI);
+			list.add(anyAppli);
+		}
+
 		final Filter filter = new Filter(
-				(EClass) ((IStructuredSelection) eClassViewer.getSelection()).getFirstElement(), searchText.getText());
+				selectedEClass, searchText.getText());
 
 		currentResultHandler = new ModelResultHandlerImpl(list, filter, editor, ((EObject) fragment).eResource());
 		collector.findModelElements(filter, currentResultHandler);

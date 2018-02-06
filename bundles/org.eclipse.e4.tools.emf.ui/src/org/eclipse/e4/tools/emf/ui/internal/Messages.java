@@ -613,6 +613,7 @@ public class Messages {
 	public String FindParentReferenceElementDialog_NoId;
 	public String FindParentReferenceElementDialog_ClearCache;
 	public String FindParentReferenceElementDialog_NoReferenceId;
+	public String FindParentReferenceElementDialog_AnyApplication;
 
 	public String HandledMenuItemCommandSelectionDialog_ShellTitle;
 	public String HandledMenuItemCommandSelectionDialog_DialogTitle;
