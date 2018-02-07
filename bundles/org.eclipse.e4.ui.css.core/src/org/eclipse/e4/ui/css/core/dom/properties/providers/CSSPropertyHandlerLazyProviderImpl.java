@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2015 Angelo Zerr and others.
+ * Copyright (c) 2008, 2018 Angelo Zerr and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -29,7 +29,7 @@ import org.w3c.dom.css.CSSStyleDeclaration;
  * retrieved with name into packages registered with registerPackage method.
  */
 public class CSSPropertyHandlerLazyProviderImpl extends
-		AbstractCSSPropertyHandlerProvider {
+AbstractCSSPropertyHandlerProvider {
 
 	// List of package names containing handlers class for properties
 	private List<String> packageNames = new ArrayList<>();
@@ -60,21 +60,22 @@ public class CSSPropertyHandlerLazyProviderImpl extends
 						packageName, handlerClassName);
 				if (handler != null) {
 					//TODO replace with eclipse logging
-//					if (logger.isDebugEnabled())
-//						logger.debug("Handle CSS Property=" + property
-//								+ ", with class=" + packageName + "."
-//								+ handlerClassName);
-					if (handlers == null)
+					//					if (logger.isDebugEnabled())
+					//						logger.debug("Handle CSS Property=" + property
+					//								+ ", with class=" + packageName + "."
+					//								+ handlerClassName);
+					if (handlers == null) {
 						handlers = new ArrayList<>();
+					}
 					handlers.add(handler);
 				}
 			}
 			//TODO replace with eclipse logging
-//			if (logger.isDebugEnabled()) {
-//				if (handlers == null)
-//					logger.debug("Cannot find Handle Class CSS Property="
-//							+ property + ", for class=" + handlerClassName);
-//			}
+			//			if (logger.isDebugEnabled()) {
+			//				if (handlers == null)
+			//					logger.debug("Cannot find Handle Class CSS Property="
+			//							+ property + ", for class=" + handlerClassName);
+			//			}
 		} finally {
 			propertyHandlers.put(property, handlers);
 		}
@@ -93,8 +94,9 @@ public class CSSPropertyHandlerLazyProviderImpl extends
 	}
 
 	protected Map<String, List<ICSSPropertyHandler>> getPropertyToHandlersMap() {
-		if (propertyToHandlersMap == null)
+		if (propertyToHandlersMap == null) {
 			propertyToHandlersMap = new HashMap<>();
+		}
 		return propertyToHandlersMap;
 	}
 
@@ -112,12 +114,12 @@ public class CSSPropertyHandlerLazyProviderImpl extends
 		try {
 			Class<?> clazz = this.getClass().getClassLoader()
 					.loadClass(
-					handlerClass);
-			Object instance = clazz.newInstance();
+							handlerClass);
+			Object instance = clazz.getDeclaredConstructor().newInstance();
 			if (!(instance instanceof ICSSPropertyHandler)) {
 				throw new UnsupportedClassCSSPropertyException(clazz);
 			}
-			return (ICSSPropertyHandler) clazz.newInstance();
+			return (ICSSPropertyHandler) clazz.getDeclaredConstructor().newInstance();
 		} catch (ClassNotFoundException e) {
 
 		}
@@ -147,8 +149,9 @@ public class CSSPropertyHandlerLazyProviderImpl extends
 	protected CSSStyleDeclaration getDefaultCSSStyleDeclaration(
 			CSSEngine engine, CSSStylableElement stylableElement,
 			CSSStyleDeclaration newStyle, String pseudoE) throws Exception {
-		if (stylableElement.getDefaultStyleDeclaration(pseudoE) != null)
+		if (stylableElement.getDefaultStyleDeclaration(pseudoE) != null) {
 			return stylableElement.getDefaultStyleDeclaration(pseudoE);
+		}
 		if (newStyle != null) {
 			StringBuilder style = null;
 			int length = newStyle.getLength();
@@ -162,8 +165,9 @@ public class CSSPropertyHandlerLazyProviderImpl extends
 						String s = getCSSPropertyStyle(engine, stylableElement,
 								propertyName, pseudoE);
 						if (s != null) {
-							if (style == null)
+							if (style == null) {
 								style = new StringBuilder();
+							}
 							style.append(s);
 						}
 					}
@@ -171,8 +175,9 @@ public class CSSPropertyHandlerLazyProviderImpl extends
 					String s = getCSSPropertyStyle(engine, stylableElement,
 							propertyName, pseudoE);
 					if (s != null) {
-						if (style == null)
+						if (style == null) {
 							style = new StringBuilder();
+						}
 						style.append(s);
 					}
 				}

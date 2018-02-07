@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2017 IBM Corporation and others.
+ * Copyright (c) 2000, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -81,16 +81,14 @@ public final class ComponentSupport {
 		}
 
         try {
-            Class c = bundle
+            Class<?> c = bundle
                     .loadClass("org.eclipse.ui.internal.editorsupport.win32.OleEditor"); //$NON-NLS-1$
-            return (IEditorPart) c.newInstance();
-        } catch (ClassNotFoundException exception) {
+			return (IEditorPart) c.getDeclaredConstructor().newInstance();
+		} catch (SecurityException | ClassNotFoundException | NoSuchMethodException
+				| InvocationTargetException | IllegalArgumentException | InstantiationException
+				| IllegalAccessException exception) {
             return null;
-        } catch (IllegalAccessException exception) {
-            return null;
-        } catch (InstantiationException exception) {
-            return null;
-        }
+		}
     }
 
     public static boolean testForOleEditor(String filename) {
@@ -98,12 +96,10 @@ public final class ComponentSupport {
         if (nDot >= 0) {
             try {
                 String strName = filename.substring(nDot);
-                Class oleClass = Class.forName("org.eclipse.swt.ole.win32.OLE"); //$NON-NLS-1$
-                Method findMethod = oleClass.getDeclaredMethod(
-                        "findProgramID", new Class[] { String.class }); //$NON-NLS-1$
-                strName = (String) findMethod.invoke(null,
-                        new Object[] { strName });
-                if (strName.length() > 0) {
+				Class<?> oleClass = Class.forName("org.eclipse.swt.ole.win32.OLE"); //$NON-NLS-1$
+				Method findMethod = oleClass.getDeclaredMethod("findProgramID", String.class); //$NON-NLS-1$
+				strName = (String) findMethod.invoke(null, strName);
+				if (!strName.isEmpty()) {
 					return true;
 				}
             } catch (ClassNotFoundException exception) {

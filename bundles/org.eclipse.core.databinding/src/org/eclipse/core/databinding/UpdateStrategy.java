@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2015 IBM Corporation and others.
+ * Copyright (c) 2007, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -150,11 +150,10 @@ import com.ibm.icu.text.NumberFormat;
 				return (IConverter) converterOrClassname;
 			} else if (converterOrClassname instanceof String) {
 				String classname = (String) converterOrClassname;
-				Class converterClass;
+				Class<?> converterClass;
 				try {
 					converterClass = Class.forName(classname);
-					IConverter result = (IConverter) converterClass
-							.newInstance();
+					IConverter result = (IConverter) converterClass.getDeclaredConstructor().newInstance();
 					converterMap.put(key, result);
 					return result;
 				} catch (Exception e) {

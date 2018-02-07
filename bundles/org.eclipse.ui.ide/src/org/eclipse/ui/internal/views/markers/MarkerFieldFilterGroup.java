@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2015 IBM Corporation and others.
+ * Copyright (c) 2007, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,6 +13,7 @@
 
 package org.eclipse.ui.internal.views.markers;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -510,17 +511,13 @@ class MarkerFieldFilterGroup {
 		clone.id = id;
 		for (int i = 0; i < fieldFilters.length; i++) {
 			try {
-				clone.fieldFilters[i] = fieldFilters[i].getClass().newInstance();
+				clone.fieldFilters[i] = fieldFilters[i].getClass().getDeclaredConstructor().newInstance();
 				fieldFilters[i].populateWorkingCopy(clone.fieldFilters[i]);
-			} catch (InstantiationException e) {
-				StatusManager.getManager().handle(
-						StatusUtil.newStatus(IStatus.ERROR, e
-								.getLocalizedMessage(), e), StatusManager.SHOW);
-				return false;
-			} catch (IllegalAccessException e) {
-				StatusManager.getManager().handle(
-						StatusUtil.newStatus(IStatus.ERROR, e
-								.getLocalizedMessage(), e), StatusManager.SHOW);
+			} catch (InstantiationException | IllegalArgumentException | IllegalAccessException
+					| InvocationTargetException | NoSuchMethodException
+					| SecurityException e) {
+				StatusManager.getManager().handle(StatusUtil.newStatus(IStatus.ERROR, e.getLocalizedMessage(), e),
+						StatusManager.SHOW);
 				return false;
 			}
 		}

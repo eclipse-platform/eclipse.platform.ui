@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 IBM Corporation and others.
+ * Copyright (c) 2000, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.jface.preference;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -133,14 +134,9 @@ public class PreferenceNode implements IPreferenceNode {
         Assert.isNotNull(className);
         try {
             Class<?> cl = Class.forName(className);
-            return cl.newInstance();
-        } catch (ClassNotFoundException e) {
-            return null;
-        } catch (InstantiationException e) {
-            return null;
-        } catch (IllegalAccessException e) {
-            return null;
-        } catch (NoSuchMethodError e) {
+			return cl.getDeclaredConstructor().newInstance();
+		} catch (ClassNotFoundException | InstantiationException | IllegalAccessException | NoSuchMethodError
+				| IllegalArgumentException | InvocationTargetException | NoSuchMethodException | SecurityException e) {
             return null;
         }
     }

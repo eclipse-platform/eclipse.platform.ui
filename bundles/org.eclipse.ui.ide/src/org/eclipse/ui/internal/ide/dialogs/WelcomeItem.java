@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2017 IBM Corporation and others.
+ * Copyright (c) 2000, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,6 +9,8 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.ui.internal.ide.dialogs;
+
+import java.lang.reflect.InvocationTargetException;
 
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.action.IAction;
@@ -141,14 +143,9 @@ public class WelcomeItem {
             return;
         }
         try {
-            action = (IAction) actionClass.newInstance();
-        } catch (InstantiationException e) {
-            logActionLinkError(pluginId, className);
-            return;
-        } catch (IllegalAccessException e) {
-            logActionLinkError(pluginId, className);
-            return;
-        } catch (ClassCastException e) {
+			action = (IAction) actionClass.getDeclaredConstructor().newInstance();
+		} catch (InstantiationException | IllegalAccessException | ClassCastException | IllegalArgumentException
+				| InvocationTargetException | NoSuchMethodException | SecurityException e) {
             logActionLinkError(pluginId, className);
             return;
         }
