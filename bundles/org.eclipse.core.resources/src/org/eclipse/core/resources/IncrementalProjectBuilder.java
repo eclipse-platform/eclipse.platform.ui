@@ -411,9 +411,8 @@ public abstract class IncrementalProjectBuilder extends InternalBuilder implemen
 	 * <ul>
 	 * <li>
 	 * The rule may be <i>relaxed</i> and in some cases let the builder be scheduled in
-	 * parallel of any other operation using a rule based on {@link IResource}). To
-	 * implement such <i>relaxed</i> rule for the builder, simply make the rule return
-	 * <code>true</code> for <code>rule.contains(workspaceRoot)</code>
+	 * parallel of any other operation using a rule based on {@link IResource}). A relaxed
+	 * rule is a scheduling rule which does not contain the workspace root rule.
 	 * </li>
 	 * <li>
 	 * The rule returned here may have no effect if the build is invoked within the

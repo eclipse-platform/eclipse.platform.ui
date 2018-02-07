@@ -547,11 +547,11 @@ public class Project extends Container implements IProject {
 			public void run(IProgressMonitor innerMonitor) throws CoreException {
 				innerMonitor = Policy.monitorFor(innerMonitor);
 				final ISchedulingRule projectBuildRule = workspace.getBuildManager().getRule(config, trigger, builderName, args);
-				final boolean relaxed = Job.getJobManager().currentRule() == null && projectBuildRule != null && projectBuildRule.contains(workspace.getRoot());
+				final boolean relaxed = Job.getJobManager().currentRule() == null && workspace.isRelaxedRule(projectBuildRule);
 
 				// PRE + POST_BUILD, and the build itself are allowed to modify resources, so require the current thread's scheduling rule
 				// to either contain the WR or be null. Therefore, if not null, ensure it contains the WR rule...
-				final ISchedulingRule notificationsRule = relaxed ? null : workspace.getRuleFactory().buildRule();
+				final ISchedulingRule notificationsRule = relaxed ? null : workspace.getRoot();
 				try {
 					innerMonitor.beginTask("", Policy.totalWork); //$NON-NLS-1$
 					try {

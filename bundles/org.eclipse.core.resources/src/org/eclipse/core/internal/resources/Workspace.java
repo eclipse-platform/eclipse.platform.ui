@@ -416,38 +416,32 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 		monitor = Policy.monitorFor(monitor);
 		// Bug 343256 use a relaxed scheduling rule if the config we're building uses a relaxed rule.
 		// Otherwise fall-back to WR.
-		boolean relaxed = false;
-		if (Job.getJobManager().currentRule() == null && configs.length > 0) {
-			relaxed = true;
-			for (IBuildConfiguration config : configs) {
-				ISchedulingRule requested = getBuildManager().getRule(config, trigger, null, null);
-				if (requested != null && requested.contains(getRoot())) {
-					relaxed = false;
-					break;
-				}
-			}
-		}
-
 		// PRE + POST_BUILD, and the build itself are allowed to modify resources, so require the current thread's scheduling rule
 		// to either contain the WR or be null. Therefore, if not null, ensure it contains the WR rule...
-		final ISchedulingRule buildRule = getRuleFactory().buildRule();
-		final ISchedulingRule rule = relaxed ? null : buildRule;
+		boolean noEnclosingRule = Job.getJobManager().currentRule() == null;
+		boolean relaxed = noEnclosingRule && configs.length > 0 && Arrays.stream(configs).map(cfg -> getBuildManager().getRule(cfg, trigger, null, null)).allMatch(this::isRelaxedRule);
+		final ISchedulingRule notificationRule = getRuleFactory().buildRule();
+		ISchedulingRule currentRule = null;
 		try {
 			monitor.beginTask("", Policy.opWork); //$NON-NLS-1$
 			try {
 				try {
+
 					// Must run the PRE_BUILD with the WRule held before acquiring WS lock
 					// Can remove this if we run notifications without the WS lock held: bug 249951
-					prepareOperation(rule == null ? buildRule : rule, monitor);
+					prepareOperation(notificationRule, monitor);
+					currentRule = notificationRule;
 					beginOperation(true);
 					aboutToBuild(this, trigger);
 				} finally {
-					if (rule == null) {
-						endOperation(buildRule, false);
-						prepareOperation(rule, monitor);
+					if (relaxed) {
+						endOperation(currentRule, false);
+						prepareOperation(null, monitor);
+						currentRule = null;
 						beginOperation(false);
 					}
 				}
+
 				IStatus result;
 				try {
 
@@ -487,9 +481,10 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 					result = getBuildManager().build(configs, requestedConfigs, trigger, Policy.subMonitorFor(monitor, Policy.opWork));
 				} finally {
 					// Run the POST_BUILD with the WRule held
-					if (rule == null) {
-						endOperation(rule, false);
-						prepareOperation(buildRule, monitor);
+					if (relaxed) {
+						endOperation(currentRule, false);
+						prepareOperation(notificationRule, monitor);
+						currentRule = notificationRule;
 						beginOperation(false);
 					}
 					//must fire POST_BUILD if PRE_BUILD has occurred
@@ -502,11 +497,15 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 				if (tree.isImmutable())
 					newWorkingTree();
 				// Rule will be the build-rule from the POST_BUILD refresh
-				endOperation(buildRule, false);
+				endOperation(currentRule, false);
 			}
 		} finally {
 			monitor.done();
 		}
+	}
+
+	boolean isRelaxedRule(ISchedulingRule rule) {
+		return rule == null || !rule.contains(getRoot());
 	}
 
 	/**
