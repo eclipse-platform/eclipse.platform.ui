@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2015 IBM Corporation and others.
+ * Copyright (c) 2008, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,7 +12,6 @@ package org.eclipse.core.internal.expressions.tests;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
 
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
@@ -37,12 +36,7 @@ public class ExpressionTestsPluginUnloading extends TestCase {
 		TestSuite suite= new TestSuite(ExpressionTestsPluginUnloading.class);
 		// ensure lexicographical ordering:
 		ArrayList<Test> tests = Collections.list(suite.tests());
-		Collections.sort(tests, new Comparator<Test>() {
-			@Override
-			public int compare(Test o1, Test o2) {
-				return ((TestCase)o1).getName().compareTo(((TestCase)o2).getName());
-			}
-		});
+		Collections.sort(tests, (o1, o2) -> ((TestCase) o1).getName().compareTo(((TestCase) o2).getName()));
 		TestSuite result= new TestSuite();
 		for (Test test : tests) {
 			result.addTest(test);
@@ -80,8 +74,8 @@ public class ExpressionTestsPluginUnloading extends TestCase {
 		Class<?> icuClass = icu.loadClass("com.ibm.icu.text.DecimalFormat");
 		assertNotSame(exprClass, icuClass);
 
-		Object exprObj= exprClass.newInstance();
-		Object icuObj= icuClass.newInstance();
+		Object exprObj = exprClass.getDeclaredConstructor().newInstance();
+		Object icuObj = icuClass.getDeclaredConstructor().newInstance();
 
 		assertInstanceOf(exprObj, "java.lang.Runnable", "java.lang.String");
 		assertInstanceOf(exprObj, "java.lang.Object", "java.io.Serializable");
@@ -104,7 +98,7 @@ public class ExpressionTestsPluginUnloading extends TestCase {
 
 	private void doTestInstanceofICUDecimalFormat(Bundle bundle) throws Exception {
 		Class<?> clazz = bundle.loadClass("com.ibm.icu.text.DecimalFormat");
-		Object decimalFormat= clazz.newInstance();
+		Object decimalFormat = clazz.getDeclaredConstructor().newInstance();
 		assertInstanceOf(decimalFormat, "com.ibm.icu.text.DecimalFormat", "java.text.NumberFormat");
 	}
 

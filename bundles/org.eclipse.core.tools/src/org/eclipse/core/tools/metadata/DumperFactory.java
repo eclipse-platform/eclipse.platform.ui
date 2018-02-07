@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2007 IBM Corporation and others.
+ * Copyright (c) 2002, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -95,7 +95,7 @@ public class DumperFactory {
 		// legacy-style definition (from the properties file)
 		if (dumper instanceof String)
 			try {
-				return (IDumper) Class.forName((String) dumper).newInstance();
+				return (IDumper) Class.forName((String) dumper).getDeclaredConstructor().newInstance();
 			} catch (Exception e) {
 				throw new DumpException("Error instantiating dumper named " + dumper + " for <" + fileName + "> file", e); //$NON-NLS-1$ //$NON-NLS-2$
 			}

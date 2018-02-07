@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2015 IBM Corporation and others.
+ * Copyright (c) 2007, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.core.tests.runtime;
 
+import java.lang.reflect.InvocationTargetException;
 import org.eclipse.core.runtime.*;
 import org.junit.Assert;
 import org.osgi.framework.Bundle;
@@ -28,12 +29,9 @@ public class TestAdapterFactoryLoader extends Assert implements IAdapterFactory 
 	public <T> T getAdapter(Object adaptableObject, Class<T> adapterType) {
 		try {
 			Class<?>[] targets = getAdapterList();
-			return adapterType.cast(targets[0].newInstance());
-		} catch (InstantiationException e) {
-			e.printStackTrace();
-			fail("Unable to load target class");
-			return null;
-		} catch (IllegalAccessException e) {
+			return adapterType.cast(targets[0].getDeclaredConstructor().newInstance());
+		} catch (InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException
+				| NoSuchMethodException | SecurityException e) {
 			e.printStackTrace();
 			fail("Unable to load target class");
 			return null;

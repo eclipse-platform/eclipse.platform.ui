@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2013 IBM Corporation and others.
+ * Copyright (c) 2002, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -32,7 +32,7 @@ import org.eclipse.ui.*;
 public class PluginDependencyView extends SpyView implements ISelectionListener {
 
 	private TextViewer viewer;
-	private Map dependencyGraph = null;
+	private Map<Long, PluginDependencyGraphNode> dependencyGraph = null;
 
 	/** The id by which this view is known in the plug-in registry */
 	public static final String VIEW_ID = PluginDependencyView.class.getName();
@@ -95,19 +95,19 @@ public class PluginDependencyView extends SpyView implements ISelectionListener 
 	 * plug-in registry and the cycle through the list of pre-requisites and create the
 	 * parent/child relationships in the nodes.
 	 */
-	private Map getDependencyGraph() {
+	private Map<Long, PluginDependencyGraphNode> getDependencyGraph() {
 		if (dependencyGraph != null)
 			return dependencyGraph;
 		// Build up the dependency graph (see PluginDependencyGraphNode) so
 		// we have the information readily available for any plug-in.
 		State state = Platform.getPlatformAdmin().getState(false);
 		BundleDescription[] plugins = state.getBundles();
-		dependencyGraph = new HashMap();
+		dependencyGraph = new HashMap<>();
 		for (BundleDescription descriptor : plugins) {
-			PluginDependencyGraphNode node = (PluginDependencyGraphNode) dependencyGraph.get(new Long(descriptor.getBundleId()));
+			PluginDependencyGraphNode node = dependencyGraph.get(Long.valueOf(descriptor.getBundleId()));
 			if (node == null) {
 				node = new PluginDependencyGraphNode(descriptor);
-				dependencyGraph.put(new Long(descriptor.getBundleId()), node);
+				dependencyGraph.put(Long.valueOf(descriptor.getBundleId()), node);
 			}
 
 			// Cycle through the prerequisites
@@ -119,10 +119,11 @@ public class PluginDependencyView extends SpyView implements ISelectionListener 
 					continue;
 
 				// if the child entry is not in the table yet then add it
-				PluginDependencyGraphNode childNode = (PluginDependencyGraphNode) dependencyGraph.get(new Long(childDesc.getBundleId()));
+				PluginDependencyGraphNode childNode = dependencyGraph
+						.get(Long.valueOf(childDesc.getBundleId()));
 				if (childNode == null) {
 					childNode = new PluginDependencyGraphNode(childDesc);
-					dependencyGraph.put(new Long(childDesc.getBundleId()), childNode);
+					dependencyGraph.put(Long.valueOf(childDesc.getBundleId()), childNode);
 				}
 
 				// Add the child to this node's children and set this node as an ancestor
@@ -154,7 +155,7 @@ public class PluginDependencyView extends SpyView implements ISelectionListener 
 //		}
 		if (id == -1)
 			return;
-		PluginDependencyGraphNode node = (PluginDependencyGraphNode) getDependencyGraph().get(new Long(id));
+		PluginDependencyGraphNode node = getDependencyGraph().get(Long.valueOf(id));
 		String text = node == null ? NLS.bind(Messages.depend_noInformation, name) : node.toDeepString();
 		viewer.getDocument().set(text);
 		viewer.refresh();
