@@ -37,7 +37,6 @@ import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.ViewerFilter;
-import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
@@ -410,7 +409,8 @@ public abstract class FilteredPreferenceDialog extends PreferenceDialog
 	}
 
 	private void openImportWizard(Composite parent) {
-		Wizard importWizard = new PreferencesImportWizard();
+		PreferencesImportWizard importWizard = new PreferencesImportWizard();
+		importWizard.init(PlatformUI.getWorkbench(), null);
 		WizardDialog wizardDialog = new WizardDialog(parent.getShell(), importWizard);
 		wizardDialog.open();
 		if (wizardDialog.getReturnCode() == 0) {
@@ -419,7 +419,8 @@ public abstract class FilteredPreferenceDialog extends PreferenceDialog
 	}
 
 	private void openExportWizard(Composite parent) {
-		Wizard exportWizard = new PreferencesExportWizard();
+		PreferencesExportWizard exportWizard = new PreferencesExportWizard();
+		exportWizard.init(PlatformUI.getWorkbench(), null);
 		WizardDialog wizardDialog = new WizardDialog(parent.getShell(), exportWizard);
 
 		int dialogResponse = MessageDialog.open(MessageDialog.CONFIRM, parent.getShell(),
