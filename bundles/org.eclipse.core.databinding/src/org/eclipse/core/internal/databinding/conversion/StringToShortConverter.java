@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2015 IBM Corporation and others.
+ * Copyright (c) 2007, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -28,7 +28,7 @@ public class StringToShortConverter extends NumberFormatConverter {
 	/**
 	 * Constructs a new instance.
 	 */
-	private StringToShortConverter(NumberFormat numberFormat, Class toType) {
+	private StringToShortConverter(NumberFormat numberFormat, Class<?> toType) {
 		super(String.class, toType, numberFormat);
 		this.numberFormat = numberFormat;
 		primitive = toType.isPrimitive();
@@ -59,7 +59,8 @@ public class StringToShortConverter extends NumberFormatConverter {
 		synchronized (this) {
 			if (outOfRangeMessage == null) {
 				outOfRangeMessage = StringToNumberParser
-				.createOutOfRangeMessage(new Short(Short.MIN_VALUE), new Short(Short.MAX_VALUE), numberFormat);
+						.createOutOfRangeMessage(Short.valueOf(Short.MIN_VALUE), Short.valueOf(Short.MAX_VALUE),
+								numberFormat);
 			}
 
 			throw new IllegalArgumentException(outOfRangeMessage);

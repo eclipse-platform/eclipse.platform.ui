@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2014 Brad Reynolds.
+ * Copyright (c) 2006, 2018 Brad Reynolds.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -176,7 +176,7 @@ public class MocksTest  {
 
 	@Test
 	public void testPrimitiveFloatSetLastReturnValue()  {
-		Float value = new Float(1);
+		Float value = Float.valueOf(1);
 		primitiveMock.getFloat();
 		Mocks.setLastReturnValue(primitiveMock, value);
 		Mocks.startChecking(primitiveMock);
@@ -196,7 +196,7 @@ public class MocksTest  {
 
 	@Test
 	public void testPrimitiveDoubleSetLastReturnValue() {
-		Double value = new Double(1);
+		Double value = Double.valueOf(1);
 		primitiveMock.getDouble();
 		Mocks.setLastReturnValue(primitiveMock, value);
 		Mocks.startChecking(primitiveMock);

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 IBM Corporation and others.
+ * Copyright (c) 2000, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -285,18 +285,18 @@ public final class XMLMemento implements IMemento {
 		}
 
 		// Extract each node with given type.
-		ArrayList list = new ArrayList(size);
+		ArrayList<Element> list = new ArrayList<>(size);
 		for (int nX = 0; nX < size; nX++) {
 			final Node node = nodes.item(nX);
 			if (node instanceof Element)
-				list.add(node);
+				list.add((Element) node);
 		}
 
 		// Create a memento for each node.
 		size = list.size();
 		IMemento[] results = new IMemento[size];
 		for (int x = 0; x < size; x++) {
-			results[x] = new XMLMemento(factory, (Element) list.get(x));
+			results[x] = new XMLMemento(factory, list.get(x));
 		}
 		return results;
 	}
@@ -312,7 +312,7 @@ public final class XMLMemento implements IMemento {
 		}
 
         // Extract each node with given type.
-        ArrayList list = new ArrayList(size);
+		ArrayList<Element> list = new ArrayList<>(size);
         for (int nX = 0; nX < size; nX++) {
             Node node = nodes.item(nX);
             if (node instanceof Element) {
@@ -327,7 +327,7 @@ public final class XMLMemento implements IMemento {
         size = list.size();
         IMemento[] results = new IMemento[size];
         for (int x = 0; x < size; x++) {
-            results[x] = new XMLMemento(factory, (Element) list.get(x));
+            results[x] = new XMLMemento(factory, list.get(x));
         }
         return results;
     }
@@ -340,7 +340,7 @@ public final class XMLMemento implements IMemento {
 		}
         String strValue = attr.getValue();
         try {
-            return new Float(strValue);
+			return Float.valueOf(strValue);
         } catch (NumberFormatException e) {
             WorkbenchPlugin.log("Memento problem - Invalid float for key: " //$NON-NLS-1$
                     + key + " value: " + strValue, e); //$NON-NLS-1$

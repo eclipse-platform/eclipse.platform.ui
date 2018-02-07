@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2013, 2016 IBM Corporation and others.
+ * Copyright (c) 2013, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -32,7 +32,7 @@ public class PerspectiveExtensionReader extends RegistryReader {
 
 	private ModeledPageLayout pageLayout;
 
-    private Set includeOnlyTags = null;
+	private Set<String> includeOnlyTags = null;
 
     private static final String VAL_LEFT = "left";//$NON-NLS-1$
 
@@ -221,7 +221,7 @@ public class PerspectiveExtensionReader extends RegistryReader {
             ratio = IPageLayout.NULL_RATIO;
         } else {
             try {
-                ratio = new Float(ratioString).floatValue();
+				ratio = Float.parseFloat(ratioString);
             } catch (NumberFormatException e) {
                 return false;
             }
@@ -358,7 +358,7 @@ public class PerspectiveExtensionReader extends RegistryReader {
      * @param tags the tags to include
      */
     public void setIncludeOnlyTags(String[] tags) {
-        includeOnlyTags = new HashSet();
+		includeOnlyTags = new HashSet<>();
         for (String tag : tags) {
             includeOnlyTags.add(tag);
         }

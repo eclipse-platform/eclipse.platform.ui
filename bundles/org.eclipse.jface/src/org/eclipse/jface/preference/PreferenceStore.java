@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 IBM Corporation and others.
+ * Copyright (c) 2000, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -206,7 +206,7 @@ public class PreferenceStore extends EventManager implements
 		}
 		double ival = DOUBLE_DEFAULT_DEFAULT;
 		try {
-			ival = new Double(value).doubleValue();
+			ival = Double.parseDouble(value);
 		} catch (NumberFormatException e) {
 		}
 		return ival;
@@ -231,7 +231,7 @@ public class PreferenceStore extends EventManager implements
 		}
 		float ival = FLOAT_DEFAULT_DEFAULT;
 		try {
-			ival = new Float(value).floatValue();
+			ival = Float.parseFloat(value);
 		} catch (NumberFormatException e) {
 		}
 		return ival;
@@ -516,8 +516,7 @@ public class PreferenceStore extends EventManager implements
 		if (oldValue != value) {
 			setValue(properties, name, value);
 			dirty = true;
-			firePropertyChangeEvent(name, new Double(oldValue), new Double(
-					value));
+			firePropertyChangeEvent(name, Double.valueOf(oldValue), Double.valueOf(value));
 		}
 	}
 
@@ -527,7 +526,7 @@ public class PreferenceStore extends EventManager implements
 		if (oldValue != value) {
 			setValue(properties, name, value);
 			dirty = true;
-			firePropertyChangeEvent(name, new Float(oldValue), new Float(value));
+			firePropertyChangeEvent(name, Float.valueOf(oldValue), Float.valueOf(value));
 		}
 	}
 

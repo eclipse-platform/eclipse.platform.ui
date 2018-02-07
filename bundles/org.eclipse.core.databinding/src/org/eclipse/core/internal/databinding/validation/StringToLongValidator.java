@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2015 IBM Corporation and others.
+ * Copyright (c) 2007, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -20,8 +20,8 @@ import org.eclipse.core.internal.databinding.conversion.StringToNumberParser;
  * @since 1.0
  */
 public class StringToLongValidator extends AbstractStringToNumberValidator {
-	private static final Long MIN = new Long(Long.MIN_VALUE);
-	private static final Long MAX = new Long(Long.MAX_VALUE);
+	private static final Long MIN = Long.valueOf(Long.MIN_VALUE);
+	private static final Long MAX = Long.valueOf(Long.MAX_VALUE);
 
 	/**
 	 * @param converter

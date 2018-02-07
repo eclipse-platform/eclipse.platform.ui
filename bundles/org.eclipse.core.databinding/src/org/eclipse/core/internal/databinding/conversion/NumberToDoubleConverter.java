@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2015 IBM Corporation and others.
+ * Copyright (c) 2007, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -28,7 +28,7 @@ public class NumberToDoubleConverter extends NumberToNumberConverter {
 	 * @param fromType
 	 * @param primitive
 	 */
-	public NumberToDoubleConverter(NumberFormat numberFormat, Class fromType,
+	public NumberToDoubleConverter(NumberFormat numberFormat, Class<?> fromType,
 			boolean primitive) {
 		super(numberFormat, fromType, (primitive) ? Double.TYPE : Double.class);
 	}
@@ -36,7 +36,7 @@ public class NumberToDoubleConverter extends NumberToNumberConverter {
 	@Override
 	protected Number doConvert(Number number) {
 		if (StringToNumberParser.inDoubleRange(number)) {
-			return new Double(number.doubleValue());
+			return Double.valueOf(number.doubleValue());
 		}
 
 		return null;

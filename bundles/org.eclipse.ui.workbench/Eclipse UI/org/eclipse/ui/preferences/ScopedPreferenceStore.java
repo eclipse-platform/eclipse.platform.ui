@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2015 IBM Corporation and others.
+ * Copyright (c) 2004, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -203,9 +203,9 @@ public class ScopedPreferenceStore extends EventManager implements
 		} else if (obj instanceof Integer) {
 			return Integer.valueOf(defaults.getInt(key, INT_DEFAULT_DEFAULT));
 		} else if (obj instanceof Double) {
-			return new Double(defaults.getDouble(key, DOUBLE_DEFAULT_DEFAULT));
+			return Double.valueOf(defaults.getDouble(key, DOUBLE_DEFAULT_DEFAULT));
 		} else if (obj instanceof Float) {
-			return new Float(defaults.getFloat(key, FLOAT_DEFAULT_DEFAULT));
+			return Float.valueOf(defaults.getFloat(key, FLOAT_DEFAULT_DEFAULT));
 		} else if (obj instanceof Long) {
 			return Long.valueOf(defaults.getLong(key, LONG_DEFAULT_DEFAULT));
 		} else if (obj instanceof Boolean) {
@@ -558,8 +558,7 @@ public class ScopedPreferenceStore extends EventManager implements
 				getStorePreferences().putDouble(name, value);
 			}
 			dirty = true;
-			firePropertyChangeEvent(name, new Double(oldValue), new Double(
-					value));
+			firePropertyChangeEvent(name, Double.valueOf(oldValue), Double.valueOf(value));
 		} finally {
 			silentRunning = false;// Restart listening to preferences
 		}
@@ -579,7 +578,7 @@ public class ScopedPreferenceStore extends EventManager implements
 				getStorePreferences().putFloat(name, value);
 			}
 			dirty = true;
-			firePropertyChangeEvent(name, new Float(oldValue), new Float(value));
+			firePropertyChangeEvent(name, Float.valueOf(oldValue), Float.valueOf(value));
 		} finally {
 			silentRunning = false;// Restart listening to preferences
 		}

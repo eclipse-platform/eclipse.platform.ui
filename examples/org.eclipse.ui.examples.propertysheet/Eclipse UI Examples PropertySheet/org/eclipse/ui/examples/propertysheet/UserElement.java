@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,7 +12,6 @@ package org.eclipse.ui.examples.propertysheet;
 
 import java.util.ArrayList;
 
-import org.eclipse.jface.viewers.ICellEditorValidator;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.ui.views.properties.ColorPropertyDescriptor;
@@ -206,24 +205,21 @@ public class UserElement extends OrganizationElement {
         propertyDescriptor.setHelpContextIds(new Object[] { SALARY_CONTEXT });
         propertyDescriptor
                 .setFilterFlags(new String[] { IPropertySheetEntry.FILTER_ID_EXPERT });
-        propertyDescriptor.setValidator(new ICellEditorValidator() {
-            @Override
-			public String isValid(Object value) {
-                if (value == null)
-                    return MessageUtil.getString("salary_is_invalid"); //$NON-NLS-1$
-                //
-                Float trySalary;
-                try {
-                    trySalary = new Float(Float.parseFloat((String) value));
-                } catch (NumberFormatException e) {
-                    return MessageUtil.getString("salary_is_invalid"); //$NON-NLS-1$
-                }
-                if (trySalary.floatValue() < 0.0)
-                    return MessageUtil
-                            .getString("salary_must_be_greator_than_zero"); //$NON-NLS-1$
-                return null;
-            }
-        });
+        propertyDescriptor.setValidator(value -> {
+		    if (value == null)
+		        return MessageUtil.getString("salary_is_invalid"); //$NON-NLS-1$
+		    //
+		    Float trySalary;
+		    try {
+		        trySalary = Float.valueOf(Float.parseFloat((String) value));
+		    } catch (NumberFormatException e) {
+		        return MessageUtil.getString("salary_is_invalid"); //$NON-NLS-1$
+		    }
+		    if (trySalary.floatValue() < 0.0)
+		        return MessageUtil
+		                .getString("salary_must_be_greator_than_zero"); //$NON-NLS-1$
+		    return null;
+		});
         propertyDescriptor.setCategory(P_PERSONELINFO);
         descriptors.add(propertyDescriptor);
 
@@ -404,13 +400,10 @@ public class UserElement extends OrganizationElement {
      */
     private Float getSalary() {
         if (salary == null)
-            salary = new Float(0);
+            salary = Float.valueOf(0);
         return salary;
     }
 
-    /* (non-Javadoc)
-     * Method declared on IPropertySource
-     */
     @Override
 	public boolean isPropertySet(Object property) {
         if (property.equals(P_ID_ADDRESS))
@@ -434,17 +427,11 @@ public class UserElement extends OrganizationElement {
         return false;
     }
 
-    /* (non-Javadoc)
-     * Method declared on OrganizationElement
-     */
     @Override
 	public boolean isUser() {
         return true;
     }
 
-    /* (non-Javadoc)
-     * Method declared on IPropertySource
-     */
     @Override
 	public void resetPropertyValue(Object property) {
         if (property.equals(P_ID_ADDRESS)) {
@@ -585,7 +572,7 @@ public class UserElement extends OrganizationElement {
         }
         if (propKey.equals(P_ID_SALARY)) {
             try {
-                setSalary(new Float(Float.parseFloat((String) val)));
+                setSalary(Float.valueOf(Float.parseFloat((String) val)));
             } catch (NumberFormatException e) {
                 setSalary(salary_Default);
             }

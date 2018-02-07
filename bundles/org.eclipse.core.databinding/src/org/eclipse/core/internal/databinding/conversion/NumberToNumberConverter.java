@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2015 IBM Corporation and others.
+ * Copyright (c) 2007, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -31,7 +31,7 @@ public abstract class NumberToNumberConverter extends Converter {
 	private String outOfRangeMessage;
 
 	protected NumberToNumberConverter(NumberFormat numberFormat,
-			Class fromType, Class toType) {
+			Class<?> fromType, Class<?> toType) {
 		super(fromType, toType);
 		this.numberFormat = numberFormat;
 		this.primitive = toType.isPrimitive();
@@ -63,8 +63,8 @@ public abstract class NumberToNumberConverter extends Converter {
 		synchronized (this) {
 			if (outOfRangeMessage == null) {
 				outOfRangeMessage = StringToNumberParser
-						.createOutOfRangeMessage(new Short(Short.MIN_VALUE),
-								new Short(Short.MAX_VALUE), numberFormat);
+						.createOutOfRangeMessage(Short.valueOf(Short.MIN_VALUE), Short.valueOf(Short.MAX_VALUE),
+								numberFormat);
 			}
 
 			throw new IllegalArgumentException(outOfRangeMessage);
