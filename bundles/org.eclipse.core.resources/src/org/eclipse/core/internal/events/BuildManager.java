@@ -19,6 +19,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 import org.eclipse.core.internal.dtree.DeltaDataTree;
 import org.eclipse.core.internal.resources.*;
+import org.eclipse.core.internal.resources.ComputeProjectOrder.Digraph;
 import org.eclipse.core.internal.utils.Messages;
 import org.eclipse.core.internal.utils.Policy;
 import org.eclipse.core.internal.watson.ElementTree;
@@ -103,7 +104,7 @@ public class BuildManager implements ICoreConstants, IManager, ILifecycleListene
 
 	//the job for performing background autobuild
 	final AutoBuildJob autoBuildJob;
-	private final Set<IProject> builtProjects = new HashSet<>();
+	private final Set<IProject> builtProjects = Collections.synchronizedSet(new HashSet<>());
 
 	//the following four fields only apply for the lifetime of a single builder invocation.
 	protected final Set<InternalBuilder> currentBuilders;
@@ -388,6 +389,55 @@ public class BuildManager implements ICoreConstants, IManager, ILifecycleListene
 			monitor.done();
 			if (trigger == IncrementalProjectBuilder.INCREMENTAL_BUILD || trigger == IncrementalProjectBuilder.FULL_BUILD)
 				autoBuildJob.avoidBuild();
+		}
+	}
+
+	/**
+	 * Runs all builders on all the given project configs, in the order that
+	 * they are given.
+	 * @param buildJobGroup
+	 * @return A status indicating if the build succeeded or failed
+	 */
+	public IStatus buildParallel(Digraph<IBuildConfiguration> configs, IBuildConfiguration[] requestedConfigs, int trigger, JobGroup buildJobGroup, IProgressMonitor monitor) {
+		monitor = Policy.monitorFor(monitor);
+		try {
+			monitor.beginTask(Messages.events_building_0, TOTAL_BUILD_WORK);
+			try {
+				builtProjects.clear();
+				hookStartBuild(configs.vertexList.stream().map(vertex -> vertex.id).toArray(IBuildConfiguration[]::new), trigger);
+				MultiStatus status = new MultiStatus(ResourcesPlugin.PI_RESOURCES, IResourceStatus.BUILD_FAILED, Messages.events_errors, null);
+				parallelBuildLoop(configs, requestedConfigs, trigger, buildJobGroup, status, monitor);
+				return status;
+			} finally {
+				hookEndBuild(trigger);
+			}
+		} finally {
+			monitor.done();
+			if (trigger == IncrementalProjectBuilder.INCREMENTAL_BUILD || trigger == IncrementalProjectBuilder.FULL_BUILD)
+				autoBuildJob.avoidBuild();
+		}
+	}
+
+	private void parallelBuildLoop(final Digraph<IBuildConfiguration> configs, IBuildConfiguration[] requestedConfigs, int trigger, JobGroup buildJobGroup, MultiStatus status, IProgressMonitor monitor) {
+		final int projectWork = configs.vertexList.size() > 0 ? TOTAL_BUILD_WORK / configs.vertexList.size() : 0;
+		builtProjects.clear();
+		final GraphProcessor<IBuildConfiguration> graphProcessor = new GraphProcessor<>(configs, IBuildConfiguration.class, (config, graphCrawler) -> {
+			IBuildContext context = new BuildContext(config, requestedConfigs, graphCrawler.getSequentialOrder()); // TODO consider passing Digraph to BuildConfig?
+			try {
+				workspace.prepareOperation(null, monitor);
+				workspace.beginOperation(false);
+				basicBuild(config, trigger, context, status, Policy.subMonitorFor(monitor, projectWork));
+				workspace.endOperation(null, false);
+				builtProjects.add(config.getProject());
+			} catch (CoreException ex) {
+				status.add(new Status(IStatus.ERROR, ResourcesPlugin.PI_RESOURCES, ex.getMessage(), ex));
+			}
+		}, buildJobGroup);
+		graphProcessor.processGraphWithParallelJobs();
+		try {
+			Job.getJobManager().join(graphProcessor, monitor);
+		} catch (OperationCanceledException | InterruptedException e) {
+			status.add(new Status(IStatus.ERROR, ResourcesPlugin.PI_RESOURCES, e.getMessage(), e));
 		}
 	}
 
