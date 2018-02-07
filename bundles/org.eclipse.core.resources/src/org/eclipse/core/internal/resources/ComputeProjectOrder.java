@@ -16,6 +16,10 @@ package org.eclipse.core.internal.resources;
 import java.lang.reflect.Array;
 import java.util.*;
 import java.util.function.Predicate;
+import java.util.stream.Collectors;
+import org.eclipse.core.internal.resources.ComputeProjectOrder.Digraph.Edge;
+import org.eclipse.core.internal.resources.ComputeProjectOrder.Digraph.Vertex;
+import org.eclipse.core.runtime.Assert;
 
 /**
  * Implementation of a sort algorithm for computing the order of vertexes that are part
@@ -25,7 +29,7 @@ import java.util.function.Predicate;
  *
  * @since 2.1
  */
-class ComputeProjectOrder {
+public class ComputeProjectOrder {
 
 	/*
 	 * Prevent class from being instantiated.
@@ -43,7 +47,7 @@ class ComputeProjectOrder {
 	 * McGraw-Hill, 1990. The depth-first search algorithm is in section 23.3.
 	 * </p>
 	 */
-	private static class Digraph<T> {
+	public static class Digraph<T> {
 		/**
 		 * struct-like object for representing a vertex along with various
 		 * values computed during depth-first search (DFS).
@@ -109,19 +113,29 @@ class ComputeProjectOrder {
 			}
 		}
 
+		public static class Edge<T> {
+			public final T from;
+			public final T to;
+
+			public Edge(T from, T to) {
+				this.from = from;
+				this.to = to;
+			}
+		}
+
 		/**
 		 * Ordered list of all vertexes in this graph.
 		 *
 		 * Element type: <code>Vertex</code>
 		 */
-		private List<Vertex<T>> vertexList = new ArrayList<>(100);
+		public final List<Vertex<T>> vertexList = new ArrayList<>(100);
 
 		/**
 		 * Map from id to vertex.
 		 *
 		 * Key type: <code>T</code>; value type: <code>Vertex</code>
 		 */
-		private Map<T, Vertex<T>> vertexMap = new HashMap<>(100);
+		public final Map<T, Vertex<T>> vertexMap = new HashMap<>(100);
 
 		/**
 		 * DFS visit time. Non-negative.
@@ -449,13 +463,103 @@ class ComputeProjectOrder {
 			}
 		}
 
+		/**
+		 * Picks that next element to consider.
+		 *
+		 * TODO could be part of a "GraphProcessingState" class so
+		 * it'd become O(1) instead of O(#vertex).
+		 * @param alreadyProcessed
+		 * @return next elements to process: either one who has all parents covered, or if there are only cycles, the best entry points of a cycle
+		 */
+		public Set<T> getNextElementToProcess(Set<T> alreadyProcessed) {
+			if (!initialized) {
+				throw new IllegalArgumentException();
+			}
+			int maxDepthAlreadyProcessed = 0;
+			for (T item : alreadyProcessed) {
+				Vertex<T> vertex = vertexMap.get(item);
+				if (item == null) {
+					throw new IllegalArgumentException();
+				}
+				maxDepthAlreadyProcessed = Math.max(maxDepthAlreadyProcessed, vertex.finishTime);
+			}
+			Set<Vertex<T>> remaining = new HashSet<>(this.vertexMap.values());
+			alreadyProcessed.forEach(item -> remaining.remove(vertexMap.get(item)));
+			if (remaining.isEmpty()) {
+				return Collections.emptySet();
+			}
+			Set<T> res = new HashSet<>();
+			for (Vertex<T> notProcessed : remaining) {
+				if (notProcessed.predecessor == null || alreadyProcessed.contains(notProcessed.predecessor.id)) {
+					res.add(notProcessed.id);
+				}
+			}
+			if (!res.isEmpty()) {
+				return res;
+			} else if (containsCycles()) {
+				// pick only the node with the lowest depth
+				Vertex<T> nextVertex = null;
+				for (Vertex<T> notProcessed : remaining) {
+					if (nextVertex == null || notProcessed.finishTime < nextVertex.finishTime) {
+						nextVertex = notProcessed;
+					}
+				} ;
+				if (nextVertex != null) {
+					return Collections.singleton(nextVertex.id);
+				}
+			}
+			throw new IllegalStateException();
+		}
+
+		/**
+		 * O(n^2)
+		 * @param id
+		 */
+		public void removeHeadVertex(T id) {
+			if (!this.vertexMap.containsKey(id)) {
+				throw new IllegalArgumentException();
+			}
+			Vertex<T> toRemove = vertexMap.get(id);
+			if (toRemove.predecessor != null) {
+				throw new IllegalArgumentException();
+			}
+			vertexMap.remove(id);
+			vertexList.remove(toRemove);
+			for (Vertex<T> other : vertexList) { // O(n^2)
+				if (other.predecessor == toRemove) {
+					other.predecessor = null;
+					cascadeDecreaseFinishTime(other); // O(n)
+				}
+				other.adjacent.remove(toRemove); //O(n)
+			}
+		}
+
+		private void cascadeDecreaseFinishTime(Vertex<T> vertex) {
+			vertex.finishTime--;
+			for (Vertex<T> adjacent : vertex.adjacent) {
+				if (adjacent.predecessor == vertex) {
+					cascadeDecreaseFinishTime(adjacent);
+				}
+			}
+		}
+
+		public Collection<Edge<T>> getEdges() {
+			int size = 0;
+			for (Vertex<T> vertex : vertexList) {
+				size += vertex.adjacent.size();
+			}
+			Collection<Edge<T>> res = new HashSet<>(size, (float) 1.);
+			vertexList.forEach(vertex -> vertex.adjacent.forEach(adjacent -> res.add(new Edge<>(vertex.id, adjacent.id))));
+			return res;
+		}
+
 	}
 
 	/**
 	 * Data structure for holding the multi-part outcome of
 	 * <code>ComputeVertexOrder.computeVertexOrder</code>.
 	 */
-	static final class VertexOrder<T> {
+	public static class VertexOrder<T> {
 		/**
 		 * Creates an instance with the given values.
 		 * @param vertexes initial value of <code>vertexes</code> field
@@ -511,27 +615,15 @@ class ComputeProjectOrder {
 	 * @param references a list of pairs [A,B] meaning that A references B
 	 * @return an object describing the resulting order
 	 */
+	static <T> VertexOrder<T> computeVertexOrder(SortedSet<T> vertexes, List<T[]> references, Class<T> clazz) {
+		final Digraph<T> g1 = computeGraph(vertexes, references, clazz);
+		return computeVertexOrder(g1, clazz);
+	}
+
 	@SuppressWarnings("unchecked")
-	static <T> VertexOrder<T> computeVertexOrder(SortedSet<? extends T> vertexes, List<? extends T[]> references, Class<T> clazz) {
-
-		// Step 1: Create the graph object.
-		final Digraph<T> g1 = new Digraph<>(clazz);
-		// add vertexes
-		for (T name : vertexes) {
-			g1.addVertex(name);
-		}
-		// add edges
-		for (T[] ref : references) {
-			T p = ref[0];
-			T q = ref[1];
-			// p has a reference to q
-			// therefore create an edge from q to p
-			// to cause q to come before p in eventual result
-			g1.addEdge(q, p);
-		}
-		g1.freeze();
-
-		// Step 2: Create the transposed graph. This time, define the vertexes
+	public static <T> VertexOrder<T> computeVertexOrder(final Digraph<T> g1, Class<T> clazz) {
+		Assert.isNotNull(g1);
+		// Create the transposed graph. This time, define the vertexes
 		// in decreasing order of depth-first finish time in g1
 		// interchange "to" and "from" to reverse edges from g1
 		final Digraph<T> g2 = new Digraph<>(clazz);
@@ -540,19 +632,15 @@ class ComputeProjectOrder {
 		for (T object : resortedVertexes) {
 			g2.addVertex(object);
 		}
-		// add edges
-		for (T[] ref : references) {
-			T p = ref[0];
-			T q = ref[1];
-			// p has a reference to q
-			// therefore create an edge from p to q
-			// N.B. this is the reverse of step 1
-			g2.addEdge(p, q);
+		for (Vertex<T> vertex : g1.vertexList) {
+			for (Vertex<T> adjacent : vertex.adjacent) {
+				// N.B. this is the transposed graph
+				g2.addEdge(adjacent.id, vertex.id);
+			}
 		}
 		g2.freeze();
 
-		// Step 3: Return the vertexes in increasing order of depth-first finish
-		// time in g2
+		// Return the vertexes in increasing order of depth-first finish time in g2
 		List<T> sortedVertexList = g2.idsByDFSFinishTime(true);
 		T[] orderedVertexes = (T[]) Array.newInstance(clazz, sortedVertexList.size());
 		sortedVertexList.toArray(orderedVertexes);
@@ -616,5 +704,63 @@ class ComputeProjectOrder {
 		}
 		Class<?> arrayClass = Array.newInstance(clazz, 0).getClass();
 		return new VertexOrder<>(reducedVertexes, reducedKnots.size() > 0, reducedKnots.toArray((T[][]) Array.newInstance(arrayClass, reducedKnots.size())));
+	}
+
+	public static <T> Digraph<T> computeGraph(Collection<T> vertexes, Collection<T[]> references, Class<T> clazz) {
+		final Digraph<T> g1 = new Digraph<>(clazz);
+		// add vertexes
+		for (T name : vertexes) {
+			g1.addVertex(name);
+		}
+		// add edges
+		for (T[] ref : references) {
+			if (ref.length != 2) {
+				throw new IllegalArgumentException();
+			}
+			T p = ref[0];
+			T q = ref[1];
+			if (p == null || q == null) {
+				throw new IllegalArgumentException();
+			}
+			// p has a reference to q
+			// therefore create an edge from q to p
+			// to cause q to come before p in eventual result
+			g1.addEdge(q, p);
+		}
+		g1.freeze();
+		return g1;
+	}
+
+	/**
+	 * Builds a digraph excluding the nodes that do not match filter, but keeps transitive edges. Ie if A->B->C and B is removed,
+	 * result would be A->C.
+	 *
+	 * This is an expensive operation (worst case is O(v^3) with v number of vertexes, or O(e^2) with e number of edges.
+	 *
+	 * @param initialGraph
+	 * @param filterOut a filter to exclude nodes.
+	 * @param clazz
+	 * @return the filtered graph.
+	 */
+	public static <T> Digraph<T> buildFilteredDigraph(Digraph<T> initialGraph, Predicate<T> filterOut, Class<T> clazz) {
+		Digraph<T> res = new Digraph<>(clazz);
+		Set<Vertex<T>> toRemove = new HashSet<>(); // Make it a TreeSet using depth as comparator?
+		for (Vertex<T> vertex : initialGraph.vertexList) {
+			if (!filterOut.test(vertex.id)) {
+				res.addVertex(vertex.id);
+			} else {
+				toRemove.add(vertex);
+			}
+		}
+		Set<Edge<T>> edges = new HashSet<>(initialGraph.getEdges());
+		for (Vertex<T> vertexToRemove : toRemove) {
+			Set<Edge<T>> incoming = edges.stream().filter(edge -> edge.to == vertexToRemove.id).collect(Collectors.toSet());
+			Set<Edge<T>> outgoing = edges.stream().filter(edge -> edge.from == vertexToRemove.id).collect(Collectors.toSet());
+			edges.removeAll(incoming);
+			edges.removeAll(outgoing);
+			incoming.forEach(incomingEdge -> outgoing.forEach(outgoingEdge -> edges.add(new Edge<>(incomingEdge.from, outgoingEdge.to))));
+		}
+		edges.forEach(edge -> res.addEdge(edge.from, edge.to));
+		return res;
 	}
 }

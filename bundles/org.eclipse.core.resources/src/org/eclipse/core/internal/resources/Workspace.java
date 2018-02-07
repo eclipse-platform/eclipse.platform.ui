@@ -30,6 +30,7 @@ import org.eclipse.core.internal.localstore.FileSystemResourceManager;
 import org.eclipse.core.internal.properties.IPropertyManager;
 import org.eclipse.core.internal.properties.PropertyManager2;
 import org.eclipse.core.internal.refresh.RefreshManager;
+import org.eclipse.core.internal.resources.ComputeProjectOrder.Digraph;
 import org.eclipse.core.internal.resources.ComputeProjectOrder.VertexOrder;
 import org.eclipse.core.internal.utils.*;
 import org.eclipse.core.internal.watson.*;
@@ -91,6 +92,7 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 	protected AliasManager aliasManager;
 	protected BuildManager buildManager;
 	protected volatile IBuildConfiguration[] buildOrder = null;
+	protected volatile Digraph<IBuildConfiguration> buildOrderGraph;
 	protected CharsetManager charsetManager;
 	protected ContentDescriptionManager contentDescriptionManager;
 	/** indicates if the workspace crashed in a previous session */
@@ -444,14 +446,18 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 
 				IStatus result;
 				try {
-
 					// Calculate the build-order having called the pre-build notification (which may change build order)
 					// If configs == EMPTY_BUILD_CONFIG_ARRAY => This is a full workspace build.
 					IBuildConfiguration[] requestedConfigs = configs;
+					Digraph<IBuildConfiguration> buildGraph = null;
 					if (configs == EMPTY_BUILD_CONFIG_ARRAY) {
-						if (trigger != IncrementalProjectBuilder.CLEAN_BUILD)
-							configs = getBuildOrder();
-						else {
+						if (trigger != IncrementalProjectBuilder.CLEAN_BUILD) {
+							if (getDescription().getBuildOrder() != null) {
+								configs = getBuildOrder();
+							} else {
+								buildGraph = getBuildGraph();
+							}
+						} else {
 							// clean all accessible configurations
 							List<IBuildConfiguration> configArr = new ArrayList<>();
 							IProject[] prjs = getRoot().getProjects();
@@ -474,10 +480,12 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 						}
 
 						// Order the referenced project buildConfigs
-						ProjectBuildConfigOrder order = computeProjectBuildConfigOrder(refsList.toArray(new IBuildConfiguration[refsList.size()]));
-						configs = order.buildConfigurations;
+						buildGraph = computeProjectBuildConfigOrderGraph(refsList);
 					}
-
+					if (buildGraph != null) {
+						buildGraph.freeze();
+						configs = ComputeProjectOrder.computeVertexOrder(buildGraph, IBuildConfiguration.class).vertexes;
+					}
 					result = getBuildManager().build(configs, requestedConfigs, trigger, Policy.subMonitorFor(monitor, Policy.opWork));
 				} finally {
 					// Run the POST_BUILD with the WRule held
@@ -676,6 +684,11 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 	 * @return result describing the global active build configuration order
 	 */
 	private VertexOrder<IBuildConfiguration> computeActiveBuildConfigOrder() {
+		Digraph<IBuildConfiguration> activeBuildConfigurationGraph = computeActiveBuildConfigGraph();
+		return ComputeProjectOrder.computeVertexOrder(activeBuildConfigurationGraph, IBuildConfiguration.class);
+	}
+
+	private Digraph<IBuildConfiguration> computeActiveBuildConfigGraph() {
 		// Determine the full set of accessible active project buildConfigs in the workspace,
 		// and all the accessible project buildConfigs that they reference. This forms a set
 		// of all the project buildConfigs that will be returned.
@@ -731,7 +744,7 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 				}
 			}
 		}
-		return ComputeProjectOrder.computeVertexOrder(allAccessibleBuildConfigs, edges, IBuildConfiguration.class);
+		return ComputeProjectOrder.computeGraph(allAccessibleBuildConfigs, edges, IBuildConfiguration.class);
 	}
 
 	/**
@@ -757,8 +770,15 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 	 * </p>
 	 *
 	 * @return result describing the global project build configuration order
+	 * @deprecated Use {@link #computeFullBuildConfigGraph()} instead
 	 */
+	@Deprecated
 	private VertexOrder<IBuildConfiguration> computeFullBuildConfigOrder() {
+		Digraph<IBuildConfiguration> graph = computeFullBuildConfigGraph();
+		return ComputeProjectOrder.computeVertexOrder(graph, IBuildConfiguration.class);
+	}
+
+	private Digraph<IBuildConfiguration> computeFullBuildConfigGraph() {
 		// Compute the order for all accessible project buildConfigs
 		SortedSet<IBuildConfiguration> allAccessibleBuildConfigurations = new TreeSet<>(new BuildConfigurationComparator());
 
@@ -786,7 +806,7 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 				}
 			}
 		}
-		return ComputeProjectOrder.computeVertexOrder(allAccessibleBuildConfigurations, edges, IBuildConfiguration.class);
+		return ComputeProjectOrder.computeGraph(allAccessibleBuildConfigurations, edges, IBuildConfiguration.class);
 	}
 
 	private static ProjectOrder vertexOrderToProjectOrder(VertexOrder<IProject> order) {
@@ -919,6 +939,17 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 
 		// Filter the order and return it
 		return vertexOrderToProjectBuildConfigOrder(ComputeProjectOrder.filterVertexOrder(fullBuildConfigOrder, filter, IBuildConfiguration.class));
+	}
+
+	private Digraph<IBuildConfiguration> computeProjectBuildConfigOrderGraph(Collection<IBuildConfiguration> buildConfigs) {
+		Digraph<IBuildConfiguration> fullBuildConfigOrder = computeFullBuildConfigGraph();
+
+		// Create a filter to remove all project buildConfigs that are not in the list asked for
+		final Set<IBuildConfiguration> projectConfigSet = new HashSet<>(buildConfigs);
+		Predicate<IBuildConfiguration> filter = vertex -> !projectConfigSet.contains(vertex);
+
+		// Filter the order and return it
+		return ComputeProjectOrder.buildFilteredDigraph(fullBuildConfigOrder, filter, IBuildConfiguration.class);
 	}
 
 	@Override
@@ -1464,6 +1495,7 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 	 */
 	protected void flushBuildOrder() {
 		buildOrder = null;
+		buildOrderGraph = null;
 	}
 
 	@Override
@@ -1534,12 +1566,30 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 			IBuildConfiguration[] bo = new IBuildConfiguration[configs.size()];
 			configs.toArray(bo);
 			this.buildOrder = bo;
-		} else
+		} else {
 			// use default project build order
 			// computed for all accessible projects in workspace
-			buildOrder = vertexOrderToProjectBuildConfigOrder(computeActiveBuildConfigOrder()).buildConfigurations;
+			Digraph<IBuildConfiguration> buildGraph = getBuildGraph();
+			buildOrder = vertexOrderToProjectBuildConfigOrder(ComputeProjectOrder.computeVertexOrder(buildGraph, IBuildConfiguration.class)).buildConfigurations;
+		}
 
 		return buildOrder;
+	}
+
+	/**
+	 *
+	 * @return the build graph, or null if a build order has been specified (in which case, use {@link #getBuildOrder()} directly
+	 */
+	private Digraph<IBuildConfiguration> getBuildGraph() {
+		if (buildOrderGraph != null) {
+			return buildOrderGraph;
+		}
+		String[] order = description.getBuildOrder(false);
+		if (order != null) {
+			return null;
+		}
+		buildOrderGraph = computeActiveBuildConfigGraph();
+		return buildOrderGraph;
 	}
 
 	public CharsetManager getCharsetManager() {
@@ -2285,8 +2335,9 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 		// Otherwise, set the slot to null to force recomputing or building from the description.
 		WorkspaceDescription newDescription = (WorkspaceDescription) value;
 		String[] newOrder = newDescription.getBuildOrder(false);
-		if (description.getBuildOrder(false) != null || newOrder != null)
-			buildOrder = null;
+		if (description.getBuildOrder(false) != null || newOrder != null) {
+			flushBuildOrder();
+		}
 		description.copyFrom(newDescription);
 		ResourcesPlugin.getPlugin().savePluginPreferences();
 	}
