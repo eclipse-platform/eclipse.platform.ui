@@ -6,7 +6,9 @@ Thanks for your interest in this project.
 Project description:
 --------------------
 
-Platform UI provides the basic building blocks for user interfaces built with Eclipse. Some of these form the Eclipse Rich Client Platform (RCP) and can be used for arbitrary rich client applications, while others are specific to the Eclipse IDE. The Platform UI codebase is built on top of the Eclipse Standard Widget Toolkit (SWT), which is developed as an independent project.
+Platform UI provides the basic building blocks for user interfaces built with Eclipse. 
+
+Some of these form the Eclipse Rich Client Platform (RCP) and can be used for arbitrary rich client applications, while others are specific to the Eclipse IDE. The Platform UI codebase is built on top of the Eclipse Standard Widget Toolkit (SWT), which is developed as an independent project.
 
 Website: <http://www.eclipse.org/platform/ui/>
 
@@ -19,6 +21,19 @@ How to contribute:
 Contributions to Platform UI are most welcome. There are many ways to contribute,
 from entering high quality bug reports, to contributing code or documentation changes.
 For a complete guide, see the [Platform UI - How to contribute wiki page][2] page on the team wiki.
+
+Test dependencies
+-----------------
+
+Several test plug-ins have a dependency to the Mockito and Hamcrest library.
+Please install them from the [Orbit Download page][3]
+
+Currently the following versions are required:
+
+- org.hamcrest;bundle-version="1.1.0",
+- org.mockito;bundle-version="1.8.4",
+
+
 
 How to build on the command line
 --------------------------------
@@ -68,8 +83,9 @@ Contact the project developers via the project's "dev" list.
 License
 -------
 
-[Eclipse Public License (EPL) v1.0][3]
+[Eclipse Public License (EPL) v1.0][4]
 
 [1]: http://wiki.eclipse.org/Platform_UI
 [2]: https://wiki.eclipse.org/Platform_UI/How_to_Contribute
+[3]: http://download.eclipse.org/tools/orbit/downloads/
 [3]: http://wiki.eclipse.org/EPL
