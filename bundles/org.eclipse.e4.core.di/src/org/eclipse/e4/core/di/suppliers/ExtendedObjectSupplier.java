@@ -28,7 +28,7 @@ import org.osgi.framework.BundleContext;
  * 
  * @see IRequestor#resolveArguments(boolean)
  * @see IRequestor#execute()
- * @since 1.7.0
+ * @since 1.7
  */
 abstract public class ExtendedObjectSupplier {
 

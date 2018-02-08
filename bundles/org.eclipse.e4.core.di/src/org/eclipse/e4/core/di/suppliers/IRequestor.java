@@ -27,7 +27,7 @@ import org.eclipse.e4.core.di.InjectionException;
  * 
  * @noimplement This interface is not intended to be implemented by clients.
  * @noextend This interface is not intended to be extended by clients.
- * @since 1.7.0
+ * @since 1.7
  */
 public interface IRequestor {
 

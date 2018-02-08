@@ -26,7 +26,7 @@ import java.lang.ref.WeakReference;
  * 
  * @see IRequestor#resolveArguments(boolean)
  * @see IRequestor#execute()
- * @since 1.7.0
+ * @since 1.7
  */
 abstract public class PrimaryObjectSupplier {
 
