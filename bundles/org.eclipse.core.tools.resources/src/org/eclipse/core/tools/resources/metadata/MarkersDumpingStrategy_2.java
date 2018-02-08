@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2015 IBM Corporation and others.
+ * Copyright (c) 2002, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -82,7 +82,7 @@ public class MarkersDumpingStrategy_2 implements IStringDumpingStrategy {
 			Object value = null;
 			switch (type) {
 				case MarkersDumper.ATTRIBUTE_INTEGER :
-					value = new Integer(input.readInt());
+					value = Integer.valueOf(input.readInt());
 					break;
 				case MarkersDumper.ATTRIBUTE_BOOLEAN :
 					value = input.readBoolean() ? Boolean.TRUE : Boolean.FALSE;
