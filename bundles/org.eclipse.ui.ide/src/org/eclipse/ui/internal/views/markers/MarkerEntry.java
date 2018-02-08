@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Andrey Loskutov <loskutov@gmx.de> - generified interface, bug 461762
+ *     Patrik Suzzi <psuzzi@itemis.com> - bug 530702
  *******************************************************************************/
 
 package org.eclipse.ui.internal.views.markers;
@@ -21,8 +22,11 @@ import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IAdapterFactory;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.ui.internal.ide.Policy;
+import org.eclipse.ui.internal.ide.model.WorkbenchMarker;
+import org.eclipse.ui.model.IWorkbenchAdapter;
 import org.eclipse.ui.views.markers.MarkerViewUtil;
 import org.eclipse.ui.views.markers.internal.MarkerMessages;
 import org.eclipse.ui.views.markers.internal.MarkerTypesModel;
@@ -89,6 +93,26 @@ class MarkerEntry extends MarkerSupportItem implements IAdaptable {
 	public <T> T getAdapter(Class<T> adapter) {
 		if (adapter.equals(IMarker.class)) {
 			return adapter.cast(marker);
+		}
+		if (adapter.equals(IWorkbenchAdapter.class)) {
+			return adapter.cast(new WorkbenchMarker() {
+
+				@Override
+				public Object getParent(Object o) {
+					return super.getParent(marker);
+				}
+
+				@Override
+				public String getLabel(Object o) {
+					return getMarkerTypeName();
+				}
+
+				@Override
+				public ImageDescriptor getImageDescriptor(Object object) {
+					return super.getImageDescriptor(marker);
+				}
+
+			});
 		}
 		return null;
 	}
