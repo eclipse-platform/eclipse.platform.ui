@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2017 IBM Corporation and others.
+ * Copyright (c) 2000, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,7 +10,7 @@
  *     Andreas Buchen <andreas.buchen@sap.com> - Bug 206584
  *     Lars Vogel <Lars.Vogel@gmail.com> - Bug 440810, 440975, 431862
  *     Andrey Loskutov <loskutov@gmx.de> - Bug 445538
- *     Patrik Suzzi <psuzzi@gmail.com> - Bug 487570, 494289
+ *     Patrik Suzzi <psuzzi@itemis.com> - Bug 487570, 494289, 529885
  *     Kaloyan Raev <kaloyan.r@zend.com> - Bug 322002
  *******************************************************************************/
 package org.eclipse.ui.internal.ide;
@@ -483,6 +483,12 @@ public final class WorkbenchActionBuilder extends ActionBarAdvisor {
         }
 
         menu.add(new GroupMarker(IWorkbenchActionConstants.NEW_EXT));
+
+		MenuManager recent = new MenuManager(WorkbenchMessages.OpenRecentDocuments_text);
+		recent.add(ContributionItemFactory.REOPEN_EDITORS.create(getWindow()));
+		recent.add(new GroupMarker(IWorkbenchActionConstants.MRU));
+		menu.add(recent);
+
         menu.add(new Separator());
 
         menu.add(closeAction);
@@ -514,8 +520,6 @@ public final class WorkbenchActionBuilder extends ActionBarAdvisor {
         menu.add(new Separator());
         menu.add(getPropertiesItem());
 
-        menu.add(ContributionItemFactory.REOPEN_EDITORS.create(getWindow()));
-        menu.add(new GroupMarker(IWorkbenchActionConstants.MRU));
         menu.add(new Separator());
 
 		menu.add(openWorkspaceAction);

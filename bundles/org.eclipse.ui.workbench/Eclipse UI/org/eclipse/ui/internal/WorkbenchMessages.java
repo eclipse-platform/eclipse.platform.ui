@@ -14,7 +14,7 @@
  * 		Implemented workbench auto-save to correctly restore state in case of crash.
  * Andrey Loskutov <loskutov@gmx.de> - Bug 388476, 445538, 463262
  * Alain Bernard <alain.bernard1224@gmail.com> - Bug 281490
- * Patrik Suzzi <psuzzi@gmail.com> - Bug 491785, 368977, 501811, 511198
+ * Patrik Suzzi <psuzzi@itemis.com> - Bug 491785, 368977, 501811, 511198, 529885
  * Kaloyan Raev <kaloyan.r@zend.com> - Bug 322002
  * Lucas Bullen (Red Hat Inc.) - Bug 500051, 530654
  *******************************************************************************/
@@ -113,7 +113,7 @@ public class WorkbenchMessages extends NLS {
 	public static String ImportResourcesAction_text;
 	public static String ImportResourcesAction_toolTip;
 
-
+	public static String OpenRecentDocuments_text;
 	public static String OpenRecent_errorTitle;
 	public static String OpenRecent_unableToOpen;
 	public static String Exit_text;

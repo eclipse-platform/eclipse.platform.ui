@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2016 IBM Corporation and others.
+ * Copyright (c) 2000, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,6 +14,7 @@
  *     Denis Zygann <d.zygann@web.de> - Bug 330453
  *     Axel Richard <axel.richard@obeo.fr> - Bug 486644
  *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 146205
+ *     Patrik Suzzi <psuzzi@itemis.com> - Bug 529885
  *******************************************************************************/
 package org.eclipse.ui.internal;
 
@@ -61,7 +62,7 @@ public class WorkbenchPreferenceInitializer extends AbstractPreferenceInitialize
 		node.putBoolean(IPreferenceConstants.OPEN_ON_SINGLE_CLICK, false);
 		node.putBoolean(IPreferenceConstants.SELECT_ON_HOVER, false);
 		node.putBoolean(IPreferenceConstants.OPEN_AFTER_DELAY, false);
-		node.putInt(IPreferenceConstants.RECENT_FILES, 4);
+		node.putInt(IPreferenceConstants.RECENT_FILES, 10);
 
 		// FIXME this does not actually set the default since it is the wrong
 		// node. It works because the default-default is false.
