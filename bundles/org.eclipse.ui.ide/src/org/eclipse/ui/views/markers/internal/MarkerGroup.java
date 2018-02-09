@@ -15,9 +15,12 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.runtime.CoreException;
@@ -239,10 +242,9 @@ public class MarkerGroup {
 			}
 
 			try {
-				return (findGroupValue(item2.getMarker().getType(),
-						item2.getMarker()).getPriority() - findGroupValue(
-						item1.getMarker().getType(), item1.getMarker())
-						.getPriority());
+				MarkerGroupingEntry groupValue2 = findGroupValue(item2.getMarker().getType(), item2.getMarker());
+				MarkerGroupingEntry groupValue1 = findGroupValue(item1.getMarker().getType(), item1.getMarker());
+				return (groupValue2.getPriority() - groupValue1.getPriority());
 
 			} catch (CoreException exception) {
 				Policy.handle(exception);
@@ -264,7 +266,7 @@ public class MarkerGroup {
 
 	protected MarkerField markerField;
 
-	private Map<String, Collection<EntryMapping>> typesToMappings = new HashMap<>();
+	private Map<String, Set<EntryMapping>> typesToMappings = new LinkedHashMap<>();
 
 	private IConfigurationElement configurationElement;
 
@@ -356,9 +358,9 @@ public class MarkerGroup {
 	 */
 	private void addEntry(String markerType, EntryMapping entry) {
 		for (MarkerType type : getMarkerTypes(markerType)) {
-			Collection<EntryMapping> entries = typesToMappings.get(markerType);
+			Set<EntryMapping> entries = typesToMappings.get(markerType);
 			if (entries == null) {
-				entries = new HashSet<>();
+				entries = new LinkedHashSet<>();
 			}
 			entries.add(entry);
 			typesToMappings.put(type.getId(), entries);
@@ -457,7 +459,7 @@ public class MarkerGroup {
 	 */
 	private MarkerType[] getMarkerTypes(String markerType) {
 		MarkerTypesModel model = MarkerTypesModel.getInstance();
-		Collection<MarkerType> types = new HashSet<>();
+		Collection<MarkerType> types = new LinkedHashSet<>();
 
 		MarkerType type = model.getType(markerType);
 		if (type != null) {
@@ -506,10 +508,10 @@ public class MarkerGroup {
 	 * @param entry
 	 */
 	public void remove(MarkerGroupingEntry entry) {
-		Iterator<Collection<EntryMapping>> entries = typesToMappings.values().iterator();
-		Collection<EntryMapping> removeCollection = new ArrayList<>();
+		Iterator<Set<EntryMapping>> entries = typesToMappings.values().iterator();
+		List<EntryMapping> removeCollection = new ArrayList<>();
 		while (entries.hasNext()) {
-			Collection<EntryMapping> mappings = entries.next();
+			Set<EntryMapping> mappings = entries.next();
 			Iterator<EntryMapping> mappingsIterator = mappings.iterator();
 			while (mappingsIterator.hasNext()) {
 				EntryMapping next = mappingsIterator.next();

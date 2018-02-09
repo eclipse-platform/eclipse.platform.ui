@@ -43,13 +43,13 @@ class Markers {
 	static final MarkerEntry[] EMPTY_ENTRY_ARRAY = new MarkerEntry[0];
 
 	// the marker entries
-	private MarkerEntry[] markerEntryArray = EMPTY_ENTRY_ARRAY;
+	private volatile MarkerEntry[] markerEntryArray = EMPTY_ENTRY_ARRAY;
 	// the categories
-	private MarkerCategory[] categories = EMPTY_CATEGORY_ARRAY;
+	private volatile MarkerCategory[] categories = EMPTY_CATEGORY_ARRAY;
 
 	private CachedMarkerBuilder builder;
 
-	private boolean inChange;
+	private volatile boolean inChange;
 
 	// markerToEntryMap is a lazily created map from the markers to thier
 	// corresponding entry
@@ -58,7 +58,6 @@ class Markers {
 
 	Markers(CachedMarkerBuilder builder) {
 		this.builder = builder;
-		inChange = false;
 	}
 
 	/**
@@ -88,8 +87,9 @@ class Markers {
 			if (monitor.isCanceled()) {
 				return false;
 			}
-			markerEntryArray = new MarkerEntry[markerEntries.size()];
-			markerEntries.toArray(markerEntryArray);
+			MarkerEntry[] markerArray = new MarkerEntry[markerEntries.size()];
+			markerEntries.toArray(markerArray);
+			markerEntryArray = markerArray;
 			if (sortAndGroup) {
 				if (monitor.isCanceled()) {
 					return false;
@@ -113,7 +113,7 @@ class Markers {
 	 *
 	 * @param monitor
 	 */
-	synchronized boolean sortAndMakeCategories(IProgressMonitor monitor) {
+	private synchronized boolean sortAndMakeCategories(IProgressMonitor monitor) {
 		boolean initialVal = inChange;
 		try {
 			inChange = true;
@@ -205,7 +205,7 @@ class Markers {
 	 * @param newMarkers
 	 * @return MarkerCategory
 	 */
-	MarkerCategory[] groupIntoCategories(IProgressMonitor monitor, MarkerEntry[] newMarkers) {
+	private MarkerCategory[] groupIntoCategories(IProgressMonitor monitor, MarkerEntry[] newMarkers) {
 		Map<MarkerGroupingEntry, Integer> boundaryInfoMap = groupMarkerEntries(newMarkers,
 				builder.getCategoryGroup(), newMarkers.length - 1, monitor);
 		int start = 0;
@@ -375,8 +375,8 @@ class Markers {
 	Markers getClone() {
 		Markers markers = new Markers(builder);
 		if (!inChange) {
-			markers.markerEntryArray = markerEntryArray;
-			markers.categories = categories;
+			markers.markerEntryArray = markerEntryArray.clone();
+			markers.categories = categories.clone();
 		}
 		return markers;
 	}

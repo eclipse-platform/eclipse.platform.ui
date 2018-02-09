@@ -104,12 +104,11 @@ class MarkerComparator implements Comparator<MarkerItem> {
 	public int compareFields(MarkerItem item0, MarkerItem item1) {
 		int value = 0;
 		for (MarkerField field : fields) {
-			if (descendingFields.contains(field)) {
-				value = field.compare(item1, item0);
-			} else {
-				value = field.compare(item0, item1);
-			}
+			value = field.compare(item0, item1);
 			if (value != 0) {
+				if (descendingFields.contains(field)) {
+					value = -value;
+				}
 				break;
 			}
 		}

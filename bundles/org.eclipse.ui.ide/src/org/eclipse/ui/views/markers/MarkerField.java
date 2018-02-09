@@ -260,4 +260,8 @@ public abstract class MarkerField {
 		cell.setImage(null);
 	}
 
+	@Override
+	public String toString() {
+		return getName() + " (" + getClass().getName() + ')'; //$NON-NLS-1$
+	}
 }
