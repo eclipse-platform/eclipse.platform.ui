@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2017 IBM Corporation and others.
+ * Copyright (c) 2004, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -77,12 +77,12 @@ public final class BindingManager extends HandleObjectManager implements
 	/**
 	 * Returned for optimized lookup.
 	 */
-	private static final TriggerSequence[] EMPTY_TRIGGER_SEQUENCE = new TriggerSequence[0];
+	private static TriggerSequence[] EMPTY_TRIGGER_SEQUENCE = new TriggerSequence[0];
 
 	/**
 	 * The separator character used in locales.
 	 */
-	private static final String LOCALE_SEPARATOR = "_"; //$NON-NLS-1$
+	private static String LOCALE_SEPARATOR = "_"; //$NON-NLS-1$
 
 	private Map currentConflicts = null;
 
@@ -103,7 +103,7 @@ public final class BindingManager extends HandleObjectManager implements
 	 * @param value
 	 *            The value to look up in the map; may be <code>null</code>.
 	 */
-	private static final void addReverseLookup(final Map map, final Object key,
+	private static void addReverseLookup(final Map map, final Object key,
 			final Object value) {
 		if (map == null) {
 			return;
@@ -140,7 +140,7 @@ public final class BindingManager extends HandleObjectManager implements
 	 *         <code>string</code>) to the least specific (i.e.,
 	 *         <code>null</code>).
 	 */
-	private static final String[] expand(String string, final String separator) {
+	private static String[] expand(String string, final String separator) {
 		// Test for boundary conditions.
 		if (string == null || separator == null) {
 			return new String[0];
@@ -321,7 +321,7 @@ public final class BindingManager extends HandleObjectManager implements
 	 * @param binding
 	 *            The binding to be added; must not be <code>null</code>.
 	 */
-	public final void addBinding(final Binding binding) {
+	public void addBinding(final Binding binding) {
 		if (binding == null) {
 			throw new NullPointerException("Cannot add a null binding"); //$NON-NLS-1$
 		}
@@ -350,7 +350,7 @@ public final class BindingManager extends HandleObjectManager implements
 	 * @param listener
 	 *            The listener to attach; must not be <code>null</code>.
 	 */
-	public final void addBindingManagerListener(
+	public void addBindingManagerListener(
 			final IBindingManagerListener listener) {
 		addListenerObject(listener);
 	}
@@ -683,7 +683,7 @@ public final class BindingManager extends HandleObjectManager implements
 	 * </p>
 	 */
 	@Override
-	public final void contextManagerChanged(
+	public void contextManagerChanged(
 			final ContextManagerEvent contextManagerEvent) {
 		if (contextManagerEvent.isActiveContextsChanged()) {
 // clearSolution();
@@ -963,7 +963,7 @@ public final class BindingManager extends HandleObjectManager implements
 	 *         <code>Collection</code> containing <code>Binding</code>).
 	 *         This map may be empty, but it is never <code>null</code>.
 	 */
-	public final Map getActiveBindingsDisregardingContext() {
+	public Map getActiveBindingsDisregardingContext() {
 		if (bindings == null) {
 			// Not yet initialized. This is happening too early. Do nothing.
 			return Collections.EMPTY_MAP;
@@ -1088,7 +1088,7 @@ public final class BindingManager extends HandleObjectManager implements
 	 *         in any fashion. This collection may be empty, but it is never
 	 *         <code>null</code>.
 	 */
-	public final Collection getActiveBindingsDisregardingContextFlat() {
+	public Collection getActiveBindingsDisregardingContextFlat() {
 		final Collection bindingCollections = getActiveBindingsDisregardingContext()
 				.values();
 		final Collection mergedBindings = new ArrayList();
@@ -1124,7 +1124,7 @@ public final class BindingManager extends HandleObjectManager implements
 	 *         never be <code>null</code>, but it may be empty.
 	 * @since 3.2
 	 */
-	public final TriggerSequence[] getActiveBindingsDisregardingContextFor(
+	public TriggerSequence[] getActiveBindingsDisregardingContextFor(
 			final ParameterizedCommand parameterizedCommand) {
 		final Object object = getActiveBindingsDisregardingContextByParameterizedCommand()
 				.get(parameterizedCommand);
@@ -1155,7 +1155,7 @@ public final class BindingManager extends HandleObjectManager implements
 	 *         for a particular command identifier. This value is guaranteed to
 	 *         never be <code>null</code>, but it may be empty.
 	 */
-	public final TriggerSequence[] getActiveBindingsFor(
+	public TriggerSequence[] getActiveBindingsFor(
 			final ParameterizedCommand parameterizedCommand) {
 		final Object object = getActiveBindingsByParameterizedCommand().get(
 				parameterizedCommand);
@@ -1187,7 +1187,7 @@ public final class BindingManager extends HandleObjectManager implements
 	 *         for a particular command identifier. This value is guaranteed not
 	 *         to be <code>null</code>, but it may be empty.
 	 */
-	public final TriggerSequence[] getActiveBindingsFor(final String commandId) {
+	public TriggerSequence[] getActiveBindingsFor(final String commandId) {
 		final ParameterizedCommand parameterizedCommand = new ParameterizedCommand(
 				commandManager.getCommand(commandId), null);
 		return getActiveBindingsFor(parameterizedCommand);
@@ -1238,7 +1238,7 @@ public final class BindingManager extends HandleObjectManager implements
 	 *         active scheme. If a scheme is returned, it is guaranteed to be
 	 *         defined.
 	 */
-	public final Scheme getActiveScheme() {
+	public Scheme getActiveScheme() {
 		return activeScheme;
 	}
 
@@ -1260,7 +1260,7 @@ public final class BindingManager extends HandleObjectManager implements
 	 *         command.
 	 * @since 3.2
 	 */
-	public final TriggerSequence getBestActiveBindingFor(final String commandId) {
+	public TriggerSequence getBestActiveBindingFor(final String commandId) {
 		return getBestActiveBindingFor(new ParameterizedCommand(commandManager.getCommand(commandId), null));
 	}
 
@@ -1270,7 +1270,7 @@ public final class BindingManager extends HandleObjectManager implements
 	 * 		a trigger sequence, or <code>null</code>
 	 * @since 3.4
 	 */
-	public final TriggerSequence getBestActiveBindingFor(final ParameterizedCommand command) {
+	public TriggerSequence getBestActiveBindingFor(final ParameterizedCommand command) {
 		final Binding[] bindings = getActiveBindingsFor1(command);
 		if ((bindings == null) || (bindings.length == 0)) {
 			return null;
@@ -1379,7 +1379,7 @@ public final class BindingManager extends HandleObjectManager implements
 	 *         command.
 	 * @since 3.2
 	 */
-	public final String getBestActiveBindingFormattedFor(final String commandId) {
+	public String getBestActiveBindingFormattedFor(final String commandId) {
 		final TriggerSequence binding = getBestActiveBindingFor(commandId);
 		if (binding != null) {
 			return binding.format();
@@ -1398,7 +1398,7 @@ public final class BindingManager extends HandleObjectManager implements
 	 * @return The array of all bindings. This value may be <code>null</code>
 	 *         and it may be empty.
 	 */
-	public final Binding[] getBindings() {
+	public Binding[] getBindings() {
 		if (bindings == null) {
 			return null;
 		}
@@ -1419,7 +1419,7 @@ public final class BindingManager extends HandleObjectManager implements
 	 * @return The array of defined schemes; this value may be empty or
 	 *         <code>null</code>.
 	 */
-	public final Scheme[] getDefinedSchemes() {
+	public Scheme[] getDefinedSchemes() {
 		return (Scheme[]) definedHandleObjects
 				.toArray(new Scheme[definedHandleObjects.size()]);
 	}
@@ -1435,7 +1435,7 @@ public final class BindingManager extends HandleObjectManager implements
 	 *
 	 * @return The active locale; never <code>null</code>.
 	 */
-	public final String getLocale() {
+	public String getLocale() {
 		return locale;
 	}
 
@@ -1455,7 +1455,7 @@ public final class BindingManager extends HandleObjectManager implements
 	 * @return A map of triggers (<code>TriggerSequence</code>) to bindings (<code>Binding</code>).
 	 *         This map may be empty, but it is never <code>null</code>.
 	 */
-	public final Map getPartialMatches(final TriggerSequence trigger) {
+	public Map getPartialMatches(final TriggerSequence trigger) {
 		final Map partialMatches = (Map) getPrefixTable().get(trigger);
 		if (partialMatches == null) {
 			return Collections.EMPTY_MAP;
@@ -1479,7 +1479,7 @@ public final class BindingManager extends HandleObjectManager implements
 	 *            The trigger to match; may be <code>null</code>.
 	 * @return The binding that matches, if any; <code>null</code> otherwise.
 	 */
-	public final Binding getPerfectMatch(final TriggerSequence trigger) {
+	public Binding getPerfectMatch(final TriggerSequence trigger) {
 		return (Binding) getActiveBindings().get(trigger);
 	}
 
@@ -1494,7 +1494,7 @@ public final class BindingManager extends HandleObjectManager implements
 	 *
 	 * @return The active platform; never <code>null</code>.
 	 */
-	public final String getPlatform() {
+	public String getPlatform() {
 		return platform;
 	}
 
@@ -1537,7 +1537,7 @@ public final class BindingManager extends HandleObjectManager implements
 	 *            <code>null</code>.
 	 * @return A scheme with the given identifier.
 	 */
-	public final Scheme getScheme(final String schemeId) {
+	public Scheme getScheme(final String schemeId) {
 		checkId(schemeId);
 
 		Scheme scheme = (Scheme) handleObjectsById.get(schemeId);
@@ -1600,7 +1600,7 @@ public final class BindingManager extends HandleObjectManager implements
 	 * @return <code>true</code> if the trigger can be found in the active
 	 *         bindings; <code>false</code> otherwise.
 	 */
-	public final boolean isPartialMatch(final TriggerSequence trigger) {
+	public boolean isPartialMatch(final TriggerSequence trigger) {
 		return (getPrefixTable().get(trigger) != null);
 	}
 
@@ -1621,7 +1621,7 @@ public final class BindingManager extends HandleObjectManager implements
 	 * @return <code>true</code> if the trigger can be found in the active
 	 *         bindings; <code>false</code> otherwise.
 	 */
-	public final boolean isPerfectMatch(final TriggerSequence trigger) {
+	public boolean isPerfectMatch(final TriggerSequence trigger) {
 		return getActiveBindings().containsKey(trigger);
 	}
 
@@ -1782,7 +1782,7 @@ public final class BindingManager extends HandleObjectManager implements
 	 *            The binding to be removed; must not be <code>null</code>.
 	 * @since 3.2
 	 */
-	public final void removeBinding(final Binding binding) {
+	public void removeBinding(final Binding binding) {
 		if (bindings == null || bindings.length < 1) {
 			return;
 		}
@@ -1817,7 +1817,7 @@ public final class BindingManager extends HandleObjectManager implements
 	 * @param listener
 	 *            The listener to be removed; must not be <code>null</code>.
 	 */
-	public final void removeBindingManagerListener(
+	public void removeBindingManagerListener(
 			final IBindingManagerListener listener) {
 		removeListenerObject(listener);
 	}
@@ -1849,7 +1849,7 @@ public final class BindingManager extends HandleObjectManager implements
 	 *            The type to look for.
 	 *
 	 */
-	public final void removeBindings(final TriggerSequence sequence,
+	public void removeBindings(final TriggerSequence sequence,
 			final String schemeId, final String contextId, final String locale,
 			final String platform, final String windowManager, final int type) {
 		if ((bindings == null) || (bindingCount < 1)) {
@@ -2117,7 +2117,7 @@ public final class BindingManager extends HandleObjectManager implements
 	 *            An event describing the change in the scheme.
 	 */
 	@Override
-	public final void schemeChanged(final SchemeEvent schemeEvent) {
+	public void schemeChanged(final SchemeEvent schemeEvent) {
 		if (schemeEvent.isDefinedChanged()) {
 			final Scheme scheme = schemeEvent.getScheme();
 			final boolean schemeIdAdded = scheme.isDefined();
@@ -2227,7 +2227,7 @@ public final class BindingManager extends HandleObjectManager implements
 	 * @throws NotDefinedException
 	 *             If the given scheme is currently undefined.
 	 */
-	public final void setActiveScheme(final Scheme scheme)
+	public void setActiveScheme(final Scheme scheme)
 			throws NotDefinedException {
 		if (scheme == null) {
 			throw new NullPointerException("Cannot activate a null scheme"); //$NON-NLS-1$
@@ -2267,7 +2267,7 @@ public final class BindingManager extends HandleObjectManager implements
 	 *            The new array of bindings; may be <code>null</code>. This
 	 *            set is copied into a local data structure.
 	 */
-	public final void setBindings(Binding[] bindings) {
+	public void setBindings(Binding[] bindings) {
 		if (bindings != null) {
 			// discard bindings not applicable for this platform
 			List newList = new ArrayList();
@@ -2311,7 +2311,7 @@ public final class BindingManager extends HandleObjectManager implements
 	 *            The new locale; must not be <code>null</code>.
 	 * @see Locale#getDefault()
 	 */
-	public final void setLocale(final String locale) {
+	public void setLocale(final String locale) {
 		if (locale == null) {
 			throw new NullPointerException("The locale cannot be null"); //$NON-NLS-1$
 		}
@@ -2342,7 +2342,7 @@ public final class BindingManager extends HandleObjectManager implements
 	 * @see org.eclipse.swt.SWT#getPlatform()
 	 * @see Util#getWS()
 	 */
-	public final void setPlatform(final String platform) {
+	public void setPlatform(final String platform) {
 		if (platform == null) {
 			throw new NullPointerException("The platform cannot be null"); //$NON-NLS-1$
 		}

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2013 Angelo Zerr and others.
+ * Copyright (c) 2008, 2018 Angelo Zerr and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -32,7 +32,7 @@ public interface ICSSPropertyBorderHandler extends ICSSPropertyHandler {
 	 * @param engine
 	 * @throws Exception
 	 */
-	public void applyCSSPropertyBorder(Object element, CSSValue value,
+	void applyCSSPropertyBorder(Object element, CSSValue value,
 			String pseudo, CSSEngine engine) throws Exception;
 
 	/**
@@ -46,7 +46,7 @@ public interface ICSSPropertyBorderHandler extends ICSSPropertyHandler {
 	 * @param engine
 	 * @throws Exception
 	 */
-	public void applyCSSPropertyBorderBottom(Object element, CSSValue value,
+	void applyCSSPropertyBorderBottom(Object element, CSSValue value,
 			String pseudo, CSSEngine engine) throws Exception;
 
 	/**
@@ -58,7 +58,7 @@ public interface ICSSPropertyBorderHandler extends ICSSPropertyHandler {
 	 * @param engine
 	 * @throws Exception
 	 */
-	public void applyCSSPropertyBorderBottomColor(Object element,
+	void applyCSSPropertyBorderBottomColor(Object element,
 			CSSValue value, String pseudo, CSSEngine engine) throws Exception;
 
 	/**
@@ -70,7 +70,7 @@ public interface ICSSPropertyBorderHandler extends ICSSPropertyHandler {
 	 * @param engine
 	 * @throws Exception
 	 */
-	public void applyCSSPropertyBorderBottomStyle(Object element,
+	void applyCSSPropertyBorderBottomStyle(Object element,
 			CSSValue value, String pseudo, CSSEngine engine) throws Exception;
 
 	/**
@@ -83,7 +83,7 @@ public interface ICSSPropertyBorderHandler extends ICSSPropertyHandler {
 	 * @param engine
 	 * @throws Exception
 	 */
-	public void applyCSSPropertyBorderBottomWidth(Object element,
+	void applyCSSPropertyBorderBottomWidth(Object element,
 			CSSValue value, String pseudo, CSSEngine engine) throws Exception;
 
 	/**
@@ -96,7 +96,7 @@ public interface ICSSPropertyBorderHandler extends ICSSPropertyHandler {
 	 * @param engine
 	 * @throws Exception
 	 */
-	public void applyCSSPropertyBorderColor(Object element, CSSValue value,
+	void applyCSSPropertyBorderColor(Object element, CSSValue value,
 			String pseudo, CSSEngine engine) throws Exception;
 
 	/**
@@ -110,7 +110,7 @@ public interface ICSSPropertyBorderHandler extends ICSSPropertyHandler {
 	 * @param engine
 	 * @throws Exception
 	 */
-	public void applyCSSPropertyBorderLeft(Object element, CSSValue value,
+	void applyCSSPropertyBorderLeft(Object element, CSSValue value,
 			String pseudo, CSSEngine engine) throws Exception;
 
 	/**
@@ -122,7 +122,7 @@ public interface ICSSPropertyBorderHandler extends ICSSPropertyHandler {
 	 * @param engine
 	 * @throws Exception
 	 */
-	public void applyCSSPropertyBorderLeftColor(Object element, CSSValue value,
+	void applyCSSPropertyBorderLeftColor(Object element, CSSValue value,
 			String pseudo, CSSEngine engine) throws Exception;
 
 	/**
@@ -134,7 +134,7 @@ public interface ICSSPropertyBorderHandler extends ICSSPropertyHandler {
 	 * @param engine
 	 * @throws Exception
 	 */
-	public void applyCSSPropertyBorderLeftStyle(Object element, CSSValue value,
+	void applyCSSPropertyBorderLeftStyle(Object element, CSSValue value,
 			String pseudo, CSSEngine engine) throws Exception;
 
 	/**
@@ -147,7 +147,7 @@ public interface ICSSPropertyBorderHandler extends ICSSPropertyHandler {
 	 * @param engine
 	 * @throws Exception
 	 */
-	public void applyCSSPropertyBorderLeftWidth(Object element, CSSValue value,
+	void applyCSSPropertyBorderLeftWidth(Object element, CSSValue value,
 			String pseudo, CSSEngine engine) throws Exception;
 
 	/**
@@ -161,7 +161,7 @@ public interface ICSSPropertyBorderHandler extends ICSSPropertyHandler {
 	 * @param engine
 	 * @throws Exception
 	 */
-	public void applyCSSPropertyBorderRight(Object element, CSSValue value,
+	void applyCSSPropertyBorderRight(Object element, CSSValue value,
 			String pseudo, CSSEngine engine) throws Exception;
 
 	/**
@@ -173,7 +173,7 @@ public interface ICSSPropertyBorderHandler extends ICSSPropertyHandler {
 	 * @param engine
 	 * @throws Exception
 	 */
-	public void applyCSSPropertyBorderRightColor(Object element,
+	void applyCSSPropertyBorderRightColor(Object element,
 			CSSValue value, String pseudo, CSSEngine engine) throws Exception;
 
 	/**
@@ -185,7 +185,7 @@ public interface ICSSPropertyBorderHandler extends ICSSPropertyHandler {
 	 * @param engine
 	 * @throws Exception
 	 */
-	public void applyCSSPropertyBorderRightStyle(Object element,
+	void applyCSSPropertyBorderRightStyle(Object element,
 			CSSValue value, String pseudo, CSSEngine engine) throws Exception;
 
 	/**
@@ -198,7 +198,7 @@ public interface ICSSPropertyBorderHandler extends ICSSPropertyHandler {
 	 * @param engine
 	 * @throws Exception
 	 */
-	public void applyCSSPropertyBorderRightWidth(Object element,
+	void applyCSSPropertyBorderRightWidth(Object element,
 			CSSValue value, String pseudo, CSSEngine engine) throws Exception;
 
 	/**
@@ -212,7 +212,7 @@ public interface ICSSPropertyBorderHandler extends ICSSPropertyHandler {
 	 * @param engine
 	 * @throws Exception
 	 */
-	public void applyCSSPropertyBorderStyle(Object element, CSSValue value,
+	void applyCSSPropertyBorderStyle(Object element, CSSValue value,
 			String pseudo, CSSEngine engine) throws Exception;
 
 	/**
@@ -226,7 +226,7 @@ public interface ICSSPropertyBorderHandler extends ICSSPropertyHandler {
 	 * @param engine
 	 * @throws Exception
 	 */
-	public void applyCSSPropertyBorderTop(Object element, CSSValue value,
+	void applyCSSPropertyBorderTop(Object element, CSSValue value,
 			String pseudo, CSSEngine engine) throws Exception;
 
 	/**
@@ -238,7 +238,7 @@ public interface ICSSPropertyBorderHandler extends ICSSPropertyHandler {
 	 * @param engine
 	 * @throws Exception
 	 */
-	public void applyCSSPropertyBorderTopColor(Object element, CSSValue value,
+	void applyCSSPropertyBorderTopColor(Object element, CSSValue value,
 			String pseudo, CSSEngine engine) throws Exception;
 
 	/**
@@ -250,7 +250,7 @@ public interface ICSSPropertyBorderHandler extends ICSSPropertyHandler {
 	 * @param engine
 	 * @throws Exception
 	 */
-	public void applyCSSPropertyBorderTopStyle(Object element, CSSValue value,
+	void applyCSSPropertyBorderTopStyle(Object element, CSSValue value,
 			String pseudo, CSSEngine engine) throws Exception;
 
 	/**
@@ -263,7 +263,7 @@ public interface ICSSPropertyBorderHandler extends ICSSPropertyHandler {
 	 * @param engine
 	 * @throws Exception
 	 */
-	public void applyCSSPropertyBorderTopWidth(Object element, CSSValue value,
+	void applyCSSPropertyBorderTopWidth(Object element, CSSValue value,
 			String pseudo, CSSEngine engine) throws Exception;
 
 	/**
@@ -277,67 +277,67 @@ public interface ICSSPropertyBorderHandler extends ICSSPropertyHandler {
 	 * @param engine
 	 * @throws Exception
 	 */
-	public void applyCSSPropertyBorderWidth(Object element, CSSValue value,
+	void applyCSSPropertyBorderWidth(Object element, CSSValue value,
 			String pseudo, CSSEngine engine) throws Exception;
 
-	public String retrieveCSSPropertyBorder(Object element, String pseudo,
+	String retrieveCSSPropertyBorder(Object element, String pseudo,
 			CSSEngine engine) throws Exception;
 
-	public String retrieveCSSPropertyBorderBottom(Object element,
+	String retrieveCSSPropertyBorderBottom(Object element,
 			String pseudo, CSSEngine engine) throws Exception;
 
-	public String retrieveCSSPropertyBorderBottomColor(Object element,
+	String retrieveCSSPropertyBorderBottomColor(Object element,
 			String pseudo, CSSEngine engine) throws Exception;
 
-	public String retrieveCSSPropertyBorderBottomStyle(Object element,
+	String retrieveCSSPropertyBorderBottomStyle(Object element,
 			String pseudo, CSSEngine engine) throws Exception;
 
-	public String retrieveCSSPropertyBorderBottomWidth(Object element,
+	String retrieveCSSPropertyBorderBottomWidth(Object element,
 			String pseudo, CSSEngine engine) throws Exception;
 
-	public String retrieveCSSPropertyBorderColor(Object element, String pseudo,
+	String retrieveCSSPropertyBorderColor(Object element, String pseudo,
 			CSSEngine engine) throws Exception;
 
-	public String retrieveCSSPropertyBorderLeft(Object element, String pseudo,
+	String retrieveCSSPropertyBorderLeft(Object element, String pseudo,
 			CSSEngine engine) throws Exception;
 
-	public String retrieveCSSPropertyBorderLeftColor(Object element,
+	String retrieveCSSPropertyBorderLeftColor(Object element,
 			String pseudo, CSSEngine engine) throws Exception;
 
-	public String retrieveCSSPropertyBorderLeftStyle(Object element,
+	String retrieveCSSPropertyBorderLeftStyle(Object element,
 			String pseudo, CSSEngine engine) throws Exception;
 
-	public String retrieveCSSPropertyBorderLeftWidth(Object element,
+	String retrieveCSSPropertyBorderLeftWidth(Object element,
 			String pseudo, CSSEngine engine) throws Exception;
 
-	public String retrieveCSSPropertyBorderRight(Object element, String pseudo,
+	String retrieveCSSPropertyBorderRight(Object element, String pseudo,
 			CSSEngine engine) throws Exception;
 
-	public String retrieveCSSPropertyBorderRightColor(Object element,
+	String retrieveCSSPropertyBorderRightColor(Object element,
 			String pseudo, CSSEngine engine) throws Exception;
 
-	public String retrieveCSSPropertyBorderRightStyle(Object element,
+	String retrieveCSSPropertyBorderRightStyle(Object element,
 			String pseudo, CSSEngine engine) throws Exception;
 
-	public String retrieveCSSPropertyBorderRightWidth(Object element,
+	String retrieveCSSPropertyBorderRightWidth(Object element,
 			String pseudo, CSSEngine engine) throws Exception;
 
-	public String retrieveCSSPropertyBorderStyle(Object element, String pseudo,
+	String retrieveCSSPropertyBorderStyle(Object element, String pseudo,
 			CSSEngine engine) throws Exception;
 
-	public String retrieveCSSPropertyBorderTop(Object element, String pseudo,
+	String retrieveCSSPropertyBorderTop(Object element, String pseudo,
 			CSSEngine engine) throws Exception;
 
-	public String retrieveCSSPropertyBorderTopColor(Object element,
+	String retrieveCSSPropertyBorderTopColor(Object element,
 			String pseudo, CSSEngine engine) throws Exception;
 
-	public String retrieveCSSPropertyBorderTopStyle(Object element,
+	String retrieveCSSPropertyBorderTopStyle(Object element,
 			String pseudo, CSSEngine engine) throws Exception;
 
-	public String retrieveCSSPropertyBorderTopWidth(Object element,
+	String retrieveCSSPropertyBorderTopWidth(Object element,
 			String pseudo, CSSEngine engine) throws Exception;
 
-	public String retrieveCSSPropertyBorderWidth(Object element, String pseudo,
+	String retrieveCSSPropertyBorderWidth(Object element, String pseudo,
 			CSSEngine engine) throws Exception;
 
 }

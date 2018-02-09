@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2016 IBM Corporation and others.
+ * Copyright (c) 2000, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -518,7 +518,7 @@ public final class KeysPreferencePage extends PreferencePage implements
 		}
 	}
 	@Override
-	protected final Control createContents(final Composite parent) {
+	protected Control createContents(final Composite parent) {
 
 		PlatformUI.getWorkbench().getHelpSystem()
 			.setHelp(parent, IWorkbenchHelpContextIds.KEYS_PREFERENCE_PAGE);
@@ -557,7 +557,7 @@ public final class KeysPreferencePage extends PreferencePage implements
 	 * @return The composite which represents the contents of the tab; never
 	 *         <code>null</code>.
 	 */
-	private final Composite createModifyTab(final TabFolder parent) {
+	private Composite createModifyTab(final TabFolder parent) {
 		final Composite composite = new Composite(parent, SWT.NULL);
 		composite.setLayout(new GridLayout());
 		GridData gridData = new GridData(GridData.FILL_BOTH);
@@ -878,7 +878,7 @@ public final class KeysPreferencePage extends PreferencePage implements
 	 *         <code>null</code>.
 	 * @since 3.1
 	 */
-	private final Composite createViewTab(final TabFolder parent) {
+	private Composite createViewTab(final TabFolder parent) {
 		GridData gridData = null;
 		int widthHint;
 
@@ -994,7 +994,7 @@ public final class KeysPreferencePage extends PreferencePage implements
 	 *            this also just switches to the modify tab.
 	 * @since 3.1
 	 */
-	public final void editBinding(final Binding binding) {
+	public void editBinding(final Binding binding) {
 		// Switch to the modify tab.
 		tabFolder.setSelection(TAB_INDEX_MODIFY);
 
@@ -1083,7 +1083,7 @@ public final class KeysPreferencePage extends PreferencePage implements
 	 *
 	 * @return The selected category; <code>null</code> if none.
 	 */
-	private final String getCategoryId() {
+	private String getCategoryId() {
 		return !commandIdsByCategoryId.containsKey(null)
 				|| comboCategory.getSelectionIndex() > 0 ? (String) categoryIdsByUniqueName
 				.get(comboCategory.getText())
@@ -1095,7 +1095,7 @@ public final class KeysPreferencePage extends PreferencePage implements
 	 *
 	 * @return The selected context; <code>null</code> if none.
 	 */
-	private final String getContextId() {
+	private String getContextId() {
 		return comboContext.getSelectionIndex() >= 0 ? (String) contextIdsByUniqueName
 				.get(comboContext.getText())
 				: null;
@@ -1106,7 +1106,7 @@ public final class KeysPreferencePage extends PreferencePage implements
 	 *
 	 * @return The trigger sequence; may be empty, but never <code>null</code>.
 	 */
-	private final KeySequence getKeySequence() {
+	private KeySequence getKeySequence() {
 		return textTriggerSequenceManager.getKeySequence();
 	}
 
@@ -1116,7 +1116,7 @@ public final class KeysPreferencePage extends PreferencePage implements
 	 * @return The selected fully-parameterized command; <code>null</code> if
 	 *         none.
 	 */
-	private final ParameterizedCommand getParameterizedCommand() {
+	private ParameterizedCommand getParameterizedCommand() {
 		final int selectionIndex = comboCommand.getSelectionIndex();
 		if ((selectionIndex >= 0) && (commands != null)
 				&& (selectionIndex < commands.length)) {
@@ -1131,14 +1131,14 @@ public final class KeysPreferencePage extends PreferencePage implements
 	 *
 	 * @return The selected scheme; <code>null</code> if none.
 	 */
-	private final String getSchemeId() {
+	private String getSchemeId() {
 		return comboScheme.getSelectionIndex() >= 0 ? (String) schemeIdsByUniqueName
 				.get(comboScheme.getText())
 				: null;
 	}
 
 	@Override
-	public final void init(final IWorkbench workbench) {
+	public void init(final IWorkbench workbench) {
 		activityManager = workbench.getActivitySupport().getActivityManager();
 		bindingService = workbench.getService(IBindingService.class);
 		commandService = workbench.getService(ICommandService.class);
@@ -1156,7 +1156,7 @@ public final class KeysPreferencePage extends PreferencePage implements
 	 * @return <code>true</code> if the command identifier is not filtered;
 	 *         <code>false</code> if it is
 	 */
-	private final boolean isActive(final Command command) {
+	private boolean isActive(final Command command) {
 		return activityManager.getIdentifier(command.getId()).isEnabled();
 	}
 
@@ -1168,7 +1168,7 @@ public final class KeysPreferencePage extends PreferencePage implements
 	 * @param exception
 	 *            The exception to be logged; must not be <code>null</code>.
 	 */
-	private final void logPreferenceStoreException(final Throwable exception) {
+	private void logPreferenceStoreException(final Throwable exception) {
 		final String message = Util.translateString(RESOURCE_BUNDLE,
 				"PreferenceStoreError.Message"); //$NON-NLS-1$
 		String exceptionMessage = exception.getMessage();
@@ -1182,7 +1182,7 @@ public final class KeysPreferencePage extends PreferencePage implements
 	}
 
 	@Override
-	public final boolean performCancel() {
+	public boolean performCancel() {
 		// Save the selected tab for future reference.
 		persistSelectedTab();
 
@@ -1190,7 +1190,7 @@ public final class KeysPreferencePage extends PreferencePage implements
 	}
 
 	@Override
-	protected final void performDefaults() {
+	protected void performDefaults() {
 		// Ask the user to confirm
 		final String title = Util.translateString(RESOURCE_BUNDLE,
 				"restoreDefaultsMessageBoxText"); //$NON-NLS-1$
@@ -1239,7 +1239,7 @@ public final class KeysPreferencePage extends PreferencePage implements
 	}
 
 	@Override
-	public final boolean performOk() {
+	public boolean performOk() {
 		// Save the preferences.
 		try {
 			bindingService.savePreferences(
@@ -1259,7 +1259,7 @@ public final class KeysPreferencePage extends PreferencePage implements
 	 * Remembers the currently selected tab for when the preference page next
 	 * opens.
 	 */
-	private final void persistSelectedTab() {
+	private void persistSelectedTab() {
 		final IPreferenceStore store = getPreferenceStore();
 		store.setValue(IPreferenceConstants.KEYS_PREFERENCE_SELECTED_TAB,
 				tabFolder.getSelectionIndex());
@@ -1270,7 +1270,7 @@ public final class KeysPreferencePage extends PreferencePage implements
 	 * user-defined bindings matching the given key sequence, scheme and
 	 * context. It then adds a new binding with the current selections.
 	 */
-	private final void selectedButtonAdd() {
+	private void selectedButtonAdd() {
 		final ParameterizedCommand command = getParameterizedCommand();
 		final String contextId = getContextId();
 		final String schemeId = getSchemeId();
@@ -1290,7 +1290,7 @@ public final class KeysPreferencePage extends PreferencePage implements
 	 *
 	 * @since 3.1
 	 */
-	private final void selectedButtonExport() {
+	private void selectedButtonExport() {
 		final FileDialog fileDialog = new FileDialog(getShell(), SWT.SAVE
 				| SWT.SHEET);
 		fileDialog.setFilterExtensions(new String[] { "*.csv" }); //$NON-NLS-1$
@@ -1342,7 +1342,7 @@ public final class KeysPreferencePage extends PreferencePage implements
 	 * context. It then adds a new deletion binding for the selected trigger
 	 * sequence.
 	 */
-	private final void selectedButtonRemove() {
+	private void selectedButtonRemove() {
 		final String contextId = getContextId();
 		final String schemeId = getSchemeId();
 		final KeySequence keySequence = getKeySequence();
@@ -1358,7 +1358,7 @@ public final class KeysPreferencePage extends PreferencePage implements
 	 * user-defined bindings matching the given key sequence, scheme and
 	 * context.
 	 */
-	private final void selectedButtonRestore() {
+	private void selectedButtonRestore() {
 		String contextId = getContextId();
 		String schemeId = getSchemeId();
 		KeySequence keySequence = getKeySequence();
@@ -1370,7 +1370,7 @@ public final class KeysPreferencePage extends PreferencePage implements
 	/**
 	 * Updates the local managers active scheme, and then updates the interface.
 	 */
-	private final void selectedComboScheme() {
+	private void selectedComboScheme() {
 		final String activeSchemeId = getSchemeId();
 		final Scheme activeScheme = localChangeManager
 				.getScheme(activeSchemeId);
@@ -1387,7 +1387,7 @@ public final class KeysPreferencePage extends PreferencePage implements
 	 * particular command. This updates the context and trigger sequence based
 	 * on the selected binding.
 	 */
-	private final void selectedTableBindingsForCommand() {
+	private void selectedTableBindingsForCommand() {
 		final int selection = tableBindingsForCommand.getSelectionIndex();
 		if ((selection >= 0)
 				&& (selection < tableBindingsForCommand.getItemCount())) {
@@ -1405,7 +1405,7 @@ public final class KeysPreferencePage extends PreferencePage implements
 	 * particular trigger sequence. This updates the context based on the
 	 * selected binding.
 	 */
-	private final void selectedTableBindingsForTriggerSequence() {
+	private void selectedTableBindingsForTriggerSequence() {
 		final int selection = tableBindingsForTriggerSequence
 				.getSelectionIndex();
 		if ((selection >= 0)
@@ -1426,7 +1426,7 @@ public final class KeysPreferencePage extends PreferencePage implements
 	 *
 	 * @since 3.1
 	 */
-	private final void selectedTableKeyBindings() {
+	private void selectedTableKeyBindings() {
 		final int selectionIndex = tableBindings.getSelectionIndex();
 		if (selectionIndex != -1) {
 			final TableItem item = tableBindings.getItem(selectionIndex);
@@ -1448,7 +1448,7 @@ public final class KeysPreferencePage extends PreferencePage implements
 	 *            The context identifier for the context to be selected in the
 	 *            combo box; may be <code>null</code>.
 	 */
-	private final void setContextId(final String contextId) {
+	private void setContextId(final String contextId) {
 		// Clear the current selection.
 		comboContext.clearSelection();
 		comboContext.deselectAll();
@@ -1486,7 +1486,7 @@ public final class KeysPreferencePage extends PreferencePage implements
 	 * @param keySequence
 	 *            The trigger sequence; may be <code>null</code>.
 	 */
-	private final void setKeySequence(final KeySequence keySequence) {
+	private void setKeySequence(final KeySequence keySequence) {
 		textTriggerSequenceManager.setKeySequence(keySequence);
 	}
 
@@ -1497,7 +1497,7 @@ public final class KeysPreferencePage extends PreferencePage implements
 	 *            The fully-parameterized command to select; may be
 	 *            <code>null</code>.
 	 */
-	private final void setParameterizedCommand(
+	private void setParameterizedCommand(
 			final ParameterizedCommand command) {
 		int i = 0;
 		if (commands != null) {
@@ -1524,7 +1524,7 @@ public final class KeysPreferencePage extends PreferencePage implements
 	 * @param scheme
 	 *            The scheme to select; may be <code>null</code>.
 	 */
-	private final void setScheme(final Scheme scheme) {
+	private void setScheme(final Scheme scheme) {
 		comboScheme.clearSelection();
 		comboScheme.deselectAll();
 		final String schemeUniqueName = (String) schemeUniqueNamesById
@@ -1547,7 +1547,7 @@ public final class KeysPreferencePage extends PreferencePage implements
 	 * visible.
 	 */
 	@Override
-	public final void setVisible(final boolean visible) {
+	public void setVisible(final boolean visible) {
 		if (visible == true) {
 			Map contextsByName = new HashMap();
 
@@ -1806,7 +1806,7 @@ public final class KeysPreferencePage extends PreferencePage implements
 	 * event triggers an update. It is possible for extra work to be done by
 	 * this page before calling update.
 	 */
-	private final void update() {
+	private void update() {
 		update(false);
 	}
 
@@ -1820,7 +1820,7 @@ public final class KeysPreferencePage extends PreferencePage implements
 	 * @param updateViewTab
 	 *            Whether the view tab should be updated as well.
 	 */
-	private final void update(final boolean updateViewTab) {
+	private void update(final boolean updateViewTab) {
 		if (updateViewTab) {
 			updateViewTab();
 		}
@@ -1843,7 +1843,7 @@ public final class KeysPreferencePage extends PreferencePage implements
 	 * Updates the contents of the commands combo box, based on the current
 	 * selection in the category combo box.
 	 */
-	private final void updateComboCommand() {
+	private void updateComboCommand() {
 		// Remember the current selection, so we can restore it later.
 		final ParameterizedCommand command = getParameterizedCommand();
 
@@ -1958,7 +1958,7 @@ public final class KeysPreferencePage extends PreferencePage implements
 	/**
 	 * Updates the contents of the context combo box, as well as its selection.
 	 */
-	private final void updateComboContext() {
+	private void updateComboContext() {
 		final String contextId = getContextId();
 		final Map contextIdsByName = new HashMap(contextIdsByUniqueName);
 
@@ -1986,7 +1986,7 @@ public final class KeysPreferencePage extends PreferencePage implements
 	 *            The currently selected command, if any; <code>null</code>
 	 *            otherwise.
 	 */
-	private final void updateEnabled(final TriggerSequence triggerSequence,
+	private void updateEnabled(final TriggerSequence triggerSequence,
 			final ParameterizedCommand command) {
 		final boolean commandSelected = command != null;
 		labelBindingsForCommand.setEnabled(commandSelected);
@@ -2011,7 +2011,7 @@ public final class KeysPreferencePage extends PreferencePage implements
 	 * is a child of another context. If the context is not a child of another
 	 * context, then the label is simply blank.
 	 */
-	private final void updateLabelContextExtends() {
+	private void updateLabelContextExtends() {
 		final String contextId = getContextId();
 
 		if (contextId != null) {
@@ -2043,7 +2043,7 @@ public final class KeysPreferencePage extends PreferencePage implements
 	 * a child of another scheme. If the scheme is not a child of another
 	 * scheme, then the label is simply blank.
 	 */
-	private final void updateLabelSchemeExtends() {
+	private void updateLabelSchemeExtends() {
 		final String schemeId = getSchemeId();
 
 		if (schemeId != null) {
@@ -2080,7 +2080,7 @@ public final class KeysPreferencePage extends PreferencePage implements
 	 * @param triggerSequence
 	 *            The current trigger sequence; should not be <code>null</code>.
 	 */
-	private final void updateSelection(final Table table,
+	private void updateSelection(final Table table,
 			final String contextId, final TriggerSequence triggerSequence) {
 		if (table.getSelectionCount() > 1) {
 			table.deselectAll();
@@ -2111,7 +2111,7 @@ public final class KeysPreferencePage extends PreferencePage implements
 	 *            The currently selected fully-parameterized command; may be
 	 *            <code>null</code>.
 	 */
-	private final void updateTableBindingsForCommand(
+	private void updateTableBindingsForCommand(
 			final ParameterizedCommand parameterizedCommand) {
 		// Clear the table of existing items.
 		tableBindingsForCommand.removeAll();
@@ -2161,7 +2161,7 @@ public final class KeysPreferencePage extends PreferencePage implements
 	 *            The current trigger sequence; may be <code>null</code> or
 	 *            empty.
 	 */
-	private final void updateTableBindingsForTriggerSequence(
+	private void updateTableBindingsForTriggerSequence(
 			final TriggerSequence triggerSequence) {
 		// Clear the table of its existing items.
 		tableBindingsForTriggerSequence.removeAll();
@@ -2221,7 +2221,7 @@ public final class KeysPreferencePage extends PreferencePage implements
 	 *
 	 * @since 3.1
 	 */
-	private final void updateViewTab() {
+	private void updateViewTab() {
 		// Clear out the existing table contents.
 		tableBindings.removeAll();
 

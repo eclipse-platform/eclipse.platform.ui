@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2015 IBM Corporation and others.
+ * Copyright (c) 2005, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -64,68 +64,68 @@ public interface ISources {
 	 * The priority given to default handlers and handlers that are active
 	 * across the entire workbench.
 	 */
-	public static final int WORKBENCH = 0;
+	int WORKBENCH = 0;
 
 	/**
 	 * The priority given when the activation is defined by a handler submission
 	 * with a legacy priority.
 	 */
-	public static final int LEGACY_LEGACY = 1;
+	int LEGACY_LEGACY = 1;
 
 	/**
 	 * The priority given when the activation is defined by a handler submission
 	 * with a low priority.
 	 */
-	public static final int LEGACY_LOW = 1 << 1;
+	int LEGACY_LOW = 1 << 1;
 
 	/**
 	 * The priority given when the activation is defined by a handler submission
 	 * with a medium priority.
 	 */
-	public static final int LEGACY_MEDIUM = 1 << 2;
+	int LEGACY_MEDIUM = 1 << 2;
 
 	/**
 	 * The priority given when the source includes a particular context.
 	 */
-	public static final int ACTIVE_CONTEXT = 1 << 6;
+	int ACTIVE_CONTEXT = 1 << 6;
 
 	/**
 	 * The variable name for the active contexts. This is for use with the
 	 * <code>ISourceProvider</code> and <code>IEvaluationContext</code>.
 	 * @since 3.2
 	 */
-	public static final String ACTIVE_CONTEXT_NAME = "activeContexts"; //$NON-NLS-1$
+	String ACTIVE_CONTEXT_NAME = "activeContexts"; //$NON-NLS-1$
 
 	/**
 	 * The priority given when the source includes a particular action set.
 	 * @since 3.2
 	 */
-	public static final int ACTIVE_ACTION_SETS = 1 << 8;
+	int ACTIVE_ACTION_SETS = 1 << 8;
 
 	/**
 	 * The variable name for the active action sets. This is for use with the
 	 * {@link ISourceProvider} and {@link IEvaluationContext}.
 	 * @since 3.2
 	 */
-	public static final String ACTIVE_ACTION_SETS_NAME = "activeActionSets"; //$NON-NLS-1$
+	String ACTIVE_ACTION_SETS_NAME = "activeActionSets"; //$NON-NLS-1$
 
 	/**
 	 * The priority given when the source includes the currently active shell.
 	 */
-	public static final int ACTIVE_SHELL = 1 << 10;
+	int ACTIVE_SHELL = 1 << 10;
 
 	/**
 	 * The variable name for the active shell. This is for use with the
 	 * <code>ISourceProvider</code> and <code>IEvaluationContext</code>.
 	 */
-	public static final String ACTIVE_SHELL_NAME = "activeShell"; //$NON-NLS-1$
+	String ACTIVE_SHELL_NAME = "activeShell"; //$NON-NLS-1$
 
 	/**
 	 * The priority given when the source includes the currently active
 	 * workbench window shell.
 	 * @since 3.2
 	 */
-	public static final int ACTIVE_WORKBENCH_WINDOW_SHELL = 1 << 12;
+	int ACTIVE_WORKBENCH_WINDOW_SHELL = 1 << 12;
 
 	/**
 	 * The variable name for the active workbench window shell. This is for use
@@ -133,19 +133,19 @@ public interface ISources {
 	 * <code>IEvaluationContext</code>.
 	 * @since 3.2
 	 */
-	public static final String ACTIVE_WORKBENCH_WINDOW_SHELL_NAME = "activeWorkbenchWindowShell"; //$NON-NLS-1$
+	String ACTIVE_WORKBENCH_WINDOW_SHELL_NAME = "activeWorkbenchWindowShell"; //$NON-NLS-1$
 
 	/**
 	 * The priority given when the source includes the currently active
 	 * workbench window.
 	 */
-	public static final int ACTIVE_WORKBENCH_WINDOW = 1 << 14;
+	int ACTIVE_WORKBENCH_WINDOW = 1 << 14;
 
 	/**
 	 * The variable name for the active workbench window. This is for use with
 	 * the <code>ISourceProvider</code> and <code>IEvaluationContext</code>.
 	 */
-	public static final String ACTIVE_WORKBENCH_WINDOW_NAME = "activeWorkbenchWindow"; //$NON-NLS-1$
+	String ACTIVE_WORKBENCH_WINDOW_NAME = "activeWorkbenchWindow"; //$NON-NLS-1$
 
 	/**
 	 * The priority given when the source includes subordinate properties of the currently active
@@ -153,7 +153,7 @@ public interface ISources {
 	 *
 	 * @since 3.3
 	 */
-	public static final int ACTIVE_WORKBENCH_WINDOW_SUBORDINATE = 1 << 15;
+	int ACTIVE_WORKBENCH_WINDOW_SUBORDINATE = 1 << 15;
 
 	/**
 	 * The variable name for the coolbar visibility state of the active
@@ -162,7 +162,7 @@ public interface ISources {
 	 *
 	 * @since 3.3
 	 */
-	public static final String ACTIVE_WORKBENCH_WINDOW_IS_COOLBAR_VISIBLE_NAME = ACTIVE_WORKBENCH_WINDOW_NAME
+	String ACTIVE_WORKBENCH_WINDOW_IS_COOLBAR_VISIBLE_NAME = ACTIVE_WORKBENCH_WINDOW_NAME
 			+ ".isCoolbarVisible"; //$NON-NLS-1$
 
 	/**
@@ -172,7 +172,7 @@ public interface ISources {
 	 *
 	 * @since 3.3
 	 */
-	public static final String ACTIVE_WORKBENCH_WINDOW_IS_PERSPECTIVEBAR_VISIBLE_NAME = ACTIVE_WORKBENCH_WINDOW_NAME
+	String ACTIVE_WORKBENCH_WINDOW_IS_PERSPECTIVEBAR_VISIBLE_NAME = ACTIVE_WORKBENCH_WINDOW_NAME
 			+ ".isPerspectiveBarVisible"; //$NON-NLS-1$
 
 	/**
@@ -182,33 +182,33 @@ public interface ISources {
 	 *
 	 * @since 3.4
 	 */
-	public static final String ACTIVE_WORKBENCH_WINDOW_ACTIVE_PERSPECTIVE_NAME = ACTIVE_WORKBENCH_WINDOW_NAME
+	String ACTIVE_WORKBENCH_WINDOW_ACTIVE_PERSPECTIVE_NAME = ACTIVE_WORKBENCH_WINDOW_NAME
 	+ ".activePerspective"; //$NON-NLS-1$
 
 	/**
 	 * The priority given when the source includes the active editor part.
 	 */
-	public static final int ACTIVE_EDITOR = 1 << 16;
+	int ACTIVE_EDITOR = 1 << 16;
 
 	/**
 	 * The variable name for the active editor part. This is for use with the
 	 * <code>ISourceProvider</code> and <code>IEvaluationContext</code>.
 	 * @since 3.2
 	 */
-	public static final String ACTIVE_EDITOR_NAME = "activeEditor"; //$NON-NLS-1$
+	String ACTIVE_EDITOR_NAME = "activeEditor"; //$NON-NLS-1$
 
 	/**
 	 * The editor input of the currently active editor.
 	 * @since 3.5
 	 */
-	public static final String ACTIVE_EDITOR_INPUT_NAME = "activeEditorInput"; //$NON-NLS-1$
+	String ACTIVE_EDITOR_INPUT_NAME = "activeEditorInput"; //$NON-NLS-1$
 
 	/**
 	 * The priority given when the source includes the active editor identifier.
 	 *
 	 * @since 3.2
 	 */
-	public static final int ACTIVE_EDITOR_ID = 1 << 18;
+	int ACTIVE_EDITOR_ID = 1 << 18;
 
 	/**
 	 * The variable name for the active editor identifier. This is for use with
@@ -216,25 +216,25 @@ public interface ISources {
 	 *
 	 * @since 3.2
 	 */
-	public static final String ACTIVE_EDITOR_ID_NAME = "activeEditorId"; //$NON-NLS-1$
+	String ACTIVE_EDITOR_ID_NAME = "activeEditorId"; //$NON-NLS-1$
 
 	/**
 	 * The priority given when the source includes the active part.
 	 */
-	public static final int ACTIVE_PART = 1 << 20;
+	int ACTIVE_PART = 1 << 20;
 
 	/**
 	 * The variable name for the active part. This is for use with the
 	 * <code>ISourceProvider</code> and <code>IEvaluationContext</code>.
 	 */
-	public static final String ACTIVE_PART_NAME = "activePart"; //$NON-NLS-1$
+	String ACTIVE_PART_NAME = "activePart"; //$NON-NLS-1$
 
 	/**
 	 * The priority given when the source includes the active part id.
 	 *
 	 * @since 3.2
 	 */
-	public static final int ACTIVE_PART_ID = 1 << 22;
+	int ACTIVE_PART_ID = 1 << 22;
 
 	/**
 	 * The variable name for the active part id. This is for use with the
@@ -242,20 +242,20 @@ public interface ISources {
 	 *
 	 * @since 3.2
 	 */
-	public static final String ACTIVE_PART_ID_NAME = "activePartId"; //$NON-NLS-1$
+	String ACTIVE_PART_ID_NAME = "activePartId"; //$NON-NLS-1$
 
 	/**
 	 * The priority given when the source includes the active workbench site. In
 	 * the case of nesting components, one should be careful to only activate
 	 * the most nested component.
 	 */
-	public static final int ACTIVE_SITE = 1 << 26;
+	int ACTIVE_SITE = 1 << 26;
 
 	/**
 	 * The variable name for the active workbench site. This is for use with the
 	 * <code>ISourceProvider</code> and <code>IEvaluationContext</code>.
 	 */
-	public static final String ACTIVE_SITE_NAME = "activeSite"; //$NON-NLS-1$
+	String ACTIVE_SITE_NAME = "activeSite"; //$NON-NLS-1$
 
 	/**
 	 * The variable for the showIn selection.  This is for use with the
@@ -263,7 +263,7 @@ public interface ISources {
 	 * @since 3.4
 	 * @see IShowInSource
 	 */
-	public static final String SHOW_IN_SELECTION = "showInSelection"; //$NON-NLS-1$
+	String SHOW_IN_SELECTION = "showInSelection"; //$NON-NLS-1$
 
 	/**
 	 * The variable for the showIn input.  This is for use with the
@@ -271,32 +271,32 @@ public interface ISources {
 	 * @since 3.4
 	 * @see IShowInSource
 	 */
-	public static final String SHOW_IN_INPUT = "showInInput"; //$NON-NLS-1$
+	String SHOW_IN_INPUT = "showInInput"; //$NON-NLS-1$
 
 	/**
 	 * The priority given when the source includes the current selection.
 	 */
-	public static final int ACTIVE_CURRENT_SELECTION = 1 << 30;
+	int ACTIVE_CURRENT_SELECTION = 1 << 30;
 
 	/**
 	 * The variable name for the active selection. This is for use with the
 	 * <code>ISourceProvider</code> and <code>IEvaluationContext</code>.
 	 * @since 3.2
 	 */
-	public static final String ACTIVE_CURRENT_SELECTION_NAME = "selection"; //$NON-NLS-1$
+	String ACTIVE_CURRENT_SELECTION_NAME = "selection"; //$NON-NLS-1$
 
 	/**
 	 * The priority given when the source includes the current menu.
 	 * @since 3.2
 	 */
-	public static final int ACTIVE_MENU = 1 << 31;
+	int ACTIVE_MENU = 1 << 31;
 
 	/**
 	 * The variable name for the active menu. This is for use with the
 	 * {@link ISourceProvider} and {@link IEvaluationContext}.
 	 * @since 3.2
 	 */
-	public static final String ACTIVE_MENU_NAME = "activeMenu"; //$NON-NLS-1$
+	String ACTIVE_MENU_NAME = "activeMenu"; //$NON-NLS-1$
 
 	/**
 	 * The variable name for the <b>local</b> selection, available while a
@@ -304,7 +304,7 @@ public interface ISources {
 	 *
 	 * @since 3.3
 	 */
-	public static final String ACTIVE_MENU_SELECTION_NAME = "activeMenuSelection";  //$NON-NLS-1$
+	String ACTIVE_MENU_SELECTION_NAME = "activeMenuSelection"; //$NON-NLS-1$
 
 	/**
 	 * The variable name for the <b>local</b> editor input which is sometimes
@@ -312,7 +312,7 @@ public interface ISources {
 	 *
 	 * @since 3.3
 	 */
-	public static final String ACTIVE_MENU_EDITOR_INPUT_NAME = "activeMenuEditorInput";  //$NON-NLS-1$
+	String ACTIVE_MENU_EDITOR_INPUT_NAME = "activeMenuEditorInput"; //$NON-NLS-1$
 
 	/**
 	 * The variable name for the active focus Control, when provided by the
@@ -320,7 +320,7 @@ public interface ISources {
 	 *
 	 * @since 3.3
 	 */
-	public static final String ACTIVE_FOCUS_CONTROL_NAME = "activeFocusControl"; //$NON-NLS-1$
+	String ACTIVE_FOCUS_CONTROL_NAME = "activeFocusControl"; //$NON-NLS-1$
 
 	/**
 	 * The variable name for the active focus Control id, when provided by the
@@ -328,5 +328,5 @@ public interface ISources {
 	 *
 	 * @since 3.3
 	 */
-	public static final String ACTIVE_FOCUS_CONTROL_ID_NAME = "activeFocusControlId"; //$NON-NLS-1$
+	String ACTIVE_FOCUS_CONTROL_ID_NAME = "activeFocusControlId"; //$NON-NLS-1$
 }

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2017 IBM Corporation and others.
+ * Copyright (c) 2000, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -135,38 +135,38 @@ public interface IWorkbenchActionConstants {
      * ]
      * </p>
      */
-    public static final String MENU_PREFIX = ""; //$NON-NLS-1$
+	String MENU_PREFIX = ""; //$NON-NLS-1$
 
     /**
      * <p>
      * [Issue: SEP is "/". It is not used anywhere. Recommend deleting it.]
      * </p>
      */
-    public static final String SEP = "/"; //$NON-NLS-1$
+	String SEP = "/"; //$NON-NLS-1$
 
     /**
      * Name of standard File menu (value <code>"file"</code>).
      */
-    public static final String M_FILE = MENU_PREFIX + "file"; //$NON-NLS-1$
+	String M_FILE = MENU_PREFIX + "file"; //$NON-NLS-1$
 
     /**
      * Name of standard Edit menu (value <code>"edit"</code>).
      */
-    public static final String M_EDIT = MENU_PREFIX + "edit"; //$NON-NLS-1$
+	String M_EDIT = MENU_PREFIX + "edit"; //$NON-NLS-1$
 
     /**
      * Name of standard View menu (value <code>"view"</code>).
      * @deprecated Since 3.0.  This is no longer used.
      */
     @Deprecated
-	public static final String M_VIEW = MENU_PREFIX + "view"; //$NON-NLS-1$
+	String M_VIEW = MENU_PREFIX + "view"; //$NON-NLS-1$
 
     /**
      * Name of standard Workbench menu (value <code>"workbench"</code>).
      * @deprecated Since 3.0.  This is no longer used.
      */
     @Deprecated
-	public static final String M_WORKBENCH = MENU_PREFIX + "workbench"; //$NON-NLS-1$
+	String M_WORKBENCH = MENU_PREFIX + "workbench"; //$NON-NLS-1$
 
     // menu reorg
 
@@ -175,34 +175,34 @@ public interface IWorkbenchActionConstants {
 	 *
 	 * @since 3.107
 	 */
-   public static final String M_PERSPECTIVE = MENU_PREFIX + "perspective"; //$NON-NLS-1$
+	String M_PERSPECTIVE = MENU_PREFIX + "perspective"; //$NON-NLS-1$
 
     /**
      * Name of standard Navigate menu (value <code>"navigate"</code>).
      */
-    public static final String M_NAVIGATE = MENU_PREFIX + "navigate"; //$NON-NLS-1$
+	String M_NAVIGATE = MENU_PREFIX + "navigate"; //$NON-NLS-1$
 
     /**
      * Name of standard Project menu (value <code>"project"</code>).
      */
-    public static final String M_PROJECT = MENU_PREFIX + "project"; //$NON-NLS-1$
+	String M_PROJECT = MENU_PREFIX + "project"; //$NON-NLS-1$
 
     // end menu reorg
 
     /**
      * Name of standard Window menu (value <code>"window"</code>).
      */
-    public static final String M_WINDOW = MENU_PREFIX + "window"; //$NON-NLS-1$
+	String M_WINDOW = MENU_PREFIX + "window"; //$NON-NLS-1$
 
     /**
      * Name of Launch window menu (value <code>"launch"</code>).
      */
-    public static final String M_LAUNCH = MENU_PREFIX + "launch"; //$NON-NLS-1$
+	String M_LAUNCH = MENU_PREFIX + "launch"; //$NON-NLS-1$
 
     /**
      * Name of standard Help menu (value <code>"help"</code>).
      */
-    public static final String M_HELP = MENU_PREFIX + "help"; //$NON-NLS-1$
+	String M_HELP = MENU_PREFIX + "help"; //$NON-NLS-1$
 
     /**
      * ID of the Project configure popup menu, can be used in
@@ -210,24 +210,24 @@ public interface IWorkbenchActionConstants {
      *
      * @since 3.5
      */
-    public static final String M_PROJECT_CONFIGURE = "org.eclipse.ui.projectConfigure"; //$NON-NLS-1$
+	String M_PROJECT_CONFIGURE = "org.eclipse.ui.projectConfigure"; //$NON-NLS-1$
 
     // Standard area for adding top level menus:
     /**
      * Name of group for adding new top-level menus (value <code>"additions"</code>).
      */
-    public static final String MB_ADDITIONS = "additions"; // Group. //$NON-NLS-1$
+	String MB_ADDITIONS = "additions"; // Group. //$NON-NLS-1$
 
     // Standard file actions:
     /**
      * File menu: name of group for start of menu (value <code>"fileStart"</code>).
      */
-    public static final String FILE_START = "fileStart"; // Group. //$NON-NLS-1$
+	String FILE_START = "fileStart"; // Group. //$NON-NLS-1$
 
     /**
      * File menu: name of group for end of menu (value <code>"fileEnd"</code>).
      */
-    public static final String FILE_END = "fileEnd"; // Group. //$NON-NLS-1$
+	String FILE_END = "fileEnd"; // Group. //$NON-NLS-1$
 
     /**
      * File menu: name of standard New action (value <code>"new"</code>).
@@ -237,12 +237,12 @@ public interface IWorkbenchActionConstants {
      * instead.
      */
     @Deprecated
-	public static final String NEW = "new"; //$NON-NLS-1$
+	String NEW = "new"; //$NON-NLS-1$
 
     /**
      * File menu: name of group for extra New-like actions (value <code>"new.ext"</code>).
      */
-    public static final String NEW_EXT = "new.ext"; // Group. //$NON-NLS-1$
+	String NEW_EXT = "new.ext"; // Group. //$NON-NLS-1$
 
     /**
      * File menu: name of standard Close action (value <code>"close"</code>).
@@ -251,7 +251,7 @@ public interface IWorkbenchActionConstants {
      * ActionFactory.CLOSE.getId()} instead.
      */
     @Deprecated
-	public static final String CLOSE = "close"; //$NON-NLS-1$
+	String CLOSE = "close"; //$NON-NLS-1$
 
     /**
      * File menu: name of standard Close All action (value <code>"closeAll"</code>).
@@ -260,12 +260,12 @@ public interface IWorkbenchActionConstants {
      * ActionFactory.CLOSE_ALL.getId()} instead.
      */
     @Deprecated
-	public static final String CLOSE_ALL = "closeAll"; //$NON-NLS-1$
+	String CLOSE_ALL = "closeAll"; //$NON-NLS-1$
 
     /**
      * File menu: name of group for extra Close-like actions (value <code>"close.ext"</code>).
      */
-    public static final String CLOSE_EXT = "close.ext"; // Group. //$NON-NLS-1$
+	String CLOSE_EXT = "close.ext"; // Group. //$NON-NLS-1$
 
     /**
      * File menu: name of standard Save action (value <code>"save"</code>).
@@ -274,7 +274,7 @@ public interface IWorkbenchActionConstants {
      * ActionFactory.SAVE.getId()} instead.
      */
     @Deprecated
-	public static final String SAVE = "save"; //$NON-NLS-1$
+	String SAVE = "save"; //$NON-NLS-1$
 
     /**
      * File menu: name of standard Save As action (value <code>"saveAs"</code>).
@@ -283,7 +283,7 @@ public interface IWorkbenchActionConstants {
      * ActionFactory.SAVE_AS.getId()} instead.
      */
     @Deprecated
-	public static final String SAVE_AS = "saveAs"; //$NON-NLS-1$
+	String SAVE_AS = "saveAs"; //$NON-NLS-1$
 
     /**
      * File menu: name of standard Save All action (value <code>"saveAll"</code>).
@@ -292,12 +292,12 @@ public interface IWorkbenchActionConstants {
      * ActionFactory.SAVE_ALL.getId()} instead.
      */
     @Deprecated
-	public static final String SAVE_ALL = "saveAll"; //$NON-NLS-1$
+	String SAVE_ALL = "saveAll"; //$NON-NLS-1$
 
     /**
      * File menu: name of group for extra Save-like actions (value <code>"save.ext"</code>).
      */
-    public static final String SAVE_EXT = "save.ext"; // Group. //$NON-NLS-1$
+	String SAVE_EXT = "save.ext"; // Group. //$NON-NLS-1$
 
     /**
      * File menu: name of standard Print global action
@@ -307,13 +307,13 @@ public interface IWorkbenchActionConstants {
      * ActionFactory.PRINT.getId()} instead.
      */
     @Deprecated
-	public static final String PRINT = "print"; // Global action. //$NON-NLS-1$
+	String PRINT = "print"; // Global action. //$NON-NLS-1$
 
     /**
      * File menu: name of group for extra Print-like actions (value <code>"print.ext"</code>).
      * @since 3.0
      */
-    public static final String PRINT_EXT = "print.ext"; // Group. //$NON-NLS-1$
+	String PRINT_EXT = "print.ext"; // Group. //$NON-NLS-1$
 
     /**
      * File menu: name of standard Import action (value <code>"import"</code>).
@@ -323,7 +323,7 @@ public interface IWorkbenchActionConstants {
      * instead.
      */
     @Deprecated
-	public static final String IMPORT = "import"; //$NON-NLS-1$
+	String IMPORT = "import"; //$NON-NLS-1$
 
     /**
      * File menu: name of standard Export action (value <code>"export"</code>).
@@ -333,18 +333,18 @@ public interface IWorkbenchActionConstants {
      * instead.
      */
     @Deprecated
-	public static final String EXPORT = "export"; //$NON-NLS-1$
+	String EXPORT = "export"; //$NON-NLS-1$
 
     /**
      * File menu: name of group for extra Import-like actions (value <code>"import.ext"</code>).
      */
-    public static final String IMPORT_EXT = "import.ext"; // Group. //$NON-NLS-1$
+	String IMPORT_EXT = "import.ext"; // Group. //$NON-NLS-1$
 
     /**
      * File menu: name of "Most Recently Used File" group.
      * (value <code>"mru"</code>).
      */
-    public static final String MRU = "mru"; //$NON-NLS-1$
+	String MRU = "mru"; //$NON-NLS-1$
 
     /**
      * File menu: name of standard Quit action (value <code>"quit"</code>).
@@ -353,18 +353,18 @@ public interface IWorkbenchActionConstants {
      * ActionFactory.QUIT.getId()} instead.
      */
     @Deprecated
-	public static final String QUIT = "quit"; //$NON-NLS-1$
+	String QUIT = "quit"; //$NON-NLS-1$
 
     // Standard edit actions:
     /**
      * Edit menu: name of group for start of menu (value <code>"editStart"</code>).
      */
-    public static final String EDIT_START = "editStart"; // Group. //$NON-NLS-1$
+	String EDIT_START = "editStart"; // Group. //$NON-NLS-1$
 
     /**
      * Edit menu: name of group for end of menu (value <code>"editEnd"</code>).
      */
-    public static final String EDIT_END = "editEnd"; // Group. //$NON-NLS-1$
+	String EDIT_END = "editEnd"; // Group. //$NON-NLS-1$
 
     /**
      * Edit menu: name of standard Undo global action
@@ -374,7 +374,7 @@ public interface IWorkbenchActionConstants {
      * ActionFactory.UNDO.getId()} instead.
      */
     @Deprecated
-	public static final String UNDO = "undo"; // Global action. //$NON-NLS-1$
+	String UNDO = "undo"; // Global action. //$NON-NLS-1$
 
     /**
      * Edit menu: name of standard Redo global action
@@ -384,12 +384,12 @@ public interface IWorkbenchActionConstants {
      * ActionFactory.REDO.getId()} instead.
      */
     @Deprecated
-	public static final String REDO = "redo"; // Global action. //$NON-NLS-1$
+	String REDO = "redo"; // Global action. //$NON-NLS-1$
 
     /**
      * Edit menu: name of group for extra Undo-like actions (value <code>"undo.ext"</code>).
      */
-    public static final String UNDO_EXT = "undo.ext"; // Group. //$NON-NLS-1$
+	String UNDO_EXT = "undo.ext"; // Group. //$NON-NLS-1$
 
     /**
      * Edit menu: name of standard Cut global action
@@ -399,7 +399,7 @@ public interface IWorkbenchActionConstants {
      * ActionFactory.CUT.getId()} instead.
      */
     @Deprecated
-	public static final String CUT = "cut"; // Global action. //$NON-NLS-1$
+	String CUT = "cut"; // Global action. //$NON-NLS-1$
 
     /**
      * Edit menu: name of standard Copy global action
@@ -409,7 +409,7 @@ public interface IWorkbenchActionConstants {
      * ActionFactory.COPY.getId()} instead.
      */
     @Deprecated
-	public static final String COPY = "copy"; // Global action. //$NON-NLS-1$
+	String COPY = "copy"; // Global action. //$NON-NLS-1$
 
     /**
      * Edit menu: name of standard Paste global action
@@ -419,12 +419,12 @@ public interface IWorkbenchActionConstants {
      * ActionFactory.PASTE.getId()} instead.
      */
     @Deprecated
-	public static final String PASTE = "paste"; // Global action. //$NON-NLS-1$
+	String PASTE = "paste"; // Global action. //$NON-NLS-1$
 
     /**
      * Edit menu: name of group for extra Cut-like actions (value <code>"cut.ext"</code>).
      */
-    public static final String CUT_EXT = "cut.ext"; // Group. //$NON-NLS-1$
+	String CUT_EXT = "cut.ext"; // Group. //$NON-NLS-1$
 
     /**
      * Edit menu: name of standard Delete global action
@@ -434,7 +434,7 @@ public interface IWorkbenchActionConstants {
      * ActionFactory.DELETE.getId()} instead.
      */
     @Deprecated
-	public static final String DELETE = "delete"; // Global action. //$NON-NLS-1$
+	String DELETE = "delete"; // Global action. //$NON-NLS-1$
 
     /**
      * Edit menu: name of standard Find global action
@@ -444,12 +444,12 @@ public interface IWorkbenchActionConstants {
      * ActionFactory.FIND.getId()} instead.
      */
     @Deprecated
-	public static final String FIND = "find"; // Global action. //$NON-NLS-1$
+	String FIND = "find"; // Global action. //$NON-NLS-1$
 
     /**
      * Edit menu: name of group for extra Find-like actions (value <code>"find.ext"</code>).
      */
-    public static final String FIND_EXT = "find.ext"; // Group. //$NON-NLS-1$
+	String FIND_EXT = "find.ext"; // Group. //$NON-NLS-1$
 
     /**
      * Edit menu: name of standard Select All global action
@@ -459,7 +459,7 @@ public interface IWorkbenchActionConstants {
      * ActionFactory.SELECT_ALL.getId()} instead.
      */
     @Deprecated
-	public static final String SELECT_ALL = "selectAll"; // Global action. //$NON-NLS-1$
+	String SELECT_ALL = "selectAll"; // Global action. //$NON-NLS-1$
 
     /**
      * Edit menu: name of standard Add Bookmark global action
@@ -470,7 +470,7 @@ public interface IWorkbenchActionConstants {
      * instead.
      */
     @Deprecated
-	public static final String BOOKMARK = "bookmark"; // Global action. //$NON-NLS-1$
+	String BOOKMARK = "bookmark"; // Global action. //$NON-NLS-1$
 
     /**
      * Edit menu: name of standard Add Task global action
@@ -481,31 +481,31 @@ public interface IWorkbenchActionConstants {
      * instead.
      */
     @Deprecated
-	public static final String ADD_TASK = "addTask"; // Global action. //$NON-NLS-1$
+	String ADD_TASK = "addTask"; // Global action. //$NON-NLS-1$
 
     /**
      * Edit menu: name of group for extra Add-like actions (value <code>"add.ext"</code>).
      */
-    public static final String ADD_EXT = "add.ext"; // Group. //$NON-NLS-1$
+	String ADD_EXT = "add.ext"; // Group. //$NON-NLS-1$
 
     // Standard workbench actions:
     /**
      * Workbench menu: name of group for start of menu
      * (value <code>"wbStart"</code>).
      */
-    public static final String WB_START = "wbStart"; // Group. //$NON-NLS-1$
+	String WB_START = "wbStart"; // Group. //$NON-NLS-1$
 
     /**
      * Workbench menu: name of group for end of menu
      * (value <code>"wbEnd"</code>).
      */
-    public static final String WB_END = "wbEnd"; // Group. //$NON-NLS-1$
+	String WB_END = "wbEnd"; // Group. //$NON-NLS-1$
 
     /**
      * Workbench menu: name of group for extra Build-like actions
      * (value <code>"build.ext"</code>).
      */
-    public static final String BUILD_EXT = "build.ext"; // Group. //$NON-NLS-1$
+	String BUILD_EXT = "build.ext"; // Group. //$NON-NLS-1$
 
     /**
      * Workbench menu: name of standard Build action
@@ -516,7 +516,7 @@ public interface IWorkbenchActionConstants {
      * instead.
      */
     @Deprecated
-	public static final String BUILD = "build"; //$NON-NLS-1$
+	String BUILD = "build"; //$NON-NLS-1$
 
     /**
      * Workbench menu: name of standard Rebuild All action
@@ -527,7 +527,7 @@ public interface IWorkbenchActionConstants {
      * instead.
      */
     @Deprecated
-	public static final String REBUILD_ALL = "rebuildAll"; //$NON-NLS-1$
+	String REBUILD_ALL = "rebuildAll"; //$NON-NLS-1$
 
     // Workbench toolbar ids:
     /**
@@ -535,28 +535,28 @@ public interface IWorkbenchActionConstants {
      *
      * @since 2.1
      */
-    public static final String TOOLBAR_FILE = "org.eclipse.ui.workbench.file"; //$NON-NLS-1$
+	String TOOLBAR_FILE = "org.eclipse.ui.workbench.file"; //$NON-NLS-1$
 
     /**
 	 * Workbench toolbar id for edit toolbar group.
 	 *
 	 * @since 3.111
 	 */
-    public static final String TOOLBAR_EDIT = "org.eclipse.ui.workbench.edit"; //$NON-NLS-1$
+	String TOOLBAR_EDIT = "org.eclipse.ui.workbench.edit"; //$NON-NLS-1$
 
     /**
      * Workbench toolbar id for navigate toolbar group.
      *
      * @since 2.1
      */
-    public static final String TOOLBAR_NAVIGATE = "org.eclipse.ui.workbench.navigate"; //$NON-NLS-1$
+	String TOOLBAR_NAVIGATE = "org.eclipse.ui.workbench.navigate"; //$NON-NLS-1$
 
     /**
      * Workbench toolbar id for help toolbar group.
      *
      * @since 3.1
      */
-    public static final String TOOLBAR_HELP = "org.eclipse.ui.workbench.help"; //$NON-NLS-1$
+	String TOOLBAR_HELP = "org.eclipse.ui.workbench.help"; //$NON-NLS-1$
 
     // Workbench toolbar group ids.  To add an item at the beginning of the group,
     // use the GROUP id.  To add an item at the end of the group, use the EXT id.
@@ -566,109 +566,109 @@ public interface IWorkbenchActionConstants {
      *
      * @since 2.1
      */
-    public static final String PIN_GROUP = "pin.group"; //$NON-NLS-1$
+	String PIN_GROUP = "pin.group"; //$NON-NLS-1$
 
     /**
      * Group id for history toolbar group.
      *
      * @since 2.1
      */
-    public static final String HISTORY_GROUP = "history.group"; //$NON-NLS-1$
+	String HISTORY_GROUP = "history.group"; //$NON-NLS-1$
 
     /**
      * Group id for new toolbar group.
      *
      * @since 2.1
      */
-    public static final String NEW_GROUP = "new.group"; //$NON-NLS-1$
+	String NEW_GROUP = "new.group"; //$NON-NLS-1$
 
     /**
      * Group id for save group.
      *
      * @since 2.1
      */
-    public static final String SAVE_GROUP = "save.group"; //$NON-NLS-1$
+	String SAVE_GROUP = "save.group"; //$NON-NLS-1$
 
     /**
 	 * Group id for build group.
 	 *
 	 * @since 3.111
 	 */
-	public static final String EDIT_GROUP = "edit.group"; //$NON-NLS-1$
+	String EDIT_GROUP = "edit.group"; //$NON-NLS-1$
 
 	/**
 	 * Group id for build group.
 	 *
 	 * @since 2.1
 	 */
-    public static final String BUILD_GROUP = "build.group"; //$NON-NLS-1$
+	String BUILD_GROUP = "build.group"; //$NON-NLS-1$
 
     // Pop-up menu groups:
     /**
      * Pop-up menu: name of group for Managing actions (value <code>"group.managing"</code>).
      */
-    public static final String GROUP_MANAGING = "group.managing"; //$NON-NLS-1$
+	String GROUP_MANAGING = "group.managing"; //$NON-NLS-1$
 
     /**
      * Pop-up menu: name of group for Reorganize actions (value <code>"group.reorganize"</code>).
      */
-    public static final String GROUP_REORGANIZE = "group.reorganize"; //$NON-NLS-1$
+	String GROUP_REORGANIZE = "group.reorganize"; //$NON-NLS-1$
 
     /**
      * Pop-up menu: name of group for Add actions (value <code>"group.add"</code>).
      */
-    public static final String GROUP_ADD = "group.add"; //$NON-NLS-1$
+	String GROUP_ADD = "group.add"; //$NON-NLS-1$
 
     /**
      * Pop-up menu: name of group for File actions (value <code>"group.file"</code>).
      */
-    public static final String GROUP_FILE = "group.file"; //$NON-NLS-1$
+	String GROUP_FILE = "group.file"; //$NON-NLS-1$
 
     /**
      * Pop-up menu: name of group for Show In actions (value <code>"group.showIn"</code>).
      *
      * @since 2.1
      */
-    public static final String GROUP_SHOW_IN = "group.showIn"; //$NON-NLS-1$
+	String GROUP_SHOW_IN = "group.showIn"; //$NON-NLS-1$
 
     /**
      * Coolbar: name of group for application created actions
      *
      * @since 3.0
      */
-    public static final String GROUP_APP = "group.application"; //$NON-NLS-1$
+	String GROUP_APP = "group.application"; //$NON-NLS-1$
 
     /**
      * Toolbar: name of group for editor action bars.
      */
-    public static final String GROUP_EDITOR = "group.editor"; //$NON-NLS-1$
+	String GROUP_EDITOR = "group.editor"; //$NON-NLS-1$
 
     /**
      * Coolbar: name of group for help actions and contributions
      *
      * @since 3.1
      */
-    public static final String GROUP_HELP = "group.help"; //$NON-NLS-1$
+	String GROUP_HELP = "group.help"; //$NON-NLS-1$
 
     // Standard view actions:
     /**
      * View menu: name of group for additional view-like items.
      * (value <code>"additions"</code>).
      */
-    public static final String VIEW_EXT = MB_ADDITIONS; // Group.
+	String VIEW_EXT = MB_ADDITIONS; // Group.
 
     // Standard window actions:
     /**
      * Window menu: name of group for additional window-like items.
      * (value <code>"additions"</code>).
      */
-    public static final String WINDOW_EXT = MB_ADDITIONS; // Group.
+	String WINDOW_EXT = MB_ADDITIONS; // Group.
 
     /**
      * Launch menu: name of group for launching additional windows.
      * (value <code>"additions"</code>).
      */
-    public static final String LAUNCH_EXT = MB_ADDITIONS; // Group.
+	String LAUNCH_EXT = MB_ADDITIONS; // Group.
 
     // menu reorg
     /**
@@ -679,7 +679,7 @@ public interface IWorkbenchActionConstants {
      * ActionFactory.REVERT.getId()} instead.
      */
     @Deprecated
-	public static final String REVERT = "revert"; // Global action. //$NON-NLS-1$
+	String REVERT = "revert"; // Global action. //$NON-NLS-1$
 
     /**
      * File menu: name of standard Refresh global action
@@ -689,7 +689,7 @@ public interface IWorkbenchActionConstants {
      * ActionFactory.REFRESH.getId()} instead.
      */
     @Deprecated
-	public static final String REFRESH = "refresh"; // Global action. //$NON-NLS-1$
+	String REFRESH = "refresh"; // Global action. //$NON-NLS-1$
 
     /**
      * File menu: name of standard Properties global action
@@ -699,7 +699,7 @@ public interface IWorkbenchActionConstants {
      * ActionFactory.PROPERTIES.getId()} instead.
      */
     @Deprecated
-	public static final String PROPERTIES = "properties"; // Global action. //$NON-NLS-1$
+	String PROPERTIES = "properties"; // Global action. //$NON-NLS-1$
 
     /**
      * Edit menu: name of standard Move global action
@@ -709,7 +709,7 @@ public interface IWorkbenchActionConstants {
      * ActionFactory.MOVE.getId()} instead.
      */
     @Deprecated
-	public static final String MOVE = "move"; // Global action. //$NON-NLS-1$
+	String MOVE = "move"; // Global action. //$NON-NLS-1$
 
     /**
      * Edit menu: name of standard Rename global action
@@ -719,13 +719,13 @@ public interface IWorkbenchActionConstants {
      * ActionFactory.RENAME.getId()} instead.
      */
     @Deprecated
-	public static final String RENAME = "rename"; // Global action. //$NON-NLS-1$
+	String RENAME = "rename"; // Global action. //$NON-NLS-1$
 
     /**
      * Edit menu: name of standard Add Task global action
      * (value <code>"addTask"</code>).
      */
-    //	public static final String ADD_TASK = "addTask";	// Global action. //$NON-NLS-1$
+	// String ADD_TASK = "addTask"; // Global action. //$NON-NLS-1$
 
 	/**
 	 * Perspective menu: name of group for start of menu (value
@@ -733,7 +733,7 @@ public interface IWorkbenchActionConstants {
 	 *
 	 * @since 3.107
 	 */
-	public static final String PERSPECTIVE_START = "perspectiveStart"; // Group. //$NON-NLS-1$
+	String PERSPECTIVE_START = "perspectiveStart"; // Group. //$NON-NLS-1$
 
 	/**
 	 * Perspective menu: name of group for end of menu (value
@@ -741,49 +741,49 @@ public interface IWorkbenchActionConstants {
 	 *
 	 * @since 3.107
 	 */
-	public static final String PERSPECTIVE_END = "perspectiveStartEnd"; // Group. //$NON-NLS-1$
+	String PERSPECTIVE_END = "perspectiveStartEnd"; // Group. //$NON-NLS-1$
 
     /**
      * Navigate menu: name of group for start of menu
      * (value <code>"navStart"</code>).
      */
-    public static final String NAV_START = "navStart"; // Group. //$NON-NLS-1$
+	String NAV_START = "navStart"; // Group. //$NON-NLS-1$
 
     /**
      * Navigate menu: name of group for end of menu
      * (value <code>"navEnd"</code>).
      */
-    public static final String NAV_END = "navEnd"; // Group. //$NON-NLS-1$
+	String NAV_END = "navEnd"; // Group. //$NON-NLS-1$
 
     /**
      * File and Navigate menu: name of group for extra Open actions
      * (value <code>"open.ext"</code>).
      */
-    public static final String OPEN_EXT = "open.ext"; // Group. //$NON-NLS-1$
+	String OPEN_EXT = "open.ext"; // Group. //$NON-NLS-1$
 
     /**
      * Navigate menu: name of group for extra Show actions
      * (value <code>"show.ext"</code>).
      */
-    public static final String SHOW_EXT = "show.ext"; // Group. //$NON-NLS-1$
+	String SHOW_EXT = "show.ext"; // Group. //$NON-NLS-1$
 
     /**
      * Navigate menu: name of standard Go Into global action
      * (value <code>"goInto"</code>).
      */
-    public static final String GO_INTO = "goInto"; // Global action. //$NON-NLS-1$
+	String GO_INTO = "goInto"; // Global action. //$NON-NLS-1$
 
     /**
      * Navigate menu: name of standard Go To submenu
      * (value <code>"goTo"</code>).
      */
-    public static final String GO_TO = "goTo"; //$NON-NLS-1$
+	String GO_TO = "goTo"; //$NON-NLS-1$
 
     /**
      * Navigate menu: name of standard Go To Resource global action
      * (value <code>"goToResource"</code>).
      */
-    public static final String GO_TO_RESOURCE = "goToResource"; // Global action. //$NON-NLS-1$
+	String GO_TO_RESOURCE = "goToResource"; // Global action. //$NON-NLS-1$
 
     /**
      * Navigate menu: name of standard Sync With Editor global action (value
@@ -792,7 +792,7 @@ public interface IWorkbenchActionConstants {
      * @deprecated this action will be removed soon; use SHOW_IN instead
      */
     @Deprecated
-	public static final String SYNC_EDITOR = "syncEditor"; // Global action. //$NON-NLS-1$
+	String SYNC_EDITOR = "syncEditor"; // Global action. //$NON-NLS-1$
 
     /**
      * Navigate menu: name of standard Show In... action
@@ -803,7 +803,7 @@ public interface IWorkbenchActionConstants {
      * @deprecated
      */
     @Deprecated
-	public static final String SHOW_IN = "showIn"; //$NON-NLS-1$
+	String SHOW_IN = "showIn"; //$NON-NLS-1$
 
     /**
      * Navigate menu: name of standard Back global action
@@ -813,7 +813,7 @@ public interface IWorkbenchActionConstants {
      * ActionFactory.BACK.getId()} instead.
      */
     @Deprecated
-	public static final String BACK = "back"; // Global action. //$NON-NLS-1$
+	String BACK = "back"; // Global action. //$NON-NLS-1$
 
     /**
      * Navigate menu: name of standard Forward global action
@@ -823,13 +823,13 @@ public interface IWorkbenchActionConstants {
      * ActionFactory.FORWARD.getId()} instead.
      */
     @Deprecated
-	public static final String FORWARD = "forward"; // Global action. //$NON-NLS-1$
+	String FORWARD = "forward"; // Global action. //$NON-NLS-1$
 
     /**
      * Navigate menu: name of standard Up global action
      * (value <code>"up"</code>).
      */
-    public static final String UP = "up"; // Global action. //$NON-NLS-1$
+	String UP = "up"; // Global action. //$NON-NLS-1$
 
     /**
      * Navigate menu: name of standard Next global action
@@ -839,7 +839,7 @@ public interface IWorkbenchActionConstants {
      * ActionFactory.NEXT.getId()} instead.
      */
     @Deprecated
-	public static final String NEXT = "next"; // Global action. //$NON-NLS-1$
+	String NEXT = "next"; // Global action. //$NON-NLS-1$
 
     /**
      * Navigate menu: name of standard Up global action
@@ -849,19 +849,19 @@ public interface IWorkbenchActionConstants {
      * ActionFactory.PREVIOUS.getId()} instead.
      */
     @Deprecated
-	public static final String PREVIOUS = "previous"; // Global action. //$NON-NLS-1$
+	String PREVIOUS = "previous"; // Global action. //$NON-NLS-1$
 
     /**
      * Project menu: name of group for start of menu
      * (value <code>"projStart"</code>).
      */
-    public static final String PROJ_START = "projStart"; // Group. //$NON-NLS-1$
+	String PROJ_START = "projStart"; // Group. //$NON-NLS-1$
 
     /**
      * Project menu: name of group for start of menu
      * (value <code>"projEnd"</code>).
      */
-    public static final String PROJ_END = "projEnd"; // Group. //$NON-NLS-1$
+	String PROJ_END = "projEnd"; // Group. //$NON-NLS-1$
 
     /**
      * Project menu: name of standard Build Project global action
@@ -872,7 +872,7 @@ public interface IWorkbenchActionConstants {
      * instead.
      */
     @Deprecated
-	public static final String BUILD_PROJECT = "buildProject"; // Global action. //$NON-NLS-1$
+	String BUILD_PROJECT = "buildProject"; // Global action. //$NON-NLS-1$
 
     /**
      * Project menu: name of standard Rebuild Project global action
@@ -883,7 +883,7 @@ public interface IWorkbenchActionConstants {
      * instead.
      */
     @Deprecated
-	public static final String REBUILD_PROJECT = "rebuildProject"; // Global action. //$NON-NLS-1$
+	String REBUILD_PROJECT = "rebuildProject"; // Global action. //$NON-NLS-1$
 
     /**
      * Project menu: name of standard Open Project global action
@@ -894,7 +894,7 @@ public interface IWorkbenchActionConstants {
      * instead.
      */
     @Deprecated
-	public static final String OPEN_PROJECT = "openProject"; // Global action. //$NON-NLS-1$
+	String OPEN_PROJECT = "openProject"; // Global action. //$NON-NLS-1$
 
     /**
      * Project menu: name of standard Close Project global action
@@ -905,7 +905,7 @@ public interface IWorkbenchActionConstants {
      * instead.
      */
     @Deprecated
-	public static final String CLOSE_PROJECT = "closeProject"; // Global action. //$NON-NLS-1$
+	String CLOSE_PROJECT = "closeProject"; // Global action. //$NON-NLS-1$
     // end menu reorg
 
     // Standard help actions:
@@ -913,13 +913,13 @@ public interface IWorkbenchActionConstants {
      * Help menu: name of group for start of menu
      * (value <code>"helpStart"</code>).
      */
-    public static final String HELP_START = "helpStart"; // Group. //$NON-NLS-1$
+	String HELP_START = "helpStart"; // Group. //$NON-NLS-1$
 
     /**
      * Help menu: name of group for end of menu
      * (value <code>"helpEnd"</code>).
      */
-    public static final String HELP_END = "helpEnd"; // Group. //$NON-NLS-1$
+	String HELP_END = "helpEnd"; // Group. //$NON-NLS-1$
 
     /**
      * Help menu: name of standard About action
@@ -929,7 +929,7 @@ public interface IWorkbenchActionConstants {
      * ActionFactory.ABOUT.getId()} instead.
      */
     @Deprecated
-	public static final String ABOUT = "about"; //$NON-NLS-1$
+	String ABOUT = "about"; //$NON-NLS-1$
 
     /**
      * Standard global actions in a workbench window.
@@ -937,6 +937,6 @@ public interface IWorkbenchActionConstants {
      * @deprecated in 3.0
      */
     @Deprecated
-	public static final String[] GLOBAL_ACTIONS = { UNDO, REDO, CUT, COPY,
+	String[] GLOBAL_ACTIONS = { UNDO, REDO, CUT, COPY,
             PASTE, PRINT, DELETE, FIND, SELECT_ALL, BOOKMARK };
 }

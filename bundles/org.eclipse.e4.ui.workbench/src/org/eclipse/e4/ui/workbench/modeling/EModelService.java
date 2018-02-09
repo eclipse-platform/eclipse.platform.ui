@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2015 IBM Corporation and others.
+ * Copyright (c) 2010, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -39,66 +39,66 @@ public interface EModelService {
 	// Insertion constants
 
 	/** Insert the new element above the existing one */
-	public static final int ABOVE = 0;
+	int ABOVE = 0;
 
 	/** Insert the new element below the existing one */
-	public static final int BELOW = 1;
+	int BELOW = 1;
 
 	/** Insert the new element to the left of the existing one */
-	public static final int LEFT_OF = 2;
+	int LEFT_OF = 2;
 
 	/** Insert the new element to the right of the existing one */
-	public static final int RIGHT_OF = 3;
+	int RIGHT_OF = 3;
 
 	// Search modifiers / Location Constants
 
 	/** Returned Location if the element's parent chain does not relate to the MApplication's model */
-	public static final int NOT_IN_UI = 0x00;
+	int NOT_IN_UI = 0x00;
 
 	/** Returned Location if the element is in the UI but not in an MPerspective */
-	public static final int OUTSIDE_PERSPECTIVE = 0x01;
+	int OUTSIDE_PERSPECTIVE = 0x01;
 
 	/** Returned Location if the element is in the currently active perspective */
-	public static final int IN_ACTIVE_PERSPECTIVE = 0x02;
+	int IN_ACTIVE_PERSPECTIVE = 0x02;
 
 	/** Returned Location if the element is in a non-active perspective */
-	public static final int IN_ANY_PERSPECTIVE = 0x04;
+	int IN_ANY_PERSPECTIVE = 0x04;
 
 	/** Returned Location if the element is contained in an MArea */
-	public static final int IN_SHARED_AREA = 0x08;
+	int IN_SHARED_AREA = 0x08;
 
 	/** Returned Location if the element is in an MTrimBar */
-	public static final int IN_TRIM = 0x10;
+	int IN_TRIM = 0x10;
 
 	/**
 	 * Returned Location if the element is in a main menu of an MWindow
 	 *
 	 * @since 1.1
 	 */
-	public static final int IN_MAIN_MENU = 0x20;
+	int IN_MAIN_MENU = 0x20;
 
 	/**
 	 * Returned Location if the element is in an MPart
 	 *
 	 * @since 1.1
 	 */
-	public static final int IN_PART = 0x40;
+	int IN_PART = 0x40;
 
 	// 'Standard' searches
 
 	/** Searches for elements in the UI that the user is currently seeing (excluding trim) */
-	public static final int PRESENTATION = OUTSIDE_PERSPECTIVE | IN_ACTIVE_PERSPECTIVE
+	int PRESENTATION = OUTSIDE_PERSPECTIVE | IN_ACTIVE_PERSPECTIVE
 			| IN_SHARED_AREA;
 
 	/** Searches for elements in the UI presentation, including all perspectives */
-	public static final int ANYWHERE = OUTSIDE_PERSPECTIVE | IN_ANY_PERSPECTIVE | IN_SHARED_AREA
+	int ANYWHERE = OUTSIDE_PERSPECTIVE | IN_ANY_PERSPECTIVE | IN_SHARED_AREA
 			| IN_TRIM;
 
 	/**
 	 * Searches for elements in the UI that the user is currently seeing that are OUTSIDE the
 	 * perspective (i.e. visible regardless of the current perspective)
 	 */
-	public static final int GLOBAL = OUTSIDE_PERSPECTIVE | IN_SHARED_AREA;
+	int GLOBAL = OUTSIDE_PERSPECTIVE | IN_SHARED_AREA;
 
 	/**
 	 * When invoking the 'cloneElement' method the newly cloned element's 'transientData' map will
@@ -106,7 +106,7 @@ public interface EModelService {
 	 *
 	 * @since 1.1
 	 */
-	public static String CLONED_FROM_KEY = "Cloned From"; //$NON-NLS-1$
+	String CLONED_FROM_KEY = "Cloned From"; //$NON-NLS-1$
 
 	/**
 	 * Creates instances of model elements. The method supports any type extending
@@ -126,7 +126,7 @@ public interface EModelService {
 	 * @throws IllegalArgumentException
 	 *             if the passed class is not supported.
 	 */
-	public <T extends MApplicationElement> T createModelElement(Class<T> elementType);
+	<T extends MApplicationElement> T createModelElement(Class<T> elementType);
 
 	/**
 	 * This is a convenience method that constructs a new Selector based on {@link ElementMatcher}
@@ -135,7 +135,7 @@ public interface EModelService {
 	 *
 	 * @see EModelService#findElements(MApplicationElement, Class, int, Selector)
 	 */
-	public <T> List<T> findElements(MUIElement searchRoot, String id, Class<T> clazz,
+	<T> List<T> findElements(MUIElement searchRoot, String id, Class<T> clazz,
 			List<String> tagsToMatch, int searchFlags);
 
 	/**
@@ -144,7 +144,7 @@ public interface EModelService {
 	 * {@link EModelService#ANYWHERE} as the 'searchFlags'.
 	 *
 	 */
-	public <T> List<T> findElements(MUIElement searchRoot, String id, Class<T> clazz,
+	<T> List<T> findElements(MUIElement searchRoot, String id, Class<T> clazz,
 			List<String> tagsToMatch);
 
 	/**
@@ -191,7 +191,7 @@ public interface EModelService {
 	 *
 	 * @since 1.1
 	 */
-	public <T> List<T> findElements(MApplicationElement searchRoot, Class<T> clazz,
+	<T> List<T> findElements(MApplicationElement searchRoot, Class<T> clazz,
 			int searchFlags, Selector matcher);
 
 	/**
@@ -203,7 +203,7 @@ public interface EModelService {
 	 *            The element at which to start the search, must not be null
 	 * @return The first element with a matching id or <code>null</code> if one is not found
 	 */
-	public MUIElement find(String id, MUIElement searchRoot);
+	MUIElement find(String id, MUIElement searchRoot);
 
 	/**
 	 * Locate the context that is closest to the given element in the parent hierarchy. It does not
@@ -213,7 +213,7 @@ public interface EModelService {
 	 *            the element to locate parent context for
 	 * @return the containing context for this element
 	 */
-	public IEclipseContext getContainingContext(MUIElement element);
+	IEclipseContext getContainingContext(MUIElement element);
 
 	/**
 	 * Brings the specified element to the top of its containment structure. If the specified
@@ -224,7 +224,7 @@ public interface EModelService {
 	 * @param element
 	 *            The element to bring to the top
 	 */
-	public void bringToTop(MUIElement element);
+	void bringToTop(MUIElement element);
 
 	/**
 	 * Clones the element, creating a deep copy of its structure.
@@ -240,7 +240,7 @@ public interface EModelService {
 	 *            need not be saved
 	 * @return The newly cloned element
 	 */
-	public MUIElement cloneElement(MUIElement element, MSnippetContainer snippetContainer);
+	MUIElement cloneElement(MUIElement element, MSnippetContainer snippetContainer);
 
 	/**
 	 * If a snippet with the given id exists a clone is created and returned. returns
@@ -255,7 +255,7 @@ public interface EModelService {
 	 *
 	 * @return The cloned snippet or <code>null</code> if no snippet with the given id can be found
 	 */
-	public MUIElement cloneSnippet(MSnippetContainer snippetContainer, String snippetId,
+	MUIElement cloneSnippet(MSnippetContainer snippetContainer, String snippetId,
 			MWindow refWin);
 
 	/**
@@ -267,7 +267,7 @@ public interface EModelService {
 	 *            The id of the root element of the snippet
 	 * @return The root element of the snippet or <code>null</code> if none is found
 	 */
-	public MUIElement findSnippet(MSnippetContainer snippetContainer, String id);
+	MUIElement findSnippet(MSnippetContainer snippetContainer, String id);
 
 	/**
 	 * Return the count of the children whose 'toBeRendered' flag is true
@@ -276,7 +276,7 @@ public interface EModelService {
 	 *            The element to test
 	 * @return the number of children with 'toBeRendered' == true
 	 */
-	public int countRenderableChildren(MUIElement element);
+	int countRenderableChildren(MUIElement element);
 
 	/**
 	 * Given a containing MWindow find the MPlaceholder that is currently being used to host the
@@ -288,7 +288,7 @@ public interface EModelService {
 	 *            The element to find the MPlaceholder for
 	 * @return the MPlaceholder or null if none is found
 	 */
-	public MPlaceholder findPlaceholderFor(MWindow window, MUIElement element);
+	MPlaceholder findPlaceholderFor(MWindow window, MUIElement element);
 
 	/**
 	 * Move the element to a new location. The element will be placed at the end of the new parent's
@@ -299,7 +299,7 @@ public interface EModelService {
 	 * @param newParent
 	 *            The new parent for the element.
 	 */
-	public <T extends MUIElement> void move(T element, MElementContainer<? super T> newParent);
+	<T extends MUIElement> void move(T element, MElementContainer<? super T> newParent);
 
 	/**
 	 * Move the element to a new location. The element will be placed at the end of the new parent's
@@ -313,7 +313,7 @@ public interface EModelService {
 	 * @param leavePlaceholder
 	 *            true if a placeholder for the element should be added
 	 */
-	public <T extends MUIElement> void move(T element, MElementContainer<? super T> newParent,
+	<T extends MUIElement> void move(T element, MElementContainer<? super T> newParent,
 			boolean leavePlaceholder);
 
 	/**
@@ -327,7 +327,7 @@ public interface EModelService {
 	 * @param index
 	 *            The index to insert the element at; -1 means at the end
 	 */
-	public <T extends MUIElement> void move(T element, MElementContainer<? super T> newParent, int index);
+	<T extends MUIElement> void move(T element, MElementContainer<? super T> newParent, int index);
 
 	/**
 	 * Move the element to a new location. The element will be placed at the end of the new parent's
@@ -342,7 +342,7 @@ public interface EModelService {
 	 * @param leavePlaceholder
 	 *            true if a placeholder for the element should be added
 	 */
-	public <T extends MUIElement> void move(T element, MElementContainer<? super T> newParent, int index,
+	<T extends MUIElement> void move(T element, MElementContainer<? super T> newParent, int index,
 			boolean leavePlaceholder);
 
 	/**
@@ -361,7 +361,7 @@ public interface EModelService {
 	 *            The percentage of the area to be occupied by the inserted
 	 *            element; should be a number greater than 0 and less than 1
 	 */
-	public void insert(MPartSashContainerElement toInsert, MPartSashContainerElement relTo,
+	void insert(MPartSashContainerElement toInsert, MPartSashContainerElement relTo,
 			int where, float ratio);
 
 	/**
@@ -378,7 +378,7 @@ public interface EModelService {
 	 * @param height
 	 *            The Height of the new window
 	 */
-	public void detach(MPartSashContainerElement mPartSashContainerElement, int x, int y, int width, int height);
+	void detach(MPartSashContainerElement mPartSashContainerElement, int x, int y, int width, int height);
 
 	/**
 	 * Get the top-level window containing this UI element. A <code>null</code> return value
@@ -392,7 +392,7 @@ public interface EModelService {
 	 *         indicates that the element is not directly contained in the UI model (but may, for
 	 *         example, be a model snippet hosted in a Dialog...)
 	 */
-	public MWindow getTopLevelWindowFor(MUIElement element);
+	MWindow getTopLevelWindowFor(MUIElement element);
 
 	/**
 	 * @param element
@@ -400,7 +400,7 @@ public interface EModelService {
 	 * @return The MPerspective containing this element or <code>null</code> if the element is not
 	 *         in a perspective
 	 */
-	public MPerspective getPerspectiveFor(MUIElement element);
+	MPerspective getPerspectiveFor(MUIElement element);
 
 	/**
 	 * Returns the window's MTrimBar for the specified side. If necessary the bar will be created.
@@ -412,7 +412,7 @@ public interface EModelService {
 	 *
 	 * @return The appropriate trim bar
 	 */
-	public MTrimBar getTrim(MTrimmedWindow window, SideValue sv);
+	MTrimBar getTrim(MTrimmedWindow window, SideValue sv);
 
 	/**
 	 * Return the active perspective for the given window. This is a convenience method that just
@@ -424,7 +424,7 @@ public interface EModelService {
 	 * @return The active perspective or <code>null</code> if there is no MPerspectiveStack, it's
 	 *         empty or has no selected element.
 	 */
-	public MPerspective getActivePerspective(MWindow window);
+	MPerspective getActivePerspective(MWindow window);
 
 	/**
 	 * This is a convenience method that will clean the model of all traces of a given perspective.
@@ -437,7 +437,7 @@ public interface EModelService {
 	 * @param window
 	 *            the window to remove it from
 	 */
-	public void resetPerspectiveModel(MPerspective persp, MWindow window);
+	void resetPerspectiveModel(MPerspective persp, MWindow window);
 
 	/**
 	 * Remove the given perspective completely from the model.
@@ -447,7 +447,7 @@ public interface EModelService {
 	 * @param window
 	 *            the window to remove it from
 	 */
-	public void removePerspectiveModel(MPerspective persp, MWindow window);
+	void removePerspectiveModel(MPerspective persp, MWindow window);
 
 	/**
 	 * Count the number of 'toBeRendered' children
@@ -457,7 +457,7 @@ public interface EModelService {
 	 * @return The number of children whose toBeRendered flag is <code>true</code>
 	 *
 	 */
-	public int toBeRenderedCount(MElementContainer<?> container);
+	int toBeRenderedCount(MElementContainer<?> container);
 
 	/**
 	 * Get the container of the given element. This is a convenience method that will always return
@@ -469,7 +469,7 @@ public interface EModelService {
 	 * @return The element's container. This may be <code>null</code> if the element being checked
 	 *         is a snippet unattached to the UI Model itself.
 	 */
-	public MUIElement getContainer(MUIElement element);
+	MUIElement getContainer(MUIElement element);
 
 	/**
 	 * Given an element this method responds with information about where the element exists within
@@ -489,7 +489,7 @@ public interface EModelService {
 	 *         different perspectives</li>
 	 *         </ul>
 	 */
-	public int getElementLocation(MUIElement element);
+	int getElementLocation(MUIElement element);
 
 	/**
 	 * Returns the descriptor for the given part id.
@@ -506,7 +506,7 @@ public interface EModelService {
 	 *            The id of the descriptor to return
 	 * @return The descriptor matching the id or <code>null</code> if none exists
 	 */
-	public MPartDescriptor getPartDescriptor(String id);
+	MPartDescriptor getPartDescriptor(String id);
 
 	/**
 	 * Creates a new part from the given descriptor.
@@ -517,7 +517,7 @@ public interface EModelService {
 	 * @see EPartService#createPart(String)
 	 * @since 1.5
 	 */
-	public MPart createPart(MPartDescriptor descriptor);
+	MPart createPart(MPartDescriptor descriptor);
 
 	/**
 	 * This method ensures that there will never be two placeholders for the same referenced element
@@ -532,7 +532,7 @@ public interface EModelService {
 	 *            if non-null specifies the specific perspective to modify, otherwise all
 	 *            perspectives in the window are checked
 	 */
-	public void hideLocalPlaceholders(MWindow window, MPerspective perspective);
+	void hideLocalPlaceholders(MWindow window, MPerspective perspective);
 
 	/**
 	 * Returns <code>true</code> iff the supplied element represents the single visible element in
@@ -543,7 +543,7 @@ public interface EModelService {
 	 *            The element to test
 	 * @return <code>true</code> iff the element is the last visible stack
 	 */
-	public boolean isLastEditorStack(MUIElement stack);
+	boolean isLastEditorStack(MUIElement stack);
 
 	/**
 	 * Allows an element to be rendered in an arbitrary UI container (I.e. SWT Composite).
@@ -557,7 +557,7 @@ public interface EModelService {
 	 * @param hostContext
 	 *            The IEclipseContext to use for hosting the element. Must be non-null.
 	 */
-	public void hostElement(MUIElement element, MWindow hostWindow, Object uiContainer,
+	void hostElement(MUIElement element, MWindow hostWindow, Object uiContainer,
 			IEclipseContext hostContext);
 
 	/**
@@ -573,5 +573,5 @@ public interface EModelService {
 	 * @return <code>true</code> iff the given element or one of its ancestors is currently being
 	 *         hosted in the given MWindow.
 	 */
-	public boolean isHostedElement(MUIElement element, MWindow hostWindow);
+	boolean isHostedElement(MUIElement element, MWindow hostWindow);
 }

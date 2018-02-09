@@ -52,13 +52,13 @@ public interface IAction {
      *
      * @since 2.1
      */
-    public static int AS_UNSPECIFIED = 0x00;
+	int AS_UNSPECIFIED = 0x00;
 
     /**
      * Action style constant (value <code>1</code>) indicating action is
      * a simple push button.
      */
-    public static int AS_PUSH_BUTTON = 0x01;
+	int AS_PUSH_BUTTON = 0x01;
 
     /**
      * Action style constant (value <code>2</code>) indicating action is
@@ -68,13 +68,13 @@ public interface IAction {
      * deselected. Use {@link #isChecked} to determine the selection state.
      * </p>
      */
-    public static int AS_CHECK_BOX = 0x02;
+	int AS_CHECK_BOX = 0x02;
 
     /**
      * Action style constant (value <code>4</code>) indicating action is
      * a drop down menu.
      */
-    public static int AS_DROP_DOWN_MENU = 0x04;
+	int AS_DROP_DOWN_MENU = 0x04;
 
     /**
      * Action style constant (value <code>8</code>) indicating action is
@@ -87,41 +87,41 @@ public interface IAction {
      *
      * @since 2.1
      */
-    public static int AS_RADIO_BUTTON = 0x08;
+	int AS_RADIO_BUTTON = 0x08;
 
     /**
      * Property name of an action's text (value <code>"text"</code>).
      */
-    public static final String TEXT = "text"; //$NON-NLS-1$
+	String TEXT = "text"; //$NON-NLS-1$
 
     /**
      * Property name of an action's enabled state
      * (value <code>"enabled"</code>).
      */
-    public static final String ENABLED = "enabled"; //$NON-NLS-1$
+	String ENABLED = "enabled"; //$NON-NLS-1$
 
     /**
      * Property name of an action's image (value <code>"image"</code>).
      */
-    public static final String IMAGE = "image"; //$NON-NLS-1$
+	String IMAGE = "image"; //$NON-NLS-1$
 
     /**
      * Property name of an action's tooltip text (value <code>"toolTipText"</code>).
      */
-    public static final String TOOL_TIP_TEXT = "toolTipText"; //$NON-NLS-1$
+	String TOOL_TIP_TEXT = "toolTipText"; //$NON-NLS-1$
 
     /**
      * Property name of an action's description (value <code>"description"</code>).
      * Typically the description is shown as a (longer) help text in the status line.
      */
-    public static final String DESCRIPTION = "description"; //$NON-NLS-1$
+	String DESCRIPTION = "description"; //$NON-NLS-1$
 
     /**
      * Property name of an action's checked status (value
      * <code>"checked"</code>). Applicable when the style is
      * <code>AS_CHECK_BOX</code> or <code>AS_RADIO_BUTTON</code>.
      */
-    public static final String CHECKED = "checked"; //$NON-NLS-1$
+	String CHECKED = "checked"; //$NON-NLS-1$
 
     /**
      * Property name of an action's success/fail result
@@ -139,7 +139,7 @@ public interface IAction {
      *
      * @since 3.0
      */
-    public static final String RESULT = "result"; //$NON-NLS-1$
+	String RESULT = "result"; //$NON-NLS-1$
 
     /**
      * Property name of an action's handler. Some actions delegate some or all
@@ -152,7 +152,7 @@ public interface IAction {
      *
      * @since 3.1
      */
-	public static final String HANDLED = IHandlerAttributes.ATTRIBUTE_HANDLED;
+	String HANDLED = IHandlerAttributes.ATTRIBUTE_HANDLED;
 
     /**
      * Adds a property change listener to this action.
@@ -160,7 +160,7 @@ public interface IAction {
      *
      * @param listener a property change listener
      */
-    public void addPropertyChangeListener(IPropertyChangeListener listener);
+	void addPropertyChangeListener(IPropertyChangeListener listener);
 
     /**
      * Returns the accelerator keycode for this action.
@@ -170,7 +170,7 @@ public interface IAction {
      * @return the accelerator keycode
      * @see org.eclipse.swt.widgets.MenuItem#getAccelerator()
      */
-    public int getAccelerator();
+	int getAccelerator();
 
     /**
      * Returns the action definition id of this action.
@@ -179,7 +179,7 @@ public interface IAction {
      * <code>null</code> if none
      * @since 2.0
      */
-    public String getActionDefinitionId();
+	String getActionDefinitionId();
 
     /**
      * Returns the action's description if it has one.
@@ -187,7 +187,7 @@ public interface IAction {
      *
      * @return a description for the action; may be <code>null</code>
      */
-    public String getDescription();
+	String getDescription();
 
     /**
      * Returns the disabled image for this action as an image descriptor.
@@ -199,14 +199,14 @@ public interface IAction {
      * @return the image, or <code>null</code> if this action has no image
      * @see #IMAGE
      */
-    public ImageDescriptor getDisabledImageDescriptor();
+	ImageDescriptor getDisabledImageDescriptor();
 
     /**
      * Returns a help listener for this action.
      *
      * @return a help listener for this action
      */
-    public HelpListener getHelpListener();
+	HelpListener getHelpListener();
 
     /**
      * Returns the hover image for this action as an image descriptor.
@@ -220,7 +220,7 @@ public interface IAction {
      * @return the image, or <code>null</code> if this action has no image
      * @see #IMAGE
      */
-    public ImageDescriptor getHoverImageDescriptor();
+	ImageDescriptor getHoverImageDescriptor();
 
     /**
      * Returns a unique identifier for this action, or <code>null</code> if it has
@@ -228,7 +228,7 @@ public interface IAction {
      *
      * @return the action id, or <code>null</code> if none
      */
-    public String getId();
+	String getId();
 
     /**
      * Returns the image for this action as an image descriptor.
@@ -240,14 +240,14 @@ public interface IAction {
      * @return the image, or <code>null</code> if this action has no image
      * @see #IMAGE
      */
-    public ImageDescriptor getImageDescriptor();
+	ImageDescriptor getImageDescriptor();
 
     /**
      * Returns the menu creator for this action.
      *
      * @return the menu creator, or <code>null</code> if none
      */
-    public IMenuCreator getMenuCreator();
+	IMenuCreator getMenuCreator();
 
     /**
      * Return this action's style.
@@ -255,7 +255,7 @@ public interface IAction {
      * @return one of <code>AS_PUSH_BUTTON</code>, <code>AS_CHECK_BOX</code>,
      * <code>AS_RADIO_BUTTON</code> and <code>AS_DROP_DOWN_MENU</code>.
      */
-    public int getStyle();
+	int getStyle();
 
     /**
      * Returns the text for this action.
@@ -267,7 +267,7 @@ public interface IAction {
      * @return the text, or <code>null</code> if none
      * @see #TEXT
      */
-    public String getText();
+	String getText();
 
     /**
      * Returns the tool tip text for this action.
@@ -279,7 +279,7 @@ public interface IAction {
      * @return the tool tip text, or <code>null</code> if none
      * @see #TOOL_TIP_TEXT
      */
-    public String getToolTipText();
+	String getToolTipText();
 
     /**
      * Returns the checked status of this action. Applicable only if the style is
@@ -292,7 +292,7 @@ public interface IAction {
      * @return the checked status
      * @see #CHECKED
      */
-    public boolean isChecked();
+	boolean isChecked();
 
     /**
      * Returns whether this action is enabled.
@@ -305,7 +305,7 @@ public interface IAction {
      *   <code>false</code> if disabled
      * @see #ENABLED
      */
-    public boolean isEnabled();
+	boolean isEnabled();
 
     /**
 	 * Returns whether this action is handled. In the default case, this is
@@ -317,7 +317,7 @@ public interface IAction {
 	 *         available; <code>false</code> otherwise.
 	 * @since 3.1
 	 */
-	public boolean isHandled();
+	boolean isHandled();
 
     /**
      * Removes the given listener from this action.
@@ -325,7 +325,7 @@ public interface IAction {
      *
      * @param listener a property change listener
      */
-    public void removePropertyChangeListener(IPropertyChangeListener listener);
+	void removePropertyChangeListener(IPropertyChangeListener listener);
 
     /**
      * Runs this action.
@@ -336,7 +336,7 @@ public interface IAction {
      * @see #AS_RADIO_BUTTON How radio buttons are handled
      * @see #AS_CHECK_BOX How check boxes are handled
      */
-    public void run();
+	void run();
 
     /**
      * Runs this action, passing the triggering SWT event.
@@ -351,7 +351,7 @@ public interface IAction {
      * @see #AS_RADIO_BUTTON How radio buttons are handled
      * @see #AS_CHECK_BOX How check boxes are handled
      */
-    public void runWithEvent(Event event);
+	void runWithEvent(Event event);
 
     /**
      * Sets the action definition id of this action.
@@ -359,7 +359,7 @@ public interface IAction {
      * @param id the action definition id
      * @since 2.0
      */
-    public void setActionDefinitionId(String id);
+	void setActionDefinitionId(String id);
 
     /**
      * Sets the checked status of this action. Applicable for the styles
@@ -372,7 +372,7 @@ public interface IAction {
      * @param checked the new checked status
      * @see #CHECKED
      */
-    public void setChecked(boolean checked);
+	void setChecked(boolean checked);
 
     /**
      * Sets this action's description.
@@ -385,7 +385,7 @@ public interface IAction {
      * @param text the description, or <code>null</code> to clear the description
      * @see #DESCRIPTION
      */
-    public void setDescription(String text);
+	void setDescription(String text);
 
     /**
      * Sets the disabled image for this action, as an image descriptor.
@@ -400,7 +400,7 @@ public interface IAction {
      *   action should not have an image
      * @see #IMAGE
      */
-    public void setDisabledImageDescriptor(ImageDescriptor newImage);
+	void setDisabledImageDescriptor(ImageDescriptor newImage);
 
     /**
      * Sets the enabled state of this action.
@@ -418,14 +418,14 @@ public interface IAction {
      *   <code>false</code> to disable
      * @see #ENABLED
      */
-    public void setEnabled(boolean enabled);
+	void setEnabled(boolean enabled);
 
     /**
      * Sets a help listener for this action.
      *
      * @param listener a help listener for this action
      */
-    public void setHelpListener(HelpListener listener);
+	void setHelpListener(HelpListener listener);
 
     /**
      * Sets the hover image for this action, as an image descriptor.
@@ -440,7 +440,7 @@ public interface IAction {
      *   action should not have an image
      * @see #IMAGE
      */
-    public void setHoverImageDescriptor(ImageDescriptor newImage);
+	void setHoverImageDescriptor(ImageDescriptor newImage);
 
     /**
      * Sets the unique identifier for this action. This is used to identify actions
@@ -453,7 +453,7 @@ public interface IAction {
      * @see ActionContributionItem
      * @see IContributionItem#getId
      */
-    public void setId(String id);
+	void setId(String id);
 
 	/**
 	 * Sets the image for this action, as an image descriptor.
@@ -474,7 +474,7 @@ public interface IAction {
 	 *            an image
 	 * @see #IMAGE
 	 */
-    public void setImageDescriptor(ImageDescriptor newImage);
+	void setImageDescriptor(ImageDescriptor newImage);
 
     /**
      * Sets the menu creator for this action. Applicable for style
@@ -482,7 +482,7 @@ public interface IAction {
      *
      * @param creator the menu creator, or <code>null</code> if none
      */
-    public void setMenuCreator(IMenuCreator creator);
+	void setMenuCreator(IMenuCreator creator);
 
     /**
      * Sets the text for this action.
@@ -506,7 +506,7 @@ public interface IAction {
      * @see Action#findModifier
      * @see Action#findKeyCode
      */
-    public void setText(String text);
+	void setText(String text);
 
     /**
      * Sets the tool tip text for this action.
@@ -518,7 +518,7 @@ public interface IAction {
      * @param text the tool tip text, or <code>null</code> if none
      * @see #TOOL_TIP_TEXT
      */
-    public void setToolTipText(String text);
+	void setToolTipText(String text);
 
     /**
      * <p>
@@ -541,5 +541,5 @@ public interface IAction {
      * @param keycode
      *            the keycode to be accepted.
      */
-    public void setAccelerator(int keycode);
+	void setAccelerator(int keycode);
 }

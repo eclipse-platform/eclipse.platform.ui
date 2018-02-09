@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 IBM Corporation and others.
+ * Copyright (c) 2000, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -92,7 +92,7 @@ public interface IWorkbench extends IAdaptable, IServiceLocator {
 	 *         workbench
 	 * @since 3.0
 	 */
-	public Display getDisplay();
+	Display getDisplay();
 
 	/**
 	 * Returns the progress service for the workbench.
@@ -100,7 +100,7 @@ public interface IWorkbench extends IAdaptable, IServiceLocator {
 	 * @return the progress service
 	 * @since 3.0
 	 */
-	public IProgressService getProgressService();
+	IProgressService getProgressService();
 
 	/**
 	 * Adds a workbench listener.
@@ -109,7 +109,7 @@ public interface IWorkbench extends IAdaptable, IServiceLocator {
 	 *            the workbench listener to add
 	 * @since 3.2
 	 */
-	public void addWorkbenchListener(IWorkbenchListener listener);
+	void addWorkbenchListener(IWorkbenchListener listener);
 
 	/**
 	 * Removes a workbench listener.
@@ -118,7 +118,7 @@ public interface IWorkbench extends IAdaptable, IServiceLocator {
 	 *            the workbench listener to remove
 	 * @since 3.2
 	 */
-	public void removeWorkbenchListener(IWorkbenchListener listener);
+	void removeWorkbenchListener(IWorkbenchListener listener);
 
 	/**
 	 * Adds a window listener.
@@ -127,7 +127,7 @@ public interface IWorkbench extends IAdaptable, IServiceLocator {
 	 *            the window listener to add
 	 * @since 2.0
 	 */
-	public void addWindowListener(IWindowListener listener);
+	void addWindowListener(IWindowListener listener);
 
 	/**
 	 * Removes a window listener.
@@ -136,7 +136,7 @@ public interface IWorkbench extends IAdaptable, IServiceLocator {
 	 *            the window listener to remove
 	 * @since 2.0
 	 */
-	public void removeWindowListener(IWindowListener listener);
+	void removeWindowListener(IWindowListener listener);
 
 	/**
 	 * Closes this workbench and all its open windows.
@@ -148,7 +148,7 @@ public interface IWorkbench extends IAdaptable, IServiceLocator {
 	 * @return <code>true</code> if the workbench was successfully closed, and
 	 *         <code>false</code> if it is still open
 	 */
-	public boolean close();
+	boolean close();
 
 	/**
 	 * Returns the currently active window for this workbench (if any). Returns
@@ -158,14 +158,14 @@ public interface IWorkbench extends IAdaptable, IServiceLocator {
 	 * @return the active workbench window, or <code>null</code> if there is
 	 *         no active workbench window or if called from a non-UI thread
 	 */
-	public IWorkbenchWindow getActiveWorkbenchWindow();
+	IWorkbenchWindow getActiveWorkbenchWindow();
 
 	/**
 	 * Returns the editor registry for the workbench.
 	 *
 	 * @return the workbench editor registry
 	 */
-	public IEditorRegistry getEditorRegistry();
+	IEditorRegistry getEditorRegistry();
 
 	/**
 	 * <p>
@@ -176,21 +176,21 @@ public interface IWorkbench extends IAdaptable, IServiceLocator {
 	 *
 	 * @since 3.1
 	 */
-	public IWorkbenchOperationSupport getOperationSupport();
+	IWorkbenchOperationSupport getOperationSupport();
 
 	/**
 	 * Returns the perspective registry for the workbench.
 	 *
 	 * @return the workbench perspective registry
 	 */
-	public IPerspectiveRegistry getPerspectiveRegistry();
+	IPerspectiveRegistry getPerspectiveRegistry();
 
 	/**
 	 * Returns the preference manager for the workbench.
 	 *
 	 * @return the workbench preference manager
 	 */
-	public PreferenceManager getPreferenceManager();
+	PreferenceManager getPreferenceManager();
 
 	/**
 	 * Returns the preference store for the workbench.
@@ -206,14 +206,14 @@ public interface IWorkbench extends IAdaptable, IServiceLocator {
 	 *             store.
 	 */
 	@Deprecated
-	public IPreferenceStore getPreferenceStore();
+	IPreferenceStore getPreferenceStore();
 
 	/**
 	 * Returns the shared images for the workbench.
 	 *
 	 * @return the shared image manager
 	 */
-	public ISharedImages getSharedImages();
+	ISharedImages getSharedImages();
 
 	/**
 	 * Returns the number of open main windows associated with this workbench.
@@ -223,7 +223,7 @@ public interface IWorkbench extends IAdaptable, IServiceLocator {
 	 * @return the number of open windows
 	 * @since 3.0
 	 */
-	public int getWorkbenchWindowCount();
+	int getWorkbenchWindowCount();
 
 	/**
 	 * Returns a list of the open main windows associated with this workbench.
@@ -232,7 +232,7 @@ public interface IWorkbench extends IAdaptable, IServiceLocator {
 	 *
 	 * @return a list of open windows
 	 */
-	public IWorkbenchWindow[] getWorkbenchWindows();
+	IWorkbenchWindow[] getWorkbenchWindows();
 
 	/**
 	 * Returns the working set manager for the workbench.
@@ -240,7 +240,7 @@ public interface IWorkbench extends IAdaptable, IServiceLocator {
 	 * @return the working set manager
 	 * @since 2.0
 	 */
-	public IWorkingSetManager getWorkingSetManager();
+	IWorkingSetManager getWorkingSetManager();
 
 	/**
 	 * Creates a new local working set manager. Clients of local working set
@@ -250,7 +250,7 @@ public interface IWorkbench extends IAdaptable, IServiceLocator {
 	 * @return the local working set manager
 	 * @since 3.1
 	 */
-	public ILocalWorkingSetManager createLocalWorkingSetManager();
+	ILocalWorkingSetManager createLocalWorkingSetManager();
 
 	/**
 	 * Creates and opens a new workbench window with one page. The perspective
@@ -283,7 +283,7 @@ public interface IWorkbench extends IAdaptable, IServiceLocator {
 	 *
 	 * @see IWorkbench#showPerspective(String, IWorkbenchWindow, IAdaptable)
 	 */
-	public IWorkbenchWindow openWorkbenchWindow(String perspectiveId,
+	IWorkbenchWindow openWorkbenchWindow(String perspectiveId,
 			IAdaptable input) throws WorkbenchException;
 
 	/**
@@ -308,7 +308,7 @@ public interface IWorkbench extends IAdaptable, IServiceLocator {
 	 *
 	 * @see IWorkbench#showPerspective(String, IWorkbenchWindow, IAdaptable)
 	 */
-	public IWorkbenchWindow openWorkbenchWindow(IAdaptable input)
+	IWorkbenchWindow openWorkbenchWindow(IAdaptable input)
 			throws WorkbenchException;
 
 	/**
@@ -324,7 +324,7 @@ public interface IWorkbench extends IAdaptable, IServiceLocator {
 	 *
 	 * @since 2.0
 	 */
-	public boolean restart();
+	boolean restart();
 
 	/**
 	 * Closes then restarts this workbench using the current workspace if
@@ -346,7 +346,7 @@ public interface IWorkbench extends IAdaptable, IServiceLocator {
 	 *
 	 * @since 3.107
 	 */
-	public boolean restart(boolean useCurrentWorkspace);
+	boolean restart(boolean useCurrentWorkspace);
 
 	/**
 	 * Shows the specified perspective to the user. The caller should use this
@@ -387,7 +387,7 @@ public interface IWorkbench extends IAdaptable, IServiceLocator {
 	 *
 	 * @since 2.0
 	 */
-	public IWorkbenchPage showPerspective(String perspectiveId,
+	IWorkbenchPage showPerspective(String perspectiveId,
 			IWorkbenchWindow window) throws WorkbenchException;
 
 	/**
@@ -433,7 +433,7 @@ public interface IWorkbench extends IAdaptable, IServiceLocator {
 	 *
 	 * @since 2.0
 	 */
-	public IWorkbenchPage showPerspective(String perspectiveId,
+	IWorkbenchPage showPerspective(String perspectiveId,
 			IWorkbenchWindow window, IAdaptable input)
 			throws WorkbenchException;
 
@@ -458,7 +458,7 @@ public interface IWorkbench extends IAdaptable, IServiceLocator {
 	 *
 	 * @return the decorator manager
 	 */
-	public IDecoratorManager getDecoratorManager();
+	IDecoratorManager getDecoratorManager();
 
 	/**
 	 * Save all dirty editors in the workbench. Opens a dialog to prompt the
@@ -472,7 +472,7 @@ public interface IWorkbench extends IAdaptable, IServiceLocator {
 	 *         <code>false</code> if the operation was canceled by the user or
 	 *         an error occurred while saving
 	 */
-	public boolean saveAllEditors(boolean confirm);
+	boolean saveAllEditors(boolean confirm);
 
 	/**
 	 * Returns the element factory with the given id.
@@ -483,7 +483,7 @@ public interface IWorkbench extends IAdaptable, IServiceLocator {
 	 * @see IElementFactory
 	 * @since 3.0
 	 */
-	public IElementFactory getElementFactory(String factoryId);
+	IElementFactory getElementFactory(String factoryId);
 
 	/**
 	 * Returns an interface to manage activities at the workbench level.
@@ -526,7 +526,7 @@ public interface IWorkbench extends IAdaptable, IServiceLocator {
 	 *         <code>null</code>.
 	 * @since 3.0
 	 */
-	public IThemeManager getThemeManager();
+	IThemeManager getThemeManager();
 
 	/**
 	 * Return the intro manager for this workbench.
@@ -535,7 +535,7 @@ public interface IWorkbench extends IAdaptable, IServiceLocator {
 	 *         <code>null</code>.
 	 * @since 3.0
 	 */
-	public IIntroManager getIntroManager();
+	IIntroManager getIntroManager();
 
 	/**
 	 * Return the help system for this workbench.
@@ -543,7 +543,7 @@ public interface IWorkbench extends IAdaptable, IServiceLocator {
 	 * @return the help system
 	 * @since 3.1
 	 */
-	public IWorkbenchHelpSystem getHelpSystem();
+	IWorkbenchHelpSystem getHelpSystem();
 
 	/**
 	 * Return the browser support for this workbench.
@@ -551,7 +551,7 @@ public interface IWorkbench extends IAdaptable, IServiceLocator {
 	 * @return the browser support system
 	 * @since 3.1
 	 */
-	public IWorkbenchBrowserSupport getBrowserSupport();
+	IWorkbenchBrowserSupport getBrowserSupport();
 
 	/**
 	 * Returns a boolean indicating whether the workbench is in the process of
@@ -564,7 +564,7 @@ public interface IWorkbench extends IAdaptable, IServiceLocator {
 	 *         <code>false</code> otherwise
 	 * @since 3.5
 	 */
-	public boolean isStarting();
+	boolean isStarting();
 
 	/**
 	 * Returns a boolean indicating whether the workbench is in the process of
@@ -574,7 +574,7 @@ public interface IWorkbench extends IAdaptable, IServiceLocator {
 	 *         closing, <code>false</code> otherwise
 	 * @since 3.1
 	 */
-	public boolean isClosing();
+	boolean isClosing();
 
 	/**
 	 * <p>
@@ -592,7 +592,7 @@ public interface IWorkbench extends IAdaptable, IServiceLocator {
 	 * @see IWorkbenchPage#getExtensionTracker()
 	 * @since 3.1
 	 */
-	public IExtensionTracker getExtensionTracker();
+	IExtensionTracker getExtensionTracker();
 
 	/**
 	 * Returns the view registry for the workbench.
@@ -600,7 +600,7 @@ public interface IWorkbench extends IAdaptable, IServiceLocator {
 	 * @return the workbench view registry
 	 * @since 3.1
 	 */
-	public IViewRegistry getViewRegistry();
+	IViewRegistry getViewRegistry();
 
 	/**
 	 * Return the new wizard registry.
@@ -608,7 +608,7 @@ public interface IWorkbench extends IAdaptable, IServiceLocator {
 	 * @return the new wizard registry
 	 * @since 3.1
 	 */
-	public IWizardRegistry getNewWizardRegistry();
+	IWizardRegistry getNewWizardRegistry();
 
 	/**
 	 * Return the import wizard registry.
@@ -616,7 +616,7 @@ public interface IWorkbench extends IAdaptable, IServiceLocator {
 	 * @return the import wizard registry
 	 * @since 3.1
 	 */
-	public IWizardRegistry getImportWizardRegistry();
+	IWizardRegistry getImportWizardRegistry();
 
 	/**
 	 * Return the export wizard registry.
@@ -624,7 +624,7 @@ public interface IWorkbench extends IAdaptable, IServiceLocator {
 	 * @return the export wizard registry
 	 * @since 3.1
 	 */
-	public IWizardRegistry getExportWizardRegistry();
+	IWizardRegistry getExportWizardRegistry();
 
 	/**
 	 * Save all dirty saveables in the workbench that match the given filter.
@@ -649,7 +649,7 @@ public interface IWorkbench extends IAdaptable, IServiceLocator {
 	 *         <code>false</code> if the operation was canceled by the user or
 	 *         an error occurred while saving
 	 */
-	public boolean saveAll(IShellProvider shellProvider,
+	boolean saveAll(IShellProvider shellProvider,
 			IRunnableContext runnableContext, ISaveableFilter filter,
 			boolean confirm);
 
@@ -664,5 +664,5 @@ public interface IWorkbench extends IAdaptable, IServiceLocator {
 	 *
 	 * @since 3.6
 	 */
-	public IShellProvider getModalDialogShellProvider();
+	IShellProvider getModalDialogShellProvider();
 }

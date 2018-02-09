@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 IBM Corporation and others.
+ * Copyright (c) 2000, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -76,7 +76,7 @@ public interface IPageLayout {
      * The part id for the workbench's editor area.  This may only be used
      * as a reference part for view addition.
      */
-    public static String ID_EDITOR_AREA = "org.eclipse.ui.editorss"; //$NON-NLS-1$
+	String ID_EDITOR_AREA = "org.eclipse.ui.editorss"; //$NON-NLS-1$
 
 	/**
 	 * The view id for the workbench's Resource Navigator standard component.
@@ -85,88 +85,88 @@ public interface IPageLayout {
 	 *             of release 3.5.
 	 */
     @Deprecated
-	public static String ID_RES_NAV = "org.eclipse.ui.views.ResourceNavigator"; //$NON-NLS-1$
+	String ID_RES_NAV = "org.eclipse.ui.views.ResourceNavigator"; //$NON-NLS-1$
 
     /**
      * The view id for the Project Explorer.
      * @since 3.5
      */
-    public static String ID_PROJECT_EXPLORER = "org.eclipse.ui.navigator.ProjectExplorer"; //$NON-NLS-1$
+	String ID_PROJECT_EXPLORER = "org.eclipse.ui.navigator.ProjectExplorer"; //$NON-NLS-1$
 
     /**
      * The view id for the workbench's Property Sheet standard component.
      */
-    public static String ID_PROP_SHEET = "org.eclipse.ui.views.PropertySheet"; //$NON-NLS-1$
+	String ID_PROP_SHEET = "org.eclipse.ui.views.PropertySheet"; //$NON-NLS-1$
 
     /**
      * The view id for the workbench's Content Outline standard component.
      */
-    public static String ID_OUTLINE = "org.eclipse.ui.views.ContentOutline"; //$NON-NLS-1$
+	String ID_OUTLINE = "org.eclipse.ui.views.ContentOutline"; //$NON-NLS-1$
 
     /**
      * The view id for the workbench's Bookmark Navigator standard component.
      */
-    public static String ID_BOOKMARKS = "org.eclipse.ui.views.BookmarkView"; //$NON-NLS-1$
+	String ID_BOOKMARKS = "org.eclipse.ui.views.BookmarkView"; //$NON-NLS-1$
 
     /**
      * The view id for the workbench's Problems View standard component.
      * @since 3.0
      */
-    public static String ID_PROBLEM_VIEW = "org.eclipse.ui.views.ProblemView"; //$NON-NLS-1$
+	String ID_PROBLEM_VIEW = "org.eclipse.ui.views.ProblemView"; //$NON-NLS-1$
 
     /**
      * The view id for the workbench's Progress View standard component.
      * @since 3.2
      */
-    public static String ID_PROGRESS_VIEW = "org.eclipse.ui.views.ProgressView"; //$NON-NLS-1$
+	String ID_PROGRESS_VIEW = "org.eclipse.ui.views.ProgressView"; //$NON-NLS-1$
 
     /**
      * The view id for the workbench's Task List standard component.
      */
-    public static String ID_TASK_LIST = "org.eclipse.ui.views.TaskList"; //$NON-NLS-1$
+	String ID_TASK_LIST = "org.eclipse.ui.views.TaskList"; //$NON-NLS-1$
 
     /**
      * Id of the navigate action set.
      * (value <code>"org.eclipse.ui.NavigateActionSet"</code>)
      * @since 2.1
      */
-    public static final String ID_NAVIGATE_ACTION_SET = "org.eclipse.ui.NavigateActionSet"; //$NON-NLS-1$
+	String ID_NAVIGATE_ACTION_SET = "org.eclipse.ui.NavigateActionSet"; //$NON-NLS-1$
 
     /**
      * Relationship constant indicating a part should be placed to the left of
      * its relative.
      */
-    public static final int LEFT = 1;
+	int LEFT = 1;
 
     /**
      * Relationship constant indicating a part should be placed to the right of
      * its relative.
      */
-    public static final int RIGHT = 2;
+	int RIGHT = 2;
 
     /**
      * Relationship constant indicating a part should be placed above its
      * relative.
      */
-    public static final int TOP = 3;
+	int TOP = 3;
 
     /**
      * Relationship constant indicating a part should be placed below its
      * relative.
      */
-    public static final int BOTTOM = 4;
+	int BOTTOM = 4;
 
     /**
      * Minimum acceptable ratio value when adding a view
      * @since 2.0
      */
-    public static final float RATIO_MIN = 0.05f;
+	float RATIO_MIN = 0.05f;
 
     /**
      * Maximum acceptable ratio value when adding a view
      * @since 2.0
      */
-    public static final float RATIO_MAX = 0.95f;
+	float RATIO_MAX = 0.95f;
 
     /**
      * The default fast view ratio width.
@@ -174,25 +174,25 @@ public interface IPageLayout {
      * @deprecated discontinued support for fast views
      */
     @Deprecated
-    public static final float DEFAULT_FASTVIEW_RATIO = 0.3f;
+	float DEFAULT_FASTVIEW_RATIO = 0.3f;
 
     /**
      * The default view ratio width for regular (non-fast) views.
      * @since 2.0
      */
-    public static final float DEFAULT_VIEW_RATIO = 0.5f;
+	float DEFAULT_VIEW_RATIO = 0.5f;
 
     /**
      * A variable used to represent invalid  ratios.
      * @since 2.0
      */
-    public static final float INVALID_RATIO = -1f;
+	float INVALID_RATIO = -1f;
 
     /**
      * A variable used to represent a ratio which has not been specified.
      * @since 2.0
      */
-    public static final float NULL_RATIO = -2f;
+	float NULL_RATIO = -2f;
 
     /**
      * Adds an action set with the given id to this page layout.
@@ -201,7 +201,7 @@ public interface IPageLayout {
      *
      * @param actionSetId the action set id
      */
-    public void addActionSet(String actionSetId);
+	void addActionSet(String actionSetId);
 
     /**
      * Adds the view with the given compound id to the page layout as a fast view.
@@ -214,7 +214,7 @@ public interface IPageLayout {
      * @deprecated discontinued support for fast views
      */
     @Deprecated
-    public void addFastView(String viewId);
+	void addFastView(String viewId);
 
     /**
      * Adds the view with the given compound id to the page layout as a fast view
@@ -229,7 +229,7 @@ public interface IPageLayout {
      * @deprecated discontinued support for fast views
      */
     @Deprecated
-    public void addFastView(String viewId, float ratio);
+	void addFastView(String viewId, float ratio);
 
     /**
      * Adds a new wizard shortcut to the page layout.
@@ -240,7 +240,7 @@ public interface IPageLayout {
      *
      * @param id the wizard id
      */
-    public void addNewWizardShortcut(String id);
+	void addNewWizardShortcut(String id);
 
     /**
      * Adds a perspective shortcut to the page layout.
@@ -251,7 +251,7 @@ public interface IPageLayout {
      *
      * @param id the perspective id
      */
-    public void addPerspectiveShortcut(String id);
+	void addPerspectiveShortcut(String id);
 
     /**
      * Adds a view placeholder to this page layout.
@@ -280,7 +280,7 @@ public interface IPageLayout {
      * @param refId the id of the reference part; either a view id, a folder id,
      *   or the special editor area id returned by <code>getEditorArea</code>
      */
-    public void addPlaceholder(String viewId, int relationship, float ratio,
+	void addPlaceholder(String viewId, int relationship, float ratio,
             String refId);
 
     /**
@@ -292,7 +292,7 @@ public interface IPageLayout {
      *
      * @since 2.1
      */
-    public void addShowInPart(String id);
+	void addShowInPart(String id);
 
     /**
      * Adds a show view shortcut to the page layout.
@@ -303,7 +303,7 @@ public interface IPageLayout {
      *
      * @param id the view id
      */
-    public void addShowViewShortcut(String id);
+	void addShowViewShortcut(String id);
 
     /**
      * Adds a view with the given compound id to this page layout.
@@ -325,7 +325,7 @@ public interface IPageLayout {
      * @param refId the id of the reference part; either a view id, a folder id,
      *   or the special editor area id returned by <code>getEditorArea</code>
      */
-    public void addView(String viewId, int relationship, float ratio,
+	void addView(String viewId, int relationship, float ratio,
             String refId);
 
     /**
@@ -349,7 +349,7 @@ public interface IPageLayout {
      *   or the special editor area id returned by <code>getEditorArea</code>
      * @return the new folder
      */
-    public IFolderLayout createFolder(String folderId, int relationship,
+	IFolderLayout createFolder(String folderId, int relationship,
             float ratio, String refId);
 
     /**
@@ -374,7 +374,7 @@ public interface IPageLayout {
      * @return a placeholder for the new folder
      * @since 2.0
      */
-    public IPlaceholderFolderLayout createPlaceholderFolder(String folderId,
+	IPlaceholderFolderLayout createPlaceholderFolder(String folderId,
             int relationship, float ratio, String refId);
 
     /**
@@ -388,7 +388,7 @@ public interface IPageLayout {
      *
      * @return the special id of the editor area
      */
-    public String getEditorArea();
+	String getEditorArea();
 
     /**
      * Returns whether the page's layout will show
@@ -396,14 +396,14 @@ public interface IPageLayout {
      *
      * @return <code>true</code> when editor area visible, <code>false</code> otherwise
      */
-    public boolean isEditorAreaVisible();
+	boolean isEditorAreaVisible();
 
     /**
      * Show or hide the editor area for the page's layout.
      *
      * @param showEditorArea <code>true</code> to show the editor area, <code>false</code> to hide the editor area
      */
-    public void setEditorAreaVisible(boolean showEditorArea);
+	void setEditorAreaVisible(boolean showEditorArea);
 
     /**
      * Returns the number of open editors before reusing editors or -1 if the
@@ -415,7 +415,7 @@ public interface IPageLayout {
      * @deprecated this always returns -1 as of Eclipse 2.1
      */
     @Deprecated
-	public int getEditorReuseThreshold();
+	int getEditorReuseThreshold();
 
     /**
      * Sets the number of open editors before reusing editors.
@@ -426,7 +426,7 @@ public interface IPageLayout {
      * @deprecated this method has no effect, as of Eclipse 2.1
      */
     @Deprecated
-	public void setEditorReuseThreshold(int openEditors);
+	void setEditorReuseThreshold(int openEditors);
 
     /**
      * Sets whether this layout is fixed.
@@ -436,7 +436,7 @@ public interface IPageLayout {
      * @param isFixed <code>true</code> if this layout is fixed, <code>false</code> if not
      * @since 3.0
      */
-    public void setFixed(boolean isFixed);
+	void setFixed(boolean isFixed);
 
     /**
      * Returns <code>true</code> if this layout is fixed, <code>false</code> if not.
@@ -447,7 +447,7 @@ public interface IPageLayout {
      * @return <code>true</code> if this layout is fixed, <code>false</code> if not.
      * @since 3.0
      */
-    public boolean isFixed();
+	boolean isFixed();
 
     /**
      * Returns the layout for the view or placeholder with the given compound id in
@@ -459,7 +459,7 @@ public interface IPageLayout {
      * @return the view layout, or <code>null</code>
      * @since 3.0
      */
-    public IViewLayout getViewLayout(String id);
+	IViewLayout getViewLayout(String id);
 
     /**
      * Adds a standalone view with the given compound id to this page layout.
@@ -492,7 +492,7 @@ public interface IPageLayout {
      *
      * @since 3.0
      */
-    public void addStandaloneView(String viewId, boolean showTitle,
+	void addStandaloneView(String viewId, boolean showTitle,
             int relationship, float ratio, String refId);
 
     /**
@@ -531,7 +531,7 @@ public interface IPageLayout {
 	 *
 	 * @since 3.2
 	 */
-    public void addStandaloneViewPlaceholder(String viewId, int relationship,
+	void addStandaloneViewPlaceholder(String viewId, int relationship,
 			float ratio, String refId, boolean showTitle);
 
 
@@ -541,7 +541,7 @@ public interface IPageLayout {
 	 * @return the perspective descriptor for the perspective being layed out
 	 * @since 3.2
 	 */
-    public IPerspectiveDescriptor getDescriptor();
+	IPerspectiveDescriptor getDescriptor();
 
     /**
 	 * Returns the folder layout for the view or placeholder with the given
@@ -556,5 +556,5 @@ public interface IPageLayout {
 	 * @return the folder layout, or <code>null</code>
 	 * @since 3.3
 	 */
-    public IPlaceholderFolderLayout getFolderForView(String id);
+	IPlaceholderFolderLayout getFolderForView(String id);
 }

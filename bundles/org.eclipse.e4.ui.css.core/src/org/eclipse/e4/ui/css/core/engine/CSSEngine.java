@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2013 Angelo Zerr and others.
+ * Copyright (c) 2008, 2018 Angelo Zerr and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -46,7 +46,7 @@ public interface CSSEngine {
 	 * @return
 	 * @throws IOException
 	 */
-	public StyleSheet parseStyleSheet(Reader reader) throws IOException;
+	StyleSheet parseStyleSheet(Reader reader) throws IOException;
 
 	/**
 	 * Parse style sheet from InputStream stream.
@@ -55,7 +55,7 @@ public interface CSSEngine {
 	 * @return
 	 * @throws IOException
 	 */
-	public StyleSheet parseStyleSheet(InputStream stream) throws IOException;
+	StyleSheet parseStyleSheet(InputStream stream) throws IOException;
 
 	/**
 	 * Parse style sheet from InputSource source.
@@ -64,7 +64,7 @@ public interface CSSEngine {
 	 * @return
 	 * @throws IOException
 	 */
-	public StyleSheet parseStyleSheet(InputSource source) throws IOException;
+	StyleSheet parseStyleSheet(InputSource source) throws IOException;
 
 	/*--------------- Parse style declaration -----------------*/
 
@@ -75,7 +75,7 @@ public interface CSSEngine {
 	 * @return
 	 * @throws IOException
 	 */
-	public CSSStyleDeclaration parseStyleDeclaration(String style) throws IOException;
+	CSSStyleDeclaration parseStyleDeclaration(String style) throws IOException;
 
 	/**
 	 * Parse style declaration from Reader reader.
@@ -84,7 +84,7 @@ public interface CSSEngine {
 	 * @return
 	 * @throws IOException
 	 */
-	public CSSStyleDeclaration parseStyleDeclaration(Reader reader) throws IOException;
+	CSSStyleDeclaration parseStyleDeclaration(Reader reader) throws IOException;
 
 	/**
 	 * Parse style declaration from InputStream stream.
@@ -93,7 +93,7 @@ public interface CSSEngine {
 	 * @return
 	 * @throws IOException
 	 */
-	public CSSStyleDeclaration parseStyleDeclaration(InputStream stream) throws IOException;
+	CSSStyleDeclaration parseStyleDeclaration(InputStream stream) throws IOException;
 
 	/**
 	 * Parse style declaration from InputSource source.
@@ -102,7 +102,7 @@ public interface CSSEngine {
 	 * @return
 	 * @throws IOException
 	 */
-	public CSSStyleDeclaration parseStyleDeclaration(InputSource source) throws IOException;
+	CSSStyleDeclaration parseStyleDeclaration(InputSource source) throws IOException;
 
 	/*--------------- Parse CSS Property Value-----------------*/
 
@@ -113,7 +113,7 @@ public interface CSSEngine {
 	 * @return
 	 * @throws IOException
 	 */
-	public CSSValue parsePropertyValue(String value) throws IOException;
+	CSSValue parsePropertyValue(String value) throws IOException;
 
 	/**
 	 * Parse CSSValue from InputStream stream.
@@ -122,7 +122,7 @@ public interface CSSEngine {
 	 * @return
 	 * @throws IOException
 	 */
-	public CSSValue parsePropertyValue(InputStream stream) throws IOException;
+	CSSValue parsePropertyValue(InputStream stream) throws IOException;
 
 	/**
 	 * Parse CSSValue from Reader reader.
@@ -131,7 +131,7 @@ public interface CSSEngine {
 	 * @return
 	 * @throws IOException
 	 */
-	public CSSValue parsePropertyValue(Reader reader) throws IOException;
+	CSSValue parsePropertyValue(Reader reader) throws IOException;
 
 	/**
 	 * Parse CSSValue from InputSource source.
@@ -140,7 +140,7 @@ public interface CSSEngine {
 	 * @return
 	 * @throws IOException
 	 */
-	public CSSValue parsePropertyValue(InputSource source) throws IOException;
+	CSSValue parsePropertyValue(InputSource source) throws IOException;
 
 	/*--------------- Apply styles -----------------*/
 
@@ -151,7 +151,7 @@ public interface CSSEngine {
 	 * @return
 	 * @throws IOException
 	 */
-	public SelectorList parseSelectors(String text) throws IOException;
+	SelectorList parseSelectors(String text) throws IOException;
 
 	/**
 	 * Parse Selectors from InputSource value.
@@ -160,7 +160,7 @@ public interface CSSEngine {
 	 * @return
 	 * @throws IOException
 	 */
-	public SelectorList parseSelectors(InputSource source) throws IOException;
+	SelectorList parseSelectors(InputSource source) throws IOException;
 
 	/**
 	 * Parse Selectors from InputStream.
@@ -169,7 +169,7 @@ public interface CSSEngine {
 	 * @return
 	 * @throws IOException
 	 */
-	public SelectorList parseSelectors(InputStream stream) throws IOException;
+	SelectorList parseSelectors(InputStream stream) throws IOException;
 
 	/**
 	 * Parse Selectors from String value.
@@ -178,7 +178,7 @@ public interface CSSEngine {
 	 * @return
 	 * @throws IOException
 	 */
-	public SelectorList parseSelectors(Reader reader) throws IOException;
+	SelectorList parseSelectors(Reader reader) throws IOException;
 
 	/**
 	 * Check if the <code>selector</code> matches the object <code>node</code>.
@@ -188,7 +188,7 @@ public interface CSSEngine {
 	 * @param pseudo
 	 * @return
 	 */
-	public boolean matches(Selector selector, Object node, String pseudo);
+	boolean matches(Selector selector, Object node, String pseudo);
 
 	/*--------------- Apply styles -----------------*/
 
@@ -201,7 +201,7 @@ public interface CSSEngine {
 	 * @param node
 	 * @param applyStylesToChildNodes
 	 */
-	public void applyStyles(Object node, boolean applyStylesToChildNodes);
+	void applyStyles(Object node, boolean applyStylesToChildNodes);
 
 	/**
 	 * Apply styles to the Object node (SWT Text,...). If
@@ -214,7 +214,7 @@ public interface CSSEngine {
 	 * @param applyStylesToChildNodes
 	 * @param computeDefaultStyle
 	 */
-	public void applyStyles(Object node, boolean applyStylesToChildNodes, boolean computeDefaultStyle);
+	void applyStyles(Object node, boolean applyStylesToChildNodes, boolean computeDefaultStyle);
 
 	/*--------------- Apply style declaration -----------------*/
 
@@ -225,7 +225,7 @@ public interface CSSEngine {
 	 * @param style
 	 * @param pseudo
 	 */
-	public void applyStyleDeclaration(Object node, CSSStyleDeclaration style, String pseudo);
+	void applyStyleDeclaration(Object node, CSSStyleDeclaration style, String pseudo);
 
 	/**
 	 * Parse and apply style declaration from Reader reader.
@@ -235,7 +235,7 @@ public interface CSSEngine {
 	 * @return
 	 * @throws IOException
 	 */
-	public CSSStyleDeclaration parseAndApplyStyleDeclaration(Object node, Reader reader) throws IOException;
+	CSSStyleDeclaration parseAndApplyStyleDeclaration(Object node, Reader reader) throws IOException;
 
 	/**
 	 * Parse and apply style declaration from InputStream stream.
@@ -245,7 +245,7 @@ public interface CSSEngine {
 	 * @return
 	 * @throws IOException
 	 */
-	public CSSStyleDeclaration parseAndApplyStyleDeclaration(Object node, InputStream stream) throws IOException;
+	CSSStyleDeclaration parseAndApplyStyleDeclaration(Object node, InputStream stream) throws IOException;
 
 	/**
 	 * Parse and apply style declaration from InputSource source.
@@ -255,7 +255,7 @@ public interface CSSEngine {
 	 * @return
 	 * @throws IOException
 	 */
-	public CSSStyleDeclaration parseAndApplyStyleDeclaration(Object node, InputSource sourcee) throws IOException;
+	CSSStyleDeclaration parseAndApplyStyleDeclaration(Object node, InputSource sourcee) throws IOException;
 
 	/**
 	 * Parse and apply style declaration from String style.
@@ -265,7 +265,7 @@ public interface CSSEngine {
 	 * @return
 	 * @throws IOException
 	 */
-	public CSSStyleDeclaration parseAndApplyStyleDeclaration(Object node, String style) throws IOException;
+	CSSStyleDeclaration parseAndApplyStyleDeclaration(Object node, String style) throws IOException;
 
 	/*--------------- Apply inline style -----------------*/
 
@@ -279,21 +279,21 @@ public interface CSSEngine {
 	 * @param applyStylesToChildNodes
 	 * @throws IOException
 	 */
-	public void applyInlineStyle(Object node, boolean applyStylesToChildNodes) throws IOException;
+	void applyInlineStyle(Object node, boolean applyStylesToChildNodes) throws IOException;
 
 	/**
 	 * Return {@link CSSErrorHandler} used to handles exception error.
 	 *
 	 * @return
 	 */
-	public CSSErrorHandler getErrorHandler();
+	CSSErrorHandler getErrorHandler();
 
 	/**
 	 * Register the {@link CSSErrorHandler} used to handles exception error.
 	 *
 	 * @param errorHandler
 	 */
-	public void setErrorHandler(CSSErrorHandler errorHandler);
+	void setErrorHandler(CSSErrorHandler errorHandler);
 
 	/*--------------- Resources -----------------*/
 
@@ -302,14 +302,14 @@ public interface CSSEngine {
 	 *
 	 * @param resourcesLocatorManager
 	 */
-	public void setResourcesLocatorManager(IResourcesLocatorManager resourcesLocatorManager);
+	void setResourcesLocatorManager(IResourcesLocatorManager resourcesLocatorManager);
 
 	/**
 	 * Get the {@link IResourcesLocatorManager} to use manage resources.
 	 *
 	 * @return
 	 */
-	public IResourcesLocatorManager getResourcesLocatorManager();
+	IResourcesLocatorManager getResourcesLocatorManager();
 
 	/*--------------- Document/View CSS -----------------*/
 
@@ -318,14 +318,14 @@ public interface CSSEngine {
 	 *
 	 * @return
 	 */
-	public DocumentCSS getDocumentCSS();
+	DocumentCSS getDocumentCSS();
 
 	/**
 	 * Return the {@link ViewCSS} used to compute {@link CSSStyleDeclaration}.
 	 *
 	 * @return
 	 */
-	public ViewCSS getViewCSS();
+	ViewCSS getViewCSS();
 
 	/*--------------- w3c Element -----------------*/
 
@@ -335,7 +335,7 @@ public interface CSSEngine {
 	 *
 	 * @return
 	 */
-	public IElementProvider getElementProvider();
+	IElementProvider getElementProvider();
 
 	/**
 	 * Set {@link IElementProvider} registered used to retrieve w3c
@@ -343,7 +343,7 @@ public interface CSSEngine {
 	 *
 	 * @param elementProvider
 	 */
-	public void setElementProvider(IElementProvider elementProvider);
+	void setElementProvider(IElementProvider elementProvider);
 
 	/*--------------- CSS Property Handler -----------------*/
 
@@ -358,7 +358,7 @@ public interface CSSEngine {
 	 * @return
 	 * @throws Exception
 	 */
-	public ICSSPropertyHandler applyCSSProperty(Object node, String property, CSSValue value, String pseudo)
+	ICSSPropertyHandler applyCSSProperty(Object node, String property, CSSValue value, String pseudo)
 			throws Exception;
 
 	/**
@@ -370,7 +370,7 @@ public interface CSSEngine {
 	 * @param pseudo
 	 * @return
 	 */
-	public String retrieveCSSProperty(Object node, String property, String pseudo);
+	String retrieveCSSProperty(Object node, String property, String pseudo);
 
 
 	/*--------------- Default Style -----------------*/
@@ -385,7 +385,7 @@ public interface CSSEngine {
 	 * @param applyStylesToChildNodes
 	 * @throws IOException
 	 */
-	public void applyDefaultStyleDeclaration(Object node, boolean applyStylesToChildNodes);
+	void applyDefaultStyleDeclaration(Object node, boolean applyStylesToChildNodes);
 
 	/**
 	 * Get default {@link CSSStyleDeclaration} of the <code>node</code> for
@@ -394,21 +394,21 @@ public interface CSSEngine {
 	 * @param element
 	 * @return
 	 */
-	public CSSStyleDeclaration getDefaultStyleDeclaration(Object node, String pseudoE);
+	CSSStyleDeclaration getDefaultStyleDeclaration(Object node, String pseudoE);
 
 	/*--------------- Dispose/Reset -----------------*/
 
 	/**
 	 * Call reset and dispose all resources
 	 */
-	public void dispose();
+	void dispose();
 
 	/**
 	 * Reset all style sheet registered into CSS Engine. This method must be
 	 * called if you want parse and apply new StyleSheet and remove the old
 	 * StyleSheet parsed.
 	 */
-	public void reset();
+	void reset();
 
 	/*--------------- Resources Registry -----------------*/
 
@@ -418,14 +418,14 @@ public interface CSSEngine {
 	 *
 	 * @return
 	 */
-	public IResourcesRegistry getResourcesRegistry();
+	IResourcesRegistry getResourcesRegistry();
 
 	/**
 	 * Register {@link IResourcesRegistry} used to cache/dispose resources.
 	 *
 	 * @param resourcesRegistry
 	 */
-	public void setResourcesRegistry(IResourcesRegistry resourcesRegistry);
+	void setResourcesRegistry(IResourcesRegistry resourcesRegistry);
 
 	/*--------------- CSS Value Converter -----------------*/
 
@@ -434,14 +434,14 @@ public interface CSSEngine {
 	 *
 	 * @param converter
 	 */
-	public void registerCSSValueConverter(ICSSValueConverter converter);
+	void registerCSSValueConverter(ICSSValueConverter converter);
 
 	/**
 	 * Unregister CSSValue converter {@link ICSSValueConverter}.
 	 *
 	 * @param converter
 	 */
-	public void unregisterCSSValueConverter(ICSSValueConverter converter);
+	void unregisterCSSValueConverter(ICSSValueConverter converter);
 
 	/**
 	 * Get CSSValue converter {@link ICSSValueConverter} which is enable to
@@ -450,7 +450,7 @@ public interface CSSEngine {
 	 * @param toType
 	 * @return
 	 */
-	public ICSSValueConverter getCSSValueConverter(Object toType);
+	ICSSValueConverter getCSSValueConverter(Object toType);
 
 	/**
 	 * Convert CSSValue into Object type of <code>toType</code>. (ex :
@@ -467,7 +467,7 @@ public interface CSSEngine {
 	 * @return
 	 * @throws Exception
 	 */
-	public Object convert(CSSValue value, Object toType, Object context) throws Exception;
+	Object convert(CSSValue value, Object toType, Object context) throws Exception;
 
 	/**
 	 * Convert Object type of <code>toType</code> into CSSValue String.
@@ -478,7 +478,7 @@ public interface CSSEngine {
 	 * @return
 	 * @throws Exception
 	 */
-	public String convert(Object value, Object toType, Object context) throws Exception;
+	String convert(Object value, Object toType, Object context) throws Exception;
 
 	/**
 	 * Get the w3c {@link Element} which wrap Object <code>node</code>.
@@ -486,7 +486,7 @@ public interface CSSEngine {
 	 * @param node
 	 * @return
 	 */
-	public Element getElement(Object node);
+	Element getElement(Object node);
 
 	/**
 	 * Get the {@link CSSElementContext} context of the object <code>node</code>.
@@ -494,7 +494,7 @@ public interface CSSEngine {
 	 * @param node
 	 * @return
 	 */
-	public CSSElementContext getCSSElementContext(Object node);
+	CSSElementContext getCSSElementContext(Object node);
 
 	/**
 	 * Return the set of property names applicable to the provided node.
@@ -503,7 +503,7 @@ public interface CSSEngine {
 	 *            the DOM node or an element
 	 * @return the property names
 	 */
-	public Collection<String> getCSSProperties(Object node);
+	Collection<String> getCSSProperties(Object node);
 
 	/**
 	 * Return array of CSS property name of the CSS <code>property</code>.
@@ -511,17 +511,17 @@ public interface CSSEngine {
 	 * @param property
 	 * @return
 	 */
-	public String[] getCSSCompositePropertiesNames(String property);
+	String[] getCSSCompositePropertiesNames(String property);
 
 	/**
 	 * Handle exceptions.
 	 *
 	 * @param e
 	 */
-	public void handleExceptions(Exception e);
+	void handleExceptions(Exception e);
 
 	/**
 	 * Reapply the styles to the objects managed by this engine.
 	 */
-	public void reapply();
+	void reapply();
 }
