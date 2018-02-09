@@ -255,13 +255,19 @@ public class BasicPackageImpl extends EPackageImpl {
 	public static final int PART_DESCRIPTOR__CLOSEABLE = ApplicationPackageImpl.APPLICATION_ELEMENT_FEATURE_COUNT + 11;
 
 	/**
-	 * The feature id for the '<em><b>Dirtyable</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+	 * The feature id for the '<em><b>Dirtyable</b></em>' attribute. <!--
+	 * begin-user-doc --> <!-- end-user-doc -->
+	 * 
 	 * @since 1.0
 	 * @generated
 	 * @ordered
+	 * @deprecated dirtyable is managed by part
+	 * @noreference This constant is not intented to be referenced by clients.
+	 * @see <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=530887">Bug
+	 *      530887</a>
+	 * 
 	 */
+	@Deprecated
 	public static final int PART_DESCRIPTOR__DIRTYABLE = ApplicationPackageImpl.APPLICATION_ELEMENT_FEATURE_COUNT + 12;
 
 	/**
@@ -584,15 +590,21 @@ public class BasicPackageImpl extends EPackageImpl {
 	}
 
 	/**
-	 * Returns the meta object for the attribute '{@link org.eclipse.e4.ui.model.application.descriptor.basic.MPartDescriptor#isDirtyable <em>Dirtyable</em>}'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+	 * Returns the meta object for the attribute
+	 * '{@link org.eclipse.e4.ui.model.application.descriptor.basic.MPartDescriptor#isDirtyable
+	 * <em>Dirtyable</em>}'. <!-- begin-user-doc --> <!-- end-user-doc -->
+	 * 
 	 * @return the meta object for the attribute '<em>Dirtyable</em>'.
 	 * @see org.eclipse.e4.ui.model.application.descriptor.basic.MPartDescriptor#isDirtyable()
 	 * @see #getPartDescriptor()
 	 * @since 1.0
 	 * @generated
+	 * @deprecated dirtyable is managed by Part
+	 * @noreference This method is not intended to be referenced by clients.
+	 * @see <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id= 530887">Bug
+	 *      530887</a>
 	 */
+	@Deprecated
 	public EAttribute getPartDescriptor_Dirtyable() {
 		return (EAttribute)partDescriptorEClass.getEStructuralFeatures().get(5);
 	}
@@ -891,12 +903,16 @@ public class BasicPackageImpl extends EPackageImpl {
 		public static final EAttribute PART_DESCRIPTOR__CLOSEABLE = eINSTANCE.getPartDescriptor_Closeable();
 
 		/**
-		 * The meta object literal for the '<em><b>Dirtyable</b></em>' attribute feature.
-		 * <!-- begin-user-doc -->
-		 * <!-- end-user-doc -->
+		 * The meta object literal for the '<em><b>Dirtyable</b></em>' attribute
+		 * feature. <!-- begin-user-doc --> <!-- end-user-doc -->
+		 * 
 		 * @since 1.0
-		 * @generated
+		 * @deprecated
+		 * @noreference This field is not intended to be referenced by clients.
+		 * @see <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id= 530887">Bug
+		 *      530887</a>
 		 */
+		@Deprecated
 		public static final EAttribute PART_DESCRIPTOR__DIRTYABLE = eINSTANCE.getPartDescriptor_Dirtyable();
 
 		/**

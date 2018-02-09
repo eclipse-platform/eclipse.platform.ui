@@ -189,30 +189,43 @@ public interface MPartDescriptor extends MApplicationElement, MUILabel, MHandler
 	void setCloseable(boolean value);
 
 	/**
-	 * Returns the value of the '<em><b>Dirtyable</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * <!-- begin-model-doc -->
+	 * Returns the value of the '<em><b>Dirtyable</b></em>' attribute. <!--
+	 * begin-user-doc --> <!-- end-user-doc --> <!-- begin-model-doc -->
 	 * <p>
 	 * Determines whether Parts generated from this template can participate in the
-	 * Dirty -> Save cycle. At best this is a hint since all Parts are inherently dirtyable.
+	 * Dirty -> Save cycle. At best this is a hint since all Parts are inherently
+	 * dirtyable.
 	 * </p>
 	 * <!-- end-model-doc -->
+	 * 
 	 * @return the value of the '<em>Dirtyable</em>' attribute.
 	 * @see #setDirtyable(boolean)
 	 * @model
-	 * @generated
+	 * @generated NOT
+	 * @deprecated dirtyable is managed by part
+	 * @noreference This method is not intented to be referenced by clients.
+	 * @see <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=530887">Bug
+	 *      530887</a>
+	 * 
 	 */
+	@Deprecated
 	boolean isDirtyable();
 
 	/**
-	 * Sets the value of the '{@link org.eclipse.e4.ui.model.application.descriptor.basic.MPartDescriptor#isDirtyable <em>Dirtyable</em>}' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @param value the new value of the '<em>Dirtyable</em>' attribute.
+	 * Sets the value of the
+	 * '{@link org.eclipse.e4.ui.model.application.descriptor.basic.MPartDescriptor#isDirtyable
+	 * <em>Dirtyable</em>}' attribute. <!-- begin-user-doc --> <!-- end-user-doc -->
+	 * 
+	 * @param value
+	 *            the new value of the '<em>Dirtyable</em>' attribute.
 	 * @see #isDirtyable()
-	 * @generated
+	 * @generated NOT
+	 * @deprecated dirtyable is managed by part
+	 * @noreference This method is not intented to be referenced by clients.
+	 * @see <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=530887">Bug
+	 *      530887</a>
 	 */
+	@Deprecated
 	void setDirtyable(boolean value);
 
 	/**

@@ -657,6 +657,13 @@ public class UIEvents {
 		String TOPIC_CLOSEABLE = "org/eclipse/e4/ui/model/basic/PartDescriptor/closeable/*"; //$NON-NLS-1$
 		String TOPIC_CONTRIBUTIONURI = "org/eclipse/e4/ui/model/basic/PartDescriptor/contributionURI/*"; //$NON-NLS-1$
 		String TOPIC_DESCRIPTION = "org/eclipse/e4/ui/model/basic/PartDescriptor/description/*"; //$NON-NLS-1$
+		/**
+		 * @deprecated
+		 * @noreference This field is not intended to be referenced by clients.
+		 * @see <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id= 530887">Bug
+		 *      530887</a>
+		 */
+		@Deprecated
 		String TOPIC_DIRTYABLE = "org/eclipse/e4/ui/model/basic/PartDescriptor/dirtyable/*"; //$NON-NLS-1$
 		String TOPIC_MENUS = "org/eclipse/e4/ui/model/basic/PartDescriptor/menus/*"; //$NON-NLS-1$
 		String TOPIC_TOOLBAR = "org/eclipse/e4/ui/model/basic/PartDescriptor/toolbar/*"; //$NON-NLS-1$
@@ -672,6 +679,12 @@ public class UIEvents {
 		String CLOSEABLE = "closeable"; //$NON-NLS-1$
 		String CONTRIBUTIONURI = "contributionURI"; //$NON-NLS-1$
 		String DESCRIPTION = "description"; //$NON-NLS-1$
+		/**
+		 * @deprecated
+		 * @noreference This field is not intended to be referenced by clients.
+		 * @see <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id= 530887">Bug
+		 *      530887</a>
+		 */
 		String DIRTYABLE = "dirtyable"; //$NON-NLS-1$
 		String MENUS = "menus"; //$NON-NLS-1$
 		String TOOLBAR = "toolbar"; //$NON-NLS-1$
