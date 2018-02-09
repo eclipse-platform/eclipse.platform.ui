@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 IBM Corporation and others.
+ * Copyright (c) 2000, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,6 +12,7 @@ package org.eclipse.ui.internal;
 
 import static org.eclipse.swt.events.SelectionListener.widgetSelectedAdapter;
 
+import java.util.Arrays;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.SafeRunner;
@@ -209,6 +210,7 @@ public class ReopenEditorMenu extends ContributionItem {
 
         int n = Math.min(itemsToShow, historyItems.length);
         if (n <= 0) {
+			addClearHistory(menu, n);
             return;
         }
 
@@ -240,6 +242,18 @@ public class ReopenEditorMenu extends ContributionItem {
                 }
             });
         }
+
+		addClearHistory(menu, n);
+	}
+
+	private void addClearHistory(Menu menu, int nItems) {
+		new MenuItem(menu, SWT.SEPARATOR);
+		MenuItem miClear = new MenuItem(menu, SWT.PUSH);
+		miClear.setText(WorkbenchMessages.OpenRecentDocumentsClear_text);
+		miClear.addSelectionListener(widgetSelectedAdapter(e -> Arrays.stream(history.getItems()).forEach(item -> {
+			history.remove(item);
+		})));
+		miClear.setEnabled(nItems > 0);
     }
 
     /**

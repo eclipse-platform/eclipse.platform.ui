@@ -114,6 +114,7 @@ public class WorkbenchMessages extends NLS {
 	public static String ImportResourcesAction_toolTip;
 
 	public static String OpenRecentDocuments_text;
+	public static String OpenRecentDocumentsClear_text;
 	public static String OpenRecent_errorTitle;
 	public static String OpenRecent_unableToOpen;
 	public static String Exit_text;
