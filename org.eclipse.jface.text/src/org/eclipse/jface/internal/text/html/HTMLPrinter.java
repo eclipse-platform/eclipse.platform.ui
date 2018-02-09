@@ -19,10 +19,9 @@ import org.eclipse.swt.SWTError;
 import org.eclipse.swt.graphics.FontData;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Event;
-import org.eclipse.swt.widgets.Listener;
 
 import org.eclipse.jface.resource.JFaceColors;
+import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.util.Util;
 
 import org.eclipse.jface.text.DefaultInformationControl;
@@ -36,6 +35,8 @@ public class HTMLPrinter {
 
 	private static volatile RGB BG_COLOR_RGB= new RGB(255, 255, 225); // RGB value of info bg color on WindowsXP
 	private static volatile RGB FG_COLOR_RGB= new RGB(0, 0, 0); // RGB value of info fg color on WindowsXP
+	private static volatile RGB LINK_COLOR_RGB= new RGB(0, 0, 255); // dark blue
+	private static volatile RGB ACTIVE_LINK_COLOR_RGB= new RGB(0, 0, 128); // light blue
 
 	private static final String UNIT; // See https://bugs.eclipse.org/bugs/show_bug.cgi?id=155993
 	static {
@@ -68,15 +69,13 @@ public class HTMLPrinter {
 	private static void cacheColors(Display display) {
 		BG_COLOR_RGB= JFaceColors.getInformationViewerBackgroundColor(display).getRGB();
 		FG_COLOR_RGB= JFaceColors.getInformationViewerForegroundColor(display).getRGB();
+		LINK_COLOR_RGB= JFaceColors.getHyperlinkText(display).getRGB();
+		ACTIVE_LINK_COLOR_RGB= JFaceColors.getActiveHyperlinkText(display).getRGB();
 	}
 
 	private static void installColorUpdater(final Display display) {
-		display.addListener(SWT.Settings, new Listener() {
-			@Override
-			public void handleEvent(Event event) {
-				cacheColors(display);
-			}
-		});
+		display.addListener(SWT.Settings, event -> cacheColors(display));
+		JFaceResources.getColorRegistry().addListener(event -> cacheColors(display));
 	}
 
 	private static String replace(String text, char c, String s) {
@@ -394,6 +393,14 @@ public class HTMLPrinter {
 		appendColor(bg, bgRGB);
 		styleSheet= styleSheet.replaceAll("InfoBackground", bg.toString()); //$NON-NLS-1$
 
+		// replace link colors with colors from preferences
+		StringBuilder linkColor= new StringBuilder();
+		appendColor(linkColor, LINK_COLOR_RGB);
+		styleSheet= styleSheet.replaceAll("hyperlinkColor", linkColor.toString()); //$NON-NLS-1$
+		StringBuilder activeLinkColor= new StringBuilder();
+		appendColor(activeLinkColor, ACTIVE_LINK_COLOR_RGB);
+		styleSheet= styleSheet.replaceAll("activeHyperlinkColor", activeLinkColor.toString()); //$NON-NLS-1$
+
 		buffer.append("<head><style CHARSET=\"ISO-8859-1\" TYPE=\"text/css\">"); //$NON-NLS-1$
 		buffer.append(styleSheet);
 		buffer.append("</style></head>"); //$NON-NLS-1$
@@ -414,12 +421,20 @@ public class HTMLPrinter {
 			return;
 
 		// workaround for https://bugs.eclipse.org/318243
-		StringBuffer fg= new StringBuffer();
+		StringBuilder fg= new StringBuilder();
 		appendColor(fg, fgRGB);
 		styleSheet= styleSheet.replaceAll("InfoText", fg.toString()); //$NON-NLS-1$
 		StringBuilder bg= new StringBuilder();
 		appendColor(bg, bgRGB);
 		styleSheet= styleSheet.replaceAll("InfoBackground", bg.toString()); //$NON-NLS-1$
+
+		// replace link colors with colors from preferences
+		StringBuilder linkColor= new StringBuilder();
+		appendColor(linkColor, LINK_COLOR_RGB);
+		styleSheet= styleSheet.replaceAll("hyperlinkColor", linkColor.toString()); //$NON-NLS-1$
+		StringBuilder activeLinkColor= new StringBuilder();
+		appendColor(activeLinkColor, ACTIVE_LINK_COLOR_RGB);
+		styleSheet= styleSheet.replaceAll("activeHyperlinkColor", activeLinkColor.toString()); //$NON-NLS-1$
 
 		buffer.append("<head><style CHARSET=\"ISO-8859-1\" TYPE=\"text/css\">"); //$NON-NLS-1$
 		buffer.append(styleSheet);

@@ -53,8 +53,8 @@ class RevisionHoverInformationControlCreator extends AbstractReusableInformation
 	"dd	         { margin-top: 0; margin-bottom: 0 }\n" + //$NON-NLS-1$
 	"\n" + //$NON-NLS-1$
 	"/* Styles and colors */\n" + //$NON-NLS-1$
-	"a:link	     { color: #0000FF }\n" + //$NON-NLS-1$
-	"a:hover	     { color: #000080 }\n" + //$NON-NLS-1$
+	"a:link	     { color: hyperlinkColor }\n" + //$NON-NLS-1$
+	"a:hover	     { color: activeHyperlinkColor }\n" + //$NON-NLS-1$
 	"a:visited    { text-decoration: underline }\n" + //$NON-NLS-1$
 	"h4           { font-style: italic }\n" + //$NON-NLS-1$
 	"strong	     { font-weight: bold }\n" + //$NON-NLS-1$
