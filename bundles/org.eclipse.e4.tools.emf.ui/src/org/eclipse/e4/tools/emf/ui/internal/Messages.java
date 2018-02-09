@@ -254,7 +254,6 @@ public class Messages {
 	public String PartDescriptorEditor_Tooltip;
 	public String PartDescriptorEditor_IconURI;
 	public String PartDescriptorEditor_ClassURI;
-	public String PartDescriptorEditor_Dirtyable;
 	public String PartDescriptorEditor_Closeable;
 	public String PartDescriptorEditor_Multiple;
 	public String PartDescriptorEditor_Category;

@@ -8,7 +8,7 @@
  * Contributors:
  * Tom Schindl <tom.schindl@bestsolution.at> - initial API and implementation
  * Steven Spungin <steven@spungin.tv> - Bug 404166, 424730, 437951
- * Olivier Prouvost <olivier@opcoach.com> - Bug 472658
+ * Olivier Prouvost <olivier@opcoach.com> - Bug 472658, 530887
  ******************************************************************************/
 package org.eclipse.e4.tools.emf.ui.internal.common.component;
 
@@ -302,21 +302,6 @@ public class PartDescriptorEditor extends AbstractComponentEditor {
 					.observeDetail(master));
 		}
 
-		// ------------------------------------------------------------
-		{
-			final Label l = new Label(parent, SWT.NONE);
-			l.setText(Messages.PartDescriptorEditor_Dirtyable);
-			l.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
-
-			final Button checkbox = new Button(parent, SWT.CHECK);
-			checkbox.setLayoutData(new GridData(GridData.BEGINNING, GridData.BEGINNING, false, false, 2, 1));
-
-			final IEMFEditValueProperty mprop = EMFEditProperties.value(getEditingDomain(),
-					BasicPackageImpl.Literals.PART_DESCRIPTOR__DIRTYABLE);
-			final IWidgetValueProperty uiProp = WidgetProperties.selection();
-
-			context.bindValue(uiProp.observe(checkbox), mprop.observeDetail(master));
-		}
 
 		// ------------------------------------------------------------
 		{
