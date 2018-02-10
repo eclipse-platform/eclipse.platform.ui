@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 IBM Corporation and others.
+ * Copyright (c) 2000, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -28,7 +28,7 @@ public class EditorHistory {
     /**
      * The maximum of entries in the history.
      */
-    public static final int MAX_SIZE = 15;
+	public static final int MAX_SIZE = 20;
 
     /**
      * The list of editor entries, in FIFO order.

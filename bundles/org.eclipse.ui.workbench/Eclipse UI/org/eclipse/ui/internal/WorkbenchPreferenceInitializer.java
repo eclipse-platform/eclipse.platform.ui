@@ -62,7 +62,7 @@ public class WorkbenchPreferenceInitializer extends AbstractPreferenceInitialize
 		node.putBoolean(IPreferenceConstants.OPEN_ON_SINGLE_CLICK, false);
 		node.putBoolean(IPreferenceConstants.SELECT_ON_HOVER, false);
 		node.putBoolean(IPreferenceConstants.OPEN_AFTER_DELAY, false);
-		node.putInt(IPreferenceConstants.RECENT_FILES, 10);
+		node.putInt(IPreferenceConstants.RECENT_FILES, 20);
 
 		// FIXME this does not actually set the default since it is the wrong
 		// node. It works because the default-default is false.
