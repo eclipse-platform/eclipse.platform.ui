@@ -222,4 +222,18 @@ class MarkerComparator implements Comparator<MarkerItem> {
 		this.category = category;
 	}
 
+	/**
+	 * @return Returns the fields.
+	 */
+	public MarkerField[] getFields() {
+		return fields;
+	}
+
+	/**
+	 * @return Returns the category.
+	 */
+	public MarkerField getCategory() {
+		return category;
+	}
+
 }

@@ -13,6 +13,7 @@
 package org.eclipse.ui.internal.views.markers;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
@@ -25,6 +26,7 @@ import java.util.TreeMap;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
 import org.eclipse.ui.views.markers.MarkerItem;
 import org.eclipse.ui.views.markers.internal.MarkerGroup;
 import org.eclipse.ui.views.markers.internal.MarkerGroupingEntry;
@@ -144,14 +146,17 @@ class Markers {
 			return false;
 		}
 		boolean initialVal = inChange;
+		MarkerComparator markerComparator = builder.getComparator();
+		MarkerCategory lastCategory = null;
 		try {
 			inChange = true;
 			if (builder.isShowingHierarchy()) {
-				Comparator<MarkerItem> comparator = builder.getComparator().getFieldsComparator();
+				Comparator<MarkerItem> comparator = markerComparator.getFieldsComparator();
 				for (MarkerCategory category : categories) {
 					if (monitor.isCanceled()) {
 						return false;
 					}
+					lastCategory = category;
 					// sort various categories
 					category.children = null; // reset cached children
 					int avaliable = category.end - category.start + 1;
@@ -167,13 +172,24 @@ class Markers {
 				int avaialble = markerEntryArray.length - 1;
 				int effLimit = getShowingLimit(avaialble);
 				MarkerSortUtil.sortStartingKElement(markerEntryArray,
-						builder.getComparator(), effLimit, monitor);
+						markerComparator, effLimit, monitor);
 			}
 			if (monitor.isCanceled()) {
 				return false;
 			}
 			monitor.worked(50);
 			return true;
+		} catch (IllegalArgumentException e) {
+			StringBuilder err = new StringBuilder("Bug 371586: broken comparator. "); //$NON-NLS-1$
+			if (lastCategory != null) {
+				err.append(lastCategory);
+			} else {
+				err.append(markerComparator.getCategory());
+			}
+			err.append(", fields: "); //$NON-NLS-1$
+			err.append(Arrays.toString(markerComparator.getFields()));
+			IDEWorkbenchPlugin.log(err.toString(), e);
+			return false;
 		} finally {
 			inChange = initialVal;
 		}

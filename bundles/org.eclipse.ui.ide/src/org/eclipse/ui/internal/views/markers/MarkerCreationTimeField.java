@@ -39,8 +39,15 @@ public class MarkerCreationTimeField extends MarkerField {
 
 	@Override
 	public int compare(MarkerItem item1, MarkerItem item2) {
-		return (int) (((MarkerSupportItem) item1).getCreationTime() - ((MarkerSupportItem) item2)
-				.getCreationTime());
+		long time1 = ((MarkerSupportItem) item1).getCreationTime();
+		long time2 = ((MarkerSupportItem) item2).getCreationTime();
+		if (time1 < time2) {
+			return -1;
+		}
+		if (time1 > time2) {
+			return 1;
+		}
+		return 0;
 	}
 
 	@Override
