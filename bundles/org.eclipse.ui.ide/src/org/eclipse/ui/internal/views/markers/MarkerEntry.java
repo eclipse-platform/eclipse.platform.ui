@@ -250,8 +250,8 @@ class MarkerEntry extends MarkerSupportItem implements IAdaptable {
 		if(stale||checkIfMarkerStale()){
 			return MarkerSupportInternalUtilities.UNKNOWN_ATRRIBTE_VALUE_STRING;
 		}
-		if (getCache().containsKey(LOCATION_STRING)) {
-			Object value = getCache().get(LOCATION_STRING);
+		Object value = getCache().get(LOCATION_STRING);
+		if (value != null) {
 			if (value instanceof CollationKey) {
 				return ((CollationKey) value).getSourceString();
 			}

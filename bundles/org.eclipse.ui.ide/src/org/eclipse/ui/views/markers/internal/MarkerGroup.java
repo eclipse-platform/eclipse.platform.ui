@@ -310,8 +310,8 @@ public class MarkerGroup {
 
 			String defaultEntryId = attributeGrouping.getDefaultGroupingEntry();
 			if (defaultEntryId != null) {
-				if (idsToEntries.containsKey(defaultEntryId)) {
-					MarkerGroupingEntry entry = idsToEntries.get(defaultEntryId);
+				MarkerGroupingEntry entry = idsToEntries.get(defaultEntryId);
+				if (entry != null) {
 					entry.setAsDefault(attributeGrouping.getMarkerType());
 				} else {
 					IDEWorkbenchPlugin.log(NLS.bind(
@@ -325,8 +325,8 @@ public class MarkerGroup {
 			for (IConfigurationElement mapping : mappings) {
 				String entryId = mapping.getAttribute(MarkerSupportRegistry.MARKER_GROUPING_ENTRY);
 
-				if (idsToEntries.containsKey(entryId)) {
-					MarkerGroupingEntry entry = idsToEntries.get(entryId);
+				MarkerGroupingEntry entry = idsToEntries.get(entryId);
+				if (entry != null) {
 					entry.getMarkerGroup().mapAttribute(
 							attributeGrouping,
 							entry,
@@ -356,10 +356,8 @@ public class MarkerGroup {
 	 */
 	private void addEntry(String markerType, EntryMapping entry) {
 		for (MarkerType type : getMarkerTypes(markerType)) {
-			Collection<EntryMapping> entries = new HashSet<>();
-			if (typesToMappings.containsKey(type.getId())) {
-				entries = typesToMappings.get(markerType);
-			} else {
+			Collection<EntryMapping> entries = typesToMappings.get(markerType);
+			if (entries == null) {
 				entries = new HashSet<>();
 			}
 			entries.add(entry);
@@ -388,9 +386,10 @@ public class MarkerGroup {
 	 * @return MarkerGroupingEntry
 	 */
 	public MarkerGroupingEntry findGroupValue(String type, IMarker marker) {
-		if (typesToMappings.containsKey(type)) {
+		Collection<EntryMapping> collection = typesToMappings.get(type);
+		if (collection != null) {
 			EntryMapping defaultMapping = null;
-			Iterator<EntryMapping> mappings = typesToMappings.get(type).iterator();
+			Iterator<EntryMapping> mappings = collection.iterator();
 			while (mappings.hasNext()) {
 				EntryMapping mapping = mappings.next();
 				if (mapping.hasAttributes()) {

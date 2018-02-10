@@ -262,10 +262,8 @@ public class MarkerSupportRegistry implements IExtensionChangeHandler {
 			if (element.getName().equals(MARKER_GROUPING_ENTRY)) {
 				MarkerGroupingEntry entry = new MarkerGroupingEntry(element);
 				String groupName = element.getAttribute(MARKER_GROUPING);
-				Collection<MarkerGroupingEntry> entries;
-				if (groupIDsToEntries.containsKey(groupName)) {
-					entries = groupIDsToEntries.get(groupName);
-				} else {
+				Collection<MarkerGroupingEntry> entries = groupIDsToEntries.get(groupName);
+				if (entries == null) {
 					entries = new HashSet<>();
 				}
 
@@ -296,10 +294,8 @@ public class MarkerSupportRegistry implements IExtensionChangeHandler {
 
 			if (element.getName().equals(MARKER_CONTENT_GENERATOR_EXTENSION)) {
 				String generatorName = element.getAttribute(ATTRIBUTE_GENERATOR_ID);
-				Collection<IConfigurationElement> extensionCollection;
-				if(generatorExtensions.containsKey(generatorName)) {
-					extensionCollection = generatorExtensions.get(generatorName);
-				} else {
+				Collection<IConfigurationElement> extensionCollection = generatorExtensions.get(generatorName);
+				if (extensionCollection == null) {
 					extensionCollection = new ArrayList<>();
 				}
 
@@ -377,8 +373,9 @@ public class MarkerSupportRegistry implements IExtensionChangeHandler {
 		while (generatorIterator.hasNext()) {
 			ContentGeneratorDescriptor generatorDesc = generatorIterator.next();
 			generatorDesc.initializeFromConfigurationElement(this);
-			if (generatorExtensions.containsKey(generatorDesc.getId())) {
-				generatorDesc.addExtensions(generatorExtensions.get(generatorDesc.getId()));
+			Collection<IConfigurationElement> extensions = generatorExtensions.get(generatorDesc.getId());
+			if (extensions != null) {
+				generatorDesc.addExtensions(extensions);
 			}
 		}
 
@@ -392,8 +389,8 @@ public class MarkerSupportRegistry implements IExtensionChangeHandler {
 	private void processGroupingEntries(Map<String, Collection<MarkerGroupingEntry>> groupingEntries) {
 		for (Entry<String, Collection<MarkerGroupingEntry>> entry : groupingEntries.entrySet()) {
 			String nextGroupId = entry.getKey();
-			if (markerGroups.containsKey(nextGroupId)) {
-				MarkerGroup group = markerGroups.get(nextGroupId);
+			MarkerGroup group = markerGroups.get(nextGroupId);
+			if (group != null) {
 				for (MarkerGroupingEntry markerGroupingEntry : entry.getValue()) {
 					markerGroupingEntry.setGroup(group);
 				}
@@ -419,8 +416,8 @@ public class MarkerSupportRegistry implements IExtensionChangeHandler {
 			AttributeMarkerGrouping attributeGrouping = mappingsIterator.next();
 			String defaultEntryId = attributeGrouping.getDefaultGroupingEntry();
 			if (defaultEntryId != null) {
-				if (entryIDsToEntries.containsKey(defaultEntryId)) {
-					MarkerGroupingEntry entry = entryIDsToEntries.get(defaultEntryId);
+				MarkerGroupingEntry entry = entryIDsToEntries.get(defaultEntryId);
+				if (entry != null) {
 					entry.setAsDefault(attributeGrouping.getMarkerType());
 				} else {
 					IDEWorkbenchPlugin.log(NLS.bind(
@@ -433,8 +430,8 @@ public class MarkerSupportRegistry implements IExtensionChangeHandler {
 			for (IConfigurationElement mapping : mappings) {
 				String entryId = mapping.getAttribute(MARKER_GROUPING_ENTRY);
 
-				if (entryIDsToEntries.containsKey(entryId)) {
-					MarkerGroupingEntry entry = entryIDsToEntries.get(entryId);
+				MarkerGroupingEntry entry = entryIDsToEntries.get(entryId);
+				if (entry != null) {
 					entry.getMarkerGroup().mapAttribute(attributeGrouping, entry, mapping.getAttribute(VALUE));
 				} else {
 					IDEWorkbenchPlugin.log(NLS.bind(
@@ -698,10 +695,7 @@ public class MarkerSupportRegistry implements IExtensionChangeHandler {
 	 * @return String or <code>null</code>
 	 */
 	public String getCategory(String markerType) {
-		if (categories.containsKey(markerType)) {
-			return categories.get(markerType);
-		}
-		return null;
+		return categories.get(markerType);
 	}
 
 	/**
@@ -711,11 +705,12 @@ public class MarkerSupportRegistry implements IExtensionChangeHandler {
 	 * @return TableSorter
 	 */
 	public TableComparator getSorterFor(String type) {
-		if (hierarchyOrders.containsKey(type)) {
-			return hierarchyOrders.get(type);
+		TableComparator sorter = hierarchyOrders.get(type);
+		if (sorter != null) {
+			return sorter;
 		}
 
-		TableComparator sorter = findSorterInChildren(type, getRootType());
+		sorter = findSorterInChildren(type, getRootType());
 		if (sorter == null) {
 			return new TableComparator(new IField[0], new int[0], new int[0]);
 		}
@@ -743,11 +738,6 @@ public class MarkerSupportRegistry implements IExtensionChangeHandler {
 	 * @return TableSorter or <code>null</code>.
 	 */
 	private TableComparator findSorterInChildren(String typeName, MarkerType type) {
-		TableComparator defaultSorter = null;
-		if (hierarchyOrders.containsKey(type.getId())) {
-			defaultSorter = hierarchyOrders.get(type.getId());
-		}
-
 		for (MarkerType markerSubType : type.getAllSubTypes()) {
 			MarkerType[] subtypes = markerSubType.getAllSubTypes();
 			for (MarkerType subtype : subtypes) {
@@ -757,7 +747,7 @@ public class MarkerSupportRegistry implements IExtensionChangeHandler {
 				}
 			}
 		}
-		return defaultSorter;
+		return hierarchyOrders.get(type.getId());
 	}
 
 	/**
@@ -785,7 +775,7 @@ public class MarkerSupportRegistry implements IExtensionChangeHandler {
 	 * @return ContentGeneratorDescriptor or <code>null</code>.
 	 */
 	public ContentGeneratorDescriptor getContentGenDescriptor (String id) {
-		if (id != null && generators.containsKey(id)) {
+		if (id != null) {
 			return generators.get(id);
 		}
 		return null;
@@ -807,10 +797,7 @@ public class MarkerSupportRegistry implements IExtensionChangeHandler {
 	 * @return FieldMarkerGroup or <code>null</code>
 	 */
 	public MarkerGroup getMarkerGroup(String categoryName) {
-		if (markerGroups.containsKey(categoryName)) {
-			return markerGroups.get(categoryName);
-		}
-		return null;
+		return markerGroups.get(categoryName);
 	}
 
 	/**
@@ -820,10 +807,7 @@ public class MarkerSupportRegistry implements IExtensionChangeHandler {
 	 * @return {@link MarkerField} or <code>null</code>
 	 */
 	public MarkerField getField(String id) {
-		if (fields.containsKey(id)) {
-			return fields.get(id);
-		}
-		return null;
+		return fields.get(id);
 	}
 
 }

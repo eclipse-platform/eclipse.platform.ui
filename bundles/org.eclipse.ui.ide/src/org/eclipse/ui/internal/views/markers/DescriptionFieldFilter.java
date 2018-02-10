@@ -144,15 +144,16 @@ public class DescriptionFieldFilter extends CompatibilityFieldFilter {
 	@Override
 	public void initialize(Map values) {
 		super.initialize(values);
-		if (values.containsKey(MarkerSupportConstants.CONTAINS_KEY)) {
-			setContainsText((String) values
-					.get(MarkerSupportConstants.CONTAINS_KEY));
+		String value = (String) values.get(MarkerSupportConstants.CONTAINS_KEY);
+		if (value != null) {
+			setContainsText(value);
 			setContainsModifier(MarkerSupportConstants.CONTAINS_KEY);
-		} else if (values
-				.containsKey(MarkerSupportConstants.DOES_NOT_CONTAIN_KEY)) {
-			setContainsText((String) values
-					.get(MarkerSupportConstants.DOES_NOT_CONTAIN_KEY));
-			setContainsModifier(MarkerSupportConstants.DOES_NOT_CONTAIN_KEY);
+		} else {
+			value = (String) values.get(MarkerSupportConstants.DOES_NOT_CONTAIN_KEY);
+			if (value != null) {
+				setContainsText(value);
+				setContainsModifier(MarkerSupportConstants.DOES_NOT_CONTAIN_KEY);
+			}
 		}
 	}
 

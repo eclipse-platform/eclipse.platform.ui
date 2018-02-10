@@ -335,10 +335,7 @@ class Markers {
 				}
 			}
 		}
-		if (markerToEntryMap.containsKey(marker)) {
-			return markerToEntryMap.get(marker);
-		}
-		return null;
+		return markerToEntryMap.get(marker);
 	}
 
 	/**

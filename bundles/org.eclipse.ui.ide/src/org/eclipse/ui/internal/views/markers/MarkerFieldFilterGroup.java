@@ -462,8 +462,8 @@ class MarkerFieldFilterGroup {
 
 		for (IMemento childMemento : memento.getChildren(TAG_FIELD_FILTER_ENTRY)) {
 			String filterId = childMemento.getID();
-			if (filterMap.containsKey(filterId)) {
-				MarkerFieldFilter filter = filterMap.get(filterId);
+			MarkerFieldFilter filter = filterMap.get(filterId);
+			if (filter != null) {
 				if (filter instanceof MarkerTypeFieldFilter) {
 					((MarkerTypeFieldFilter) filter).setContentGenerator(generator);
 				}

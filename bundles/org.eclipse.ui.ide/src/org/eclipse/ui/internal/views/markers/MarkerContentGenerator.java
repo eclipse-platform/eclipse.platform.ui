@@ -238,8 +238,9 @@ public class MarkerContentGenerator {
 
 			for (IMemento element : visible) {
 				String key = element.getID();
-				if (allTable.containsKey(key)) {
-					newVisible.add(allTable.get(key));
+				MarkerField field = allTable.get(key);
+				if (field != null) {
+					newVisible.add(field);
 				}
 			}
 
