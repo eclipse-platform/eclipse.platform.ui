@@ -227,7 +227,7 @@ public abstract class LazyStackRenderer extends SWTPartRenderer {
 			// we do not call layout() because this could lead to
 			// a big amount of layout calls in unrelated places e.g. none
 			// visible children of a CTabFolder (see 460745)
-			if (refCtrl.getParent() != phComp) {
+			if (refCtrl != null && refCtrl.getParent() != phComp) {
 				refCtrl.setParent(phComp);
 				refCtrl.setSize(phComp.getSize());
 			}
