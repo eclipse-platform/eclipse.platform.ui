@@ -135,7 +135,7 @@ public class ComputeProjectOrder {
 		 *
 		 * Key type: <code>T</code>; value type: <code>Vertex</code>
 		 */
-		public final Map<T, Vertex<T>> vertexMap = new HashMap<>(100);
+		public final Map<T, Vertex<T>> vertexMap = new LinkedHashMap<>(100);
 
 		/**
 		 * DFS visit time. Non-negative.
@@ -296,7 +296,7 @@ public class ComputeProjectOrder {
 			}
 			// find the roots of each component
 			// Map<Vertex,List<Object>> components
-			Map<Vertex<T>, List<T>> components = new HashMap<>();
+			Map<Vertex<T>, List<T>> components = new LinkedHashMap<>();
 			for (Vertex<T> vertex : vertexList) {
 				if (vertex.predecessor == null) {
 					// this vertex is the root of a component
@@ -463,92 +463,12 @@ public class ComputeProjectOrder {
 			}
 		}
 
-		/**
-		 * Picks that next element to consider.
-		 *
-		 * TODO could be part of a "GraphProcessingState" class so
-		 * it'd become O(1) instead of O(#vertex).
-		 * @param alreadyProcessed
-		 * @return next elements to process: either one who has all parents covered, or if there are only cycles, the best entry points of a cycle
-		 */
-		public Set<T> getNextElementToProcess(Set<T> alreadyProcessed) {
-			if (!initialized) {
-				throw new IllegalArgumentException();
-			}
-			int maxDepthAlreadyProcessed = 0;
-			for (T item : alreadyProcessed) {
-				Vertex<T> vertex = vertexMap.get(item);
-				if (item == null) {
-					throw new IllegalArgumentException();
-				}
-				maxDepthAlreadyProcessed = Math.max(maxDepthAlreadyProcessed, vertex.finishTime);
-			}
-			Set<Vertex<T>> remaining = new HashSet<>(this.vertexMap.values());
-			alreadyProcessed.forEach(item -> remaining.remove(vertexMap.get(item)));
-			if (remaining.isEmpty()) {
-				return Collections.emptySet();
-			}
-			Set<T> res = new HashSet<>();
-			for (Vertex<T> notProcessed : remaining) {
-				if (notProcessed.predecessor == null || alreadyProcessed.contains(notProcessed.predecessor.id)) {
-					res.add(notProcessed.id);
-				}
-			}
-			if (!res.isEmpty()) {
-				return res;
-			} else if (containsCycles()) {
-				// pick only the node with the lowest depth
-				Vertex<T> nextVertex = null;
-				for (Vertex<T> notProcessed : remaining) {
-					if (nextVertex == null || notProcessed.finishTime < nextVertex.finishTime) {
-						nextVertex = notProcessed;
-					}
-				} ;
-				if (nextVertex != null) {
-					return Collections.singleton(nextVertex.id);
-				}
-			}
-			throw new IllegalStateException();
-		}
-
-		/**
-		 * O(n^2)
-		 * @param id
-		 */
-		public void removeHeadVertex(T id) {
-			if (!this.vertexMap.containsKey(id)) {
-				throw new IllegalArgumentException();
-			}
-			Vertex<T> toRemove = vertexMap.get(id);
-			if (toRemove.predecessor != null) {
-				throw new IllegalArgumentException();
-			}
-			vertexMap.remove(id);
-			vertexList.remove(toRemove);
-			for (Vertex<T> other : vertexList) { // O(n^2)
-				if (other.predecessor == toRemove) {
-					other.predecessor = null;
-					cascadeDecreaseFinishTime(other); // O(n)
-				}
-				other.adjacent.remove(toRemove); //O(n)
-			}
-		}
-
-		private void cascadeDecreaseFinishTime(Vertex<T> vertex) {
-			vertex.finishTime--;
-			for (Vertex<T> adjacent : vertex.adjacent) {
-				if (adjacent.predecessor == vertex) {
-					cascadeDecreaseFinishTime(adjacent);
-				}
-			}
-		}
-
 		public Collection<Edge<T>> getEdges() {
 			int size = 0;
 			for (Vertex<T> vertex : vertexList) {
 				size += vertex.adjacent.size();
 			}
-			Collection<Edge<T>> res = new HashSet<>(size, (float) 1.);
+			Collection<Edge<T>> res = new LinkedHashSet<>(size, (float) 1.);
 			vertexList.forEach(vertex -> vertex.adjacent.forEach(adjacent -> res.add(new Edge<>(vertex.id, adjacent.id))));
 			return res;
 		}
@@ -744,7 +664,7 @@ public class ComputeProjectOrder {
 	 */
 	public static <T> Digraph<T> buildFilteredDigraph(Digraph<T> initialGraph, Predicate<T> filterOut, Class<T> clazz) {
 		Digraph<T> res = new Digraph<>(clazz);
-		Set<Vertex<T>> toRemove = new HashSet<>(); // Make it a TreeSet using depth as comparator?
+		Set<Vertex<T>> toRemove = new LinkedHashSet<>(); // Make it a TreeSet using depth as comparator?
 		for (Vertex<T> vertex : initialGraph.vertexList) {
 			if (!filterOut.test(vertex.id)) {
 				res.addVertex(vertex.id);
@@ -752,10 +672,10 @@ public class ComputeProjectOrder {
 				toRemove.add(vertex);
 			}
 		}
-		Set<Edge<T>> edges = new HashSet<>(initialGraph.getEdges());
+		Set<Edge<T>> edges = new LinkedHashSet<>(initialGraph.getEdges());
 		for (Vertex<T> vertexToRemove : toRemove) {
-			Set<Edge<T>> incoming = edges.stream().filter(edge -> edge.to == vertexToRemove.id).collect(Collectors.toSet());
-			Set<Edge<T>> outgoing = edges.stream().filter(edge -> edge.from == vertexToRemove.id).collect(Collectors.toSet());
+			Set<Edge<T>> incoming = edges.stream().filter(edge -> edge.to == vertexToRemove.id).collect(Collectors.toCollection(LinkedHashSet::new));
+			Set<Edge<T>> outgoing = edges.stream().filter(edge -> edge.from == vertexToRemove.id).collect(Collectors.toCollection(LinkedHashSet::new));
 			edges.removeAll(incoming);
 			edges.removeAll(outgoing);
 			incoming.forEach(incomingEdge -> outgoing.forEach(outgoingEdge -> edges.add(new Edge<>(incomingEdge.from, outgoingEdge.to))));
