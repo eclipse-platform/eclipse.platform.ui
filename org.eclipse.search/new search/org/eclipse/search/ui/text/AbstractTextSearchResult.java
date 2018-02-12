@@ -142,7 +142,8 @@ public abstract class AbstractTextSearchResult implements ISearchResult {
 
 	private static int getInsertIndex(List<Match> matches, Match match) {
 		int count= matches.size();
-		int min = 0, max = count - 1;
+		int min = 0;
+		int max = count - 1;
 		while (min <= max) {
 			int mid = (min + max) / 2;
 			Match data = matches.get(mid);
