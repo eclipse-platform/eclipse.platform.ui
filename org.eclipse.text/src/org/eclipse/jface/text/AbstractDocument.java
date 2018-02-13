@@ -1528,10 +1528,9 @@ public abstract class AbstractDocument implements IDocument, IDocumentExtension,
 	protected final void stopRewriteSessionOnPartitioners(DocumentRewriteSession session) {
 		if (fDocumentPartitioners != null) {
 			DocumentPartitioningChangedEvent event= new DocumentPartitioningChangedEvent(this);
-			Iterator<String> e= fDocumentPartitioners.keySet().iterator();
-			while (e.hasNext()) {
-				String partitioning= e.next();
-				IDocumentPartitioner partitioner= fDocumentPartitioners.get(partitioning);
+			for (Entry<String, IDocumentPartitioner> entry : fDocumentPartitioners.entrySet()) {
+				String partitioning = entry.getKey();
+				IDocumentPartitioner partitioner= entry.getValue();
 				if (partitioner instanceof IDocumentPartitionerExtension3) {
 					IDocumentPartitionerExtension3 extension= (IDocumentPartitionerExtension3) partitioner;
 					extension.stopRewriteSession(session);
