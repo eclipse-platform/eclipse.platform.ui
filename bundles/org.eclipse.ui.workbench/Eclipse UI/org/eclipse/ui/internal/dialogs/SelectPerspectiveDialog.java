@@ -52,8 +52,7 @@ import org.eclipse.ui.model.PerspectiveLabelProvider;
 /**
  * A dialog for perspective creation
  */
-public class SelectPerspectiveDialog extends Dialog implements
-        ISelectionChangedListener {
+public class SelectPerspectiveDialog extends Dialog implements ISelectionChangedListener {
 
     final private static int LIST_HEIGHT = 300;
 
@@ -81,8 +80,7 @@ public class SelectPerspectiveDialog extends Dialog implements
      * @param parentShell the parent shell
      * @param perspReg the perspective registry
      */
-    public SelectPerspectiveDialog(Shell parentShell,
-            IPerspectiveRegistry perspReg) {
+	public SelectPerspectiveDialog(Shell parentShell, IPerspectiveRegistry perspReg) {
         super(parentShell);
         this.perspReg = perspReg;
 		setShellStyle(getShellStyle() | SWT.SHEET);
@@ -98,8 +96,7 @@ public class SelectPerspectiveDialog extends Dialog implements
 	protected void configureShell(Shell shell) {
         super.configureShell(shell);
         shell.setText(WorkbenchMessages.SelectPerspective_shellTitle);
-        PlatformUI.getWorkbench().getHelpSystem().setHelp(shell,
-				IWorkbenchHelpContextIds.SELECT_PERSPECTIVE_DIALOG);
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(shell, IWorkbenchHelpContextIds.SELECT_PERSPECTIVE_DIALOG);
     }
 
     /**
@@ -114,10 +111,9 @@ public class SelectPerspectiveDialog extends Dialog implements
      */
     @Override
 	protected void createButtonsForButtonBar(Composite parent) {
-        okButton = createButton(parent, IDialogConstants.OK_ID,
-				WorkbenchMessages.SelectPerspective_open_button_label, true);
-        createButton(parent, IDialogConstants.CANCEL_ID,
-                IDialogConstants.CANCEL_LABEL, false);
+		okButton = createButton(parent, IDialogConstants.OK_ID, WorkbenchMessages.SelectPerspective_open_button_label,
+				true);
+		createButton(parent, IDialogConstants.CANCEL_ID, IDialogConstants.CANCEL_LABEL, false);
         updateButtons();
     }
 
@@ -279,9 +275,8 @@ public class SelectPerspectiveDialog extends Dialog implements
 
 	@Override
 	protected void okPressed() {
-        ITriggerPoint triggerPoint = PlatformUI.getWorkbench()
-                .getActivitySupport().getTriggerPointManager().getTriggerPoint(
-                        WorkbenchTriggerPoints.OPEN_PERSPECITVE_DIALOG);
+		ITriggerPoint triggerPoint = PlatformUI.getWorkbench().getActivitySupport().getTriggerPointManager()
+				.getTriggerPoint(WorkbenchTriggerPoints.OPEN_PERSPECITVE_DIALOG);
         if (WorkbenchActivityHelper.allowUseOf(triggerPoint, getSelection())) {
 			super.okPressed();
 		}
