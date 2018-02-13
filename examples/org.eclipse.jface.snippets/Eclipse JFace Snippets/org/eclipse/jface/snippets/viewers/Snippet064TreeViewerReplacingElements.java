@@ -38,6 +38,7 @@ import org.eclipse.swt.widgets.Shell;
 public class Snippet064TreeViewerReplacingElements {
 
 	public Snippet064TreeViewerReplacingElements(Shell shell) {
+		Random random = new Random();
 		final Composite c = new Composite(shell, SWT.NONE);
 		c.setLayout(new FillLayout(SWT.VERTICAL));
 		Label l = new Label(c, SWT.NONE);
@@ -68,7 +69,7 @@ public class Snippet064TreeViewerReplacingElements {
 				// don't use 'r' and 'c', because they would iterate through the
 				// root... / child... elements
 				if (e.character == 'q') {
-					rootElementList.set(0, "root " + new Random().nextInt());
+					rootElementList.set(0, "root " + random.nextInt());
 				}
 				if (e.character == 'w') {
 					IObservableList<String> childElementsList = recentlyCreatedChildList.get();

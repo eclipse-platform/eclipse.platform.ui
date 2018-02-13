@@ -37,6 +37,7 @@ import org.eclipse.swt.widgets.Shell;
 public class Snippet065TableViewerReplacingElements {
 
 	public Snippet065TableViewerReplacingElements(Shell shell) {
+		Random random = new Random();
 		final Composite c = new Composite(shell, SWT.NONE);
 		c.setLayout(new FillLayout(SWT.VERTICAL));
 		Label l = new Label(c, SWT.NONE);
@@ -56,7 +57,7 @@ public class Snippet065TableViewerReplacingElements {
 				// don't use 'r' and 'c', because they would iterate through the
 				// root... / child... elements
 				if (e.character == 'q') {
-					input.set(0, "root " + new Random().nextInt());
+					input.set(0, "root " + random.nextInt());
 				}
 		    }
 		});
