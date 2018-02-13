@@ -65,5 +65,6 @@ IEclipsePreferences#org-eclipse-ui-workbench:org-eclipse-ui-themes { /* pseudo a
 		'OUTGOING_COLOR=238,238,238'
 		'RESOLVED_COLOR=108,210,17'
 		'org.eclipse.search.ui.match.highlight=206,92,0'
+		'org.eclipse.ui.editors.rangeIndicatorColor=27,118,153'
 }
 
