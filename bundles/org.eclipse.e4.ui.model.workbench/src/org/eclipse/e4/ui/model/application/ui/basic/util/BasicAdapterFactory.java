@@ -167,11 +167,25 @@ public class BasicAdapterFactory extends AdapterFactoryImpl {
 			return createStackElementAdapter();
 		}
 
+		/**
+		 * @deprecated
+		 * @noreference This method is not intended to be referenced by clients.
+		 * @see <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=531054">Bug
+		 *      531054</a>
+		 */
+		@Deprecated
 		@Override
 		public Adapter caseDialog(MDialog object) {
 			return createDialogAdapter();
 		}
 
+		/**
+		 * @deprecated
+		 * @noreference This method is not intended to be referenced by clients.
+		 * @see <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=531054">Bug
+		 *      531054</a>
+		 */
+		@Deprecated
 		@Override
 		public Adapter caseWizardDialog(MWizardDialog object) {
 			return createWizardDialogAdapter();
@@ -490,8 +504,13 @@ public class BasicAdapterFactory extends AdapterFactoryImpl {
 	 * @return the new adapter.
 	 * @see org.eclipse.e4.ui.model.application.ui.basic.MDialog
 	 * @since 1.1
-	 * @generated
+	 * @generated NOT
+	 * @deprecated
+	 * @noreference This method is not intended to be referenced by clients.
+	 * @see <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=531054">Bug
+	 *      531054</a>
 	 */
+	@Deprecated
 	public Adapter createDialogAdapter() {
 		return null;
 	}
@@ -506,8 +525,13 @@ public class BasicAdapterFactory extends AdapterFactoryImpl {
 	 * @return the new adapter.
 	 * @see org.eclipse.e4.ui.model.application.ui.basic.MWizardDialog
 	 * @since 1.1
-	 * @generated
+	 * @generated NOT
+	 * @deprecated
+	 * @noreference This method is not intended to be referenced by clients.
+	 * @see <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=531054">Bug
+	 *      531054</a>
 	 */
+	@Deprecated
 	public Adapter createWizardDialogAdapter() {
 		return null;
 	}

@@ -11,32 +11,46 @@
 package org.eclipse.e4.ui.model.application.ui.basic.impl;
 
 import org.eclipse.e4.ui.model.application.ui.basic.MDialog;
-
 import org.eclipse.emf.ecore.EClass;
 
 /**
- * <!-- begin-user-doc -->
- * An implementation of the model object '<em><b>Dialog</b></em>'.
- * <!-- end-user-doc -->
+ * <!-- begin-user-doc --> An implementation of the model object
+ * '<em><b>Dialog</b></em>'. <!-- end-user-doc -->
  *
  * @since 1.1
- * @generated
+ * @generated NOT
+ * @deprecated
+ * @ordered
+ * @noreference This class is not intended to be referenced by clients.
+ * @see <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=531054">Bug
+ *      531054</a>
  */
+@Deprecated
 public class DialogImpl extends WindowImpl implements MDialog {
 	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
+	 * <!-- begin-user-doc --> <!-- end-user-doc -->
+	 * 
+	 * @generated NOT
+	 * @deprecated
+	 * @noreference This method is not intended to be referenced by clients.
+	 * @see <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=531054">Bug
+	 *      531054</a>
 	 */
+	@Deprecated
 	protected DialogImpl() {
 		super();
 	}
 
 	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
+	 * <!-- begin-user-doc --> <!-- end-user-doc -->
+	 * 
+	 * @generated NOT
+	 * @deprecated
+	 * @noreference This method is not intended to be referenced by clients.
+	 * @see <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=531054">Bug
+	 *      531054</a>
 	 */
+	@Deprecated
 	@Override
 	protected EClass eStaticClass() {
 		return BasicPackageImpl.Literals.DIALOG;

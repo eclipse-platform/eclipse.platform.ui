@@ -482,33 +482,45 @@ public class BasicSwitch<T1> extends Switch<T1> {
 	}
 
 	/**
-	 * Returns the result of interpreting the object as an instance of '<em>Dialog</em>'.
-	 * <!-- begin-user-doc -->
-	 * This implementation returns null;
-	 * returning a non-null result will terminate the switch.
-	 * <!-- end-user-doc -->
-	 * @param object the target of the switch.
-	 * @return the result of interpreting the object as an instance of '<em>Dialog</em>'.
+	 * Returns the result of interpreting the object as an instance of
+	 * '<em>Dialog</em>'. <!-- begin-user-doc --> This implementation returns null;
+	 * returning a non-null result will terminate the switch. <!-- end-user-doc -->
+	 * 
+	 * @param object
+	 *            the target of the switch.
+	 * @return the result of interpreting the object as an instance of
+	 *         '<em>Dialog</em>'.
 	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
 	 * @since 1.1
-	 * @generated
+	 * @generated NOT
+	 * @deprecated
+	 * @noreference This method is not intended to be referenced by clients.
+	 * @see <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=531054">Bug
+	 *      531054</a>
 	 */
+	@Deprecated
 	public T1 caseDialog(MDialog object) {
 		return null;
 	}
 
 	/**
-	 * Returns the result of interpreting the object as an instance of '<em>Wizard Dialog</em>'.
-	 * <!-- begin-user-doc -->
-	 * This implementation returns null;
-	 * returning a non-null result will terminate the switch.
-	 * <!-- end-user-doc -->
-	 * @param object the target of the switch.
-	 * @return the result of interpreting the object as an instance of '<em>Wizard Dialog</em>'.
+	 * Returns the result of interpreting the object as an instance of '<em>Wizard
+	 * Dialog</em>'. <!-- begin-user-doc --> This implementation returns null;
+	 * returning a non-null result will terminate the switch. <!-- end-user-doc -->
+	 * 
+	 * @param object
+	 *            the target of the switch.
+	 * @return the result of interpreting the object as an instance of '<em>Wizard
+	 *         Dialog</em>'.
 	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
 	 * @since 1.1
-	 * @generated
+	 * @generated NOT
+	 * @deprecated
+	 * @noreference This method is not intended to be referenced by clients.
+	 * @see <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=531054">Bug
+	 *      531054</a>
 	 */
+	@Deprecated
 	public T1 caseWizardDialog(MWizardDialog object) {
 		return null;
 	}

@@ -116,25 +116,34 @@ public interface MBasicFactory {
 	MTrimBar createTrimBar();
 
 	/**
-	 * Returns a new object of class '<em>Dialog</em>'.
-	 * <!-- begin-user-doc -->
-	 * @since 1.1
-	 * <!-- end-user-doc -->
+	 * Returns a new object of class '<em>Dialog</em>'. <!-- begin-user-doc -->
+	 * 
+	 * @since 1.1 <!-- end-user-doc -->
 	 * @return a new object of class '<em>Dialog</em>'.
 	 * @since 1.1
-	 * @generated
+	 * @generated NOT
+	 * @deprecated
+	 * @noreference This method is not intended to be referenced by clients.
+	 * @see <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=531054">Bug
+	 *      531054</a>
 	 */
+	@Deprecated
 	MDialog createDialog();
 
 	/**
-	 * Returns a new object of class '<em>Wizard Dialog</em>'.
-	 * <!-- begin-user-doc -->
-	 * @since 1.1
-	 * <!-- end-user-doc -->
+	 * Returns a new object of class '<em>Wizard Dialog</em>'. <!-- begin-user-doc
+	 * -->
+	 * 
+	 * @since 1.1 <!-- end-user-doc -->
 	 * @return a new object of class '<em>Wizard Dialog</em>'.
 	 * @since 1.1
-	 * @generated
+	 * @generated NOT
+	 * @deprecated
+	 * @noreference This method is not intended to be referenced by clients.
+	 * @see <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=531054">Bug
+	 *      531054</a>
 	 */
+	@Deprecated
 	MWizardDialog createWizardDialog();
 
 } //MBasicFactory

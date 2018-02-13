@@ -10,6 +10,9 @@
  */
 package org.eclipse.e4.ui.model.application.ui.basic.impl;
 
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.e4.ui.model.application.ui.basic.MBasicFactory;
 import org.eclipse.e4.ui.model.application.ui.basic.MCompositePart;
 import org.eclipse.e4.ui.model.application.ui.basic.MDialog;
@@ -26,6 +29,8 @@ import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.impl.EFactoryImpl;
 import org.eclipse.emf.ecore.plugin.EcorePlugin;
+import org.osgi.framework.Bundle;
+import org.osgi.framework.FrameworkUtil;
 
 /**
  * <!-- begin-user-doc -->
@@ -190,24 +195,43 @@ public class BasicFactoryImpl extends EFactoryImpl implements MBasicFactory {
 	}
 
 	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+	 * <!-- begin-user-doc --> <!-- end-user-doc -->
+	 * 
 	 * @since 1.1
-	 * @generated
+	 * @generated NOT
+	 * @deprecated
+	 * @noreference This method is not intended to be referenced by clients.
+	 * @see <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=531054">Bug
+	 *      531054</a>
 	 */
+	@Deprecated
 	public MDialog createDialog() {
 		DialogImpl dialog = new DialogImpl();
+		Bundle bundle = FrameworkUtil.getBundle(getClass());
+		Status s = new Status(IStatus.ERROR, bundle.getSymbolicName(), // $NON-NLS-1$
+				"Your application model still contains a deprecated Dialog instance. Please remove it to keep compatibility with future versions."); //$NON-NLS-1$
+		Platform.getLog(bundle).log(s);
 		return dialog;
 	}
 
 	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+	 * <!-- begin-user-doc --> <!-- end-user-doc -->
+	 * 
 	 * @since 1.1
-	 * @generated
+	 * @generated NOT
+	 * @deprecated
+	 * @noreference This method is not intended to be referenced by clients.
+	 * @see <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=531054">Bug
+	 *      531054</a>
 	 */
+	@Deprecated
 	public MWizardDialog createWizardDialog() {
 		WizardDialogImpl wizardDialog = new WizardDialogImpl();
+		Bundle bundle = FrameworkUtil.getBundle(getClass());
+		Status s = new Status(IStatus.ERROR, bundle.getSymbolicName(), // $NON-NLS-1$
+				"Your application model still contains a deprecated WizardDialog instance. Please remove it to keep compatibility with future versions."); //$NON-NLS-1$
+		Platform.getLog(bundle).log(s);
+
 		return wizardDialog;
 	}
 

@@ -727,6 +727,10 @@ public class UIEvents {
 		String TOPIC_COMMANDS = "org/eclipse/e4/ui/model/application/Application/commands/*"; //$NON-NLS-1$
 		/**
 		 * @since 1.1
+		 * @deprecated
+		 * @noreference This field is not intended to be referenced by clients.
+		 * @see <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id= 531054">Bug
+		 *      531054 </a>
 		 */
 		String TOPIC_DIALOGS = "org/eclipse/e4/ui/model/application/Application/dialogs/*"; //$NON-NLS-1$
 
@@ -736,7 +740,12 @@ public class UIEvents {
 		String COMMANDS = "commands"; //$NON-NLS-1$
 		/**
 		 * @since 1.1
+		 * @deprecated
+		 * @noreference This field is not intended to be referenced by clients.
+		 * @see <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id= 531054">Bug
+		 *      531054 </a>
 		 */
+		@Deprecated
 		String DIALOGS = "dialogs"; //$NON-NLS-1$
 	}
 
