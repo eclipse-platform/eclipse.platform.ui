@@ -35,7 +35,6 @@ import org.eclipse.e4.ui.model.application.commands.MHandler;
 import org.eclipse.e4.ui.model.application.ui.MCoreExpression;
 import org.eclipse.e4.ui.model.application.ui.MImperativeExpression;
 import org.eclipse.e4.ui.model.application.ui.MUIElement;
-import org.eclipse.e4.ui.model.application.ui.basic.MBasicFactory;
 import org.eclipse.e4.ui.model.application.ui.basic.MPart;
 import org.eclipse.e4.ui.model.application.ui.basic.MPartStack;
 import org.eclipse.e4.ui.model.application.ui.basic.MWindow;
@@ -749,9 +748,9 @@ public class MMenuItemTest {
 	public void testElementHierarchyInContext_DirectItem() {
 		MWindow window = ems.createModelElement(MWindow.class);
 
-		MPartStack stack = MBasicFactory.INSTANCE.createPartStack();
-		final MPart activePart = MBasicFactory.INSTANCE.createPart();
-		final MPart inactivePart = MBasicFactory.INSTANCE.createPart();
+		MPartStack stack = ems.createModelElement(MPartStack.class);
+		final MPart activePart = ems.createModelElement(MPart.class);
+		final MPart inactivePart = ems.createModelElement(MPart.class);
 		stack.getChildren().add(activePart);
 		stack.getChildren().add(inactivePart);
 		stack.setSelectedElement(activePart);
@@ -812,9 +811,9 @@ public class MMenuItemTest {
 	public void testElementHierarchyInContext_HandledItem() {
 		MWindow window = ems.createModelElement(MWindow.class);
 
-		MPartStack stack = MBasicFactory.INSTANCE.createPartStack();
-		final MPart activePart = MBasicFactory.INSTANCE.createPart();
-		final MPart inactivePart = MBasicFactory.INSTANCE.createPart();
+		MPartStack stack = ems.createModelElement(MPartStack.class);
+		final MPart activePart = ems.createModelElement(MPart.class);
+		final MPart inactivePart = ems.createModelElement(MPart.class);
 		stack.getChildren().add(activePart);
 		stack.getChildren().add(inactivePart);
 		stack.setSelectedElement(activePart);
