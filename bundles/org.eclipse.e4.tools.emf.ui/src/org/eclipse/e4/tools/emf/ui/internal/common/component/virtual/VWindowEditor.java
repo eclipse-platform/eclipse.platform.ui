@@ -57,12 +57,6 @@ public abstract class VWindowEditor extends AbstractComponentEditor {
 
 	@PostConstruct
 	void init() {
-		actions.add(new Action(Messages.VWindowEditor_AddDialog, createImageDescriptor(ResourceProvider.IMG_Dialog)) {
-			@Override
-			public void run() {
-				handleAdd(BasicPackageImpl.Literals.DIALOG);
-			}
-		});
 		actions.add(new Action(Messages.VWindowEditor_AddTrimmedWindow, createImageDescriptor(ResourceProvider.IMG_Window)) {
 			@Override
 			public void run() {
@@ -73,12 +67,6 @@ public abstract class VWindowEditor extends AbstractComponentEditor {
 			@Override
 			public void run() {
 				handleAdd(BasicPackageImpl.Literals.WINDOW);
-			}
-		});
-		actions.add(new Action(Messages.VWindowEditor_AddWizardDialog, createImageDescriptor(ResourceProvider.IMG_WizardDialog)) {
-			@Override
-			public void run() {
-				handleAdd(BasicPackageImpl.Literals.WIZARD_DIALOG);
 			}
 		});
 	}
@@ -135,29 +123,8 @@ public abstract class VWindowEditor extends AbstractComponentEditor {
 		viewer = pickList.getList();
 
 		pickList.setLabelProvider(new EClassLabelProvider(getEditor()));
-		pickList.setInput(new EClass[] { BasicPackageImpl.Literals.DIALOG, BasicPackageImpl.Literals.TRIMMED_WINDOW, BasicPackageImpl.Literals.WINDOW, BasicPackageImpl.Literals.WIZARD_DIALOG });
+		pickList.setInput(new EClass[] { BasicPackageImpl.Literals.TRIMMED_WINDOW, BasicPackageImpl.Literals.WINDOW });
 		pickList.setSelection(new StructuredSelection(BasicPackageImpl.Literals.TRIMMED_WINDOW));
-
-		// @SuppressWarnings("unchecked")
-		// @Override
-		// public void widgetSelected(SelectionEvent e) {
-		// if (!viewer.getSelection().isEmpty()) {
-		// IStructuredSelection s = (IStructuredSelection)
-		// viewer.getSelection();
-		// if (s.size() == 1) {
-		// Object obj = s.getFirstElement();
-		// EObject container = (EObject) getMaster().getValue();
-		// List<Object> l = (List<Object>) container.eGet(targetFeature);
-		// int idx = l.indexOf(obj) - 1;
-		// if (idx >= 0) {
-		// if (Util.moveElementByIndex(getEditingDomain(), (MUIElement) obj,
-		// getEditor().isLiveModel(), idx, targetFeature)) {
-		// viewer.setSelection(new StructuredSelection(obj));
-		// }
-		// }
-		//
-		// }
-		// }
 
 		folder.setSelection(0);
 

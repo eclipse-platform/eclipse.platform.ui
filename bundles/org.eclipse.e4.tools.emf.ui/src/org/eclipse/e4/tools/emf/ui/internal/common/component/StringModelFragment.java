@@ -15,6 +15,7 @@
 package org.eclipse.e4.tools.emf.ui.internal.common.component;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
@@ -671,7 +672,7 @@ public class StringModelFragment extends AbstractComponentEditor {
 			result = new ArrayList<>();
 			for (final InternalPackage p : Util.loadPackages()) {
 				for (EClass c : p.getAllClasses()) {
-					if (childClass.isSuperTypeOf(c)) {
+					if (childClass.isSuperTypeOf(c) && isRelevant(c.getName())) {
 						result.add(new FeatureClass(c.getName(), c));
 					}
 				}
@@ -679,6 +680,19 @@ public class StringModelFragment extends AbstractComponentEditor {
 			}
 		}
 		return result;
+	}
+
+	// Fix bug 531054 -> This code could be removed when Dialog and WizardDialog
+	// will disappear from model !
+	static private final List<String> excludeNames = Arrays.asList("Dialog", "WizardDialog");
+
+	// Fix bug 531054 -> This code could be removed when DIalog and WizardDialog
+	// will be definitively removed from code (after 2020).
+	private static boolean isRelevant(String className)
+	{
+		// System.out.println("Checking if " + className + " should be kept : " +
+		// !excludeNames.contains(className));
+		return !excludeNames.contains(className);
 	}
 
 }

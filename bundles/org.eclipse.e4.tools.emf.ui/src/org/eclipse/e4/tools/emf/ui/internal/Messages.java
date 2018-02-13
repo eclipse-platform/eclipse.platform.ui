@@ -348,10 +348,6 @@ public class Messages {
 	public String ToolControlEditor_Description;
 	public String ToolControlEditor_ClassURI;
 
-	public String DialogEditor_Label;
-
-	public String WizardDialogEditor_Label;
-
 	public String VBindingTableEditor_Label;
 	public String VBindingTableEditor_Description;
 	public String VBindingTableEditor_Contexts;
@@ -561,8 +557,6 @@ public class Messages {
 	public String VWindowEditor_Windows;
 	public String VWindowEditor_AddTrimmedWindow;
 	public String VWindowEditor_AddWindow;
-	public String VWindowEditor_AddDialog;
-	public String VWindowEditor_AddWizardDialog;
 
 	public String VWindowSharedElementsEditor_TreeLabel;
 	public String VWindowSharedElementsEditor_TreeLabelDescription;

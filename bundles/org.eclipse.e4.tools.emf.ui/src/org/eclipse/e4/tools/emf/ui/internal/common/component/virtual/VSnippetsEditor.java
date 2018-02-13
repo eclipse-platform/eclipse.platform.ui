@@ -61,12 +61,6 @@ public class VSnippetsEditor extends AbstractComponentEditor {
 			}
 		});
 
-		actions.add(new Action(Messages.VWindowEditor_AddDialog, createImageDescriptor(ResourceProvider.IMG_Dialog)) {
-			@Override
-			public void run() {
-				handleAdd(BasicPackageImpl.Literals.DIALOG);
-			}
-		});
 
 		actions
 		.add(new Action(Messages.VWindowControlEditor_AddPart, createImageDescriptor(ResourceProvider.IMG_Part)) {
@@ -135,13 +129,6 @@ public class VSnippetsEditor extends AbstractComponentEditor {
 				handleAdd(BasicPackageImpl.Literals.TRIM_BAR);
 			}
 		});
-		actions.add(new Action(Messages.VWindowEditor_AddWizardDialog,
-				createImageDescriptor(ResourceProvider.IMG_WizardDialog)) {
-			@Override
-			public void run() {
-				handleAdd(BasicPackageImpl.Literals.WIZARD_DIALOG);
-			}
-		});
 
 		Collections.sort(actions, (o1, o2) -> o1.getText().compareTo(o2.getText()));
 
@@ -203,7 +190,7 @@ public class VSnippetsEditor extends AbstractComponentEditor {
 				AdvancedPackageImpl.Literals.PERSPECTIVE_STACK, AdvancedPackageImpl.Literals.PERSPECTIVE,
 				AdvancedPackageImpl.Literals.AREA, BasicPackageImpl.Literals.PART_SASH_CONTAINER,
 				BasicPackageImpl.Literals.PART_STACK, BasicPackageImpl.Literals.PART,
-				BasicPackageImpl.Literals.TRIM_BAR, BasicPackageImpl.Literals.TRIM_ELEMENT, });
+				BasicPackageImpl.Literals.TRIM_BAR });
 		pickList.setSelection(new StructuredSelection(AdvancedPackageImpl.Literals.PERSPECTIVE));
 
 		folder.setSelection(0);
