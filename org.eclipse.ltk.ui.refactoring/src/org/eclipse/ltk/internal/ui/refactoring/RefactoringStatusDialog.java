@@ -24,6 +24,10 @@ import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.DialogSettings;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.IDialogSettings;
+import org.eclipse.jface.preference.JFacePreferences;
+import org.eclipse.jface.resource.ColorRegistry;
+import org.eclipse.jface.resource.JFaceColors;
+import org.eclipse.jface.resource.JFaceResources;
 
 import org.eclipse.ltk.core.refactoring.RefactoringStatus;
 
@@ -84,8 +88,16 @@ public class RefactoringStatusDialog extends Dialog {
 		gd.heightHint= 400;
 
 		if (!fLightWeight) {
-			Color foreground= parent.getDisplay().getSystemColor(SWT.COLOR_INFO_FOREGROUND);
-			Color background= parent.getDisplay().getSystemColor(SWT.COLOR_INFO_BACKGROUND);
+			ColorRegistry colorRegistry = JFaceResources.getColorRegistry();
+			Color foreground = colorRegistry.get(JFacePreferences.INFORMATION_FOREGROUND_COLOR);
+			if (foreground == null) {
+				foreground = JFaceColors.getInformationViewerForegroundColor(parent.getDisplay());
+			}
+
+			Color background = colorRegistry.get(JFacePreferences.INFORMATION_BACKGROUND_COLOR);
+			if (background == null) {
+				background = JFaceColors.getInformationViewerForegroundColor(parent.getDisplay());
+			}
 			ViewForm messagePane= new ViewForm(result, SWT.BORDER | SWT.FLAT);
 			messagePane.marginWidth= 3;
 			messagePane.marginHeight= 3;
