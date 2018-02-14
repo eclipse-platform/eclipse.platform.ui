@@ -57,16 +57,12 @@
       <repositoryList
           name="Neon">
         <repository
-            url="http://download.eclipse.org/technology/nebula/snapshot"/>
-        <repository
             url="http://download.eclipse.org/modeling/emf/emf/updates/2.11.x"/>
         <repository
             url="http://download.eclipse.org/tools/gef/updates/releases"/>
       </repositoryList>
       <repositoryList
           name="Mars">
-        <repository
-            url="http://download.eclipse.org/technology/nebula/snapshot"/>
         <repository
             url="http://download.eclipse.org/modeling/emf/emf/updates/2.11.x"/>
         <repository
@@ -75,8 +71,6 @@
       <repositoryList
           name="Luna">
         <repository
-            url="http://download.eclipse.org/technology/nebula/snapshot"/>
-        <repository
             url="http://download.eclipse.org/modeling/emf/emf/updates/2.11milestones/core"/>
         <repository
             url="http://download.eclipse.org/tools/gef/updates/releases"/>
@@ -84,16 +78,12 @@
       <repositoryList
           name="Kepler">
         <repository
-            url="http://download.eclipse.org/technology/nebula/snapshot"/>
-        <repository
             url="http://download.eclipse.org/modeling/emf/emf/updates/2.11milestones/core"/>
         <repository
             url="http://download.eclipse.org/tools/gef/updates/releases"/>
       </repositoryList>
       <repositoryList
           name="Juno">
-        <repository
-            url="http://download.eclipse.org/technology/nebula/snapshot"/>
         <repository
             url="http://download.eclipse.org/modeling/emf/emf/updates/2.11milestones/core"/>
         <repository
