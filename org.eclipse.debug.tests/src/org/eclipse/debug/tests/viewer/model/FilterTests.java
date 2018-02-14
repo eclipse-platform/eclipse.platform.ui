@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2017 Wind River Systems and others.
+ * Copyright (c) 2009, 2018 Wind River Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -248,6 +248,7 @@ abstract public class FilterTests extends AbstractViewerModelTest implements ITe
 
         // Populate the view (all elements containing a "2" will be filtered out.
         fViewer.setInput(model.getRootElement());
+		TestUtil.waitForJobs(getName(), 300, 5000);
 
 		waitWhile(t -> !fListener.isFinished(ALL_UPDATES_COMPLETE), createListenerErrorMessage());
 
