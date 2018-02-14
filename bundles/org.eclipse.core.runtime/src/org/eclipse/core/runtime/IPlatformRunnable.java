@@ -14,9 +14,9 @@ import org.eclipse.equinox.app.IApplication;
 
 /**
  * Bootstrap type for the platform. Platform runnables represent executable
- * entry points into plug-ins.  Runnables can be configured into the Platform's
- * <code>org.eclipse.core.runtime.applications</code> extension-point
- * or be made available through code or extensions on other plug-in's extension-points.
+ * entry points into plug-ins. Runnables can be configured into the Platform's
+ * <code>org.eclipse.core.runtime.applications</code> extension-point or be made
+ * available through code or extensions on other plug-in's extension-points.
  *
  * <p>
  * Clients may implement this interface.
@@ -24,6 +24,11 @@ import org.eclipse.equinox.app.IApplication;
  *
  * @since 3.0
  * @deprecated use {@link IApplication}
+ * @noimplement This interface is not intended to be implemented by clients.
+ * @noreference This interface is not intended to be referenced by clients.
+ *
+ *              This API is planned to be deleted see
+ *              https://bugs.eclipse.org/bugs/show_bug.cgi?id=457134 for details
  */
 @Deprecated
 public interface IPlatformRunnable {
