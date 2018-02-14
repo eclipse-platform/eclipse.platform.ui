@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<component id="org.eclipse.ui" version="2">
+    <resource path="META-INF/MANIFEST.MF" type="org.eclipse.ui.help.DialogPageContextComputer">
+        <filter comment="Planned API removal see Bug 531133" id="305422471">
+            <message_arguments>
+                <message_argument value="org.eclipse.ui.help.DialogPageContextComputer"/>
+                <message_argument value="org.eclipse.ui_3.109.0"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="META-INF/MANIFEST.MF" type="org.eclipse.ui.help.IContextComputer">
+        <filter comment="Planned API removal see Bug 531133" id="305422471">
+            <message_arguments>
+                <message_argument value="org.eclipse.ui.help.IContextComputer"/>
+                <message_argument value="org.eclipse.ui_3.109.0"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="META-INF/MANIFEST.MF" type="org.eclipse.ui.help.ViewContextComputer">
+        <filter comment="Planned API removal see Bug 531133" id="305422471">
+            <message_arguments>
+                <message_argument value="org.eclipse.ui.help.ViewContextComputer"/>
+                <message_argument value="org.eclipse.ui_3.109.0"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="META-INF/MANIFEST.MF" type="org.eclipse.ui.help.WorkbenchHelp">
+        <filter comment="Planned API removal see Bug 531133" id="305422471">
+            <message_arguments>
+                <message_argument value="org.eclipse.ui.help.WorkbenchHelp"/>
+                <message_argument value="org.eclipse.ui_3.109.0"/>
+            </message_arguments>
+        </filter>
+    </resource>
+</component>
