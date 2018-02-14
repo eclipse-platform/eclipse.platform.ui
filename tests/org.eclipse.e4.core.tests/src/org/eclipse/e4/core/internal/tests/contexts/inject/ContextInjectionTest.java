@@ -121,11 +121,11 @@ public class ContextInjectionTest {
 
 		// create context
 		IEclipseContext context = EclipseContextFactory.create();
-		context.set(Integer.class.getName(), testInt);
-		context.set(String.class.getName(), testString);
-		context.set(Double.class.getName(), testDouble);
-		context.set(Float.class.getName(), testFloat);
-		context.set(Character.class.getName(), testChar);
+		context.set(Integer.class, testInt);
+		context.set(String.class, testString);
+		context.set(Double.class, testDouble);
+		context.set(Float.class, testFloat);
+		context.set(Character.class, testChar);
 
 		ObjectBasic userObject = new ObjectBasic();
 		ContextInjectionFactory.inject(userObject, context);
