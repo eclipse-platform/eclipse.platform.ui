@@ -4947,7 +4947,6 @@ public class BasicPackageImpl extends EPackageImpl {
 	 * @since 1.0
 	 * @deprecated See {@link MInputPart model documentation} for details.
 	 * @generated NOT
-	 * @noreference This field is not intended to be referenced by clients.
 	 * @see <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=509868">Bug
 	 *      509868</a>
 	 */
@@ -5032,7 +5031,6 @@ public class BasicPackageImpl extends EPackageImpl {
 	 * @since 1.1
 	 * @generated NOT
 	 * @deprecated
-	 * @noreference This field is not intended to be referenced by clients.
 	 * @see <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=531054">Bug
 	 *      531054</a>
 	 */
@@ -5045,7 +5043,6 @@ public class BasicPackageImpl extends EPackageImpl {
 	 * @since 1.1
 	 * @generated NOT
 	 * @deprecated
-	 * @noreference This field is not intended to be referenced by clients.
 	 * @see <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=531054">Bug
 	 *      531054</a>
 	 */
