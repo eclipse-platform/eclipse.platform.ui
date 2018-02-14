@@ -40,7 +40,6 @@ import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.commands.ICommand;
 import org.eclipse.ui.help.AbstractHelpUI;
-import org.eclipse.ui.help.IContextComputer;
 import org.eclipse.ui.help.IWorkbenchHelpSystem;
 import org.eclipse.ui.internal.IWorkbenchHelpContextIds;
 import org.eclipse.ui.internal.WorkbenchPlugin;
@@ -100,19 +99,6 @@ public final class WorkbenchHelpSystem implements IWorkbenchHelpSystem {
 			} else if (object instanceof IContext) {
 				// already resolved context (pre 2.0)
 				context = (IContext) object;
-			} else if (object instanceof IContextComputer) {
-				// a computed context (pre 2.0) - compute it now
-				Object[] helpContexts = ((IContextComputer) object)
-						.computeContexts(event);
-				// extract the first entry
-				if (helpContexts != null && helpContexts.length > 0) {
-					Object primaryEntry = helpContexts[0];
-					if (primaryEntry instanceof String) {
-						context = HelpSystem.getContext((String) primaryEntry);
-					} else if (primaryEntry instanceof IContext) {
-						context = (IContext) primaryEntry;
-					}
-				}
 			} else if (object instanceof Object[]) {
 				// mixed array of String or IContext (pre 2.0) - extract the
 				// first entry
@@ -628,44 +614,6 @@ public final class WorkbenchHelpSystem implements IWorkbenchHelpSystem {
 		});
 	}
 
-	/**
-	 * Sets the given help context computer on the given action.
-	 * <p>
-	 * Use this method when the help contexts cannot be computed in advance.
-	 * Help contexts can either supplied as a static list, or calculated with a
-	 * context computer (but not both).
-	 * </p>
-	 *
-	 * @param action
-	 *            the action on which to register the computer
-	 * @param computer
-	 *            the computer to determine the help contexts for the control
-	 *            when F1 help is invoked
-	 * @deprecated context computers are no longer supported, clients should
-	 *             implement their own help listener
-	 */
-	@Deprecated
-	public void setHelp(IAction action, final IContextComputer computer) {
-		action.setHelpListener(event -> {
-			Object[] helpContexts = computer.computeContexts(event);
-			if (helpContexts != null && helpContexts.length > 0
-					&& getHelpUI() != null) {
-				// determine the context
-				IContext context = null;
-				if (helpContexts[0] instanceof String) {
-					context = HelpSystem
-							.getContext((String) helpContexts[0]);
-				} else if (helpContexts[0] instanceof IContext) {
-					context = (IContext) helpContexts[0];
-				}
-				if (context != null) {
-					Point point = computePopUpLocation(event.widget
-							.getDisplay());
-					displayContext(context, point.x, point.y);
-				}
-			}
-		});
-	}
 
 	/**
 	 * Sets the given help contexts on the given control.
@@ -691,30 +639,6 @@ public final class WorkbenchHelpSystem implements IWorkbenchHelpSystem {
 		}
 
 		control.setData(HELP_KEY, contexts);
-		// ensure that the listener is only registered once
-		control.removeHelpListener(getHelpListener());
-		control.addHelpListener(getHelpListener());
-	}
-
-	/**
-	 * Sets the given help context computer on the given control.
-	 * <p>
-	 * Use this method when the help contexts cannot be computed in advance.
-	 * Help contexts can either supplied as a static list, or calculated with a
-	 * context computer (but not both).
-	 * </p>
-	 *
-	 * @param control
-	 *            the control on which to register the computer
-	 * @param computer
-	 *            the computer to determine the help contexts for the control
-	 *            when F1 help is invoked
-	 * @deprecated context computers are no longer supported, clients should
-	 *             implement their own help listener
-	 */
-	@Deprecated
-	public void setHelp(Control control, IContextComputer computer) {
-		control.setData(HELP_KEY, computer);
 		// ensure that the listener is only registered once
 		control.removeHelpListener(getHelpListener());
 		control.addHelpListener(getHelpListener());
@@ -749,30 +673,6 @@ public final class WorkbenchHelpSystem implements IWorkbenchHelpSystem {
 	}
 
 	/**
-	 * Sets the given help context computer on the given menu.
-	 * <p>
-	 * Use this method when the help contexts cannot be computed in advance.
-	 * Help contexts can either supplied as a static list, or calculated with a
-	 * context computer (but not both).
-	 * </p>
-	 *
-	 * @param menu
-	 *            the menu on which to register the computer
-	 * @param computer
-	 *            the computer to determine the help contexts for the control
-	 *            when F1 help is invoked
-	 * @deprecated context computers are no longer supported, clients should
-	 *             implement their own help listener
-	 */
-	@Deprecated
-	public void setHelp(Menu menu, IContextComputer computer) {
-		menu.setData(HELP_KEY, computer);
-		// ensure that the listener is only registered once
-		menu.removeHelpListener(getHelpListener());
-		menu.addHelpListener(getHelpListener());
-	}
-
-	/**
 	 * Sets the given help contexts on the given menu item.
 	 * <p>
 	 * Use this method when the list of help contexts is known in advance. Help
@@ -795,30 +695,6 @@ public final class WorkbenchHelpSystem implements IWorkbenchHelpSystem {
 					|| context instanceof IContext);
 		}
 		item.setData(HELP_KEY, contexts);
-		// ensure that the listener is only registered once
-		item.removeHelpListener(getHelpListener());
-		item.addHelpListener(getHelpListener());
-	}
-
-	/**
-	 * Sets the given help context computer on the given menu item.
-	 * <p>
-	 * Use this method when the help contexts cannot be computed in advance.
-	 * Help contexts can either supplied as a static list, or calculated with a
-	 * context computer (but not both).
-	 * </p>
-	 *
-	 * @param item
-	 *            the menu item on which to register the computer
-	 * @param computer
-	 *            the computer to determine the help contexts for the control
-	 *            when F1 help is invoked
-	 * @deprecated context computers are no longer supported, clients should
-	 *             implement their own help listener
-	 */
-	@Deprecated
-	public void setHelp(MenuItem item, IContextComputer computer) {
-		item.setData(HELP_KEY, computer);
 		// ensure that the listener is only registered once
 		item.removeHelpListener(getHelpListener());
 		item.addHelpListener(getHelpListener());

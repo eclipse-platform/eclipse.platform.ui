@@ -50,7 +50,6 @@ import org.eclipse.ui.ISaveablePart;
 import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.help.IContextComputer;
 import org.eclipse.ui.help.IWorkbenchHelpSystem;
 import org.eclipse.ui.internal.views.properties.PropertiesMessages;
 import org.eclipse.ui.part.CellEditorActionHandler;
@@ -259,13 +258,7 @@ public class PropertySheetPage extends Page implements IPropertySheetPage, IAdap
 			@Deprecated
 			private Object getFirstContext(Object helpContext, HelpEvent e) {
 				Object[] contexts;
-				if (helpContext instanceof IContextComputer) {
-				    // get local contexts
-					contexts= ((IContextComputer)helpContext)
-				            .getLocalContexts(e);
-				} else {
-					contexts= (Object[])helpContext;
-				}
+				contexts = (Object[]) helpContext;
 
 				if (contexts.length > 0)
 					return contexts[0];
