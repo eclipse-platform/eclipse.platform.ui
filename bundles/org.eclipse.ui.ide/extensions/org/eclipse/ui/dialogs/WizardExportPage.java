@@ -59,24 +59,32 @@ import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
  * <p>
  * Subclasses must implement
  * <ul>
- *   <li><code>createDestinationGroup</code></li>
+ * <li><code>createDestinationGroup</code></li>
  * </ul>
  * </p>
  * <p>
  * Subclasses may override
  * <ul>
- *   <li><code>allowNewContainerName</code></li>
+ * <li><code>allowNewContainerName</code></li>
  * </ul>
  * </p>
  * <p>
  * Subclasses may extend
  * <ul>
- *   <li><code>handleEvent</code></li>
- *   <li><code>internalSaveWidgetValues</code></li>
- *   <li><code>updateWidgetEnablements</code></li>
+ * <li><code>handleEvent</code></li>
+ * <li><code>internalSaveWidgetValues</code></li>
+ * <li><code>updateWidgetEnablements</code></li>
  * </ul>
  * </p>
+ *
  * @deprecated use WizardExportResourcePage
+ *
+ * @noreference This class is not intended to be referenced by clients.
+ * @noextend This class is not intended to be subclassed by clients.
+ *
+ *           Planned to be removed, see
+ *           https://bugs.eclipse.org/bugs/show_bug.cgi?id=448275
+ *
  */
 @Deprecated
 public abstract class WizardExportPage extends WizardDataTransferPage {

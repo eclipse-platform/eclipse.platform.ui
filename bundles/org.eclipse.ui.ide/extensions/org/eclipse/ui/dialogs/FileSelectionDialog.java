@@ -37,23 +37,30 @@ import org.eclipse.ui.model.WorkbenchLabelProvider;
 import org.eclipse.ui.model.WorkbenchViewerComparator;
 
 /**
- * A standard file selection dialog which solicits a list of files from the user.
- * The <code>getResult</code> method returns the selected files.
+ * A standard file selection dialog which solicits a list of files from the
+ * user. The <code>getResult</code> method returns the selected files.
  * <p>
  * This class may be instantiated; it is not intended to be subclassed.
  * </p>
  * <p>
  * Example:
+ * 
  * <pre>
- *	FileSelectionDialog dialog =
- *		new FileSelectionDialog(getShell(), rootElement, msg);
- *	dialog.setInitialSelections(selectedResources);
- *	dialog.open();
- *	return dialog.getResult();
+ * FileSelectionDialog dialog = new FileSelectionDialog(getShell(), rootElement, msg);
+ * dialog.setInitialSelections(selectedResources);
+ * dialog.open();
+ * return dialog.getResult();
  * </pre>
  * </p>
+ * 
  * @deprecated Use org.eclipse.swt.widgets.FileDialog,
  * @noextend This class is not intended to be subclassed by clients.
+ * @noreference This class is not intended to be referenced by clients.
+ *
+ *           Planned to be removed, see
+ *           https://bugs.eclipse.org/bugs/show_bug.cgi?id=448275
+ *
+ *
  */
 @Deprecated
 public class FileSelectionDialog extends SelectionDialog {

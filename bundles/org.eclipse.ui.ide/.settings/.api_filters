@@ -8,4 +8,110 @@
             </message_arguments>
         </filter>
     </resource>
+    <resource path="extensions/org/eclipse/ui/dialogs/FileSelectionDialog.java" type="org.eclipse.ui.dialogs.FileSelectionDialog">
+        <filter comment="Bug 448275 - Mark deprecated dialogs from org.eclipse.ui.dialogs for deletion" id="338944126">
+            <message_arguments>
+                <message_argument value="org.eclipse.ui.dialogs.FileSelectionDialog"/>
+                <message_argument value="create()"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Bug 448275 - Mark deprecated dialogs from org.eclipse.ui.dialogs for deletion" id="338944126">
+            <message_arguments>
+                <message_argument value="org.eclipse.ui.dialogs.FileSelectionDialog"/>
+                <message_argument value="getExpandAllOnOpen()"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Bug 448275 - Mark deprecated dialogs from org.eclipse.ui.dialogs for deletion" id="338944126">
+            <message_arguments>
+                <message_argument value="org.eclipse.ui.dialogs.FileSelectionDialog"/>
+                <message_argument value="setExpandAllOnOpen(boolean)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Bug 448275 - Mark deprecated dialogs from org.eclipse.ui.dialogs for deletion" id="338948223">
+            <message_arguments>
+                <message_argument value="org.eclipse.ui.dialogs.FileSelectionDialog"/>
+                <message_argument value="FileSelectionDialog(Shell, FileSystemElement, String)"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="extensions/org/eclipse/ui/dialogs/WizardExportPage.java" type="org.eclipse.ui.dialogs.WizardExportPage">
+        <filter comment="Bug 448275 - Mark deprecated dialogs from org.eclipse.ui.dialogs for deletion" id="336744520">
+            <message_arguments>
+                <message_argument value="org.eclipse.ui.dialogs.WizardExportPage"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Bug 448275 - Mark deprecated dialogs from org.eclipse.ui.dialogs for deletion" id="338944126">
+            <message_arguments>
+                <message_argument value="org.eclipse.ui.dialogs.WizardExportPage"/>
+                <message_argument value="createControl(Composite)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Bug 448275 - Mark deprecated dialogs from org.eclipse.ui.dialogs for deletion" id="338944126">
+            <message_arguments>
+                <message_argument value="org.eclipse.ui.dialogs.WizardExportPage"/>
+                <message_argument value="getExportAllTypesValue()"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Bug 448275 - Mark deprecated dialogs from org.eclipse.ui.dialogs for deletion" id="338944126">
+            <message_arguments>
+                <message_argument value="org.eclipse.ui.dialogs.WizardExportPage"/>
+                <message_argument value="getResourceFieldValue()"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Bug 448275 - Mark deprecated dialogs from org.eclipse.ui.dialogs for deletion" id="338944126">
+            <message_arguments>
+                <message_argument value="org.eclipse.ui.dialogs.WizardExportPage"/>
+                <message_argument value="getTypesFieldValue()"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Bug 448275 - Mark deprecated dialogs from org.eclipse.ui.dialogs for deletion" id="338944126">
+            <message_arguments>
+                <message_argument value="org.eclipse.ui.dialogs.WizardExportPage"/>
+                <message_argument value="handleEvent(Event)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Bug 448275 - Mark deprecated dialogs from org.eclipse.ui.dialogs for deletion" id="338944126">
+            <message_arguments>
+                <message_argument value="org.eclipse.ui.dialogs.WizardExportPage"/>
+                <message_argument value="setExportAllTypesValue(boolean)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Bug 448275 - Mark deprecated dialogs from org.eclipse.ui.dialogs for deletion" id="338944126">
+            <message_arguments>
+                <message_argument value="org.eclipse.ui.dialogs.WizardExportPage"/>
+                <message_argument value="setResourceFieldValue(String)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Bug 448275 - Mark deprecated dialogs from org.eclipse.ui.dialogs for deletion" id="338944126">
+            <message_arguments>
+                <message_argument value="org.eclipse.ui.dialogs.WizardExportPage"/>
+                <message_argument value="setTypesFieldValue(String)"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="extensions/org/eclipse/ui/dialogs/WizardImportPage.java" type="org.eclipse.ui.dialogs.WizardImportPage">
+        <filter comment="Bug 448275 - Mark deprecated dialogs from org.eclipse.ui.dialogs for deletion" id="336744520">
+            <message_arguments>
+                <message_argument value="org.eclipse.ui.dialogs.WizardImportPage"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Bug 448275 - Mark deprecated dialogs from org.eclipse.ui.dialogs for deletion" id="338944126">
+            <message_arguments>
+                <message_argument value="org.eclipse.ui.dialogs.WizardImportPage"/>
+                <message_argument value="createControl(Composite)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Bug 448275 - Mark deprecated dialogs from org.eclipse.ui.dialogs for deletion" id="338944126">
+            <message_arguments>
+                <message_argument value="org.eclipse.ui.dialogs.WizardImportPage"/>
+                <message_argument value="handleEvent(Event)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Bug 448275 - Mark deprecated dialogs from org.eclipse.ui.dialogs for deletion" id="338944126">
+            <message_arguments>
+                <message_argument value="org.eclipse.ui.dialogs.WizardImportPage"/>
+                <message_argument value="setContainerFieldValue(String)"/>
+            </message_arguments>
+        </filter>
+    </resource>
 </component>
