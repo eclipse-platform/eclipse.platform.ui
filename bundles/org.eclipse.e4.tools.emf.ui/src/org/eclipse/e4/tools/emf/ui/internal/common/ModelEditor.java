@@ -241,46 +241,50 @@ public class ModelEditor implements IGotoObject {
 
 	public static final String CSS_CLASS_KEY = "org.eclipse.e4.ui.css.CssClassName"; //$NON-NLS-1$
 
-	public static final String VIRTUAL_PART_MENU = ModelEditor.class.getName() + ".VIRTUAL_PART_MENU"; //$NON-NLS-1$
-	public static final String VIRTUAL_HANDLER = ModelEditor.class.getName() + ".VIRTUAL_HANDLER"; //$NON-NLS-1$
-	public static final String VIRTUAL_BINDING_TABLE = ModelEditor.class.getName() + ".VIRTUAL_BINDING_TABLE"; //$NON-NLS-1$
-	public static final String VIRTUAL_COMMAND = ModelEditor.class.getName() + ".VIRTUAL_COMMAND"; //$NON-NLS-1$
-	public static final String VIRTUAL_APPLICATION_WINDOWS = ModelEditor.class.getName()
-			+ ".VIRTUAL_APPLICATION_WINDOWS"; //$NON-NLS-1$
-	public static final String VIRTUAL_PERSPECTIVE_WINDOWS = ModelEditor.class.getName()
-			+ ".VIRTUAL_PERSPECTIVE_WINDOWS"; //$NON-NLS-1$
-	public static final String VIRTUAL_WINDOW_WINDOWS = ModelEditor.class.getName() + ".VIRTUAL_WINDOW_WINDOWS"; //$NON-NLS-1$
-	public static final String VIRTUAL_WINDOW_CONTROLS = ModelEditor.class.getName() + ".VIRTUAL_WINDOW_CONTROLS"; //$NON-NLS-1$
-	public static final String VIRTUAL_PART_DESCRIPTORS = ModelEditor.class.getName() + ".VIRTUAL_PART_DESCRIPTORS"; //$NON-NLS-1$
-	public static final String VIRTUAL_PARTDESCRIPTOR_MENU = ModelEditor.class.getName()
-			+ ".VIRTUAL_PARTDESCRIPTOR_MENU"; //$NON-NLS-1$
-	public static final String VIRTUAL_TRIMMED_WINDOW_TRIMS = ModelEditor.class.getName()
-			+ ".VIRTUAL_TRIMMED_WINDOW_TRIMS"; //$NON-NLS-1$
-	public static final String VIRTUAL_ADDONS = ModelEditor.class.getName() + ".VIRTUAL_ADDONS"; //$NON-NLS-1$
-	public static final String VIRTUAL_MENU_CONTRIBUTIONS = ModelEditor.class.getName() + ".VIRTUAL_MENU_CONTRIBUTIONS"; //$NON-NLS-1$
-	public static final String VIRTUAL_TOOLBAR_CONTRIBUTIONS = ModelEditor.class.getName()
-			+ ".VIRTUAL_TOOLBAR_CONTRIBUTIONS"; //$NON-NLS-1$
-	public static final String VIRTUAL_TRIM_CONTRIBUTIONS = ModelEditor.class.getName() + ".VIRTUAL_TRIM_CONTRIBUTIONS"; //$NON-NLS-1$
-	public static final String VIRTUAL_WINDOW_SHARED_ELEMENTS = ModelEditor.class.getName()
-			+ ".VIRTUAL_WINDOW_SHARED_ELEMENTS"; //$NON-NLS-1$
-	public static final String VIRTUAL_WINDOW_SNIPPETS = ModelEditor.class.getName() + ".VIRTUAL_WINDOW_SNIPPETS"; //$NON-NLS-1$
+	public static final String VIRTUAL_PART_MENU = "org.eclipse.e4.tools.emf.ui.VIRTUAL_PART_MENU"; //$NON-NLS-1$
+	public static final String VIRTUAL_HANDLER = "org.eclipse.e4.tools.emf.ui.VIRTUAL_HANDLER"; //$NON-NLS-1$
+	public static final String VIRTUAL_BINDING_TABLE = "org.eclipse.e4.tools.emf.ui.VIRTUAL_BINDING_TABLE"; //$NON-NLS-1$
+	public static final String VIRTUAL_COMMAND = "org.eclipse.e4.tools.emf.ui.VIRTUAL_COMMAND"; //$NON-NLS-1$
+	public static final String VIRTUAL_APPLICATION_WINDOWS = "org.eclipse.e4.tools.emf.ui.VIRTUAL_APPLICATION_WINDOWS"; //$NON-NLS-1$
+	public static final String VIRTUAL_PERSPECTIVE_WINDOWS = "org.eclipse.e4.tools.emf.ui.VIRTUAL_PERSPECTIVE_WINDOWS"; //$NON-NLS-1$
+	public static final String VIRTUAL_WINDOW_WINDOWS = "org.eclipse.e4.tools.emf.ui.VIRTUAL_WINDOW_WINDOWS"; //$NON-NLS-1$
+	public static final String VIRTUAL_WINDOW_CONTROLS = "org.eclipse.e4.tools.emf.ui.VIRTUAL_WINDOW_CONTROLS"; //$NON-NLS-1$
+	public static final String VIRTUAL_PART_DESCRIPTORS = "org.eclipse.e4.tools.emf.ui.VIRTUAL_PART_DESCRIPTORS"; //$NON-NLS-1$
+	public static final String VIRTUAL_PARTDESCRIPTOR_MENU = "org.eclipse.e4.tools.emf.ui.VIRTUAL_PARTDESCRIPTOR_MENU"; //$NON-NLS-1$
+	public static final String VIRTUAL_TRIMMED_WINDOW_TRIMS = "org.eclipse.e4.tools.emf.ui.VIRTUAL_TRIMMED_WINDOW_TRIMS"; //$NON-NLS-1$
+	public static final String VIRTUAL_ADDONS = "org.eclipse.e4.tools.emf.ui.VIRTUAL_ADDONS"; //$NON-NLS-1$
+	public static final String VIRTUAL_MENU_CONTRIBUTIONS = "org.eclipse.e4.tools.emf.ui.VIRTUAL_MENU_CONTRIBUTIONS"; //$NON-NLS-1$
+	public static final String VIRTUAL_TOOLBAR_CONTRIBUTIONS = "org.eclipse.e4.tools.emf.ui.VIRTUAL_TOOLBAR_CONTRIBUTIONS"; //$NON-NLS-1$
+	public static final String VIRTUAL_TRIM_CONTRIBUTIONS = "org.eclipse.e4.tools.emf.ui.VIRTUAL_TRIM_CONTRIBUTIONS"; //$NON-NLS-1$
+	public static final String VIRTUAL_WINDOW_SHARED_ELEMENTS = "org.eclipse.e4.tools.emf.ui.VIRTUAL_WINDOW_SHARED_ELEMENTS"; //$NON-NLS-1$
+	public static final String VIRTUAL_WINDOW_SNIPPETS = "org.eclipse.e4.tools.emf.ui.VIRTUAL_WINDOW_SNIPPETS"; //$NON-NLS-1$
 
-	public static final String VIRTUAL_MODEL_FRAGEMENTS = ModelEditor.class.getName() + ".VIRTUAL_MODEL_FRAGEMENTS"; //$NON-NLS-1$
-	public static final String VIRTUAL_MODEL_IMPORTS = ModelEditor.class.getName() + ".VIRTUAL_MODEL_IMPORTS"; //$NON-NLS-1$
-	public static final String VIRTUAL_CATEGORIES = ModelEditor.class.getName() + ".VIRTUAL_CATEGORIES"; //$NON-NLS-1$
-	public static final String VIRTUAL_PARAMETERS = ModelEditor.class.getName() + ".VIRTUAL_PARAMETERS"; //$NON-NLS-1$
-	public static final String VIRTUAL_MENUELEMENTS = ModelEditor.class.getName() + ".VIRTUAL_MENUELEMENTS"; //$NON-NLS-1$
-	public static final String VIRTUAL_ROOT_CONTEXTS = ModelEditor.class.getName() + ".VIRTUAL_ROOT_CONTEXTS"; //$NON-NLS-1$
-	public static final String VIRTUAL_PERSPECTIVE_CONTROLS = ModelEditor.class.getName()
-			+ "VIRTUAL_PERSPECTIVE_CONTROLS"; //$NON-NLS-1$
-	public static final String VIRTUAL_SNIPPETS = ModelEditor.class.getName() + "VIRTUAL_SNIPPETS"; //$NON-NLS-1$
+	public static final String VIRTUAL_MODEL_FRAGEMENTS = "org.eclipse.e4.tools.emf.ui.VIRTUAL_MODEL_FRAGEMENTS"; //$NON-NLS-1$
+	public static final String VIRTUAL_MODEL_IMPORTS = "org.eclipse.e4.tools.emf.ui.VIRTUAL_MODEL_IMPORTS"; //$NON-NLS-1$
+	public static final String VIRTUAL_CATEGORIES = "org.eclipse.e4.tools.emf.ui.VIRTUAL_CATEGORIES"; //$NON-NLS-1$
+	public static final String VIRTUAL_PARAMETERS = "org.eclipse.e4.tools.emf.ui.VIRTUAL_PARAMETERS"; //$NON-NLS-1$
+	public static final String VIRTUAL_MENUELEMENTS = "org.eclipse.e4.tools.emf.ui.VIRTUAL_MENUELEMENTS"; //$NON-NLS-1$
+	public static final String VIRTUAL_ROOT_CONTEXTS = "org.eclipse.e4.tools.emf.ui.VIRTUAL_ROOT_CONTEXTS"; //$NON-NLS-1$
+	public static final String VIRTUAL_PERSPECTIVE_CONTROLS = "org.eclipse.e4.tools.emf.ui.VIRTUAL_PERSPECTIVE_CONTROLS"; //$NON-NLS-1$
+	public static final String VIRTUAL_SNIPPETS = "org.eclipse.e4.tools.emf.ui.VIRTUAL_SNIPPETS"; //$NON-NLS-1$
 
 	public static final int TAB_FORM = 0;
 	public static final int TAB_XMI = 1;
 	public static final int TAB_LIST = 2;
 
-	private final Map<EClass, AbstractComponentEditor> editorMap = new HashMap<>();
-	private final Map<String, AbstractComponentEditor> virtualEditors = new HashMap<>();
+	/**
+	 * A map with key = eClass name or virtual key, value is an
+	 * AbstractComponentEditor instance This map is filled on the fly when getting
+	 * editors
+	 */
+	private final Map<String, AbstractComponentEditor> editors = new HashMap<>();
+
+	/**
+	 * A map with key = eClass name or virtual key, value is a class of
+	 * AbstractComponentEditor. This map is filled on init by registerEditor
+	 */
+	private final Map<String, Class<? extends AbstractComponentEditor>> editorsClasses = new HashMap<>();
+
 	private final Map<Class<?>, List<AbstractElementEditorContribution>> tabContributions = new HashMap<>();
 	private final List<FeaturePath> labelFeaturePaths = new ArrayList<>();
 	private final List<IEditorFeature> editorFeatures = new ArrayList<>();
@@ -607,7 +611,7 @@ public class ModelEditor implements IGotoObject {
 					}
 				} else {
 					final VirtualEntry<?> entry = (VirtualEntry<?>) s.getFirstElement();
-					final AbstractComponentEditor editor2 = virtualEditors.get(entry.getId());
+					final AbstractComponentEditor editor2 = getEditor(entry.getId());
 					if (editor2 != null) {
 						currentEditor = editor2;
 						sectionHeaderLabel.setText(editor2.getLabel(entry));
@@ -620,12 +624,6 @@ public class ModelEditor implements IGotoObject {
 						});
 					}
 				}
-
-				// Rectangle r = scrolling.getClientArea();
-				// scrolling.setMinSize(contentContainer.computeSize(r.width,
-				// SWT.DEFAULT));
-				// scrolling.setOrigin(0, 0);
-				// scrolling.layout(true, true);
 
 				if (selectionService != null) {
 					selectionService.setSelection(s.getFirstElement());
@@ -647,7 +645,7 @@ public class ModelEditor implements IGotoObject {
 			if (!s.isEmpty() && noSelected == 1) {
 				List<Action> actions;
 				if (s.getFirstElement() instanceof VirtualEntry<?>) {
-					actions = virtualEditors.get(((VirtualEntry<?>) s.getFirstElement()).getId())
+					actions = getEditor(((VirtualEntry<?>) s.getFirstElement()).getId())
 							.getActions(s.getFirstElement());
 					if (actions.size() > 0) {
 						final MenuManager addMenu1 = new MenuManager(messages.ModelEditor_AddChild);
@@ -658,7 +656,7 @@ public class ModelEditor implements IGotoObject {
 						manager.add(addMenu1);
 					}
 
-					actions = virtualEditors.get(((VirtualEntry<?>) s.getFirstElement()).getId())
+					actions = getEditor(((VirtualEntry<?>) s.getFirstElement()).getId())
 							.getActionsImport(s.getFirstElement());
 					if (actions.size() > 0) {
 						final MenuManager menu1 = new MenuManager(messages.ModelEditor_Import3x);
@@ -1136,53 +1134,37 @@ public class ModelEditor implements IGotoObject {
 			final IContributionFactory fact = context.get(IContributionFactory.class);
 			final AbstractComponentEditor editor = (AbstractComponentEditor) fact
 					.create("bundleclass://" + el.getContributor().getName() + "/" + el.getAttribute("class"), context); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-			registerVirtualEditor(el.getAttribute("id"), editor); //$NON-NLS-1$
+			registerEditor(el.getAttribute("id"), editor); //$NON-NLS-1$
 		}
 	}
 
 	private void registerVirtualEditors() {
-		registerVirtualEditor(VIRTUAL_PART_MENU, ContextInjectionFactory.make(VPartMenuEditor.class, context));
-		registerVirtualEditor(VIRTUAL_HANDLER, ContextInjectionFactory.make(VHandlerEditor.class, context));
-		registerVirtualEditor(VIRTUAL_BINDING_TABLE, ContextInjectionFactory.make(VBindingTableEditor.class, context));
-		registerVirtualEditor(VIRTUAL_COMMAND, ContextInjectionFactory.make(VCommandEditor.class, context));
-		registerVirtualEditor(VIRTUAL_APPLICATION_WINDOWS,
-				ContextInjectionFactory.make(VApplicationWindowEditor.class, context));
-		registerVirtualEditor(VIRTUAL_WINDOW_WINDOWS,
-				ContextInjectionFactory.make(VWindowWindowsEditor.class, context));
-		registerVirtualEditor(VIRTUAL_PERSPECTIVE_WINDOWS,
-				ContextInjectionFactory.make(VPerspectiveWindowsEditor.class, context));
-		registerVirtualEditor(VIRTUAL_WINDOW_CONTROLS,
-				ContextInjectionFactory.make(VWindowControlEditor.class, context));
-		registerVirtualEditor(VIRTUAL_WINDOW_SNIPPETS, ContextInjectionFactory.make(VSnippetsEditor.class, context));
-		registerVirtualEditor(VIRTUAL_PART_DESCRIPTORS, ContextInjectionFactory.make(VPartDescriptor.class, context));
-		registerVirtualEditor(VIRTUAL_PARTDESCRIPTOR_MENU,
-				ContextInjectionFactory.make(VPartDescriptorMenuEditor.class, context));
-		registerVirtualEditor(VIRTUAL_TRIMMED_WINDOW_TRIMS,
-				ContextInjectionFactory.make(VWindowTrimEditor.class, context));
-		registerVirtualEditor(VIRTUAL_ADDONS, ContextInjectionFactory.make(VApplicationAddons.class, context));
-		registerVirtualEditor(VIRTUAL_MENU_CONTRIBUTIONS,
-				ContextInjectionFactory.make(VMenuContributionsEditor.class, context));
-		registerVirtualEditor(VIRTUAL_TOOLBAR_CONTRIBUTIONS,
-				ContextInjectionFactory.make(VToolBarContributionsEditor.class, context));
-		registerVirtualEditor(VIRTUAL_TRIM_CONTRIBUTIONS,
-				ContextInjectionFactory.make(VTrimContributionsEditor.class, context));
-		registerVirtualEditor(VIRTUAL_WINDOW_SHARED_ELEMENTS,
-				ContextInjectionFactory.make(VWindowSharedElementsEditor.class, context));
-		registerVirtualEditor(VIRTUAL_MODEL_FRAGEMENTS,
-				ContextInjectionFactory.make(VModelFragmentsEditor.class, context));
-		registerVirtualEditor(VIRTUAL_MODEL_IMPORTS, ContextInjectionFactory.make(VModelImportsEditor.class, context));
-		registerVirtualEditor(VIRTUAL_CATEGORIES,
-				ContextInjectionFactory.make(VApplicationCategoriesEditor.class, context));
-		registerVirtualEditor(VIRTUAL_PARAMETERS, ContextInjectionFactory.make(VItemParametersEditor.class, context));
-		registerVirtualEditor(VIRTUAL_ROOT_CONTEXTS, ContextInjectionFactory.make(VRootBindingContexts.class, context));
-		registerVirtualEditor(VIRTUAL_PERSPECTIVE_CONTROLS,
-				ContextInjectionFactory.make(VPerspectiveControlEditor.class, context));
-		registerVirtualEditor(VIRTUAL_SNIPPETS, ContextInjectionFactory.make(VSnippetsEditor.class, context));
+		registerEditor(VIRTUAL_PART_MENU, VPartMenuEditor.class);
+		registerEditor(VIRTUAL_HANDLER, VHandlerEditor.class);
+		registerEditor(VIRTUAL_BINDING_TABLE, VBindingTableEditor.class);
+		registerEditor(VIRTUAL_COMMAND, VCommandEditor.class);
+		registerEditor(VIRTUAL_APPLICATION_WINDOWS, VApplicationWindowEditor.class);
+		registerEditor(VIRTUAL_WINDOW_WINDOWS, VWindowWindowsEditor.class);
+		registerEditor(VIRTUAL_PERSPECTIVE_WINDOWS, VPerspectiveWindowsEditor.class);
+		registerEditor(VIRTUAL_WINDOW_CONTROLS, VWindowControlEditor.class);
+		registerEditor(VIRTUAL_WINDOW_SNIPPETS, VSnippetsEditor.class);
+		registerEditor(VIRTUAL_PART_DESCRIPTORS, VPartDescriptor.class);
+		registerEditor(VIRTUAL_PARTDESCRIPTOR_MENU, VPartDescriptorMenuEditor.class);
+		registerEditor(VIRTUAL_TRIMMED_WINDOW_TRIMS, VWindowTrimEditor.class);
+		registerEditor(VIRTUAL_ADDONS, VApplicationAddons.class);
+		registerEditor(VIRTUAL_MENU_CONTRIBUTIONS, VMenuContributionsEditor.class);
+		registerEditor(VIRTUAL_TOOLBAR_CONTRIBUTIONS, VToolBarContributionsEditor.class);
+		registerEditor(VIRTUAL_TRIM_CONTRIBUTIONS, VTrimContributionsEditor.class);
+		registerEditor(VIRTUAL_WINDOW_SHARED_ELEMENTS, VWindowSharedElementsEditor.class);
+		registerEditor(VIRTUAL_MODEL_FRAGEMENTS, VModelFragmentsEditor.class);
+		registerEditor(VIRTUAL_MODEL_IMPORTS, VModelImportsEditor.class);
+		registerEditor(VIRTUAL_CATEGORIES, VApplicationCategoriesEditor.class);
+		registerEditor(VIRTUAL_PARAMETERS, VItemParametersEditor.class);
+		registerEditor(VIRTUAL_ROOT_CONTEXTS, VRootBindingContexts.class);
+		registerEditor(VIRTUAL_PERSPECTIVE_CONTROLS, VPerspectiveControlEditor.class);
+		registerEditor(VIRTUAL_SNIPPETS, VSnippetsEditor.class);
 	}
 
-	private void registerVirtualEditor(String id, AbstractComponentEditor editor) {
-		virtualEditors.put(id, editor);
-	}
 
 	public void setSelection(Object element) {
 		viewer.setSelection(new StructuredSelection(element));
@@ -1375,12 +1357,98 @@ public class ModelEditor implements IGotoObject {
 	}
 
 	private void registerEditor(EClass eClass, Class<? extends AbstractComponentEditor> clazz) {
-		registerEditor(eClass, ContextInjectionFactory.make(clazz, context));
+		registerEditor(eClass.getInstanceClassName(), clazz);
 	}
 
-	public void registerEditor(EClass eClass, AbstractComponentEditor editor) {
-		editorMap.put(eClass, editor);
+	/**
+	 * Register a class to use to create an editor for a given key
+	 *
+	 * @param ley
+	 * @param clazz
+	 */
+	private void registerEditor(String key, Class<? extends AbstractComponentEditor> clazz) {
+		editorsClasses.put(key, clazz);
+	}
 
+	/**
+	 * Register directly a created editor for a given key
+	 *
+	 * @param instanceClassName
+	 * @param clazz
+	 */
+	private void registerEditor(String key, AbstractComponentEditor editor) {
+		editors.put(key, editor);
+	}
+
+	/**
+	 * Get editor from an eClass. May return the registered editor for this eclass,
+	 * or the editor for a parent EClass or the default editor
+	 *
+	 * @param eClass
+	 *            the eClass to get editor for
+	 * @return the {@link AbstractComponentEditor} found (never null).
+	 */
+	public AbstractComponentEditor getEditor(EClass eClass) {
+		AbstractComponentEditor editor = getEditor(eClass.getInstanceClassName(), false);
+
+		if (editor == null) {
+			// May be can try to use the ancestor editor if not found or the default editor
+			for (final EClass cl : eClass.getESuperTypes()) {
+				editor = getEditor(cl);
+				if (editor != null) {
+					break;
+				}
+			}
+
+			// Editor is still null ? , will use the default editor
+			if (editor == null) {
+				editor = ContextInjectionFactory.make(DefaultEditor.class, context);
+			}
+
+			// register the parent or default editor
+			editors.put(eClass.getInstanceClassName(), editor);
+		}
+
+		return editor;
+
+	}
+
+	public AbstractComponentEditor getEditor(String key) {
+		return getEditor(key, true);
+	}
+
+	/**
+	 * get editor from a string key.
+	 *
+	 * @param key
+	 *            : the editor string key
+	 * @param createDefaultIfNull
+	 *            if true, returns the default editor if no editor found
+	 * @return the {@link AbstractComponentEditor} if exists. Never null if
+	 *         createDefaultIfNull is true
+	 */
+	private AbstractComponentEditor getEditor(String key, boolean createDefaultIfNull) {
+		AbstractComponentEditor editor = editors.get(key);
+
+		if (editor == null) {
+
+			// Editor not yet created in the map... must create instance using registered
+			// class
+			Class<? extends AbstractComponentEditor> cz = editorsClasses.get(key);
+			if (cz != null) {
+				editor = ContextInjectionFactory.make(cz, context);
+				editors.put(key, editor);
+
+				// Then manage the feature maps...
+				manageFeatureMap(editor);
+			}
+
+		}
+
+		return editor;
+	}
+
+	private void manageFeatureMap(AbstractComponentEditor editor) {
 		for (final FeaturePath p : editor.getLabelProperties()) {
 			boolean found = false;
 			for (final FeaturePath tmp : labelFeaturePaths) {
@@ -1394,6 +1462,12 @@ public class ModelEditor implements IGotoObject {
 				labelFeaturePaths.add(p);
 			}
 		}
+
+	}
+
+	public void registerEditor(EClass eClass, AbstractComponentEditor editor) {
+		editors.put(eClass.getInstanceClassName(), editor);
+		manageFeatureMap(editor);
 	}
 
 	private boolean equalsPaths(FeaturePath p1, FeaturePath p2) {
@@ -1410,20 +1484,6 @@ public class ModelEditor implements IGotoObject {
 		return false;
 	}
 
-	public AbstractComponentEditor getEditor(EClass eClass) {
-		AbstractComponentEditor editor = editorMap.get(eClass);
-		if (editor == null) {
-			for (final EClass cl : eClass.getESuperTypes()) {
-				editor = getEditor(cl);
-				if (editor != null) {
-					return editor;
-				}
-			}
-
-			editor = ContextInjectionFactory.make(DefaultEditor.class, context);
-		}
-		return editor;
-	}
 
 	@Persist
 	public void doSave(@Optional IProgressMonitor monitor) {
