@@ -858,6 +858,7 @@ new TreePath[] { model.findElement("5"), model.findElement("5.1"), model.findEle
 
         // Set the input into the view and update the view.
         fViewer.setInput(model.getRootElement());
+		TestUtil.waitForJobs(getName(), 300, 5000);
 		waitWhile(t -> !fListener.isFinished(CONTENT_SEQUENCE_COMPLETE), createListenerErrorMessage());
 
         expandAlternateElements(fListener, model, false);
@@ -876,6 +877,7 @@ new TreePath[] { model.findElement("5"), model.findElement("5.1"), model.findEle
         fListener.addStateUpdates(getInternalViewer(), originalState, IModelDelta.EXPAND | IModelDelta.SELECT | IModelDelta.REVEAL);
 
         fViewer.setInput(null);
+		TestUtil.waitForJobs(getName(), 300, 5000);
 		waitWhile(t -> !fListener.isFinished(STATE_SAVE_COMPLETE | STATE_UPDATES), createListenerErrorMessage());
 
         // Set the viewer input back to the model.  When view updates are complete
@@ -883,6 +885,7 @@ new TreePath[] { model.findElement("5"), model.findElement("5.1"), model.findEle
         // Note: disable redundant updates because the reveal delta triggers one.
         fListener.reset();
         fViewer.setInput(model.getRootElement());
+		TestUtil.waitForJobs(getName(), 300, 5000);
 		waitWhile(t -> !fListener.isFinished(CONTENT_SEQUENCE_COMPLETE), createListenerErrorMessage());
 
         // Validate data (only select visible elements).
