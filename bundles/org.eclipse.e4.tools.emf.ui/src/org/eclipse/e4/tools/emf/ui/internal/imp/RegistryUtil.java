@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2013 Remain BV, Industrial-TSI BV and others.
+ * Copyright (c) 2013, 2018 Remain BV, Industrial-TSI BV and others.
  *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -73,7 +73,7 @@ public class RegistryUtil {
 	 * @param elements
 	 */
 	public static MApplicationElement[] getModelElements(Class<? extends MApplicationElement> t, String hint,
-		MApplication application, IConfigurationElement... elements) {
+			MApplication application, IConfigurationElement... elements) {
 
 		Assert.isNotNull(t);
 		Assert.isNotNull(elements);
@@ -226,38 +226,12 @@ public class RegistryUtil {
 		return result.toArray(new MPartDescriptor[0]);
 	}
 
-	private static MPart[] getEditors(IConfigurationElement[] elements) {
-
-		final ArrayList<MPart> result = new ArrayList<>();
-		for (final IConfigurationElement element : elements) {
-			if ("editor".equals(element.getName())) /* Sanity Check */{ //$NON-NLS-1$
-				final MPart part = (MPart) EcoreUtil.create(BasicPackageImpl.Literals.PART);
-				part.setElementId(element.getAttribute("id")); //$NON-NLS-1$
-				part.setLabel(element.getAttribute("name")); //$NON-NLS-1$
-				part.setIconURI(getIconURI(element, "icon")); //$NON-NLS-1$
-				if (element.getAttribute("class") != null) { //$NON-NLS-1$
-					part.setContributionURI(getContributionURI(element, "class")); //$NON-NLS-1$
-				} else {
-					part.setContributionURI(getContributionURI(element, "launcher")); //$NON-NLS-1$
-				}
-				part.setToBeRendered(true);
-				part.setVisible(true);
-				part.setToolbar(createToolBar(part));
-				part.getMenus().add(createViewMenu(part));
-				part.setCloseable(true);
-				result.add(part);
-			}
-		}
-
-		return result.toArray(new MPart[0]);
-	}
-
 	private static MPartDescriptor[] getEditorPartDescriptors(IConfigurationElement[] elements) {
 
 		final ArrayList<MPartDescriptor> result = new ArrayList<>();
 		for (final IConfigurationElement element : elements) {
 			final MPartDescriptor part = (MPartDescriptor) EcoreUtil
-				.create(org.eclipse.e4.ui.model.application.descriptor.basic.impl.BasicPackageImpl.Literals.PART_DESCRIPTOR);
+					.create(org.eclipse.e4.ui.model.application.descriptor.basic.impl.BasicPackageImpl.Literals.PART_DESCRIPTOR);
 			part.setElementId(element.getAttribute(ID));
 			part.setLabel(element.getAttribute(NAME));
 			part.setIconURI(getIconURI(element, ICON));
@@ -290,7 +264,7 @@ public class RegistryUtil {
 		final ArrayList<MPartDescriptor> result = new ArrayList<>();
 		for (final IConfigurationElement element : elements) {
 			final MPartDescriptor part = (MPartDescriptor) EcoreUtil
-				.create(org.eclipse.e4.ui.model.application.descriptor.basic.impl.BasicPackageImpl.Literals.PART_DESCRIPTOR);
+					.create(org.eclipse.e4.ui.model.application.descriptor.basic.impl.BasicPackageImpl.Literals.PART_DESCRIPTOR);
 			part.setElementId(element.getAttribute(ID));
 			part.setLabel(element.getAttribute(NAME));
 			part.setIconURI(getIconURI(element, ICON));
@@ -391,7 +365,7 @@ public class RegistryUtil {
 	 *         passed criteria.
 	 */
 	public static IConfigurationElement[] getExtensions(IExtensionRegistry registry, RegistryStruct struct,
-		boolean isLive) {
+			boolean isLive) {
 
 		final IExtensionLookup service = getService(IExtensionLookup.class, null);
 		if (struct == null || service == null) {
