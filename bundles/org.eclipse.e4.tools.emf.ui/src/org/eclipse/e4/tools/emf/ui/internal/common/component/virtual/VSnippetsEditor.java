@@ -40,6 +40,15 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
 
 public class VSnippetsEditor extends AbstractComponentEditor {
+
+	/** Define the classes available to create snippets */
+	public static final EClass[] SNIPPET_CHILDREN = new EClass[] { AdvancedPackageImpl.Literals.AREA, BasicPackageImpl.Literals.PART,
+			BasicPackageImpl.Literals.PART_SASH_CONTAINER, BasicPackageImpl.Literals.PART_STACK,
+			AdvancedPackageImpl.Literals.PERSPECTIVE, AdvancedPackageImpl.Literals.PERSPECTIVE_STACK,
+			MenuPackageImpl.Literals.TRIM_CONTRIBUTION,
+			BasicPackageImpl.Literals.TRIMMED_WINDOW, BasicPackageImpl.Literals.WINDOW,
+			BasicPackageImpl.Literals.TRIM_BAR };
+
 	private Composite composite;
 	private EMFDataBindingContext context;
 	private TableViewer viewer;
@@ -187,12 +196,7 @@ public class VSnippetsEditor extends AbstractComponentEditor {
 		viewer = pickList.getList();
 
 		pickList.setLabelProvider(new EClassLabelProvider(getEditor()));
-		pickList.setInput(new EClass[] { AdvancedPackageImpl.Literals.AREA, BasicPackageImpl.Literals.PART,
-				BasicPackageImpl.Literals.PART_SASH_CONTAINER, BasicPackageImpl.Literals.PART_STACK,
-				AdvancedPackageImpl.Literals.PERSPECTIVE, AdvancedPackageImpl.Literals.PERSPECTIVE_STACK,
-				MenuPackageImpl.Literals.TRIM_CONTRIBUTION,
-				BasicPackageImpl.Literals.TRIMMED_WINDOW, BasicPackageImpl.Literals.WINDOW,
-				BasicPackageImpl.Literals.TRIM_BAR });
+		pickList.setInput(SNIPPET_CHILDREN);
 		pickList.setSelection(new StructuredSelection(AdvancedPackageImpl.Literals.PERSPECTIVE));
 
 		folder.setSelection(0);

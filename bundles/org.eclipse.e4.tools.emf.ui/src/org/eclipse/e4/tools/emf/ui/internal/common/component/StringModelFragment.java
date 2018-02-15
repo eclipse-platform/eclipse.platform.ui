@@ -39,6 +39,7 @@ import org.eclipse.e4.tools.emf.ui.internal.common.component.ControlFactory.Text
 import org.eclipse.e4.tools.emf.ui.internal.common.component.dialogs.FeatureSelectionDialog;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.dialogs.FindParentReferenceElementDialog;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.tabs.empty.E;
+import org.eclipse.e4.tools.emf.ui.internal.common.component.virtual.VSnippetsEditor;
 import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.MApplicationElement;
 import org.eclipse.e4.ui.model.application.impl.ApplicationElementImpl;
@@ -645,38 +646,47 @@ public class StringModelFragment extends AbstractComponentEditor {
 		if (targetClass != null) {
 			// The top level class for children, is the class of the EReference
 			// bound to feature name
-			EReference childRef = null;
 
-			for (EReference ref : targetClass.getEAllReferences()) {
-				if (ref.getName().equals(featurename)) {
-					childRef = ref;
-					break;
+			// We must manage especially snippets (see bug 531219) No other solution ...
+			if ("snippets".equals(featurename)) {
+				result = new ArrayList<>();
+				for (EClass c : VSnippetsEditor.SNIPPET_CHILDREN) {
+					result.add(new FeatureClass(c.getName(), c));
 				}
-			}
+			} else {
+				EReference childRef = null;
 
-			if (childRef == null) {
-				return result;
-			}
-
-			// Get the parent EClass where this childRef is defined...
-			// For instance : for the 'children' reference it will be in
-			// UIElementContainer<T extends UIElement>
-			// We must check if the selectedContainer extends
-			// UIElementContainer<XXX> and in this case childRef is XXX
-			final EClass childClass = (EClass) ModelUtils.getTypeArgument(targetClass,
-					childRef.getEGenericType());
-
-			// Search for descendant of ChildClass -> This result could be
-			// cached for all StringModelFragment editors instances and computed
-			// once...
-			result = new ArrayList<>();
-			for (final InternalPackage p : Util.loadPackages()) {
-				for (EClass c : p.getAllClasses()) {
-					if (childClass.isSuperTypeOf(c) && isRelevant(c.getName())) {
-						result.add(new FeatureClass(c.getName(), c));
+				for (EReference ref : targetClass.getEAllReferences()) {
+					if (ref.getName().equals(featurename)) {
+						childRef = ref;
+						break;
 					}
 				}
 
+				if (childRef == null) {
+					return result;
+				}
+
+				// Get the parent EClass where this childRef is defined...
+				// For instance : for the 'children' reference it will be in
+				// UIElementContainer<T extends UIElement>
+				// We must check if the selectedContainer extends
+				// UIElementContainer<XXX> and in this case childRef is XXX
+				final EClass childClass = (EClass) ModelUtils.getTypeArgument(targetClass,
+						childRef.getEGenericType());
+
+				// Search for descendant of ChildClass -> This result could be
+				// cached for all StringModelFragment editors instances and computed
+				// once...
+				result = new ArrayList<>();
+				for (final InternalPackage p : Util.loadPackages()) {
+					for (EClass c : p.getAllClasses()) {
+						if (childClass.isSuperTypeOf(c) && isRelevant(c.getName())) {
+							result.add(new FeatureClass(c.getName(), c));
+						}
+					}
+
+				}
 			}
 		}
 		return result;
