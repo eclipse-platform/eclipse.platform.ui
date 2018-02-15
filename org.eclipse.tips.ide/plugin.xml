@@ -1,0 +1,189 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<!--
+    Copyright (c) 2018 Remain Software
+    All rights reserved. This program and the accompanying materials
+    are made available under the terms of the Eclipse Public License v1.0
+    which accompanies this distribution, and is available at
+    http://www.eclipse.org/legal/epl-v10.html
+   
+    Contributors:
+        wim.jongman@remainsoftware.com - initial API and implementation
+ -->
+
+<plugin>
+   <extension
+         point="org.eclipse.ui.startup">
+      <startup
+            class="org.eclipse.tips.ide.internal.Startup">
+      </startup>
+   </extension>
+   <extension
+         point="org.eclipse.ui.commands">
+      <command
+            defaultHandler="org.eclipse.tips.ide.internal.TipsHandler"
+            id="org.eclipse.tips.ide.command.open"
+            name="Tip of the Day">
+      </command>
+      <command
+            id="org.eclipse.tips.ide.command.trim.open"
+            name="Tip of the Day">
+      </command>
+   </extension>
+   <extension
+         point="org.eclipse.ui.menus">
+      <menuContribution
+            allPopups="false"
+            locationURI="menu:help?before=tipsAndTricks">
+         <command
+               commandId="org.eclipse.tips.ide.command.open"
+               icon="icons/lightbulb.png"
+               id="org.eclipse.tips.ide.tip.menu"
+               label="Tip of the Day"
+               style="push"> variable="newtips">
+         </command>
+      </menuContribution>
+      <menuContribution
+            allPopups="false"
+            locationURI="toolbar:org.eclipse.ui.trim.status">
+         <toolbar
+               id="org.eclipse.tips.ide.toolbar.status"
+               label="Tip of the Day Toolbar">
+            <command
+                  commandId="org.eclipse.tips.ide.command.trim.open"
+                  icon="icons/lightbulb.png"
+                  id="org.eclipse.tips.ide.tip.tool"
+                  label="Tip of the Day"
+                  style="push">
+               <visibleWhen
+                     checkEnabled="false">
+                  <with
+                        variable="newtips">
+                     <equals
+                           value="true">
+                     </equals>
+                  </with>
+               </visibleWhen>
+            </command>
+         </toolbar>
+      </menuContribution>
+   </extension>
+   <extension
+         point="org.eclipse.ui.themes">
+      <themeElementCategory
+            id="org.eclipse.tips.presentation"
+            label="Tip of the Day">
+      </themeElementCategory>
+      <fontDefinition
+            categoryId="org.eclipse.tips.presentation"
+            defaultsTo="org.eclipse.jface.textfont"
+            id="org.eclipse.tips.browser.font"
+            label="Browser font">
+         <description>
+            The browser font (may be overridden by HTML and CSS)
+         </description>
+      </fontDefinition>
+      <colorDefinition
+            categoryId="org.eclipse.tips.presentation"
+            id="org.eclipse.tips.browser.background.color"
+            label="Browser background color"
+            value="COLOR_WHITE">
+         <description>
+            The browser background color (may be overridden by HTML and CSS)
+         </description>
+      </colorDefinition>
+      <colorDefinition
+            categoryId="org.eclipse.tips.presentation"
+            id="org.eclipse.tips.browser.foreground.color"
+            label="Browser foreground color"
+            value="COLOR_BLACK">
+         <description>
+            The browser foreground color (may be overridden by HTML and CSS)
+         </description>
+      </colorDefinition>
+      <colorDefinition
+            categoryId="org.eclipse.tips.presentation"
+            id="org.eclipse.tips.slider.hover.color"
+            label="Slider button hover color"
+            value="COLOR_GRAY">
+         <description>
+            The background color of the button when the mouse hovers over the button.
+         </description>
+      </colorDefinition>
+      <colorDefinition
+            categoryId="org.eclipse.tips.presentation"
+            id="org.eclipse.tips.slider.selection.color"
+            label="Slider button selection color"
+            value="COLOR_TITLE_BACKGROUND">
+         <description>
+            The color of the button when this is the selected button.
+         </description>
+      </colorDefinition>
+      <colorDefinition
+            categoryId="org.eclipse.tips.presentation"
+            id="org.eclipse.tips.slider.unreadTipCount.background.color"
+            label="Unread tip counter background color"
+            value="COLOR_RED">
+         <description>
+            The background color of the tip counter badge when in unread mode.
+         </description>
+      </colorDefinition>
+      <colorDefinition
+            categoryId="org.eclipse.tips.presentation"
+            id="org.eclipse.tips.slider.unreadTipCount.foreground.color"
+            label="Unread tip counter foreground color"
+            value="COLOR_WHITE">
+         <description>
+            The foreground color of the tip counter badge when in unread mode.
+         </description>
+      </colorDefinition>
+      <fontDefinition
+            categoryId="org.eclipse.tips.presentation"
+            id="org.eclipse.tips.slider.badge.font"
+            label="Slider badge font"
+            value="Sans-bold-10">
+         <description>
+            The counter badge font.
+         </description>
+      </fontDefinition>
+      <colorDefinition
+            categoryId="org.eclipse.tips.presentation"
+            id="org.eclipse.tips.slider.tipCount.background.color"
+            label="Tip counter background color"
+            value="COLOR_DARK_GREEN">
+         <description>
+            The background color of the counter badge when not in unread mode.
+         </description>
+      </colorDefinition>
+      <colorDefinition
+            categoryId="org.eclipse.tips.presentation"
+            id="org.eclipse.tips.slider.tipCount.foreground.color"
+            label="Tip counter foreground color"
+            value="COLOR_WHITE">
+         <description>
+            The background color of the tip counter badge when not in unread mode.
+         </description>
+      </colorDefinition>
+   </extension>
+   <extension
+         point="org.eclipse.ui.handlers">
+      <handler
+            class="org.eclipse.tips.ide.internal.TipsHandler"
+            commandId="org.eclipse.tips.ide.command.trim.open">
+         <activeWhen>
+            <with
+                  variable="newtips">
+               <equals
+                     value="true">
+               </equals>
+            </with>
+         </activeWhen>
+      </handler>
+   </extension>
+   <extension
+         point="org.eclipse.core.runtime.preferences">
+      <initializer
+            class="org.eclipse.tips.ide.internal.Preferences">
+      </initializer>
+   </extension>
+</plugin>

@@ -65,5 +65,9 @@
     <module>org.eclipse.ui.intro.quicklinks</module>
     <module>org.eclipse.ui.intro.quicklinks.examples</module>
     <module>org.eclipse.ui.intro.solstice.examples</module>
+    <module>org.eclipse.tips.core</module>
+    <module>org.eclipse.tips.ui</module>
+    <module>org.eclipse.tips.ide</module>
+    
   </modules>
 </project>

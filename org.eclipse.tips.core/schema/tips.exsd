@@ -1,0 +1,455 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!-- Schema file written by PDE -->
+<schema targetNamespace="org.eclipse.tips.core" xmlns="http://www.w3.org/2001/XMLSchema">
+<annotation>
+      <appinfo>
+         <meta.schema plugin="org.eclipse.tips.core" id="tips" name="Tips"/>
+      </appinfo>
+      <documentation>
+         &lt;p&gt;
+This extension point allows bundles to hook into the eclipse tips framework.
+&lt;/p&gt;
+@see Examples
+      </documentation>
+   </annotation>
+
+   <include schemaLocation="schema://org.eclipse.core.expressions/schema/expressionLanguage.exsd"/>
+
+   <element name="extension">
+      <annotation>
+         <appinfo>
+            <meta.element />
+         </appinfo>
+      </annotation>
+      <complexType>
+         <choice>
+            <element ref="provider" minOccurs="1" maxOccurs="unbounded"/>
+            <element ref="category" minOccurs="1" maxOccurs="unbounded"/>
+         </choice>
+         <attribute name="point" type="string" use="required">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="id" type="string">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="name" type="string">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+               <appinfo>
+                  <meta.attribute translatable="true"/>
+               </appinfo>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="provider">
+      <complexType>
+         <sequence>
+            <element ref="enablement" minOccurs="0" maxOccurs="1"/>
+         </sequence>
+         <attribute name="id" type="string" use="required">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="description" type="string" use="required">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="class" type="string" use="required">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+               <appinfo>
+                  <meta.attribute kind="java" basedOn="org.eclipse.tips.core.TipProvider:"/>
+               </appinfo>
+            </annotation>
+         </attribute>
+         <attribute name="category" type="string" use="required">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+               <appinfo>
+                  <meta.attribute kind="identifier" basedOn="org.eclipse.tips.core.tips/category/@id"/>
+               </appinfo>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="category">
+      <annotation>
+         <documentation>
+            A category to group tips in the UI.
+         </documentation>
+      </annotation>
+      <complexType>
+         <attribute name="id" type="string" use="required">
+            <annotation>
+               <documentation>
+                  a unique name that will be used to identify this category
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="name" type="string" use="required">
+            <annotation>
+               <documentation>
+                  a translatable name that will be used in the UI for this category
+               </documentation>
+               <appinfo>
+                  <meta.attribute translatable="true"/>
+               </appinfo>
+            </annotation>
+         </attribute>
+         <attribute name="parentCategory" type="string">
+            <annotation>
+               <documentation>
+                  an optional path composed of category IDs separated by &apos;/&apos;. This
+allows the creation of a hierarchy of categories.
+               </documentation>
+               <appinfo>
+                  <meta.attribute kind="identifier" basedOn="org.eclipse.tips.core.tips/category/@id"/>
+               </appinfo>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+
+   <annotation>
+      <appinfo>
+         <meta.section type="examples"/>
+      </appinfo>
+      <documentation>
+         &lt;p&gt;
+This extension defines a parent category &quot;Java&quot;and a child category &quot;Java9&quot;. Then the provider 
+is defined within category &quot;Java9&quot;.
+&lt;pre&gt;
+   &lt;extension
+         point=&quot;org.eclipse.tips.ide.tips&quot;&gt;
+      &lt;category
+            id=&quot;org.eclipse.tips.examples.java&quot;
+            name=&quot;Java&quot;&gt;
+      &lt;/category&gt;
+      &lt;category
+            id=&quot;org.eclipse.tips.examples.java9&quot;
+            name=&quot;Java9&quot;
+            parentCategory=&quot;org.eclipse.tips.examples.java9&quot;&gt;
+      &lt;/category&gt;
+      &lt;provider
+            category=&quot;org.eclipse.tips.examples.java9&quot;
+            class=&quot;org.eclipse.tips.examples.java.java9.Java9TipProvider&quot;
+            description=&quot;Java 9 Tips&quot;
+            id=&quot;org.eclipse.tips.examples.java.java9.Java9TipProvider&quot;&gt;
+         &lt;enablement&gt;
+            &lt;with
+                  variable=&quot;activeWorkbenchWindow.activePerspective&quot;&gt;
+               &lt;equals
+                     value=&quot;org.eclipse.jdt.ui.JavaPerspective&quot;&gt;
+               &lt;/equals&gt;
+            &lt;/with&gt;
+         &lt;/enablement&gt;
+      &lt;/provider&gt;
+   &lt;/extension&gt;
+&lt;/pre&gt;   
+&lt;/p&gt;
+
+&lt;p&gt;
+&lt;b&gt;Sample implementation TipProvider&lt;/b&gt;   
+&lt;/p&gt;
+  
+&lt;p&gt;  
+
+&lt;h1&gt;The Implementation of a TipProvider&lt;/h1&gt;
+This is an example of a TipProvider. The framework also contains an JSon TipProvider that fetches tips inside a JSon file from a remote URL.
+&lt;b&gt;
+The example below instantiates Tips from Java.
+&lt;pre&gt;
+
+/**
+ * Class to provide tips to the tip framework. It is the job of this provider to
+ * manage its tips. Examples of managing tips are:
+ *
+ * &lt;ul&gt;
+ * &lt;li&gt;Loading tips from the internet&lt;/li&gt;
+ * &lt;li&gt;Serve next, previous and current tip on request&lt;/li&gt;
+ * &lt;/ul&gt;
+ * 
+ * After the TipProvider is instantiated by the {@link TipManager}, the
+ * TipManager will insert itself by calling {@link #setManager(TipManager)}.
+ * Then the TipManager will asynchronous call this providers&apos; {@link #load()}
+ * method. The job of the load() method is to do long work like fetching new
+ * tips from the internet and storing them locally. There is no defined method
+ * on how tips should be stored locally, implementers are free to do what is
+ * needed.
+ * 
+ * The constructor must return fast, meaning that tips may not be fetched from
+ * the internet in the constructor. This should be done in the
+ * {@link #load(IProgressMonitor)} method.
+ *
+ * To indicate that this provider is ready to serve tips, it should call the
+ * {@link #setTips(List)} method which then sets its &lt;code&gt;ready&lt;/code&gt; flag.
+ *
+ */
+public class Java9TipProvider extends TipProvider {
+
+ @Override
+ /**
+  * The Id is used (for example) to manage the read state of this providers tips.
+  * It should be unique.
+  * 
+  * @return the ID of this provider
+  */
+ public String getID() {
+  return &quot;org.eclipse.tips.examples.Java9TipProvider&quot;;
+ }
+
+ /**
+  * The 48x48 image may be used by the UI for low resolution displays.
+  * 
+  * @return a 48x48 {@link TipImage}
+  */
+ @Override
+ public TipImage getImage48() {
+  Bundle bundle = FrameworkUtil.getBundle(getClass());
+  try {
+   return new TipImage(bundle.getEntry(&quot;icons/48/java.png&quot;)).setAspectRatio(1);
+  } catch (IOException e) {
+   getManager().log(getClass(), e);
+  }
+  return null;
+
+ }
+
+ /**
+  * The 64x64 image may be used by the UI for higher resolution displays.
+  * 
+  * @return a 64x64 {@link TipImage}
+  */
+ @Override
+ public TipImage getImage64() {
+  Bundle bundle = FrameworkUtil.getBundle(getClass());
+  try {
+   return new TipImage(bundle.getEntry(&quot;icons/64/java.png&quot;)).setAspectRatio(1);
+  } catch (IOException e) {
+   getManager().log(getClass(), e);
+  }
+  return null;
+
+ }
+
+ /**
+  * Is called asynchronously during startup of the TipManager to gather new tips.
+  * The provider is not available to the UI unless it has called it&apos;s
+  * {@link #setTips(List)} method. It is therefore possible that the provider is
+  * not immediately visible in the tip UI but will be added later.
+  * 
+  * One strategy is to do a long running fetch in this method and then store the
+  * tips locally. On the next run of the TipManager, the fetched tips can be
+  * served from the constructor (i.e. by calling {@link #setTips(List)}), making
+  * it immediately available.
+  *
+  * @param pMonitor
+  *            The monitor to report back progress.
+  * @see TipProvider#setTips(List)
+  * @see TipProvider#isReady()
+  */
+ @Override
+ public synchronized void load(IProgressMonitor pMonitor) {
+  SubMonitor subMonitor = SubMonitor.convert(pMonitor);
+  subMonitor.beginTask(&quot;Loading Tips&quot;, -1);
+  List&lt;Tip&gt; tips = new ArrayList&lt;&gt;();
+  tips.add(new Tip1(this));
+  tips.add(new Navigate2Tip(this));
+  setTips(tips);
+  subMonitor.done();
+ }
+
+ /**
+  * @return the short description of this provider.
+  */
+ @Override
+ public String getDescription() {
+  return &quot;Java and Java Dev Tools Tips&quot;;
+ }
+
+ /**
+  * Provides the opportunity to release all held resources.
+  */
+ @Override
+ public void dispose() {
+ }
+}
+
+&lt;/pre&gt;
+
+&lt;h1&gt;The Implementation of a Tip&lt;/h1&gt;
+This is an example implementation of a Tip
+&lt;pre&gt;
+/**
+ * This is an example Tip class.
+ * 
+ */
+public class Tip1 extends Tip {
+
+ /**
+  * Tips should be created fast.
+  *
+  * @param pProvider
+  *            the associated {@link TipProvider}
+  */
+ public Tip1(TipProvider pProvider) {
+  super(pProvider);
+ }
+
+ /**
+  * A getter for a {@link Runnable} action for this tip. Clients may override or
+  * call {@link #setAction(Runnable)}.
+  *
+  * @return the action or null if not set by {@link Tip#setAction(Runnable)}.
+  * @see Tip#setAction(Runnable)
+  */
+ @Override
+ public Runnable getAction() {
+  return new Runnable() {
+   @Override
+   public void run() {
+    Display.getDefault().syncExec(new Runnable() {
+     @Override
+     public void run() {
+      MessageDialog.openConfirm(null, getSubject(), &quot;We can start an action from a Tip!&quot;);
+     }
+    });
+   }
+  };
+ }
+
+ /**
+  * Return the publish date of the tip. The {@link TipProvider} could decide to
+  * server newer tips first.
+  * 
+  * @return the date this tip was published which may not be null.
+  */
+ @Override
+ public Date getCreationDate() {
+  return DateUtil.getDateFromYYMMDD(&quot;10/01/2018&quot;);
+ }
+
+ /**
+  * @return the subject which may not be null.
+  */
+ @Override
+ public String getSubject() {
+  return &quot;Java tip 1&quot;;
+ }
+
+ /**
+  * This method may both return the string representation of an URL or the
+  * descriptive HTML of the tip. If the html of the text is returned then an
+  * effort is made to also inline the image URL. If you supply an URL then
+  * {@link #getImage()} should return null.
+  *
+  * @return the HMTL or URL of the tip which is displayed in a browser widget.
+  * @see #getImage()
+  */
+ @Override
+ public String getHTML() {
+  return &quot;&lt;h2&gt;Javatip 1&lt;/h2&gt;You see this tip because the Tip UI was opened when the java perspective &quot;
+    + &quot;was active or because you selected the Java icon below.&quot; + &quot;&lt;br&gt;&lt;br&gt;&quot;
+    + &quot;More java tips will be displayed here in the near future. For now, select one of the other providers&quot;
+    + &quot; by clicking on the icons below.&quot;;
+ }
+
+ /**
+  * A getter for the {@link TipImage}. Subclasses may override, the default
+  * implementation returns null.
+  *
+  * @return a TipImage with information about the image or null if no image is
+  *         provided.
+  */
+ @Override
+ public TipImage getImage() {
+  Bundle bundle = FrameworkUtil.getBundle(getClass());
+  try {
+   return new TipImage(bundle.getEntry(&quot;images/java/duke.png&quot;)).setAspectRatio(1);
+  } catch (IOException e) {
+   getProvider().getManager().log(getClass(), e);
+  }
+  return null;
+ }
+}
+&lt;/pre&gt;
+
+&lt;h1&gt;Example of a TipImage&lt;/h1&gt;
+TipImage objects are UI agnostic representations of an Image. You may pass a URL to a TipImage or a full base64 string (e.g. &quot;data:image/png;base64,iVBORw0KGgo.....CYII=&quot;).
+&lt;br&gt;
+One import aspect of the TipImage is it&apos;s aspect ratio. The Tip UI may use a browser to display it&apos;s UI. Therefore it can be scaled to the available space. Images look best when they use a 3:2 (1.5) ratio. 
+&lt;br&gt;
+&lt;h4&gt;Set an image that is a square (aspect ratio = 1:1 (1))
+&lt;pre&gt;
+TipImage img = new TipImage(bundle.getEntry(&quot;images/java/duke.png&quot;)).setAspectRatio(1)
+&lt;/pre&gt; 
+
+&lt;h4&gt;Set an image that is a square (aspect ratio = 1:1 (1))
+&lt;pre&gt;
+ /**
+  * Sets the aspect ratio of this image. If the image is 300 wide and 600 high
+  * then the aspect ratio is 300/600 = 0,5 (1:2). If your image is 1200 wide and
+  * 250 high then the aspect ratio (1200/250) = 4,8. With the supplied values the
+  * best dimensions for the image can be calculated give the available space in
+  * the UI.
+  * &lt;p&gt;
+  * In case you pass true for &lt;code&gt;pSetAsMax&lt;/code&gt; then the image can not be
+  * up-scaled beyond the specified size. So if your image is 200x200 and you want
+  * a maximum up-scale of 2 then pass 400x400 to this method to maintain the
+  * aspect ratio but allow the image to be resized to maximum it&apos;s double size.
+  * &lt;p&gt;
+  * The recommended aspect ratio is around 3:2 (1.5) to be comfortably displayed
+  * in the Tip UI.
+  **
+     TipImage img = new TipImage(&quot;data:image/png;base64,3ff4..eFW&quot;);
+     img.setAspectRatio(800, 400, true); // Image can not be scaled up higer than 800:400
+&lt;/pre&gt; 
+
+&lt;/p&gt;
+      </documentation>
+   </annotation>
+
+
+
+   <annotation>
+      <appinfo>
+         <meta.section type="copyright"/>
+      </appinfo>
+      <documentation>
+         Copyright (c) 2017 Remain Software
+                                                                      
+ All rights reserved. This program and the accompanying materials     
+ are made available under the terms of the Eclipse Public License v1.0
+ which accompanies this distribution, and is available at             
+ http://www.eclipse.org/legal/epl-v10.html                            
+                                                                      
+ Contributors:                                                        
+     Wim Jongman &lt;wim.jongman@remainsoftware.com&gt; - Initial implementation
+      </documentation>
+   </annotation>
+
+</schema>

@@ -1,0 +1,14 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: IDE Enablement for Tip of the Day
+Bundle-SymbolicName: org.eclipse.tips.ide;singleton:=true
+Bundle-Version: 0.1.0.qualifier
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Require-Bundle: org.eclipse.ui;bundle-version="3.109.0",
+ org.eclipse.core.runtime;bundle-version="3.13.0",
+ org.eclipse.core.expressions;bundle-version="3.6.0",
+ org.eclipse.e4.ui.workbench;bundle-version="1.5.1",
+ org.eclipse.tips.core;bundle-version="0.1.0",
+ org.eclipse.tips.ui;bundle-version="0.1.0"
+Export-Package: org.eclipse.tips.ide.internal;x-internal:=true
+Automatic-Module-Name: org.eclipse.tips.ide
