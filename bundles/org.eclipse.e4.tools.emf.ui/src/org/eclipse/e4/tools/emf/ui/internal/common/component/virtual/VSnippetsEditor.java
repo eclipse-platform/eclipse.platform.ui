@@ -21,6 +21,7 @@ import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.ui.advanced.impl.AdvancedPackageImpl;
 import org.eclipse.e4.ui.model.application.ui.basic.impl.BasicPackageImpl;
 import org.eclipse.e4.ui.model.application.ui.impl.UiPackageImpl;
+import org.eclipse.e4.ui.model.application.ui.menu.impl.MenuPackageImpl;
 import org.eclipse.emf.common.command.Command;
 import org.eclipse.emf.databinding.EMFDataBindingContext;
 import org.eclipse.emf.ecore.EClass;
@@ -105,7 +106,7 @@ public class VSnippetsEditor extends AbstractComponentEditor {
 				createImageDescriptor(ResourceProvider.IMG_TrimContribution)) {
 			@Override
 			public void run() {
-				handleAdd(BasicPackageImpl.Literals.TRIM_ELEMENT);
+				handleAdd(MenuPackageImpl.Literals.TRIM_CONTRIBUTION);
 			}
 		});
 
@@ -186,10 +187,11 @@ public class VSnippetsEditor extends AbstractComponentEditor {
 		viewer = pickList.getList();
 
 		pickList.setLabelProvider(new EClassLabelProvider(getEditor()));
-		pickList.setInput(new EClass[] { BasicPackageImpl.Literals.TRIMMED_WINDOW, BasicPackageImpl.Literals.WINDOW,
-				AdvancedPackageImpl.Literals.PERSPECTIVE_STACK, AdvancedPackageImpl.Literals.PERSPECTIVE,
-				AdvancedPackageImpl.Literals.AREA, BasicPackageImpl.Literals.PART_SASH_CONTAINER,
-				BasicPackageImpl.Literals.PART_STACK, BasicPackageImpl.Literals.PART,
+		pickList.setInput(new EClass[] { AdvancedPackageImpl.Literals.AREA, BasicPackageImpl.Literals.PART,
+				BasicPackageImpl.Literals.PART_SASH_CONTAINER, BasicPackageImpl.Literals.PART_STACK,
+				AdvancedPackageImpl.Literals.PERSPECTIVE, AdvancedPackageImpl.Literals.PERSPECTIVE_STACK,
+				MenuPackageImpl.Literals.TRIM_CONTRIBUTION,
+				BasicPackageImpl.Literals.TRIMMED_WINDOW, BasicPackageImpl.Literals.WINDOW,
 				BasicPackageImpl.Literals.TRIM_BAR });
 		pickList.setSelection(new StructuredSelection(AdvancedPackageImpl.Literals.PERSPECTIVE));
 
