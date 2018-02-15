@@ -16,7 +16,6 @@ package org.eclipse.core.internal.resources;
 import java.lang.reflect.Array;
 import java.util.*;
 import java.util.function.Predicate;
-import java.util.stream.Collectors;
 import org.eclipse.core.internal.resources.ComputeProjectOrder.Digraph.Edge;
 import org.eclipse.core.internal.resources.ComputeProjectOrder.Digraph.Vertex;
 import org.eclipse.core.runtime.Assert;
@@ -120,6 +119,20 @@ public class ComputeProjectOrder {
 			public Edge(T from, T to) {
 				this.from = from;
 				this.to = to;
+			}
+
+			@Override
+			public boolean equals(Object obj) {
+				if (!(obj instanceof Edge)) {
+					return false;
+				}
+				Edge<?> other = (Edge<?>) obj;
+				return Objects.equals(this.from, other.from) && Objects.equals(this.to, other.to);
+			}
+
+			@Override
+			public int hashCode() {
+				return Objects.hash(this.from, this.to);
 			}
 		}
 
@@ -674,8 +687,15 @@ public class ComputeProjectOrder {
 		}
 		Set<Edge<T>> edges = new LinkedHashSet<>(initialGraph.getEdges());
 		for (Vertex<T> vertexToRemove : toRemove) {
-			Set<Edge<T>> incoming = edges.stream().filter(edge -> edge.to == vertexToRemove.id).collect(Collectors.toCollection(LinkedHashSet::new));
-			Set<Edge<T>> outgoing = edges.stream().filter(edge -> edge.from == vertexToRemove.id).collect(Collectors.toCollection(LinkedHashSet::new));
+			Set<Edge<T>> incoming = new LinkedHashSet<>();
+			Set<Edge<T>> outgoing = new LinkedHashSet<>();
+			for (Edge<T> edge : edges) {
+				if (edge.from == vertexToRemove.id) {
+					outgoing.add(edge);
+				} else if (edge.to == vertexToRemove.id) {
+					incoming.add(edge);
+				}
+			}
 			edges.removeAll(incoming);
 			edges.removeAll(outgoing);
 			incoming.forEach(incomingEdge -> outgoing.forEach(outgoingEdge -> edges.add(new Edge<>(incomingEdge.from, outgoingEdge.to))));

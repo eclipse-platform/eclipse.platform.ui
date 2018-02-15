@@ -36,6 +36,7 @@ public class AllTests extends TestCase {
 		suite.addTest(BuildConfigurationsTest.suite());
 		suite.addTest(BuildContextTest.suite());
 		suite.addTest(ParallelBuildChainTest.suite());
+		suite.addTest(ComputeProjectOrderTest.suite());
 		return suite;
 	}
 }
