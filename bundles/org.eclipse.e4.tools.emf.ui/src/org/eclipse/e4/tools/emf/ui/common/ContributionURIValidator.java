@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Tom Schindl <tom.schindl@bestsolution.at> - initial API and implementation
+ *      Olivier Prouvost <olivier.prouvost@opcoach.com> - Bug 412567
  ******************************************************************************/
 package org.eclipse.e4.tools.emf.ui.common;
 
@@ -20,13 +21,16 @@ public class ContributionURIValidator implements IValidator {
 
 	@Override
 	public IStatus validate(Object value) {
-		if (value == null) {
-			return new Status(IStatus.ERROR, Plugin.ID, Messages.ContributionURIValidator_No_Empty_URI);
-		} else if (!value.toString().startsWith("bundleclass:")) { //$NON-NLS-1$
+		String valStr = (value == null) ? null : value.toString();
+
+		if ((valStr == null) || (valStr.length() == 0)) {
+			return new Status(IStatus.WARNING, Plugin.ID, Messages.ContributionURIValidator_No_Empty_URI);
+		} else if (!valStr.startsWith("bundleclass:")) { //$NON-NLS-1$
+
 			return new Status(IStatus.ERROR, Plugin.ID, Messages.ContributionURIValidator_URI_starts_with_platform);
 		} else {
 			try {
-				URI uri = URI.createURI(value.toString());
+				URI uri = URI.createURI(valStr);
 				if (uri.authority() == null || uri.authority().length() == 0 || uri.segmentCount() != 1) {
 					return new Status(IStatus.ERROR, Plugin.ID, Messages.ContributionURIValidator_Malformed_URI);
 				}

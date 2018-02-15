@@ -8,7 +8,7 @@
  * Contributors:
  * Tom Schindl <tom.schindl@bestsolution.at> - initial API and implementation
  * Steven Spungin <steven@spungin.tv> - Bug 404166, 424730, 437951
- * Olivier Prouvost <olivier@opcoach.com> - Bug 472658, 530887
+ * Olivier Prouvost <olivier@opcoach.com> - Bug 472658, 530887, 412567
  ******************************************************************************/
 package org.eclipse.e4.tools.emf.ui.internal.common.component;
 
@@ -30,7 +30,6 @@ import org.eclipse.e4.tools.emf.ui.internal.ResourceProvider;
 import org.eclipse.e4.tools.emf.ui.internal.common.ModelEditor;
 import org.eclipse.e4.tools.emf.ui.internal.common.VirtualEntry;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.ControlFactory.TextPasteHandler;
-import org.eclipse.e4.tools.emf.ui.internal.common.component.dialogs.ContributionClassDialog;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.dialogs.PartDescriptorIconDialogEditor;
 import org.eclipse.e4.ui.model.application.commands.impl.CommandsPackageImpl;
 import org.eclipse.e4.ui.model.application.descriptor.basic.MPartDescriptor;
@@ -64,7 +63,6 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.Link;
 import org.eclipse.swt.widgets.Text;
 
 public class PartDescriptorEditor extends AbstractComponentEditor {
@@ -143,6 +141,7 @@ public class PartDescriptorEditor extends AbstractComponentEditor {
 		getMaster().setValue(object);
 		enableIdGenerator(UiPackageImpl.Literals.UI_LABEL__LABEL,
 				ApplicationPackageImpl.Literals.APPLICATION_ELEMENT__ELEMENT_ID, null);
+		context.updateModels();
 		return composite;
 	}
 
@@ -209,62 +208,23 @@ public class PartDescriptorEditor extends AbstractComponentEditor {
 		}
 
 		// ------------------------------------------------------------
-		final Link lnk;
-		{
-			/*
-			 * IContributionClassCreator accepts MContribitions but
-			 * MPartDescriptor does not implement, so we need to be a bit
-			 * creative here
-			 */
-			//
-			final IContributionClassCreator c = getEditor().getContributionCreator(
-					org.eclipse.e4.ui.model.application.ui.basic.impl.BasicPackageImpl.Literals.PART);
-			if (project != null && c != null) {
-				lnk = new Link(parent, SWT.NONE);
-				lnk.setText("<A>" + Messages.PartEditor_ClassURI + "</A>"); //$NON-NLS-1$//$NON-NLS-2$
-				lnk.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
-				final IObservableValue masterFinal = master;
-				lnk.addSelectionListener(new SelectionAdapter() {
-					@Override
-					public void widgetSelected(SelectionEvent e) {
-						final MPart dummyPart = MBasicFactory.INSTANCE.createPart();
-						final String contributionURI = ((MPartDescriptor) getMaster().getValue()).getContributionURI();
-						dummyPart.setContributionURI(contributionURI);
-						c.createOpen(dummyPart, getEditingDomain(), project, lnk.getShell());
-						((MPartDescriptor) masterFinal.getValue()).setContributionURI(dummyPart.getContributionURI());
-					}
-				});
-			} else {
-				// Dispose the lnk widget, which is unused in this else branch
-				// and screws up the layout: see https://bugs.eclipse.org/421369
-				lnk = null;
-				final Label l = new Label(parent, SWT.NONE);
-				l.setText(Messages.PartDescriptorEditor_ClassURI);
-				l.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
+		IContributionClassCreator contributionCreator = getEditor().getContributionCreator(
+				org.eclipse.e4.ui.model.application.ui.basic.impl.BasicPackageImpl.Literals.PART);
+
+		ControlFactory.createClassURIField(parent, Messages, this, Messages.PartEditor_ClassURI,
+				BasicPackageImpl.Literals.PART_DESCRIPTOR__CONTRIBUTION_URI,
+				contributionCreator,
+				project, context,
+				eclipseContext, new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				final MPart dummyPart = MBasicFactory.INSTANCE.createPart();
+				final String contributionURI = ((MPartDescriptor) getMaster().getValue()).getContributionURI();
+				dummyPart.setContributionURI(contributionURI);
+				contributionCreator.createOpen(dummyPart, getEditingDomain(), project, folder.getShell());
+				((MPartDescriptor) master.getValue()).setContributionURI(dummyPart.getContributionURI());
 			}
-
-			final Text t = new Text(parent, SWT.BORDER);
-			t.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-			context.bindValue(textProp.observeDelayed(200, t),
-					EMFEditProperties
-					.value(getEditingDomain(), BasicPackageImpl.Literals.PART_DESCRIPTOR__CONTRIBUTION_URI)
-					.observeDetail(master));
-			TextPasteHandler.createFor(t);
-
-			final Button b = new Button(parent, SWT.PUSH | SWT.FLAT);
-			b.setLayoutData(new GridData(GridData.FILL, GridData.CENTER, false, false));
-			b.setImage(createImage(ResourceProvider.IMG_Obj16_zoom));
-			b.setText(Messages.ModelTooling_Common_FindEllipsis);
-			b.addSelectionListener(new SelectionAdapter() {
-				@Override
-				public void widgetSelected(SelectionEvent e) {
-					final ContributionClassDialog dialog = new ContributionClassDialog(b.getShell(), eclipseContext,
-							getEditingDomain(), (MPartDescriptor) getMaster().getValue(),
-							BasicPackageImpl.Literals.PART_DESCRIPTOR__CONTRIBUTION_URI, Messages);
-					dialog.open();
-				}
-			});
-		}
+		});
 
 		// ------------------------------------------------------------
 		{

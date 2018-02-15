@@ -8,25 +8,18 @@
  * Contributors:
  * Tom Schindl <tom.schindl@bestsolution.at> - initial API and implementation
  * Steven Spungin <steven@spungin.tv> - Bug 424730
+ * Olivier Prouvost <olivier.prouvost@opcoach.com> - Bug 412567
  ******************************************************************************/
 package org.eclipse.e4.tools.emf.ui.internal.common.component;
 
 import javax.inject.Inject;
 
-import org.eclipse.core.databinding.Binding;
-import org.eclipse.core.databinding.UpdateValueStrategy;
 import org.eclipse.core.databinding.observable.list.IObservableList;
 import org.eclipse.core.databinding.observable.list.WritableList;
 import org.eclipse.core.databinding.observable.value.WritableValue;
 import org.eclipse.e4.core.contexts.IEclipseContext;
-import org.eclipse.e4.tools.emf.ui.common.ContributionURIValidator;
-import org.eclipse.e4.tools.emf.ui.common.IContributionClassCreator;
-import org.eclipse.e4.tools.emf.ui.common.Util;
 import org.eclipse.e4.tools.emf.ui.internal.ResourceProvider;
-import org.eclipse.e4.tools.emf.ui.internal.common.component.ControlFactory.TextPasteHandler;
-import org.eclipse.e4.tools.emf.ui.internal.common.component.dialogs.ContributionClassDialog;
 import org.eclipse.e4.tools.emf.ui.internal.common.objectdata.ObjectViewer;
-import org.eclipse.e4.ui.model.application.MContribution;
 import org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl;
 import org.eclipse.e4.ui.model.application.ui.impl.UiPackageImpl;
 import org.eclipse.e4.ui.model.application.ui.menu.MDirectMenuItem;
@@ -34,23 +27,16 @@ import org.eclipse.e4.ui.model.application.ui.menu.impl.MenuPackageImpl;
 import org.eclipse.emf.databinding.EMFDataBindingContext;
 import org.eclipse.emf.databinding.EMFProperties;
 import org.eclipse.emf.databinding.IEMFValueProperty;
-import org.eclipse.emf.databinding.edit.EMFEditProperties;
 import org.eclipse.jface.databinding.swt.IWidgetValueProperty;
 import org.eclipse.jface.databinding.swt.WidgetProperties;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.custom.CTabItem;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.Link;
-import org.eclipse.swt.widgets.Text;
 
 public class DirectMenuItemEditor extends MenuItemEditor {
 	private final IEMFValueProperty UI_ELEMENT__VISIBLE_WHEN = EMFProperties
@@ -108,59 +94,11 @@ public class DirectMenuItemEditor extends MenuItemEditor {
 	protected void createFormSubTypeForm(Composite parent, EMFDataBindingContext context, WritableValue master) {
 		final IWidgetValueProperty textProp = WidgetProperties.text(SWT.Modify);
 
-		// ------------------------------------------------------------
-		final Link lnk;
-		{
-			final IContributionClassCreator c = getEditor().getContributionCreator(
-					MenuPackageImpl.Literals.DIRECT_MENU_ITEM);
-			if (project != null && c != null) {
-				lnk = new Link(parent, SWT.NONE);
-				lnk.setText("<A>" + Messages.DirectMenuItemEditor_ClassURI + "</A>"); //$NON-NLS-1$//$NON-NLS-2$
-				lnk.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
-				lnk.addSelectionListener(new SelectionAdapter() {
-					@Override
-					public void widgetSelected(SelectionEvent e) {
-						c.createOpen((MContribution) getMaster().getValue(), getEditingDomain(), project,
-								lnk.getShell());
-					}
-				});
-			} else {
-				lnk = null;
-				final Label l = new Label(parent, SWT.NONE);
-				l.setText(Messages.DirectMenuItemEditor_ClassURI);
-				l.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
-			}
+		ControlFactory.createClassURIField(parent, Messages, this, Messages.DirectMenuItemEditor_ClassURI,
+				ApplicationPackageImpl.Literals.CONTRIBUTION__CONTRIBUTION_URI,
+				getEditor().getContributionCreator(MenuPackageImpl.Literals.DIRECT_MENU_ITEM), project, context,
+				eclipseContext);
 
-			final Text t = new Text(parent, SWT.BORDER);
-			TextPasteHandler.createFor(t);
-			t.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-			t.addModifyListener(e -> {
-				if (lnk != null) {
-					lnk.setToolTipText(((Text) e.getSource()).getText());
-				}
-			});
-			final Binding binding = context.bindValue(
-					textProp.observeDelayed(200, t),
-					EMFEditProperties.value(getEditingDomain(),
-							ApplicationPackageImpl.Literals.CONTRIBUTION__CONTRIBUTION_URI).observeDetail(master),
-					new UpdateValueStrategy().setAfterConvertValidator(new ContributionURIValidator()),
-					new UpdateValueStrategy());
-			Util.addDecoration(t, binding);
-
-			final Button b = new Button(parent, SWT.PUSH | SWT.FLAT);
-			b.setLayoutData(new GridData(GridData.FILL, GridData.CENTER, false, false));
-			b.setImage(createImage(ResourceProvider.IMG_Obj16_zoom));
-			b.setText(Messages.ModelTooling_Common_FindEllipsis);
-			b.addSelectionListener(new SelectionAdapter() {
-				@Override
-				public void widgetSelected(SelectionEvent e) {
-					final ContributionClassDialog dialog = new ContributionClassDialog(b.getShell(), eclipseContext,
-							getEditingDomain(), (MContribution) getMaster().getValue(),
-							ApplicationPackageImpl.Literals.CONTRIBUTION__CONTRIBUTION_URI, Messages);
-					dialog.open();
-				}
-			});
-		}
 	}
 
 	@Override

@@ -10,6 +10,7 @@
  * Dirk Fauth <dirk.fauth@googlemail.com> - Bug 426986
  * Steven Spungin <steven@spungin.tv> - Bug 430660, 430664, Bug 430809, 430717
  * Steven Spungin <steven@spungin.tv> - Ongoing maintenance
+ * Olivier Prouvost <olivier.prouvost@opcoach.com> - Bug 412567
  ******************************************************************************/
 package org.eclipse.e4.tools.emf.ui.internal.common.component;
 
@@ -26,6 +27,9 @@ import org.eclipse.core.databinding.validation.IValidator;
 import org.eclipse.core.databinding.validation.ValidationStatus;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.e4.core.contexts.IEclipseContext;
+import org.eclipse.e4.tools.emf.ui.common.ContributionURIValidator;
+import org.eclipse.e4.tools.emf.ui.common.IContributionClassCreator;
 import org.eclipse.e4.tools.emf.ui.common.Util;
 import org.eclipse.e4.tools.emf.ui.common.component.AbstractComponentEditor;
 import org.eclipse.e4.tools.emf.ui.internal.Messages;
@@ -34,6 +38,7 @@ import org.eclipse.e4.tools.emf.ui.internal.common.AbstractPickList.PickListFeat
 import org.eclipse.e4.tools.emf.ui.internal.common.E4PickList;
 import org.eclipse.e4.tools.emf.ui.internal.common.E4StringPickList;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.dialogs.BindingContextSelectionDialog;
+import org.eclipse.e4.tools.emf.ui.internal.common.component.dialogs.ContributionClassDialog;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.dialogs.FindImportElementDialog;
 import org.eclipse.e4.tools.emf.ui.internal.common.properties.ProjectOSGiTranslationProvider;
 import org.eclipse.e4.tools.services.IClipboardService.Handler;
@@ -41,6 +46,7 @@ import org.eclipse.e4.tools.services.IResourcePool;
 import org.eclipse.e4.ui.dialogs.filteredtree.PatternFilter;
 import org.eclipse.e4.ui.internal.workbench.E4XMIResource;
 import org.eclipse.e4.ui.model.application.MApplicationElement;
+import org.eclipse.e4.ui.model.application.MContribution;
 import org.eclipse.e4.ui.model.application.commands.impl.CommandsPackageImpl;
 import org.eclipse.e4.ui.model.application.impl.ApplicationFactoryImpl;
 import org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl;
@@ -54,6 +60,7 @@ import org.eclipse.emf.databinding.IEMFListProperty;
 import org.eclipse.emf.databinding.edit.EMFEditProperties;
 import org.eclipse.emf.databinding.edit.IEMFEditListProperty;
 import org.eclipse.emf.databinding.edit.IEMFEditValueProperty;
+import org.eclipse.emf.ecore.EAttribute;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.emf.ecore.resource.Resource;
@@ -94,8 +101,18 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Link;
 import org.eclipse.swt.widgets.Text;
 
+/**
+ * This class creates different widgets in editors...
+ *
+ * As all these widgets are common to a lot of editors. So this class could be
+ * moved in AbstractComponentEditor and the code would be really simplified
+ * because all parameters in static functions are already defined in
+ * AbstractComponentEditor
+ *
+ */
 public class ControlFactory {
 	public static final String COPY_HANDLER = ControlFactory.class.getName() + ".COPY_HANDLER"; //$NON-NLS-1$
 
@@ -627,30 +644,6 @@ public class ControlFactory {
 			t.setText(strSelected != null ? strSelected : ""); //$NON-NLS-1$
 		});
 
-		//
-		// final Button btnDelete = new Button(compButton, SWT.PUSH | SWT.FLAT);
-		// btnDelete.setText(Messages.ModelTooling_Common_Remove);
-		// btnDelete.setImage(editor.createImage(ResourceProvider.IMG_Obj16_table_delete));
-		// btnDelete.setLayoutData(new GridData(GridData.FILL, GridData.CENTER,
-		// true, false));
-		// btnDelete.addSelectionListener(new SelectionAdapter() {
-		// @Override
-		// public void widgetSelected(SelectionEvent e) {
-		// if (!viewer.getSelection().isEmpty()) {
-		// EObject el = (EObject) editor.getMaster().getValue();
-		// List<?> ids = ((IStructuredSelection)
-		// viewer.getSelection()).toList();
-		// Command cmd = RemoveCommand.create(editor.getEditingDomain(), el,
-		// feature, ids);
-		// if (cmd.canExecute()) {
-		// editor.getEditingDomain().getCommandStack().execute(cmd);
-		// if (ids.size() > 0) {
-		// viewer.setSelection(new StructuredSelection(ids.get(0)));
-		// }
-		// }
-		// }
-		// }
-		// });
 
 		return pickList;
 	}
@@ -770,4 +763,102 @@ public class ControlFactory {
 			}
 		});
 	}
+
+	/**
+	 * This method create a ClassURI field containing : a link to the class, a text
+	 * field (to set the value bundleclass://....) and a button find to find the
+	 * object. It must be called by all editors that need to get a class URI It adds
+	 * a validator to check if the value exists (OK), or if it is null or empty
+	 * (WARNING), or if the class does not exists (ERROR)
+	 *
+	 * @see <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id= 412567">Bug
+	 *      412567 </a> *
+	 * @param parent
+	 *            the parent composite
+	 * @param Messages
+	 *            The messages container class
+	 * @param editor
+	 *            the current abstractComponentEditor containing a classURI field
+	 * @param title
+	 *            the title of the field
+	 * @param feature
+	 *            the associated Feature in the model
+	 * @param c
+	 *            the Contribution Class creator to use to create the URI class
+	 * @param project
+	 *            current project where application model stands
+	 * @param context
+	 *            the EMFBinding context
+	 * @param eclipseContext
+	 *            the Eclipse context
+	 * @param adapter
+	 *            the selection adapter to use. For objects extending MContribution
+	 *            there is a default adapter. But for MPartDescriptors, which is not
+	 *            a MContribution, a specific adapter must be set (@see
+	 *            MPartDescriptorEditor)
+	 */
+	public static void createClassURIField(Composite parent, final Messages Messages,
+			final AbstractComponentEditor editor, String title, final EAttribute feature, IContributionClassCreator c,
+			IProject project,
+			EMFDataBindingContext context, IEclipseContext eclipseContext, SelectionAdapter adapter) {
+		final Link lnk;
+		final IWidgetValueProperty textProp = WidgetProperties.text(SWT.Modify);
+
+		if (project != null && c != null) {
+			lnk = new Link(parent, SWT.NONE);
+			lnk.setText("<A>" + title + "</A>"); //$NON-NLS-1$//$NON-NLS-2$
+			lnk.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
+			lnk.addSelectionListener(adapter);
+		} else {
+			lnk = null;
+			final Label l = new Label(parent, SWT.NONE);
+			l.setText(title);
+			l.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
+		}
+
+		final Text t = new Text(parent, SWT.BORDER);
+		TextPasteHandler.createFor(t);
+		t.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		t.addModifyListener(e -> {
+			if (lnk != null) {
+				lnk.setToolTipText(((Text) e.getSource()).getText());
+			}
+		});
+		final Binding binding = context.bindValue(textProp.observeDelayed(200, t),
+				EMFEditProperties
+				.value(editor.getEditingDomain(), feature)
+				.observeDetail(editor.getMaster()),
+				new UpdateValueStrategy().setAfterConvertValidator(new ContributionURIValidator()),
+				new UpdateValueStrategy());
+		Util.addDecoration(t, binding);
+
+		final Button b = new Button(parent, SWT.PUSH | SWT.FLAT);
+		b.setImage(editor.createImage(ResourceProvider.IMG_Obj16_zoom));
+		b.setText(Messages.ModelTooling_Common_FindEllipsis);
+		b.setLayoutData(new GridData(GridData.FILL, GridData.CENTER, false, false));
+		b.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				final ContributionClassDialog dialog = new ContributionClassDialog(b.getShell(), eclipseContext,
+						editor.getEditingDomain(), (MContribution) editor.getMaster().getValue(),
+						feature, Messages);
+				dialog.open();
+			}
+		});
+	}
+
+	public static void createClassURIField(Composite parent, final Messages Messages,
+			final AbstractComponentEditor editor, String title, final EAttribute feature, IContributionClassCreator c,
+			IProject project, EMFDataBindingContext context, IEclipseContext eclipseContext) {
+		createClassURIField(parent, Messages, editor, title, feature, c, project, context, eclipseContext,
+				new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				c.createOpen((MContribution) editor.getMaster().getValue(), editor.getEditingDomain(), project,
+						parent.getShell());
+			}
+		});
+
+	}
+
 }

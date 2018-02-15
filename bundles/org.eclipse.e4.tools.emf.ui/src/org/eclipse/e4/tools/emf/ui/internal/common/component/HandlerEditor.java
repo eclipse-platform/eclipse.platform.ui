@@ -9,12 +9,12 @@
  *     Tom Schindl <tom.schindl@bestsolution.at> - initial API and implementation
  *     Lars Vogel <Lars.Vogel@gmail.com> - Ongoing maintenance
  *     Steven Spungin <steven@spungin.tv> - Bug 424730
+ * Olivier Prouvost <olivier.prouvost@opcoach.com> - Bug 412567
  ******************************************************************************/
 package org.eclipse.e4.tools.emf.ui.internal.common.component;
 
 import javax.inject.Inject;
 
-import org.eclipse.core.databinding.Binding;
 import org.eclipse.core.databinding.UpdateValueStrategy;
 import org.eclipse.core.databinding.observable.list.IObservableList;
 import org.eclipse.core.databinding.observable.value.IObservableValue;
@@ -22,17 +22,13 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.di.annotations.Optional;
 import org.eclipse.e4.tools.emf.ui.common.CommandToStringConverter;
-import org.eclipse.e4.tools.emf.ui.common.ContributionURIValidator;
-import org.eclipse.e4.tools.emf.ui.common.IContributionClassCreator;
 import org.eclipse.e4.tools.emf.ui.common.IModelResource;
 import org.eclipse.e4.tools.emf.ui.common.Util;
 import org.eclipse.e4.tools.emf.ui.common.component.AbstractComponentEditor;
 import org.eclipse.e4.tools.emf.ui.internal.ResourceProvider;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.ControlFactory.TextPasteHandler;
-import org.eclipse.e4.tools.emf.ui.internal.common.component.dialogs.ContributionClassDialog;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.dialogs.HandlerCommandSelectionDialog;
 import org.eclipse.e4.tools.emf.ui.internal.common.objectdata.ObjectViewer;
-import org.eclipse.e4.ui.model.application.MContribution;
 import org.eclipse.e4.ui.model.application.commands.MHandler;
 import org.eclipse.e4.ui.model.application.commands.impl.CommandsPackageImpl;
 import org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl;
@@ -56,7 +52,6 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.Link;
 import org.eclipse.swt.widgets.Text;
 
 public class HandlerEditor extends AbstractComponentEditor {
@@ -124,6 +119,7 @@ public class HandlerEditor extends AbstractComponentEditor {
 		}
 
 		getMaster().setValue(object);
+		context.updateModels();
 		return composite;
 	}
 
@@ -175,50 +171,11 @@ public class HandlerEditor extends AbstractComponentEditor {
 			});
 		}
 
-		// ------------------------------------------------------------
-		final Link lnk;
-		{
-			final IContributionClassCreator c = getEditor().getContributionCreator(CommandsPackageImpl.Literals.HANDLER);
-			if (project != null && c != null) {
-				lnk = new Link(parent, SWT.NONE);
-				lnk.setText("<A>" + Messages.HandlerEditor_ClassURI + "</A>"); //$NON-NLS-1$//$NON-NLS-2$
-				lnk.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
-				lnk.addSelectionListener(new SelectionAdapter() {
-					@Override
-					public void widgetSelected(SelectionEvent e) {
-						c.createOpen((MContribution) getMaster().getValue(), getEditingDomain(), project, lnk.getShell());
-					}
-				});
-			} else {
-				lnk = null;
-				final Label l = new Label(parent, SWT.NONE);
-				l.setText(Messages.HandlerEditor_ClassURI);
-				l.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
-			}
+		ControlFactory.createClassURIField(parent, Messages, this, Messages.HandlerEditor_ClassURI,
+				ApplicationPackageImpl.Literals.CONTRIBUTION__CONTRIBUTION_URI,
+				getEditor().getContributionCreator(CommandsPackageImpl.Literals.HANDLER), project, context,
+				eclipseContext);
 
-			final Text t = new Text(parent, SWT.BORDER);
-			TextPasteHandler.createFor(t);
-			t.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-			t.addModifyListener(e -> {
-				if (lnk != null) {
-					lnk.setToolTipText(((Text) e.getSource()).getText());
-				}
-			});
-			final Binding binding = context.bindValue(textProp.observeDelayed(200, t), EMFEditProperties.value(getEditingDomain(), ApplicationPackageImpl.Literals.CONTRIBUTION__CONTRIBUTION_URI).observeDetail(getMaster()), new UpdateValueStrategy().setAfterConvertValidator(new ContributionURIValidator()), new UpdateValueStrategy());
-			Util.addDecoration(t, binding);
-
-			final Button b = new Button(parent, SWT.PUSH | SWT.FLAT);
-			b.setImage(createImage(ResourceProvider.IMG_Obj16_zoom));
-			b.setText(Messages.ModelTooling_Common_FindEllipsis);
-			b.setLayoutData(new GridData(GridData.FILL, GridData.CENTER, false, false));
-			b.addSelectionListener(new SelectionAdapter() {
-				@Override
-				public void widgetSelected(SelectionEvent e) {
-					final ContributionClassDialog dialog = new ContributionClassDialog(b.getShell(), eclipseContext, getEditingDomain(), (MContribution) getMaster().getValue(), ApplicationPackageImpl.Literals.CONTRIBUTION__CONTRIBUTION_URI, Messages);
-					dialog.open();
-				}
-			});
-		}
 		ControlFactory.createMapProperties(parent, Messages, this, Messages.ModelTooling_Contribution_PersistedState, ApplicationPackageImpl.Literals.APPLICATION_ELEMENT__PERSISTED_STATE, VERTICAL_LIST_WIDGET_INDENT);
 
 		item = new CTabItem(folder, SWT.NONE);
