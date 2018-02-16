@@ -58,7 +58,7 @@ public abstract class MarkerField {
 	 */
 	public Image annotateImage(MarkerItem item, Image image) {
 		ImageDescriptor[] descriptors = new ImageDescriptor[5];
-		if (item.getMarker() != null) {
+		if (item != null) {
 			IMarker marker = item.getMarker();
 			// If there is no image get the full image rather than the decorated
 			// one
