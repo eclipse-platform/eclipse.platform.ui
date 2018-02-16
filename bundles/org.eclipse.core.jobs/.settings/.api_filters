@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<component id="org.eclipse.core.jobs" version="2">
+    <resource path="src/org/eclipse/core/runtime/jobs/Job.java" type="org.eclipse.core.runtime.jobs.Job">
+        <filter comment="Bug 531276 - Mark Job.createSystem(ICoreRunnable) API for deletion" id="338944126">
+            <message_arguments>
+                <message_argument value="org.eclipse.core.runtime.jobs.Job"/>
+                <message_argument value="createSystem(ICoreRunnable)"/>
+            </message_arguments>
+        </filter>
+    </resource>
+</component>

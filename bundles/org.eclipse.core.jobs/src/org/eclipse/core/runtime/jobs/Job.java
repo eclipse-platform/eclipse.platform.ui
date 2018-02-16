@@ -237,7 +237,11 @@ public abstract class Job extends InternalJob implements IAdaptable {
 	 * @see ICoreRunnable
 	 * @see Job#setSystem(boolean)
 	 * @since 3.8
+	 * @noreference This API is planned to be deleted, see
+	 *              https://bugs.eclipse.org/531276 for details.
+	 * @deprecated use {@link #create(String, ICoreRunnable)} instead
 	 */
+	@Deprecated
 	public static Job createSystem(final ICoreRunnable runnable) {
 		return createSystem("", runnable); //$NON-NLS-1$
 	}
