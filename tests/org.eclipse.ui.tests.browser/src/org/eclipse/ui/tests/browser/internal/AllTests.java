@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2017 IBM Corporation and others.
+ * Copyright (c) 2004, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -18,7 +18,8 @@ import org.junit.runners.Suite;
 @Suite.SuiteClasses({
 		ExistenceTestCase.class, InternalBrowserViewTestCase.class, InternalBrowserEditorTestCase.class,
 		// ExternalBrowserTestCase.class);
-		DialogsTestCase.class, PreferencesTestCase.class, ToolbarBrowserTestCase.class, WebBrowserUtilTestCase.class
+		DialogsTestCase.class, PreferencesTestCase.class, TestInput.class, ToolbarBrowserTestCase.class,
+		WebBrowserUtilTestCase.class
 })
 public class AllTests {
 }
