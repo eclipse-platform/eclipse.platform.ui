@@ -677,30 +677,50 @@ public class ComputeProjectOrder {
 	 */
 	public static <T> Digraph<T> buildFilteredDigraph(Digraph<T> initialGraph, Predicate<T> filterOut, Class<T> clazz) {
 		Digraph<T> res = new Digraph<>(clazz);
-		Set<Vertex<T>> toRemove = new LinkedHashSet<>(); // Make it a TreeSet using depth as comparator?
+		Set<T> toRemove = new LinkedHashSet<>(); // Make it a TreeSet using depth as comparator?
 		for (Vertex<T> vertex : initialGraph.vertexList) {
-			if (!filterOut.test(vertex.id)) {
-				res.addVertex(vertex.id);
+			T id = vertex.id;
+			if (!filterOut.test(id)) {
+				res.addVertex(id);
 			} else {
-				toRemove.add(vertex);
+				toRemove.add(id);
 			}
 		}
-		Set<Edge<T>> edges = new LinkedHashSet<>(initialGraph.getEdges());
-		for (Vertex<T> vertexToRemove : toRemove) {
+		if (res.vertexList.size() < 2) { // 0 or 1 node -> no edge
+			return res;
+		}
+		final Set<Edge<T>> edgesWithRemovedRef = new LinkedHashSet<>();
+		initialGraph.getEdges().forEach(edge -> {
+			if (toRemove.contains(edge.from) || toRemove.contains(edge.to)) {
+				edgesWithRemovedRef.add(edge);
+			} else {
+				res.addEdge(edge.from, edge.to);
+			}
+		});
+		for (T idToRemove : toRemove) {
 			Set<Edge<T>> incoming = new LinkedHashSet<>();
 			Set<Edge<T>> outgoing = new LinkedHashSet<>();
-			for (Edge<T> edge : edges) {
-				if (edge.from == vertexToRemove.id) {
+			for (Edge<T> edge : edgesWithRemovedRef) {
+				if (edge.from == idToRemove) {
 					outgoing.add(edge);
-				} else if (edge.to == vertexToRemove.id) {
+				} else if (edge.to == idToRemove) {
 					incoming.add(edge);
 				}
 			}
-			edges.removeAll(incoming);
-			edges.removeAll(outgoing);
-			incoming.forEach(incomingEdge -> outgoing.forEach(outgoingEdge -> edges.add(new Edge<>(incomingEdge.from, outgoingEdge.to))));
+			edgesWithRemovedRef.removeAll(incoming);
+			edgesWithRemovedRef.removeAll(outgoing);
+			incoming.forEach(incomingEdge -> outgoing.forEach(outgoingEdge -> {
+				Edge<T> edge = new Edge<>(incomingEdge.from, outgoingEdge.to);
+				if (toRemove.contains(edge.from) || toRemove.contains(edge.to)) {
+					edgesWithRemovedRef.add(edge);
+				} else {
+					res.addEdge(edge.from, edge.to);
+				}
+			}));
 		}
-		edges.forEach(edge -> res.addEdge(edge.from, edge.to));
+		if (!edgesWithRemovedRef.isEmpty()) {
+			throw new IllegalStateException("There should be no remaining edge at this point."); //$NON-NLS-1$
+		}
 		return res;
 	}
 }

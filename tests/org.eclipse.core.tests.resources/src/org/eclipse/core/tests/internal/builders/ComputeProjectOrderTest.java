@@ -45,6 +45,7 @@ public class ComputeProjectOrderTest {
 		digraph.freeze();
 		ComputeProjectOrder.computeVertexOrder(digraph, Object.class);
 		long duration = System.currentTimeMillis() - timestamp;
+		System.err.println(duration);
 		assertTrue(duration < 1000);
 	}
 
@@ -64,12 +65,28 @@ public class ComputeProjectOrderTest {
 		Digraph<Object> filtered = ComputeProjectOrder.buildFilteredDigraph(digraph, o -> false, Object.class);
 		assertEquals(digraph.vertexMap.keySet(), filtered.vertexMap.keySet());
 		long duration = System.currentTimeMillis() - timestamp;
+		System.err.println(duration);
 		assertTrue(duration < 1000);
 		// keep only 1 element
 		timestamp = System.currentTimeMillis();
 		filtered = ComputeProjectOrder.buildFilteredDigraph(digraph, o -> o != initialVertex, Object.class);
 		assertEquals(Collections.singleton(initialVertex), filtered.vertexMap.keySet());
 		duration = System.currentTimeMillis() - timestamp;
+		System.err.println(duration);
+		assertTrue(duration < 1000);
+		// keep half elements
+		timestamp = System.currentTimeMillis();
+		Predicate<Object> removeOneOutOfTwo = new Predicate<Object>() {
+			private int i = 0;
+
+			@Override
+			public boolean test(Object t) {
+				return (i++) % 2 == 0;
+			}
+		};
+		filtered = ComputeProjectOrder.buildFilteredDigraph(digraph, removeOneOutOfTwo, Object.class);
+		duration = System.currentTimeMillis() - timestamp;
+		System.err.println(duration);
 		assertTrue(duration < 1000);
 	}
 
