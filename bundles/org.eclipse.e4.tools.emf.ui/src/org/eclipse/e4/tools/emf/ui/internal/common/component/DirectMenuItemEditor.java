@@ -27,8 +27,6 @@ import org.eclipse.e4.ui.model.application.ui.menu.impl.MenuPackageImpl;
 import org.eclipse.emf.databinding.EMFDataBindingContext;
 import org.eclipse.emf.databinding.EMFProperties;
 import org.eclipse.emf.databinding.IEMFValueProperty;
-import org.eclipse.jface.databinding.swt.IWidgetValueProperty;
-import org.eclipse.jface.databinding.swt.WidgetProperties;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CTabFolder;
@@ -92,7 +90,6 @@ public class DirectMenuItemEditor extends MenuItemEditor {
 
 	@Override
 	protected void createFormSubTypeForm(Composite parent, EMFDataBindingContext context, WritableValue master) {
-		final IWidgetValueProperty textProp = WidgetProperties.text(SWT.Modify);
 
 		ControlFactory.createClassURIField(parent, Messages, this, Messages.DirectMenuItemEditor_ClassURI,
 				ApplicationPackageImpl.Literals.CONTRIBUTION__CONTRIBUTION_URI,
