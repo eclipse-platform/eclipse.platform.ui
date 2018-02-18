@@ -18,8 +18,13 @@ import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.ActionContributionItem;
 import org.eclipse.jface.action.IMenuCreator;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Menu;
+import org.eclipse.swt.widgets.ToolItem;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.console.ConsolePlugin;
 import org.eclipse.ui.console.IConsole;
@@ -44,12 +49,11 @@ class ConsoleDropDownAction extends Action implements IMenuCreator, IConsoleList
 	}
 
 	public ConsoleDropDownAction(IConsoleView view) {
+		super(ConsoleMessages.ConsoleDropDownAction_0, AS_DROP_DOWN_MENU);
 		fView= view;
-		setText(ConsoleMessages.ConsoleDropDownAction_0);
 		setToolTipText(ConsoleMessages.ConsoleDropDownAction_1);
 		setImageDescriptor(ConsolePluginImages.getImageDescriptor(IConsoleConstants.IMG_VIEW_CONSOLE));
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(this, IConsoleHelpContextIds.CONSOLE_DISPLAY_CONSOLE_ACTION);
-		setMenuCreator(this);
 		ConsolePlugin.getDefault().getConsoleManager().addConsoleListener(this);
 		update();
 	}
@@ -128,6 +132,23 @@ class ConsoleDropDownAction extends Action implements IMenuCreator, IConsoleList
 			if (pinned) {
 				consoleView.setPinned(true);
 			}
+		}
+	}
+
+	@Override
+	public void runWithEvent(Event event) {
+		// Show menu on drop-down button, run action otherwise
+		if (event.detail == SWT.ARROW && event.widget instanceof ToolItem) {
+			ToolItem toolItem = (ToolItem) event.widget;
+			Control control = toolItem.getParent();
+			Menu menu = getMenu(control);
+
+			Rectangle bounds = toolItem.getBounds();
+			Point topLeft = new Point(bounds.x, bounds.y + bounds.height);
+			menu.setLocation(control.toDisplay(topLeft));
+			menu.setVisible(true);
+		} else {
+			run();
 		}
 	}
 

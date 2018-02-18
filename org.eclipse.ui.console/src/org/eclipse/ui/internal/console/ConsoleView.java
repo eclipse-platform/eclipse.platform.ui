@@ -359,6 +359,10 @@ public class ConsoleView extends PageBookView implements IConsoleView, IConsoleL
 			fDisplayConsoleAction.dispose();
 			fDisplayConsoleAction = null;
 		}
+		if (fOpenConsoleAction != null) {
+			fOpenConsoleAction.dispose();
+			fOpenConsoleAction = null;
+		}
 	}
 
 	/**

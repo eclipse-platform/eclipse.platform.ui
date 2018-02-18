@@ -39,12 +39,11 @@ public class OpenConsoleAction extends Action implements IMenuCreator {
 	private Menu fMenu;
 
 	public OpenConsoleAction() {
+		super(ConsoleMessages.OpenConsoleAction_0, AS_DROP_DOWN_MENU);
 		fFactoryExtensions = getSortedFactories();
-		setText(ConsoleMessages.OpenConsoleAction_0);
 		setToolTipText(ConsoleMessages.OpenConsoleAction_1);
 		setImageDescriptor(ConsolePluginImages.getImageDescriptor(IInternalConsoleConstants.IMG_ELCL_NEW_CON));
 		setDisabledImageDescriptor(ConsolePluginImages.getImageDescriptor(IInternalConsoleConstants.IMG_DLCL_NEW_CON));
-		setMenuCreator(this);
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(this, IConsoleHelpContextIds.CONSOLE_OPEN_CONSOLE_ACTION);
 	}
 
@@ -71,6 +70,10 @@ public class OpenConsoleAction extends Action implements IMenuCreator {
 	@Override
 	public void dispose() {
 		fFactoryExtensions = null;
+		if (fMenu != null) {
+			fMenu.dispose();
+			fMenu = null;
+		}
 	}
 
 	@Override
