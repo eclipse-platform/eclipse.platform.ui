@@ -401,11 +401,11 @@ public class UIEventsTest extends HeadlessApplicationElementTest {
 	private void ensureAllSet(EventTester tester) {
 		String[] unfiredIds = tester.getAttIds(false);
 		if (unfiredIds.length > 0) {
-			String msg = "No event fired:" + unfiredIds;
+			StringBuilder msg = new StringBuilder("No event fired:").append(unfiredIds);
 			for (int i = 0; i < unfiredIds.length; i++) {
-				msg += ' ' + unfiredIds[i];
+				msg.append(' ').append(unfiredIds[i]);
 			}
-			fail(msg);
+			fail(msg.toString());
 		}
 	}
 
