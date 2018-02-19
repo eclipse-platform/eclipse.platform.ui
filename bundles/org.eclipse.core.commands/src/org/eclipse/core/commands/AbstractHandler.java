@@ -34,9 +34,6 @@ public abstract class AbstractHandler extends EventManager implements IHandler2 
 	 */
 	private boolean baseEnabled = true;
 
-	/**
-	 * @see IHandler#addHandlerListener(IHandlerListener)
-	 */
 	@Override
 	public void addHandlerListener(final IHandlerListener handlerListener) {
 		addListenerObject(handlerListener);
@@ -45,8 +42,6 @@ public abstract class AbstractHandler extends EventManager implements IHandler2 
 	/**
 	 * The default implementation does nothing. Subclasses who attach listeners
 	 * to other objects are encouraged to detach them in this method.
-	 *
-	 * @see org.eclipse.core.commands.IHandler#dispose()
 	 */
 	@Override
 	public void dispose() {
@@ -160,9 +155,6 @@ public abstract class AbstractHandler extends EventManager implements IHandler2 
 		return isListenerAttached();
 	}
 
-	/**
-	 * @see IHandler#removeHandlerListener(IHandlerListener)
-	 */
 	@Override
 	public void removeHandlerListener(final IHandlerListener handlerListener) {
 		removeListenerObject(handlerListener);
