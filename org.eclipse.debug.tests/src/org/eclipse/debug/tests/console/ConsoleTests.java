@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2017 Andreas Loth and others.
+ * Copyright (c) 2017, 2018 Andreas Loth and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,22 +14,14 @@ package org.eclipse.debug.tests.console;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 
-import org.eclipse.core.commands.Command;
-import org.eclipse.debug.tests.AbstractDebugTest;
-import org.eclipse.debug.tests.TestUtil;
 import org.eclipse.jface.text.IDocument;
-import org.eclipse.ui.IViewPart;
-import org.eclipse.ui.IWorkbenchCommandConstants;
-import org.eclipse.ui.IWorkbenchPage;
-import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.commands.ICommandService;
-import org.eclipse.ui.console.ConsolePlugin;
-import org.eclipse.ui.console.IConsole;
+
 import org.eclipse.ui.console.IConsoleConstants;
-import org.eclipse.ui.console.IConsoleManager;
-import org.eclipse.ui.console.IOConsole;
 import org.eclipse.ui.console.IOConsoleOutputStream;
 import org.eclipse.ui.console.MessageConsole;
+
+import org.eclipse.debug.tests.AbstractDebugTest;
+import org.eclipse.debug.tests.TestUtil;
 
 import junit.framework.TestCase;
 
@@ -154,34 +146,4 @@ public class ConsoleTests extends AbstractDebugTest {
 		}
 	}
 
-	/**
-	 * Validate that we can use find and replace after opening a console in the
-	 * Console View.
-	 *
-	 * @see <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=268608">bug
-	 *      268608</a>
-	 */
-	public void testFindReplaceIsEnabledOnConsoleOpen() throws Exception {
-		IWorkbenchPage activePage = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
-		IViewPart consoleView = activePage.showView(IConsoleConstants.ID_CONSOLE_VIEW);
-
-		IOConsole console = new IOConsole("Test Console 7", IConsoleConstants.MESSAGE_CONSOLE_TYPE, null, true); //$NON-NLS-1$
-		console.getDocument().set("some text"); //$NON-NLS-1$
-
-		IConsoleManager consoleManager = ConsolePlugin.getDefault().getConsoleManager();
-		IConsole[] consoles = { console };
-
-		try {
-			consoleManager.addConsoles(consoles);
-			consoleManager.showConsoleView(console);
-			TestUtil.waitForJobs(getName(), 100, 3000);
-
-			ICommandService commandService = PlatformUI.getWorkbench().getService(ICommandService.class);
-			Command command = commandService.getCommand(IWorkbenchCommandConstants.EDIT_FIND_AND_REPLACE);
-			TestCase.assertTrue("expected FindReplace command to be enabled after opening console", command.isEnabled());
-		} finally {
-			consoleManager.removeConsoles(consoles);
-			activePage.hideView(consoleView);
-		}
-	}
 }
