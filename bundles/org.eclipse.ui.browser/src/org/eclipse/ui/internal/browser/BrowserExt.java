@@ -155,15 +155,15 @@ public class BrowserExt implements IBrowserExt {
 	 */
 	@Override
 	public String toString() {
-		String s = "BrowserExt: " + getId() + ", " + getName() + ", " + getOS()  //$NON-NLS-1$//$NON-NLS-2$ //$NON-NLS-3$
-				+ ", " + getExecutable() + ", " + getParameters() + ", ";  //$NON-NLS-1$//$NON-NLS-2$ //$NON-NLS-3$
+		StringBuilder s = new StringBuilder("BrowserExt: ").append(getId()).append(", " + getName()).append(", ") //$NON-NLS-1$//$NON-NLS-2$ //$NON-NLS-3$
+				.append(getOS()).append(", ").append(getExecutable()).append(", ").append(getParameters()).append(", "); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		String[] locations = getDefaultLocations();
 		if (locations != null) {
 			int size = locations.length;
 			for (int i = 0; i < size; i++) {
-				s += locations[i] + ";"; //$NON-NLS-1$
+				s.append(locations[i]).append(";"); //$NON-NLS-1$
 			}
 		}
-		return s;
+		return s.toString();
 	}
 }
