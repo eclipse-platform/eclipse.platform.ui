@@ -889,13 +889,12 @@ public class LinkedResourceEditor {
 				buf.append('_');
 
 		}
-		variableName = buf.toString();
 		int index = 1;
-		while (fProject.getPathVariableManager().isDefined(variableName)) {
-			variableName += index;
+		while (fProject.getPathVariableManager().isDefined(buf.toString())) {
+			buf.append(index);
 			index++;
 		}
-		return variableName;
+		return buf.toString();
 	}
 
 	void editLocation() {

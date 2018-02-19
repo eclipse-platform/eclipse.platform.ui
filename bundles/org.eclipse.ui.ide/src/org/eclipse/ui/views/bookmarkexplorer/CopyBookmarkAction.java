@@ -94,26 +94,25 @@ class CopyBookmarkAction extends BookmarkAction {
     }
 
     private String createBookmarkReport(IMarker[] markers) {
-        String report = ""; //$NON-NLS-1$
+		StringBuilder report = new StringBuilder();
+		// write header
+		report.append(BookmarkMessages.ColumnDescription_header).append('\t');
+		report.append(BookmarkMessages.ColumnResource_header).append('\t');
+		report.append(BookmarkMessages.ColumnFolder_header).append('\t');
+		report.append(BookmarkMessages.ColumnLocation_header);
+		report.append(System.getProperty("line.separator")); //$NON-NLS-1$
 
-        //write header
-        report += BookmarkMessages.ColumnDescription_header + '\t';
-        report += BookmarkMessages.ColumnResource_header + '\t';
-        report += BookmarkMessages.ColumnFolder_header + '\t';
-        report += BookmarkMessages.ColumnLocation_header;
-        report += System.getProperty("line.separator"); //$NON-NLS-1$
+		// write markers
+		for (IMarker marker : markers) {
+			report.append(MarkerUtil.getMessage(marker)).append('\t');
+			report.append(MarkerUtil.getResourceName(marker)).append('\t');
+			report.append(MarkerUtil.getContainerName(marker)).append('\t');
+			int line = MarkerUtil.getLineNumber(marker);
+			report.append(NLS.bind(BookmarkMessages.LineIndicator_text, String.valueOf(line)));
+			report.append(System.getProperty("line.separator")); //$NON-NLS-1$
+		}
 
-        //write markers
-        for (IMarker marker : markers) {
-            report += MarkerUtil.getMessage(marker) + '\t';
-            report += MarkerUtil.getResourceName(marker) + '\t';
-            report += MarkerUtil.getContainerName(marker) + '\t';
-            int line = MarkerUtil.getLineNumber(marker);
-            report += NLS.bind(BookmarkMessages.LineIndicator_text, String.valueOf(line));
-            report += System.getProperty("line.separator"); //$NON-NLS-1$
-        }
-
-        return report;
-    }
+		return report.toString();
+	}
 }
 

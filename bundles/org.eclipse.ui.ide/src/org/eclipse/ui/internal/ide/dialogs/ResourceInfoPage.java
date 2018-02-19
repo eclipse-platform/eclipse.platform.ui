@@ -1075,16 +1075,16 @@ public class ResourceInfoPage extends PropertyPage {
 
 	private boolean shouldPerformRecursiveChanges(List/*<IResourceChange>*/ changes) {
 		if (!changes.isEmpty()) {
-			String message = IDEWorkbenchMessages.ResourceInfo_recursiveChangesSummary
-					+ "\n"; //$NON-NLS-1$
+			StringBuilder message = new StringBuilder(IDEWorkbenchMessages.ResourceInfo_recursiveChangesSummary)
+					.append('\n');
 			for (int i = 0; i < changes.size(); i++) {
-				message += ((IResourceChange) changes.get(i)).getMessage();
+				message.append(((IResourceChange) changes.get(i)).getMessage());
 			}
-			message += IDEWorkbenchMessages.ResourceInfo_recursiveChangesQuestion;
+			message.append(IDEWorkbenchMessages.ResourceInfo_recursiveChangesQuestion);
 
 			MessageDialog dialog = new MessageDialog(getShell(),
 					IDEWorkbenchMessages.ResourceInfo_recursiveChangesTitle,
-					null, message, MessageDialog.QUESTION, 1,
+					null, message.toString(), MessageDialog.QUESTION, 1,
 					IDialogConstants.YES_LABEL,
 					IDialogConstants.NO_LABEL);
 

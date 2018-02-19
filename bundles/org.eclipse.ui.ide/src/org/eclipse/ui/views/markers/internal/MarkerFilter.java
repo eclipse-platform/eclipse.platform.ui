@@ -693,21 +693,21 @@ public class MarkerFilter implements Cloneable {
 		settings.putString(TAG_ENABLED, String.valueOf(enabled));
 		settings.putInteger(TAG_ON_RESOURCE, onResource);
 
-		String markerTypeIds = ""; //$NON-NLS-1$
+		StringBuilder markerTypeIds = new StringBuilder();
 
 		List<MarkerType> includedTypes = new ArrayList<>();
 		addAllSubTypes(includedTypes);
 		for (int i = 0; i < includedTypes.size(); i++) {
 			MarkerType markerType = includedTypes.get(i);
-			markerTypeIds += markerType.getId() + TAG_TYPES_DELIMITER;
+			markerTypeIds.append(markerType.getId()).append(TAG_TYPES_DELIMITER);
 			if (selectedTypes.contains(markerType)) {
-				markerTypeIds += SELECTED_TRUE + TAG_TYPES_DELIMITER;
+				markerTypeIds.append(SELECTED_TRUE).append(TAG_TYPES_DELIMITER);
 			} else {
-				markerTypeIds += SELECTED_FALSE + TAG_TYPES_DELIMITER;
+				markerTypeIds.append(SELECTED_FALSE).append(TAG_TYPES_DELIMITER);
 			}
 		}
 
-		settings.putString(TAG_SELECTION_STATUS, markerTypeIds);
+		settings.putString(TAG_SELECTION_STATUS, markerTypeIds.toString());
 		if (workingSet != null) {
 			settings.putString(TAG_WORKING_SET, workingSet.getName());
 		}
