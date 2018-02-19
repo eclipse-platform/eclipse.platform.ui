@@ -37,24 +37,23 @@ public class PatternUtil {
 		final String STOP = "\\E"; //$NON-NLS-1$
 		final int STOP_LENGTH = 2;  // STOP.length()
 
+		StringBuilder result = new StringBuilder(START);
 		int stopIndex = pattern.indexOf(STOP);
 		if (stopIndex < 0) {
-			return START + pattern + STOP;
+			return result.append(pattern).append(STOP).toString();
 		}
 
-		String result = START;
 		for (int position=0; ;) {
 			stopIndex = pattern.indexOf(STOP, position);
 			if (stopIndex >= 0) {
-				result += pattern.substring(position, stopIndex + 2)
-						+ "\\" + STOP + START; //$NON-NLS-1$
+				result.append(pattern.substring(position, stopIndex + 2)).append("\\").append(STOP).append(START); //$NON-NLS-1$
 				position = stopIndex + STOP_LENGTH;
 			} else {
-				result += pattern.substring(position) + STOP;
+				result.append(pattern.substring(position)).append(STOP);
 				break;
 			}
 		}
 
-		return result;
+		return result.toString();
 	}
 }

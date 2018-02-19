@@ -69,22 +69,16 @@ public class MultiEditorInput implements IEditorInput {
         return null;
     }
 
-    /*
-     * @see IEditorInput#getName()
-     */
-    @Override
+	@Override
 	public String getName() {
-        String name = ""; //$NON-NLS-1$
-        for (int i = 0; i < (input.length - 1); i++) {
-            name = name + input[i].getName() + "/"; //$NON-NLS-1$
-        }
-        name = name + input[input.length - 1].getName();
-        return name;
-    }
+		StringBuilder name = new StringBuilder();
+		for (int i = 0; i < (input.length - 1); i++) {
+			name.append(input[i].getName()).append("/"); //$NON-NLS-1$
+		}
+		name.append(input[input.length - 1].getName());
+		return name.toString();
+	}
 
-    /*
-     * @see IEditorInput#getPersistable()
-     */
     @Override
 	public IPersistableElement getPersistable() {
         return null;
