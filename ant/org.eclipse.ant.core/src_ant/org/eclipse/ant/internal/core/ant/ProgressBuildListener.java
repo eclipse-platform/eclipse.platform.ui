@@ -31,7 +31,7 @@ import org.eclipse.ant.internal.core.IAntCoreConstants;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.OperationCanceledException;
-import org.eclipse.core.runtime.SubProgressMonitor;
+import org.eclipse.core.runtime.SubMonitor;
 
 /**
  * Reports progress and checks for cancellation of a script execution.
@@ -330,6 +330,6 @@ public class ProgressBuildListener implements BuildListener {
 		if (monitor instanceof NullProgressMonitor) {
 			return monitor;
 		}
-		return new SubProgressMonitor(monitor, ticks);
+		return SubMonitor.convert(monitor, ticks);
 	}
 }

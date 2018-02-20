@@ -49,7 +49,7 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.core.runtime.SubProgressMonitor;
+import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.core.runtime.URIUtil;
 import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.core.DebugPlugin;
@@ -575,7 +575,7 @@ public class AntLaunchDelegate extends LaunchConfigurationDelegate {
 		}
 		// copy.setAttribute(IJavaLaunchConfigurationConstants.ATTR_VM_ARGUMENTS,
 		// "-Xdebug -Xnoagent -Djava.compiler=NONE -Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=8000");
-		IProgressMonitor subMonitor = new SubProgressMonitor(monitor, 10);
+		IProgressMonitor subMonitor = SubMonitor.convert(monitor, 10);
 		AntJavaLaunchDelegate delegate = new AntJavaLaunchDelegate();
 		delegate.preLaunchCheck(copy, ILaunchManager.RUN_MODE, subMonitor);
 		delegate.launch(copy, ILaunchManager.RUN_MODE, launch, subMonitor);
