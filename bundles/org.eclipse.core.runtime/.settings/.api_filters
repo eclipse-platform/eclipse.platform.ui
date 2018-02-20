@@ -85,4 +85,12 @@
             </message_arguments>
         </filter>
     </resource>
+    <resource path="src/org/eclipse/core/runtime/Platform.java" type="org.eclipse.core.runtime.Platform">
+        <filter comment="Planned for removal as of bug#528192" id="338944126">
+            <message_arguments>
+                <message_argument value="org.eclipse.core.runtime.Platform"/>
+                <message_argument value="getJobManager()"/>
+            </message_arguments>
+        </filter>
+    </resource>
 </component>

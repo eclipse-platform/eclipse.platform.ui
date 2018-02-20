@@ -832,6 +832,7 @@ public final class Platform {
 	 * @return the platform's job manager
 	 * @since 3.0
 	 * @deprecated The method {@link Job#getJobManager()} should be used instead.
+	 * @noreference This method is planned for removal. See bug#528192 for details.
 	 */
 	@Deprecated
 	public static IJobManager getJobManager() {
