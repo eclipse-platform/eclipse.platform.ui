@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2017 IBM Corporation and others.
+ * Copyright (c) 2000, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -687,7 +687,9 @@ public class AntCorePreferences implements IPropertyChangeListener {
 		} else {
 			try {
 				URL fileURL = FileLocator.toFileURL(bundle.getEntry(library));
-				urlFile = URIUtil.toFile(URIUtil.toURI(fileURL));
+				if (fileURL != null) {
+					urlFile = URIUtil.toFile(URIUtil.toURI(fileURL));
+				}
 			}
 			catch (URISyntaxException e) {
 				AntCorePlugin.log(e);
