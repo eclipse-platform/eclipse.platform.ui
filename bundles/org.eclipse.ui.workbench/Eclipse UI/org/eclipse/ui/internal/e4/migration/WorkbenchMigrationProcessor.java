@@ -87,8 +87,8 @@ public class WorkbenchMigrationProcessor {
 		defaultWindows = new ArrayList<>(application.getChildren());
 		application.getChildren().clear();
 		IEclipseContext builderContext = context.createChild();
-		IModelBuilderFactory builderFactory = ContextInjectionFactory.make(
-				ModelBuilderFactoryImpl.class, builderContext);
+		IModelBuilderFactory builderFactory = ContextInjectionFactory.make(ModelBuilderFactoryImpl.class,
+				builderContext);
 		builderContext.set(IModelBuilderFactory.class, builderFactory);
 		ApplicationBuilder modelBuilder = builderFactory.createApplicationBuilder(new WorkbenchMementoReader(
 				workbenchMemento));
@@ -99,24 +99,12 @@ public class WorkbenchMigrationProcessor {
 	}
 
 	private IMemento loadMemento() {
-		BufferedReader reader = null;
 		IMemento memento = null;
-		try {
-			reader = new BufferedReader(
-					new InputStreamReader(new FileInputStream(legacyWorkbenchFile), StandardCharsets.UTF_8));
+		try (BufferedReader reader = new BufferedReader(
+					new InputStreamReader(new FileInputStream(legacyWorkbenchFile), StandardCharsets.UTF_8))){
 			memento = XMLMemento.createReadRoot(reader);
-		} catch (IOException e) {
+		} catch (IOException | WorkbenchException e) {
 			WorkbenchPlugin.log("Failed to load " + legacyWorkbenchFile.getAbsolutePath(), e); //$NON-NLS-1$
-		} catch (WorkbenchException e) {
-			WorkbenchPlugin.log("Failed to load " + legacyWorkbenchFile.getAbsolutePath(), e); //$NON-NLS-1$
-		} finally {
-			if (reader != null) {
-				try {
-					reader.close();
-				} catch (IOException e) {
-					WorkbenchPlugin.log(e);
-				}
-			}
 		}
 		return memento;
 	}
@@ -137,8 +125,7 @@ public class WorkbenchMigrationProcessor {
 		return migrated;
 	}
 
-	public void updatePartsAfterMigration(IPerspectiveRegistry perspectiveRegistry,
-			IViewRegistry viewRegistry) {
+	public void updatePartsAfterMigration(IPerspectiveRegistry perspectiveRegistry, IViewRegistry viewRegistry) {
 		if (!migrated) {
 			return;
 		}
