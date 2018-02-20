@@ -61,8 +61,7 @@ public final class XMLMemento implements IMemento {
      * @return a memento on the first <code>Element</code> for reading the document
      * @throws WorkbenchException if IO problems, invalid format, or no element.
      */
-    public static XMLMemento createReadRoot(Reader reader)
-            throws WorkbenchException {
+	public static XMLMemento createReadRoot(Reader reader) throws WorkbenchException {
         return createReadRoot(reader, null);
     }
 
@@ -80,14 +79,12 @@ public final class XMLMemento implements IMemento {
      * @return a memento on the first <code>Element</code> for reading the document
      * @throws WorkbenchException if IO problems, invalid format, or no element.
      */
-    public static XMLMemento createReadRoot(Reader reader, String baseDir)
-            throws WorkbenchException {
+	public static XMLMemento createReadRoot(Reader reader, String baseDir) throws WorkbenchException {
         String errorMessage = null;
         Exception exception = null;
 
         try {
-            DocumentBuilderFactory factory = DocumentBuilderFactory
-                    .newInstance();
+			DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
             DocumentBuilder parser = factory.newDocumentBuilder();
             InputSource source = new InputSource(reader);
             if (baseDir != null) {
