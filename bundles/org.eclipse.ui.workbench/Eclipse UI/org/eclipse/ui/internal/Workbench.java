@@ -1143,7 +1143,6 @@ public final class Workbench extends EventManager implements IWorkbench,
 			@Override
 			public void run() {
 				if (isClosing || force) {
-					// isClosing = windowManager.close();
 					E4Util.unsupported("Need to close since no windowManager"); //$NON-NLS-1$
 					MWindow selectedWindow = application.getSelectedElement();
 					WorkbenchWindow selected = null;
@@ -1177,7 +1176,6 @@ public final class Workbench extends EventManager implements IWorkbench,
 
 		IPresentationEngine engine = application.getContext().get(IPresentationEngine.class);
 		engine.stop();
-		//System.err.println("stop()"); //$NON-NLS-1$
 
 		runEventLoop = false;
 		return true;
@@ -1703,8 +1701,6 @@ public final class Workbench extends EventManager implements IWorkbench,
 		} finally {
 			UIStats.end(UIStats.RESTORE_WORKBENCH, this, "Workbench"); //$NON-NLS-1$
 		}
-
-		// forceOpenPerspective();
 
 		return true;
 	}
