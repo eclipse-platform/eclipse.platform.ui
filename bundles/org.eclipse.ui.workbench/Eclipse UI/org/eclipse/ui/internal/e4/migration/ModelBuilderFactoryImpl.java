@@ -31,16 +31,14 @@ public class ModelBuilderFactoryImpl implements IModelBuilderFactory {
 	public PerspectiveBuilder createPerspectiveBuilder(PerspectiveReader perspReader) {
 		IEclipseContext childContext = context.createChild();
 		childContext.set(PerspectiveReader.class, perspReader);
-		return ContextInjectionFactory.make(PerspectiveBuilder.class,
-				childContext);
+		return ContextInjectionFactory.make(PerspectiveBuilder.class, childContext);
 	}
 
 	@Override
 	public ApplicationBuilder createApplicationBuilder(WorkbenchMementoReader reader) {
 		IEclipseContext childContext = context.createChild();
 		childContext.set(WorkbenchMementoReader.class, reader);
-		return ContextInjectionFactory.make(ApplicationBuilder.class,
-				childContext);
+		return ContextInjectionFactory.make(ApplicationBuilder.class, childContext);
 	}
 
 }
