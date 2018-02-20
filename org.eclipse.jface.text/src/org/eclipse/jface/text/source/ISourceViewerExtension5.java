@@ -33,6 +33,20 @@ public interface ISourceViewerExtension5 {
 	void setCodeMiningAnnotationPainter(AnnotationPainter painter);
 
 	/**
+	 * Register the code mining providers.
+	 *
+	 * @param codeMiningProviders the code mining providers to register.
+	 */
+	void setCodeMiningProviders(ICodeMiningProvider[] codeMiningProviders);
+
+	/**
+	 * Returns true there are code mining providers and false otherwise.
+	 *
+	 * @return true there are code mining providers and false otherwise.
+	 */
+	boolean hasCodeMiningProviders();
+
+	/**
 	 * Update the code minings.
 	 *
 	 * Clients and implementors are responsible of calling this method when needed. A typical
@@ -41,10 +55,4 @@ public interface ISourceViewerExtension5 {
 	 */
 	void updateCodeMinings();
 
-	/**
-	 * Register the code mining providers.
-	 *
-	 * @param codeMiningProviders the code mining providers to register.
-	 */
-	void setCodeMiningProviders(ICodeMiningProvider[] codeMiningProviders);
 }

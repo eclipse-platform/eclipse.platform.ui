@@ -761,7 +761,7 @@ public class SourceViewer extends TextViewer implements ISourceViewer, ISourceVi
 
 		setHyperlinkDetectors(null, SWT.NONE);
 
-		if (fCodeMiningManager != null) {
+		if (hasCodeMiningProviders()) {
 			fCodeMiningManager.uninstall();
 			fCodeMiningManager= null;
 		}
@@ -1272,12 +1272,12 @@ public class SourceViewer extends TextViewer implements ISourceViewer, ISourceVi
 		boolean enable= codeMiningProviders != null && codeMiningProviders.length > 0;
 		fCodeMiningProviders= codeMiningProviders;
 		if (enable) {
-			if (fCodeMiningManager != null) {
+			if (hasCodeMiningProviders()) {
 				fCodeMiningManager.setCodeMiningProviders(fCodeMiningProviders);
 			}
 			ensureCodeMiningManagerInstalled();
 		} else {
-			if (fCodeMiningManager != null)
+			if (hasCodeMiningProviders())
 				fCodeMiningManager.uninstall();
 			fCodeMiningManager= null;
 		}
@@ -1300,8 +1300,13 @@ public class SourceViewer extends TextViewer implements ISourceViewer, ISourceVi
 	}
 
 	@Override
+	public boolean hasCodeMiningProviders() {
+		return fCodeMiningManager != null;
+	}
+
+	@Override
 	public void updateCodeMinings() {
-		if (fCodeMiningManager != null) {
+		if (hasCodeMiningProviders()) {
 			fCodeMiningManager.run();
 		}
 	}
