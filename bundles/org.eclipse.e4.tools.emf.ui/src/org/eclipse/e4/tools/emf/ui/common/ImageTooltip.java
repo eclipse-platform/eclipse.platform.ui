@@ -77,7 +77,11 @@ public class ImageTooltip extends ToolTip {
 
 		l = new Label(parent, SWT.NONE);
 		final int pos = imageUri.lastIndexOf('/');
-		l.setText(imageUri.substring(pos));
+		if (pos != -1) {
+			l.setText(imageUri.substring(pos));
+		} else {
+			l.setText(imageUri);
+		}
 
 		// ---------------------------------
 		l = new Label(parent, SWT.NONE);

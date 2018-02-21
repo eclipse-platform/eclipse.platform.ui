@@ -151,7 +151,7 @@ public abstract class AbstractComponentEditor {
 		Image img = null;
 		// Returns only an image if there is a non empty Icon URI
 		final String iconUri = element.getIconURI();
-		if (iconUri != null && iconUri.length() > 0) {
+		if (iconUri != null && iconUri.trim().length() > 0) {
 			final boolean greyVersion = shouldBeGrey(element);
 			// Is this image already loaded ?
 			img = getImage(iconUri, greyVersion);
