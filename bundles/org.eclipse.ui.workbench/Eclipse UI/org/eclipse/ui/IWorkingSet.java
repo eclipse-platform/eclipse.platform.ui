@@ -32,7 +32,7 @@ public interface IWorkingSet extends IPersistableElement, IAdaptable {
      * </p>
      * @return	the working set's elements
      */
-    public IAdaptable[] getElements();
+    IAdaptable[] getElements();
 
     /**
      * Returns the working set id. Returns <code>null</code> if no
@@ -46,7 +46,7 @@ public interface IWorkingSet extends IPersistableElement, IAdaptable {
      * @return the working set id. May be <code>null</code>
      * @since 2.1
      */
-    public String getId();
+    String getId();
 
     /**
      * Returns the working set icon.
@@ -61,8 +61,7 @@ public interface IWorkingSet extends IPersistableElement, IAdaptable {
      * @since 2.1
      * @deprecated use {@link #getImageDescriptor()} instead
      */
-    @Deprecated
-	public ImageDescriptor getImage();
+    @Deprecated ImageDescriptor getImage();
 
     /**
      * Returns the working set icon.
@@ -76,14 +75,14 @@ public interface IWorkingSet extends IPersistableElement, IAdaptable {
      * @return the working set icon or <code>null</code>.
      * @since 3.3
      */
-    public ImageDescriptor getImageDescriptor();
+    ImageDescriptor getImageDescriptor();
 
     /**
      * Returns the name of the working set.
      *
      * @return	the name of the working set
      */
-    public String getName();
+    String getName();
 
     /**
 	 * Sets the elements that are contained in this working set.
@@ -94,7 +93,7 @@ public interface IWorkingSet extends IPersistableElement, IAdaptable {
 	 *        through the results from calling
 	 *        {@link #adaptElements(IAdaptable[])} with the desired elements.
 	 */
-	public void setElements(IAdaptable[] elements);
+	void setElements(IAdaptable[] elements);
 
     /**
 	 * Sets the working set id. This is one of the ids defined by extensions of
@@ -106,7 +105,7 @@ public interface IWorkingSet extends IPersistableElement, IAdaptable {
 	 *            the working set id. May be <code>null</code>
 	 * @since 2.1
 	 */
-    public void setId(String id);
+    void setId(String id);
 
     /**
      * Sets the name of the working set.
@@ -116,7 +115,7 @@ public interface IWorkingSet extends IPersistableElement, IAdaptable {
      *
      * @param name the name of the working set
      */
-    public void setName(String name);
+    void setName(String name);
 
     /**
      * Returns whether this working set can be edited or not. To make
@@ -128,7 +127,7 @@ public interface IWorkingSet extends IPersistableElement, IAdaptable {
      *
      * @since 3.1
      */
-    public boolean isEditable();
+    boolean isEditable();
 
     /**
 	 * Returns whether this working set should be shown in user interface
@@ -139,7 +138,7 @@ public interface IWorkingSet extends IPersistableElement, IAdaptable {
 	 *
 	 * @since 3.2
 	 */
-	public boolean isVisible();
+	boolean isVisible();
 
     /**
 	 * Return the name of this working set, formated for the end user. Often this value is
@@ -148,7 +147,7 @@ public interface IWorkingSet extends IPersistableElement, IAdaptable {
 	 * @return the name of this working set, formated for the end user
 	 * @since 3.2
 	 */
-    public String getLabel();
+    String getLabel();
 
     /**
 	 * Set the name of this working set, formated for the end user.
@@ -158,7 +157,7 @@ public interface IWorkingSet extends IPersistableElement, IAdaptable {
 	 *            supplied then the value of {@link #getName()} will be used.
 	 * @since 3.2
 	 */
-	public void setLabel(String label);
+	void setLabel(String label);
 
 	/**
 	 * Returns <code>true</code> if this working set is capable of updating
@@ -171,7 +170,7 @@ public interface IWorkingSet extends IPersistableElement, IAdaptable {
 	 * @return whether the set is self-updating or not
 	 * @since 3.2
 	 */
-	public boolean isSelfUpdating();
+	boolean isSelfUpdating();
 
 	/**
 	 * Returns whether this working set is an aggregate working set or not.
@@ -186,7 +185,7 @@ public interface IWorkingSet extends IPersistableElement, IAdaptable {
 	 * @return whether this working set is an aggregate working set or not
 	 * @since 3.2
 	 */
-	public boolean isAggregateWorkingSet();
+	boolean isAggregateWorkingSet();
 
 	/**
 	 * Returns whether this working set is currently empty (has no elements).
@@ -194,7 +193,7 @@ public interface IWorkingSet extends IPersistableElement, IAdaptable {
 	 * @return whether this working set is currently empty
 	 * @since 3.2
 	 */
-	public boolean isEmpty();
+	boolean isEmpty();
 
 	/**
 	 * Transforms the supplied elements into elements that are suitable for
@@ -211,5 +210,5 @@ public interface IWorkingSet extends IPersistableElement, IAdaptable {
 	 * @see org.eclipse.ui.IWorkingSetElementAdapter
 	 * @see org.eclipse.ui.BasicWorkingSetElementAdapter
 	 */
-	public IAdaptable[] adaptElements(IAdaptable[] objects);
+	IAdaptable[] adaptElements(IAdaptable[] objects);
 }

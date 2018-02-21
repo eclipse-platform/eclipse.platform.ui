@@ -486,7 +486,7 @@ public final class ExternalActionManager {
 	 *
 	 * @since 3.1
 	 */
-	public static interface IActiveChecker {
+	public interface IActiveChecker {
 		/**
 		 * Checks whether the command with the given identifier should be
 		 * considered active. This can be used in systems using some kind of
@@ -498,7 +498,7 @@ public final class ExternalActionManager {
 		 * @return <code>true</code> if the command is active;
 		 *         <code>false</code> otherwise.
 		 */
-		public boolean isActive(String commandId);
+		boolean isActive(String commandId);
 	}
 
 	/**
@@ -514,7 +514,7 @@ public final class ExternalActionManager {
 	 *
 	 * @since 3.2
 	 */
-	public static interface IBindingManagerCallback extends ICallback {
+	public interface IBindingManagerCallback extends ICallback {
 
 		/**
 		 * <p>
@@ -529,7 +529,7 @@ public final class ExternalActionManager {
 		 *         for a particular command identifier. This value is guaranteed
 		 *         not to be <code>null</code>, but it may be empty.
 		 */
-		public TriggerSequence[] getActiveBindingsFor(String commandId);
+		TriggerSequence[] getActiveBindingsFor(String commandId);
 	}
 
 	/**
@@ -538,7 +538,7 @@ public final class ExternalActionManager {
 	 *
 	 * @since 3.4
 	 */
-	public static interface IExecuteApplicable {
+	public interface IExecuteApplicable {
 		/**
 		 * Allow the callback to filter out actions that should not fire
 		 * execution events.
@@ -547,7 +547,7 @@ public final class ExternalActionManager {
 		 *            The action with an actionDefinitionId
 		 * @return true if this action should be considered.
 		 */
-		public boolean isApplicable(IAction action);
+		boolean isApplicable(IAction action);
 	}
 
 	/**
@@ -562,7 +562,7 @@ public final class ExternalActionManager {
 	 * @since 3.4
 	 *
 	 */
-	public static interface IExecuteCallback {
+	public interface IExecuteCallback {
 
 		/**
 		 * Fires a <code>NotEnabledException</code> because the action was not
@@ -574,7 +574,7 @@ public final class ExternalActionManager {
 		 * @param exception
 		 * 			The <code>NotEnabledException</code>, never <code>null</code>.
 		 */
-		public void notEnabled(IAction action, NotEnabledException exception);
+		void notEnabled(IAction action, NotEnabledException exception);
 
 		/**
 		 * Fires a <code>NotDefinedException</code> because the action was not
@@ -586,7 +586,7 @@ public final class ExternalActionManager {
 		 * @param exception
 		 * 			The <code>NotDefinedException</code>, never <code>null</code>.
 		 */
-		public void notDefined(IAction action, NotDefinedException exception);
+		void notDefined(IAction action, NotDefinedException exception);
 
 		/**
 		 * Fires an execution event before an action is run.
@@ -598,7 +598,7 @@ public final class ExternalActionManager {
 		 *            The SWT Event, may be <code>null</code>.
 		 *
 		 */
-		public void preExecute(IAction action,
+		void preExecute(IAction action,
 				Event e);
 
 		/**
@@ -611,7 +611,7 @@ public final class ExternalActionManager {
 		 *            The command's result, may be <code>null</code>.
 		 *
 		 */
-		public void postExecuteSuccess(IAction action,
+		void postExecuteSuccess(IAction action,
 				Object returnValue);
 
 		/**
@@ -624,7 +624,7 @@ public final class ExternalActionManager {
 		 * @param exception
 		 * 			The <code>ExecutionException</code>, never <code>null</code>.
 		 */
-		public void postExecuteFailure(IAction action,
+		void postExecuteFailure(IAction action,
 				ExecutionException exception);
 	}
 
@@ -634,7 +634,7 @@ public final class ExternalActionManager {
 	 *
 	 * @since 3.0
 	 */
-	public static interface ICallback {
+	public interface ICallback {
 
 		/**
 		 * <p>
@@ -654,7 +654,7 @@ public final class ExternalActionManager {
 		 * @param listener
 		 *            The listener to be added; must not be <code>null</code>.
 		 */
-		public void addPropertyChangeListener(String identifier,
+		void addPropertyChangeListener(String identifier,
 				IPropertyChangeListener listener);
 
 		/**
@@ -668,7 +668,7 @@ public final class ExternalActionManager {
 		 * @return An integer representation of the accelerator. This is the
 		 *         same accelerator format used by SWT.
 		 */
-		public Integer getAccelerator(String identifier);
+		Integer getAccelerator(String identifier);
 
 		/**
 		 * An accessor for the accelerator text associated with the item
@@ -682,7 +682,7 @@ public final class ExternalActionManager {
 		 * @return A string representation of the accelerator. This is the
 		 *         string representation that should be displayed to the user.
 		 */
-		public String getAcceleratorText(String identifier);
+		String getAcceleratorText(String identifier);
 
 		/**
 		 * Checks to see whether the given accelerator is being used by some
@@ -696,7 +696,7 @@ public final class ExternalActionManager {
 		 * @return <code>true</code> if the accelerator is already being used
 		 *         and shouldn't be used again; <code>false</code> otherwise.
 		 */
-		public boolean isAcceleratorInUse(int accelerator);
+		boolean isAcceleratorInUse(int accelerator);
 
 		/**
 		 * Checks whether the item matching this identifier is active. This is
@@ -709,7 +709,7 @@ public final class ExternalActionManager {
 		 * @return <code>true</code> if the item is active; <code>false</code>
 		 *         otherwise.
 		 */
-		public boolean isActive(String identifier);
+		boolean isActive(String identifier);
 
 		/**
 		 * Removes a listener from the object referenced by
@@ -723,7 +723,7 @@ public final class ExternalActionManager {
 		 * @param listener
 		 *            The listener to be removed; must not be <code>null</code>.
 		 */
-		public void removePropertyChangeListener(String identifier,
+		void removePropertyChangeListener(String identifier,
 				IPropertyChangeListener listener);
 
 	}

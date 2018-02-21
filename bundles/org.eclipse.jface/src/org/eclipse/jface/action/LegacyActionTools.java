@@ -90,7 +90,7 @@ public final class LegacyActionTools {
 	 *            the key code to be translated
 	 * @return a string representation of the key code
 	 */
-	public static final String convertAccelerator(final int keyCode) {
+	public static String convertAccelerator(final int keyCode) {
 		String modifier = getModifierString(keyCode);
 		String fullKey;
 		if (modifier.equals("")) { //$NON-NLS-1$
@@ -109,7 +109,7 @@ public final class LegacyActionTools {
 	 *            the accelerator text
 	 * @return the SWT key code, or 0 if there is no accelerator
 	 */
-	public static final int convertAccelerator(final String acceleratorText) {
+	public static int convertAccelerator(final String acceleratorText) {
 		int accelerator = 0;
 		StringTokenizer stok = new StringTokenizer(acceleratorText, "+"); //$NON-NLS-1$
 
@@ -150,7 +150,7 @@ public final class LegacyActionTools {
 	 *            the accelerator text localized to the current locale
 	 * @return the SWT key code, or 0 if there is no accelerator
 	 */
-	static final int convertLocalizedAccelerator(final String acceleratorText) {
+	static int convertLocalizedAccelerator(final String acceleratorText) {
 		int accelerator = 0;
 		StringTokenizer stok = new StringTokenizer(acceleratorText, "+"); //$NON-NLS-1$
 
@@ -189,7 +189,7 @@ public final class LegacyActionTools {
 	 *            the text for the action; may be <code>null</code>.
 	 * @return the accelerator text, or <code>null</code>
 	 */
-	public static final String extractAcceleratorText(final String text) {
+	public static String extractAcceleratorText(final String text) {
 		if (text == null) {
 			return null;
 		}
@@ -213,7 +213,7 @@ public final class LegacyActionTools {
 	 * @return The text of the mnemonic; will be {@link #MNEMONIC_NONE} if there
 	 *         is no mnemonic;
 	 */
-	public static final char extractMnemonic(final String text) {
+	public static char extractMnemonic(final String text) {
 		if (text == null) {
 			return MNEMONIC_NONE;
 		}
@@ -271,7 +271,7 @@ public final class LegacyActionTools {
 	 * @return the SWT key code, <code>-1</code> if no match was found
 	 * @see SWT
 	 */
-	public static final int findKeyCode(String token) {
+	public static int findKeyCode(String token) {
 		if (keyCodes == null) {
 			initKeyCodes();
 		}
@@ -299,7 +299,7 @@ public final class LegacyActionTools {
 	 * @see SWT
 	 * @since 2.0
 	 */
-	public static final String findKeyString(final int keyCode) {
+	public static String findKeyString(final int keyCode) {
 		if (keyStrings == null) {
 			initKeyStrings();
 		}
@@ -326,7 +326,7 @@ public final class LegacyActionTools {
 	 * @return the SWT key code, <code>-1</code> if no match was found
 	 * @see #findKeyCode
 	 */
-	private static final int findLocalizedKeyCode(String token) {
+	private static int findLocalizedKeyCode(String token) {
 		if (localizedKeyCodes == null) {
 			initLocalizedKeyCodes();
 		}
@@ -351,7 +351,7 @@ public final class LegacyActionTools {
 	 *
 	 * @see #findModifier
 	 */
-	private static final int findLocalizedModifier(String token) {
+	private static int findLocalizedModifier(String token) {
 		if (localizedCtrl == null) {
 			initLocalizedModifiers();
 		}
@@ -384,7 +384,7 @@ public final class LegacyActionTools {
 	 * @return the SWT modifier bit, or <code>0</code> if no match was found
 	 * @see SWT
 	 */
-	public static final int findModifier(String token) {
+	public static int findModifier(String token) {
 		token = token.toUpperCase();
 		if (token.equals("CTRL")) { //$NON-NLS-1$
 			return SWT.CTRL;
@@ -412,7 +412,7 @@ public final class LegacyActionTools {
 	 *         <code>null</code> if the key code was not an SWT modifier bit
 	 * @see SWT
 	 */
-	public static final String findModifierString(final int keyCode) {
+	public static String findModifierString(final int keyCode) {
 		if (keyCode == SWT.CTRL) {
 			return JFaceResources.getString("Ctrl"); //$NON-NLS-1$
 		}
@@ -477,7 +477,7 @@ public final class LegacyActionTools {
 	/**
 	 * Initializes the internal key code table.
 	 */
-	private static final void initKeyCodes() {
+	private static void initKeyCodes() {
 		keyCodes = new HashMap<>(40);
 
 		keyCodes.put("BACKSPACE", Integer.valueOf(8)); //$NON-NLS-1$
@@ -712,7 +712,7 @@ public final class LegacyActionTools {
 	 *            the text
 	 * @return the text sans accelerator
 	 */
-	public static final String removeAcceleratorText(final String text) {
+	public static String removeAcceleratorText(final String text) {
 		int index = text.lastIndexOf('\t');
 		if (index == -1) {
 			index = text.lastIndexOf('@');
@@ -732,7 +732,7 @@ public final class LegacyActionTools {
 	 *            the text
 	 * @return the text sans mnemonics
 	 */
-	public static final String removeMnemonics(final String text) {
+	public static String removeMnemonics(final String text) {
 		int index = text.indexOf('&');
 		if (index == -1) {
 			return text;
@@ -781,7 +781,7 @@ public final class LegacyActionTools {
 	 * @return the text with mnemonics escaped
 	 * @since 3.6
 	 */
-	public static final String escapeMnemonics(String text) {
+	public static String escapeMnemonics(String text) {
 		return Util.replaceAll(text, "&", "&&"); //$NON-NLS-1$//$NON-NLS-2$
 	}
 

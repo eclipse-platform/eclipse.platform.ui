@@ -146,7 +146,7 @@ public final class Command extends NamedHandleObjectWithState implements Compara
 	 * @param commandListener
 	 *            The listener to be added; must not be <code>null</code>.
 	 */
-	public final void addCommandListener(final ICommandListener commandListener) {
+	public void addCommandListener(final ICommandListener commandListener) {
 		if (commandListener == null) {
 			throw new NullPointerException("Cannot add a null command listener"); //$NON-NLS-1$
 		}
@@ -160,7 +160,7 @@ public final class Command extends NamedHandleObjectWithState implements Compara
 	 * @param executionListener
 	 *            The listener to be added; must not be <code>null</code>.
 	 */
-	public final void addExecutionListener(final IExecutionListener executionListener) {
+	public void addExecutionListener(final IExecutionListener executionListener) {
 		if (executionListener == null) {
 			throw new NullPointerException("Cannot add a null execution listener"); //$NON-NLS-1$
 		}
@@ -209,7 +209,7 @@ public final class Command extends NamedHandleObjectWithState implements Compara
 	 *         greater than, equal to or less than this command.
 	 */
 	@Override
-	public final int compareTo(final Object object) {
+	public int compareTo(final Object object) {
 		final Command castedObject = (Command) object;
 		int compareTo = Util.compare(category, castedObject.category);
 		if (compareTo == 0) {
@@ -250,7 +250,7 @@ public final class Command extends NamedHandleObjectWithState implements Compara
 	 *            The category for this command; must not be <code>null</code>.
 	 * @since 3.2
 	 */
-	public final void define(final String name, final String description, final Category category) {
+	public void define(final String name, final String description, final Category category) {
 		define(name, description, category, null);
 	}
 
@@ -274,7 +274,7 @@ public final class Command extends NamedHandleObjectWithState implements Compara
 	 *            either <code>null</code> or empty if the command does not
 	 *            accept parameters.
 	 */
-	public final void define(final String name, final String description,
+	public void define(final String name, final String description,
 			final Category category, final IParameter[] parameters) {
 		define(name, description, category, parameters, null);
 	}
@@ -304,7 +304,7 @@ public final class Command extends NamedHandleObjectWithState implements Compara
 	 *            type.
 	 * @since 3.2
 	 */
-	public final void define(final String name, final String description,
+	public void define(final String name, final String description,
 			final Category category, final IParameter[] parameters,
 			ParameterType returnType) {
 		define(name, description, category, parameters, returnType, null);
@@ -339,7 +339,7 @@ public final class Command extends NamedHandleObjectWithState implements Compara
 	 *            have any help associated with it.
 	 * @since 3.2
 	 */
-	public final void define(final String name, final String description,
+	public void define(final String name, final String description,
 			final Category category, final IParameter[] parameters,
 			ParameterType returnType, final String helpContextId) {
 		if (name == null) {
@@ -401,7 +401,7 @@ public final class Command extends NamedHandleObjectWithState implements Compara
 	 *             instead.
 	 */
 	@Deprecated
-	public final Object execute(final ExecutionEvent event) throws ExecutionException, NotHandledException {
+	public Object execute(final ExecutionEvent event) throws ExecutionException, NotHandledException {
 		if (shouldFireEvents) {
 			firePreExecute(event);
 		}
@@ -454,7 +454,7 @@ public final class Command extends NamedHandleObjectWithState implements Compara
 	 *             If there is no handler.
 	 * @since 3.2
 	 */
-	public final Object executeWithChecks(final ExecutionEvent event)
+	public Object executeWithChecks(final ExecutionEvent event)
 			throws ExecutionException, NotDefinedException, NotEnabledException, NotHandledException {
 		if (shouldFireEvents) {
 			firePreExecute(event);
@@ -518,7 +518,7 @@ public final class Command extends NamedHandleObjectWithState implements Compara
 	 *            The event to send to all of the listener; must not be
 	 *            <code>null</code>.
 	 */
-	private final void fireCommandChanged(final CommandEvent commandEvent) {
+	private void fireCommandChanged(final CommandEvent commandEvent) {
 		if (commandEvent == null) {
 			throw new NullPointerException("Cannot fire a null event"); //$NON-NLS-1$
 		}
@@ -547,7 +547,7 @@ public final class Command extends NamedHandleObjectWithState implements Compara
 	 *            <code>null</code>.
 	 * @since 3.2
 	 */
-	private final void fireNotDefined(final NotDefinedException e) {
+	private void fireNotDefined(final NotDefinedException e) {
 		// Debugging output
 		if (DEBUG_COMMAND_EXECUTION) {
 			Tracing.printTrace("COMMANDS", "execute" + Tracing.SEPARATOR //$NON-NLS-1$ //$NON-NLS-2$
@@ -573,7 +573,7 @@ public final class Command extends NamedHandleObjectWithState implements Compara
 	 *            <code>null</code>.
 	 * @since 3.2
 	 */
-	private final void fireNotEnabled(final NotEnabledException e) {
+	private void fireNotEnabled(final NotEnabledException e) {
 		// Debugging output
 		if (DEBUG_COMMAND_EXECUTION) {
 			Tracing.printTrace("COMMANDS", "execute" + Tracing.SEPARATOR //$NON-NLS-1$ //$NON-NLS-2$
@@ -598,7 +598,7 @@ public final class Command extends NamedHandleObjectWithState implements Compara
 	 *            The exception that is about to be thrown; never
 	 *            <code>null</code>.
 	 */
-	private final void fireNotHandled(final NotHandledException e) {
+	private void fireNotHandled(final NotHandledException e) {
 		// Debugging output
 		if (DEBUG_COMMAND_EXECUTION) {
 			Tracing.printTrace("COMMANDS", "execute" + Tracing.SEPARATOR //$NON-NLS-1$ //$NON-NLS-2$
@@ -621,7 +621,7 @@ public final class Command extends NamedHandleObjectWithState implements Compara
 	 *            After this method completes, the exception will be thrown
 	 *            again.
 	 */
-	private final void firePostExecuteFailure(final ExecutionException e) {
+	private void firePostExecuteFailure(final ExecutionException e) {
 		// Debugging output
 		if (DEBUG_COMMAND_EXECUTION) {
 			Tracing.printTrace("COMMANDS", "execute" + Tracing.SEPARATOR //$NON-NLS-1$ //$NON-NLS-2$
@@ -642,7 +642,7 @@ public final class Command extends NamedHandleObjectWithState implements Compara
 	 * @param returnValue
 	 *            The return value from the command; may be <code>null</code>.
 	 */
-	private final void firePostExecuteSuccess(final Object returnValue) {
+	private void firePostExecuteSuccess(final Object returnValue) {
 		// Debugging output
 		if (DEBUG_COMMAND_EXECUTION) {
 			Tracing.printTrace("COMMANDS", "execute" + Tracing.SEPARATOR //$NON-NLS-1$ //$NON-NLS-2$
@@ -664,7 +664,7 @@ public final class Command extends NamedHandleObjectWithState implements Compara
 	 * @param event
 	 *            The execution event that will be used; never <code>null</code>.
 	 */
-	private final void firePreExecute(final ExecutionEvent event) {
+	private void firePreExecute(final ExecutionEvent event) {
 		// Debugging output
 		if (DEBUG_COMMAND_EXECUTION) {
 			Tracing.printTrace("COMMANDS", "execute" + Tracing.SEPARATOR //$NON-NLS-1$ //$NON-NLS-2$
@@ -685,7 +685,7 @@ public final class Command extends NamedHandleObjectWithState implements Compara
 	 * @throws NotDefinedException
 	 *             If the handle is not currently defined.
 	 */
-	public final Category getCategory() throws NotDefinedException {
+	public Category getCategory() throws NotDefinedException {
 		if (!isDefined()) {
 			throw new NotDefinedException("Cannot get the category from an undefined command. " //$NON-NLS-1$
 					+ id);
@@ -705,7 +705,7 @@ public final class Command extends NamedHandleObjectWithState implements Compara
 	 * @return The current handler for this command; may be <code>null</code>.
 	 * @since 3.3
 	 */
-	public final IHandler getHandler() {
+	public IHandler getHandler() {
 		return handler;
 	}
 
@@ -718,7 +718,7 @@ public final class Command extends NamedHandleObjectWithState implements Compara
 	 *         <code>null</code> if there is none.
 	 * @since 3.2
 	 */
-	final String getHelpContextId() {
+	String getHelpContextId() {
 		return helpContextId;
 	}
 
@@ -734,7 +734,7 @@ public final class Command extends NamedHandleObjectWithState implements Compara
 	 *             If the handle is not currently defined.
 	 * @since 3.2
 	 */
-	public final IParameter getParameter(final String parameterId) throws NotDefinedException {
+	public IParameter getParameter(final String parameterId) throws NotDefinedException {
 		if (!isDefined()) {
 			throw new NotDefinedException("Cannot get a parameter from an undefined command. " //$NON-NLS-1$
 					+ id);
@@ -762,7 +762,7 @@ public final class Command extends NamedHandleObjectWithState implements Compara
 	 * @throws NotDefinedException
 	 *             If the handle is not currently defined.
 	 */
-	public final IParameter[] getParameters() throws NotDefinedException {
+	public IParameter[] getParameters() throws NotDefinedException {
 		if (!isDefined()) {
 			throw new NotDefinedException("Cannot get the parameters from an undefined command. " //$NON-NLS-1$
 					+ id);
@@ -792,7 +792,7 @@ public final class Command extends NamedHandleObjectWithState implements Compara
 	 *             If the handle is not currently defined.
 	 * @since 3.2
 	 */
-	public final ParameterType getParameterType(final String parameterId) throws NotDefinedException {
+	public ParameterType getParameterType(final String parameterId) throws NotDefinedException {
 		final IParameter parameter = getParameter(parameterId);
 		if (parameter instanceof ITypedParameter) {
 			final ITypedParameter parameterWithType = (ITypedParameter) parameter;
@@ -813,7 +813,7 @@ public final class Command extends NamedHandleObjectWithState implements Compara
 	 *             If the handle is not currently defined.
 	 * @since 3.2
 	 */
-	public final ParameterType getReturnType() throws NotDefinedException {
+	public ParameterType getReturnType() throws NotDefinedException {
 		if (!isDefined()) {
 			throw new NotDefinedException("Cannot get the return type of an undefined command. " //$NON-NLS-1$
 					+ id);
@@ -829,7 +829,7 @@ public final class Command extends NamedHandleObjectWithState implements Compara
 	 * @return <code>true</code> if the command is handled; <code>false</code>
 	 *         otherwise.
 	 */
-	public final boolean isEnabled() {
+	public boolean isEnabled() {
 		if (handler == null) {
 			return false;
 		}
@@ -870,7 +870,7 @@ public final class Command extends NamedHandleObjectWithState implements Compara
 	 * @return <code>true</code> if the command is handled; <code>false</code>
 	 *         otherwise.
 	 */
-	public final boolean isHandled() {
+	public boolean isHandled() {
 		if (handler == null) {
 			return false;
 		}
@@ -885,7 +885,7 @@ public final class Command extends NamedHandleObjectWithState implements Compara
 	 *            The listener to be removed; must not be <code>null</code>.
 	 *
 	 */
-	public final void removeCommandListener(final ICommandListener commandListener) {
+	public void removeCommandListener(final ICommandListener commandListener) {
 		if (commandListener == null) {
 			throw new NullPointerException("Cannot remove a null command listener"); //$NON-NLS-1$
 		}
@@ -900,7 +900,7 @@ public final class Command extends NamedHandleObjectWithState implements Compara
 	 *            The listener to be removed; must not be <code>null</code>.
 	 *
 	 */
-	public final void removeExecutionListener(final IExecutionListener executionListener) {
+	public void removeExecutionListener(final IExecutionListener executionListener) {
 		if (executionListener == null) {
 			throw new NullPointerException("Cannot remove a null execution listener"); //$NON-NLS-1$
 		}
@@ -944,7 +944,7 @@ public final class Command extends NamedHandleObjectWithState implements Compara
 	 * @return <code>true</code> if the handler changed; <code>false</code>
 	 *         otherwise.
 	 */
-	public final boolean setHandler(final IHandler handler) {
+	public boolean setHandler(final IHandler handler) {
 		if (Util.equals(handler, this.handler)) {
 			return false;
 		}
@@ -1023,7 +1023,7 @@ public final class Command extends NamedHandleObjectWithState implements Compara
 	 * @return The string representation; never <code>null</code>.
 	 */
 	@Override
-	public final String toString() {
+	public String toString() {
 		if (string == null) {
 			final StringWriter sw = new StringWriter();
 			final BufferedWriter buffer = new BufferedWriter(sw);
@@ -1068,7 +1068,7 @@ public final class Command extends NamedHandleObjectWithState implements Compara
 	 * state and disposes of it. Notification is sent to all listeners.
 	 */
 	@Override
-	public final void undefine() {
+	public void undefine() {
 		boolean enabledChanged = isEnabled();
 
 		string = null;

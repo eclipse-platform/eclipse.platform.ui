@@ -57,7 +57,7 @@ public interface IMemento {
      *
      * @see #getID()
      */
-    public static final String TAG_ID = "IMemento.internal.id"; //$NON-NLS-1$
+    String TAG_ID = "IMemento.internal.id"; //$NON-NLS-1$
 
     /**
      * Creates a new child of this memento with the given type.
@@ -71,7 +71,7 @@ public interface IMemento {
      * @see #getChild
      * @see #getChildren
      */
-    public IMemento createChild(String type);
+    IMemento createChild(String type);
 
     /**
      * Creates a new child of this memento with the given type and id.
@@ -87,7 +87,7 @@ public interface IMemento {
      * @return a new child memento with the given type and id
      * @see #getID
      */
-    public IMemento createChild(String type, String id);
+    IMemento createChild(String type, String id);
 
     /**
 	 * Returns the first child with the given type id.
@@ -97,7 +97,7 @@ public interface IMemento {
 	 * @return the first child with the given type. May return <code>null</code>
 	 *         .
 	 */
-    public IMemento getChild(String type);
+    IMemento getChild(String type);
 
 	/**
 	 * Returns all children of this node.
@@ -107,7 +107,7 @@ public interface IMemento {
 	 *         zero will be returned.
 	 * @since 3.8
 	 */
-	public IMemento[] getChildren();
+	IMemento[] getChildren();
 
     /**
 	 * Returns all children with the given type id.
@@ -118,7 +118,7 @@ public interface IMemento {
 	 *         <code>null</code>. If there are no keys, an array of length zero
 	 *         will be returned.
 	 */
-    public IMemento[] getChildren(String type);
+    IMemento[] getChildren(String type);
 
     /**
      * Returns the floating point value of the given key.
@@ -127,7 +127,7 @@ public interface IMemento {
      * @return the value, or <code>null</code> if the key was not found or was found
      *   but was not a floating point number
      */
-    public Float getFloat(String key);
+    Float getFloat(String key);
 
     /**
 	 * Returns the type for this memento.
@@ -137,7 +137,7 @@ public interface IMemento {
 	 * @see #createChild(java.lang.String,java.lang.String)
 	 * @since 3.4
 	 */
-	public String getType();
+	String getType();
 
     /**
      * Returns the id for this memento.
@@ -145,7 +145,7 @@ public interface IMemento {
      * @return the memento id, or <code>null</code> if none
      * @see #createChild(java.lang.String,java.lang.String)
      */
-    public String getID();
+    String getID();
 
     /**
      * Returns the integer value of the given key.
@@ -154,7 +154,7 @@ public interface IMemento {
      * @return the value, or <code>null</code> if the key was not found or was found
      *   but was not an integer
      */
-    public Integer getInteger(String key);
+    Integer getInteger(String key);
 
     /**
      * Returns the string value of the given key.
@@ -162,7 +162,7 @@ public interface IMemento {
      * @param key the key
      * @return the value, or <code>null</code> if the key was not found
      */
-    public String getString(String key);
+    String getString(String key);
 
     /**
 	 * Returns the boolean value of the given key.
@@ -171,7 +171,7 @@ public interface IMemento {
 	 * @return the value, or <code>null</code> if the key was not found
      * @since 3.4
 	 */
-	public Boolean getBoolean(String key);
+	Boolean getBoolean(String key);
 
 	/**
      * Returns the data of the Text node of the memento. Each memento is allowed
@@ -181,7 +181,7 @@ public interface IMemento {
      * if the memento has no Text node.
      * @since 2.0
      */
-    public String getTextData();
+    String getTextData();
 
     /**
      * Returns an array of all the attribute keys of the memento. This will not
@@ -190,7 +190,7 @@ public interface IMemento {
      * @return an array with all the attribute keys of the memento
      * @since 3.4
      */
-	public String[] getAttributeKeys();
+	String[] getAttributeKeys();
 
     /**
      * Sets the value of the given key to the given floating point number.
@@ -198,7 +198,7 @@ public interface IMemento {
      * @param key the key
      * @param value the value
      */
-    public void putFloat(String key, float value);
+    void putFloat(String key, float value);
 
     /**
      * Sets the value of the given key to the given integer.
@@ -206,7 +206,7 @@ public interface IMemento {
      * @param key the key
      * @param value the value
      */
-    public void putInteger(String key, int value);
+    void putInteger(String key, int value);
 
     /**
      * Copy the attributes and children from  <code>memento</code>
@@ -214,7 +214,7 @@ public interface IMemento {
      *
      * @param memento the IMemento to be copied.
      */
-    public void putMemento(IMemento memento);
+    void putMemento(IMemento memento);
 
     /**
      * Sets the value of the given key to the given string.
@@ -222,7 +222,7 @@ public interface IMemento {
      * @param key the key
      * @param value the value
      */
-    public void putString(String key, String value);
+    void putString(String key, String value);
 
     /**
 	 * Sets the value of the given key to the given boolean value.
@@ -231,7 +231,7 @@ public interface IMemento {
 	 * @param value the value
      * @since 3.4
 	 */
-	public void putBoolean(String key, boolean value);
+	void putBoolean(String key, boolean value);
 
     /**
      * Sets the memento's Text node to contain the given data. Creates the Text node if
@@ -241,5 +241,5 @@ public interface IMemento {
      * @param data the data to be placed on the Text node
      * @since 2.0
      */
-    public void putTextData(String data);
+    void putTextData(String data);
 }

@@ -12,7 +12,6 @@
 package org.eclipse.ui.handlers;
 
 import java.util.Collection;
-
 import org.eclipse.core.commands.Command;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
@@ -68,7 +67,7 @@ public interface IHandlerService extends IServiceWithSources {
 	 *         activation that is passed as a parameter).
 	 * @since 3.2
 	 */
-	public IHandlerActivation activateHandler(IHandlerActivation activation);
+	IHandlerActivation activateHandler(IHandlerActivation activation);
 
 	/**
 	 * <p>
@@ -94,7 +93,7 @@ public interface IHandlerService extends IServiceWithSources {
 	 *         activation will automatically be cancelled if the context from
 	 *         which this service was retrieved is destroyed.
 	 */
-	public IHandlerActivation activateHandler(String commandId, IHandler handler);
+	IHandlerActivation activateHandler(String commandId, IHandler handler);
 
 	/**
 	 * <p>
@@ -128,7 +127,7 @@ public interface IHandlerService extends IServiceWithSources {
 	 * @see org.eclipse.ui.ISources
 	 * @since 3.2
 	 */
-	public IHandlerActivation activateHandler(String commandId,
+	IHandlerActivation activateHandler(String commandId,
 			IHandler handler, Expression expression);
 
 	/**
@@ -168,7 +167,7 @@ public interface IHandlerService extends IServiceWithSources {
 	 * @see org.eclipse.ui.ISources
 	 * @since 3.2
 	 */
-	public IHandlerActivation activateHandler(String commandId,
+	IHandlerActivation activateHandler(String commandId,
 			IHandler handler, Expression expression, boolean global);
 
 	/**
@@ -205,8 +204,7 @@ public interface IHandlerService extends IServiceWithSources {
 	 *             {@link IHandlerService#activateHandler(String, IHandler, Expression)}
 	 *             instead.
 	 */
-	@Deprecated
-	public IHandlerActivation activateHandler(String commandId,
+	@Deprecated IHandlerActivation activateHandler(String commandId,
 			IHandler handler, Expression expression, int sourcePriorities);
 
 	/**
@@ -224,7 +222,7 @@ public interface IHandlerService extends IServiceWithSources {
 	 * @since 3.2
 	 * @see Command#executeWithChecks(ExecutionEvent)
 	 */
-	public ExecutionEvent createExecutionEvent(Command command, Event event);
+	ExecutionEvent createExecutionEvent(Command command, Event event);
 
 	/**
 	 * Creates a parameterized execution event based on an SWT event and a
@@ -243,7 +241,7 @@ public interface IHandlerService extends IServiceWithSources {
 	 * @see ParameterizedCommand#getCommand()
 	 * @see Command#executeWithChecks(ExecutionEvent)
 	 */
-	public ExecutionEvent createExecutionEvent(ParameterizedCommand command,
+	ExecutionEvent createExecutionEvent(ParameterizedCommand command,
 			Event event);
 
 	/**
@@ -257,7 +255,7 @@ public interface IHandlerService extends IServiceWithSources {
 	 *            The token that was returned from a call to
 	 *            <code>activateHandler</code>; must not be <code>null</code>.
 	 */
-	public void deactivateHandler(IHandlerActivation activation);
+	void deactivateHandler(IHandlerActivation activation);
 
 	/**
 	 * Deactivates the given handlers within the context of this service. If the
@@ -272,7 +270,7 @@ public interface IHandlerService extends IServiceWithSources {
 	 *            contain instances of <code>IHandlerActivation</code>. The
 	 *            collection must not be <code>null</code>.
 	 */
-	public void deactivateHandlers(Collection activations);
+	void deactivateHandlers(Collection activations);
 
 	/**
 	 * Executes the command with the given identifier and no parameters.
@@ -295,7 +293,7 @@ public interface IHandlerService extends IServiceWithSources {
 	 * @since 3.2
 	 * @see Command#executeWithChecks(ExecutionEvent)
 	 */
-	public Object executeCommand(String commandId, Event event)
+	Object executeCommand(String commandId, Event event)
 			throws ExecutionException, NotDefinedException,
 			NotEnabledException, NotHandledException;
 
@@ -320,7 +318,7 @@ public interface IHandlerService extends IServiceWithSources {
 	 * @since 3.2
 	 * @see Command#executeWithChecks(ExecutionEvent)
 	 */
-	public Object executeCommand(ParameterizedCommand command, Event event)
+	Object executeCommand(ParameterizedCommand command, Event event)
 			throws ExecutionException, NotDefinedException,
 			NotEnabledException, NotHandledException;
 
@@ -352,7 +350,7 @@ public interface IHandlerService extends IServiceWithSources {
 	 * @see Command#executeWithChecks(ExecutionEvent)
 	 * @see #createContextSnapshot(boolean)
 	 */
-	public Object executeCommandInContext(ParameterizedCommand command,
+	Object executeCommandInContext(ParameterizedCommand command,
 			Event event, IEvaluationContext context) throws ExecutionException,
 			NotDefinedException, NotEnabledException, NotHandledException;
 
@@ -367,7 +365,7 @@ public interface IHandlerService extends IServiceWithSources {
 	 *         is not included, the default variable is an empty collection
 	 * @since 3.4
 	 */
-	public IEvaluationContext createContextSnapshot(boolean includeSelection);
+	IEvaluationContext createContextSnapshot(boolean includeSelection);
 
 	/**
 	 * Returns an evaluation context representing the current state of the
@@ -380,7 +378,7 @@ public interface IHandlerService extends IServiceWithSources {
 	 *      Object)
 	 * @see org.eclipse.ui.services.IEvaluationService
 	 */
-	public IEvaluationContext getCurrentState();
+	IEvaluationContext getCurrentState();
 
 	/**
 	 * <p>
@@ -390,7 +388,7 @@ public interface IHandlerService extends IServiceWithSources {
 	 * handler service will reflect the current state of the registry.
 	 * </p>
 	 */
-	public void readRegistry();
+	void readRegistry();
 
 	/**
 	 * Sets the help context identifier to associate with a particular handler.
@@ -404,5 +402,5 @@ public interface IHandlerService extends IServiceWithSources {
 	 *            removed.
 	 * @since 3.2
 	 */
-	public void setHelpContextId(IHandler handler, String helpContextId);
+	void setHelpContextId(IHandler handler, String helpContextId);
 }

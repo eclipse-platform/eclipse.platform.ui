@@ -43,7 +43,7 @@ public interface IWorkbenchConfigurer {
      *
      * @see #restoreState
      */
-    public static final int RESTORE_CODE_RESET = 1;
+    int RESTORE_CODE_RESET = 1;
 
     /**
      * Restore status code indicating that the saved state
@@ -51,14 +51,14 @@ public interface IWorkbenchConfigurer {
      * must exit immediately without modifying any previously
      * saved workbench state.
      */
-    public static final int RESTORE_CODE_EXIT = 2;
+    int RESTORE_CODE_EXIT = 2;
 
     /**
      * Returns the underlying workbench.
      *
      * @return the workbench
      */
-    public IWorkbench getWorkbench();
+    IWorkbench getWorkbench();
 
     /**
      * Returns whether the workbench state should be saved on close and
@@ -70,7 +70,7 @@ public interface IWorkbenchConfigurer {
      * @return <code>true</code> to save and restore workbench state, or
      * 	<code>false</code> to forget current workbench state on close.
      */
-    public boolean getSaveAndRestore();
+    boolean getSaveAndRestore();
 
     /**
      * Sets whether the workbench state should be saved on close and
@@ -79,7 +79,7 @@ public interface IWorkbenchConfigurer {
      * @param enabled <code>true</code> to save and restore workbench state, or
      * 	<code>false</code> to forget current workbench state on close.
      */
-    public void setSaveAndRestore(boolean enabled);
+    void setSaveAndRestore(boolean enabled);
 
 	/**
 	 * Restores a workbench window from the given memento.
@@ -90,7 +90,7 @@ public interface IWorkbenchConfigurer {
      * @see IWorkbenchWindowConfigurer#saveState(IMemento)
 	 * @since 3.1
 	 */
-	public IWorkbenchWindowConfigurer restoreWorkbenchWindow(IMemento memento)
+	IWorkbenchWindowConfigurer restoreWorkbenchWindow(IMemento memento)
 			throws WorkbenchException;
 
     /**
@@ -101,7 +101,7 @@ public interface IWorkbenchConfigurer {
      * Note:IWorkbenchWindow is implemented using JFace's Window (and therefore uses WindowManager),
      *   but this is an implementation detail
      */
-    public WindowManager getWorkbenchWindowManager();
+    WindowManager getWorkbenchWindowManager();
 
     /**
      * Declares a workbench image.
@@ -129,7 +129,7 @@ public interface IWorkbenchConfigurer {
      * @see org.eclipse.ui.ISharedImages#getImage
      * @see org.eclipse.ui.ISharedImages#getImageDescriptor
      */
-    public void declareImage(String symbolicName, ImageDescriptor descriptor,
+    void declareImage(String symbolicName, ImageDescriptor descriptor,
             boolean shared);
 
     /**
@@ -146,7 +146,7 @@ public interface IWorkbenchConfigurer {
      *
      * @see #emergencyClosing
      */
-    public void emergencyClose();
+    void emergencyClose();
 
     /**
      * Returns whether the workbench is being closed due to an emergency.
@@ -158,7 +158,7 @@ public interface IWorkbenchConfigurer {
      * @return <code>true</code> if the workbench is in the process of being
      * closed under emergency conditions, and <code>false</code> otherwise
      */
-    public boolean emergencyClosing();
+    boolean emergencyClosing();
 
     /**
      * Returns an object that can be used to configure the given window.
@@ -166,7 +166,7 @@ public interface IWorkbenchConfigurer {
      * @param window a workbench window
      * @return a workbench window configurer
      */
-    public IWorkbenchWindowConfigurer getWindowConfigurer(
+    IWorkbenchWindowConfigurer getWindowConfigurer(
             IWorkbenchWindow window);
 
     /**
@@ -176,7 +176,7 @@ public interface IWorkbenchConfigurer {
      * @return the data, or <code>null</code> if there is no data at the given
      * key
      */
-    public Object getData(String key);
+    Object getData(String key);
 
     /**
      * Sets the data associated with the workbench at the given key.
@@ -184,7 +184,7 @@ public interface IWorkbenchConfigurer {
      * @param key the key
      * @param data the data, or <code>null</code> to delete existing data
      */
-    public void setData(String key, Object data);
+    void setData(String key, Object data);
 
     /**
      * Restores the workbench state saved from the previous session, if any.
@@ -201,7 +201,7 @@ public interface IWorkbenchConfigurer {
      * @see #RESTORE_CODE_EXIT
      * @see WorkbenchAdvisor#openWindows
      */
-    public IStatus restoreState();
+    IStatus restoreState();
 
     /**
      * Opens the first time window, using the default perspective and
@@ -213,7 +213,7 @@ public interface IWorkbenchConfigurer {
      *
      * @see WorkbenchAdvisor#openWindows
      */
-    public void openFirstTimeWindow();
+    void openFirstTimeWindow();
 
     /**
 	 * Returns <code>true</code> if the workbench should exit when the last
@@ -241,7 +241,7 @@ public interface IWorkbenchConfigurer {
 	 *         be closed
 	 * @since 3.1
 	 */
-    public boolean getExitOnLastWindowClose();
+    boolean getExitOnLastWindowClose();
 
     /**
 	 * Sets whether the workbench should exit when the last window is closed, or
@@ -257,5 +257,5 @@ public interface IWorkbenchConfigurer {
 	 *            just be closed
 	 * @since 3.1
 	 */
-    public void setExitOnLastWindowClose(boolean enabled);
+    void setExitOnLastWindowClose(boolean enabled);
 }

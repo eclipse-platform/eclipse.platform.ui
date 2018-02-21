@@ -30,12 +30,12 @@ public interface IPresentationEngine {
 	/**
 	 * The ID to access the service in the {@link IEclipseContext}
 	 */
-	public static final String SERVICE_NAME = IPresentationEngine.class.getName();
+	String SERVICE_NAME = IPresentationEngine.class.getName();
 
 	/**
 	 * When applied as a tag to an MUILabel inhibits the display of the label text
 	 */
-	public static final String NO_TITLE = "NoTitle"; //$NON-NLS-1$
+	String NO_TITLE = "NoTitle"; //$NON-NLS-1$
 
 	/**
 	 * When applied as a tag to an MPlaceholder inhibits the display of the close affordance. This
@@ -44,7 +44,7 @@ public interface IPresentationEngine {
 	 * <b>NOTE:</b> If you are not using perspectives then use the MPart's 'isCloseable' attribute
 	 * to control the affordance.
 	 */
-	public static final String NO_CLOSE = "NoClose"; //$NON-NLS-1$
+	String NO_CLOSE = "NoClose"; //$NON-NLS-1$
 
 	/**
 	 * Declare the stack as containing a singe 'standalone' view. These stacks will not allow either
@@ -52,17 +52,17 @@ public interface IPresentationEngine {
 	 *
 	 * @since 1.1
 	 */
-	public static final String STANDALONE = "Standalone"; //$NON-NLS-1$
+	String STANDALONE = "Standalone"; //$NON-NLS-1$
 
 	/**
 	 * Don't remove the element from the display even if it has no displayable children
 	 */
-	public static final String NO_AUTO_COLLAPSE = "NoAutoCollapse"; //$NON-NLS-1$
+	String NO_AUTO_COLLAPSE = "NoAutoCollapse"; //$NON-NLS-1$
 
 	/**
 	 * When applied as a tag to an MUIElement inhibits moving the element (ie. through DnD...
 	 */
-	public static final String NO_MOVE = "NoMove"; //$NON-NLS-1$
+	String NO_MOVE = "NoMove"; //$NON-NLS-1$
 
 	/**
 	 * When applied as a tag to an MUIElement inhibits detaching the element (ie.
@@ -70,7 +70,7 @@ public interface IPresentationEngine {
 	 * 
 	 * @since 1.6
 	 */
-	public static final String NO_DETACH = "NoDetach"; //$NON-NLS-1$
+	String NO_DETACH = "NoDetach"; //$NON-NLS-1$
 
 	/**
 	 * This tag can be used by the renderer implementation to decide that the user interface element
@@ -78,7 +78,7 @@ public interface IPresentationEngine {
 	 *
 	 * @since 1.1
 	 */
-	public static final String HIDDEN_EXPLICITLY = "HIDDEN_EXPLICITLY"; //$NON-NLS-1$
+	String HIDDEN_EXPLICITLY = "HIDDEN_EXPLICITLY"; //$NON-NLS-1$
 
 	/**
 	 * This key is used to store information in the 'persistentData' map which will be used to
@@ -87,21 +87,21 @@ public interface IPresentationEngine {
 	 *
 	 * @since 1.1
 	 */
-	public static String STYLE_OVERRIDE_KEY = "styleOverride"; //$NON-NLS-1$
+	String STYLE_OVERRIDE_KEY = "styleOverride"; //$NON-NLS-1$
 
 	/**
 	 * When applied to an MWindow causes the renderer to minimize the resulting control.
 	 *
 	 * @since 1.1
 	 */
-	public static String WINDOW_MINIMIZED_TAG = "shellMinimized"; //$NON-NLS-1$
+	String WINDOW_MINIMIZED_TAG = "shellMinimized"; //$NON-NLS-1$
 
 	/**
 	 * When applied to an MWindow causes the renderer to maximize the resulting control.
 	 *
 	 * @since 1.1
 	 */
-	public static String WINDOW_MAXIMIZED_TAG = "shellMaximized"; //$NON-NLS-1$
+	String WINDOW_MAXIMIZED_TAG = "shellMaximized"; //$NON-NLS-1$
 
 	/**
 	 * When applied to an MArea causes it to behave like a
@@ -110,7 +110,7 @@ public interface IPresentationEngine {
 	 *
 	 * @since 1.5
 	 */
-	public static String MIN_MAXIMIZEABLE_CHILDREN_AREA_TAG = "MinMaximizeableChildrenArea"; //$NON-NLS-1$
+	String MIN_MAXIMIZEABLE_CHILDREN_AREA_TAG = "MinMaximizeableChildrenArea"; //$NON-NLS-1$
 
 	/**
 	 * When applied to an MWindow causes the renderer to render the resulting control as a top level
@@ -118,28 +118,28 @@ public interface IPresentationEngine {
 	 *
 	 * @since 1.3
 	 */
-	public static String WINDOW_TOP_LEVEL = "shellTopLevel"; //$NON-NLS-1$
+	String WINDOW_TOP_LEVEL = "shellTopLevel"; //$NON-NLS-1$
 
 	/**
 	 * When added to an element's 'tags' this should cause the presentation to move that element to
 	 * the trim. In the default implementation you can only apply this tag to an MPartStack or the
 	 * MPlaceholder of the MArea.
 	 */
-	public static String MINIMIZED = "Minimized"; //$NON-NLS-1$
+	String MINIMIZED = "Minimized"; //$NON-NLS-1$
 
 	/**
 	 * When added to an element's 'tags' this should cause the presentation to minimize all other
 	 * presentation elements. In the default implementation you can only apply this tag to an
 	 * MPartStack or the MPlaceholder of the MArea.
 	 */
-	public static String MAXIMIZED = "Maximized"; //$NON-NLS-1$
+	String MAXIMIZED = "Maximized"; //$NON-NLS-1$
 
 	/**
 	 * This tag should be applied to any element that had its MINIMIZED tag set due to a different
 	 * element going maximized. This allows the restore operation to only restore elements that the
 	 * user did not explicitly minimize.
 	 */
-	public static String MINIMIZED_BY_ZOOM = "MinimizedByZoom"; //$NON-NLS-1$
+	String MINIMIZED_BY_ZOOM = "MinimizedByZoom"; //$NON-NLS-1$
 
 	/**
 	 * This tag can be applied to an element as a hint to the renderers that the element would
@@ -147,7 +147,7 @@ public interface IPresentationEngine {
 	 * view when it's in the trim but could also be used when picking a stack to add a newly opening
 	 * part to. It could also be used for example to control where the tabs appear on an MPartStack.
 	 */
-	public static String ORIENTATION_HORIZONTAL = "Horizontal"; //$NON-NLS-1$
+	String ORIENTATION_HORIZONTAL = "Horizontal"; //$NON-NLS-1$
 
 	/**
 	 * This tag can be applied to an element as a hint to the renderers that the element would
@@ -155,7 +155,7 @@ public interface IPresentationEngine {
 	 * when it's in the trim but could also be used when picking a stack to add a newly opening part
 	 * to. It could also be used for example to control where the tabs appear on an MPartStack.
 	 */
-	public static String ORIENTATION_VERTICAL = "Vertical"; //$NON-NLS-1$
+	String ORIENTATION_VERTICAL = "Vertical"; //$NON-NLS-1$
 
 	/**
 	 * This tag can be applied to an element (usually an MPart) to indicate that the element should
@@ -163,7 +163,7 @@ public interface IPresentationEngine {
 	 *
 	 * @since 1.1
 	 */
-	public static String SPLIT_HORIZONTAL = "Split Horizontal"; //$NON-NLS-1$
+	String SPLIT_HORIZONTAL = "Split Horizontal"; //$NON-NLS-1$
 
 	/**
 	 * This tag can be applied to an element (usually an MPart) to indicate that the element should
@@ -171,7 +171,7 @@ public interface IPresentationEngine {
 	 *
 	 * @since 1.1
 	 */
-	public static String SPLIT_VERTICAL = "Split Vertical"; //$NON-NLS-1$
+	String SPLIT_VERTICAL = "Split Vertical"; //$NON-NLS-1$
 
 	/**
 	 * This key should be used to add an optional String to an element that is a URI to the elements
@@ -181,7 +181,7 @@ public interface IPresentationEngine {
 	 *
 	 * There is a strong argument to be made that this disabledIconURI actually be part of the model
 	 */
-	public static final String DISABLED_ICON_IMAGE_KEY = "e4_disabled_icon_image_key"; //$NON-NLS-1$
+	String DISABLED_ICON_IMAGE_KEY = "e4_disabled_icon_image_key"; //$NON-NLS-1$
 
 	/**
 	 * This key should be used to add an optional org.eclipse.swt.graphics.Image to an elements
@@ -190,14 +190,14 @@ public interface IPresentationEngine {
 	 *
 	 * NOTE: This image must be checked to ensure that it hasn't been disposed on retrieval.
 	 */
-	public static final String OVERRIDE_ICON_IMAGE_KEY = "e4_override_icon_image_key"; //$NON-NLS-1$
+	String OVERRIDE_ICON_IMAGE_KEY = "e4_override_icon_image_key"; //$NON-NLS-1$
 
 	/**
 	 * This key should be used to add an optional String to an elements TRANSIENTDATA. If present,
 	 * the string will be used to override the elements TitleToolTip. An example is setting the
 	 * ToolTip of a minimized problems view stack to the number of errors and warnings in the view.
 	 */
-	public static final String OVERRIDE_TITLE_TOOL_TIP_KEY = "e4_override_title_tool_tip_key"; //$NON-NLS-1$
+	String OVERRIDE_TITLE_TOOL_TIP_KEY = "e4_override_title_tool_tip_key"; //$NON-NLS-1$
 
 	/**
 	 * This is a Tag that when applied to an MUILabel element will cause whatever Image is to be
@@ -205,18 +205,18 @@ public interface IPresentationEngine {
 	 *
 	 * @since 1.1
 	 */
-	public static final String ADORNMENT_PIN = "Pin Adornment"; //$NON-NLS-1$
+	String ADORNMENT_PIN = "Pin Adornment"; //$NON-NLS-1$
 
 	/**
 	 * This is a <b>Boolean</b> preference used to control animations in the application
 	 */
-	public static final String ANIMATIONS_ENABLED = "Animations Enabled"; //$NON-NLS-1$
+	String ANIMATIONS_ENABLED = "Animations Enabled"; //$NON-NLS-1$
 
 	/**
 	 * This is a persistedState 'key' whose value is expected to be the URI of a subclass of
 	 * ABstractPartRenderer that is to be used to render the element
 	 */
-	public static final String CUSTOM_RENDERER_KEY = "Custom Renderer"; //$NON-NLS-1$
+	String CUSTOM_RENDERER_KEY = "Custom Renderer"; //$NON-NLS-1$
 
 	/**
 	 * This key can be used , if the model element does not have a parent and a
@@ -224,7 +224,7 @@ public interface IPresentationEngine {
 	 *
 	 * @since 1.4
 	 */
-	public static final String RENDERING_PARENT_KEY = "Rendering Parent"; //$NON-NLS-1$
+	String RENDERING_PARENT_KEY = "Rendering Parent"; //$NON-NLS-1$
 
 	/**
 	 * This is the tag name that enables the DND support for the element. The
@@ -233,21 +233,21 @@ public interface IPresentationEngine {
 	 *
 	 * @since 1.1
 	 */
-	public static final String DRAGGABLE = "Draggable"; //$NON-NLS-1$
+	String DRAGGABLE = "Draggable"; //$NON-NLS-1$
 
 	/**
 	 * This is the tag name that indicates that the model element is active.
 	 *
 	 * @since 1.3
 	 */
-	public static final String ACTIVE = "active"; //$NON-NLS-1$
+	String ACTIVE = "active"; //$NON-NLS-1$
 
 	/**
 	 * When applied as a tag to an MPartDescriptor marks the part as not restorable.
 	 *
 	 * @since 1.6
 	 */
-	public static final String NO_RESTORE = "NoRestore"; //$NON-NLS-1$
+	String NO_RESTORE = "NoRestore"; //$NON-NLS-1$
 
 	/**
 	 * Creates and returns the UI element for the given model element.
@@ -261,7 +261,7 @@ public interface IPresentationEngine {
 	 *
 	 * @return the created UI element
 	 */
-	public Object createGui(MUIElement element, Object parentWidget, IEclipseContext parentContext);
+	Object createGui(MUIElement element, Object parentWidget, IEclipseContext parentContext);
 
 	/**
 	 * Creates and returns the UI element corresponding to the given model element. The resulting UI
@@ -271,7 +271,7 @@ public interface IPresentationEngine {
 	 *            the model element
 	 * @return the create UI element
 	 */
-	public Object createGui(MUIElement element);
+	Object createGui(MUIElement element);
 
 	/**
 	 * Remove the UI element created for this model element.
@@ -279,7 +279,7 @@ public interface IPresentationEngine {
 	 * @param element
 	 *            the model element whose UI element should removed
 	 */
-	public void removeGui(MUIElement element);
+	void removeGui(MUIElement element);
 
 	/**
 	 * Attempts to set the UI focus onto the given element. By default we delegate this to the
@@ -288,7 +288,7 @@ public interface IPresentationEngine {
 	 *
 	 * @param element
 	 */
-	public void focusGui(MUIElement element);
+	void focusGui(MUIElement element);
 
 	/**
 	 * Run the UI. This method is responsible for creating the initial UI and (if necessary)
@@ -299,10 +299,10 @@ public interface IPresentationEngine {
 	 *
 	 * @return The application's return value
 	 */
-	public Object run(MApplicationElement uiRoot, IEclipseContext appContext);
+	Object run(MApplicationElement uiRoot, IEclipseContext appContext);
 
 	/**
 	 * Shuts down the presentation engine
 	 */
-	public void stop();
+	void stop();
 }

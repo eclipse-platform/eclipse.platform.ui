@@ -49,7 +49,7 @@ public interface IContributionItem {
      *
      * @since 2.1
      */
-    public void dispose();
+    void dispose();
 
     /**
      * Fills the given composite control with controls representing this
@@ -57,7 +57,7 @@ public interface IContributionItem {
      *
      * @param parent the parent control
      */
-    public void fill(Composite parent);
+    void fill(Composite parent);
 
     /**
      * Fills the given menu with controls representing this contribution item.
@@ -67,7 +67,7 @@ public interface IContributionItem {
      * @param index the index where the controls are inserted,
      *   or <code>-1</code> to insert at the end
      */
-    public void fill(Menu parent, int index);
+    void fill(Menu parent, int index);
 
     /**
      * Fills the given tool bar with controls representing this contribution item.
@@ -77,7 +77,7 @@ public interface IContributionItem {
      * @param index the index where the controls are inserted,
      *   or <code>-1</code> to insert at the end
      */
-    public void fill(ToolBar parent, int index);
+    void fill(ToolBar parent, int index);
 
     /**
      * Fills the given cool bar with controls representing this contribution item.
@@ -88,7 +88,7 @@ public interface IContributionItem {
      *   or <code>-1</code> to insert at the end
      * @since 3.0
      */
-    public void fill(CoolBar parent, int index);
+    void fill(CoolBar parent, int index);
 
     /**
      * Returns the identifier of this contribution item.
@@ -97,14 +97,14 @@ public interface IContributionItem {
      * @return the contribution item identifier, or <code>null</code>
      *   if none
      */
-    public String getId();
+    String getId();
 
     /**
      * Returns whether this contribution item is enabled.
      *
      * @return <code>true</code> if this item is enabled
      */
-    public boolean isEnabled();
+    boolean isEnabled();
 
     /**
      * Returns whether this contribution item is dirty. A dirty item will be
@@ -112,7 +112,7 @@ public interface IContributionItem {
      *
      * @return <code>true</code> if this item is dirty
      */
-    public boolean isDirty();
+    boolean isDirty();
 
     /**
      * Returns whether this contribution item is dynamic. A dynamic contribution
@@ -121,7 +121,7 @@ public interface IContributionItem {
      * @return <code>true</code> if this item is dynamic, and
      *  <code>false</code> for normal items
      */
-    public boolean isDynamic();
+    boolean isDynamic();
 
     /**
      * Returns whether this contribution item is a group marker.
@@ -134,7 +134,7 @@ public interface IContributionItem {
      * @see IContributionManager#appendToGroup(String, IContributionItem)
      * @see IContributionManager#prependToGroup(String, IContributionItem)
      */
-    public boolean isGroupMarker();
+    boolean isGroupMarker();
 
     /**
      * Returns whether this contribution item is a separator.
@@ -144,7 +144,7 @@ public interface IContributionItem {
      *  <code>false</code> for normal items
      * @see Separator
      */
-    public boolean isSeparator();
+    boolean isSeparator();
 
     /**
      * Returns whether this contribution item is visibile within its manager.
@@ -152,7 +152,7 @@ public interface IContributionItem {
      * @return <code>true</code> if this item is visible, and
      *  <code>false</code> otherwise
      */
-    public boolean isVisible();
+    boolean isVisible();
 
     /**
      * Saves any state information of the control(s) owned by this contribution item.
@@ -160,7 +160,7 @@ public interface IContributionItem {
      *
      * @since 3.0
      */
-    public void saveWidgetState();
+    void saveWidgetState();
 
     /**
      * Sets the parent manager of this item
@@ -168,7 +168,7 @@ public interface IContributionItem {
      * @param parent the parent contribution manager
      * @since 2.0
      */
-    public void setParent(IContributionManager parent);
+    void setParent(IContributionManager parent);
 
     /**
      * Sets whether this contribution item is visibile within its manager.
@@ -176,14 +176,14 @@ public interface IContributionItem {
      * @param visible <code>true</code> if this item should be visible, and
      *  <code>false</code> otherwise
      */
-    public void setVisible(boolean visible);
+    void setVisible(boolean visible);
 
     /**
      * Updates any SWT controls cached by this contribution item with any
      * changes which have been made to this contribution item since the last update.
      * Called by contribution manager update methods.
      */
-    public void update();
+    void update();
 
     /**
      * Updates any SWT controls cached by this contribution item with changes
@@ -192,5 +192,5 @@ public interface IContributionItem {
      * @param id the id of the changed property
      * @since 2.0
      */
-    public void update(String id);
+    void update(String id);
 }

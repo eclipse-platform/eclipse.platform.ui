@@ -48,7 +48,7 @@ public final class Util {
 	 * @param c
 	 *            The class which the object should be; must not be <code>null</code>.
 	 */
-	public static final void assertInstance(final Object object, final Class<?> c) {
+	public static void assertInstance(final Object object, final Class<?> c) {
 		assertInstance(object, c, false);
 	}
 
@@ -63,7 +63,7 @@ public final class Util {
 	 * @param allowNull
 	 *            Whether the object is allowed to be <code>null</code>.
 	 */
-	private static final void assertInstance(final Object object, final Class<?> c,
+	private static void assertInstance(final Object object, final Class<?> c,
 			final boolean allowNull) {
 		if (object == null && allowNull) {
 			return;
@@ -88,7 +88,7 @@ public final class Util {
 	 *         <code>1</code> if the opposite is true. If they are equal, then it returns
 	 *         <code>0</code>.
 	 */
-	public static final int compare(final boolean left, final boolean right) {
+	public static int compare(final boolean left, final boolean right) {
 		return left == false ? (right == true ? -1 : 0) : 1;
 	}
 
@@ -101,7 +101,7 @@ public final class Util {
 	 *            The right value to compare
 	 * @return <code>left - right</code>
 	 */
-	public static final int compare(final int left, final int right) {
+	public static int compare(final int left, final int right) {
 		return left - right;
 	}
 
@@ -115,7 +115,7 @@ public final class Util {
 	 * @return The result of the comparison. <code>null</code> is considered to be the least
 	 *         possible value.
 	 */
-	public static final <T extends Comparable<T>> int compare(final T left, final T right) {
+	public static <T extends Comparable<T>> int compare(final T left, final T right) {
 		if (left == null && right == null) {
 			return 0;
 		} else if (left == null) {
@@ -137,7 +137,7 @@ public final class Util {
 	 * @return The result of the comparison. <code>null</code> is considered to be the least
 	 *         possible value. A shorter array is considered less than a longer array.
 	 */
-	public static final <T extends Comparable<T>> int compare(final T[] left, final T[] right) {
+	public static <T extends Comparable<T>> int compare(final T[] left, final T[] right) {
 		if (left == null && right == null) {
 			return 0;
 		} else if (left == null) {
@@ -177,7 +177,7 @@ public final class Util {
 	 * @return The result of the comparison. <code>null</code> is considered to be the least
 	 *         possible value. A shorter list is considered less than a longer list.
 	 */
-	public static final <T extends Comparable<T>> int compare(final List<T> left, final List<T> right) {
+	public static <T extends Comparable<T>> int compare(final List<T> left, final List<T> right) {
 		if (left == null && right == null) {
 			return 0;
 		} else if (left == null) {
@@ -216,7 +216,7 @@ public final class Util {
 	 * @return <code>true</code> if the second array is a subsequence of the array list, and they
 	 *         share end elements.
 	 */
-	public static final boolean endsWith(final Object[] left, final Object[] right,
+	public static boolean endsWith(final Object[] left, final Object[] right,
 			final boolean equals) {
 		if (left == null || right == null) {
 			return false;
@@ -251,7 +251,7 @@ public final class Util {
 	 * @deprecated Use {@link Objects#equals(Object, Object)}
 	 */
 	@Deprecated
-	public static final boolean equals(final Object left, final Object right) {
+	public static boolean equals(final Object left, final Object right) {
 		return left == null ? right == null : ((right != null) && left.equals(right));
 	}
 
@@ -270,7 +270,7 @@ public final class Util {
 	 * @deprecated Use {@link Arrays#equals(Object[], Object[])}
 	 */
 	@Deprecated
-	public static final boolean equals(final Object[] leftArray, final Object[] rightArray) {
+	public static boolean equals(final Object[] leftArray, final Object[] rightArray) {
 		return Arrays.equals(leftArray, rightArray);
 	}
 
@@ -281,7 +281,7 @@ public final class Util {
 	 *            The integer value
 	 * @return <code>i</code>
 	 */
-	public static final int hashCode(final int i) {
+	public static int hashCode(final int i) {
 		return i;
 	}
 
@@ -293,7 +293,7 @@ public final class Util {
 	 * @return <code>object.hashCode</code> or <code>0</code> if <code>object</code> if
 	 *         <code>null</code>.
 	 */
-	public static final int hashCode(final Object object) {
+	public static int hashCode(final Object object) {
 		return object != null ? object.hashCode() : 0;
 	}
 
@@ -305,7 +305,7 @@ public final class Util {
 	 * @return The hash code for <code>objects</code>; or <code>0</code> if <code>objects</code> is
 	 *         <code>null</code>.
 	 */
-	public static final int hashCode(final Object[] objects) {
+	public static int hashCode(final Object[] objects) {
 		if (objects == null) {
 			return 0;
 		}
@@ -333,7 +333,7 @@ public final class Util {
 	 * @return <code>true</code> if the first arrays starts with the second list; <code>false</code>
 	 *         otherwise.
 	 */
-	public static final boolean startsWith(final Object[] left, final Object[] right,
+	public static boolean startsWith(final Object[] left, final Object[] right,
 			final boolean equals) {
 		if (left == null || right == null) {
 			return false;
@@ -362,7 +362,7 @@ public final class Util {
 	 *            The array to convert; may be <code>null</code>.
 	 * @return The string representation of the array; never <code>null</code>.
 	 */
-	public static final String toString(final Object[] array) {
+	public static String toString(final Object[] array) {
 		if (array == null) {
 			return "null"; //$NON-NLS-1$
 		}
@@ -396,7 +396,7 @@ public final class Util {
 	 * @return The value of the translated resource at <code>key</code>. If the key cannot be found,
 	 *         then it is simply the <code>defaultString</code>.
 	 */
-	public static final String translateString(final ResourceBundle resourceBundle,
+	public static String translateString(final ResourceBundle resourceBundle,
 			final String key, final String defaultString) {
 		if (resourceBundle != null && key != null) {
 			try {
@@ -427,7 +427,7 @@ public final class Util {
 	 *         <code>replacement</code> (not using regular expressions)
 	 * @since 3.4
 	 */
-	public static final String replaceAll(String src, String find, String replacement) {
+	public static String replaceAll(String src, String find, String replacement) {
 		final int len = src.length();
 		final int findLen = find.length();
 

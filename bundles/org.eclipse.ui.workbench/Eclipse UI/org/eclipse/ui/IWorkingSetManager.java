@@ -43,7 +43,7 @@ public interface IWorkingSetManager {
      *
      * @see IPropertyChangeListener
      */
-    public static final String CHANGE_WORKING_SET_ADD = "workingSetAdd"; //$NON-NLS-1$
+    String CHANGE_WORKING_SET_ADD = "workingSetAdd"; //$NON-NLS-1$
 
     /**
      * Change event id when a working set is removed
@@ -52,7 +52,7 @@ public interface IWorkingSetManager {
      *
      * @see IPropertyChangeListener
      */
-    public static final String CHANGE_WORKING_SET_REMOVE = "workingSetRemove"; //$NON-NLS-1$
+    String CHANGE_WORKING_SET_REMOVE = "workingSetRemove"; //$NON-NLS-1$
 
     /**
      * Change event id when the working set contents changed
@@ -60,7 +60,7 @@ public interface IWorkingSetManager {
      *
      * @see IPropertyChangeListener
      */
-    public static final String CHANGE_WORKING_SET_CONTENT_CHANGE = "workingSetContentChange"; //$NON-NLS-1$
+    String CHANGE_WORKING_SET_CONTENT_CHANGE = "workingSetContentChange"; //$NON-NLS-1$
 
     /**
      * Change event id when the working set name changed.
@@ -68,7 +68,7 @@ public interface IWorkingSetManager {
      *
      * @see IPropertyChangeListener
      */
-    public static final String CHANGE_WORKING_SET_NAME_CHANGE = "workingSetNameChange"; //$NON-NLS-1$
+    String CHANGE_WORKING_SET_NAME_CHANGE = "workingSetNameChange"; //$NON-NLS-1$
 
     /**
      * Change event id when the working set label changed.
@@ -77,7 +77,7 @@ public interface IWorkingSetManager {
      * @see IPropertyChangeListener
      * @since 3.2
      */
-    public static final String CHANGE_WORKING_SET_LABEL_CHANGE = "workingSetLabelChange"; //$NON-NLS-1$
+    String CHANGE_WORKING_SET_LABEL_CHANGE = "workingSetLabelChange"; //$NON-NLS-1$
 
     /**
      * Change event id when a working set updater got installed.
@@ -85,7 +85,7 @@ public interface IWorkingSetManager {
      * OldValue will be <code>null</code>
      * @since 3.1
      */
-    public static final String CHANGE_WORKING_SET_UPDATER_INSTALLED = "workingSetUpdaterInstalled"; //$NON-NLS-1$
+    String CHANGE_WORKING_SET_UPDATER_INSTALLED = "workingSetUpdaterInstalled"; //$NON-NLS-1$
 
     /**
      * Change event id when a working set updater got uninstalled.
@@ -93,14 +93,14 @@ public interface IWorkingSetManager {
      * OldValue of the PropertyChangeEvent will be the uninstalled updater.
      * @since 3.3
      */
-    public static final String CHANGE_WORKING_SET_UPDATER_UNINSTALLED = "workingSetUpdaterUninstalled"; //$NON-NLS-1$
+    String CHANGE_WORKING_SET_UPDATER_UNINSTALLED = "workingSetUpdaterUninstalled"; //$NON-NLS-1$
 
     /**
      * Adds a property change listener.
      *
      * @param listener the property change listener to add
      */
-    public void addPropertyChangeListener(IPropertyChangeListener listener);
+    void addPropertyChangeListener(IPropertyChangeListener listener);
 
     /**
      * Adds a working set to the top of the list of most recently used
@@ -111,7 +111,7 @@ public interface IWorkingSetManager {
      * @param workingSet the working set to add to the list of most
      * 	recently used working sets.
      */
-    public void addRecentWorkingSet(IWorkingSet workingSet);
+    void addRecentWorkingSet(IWorkingSet workingSet);
 
     /**
      * Adds a working set to the receiver. The working set must
@@ -119,7 +119,7 @@ public interface IWorkingSetManager {
      *
      * @param workingSet the working set to add
      */
-    public void addWorkingSet(IWorkingSet workingSet);
+    void addWorkingSet(IWorkingSet workingSet);
 
     /**
      * Creates a new working set.
@@ -130,7 +130,7 @@ public interface IWorkingSetManager {
      * @param elements the working set contents
      * @return a new working set with the specified name and content
      */
-    public IWorkingSet createWorkingSet(String name, IAdaptable[] elements);
+    IWorkingSet createWorkingSet(String name, IAdaptable[] elements);
 
     /**
 	 * Create a working set that is the union of a collection of other working
@@ -150,7 +150,7 @@ public interface IWorkingSetManager {
 	 *
 	 * @since 3.2
 	 */
-	public IWorkingSet createAggregateWorkingSet(String name, String label,
+	IWorkingSet createAggregateWorkingSet(String name, String label,
 			IWorkingSet[] components);
 
     /**
@@ -162,7 +162,7 @@ public interface IWorkingSetManager {
      *
      * @since 3.0
      */
-    public IWorkingSet createWorkingSet(IMemento memento);
+    IWorkingSet createWorkingSet(IMemento memento);
 
     /**
      * Creates a working set edit wizard for the specified working set.
@@ -192,7 +192,7 @@ public interface IWorkingSetManager {
      *  returned.
      * @since 2.1
      */
-    public IWorkingSetEditWizard createWorkingSetEditWizard(
+    IWorkingSetEditWizard createWorkingSetEditWizard(
             IWorkingSet workingSet);
 
 
@@ -223,15 +223,14 @@ public interface IWorkingSetManager {
      *
      * @since 3.1
      */
-    public IWorkingSetNewWizard createWorkingSetNewWizard(String[] workingSetIds);
+    IWorkingSetNewWizard createWorkingSetNewWizard(String[] workingSetIds);
 
     /**
      * @param parent the parent shell
      * @return the dialog
      * @deprecated use createWorkingSetSelectionDialog(parent, true) instead
      */
-    @Deprecated
-	public IWorkingSetSelectionDialog createWorkingSetSelectionDialog(
+    @Deprecated IWorkingSetSelectionDialog createWorkingSetSelectionDialog(
             Shell parent);
 
     /**
@@ -250,7 +249,7 @@ public interface IWorkingSetManager {
      *  selected in the dialog.
      * @return a working set selection dialog
      */
-    public IWorkingSetSelectionDialog createWorkingSetSelectionDialog(
+    IWorkingSetSelectionDialog createWorkingSetSelectionDialog(
             Shell parentShell, boolean multi);
 
     /**
@@ -274,7 +273,7 @@ public interface IWorkingSetManager {
      * @return a working set selection dialog
      * @since 3.1
      */
-    public IWorkingSetSelectionDialog createWorkingSetSelectionDialog(
+    IWorkingSetSelectionDialog createWorkingSetSelectionDialog(
             Shell parentShell, boolean multi, String[] workingsSetIds);
 
     /**
@@ -283,7 +282,7 @@ public interface IWorkingSetManager {
      *
      * @return the list of most recently used working sets
      */
-    public IWorkingSet[] getRecentWorkingSets();
+    IWorkingSet[] getRecentWorkingSets();
 
     /**
      * Returns the working set with the specified name.
@@ -292,7 +291,7 @@ public interface IWorkingSetManager {
      * @param name the name of the working set to return
      * @return the working set with the specified name.
      */
-    public IWorkingSet getWorkingSet(String name);
+    IWorkingSet getWorkingSet(String name);
 
     /**
 	 * Returns an array of all working sets stored in the receiver. The array is
@@ -302,7 +301,7 @@ public interface IWorkingSetManager {
 	 *
 	 * @return the working sets stored in the receiver
 	 */
-    public IWorkingSet[] getWorkingSets();
+    IWorkingSet[] getWorkingSets();
 
     /**
 	 * Returns an array of all working sets stored in the receiver including
@@ -312,28 +311,28 @@ public interface IWorkingSetManager {
 	 * @return the working sets stored in the receiver
 	 * @since 3.2
 	 */
-    public IWorkingSet[] getAllWorkingSets();
+    IWorkingSet[] getAllWorkingSets();
 
     /**
      * Removes the property change listener.
      *
      * @param listener the property change listener to remove
      */
-    public void removePropertyChangeListener(IPropertyChangeListener listener);
+    void removePropertyChangeListener(IPropertyChangeListener listener);
 
     /**
      * Removes the working set
      *
      * @param workingSet the working set to remove
      */
-    public void removeWorkingSet(IWorkingSet workingSet);
+    void removeWorkingSet(IWorkingSet workingSet);
 
     /**
      * Disposes the working set manager.
      *
      * @since 3.1
      */
-    public void dispose();
+    void dispose();
 
     /**
 	 * Utility method that will add the <code>element</code> to each given
@@ -348,7 +347,7 @@ public interface IWorkingSetManager {
 	 *            the working sets to add the element to
 	 * @since 3.4
 	 */
-	public void addToWorkingSets(IAdaptable element, IWorkingSet[] workingSets);
+	void addToWorkingSets(IAdaptable element, IWorkingSet[] workingSets);
 
 	/**
 	 * Sets maximum length of the recent working sets list.
@@ -357,7 +356,7 @@ public interface IWorkingSetManager {
 	 *            maximum number of recent working sets to be kept in the list
 	 * @since 3.7
 	 */
-	public void setRecentWorkingSetsLength(int length);
+	void setRecentWorkingSetsLength(int length);
 
 	/**
 	 * Returns the maximum length of the recent working sets list.
@@ -365,5 +364,5 @@ public interface IWorkingSetManager {
 	 * @return the maximum length of the recent working sets list.
 	 * @since 3.7
 	 */
-	public int getRecentWorkingSetsLength();
+	int getRecentWorkingSetsLength();
 }

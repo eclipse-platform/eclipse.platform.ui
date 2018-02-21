@@ -105,7 +105,7 @@ public final class ParameterizedCommand implements Comparable {
 	 *         special serialization characters escaped
 	 * @since 3.2
 	 */
-	private static final String escape(final String rawText) {
+	private static String escape(final String rawText) {
 
 		// defer initialization of a StringBuilder until we know we need one
 		StringBuilder buffer = null;
@@ -153,7 +153,7 @@ public final class ParameterizedCommand implements Comparable {
 	 * @return A collection (<code>Collection</code>) of combinations (<code>List</code>
 	 *         of <code>Parameterization</code>).
 	 */
-	private static final Collection<?> expandParameters(final int startIndex,
+	private static Collection<?> expandParameters(final int startIndex,
 			final IParameter[] parameters) {
 		final int nextIndex = startIndex + 1;
 		final boolean noMoreParameters = (nextIndex >= parameters.length);
@@ -249,7 +249,7 @@ public final class ParameterizedCommand implements Comparable {
 	 * @throws NotDefinedException
 	 *             If the command is not defined.
 	 */
-	public static final Collection generateCombinations(final Command command)
+	public static Collection generateCombinations(final Command command)
 			throws NotDefinedException {
 		final IParameter[] parameters = command.getParameters();
 		if (parameters == null) {
@@ -293,7 +293,7 @@ public final class ParameterizedCommand implements Comparable {
 	 *         be generated
 	 * @since 3.4
 	 */
-	public static final ParameterizedCommand generateCommand(Command command, Map parameters) {
+	public static ParameterizedCommand generateCommand(Command command, Map parameters) {
 		// no parameters
 		if (parameters == null || parameters.isEmpty()) {
 			return new ParameterizedCommand(command, null);
@@ -396,7 +396,7 @@ public final class ParameterizedCommand implements Comparable {
 	}
 
 	@Override
-	public final int compareTo(final Object object) {
+	public int compareTo(final Object object) {
 		final ParameterizedCommand command = (ParameterizedCommand) object;
 		final boolean thisDefined = this.command.isDefined();
 		final boolean otherDefined = command.command.isDefined();
@@ -417,7 +417,7 @@ public final class ParameterizedCommand implements Comparable {
 	}
 
 	@Override
-	public final boolean equals(final Object object) {
+	public boolean equals(final Object object) {
 		if (this == object) {
 			return true;
 		}
@@ -454,7 +454,7 @@ public final class ParameterizedCommand implements Comparable {
 	 *             instead.
 	 */
 	@Deprecated
-	public final Object execute(final Object trigger, final Object applicationContext)
+	public Object execute(final Object trigger, final Object applicationContext)
 			throws ExecutionException, NotHandledException {
 		return command.execute(new ExecutionEvent(command, getParameterMap(), trigger, applicationContext));
 	}
@@ -482,7 +482,7 @@ public final class ParameterizedCommand implements Comparable {
 	 *             If there is no handler.
 	 * @since 3.2
 	 */
-	public final Object executeWithChecks(final Object trigger, final Object applicationContext)
+	public Object executeWithChecks(final Object trigger, final Object applicationContext)
 			throws ExecutionException, NotDefinedException, NotEnabledException, NotHandledException {
 		return command.executeWithChecks(new ExecutionEvent(command, getParameterMap(), trigger, applicationContext));
 	}
@@ -493,7 +493,7 @@ public final class ParameterizedCommand implements Comparable {
 	 *
 	 * @return The command; never <code>null</code>, but may be undefined.
 	 */
-	public final Command getCommand() {
+	public Command getCommand() {
 		return command;
 	}
 
@@ -503,7 +503,7 @@ public final class ParameterizedCommand implements Comparable {
 	 *
 	 * @return The command id; never <code>null</code>.
 	 */
-	public final String getId() {
+	public String getId() {
 		return command.getId();
 	}
 
@@ -516,7 +516,7 @@ public final class ParameterizedCommand implements Comparable {
 	 * @throws NotDefinedException
 	 *             If the underlying command is not defined.
 	 */
-	public final String getName() throws NotDefinedException {
+	public String getName() throws NotDefinedException {
 		return getName(command.getName());
 	}
 
@@ -533,7 +533,7 @@ public final class ParameterizedCommand implements Comparable {
 	 *             If the underlying command is not defined.
 	 * @since 3.8
 	 */
-	public final String getName(String baseName) throws NotDefinedException {
+	public String getName(String baseName) throws NotDefinedException {
 		if (name == null) {
 			final StringBuilder nameBuffer = new StringBuilder();
 			nameBuffer.append(baseName);
@@ -585,7 +585,7 @@ public final class ParameterizedCommand implements Comparable {
 	 *         values (<code>String</code>). This map is never
 	 *         <code>null</code>, but may be empty.
 	 */
-	public final Map getParameterMap() {
+	public Map getParameterMap() {
 		if ((parameterizations == null) || (parameterizations.length == 0)) {
 			return Collections.EMPTY_MAP;
 		}
@@ -598,7 +598,7 @@ public final class ParameterizedCommand implements Comparable {
 	}
 
 	@Override
-	public final int hashCode() {
+	public int hashCode() {
 		if (hashCode == HASH_CODE_NOT_COMPUTED) {
 			hashCode = HASH_INITIAL * HASH_FACTOR + Util.hashCode(command);
 			hashCode = hashCode * HASH_FACTOR;
@@ -671,7 +671,7 @@ public final class ParameterizedCommand implements Comparable {
 	 * @see CommandManager#deserialize(String)
 	 * @since 3.2
 	 */
-	public final String serialize() {
+	public String serialize() {
 		final String escapedId = escape(getId());
 
 		if ((parameterizations == null) || (parameterizations.length == 0)) {
@@ -708,7 +708,7 @@ public final class ParameterizedCommand implements Comparable {
 	}
 
 	@Override
-	public final String toString() {
+	public String toString() {
 		final StringBuilder buffer = new StringBuilder("ParameterizedCommand("); //$NON-NLS-1$
 		buffer.append(command);
 		buffer.append(',');

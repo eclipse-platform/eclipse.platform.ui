@@ -41,14 +41,14 @@ public interface IContributionManager {
      *
      * @param action the action, this cannot be <code>null</code>
      */
-    public void add(IAction action);
+    void add(IAction action);
 
     /**
      * Adds a contribution item to this manager.
      *
      * @param item the contribution item, this cannot be <code>null</code>
      */
-    public void add(IContributionItem item);
+    void add(IContributionItem item);
 
     /**
      * Adds a contribution item for the given action at the end of the group
@@ -61,7 +61,7 @@ public interface IContributionManager {
      * @exception IllegalArgumentException if there is no group with
      *   the given name
      */
-    public void appendToGroup(String groupName, IAction action);
+    void appendToGroup(String groupName, IAction action);
 
     /**
      * Adds a contribution item to this manager at the end of the group
@@ -72,7 +72,7 @@ public interface IContributionManager {
      * @exception IllegalArgumentException if there is no group with
      *   the given name
      */
-    public void appendToGroup(String groupName, IContributionItem item);
+    void appendToGroup(String groupName, IContributionItem item);
 
     /**
      * Finds the contribution item with the given id.
@@ -81,14 +81,14 @@ public interface IContributionManager {
      * @return the contribution item, or <code>null</code> if
      *   no item with the given id can be found
      */
-    public IContributionItem find(String id);
+    IContributionItem find(String id);
 
     /**
      * Returns all contribution items known to this manager.
      *
      * @return a list of contribution items
      */
-    public IContributionItem[] getItems();
+    IContributionItem[] getItems();
 
     /**
      * Returns the overrides for the items of this manager.
@@ -96,7 +96,7 @@ public interface IContributionManager {
      * @return the overrides for the items of this manager
      * @since 2.0
      */
-    public IContributionManagerOverrides getOverrides();
+    IContributionManagerOverrides getOverrides();
 
     /**
      * Inserts a contribution item for the given action after the item
@@ -109,7 +109,7 @@ public interface IContributionManager {
      * @exception IllegalArgumentException if there is no item with
      *   the given id
      */
-    public void insertAfter(String id, IAction action);
+    void insertAfter(String id, IAction action);
 
     /**
      * Inserts a contribution item after the item with the given id.
@@ -119,7 +119,7 @@ public interface IContributionManager {
      * @exception IllegalArgumentException if there is no item with
      *   the given id
      */
-    public void insertAfter(String id, IContributionItem item);
+    void insertAfter(String id, IContributionItem item);
 
     /**
      * Inserts a contribution item for the given action before the item
@@ -132,7 +132,7 @@ public interface IContributionManager {
      * @exception IllegalArgumentException if there is no item with
      *   the given id
      */
-    public void insertBefore(String id, IAction action);
+    void insertBefore(String id, IAction action);
 
     /**
      * Inserts a contribution item before the item with the given id.
@@ -142,7 +142,7 @@ public interface IContributionManager {
      * @exception IllegalArgumentException if there is no item with
      *   the given id
      */
-    public void insertBefore(String id, IContributionItem item);
+    void insertBefore(String id, IContributionItem item);
 
     /**
      * Returns whether the list of contributions has recently changed and
@@ -151,7 +151,7 @@ public interface IContributionManager {
      * @return <code>true</code> if this manager is dirty, and <code>false</code>
      *   if it is up-to-date
      */
-    public boolean isDirty();
+    boolean isDirty();
 
     /**
      * Returns whether this manager has any contribution items.
@@ -159,12 +159,12 @@ public interface IContributionManager {
      * @return <code>true</code> if there are no items, and
      *   <code>false</code> otherwise
      */
-    public boolean isEmpty();
+    boolean isEmpty();
 
     /**
      * Marks this contribution manager as dirty.
      */
-    public void markDirty();
+    void markDirty();
 
     /**
      * Adds a contribution item for the given action at the beginning of the
@@ -177,7 +177,7 @@ public interface IContributionManager {
      * @exception IllegalArgumentException if there is no group with
      *   the given name
      */
-    public void prependToGroup(String groupName, IAction action);
+    void prependToGroup(String groupName, IAction action);
 
     /**
      * Adds a contribution item to this manager at the beginning of the
@@ -188,7 +188,7 @@ public interface IContributionManager {
      * @exception IllegalArgumentException if there is no group with
      *   the given name
      */
-    public void prependToGroup(String groupName, IContributionItem item);
+    void prependToGroup(String groupName, IContributionItem item);
 
     /**
      * Removes and returns the contribution item with the given id from this manager.
@@ -198,7 +198,7 @@ public interface IContributionManager {
      * @param id the contribution item id
      * @return the item that was found and removed, or <code>null</code> if none
      */
-    public IContributionItem remove(String id);
+    IContributionItem remove(String id);
 
     /**
      * Removes the given contribution item from the contribution items
@@ -208,7 +208,7 @@ public interface IContributionManager {
      * @return the <code>item</code> parameter if the item was removed,
      *   and <code>null</code> if it was not found
      */
-    public IContributionItem remove(IContributionItem item);
+    IContributionItem remove(IContributionItem item);
 
     /**
      * Removes all contribution items from this manager.
@@ -216,7 +216,7 @@ public interface IContributionManager {
      * <strong>Note:</strong> The items will not get disposed.
      * </p>
      */
-    public void removeAll();
+    void removeAll();
 
     /**
      * Updates this manager's underlying widget(s) with any changes which
@@ -227,5 +227,5 @@ public interface IContributionManager {
      * @param force <code>true</code> means update even if not dirty,
      *   and <code>false</code> for normal incremental updating
      */
-    public void update(boolean force);
+    void update(boolean force);
 }

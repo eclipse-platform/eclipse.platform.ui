@@ -223,7 +223,7 @@ public final class ActionDelegateHandlerProxy implements ISelectionListener,
 	}
 
 	@Override
-	public final void addHandlerListener(final IHandlerListener handlerListener) {
+	public void addHandlerListener(final IHandlerListener handlerListener) {
 		if (listenerList == null) {
 			listenerList = new ListenerList<>(ListenerList.IDENTITY);
 		}
@@ -237,7 +237,7 @@ public final class ActionDelegateHandlerProxy implements ISelectionListener,
 
 
 	@Override
-	public final void dispose() {
+	public void dispose() {
 		disposeDelegate();
 	}
 
@@ -262,7 +262,7 @@ public final class ActionDelegateHandlerProxy implements ISelectionListener,
 	}
 
 	@Override
-	public final Object execute(final ExecutionEvent event) {
+	public Object execute(final ExecutionEvent event) {
 		final IAction action = getAction();
 		if (loadDelegate() && (action != null)) {
 			final Object trigger = event.getTrigger();
@@ -392,7 +392,7 @@ public final class ActionDelegateHandlerProxy implements ISelectionListener,
 	 * @return The current action; <code>null</code> if there is no currently
 	 *         active workbench window.
 	 */
-	public final CommandLegacyActionWrapper getAction() {
+	public CommandLegacyActionWrapper getAction() {
 		if (action == null) {
 			action = new CommandLegacyActionWrapper(actionId, command, style,
 					window);
@@ -409,7 +409,7 @@ public final class ActionDelegateHandlerProxy implements ISelectionListener,
 	 *
 	 * @return The current delegate; or <code>null</code> if none.
 	 */
-	public final IActionDelegate getDelegate() {
+	public IActionDelegate getDelegate() {
 		return delegate;
 	}
 
@@ -423,14 +423,14 @@ public final class ActionDelegateHandlerProxy implements ISelectionListener,
 		return null;
 	}
 
-	public final void handleStateChange(final State state, final Object oldValue) {
+	public void handleStateChange(final State state, final Object oldValue) {
 		// TODO What should we do here?
 	}
 
 	/**
 	 * Initialize the action delegate by calling its lifecycle method.
 	 */
-	private final boolean initDelegate() {
+	private boolean initDelegate() {
 		final IWorkbenchPage page = window.getActivePage();
 		final IWorkbenchPart activePart;
 		final IEditorPart activeEditor;
@@ -455,12 +455,12 @@ public final class ActionDelegateHandlerProxy implements ISelectionListener,
 		// Initialize the delegate.
 		final ISafeRunnable runnable = new ISafeRunnable() {
 			@Override
-			public final void handleException(final Throwable exception) {
+			public void handleException(final Throwable exception) {
 				// Do nothing.
 			}
 
 			@Override
-			public final void run() {
+			public void run() {
 				// Handle IActionDelegate2
 				if (delegate instanceof IActionDelegate2) {
 					final IActionDelegate2 delegate2 = (IActionDelegate2) delegate;
@@ -522,12 +522,12 @@ public final class ActionDelegateHandlerProxy implements ISelectionListener,
 	}
 
 	@Override
-	public final boolean isEnabled() {
+	public boolean isEnabled() {
 		return (action == null) || action.isEnabledDisregardingCommand();
 	}
 
 	@Override
-	public final boolean isHandled() {
+	public boolean isHandled() {
 		return true;
 	}
 
@@ -538,7 +538,7 @@ public final class ActionDelegateHandlerProxy implements ISelectionListener,
 	 * @return <code>true</code> if the bundle containing the delegate is
 	 *         already loaded -- making it safe to load the delegate.
 	 */
-	private final boolean isSafeToLoadDelegate() {
+	private boolean isSafeToLoadDelegate() {
 		return false;
 		// TODO This causes problem because some people expect their selections
 		// to be a particular class.
@@ -553,7 +553,7 @@ public final class ActionDelegateHandlerProxy implements ISelectionListener,
 	 * @return <code>true</code> if the delegate is now non-null;
 	 *         <code>false</code> otherwise.
 	 */
-	public final boolean loadDelegate() {
+	public boolean loadDelegate() {
 		// Try to load the delegate, if it hasn't been loaded already.
 		if (delegate == null) {
 			/*
@@ -636,7 +636,7 @@ public final class ActionDelegateHandlerProxy implements ISelectionListener,
 	/**
 	 * Refresh the action enablement.
 	 */
-	private final void refreshEnablement() {
+	private void refreshEnablement() {
 		final IActionDelegate delegate = getDelegate();
 		final IAction action = getAction();
 		if ((delegate != null) && (action != null)) {
@@ -659,7 +659,7 @@ public final class ActionDelegateHandlerProxy implements ISelectionListener,
 	public void removeState(String stateId) {
 	}
 
-	private final void selectionChanged(final ISelection selection) {
+	private void selectionChanged(final ISelection selection) {
 		// Update selection.
 		currentSelection = selection;
 		if (currentSelection == null) {
@@ -680,20 +680,20 @@ public final class ActionDelegateHandlerProxy implements ISelectionListener,
 	}
 
 	@Override
-	public final void selectionChanged(final IWorkbenchPart part,
+	public void selectionChanged(final IWorkbenchPart part,
 			final ISelection selection) {
 		selectionChanged(selection);
 
 	}
 
 	@Override
-	public final void selectionChanged(final SelectionChangedEvent event) {
+	public void selectionChanged(final SelectionChangedEvent event) {
 		final ISelection selection = event.getSelection();
 		selectionChanged(selection);
 	}
 
 	@Override
-	public final String toString() {
+	public String toString() {
 		final StringBuilder buffer = new StringBuilder();
 		buffer.append("ActionDelegateHandlerProxy("); //$NON-NLS-1$
 		buffer.append(getDelegate());

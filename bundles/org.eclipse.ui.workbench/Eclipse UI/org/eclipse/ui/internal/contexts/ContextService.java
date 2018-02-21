@@ -91,7 +91,7 @@ public final class ContextService implements IContextService {
 	}
 
 	@Override
-	public final IContextActivation activateContext(final String contextId) {
+	public IContextActivation activateContext(final String contextId) {
 		return activateContext(contextId, null);
 	}
 
@@ -137,7 +137,7 @@ public final class ContextService implements IContextService {
 	}
 
 	@Override
-	public final IContextActivation activateContext(final String contextId,
+	public IContextActivation activateContext(final String contextId,
 			final Expression expression) {
 
 		final IContextActivation activation = new ContextActivation(contextId,
@@ -160,24 +160,24 @@ public final class ContextService implements IContextService {
 	}
 
 	@Override
-	public final IContextActivation activateContext(final String contextId,
+	public IContextActivation activateContext(final String contextId,
 			final Expression expression, final int sourcePriority) {
 		return activateContext(contextId, expression);
 	}
 
 	@Override
-	public final void addContextManagerListener(
+	public void addContextManagerListener(
 			final IContextManagerListener listener) {
 		contextManager.addContextManagerListener(listener);
 	}
 
 	@Override
-	public final void addSourceProvider(final ISourceProvider provider) {
+	public void addSourceProvider(final ISourceProvider provider) {
 		contextAuthority.addSourceProvider(provider);
 	}
 
 	@Override
-	public final void deactivateContext(final IContextActivation activation) {
+	public void deactivateContext(final IContextActivation activation) {
 		if (activation != null && activation.getContextService() == this) {
 			final UpdateExpression rat = activationToRat.remove(activation);
 			if (rat != null) {
@@ -193,7 +193,7 @@ public final class ContextService implements IContextService {
 	}
 
 	@Override
-	public final void deactivateContexts(final Collection activations) {
+	public void deactivateContexts(final Collection activations) {
 		try {
 			deferUpdates(true);
 			final Iterator<?> activationItr = activations.iterator();
@@ -207,59 +207,59 @@ public final class ContextService implements IContextService {
 	}
 
 	@Override
-	public final void dispose() {
+	public void dispose() {
 		contextPersistence.dispose();
 		contextAuthority.dispose();
 	}
 
 	@Override
-	public final Collection getActiveContextIds() {
+	public Collection getActiveContextIds() {
 		return contextService.getActiveContextIds();
 	}
 
 	@Override
-	public final Context getContext(final String contextId) {
+	public Context getContext(final String contextId) {
 		return contextService.getContext(contextId);
 	}
 
 	@Override
-	public final Collection getDefinedContextIds() {
+	public Collection getDefinedContextIds() {
 		return contextManager.getDefinedContextIds();
 	}
 
 	@Override
-	public final Context[] getDefinedContexts() {
+	public Context[] getDefinedContexts() {
 		return contextManager.getDefinedContexts();
 	}
 
 	@Override
-	public final int getShellType(final Shell shell) {
+	public int getShellType(final Shell shell) {
 		return contextAuthority.getShellType(shell);
 	}
 
 	@Override
-	public final void readRegistry() {
+	public void readRegistry() {
 		// contextPersistence.read();
 	}
 
 	@Override
-	public final boolean registerShell(final Shell shell, final int type) {
+	public boolean registerShell(final Shell shell, final int type) {
 		return contextAuthority.registerShell(shell, type);
 	}
 
 	@Override
-	public final void removeContextManagerListener(
+	public void removeContextManagerListener(
 			final IContextManagerListener listener) {
 		contextManager.removeContextManagerListener(listener);
 	}
 
 	@Override
-	public final void removeSourceProvider(final ISourceProvider provider) {
+	public void removeSourceProvider(final ISourceProvider provider) {
 		contextAuthority.removeSourceProvider(provider);
 	}
 
 	@Override
-	public final boolean unregisterShell(final Shell shell) {
+	public boolean unregisterShell(final Shell shell) {
 		return contextAuthority.unregisterShell(shell);
 	}
 
@@ -273,7 +273,7 @@ public final class ContextService implements IContextService {
 	 * DO NOT CALL THIS METHOD.
 	 * </p>
 	 */
-	public final void updateShellKludge() {
+	public void updateShellKludge() {
 		contextAuthority.updateShellKludge();
 	}
 
@@ -291,7 +291,7 @@ public final class ContextService implements IContextService {
 	 *            The shell that should be considered active; must not be
 	 *            <code>null</code>.
 	 */
-	public final void updateShellKludge(final Shell shell) {
+	public void updateShellKludge(final Shell shell) {
 		final Shell currentActiveShell = contextAuthority.getActiveShell();
 		if (currentActiveShell != shell) {
 			contextAuthority.sourceChanged(ISources.ACTIVE_SHELL,

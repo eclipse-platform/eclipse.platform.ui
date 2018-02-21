@@ -85,7 +85,7 @@ public final class BindingManagerTest extends UITestCase {
 	 * cases.
 	 */
 	@Override
-	protected final void doSetUp() {
+	protected void doSetUp() {
 		commandManager = new CommandManager();
 		contextManager = new ContextManager();
 		bindingManager = new BindingManager(contextManager, commandManager);
@@ -95,7 +95,7 @@ public final class BindingManagerTest extends UITestCase {
 	 * Releases the context manager and binding manager for garbage collection.
 	 */
 	@Override
-	protected final void doTearDown() {
+	protected void doTearDown() {
 		bindingManager = null;
 		contextManager = null;
 		commandManager = null;
@@ -104,7 +104,7 @@ public final class BindingManagerTest extends UITestCase {
 	/**
 	 * Tests that the constructor disallows a null context manager.
 	 */
-	public final void testConstructor() {
+	public void testConstructor() {
 		try {
 			new BindingManager(null, null);
 			fail("A binding manager cannot be constructed with a null context manager");
@@ -120,7 +120,7 @@ public final class BindingManagerTest extends UITestCase {
 	 * @throws NotDefinedException
 	 *             If the scheme we try to activate is not defined.
 	 */
-	public final void testAddBinding() throws NotDefinedException {
+	public void testAddBinding() throws NotDefinedException {
 		// Set up a state in which a binding may become active.
 		final Context context = contextManager.getContext("na");
 		context.define("name", "description", null);
@@ -154,7 +154,7 @@ public final class BindingManagerTest extends UITestCase {
 	 *
 	 * @see BindingInteractionsTest
 	 */
-	public final void testGetActiveBindingsDisregardingContext() {
+	public void testGetActiveBindingsDisregardingContext() {
 		final Map<?, ?> activeBindings = bindingManager
 				.getActiveBindingsDisregardingContext();
 		assertNotNull("The active bindings should never be null",
@@ -170,7 +170,7 @@ public final class BindingManagerTest extends UITestCase {
 	 *
 	 * @see BindingInteractionsTest
 	 */
-	public final void testGetActiveBindingsDisregardingContextFlat() {
+	public void testGetActiveBindingsDisregardingContextFlat() {
 		final Collection<?> activeBindings = bindingManager
 				.getActiveBindingsDisregardingContextFlat();
 		assertNotNull("The active bindings should never be null",
@@ -186,7 +186,7 @@ public final class BindingManagerTest extends UITestCase {
 	 * @throws NotDefinedException
 	 *             If the scheme we try to activate is not defined.
 	 */
-	public final void testGetActiveBindingsFor() throws NotDefinedException {
+	public void testGetActiveBindingsFor() throws NotDefinedException {
 		// Test with a null argument.
 		final TriggerSequence[] activeBindingsForNull = bindingManager
 				.getActiveBindingsFor((ParameterizedCommand) null);
@@ -226,7 +226,7 @@ public final class BindingManagerTest extends UITestCase {
 	 *
 	 * @see BindingManagerTest#testSetActiveScheme()
 	 */
-	public final void testGetActiveScheme() {
+	public void testGetActiveScheme() {
 		assertNull("The active scheme should start null",
 				bindingManager.getActiveScheme());
 	}
@@ -235,7 +235,7 @@ public final class BindingManagerTest extends UITestCase {
 	 * Tests that <code>getBindings</code> first returns <code>null</code>. It
 	 * then verifies that an added binding is return from this method.
 	 */
-	public final void testGetBindings() {
+	public void testGetBindings() {
 		// Check the starting condition.
 		assertNull("The bindings should start off null",
 				bindingManager.getBindings());
@@ -260,7 +260,7 @@ public final class BindingManagerTest extends UITestCase {
 	/**
 	 * Tests that the list of defined schemes stays up-to-date
 	 */
-	public final void testGetDefinedSchemeIds() {
+	public void testGetDefinedSchemeIds() {
 		// Starting condition.
 		assertTrue("The set of defined schemes should start empty",
 				bindingManager.getDefinedSchemes().length == 0);
@@ -294,7 +294,7 @@ public final class BindingManagerTest extends UITestCase {
 	/**
 	 * Tests that the active locale is never <code>null</code>.
 	 */
-	public final void testGetLocale() {
+	public void testGetLocale() {
 		assertNotNull("The locale should never be null",
 				bindingManager.getLocale());
 	}
@@ -311,7 +311,7 @@ public final class BindingManagerTest extends UITestCase {
 	 * @throws ParseException
 	 *             If the hard-coded strings aren't constructed properly.
 	 */
-	public final void testGetPartialMatches() throws NotDefinedException,
+	public void testGetPartialMatches() throws NotDefinedException,
 			ParseException {
 		// GENERAL SET-UP
 		final Context context = contextManager.getContext("na");
@@ -395,7 +395,7 @@ public final class BindingManagerTest extends UITestCase {
 	 * @throws ParseException
 	 *             If the hard-coded strings aren't constructed properly.
 	 */
-	public final void testGetPerfectMatch() throws NotDefinedException,
+	public void testGetPerfectMatch() throws NotDefinedException,
 			ParseException {
 		// GENERAL SET-UP
 		final Context context = contextManager.getContext("na");
@@ -457,7 +457,7 @@ public final class BindingManagerTest extends UITestCase {
 	/**
 	 * Tests that the platform is never <code>null</code>.
 	 */
-	public final void testGetPlatform() {
+	public void testGetPlatform() {
 		assertNotNull("The platform can never be null",
 				bindingManager.getPlatform());
 	}
@@ -466,7 +466,7 @@ public final class BindingManagerTest extends UITestCase {
 	 * Tests that when a scheme is first retrieved, it is undefined. Tests that
 	 * a second access to a scheme returns the same scheme.
 	 */
-	public final void testGetScheme() {
+	public void testGetScheme() {
 		final String schemeId = "schemeId";
 		final Scheme firstScheme = bindingManager.getScheme(schemeId);
 		assertTrue("A scheme should start undefined", !firstScheme.isDefined());
@@ -487,7 +487,7 @@ public final class BindingManagerTest extends UITestCase {
 	 * @throws ParseException
 	 *             If the hard-coded strings aren't constructed properly.
 	 */
-	public final void testIsPartialMatch() throws NotDefinedException,
+	public void testIsPartialMatch() throws NotDefinedException,
 			ParseException {
 		// GENERAL SET-UP
 		final Context context = contextManager.getContext("na");
@@ -556,7 +556,7 @@ public final class BindingManagerTest extends UITestCase {
 	 * @throws ParseException
 	 *             If the hard-coded strings aren't constructed properly.
 	 */
-	public final void testIsPerfectMatch() throws NotDefinedException,
+	public void testIsPerfectMatch() throws NotDefinedException,
 			ParseException {
 		// GENERAL SET-UP
 		final Context context = contextManager.getContext("na");
@@ -619,7 +619,7 @@ public final class BindingManagerTest extends UITestCase {
 	 * @throws NotDefinedException
 	 *             If the scheme we try to activate is not defined.
 	 */
-	public final void testRemoveBindings() throws NotDefinedException {
+	public void testRemoveBindings() throws NotDefinedException {
 		// GENERAL SET-UP
 		final Context context = contextManager.getContext("na");
 		context.define("name", "description", null);
@@ -680,7 +680,7 @@ public final class BindingManagerTest extends UITestCase {
 	 * selecting a scheme works. Verifies that undefining scheme removes it as
 	 * the active scheme.
 	 */
-	public final void testSetActiveScheme() {
+	public void testSetActiveScheme() {
 		// SELECT UNDEFINED
 		final String schemeId = "schemeId";
 		final Scheme scheme = bindingManager.getScheme(schemeId);
@@ -766,7 +766,7 @@ public final class BindingManagerTest extends UITestCase {
 	 * @throws NotDefinedException
 	 *             If this test doesn't properly define a scheme.
 	 */
-	public final void testSetBindings() throws NotDefinedException {
+	public void testSetBindings() throws NotDefinedException {
 		// GENERAL SET-UP
 		final Context context = contextManager.getContext("na");
 		context.define("name", "description", null);
@@ -806,7 +806,7 @@ public final class BindingManagerTest extends UITestCase {
 	 * @throws NotDefinedException
 	 *             If this test doesn't properly define a scheme.
 	 */
-	public final void testSetLocale() throws NotDefinedException {
+	public void testSetLocale() throws NotDefinedException {
 		// GENERAL SET-UP
 		final Context context = contextManager.getContext("na");
 		context.define("name", "description", null);
@@ -849,7 +849,7 @@ public final class BindingManagerTest extends UITestCase {
 	 * @throws NotDefinedException
 	 *             If this test doesn't properly define a scheme.
 	 */
-	public final void testSetPlatform() throws NotDefinedException {
+	public void testSetPlatform() throws NotDefinedException {
 		// GENERAL SET-UP
 		final Context context = contextManager.getContext("na");
 		context.define("name", "description", null);
@@ -892,7 +892,7 @@ public final class BindingManagerTest extends UITestCase {
 	 * @throws NotDefinedException
 	 *             If the scheme we try to activate is not defined.
 	 */
-	public final void testGetBestActiveBindingFor() throws Exception {
+	public void testGetBestActiveBindingFor() throws Exception {
 		// Test with a null argument.
 		final TriggerSequence[] activeBindingsForNull = bindingManager
 				.getActiveBindingsFor((ParameterizedCommand) null);

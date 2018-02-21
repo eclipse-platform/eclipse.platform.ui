@@ -65,15 +65,14 @@ public interface IWorkbenchWindow extends IPageService, IRunnableContext,
      * @return <code>true</code> if the window was successfully closed, and
      *         <code>false</code> if it is still open
      */
-    public boolean close();
+    boolean close();
 
     /**
      * Returns the currently active page for this workbench window.
      *
      * @return the active page, or <code>null</code> if none
      */
-    @Override
-	public IWorkbenchPage getActivePage();
+    @Override IWorkbenchPage getActivePage();
 
     /**
      * Returns a list of the pages in this workbench window.
@@ -84,7 +83,7 @@ public interface IWorkbenchWindow extends IPageService, IRunnableContext,
      *
      * @return a list of pages
      */
-    public IWorkbenchPage[] getPages();
+    IWorkbenchPage[] getPages();
 
     /**
      * Returns the part service which tracks part activation within this
@@ -92,7 +91,7 @@ public interface IWorkbenchWindow extends IPageService, IRunnableContext,
      *
      * @return the part service
      */
-    public IPartService getPartService();
+    IPartService getPartService();
 
     /**
      * Returns the selection service which tracks selection within this
@@ -100,7 +99,7 @@ public interface IWorkbenchWindow extends IPageService, IRunnableContext,
      *
      * @return the selection service
      */
-    public ISelectionService getSelectionService();
+    ISelectionService getSelectionService();
 
     /**
      * Returns this workbench window's shell.
@@ -108,15 +107,14 @@ public interface IWorkbenchWindow extends IPageService, IRunnableContext,
      * @return the shell containing this window's controls or <code>null</code>
      *   if the shell has not been created yet or if the window has been closed
      */
-    @Override
-	public Shell getShell();
+    @Override Shell getShell();
 
     /**
      * Returns the workbench for this window.
      *
      * @return the workbench
      */
-    public IWorkbench getWorkbench();
+    IWorkbench getWorkbench();
 
     /**
      * Returns whether the specified menu is an application menu as opposed to
@@ -134,7 +132,7 @@ public interface IWorkbenchWindow extends IPageService, IRunnableContext,
      * @return <code>true</code> if the specified menu is an application
      *         menu, and <code>false</code> if it is not
      */
-    public boolean isApplicationMenu(String menuId);
+    boolean isApplicationMenu(String menuId);
 
     /**
      * Creates and opens a new workbench page. The perspective of the new page
@@ -159,7 +157,7 @@ public interface IWorkbenchWindow extends IPageService, IRunnableContext,
      *
      * @see IWorkbench#showPerspective(String, IWorkbenchWindow, IAdaptable)
      */
-    public IWorkbenchPage openPage(String perspectiveId, IAdaptable input)
+    IWorkbenchPage openPage(String perspectiveId, IAdaptable input)
             throws WorkbenchException;
 
     /**
@@ -183,7 +181,7 @@ public interface IWorkbenchWindow extends IPageService, IRunnableContext,
      *
      * @see IWorkbench#showPerspective(String, IWorkbenchWindow, IAdaptable)
      */
-    public IWorkbenchPage openPage(IAdaptable input) throws WorkbenchException;
+    IWorkbenchPage openPage(IAdaptable input) throws WorkbenchException;
 
     /**
      * This specialization of IRunnableContext#run(boolean, boolean,
@@ -197,8 +195,7 @@ public interface IWorkbenchWindow extends IPageService, IRunnableContext,
      *
      * @since 3.2
      */
-    @Override
-	public void run(boolean fork, boolean cancelable, IRunnableWithProgress runnable) throws InvocationTargetException, InterruptedException;
+    @Override void run(boolean fork, boolean cancelable, IRunnableWithProgress runnable) throws InvocationTargetException, InterruptedException;
 
     /**
 	 * Sets or clears the currently active page for this workbench window.
@@ -206,7 +203,7 @@ public interface IWorkbenchWindow extends IPageService, IRunnableContext,
 	 * @param page
 	 *            the new active page, or <code>null</code> for no active page
 	 */
-    public void setActivePage(IWorkbenchPage page);
+    void setActivePage(IWorkbenchPage page);
 
     /**
 	 * <p>
@@ -225,5 +222,5 @@ public interface IWorkbenchWindow extends IPageService, IRunnableContext,
 	 * @see IWorkbenchPage#getExtensionTracker()
 	 * @since 3.1
 	 */
-    public IExtensionTracker getExtensionTracker();
+    IExtensionTracker getExtensionTracker();
 }

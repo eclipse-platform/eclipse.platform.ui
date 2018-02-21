@@ -49,7 +49,7 @@ public interface IObservableMap<K, V> extends Map<K, V>, IObservable {
 	 *         observable map, or <code>null</code> if the keyset is untyped.
 	 * @since 1.2
 	 */
-	public Object getKeyType();
+	Object getKeyType();
 
 	/**
 	 * Returns the element type for the {@link #values() values} of this
@@ -60,87 +60,75 @@ public interface IObservableMap<K, V> extends Map<K, V>, IObservable {
 	 *         untyped.
 	 * @since 1.2
 	 */
-	public Object getValueType();
+	Object getValueType();
 
 	/**
 	 * @param listener
 	 */
-	public void addMapChangeListener(IMapChangeListener<? super K, ? super V> listener);
+	void addMapChangeListener(IMapChangeListener<? super K, ? super V> listener);
 
 	/**
 	 * @param listener
 	 */
-	public void removeMapChangeListener(IMapChangeListener<? super K, ? super V> listener);
+	void removeMapChangeListener(IMapChangeListener<? super K, ? super V> listener);
 
 	/**
 	 * @TrackedGetter
 	 */
-	@Override
-	public int size();
+	@Override int size();
 
 	/**
 	 * @TrackedGetter
 	 */
-	@Override
-	public boolean isEmpty();
+	@Override boolean isEmpty();
 
 	/**
 	 * @TrackedGetter
 	 */
-	@Override
-	public boolean containsKey(Object key);
+	@Override boolean containsKey(Object key);
 
 	/**
 	 * @TrackedGetter
 	 */
-	@Override
-	public boolean containsValue(Object value);
+	@Override boolean containsValue(Object value);
 
 	/**
 	 * @TrackedGetter
 	 */
-	@Override
-	public V get(Object key);
+	@Override V get(Object key);
 
 	/**
 	 *
 	 */
-	@Override
-	public V put(K key, V value);
+	@Override V put(K key, V value);
 
 	/**
 	 *
 	 */
-	@Override
-	public V remove(Object key);
+	@Override V remove(Object key);
 
 	/**
 	 * @TrackedGetter
 	 */
-	@Override
-	public Set<K> keySet();
+	@Override Set<K> keySet();
 
 	/**
 	 * @TrackedGetter
 	 */
-	@Override
-	public Collection<V> values();
+	@Override Collection<V> values();
 
 	/**
 	 * @TrackedGetter
 	 */
-	@Override
-	public Set<Map.Entry<K, V>> entrySet();
+	@Override Set<Map.Entry<K, V>> entrySet();
 
 	/**
 	 * @TrackedGetter
 	 */
-	@Override
-	public boolean equals(Object o);
+	@Override boolean equals(Object o);
 
 	/**
 	 * @TrackedGetter
 	 */
-	@Override
-	public int hashCode();
+	@Override int hashCode();
 }

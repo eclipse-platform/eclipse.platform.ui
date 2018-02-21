@@ -72,7 +72,7 @@ public final class CommandLegacyActionWrapper extends AbstractAction {
 	 */
 	private final class CommandListener implements ICommandListener {
 		@Override
-		public final void commandChanged(final CommandEvent commandEvent) {
+		public void commandChanged(final CommandEvent commandEvent) {
 			final Command baseCommand = commandEvent.getCommand();
 
 			// Check if the name changed.
@@ -187,7 +187,7 @@ public final class CommandLegacyActionWrapper extends AbstractAction {
 	}
 
 	@Override
-	public final int getAccelerator() {
+	public int getAccelerator() {
 		final String commandId = getActionDefinitionId();
 		final IBindingService bindingService = serviceLocator
 				.getService(IBindingService.class);
@@ -206,12 +206,12 @@ public final class CommandLegacyActionWrapper extends AbstractAction {
 	}
 
 	@Override
-	public final String getActionDefinitionId() {
+	public String getActionDefinitionId() {
 		return command.getId();
 	}
 
 	@Override
-	public final String getDescription() {
+	public String getDescription() {
 		try {
 			return command.getCommand().getDescription();
 		} catch (final NotDefinedException e) {
@@ -220,7 +220,7 @@ public final class CommandLegacyActionWrapper extends AbstractAction {
 	}
 
 	@Override
-	public final ImageDescriptor getDisabledImageDescriptor() {
+	public ImageDescriptor getDisabledImageDescriptor() {
 		final String commandId = getActionDefinitionId();
 		final ICommandImageService commandImageService = serviceLocator
 				.getService(ICommandImageService.class);
@@ -229,13 +229,13 @@ public final class CommandLegacyActionWrapper extends AbstractAction {
 	}
 
 	@Override
-	public final HelpListener getHelpListener() {
+	public HelpListener getHelpListener() {
 		// TODO Help. Addressing help on commands.
 		return null;
 	}
 
 	@Override
-	public final ImageDescriptor getHoverImageDescriptor() {
+	public ImageDescriptor getHoverImageDescriptor() {
 		final String commandId = getActionDefinitionId();
 		final ICommandImageService commandImageService = serviceLocator
 				.getService(ICommandImageService.class);
@@ -244,12 +244,12 @@ public final class CommandLegacyActionWrapper extends AbstractAction {
 	}
 
 	@Override
-	public final String getId() {
+	public String getId() {
 		return id;
 	}
 
 	@Override
-	public final ImageDescriptor getImageDescriptor() {
+	public ImageDescriptor getImageDescriptor() {
 		final String commandId = getActionDefinitionId();
 		final ICommandImageService commandImageService = serviceLocator
 				.getService(ICommandImageService.class);
@@ -257,13 +257,13 @@ public final class CommandLegacyActionWrapper extends AbstractAction {
 	}
 
 	@Override
-	public final IMenuCreator getMenuCreator() {
+	public IMenuCreator getMenuCreator() {
 		// TODO Pulldown. What kind of callback is needed here?
 		return null;
 	}
 
 	@Override
-	public final int getStyle() {
+	public int getStyle() {
 		// TODO Pulldown. This does not currently support the pulldown style.
 		final State state = command.getCommand().getState(IMenuStateIds.STYLE);
 		if (state instanceof RadioState) {
@@ -276,7 +276,7 @@ public final class CommandLegacyActionWrapper extends AbstractAction {
 	}
 
 	@Override
-	public final String getText() {
+	public String getText() {
 		try {
 			return command.getName();
 		} catch (final NotDefinedException e) {
@@ -285,12 +285,12 @@ public final class CommandLegacyActionWrapper extends AbstractAction {
 	}
 
 	@Override
-	public final String getToolTipText() {
+	public String getToolTipText() {
 		return getDescription();
 	}
 
 	@Override
-	public final boolean isChecked() {
+	public boolean isChecked() {
 		final State state = command.getCommand().getState(IMenuStateIds.STYLE);
 		if (state instanceof ToggleState) {
 			final Boolean currentValue = (Boolean) state.getValue();
@@ -301,7 +301,7 @@ public final class CommandLegacyActionWrapper extends AbstractAction {
 	}
 
 	@Override
-	public final boolean isEnabled() {
+	public boolean isEnabled() {
 		return isEnabledDisregardingCommand();
 	}
 
@@ -317,23 +317,23 @@ public final class CommandLegacyActionWrapper extends AbstractAction {
 	 *         {@link #setEnabled(boolean)} with <code>false</code>;
 	 *         <code>true</code> otherwise.
 	 */
-	public final boolean isEnabledDisregardingCommand() {
+	public boolean isEnabledDisregardingCommand() {
 		return enabled;
 	}
 
 	@Override
-	public final boolean isHandled() {
+	public boolean isHandled() {
 		final Command baseCommand = command.getCommand();
 		return baseCommand.isHandled();
 	}
 
 	@Override
-	public final void run() {
+	public void run() {
 		runWithEvent(null);
 	}
 
 	@Override
-	public final void runWithEvent(final Event event) {
+	public void runWithEvent(final Event event) {
 		final Command baseCommand = command.getCommand();
 		final ExecutionEvent executionEvent = new ExecutionEvent(command
 				.getCommand(), command.getParameterMap(), event, null);
@@ -352,12 +352,12 @@ public final class CommandLegacyActionWrapper extends AbstractAction {
 	}
 
 	@Override
-	public final void setAccelerator(final int keycode) {
+	public void setAccelerator(final int keycode) {
 		// TODO Binding. This is hopefully not essential.
 	}
 
 	@Override
-	public final void setActionDefinitionId(final String id) {
+	public void setActionDefinitionId(final String id) {
 		// Get the old values.
 		final boolean oldChecked = isChecked();
 		final String oldDescription = getDescription();
@@ -438,7 +438,7 @@ public final class CommandLegacyActionWrapper extends AbstractAction {
 	}
 
 	@Override
-	public final void setChecked(final boolean checked) {
+	public void setChecked(final boolean checked) {
 		final State state = command.getCommand().getState(IMenuStateIds.STYLE);
 		if (state instanceof ToggleState) {
 			final Boolean currentValue = (Boolean) state.getValue();
@@ -453,7 +453,7 @@ public final class CommandLegacyActionWrapper extends AbstractAction {
 	}
 
 	@Override
-	public final void setDescription(final String text) {
+	public void setDescription(final String text) {
 		final State state = command.getCommand().getState(
 				INamedHandleStateIds.DESCRIPTION);
 		if (state instanceof TextState) {
@@ -465,7 +465,7 @@ public final class CommandLegacyActionWrapper extends AbstractAction {
 	}
 
 	@Override
-	public final void setDisabledImageDescriptor(final ImageDescriptor newImage) {
+	public void setDisabledImageDescriptor(final ImageDescriptor newImage) {
 		final String commandId = getActionDefinitionId();
 		final int type = CommandImageManager.TYPE_DISABLED;
 		final ICommandImageService commandImageService = serviceLocator
@@ -477,7 +477,7 @@ public final class CommandLegacyActionWrapper extends AbstractAction {
 	}
 
 	@Override
-	public final void setEnabled(final boolean enabled) {
+	public void setEnabled(final boolean enabled) {
 		if (enabled != this.enabled) {
 			final Boolean oldValue = this.enabled ? Boolean.TRUE
 					: Boolean.FALSE;
@@ -488,13 +488,13 @@ public final class CommandLegacyActionWrapper extends AbstractAction {
 	}
 
 	@Override
-	public final void setHelpListener(final HelpListener listener) {
+	public void setHelpListener(final HelpListener listener) {
 		// TODO Help Haven't even started to look at help yet.
 
 	}
 
 	@Override
-	public final void setHoverImageDescriptor(final ImageDescriptor newImage) {
+	public void setHoverImageDescriptor(final ImageDescriptor newImage) {
 		final String commandId = getActionDefinitionId();
 		final int type = CommandImageManager.TYPE_HOVER;
 		final ICommandImageService commandImageService = serviceLocator
@@ -506,12 +506,12 @@ public final class CommandLegacyActionWrapper extends AbstractAction {
 	}
 
 	@Override
-	public final void setId(final String id) {
+	public void setId(final String id) {
 		this.id = id;
 	}
 
 	@Override
-	public final void setImageDescriptor(final ImageDescriptor newImage) {
+	public void setImageDescriptor(final ImageDescriptor newImage) {
 		final String commandId = getActionDefinitionId();
 		final int type = CommandImageManager.TYPE_DEFAULT;
 		final ICommandImageService commandImageService = serviceLocator
@@ -523,12 +523,12 @@ public final class CommandLegacyActionWrapper extends AbstractAction {
 	}
 
 	@Override
-	public final void setMenuCreator(final IMenuCreator creator) {
+	public void setMenuCreator(final IMenuCreator creator) {
 		// TODO Pulldown. This is complicated
 	}
 
 	@Override
-	public final void setText(final String text) {
+	public void setText(final String text) {
 		final State state = command.getCommand().getState(
 				INamedHandleStateIds.NAME);
 		if (state instanceof TextState) {
@@ -540,7 +540,7 @@ public final class CommandLegacyActionWrapper extends AbstractAction {
 	}
 
 	@Override
-	public final void setToolTipText(final String text) {
+	public void setToolTipText(final String text) {
 		setDescription(text);
 	}
 

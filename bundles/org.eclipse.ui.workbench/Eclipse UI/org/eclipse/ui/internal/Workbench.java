@@ -558,7 +558,7 @@ public final class Workbench extends EventManager implements IWorkbench,
 	 * @return the workbench, or <code>null</code> if the workbench has not been
 	 *         created, or has been created and already completed
 	 */
-	public static final Workbench getInstance() {
+	public static Workbench getInstance() {
 		return instance;
 	}
 
@@ -590,7 +590,7 @@ public final class Workbench extends EventManager implements IWorkbench,
 	 *         {@link IWorkbench#restart IWorkbench.restart}; other values
 	 *         reserved for future use
 	 */
-	public static final int createAndRunWorkbench(final Display display, final WorkbenchAdvisor advisor) {
+	public static int createAndRunWorkbench(final Display display, final WorkbenchAdvisor advisor) {
 		final int[] returnCode = new int[1];
 		Realm.runWithDefault(DisplayRealm.getRealm(display), () -> {
 			final String nlExtensions = Platform.getNLExtensions();
@@ -1877,7 +1877,7 @@ public final class Workbench extends EventManager implements IWorkbench,
 		return isClosing;
 	}
 
-	private final void initializeE4Services() {
+	private void initializeE4Services() {
 		// track the workbench preference and update the eclipse context with
 		// the new value
 		IPreferenceStore preferenceStore = PrefUtil.getAPIPreferenceStore();
@@ -2126,7 +2126,7 @@ public final class Workbench extends EventManager implements IWorkbench,
 		return ((MWindow) parent).getContext();
 	}
 
-	private final void initializeLazyServices() {
+	private void initializeLazyServices() {
 		e4Context.set(IExtensionTracker.class.getName(), new ContextFunction() {
 
 			@Override
@@ -2239,7 +2239,7 @@ public final class Workbench extends EventManager implements IWorkbench,
 	 * initializing the command-based services, this also parses the registry
 	 * and hooks up all the required listeners.
 	 */
-	private final void initializeDefaultServices() {
+	private void initializeDefaultServices() {
 
 		final IContributionService contributionService = new ContributionService(getAdvisor());
 		serviceLocator.registerService(IContributionService.class, contributionService);
@@ -3342,7 +3342,7 @@ public final class Workbench extends EventManager implements IWorkbench,
 	 * Important: always use with <code>largeUpdateEnd</code>!
 	 * </p>
 	 */
-	public final void largeUpdateStart() {
+	public void largeUpdateStart() {
 		if (largeUpdates++ == 0) {
 			final IWorkbenchWindow[] windows = getWorkbenchWindows();
 			for (IWorkbenchWindow window : windows) {
@@ -3365,7 +3365,7 @@ public final class Workbench extends EventManager implements IWorkbench,
 	 * Important: always protect this call by using <code>finally</code>!
 	 * </p>
 	 */
-	public final void largeUpdateEnd() {
+	public void largeUpdateEnd() {
 		if (--largeUpdates == 0) {
 
 			// Perform window-specific blocking.
@@ -3423,18 +3423,18 @@ public final class Workbench extends EventManager implements IWorkbench,
 	}
 
 	@Override
-	public final <T> T getAdapter(final Class<T> key) {
+	public <T> T getAdapter(final Class<T> key) {
 		return key.cast(serviceLocator.getService(key));
 	}
 
 
 	@Override
-	public final <T> T getService(final Class<T> key) {
+	public <T> T getService(final Class<T> key) {
 		return serviceLocator.getService(key);
 	}
 
 	@Override
-	public final boolean hasService(final Class<?> key) {
+	public boolean hasService(final Class<?> key) {
 		return serviceLocator.hasService(key);
 	}
 
@@ -3450,7 +3450,7 @@ public final class Workbench extends EventManager implements IWorkbench,
 	 *            The service to register. This must be some implementation of
 	 *            <code>api</code>. This value must not be <code>null</code>.
 	 */
-	public final void registerService(final Class api, final Object service) {
+	public void registerService(final Class api, final Object service) {
 		serviceLocator.registerService(api, service);
 	}
 
@@ -3472,7 +3472,7 @@ public final class Workbench extends EventManager implements IWorkbench,
 	 * @param localSelection
 	 * @param localEditorInput
 	 */
-	public final void addShowingMenus(final Set menuIds, final ISelection localSelection,
+	public void addShowingMenus(final Set menuIds, final ISelection localSelection,
 			final ISelection localEditorInput) {
 		menuSourceProvider.addShowingMenus(menuIds, localSelection, localEditorInput);
 		Map currentState = menuSourceProvider.getCurrentState();
@@ -3492,7 +3492,7 @@ public final class Workbench extends EventManager implements IWorkbench,
 	 * @param localSelection
 	 * @param localEditorInput
 	 */
-	public final void removeShowingMenus(final Set menuIds, final ISelection localSelection,
+	public void removeShowingMenus(final Set menuIds, final ISelection localSelection,
 			final ISelection localEditorInput) {
 		menuSourceProvider.removeShowingMenus(menuIds, localSelection, localEditorInput);
 		for (String key : menuSourceProvider.getProvidedSourceNames()) {
@@ -3636,7 +3636,7 @@ public final class Workbench extends EventManager implements IWorkbench,
 	}
 
 	@Override
-	public final String getId() {
+	public String getId() {
 		return id;
 	}
 

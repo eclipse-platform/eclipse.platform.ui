@@ -33,7 +33,7 @@ public interface ICSSPropertyFontHandler extends ICSSPropertyHandler {
 	 * @param engine
 	 * @throws Exception
 	 */
-	public void applyCSSPropertyFont(Object element, CSSValue value,
+	void applyCSSPropertyFont(Object element, CSSValue value,
 			String pseudo, CSSEngine engine) throws Exception;
 
 	/**
@@ -47,7 +47,7 @@ public interface ICSSPropertyFontHandler extends ICSSPropertyHandler {
 	 * @return
 	 * @throws Exception
 	 */
-	public void applyCSSPropertyFontFamily(Object element, CSSValue value,
+	void applyCSSPropertyFontFamily(Object element, CSSValue value,
 			String pseudo, CSSEngine engine) throws Exception;
 
 	/**
@@ -60,7 +60,7 @@ public interface ICSSPropertyFontHandler extends ICSSPropertyHandler {
 	 * @return
 	 * @throws Exception
 	 */
-	public void applyCSSPropertyFontSize(Object element, CSSValue value,
+	void applyCSSPropertyFontSize(Object element, CSSValue value,
 			String pseudo, CSSEngine engine) throws Exception;
 
 	/**
@@ -74,7 +74,7 @@ public interface ICSSPropertyFontHandler extends ICSSPropertyHandler {
 	 * @return
 	 * @throws Exception
 	 */
-	public void applyCSSPropertyFontSizeAdjust(Object element, CSSValue value,
+	void applyCSSPropertyFontSizeAdjust(Object element, CSSValue value,
 			String pseudo, CSSEngine engine) throws Exception;
 
 	/**
@@ -87,7 +87,7 @@ public interface ICSSPropertyFontHandler extends ICSSPropertyHandler {
 	 * @return
 	 * @throws Exception
 	 */
-	public void applyCSSPropertyFontStretch(Object element, CSSValue value,
+	void applyCSSPropertyFontStretch(Object element, CSSValue value,
 			String pseudo, CSSEngine engine) throws Exception;
 
 	/**
@@ -100,7 +100,7 @@ public interface ICSSPropertyFontHandler extends ICSSPropertyHandler {
 	 * @return
 	 * @throws Exception
 	 */
-	public void applyCSSPropertyFontStyle(Object element, CSSValue value,
+	void applyCSSPropertyFontStyle(Object element, CSSValue value,
 			String pseudo, CSSEngine engine) throws Exception;
 
 	/**
@@ -113,7 +113,7 @@ public interface ICSSPropertyFontHandler extends ICSSPropertyHandler {
 	 * @return
 	 * @throws Exception
 	 */
-	public void applyCSSPropertyFontVariant(Object element, CSSValue value,
+	void applyCSSPropertyFontVariant(Object element, CSSValue value,
 			String pseudo, CSSEngine engine) throws Exception;
 
 	/**
@@ -126,28 +126,28 @@ public interface ICSSPropertyFontHandler extends ICSSPropertyHandler {
 	 * @return
 	 * @throws Exception
 	 */
-	public void applyCSSPropertyFontWeight(Object element, CSSValue value,
+	void applyCSSPropertyFontWeight(Object element, CSSValue value,
 			String pseudo, CSSEngine engine) throws Exception;
 
-	public String retrieveCSSPropertyFontFamily(Object element, String pseudo,
+	String retrieveCSSPropertyFontFamily(Object element, String pseudo,
 			CSSEngine engine) throws Exception;
 
-	public String retrieveCSSPropertyFontSize(Object element, String pseudo,
+	String retrieveCSSPropertyFontSize(Object element, String pseudo,
 			CSSEngine engine) throws Exception;
 
-	public String retrieveCSSPropertyFontAdjust(Object element, String pseudo,
+	String retrieveCSSPropertyFontAdjust(Object element, String pseudo,
 			CSSEngine engine) throws Exception;
 
-	public String retrieveCSSPropertyFontStretch(Object element, String pseudo,
+	String retrieveCSSPropertyFontStretch(Object element, String pseudo,
 			CSSEngine engine) throws Exception;
 
-	public String retrieveCSSPropertyFontStyle(Object element, String pseudo,
+	String retrieveCSSPropertyFontStyle(Object element, String pseudo,
 			CSSEngine engine) throws Exception;
 
-	public String retrieveCSSPropertyFontVariant(Object element, String pseudo,
+	String retrieveCSSPropertyFontVariant(Object element, String pseudo,
 			CSSEngine engine) throws Exception;
 
-	public String retrieveCSSPropertyFontWeight(Object element, String pseudo,
+	String retrieveCSSPropertyFontWeight(Object element, String pseudo,
 			CSSEngine engine) throws Exception;
 
 }

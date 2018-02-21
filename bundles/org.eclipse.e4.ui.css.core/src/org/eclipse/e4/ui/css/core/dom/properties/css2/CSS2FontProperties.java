@@ -15,31 +15,31 @@ import org.w3c.dom.css.CSSValue;
 
 public interface CSS2FontProperties extends CSSValue {
 
-	public CSSPrimitiveValue getFamily();
+	CSSPrimitiveValue getFamily();
 
-	public void setFamily(CSSPrimitiveValue family);
+	void setFamily(CSSPrimitiveValue family);
 
-	public CSSPrimitiveValue getSize();
+	CSSPrimitiveValue getSize();
 
-	public void setSize(CSSPrimitiveValue size);
+	void setSize(CSSPrimitiveValue size);
 
-	public CSSPrimitiveValue getSizeAdjust();
+	CSSPrimitiveValue getSizeAdjust();
 
-	public void setSizeAdjust(CSSPrimitiveValue sizeAdjust);
+	void setSizeAdjust(CSSPrimitiveValue sizeAdjust);
 
-	public CSSPrimitiveValue getWeight();
+	CSSPrimitiveValue getWeight();
 
-	public void setWeight(CSSPrimitiveValue weight);
+	void setWeight(CSSPrimitiveValue weight);
 
-	public CSSPrimitiveValue getStyle();
+	CSSPrimitiveValue getStyle();
 
-	public void setStyle(CSSPrimitiveValue style);
+	void setStyle(CSSPrimitiveValue style);
 
-	public CSSPrimitiveValue getVariant();
+	CSSPrimitiveValue getVariant();
 
-	public void setVariant(CSSPrimitiveValue variant);
+	void setVariant(CSSPrimitiveValue variant);
 
-	public CSSPrimitiveValue getStretch();
+	CSSPrimitiveValue getStretch();
 
-	public void setStretch(CSSPrimitiveValue stretch);
+	void setStretch(CSSPrimitiveValue stretch);
 }

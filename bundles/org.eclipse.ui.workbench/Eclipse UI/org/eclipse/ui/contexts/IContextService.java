@@ -43,32 +43,32 @@ public interface IContextService extends IServiceWithSources {
 	 *
 	 * @since 3.7
 	 */
-	public static final String CONTEXT_ID_WORKBENCH_MENU = "org.eclipse.ui.contexts.workbenchMenu"; //$NON-NLS-1$
+	String CONTEXT_ID_WORKBENCH_MENU = "org.eclipse.ui.contexts.workbenchMenu"; //$NON-NLS-1$
 
 	/**
 	 * The identifier for the context that is active when a shell registered as
 	 * a dialog.
 	 */
-	public static final String CONTEXT_ID_DIALOG = "org.eclipse.ui.contexts.dialog"; //$NON-NLS-1$
+	String CONTEXT_ID_DIALOG = "org.eclipse.ui.contexts.dialog"; //$NON-NLS-1$
 
 	/**
 	 * The identifier for the context that is active when a shell is registered
 	 * as either a window or a dialog.
 	 */
-	public static final String CONTEXT_ID_DIALOG_AND_WINDOW = "org.eclipse.ui.contexts.dialogAndWindow"; //$NON-NLS-1$
+	String CONTEXT_ID_DIALOG_AND_WINDOW = "org.eclipse.ui.contexts.dialogAndWindow"; //$NON-NLS-1$
 
 	/**
 	 * The identifier for the context that is active when a shell is registered
 	 * as a window.
 	 */
-	public static final String CONTEXT_ID_WINDOW = "org.eclipse.ui.contexts.window"; //$NON-NLS-1$
+	String CONTEXT_ID_WINDOW = "org.eclipse.ui.contexts.window"; //$NON-NLS-1$
 
 	/**
 	 * The type used for registration indicating that the shell should be
 	 * treated as a dialog. When the given shell is active, the "In Dialogs"
 	 * context should also be active.
 	 */
-	public static final int TYPE_DIALOG = 0;
+	int TYPE_DIALOG = 0;
 
 	/**
 	 * The type used for registration indicating that the shell should not
@@ -77,14 +77,14 @@ public interface IContextService extends IServiceWithSources {
 	 * "In Dialogs" or "In Windows" contexts.
 	 *
 	 */
-	public static final int TYPE_NONE = 1;
+	int TYPE_NONE = 1;
 
 	/**
 	 * The type used for registration indicating that the shell should be
 	 * treated as a window. When the given shell is active, the "In Windows"
 	 * context should also be active.
 	 */
-	public static final int TYPE_WINDOW = 2;
+	int TYPE_WINDOW = 2;
 
 	/**
 	 * <p>
@@ -108,7 +108,7 @@ public interface IContextService extends IServiceWithSources {
 	 *         activation will automatically be cancelled if the context from
 	 *         which this service was retrieved is destroyed.
 	 */
-	public IContextActivation activateContext(String contextId);
+	IContextActivation activateContext(String contextId);
 
 	/**
 	 * <p>
@@ -139,7 +139,7 @@ public interface IContextService extends IServiceWithSources {
 	 * @see org.eclipse.ui.ISources
 	 * @since 3.2
 	 */
-	public IContextActivation activateContext(String contextId,
+	IContextActivation activateContext(String contextId,
 			Expression expression);
 
 	/**
@@ -175,7 +175,7 @@ public interface IContextService extends IServiceWithSources {
 	 * @see org.eclipse.ui.ISources
 	 * @since 3.2
 	 */
-	public IContextActivation activateContext(String contextId,
+	IContextActivation activateContext(String contextId,
 			Expression expression, boolean global);
 
 	/**
@@ -210,8 +210,7 @@ public interface IContextService extends IServiceWithSources {
 	 *             {@link IContextService#activateContext(String, Expression)}
 	 *             instead.
 	 */
-	@Deprecated
-	public IContextActivation activateContext(String contextId,
+	@Deprecated IContextActivation activateContext(String contextId,
 			Expression expression, int sourcePriorities);
 
 	/**
@@ -229,7 +228,7 @@ public interface IContextService extends IServiceWithSources {
 	 * @since 3.2
 	 * @see #removeContextManagerListener(IContextManagerListener)
 	 */
-	public void addContextManagerListener(IContextManagerListener listener);
+	void addContextManagerListener(IContextManagerListener listener);
 
 	/**
 	 * Deactivates the given context within the context of this service. If the
@@ -242,7 +241,7 @@ public interface IContextService extends IServiceWithSources {
 	 *            The token that was returned from a call to
 	 *            <code>activateContext</code>; must not be <code>null</code>.
 	 */
-	public void deactivateContext(IContextActivation activation);
+	void deactivateContext(IContextActivation activation);
 
 	/**
 	 * Deactivates the given contexts within the context of this service. If the
@@ -258,7 +257,7 @@ public interface IContextService extends IServiceWithSources {
 	 *            contain instances of <code>IContextActivation</code>. The
 	 *            collection must not be <code>null</code>.
 	 */
-	public void deactivateContexts(Collection activations);
+	void deactivateContexts(Collection activations);
 
 	/**
 	 * Returns the set of active context identifiers.
@@ -269,7 +268,7 @@ public interface IContextService extends IServiceWithSources {
 	 *         instances of <code>String</code>.
 	 * @since 3.2
 	 */
-	public Collection getActiveContextIds();
+	Collection getActiveContextIds();
 
 	/**
 	 * Retrieves the context with the given identifier. If no such context
@@ -279,7 +278,7 @@ public interface IContextService extends IServiceWithSources {
 	 *            The identifier to find; must not be <code>null</code>.
 	 * @return A context with the given identifier, either defined or undefined.
 	 */
-	public Context getContext(String contextId);
+	Context getContext(String contextId);
 
 	/**
 	 * Returns the collection of all of the defined contexts in the workbench.
@@ -288,7 +287,7 @@ public interface IContextService extends IServiceWithSources {
 	 *         defined; never <code>null</code>, but may be empty.
 	 * @since 3.2
 	 */
-	public Context[] getDefinedContexts();
+	Context[] getDefinedContexts();
 
 	/**
 	 * Returns the collection of the identifiers for all of the defined contexts
@@ -297,7 +296,7 @@ public interface IContextService extends IServiceWithSources {
 	 * @return The collection of context identifiers (<code>String</code>)
 	 *         that are defined; never <code>null</code>, but may be empty.
 	 */
-	public Collection getDefinedContextIds();
+	Collection getDefinedContextIds();
 
 	/**
 	 * Returns the shell type for the given shell.
@@ -310,7 +309,7 @@ public interface IContextService extends IServiceWithSources {
 	 *         <code>IContextService.TYPE_DIALOG</code>, or
 	 *         <code>IContextService.TYPE_NONE</code>.
 	 */
-	public int getShellType(Shell shell);
+	int getShellType(Shell shell);
 
 	/**
 	 * <p>
@@ -321,7 +320,7 @@ public interface IContextService extends IServiceWithSources {
 	 * registry and preference store.
 	 * </p>
 	 */
-	public void readRegistry();
+	void readRegistry();
 
 	/**
 	 * <p>
@@ -354,7 +353,7 @@ public interface IContextService extends IServiceWithSources {
 	 * @return <code>true</code> if the shell had already been registered (i.e.,
 	 *         the registration has changed); <code>false</code> otherwise.
 	 */
-	public boolean registerShell(Shell shell, int type);
+	boolean registerShell(Shell shell, int type);
 
 	/**
 	 * Removes a listener from this context service.
@@ -363,7 +362,7 @@ public interface IContextService extends IServiceWithSources {
 	 *            The listener to be removed; must not be <code>null</code>.
 	 * @since 3.2
 	 */
-	public void removeContextManagerListener(IContextManagerListener listener);
+	void removeContextManagerListener(IContextManagerListener listener);
 
 	/**
 	 * <p>
@@ -384,7 +383,7 @@ public interface IContextService extends IServiceWithSources {
 	 * @return <code>true</code> if the shell had been registered;
 	 *         <code>false</code> otherwise.
 	 */
-	public boolean unregisterShell(Shell shell);
+	boolean unregisterShell(Shell shell);
 
 	/**
 	 * Informs the service that a batch operation has started.
@@ -400,6 +399,6 @@ public interface IContextService extends IServiceWithSources {
 	 *
 	 * @since 3.5
 	 */
-	public void deferUpdates(boolean defer);
+	void deferUpdates(boolean defer);
 
 }

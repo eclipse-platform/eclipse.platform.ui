@@ -23,7 +23,7 @@ import org.w3c.dom.css.CSSStyleDeclaration;
  * and provides the possibility to change the theme
  */
 public interface IThemeEngine {
-	public static final String DEFAULT_THEME_ID = "org.eclipse.e4.ui.workbench.swt.theme.default";
+	String DEFAULT_THEME_ID = "org.eclipse.e4.ui.workbench.swt.theme.default";
 
 	/**
 	 * The IThemeEngine may broadcast an event using the OSGi EventAdmin
@@ -36,8 +36,8 @@ public interface IThemeEngine {
 	 * </p>
 	 */
 	public static interface Events {
-		public static final String TOPIC = "org/eclipse/e4/ui/css/swt/theme/ThemeManager";
-		public static final String THEME_CHANGED = TOPIC + "/themeChanged";
+		String TOPIC = "org/eclipse/e4/ui/css/swt/theme/ThemeManager";
+		String THEME_CHANGED = TOPIC + "/themeChanged";
 
 		// attributes that can be tested in event handlers
 
@@ -46,7 +46,7 @@ public interface IThemeEngine {
 		 *
 		 * @see ITheme
 		 */
-		public static final String THEME = "theme";
+		String THEME = "theme";
 
 		/**
 		 * Attribute for the affected rendering device (e.g., an SWT
@@ -55,14 +55,14 @@ public interface IThemeEngine {
 		 * @see org.eclipse.swt.graphics.Device
 		 * @see org.eclipse.swt.widgets.Display
 		 */
-		public static final String DEVICE = "device";
+		String DEVICE = "device";
 
 		/**
 		 * Attribute for the associated {@link IThemeEngine} theme engine
 		 *
 		 * @see IThemeEngine
 		 */
-		public static final String THEME_ENGINE = "themeEngine";
+		String THEME_ENGINE = "themeEngine";
 
 		/**
 		 * Attribute describing the theme change's persist state. If true, then
@@ -70,7 +70,7 @@ public interface IThemeEngine {
 		 *
 		 * @see Boolean
 		 */
-		public static final String RESTORE = "restore";
+		String RESTORE = "restore";
 	}
 
 	/**
@@ -87,7 +87,7 @@ public interface IThemeEngine {
 	 * @throws IllegalArgumentException
 	 *             if a theme with this id is already registered
 	 */
-	public ITheme registerTheme(String id, String label,
+	ITheme registerTheme(String id, String label,
 			String basestylesheetURI) throws IllegalArgumentException;
 
 	/**
@@ -99,7 +99,7 @@ public interface IThemeEngine {
 	 *            the theme ids the stylesheet is added to or empty if should be
 	 *            added to all
 	 */
-	public void registerStylesheet(String uri, String... themes);
+	void registerStylesheet(String uri, String... themes);
 
 	/**
 	 * Register a resource locator used to look up image sources
@@ -110,13 +110,13 @@ public interface IThemeEngine {
 	 *            the theme ids the locator is registered for or empty if should
 	 *            be added to all
 	 */
-	public void registerResourceLocator(IResourceLocator locator,
+	void registerResourceLocator(IResourceLocator locator,
 			String... themes);
 
 	/**
 	 * @return Unmodifiable list of themes
 	 */
-	public List<ITheme> getThemes();
+	List<ITheme> getThemes();
 
 	/**
 	 * Set a theme by its id and restore it for the next time the engine is
@@ -128,7 +128,7 @@ public interface IThemeEngine {
 	 *            restore the theme set for the next time
 	 *            {@link #restore(String)}
 	 */
-	public void setTheme(String themeId, boolean restore);
+	void setTheme(String themeId, boolean restore);
 
 	/**
 	 * Set a theme and restore it for the next time the engine is initialized (
@@ -140,7 +140,7 @@ public interface IThemeEngine {
 	 *            restore the theme set for the next time
 	 *            {@link #restore(String)}
 	 */
-	public void setTheme(ITheme theme, boolean restore);
+	void setTheme(ITheme theme, boolean restore);
 
 	/**
 	 * Force reapplying the style to the widget and its children
@@ -150,7 +150,7 @@ public interface IThemeEngine {
 	 * @param applyStylesToChildNodes
 	 *            if the children should be updated as well
 	 */
-	public void applyStyles(Object widget, boolean applyStylesToChildNodes);
+	void applyStyles(Object widget, boolean applyStylesToChildNodes);
 
 	/**
 	 * Get the style currently active for a widget
@@ -159,7 +159,7 @@ public interface IThemeEngine {
 	 *            the widget
 	 * @return the declaration or <code>null</code>
 	 */
-	public CSSStyleDeclaration getStyle(Object widget);
+	CSSStyleDeclaration getStyle(Object widget);
 
 	/**
 	 * Restore the previously stored theme
@@ -167,14 +167,14 @@ public interface IThemeEngine {
 	 * @param alternate
 	 *            the alternate theme if the restored one is not found
 	 */
-	public void restore(String alternate);
+	void restore(String alternate);
 
 	/**
 	 * @return the current active theme or <code>null</code> if no active theme
 	 */
-	public ITheme getActiveTheme();
+	ITheme getActiveTheme();
 
-	public void addCSSEngine(CSSEngine cssswtEngine);
+	void addCSSEngine(CSSEngine cssswtEngine);
 
-	public void removeCSSEngine(CSSEngine cssswtEngine);
+	void removeCSSEngine(CSSEngine cssswtEngine);
 }

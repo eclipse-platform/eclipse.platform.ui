@@ -42,7 +42,7 @@ public interface IEditorRegistry {
     /**
      * The property identifier for the contents of this registry.
      */
-    public static final int PROP_CONTENTS = 0x01;
+    int PROP_CONTENTS = 0x01;
 
     /**
      * The identifier for the system external editor descriptor. This descriptor
@@ -54,7 +54,7 @@ public interface IEditorRegistry {
      *
      * @since 3.0
      */
-    public static final String SYSTEM_EXTERNAL_EDITOR_ID = "org.eclipse.ui.systemExternalEditor"; //$NON-NLS-1$
+    String SYSTEM_EXTERNAL_EDITOR_ID = "org.eclipse.ui.systemExternalEditor"; //$NON-NLS-1$
 
     /**
      * The identifier for the system in-place editor descriptor. This descriptor
@@ -66,7 +66,7 @@ public interface IEditorRegistry {
      *
      * @since 3.0
      */
-    public static final String SYSTEM_INPLACE_EDITOR_ID = "org.eclipse.ui.systemInPlaceEditor"; //$NON-NLS-1$
+    String SYSTEM_INPLACE_EDITOR_ID = "org.eclipse.ui.systemInPlaceEditor"; //$NON-NLS-1$
 
     /**
      * Adds a listener for changes to properties of this registry.
@@ -81,7 +81,7 @@ public interface IEditorRegistry {
      *
      * @param listener a property listener
      */
-    public void addPropertyListener(IPropertyListener listener);
+    void addPropertyListener(IPropertyListener listener);
 
     /**
      * Finds and returns the descriptor of the editor with the given editor id.
@@ -90,7 +90,7 @@ public interface IEditorRegistry {
      * @return the editor descriptor with the given id, or <code>null</code> if not
      *   found
      */
-    public IEditorDescriptor findEditor(String editorId);
+    IEditorDescriptor findEditor(String editorId);
 
     /**
      * Returns the default editor. The default editor always exist.
@@ -100,8 +100,7 @@ public interface IEditorRegistry {
      * Use <code>findEditor(IEditorRegistry.SYSTEM_EXTERNAL_EDITOR_ID)</code>
      * instead.
      */
-    @Deprecated
-	public IEditorDescriptor getDefaultEditor();
+    @Deprecated IEditorDescriptor getDefaultEditor();
 
     /**
 	 * Returns the default editor for a given file name. This method assumes an
@@ -116,7 +115,7 @@ public interface IEditorRegistry {
 	 * @return the descriptor of the default editor, or <code>null</code> if
 	 *         not found
 	 */
-    public IEditorDescriptor getDefaultEditor(String fileName);
+    IEditorDescriptor getDefaultEditor(String fileName);
 
     /**
      * Returns the default editor for a given file name and with the given content type.
@@ -131,7 +130,7 @@ public interface IEditorRegistry {
      *   found
      * @since 3.1
      */
-    public IEditorDescriptor getDefaultEditor(String fileName, IContentType contentType);
+    IEditorDescriptor getDefaultEditor(String fileName, IContentType contentType);
 
     /**
 	 * Returns the list of file editors registered to work against the file with
@@ -146,7 +145,7 @@ public interface IEditorRegistry {
 	 *            the file name in the system
 	 * @return a list of editor descriptors
 	 */
-    public IEditorDescriptor[] getEditors(String fileName);
+    IEditorDescriptor[] getEditors(String fileName);
 
     /**
 	 * Returns the list of file editors registered to work against the file with
@@ -164,7 +163,7 @@ public interface IEditorRegistry {
 	 * @return a list of editor descriptors
 	 * @since 3.1
 	 */
-    public IEditorDescriptor[] getEditors(String fileName, IContentType contentType);
+    IEditorDescriptor[] getEditors(String fileName, IContentType contentType);
 
     /**
      * Returns a list of mappings from file type to editor.  The resulting list
@@ -178,7 +177,7 @@ public interface IEditorRegistry {
      *
      * @return a list of mappings sorted alphabetically by extension
      */
-    public IFileEditorMapping[] getFileEditorMappings();
+    IFileEditorMapping[] getFileEditorMappings();
 
     /**
 	 * Returns the image descriptor associated with a given file. This image is
@@ -194,7 +193,7 @@ public interface IEditorRegistry {
 	 *            the file name in the system
 	 * @return the descriptor of the image to display next to the file
 	 */
-    public ImageDescriptor getImageDescriptor(String filename);
+    ImageDescriptor getImageDescriptor(String filename);
 
     /**
 	 * Returns the image descriptor associated with a given file. This image is
@@ -213,7 +212,7 @@ public interface IEditorRegistry {
 	 * @return the descriptor of the image to display next to the file
 	 * @since 3.1
 	 */
-    public ImageDescriptor getImageDescriptor(String filename, IContentType contentType);
+    ImageDescriptor getImageDescriptor(String filename, IContentType contentType);
 
     /**
 	 * Removes the given property listener from this registry. Has no effect if
@@ -222,7 +221,7 @@ public interface IEditorRegistry {
 	 * @param listener
 	 *            a property listener
 	 */
-    public void removePropertyListener(IPropertyListener listener);
+    void removePropertyListener(IPropertyListener listener);
 
     /**
      * Sets the default editor id for the files that match that
@@ -232,7 +231,7 @@ public interface IEditorRegistry {
      * @param fileNameOrExtension the file name or extension pattern (e.g. "*.xml");
      * @param editorId the editor id or <code>null</code> for no default
      */
-    public void setDefaultEditor(String fileNameOrExtension, String editorId);
+    void setDefaultEditor(String fileNameOrExtension, String editorId);
 
     /**
      * Returns whether there is an in-place editor that could handle a file
@@ -243,7 +242,7 @@ public interface IEditorRegistry {
      * <code>false</code> otherwise
      * @since 3.0
      */
-    public boolean isSystemInPlaceEditorAvailable(String filename);
+    boolean isSystemInPlaceEditorAvailable(String filename);
 
     /**
      * Returns whether the system has an editor that could handle a file
@@ -254,7 +253,7 @@ public interface IEditorRegistry {
      * <code>false</code> otherwise
      * @since 3.0
      */
-    public boolean isSystemExternalEditorAvailable(String filename);
+    boolean isSystemExternalEditorAvailable(String filename);
 
     /**
      * Returns the image descriptor associated with the system editor that
@@ -265,6 +264,6 @@ public interface IEditorRegistry {
      * if none
      * @since 3.0
      */
-    public ImageDescriptor getSystemExternalEditorImageDescriptor(
+    ImageDescriptor getSystemExternalEditorImageDescriptor(
             String filename);
 }

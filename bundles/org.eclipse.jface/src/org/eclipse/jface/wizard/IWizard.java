@@ -34,7 +34,7 @@ public interface IWizard {
      * wizard the opportunity to add any lazily created pages.
      * </p>
      */
-    public void addPages();
+    void addPages();
 
     /**
      * Returns whether this wizard could be finished without further user
@@ -47,7 +47,7 @@ public interface IWizard {
      * @return <code>true</code> if the wizard could be finished,
      *   and <code>false</code> otherwise
      */
-    public boolean canFinish();
+    boolean canFinish();
 
     /**
      * Creates this wizard's controls in the given parent control.
@@ -60,12 +60,12 @@ public interface IWizard {
      *
      * @param pageContainer the parent control
      */
-    public void createPageControls(Composite pageContainer);
+    void createPageControls(Composite pageContainer);
 
     /**
      * Disposes of this wizard and frees all SWT resources.
      */
-    public void dispose();
+    void dispose();
 
     /**
      * Returns the container of this wizard.
@@ -73,7 +73,7 @@ public interface IWizard {
      * @return the wizard container, or <code>null</code> if this
      *   wizard has yet to be added to a container
      */
-    public IWizardContainer getContainer();
+    IWizardContainer getContainer();
 
     /**
      * Returns the default page image for this wizard.
@@ -84,7 +84,7 @@ public interface IWizard {
      *
      * @return the default page image
      */
-    public Image getDefaultPageImage();
+    Image getDefaultPageImage();
 
     /**
      * Returns the dialog settings for this wizard.
@@ -96,7 +96,7 @@ public interface IWizard {
      *
      * @return the dialog settings, or <code>null</code> if none
      */
-    public IDialogSettings getDialogSettings();
+    IDialogSettings getDialogSettings();
 
     /**
      * Returns the successor of the given page.
@@ -107,7 +107,7 @@ public interface IWizard {
      * @param page the page
      * @return the next page, or <code>null</code> if none
      */
-    public IWizardPage getNextPage(IWizardPage page);
+    IWizardPage getNextPage(IWizardPage page);
 
     /**
      * Returns the wizard page with the given name belonging to this wizard.
@@ -115,21 +115,21 @@ public interface IWizard {
      * @param pageName the name of the wizard page
      * @return the wizard page with the given name, or <code>null</code> if none
      */
-    public IWizardPage getPage(String pageName);
+    IWizardPage getPage(String pageName);
 
     /**
      * Returns the number of pages in this wizard.
      *
      * @return the number of wizard pages
      */
-    public int getPageCount();
+    int getPageCount();
 
     /**
      * Returns all the pages in this wizard.
      *
      * @return a list of pages
      */
-    public IWizardPage[] getPages();
+    IWizardPage[] getPages();
 
     /**
      * Returns the predecessor of the given page.
@@ -140,28 +140,28 @@ public interface IWizard {
      * @param page the page
      * @return the previous page, or <code>null</code> if none
      */
-    public IWizardPage getPreviousPage(IWizardPage page);
+    IWizardPage getPreviousPage(IWizardPage page);
 
     /**
      * Returns the first page to be shown in this wizard.
      *
      * @return the first wizard page
      */
-    public IWizardPage getStartingPage();
+    IWizardPage getStartingPage();
 
     /**
      * Returns the title bar color for this wizard.
      *
      * @return the title bar color
      */
-    public RGB getTitleBarColor();
+    RGB getTitleBarColor();
 
     /**
      * Returns the window title string for this wizard.
      *
      * @return the window title string, or <code>null</code> for no title
      */
-    public String getWindowTitle();
+    String getWindowTitle();
 
     /**
 	 * Returns whether help is available for this wizard.
@@ -182,7 +182,7 @@ public interface IWizard {
 	 * @see TrayDialog#isHelpAvailable()
 	 * @see TrayDialog#setHelpAvailable(boolean)
 	 */
-    public boolean isHelpAvailable();
+    boolean isHelpAvailable();
 
     /**
      * Returns whether this wizard needs Previous and Next buttons.
@@ -193,7 +193,7 @@ public interface IWizard {
      * @return <code>true</code> if Previous and Next buttons are required,
      *   and <code>false</code> if none are needed
      */
-    public boolean needsPreviousAndNextButtons();
+    boolean needsPreviousAndNextButtons();
 
     /**
      * Returns whether this wizard needs a progress monitor.
@@ -204,7 +204,7 @@ public interface IWizard {
      * @return <code>true</code> if a progress monitor is required,
      *   and <code>false</code> if none is needed
      */
-    public boolean needsProgressMonitor();
+    boolean needsProgressMonitor();
 
     /**
      * Performs any actions appropriate in response to the user
@@ -215,7 +215,7 @@ public interface IWizard {
      *   was accepted, and <code>false</code> to indicate
      *   that the cancel request was refused
      */
-    public boolean performCancel();
+    boolean performCancel();
 
     /**
      * Performs any actions appropriate in response to the user
@@ -232,12 +232,12 @@ public interface IWizard {
      *   was accepted, and <code>false</code> to indicate
      *   that the finish request was refused
      */
-    public boolean performFinish();
+    boolean performFinish();
 
     /**
      * Sets or clears the container of this wizard.
      *
      * @param wizardContainer the wizard container, or <code>null</code>
      */
-    public void setContainer(IWizardContainer wizardContainer);
+    void setContainer(IWizardContainer wizardContainer);
 }

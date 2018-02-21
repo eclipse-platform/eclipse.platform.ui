@@ -13,7 +13,6 @@ package org.eclipse.ui.keys;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.Map;
-
 import org.eclipse.core.commands.ParameterizedCommand;
 import org.eclipse.jface.bindings.Binding;
 import org.eclipse.jface.bindings.IBindingManagerListener;
@@ -52,7 +51,7 @@ public interface IBindingService extends IDisposable {
 	 * <code>BindingPersistence</code> code needs to know this value so it can
 	 * try to decide if someone overrode the default.
 	 */
-	public static final String DEFAULT_DEFAULT_ACTIVE_SCHEME_ID = "org.eclipse.ui.defaultAcceleratorConfiguration"; //$NON-NLS-1$
+	String DEFAULT_DEFAULT_ACTIVE_SCHEME_ID = "org.eclipse.ui.defaultAcceleratorConfiguration"; //$NON-NLS-1$
 
 	/**
 	 * <p>
@@ -69,7 +68,7 @@ public interface IBindingService extends IDisposable {
 	 *
 	 * @since 3.5
 	 */
-	public void addBindingManagerListener(IBindingManagerListener listener);
+	void addBindingManagerListener(IBindingManagerListener listener);
 
 	/**
 	 * <p>
@@ -84,7 +83,7 @@ public interface IBindingService extends IDisposable {
 	 *
 	 * @since 3.5
 	 */
-	public void removeBindingManagerListener(IBindingManagerListener listener);
+	void removeBindingManagerListener(IBindingManagerListener listener);
 
 	/**
 	 * Gets the active bindings for a given parameterized command.
@@ -95,7 +94,7 @@ public interface IBindingService extends IDisposable {
 	 * @return The array of all active bindings for the given command. This
 	 *         collection may be empty, but it is never <code>null</code>.
 	 */
-	public TriggerSequence[] getActiveBindingsFor(
+	TriggerSequence[] getActiveBindingsFor(
 			ParameterizedCommand parameterizedCommand);
 
 	/**
@@ -108,7 +107,7 @@ public interface IBindingService extends IDisposable {
 	 * @return The array of all active bindings for the given command. This
 	 *         collection may be empty, but it is never <code>null</code>.
 	 */
-	public TriggerSequence[] getActiveBindingsFor(String commandId);
+	TriggerSequence[] getActiveBindingsFor(String commandId);
 
 	/**
 	 * Returns the currently active scheme.
@@ -116,7 +115,7 @@ public interface IBindingService extends IDisposable {
 	 * @return The currently active scheme. This value may (in certain rare
 	 *         circumstances) be <code>null</code>.
 	 */
-	public Scheme getActiveScheme();
+	Scheme getActiveScheme();
 
 	/**
 	 * Gets the best active binding for a command. The best binding is the one
@@ -136,7 +135,7 @@ public interface IBindingService extends IDisposable {
 	 *         command.
 	 * @since 3.4
 	 */
-	public TriggerSequence getBestActiveBindingFor(ParameterizedCommand command);
+	TriggerSequence getBestActiveBindingFor(ParameterizedCommand command);
 
 	/**
 	 * Gets the best active binding for a command. The best binding is the one
@@ -157,7 +156,7 @@ public interface IBindingService extends IDisposable {
 	 * @since 3.2
 	 * @see #getBestActiveBindingFor(ParameterizedCommand)
 	 */
-	public TriggerSequence getBestActiveBindingFor(String commandId);
+	TriggerSequence getBestActiveBindingFor(String commandId);
 
 	/**
 	 * Gets the formatted string representing the best active binding for a
@@ -177,14 +176,14 @@ public interface IBindingService extends IDisposable {
 	 * @since 3.2
 	 * @see #getBestActiveBindingFor(ParameterizedCommand)
 	 */
-	public String getBestActiveBindingFormattedFor(String commandId);
+	String getBestActiveBindingFormattedFor(String commandId);
 
 	/**
 	 * Returns the current set of bindings.
 	 *
 	 * @return The current array of bindings (<code>Binding</code>).
 	 */
-	public Binding[] getBindings();
+	Binding[] getBindings();
 
 	/**
 	 * Returns the current state of the key binding buffer. This will contain
@@ -199,7 +198,7 @@ public interface IBindingService extends IDisposable {
 	 *         there is nothing in the buffer.
 	 * @since 3.2
 	 */
-	public TriggerSequence getBuffer();
+	TriggerSequence getBuffer();
 
 	/**
 	 * Returns the default scheme identifier for the currently running
@@ -209,7 +208,7 @@ public interface IBindingService extends IDisposable {
 	 *         <code>null</code>, but may be empty or point to an undefined
 	 *         scheme.
 	 */
-	public String getDefaultSchemeId();
+	String getDefaultSchemeId();
 
 	/**
 	 * Returns the array of defined schemes in the workbench.
@@ -217,14 +216,14 @@ public interface IBindingService extends IDisposable {
 	 * @return The array of schemes (<code>Scheme</code>) that are defined;
 	 *         it may be <code>null</code>, and it may be empty.
 	 */
-	public Scheme[] getDefinedSchemes();
+	Scheme[] getDefinedSchemes();
 
 	/**
 	 * Returns the currently active locale.
 	 *
 	 * @return The current locale.
 	 */
-	public String getLocale();
+	String getLocale();
 
 	/**
 	 * Returns all of the possible bindings that start with the given trigger
@@ -235,7 +234,7 @@ public interface IBindingService extends IDisposable {
 	 * @return A map of triggers (<code>TriggerSequence</code>) to bindings (<code>Binding</code>).
 	 *         This map may be empty, but it is never <code>null</code>.
 	 */
-	public Map getPartialMatches(TriggerSequence trigger);
+	Map getPartialMatches(TriggerSequence trigger);
 
 	/**
 	 * Returns the command identifier for the active binding matching this
@@ -245,14 +244,14 @@ public interface IBindingService extends IDisposable {
 	 *            The trigger to match; may be <code>null</code>.
 	 * @return The binding that matches, if any; <code>null</code> otherwise.
 	 */
-	public Binding getPerfectMatch(TriggerSequence trigger);
+	Binding getPerfectMatch(TriggerSequence trigger);
 
 	/**
 	 * Returns the currently active platform.
 	 *
 	 * @return The current platform.
 	 */
-	public String getPlatform();
+	String getPlatform();
 
 	/**
 	 * Retrieves the scheme with the given identifier. If no such scheme exists,
@@ -262,7 +261,7 @@ public interface IBindingService extends IDisposable {
 	 *            The identifier to find; must not be <code>null</code>.
 	 * @return A scheme with the given identifier, either defined or undefined.
 	 */
-	public Scheme getScheme(String schemeId);
+	Scheme getScheme(String schemeId);
 
 	/**
 	 * Tests whether the global key binding architecture is currently active.
@@ -270,7 +269,7 @@ public interface IBindingService extends IDisposable {
 	 * @return <code>true</code> if the key bindings are active;
 	 *         <code>false</code> otherwise.
 	 */
-	public boolean isKeyFilterEnabled();
+	boolean isKeyFilterEnabled();
 
 	/**
 	 * Returns whether the given trigger sequence is a partial match for the
@@ -282,7 +281,7 @@ public interface IBindingService extends IDisposable {
 	 * @return <code>true</code> if the trigger can be found in the active
 	 *         bindings; <code>false</code> otherwise.
 	 */
-	public boolean isPartialMatch(TriggerSequence trigger);
+	boolean isPartialMatch(TriggerSequence trigger);
 
 	/**
 	 * Returns whether the given trigger sequence is a perfect match for the
@@ -294,13 +293,13 @@ public interface IBindingService extends IDisposable {
 	 * @return <code>true</code> if the trigger can be found in the active
 	 *         bindings; <code>false</code> otherwise.
 	 */
-	public boolean isPerfectMatch(TriggerSequence trigger);
+	boolean isPerfectMatch(TriggerSequence trigger);
 
 	/**
 	 * Opens the key assistant dialog positioned near the key binding entry in
 	 * the status bar.
 	 */
-	public void openKeyAssistDialog();
+	void openKeyAssistDialog();
 
 	/**
 	 * <p>
@@ -314,7 +313,7 @@ public interface IBindingService extends IDisposable {
 	 * @param commandService
 	 *            Ignored.
 	 */
-	public void readRegistryAndPreferences(ICommandService commandService);
+	void readRegistryAndPreferences(ICommandService commandService);
 
 	/**
 	 * <p>
@@ -343,7 +342,7 @@ public interface IBindingService extends IDisposable {
 	 * @see org.eclipse.ui.IWorkbenchPreferenceConstants
 	 * @see org.eclipse.ui.contexts.IContextService
 	 */
-	public void savePreferences(Scheme activeScheme, Binding[] bindings)
+	void savePreferences(Scheme activeScheme, Binding[] bindings)
 			throws IOException;
 
 	/**
@@ -366,7 +365,7 @@ public interface IBindingService extends IDisposable {
 	 * @param enabled
 	 *            Whether the key filter should be enabled.
 	 */
-	public void setKeyFilterEnabled(boolean enabled);
+	void setKeyFilterEnabled(boolean enabled);
 
 	/**
 	 * Provides the current conflicts in the keybindings for the given
@@ -378,5 +377,5 @@ public interface IBindingService extends IDisposable {
 	 *         then returns a <code>null</code>
 	 * @since 3.5
 	 */
-	public Collection getConflictsFor(TriggerSequence sequence);
+	Collection getConflictsFor(TriggerSequence sequence);
 }

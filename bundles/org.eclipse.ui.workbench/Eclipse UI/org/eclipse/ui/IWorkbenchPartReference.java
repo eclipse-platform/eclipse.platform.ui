@@ -32,42 +32,42 @@ public interface IWorkbenchPartReference {
 	 * @return the part, or <code>null</code> if the part was not instantiated
 	 *         or it failed to be restored.
 	 */
-    public IWorkbenchPart getPart(boolean restore);
+    IWorkbenchPart getPart(boolean restore);
 
     /**
      * @see IWorkbenchPart#getTitle
      */
-    public String getTitle();
+    String getTitle();
 
     /**
      * @see IWorkbenchPart#getTitleImage
      */
-    public Image getTitleImage();
+    Image getTitleImage();
 
     /**
      * @see IWorkbenchPart#getTitleToolTip
      */
-    public String getTitleToolTip();
+    String getTitleToolTip();
 
     /**
      * @see IWorkbenchPartSite#getId
      */
-    public String getId();
+    String getId();
 
     /**
      * @see IWorkbenchPart#addPropertyListener
      */
-    public void addPropertyListener(IPropertyListener listener);
+    void addPropertyListener(IPropertyListener listener);
 
     /**
      * @see IWorkbenchPart#removePropertyListener
      */
-    public void removePropertyListener(IPropertyListener listener);
+    void removePropertyListener(IPropertyListener listener);
 
     /**
      * Returns the workbench page that contains this part
      */
-    public IWorkbenchPage getPage();
+    IWorkbenchPage getPage();
 
     /**
      * Returns the name of the part, as it should be shown in tabs.
@@ -76,7 +76,7 @@ public interface IWorkbenchPartReference {
      *
      * @since 3.0
      */
-    public String getPartName();
+    String getPartName();
 
     /**
      * Returns the content description for the part (or the empty string if none)
@@ -85,7 +85,7 @@ public interface IWorkbenchPartReference {
      *
      * @since 3.0
      */
-    public String getContentDescription();
+    String getContentDescription();
 
 
     /**
@@ -95,7 +95,7 @@ public interface IWorkbenchPartReference {
      *
      * @since 3.2 (previously existed on IEditorReference)
      */
-    public boolean isDirty();
+    boolean isDirty();
 
     /**
 	 * Return an arbitrary property from the reference. If the part has been
@@ -108,7 +108,7 @@ public interface IWorkbenchPartReference {
 	 * @return The String property, or <code>null</code>.
 	 * @since 3.3
 	 */
-    public String getPartProperty(String key);
+    String getPartProperty(String key);
 
     /**
 	 * Add a listener for changes in the arbitrary properties set.
@@ -117,7 +117,7 @@ public interface IWorkbenchPartReference {
 	 *            Must not be <code>null</code>.
 	 * @since 3.3
 	 */
-    public void addPartPropertyListener(IPropertyChangeListener listener);
+    void addPartPropertyListener(IPropertyChangeListener listener);
 
     /**
 	 * Remove a listener for changes in the arbitrary properties set.
@@ -126,5 +126,5 @@ public interface IWorkbenchPartReference {
 	 *            Must not be <code>null</code>.
 	 * @since 3.3
 	 */
-    public void removePartPropertyListener(IPropertyChangeListener listener);
+    void removePartPropertyListener(IPropertyChangeListener listener);
 }

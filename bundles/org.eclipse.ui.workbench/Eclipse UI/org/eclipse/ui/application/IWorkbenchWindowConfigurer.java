@@ -48,14 +48,14 @@ public interface IWorkbenchWindowConfigurer {
      *
      * @return the workbench window
      */
-    public IWorkbenchWindow getWindow();
+    IWorkbenchWindow getWindow();
 
     /**
      * Returns the workbench configurer.
      *
      * @return the workbench configurer
      */
-    public IWorkbenchConfigurer getWorkbenchConfigurer();
+    IWorkbenchConfigurer getWorkbenchConfigurer();
 
     /**
      * Returns the action bar configurer for this workbench
@@ -63,21 +63,21 @@ public interface IWorkbenchWindowConfigurer {
      *
      * @return the action bar configurer
      */
-    public IActionBarConfigurer getActionBarConfigurer();
+    IActionBarConfigurer getActionBarConfigurer();
 
     /**
      * Returns the title of the underlying workbench window.
      *
      * @return the window title
      */
-    public String getTitle();
+    String getTitle();
 
     /**
      * Sets the title of the underlying workbench window.
      *
      * @param title the window title
      */
-    public void setTitle(String title);
+    void setTitle(String title);
 
     /**
      * Returns whether the underlying workbench window has a menu bar.
@@ -88,7 +88,7 @@ public interface IWorkbenchWindowConfigurer {
      * @return <code>true</code> for a menu bar, and <code>false</code>
      * for no menu bar
      */
-    public boolean getShowMenuBar();
+    boolean getShowMenuBar();
 
     /**
      * Sets whether the underlying workbench window has a menu bar.
@@ -96,7 +96,7 @@ public interface IWorkbenchWindowConfigurer {
      * @param show <code>true</code> for a menu bar, and <code>false</code>
      * for no menu bar
      */
-    public void setShowMenuBar(boolean show);
+    void setShowMenuBar(boolean show);
 
     /**
      * Returns whether the underlying workbench window has a cool bar.
@@ -107,7 +107,7 @@ public interface IWorkbenchWindowConfigurer {
      * @return <code>true</code> for a cool bar, and <code>false</code>
      * for no cool bar
      */
-    public boolean getShowCoolBar();
+    boolean getShowCoolBar();
 
     /**
      * Sets whether the underlying workbench window has a cool bar.
@@ -115,7 +115,7 @@ public interface IWorkbenchWindowConfigurer {
      * @param show <code>true</code> for a cool bar, and <code>false</code>
      * for no cool bar
      */
-    public void setShowCoolBar(boolean show);
+    void setShowCoolBar(boolean show);
 
     /**
      * Returns whether the underlying workbench window has a status line.
@@ -126,7 +126,7 @@ public interface IWorkbenchWindowConfigurer {
      * @return <code>true</code> for a status line, and <code>false</code>
      * for no status line
      */
-    public boolean getShowStatusLine();
+    boolean getShowStatusLine();
 
     /**
      * Sets whether the underlying workbench window has a status line.
@@ -134,7 +134,7 @@ public interface IWorkbenchWindowConfigurer {
      * @param show <code>true</code> for a status line, and <code>false</code>
      * for no status line
      */
-    public void setShowStatusLine(boolean show);
+    void setShowStatusLine(boolean show);
 
     /**
      * Returns whether the underlying workbench window has a perspective bar (the
@@ -146,7 +146,7 @@ public interface IWorkbenchWindowConfigurer {
      * @return <code>true</code> for a perspective bar, and <code>false</code>
      * for no perspective bar
      */
-    public boolean getShowPerspectiveBar();
+    boolean getShowPerspectiveBar();
 
     /**
      * Sets whether the underlying workbench window has a perspective bar (the
@@ -155,7 +155,7 @@ public interface IWorkbenchWindowConfigurer {
      * @param show <code>true</code> for a perspective bar, and
      * <code>false</code> for no perspective bar
      */
-    public void setShowPerspectiveBar(boolean show);
+    void setShowPerspectiveBar(boolean show);
 
     /**
      * Returns whether the underlying workbench window has fast view bars.
@@ -167,8 +167,7 @@ public interface IWorkbenchWindowConfigurer {
      * <code>false</code> for no fast view bars
      * @deprecated discontinued support for fast views
      */
-    @Deprecated
-    public boolean getShowFastViewBars();
+    @Deprecated boolean getShowFastViewBars();
 
     /**
      * Sets whether the underlying workbench window has fast view bars.
@@ -177,8 +176,7 @@ public interface IWorkbenchWindowConfigurer {
      * <code>false</code> for no fast view bars
      * @deprecated discontinued support for fast views
      */
-    @Deprecated
-    public void setShowFastViewBars(boolean enable);
+    @Deprecated void setShowFastViewBars(boolean enable);
 
     /**
      * Returns whether the underlying workbench window has a progress indicator.
@@ -189,7 +187,7 @@ public interface IWorkbenchWindowConfigurer {
      * @return <code>true</code> for a progress indicator, and <code>false</code>
      * for no progress indicator
      */
-    public boolean getShowProgressIndicator();
+    boolean getShowProgressIndicator();
 
     /**
      * Sets whether the underlying workbench window has a progress indicator.
@@ -197,7 +195,7 @@ public interface IWorkbenchWindowConfigurer {
      * @param show <code>true</code> for a progress indicator, and <code>false</code>
      * for no progress indicator
      */
-    public void setShowProgressIndicator(boolean show);
+    void setShowProgressIndicator(boolean show);
 
     /**
      * Returns the style bits to use for the window's shell when it is created.
@@ -205,7 +203,7 @@ public interface IWorkbenchWindowConfigurer {
      *
      * @return the shell style bits
      */
-    public int getShellStyle();
+    int getShellStyle();
 
     /**
      * Sets the style bits to use for the window's shell when it is created.
@@ -219,14 +217,14 @@ public interface IWorkbenchWindowConfigurer {
      *
      * @param shellStyle the shell style bits
      */
-    public void setShellStyle(int shellStyle);
+    void setShellStyle(int shellStyle);
 
     /**
      * Returns the size to use for the window's shell when it is created.
      *
      * @return the initial size to use for the shell
      */
-    public Point getInitialSize();
+    Point getInitialSize();
 
     /**
      * Sets the size to use for the window's shell when it is created.
@@ -236,7 +234,7 @@ public interface IWorkbenchWindowConfigurer {
      *
      * @param initialSize the initial size to use for the shell
      */
-    public void setInitialSize(Point initialSize);
+    void setInitialSize(Point initialSize);
 
     /**
      * Returns the data associated with this workbench window at the given key.
@@ -245,7 +243,7 @@ public interface IWorkbenchWindowConfigurer {
      * @return the data, or <code>null</code> if there is no data at the given
      * key
      */
-    public Object getData(String key);
+    Object getData(String key);
 
     /**
      * Sets the data associated with this workbench window at the given key.
@@ -253,7 +251,7 @@ public interface IWorkbenchWindowConfigurer {
      * @param key the key
      * @param data the data, or <code>null</code> to delete existing data
      */
-    public void setData(String key, Object data);
+    void setData(String key, Object data);
 
     /**
      * Adds the given drag and drop <code>Transfer</code> type to the ones
@@ -277,7 +275,7 @@ public interface IWorkbenchWindowConfigurer {
      * @see #configureEditorAreaDropListener
      * @see org.eclipse.ui.part.EditorInputTransfer
      */
-    public void addEditorAreaTransfer(Transfer transfer);
+    void addEditorAreaTransfer(Transfer transfer);
 
     /**
      * Configures the drop target listener for the editor area of this workbench window.
@@ -300,7 +298,7 @@ public interface IWorkbenchWindowConfigurer {
      *
      * @see #addEditorAreaTransfer
      */
-    public void configureEditorAreaDropListener(
+    void configureEditorAreaDropListener(
             DropTargetListener dropTargetListener);
 
     /**
@@ -319,8 +317,7 @@ public interface IWorkbenchWindowConfigurer {
 	 * @deprecated This method is no longer used. Applications now define
 	 *             workbench window contents in their application model.
 	 */
-	@Deprecated
-    public Menu createMenuBar();
+	@Deprecated Menu createMenuBar();
 
     /**
 	 * Creates the cool bar control.
@@ -340,8 +337,7 @@ public interface IWorkbenchWindowConfigurer {
 	 * @deprecated This method is no longer used. Applications now define
 	 *             workbench window contents in their application model.
 	 */
-	@Deprecated
-    public Control createCoolBarControl(Composite parent);
+	@Deprecated Control createCoolBarControl(Composite parent);
 
     /**
 	 * Creates the status line control.
@@ -361,8 +357,7 @@ public interface IWorkbenchWindowConfigurer {
 	 * @deprecated This method is no longer used. Applications now define
 	 *             workbench window contents in their application model.
 	 */
-	@Deprecated
-    public Control createStatusLineControl(Composite parent);
+	@Deprecated Control createStatusLineControl(Composite parent);
 
     /**
 	 * Creates the page composite, in which the window's pages, and their views
@@ -382,8 +377,7 @@ public interface IWorkbenchWindowConfigurer {
 	 * @deprecated This method is no longer used. Applications now define
 	 *             workbench window contents in their application model.
 	 */
-	@Deprecated
-    public Control createPageComposite(Composite parent);
+	@Deprecated Control createPageComposite(Composite parent);
 
 	/**
 	 * Saves the current state of the window using the specified memento.
@@ -393,5 +387,5 @@ public interface IWorkbenchWindowConfigurer {
      * @see IWorkbenchConfigurer#restoreWorkbenchWindow(IMemento)
 	 * @since 3.1
 	 */
-	public IStatus saveState(IMemento memento);
+	IStatus saveState(IMemento memento);
 }

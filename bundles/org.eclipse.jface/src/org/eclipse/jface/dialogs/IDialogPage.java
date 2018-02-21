@@ -29,13 +29,13 @@ public interface IDialogPage {
      *
      * @param parent the parent composite
      */
-    public void createControl(Composite parent);
+    void createControl(Composite parent);
 
     /**
      * Disposes the SWT resources allocated by this
      * dialog page.
      */
-    public void dispose();
+    void dispose();
 
     /**
      * Returns the top level control for this dialog page.
@@ -46,7 +46,7 @@ public interface IDialogPage {
      *
      * @return the top level control or <code>null</code>
      */
-    public Control getControl();
+    Control getControl();
 
     /**
      * Returns this dialog page's description text.
@@ -54,7 +54,7 @@ public interface IDialogPage {
      * @return the description text for this dialog page,
      *  or <code>null</code> if none
      */
-    public String getDescription();
+    String getDescription();
 
     /**
      * Returns the current error message for this dialog page.
@@ -67,7 +67,7 @@ public interface IDialogPage {
      *
      * @return the error message, or <code>null</code> if none
      */
-    public String getErrorMessage();
+    String getErrorMessage();
 
     /**
      * Returns this dialog page's image.
@@ -75,7 +75,7 @@ public interface IDialogPage {
      * @return the image for this dialog page, or <code>null</code>
      *  if none
      */
-    public Image getImage();
+    Image getImage();
 
     /**
      * Returns the current message for this wizard page.
@@ -87,7 +87,7 @@ public interface IDialogPage {
      *
      * @return the message, or <code>null</code> if none
      */
-    public String getMessage();
+    String getMessage();
 
     /**
      * Returns this dialog page's title.
@@ -95,12 +95,12 @@ public interface IDialogPage {
      * @return the title of this dialog page,
      *  or <code>null</code> if none
      */
-    public String getTitle();
+    String getTitle();
 
     /**
      * Notifies that help has been requested for this dialog page.
      */
-    public void performHelp();
+    void performHelp();
 
     /**
      * Sets this dialog page's description text.
@@ -108,7 +108,7 @@ public interface IDialogPage {
      * @param description the description text for this dialog
      *  page, or <code>null</code> if none
      */
-    public void setDescription(String description);
+    void setDescription(String description);
 
     /**
      * Sets this dialog page's image.
@@ -116,7 +116,7 @@ public interface IDialogPage {
      * @param image the image for this dialog page,
      *  or <code>null</code> if none
      */
-    public void setImageDescriptor(ImageDescriptor image);
+    void setImageDescriptor(ImageDescriptor image);
 
     /**
      * Set this dialog page's title.
@@ -124,7 +124,7 @@ public interface IDialogPage {
      * @param title the title of this dialog page,
      *  or <code>null</code> if none
      */
-    public void setTitle(String title);
+    void setTitle(String title);
 
     /**
      * Sets the visibility of this dialog page.
@@ -132,5 +132,5 @@ public interface IDialogPage {
      * @param visible <code>true</code> to make this page visible,
      *  and <code>false</code> to hide it
      */
-    public void setVisible(boolean visible);
+    void setVisible(boolean visible);
 }

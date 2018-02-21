@@ -21,32 +21,32 @@ import org.eclipse.swt.graphics.Font;
  * instances of <code>ILightweightLabelDecorator</code>.
  * @noimplement This interface is not intended to be implemented by clients.
  */
-public interface IDecoration{
+public interface IDecoration {
 
 	/**
 	 * Constants for placement of image decorations.
 	 */
-	public static final int TOP_LEFT = 0;
+	int TOP_LEFT = 0;
 
 	/**
 	 * Constant for the top right quadrant.
 	 */
-	public static final int TOP_RIGHT = 1;
+	int TOP_RIGHT = 1;
 
 	/**
 	 * Constant for the bottom left quadrant.
 	 */
-	public static final int BOTTOM_LEFT = 2;
+	int BOTTOM_LEFT = 2;
 
 	/**
 	 * Constant for the bottom right quadrant.
 	 */
-	public static final int BOTTOM_RIGHT = 3;
+	int BOTTOM_RIGHT = 3;
 
 	/**
 	 * Constant for the underlay.
 	 */
-	public static final int UNDERLAY = 4;
+	int UNDERLAY = 4;
 
 	/**
 	 * Constant for replacing the original image. Note that for this to have an
@@ -58,7 +58,7 @@ public interface IDecoration{
 	 *
 	 * @since 3.4
 	 */
-	public static final int REPLACE = 5;
+	int REPLACE = 5;
 
 	/**
 	 * Constant that is used as the property key on an
@@ -68,7 +68,7 @@ public interface IDecoration{
 	 * @since 3.4
 	 * @see IDecorationContext
 	 */
-	public static final String ENABLE_REPLACE = "org.eclipse.jface.viewers.IDecoration.disableReplace"; //$NON-NLS-1$
+	String ENABLE_REPLACE = "org.eclipse.jface.viewers.IDecoration.disableReplace"; //$NON-NLS-1$
 
 	/**
 	 * Adds a prefix to the element's label.
@@ -76,7 +76,7 @@ public interface IDecoration{
 	 * @param prefix
 	 *            the prefix
 	 */
-	public void addPrefix(String prefix);
+	void addPrefix(String prefix);
 
 	/**
 	 * Adds a suffix to the element's label.
@@ -84,7 +84,7 @@ public interface IDecoration{
 	 * @param suffix
 	 *            the suffix
 	 */
-	public void addSuffix(String suffix);
+	void addSuffix(String suffix);
 
 	/**
 	 * Adds an overlay to the element's image.
@@ -92,7 +92,7 @@ public interface IDecoration{
 	 * @param overlay
 	 *            the overlay image descriptor
 	 */
-	public void addOverlay(ImageDescriptor overlay);
+	void addOverlay(ImageDescriptor overlay);
 
 	/**
 	 * Adds an overlay to the element's image.
@@ -102,7 +102,7 @@ public interface IDecoration{
 	 * @param quadrant
 	 *            The constant for the quadrant to draw the image on.
 	 */
-	public void addOverlay(ImageDescriptor overlay, int quadrant);
+	void addOverlay(ImageDescriptor overlay, int quadrant);
 
 	/**
 	 * Set the foreground color for this decoration.
@@ -110,7 +110,7 @@ public interface IDecoration{
 	 *
 	 * @since 3.1
 	 */
-	public void setForegroundColor(Color color);
+	void setForegroundColor(Color color);
 
 	/**
 	 * Set the background color for this decoration.
@@ -118,7 +118,7 @@ public interface IDecoration{
 	 *
 	 * @since 3.1
 	 */
-	public void setBackgroundColor(Color color);
+	void setBackgroundColor(Color color);
 
 	/**
 	 * Set the font for this decoration.
@@ -126,7 +126,7 @@ public interface IDecoration{
 	 *
 	 * @since 3.1
 	 */
-	public void setFont(Font font);
+	void setFont(Font font);
 
 	/**
 	 * Return the decoration context in which this decoration
@@ -135,5 +135,5 @@ public interface IDecoration{
 	 *
 	 * @since 3.2
 	 */
-	public IDecorationContext getDecorationContext();
+	IDecorationContext getDecorationContext();
 }

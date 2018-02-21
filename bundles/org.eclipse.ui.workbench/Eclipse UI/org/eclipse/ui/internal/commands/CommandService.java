@@ -72,7 +72,7 @@ public final class CommandService implements ICommandService, IUpdateService {
 	 *            should be created; must not be <code>null</code>.
 	 * @return A suitable preference key; never <code>null</code>.
 	 */
-	static final String createPreferenceKey(final Command command,
+	static String createPreferenceKey(final Command command,
 			final String stateId) {
 		return PREFERENCE_KEY_PREFIX + '/' + command.getId() + '/' + stateId;
 	}
@@ -111,25 +111,25 @@ public final class CommandService implements ICommandService, IUpdateService {
 	}
 
 	@Override
-	public final void addExecutionListener(final IExecutionListener listener) {
+	public void addExecutionListener(final IExecutionListener listener) {
 		commandManager.addExecutionListener(listener);
 	}
 
 	@Override
-	public final void defineUncategorizedCategory(final String name,
+	public void defineUncategorizedCategory(final String name,
 			final String description) {
 		commandManager.defineUncategorizedCategory(name, description);
 	}
 
 	@Override
-	public final ParameterizedCommand deserialize(
+	public ParameterizedCommand deserialize(
 			final String serializedParameterizedCommand)
 			throws NotDefinedException, SerializationException {
 		return commandManager.deserialize(serializedParameterizedCommand);
 	}
 
 	@Override
-	public final void dispose() {
+	public void dispose() {
 		commandPersistence.dispose();
 
 		/*
@@ -155,32 +155,32 @@ public final class CommandService implements ICommandService, IUpdateService {
 	}
 
 	@Override
-	public final Category getCategory(final String categoryId) {
+	public Category getCategory(final String categoryId) {
 		return commandManager.getCategory(categoryId);
 	}
 
 	@Override
-	public final Command getCommand(final String commandId) {
+	public Command getCommand(final String commandId) {
 		return commandManager.getCommand(commandId);
 	}
 
 	@Override
-	public final Category[] getDefinedCategories() {
+	public Category[] getDefinedCategories() {
 		return commandManager.getDefinedCategories();
 	}
 
 	@Override
-	public final Collection getDefinedCategoryIds() {
+	public Collection getDefinedCategoryIds() {
 		return commandManager.getDefinedCategoryIds();
 	}
 
 	@Override
-	public final Collection getDefinedCommandIds() {
+	public Collection getDefinedCommandIds() {
 		return commandManager.getDefinedCommandIds();
 	}
 
 	@Override
-	public final Command[] getDefinedCommands() {
+	public Command[] getDefinedCommands() {
 		return commandManager.getDefinedCommands();
 	}
 
@@ -199,13 +199,13 @@ public final class CommandService implements ICommandService, IUpdateService {
 	 *             if the given command is not defined
 	 */
 	@Override
-	public final String getHelpContextId(final Command command)
+	public String getHelpContextId(final Command command)
 			throws NotDefinedException {
 		return commandHelpService.getHelpContextId(command.getId(), context);
 	}
 
 	@Override
-	public final String getHelpContextId(final String commandId)
+	public String getHelpContextId(final String commandId)
 			throws NotDefinedException {
 		final Command command = getCommand(commandId);
 		return getHelpContextId(command);
@@ -217,17 +217,17 @@ public final class CommandService implements ICommandService, IUpdateService {
 	}
 
 	@Override
-	public final void readRegistry() {
+	public void readRegistry() {
 		commandPersistence.reRead();
 	}
 
 	@Override
-	public final void removeExecutionListener(final IExecutionListener listener) {
+	public void removeExecutionListener(final IExecutionListener listener) {
 		commandManager.removeExecutionListener(listener);
 	}
 
 	@Override
-	public final void setHelpContextId(final IHandler handler, final String helpContextId) {
+	public void setHelpContextId(final IHandler handler, final String helpContextId) {
 		commandHelpService.setHelpContextId(handler, helpContextId);
 	}
 
@@ -238,7 +238,7 @@ public final class CommandService implements ICommandService, IUpdateService {
 	private Map commandCallbacks = new HashMap();
 
 	@Override
-	public final void refreshElements(String commandId, Map filter) {
+	public void refreshElements(String commandId, Map filter) {
 		Command cmd = getCommand(commandId);
 
 		if (!cmd.isDefined() || !(cmd.getHandler() instanceof IElementUpdater)) {
@@ -291,7 +291,7 @@ public final class CommandService implements ICommandService, IUpdateService {
 	}
 
 	@Override
-	public final IElementReference registerElementForCommand(
+	public IElementReference registerElementForCommand(
 			ParameterizedCommand command, UIElement element)
 			throws NotDefinedException {
 		if (!command.getCommand().isDefined()) {

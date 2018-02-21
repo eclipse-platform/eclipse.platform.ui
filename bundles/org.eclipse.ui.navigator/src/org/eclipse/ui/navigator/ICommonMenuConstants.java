@@ -31,7 +31,7 @@ public interface ICommonMenuConstants {
 	 * Pop-up menu: name of group for the top of the menu (value
 	 * <code>"group.top"</code>).
 	 */
-	public static final String GROUP_TOP = "group.top"; //$NON-NLS-1$
+	String GROUP_TOP = "group.top"; //$NON-NLS-1$
 
 	/**
 	 * Pop-up menu: name of group for goto actions (value
@@ -44,7 +44,7 @@ public interface ICommonMenuConstants {
 	 * </ul>
 	 * </p>
 	 */
-	public static final String GROUP_GOTO = "group.goto"; //$NON-NLS-1$
+	String GROUP_GOTO = "group.goto"; //$NON-NLS-1$
 
 	/**
 	 * Pop-up menu: name of group for show actions (value
@@ -57,7 +57,7 @@ public interface ICommonMenuConstants {
 	 * </ul>
 	 * </p>
 	 */
-	public static final String GROUP_SHOW = "group.show"; //$NON-NLS-1$
+	String GROUP_SHOW = "group.show"; //$NON-NLS-1$
 
 	/**
 	 * Pop-up menu: name of group for new actions (value
@@ -70,7 +70,7 @@ public interface ICommonMenuConstants {
 	 * </ul>
 	 * </p>
 	 */
-	public static final String GROUP_NEW = "group.new"; //$NON-NLS-1$
+	String GROUP_NEW = "group.new"; //$NON-NLS-1$
 
 	/**
 	 * Pop-up menu: name of group for open actions (value
@@ -85,7 +85,7 @@ public interface ICommonMenuConstants {
 	 *
 	 * @see #GROUP_OPEN_WITH
 	 */
-	public static final String GROUP_OPEN = "group.open"; //$NON-NLS-1$
+	String GROUP_OPEN = "group.open"; //$NON-NLS-1$
 
 	/**
 	 * Pop-up menu: name of group for open actions (value
@@ -97,7 +97,7 @@ public interface ICommonMenuConstants {
 	 * </ul>
 	 * </p>
 	 */
-	public static final String GROUP_OPEN_WITH = "group.openWith"; //$NON-NLS-1$
+	String GROUP_OPEN_WITH = "group.openWith"; //$NON-NLS-1$
 
 	/**
 	 * Pop-up menu: name of group for porting actions (value
@@ -110,31 +110,31 @@ public interface ICommonMenuConstants {
 	 * </ul>
 	 * </p>
 	 */
-	public static final String GROUP_PORT = "group.port";//$NON-NLS-1$
+	String GROUP_PORT = "group.port";//$NON-NLS-1$
 
 	/**
 	 * Pop-up menu: name of group for properties actions (value
 	 * <code>"group.edit"</code>).
 	 */
-	public static final String GROUP_EDIT = "group.edit"; //$NON-NLS-1$
+	String GROUP_EDIT = "group.edit"; //$NON-NLS-1$
 
 	/**
 	 * Pop-up menu: name of group for build actions (value
 	 * <code>"group.build"</code>).
 	 */
-	public static final String GROUP_BUILD = "group.build"; //$NON-NLS-1$
+	String GROUP_BUILD = "group.build"; //$NON-NLS-1$
 
 	/**
 	 * Pop-up menu: name of group for reorganize actions (value
 	 * <code>"group.reorganize"</code>).
 	 */
-	public static final String GROUP_REORGANIZE = IWorkbenchActionConstants.GROUP_REORGANIZE;
+	String GROUP_REORGANIZE = IWorkbenchActionConstants.GROUP_REORGANIZE;
 
 	/**
 	 * Pop-up menu: name of group for code generation actions ( value
 	 * <code>"group.generate"</code>).
 	 */
-	public static final String GROUP_GENERATE = "group.generate"; //$NON-NLS-1$
+	String GROUP_GENERATE = "group.generate"; //$NON-NLS-1$
 
 	/**
 	 * Pop-up menu: name of group for source actions. This is an alias for
@@ -142,30 +142,30 @@ public interface ICommonMenuConstants {
 	 * structure.
 	 *
 	 */
-	public static final String GROUP_SOURCE = GROUP_GENERATE;
+	String GROUP_SOURCE = GROUP_GENERATE;
 
 	/**
 	 * Pop-up menu: name of group for search actions (value
 	 * <code>"group.search"</code>).
 	 */
-	public static final String GROUP_SEARCH = "group.search"; //$NON-NLS-1$
+	String GROUP_SEARCH = "group.search"; //$NON-NLS-1$
 
 	/**
 	 * Pop-up menu: name of group for additional actions (value
 	 * <code>"additions"</code>).
 	 */
-	public static final String GROUP_ADDITIONS = "additions"; //$NON-NLS-1$
+	String GROUP_ADDITIONS = "additions"; //$NON-NLS-1$
 
 	/**
 	 * Pop-up menu: name of group for viewer setup actions (value
 	 * <code>"group.viewerSetup"</code>).
 	 */
-	public static final String GROUP_VIEWER_SETUP = "group.viewerSetup"; //$NON-NLS-1$
+	String GROUP_VIEWER_SETUP = "group.viewerSetup"; //$NON-NLS-1$
 
 	/**
 	 * Pop-up menu: name of group for properties actions (value
 	 * <code>"group.properties"</code>).
 	 */
-	public static final String GROUP_PROPERTIES = "group.properties"; //$NON-NLS-1$
+	String GROUP_PROPERTIES = "group.properties"; //$NON-NLS-1$
 
 }

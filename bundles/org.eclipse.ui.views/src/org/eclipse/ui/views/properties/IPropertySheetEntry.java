@@ -26,7 +26,7 @@ public interface IPropertySheetEntry {
     /**
      * The filter id for expert properties
      */
-    public String FILTER_ID_EXPERT = "org.eclipse.ui.views.properties.expert"; //$NON-NLS-1$
+    String FILTER_ID_EXPERT = "org.eclipse.ui.views.properties.expert"; //$NON-NLS-1$
 
     /**
      * Adds the given listener to this entry's collection of listeners.
@@ -34,32 +34,32 @@ public interface IPropertySheetEntry {
      * @param listener
      *            the listener to add
      */
-    public void addPropertySheetEntryListener(
+    void addPropertySheetEntryListener(
             IPropertySheetEntryListener listener);
 
     /**
      * Apply the current cell editor value.
      */
-    public void applyEditorValue();
+    void applyEditorValue();
 
     /**
      * Called when the entry is no longer needed
      */
-    public void dispose();
+    void dispose();
 
     /**
      * Returns the entry's category.
      *
      * @return the entry's category
      */
-    public String getCategory();
+    String getCategory();
 
     /**
      * Returns the child entries for this entry.
      *
      * @return the child entries for this entry
      */
-    public IPropertySheetEntry[] getChildEntries();
+    IPropertySheetEntry[] getChildEntries();
 
     /**
      * Return a short description of the property sheet entry. Typically this
@@ -67,14 +67,14 @@ public interface IPropertySheetEntry {
      *
      * @return the entry's description
      */
-    public String getDescription();
+    String getDescription();
 
     /**
      * Returns the name used to display the property.
      *
      * @return the name used to display the property
      */
-    public String getDisplayName();
+    String getDisplayName();
 
     /**
      * Return the <code>CellEditor</code> used to edit the property.
@@ -91,7 +91,7 @@ public interface IPropertySheetEntry {
      * @return the error text to display when the value is invalid or
      *         <code>null</code>
      */
-    public String getErrorText();
+    String getErrorText();
 
     /**
      * Return the filter ids used to group entries into levels such as Expert.
@@ -99,7 +99,7 @@ public interface IPropertySheetEntry {
      *
      * @return the filter ids used to group entries into levels such as Expert.
      */
-    public String[] getFilters();
+    String[] getFilters();
 
     /**
      * Returns the help context id for this entry, or <code>null</code> if
@@ -117,7 +117,7 @@ public interface IPropertySheetEntry {
      *
      * @return the help context id for this entry
      */
-    public Object getHelpContextIds();
+    Object getHelpContextIds();
 
     /**
      * Returns the image for the property value, if there is one. This image is
@@ -126,21 +126,21 @@ public interface IPropertySheetEntry {
      *
      * @return the image for this property value or <code>null</code>
      */
-    public Image getImage();
+    Image getImage();
 
     /**
      * Returns the value of the objects expressed as a String.
      *
      * @return the value of the objects expressed as a String
      */
-    public String getValueAsString();
+    String getValueAsString();
 
     /**
      * Returns <code>true</code> if the entry has children.
      *
      * @return <code>true</code> if the entry has children
      */
-    public boolean hasChildEntries();
+    boolean hasChildEntries();
 
     /**
      * Removes the given listener from this entry's collection of listeners.
@@ -148,7 +148,7 @@ public interface IPropertySheetEntry {
      * @param listener
      *            the listener to remove
      */
-    public void removePropertySheetEntryListener(
+    void removePropertySheetEntryListener(
             IPropertySheetEntryListener listener);
 
     /**
@@ -166,5 +166,5 @@ public interface IPropertySheetEntry {
      *
      * @param values the values for this entry
      */
-    public void setValues(Object[] values);
+    void setValues(Object[] values);
 }

@@ -45,7 +45,7 @@ public interface IObservableList<E> extends List<E>, IObservableCollection<E> {
 	 *
 	 * @param listener
 	 */
-	public void addListChangeListener(IListChangeListener<? super E> listener);
+	void addListChangeListener(IListChangeListener<? super E> listener);
 
 	/**
 	 * Removes the given list change listener from the list of list change
@@ -54,109 +54,92 @@ public interface IObservableList<E> extends List<E>, IObservableCollection<E> {
 	 *
 	 * @param listener
 	 */
-	public void removeListChangeListener(IListChangeListener<? super E> listener);
+	void removeListChangeListener(IListChangeListener<? super E> listener);
 
 	/**
 	 * @TrackedGetter
 	 */
-	@Override
-	public int size();
+	@Override int size();
 
 	/**
 	 * @TrackedGetter
 	 */
-	@Override
-	public boolean isEmpty();
+	@Override boolean isEmpty();
 
 	/**
 	 * @TrackedGetter
 	 */
-	@Override
-	public boolean contains(Object o);
+	@Override boolean contains(Object o);
 
 	/**
 	 * @TrackedGetter
 	 */
-	@Override
-	public Iterator<E> iterator();
+	@Override Iterator<E> iterator();
 
 	/**
 	 * @TrackedGetter
 	 */
-	@Override
-	public Object[] toArray();
+	@Override Object[] toArray();
 
 	/**
 	 * @TrackedGetter
 	 */
-	@Override
-	public <T> T[] toArray(T a[]);
+	@Override <T> T[] toArray(T a[]);
 
 	/**
 	 *
 	 */
-	@Override
-	public boolean add(E o);
+	@Override boolean add(E o);
 
 	/**
 	 *
 	 */
-	@Override
-	public boolean remove(Object o);
+	@Override boolean remove(Object o);
 
 	/**
 	 * @TrackedGetter
 	 */
-	@Override
-	public boolean containsAll(Collection<?> c);
+	@Override boolean containsAll(Collection<?> c);
 
 	/**
 	 *
 	 */
-	@Override
-	public boolean addAll(Collection<? extends E> c);
+	@Override boolean addAll(Collection<? extends E> c);
 
 	/**
 	 *
 	 */
-	@Override
-	public boolean addAll(int index, Collection<? extends E> c);
+	@Override boolean addAll(int index, Collection<? extends E> c);
 
 	/**
 	 *
 	 */
-	@Override
-	public boolean removeAll(Collection<?> c);
+	@Override boolean removeAll(Collection<?> c);
 
 	/**
 	 *
 	 */
-	@Override
-	public boolean retainAll(Collection<?> c);
+	@Override boolean retainAll(Collection<?> c);
 
 	/**
 	 * @TrackedGetter
 	 */
-	@Override
-	public boolean equals(Object o);
+	@Override boolean equals(Object o);
 
 	/**
 	 * @TrackedGetter
 	 */
-	@Override
-	public int hashCode();
+	@Override int hashCode();
 
 	/**
 	 * @TrackedGetter
 	 */
-	@Override
-	public E get(int index);
+	@Override E get(int index);
 
 	/**
 	 *
 	 */
-	@Override
-	public E set(int index, E element);
+	@Override E set(int index, E element);
 
 	/**
 	 * Moves the element located at <code>oldIndex</code> to
@@ -182,43 +165,37 @@ public interface IObservableList<E> extends List<E>, IObservableCollection<E> {
 	 * @see ListDiff#accept(ListDiffVisitor)
 	 * @since 1.1
 	 */
-	public E move(int oldIndex, int newIndex);
+	E move(int oldIndex, int newIndex);
 
 	/**
 	 *
 	 */
-	@Override
-	public E remove(int index);
+	@Override E remove(int index);
 
 	/**
 	 * @TrackedGetter
 	 */
-	@Override
-	public int indexOf(Object o);
+	@Override int indexOf(Object o);
 
 	/**
 	 * @TrackedGetter
 	 */
-	@Override
-	public int lastIndexOf(Object o);
+	@Override int lastIndexOf(Object o);
 
 	/**
 	 * @TrackedGetter
 	 */
-	@Override
-	public ListIterator<E> listIterator();
+	@Override ListIterator<E> listIterator();
 
 	/**
 	 * @TrackedGetter
 	 */
-	@Override
-	public ListIterator<E> listIterator(int index);
+	@Override ListIterator<E> listIterator(int index);
 
 	/**
 	 * @TrackedGetter
 	 */
-	@Override
-	public List<E> subList(int fromIndex, int toIndex);
+	@Override List<E> subList(int fromIndex, int toIndex);
 
 	/**
 	 * @return the type of the elements or <code>null</code> if untyped

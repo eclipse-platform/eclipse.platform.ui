@@ -32,7 +32,7 @@ public interface IDialogSettings {
      *
      * @see DialogSettings#getOrCreateSection(IDialogSettings, String)
      */
-    public IDialogSettings addNewSection(String name);
+    IDialogSettings addNewSection(String name);
 
     /**
      * Add a section in the receiver.
@@ -40,7 +40,7 @@ public interface IDialogSettings {
      * @param section
      *            the section to be added
      */
-    public void addSection(IDialogSettings section);
+    void addSection(IDialogSettings section);
 
     /**
      * Returns the value of the given key in this dialog settings.
@@ -49,7 +49,7 @@ public interface IDialogSettings {
      *            the key
      * @return the value, or <code>null</code> if none
      */
-    public String get(String key);
+    String get(String key);
 
     /**
      * Returns the value, an array of strings, of the given key in this dialog
@@ -59,7 +59,7 @@ public interface IDialogSettings {
      *            the key
      * @return the array of string, or <code>null</code> if none
      */
-    public String[] getArray(String key);
+    String[] getArray(String key);
 
     /**
      * Convenience API. Convert the value of the given key in this dialog
@@ -69,7 +69,7 @@ public interface IDialogSettings {
      *            the key
      * @return the boolean value, or <code>false</code> if none
      */
-    public boolean getBoolean(String key);
+    boolean getBoolean(String key);
 
     /**
      * Convenience API. Convert the value of the given key in this dialog
@@ -84,7 +84,7 @@ public interface IDialogSettings {
      *                if the string value does not contain a parsable number.
      * @see java.lang.Double#valueOf(java.lang.String)
      */
-    public double getDouble(String key) throws NumberFormatException;
+    double getDouble(String key) throws NumberFormatException;
 
     /**
      * Convenience API. Convert the value of the given key in this dialog
@@ -99,7 +99,7 @@ public interface IDialogSettings {
      *                if the string value does not contain a parsable number.
      * @see java.lang.Float#valueOf(java.lang.String)
      */
-    public float getFloat(String key) throws NumberFormatException;
+    float getFloat(String key) throws NumberFormatException;
 
     /**
      * Convenience API. Convert the value of the given key in this dialog
@@ -114,7 +114,7 @@ public interface IDialogSettings {
      *                if the string value does not contain a parsable number.
      * @see java.lang.Integer#valueOf(java.lang.String)
      */
-    public int getInt(String key) throws NumberFormatException;
+    int getInt(String key) throws NumberFormatException;
 
     /**
      * Convenience API. Convert the value of the given key in this dialog
@@ -129,14 +129,14 @@ public interface IDialogSettings {
      *                if the string value does not contain a parsable number.
      * @see java.lang.Long#valueOf(java.lang.String)
      */
-    public long getLong(String key) throws NumberFormatException;
+    long getLong(String key) throws NumberFormatException;
 
     /**
      * Returns the IDialogSettings name.
      *
      * @return the name
      */
-    public String getName();
+    String getName();
 
     /**
      * Returns the section with the given name in this dialog settings.
@@ -147,14 +147,14 @@ public interface IDialogSettings {
      *
      * @see DialogSettings#getOrCreateSection(IDialogSettings, String)
      */
-    public IDialogSettings getSection(String sectionName);
+    IDialogSettings getSection(String sectionName);
 
     /**
      * Returns all the sections in this dialog settings.
      *
      * @return the section, or <code>null</code> if none
      */
-    public IDialogSettings[] getSections();
+    IDialogSettings[] getSections();
 
     /**
      * Load a dialog settings from a stream and fill the receiver with its
@@ -165,7 +165,7 @@ public interface IDialogSettings {
      *            from.
      * @throws IOException
      */
-    public void load(Reader reader) throws IOException;
+    void load(Reader reader) throws IOException;
 
     /**
      * Load a dialog settings from a file and fill the receiver with its
@@ -175,7 +175,7 @@ public interface IDialogSettings {
      *            the name of the file the settings are read from.
      * @throws IOException
      */
-    public void load(String fileName) throws IOException;
+    void load(String fileName) throws IOException;
 
     /**
      * Adds the pair <code>key/value</code> to this dialog settings.
@@ -185,7 +185,7 @@ public interface IDialogSettings {
      * @param value
      *            the value to be associated with the <code>key</code>
      */
-    public void put(String key, String[] value);
+    void put(String key, String[] value);
 
     /**
      * Convenience API. Converts the double <code>value</code> to a string and
@@ -196,7 +196,7 @@ public interface IDialogSettings {
      * @param value
      *            the value to be associated with the <code>key</code>
      */
-    public void put(String key, double value);
+    void put(String key, double value);
 
     /**
      * Convenience API. Converts the float <code>value</code> to a string and
@@ -207,7 +207,7 @@ public interface IDialogSettings {
      * @param value
      *            the value to be associated with the <code>key</code>
      */
-    public void put(String key, float value);
+    void put(String key, float value);
 
     /**
      * Convenience API. Converts the int <code>value</code> to a string and
@@ -218,7 +218,7 @@ public interface IDialogSettings {
      * @param value
      *            the value to be associated with the <code>key</code>
      */
-    public void put(String key, int value);
+    void put(String key, int value);
 
     /**
      * Convenience API. Converts the long <code>value</code> to a string and
@@ -229,7 +229,7 @@ public interface IDialogSettings {
      * @param value
      *            the value to be associated with the <code>key</code>
      */
-    public void put(String key, long value);
+    void put(String key, long value);
 
     /**
      * Adds the pair <code>key/value</code> to this dialog settings.
@@ -239,7 +239,7 @@ public interface IDialogSettings {
      * @param value
      *            the value to be associated with the <code>key</code>
      */
-    public void put(String key, String value);
+    void put(String key, String value);
 
     /**
      * Convenience API. Converts the boolean <code>value</code> to a string
@@ -250,7 +250,7 @@ public interface IDialogSettings {
      * @param value
      *            the value to be associated with the <code>key</code>
      */
-    public void put(String key, boolean value);
+    void put(String key, boolean value);
 
     /**
      * Save a dialog settings to a stream
@@ -259,7 +259,7 @@ public interface IDialogSettings {
      *            a Writer specifying the stream the settings are written in.
      * @throws IOException
      */
-    public void save(Writer writer) throws IOException;
+    void save(Writer writer) throws IOException;
 
     /**
      * Save a dialog settings to a file.
@@ -268,5 +268,5 @@ public interface IDialogSettings {
      *            the name of the file the settings are written in.
      * @throws IOException
      */
-    public void save(String fileName) throws IOException;
+    void save(String fileName) throws IOException;
 }

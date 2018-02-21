@@ -37,7 +37,7 @@ public interface EPartService {
 	 * Used to tag the currently active part in a presentation for subsequent activation on session
 	 * startup
 	 */
-	public static final String ACTIVE_ON_CLOSE_TAG = "activeOnClose"; //$NON-NLS-1$
+	String ACTIVE_ON_CLOSE_TAG = "activeOnClose"; //$NON-NLS-1$
 
 	/**
 	 * Applicable states that a part can be in. This will be used in conjunction with
@@ -68,7 +68,7 @@ public interface EPartService {
 	 *
 	 * @see #hidePart(MPart)
 	 */
-	public static final String REMOVE_ON_HIDE_TAG = "removeOnHide"; //$NON-NLS-1$
+	String REMOVE_ON_HIDE_TAG = "removeOnHide"; //$NON-NLS-1$
 
 	/**
 	 * Adds the given listener for part lifecycle events. Has no effect if an identical listener has
@@ -80,7 +80,7 @@ public interface EPartService {
 	 * @param listener
 	 *            the listener to attach
 	 */
-	public void addPartListener(IPartListener listener);
+	void addPartListener(IPartListener listener);
 
 	/**
 	 * Removes the given listener so that it will no longer be notified of part lifecycle events.
@@ -89,7 +89,7 @@ public interface EPartService {
 	 * @param listener
 	 *            the listener to remove
 	 */
-	public void removePartListener(IPartListener listener);
+	void removePartListener(IPartListener listener);
 
 	/**
 	 * Activates the given part. The part will be brought to top (if necessary) and granted focus.
@@ -97,7 +97,7 @@ public interface EPartService {
 	 * @param part
 	 *            the part to activate, must not be <code>null</code>
 	 */
-	public void activate(MPart part);
+	void activate(MPart part);
 
 	/**
 	 * Activates the given part. The part will be brought to top (if necessary) and, if
@@ -108,12 +108,12 @@ public interface EPartService {
 	 * @param requiresFocus
 	 *            if true, then also cause the part to acquire focus
 	 */
-	public void activate(MPart part, boolean requiresFocus);
+	void activate(MPart part, boolean requiresFocus);
 
 	/**
 	 * Ask the service to assign activation to a valid part in the currently active presentation.
 	 */
-	public void requestActivation();
+	void requestActivation();
 
 	/**
 	 * Brings this part to the top so that it will become visible to the end user. This does not
@@ -122,7 +122,7 @@ public interface EPartService {
 	 * @param part
 	 *            the part to bring to top
 	 */
-	public void bringToTop(MPart part);
+	void bringToTop(MPart part);
 
 	/**
 	 * Finds and returns a part with the given id.
@@ -131,14 +131,14 @@ public interface EPartService {
 	 *            the id of the part to search for, must not be <code>null</code>
 	 * @return the part with the specified id, or <code>null</code> if no such part could be found
 	 */
-	public MPart findPart(String id);
+	MPart findPart(String id);
 
 	/**
 	 * Returns a collection of all the parts that are being managed by this part service.
 	 *
 	 * @return a collection of parts that are being managed by this service, never <code>null</code>
 	 */
-	public Collection<MPart> getParts();
+	Collection<MPart> getParts();
 
 	/**
 	 * Returns the active part.
@@ -146,7 +146,7 @@ public interface EPartService {
 	 * @return an active part within the scope of this service, or <code>null</code> if no part is
 	 *         currently active
 	 */
-	public MPart getActivePart();
+	MPart getActivePart();
 
 	/**
 	 * Returns whether the specified part is currently visible to the end user.
@@ -155,7 +155,7 @@ public interface EPartService {
 	 *            the part to check
 	 * @return <code>true</code> if the part is currently visible, <code>false</code> otherwise
 	 */
-	public boolean isPartVisible(MPart part);
+	boolean isPartVisible(MPart part);
 
 	/**
 	 * Creates a new part of the given id.
@@ -165,7 +165,7 @@ public interface EPartService {
 	 * @return a new part of the given id, or <code>null</code> if no part descriptors can be found
 	 *         that match the specified id
 	 */
-	public MPart createPart(String id);
+	MPart createPart(String id);
 
 	/**
 	 * Creates a new placeholder for a part of the given id.
@@ -175,7 +175,7 @@ public interface EPartService {
 	 * @return a new part of the given id, or <code>null</code> if no part descriptors can be found
 	 *         that match the specified id
 	 */
-	public MPlaceholder createSharedPart(String id);
+	MPlaceholder createSharedPart(String id);
 
 	/**
 	 * Creates a new placeholder for a part of the given id.
@@ -188,7 +188,7 @@ public interface EPartService {
 	 * @return a new part of the given id, or <code>null</code> if no part descriptors can be found
 	 *         that match the specified id
 	 */
-	public MPlaceholder createSharedPart(String id, boolean force);
+	MPlaceholder createSharedPart(String id, boolean force);
 
 	/**
 	 * Shows a part with the identified by the given id. In the event that there are multiple parts
@@ -212,7 +212,7 @@ public interface EPartService {
 	 * @return the shown part, or <code>null</code> if no parts or part descriptors can be found
 	 *         that match the specified id
 	 */
-	public MPart showPart(String id, PartState partState);
+	MPart showPart(String id, PartState partState);
 
 	/**
 	 * Shows the given part.
@@ -242,7 +242,7 @@ public interface EPartService {
 	 *            the desired state of the shown part to be in
 	 * @return the shown part
 	 */
-	public MPart showPart(MPart part, PartState partState);
+	MPart showPart(MPart part, PartState partState);
 
 	/**
 	 * Hides the given part. The part must be a part managed by this service.
@@ -264,7 +264,7 @@ public interface EPartService {
 	 *            the part to hide
 	 * @see #savePart(MPart, boolean)
 	 */
-	public void hidePart(MPart part);
+	void hidePart(MPart part);
 
 	/**
 	 * Hides the given part. The part must be a part managed by this service.
@@ -289,7 +289,7 @@ public interface EPartService {
 	 *            {@link #REMOVE_ON_HIDE_TAG} tag
 	 * @see #savePart(MPart, boolean)
 	 */
-	public void hidePart(MPart part, boolean force);
+	void hidePart(MPart part, boolean force);
 
 	/**
 	 * Returns a collection of all the dirty parts that are being managed by this service.
@@ -298,7 +298,7 @@ public interface EPartService {
 	 * @return a collection of dirty parts that are being managed by this service, never
 	 *         <code>null</code>
 	 */
-	public Collection<MPart> getDirtyParts();
+	Collection<MPart> getDirtyParts();
 
 	/**
 	 * Saves the contents of the part if it is dirty and returns whether the operation completed.
@@ -312,7 +312,7 @@ public interface EPartService {
 	 *         user canceled the operation or if an error occurred while saving the changes
 	 * @see #hidePart(MPart, boolean)
 	 */
-	public boolean savePart(MPart part, boolean confirm);
+	boolean savePart(MPart part, boolean confirm);
 
 	/**
 	 * Saves the contents of all dirty parts and returns whether the operation completed.
@@ -323,7 +323,7 @@ public interface EPartService {
 	 * @return <code>true</code> if the operation completed successfully, <code>false</code> if the
 	 *         user canceled the operation or if an error occurred while saving the changes
 	 */
-	public boolean saveAll(boolean confirm);
+	boolean saveAll(boolean confirm);
 
 	/**
 	 * Returns a collection of all {@link MInputPart} with the inputURI-Attribute
@@ -339,8 +339,7 @@ public interface EPartService {
 	 * @see <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=509868">Bug
 	 *      509868</a>
 	 */
-	@Deprecated
-	public Collection<MInputPart> getInputParts(String inputUri);
+	@Deprecated Collection<MInputPart> getInputParts(String inputUri);
 
 	/**
 	 * Switch to the specified perspective. It will be selected and brought to top (if necessary).
@@ -352,7 +351,7 @@ public interface EPartService {
 	 *
 	 * @since 1.4
 	 */
-	public void switchPerspective(MPerspective perspective);
+	void switchPerspective(MPerspective perspective);
 
 	/**
 	 * Switch to the specified perspective. It will be selected and brought to
@@ -368,7 +367,7 @@ public interface EPartService {
 	 *
 	 * @since 1.4
 	 */
-	public Optional<MPerspective> switchPerspective(String perspectiveId);
+	Optional<MPerspective> switchPerspective(String perspectiveId);
 
 	/**
 	 * Indicates whether a part with a certain elementId is currently rendered in a certain
@@ -382,5 +381,5 @@ public interface EPartService {
 	 *         perspective and <code>false</code> otherwise
 	 * @since 1.3
 	 */
-	public boolean isPartOrPlaceholderInPerspective(String elementId, MPerspective perspective);
+	boolean isPartOrPlaceholderInPerspective(String elementId, MPerspective perspective);
 }
