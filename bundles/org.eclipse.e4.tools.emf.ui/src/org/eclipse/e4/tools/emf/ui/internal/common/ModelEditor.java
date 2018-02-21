@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2017 BestSolution.at and others.
+ * Copyright (c) 2010, 2018 BestSolution.at and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,7 +13,8 @@
  * Steven Spungin <steven@spungin.tv> - Bug 396902, 431755, 431735, 424730, 424730, 391089, 437236, 437552, Ongoing
  * Maintenance
  * Simon Scholz <simon.scholz@vogella.com> - Bug 475365
- * Olivier Prouvost <olivier.prouvost@opcoach.com> - Bug 472706
+ * Olivier Prouvost <olivier.prouvost@opcoach.com> - Bug 472706, 429684
+ * Dmitry Spiridenok <d.spiridenok@gmail.com> - Bug 429684
  ******************************************************************************/
 package org.eclipse.e4.tools.emf.ui.internal.common;
 
@@ -157,6 +158,7 @@ import org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl;
 import org.eclipse.e4.ui.model.application.ui.MContext;
 import org.eclipse.e4.ui.model.application.ui.MElementContainer;
 import org.eclipse.e4.ui.model.application.ui.MUIElement;
+import org.eclipse.e4.ui.model.application.ui.MUILabel;
 import org.eclipse.e4.ui.model.application.ui.advanced.impl.AdvancedPackageImpl;
 import org.eclipse.e4.ui.model.application.ui.basic.MPart;
 import org.eclipse.e4.ui.model.application.ui.basic.impl.BasicPackageImpl;
@@ -1835,7 +1837,7 @@ public class ModelEditor implements IGotoObject {
 				}
 
 				if (feature != null && parent != null) {
-					final Command cmd = AddCommand.create(domain, parent, feature, data);
+					final Command cmd = createRemoveAddCommand(data, feature, parent, CommandParameter.NO_INDEX);
 					if (cmd.canExecute()) {
 						domain.getCommandStack().execute(cmd);
 						if (isLiveModel()) {
@@ -1877,7 +1879,7 @@ public class ModelEditor implements IGotoObject {
 				if (feature == FragmentPackageImpl.Literals.MODEL_FRAGMENTS__IMPORTS && parent != null) {
 					final MApplicationElement el = (MApplicationElement) EcoreUtil.create(((EObject) data).eClass());
 					el.setElementId(((MApplicationElement) data).getElementId());
-					final Command cmd = AddCommand.create(domain, parent, feature, el);
+					final Command cmd = createRemoveAddCommand(data, feature, parent, CommandParameter.NO_INDEX);
 					if (cmd.canExecute()) {
 						domain.getCommandStack().execute(cmd);
 					}
@@ -1908,7 +1910,7 @@ public class ModelEditor implements IGotoObject {
 							data = EcoreUtil.copy((EObject) data);
 						}
 
-						final Command cmd = AddCommand.create(domain, parent, feature, data, index);
+						final Command cmd = createRemoveAddCommand(data, feature, parent, index);
 						if (cmd.canExecute()) {
 							domain.getCommandStack().execute(cmd);
 							if (isLiveModel()) {
@@ -1924,6 +1926,58 @@ public class ModelEditor implements IGotoObject {
 			}
 
 			return false;
+		}
+
+		/**
+		 * Create an internal Compound command containing a Remove and a Add so as to
+		 * allow the Undo
+		 *
+		 * @param data
+		 *            the object to be dragged and dropped
+		 * @param destFeature
+		 *            the target feature in the model where data must be dropped
+		 * @param parent
+		 *            the destination parent
+		 * @param index
+		 *            the index in the parent list
+		 * @see bug #429684
+		 * @return the compound command
+		 */
+		private Command createRemoveAddCommand(Object data, EStructuralFeature destFeature, EObject parent, int index) {
+
+			// Remark : this code could be replaced by a MoveCommand, but unfortunately I
+			// could not make it working (its canExecute() method always returns false
+			// because it is not prepared (see canExecute())...)...
+
+			List<Command> listOfCommands = new ArrayList<>();
+			EStructuralFeature sourceFeature = null;
+			if (data instanceof EObject) {
+				sourceFeature = ((EObject) data).eContainmentFeature();
+			}
+			Command removeCommand = RemoveCommand.create(domain, ((EObject) data).eContainer(), sourceFeature, data);
+			if (removeCommand.canExecute()) {
+				listOfCommands.add(removeCommand);
+			}
+
+			Command addCommand = AddCommand.create(domain, parent, destFeature, data, index);
+			listOfCommands.add(addCommand);
+			CompoundCommand compoundCommand = new CompoundCommand(listOfCommands);
+			compoundCommand.setLabel(messages.ModelEditor_Move + " " + getObjectNameForCommand(data)); //$NON-NLS-1$
+			return compoundCommand;
+
+		}
+
+		/**
+		 * compute a valid name for the undo/redo/paste of move commands
+		 *
+		 * @param data
+		 *            the object concerned by the command
+		 * @return a representative string for the object or 'Object' if nothing found
+		 */
+		private String getObjectNameForCommand(Object data) {
+			String clname = (data instanceof EObject) ? ((EObject) data).eClass().getName() : "Object"; //$NON-NLS-1$
+			String dname = (data instanceof MUILabel) ? ((MUILabel) data).getLabel() : ""; //$NON-NLS-1$
+			return clname + " " + dname; //$NON-NLS-1$
 		}
 
 		@Override

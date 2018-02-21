@@ -110,6 +110,7 @@ public class Messages {
 	public String ModelTooling_Common_TabDefault;
 	public String ModelTooling_Common_TabSupplementary;
 	public String ModelEditor_AddChild;
+	public String ModelEditor_Move;
 	public String ModelTooling_Common_RuntimeContributionInstance;
 	public String ModelTooling_Common_RuntimeWidgetTree;
 

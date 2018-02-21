@@ -116,7 +116,6 @@ public class AddonsEditor extends AbstractComponentEditor {
 		}
 
 		getMaster().setValue(object);
-		context.updateModels();
 		return composite;
 	}
 

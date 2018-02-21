@@ -109,7 +109,6 @@ public class DynamicMenuContributionEditor extends AbstractComponentEditor {
 		}
 
 		getMaster().setValue(object);
-		context.updateModels();
 
 		return composite;
 	}

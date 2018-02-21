@@ -147,7 +147,6 @@ public abstract class MenuItemEditor extends AbstractComponentEditor {
 		getMaster().setValue(object);
 		enableIdGenerator(UiPackageImpl.Literals.UI_LABEL__LABEL,
 				ApplicationPackageImpl.Literals.APPLICATION_ELEMENT__ELEMENT_ID, null);
-		context.updateModels();
 
 		return composite;
 	}

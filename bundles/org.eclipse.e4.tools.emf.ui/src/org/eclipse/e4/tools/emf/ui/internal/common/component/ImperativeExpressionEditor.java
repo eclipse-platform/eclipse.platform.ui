@@ -78,7 +78,6 @@ public class ImperativeExpressionEditor extends AbstractComponentEditor {
 			createForm(composite, context, getMaster());
 		}
 		getMaster().setValue(object);
-		context.updateModels();
 
 		return composite;
 	}

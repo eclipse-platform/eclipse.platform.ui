@@ -119,7 +119,6 @@ public class HandlerEditor extends AbstractComponentEditor {
 		}
 
 		getMaster().setValue(object);
-		context.updateModels();
 		return composite;
 	}
 

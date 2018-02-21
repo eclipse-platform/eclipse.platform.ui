@@ -11,6 +11,7 @@
 package org.eclipse.e4.tools.emf.editor3x;
 
 import org.eclipse.e4.tools.emf.ui.common.IModelResource;
+import org.eclipse.emf.common.command.Command;
 import org.eclipse.jface.action.Action;
 
 public class RedoAction extends Action {
@@ -45,9 +46,12 @@ public class RedoAction extends Action {
 
 	private void update() {
 		if (resource.getEditingDomain().getCommandStack().canRedo()) {
+
+			Command redoCommand = resource.getEditingDomain().getCommandStack().getRedoCommand();
+			String label = UndoAction.getCommandLabel(redoCommand);
+
 			setText(Messages.RedoAction_Redo + " " //$NON-NLS-1$
-				+ resource.getEditingDomain().getCommandStack()
-					.getRedoCommand().getLabel());
+					+ label);
 			setEnabled(true);
 		} else {
 			setText(Messages.RedoAction_Redo);
