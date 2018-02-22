@@ -36,4 +36,11 @@ public interface ICodeMiningAnnotation {
 	 */
 	void redraw();
 
+	/**
+	 * Return whether the annotation is in visible lines.
+	 *
+	 * @return <code>true</code> if the annotation is in visible lines and <code>false</code>
+	 *         otherwise.
+	 */
+	boolean isInVisibleLines();
 }

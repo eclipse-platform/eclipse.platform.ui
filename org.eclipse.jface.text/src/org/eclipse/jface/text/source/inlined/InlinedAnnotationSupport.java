@@ -1,5 +1,5 @@
 /**
- *  Copyright (c) 2017 Angelo ZERR.
+ *  Copyright (c) 2017, 2018 Angelo ZERR.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -38,6 +38,8 @@ import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.ISynchronizable;
 import org.eclipse.jface.text.ITextViewerExtension5;
+import org.eclipse.jface.text.IViewportListener;
+import org.eclipse.jface.text.JFaceTextUtil;
 import org.eclipse.jface.text.Position;
 import org.eclipse.jface.text.source.Annotation;
 import org.eclipse.jface.text.source.AnnotationPainter;
@@ -69,7 +71,92 @@ public class InlinedAnnotationSupport implements StyledTextLineSpacingProvider {
 	 */
 	private static final String INLINED_STRATEGY_ID= "inlined"; //$NON-NLS-1$
 
-	class MouseTracker implements MouseTrackListener, MouseMoveListener, MouseListener {
+	/**
+	 * Tracker of start/end offset of visible lines.
+	 */
+	private VisibleLines visibleLines;
+
+	/**
+	 * Class to track start/end offset of visible lines.
+	 *
+	 */
+	private class VisibleLines implements IViewportListener {
+
+		private int startOffset;
+
+		private int endOffset;
+
+		public VisibleLines() {
+			fViewer.getTextWidget().getDisplay().asyncExec(() -> {
+				startOffset= getInclusiveTopIndexStartOffset();
+				endOffset= getExclusiveBottomIndexEndOffset();
+			});
+		}
+
+		@Override
+		public void viewportChanged(int verticalOffset) {
+			compute();
+		}
+
+		private void compute() {
+			startOffset= getInclusiveTopIndexStartOffset();
+			endOffset= getExclusiveBottomIndexEndOffset();
+		}
+
+		/**
+		 * Returns the document offset of the upper left corner of the source viewer's view port,
+		 * possibly including partially visible lines.
+		 *
+		 * @return the document offset if the upper left corner of the view port
+		 */
+		private int getInclusiveTopIndexStartOffset() {
+			if (fViewer != null && fViewer.getTextWidget() != null && !fViewer.getTextWidget().isDisposed()) {
+				int top= JFaceTextUtil.getPartialTopIndex(fViewer);
+				try {
+					IDocument document= fViewer.getDocument();
+					return document.getLineOffset(top);
+				} catch (BadLocationException x) {
+					// Do nothing
+				}
+			}
+			return -1;
+		}
+
+		/**
+		 * Returns the first invisible document offset of the lower right corner of the source
+		 * viewer's view port, possibly including partially visible lines.
+		 *
+		 * @return the first invisible document offset of the lower right corner of the view port
+		 */
+		private int getExclusiveBottomIndexEndOffset() {
+			if (fViewer != null && fViewer.getTextWidget() != null && !fViewer.getTextWidget().isDisposed()) {
+				int bottom= JFaceTextUtil.getPartialBottomIndex(fViewer);
+				try {
+					IDocument document= fViewer.getDocument();
+					if (bottom >= document.getNumberOfLines()) {
+						bottom= document.getNumberOfLines() - 1;
+					}
+					return document.getLineOffset(bottom) + document.getLineLength(bottom);
+				} catch (BadLocationException x) {
+					// Do nothing
+				}
+			}
+			return -1;
+		}
+
+		/**
+		 * Return whether the given annotation is in visible lines.
+		 *
+		 * @param annotation the inlined annotation
+		 * @return <code>true</code> if the given annotation is in visible lines and
+		 *         <code>false</code> otherwise.
+		 */
+		public boolean isInVisibleLines(AbstractInlinedAnnotation annotation) {
+			return annotation.getPosition().getOffset() >= startOffset && annotation.getPosition().getOffset() <= endOffset;
+		}
+	}
+
+	private class MouseTracker implements MouseTrackListener, MouseMoveListener, MouseListener {
 
 		private AbstractInlinedAnnotation fAnnotation;
 
@@ -177,6 +264,8 @@ public class InlinedAnnotationSupport implements StyledTextLineSpacingProvider {
 		if (text == null || text.isDisposed()) {
 			return;
 		}
+		visibleLines= new VisibleLines();
+		fViewer.addViewportListener(visibleLines);
 		text.addMouseListener(fMouseTracker);
 		text.addMouseTrackListener(fMouseTracker);
 		text.addMouseMoveListener(fMouseTracker);
@@ -210,6 +299,9 @@ public class InlinedAnnotationSupport implements StyledTextLineSpacingProvider {
 			text.removeMouseListener(this.fMouseTracker);
 			text.removeMouseTrackListener(this.fMouseTracker);
 			text.removeMouseMoveListener(this.fMouseTracker);
+		}
+		if (fViewer != null) {
+			fViewer.removeViewportListener(visibleLines);
 		}
 		fViewer= null;
 		fPainter= null;
@@ -248,6 +340,10 @@ public class InlinedAnnotationSupport implements StyledTextLineSpacingProvider {
 		}
 		// Update annotation model
 		synchronized (getLockObject(annotationModel)) {
+			// Update annotations with this inlined annotation support.
+			for (AbstractInlinedAnnotation ann : annotations) {
+				ann.setSupport(this);
+			}
 			if (annotationsToAdd.size() == 0 && annotationsToRemove.size() == 0) {
 				// None change, do nothing. Here the user could change position of codemining
 				// range
@@ -501,5 +597,16 @@ public class InlinedAnnotationSupport implements StyledTextLineSpacingProvider {
 				}
 			});
 		}
+	}
+
+	/**
+	 * Return whether the given annotation is in visible lines.
+	 *
+	 * @param annotation the inlined annotation
+	 * @return <code>true</code> if the given annotation is in visible lines and <code>false</code>
+	 *         otherwise.
+	 */
+	boolean isInVisibleLines(AbstractInlinedAnnotation annotation) {
+		return visibleLines.isInVisibleLines(annotation);
 	}
 }

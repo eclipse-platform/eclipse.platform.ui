@@ -1,5 +1,5 @@
 /**
- *  Copyright (c) 2017 Angelo ZERR.
+ *  Copyright (c) 2017, 2018 Angelo ZERR.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -45,6 +45,11 @@ public abstract class AbstractInlinedAnnotation extends Annotation {
 	 * The {@link ISourceViewer} where the annotation must be drawn.
 	 */
 	private ISourceViewer fViewer;
+
+	/**
+	 * The {@link InlinedAnnotationSupport} which manages the annotation.
+	 */
+	private InlinedAnnotationSupport support;
 
 	/**
 	 * Inlined annotation constructor.
@@ -143,4 +148,24 @@ public abstract class AbstractInlinedAnnotation extends Annotation {
 	public Consumer<MouseEvent> getAction(MouseEvent e) {
 		return null;
 	}
+
+	/**
+	 * Set the inlined annotation support which manages this annotation.
+	 *
+	 * @param support the inlined annotation support which manages this annotation.
+	 */
+	void setSupport(InlinedAnnotationSupport support) {
+		this.support= support;
+	}
+
+	/**
+	 * Return whether the annotation is in visible lines.
+	 *
+	 * @return <code>true</code> if the annotation is in visible lines and <code>false</code>
+	 *         otherwise.
+	 */
+	protected boolean isInVisibleLines() {
+		return support.isInVisibleLines(this);
+	}
+
 }

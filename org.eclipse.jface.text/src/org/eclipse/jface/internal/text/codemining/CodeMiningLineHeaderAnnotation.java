@@ -182,4 +182,9 @@ public class CodeMiningLineHeaderAnnotation extends LineHeaderAnnotation impleme
 		}
 		return null;
 	}
+
+	@Override
+	public boolean isInVisibleLines() {
+		return super.isInVisibleLines();
+	}
 }

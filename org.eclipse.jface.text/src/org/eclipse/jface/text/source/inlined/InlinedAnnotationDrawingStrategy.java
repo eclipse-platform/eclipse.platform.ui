@@ -35,6 +35,10 @@ class InlinedAnnotationDrawingStrategy implements IDrawingStrategy {
 		if (!(annotation instanceof AbstractInlinedAnnotation)) {
 			return;
 		}
+		if (!((AbstractInlinedAnnotation) annotation).isInVisibleLines()) {
+			// The annotation is not in visible lines, don't draw it.
+			return;
+		}
 		InlinedAnnotationDrawingStrategy.draw((AbstractInlinedAnnotation) annotation, gc, textWidget, offset, length,
 				color);
 	}
