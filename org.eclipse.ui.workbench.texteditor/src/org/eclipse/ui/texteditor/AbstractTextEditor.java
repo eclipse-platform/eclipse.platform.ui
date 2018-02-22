@@ -4039,7 +4039,7 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	/**
 	 * Install codemining providers.
 	 *
-	 * @since 3.10
+	 * @since 3.11
 	 */
 	protected void installCodeMinigProviders() {
 		ICodeMiningProvider[] providers = TextEditorPlugin.getDefault().getCodeMiningProviderRegistry()
