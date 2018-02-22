@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2017 IBM Corporation and others.
+ * Copyright (c) 2000, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,7 +14,7 @@
  *  Simon Muschel <smuschel@gmx.de> - bug 258493
  *  Lars Vogel <Lars.Vogel@gmail.com> - Bug 440810
  *  Patrik Suzzi <psuzzi@gmail.com> - Bug 485133
- *  Lucas Bullen <lbullen@redhat.com> - Bug 525974
+ *  Lucas Bullen <lbullen@redhat.com> - Bug 525974, 531332
  *******************************************************************************/
 package org.eclipse.ui.dialogs;
 
@@ -204,6 +204,8 @@ public abstract class FilteredItemsSelectionDialog extends SelectionStatusDialog
 	private FilterJob filterJob;
 
 	private ItemsFilter filter;
+
+	private ItemsFilter currentlyCompletingFilter;
 
 	private List lastCompletedResult;
 
@@ -2762,6 +2764,7 @@ public abstract class FilteredItemsSelectionDialog extends SelectionStatusDialog
 		 */
 		public void reloadCache(boolean checkDuplicates, IProgressMonitor monitor) {
 			reset = false;
+			currentlyCompletingFilter = filter;
 
 			// the work is divided into two actions of the same length
 			int totalWork = checkDuplicates ? 200 : 100;
@@ -3069,8 +3072,8 @@ public abstract class FilteredItemsSelectionDialog extends SelectionStatusDialog
 		@Override
 		public int compare(Object o1, Object o2) {
 			// find perfect matches
-			if (filter != null) {
-				String filterPattern = filter.getPattern();
+			if (currentlyCompletingFilter != null) {
+				String filterPattern = currentlyCompletingFilter.getPattern();
 				// See if any are exact matches
 				boolean m1 = filterPattern.equals(getElementName(o1));
 				boolean m2 = filterPattern.equals(getElementName(o2));
