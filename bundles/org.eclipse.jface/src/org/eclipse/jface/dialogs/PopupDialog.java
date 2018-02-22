@@ -25,7 +25,6 @@ import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.jface.layout.GridLayoutFactory;
-import org.eclipse.jface.preference.JFacePreferences;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.util.Util;
 import org.eclipse.jface.window.Window;
@@ -1408,7 +1407,10 @@ public class PopupDialog extends Window {
 	 * @return the default foreground color.
 	 */
 	private Color getDefaultForeground() {
-		return JFaceResources.getColorRegistry().get(JFacePreferences.INFORMATION_FOREGROUND_COLOR);
+		if ((getShellStyle() & SWT.NO_FOCUS) != 0) {
+			return getShell().getDisplay().getSystemColor(SWT.COLOR_INFO_FOREGROUND);
+		}
+		return getShell().getDisplay().getSystemColor(SWT.COLOR_LIST_FOREGROUND);
 	}
 
 	/**
@@ -1417,7 +1419,10 @@ public class PopupDialog extends Window {
 	 * @return the default background color
 	 */
 	private Color getDefaultBackground() {
-		return JFaceResources.getColorRegistry().get(JFacePreferences.INFORMATION_BACKGROUND_COLOR);
+		if ((getShellStyle() & SWT.NO_FOCUS) != 0) {
+			return getShell().getDisplay().getSystemColor(SWT.COLOR_INFO_BACKGROUND);
+		}
+		return getShell().getDisplay().getSystemColor(SWT.COLOR_LIST_BACKGROUND);
 	}
 
 	/**
