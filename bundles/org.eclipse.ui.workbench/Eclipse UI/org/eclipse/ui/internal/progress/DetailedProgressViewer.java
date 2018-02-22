@@ -215,6 +215,18 @@ public class DetailedProgressViewer extends AbstractProgressViewer {
 		final ProgressInfoItem item = new ProgressInfoItem(control, SWT.NONE,
 				info);
 
+		item.addControlListener(new ControlListener() {
+			@Override
+			public void controlMoved(ControlEvent e) {
+				updateVisibleProgressItems(item);
+			}
+
+			@Override
+			public void controlResized(ControlEvent e) {
+				updateVisibleProgressItems(item);
+			}
+		});
+
 		item.setIndexListener(new ProgressInfoItem.IndexListener() {
 			@Override
 			public void selectNext() {
@@ -451,9 +463,13 @@ public class DetailedProgressViewer extends AbstractProgressViewer {
 	 * area.
 	 */
 	private void updateVisibleItems() {
+		updateVisibleProgressItems(control.getChildren());
+	}
+
+	private void updateVisibleProgressItems(Control... progressInfoItems) {
 		int top = scrolled.getOrigin().y;
 		int bottom = top + scrolled.getParent().getBounds().height;
-		for (Control control : control.getChildren()) {
+		for (Control control : progressInfoItems) {
 			ProgressInfoItem item = (ProgressInfoItem) control;
 			item.setDisplayed(top, bottom);
 		}
