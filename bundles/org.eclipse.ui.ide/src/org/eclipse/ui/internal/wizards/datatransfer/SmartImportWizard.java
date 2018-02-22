@@ -38,7 +38,10 @@ import org.eclipse.osgi.util.NLS;
 import org.eclipse.ui.IImportWizard;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkingSet;
+import org.eclipse.ui.internal.IPreferenceConstants;
+import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
+import org.eclipse.ui.progress.IProgressConstants;
 import org.eclipse.ui.wizards.datatransfer.ProjectConfigurator;
 
 /**
@@ -254,11 +257,16 @@ public class SmartImportWizard extends Wizard implements IImportWizard {
 			getDialogSettings().put(SmartImportRootWizardPage.IMPORTED_SOURCES, newProposals);
 		}
 		SmartImportJob job = getImportJob();
-		if (projectRootPage.isDetectNestedProject() || projectRootPage.isConfigureProjects()) {
-			SmartImportJobReportDialog dialog = new SmartImportJobReportDialog(null);
-			dialog.setBlockOnOpen(false);
-			getContainer().getShell().setEnabled(false);
-			dialog.show(job, getShell());
+		boolean runInBackground = WorkbenchPlugin.getDefault().getPreferenceStore()
+				.getBoolean(IPreferenceConstants.RUN_IN_BACKGROUND);
+		job.setProperty(IProgressConstants.PROPERTY_IN_DIALOG, runInBackground);
+		if (!runInBackground) {
+			if (projectRootPage.isDetectNestedProject() || projectRootPage.isConfigureProjects()) {
+				SmartImportJobReportDialog dialog = new SmartImportJobReportDialog(null);
+				dialog.setBlockOnOpen(false);
+				getContainer().getShell().setEnabled(false);
+				dialog.show(job, getShell());
+			}
 		}
 		job.schedule();
 		return true;

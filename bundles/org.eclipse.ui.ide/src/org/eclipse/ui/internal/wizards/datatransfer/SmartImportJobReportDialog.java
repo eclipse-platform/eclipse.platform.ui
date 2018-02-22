@@ -18,6 +18,7 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.ColumnLabelProvider;
 import org.eclipse.jface.viewers.TableViewer;
@@ -254,6 +255,14 @@ public class SmartImportJobReportDialog extends ProgressMonitorFocusJobDialog {
 		super.createDialogArea(parent);
 
 		return res;
+	}
+
+	@Override
+	protected void createButtonsForButtonBar(Composite parent) {
+		cancel = createButton(parent, IDialogConstants.CANCEL_ID, IDialogConstants.CANCEL_LABEL, false);
+		cancel.setCursor(arrowCursor);
+
+		createDetailsButton(parent);
 	}
 
 	@Override
