@@ -657,6 +657,11 @@ public class FilteredResourcesSelectionDialog extends
 			}
 			getMatchPositions(resourceName, searchFieldString).stream()
 					.forEach(position -> str.setStyle(position.offset, position.length, boldStyler));
+			// extra info for duplicates
+			if (isDuplicateElement(element)) {
+				str.append(" - ", StyledString.QUALIFIER_STYLER); //$NON-NLS-1$
+				str.append(resource.getParent().getFullPath().makeRelative().toString(), StyledString.QUALIFIER_STYLER);
+			}
 			return str;
 		}
 

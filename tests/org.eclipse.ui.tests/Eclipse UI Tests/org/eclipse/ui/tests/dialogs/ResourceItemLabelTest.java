@@ -14,6 +14,7 @@ import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -180,6 +181,23 @@ public class ResourceItemLabelTest extends UITestCase {
 		compareStyleRanges(withDigits, getStyleRanges("AB5C", "Ab5cBz5zCz.txt"));
 	}
 
+	/**
+	 * Tests for Bug 531610: Open Resource dialog doesn't show paths for duplicated
+	 * files
+	 *
+	 * @throws Exception
+	 */
+	public void testBug531610() throws Exception {
+		IFolder folder = project.getFolder("folder");
+		IFile fileB = folder.getFile("file");
+		folder.create(true, true, new NullProgressMonitor());
+		fileB.create(stream, true, new NullProgressMonitor());
+		System.out.println(project.getName());
+		Position[] withDigits = { new Position(0, 4),
+				new Position(4, 3 + project.getName().length()) }; // " - ".length() == 3
+		compareStyleRanges(withDigits, getStyleRanges("file", "file"));
+	}
+
 	private void compareStyleRanges(Position[] expected, StyleRange[] actual) {
 		assertEquals("Length of StyleRanges is incorrect: " + printStyleRanges(actual), expected.length, actual.length);
 		for (int i = 0; i < actual.length; i++) {
@@ -224,8 +242,6 @@ public class ResourceItemLabelTest extends UITestCase {
 				return table.getItemCount() > 0;
 			}
 		}.waitForCondition(shell.getDisplay(), 3000);
-
-		assertEquals("Impropper number of results", 1, table.getItemCount());
 
 		Object data = table.getItem(0).getData("org.eclipse.jfacestyled_label_key_0");
 
