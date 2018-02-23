@@ -99,7 +99,7 @@ public class ThemeEngine implements IThemeEngine {
 		} catch (IOException e1) {
 		}
 
-		IPath path = new Path(e4CSSPath + System.getProperty("file.separator"));
+		IPath path = new Path(e4CSSPath + File.separator);
 		File modDir= new File(path.toFile().toURI());
 		if (!modDir.exists()) {
 			modDir.mkdirs();
@@ -107,7 +107,7 @@ public class ThemeEngine implements IThemeEngine {
 
 		//Check for old css files
 		File oldModDir= new File(
-				System.getProperty("user.home") + System.getProperty("file.separator") + ".e4css" + System.getProperty("file.separator")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+				System.getProperty("user.home") + File.separator + ".e4css" + File.separator); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		if (oldModDir.exists()) {
 			File done = new File(oldModDir, ".processed");
 			if (!done.exists()) {
@@ -122,7 +122,7 @@ public class ThemeEngine implements IThemeEngine {
 					for (File oldModifiedFile : oldModifiedFiles) {
 						if (oldModifiedFile.getName().contains(".css")) {
 							copyFile(oldModifiedFile.getPath(), path
-									+ System.getProperty("file.separator")
+									+ File.separator
 									+ oldModifiedFile.getName());
 						}
 					}
