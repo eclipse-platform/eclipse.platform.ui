@@ -40,8 +40,7 @@ import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
  *
  * @since 3.0
  */
-public class OpenWorkspaceAction extends Action implements
-		ActionFactory.IWorkbenchAction {
+public class OpenWorkspaceAction extends Action implements ActionFactory.IWorkbenchAction {
 
 	/**
 	 * Action responsible for opening the "Other..." dialog (ie: the workspace
@@ -127,8 +126,7 @@ public class OpenWorkspaceAction extends Action implements
 		if (list.size()>0) {
 			list.add(new Separator());
 		}
-		return list
-				.toArray(new IContributionItem[list.size()]);
+		return list.toArray(new IContributionItem[list.size()]);
 	}
 
 	class MenuCreator implements IMenuCreator {
@@ -211,8 +209,6 @@ public class OpenWorkspaceAction extends Action implements
 			throw new IllegalArgumentException();
 		}
 
-		// TODO help?
-
 		this.window = window;
 		setToolTipText(IDEWorkbenchMessages.OpenWorkspaceAction_toolTip);
 		setActionDefinitionId("org.eclipse.ui.file.openWorkspace"); //$NON-NLS-1$
@@ -283,14 +279,8 @@ public class OpenWorkspaceAction extends Action implements
 	private String buildCommandLine(String workspace) {
 		String property = System.getProperty(PROP_VM);
 		if (property == null) {
-			MessageDialog
-					.openError(
-							window.getShell(),
-							IDEWorkbenchMessages.OpenWorkspaceAction_errorTitle,
-							NLS
-									.bind(
-											IDEWorkbenchMessages.OpenWorkspaceAction_errorMessage,
-											PROP_VM));
+			MessageDialog.openError(window.getShell(), IDEWorkbenchMessages.OpenWorkspaceAction_errorTitle,
+					NLS.bind(IDEWorkbenchMessages.OpenWorkspaceAction_errorMessage, PROP_VM));
 			return null;
 		}
 
