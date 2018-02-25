@@ -87,11 +87,18 @@ public class ObservableMapCellLabelProvider extends CellLabelProvider {
 		this.mapChangeListener = null;
 	}
 
+	/**
+	 * Updates the label of the cell with the value for the cell element. Note:
+	 * The value for the first map is always used, for all columns.
+	 * 
+	 * @param cell
+	 *            The cell to be updated.
+	 */
 	@Override
 	public void update(ViewerCell cell) {
 		Object element = cell.getElement();
+		// Always use the value from the first map
 		Object value = attributeMaps[0].get(element);
 		cell.setText(value == null ? "" : value.toString()); //$NON-NLS-1$
 	}
-
 }
