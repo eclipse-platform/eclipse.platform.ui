@@ -165,7 +165,17 @@ public abstract class AbstractInlinedAnnotation extends Annotation {
 	 *         otherwise.
 	 */
 	protected boolean isInVisibleLines() {
-		return support.isInVisibleLines(this);
+		return support.isInVisibleLines(getPosition().getOffset());
 	}
 
+	/**
+	 * Return whether the given offset is in visible lines.
+	 *
+	 * @param offset the offset
+	 * @return <code>true</code> if the given offset is in visible lines and <code>false</code>
+	 *         otherwise.
+	 */
+	protected boolean isInVisibleLines(int offset) {
+		return support.isInVisibleLines(offset);
+	}
 }

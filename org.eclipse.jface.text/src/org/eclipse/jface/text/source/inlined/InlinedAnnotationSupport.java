@@ -145,14 +145,14 @@ public class InlinedAnnotationSupport implements StyledTextLineSpacingProvider {
 		}
 
 		/**
-		 * Return whether the given annotation is in visible lines.
+		 * Return whether the given offset is in visible lines.
 		 *
-		 * @param annotation the inlined annotation
-		 * @return <code>true</code> if the given annotation is in visible lines and
-		 *         <code>false</code> otherwise.
+		 * @param offset the offset
+		 * @return <code>true</code> if the given offset is in visible lines and <code>false</code>
+		 *         otherwise.
 		 */
-		public boolean isInVisibleLines(AbstractInlinedAnnotation annotation) {
-			return annotation.getPosition().getOffset() >= startOffset && annotation.getPosition().getOffset() <= endOffset;
+		public boolean isInVisibleLines(int offset) {
+			return offset >= startOffset && offset <= endOffset;
 		}
 	}
 
@@ -600,13 +600,13 @@ public class InlinedAnnotationSupport implements StyledTextLineSpacingProvider {
 	}
 
 	/**
-	 * Return whether the given annotation is in visible lines.
+	 * Return whether the given offset is in visible lines.
 	 *
-	 * @param annotation the inlined annotation
-	 * @return <code>true</code> if the given annotation is in visible lines and <code>false</code>
+	 * @param offset the offset
+	 * @return <code>true</code> if the given offset is in visible lines and <code>false</code>
 	 *         otherwise.
 	 */
-	boolean isInVisibleLines(AbstractInlinedAnnotation annotation) {
-		return visibleLines.isInVisibleLines(annotation);
+	boolean isInVisibleLines(int offset) {
+		return visibleLines.isInVisibleLines(offset);
 	}
 }

@@ -1,5 +1,5 @@
 /**
- *  Copyright (c) 2017 Angelo ZERR.
+ *  Copyright (c) 2017, 2018 Angelo ZERR.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -12,6 +12,8 @@ package org.eclipse.jface.text.source.inlined;
 
 import org.eclipse.swt.custom.StyledText;
 
+import org.eclipse.jface.text.BadLocationException;
+import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.Position;
 import org.eclipse.jface.text.source.ISourceViewer;
 
@@ -40,6 +42,27 @@ public class LineHeaderAnnotation extends AbstractInlinedAnnotation {
 	public int getHeight() {
 		StyledText styledText= super.getTextWidget();
 		return styledText.getLineHeight();
+	}
+
+	@Override
+	protected boolean isInVisibleLines() {
+		if (!super.isInVisibleLines()) {
+			return false;
+		}
+		// the inlined annotation is in the visible lines
+		ISourceViewer viewer= super.getViewer();
+		IDocument document= viewer.getDocument();
+		if (document == null) {
+			return false;
+		}
+		try {
+			// check if previous line where annotation is drawn in the line spacing, is visible
+			int startLineOffset= document.getLineInformationOfOffset(getPosition().getOffset()).getOffset();
+			int previousEndLineOffset= startLineOffset - 1;
+			return super.isInVisibleLines(previousEndLineOffset);
+		} catch (BadLocationException e) {
+			return false;
+		}
 	}
 
 }
