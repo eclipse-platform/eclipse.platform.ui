@@ -122,7 +122,7 @@ public class CodeMiningManager implements Runnable {
 			// check if request was canceled.
 			monitor.isCanceled();
 			// then group code minings by lines position
-			Map<Position, List<ICodeMining>> groups= goupByLines(symbols, fCodeMiningProviders);
+			Map<Position, List<ICodeMining>> groups= groupByLines(symbols, fCodeMiningProviders);
 			// resolve and render code minings
 			renderCodeMinings(groups, fViewer, monitor);
 		});
@@ -158,13 +158,13 @@ public class CodeMiningManager implements Runnable {
 	}
 
 	/**
-	 * Returns a sorted Map which groups the given code minings by same position line
+	 * Returns a sorted Map which groups the given code minings by same position line.
 	 *
 	 * @param codeMinings list of code minings to group.
 	 * @param providers CodeMining providers used to retrieve code minings.
 	 * @return a sorted Map which groups the given code minings by same position line.
 	 */
-	private static Map<Position, List<ICodeMining>> goupByLines(List<? extends ICodeMining> codeMinings,
+	private static Map<Position, List<ICodeMining>> groupByLines(List<? extends ICodeMining> codeMinings,
 			List<ICodeMiningProvider> providers) {
 		// sort code minings by lineNumber and provider-rank if
 		Collections.sort(codeMinings, (a, b) -> {
