@@ -257,7 +257,7 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 	 */
 	public LaunchConfigurationsDialog(Shell shell, LaunchGroupExtension group) {
 		super(shell);
-		setShellStyle(getShellStyle() | SWT.RESIZE);
+		setShellStyle(getShellStyle() | SWT.RESIZE | SWT.MAX);
 		setLaunchGroup(group);
 	}
 
