@@ -192,10 +192,18 @@ public class ResourceItemLabelTest extends UITestCase {
 		IFile fileB = folder.getFile("file");
 		folder.create(true, true, new NullProgressMonitor());
 		fileB.create(stream, true, new NullProgressMonitor());
-		System.out.println(project.getName());
+		StyleRange[] ranges = getStyleRanges("file", "file");
+		// if true adds "/folder" length to the range
+		boolean withFolder = false;
+		for (StyleRange range : ranges) {
+			if (range.length > 3 + project.getName().length()) {
+				withFolder = true;
+			}
+		}
 		Position[] withDigits = { new Position(0, 4),
-				new Position(4, 3 + project.getName().length()) }; // " - ".length() == 3
-		compareStyleRanges(withDigits, getStyleRanges("file", "file"));
+				new Position(4, 3 + project.getName().length() + (withFolder ? "/folder".length() : 0)) }; // " - "
+		// withFolder - "/folder"
+		compareStyleRanges(withDigits, ranges);
 	}
 
 	private void compareStyleRanges(Position[] expected, StyleRange[] actual) {
