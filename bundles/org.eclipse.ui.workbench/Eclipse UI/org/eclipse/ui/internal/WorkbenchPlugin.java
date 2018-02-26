@@ -1137,8 +1137,7 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
         try {
             return getStateLocation();
         } catch (IllegalStateException e) {
-            // This occurs if -data=@none is explicitly specified, so ignore this silently.
-            // Is this OK? See bug 85071.
+			// This occurs if -data=@none is explicitly specified, so return null
             return null;
         }
     }
