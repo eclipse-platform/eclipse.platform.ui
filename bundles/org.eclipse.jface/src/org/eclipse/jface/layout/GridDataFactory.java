@@ -206,7 +206,7 @@ public final class GridDataFactory {
      *
      * @see GridLayoutFactory#generateLayout(org.eclipse.swt.widgets.Composite)
      * @param theControl
-     * @return a GridLayoutFactory initialized with defaults that GridLayoutFactory would have
+     * @return a GridDataFactory initialized with defaults that GridLayoutFactory would have assigned
      * @since 3.3
      */
     public static GridDataFactory defaultsFor(Control theControl) {
