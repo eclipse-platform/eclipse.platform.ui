@@ -21,6 +21,7 @@ import java.util.Set;
 import java.util.function.Consumer;
 
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.StyleRange;
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.custom.StyledTextLineSpacingProvider;
 import org.eclipse.swt.events.MouseEvent;
@@ -28,6 +29,7 @@ import org.eclipse.swt.events.MouseListener;
 import org.eclipse.swt.events.MouseMoveListener;
 import org.eclipse.swt.events.MouseTrackListener;
 import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.graphics.GlyphMetrics;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Display;
 
@@ -37,10 +39,13 @@ import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.ISynchronizable;
+import org.eclipse.jface.text.ITextPresentationListener;
+import org.eclipse.jface.text.ITextViewerExtension4;
 import org.eclipse.jface.text.ITextViewerExtension5;
 import org.eclipse.jface.text.IViewportListener;
 import org.eclipse.jface.text.JFaceTextUtil;
 import org.eclipse.jface.text.Position;
+import org.eclipse.jface.text.TextPresentation;
 import org.eclipse.jface.text.source.Annotation;
 import org.eclipse.jface.text.source.AnnotationPainter;
 import org.eclipse.jface.text.source.AnnotationPainter.IDrawingStrategy;
@@ -70,6 +75,41 @@ public class InlinedAnnotationSupport implements StyledTextLineSpacingProvider {
 	 * The annotation inlined strategy ID.
 	 */
 	private static final String INLINED_STRATEGY_ID= "inlined"; //$NON-NLS-1$
+
+	/**
+	 * Listener used to update {@link GlyphMetrics} width style for {@link LineContentAnnotation}.
+	 */
+	private ITextPresentationListener updateStylesWidth;
+
+	/**
+	 * Class to update {@link GlyphMetrics} width style for {@link LineContentAnnotation}.
+	 *
+	 */
+	private class UpdateStylesWidth implements ITextPresentationListener {
+
+		@Override
+		public void applyTextPresentation(TextPresentation textPresentation) {
+			IAnnotationModel annotationModel= fViewer.getAnnotationModel();
+			IRegion region= textPresentation.getExtent();
+			((IAnnotationModelExtension2) annotationModel)
+					.getAnnotationIterator(region.getOffset(), region.getLength(), true, true)
+					.forEachRemaining(annotation -> {
+						if (annotation instanceof LineContentAnnotation) {
+							LineContentAnnotation ann= (LineContentAnnotation) annotation;
+							Position position= ann.getPosition();
+							if (position != null) {
+								StyleRange s= new StyleRange();
+								s.start= position.getOffset();
+								s.length= 1;
+								s.metrics= ann.isMarkedDeleted()
+										? null
+										: new GlyphMetrics(0, 0, ann.getWidth());
+								textPresentation.mergeStyleRange(s);
+							}
+						}
+					});
+		}
+	}
 
 	/**
 	 * Tracker of start/end offset of visible lines.
@@ -264,13 +304,17 @@ public class InlinedAnnotationSupport implements StyledTextLineSpacingProvider {
 		if (text == null || text.isDisposed()) {
 			return;
 		}
+		if (fViewer instanceof ITextViewerExtension4) {
+			updateStylesWidth= new UpdateStylesWidth();
+			((ITextViewerExtension4) fViewer).addTextPresentationListener(updateStylesWidth);
+		}
 		visibleLines= new VisibleLines();
 		fViewer.addViewportListener(visibleLines);
 		text.addMouseListener(fMouseTracker);
 		text.addMouseTrackListener(fMouseTracker);
 		text.addMouseMoveListener(fMouseTracker);
-		setColor(text.getDisplay().getSystemColor(SWT.COLOR_DARK_GRAY));
 		text.setLineSpacingProvider(this);
+		setColor(text.getDisplay().getSystemColor(SWT.COLOR_DARK_GRAY));
 	}
 
 	/**
@@ -301,6 +345,9 @@ public class InlinedAnnotationSupport implements StyledTextLineSpacingProvider {
 			text.removeMouseMoveListener(this.fMouseTracker);
 		}
 		if (fViewer != null) {
+			if (fViewer instanceof ITextViewerExtension4) {
+				((ITextViewerExtension4) fViewer).removeTextPresentationListener(updateStylesWidth);
+			}
 			fViewer.removeViewportListener(visibleLines);
 		}
 		fViewer= null;
