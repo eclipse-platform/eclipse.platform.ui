@@ -162,28 +162,28 @@ class InlinedAnnotationDrawingStrategy implements IDrawingStrategy {
 
 			// Draw the line content annotation
 			annotation.draw(gc, textWidget, offset, length, color, x, y);
-			// check the width annotation
 			int width= annotation.getWidth();
-			GlyphMetrics metrics= style != null ? style.metrics : null;
-			if (metrics == null || metrics.width != width) {
-				// The annotation drawn width is not the same than metrics width, update it.
-				if (metrics == null) {
-					metrics= new GlyphMetrics(0, 0, width);
-				} else {
-					metrics.width= width;
-				}
-				if (style == null) {
-					style= new StyleRange();
-					style.start= offset;
-					style.length= 1;
-					style.background= textWidget.getBackground();
-					style.foreground= textWidget.getForeground();
-				}
-				style.metrics= metrics;
-				textWidget.setStyleRange(style);
-				return;
-			}
 			if (width != 0) {
+				// Annotation takes place, add GlyphMetrics width to the style
+				GlyphMetrics metrics= style != null ? style.metrics : null;
+				if (metrics == null || metrics.width != width) {
+					// The annotation drawn width is not the same than metrics width, update it.
+					if (metrics == null) {
+						metrics= new GlyphMetrics(0, 0, width);
+					} else {
+						metrics.width= width;
+					}
+					if (style == null) {
+						style= new StyleRange();
+						style.start= offset;
+						style.length= 1;
+						style.background= textWidget.getBackground();
+						style.foreground= textWidget.getForeground();
+					}
+					style.metrics= metrics;
+					textWidget.setStyleRange(style);
+					return;
+				}
 				// The inline annotation replaces one character by taking a place width
 				// GlyphMetrics
 				// Here we need to redraw this first character because GlyphMetrics clip this
