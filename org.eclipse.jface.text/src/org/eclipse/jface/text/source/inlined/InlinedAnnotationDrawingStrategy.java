@@ -189,15 +189,19 @@ class InlinedAnnotationDrawingStrategy implements IDrawingStrategy {
 				// Here we need to redraw this first character because GlyphMetrics clip this
 				// character.
 				String s= textWidget.getText(offset, offset);
+				int charWidth= gc.stringExtent(s).x;
+				int charX= x + bounds.width - charWidth;
+				int charY= y;
 				if (style != null) {
 					if (style.background != null) {
 						gc.setBackground(style.background);
+						gc.fillRectangle(charX, charY, charWidth + 1, bounds.height);
 					}
 					if (style.foreground != null) {
 						gc.setForeground(style.foreground);
 					}
 				}
-				gc.drawString(s, bounds.x + bounds.width - gc.stringExtent(s).x, bounds.y, true);
+				gc.drawString(s, charX, charY, true);
 			}
 		} else {
 			textWidget.redrawRange(offset, length, true);
