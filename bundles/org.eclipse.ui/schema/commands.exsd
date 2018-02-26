@@ -106,7 +106,7 @@ This element is used to define commands. A command represents an request from th
             <annotation>
                <documentation>
                   &lt;p&gt;
-The unique id of the category for this command. If this command does not specify a category it will be placed in an global &quot;Uncategorized&quot; category.
+The unique id of the category for this command. If this command does not specify a category it will be placed in an global &quot;Uncategorized&quot; category and will be filtered by default on the Keys preference page meaning users can not assign a key binding unless they disable the filter for &quot;Uncategorized&quot; commands.
 &lt;/p&gt;
 &lt;p&gt;&lt;em&gt;Since: 3.0&lt;/em&gt;&lt;/p&gt;
                </documentation>
