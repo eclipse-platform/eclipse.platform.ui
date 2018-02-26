@@ -13,7 +13,9 @@ package org.eclipse.ui.console;
 
 import java.util.HashMap;
 
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
+import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.text.BadLocationException;
@@ -22,12 +24,14 @@ import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.Position;
 import org.eclipse.jface.text.Region;
+import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.ui.internal.console.ConsoleDocument;
 import org.eclipse.ui.internal.console.ConsoleHyperlinkPosition;
 import org.eclipse.ui.internal.console.ConsolePatternMatcher;
 import org.eclipse.ui.part.IPageBookViewPage;
+import org.eclipse.ui.preferences.ScopedPreferenceStore;
 
 /**
  * An abstract text console that supports regular expression matching and
@@ -98,17 +102,18 @@ public abstract class TextConsole extends AbstractConsole {
 	private HashMap<String, Object> fAttributes = new HashMap<String, Object>();
 
 	private IConsoleManager fConsoleManager = ConsolePlugin.getDefault().getConsoleManager();
+	private ScopedPreferenceStore store;
+	private IPropertyChangeListener propListener;
 
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.console.AbstractConsole#dispose()
-	 */
 	@Override
 	protected void dispose() {
 		super.dispose();
 		fFont = null;
 		synchronized(fAttributes) {
 			fAttributes.clear();
+		}
+		if (store != null) {
+			store.removePropertyChangeListener(propListener);
 		}
 	}
 	/**
@@ -185,6 +190,23 @@ public abstract class TextConsole extends AbstractConsole {
 
 			firePropertyChange(this, IConsoleConstants.P_CONSOLE_AUTO_SCROLL_LOCK, Boolean.valueOf(old), Boolean.valueOf(fConsoleAutoScrollLock));
 		}
+	}
+
+	@Override
+	protected void init() {
+		super.init();
+		String qualifier = ConsolePlugin.getUniqueIdentifier();
+		String key = IConsoleConstants.P_CONSOLE_AUTO_SCROLL_LOCK;
+		setConsoleAutoScrollLock(Platform.getPreferencesService().getBoolean(qualifier, key, true, null));
+		store = new ScopedPreferenceStore(InstanceScope.INSTANCE, qualifier);
+
+		propListener = event -> {
+			String property = event.getProperty();
+			if (key.equals(property)) {
+				setConsoleAutoScrollLock(store.getBoolean(key));
+			}
+		};
+		store.addPropertyChangeListener(propListener);
 	}
 
 	/**

@@ -6,7 +6,7 @@
      are made available under the terms of the Eclipse Public License v1.0
      which accompanies this distribution, and is available at
      http://www.eclipse.org/legal/epl-v10.html
-    
+
      Contributors:
          IBM Corporation - initial API and implementation
  -->
@@ -30,12 +30,12 @@
       </view>
    </extension>
 <!-- commands and their bindings
-NOTE: 
-M1 = CTRL/COMMAND 
-M2 = SHIFT 
-M3 = ALT 
+NOTE:
+M1 = CTRL/COMMAND
+M2 = SHIFT
+M3 = ALT
 M4 = Platform-specific fourth key
--->   
+-->
     <extension point="org.eclipse.ui.bindings">
      <key
            commandId="org.eclipse.ui.views.showView"
@@ -46,10 +46,10 @@ M4 = Platform-specific fourth key
               value="org.eclipse.ui.console.ConsoleView">
         </parameter>
      </key>
-     <key 
+     <key
             platform="carbon"
   	    	sequence="M2+M3+Q C"
-            
+
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/>
      <key
            commandId="org.eclipse.ui.views.showView"
@@ -88,4 +88,7 @@ M4 = Platform-specific fourth key
        </context>
     </extension>
 
+    <extension point="org.eclipse.core.runtime.preferences">
+		<initializer class="org.eclipse.ui.internal.console.ConsoleUIPreferenceInitializer"/>
+	</extension>
 </plugin>

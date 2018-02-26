@@ -320,10 +320,7 @@ public class ProcessConsole extends IOConsole implements IConsole, IDebugEventSe
         } else if (property.equals(IDebugPreferenceConstants.CONSOLE_TAB_WIDTH)) {
             int tabWidth = store.getInt(IDebugPreferenceConstants.CONSOLE_TAB_WIDTH);
             setTabWidth(tabWidth);
-		} else if (property.equals(IDebugPreferenceConstants.CONSOLE_AUTO_SCROLL_LOCK)) {
-			boolean autoScrollLock = store.getBoolean(IDebugPreferenceConstants.CONSOLE_AUTO_SCROLL_LOCK);
-			setConsoleAutoScrollLock(autoScrollLock);
-        } else if (property.equals(IDebugPreferenceConstants.CONSOLE_OPEN_ON_OUT)) {
+		} else if (property.equals(IDebugPreferenceConstants.CONSOLE_OPEN_ON_OUT)) {
             boolean activateOnOut = store.getBoolean(IDebugPreferenceConstants.CONSOLE_OPEN_ON_OUT);
 			@SuppressWarnings("resource")
 			IOConsoleOutputStream stream = getStream(IDebugUIConstants.ID_STANDARD_OUTPUT_STREAM);
@@ -452,7 +449,6 @@ public class ProcessConsole extends IOConsole implements IConsole, IDebugEventSe
             setConsoleWidth(store.getInt(IDebugPreferenceConstants.CONSOLE_WIDTH));
         }
         setTabWidth(store.getInt(IDebugPreferenceConstants.CONSOLE_TAB_WIDTH));
-		setConsoleAutoScrollLock(store.getBoolean(IDebugPreferenceConstants.CONSOLE_AUTO_SCROLL_LOCK));
 
         if (store.getBoolean(IDebugPreferenceConstants.CONSOLE_LIMIT_CONSOLE_OUTPUT)) {
             int highWater = store.getInt(IDebugPreferenceConstants.CONSOLE_HIGH_WATER_MARK);

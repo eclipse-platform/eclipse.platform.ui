@@ -28,6 +28,8 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.console.ConsolePlugin;
+import org.eclipse.ui.console.IConsoleConstants;
 
 import com.ibm.icu.text.MessageFormat;
 
@@ -67,13 +69,14 @@ public class ConsolePreferencePage extends FieldEditorPreferencePage implements 
 		}
 	}
 
-	private BooleanFieldEditor2 fWrapEditor = null;
-	private ConsoleIntegerFieldEditor fWidthEditor = null;
+	private BooleanFieldEditor2 fWrapEditor;
+	private ConsoleIntegerFieldEditor fWidthEditor;
 
-	private BooleanFieldEditor2 fUseBufferSize = null;
-	private ConsoleIntegerFieldEditor fBufferSizeEditor = null;
+	private BooleanFieldEditor2 fUseBufferSize;
+	private ConsoleIntegerFieldEditor fBufferSizeEditor;
 
-	private ConsoleIntegerFieldEditor fTabSizeEditor = null;
+	private ConsoleIntegerFieldEditor fTabSizeEditor;
+	private BooleanFieldEditor autoScrollLockEditor;
 
 	/**
 	 * Create the console page.
@@ -84,9 +87,6 @@ public class ConsolePreferencePage extends FieldEditorPreferencePage implements 
 		setPreferenceStore(DebugUIPlugin.getDefault().getPreferenceStore());
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.preference.PreferencePage#createControl(Composite)
-	 */
 	@Override
 	public void createControl(Composite parent) {
 		super.createControl(parent);
@@ -140,7 +140,8 @@ public class ConsolePreferencePage extends FieldEditorPreferencePage implements 
 		fTabSizeEditor.setValidRange(1,100);
 		fTabSizeEditor.setErrorMessage(DebugPreferencesMessages.ConsolePreferencePage_13);
 
-		addField(new BooleanFieldEditor(IDebugPreferenceConstants.CONSOLE_AUTO_SCROLL_LOCK, DebugPreferencesMessages.ConsolePreferencePage_Show__Console_View_enable_auto_scroll_lock, SWT.NONE, getFieldEditorParent()));
+		autoScrollLockEditor = new BooleanFieldEditor(IConsoleConstants.P_CONSOLE_AUTO_SCROLL_LOCK, DebugPreferencesMessages.ConsolePreferencePage_Show__Console_View_enable_auto_scroll_lock, SWT.NONE, getFieldEditorParent());
+		addField(autoScrollLockEditor);
 		addField(new BooleanFieldEditor(IDebugPreferenceConstants.CONSOLE_OPEN_ON_OUT, DebugPreferencesMessages.ConsolePreferencePage_Show__Console_View_when_there_is_program_output_3, SWT.NONE, getFieldEditorParent()));
 		addField(new BooleanFieldEditor(IDebugPreferenceConstants.CONSOLE_OPEN_ON_ERR, DebugPreferencesMessages.ConsolePreferencePage_Show__Console_View_when_there_is_program_error_3, SWT.NONE, getFieldEditorParent()));
 
@@ -162,9 +163,6 @@ public class ConsolePreferencePage extends FieldEditorPreferencePage implements 
 	public void init(IWorkbench workbench) {
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.preference.IPreferencePage#performOk()
-	 */
 	@Override
 	public boolean performOk() {
 		boolean ok= super.performOk();
@@ -183,7 +181,16 @@ public class ConsolePreferencePage extends FieldEditorPreferencePage implements 
 	protected void initialize() {
 		super.initialize();
 		updateWidthEditor();
+		updateAutoScrollLockEditor();
 		updateBufferSizeEditor();
+	}
+
+	/**
+	 * Because the autoscroll value is in another plugin we must update the preference store manually
+	 */
+	protected void updateAutoScrollLockEditor() {
+		autoScrollLockEditor.setPreferenceStore(ConsolePlugin.getDefault().getPreferenceStore());
+		autoScrollLockEditor.load();
 	}
 
 	/**

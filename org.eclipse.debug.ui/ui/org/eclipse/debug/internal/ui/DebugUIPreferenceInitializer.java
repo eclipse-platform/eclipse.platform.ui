@@ -29,9 +29,6 @@ public class DebugUIPreferenceInitializer extends AbstractPreferenceInitializer 
 		super();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.core.runtime.preferences.AbstractPreferenceInitializer#initializeDefaultPreferences()
-	 */
 	@Override
 	public void initializeDefaultPreferences() {
 		IPreferenceStore prefs = DebugUIPlugin.getDefault().getPreferenceStore();
@@ -74,7 +71,6 @@ public class DebugUIPreferenceInitializer extends AbstractPreferenceInitializer 
 		//ConsolePreferencePage
 		prefs.setDefault(IDebugPreferenceConstants.CONSOLE_WRAP, false);
 		prefs.setDefault(IDebugPreferenceConstants.CONSOLE_WIDTH, 80);
-		prefs.setDefault(IDebugPreferenceConstants.CONSOLE_AUTO_SCROLL_LOCK, true);
 		prefs.setDefault(IDebugPreferenceConstants.CONSOLE_OPEN_ON_OUT, true);
 		prefs.setDefault(IDebugPreferenceConstants.CONSOLE_OPEN_ON_ERR, true);
 		prefs.setDefault(IDebugPreferenceConstants.CONSOLE_LIMIT_CONSOLE_OUTPUT, true);
