@@ -79,6 +79,8 @@ public class IDEWorkspacePreferencePage extends PreferencePage implements IWorkb
 
 	private Button autoBuildButton;
 
+	private IntegerFieldEditor maxSimultaneousBuilds;
+
 	private Button autoSaveAllButton;
 
 	private IntegerFieldEditor saveInterval;
@@ -130,13 +132,14 @@ public class IDEWorkspacePreferencePage extends PreferencePage implements IWorkb
 		area.getControl().setLayoutData(data);
 
 		createSpace(composite);
-        createAutoBuildPref(composite);
-        createAutoRefreshControls(composite);
-        createSaveAllBeforeBuildPref(composite);
-        createCloseUnrelatedProjPrefControls(composite);
+		createAutoRefreshControls(composite);
+		createCloseUnrelatedProjPrefControls(composite);
+		createSaveIntervalGroup(composite);
 
 		createSpace(composite);
-		createSaveIntervalGroup(composite);
+		createSaveAllBeforeBuildPref(composite);
+		createAutoBuildPref(composite);
+		createMaxSimultaneousBuildsGroup(composite);
 
 		createSpace(composite);
 		createWorkspaceLocationGroup(composite);
@@ -374,6 +377,50 @@ public class IDEWorkspacePreferencePage extends PreferencePage implements IWorkb
 	}
 
 	/**
+	 * Create a composite that contains entry fields specifying save interval
+	 * preference.
+	 *
+	 * @param composite
+	 *            the Composite the group is created in.
+	 */
+	private void createMaxSimultaneousBuildsGroup(Composite composite) {
+		Composite groupComposite = new Composite(composite, SWT.LEFT);
+		GridLayout layout = new GridLayout();
+		layout.numColumns = 2;
+		groupComposite.setLayout(layout);
+		GridData gd = new GridData();
+		gd.horizontalAlignment = GridData.FILL;
+		gd.grabExcessHorizontalSpace = true;
+		groupComposite.setLayoutData(gd);
+
+		maxSimultaneousBuilds = new IntegerFieldEditor(IDEInternalPreferences.MAX_SIMULTANEOUS_BUILD,
+				IDEWorkbenchMessages.WorkbenchPreference_maxSimultaneousBuilds, groupComposite);
+
+		// @issue we should drop our preference constant and let clients use
+		// core'zs pref. ours is not up-to-date anyway if someone changes this
+		// interval directly thru core api.
+		maxSimultaneousBuilds.setPreferenceStore(getIDEPreferenceStore());
+		maxSimultaneousBuilds.setPage(this);
+		maxSimultaneousBuilds
+				.setTextLimit(Integer.toString(IDEInternalPreferences.MAX_MAX_SIMULTANEOUS_BUILD).length());
+		maxSimultaneousBuilds
+				.setErrorMessage(NLS.bind(IDEWorkbenchMessages.WorkbenchPreference_maxSimultaneousBuildIntervalError,
+				Integer.valueOf(IDEInternalPreferences.MAX_MAX_SIMULTANEOUS_BUILD)));
+		maxSimultaneousBuilds.setValidateStrategy(StringFieldEditor.VALIDATE_ON_KEY_STROKE);
+		maxSimultaneousBuilds.setValidRange(1, IDEInternalPreferences.MAX_MAX_SIMULTANEOUS_BUILD);
+
+		IWorkspaceDescription description = ResourcesPlugin.getWorkspace().getDescription();
+		maxSimultaneousBuilds.setStringValue(Integer.toString(description.getMaxConcurrentBuilds()));
+
+		maxSimultaneousBuilds.setPropertyChangeListener(event -> {
+			if (event.getProperty().equals(FieldEditor.IS_VALID)) {
+				setValid(maxSimultaneousBuilds.isValid());
+			}
+		});
+
+	}
+
+	/**
 	 * Create the Refresh controls
 	 *
 	 * @param parent
@@ -535,6 +582,10 @@ public class IDEWorkspacePreferencePage extends PreferencePage implements IWorkb
 				.getDefaultBoolean(ResourcesPlugin.PREF_AUTO_BUILDING);
 		autoBuildButton.setSelection(autoBuild);
 
+		int simultaneousBuilds = ResourcesPlugin.getPlugin().getPluginPreferences()
+				.getDefaultInt(ResourcesPlugin.PREF_MAX_CONCURRENT_BUILDS);
+		maxSimultaneousBuilds.setStringValue(Integer.toString(simultaneousBuilds));
+
 		IPreferenceStore store = getIDEPreferenceStore();
 		autoSaveAllButton.setSelection(store.getDefaultBoolean(IDEInternalPreferences.SAVE_ALL_BEFORE_BUILD));
 		saveInterval.loadDefault();
@@ -597,6 +648,15 @@ public class IDEWorkspacePreferencePage extends PreferencePage implements IWorkb
                                 .getStatus());
             }
         }
+		if (maxSimultaneousBuilds.getIntValue() != description.getMaxConcurrentBuilds()) {
+			try {
+				description.setMaxConcurrentBuilds(maxSimultaneousBuilds.getIntValue());
+				ResourcesPlugin.getWorkspace().setDescription(description);
+			} catch (CoreException e) {
+				IDEWorkbenchPlugin.log("Error changing max cucrrent builds workspace setting.", e//$NON-NLS-1$
+						.getStatus());
+			}
+		}
 
         IPreferenceStore store = getIDEPreferenceStore();
 

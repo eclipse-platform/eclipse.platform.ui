@@ -1077,6 +1077,9 @@ public class IDEWorkbenchMessages extends NLS {
 	public static String ExtendedFileEditorsPreferencePage_strategyForUnassociatedFiles;
 	public static String ExtendedFileEditorsPreferencePage_labelNotResolved;
 
+	public static String WorkbenchPreference_maxSimultaneousBuilds;
+	public static String WorkbenchPreference_maxSimultaneousBuildIntervalError;
+
 	static {
 		// load message values from bundle file
 		NLS.initializeMessages(BUNDLE_NAME, IDEWorkbenchMessages.class);
