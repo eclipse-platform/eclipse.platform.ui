@@ -80,8 +80,8 @@ public class ResourceHandler implements IModelResourceHandler {
 	 * https://bugs.eclipse.org/bugs/show_bug.cgi?id=295524
 	 *
 	 */
-	final private boolean saveAndRestore;
-	final private boolean clearPersistedState;
+	private final boolean saveAndRestore;
+	private final boolean clearPersistedState;
 
 	/**
 	 * Constructor.
