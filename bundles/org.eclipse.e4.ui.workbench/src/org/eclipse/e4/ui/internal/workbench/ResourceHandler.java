@@ -46,6 +46,7 @@ import org.eclipse.emf.common.util.TreeIterator;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.resource.Resource;
+import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.emf.ecore.resource.URIConverter;
 import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
 import org.eclipse.emf.ecore.util.EcoreUtil;
@@ -57,7 +58,7 @@ import org.osgi.framework.Bundle;
  */
 public class ResourceHandler implements IModelResourceHandler {
 
-	private ResourceSetImpl resourceSetImpl;
+	private ResourceSet resourceSet;
 	private Resource resource;
 
 	@Inject
@@ -100,25 +101,18 @@ public class ResourceHandler implements IModelResourceHandler {
 
 	@PostConstruct
 	void init() {
-		resourceSetImpl = new ResourceSetImpl();
-		resourceSetImpl.getResourceFactoryRegistry().getExtensionToFactoryMap()
+		resourceSet = new ResourceSetImpl();
+		resourceSet.getResourceFactoryRegistry().getExtensionToFactoryMap()
 				.put(Resource.Factory.Registry.DEFAULT_EXTENSION, new E4XMIResourceFactory());
-
-		resourceSetImpl.getPackageRegistry().put(ApplicationPackageImpl.eNS_URI,
-				ApplicationPackageImpl.eINSTANCE);
-		resourceSetImpl.getPackageRegistry().put(CommandsPackageImpl.eNS_URI,
-				CommandsPackageImpl.eINSTANCE);
-		resourceSetImpl.getPackageRegistry().put(UiPackageImpl.eNS_URI, UiPackageImpl.eINSTANCE);
-		resourceSetImpl.getPackageRegistry()
-				.put(MenuPackageImpl.eNS_URI, MenuPackageImpl.eINSTANCE);
-		resourceSetImpl.getPackageRegistry().put(BasicPackageImpl.eNS_URI,
-				BasicPackageImpl.eINSTANCE);
-		resourceSetImpl.getPackageRegistry().put(AdvancedPackageImpl.eNS_URI,
-				AdvancedPackageImpl.eINSTANCE);
-		resourceSetImpl
-				.getPackageRegistry()
-				.put(org.eclipse.e4.ui.model.application.descriptor.basic.impl.BasicPackageImpl.eNS_URI,
-						org.eclipse.e4.ui.model.application.descriptor.basic.impl.BasicPackageImpl.eINSTANCE);
+		resourceSet.getPackageRegistry().put(ApplicationPackageImpl.eNS_URI, ApplicationPackageImpl.eINSTANCE);
+		resourceSet.getPackageRegistry().put(CommandsPackageImpl.eNS_URI, CommandsPackageImpl.eINSTANCE);
+		resourceSet.getPackageRegistry().put(UiPackageImpl.eNS_URI, UiPackageImpl.eINSTANCE);
+		resourceSet.getPackageRegistry().put(MenuPackageImpl.eNS_URI, MenuPackageImpl.eINSTANCE);
+		resourceSet.getPackageRegistry().put(BasicPackageImpl.eNS_URI, BasicPackageImpl.eINSTANCE);
+		resourceSet.getPackageRegistry().put(AdvancedPackageImpl.eNS_URI, AdvancedPackageImpl.eINSTANCE);
+		resourceSet.getPackageRegistry().put(
+				org.eclipse.e4.ui.model.application.descriptor.basic.impl.BasicPackageImpl.eNS_URI,
+				org.eclipse.e4.ui.model.application.descriptor.basic.impl.BasicPackageImpl.eINSTANCE);
 
 	}
 
@@ -234,9 +228,9 @@ public class ResourceHandler implements IModelResourceHandler {
 	private Resource createResource() {
 		if (saveAndRestore) {
 			URI saveLocation = URI.createFileURI(getWorkbenchSaveLocation().getAbsolutePath());
-			return resourceSetImpl.createResource(saveLocation);
+			return resourceSet.createResource(saveLocation);
 		}
-		return resourceSetImpl.createResource(URI.createURI("workbench.xmi")); //$NON-NLS-1$
+		return resourceSet.createResource(URI.createURI("workbench.xmi")); //$NON-NLS-1$
 	}
 
 	private File getWorkbenchSaveLocation() {
@@ -285,14 +279,14 @@ public class ResourceHandler implements IModelResourceHandler {
 	private Resource getResource(URI uri) throws Exception {
 		Resource resource;
 		if (saveAndRestore) {
-			resource = resourceSetImpl.getResource(uri, true);
+			resource = resourceSet.getResource(uri, true);
 		} else {
 			// Workaround for java.lang.IllegalStateException: No instance data can be specified
 			// thrown by org.eclipse.core.internal.runtime.DataArea.assertLocationInitialized
 			// The DataArea.assertLocationInitialized is called by ResourceSetImpl.getResource(URI,
 			// boolean)
-			resource = resourceSetImpl.createResource(uri);
-			resource.load(new URL(uri.toString()).openStream(), resourceSetImpl.getLoadOptions());
+			resource = resourceSet.createResource(uri);
+			resource.load(new URL(uri.toString()).openStream(), resourceSet.getLoadOptions());
 		}
 
 		return resource;
