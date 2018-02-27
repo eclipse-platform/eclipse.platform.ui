@@ -621,14 +621,11 @@ public class FilteredResourcesSelectionDialog extends
 
 			IResource res = (IResource) element;
 
-			String str = res.getName();
+			StringBuilder str = new StringBuilder(res.getName());
+			str.append(" - "); //$NON-NLS-1$
+			str.append(res.getParent().getFullPath().makeRelative().toString());
 
-			// extra info for duplicates
-			if (isDuplicateElement(element))
-				str = str
-						+ " - " + res.getParent().getFullPath().makeRelative().toString(); //$NON-NLS-1$
-
-			return str;
+			return str.toString();
 		}
 
 		@Override
@@ -657,11 +654,11 @@ public class FilteredResourcesSelectionDialog extends
 			}
 			getMatchPositions(resourceName, searchFieldString).stream()
 					.forEach(position -> str.setStyle(position.offset, position.length, boldStyler));
-			// extra info for duplicates
-			if (isDuplicateElement(element)) {
-				str.append(" - ", StyledString.QUALIFIER_STYLER); //$NON-NLS-1$
-				str.append(resource.getParent().getFullPath().makeRelative().toString(), StyledString.QUALIFIER_STYLER);
-			}
+
+			// Show extra package info on every element
+			str.append(" - ", StyledString.QUALIFIER_STYLER); //$NON-NLS-1$
+			str.append(resource.getParent().getFullPath().makeRelative().toString(), StyledString.QUALIFIER_STYLER);
+
 			return str;
 		}
 
