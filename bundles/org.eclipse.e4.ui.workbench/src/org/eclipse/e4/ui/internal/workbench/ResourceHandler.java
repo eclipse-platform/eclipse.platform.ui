@@ -75,8 +75,15 @@ public class ResourceHandler implements IModelResourceHandler {
 	@Named(E4Workbench.INSTANCE_LOCATION)
 	private Location instanceLocation;
 
-	private final boolean saveAndRestore;
-	private final boolean clearPersistedState;
+	@Inject
+	@Optional
+	@Named(IWorkbench.PERSIST_STATE)
+	private boolean saveAndRestore;
+
+	@Inject
+	@Optional
+	@Named(IWorkbench.CLEAR_PERSISTED_STATE)
+	private boolean clearPersistedState;
 
 	/**
 	 * Constructor.
