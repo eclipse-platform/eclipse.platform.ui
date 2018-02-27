@@ -86,9 +86,7 @@ public final class ProjectExplorer extends CommonNavigator {
 	@Override
 	public void createPartControl(Composite aParent) {
 		super.createPartControl(aParent);
-
-		if (!false)
-			getCommonViewer().setMapper(new ResourceToItemsMapper(getCommonViewer()));
+		getCommonViewer().setMapper(new ResourceToItemsMapper(getCommonViewer()));
 	}
 
 	/**
