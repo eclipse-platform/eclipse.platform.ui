@@ -14,7 +14,6 @@ package org.eclipse.ui.internal;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CLabel;
-import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.ISharedImages;
@@ -24,8 +23,6 @@ import org.eclipse.ui.PlatformUI;
  * A message line displaying a status.
  */
 public class MessageLine extends CLabel {
-
-    private Color fNormalMsgAreaBackground;
 
     /**
      * Creates a new message line as a child of the given parent.
@@ -39,7 +36,6 @@ public class MessageLine extends CLabel {
      */
     public MessageLine(Composite parent, int style) {
         super(parent, style);
-        fNormalMsgAreaBackground = null;
     }
 
     private Image findImage(IStatus status) {
@@ -73,12 +69,6 @@ public class MessageLine extends CLabel {
         }
 		setText(""); //$NON-NLS-1$
         setImage(null);
-		super.setBackground(fNormalMsgAreaBackground);
 	}
-
-	@Override
-	public void setBackground(Color color) {
-		fNormalMsgAreaBackground = color;
-    }
 }
 
