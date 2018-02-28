@@ -167,11 +167,11 @@ public class CTabFolderTest extends CSSSWTTestCase {
 
 	@Test
 	public void testMaximizeVisible() {
-		CTabFolder folderToTest = createTestCTabFolder("CTabFolder { maximize-visible: true}");
+		CTabFolder folderToTest = createTestCTabFolder("CTabFolder { swt-maximize-visible: true}");
 		assertEquals(true, folderToTest.getMaximizeVisible());
-		assertEquals("true", engine.retrieveCSSProperty(folderToTest, "maximize-visible", null));
+		assertEquals("true", engine.retrieveCSSProperty(folderToTest, "swt-maximize-visible", null));
 		folderToTest.getShell().close();
-		folderToTest = createTestCTabFolder("CTabFolder { maximize-visible: false}");
+		folderToTest = createTestCTabFolder("CTabFolder { swt-maximize-visible: false}");
 		assertEquals(false, folderToTest.getMaximizeVisible());
 		assertEquals("false", engine.retrieveCSSProperty(folderToTest, "maximize-visible", null));
 	}
@@ -243,30 +243,30 @@ public class CTabFolderTest extends CSSSWTTestCase {
 
 	@Test
 	public void testTabHeight() {
-		CTabFolder folderToTest = createTestCTabFolder("CTabFolder { tab-height: 30px }");
+		CTabFolder folderToTest = createTestCTabFolder("CTabFolder { swt-tab-height: 30px }");
 		assertEquals(30, folderToTest.getTabHeight());
-		folderToTest = createTestCTabFolder("CTabFolder { tab-height: 40px }");
+		folderToTest = createTestCTabFolder("CTabFolder { swt-tab-height: 40px }");
 		assertEquals(40, folderToTest.getTabHeight());
 
 		//negative test to ensure we don't try to interpret a list
-		folderToTest = createTestCTabFolder("CTabFolder { tab-height: 40px 50px }");
+		folderToTest = createTestCTabFolder("CTabFolder { swt-tab-height: 40px 50px }");
 		assertNotSame(40, folderToTest.getTabHeight());
 		assertNotSame(50, folderToTest.getTabHeight());
 
 		//negative test for ambiguous unit value
-		folderToTest = createTestCTabFolder("CTabFolder { tab-height: 40 }");
+		folderToTest = createTestCTabFolder("CTabFolder { swt-tab-height: 40 }");
 		assertNotSame(40, folderToTest.getTabHeight());
 
 	}
 
 	@Test
 	public void testSingle() {
-		CTabFolder folderToTest = createTestCTabFolder("CTabFolder { single: true}");
+		CTabFolder folderToTest = createTestCTabFolder("CTabFolder { swt-single: true}");
 		assertEquals(true, folderToTest.getSingle());
-		assertEquals("true", engine.retrieveCSSProperty(folderToTest, "single", null));
-		folderToTest = createTestCTabFolder("CTabFolder { single: false}");
+		assertEquals("true", engine.retrieveCSSProperty(folderToTest, "swt-single", null));
+		folderToTest = createTestCTabFolder("CTabFolder { swt-single: false}");
 		assertEquals(false, folderToTest.getSingle());
-		assertEquals("false", engine.retrieveCSSProperty(folderToTest, "single", null));
+		assertEquals("false", engine.retrieveCSSProperty(folderToTest, "swt-single", null));
 	}
 
 	@Test
@@ -294,7 +294,7 @@ public class CTabFolderTest extends CSSSWTTestCase {
 		Shell shell = createShell("Shell {color:red}");
 		assertEquals(null, engine.retrieveCSSProperty(shell, "border-visible", null));
 		assertEquals(null, engine.retrieveCSSProperty(shell, "maximized", null));
-		assertEquals(null, engine.retrieveCSSProperty(shell, "maximize-visible", null));
+		assertEquals(null, engine.retrieveCSSProperty(shell, "swt-maximize-visible", null));
 		assertEquals(null, engine.retrieveCSSProperty(shell, "minimize-visible", null));
 		assertEquals(null, engine.retrieveCSSProperty(shell, "mru-visible", null));
 		assertEquals(null, engine.retrieveCSSProperty(shell, "show-close", null));
