@@ -20,11 +20,11 @@ import org.eclipse.swt.widgets.Listener;
  */
 public class ControlSelectedColorCustomization {
 
-	public final static String SELECTION_FOREGROUND_COLOR = "org.eclipse.e4.ui.css.swt.selectionForegroundColor"; //$NON-NLS-1$
-	public final static String SELECTION_BACKGROUND_COLOR = "org.eclipse.e4.ui.css.swt.selectionBackgroundColor"; //$NON-NLS-1$
-	public final static String SELECTION_BORDER_COLOR = "org.eclipse.e4.ui.css.swt.selectionBorderColor"; //$NON-NLS-1$
-	public final static String HOT_BACKGROUND_COLOR = "org.eclipse.e4.ui.css.swt.hotBackgroundColor"; //$NON-NLS-1$
-	public final static String HOT_BORDER_COLOR = "org.eclipse.e4.ui.css.swt.hotBorderColor"; //$NON-NLS-1$
+	public static final String SELECTION_FOREGROUND_COLOR = "org.eclipse.e4.ui.css.swt.selectionForegroundColor"; //$NON-NLS-1$
+	public static final String SELECTION_BACKGROUND_COLOR = "org.eclipse.e4.ui.css.swt.selectionBackgroundColor"; //$NON-NLS-1$
+	public static final String SELECTION_BORDER_COLOR = "org.eclipse.e4.ui.css.swt.selectionBorderColor"; //$NON-NLS-1$
+	public static final String HOT_BACKGROUND_COLOR = "org.eclipse.e4.ui.css.swt.hotBackgroundColor"; //$NON-NLS-1$
+	public static final String HOT_BORDER_COLOR = "org.eclipse.e4.ui.css.swt.hotBorderColor"; //$NON-NLS-1$
 
 	private final Control fControl;
 
