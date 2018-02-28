@@ -51,16 +51,13 @@ public abstract class AbstractCSSSWTEngineImpl extends CSSEngineImpl {
 		// Register SWT Color CSSValue Converter
 		super.registerCSSValueConverter(CSSValueSWTColorConverterImpl.INSTANCE);
 		// Register SWT Gradient CSSValue Converter
-		super
-		.registerCSSValueConverter(CSSValueSWTGradientConverterImpl.INSTANCE);
+		super.registerCSSValueConverter(CSSValueSWTGradientConverterImpl.INSTANCE);
 		// Register SWT Cursor CSSValue Converter
-		super
-		.registerCSSValueConverter(CSSValueSWTCursorConverterImpl.INSTANCE);
+		super.registerCSSValueConverter(CSSValueSWTCursorConverterImpl.INSTANCE);
 		// Register SWT Font CSSValue Converter
 		super.registerCSSValueConverter(CSSValueSWTFontConverterImpl.INSTANCE);
 		// Register SWT FontData CSSValue Converter
-		super
-		.registerCSSValueConverter(CSSValueSWTFontDataConverterImpl.INSTANCE);
+		super.registerCSSValueConverter(CSSValueSWTFontDataConverterImpl.INSTANCE);
 		// Register SWT Image CSSValue Converter
 		super.registerCSSValueConverter(CSSValueSWTImageConverterImpl.INSTANCE);
 
@@ -70,7 +67,6 @@ public abstract class AbstractCSSSWTEngineImpl extends CSSEngineImpl {
 
 		initializeCSSElementProvider();
 		initializeCSSPropertyHandlers();
-		//		SWTElement.setEngine(display, this);
 
 		setResourceRegistryKeyFactory(new SWTResourceRegistryKeyFactory());
 	}
@@ -114,8 +110,7 @@ public abstract class AbstractCSSSWTEngineImpl extends CSSEngineImpl {
 	 */
 	protected boolean isStylable(Widget widget) {
 		// allows widgets to be selectively excluded from styling
-		return !Boolean.TRUE.equals(widget
-				.getData("org.eclipse.e4.ui.css.disabled")); //$NON-NLS-1$
+		return !Boolean.TRUE.equals(widget.getData("org.eclipse.e4.ui.css.disabled")); //$NON-NLS-1$
 	}
 
 	@Override
