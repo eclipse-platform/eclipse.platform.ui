@@ -50,7 +50,7 @@
       </repositories>
     </profile>
   </profiles>
-
+  
   <modules>
     <module>org.eclipse.help</module>
     <module>org.eclipse.help.base</module>
@@ -65,9 +65,11 @@
     <module>org.eclipse.ui.intro.quicklinks</module>
     <module>org.eclipse.ui.intro.quicklinks.examples</module>
     <module>org.eclipse.ui.intro.solstice.examples</module>
+    
     <module>org.eclipse.tips.core</module>
     <module>org.eclipse.tips.ui</module>
     <module>org.eclipse.tips.ide</module>
+    <module>org.eclipse.tips.json</module>
     
   </modules>
 </project>

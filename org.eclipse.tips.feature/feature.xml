@@ -29,6 +29,10 @@
       %license
    </license>
 
+   <requires>
+      <import plugin="com.google.gson"/>
+   </requires>
+
    <plugin
          id="org.eclipse.tips.ui"
          download-size="0"
@@ -45,6 +49,13 @@
 
    <plugin
          id="org.eclipse.tips.json"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.eclipse.tips.ide"
          download-size="0"
          install-size="0"
          version="0.0.0"
