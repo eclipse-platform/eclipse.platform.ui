@@ -356,7 +356,15 @@ public abstract class TrayDialog extends Dialog {
 	 * any help listener.
 	 */
 	private void helpPressed() {
-		if (getTray() == null ||
+		if (fHelpButton != null && fHelpButton.getSelection()) {
+			DialogTray tray = getTray();
+			if (tray != null) {
+				// help is selected, but another tray is already visible. Close it now so that
+				// help can be displayed.
+				closeTray();
+			}
+		}
+		if (tray == null ||
 				fHelpButton != null && fHelpButton.getSelection()) { // help button was not selected before
 			if (getShell() != null) {
 				Control c = getShell().getDisplay().getFocusControl();
@@ -367,11 +375,13 @@ public abstract class TrayDialog extends Dialog {
 					}
 					c = c.getParent();
 				}
-				if (fHelpButton != null && getTray() != null) {
-					fHelpButton.setSelection(true);
+				if (fHelpButton != null) {
+					if (getTray() != null)
+						fHelpButton.setSelection(true);
+					else
+						fHelpButton.setSelection(false); // tray with help content was not created, disabled selection
 				}
 			}
-
 		} else {
 			closeTray();
 		}
