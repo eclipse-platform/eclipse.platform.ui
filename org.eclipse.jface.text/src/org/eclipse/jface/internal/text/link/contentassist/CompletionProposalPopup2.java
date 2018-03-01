@@ -31,11 +31,15 @@ import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableItem;
 
 import org.eclipse.jface.internal.text.TableOwnerDrawSupport;
+import org.eclipse.jface.preference.JFacePreferences;
+import org.eclipse.jface.resource.ColorRegistry;
+import org.eclipse.jface.resource.JFaceColors;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.viewers.StyledString;
 
@@ -311,13 +315,20 @@ class CompletionProposalPopup2 implements IContentAssistListener2 {
 			});
 		}
 
-		fProposalShell.setBackground(control.getDisplay().getSystemColor(SWT.COLOR_BLACK));
+		ColorRegistry colorRegistry= JFaceResources.getColorRegistry();
+		Color background= colorRegistry.get(JFacePreferences.CONTENT_ASSIST_BACKGROUND_COLOR);
+		if (background == null) {
+			background= JFaceColors.getInformationViewerBackgroundColor(Display.getDefault());
+		}
 
-		Color c= control.getDisplay().getSystemColor(SWT.COLOR_INFO_BACKGROUND);
-		fProposalTable.setBackground(c);
+		Color foreground= colorRegistry.get(JFacePreferences.CONTENT_ASSIST_FOREGROUND_COLOR);
+		if (foreground == null) {
+			foreground= JFaceColors.getInformationViewerBackgroundColor(Display.getDefault());
+		}
 
-		c= control.getDisplay().getSystemColor(SWT.COLOR_INFO_FOREGROUND);
-		fProposalTable.setForeground(c);
+		fProposalShell.setBackground(background);
+		fProposalTable.setBackground(background);
+		fProposalTable.setForeground(foreground);
 
 		fProposalTable.addSelectionListener(new SelectionListener() {
 

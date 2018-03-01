@@ -75,6 +75,7 @@ import org.eclipse.jface.contentassist.IContentAssistSubjectControl;
 import org.eclipse.jface.internal.text.InformationControlReplacer;
 import org.eclipse.jface.internal.text.TableOwnerDrawSupport;
 import org.eclipse.jface.preference.JFacePreferences;
+import org.eclipse.jface.resource.JFaceColors;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.util.Geometry;
 import org.eclipse.jface.viewers.StyledString;
@@ -654,13 +655,19 @@ class CompletionProposalPopup implements IContentAssistListener {
 			}
 		});
 
-		fProposalShell.setBackground(control.getDisplay().getSystemColor(SWT.COLOR_GRAY));
+		Color background= getBackgroundColor(control);
+		if (background == null) {
+			background= JFaceColors.getInformationViewerBackgroundColor(Display.getDefault());
+		}
 
-		Color c= getBackgroundColor(control);
-		fProposalTable.setBackground(c);
+		Color foreground= getForegroundColor(control);
+		if (foreground == null) {
+			foreground= JFaceColors.getInformationViewerBackgroundColor(Display.getDefault());
+		}
 
-		c= getForegroundColor(control);
-		fProposalTable.setForeground(c);
+		fProposalShell.setBackground(background);
+		fProposalTable.setBackground(background);
+		fProposalTable.setForeground(foreground);
 
 		fProposalTable.addSelectionListener(new SelectionListener() {
 
