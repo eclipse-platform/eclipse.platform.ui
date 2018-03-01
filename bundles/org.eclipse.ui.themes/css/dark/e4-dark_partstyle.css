@@ -129,17 +129,6 @@
     color: #7AAADA;
 }
 
-.MPart > Label,
-#com-android-ide-eclipse-adt-internal-lint-LintViewPart > Composite > Label {
-    background-color: #313538;
-    color: #7DC2BD;
-}
-.MPartStack.active .MPart > Label,
-.MPartStack.active #com-android-ide-eclipse-adt-internal-lint-LintViewPart > Composite > Label {
-    background-color: #2F3235;
-    color: #B1E8F7;
-}
-
 .MPart Section Tree,
 .MPart LayoutComposite > * > LayoutComposite > Section > LayoutComposite > Tree {
     background-color: #383A3B;
