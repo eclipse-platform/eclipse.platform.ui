@@ -46,7 +46,7 @@ public class EditorOpener {
 
 	public IEditorPart openAndSelect(IWorkbenchPage wbPage, IFile file, int offset, int length, boolean activate) throws PartInitException {
 		String editorId= null;
-		IEditorDescriptor desc= IDE.getEditorDescriptor(file);
+		IEditorDescriptor desc = IDE.getEditorDescriptor(file, true, true);
 		if (desc == null || !desc.isInternal()) {
 			editorId= "org.eclipse.ui.DefaultTextEditor"; //$NON-NLS-1$
 		} else {
@@ -75,7 +75,7 @@ public class EditorOpener {
 
 
 	private String getEditorID(IFile file) throws PartInitException {
-		IEditorDescriptor desc= IDE.getEditorDescriptor(file);
+		IEditorDescriptor desc = IDE.getEditorDescriptor(file, true, true);
 		if (desc == null)
 			return SearchPlugin.getDefault().getWorkbench().getEditorRegistry().findEditor(IEditorRegistry.SYSTEM_EXTERNAL_EDITOR_ID).getId();
 		return desc.getId();
