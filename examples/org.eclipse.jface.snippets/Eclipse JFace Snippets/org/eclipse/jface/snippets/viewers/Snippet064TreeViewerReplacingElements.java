@@ -74,7 +74,7 @@ public class Snippet064TreeViewerReplacingElements {
 				if (e.character == 'w') {
 					IObservableList<String> childElementsList = recentlyCreatedChildList.get();
 					if (childElementsList != null) {
-						childElementsList.set(0, "child " + new Random().nextInt());
+						childElementsList.set(0, "child " + random.nextInt());
 					} else {
 						System.out.println("no children list present");
 					}
