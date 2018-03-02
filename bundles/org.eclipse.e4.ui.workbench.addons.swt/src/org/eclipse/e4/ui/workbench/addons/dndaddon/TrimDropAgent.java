@@ -92,7 +92,7 @@ public class TrimDropAgent extends DropAgent {
 		Point trimPos = trimComp.getDisplay().map(null, trimComp, info.cursorPos);
 		Control trimCtrl = tbl.ctrlFromPoint(trimComp, trimPos);
 
-		if (trimCtrl == null) {
+		if (trimCtrl == null || dragElement.getWidget() == null) {
 			return null;
 		}
 
@@ -198,13 +198,17 @@ public class TrimDropAgent extends DropAgent {
 
 		dragElement.setToBeRendered(true);
 		Control trimCtrl = (Control) dragElement.getWidget();
-		trimCtrl.setBackground(trimCtrl.getDisplay().getSystemColor(SWT.COLOR_WIDGET_NORMAL_SHADOW));
+		if (trimCtrl != null) {
+			trimCtrl.setBackground(trimCtrl.getDisplay().getSystemColor(SWT.COLOR_WIDGET_NORMAL_SHADOW));
+		}
 	}
 
 	@Override
 	public boolean drop(MUIElement dragElement, DnDInfo info) {
 		Control trimCtrl = (Control) dragElement.getWidget();
-		trimCtrl.setBackground(null);
+		if (trimCtrl != null) {
+			trimCtrl.setBackground(null);
+		}
 		return true;
 	}
 }
