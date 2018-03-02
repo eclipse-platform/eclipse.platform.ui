@@ -98,13 +98,16 @@ public class InlinedAnnotationSupport implements StyledTextLineSpacingProvider {
 							LineContentAnnotation ann= (LineContentAnnotation) annotation;
 							Position position= ann.getPosition();
 							if (position != null) {
-								StyleRange s= new StyleRange();
-								s.start= position.getOffset();
-								s.length= 1;
-								s.metrics= ann.isMarkedDeleted()
-										? null
-										: new GlyphMetrics(0, 0, ann.getWidth());
-								textPresentation.mergeStyleRange(s);
+								int width= ann.getWidth();
+								if (width != 0) {
+									StyleRange s= new StyleRange();
+									s.start= position.getOffset();
+									s.length= 1;
+									s.metrics= ann.isMarkedDeleted()
+											? null
+											: new GlyphMetrics(0, 0, width);
+									textPresentation.mergeStyleRange(s);
+								}
 							}
 						}
 					});
