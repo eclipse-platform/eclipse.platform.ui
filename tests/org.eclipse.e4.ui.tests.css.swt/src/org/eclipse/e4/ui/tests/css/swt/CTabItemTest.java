@@ -126,10 +126,8 @@ public class CTabItemTest extends CSSSWTTestCase {
 			assertEquals(SWT.NORMAL, fontData.getStyle());
 
 			// verify retrieval
-			assertEquals("Verdana", engine.retrieveCSSProperty(item,
-					"font-family", null));
-			assertEquals("16", engine.retrieveCSSProperty(item,
-					"font-size", null));
+			assertEquals("Verdana", engine.retrieveCSSProperty(item, "font-family", null));
+			assertEquals("16", engine.retrieveCSSProperty(item, "font-size", null));
 
 			// make sure child controls are styled
 			Control button = item.getControl();
@@ -177,8 +175,7 @@ public class CTabItemTest extends CSSSWTTestCase {
 			assertEquals(SWT.ITALIC, fontData.getStyle());
 
 			// verify retrieval
-			assertEquals("italic", engine.retrieveCSSProperty(item,
-					"font-style", null));
+			assertEquals("italic", engine.retrieveCSSProperty(item, "font-style", null));
 
 			// make sure child controls are styled
 			Control button = item.getControl();
@@ -346,8 +343,7 @@ public class CTabItemTest extends CSSSWTTestCase {
 			testSelectedShowClose(folder, i);
 		}
 
-		engine = createEngine("CTabItem:selected { show-close: false }", folder
-				.getDisplay());
+		engine = createEngine("CTabItem:selected { show-close: false }", folder.getDisplay());
 		engine.applyStyles(folder.getShell(), true);
 		for (int i = 0; i < folder.getItemCount(); i++) {
 			assertFalse(folder.getItem(i).getShowClose());
@@ -585,13 +581,11 @@ public class CTabItemTest extends CSSSWTTestCase {
 
 	@Test
 	public void testBackground() {
-		CTabFolder folder = createTestTabFolder(
-				"CTabItem { background-color: #0000ff }", false);
+		CTabFolder folder = createTestTabFolder("CTabItem { background-color: #0000ff }", false);
 		assertEquals(new RGB(0, 0, 255), folder.getBackground().getRGB());
 
 		for (int i = 0; i < folder.getItemCount(); i++) {
-			assertEquals("#0000ff", engine.retrieveCSSProperty(folder
-					.getItem(i), "background-color", null));
+			assertEquals("#0000ff", engine.retrieveCSSProperty(folder.getItem(i), "background-color", null));
 		}
 	}
 
@@ -609,43 +603,35 @@ public class CTabItemTest extends CSSSWTTestCase {
 			colour = "#00ff00";
 		}
 
-		CSSEngine engine = createEngine("CTabItem { background-color: " + colour + " }",
-				folder.getDisplay());
+		CSSEngine engine = createEngine("CTabItem { background-color: " + colour + " }", folder.getDisplay());
 		engine.applyStyles(folder, true);
 
 		assertEquals(rgb, folder.getBackground().getRGB());
 
 		for (int i = 0; i < folder.getItemCount(); i++) {
-			assertEquals(colour, engine.retrieveCSSProperty(folder.getItem(i),
-					"background-color", null));
+			assertEquals(colour, engine.retrieveCSSProperty(folder.getItem(i), "background-color", null));
 		}
 
-		assertEquals(preStyledSelectionBackground.getRGB(), folder
-				.getSelectionBackground().getRGB());
+		assertEquals(preStyledSelectionBackground.getRGB(), folder.getSelectionBackground().getRGB());
 	}
 
 	@Test
 	public void testSelectionBackground() {
-		CTabFolder folder = createTestTabFolder(
-				"CTabItem:selected { background-color: #00ff00 }", false);
-		assertEquals(new RGB(0, 255, 0), folder.getSelectionBackground()
-				.getRGB());
+		CTabFolder folder = createTestTabFolder("CTabItem:selected { background-color: #00ff00 }", false);
+		assertEquals(new RGB(0, 255, 0), folder.getSelectionBackground().getRGB());
 
 		for (int i = 0; i < folder.getItemCount(); i++) {
-			assertEquals("#00ff00", engine.retrieveCSSProperty(folder
-					.getItem(i), "background-color", "selected"));
+			assertEquals("#00ff00", engine.retrieveCSSProperty(folder.getItem(i), "background-color", "selected"));
 		}
 	}
 
 	@Test
 	public void testForeground() {
-		CTabFolder folder = createTestTabFolder("CTabItem { color: #0000ff }",
-				false);
+		CTabFolder folder = createTestTabFolder("CTabItem { color: #0000ff }", false);
 		assertEquals(new RGB(0, 0, 255), folder.getForeground().getRGB());
 
 		for (int i = 0; i < folder.getItemCount(); i++) {
-			assertEquals("#0000ff", engine.retrieveCSSProperty(
-					folder.getItem(i), "color", null));
+			assertEquals("#0000ff", engine.retrieveCSSProperty(folder.getItem(i), "color", null));
 		}
 	}
 
@@ -664,41 +650,33 @@ public class CTabItemTest extends CSSSWTTestCase {
 			colour = "#00ff00";
 		}
 
-		CSSEngine engine = createEngine("CTabItem { color: " + colour + " }",
-				folder.getDisplay());
+		CSSEngine engine = createEngine("CTabItem { color: " + colour + " }", folder.getDisplay());
 		engine.applyStyles(folder, true);
 
 		assertEquals(rgb, folder.getForeground().getRGB());
 
 		for (int i = 0; i < folder.getItemCount(); i++) {
-			assertEquals(colour, engine.retrieveCSSProperty(folder.getItem(i),
-					"color", null));
+			assertEquals(colour, engine.retrieveCSSProperty(folder.getItem(i), "color", null));
 		}
 
-		assertEquals(preStyledSelectionForeground.getRGB(), folder
-				.getSelectionForeground().getRGB());
+		assertEquals(preStyledSelectionForeground.getRGB(), folder.getSelectionForeground().getRGB());
 	}
 
 	@Test
 	public void testSelectionForeground() {
-		CTabFolder folder = createTestTabFolder(
-				"CTabItem:selected { color: #00ff00 }", false);
-		assertEquals(new RGB(0, 255, 0), folder.getSelectionForeground()
-				.getRGB());
+		CTabFolder folder = createTestTabFolder("CTabItem:selected { color: #00ff00 }", false);
+		assertEquals(new RGB(0, 255, 0), folder.getSelectionForeground().getRGB());
 
 		for (int i = 0; i < folder.getItemCount(); i++) {
-			assertEquals("#00ff00", engine.retrieveCSSProperty(
-					folder.getItem(i), "color", "selected"));
+			assertEquals("#00ff00", engine.retrieveCSSProperty(folder.getItem(i), "color", "selected"));
 		}
 	}
 
 	@Test
 	public void testParent() {
-		CTabFolder folder = createTestTabFolder(
-				"CTabItem:selected { color: #00ff00 }", false);
+		CTabFolder folder = createTestTabFolder("CTabItem:selected { color: #00ff00 }", false);
 		for (int i = 0; i < folder.getItemCount(); i++) {
-			CTabItemElement element = (CTabItemElement) engine
-					.getElement(folder.getItem(i));
+			CTabItemElement element = (CTabItemElement) engine.getElement(folder.getItem(i));
 			assertNotNull(element.getParentNode());
 		}
 	}
