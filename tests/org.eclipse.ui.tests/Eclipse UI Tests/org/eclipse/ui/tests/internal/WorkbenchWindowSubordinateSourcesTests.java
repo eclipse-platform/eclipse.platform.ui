@@ -66,7 +66,7 @@ public class WorkbenchWindowSubordinateSourcesTests extends UITestCase {
 			fail(e.getMessage());
 		}
 
-		window.setCoolBarVisible(current = !current);
+		window.setCoolBarVisible(!current);
 		try {
 			assertEquals(EvaluationResult.FALSE, with.evaluate(context));
 		} catch (CoreException e) {
@@ -90,7 +90,7 @@ public class WorkbenchWindowSubordinateSourcesTests extends UITestCase {
 			fail(e.getMessage());
 		}
 
-		window.setStatusLineVisible(current = !current);
+		window.setStatusLineVisible(!current);
 		try {
 			assertEquals(EvaluationResult.FALSE, with.evaluate(context));
 		} catch (CoreException e) {
@@ -114,7 +114,7 @@ public class WorkbenchWindowSubordinateSourcesTests extends UITestCase {
 			fail(e.getMessage());
 		}
 
-		window.setPerspectiveBarVisible(current = !current);
+		window.setPerspectiveBarVisible(!current);
 		try {
 			assertEquals(EvaluationResult.FALSE, with.evaluate(context));
 		} catch (CoreException e) {

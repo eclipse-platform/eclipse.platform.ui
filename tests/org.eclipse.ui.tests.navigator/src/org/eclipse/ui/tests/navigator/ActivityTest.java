@@ -46,8 +46,8 @@ public class ActivityTest extends NavigatorTestBase {
 
 		IWorkbenchActivitySupport actSupport = PlatformUI.getWorkbench()
 				.getActivitySupport();
-		Set ids = new HashSet();
-		ids = actSupport.getActivityManager().getEnabledActivityIds();
+
+		Set ids = actSupport.getActivityManager().getEnabledActivityIds();
 
 		if (DEBUG)
 			System.out.println("enabled before: " + ids);
@@ -80,8 +80,8 @@ public class ActivityTest extends NavigatorTestBase {
 
 		IWorkbenchActivitySupport actSupport = PlatformUI.getWorkbench()
 				.getActivitySupport();
-		Set ids = new HashSet();
-		ids = actSupport.getActivityManager().getEnabledActivityIds();
+
+		Set ids = actSupport.getActivityManager().getEnabledActivityIds();
 
 		if (DEBUG)
 			System.out.println("enabled before: " + ids);
