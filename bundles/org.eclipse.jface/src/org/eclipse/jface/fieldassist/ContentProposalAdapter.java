@@ -106,11 +106,6 @@ public class ContentProposalAdapter {
 											.getShell() == activeShell)) {
 								return;
 							}
-							/*
-							 * System.out.println(e);
-							 * System.out.println(e.display.getFocusControl());
-							 * System.out.println(e.display.getActiveShell());
-							 */
 							close();
 						}
 					});
@@ -433,12 +428,10 @@ public class ContentProposalAdapter {
 			 */
 			@Override
 			protected Control createDialogArea(Composite parent) {
-				text = new Text(parent, SWT.MULTI | SWT.READ_ONLY | SWT.WRAP
-						| SWT.NO_FOCUS);
+				text = new Text(parent, SWT.MULTI | SWT.READ_ONLY | SWT.WRAP | SWT.NO_FOCUS);
 
 				// Use the compact margins employed by PopupDialog.
-				GridData gd = new GridData(GridData.BEGINNING
-						| GridData.FILL_BOTH);
+				GridData gd = new GridData(GridData.BEGINNING | GridData.FILL_BOTH);
 				gd.horizontalIndent = PopupDialog.POPUP_HORIZONTALSPACING;
 				gd.verticalIndent = PopupDialog.POPUP_VERTICALSPACING;
 				text.setLayoutData(gd);
@@ -928,16 +921,12 @@ public class ContentProposalAdapter {
 							String description = p.getDescription();
 							if (description != null) {
 								if (infoPopup == null) {
-									infoPopup = new InfoPopupDialog(
-											getShell());
+									infoPopup = new InfoPopupDialog(getShell());
 									infoPopup.open();
-									infoPopup
-											.getShell()
-											.addDisposeListener(
-													event -> infoPopup = null);
+									infoPopup.getShell()
+											.addDisposeListener(event -> infoPopup = null);
 								}
-								infoPopup.setContents(p
-										.getDescription());
+								infoPopup.setContents(p.getDescription());
 							} else if (infoPopup != null) {
 								infoPopup.close();
 							}
