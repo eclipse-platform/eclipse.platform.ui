@@ -1866,7 +1866,7 @@ public final class IDE {
 		for(int i = 0 ; i < inputs.length; i++) {
 			editorInputs[i] = new FileEditorInput(inputs[i]);
 			try {
-				editorDescriptions[i] = getEditorDescriptor(inputs[i]).getId();
+				editorDescriptions[i] = getEditorDescriptor(inputs[i], true, true).getId();
 			} catch (PartInitException e) {
 				PartInitException[] exceptions = new PartInitException[inputs.length];
 				exceptions[i] = e;

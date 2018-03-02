@@ -74,7 +74,7 @@ public class EditorWidgetFactory extends TestWidgetFactory {
         IFile file = testProject.getFile(filename);
 
         if (editorId == null) {
-            editorId = IDE.getEditorDescriptor(file).getId();
+			editorId = IDE.getEditorDescriptor(file, true, /* allowInteractive */false).getId();
         }
 
         IEditorPart part = IDE.openEditor(activePage, file, editorId, true);
