@@ -105,26 +105,6 @@ public class PopupDialog extends Window {
 	private static final String DIALOG_HEIGHT = "DIALOG_HEIGHT"; //$NON-NLS-1$
 
 	/**
-	 * The dialog settings key name for remembering if the persisted bounds
-	 * should be accessed.
-	 *
-	 * @deprecated Since 3.4, this is retained only for backward compatibility.
-	 */
-	@Deprecated
-	private static final String DIALOG_USE_PERSISTED_BOUNDS = "DIALOG_USE_PERSISTED_BOUNDS"; //$NON-NLS-1$
-
-	/**
-	 * The dialog settings key name for remembering if the bounds persisted
-	 * prior to 3.4 have been migrated to the 3.4 settings.
-	 *
-	 * @since 3.4
-	 * @deprecated This is marked deprecated at its introduction to discourage
-	 *             future dependency
-	 */
-	@Deprecated
-	private static final String DIALOG_VALUE_MIGRATED_TO_34 = "hasBeenMigratedTo34"; //$NON-NLS-1$
-
-	/**
 	 * The dialog settings key name for remembering if the persisted size should
 	 * be accessed.
 	 */
@@ -562,8 +542,6 @@ public class PopupDialog extends Window {
 
 		this.persistSize = persistSize;
 		this.persistLocation = persistLocation;
-
-		migrateBoundsSetting();
 
 		initializeWidgetState();
 	}
@@ -1607,24 +1585,6 @@ public class PopupDialog extends Window {
 					persistLocation = settings.getBoolean(key);
 			}
 		}
-	}
-
-	private void migrateBoundsSetting() {
-		IDialogSettings settings = getDialogSettings();
-		if (settings == null)
-			return;
-
-		final String className = getClass().getName();
-
-		String key = className + DIALOG_USE_PERSISTED_BOUNDS;
-		String value = settings.get(key);
-		if (value == null || DIALOG_VALUE_MIGRATED_TO_34.equals(value))
-			return;
-
-		boolean storeBounds = settings.getBoolean(key);
-		settings.put(className + DIALOG_USE_PERSISTED_LOCATION, storeBounds);
-		settings.put(className + DIALOG_USE_PERSISTED_SIZE, storeBounds);
-		settings.put(key, DIALOG_VALUE_MIGRATED_TO_34);
 	}
 
 	/**
