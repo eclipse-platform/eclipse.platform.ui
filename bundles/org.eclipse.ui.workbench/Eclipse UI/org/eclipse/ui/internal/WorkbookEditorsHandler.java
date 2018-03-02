@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2017 IBM Corporation and others.
+ * Copyright (c) 2007, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Marc-Andre Laperle (Ericsson) - Bug 413278
- *     Patrik Suzzi <psuzzi@gmail.com> - Bug 497618, 368977, 504088, 506019
+ *     Patrik Suzzi <psuzzi@itemis.com> - Bug 497618, 368977, 504088, 506019, 486859
  ******************************************************************************/
 
 package org.eclipse.ui.internal;
@@ -109,6 +109,9 @@ public class WorkbookEditorsHandler extends FilteredTableBaseHandler {
 			searchPattern = null;
 		} else {
 			SearchPattern patternMatcher = new SearchPattern();
+			if (pattern.indexOf("*") != 0 && pattern.indexOf("?") != 0 && pattern.indexOf(".") != 0) {//$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+				pattern = "*" + pattern; //$NON-NLS-1$
+			}
 			patternMatcher.setPattern(pattern);
 			searchPattern = patternMatcher;
 		}
