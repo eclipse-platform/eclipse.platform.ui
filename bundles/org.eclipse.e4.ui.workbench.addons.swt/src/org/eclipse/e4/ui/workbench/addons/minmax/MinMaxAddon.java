@@ -691,9 +691,11 @@ public class MinMaxAddon {
 		Shell hostShell = (Shell) modelService.getTopLevelWindowFor(element).getWidget();
 		MWindow win = MinMaxAddonUtil.getWindowFor(element);
 
-		FaderAnimationFeedback fader = new FaderAnimationFeedback(hostShell);
-		AnimationEngine engine = new AnimationEngine(win.getContext(), fader, 300);
-		engine.schedule();
+		if (hostShell != null) {
+			FaderAnimationFeedback fader = new FaderAnimationFeedback(hostShell);
+			AnimationEngine engine = new AnimationEngine(win.getContext(), fader, 300);
+			engine.schedule();
+		}
 
 		// Restore any currently maximized element
 		restoreMaximizedElement(element, win);
@@ -875,9 +877,11 @@ public class MinMaxAddon {
 		MWindow win = MinMaxAddonUtil.getWindowFor(element);
 
 		Shell hostShell = (Shell) win.getWidget();
-		FaderAnimationFeedback fader = new FaderAnimationFeedback(hostShell);
-		AnimationEngine engine = new AnimationEngine(win.getContext(), fader, 300);
-		engine.schedule();
+		if (hostShell != null) {
+			FaderAnimationFeedback fader = new FaderAnimationFeedback(hostShell);
+			AnimationEngine engine = new AnimationEngine(win.getContext(), fader, 300);
+			engine.schedule();
+		}
 
 		List<MUIElement> elementsToRestore = getElementsToRestore(element);
 		for (MUIElement toRestore : elementsToRestore) {
