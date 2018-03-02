@@ -1567,10 +1567,7 @@ public abstract class FilteredItemsSelectionDialog extends SelectionStatusDialog
 			provider.dispose();
 
 			provider = newProvider;
-
-			if (provider != null) {
-				provider.addListener(this);
-			}
+			provider.addListener(this);
 
 			setOwnerDrawEnabled(showColoredLabels() && provider instanceof IStyledLabelProvider);
 		}
