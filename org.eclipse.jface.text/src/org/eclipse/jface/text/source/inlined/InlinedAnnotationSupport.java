@@ -36,7 +36,9 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.core.runtime.Assert;
 
 import org.eclipse.jface.text.BadLocationException;
+import org.eclipse.jface.text.DocumentEvent;
 import org.eclipse.jface.text.IDocument;
+import org.eclipse.jface.text.IDocumentListener;
 import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.ISynchronizable;
 import org.eclipse.jface.text.ITextPresentationListener;
@@ -123,17 +125,17 @@ public class InlinedAnnotationSupport implements StyledTextLineSpacingProvider {
 	 * Class to track start/end offset of visible lines.
 	 *
 	 */
-	private class VisibleLines implements IViewportListener {
+	private class VisibleLines implements IViewportListener, IDocumentListener {
 
 		private int startOffset;
 
-		private int endOffset;
+		private Integer endOffset;
 
 		public VisibleLines() {
 			fViewer.getTextWidget().getDisplay().asyncExec(() -> {
-				startOffset= getInclusiveTopIndexStartOffset();
-				endOffset= getExclusiveBottomIndexEndOffset();
+				compute();
 			});
+			fViewer.getDocument().addDocumentListener(this);
 		}
 
 		@Override
@@ -141,6 +143,17 @@ public class InlinedAnnotationSupport implements StyledTextLineSpacingProvider {
 			compute();
 		}
 
+		@Override
+		public void documentAboutToBeChanged(DocumentEvent event) {
+			endOffset= null;
+		}
+
+		@Override
+		public void documentChanged(DocumentEvent event) {
+			// Do nothing
+		}
+
+		@SuppressWarnings("boxing")
 		private void compute() {
 			startOffset= getInclusiveTopIndexStartOffset();
 			endOffset= getExclusiveBottomIndexEndOffset();
@@ -194,8 +207,21 @@ public class InlinedAnnotationSupport implements StyledTextLineSpacingProvider {
 		 * @return <code>true</code> if the given offset is in visible lines and <code>false</code>
 		 *         otherwise.
 		 */
-		public boolean isInVisibleLines(int offset) {
+		@SuppressWarnings("boxing")
+		boolean isInVisibleLines(int offset) {
+			if (endOffset == null) {
+				endOffset= getExclusiveBottomIndexEndOffset();
+			}
 			return offset >= startOffset && offset <= endOffset;
+		}
+
+		/**
+		 * Uninstall visible lines
+		 */
+		void uninstall() {
+			if (fViewer != null && fViewer.getDocument() != null) {
+				fViewer.getDocument().removeDocumentListener(this);
+			}
 		}
 	}
 
@@ -352,6 +378,10 @@ public class InlinedAnnotationSupport implements StyledTextLineSpacingProvider {
 				((ITextViewerExtension4) fViewer).removeTextPresentationListener(updateStylesWidth);
 			}
 			fViewer.removeViewportListener(visibleLines);
+		}
+		if (visibleLines != null) {
+			visibleLines.uninstall();
+			visibleLines= null;
 		}
 		fViewer= null;
 		fPainter= null;
