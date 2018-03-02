@@ -103,7 +103,7 @@ public class TrimDropAgent extends DropAgent {
 		// Are we closer to the 'end' of the trim control ?
 		// If so insert before the next control (if any)
 		MUIElement trimElement = (MUIElement) trimCtrl.getData(AbstractPartRenderer.OWNING_ME);
-		if (isAfter(trimCtrl, info)) {
+		if (isAfter(trimCtrl, info) && trimElement != null) {
 			MElementContainer<MUIElement> trimParent = trimElement.getParent();
 			int trimIndex = trimParent.getChildren().indexOf(trimElement);
 			if (trimIndex == trimParent.getChildren().size() - 1) {
