@@ -84,7 +84,7 @@ import com.ibm.icu.text.MessageFormat;
  * General utility class dealing with Ant build files
  */
 public final class AntUtil {
-	public static final String ATTRIBUTE_SEPARATOR = ","; //$NON-NLS-1$;
+	public static final String ATTRIBUTE_SEPARATOR = ","; //$NON-NLS-1$ ;
 	public static final char ANT_CLASSPATH_DELIMITER = '*';
 	public static final String ANT_HOME_CLASSPATH_PLACEHOLDER = "G"; //$NON-NLS-1$
 	public static final String ANT_GLOBAL_USER_CLASSPATH_PLACEHOLDER = "UG"; //$NON-NLS-1$
@@ -563,7 +563,7 @@ public final class AntUtil {
 		IFile file = node.getIFile();
 		IEditorDescriptor editorDesc;
 		try {
-			editorDesc = IDE.getEditorDescriptor(file);
+			editorDesc = IDE.getEditorDescriptor(file, true, true);
 		}
 		catch (PartInitException e) {
 			return;
