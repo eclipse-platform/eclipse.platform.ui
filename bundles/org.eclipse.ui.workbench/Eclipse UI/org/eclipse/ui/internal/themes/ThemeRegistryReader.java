@@ -115,7 +115,7 @@ public class ThemeRegistryReader extends RegistryReader {
 		}
 
         return new ThemeElementCategory(name, id, parentId, description,
-                element.getNamespace(), element);
+				element.getContributor().getName(), element);
     }
 
     /**

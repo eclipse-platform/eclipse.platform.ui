@@ -375,7 +375,7 @@ public final class EditorDescriptor implements IEditorDescriptor, Serializable,
      */
     public String getPluginID() {
     	if (configurationElement != null) {
-			return configurationElement.getNamespace();
+			return configurationElement.getContributor().getName();
 		}
     	return pluginIdentifier;
     }

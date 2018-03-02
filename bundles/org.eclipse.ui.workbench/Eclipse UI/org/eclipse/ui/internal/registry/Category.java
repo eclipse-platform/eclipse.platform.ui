@@ -247,8 +247,8 @@ public class Category implements IWorkbenchAdapter, IPluginContribution, IAdapta
 
     @Override
 	public String getPluginId() {
-        return configurationElement == null ? pluginId : configurationElement
-				.getNamespace();
+		return configurationElement == null ? pluginId : configurationElement
+						.getContributor().getName();
     }
 
 	/**

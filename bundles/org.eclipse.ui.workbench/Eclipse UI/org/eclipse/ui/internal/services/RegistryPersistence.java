@@ -172,7 +172,7 @@ public abstract class RegistryPersistence implements IDisposable,
 		String statusMessage = message;
 		if (element != null) {
 			statusMessage = statusMessage
-					+ ": plug-in='" + element.getNamespace() + '\''; //$NON-NLS-1$
+					+ ": plug-in='" + element.getContributor().getName() + '\''; //$NON-NLS-1$
 		}
 		if (id != null) {
 			if (element != null) {

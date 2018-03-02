@@ -118,7 +118,7 @@ public class WorkingSetDescriptor implements IPluginContribution {
      * @return the name space declaring this working set
      */
     public String getDeclaringNamespace() {
-    	return configElement.getNamespace();
+		return configElement.getContributor().getName();
     }
 
     /**
