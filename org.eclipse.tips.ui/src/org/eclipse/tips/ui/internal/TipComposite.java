@@ -204,6 +204,7 @@ public class TipComposite extends Composite implements ProviderSelectionListener
 		});
 
 		fEmptyActionComposite = new Composite(actionComposite, SWT.NONE);
+		fEmptyActionComposite.setLayout(new FillLayout(SWT.HORIZONTAL));
 
 		fPreviousTipButton = new Button(buttonBar, SWT.NONE);
 		fPreviousTipButton.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1));

@@ -40,7 +40,7 @@ public abstract class DefaultTipManager extends TipManager {
 	 */
 	@Override
 	public TipManager open(boolean startUp) {
-		if (fOpen && (fTipDialog == null || fTipDialog.isDisposed())) {
+		if (fOpen && (fTipDialog == null || fTipDialog.getShell() == null || fTipDialog.getShell().isDisposed())) {
 			fOpen = false;
 		}
 		try {
@@ -55,14 +55,14 @@ public abstract class DefaultTipManager extends TipManager {
 		}
 
 		fTipDialog = new TipDialog(Display.getCurrent().getActiveShell(), this, TipDialog.DEFAULT_STYLE);
-		fTipDialog.addDisposeListener(pE -> {
+		fTipDialog.open();
+		fTipDialog.getShell().addDisposeListener(pE -> {
 			try {
 				dispose();
 			} finally {
 				fOpen = false;
 			}
 		});
-		fTipDialog.open();
 		fOpen = true;
 		return this;
 	}

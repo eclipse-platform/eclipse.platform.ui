@@ -237,7 +237,7 @@ public class Slider extends Composite {
 	public Slider setTipManager(TipManager tipManager) {
 		fTipManager = tipManager;
 		fTipManager.getListenerManager().addProviderListener(fProviderListener);
-		fIconSize = 48; 
+		fIconSize = 48;
 		load();
 		return this;
 	}
@@ -321,8 +321,12 @@ public class Slider extends Composite {
 	private void paintButton(GC gc, Composite providerButton, TipProvider provider) {
 		gc.setAdvanced(true);
 		if (fSelectedProvider.equals(provider)) {
+			gc.setForeground(getDisplay().getSystemColor(SWT.COLOR_LIST_SELECTION_TEXT));
+			gc.setBackground(getDisplay().getSystemColor(SWT.COLOR_LIST_SELECTION));
 			gc.drawRectangle(0, 0, fIconSize + 3, fIconSize + 3);
 		} else {
+			gc.setForeground(fLeftButton.getForeground());
+			gc.setBackground(fLeftButton.getBackground());
 			boolean mouseIn = getDisplay().getCursorControl() == providerButton;
 			if (mouseIn) {
 				gc.drawRectangle(0, 0, fIconSize + 3, fIconSize + 3);
@@ -378,18 +382,15 @@ public class Slider extends Composite {
 		image = new Image(getDisplay(), data);
 		GC gc = new GC(image);
 		gc.setAdvanced(true);
-//		if (fTipManager.mustServeReadTips()) {
-//			gc.setBackground(theme.getColor(TipTheme.COLOR_BADGE_TIPCOUNT_BACKGROUND));
-//		} else {
-//			gc.setBackground(theme.getColor(TipTheme.COLOR_BADGE_UNREAD_BACKGROUND));
-//		}
+		if (fTipManager.mustServeReadTips()) {
+			gc.setBackground(getDisplay().getSystemColor(SWT.COLOR_DARK_GREEN));
+		} else {
+			gc.setBackground(getDisplay().getSystemColor(SWT.COLOR_RED));
+		}
+		gc.setForeground(getDisplay().getSystemColor(SWT.COLOR_WHITE));
+		gc.setFont(SWTResourceManager.getBoldFont(gc.getFont()));
 		gc.setAlpha(210);
 		gc.setTextAntialias(SWT.ON);
-//		if (fTipManager.mustServeReadTips()) {
-//			gc.setForeground(theme.getColor(TipTheme.COLOR_BADGE_TIPCOUNT_FOREGROUND));
-//		} else {
-//			gc.setForeground(theme.getColor(TipTheme.COLOR_BADGE_UNREAD_FOREGROUND));
-//		}
 		if (tipCount > 9) {
 			gc.fillOval(0, 0, textExtent.x + 8, textExtent.y + 5);
 			gc.drawText(tipCount + "", 4, 2, true);
