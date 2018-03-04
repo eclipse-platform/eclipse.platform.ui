@@ -49,10 +49,11 @@ public class LocationValidator {
 	private IStatus validateAbsolute(URI location, boolean error) {
 		if (!location.isAbsolute()) {
 			String message;
-			if (location.getSchemeSpecificPart() == null)
+			String schemeSpecificPart = location.getSchemeSpecificPart();
+			if (schemeSpecificPart == null || schemeSpecificPart.isEmpty()) {
 				message = Messages.links_noPath;
-			else {
-				IPath pathPart = new Path(location.getSchemeSpecificPart());
+			} else {
+				IPath pathPart = new Path(schemeSpecificPart);
 				if (pathPart.segmentCount() > 0)
 					message = NLS.bind(Messages.pathvar_undefined, location.toString(), pathPart.segment(0));
 				else
@@ -84,8 +85,10 @@ public class LocationValidator {
 	}
 
 	public IStatus validateLinkLocationURI(IResource resource, URI unresolvedLocation) {
-		if (unresolvedLocation.getSchemeSpecificPart() == null)
+		String schemeSpecificPart = unresolvedLocation.getSchemeSpecificPart();
+		if (schemeSpecificPart == null || schemeSpecificPart.isEmpty()) {
 			return new ResourceStatus(IResourceStatus.INVALID_VALUE, resource.getFullPath(), Messages.links_noPath);
+		}
 		String message;
 		//check if resource linking is disabled
 		if (ResourcesPlugin.getPlugin().getPluginPreferences().getBoolean(ResourcesPlugin.PREF_DISABLE_LINKING)) {

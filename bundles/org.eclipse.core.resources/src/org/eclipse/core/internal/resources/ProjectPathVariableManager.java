@@ -275,9 +275,14 @@ public class ProjectPathVariableManager implements IPathVariableManager, IManage
 
 	@Override
 	public URI resolveURI(URI uri) {
-		if (uri == null || uri.isAbsolute() || (uri.getSchemeSpecificPart() == null))
+		if (uri == null || uri.isAbsolute()) {
 			return uri;
-		IPath raw = new Path(uri.getSchemeSpecificPart());
+		}
+		String schemeSpecificPart = uri.getSchemeSpecificPart();
+		if (schemeSpecificPart == null || schemeSpecificPart.isEmpty()) {
+			return uri;
+		}
+		IPath raw = new Path(schemeSpecificPart);
 		if (raw == null || raw.segmentCount() == 0 || raw.isAbsolute() || raw.getDevice() != null)
 			return URIUtil.toURI(raw);
 		URI value = resolveVariable(raw.segment(0));
