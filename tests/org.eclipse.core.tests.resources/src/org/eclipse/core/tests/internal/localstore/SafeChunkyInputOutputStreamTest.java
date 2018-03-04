@@ -11,6 +11,8 @@
 package org.eclipse.core.tests.internal.localstore;
 
 import java.io.*;
+import java.util.ArrayList;
+import java.util.List;
 import junit.framework.Test;
 import junit.framework.TestSuite;
 import org.eclipse.core.internal.localstore.*;
@@ -20,6 +22,10 @@ import org.eclipse.core.runtime.IPath;
 public class SafeChunkyInputOutputStreamTest extends LocalStoreTest {
 	protected File temp;
 
+	private List<SafeChunkyOutputStream> streams;
+
+	private File target;
+
 	public SafeChunkyInputOutputStreamTest() {
 		super();
 	}
@@ -28,14 +34,10 @@ public class SafeChunkyInputOutputStreamTest extends LocalStoreTest {
 		super(name);
 	}
 
-	protected boolean compare(byte[] source, byte[] target) {
-		if (source.length != target.length) {
-			return false;
-		}
-		for (int i = 0; i < target.length; i++) {
-			if (source[i] != target[i]) {
-				return false;
-			}
+	protected boolean compare(byte[] source, byte[] target1) {
+		assertEquals(source.length, target1.length);
+		for (int i = 0; i < target1.length; i++) {
+			assertEquals(source[i], target1[i]);
 		}
 		return true;
 	}
@@ -54,10 +56,13 @@ public class SafeChunkyInputOutputStreamTest extends LocalStoreTest {
 	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
+		streams = new ArrayList<>();
+
 		IPath location = getRandomLocation();
 		temp = location.append("temp").toFile();
 		temp.mkdirs();
 		assertTrue("could not create temp directory", temp.isDirectory());
+		target = new File(temp, "target");
 	}
 
 	public static Test suite() {
@@ -66,52 +71,41 @@ public class SafeChunkyInputOutputStreamTest extends LocalStoreTest {
 
 	@Override
 	protected void tearDown() throws Exception {
+		for (SafeChunkyOutputStream stream : streams) {
+			try {
+				stream.close();
+			} catch (Exception e) {
+				// ignore
+			}
+		}
 		ensureDoesNotExistInFileSystem(temp.getParentFile());
 		super.tearDown();
 	}
 
-	public void testBufferLimit() {
-		File target = new File(temp, "target");
+	public void testBufferLimit() throws Exception {
 		Workspace.clear(target); // make sure there was nothing here before
-		assertTrue("1.0", !target.exists());
+		assertTrue(!target.exists());
 
 		// use only one chunk but bigger than the buffer
 		int bufferSize = 10024;
 		byte[] chunk = getBigContents(bufferSize);
-		SafeChunkyOutputStream output = null;
-		try {
-			output = new SafeChunkyOutputStream(target);
-			try {
-				output.write(chunk);
-				output.succeed();
-			} finally {
-				output.close();
-			}
-		} catch (IOException e) {
-			fail("2.0", e);
+		try (SafeChunkyOutputStream output = new SafeChunkyOutputStream(target)) {
+			output.write(chunk);
+			output.succeed();
 		}
 
 		// read chunks
-		SafeChunkyInputStream input = null;
-		try {
-			input = new SafeChunkyInputStream(target);
-			try {
-				byte[] read = new byte[chunk.length];
-				assertTrue("3.0", input.read(read) == chunk.length);
-				assertTrue("3.6", compare(chunk, read));
-			} finally {
-				input.close();
-			}
-		} catch (IOException e) {
-			fail("3.20", e);
+		try (SafeChunkyInputStream input = new SafeChunkyInputStream(target)) {
+			byte[] read = new byte[chunk.length];
+			assertEquals(chunk.length, input.read(read));
+			assertTrue(compare(chunk, read));
 		}
 		Workspace.clear(target); // make sure there was nothing here before
 	}
 
-	public void testFailure() {
-		File target = new File(temp, "target");
+	public void testFailure() throws Exception {
 		Workspace.clear(target); // make sure there was nothing here before
-		assertTrue("1.0", !target.exists());
+		assertTrue(!target.exists());
 
 		// misc
 		byte[] fakeEnd = new byte[ILocalStoreConstants.END_CHUNK.length];
@@ -125,76 +119,62 @@ public class SafeChunkyInputOutputStreamTest extends LocalStoreTest {
 		byte[] chunk4 = getRandomString().getBytes();
 		byte[] chunk5 = getRandomString().getBytes();
 		byte[] chunk6 = getRandomString().getBytes();
-		SafeChunkyOutputStream output = null;
+		SafeChunkyOutputStream output = new SafeChunkyOutputStream(target);
 		try {
+			output.write(chunk1);
+			output.succeed();
+			doNothing(output);
 			output = new SafeChunkyOutputStream(target);
-			try {
-				output.write(chunk1);
-				output.succeed();
-				doNothing(output);
-				output = new SafeChunkyOutputStream(target);
-				// fake failure
-				output.write(chunk2);
-				output.write(ILocalStoreConstants.BEGIN_CHUNK); // another begin
-				output.succeed();
-				//
-				doNothing(output);
-				output = new SafeChunkyOutputStream(target);
-				output.write(chunk3);
-				output.succeed();
-				doNothing(output);
-				output = new SafeChunkyOutputStream(target);
-				// fake failure
-				output.write(chunk4);
-				output.write(ILocalStoreConstants.END_CHUNK); // another end
-				output.succeed();
-				doNothing(output);
-				//
-				output = new SafeChunkyOutputStream(target);
-				output.write(chunk5);
-				output.succeed();
-				// fake failure
-				output.write(fakeEnd);
-				output.write(chunk6);
-				output.succeed();
-			} finally {
-				output.close();
-			}
-		} catch (IOException e) {
-			fail("2.0", e);
+			// fake failure
+			output.write(chunk2);
+			output.write(ILocalStoreConstants.BEGIN_CHUNK); // another begin
+			output.succeed();
+			//
+			doNothing(output);
+			output = new SafeChunkyOutputStream(target);
+			output.write(chunk3);
+			output.succeed();
+			doNothing(output);
+			output = new SafeChunkyOutputStream(target);
+			// fake failure
+			output.write(chunk4);
+			output.write(ILocalStoreConstants.END_CHUNK); // another end
+			output.succeed();
+			doNothing(output);
+			//
+			output = new SafeChunkyOutputStream(target);
+			output.write(chunk5);
+			output.succeed();
+			// fake failure
+			output.write(fakeEnd);
+			output.write(chunk6);
+			output.succeed();
+		} finally {
+			output.close();
 		}
 
 		// read chunks
-		SafeChunkyInputStream input = null;
-		try {
-			input = new SafeChunkyInputStream(target);
-			try {
-				byte[] read1 = new byte[chunk1.length];
-				//byte[] read2 = new byte[chunk2.length];
-				byte[] read3 = new byte[chunk3.length];
-				byte[] read4 = new byte[chunk4.length];
-				byte[] read5 = new byte[chunk5.length];
-				byte[] read6 = new byte[fakeEnd.length + chunk6.length];
-				assertTrue("3.0", input.read(read1) == chunk1.length);
-				//assert("3.1", input.read(read2) == chunk2.length);
-				assertTrue("3.2", input.read(read3) == chunk3.length);
-				assertTrue("3.3", input.read(read4) == chunk4.length);
-				assertTrue("3.4", input.read(read5) == chunk5.length);
-				assertTrue("3.5", input.read(read6) == (fakeEnd.length + chunk6.length));
-				assertTrue("3.6", compare(chunk1, read1));
-				//assert("3.7", compare(chunk2, read2));
-				assertTrue("3.8", compare(chunk3, read3));
-				assertTrue("3.9", compare(chunk4, read4));
-				assertTrue("3.10", compare(chunk5, read5));
-				byte[] expected = merge(fakeEnd, chunk6);
-				assertTrue("3.11", compare(expected, read6));
-			} finally {
-				input.close();
-			}
-		} catch (IOException e) {
-			fail("3.20", e);
+		try (SafeChunkyInputStream input = new SafeChunkyInputStream(target)) {
+			byte[] read1 = new byte[chunk1.length];
+			// byte[] read2 = new byte[chunk2.length];
+			byte[] read3 = new byte[chunk3.length];
+			byte[] read4 = new byte[chunk4.length];
+			byte[] read5 = new byte[chunk5.length];
+			byte[] read6 = new byte[fakeEnd.length + chunk6.length];
+			assertEquals(chunk1.length, input.read(read1));
+			// assert("3.1", input.read(read2) == chunk2.length);
+			assertEquals(chunk3.length, input.read(read3));
+			assertEquals(chunk4.length, input.read(read4));
+			assertEquals(chunk5.length, input.read(read5));
+			assertEquals((fakeEnd.length + chunk6.length), input.read(read6));
+			assertTrue(compare(chunk1, read1));
+			// assert("3.7", compare(chunk2, read2));
+			assertTrue(compare(chunk3, read3));
+			assertTrue(compare(chunk4, read4));
+			assertTrue(compare(chunk5, read5));
+			byte[] expected = merge(fakeEnd, chunk6);
+			assertTrue(compare(expected, read6));
 		}
-		Workspace.clear(target); // make sure there was nothing here before
 	}
 
 	/**
@@ -203,53 +183,29 @@ public class SafeChunkyInputOutputStreamTest extends LocalStoreTest {
 	 * not closing the stream to test recovery from failure.
 	 */
 	private void doNothing(SafeChunkyOutputStream output) {
+		streams.add(output);
 	}
 
-	public void testAlmostEmpty() {
-		File target = new File(temp, "target");
+	public void testAlmostEmpty() throws Exception {
 		Workspace.clear(target); // make sure there was nothing here before
-		assertTrue("1.0", !target.exists());
+		assertTrue(!target.exists());
 
 		// open the file but don't write anything.
-		SafeChunkyOutputStream output = null;
-		try {
-			output = new SafeChunkyOutputStream(target);
-		} catch (IOException e) {
-			fail("1.0", e);
-		} finally {
-			if (output != null) {
-				try {
-					output.close();
-				} catch (IOException e) {
-					fail("1.1", e);
-				}
-			}
+		try (SafeChunkyOutputStream output = new SafeChunkyOutputStream(target)) {
+			output.close();
 		}
 
-		DataInputStream input = null;
-		try {
-			input = new DataInputStream(new SafeChunkyInputStream(target));
+		try (DataInputStream input = new DataInputStream(new SafeChunkyInputStream(target))) {
 			input.readUTF();
-			fail("2.0");
+			fail("Should throw EOFException");
 		} catch (EOFException e) {
 			// should hit here
-		} catch (IOException e) {
-			fail("2.1", e);
-		} finally {
-			if (input != null) {
-				try {
-					input.close();
-				} catch (IOException e) {
-					fail("2.2", e);
-				}
-			}
 		}
 	}
 
-	public void testSimple() {
-		File target = new File(temp, "target");
+	public void testSimple() throws Exception {
 		Workspace.clear(target); // make sure there was nothing here before
-		assertTrue("1.0", !target.exists());
+		assertTrue(!target.exists());
 
 		// write chunks
 		byte[] chunk1 = getRandomString().getBytes();
@@ -257,53 +213,38 @@ public class SafeChunkyInputOutputStreamTest extends LocalStoreTest {
 		byte[] chunk3 = getRandomString().getBytes();
 		byte[] chunk4 = getRandomString().getBytes();
 		byte[] chunk5 = getRandomString().getBytes();
-		SafeChunkyOutputStream output = null;
-		try {
-			output = new SafeChunkyOutputStream(target);
-			try {
-				output.write(chunk1);
-				output.succeed();
-				output.write(chunk2);
-				output.succeed();
-				output.write(chunk3);
-				output.succeed();
-				output.write(chunk4);
-				output.succeed();
-				output.write(chunk5);
-				output.succeed();
-			} finally {
-				output.close();
-			}
-		} catch (IOException e) {
-			fail("2.0", e);
+		try (SafeChunkyOutputStream output = new SafeChunkyOutputStream(target)) {
+			output.write(chunk1);
+			output.succeed();
+			output.write(chunk2);
+			output.succeed();
+			output.write(chunk3);
+			output.succeed();
+			output.write(chunk4);
+			output.succeed();
+			output.write(chunk5);
+			output.succeed();
 		}
 
 		// read chunks
-		SafeChunkyInputStream input = null;
-		try {
-			input = new SafeChunkyInputStream(target);
-			try {
-				byte[] read1 = new byte[chunk1.length];
-				byte[] read2 = new byte[chunk2.length];
-				byte[] read3 = new byte[chunk3.length];
-				byte[] read4 = new byte[chunk4.length];
-				byte[] read5 = new byte[chunk5.length];
-				assertTrue("3.0", input.read(read1) == chunk1.length);
-				assertTrue("3.1", input.read(read2) == chunk2.length);
-				assertTrue("3.2", input.read(read3) == chunk3.length);
-				assertTrue("3.3", input.read(read4) == chunk4.length);
-				assertTrue("3.4", input.read(read5) == chunk5.length);
-				assertTrue("3.5", compare(chunk1, read1));
-				assertTrue("3.6", compare(chunk2, read2));
-				assertTrue("3.7", compare(chunk3, read3));
-				assertTrue("3.8", compare(chunk4, read4));
-				assertTrue("3.9", compare(chunk5, read5));
-			} finally {
-				input.close();
-			}
-		} catch (IOException e) {
-			fail("3.10", e);
+		try (SafeChunkyInputStream input = new SafeChunkyInputStream(target)) {
+			byte[] read1 = new byte[chunk1.length];
+			byte[] read2 = new byte[chunk2.length];
+			byte[] read3 = new byte[chunk3.length];
+			byte[] read4 = new byte[chunk4.length];
+			byte[] read5 = new byte[chunk5.length];
+			assertEquals(chunk1.length, input.read(read1));
+			assertEquals(chunk2.length, input.read(read2));
+			assertEquals(chunk3.length, input.read(read3));
+			assertEquals(chunk4.length, input.read(read4));
+			assertEquals(chunk5.length, input.read(read5));
+			assertTrue(compare(chunk1, read1));
+			assertTrue(compare(chunk2, read2));
+			assertTrue(compare(chunk3, read3));
+			assertTrue(compare(chunk4, read4));
+			assertTrue(compare(chunk5, read5));
+		} finally {
+			Workspace.clear(target); // make sure there was nothing here before
 		}
-		Workspace.clear(target); // make sure there was nothing here before
 	}
 }

@@ -72,6 +72,19 @@ public class SafeChunkyOutputStream extends FilterOutputStream {
 		}
 	}
 
+	/**
+	 * Overrides super implementation to allow multiple calls on Java 9+.
+	 * See https://bugs.eclipse.org/bugs/show_bug.cgi?id=530330
+	 *
+	 * {@inheritDoc}
+	 */
+	@Override
+	public void close() throws IOException {
+		try (OutputStream ostream = out) {
+			flush();
+		}
+	}
+
 	@Override
 	public void write(int b) throws IOException {
 		if (!isOpen)
