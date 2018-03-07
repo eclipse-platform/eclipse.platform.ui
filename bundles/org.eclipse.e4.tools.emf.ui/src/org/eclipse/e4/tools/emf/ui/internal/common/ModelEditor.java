@@ -20,6 +20,7 @@ package org.eclipse.e4.tools.emf.ui.internal.common;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -173,6 +174,7 @@ import org.eclipse.e4.ui.services.IServiceConstants;
 import org.eclipse.e4.ui.workbench.UIEvents;
 import org.eclipse.e4.ui.workbench.UIEvents.EventTags;
 import org.eclipse.e4.ui.workbench.modeling.ESelectionService;
+import org.eclipse.emf.common.command.AbstractCommand;
 import org.eclipse.emf.common.command.Command;
 import org.eclipse.emf.common.command.CompoundCommand;
 import org.eclipse.emf.databinding.EMFProperties;
@@ -1731,18 +1733,43 @@ public class ModelEditor implements IGotoObject {
 		}
 
 		private void handleStructureCut() {
-			final Object o = ((IStructuredSelection) viewer.getSelection()).getFirstElement();
-			if (o != null && o instanceof EObject) {
-				final Clipboard clip = new Clipboard(viewer.getControl().getDisplay());
-				clip.setContents(new Object[] { o }, new Transfer[] { MemoryTransfer.getInstance() });
-				clip.dispose();
-				final EObject eObj = (EObject) o;
-				final Command cmd = RemoveCommand.create(getModelProvider().getEditingDomain(), eObj.eContainer(),
-						eObj.eContainingFeature(), eObj);
-				if (cmd.canExecute()) {
-					getModelProvider().getEditingDomain().getCommandStack().execute(cmd);
+
+			// Manage multiple cut objects (bug #532070)
+			Collection<EObject> objectsToCut = new ArrayList<>();
+			final Clipboard clip = new Clipboard(viewer.getControl().getDisplay());
+			for (Object o : ((IStructuredSelection) viewer.getSelection()).toList()) {
+				if (o != null && o instanceof EObject) {
+					objectsToCut.add((EObject) o);
 				}
 			}
+
+			Command cmd = null;
+			if (objectsToCut.size() == 0) {
+				return;
+			} else if (objectsToCut.size() == 1) {
+				// Only 1 object to cut... create a removeCommand
+				EObject o = objectsToCut.iterator().next();
+				cmd = RemoveCommand.create(getModelProvider().getEditingDomain(), o.eContainer(),
+						o.eContainingFeature(), o);
+				((AbstractCommand) cmd).setLabel((messages.ModelEditor_Cut + " " + getObjectNameForCommand(o))); //$NON-NLS-1$
+			} else {
+				// There are more than one object to remove -> Compound command.
+				CompoundCommand cc = new CompoundCommand();
+				cc.setLabel(messages.ModelEditor_CutObjects);
+				for (EObject o : objectsToCut) {
+					cc.append(RemoveCommand.create(getModelProvider().getEditingDomain(), o.eContainer(),
+							o.eContainingFeature(), o));
+				}
+				cmd = cc;
+			}
+
+			if (cmd.canExecute()) {
+				// Now can set the clipboard...
+				clip.setContents(new Object[] { objectsToCut }, new Transfer[] { MemoryTransfer.getInstance() });
+				getModelProvider().getEditingDomain().getCommandStack().execute(cmd);
+			}
+
+			clip.dispose();
 		}
 	}
 
@@ -1967,18 +1994,6 @@ public class ModelEditor implements IGotoObject {
 
 		}
 
-		/**
-		 * compute a valid name for the undo/redo/paste of move commands
-		 *
-		 * @param data
-		 *            the object concerned by the command
-		 * @return a representative string for the object or 'Object' if nothing found
-		 */
-		private String getObjectNameForCommand(Object data) {
-			String clname = (data instanceof EObject) ? ((EObject) data).eClass().getName() : "Object"; //$NON-NLS-1$
-			String dname = (data instanceof MUILabel) ? ((MUILabel) data).getLabel() : ""; //$NON-NLS-1$
-			return clname + " " + dname; //$NON-NLS-1$
-		}
 
 		@Override
 		public boolean validateDrop(Object target, int operation, TransferData transferType) {
@@ -2036,6 +2051,19 @@ public class ModelEditor implements IGotoObject {
 
 			return false;
 		}
+	}
+
+	/**
+	 * compute a valid name for the undo/redo/paste of move commands
+	 *
+	 * @param data
+	 *            the object concerned by the command
+	 * @return a representative string for the object or 'Object' if nothing found
+	 */
+	private String getObjectNameForCommand(Object data) {
+		String clname = (data instanceof EObject) ? ((EObject) data).eClass().getName() : "Object"; //$NON-NLS-1$
+		String dname = (data instanceof MUILabel) ? ((MUILabel) data).getLabel() : ""; //$NON-NLS-1$
+		return clname + " " + dname; //$NON-NLS-1$
 	}
 
 	@Override
