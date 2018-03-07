@@ -98,6 +98,11 @@ public class BuildManager implements ICoreConstants, IManager, ILifecycleListene
 			return name;
 		}
 
+		@Override
+		public ISchedulingRule getRule(int kind, Map<String, String> args) {
+			return null;
+		}
+
 	}
 
 	private static final int TOTAL_BUILD_WORK = Policy.totalWork * 1000;
