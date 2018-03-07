@@ -155,6 +155,7 @@ import org.eclipse.e4.ui.dialogs.filteredtree.PatternFilter;
 import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.MApplicationElement;
 import org.eclipse.e4.ui.model.application.commands.impl.CommandsPackageImpl;
+import org.eclipse.e4.ui.model.application.impl.ApplicationElementImpl;
 import org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl;
 import org.eclipse.e4.ui.model.application.ui.MContext;
 import org.eclipse.e4.ui.model.application.ui.MElementContainer;
@@ -1640,6 +1641,7 @@ public class ModelEditor implements IGotoObject {
 			}
 
 			CompoundCommand cc = new CompoundCommand();
+			Object pastedObject = null; // The single pasted object if single paste (for undo/redo message)
 			for (EObject eObject : toCopy) {
 				if (!ModelUtils.getTypeArgument(eObject.eClass(), feature.getEGenericType()).isInstance(eObject)) {
 					// the object to paste does not fit into the target feature
@@ -1657,6 +1659,7 @@ public class ModelEditor implements IGotoObject {
 					final Command cmd = AddCommand.create(getModelProvider().getEditingDomain(), container, feature,
 							el);
 					if (cmd.canExecute()) {
+						pastedObject = el;
 						cc.append(cmd);
 					}
 					return;
@@ -1664,6 +1667,7 @@ public class ModelEditor implements IGotoObject {
 
 				final Command cmd = AddCommand.create(getModelProvider().getEditingDomain(), container, feature,
 						eObject);
+				pastedObject = eObject;
 				if (cmd.canExecute()) {
 					cc.append(cmd);
 					if (isLiveModel()) {
@@ -1675,6 +1679,12 @@ public class ModelEditor implements IGotoObject {
 				}
 			}
 			if (!cc.isEmpty()) {
+				if (cc.getCommandList().size() == 1) {
+					cc.setLabel(messages.ModelEditor_Paste + " " + getObjectNameForCommand(pastedObject)); //$NON-NLS-1$
+				} else {
+					cc.setLabel(messages.ModelEditor_PasteObjects);
+				}
+
 				getModelProvider().getEditingDomain().getCommandStack().execute(cc);
 			}
 		}
@@ -1751,7 +1761,7 @@ public class ModelEditor implements IGotoObject {
 				EObject o = objectsToCut.iterator().next();
 				cmd = RemoveCommand.create(getModelProvider().getEditingDomain(), o.eContainer(),
 						o.eContainingFeature(), o);
-				((AbstractCommand) cmd).setLabel((messages.ModelEditor_Cut + " " + getObjectNameForCommand(o))); //$NON-NLS-1$
+				((AbstractCommand) cmd).setLabel(messages.ModelEditor_Cut + " " + getObjectNameForCommand(o)); //$NON-NLS-1$
 			} else {
 				// There are more than one object to remove -> Compound command.
 				CompoundCommand cc = new CompoundCommand();
@@ -2061,7 +2071,8 @@ public class ModelEditor implements IGotoObject {
 	 * @return a representative string for the object or 'Object' if nothing found
 	 */
 	private String getObjectNameForCommand(Object data) {
-		String clname = (data instanceof EObject) ? ((EObject) data).eClass().getName() : "Object"; //$NON-NLS-1$
+		String clname = (data instanceof ApplicationElementImpl) ? ((ApplicationElementImpl) data).eClass().getName()
+				: "Object"; //$NON-NLS-1$
 		String dname = (data instanceof MUILabel) ? ((MUILabel) data).getLabel() : ""; //$NON-NLS-1$
 		return clname + " " + dname; //$NON-NLS-1$
 	}

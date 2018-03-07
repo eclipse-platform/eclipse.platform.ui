@@ -113,6 +113,8 @@ public class Messages {
 	public String ModelEditor_Move;
 	public String ModelEditor_Cut;
 	public String ModelEditor_CutObjects;
+	public String ModelEditor_Paste;
+	public String ModelEditor_PasteObjects;
 	public String ModelTooling_Common_RuntimeContributionInstance;
 	public String ModelTooling_Common_RuntimeWidgetTree;
 
