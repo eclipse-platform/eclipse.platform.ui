@@ -210,7 +210,12 @@ public class InlinedAnnotationSupport implements StyledTextLineSpacingProvider {
 		@SuppressWarnings("boxing")
 		boolean isInVisibleLines(int offset) {
 			if (endOffset == null) {
-				endOffset= getExclusiveBottomIndexEndOffset();
+				Display display= fViewer.getTextWidget().getDisplay();
+				if (display.getThread() == Thread.currentThread()) {
+					endOffset= getExclusiveBottomIndexEndOffset();
+				} else {
+					display.syncExec(() -> endOffset= getExclusiveBottomIndexEndOffset());
+				}
 			}
 			return offset >= startOffset && offset <= endOffset;
 		}
