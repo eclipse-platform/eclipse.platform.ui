@@ -49,8 +49,6 @@ public class UndoAction extends Action {
 		}
 	}
 
-	private static int cpt = 0;
-
 	private void update() {
 		if (resource.getEditingDomain().getCommandStack().canUndo()) {
 			Command undoCommand = resource.getEditingDomain().getCommandStack()
