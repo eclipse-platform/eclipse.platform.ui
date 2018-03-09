@@ -1433,7 +1433,7 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 				if (getShell() != null) {
 					fProgressMonitorPart.getParent().setVisible(false);
 					fProgressMonitorPart.removeFromCancelComponent(null);
-					if (fLastControl != null) {
+					if (fLastControl != null && !fLastControl.isDisposed()) {
 						fLastControl.setFocus();
 					}
 				}
