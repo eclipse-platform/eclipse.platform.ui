@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2013, 2015 IBM Corporation and others.
+ * Copyright (c) 2013, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -54,7 +54,7 @@ public class SWTPartRendererTest {
 		stylingEngineExecutedMethods = new HashMap<String, Object[]>();
 
 		context = EclipseContextFactory.create();
-		context.set(IStylingEngine.SERVICE_NAME, Proxy.newProxyInstance(
+		context.set(IStylingEngine.class, (IStylingEngine) Proxy.newProxyInstance(
 				getClass().getClassLoader(),
 				new Class<?>[] { IStylingEngine.class },
 				new InvocationHandler() {
@@ -110,7 +110,7 @@ public class SWTPartRendererTest {
 	public void testSetCSSInfoWhenNoCSSStylingEngineInContext()
 			throws Exception {
 		Button button = new Button(shell, SWT.PUSH);
-		context.remove(IStylingEngine.SERVICE_NAME);
+		context.remove(IStylingEngine.class);
 
 		renderer.setCSSInfo(part, button);
 		Object[] setClassnameAndIdParams = stylingEngineExecutedMethods

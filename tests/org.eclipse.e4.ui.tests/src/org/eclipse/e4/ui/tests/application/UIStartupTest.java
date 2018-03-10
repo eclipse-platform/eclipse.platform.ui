@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2015 IBM Corporation and others.
+ * Copyright (c) 2009, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -172,7 +172,7 @@ public abstract class UIStartupTest extends HeadlessApplicationTest {
 				contexts[0] = UIStartupTest.super.createApplicationContext();
 				contexts[0].set(IResourceUtilities.class.getName(),
 						new ResourceUtility());
-				contexts[0].set(IStylingEngine.class.getName(),
+				contexts[0].set(IStylingEngine.class,
 						new IStylingEngine() {
 							@Override
 							public void style(Object widget) {

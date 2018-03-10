@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2016 IBM Corporation and others.
+ * Copyright (c) 2008, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -1255,7 +1255,7 @@ public class PartRenderingEngine implements IPresentationEngine {
 				.getBoolean("org.eclipse.e4.ui.workbench.renderers.swt", ENABLED_THEME_KEY, true, contexts);
 
 		if ("none".equals(cssTheme) || (!enableThemePreference)) {
-			appContext.set(IStylingEngine.SERVICE_NAME, new IStylingEngine() {
+			appContext.set(IStylingEngine.class, new IStylingEngine() {
 				@Override
 				public void setClassname(Object widget, String classname) {
 					WidgetElement.setCSSClass((Widget) widget, classname);
@@ -1292,7 +1292,7 @@ public class PartRenderingEngine implements IPresentationEngine {
 				themeEngine.registerResourceLocator(new OSGiResourceLocator(cssResourcesURI));
 			}
 
-			appContext.set(IStylingEngine.SERVICE_NAME, new IStylingEngine() {
+			appContext.set(IStylingEngine.class, new IStylingEngine() {
 				@Override
 				public void setClassname(Object widget, String classname) {
 					WidgetElement.setCSSClass((Widget) widget, classname);
@@ -1335,7 +1335,7 @@ public class PartRenderingEngine implements IPresentationEngine {
 			}
 			// FIXME: is this needed?
 			display.setData("org.eclipse.e4.ui.css.context", appContext); //$NON-NLS-1$
-			appContext.set(IStylingEngine.SERVICE_NAME, new IStylingEngine() {
+			appContext.set(IStylingEngine.class, new IStylingEngine() {
 				@Override
 				public void setClassname(Object widget, String classname) {
 					WidgetElement.setCSSClass((Widget) widget, classname);
