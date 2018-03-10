@@ -106,7 +106,7 @@ public class KeyAssistDialog extends PopupDialog {
 	 *            The key binding listener for the workbench; must not be <code>null</code>.
 	 */
 	public KeyAssistDialog(IEclipseContext context, KeyBindingDispatcher associatedKeyboard) {
-		super((Shell) null, PopupDialog.INFOPOPUP_SHELLSTYLE, true, false, false, false, null, null);
+		super((Shell) null, PopupDialog.INFOPOPUP_SHELLSTYLE, true, false, false, false, false, null, null);
 		//super(null, PopupDialog.INFOPOPUP_SHELLSTYLE, true, false, false, false, false, DIALOG_TITLE, getKeySequenceString()); //$NON-NLS-1$
 
 		this.context = context;
