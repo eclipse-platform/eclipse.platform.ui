@@ -85,7 +85,7 @@ public class ListBinding extends Binding {
 	@Override
 	protected void postInit() {
 		if (modelToTarget.getUpdatePolicy() == UpdateListStrategy.POLICY_UPDATE) {
-			getModel().getRealm().exec(() -> {
+			execAfterDisposalCheck(getModel(), () -> {
 				((IObservableList) getModel()).addListChangeListener(modelChangeListener);
 				updateModelToTarget();
 			});
@@ -94,7 +94,7 @@ public class ListBinding extends Binding {
 		}
 
 		if (targetToModel.getUpdatePolicy() == UpdateListStrategy.POLICY_UPDATE) {
-			getTarget().getRealm().exec(() -> {
+			execAfterDisposalCheck(getTarget(), () -> {
 				((IObservableList) getTarget()).addListChangeListener(targetChangeListener);
 				if (modelToTarget.getUpdatePolicy() == UpdateListStrategy.POLICY_NEVER) {
 					// we have to sync from target to model, if the other
@@ -113,7 +113,7 @@ public class ListBinding extends Binding {
 	@Override
 	public void updateModelToTarget() {
 		final IObservableList modelList = (IObservableList) getModel();
-		modelList.getRealm().exec(() -> {
+		execAfterDisposalCheck(modelList, () -> {
 			ListDiff diff = Diffs.computeListDiff(Collections.EMPTY_LIST, modelList);
 			doUpdate(modelList, (IObservableList) getTarget(), diff, modelToTarget, true, true);
 		});
@@ -122,7 +122,7 @@ public class ListBinding extends Binding {
 	@Override
 	public void updateTargetToModel() {
 		final IObservableList targetList = (IObservableList) getTarget();
-		targetList.getRealm().exec(() -> {
+		execAfterDisposalCheck(targetList, () -> {
 			ListDiff diff = Diffs.computeListDiff(Collections.EMPTY_LIST, targetList);
 			doUpdate(targetList, (IObservableList) getModel(), diff, targetToModel, true, true);
 		});
@@ -156,7 +156,7 @@ public class ListBinding extends Binding {
 					 */
 					diff.getDifferences();
 				}
-				destination.getRealm().exec(() -> {
+				execAfterDisposalCheck(destination, () -> {
 					if (destination == getTarget()) {
 						updatingTarget = true;
 					} else {

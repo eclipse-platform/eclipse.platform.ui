@@ -87,7 +87,7 @@ public class SetBinding extends Binding {
 	@Override
 	protected void postInit() {
 		if (modelToTarget.getUpdatePolicy() == UpdateSetStrategy.POLICY_UPDATE) {
-			getModel().getRealm().exec(() -> {
+			execAfterDisposalCheck(getModel(), () -> {
 				((IObservableSet) getModel()).addSetChangeListener(modelChangeListener);
 				updateModelToTarget();
 			});
@@ -96,7 +96,7 @@ public class SetBinding extends Binding {
 		}
 
 		if (targetToModel.getUpdatePolicy() == UpdateSetStrategy.POLICY_UPDATE) {
-			getTarget().getRealm().exec(() -> {
+			execAfterDisposalCheck(getTarget(), () -> {
 				((IObservableSet) getTarget()).addSetChangeListener(targetChangeListener);
 				if (modelToTarget.getUpdatePolicy() == UpdateSetStrategy.POLICY_NEVER) {
 					// we have to sync from target to model, if the other
@@ -114,7 +114,7 @@ public class SetBinding extends Binding {
 	@Override
 	public void updateModelToTarget() {
 		final IObservableSet modelSet = (IObservableSet) getModel();
-		modelSet.getRealm().exec(() -> {
+		execAfterDisposalCheck(modelSet, () -> {
 			SetDiff diff = Diffs.computeSetDiff(Collections.EMPTY_SET, modelSet);
 			doUpdate(modelSet, (IObservableSet) getTarget(), diff, modelToTarget, true, true);
 		});
@@ -123,7 +123,7 @@ public class SetBinding extends Binding {
 	@Override
 	public void updateTargetToModel() {
 		final IObservableSet targetSet = (IObservableSet) getTarget();
-		targetSet.getRealm().exec(() -> {
+		execAfterDisposalCheck(targetSet, () -> {
 			SetDiff diff = Diffs.computeSetDiff(Collections.EMPTY_SET, targetSet);
 			doUpdate(targetSet, (IObservableSet) getModel(), diff, targetToModel, true, true);
 		});
@@ -160,7 +160,7 @@ public class SetBinding extends Binding {
 			diff.getAdditions();
 			diff.getRemovals();
 		}
-		destination.getRealm().exec(() -> {
+		execAfterDisposalCheck(destination, () -> {
 			if (destination == getTarget()) {
 				updatingTarget = true;
 			} else {
