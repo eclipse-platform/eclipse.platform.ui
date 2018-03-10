@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2017 IBM Corporation and others.
+ * Copyright (c) 2006, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -69,7 +69,11 @@ public abstract class Binding extends ValidationStatusProvider {
 		target.addDisposeListener(disposeListener);
 		model.addDisposeListener(disposeListener);
 		preInit();
-		context.addBinding(this);
+		if (context.getValidationRealm().isCurrent()) {
+			context.addBinding(this);
+		} else {
+			context.getValidationRealm().exec(() -> context.addBinding(Binding.this));
+		}
 		postInit();
 	}
 

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2015, 2016 Conrad Groth and others.
+ * Copyright (c) 2015, 2018 Conrad Groth and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,10 +10,12 @@
  ******************************************************************************/
 package org.eclipse.core.tests.internal.databinding;
 
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicReference;
 
 import org.eclipse.core.databinding.DataBindingContext;
 import org.eclipse.core.databinding.observable.list.ObservableList;
@@ -88,5 +90,29 @@ public class DifferentRealmsBindingTest {
 		targetAndModelRealm.processQueue();
 		targetAndModelRealm.unblock();
 		assertTrue(errorStatusses.toString(), errorStatusses.isEmpty());
+	}
+
+	@Test
+	public void testBindingCanBeCreatedOutsideOfValidationRealm() throws Exception {
+		final ObservableSet<String> model = new WritableSet<>(targetAndModelRealm);
+		final ObservableSet<String> target = new WritableSet<>(targetAndModelRealm);
+
+		targetAndModelRealm.unblock();
+
+		AtomicReference<Exception> exceptionOccured = new AtomicReference<>();
+		Thread t = new Thread() {
+			@Override
+			public void run() {
+				try {
+					dbc.bindSet(target, model);
+				} catch (Exception e) {
+					exceptionOccured.set(e);
+				}
+			}
+		};
+		t.start();
+		t.join(1000);
+
+		assertNull(exceptionOccured.get());
 	}
 }
