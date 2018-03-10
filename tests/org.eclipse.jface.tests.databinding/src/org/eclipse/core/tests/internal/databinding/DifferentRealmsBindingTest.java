@@ -14,14 +14,23 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.atomic.AtomicReference;
 
 import org.eclipse.core.databinding.DataBindingContext;
+import org.eclipse.core.databinding.observable.list.ComputedList;
+import org.eclipse.core.databinding.observable.list.IObservableList;
 import org.eclipse.core.databinding.observable.list.ObservableList;
 import org.eclipse.core.databinding.observable.list.WritableList;
+import org.eclipse.core.databinding.observable.set.ComputedSet;
+import org.eclipse.core.databinding.observable.set.IObservableSet;
 import org.eclipse.core.databinding.observable.set.ObservableSet;
 import org.eclipse.core.databinding.observable.set.WritableSet;
+import org.eclipse.core.databinding.observable.value.ComputedValue;
+import org.eclipse.core.databinding.observable.value.IObservableValue;
+import org.eclipse.core.databinding.observable.value.WritableValue;
 import org.eclipse.core.databinding.util.ILogger;
 import org.eclipse.core.databinding.util.Policy;
 import org.eclipse.core.runtime.IStatus;
@@ -114,5 +123,65 @@ public class DifferentRealmsBindingTest {
 		t.join(1000);
 
 		assertNull(exceptionOccured.get());
+	}
+
+	@Test
+	public void testBindComputedListToWritableListInDifferentRealm() {
+		// The validationRealm is the current realm.
+		final IObservableValue<String> modelValue = new WritableValue<>(validationRealm);
+		final IObservableList<String> model = new ComputedList<String>(validationRealm) {
+			@Override
+			protected List<String> calculate() {
+				return Collections.singletonList(modelValue.getValue());
+			}
+		};
+		final IObservableList<String> target = new WritableList<>(targetAndModelRealm);
+
+		dbc.bindList(target, model);
+		modelValue.setValue("Test");
+		targetAndModelRealm.waitUntilBlocking();
+		targetAndModelRealm.processQueue();
+		targetAndModelRealm.unblock();
+		assertTrue(errorStatusses.toString(), errorStatusses.isEmpty());
+	}
+
+	@Test
+	public void testBindComputedSetToWritableSetInDifferentRealm() {
+		// The validationRealm is the current realm.
+		final IObservableValue<String> modelValue = new WritableValue<>(validationRealm);
+		final IObservableSet<String> model = new ComputedSet<String>(validationRealm) {
+			@Override
+			protected Set<String> calculate() {
+				return Collections.singleton(modelValue.getValue());
+			}
+		};
+		final IObservableSet<String> target = new WritableSet<>(targetAndModelRealm);
+
+		dbc.bindSet(target, model);
+		modelValue.setValue("Test");
+		targetAndModelRealm.waitUntilBlocking();
+		targetAndModelRealm.processQueue();
+		targetAndModelRealm.unblock();
+		assertTrue(errorStatusses.toString(), errorStatusses.isEmpty());
+	}
+
+	@Test
+	public void testBindComputedValueToWritableValueInDifferentRealm() {
+		// The validationRealm is the current realm.
+		final IObservableValue<String> modelValue = new WritableValue<>(validationRealm);
+		final IObservableValue<String> model = new ComputedValue<String>(validationRealm) {
+			@Override
+			protected String calculate() {
+				return modelValue.getValue();
+			}
+		};
+		final IObservableValue<String> target = new WritableValue<>(targetAndModelRealm);
+
+		dbc.bindValue(target, model);
+		modelValue.setValue("Test");
+		targetAndModelRealm.waitUntilBlocking();
+		targetAndModelRealm.processQueue();
+		targetAndModelRealm.unblock();
+		assertTrue(errorStatusses.toString(), errorStatusses.isEmpty());
 	}
 }

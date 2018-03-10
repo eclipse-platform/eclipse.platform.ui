@@ -152,6 +152,14 @@ public class SetBinding extends Binding {
 			return;
 		if (policy == UpdateSetStrategy.POLICY_ON_REQUEST && !explicit)
 			return;
+		if (!destination.getRealm().isCurrent()) {
+			/*
+			 * If the destination is different from the source realm, we have to avoid lazy
+			 * diff calculation.
+			 */
+			diff.getAdditions();
+			diff.getRemovals();
+		}
 		destination.getRealm().exec(() -> {
 			if (destination == getTarget()) {
 				updatingTarget = true;

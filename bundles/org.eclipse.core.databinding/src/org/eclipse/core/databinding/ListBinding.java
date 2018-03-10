@@ -149,6 +149,13 @@ public class ListBinding extends Binding {
 		final int policy = updateListStrategy.getUpdatePolicy();
 		if (policy != UpdateListStrategy.POLICY_NEVER) {
 			if (policy != UpdateListStrategy.POLICY_ON_REQUEST || explicit) {
+				if (!destination.getRealm().isCurrent()) {
+					/*
+					 * If the destination is different from the source realm, we have to avoid lazy
+					 * diff calculation.
+					 */
+					diff.getDifferences();
+				}
 				destination.getRealm().exec(() -> {
 					if (destination == getTarget()) {
 						updatingTarget = true;

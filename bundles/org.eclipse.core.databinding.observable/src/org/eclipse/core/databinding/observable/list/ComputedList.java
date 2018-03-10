@@ -255,15 +255,14 @@ public abstract class ComputedList<E> extends AbstractObservableList<E> {
 			// Fire the "dirty" event. This implementation recomputes the new
 			// list lazily.
 			fireListChange(new ListDiff<E>() {
-				List<ListDiffEntry<E>> differences;
+				ListDiffEntry<E>[] differences;
 
 				@Override
 				public ListDiffEntry<E>[] getDifferences() {
-					if (differences == null)
-						return Diffs.computeListDiff(oldList, getList())
-								.getDifferences();
-					return differences.toArray(new ListDiffEntry[differences
-							.size()]);
+					if (differences == null) {
+						differences = Diffs.computeListDiff(oldList, getList()).getDifferences();
+					}
+					return differences;
 				}
 			});
 		}
