@@ -16,8 +16,8 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Set;
+import java.util.Map.Entry;
 import java.util.function.Consumer;
 
 import org.eclipse.swt.SWT;
@@ -29,6 +29,9 @@ import org.eclipse.swt.events.MouseListener;
 import org.eclipse.swt.events.MouseMoveListener;
 import org.eclipse.swt.events.MouseTrackListener;
 import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.graphics.Device;
+import org.eclipse.swt.graphics.Font;
+import org.eclipse.swt.graphics.FontData;
 import org.eclipse.swt.graphics.GlyphMetrics;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Display;
@@ -50,11 +53,11 @@ import org.eclipse.jface.text.Position;
 import org.eclipse.jface.text.TextPresentation;
 import org.eclipse.jface.text.source.Annotation;
 import org.eclipse.jface.text.source.AnnotationPainter;
-import org.eclipse.jface.text.source.AnnotationPainter.IDrawingStrategy;
 import org.eclipse.jface.text.source.IAnnotationModel;
 import org.eclipse.jface.text.source.IAnnotationModelExtension;
 import org.eclipse.jface.text.source.IAnnotationModelExtension2;
 import org.eclipse.jface.text.source.ISourceViewer;
+import org.eclipse.jface.text.source.AnnotationPainter.IDrawingStrategy;
 
 /**
  * Support to draw inlined annotations:
@@ -77,6 +80,11 @@ public class InlinedAnnotationSupport implements StyledTextLineSpacingProvider {
 	 * The annotation inlined strategy ID.
 	 */
 	private static final String INLINED_STRATEGY_ID= "inlined"; //$NON-NLS-1$
+
+	/**
+	 * The StyledText font normal, bold, italic and bold itlaic both.
+	 */
+	private Font regularFont, boldFont, italicFont, boldItalicFont;
 
 	/**
 	 * Listener used to update {@link GlyphMetrics} width style for {@link LineContentAnnotation}.
@@ -388,6 +396,7 @@ public class InlinedAnnotationSupport implements StyledTextLineSpacingProvider {
 			visibleLines.uninstall();
 			visibleLines= null;
 		}
+		disposeFont();
 		fViewer= null;
 		fPainter= null;
 	}
@@ -693,5 +702,68 @@ public class InlinedAnnotationSupport implements StyledTextLineSpacingProvider {
 	 */
 	boolean isInVisibleLines(int offset) {
 		return visibleLines.isInVisibleLines(offset);
+	}
+
+	/**
+	 * Returns the font according the specified <code>style</code> that the receiver will use to
+	 * paint textual information.
+	 *
+	 * @param style the style of Font widget to get.
+	 * @return the receiver's font according the specified <code>style</code>
+	 *
+	 */
+	Font getFont(int style) {
+		StyledText styledText= fViewer != null ? fViewer.getTextWidget() : null;
+		if (styledText == null) {
+			return null;
+		}
+		if (!styledText.getFont().equals(regularFont)) {
+			disposeFont();
+			regularFont= styledText.getFont();
+		}
+		Device device= styledText.getDisplay();
+		switch (style) {
+			case SWT.BOLD:
+				if (boldFont != null)
+					return boldFont;
+				return boldFont= new Font(device, getFontData(style));
+			case SWT.ITALIC:
+				if (italicFont != null)
+					return italicFont;
+				return italicFont= new Font(device, getFontData(style));
+			case SWT.BOLD | SWT.ITALIC:
+				if (boldItalicFont != null)
+					return boldItalicFont;
+				return boldItalicFont= new Font(device, getFontData(style));
+			default:
+				return regularFont;
+		}
+	}
+
+	/**
+	 * Returns the font data array according the given style.
+	 *
+	 * @param style the style
+	 * @return the font data array according the given style.
+	 */
+	FontData[] getFontData(int style) {
+		FontData[] fontDatas= regularFont.getFontData();
+		for (int i= 0; i < fontDatas.length; i++) {
+			fontDatas[i].setStyle(style);
+		}
+		return fontDatas;
+	}
+
+	/**
+	 * Dispose the font.
+	 */
+	void disposeFont() {
+		if (boldFont != null)
+			boldFont.dispose();
+		if (italicFont != null)
+			italicFont.dispose();
+		if (boldItalicFont != null)
+			boldItalicFont.dispose();
+		boldFont= italicFont= boldItalicFont= null;
 	}
 }

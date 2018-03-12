@@ -200,6 +200,7 @@ class InlinedAnnotationDrawingStrategy implements IDrawingStrategy {
 					if (style.foreground != null) {
 						gc.setForeground(style.foreground);
 					}
+					gc.setFont(annotation.getFont(style.fontStyle));
 				}
 				gc.drawString(s, charX, charY, true);
 			}

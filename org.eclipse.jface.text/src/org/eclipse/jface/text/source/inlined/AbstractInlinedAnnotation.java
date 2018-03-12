@@ -16,6 +16,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.GC;
 
 import org.eclipse.jface.text.ITextViewerExtension5;
@@ -177,5 +178,17 @@ public abstract class AbstractInlinedAnnotation extends Annotation {
 	 */
 	protected boolean isInVisibleLines(int offset) {
 		return support.isInVisibleLines(offset);
+	}
+
+	/**
+	 * Returns the font according the specified <code>style</code> that the receiver will use to
+	 * paint textual information.
+	 *
+	 * @param style the style of Font widget to get.
+	 * @return the receiver's font according the specified <code>style</code>
+	 *
+	 */
+	protected Font getFont(int style) {
+		return support.getFont(style);
 	}
 }
