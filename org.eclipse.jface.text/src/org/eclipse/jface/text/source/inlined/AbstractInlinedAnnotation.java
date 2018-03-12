@@ -122,7 +122,7 @@ public abstract class AbstractInlinedAnnotation extends Annotation {
 	public void draw(GC gc, StyledText textWidget, int offset, int length, Color color, int x, int y) {
 		gc.setForeground(color);
 		gc.setBackground(textWidget.getBackground());
-		gc.drawText(getText(), x, y);
+		gc.drawString(getText(), x, y, true);
 	}
 
 	/**

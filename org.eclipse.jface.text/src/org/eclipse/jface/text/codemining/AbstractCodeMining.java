@@ -140,7 +140,7 @@ public abstract class AbstractCodeMining implements ICodeMining {
 	@Override
 	public Point draw(GC gc, StyledText textWidget, Color color, int x, int y) {
 		String title= getLabel() != null ? getLabel() : "no command"; //$NON-NLS-1$
-		gc.drawText(title, x, y);
+		gc.drawString(title, x, y, true);
 		return gc.stringExtent(title);
 	}
 
