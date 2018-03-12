@@ -13,7 +13,7 @@
  * Steven Spungin <steven@spungin.tv> - Bug 396902, 431755, 431735, 424730, 424730, 391089, 437236, 437552, Ongoing
  * Maintenance
  * Simon Scholz <simon.scholz@vogella.com> - Bug 475365
- * Olivier Prouvost <olivier.prouvost@opcoach.com> - Bug 472706, 429684
+ * Olivier Prouvost <olivier.prouvost@opcoach.com> - Bug 472706, 429684, 531451
  * Dmitry Spiridenok <d.spiridenok@gmail.com> - Bug 429684
  ******************************************************************************/
 package org.eclipse.e4.tools.emf.ui.internal.common;
@@ -456,7 +456,7 @@ public class ModelEditor implements IGotoObject {
 		tabItemTree.setControl(createFormTab(editorTabFolder));
 		tabItemTree.setImage(resourcePool.getImageUnchecked(ResourceProvider.IMG_Obj16_application_form));
 
-		tab_list_show(true);
+		tabListShow(true);
 
 		tabItemXmi = new CTabItem(editorTabFolder, SWT.NONE);
 		tabItemXmi.setText(messages.ModelEditor_XMI);
@@ -1290,7 +1290,7 @@ public class ModelEditor implements IGotoObject {
 		registerEditor(FragmentPackageImpl.Literals.STRING_MODEL_FRAGMENT, StringModelFragment.class);
 	}
 
-	public void tab_list_show(Boolean show) {
+	public void tabListShow(Boolean show) {
 		if (editorTabFolder == null) {
 			return;
 		}
@@ -1522,8 +1522,6 @@ public class ModelEditor implements IGotoObject {
 		if (clipboardService != null) {
 			clipboardService.setHandler(clipboardHandler);
 		}
-		// See bug 432095.
-		// viewer.getControl().setFocus();
 	}
 
 	public void setHeaderTitle(String title) {
@@ -1643,7 +1641,7 @@ public class ModelEditor implements IGotoObject {
 			CompoundCommand cc = new CompoundCommand();
 			Object pastedObject = null; // The single pasted object if single paste (for undo/redo message)
 			for (EObject eObject : toCopy) {
-				if (!ModelUtils.getTypeArgument(eObject.eClass(), feature.getEGenericType()).isInstance(eObject)) {
+				if (!isValidTarget(parent, eObject, false)) {
 					// the object to paste does not fit into the target feature
 					continue;
 				}
@@ -1754,7 +1752,7 @@ public class ModelEditor implements IGotoObject {
 			}
 
 			Command cmd = null;
-			if (objectsToCut.size() == 0) {
+			if (objectsToCut.isEmpty()) {
 				return;
 			} else if (objectsToCut.size() == 1) {
 				// Only 1 object to cut... create a removeCommand
@@ -2010,13 +2008,13 @@ public class ModelEditor implements IGotoObject {
 			boolean rv = true;
 			if (getSelectedObject() instanceof MApplicationElement || getSelectedObject() instanceof MModelFragment) {
 				if (getCurrentLocation() == LOCATION_ON) {
-					rv = isValidDrop(target, getSelectedObject(), false);
+					rv = isValidTarget(target, getSelectedObject(), false);
 				} else if (getCurrentLocation() == LOCATION_AFTER || getCurrentLocation() == LOCATION_BEFORE) {
 					TreeItem item = (TreeItem) getCurrentEvent().item;
 					if (item != null) {
 						item = item.getParentItem();
 						if (item != null) {
-							rv = isValidDrop(item.getData(), getSelectedObject(), true);
+							rv = isValidTarget(item.getData(), getSelectedObject(), true);
 						}
 					}
 				}
@@ -2025,43 +2023,52 @@ public class ModelEditor implements IGotoObject {
 			return rv;
 		}
 
-		private boolean isValidDrop(Object target, Object instance, boolean isIndex) {
-			if (target instanceof MElementContainer<?>) {
-				@SuppressWarnings("unchecked")
-				final MElementContainer<MUIElement> container = (MElementContainer<MUIElement>) target;
+	}
 
-				if (isIndex || !container.getChildren().contains(instance)) {
-					final EClassifier classifier = ModelUtils.getTypeArgument(((EObject) container).eClass(),
-							UiPackageImpl.Literals.ELEMENT_CONTAINER__CHILDREN.getEGenericType());
+	/** This method checks if the target object is a valid target for the current instance.
+	 *  It used both for paste and for drag and drop behavior
+	 * @param target  the target object where instance should be pasted of dropped
+	 * @param instance the instance of object to be pasted or dropped
+	 * @param isIndex if true, means that target is an object in a container
+	 * @return
+	 */
+	private boolean isValidTarget(Object target, Object instance, boolean isIndex) {
+		if (target instanceof MElementContainer<?>) {
+			@SuppressWarnings("unchecked")
+			final MElementContainer<MUIElement> container = (MElementContainer<MUIElement>) target;
+
+			if (isIndex || !container.getChildren().contains(instance)) {
+				final EClassifier classifier = ModelUtils.getTypeArgument(((EObject) container).eClass(),
+						UiPackageImpl.Literals.ELEMENT_CONTAINER__CHILDREN.getEGenericType());
+				return classifier.isInstance(instance);
+			}
+		} else if (target instanceof VirtualEntry<?>) {
+			@SuppressWarnings("unchecked")
+			final VirtualEntry<Object> vTarget = (VirtualEntry<Object>) target;
+			if (isIndex || !vTarget.getList().contains(instance)) {
+				if (vTarget.getProperty() instanceof IEMFProperty) {
+					final EStructuralFeature feature = ((IEMFProperty) vTarget.getProperty())
+							.getStructuralFeature();
+					final EObject parent = (EObject) vTarget.getOriginalParent();
+					final EClassifier classifier = ModelUtils.getTypeArgument(parent.eClass(),
+							feature.getEGenericType());
 					return classifier.isInstance(instance);
 				}
-			} else if (target instanceof VirtualEntry<?>) {
-				@SuppressWarnings("unchecked")
-				final VirtualEntry<Object> vTarget = (VirtualEntry<Object>) target;
-				if (isIndex || !vTarget.getList().contains(instance)) {
-					if (vTarget.getProperty() instanceof IEMFProperty) {
-						final EStructuralFeature feature = ((IEMFProperty) vTarget.getProperty())
-								.getStructuralFeature();
-						final EObject parent = (EObject) vTarget.getOriginalParent();
-						final EClassifier classifier = ModelUtils.getTypeArgument(parent.eClass(),
-								feature.getEGenericType());
-						return classifier.isInstance(instance);
-					}
 
-				}
-			} else if (target instanceof EObject) {
-				final EObject eObj = (EObject) target;
-				for (final EStructuralFeature f : eObj.eClass().getEAllStructuralFeatures()) {
-					final EClassifier cl = ModelUtils.getTypeArgument(eObj.eClass(), f.getEGenericType());
-					if (cl.isInstance(instance)) {
-						return true;
-					}
+			}
+		} else if (target instanceof EObject) {
+			final EObject eObj = (EObject) target;
+			for (final EStructuralFeature f : eObj.eClass().getEAllStructuralFeatures()) {
+				final EClassifier cl = ModelUtils.getTypeArgument(eObj.eClass(), f.getEGenericType());
+				if (cl.isInstance(instance)) {
+					return true;
 				}
 			}
-
-			return false;
 		}
+
+		return false;
 	}
+
 
 	/**
 	 * compute a valid name for the undo/redo/paste of move commands
@@ -2114,7 +2121,6 @@ public class ModelEditor implements IGotoObject {
 			default:
 				break;
 			}
-			// }
 		}
 	}
 
