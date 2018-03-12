@@ -16,8 +16,8 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.Map.Entry;
+import java.util.Set;
 import java.util.function.Consumer;
 
 import org.eclipse.swt.SWT;
@@ -53,11 +53,11 @@ import org.eclipse.jface.text.Position;
 import org.eclipse.jface.text.TextPresentation;
 import org.eclipse.jface.text.source.Annotation;
 import org.eclipse.jface.text.source.AnnotationPainter;
+import org.eclipse.jface.text.source.AnnotationPainter.IDrawingStrategy;
 import org.eclipse.jface.text.source.IAnnotationModel;
 import org.eclipse.jface.text.source.IAnnotationModelExtension;
 import org.eclipse.jface.text.source.IAnnotationModelExtension2;
 import org.eclipse.jface.text.source.ISourceViewer;
-import org.eclipse.jface.text.source.AnnotationPainter.IDrawingStrategy;
 
 /**
  * Support to draw inlined annotations:
@@ -106,18 +106,9 @@ public class InlinedAnnotationSupport implements StyledTextLineSpacingProvider {
 					.forEachRemaining(annotation -> {
 						if (annotation instanceof LineContentAnnotation) {
 							LineContentAnnotation ann= (LineContentAnnotation) annotation;
-							Position position= ann.getPosition();
-							if (position != null) {
-								int width= ann.getWidth();
-								if (width != 0) {
-									StyleRange s= new StyleRange();
-									s.start= position.getOffset();
-									s.length= 1;
-									s.metrics= ann.isMarkedDeleted()
-											? null
-											: new GlyphMetrics(0, 0, width);
-									textPresentation.mergeStyleRange(s);
-								}
+							StyleRange style= InlinedAnnotationDrawingStrategy.updateStyle(ann, null);
+							if (style != null) {
+								textPresentation.mergeStyleRange(style);
 							}
 						}
 					});

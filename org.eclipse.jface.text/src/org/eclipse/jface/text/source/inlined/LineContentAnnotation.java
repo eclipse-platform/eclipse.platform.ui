@@ -30,6 +30,8 @@ public class LineContentAnnotation extends AbstractInlinedAnnotation {
 	 */
 	private int width;
 
+	private int redrawnCharacterWidth;
+
 	/**
 	 * Line content annotation constructor.
 	 *
@@ -77,5 +79,13 @@ public class LineContentAnnotation extends AbstractInlinedAnnotation {
 		// Draw the text annotation and returns the width
 		super.draw(gc, textWidget, offset, length, color, x, y);
 		return gc.stringExtent(getText()).x + 2 * gc.getFontMetrics().getAverageCharWidth();
+	}
+
+	int getRedrawnCharacterWidth() {
+		return redrawnCharacterWidth;
+	}
+
+	void setRedrawnCharacterWidth(int redrawnCharacterWidth) {
+		this.redrawnCharacterWidth= redrawnCharacterWidth;
 	}
 }
