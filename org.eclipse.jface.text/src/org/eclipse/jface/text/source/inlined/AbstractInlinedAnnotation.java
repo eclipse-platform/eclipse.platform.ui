@@ -188,7 +188,7 @@ public abstract class AbstractInlinedAnnotation extends Annotation {
 	 * @return the receiver's font according the specified <code>style</code>
 	 *
 	 */
-	protected Font getFont(int style) {
+	Font getFont(int style) {
 		return support.getFont(style);
 	}
 }
