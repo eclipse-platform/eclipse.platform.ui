@@ -381,7 +381,9 @@ public class Messages {
 	public String MenuContributionEditor_Menu;
 	public String MenuContributionEditor_DirectMenuItem;
 	public String MenuContributionEditor_ParentId;
+	public String MenuContributionEditor_ParentIdTooltip;
 	public String MenuContributionEditor_Position;
+	public String MenuContributionEditor_PositionTooltip;
 	public String MenuContributionEditor_TreeLabel;
 	public String MenuContributionEditor_TreeLabelDescription;
 
@@ -448,6 +450,10 @@ public class Messages {
 
 	public String ToolBarContributionEditor_TreeLabel;
 	public String ToolBarContributionEditor_TreeLabelDescription;
+	public String ToolBarContributionEditor_ParentId;
+	public String ToolBarContributionEditor_ParentIdTooltip;
+	public String ToolBarContributionEditor_Position;
+	public String ToolBarContributionEditor_PositionTooltip;
 
 	public String ToolItemEditor_Type;
 	public String ToolItemEditor_Label;

@@ -211,7 +211,8 @@ public class ToolBarContributionEditor extends AbstractComponentEditor {
 
 		{
 			final Label l = new Label(parent, SWT.NONE);
-			l.setText(Messages.MenuContributionEditor_ParentId);
+			l.setText(Messages.ToolBarContributionEditor_ParentId);
+			l.setToolTipText(Messages.ToolBarContributionEditor_ParentIdTooltip);
 			l.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
 
 			final Text t = new Text(parent, SWT.BORDER);
@@ -236,7 +237,8 @@ public class ToolBarContributionEditor extends AbstractComponentEditor {
 			});
 		}
 
-		ControlFactory.createTextField(parent, Messages.MenuContributionEditor_Position, master, context, textProp,
+		ControlFactory.createTextField(parent, Messages.ToolBarContributionEditor_Position,
+				Messages.ToolBarContributionEditor_PositionTooltip, master, context, textProp,
 				EMFEditProperties.value(getEditingDomain(),
 						MenuPackageImpl.Literals.TOOL_BAR_CONTRIBUTION__POSITION_IN_PARENT));
 

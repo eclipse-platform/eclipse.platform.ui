@@ -209,6 +209,7 @@ public class MenuContributionEditor extends AbstractComponentEditor {
 		{
 			final Label l = new Label(parent, SWT.NONE);
 			l.setText(Messages.MenuContributionEditor_ParentId);
+			l.setToolTipText(Messages.MenuContributionEditor_ParentIdTooltip);
 			l.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
 
 			final Text t = new Text(parent, SWT.BORDER);
@@ -235,7 +236,8 @@ public class MenuContributionEditor extends AbstractComponentEditor {
 		}
 
 		ControlFactory
-		.createTextField(parent, Messages.MenuContributionEditor_Position, master, context, textProp,
+				.createTextField(parent, Messages.MenuContributionEditor_Position,
+						Messages.MenuContributionEditor_PositionTooltip, master, context, textProp,
 				EMFEditProperties.value(getEditingDomain(),
 						MenuPackageImpl.Literals.MENU_CONTRIBUTION__POSITION_IN_PARENT));
 
@@ -276,8 +278,8 @@ public class MenuContributionEditor extends AbstractComponentEditor {
 					defaultStruct,
 					new Struct(Messages.MenuContributionEditor_DirectMenuItem, MenuPackageImpl.Literals.DIRECT_MENU_ITEM,
 							false),
-							new Struct(Messages.MenuContributionEditor_DynamicMenuContribution,
-									MenuPackageImpl.Literals.DYNAMIC_MENU_CONTRIBUTION, false) });
+					new Struct(Messages.MenuContributionEditor_DynamicMenuContribution,
+							MenuPackageImpl.Literals.DYNAMIC_MENU_CONTRIBUTION, false) });
 			pickList.setSelection(new StructuredSelection(defaultStruct));
 
 		}
