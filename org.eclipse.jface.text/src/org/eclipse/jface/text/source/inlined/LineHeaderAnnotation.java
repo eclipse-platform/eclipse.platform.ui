@@ -12,8 +12,6 @@ package org.eclipse.jface.text.source.inlined;
 
 import org.eclipse.swt.custom.StyledText;
 
-import org.eclipse.jface.text.BadLocationException;
-import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.Position;
 import org.eclipse.jface.text.source.ISourceViewer;
 
@@ -23,6 +21,10 @@ import org.eclipse.jface.text.source.ISourceViewer;
  * @since 3.13
  */
 public class LineHeaderAnnotation extends AbstractInlinedAnnotation {
+
+	private int redrawnCharacterHeight;
+
+	private int redrawnCharacterWidth;
 
 	/**
 	 * Line header annotation constructor.
@@ -44,25 +46,19 @@ public class LineHeaderAnnotation extends AbstractInlinedAnnotation {
 		return styledText.getLineHeight();
 	}
 
-	@Override
-	protected boolean isInVisibleLines() {
-		if (!super.isInVisibleLines()) {
-			return false;
-		}
-		// the inlined annotation is in the visible lines
-		ISourceViewer viewer= super.getViewer();
-		IDocument document= viewer.getDocument();
-		if (document == null) {
-			return false;
-		}
-		try {
-			// check if previous line where annotation is drawn in the line spacing, is visible
-			int startLineOffset= document.getLineInformationOfOffset(getPosition().getOffset()).getOffset();
-			int previousEndLineOffset= startLineOffset - 1;
-			return super.isInVisibleLines(previousEndLineOffset);
-		} catch (BadLocationException e) {
-			return false;
-		}
+	int getRedrawnCharacterHeight() {
+		return redrawnCharacterHeight;
 	}
 
+	void setRedrawnCharacterHeight(int redrawnCharacterHeight) {
+		this.redrawnCharacterHeight= redrawnCharacterHeight;
+	}
+
+	int getRedrawnCharacterWidth() {
+		return redrawnCharacterWidth;
+	}
+
+	void setRedrawnCharacterWidth(int redrawnCharacterWidth) {
+		this.redrawnCharacterWidth= redrawnCharacterWidth;
+	}
 }

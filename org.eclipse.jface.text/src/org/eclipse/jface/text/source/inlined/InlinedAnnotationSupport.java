@@ -23,7 +23,6 @@ import java.util.function.Consumer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StyleRange;
 import org.eclipse.swt.custom.StyledText;
-import org.eclipse.swt.custom.StyledTextLineSpacingProvider;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.MouseListener;
 import org.eclipse.swt.events.MouseMoveListener;
@@ -69,7 +68,7 @@ import org.eclipse.jface.text.source.ISourceViewer;
  *
  * @since 3.13
  */
-public class InlinedAnnotationSupport implements StyledTextLineSpacingProvider {
+public class InlinedAnnotationSupport {
 
 	/**
 	 * The annotation inlined strategy singleton.
@@ -106,6 +105,12 @@ public class InlinedAnnotationSupport implements StyledTextLineSpacingProvider {
 					.forEachRemaining(annotation -> {
 						if (annotation instanceof LineContentAnnotation) {
 							LineContentAnnotation ann= (LineContentAnnotation) annotation;
+							StyleRange style= InlinedAnnotationDrawingStrategy.updateStyle(ann, null);
+							if (style != null) {
+								textPresentation.mergeStyleRange(style);
+							}
+						} else if (annotation instanceof LineHeaderAnnotation) {
+							LineHeaderAnnotation ann= (LineHeaderAnnotation) annotation;
 							StyleRange style= InlinedAnnotationDrawingStrategy.updateStyle(ann, null);
 							if (style != null) {
 								textPresentation.mergeStyleRange(style);
@@ -346,7 +351,6 @@ public class InlinedAnnotationSupport implements StyledTextLineSpacingProvider {
 		text.addMouseListener(fMouseTracker);
 		text.addMouseTrackListener(fMouseTracker);
 		text.addMouseMoveListener(fMouseTracker);
-		text.setLineSpacingProvider(this);
 		setColor(text.getDisplay().getSystemColor(SWT.COLOR_DARK_GRAY));
 	}
 
@@ -514,19 +518,6 @@ public class InlinedAnnotationSupport implements StyledTextLineSpacingProvider {
 	}
 
 	/**
-	 * Returns the line spacing from the given line index with the codemining annotations height and
-	 * null otherwise.
-	 */
-	@SuppressWarnings("boxing")
-	@Override
-	public Integer getLineSpacing(int lineIndex) {
-		AbstractInlinedAnnotation annotation= getInlinedAnnotationAtLine(fViewer, lineIndex);
-		return (annotation instanceof LineHeaderAnnotation)
-				? ((LineHeaderAnnotation) annotation).getHeight()
-				: null;
-	}
-
-	/**
 	 * Returns the {@link AbstractInlinedAnnotation} from the given line index and null otherwise.
 	 *
 	 * @param viewer the source viewer
@@ -542,7 +533,7 @@ public class InlinedAnnotationSupport implements StyledTextLineSpacingProvider {
 			return null;
 		}
 		IDocument document= viewer.getDocument();
-		int lineNumber= lineIndex + 1;
+		int lineNumber= lineIndex;
 		if (lineNumber > document.getNumberOfLines()) {
 			return null;
 		}

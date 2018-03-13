@@ -73,60 +73,123 @@ class InlinedAnnotationDrawingStrategy implements IDrawingStrategy {
 	 */
 	private static void draw(LineHeaderAnnotation annotation, GC gc, StyledText textWidget, int offset, int length,
 			Color color) {
-		if (annotation.isMarkedDeleted()) {
-			// When annotation is deleted, redraw the styled text to hide old draw of
-			// annotations
-			textWidget.redraw();
-			// update caret offset since line spacing has changed.
-			textWidget.setCaretOffset(textWidget.getCaretOffset());
-			return;
-		}
-		// compute current, previous line index.
-		int lineIndex= -1;
+		StyleRange style= null;
 		try {
-			lineIndex= textWidget.getLineAtOffset(offset);
+			style= textWidget.getStyleRangeAtOffset(offset);
 		} catch (Exception e) {
 			return;
 		}
-		int previousLineIndex= lineIndex - 1;
-		if (gc != null) {
-			// Compute the location of the annotation
-			int x= textWidget.getLocationAtOffset(offset).x;
-			int y= 0;
-			int height= annotation.getHeight();
-			if (lineIndex > 0) {
-				int previousOffset= textWidget.getOffsetAtLine(previousLineIndex);
-				y= textWidget.getLocationAtOffset(previousOffset).y + height;
+		if (annotation.isMarkedDeleted()) {
+			// When annotation is deleted, update metrics to null to remove extra spaces of the line header annotation.
+			if (style != null) {
+				style.metrics= null;
+				textWidget.setStyleRange(style);
 			}
-			Rectangle clipping= gc.getClipping();
-			if (clipping.contains(x, y)) {
-				// GC clipping contains the x, y where annotation must be drawn.
-
-				// Colorize line spacing area with the background of StyledText to avoid having highlighted line color
-				gc.setBackground(textWidget.getBackground());
-				Rectangle client= textWidget.getClientArea();
-				textWidget.drawBackground(gc, x, y, client.width, height);
-
-				// draw the annotation
-				annotation.draw(gc, textWidget, offset, length, color, x, y);
-				return;
-			} else {
-				if (!(clipping.y - height == y)) {
-					// Clipping doesn't include the y of previous line spacing, stop the redraw
-					// range.
-					return;
-				}
-			}
-		}
-
-		if (previousLineIndex < 0) {
-			// There are none previous line, do nothing
 			return;
 		}
-		// refresh the previous line range where line header annotation must be drawn.
-		int previousOffset= textWidget.getOffsetAtLine(previousLineIndex);
-		int lineLength= offset - previousOffset;
-		textWidget.redrawRange(previousOffset, lineLength, true);
+		if (gc != null) {
+			// Compute the location of the annotation
+			Rectangle bounds= textWidget.getTextBounds(offset, offset);
+			int x= bounds.x;
+			int y= bounds.y;
+
+			// Colorize line spacing area with the background of StyledText to avoid having highlighted line color
+			gc.setBackground(textWidget.getBackground());
+			Rectangle client= textWidget.getClientArea();
+			textWidget.drawBackground(gc, x, y, client.width, annotation.getHeight());
+
+			// Draw the line header annotation
+			annotation.draw(gc, textWidget, offset, length, color, x, y);
+			int height= annotation.getHeight();
+			if (height != 0) {
+				// The inline annotation replaces one character by taking a place width
+				// GlyphMetrics
+				// Here we need to redraw this first character because GlyphMetrics clip this
+				// character.
+
+				// FIXME: remove this code when we need not redraw the character (see https://bugs.eclipse.org/bugs/show_bug.cgi?id=531769)
+				// START TO REMOVE
+				String s= textWidget.getText(offset, offset);
+				Point charBounds= gc.stringExtent(s);
+				int charWidth= charBounds.x;
+				int charHeight= charBounds.y;
+				annotation.setRedrawnCharacterWidth(charWidth);
+				annotation.setRedrawnCharacterHeight(charHeight);
+				// END TO REMOVE
+
+				StyleRange newStyle= updateStyle(annotation, style);
+				if (newStyle != null) {
+					textWidget.setStyleRange(newStyle);
+					return;
+				}
+
+				// FIXME: remove this code when we need not redraw the character (see https://bugs.eclipse.org/bugs/show_bug.cgi?id=531769)
+				// START TO REMOVE
+				int charX= x + bounds.width - charWidth;
+				int charY= y + bounds.height - height;
+				if (style != null) {
+					if (style.background != null) {
+						gc.setBackground(style.background);
+						gc.fillRectangle(charX, charY, charWidth + 1, bounds.height);
+					}
+					if (style.foreground != null) {
+						gc.setForeground(style.foreground);
+					} else {
+						gc.setForeground(textWidget.getForeground());
+					}
+					gc.setFont(annotation.getFont(style.fontStyle));
+				}
+				gc.drawString(s, charX, charY, true);
+				// END TO REMOVE
+			}
+		} else {
+			if (style != null && style.metrics != null) {
+				// Here GlyphMetrics ascent is done, the redraw of the full line width is done to avoid annotation clipping
+				Rectangle bounds= textWidget.getTextBounds(offset, offset);
+				Rectangle client= textWidget.getClientArea();
+				textWidget.redraw(0, bounds.y, client.width, bounds.height, false);
+			} else {
+				textWidget.redrawRange(offset, length, true);
+			}
+		}
+	}
+
+	/**
+	 * Returns the style to apply with GlyphMetrics ascent only if needed.
+	 *
+	 * @param annotation the line header annotation
+	 * @param style the current style and null otherwise.
+	 * @return the style to apply with GlyphMetrics ascent only if needed.
+	 */
+	static StyleRange updateStyle(LineHeaderAnnotation annotation, StyleRange style) {
+		int height= annotation.getHeight();
+		if (height == 0) {
+			return null;
+		}
+		int fullHeight= height + annotation.getRedrawnCharacterHeight();
+		int width= annotation.getRedrawnCharacterWidth();
+		if (style == null) {
+			style= new StyleRange();
+			Position position= annotation.getPosition();
+			style.start= position.getOffset();
+			style.length= 1;
+		}
+		GlyphMetrics metrics= style.metrics;
+		if (!annotation.isMarkedDeleted()) {
+			if (metrics == null) {
+				metrics= new GlyphMetrics(fullHeight, 0, width);
+			} else {
+				if (metrics.ascent == fullHeight) {
+					return null;
+				}
+				metrics.width= width;
+				metrics.ascent= fullHeight;
+			}
+		} else {
+			metrics= null;
+		}
+		style.metrics= metrics;
+		return style;
 	}
 
 	/**
@@ -166,6 +229,10 @@ class InlinedAnnotationDrawingStrategy implements IDrawingStrategy {
 			String s= textWidget.getText(offset, offset);
 			Point charBounds= gc.stringExtent(s);
 			int charWidth= charBounds.x;
+			int charHeight= charBounds.y;
+
+			// When line text has line header annotation, there is a space on the top, adjust the y by using char height
+			y+= bounds.height - charHeight;
 
 			// Draw the line content annotation
 			annotation.draw(gc, textWidget, offset, length, color, x, y);
