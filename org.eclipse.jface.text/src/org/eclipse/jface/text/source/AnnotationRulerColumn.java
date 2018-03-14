@@ -20,6 +20,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.Consumer;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StyledText;
@@ -47,13 +48,10 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IRegion;
-import org.eclipse.jface.text.ITextListener;
 import org.eclipse.jface.text.ITextViewer;
 import org.eclipse.jface.text.ITextViewerExtension5;
-import org.eclipse.jface.text.IViewportListener;
 import org.eclipse.jface.text.JFaceTextUtil;
 import org.eclipse.jface.text.Position;
-import org.eclipse.jface.text.TextEvent;
 
 
 /**
@@ -70,23 +68,10 @@ public class AnnotationRulerColumn implements IVerticalRulerColumn, IVerticalRul
 	/**
 	 * Internal listener class.
 	 */
-	class InternalListener implements IViewportListener, IAnnotationModelListener, ITextListener {
-
-		@Override
-		public void viewportChanged(int verticalPosition) {
-			if (verticalPosition != fScrollPos)
-				redraw();
-		}
-
+	class AnnotationsListener implements IAnnotationModelListener {
 		@Override
 		public void modelChanged(IAnnotationModel model) {
 			postRedraw();
-		}
-
-		@Override
-		public void textChanged(TextEvent e) {
-			if (e.getViewerRedrawState())
-				postRedraw();
 		}
 	}
 
@@ -139,7 +124,7 @@ public class AnnotationRulerColumn implements IVerticalRulerColumn, IVerticalRul
 	/** The buffer for double buffering */
 	private Image fBuffer;
 	/** The internal listener */
-	private InternalListener fInternalListener= new InternalListener();
+	private AnnotationsListener fAnnotationListener= new AnnotationsListener();
 	/** The width of this vertical ruler */
 	private int fWidth;
 	/** Switch for enabling/disabling the setModel method. */
@@ -192,6 +177,8 @@ public class AnnotationRulerColumn implements IVerticalRulerColumn, IVerticalRul
 	 */
 	private MouseListener fMouseListener;
 
+	private Consumer<StyledText> lineHeightChangeHandler= (t) -> postRedraw();
+
 	/**
 	 * Constructs this column with the given arguments.
 	 *
@@ -204,7 +191,7 @@ public class AnnotationRulerColumn implements IVerticalRulerColumn, IVerticalRul
 		this(width, annotationAccess);
 		fAllowSetModel= false;
 		fModel= model;
-		fModel.addAnnotationModelListener(fInternalListener);
+		fModel.addAnnotationModelListener(fAnnotationListener);
 	}
 
 	/**
@@ -230,7 +217,7 @@ public class AnnotationRulerColumn implements IVerticalRulerColumn, IVerticalRul
 		fWidth= width;
 		fAllowSetModel= false;
 		fModel= model;
-		fModel.addAnnotationModelListener(fInternalListener);
+		fModel.addAnnotationModelListener(fAnnotationListener);
 	}
 
 	/**
@@ -337,8 +324,7 @@ public class AnnotationRulerColumn implements IVerticalRulerColumn, IVerticalRul
 		});
 
 		if (fCachedTextViewer != null) {
-			fCachedTextViewer.addViewportListener(fInternalListener);
-			fCachedTextViewer.addTextListener(fInternalListener);
+			VisibleLinesTracker.track(fCachedTextViewer, lineHeightChangeHandler);
 			// on word wrap toggle a "resized" ControlEvent is fired: suggest a redraw of the ruler
 			fCachedTextWidget.addControlListener(new ControlAdapter() {
 				@Override
@@ -506,12 +492,11 @@ public class AnnotationRulerColumn implements IVerticalRulerColumn, IVerticalRul
 	private void handleDispose() {
 
 		if (fCachedTextViewer != null) {
-			fCachedTextViewer.removeViewportListener(fInternalListener);
-			fCachedTextViewer.removeTextListener(fInternalListener);
+			VisibleLinesTracker.untrack(fCachedTextViewer, lineHeightChangeHandler);
 		}
 
 		if (fModel != null)
-			fModel.removeAnnotationModelListener(fInternalListener);
+			fModel.removeAnnotationModelListener(fAnnotationListener);
 
 		if (fBuffer != null) {
 			fBuffer.dispose();
@@ -521,6 +506,7 @@ public class AnnotationRulerColumn implements IVerticalRulerColumn, IVerticalRul
 		fConfiguredAnnotationTypes.clear();
 		fAllowedAnnotationTypes.clear();
 		fAnnotationAccessExtension= null;
+
 	}
 
 	/**
@@ -867,12 +853,12 @@ public class AnnotationRulerColumn implements IVerticalRulerColumn, IVerticalRul
 		if (fAllowSetModel && model != fModel) {
 
 			if (fModel != null)
-				fModel.removeAnnotationModelListener(fInternalListener);
+				fModel.removeAnnotationModelListener(fAnnotationListener);
 
 			fModel= model;
 
 			if (fModel != null)
-				fModel.addAnnotationModelListener(fInternalListener);
+				fModel.addAnnotationModelListener(fAnnotationListener);
 
 			postRedraw();
 		}

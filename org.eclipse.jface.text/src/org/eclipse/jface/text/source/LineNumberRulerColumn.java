@@ -17,6 +17,7 @@ package org.eclipse.jface.text.source;
 
 import java.lang.ref.WeakReference;
 import java.util.Arrays;
+import java.util.function.Consumer;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StyledText;
@@ -51,13 +52,10 @@ import org.eclipse.jface.util.Util;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IRegion;
-import org.eclipse.jface.text.ITextListener;
 import org.eclipse.jface.text.ITextViewer;
 import org.eclipse.jface.text.ITextViewerExtension;
 import org.eclipse.jface.text.ITextViewerExtension5;
-import org.eclipse.jface.text.IViewportListener;
 import org.eclipse.jface.text.JFaceTextUtil;
-import org.eclipse.jface.text.TextEvent;
 
 
 /**
@@ -79,41 +77,6 @@ public class LineNumberRulerColumn implements IVerticalRulerColumn {
 			&& !"false".equals(System.getProperty("LineNumberRulerColumn.retina.workaround")) //$NON-NLS-1$ //$NON-NLS-2$
 			&& internalSupportsZoomedPaint();
 
-	/**
-	 * Internal listener class.
-	 */
-	class InternalListener implements IViewportListener, ITextListener {
-
-		/**
-		 * @since 3.1
-		 */
-		private boolean fCachedRedrawState= true;
-
-		@Override
-		public void viewportChanged(int verticalPosition) {
-			if (fCachedRedrawState && verticalPosition != fScrollPos)
-				redraw();
-		}
-
-		@Override
-		public void textChanged(TextEvent event) {
-
-			fCachedRedrawState= event.getViewerRedrawState();
-			if (!fCachedRedrawState)
-				return;
-
-			if (updateNumberOfDigits()) {
-				computeIndentations();
-				layout(event.getViewerRedrawState());
-				return;
-			}
-
-			boolean viewerCompletelyShown= isViewerCompletelyShown();
-			if (viewerCompletelyShown || fSensitiveToTextChanges || event.getDocumentEvent() == null)
-				postRedraw();
-			fSensitiveToTextChanges= viewerCompletelyShown;
-		}
-	}
 
 	/**
 	 * Handles all the mouse interaction in this line number ruler column.
@@ -398,8 +361,6 @@ public class LineNumberRulerColumn implements IVerticalRulerColumn {
 	private int fScrollPos;
 	/** The drawable for double buffering */
 	private Image fBuffer;
-	/** The internal listener */
-	private InternalListener fInternalListener= new InternalListener();
 	/** The font of this column */
 	private Font fFont;
 	/** The indentation cache */
@@ -447,6 +408,12 @@ public class LineNumberRulerColumn implements IVerticalRulerColumn {
 	private WeakReference<Font> fLastFont;
 	private Font fLastZoomedFont;
 
+	/**
+	 * Redraw the ruler handler called when a line height change.
+	 *
+	 * @since 3.13
+	 */
+	private Consumer<StyledText> lineHeightChangeHandler= (t) -> postRedraw();
 
 	/**
 	 * Constructs a new vertical ruler column.
@@ -620,6 +587,10 @@ public class LineNumberRulerColumn implements IVerticalRulerColumn {
 			}
 		});
 
+		// track when StyledText is redrawn to check if some line height changed. In this case, the ruler must be redrawn
+		// to draw line number with well height.
+		VisibleLinesTracker.track(fCachedTextViewer, lineHeightChangeHandler);
+
 		fCanvas= new Canvas(parentControl, SWT.NO_FOCUS ) {
  			@Override
 			public void addMouseListener(MouseListener listener) {
@@ -660,9 +631,7 @@ public class LineNumberRulerColumn implements IVerticalRulerColumn {
 		fCanvas.addMouseWheelListener(fMouseHandler);
 
 		if (fCachedTextViewer != null) {
-
-			fCachedTextViewer.addViewportListener(fInternalListener);
-			fCachedTextViewer.addTextListener(fInternalListener);
+			VisibleLinesTracker.track(fCachedTextViewer, lineHeightChangeHandler);
 
 			if (fFont == null) {
 				if (fCachedTextWidget != null && !fCachedTextWidget.isDisposed())
@@ -684,8 +653,7 @@ public class LineNumberRulerColumn implements IVerticalRulerColumn {
 	protected void handleDispose() {
 
 		if (fCachedTextViewer != null) {
-			fCachedTextViewer.removeViewportListener(fInternalListener);
-			fCachedTextViewer.removeTextListener(fInternalListener);
+			VisibleLinesTracker.untrack(fCachedTextViewer, lineHeightChangeHandler);
 		}
 
 		if (fBuffer != null) {
