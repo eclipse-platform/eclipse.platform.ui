@@ -16,6 +16,7 @@ import java.net.URL;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.SWTError;
+import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.FontData;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.widgets.Display;
@@ -69,8 +70,14 @@ public class HTMLPrinter {
 	private static void cacheColors(Display display) {
 		BG_COLOR_RGB= JFaceColors.getInformationViewerBackgroundColor(display).getRGB();
 		FG_COLOR_RGB= JFaceColors.getInformationViewerForegroundColor(display).getRGB();
-		LINK_COLOR_RGB= JFaceColors.getHyperlinkText(display).getRGB();
-		ACTIVE_LINK_COLOR_RGB= JFaceColors.getActiveHyperlinkText(display).getRGB();
+		Color hyperlinkText= JFaceColors.getHyperlinkText(display);
+		if (hyperlinkText != null) {
+			LINK_COLOR_RGB= hyperlinkText.getRGB();
+		}
+		Color activeHyperlinkText= JFaceColors.getActiveHyperlinkText(display);
+		if (activeHyperlinkText != null) {
+			ACTIVE_LINK_COLOR_RGB= activeHyperlinkText.getRGB();
+		}
 	}
 
 	private static void installColorUpdater(final Display display) {
