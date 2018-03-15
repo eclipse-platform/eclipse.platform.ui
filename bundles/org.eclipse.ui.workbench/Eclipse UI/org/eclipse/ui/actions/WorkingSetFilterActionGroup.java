@@ -16,7 +16,6 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
-
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.jface.action.IContributionItem;
 import org.eclipse.jface.action.IMenuManager;
@@ -111,9 +110,15 @@ public class WorkingSetFilterActionGroup extends ActionGroup {
 				Collections.sort(sortedWorkingSets, new WorkingSetComparator());
 
 				int mruMenuCount = 0;
+				if (page != null && page.getAggregateWorkingSet() != null) {
+					IContributionItem item = new WorkingSetMenuContributionItem(
+							++mruMenuCount,
+							WorkingSetFilterActionGroup.this, page.getAggregateWorkingSet());
+					items.add(item);
+				}
 				for (Iterator i = sortedWorkingSets.iterator(); i.hasNext();) {
 					IWorkingSet workingSet = (IWorkingSet) i.next();
-					if (workingSet != null) {
+					if (workingSet != null && !workingSet.isAggregateWorkingSet()) {
 						IContributionItem item = new WorkingSetMenuContributionItem(
 								++mruMenuCount,
 								WorkingSetFilterActionGroup.this, workingSet);
