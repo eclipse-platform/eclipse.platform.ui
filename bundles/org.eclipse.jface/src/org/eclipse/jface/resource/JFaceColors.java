@@ -75,22 +75,26 @@ public class JFaceColors {
     }
 
     /**
-     * @param display the display the color is from
-     * @return the default color to use for displaying hyperlinks.
-     * @see ColorRegistry#get(String)
-     * @see JFacePreferences#HYPERLINK_COLOR
-     */
+	 * @param display
+	 *            the display the color is from
+	 * @return the default color to use for displaying hyperlinks, or
+	 *         <code>null</code> if the color definition does not exists.
+	 * @see ColorRegistry#get(String)
+	 * @see JFacePreferences#HYPERLINK_COLOR
+	 */
     public static Color getHyperlinkText(Display display) {
         return JFaceResources.getColorRegistry().get(
                 JFacePreferences.HYPERLINK_COLOR);
     }
 
     /**
-     * @param display the display the color is from
-     * @return the default color to use for displaying active hyperlinks.
-     * @see ColorRegistry#get(String)
-     * @see JFacePreferences#ACTIVE_HYPERLINK_COLOR
-     */
+	 * @param display
+	 *            the display the color is from
+	 * @return the default color to use for displaying active hyperlinks, or
+	 *         <code>null</code> if the color definition does not exists.
+	 * @see ColorRegistry#get(String)
+	 * @see JFacePreferences#ACTIVE_HYPERLINK_COLOR
+	 */
     public static Color getActiveHyperlinkText(Display display) {
         return JFaceResources.getColorRegistry().get(
                 JFacePreferences.ACTIVE_HYPERLINK_COLOR);
