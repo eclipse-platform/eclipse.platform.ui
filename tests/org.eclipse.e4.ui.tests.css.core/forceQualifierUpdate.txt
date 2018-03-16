@@ -1,3 +1,4 @@
 # To force a version qualifier update add the bug here
 Bug 403352 - Update all parent versions to match our build stream
 Bug 521195 - Migrate to Batik 1.9.0
+Bug 532094 - Update releng with new hamcrest and apache batik
