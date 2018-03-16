@@ -360,10 +360,12 @@ public class ImageBasedFrame extends Canvas {
 		handleHeight = (handle != null && vertical) ? handle.getBounds().height
 				: 0;
 
-		if (vertical) {
-			framedControl.setLocation(w1, h1 + handleHeight);
-		} else {
-			framedControl.setLocation(w1 + handleWidth, h1);
+		if (!framedControl.isDisposed()) {
+			if (vertical) {
+				framedControl.setLocation(w1, h1 + handleHeight);
+			} else {
+				framedControl.setLocation(w1 + handleWidth, h1);
+			}
 		}
 		setSize(computeSize(-1, -1));
 	}
