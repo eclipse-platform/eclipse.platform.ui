@@ -443,6 +443,9 @@ public class MessageManager implements IMessageManager {
 
 	private void update(ArrayList<Message> mergedList) {
 		pruneControlDecorators();
+		if (form.isDisposed()) {
+			return;
+		}
 		if (form.getHead().getBounds().height == 0 || mergedList.isEmpty() || mergedList == null) {
 			form.setMessage(null, IMessageProvider.NONE);
 			return;
