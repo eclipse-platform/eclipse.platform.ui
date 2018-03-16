@@ -55,37 +55,51 @@
       <sourceLocator
           rootFolder="${git.clone.platform.ui.location}"/>
       <repositoryList
+          name="Photon">
+        <repository
+            url="http://download.eclipse.org/modeling/emf/emf/builds/milestone/latest"/>
+        <repository
+            url="http://download.eclipse.org/tools/gef/updates/releases"/>
+      </repositoryList>
+      <repositoryList
+          name="Oxygen">
+        <repository
+            url="http://download.eclipse.org/modeling/emf/emf/builds/release/2.13"/>
+        <repository
+            url="http://download.eclipse.org/tools/gef/updates/releases"/>
+      </repositoryList>
+      <repositoryList
           name="Neon">
         <repository
-            url="http://download.eclipse.org/modeling/emf/emf/updates/2.11.x"/>
+            url="http://download.eclipse.org/modeling/emf/emf/builds/release/2.12"/>
         <repository
             url="http://download.eclipse.org/tools/gef/updates/releases"/>
       </repositoryList>
       <repositoryList
           name="Mars">
         <repository
-            url="http://download.eclipse.org/modeling/emf/emf/updates/2.11.x"/>
+            url="http://download.eclipse.org/modeling/emf/emf/builds/release/2.11"/>
         <repository
             url="http://download.eclipse.org/tools/gef/updates/releases"/>
       </repositoryList>
       <repositoryList
           name="Luna">
         <repository
-            url="http://download.eclipse.org/modeling/emf/emf/updates/2.11milestones/core"/>
+            url="http://download.eclipse.org/modeling/emf/emf/builds/release/2.10"/>
         <repository
             url="http://download.eclipse.org/tools/gef/updates/releases"/>
       </repositoryList>
       <repositoryList
           name="Kepler">
         <repository
-            url="http://download.eclipse.org/modeling/emf/emf/updates/2.11milestones/core"/>
+            url="http://download.eclipse.org/modeling/emf/emf/builds/release/2.9"/>
         <repository
             url="http://download.eclipse.org/tools/gef/updates/releases"/>
       </repositoryList>
       <repositoryList
           name="Juno">
         <repository
-            url="http://download.eclipse.org/modeling/emf/emf/updates/2.11milestones/core"/>
+            url="http://download.eclipse.org/modeling/emf/emf/builds/release/2.8"/>
         <repository
             url="http://download.eclipse.org/tools/gef/updates/releases"/>
       </repositoryList>
@@ -135,7 +149,7 @@
     <setupTask
         xsi:type="setup:VariableTask"
         name="eclipse.target.platform"
-        value="Oxygen"
+        value="Photon"
         storageURI="scope://Workspace"/>
   </stream>
   <logicalProjectContainer
