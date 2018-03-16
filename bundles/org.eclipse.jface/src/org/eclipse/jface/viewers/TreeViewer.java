@@ -286,10 +286,16 @@ public class TreeViewer extends AbstractTreeViewer {
 
 	@Override
 	protected void setExpanded(Item node, boolean expand) {
-		((TreeItem) node).setExpanded(expand);
+		TreeItem treeItem = (TreeItem) node;
+		if (!treeItem.isDisposed()) {
+			treeItem.setExpanded(expand);
+		}
 		if (contentProviderIsLazy) {
 			// force repaints to happen
-			getControl().update();
+			Control control = getControl();
+			if (!control.isDisposed()) {
+				control.update();
+			}
 		}
 	}
 
