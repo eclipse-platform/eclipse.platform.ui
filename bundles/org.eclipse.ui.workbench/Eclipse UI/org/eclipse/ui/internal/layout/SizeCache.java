@@ -11,7 +11,6 @@
 package org.eclipse.ui.internal.layout;
 
 import java.util.List;
-
 import org.eclipse.jface.util.Geometry;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Point;
@@ -86,12 +85,13 @@ public class SizeCache {
 
     /**
      * Sets the control whose size is being cached. Does nothing (will not
-     * even flush the cache) if this is the same control as last time.
+     * even flush the cache) if this is the same control as last time or
+     * it is already disposed.
      *
      * @param newControl the control whose size is being cached, or null to always return (0,0)
      */
     public void setControl(Control newControl) {
-        if (newControl != control) {
+        if (newControl != control && !newControl.isDisposed()) {
             control = newControl;
             if (control == null) {
                 independentDimensions = true;
