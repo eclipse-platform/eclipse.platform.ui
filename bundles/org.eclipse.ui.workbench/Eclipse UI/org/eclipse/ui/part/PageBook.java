@@ -47,7 +47,7 @@ public class PageBook extends Composite {
 			}
 
             Point result = null;
-            if (currentPage != null) {
+			if (currentPage != null && !currentPage.isDisposed()) {
                 result = currentPage.computeSize(wHint, hHint, flushCache);
             } else {
                 //Rectangle rect= composite.getClientArea();
