@@ -6215,8 +6215,12 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 
 	@Override
 	public void setFocus() {
-		if (fSourceViewer != null && fSourceViewer.getTextWidget() != null)
-			fSourceViewer.getTextWidget().setFocus();
+		if (fSourceViewer != null) {
+			StyledText widget= fSourceViewer.getTextWidget();
+			if (widget != null && !widget.isDisposed()) {
+				widget.setFocus();
+			}
+		}
 	}
 
 	@Override
