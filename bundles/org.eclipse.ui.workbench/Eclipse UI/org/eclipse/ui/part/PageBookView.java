@@ -846,11 +846,11 @@ public abstract class PageBookView extends ViewPart implements IPartListener {
 	public void setFocus() {
 		// first set focus on the page book, in case the page
 		// doesn't properly handle setFocus
-		if (book != null) {
+		if (book != null && !book.isDisposed()) {
 			book.setFocus();
 		}
 		// then set focus on the page, if any
-		if (activeRec != null) {
+		if (activeRec != null && !activeRec.page.getControl().isDisposed()) {
 			activeRec.page.setFocus();
 		}
 	}
