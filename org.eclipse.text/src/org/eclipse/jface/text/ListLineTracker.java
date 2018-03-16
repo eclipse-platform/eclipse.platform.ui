@@ -132,8 +132,11 @@ abstract class ListLineTracker implements ILineTracker {
 
 	@Override
 	public final int getLineNumberOfOffset(int position) throws BadLocationException {
-		if (position < 0 || position > fTextLength)
-			throw new BadLocationException();
+		if (position < 0) {
+			throw new BadLocationException("Negative offset : " + position); //$NON-NLS-1$
+		} else if (position > fTextLength) {
+			throw new BadLocationException("Offset > length: " + position + " > " + fTextLength);  //$NON-NLS-1$//$NON-NLS-2$
+		}
 
 		if (position == fTextLength) {
 
@@ -151,7 +154,7 @@ abstract class ListLineTracker implements ILineTracker {
 	@Override
 	public final IRegion getLineInformationOfOffset(int position) throws BadLocationException {
 		if (position > fTextLength)
-			throw new BadLocationException();
+			throw new BadLocationException("Offset > length: " + position + " > " + fTextLength);  //$NON-NLS-1$//$NON-NLS-2$
 
 		if (position == fTextLength) {
 			int size= fLines.size();
