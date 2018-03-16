@@ -567,7 +567,11 @@ public class ExpandableComposite extends Canvas {
 			setBackgroundMode(SWT.INHERIT_DEFAULT);
 		super.setLayout(new ExpandableLayout());
 		if (hasTitleBar()) {
-			this.addPaintListener(e -> onPaint(e));
+			this.addPaintListener(e -> {
+				if (!isDisposed()) {
+					onPaint(e);
+				}
+			});
 		}
 		if ((expansionStyle & TWISTIE) != 0)
 			toggle = new Twistie(this, SWT.NULL);
