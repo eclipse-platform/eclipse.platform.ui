@@ -263,7 +263,7 @@ public final class WorkbenchWindowConfigurer implements
     @Override
 	public String getTitle() {
         Shell shell = window.getShell();
-        if (shell != null) {
+        if (shell != null && !shell.isDisposed()) {
             // update the cached title
             windowTitle = shell.getText();
         }
