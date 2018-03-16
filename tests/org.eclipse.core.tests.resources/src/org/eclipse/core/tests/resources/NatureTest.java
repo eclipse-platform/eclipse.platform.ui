@@ -437,7 +437,7 @@ public class NatureTest extends ResourceTest {
 		Assert.assertNotEquals(-42, marker.getAttribute(IMarker.CHAR_END, -42));
 		try (ByteArrayOutputStream bos = new ByteArrayOutputStream(); InputStream input = ((IFile) marker.getResource()).getContents()) {
 			FileUtil.transferStreams(input, bos, "whatever", getMonitor());
-			String marked = bos.toString().substring(marker.getAttribute(IMarker.CHAR_START, -42), marker.getAttribute(IMarker.CHAR_END, -42) + 1);
+			String marked = bos.toString().substring(marker.getAttribute(IMarker.CHAR_START, -42), marker.getAttribute(IMarker.CHAR_END, -42));
 			Assert.assertEquals(NATURE_MISSING, marked);
 		}
 	}
@@ -459,7 +459,8 @@ public class NatureTest extends ResourceTest {
 		Assert.assertNotEquals(-42, marker.getAttribute(IMarker.CHAR_END, -42));
 		try (ByteArrayOutputStream bos = new ByteArrayOutputStream(); InputStream input = ((IFile) marker.getResource()).getContents()) {
 			FileUtil.transferStreams(input, bos, "whatever", getMonitor());
-			String marked = bos.toString().substring(marker.getAttribute(IMarker.CHAR_START, -42), marker.getAttribute(IMarker.CHAR_END, -42) + 1);
+			String marked = bos.toString().substring(marker.getAttribute(IMarker.CHAR_START, -42),
+					marker.getAttribute(IMarker.CHAR_END, -42));
 			Assert.assertEquals(NATURE_MISSING, marked);
 		}
 	}

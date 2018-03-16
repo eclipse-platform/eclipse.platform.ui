@@ -211,7 +211,7 @@ public class CheckMissingNaturesListener implements IResourceChangeListener, IPr
 			Matcher matcher = pattern.matcher(content);
 			if (matcher.matches() && matcher.groupCount() > 0) {
 				marker.setAttribute(IMarker.CHAR_START, matcher.start(1));
-				marker.setAttribute(IMarker.CHAR_END, matcher.end(1) - 1);
+				marker.setAttribute(IMarker.CHAR_END, matcher.end(1));
 			}
 		} catch (IOException e) {
 			ResourcesPlugin.getPlugin().getLog().log(new Status(IStatus.ERROR, ResourcesPlugin.PI_RESOURCES, e.getMessage(), e));
