@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.debug.internal.ui.launchConfigurations;
 
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -63,12 +64,7 @@ public class SelectLaunchersDialog extends AbstractDebugListSelectionDialog {
 		@Override
 		public String getText(Object element) {
 			if(element instanceof ILaunchDelegate) {
-				ILaunchDelegate ldp = (ILaunchDelegate) element;
-				String name = ldp.getName();
-				if(name == null) {
-					name = ldp.getContributorName();
-				}
-				return name;
+				return getDelegateName((ILaunchDelegate) element);
 			}
 			return element.toString();
 		}
@@ -96,7 +92,8 @@ public class SelectLaunchersDialog extends AbstractDebugListSelectionDialog {
 		super(parentShell);
 		super.setTitle(LaunchConfigurationsMessages.SelectLaunchersDialog_0);
 		setShellStyle(getShellStyle() | SWT.RESIZE);
-		fDelegates = delegates;
+		fDelegates = delegates.clone();
+		Arrays.sort(fDelegates, (delegate1, delegate2) -> String.CASE_INSENSITIVE_ORDER.compare(getDelegateName(delegate1), getDelegateName(delegate2)));
 		fConfiguration = configuration;
 		fLaunchMode = launchmode;
 	}
@@ -313,5 +310,13 @@ public class SelectLaunchersDialog extends AbstractDebugListSelectionDialog {
 	@Override
 	protected String getViewerLabel() {
 		return LaunchConfigurationsMessages.SelectLaunchersDialog_launchers;
+	}
+
+	private String getDelegateName(ILaunchDelegate ldp) {
+		String name = ldp.getName();
+		if(name == null) {
+			name = ldp.getContributorName();
+		}
+		return name;
 	}
 }
