@@ -187,7 +187,6 @@ public class LaunchConfigurationsMessages extends NLS {
 	public static String PrototypeTab_Reset_Menu_Action_9;
 	public static String PrototypeTab_Explanation_Label_10;
 	public static String PrototypeTab_Explanation_Label_11;
-	public static String PrototypeTab_Explanation_Label_12;
 
 	public static String FavoritesDialog_1;
 	public static String FavoritesDialog_2;
