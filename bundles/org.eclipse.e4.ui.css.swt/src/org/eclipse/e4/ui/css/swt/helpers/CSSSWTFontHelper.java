@@ -442,7 +442,7 @@ public class CSSSWTFontHelper {
 	 */
 	public static FontData getFirstFontData(Control control) {
 		Font font = control.getFont();
-		if (font == null) {
+		if (font == null || font.isDisposed()) {
 			return null;
 		}
 		return getFirstFontData(font);
@@ -456,7 +456,7 @@ public class CSSSWTFontHelper {
 	 * @return
 	 */
 	public static FontData getFirstFontData(Font font) {
-		FontData[] fontDatas = font.getFontData();
+		FontData[] fontDatas = !font.isDisposed() ? font.getFontData() : null;
 		if (fontDatas == null || fontDatas.length < 1) {
 			return null;
 		}
