@@ -264,7 +264,7 @@ public class LineDelimiterEditor {
 	 */
 	public void store() {
 		String val;
-		if (defaultButton.getSelection() || choiceCombo.getText().isEmpty()) {
+		if (defaultButton.isDisposed() || defaultButton.getSelection() || choiceCombo.getText().isEmpty()) {
 			val = null;
 		} else {
 			Map<String, String> lineSeparators = Platform.knownPlatformLineSeparators();
