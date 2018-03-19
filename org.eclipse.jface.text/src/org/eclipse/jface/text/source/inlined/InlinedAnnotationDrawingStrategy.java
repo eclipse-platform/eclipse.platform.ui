@@ -162,12 +162,16 @@ class InlinedAnnotationDrawingStrategy implements IDrawingStrategy {
 	 * @return the style to apply with GlyphMetrics ascent only if needed.
 	 */
 	static StyleRange updateStyle(LineHeaderAnnotation annotation, StyleRange style) {
+		int width= annotation.getRedrawnCharacterWidth();
+		if (width == 0) {
+			// Update GlyphMetrics only when mining was already drawn
+			return null;
+		}
 		int height= annotation.getHeight();
 		if (height == 0) {
 			return null;
 		}
 		int fullHeight= height + annotation.getRedrawnCharacterHeight();
-		int width= annotation.getRedrawnCharacterWidth();
 		if (style == null) {
 			style= new StyleRange();
 			Position position= annotation.getPosition();
