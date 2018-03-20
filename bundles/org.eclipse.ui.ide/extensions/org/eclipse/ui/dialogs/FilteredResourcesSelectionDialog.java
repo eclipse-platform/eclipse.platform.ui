@@ -11,6 +11,7 @@
  *     Anton Leherbauer (Wind River Systems, Inc.) - Bug 415099 Terminating with "<" or " " (space) does not work for extensions
  *     Mickael Istria (Red Hat Inc.) - Bug 460749: filter resources with same location
  *     Lucas Bullen (Red Hat Inc.) - Bug 520250/520251 highlight matches by CamelCase and pattern
+ *                                 - Bug 525974: Open Resource sorting doesn't show perfect match first
  *******************************************************************************/
 package org.eclipse.ui.dialogs;
 
@@ -116,6 +117,7 @@ public class FilteredResourcesSelectionDialog extends
 
 	private String title;
 
+	private ItemsFilter latestFilter;
 	/**
 	 * The base outer-container which will be used to search for resources. This
 	 * is the root of the tree that spans the search space. Often, this is the
@@ -408,7 +410,8 @@ public class FilteredResourcesSelectionDialog extends
 
 	@Override
 	protected ItemsFilter createFilter() {
-		return new ResourceFilter(container, searchContainer, isDerived, typeMask);
+		latestFilter = new ResourceFilter(container, searchContainer, isDerived, typeMask);
+		return latestFilter;
 	}
 
 	@Override
@@ -430,6 +433,21 @@ public class FilteredResourcesSelectionDialog extends
 			int s2Dot = s2.lastIndexOf('.');
 			String n1 = s1Dot == -1 ? s1 : s1.substring(0, s1Dot);
 			String n2 = s2Dot == -1 ? s2 : s2.substring(0, s2Dot);
+
+			if (latestFilter != null) {
+				String pattern = latestFilter.getPattern();
+				int patternDot = pattern.lastIndexOf('.');
+				String patternNoExtension = patternDot == -1 ? pattern : pattern.substring(0, patternDot);
+				boolean m1 = patternNoExtension.equals(n1);
+				boolean m2 = patternNoExtension.equals(n2);
+				if (m1 && m2)
+					return 0;
+				if (m1)
+					return -1;
+				if (m2)
+					return 1;
+			}
+
 			int comparability = collator.compare(n1, n2);
 			if (comparability != 0)
 				return comparability;
