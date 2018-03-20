@@ -391,14 +391,12 @@ public abstract class AbstractCSSEngine implements CSSEngine {
 				// there are static pseudo instances defined, loop for it and
 				// apply styles for each pseudo instance.
 				for (String pseudoInstance : pseudoInstances) {
-					CSSStyleDeclaration styleWithPseudoInstance = viewCSS
-							.getComputedStyle(elt, pseudoInstance);
+					CSSStyleDeclaration styleWithPseudoInstance = viewCSS.getComputedStyle(elt, pseudoInstance);
 					if (computeDefaultStyle) {
 						/*
 						 * Apply default style for the current pseudo instance.
 						 */
-						applyDefaultStyleDeclaration(element, false,
-								styleWithPseudoInstance, pseudoInstance);
+						applyDefaultStyleDeclaration(element, false, styleWithPseudoInstance, pseudoInstance);
 					}
 
 					if (styleWithPseudoInstance != null) {
@@ -406,8 +404,6 @@ public abstract class AbstractCSSEngine implements CSSEngine {
 						if (parentRule instanceof ExtendedCSSRule) {
 							applyConditionalPseudoStyle((ExtendedCSSRule) parentRule, pseudoInstance, element, styleWithPseudoInstance);
 						} else {
-							//							applyStyleDeclaration(element, styleWithPseudoInstance,
-							//									pseudoInstance);
 							applyStyleDeclaration(elt, styleWithPseudoInstance, pseudoInstance);
 						}
 					}
@@ -415,7 +411,6 @@ public abstract class AbstractCSSEngine implements CSSEngine {
 			}
 
 			if (style != null) {
-				//applyStyleDeclaration(element, style, null);
 				applyStyleDeclaration(elt, style, null);
 			}
 			try {
@@ -430,7 +425,8 @@ public abstract class AbstractCSSEngine implements CSSEngine {
 				 * Style all children recursive.
 				 */
 				NodeList nodes = elt instanceof ChildVisibilityAwareElement
-						? ((ChildVisibilityAwareElement) elt).getVisibleChildNodes() : elt.getChildNodes();
+						? ((ChildVisibilityAwareElement) elt).getVisibleChildNodes()
+								: elt.getChildNodes();
 						if (nodes != null) {
 							for (int k = 0; k < nodes.getLength(); k++) {
 								applyStyles(nodes.item(k), applyStylesToChildNodes);
@@ -540,8 +536,7 @@ public abstract class AbstractCSSEngine implements CSSEngine {
 			String property = style.item(i);
 			CSSValue value = style.getPropertyCSSValue(property);
 			try {
-				ICSSPropertyHandler handler = this.applyCSSProperty(element,
-						property, value, pseudo);
+				ICSSPropertyHandler handler = this.applyCSSProperty(element, property, value, pseudo);
 				ICSSPropertyHandler2 propertyHandler2 = null;
 				if (handler instanceof ICSSPropertyHandler2) {
 					propertyHandler2 = (ICSSPropertyHandler2) handler;
@@ -588,24 +583,21 @@ public abstract class AbstractCSSEngine implements CSSEngine {
 	}
 
 	@Override
-	public CSSStyleDeclaration parseAndApplyStyleDeclaration(Object node,
-			InputStream stream) throws IOException {
+	public CSSStyleDeclaration parseAndApplyStyleDeclaration(Object node, InputStream stream) throws IOException {
 		CSSStyleDeclaration style = parseStyleDeclaration(stream);
 		this.applyStyleDeclaration(node, style, null);
 		return style;
 	}
 
 	@Override
-	public CSSStyleDeclaration parseAndApplyStyleDeclaration(Object node,
-			InputSource source) throws IOException {
+	public CSSStyleDeclaration parseAndApplyStyleDeclaration(Object node, InputSource source) throws IOException {
 		CSSStyleDeclaration style = parseStyleDeclaration(source);
 		this.applyStyleDeclaration(node, style, null);
 		return style;
 	}
 
 	@Override
-	public CSSStyleDeclaration parseAndApplyStyleDeclaration(Object node,
-			String style) throws IOException {
+	public CSSStyleDeclaration parseAndApplyStyleDeclaration(Object node, String style) throws IOException {
 		CSSStyleDeclaration styleDeclaration = parseStyleDeclaration(style);
 		this.applyStyleDeclaration(node, styleDeclaration, null);
 		return styleDeclaration;
@@ -614,16 +606,14 @@ public abstract class AbstractCSSEngine implements CSSEngine {
 	/*--------------- Apply inline style -----------------*/
 
 	@Override
-	public void applyInlineStyle(Object node, boolean applyStylesToChildNodes)
-			throws IOException {
+	public void applyInlineStyle(Object node, boolean applyStylesToChildNodes) throws IOException {
 		Element elt = getElement(node);
 		if (elt != null) {
 			if (elt instanceof CSSStylableElement) {
 				CSSStylableElement stylableElement = (CSSStylableElement) elt;
 				String style = stylableElement.getCSSStyle();
 				if (style != null && style.length() > 0) {
-					parseAndApplyStyleDeclaration(stylableElement
-							.getNativeWidget(), style);
+					parseAndApplyStyleDeclaration(stylableElement.getNativeWidget(), style);
 				}
 			}
 			if (applyStylesToChildNodes) {
@@ -643,18 +633,15 @@ public abstract class AbstractCSSEngine implements CSSEngine {
 	/*--------------- Initial Style -----------------*/
 
 	@Override
-	public CSSStyleDeclaration getDefaultStyleDeclaration(Object element,
-			String pseudoE) {
+	public CSSStyleDeclaration getDefaultStyleDeclaration(Object element, String pseudoE) {
 		return getDefaultStyleDeclaration(element, null, pseudoE);
 	}
 
-	public CSSStyleDeclaration getDefaultStyleDeclaration(Object widget,
-			CSSStyleDeclaration newStyle, String pseudoE) {
+	public CSSStyleDeclaration getDefaultStyleDeclaration(Object widget, CSSStyleDeclaration newStyle, String pseudoE) {
 		CSSStyleDeclaration style = null;
 		for (ICSSPropertyHandlerProvider provider : propertyHandlerProviders) {
 			try {
-				style = provider.getDefaultCSSStyleDeclaration(this, widget,
-						newStyle, pseudoE);
+				style = provider.getDefaultCSSStyleDeclaration(this, widget, newStyle, pseudoE);
 			} catch (Exception e) {
 				handleExceptions(e);
 			}
@@ -663,25 +650,18 @@ public abstract class AbstractCSSEngine implements CSSEngine {
 	}
 
 	@Override
-	public void applyDefaultStyleDeclaration(Object element,
-			boolean applyStylesToChildNodes) {
-		applyDefaultStyleDeclaration(element, applyStylesToChildNodes, null,
-				null);
+	public void applyDefaultStyleDeclaration(Object element, boolean applyStylesToChildNodes) {
+		applyDefaultStyleDeclaration(element, applyStylesToChildNodes, null, null);
 	}
 
-	public void applyDefaultStyleDeclaration(Object element,
-			boolean applyStylesToChildNodes, CSSStyleDeclaration newStyle,
-			String pseudoE) {
+	public void applyDefaultStyleDeclaration(Object element, boolean applyStylesToChildNodes,
+			CSSStyleDeclaration newStyle, String pseudoE) {
 		// Initial styles must be computed or applied
 		Element elt = getElement(element);
 		if (elt != null) {
 			if (elt instanceof CSSStylableElement) {
 				CSSStylableElement stylableElement = (CSSStylableElement) elt;
-				CSSStyleDeclaration oldDefaultStyleDeclaration = stylableElement
-						.getDefaultStyleDeclaration(pseudoE);
-				// CSSStyleDeclaration defaultStyleDeclaration =
-				// computeDefaultStyleDeclaration(
-				// stylableElement, newStyle);
+				CSSStyleDeclaration oldDefaultStyleDeclaration = stylableElement.getDefaultStyleDeclaration(pseudoE);
 				CSSStyleDeclaration defaultStyleDeclaration = getDefaultStyleDeclaration(
 						element, newStyle, pseudoE);
 				if (oldDefaultStyleDeclaration != null) {
@@ -689,8 +669,7 @@ public abstract class AbstractCSSEngine implements CSSEngine {
 					// before apply the new style
 					try {
 						throwError = false;
-						applyStyleDeclaration(element, defaultStyleDeclaration,
-								pseudoE);
+						applyStyleDeclaration(element, defaultStyleDeclaration, pseudoE);
 					} finally {
 						throwError = true;
 					}
@@ -703,8 +682,7 @@ public abstract class AbstractCSSEngine implements CSSEngine {
 				NodeList nodes = elt.getChildNodes();
 				if (nodes != null) {
 					for (int k = 0; k < nodes.getLength(); k++) {
-						applyDefaultStyleDeclaration(nodes.item(k),
-								applyStylesToChildNodes);
+						applyDefaultStyleDeclaration(nodes.item(k), applyStylesToChildNodes);
 					}
 					onStylesAppliedToChildNodes(elt, nodes);
 				}
@@ -722,11 +700,9 @@ public abstract class AbstractCSSEngine implements CSSEngine {
 	 * @param pseudo
 	 */
 	@Override
-	public ICSSPropertyHandler applyCSSProperty(Object element,
-			String property,
-			CSSValue value, String pseudo) throws Exception {
-		if (currentCSSPropertiesApplyed != null
-				&& currentCSSPropertiesApplyed.containsKey(property)) {
+	public ICSSPropertyHandler applyCSSProperty(Object element, String property, CSSValue value, String pseudo)
+			throws Exception {
+		if (currentCSSPropertiesApplyed != null && currentCSSPropertiesApplyed.containsKey(property)) {
 			// CSS Property was already applied, ignore it.
 			return null;
 		}
@@ -737,24 +713,20 @@ public abstract class AbstractCSSEngine implements CSSEngine {
 			Element actualElement = (Element) element;
 			Node parentNode = actualElement.getParentNode();
 			// get CSS property value
-			String parentValueString = retrieveCSSProperty(parentNode,
-					property, pseudo);
+			String parentValueString = retrieveCSSProperty(parentNode, property, pseudo);
 			// and convert it to a CSS value, overriding the "inherit" setting
 			// with the parent value
 			value = parsePropertyValue(parentValueString);
 		}
 
 		for (ICSSPropertyHandlerProvider provider : propertyHandlerProviders) {
-			Collection<ICSSPropertyHandler> handlers = provider
-					.getCSSPropertyHandlers(element, property);
+			Collection<ICSSPropertyHandler> handlers = provider.getCSSPropertyHandlers(element, property);
 			if (handlers == null) {
 				continue;
 			}
 			for (ICSSPropertyHandler handler : handlers) {
 				try {
-					boolean result = handler.applyCSSProperty(element,
-							property,
-							value, pseudo, this);
+					boolean result = handler.applyCSSProperty(element, property, value, pseudo, this);
 					if (result) {
 						// Add CSS Property to flag that this CSS Property was
 						// applied.
@@ -775,19 +747,16 @@ public abstract class AbstractCSSEngine implements CSSEngine {
 	}
 
 	@Override
-	public String retrieveCSSProperty(Object element, String property,
-			String pseudo) {
+	public String retrieveCSSProperty(Object element, String property, String pseudo) {
 		try {
 			element = getElement(element); // in case we're passed a node
 			for (ICSSPropertyHandlerProvider provider : propertyHandlerProviders) {
-				Collection<ICSSPropertyHandler> handlers = provider
-						.getCSSPropertyHandlers(element, property);
+				Collection<ICSSPropertyHandler> handlers = provider.getCSSPropertyHandlers(element, property);
 				if (handlers == null) {
 					continue;
 				}
 				for (ICSSPropertyHandler handler : handlers) {
-					String value = handler.retrieveCSSProperty(element,
-							property, pseudo, this);
+					String value = handler.retrieveCSSProperty(element, property, pseudo, this);
 					if (!StringUtils.isEmpty(value)) {
 						return value;
 					}
@@ -820,12 +789,10 @@ public abstract class AbstractCSSEngine implements CSSEngine {
 		return null;
 	}
 
-	protected Collection<ICSSPropertyHandler> getCSSPropertyHandlers(
-			String property) throws Exception {
+	protected Collection<ICSSPropertyHandler> getCSSPropertyHandlers(String property) throws Exception {
 		Collection<ICSSPropertyHandler> handlers = new ArrayList<>();
 		for (ICSSPropertyHandlerProvider provider : propertyHandlerProviders) {
-			Collection<ICSSPropertyHandler> h = provider
-					.getCSSPropertyHandlers(property);
+			Collection<ICSSPropertyHandler> h = provider.getCSSPropertyHandlers(property);
 			if (handlers == null) {
 				handlers = h;
 			} else {
@@ -861,7 +828,6 @@ public abstract class AbstractCSSEngine implements CSSEngine {
 	@Override
 	public void setElementProvider(IElementProvider elementProvider) {
 		this.elementProvider = elementProvider;
-		// this.elementsContext = null;
 	}
 
 	/**
@@ -892,8 +858,7 @@ public abstract class AbstractCSSEngine implements CSSEngine {
 				elementContext = new CSSElementContextImpl();
 				Object nativeWidget = getNativeWidget(element);
 				hookNativeWidget(nativeWidget);
-				getElementsContext().put(nativeWidget,
-						elementContext);
+				getElementsContext().put(nativeWidget, elementContext);
 			}
 			elementContext.setElementProvider(elementProvider);
 			elementContext.setElement(elt);
@@ -1064,13 +1029,11 @@ public abstract class AbstractCSSEngine implements CSSEngine {
 		this.resourcesRegistry = resourcesRegistry;
 	}
 
-	public void registerCSSPropertyHandlerProvider(
-			ICSSPropertyHandlerProvider handlerProvider) {
+	public void registerCSSPropertyHandlerProvider(ICSSPropertyHandlerProvider handlerProvider) {
 		propertyHandlerProviders.add(handlerProvider);
 	}
 
-	public void unregisterCSSPropertyHandlerProvider(
-			ICSSPropertyHandlerProvider handlerProvider) {
+	public void unregisterCSSPropertyHandlerProvider(ICSSPropertyHandlerProvider handlerProvider) {
 		propertyHandlerProviders.remove(handlerProvider);
 	}
 
@@ -1101,8 +1064,7 @@ public abstract class AbstractCSSEngine implements CSSEngine {
 	}
 
 	@Override
-	public Object convert(CSSValue value, Object toType, Object context)
-			throws Exception {
+	public Object convert(CSSValue value, Object toType, Object context) throws Exception {
 		Object key = keyFactory.createKey(value);
 		Object newValue = getResource(toType, key);
 
@@ -1150,8 +1112,7 @@ public abstract class AbstractCSSEngine implements CSSEngine {
 	 */
 	public abstract CSSParser makeCSSParser();
 
-	protected void setResourceRegistryKeyFactory(
-			ResourceRegistryKeyFactory keyFactory) {
+	protected void setResourceRegistryKeyFactory(ResourceRegistryKeyFactory keyFactory) {
 		this.keyFactory = keyFactory;
 	}
 }
