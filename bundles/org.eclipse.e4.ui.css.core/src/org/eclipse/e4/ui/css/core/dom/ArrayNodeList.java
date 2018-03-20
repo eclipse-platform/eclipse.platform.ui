@@ -10,12 +10,14 @@
  *******************************************************************************/
 package org.eclipse.e4.ui.css.core.dom;
 
+import java.util.Arrays;
 import java.util.List;
 import org.eclipse.e4.ui.css.core.engine.CSSEngine;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 public class ArrayNodeList implements NodeList {
+
 	private Object[] elements;
 	private CSSEngine engine;
 
@@ -37,4 +39,10 @@ public class ArrayNodeList implements NodeList {
 	public Node item(int index) {
 		return engine.getElement(elements[index]);
 	}
+
+	@Override
+	public String toString() {
+		return "ArrayNodeList [elements=" + Arrays.toString(elements) + "]";
+	}
+
 }
