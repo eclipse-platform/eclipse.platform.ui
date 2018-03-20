@@ -441,7 +441,7 @@ public class ProgressManagerUtil {
 
 		for (int i = toSearch.length - 1; i >= 0; i--) {
 			Shell shell = toSearch[i];
-			if (shell.equals(toExclude)) {
+			if (shell.equals(toExclude) || shell.isDisposed()) {
 				continue;
 			}
 
