@@ -24,6 +24,7 @@ import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.ToolBar;
 import org.junit.Ignore;
@@ -97,6 +98,35 @@ public class CTabFolderTest extends CSSSWTTestCase {
 
 		shell.pack();
 		return shell;
+	}
+
+	@SuppressWarnings("restriction")
+	protected Label createLabelInCTabFolder(String styleSheet) {
+		engine = createEngine(styleSheet, display);
+
+		// Create widgets
+		Shell shell = new Shell(display, SWT.SHELL_TRIM);
+		FillLayout layout = new FillLayout();
+		shell.setLayout(layout);
+		Composite panel = new Composite(shell, SWT.NONE);
+		panel.setLayout(new FillLayout());
+
+		CTabFolder folderToTest = new CTabFolder(panel, SWT.NONE);
+		CTabItem tab1 = new CTabItem(folderToTest, SWT.NONE);
+		tab1.setText("A TAB ITEM");
+		Composite composite = new Composite(folderToTest, SWT.BORDER);
+		composite.setLayout(new FillLayout());
+		Label labelToTest = new Label(composite, SWT.BORDER);
+		labelToTest.setText("Text for item ");
+		tab1.setControl(composite);
+		// setSelection is required to process via the CSS engine the children of
+		// CTabItem
+		folderToTest.setSelection(0);
+
+		engine.applyStyles(shell, true);
+
+		shell.pack();
+		return labelToTest;
 	}
 
 	@Test
@@ -327,5 +357,11 @@ public class CTabFolderTest extends CSSSWTTestCase {
 		engine.applyStyles(barA.getShell(), true);
 
 		assertEquals(WHITE, barA.getBackground().getRGB());
+	}
+
+	@Test
+	public void testStyleLabelChildInCTabFolder() {
+		Label labelToTest = createLabelInCTabFolder("Label { background-color: #0000FF; }\n");
+		assertEquals(BLUE, labelToTest.getBackground().getRGB());
 	}
 }
