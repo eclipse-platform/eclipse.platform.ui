@@ -137,7 +137,7 @@ public final class DetailsPart implements IFormPart, IPartSelectionListener {
  */
 	public IDetailsPage getCurrentPage() {
 		Control control = pageBook.getCurrentPage();
-		if (control != null) {
+		if (control != null && !control.isDisposed()) {
 			Object data = control.getData();
 			if (data instanceof IDetailsPage)
 				return (IDetailsPage) data;
