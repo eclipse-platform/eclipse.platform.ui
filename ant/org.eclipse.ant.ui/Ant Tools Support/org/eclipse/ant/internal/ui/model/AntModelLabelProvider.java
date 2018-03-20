@@ -11,23 +11,37 @@
 package org.eclipse.ant.internal.ui.model;
 
 import org.eclipse.core.resources.IFile;
+import org.eclipse.jface.preference.JFacePreferences;
+import org.eclipse.jface.resource.ColorRegistry;
+import org.eclipse.jface.resource.JFaceColors;
+import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.viewers.DelegatingStyledCellLabelProvider.IStyledLabelProvider;
 import org.eclipse.jface.viewers.IColorProvider;
 import org.eclipse.jface.viewers.StyledCellLabelProvider;
 import org.eclipse.jface.viewers.StyledString;
 import org.eclipse.jface.viewers.ViewerCell;
-import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Display;
 
 public class AntModelLabelProvider extends StyledCellLabelProvider implements IColorProvider, IStyledLabelProvider {
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.jface.viewers.ILabelProvider#getImage(Object)
-	 */
+	private Color normalForeground;
+	private Color defaultForeground;
+
+	public AntModelLabelProvider() {
+		ColorRegistry colorRegistry = JFaceResources.getColorRegistry();
+
+		normalForeground = colorRegistry.get(JFacePreferences.INFORMATION_FOREGROUND_COLOR);
+		if (normalForeground == null) {
+			normalForeground = JFaceColors.getInformationViewerForegroundColor(Display.getDefault());
+		}
+		defaultForeground = colorRegistry.get(JFacePreferences.ACTIVE_HYPERLINK_COLOR);
+		if (defaultForeground == null) {
+			defaultForeground = JFaceColors.getInformationViewerForegroundColor(Display.getDefault());
+		}
+	}
+
 	@Override
 	public Image getImage(Object anElement) {
 		AntElementNode node = (AntElementNode) anElement;
@@ -46,9 +60,9 @@ public class AntModelLabelProvider extends StyledCellLabelProvider implements IC
 	@Override
 	public Color getForeground(Object node) {
 		if (node instanceof AntTargetNode && ((AntTargetNode) node).isDefaultTarget()) {
-			return Display.getDefault().getSystemColor(SWT.COLOR_BLUE);
+			return defaultForeground;
 		}
-		return Display.getDefault().getSystemColor(SWT.COLOR_LIST_FOREGROUND);
+		return normalForeground;
 	}
 
 	@Override
@@ -78,6 +92,6 @@ public class AntModelLabelProvider extends StyledCellLabelProvider implements IC
 
 	@Override
 	public Color getBackground(Object element) {
-		return Display.getDefault().getSystemColor(SWT.COLOR_LIST_BACKGROUND);
+		return null;
 	}
 }
