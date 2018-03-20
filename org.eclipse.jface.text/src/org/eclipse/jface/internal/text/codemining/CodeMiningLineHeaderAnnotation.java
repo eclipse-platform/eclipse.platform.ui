@@ -12,7 +12,9 @@ package org.eclipse.jface.internal.text.codemining;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.function.Consumer;
+import java.util.stream.Stream;
 
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.events.MouseEvent;
@@ -62,13 +64,32 @@ public class CodeMiningLineHeaderAnnotation extends LineHeaderAnnotation impleme
 	 * Code mining annotation constructor.
 	 *
 	 * @param position the position
-	 * @param viewer the viewer
+	 * @param viewer   the viewer
 	 */
 	public CodeMiningLineHeaderAnnotation(Position position, ISourceViewer viewer) {
 		super(position, viewer);
 		fResolvedMinings= null;
 		fMinings= new ArrayList<>();
 		fBounds= new ArrayList<>();
+	}
+
+	@Override
+	public int getHeight() {
+		return hasAtLeastOneResolvedMining() ? super.getHeight() : 0;
+	}
+
+	/**
+	 * Returns <code>true</code> if the annotation has at least one resolved mining and
+	 * <code>false</code> otherwise.
+	 *
+	 * @return <code>true</code> if the annotation has at least one resolved mining and
+	 *         <code>false</code> otherwise.
+	 */
+	private boolean hasAtLeastOneResolvedMining() {
+		if (fResolvedMinings == null || fResolvedMinings.length == 0) {
+			return false;
+		}
+		return Stream.of(fResolvedMinings).anyMatch(Objects::nonNull);
 	}
 
 	@Override
@@ -106,9 +127,7 @@ public class CodeMiningLineHeaderAnnotation extends LineHeaderAnnotation impleme
 		for (int i= 0; i < minings.size(); i++) {
 			ICodeMining mining= minings.get(i);
 			if (!mining.isResolved()) {
-				// the mining is not resolved.
 				if (!redrawn) {
-					// redraw the annotation when mining is resolved.
 					redraw();
 					redrawn= true;
 				}
@@ -117,7 +136,6 @@ public class CodeMiningLineHeaderAnnotation extends LineHeaderAnnotation impleme
 					mining= fResolvedMinings[i];
 				}
 				if (mining == null) {
-					// the last mining was not resolved, don't draw it.
 					continue;
 				}
 			} else {
@@ -145,8 +163,8 @@ public class CodeMiningLineHeaderAnnotation extends LineHeaderAnnotation impleme
 	 * Initialize GC with given color and styled text background color and font.
 	 *
 	 * @param textWidget the text widget
-	 * @param color the color
-	 * @param gc the gc to initialize
+	 * @param color      the color
+	 * @param gc         the gc to initialize
 	 */
 	private void initGC(StyledText textWidget, Color color, GC gc) {
 		gc.setForeground(color);
