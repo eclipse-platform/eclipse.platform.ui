@@ -25,7 +25,6 @@ import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.Link;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Widget;
 import org.junit.After;
@@ -124,26 +123,4 @@ public class CSSSWTTestCase {
 		shell.pack();
 		return labelToTest;
 	}
-
-	protected Link createTestLink(String styleSheet) {
-		engine = createEngine(styleSheet, display);
-
-		// Create widgets
-		Shell shell = new Shell(display, SWT.SHELL_TRIM);
-		FillLayout layout = new FillLayout();
-		shell.setLayout(layout);
-
-		Composite panel = new Composite(shell, SWT.NONE);
-		panel.setLayout(new FillLayout());
-
-		Link labelToTest = new Link(panel, SWT.NONE);
-		labelToTest.setText("Some text <A HREF='./somewhere'>some link text</A>");
-
-		// Apply styles
-		engine.applyStyles(labelToTest, true);
-
-		shell.pack();
-		return labelToTest;
-	}
-
 }
