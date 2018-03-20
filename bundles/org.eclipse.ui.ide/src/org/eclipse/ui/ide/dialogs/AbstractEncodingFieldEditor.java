@@ -338,7 +338,8 @@ public abstract class AbstractEncodingFieldEditor extends FieldEditor {
 	 * @return the currently selected encoding
 	 */
 	protected String getSelectedEncoding() {
-		if (defaultEncodingButton.getSelection()) {
+		if ((!defaultEncodingButton.isDisposed() && defaultEncodingButton.getSelection())
+				|| encodingCombo.isDisposed()) {
 			return defaultEnc;
 		}
 		return encodingCombo.getText();
