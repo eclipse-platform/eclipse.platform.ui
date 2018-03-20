@@ -52,10 +52,12 @@ import org.eclipse.jface.util.Util;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IRegion;
+import org.eclipse.jface.text.ITextListener;
 import org.eclipse.jface.text.ITextViewer;
 import org.eclipse.jface.text.ITextViewerExtension;
 import org.eclipse.jface.text.ITextViewerExtension5;
 import org.eclipse.jface.text.JFaceTextUtil;
+import org.eclipse.jface.text.TextEvent;
 
 
 /**
@@ -77,6 +79,34 @@ public class LineNumberRulerColumn implements IVerticalRulerColumn {
 			&& !"false".equals(System.getProperty("LineNumberRulerColumn.retina.workaround")) //$NON-NLS-1$ //$NON-NLS-2$
 			&& internalSupportsZoomedPaint();
 
+	/**
+	 * Internal listener class.
+	 */
+	class InternalListener implements ITextListener {
+
+		/**
+		 * @since 3.1
+		 */
+		private boolean fCachedRedrawState= true;
+
+		@Override
+		public void textChanged(TextEvent event) {
+
+			fCachedRedrawState= event.getViewerRedrawState();
+			if (!fCachedRedrawState)
+				return;
+
+			if (updateNumberOfDigits()) {
+				computeIndentations();
+				layout(event.getViewerRedrawState());
+				return;
+			}
+
+			boolean viewerCompletelyShown= isViewerCompletelyShown();
+			if (viewerCompletelyShown || event.getDocumentEvent() == null)
+				postRedraw();
+		}
+	}
 
 	/**
 	 * Handles all the mouse interaction in this line number ruler column.
@@ -357,16 +387,14 @@ public class LineNumberRulerColumn implements IVerticalRulerColumn {
 	private StyledText fCachedTextWidget;
 	/** The columns canvas */
 	private Canvas fCanvas;
-	/** Cache for the actual scroll position in pixels */
-	private int fScrollPos;
 	/** The drawable for double buffering */
 	private Image fBuffer;
+	/** The internal listener */
+	private ITextListener fInternalListener= new InternalListener();
 	/** The font of this column */
 	private Font fFont;
 	/** The indentation cache */
 	private int[] fIndentation;
-	/** Indicates whether this column reacts on text change events */
-	private boolean fSensitiveToTextChanges= false;
 	/** The foreground color */
 	private Color fForeground;
 	/** The background color */
@@ -632,6 +660,8 @@ public class LineNumberRulerColumn implements IVerticalRulerColumn {
 
 		if (fCachedTextViewer != null) {
 			VisibleLinesTracker.track(fCachedTextViewer, lineHeightChangeHandler);
+			fCachedTextViewer.addTextListener(fInternalListener);
+
 
 			if (fFont == null) {
 				if (fCachedTextWidget != null && !fCachedTextWidget.isDisposed())
@@ -725,7 +755,6 @@ public class LineNumberRulerColumn implements IVerticalRulerColumn {
 					gc.setBackground(getBackground(fCanvas.getDisplay()));
 					gc.fillRectangle(0, 0, width, height);
 
-					fScrollPos= fCachedTextWidget.getTopPixel();
 					doPaint(gc, visibleLines);
 				} finally {
 					gc.dispose();
@@ -750,7 +779,6 @@ public class LineNumberRulerColumn implements IVerticalRulerColumn {
 				gc.setBackground(getBackground(fCanvas.getDisplay()));
 				gc.fillRectangle(0, 0, size.x, size.y);
 
-				fScrollPos= fCachedTextWidget.getTopPixel();
 				doPaint(gc, visibleLines);
 			} finally {
 				gc.dispose();
