@@ -4033,7 +4033,7 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 		}
 
 		if (fSourceViewer instanceof ISourceViewerExtension5)
-			installCodeMinigProviders();
+			installCodeMiningProviders();
 	}
 
 	/**
@@ -4041,7 +4041,7 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	 *
 	 * @since 3.11
 	 */
-	protected void installCodeMinigProviders() {
+	protected void installCodeMiningProviders() {
 		ICodeMiningProvider[] providers = TextEditorPlugin.getDefault().getCodeMiningProviderRegistry()
 				.getProviders(this.getSourceViewer(), this);
 		((ISourceViewerExtension5) fSourceViewer).setCodeMiningProviders(providers);
