@@ -249,9 +249,10 @@ public final class MatchingCharacterPainter implements IPainter, PaintListener {
 			gc.setForeground(fColor);
 
 			Rectangle bounds= fTextWidget.getTextBounds(offset, offset + length - 1);
+			int height= fTextWidget.getCaret().getSize().y;
 
 			// draw box around line segment
-			gc.drawRectangle(bounds.x, bounds.y, bounds.width - 1, bounds.height - 1);
+			gc.drawRectangle(bounds.x, bounds.y + bounds.height - height, bounds.width - 1, height - 1);
 
 			// draw box around character area
 //			int widgetBaseline= fTextWidget.getBaseline();
