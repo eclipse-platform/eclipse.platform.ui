@@ -1272,13 +1272,14 @@ public class SourceViewer extends TextViewer implements ISourceViewer, ISourceVi
 		boolean enable= codeMiningProviders != null && codeMiningProviders.length > 0;
 		fCodeMiningProviders= codeMiningProviders;
 		if (enable) {
-			if (hasCodeMiningProviders()) {
+			if (fCodeMiningManager != null) {
 				fCodeMiningManager.setCodeMiningProviders(fCodeMiningProviders);
 			}
 			ensureCodeMiningManagerInstalled();
 		} else {
-			if (hasCodeMiningProviders())
+			if (fCodeMiningManager != null) {
 				fCodeMiningManager.uninstall();
+			}
 			fCodeMiningManager= null;
 		}
 	}
@@ -1296,12 +1297,14 @@ public class SourceViewer extends TextViewer implements ISourceViewer, ISourceVi
 				fInlinedAnnotationSupport.install(this, fAnnotationPainter);
 			}
 			fCodeMiningManager= new CodeMiningManager(this, fInlinedAnnotationSupport, fCodeMiningProviders);
+			// now trigger an update
+			updateCodeMinings();
 		}
 	}
 
 	@Override
 	public boolean hasCodeMiningProviders() {
-		return fCodeMiningManager != null;
+		return fCodeMiningManager != null; // manager always has at least one provider
 	}
 
 	@Override

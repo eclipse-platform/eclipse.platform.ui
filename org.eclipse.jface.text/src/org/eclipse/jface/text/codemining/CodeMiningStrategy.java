@@ -37,12 +37,10 @@ class CodeMiningStrategy implements IReconcilingStrategy, IReconcilingStrategyEx
 
 	@Override
 	public void initialReconcile() {
-		if (fViewer != null) {
-			// FIXME: this update is done because minings is not updated on focus by AbstractTextEditor#setFocus
-			// But I'm a little afraid to update minings each time editor will have focus
-			// @Mickael what do you think about doing update minings on AbstractTextEditor#setFocus ?
-			fViewer.updateCodeMinings();
-		}
+		// Do nothing
+		// Initial reconcilation will happen when the SourceViewer
+		// has initialized the code mining provider
+		// see SourceViewer#ensureCodeMiningManagerInstalled
 	}
 
 	@Override
