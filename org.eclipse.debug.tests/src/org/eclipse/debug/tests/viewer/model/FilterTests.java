@@ -201,6 +201,7 @@ abstract public class FilterTests extends AbstractViewerModelTest implements ITe
 
         // Populate the view (all elements containing a "2" will be filtered out.
         fViewer.setInput(model.getRootElement());
+		TestUtil.waitForJobs(getName(), 300, 5000);
 
 		waitWhile(t -> !fListener.isFinished(ALL_UPDATES_COMPLETE), createListenerErrorMessage());
 
