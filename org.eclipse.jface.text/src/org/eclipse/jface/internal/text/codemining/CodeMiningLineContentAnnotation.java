@@ -73,21 +73,13 @@ public class CodeMiningLineContentAnnotation extends LineContentAnnotation imple
 
 	@Override
 	public void update(List<ICodeMining> minings, IProgressMonitor monitor) {
-		if (fResolvedMinings == null || (fResolvedMinings.length != minings.size())) {
-			// size of resolved minings are different from size of minings to update, initialize it with size of minings to update
-			fResolvedMinings= new ICodeMining[minings.size()];
-		}
-		// fill valid resolved minings with old minings.
-		int length= Math.min(fMinings.size(), minings.size());
-		for (int i= 0; i < length; i++) {
-			ICodeMining mining= fMinings.get(i);
-			if (mining.isResolved() && !mining.isResolutionFailed()) {
-				fResolvedMinings[i]= mining;
-			}
-		}
 		disposeMinings();
 		fMonitor= monitor;
 		fMinings.addAll(minings);
+		if (fResolvedMinings == null || (fResolvedMinings.length != fMinings.size())) {
+			// size of resolved minings are different from size of minings to update, initialize it with size of minings to update
+			fResolvedMinings= new ICodeMining[fMinings.size()];
+		}
 	}
 
 	@Override
@@ -114,31 +106,24 @@ public class CodeMiningLineContentAnnotation extends LineContentAnnotation imple
 		fBounds.clear();
 		for (int i= 0; i < minings.size(); i++) {
 			ICodeMining mining= minings.get(i);
-			if (mining.isResolutionFailed()) {
-				// mining has error, try to get the last resolved mining.
-				if (fResolvedMinings.length > i) {
-					mining= fResolvedMinings[i];
-				}
-			} else if (!mining.isResolved()) {
+			if (!mining.isResolved()) {
 				// the mining is not resolved.
-				if (!redrawn && !mining.isResolutionFailed()) {
+				if (!redrawn) {
 					// redraw the annotation when mining is resolved.
 					redraw();
 					redrawn= true;
 				}
 				// try to get the last resolved mining.
-				if (fResolvedMinings.length > i) {
+				if (fResolvedMinings != null) {
 					mining= fResolvedMinings[i];
+				}
+				if (mining == null) {
+					// the last mining was not resolved, don't draw it.
+					continue;
 				}
 			} else {
 				// mining is resolved, update the resolved mining list
-				if (fResolvedMinings.length > i) {
-					fResolvedMinings[i]= mining;
-				}
-			}
-			if (mining == null) {
-				// the last mining was not resolved, don't draw it.
-				continue;
+				fResolvedMinings[i]= mining;
 			}
 			// draw the mining
 			if (nbDraw > 0) {
@@ -176,7 +161,7 @@ public class CodeMiningLineContentAnnotation extends LineContentAnnotation imple
 		// redraw codemining annotation is done only if all current minings are resolved.
 		List<ICodeMining> minings= new ArrayList<>(fMinings);
 		for (ICodeMining mining : minings) {
-			if (!mining.isResolved() && !mining.isResolutionFailed()) {
+			if (!mining.isResolved()) {
 				// one of mining is not resolved, resolve it and then redraw the annotation.
 				mining.resolve(getViewer(), fMonitor).thenRunAsync(() -> {
 					this.redraw();

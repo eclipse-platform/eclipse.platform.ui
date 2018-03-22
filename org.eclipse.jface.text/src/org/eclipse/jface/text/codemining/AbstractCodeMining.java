@@ -57,21 +57,11 @@ public abstract class AbstractCodeMining implements ICodeMining {
 	private final Consumer<MouseEvent> action;
 
 	/**
-	 * The cached resolved state.
-	 */
-	private boolean resolved;
-
-	/**
-	 * The cached resolution failed state.
-	 */
-	private boolean resolutionFailed;
-
-	/**
 	 * CodeMining constructor to locate the code mining in a given position.
 	 *
 	 * @param position the position where the mining must be drawn.
 	 * @param provider the owner codemining provider which creates this mining.
-	 * @param action   the action to execute when mining is clicked and null otherwise.
+	 * @param action the action to execute when mining is clicked and null otherwise.
 	 */
 	protected AbstractCodeMining(Position position, ICodeMiningProvider provider, Consumer<MouseEvent> action) {
 		this.position= position;
@@ -125,25 +115,12 @@ public abstract class AbstractCodeMining implements ICodeMining {
 
 	@Override
 	public boolean isResolved() {
-		if (resolveFuture != null) {
-			return resolved= resolveFuture.isDone();
-		}
-		return resolved;
-	}
-
-	@Override
-	public boolean isResolutionFailed() {
-		if (resolveFuture != null) {
-			return resolutionFailed= resolveFuture.isCompletedExceptionally();
-		}
-		return resolutionFailed;
+		return (resolveFuture != null && resolveFuture.isDone());
 	}
 
 	@Override
 	public void dispose() {
 		if (resolveFuture != null) {
-			resolved= resolveFuture.isDone();
-			resolutionFailed= resolveFuture.isCompletedExceptionally();
 			resolveFuture.cancel(true);
 			resolveFuture= null;
 		}
