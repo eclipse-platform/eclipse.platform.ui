@@ -10,7 +10,7 @@
       </documentation>
    </annotation>
 
-   <include schemaLocation="schema://org.eclipse.core.expressions/schema/expressionLanguage.exsd"/>   
+   <include schemaLocation="schema://org.eclipse.core.expressions/schema/expressionLanguage.exsd"/>
 
    <element name="extension">
       <annotation>
@@ -51,6 +51,9 @@
 
    <element name="autoEditStrategy">
       <complexType>
+         <sequence>
+            <element ref="enabledWhen" minOccurs="0" maxOccurs="1"/>
+         </sequence>
          <attribute name="class" type="string" use="required">
             <annotation>
                <documentation>
@@ -74,6 +77,35 @@
       </complexType>
    </element>
 
+   <element name="enabledWhen">
+      <annotation>
+         <documentation>
+            A core Expression that controls the enabled of the given auto edit strategies. The viewer, editor, and editor input are registered in the evaluation context as variable:
+
+ * &lt;with variable=&quot;viewer&quot;&gt; : use it if your expression requires the viewer.
+ * &lt;with variable=&quot;editor&quot;&gt; : use it if your expression requires the editor.
+ * &lt;with variable=&quot;editorInput&quot;&gt; :  use it if your expression requires the editor input.
+         </documentation>
+      </annotation>
+      <complexType>
+         <choice minOccurs="0" maxOccurs="1">
+            <element ref="not"/>
+            <element ref="or"/>
+            <element ref="and"/>
+            <element ref="instanceof"/>
+            <element ref="test"/>
+            <element ref="systemTest"/>
+            <element ref="equals"/>
+            <element ref="count"/>
+            <element ref="with"/>
+            <element ref="resolve"/>
+            <element ref="adapt"/>
+            <element ref="iterate"/>
+            <element ref="reference"/>
+         </choice>
+      </complexType>
+   </element>
+
    <annotation>
       <appinfo>
          <meta.section type="since"/>
@@ -93,8 +125,14 @@
 &lt;pre&gt;
 &lt;extension point=&quot;org.eclipse.ui.genericeditor.autoEditStrategies&quot;&gt;
    &lt;autoEditStrategy
-            class=&quot;org.eclipse.ui.genericeditor.examples.TargedDefinitionAutoEditStrategy&quot;
-            contentType=&quot;org.eclipse.pde.targetFile&quot;&gt;
+       class=&quot;org.eclipse.ui.genericeditor.examples.TargetDefinitionAutoEditStrategy&quot;
+       contentType=&quot;org.eclipse.pde.targetFile&quot;&gt;
+      &lt;enabledWhen&gt;
+         &lt;with variable=&quot;editor&quot;&gt;
+            &lt;test property=&quot;org.eclipse.ui.genericeditor.examples.TargetDefinitionPropertyTester&quot;&gt;
+            &lt;/test&gt;
+         &lt;/with&gt;
+      &lt;/enabledWhen&gt;
    &lt;/autoEditStrategy&gt;
 &lt;/extension&gt;
 &lt;/pre&gt;

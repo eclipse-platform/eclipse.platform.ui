@@ -32,6 +32,7 @@ import org.eclipse.jface.text.ITextHover;
 import org.eclipse.jface.text.source.ISourceViewer;
 import org.eclipse.ui.internal.genericeditor.GenericContentTypeRelatedExtension;
 import org.eclipse.ui.internal.genericeditor.GenericEditorPlugin;
+import org.eclipse.ui.texteditor.ITextEditor;
 
 /**
  * Text hover registry that manages the detectors
@@ -92,12 +93,13 @@ public final class TextHoverRegistry {
 		}, EXTENSION_POINT_ID);
 	}
 
-	public List<ITextHover> getAvailableHovers(ISourceViewer sourceViewer, Set<IContentType> contentTypes) {
+	public List<ITextHover> getAvailableHovers(ISourceViewer sourceViewer, ITextEditor editor, Set<IContentType> contentTypes) {
 		if (this.outOfSync) {
 			sync();
 		}
 		return this.extensions.stream()
 				.filter(ext -> contentTypes.contains(ext.targetContentType))
+				.filter(ext -> ext.matches(sourceViewer, editor))
 				// don't sort in the stream as the initial structure is already sorted by isAfter/isBefore
 				.map(GenericContentTypeRelatedExtension<ITextHover>::createDelegate)
 				.collect(Collectors.toList());

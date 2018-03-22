@@ -99,7 +99,7 @@ public final class ExtensionBasedTextViewerConfiguration extends TextSourceViewe
 
 	@Override
 	public ITextHover getTextHover(ISourceViewer sourceViewer, String contentType) {
-		List<ITextHover> hovers = GenericEditorPlugin.getDefault().getHoverRegistry().getAvailableHovers(sourceViewer, getContentTypes());
+		List<ITextHover> hovers = GenericEditorPlugin.getDefault().getHoverRegistry().getAvailableHovers(sourceViewer, editor, getContentTypes());
 		if (hovers == null || hovers.isEmpty()) {
 			return null;
 		} else if (hovers.size() == 1) {
@@ -118,7 +118,7 @@ public final class ExtensionBasedTextViewerConfiguration extends TextSourceViewe
 		contentAssistant.setAutoActivationDelay(0);
 		contentAssistant.enableColoredLabels(true);
 		contentAssistant.enableAutoActivation(true);
-		this.processors = registry.getContentAssistProcessors(sourceViewer, getContentTypes());
+		this.processors = registry.getContentAssistProcessors(sourceViewer, editor, getContentTypes());
 		if (this.processors.isEmpty()) {
 			this.processors.add(new DefaultContentAssistProcessor());
 		}
@@ -140,7 +140,7 @@ public final class ExtensionBasedTextViewerConfiguration extends TextSourceViewe
 	@Override
 	public IPresentationReconciler getPresentationReconciler(ISourceViewer sourceViewer) {
 		PresentationReconcilerRegistry registry = GenericEditorPlugin.getDefault().getPresentationReconcilerRegistry();
-		List<IPresentationReconciler> reconciliers = registry.getPresentationReconcilers(sourceViewer, getContentTypes());
+		List<IPresentationReconciler> reconciliers = registry.getPresentationReconcilers(sourceViewer, editor, getContentTypes());
 		if (!reconciliers.isEmpty()) {
 			return reconciliers.get(0);
 		}
@@ -191,8 +191,8 @@ public final class ExtensionBasedTextViewerConfiguration extends TextSourceViewe
 	@Override
 	public IReconciler getReconciler(ISourceViewer sourceViewer) {
 		ReconcilerRegistry registry = GenericEditorPlugin.getDefault().getReconcilerRegistry();
-		List<IReconciler> reconciliers = registry.getReconcilers(sourceViewer, getContentTypes());
-		List<IReconciler> highlightReconciliers = registry.getHighlightReconcilers(sourceViewer, getContentTypes());
+		List<IReconciler> reconciliers = registry.getReconcilers(sourceViewer, editor, getContentTypes());
+		List<IReconciler> highlightReconciliers = registry.getHighlightReconcilers(sourceViewer, editor, getContentTypes());
 
 		if(!highlightReconciliers.isEmpty()) {
 			reconciliers.addAll(highlightReconciliers);
@@ -209,7 +209,7 @@ public final class ExtensionBasedTextViewerConfiguration extends TextSourceViewe
 	@Override
 	public IAutoEditStrategy[] getAutoEditStrategies(ISourceViewer sourceViewer, String contentType) {
 		AutoEditStrategyRegistry registry = GenericEditorPlugin.getDefault().getAutoEditStrategyRegistry();
-		List<IAutoEditStrategy> editStrategies = registry.getAutoEditStrategies(sourceViewer, getContentTypes());
+		List<IAutoEditStrategy> editStrategies = registry.getAutoEditStrategies(sourceViewer, editor, getContentTypes());
 		if (!editStrategies.isEmpty()) {
 			return editStrategies.toArray(new IAutoEditStrategy[editStrategies.size()]);
 		}

@@ -26,6 +26,7 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.content.IContentType;
 import org.eclipse.jface.text.presentation.IPresentationReconciler;
 import org.eclipse.jface.text.source.ISourceViewer;
+import org.eclipse.ui.texteditor.ITextEditor;
 
 /**
  * A registry of presentation reconciliers provided by extension <code>org.eclipse.ui.genericeditor.presentationReconcilers</code>.
@@ -56,15 +57,17 @@ public class PresentationReconcilerRegistry {
 	 * Get the contributed {@link IPresentationReconciliers}s that are relevant to hook on source viewer according
 	 * to document content types. 
 	 * @param sourceViewer the source viewer we're hooking completion to.
+	 * @param editor the text editor
 	 * @param contentTypes the content types of the document we're editing.
 	 * @return the list of {@link IPresentationReconciler} contributed for at least one of the content types.
 	 */
-	public List<IPresentationReconciler> getPresentationReconcilers(ISourceViewer sourceViewer, Set<IContentType> contentTypes) {
+	public List<IPresentationReconciler> getPresentationReconcilers(ISourceViewer sourceViewer, ITextEditor editor, Set<IContentType> contentTypes) {
 		if (this.outOfSync) {
 			sync();
 		}
 		return this.extensions.values().stream()
 			.filter(ext -> contentTypes.contains(ext.targetContentType))
+			.filter(ext -> ext.matches(sourceViewer, editor))
 			.sorted(new ContentTypeSpecializationComparator<IPresentationReconciler>())
 			.map(GenericContentTypeRelatedExtension<IPresentationReconciler>::createDelegate)
 			.collect(Collectors.toList());

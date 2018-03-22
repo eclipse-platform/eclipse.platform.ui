@@ -24,6 +24,7 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.content.IContentType;
 import org.eclipse.jface.text.reconciler.IReconciler;
 import org.eclipse.jface.text.source.ISourceViewer;
+import org.eclipse.ui.texteditor.ITextEditor;
 
 /**
  * A registry of reconciliers provided by extensions <code>org.eclipse.ui.genericeditor.reconcilers</code>
@@ -59,16 +60,18 @@ public class ReconcilerRegistry {
 	 * Get the contributed {@link IReconciliers}s that are relevant to hook on source viewer according
 	 * to document content types.
 	 * @param sourceViewer the source viewer we're hooking completion to.
+	 * @param editor the text editor
 	 * @param contentTypes the content types of the document we're editing.
 	 * @return the list of {@link IReconciler} contributed for at least one of the content types,
 	 * sorted by most generic content type to most specific.
 	 */
-	public List<IReconciler> getReconcilers(ISourceViewer sourceViewer, Set<IContentType> contentTypes) {
+	public List<IReconciler> getReconcilers(ISourceViewer sourceViewer, ITextEditor editor, Set<IContentType> contentTypes) {
 		if (this.outOfSync) {
 			sync();
 		}
 		List<IReconciler> reconcilers = this.extensions.values().stream()
 				.filter(ext -> contentTypes.contains(ext.targetContentType))
+				.filter(ext -> ext.matches(sourceViewer, editor))
 				.sorted(new ContentTypeSpecializationComparator<IReconciler>().reversed())
 				.map(GenericContentTypeRelatedExtension<IReconciler>::createDelegate)
 				.collect(Collectors.toList());
@@ -79,16 +82,18 @@ public class ReconcilerRegistry {
 	 * Get the contributed highlight {@link IReconciliers}s that are relevant to hook on source viewer according
 	 * to document content types.
 	 * @param sourceViewer the source viewer we're hooking completion to.
+	 * @param editor the text editor
 	 * @param contentTypes the content types of the document we're editing.
 	 * @return the list of highlight {@link IReconciler}s contributed for at least one of the content types,
 	 * sorted by most generic content type to most specific.
 	 */
-	public List<IReconciler> getHighlightReconcilers(ISourceViewer sourceViewer, Set<IContentType> contentTypes) {
+	public List<IReconciler> getHighlightReconcilers(ISourceViewer sourceViewer, ITextEditor editor, Set<IContentType> contentTypes) {
 		if (this.highlightOutOfSync) {
 			syncHighlight();
 		}
 		List<IReconciler> highlightReconcilers = this.highlightExtensions.values().stream()
 				.filter(ext -> contentTypes.contains(ext.targetContentType))
+				.filter(ext -> ext.matches(sourceViewer, editor))
 				.sorted(new ContentTypeSpecializationComparator<IReconciler>().reversed())
 				.map(GenericContentTypeRelatedExtension<IReconciler>::createDelegate)
 				.collect(Collectors.toList());

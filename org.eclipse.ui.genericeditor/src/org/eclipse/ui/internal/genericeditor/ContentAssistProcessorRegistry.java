@@ -34,6 +34,7 @@ import org.eclipse.jface.text.contentassist.IContextInformation;
 import org.eclipse.jface.text.contentassist.IContextInformationValidator;
 import org.eclipse.jface.text.source.ISourceViewer;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.texteditor.ITextEditor;
 
 /**
  * A registry of content assist processors provided by extension <code>org.eclipse.ui.genericeditor.contentAssistProcessors</code>.
@@ -145,15 +146,17 @@ public class ContentAssistProcessorRegistry {
 	 * Get the contributed {@link IContentAssistProcessor}s that are relevant to hook on source viewer according
 	 * to document content types. 
 	 * @param sourceViewer the source viewer we're hooking completion to.
+	 * @param editor the text editor
 	 * @param contentTypes the content types of the document we're editing.
 	 * @return the list of {@link IContentAssistProcessor} contributed for at least one of the content types.
 	 */
-	public List<IContentAssistProcessor> getContentAssistProcessors(ISourceViewer sourceViewer, Set<IContentType> contentTypes) {
+	public List<IContentAssistProcessor> getContentAssistProcessors(ISourceViewer sourceViewer, ITextEditor editor, Set<IContentType> contentTypes) {
 		if (this.outOfSync) {
 			sync();
 		}
 		return this.extensions.values().stream()
 			.filter(ext -> contentTypes.contains(ext.targetContentType))
+			.filter(ext -> ext.matches(sourceViewer, editor))
 			.sorted(new ContentTypeSpecializationComparator<IContentAssistProcessor>())
 			.map(GenericContentTypeRelatedExtension<IContentAssistProcessor>::createDelegate)
 			.collect(Collectors.toList());
