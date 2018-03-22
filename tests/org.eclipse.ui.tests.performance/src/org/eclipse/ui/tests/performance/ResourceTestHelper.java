@@ -59,8 +59,8 @@ public class ResourceTestHelper {
 		return files.toArray(new IFile[files.size()]);
 	}
 
-	public static StringBuffer read(String src) throws IOException, CoreException {
-		return FileTool.read(new InputStreamReader(getRoot().getFile(new Path(src)).getContents()));
+	public static StringBuilder read(String src) throws IOException, CoreException {
+		return FileTool.readToBuilder(new InputStreamReader(getRoot().getFile(new Path(src)).getContents()));
 	}
 
 	public static void write(String dest, final String content) throws IOException, CoreException {
@@ -77,25 +77,25 @@ public class ResourceTestHelper {
 
 	public static void replicate(String src, String destPrefix, String destSuffix, int n, String srcName, String destNamePrefix) throws IOException, CoreException {
 
-		StringBuffer s= read(src);
+		StringBuilder s = read(src);
 
 		List<Integer> positions = identifierPositions(s, srcName);
 
 		for (int j= 0; j < n; j++) {
-			StringBuffer c= new StringBuffer(s.toString());
+			StringBuilder c = new StringBuilder(s.toString());
 			replacePositions(c, srcName.length(), destNamePrefix + j, positions);
 			write(destPrefix + j + destSuffix, c.toString());
 		}
 	}
 
 	public static void copy(String src, String dest, String srcName, String destName) throws IOException, CoreException {
-		StringBuffer buf= read(src);
+		StringBuilder buf = read(src);
 		List<Integer> positions = identifierPositions(buf, srcName);
 		replacePositions(buf, srcName.length(), destName, positions);
 		write(dest, buf.toString());
 	}
 
-	private static void replacePositions(StringBuffer c, int origLength, String string, List<Integer> positions) {
+	private static void replacePositions(StringBuilder c, int origLength, String string, List<Integer> positions) {
 		int offset= 0;
 		for (Iterator<Integer> iter = positions.iterator(); iter.hasNext();) {
 			int position= iter.next().intValue();
@@ -104,7 +104,7 @@ public class ResourceTestHelper {
 		}
 	}
 
-	private static List<Integer> identifierPositions(StringBuffer buffer, String identifier) {
+	private static List<Integer> identifierPositions(StringBuilder buffer, String identifier) {
 		List<Integer> positions = new ArrayList<Integer>();
 		int i= -1;
 		while (true) {
