@@ -10,6 +10,7 @@
  */
 package org.eclipse.jface.text.codemining;
 
+import java.util.concurrent.CancellationException;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Consumer;
 
@@ -76,11 +77,25 @@ public interface ICodeMining {
 	 * {{@link #resolve(ITextViewer, IProgressMonitor)}} will be invoked later, triggering the
 	 * future to resolve content.
 	 *
+	 * This method returns true if content mining is resolved even if there are some error (like
+	 * {@link CancellationException}). Use {{@link #isResolutionFailed()}} to know if mining was
+	 * resolved with an error.
+	 *
+	 * @see #isResolutionFailed()
 	 * @return whether the content mining is resolved. If it is not resolved,
 	 *         {{@link #resolve(ITextViewer, IProgressMonitor)}} will be invoked later, triggering
 	 *         the future to resolve content.
 	 */
 	boolean isResolved();
+
+	/**
+	 * Returns true if resolved was done with an error (like {@link CancellationException}) and
+	 * false otherwise.
+	 *
+	 * @return true if resolved was done with an error (like {@link CancellationException}) and
+	 *         false otherwise.
+	 */
+	boolean isResolutionFailed();
 
 	/**
 	 * Draw the code mining.
