@@ -107,7 +107,7 @@ public class ThemeEngine implements IThemeEngine {
 
 		//Check for old css files
 		File oldModDir= new File(
-				System.getProperty("user.home") + File.separator + ".e4css" + File.separator); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+				System.getProperty("user.home") + File.separator + ".e4css" + File.separator); //$NON-NLS-1$ //$NON-NLS-2$
 		if (oldModDir.exists()) {
 			File done = new File(oldModDir, ".processed");
 			if (!done.exists()) {
@@ -145,8 +145,7 @@ public class ThemeEngine implements IThemeEngine {
 							version ="";
 						}
 						String originalCSSFile;
-						String basestylesheeturi = originalCSSFile = ce
-								.getAttribute("basestylesheeturi");
+						String basestylesheeturi = originalCSSFile = ce.getAttribute("basestylesheeturi");
 						if (!basestylesheeturi.startsWith("platform:/plugin/")) {
 							basestylesheeturi = "platform:/plugin/"
 									+ ce.getContributor().getName() + "/"
@@ -165,9 +164,7 @@ public class ThemeEngine implements IThemeEngine {
 							themesToVarients.get(themeBaseId).add(themeId);
 							label = getVarientThemeLabel(label, os, ws);
 						}
-						registerTheme(
-								themeId, label, basestylesheeturi,
-								version);
+						registerTheme(themeId, label, basestylesheeturi, version);
 
 						//check for modified files
 						if (modifiedFiles != null) {
@@ -260,12 +257,8 @@ public class ThemeEngine implements IThemeEngine {
 		if (os != null && !os.equals(currentOS)) {
 			String osName;
 			switch (os) {
-			case Platform.OS_AIX:		osName="AIX";break;
-			case Platform.OS_HPUX:		osName="HP/UX";break;
 			case Platform.OS_LINUX:		osName="Linux";break;
 			case Platform.OS_MACOSX:	osName="Mac OS X";break;
-			case Platform.OS_QNX:		osName="QNX";break;
-			case Platform.OS_SOLARIS:	osName="Solaris";break;
 			case Platform.OS_WIN32:		osName="Windows";break;
 			default:					osName=os;break;
 			}
@@ -277,8 +270,6 @@ public class ThemeEngine implements IThemeEngine {
 			case Platform.WS_CARBON:	wsName="Carbon";break;
 			case Platform.WS_COCOA:		wsName="Cocoa";break;
 			case Platform.WS_GTK:		wsName="GTK";break;
-			case Platform.WS_MOTIF:		wsName="Motif";break;
-			case Platform.WS_PHOTON:	wsName="Photon";break;
 			case Platform.WS_WPF:		wsName="WPF";break;
 			default:					wsName=ws;break;
 			}
@@ -291,8 +282,8 @@ public class ThemeEngine implements IThemeEngine {
 	}
 
 	@Override
-	public synchronized ITheme registerTheme(String id, String label,
-			String basestylesheetURI) throws IllegalArgumentException {
+	public synchronized ITheme registerTheme(String id, String label, String basestylesheetURI)
+			throws IllegalArgumentException {
 		return  registerTheme(id, label, basestylesheetURI, "");
 	}
 
@@ -528,8 +519,7 @@ public class ThemeEngine implements IThemeEngine {
 			return null;
 		}
 		BundleContext context = bundle.getBundleContext();
-		ServiceReference<EventAdmin> eventAdminRef = context
-				.getServiceReference(EventAdmin.class);
+		ServiceReference<EventAdmin> eventAdminRef = context.getServiceReference(EventAdmin.class);
 		return context.getService(eventAdminRef);
 	}
 
@@ -553,9 +543,7 @@ public class ThemeEngine implements IThemeEngine {
 	}
 
 	private IEclipsePreferences getPreferences() {
-		return InstanceScope.INSTANCE.getNode(
-				FrameworkUtil.getBundle(
-						ThemeEngine.class).getSymbolicName());
+		return InstanceScope.INSTANCE.getNode(FrameworkUtil.getBundle(ThemeEngine.class).getSymbolicName());
 	}
 
 	void copyFile(String from, String to) throws IOException {
