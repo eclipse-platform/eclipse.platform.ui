@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2015 IBM Corporation and others.
+ * Copyright (c) 2010, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -77,7 +77,21 @@ public class CommandToModelProcessor {
 	 */
 	private void generateCommands(MApplication application, CommandManager commandManager) {
 		for (Command cmd : commandManager.getDefinedCommands()) {
-			if (commands.containsKey(cmd.getId())) {
+			final MCommand mCommand = commands.get(cmd.getId());
+			if (mCommand != null) {
+				try {
+					// This is needed to set the command name and description using the correct locale.
+					String cmdName = cmd.getName();
+					if (!cmdName.equals(mCommand.getCommandName())) {
+						mCommand.setCommandName(cmdName);
+						String cmdDesc = cmd.getDescription();
+						if (cmdDesc != null)
+							mCommand.setDescription(cmdDesc);
+					}
+				} catch (NotDefinedException e) {
+					// Since we asked for defined commands, this shouldn't be an issue
+					WorkbenchPlugin.log(e);
+				}
 				continue;
 			}
 			try {
