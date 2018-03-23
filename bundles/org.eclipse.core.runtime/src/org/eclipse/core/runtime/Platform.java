@@ -213,7 +213,9 @@ public final class Platform {
 	 * org.eclipse.core.boot.BootLoader class and its value has not changed.
 	 * </p>
 	 * @since 3.0
+	 * * @deprecated not supported anymore
 	 */
+	@Deprecated
 	public static final String OS_AIX = "aix";//$NON-NLS-1$
 
 	/**
@@ -224,7 +226,10 @@ public final class Platform {
 	 * org.eclipse.core.boot.BootLoader class and its value has not changed.
 	 * </p>
 	 * @since 3.0
+	 *
+	 * @deprecated not supported anymore
 	 */
+	@Deprecated
 	public static final String OS_SOLARIS = "solaris";//$NON-NLS-1$
 
 	/**
@@ -235,7 +240,10 @@ public final class Platform {
 	 * org.eclipse.core.boot.BootLoader class and its value has not changed.
 	 * </p>
 	 * @since 3.0
+	 *
+	 * @deprecated not supported anymore
 	 */
+	@Deprecated
 	public static final String OS_HPUX = "hpux";//$NON-NLS-1$
 
 	/**
@@ -246,7 +254,10 @@ public final class Platform {
 	 * org.eclipse.core.boot.BootLoader class and its value has not changed.
 	 * </p>
 	 * @since 3.0
+	 *
+	 * @deprecated not supported anymore
 	 */
+	@Deprecated
 	public static final String OS_QNX = "qnx";//$NON-NLS-1$
 
 	/**
@@ -369,7 +380,10 @@ public final class Platform {
 	 * org.eclipse.core.boot.BootLoader class and its value has not changed.
 	 * </p>
 	 * @since 3.0
+	 *
+	 * @deprecated not supported anymore
 	 */
+	@Deprecated
 	public static final String WS_MOTIF = "motif";//$NON-NLS-1$
 
 	/**
@@ -391,7 +405,9 @@ public final class Platform {
 	 * org.eclipse.core.boot.BootLoader class and its value has not changed.
 	 * </p>
 	 * @since 3.0
+	 * @deprecated not supported anymore
 	 */
+	@Deprecated
 	public static final String WS_PHOTON = "photon";//$NON-NLS-1$
 
 	/**
