@@ -141,6 +141,10 @@ class InlinedAnnotationDrawingStrategy implements IDrawingStrategy {
 				}
 				gc.drawString(s, charX, charY, true);
 				// END TO REMOVE
+			} else if (style != null && style.metrics != null && style.metrics.ascent != 0) {
+				// line header annotation had an height, reset it
+				style.metrics= null;
+				textWidget.setStyleRange(style);
 			}
 		} else {
 			if (style != null && style.metrics != null) {
@@ -280,6 +284,10 @@ class InlinedAnnotationDrawingStrategy implements IDrawingStrategy {
 				}
 				gc.drawString(s, charX, charY, true);
 				// END TO REMOVE
+			} else if (style != null && style.metrics != null && style.metrics.width != 0) {
+				// line content annotation had an , reset it
+				style.metrics= null;
+				textWidget.setStyleRange(style);
 			}
 		} else {
 			textWidget.redrawRange(offset, length, true);

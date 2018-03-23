@@ -73,13 +73,22 @@ public class CodeMiningLineContentAnnotation extends LineContentAnnotation imple
 
 	@Override
 	public void update(List<ICodeMining> minings, IProgressMonitor monitor) {
+		if (fResolvedMinings == null || (fResolvedMinings.length != minings.size())) {
+			// size of resolved minings are different from size of minings to update, initialize it with size of minings to update
+			fResolvedMinings= new ICodeMining[minings.size()];
+		}
+		// fill valid resolved minings with old minings.
+		int length= Math.min(fMinings.size(), minings.size());
+		for (int i= 0; i < length; i++) {
+			ICodeMining mining= fMinings.get(i);
+			if (mining.getLabel() != null) {
+				// mining was resolved without an error.
+				fResolvedMinings[i]= mining;
+			}
+		}
 		disposeMinings();
 		fMonitor= monitor;
 		fMinings.addAll(minings);
-		if (fResolvedMinings == null || (fResolvedMinings.length != fMinings.size())) {
-			// size of resolved minings are different from size of minings to update, initialize it with size of minings to update
-			fResolvedMinings= new ICodeMining[fMinings.size()];
-		}
 	}
 
 	@Override
@@ -106,24 +115,26 @@ public class CodeMiningLineContentAnnotation extends LineContentAnnotation imple
 		fBounds.clear();
 		for (int i= 0; i < minings.size(); i++) {
 			ICodeMining mining= minings.get(i);
-			if (!mining.isResolved()) {
-				// the mining is not resolved.
+			// try to get the last resolved mining.
+			ICodeMining lastResolvedMining= (fResolvedMinings != null && fResolvedMinings.length > i) ? fResolvedMinings[i] : null;
+			if (mining.getLabel() != null) {
+				// mining is resolved without error, update the resolved mining list
+				fResolvedMinings[i]= mining;
+			} else if (!mining.isResolved()) {
+				// the mining is not resolved, draw the last resolved mining
+				mining= lastResolvedMining;
 				if (!redrawn) {
 					// redraw the annotation when mining is resolved.
 					redraw();
 					redrawn= true;
 				}
-				// try to get the last resolved mining.
-				if (fResolvedMinings != null) {
-					mining= fResolvedMinings[i];
-				}
-				if (mining == null) {
-					// the last mining was not resolved, don't draw it.
-					continue;
-				}
 			} else {
-				// mining is resolved, update the resolved mining list
-				fResolvedMinings[i]= mining;
+				// the mining is resolved with error, draw the last resolved mining
+				mining= lastResolvedMining;
+			}
+			if (mining == null) {
+				// ignore the draw of mining
+				continue;
 			}
 			// draw the mining
 			if (nbDraw > 0) {

@@ -75,32 +75,40 @@ public class CodeMiningLineHeaderAnnotation extends LineHeaderAnnotation impleme
 
 	@Override
 	public int getHeight() {
-		return hasAtLeastOneResolvedMining() ? super.getHeight() : 0;
+		return hasAtLeastOneResolvedMiningNotEmpty() ? super.getHeight() : 0;
 	}
 
 	/**
-	 * Returns <code>true</code> if the annotation has at least one resolved mining and
-	 * <code>false</code> otherwise.
+	 * Returns <code>true</code> if the annotation has at least one resolved mining which have a
+	 * label and <code>false</code> otherwise.
 	 *
-	 * @return <code>true</code> if the annotation has at least one resolved mining and
-	 *         <code>false</code> otherwise.
+	 * @return <code>true</code> if the annotation has at least one resolved mining which have a
+	 *         label and <code>false</code> otherwise.
 	 */
-	private boolean hasAtLeastOneResolvedMining() {
+	private boolean hasAtLeastOneResolvedMiningNotEmpty() {
 		if (fResolvedMinings == null || fResolvedMinings.length == 0) {
 			return false;
 		}
-		return Stream.of(fResolvedMinings).anyMatch(Objects::nonNull);
+		return Stream.of(fResolvedMinings).anyMatch(m -> Objects.nonNull(m) && !m.getLabel().isEmpty());
 	}
 
 	@Override
 	public void update(List<ICodeMining> minings, IProgressMonitor monitor) {
+		if (fResolvedMinings == null || (fResolvedMinings.length != minings.size())) {
+			// size of resolved minings are different from size of minings to update, initialize it with size of minings to update
+			fResolvedMinings= new ICodeMining[minings.size()];
+		}
+		// fill valid resolved minings with old minings.
+		int length= Math.min(fMinings.size(), minings.size());
+		for (int i= 0; i < length; i++) {
+			ICodeMining mining= fMinings.get(i);
+			if (mining.getLabel() != null) {
+				fResolvedMinings[i]= mining;
+			}
+		}
 		disposeMinings();
 		fMonitor= monitor;
 		fMinings.addAll(minings);
-		if (fResolvedMinings == null || (fResolvedMinings.length != fMinings.size())) {
-			// size of resolved minings are different from size of minings to update, initialize it with size of minings to update
-			fResolvedMinings= new ICodeMining[fMinings.size()];
-		}
 	}
 
 	@Override
@@ -126,21 +134,26 @@ public class CodeMiningLineHeaderAnnotation extends LineHeaderAnnotation impleme
 		fBounds.clear();
 		for (int i= 0; i < minings.size(); i++) {
 			ICodeMining mining= minings.get(i);
-			if (!mining.isResolved()) {
+			// try to get the last resolved mining.
+			ICodeMining lastResolvedMining= (fResolvedMinings != null && fResolvedMinings.length > i) ? fResolvedMinings[i] : null;
+			if (mining.getLabel() != null) {
+				// mining is resolved with none error, update the resolved mining list
+				fResolvedMinings[i]= mining;
+			} else if (!mining.isResolved()) {
+				// the mining is not resolved, draw the last resolved mining
+				mining= lastResolvedMining;
 				if (!redrawn) {
+					// redraw the annotation when mining is resolved.
 					redraw();
 					redrawn= true;
 				}
-				// try to get the last resolved mining.
-				if (fResolvedMinings != null) {
-					mining= fResolvedMinings[i];
-				}
-				if (mining == null) {
-					continue;
-				}
 			} else {
-				// mining is resolved, update the resolved mining list
-				fResolvedMinings[i]= mining;
+				// the mining is resolved with error, draw the last resolved mining
+				mining= lastResolvedMining;
+			}
+			if (mining == null) {
+				// ignore the draw of mining
+				continue;
 			}
 			// draw the mining
 			if (nbDraw > 0) {
