@@ -186,8 +186,12 @@ class InlinedAnnotationDrawingStrategy implements IDrawingStrategy {
 				if (metrics.ascent == fullHeight) {
 					return null;
 				}
-				metrics.width= width;
-				metrics.ascent= fullHeight;
+				/**
+				 * We must create a new GlyphMetrics instance because comparison with similarTo used
+				 * later in StyledText#setStyleRange will compare the same (modified) and won't
+				 * realize an update happened.
+				 */
+				metrics= new GlyphMetrics(fullHeight, 0, width);
 			}
 		} else {
 			metrics= null;
@@ -309,7 +313,12 @@ class InlinedAnnotationDrawingStrategy implements IDrawingStrategy {
 				if (metrics.width == fullWidth) {
 					return null;
 				}
-				metrics.width= fullWidth;
+				/**
+				 * We must create a new GlyphMetrics instance because comparison with similarTo used
+				 * later in StyledText#setStyleRange will compare the same (modified) and won't
+				 * realize an update happened.
+				 */
+				metrics= new GlyphMetrics(0, 0, fullWidth);
 			}
 		} else {
 			metrics= null;
