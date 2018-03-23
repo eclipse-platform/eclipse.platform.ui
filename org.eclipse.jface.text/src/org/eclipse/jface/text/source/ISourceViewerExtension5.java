@@ -1,5 +1,5 @@
-/**
- *  Copyright (c) 2017 Angelo ZERR.
+/*******************************************************************************
+ *  Copyright (c) 2017, 2018 Angelo ZERR.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -7,7 +7,7 @@
  *
  *  Contributors:
  *  Angelo Zerr <angelo.zerr@gmail.com> - [CodeMining] Add CodeMining support in SourceViewer - Bug 527515
- */
+ *******************************************************************************/
 package org.eclipse.jface.text.source;
 
 import org.eclipse.jface.text.codemining.ICodeMining;
@@ -40,9 +40,11 @@ public interface ISourceViewerExtension5 {
 	void setCodeMiningProviders(ICodeMiningProvider[] codeMiningProviders);
 
 	/**
-	 * Returns true there are code mining providers and false otherwise.
+	 * Returns <code>true</code> if there are code mining providers and <code>false</code>
+	 * otherwise.
 	 *
-	 * @return true there are code mining providers and false otherwise.
+	 * @return <code>true</code> if there are code mining providers and <code>false</code>
+	 *         otherwise.
 	 */
 	boolean hasCodeMiningProviders();
 
