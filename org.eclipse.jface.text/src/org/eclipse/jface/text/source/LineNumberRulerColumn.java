@@ -101,10 +101,6 @@ public class LineNumberRulerColumn implements IVerticalRulerColumn {
 				layout(event.getViewerRedrawState());
 				return;
 			}
-
-			boolean viewerCompletelyShown= isViewerCompletelyShown();
-			if (viewerCompletelyShown || event.getDocumentEvent() == null)
-				postRedraw();
 		}
 	}
 
