@@ -387,7 +387,7 @@ public abstract class AbstractCSSEngine implements CSSEngine {
 			 * Manage static pseudo instances
 			 */
 			String[] pseudoInstances = getStaticPseudoInstances(elt);
-			if (pseudoInstances != null) {
+			if (pseudoInstances != null && pseudoInstances.length > 0) {
 				// there are static pseudo instances defined, loop for it and
 				// apply styles for each pseudo instance.
 				for (String pseudoInstance : pseudoInstances) {
