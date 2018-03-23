@@ -15,7 +15,6 @@ import static org.junit.Assert.assertTrue;
 
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.List;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
@@ -64,7 +63,6 @@ public class TipProviderTest {
 		fManager.setAsRead(fProvider.getNextTip());
 		assertTrue(fProvider.getTips(false).size() == 2);
 		assertTrue(fProvider.getTips(false).size() == 2);
-		List<Tip> tips = fProvider.getTips(true);
 		assertTrue(fProvider.getTips(true).size() == 1);
 		((TipManager) fProvider.getManager()).setServeReadTips(true);
 		assertTrue(fProvider.getTips(false).size() == 2);

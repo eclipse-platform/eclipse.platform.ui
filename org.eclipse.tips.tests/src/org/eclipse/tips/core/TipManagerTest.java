@@ -22,6 +22,7 @@ import org.eclipse.tips.core.internal.LogUtil;
 import org.junit.Before;
 import org.junit.Test;
 
+@SuppressWarnings("restriction")
 public class TipManagerTest {
 
 	private TestTipManager fManager;

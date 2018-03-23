@@ -60,7 +60,7 @@ public class TipTest {
 
 	@Test
 	public void testTip() {
-		new TestTip(fProvider.getID(),HTML, SUBJECT_TIP);
+		new TestTip(fProvider.getID(), HTML, SUBJECT_TIP);
 	}
 
 	@Test
@@ -95,9 +95,8 @@ public class TipTest {
 
 	@Test
 	public void testEqualsObject() {
-		TestTip testTip = new TestTip(fProvider.getID(),HTML, SUBJECT_TIP);
-		TestTip testTipx = new TestTip(fProvider.getID(),HTML, SUBJECT_TIP);
-		assertTrue(!testTip.equals("hello"));
+		TestTip testTip = new TestTip(fProvider.getID(), HTML, SUBJECT_TIP);
+		TestTip testTipx = new TestTip(fProvider.getID(), HTML, SUBJECT_TIP);
 		assertTrue(!testTip.equals(null));
 		assertTrue(testTip.equals(testTip));
 		assertTrue(!testTip.equals(fTip));
@@ -109,13 +108,6 @@ public class TipTest {
 				return "sss";
 			}
 		};
-		TestTip testTip2 = new TestTip(fProvider.getID(),HTML, SUBJECT_TIP + "DDD");
-		assertTrue(!testTip.equals(testTip2));
-		assertTrue(!testTip.equals(testTip2));
-
-		TestTip testTip3 = new TestTip(fProvider.getID(),HTML, SUBJECT_TIP + "DDD");
-		assertTrue(!testTip.equals(testTip3));
-		assertTrue(!testTip3.equals(testTip));
 
 		TestTipProvider testTipProvider2 = new TestTipProvider() {
 			@Override
@@ -124,15 +116,32 @@ public class TipTest {
 			}
 		};
 
+		TestTipProvider testTipProvider3 = new TestTipProvider() {
+			@Override
+			public String getID() {
+				return "sss";
+			}
+		};
+
+		assertTrue(!testTipProvider.equals(testTipProvider2));
+		assertTrue(!testTipProvider.equals(testTipProvider3));
+		TestTip testTip2 = new TestTip(fProvider.getID(), HTML, SUBJECT_TIP + "DDD");
+		assertTrue(!testTip.equals(testTip2));
+		assertTrue(!testTip.equals(testTip2));
+
+		TestTip testTip3 = new TestTip(fProvider.getID(), HTML, SUBJECT_TIP + "DDD");
+		assertTrue(!testTip.equals(testTip3));
+		assertTrue(!testTip3.equals(testTip));
+
 		TestTip testTip4 = new TestTip(fProvider.getID(), HTML, SUBJECT_TIP + "DDD");
 		assertTrue(!testTip.equals(testTip4));
 		assertTrue(!testTip4.equals(testTip));
 
-		TestTip testTip5 = new TestTip(fProvider.getID(),HTML, SUBJECT_TIP + "DDDWW");
+		TestTip testTip5 = new TestTip(fProvider.getID(), HTML, SUBJECT_TIP + "DDDWW");
 		assertTrue(!testTip.equals(testTip5));
 		assertTrue(!testTip5.equals(testTip));
 
-		TestTip testTip6 = new TestTip(fProvider.getID(),HTML, null);
+		TestTip testTip6 = new TestTip(fProvider.getID(), HTML, null);
 		assertTrue(!testTip.equals(testTip6));
 		assertTrue(!testTip6.equals(testTip));
 
@@ -145,9 +154,9 @@ public class TipTest {
 		fManager.setAsRead(fTip);
 		assertTrue(fManager.isRead(fTip));
 	}
-	
+
 	private void createTestDate() {
-		fProvider.setTips(Arrays.asList(new TestTip(fProvider.getID(),"<b>bold</b>", "Tip 1"),
-				new TestTip(fProvider.getID(),"<b>bold2</b>", "Tip 2")));
+		fProvider.setTips(Arrays.asList(new TestTip(fProvider.getID(), "<b>bold</b>", "Tip 1"),
+				new TestTip(fProvider.getID(), "<b>bold2</b>", "Tip 2")));
 	}
 }

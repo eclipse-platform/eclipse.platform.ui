@@ -45,13 +45,13 @@ public class TestTipManager extends TipManager {
 
 	@Override
 	public boolean isRead(Tip tip) {
-		return fReadList.contains(tip.hashCode());
+		return fReadList.contains(Integer.valueOf(tip.hashCode()));
 	}
 
 	@Override
 	public TipManager setAsRead(Tip tip) {
-		fReadList.remove((Integer) tip.hashCode());
-		fReadList.add(tip.hashCode());
+		fReadList.remove(Integer.valueOf(tip.hashCode()));
+		fReadList.add(Integer.valueOf(tip.hashCode()));
 		return this;
 	}
 

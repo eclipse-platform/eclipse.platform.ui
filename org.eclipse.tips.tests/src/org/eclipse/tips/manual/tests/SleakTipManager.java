@@ -66,7 +66,7 @@ public class SleakTipManager extends TipManager {
 			shell.setLayout(new FillLayout());
 			new Sleak().open();
 			TipDialog tipDialog = new TipDialog(shell, SleakTipManager.this, TipDialog.DEFAULT_STYLE);
-			tipDialog.addDisposeListener(pE -> dispose());
+			shell.addDisposeListener(pE -> dispose());
 			tipDialog.open();
 			shell.pack();
 			shell.open();
