@@ -10,6 +10,8 @@
  *****************************************************************************/
 package org.eclipse.tips.core;
 
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeSupport;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -32,8 +34,8 @@ public abstract class TipManager implements ITipManager {
 	private Map<Integer, List<String>> fProviderPrio = new TreeMap<>();
 	protected boolean fOpen;
 	private boolean fServeReadTips = false;
-	private TipProviderListenerManager fListenerManager = new TipProviderListenerManager();
 	private boolean fIsDiposed;
+	private PropertyChangeSupport fChangeSupport = new PropertyChangeSupport(this);
 
 	/**
 	 * Instantiates a new TipManager.
@@ -44,8 +46,7 @@ public abstract class TipManager implements ITipManager {
 	/**
 	 * Gets the provider with the specified ID.
 	 *
-	 * @param providerID
-	 *            the id of the provider to fetch
+	 * @param providerID the id of the provider to fetch
 	 * @return the provider with the specified ID or null if no such provider
 	 *         exists.
 	 * @see TipProvider#getID()
@@ -57,12 +58,14 @@ public abstract class TipManager implements ITipManager {
 
 	/**
 	 * Binds the passed provider to this manager. Implementations should override,
-	 * call super and the asynchronously call the
+	 * call super, and then asynchronously call the
 	 * {@link TipProvider#loadNewTips(org.eclipse.core.runtime.IProgressMonitor)}
 	 * method.
+	 * 
+	 * This manager then starts listening to the a {@link TipProvider#PROP_READY}
+	 * property change event and resends it through its own change support.
 	 *
-	 * @param provider
-	 *            the {@link TipProvider} to register.
+	 * @param provider the {@link TipProvider} to register.
 	 *
 	 * @return this
 	 */
@@ -72,9 +75,18 @@ public abstract class TipManager implements ITipManager {
 		log(LogUtil.info("Registering provider: " + provider.getID() + " : " + provider.getDescription()));
 		provider.setManager(this);
 		addToMaps(provider, new Integer(getPriority(provider)));
-		provider.getListenerManager().addProviderListener(
-				myProvider -> getListenerManager().notifyListeners(TipProviderListener.EVENT_READY, myProvider));
+		provider.getChangeSupport().addPropertyChangeListener(event -> {
+			if (event.getPropertyName().equals(TipProvider.PROP_READY)) {
+				PropertyChangeEvent newEvent = new PropertyChangeEvent(this, event.getPropertyName(), null, provider);
+				newEvent.setPropagationId(event.getPropagationId());
+				getChangeSupport().firePropertyChange(newEvent);
+			}
+		});
 		return this;
+	}
+
+	public PropertyChangeSupport getChangeSupport() {
+		return fChangeSupport;
 	}
 
 	private void checkDisposed() {
@@ -89,8 +101,7 @@ public abstract class TipManager implements ITipManager {
 	 * {@link TipProvider#getExpression()} was purposed to aid in the calculation of
 	 * the priority.
 	 *
-	 * @param provider
-	 *            the provider
+	 * @param provider the provider
 	 * @return the priority, lower is higher, never negative.
 	 */
 	public abstract int getPriority(TipProvider provider);
@@ -163,8 +174,8 @@ public abstract class TipManager implements ITipManager {
 	/**
 	 * Determines if the Tips framework must run at startup.
 	 *
-	 * @param shouldRun
-	 *            true if the tips should be displayed at startup, false otherwise.
+	 * @param shouldRun true if the tips should be displayed at startup, false
+	 *                  otherwise.
 	 *
 	 * @return this
 	 *
@@ -175,11 +186,10 @@ public abstract class TipManager implements ITipManager {
 	/**
 	 * Opens the Tip of the Day dialog.
 	 *
-	 * @param startUp
-	 *            When called from a startup situation, true must be passed for
-	 *            <code>pStartup</code>. If in a manual starting situation, false
-	 *            must be passed. This enables the manager to decide to skip opening
-	 *            the dialog at startup (e.g., no new tip items).
+	 * @param startUp When called from a startup situation, true must be passed for
+	 *                <code>pStartup</code>. If in a manual starting situation,
+	 *                false must be passed. This enables the manager to decide to
+	 *                skip opening the dialog at startup (e.g., no new tip items).
 	 *
 	 * @return this
 	 *
@@ -220,8 +230,7 @@ public abstract class TipManager implements ITipManager {
 	 * Indicates whether read tips must be served or not. Subclasses could override,
 	 * to save the state somewhere, but must call super.
 	 *
-	 * @param serveRead
-	 *            true of read tips may be served by the {@link TipProvider}s
+	 * @param serveRead true of read tips may be served by the {@link TipProvider}s
 	 * @return this
 	 * @see TipManager#mustServeReadTips()
 	 */
@@ -241,16 +250,6 @@ public abstract class TipManager implements ITipManager {
 	public boolean mustServeReadTips() {
 		checkDisposed();
 		return fServeReadTips;
-	}
-
-	/**
-	 * Gets the listener manager so that interested parties can subscribe to the
-	 * events of this provider.
-	 *
-	 * @return the listener manager, never null.
-	 */
-	public TipProviderListenerManager getListenerManager() {
-		return fListenerManager;
 	}
 
 	@Override

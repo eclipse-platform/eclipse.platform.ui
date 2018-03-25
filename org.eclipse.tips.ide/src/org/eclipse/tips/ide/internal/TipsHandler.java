@@ -22,7 +22,9 @@ public class TipsHandler extends AbstractHandler {
 
 	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException {
-		Startup.loadProviders();
+		if (!IDETipManager.getInstance().isOpen()) {
+			Startup.loadProviders();
+		}
 		IDETipManager.getInstance().open(false);
 		return null;
 	}

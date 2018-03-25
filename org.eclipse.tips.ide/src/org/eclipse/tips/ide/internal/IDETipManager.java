@@ -87,9 +87,9 @@ public class IDETipManager extends DefaultTipManager {
 
 	@Override
 	public TipManager open(boolean startUp) {
-		// if (isOpen()) {
-		// return this;
-		// }
+		 if (isOpen()) {
+		 return this;
+		 }
 		if (!fSourceProviderAdded) {
 			IEvaluationService evaluationService = PlatformUI.getWorkbench().getService(IEvaluationService.class);
 			evaluationService.addSourceProvider(fSourceProvider);

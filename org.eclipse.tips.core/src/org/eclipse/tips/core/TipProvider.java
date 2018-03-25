@@ -10,6 +10,7 @@
  *****************************************************************************/
 package org.eclipse.tips.core;
 
+import java.beans.PropertyChangeSupport;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -47,12 +48,17 @@ import org.eclipse.tips.core.internal.FinalTip;
  */
 public abstract class TipProvider {
 
+	/**
+	 * Ready property.
+	 */
+	public static final String PROP_READY = "PR";
+
 	private ITipManager fTipManager;
 	private int fTipIndex;
 	protected List<Tip> fTips = new ArrayList<>();
 	private Tip fCurrentTip;
 	private boolean fReady;
-	private TipProviderListenerManager fListenerManager = new TipProviderListenerManager();
+	private PropertyChangeSupport fChangeSupport = new PropertyChangeSupport(this);
 	private Tip fFinalTip = new FinalTip(getID());
 	private String fExpression;
 
@@ -85,9 +91,9 @@ public abstract class TipProvider {
 	public abstract String getID();
 
 	/**
-	 * The image used by the UI for low resolution 
+	 * The image used by the UI for low resolution
 	 *
-	 * @return a 48x48 {@link TipImage} 
+	 * @return a 48x48 {@link TipImage}
 	 */
 	public abstract TipImage getImage();
 
@@ -105,8 +111,7 @@ public abstract class TipProvider {
 	 * Subclasses may override (calling super(false) to fetch the list) if they want
 	 * to serve or sort the list of tips in a different way.
 	 *
-	 * @param filter
-	 *            false or true, see description above.
+	 * @param filter false or true, see description above.
 	 * @return an unmodifiable list of tips.
 	 */
 	public synchronized List<Tip> getTips(boolean filter) {
@@ -205,8 +210,7 @@ public abstract class TipProvider {
 	 * served from the constructor (i.e. by calling {@link #setTips(List)}), making
 	 * them available immediately
 	 *
-	 * @param monitor
-	 *            The monitor to report back progress.
+	 * @param monitor The monitor to report back progress.
 	 * @return the status in case you want to report problems.
 	 * @see TipProvider#setTips(List)
 	 * @see TipProvider#isReady()
@@ -226,8 +230,7 @@ public abstract class TipProvider {
 	 * will call this method. Subclasses may override but must not forget to call
 	 * super in order to save the {@link ITipManager}.
 	 *
-	 * @param tipManager
-	 *            the {@link ITipManager}
+	 * @param tipManager the {@link ITipManager}
 	 * @return this
 	 */
 	public synchronized TipProvider setManager(ITipManager tipManager) {
@@ -241,20 +244,19 @@ public abstract class TipProvider {
 	 * constructor of the {@link TipProvider} but may also be called from the
 	 * asynchronous {@link #loadNewTips(IProgressMonitor)} method.
 	 *
-	 * @param tips
-	 *            a list of {@link Tip} objects
+	 * @param tips a list of {@link Tip} objects
 	 * @return this
 	 * @see #addTips(List)
 	 * @see #isReady()
 	 * @see #loadNewTips(IProgressMonitor)
 	 */
 	public TipProvider setTips(List<Tip> tips) {
-		if(getManager().isDisposed()) {
+		if (getManager().isDisposed()) {
 			return this;
 		}
 		doSetTips(tips, true);
 		fReady = true;
-		fListenerManager.notifyListeners(TipProviderListener.EVENT_READY, this);
+		fChangeSupport.firePropertyChange(PROP_READY, false, true);
 		return this;
 	}
 
@@ -264,8 +266,7 @@ public abstract class TipProvider {
 	 * constructor of the {@link TipProvider} but may also be called from the
 	 * asynchronous {@link #loadNewTips(IProgressMonitor)} method.
 	 *
-	 * @param tips
-	 *            a list of {@link Tip} objects
+	 * @param tips a list of {@link Tip} objects
 	 * @return this
 	 * @see #setTips(List)
 	 * @see #isReady()
@@ -274,7 +275,7 @@ public abstract class TipProvider {
 	public TipProvider addTips(List<Tip> tips) {
 		doSetTips(tips, false);
 		fReady = true;
-		fListenerManager.notifyListeners(TipProviderListener.EVENT_READY, this);
+		fChangeSupport.firePropertyChange(PROP_READY, false, true);
 		return this;
 	}
 
@@ -286,13 +287,13 @@ public abstract class TipProvider {
 	}
 
 	/**
-	 * Gets the listener manager so that interested parties can subscribe to the
-	 * events of this provider.
+	 * Gets the change support so that interested parties can subscribe to the
+	 * property change events of this provider.
 	 *
-	 * @return the {@link TipProviderListenerManager}
+	 * @return the {@link PropertyChangeSupport}
 	 */
-	public TipProviderListenerManager getListenerManager() {
-		return fListenerManager;
+	public PropertyChangeSupport getChangeSupport() {
+		return fChangeSupport;
 	}
 
 	/**
@@ -321,8 +322,7 @@ public abstract class TipProvider {
 	/**
 	 * Sets the expression to determine the priority of the provider.
 	 *
-	 * @param expression
-	 *            the expression, may be null.
+	 * @param expression the expression, may be null.
 	 *
 	 * @see #getExpression()
 	 */

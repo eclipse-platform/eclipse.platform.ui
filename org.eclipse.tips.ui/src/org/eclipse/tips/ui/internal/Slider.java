@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.tips.ui.internal;
 
+import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -30,7 +31,6 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.tips.core.TipImage;
 import org.eclipse.tips.core.TipManager;
 import org.eclipse.tips.core.TipProvider;
-import org.eclipse.tips.core.TipProviderListener;
 import org.eclipse.tips.core.internal.LogUtil;
 import org.eclipse.tips.ui.internal.util.ImageUtil;
 import org.eclipse.tips.ui.internal.util.ResourceManager;
@@ -47,18 +47,16 @@ public class Slider extends Composite {
 	private TipManager fTipManager;
 	private Button fLeftButton;
 	private Button fRightButton;
-	private TipProviderListener fProviderListener;
 	private Composite fSelectedProviderButton;
 	private HashMap<String, Image> fProviderImageCache = new HashMap<>();
 	private int fIconSize = 48;
+	private PropertyChangeListener fPropertyChangeListener;
 
 	/**
 	 * Constructor for the Slider widget.
 	 *
-	 * @param parent
-	 *            the parent
-	 * @param style
-	 *            the SWT style bits
+	 * @param parent the parent
+	 * @param style  the SWT style bits
 	 */
 	public Slider(Composite parent, int style) {
 		super(parent, style);
@@ -104,7 +102,7 @@ public class Slider extends Composite {
 
 	private void setupDisposeListener() {
 		addListener(SWT.Dispose, event -> {
-			fTipManager.getListenerManager().removeProviderListener(fProviderListener);
+			fTipManager.getChangeSupport().removePropertyChangeListener(fPropertyChangeListener);
 			fProviderImageCache.values().forEach(img -> {
 				if (!img.isDisposed()) {
 					img.dispose();
@@ -114,7 +112,7 @@ public class Slider extends Composite {
 	}
 
 	private void setupProviderListener() {
-		fProviderListener = provider -> getDisplay().asyncExec(() -> load());
+		fPropertyChangeListener = provider -> getDisplay().asyncExec(() -> load());
 	}
 
 	private static Image getImage(String icon) {
@@ -230,13 +228,12 @@ public class Slider extends Composite {
 	/**
 	 * Sets the {@link TipManager}.
 	 *
-	 * @param tipManager
-	 *            the {@link TipManager}
+	 * @param tipManager the {@link TipManager}
 	 * @return this
 	 */
 	public Slider setTipManager(TipManager tipManager) {
 		fTipManager = tipManager;
-		fTipManager.getListenerManager().addProviderListener(fProviderListener);
+		fTipManager.getChangeSupport().addPropertyChangeListener(TipProvider.PROP_READY, fPropertyChangeListener);
 		fIconSize = 48;
 		load();
 		return this;
@@ -282,8 +279,7 @@ public class Slider extends Composite {
 	/**
 	 * Sets the passed provider as the selected provider in the slider.
 	 *
-	 * @param provider
-	 *            the new provider for the slider.
+	 * @param provider the new provider for the slider.
 	 *
 	 * @return this
 	 */
@@ -297,8 +293,7 @@ public class Slider extends Composite {
 	 * Adds the listener to the list of listeners to be called when an event with a
 	 * {@link TipProvider} occurs.
 	 *
-	 * @param listener
-	 *            the {@link ProviderSelectionListener}
+	 * @param listener the {@link ProviderSelectionListener}
 	 * @return this
 	 */
 	public Slider addTipProviderListener(ProviderSelectionListener listener) {
@@ -309,8 +304,7 @@ public class Slider extends Composite {
 	/**
 	 * Removes the listener from the list.
 	 *
-	 * @param listener
-	 *            the {@link ProviderSelectionListener}
+	 * @param listener the {@link ProviderSelectionListener}
 	 * @return this
 	 */
 	public Slider removeTipProviderListener(ProviderSelectionListener listener) {
