@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2015 Angelo Zerr and others.
+ * Copyright (c) 2008, 2018 Angelo Zerr and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,12 +10,14 @@
  *     IBM Corporation - ongoing development
  *     Lars Vogel <Lars.Vogel@gmail.com> - Bug 422702
  *     Stefan Winkler <stefan@winklerweb.net> - Bug 458342
+ *     Karsten Thoms <karste.thoms@itemis.de> - Bug 532869
  *******************************************************************************/
 package org.eclipse.e4.ui.css.core.impl.dom;
 
 import java.util.ArrayList;
 import java.util.List;
 import org.eclipse.e4.ui.css.core.dom.ExtendedCSSRule;
+import org.eclipse.e4.ui.css.core.dom.ExtendedDocumentCSS;
 import org.eclipse.e4.ui.css.core.impl.sac.ExtendedSelector;
 import org.w3c.css.sac.Selector;
 import org.w3c.css.sac.SelectorList;
@@ -27,6 +29,7 @@ import org.w3c.dom.css.CSSStyleRule;
 import org.w3c.dom.css.CSSStyleSheet;
 import org.w3c.dom.css.DocumentCSS;
 import org.w3c.dom.css.ViewCSS;
+import org.w3c.dom.stylesheets.StyleSheet;
 import org.w3c.dom.stylesheets.StyleSheetList;
 import org.w3c.dom.views.DocumentView;
 
@@ -34,15 +37,22 @@ import org.w3c.dom.views.DocumentView;
 /**
  * {@link ViewCSS} implementation used to compute {@link CSSStyleDeclaration}.
  */
-public class ViewCSSImpl implements ViewCSS {
+public class ViewCSSImpl implements ViewCSS, ExtendedDocumentCSS.StyleSheetChangeListener {
 
 	protected DocumentCSS documentCSS;
+	private boolean ruleCachingEnabled;
+	/** Cached state of combined CSS rules for the current stylesheets */
+	private List<CSSRule> currentCombinedRules;
 
 	/**
 	 * Creates a new ViewCSS.
 	 */
 	public ViewCSSImpl(DocumentCSS documentCSS) {
 		this.documentCSS = documentCSS;
+		if (this.documentCSS instanceof ExtendedDocumentCSS) {
+			((ExtendedDocumentCSS) this.documentCSS).addStyleSheetChangeListener(this);
+			ruleCachingEnabled = true;
+		}
 	}
 
 	/**
@@ -59,23 +69,43 @@ public class ViewCSSImpl implements ViewCSS {
 	 */
 	@Override
 	public CSSStyleDeclaration getComputedStyle(Element elt, String pseudoElt) {
-		// Loop over the CSS styleSheet list
+		CSSStyleDeclaration styleDeclaration = getComputedStyle(getCombinedRules(), elt, pseudoElt);
+		return styleDeclaration;
+	}
+
+	/**
+	 * Retrieves the combined list of CSS rules for all current stylesheets. This
+	 * method returns a cached state when the stylesheets are the same as on its
+	 * last call. When the stylesheets differ, the rules are collected from
+	 * documentCSS's stylesheets.
+	 *
+	 * @return CSS rules for all style sheets
+	 */
+	private List<CSSRule> getCombinedRules() {
+		if (this.ruleCachingEnabled && this.currentCombinedRules != null) {
+			return this.currentCombinedRules;
+		}
+
 		StyleSheetList styleSheetList = documentCSS.getStyleSheets();
 		int l = styleSheetList.getLength();
 
-		List<CSSRule> combinedRuleList = new ArrayList<>();
+		List<CSSRule> cssRules = new ArrayList<>();
+
+		// Loop over the CSS styleSheet list
 		for (int i = 0; i < l; i++) {
 			CSSStyleSheet styleSheet = (CSSStyleSheet) styleSheetList.item(i);
 
 			CSSRuleList styleSheetRules = styleSheet.getCssRules();
 			int rulesSize = styleSheetRules.getLength();
 			for (int j = 0; j < rulesSize; j++) {
-				combinedRuleList.add(styleSheetRules.item(j));
+				cssRules.add(styleSheetRules.item(j));
 			}
 		}
 
-		CSSStyleDeclaration styleDeclaration = getComputedStyle(combinedRuleList, elt, pseudoElt);
-		return styleDeclaration;
+		if (this.ruleCachingEnabled) {
+			this.currentCombinedRules = cssRules;
+		}
+		return cssRules;
 	}
 
 	public CSSStyleDeclaration getComputedStyle(List<CSSRule> ruleList, Element elt, String pseudoElt) {
@@ -135,5 +165,15 @@ public class ViewCSSImpl implements ViewCSS {
 			return firstStyleDeclaration.style;
 		}
 		return null;
+	}
+
+	@Override
+	public void styleSheetAdded(StyleSheet styleSheet) {
+		currentCombinedRules = null;
+	}
+
+	@Override
+	public void styleSheetRemoved(StyleSheet styleSheet) {
+		currentCombinedRules = null;
 	}
 }

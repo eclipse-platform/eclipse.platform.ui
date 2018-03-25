@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2015 Angelo Zerr and others.
+ * Copyright (c) 2008, 2018 Angelo Zerr and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,6 +9,7 @@
  *     Angelo Zerr <angelo.zerr@gmail.com> - initial API and implementation
  *     IBM Corporation - ongoing development
  *     Lars Vogel <Lars.Vogel@gmail.com> - Bug 422702
+ *     Karsten Thoms <karste.thoms@itemis.de> - Bug 532869
  *******************************************************************************/
 
 package org.eclipse.e4.ui.css.core.impl.dom;
@@ -43,6 +44,8 @@ public class DocumentCSSImpl implements ExtendedDocumentCSS {
 	 */
 	private Map<Integer, List<?>> styleDeclarationMap;
 
+	private List<StyleSheetChangeListener> styleSheetChangeListeners = new ArrayList<>(1);
+
 	@Override
 	public StyleSheetList getStyleSheets() {
 		return styleSheetList;
@@ -56,10 +59,15 @@ public class DocumentCSSImpl implements ExtendedDocumentCSS {
 	@Override
 	public void addStyleSheet(StyleSheet styleSheet) {
 		styleSheetList.addStyleSheet(styleSheet);
+		styleSheetChangeListeners.forEach(l -> l.styleSheetAdded(styleSheet));
 	}
 
 	@Override
 	public void removeAllStyleSheets() {
+		for (int i = 0; i < styleSheetList.getLength(); i++) {
+			StyleSheet styleSheet = styleSheetList.item(i);
+			styleSheetChangeListeners.forEach(l -> l.styleSheetRemoved(styleSheet));
+		}
 		styleSheetList.removeAllStyleSheets();
 		this.styleDeclarationMap = null;
 	}
@@ -149,5 +157,15 @@ public class DocumentCSSImpl implements ExtendedDocumentCSS {
 			styleDeclarationMap = new HashMap<>();
 		}
 		return styleDeclarationMap;
+	}
+
+	@Override
+	public void addStyleSheetChangeListener(StyleSheetChangeListener listener) {
+		styleSheetChangeListeners.add(listener);
+	}
+
+	@Override
+	public void removeStyleSheetChangeListener(StyleSheetChangeListener listener) {
+		styleSheetChangeListeners.remove(listener);
 	}
 }

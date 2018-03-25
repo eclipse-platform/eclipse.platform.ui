@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2015 Angelo Zerr and others.
+ * Copyright (c) 2008, 2018 Angelo Zerr and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,11 +7,12 @@
  *
  * Contributors:
  *     Angelo Zerr <angelo.zerr@gmail.com> - initial API and implementation
+ *     Karsten Thoms <karste.thoms@itemis.de> - Bug 532869
  *******************************************************************************/
 package org.eclipse.e4.ui.css.core.dom;
 
+import java.util.EventListener;
 import java.util.List;
-
 import org.w3c.css.sac.Condition;
 import org.w3c.css.sac.Selector;
 import org.w3c.dom.css.DocumentCSS;
@@ -37,4 +38,24 @@ public interface ExtendedDocumentCSS extends DocumentCSS {
 
 	public List<?> querySelector(int selectorType, int conditionType);
 
+	/**
+	 * @since 0.12.200
+	 */
+	interface StyleSheetChangeListener extends EventListener {
+		void styleSheetAdded(StyleSheet styleSheet);
+
+		void styleSheetRemoved(StyleSheet styleSheet);
+	}
+
+	/**
+	 * @since 0.12.200
+	 */
+	default void addStyleSheetChangeListener(StyleSheetChangeListener listener) {
+	}
+
+	/**
+	 * @since 0.12.200
+	 */
+	default void removeStyleSheetChangeListener(StyleSheetChangeListener listener) {
+	}
 }

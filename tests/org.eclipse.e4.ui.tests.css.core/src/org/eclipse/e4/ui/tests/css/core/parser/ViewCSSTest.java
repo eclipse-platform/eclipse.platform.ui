@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2014 EclipseSource and others. All rights reserved.
+ * Copyright (c) 2009, 2018 EclipseSource and others. All rights reserved.
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
@@ -8,14 +8,21 @@
  *   EclipseSource - initial API and implementation
  *   Stefan Winkler <stefan@winklerweb.net> - Bug 419482
  *   Lars Vogel <Lars.Vogel@gmail.com> - Bug 430468
+ *   Karsten Thoms <karste.thoms@itemis.de> - Bug 532869
  ******************************************************************************/
 package org.eclipse.e4.ui.tests.css.core.parser;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNotSame;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertSame;
+import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
+import java.util.List;
 
 import org.eclipse.e4.ui.css.core.impl.dom.DocumentCSSImpl;
 import org.eclipse.e4.ui.css.core.impl.dom.ViewCSSImpl;
@@ -25,6 +32,7 @@ import org.eclipse.e4.ui.tests.css.core.util.TestElement;
 import org.eclipse.swt.widgets.Display;
 import org.junit.Before;
 import org.junit.Test;
+import org.w3c.dom.css.CSSRule;
 import org.w3c.dom.css.CSSStyleDeclaration;
 import org.w3c.dom.css.CSSStyleSheet;
 import org.w3c.dom.css.ViewCSS;
@@ -106,6 +114,55 @@ public class ViewCSSTest {
 		assertNotNull(buttonStyle);
 		assertEquals(1, buttonStyle.getLength());
 		assertEquals("color: blue;", buttonStyle.getCssText());
+	}
+
+	@SuppressWarnings("unchecked")
+	@Test
+	public void testRuleCaching() throws Exception {
+		String css = "Shell > * > * { color: red; }\n" + "Button { color: blue; }\n";
+		CSSStyleSheet styleSheet = ParserTestUtil.parseCss(css);
+		DocumentCSSImpl docCss = new DocumentCSSImpl();
+		docCss.addStyleSheet(styleSheet);
+		ViewCSSImpl viewCSS = new ViewCSSImpl(docCss);
+
+		Class<?>[] NO_TYPES = new Class<?>[0];
+		Object[] NO_ARGS = new Object[0];
+
+		Field currentCombinedRulesField = ViewCSSImpl.class.getDeclaredField("currentCombinedRules");
+		currentCombinedRulesField.setAccessible(true);
+
+		// after creation and before call of getComputedStyle() the fields are null
+		assertNull(currentCombinedRulesField.get(viewCSS));
+
+		// now call getComputedStyle() for a shell
+		final TestElement shell = new TestElement("Shell", engine);
+		final TestElement composite = new TestElement("Composite", shell, engine);
+		final TestElement button = new TestElement("Button", composite, engine);
+		CSSStyleDeclaration buttonStyle = viewCSS.getComputedStyle(button, null);
+		assertNotNull(buttonStyle);
+
+		// now the fields are filled
+		assertNotNull(currentCombinedRulesField.get(viewCSS));
+
+		// deeper inspection: check what private method getCombinedRules returns
+		Method getCombinedRulesMethod = ViewCSSImpl.class.getDeclaredMethod("getCombinedRules", NO_TYPES);
+		getCombinedRulesMethod.setAccessible(true);
+
+		List<CSSRule> cssRules = (List<CSSRule>) getCombinedRulesMethod.invoke(viewCSS, NO_ARGS);
+		// check caching: a 2nd call retrieves cached list
+		assertSame(cssRules, getCombinedRulesMethod.invoke(viewCSS, NO_ARGS));
+
+		// add a new stylesheet => flush cache
+		css = "Shell > * > * { color: blue; }\n" + "Label { color: green; }\n";
+		styleSheet = ParserTestUtil.parseCss(css);
+		docCss.addStyleSheet(styleSheet);
+
+		assertNull(currentCombinedRulesField.get(viewCSS));
+
+		List<CSSRule> cssRules2 = (List<CSSRule>) getCombinedRulesMethod.invoke(viewCSS, NO_ARGS);
+		assertNotSame(cssRules, cssRules2);
+		// stylesheet added => more rules
+		assertTrue(cssRules2.size() > cssRules.size());
 	}
 
 	private static ViewCSS createViewCss(String css) throws IOException {
