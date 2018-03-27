@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2017 Red Hat Inc. and others.
+ * Copyright (c) 2017, 2018 Red Hat Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -35,21 +35,24 @@ import org.eclipse.jface.text.source.Annotation;
 import org.eclipse.jface.text.source.IAnnotationModel;
 import org.eclipse.jface.text.source.IAnnotationModelExtension;
 import org.eclipse.jface.text.source.ISourceViewer;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.custom.CaretEvent;
 import org.eclipse.swt.custom.CaretListener;
 
 /**
-*
-* This Reconciler Strategy is a default stategy which will be present if
-* no other highlightReconcilers are registered for a given content-type. It splits
-* the text into 'words' (which are defined as anything in-between
-* non-alphanumeric characters) and searches the document highlighting all like words.
-*
-* E.g. if your file contains "t^he dog in the bog" and you leave your caret at
-* ^ you will get both instances of 'the' highlighted.
-*
-*/
-public class DefaultWordHighlightStrategy implements IReconcilingStrategy, IReconcilingStrategyExtension, CaretListener, IPreferenceChangeListener {
+ *
+ * This Reconciler Strategy is a default stategy which will be present if no
+ * other highlightReconcilers are registered for a given content-type. It splits
+ * the text into 'words' (which are defined as anything in-between
+ * non-alphanumeric characters) and searches the document highlighting all like
+ * words.
+ *
+ * E.g. if your file contains "t^he dog in the bog" and you leave your caret at
+ * ^ you will get both instances of 'the' highlighted.
+ *
+ */
+public class DefaultWordHighlightStrategy
+		implements IReconcilingStrategy, IReconcilingStrategyExtension, CaretListener, IPreferenceChangeListener {
 
 	private static final String ANNOTATION_TYPE = "org.eclipse.ui.genericeditor.text"; //$NON-NLS-1$
 
@@ -59,7 +62,8 @@ public class DefaultWordHighlightStrategy implements IReconcilingStrategy, IReco
 
 	private static final String WORD_REGEXP = "\\w+"; //$NON-NLS-1$
 	private static final Pattern WORD_PATTERN = Pattern.compile(WORD_REGEXP, Pattern.UNICODE_CHARACTER_CLASS);
-	private static final Pattern CURRENT_WORD_START_PATTERN = Pattern.compile(WORD_REGEXP + "$", Pattern.UNICODE_CHARACTER_CLASS); //$NON-NLS-1$
+	private static final Pattern CURRENT_WORD_START_PATTERN = Pattern.compile(WORD_REGEXP + "$", //$NON-NLS-1$
+			Pattern.UNICODE_CHARACTER_CLASS);
 
 	private Annotation[] fOccurrenceAnnotations = null;
 
@@ -70,24 +74,26 @@ public class DefaultWordHighlightStrategy implements IReconcilingStrategy, IReco
 		}
 
 		String text = document.get();
-		offset = ((ITextViewerExtension5)sourceViewer).widgetOffset2ModelOffset(offset);
+		offset = ((ITextViewerExtension5) sourceViewer).widgetOffset2ModelOffset(offset);
 
 		String word = findCurrentWord(text, offset);
-		if(word == null) {
+		if (word == null) {
 			removeOccurrenceAnnotations();
 			return;
 		}
 
 		Matcher m = WORD_PATTERN.matcher(text);
 		Map<Annotation, Position> annotationMap = new HashMap<>();
-		while(m.find()) {
-			if(m.group().equals(word)) {
-				annotationMap.put(new Annotation(ANNOTATION_TYPE, false, null),
+		while (m.find()) {
+			if (m.group().equals(word)) {
+				annotationMap.put(
+						new Annotation(ANNOTATION_TYPE, false,
+								NLS.bind(Messages.DefaultWordHighlightStrategy_OccurrencesOf, word)),
 						new Position(m.start(), m.end() - m.start()));
 			}
 		}
 
-		if(annotationMap.size() < 2) {
+		if (annotationMap.size() < 2) {
 			removeOccurrenceAnnotations();
 			return;
 		}
@@ -111,11 +117,11 @@ public class DefaultWordHighlightStrategy implements IReconcilingStrategy, IReco
 	private static String findCurrentWord(String text, int offset) {
 		String wordStart = null;
 		String wordEnd = null;
-		
+
 		String substring = text.substring(0, offset);
 		Matcher m = CURRENT_WORD_START_PATTERN.matcher(substring);
 		if (m.find()) {
-			wordStart=m.group();
+			wordStart = m.group();
 		}
 		substring = text.substring(offset);
 		m = WORD_PATTERN.matcher(substring);
