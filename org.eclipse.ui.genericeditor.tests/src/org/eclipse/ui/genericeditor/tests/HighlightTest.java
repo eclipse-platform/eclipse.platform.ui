@@ -27,6 +27,8 @@ import org.eclipse.jface.text.source.Annotation;
 import org.eclipse.jface.text.source.IAnnotationModel;
 import org.eclipse.jface.text.tests.util.DisplayHelper;
 
+import org.eclipse.ui.genericeditor.tests.contributions.EnabledPropertyTester;
+
 import org.eclipse.ui.texteditor.IDocumentProvider;
 
 public class HighlightTest extends AbstratGenericEditorTest {
@@ -47,6 +49,18 @@ public class HighlightTest extends AbstratGenericEditorTest {
 		createAndOpenFile("bar.txt", "bar 'bar'");
 
 		checkHighlightForCaretOffset(0, "'bar'", 1);
+	}
+
+	@Test
+	public void testEnabledWhenCustomHighlightReconciler() throws Exception {
+		EnabledPropertyTester.setEnabled(true);
+		createAndOpenFile("enabledWhen.txt", "bar 'bar'");
+		checkHighlightForCaretOffset(0, "'bar'", 1);
+		cleanFileAndEditor();
+
+		EnabledPropertyTester.setEnabled(false);
+		createAndOpenFile("enabledWhen.txt", "bar 'bar'");
+		checkHighlightForCaretOffset(0, "'bar'", 0);
 	}
 
 	@Test

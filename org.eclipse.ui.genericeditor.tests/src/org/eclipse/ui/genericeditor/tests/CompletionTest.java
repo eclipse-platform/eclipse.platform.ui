@@ -11,6 +11,7 @@
 package org.eclipse.ui.genericeditor.tests;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import java.util.Arrays;
@@ -36,6 +37,7 @@ import org.eclipse.jface.text.contentassist.ICompletionProposal;
 import org.eclipse.jface.text.tests.util.DisplayHelper;
 
 import org.eclipse.ui.genericeditor.tests.contributions.BarContentAssistProcessor;
+import org.eclipse.ui.genericeditor.tests.contributions.EnabledPropertyTester;
 import org.eclipse.ui.genericeditor.tests.contributions.LongRunningBarContentAssistProcessor;
 
 import org.eclipse.ui.texteditor.ContentAssistAction;
@@ -51,16 +53,42 @@ public class CompletionTest extends AbstratGenericEditorTest {
 	@Test
 	public void testCompletion() throws Exception {
 		final Set<Shell> beforeShells = Arrays.stream(editor.getSite().getShell().getDisplay().getShells()).filter(Shell::isVisible).collect(Collectors.toSet());
-		editor.selectAndReveal(3, 0);
-		ContentAssistAction action = (ContentAssistAction) editor.getAction(ITextEditorActionConstants.CONTENT_ASSIST);
-		action.update();
-		action.run();
-		waitAndDispatch(100);
+		openConentAssist();
 		this.completionShell= findNewShell(beforeShells);
 		final Table completionProposalList = findCompletionSelectionControl(completionShell);
 		checkCompletionContent(completionProposalList);
 		// TODO find a way to actually trigger completion and verify result against Editor content
 		// Assert.assertEquals("Completion didn't complete", "bars are good for a beer.", ((StyledText)editor.getAdapter(Control.class)).getText());
+	}
+
+	@Test
+	public void testEnabledWhenCompletion() throws Exception {
+		// Confirm that when disabled, a completion shell is present
+		EnabledPropertyTester.setEnabled(false);
+		createAndOpenFile("enabledWhen.txt", "bar 'bar'");
+		final Set<Shell> beforeShells = Arrays.stream(editor.getSite().getShell().getDisplay().getShells()).filter(Shell::isVisible).collect(Collectors.toSet());
+		openConentAssist();
+		Shell[] afterShells = Arrays.stream(editor.getSite().getShell().getDisplay().getShells())
+				.filter(Shell::isVisible)
+				.filter(shell -> !beforeShells.contains(shell))
+				.toArray(Shell[]::new);
+		assertEquals("A new shell was found", 0, afterShells.length);
+		cleanFileAndEditor();
+
+		// Confirm that when enabled, a completion shell is present
+		EnabledPropertyTester.setEnabled(true);
+		createAndOpenFile("enabledWhen.txt", "bar 'bar'");
+		final Set<Shell> beforeEnabledShells = Arrays.stream(editor.getSite().getShell().getDisplay().getShells()).filter(Shell::isVisible).collect(Collectors.toSet());
+		openConentAssist();
+		assertNotNull(findNewShell(beforeEnabledShells));
+	}
+
+	private void openConentAssist() {
+		editor.selectAndReveal(3, 0);
+		ContentAssistAction action = (ContentAssistAction) editor.getAction(ITextEditorActionConstants.CONTENT_ASSIST);
+		action.update();
+		action.run();
+		waitAndDispatch(100);
 	}
 
 	/**
@@ -111,11 +139,7 @@ public class CompletionTest extends AbstratGenericEditorTest {
 	@Test
 	public void testCompletionFreeze_bug521484() throws Exception {
 		final Set<Shell> beforeShells = Arrays.stream(editor.getSite().getShell().getDisplay().getShells()).filter(Shell::isVisible).collect(Collectors.toSet());
-		editor.selectAndReveal(3, 0);
-		ContentAssistAction action = (ContentAssistAction) editor.getAction(ITextEditorActionConstants.CONTENT_ASSIST);
-		action.update();
-		action.run();
-		waitAndDispatch(100);
+		openConentAssist();
 		this.completionShell= findNewShell(beforeShells);
 		final Table completionProposalList = findCompletionSelectionControl(this.completionShell);
 		// should be instantaneous, but happens to go asynchronous on CI so let's allow a wait
@@ -134,7 +158,7 @@ public class CompletionTest extends AbstratGenericEditorTest {
 		emulatePressLeftArrowKey();
 		DisplayHelper.sleep(editor.getSite().getShell().getDisplay(), 200); //give time to process events
 		long processingDuration = System.currentTimeMillis() - timestamp;
-		assertTrue("UI Thread frozen for " + processingDuration + "ms", processingDuration < LongRunningBarContentAssistProcessor.DELAY);		
+		assertTrue("UI Thread frozen for " + processingDuration + "ms", processingDuration < LongRunningBarContentAssistProcessor.DELAY);
 	}
 
 	@Test

@@ -18,6 +18,8 @@ import org.eclipse.swt.widgets.Control;
 
 import org.eclipse.jface.text.IDocument;
 
+import org.eclipse.ui.genericeditor.tests.contributions.EnabledPropertyTester;
+
 public class AutoEditTest extends AbstratGenericEditorTest {
 
 	@Test
@@ -29,4 +31,23 @@ public class AutoEditTest extends AbstratGenericEditorTest {
 		Assert.assertEquals("AutoAddedThird!AutoAddedSecond!AutoAddedFirst!", document.get());
 	}
 
+	@Test
+	public void testEnabledWhenAutoEdit() throws Exception {
+		EnabledPropertyTester.setEnabled(true);
+		createAndOpenFile("enabledWhen.txt", "bar 'bar'");
+		IDocument document= editor.getDocumentProvider().getDocument(editor.getEditorInput());
+		StyledText control= (StyledText) editor.getAdapter(Control.class);
+		control.setText("");
+		// order of auto-edits from most specialized to least specialized
+		Assert.assertEquals("AutoAddedFirst!", document.get());
+		cleanFileAndEditor();
+
+		EnabledPropertyTester.setEnabled(false);
+		createAndOpenFile("enabledWhen.txt", "bar 'bar'");
+		document= editor.getDocumentProvider().getDocument(editor.getEditorInput());
+		control= (StyledText) editor.getAdapter(Control.class);
+		control.setText("");
+		// order of auto-edits from most specialized to least specialized
+		Assert.assertEquals("", document.get());
+	}
 }

@@ -48,6 +48,7 @@ import org.eclipse.jface.text.TextViewer;
 import org.eclipse.jface.text.tests.util.DisplayHelper;
 
 import org.eclipse.ui.genericeditor.tests.contributions.AlrightyHoverProvider;
+import org.eclipse.ui.genericeditor.tests.contributions.EnabledPropertyTester;
 import org.eclipse.ui.genericeditor.tests.contributions.HelloHoverProvider;
 import org.eclipse.ui.genericeditor.tests.contributions.MarkerResolutionGenerator;
 import org.eclipse.ui.genericeditor.tests.contributions.WorldHoverProvider;
@@ -75,6 +76,22 @@ public class HoverTest extends AbstratGenericEditorTest {
 		assertNotNull(findControl(shell, StyledText.class, AlrightyHoverProvider.LABEL));
 		assertNull(findControl(shell, StyledText.class, HelloHoverProvider.LABEL));
 		assertNull(findControl(shell, StyledText.class, WorldHoverProvider.LABEL));
+	}
+
+	@Test
+	public void testEnabledWhenHover() throws Exception {
+		EnabledPropertyTester.setEnabled(true);
+		createAndOpenFile("enabledWhen.txt", "bar 'bar'");
+		Shell shell = getHoverShell(triggerCompletionAndRetrieveInformationControlManager());
+		assertNotNull(findControl(shell, StyledText.class, AlrightyHoverProvider.LABEL));
+		assertNull(findControl(shell, StyledText.class, WorldHoverProvider.LABEL));
+		cleanFileAndEditor();
+
+		EnabledPropertyTester.setEnabled(false);
+		createAndOpenFile("enabledWhen.txt", "bar 'bar'");
+		shell = getHoverShell(triggerCompletionAndRetrieveInformationControlManager());
+		assertNull(findControl(shell, StyledText.class, AlrightyHoverProvider.LABEL));
+		assertNotNull(findControl(shell, StyledText.class, WorldHoverProvider.LABEL));
 	}
 
 	/**

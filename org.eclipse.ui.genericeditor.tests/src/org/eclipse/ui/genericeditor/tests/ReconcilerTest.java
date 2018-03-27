@@ -28,6 +28,7 @@ import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.tests.util.DisplayHelper;
 
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.genericeditor.tests.contributions.EnabledPropertyTester;
 import org.eclipse.ui.genericeditor.tests.contributions.ReconcilerStrategyFirst;
 import org.eclipse.ui.genericeditor.tests.contributions.ReconcilerStrategySecond;
 import org.eclipse.ui.internal.genericeditor.ExtensionBasedTextEditor;
@@ -47,6 +48,18 @@ public class ReconcilerTest extends AbstratGenericEditorTest {
 	}
 
 	@Test
+	public void testEnabledWhenReconciler() throws Exception {
+		EnabledPropertyTester.setEnabled(true);
+		createAndOpenFile("enabledWhen.txt", "");
+		performTestOnEditor(ReconcilerStrategyFirst.SEARCH_TERM, editor, ReconcilerStrategyFirst.REPLACEMENT);
+		cleanFileAndEditor();
+
+		EnabledPropertyTester.setEnabled(false);
+		createAndOpenFile("enabledWhen.txt", "");
+		performTestOnEditor(ReconcilerStrategySecond.SEARCH_TERM, editor, ReconcilerStrategySecond.REPLACEMENT);
+	}
+
+	@Test
 	public void testMultipleEditors() throws Exception {
 		secondProject= ResourcesPlugin.getWorkspace().getRoot().getProject(getClass().getName() + System.currentTimeMillis());
 		secondProject.create(null);
@@ -57,7 +70,7 @@ public class ReconcilerTest extends AbstratGenericEditorTest {
 				.getActivePage().openEditor(new FileEditorInput(secondFile), "org.eclipse.ui.genericeditor.GenericEditor");
 		performTestOnEditor(ReconcilerStrategyFirst.SEARCH_TERM, editor, ReconcilerStrategyFirst.REPLACEMENT);
 	}
-	
+
 	@Test
 	public void testMultipleReconcilers() throws Exception {
 		secondFile = project.getFile("bar.txt");
