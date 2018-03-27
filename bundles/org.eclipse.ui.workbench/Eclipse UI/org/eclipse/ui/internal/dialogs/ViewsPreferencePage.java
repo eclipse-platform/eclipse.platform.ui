@@ -39,6 +39,7 @@ import org.eclipse.e4.ui.internal.workbench.swt.PartRenderingEngine;
 import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.workbench.renderers.swt.StackRenderer;
 import org.eclipse.jface.dialogs.Dialog;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.fieldassist.ControlDecoration;
 import org.eclipse.jface.fieldassist.FieldDecorationRegistry;
 import org.eclipse.jface.preference.IPreferenceStore;
@@ -286,6 +287,7 @@ public class ViewsPreferencePage extends PreferencePage implements
 				engine.setTheme(getSelectedTheme(), !highContrastMode);
 			}
 		}
+
 		IPreferenceStore apiStore = PrefUtil.getAPIPreferenceStore();
 		apiStore.setValue(IWorkbenchPreferenceConstants.ENABLE_ANIMATIONS, enableAnimations.getSelection());
 		apiStore.setValue(IWorkbenchPreferenceConstants.USE_COLORED_LABELS, useColoredLabels.getSelection());
@@ -358,6 +360,10 @@ public class ViewsPreferencePage extends PreferencePage implements
 		super.performApply();
 		if (engine != null) {
 			ITheme theme = getSelectedTheme();
+			boolean themeChanged = theme != null && !theme.equals(currentTheme);
+			boolean colorsAndFontsThemeChanged = !PlatformUI.getWorkbench().getThemeManager().getCurrentTheme().getId()
+					.equals(currentColorsAndFontsTheme.getId());
+
 			if (theme != null) {
 				currentTheme = theme;
 			}
@@ -369,7 +375,15 @@ public class ViewsPreferencePage extends PreferencePage implements
 
 			themeComboDecorator.hide();
 			colorFontsDecorator.hide();
+
+
+
+		if (themeChanged || colorsAndFontsThemeChanged) {
+				MessageDialog.openWarning(getShell(), WorkbenchMessages.ThemeChangeWarningTitle,
+						WorkbenchMessages.ThemeChangeWarningText);
+			}
 		}
+
 	}
 
 	private void createColorsAndFontsThemeCombo(Composite composite) {
