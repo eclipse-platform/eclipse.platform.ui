@@ -683,6 +683,10 @@ public class InlinedAnnotationSupport {
 	 *         otherwise.
 	 */
 	boolean isInVisibleLines(int offset) {
+		if (visibleLines == null) {
+			// case of support has been uninstalled and mining must be drawn.
+			return false;
+		}
 		return visibleLines.isInVisibleLines(offset);
 	}
 
