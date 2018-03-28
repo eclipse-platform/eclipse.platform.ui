@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2007, 2016 IBM Corporation and others.
+ *  Copyright (c) 2007, 2018 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -22,6 +22,7 @@ import java.util.Set;
 import org.eclipse.ui.internal.intro.impl.model.ExtensionMap;
 import org.eclipse.ui.internal.intro.universal.contentdetect.ContentDetectHelper;
 import org.eclipse.ui.internal.intro.universal.contentdetect.ContentDetector;
+import org.junit.AfterClass;
 import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runners.MethodSorters;
@@ -156,12 +157,11 @@ public class ContentDetectorTest {
 		assertNull(map.getStartPage());
 	}
 
-	@Override
-	protected void finalize() throws Throwable {
+	@AfterClass
+	public static void cleanup() throws Throwable {
 		// Delete state files so that if we start Eclipse we don't see all content as new
 		ContentDetectHelper helper = new ContentDetectHelper();
 		helper.deleteStateFiles();
-		super.finalize();
 	}
 
 }

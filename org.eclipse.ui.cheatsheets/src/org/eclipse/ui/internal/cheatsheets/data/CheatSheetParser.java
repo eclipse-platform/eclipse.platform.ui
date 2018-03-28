@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2017 IBM Corporation and others.
+ * Copyright (c) 2002, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -939,7 +939,8 @@ public class CheatSheetParser implements IStatusContainer {
 			addStatus(IStatus.ERROR, message, e);
 			return null;
 		} catch (SAXParseException spe) {
-			String message = NLS.bind(Messages.ERROR_SAX_PARSING_WITH_LOCATION, (new Object[] {filename, Integer.valueOf(spe.getLineNumber()), new Integer(spe.getColumnNumber())}));
+			String message = NLS.bind(Messages.ERROR_SAX_PARSING_WITH_LOCATION, (new Object[] { filename,
+					Integer.valueOf(spe.getLineNumber()), Integer.valueOf(spe.getColumnNumber()) }));
 			addStatus(IStatus.ERROR, message, spe);
 			return null;
 		} catch (SAXException se) {
