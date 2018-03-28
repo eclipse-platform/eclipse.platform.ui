@@ -1,5 +1,5 @@
 <%--
- Copyright (c) 2009, 2010 IBM Corporation and others.
+ Copyright (c) 2009, 2018 IBM Corporation and others.
  All rights reserved. This program and the accompanying materials 
  are made available under the terms of the Eclipse Public License v1.0
  which accompanies this distribution, and is available at
@@ -30,7 +30,7 @@
 <meta http-equiv="Expires" content="-1">
 <link rel="stylesheet" href="printAlert.css" charset="utf-8" type="text/css">
 
-<script language="JavaScript">
+<script type="text/javascript">
 
 function onloadHandler() {
 	sizeButtons();

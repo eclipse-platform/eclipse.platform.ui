@@ -1,5 +1,5 @@
 <%--
- Copyright (c) 2000, 2011 IBM Corporation and others.
+ Copyright (c) 2000, 2018 IBM Corporation and others.
  All rights reserved. This program and the accompanying materials 
  are made available under the terms of the Eclipse Public License v1.0
  which accompanies this distribution, and is available at
@@ -160,12 +160,12 @@ HTML {
     for (int s = 0; s < scripts.length; s++) {
         String path = scripts[s];
 %>
-    <script language="JavaScript" src = "<%=path%>" ></script>
+    <script type="text/javascript" src = "<%=path%>" ></script>
 <%
     }
 %>
 
-<script language="JavaScript">
+<script type="text/javascript">
 
 var bRestore = false;
 // Preload images
@@ -426,7 +426,7 @@ function menuExit(e) {
 <%
 if (data.getScript() != null) {
 %>
-<script language="JavaScript" src="<%=UrlUtil.htmlEncode(data.getScript())%>"></script>
+<script type="text/javascript" src="<%=UrlUtil.htmlEncode(data.getScript())%>"></script>
 <%
 }
 %>

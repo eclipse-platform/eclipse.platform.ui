@@ -1,5 +1,5 @@
 <%--
- Copyright (c) 2009, 2011 IBM Corporation and others.
+ Copyright (c) 2009, 2018 IBM Corporation and others.
  All rights reserved. This program and the accompanying materials 
  are made available under the terms of the Eclipse Public License v1.0
  which accompanies this distribution, and is available at
@@ -88,10 +88,10 @@ if (data.isMozilla()) {
 
 </style>
 
-<script language="JavaScript" src="resize.js"></script>
-<script language="JavaScript" src="utils.js"></script>
-<script language="JavaScript" src="list.js"></script>
-<script language="JavaScript">
+<script type="text/javascript" src="resize.js"></script>
+<script type="text/javascript" src="utils.js"></script>
+<script type="text/javascript" src="list.js"></script>
+<script type="text/javascript">
 
 var quickSearchType = "<%=quickSearchType%>";
 

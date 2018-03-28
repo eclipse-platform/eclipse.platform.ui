@@ -1,5 +1,5 @@
 <%--
- Copyright (c) 2005, 2010 Intel Corporation and others.
+ Copyright (c) 2005, 2018 Intel Corporation and others.
  All rights reserved. This program and the accompanying materials 
  are made available under the terms of the Eclipse Public License v1.0
  which accompanies this distribution, and is available at
@@ -46,18 +46,18 @@
 
 <base target="ContentViewFrame">
 
-<script language="JavaScript">
+<script type="text/javascript">
 
 var loadingMessage = "<%=UrlUtil.JavaScriptEncode(ServletResources.getString("Loading", request))%>";
 </script>
 
-<script language="JavaScript" src="indexView.js"></script>
-<script language="JavaScript" src="resize.js"></script>
-<script language="JavaScript" src="helptree.js"></script>
-<script language="JavaScript" src="helptreechildren.js"></script>
-<script language="JavaScript" src="xmlajax.js"></script>
-<script language="JavaScript" src="utils.js"></script>
-<script language="JavaScript" src="view.js"></script>
+<script type="text/javascript" src="indexView.js"></script>
+<script type="text/javascript" src="resize.js"></script>
+<script type="text/javascript" src="helptree.js"></script>
+<script type="text/javascript" src="helptreechildren.js"></script>
+<script type="text/javascript" src="xmlajax.js"></script>
+<script type="text/javascript" src="utils.js"></script>
+<script type="text/javascript" src="view.js"></script>
 </head>
 
 <body dir="<%=direction%>" onload="onloadHandler()" onresize = "sizeList()">

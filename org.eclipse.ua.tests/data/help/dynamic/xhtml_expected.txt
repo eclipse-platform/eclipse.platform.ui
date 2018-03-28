@@ -9,7 +9,7 @@
 
 <link rel="STYLESHEET" href="../book.css" charset="ISO-8859-1" type="text/css" />
 <title>Exporting files</title>
-<script language="JavaScript" src="PLUGINS_ROOT/org.eclipse.help/livehelp.js" xml:space="preserve"> </script>
+<script type="text/javascript" src="PLUGINS_ROOT/org.eclipse.help/livehelp.js" xml:space="preserve"> </script>
 </head>
 
 <body bgcolor="#ffffff">

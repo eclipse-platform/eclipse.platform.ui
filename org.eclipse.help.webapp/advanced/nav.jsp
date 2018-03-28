@@ -1,5 +1,5 @@
 <%--
- Copyright (c) 2000, 2010 IBM Corporation and others.
+ Copyright (c) 2000, 2018 IBM Corporation and others.
  All rights reserved. This program and the accompanying materials 
  are made available under the terms of the Eclipse Public License v1.0
  which accompanies this distribution, and is available at
@@ -35,7 +35,7 @@ FRAMESET {
 %>
 </style>
 
-<script language="JavaScript">
+<script type="text/javascript">
 var isMozilla = navigator.userAgent.indexOf('Mozilla') != -1 && parseInt(navigator.appVersion.substring(0,1)) >= 5;
 var isMozilla10 = isMozilla && navigator.userAgent.indexOf('rv:1') != -1;
 var isIE = navigator.userAgent.indexOf('MSIE') != -1;
