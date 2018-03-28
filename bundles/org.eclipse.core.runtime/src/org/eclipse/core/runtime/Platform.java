@@ -417,8 +417,12 @@ public final class Platform {
 	 * Note this constant has been moved from the deprecated
 	 * org.eclipse.core.boot.BootLoader class and its value has not changed.
 	 * </p>
+	 *
+	 * @deprecated not supported anymore
+	 *
 	 * @since 3.0
 	 */
+	@Deprecated
 	public static final String WS_CARBON = "carbon";//$NON-NLS-1$
 
 	/**
