@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2016 IBM Corporation and others.
+ * Copyright (c) 2000, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -29,12 +29,7 @@ import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
 
-public class HyperlinkHandler
-		implements
-			MouseListener,
-			MouseTrackListener,
-			PaintListener,
-			Listener {
+public class HyperlinkHandler implements MouseListener, MouseTrackListener, PaintListener, Listener {
 	public static final int UNDERLINE_NEVER = 1;
 	public static final int UNDERLINE_ROLLOVER = 2;
 	public static final int UNDERLINE_ALWAYS = 3;
@@ -53,14 +48,8 @@ public class HyperlinkHandler
 	 */
 	public HyperlinkHandler() {
 		hyperlinkListeners = new Hashtable<>();
-		hyperlinkCursor = new Cursor(Display.getCurrent(), SWT.CURSOR_HAND);
-		busyCursor = new Cursor(Display.getCurrent(), SWT.CURSOR_WAIT);
-	}
-	/**
-	 */
-	public void dispose() {
-		hyperlinkCursor.dispose();
-		busyCursor.dispose();
+		hyperlinkCursor = Display.getCurrent().getSystemCursor(SWT.CURSOR_HAND);
+		busyCursor = Display.getCurrent().getSystemCursor(SWT.CURSOR_WAIT);
 	}
 	/**
 	 * @return org.eclipse.swt.graphics.Color
@@ -81,22 +70,10 @@ public class HyperlinkHandler
 		return background;
 	}
 	/**
-	 * @return org.eclipse.swt.graphics.Cursor
-	 */
-	public Cursor getBusyCursor() {
-		return busyCursor;
-	}
-	/**
 	 * @return org.eclipse.swt.graphics.Color
 	 */
 	public Color getForeground() {
 		return foreground;
-	}
-	/**
-	 * @return org.eclipse.swt.graphics.Cursor
-	 */
-	public Cursor getHyperlinkCursor() {
-		return hyperlinkCursor;
 	}
 	/**
 	 * @return int
@@ -255,16 +232,18 @@ public class HyperlinkHandler
 	public void setForeground(Color newForeground) {
 		foreground = newForeground;
 	}
+	
 	/**
 	 * @param newHyperlinkCursorUsed
-	 *            boolean
+	 *                                   boolean
 	 */
 	public void setHyperlinkCursorUsed(boolean newHyperlinkCursorUsed) {
 		hyperlinkCursorUsed = newHyperlinkCursorUsed;
 	}
+
 	/**
 	 * @param newHyperlinkUnderlineMode
-	 *            int
+	 *                                      int
 	 */
 	public void setHyperlinkUnderlineMode(int newHyperlinkUnderlineMode) {
 		hyperlinkUnderlineMode = newHyperlinkUnderlineMode;

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2016 IBM Corporation and others.
+ * Copyright (c) 2000, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -105,8 +105,6 @@ public abstract class HyperlinkTreePart extends AbstractFormPart implements
 
 	private TreeItem lastItem;
 
-	private Cursor handCursor;
-
 	private ScopeObserver scopeObserver;
 
 	/**
@@ -116,7 +114,7 @@ public abstract class HyperlinkTreePart extends AbstractFormPart implements
 	 */
 	public HyperlinkTreePart(Composite parent, final FormToolkit toolkit,
 			IToolBarManager tbm) {
-		handCursor = new Cursor(parent.getDisplay(), SWT.CURSOR_HAND);
+		Cursor handCursor = parent.getDisplay().getSystemCursor(SWT.CURSOR_HAND);
 		/*
 		container = toolkit.createComposite(parent);
 		GridLayout layout = new GridLayout();
@@ -242,7 +240,6 @@ public abstract class HyperlinkTreePart extends AbstractFormPart implements
 
 	@Override
 	public void dispose() {
-		handCursor.dispose();
 		if (scopeObserver != null) {
 			ScopeState.getInstance().getScopeSetManager().deleteObserver(scopeObserver);
 		}
