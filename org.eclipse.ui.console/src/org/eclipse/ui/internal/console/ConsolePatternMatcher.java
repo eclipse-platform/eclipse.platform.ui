@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2013 IBM Corporation and others.
+ * Copyright (c) 2000, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -36,7 +36,7 @@ public class ConsolePatternMatcher implements IDocumentListener {
 	/**
 	 * Collection of compiled pattern match listeners
 	 */
-	private ArrayList<CompiledPatternMatchListener> fPatterns = new ArrayList<CompiledPatternMatchListener>();
+	private ArrayList<CompiledPatternMatchListener> fPatterns = new ArrayList<>();
 
 	private TextConsole fConsole;
 
@@ -56,11 +56,6 @@ public class ConsolePatternMatcher implements IDocumentListener {
 			setRule(fConsole.getSchedulingRule());
 		}
 
-		/*
-		 * (non-Javadoc)
-		 *
-		 * @see org.eclipse.core.runtime.jobs.Job#run(org.eclipse.core.runtime.IProgressMonitor)
-		 */
 		@Override
 		protected IStatus run(IProgressMonitor monitor) {
 			IDocument doc = fConsole.getDocument();
@@ -265,20 +260,10 @@ public class ConsolePatternMatcher implements IDocumentListener {
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.jface.text.IDocumentListener#documentAboutToBeChanged(org.eclipse.jface.text.DocumentEvent)
-	 */
 	@Override
 	public void documentAboutToBeChanged(DocumentEvent event) {
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.jface.text.IDocumentListener#documentChanged(org.eclipse.jface.text.DocumentEvent)
-	 */
 	@Override
 	public void documentChanged(DocumentEvent event) {
 		if (event.fLength > 0) {

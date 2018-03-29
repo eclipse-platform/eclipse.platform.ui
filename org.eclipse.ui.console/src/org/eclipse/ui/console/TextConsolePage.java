@@ -17,13 +17,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.ResourceBundle;
 
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Menu;
-import org.eclipse.swt.widgets.Widget;
-
 import org.eclipse.core.runtime.IAdaptable;
-
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
@@ -31,17 +25,19 @@ import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.resource.JFaceResources;
-import org.eclipse.jface.util.IPropertyChangeListener;
-import org.eclipse.jface.util.PropertyChangeEvent;
-import org.eclipse.jface.viewers.ISelectionChangedListener;
-import org.eclipse.jface.viewers.SelectionChangedEvent;
-
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IFindReplaceTarget;
 import org.eclipse.jface.text.ITextListener;
 import org.eclipse.jface.text.ITextOperationTarget;
 import org.eclipse.jface.text.TextEvent;
-
+import org.eclipse.jface.util.IPropertyChangeListener;
+import org.eclipse.jface.util.PropertyChangeEvent;
+import org.eclipse.jface.viewers.ISelectionChangedListener;
+import org.eclipse.jface.viewers.SelectionChangedEvent;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Menu;
+import org.eclipse.swt.widgets.Widget;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.IWorkbenchActionConstants;
@@ -56,7 +52,6 @@ import org.eclipse.ui.internal.console.FollowHyperlinkAction;
 import org.eclipse.ui.internal.console.IConsoleHelpContextIds;
 import org.eclipse.ui.part.IPageBookViewPage;
 import org.eclipse.ui.part.IPageSite;
-
 import org.eclipse.ui.texteditor.FindReplaceAction;
 import org.eclipse.ui.texteditor.IUpdate;
 
@@ -80,8 +75,8 @@ public class TextConsolePage implements IPageBookViewPage, IPropertyChangeListen
 	private IConsoleView fConsoleView;
 	private TextConsoleViewer fViewer;
 	private MenuManager fMenuManager;
-	protected Map<String, IAction> fGlobalActions = new HashMap<String, IAction>();
-	protected ArrayList<String> fSelectionActions = new ArrayList<String>();
+	protected Map<String, IAction> fGlobalActions = new HashMap<>();
+	protected ArrayList<String> fSelectionActions = new ArrayList<>();
 	protected ClearOutputAction fClearOutputAction;
 
 	// text selection listener, used to update selection dependent actions on selection changes
@@ -131,19 +126,11 @@ public class TextConsolePage implements IPageBookViewPage, IPropertyChangeListen
 		return new TextConsoleViewer(parent, fConsole, fConsoleView);
 	}
 
-	/*
-	 *  (non-Javadoc)
-	 * @see org.eclipse.ui.part.IPageBookViewPage#getSite()
-	 */
 	@Override
 	public IPageSite getSite() {
 		return fSite;
 	}
 
-	/*
-	 *  (non-Javadoc)
-	 * @see org.eclipse.ui.part.IPageBookViewPage#init(org.eclipse.ui.part.IPageSite)
-	 */
 	@Override
 	public void init(IPageSite pageSite) throws PartInitException {
 		fSite = pageSite;
@@ -158,10 +145,6 @@ public class TextConsolePage implements IPageBookViewPage, IPropertyChangeListen
 		}
 	}
 
-	/*
-	 *  (non-Javadoc)
-	 * @see org.eclipse.ui.part.IPage#createControl(org.eclipse.swt.widgets.Composite)
-	 */
 	@Override
 	public void createControl(Composite parent) {
 		fViewer = createViewer(parent);
@@ -195,10 +178,6 @@ public class TextConsolePage implements IPageBookViewPage, IPropertyChangeListen
 		fViewer.addTextListener(textListener);
 	}
 
-	/*
-	 *  (non-Javadoc)
-	 * @see org.eclipse.ui.part.IPage#dispose()
-	 */
 	@Override
 	public void dispose() {
 		fConsole.removePropertyChangeListener(this);
@@ -216,26 +195,15 @@ public class TextConsolePage implements IPageBookViewPage, IPropertyChangeListen
 		fViewer = null;
 	}
 
-
-	/*
-	 *  (non-Javadoc)
-	 * @see org.eclipse.ui.part.IPage#getControl()
-	 */
 	@Override
 	public Control getControl() {
 		return fViewer != null ? fViewer.getControl() : null;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.part.IPage#setActionBars(org.eclipse.ui.IActionBars)
-	 */
 	@Override
 	public void setActionBars(IActionBars actionBars) {
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.part.IPage#setFocus()
-	 */
 	@Override
 	public void setFocus() {
 		if (fViewer != null) {
@@ -243,10 +211,6 @@ public class TextConsolePage implements IPageBookViewPage, IPropertyChangeListen
 		}
 	}
 
-	/*
-	 *  (non-Javadoc)
-	 * @see org.eclipse.jface.util.IPropertyChangeListener#propertyChange(org.eclipse.jface.util.PropertyChangeEvent)
-	 */
 	@Override
 	public void propertyChange(PropertyChangeEvent event) {
 		if (fViewer != null) {
@@ -331,9 +295,6 @@ public class TextConsolePage implements IPageBookViewPage, IPropertyChangeListen
 		actionBars.setGlobalActionHandler(actionID, action);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.core.runtime.IAdaptable#getAdapter(java.lang.Class)
-	 */
 	@SuppressWarnings("unchecked")
 	@Override
 	public <T> T getAdapter(Class<T> required) {

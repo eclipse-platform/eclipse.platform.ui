@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2013 IBM Corporation and others.
+ * Copyright (c) 2000, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -47,7 +47,7 @@ public class ConsoleDocumentAdapter implements IDocumentAdapter, IDocumentListen
 
 
 	public ConsoleDocumentAdapter(int width) {
-		textChangeListeners = new ArrayList<TextChangeListener>();
+		textChangeListeners = new ArrayList<>();
 		consoleWidth = width;
 	}
 
@@ -122,9 +122,6 @@ public class ConsoleDocumentAdapter implements IDocumentAdapter, IDocumentListen
 		regionCount++;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.text.IDocumentAdapter#setDocument(org.eclipse.jface.text.IDocument)
-	 */
 	@Override
 	public void setDocument(IDocument doc) {
 		if (document != null) {
@@ -139,9 +136,6 @@ public class ConsoleDocumentAdapter implements IDocumentAdapter, IDocumentListen
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.swt.custom.StyledTextContent#addTextChangeListener(org.eclipse.swt.custom.TextChangeListener)
-	 */
 	@Override
 	public synchronized void addTextChangeListener(TextChangeListener listener) {
 		Assert.isNotNull(listener);
@@ -150,9 +144,6 @@ public class ConsoleDocumentAdapter implements IDocumentAdapter, IDocumentListen
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.swt.custom.StyledTextContent#removeTextChangeListener(org.eclipse.swt.custom.TextChangeListener)
-	 */
 	@Override
 	public synchronized void removeTextChangeListener(TextChangeListener listener) {
 		if(textChangeListeners != null) {
@@ -161,17 +152,11 @@ public class ConsoleDocumentAdapter implements IDocumentAdapter, IDocumentListen
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.swt.custom.StyledTextContent#getCharCount()
-	 */
 	@Override
 	public int getCharCount() {
 		return document.getLength();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.swt.custom.StyledTextContent#getLine(int)
-	 */
 	@Override
 	public String getLine(int lineIndex) {
 		try {
@@ -186,9 +171,6 @@ public class ConsoleDocumentAdapter implements IDocumentAdapter, IDocumentListen
 		return ""; //$NON-NLS-1$
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.swt.custom.StyledTextContent#getLineAtOffset(int)
-	 */
 	@Override
 	public int getLineAtOffset(int offset) {
 		if (offset == 0 || regionCount <= 1) {
@@ -221,33 +203,21 @@ public class ConsoleDocumentAdapter implements IDocumentAdapter, IDocumentListen
 		return midIndex;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.swt.custom.StyledTextContent#getLineCount()
-	 */
 	@Override
 	public int getLineCount() {
 		return regionCount;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.swt.custom.StyledTextContent#getLineDelimiter()
-	 */
 	@Override
 	public String getLineDelimiter() {
 		return System.getProperty("line.separator"); //$NON-NLS-1$
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.swt.custom.StyledTextContent#getOffsetAtLine(int)
-	 */
 	@Override
 	public int getOffsetAtLine(int lineIndex) {
 		return offsets[lineIndex];
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.swt.custom.StyledTextContent#getTextRange(int, int)
-	 */
 	@Override
 	public String getTextRange(int start, int length) {
 		try {
@@ -257,9 +227,6 @@ public class ConsoleDocumentAdapter implements IDocumentAdapter, IDocumentListen
 		return null;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.swt.custom.StyledTextContent#replaceTextRange(int, int, java.lang.String)
-	 */
 	@Override
 	public void replaceTextRange(int start, int replaceLength, String text) {
 		try {
@@ -268,9 +235,6 @@ public class ConsoleDocumentAdapter implements IDocumentAdapter, IDocumentListen
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.swt.custom.StyledTextContent#setText(java.lang.String)
-	 */
 	@Override
 	public synchronized void setText(String text) {
 		TextChangedEvent changeEvent = new TextChangedEvent(this);
@@ -279,9 +243,6 @@ public class ConsoleDocumentAdapter implements IDocumentAdapter, IDocumentListen
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.text.IDocumentListener#documentAboutToBeChanged(org.eclipse.jface.text.DocumentEvent)
-	 */
 	@Override
 	public synchronized void documentAboutToBeChanged(DocumentEvent event) {
 		if (document == null) {
@@ -372,9 +333,6 @@ public class ConsoleDocumentAdapter implements IDocumentAdapter, IDocumentListen
 	}
 
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.text.IDocumentListener#documentChanged(org.eclipse.jface.text.DocumentEvent)
-	 */
 	@Override
 	public synchronized void documentChanged(DocumentEvent event) {
 		if (document == null) {

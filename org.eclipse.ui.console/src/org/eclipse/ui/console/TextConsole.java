@@ -99,7 +99,7 @@ public abstract class TextConsole extends AbstractConsole {
 	/**
 	 * Map of client defined attributes
 	 */
-	private HashMap<String, Object> fAttributes = new HashMap<String, Object>();
+	private HashMap<String, Object> fAttributes = new HashMap<>();
 
 	private IConsoleManager fConsoleManager = ConsolePlugin.getDefault().getConsoleManager();
 	private ScopedPreferenceStore store;
@@ -134,9 +134,6 @@ public abstract class TextConsole extends AbstractConsole {
 		fTabWidth = IConsoleConstants.DEFAULT_TAB_SIZE;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.console.IConsole#createPage(org.eclipse.ui.console.IConsoleView)
-	 */
 	@Override
 	public IPageBookViewPage createPage(IConsoleView view) {
 		return new TextConsolePage(this, view);

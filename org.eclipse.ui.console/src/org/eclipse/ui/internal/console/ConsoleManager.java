@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2016 IBM Corporation and others.
+ * Copyright (c) 2000, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -63,7 +63,7 @@ public class ConsoleManager implements IConsoleManager {
 	/**
 	 * List of registered consoles
 	 */
-	private List<IConsole> fConsoles = new ArrayList<IConsole>(10);
+	private List<IConsole> fConsoles = new ArrayList<>(10);
 
 
 	// change notification constants
@@ -76,14 +76,14 @@ public class ConsoleManager implements IConsoleManager {
 
 	private List<ConsoleFactoryExtension> fConsoleFactoryExtensions;
 
-	private List<IConsoleView> fConsoleViews = new ArrayList<IConsoleView>();
+	private List<IConsoleView> fConsoleViews = new ArrayList<>();
 
 	private boolean fWarnQueued = false;
 
 	private RepaintJob fRepaintJob = new RepaintJob();
 
 	private class RepaintJob extends WorkbenchJob {
-		private Set<IConsole> list = new HashSet<IConsole>();
+		private Set<IConsole> list = new HashSet<>();
 
 		public RepaintJob() {
 			super("schedule redraw() of viewers"); //$NON-NLS-1$
@@ -138,18 +138,12 @@ public class ConsoleManager implements IConsoleManager {
 		private int fType;
 		private IConsole[] fChanged;
 
-		/* (non-Javadoc)
-		 * @see org.eclipse.core.runtime.ISafeRunnable#handleException(java.lang.Throwable)
-		 */
 		@Override
 		public void handleException(Throwable exception) {
 			IStatus status = new Status(IStatus.ERROR, ConsolePlugin.getUniqueIdentifier(), IConsoleConstants.INTERNAL_ERROR, ConsoleMessages.ConsoleManager_0, exception);
 			ConsolePlugin.log(status);
 		}
 
-		/* (non-Javadoc)
-		 * @see org.eclipse.core.runtime.ISafeRunnable#run()
-		 */
 		@Override
 		public void run() throws Exception {
 			switch (fType) {
@@ -196,9 +190,6 @@ public class ConsoleManager implements IConsoleManager {
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.console.IConsoleManager#addConsoleListener(org.eclipse.ui.console.IConsoleListener)
-	 */
 	@Override
 	public void addConsoleListener(IConsoleListener listener) {
 		if (fListeners == null) {
@@ -207,9 +198,6 @@ public class ConsoleManager implements IConsoleManager {
 		fListeners.add(listener);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.console.IConsoleManager#removeConsoleListener(org.eclipse.ui.console.IConsoleListener)
-	 */
 	@Override
 	public void removeConsoleListener(IConsoleListener listener) {
 		if (fListeners != null) {
@@ -217,12 +205,9 @@ public class ConsoleManager implements IConsoleManager {
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.console.IConsoleManager#addConsoles(org.eclipse.ui.console.IConsole[])
-	 */
 	@Override
 	public void addConsoles(IConsole[] consoles) {
-		List<IConsole> added = new ArrayList<IConsole>(consoles.length);
+		List<IConsole> added = new ArrayList<>(consoles.length);
 		synchronized (fConsoles) {
 			for (int i = 0; i < consoles.length; i++) {
 				IConsole console = consoles[i];
@@ -241,12 +226,9 @@ public class ConsoleManager implements IConsoleManager {
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.console.IConsoleManager#removeConsoles(org.eclipse.ui.console.IConsole[])
-	 */
 	@Override
 	public void removeConsoles(IConsole[] consoles) {
-		List<IConsole> removed = new ArrayList<IConsole>(consoles.length);
+		List<IConsole> removed = new ArrayList<>(consoles.length);
 		synchronized (fConsoles) {
 			for (int i = 0; i < consoles.length; i++) {
 				IConsole console = consoles[i];
@@ -260,9 +242,6 @@ public class ConsoleManager implements IConsoleManager {
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.console.IConsoleManager#getConsoles()
-	 */
 	@Override
 	public IConsole[] getConsoles() {
 		synchronized (fConsoles) {
@@ -282,7 +261,7 @@ public class ConsoleManager implements IConsoleManager {
 
 
 	private class ShowConsoleViewJob extends WorkbenchJob {
-		private Set<IConsole> queue = new LinkedHashSet<IConsole>();
+		private Set<IConsole> queue = new LinkedHashSet<>();
 
 		ShowConsoleViewJob() {
 			super("Show Console View"); //$NON-NLS-1$
@@ -380,9 +359,6 @@ public class ConsoleManager implements IConsoleManager {
 		return bringToTop;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.console.IConsoleManager#warnOfContentChange(org.eclipse.ui.console.IConsole)
-	 */
 	@Override
 	public void warnOfContentChange(final IConsole console) {
 		if (!fWarnQueued) {
@@ -409,13 +385,10 @@ public class ConsoleManager implements IConsoleManager {
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.console.IConsoleManager#getPatternMatchListenerDelegates(org.eclipse.ui.console.IConsole)
-	 */
 	@Override
 	public IPatternMatchListener[] createPatternMatchListeners(IConsole console) {
 		if (fPatternMatchListeners == null) {
-			fPatternMatchListeners = new ArrayList<PatternMatchListenerExtension>();
+			fPatternMatchListeners = new ArrayList<>();
 			IExtensionPoint extensionPoint= Platform.getExtensionRegistry().getExtensionPoint(ConsolePlugin.getUniqueIdentifier(), IConsoleConstants.EXTENSION_POINT_CONSOLE_PATTERN_MATCH_LISTENERS);
 			IConfigurationElement[] elements = extensionPoint.getConfigurationElements();
 			for (int i = 0; i < elements.length; i++) {
@@ -424,7 +397,7 @@ public class ConsoleManager implements IConsoleManager {
 				fPatternMatchListeners.add(extension);
 			}
 		}
-		ArrayList<PatternMatchListener> list = new ArrayList<PatternMatchListener>();
+		ArrayList<PatternMatchListener> list = new ArrayList<>();
 		for (Iterator<PatternMatchListenerExtension> i = fPatternMatchListeners.iterator(); i.hasNext();) {
 			PatternMatchListenerExtension extension = i.next();
 			try {
@@ -456,7 +429,7 @@ public class ConsoleManager implements IConsoleManager {
 	 */
 	public IConsolePageParticipant[] getPageParticipants(IConsole console) {
 		if(fPageParticipants == null) {
-			fPageParticipants = new ArrayList<ConsolePageParticipantExtension>();
+			fPageParticipants = new ArrayList<>();
 			IExtensionPoint extensionPoint = Platform.getExtensionRegistry().getExtensionPoint(ConsolePlugin.getUniqueIdentifier(), IConsoleConstants.EXTENSION_POINT_CONSOLE_PAGE_PARTICIPANTS);
 			IConfigurationElement[] elements = extensionPoint.getConfigurationElements();
 			for(int i = 0; i < elements.length; i++) {
@@ -465,7 +438,7 @@ public class ConsoleManager implements IConsoleManager {
 				fPageParticipants.add(extension);
 			}
 		}
-		ArrayList<IConsolePageParticipant> list = new ArrayList<IConsolePageParticipant>();
+		ArrayList<IConsolePageParticipant> list = new ArrayList<>();
 		for (Iterator<ConsolePageParticipantExtension> i = fPageParticipants.iterator(); i.hasNext();) {
 			ConsolePageParticipantExtension extension = i.next();
 			try {
@@ -484,7 +457,7 @@ public class ConsoleManager implements IConsoleManager {
 	 */
 	public ConsoleFactoryExtension[] getConsoleFactoryExtensions() {
 		if (fConsoleFactoryExtensions == null) {
-			fConsoleFactoryExtensions = new ArrayList<ConsoleFactoryExtension>();
+			fConsoleFactoryExtensions = new ArrayList<>();
 			IExtensionPoint extensionPoint = Platform.getExtensionRegistry().getExtensionPoint(ConsolePlugin.getUniqueIdentifier(), IConsoleConstants.EXTENSION_POINT_CONSOLE_FACTORIES);
 			IConfigurationElement[] configurationElements = extensionPoint.getConfigurationElements();
 			for (int i = 0; i < configurationElements.length; i++) {

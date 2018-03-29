@@ -385,7 +385,7 @@ public class TextConsoleViewer extends SourceViewer implements LineStyleListener
 	public void lineGetStyle(LineStyleEvent event) {
 		IDocument document = getDocument();
 		if (document != null && document.getLength() > 0) {
-			ArrayList<StyleRange> ranges = new ArrayList<StyleRange>();
+			ArrayList<StyleRange> ranges = new ArrayList<>();
 			int offset = event.lineOffset;
 			int length = event.lineText.length();
 
@@ -501,7 +501,7 @@ public class TextConsoleViewer extends SourceViewer implements LineStyleListener
 			}
 		}
 
-		List<Position> list = new ArrayList<Position>();
+		List<Position> list = new ArrayList<>();
 		int index = left - 1;
 		if (index >= 0) {
 			position = positions[index];

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2016 IBM Corporation and others.
+ * Copyright (c) 2000, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -109,18 +109,14 @@ public class IOConsolePartitioner implements IConsoleDocumentPartitioner, IDocum
 		return document;
 	}
 
-	/*
-	 *  (non-Javadoc)
-	 * @see org.eclipse.jface.text.IDocumentPartitioner#connect(org.eclipse.jface.text.IDocument)
-	 */
 	@Override
 	public void connect(IDocument doc) {
 		document = doc;
 		document.setDocumentPartitioner(this);
 		lld = document.getLegalLineDelimiters();
-		partitions = new ArrayList<IOConsolePartition>();
-		pendingPartitions = new ArrayList<PendingPartition>();
-		inputPartitions = new ArrayList<IOConsolePartition>();
+		partitions = new ArrayList<>();
+		pendingPartitions = new ArrayList<>();
+		inputPartitions = new ArrayList<>();
 		queueJob = new QueueProcessingJob();
 		queueJob.setSystem(true);
 		queueJob.setPriority(Job.INTERACTIVE);
@@ -158,10 +154,6 @@ public class IOConsolePartitioner implements IConsoleDocumentPartitioner, IDocum
 		queueJob.schedule(); //ensure that all pending partitions are processed.
 	}
 
-	/*
-	 *  (non-Javadoc)
-	 * @see org.eclipse.jface.text.IDocumentPartitioner#disconnect()
-	 */
 	@Override
 	public void disconnect() {
 		synchronized (overflowLock) {
@@ -175,45 +167,25 @@ public class IOConsolePartitioner implements IConsoleDocumentPartitioner, IDocum
 		}
 	}
 
-	/*
-	 *  (non-Javadoc)
-	 * @see org.eclipse.jface.text.IDocumentPartitioner#documentAboutToBeChanged(org.eclipse.jface.text.DocumentEvent)
-	 */
 	@Override
 	public void documentAboutToBeChanged(DocumentEvent event) {
 	}
 
-	/*
-	 *  (non-Javadoc)
-	 * @see org.eclipse.jface.text.IDocumentPartitioner#documentChanged(org.eclipse.jface.text.DocumentEvent)
-	 */
 	@Override
 	public boolean documentChanged(DocumentEvent event) {
 		return documentChanged2(event) != null;
 	}
 
-	/*
-	 *  (non-Javadoc)
-	 * @see org.eclipse.jface.text.IDocumentPartitioner#getLegalContentTypes()
-	 */
 	@Override
 	public String[] getLegalContentTypes() {
 		return new String[] { IOConsolePartition.OUTPUT_PARTITION_TYPE, IOConsolePartition.INPUT_PARTITION_TYPE };
 	}
 
-	/*
-	 *  (non-Javadoc)
-	 * @see org.eclipse.jface.text.IDocumentPartitioner#getContentType(int)
-	 */
 	@Override
 	public String getContentType(int offset) {
 		return getPartition(offset).getType();
 	}
 
-	/*
-	 *  (non-Javadoc)
-	 * @see org.eclipse.jface.text.IDocumentPartitioner#computePartitioning(int, int)
-	 */
 	@Override
 	public ITypedRegion[] computePartitioning(int offset, int length) {
 		int rangeEnd = offset + length;
@@ -248,7 +220,7 @@ public class IOConsolePartitioner implements IConsoleDocumentPartitioner, IDocum
 		}
 
 
-		List<IOConsolePartition> list = new ArrayList<IOConsolePartition>();
+		List<IOConsolePartition> list = new ArrayList<>();
 		int index = left - 1;
 		if (index >= 0) {
 			position= partitions.get(index);
@@ -272,11 +244,6 @@ public class IOConsolePartitioner implements IConsoleDocumentPartitioner, IDocum
 		return list.toArray(new IOConsolePartition[list.size()]);
 	}
 
-
-	/*
-	 *  (non-Javadoc)
-	 * @see org.eclipse.jface.text.IDocumentPartitioner#getPartition(int)
-	 */
 	@Override
 	public ITypedRegion getPartition(int offset) {
 		for (int i = 0; i < partitions.size(); i++) {
@@ -327,11 +294,6 @@ public class IOConsolePartitioner implements IConsoleDocumentPartitioner, IDocum
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.jface.text.IDocumentPartitionerExtension#documentChanged2(org.eclipse.jface.text.DocumentEvent)
-	 */
 	@Override
 	public IRegion documentChanged2(DocumentEvent event) {
 		if (document == null) {
@@ -521,10 +483,6 @@ public class IOConsolePartitioner implements IConsoleDocumentPartitioner, IDocum
 			super("IOConsole Updater"); //$NON-NLS-1$
 		}
 
-		/*
-		 *  (non-Javadoc)
-		 * @see org.eclipse.core.internal.jobs.InternalJob#run(org.eclipse.core.runtime.IProgressMonitor)
-		 */
 		@Override
 		public IStatus runInUIThread(IProgressMonitor monitor) {
 			processQueue();
@@ -547,7 +505,7 @@ public class IOConsolePartitioner implements IConsoleDocumentPartitioner, IDocum
 
 	void processQueue() {
 		synchronized (overflowLock) {
-			ArrayList<PendingPartition> pendingCopy = new ArrayList<PendingPartition>();
+			ArrayList<PendingPartition> pendingCopy = new ArrayList<>();
 			StringBuffer buffer = null;
 			boolean consoleClosed = false;
 			synchronized(pendingPartitions) {
@@ -673,17 +631,11 @@ public class IOConsolePartitioner implements IConsoleDocumentPartitioner, IDocum
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.console.IConsoleDocumentPartitioner#isReadOnly(int)
-	 */
 	@Override
 	public boolean isReadOnly(int offset) {
 		return ((IOConsolePartition)getPartition(offset)).isReadOnly();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.console.IConsoleDocumentPartitioner#computeStyleRange(int, int)
-	 */
 	@Override
 	public StyleRange[] getStyleRanges(int offset, int length) {
 		if (!connected) {

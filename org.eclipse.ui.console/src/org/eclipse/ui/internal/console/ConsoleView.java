@@ -17,20 +17,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.eclipse.swt.custom.StyledText;
-import org.eclipse.swt.events.MouseAdapter;
-import org.eclipse.swt.events.MouseEvent;
-import org.eclipse.swt.graphics.Point;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Event;
-import org.eclipse.swt.widgets.ToolBar;
-import org.eclipse.swt.widgets.ToolItem;
-
 import org.eclipse.core.runtime.ISafeRunnable;
 import org.eclipse.core.runtime.ListenerList;
 import org.eclipse.core.runtime.SafeRunner;
-
 import org.eclipse.jface.action.ActionContributionItem;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IToolBarManager;
@@ -40,7 +29,15 @@ import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.viewers.IBasicPropertyConstants;
-
+import org.eclipse.swt.custom.StyledText;
+import org.eclipse.swt.events.MouseAdapter;
+import org.eclipse.swt.events.MouseEvent;
+import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.ToolBar;
+import org.eclipse.swt.widgets.ToolItem;
 import org.eclipse.ui.IPartListener2;
 import org.eclipse.ui.IViewReference;
 import org.eclipse.ui.IViewSite;
@@ -80,7 +77,7 @@ public class ConsoleView extends PageBookView implements IConsoleView, IConsoleL
 	/**
 	 * Stack of consoles in MRU order
 	 */
-	private List<IConsole> fStack = new ArrayList<IConsole>();
+	private List<IConsole> fStack = new ArrayList<>();
 
 	/**
 	 * The console being displayed, or <code>null</code> if none
@@ -445,9 +442,9 @@ public class ConsoleView extends PageBookView implements IConsoleView, IConsoleL
 	 */
 	public ConsoleView() {
 		super();
-		fConsoleToPart = new HashMap<IConsole, ConsoleWorkbenchPart>();
-		fPartToConsole = new HashMap<ConsoleWorkbenchPart, IConsole>();
-		fConsoleToPageParticipants = new HashMap<IConsole, ListenerList<IConsolePageParticipant>>();
+		fConsoleToPart = new HashMap<>();
+		fPartToConsole = new HashMap<>();
+		fConsoleToPageParticipants = new HashMap<>();
 
 		ConsoleManager consoleManager = (ConsoleManager) ConsolePlugin.getDefault().getConsoleManager();
 		consoleManager.registerConsoleView(this);

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2017 IBM Corporation and others.
+ * Copyright (c) 2000, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -144,9 +144,6 @@ public class IOConsole extends TextConsole {
 		this(name, null, imageDescriptor);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.console.IConsole#createPage(org.eclipse.ui.console.IConsoleView)
-	 */
 	@Override
 	public IPageBookViewPage createPage(IConsoleView view) {
 		return new IOConsolePage(this, view);
@@ -281,9 +278,6 @@ public class IOConsole extends TextConsole {
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.console.TextConsole#clearConsole()
-	 */
 	@Override
 	public void clearConsole() {
 		if (partitioner != null) {
@@ -301,7 +295,7 @@ public class IOConsole extends TextConsole {
 		//make a copy of the open streams and close them all
 		//a copy is needed as close the streams results in a callback that
 		//removes the streams from the openStreams collection (bug 152794)
-		List<Closeable> list = new ArrayList<Closeable>(openStreams);
+		List<Closeable> list = new ArrayList<>(openStreams);
 		for (Closeable closable : list) {
 			try {
 				closable.close();
