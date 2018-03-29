@@ -162,10 +162,10 @@ abstract public class StateTests extends AbstractViewerModelTest implements ITes
     }
 
     static boolean areTreeSelectionsEqual(ITreeSelection sel1, ITreeSelection sel2) {
-		Set<TreePath> sel1Set = new HashSet<TreePath>();
+		Set<TreePath> sel1Set = new HashSet<>();
         sel1Set.addAll( Arrays.asList(sel1.getPaths()) );
 
-		Set<TreePath> sel2Set = new HashSet<TreePath>();
+		Set<TreePath> sel2Set = new HashSet<>();
         sel2Set.addAll( Arrays.asList(sel2.getPaths()) );
 
         return sel1Set.equals(sel2Set);

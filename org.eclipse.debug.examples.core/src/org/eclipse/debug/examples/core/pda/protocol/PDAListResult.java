@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2013 Wind River Systems and others.
+ * Copyright (c) 2008, 2018 Wind River Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -27,7 +27,7 @@ public class PDAListResult extends PDACommandResult {
     PDAListResult(String response) {
         super(response);
         StringTokenizer st = new StringTokenizer(response, "|"); //$NON-NLS-1$
-		List<String> valuesList = new ArrayList<String>();
+		List<String> valuesList = new ArrayList<>();
 
         while (st.hasMoreTokens()) {
             String token = st.nextToken();

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2013 IBM Corporation and others.
+ * Copyright (c) 2010, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -30,34 +30,25 @@ public class ExpressionManagerTests extends AbstractDebugTest {
 
 	class SinlgeListener implements IExpressionListener {
 
-		List<IExpression> added = new ArrayList<IExpression>();
-		List<IExpression> removed = new ArrayList<IExpression>();
-		List<IExpression> changed = new ArrayList<IExpression>();
+		List<IExpression> added = new ArrayList<>();
+		List<IExpression> removed = new ArrayList<>();
+		List<IExpression> changed = new ArrayList<>();
 		int addedCallbacks = 0;
 		int removedCallbacks = 0;
 		int changedCallbacks = 0;
 
-		/* (non-Javadoc)
-		 * @see org.eclipse.debug.core.IExpressionListener#expressionAdded(org.eclipse.debug.core.model.IExpression)
-		 */
 		@Override
 		public void expressionAdded(IExpression expression) {
 			added.add(expression);
 			addedCallbacks++;
 		}
 
-		/* (non-Javadoc)
-		 * @see org.eclipse.debug.core.IExpressionListener#expressionRemoved(org.eclipse.debug.core.model.IExpression)
-		 */
 		@Override
 		public void expressionRemoved(IExpression expression) {
 			removed.add(expression);
 			removedCallbacks++;
 		}
 
-		/* (non-Javadoc)
-		 * @see org.eclipse.debug.core.IExpressionListener#expressionChanged(org.eclipse.debug.core.model.IExpression)
-		 */
 		@Override
 		public void expressionChanged(IExpression expression) {
 			changed.add(expression);
@@ -68,16 +59,13 @@ public class ExpressionManagerTests extends AbstractDebugTest {
 
 	class MultiListener implements IExpressionsListener {
 
-		List<IExpression> added = new ArrayList<IExpression>();
-		List<IExpression> removed = new ArrayList<IExpression>();
-		List<IExpression> changed = new ArrayList<IExpression>();
+		List<IExpression> added = new ArrayList<>();
+		List<IExpression> removed = new ArrayList<>();
+		List<IExpression> changed = new ArrayList<>();
 		int addedCallbacks = 0;
 		int removedCallbacks = 0;
 		int changedCallbacks = 0;
 
-		/* (non-Javadoc)
-		 * @see org.eclipse.debug.core.IExpressionsListener#expressionsAdded(org.eclipse.debug.core.model.IExpression[])
-		 */
 		@Override
 		public void expressionsAdded(IExpression[] expressions) {
 			for (int i = 0; i < expressions.length; i++) {
@@ -86,9 +74,6 @@ public class ExpressionManagerTests extends AbstractDebugTest {
 			addedCallbacks++;
 		}
 
-		/* (non-Javadoc)
-		 * @see org.eclipse.debug.core.IExpressionsListener#expressionsRemoved(org.eclipse.debug.core.model.IExpression[])
-		 */
 		@Override
 		public void expressionsRemoved(IExpression[] expressions) {
 			for (int i = 0; i < expressions.length; i++) {
@@ -97,9 +82,6 @@ public class ExpressionManagerTests extends AbstractDebugTest {
 			removedCallbacks++;
 		}
 
-		/* (non-Javadoc)
-		 * @see org.eclipse.debug.core.IExpressionsListener#expressionsChanged(org.eclipse.debug.core.model.IExpression[])
-		 */
 		@Override
 		public void expressionsChanged(IExpression[] expressions) {
 			for (int i = 0; i < expressions.length; i++) {
@@ -112,15 +94,12 @@ public class ExpressionManagerTests extends AbstractDebugTest {
 
 	class InsertMoveListener extends MultiListener implements IExpressionsListener2 {
 
-		List<IExpression> moved = new ArrayList<IExpression>();
-		List<IExpression> inserted = new ArrayList<IExpression>();
+		List<IExpression> moved = new ArrayList<>();
+		List<IExpression> inserted = new ArrayList<>();
 		int insertIndex = -1;
 		int movedCallbacks = 0;
 		int insertedCallbacks = 0;
 
-		/* (non-Javadoc)
-		 * @see org.eclipse.debug.internal.core.IExpressionsListener2#expressionsMoved(org.eclipse.debug.core.model.IExpression[], int)
-		 */
 		@Override
 		public void expressionsMoved(IExpression[] expressions, int index) {
 			for (int i = 0; i < expressions.length; i++) {
@@ -130,9 +109,6 @@ public class ExpressionManagerTests extends AbstractDebugTest {
 			insertIndex = index;
 		}
 
-		/* (non-Javadoc)
-		 * @see org.eclipse.debug.internal.core.IExpressionsListener2#expressionsInserted(org.eclipse.debug.core.model.IExpression[], int)
-		 */
 		@Override
 		public void expressionsInserted(IExpression[] expressions, int index) {
 			for (int i = 0; i < expressions.length; i++) {

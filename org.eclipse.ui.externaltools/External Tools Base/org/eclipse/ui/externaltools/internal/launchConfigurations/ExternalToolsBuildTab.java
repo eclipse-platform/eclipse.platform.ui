@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2013 IBM Corporation and others.
+ * Copyright (c) 2000, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -73,28 +73,19 @@ public class ExternalToolsBuildTab extends AbstractLaunchConfigurationTab {
 	private Button fReferencedProjects;
 
 	// projects to build (empty if none)
-	private List<IProject> fProjects = new ArrayList<IProject>();
+	private List<IProject> fProjects = new ArrayList<>();
 
 	class ProjectsContentProvider implements IStructuredContentProvider {
 
-		/* (non-Javadoc)
-		 * @see org.eclipse.jface.viewers.IStructuredContentProvider#getElements(java.lang.Object)
-		 */
 		@Override
 		public Object[] getElements(Object inputElement) {
 			return ((IWorkspace)inputElement).getRoot().getProjects();
 		}
 
-		/* (non-Javadoc)
-		 * @see org.eclipse.jface.viewers.IContentProvider#dispose()
-		 */
 		@Override
 		public void dispose() {
 		}
 
-		/* (non-Javadoc)
-		 * @see org.eclipse.jface.viewers.IContentProvider#inputChanged(org.eclipse.jface.viewers.Viewer, java.lang.Object, java.lang.Object)
-		 */
 		@Override
 		public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
 		}
@@ -108,9 +99,6 @@ public class ExternalToolsBuildTab extends AbstractLaunchConfigurationTab {
 		setHelpContextId(IExternalToolsHelpContextIds.EXTERNAL_TOOLS_LAUNCH_CONFIGURATION_DIALOG_BUILD_TAB);
 	}
 
-	/**
-	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#createControl(org.eclipse.swt.widgets.Composite)
-	 */
 	@Override
 	public void createControl(Composite parent) {
 		Composite mainComposite = new Composite(parent, SWT.NONE);
@@ -193,23 +181,17 @@ public class ExternalToolsBuildTab extends AbstractLaunchConfigurationTab {
 			return;
 		}
 		Object[] res = dialog.getResult();
-		fProjects = new ArrayList<IProject>(res.length);
+		fProjects = new ArrayList<>(res.length);
 		for (int i = 0; i < res.length; i++) {
 			fProjects.add((IProject) res[i]);
 		}
 		updateLaunchConfigurationDialog();
 	}
 
-	/**
-	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#setDefaults(org.eclipse.debug.core.ILaunchConfigurationWorkingCopy)
-	 */
 	@Override
 	public void setDefaults(ILaunchConfigurationWorkingCopy configuration) {
 	}
 
-	/**
-	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#initializeFrom(org.eclipse.debug.core.ILaunchConfiguration)
-	 */
 	@Override
 	public void initializeFrom(ILaunchConfiguration configuration) {
 		updateScope(configuration);
@@ -254,16 +236,13 @@ public class ExternalToolsBuildTab extends AbstractLaunchConfigurationTab {
 			} else if (scope.startsWith("${projects:")) { //$NON-NLS-1$
 				fSpecificProjectsButton.setSelection(true);
 				IProject[] projects = getBuildProjects(configuration, IExternalToolConstants.ATTR_BUILD_SCOPE);
-				fProjects = new ArrayList<IProject>(projects.length);
+				fProjects = new ArrayList<>(projects.length);
 				for (int i = 0; i < projects.length; i++) {
 					fProjects.add(projects[i]);
 				}
 			}
 		}
 	}
-	/**
-	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#performApply(org.eclipse.debug.core.ILaunchConfigurationWorkingCopy)
-	 */
 	@Override
 	public void performApply(ILaunchConfigurationWorkingCopy configuration) {
 		String scope = generateScopeMemento();
@@ -296,9 +275,6 @@ public class ExternalToolsBuildTab extends AbstractLaunchConfigurationTab {
 		return "${none}"; //$NON-NLS-1$
 	}
 
-	/**
-	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#getName()
-	 */
 	@Override
 	public String getName() {
 		return ExternalToolsLaunchConfigurationMessages.ExternalToolsBuildTab_8;
@@ -326,9 +302,6 @@ public class ExternalToolsBuildTab extends AbstractLaunchConfigurationTab {
 		fReferencedProjects.setEnabled(fBuildButton.getSelection() && (fProjectButton.getSelection() || fSpecificProjectsButton.getSelection()));
 	}
 
-	/**
-	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#getImage()
-	 */
 	@Override
 	public Image getImage() {
 		return ExternalToolsImages.getImage(org.eclipse.ui.externaltools.internal.model.IExternalToolConstants.IMG_TAB_BUILD);
@@ -391,17 +364,11 @@ public class ExternalToolsBuildTab extends AbstractLaunchConfigurationTab {
 		return buf.toString();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#activated(org.eclipse.debug.core.ILaunchConfigurationWorkingCopy)
-	 */
 	@Override
 	public void activated(ILaunchConfigurationWorkingCopy workingCopy) {
 		// do nothing on activation
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#deactivated(org.eclipse.debug.core.ILaunchConfigurationWorkingCopy)
-	 */
 	@Override
 	public void deactivated(ILaunchConfigurationWorkingCopy workingCopy) {
 		// do nothing on deactivation

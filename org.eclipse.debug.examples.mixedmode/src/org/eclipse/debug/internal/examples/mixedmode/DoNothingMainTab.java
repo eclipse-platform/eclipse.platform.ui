@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2013 IBM Corporation and others.
+ * Copyright (c) 2013, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -34,9 +34,6 @@ public class DoNothingMainTab extends AbstractLaunchConfigurationTab implements 
 	protected Button fButton = null;
 	protected Set<String> fOptions = null;
 
-	/**
-	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#createControl(org.eclipse.swt.widgets.Composite)
-	 */
 	@Override
 	public void createControl(Composite parent) {
 		Composite comp = SWTFactory.createComposite(parent, parent.getFont(), 1, 1, GridData.FILL_BOTH);
@@ -56,9 +53,6 @@ public class DoNothingMainTab extends AbstractLaunchConfigurationTab implements 
 		getLaunchManager().addLaunchConfigurationListener(this);
 	}
 
-	/**
-	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#getName()
-	 */
 	@Override
 	public String getName() {
 		return Messages.DoNothingMainTab_1;
@@ -68,23 +62,17 @@ public class DoNothingMainTab extends AbstractLaunchConfigurationTab implements 
 	 * @return the set of modes this tab works with
 	 */
 	protected Set<String> getModes() {
-		Set<String> set = new HashSet<String>();
+		Set<String> set = new HashSet<>();
 		set.add("profile"); //$NON-NLS-1$
 		return set;
 	}
 
-	/**
-	 * @see org.eclipse.debug.ui.AbstractLaunchConfigurationTab#dispose()
-	 */
 	@Override
 	public void dispose() {
 		getLaunchManager().removeLaunchConfigurationListener(this);
 		super.dispose();
 	}
 
-	/**
-	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#initializeFrom(org.eclipse.debug.core.ILaunchConfiguration)
-	 */
 	@Override
 	public void initializeFrom(ILaunchConfiguration configuration) {
 		try {
@@ -99,9 +87,6 @@ public class DoNothingMainTab extends AbstractLaunchConfigurationTab implements 
 		}
 	}
 
-	/**
-	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#performApply(org.eclipse.debug.core.ILaunchConfigurationWorkingCopy)
-	 */
 	@Override
 	public void performApply(ILaunchConfigurationWorkingCopy configuration) {
 		if (fButton.getSelection()) {
@@ -111,24 +96,15 @@ public class DoNothingMainTab extends AbstractLaunchConfigurationTab implements 
 		}
 	}
 
-	/**
-	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#setDefaults(org.eclipse.debug.core.ILaunchConfigurationWorkingCopy)
-	 */
 	@Override
 	public void setDefaults(ILaunchConfigurationWorkingCopy configuration) {
 	}
 
-	/**
-	 * @see org.eclipse.debug.ui.AbstractLaunchConfigurationTab#getId()
-	 */
 	@Override
 	public String getId() {
 		return "org.eclipse.debug.examples.mixedmode.main.tab"; //$NON-NLS-1$
 	}
 
-	/**
-	 * @see org.eclipse.debug.core.ILaunchConfigurationListener#launchConfigurationChanged(org.eclipse.debug.core.ILaunchConfiguration)
-	 */
 	@Override
 	public void launchConfigurationChanged(ILaunchConfiguration configuration) {
 		try {

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2013 Wind River Systems and others.
+ * Copyright (c) 2008, 2018 Wind River Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -35,7 +35,7 @@ public class PDARegisterData {
         fName = regSt.nextToken();
         fWritable = Boolean.getBoolean(regSt.nextToken());
 
-		List<PDABitFieldData> bitFieldsList = new ArrayList<PDABitFieldData>();
+		List<PDABitFieldData> bitFieldsList = new ArrayList<>();
         while (st.hasMoreTokens()) {
             bitFieldsList.add(new PDABitFieldData(st.nextToken()));
         }

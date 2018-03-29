@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2015 Wind River Systems and others.
+ * Copyright (c) 2005, 2018 Wind River Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -62,7 +62,7 @@ public class PDAVirtualMachine {
         String fName;
         String fGroup = "<no_group>"; //$NON-NLS-1$
         boolean fIsWriteable = true;
-		Map<String, BitField> fBitFields = new LinkedHashMap<String, BitField>(0);
+		Map<String, BitField> fBitFields = new LinkedHashMap<>(0);
         int fValue;
     }
 
@@ -73,10 +73,10 @@ public class PDAVirtualMachine {
         String fName;
         int fBitOffset;
         int fBitCount;
-		Map<String, Integer> fMnemonics = new LinkedHashMap<String, Integer>(0);
+		Map<String, Integer> fMnemonics = new LinkedHashMap<>(0);
     }
 
-	Map<String, Register> fRegisters = new LinkedHashMap<String, Register>(0);
+	Map<String, Register> fRegisters = new LinkedHashMap<>(0);
 
     class Args {
         final String[] fArgs;
@@ -147,7 +147,7 @@ public class PDAVirtualMachine {
 		Map<String, Integer> fThreadLabels;
 
         /** The stack of stack frames (the control stack) */
-		final List<Frame> fFrames = new LinkedList<Frame>();
+		final List<Frame> fFrames = new LinkedList<>();
 
         /** Current stack frame (not includced in fFrames) */
         Frame fCurrentFrame;
@@ -176,7 +176,7 @@ public class PDAVirtualMachine {
         }
     }
 
-	final Map<Integer, PDAThread> fThreads = new LinkedHashMap<Integer, PDAThread>();
+	final Map<Integer, PDAThread> fThreads = new LinkedHashMap<>();
 
     int fNextThreadId = 1;
 
@@ -192,7 +192,7 @@ public class PDAVirtualMachine {
 
     /** Each stack frame is a mapping of variable names to values. */
     class Frame {
-		final Map<String, Object> fLocalVariables = new LinkedHashMap<String, Object>();
+		final Map<String, Object> fLocalVariables = new LinkedHashMap<>();
 
         /**
          * The name of the function in this frame
@@ -278,7 +278,7 @@ public class PDAVirtualMachine {
      * Breakpoints are stored per each each line of code.  The boolean indicates
      * whether the whole VM should suspend or just the triggering thread.
      */
-	final Map<Integer, Boolean> fBreakpoints = new HashMap<Integer, Boolean>();
+	final Map<Integer, Boolean> fBreakpoints = new HashMap<>();
 
     /**
      * The suspend flag is true if the VM should suspend running the program and
@@ -324,7 +324,7 @@ public class PDAVirtualMachine {
     OutputStream fEventStream;
 
     /** The eventstops table holds which events cause suspends and which do not. */
-	final Map<String, Boolean> fEventStops = new HashMap<String, Boolean>();
+	final Map<String, Boolean> fEventStops = new HashMap<>();
     {
         fEventStops.put("unimpinstr", Boolean.FALSE); //$NON-NLS-1$
         fEventStops.put("nosuchlabel", Boolean.FALSE); //$NON-NLS-1$
@@ -340,7 +340,7 @@ public class PDAVirtualMachine {
      * <li>N = 2 is write watch</li>
      * <li>N = 3 is both, etc.</li>
      */
-	final Map<String, Integer> fWatchpoints = new HashMap<String, Integer>();
+	final Map<String, Integer> fWatchpoints = new HashMap<>();
 
     public static void main(String[] args) {
         String programFile = args.length >= 1 ? args[0] : null;
@@ -388,7 +388,7 @@ public class PDAVirtualMachine {
 
         // Load all the code into memory
         StringWriter stringWriter = new StringWriter();
-		List<String> code = new LinkedList<String>();
+		List<String> code = new LinkedList<>();
 		try (FileReader fileReader = new FileReader(inputFile)) {
 	        int c = fileReader.read();
 	        while (c != -1) {
@@ -416,7 +416,7 @@ public class PDAVirtualMachine {
      * Initializes the labels map
      */
 	Map<String, Integer> mapLabels(String[] code) {
-		Map<String, Integer> labels = new HashMap<String, Integer>();
+		Map<String, Integer> labels = new HashMap<>();
         for (int i = 0; i < code.length; i++) {
             if (code[i].length() != 0 && code[i].charAt(0) == ':') {
                 labels.put(code[i].substring(1), Integer.valueOf(i));
@@ -551,7 +551,7 @@ public class PDAVirtualMachine {
     void doOneInstruction(PDAThread thread, String instr) {
         StringTokenizer tokenizer = new StringTokenizer(instr);
         String op = tokenizer.nextToken();
-		List<String> tokens = new LinkedList<String>();
+		List<String> tokens = new LinkedList<>();
         while (tokenizer.hasMoreTokens()) {
             tokens.add(tokenizer.nextToken());
         }
@@ -698,7 +698,7 @@ public class PDAVirtualMachine {
         }
 
         String command = tokenizer.nextToken();
-		List<String> tokens = new LinkedList<String>();
+		List<String> tokens = new LinkedList<>();
         while (tokenizer.hasMoreTokens()) {
             tokens.add(tokenizer.nextToken());
         }
@@ -779,7 +779,7 @@ public class PDAVirtualMachine {
             ? thread.fCurrentFrame : (Frame)thread.fFrames.get(sfnumber);
 
         String varDot = var + "."; //$NON-NLS-1$
-		List<String> children = new ArrayList<String>();
+		List<String> children = new ArrayList<>();
 		for (Iterator<String> itr = frame.fLocalVariables.keySet().iterator(); itr.hasNext();) {
             String localVar = itr.next();
             if (localVar.startsWith(varDot) && localVar.indexOf('.', varDot.length() + 1) == -1) {
@@ -933,7 +933,7 @@ public class PDAVirtualMachine {
      * @param args
      */
     void debugGroups(Args args) {
-		TreeSet<String> groups = new TreeSet<String>();
+		TreeSet<String> groups = new TreeSet<>();
 		for (Iterator<Register> itr = fRegisters.values().iterator(); itr.hasNext();) {
             Register reg = itr.next();
             groups.add(reg.fGroup);

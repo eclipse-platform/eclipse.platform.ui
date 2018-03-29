@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2013 Wind River Systems and others.
+ * Copyright (c) 2009, 2018 Wind River Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -24,9 +24,6 @@ import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeItem;
 import org.eclipse.swt.widgets.Widget;
 
-/**
- *
- */
 public class TreeModelViewerAutopopulateAgent implements IViewerUpdateListener {
 
     private TreeModelViewer fViewer;
@@ -81,7 +78,7 @@ public class TreeModelViewerAutopopulateAgent implements IViewerUpdateListener {
     private TreePath getTreePath(Widget w) {
         if (w instanceof TreeItem) {
             TreeItem item = (TreeItem)w;
-			LinkedList<Object> segments = new LinkedList<Object>();
+			LinkedList<Object> segments = new LinkedList<>();
             while (item != null) {
                 Object segment = item.getData();
                 Assert.isNotNull(segment);

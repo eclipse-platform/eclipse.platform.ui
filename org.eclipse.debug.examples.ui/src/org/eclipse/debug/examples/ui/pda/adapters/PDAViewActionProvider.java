@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012, 2013 Wind River Systems and others.
+ * Copyright (c) 2012, 2018 Wind River Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -28,11 +28,8 @@ import org.eclipse.jface.action.IAction;
  */
 public class PDAViewActionProvider implements IViewActionProvider {
 
-	Map<IPresentationContext, Action> fActions = new HashMap<IPresentationContext, Action>();
+	Map<IPresentationContext, Action> fActions = new HashMap<>();
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.viewers.model.provisional.IViewActionProvider#getAction(org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationContext, java.lang.String)
-	 */
 	@Override
 	public IAction getAction(IPresentationContext presentationContext, String actionID) {
 		if (presentationContext.getId().equals(IDebugUIConstants.ID_VARIABLE_VIEW) &&

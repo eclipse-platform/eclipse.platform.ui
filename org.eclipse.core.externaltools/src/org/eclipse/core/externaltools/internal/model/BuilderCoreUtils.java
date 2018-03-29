@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2014 IBM Corporation and others.
+ * Copyright (c) 2000, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -149,7 +149,7 @@ public class BuilderCoreUtils {
 		if(!isfull && isinc) {
 			Map<String, String> args = newCommand.getArguments();
 			if(args == null) {
-				args = new HashMap<String, String>();
+				args = new HashMap<>();
 			}
 			newCommand.setBuilding(IncrementalProjectBuilder.FULL_BUILD, true);
 			args.put(INC_CLEAN, Boolean.TRUE.toString());
@@ -211,7 +211,7 @@ public class BuilderCoreUtils {
 					temp = workingCopy.getOriginal();
 				}
 			}
-			args = new HashMap<String, String>();
+			args = new HashMap<>();
 			// Launch configuration builders are stored with a project-relative
 			// path
 			StringBuilder buffer = new StringBuilder(PROJECT_TAG);

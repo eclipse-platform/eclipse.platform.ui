@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2013 IBM Corporation and others.
+ * Copyright (c) 2000, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -42,8 +42,8 @@ import org.eclipse.ui.views.navigator.ResourceComparator;
 public class TreeAndListGroup implements ISelectionChangedListener {
 	private Object root;
 	private Object currentTreeSelection;
-	private List<ISelectionChangedListener> selectionChangedListeners = new ArrayList<ISelectionChangedListener>();
-	private List<IDoubleClickListener> doubleClickListeners = new ArrayList<IDoubleClickListener>();
+	private List<ISelectionChangedListener> selectionChangedListeners = new ArrayList<>();
+	private List<IDoubleClickListener> doubleClickListeners = new ArrayList<>();
 
 	private ITreeContentProvider treeContentProvider;
 	private IStructuredContentProvider listContentProvider;
@@ -243,9 +243,6 @@ public class TreeAndListGroup implements ISelectionChangedListener {
 		treeViewer.setInput(root);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.viewers.ISelectionChangedListener#selectionChanged(org.eclipse.jface.viewers.SelectionChangedEvent)
-	 */
 	@Override
 	public void selectionChanged(SelectionChangedEvent event) {
 		IStructuredSelection selection = (IStructuredSelection) event.getSelection();

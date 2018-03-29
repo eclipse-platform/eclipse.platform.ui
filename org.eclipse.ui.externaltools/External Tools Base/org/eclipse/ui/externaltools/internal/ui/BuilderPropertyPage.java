@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 IBM Corporation and others.
+ * Copyright (c) 2000, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -129,7 +129,7 @@ public final class BuilderPropertyPage extends PropertyPage implements ICheckSta
 	 * Collection of configurations created while the page is open.
 	 * Stored here so they can be deleted if the page is cancelled.
 	 */
-	private List<ILaunchConfiguration> newConfigList = new ArrayList<ILaunchConfiguration>();
+	private List<ILaunchConfiguration> newConfigList = new ArrayList<>();
 
 	private SelectionListener buttonListener= new SelectionAdapter() {
 		@Override
@@ -296,9 +296,6 @@ public final class BuilderPropertyPage extends PropertyPage implements ICheckSta
 		return button;
 	}
 
-	/* (non-Javadoc)
-	 * Method declared on PreferencePage.
-	 */
 	@Override
 	protected Control createContents(Composite parent) {
 
@@ -429,9 +426,6 @@ public final class BuilderPropertyPage extends PropertyPage implements ICheckSta
 		viewer.getTable().setFocus();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.viewers.ICheckStateListener#checkStateChanged(org.eclipse.jface.viewers.CheckStateChangedEvent)
-	 */
 	@Override
 	public void checkStateChanged(CheckStateChangedEvent event) {
 		Object element= event.getElement();
@@ -491,7 +485,7 @@ public final class BuilderPropertyPage extends PropertyPage implements ICheckSta
 	private void enableCommand(ICommand command, boolean enable) {
 		Map<String, String> args = command.getArguments();
 		if (args == null) {
-			args = new HashMap<String, String>(1);
+			args = new HashMap<>(1);
 		}
 		args.put(COMMAND_ENABLED, Boolean.toString(enable));
 		command.setArguments(args);
@@ -505,7 +499,7 @@ public final class BuilderPropertyPage extends PropertyPage implements ICheckSta
 	private void handleImportButtonPressed() {
 		ILaunchManager manager= DebugPlugin.getDefault().getLaunchManager();
 		List<ILaunchConfigurationType> toolTypes = getConfigurationTypes(IExternalToolConstants.ID_EXTERNAL_TOOLS_LAUNCH_CATEGORY);
-		List<ILaunchConfiguration> configurations = new ArrayList<ILaunchConfiguration>();
+		List<ILaunchConfiguration> configurations = new ArrayList<>();
 		for (ILaunchConfigurationType type : toolTypes) {
 			try {
 				ILaunchConfiguration[] configs = manager.getLaunchConfigurations(type);
@@ -569,12 +563,12 @@ public final class BuilderPropertyPage extends PropertyPage implements ICheckSta
 				Object item= iterator.next();
 				if (item instanceof ILaunchConfiguration) {
 					if (configsToBeDeleted == null) {
-						configsToBeDeleted = new ArrayList<ILaunchConfiguration>(numSelected);
+						configsToBeDeleted = new ArrayList<>(numSelected);
 					}
 					configsToBeDeleted.add((ILaunchConfiguration) item);
 				} else if (item instanceof ICommand) {
 					if (commandsToBeDeleted == null) {
-						commandsToBeDeleted = new ArrayList<ICommand>(numSelected);
+						commandsToBeDeleted = new ArrayList<>(numSelected);
 					}
 					commandsToBeDeleted.add((ICommand) item);
 				}
@@ -682,7 +676,7 @@ public final class BuilderPropertyPage extends PropertyPage implements ICheckSta
 	 */
 	private List<ILaunchConfigurationType> getConfigurationTypes(String category) {
 		ILaunchConfigurationType types[] = DebugPlugin.getDefault().getLaunchManager().getLaunchConfigurationTypes();
-		List<ILaunchConfigurationType> externalToolTypes = new ArrayList<ILaunchConfigurationType>();
+		List<ILaunchConfigurationType> externalToolTypes = new ArrayList<>();
 		for (int i = 0; i < types.length; i++) {
 			ILaunchConfigurationType configurationType = types[i];
 			if (category.equals(configurationType.getCategory())) {
@@ -982,7 +976,7 @@ public final class BuilderPropertyPage extends PropertyPage implements ICheckSta
 		//get all the build commands
 		int numCommands = itemData.length;
 		monitor.beginTask(ExternalToolsUIMessages.BuilderPropertyPage_3, numCommands + 1);
-		List<ICommand> possibleCommands = new ArrayList<ICommand>(numCommands);
+		List<ICommand> possibleCommands = new ArrayList<>(numCommands);
 		for (int i = 0; i < numCommands; i++) {
 			Object data = itemData[i];
 			if (data instanceof ICommand) {
@@ -1086,7 +1080,7 @@ public final class BuilderPropertyPage extends PropertyPage implements ICheckSta
 			newCommand.setBuilderName(builderName);
 			newCommand.setArguments(args);
 			if (configsToBeDeleted == null) {
-				configsToBeDeleted = new ArrayList<ILaunchConfiguration>();
+				configsToBeDeleted = new ArrayList<>();
 			}
 			configsToBeDeleted.add(config);
 			return newCommand;
@@ -1215,9 +1209,6 @@ public final class BuilderPropertyPage extends PropertyPage implements ICheckSta
 		return false;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.preference.IPreferencePage#performCancel()
-	 */
 	@Override
 	public boolean performCancel() {
 		for (ILaunchConfiguration config : newConfigList) {

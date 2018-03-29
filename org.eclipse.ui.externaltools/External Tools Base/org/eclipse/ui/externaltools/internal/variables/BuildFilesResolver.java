@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2013 Matthew Conway and others.
+ * Copyright (c) 2007, 2018 Matthew Conway and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -43,7 +43,7 @@ public class BuildFilesResolver implements IDynamicVariableResolver
         if (buildDelta != null)
         {
             final StringBuffer fileList = new StringBuffer();
-			final Set<String> changedResources = new LinkedHashSet<String>();
+			final Set<String> changedResources = new LinkedHashSet<>();
 
             // Use the argument to determine which deltas to visit - if none,
             // then defaults to all

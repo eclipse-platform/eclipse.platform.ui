@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2013 IBM Corporation and others.
+ * Copyright (c) 2004, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -130,7 +130,7 @@ public class PDAVirtualFindAction extends Action implements IUpdate {
 
 	private static class FindLabelProvider extends LabelProvider {
 		private final VirtualTreeModelViewer fVirtualViewer;
-		private final Map<VirtualItem, String> fTextCache = new HashMap<VirtualItem, String>();
+		private final Map<VirtualItem, String> fTextCache = new HashMap<>();
 
 		public FindLabelProvider(VirtualTreeModelViewer viewer, List<VirtualItem> items) {
 		    fVirtualViewer = viewer;
@@ -247,7 +247,7 @@ public class PDAVirtualFindAction extends Action implements IUpdate {
 
 		VirtualItem root = virtualViewer.getTree();
 		if (!monitor.isCanceled()) {
-			List<VirtualItem> list = new ArrayList<VirtualItem>();
+			List<VirtualItem> list = new ArrayList<>();
 			collectAllChildren(root, list);
 			FindLabelProvider labelProvider = new FindLabelProvider(virtualViewer, list);
 			VirtualItem result = performFind(list, labelProvider);

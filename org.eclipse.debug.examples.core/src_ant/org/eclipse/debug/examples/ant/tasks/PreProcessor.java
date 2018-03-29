@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2015 IBM Corporation and others.
+ * Copyright (c) 2005, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -46,9 +46,9 @@ import org.apache.tools.ant.util.FileUtils;
  */
 public class PreProcessor extends Task {
 
-	private Vector<FileSet> fFileSets = new Vector<FileSet>();
+	private Vector<FileSet> fFileSets = new Vector<>();
 	private File fDestDir = null;
-	private Set<String> fSymbols = new HashSet<String>();
+	private Set<String> fSymbols = new HashSet<>();
 	private FileUtils fUtils = FileUtils.getFileUtils();
 
 	// possible states

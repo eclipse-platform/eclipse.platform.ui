@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2013 Wind River Systems and others.
+ * Copyright (c) 2008, 2018 Wind River Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -31,7 +31,7 @@ public class PDAStackCommandResult extends PDACommandResult {
     PDAStackCommandResult(String response) {
         super(response);
         StringTokenizer st = new StringTokenizer(response, "#"); //$NON-NLS-1$
-		List<PDAFrameData> framesList = new ArrayList<PDAFrameData>();
+		List<PDAFrameData> framesList = new ArrayList<>();
 
         while (st.hasMoreTokens()) {
             framesList.add(new PDAFrameData(st.nextToken()));

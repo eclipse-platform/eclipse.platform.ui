@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2013 Wind River Systems and others.
+ * Copyright (c) 2009, 2018 Wind River Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -428,7 +428,7 @@ abstract public class UpdateTests extends AbstractViewerModelTest implements ITe
 
         }
 
-		ArrayList<IViewerUpdate> updates = new ArrayList<IViewerUpdate>(model.getQueuedUpdates());
+		ArrayList<IViewerUpdate> updates = new ArrayList<>(model.getQueuedUpdates());
         model.getQueuedUpdates().clear();
         for (int i = updates.size() - 1; i >= 0; i--) {
             model.processUpdate(updates.get(i));
@@ -518,7 +518,7 @@ abstract public class UpdateTests extends AbstractViewerModelTest implements ITe
 
         }
 
-		ArrayList<IViewerUpdate> updates = new ArrayList<IViewerUpdate>(model.getQueuedUpdates());
+		ArrayList<IViewerUpdate> updates = new ArrayList<>(model.getQueuedUpdates());
         model.getQueuedUpdates().clear();
         for (int i = updates.size() - 1; i >= 0; i--) {
             model.processUpdate(updates.get(i));
@@ -638,7 +638,7 @@ abstract public class UpdateTests extends AbstractViewerModelTest implements ITe
     }
 
 	private void completeQueuedUpdatesOfType(TestModel model, Class<?> updateClass) {
-		List<IViewerUpdate> updatesToComplete = new LinkedList<IViewerUpdate>();
+		List<IViewerUpdate> updatesToComplete = new LinkedList<>();
 
 		for (Iterator<IViewerUpdate> itr = model.getQueuedUpdates().iterator(); itr.hasNext();) {
             IViewerUpdate update = itr.next();

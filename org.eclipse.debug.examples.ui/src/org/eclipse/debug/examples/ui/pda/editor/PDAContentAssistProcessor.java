@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2013 IBM Corporation and others.
+ * Copyright (c) 2005, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -42,7 +42,7 @@ public class PDAContentAssistProcessor implements IContentAssistProcessor {
             }
         }
 
-		List<CompletionProposal> proposals = new ArrayList<CompletionProposal>();
+		List<CompletionProposal> proposals = new ArrayList<>();
         String[] keywords = PDAScanner.fgKeywords;
         if (prefix.length() > 0) {
             String word = prefix.toString();
@@ -65,44 +65,28 @@ public class PDAContentAssistProcessor implements IContentAssistProcessor {
         return null;
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.jface.text.contentassist.IContentAssistProcessor#computeContextInformation(org.eclipse.jface.text.ITextViewer, int)
-     */
     @Override
 	public IContextInformation[] computeContextInformation(ITextViewer viewer, int offset) {
         return null;
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.jface.text.contentassist.IContentAssistProcessor#getCompletionProposalAutoActivationCharacters()
-     */
     @Override
 	public char[] getCompletionProposalAutoActivationCharacters() {
         return null;
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.jface.text.contentassist.IContentAssistProcessor#getContextInformationAutoActivationCharacters()
-     */
     @Override
 	public char[] getContextInformationAutoActivationCharacters() {
         return null;
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.jface.text.contentassist.IContentAssistProcessor#getErrorMessage()
-     */
     @Override
 	public String getErrorMessage() {
         return null;
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.jface.text.contentassist.IContentAssistProcessor#getContextInformationValidator()
-     */
     @Override
 	public IContextInformationValidator getContextInformationValidator() {
         return null;
     }
-
 }

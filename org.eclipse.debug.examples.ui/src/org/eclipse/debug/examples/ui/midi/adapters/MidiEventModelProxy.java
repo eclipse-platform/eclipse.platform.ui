@@ -1,5 +1,5 @@
 /*****************************************************************
- * Copyright (c) 2009, 2013 Texas Instruments and others
+ * Copyright (c) 2009, 2018 Texas Instruments and others
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -20,12 +20,9 @@ import org.eclipse.debug.internal.ui.viewers.provisional.AbstractModelProxy;
 import org.eclipse.jface.viewers.TreePath;
 
 public class MidiEventModelProxy extends AbstractModelProxy implements ICheckboxModelProxy {
-	static Map<TreePath, Boolean> gChecked = new HashMap<TreePath, Boolean>();
+	static Map<TreePath, Boolean> gChecked = new HashMap<>();
 
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.viewers.model.provisional.ICheckboxModelProxy#setChecked(org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationContext, java.lang.Object, org.eclipse.jface.viewers.TreePath, boolean)
-	 */
 	@Override
 	public boolean setChecked(IPresentationContext context, Object viewerInput, TreePath path, boolean checked) {
 		System.out.println("TrackCheckListener.setChecked() element = " + path.getLastSegment() + " checked = " + checked); //$NON-NLS-1$ //$NON-NLS-2$

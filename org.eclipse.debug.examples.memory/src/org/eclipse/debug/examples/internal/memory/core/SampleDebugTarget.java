@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2013, 2015 IBM Corporation and others.
+ * Copyright (c) 2013, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -41,7 +41,7 @@ public class SampleDebugTarget extends DebugElement implements IDebugTarget, IMe
 
 	protected ILaunch fLaunch;
 	protected SampleEngine fEngine = new SampleEngine();
-	protected ArrayList<IMemoryBlockExtension> fMemoryBlocks = new ArrayList<IMemoryBlockExtension>();
+	protected ArrayList<IMemoryBlockExtension> fMemoryBlocks = new ArrayList<>();
 	protected IThread fThread;
 	protected boolean fBusy;
 
@@ -56,113 +56,63 @@ public class SampleDebugTarget extends DebugElement implements IDebugTarget, IMe
 		fireEvent(new DebugEvent(this, DebugEvent.CREATE));
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.debug.core.model.IDebugTarget#getProcess()
-	 */
 	@Override
 	public IProcess getProcess() {
 		return null;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.debug.core.model.IDebugTarget#hasThreads()
-	 */
 	@Override
 	public boolean hasThreads() throws DebugException {
 		return true;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * org.eclipse.debug.core.model.IDebugTarget#supportsBreakpoint(org.eclipse
-	 * .debug.core.model.IBreakpoint)
-	 */
 	@Override
 	public boolean supportsBreakpoint(IBreakpoint breakpoint) {
 
 		return false;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.debug.core.model.IDebugElement#getDebugTarget()
-	 */
 	@Override
 	public IDebugTarget getDebugTarget() {
 		return this;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.debug.core.model.IDebugElement#getLaunch()
-	 */
 	@Override
 	public ILaunch getLaunch() {
 		return fLaunch;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.debug.core.model.ITerminate#canTerminate()
-	 */
 	@Override
 	public boolean canTerminate() {
 		return !fTerminate;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.debug.core.model.ITerminate#isTerminated()
-	 */
 	@Override
 	public boolean isTerminated() {
 		return fTerminate;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.debug.core.model.ITerminate#terminate()
-	 */
 	@Override
 	public void terminate() throws DebugException {
 		fTerminate = true;
 		fireEvent(new DebugEvent(this, DebugEvent.TERMINATE));
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.debug.core.model.ISuspendResume#canResume()
-	 */
 	@Override
 	public boolean canResume() {
 		return fSuspend && !fTerminate;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.debug.core.model.ISuspendResume#canSuspend()
-	 */
 	@Override
 	public boolean canSuspend() {
 		return !fSuspend && !fTerminate;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.debug.core.model.ISuspendResume#isSuspended()
-	 */
 	@Override
 	public boolean isSuspended() {
 		return fSuspend;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.debug.core.model.ISuspendResume#resume()
-	 */
 	@Override
 	public void resume() throws DebugException {
 		fSuspend = false;
@@ -170,81 +120,41 @@ public class SampleDebugTarget extends DebugElement implements IDebugTarget, IMe
 		fireEvent(new DebugEvent(this, DebugEvent.RESUME));
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.debug.core.model.ISuspendResume#suspend()
-	 */
 	@Override
 	public void suspend() throws DebugException {
 		fSuspend = true;
 		fireEvent(new DebugEvent(getEngine().getThreads(this)[0], DebugEvent.SUSPEND));
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * org.eclipse.debug.core.IBreakpointListener#breakpointAdded(org.eclipse
-	 * .debug.core.model.IBreakpoint)
-	 */
 	@Override
 	public void breakpointAdded(IBreakpoint breakpoint) {
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * org.eclipse.debug.core.IBreakpointListener#breakpointRemoved(org.eclipse
-	 * .debug.core.model.IBreakpoint, org.eclipse.core.resources.IMarkerDelta)
-	 */
 	@Override
 	public void breakpointRemoved(IBreakpoint breakpoint, IMarkerDelta delta) {
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * org.eclipse.debug.core.IBreakpointListener#breakpointChanged(org.eclipse
-	 * .debug.core.model.IBreakpoint, org.eclipse.core.resources.IMarkerDelta)
-	 */
 	@Override
 	public void breakpointChanged(IBreakpoint breakpoint, IMarkerDelta delta) {
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.debug.core.model.IDisconnect#canDisconnect()
-	 */
 	@Override
 	public boolean canDisconnect() {
 
 		return false;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.debug.core.model.IDisconnect#disconnect()
-	 */
 	@Override
 	public void disconnect() throws DebugException {
 
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.debug.core.model.IDisconnect#isDisconnected()
-	 */
 	@Override
 	public boolean isDisconnected() {
 
 		return false;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * org.eclipse.debug.core.model.IMemoryBlockRetrieval#supportsStorageRetrieval
-	 * ()
-	 */
 	@Override
 	public boolean supportsStorageRetrieval() {
 		return true;
@@ -266,12 +176,6 @@ public class SampleDebugTarget extends DebugElement implements IDebugTarget, IMe
 		fMemoryBlocks.remove(memBlk);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * org.eclipse.debug.core.model.IMemoryBlockRetrieval#getMemoryBlock(long,
-	 * long)
-	 */
 	@Override
 	public IMemoryBlock getMemoryBlock(long startAddress, long length) throws DebugException {
 
@@ -308,11 +212,6 @@ public class SampleDebugTarget extends DebugElement implements IDebugTarget, IMe
 		return MemoryViewSamplePlugin.PLUGIN_ID;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.debug.core.model.IMemoryBlockRetrievalExtension#
-	 * getExtendedMemoryBlock(java.lang.String, java.lang.Object)
-	 */
 	@Override
 	public IMemoryBlockExtension getExtendedMemoryBlock(String expression, Object context) throws DebugException {
 

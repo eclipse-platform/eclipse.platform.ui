@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012, 2013 IBM Corporation and others.
+ * Copyright (c) 2012, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -114,7 +114,7 @@ public class ArgumentParsingTests extends AbstractDebugTest {
 		Process process = DebugPlugin.exec(execArgs, null);
 		BufferedReader procOut = new BufferedReader(new InputStreamReader(process.getInputStream()));
 
-		ArrayList<String> procArgs = new ArrayList<String>();
+		ArrayList<String> procArgs = new ArrayList<>();
 		String procArg;
 		while ((procArg = procOut.readLine()) != null) {
 			procArgs.add(procArg);

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2013 IBM Corporation and others.
+ * Copyright (c) 2005, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -84,7 +84,7 @@ public class DebugUIPlugin extends AbstractUIPlugin {
     /**
      * Managed colors
      */
-	private final Map<RGB, Color> fColors = new HashMap<RGB, Color>();
+	private final Map<RGB, Color> fColors = new HashMap<>();
 
 	/**
 	 * The constructor.
@@ -156,10 +156,6 @@ public class DebugUIPlugin extends AbstractUIPlugin {
 		return resourceBundle;
 	}
 
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.plugin.AbstractUIPlugin#initializeImageRegistry(org.eclipse.jface.resource.ImageRegistry)
-	 */
 	@Override
 	protected void initializeImageRegistry(ImageRegistry reg) {
 		declareImage(IMG_OBJ_PDA, PATH_OBJECT + "pda.gif"); //$NON-NLS-1$

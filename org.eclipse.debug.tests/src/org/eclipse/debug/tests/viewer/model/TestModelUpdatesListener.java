@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2016 Wind River Systems and others.
+ * Copyright (c) 2009, 2018 Wind River Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -54,30 +54,30 @@ public class TestModelUpdatesListener implements IViewerUpdateListener, ILabelUp
 
 	private boolean fFailOnRedundantUpdates;
 	private boolean fFailOnRedundantLabelUpdates;
-	private Set<IViewerUpdate> fRedundantUpdates = new HashSet<IViewerUpdate>();
-	private Set<ILabelUpdate> fRedundantLabelUpdates = new HashSet<ILabelUpdate>();
-	private Set<TreePath> fRedundantHasChildrenUpdateExceptions = new HashSet<TreePath>();
-	private Set<TreePath> fRedundantChildCountUpdateExceptions = new HashSet<TreePath>();
-	private Set<TreePath> fRedundantChildrenUpdateExceptions = new HashSet<TreePath>();
-	private Set<TreePath> fRedundantLabelUpdateExceptions = new HashSet<TreePath>();
+	private Set<IViewerUpdate> fRedundantUpdates = new HashSet<>();
+	private Set<ILabelUpdate> fRedundantLabelUpdates = new HashSet<>();
+	private Set<TreePath> fRedundantHasChildrenUpdateExceptions = new HashSet<>();
+	private Set<TreePath> fRedundantChildCountUpdateExceptions = new HashSet<>();
+	private Set<TreePath> fRedundantChildrenUpdateExceptions = new HashSet<>();
+	private Set<TreePath> fRedundantLabelUpdateExceptions = new HashSet<>();
 
 	private boolean fFailOnMultipleModelUpdateSequences;
 	private boolean fFailOnMultipleLabelUpdateSequences;
 
-	private Set<TreePath> fHasChildrenUpdatesScheduled = new HashSet<TreePath>();
-	private Set<IViewerUpdate> fHasChildrenUpdatesRunning = new HashSet<IViewerUpdate>();
-	private Set<IViewerUpdate> fHasChildrenUpdatesCompleted = new HashSet<IViewerUpdate>();
-	private Map<TreePath, Set<Integer>> fChildrenUpdatesScheduled = new HashMap<TreePath, Set<Integer>>();
-	private Set<IViewerUpdate> fChildrenUpdatesRunning = new HashSet<IViewerUpdate>();
-	private Set<IViewerUpdate> fChildrenUpdatesCompleted = new HashSet<IViewerUpdate>();
-	private Set<TreePath> fChildCountUpdatesScheduled = new HashSet<TreePath>();
-	private Set<IViewerUpdate> fChildCountUpdatesRunning = new HashSet<IViewerUpdate>();
-	private Set<IViewerUpdate> fChildCountUpdatesCompleted = new HashSet<IViewerUpdate>();
-	private Set<TreePath> fLabelUpdates = new HashSet<TreePath>();
-	private Set<ILabelUpdate> fLabelUpdatesRunning = new HashSet<ILabelUpdate>();
-	private Set<ILabelUpdate> fLabelUpdatesCompleted = new HashSet<ILabelUpdate>();
-	private Set<TestModel> fProxyModels = new HashSet<TestModel>();
-	private Set<TreePath> fStateUpdates = new HashSet<TreePath>();
+	private Set<TreePath> fHasChildrenUpdatesScheduled = new HashSet<>();
+	private Set<IViewerUpdate> fHasChildrenUpdatesRunning = new HashSet<>();
+	private Set<IViewerUpdate> fHasChildrenUpdatesCompleted = new HashSet<>();
+	private Map<TreePath, Set<Integer>> fChildrenUpdatesScheduled = new HashMap<>();
+	private Set<IViewerUpdate> fChildrenUpdatesRunning = new HashSet<>();
+	private Set<IViewerUpdate> fChildrenUpdatesCompleted = new HashSet<>();
+	private Set<TreePath> fChildCountUpdatesScheduled = new HashSet<>();
+	private Set<IViewerUpdate> fChildCountUpdatesRunning = new HashSet<>();
+	private Set<IViewerUpdate> fChildCountUpdatesCompleted = new HashSet<>();
+	private Set<TreePath> fLabelUpdates = new HashSet<>();
+	private Set<ILabelUpdate> fLabelUpdatesRunning = new HashSet<>();
+	private Set<ILabelUpdate> fLabelUpdatesCompleted = new HashSet<>();
+	private Set<TestModel> fProxyModels = new HashSet<>();
+	private Set<TreePath> fStateUpdates = new HashSet<>();
 	private int fViewerUpdatesStarted = 0;
 	private int fViewerUpdatesComplete = 0;
 	private int fViewerUpdatesStartedAtReset;
@@ -260,7 +260,7 @@ public class TestModelUpdatesListener implements IViewerUpdateListener, ILabelUp
 	public void addChildreUpdate(TreePath path, int index) {
 		Set<Integer> childrenIndexes = fChildrenUpdatesScheduled.get(path);
 		if (childrenIndexes == null) {
-			childrenIndexes = new TreeSet<Integer>();
+			childrenIndexes = new TreeSet<>();
 			fChildrenUpdatesScheduled.put(path, childrenIndexes);
 		}
 		childrenIndexes.add(Integer.valueOf(index));
@@ -352,7 +352,7 @@ public class TestModelUpdatesListener implements IViewerUpdateListener, ILabelUp
 	 * @return corresponding tree path
 	 */
 	private TreePath getViewerTreePath(IModelDelta node) {
-		ArrayList<Object> list = new ArrayList<Object>();
+		ArrayList<Object> list = new ArrayList<>();
 		IModelDelta parentDelta = node.getParentDelta();
 		while (parentDelta != null) {
 			list.add(0, node.getElement());
@@ -404,7 +404,7 @@ public class TestModelUpdatesListener implements IViewerUpdateListener, ILabelUp
 					fChildCountUpdatesScheduled.add(path);
 				}
 				if ((flags & CHILDREN_UPDATES) != 0) {
-					Set<Integer> childrenIndexes = new HashSet<Integer>();
+					Set<Integer> childrenIndexes = new HashSet<>();
 					for (int i = 0; i < children.length; i++) {
 						if (!isFiltered(children[i], filters)) {
 							childrenIndexes.add(Integer.valueOf(i));

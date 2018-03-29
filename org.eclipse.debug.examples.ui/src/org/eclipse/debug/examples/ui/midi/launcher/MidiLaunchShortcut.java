@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2013 IBM Corporation and others.
+ * Copyright (c) 2008, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -39,9 +39,6 @@ import org.eclipse.ui.dialogs.ElementListSelectionDialog;
  */
 public class MidiLaunchShortcut implements ILaunchShortcut {
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.ui.ILaunchShortcut#launch(org.eclipse.jface.viewers.ISelection, java.lang.String)
-	 */
 	@Override
 	public void launch(ISelection selection, String mode) {
 		if (selection instanceof IStructuredSelection) {
@@ -68,7 +65,7 @@ public class MidiLaunchShortcut implements ILaunchShortcut {
 	 * @return associated launch configuration or <code>null</code>
 	 */
 	private ILaunchConfiguration getConfiguration(IFile file) {
-		List<ILaunchConfiguration> candiates = new ArrayList<ILaunchConfiguration>();
+		List<ILaunchConfiguration> candiates = new ArrayList<>();
 		try {
 			ILaunchConfiguration[] configurations = getLaunchManager().getLaunchConfigurations(getLaunchType());
 			for (int i = 0; i < configurations.length; i++) {
@@ -155,9 +152,6 @@ public class MidiLaunchShortcut implements ILaunchShortcut {
 		return null;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.ui.ILaunchShortcut#launch(org.eclipse.ui.IEditorPart, java.lang.String)
-	 */
 	@Override
 	public void launch(IEditorPart editor, String mode) {
 		// nothing - currently no editor

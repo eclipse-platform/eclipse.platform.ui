@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2013 IBM Corporation and others.
+ * Copyright (c) 2013, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -33,9 +33,9 @@ public class SampleEngine {
 	Random fRandom = new Random();
 	byte[] fMemory;
 	Hashtable<BigInteger, SampleMemoryUnit> memoryBlockTable;
-	Hashtable<String, BigInteger> expressionAddressTable = new Hashtable<String, BigInteger>();
-	Hashtable<SampleDebugTarget, Object> threadTable = new Hashtable<SampleDebugTarget, Object>();
-	Hashtable<SampleThread, Object> stackframeTable = new Hashtable<SampleThread, Object>();
+	Hashtable<String, BigInteger> expressionAddressTable = new Hashtable<>();
+	Hashtable<SampleDebugTarget, Object> threadTable = new Hashtable<>();
+	Hashtable<SampleThread, Object> stackframeTable = new Hashtable<>();
 
 	Random random = new Random();
 
@@ -51,7 +51,7 @@ public class SampleEngine {
 
 		if (memoryBlockTable == null) {
 			// create new memoryBlock table
-			memoryBlockTable = new Hashtable<BigInteger, SampleMemoryUnit>();
+			memoryBlockTable = new Hashtable<>();
 			byte[] bytes = new byte[(int) length * getAddressableSize()];
 			BigInteger addressKey = address;
 

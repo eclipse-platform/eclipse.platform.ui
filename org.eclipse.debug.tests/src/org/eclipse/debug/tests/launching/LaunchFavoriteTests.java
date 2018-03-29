@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2013 IBM Corporation and others.
+ * Copyright (c) 2010, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -57,9 +57,6 @@ public class LaunchFavoriteTests extends AbstractLaunchTest {
 		return getLaunchConfigurationManager().getLaunchHistory(IDebugUIConstants.ID_DEBUG_LAUNCH_GROUP);
 	}
 
-	/* (non-Javadoc)
-	 * @see junit.framework.TestCase#setUp()
-	 */
 	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
@@ -69,9 +66,6 @@ public class LaunchFavoriteTests extends AbstractLaunchTest {
 		fConfig = getLaunchConfiguration(getName());
 	}
 
-	/* (non-Javadoc)
-	 * @see junit.framework.TestCase#tearDown()
-	 */
 	@Override
 	protected void tearDown() throws Exception {
 		// delete the configuration used during this test
@@ -104,7 +98,7 @@ public class LaunchFavoriteTests extends AbstractLaunchTest {
 		ILaunchConfigurationWorkingCopy wc = getWorkingCopy(config);
 		List<String> list = config.getAttribute(IDebugUIConstants.ATTR_FAVORITE_GROUPS, (List<String>) null);
 		if (list == null) {
-			list = new ArrayList<String>();
+			list = new ArrayList<>();
 		}
 		list.add(groupId);
 		wc.setAttribute(IDebugUIConstants.ATTR_FAVORITE_GROUPS, list);

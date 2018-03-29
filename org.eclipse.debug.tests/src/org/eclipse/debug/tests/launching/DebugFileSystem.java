@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2013 IBM Corporation and others.
+ * Copyright (c) 2008, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -34,7 +34,7 @@ public class DebugFileSystem extends FileSystem {
 	/**
 	 * Keys URIs to file stores for existing files
 	 */
-	private final Map<URI, byte[]> files = new HashMap<URI, byte[]>();
+	private final Map<URI, byte[]> files = new HashMap<>();
 
 	/**
 	 * Constructs the singleton
@@ -56,25 +56,16 @@ public class DebugFileSystem extends FileSystem {
 		return system;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.core.filesystem.provider.FileSystem#getStore(java.net.URI)
-	 */
 	@Override
 	public IFileStore getStore(URI uri) {
 		return new DebugFileStore(uri);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.core.filesystem.provider.FileSystem#canDelete()
-	 */
 	@Override
 	public boolean canDelete() {
 		return true;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.core.filesystem.provider.FileSystem#canWrite()
-	 */
 	@Override
 	public boolean canWrite() {
 		return true;

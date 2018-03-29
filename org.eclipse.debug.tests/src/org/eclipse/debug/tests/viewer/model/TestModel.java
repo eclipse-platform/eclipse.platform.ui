@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2015 Wind River Systems and others.
+ * Copyright (c) 2009, 2018 Wind River Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -175,7 +175,7 @@ public class TestModel implements IElementContentProvider, IElementLabelProvider
     private IModelSelectionPolicy fModelSelectionPolicy;
     private boolean fQueueingUpdates = false;
     private boolean fDelayUpdates = false;
-	private List<IViewerUpdate> fQueuedUpdates = new LinkedList<IViewerUpdate>();
+	private List<IViewerUpdate> fQueuedUpdates = new LinkedList<>();
 
     /**
      * Constructor private.  Use static factory methods instead.
@@ -241,7 +241,7 @@ public class TestModel implements IElementContentProvider, IElementLabelProvider
     }
 
     public void processQueuedUpdates() {
-		List<IViewerUpdate> updates = new ArrayList<IViewerUpdate>(fQueuedUpdates);
+		List<IViewerUpdate> updates = new ArrayList<>(fQueuedUpdates);
         fQueuedUpdates.clear();
         for (int i = 0; i < updates.size(); i++) {
             processUpdate(updates.get(i));

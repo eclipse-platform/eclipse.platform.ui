@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2015 IBM Corporation and others.
+ * Copyright (c) 2005, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -41,9 +41,6 @@ import org.eclipse.debug.examples.core.pda.model.PDADebugTarget;
  * Launches PDA program on a PDA interpreter written in Perl
  */
 public class PDALaunchDelegate extends LaunchConfigurationDelegate {
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.core.model.ILaunchConfigurationDelegate#launch(org.eclipse.debug.core.ILaunchConfiguration, java.lang.String, org.eclipse.debug.core.ILaunch, org.eclipse.core.runtime.IProgressMonitor)
-	 */
 	@Override
 	public void launch(ILaunchConfiguration configuration, String mode, ILaunch launch, IProgressMonitor monitor) throws CoreException {
 		//#ifdef ex1
@@ -53,7 +50,7 @@ public class PDALaunchDelegate extends LaunchConfigurationDelegate {
 //#		new RuntimeProcess(launch, process, "Hello", null);
 		//#else
 
-		List<String> commandList = new ArrayList<String>();
+		List<String> commandList = new ArrayList<>();
 
         // Get Java VM path
         String javaVMHome = System.getProperty("java.home"); //$NON-NLS-1$
@@ -135,9 +132,6 @@ public class PDALaunchDelegate extends LaunchConfigurationDelegate {
 		return -1;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.core.model.LaunchConfigurationDelegate#buildForLaunch(org.eclipse.debug.core.ILaunchConfiguration, java.lang.String, org.eclipse.core.runtime.IProgressMonitor)
-	 */
 	@Override
 	public boolean buildForLaunch(ILaunchConfiguration configuration, String mode, IProgressMonitor monitor) throws CoreException {
 		return false;

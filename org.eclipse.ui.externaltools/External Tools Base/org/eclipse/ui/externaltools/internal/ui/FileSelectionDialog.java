@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2013 IBM Corporation and others.
+ * Copyright (c) 2000, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -102,9 +102,6 @@ public class FileSelectionDialog extends MessageDialog {
 	    }
 	}
 
-	/*
-	 * (non-Javadoc) Method declared in Window.
-	 */
 	@Override
 	protected void configureShell(Shell shell) {
 		super.configureShell(shell);
@@ -117,9 +114,6 @@ public class FileSelectionDialog extends MessageDialog {
 		initializeDialog();
 	}
 
-	/*
-	 * (non-Javadoc) Method declared on Dialog.
-	 */
 	@Override
 	protected Control createDialogArea(Composite parent) {
 		// page group
@@ -172,7 +166,7 @@ public class FileSelectionDialog extends MessageDialog {
 					IResource[] members = null;
 					try {
 						members = ((IContainer) o).members();
-						List<IResource> accessibleMembers = new ArrayList<IResource>(members.length);
+						List<IResource> accessibleMembers = new ArrayList<>(members.length);
 						for (int i = 0; i < members.length; i++) {
 							IResource resource = members[i];
 							if (resource.isAccessible()) {
@@ -186,7 +180,7 @@ public class FileSelectionDialog extends MessageDialog {
 					}
 
 					//filter out the desired resource types
-					ArrayList<IResource> results = new ArrayList<IResource>();
+					ArrayList<IResource> results = new ArrayList<>();
 					for (int i = 0; i < members.length; i++) {
 						//And the test bits with the resource types to see if
 						// they are what we want

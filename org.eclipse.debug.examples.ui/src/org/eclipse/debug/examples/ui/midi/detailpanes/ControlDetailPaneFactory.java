@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2013 IBM Corporation and others.
+ * Copyright (c) 2008, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -36,9 +36,6 @@ public class ControlDetailPaneFactory implements IDetailPaneFactory {
 	 */
 	public static final String ID_CLOCK_SLIDER = "CLOCK_SLIDER"; //$NON-NLS-1$
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.ui.IDetailPaneFactory#createDetailPane(java.lang.String)
-	 */
 	@Override
 	public IDetailPane createDetailPane(String paneID) {
 		if (ID_TEMPO_SLIDER.equals(paneID)) {
@@ -50,9 +47,6 @@ public class ControlDetailPaneFactory implements IDetailPaneFactory {
 		return null;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.ui.IDetailPaneFactory#getDefaultDetailPane(org.eclipse.jface.viewers.IStructuredSelection)
-	 */
 	@Override
 	public String getDefaultDetailPane(IStructuredSelection selection) {
 		if (selection.size() == 1) {
@@ -67,9 +61,6 @@ public class ControlDetailPaneFactory implements IDetailPaneFactory {
 		return null;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.ui.IDetailPaneFactory#getDetailPaneDescription(java.lang.String)
-	 */
 	@Override
 	public String getDetailPaneDescription(String paneID) {
 		if (ID_TEMPO_SLIDER.equals(paneID)) {
@@ -81,9 +72,6 @@ public class ControlDetailPaneFactory implements IDetailPaneFactory {
 		return null;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.ui.IDetailPaneFactory#getDetailPaneName(java.lang.String)
-	 */
 	@Override
 	public String getDetailPaneName(String paneID) {
 		if (ID_TEMPO_SLIDER.equals(paneID)) {
@@ -95,12 +83,9 @@ public class ControlDetailPaneFactory implements IDetailPaneFactory {
 		return null;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.ui.IDetailPaneFactory#getDetailPaneTypes(org.eclipse.jface.viewers.IStructuredSelection)
-	 */
 	@Override
 	public Set<String> getDetailPaneTypes(IStructuredSelection selection) {
-		Set<String> set = new HashSet<String>();
+		Set<String> set = new HashSet<>();
 		if (selection.size() == 1) {
 			Object element = selection.getFirstElement();
 			if (element instanceof TempoControl) {

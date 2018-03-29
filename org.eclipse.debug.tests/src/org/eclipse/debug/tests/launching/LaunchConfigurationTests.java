@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2017 IBM Corporation and others.
+ * Copyright (c) 2000, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -97,29 +97,20 @@ public class LaunchConfigurationTests extends AbstractLaunchTest implements ILau
 
 	class Listener implements ILaunchConfigurationListener {
 
-		private final List<ILaunchConfiguration> addedList = new ArrayList<ILaunchConfiguration>();
-		private final List<ILaunchConfiguration> removedList = new ArrayList<ILaunchConfiguration>();
-		private final List<ILaunchConfiguration> changedList = new ArrayList<ILaunchConfiguration>();
+		private final List<ILaunchConfiguration> addedList = new ArrayList<>();
+		private final List<ILaunchConfiguration> removedList = new ArrayList<>();
+		private final List<ILaunchConfiguration> changedList = new ArrayList<>();
 
-		/* (non-Javadoc)
-		 * @see org.eclipse.debug.core.ILaunchConfigurationListener#launchConfigurationAdded(org.eclipse.debug.core.ILaunchConfiguration)
-		 */
 		@Override
 		public void launchConfigurationAdded(ILaunchConfiguration configuration) {
 			addedList.add(configuration);
 		}
 
-		/* (non-Javadoc)
-		 * @see org.eclipse.debug.core.ILaunchConfigurationListener#launchConfigurationChanged(org.eclipse.debug.core.ILaunchConfiguration)
-		 */
 		@Override
 		public void launchConfigurationChanged(ILaunchConfiguration configuration) {
 			changedList.add(configuration);
 		}
 
-		/* (non-Javadoc)
-		 * @see org.eclipse.debug.core.ILaunchConfigurationListener#launchConfigurationRemoved(org.eclipse.debug.core.ILaunchConfiguration)
-		 */
 		@Override
 		public void launchConfigurationRemoved(ILaunchConfiguration configuration) {
 			removedList.add(configuration);
@@ -402,7 +393,7 @@ public class LaunchConfigurationTests extends AbstractLaunchTest implements ILau
 	 */
 	public void testSetAttributes() throws CoreException {
 		 ILaunchConfigurationWorkingCopy wc = newConfiguration(null, "config1"); //$NON-NLS-1$
-		Map<String, Object> map = new HashMap<String, Object>();
+		Map<String, Object> map = new HashMap<>();
 		 map.put("ATTR1", "ONE"); //$NON-NLS-1$ //$NON-NLS-2$
 		 map.put("ATTR2", "TWO"); //$NON-NLS-1$ //$NON-NLS-2$
 		 wc.setAttributes(map);
@@ -1163,7 +1154,7 @@ public class LaunchConfigurationTests extends AbstractLaunchTest implements ILau
 			 // should be 5 added
 			List<?> added = listener.getAdded();
 			assertEquals("Should be 5 added configs", 5, added.size()); //$NON-NLS-1$
-			Set<String> names = new HashSet<String>();
+			Set<String> names = new HashSet<>();
 			Iterator<?> iterator = added.iterator();
 			 while (iterator.hasNext()) {
 				ILaunchConfiguration lc = (ILaunchConfiguration) iterator.next();
@@ -1220,7 +1211,7 @@ public class LaunchConfigurationTests extends AbstractLaunchTest implements ILau
 	 */
 	public void testMapAttributePersistence() throws CoreException, IOException {
 		ILaunchConfigurationWorkingCopy c1 = newEmptyConfiguration(getProject(), "testMapAttributes1"); //$NON-NLS-1$
-		HashMap<String, String> map = new HashMap<String, String>();
+		HashMap<String, String> map = new HashMap<>();
 		map.put("Z", "z-value"); //$NON-NLS-1$ //$NON-NLS-2$
 		map.put("Y", "y-value"); //$NON-NLS-1$ //$NON-NLS-2$
 		map.put("X", "x-value"); //$NON-NLS-1$ //$NON-NLS-2$
@@ -1251,7 +1242,7 @@ public class LaunchConfigurationTests extends AbstractLaunchTest implements ILau
 		c1.doSave();
 
 		ILaunchConfigurationWorkingCopy c2 = newEmptyConfiguration(getProject(), "testMapAttributes2"); //$NON-NLS-1$
-		map = new HashMap<String, String>();
+		map = new HashMap<>();
 		map.put("A", "a-value"); //$NON-NLS-1$ //$NON-NLS-2$
 		map.put("Z", "z-value"); //$NON-NLS-1$ //$NON-NLS-2$
 		map.put("B", "b-value"); //$NON-NLS-1$ //$NON-NLS-2$
@@ -1298,7 +1289,7 @@ public class LaunchConfigurationTests extends AbstractLaunchTest implements ILau
 	 */
 	public void testSetAttributePersistence() throws CoreException, IOException {
 		ILaunchConfigurationWorkingCopy c1 = newEmptyConfiguration(getProject(), "testSetAttributes1"); //$NON-NLS-1$
-		Set<String> set = new HashSet<String>();
+		Set<String> set = new HashSet<>();
 		set.add("z-value"); //$NON-NLS-1$
 		set.add("y-value"); //$NON-NLS-1$
 		set.add("x-value"); //$NON-NLS-1$
@@ -1329,7 +1320,7 @@ public class LaunchConfigurationTests extends AbstractLaunchTest implements ILau
 		c1.doSave();
 
 		ILaunchConfigurationWorkingCopy c2 = newEmptyConfiguration(getProject(), "testSetAttributes2"); //$NON-NLS-1$
-		set = new HashSet<String>();
+		set = new HashSet<>();
 		set.add("a-value"); //$NON-NLS-1$
 		set.add("z-value"); //$NON-NLS-1$
 		set.add("b-value"); //$NON-NLS-1$
@@ -1583,8 +1574,8 @@ public class LaunchConfigurationTests extends AbstractLaunchTest implements ILau
 		List/* <String> */<String> types = null;
 		int size = resources.length;
 		if(resources != null && size > 0) {
-			paths = new ArrayList<String>(size);
-			types = new ArrayList<String>(size);
+			paths = new ArrayList<>(size);
+			types = new ArrayList<>(size);
 			for(int i = 0; i < size; i++) {
 				paths.add(resources[i].path);
 				types.add(resources[i].type.toString());
@@ -1636,7 +1627,7 @@ public class LaunchConfigurationTests extends AbstractLaunchTest implements ILau
 		ILaunchConfiguration prototype = wc.doSave();
 		assertTrue("Should be a prototype", prototype.isPrototype()); //$NON-NLS-1$
 		ILaunchConfiguration[] prototypes = wc.getType().getPrototypes();
-		List<ILaunchConfiguration> list = new ArrayList<ILaunchConfiguration>();
+		List<ILaunchConfiguration> list = new ArrayList<>();
 		for (int i = 0; i < prototypes.length; i++) {
 			list.add(prototypes[i]);
 		}
@@ -1663,7 +1654,7 @@ public class LaunchConfigurationTests extends AbstractLaunchTest implements ILau
 		ILaunchConfiguration s2 = r2.doSave();
 
 		Iterable<ILaunchConfiguration> children = prototype.getPrototypeChildren();
-		List<ILaunchConfiguration> list = new ArrayList<ILaunchConfiguration>();
+		List<ILaunchConfiguration> list = new ArrayList<>();
 		for (ILaunchConfiguration child : children) {
 			list.add(child);
 		}

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2013 Wind River Systems and others.
+ * Copyright (c) 2008, 2018 Wind River Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -32,9 +32,9 @@ public class PDAToggleWatchpointsTargetFactory implements IToggleBreakpointsTarg
 	private static final String TOGGLE_WATCHPOINT_TARGET_MODIFICATION = "org.eclipse.debug.examples.ui.pda.watchpoint_modification"; //$NON-NLS-1$
 	private static final String TOGGLE_WATCHPOINT_TARGET_BOTH = "org.eclipse.debug.examples.ui.pda.watchpoint_both"; //$NON-NLS-1$
 
-	private static Set<String> TOGGLE_WATCHPOINTS_TARGETS = new LinkedHashSet<String>();
+	private static Set<String> TOGGLE_WATCHPOINTS_TARGETS = new LinkedHashSet<>();
 
-	private final Map<String, IToggleBreakpointsTarget> fToggleWatchpointTargets = new HashMap<String, IToggleBreakpointsTarget>(3);
+	private final Map<String, IToggleBreakpointsTarget> fToggleWatchpointTargets = new HashMap<>(3);
 
     static {
         TOGGLE_WATCHPOINTS_TARGETS.add(TOGGLE_WATCHPOINT_TARGET_BOTH);
