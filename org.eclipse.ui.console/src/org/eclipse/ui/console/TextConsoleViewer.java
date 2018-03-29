@@ -381,11 +381,6 @@ public class TextConsoleViewer extends SourceViewer implements LineStyleListener
 		revealJob.schedule(50);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.swt.custom.LineStyleListener#lineGetStyle(org.eclipse.swt.custom.LineStyleEvent)
-	 */
 	@Override
 	public void lineGetStyle(LineStyleEvent event) {
 		IDocument document = getDocument();
@@ -533,11 +528,6 @@ public class TextConsoleViewer extends SourceViewer implements LineStyleListener
 		return list.toArray(new Position[list.size()]);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.swt.custom.LineBackgroundListener#lineGetBackground(org.eclipse.swt.custom.LineBackgroundEvent)
-	 */
 	@Override
 	public void lineGetBackground(LineBackgroundEvent event) {
 		event.lineBackground = null;
@@ -550,7 +540,7 @@ public class TextConsoleViewer extends SourceViewer implements LineStyleListener
 	 */
 	protected Cursor getHandCursor() {
 		if (handCursor == null) {
-			handCursor = new Cursor(ConsolePlugin.getStandardDisplay(), SWT.CURSOR_HAND);
+			handCursor = ConsolePlugin.getStandardDisplay().getSystemCursor(SWT.CURSOR_HAND);
 		}
 		return handCursor;
 	}
@@ -562,7 +552,7 @@ public class TextConsoleViewer extends SourceViewer implements LineStyleListener
 	 */
 	protected Cursor getTextCursor() {
 		if (textCursor == null) {
-			textCursor = new Cursor(ConsolePlugin.getStandardDisplay(), SWT.CURSOR_IBEAM);
+			textCursor = ConsolePlugin.getStandardDisplay().getSystemCursor(SWT.CURSOR_IBEAM);
 		}
 		return textCursor;
 	}
@@ -600,21 +590,11 @@ public class TextConsoleViewer extends SourceViewer implements LineStyleListener
 		control.removeMouseListener(this);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.swt.events.MouseTrackListener#mouseEnter(org.eclipse.swt.events.MouseEvent)
-	 */
 	@Override
 	public void mouseEnter(MouseEvent e) {
 		getTextWidget().addMouseMoveListener(this);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.swt.events.MouseTrackListener#mouseExit(org.eclipse.swt.events.MouseEvent)
-	 */
 	@Override
 	public void mouseExit(MouseEvent e) {
 		getTextWidget().removeMouseMoveListener(this);
@@ -623,20 +603,10 @@ public class TextConsoleViewer extends SourceViewer implements LineStyleListener
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.swt.events.MouseTrackListener#mouseHover(org.eclipse.swt.events.MouseEvent)
-	 */
 	@Override
 	public void mouseHover(MouseEvent e) {
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.swt.events.MouseMoveListener#mouseMove(org.eclipse.swt.events.MouseEvent)
-	 */
 	@Override
 	public void mouseMove(MouseEvent e) {
 		Point p = new Point(e.x, e.y);
@@ -690,38 +660,18 @@ public class TextConsoleViewer extends SourceViewer implements LineStyleListener
 		return null;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.swt.events.MouseListener#mouseDoubleClick(org.eclipse.swt.events.MouseEvent)
-	 */
 	@Override
 	public void mouseDoubleClick(MouseEvent e) {
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.swt.events.MouseListener#mouseDown(org.eclipse.swt.events.MouseEvent)
-	 */
 	@Override
 	public void mouseDown(MouseEvent e) {
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.swt.events.MouseListener#mouseUp(org.eclipse.swt.events.MouseEvent)
-	 */
 	@Override
 	public void mouseUp(MouseEvent e) {
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.jface.text.TextViewer#createDocumentAdapter()
-	 */
 	@Override
 	protected IDocumentAdapter createDocumentAdapter() {
 		if (documentAdapter == null) {
@@ -763,11 +713,6 @@ public class TextConsoleViewer extends SourceViewer implements LineStyleListener
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.jface.text.TextViewer#handleDispose()
-	 */
 	@Override
 	protected void handleDispose() {
 		IDocument document = getDocument();
@@ -781,14 +726,6 @@ public class TextConsoleViewer extends SourceViewer implements LineStyleListener
 		styledText.removeLineBackgroundListener(this);
 		styledText.removeMouseTrackListener(this);
 
-		if(handCursor != null) {
-			handCursor.dispose();
-		}
-		handCursor = null;
-		if(textCursor != null) {
-			textCursor.dispose();
-		}
-		textCursor = null;
 		hyperlink = null;
 		console = null;
 
