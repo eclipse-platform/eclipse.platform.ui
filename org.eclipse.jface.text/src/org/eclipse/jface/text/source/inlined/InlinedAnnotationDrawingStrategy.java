@@ -79,7 +79,7 @@ class InlinedAnnotationDrawingStrategy implements IDrawingStrategy {
 		} catch (Exception e) {
 			return;
 		}
-		if (annotation.isMarkedDeleted()) {
+		if (annotation.isMarkedDeleted() || annotation.getPosition().isDeleted()) {
 			// When annotation is deleted, update metrics to null to remove extra spaces of the line header annotation.
 			if (style != null) {
 				style.metrics= null;
@@ -223,7 +223,7 @@ class InlinedAnnotationDrawingStrategy implements IDrawingStrategy {
 		} catch (Exception e) {
 			return;
 		}
-		if (annotation.isMarkedDeleted()) {
+		if (annotation.isMarkedDeleted() || annotation.getPosition().isDeleted()) {
 			// When annotation is deleted, update metrics to null to remove extra spaces of the line content annotation.
 			if (style != null) {
 				style.metrics= null;
