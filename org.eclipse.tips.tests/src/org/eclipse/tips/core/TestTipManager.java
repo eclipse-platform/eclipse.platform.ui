@@ -15,7 +15,9 @@ import java.util.List;
 
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.tips.core.internal.TipManager;
 
+@SuppressWarnings("restriction")
 public class TestTipManager extends TipManager {
 
 	private boolean fShouldRun = true;
@@ -63,6 +65,7 @@ public class TestTipManager extends TipManager {
 
 	@Override
 	public TipManager open(boolean startUp) {
+		setOpen(true);
 		return this;
 	}
 

@@ -11,9 +11,10 @@
 package org.eclipse.tips.core;
 
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.tips.core.internal.TipManager;
 
 /**
- * The model maintained by the TipManager.
+ * The ITipManager interface.
  *
  */
 public interface ITipManager {
@@ -29,8 +30,7 @@ public interface ITipManager {
 	/**
 	 * Consults TipManager to determine the Tip's read status.
 	 *
-	 * @param tip
-	 *            the tip to query for its read status
+	 * @param tip the tip to query for its read status
 	 * @return true if the tip is read, false otherwise.
 	 */
 	public abstract boolean isRead(Tip tip);
@@ -38,8 +38,7 @@ public interface ITipManager {
 	/**
 	 * Instructs the TipManager to mark this tip as read.
 	 *
-	 * @param tip
-	 *            the tip to set as read.
+	 * @param tip the tip to set as read.
 	 * @return this
 	 */
 	public abstract ITipManager setAsRead(Tip tip);
@@ -47,8 +46,7 @@ public interface ITipManager {
 	/**
 	 * Central place of logging for the Tip Framework.
 	 *
-	 * @param status
-	 *            the {@link IStatus} which may not be null
+	 * @param status the {@link IStatus} which may not be null
 	 * @return this
 	 */
 	public ITipManager log(IStatus status);
@@ -59,16 +57,29 @@ public interface ITipManager {
 	 * {@link TipProvider#loadNewTips(org.eclipse.core.runtime.IProgressMonitor)}
 	 * method.
 	 *
-	 * @param provider
-	 *            the {@link TipProvider} to register which may not be null.
+	 * @param provider the {@link TipProvider} to register which may not be null.
 	 * @return this
 	 */
 	public ITipManager register(TipProvider provider);
+	
+	/**
+	 * Opens the Tip of the Day dialog.
+	 *
+	 * @param startUp When called from a startup situation, true must be passed for
+	 *                <code>startup</code>. If in a manual starting situation,
+	 *                false must be passed. This enables the manager to decide to
+	 *                skip opening the dialog at startup (e.g., no new tip items).
+	 *
+	 * @return this
+	 *
+	 * @see #isOpen()
+	 */
+	public ITipManager open(boolean startUp);
 
 	/**
-	 * Returns the disposed stated.
+	 * Returns the open state.
 	 *
-	 * @return true if this manager is disposed, false otherwise.
+	 * @return true if this manager is open, false otherwise.
 	 */
-	public boolean isDisposed();
+	public boolean isOpen();
 }

@@ -31,8 +31,8 @@ public class Startup implements IStartup {
 
 	@Override
 	public void earlyStartup() {
-		loadProviders();
 		openManager();
+		loadProviders();
 	}
 
 	/**

@@ -19,6 +19,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.tips.core.internal.LogUtil;
+import org.eclipse.tips.core.internal.TipManager;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -32,6 +33,7 @@ public class TipManagerTest {
 	@Before
 	public void testTipManager() {
 		fManager = new TestTipManager();
+		fManager.open(false);
 		fProvider1 = new TestTipProvider();
 		fProvider2 = new TestTipProvider();
 	}
@@ -166,9 +168,9 @@ public class TipManagerTest {
 		fProvider1.setTips(Arrays.asList(new TestTip(fProvider1.getID(),"<b>bold</b>", "Tip 1"),
 				new TestTip(fProvider1.getID(),"<b>bold2</b>", "Tip 2")));
 		fManager.setAsRead(fProvider1.getCurrentTip());
-		assertTrue(fProvider1.getTips(true).size() + "", fProvider1.getTips(true).size() == 1);
+		assertTrue(fProvider1.getTips().size() + "", fProvider1.getTips().size() == 1);
 		fManager.setServeReadTips(true);
-		assertTrue(fProvider1.getTips(true).size() == 2);
+		assertTrue(fProvider1.getTips().size() == 2);
 	}
 
 	@Test

@@ -40,7 +40,7 @@ public class ProviderLoadJobChangeListener extends JobChangeAdapter {
 	 */
 	@Override
 	public void done(IJobChangeEvent event) {
-		for (Tip tip : fProvider.getTips(false)) {
+		for (Tip tip : fProvider.getTips(null)) {
 			if (!fManager.isRead(tip)) {
 				fManager.setNewTips(true);
 				return;

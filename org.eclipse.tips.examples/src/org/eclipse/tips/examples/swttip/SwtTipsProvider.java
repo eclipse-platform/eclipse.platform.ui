@@ -26,9 +26,10 @@ import org.eclipse.tips.core.internal.LogUtil;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.FrameworkUtil;
 
+@SuppressWarnings("restriction")
 public class SwtTipsProvider extends TipProvider {
 
-	private TipImage fImage64, fImage48;
+	private TipImage fImage;
 	private int fCounter;
 	private boolean fFetching;
 
@@ -43,8 +44,8 @@ public class SwtTipsProvider extends TipProvider {
 	}
 
 	@Override
-	public synchronized List<Tip> getTips(boolean pFilter) {
-		List<Tip> tips = super.getTips(pFilter);
+	public synchronized List<Tip> getTips() {
+		List<Tip> tips = super.getTips();
 		if (tips.size() <= 1) {
 			Job job = new Job(getDescription() + " is getting more tips.") {
 
@@ -61,17 +62,16 @@ public class SwtTipsProvider extends TipProvider {
 
 	@Override
 	public TipImage getImage() {
-		if (fImage48 == null) {
+		if (fImage == null) {
 			Bundle bundle = FrameworkUtil.getBundle(getClass());
 			try {
-				fImage48 = new TipImage(bundle.getEntry("icons/48/swt.png")).setAspectRatio(1);
+				fImage = new TipImage(bundle.getEntry("icons/48/swt.png")).setAspectRatio(1);
 			} catch (IOException e) {
 				getManager().log(LogUtil.error(getClass(), e));
 			}
 		}
-		return fImage48;
+		return fImage;
 	}
-
 
 	@Override
 	public synchronized IStatus loadNewTips(IProgressMonitor pMonitor) {
@@ -82,11 +82,11 @@ public class SwtTipsProvider extends TipProvider {
 		try {
 			subMonitor.beginTask("Loading Tips for " + getDescription(), -1);
 			List<Tip> tips = new ArrayList<>();
-			tips.add(new SwtTipImpl(getID(),1));
-			tips.add(new SwtTipImpl(getID(),2));
-			tips.add(new SwtTipImpl(getID(),3));
-			tips.add(new SwtTipImpl(getID(),4));
-			tips.add(new SwtTipImpl(getID(),5));
+			tips.add(new SwtTipImpl(getID(), System.currentTimeMillis() + 100));
+			tips.add(new SwtTipImpl(getID(), System.currentTimeMillis() + 200));
+			tips.add(new SwtTipImpl(getID(), System.currentTimeMillis() + 300));
+			tips.add(new SwtTipImpl(getID(), System.currentTimeMillis() + 400));
+			tips.add(new SwtTipImpl(getID(), System.currentTimeMillis() + 500));
 			addTips(tips);
 			return Status.OK_STATUS;
 		} finally {

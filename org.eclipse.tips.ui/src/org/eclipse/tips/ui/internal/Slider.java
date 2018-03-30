@@ -29,9 +29,9 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.tips.core.TipImage;
-import org.eclipse.tips.core.TipManager;
 import org.eclipse.tips.core.TipProvider;
 import org.eclipse.tips.core.internal.LogUtil;
+import org.eclipse.tips.core.internal.TipManager;
 import org.eclipse.tips.ui.internal.util.ImageUtil;
 import org.eclipse.tips.ui.internal.util.ResourceManager;
 import org.eclipse.tips.ui.internal.util.SWTResourceManager;
@@ -159,7 +159,7 @@ public class Slider extends Composite {
 		int newSpacing = fSpacing + (emptyPixelsLeft / (spaceCount + 1));
 		for (int i = 0; i < Math.min(providerCount - fSliderIndex, spaceCount); i++) {
 			TipProvider provider = providers.get(i + fSliderIndex);
-			if (fSelectedProvider == null && !provider.getTips(true).isEmpty()) {
+			if (fSelectedProvider == null && !provider.getTips().isEmpty()) {
 				fSelectedProvider = provider;
 				notifyListeners(fSelectedProvider);
 			}
@@ -314,7 +314,7 @@ public class Slider extends Composite {
 
 	private void paintButton(GC gc, Composite providerButton, TipProvider provider) {
 		gc.setAdvanced(true);
-		if (fSelectedProvider.equals(provider)) {
+		if (provider.equals(fSelectedProvider)) {
 			gc.setForeground(getDisplay().getSystemColor(SWT.COLOR_LIST_SELECTION_TEXT));
 			gc.setBackground(getDisplay().getSystemColor(SWT.COLOR_LIST_SELECTION));
 			gc.drawRectangle(0, 0, fIconSize + 3, fIconSize + 3);
@@ -354,13 +354,13 @@ public class Slider extends Composite {
 	}
 
 	private Image getUnreadOverlay(Composite providerButton, TipProvider provider) {
-		if (provider.getTips(true).isEmpty()) {
+		if (provider.getTips().isEmpty()) {
 			return getProviderImage(provider, selectProviderImage(provider));
 		}
 		GC gc2 = new GC(providerButton);
 		gc2.setAdvanced(true);
 		gc2.setFont(SWTResourceManager.getBoldFont(gc2.getFont()));
-		int tipCount = provider.getTips(true).size();
+		int tipCount = provider.getTips().size();
 		Point textExtent = gc2.textExtent(tipCount + "");
 		gc2.dispose();
 

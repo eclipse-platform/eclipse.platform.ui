@@ -15,6 +15,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -55,12 +56,28 @@ public abstract class TipProvider {
 
 	private ITipManager fTipManager;
 	private int fTipIndex;
-	protected List<Tip> fTips = new ArrayList<>();
+	private List<Tip> fTips = new ArrayList<>();
 	private Tip fCurrentTip;
 	private boolean fReady;
 	private PropertyChangeSupport fChangeSupport = new PropertyChangeSupport(this);
 	private Tip fFinalTip = new FinalTip(getID());
 	private String fExpression;
+
+	/**
+	 * A predicate that tests if a tip is valid based on its read state and the
+	 * requirement to only serve read tips. Subclasses may replace this predicate if
+	 * they want to add some additional tests.
+	 */
+	private Predicate<Tip> fUnreadTipPredicate = new Predicate<Tip>() {
+
+		@Override
+		public boolean test(Tip pTip) {
+			if (getManager().mustServeReadTips()) {
+				return true;
+			}
+			return !getManager().isRead(pTip);
+		}
+	};
 
 	/**
 	 * The zero argument constructor must be able to instantiate the TipProvider.
@@ -98,34 +115,6 @@ public abstract class TipProvider {
 	public abstract TipImage getImage();
 
 	/**
-	 * Get a list of tips. The default implementation returns tips based on the
-	 * following conditions: <br>
-	 * <dl>
-	 * <dt><code>pFilter</code> is false</dt>
-	 * <dd>Return all read and unread tips.</dd>
-	 * <dt><code>pFilter</code> is true</dt>
-	 * <dd>Return read and unread tips if the tipManager may serve unread tips,
-	 * otherwise return only unread tips.</dd>
-	 * </dl>
-	 * <p>
-	 * Subclasses may override (calling super(false) to fetch the list) if they want
-	 * to serve or sort the list of tips in a different way.
-	 *
-	 * @param filter false or true, see description above.
-	 * @return an unmodifiable list of tips.
-	 */
-	public synchronized List<Tip> getTips(boolean filter) {
-		if (filter) {
-			return Collections.unmodifiableList(fTips //
-					.stream() //
-					.filter(tip -> getManager().mustServeReadTips() || !getManager().isRead(tip)) //
-					.sorted(Comparator.comparing(Tip::getCreationDate).reversed()) //
-					.collect(Collectors.toList()));
-		}
-		return Collections.unmodifiableList(fTips);
-	}
-
-	/**
 	 * @return the {@link Tip} that was last returned by {@link #getNextTip()} or
 	 *         {@link #getPreviousTip()}
 	 */
@@ -146,12 +135,11 @@ public abstract class TipProvider {
 	 * @see #getCurrentTip()
 	 */
 	public synchronized Tip getNextTip() {
-		boolean unreadOnly = !getManager().mustServeReadTips();
-		List<Tip> list = getTips(unreadOnly);
+		List<Tip> list = getTips(fUnreadTipPredicate);
 		if (list.isEmpty()) {
 			return setCurrentTip(fFinalTip);
 		}
-		if (!unreadOnly && fCurrentTip != null) {
+		if (getManager().mustServeReadTips() && fCurrentTip != null) {
 			fTipIndex++;
 		} else if (fCurrentTip != null && getManager().isRead(fCurrentTip)) {
 			fTipIndex++;
@@ -168,7 +156,7 @@ public abstract class TipProvider {
 	 * @see #getCurrentTip()
 	 */
 	public Tip getPreviousTip() {
-		List<Tip> list = getTips(!getManager().mustServeReadTips());
+		List<Tip> list = getTips(fUnreadTipPredicate);
 		if (list.isEmpty()) {
 			return setCurrentTip(fFinalTip);
 		}
@@ -239,6 +227,35 @@ public abstract class TipProvider {
 	}
 
 	/**
+	 * A convenience method to get the list of tips based on the read status of the
+	 * tip and the requirement to serve unread or all tips.
+	 * 
+	 * @return the list of tips based on the description above
+	 * @see ITipManager#mustServeReadTips()
+	 * @see ITipManager#isRead(Tip)
+	 */
+	public List<Tip> getTips() {
+		return getTips(fUnreadTipPredicate);
+	}
+
+	/**
+	 * Get a list of tips filtered by the passed predicate.
+	 *
+	 * @param a {@link Predicate} targeting a Tip object or null to return all tips
+	 * @return an unmodifiable list of tips.
+	 */
+	public synchronized List<Tip> getTips(Predicate<Tip> predicate) {
+		if (predicate != null) {
+			return Collections.unmodifiableList(fTips //
+					.stream() //
+					.filter(tip -> predicate.test(tip)) //
+					.sorted(Comparator.comparing(Tip::getCreationDate).reversed()) //
+					.collect(Collectors.toList()));
+		}
+		return Collections.unmodifiableList(fTips);
+	}
+
+	/**
 	 * Sets the tips for this provider, replacing the current set of tips, and sets
 	 * the <code>ready</code> flag to true. This method is typically called from the
 	 * constructor of the {@link TipProvider} but may also be called from the
@@ -251,7 +268,7 @@ public abstract class TipProvider {
 	 * @see #loadNewTips(IProgressMonitor)
 	 */
 	public TipProvider setTips(List<Tip> tips) {
-		if (getManager().isDisposed()) {
+		if (!getManager().isOpen()) {
 			return this;
 		}
 		doSetTips(tips, true);

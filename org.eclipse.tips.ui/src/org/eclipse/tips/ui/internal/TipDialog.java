@@ -18,12 +18,13 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.tips.core.TipManager;
+import org.eclipse.tips.core.internal.TipManager;
 
 /**
  * The dialog containing the tips.
  *
  */
+@SuppressWarnings("restriction")
 public class TipDialog extends Dialog {
 
 	/**

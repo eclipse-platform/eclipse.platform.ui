@@ -14,7 +14,7 @@
  * IDE you may use the tips extension point to register a new
  * {@link org.eclipse.tips.core.TipProvider}.If you want to run the Tip
  * framework outside of the IDE (e.g. in an RCP application) then you should
- * also implement your own {@link org.eclipse.tips.core.TipManager} and start
+ * also implement your own {@link org.eclipse.tips.core.internal.TipManager} and start
  * that with some action or at startup of your application.
  */
 package org.eclipse.tips.core;

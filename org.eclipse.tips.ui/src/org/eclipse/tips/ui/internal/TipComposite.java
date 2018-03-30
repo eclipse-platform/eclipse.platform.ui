@@ -48,9 +48,9 @@ import org.eclipse.tips.core.IUrlTip;
 import org.eclipse.tips.core.Tip;
 import org.eclipse.tips.core.TipAction;
 import org.eclipse.tips.core.TipImage;
-import org.eclipse.tips.core.TipManager;
 import org.eclipse.tips.core.TipProvider;
 import org.eclipse.tips.core.internal.LogUtil;
+import org.eclipse.tips.core.internal.TipManager;
 import org.eclipse.tips.ui.ISwtTip;
 import org.eclipse.tips.ui.internal.util.ImageUtil;
 import org.eclipse.tips.ui.internal.util.ResourceManager;
@@ -313,10 +313,10 @@ public class TipComposite extends Composite implements ProviderSelectionListener
 	}
 
 	private void getNextTip() {
-		if (fProvider.getTips(true).isEmpty() && !fTipManager.getProviders().isEmpty()) {
+		if (fProvider.getTips().isEmpty() && !fTipManager.getProviders().isEmpty()) {
 			fProvider.getNextTip(); // advance current tip
 			for (TipProvider provider : fTipManager.getProviders()) {
-				if (!provider.getTips(true).isEmpty()) {
+				if (!provider.getTips().isEmpty()) {
 					setProvider(provider);
 					break;
 				}
@@ -387,7 +387,7 @@ public class TipComposite extends Composite implements ProviderSelectionListener
 	 */
 	private void loadTimeOutScript() {
 		fBrowser.setText(getScaling() + getLoadingScript(500));
-		while (!getShell().isDisposed()) {
+		while (!isDisposed()) {
 			if (!getDisplay().readAndDispatch()) {
 				break;
 			}

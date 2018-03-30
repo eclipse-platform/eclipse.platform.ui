@@ -21,14 +21,15 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.tips.core.ITipManager;
 import org.eclipse.tips.core.JsonTestProvider;
 import org.eclipse.tips.core.Tip;
-import org.eclipse.tips.core.TipManager;
 import org.eclipse.tips.core.TipProvider;
+import org.eclipse.tips.core.internal.TipManager;
 import org.eclipse.tips.ui.internal.TipDialog;
 import org.eclipse.tips.ui.internal.util.ResourceManager;
 
 /**
  * Class to manage the tip providers and start the tip of the day UI.
  */
+@SuppressWarnings("restriction")
 public class SleakTipManager extends TipManager {
 
 	private static SleakTipManager instance = new SleakTipManager();

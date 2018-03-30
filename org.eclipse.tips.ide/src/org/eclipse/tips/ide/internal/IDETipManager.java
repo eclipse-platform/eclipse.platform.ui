@@ -12,6 +12,7 @@ package org.eclipse.tips.ide.internal;
 
 import java.io.ByteArrayInputStream;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -24,17 +25,21 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.core.runtime.preferences.ConfigurationScope;
+import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eclipse.tips.core.ITipManager;
 import org.eclipse.tips.core.Tip;
-import org.eclipse.tips.core.TipManager;
 import org.eclipse.tips.core.TipProvider;
 import org.eclipse.tips.core.internal.LogUtil;
-import org.eclipse.tips.ui.DefaultTipManager;
+import org.eclipse.tips.core.internal.TipManager;
+import org.eclipse.tips.ui.internal.DefaultTipManager;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.services.IEvaluationService;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.FrameworkUtil;
+import org.osgi.service.prefs.BackingStoreException;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -57,7 +62,7 @@ public class IDETipManager extends DefaultTipManager {
 	/**
 	 * @return the tip manager instance.
 	 */
-	public static synchronized IDETipManager getInstance() {
+	public static synchronized ITipManager getInstance() {
 		if (instance.isDisposed()) {
 			instance = new IDETipManager();
 		}
@@ -86,16 +91,37 @@ public class IDETipManager extends DefaultTipManager {
 	}
 
 	@Override
-	public TipManager open(boolean startUp) {
-		 if (isOpen()) {
-		 return this;
-		 }
+	public ITipManager open(boolean startUp) {
+		if (isOpen()) {
+			return this;
+		}
 		if (!fSourceProviderAdded) {
 			IEvaluationService evaluationService = PlatformUI.getWorkbench().getService(IEvaluationService.class);
 			evaluationService.addSourceProvider(fSourceProvider);
 			fSourceProviderAdded = true;
 		}
+		fReadTips.addAll(Preferences.loadReadState());
 		return super.open(startUp);
+	}
+
+	/**
+	 * Saves the tip read status to disk.
+	 * 
+	 * @param pReadTips the tips to save
+	 *
+	 */
+	private void saveReadState(List<Integer> pReadTips) {
+		Job job = new Job("Tips save read state..") {
+			@Override
+			protected IStatus run(IProgressMonitor monitor) {
+				SubMonitor subMonitor = SubMonitor.convert(monitor, IProgressMonitor.UNKNOWN);
+				subMonitor.setTaskName("Saving read tips..");
+				IStatus status = Preferences.saveReadState(pReadTips);
+				subMonitor.done();
+				return status;
+			}
+		};
+		job.schedule();
 	}
 
 	/**
@@ -104,8 +130,9 @@ public class IDETipManager extends DefaultTipManager {
 	 *
 	 * @param newTips
 	 */
-	private void refreshUI(boolean newTips) {
-		Job job = new Job("Tip of the Day..") {
+	private void refreshUI() {
+		boolean newTips = getProviders().stream().filter(p -> !p.getTips().isEmpty()).count() > 0;
+		Job job = new Job("Tips status bar refresh..") {
 			@Override
 			protected IStatus run(IProgressMonitor monitor) {
 				setNewTips(newTips);
@@ -151,7 +178,7 @@ public class IDETipManager extends DefaultTipManager {
 
 	@Override
 	public boolean isRead(Tip tip) {
-		if (fReadTips.contains(new Integer(tip.hashCode()))) {
+		if (fReadTips.contains(Integer.valueOf(tip.hashCode()))) {
 			return true;
 		}
 		return false;
@@ -160,7 +187,7 @@ public class IDETipManager extends DefaultTipManager {
 	@Override
 	public TipManager setAsRead(Tip tip) {
 		if (!isRead(tip)) {
-			fReadTips.add(new Integer(tip.hashCode()));
+			fReadTips.add(Integer.valueOf(tip.hashCode()));
 		}
 		return this;
 	}
@@ -176,8 +203,8 @@ public class IDETipManager extends DefaultTipManager {
 	@Override
 	public void dispose() {
 		try {
-			boolean newTips = getProviders().stream().filter(p -> !p.getTips(true).isEmpty()).count() > 0;
-			refreshUI(newTips);
+			refreshUI();
+			saveReadState(Collections.unmodifiableList(fReadTips));
 		} finally {
 			super.dispose();
 		}
@@ -191,8 +218,7 @@ public class IDETipManager extends DefaultTipManager {
 	 * enablement then the weight is 30. If there is a matching enablement then the
 	 * weight is 10.
 	 *
-	 * @param provider
-	 *            the provider
+	 * @param provider the provider
 	 *
 	 * @return the weight
 	 */

@@ -20,9 +20,11 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.tips.core.internal.TipManager;
 import org.junit.Before;
 import org.junit.Test;
 
+@SuppressWarnings("restriction")
 public class TipProviderTest {
 
 	private TestTipManager fManager;
@@ -31,6 +33,7 @@ public class TipProviderTest {
 	@Before
 	public void testTipProvider() {
 		fManager = new TestTipManager();
+		fManager.open(false);
 		fProvider = (TestTipProvider) new TestTipProvider().setManager(fManager);
 	}
 
@@ -50,7 +53,6 @@ public class TipProviderTest {
 		assertTrue(fProvider.getID().equals(fProvider.getClass().getName()));
 	}
 
-
 	@Test
 	public void testGetImage() {
 		assertTrue(fProvider.getImage() != null);
@@ -58,19 +60,19 @@ public class TipProviderTest {
 
 	@Test
 	public void testGetTips() {
-		assertTrue(fProvider.getTips(false).size() == 0);
-		createTestDate();
+		assertTrue(fProvider.getTips(null).size() == 0);
+		createTestData();
 		fManager.setAsRead(fProvider.getNextTip());
-		assertTrue(fProvider.getTips(false).size() == 2);
-		assertTrue(fProvider.getTips(false).size() == 2);
-		assertTrue(fProvider.getTips(true).size() == 1);
+		assertTrue(fProvider.getTips(null).size() == 2);
+		assertTrue(fProvider.getTips(null).size() == 2);
+		assertTrue(fProvider.getTips().size() == 1);
 		((TipManager) fProvider.getManager()).setServeReadTips(true);
-		assertTrue(fProvider.getTips(false).size() == 2);
+		assertTrue(fProvider.getTips(null).size() == 2);
 	}
 
-	private void createTestDate() {
-		fProvider.setTips(Arrays.asList(new TestTip(fProvider.getID(),"<b>bold</b>", "Tip 1"),
-				new TestTip(fProvider.getID(),"<b>bold2</b>", "Tip 2")));
+	private void createTestData() {
+		fProvider.setTips(Arrays.asList(new TestTip(fProvider.getID(), "<b>bold</b>", "Tip 1"),
+				new TestTip(fProvider.getID(), "<b>bold2</b>", "Tip 2")));
 	}
 
 	@Test
@@ -85,7 +87,7 @@ public class TipProviderTest {
 
 	@Test
 	public void testGetNextTip() {
-		createTestDate();
+		createTestData();
 		fManager.setAsRead(fProvider.getNextTip());
 		assertTrue(fProvider.getNextTip().equals(fProvider.getCurrentTip()));
 		Tip nextTip = fProvider.getNextTip();
@@ -119,7 +121,7 @@ public class TipProviderTest {
 
 	@Test
 	public void testGetPreviousTip4() {
-		createTestDate();
+		createTestData();
 		assertTrue(fProvider.getPreviousTip() != null);
 		assertTrue(fProvider.getPreviousTip() != null);
 		assertTrue(fProvider.getPreviousTip() != null);
@@ -159,15 +161,15 @@ public class TipProviderTest {
 		TestTipProvider p = new TestTipProvider() {
 			@Override
 			public IStatus loadNewTips(IProgressMonitor pMonitor) {
-				assertTrue(getTips(false).size() == 0);
-				assertTrue(setTips(Arrays.asList(new Tip[] { new TestTip(getID(),"DDD", "XXX") })).getTips(false)
+				assertTrue(getTips(null).size() == 0);
+				assertTrue(setTips(Arrays.asList(new Tip[] { new TestTip(getID(), "DDD", "XXX") })).getTips(null)
 						.size() == 1);
 				return Status.OK_STATUS;
 			}
 		};
-		assertTrue(p.getTips(false).size() == 0);
+		assertTrue(p.getTips(null).size() == 0);
 		fManager.register(p);
-		assertTrue(p.getTips(false).size() == 1);
+		assertTrue(p.getTips(null).size() == 1);
 	}
 
 	@Test
@@ -175,10 +177,10 @@ public class TipProviderTest {
 		TestTipProvider p = new TestTipProvider() {
 			@Override
 			public IStatus loadNewTips(IProgressMonitor pMonitor) {
-				assertTrue(getTips(false).size() == 0);
-				assertTrue(setTips(Arrays.asList(new Tip[] { new TestTip(getID(),"DDD", "XXX") })).getTips(false)
+				assertTrue(getTips(null).size() == 0);
+				assertTrue(setTips(Arrays.asList(new Tip[] { new TestTip(getID(), "DDD", "XXX") })).getTips(null)
 						.size() == 1);
-				assertTrue(addTips(Arrays.asList(new Tip[] { new TestTip(getID(),"DDD", "XXX") })).getTips(false)
+				assertTrue(addTips(Arrays.asList(new Tip[] { new TestTip(getID(), "DDD", "XXX") })).getTips(null)
 						.size() == 2);
 				return Status.OK_STATUS;
 			}

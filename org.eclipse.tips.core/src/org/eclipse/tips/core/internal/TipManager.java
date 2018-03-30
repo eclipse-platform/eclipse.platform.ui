@@ -8,7 +8,7 @@
  * Contributors:
  *    Wim Jongman <wim.jongman@remainsoftware.com> - initial API and implementation
  *****************************************************************************/
-package org.eclipse.tips.core;
+package org.eclipse.tips.core.internal;
 
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeSupport;
@@ -19,7 +19,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
-import org.eclipse.tips.core.internal.LogUtil;
+import org.eclipse.tips.core.ITipManager;
+import org.eclipse.tips.core.TipProvider;
 
 /**
  * An abstract implementation of ITipManager with additional control API. While
@@ -32,7 +33,7 @@ public abstract class TipManager implements ITipManager {
 
 	private Map<String, TipProvider> fProviders = new HashMap<>();
 	private Map<Integer, List<String>> fProviderPrio = new TreeMap<>();
-	protected boolean fOpen;
+	private boolean fOpen;
 	private boolean fServeReadTips = false;
 	private boolean fIsDiposed;
 	private PropertyChangeSupport fChangeSupport = new PropertyChangeSupport(this);
@@ -74,7 +75,7 @@ public abstract class TipManager implements ITipManager {
 		checkDisposed();
 		log(LogUtil.info("Registering provider: " + provider.getID() + " : " + provider.getDescription()));
 		provider.setManager(this);
-		addToMaps(provider, new Integer(getPriority(provider)));
+		addToMaps(provider, Integer.valueOf(getPriority(provider)));
 		provider.getChangeSupport().addPropertyChangeListener(event -> {
 			if (event.getPropertyName().equals(TipProvider.PROP_READY)) {
 				PropertyChangeEvent newEvent = new PropertyChangeEvent(this, event.getPropertyName(), null, provider);
@@ -184,20 +185,6 @@ public abstract class TipManager implements ITipManager {
 	public abstract TipManager setRunAtStartup(boolean shouldRun);
 
 	/**
-	 * Opens the Tip of the Day dialog.
-	 *
-	 * @param startUp When called from a startup situation, true must be passed for
-	 *                <code>pStartup</code>. If in a manual starting situation,
-	 *                false must be passed. This enables the manager to decide to
-	 *                skip opening the dialog at startup (e.g., no new tip items).
-	 *
-	 * @return this
-	 *
-	 * @see #isOpen()
-	 */
-	public abstract TipManager open(boolean startUp);
-
-	/**
 	 * The default implementation disposes of this manager and all the TipProviders
 	 * when the dialog is disposed. Subclasses may override but must call super.
 	 */
@@ -219,11 +206,18 @@ public abstract class TipManager implements ITipManager {
 	}
 
 	/**
-	 * @return returns true if the tips are currently being displayed in some way.
+	 * @return true if this manager is currently open.
 	 */
+	@Override
 	public boolean isOpen() {
-		checkDisposed();
+		// checkDisposed();
+		if (isDisposed())
+			return false;
 		return fOpen;
+	}
+
+	protected void setOpen(boolean open) {
+		fOpen = open;
 	}
 
 	/**
@@ -252,7 +246,6 @@ public abstract class TipManager implements ITipManager {
 		return fServeReadTips;
 	}
 
-	@Override
 	public boolean isDisposed() {
 		return fIsDiposed;
 	}
