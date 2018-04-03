@@ -50,7 +50,7 @@ public class HeapStatus extends Composite {
 	private Image gcImage;
 	private Image disabledGcImage;
 	private Color bgCol, usedMemCol, lowMemCol, freeMemCol, topLeftCol, bottomRightCol, sepCol, textCol, markCol, armCol;
-    private Canvas button;
+    private Canvas canvas;
 	private IPreferenceStore prefStore;
 	private int updateInterval;
 	private boolean showMax;
@@ -116,8 +116,8 @@ public class HeapStatus extends Composite {
         setUpdateIntervalInMS(prefStore.getInt(IHeapStatusConstants.PREF_UPDATE_INTERVAL));
         showMax = prefStore.getBoolean(IHeapStatusConstants.PREF_SHOW_MAX);
 
-        button = new Canvas(this, SWT.NONE);
-        button.setToolTipText(WorkbenchMessages.HeapStatus_buttonToolTip);
+        canvas = new Canvas(this, SWT.NONE);
+        canvas.setToolTipText(WorkbenchMessages.HeapStatus_buttonToolTip);
 
 		ImageDescriptor imageDesc = WorkbenchImages.getWorkbenchImageDescriptor("elcl16/trash.png"); //$NON-NLS-1$
 		Display display = getDisplay();
@@ -143,13 +143,13 @@ public class HeapStatus extends Composite {
 		        break;
 		    case SWT.Resize:
 		        Rectangle rect = getClientArea();
-		        button.setBounds(rect.width - imgBounds.width - 1, 1, imgBounds.width, rect.height - 2);
+		        canvas.setBounds(rect.width - imgBounds.width - 1, 1, imgBounds.width, rect.height - 2);
 		        break;
 		    case SWT.Paint:
 		        if (event.widget == HeapStatus.this) {
 		        	paintComposite(event.gc);
 		        }
-		        else if (event.widget == button) {
+		        else if (event.widget == canvas) {
 		            paintButton(event.gc);
 		        }
 		        break;
@@ -165,7 +165,7 @@ public class HeapStatus extends Composite {
 		        if (event.button == 1) {
 		            if (event.widget == HeapStatus.this) {
 						setMark();
-					} else if (event.widget == button) {
+					} else if (event.widget == canvas) {
 						if (!isInGC)
 							arm(true);
 					}
@@ -178,7 +178,7 @@ public class HeapStatus extends Composite {
 		    case SWT.MouseExit:
 		        if (event.widget == HeapStatus.this) {
 		        	HeapStatus.this.updateTooltip = false;
-				} else if (event.widget == button) {
+				} else if (event.widget == canvas) {
 					arm(false);
 				}
 		        break;
@@ -190,10 +190,10 @@ public class HeapStatus extends Composite {
         addListener(SWT.Resize, listener);
         addListener(SWT.MouseEnter, listener);
         addListener(SWT.MouseExit, listener);
-        button.addListener(SWT.MouseDown, listener);
-        button.addListener(SWT.MouseExit, listener);
-        button.addListener(SWT.MouseUp, listener);
-        button.addListener(SWT.Paint, listener);
+        canvas.addListener(SWT.MouseDown, listener);
+        canvas.addListener(SWT.MouseExit, listener);
+        canvas.addListener(SWT.MouseUp, listener);
+        canvas.addListener(SWT.Paint, listener);
 
 		// make sure stats are updated before first paint
 		updateStats();
@@ -208,7 +208,7 @@ public class HeapStatus extends Composite {
 	@Override
 	public void setBackground(Color color) {
 		bgCol = color;
-		button.redraw();
+		canvas.redraw();
 	}
 
 	@Override
@@ -219,7 +219,7 @@ public class HeapStatus extends Composite {
 			markCol = textCol = color;
 		}
 
-		button.redraw();
+		canvas.redraw();
 	}
 
 	@Override
@@ -290,7 +290,7 @@ public class HeapStatus extends Composite {
 			return;
 		}
         this.armed = armed;
-        button.redraw();
+        canvas.redraw();
     }
 
 	private void gcRunning(boolean isInGC) {
@@ -298,7 +298,7 @@ public class HeapStatus extends Composite {
 			return;
 		}
 		this.isInGC = isInGC;
-		 button.redraw();
+		 canvas.redraw();
 	}
 
     /**
@@ -365,7 +365,7 @@ public class HeapStatus extends Composite {
     }
 
     private void paintButton(GC gc) {
-        Rectangle rect = button.getClientArea();
+        Rectangle rect = canvas.getClientArea();
 		if (isInGC) {
 			if (disabledGcImage != null) {
 				int buttonY = (rect.height - imgBounds.height) / 2 + rect.y;
