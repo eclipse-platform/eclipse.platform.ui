@@ -132,7 +132,7 @@ public class CodeMiningLineContentAnnotation extends LineContentAnnotation imple
 				// the mining is resolved with error, draw the last resolved mining
 				mining= lastResolvedMining;
 			}
-			if (mining == null) {
+			if (mining == null || mining.getLabel() == null || mining.getLabel().isEmpty()) {
 				// ignore the draw of mining
 				continue;
 			}
