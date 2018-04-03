@@ -41,15 +41,12 @@ public class AutoCompleteField {
 	 *            the array of Strings representing valid content proposals for
 	 *            the field.
 	 */
-	public AutoCompleteField(Control control,
-			IControlContentAdapter controlContentAdapter, String[] proposals) {
+	public AutoCompleteField(Control control, IControlContentAdapter controlContentAdapter, String... proposals) {
 		proposalProvider = new SimpleContentProposalProvider(proposals);
 		proposalProvider.setFiltering(true);
-		adapter = new ContentProposalAdapter(control, controlContentAdapter,
-				proposalProvider, null, null);
+		adapter = new ContentProposalAdapter(control, controlContentAdapter, proposalProvider, null, null);
 		adapter.setPropagateKeys(true);
-		adapter
-				.setProposalAcceptanceStyle(ContentProposalAdapter.PROPOSAL_REPLACE);
+		adapter.setProposalAcceptanceStyle(ContentProposalAdapter.PROPOSAL_REPLACE);
 	}
 
 	/**
@@ -58,7 +55,7 @@ public class AutoCompleteField {
 	 * @param proposals
 	 *            the array of Strings to be used as proposals.
 	 */
-	public void setProposals(String[] proposals) {
+	public void setProposals(String... proposals) {
 		proposalProvider.setProposals(proposals);
 	}
 }
