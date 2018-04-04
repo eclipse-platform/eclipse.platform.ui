@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2018 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,7 +7,6 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
- *     Ralf Petter <ralf.petter@gmail.com> - 510232
  *******************************************************************************/
 package org.eclipse.ui.forms.widgets;
 
@@ -275,7 +274,7 @@ public class Form extends Composite {
 	 */
 	public void setText(String text) {
 		head.setText(text);
-		requestLayout();
+		layout();
 		redraw();
 	}
 
@@ -295,7 +294,7 @@ public class Form extends Composite {
 	 */
 	public void setImage(Image image) {
 		head.setImage(image);
-		requestLayout();
+		layout();
 		redraw();
 	}
 
@@ -438,7 +437,7 @@ public class Form extends Composite {
 	 */
 	public void setHeadClient(Control headClient) {
 		head.setHeadClient(headClient);
-		requestLayout();
+		layout();
 	}
 
 	/**
@@ -672,7 +671,7 @@ public class Form extends Composite {
 
 	public void setMessage(String newMessage, int newType, IMessage[] children) {
 		head.showMessage(newMessage, newType, children);
-		requestLayout();
+		layout();
 	}
 
 	/**
