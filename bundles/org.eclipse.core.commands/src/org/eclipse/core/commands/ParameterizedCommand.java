@@ -538,22 +538,26 @@ public final class ParameterizedCommand implements Comparable {
 			final StringBuilder nameBuffer = new StringBuilder();
 			nameBuffer.append(baseName);
 			if (parameterizations != null) {
-				nameBuffer.append(" ("); //$NON-NLS-1$
+				StringBuilder parametersBuffer = new StringBuilder();
 				final int parameterizationCount = parameterizations.length;
 				if (parameterizationCount == 1) {
-					appendParameter(nameBuffer, parameterizations[0], false);
+					appendParameter(parametersBuffer, parameterizations[0], false);
 				} else {
 					for (int i = 0; i < parameterizationCount; i++) {
 
-						appendParameter(nameBuffer, parameterizations[i], true);
+						appendParameter(parametersBuffer, parameterizations[i], true);
 
 						// If there is another item, append a separator.
 						if (i + 1 < parameterizationCount) {
-							nameBuffer.append(", "); //$NON-NLS-1$
+							parametersBuffer.append(", "); //$NON-NLS-1$
 						}
 					}
 				}
-				nameBuffer.append(')');
+				if (parametersBuffer.length() > 0) {
+					nameBuffer.append(" ("); //$NON-NLS-1$
+					nameBuffer.append(parametersBuffer);
+					nameBuffer.append(')');
+				}
 			}
 			name = nameBuffer.toString();
 		}
