@@ -82,9 +82,9 @@
          <documentation>
             A core Expression that controls the enabled of the given auto edit strategies. The viewer, editor, and editor input are registered in the evaluation context as variable:
 
- * &lt;with variable=&quot;viewer&quot;&gt; : use it if your expression requires the viewer.
- * &lt;with variable=&quot;editor&quot;&gt; : use it if your expression requires the editor.
- * &lt;with variable=&quot;editorInput&quot;&gt; :  use it if your expression requires the editor input.
+ * &lt;with variable=&quot;viewer&quot;/&gt; : use it if your expression requires the viewer.
+ * &lt;with variable=&quot;editor&quot;/&gt; : use it if your expression requires the editor.
+ * &lt;with variable=&quot;editorInput&quot;/&gt; :  use it if your expression requires the editor input.
          </documentation>
       </annotation>
       <complexType>
