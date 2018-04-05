@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2015 IBM Corporation and others.
+ * Copyright (c) 2010, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -15,9 +15,12 @@ package org.eclipse.e4.ui.internal.workbench;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Dictionary;
+import java.util.Hashtable;
 import java.util.List;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.IExtensionRegistry;
+import org.eclipse.e4.core.contexts.ContextInjectionFactory;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.services.events.IEventBroker;
 import org.eclipse.e4.core.services.log.Logger;
@@ -56,51 +59,28 @@ import org.eclipse.e4.ui.model.internal.ModelUtils;
 import org.eclipse.e4.ui.workbench.IPresentationEngine;
 import org.eclipse.e4.ui.workbench.Selector;
 import org.eclipse.e4.ui.workbench.UIEvents;
-import org.eclipse.e4.ui.workbench.UIEvents.EventTags;
 import org.eclipse.e4.ui.workbench.modeling.EModelService;
 import org.eclipse.e4.ui.workbench.modeling.EPartService;
 import org.eclipse.e4.ui.workbench.modeling.EPlaceholderResolver;
 import org.eclipse.e4.ui.workbench.modeling.ElementMatcher;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.util.EcoreUtil;
-import org.osgi.service.event.Event;
+import org.osgi.framework.Bundle;
+import org.osgi.framework.FrameworkUtil;
+import org.osgi.service.event.EventConstants;
 import org.osgi.service.event.EventHandler;
 
 /**
  *
  */
 public class ModelServiceImpl implements EModelService {
-	private static String HOSTED_ELEMENT = "HostedElement"; //$NON-NLS-1$
+
+	static String HOSTED_ELEMENT = "HostedElement"; //$NON-NLS-1$
 
 	private IEclipseContext appContext;
 
 	/** Factory which is able to create {@link MApplicationElement}s in a generic way. */
 	private GenericMApplicationElementFactoryImpl mApplicationElementFactory;
-
-	// Cleans up after a hosted element is disposed
-	private EventHandler hostedElementHandler = new EventHandler() {
-
-		@Override
-		public void handleEvent(Event event) {
-			final MUIElement changedElement = (MUIElement) event.getProperty(EventTags.ELEMENT);
-			if (!changedElement.getTags().contains(HOSTED_ELEMENT)) {
-				return;
-			}
-
-			if (changedElement.getWidget() != null) {
-				return;
-			}
-
-			EObject eObj = (EObject) changedElement;
-			if (!(eObj.eContainer() instanceof MWindow)) {
-				return;
-			}
-
-			MWindow hostingWindow = (MWindow) eObj.eContainer();
-			hostingWindow.getSharedElements().remove(changedElement);
-			changedElement.getTags().remove(HOSTED_ELEMENT);
-		}
-	};
 
 	/**
 	 * This is a singleton service. One instance is used throughout the running application
@@ -112,18 +92,31 @@ public class ModelServiceImpl implements EModelService {
 	 *             if the given appContext is <code>null</code>
 	 */
 	public ModelServiceImpl(IEclipseContext appContext) {
-		if (appContext == null)
-		 {
+		if (appContext == null) {
 			throw new NullPointerException("No application context given!"); //$NON-NLS-1$
 		}
 
 		this.appContext = appContext;
-		IEventBroker eventBroker = appContext.get(IEventBroker.class);
-		if (eventBroker == null) {
-			throw new IllegalStateException(
-					"Could not get an IEventBroker instance. Please check your configuration that a providing bundle is present and active."); //$NON-NLS-1$
+
+		Bundle bundle = FrameworkUtil.getBundle(getClass());
+		if (bundle != null && bundle.getBundleContext() != null) {
+			// register the event handler via whiteboard pattern
+			Dictionary<String, Object> properties = new Hashtable<>();
+			properties.put(EventConstants.EVENT_TOPIC, new String[] { UIEvents.UIElement.TOPIC_WIDGET });
+			bundle.getBundleContext().registerService(EventHandler.class.getName(),
+						ContextInjectionFactory.make(HostedElementEventHandler.class, appContext), properties);
+		} else {
+			// if we are not running in an OSGi environment, we try to use the IEventBroker
+			IEventBroker eventBroker = appContext.get(IEventBroker.class);
+			if (eventBroker == null) {
+				throw new IllegalStateException(
+						"Could not get an IEventBroker instance. Please check your configuration that a providing bundle is present and active."); //$NON-NLS-1$
+			}
+			// subscribe headless as the handler itself ensures that the code is executed in
+			// the UI thread
+			eventBroker.subscribe(UIEvents.UIElement.TOPIC_WIDGET, null,
+					ContextInjectionFactory.make(HostedElementEventHandler.class, appContext), true);
 		}
-		eventBroker.subscribe(UIEvents.UIElement.TOPIC_WIDGET, hostedElementHandler);
 
 		mApplicationElementFactory = new GenericMApplicationElementFactoryImpl(
 				appContext.get(IExtensionRegistry.class));
