@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2015 IBM Corporation and others.
+ * Copyright (c) 2003, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -239,7 +239,7 @@ public abstract class Job extends InternalJob implements IAdaptable {
 	 * @since 3.8
 	 * @noreference This API is planned to be deleted, see
 	 *              https://bugs.eclipse.org/531276 for details.
-	 * @deprecated use {@link #create(String, ICoreRunnable)} instead
+	 * @deprecated use {@link #createSystem(String, ICoreRunnable)} instead
 	 */
 	@Deprecated
 	public static Job createSystem(final ICoreRunnable runnable) {
