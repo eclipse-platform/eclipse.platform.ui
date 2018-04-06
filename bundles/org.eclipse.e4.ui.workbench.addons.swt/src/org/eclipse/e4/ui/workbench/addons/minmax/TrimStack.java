@@ -914,6 +914,9 @@ public class TrimStack {
 	 */
 	public void showStack(boolean show) {
 		Control ctrl = (Control) minimizedElement.getWidget();
+		if (ctrl == null) {
+			return;
+		}
 		CTabFolder ctf = ctrl instanceof CTabFolder? (CTabFolder) ctrl: null;
 
 		Composite clientAreaComposite = getCAComposite();
