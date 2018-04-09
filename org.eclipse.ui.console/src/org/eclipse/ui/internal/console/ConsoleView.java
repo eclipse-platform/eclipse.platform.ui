@@ -52,6 +52,8 @@ import org.eclipse.ui.console.IConsoleListener;
 import org.eclipse.ui.console.IConsoleManager;
 import org.eclipse.ui.console.IConsolePageParticipant;
 import org.eclipse.ui.console.IConsoleView;
+import org.eclipse.ui.console.TextConsolePage;
+import org.eclipse.ui.console.TextConsoleViewer;
 import org.eclipse.ui.contexts.IContextActivation;
 import org.eclipse.ui.contexts.IContextService;
 import org.eclipse.ui.part.IPage;
@@ -184,6 +186,16 @@ public class ConsoleView extends PageBookView implements IConsoleView, IConsoleL
 		IPage page = getCurrentPage();
 		if (page instanceof IOConsolePage) {
 			((IOConsolePage) page).setWordWrap(fWordWrap);
+		}
+		/*
+		 * Bug 268608: cannot invoke find/replace after opening console
+		 *
+		 * Global actions of TextConsolePage must be updated here,
+		 * but they are only updated on a selection change.
+		 */
+		if (page instanceof TextConsolePage) {
+			TextConsoleViewer viewer = ((TextConsolePage) page).getViewer();
+			viewer.setSelection(viewer.getSelection());
 		}
 	}
 
