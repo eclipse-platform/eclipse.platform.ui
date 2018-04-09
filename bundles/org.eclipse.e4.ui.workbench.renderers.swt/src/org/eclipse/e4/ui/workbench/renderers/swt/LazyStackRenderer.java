@@ -49,13 +49,15 @@ public abstract class LazyStackRenderer extends SWTPartRenderer {
 	private EventHandler lazyLoader = event -> {
 		Object element = event.getProperty(UIEvents.EventTags.ELEMENT);
 
-		if (!(element instanceof MGenericStack<?>))
+		if (!(element instanceof MGenericStack<?>)) {
 			return;
+		}
 
 		@SuppressWarnings("unchecked")
 		MGenericStack<MUIElement> stack = (MGenericStack<MUIElement>) element;
-		if (stack.getRenderer() != LazyStackRenderer.this)
+		if (stack.getRenderer() != LazyStackRenderer.this) {
 			return;
+		}
 		LazyStackRenderer lsr = (LazyStackRenderer) stack.getRenderer();
 
 		// Gather up the elements that are being 'hidden' by this change
@@ -64,8 +66,9 @@ public abstract class LazyStackRenderer extends SWTPartRenderer {
 			hideElementRecursive(oldSel);
 		}
 
-		if (stack.getSelectedElement() != null)
+		if (stack.getSelectedElement() != null) {
 			lsr.showTab(stack.getSelectedElement());
+		}
 	};
 
 	public void init(IEventBroker eventBroker) {
@@ -113,8 +116,9 @@ public abstract class LazyStackRenderer extends SWTPartRenderer {
 		IPresentationEngine renderer = context.get(IPresentationEngine.class);
 
 		for (MUIElement element : me.getChildren()) {
-			if (!element.isToBeRendered() || !element.isVisible())
+			if (!element.isToBeRendered() || !element.isVisible()) {
 				continue;
+			}
 			boolean lazy = true;
 
 			// Special case: we also render any placeholder that refers to
@@ -122,8 +126,9 @@ public abstract class LazyStackRenderer extends SWTPartRenderer {
 			// part is already there...see bug 378138 for details
 			if (element instanceof MPlaceholder) {
 				MPlaceholder ph = (MPlaceholder) element;
-				if (ph.getRef().getTags().contains(IPresentationEngine.NO_RESTORE))
+				if (ph.getRef().getTags().contains(IPresentationEngine.NO_RESTORE)) {
 					continue;
+				}
 				if (ph.getRef() instanceof MPart && ph.getRef().getWidget() != null) {
 					lazy = false;
 				}
@@ -158,8 +163,9 @@ public abstract class LazyStackRenderer extends SWTPartRenderer {
 	}
 
 	private void hideElementRecursive(MUIElement element) {
-		if (element == null || element.getWidget() == null)
+		if (element == null || element.getWidget() == null) {
 			return;
+		}
 
 		if (element instanceof MPlaceholder) {
 			MPlaceholder ph = (MPlaceholder) element;
@@ -196,8 +202,9 @@ public abstract class LazyStackRenderer extends SWTPartRenderer {
 	}
 
 	private void showElementRecursive(MUIElement element) {
-		if (!element.isToBeRendered())
+		if (!element.isToBeRendered()) {
 			return;
+		}
 
 		if (element instanceof MPartStack && element.getRenderer() instanceof StackRenderer) {
 			MPartStack stackModel = (MPartStack) element;
@@ -250,8 +257,9 @@ public abstract class LazyStackRenderer extends SWTPartRenderer {
 		if (element instanceof MWindow && element.getWidget() != null) {
 			int visCount = 0;
 			for (MUIElement kid : ((MWindow) element).getChildren()) {
-				if (kid.isToBeRendered() && kid.isVisible())
+				if (kid.isToBeRendered() && kid.isVisible()) {
 					visCount++;
+				}
 			}
 			if (visCount > 0) {
 				element.setVisible(true);
@@ -267,10 +275,12 @@ public abstract class LazyStackRenderer extends SWTPartRenderer {
 			// For stacks only the currently selected elements are being visible
 			MGenericStack<?> container = (MGenericStack<?>) element;
 			MUIElement curSel = container.getSelectedElement();
-			if (curSel == null && container.getChildren().size() > 0)
+			if (curSel == null && container.getChildren().size() > 0) {
 				curSel = container.getChildren().get(0);
-			if (curSel != null)
+			}
+			if (curSel != null) {
 				showElementRecursive(curSel);
+			}
 		} else if (element instanceof MElementContainer<?>) {
 			MElementContainer<?> container = (MElementContainer<?>) element;
 			List<MUIElement> kids = new ArrayList<>(container.getChildren());
