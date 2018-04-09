@@ -13,6 +13,8 @@
  *******************************************************************************/
 package org.eclipse.e4.ui.workbench.renderers.swt;
 
+import static org.eclipse.core.runtime.Assert.isNotNull;
+
 import java.util.ArrayList;
 import java.util.List;
 import org.eclipse.e4.core.contexts.IEclipseContext;
@@ -125,11 +127,13 @@ public abstract class LazyStackRenderer extends SWTPartRenderer {
 			// an *existing* part, this doesn't break lazy loading since the
 			// part is already there...see bug 378138 for details
 			if (element instanceof MPlaceholder) {
-				MPlaceholder ph = (MPlaceholder) element;
-				if (ph.getRef().getTags().contains(IPresentationEngine.NO_RESTORE)) {
+				MPlaceholder placeholder = (MPlaceholder) element;
+				isNotNull(placeholder.getRef(),
+						"Placeholder " + placeholder.getElementId() + " does not point to a valid reference"); //$NON-NLS-1$ //$NON-NLS-2$
+				if (placeholder.getRef().getTags().contains(IPresentationEngine.NO_RESTORE)) {
 					continue;
 				}
-				if (ph.getRef() instanceof MPart && ph.getRef().getWidget() != null) {
+				if (placeholder.getRef() instanceof MPart && placeholder.getRef().getWidget() != null) {
 					lazy = false;
 				}
 			}
