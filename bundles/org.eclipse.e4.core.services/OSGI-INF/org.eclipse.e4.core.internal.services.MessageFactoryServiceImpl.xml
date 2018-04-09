@@ -3,6 +3,6 @@
    <service>
       <provide interface="org.eclipse.e4.core.services.nls.IMessageFactoryService"/>
    </service>
-   <reference bind="setLogService" cardinality="0..1" interface="org.osgi.service.log.LogService" name="LogService" policy="dynamic" unbind="unsetLogService"/>
+   <reference bind="setLogger" cardinality="0..1" interface="org.osgi.service.log.LoggerFactory" name="Logger" policy="dynamic" unbind="unsetLogger"/>
    <implementation class="org.eclipse.e4.core.internal.services.MessageFactoryServiceImpl"/>
 </scr:component>

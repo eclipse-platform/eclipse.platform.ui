@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2014 Dirk Fauth and others.
+ * Copyright (c) 2014, 2018 Dirk Fauth and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -19,8 +19,10 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
 import javax.annotation.PreDestroy;
-import org.eclipse.e4.core.internal.services.ResourceBundleHelper;
-import org.osgi.service.log.LogService;
+import javax.inject.Inject;
+import org.eclipse.e4.core.di.annotations.Optional;
+import org.osgi.service.log.Logger;
+import org.osgi.service.log.LoggerFactory;
 
 /**
  * Using this MessageRegistry allows to register controls for attributes in a
@@ -67,6 +69,24 @@ public class BaseMessageRegistry<M> {
 	private M messages;
 
 	private final Map<MessageConsumer, MessageSupplier> bindings = new HashMap<>();
+
+	private Logger registryLogger;
+	private Logger consumerLogger;
+	private Logger supplierLogger;
+
+	@Inject
+	@Optional
+	void setLoggerFactory(LoggerFactory factory) {
+		if (factory != null) {
+			this.registryLogger = factory.getLogger(BaseMessageRegistry.class);
+			this.consumerLogger = factory.getLogger(MessageConsumerImplementation.class);
+			this.supplierLogger = factory.getLogger(MessageSupplierImplementation.class);
+		} else {
+			this.registryLogger = null;
+			this.consumerLogger = null;
+			this.supplierLogger = null;
+		}
+	}
 
 	/**
 	 * Register a consumer and a function that is acting as the supplier of the translation value.
@@ -197,37 +217,33 @@ public class BaseMessageRegistry<M> {
 	 */
 	protected MessageConsumer createConsumer(final Object control, final String method) {
 
-		final LogService logService = ResourceBundleHelper.getLogService();
-
 		try {
 			final Method m = control.getClass().getMethod(method, String.class);
 			if (m != null) {
-				return new MessageConsumerImplementation(logService, m, control);
+				return new MessageConsumerImplementation(m, control);
 			}
 		} catch (NoSuchMethodException e) {
-			if (logService != null)
-				logService.log(LogService.LOG_WARNING,
-						"The method '" + e.getMessage()
-								+ "' does not exist. Binding is not created!");
+			Logger log = this.registryLogger;
+			if (log != null) {
+				log.warn("The method '{}' does not exist. Binding is not created!", e.getMessage());
+			}
 		} catch (SecurityException e) {
-			if (logService != null)
-				logService.log(
-						LogService.LOG_WARNING,
-						"Error on accessing method '" + method + "' on class '"
-								+ control.getClass() + "' with error message '" + e.getMessage()
-								+ "'. Binding is not created!");
+			Logger log = this.registryLogger;
+			if (log != null) {
+				log.warn(
+						"Error on accessing method '{}' on class '{}' with error message '{}'. Binding is not created!",
+						method, control.getClass(), e.getMessage());
+			}
 		}
 
 		return null;
 	}
 
 	private final class MessageConsumerImplementation implements MessageConsumer {
-		private final LogService logService;
 		private final Method m;
 		private final Object control;
 
-		private MessageConsumerImplementation(LogService logService, Method m, Object control) {
-			this.logService = logService;
+		private MessageConsumerImplementation(Method m, Object control) {
 			this.m = m;
 			this.control = control;
 		}
@@ -254,11 +270,12 @@ public class BaseMessageRegistry<M> {
 								// binding to avoid further issues e.g. this can
 								// happen in case of disposed SWT controls
 								bindings.remove(MessageConsumerImplementation.this);
-								if (logService != null)
-									logService.log(LogService.LOG_INFO,
-											"Error on invoke '" + m.getName() + "' on '" + control.getClass()
-													+ "' with error message '" + e.getMessage()
-													+ "'. Binding is removed.");
+								Logger log = consumerLogger;
+								if (log != null) {
+									log.info(
+											"Error on invoke '{}' on '{}' with error message '{}'. Binding is removed.",
+											m.getName(), control.getClass(), e.getMessage());
+								}
 							}
 							return null;
 						}
@@ -270,10 +287,11 @@ public class BaseMessageRegistry<M> {
 				// avoid further issues
 				// e.g. this can happen in case of disposed SWT controls
 				bindings.remove(this);
-				if (logService != null)
-					logService.log(LogService.LOG_INFO,
-							"Error on invoke '" + m.getName() + "' on '" + control.getClass() + "' with error message '"
-									+ e.getMessage() + "'. Binding is removed.");
+				Logger log = consumerLogger;
+				if (log != null) {
+					log.info("Error on invoke '{}' on '{}' with error message '{}'. Binding is removed.",
+							m.getName(), control.getClass(), e.getMessage());
+				}
 			}
 		}
 	}
@@ -285,31 +303,33 @@ public class BaseMessageRegistry<M> {
 	 * @return A MessageSupplier that returns the message value for the given message key
 	 */
 	protected MessageSupplier createSupplier(final String messageKey) {
-		final LogService logService = ResourceBundleHelper.getLogService();
 		try {
 			final Field f = messages.getClass().getField(messageKey);
 			if (f != null) {
-				return new MessageSupplierImplementation(logService, f);
+				return new MessageSupplierImplementation(f);
 			}
 		} catch (NoSuchFieldException e) {
-			if (logService != null)
-				logService.log(LogService.LOG_WARNING, "The class '" + this.messages.getClass().getName()
-						+ "' does not contain a field with name '" + e.getMessage() + "'. Binding is not created!");
+			Logger log = this.registryLogger;
+			if (log != null) {
+				log.warn(
+						"The class '{}' does not contain a field with name '{}'. Binding is not created!",
+						this.messages.getClass().getName(), e.getMessage());
+			}
 		} catch (SecurityException e) {
-			if (logService != null)
-				logService.log(LogService.LOG_WARNING,
-						"Error on accessing field '" + messageKey + "' on class '" + messages.getClass()
-								+ "' with error message '" + e.getMessage() + "'. Binding is not created!");
+			Logger log = this.registryLogger;
+			if (log != null) {
+				log.warn(
+						"Error on accessing field '{}' on class '{}' with error message '{}'. Binding is not created!",
+						messageKey, messages.getClass(), e.getMessage());
+			}
 		}
 		return null;
 	}
 
 	private final class MessageSupplierImplementation implements MessageSupplier {
-		private final LogService logService;
 		private final Field f;
 
-		private MessageSupplierImplementation(LogService logService, Field f) {
-			this.logService = logService;
+		private MessageSupplierImplementation(Field f) {
 			this.f = f;
 		}
 
@@ -328,10 +348,11 @@ public class BaseMessageRegistry<M> {
 						iterator.remove();
 					}
 				});
-				if (logService != null)
-					logService.log(LogService.LOG_INFO,
-							"Error on invoke '" + f.getName() + "' on '" + messages.getClass()
-									+ "' with error message '" + e.getMessage() + "'. Binding is removed.");
+				Logger log = supplierLogger;
+				if (log != null) {
+					log.info("Error on invoke '{}' on '{}' with error message '{}'. Binding is removed.",
+							f.getName(), messages.getClass(), e.getMessage());
+				}
 			}
 			return message;
 		}

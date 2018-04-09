@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011, 2014 IBM Corporation and others.
+ * Copyright (c) 2011, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -16,21 +16,21 @@ import javax.inject.Inject;
 import org.eclipse.e4.core.di.annotations.Optional;
 import org.eclipse.e4.core.services.translation.ResourceBundleProvider;
 import org.eclipse.e4.core.services.translation.TranslationService;
-import org.osgi.service.log.LogService;
+import org.osgi.service.log.Logger;
+import org.osgi.service.log.LoggerFactory;
 
 public class BundleTranslationProvider extends TranslationService {
 
 	@Inject
 	ResourceBundleProvider provider;
 
-	@Inject
-	@Optional
-	LogService logService;
+	Logger logger;
 
 	@Override
 	public String translate(String key, String contributorURI) {
-		if (provider == null)
+		if (provider == null) {
 			return key;
+		}
 
 		try {
 			ResourceBundle resourceBundle = ResourceBundleHelper.getResourceBundleForUri(
@@ -39,13 +39,23 @@ public class BundleTranslationProvider extends TranslationService {
 		} catch (Exception e) {
 			// an error occurred on trying to retrieve the translation for the given key
 			// for improved fault tolerance we will log the error and return the key
-			if (logService != null)
-				logService.log(LogService.LOG_ERROR,
-						"Error retrieving the translation for key=" + key //$NON-NLS-1$
-								+ " and contributorURI=" + contributorURI, e); //$NON-NLS-1$
+			Logger log = this.logger;
+			if (log != null) {
+				log.error("Error retrieving the translation for key={} and contributorURI={}", key, contributorURI,
+						e);
+			}
 
 			return key;
 		}
 	}
 
+	@Inject
+	@Optional
+	void setLoggerFactory(LoggerFactory factory) {
+		if (factory != null) {
+			this.logger = factory.getLogger(getClass());
+		} else {
+			this.logger = null;
+		}
+	}
 }

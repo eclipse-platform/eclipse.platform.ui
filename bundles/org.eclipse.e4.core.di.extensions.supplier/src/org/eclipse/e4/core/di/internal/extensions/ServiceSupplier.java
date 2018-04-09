@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2014, 2017 BestSolution.at and others.
+ * Copyright (c) 2014, 2018 BestSolution.at and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -40,9 +40,11 @@ import org.osgi.framework.ServiceReference;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 import org.osgi.service.component.annotations.ReferenceCardinality;
+import org.osgi.service.component.annotations.ReferencePolicy;
 import org.osgi.service.event.Event;
 import org.osgi.service.event.EventHandler;
-import org.osgi.service.log.LogService;
+import org.osgi.service.log.Logger;
+import org.osgi.service.log.LoggerFactory;
 
 /**
  * Supplier for {@link Service}
@@ -52,8 +54,8 @@ import org.osgi.service.log.LogService;
 		"event.topics=" + IEclipseContext.TOPIC_DISPOSE })
 public class ServiceSupplier extends ExtendedObjectSupplier implements EventHandler {
 
-	@Reference(cardinality = ReferenceCardinality.OPTIONAL)
-	volatile LogService logService;
+	LoggerFactory factory;
+	Logger logger;
 
 	static class ServiceHandler implements ServiceListener {
 		private final ServiceSupplier supplier;
@@ -210,15 +212,16 @@ public class ServiceSupplier extends ExtendedObjectSupplier implements EventHand
 
 	/**
 	 * Method to log an exception.
-	 * 
+	 *
 	 * @param message
 	 *            The log message.
 	 * @param e
 	 *            The exception that should be logged.
 	 */
 	void logError(String message, Throwable e) {
-		if (this.logService != null) {
-			this.logService.log(LogService.LOG_ERROR, message, e);
+		Logger log = this.logger;
+		if (log != null) {
+			log.error(message, e);
 		} else {
 			// fallback if no LogService is available
 			e.printStackTrace();
@@ -232,5 +235,18 @@ public class ServiceSupplier extends ExtendedObjectSupplier implements EventHand
 				sh.cleanup();
 			});
 		});
+	}
+
+	@Reference(cardinality = ReferenceCardinality.OPTIONAL, policy = ReferencePolicy.DYNAMIC)
+	void setLogger(LoggerFactory factory) {
+		this.factory = factory;
+		this.logger = factory.getLogger(getClass());
+	}
+
+	void unsetLogger(LoggerFactory loggerFactory) {
+		if (this.factory == loggerFactory) {
+			this.factory = null;
+			this.logger = null;
+		}
 	}
 }

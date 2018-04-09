@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012, 2014 Dirk Fauth and others.
+ * Copyright (c) 2012, 2018 Dirk Fauth and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -30,13 +30,15 @@ import org.eclipse.e4.core.services.translation.ResourceBundleProvider;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.FrameworkUtil;
+import org.osgi.framework.ServiceReference;
 import org.osgi.service.log.LogService;
+import org.osgi.service.log.Logger;
+import org.osgi.service.log.LoggerFactory;
 import org.osgi.util.tracker.ServiceTracker;
+import org.osgi.util.tracker.ServiceTrackerCustomizer;
 
 /**
  * Helper class for retrieving {@link ResourceBundle}s out of OSGi {@link Bundle}s.
- *
- * @author Dirk Fauth
  */
 public class ResourceBundleHelper {
 
@@ -74,6 +76,40 @@ public class ResourceBundleHelper {
 		}
 	}
 
+	private static ServiceTracker<LoggerFactory, Logger> loggerTracker = openLoggerTracker();
+
+	private static ServiceTracker<LoggerFactory, Logger> openLoggerTracker() {
+		try {
+			BundleContext context = FrameworkUtil.getBundle(ResourceBundleHelper.class).getBundleContext();
+			ServiceTracker<LoggerFactory, Logger> tracker = new ServiceTracker<>(
+					context, LoggerFactory.class,
+					new ServiceTrackerCustomizer<LoggerFactory, Logger>() {
+
+						@Override
+						public Logger addingService(ServiceReference<LoggerFactory> reference) {
+							LoggerFactory factory = context.getService(reference);
+							if (factory != null) {
+								return factory.getLogger(ResourceBundleHelper.class);
+							}
+							return null;
+						}
+
+						@Override
+						public void modifiedService(ServiceReference<LoggerFactory> reference, Logger service) {
+						}
+
+						@Override
+						public void removedService(ServiceReference<LoggerFactory> reference, Logger service) {
+							context.ungetService(reference);
+						}
+					});
+			tracker.open();
+			return tracker;
+		} catch (Throwable t) {
+			return null;
+		}
+	}
+
 	/**
 	 * Parses the specified contribution URI and loads the {@link ResourceBundle} for the specified
 	 * {@link Locale} out of an OSGi {@link Bundle}.
@@ -106,15 +142,15 @@ public class ResourceBundleHelper {
 		if (contributionURI == null)
 			return null;
 
-		LogService logService = logTracker.getService();
+		Logger logger = loggerTracker.getService();
 
 		URI uri;
 		try {
 			uri = new URI(contributionURI);
 		} catch (URISyntaxException e) {
-			if (logService != null)
-				logService
-						.log(LogService.LOG_ERROR, "Invalid contribution URI: " + contributionURI); //$NON-NLS-1$
+			if (logger != null) {
+				logger.error("Invalid contribution URI: {}", contributionURI); //$NON-NLS-1$
+			}
 			return null;
 		}
 
@@ -138,18 +174,17 @@ public class ResourceBundleHelper {
 			}
 		} else if (BUNDLECLASS_SCHEMA.equals(uri.getScheme())) {
 			if (uri.getAuthority() == null) {
-				if (logService != null)
-					logService.log(LogService.LOG_ERROR,
-							"Failed to get bundle for: " + contributionURI); //$NON-NLS-1$
+				if (logger != null) {
+					logger.error("Failed to get bundle for: {}", contributionURI); //$NON-NLS-1$
+				}
 			}
 			bundleName = uri.getAuthority();
 			// remove the leading /
 			if (uri.getPath() != null && uri.getPath().length() > 0) {
 				classPath = uri.getPath().substring(1);
 			} else {
-				if (logService != null) {
-					logService.log(LogService.LOG_ERROR, "Called with invalid contribution URI: "
-							+ contributionURI);
+				if (logger != null) {
+					logger.error("Called with invalid contribution URI: {}", contributionURI); //$NON-NLS-1$
 				}
 			}
 		}
@@ -168,10 +203,9 @@ public class ResourceBundleHelper {
 						result = getEquinoxResourceBundle(classPath, locale,
 								resourceBundleClass.getClassLoader());
 					} catch (Exception e) {
-						if (logService != null)
-							logService
-									.log(LogService.LOG_ERROR,
-											"Failed to load specified ResourceBundle: " + contributionURI, e); //$NON-NLS-1$
+						if (logger != null) {
+							logger.error("Failed to load specified ResourceBundle: {}", contributionURI, e); //$NON-NLS-1$
+						}
 					}
 				} else if (resourcePath != null && resourcePath.length() > 0) {
 					// the specified URI points to a resource
@@ -546,12 +580,12 @@ public class ResourceBundleHelper {
 	 *         default {@link Locale} will be returned.
 	 */
 	public static Locale toLocale(String localeString, Locale defaultLocale) {
-		LogService logService = logTracker.getService();
+		Logger logger = loggerTracker.getService();
 
 		if (localeString == null) {
-			if (logService != null)
-				logService.log(LogService.LOG_ERROR, "Given locale String is null"
-						+ " - Default Locale will be used instead."); //$NON-NLS-1$
+			if (logger != null) {
+				logger.error("Given locale String is null - Default Locale will be used instead."); //$NON-NLS-1$
+			}
 			return defaultLocale;
 		}
 
@@ -562,27 +596,28 @@ public class ResourceBundleHelper {
 		String[] localeParts = localeString.split("_"); //$NON-NLS-1$
 		if (localeParts.length == 0 || localeParts.length > 3
 				|| (localeParts.length == 1 && localeParts[0].length() == 0)) {
-			logInvalidFormat(localeString, logService);
+			logInvalidFormat(localeString, logger);
 			return defaultLocale;
 		}
 
-		if (localeParts[0].length() > 0 && !localeParts[0].matches("[a-zA-Z]{2,8}")) {
-			logInvalidFormat(localeString, logService);
+		if (localeParts[0].length() > 0 && !localeParts[0].matches("[a-zA-Z]{2,8}")) { //$NON-NLS-1$
+			logInvalidFormat(localeString, logger);
 			return defaultLocale;
 		}
 
 		language = localeParts[0];
 
 		if (localeParts.length > 1) {
-			if (localeParts[1].length() > 0 && !localeParts[1].matches("[a-zA-Z]{2}|[0-9]{3}")) {
+			if (localeParts[1].length() > 0 && !localeParts[1].matches("[a-zA-Z]{2}|[0-9]{3}")) { //$NON-NLS-1$
 				if (language.length() > 0) {
-					if (logService != null)
-						logService.log(LogService.LOG_ERROR, "Invalid locale format: "
-								+ localeString
-								+ " - Only language part will be used to create the Locale."); //$NON-NLS-1$
+					if (logger != null) {
+						logger.error(
+								"Invalid locale format: {} - Only language part will be used to create the Locale.", //$NON-NLS-1$
+								localeString);
+					}
 					return new Locale(language);
 				}
-				logInvalidFormat(localeString, logService);
+				logInvalidFormat(localeString, logger);
 				return defaultLocale;
 			}
 
@@ -591,12 +626,11 @@ public class ResourceBundleHelper {
 
 		if (localeParts.length == 3) {
 			if (localeParts[2].length() == 0) {
-				if (logService != null)
-					logService
-							.log(LogService.LOG_ERROR,
-									"Invalid locale format: "
-											+ localeString
-											+ " - Only language and country part will be used to create the Locale."); //$NON-NLS-1$
+				if (logger != null) {
+					logger.error(
+							"Invalid locale format: {} - Only language and country part will be used to create the Locale.", //$NON-NLS-1$
+							localeString);
+				}
 				return new Locale(language, country);
 			}
 			variant = localeParts[2];
@@ -607,14 +641,14 @@ public class ResourceBundleHelper {
 
 	private static HashSet<String> invalidLocalesLogged = new HashSet<>();
 
-	static void logInvalidFormat(String str, LogService logService) {
-		if (logService != null && !invalidLocalesLogged.contains(str)) {
+	static void logInvalidFormat(String str, Logger log) {
+		if (log != null && !invalidLocalesLogged.contains(str)) {
 			invalidLocalesLogged.add(str);
-			logService.log(LogService.LOG_ERROR, "Invalid locale format: " + str
-					+ " - Default Locale will be used instead."); //$NON-NLS-1$
+			log.error("Invalid locale format: {} - Default Locale will be used instead.", str); //$NON-NLS-1$
 		}
 	}
 
+	@Deprecated
 	public static LogService getLogService() {
 		return logTracker.getService();
 	}
@@ -626,9 +660,6 @@ public class ResourceBundleHelper {
 	 * <p>
 	 * It only supports properties based {@link ResourceBundle}s. If you want to use source based
 	 * {@link ResourceBundle}s you have to use the bundleclass URI with the Message annotation.
-	 *
-	 * @author Dirk Fauth
-	 *
 	 */
 	static class BundleResourceBundleControl extends ResourceBundle.Control {
 

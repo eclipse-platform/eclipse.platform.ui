@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011, 2016 BestSolution.at and others.
+ * Copyright (c) 2011, 2018 BestSolution.at and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -36,12 +36,14 @@ import org.osgi.framework.FrameworkUtil;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.ReferenceCardinality;
 import org.osgi.service.component.annotations.ReferencePolicy;
-import org.osgi.service.log.LogService;
+import org.osgi.service.log.Logger;
+import org.osgi.service.log.LoggerFactory;
 
 @Component
 public class MessageFactoryServiceImpl implements IMessageFactoryService {
 
-	private LogService logService;
+	private LoggerFactory factory;
+	private Logger logger;
 
 	// Cache so when multiple instance use the same message class
 	private Map<Object, Reference<Object>> SOFT_CACHE = Collections
@@ -169,10 +171,10 @@ public class MessageFactoryServiceImpl implements IMessageFactoryService {
 				resourceBundle = ResourceBundleHelper.getResourceBundleForUri(
 						annotation.contributionURI(), locale, rbProvider);
 			} else if (annotation.contributorURI().length() > 0) {
-				if (logService != null) {
-					logService
-							.log(LogService.LOG_WARNING,
-									"Usage of @Message#contributorURI detected! Please use @Message#contributionURI instead!"); //$NON-NLS-1$
+				Logger log = this.logger;
+				if (log != null) {
+					log.warn(
+							"Usage of @Message#contributorURI detected! Please use @Message#contributionURI instead!"); //$NON-NLS-1$
 				}
 				resourceBundle = ResourceBundleHelper.getResourceBundleForUri(
 					annotation.contributorURI(), locale, rbProvider);
@@ -223,11 +225,15 @@ public class MessageFactoryServiceImpl implements IMessageFactoryService {
 				}
 			}
 		} catch (InstantiationException e) {
-			if (logService != null)
-				logService.log(LogService.LOG_ERROR, "Instantiation of messages class failed", e); //$NON-NLS-1$
+			Logger log = this.logger;
+			if (log != null) {
+				log.error("Instantiation of messages class failed", e); //$NON-NLS-1$
+			}
 		} catch (IllegalAccessException e) {
-			if (logService != null)
-				logService.log(LogService.LOG_ERROR, "Failed to access messages class", e); //$NON-NLS-1$
+			Logger log = this.logger;
+			if (log != null) {
+				log.error("Failed to access messages class", e); //$NON-NLS-1$
+			}
 		}
 
 		// invoke the method annotated with @PostConstruct
@@ -259,10 +265,12 @@ public class MessageFactoryServiceImpl implements IMessageFactoryService {
 					try {
 						method.invoke(messageObject);
 					} catch (Exception e) {
-						if (logService != null)
-							logService
-									.log(LogService.LOG_ERROR,
-											"Exception on trying to execute the @PostConstruct annotated method in " + messageClass, e); //$NON-NLS-1$
+						Logger log = this.logger;
+						if (log != null) {
+							log.error(
+									"Exception on trying to execute the @PostConstruct annotated method in {}", //$NON-NLS-1$
+									messageClass, e);
+						}
 					}
 				}
 			}
@@ -270,13 +278,17 @@ public class MessageFactoryServiceImpl implements IMessageFactoryService {
 	}
 
 	@org.osgi.service.component.annotations.Reference(cardinality = ReferenceCardinality.OPTIONAL, policy = ReferencePolicy.DYNAMIC)
-	void setLogService(LogService logService) {
-		this.logService = logService;
+	void setLogger(LoggerFactory factory) {
+		this.factory = factory;
+		this.logger = factory.getLogger(getClass());
 	}
 
-	void unsetLogService(LogService logService) {
-		if (this.logService == logService) {
-			this.logService = null;
+	void unsetLogger(LoggerFactory loggerFactory) {
+		if (this.factory == loggerFactory) {
+			// if the factory we referenced locally is unset, we set the logger reference to
+			// null
+			this.factory = null;
+			this.logger = null;
 		}
 	}
 
