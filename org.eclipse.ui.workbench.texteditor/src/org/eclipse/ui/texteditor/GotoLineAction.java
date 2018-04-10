@@ -13,6 +13,8 @@ package org.eclipse.ui.texteditor;
 import java.util.ResourceBundle;
 
 import org.eclipse.swt.custom.StyledText;
+import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Shell;
 
@@ -86,7 +88,7 @@ public class GotoLineAction extends TextEditorAction {
 	 *
 	 * @since 2.0
 	 */
-	static class GotoLineDialog extends InputDialog {
+	class GotoLineDialog extends InputDialog {
 
 		/*
 		 * @see InputDialog#InputDialog(org.eclipse.swt.widgets.Shell, java.lang.String, java.lang.String, java.lang.String, org.eclipse.jface.dialogs.IInputValidator)
@@ -103,6 +105,13 @@ public class GotoLineAction extends TextEditorAction {
 			if (section == null)
 				section= settings.addNewSection(sectionName);
 			return section;
+		}
+
+		@Override
+		protected void createButtonsForButtonBar(Composite parent) {
+			super.createButtonsForButtonBar(parent);
+			Button button = getOkButton();
+			button.setText(GotoLineAction.this.fBundle.getString(fPrefix + "button")); //$NON-NLS-1$
 		}
 
 		@Override
