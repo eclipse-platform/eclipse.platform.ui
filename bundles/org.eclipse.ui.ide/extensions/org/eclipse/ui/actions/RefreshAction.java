@@ -121,7 +121,7 @@ public class RefreshAction extends WorkspaceAction {
 					// title
 					null, // use default window icon
 					message, MessageDialog.QUESTION, 0,
-							IDialogConstants.YES_LABEL,
+					IDEWorkbenchMessages.DeleteResourceAction_text,
 							IDialogConstants.NO_LABEL) {
 				@Override
 				protected int getShellStyle() {
