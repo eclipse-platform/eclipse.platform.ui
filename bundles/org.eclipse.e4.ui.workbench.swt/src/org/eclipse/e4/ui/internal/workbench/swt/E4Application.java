@@ -508,7 +508,7 @@ public class E4Application implements IApplication {
 		appContext.set(IWorkbench.APPLICATION_CONTEXT_KEY, appContext);
 
 		appContext.set(Logger.class, ContextInjectionFactory.make(WorkbenchLogger.class, appContext));
-		appContext.set(EModelService.class, new ModelServiceImpl(appContext));
+		appContext.set(EModelService.class, ContextInjectionFactory.make(ModelServiceImpl.class, appContext));
 		appContext.set(EPlaceholderResolver.class, new PlaceholderResolver());
 
 		// setup for commands and handlers

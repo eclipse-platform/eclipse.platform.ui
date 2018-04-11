@@ -18,6 +18,8 @@ import java.util.Collection;
 import java.util.Dictionary;
 import java.util.Hashtable;
 import java.util.List;
+import javax.annotation.PreDestroy;
+import javax.inject.Inject;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.IExtensionRegistry;
 import org.eclipse.e4.core.contexts.ContextInjectionFactory;
@@ -66,7 +68,9 @@ import org.eclipse.e4.ui.workbench.modeling.ElementMatcher;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.osgi.framework.Bundle;
+import org.osgi.framework.BundleContext;
 import org.osgi.framework.FrameworkUtil;
+import org.osgi.framework.ServiceRegistration;
 import org.osgi.service.event.EventConstants;
 import org.osgi.service.event.EventHandler;
 
@@ -82,6 +86,8 @@ public class ModelServiceImpl implements EModelService {
 	/** Factory which is able to create {@link MApplicationElement}s in a generic way. */
 	private GenericMApplicationElementFactoryImpl mApplicationElementFactory;
 
+	private ServiceRegistration<?> handlerRegistration;
+
 	/**
 	 * This is a singleton service. One instance is used throughout the running application
 	 *
@@ -91,6 +97,7 @@ public class ModelServiceImpl implements EModelService {
 	 * @throws NullPointerException
 	 *             if the given appContext is <code>null</code>
 	 */
+	@Inject
 	public ModelServiceImpl(IEclipseContext appContext) {
 		if (appContext == null) {
 			throw new NullPointerException("No application context given!"); //$NON-NLS-1$
@@ -99,12 +106,15 @@ public class ModelServiceImpl implements EModelService {
 		this.appContext = appContext;
 
 		Bundle bundle = FrameworkUtil.getBundle(getClass());
-		if (bundle != null && bundle.getBundleContext() != null) {
-			// register the event handler via whiteboard pattern
-			Dictionary<String, Object> properties = new Hashtable<>();
-			properties.put(EventConstants.EVENT_TOPIC, new String[] { UIEvents.UIElement.TOPIC_WIDGET });
-			bundle.getBundleContext().registerService(EventHandler.class.getName(),
+		if (bundle != null) {
+			BundleContext bundleContext = bundle.getBundleContext();
+			if (bundleContext != null) {
+				// register the event handler via whiteboard pattern
+				Dictionary<String, Object> properties = new Hashtable<>();
+				properties.put(EventConstants.EVENT_TOPIC, new String[] { UIEvents.UIElement.TOPIC_WIDGET });
+				handlerRegistration = bundleContext.registerService(EventHandler.class.getName(),
 						ContextInjectionFactory.make(HostedElementEventHandler.class, appContext), properties);
+			}
 		} else {
 			// if we are not running in an OSGi environment, we try to use the IEventBroker
 			IEventBroker eventBroker = appContext.get(IEventBroker.class);
@@ -112,14 +122,21 @@ public class ModelServiceImpl implements EModelService {
 				throw new IllegalStateException(
 						"Could not get an IEventBroker instance. Please check your configuration that a providing bundle is present and active."); //$NON-NLS-1$
 			}
-			// subscribe headless as the handler itself ensures that the code is executed in
-			// the UI thread
+			// subscribe headless as we ensure that the handler is called in the UI thread
+			// internally
 			eventBroker.subscribe(UIEvents.UIElement.TOPIC_WIDGET, null,
 					ContextInjectionFactory.make(HostedElementEventHandler.class, appContext), true);
 		}
 
 		mApplicationElementFactory = new GenericMApplicationElementFactoryImpl(
 				appContext.get(IExtensionRegistry.class));
+	}
+
+	@PreDestroy
+	void dispose() {
+		if (handlerRegistration != null) {
+			handlerRegistration.unregister();
+		}
 	}
 
 	@Override
