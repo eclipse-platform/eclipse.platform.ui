@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2016 IBM Corporation and others.
+ * Copyright (c) 2005, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -47,7 +47,7 @@ public class WorkingSetsLabelProvider implements ILabelProvider {
 	private Image getWorkingSetImage() {
 		if (workingSetImage == null) {
 			URL iconUrl = FileLocator.find(WorkbenchNavigatorPlugin.getDefault().getBundle(),
-					Path.fromPortableString("icons/full/obj16/workingsets.png"), //$NON-NLS-1$
+					Path.fromPortableString("icons/full/obj16/otherprojects_workingsets.png"), //$NON-NLS-1$
 					Collections.emptyMap());
 			workingSetImage = ImageDescriptor.createFromURL(iconUrl).createImage();
 		}
