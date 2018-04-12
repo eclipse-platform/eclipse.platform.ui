@@ -321,7 +321,7 @@ public class IDEApplication implements IApplication, IExecutableExtension {
 			MessageDialog dialog = new MessageDialog(shell, IDEWorkbenchMessages.IDEApplication_workspaceInUseTitle,
 					null, NLS.bind(IDEWorkbenchMessages.IDEApplication_workspaceInUseMessage, workspaceUrl.getFile()),
 					MessageDialog.ERROR, 1, IDEWorkbenchMessages.IDEApplication_workspaceInUse_Retry,
-					IDEWorkbenchMessages.IDEApplication_workspaceInUse_Cancel);
+					IDEWorkbenchMessages.IDEApplication_workspaceInUse_Choose);
 			// the return value influences the next loop's iteration
 			returnValue = dialog.open();
 			// Remember the locked workspace as recent workspace
