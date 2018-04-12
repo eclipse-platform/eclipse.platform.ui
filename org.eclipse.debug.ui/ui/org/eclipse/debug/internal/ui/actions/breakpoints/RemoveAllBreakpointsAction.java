@@ -11,24 +11,14 @@
 package org.eclipse.debug.internal.ui.actions.breakpoints;
 
 
-import org.eclipse.swt.widgets.Shell;
+import java.util.LinkedHashMap;
 
+import org.eclipse.core.resources.IMarkerDelta;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
-
-import org.eclipse.core.resources.IMarkerDelta;
-
-import org.eclipse.jface.action.IAction;
-import org.eclipse.jface.dialogs.IDialogConstants;
-import org.eclipse.jface.dialogs.MessageDialogWithToggle;
-import org.eclipse.jface.preference.IPreferenceStore;
-
-import org.eclipse.ui.IViewPart;
-import org.eclipse.ui.IWorkbenchWindow;
-
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.IBreakpointManager;
 import org.eclipse.debug.core.IBreakpointsListener;
@@ -37,8 +27,15 @@ import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.actions.AbstractRemoveAllActionDelegate;
 import org.eclipse.debug.internal.ui.actions.ActionMessages;
 import org.eclipse.debug.internal.ui.preferences.IDebugPreferenceConstants;
-
 import org.eclipse.debug.ui.DebugUITools;
+import org.eclipse.jface.action.IAction;
+import org.eclipse.jface.dialogs.IDialogConstants;
+import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.dialogs.MessageDialogWithToggle;
+import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.swt.widgets.Shell;
+import org.eclipse.ui.IViewPart;
+import org.eclipse.ui.IWorkbenchWindow;
 
 /**
  * Removes all breakpoints from the source (markers) and remove all
@@ -116,9 +113,23 @@ public class RemoveAllBreakpointsAction extends AbstractRemoveAllActionDelegate 
 		boolean prompt = store.getBoolean(IDebugPreferenceConstants.PREF_PROMPT_REMOVE_ALL_BREAKPOINTS);
 		boolean proceed = true;
 		if(prompt) {
-			MessageDialogWithToggle mdwt = MessageDialogWithToggle.openYesNoQuestion(window.getShell(), ActionMessages.RemoveAllBreakpointsAction_0,
-					ActionMessages.RemoveAllBreakpointsAction_1, ActionMessages.RemoveAllBreakpointsAction_3, !prompt, null, null);
-			if(mdwt.getReturnCode() !=  IDialogConstants.YES_ID){
+			LinkedHashMap<String, Integer> buttonLabelToId = new LinkedHashMap<>();
+			buttonLabelToId.put(ActionMessages.RemoveAllBreakpointsAction_4, IDialogConstants.YES_ID);
+			buttonLabelToId.put(IDialogConstants.NO_LABEL, IDialogConstants.NO_ID);
+			MessageDialogWithToggle mdwt =
+					new MessageDialogWithToggle(
+							window.getShell(),
+							ActionMessages.RemoveAllBreakpointsAction_0,
+							null,
+							ActionMessages.RemoveAllBreakpointsAction_1,
+							MessageDialog.QUESTION,
+							buttonLabelToId,
+							0,
+							ActionMessages.RemoveAllBreakpointsAction_3,
+							!prompt
+							);
+			int x = mdwt.open();
+			if (mdwt.getReturnCode() != IDialogConstants.YES_ID) {
 				proceed = false;
 			}
 			else {
