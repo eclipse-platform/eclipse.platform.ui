@@ -22,19 +22,21 @@ import org.osgi.service.log.LoggerFactory;
 public class BundleTranslationProvider extends TranslationService {
 
 	@Inject
+	@Optional
 	ResourceBundleProvider provider;
 
 	Logger logger;
 
 	@Override
 	public String translate(String key, String contributorURI) {
-		if (provider == null) {
+		ResourceBundleProvider prov = this.provider;
+		if (prov == null) {
 			return key;
 		}
 
 		try {
 			ResourceBundle resourceBundle = ResourceBundleHelper.getResourceBundleForUri(
-					contributorURI, locale, provider);
+					contributorURI, locale, prov);
 			return getResourceString(key, resourceBundle);
 		} catch (Exception e) {
 			// an error occurred on trying to retrieve the translation for the given key
