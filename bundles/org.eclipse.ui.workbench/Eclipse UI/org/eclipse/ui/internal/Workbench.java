@@ -478,6 +478,8 @@ public final class Workbench extends EventManager implements IWorkbench,
 	// flag used to identify if the application model needs to be saved
 	private boolean applicationModelChanged = false;
 
+	private IWorkbenchWindow windowWhileInit;
+
 	/**
 	 * Creates a new workbench.
 	 *
@@ -1448,6 +1450,10 @@ public final class Workbench extends EventManager implements IWorkbench,
 			return null;
 		}
 
+		if (windowWhileInit != null) {
+			return windowWhileInit;
+		}
+
 		MWindow activeWindow = application.getSelectedElement();
 		if ((activeWindow == null || activeWindow.getWidget() == null) && !application.getChildren().isEmpty()) {
 			activeWindow = application.getChildren().get(0);
@@ -1481,9 +1487,12 @@ public final class Workbench extends EventManager implements IWorkbench,
 		if (result == null) {
 			if (windowBeingCreated != null)
 				return windowBeingCreated;
-			result = new WorkbenchWindow(input, descriptor);
-			windowBeingCreated = result;
+
 			try {
+				result = new WorkbenchWindow(input, descriptor);
+				windowBeingCreated = result;
+				windowWhileInit = getActiveWorkbenchWindow();
+
 				if (newWindow) {
 					Point size = result.getWindowConfigurer().getInitialSize();
 					window.setWidth(size.x);
@@ -1495,6 +1504,7 @@ public final class Workbench extends EventManager implements IWorkbench,
 				windowContext.set(IWorkbenchWindow.class, result);
 			} finally {
 				windowBeingCreated = null;
+				windowWhileInit = null;
 			}
 
 			if (application.getSelectedElement() == window) {

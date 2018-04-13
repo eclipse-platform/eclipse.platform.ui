@@ -154,9 +154,14 @@ public interface IWorkbench extends IAdaptable, IServiceLocator {
 	 * Returns the currently active window for this workbench (if any). Returns
 	 * <code>null</code> if there is no active workbench window. Returns
 	 * <code>null</code> if called from a non-UI thread.
+	 * <p>
+	 * In the special case when there's <strong>no active workbench window</strong>
+	 * and <strong>a workbench window is under construction</strong> this workbench
+	 * window instance is returned.
+	 * </p>
 	 *
-	 * @return the active workbench window, or <code>null</code> if there is
-	 *         no active workbench window or if called from a non-UI thread
+	 * @return the active workbench window, or <code>null</code> if there is no
+	 *         active workbench window or if called from a non-UI thread
 	 */
 	IWorkbenchWindow getActiveWorkbenchWindow();
 
