@@ -543,7 +543,6 @@ public class ToolBarManagerRenderer extends SWTPartRenderer {
 				record.sharedElements.clear();
 			}
 		}
-		clearModelToManager(toolbarModel, null);
 	}
 
 	/**
