@@ -329,7 +329,7 @@ public class InlinedAnnotationSupport {
 	/**
 	 * Install the inlined annotation support for the given viewer.
 	 *
-	 * @param viewer the source viewer
+	 * @param viewer  the source viewer
 	 * @param painter the annotation painter to use to draw the inlined annotations.
 	 */
 	public void install(ISourceViewer viewer, AnnotationPainter painter) {
@@ -391,6 +391,7 @@ public class InlinedAnnotationSupport {
 			visibleLines.uninstall();
 			visibleLines= null;
 		}
+		removeInlinedAnnotations();
 		disposeFont();
 		fViewer= null;
 		fPainter= null;
@@ -520,7 +521,7 @@ public class InlinedAnnotationSupport {
 	/**
 	 * Returns the {@link AbstractInlinedAnnotation} from the given line index and null otherwise.
 	 *
-	 * @param viewer the source viewer
+	 * @param viewer    the source viewer
 	 * @param lineIndex the line index.
 	 * @return the {@link AbstractInlinedAnnotation} from the given line index and null otherwise.
 	 */
@@ -552,8 +553,8 @@ public class InlinedAnnotationSupport {
 	 * Returns the {@link AbstractInlinedAnnotation} from the given point and null otherwise.
 	 *
 	 * @param viewer the source viewer
-	 * @param point the origin of character bounding box relative to the origin of the widget client
-	 *            area.
+	 * @param point  the origin of character bounding box relative to the origin of the widget
+	 *                   client area.
 	 * @return the {@link AbstractInlinedAnnotation} from the given point and null otherwise.
 	 */
 	private static AbstractInlinedAnnotation getInlinedAnnotationAtPoint(ISourceViewer viewer, Point point) {
@@ -569,8 +570,8 @@ public class InlinedAnnotationSupport {
 	 * otherwise.
 	 *
 	 * @param viewer the source viewer
-	 * @param point the origin of character bounding box relative to the origin of the widget client
-	 *            area.
+	 * @param point  the origin of character bounding box relative to the origin of the widget
+	 *                   client area.
 	 * @return the {@link AbstractInlinedAnnotation} line content from the given point and null
 	 *         otherwise.
 	 */
@@ -595,8 +596,8 @@ public class InlinedAnnotationSupport {
 	 * otherwise.
 	 *
 	 * @param viewer the source viewer
-	 * @param point the origin of character bounding box relative to the origin of the widget client
-	 *            area.
+	 * @param point  the origin of character bounding box relative to the origin of the widget
+	 *                   client area.
 	 * @return the {@link AbstractInlinedAnnotation} line header from the given point and null
 	 *         otherwise.
 	 */
@@ -648,7 +649,7 @@ public class InlinedAnnotationSupport {
 	 * Execute UI {@link StyledText} function which requires UI Thread.
 	 *
 	 * @param text the styled text
-	 * @param fn the function to execute.
+	 * @param fn   the function to execute.
 	 */
 	static void runInUIThread(StyledText text, Consumer<StyledText> fn) {
 		if (text == null || text.isDisposed()) {
