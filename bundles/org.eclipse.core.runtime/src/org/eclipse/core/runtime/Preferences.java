@@ -269,6 +269,7 @@ public class Preferences {
 	 * three cases in their implementation of the property change listener.
 	 * </p>
 	 */
+	@FunctionalInterface
 	public interface IPropertyChangeListener extends EventListener {
 
 		/**
