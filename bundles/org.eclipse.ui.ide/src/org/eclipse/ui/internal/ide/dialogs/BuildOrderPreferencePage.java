@@ -21,13 +21,16 @@ import org.eclipse.core.resources.IncrementalProjectBuilder;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.preference.FieldEditor;
+import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.IntegerFieldEditor;
 import org.eclipse.jface.preference.PreferencePage;
+import org.eclipse.jface.preference.StringFieldEditor;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.window.Window;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -46,7 +49,9 @@ import org.eclipse.ui.IWorkbenchPreferencePage;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.GlobalBuildAction;
 import org.eclipse.ui.dialogs.ListSelectionDialog;
+import org.eclipse.ui.internal.ide.IDEInternalPreferences;
 import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
+import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
 import org.eclipse.ui.internal.ide.IIDEHelpContextIds;
 import org.eclipse.ui.internal.util.PrefUtil;
 
@@ -97,6 +102,12 @@ public class BuildOrderPreferencePage extends PreferencePage implements
     // whether or not the use defaults option was selected when Apply (or OK) was last pressed
     // (or when the preference page was opened). This represents the most recent applied state.
     private boolean defaultOrderInitiallySelected;
+
+	private Button autoBuildButton;
+
+	private IntegerFieldEditor maxSimultaneousBuilds;
+
+	private Button autoSaveAllButton;
 
     private IPropertyChangeListener validityChangeListener = event -> {
 	    if (event.getProperty().equals(FieldEditor.IS_VALID)) {
@@ -215,6 +226,10 @@ public class BuildOrderPreferencePage extends PreferencePage implements
         composite.setLayoutData(data);
         composite.setFont(font);
 
+		createSaveAllBeforeBuildPref(composite);
+		createAutoBuildPref(composite);
+		createSpacer(composite);
+
         String[] buildOrder = getCurrentBuildOrder();
         boolean useDefault = (buildOrder == null);
 
@@ -232,9 +247,11 @@ public class BuildOrderPreferencePage extends PreferencePage implements
 
         createSpacer(composite);
 
-        createMaxIterationsField(composite);
-
-        createSpacer(composite);
+		Composite intFieldsComposite = new Composite(composite, SWT.NONE);
+		intFieldsComposite.setLayout(new GridLayout(2, false));
+		intFieldsComposite.setLayoutData(new GridData(SWT.FILL, SWT.DEFAULT, true, false, 2, 1));
+		createMaxIterationsField(intFieldsComposite);
+		createMaxSimultaneousBuildsGroup(intFieldsComposite);
 
         if (useDefault) {
             this.buildList.setItems(getDefaultProjectOrder());
@@ -372,13 +389,8 @@ public class BuildOrderPreferencePage extends PreferencePage implements
      * of cycles.
      */
     private void createMaxIterationsField(Composite composite) {
-        Composite maxItersComposite = new Composite(composite, SWT.NONE);
-        GridData gd = new GridData(GridData.FILL_HORIZONTAL);
-        maxItersComposite.setLayoutData(gd);
-        maxItersComposite.setFont(composite.getFont());
-
         maxItersField = new IntegerFieldEditor(
-                "", IDEWorkbenchMessages.BuildOrderPreference_maxIterationsLabel, maxItersComposite) { //$NON-NLS-1$
+				"", IDEWorkbenchMessages.BuildOrderPreference_maxIterationsLabel, composite) { //$NON-NLS-1$
             @Override
 			protected void doLoad() {
                 Text text = getTextControl();
@@ -546,6 +558,18 @@ public class BuildOrderPreferencePage extends PreferencePage implements
         this.defaultOrderButton.setSelection(true);
         defaultsButtonSelected(true);
         maxItersField.loadDefault();
+
+		// core holds onto this preference.
+		boolean autoBuild = ResourcesPlugin.getPlugin().getPluginPreferences()
+				.getDefaultBoolean(ResourcesPlugin.PREF_AUTO_BUILDING);
+		autoBuildButton.setSelection(autoBuild);
+
+		int simultaneousBuilds = ResourcesPlugin.getPlugin().getPluginPreferences()
+				.getDefaultInt(ResourcesPlugin.PREF_MAX_CONCURRENT_BUILDS);
+		maxSimultaneousBuilds.setStringValue(Integer.toString(simultaneousBuilds));
+
+		IPreferenceStore store = getIDEPreferenceStore();
+		autoSaveAllButton.setSelection(store.getDefaultBoolean(IDEInternalPreferences.SAVE_ALL_BEFORE_BUILD));
         super.performDefaults();
     }
 
@@ -567,6 +591,32 @@ public class BuildOrderPreferencePage extends PreferencePage implements
         //Get a copy of the description from the workspace, set the build order and then
         //apply it to the workspace.
         IWorkspaceDescription description = getWorkspace().getDescription();
+		if (autoBuildButton.getSelection() != getWorkspace().isAutoBuilding()) {
+            try {
+                description.setAutoBuilding(autoBuildButton.getSelection());
+				getWorkspace().setDescription(description);
+            } catch (CoreException e) {
+                IDEWorkbenchPlugin.log(
+                        "Error changing auto build workspace setting.", e//$NON-NLS-1$
+                                .getStatus());
+            }
+        }
+		if (maxSimultaneousBuilds.getIntValue() != description.getMaxConcurrentBuilds()) {
+			try {
+				description.setMaxConcurrentBuilds(maxSimultaneousBuilds.getIntValue());
+				getWorkspace().setDescription(description);
+			} catch (CoreException e) {
+				IDEWorkbenchPlugin.log("Error changing max cucrrent builds workspace setting.", e//$NON-NLS-1$
+						.getStatus());
+			}
+		}
+
+        IPreferenceStore store = getIDEPreferenceStore();
+
+        // store the save all prior to build setting
+        store.setValue(IDEInternalPreferences.SAVE_ALL_BEFORE_BUILD,
+                autoSaveAllButton.getSelection());
+
         description.setBuildOrder(buildOrder);
         description.setMaxBuildIterations(maxItersField.getIntValue());
         try {
@@ -640,4 +690,59 @@ public class BuildOrderPreferencePage extends PreferencePage implements
         difference.toArray(returnValue);
         return returnValue;
     }
+
+	/**
+	 * Create a composite that contains entry fields specifying save interval
+	 * preference.
+	 *
+	 * @param composite the Composite the group is created in.
+	 */
+	private void createMaxSimultaneousBuildsGroup(Composite composite) {
+		maxSimultaneousBuilds = new IntegerFieldEditor(IDEInternalPreferences.MAX_SIMULTANEOUS_BUILD,
+				IDEWorkbenchMessages.WorkbenchPreference_maxSimultaneousBuilds, composite);
+
+		// @issue we should drop our preference constant and let clients use
+		// core'zs pref. ours is not up-to-date anyway if someone changes this
+		// interval directly thru core api.
+		maxSimultaneousBuilds.setPreferenceStore(getIDEPreferenceStore());
+		maxSimultaneousBuilds.setPage(this);
+		maxSimultaneousBuilds
+				.setTextLimit(Integer.toString(IDEInternalPreferences.MAX_MAX_SIMULTANEOUS_BUILD).length());
+		maxSimultaneousBuilds
+				.setErrorMessage(NLS.bind(IDEWorkbenchMessages.WorkbenchPreference_maxSimultaneousBuildIntervalError,
+						Integer.valueOf(IDEInternalPreferences.MAX_MAX_SIMULTANEOUS_BUILD)));
+		maxSimultaneousBuilds.setValidateStrategy(StringFieldEditor.VALIDATE_ON_KEY_STROKE);
+		maxSimultaneousBuilds.setValidRange(1, IDEInternalPreferences.MAX_MAX_SIMULTANEOUS_BUILD);
+
+		IWorkspaceDescription description = ResourcesPlugin.getWorkspace().getDescription();
+		maxSimultaneousBuilds.setStringValue(Integer.toString(description.getMaxConcurrentBuilds()));
+
+		maxSimultaneousBuilds.setPropertyChangeListener(event -> {
+			if (event.getProperty().equals(FieldEditor.IS_VALID)) {
+				setValid(maxSimultaneousBuilds.isValid());
+			}
+		});
+	}
+
+	protected void createSaveAllBeforeBuildPref(Composite composite) {
+		autoSaveAllButton = new Button(composite, SWT.CHECK);
+		autoSaveAllButton.setLayoutData(new GridData(SWT.FILL, SWT.DEFAULT, true, false, 2, 1));
+		autoSaveAllButton.setText(IDEWorkbenchMessages.IDEWorkspacePreference_savePriorToBuilding);
+		autoSaveAllButton.setToolTipText(IDEWorkbenchMessages.IDEWorkspacePreference_savePriorToBuildingToolTip);
+		autoSaveAllButton
+				.setSelection(getIDEPreferenceStore().getBoolean(IDEInternalPreferences.SAVE_ALL_BEFORE_BUILD));
+	}
+
+	protected void createAutoBuildPref(Composite composite) {
+		autoBuildButton = new Button(composite, SWT.CHECK);
+		autoBuildButton.setLayoutData(new GridData(SWT.FILL, SWT.DEFAULT, true, false, 2, 1));
+		autoBuildButton.setText(IDEWorkbenchMessages.IDEWorkspacePreference_autobuild);
+		autoBuildButton.setToolTipText(IDEWorkbenchMessages.IDEWorkspacePreference_autobuildToolTip);
+		autoBuildButton.setSelection(ResourcesPlugin.getWorkspace().isAutoBuilding());
+	}
+
+	protected IPreferenceStore getIDEPreferenceStore() {
+		return IDEWorkbenchPlugin.getDefault().getPreferenceStore();
+	}
+
 }

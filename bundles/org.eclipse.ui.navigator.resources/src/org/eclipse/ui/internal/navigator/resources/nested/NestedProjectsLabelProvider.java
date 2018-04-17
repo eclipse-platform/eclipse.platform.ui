@@ -12,23 +12,49 @@ package org.eclipse.ui.internal.navigator.resources.nested;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.jface.viewers.LabelProvider;
+import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.ui.IMemento;
 import org.eclipse.ui.model.WorkbenchLabelProvider;
+import org.eclipse.ui.navigator.ICommonContentExtensionSite;
+import org.eclipse.ui.navigator.ICommonLabelProvider;
 
-public class NestedProjectsLabelProvider extends LabelProvider {
+public class NestedProjectsLabelProvider extends WorkbenchLabelProvider implements ICommonLabelProvider {
 
-	private WorkbenchLabelProvider labelProvider = new WorkbenchLabelProvider();
 
 	@Override
-	public String getText(Object element) {
+	protected String decorateText(String input, Object element) {
 		if (! (element instanceof IProject)) {
-			return null;
+			return input;
 		}
 		IProject project = (IProject)element;
 		IPath location = project.getLocation();
 		if (location != null && !location.lastSegment().equals(project.getName())) {
-			return labelProvider.getText(element) + " (in " + location.lastSegment() + ")"; //$NON-NLS-1$ //$NON-NLS-2$
+			return input + " (in " + location.lastSegment() + ")"; //$NON-NLS-1$ //$NON-NLS-2$
 		}
+		return input;
+	}
+
+	@Override
+	protected ImageDescriptor decorateImage(ImageDescriptor input, Object element) {
+		return super.decorateImage(input, element);
+	}
+
+	@Override
+	public void restoreState(IMemento aMemento) {
+	}
+
+	@Override
+	public void saveState(IMemento aMemento) {
+	}
+
+	@Override
+	public String getDescription(Object anElement) {
 		return null;
 	}
+
+	@Override
+	public void init(ICommonContentExtensionSite aConfig) {
+
+	}
+
 }
