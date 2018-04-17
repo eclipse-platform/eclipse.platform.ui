@@ -193,8 +193,13 @@ public class TextSearchVisitor {
 					fileCharSequenceProvider.releaseCharSequence(charsequenceForPreviousLocation);
 				} catch (IOException e) {
 					SearchPlugin.log(e);
+				} finally {
+					charsequenceForPreviousLocation = null;
 				}
 			}
+			fileCharSequenceProvider = null;
+			previousLocationFromFile = null;
+			occurencesForPreviousLocation = null;
 			return multiStatus;
 		}
 
