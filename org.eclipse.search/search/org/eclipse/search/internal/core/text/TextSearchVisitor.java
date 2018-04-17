@@ -80,6 +80,7 @@ public class TextSearchVisitor {
 	public static final boolean TRACING= "true".equalsIgnoreCase(Platform.getDebugOption("org.eclipse.search/perf")); //$NON-NLS-1$ //$NON-NLS-2$
 	private static final int NUMBER_OF_LOGICAL_THREADS= Runtime.getRuntime().availableProcessors();
 	private static final int FILES_PER_JOB= 50;
+	private static final int MAX_JOBS_COUNT = 100;
 
 	public static class ReusableMatchAccess extends TextSearchMatchAccess {
 
@@ -324,6 +325,10 @@ public class TextSearchVisitor {
 		int jobCount= 1;
 		if (maxThreads > 1) {
 			jobCount= (files.length + FILES_PER_JOB - 1) / FILES_PER_JOB;
+		}
+		// Too many job references can cause OOM, see bug 514961
+		if (jobCount > MAX_JOBS_COUNT) {
+			jobCount = MAX_JOBS_COUNT;
 		}
 		final JobGroup jobGroup= new TextSearchJobGroup("Text Search", maxThreads, jobCount); //$NON-NLS-1$
 		long startTime= TRACING ? System.currentTimeMillis() : 0;
