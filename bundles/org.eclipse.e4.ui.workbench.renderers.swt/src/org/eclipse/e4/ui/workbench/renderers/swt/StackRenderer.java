@@ -563,6 +563,7 @@ public class StackRenderer extends LazyStackRenderer implements IPreferenceChang
 			break;
 		case UIEvents.Dirtyable.DIRTY:
 			cti.setText(getLabel(part, part.getLocalizedLabel()));
+			break;
 		case UIEvents.UILabel.ICONURI:
 			cti.setImage(getImage(part));
 			break;
