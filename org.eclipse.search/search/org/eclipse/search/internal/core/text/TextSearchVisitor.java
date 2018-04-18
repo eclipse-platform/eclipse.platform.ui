@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2016 IBM Corporation and others.
+ * Copyright (c) 2000, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -80,7 +80,7 @@ public class TextSearchVisitor {
 	public static final boolean TRACING= "true".equalsIgnoreCase(Platform.getDebugOption("org.eclipse.search/perf")); //$NON-NLS-1$ //$NON-NLS-2$
 	private static final int NUMBER_OF_LOGICAL_THREADS= Runtime.getRuntime().availableProcessors();
 	private static final int FILES_PER_JOB= 50;
-	private static final int MAX_JOBS_COUNT = 100;
+	private static final int MAX_JOBS_COUNT= 100;
 
 	public static class ReusableMatchAccess extends TextSearchMatchAccess {
 
@@ -169,19 +169,19 @@ public class TextSearchVisitor {
 		public TextSearchJob(IFile[] files, int begin, int end, Map<IFile, IDocument> documentsInEditors) {
 			super(files[begin].getName());
 			setSystem(true);
-			fFiles = files;
-			fBegin = begin;
-			fEnd = end;
-			fDocumentsInEditors = documentsInEditors;
+			fFiles= files;
+			fBegin= begin;
+			fEnd= end;
+			fDocumentsInEditors= documentsInEditors;
 		}
 
 		@Override
 		protected IStatus run(IProgressMonitor inner) {
 			MultiStatus multiStatus=
 					new MultiStatus(NewSearchUI.PLUGIN_ID, IStatus.OK, SearchMessages.TextSearchEngine_statusMessage, null);
-			SubMonitor subMonitor = SubMonitor.convert(inner, fEnd - fBegin);
-			this.fileCharSequenceProvider = new FileCharSequenceProvider();
-			for (int i = fBegin; i < fEnd && !fFatalError; i++) {
+			SubMonitor subMonitor= SubMonitor.convert(inner, fEnd - fBegin);
+			this.fileCharSequenceProvider= new FileCharSequenceProvider();
+			for (int i= fBegin; i < fEnd && !fFatalError; i++) {
 				IStatus status= processFile(fFiles[i], subMonitor.split(1));
 				// Only accumulate interesting status
 				if (!status.isOK())
@@ -195,12 +195,12 @@ public class TextSearchVisitor {
 				} catch (IOException e) {
 					SearchPlugin.log(e);
 				} finally {
-					charsequenceForPreviousLocation = null;
+					charsequenceForPreviousLocation= null;
 				}
 			}
-			fileCharSequenceProvider = null;
-			previousLocationFromFile = null;
-			occurencesForPreviousLocation = null;
+			fileCharSequenceProvider= null;
+			previousLocationFromFile= null;
+			occurencesForPreviousLocation= null;
 			return multiStatus;
 		}
 
@@ -221,10 +221,10 @@ public class TextSearchVisitor {
 					locateMatches(file, documentCharSequence, matcher, monitor);
 				} else if (previousLocationFromFile != null && previousLocationFromFile.equals(file.getLocation()) && !occurencesForPreviousLocation.isEmpty()) {
 					// reuse previous result
-					ReusableMatchAccess matchAccess = new ReusableMatchAccess();
+					ReusableMatchAccess matchAccess= new ReusableMatchAccess();
 					for (TextSearchMatchAccess occurence : occurencesForPreviousLocation) {
 						matchAccess.initialize(file, occurence.getMatchOffset(), occurence.getMatchLength(), charsequenceForPreviousLocation);
-						boolean goOn = fCollector.acceptPatternMatch(matchAccess);
+						boolean goOn= fCollector.acceptPatternMatch(matchAccess);
 						if (!goOn) {
 							break;
 						}
@@ -233,7 +233,7 @@ public class TextSearchVisitor {
 					if (charsequenceForPreviousLocation != null) {
 						try {
 							fileCharSequenceProvider.releaseCharSequence(charsequenceForPreviousLocation);
-							charsequenceForPreviousLocation = null;
+							charsequenceForPreviousLocation= null;
 						} catch (IOException e) {
 							SearchPlugin.log(e);
 						}
@@ -241,11 +241,11 @@ public class TextSearchVisitor {
 					try {
 						charsequenceForPreviousLocation= fileCharSequenceProvider.newCharSequence(file);
 						if (hasBinaryContent(charsequenceForPreviousLocation, file) && !fCollector.reportBinaryFile(file)) {
-							occurencesForPreviousLocation = Collections.emptyList();
+							occurencesForPreviousLocation= Collections.emptyList();
 							return Status.OK_STATUS;
 						}
-						occurencesForPreviousLocation = locateMatches(file, charsequenceForPreviousLocation, matcher, monitor);
-						previousLocationFromFile = file.getLocation();
+						occurencesForPreviousLocation= locateMatches(file, charsequenceForPreviousLocation, matcher, monitor);
+						previousLocationFromFile= file.getLocation();
 					} catch (FileCharSequenceProvider.FileCharSequenceException e) {
 						e.throwWrappedException();
 					}
@@ -270,7 +270,7 @@ public class TextSearchVisitor {
 				String message= Messages.format(SearchMessages.TextSearchVisitor_error, args);
 				return new Status(IStatus.ERROR, NewSearchUI.PLUGIN_ID, IStatus.ERROR, message, e);
 			} catch (StackOverflowError e) {
-				fFatalError = true;
+				fFatalError= true;
 				String message= SearchMessages.TextSearchVisitor_patterntoocomplex0;
 				return new Status(IStatus.ERROR, NewSearchUI.PLUGIN_ID, IStatus.ERROR, message, e);
 			} finally {
@@ -328,7 +328,7 @@ public class TextSearchVisitor {
 		}
 		// Too many job references can cause OOM, see bug 514961
 		if (jobCount > MAX_JOBS_COUNT) {
-			jobCount = MAX_JOBS_COUNT;
+			jobCount= MAX_JOBS_COUNT;
 		}
 		final JobGroup jobGroup= new TextSearchJobGroup("Text Search", maxThreads, jobCount); //$NON-NLS-1$
 		long startTime= TRACING ? System.currentTimeMillis() : 0;
@@ -379,8 +379,8 @@ public class TextSearchVisitor {
 			try {
 				fCollector.beginReporting();
 				Map<IFile, IDocument> documentsInEditors= PlatformUI.isWorkbenchRunning() ? evalNonFileBufferDocuments() : Collections.emptyMap();
-				int filesPerJob = (files.length + jobCount - 1) / jobCount;
-				IFile[] filesByLocation = new IFile[files.length];
+				int filesPerJob= (files.length + jobCount - 1) / jobCount;
+				IFile[] filesByLocation= new IFile[files.length];
 				System.arraycopy(files, 0, filesByLocation, 0, files.length);
 				// Sorting files to search by location allows to more easily reuse
 				// search results from one file to the other when they have same location
@@ -508,17 +508,17 @@ public class TextSearchVisitor {
 	}
 
 	private List<TextSearchMatchAccess> locateMatches(IFile file, CharSequence searchInput, Matcher matcher, IProgressMonitor monitor) throws CoreException {
-		List<TextSearchMatchAccess> occurences = null;
+		List<TextSearchMatchAccess> occurences= null;
 		matcher.reset(searchInput);
 		int k= 0;
 		while (matcher.find()) {
 			if (occurences == null) {
-				occurences = new ArrayList<>();
+				occurences= new ArrayList<>();
 			}
 			int start= matcher.start();
 			int end= matcher.end();
 			if (end != start) { // don't report 0-length matches
-				ReusableMatchAccess access = new ReusableMatchAccess();
+				ReusableMatchAccess access= new ReusableMatchAccess();
 				access.initialize(file, start, end - start, searchInput);
 				occurences.add(access);
 				boolean res= fCollector.acceptPatternMatch(access);
@@ -532,7 +532,7 @@ public class TextSearchVisitor {
 			}
 		}
 		if (occurences == null) {
-			occurences = Collections.emptyList();
+			occurences= Collections.emptyList();
 		}
 		return occurences;
 	}
