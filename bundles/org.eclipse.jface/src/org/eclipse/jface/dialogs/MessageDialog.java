@@ -129,51 +129,46 @@ public class MessageDialog extends IconAndMessageDialog {
      */
     private Control customArea;
 
-    /**
+	/**
 	 * Create a message dialog. Note that the dialog will have no visual
 	 * representation (no widgets) until it is told to open.
 	 * <p>
-	 * The labels of the buttons to appear in the button bar are supplied in
-	 * this constructor as an array. The <code>open</code> method will return
-	 * the index of the label in this array corresponding to the button that was
-	 * pressed to close the dialog.
+	 * The labels of the buttons to appear in the button bar are supplied in this
+	 * constructor as an array. The <code>open</code> method will return the index
+	 * of the label in this array corresponding to the button that was pressed to
+	 * close the dialog.
 	 * </p>
 	 * <p>
-	 * <strong>Note:</strong> If the dialog was dismissed without pressing a
-	 * button (ESC key, close box, etc.) then {@link SWT#DEFAULT} is returned.
-	 * Note that the <code>open</code> method blocks.
+	 * <strong>Note:</strong> If the dialog was dismissed without pressing a button
+	 * (ESC key, close box, etc.) then {@link SWT#DEFAULT} is returned. Note that
+	 * the <code>open</code> method blocks.
 	 * </p>
 	 *
-	 * As of 3.11 you can also use the other constructor which is based on
-	 * varargs
+	 * As of 3.11 you can also use the other constructor which is based on varargs
 	 *
-	 * @param parentShell
-	 *            the parent shell, or <code>null</code> to create a top-level
-	 *            shell
-	 * @param dialogTitle
-	 *            the dialog title, or <code>null</code> if none
-	 * @param dialogTitleImage
-	 *            the dialog title image, or <code>null</code> if none
-	 * @param dialogMessage
-	 *            the dialog message
-	 * @param dialogImageType
-	 *            one of the following values:
-	 *            <ul>
-	 *            <li><code>MessageDialog.NONE</code> for a dialog with no image
-	 *            </li>
-	 *            <li><code>MessageDialog.ERROR</code> for a dialog with an
-	 *            error image</li>
-	 *            <li><code>MessageDialog.INFORMATION</code> for a dialog with
-	 *            an information image</li>
-	 *            <li><code>MessageDialog.QUESTION </code> for a dialog with a
-	 *            question image</li>
-	 *            <li><code>MessageDialog.WARNING</code> for a dialog with a
-	 *            warning image</li>
-	 *            </ul>
-	 * @param dialogButtonLabels
-	 *            an array of labels for the buttons in the button bar
-	 * @param defaultIndex
-	 *            the index in the button label array of the default button
+	 * @param parentShell        the parent shell, or <code>null</code> to create a
+	 *                           top-level shell
+	 * @param dialogTitle        the dialog title, or <code>null</code> if none
+	 * @param dialogTitleImage   the dialog title image, or <code>null</code> if
+	 *                           none
+	 * @param dialogMessage      the dialog message
+	 * @param dialogImageType    one of the following values:
+	 *                           <ul>
+	 *                           <li><code>MessageDialog.NONE</code> for a dialog
+	 *                           with no image</li>
+	 *                           <li><code>MessageDialog.ERROR</code> for a dialog
+	 *                           with an error image</li>
+	 *                           <li><code>MessageDialog.INFORMATION</code> for a
+	 *                           dialog with an information image</li>
+	 *                           <li><code>MessageDialog.QUESTION </code> for a
+	 *                           dialog with a question image</li>
+	 *                           <li><code>MessageDialog.WARNING</code> for a dialog
+	 *                           with a warning image</li>
+	 *                           </ul>
+	 * @param dialogButtonLabels an array of labels for the buttons in the button
+	 *                           bar
+	 * @param defaultIndex       the index in the button label array of the default
+	 *                           button
 	 *
 	 */
 	public MessageDialog(Shell parentShell, String dialogTitle, Image dialogTitleImage, String dialogMessage,
@@ -186,45 +181,41 @@ public class MessageDialog extends IconAndMessageDialog {
 	 * Create a message dialog. Note that the dialog will have no visual
 	 * representation (no widgets) until it is told to open.
 	 * <p>
-	 * The labels of the buttons to appear in the button bar are supplied in
-	 * this constructor as a varargs of Strings. The <code>open</code> method
-	 * will return the index of the label in this array corresponding to the
-	 * button that was pressed to close the dialog.
+	 * The labels of the buttons to appear in the button bar are supplied in this
+	 * constructor as a varargs of Strings. The <code>open</code> method will return
+	 * the index of the label in this array corresponding to the button that was
+	 * pressed to close the dialog.
 	 * </p>
 	 * <p>
-	 * <strong>Note:</strong> If the dialog was dismissed without pressing a
-	 * button (ESC key, close box, etc.) then {@link SWT#DEFAULT} is returned.
-	 * Note that the <code>open</code> method blocks.
+	 * <strong>Note:</strong> If the dialog was dismissed without pressing a button
+	 * (ESC key, close box, etc.) then {@link SWT#DEFAULT} is returned. Note that
+	 * the <code>open</code> method blocks.
 	 * </p>
 	 *
-	 * @param parentShell
-	 *            the parent shell, or <code>null</code> to create a top-level
-	 *            shell
-	 * @param dialogTitle
-	 *            the dialog title, or <code>null</code> if none
-	 * @param dialogTitleImage
-	 *            the dialog title image, or <code>null</code> if none
-	 * @param dialogMessage
-	 *            the dialog message
-	 * @param dialogImageType
-	 *            one of the following values:
-	 *            <ul>
-	 *            <li><code>MessageDialog.NONE</code> for a dialog with no image
-	 *            </li>
-	 *            <li><code>MessageDialog.ERROR</code> for a dialog with an
-	 *            error image</li>
-	 *            <li><code>MessageDialog.INFORMATION</code> for a dialog with
-	 *            an information image</li>
-	 *            <li><code>MessageDialog.QUESTION </code> for a dialog with a
-	 *            question image</li>
-	 *            <li><code>MessageDialog.WARNING</code> for a dialog with a
-	 *            warning image</li>
-	 *            </ul>
-	 * @param defaultIndex
-	 *            the index in the button label array of the default button
+	 * @param parentShell        the parent shell, or <code>null</code> to create a
+	 *                           top-level shell
+	 * @param dialogTitle        the dialog title, or <code>null</code> if none
+	 * @param dialogTitleImage   the dialog title image, or <code>null</code> if
+	 *                           none
+	 * @param dialogMessage      the dialog message
+	 * @param dialogImageType    one of the following values:
+	 *                           <ul>
+	 *                           <li><code>MessageDialog.NONE</code> for a dialog
+	 *                           with no image</li>
+	 *                           <li><code>MessageDialog.ERROR</code> for a dialog
+	 *                           with an error image</li>
+	 *                           <li><code>MessageDialog.INFORMATION</code> for a
+	 *                           dialog with an information image</li>
+	 *                           <li><code>MessageDialog.QUESTION </code> for a
+	 *                           dialog with a question image</li>
+	 *                           <li><code>MessageDialog.WARNING</code> for a dialog
+	 *                           with a warning image</li>
+	 *                           </ul>
+	 * @param defaultIndex       the index in the button label array of the default
+	 *                           button
 	 *
-	 * @param dialogButtonLabels
-	 *            varargs of Strings for the button labels in the button bar
+	 * @param dialogButtonLabels varargs of Strings for the button labels in the
+	 *                           button bar
 	 *
 	 * @since 3.12
 	 */
@@ -291,18 +282,17 @@ public class MessageDialog extends IconAndMessageDialog {
         }
     }
 
-    /**
-     * Creates and returns the contents of an area of the dialog which appears
-     * below the message and above the button bar.
-     * <p>
-     * The default implementation of this framework method returns
-     * <code>null</code>. Subclasses may override.
-     * </p>
-     *
-     * @param parent
-     *            parent composite to contain the custom area
-     * @return the custom area control, or <code>null</code>
-     */
+	/**
+	 * Creates and returns the contents of an area of the dialog which appears below
+	 * the message and above the button bar.
+	 * <p>
+	 * The default implementation of this framework method returns
+	 * <code>null</code>. Subclasses may override.
+	 * </p>
+	 *
+	 * @param parent parent composite to contain the custom area
+	 * @return the custom area control, or <code>null</code>
+	 */
     protected Control createCustomArea(Composite parent) {
         return null;
     }
@@ -336,13 +326,13 @@ public class MessageDialog extends IconAndMessageDialog {
         return composite;
     }
 
-    /**
-     * Gets a button in this dialog's button bar.
-     *
-     * @param index
-     *            the index of the button in the dialog's button bar
-     * @return a button in the dialog's button bar, or <code>null</code> if there's no button with that index
-     */
+	/**
+	 * Gets a button in this dialog's button bar.
+	 *
+	 * @param index the index of the button in the dialog's button bar
+	 * @return a button in the dialog's button bar, or <code>null</code> if there's
+	 *         no button with that index
+	 */
     @Override
 	protected Button getButton(int index) {
 		if (buttons == null || index < 0 || index >= buttons.length) {
@@ -382,19 +372,14 @@ public class MessageDialog extends IconAndMessageDialog {
 	 * Convenience method to open a simple dialog as specified by the
 	 * <code>kind</code> flag.
 	 *
-	 * @param kind
-	 *            the kind of dialog to open, one of {@link #ERROR},
-	 *            {@link #INFORMATION}, {@link #QUESTION}, {@link #WARNING},
-	 *            {@link #CONFIRM}, or {@link #QUESTION_WITH_CANCEL}.
-	 * @param parent
-	 *            the parent shell of the dialog, or <code>null</code> if none
-	 * @param title
-	 *            the dialog's title, or <code>null</code> if none
-	 * @param message
-	 *            the message
-	 * @param style
-	 *            {@link SWT#NONE} for a default dialog, or {@link SWT#SHEET} for
-	 *            a dialog with sheet behavior
+	 * @param kind    the kind of dialog to open, one of {@link #ERROR},
+	 *                {@link #INFORMATION}, {@link #QUESTION}, {@link #WARNING},
+	 *                {@link #CONFIRM}, or {@link #QUESTION_WITH_CANCEL}.
+	 * @param parent  the parent shell of the dialog, or <code>null</code> if none
+	 * @param title   the dialog's title, or <code>null</code> if none
+	 * @param message the message
+	 * @param style   {@link SWT#NONE} for a default dialog, or {@link SWT#SHEET}
+	 *                for a dialog with sheet behavior
 	 * @return <code>true</code> if the user presses the OK or Yes button,
 	 *         <code>false</code> otherwise
 	 * @since 3.5
@@ -407,28 +392,24 @@ public class MessageDialog extends IconAndMessageDialog {
 	}
 
 	/**
-	 * Method to open a simple dialog as specified by the
-	 * <code>kind</code> flag.
+	 * Method to open a simple dialog as specified by the <code>kind</code> flag.
 	 *
 	 * This method accepts varargs of String to set custom button labels.
 	 *
 	 * Use this method if you want to override the default labels.
 	 *
-	 * @param kind
-	 *            the kind of dialog to open, one of {@link #ERROR},
-	 *            {@link #INFORMATION}, {@link #QUESTION}, {@link #WARNING},
-	 *            {@link #CONFIRM}, or {@link #QUESTION_WITH_CANCEL}.
-	 * @param parent
-	 *            the parent shell of the dialog, or <code>null</code> if none
-	 * @param title
-	 *            the dialog's title, or <code>null</code> if none
-	 * @param message
-	 *            the message
-	 * @param style
-	 *            {@link SWT#NONE} for a default dialog, or {@link SWT#SHEET} for a
-	 *            dialog with sheet behavior
-	 * @param dialogButtonLabels
-	 *            varargs of Strings for the button labels in the button bar
+	 * @param kind               the kind of dialog to open, one of {@link #ERROR},
+	 *                           {@link #INFORMATION}, {@link #QUESTION},
+	 *                           {@link #WARNING}, {@link #CONFIRM}, or
+	 *                           {@link #QUESTION_WITH_CANCEL}.
+	 * @param parent             the parent shell of the dialog, or
+	 *                           <code>null</code> if none
+	 * @param title              the dialog's title, or <code>null</code> if none
+	 * @param message            the message
+	 * @param style              {@link SWT#NONE} for a default dialog, or
+	 *                           {@link SWT#SHEET} for a dialog with sheet behavior
+	 * @param dialogButtonLabels varargs of Strings for the button labels in the
+	 *                           button bar
 	 * @return the index of the button that was pressed.
 	 * @since 3.13
 	 */
@@ -472,76 +453,61 @@ public class MessageDialog extends IconAndMessageDialog {
 		return dialogButtonLabels;
 	}
 
-    /**
-     * Convenience method to open a simple confirm (OK/Cancel) dialog.
-     *
-     * @param parent
-     *            the parent shell of the dialog, or <code>null</code> if none
-     * @param title
-     *            the dialog's title, or <code>null</code> if none
-     * @param message
-     *            the message
-     * @return <code>true</code> if the user presses the OK button,
-     *         <code>false</code> otherwise
-     */
+	/**
+	 * Convenience method to open a simple confirm (OK/Cancel) dialog.
+	 *
+	 * @param parent  the parent shell of the dialog, or <code>null</code> if none
+	 * @param title   the dialog's title, or <code>null</code> if none
+	 * @param message the message
+	 * @return <code>true</code> if the user presses the OK button,
+	 *         <code>false</code> otherwise
+	 */
     public static boolean openConfirm(Shell parent, String title, String message) {
         return open(CONFIRM, parent, title, message, SWT.NONE);
     }
 
-    /**
-     * Convenience method to open a standard error dialog.
-     *
-     * @param parent
-     *            the parent shell of the dialog, or <code>null</code> if none
-     * @param title
-     *            the dialog's title, or <code>null</code> if none
-     * @param message
-     *            the message
-     */
+	/**
+	 * Convenience method to open a standard error dialog.
+	 *
+	 * @param parent  the parent shell of the dialog, or <code>null</code> if none
+	 * @param title   the dialog's title, or <code>null</code> if none
+	 * @param message the message
+	 */
     public static void openError(Shell parent, String title, String message) {
         open(ERROR, parent, title, message, SWT.NONE);
     }
 
-    /**
-     * Convenience method to open a standard information dialog.
-     *
-     * @param parent
-     *            the parent shell of the dialog, or <code>null</code> if none
-     * @param title
-     *            the dialog's title, or <code>null</code> if none
-     * @param message
-     *            the message
-     */
+	/**
+	 * Convenience method to open a standard information dialog.
+	 *
+	 * @param parent  the parent shell of the dialog, or <code>null</code> if none
+	 * @param title   the dialog's title, or <code>null</code> if none
+	 * @param message the message
+	 */
 	public static void openInformation(Shell parent, String title, String message) {
         open(INFORMATION, parent, title, message, SWT.NONE);
     }
 
-    /**
-     * Convenience method to open a simple Yes/No question dialog.
-     *
-     * @param parent
-     *            the parent shell of the dialog, or <code>null</code> if none
-     * @param title
-     *            the dialog's title, or <code>null</code> if none
-     * @param message
-     *            the message
-     * @return <code>true</code> if the user presses the Yes button,
-     *         <code>false</code> otherwise
-     */
+	/**
+	 * Convenience method to open a simple Yes/No question dialog.
+	 *
+	 * @param parent  the parent shell of the dialog, or <code>null</code> if none
+	 * @param title   the dialog's title, or <code>null</code> if none
+	 * @param message the message
+	 * @return <code>true</code> if the user presses the Yes button,
+	 *         <code>false</code> otherwise
+	 */
 	public static boolean openQuestion(Shell parent, String title, String message) {
         return open(QUESTION, parent, title, message, SWT.NONE);
     }
 
-    /**
-     * Convenience method to open a standard warning dialog.
-     *
-     * @param parent
-     *            the parent shell of the dialog, or <code>null</code> if none
-     * @param title
-     *            the dialog's title, or <code>null</code> if none
-     * @param message
-     *            the message
-     */
+	/**
+	 * Convenience method to open a standard warning dialog.
+	 *
+	 * @param parent  the parent shell of the dialog, or <code>null</code> if none
+	 * @param title   the dialog's title, or <code>null</code> if none
+	 * @param message the message
+	 */
     public static void openWarning(Shell parent, String title, String message) {
         open(WARNING, parent, title, message, SWT.NONE);
     }
@@ -598,12 +564,11 @@ public class MessageDialog extends IconAndMessageDialog {
         return defaultButtonIndex;
     }
 
-    /**
-     * A mutator for the array of buttons in the button bar.
-     *
-     * @param buttons
-     *            The buttons in the button bar; must not be <code>null</code>.
-     */
+	/**
+	 * A mutator for the array of buttons in the button bar.
+	 *
+	 * @param buttons The buttons in the button bar; must not be <code>null</code>.
+	 */
 	protected void setButtons(Button... buttons) {
         if (buttons == null) {
 			throw new NullPointerException("The array of buttons cannot be null."); //$NON-NLS-1$
