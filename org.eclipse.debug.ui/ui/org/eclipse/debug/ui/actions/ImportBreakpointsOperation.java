@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2015 IBM Corporation and others.
+ * Copyright (c) 2005, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -18,8 +18,8 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.io.StringReader;
-import java.io.UnsupportedEncodingException;
 import java.lang.reflect.InvocationTargetException;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -154,22 +154,16 @@ public class ImportBreakpointsOperation implements IRunnableWithProgress {
 		fImportBreakpoints = importBreakpoints;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.core.resources.IWorkspaceRunnable#run(org.eclipse.core.runtime.IProgressMonitor)
-	 */
 	@Override
 	public void run(final IProgressMonitor monitor) throws InvocationTargetException {
 		SubMonitor localmonitor = SubMonitor.convert(monitor, ImportExportMessages.ImportOperation_0, 1);
 		try {
 			XMLMemento memento = null;
 			if (fBuffer == null) {
-				try (Reader reader = new InputStreamReader(new FileInputStream(fFileName), "UTF-8")) { //$NON-NLS-1$
+				try (Reader reader = new InputStreamReader(new FileInputStream(fFileName), StandardCharsets.UTF_8)) {
 					memento = XMLMemento.createReadRoot(reader);
 				} catch (FileNotFoundException e) {
 					throw new InvocationTargetException(e, MessageFormat.format("Breakpoint import file not found: {0}", new Object[] { //$NON-NLS-1$
-							fFileName }));
-				} catch (UnsupportedEncodingException e) {
-					throw new InvocationTargetException(e, MessageFormat.format("The import file was written in non-UTF-8 encoding.", new Object[] { //$NON-NLS-1$
 							fFileName }));
 				} catch (IOException e) {
 					throw new InvocationTargetException(e);

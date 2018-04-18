@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2017 IBM Corporation and others.
+ * Copyright (c) 2000, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -15,7 +15,7 @@ package org.eclipse.debug.internal.core;
 import java.io.BufferedOutputStream;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -99,9 +99,6 @@ public class LaunchConfigurationWorkingCopy extends LaunchConfiguration implemen
 		fSuppressChange = false;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.core.LaunchConfiguration#initialize()
-	 */
 	@Override
 	protected void initialize() {
 		fDirty = false;
@@ -176,17 +173,11 @@ public class LaunchConfigurationWorkingCopy extends LaunchConfiguration implemen
 		fSuppressChange = false;
 	}
 
-	/**
-	 * @see ILaunchConfigurationWorkingCopy#isDirty()
-	 */
 	@Override
 	public boolean isDirty() {
 		return fDirty;
 	}
 
-	/**
-	 * @see ILaunchConfigurationWorkingCopy#doSave()
-	 */
 	@Override
 	public synchronized ILaunchConfiguration doSave() throws CoreException {
 		return doSave(new NullProgressMonitor());
@@ -227,12 +218,7 @@ public class LaunchConfigurationWorkingCopy extends LaunchConfiguration implemen
 				}
 			}
 			if (useRunnable) {
-				IWorkspaceRunnable wr = new IWorkspaceRunnable() {
-					@Override
-					public void run(IProgressMonitor pm) throws CoreException {
-						doSave0(pm);
-					}
-				};
+					IWorkspaceRunnable wr = pm -> doSave0(pm);
 				ResourcesPlugin.getWorkspace().run(wr, null, 0, lmonitor.newChild(1));
 			} else {
 				//file is persisted in the metadata not the workspace
@@ -363,17 +349,7 @@ public class LaunchConfigurationWorkingCopy extends LaunchConfiguration implemen
 						)
 					);
 				}
-				ByteArrayInputStream stream = null;
-				try {
-					stream = new ByteArrayInputStream(xml.getBytes("UTF8")); //$NON-NLS-1$
-				} catch (UnsupportedEncodingException ue) {
-					lmonitor.done();
-					throw new DebugException(
-						new Status(
-							 IStatus.ERROR, DebugPlugin.getUniqueIdentifier(),
-							 DebugException.REQUEST_FAILED, DebugCoreMessages.LaunchConfigurationWorkingCopy_5, ue
-						));
-				}
+				ByteArrayInputStream stream = new ByteArrayInputStream(xml.getBytes(StandardCharsets.UTF_8));
 				SubMonitor smonitor = null;
 				if (!file.exists()) {
 					added = true;
@@ -426,72 +402,48 @@ public class LaunchConfigurationWorkingCopy extends LaunchConfiguration implemen
 		}
 	}
 
-	/**
-	 * @see ILaunchConfigurationWorkingCopy#setAttribute(String, int)
-	 */
 	@Override
 	public void setAttribute(String attributeName, int value) {
 		getInfo().setAttribute(attributeName, Integer.valueOf(value));
 		setDirty();
 	}
 
-	/**
-	 * @see ILaunchConfigurationWorkingCopy#setAttribute(String, String)
-	 */
 	@Override
 	public void setAttribute(String attributeName, String value) {
 		getInfo().setAttribute(attributeName, value);
 		setDirty();
 	}
 
-	/**
-	 * @see ILaunchConfigurationWorkingCopy#setAttribute(String, boolean)
-	 */
 	@Override
 	public void setAttribute(String attributeName, boolean value) {
 		getInfo().setAttribute(attributeName, Boolean.valueOf(value));
 		setDirty();
 	}
 
-	/**
-	 * @see ILaunchConfigurationWorkingCopy#setAttribute(String, List)
-	 */
 	@Override
 	public void setAttribute(String attributeName, List<String> value) {
 		getInfo().setAttribute(attributeName, value);
 		setDirty();
 	}
 
-	/**
-	 * @see ILaunchConfigurationWorkingCopy#setAttribute(String, Map)
-	 */
 	@Override
 	public void setAttribute(String attributeName, Map<String, String> value) {
 		getInfo().setAttribute(attributeName, value);
 		setDirty();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.core.ILaunchConfigurationWorkingCopy#setAttribute(java.lang.String, java.util.Set)
-	 */
 	@Override
 	public void setAttribute(String attributeName, Set<String> value) {
 		getInfo().setAttribute(attributeName, value);
 		setDirty();
 	}
 
-	/**
-	 * @see ILaunchConfigurationWorkingCopy#setAttribute(String, Object)
-	 */
 	@Override
 	public void setAttribute(String attributeName, Object value) {
 		getInfo().setAttribute(attributeName, value);
 		setDirty();
 	}
 
-	/**
-	 * @see ILaunchConfigurationWorkingCopy#getOriginal()
-	 */
 	@Override
 	public ILaunchConfiguration getOriginal() {
 		ILaunchConfiguration config = fOriginal;
@@ -503,9 +455,6 @@ public class LaunchConfigurationWorkingCopy extends LaunchConfiguration implemen
 		return config;
 	}
 
-	/**
-	 * @see org.eclipse.debug.core.ILaunchConfigurationWorkingCopy#getParent()
-	 */
 	@Override
 	public ILaunchConfigurationWorkingCopy getParent() {
 		return fParent;
@@ -550,9 +499,6 @@ public class LaunchConfigurationWorkingCopy extends LaunchConfiguration implemen
 		fInfo = info;
 	}
 
-	/**
-	 * @see ILaunchConfiguration#isWorkingCopy()
-	 */
 	@Override
 	public boolean isWorkingCopy() {
 		return true;
@@ -581,9 +527,6 @@ public class LaunchConfigurationWorkingCopy extends LaunchConfiguration implemen
 		}
 	}
 
-	/**
-	 * @see org.eclipse.debug.core.ILaunchConfigurationWorkingCopy#setModes(java.util.Set)
-	 */
 	@Override
 	public void setModes(Set<String> modes) {
 		getInfo().setAttribute(ATTR_LAUNCH_MODES, (modes.size() > 0 ? modes : null));
@@ -698,9 +641,6 @@ public class LaunchConfigurationWorkingCopy extends LaunchConfiguration implemen
 		return fSuppressChange;
 	}
 
-	/**
-	 * @see ILaunchConfigurationWorkingCopy#setContainer(IContainer)
-	 */
 	@Override
 	public void setContainer(IContainer container) {
 		if (equalOrNull(getContainer(), container)) {
@@ -710,28 +650,19 @@ public class LaunchConfigurationWorkingCopy extends LaunchConfiguration implemen
 		setDirty();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * org.eclipse.debug.core.ILaunchConfigurationWorkingCopy#setAttributes(
-	 * java.util.Map)
-	 */
 	@Override
 	public void setAttributes(Map<String, ? extends Object> attributes) {
 		getInfo().setAttributes(attributes);
 		setDirty();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.core.ILaunchConfigurationWorkingCopy#setResource(org.eclipse.core.resources.IResource)
-	 */
 	@Override
 	public void setMappedResources(IResource[] resources) {
 		ArrayList<String> paths = null;
 		ArrayList<String> types = null;
 		if(resources != null && resources.length > 0) {
-			paths = new ArrayList<String>(resources.length);
-			types = new ArrayList<String>(resources.length);
+			paths = new ArrayList<>(resources.length);
+			types = new ArrayList<>(resources.length);
 			for (int i = 0; i < resources.length; i++) {
 				IResource resource = resources[i];
 				if(resource != null) {
@@ -744,16 +675,13 @@ public class LaunchConfigurationWorkingCopy extends LaunchConfiguration implemen
 		setAttribute(LaunchConfiguration.ATTR_MAPPED_RESOURCE_TYPES, types);
 	}
 
-	/**
-	 * @see org.eclipse.debug.core.ILaunchConfigurationWorkingCopy#setPreferredLaunchDelegate(java.util.Set, java.lang.String)
-	 */
 	@Override
 	public void setPreferredLaunchDelegate(Set<String> modes, String delegateId) {
 		if(modes != null) {
 			try {
 				Map<String, String> delegates = getAttribute(LaunchConfiguration.ATTR_PREFERRED_LAUNCHERS, (Map<String, String>) null);
 					//copy map to avoid pointer issues
-				Map<String, String> map = new HashMap<String, String>();
+				Map<String, String> map = new HashMap<>();
 				if (delegates != null) {
 					map.putAll(delegates);
 				}
@@ -768,25 +696,16 @@ public class LaunchConfigurationWorkingCopy extends LaunchConfiguration implemen
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.core.LaunchConfiguration#getWorkingCopy()
-	 */
 	@Override
 	public ILaunchConfigurationWorkingCopy getWorkingCopy() throws CoreException {
 		return new LaunchConfigurationWorkingCopy(this);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.core.ILaunchConfigurationWorkingCopy#removeAttribute(java.lang.String)
-	 */
 	@Override
 	public Object removeAttribute(String attributeName) {
 		return getInfo().removeAttribute(attributeName);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.core.ILaunchConfigurationWorkingCopy#copyAttributes(org.eclipse.debug.core.ILaunchConfiguration)
-	 */
 	@Override
 	public void copyAttributes(ILaunchConfiguration prototype) throws CoreException {
 		Map<String, Object> map = prototype.getAttributes();
@@ -803,9 +722,6 @@ public class LaunchConfigurationWorkingCopy extends LaunchConfiguration implemen
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.core.ILaunchConfigurationWorkingCopy#setTemplate(org.eclipse.debug.core.ILaunchConfiguration, boolean)
-	 */
 	@Override
 	public void setPrototype(ILaunchConfiguration prototype, boolean copy) throws CoreException {
 		if (prototype != null && !prototype.isPrototype()) {
@@ -830,9 +746,6 @@ public class LaunchConfigurationWorkingCopy extends LaunchConfiguration implemen
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.core.ILaunchConfigurationWorkingCopy#doSave(int)
-	 */
 	@Override
 	public ILaunchConfiguration doSave(int flag) throws CoreException {
 		Collection<ILaunchConfiguration> children = null;
@@ -852,9 +765,6 @@ public class LaunchConfigurationWorkingCopy extends LaunchConfiguration implemen
 		return saved;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.core.ILaunchConfiguration#setAttributeVisibility(String, boolean)
-	 */
 	@Override
 	public void setPrototypeAttributeVisibility(String attribute, boolean visible) throws CoreException {
 		super.setPrototypeAttributeVisibility(attribute, visible);
