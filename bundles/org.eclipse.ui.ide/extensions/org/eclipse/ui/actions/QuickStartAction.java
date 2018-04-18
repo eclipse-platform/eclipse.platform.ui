@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2017 IBM Corporation and others.
+ * Copyright (c) 2000, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -92,17 +92,10 @@ public class QuickStartAction extends Action implements
             // action has been disposed
             return;
         }
-        try {
-            AboutInfo feature = promptForFeature();
-            if (feature != null) {
-                openWelcomePage(feature);
-            }
-        } catch (WorkbenchException e) {
-            ErrorDialog.openError(workbenchWindow.getShell(),
-                    IDEWorkbenchMessages.QuickStartAction_errorDialogTitle,
-                    IDEWorkbenchMessages.QuickStartAction_infoReadError,
-                    e.getStatus());
-        }
+		AboutInfo feature = promptForFeature();
+		if (feature != null) {
+			openWelcomePage(feature);
+		}
     }
 
     /**
@@ -110,7 +103,7 @@ public class QuickStartAction extends Action implements
      *
      * @return the chosen feature, or <code>null</code> if none was chosen
      */
-	private AboutInfo promptForFeature() throws WorkbenchException {
+	private AboutInfo promptForFeature() {
         // Ask the user to select a feature
 		ArrayList<AboutInfo> welcomeFeatures = new ArrayList<>();
 
@@ -173,7 +166,7 @@ public class QuickStartAction extends Action implements
      * @return the about info for the feature with the given id, or <code>null</code>
      *   if there is no such feature.
      */
-    private AboutInfo findFeature(String featureId) throws WorkbenchException {
+	private AboutInfo findFeature(String featureId) {
         AboutInfo[] features = IDEWorkbenchPlugin.getDefault()
                 .getFeatureInfos();
         for (AboutInfo info : features) {

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 IBM Corporation and others.
+ * Copyright (c) 2000, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -41,9 +41,6 @@ public class ContainerContentProvider implements ITreeContentProvider {
 	public void dispose() {
     }
 
-    /*
-     * @see org.eclipse.jface.viewers.ITreeContentProvider#getChildren(java.lang.Object)
-     */
     @Override
 	public Object[] getChildren(Object element) {
         if (element instanceof IWorkspace) {
@@ -53,7 +50,7 @@ public class ContainerContentProvider implements ITreeContentProvider {
 				return allProjects;
 			}
 
-            ArrayList accessibleProjects = new ArrayList();
+			ArrayList<IProject> accessibleProjects = new ArrayList<>();
 			for (IProject project : allProjects) {
 				if (project.isOpen()) {
 					accessibleProjects.add(project);
@@ -64,7 +61,7 @@ public class ContainerContentProvider implements ITreeContentProvider {
             IContainer container = (IContainer) element;
             if (container.isAccessible()) {
                 try {
-                    List children = new ArrayList();
+					List<IResource> children = new ArrayList<>();
 					for (IResource member : container.members()) {
                         if (member.getType() != IResource.FILE) {
                             children.add(member);
@@ -79,17 +76,11 @@ public class ContainerContentProvider implements ITreeContentProvider {
         return new Object[0];
     }
 
-    /*
-     * @see org.eclipse.jface.viewers.IStructuredContentProvider#getElements(java.lang.Object)
-     */
     @Override
 	public Object[] getElements(Object element) {
         return getChildren(element);
     }
 
-    /*
-     * @see org.eclipse.jface.viewers.ITreeContentProvider#getParent(java.lang.Object)
-     */
     @Override
 	public Object getParent(Object element) {
         if (element instanceof IResource) {
@@ -98,17 +89,11 @@ public class ContainerContentProvider implements ITreeContentProvider {
         return null;
     }
 
-    /*
-     * @see org.eclipse.jface.viewers.ITreeContentProvider#hasChildren(java.lang.Object)
-     */
     @Override
 	public boolean hasChildren(Object element) {
         return getChildren(element).length > 0;
     }
 
-    /*
-     * @see org.eclipse.jface.viewers.IContentProvider#inputChanged
-     */
     @Override
 	public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
     }

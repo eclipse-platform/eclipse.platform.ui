@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 IBM Corporation and others.
+ * Copyright (c) 2000, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -88,8 +88,7 @@ class BookmarkContentProvider implements IStructuredContentProvider,
      * deltas are placed into one of the three given vectors depending on
      * the type of delta (add, remove, or change).
      */
-    void getMarkerDeltas(IResourceDelta delta, List additions, List removals,
-            List changes) {
+	void getMarkerDeltas(IResourceDelta delta, List<IMarker> additions, List<IMarker> removals, List<IMarker> changes) {
 		for (IMarkerDelta markerDelta : delta.getMarkerDeltas()) {
             IMarker marker = markerDelta.getMarker();
             switch (markerDelta.getKind()) {
@@ -156,9 +155,9 @@ class BookmarkContentProvider implements IStructuredContentProvider,
         // gather all marker changes from the delta.
         // be sure to do this in the calling thread,
         // as the delta is destroyed when this method returns
-        final List additions = new ArrayList();
-        final List removals = new ArrayList();
-        final List changes = new ArrayList();
+		final List<IMarker> additions = new ArrayList<>();
+		final List<IMarker> removals = new ArrayList<>();
+		final List<IMarker> changes = new ArrayList<>();
 
         IResourceDelta delta = event.getDelta();
         if (delta == null) {

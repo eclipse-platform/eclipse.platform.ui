@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 IBM Corporation and others.
+ * Copyright (c) 2000, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -15,6 +15,7 @@ import java.util.ArrayList;
 
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
@@ -41,7 +42,7 @@ public class MarkerImageProviderRegistry {
 
     private static final String TAG_PROVIDER = "imageprovider";//$NON-NLS-1$
 
-    private ArrayList descriptors = new ArrayList();
+	private ArrayList<Descriptor> descriptors = new ArrayList<>();
 
     static class Descriptor {
         String id;
@@ -115,7 +116,7 @@ public class MarkerImageProviderRegistry {
     public ImageDescriptor getImageDescriptor(IMarker marker) {
         int size = descriptors.size();
         for (int i = 0; i < size; i++) {
-            Descriptor desc = (Descriptor) descriptors.get(i);
+            Descriptor desc = descriptors.get(i);
             try {
                 if (marker.isSubtypeOf(desc.markerType)) {
                     if (desc.className != null) {
@@ -160,7 +161,7 @@ public class MarkerImageProviderRegistry {
      * Returns the image descriptor with the given relative path.
      */
     ImageDescriptor getImageDescriptor(Descriptor desc) {
-       URL url = Platform.find(desc.pluginBundle, new Path(desc.imagePath));
+		URL url = FileLocator.find(desc.pluginBundle, new Path(desc.imagePath));
        return ImageDescriptor.createFromURL(url);
     }
 }

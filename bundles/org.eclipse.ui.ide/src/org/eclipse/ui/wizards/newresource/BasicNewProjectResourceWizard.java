@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 IBM Corporation and others.
+ * Copyright (c) 2000, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -465,7 +465,7 @@ try {
 		// gather the preferred perspectives
 		// always consider the final perspective (and those derived from it)
 		// to be preferred
-		ArrayList preferredPerspIds = new ArrayList();
+		ArrayList<String> preferredPerspIds = new ArrayList<>();
 		addPerspectiveAndDescendants(preferredPerspIds, finalPerspId);
 		String preferred = configElement.getAttribute(PREFERRED_PERSPECTIVES);
 		if (preferred != null) {
@@ -520,7 +520,7 @@ try {
 	 *            the id to query.
 	 * @since 3.0
 	 */
-	private static void addPerspectiveAndDescendants(List perspectiveIds, String id) {
+	private static void addPerspectiveAndDescendants(List<String> perspectiveIds, String id) {
 		IPerspectiveRegistry registry = PlatformUI.getWorkbench().getPerspectiveRegistry();
 		for (IPerspectiveDescriptor perspective : registry.getPerspectives()) {
 			// @issue illegal ref to workbench internal class;

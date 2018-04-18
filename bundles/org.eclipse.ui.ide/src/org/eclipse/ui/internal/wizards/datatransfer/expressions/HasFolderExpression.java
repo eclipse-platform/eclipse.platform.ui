@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2014-2016 Red Hat Inc., and others
+ * Copyright (c) 2014, 2018 Red Hat Inc., and others
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -17,7 +17,6 @@ import org.eclipse.core.expressions.Expression;
 import org.eclipse.core.expressions.IEvaluationContext;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.runtime.Adapters;
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.Path;
 
@@ -57,14 +56,13 @@ public class HasFolderExpression extends Expression {
 	}
 
 	@Override
-	public EvaluationResult evaluate(IEvaluationContext context) throws CoreException {
+	public EvaluationResult evaluate(IEvaluationContext context) {
 		Object root = context.getDefaultVariable();
 		if (root instanceof File) {
 			return EvaluationResult.valueOf( new File((File)root, this.path).isDirectory() );
-		} else {
-			IContainer container = Adapters.adapt(root, IContainer.class);
-			return EvaluationResult.valueOf( container.getFolder(new Path(this.path)).exists() );
 		}
+		IContainer container = Adapters.adapt(root, IContainer.class);
+		return EvaluationResult.valueOf(container.getFolder(new Path(this.path)).exists());
 	}
 
 }

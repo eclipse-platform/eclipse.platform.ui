@@ -62,7 +62,6 @@ import org.eclipse.ui.handlers.IHandlerService;
 import org.eclipse.ui.ide.IDEActionFactory;
 import org.eclipse.ui.ide.IIDEActionConstants;
 import org.eclipse.ui.internal.IPreferenceConstants;
-import org.eclipse.ui.internal.IWorkbenchHelpContextIds;
 import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.handlers.IActionCommandMappingService;
@@ -1430,162 +1429,102 @@ public final class WorkbenchActionBuilder extends ActionBarAdvisor {
     }
 
     private IContributionItem getCutItem() {
-		return getItem(
-				ActionFactory.CUT.getId(),
-				ActionFactory.CUT.getCommandId(),
-				ISharedImages.IMG_TOOL_CUT,
-				ISharedImages.IMG_TOOL_CUT_DISABLED,
-				WorkbenchMessages.Workbench_cut,
-				WorkbenchMessages.Workbench_cutToolTip, null);
+		return getItem(ActionFactory.CUT.getId(), ActionFactory.CUT.getCommandId(), ISharedImages.IMG_TOOL_CUT,
+				ISharedImages.IMG_TOOL_CUT_DISABLED, WorkbenchMessages.Workbench_cut,
+				WorkbenchMessages.Workbench_cutToolTip);
 	}
 
     private IContributionItem getCopyItem() {
-		return getItem(
-				ActionFactory.COPY.getId(),
-				ActionFactory.COPY.getCommandId(),
-				ISharedImages.IMG_TOOL_COPY,
-				ISharedImages.IMG_TOOL_COPY_DISABLED,
-				WorkbenchMessages.Workbench_copy,
-				WorkbenchMessages.Workbench_copyToolTip, null);
+		return getItem(ActionFactory.COPY.getId(), ActionFactory.COPY.getCommandId(), ISharedImages.IMG_TOOL_COPY,
+				ISharedImages.IMG_TOOL_COPY_DISABLED, WorkbenchMessages.Workbench_copy,
+				WorkbenchMessages.Workbench_copyToolTip);
 	}
 
     private IContributionItem getResetPerspectiveItem() {
-		return getItem(
-				ActionFactory.RESET_PERSPECTIVE.getId(),
-				ActionFactory.RESET_PERSPECTIVE.getCommandId(),
-				null,
-				null,
-				WorkbenchMessages.ResetPerspective_text,
-				WorkbenchMessages.ResetPerspective_toolTip,
-				IWorkbenchHelpContextIds.RESET_PERSPECTIVE_ACTION);
+		return getItem(ActionFactory.RESET_PERSPECTIVE.getId(), ActionFactory.RESET_PERSPECTIVE.getCommandId(), null,
+				null, WorkbenchMessages.ResetPerspective_text, WorkbenchMessages.ResetPerspective_toolTip);
     }
 
     private IContributionItem getSavePerspectiveItem() {
-		return getItem(
-				ActionFactory.SAVE_PERSPECTIVE.getId(),
-				ActionFactory.SAVE_PERSPECTIVE.getCommandId(),
-				null,
-				null,
-				WorkbenchMessages.SavePerspective_text,
-				WorkbenchMessages.SavePerspective_toolTip,
-				IWorkbenchHelpContextIds.SAVE_PERSPECTIVE_ACTION);
+		return getItem(ActionFactory.SAVE_PERSPECTIVE.getId(), ActionFactory.SAVE_PERSPECTIVE.getCommandId(), null,
+				null, WorkbenchMessages.SavePerspective_text, WorkbenchMessages.SavePerspective_toolTip);
     }
 
     private IContributionItem getPasteItem() {
-		return getItem(
-				ActionFactory.PASTE.getId(),
-				ActionFactory.PASTE.getCommandId(),
-				ISharedImages.IMG_TOOL_PASTE,
-				ISharedImages.IMG_TOOL_PASTE_DISABLED,
-				WorkbenchMessages.Workbench_paste,
-				WorkbenchMessages.Workbench_pasteToolTip, null);
+		return getItem(ActionFactory.PASTE.getId(), ActionFactory.PASTE.getCommandId(), ISharedImages.IMG_TOOL_PASTE,
+				ISharedImages.IMG_TOOL_PASTE_DISABLED, WorkbenchMessages.Workbench_paste,
+				WorkbenchMessages.Workbench_pasteToolTip);
 	}
 
     private IContributionItem getPrintItem() {
-		return getItem(
-				ActionFactory.PRINT.getId(),
-				ActionFactory.PRINT.getCommandId(),
-				ISharedImages.IMG_ETOOL_PRINT_EDIT,
-				ISharedImages.IMG_ETOOL_PRINT_EDIT_DISABLED,
-				WorkbenchMessages.Workbench_print,
-				WorkbenchMessages.Workbench_printToolTip, null);
+		return getItem(ActionFactory.PRINT.getId(), ActionFactory.PRINT.getCommandId(),
+				ISharedImages.IMG_ETOOL_PRINT_EDIT, ISharedImages.IMG_ETOOL_PRINT_EDIT_DISABLED,
+				WorkbenchMessages.Workbench_print, WorkbenchMessages.Workbench_printToolTip);
 	}
 
     private IContributionItem getSelectAllItem() {
-		return getItem(
-				ActionFactory.SELECT_ALL.getId(),
-				ActionFactory.SELECT_ALL.getCommandId(),
-				null, null, WorkbenchMessages.Workbench_selectAll,
-				WorkbenchMessages.Workbench_selectAllToolTip, null);
+		return getItem(ActionFactory.SELECT_ALL.getId(), ActionFactory.SELECT_ALL.getCommandId(), null, null,
+				WorkbenchMessages.Workbench_selectAll, WorkbenchMessages.Workbench_selectAllToolTip);
 	}
 
     private IContributionItem getFindItem() {
-		return getItem(
-				ActionFactory.FIND.getId(),
-				ActionFactory.FIND.getCommandId(),
-				null, null, WorkbenchMessages.Workbench_findReplace,
-				WorkbenchMessages.Workbench_findReplaceToolTip, null);
+		return getItem(ActionFactory.FIND.getId(), ActionFactory.FIND.getCommandId(), null, null,
+				WorkbenchMessages.Workbench_findReplace, WorkbenchMessages.Workbench_findReplaceToolTip);
 	}
 
     private IContributionItem getBookmarkItem() {
-		return getItem(
-				IDEActionFactory.BOOKMARK.getId(),
-				IDEActionFactory.BOOKMARK.getCommandId(),
-				null, null, IDEWorkbenchMessages.Workbench_addBookmark,
-				IDEWorkbenchMessages.Workbench_addBookmarkToolTip, null);
+		return getItem(IDEActionFactory.BOOKMARK.getId(), IDEActionFactory.BOOKMARK.getCommandId(), null, null,
+				IDEWorkbenchMessages.Workbench_addBookmark, IDEWorkbenchMessages.Workbench_addBookmarkToolTip);
 	}
 
     private IContributionItem getTaskItem() {
-		return getItem(
-				IDEActionFactory.ADD_TASK.getId(),
-				IDEActionFactory.ADD_TASK.getCommandId(),
-				null, null, IDEWorkbenchMessages.Workbench_addTask,
-				IDEWorkbenchMessages.Workbench_addTaskToolTip, null);
+		return getItem(IDEActionFactory.ADD_TASK.getId(), IDEActionFactory.ADD_TASK.getCommandId(), null, null,
+				IDEWorkbenchMessages.Workbench_addTask, IDEWorkbenchMessages.Workbench_addTaskToolTip);
 	}
 
     private IContributionItem getDeleteItem() {
-        return getItem(ActionFactory.DELETE.getId(),
-        		ActionFactory.DELETE.getCommandId(),
-        		ISharedImages.IMG_TOOL_DELETE,
-        		ISharedImages.IMG_TOOL_DELETE_DISABLED,
-        		WorkbenchMessages.Workbench_delete,
-        		WorkbenchMessages.Workbench_deleteToolTip,
-        		IWorkbenchHelpContextIds.DELETE_RETARGET_ACTION);
+		return getItem(ActionFactory.DELETE.getId(), ActionFactory.DELETE.getCommandId(), ISharedImages.IMG_TOOL_DELETE,
+				ISharedImages.IMG_TOOL_DELETE_DISABLED, WorkbenchMessages.Workbench_delete,
+				WorkbenchMessages.Workbench_deleteToolTip);
     }
 
     private IContributionItem getRevertItem() {
-		return getItem(
-				ActionFactory.REVERT.getId(),
-				ActionFactory.REVERT.getCommandId(),
-				null, null, WorkbenchMessages.Workbench_revert,
-				WorkbenchMessages.Workbench_revertToolTip, null);
+		return getItem(ActionFactory.REVERT.getId(), ActionFactory.REVERT.getCommandId(), null, null,
+				WorkbenchMessages.Workbench_revert, WorkbenchMessages.Workbench_revertToolTip);
 	}
 
     private IContributionItem getRefreshItem() {
-		return getItem(ActionFactory.REFRESH.getId(),
-				ActionFactory.REFRESH.getCommandId(), null, null,
-				WorkbenchMessages.Workbench_refresh,
-				WorkbenchMessages.Workbench_refreshToolTip, null);
+		return getItem(ActionFactory.REFRESH.getId(), ActionFactory.REFRESH.getCommandId(), null, null,
+				WorkbenchMessages.Workbench_refresh, WorkbenchMessages.Workbench_refreshToolTip);
 	}
 
     private IContributionItem getPropertiesItem() {
-		return getItem(ActionFactory.PROPERTIES.getId(),
-				ActionFactory.PROPERTIES.getCommandId(), null, null,
-				WorkbenchMessages.Workbench_properties,
-				WorkbenchMessages.Workbench_propertiesToolTip, null);
+		return getItem(ActionFactory.PROPERTIES.getId(), ActionFactory.PROPERTIES.getCommandId(), null, null,
+				WorkbenchMessages.Workbench_properties, WorkbenchMessages.Workbench_propertiesToolTip);
 	}
 
     private IContributionItem getMoveItem() {
-		return getItem(ActionFactory.MOVE.getId(),
-				ActionFactory.MOVE.getCommandId(),
-				null, null, WorkbenchMessages.Workbench_move,
-				WorkbenchMessages.Workbench_moveToolTip, null);
+		return getItem(ActionFactory.MOVE.getId(), ActionFactory.MOVE.getCommandId(), null, null,
+				WorkbenchMessages.Workbench_move, WorkbenchMessages.Workbench_moveToolTip);
 	}
 
     private IContributionItem getRenameItem() {
-		return getItem(ActionFactory.RENAME.getId(),
-				ActionFactory.RENAME.getCommandId(), null, null,
-				WorkbenchMessages.Workbench_rename,
-				WorkbenchMessages.Workbench_renameToolTip, null);
+		return getItem(ActionFactory.RENAME.getId(), ActionFactory.RENAME.getCommandId(), null, null,
+				WorkbenchMessages.Workbench_rename, WorkbenchMessages.Workbench_renameToolTip);
 	}
 
     private IContributionItem getOpenProjectItem() {
-		return getItem(IDEActionFactory.OPEN_PROJECT.getId(),
-				IDEActionFactory.OPEN_PROJECT.getCommandId(), null, null,
-				IDEWorkbenchMessages.OpenResourceAction_text,
-				IDEWorkbenchMessages.OpenResourceAction_toolTip, null);
+		return getItem(IDEActionFactory.OPEN_PROJECT.getId(), IDEActionFactory.OPEN_PROJECT.getCommandId(), null, null,
+				IDEWorkbenchMessages.OpenResourceAction_text, IDEWorkbenchMessages.OpenResourceAction_toolTip);
 	}
 
     private IContributionItem getCloseProjectItem() {
-		return getItem(
-				IDEActionFactory.CLOSE_PROJECT.getId(),
-				IDEActionFactory.CLOSE_PROJECT.getCommandId(),
-				null, null, IDEWorkbenchMessages.CloseResourceAction_text,
-				IDEWorkbenchMessages.CloseResourceAction_text, null);
+		return getItem(IDEActionFactory.CLOSE_PROJECT.getId(), IDEActionFactory.CLOSE_PROJECT.getCommandId(), null,
+				null, IDEWorkbenchMessages.CloseResourceAction_text, IDEWorkbenchMessages.CloseResourceAction_text);
 	}
 
     private IContributionItem getItem(String actionId, String commandId,
-    		String image, String disabledImage, String label, String tooltip, String helpContextId) {
+			String image, String disabledImage, String label, String tooltip) {
 		ISharedImages sharedImages = getWindow().getWorkbench()
 				.getSharedImages();
 

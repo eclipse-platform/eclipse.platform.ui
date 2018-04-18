@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2017 Freescale Semiconductor and others.
+ * Copyright (c) 2008, 2018 Freescale Semiconductor and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -371,7 +371,7 @@ public class FileInfoAttributesMatcher extends AbstractFileInfoMatcher {
 	}
 
 	@Override
-	public boolean matches(IContainer parent, IFileInfo fileInfo) throws CoreException {
+	public boolean matches(IContainer parent, IFileInfo fileInfo) {
 		if (matcher != null) {
 			return matcher.match(parent, fileInfo);
 		}
