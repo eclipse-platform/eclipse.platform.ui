@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2016 IBM Corporation and others.
+ * Copyright (c) 2000, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -24,7 +24,6 @@ import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.Separator;
-import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.LabelProvider;
@@ -124,7 +123,7 @@ public class BookmarksPart extends HyperlinkTreePart implements Observer {
 
 			@Override
 			public void run() {
-				Object obj = ((IStructuredSelection)treeViewer.getSelection()).getFirstElement();
+				Object obj = treeViewer.getStructuredSelection().getFirstElement();
 				if (obj instanceof BookmarkManager.Bookmark) {
 					BookmarkManager.Bookmark b = (BookmarkManager.Bookmark)obj;
 					BaseHelpSystem.getBookmarkManager().removeBookmark(b);
@@ -145,12 +144,12 @@ public class BookmarksPart extends HyperlinkTreePart implements Observer {
 	@Override
 	public boolean fillContextMenu(IMenuManager manager) {
 		boolean value = super.fillContextMenu(manager);
-		ISelection selection = treeViewer.getSelection();
+		IStructuredSelection selection = treeViewer.getStructuredSelection();
 		boolean canDeleteAll=false;
 		int count = BaseHelpSystem.getBookmarkManager().getBookmarks().length;
 		canDeleteAll = count>0;
 
-		if (canDelete((IStructuredSelection) selection)) {
+		if (canDelete(selection)) {
 			if (value)
 				manager.add(new Separator());
 			manager.add(deleteAction);

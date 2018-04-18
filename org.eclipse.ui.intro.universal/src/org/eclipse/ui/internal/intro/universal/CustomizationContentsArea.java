@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2017 IBM Corporation and others.
+ * Copyright (c) 2006, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -226,7 +226,7 @@ public class CustomizationContentsArea {
 
 		@Override
 		public void dragStart(DragSourceEvent event) {
-			IStructuredSelection ssel = (IStructuredSelection) viewer.getSelection();
+			IStructuredSelection ssel = viewer.getStructuredSelection();
 			if (ssel.size() > 0) {
 				event.doit = true;
 			} else {
@@ -236,7 +236,7 @@ public class CustomizationContentsArea {
 
 		@Override
 		public void dragSetData(DragSourceEvent event) {
-			IStructuredSelection ssel = (IStructuredSelection) viewer.getSelection();
+			IStructuredSelection ssel = viewer.getStructuredSelection();
 			BaseData[] array = new BaseData[ssel.size()];
 			int i = 0;
 			for (Iterator<BaseData> iter = ssel.iterator(); iter.hasNext();) {

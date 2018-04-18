@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2016 IBM Corporation and others.
+ * Copyright (c) 2004, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,7 +12,6 @@ package org.eclipse.help.ui.internal.views;
 
 import org.eclipse.help.ui.internal.Messages;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
-import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.ITableLabelProvider;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.TableViewer;
@@ -96,8 +95,7 @@ public class EngineTypeWizardPage extends WizardPage {
 		tableViewer.setLabelProvider(new EngineLabelProvider());
 		tableViewer.addSelectionChangedListener(event -> {
 			setPageComplete(!event.getSelection().isEmpty());
-			selection = (EngineTypeDescriptor) ((IStructuredSelection) event.getSelection())
-					.getFirstElement();
+			selection = (EngineTypeDescriptor) event.getStructuredSelection().getFirstElement();
 		});
 		tableViewer.getTable().setLayoutData(new GridData(GridData.FILL_BOTH));
 		tableViewer.setInput(engineTypes);

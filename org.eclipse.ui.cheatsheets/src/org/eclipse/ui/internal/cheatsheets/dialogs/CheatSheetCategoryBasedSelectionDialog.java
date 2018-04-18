@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2002, 2017 IBM Corporation and others.
+ *  Copyright (c) 2002, 2018 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -25,7 +25,6 @@ import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.dialogs.TrayDialog;
 import org.eclipse.jface.viewers.IContentProvider;
-import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.LabelProvider;
@@ -499,9 +498,8 @@ public class CheatSheetCategoryBasedSelectionDialog extends TrayDialog //extends
 	 * selectionEvent, or <code>null</code> if the selectionEvent contains
 	 * either 0 or 2+ selected objects.
 	 */
-	protected Object getSingleSelection(ISelection selection) {
-		IStructuredSelection ssel = (IStructuredSelection) selection;
-		return ssel.size() == 1 ? ssel.getFirstElement() : null;
+	protected Object getSingleSelection(IStructuredSelection selection) {
+		return selection.size() == 1 ? selection.getFirstElement() : null;
 	}
 
 	/**
@@ -513,7 +511,7 @@ public class CheatSheetCategoryBasedSelectionDialog extends TrayDialog //extends
 	 */
 	@Override
 	public void selectionChanged(SelectionChangedEvent selectionEvent) {
-		Object obj = getSingleSelection(selectionEvent.getSelection());
+		Object obj = getSingleSelection(selectionEvent.getStructuredSelection());
 		if (obj instanceof CheatSheetCollectionElement) {
 			currentSelection = null;
 		} else {
@@ -759,7 +757,7 @@ public class CheatSheetCategoryBasedSelectionDialog extends TrayDialog //extends
 	protected void storeSelectedCheatSheet() {
 		CheatSheetElement element = null;
 
-		Object el = getSingleSelection(treeViewer.getSelection());
+		Object el = getSingleSelection(treeViewer.getStructuredSelection());
 		if (el == null)
 			return;
 

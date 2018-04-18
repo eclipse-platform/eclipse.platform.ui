@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2016 IBM Corporation and others.
+ * Copyright (c) 2004, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -87,7 +87,7 @@ public class ScopePreferenceDialog extends PreferenceDialog {
 	protected TreeViewer createTreeViewer(Composite parent) {
 		TreeViewer viewer = super.createTreeViewer(parent);
 		viewer.addSelectionChangedListener(event -> {
-			IStructuredSelection ssel = (IStructuredSelection) event.getSelection();
+			IStructuredSelection ssel = event.getStructuredSelection();
 			Object obj = ssel.getFirstElement();
 			treeSelectionChanged(obj);
 		});
@@ -138,7 +138,7 @@ public class ScopePreferenceDialog extends PreferenceDialog {
 	}
 
 	private void doDelete() {
-		Object obj = ((IStructuredSelection)getTreeViewer().getSelection()).getFirstElement();
+		Object obj = getTreeViewer().getStructuredSelection().getFirstElement();
 		if (obj instanceof ScopePreferenceManager.EnginePreferenceNode) {
 			ScopePreferenceManager.EnginePreferenceNode node = (ScopePreferenceManager.EnginePreferenceNode)obj;
 			EngineDescriptor desc = node.getDescriptor();

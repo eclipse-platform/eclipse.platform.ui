@@ -137,8 +137,8 @@ public abstract class HyperlinkTreePart extends AbstractFormPart implements
 		treeViewer.setInput(this);
 		treeViewer.getControl().setLayoutData(new GridData(GridData.FILL_BOTH));
 		treeViewer.addOpenListener(event -> doOpenSelection((IStructuredSelection) event.getSelection()));
-		treeViewer.addSelectionChangedListener(
-				event -> handleSelectionChanged((IStructuredSelection) event.getSelection()));
+		treeViewer
+				.addSelectionChangedListener(event -> handleSelectionChanged(event.getStructuredSelection()));
 		treeViewer.getTree().addMouseListener(new MouseAdapter() {
 			long lastTime;
 
@@ -213,7 +213,7 @@ public abstract class HyperlinkTreePart extends AbstractFormPart implements
 				}
 				Object obj = item.getData();
 				treeViewer.getTree().setCursor(handCursor);
-				IStructuredSelection ssel = (IStructuredSelection) treeViewer.getSelection();
+				IStructuredSelection ssel = treeViewer.getStructuredSelection();
 				if (ssel.getFirstElement() == obj)
 					item.setForeground(e.display.getSystemColor(SWT.COLOR_LIST_SELECTION_TEXT));
 				else
@@ -330,8 +330,7 @@ public abstract class HyperlinkTreePart extends AbstractFormPart implements
 
 	private void updateStatus(IHelpResource res, boolean defaultToSelection) {
 		if (defaultToSelection && res == null) {
-			IStructuredSelection ssel = (IStructuredSelection) treeViewer
-					.getSelection();
+			IStructuredSelection ssel = treeViewer.getStructuredSelection();
 			Object obj = ssel.getFirstElement();
 			if (obj instanceof IHelpResource)
 				res = (IHelpResource) obj;

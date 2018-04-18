@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2016 IBM Corporation and others.
+ * Copyright (c) 2000, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -324,8 +324,7 @@ public class ScopeSetDialog extends TrayDialog  {
     		setResult(manager.getDefaultScope());
     	} else {
             // Build a list of selected children.
-            IStructuredSelection selection = (IStructuredSelection) viewer
-                    .getSelection();
+			IStructuredSelection selection = viewer.getStructuredSelection();
             setResult(selection.toList());
     	}
     	super.okPressed();
@@ -406,7 +405,7 @@ public class ScopeSetDialog extends TrayDialog  {
 
 
 	private void doEdit() {
-		IStructuredSelection ssel = (IStructuredSelection)viewer.getSelection();
+		IStructuredSelection ssel = viewer.getStructuredSelection();
 		ScopeSet set = (ScopeSet)ssel.getFirstElement();
 		if (set==null) {
 			return;
@@ -428,7 +427,7 @@ public class ScopeSetDialog extends TrayDialog  {
 	}
 
 	private void doRename() {
-		IStructuredSelection ssel = (IStructuredSelection)viewer.getSelection();
+		IStructuredSelection ssel = viewer.getStructuredSelection();
 		ScopeSet set = (ScopeSet)ssel.getFirstElement();
 		if (set!=null) {
 			RenameOperation rop = (RenameOperation)findOperation(set, RenameOperation.class);
@@ -462,7 +461,7 @@ public class ScopeSetDialog extends TrayDialog  {
 	}
 
 	private void doRemove() {
-		IStructuredSelection ssel = (IStructuredSelection)viewer.getSelection();
+		IStructuredSelection ssel = viewer.getStructuredSelection();
 		ScopeSet set = (ScopeSet)ssel.getFirstElement();
 		if (set!=null) {
 			scheduleOperation(new RemoveOperation(set));
@@ -484,7 +483,7 @@ public class ScopeSetDialog extends TrayDialog  {
 	}
 
 	private void updateButtons() {
-		IStructuredSelection ssel = (IStructuredSelection)viewer.getSelection();
+		IStructuredSelection ssel = viewer.getStructuredSelection();
 		editButton.setEnabled(ssel.isEmpty()==false);
 		ScopeSet set = (ScopeSet)ssel.getFirstElement();
 		boolean editableSet = set!=null && set.isEditable() && !set.isImplicit();
