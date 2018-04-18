@@ -27,6 +27,7 @@ public class SWTRenderersMessages extends NLS {
 	public static String menuCloseAll;
 	public static String menuCloseRight;
 	public static String menuCloseLeft;
+	public static String menuDetach;
 
 	public static String viewMenu;
 
