@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2015 IBM Corporation and others.
+ * Copyright (c) 2004, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -21,7 +21,6 @@ import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerComparator;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.graphics.Cursor;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Button;
@@ -55,16 +54,6 @@ public class BlockedJobsDialog extends IconAndMessageDialog {
 	 * The Cancel button control.
 	 */
 	private Button cancelSelected;
-
-	/**
-	 * The cursor for the buttons.
-	 */
-	private Cursor arrowCursor;
-
-	/**
-	 * The cursor for the Shell.
-	 */
-	private Cursor waitCursor;
 
 	private IProgressMonitor blockingMonitor;
 
@@ -314,14 +303,6 @@ public class BlockedJobsDialog extends IconAndMessageDialog {
 	private void clearCursors() {
 		clearCursor(cancelSelected);
 		clearCursor(getShell());
-		if (arrowCursor != null) {
-			arrowCursor.dispose();
-		}
-		if (waitCursor != null) {
-			waitCursor.dispose();
-		}
-		arrowCursor = null;
-		waitCursor = null;
 	}
 
 	/**
@@ -339,10 +320,7 @@ public class BlockedJobsDialog extends IconAndMessageDialog {
 	protected void configureShell(Shell shell) {
 		super.configureShell(shell);
 		shell.setText(ProgressMessages.BlockedJobsDialog_BlockedTitle);
-		if (waitCursor == null) {
-			waitCursor = new Cursor(shell.getDisplay(), SWT.CURSOR_WAIT);
-		}
-		shell.setCursor(waitCursor);
+		shell.setCursor(shell.getDisplay().getSystemCursor(SWT.CURSOR_WAIT));
 	}
 
 	/**

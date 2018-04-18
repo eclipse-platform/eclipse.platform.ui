@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 IBM Corporation and others.
+ * Copyright (c) 2000, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -81,10 +81,6 @@ public class WelcomeEditor extends EditorPart {
     private final static int WRAP_MIN_WIDTH = 150;
 
     private Composite editorComposite;
-
-    private Cursor handCursor;
-
-    private Cursor busyCursor;
 
     private WelcomeParser parser;
 
@@ -242,6 +238,8 @@ public class WelcomeEditor extends EditorPart {
      * Adds listeners to the given styled text
      */
     private void addListeners(StyledText styledText) {
+		Cursor handCursor = styledText.getDisplay().getSystemCursor(SWT.CURSOR_HAND);
+		Cursor busyCursor = styledText.getDisplay().getSystemCursor(SWT.CURSOR_WAIT);
         styledText.addMouseListener(new MouseAdapter() {
             @Override
 			public void mouseDown(MouseEvent e) {
@@ -666,9 +664,6 @@ public class WelcomeEditor extends EditorPart {
 			return;
 		}
 
-        handCursor = new Cursor(parent.getDisplay(), SWT.CURSOR_HAND);
-        busyCursor = new Cursor(parent.getDisplay(), SWT.CURSOR_WAIT);
-
         editorComposite = new Composite(parent, SWT.NONE);
         GridLayout layout = new GridLayout();
         layout.marginHeight = 0;
@@ -791,12 +786,6 @@ public class WelcomeEditor extends EditorPart {
     @Override
 	public void dispose() {
         super.dispose();
-        if (busyCursor != null) {
-			busyCursor.dispose();
-		}
-        if (handCursor != null) {
-			handCursor.dispose();
-		}
         if (this.colorListener != null) {
             JFacePreferences.getPreferenceStore().removePropertyChangeListener(
                     this.colorListener);

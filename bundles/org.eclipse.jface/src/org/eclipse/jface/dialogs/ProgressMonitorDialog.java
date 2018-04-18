@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 IBM Corporation and others.
+ * Copyright (c) 2000, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -133,11 +133,6 @@ public class ProgressMonitorDialog extends IconAndMessageDialog implements
 	 * The cursor used in the cancel button;
 	 */
 	protected Cursor arrowCursor;
-
-	/**
-	 * The cursor used in the shell;
-	 */
-	private Cursor waitCursor;
 
 	/**
 	 * Flag indicating whether to open or merely create the dialog before run.
@@ -373,21 +368,14 @@ public class ProgressMonitorDialog extends IconAndMessageDialog implements
 		if (arrowCursor != null) {
 			arrowCursor.dispose();
 		}
-		if (waitCursor != null) {
-			waitCursor.dispose();
-		}
 		arrowCursor = null;
-		waitCursor = null;
 	}
 
 	@Override
 	protected void configureShell(final Shell shell) {
 		super.configureShell(shell);
 		shell.setText(JFaceResources.getString("ProgressMonitorDialog.title")); //$NON-NLS-1$
-		if (waitCursor == null) {
-			waitCursor = new Cursor(shell.getDisplay(), SWT.CURSOR_WAIT);
-		}
-		shell.setCursor(waitCursor);
+		shell.setCursor(shell.getDisplay().getSystemCursor(SWT.CURSOR_WAIT));
 		// Add a listener to set the message properly when the dialog becomes
 		// visible
 		shell.addListener(SWT.Show, event -> shell.getDisplay().asyncExec(() -> setMessage(message, true)));

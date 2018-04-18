@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2015 IBM Corporation and others.
+ * Copyright (c) 2003, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -34,7 +34,6 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Cursor;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.PlatformUI;
@@ -66,8 +65,6 @@ public class WorkbenchSiteProgressService implements
     private Object busyLock = new Object();
 
     IPropertyChangeListener[] changeListeners = new IPropertyChangeListener[0];
-
-    private Cursor waitCursor;
 
     private int waitCursorJobCount;
 
@@ -101,18 +98,6 @@ public class WorkbenchSiteProgressService implements
             super(ProgressMessages.WorkbenchSiteProgressService_CursorJob);
         }
 
-        /**
-         * Get the wait cursor. Initialize it if required.
-         * @param display the display to create the cursor on.
-         * @return the created cursor
-         */
-        private Cursor getWaitCursor(Display display) {
-            if (waitCursor == null) {
-                waitCursor = new Cursor(display, SWT.CURSOR_APPSTARTING);
-            }
-            return waitCursor;
-        }
-
         @Override
 		public IStatus runInUIThread(IProgressMonitor monitor) {
 			Control control = (Control) site.getModel().getWidget();
@@ -124,7 +109,7 @@ public class WorkbenchSiteProgressService implements
                 Cursor cursor = null;
                 if (waitCursorJobCount !=0) {
                 	// at least one job which is running has requested for wait cursor
-					cursor = getWaitCursor(control.getDisplay());
+					cursor = control.getDisplay().getSystemCursor(SWT.CURSOR_APPSTARTING);
 				}
                 control.setCursor(cursor);
 				showBusy(busy);
@@ -134,13 +119,6 @@ public class WorkbenchSiteProgressService implements
 				}
             }
             return Status.OK_STATUS;
-        }
-
-        void clearCursors() {
-            if (waitCursor != null) {
-                waitCursor.dispose();
-                waitCursor = null;
-            }
         }
 
     }
@@ -168,12 +146,6 @@ public class WorkbenchSiteProgressService implements
 
         ProgressManager.getInstance().removeListener(this);
 		showBusy(false);
-
-        if (waitCursor == null) {
-			return;
-		}
-        waitCursor.dispose();
-        waitCursor = null;
     }
 
     @Override

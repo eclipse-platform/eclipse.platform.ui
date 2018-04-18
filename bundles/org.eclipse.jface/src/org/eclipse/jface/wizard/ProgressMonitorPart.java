@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 IBM Corporation and others.
+ * Copyright (c) 2000, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -27,7 +27,6 @@ import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.util.Throttler;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.graphics.Cursor;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.FontMetrics;
 import org.eclipse.swt.graphics.GC;
@@ -269,12 +268,10 @@ public class ProgressMonitorPart extends Composite implements
 			}));
         	final Image stopImage = ImageDescriptor.createFromFile(
         			ProgressMonitorPart.class, "images/stop.png").createImage(getDisplay()); //$NON-NLS-1$
-        	final Cursor arrowCursor = new Cursor(this.getDisplay(), SWT.CURSOR_ARROW);
-        	fToolBar.setCursor(arrowCursor);
+			fToolBar.setCursor(this.getDisplay().getSystemCursor(SWT.CURSOR_ARROW));
         	fStopButton.setImage(stopImage);
         	fStopButton.addDisposeListener(e -> {
 				stopImage.dispose();
-				arrowCursor.dispose();
 			});
         	fStopButton.setEnabled(false);
 			fStopButton.setToolTipText(JFaceResources.getString("ProgressMonitorPart.cancelToolTip")); //$NON-NLS-1$

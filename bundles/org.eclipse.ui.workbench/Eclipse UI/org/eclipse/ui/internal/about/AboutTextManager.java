@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 IBM Corporation and others.
+ * Copyright (c) 2000, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -92,10 +92,6 @@ public class AboutTextManager {
     }
 	private StyledText styledText;
 
-    private Cursor handCursor;
-
-    private Cursor busyCursor;
-
     private boolean mouseDown = false;
 
     private boolean dragEvent = false;
@@ -104,26 +100,15 @@ public class AboutTextManager {
 
     public AboutTextManager(StyledText text) {
     	this.styledText = text;
-    	createCursors();
     	addListeners();
     }
-
-    private void createCursors() {
-        handCursor = new Cursor(styledText.getDisplay(), SWT.CURSOR_HAND);
-        busyCursor = new Cursor(styledText.getDisplay(), SWT.CURSOR_WAIT);
-        styledText.addDisposeListener(e -> {
-		    handCursor.dispose();
-		    handCursor = null;
-		    busyCursor.dispose();
-		    busyCursor = null;
-		});
-    }
-
 
     /**
      * Adds listeners to the given styled text
      */
     protected void addListeners() {
+		Cursor handCursor = styledText.getDisplay().getSystemCursor(SWT.CURSOR_HAND);
+		Cursor busyCursor = styledText.getDisplay().getSystemCursor(SWT.CURSOR_WAIT);
         styledText.addMouseListener(new MouseAdapter() {
             @Override
 			public void mouseDown(MouseEvent e) {

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2016 IBM Corporation and others.
+ * Copyright (c) 2000, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -124,10 +124,6 @@ public class WizardDialog extends TitleAreaDialog implements IWizardContainer2, 
 
 	// The progress monitor
 	private ProgressMonitorPart progressMonitorPart;
-
-	private Cursor waitCursor;
-
-	private Cursor arrowCursor;
 
 	private MessageDialog windowClosingDialog;
 
@@ -336,14 +332,12 @@ public class WizardDialog extends TitleAreaDialog implements IWizardContainer2, 
 
 			// Set the busy cursor to all shells.
 			Display d = getShell().getDisplay();
-			waitCursor = new Cursor(d, SWT.CURSOR_WAIT);
-			setDisplayCursor(waitCursor);
+			setDisplayCursor(d.getSystemCursor(SWT.CURSOR_WAIT));
 
 			if (useCustomProgressMonitorPart) {
 				cancelButton.removeSelectionListener(cancelListener);
 				// Set the arrow cursor to the cancel component.
-				arrowCursor = new Cursor(d, SWT.CURSOR_ARROW);
-				cancelButton.setCursor(arrowCursor);
+				cancelButton.setCursor(d.getSystemCursor(SWT.CURSOR_ARROW));
 			}
 
 			// Deactivate shell
@@ -1249,11 +1243,7 @@ public class WizardDialog extends TitleAreaDialog implements IWizardContainer2, 
 			if (useCustomProgressMonitorPart) {
 				cancelButton.addSelectionListener(cancelListener);
 				cancelButton.setCursor(null);
-				arrowCursor.dispose();
-				arrowCursor = null;
 			}
-			waitCursor.dispose();
-			waitCursor = null;
 			Control focusControl = (Control) savedState.get(FOCUS_CONTROL);
 			if (focusControl != null && !focusControl.isDisposed()) {
 				focusControl.setFocus();

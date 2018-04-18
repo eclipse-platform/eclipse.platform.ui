@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 IBM Corporation and others.
+ * Copyright (c) 2000, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -29,7 +29,6 @@ import org.eclipse.swt.custom.CLabel;
 import org.eclipse.swt.dnd.Clipboard;
 import org.eclipse.swt.dnd.TextTransfer;
 import org.eclipse.swt.dnd.Transfer;
-import org.eclipse.swt.graphics.Cursor;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
@@ -83,8 +82,6 @@ import org.eclipse.swt.widgets.ToolItem;
 
 	/** the start time of the task */
 	protected long fStartTime;
-
-	private Cursor fStopButtonCursor;
 
 	/** the message text */
 	protected String fMessageText;
@@ -332,7 +329,6 @@ import org.eclipse.swt.widgets.ToolItem;
 		fProgressBar.setLayoutData(new GridData(GridData.GRAB_HORIZONTAL
 				| GridData.GRAB_VERTICAL));
 
-		fStopButtonCursor = new Cursor(getDisplay(), SWT.CURSOR_ARROW);
 	}
 
 	/**
@@ -404,10 +400,6 @@ import org.eclipse.swt.widgets.ToolItem;
 	 * @private
 	 */
 	protected void handleDispose() {
-		if (fStopButtonCursor != null) {
-			fStopButtonCursor.dispose();
-			fStopButtonCursor = null;
-		}
 		if (fProgressBar != null) {
 			fProgressBar.dispose();
 			fProgressBar = null;
@@ -584,7 +576,7 @@ import org.eclipse.swt.widgets.ToolItem;
 		if (fToolBar != null && !fToolBar.isDisposed()) {
 			fToolBar.setVisible(true);
 			fToolBar.setEnabled(true);
-			fToolBar.setCursor(fStopButtonCursor);
+			fToolBar.setCursor(getDisplay().getSystemCursor(SWT.CURSOR_ARROW));
 			fCancelButtonIsVisible = true;
 		}
 	}

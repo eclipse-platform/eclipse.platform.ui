@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2015 IBM Corporation and others.
+ * Copyright (c) 2005, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -16,7 +16,6 @@ import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.PaintEvent;
 import org.eclipse.swt.events.PaintListener;
-import org.eclipse.swt.graphics.Cursor;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
@@ -26,7 +25,6 @@ import org.eclipse.ui.plugin.AbstractUIPlugin;
 
 public class DragHandle extends Composite implements PaintListener {
 
-    Cursor dragCursor;
     Image handleImage;
     ImageDescriptor descriptor;
     private boolean isHorizontal;
@@ -35,9 +33,6 @@ public class DragHandle extends Composite implements PaintListener {
 
 public DragHandle(Composite parent) {
     super(parent, SWT.NONE);
-
-    dragCursor = new Cursor(parent.getDisplay(),
-            SWT.CURSOR_SIZEALL);
 
     addPaintListener(this);
 
@@ -71,7 +66,7 @@ public DragHandle(Composite parent) {
 
     context.dispose();
 
-    setCursor(dragCursor);
+		setCursor(parent.getDisplay().getSystemCursor(SWT.CURSOR_SIZEALL));
 }
 
 @Override
@@ -128,7 +123,6 @@ public void dispose() {
         return;
     }
     super.dispose();
-    dragCursor.dispose();
     handleImage.dispose();
     JFaceResources.getResources().destroyImage(descriptor);
 }

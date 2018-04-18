@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2015 IBM Corporation and others.
+ * Copyright (c) 2003, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -24,24 +24,15 @@ import org.eclipse.swt.widgets.Display;
  * </p>
  */
 public class FormsResources {
-	private static Cursor busyCursor;
-	private static Cursor handCursor;
-	private static Cursor textCursor;
 
 	public static Cursor getBusyCursor() {
-		if (busyCursor==null)
-			busyCursor = new Cursor(Display.getCurrent(), SWT.CURSOR_WAIT);
-		return busyCursor;
+		return Display.getCurrent().getSystemCursor(SWT.CURSOR_WAIT);
 	}
 	public static Cursor getHandCursor() {
-		if (handCursor==null)
-			handCursor = new Cursor(Display.getCurrent(), SWT.CURSOR_HAND);
-		return handCursor;
+		return Display.getCurrent().getSystemCursor(SWT.CURSOR_HAND);
 	}
 	public static Cursor getTextCursor() {
-		if (textCursor==null)
-			textCursor = new Cursor(Display.getCurrent(), SWT.CURSOR_IBEAM);
-		return textCursor;
+		return Display.getCurrent().getSystemCursor(SWT.CURSOR_IBEAM);
 	}
 
 	public static int getProgressDelay(int index) {
@@ -54,14 +45,5 @@ public class FormsResources {
 	}
 
 	public static void shutdown() {
-		if (busyCursor!=null)
-			busyCursor.dispose();
-		if (handCursor!=null)
-			handCursor.dispose();
-		if (textCursor!=null)
-			textCursor.dispose();
-		busyCursor=null;
-		handCursor=null;
-		textCursor=null;
 	}
 }
