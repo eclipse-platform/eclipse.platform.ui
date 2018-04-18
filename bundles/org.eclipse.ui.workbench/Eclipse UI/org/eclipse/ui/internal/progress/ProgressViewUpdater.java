@@ -49,7 +49,7 @@ class ProgressViewUpdater implements IJobProgressManagerListener {
 
 		Collection<JobTreeElement> refreshes = new LinkedHashSet<>();
 
-		boolean updateAll;
+		volatile boolean updateAll;
 
         private UpdatesInfo() {
             //Create a new instance of the info
@@ -60,7 +60,7 @@ class ProgressViewUpdater implements IJobProgressManagerListener {
          *
          * @param addition
          */
-		void add(JobTreeElement addition) {
+		synchronized void add(JobTreeElement addition) {
             additions.add(addition);
         }
 
@@ -69,7 +69,7 @@ class ProgressViewUpdater implements IJobProgressManagerListener {
          *
          * @param removal
          */
-		void remove(JobTreeElement removal) {
+		synchronized void remove(JobTreeElement removal) {
             deletions.add(removal);
         }
 
@@ -78,21 +78,24 @@ class ProgressViewUpdater implements IJobProgressManagerListener {
          *
          * @param refresh
          */
-		void refresh(JobTreeElement refresh) {
+		synchronized void refresh(JobTreeElement refresh) {
             refreshes.add(refresh);
         }
 
         /**
          * Reset the caches after completion of an update.
          */
-		void reset() {
+		synchronized void reset() {
             additions.clear();
             deletions.clear();
             refreshes.clear();
             updateAll = false;
         }
 
-		void processForUpdate() {
+		/**
+		 * @return array containing updated, added and deleted items
+		 */
+		synchronized JobTreeElement[][] processForUpdate() {
 			HashSet<JobTreeElement> staleAdditions = new HashSet<>();
 
             Iterator<JobTreeElement> additionsIterator = additions.iterator();
@@ -109,10 +112,7 @@ class ProgressViewUpdater implements IJobProgressManagerListener {
             additions.removeAll(staleAdditions);
 
 			HashSet<JobTreeElement> obsoleteRefresh = new HashSet<>();
-            Iterator<JobTreeElement> refreshIterator = refreshes.iterator();
-            while (refreshIterator.hasNext()) {
-                JobTreeElement treeElement = refreshIterator
-                        .next();
+			for (JobTreeElement treeElement : refreshes) {
                 if (deletions.contains(treeElement)
                         || additions.contains(treeElement)) {
 					obsoleteRefresh.add(treeElement);
@@ -134,7 +134,12 @@ class ProgressViewUpdater implements IJobProgressManagerListener {
 
             refreshes.removeAll(obsoleteRefresh);
 
-        }
+			JobTreeElement[] updateItems = refreshes.toArray(new JobTreeElement[0]);
+			JobTreeElement[] additionItems = additions.toArray(new JobTreeElement[0]);
+			JobTreeElement[] deletionItems = deletions.toArray(new JobTreeElement[0]);
+			return new JobTreeElement[][] { updateItems, additionItems, deletionItems };
+		}
+
     }
 
     /**
@@ -200,6 +205,7 @@ class ProgressViewUpdater implements IJobProgressManagerListener {
 		}
     }
 
+	/** Running in UI thread by throttledUpdate */
 	private void update() {
 		// Abort the update if there isn't anything
 		if (collectors.isEmpty()) {
@@ -213,16 +219,11 @@ class ProgressViewUpdater implements IJobProgressManagerListener {
 			}
 
 		} else {
-			// Lock while getting local copies of the caches.
-			JobTreeElement[] updateItems;
-			JobTreeElement[] additionItems;
-			JobTreeElement[] deletionItems;
+			JobTreeElement[][] elements = currentInfo.processForUpdate();
 
-			currentInfo.processForUpdate();
-
-			updateItems = currentInfo.refreshes.toArray(new JobTreeElement[0]);
-			additionItems = currentInfo.additions.toArray(new JobTreeElement[0]);
-			deletionItems = currentInfo.deletions.toArray(new JobTreeElement[0]);
+			JobTreeElement[] updateItems = elements[0];
+			JobTreeElement[] additionItems = elements[1];
+			JobTreeElement[] deletionItems = elements[2];
 
 			currentInfo.reset();
 
@@ -239,21 +240,6 @@ class ProgressViewUpdater implements IJobProgressManagerListener {
 			}
 		}
 	}
-
-    /**
-     * Refresh the supplied JobInfo.
-     * @param info
-     */
-    public void refresh(JobInfo info) {
-		currentInfo.refresh(info);
-		GroupInfo group = info.getGroupInfo();
-		if (group != null) {
-			currentInfo.refresh(group);
-		}
-        //Add in a 100ms delay so as to keep priority low
-		throttledUpdate.throttledExec();
-
-    }
 
     @Override
 	public void refreshJobInfo(JobInfo info) {
