@@ -19,6 +19,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
+import java.util.function.Consumer;
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import javax.inject.Inject;
@@ -75,7 +76,6 @@ import org.eclipse.swt.events.ControlListener;
 import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.MouseListener;
-import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Color;
@@ -1416,18 +1416,7 @@ public class StackRenderer extends LazyStackRenderer implements IPreferenceChang
 	protected void populateTabMenu(final Menu menu, MPart part) {
 		int closeableElements = 0;
 		if (isClosable(part)) {
-			MenuItem menuItemClose = new MenuItem(menu, SWT.NONE);
-			menuItemClose.setText(SWTRenderersMessages.menuClose);
-			menuItemClose.addSelectionListener(new SelectionAdapter() {
-				@Override
-				public void widgetSelected(SelectionEvent e) {
-					MPart part = (MPart) menu.getData(STACK_SELECTED_PART);
-					EPartService partService = getContextForParent(part).get(EPartService.class);
-					if (partService.savePart(part, true))
-						partService.hidePart(part);
-
-				}
-			});
+			createMenuItem(menu, SWTRenderersMessages.menuClose, e -> closePart(menu));
 			closeableElements++;
 		}
 
@@ -1436,52 +1425,49 @@ public class StackRenderer extends LazyStackRenderer implements IPreferenceChang
 			closeableElements += getCloseableSiblingParts(part).size();
 
 			if (closeableElements >= 2) {
-				MenuItem menuItemOthers = new MenuItem(menu, SWT.NONE);
-				menuItemOthers.setText(SWTRenderersMessages.menuCloseOthers);
-				menuItemOthers.addSelectionListener(new SelectionAdapter() {
-					@Override
-					public void widgetSelected(SelectionEvent e) {
-						MPart part = (MPart) menu.getData(STACK_SELECTED_PART);
-						closeSiblingParts(part, true);
-					}
-				});
+				createMenuItem(menu, SWTRenderersMessages.menuCloseOthers, e -> closeSiblingParts(menu, true));
 
-				int leftFrom = getCloseableSideParts(part, true).size();
-				if (leftFrom > 0) {
-					MenuItem menuItemLeft = new MenuItem(menu, SWT.NONE);
-					menuItemLeft.setText(SWTRenderersMessages.menuCloseLeft);
-					menuItemLeft.addSelectionListener(new SelectionAdapter() {
-						@Override
-						public void widgetSelected(SelectionEvent e) {
-							MPart part = (MPart) menu.getData(STACK_SELECTED_PART);
-							closeSideParts(part, true);
-						}
-					});
+				// create menu for parts on the left
+				if (!getCloseableSideParts(part, true).isEmpty()) {
+					createMenuItem(menu, SWTRenderersMessages.menuCloseLeft, e -> closeSideParts(menu, true));
 				}
 
-				int rightFrom = getCloseableSideParts(part, false).size();
-				if (rightFrom > 0) {
-					MenuItem menuItemRight = new MenuItem(menu, SWT.NONE);
-					menuItemRight.setText(SWTRenderersMessages.menuCloseRight);
-					menuItemRight.addSelectionListener(new SelectionAdapter() {
-						@Override
-						public void widgetSelected(SelectionEvent e) {
-							MPart part = (MPart) menu.getData(STACK_SELECTED_PART);
-							closeSideParts(part, false);
-						}
-					});
+				// create menu for parts on the right
+				if (!getCloseableSideParts(part, false).isEmpty()) {
+					createMenuItem(menu, SWTRenderersMessages.menuCloseRight, e -> closeSideParts(menu, false));
 				}
 
 				new MenuItem(menu, SWT.SEPARATOR);
 
-				MenuItem menuItemAll = new MenuItem(menu, SWT.NONE);
-				menuItemAll.setText(SWTRenderersMessages.menuCloseAll);
-				menuItemAll.addSelectionListener(SelectionListener.widgetSelectedAdapter(e -> {
-					MPart part1 = (MPart) menu.getData(STACK_SELECTED_PART);
-					closeSiblingParts(part1, false);
-				}));
+				createMenuItem(menu, SWTRenderersMessages.menuCloseAll, e -> closeSiblingParts(menu, false));
+
 			}
 		}
+	}
+
+	/**
+	 *
+	 * Closes the currently selected part
+	 *
+	 * @param menu
+	 */
+	private void closePart(final Menu menu) {
+		MPart selectedPart = (MPart) menu.getData(STACK_SELECTED_PART);
+		EPartService partService = getContextForParent(selectedPart).get(EPartService.class);
+		if (partService.savePart(selectedPart, true)) {
+			partService.hidePart(selectedPart);
+		}
+	}
+
+	/**
+	 * Helper method for creating menu items
+	 */
+	private MenuItem createMenuItem(final Menu menu, String menuItemText, Consumer<SelectionEvent> c) {
+		MenuItem menuItem = new MenuItem(menu, SWT.NONE);
+		menuItem.setText(menuItemText);
+		menuItem.addSelectionListener(SelectionListener.widgetSelectedAdapter(c));
+		return menuItem;
+
 	}
 
 	private MElementContainer<MUIElement> getParent(MPart part) {
@@ -1570,16 +1556,18 @@ public class StackRenderer extends LazyStackRenderer implements IPreferenceChang
 		return closeableSiblings;
 	}
 
-	private void closeSideParts(MPart part, boolean left) {
-		MElementContainer<MUIElement> container = getParent(part);
+	private void closeSideParts(Menu menu, boolean left) {
+		MPart selectedPart = (MPart) menu.getData(STACK_SELECTED_PART);
+		MElementContainer<MUIElement> container = getParent(selectedPart);
 		if (container == null) {
 			return;
 		}
-		List<MPart> others = getCloseableSideParts(part, left);
-		closeSiblingParts(part, others, true);
+		List<MPart> others = getCloseableSideParts(selectedPart, left);
+		closeSiblingParts(selectedPart, others, true);
 	}
 
-	private void closeSiblingParts(MPart part, boolean skipThisPart) {
+	private void closeSiblingParts(Menu menu, boolean skipThisPart) {
+		MPart part = (MPart) menu.getData(STACK_SELECTED_PART);
 		MElementContainer<MUIElement> container = getParent(part);
 		if (container == null) {
 			return;
