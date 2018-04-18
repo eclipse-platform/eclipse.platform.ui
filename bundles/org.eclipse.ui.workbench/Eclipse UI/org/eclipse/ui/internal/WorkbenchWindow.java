@@ -2367,10 +2367,10 @@ STATUS_LINE_ID, model);
 	}
 
 	/**
-	 * Returns true iff we are currently deferring UI processing due to a large
+	 * Returns true if we are currently deferring UI processing due to a large
 	 * update
 	 *
-	 * @return true iff we are deferring UI updates.
+	 * @return true if we are deferring UI updates.
 	 * @since 3.1
 	 */
 	private boolean updatesDeferred() {
