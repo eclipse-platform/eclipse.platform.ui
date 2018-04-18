@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2016 IBM Corporation and others.
+ * Copyright (c) 2003, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -29,8 +29,6 @@ import org.eclipse.jface.viewers.CheckStateChangedEvent;
 import org.eclipse.jface.viewers.CheckboxTreeViewer;
 import org.eclipse.jface.viewers.ICheckStateListener;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
-import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.ViewerComparator;
@@ -66,23 +64,39 @@ public class ActivityEnabler {
 
 	private static final int SOME = 1;
 
-	private ISelectionChangedListener selectionListener = new ISelectionChangedListener() {
+	protected CheckboxTreeViewer dualViewer;
 
-		@Override
-		public void selectionChanged(SelectionChangedEvent event) {
-			Object element = ((IStructuredSelection) event.getSelection())
-					.getFirstElement();
-			try {
-				if (element instanceof ICategory) {
-					descriptionText.setText(((ICategory) element)
-							.getDescription());
-				} else if (element instanceof IActivity) {
-					descriptionText.setText(((IActivity) element)
-							.getDescription());
-				}
-			} catch (NotDefinedException e) {
-				descriptionText.setText(""); //$NON-NLS-1$
+	/**
+	 * The Set of activities that belong to at least one category.
+	 */
+	private Set managedActivities = new HashSet(7);
+
+	/**
+	 * The content provider.
+	 */
+	protected ActivityCategoryContentProvider provider = new ActivityCategoryContentProvider();
+
+	/**
+	 * The descriptive text.
+	 */
+	protected Text descriptionText;
+
+	private Properties strings;
+
+	private IMutableActivityManager activitySupport;
+
+	private TableViewer dependantViewer;
+
+	private ISelectionChangedListener selectionListener = event -> {
+		Object element = event.getStructuredSelection().getFirstElement();
+		try {
+			if (element instanceof ICategory) {
+				descriptionText.setText(((ICategory) element).getDescription());
+			} else if (element instanceof IActivity) {
+				descriptionText.setText(((IActivity) element).getDescription());
 			}
+		} catch (NotDefinedException e) {
+			descriptionText.setText(""); //$NON-NLS-1$
 		}
 	};
 
@@ -225,29 +239,6 @@ public class ActivityEnabler {
 		}
 
 	};
-
-	protected CheckboxTreeViewer dualViewer;
-
-	/**
-	 * The Set of activities that belong to at least one category.
-	 */
-	private Set managedActivities = new HashSet(7);
-
-	/**
-	 * The content provider.
-	 */
-	protected ActivityCategoryContentProvider provider = new ActivityCategoryContentProvider();
-
-	/**
-	 * The descriptive text.
-	 */
-	protected Text descriptionText;
-
-	private Properties strings;
-
-    private IMutableActivityManager activitySupport;
-
-	private TableViewer dependantViewer;
 
 	/**
 	 * Create a new instance.

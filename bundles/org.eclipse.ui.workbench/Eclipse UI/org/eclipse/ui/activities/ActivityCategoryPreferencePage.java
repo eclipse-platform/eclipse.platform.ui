@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2016 IBM Corporation and others.
+ * Copyright (c) 2005, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -29,7 +29,6 @@ import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.resource.LocalResourceManager;
 import org.eclipse.jface.viewers.CheckboxTableViewer;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
-import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.ITableLabelProvider;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.LabelProviderChangedEvent;
@@ -399,7 +398,7 @@ public final class ActivityCategoryPreferencePage extends PreferencePage impleme
         categoryViewer.addFilter(new EmptyCategoryFilter());
 
 		categoryViewer.addSelectionChangedListener(event -> {
-			ICategory element = (ICategory) ((IStructuredSelection) event.getSelection()).getFirstElement();
+			ICategory element = (ICategory) event.getStructuredSelection().getFirstElement();
 			setDetails(element);
 		});
         categoryViewer.setInput(workingCopy.getDefinedCategoryIds());

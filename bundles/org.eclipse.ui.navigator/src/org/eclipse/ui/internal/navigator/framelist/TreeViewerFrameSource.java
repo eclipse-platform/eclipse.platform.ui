@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.navigator.framelist;
 
-import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.viewers.AbstractTreeViewer;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -42,12 +41,7 @@ public class TreeViewerFrameSource implements IFrameSource {
      * @param frameList
      */
     public void connectTo(FrameList frameList) {
-        frameList.addPropertyChangeListener(new IPropertyChangeListener() {
-            @Override
-			public void propertyChange(PropertyChangeEvent event) {
-                TreeViewerFrameSource.this.handlePropertyChange(event);
-            }
-        });
+		frameList.addPropertyChangeListener(event -> TreeViewerFrameSource.this.handlePropertyChange(event));
     }
 
     /**
@@ -138,7 +132,7 @@ public class TreeViewerFrameSource implements IFrameSource {
      * @return the selection frame, or <code>null</code>
      */
     protected Frame getSelectionFrame(int flags) {
-        IStructuredSelection sel = (IStructuredSelection) viewer.getSelection();
+		IStructuredSelection sel = viewer.getStructuredSelection();
         if (sel.size() == 1) {
             Object o = sel.getFirstElement();
             if (viewer.isExpandable(o)) {

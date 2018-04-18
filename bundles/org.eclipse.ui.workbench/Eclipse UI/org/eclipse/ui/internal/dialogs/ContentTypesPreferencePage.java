@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2017 IBM Corporation and others.
+ * Copyright (c) 2005, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -401,8 +401,8 @@ public class ContentTypesPreferencePage extends PreferencePage implements
 			public void widgetSelected(SelectionEvent e) {
 				if (editorRegistry instanceof EditorRegistry) {
 					EditorRegistry registry = (EditorRegistry) editorRegistry;
-					IEditorDescriptor editor = (IEditorDescriptor) ((IStructuredSelection) editorAssociationsViewer
-							.getSelection()).getFirstElement();
+					IEditorDescriptor editor = (IEditorDescriptor) editorAssociationsViewer.getStructuredSelection()
+							.getFirstElement();
 					IContentType contentType = (IContentType) editorAssociationsViewer.getInput();
 					registry.removeUserAssociation(contentType, editor);
 					editorAssociationsViewer.refresh();
@@ -414,8 +414,8 @@ public class ContentTypesPreferencePage extends PreferencePage implements
 		editorAssociationsViewer.addSelectionChangedListener(event -> {
 			if (editorRegistry instanceof EditorRegistry) {
 				EditorRegistry registry = (EditorRegistry) editorRegistry;
-				IEditorDescriptor editor = (IEditorDescriptor) ((IStructuredSelection) editorAssociationsViewer
-						.getSelection()).getFirstElement();
+				IEditorDescriptor editor = (IEditorDescriptor) editorAssociationsViewer.getStructuredSelection()
+						.getFirstElement();
 				IContentType contentType = (IContentType) editorAssociationsViewer.getInput();
 				removeEditorButton.setEnabled(registry.isUserAssociation(contentType, editor));
 			}
@@ -505,7 +505,7 @@ public class ContentTypesPreferencePage extends PreferencePage implements
 		data = new GridData(GridData.FILL_BOTH);
 		fileAssociationViewer.getControl().setLayoutData(data);
 		fileAssociationViewer.addSelectionChangedListener(event -> {
-			IStructuredSelection selection = (IStructuredSelection) event.getSelection();
+			IStructuredSelection selection = event.getStructuredSelection();
 			if (selection.isEmpty()) {
 				editButton.setEnabled(false);
 				removeButton.setEnabled(false);
@@ -635,7 +635,7 @@ public class ContentTypesPreferencePage extends PreferencePage implements
 		contentTypesViewer.getControl().setLayoutData(data);
 
 		contentTypesViewer.addSelectionChangedListener(event -> {
-			IContentType contentType = (IContentType) ((IStructuredSelection) event.getSelection()).getFirstElement();
+			IContentType contentType = (IContentType) event.getStructuredSelection().getFirstElement();
 			fileAssociationViewer.setInput(contentType);
 			editorAssociationsViewer.setInput(contentType);
 			editButton.setEnabled(false);

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 IBM Corporation and others.
+ * Copyright (c) 2000, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -148,20 +148,17 @@ public class DecoratorsPreferencePage extends PreferencePage implements
 
         });
 
-        checkboxViewer
-                .addSelectionChangedListener(event -> {
-				    if (event.getSelection() instanceof IStructuredSelection) {
-				        IStructuredSelection sel = (IStructuredSelection) event
-				                .getSelection();
-				        DecoratorDefinition definition = (DecoratorDefinition) sel
-				                .getFirstElement();
-				        if (definition == null) {
-							clearDescription();
-						} else {
-							showDescription(definition);
-						}
-				    }
-				});
+		checkboxViewer.addSelectionChangedListener(event -> {
+			if (event.getSelection() instanceof IStructuredSelection) {
+				IStructuredSelection sel = event.getStructuredSelection();
+				DecoratorDefinition definition = (DecoratorDefinition) sel.getFirstElement();
+				if (definition == null) {
+					clearDescription();
+				} else {
+					showDescription(definition);
+				}
+			}
+		});
 
         checkboxViewer.addCheckStateListener(event -> checkboxViewer.setSelection(new StructuredSelection(event
 		        .getElement())));

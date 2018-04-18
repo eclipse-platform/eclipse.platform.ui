@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2016 IBM Corporation and others.
+ * Copyright (c) 2004, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -20,7 +20,6 @@ import java.util.Set;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.viewers.CheckboxTableViewer;
-import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Font;
@@ -143,8 +142,7 @@ public class EnablementDialog extends Dialog {
 			            !activitiesToEnable.isEmpty());
 			});
             viewer.addSelectionChangedListener(event -> {
-			    selectedActivity = (String) ((IStructuredSelection) event
-			            .getSelection()).getFirstElement();
+				selectedActivity = (String) event.getStructuredSelection().getFirstElement();
 			    setDetails();
 			});
             activitiesToEnable.addAll(activityIdsCopy);

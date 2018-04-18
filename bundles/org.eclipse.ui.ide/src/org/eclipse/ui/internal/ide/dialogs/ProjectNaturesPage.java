@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2014 Gunnar Wagenknecht and others.
+ * Copyright (c) 2007, 2018 Gunnar Wagenknecht and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -180,7 +180,7 @@ public class ProjectNaturesPage extends PropertyPage {
 					}
 					ProjectNaturesPage.this.warningAlreadyShown = true;
 				}
-				IStructuredSelection selection = (IStructuredSelection)ProjectNaturesPage.this.activeNaturesList.getSelection();
+				IStructuredSelection selection = ProjectNaturesPage.this.activeNaturesList.getStructuredSelection();
 				for (Object item : selection.toList()) {
 					String natureId = (String) item;
 					naturesIdsWorkingCopy.remove(natureId);

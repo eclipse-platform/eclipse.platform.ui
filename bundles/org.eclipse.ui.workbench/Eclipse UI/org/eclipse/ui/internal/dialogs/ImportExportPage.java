@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2015 IBM Corporation and others.
+ * Copyright (c) 2005, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -393,8 +393,7 @@ public abstract class ImportExportPage extends WorkbenchWizardSelectionPage{
      * order to recreate this page's state in the next instance of this page.
      */
     protected void storeSelectedCategoryAndWizard(String setting, TreeViewer viewer) {
-        Object selected = ((IStructuredSelection) viewer
-                .getSelection()).getFirstElement();
+		Object selected = viewer.getStructuredSelection().getFirstElement();
 
         if (selected != null) {
             if (selected instanceof IWizardCategory) {

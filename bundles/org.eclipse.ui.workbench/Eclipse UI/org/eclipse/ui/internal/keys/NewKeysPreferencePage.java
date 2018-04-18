@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2016 IBM Corporation and others.
+ * Copyright (c) 2005, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -47,7 +47,6 @@ import org.eclipse.jface.viewers.ComboViewer;
 import org.eclipse.jface.viewers.IBaseLabelProvider;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
-import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.ITableLabelProvider;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.LabelProvider;
@@ -714,8 +713,7 @@ if (!event.getOldValue().equals(event.getNewValue())) {
 		fWhenCombo.setContentProvider(new ModelContentProvider());
 		fWhenCombo.setLabelProvider(new ListLabelProvider());
 		fWhenCombo.addSelectionChangedListener(event -> {
-			ContextElement context = (ContextElement) ((IStructuredSelection) event
-					.getSelection()).getFirstElement();
+			ContextElement context = (ContextElement) event.getStructuredSelection().getFirstElement();
 			if (context != null) {
 				keyController.getContextModel().setSelectedElement(context);
 			}
@@ -783,38 +781,32 @@ if (!event.getOldValue().equals(event.getNewValue())) {
 				return element.getContext().getName();
 			}
 		});
-		conflictViewer
-				.addSelectionChangedListener(event -> {
-					ModelElement binding = (ModelElement) ((IStructuredSelection) event.getSelection())
-							.getFirstElement();
-					BindingModel bindingModel = keyController
-							.getBindingModel();
-					if (binding != null
-							&& binding != bindingModel.getSelectedElement()) {
-						StructuredSelection selection = new StructuredSelection(
-								binding);
+		conflictViewer.addSelectionChangedListener(event -> {
+			ModelElement binding = (ModelElement) event.getStructuredSelection().getFirstElement();
+			BindingModel bindingModel = keyController.getBindingModel();
+			if (binding != null && binding != bindingModel.getSelectedElement()) {
+				StructuredSelection selection = new StructuredSelection(binding);
 
-						bindingModel.setSelectedElement(binding);
-						conflictViewer.setSelection(selection);
+				bindingModel.setSelectedElement(binding);
+				conflictViewer.setSelection(selection);
 
-						boolean selectionVisible = false;
-						TreeItem[] items = fFilteredTree.getViewer()
-								.getTree().getItems();
-						for (TreeItem item : items) {
-							if (item.getData().equals(binding)) {
-								selectionVisible = true;
-								break;
-							}
-						}
-
-						if (!selectionVisible) {
-							fFilteredTree.getFilterControl().setText(""); //$NON-NLS-1$
-							fFilteredTree.getViewer().refresh();
-							bindingModel.setSelectedElement(binding);
-							conflictViewer.setSelection(selection);
-						}
+				boolean selectionVisible = false;
+				TreeItem[] items = fFilteredTree.getViewer().getTree().getItems();
+				for (TreeItem item : items) {
+					if (item.getData().equals(binding)) {
+						selectionVisible = true;
+						break;
 					}
-				});
+				}
+
+				if (!selectionVisible) {
+					fFilteredTree.getFilterControl().setText(""); //$NON-NLS-1$
+					fFilteredTree.getViewer().refresh();
+					bindingModel.setSelectedElement(binding);
+					conflictViewer.setSelection(selection);
+				}
+			}
+		});
 
 		IPropertyChangeListener conflictsListener = event -> {
 			if (event.getSource() == keyController.getConflictModel()
@@ -946,8 +938,7 @@ if (!event.getOldValue().equals(event.getNewValue())) {
 		columns[USER_DELTA_COLUMN].setWidth(50);
 
 		viewer.addSelectionChangedListener(event -> {
-			ModelElement binding = (ModelElement) ((IStructuredSelection) event
-					.getSelection()).getFirstElement();
+			ModelElement binding = (ModelElement) event.getStructuredSelection().getFirstElement();
 			keyController.getBindingModel().setSelectedElement(binding);
 		});
 
@@ -1069,11 +1060,11 @@ if (!event.getOldValue().equals(event.getNewValue())) {
 		gridData.widthHint = 150;
 		gridData.horizontalAlignment = SWT.FILL;
 		fSchemeCombo.getCombo().setLayoutData(gridData);
-		fSchemeCombo.addSelectionChangedListener(event -> BusyIndicator.showWhile(fFilteredTree.getViewer().getTree().getDisplay(), () -> {
-			SchemeElement scheme = (SchemeElement) ((IStructuredSelection) event.getSelection())
-					.getFirstElement();
-			keyController.getSchemeModel().setSelectedElement(scheme);
-		}));
+		fSchemeCombo.addSelectionChangedListener(
+				event -> BusyIndicator.showWhile(fFilteredTree.getViewer().getTree().getDisplay(), () -> {
+					SchemeElement scheme = (SchemeElement) event.getStructuredSelection().getFirstElement();
+					keyController.getSchemeModel().setSelectedElement(scheme);
+				}));
 		IPropertyChangeListener listener = event -> {
 			if (event.getSource() == keyController.getSchemeModel()
 					&& CommonModel.PROP_SELECTED_ELEMENT.equals(event

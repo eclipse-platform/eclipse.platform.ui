@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2017 IBM Corporation and others.
+ * Copyright (c) 2010, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -509,8 +509,7 @@ public class LinkedResourceEditor {
 	}
 
 	IResource[] getSelectedResource() {
-		IStructuredSelection selection = (IStructuredSelection) fTree
-				.getSelection();
+		IStructuredSelection selection = fTree.getStructuredSelection();
 		Object[] array = selection.toArray();
 		if (array.length > 0) {
 			for (int i = 0; i < array.length; i++) {

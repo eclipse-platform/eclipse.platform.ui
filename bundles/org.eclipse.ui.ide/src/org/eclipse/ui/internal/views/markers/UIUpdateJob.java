@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2015 IBM Corporation and others.
+ * Copyright (c) 2009, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -15,7 +15,6 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.viewers.IContentProvider;
-import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.progress.WorkbenchJob;
@@ -119,7 +118,7 @@ class UIUpdateJob extends WorkbenchJob {
 		} finally {
 			if (view.isVisible()) {
 				viewer.getTree().setRedraw(true);
-				view.updateStatusLine((IStructuredSelection)viewer.getSelection());
+				view.updateStatusLine(viewer.getStructuredSelection());
 //				view.updateCategoryLabels();
 			}
 			updating = false;

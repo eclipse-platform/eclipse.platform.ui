@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 IBM Corporation and others.
+ * Copyright (c) 2000, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -534,8 +534,7 @@ class NewWizardNewPage implements ISelectionChangedListener {
         page.setErrorMessage(null);
         page.setMessage(null);
 
-        Object selectedObject = getSingleSelection((IStructuredSelection) selectionEvent
-                .getSelection());
+		Object selectedObject = getSingleSelection(selectionEvent.getStructuredSelection());
 
         if (selectedObject instanceof IWizardDescriptor) {
             if (selectedObject == selectedElement) {
@@ -617,8 +616,7 @@ class NewWizardNewPage implements ISelectionChangedListener {
      * order to recreate this page's state in the next instance of this page.
      */
     protected void storeSelectedCategoryAndWizard() {
-        Object selected = getSingleSelection((IStructuredSelection) filteredTree
-        		.getViewer().getSelection());
+		Object selected = getSingleSelection(filteredTree.getViewer().getStructuredSelection());
 
         if (selected != null) {
             if (selected instanceof IWizardCategory) {

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2015 IBM Corporation and others.
+ * Copyright (c) 2003, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,15 +10,10 @@
  *******************************************************************************/
 package org.eclipse.ui.navigator;
 
-import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.widgets.Menu;
-
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.SafeRunner;
 import org.eclipse.core.runtime.Status;
-
-import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IStatusLineManager;
 import org.eclipse.jface.action.MenuManager;
@@ -31,7 +26,8 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TreeViewer;
-
+import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.widgets.Menu;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.OpenAndLinkWithEditorHelper;
@@ -68,14 +64,7 @@ public final class CommonNavigatorManager implements ISelectionChangedListener {
 
 	private UpdateActionBarsJob updateActionBars;
 
-	private ISelectionChangedListener statusBarListener = new ISelectionChangedListener() {
-
-		@Override
-		public void selectionChanged(SelectionChangedEvent anEvent) {
-			updateStatusBar(anEvent.getSelection());
-		}
-
-	};
+	private ISelectionChangedListener statusBarListener = anEvent -> updateStatusBar(anEvent.getSelection());
 
 
 
@@ -223,8 +212,7 @@ public final class CommonNavigatorManager implements ISelectionChangedListener {
 	@Override
 	public void selectionChanged(SelectionChangedEvent anEvent) {
 		if (anEvent.getSelection() instanceof IStructuredSelection) {
-			IStructuredSelection structuredSelection = (IStructuredSelection) anEvent
-					.getSelection();
+			IStructuredSelection structuredSelection = anEvent.getStructuredSelection();
 			actionService.setContext(new ActionContext(structuredSelection));
 			actionService.fillActionBars(commonNavigator.getViewSite()
 					.getActionBars());
@@ -276,13 +264,7 @@ public final class CommonNavigatorManager implements ISelectionChangedListener {
 		MenuManager menuMgr = new MenuManager(contentService
 				.getViewerDescriptor().getPopupMenuId());
 		menuMgr.setRemoveAllWhenShown(true);
-		menuMgr.addMenuListener(new IMenuListener() {
-
-			@Override
-			public void menuAboutToShow(IMenuManager manager) {
-				fillContextMenu(manager);
-			}
-		});
+		menuMgr.addMenuListener(manager -> fillContextMenu(manager));
 		TreeViewer commonViewer = commonNavigator.getCommonViewer();
 		Menu menu = menuMgr.createContextMenu(commonViewer.getTree());
 

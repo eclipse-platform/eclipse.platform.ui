@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2017 IBM Corporation and others.
+ * Copyright (c) 2000, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -66,7 +66,6 @@ import org.eclipse.jface.viewers.ComboViewer;
 import org.eclipse.jface.viewers.ICheckStateListener;
 import org.eclipse.jface.viewers.ICheckStateProvider;
 import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.jface.viewers.TableViewer;
@@ -711,8 +710,7 @@ public class CustomizePerspectiveDialog extends TrayDialog {
 		// menusViewer
 		menusViewer
 				.addSelectionChangedListener(event -> {
-					Category category = (Category) ((IStructuredSelection) event
-							.getSelection()).getFirstElement();
+					Category category = (Category) event.getStructuredSelection().getFirstElement();
 					menuCategoriesViewer.setInput(category);
 					menuItemsViewer.setInput(category);
 					if (category.getChildrenCount() != 0) {
@@ -724,8 +722,7 @@ public class CustomizePerspectiveDialog extends TrayDialog {
 		// update menuItemsViewer on a change to menuCategoriesViewer
 		menuCategoriesViewer
 				.addSelectionChangedListener(event -> {
-					Category category = (Category) ((IStructuredSelection) event
-							.getSelection()).getFirstElement();
+					Category category = (Category) event.getStructuredSelection().getFirstElement();
 					menuItemsViewer.setInput(category);
 				});
 
@@ -907,8 +904,7 @@ public class CustomizePerspectiveDialog extends TrayDialog {
 		// selection changes
 		actionSetsViewer
 				.addSelectionChangedListener(event -> {
-					selectedActionSet[0] = (ActionSet) ((IStructuredSelection) event
-							.getSelection()).getFirstElement();
+					selectedActionSet[0] = (ActionSet) event.getStructuredSelection().getFirstElement();
 					actionSetMenuViewer.setInput(menuItems);
 					actionSetToolbarViewer.setInput(toolBarItems);
 				});

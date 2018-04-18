@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2016 IBM Corporation and others.
+ * Copyright (c) 2000, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -313,7 +313,7 @@ public class ResourceNavigator extends ViewPart implements ISetSelectionTarget,
         // Fill the action bars and update the global action handlers'
         // enabled state to match the current selection.
         getActionGroup().fillActionBars(getViewSite().getActionBars());
-        updateActionBars((IStructuredSelection) viewer.getSelection());
+		updateActionBars(viewer.getStructuredSelection());
 
         getSite().setSelectionProvider(viewer);
         getSite().getPage().addPartListener(partListener);
@@ -548,16 +548,11 @@ public class ResourceNavigator extends ViewPart implements ISetSelectionTarget,
      * @since 2.0
      */
     protected void fillContextMenu(IMenuManager menu) {
-        IStructuredSelection selection = (IStructuredSelection) getViewer()
-                .getSelection();
+		IStructuredSelection selection = getViewer().getStructuredSelection();
         getActionGroup().setContext(new ActionContext(selection));
         getActionGroup().fillContextMenu(menu);
     }
 
-    /*
-     * @see IResourceNavigatorPart
-     * @since 2.0
-     */
     @Override
 	public FrameList getFrameList() {
         return frameList;
@@ -802,8 +797,7 @@ public class ResourceNavigator extends ViewPart implements ISetSelectionTarget,
      * @since 2.0
      */
     protected void handleSelectionChanged(SelectionChangedEvent event) {
-        final IStructuredSelection sel = (IStructuredSelection) event
-                .getSelection();
+		final IStructuredSelection sel = event.getStructuredSelection();
         updateStatusLine(sel);
         updateActionBars(sel);
         dragDetected = false;
@@ -1169,8 +1163,7 @@ public class ResourceNavigator extends ViewPart implements ISetSelectionTarget,
                 }
             }
             //save selection
-            Object elements[] = ((IStructuredSelection) viewer.getSelection())
-                    .toArray();
+			Object elements[] = viewer.getStructuredSelection().toArray();
             if (elements.length > 0) {
                 IMemento selectionMem = memento.createChild(TAG_SELECTION);
                 for (Object selectionElement : elements) {
@@ -1328,13 +1321,9 @@ public class ResourceNavigator extends ViewPart implements ISetSelectionTarget,
         settings.put(STORE_SORT_TYPE, comparator.getCriteria());
 
         // update the sort actions' checked state
-        updateActionBars((IStructuredSelection) viewer.getSelection());
+		updateActionBars(viewer.getStructuredSelection());
     }
 
-    /*
-     * @see org.eclipse.ui.views.navigator.IResourceNavigatorPart#setWorkingSet(IWorkingSet)
-     * @since 2.0
-     */
     @Override
 	public void setWorkingSet(IWorkingSet workingSet) {
         TreeViewer treeViewer = getTreeViewer();
