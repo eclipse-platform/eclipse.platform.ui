@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2013 IBM Corporation and others.
+ * Copyright (c) 2000, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -161,7 +161,7 @@ public class FavoritesDialog extends TrayDialog {
 	 * The 'remove favorites' button has been pressed
 	 */
 	protected void removeSelectedFavorites() {
-		IStructuredSelection sel = (IStructuredSelection)getFavoritesTable().getSelection();
+		IStructuredSelection sel = getFavoritesTable().getStructuredSelection();
 		Iterator<?> iter = sel.iterator();
 		while (iter.hasNext()) {
 			Object config = iter.next();
@@ -177,9 +177,6 @@ public class FavoritesDialog extends TrayDialog {
 		handleMove(-1);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.dialogs.Dialog#getInitialSize()
-	 */
 	@Override
 	protected Point getInitialSize() {
 		return new Point(350, 400);
@@ -197,7 +194,7 @@ public class FavoritesDialog extends TrayDialog {
 	 * @param direction the direction to make the move (up or down)
 	 */
 	protected void handleMove(int direction) {
-		IStructuredSelection sel = (IStructuredSelection)getFavoritesTable().getSelection();
+		IStructuredSelection sel = getFavoritesTable().getStructuredSelection();
 		List<?> selList = sel.toList();
 		Object[] movedFavs= new Object[getFavorites().size()];
 		int i;
@@ -229,9 +226,6 @@ public class FavoritesDialog extends TrayDialog {
 	}
 
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.dialogs.Dialog#createDialogArea(org.eclipse.swt.widgets.Composite)
-	 */
 	@Override
 	protected Control createDialogArea(Composite parent) {
 		Composite composite = (Composite) super.createDialogArea(parent);
@@ -241,9 +235,6 @@ public class FavoritesDialog extends TrayDialog {
 		return composite;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.dialogs.Dialog#createContents(org.eclipse.swt.widgets.Composite)
-	 */
 	@Override
 	protected Control createContents(Composite parent) {
 		Control contents = super.createContents(parent);
@@ -349,7 +340,7 @@ public class FavoritesDialog extends TrayDialog {
 	 * The selection in the favorites list has changed
 	 */
 	protected void handleFavoriteSelectionChanged() {
-		IStructuredSelection selection = (IStructuredSelection)getFavoritesTable().getSelection();
+		IStructuredSelection selection = getFavoritesTable().getStructuredSelection();
 		List<ILaunchConfiguration> favs = getFavorites();
 		boolean notEmpty = !selection.isEmpty();
 		Iterator<?> elements = selection.iterator();
@@ -451,18 +442,12 @@ public class FavoritesDialog extends TrayDialog {
 		return list.toArray(new ILaunchConfiguration[list.size()]);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.dialogs.Dialog#okPressed()
-	 */
 	@Override
 	protected void okPressed() {
 		saveFavorites();
 		super.okPressed();
 	}
 
-	 /* (non-Javadoc)
-     * @see org.eclipse.jface.dialogs.Dialog#getDialogBoundsSettings()
-     */
     @Override
 	protected IDialogSettings getDialogBoundsSettings() {
     	 IDialogSettings settings = DebugUIPlugin.getDefault().getDialogSettings();

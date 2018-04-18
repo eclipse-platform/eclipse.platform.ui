@@ -1,5 +1,5 @@
 /****************************************************************************
-* Copyright (c) 2017 Red Hat Inc. and others.
+* Copyright (c) 2017, 2018 Red Hat Inc. and others.
 * All rights reserved. This program and the accompanying materials
 * are made available under the terms of the Eclipse Public License v1.0
 * which accompanies this distribution, and is available at
@@ -101,24 +101,16 @@ public class ExpressionInformationControlCreator implements IInformationControlC
 	     * Creates the content for the root element of the tree viewer in the hover
 	     */
 	    private class TreeRoot extends ElementContentProvider {
-			/* (non-Javadoc)
-			 * @see org.eclipse.debug.internal.ui.viewers.model.provisional.elements.ElementContentProvider#getChildCount(java.lang.Object, org.eclipse.debug.internal.ui.viewers.provisional.IPresentationContext)
-			 */
 			@Override
 			protected int getChildCount(Object element, IPresentationContext context, IViewerUpdate monitor) throws CoreException {
 				return 1;
 			}
-			/* (non-Javadoc)
-			 * @see org.eclipse.debug.internal.ui.viewers.model.provisional.elements.ElementContentProvider#getChildren(java.lang.Object, int, int, org.eclipse.debug.internal.ui.viewers.provisional.IPresentationContext)
-			 */
+
 			@Override
 			protected Object[] getChildren(Object parent, int index, int length, IPresentationContext context, IViewerUpdate monitor) throws CoreException {
 				return new Object[] { fVariable };
 			}
 
-			/* (non-Javadoc)
-			 * @see org.eclipse.debug.internal.ui.viewers.model.provisional.elements.ElementContentProvider#supportsContextId(java.lang.String)
-			 */
 			@Override
 			protected boolean supportsContextId(String id) {
 				return true;
@@ -131,49 +123,31 @@ public class ExpressionInformationControlCreator implements IInformationControlC
 		 */
 		private class DetailPaneContainer implements IDetailPaneContainer{
 
-			/* (non-Javadoc)
-			 * @see org.eclipse.debug.internal.ui.views.variables.details.IDetailPaneContainer#getCurrentPaneID()
-			 */
 			@Override
 			public String getCurrentPaneID() {
 				return fDetailPane.getCurrentPaneID();
 			}
 
-			/* (non-Javadoc)
-			 * @see org.eclipse.debug.internal.ui.views.variables.details.IDetailPaneContainer#getCurrentSelection()
-			 */
 			@Override
 			public IStructuredSelection getCurrentSelection() {
-				return (IStructuredSelection)fViewer.getSelection();
+				return fViewer.getStructuredSelection();
 			}
 
-			/* (non-Javadoc)
-			 * @see org.eclipse.debug.internal.ui.views.variables.details.IDetailPaneContainer#refreshDetailPaneContents()
-			 */
 			@Override
 			public void refreshDetailPaneContents() {
 				fDetailPane.display(getCurrentSelection());
 			}
 
-			/* (non-Javadoc)
-			 * @see org.eclipse.debug.internal.ui.views.variables.details.IDetailPaneContainer#getParentComposite()
-			 */
 			@Override
 			public Composite getParentComposite() {
 				return fDetailPaneComposite;
 			}
 
-			/* (non-Javadoc)
-			 * @see org.eclipse.debug.internal.ui.views.variables.details.IDetailPaneContainer#getWorkbenchPartSite()
-			 */
 			@Override
 			public IWorkbenchPartSite getWorkbenchPartSite() {
 				return null;
 			}
 
-			/* (non-Javadoc)
-			 * @see org.eclipse.debug.internal.ui.views.variables.details.IDetailPaneContainer#paneChanged(java.lang.String)
-			 */
 			@Override
 			public void paneChanged(String newPaneID) {
 				if (newPaneID.equals(DefaultDetailPane.ID)){
@@ -242,9 +216,6 @@ public class ExpressionInformationControlCreator implements IInformationControlC
 			}
 		}
 
-		/* (non-Javadoc)
-		 * @see org.eclipse.jface.text.AbstractInformationControl#dispose()
-		 */
 		@Override
 		public void dispose() {
 			persistSettings(getShell());
@@ -271,9 +242,6 @@ public class ExpressionInformationControlCreator implements IInformationControlC
 			}
 		}
 
-		/* (non-Javadoc)
-		 * @see org.eclipse.jface.text.AbstractInformationControl#setVisible(boolean)
-		 */
 		@Override
 		public void setVisible(boolean visible) {
 			if (!visible) {
@@ -282,9 +250,6 @@ public class ExpressionInformationControlCreator implements IInformationControlC
 			super.setVisible(visible);
 		}
 
-		/* (non-Javadoc)
-		 * @see org.eclipse.jface.text.AbstractInformationControl#createContent(org.eclipse.swt.widgets.Composite)
-		 */
 		@Override
 		protected void createContent(Composite parent) {
 
@@ -333,7 +298,7 @@ public class ExpressionInformationControlCreator implements IInformationControlC
 	        fTree.addSelectionListener(new SelectionListener() {
 	            @Override
 				public void widgetSelected(SelectionEvent e) {
-	            	fDetailPane.display((IStructuredSelection)fViewer.getSelection());
+					fDetailPane.display(fViewer.getStructuredSelection());
 	            }
 	            @Override
 				public void widgetDefaultSelected(SelectionEvent e) {}
@@ -406,9 +371,6 @@ public class ExpressionInformationControlCreator implements IInformationControlC
 	    	}
 	    }
 
-	    /* (non-Javadoc)
-	     * @see org.eclipse.jface.text.AbstractInformationControl#setForegroundColor(org.eclipse.swt.graphics.Color)
-	     */
 	    @Override
 	    public void setForegroundColor(Color foreground) {
 	    	super.setForegroundColor(foreground);
@@ -416,9 +378,6 @@ public class ExpressionInformationControlCreator implements IInformationControlC
 	    	fTree.setForeground(foreground);
 	    }
 
-		/* (non-Javadoc)
-		 * @see org.eclipse.jface.text.AbstractInformationControl#setBackgroundColor(org.eclipse.swt.graphics.Color)
-		 */
 		@Override
 		public void setBackgroundColor(Color background) {
 			super.setBackgroundColor(background);
@@ -426,26 +385,17 @@ public class ExpressionInformationControlCreator implements IInformationControlC
 			fTree.setBackground(background);
 		}
 
-		/* (non-Javadoc)
-		 * @see org.eclipse.jface.text.AbstractInformationControl#setFocus()
-		 */
 		@Override
 		public void setFocus() {
 			super.setFocus();
 			fTree.setFocus();
 		}
 
-		/* (non-Javadoc)
-		 * @see org.eclipse.jface.text.IInformationControlExtension#hasContents()
-		 */
 		@Override
 		public boolean hasContents() {
 			return fVariable != null;
 		}
 
-		/* (non-Javadoc)
-		 * @see org.eclipse.jface.text.IInformationControlExtension2#setInput(java.lang.Object)
-		 */
 		@Override
 		public void setInput(Object input) {
 			if (input instanceof IVariable) {
@@ -454,15 +404,9 @@ public class ExpressionInformationControlCreator implements IInformationControlC
 			}
 		}
 
-		/* (non-Javadoc)
-		 * @see org.eclipse.jface.text.AbstractInformationControl#getInformationPresenterControlCreator()
-		 */
 		@Override
 		public IInformationControlCreator getInformationPresenterControlCreator() {
 			return new ExpressionInformationControlCreator() {
-				/* (non-Javadoc)
-				 * @see org.eclipse.jdt.internal.debug.ui.ExpressionInformationControlCreator#createInformationControl(org.eclipse.swt.widgets.Shell)
-				 */
 				@Override
 				public IInformationControl createInformationControl(Shell shell) {
 					return new ExpressionInformationControl(shell, true);
@@ -471,9 +415,6 @@ public class ExpressionInformationControlCreator implements IInformationControlC
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.text.IInformationControlCreator#createInformationControl(org.eclipse.swt.widgets.Shell)
-	 */
 	@Override
 	public IInformationControl createInformationControl(Shell parent) {
 		return new ExpressionInformationControl(parent, false);

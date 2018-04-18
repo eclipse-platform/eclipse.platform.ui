@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2013 IBM Corporation and others.
+ * Copyright (c) 2003, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -15,7 +15,6 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.debug.core.sourcelookup.ISourceContainer;
-import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -77,7 +76,7 @@ public abstract class SourceContainerAction extends SelectionListenerAction {
 	 */
 	protected List<ISourceContainer> getOrderedSelection() {
 		List<ISourceContainer> targets = new ArrayList<>();
-		List<Object> selection = ((IStructuredSelection) getViewer().getSelection()).toList();
+		List<Object> selection = getViewer().getStructuredSelection().toList();
 		ISourceContainer[] entries = getViewer().getEntries();
 		for (int i = 0; i < entries.length; i++) {
 			ISourceContainer target = entries[i];
@@ -141,9 +140,6 @@ public abstract class SourceContainerAction extends SelectionListenerAction {
 		});
 	}
 
-	/**
-	 * @see IAction#setEnabled(boolean)
-	 */
 	@Override
 	public void setEnabled(boolean enabled) {
 		super.setEnabled(enabled);
@@ -156,7 +152,7 @@ public abstract class SourceContainerAction extends SelectionListenerAction {
 	 * Updates the enabled state.
 	 */
 	protected void update() {
-		selectionChanged((IStructuredSelection) getViewer().getSelection());
+		selectionChanged(getViewer().getStructuredSelection());
 	}
 
 	/**

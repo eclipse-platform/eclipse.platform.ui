@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2013 IBM Corporation and others.
+ * Copyright (c) 2007, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -101,9 +101,6 @@ public class RunDebugPropertiesPage extends PropertyPage {
 	private Button fDuplicateButton = null;
 	private Button fDeleteButton = null;
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.preference.PreferencePage#createContents(org.eclipse.swt.widgets.Composite)
-	 */
 	@Override
 	protected Control createContents(Composite parent) {
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(parent, IDebugHelpContextIds.RUN_DEBUG_RESOURCE_PROPERTY_PAGE);
@@ -211,9 +208,6 @@ public class RunDebugPropertiesPage extends PropertyPage {
 		return viewer;
 	}
 
-	/**
-	 * @see org.eclipse.jface.dialogs.DialogPage#dispose()
-	 */
 	@Override
 	public void dispose() {
 		if(fOriginalCandidates != null) {
@@ -309,9 +303,6 @@ public class RunDebugPropertiesPage extends PropertyPage {
 		return resource;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.preference.PreferencePage#performOk()
-	 */
 	@Override
 	public boolean performOk() {
 	//delete
@@ -336,9 +327,6 @@ public class RunDebugPropertiesPage extends PropertyPage {
 		return super.performOk();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.preference.PreferencePage#performDefaults()
-	 */
 	@Override
 	protected void performDefaults() {
 		setErrorMessage(null);
@@ -374,7 +362,7 @@ public class RunDebugPropertiesPage extends PropertyPage {
 	 * @return selected configurations
 	 */
 	private ILaunchConfigurationWorkingCopy[] getSelectedConfigurations() {
-		IStructuredSelection ss = (IStructuredSelection) fViewer.getSelection();
+		IStructuredSelection ss = fViewer.getStructuredSelection();
 		return (ILaunchConfigurationWorkingCopy[]) ss.toList().toArray(new ILaunchConfigurationWorkingCopy[ss.size()]);
 	}
 
@@ -478,33 +466,21 @@ public class RunDebugPropertiesPage extends PropertyPage {
 
 		SelectionDialog dialog = new AbstractDebugListSelectionDialog(getShell()){
 
-			/* (non-Javadoc)
-			 * @see org.eclipse.debug.internal.ui.launchConfigurations.AbstractDebugSelectionDialog#getDialogSettingsId()
-			 */
 			@Override
 			protected String getDialogSettingsId() {
 				return DebugUIPlugin.getUniqueIdentifier() + ".SELECT_CONFIGURATION_TYPE_DIALOG"; //$NON-NLS-1$
 			}
 
-			/* (non-Javadoc)
-			 * @see org.eclipse.debug.internal.ui.launchConfigurations.AbstractDebugSelectionDialog#getViewerInput()
-			 */
 			@Override
 			protected Object getViewerInput() {
 				return typeCandidates;
 			}
 
-			/* (non-Javadoc)
-			 * @see org.eclipse.debug.internal.ui.launchConfigurations.AbstractDebugSelectionDialog#getHelpContextId()
-			 */
 			@Override
 			protected String getHelpContextId() {
 				return IDebugHelpContextIds.SELECT_CONFIGURATION_TYPE_DIALOG;
 			}
 
-			/* (non-Javadoc)
-			 * @see org.eclipse.debug.internal.ui.launchConfigurations.AbstractDebugSelectionDialog#getViewerLabel()
-			 */
 			@Override
 			protected String getViewerLabel() {
 				return DebugPreferencesMessages.DefaultLaunchConfigurationsPropertiesPage_12;

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2013 IBM Corporation and others.
+ * Copyright (c) 2007, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -21,7 +21,6 @@ import org.eclipse.debug.internal.ui.IDebugHelpContextIds;
 import org.eclipse.debug.internal.ui.SWTFactory;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.jface.dialogs.IDialogConstants;
-import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
@@ -75,34 +74,25 @@ public class LaunchShortcutSelectionDialog extends AbstractDebugListSelectionDia
 		setTitle(MessageFormat.format(LaunchConfigurationsMessages.LaunchShortcutSelectionDialog_0, new Object[] { fModeName }));
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.launchConfigurations.AbstractDebugSelectionDialog#getHelpContextId()
-	 */
 	@Override
 	protected String getHelpContextId() {
 		return IDebugHelpContextIds.SELECT_LAUNCH_METHOD_DIALOG;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.launchConfigurations.AbstractDebugSelectionDialog#getDialogSettingsId()
-	 */
 	@Override
 	protected String getDialogSettingsId() {
 		return DIALOG_SETTINGS;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.launchConfigurations.AbstractDebugListSelectionDialog#addViewerListeners(org.eclipse.jface.viewers.StructuredViewer)
-	 */
 	@Override
 	protected void addViewerListeners(StructuredViewer viewer) {
 		super.addViewerListeners(viewer);
 		viewer.addSelectionChangedListener(new ISelectionChangedListener(){
 			@Override
 			public void selectionChanged(SelectionChangedEvent event) {
-				ISelection selection = event.getSelection();
+				IStructuredSelection selection = event.getStructuredSelection();
 				if (!selection.isEmpty()) {
-					LaunchShortcutExtension shortcutSource = (LaunchShortcutExtension) ((IStructuredSelection)selection).getFirstElement();
+					LaunchShortcutExtension shortcutSource = (LaunchShortcutExtension) selection.getFirstElement();
 					String description = shortcutSource.getShortcutDescription(fMode);
 					fDescriptionText.setText((description == null ? LaunchConfigurationsMessages.LaunchShortcutSelectionDialog_3 : description));
 				}
@@ -110,9 +100,6 @@ public class LaunchShortcutSelectionDialog extends AbstractDebugListSelectionDia
 		});
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.launchConfigurations.AbstractDebugSelectionDialog#addCustomFooterControls(org.eclipse.swt.widgets.Composite)
-	 */
 	@Override
 	protected void addCustomFooterControls(Composite parent) {
 		super.addCustomFooterControls(parent);
@@ -123,17 +110,11 @@ public class LaunchShortcutSelectionDialog extends AbstractDebugListSelectionDia
 		fDescriptionText.setBackground(group.getBackground());
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.launchConfigurations.AbstractDebugSelectionDialog#getViewerInput()
-	 */
 	@Override
 	protected Object getViewerInput() {
 		return fShortcuts;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.launchConfigurations.AbstractDebugSelectionDialog#getViewerLabel()
-	 */
 	@Override
 	protected String getViewerLabel() {
 		if(fResource == null) {
@@ -145,9 +126,6 @@ public class LaunchShortcutSelectionDialog extends AbstractDebugListSelectionDia
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.launchConfigurations.AbstractDebugListSelectionDialog#createButtonsForButtonBar(org.eclipse.swt.widgets.Composite)
-	 */
 	@Override
 	protected void createButtonsForButtonBar(Composite parent) {
 		super.createButtonsForButtonBar(parent);

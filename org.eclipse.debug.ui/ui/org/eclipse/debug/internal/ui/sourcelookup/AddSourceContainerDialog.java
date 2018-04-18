@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2013 IBM Corporation and others.
+ * Copyright (c) 2003, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -27,7 +27,6 @@ import org.eclipse.jface.dialogs.TitleAreaDialog;
 import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.DoubleClickEvent;
 import org.eclipse.jface.viewers.IDoubleClickListener;
-import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
@@ -68,9 +67,6 @@ public class AddSourceContainerDialog extends TitleAreaDialog {
 		fDirector = director;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.dialogs.TitleAreaDialog#createDialogArea(org.eclipse.swt.widgets.Composite)
-	 */
 	@Override
 	protected Control createDialogArea(Composite parent) {
 
@@ -106,9 +102,9 @@ public class AddSourceContainerDialog extends TitleAreaDialog {
 		fViewer.addSelectionChangedListener(new ISelectionChangedListener() {
 			@Override
 			public void selectionChanged(SelectionChangedEvent event) {
-				ISelection selection = event.getSelection();
+				IStructuredSelection selection = event.getStructuredSelection();
 				if (!selection.isEmpty()) {
-					ISourceContainerType type = (ISourceContainerType) ((IStructuredSelection)selection).getFirstElement();
+					ISourceContainerType type = (ISourceContainerType) selection.getFirstElement();
 					setMessage(type.getDescription());
 					getButton(IDialogConstants.OK_ID).setEnabled(true);
 				}
@@ -126,9 +122,6 @@ public class AddSourceContainerDialog extends TitleAreaDialog {
 		return comp;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.dialogs.Dialog#createButtonsForButtonBar(org.eclipse.swt.widgets.Composite)
-	 */
 	@Override
 	protected void createButtonsForButtonBar(Composite parent) {
 		super.createButtonsForButtonBar(parent);
@@ -138,12 +131,9 @@ public class AddSourceContainerDialog extends TitleAreaDialog {
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.dialogs.Dialog#okPressed()
-	 */
 	@Override
 	protected void okPressed() {
-		ISourceContainerType type = (ISourceContainerType) ((IStructuredSelection) fViewer.getSelection()).getFirstElement();
+		ISourceContainerType type = (ISourceContainerType) fViewer.getStructuredSelection().getFirstElement();
 		if (type != null) {
             ISourceContainerBrowser browser = DebugUITools.getSourceContainerBrowser(type.getId());
             if (browser != null) {

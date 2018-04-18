@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2017 Keith Seitz and others.
+ * Copyright (c) 2000, 2018 Keith Seitz and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -196,9 +196,6 @@ public class EnvironmentTab extends AbstractLaunchConfigurationTab {
 		setHelpContextId(IDebugHelpContextIds.LAUNCH_CONFIGURATION_DIALOG_ENVIRONMENT_TAB);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#createControl(org.eclipse.swt.widgets.Composite)
-	 */
 	@Override
 	public void createControl(Composite parent) {
 		// Create main composite
@@ -294,7 +291,7 @@ public class EnvironmentTab extends AbstractLaunchConfigurationTab {
 	 * @param event the selection change event
 	 */
 	protected void handleTableSelectionChanged(SelectionChangedEvent event) {
-		int size = ((IStructuredSelection)event.getSelection()).size();
+		int size = event.getStructuredSelection().size();
 		envEditButton.setEnabled(size == 1);
 		envRemoveButton.setEnabled(size > 0);
 	}
@@ -434,7 +431,7 @@ public class EnvironmentTab extends AbstractLaunchConfigurationTab {
 	 * Creates an editor for the value of the selected environment variable.
 	 */
 	private void handleEnvEditButtonSelected() {
-		IStructuredSelection sel= (IStructuredSelection) environmentTable.getSelection();
+		IStructuredSelection sel = environmentTable.getStructuredSelection();
 		EnvironmentVariable var= (EnvironmentVariable) sel.getFirstElement();
 		if (var == null) {
 			return;
@@ -470,7 +467,7 @@ public class EnvironmentTab extends AbstractLaunchConfigurationTab {
 	 * Removes the selected environment variable from the table.
 	 */
 	private void handleEnvRemoveButtonSelected() {
-		IStructuredSelection sel = (IStructuredSelection) environmentTable.getSelection();
+		IStructuredSelection sel = environmentTable.getStructuredSelection();
 		try {
 			environmentTable.getControl().setRedraw(false);
 			for (Iterator<?> i = sel.iterator(); i.hasNext();) {
@@ -492,17 +489,11 @@ public class EnvironmentTab extends AbstractLaunchConfigurationTab {
 		environmentTable.setInput(configuration);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#setDefaults(org.eclipse.debug.core.ILaunchConfigurationWorkingCopy)
-	 */
 	@Override
 	public void setDefaults(ILaunchConfigurationWorkingCopy configuration) {
 		configuration.removeAttribute(ILaunchManager.ATTR_APPEND_ENVIRONMENT_VARIABLES);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#initializeFrom(org.eclipse.debug.core.ILaunchConfiguration)
-	 */
 	@Override
 	public void initializeFrom(ILaunchConfiguration configuration) {
 		boolean append= true;
@@ -563,9 +554,6 @@ public class EnvironmentTab extends AbstractLaunchConfigurationTab {
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#getName()
-	 */
 	@Override
 	public String getName() {
 		return LaunchConfigurationsMessages.EnvironmentTab_Environment_7;
@@ -581,25 +569,16 @@ public class EnvironmentTab extends AbstractLaunchConfigurationTab {
 		return "org.eclipse.debug.ui.environmentTab"; //$NON-NLS-1$
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#getImage()
-	 */
 	@Override
 	public Image getImage() {
 		return DebugPluginImages.getImage(IDebugUIConstants.IMG_OBJS_ENVIRONMENT);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#activated(org.eclipse.debug.core.ILaunchConfigurationWorkingCopy)
-	 */
 	@Override
 	public void activated(ILaunchConfigurationWorkingCopy workingCopy) {
 		// do nothing when activated
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#deactivated(org.eclipse.debug.core.ILaunchConfigurationWorkingCopy)
-	 */
 	@Override
 	public void deactivated(ILaunchConfigurationWorkingCopy workingCopy) {
 		// do nothing when deactivated
@@ -629,41 +608,26 @@ public class EnvironmentTab extends AbstractLaunchConfigurationTab {
 			setShowSelectAllButtons(true);
 		}
 
-		/* (non-Javadoc)
-		 * @see org.eclipse.debug.internal.ui.launchConfigurations.AbstractDebugSelectionDialog#getDialogSettingsId()
-		 */
 		@Override
 		protected String getDialogSettingsId() {
 			return IDebugUIConstants.PLUGIN_ID + ".ENVIRONMENT_TAB.NATIVE_ENVIROMENT_DIALOG"; //$NON-NLS-1$
 		}
 
-		/* (non-Javadoc)
-		 * @see org.eclipse.debug.internal.ui.launchConfigurations.AbstractDebugSelectionDialog#getHelpContextId()
-		 */
 		@Override
 		protected String getHelpContextId() {
 			return IDebugHelpContextIds.SELECT_NATIVE_ENVIRONMENT_DIALOG;
 		}
 
-		/* (non-Javadoc)
-		 * @see org.eclipse.debug.internal.ui.launchConfigurations.AbstractDebugSelectionDialog#getViewerInput()
-		 */
 		@Override
 		protected Object getViewerInput() {
 			return fInput;
 		}
 
-		/* (non-Javadoc)
-		 * @see org.eclipse.debug.internal.ui.launchConfigurations.AbstractDebugSelectionDialog#getViewerLabel()
-		 */
 		@Override
 		protected String getViewerLabel() {
 			return LaunchConfigurationsMessages.EnvironmentTab_19;
 		}
 
-		/* (non-Javadoc)
-		 * @see org.eclipse.debug.internal.ui.launchConfigurations.AbstractDebugSelectionDialog#getLabelProvider()
-		 */
 		@Override
 		protected IBaseLabelProvider getLabelProvider() {
 			return new ILabelProvider() {
@@ -693,9 +657,6 @@ public class EnvironmentTab extends AbstractLaunchConfigurationTab {
 			};
 		}
 
-		/* (non-Javadoc)
-		 * @see org.eclipse.debug.internal.ui.launchConfigurations.AbstractDebugSelectionDialog#getContentProvider()
-		 */
 		@Override
 		protected IContentProvider getContentProvider() {
 			return new IStructuredContentProvider() {

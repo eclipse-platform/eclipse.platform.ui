@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2016 IBM Corporation and others.
+ * Copyright (c) 2003, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -20,7 +20,6 @@ import java.util.List;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.sourcelookup.ISourceContainer;
 import org.eclipse.debug.core.sourcelookup.ISourceLookupDirector;
-import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.StructuredSelection;
@@ -51,17 +50,11 @@ public class SourceContainerViewer extends TreeViewer {
 
 	class ContentProvider implements ITreeContentProvider {
 
-		/**
-		 * @see IStructuredContentProvider#getElements(Object)
-		 */
 		@Override
 		public Object[] getElements(Object inputElement) {
 			return getEntries();
 		}
 
-		/**
-		 * @see org.eclipse.jface.viewers.ITreeContentProvider#getChildren(java.lang.Object)
-		 */
 		@Override
 		public Object[] getChildren(Object parentElement) {
 			try {
@@ -71,17 +64,11 @@ public class SourceContainerViewer extends TreeViewer {
 			}
 		}
 
-		/**
-		 * @see org.eclipse.jface.viewers.ITreeContentProvider#getParent(java.lang.Object)
-		 */
 		@Override
 		public Object getParent(Object element) {
 			return null;
 		}
 
-		/**
-		 * @see org.eclipse.jface.viewers.ITreeContentProvider#hasChildren(java.lang.Object)
-		 */
 		@Override
 		public boolean hasChildren(Object element) {
 			return ((ISourceContainer)element).isComposite();
@@ -147,7 +134,7 @@ public class SourceContainerViewer extends TreeViewer {
 	 */
 	public void addEntries(ISourceContainer[] entries) {
         int index = 0;
-		IStructuredSelection sel = (IStructuredSelection)getSelection();
+		IStructuredSelection sel = getStructuredSelection();
 		if (!sel.isEmpty()) {
             index = fEntries.indexOf(sel.getFirstElement());
         }

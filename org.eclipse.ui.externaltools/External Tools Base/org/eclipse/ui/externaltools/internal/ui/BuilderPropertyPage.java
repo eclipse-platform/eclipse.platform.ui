@@ -554,7 +554,7 @@ public final class BuilderPropertyPage extends PropertyPage implements ICheckSta
 	 * The user has pressed the remove button. Delete the selected builder.
 	 */
 	private void handleRemoveButtonPressed() {
-		IStructuredSelection selection = (IStructuredSelection) viewer.getSelection();
+		IStructuredSelection selection = viewer.getStructuredSelection();
 		if (selection != null) {
 			int numSelected= selection.size();
 			userHasMadeChanges= true;

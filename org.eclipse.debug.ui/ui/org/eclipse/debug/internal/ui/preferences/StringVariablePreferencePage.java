@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2013 IBM Corporation and others.
+ * Copyright (c) 2000, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -109,9 +109,6 @@ public class StringVariablePreferencePage extends PreferencePage implements IWor
 		setDescription(DebugPreferencesMessages.SimpleVariablePreferencePage_6);
 	}
 
-	/**
-	 * @see PreferencePage#createControl(Composite)
-	 */
 	@Override
 	public void createControl(Composite parent) {
 		super.createControl(parent);
@@ -341,7 +338,7 @@ public class StringVariablePreferencePage extends PreferencePage implements IWor
 	}
 
 	private void handleEditButtonPressed() {
-		IStructuredSelection selection= (IStructuredSelection) variableTable.getSelection();
+		IStructuredSelection selection = variableTable.getStructuredSelection();
 		VariableWrapper variable= (VariableWrapper) selection.getFirstElement();
 		if (variable == null || variable.isReadOnly()) {
 			return;
@@ -370,7 +367,7 @@ public class StringVariablePreferencePage extends PreferencePage implements IWor
 	 * Remove the selection variables.
 	 */
 	private void handleRemoveButtonPressed() {
-		IStructuredSelection selection= (IStructuredSelection) variableTable.getSelection();
+		IStructuredSelection selection = variableTable.getStructuredSelection();
 		List<VariableWrapper> variablesToRemove = selection.toList();
 		StringBuffer contributedVariablesToRemove= new StringBuffer();
 		Iterator<VariableWrapper> iter = variablesToRemove.iterator();
@@ -398,7 +395,7 @@ public class StringVariablePreferencePage extends PreferencePage implements IWor
 	 * @param event the selection change event
 	 */
 	protected void handleTableSelectionChanged(SelectionChangedEvent event) {
-		IStructuredSelection selection = ((IStructuredSelection)event.getSelection());
+		IStructuredSelection selection = (event.getStructuredSelection());
 		VariableWrapper variable= (VariableWrapper) selection.getFirstElement();
 		if (variable == null || variable.isReadOnly()) {
 			envEditButton.setEnabled(false);
@@ -734,9 +731,6 @@ public class StringVariablePreferencePage extends PreferencePage implements IWor
 
 	class VariableFilter extends ViewerFilter {
 
-		/* (non-Javadoc)
-		 * @see org.eclipse.jface.viewers.ViewerFilter#select(org.eclipse.jface.viewers.Viewer, java.lang.Object, java.lang.Object)
-		 */
 		@Override
 		public boolean select(Viewer viewer, Object parentElement, Object element) {
 			return !((VariableWrapper)element).isRemoved();

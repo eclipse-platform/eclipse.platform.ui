@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2013 IBM Corporation and others.
+ * Copyright (c) 2000, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -69,9 +69,6 @@ public class BreakpointWorkingSetPage extends WizardPage implements IWorkingSetP
 		fFirstCheck= true;
 	}
 
-	/*
-	 * @see org.eclipse.jface.dialogs.IDialogPage#createControl(org.eclipse.swt.widgets.Composite)
-	 */
 	@Override
 	public void createControl(Composite parent) {
 		initializeDialogUnits(parent);
@@ -117,7 +114,7 @@ public class BreakpointWorkingSetPage extends WizardPage implements IWorkingSetP
 			public void widgetSelected(SelectionEvent selectionEvent) {
 				BreakpointsViewer viewer = fTViewer.getViewer();
 				viewer.getTree().selectAll();
-				viewer.setCheckedElements(((IStructuredSelection)viewer.getSelection()).toArray());
+				viewer.setCheckedElements(viewer.getStructuredSelection().toArray());
 				viewer.setGrayedElements(new Object[] {});
 				viewer.getTree().deselectAll();
 				validateInput();

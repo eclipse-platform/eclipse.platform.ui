@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2017 IBM Corporation and others.
+ * Copyright (c) 2006, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -190,7 +190,7 @@ public class LaunchersPreferencePage extends PreferencePage implements IWorkbenc
 		fTreeViewer.addSelectionChangedListener(new ISelectionChangedListener() {
 			@Override
 			public void selectionChanged(SelectionChangedEvent event) {
-				Object obj = ((IStructuredSelection) event.getSelection()).getFirstElement();
+				Object obj = event.getStructuredSelection().getFirstElement();
 				if(obj instanceof DuplicateDelegate) {
 					fTableViewer.setAllChecked(false);
 					DuplicateDelegate dd = (DuplicateDelegate) obj;
@@ -222,7 +222,7 @@ public class LaunchersPreferencePage extends PreferencePage implements IWorkbenc
 		fTableViewer.addSelectionChangedListener(new ISelectionChangedListener() {
 			@Override
 			public void selectionChanged(SelectionChangedEvent event) {
-				IStructuredSelection ss = (IStructuredSelection) event.getSelection();
+				IStructuredSelection ss = event.getStructuredSelection();
 				if(ss != null && !ss.isEmpty()) {
 					ILaunchDelegate delegate = (ILaunchDelegate)ss.getFirstElement();
 					fDescription.setText(delegate.getDescription());
@@ -246,7 +246,7 @@ public class LaunchersPreferencePage extends PreferencePage implements IWorkbenc
 				//https://bugs.eclipse.org/bugs/show_bug.cgi?id=233233
 				fTableViewer.setSelection(new StructuredSelection(element));
 				//persist the selection
-				Object obj = ((IStructuredSelection) fTreeViewer.getSelection()).getFirstElement();
+				Object obj = fTreeViewer.getStructuredSelection().getFirstElement();
 				if(obj instanceof DuplicateDelegate) {
 					fDupeSelections.remove(obj);
 					if(checked) {

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2016 IBM Corporation and others.
+ * Copyright (c) 2004, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -295,7 +295,7 @@ public class GroupBreakpointsByDialog extends TrayDialog {
 	 * to the tree of "selected" factories.
 	 */
 	public void handleAddPressed() {
-		IStructuredSelection selection= (IStructuredSelection) fAvailableViewer.getSelection();
+		IStructuredSelection selection = fAvailableViewer.getStructuredSelection();
 		if (selection.size() < 1) {
 			return;
 		}
@@ -311,7 +311,7 @@ public class GroupBreakpointsByDialog extends TrayDialog {
 	 * to the list of "available" factories.
 	 */
 	public void handleRemovePressed() {
-		IStructuredSelection selection= (IStructuredSelection) fSelectedViewer.getSelection();
+		IStructuredSelection selection = fSelectedViewer.getStructuredSelection();
 		if (selection.size() < 1) {
 			return;
 		}
@@ -326,7 +326,7 @@ public class GroupBreakpointsByDialog extends TrayDialog {
 	 * Moves each selected item up in the tree of selected containers
 	 */
 	public void handleMoveUpPressed() {
-		IStructuredSelection selection = (IStructuredSelection) fSelectedViewer.getSelection();
+		IStructuredSelection selection = fSelectedViewer.getStructuredSelection();
 		Iterator<?> iter = selection.iterator();
 		while (iter.hasNext()) {
 			fSelectedOrganizersProvider.moveUp(iter.next());
@@ -338,7 +338,7 @@ public class GroupBreakpointsByDialog extends TrayDialog {
 	 * Moves each selected item down in the tree of selected containers
 	 */
 	public void handleMoveDownPressed() {
-		IStructuredSelection selection = (IStructuredSelection) fSelectedViewer.getSelection();
+		IStructuredSelection selection = fSelectedViewer.getStructuredSelection();
 		Object[] elements= selection.toArray();
 		for (int i= elements.length - 1; i >= 0; i--) {
 			fSelectedOrganizersProvider.moveDown(elements[i]);
@@ -367,18 +367,18 @@ public class GroupBreakpointsByDialog extends TrayDialog {
 	}
 
 	public void updateAddButton() {
-		IStructuredSelection selection = (IStructuredSelection) fAvailableViewer.getSelection();
+		IStructuredSelection selection = fAvailableViewer.getStructuredSelection();
 		fAddButton.setEnabled(selection.size() > 0);
 	}
 
 	public void updateRemoveButton() {
-		IStructuredSelection selection = (IStructuredSelection) fSelectedViewer.getSelection();
+		IStructuredSelection selection = fSelectedViewer.getStructuredSelection();
 		fRemoveButton.setEnabled(selection.size() > 0);
 	}
 
 	public void updateMoveUpButton() {
 		boolean enabled= true;
-		IStructuredSelection selection = (IStructuredSelection) fSelectedViewer.getSelection();
+		IStructuredSelection selection = fSelectedViewer.getStructuredSelection();
 		if (selection.size() == 0) {
 			enabled= false;
 		} else {
@@ -393,7 +393,7 @@ public class GroupBreakpointsByDialog extends TrayDialog {
 
 	public void updateMoveDownButton() {
 		boolean enabled= true;
-		IStructuredSelection selection = (IStructuredSelection) fSelectedViewer.getSelection();
+		IStructuredSelection selection = fSelectedViewer.getStructuredSelection();
 		if (selection.size() == 0) {
 			enabled= false;
 		} else {

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2013 IBM Corporation and others.
+ * Copyright (c) 2005, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -91,9 +91,6 @@ public class InspectPopupDialog extends DebugPopup {
         fExpression = expression;
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.debug.ui.DebugPopup#createDialogArea(org.eclipse.swt.widgets.Composite)
-     */
     @Override
 	protected Control createDialogArea(Composite parent) {
         Composite composite = new Composite(parent, parent.getStyle());
@@ -128,7 +125,7 @@ public class InspectPopupDialog extends DebugPopup {
         fTree.addSelectionListener(new SelectionListener() {
             @Override
 			public void widgetSelected(SelectionEvent e) {
-            	fDetailPane.display((IStructuredSelection)fViewer.getSelection());
+				fDetailPane.display(fViewer.getStructuredSelection());
             }
             @Override
 			public void widgetDefaultSelected(SelectionEvent e) {}
@@ -195,9 +192,6 @@ public class InspectPopupDialog extends DebugPopup {
     	fSashForm.setWeights(DEFAULT_SASH_WEIGHTS);
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.jface.dialogs.PopupDialog#saveDialogBounds(org.eclipse.swt.widgets.Shell)
-     */
     @Override
 	protected void saveDialogBounds(Shell shell) {
     	super.saveDialogBounds(shell);
@@ -224,24 +218,15 @@ public class InspectPopupDialog extends DebugPopup {
      *
      */
     private class TreeRoot extends ElementContentProvider {
-		/* (non-Javadoc)
-		 * @see org.eclipse.debug.internal.ui.viewers.model.provisional.elements.ElementContentProvider#getChildCount(java.lang.Object, org.eclipse.debug.internal.ui.viewers.provisional.IPresentationContext)
-		 */
 		@Override
 		protected int getChildCount(Object element, IPresentationContext context, IViewerUpdate monitor) throws CoreException {
 			return 1;
 		}
-		/* (non-Javadoc)
-		 * @see org.eclipse.debug.internal.ui.viewers.model.provisional.elements.ElementContentProvider#getChildren(java.lang.Object, int, int, org.eclipse.debug.internal.ui.viewers.provisional.IPresentationContext)
-		 */
 		@Override
 		protected Object[] getChildren(Object parent, int index, int length, IPresentationContext context, IViewerUpdate monitor) throws CoreException {
 			return new Object[] { fExpression };
 		}
 
-		/* (non-Javadoc)
-		 * @see org.eclipse.debug.internal.ui.viewers.model.provisional.elements.ElementContentProvider#supportsContextId(java.lang.String)
-		 */
 		@Override
 		protected boolean supportsContextId(String id) {
 			return true;
@@ -269,9 +254,6 @@ public class InspectPopupDialog extends DebugPopup {
         return variablesView;
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.debug.ui.DebugPopup#close()
-     */
     @Override
 	public boolean close() {
     	if (!wasPersisted()) {
@@ -282,17 +264,11 @@ public class InspectPopupDialog extends DebugPopup {
 		return super.close();
 	}
 
-	/* (non-Javadoc)
-     * @see org.eclipse.debug.ui.DebugPopup#getActionText()
-     */
     @Override
 	protected String getActionText() {
 		return DebugUIViewsMessages.InspectPopupDialog_0;
 	}
 
-	/* (non-Javadoc)
-     * @see org.eclipse.debug.ui.DebugPopup#persist()
-     */
     @Override
 	protected void persist() {
     	super.persist();
@@ -311,9 +287,6 @@ public class InspectPopupDialog extends DebugPopup {
         }
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.jface.dialogs.PopupDialog#getInitialSize()
-     */
     @Override
 	protected Point getInitialSize() {
         Point initialSize = super.getInitialSize();
@@ -322,9 +295,6 @@ public class InspectPopupDialog extends DebugPopup {
         return initialSize;
     }
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.dialogs.PopupDialog#getBackgroundColorExclusions()
-	 */
 	@Override
 	protected List<Control> getBackgroundColorExclusions() {
 		List<Control> list = super.getBackgroundColorExclusions();
@@ -338,49 +308,31 @@ public class InspectPopupDialog extends DebugPopup {
 	 */
 	private class DetailPaneContainer implements IDetailPaneContainer{
 
-		/* (non-Javadoc)
-		 * @see org.eclipse.debug.internal.ui.views.variables.details.IDetailPaneContainer#getCurrentPaneID()
-		 */
 		@Override
 		public String getCurrentPaneID() {
 			return fDetailPane.getCurrentPaneID();
 		}
 
-		/* (non-Javadoc)
-		 * @see org.eclipse.debug.internal.ui.views.variables.details.IDetailPaneContainer#getCurrentSelection()
-		 */
 		@Override
 		public IStructuredSelection getCurrentSelection() {
-			return (IStructuredSelection)fViewer.getSelection();
+			return fViewer.getStructuredSelection();
 		}
 
-		/* (non-Javadoc)
-		 * @see org.eclipse.debug.internal.ui.views.variables.details.IDetailPaneContainer#refreshDetailPaneContents()
-		 */
 		@Override
 		public void refreshDetailPaneContents() {
 			fDetailPane.display(getCurrentSelection());
 		}
 
-		/* (non-Javadoc)
-		 * @see org.eclipse.debug.internal.ui.views.variables.details.IDetailPaneContainer#getParentComposite()
-		 */
 		@Override
 		public Composite getParentComposite() {
 			return fDetailPaneComposite;
 		}
 
-		/* (non-Javadoc)
-		 * @see org.eclipse.debug.internal.ui.views.variables.details.IDetailPaneContainer#getWorkbenchPartSite()
-		 */
 		@Override
 		public IWorkbenchPartSite getWorkbenchPartSite() {
 			return null;
 		}
 
-		/* (non-Javadoc)
-		 * @see org.eclipse.debug.internal.ui.views.variables.details.IDetailPaneContainer#paneChanged(java.lang.String)
-		 */
 		@Override
 		public void paneChanged(String newPaneID) {
 			if (newPaneID.equals(DefaultDetailPane.ID)){

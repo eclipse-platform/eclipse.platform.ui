@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2016 IBM Corporation and others.
+ * Copyright (c) 2006, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -252,9 +252,6 @@ public class LaunchPerspectivePreferencePage extends PreferencePage implements I
 	 */
 	public LaunchPerspectivePreferencePage() {}
 
-	/**
-	 * @see org.eclipse.jface.dialogs.DialogPage#dispose()
-	 */
 	@Override
 	public void dispose() {
 		PlatformUI.getWorkbench().getActivitySupport().getActivityManager().removeActivityManagerListener(this);
@@ -270,18 +267,12 @@ public class LaunchPerspectivePreferencePage extends PreferencePage implements I
 		super.dispose();
 	}
 
-	/**
-	 * @see org.eclipse.jface.preference.PreferencePage#createControl(org.eclipse.swt.widgets.Composite)
-	 */
 	@Override
 	public void createControl(Composite parent) {
 		super.createControl(parent);
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(getControl(), IDebugHelpContextIds.PERSPECTIVE_PREFERENCE_PAGE);
 	}
 
-	/**
-	 * @see org.eclipse.jface.preference.PreferencePage#createContents(org.eclipse.swt.widgets.Composite)
-	 */
 	@Override
 	protected Control createContents(Composite parent) {
 
@@ -337,7 +328,7 @@ public class LaunchPerspectivePreferencePage extends PreferencePage implements I
 		fTreeViewer.addSelectionChangedListener(new ISelectionChangedListener() {
 			@Override
 			public void selectionChanged(SelectionChangedEvent event) {
-				fPerspectivesPanel.refreshPanel((IStructuredSelection) event.getSelection());
+				fPerspectivesPanel.refreshPanel(event.getStructuredSelection());
 			}
 		});
 		fTreeViewer.addDoubleClickListener(new IDoubleClickListener() {
@@ -401,7 +392,7 @@ public class LaunchPerspectivePreferencePage extends PreferencePage implements I
 	 */
 	private String getComboSelection(Set<String> modes) {
 		String text = DebugPreferencesMessages.PerspectivePreferencePage_4;
-		IStructuredSelection ss = (IStructuredSelection) fTreeViewer.getSelection();
+		IStructuredSelection ss = fTreeViewer.getStructuredSelection();
 		if(ss != null && !ss.isEmpty()) {
 			Object o = null;
 			Set<String> tmp = new HashSet<>();
@@ -543,9 +534,6 @@ public class LaunchPerspectivePreferencePage extends PreferencePage implements I
 		fSwitchSuspend.load();
 	}
 
-	/**
-	 * @see org.eclipse.jface.preference.PreferencePage#performDefaults()
-	 */
 	@Override
 	protected void performDefaults() {
 		fgChangeSet.clear();
@@ -580,9 +568,6 @@ public class LaunchPerspectivePreferencePage extends PreferencePage implements I
 		super.performDefaults();
 	}
 
-	/**
-	 * @see org.eclipse.ui.IWorkbenchPreferencePage#init(org.eclipse.ui.IWorkbench)
-	 */
 	@Override
 	public void init(IWorkbench workbench) {
 		setPreferenceStore(DebugUIPlugin.getDefault().getPreferenceStore());
@@ -604,9 +589,6 @@ public class LaunchPerspectivePreferencePage extends PreferencePage implements I
 		fgPerspectiveLabels = labels.toArray(new String[labels.size()]);
 	}
 
-	/**
-	 * @see org.eclipse.ui.activities.IActivityManagerListener#activityManagerChanged(org.eclipse.ui.activities.ActivityManagerEvent)
-	 */
 	@Override
 	public void activityManagerChanged(ActivityManagerEvent activityManagerEvent) {
 		if(!fTree.isDisposed()) {
@@ -614,9 +596,6 @@ public class LaunchPerspectivePreferencePage extends PreferencePage implements I
 		}
 	}
 
-	/**
-	 * @see org.eclipse.jface.preference.PreferencePage#performOk()
-	 */
 	@Override
 	public boolean performOk() {
 		fSwitchLaunch.store();

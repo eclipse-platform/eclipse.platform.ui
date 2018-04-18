@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2017 IBM Corporation and others.
+ *  Copyright (c) 2000, 2018 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -341,9 +341,6 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 		return IDialogConstants.NO_ID;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.window.Window#close()
-	 */
 	@Override
 	public boolean close() {
 	    if (!isSafeToClose()) {
@@ -373,9 +370,6 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 		shell.setText(getShellTitle());
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.window.Window#create()
-	 */
 	@Override
 	public void create() {
 		super.create();
@@ -384,9 +378,6 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.dialogs.Dialog#createButtonBar(org.eclipse.swt.widgets.Composite)
-	 */
 	@Override
 	protected Control createButtonBar(Composite parent) {
 		Font font = parent.getFont();
@@ -473,9 +464,6 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 		createButton(parent, ID_CLOSE_BUTTON, LaunchConfigurationsMessages.LaunchConfigurationDialog_Close_1, false);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.window.Window#createContents(org.eclipse.swt.widgets.Composite)
-	 */
 	@Override
 	protected Control createContents(Composite parent) {
 		Control contents = super.createContents(parent);
@@ -484,9 +472,6 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 		return contents;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.dialogs.Dialog#createDialogArea(org.eclipse.swt.widgets.Composite)
-	 */
 	@Override
 	protected Control createDialogArea(Composite parent) {
 		Composite dialogComp = (Composite)super.createDialogArea(parent);
@@ -674,9 +659,6 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 		fLaunchConfigurationView.getViewer().setSelection(fInitialSelection);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.ui.ILaunchConfigurationDialog#generateName(java.lang.String)
-	 */
 	@Override
 	public String generateName(String name) {
 		if (name == null) {
@@ -702,9 +684,6 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 		return ((LaunchManager)getLaunchManager()).generateUniqueLaunchConfigurationNameFrom(name, reservednames);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.ui.ILaunchConfigurationDialog#getActiveTab()
-	 */
 	@Override
 	public ILaunchConfigurationTab getActiveTab() {
 		return fTabViewer.getActiveTab();
@@ -759,9 +738,6 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
     	return getDialogSettings();
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.jface.dialogs.Dialog#getDialogBoundsStrategy()
-     */
     @Override
 	protected int getDialogBoundsStrategy() {
     	return DIALOG_PERSISTSIZE;
@@ -867,9 +843,6 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 		return fGroup;
 	}
 
- 	/* (non-Javadoc)
- 	 * @see org.eclipse.debug.ui.ILaunchConfigurationDialog#getMode()
- 	 */
  	@Override
 	public String getMode() {
  		return getLaunchGroup().getMode();
@@ -947,9 +920,6 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 		return fOpenMode;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.dialogs.IPageChangeProvider#getSelectedPage()
-	 */
 	public Object getSelectedPage() {
 		return getActiveTab();
 	}
@@ -981,9 +951,6 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
  		return null;
  	}
 
-	/* (non-Javadoc)
- 	 * @see org.eclipse.debug.ui.ILaunchConfigurationDialog#getTabs()
- 	 */
  	@Override
 	public ILaunchConfigurationTab[] getTabs() {
  		if (getTabGroup() == null) {
@@ -1033,7 +1000,7 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
  	protected void handleLaunchConfigurationSelectionChanged(SelectionChangedEvent event) {
  		Object input = fTabViewer.getInput();
  		Object newInput = null;
- 		IStructuredSelection selection = (IStructuredSelection) event.getSelection();
+		IStructuredSelection selection = event.getStructuredSelection();
  		if (selection.size() == 1) {
 			newInput = selection.getFirstElement();
  		}
@@ -1140,9 +1107,6 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 		ErrorDialog.openError(getShell(), title, null, status);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.window.Window#initializeBounds()
-	 */
 	@Override
 	protected void initializeBounds() {
 		IDialogSettings settings = getDialogSettings();
@@ -1167,9 +1131,6 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 		super.initializeBounds();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.dialogs.TitleAreaDialog#getInitialSize()
-	 */
 	@Override
 	protected Point getInitialSize() {
 		try {
@@ -1398,9 +1359,6 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.operation.IRunnableContext#run(boolean, boolean, org.eclipse.jface.operation.IRunnableWithProgress)
-	 */
 	@Override
 	public void run(boolean fork, boolean cancelable, IRunnableWithProgress runnable) throws InvocationTargetException, InterruptedException {
 		if (getShell() != null && getShell().isVisible()) {
@@ -1462,17 +1420,11 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 		getDialogArea().setEnabled(enabled);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.ui.ILaunchConfigurationDialog#setActiveTab(org.eclipse.debug.ui.ILaunchConfigurationTab)
-	 */
 	@Override
 	public void setActiveTab(ILaunchConfigurationTab tab) {
 		fTabViewer.setActiveTab(tab);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.ui.ILaunchConfigurationDialog#setActiveTab(int)
-	 */
 	@Override
 	public void setActiveTab(int index) {
 		fTabViewer.setActiveTab(index);
@@ -1534,9 +1486,6 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 		setTitleImage(getBannerImage());
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.ui.ILaunchConfigurationDialog#setName(java.lang.String)
-	 */
 	@Override
 	public void setName(String name) {
 		fTabViewer.setName(name);
@@ -1662,9 +1611,6 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 		return showDiscardChangesDialog();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.ui.ILaunchConfigurationDialog#updateButtons()
-	 */
 	@Override
 	public void updateButtons() {
 		if (!fSettingInput) {
@@ -1683,9 +1629,6 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.ui.ILaunchConfigurationDialog#updateMessage()
-	 */
 	@Override
 	public void updateMessage() {
 		if (!fSettingInput) {
@@ -1707,9 +1650,6 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 		return fLaunchConfigurationView.getTreeViewer().getSelection().isEmpty();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.util.IPropertyChangeListener#propertyChange(org.eclipse.jface.util.PropertyChangeEvent)
-	 */
 	@Override
 	public void propertyChange(final PropertyChangeEvent event) {
 		WorkbenchJob job = new WorkbenchJob(IInternalDebugCoreConstants.EMPTY_STRING) {

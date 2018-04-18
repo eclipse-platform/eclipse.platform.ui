@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2017 Obeo.
+ * Copyright (c) 2017,2018 Obeo and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -113,12 +113,6 @@ public class PrototypeTab extends AbstractLaunchConfigurationTab {
 		setHelpContextId(IDebugHelpContextIds.LAUNCH_CONFIGURATION_DIALOG_PROTOTYPE_TAB);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * org.eclipse.debug.ui.ILaunchConfigurationTab#createControl(org.eclipse.
-	 * swt.widgets.Composite)
-	 */
 	@Override
 	public void createControl(Composite parent) {
 		Composite comp = SWTFactory.createComposite(parent, 1, 1, GridData.FILL_BOTH);
@@ -377,43 +371,21 @@ public class PrototypeTab extends AbstractLaunchConfigurationTab {
 		columnValue.getColumn().setText(PROTOTYPE_VALUE);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * org.eclipse.debug.ui.ILaunchConfigurationTab#initializeFrom(org.eclipse.
-	 * debug.core.ILaunchConfiguration)
-	 */
 	@Override
 	public void initializeFrom(ILaunchConfiguration configuration) {
 		initialize(configuration);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.debug.ui.AbstractLaunchConfigurationTab#dispose()
-	 */
 	@Override
 	public void dispose() {
 		super.dispose();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * org.eclipse.debug.ui.ILaunchConfigurationTab#activated(org.eclipse.debug.
-	 * core.ILaunchConfigurationWorkingCopy)
-	 */
 	@Override
 	public void activated(ILaunchConfigurationWorkingCopy workingCopy) {
 		initialize(workingCopy);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * org.eclipse.debug.ui.ILaunchConfigurationTab#deactivated(org.eclipse.
-	 * debug.core.ILaunchConfigurationWorkingCopy)
-	 */
 	@Override
 	public void deactivated(ILaunchConfigurationWorkingCopy workingCopy) {
 	}
@@ -486,12 +458,6 @@ public class PrototypeTab extends AbstractLaunchConfigurationTab {
 		});
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * org.eclipse.debug.ui.ILaunchConfigurationTab#isValid(org.eclipse.debug.
-	 * core.ILaunchConfiguration)
-	 */
 	@Override
 	public boolean isValid(ILaunchConfiguration config) {
 		setMessage(null);
@@ -504,30 +470,14 @@ public class PrototypeTab extends AbstractLaunchConfigurationTab {
 		return !config.isPrototype();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * org.eclipse.debug.ui.ILaunchConfigurationTab#setDefaults(org.eclipse.
-	 * debug.core.ILaunchConfigurationWorkingCopy)
-	 */
 	@Override
 	public void setDefaults(ILaunchConfigurationWorkingCopy config) {
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * org.eclipse.debug.ui.ILaunchConfigurationTab#performApply(org.eclipse.
-	 * debug.core.ILaunchConfigurationWorkingCopy)
-	 */
 	@Override
 	public void performApply(ILaunchConfigurationWorkingCopy configuration) {
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#postApply()
-	 */
 	@Override
 	public void postApply() {
 		super.postApply();
@@ -537,19 +487,11 @@ public class PrototypeTab extends AbstractLaunchConfigurationTab {
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#getName()
-	 */
 	@Override
 	public String getName() {
 		return LaunchConfigurationsMessages.PrototypeTab_Prototype_1;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#getImage()
-	 */
 	@Override
 	public Image getImage() {
 		return DebugUITools.getImage(IInternalDebugUIConstants.IMG_OBJS_PROTO_TAB);
@@ -564,10 +506,6 @@ public class PrototypeTab extends AbstractLaunchConfigurationTab {
 		return PROTOTYPE_TAB_ID;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#canSave()
-	 */
 	@Override
 	public boolean canSave() {
 		return true;
@@ -755,7 +693,7 @@ public class PrototypeTab extends AbstractLaunchConfigurationTab {
 
 		@Override
 		public void run() {
-			IStructuredSelection selection = (IStructuredSelection) fAttributesTreeViewer.getSelection();
+			IStructuredSelection selection = fAttributesTreeViewer.getStructuredSelection();
 			try {
 				ILaunchConfigurationWorkingCopy workingCopy = getWorkingCopy();
 				for (Object element : selection.toList()) {

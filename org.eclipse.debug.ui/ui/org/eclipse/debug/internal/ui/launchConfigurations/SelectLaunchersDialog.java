@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2013 IBM Corporation and others.
+ * Copyright (c) 2006, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -98,9 +98,6 @@ public class SelectLaunchersDialog extends AbstractDebugListSelectionDialog {
 		fLaunchMode = launchmode;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.dialogs.Dialog#getInitialSize()
-	 */
 	@Override
 	protected Point getInitialSize() {
 		IDialogSettings settings = getDialogBoundsSettings();
@@ -119,41 +116,26 @@ public class SelectLaunchersDialog extends AbstractDebugListSelectionDialog {
 		return new Point(450, 450);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.launchConfigurations.AbstractDebugSelectionDialog#getDialogSettingsId()
-	 */
 	@Override
 	protected String getDialogSettingsId() {
 		return IDebugUIConstants.PLUGIN_ID + ".SELECT_LAUNCHERS_DIALOG"; //$NON-NLS-1$
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.launchConfigurations.AbstractDebugSelectionDialog#getHelpContextId()
-	 */
 	@Override
 	protected String getHelpContextId() {
 		return IDebugHelpContextIds.SELECT_LAUNCHERS_DIALOG;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.launchConfigurations.AbstractDebugSelectionDialog#getLabelProvider()
-	 */
 	@Override
 	protected IBaseLabelProvider getLabelProvider() {
 		return new DelegatesLabelProvider();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.launchConfigurations.AbstractDebugSelectionDialog#getViewerInput()
-	 */
 	@Override
 	protected Object getViewerInput() {
 		return fDelegates;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.launchConfigurations.AbstractDebugSelectionDialog#addCustomHeaderControls(org.eclipse.swt.widgets.Composite)
-	 */
 	@Override
 	protected void addCustomHeaderControls(Composite parent) {
 		Composite comp = SWTFactory.createComposite(parent, parent.getFont(), 2, 1, GridData.FILL_HORIZONTAL, 0, 0);
@@ -197,9 +179,6 @@ public class SelectLaunchersDialog extends AbstractDebugListSelectionDialog {
 		return (ILaunchDelegate) selection.getFirstElement();
 	}
 
-	/**
-	 * @see org.eclipse.jface.dialogs.Dialog#okPressed()
-	 */
 	@Override
 	protected void okPressed() {
 		ILaunchDelegate delegate = null;
@@ -240,9 +219,6 @@ public class SelectLaunchersDialog extends AbstractDebugListSelectionDialog {
 		catch (CoreException ce) {DebugUIPlugin.log(ce);}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.launchConfigurations.AbstractDebugSelectionDialog#addCustomFooterControls(org.eclipse.swt.widgets.Composite)
-	 */
 	@Override
 	protected void addCustomFooterControls(Composite parent) {
 		Group group = SWTFactory.createGroup(parent, LaunchConfigurationsMessages.SelectLaunchersDialog_5, 1, 1, GridData.FILL_BOTH);
@@ -263,16 +239,13 @@ public class SelectLaunchersDialog extends AbstractDebugListSelectionDialog {
 		return modes;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.AbstractDebugCheckboxSelectionDialog#addViewerListeners(org.eclipse.jface.viewers.StructuredViewer)
-	 */
 	@Override
 	protected void addViewerListeners(StructuredViewer viewer) {
 		// Override super to use custom listeners
 		viewer.addSelectionChangedListener(new ISelectionChangedListener() {
 			@Override
 			public void selectionChanged(SelectionChangedEvent event) {
-				IStructuredSelection ss = (IStructuredSelection) event.getSelection();
+				IStructuredSelection ss = event.getStructuredSelection();
 				if(ss != null && !ss.isEmpty()) {
 					SelectLaunchersDialog.this.description.setText(((ILaunchDelegate)ss.getFirstElement()).getDescription());
 				}
@@ -284,9 +257,6 @@ public class SelectLaunchersDialog extends AbstractDebugListSelectionDialog {
 		super.addViewerListeners(viewer);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.launchConfigurations.AbstractDebugSelectionDialog#initializeControls()
-	 */
 	@Override
 	protected void initializeControls() {
 		final Viewer viewer = getViewer();
@@ -304,9 +274,6 @@ public class SelectLaunchersDialog extends AbstractDebugListSelectionDialog {
 		catch (CoreException ce) {DebugUIPlugin.log(ce);}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.launchConfigurations.AbstractDebugSelectionDialog#getViewerLabel()
-	 */
 	@Override
 	protected String getViewerLabel() {
 		return LaunchConfigurationsMessages.SelectLaunchersDialog_launchers;
