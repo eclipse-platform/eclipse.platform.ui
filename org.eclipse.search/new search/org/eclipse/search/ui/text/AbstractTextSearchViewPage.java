@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2016 IBM Corporation and others.
+ * Copyright (c) 2000, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -1121,7 +1121,7 @@ public abstract class AbstractTextSearchViewPage extends Page implements ISearch
 	}
 
 	private Object getFirstSelectedElement() {
-		IStructuredSelection selection = (IStructuredSelection) fViewer.getSelection();
+		IStructuredSelection selection = fViewer.getStructuredSelection();
 		if (selection.size() > 0)
 			return selection.getFirstElement();
 		return null;
@@ -1349,7 +1349,7 @@ public abstract class AbstractTextSearchViewPage extends Page implements ISearch
 		if (result == null)
 			return;
 		StructuredViewer viewer = getViewer();
-		IStructuredSelection selection = (IStructuredSelection) viewer.getSelection();
+		IStructuredSelection selection = viewer.getStructuredSelection();
 
 		HashSet<Match> set = new HashSet<>();
 		if (viewer instanceof TreeViewer) {

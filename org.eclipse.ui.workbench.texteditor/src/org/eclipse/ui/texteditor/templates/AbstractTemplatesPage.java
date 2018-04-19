@@ -1198,7 +1198,7 @@ public abstract class AbstractTemplatesPage extends Page implements ITemplatesPa
 	 * Set the selected templates
 	 */
 	private void setSelectedTemplates() {
-		IStructuredSelection selection= (IStructuredSelection) fTreeViewer.getSelection();
+		IStructuredSelection selection = fTreeViewer.getStructuredSelection();
 
 		Iterator<?> it= selection.iterator();
 		TemplatePersistenceData[] data= new TemplatePersistenceData[selection.size()];
@@ -1245,7 +1245,7 @@ public abstract class AbstractTemplatesPage extends Page implements ITemplatesPa
 	 *         registry if no templates are selected
 	 */
 	private String getContextTypeId() {
-		IStructuredSelection selection= (IStructuredSelection) fTreeViewer.getSelection();
+		IStructuredSelection selection = fTreeViewer.getStructuredSelection();
 		Object item;
 
 		if (selection.size() == 0)

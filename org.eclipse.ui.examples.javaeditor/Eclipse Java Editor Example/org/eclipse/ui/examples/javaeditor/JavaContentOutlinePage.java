@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 IBM Corporation and others.
+ * Copyright (c) 2000, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -18,7 +18,6 @@ import java.util.List;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 
-import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.LabelProvider;
@@ -194,11 +193,11 @@ public class JavaContentOutlinePage extends ContentOutlinePage {
 
 		super.selectionChanged(event);
 
-		ISelection selection= event.getSelection();
+		IStructuredSelection selection= event.getStructuredSelection();
 		if (selection.isEmpty())
 			fTextEditor.resetHighlightRange();
 		else {
-			Segment segment= (Segment) ((IStructuredSelection) selection).getFirstElement();
+			Segment segment= (Segment) selection.getFirstElement();
 			int start= segment.position.getOffset();
 			int length= segment.position.getLength();
 			try {

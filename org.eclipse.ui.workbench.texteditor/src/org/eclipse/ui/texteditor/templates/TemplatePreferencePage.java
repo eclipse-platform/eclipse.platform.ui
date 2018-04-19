@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 IBM Corporation and others.
+ * Copyright (c) 2000, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -1182,7 +1182,7 @@ public abstract class TemplatePreferencePage extends PreferencePage implements I
 	 * Updates the pattern viewer.
 	 */
 	protected void updateViewerInput() {
-		IStructuredSelection selection= (IStructuredSelection) fTableViewer.getSelection();
+		IStructuredSelection selection = fTableViewer.getStructuredSelection();
 
 		if (selection.size() == 1) {
 			TemplatePersistenceData data= (TemplatePersistenceData) selection.getFirstElement();
@@ -1197,7 +1197,7 @@ public abstract class TemplatePreferencePage extends PreferencePage implements I
 	 * Updates the buttons.
 	 */
 	protected void updateButtons() {
-		IStructuredSelection selection= (IStructuredSelection) fTableViewer.getSelection();
+		IStructuredSelection selection = fTableViewer.getStructuredSelection();
 		int selectionCount= selection.size();
 		int itemCount= fTableViewer.getTable().getItemCount();
 		boolean canRestore= fTemplateStore.getTemplateData(true).length != fTemplateStore.getTemplateData(false).length;
@@ -1268,7 +1268,7 @@ public abstract class TemplatePreferencePage extends PreferencePage implements I
 	}
 
 	private void edit() {
-		IStructuredSelection selection= (IStructuredSelection) fTableViewer.getSelection();
+		IStructuredSelection selection = fTableViewer.getStructuredSelection();
 
 		Object[] objects= selection.toArray();
 		if ((objects == null) || (objects.length != 1))
@@ -1347,7 +1347,7 @@ public abstract class TemplatePreferencePage extends PreferencePage implements I
 	}
 
 	private void export() {
-		IStructuredSelection selection= (IStructuredSelection) fTableViewer.getSelection();
+		IStructuredSelection selection = fTableViewer.getStructuredSelection();
 		Object[] templates= selection.toArray();
 
 		TemplatePersistenceData[] datas= new TemplatePersistenceData[templates.length];
@@ -1400,7 +1400,7 @@ public abstract class TemplatePreferencePage extends PreferencePage implements I
 	}
 
 	private void remove() {
-		IStructuredSelection selection= (IStructuredSelection) fTableViewer.getSelection();
+		IStructuredSelection selection = fTableViewer.getStructuredSelection();
 
 		Iterator<?> elements= selection.iterator();
 		while (elements.hasNext()) {
@@ -1425,7 +1425,7 @@ public abstract class TemplatePreferencePage extends PreferencePage implements I
 	}
 
 	private void revert() {
-		IStructuredSelection selection= (IStructuredSelection) fTableViewer.getSelection();
+		IStructuredSelection selection = fTableViewer.getStructuredSelection();
 
 		Iterator<?> elements= selection.iterator();
 		while (elements.hasNext()) {

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2016 IBM Corporation and others.
+ * Copyright (c) 2000, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -365,7 +365,7 @@ public class SearchHistorySelectionDialog extends SelectionDialog {
 	}
 
 	protected final void validateDialogState() {
-		IStructuredSelection sel= (IStructuredSelection) fViewer.getSelection();
+		IStructuredSelection sel = fViewer.getStructuredSelection();
 		int elementsSelected= sel.toList().size();
 
 		fRemoveButton.setEnabled(elementsSelected > 0);
@@ -390,7 +390,7 @@ public class SearchHistorySelectionDialog extends SelectionDialog {
 	@Override
 	protected void buttonPressed(int buttonId) {
 		if (buttonId == REMOVE_ID) {
-			IStructuredSelection selection= (IStructuredSelection) fViewer.getSelection();
+			IStructuredSelection selection = fViewer.getStructuredSelection();
 			Iterator<?> searchResults= selection.iterator();
 			while (searchResults.hasNext()) {
 				ISearchResult curr= (ISearchResult) searchResults.next();
@@ -418,7 +418,7 @@ public class SearchHistorySelectionDialog extends SelectionDialog {
 		// Build a list of selected children.
 		ISelection selection= fViewer.getSelection();
 		if (selection instanceof IStructuredSelection)
-			setResult(((IStructuredSelection) fViewer.getSelection()).toList());
+			setResult(fViewer.getStructuredSelection().toList());
 
 		// remove queries
 		for (ISearchResult result : fRemovedEntries) {

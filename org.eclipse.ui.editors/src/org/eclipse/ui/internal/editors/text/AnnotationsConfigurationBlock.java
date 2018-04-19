@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 IBM Corporation and others.
+ * Copyright (c) 2000, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -44,7 +44,6 @@ import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.ComboViewer;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
-import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
@@ -317,7 +316,7 @@ class AnnotationsConfigurationBlock implements IPreferenceConfigurationBlock {
 				final boolean value= fShowInTextCheckBox.getSelection();
 				if (value) {
 					// enable whatever is in the combo
-					String[] decoration= (String[]) ((IStructuredSelection) fDecorationViewer.getSelection()).getFirstElement();
+					String[] decoration= (String[]) fDecorationViewer.getStructuredSelection().getFirstElement();
 					if (HIGHLIGHT.equals(decoration))
 						fStore.setValue(item.highlightKey, true);
 					else
@@ -395,7 +394,7 @@ class AnnotationsConfigurationBlock implements IPreferenceConfigurationBlock {
 
 			@Override
 			public void selectionChanged(SelectionChangedEvent event) {
-				String[] decoration= (String[]) ((IStructuredSelection) fDecorationViewer.getSelection()).getFirstElement();
+				String[] decoration= (String[]) fDecorationViewer.getStructuredSelection().getFirstElement();
 				ListItem item= getSelectedItem();
 
 				if (fShowInTextCheckBox.getSelection()) {
@@ -673,7 +672,7 @@ class AnnotationsConfigurationBlock implements IPreferenceConfigurationBlock {
 	}
 
 	private ListItem getSelectedItem() {
-		return (ListItem) ((IStructuredSelection) fAnnotationTypeViewer.getSelection()).getFirstElement();
+		return (ListItem) fAnnotationTypeViewer.getStructuredSelection().getFirstElement();
 	}
 
 	private void updateDecorationViewer(ListItem item, boolean changed) {

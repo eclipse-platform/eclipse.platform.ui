@@ -53,7 +53,6 @@ import org.eclipse.jface.viewers.ColumnWeightData;
 import org.eclipse.jface.viewers.ICheckStateListener;
 import org.eclipse.jface.viewers.ILabelProviderListener;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
-import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.ITableLabelProvider;
 import org.eclipse.jface.viewers.Viewer;
 
@@ -543,7 +542,7 @@ class HyperlinkDetectorsConfigurationBlock implements IPreferenceConfigurationBl
 	}
 
 	private ListItem getSelectedItem() {
-		return (ListItem)((IStructuredSelection) fHyperlinkDetectorsViewer.getSelection()).getFirstElement();
+		return (ListItem) fHyperlinkDetectorsViewer.getStructuredSelection().getFirstElement();
 	}
 
 	private void handleHyperlinkKeyModifierModified() {
