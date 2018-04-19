@@ -206,6 +206,7 @@ import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.actions.ActionFactory.IWorkbenchAction;
 import org.eclipse.ui.actions.CommandNotMappedException;
 import org.eclipse.ui.actions.ContributedAction;
+import org.eclipse.ui.commands.ICommandImageService;
 import org.eclipse.ui.dialogs.PropertyDialogAction;
 import org.eclipse.ui.dnd.IDragAndDropService;
 import org.eclipse.ui.internal.texteditor.EditPosition;
@@ -5692,23 +5693,27 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 		action= new TextOperationAction(EditorMessages.getBundleForConstructedKeys(), "Editor.Cut.", this, ITextOperationTarget.CUT); //$NON-NLS-1$
 		action.setHelpContextId(IAbstractTextEditorHelpContextIds.CUT_ACTION);
 		action.setActionDefinitionId(IWorkbenchCommandConstants.EDIT_CUT);
+		updateImages(action, IWorkbenchCommandConstants.EDIT_CUT);
 		setAction(ITextEditorActionConstants.CUT, action);
 
 		setAction(IWorkbenchCommandConstants.EDIT_COPY, null);
 		action= new TextOperationAction(EditorMessages.getBundleForConstructedKeys(), "Editor.Copy.", this, ITextOperationTarget.COPY, true); //$NON-NLS-1$
 		action.setHelpContextId(IAbstractTextEditorHelpContextIds.COPY_ACTION);
 		action.setActionDefinitionId(IWorkbenchCommandConstants.EDIT_COPY);
+		updateImages(action, IWorkbenchCommandConstants.EDIT_COPY);
 		setAction(ITextEditorActionConstants.COPY, action);
 
 		setAction(IWorkbenchCommandConstants.EDIT_PASTE, null);
 		action= new TextOperationAction(EditorMessages.getBundleForConstructedKeys(), "Editor.Paste.", this, ITextOperationTarget.PASTE); //$NON-NLS-1$
 		action.setHelpContextId(IAbstractTextEditorHelpContextIds.PASTE_ACTION);
 		action.setActionDefinitionId(IWorkbenchCommandConstants.EDIT_PASTE);
+		updateImages(action, IWorkbenchCommandConstants.EDIT_PASTE);
 		setAction(ITextEditorActionConstants.PASTE, action);
 
 		action= new TextOperationAction(EditorMessages.getBundleForConstructedKeys(), "Editor.Delete.", this, ITextOperationTarget.DELETE); //$NON-NLS-1$
 		action.setHelpContextId(IAbstractTextEditorHelpContextIds.DELETE_ACTION);
 		action.setActionDefinitionId(IWorkbenchCommandConstants.EDIT_DELETE);
+		updateImages(action, IWorkbenchCommandConstants.EDIT_DELETE);
 		setAction(ITextEditorActionConstants.DELETE, action);
 
 		action= new DeleteLineAction(EditorMessages.getBundleForConstructedKeys(), "Editor.DeleteLine.", this, DeleteLineAction.WHOLE, false); //$NON-NLS-1$
@@ -5787,11 +5792,13 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 		action= new TextOperationAction(EditorMessages.getBundleForConstructedKeys(), "Editor.Print.", this, ITextOperationTarget.PRINT, true); //$NON-NLS-1$
 		action.setHelpContextId(IAbstractTextEditorHelpContextIds.PRINT_ACTION);
 		action.setActionDefinitionId(IWorkbenchCommandConstants.FILE_PRINT);
+		updateImages(action, IWorkbenchCommandConstants.FILE_PRINT);
 		setAction(ITextEditorActionConstants.PRINT, action);
 
 		action= new FindReplaceAction(EditorMessages.getBundleForConstructedKeys(), "Editor.FindReplace.", this); //$NON-NLS-1$
 		action.setHelpContextId(IAbstractTextEditorHelpContextIds.FIND_ACTION);
 		action.setActionDefinitionId(IWorkbenchCommandConstants.EDIT_FIND_AND_REPLACE);
+		updateImages(action, IWorkbenchCommandConstants.EDIT_FIND_AND_REPLACE);
 		setAction(ITextEditorActionConstants.FIND, action);
 
 		action= new FindNextAction(EditorMessages.getBundleForConstructedKeys(), "Editor.FindNext.", this, true); //$NON-NLS-1$
@@ -5820,6 +5827,7 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 		action= new RevertToSavedAction(EditorMessages.getBundleForConstructedKeys(), "Editor.Revert.", this); //$NON-NLS-1$
 		action.setHelpContextId(IAbstractTextEditorHelpContextIds.REVERT_TO_SAVED_ACTION);
 		action.setActionDefinitionId(IWorkbenchCommandConstants.FILE_REVERT);
+		updateImages(action, IWorkbenchCommandConstants.FILE_REVERT);
 		setAction(ITextEditorActionConstants.REVERT_TO_SAVED, action);
 
 		action= new GotoLineAction(EditorMessages.getBundleForConstructedKeys(), "Editor.GotoLine.", this); //$NON-NLS-1$
@@ -5977,6 +5985,7 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 					}
 				});
 		openProperties.setActionDefinitionId(IWorkbenchCommandConstants.FILE_PROPERTIES);
+		updateImages(openProperties, IWorkbenchCommandConstants.FILE_PROPERTIES);
 		setAction(ITextEditorActionConstants.PROPERTIES, openProperties);
 
 		markAsContentDependentAction(ITextEditorActionConstants.UNDO, true);
@@ -6021,6 +6030,19 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 
 		setActionActivationCode(ITextEditorActionConstants.SHIFT_RIGHT_TAB,'\t', -1, SWT.NONE);
 		setActionActivationCode(ITextEditorActionConstants.SHIFT_LEFT, '\t', -1, SWT.SHIFT);
+	}
+
+	private void updateImages(IAction action, String commandId) {
+		if (action.getImageDescriptor() != null) {
+			return;
+		}
+		ICommandImageService imgService = getSite().getService(ICommandImageService.class);
+		if (imgService == null) {
+			return;
+		}
+		action.setImageDescriptor(imgService.getImageDescriptor(commandId));
+		action.setDisabledImageDescriptor(imgService.getImageDescriptor(commandId, ICommandImageService.TYPE_DISABLED));
+		action.setHoverImageDescriptor(imgService.getImageDescriptor(commandId, ICommandImageService.TYPE_HOVER));
 	}
 
 	/**
