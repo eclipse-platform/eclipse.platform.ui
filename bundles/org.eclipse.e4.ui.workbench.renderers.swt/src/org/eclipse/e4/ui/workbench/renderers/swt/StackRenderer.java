@@ -1408,14 +1408,17 @@ public class StackRenderer extends LazyStackRenderer implements IPreferenceChang
 	/**
 	 * Populate the tab's context menu for the given part.
 	 *
-	 * @param menu
-	 *            the menu to be populated
-	 * @param part
-	 *            the relevant part
+	 * @param menu the menu to be populated
+	 * @param part the relevant part
 	 */
 	protected void populateTabMenu(final Menu menu, MPart part) {
+
+		createMenuItem(menu, SWTRenderersMessages.menuDetach, e -> detachActivePart(menu));
+		boolean needSeparatorAfterDetach = true;
+
 		int closeableElements = 0;
 		if (isClosable(part)) {
+			needSeparatorAfterDetach = createSeparator(menu, needSeparatorAfterDetach);
 			createMenuItem(menu, SWTRenderersMessages.menuClose, e -> closePart(menu));
 			closeableElements++;
 		}
@@ -1425,6 +1428,7 @@ public class StackRenderer extends LazyStackRenderer implements IPreferenceChang
 			closeableElements += getCloseableSiblingParts(part).size();
 
 			if (closeableElements >= 2) {
+				needSeparatorAfterDetach = createSeparator(menu, needSeparatorAfterDetach);
 				createMenuItem(menu, SWTRenderersMessages.menuCloseOthers, e -> closeSiblingParts(menu, true));
 
 				// create menu for parts on the left
@@ -1443,7 +1447,18 @@ public class StackRenderer extends LazyStackRenderer implements IPreferenceChang
 
 			}
 		}
-		createMenuItem(menu, SWTRenderersMessages.menuDetach, e -> detachActivePart(menu));
+
+	}
+
+	/**
+	 * @param needSeparator
+	 */
+	private boolean createSeparator(Menu menu, boolean needSeparator) {
+		if (needSeparator) {
+			new MenuItem(menu, SWT.SEPARATOR);
+			return false;
+		}
+		return true;
 
 	}
 
