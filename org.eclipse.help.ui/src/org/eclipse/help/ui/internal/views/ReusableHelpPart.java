@@ -1127,8 +1127,8 @@ public class ReusableHelpPart implements IHelpUIConstants,
 	}
 
 	public boolean isMonitoringContextHelp() {
-		return currentPage != null
-				&& currentPage.getId().equals(HV_CONTEXT_HELP_PAGE);
+		return currentPage != null && (currentPage.getId().equals(HV_CONTEXT_HELP_PAGE)
+				|| currentPage.getId().equals(HV_BROWSER_PAGE));
 	}
 
 	public Control getControl() {
@@ -1186,8 +1186,22 @@ public class ReusableHelpPart implements IHelpUIConstants,
 	 * @param isExplicitRequest is true if this is the result of a direct user request such as
 	 * pressing F1 and false if it is in response to a focus change listener
 	 */
-	public void update(IContextProvider provider, IContext context, IWorkbenchPart part,
-			Control control, boolean isExplicitRequest) {
+	public void update(IContextProvider provider, IContext context, IWorkbenchPart part, Control control,
+			boolean isExplicitRequest) {
+		IContext realContext = context;
+		if (provider != null) {
+			realContext = provider.getContext(control);
+		}
+		if (realContext != null) {
+			String contextText = realContext.getText();
+			IHelpResource[] topics = realContext.getRelatedTopics();
+			if (contextText == null && topics.length == 1) {
+				showURL(topics[0].getHref());
+				return;
+			}
+		}
+		// Ensure that context help is currently showing
+		showPage(IHelpUIConstants.HV_CONTEXT_HELP_PAGE);
 		mform.setInput(new ContextHelpProviderInput(provider, context, control, part, isExplicitRequest));
 	}
 
