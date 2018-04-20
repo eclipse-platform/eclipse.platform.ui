@@ -159,8 +159,6 @@ public class LegacyHandlerService implements IHandlerService {
 			Collection<HandlerActivation> handlerActivations) {
 		ECommandService cs = context.get(ECommandService.class);
 		Command command = cs.getCommand(cmdId);
-		boolean handled = command.isHandled();
-		boolean enabled = command.isEnabled();
 		E4HandlerProxy handlerProxy = new E4HandlerProxy(command, handler);
 		if (helpContextId != null) {
 			setHelpContextId(handler, helpContextId, context);
@@ -172,12 +170,6 @@ public class LegacyHandlerService implements IHandlerService {
 		hs.activateHandler(cmdId, new HandlerSelectionFunction(cmdId));
 		if (handlerActivations != null) {
 			handlerActivations.add(activation);
-		}
-		boolean handledChanged = handled != command.isHandled();
-		boolean enabledChanged = enabled != command.isEnabled();
-		if (handledChanged || enabledChanged) {
-			// IHandler proxy = command.getHandler();
-			// TODO do we need to fire a handler changed event?
 		}
 		return activation;
 	}
