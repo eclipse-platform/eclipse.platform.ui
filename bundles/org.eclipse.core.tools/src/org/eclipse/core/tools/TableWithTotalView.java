@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2005 IBM Corporation and others.
+ * Copyright (c) 2002, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -192,7 +192,7 @@ public abstract class TableWithTotalView extends ViewPart implements ISelectionP
 		copyAction = new Action() {
 			@Override
 			public void run() {
-				IStructuredSelection selection = (IStructuredSelection) viewer.getSelection();
+				IStructuredSelection selection = viewer.getStructuredSelection();
 				String result = ""; //$NON-NLS-1$
 				String[] columnHeaders = getColumnHeaders();
 				for (String columnHeader : columnHeaders)
@@ -224,18 +224,15 @@ public abstract class TableWithTotalView extends ViewPart implements ISelectionP
 	}
 
 	protected ISelectionChangedListener getTableListener() {
-		return new ISelectionChangedListener() {
-			@Override
-			public void selectionChanged(SelectionChangedEvent e) {
-				IStructuredSelection selection = (IStructuredSelection) e.getSelection();
-				copyAction.setEnabled(!selection.isEmpty());
-				if (selection.size() == 1) {
-					String message = getStatusLineMessage(selection.getFirstElement());
-					getViewSite().getActionBars().getStatusLineManager().setMessage(message);
-				}
-				totalTable.removeAll();
-				updateTotals();
+		return e -> {
+			IStructuredSelection selection = (IStructuredSelection) e.getSelection();
+			copyAction.setEnabled(!selection.isEmpty());
+			if (selection.size() == 1) {
+				String message = getStatusLineMessage(selection.getFirstElement());
+				getViewSite().getActionBars().getStatusLineManager().setMessage(message);
 			}
+			totalTable.removeAll();
+			updateTotals();
 		};
 	}
 
