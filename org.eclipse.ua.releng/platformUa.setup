@@ -49,8 +49,7 @@
       xsi:type="setup.targlets:TargletTask">
     <targlet
         name="Platform UA"
-        activeRepositoryList="${eclipse.target.platform}"
-        includeAllRequirements="false">
+        activeRepositoryList="${eclipse.target.platform}">
       <requirement
           name="*"/>
       <sourceLocator
