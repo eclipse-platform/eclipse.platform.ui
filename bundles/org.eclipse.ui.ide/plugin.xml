@@ -556,6 +556,10 @@
             id="org.eclipse.ui.ide.nature"
             label="%PreferenceKeywords.Nature">
       </keyword>
+      <keyword
+            id="org.eclipse.ui.ide.workspace.build"
+            label="%PreferenceKeywords.Workspace.Build">
+      </keyword>
    </extension>
    <extension
          point="org.eclipse.ui.preferencePages">
@@ -666,6 +670,9 @@
             name="%PreferencePages.BuildOrder"
             class="org.eclipse.ui.internal.ide.dialogs.BuildOrderPreferencePage"
             id="org.eclipse.ui.preferencePages.BuildOrder">
+         <keywordReference
+               id="org.eclipse.ui.ide.workspace.build">
+         </keywordReference>
       </page>
 
        <page
