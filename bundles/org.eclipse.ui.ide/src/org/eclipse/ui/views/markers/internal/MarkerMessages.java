@@ -136,6 +136,7 @@ public class MarkerMessages extends NLS {
 	public static String propertiesDialog_priorityNormal;
 	public static String propertiesDialog_priorityLow;
 	public static String propertiesDialog_completed;
+	public static String propertiesDialog_addButton;
 
 	public static String filter_matchedMessage;
 	public static String filter_itemsMessage;
