@@ -98,7 +98,7 @@ public class AggregateHyperlinkSegment extends ParagraphSegment implements
 
 	@Override
 	public Rectangle getBounds() {
-		if (segments.size() == 0)
+		if (segments.isEmpty())
 			return new Rectangle(Integer.MAX_VALUE, Integer.MAX_VALUE, 0, 0);
 
 		IHyperlinkSegment segment0 = (IHyperlinkSegment) segments.get(0);

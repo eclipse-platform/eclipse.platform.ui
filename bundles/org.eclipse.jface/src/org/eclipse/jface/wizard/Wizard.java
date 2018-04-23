@@ -284,7 +284,7 @@ public abstract class Wizard implements IWizard, IShellProvider {
 
     @Override
 	public IWizardPage getStartingPage() {
-        if (pages.size() == 0) {
+        if (pages.isEmpty()) {
 			return null;
 		}
         return pages.get(0);

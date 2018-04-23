@@ -472,7 +472,7 @@ public abstract class AbstractListViewer extends StructuredViewer {
 
     @Override
 	protected void setSelectionToWidget(List in, boolean reveal) {
-        if (in == null || in.size() == 0) { // clear selection
+        if (in == null || in.isEmpty()) { // clear selection
             listDeselectAll();
         } else {
             int n = in.size();

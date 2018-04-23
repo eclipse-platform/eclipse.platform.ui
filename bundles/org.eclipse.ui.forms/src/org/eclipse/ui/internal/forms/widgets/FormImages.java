@@ -392,7 +392,7 @@ public class FormImages {
 	}
 
 	private void validateHashMaps() {
-		if (descriptors.size() == 0)
+		if (descriptors.isEmpty())
 			descriptors = null;
 	}
 }

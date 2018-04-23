@@ -209,7 +209,7 @@ public class TextSegment extends ParagraphSegment {
 	}
 
 	public Rectangle getBounds() {
-		if (areaRectangles.size() == 0)
+		if (areaRectangles.isEmpty())
 			return new Rectangle(0, 0, 0, 0);
 
 		AreaRectangle ar0 = areaRectangles.get(0);

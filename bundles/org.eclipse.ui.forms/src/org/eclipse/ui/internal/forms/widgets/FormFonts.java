@@ -111,7 +111,7 @@ public class FormFonts {
 	}
 
 	private void validateHashMaps() {
-		if (descriptors.size() == 0)
+		if (descriptors.isEmpty())
 			descriptors = null;
 	}
 }

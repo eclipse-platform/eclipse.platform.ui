@@ -1594,7 +1594,7 @@ public abstract class StructuredViewer extends ContentViewer implements IPostSel
 				if (o == filter) {
 					i.remove();
 					refresh();
-					if (filters.size() == 0) {
+					if (filters.isEmpty()) {
 						filters = null;
 					}
 					return;

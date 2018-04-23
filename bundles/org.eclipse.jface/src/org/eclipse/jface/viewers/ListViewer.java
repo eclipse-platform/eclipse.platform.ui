@@ -184,7 +184,7 @@ public class ListViewer extends AbstractListViewer {
 		if( reveal ) {
 			super.setSelectionToWidget(in, reveal);
 		} else {
-			if (in == null || in.size() == 0) { // clear selection
+			if (in == null || in.isEmpty()) { // clear selection
 	            list.deselectAll();
 	        } else {
 	            int n = in.size();

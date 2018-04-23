@@ -684,7 +684,7 @@ public final class TableWrapLayout extends Layout implements ILayoutExtension {
 	}
 
 	private void updateRowSpans(int row, int rowHeight) {
-		if (rowspans == null || rowspans.size() == 0)
+		if (rowspans == null || rowspans.isEmpty())
 			return;
 		for (Enumeration<RowSpan> enm = rowspans.elements(); enm.hasMoreElements();) {
 			RowSpan rowspan = enm.nextElement();

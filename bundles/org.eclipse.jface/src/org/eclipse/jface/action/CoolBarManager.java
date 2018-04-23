@@ -547,7 +547,7 @@ public class CoolBarManager extends ContributionManager implements
         ArrayList<IContributionItem> contributionList = getItemList();
 
         // Check the size of the list
-        if (contributionList.size() == 0) {
+        if (contributionList.isEmpty()) {
 			return;
 		}
 
