@@ -53,7 +53,20 @@
       <requirement
           name="*"/>
       <sourceLocator
-          rootFolder="${git.clone.platform.ui.location}"/>
+          rootFolder="${git.clone.platform.ui.location}">
+        <predicate
+            xsi:type="predicates:OrPredicate">
+          <operand
+              xsi:type="predicates:NotPredicate">
+            <operand
+                xsi:type="predicates:NamePredicate"
+                pattern=".*(cocoa|gtk|win32)"/>
+          </operand>
+          <operand
+              xsi:type="predicates:NamePredicate"
+              pattern=".*\.${osgi.ws}"/>
+        </predicate>
+      </sourceLocator>
       <repositoryList
           name="EMF+GEF">
         <repository
