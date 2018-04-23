@@ -35,8 +35,6 @@ public class ToolControlContribution extends ControlContribution {
 	@Inject
 	private EModelService modelService;
 
-	// private IEclipseContext parentContext;
-
 	public ToolControlContribution() {
 		super(null);
 	}
@@ -47,14 +45,12 @@ public class ToolControlContribution extends ControlContribution {
 
 		final Composite newComposite = new Composite(parent, SWT.NONE);
 		newComposite.setLayout(new FillLayout());
-		localContext.set(Composite.class.getName(), newComposite);
-		localContext.set(MToolControl.class.getName(), model);
+		localContext.set(Composite.class, newComposite);
+		localContext.set(MToolControl.class, model);
 
-		final IEclipseContext parentContext = modelService
-				.getContainingContext(model);
+		final IEclipseContext parentContext = modelService.getContainingContext(model);
 		if (model.getObject() == null) {
-			final Object tcImpl = contribFactory.create(
-					model.getContributionURI(), parentContext, localContext);
+			final Object tcImpl = contribFactory.create(model.getContributionURI(), parentContext, localContext);
 			model.setObject(tcImpl);
 			newComposite.addDisposeListener(e -> {
 				ContextInjectionFactory.uninject(tcImpl, parentContext);
