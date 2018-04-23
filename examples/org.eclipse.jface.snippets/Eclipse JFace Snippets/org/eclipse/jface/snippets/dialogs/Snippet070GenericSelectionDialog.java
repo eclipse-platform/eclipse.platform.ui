@@ -122,7 +122,7 @@ public class Snippet070GenericSelectionDialog {
 				String shellMessage) {
 
 			super(shell);
-			if (models == null || models.size() == 0) {
+			if (models == null || models.isEmpty()) {
 				throw new IllegalArgumentException();
 			}
 			this.models = models;

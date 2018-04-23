@@ -85,7 +85,7 @@ public class ModelElementTest {
 						&& c != ApplicationPackageImpl.Literals.STRING_TO_OBJECT_MAP
 						&& c != ApplicationPackageImpl.Literals.APPLICATION_ELEMENT
 						&& !c.isInterface()) {
-					if (c.getESuperTypes().size() == 0
+					if (c.getESuperTypes().isEmpty()
 							|| c.getESuperTypes().get(0).isInterface()) {
 						failedClasses.add(c);
 					}

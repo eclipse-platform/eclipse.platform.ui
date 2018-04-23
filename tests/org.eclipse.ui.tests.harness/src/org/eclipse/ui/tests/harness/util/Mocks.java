@@ -200,7 +200,7 @@ public class Mocks {
 
 		public void verify() {
 			if (previousCallHistory == null) {
-				if (currentCallHistory.size() == 0) {
+				if (currentCallHistory.isEmpty()) {
 					// mock object was not used at all
 					return;
 				}
