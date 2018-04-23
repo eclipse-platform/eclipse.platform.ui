@@ -31,6 +31,7 @@ import org.eclipse.e4.core.commands.CommandServiceAddon;
 import org.eclipse.e4.core.commands.ECommandService;
 import org.eclipse.e4.core.commands.EHandlerService;
 import org.eclipse.e4.core.contexts.ContextInjectionFactory;
+import org.eclipse.e4.core.contexts.EclipseContextFactory;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.di.annotations.CanExecute;
 import org.eclipse.e4.core.di.annotations.Execute;
@@ -38,6 +39,7 @@ import org.eclipse.e4.core.di.annotations.Optional;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.osgi.framework.FrameworkUtil;
 
 public class HandlerTest {
 
@@ -51,7 +53,8 @@ public class HandlerTest {
 
 	@Before
 	public void setUp() {
-		IEclipseContext globalContext = TestActivator.getDefault().getGlobalContext();
+		IEclipseContext serviceContext = EclipseContextFactory.getServiceContext(FrameworkUtil.getBundle(this.getClass()).getBundleContext());
+		IEclipseContext globalContext = serviceContext.createChild();
 		workbenchContext = globalContext.createChild("workbenchContext");
 		ContextInjectionFactory.make(CommandServiceAddon.class, workbenchContext);
 		defineCommands(workbenchContext);

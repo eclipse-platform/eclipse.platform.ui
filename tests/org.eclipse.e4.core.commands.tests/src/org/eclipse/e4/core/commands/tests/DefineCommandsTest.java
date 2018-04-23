@@ -28,10 +28,12 @@ import org.eclipse.core.commands.common.NotDefinedException;
 import org.eclipse.e4.core.commands.CommandServiceAddon;
 import org.eclipse.e4.core.commands.ECommandService;
 import org.eclipse.e4.core.contexts.ContextInjectionFactory;
+import org.eclipse.e4.core.contexts.EclipseContextFactory;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.osgi.framework.FrameworkUtil;
 
 public class DefineCommandsTest {
 
@@ -44,7 +46,8 @@ public class DefineCommandsTest {
 
 	@Before
 	public void setUp() {
-		IEclipseContext globalContext = TestActivator.getDefault().getGlobalContext();
+		IEclipseContext serviceContext = EclipseContextFactory.getServiceContext(FrameworkUtil.getBundle(this.getClass()).getBundleContext());
+		IEclipseContext globalContext = serviceContext.createChild();
 		workbenchContext = globalContext.createChild("workbenchContext");
 		ContextInjectionFactory.make(CommandServiceAddon.class, workbenchContext);
 	}
