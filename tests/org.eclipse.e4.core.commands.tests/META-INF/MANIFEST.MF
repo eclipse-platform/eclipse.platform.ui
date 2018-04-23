@@ -1,6 +1,6 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: Core commands Tests (Incubation)
+Bundle-Name: %pluginName
 Bundle-SymbolicName: org.eclipse.e4.core.commands.tests;singleton:=true
 Bundle-Version: 0.12.100.qualifier
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
@@ -17,4 +17,5 @@ Import-Package: javax.inject;version="1.0.0",
 Bundle-ActivationPolicy: lazy
 Eclipse-BundleShape: dir
 Automatic-Module-Name: org.eclipse.e4.core.commands.tests
+Bundle-Vendor: %providerName
 
