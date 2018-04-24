@@ -146,7 +146,7 @@ public class ToolBarManagerRenderer extends SWTPartRenderer {
 	@Inject
 	@Optional
 	private void subscribeTopicUpdateToBeRendered(@UIEventTopic(UIEvents.UIElement.TOPIC_ALL) Event event) {
-		// Ensure that this event is for a MMenuItem
+		// Ensure that this event is for a MToolBarElement
 		if (!(event.getProperty(UIEvents.EventTags.ELEMENT) instanceof MToolBarElement)) {
 			return;
 		}
@@ -236,7 +236,7 @@ public class ToolBarManagerRenderer extends SWTPartRenderer {
 	@Inject
 	@Optional
 	private void subscribeTopicUpdateEnablement(@UIEventTopic(UIEvents.Item.TOPIC_ENABLED) Event event) {
-		// Ensure that this event is for a MMenuItem
+		// Ensure that this event is for a MToolBarElement
 		if (!(event.getProperty(UIEvents.EventTags.ELEMENT) instanceof MToolBarElement)) {
 			return;
 		}
@@ -252,7 +252,7 @@ public class ToolBarManagerRenderer extends SWTPartRenderer {
 	@Inject
 	@Optional
 	private void subscribeTopicChildAdded(@UIEventTopic(ElementContainer.TOPIC_CHILDREN) Event event) {
-		// Ensure that this event is for a MMenuItem
+		// Ensure that this event is for a MToolBar
 		if (!(event.getProperty(UIEvents.EventTags.ELEMENT) instanceof MToolBar)) {
 			return;
 		}
