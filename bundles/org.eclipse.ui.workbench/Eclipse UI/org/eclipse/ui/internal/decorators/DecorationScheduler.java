@@ -294,21 +294,21 @@ public class DecorationScheduler {
 					}
 				}
 
-				SubMonitor subMonitor = SubMonitor.convert(monitor,
-						WorkbenchMessages.DecorationScheduler_CalculatingTask, awaitingDecoration.size());
+				SubMonitor subMonitor = SubMonitor.convert(monitor);
+				subMonitor.setTaskName("WorkbenchMessages.DecorationScheduler_CalculatingTask"); //$NON-NLS-1$
 				// will block if there are no resources to be decorated
 				DecorationReference reference;
 
 				while ((reference = nextElement()) != null) {
 
-					subMonitor.split(1);
-
-					monitor.subTask(reference.getSubTask());
+					SubMonitor loopMonitor = subMonitor.setWorkRemaining(100).split(1);
 					Object element = reference.getElement();
 					boolean force = reference.shouldForceUpdate();
 					IDecorationContext[] contexts = reference.getContexts();
+					loopMonitor.setWorkRemaining(contexts.length);
 					for (IDecorationContext context : contexts) {
 						ensureResultCached(element, force, context);
+						loopMonitor.split(1);
 					}
 					// Only notify listeners when we have exhausted the
 					// queue of decoration requests.
