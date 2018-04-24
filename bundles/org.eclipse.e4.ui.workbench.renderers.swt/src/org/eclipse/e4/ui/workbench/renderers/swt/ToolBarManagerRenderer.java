@@ -437,7 +437,7 @@ public class ToolBarManagerRenderer extends SWTPartRenderer {
 	private void generateContributions(MToolBar toolbarModel, List<MToolBarContribution> toContribute) {
 
 		ToolBarManager manager = getManager(toolbarModel);
-		boolean done = toContribute.size() == 0;
+		boolean done = toContribute.isEmpty();
 		while (!done) {
 			ArrayList<MToolBarContribution> curList = new ArrayList<>(toContribute);
 			int retryCount = toContribute.size();
@@ -450,7 +450,7 @@ public class ToolBarManagerRenderer extends SWTPartRenderer {
 			}
 			// We're done if the retryList is now empty (everything done) or
 			// if the list hasn't changed at all (no hope)
-			done = toContribute.size() == 0 || toContribute.size() == retryCount;
+			done = toContribute.isEmpty() || toContribute.size() == retryCount;
 		}
 	}
 
