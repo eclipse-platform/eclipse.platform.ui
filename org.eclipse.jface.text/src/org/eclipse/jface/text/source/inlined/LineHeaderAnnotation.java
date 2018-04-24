@@ -30,7 +30,7 @@ public class LineHeaderAnnotation extends AbstractInlinedAnnotation {
 	 * Line header annotation constructor.
 	 *
 	 * @param position the position where the annotation must be drawn.
-	 * @param viewer the {@link ISourceViewer} where the annotation must be drawn.
+	 * @param viewer   the {@link ISourceViewer} where the annotation must be drawn.
 	 */
 	public LineHeaderAnnotation(Position position, ISourceViewer viewer) {
 		super(position, viewer);
@@ -60,5 +60,10 @@ public class LineHeaderAnnotation extends AbstractInlinedAnnotation {
 
 	void setRedrawnCharacterWidth(int redrawnCharacterWidth) {
 		this.redrawnCharacterWidth= redrawnCharacterWidth;
+	}
+
+	@Override
+	boolean contains(int x, int y) {
+		return (x >= this.fX && y >= this.fY && y <= this.fY + getHeight());
 	}
 }
