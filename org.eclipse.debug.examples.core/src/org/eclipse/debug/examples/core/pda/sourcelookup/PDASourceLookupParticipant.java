@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2007 IBM Corporation and others.
+ * Copyright (c) 2005, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -21,9 +21,7 @@ import org.eclipse.debug.examples.core.pda.model.PDAStackFrame;
  * PDA stack frame into a source file name
  */
 public class PDASourceLookupParticipant extends AbstractSourceLookupParticipant {
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.core.sourcelookup.ISourceLookupParticipant#getSourceName(java.lang.Object)
-	 */
+
 	@Override
 	public String getSourceName(Object object) throws CoreException {
 		//#ifdef ex4

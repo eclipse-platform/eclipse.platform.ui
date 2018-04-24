@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2013 IBM Corporation and others.
+ * Copyright (c) 2008, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -30,25 +30,16 @@ public class ClockControl extends TimeControl {
 		super("Time" , launch); //$NON-NLS-1$
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.examples.core.midi.launcher.TimeControl#getTimeValue()
-	 */
 	@Override
 	protected long getTimeValue() {
 		return getSequencer().getMicrosecondPosition();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.examples.core.midi.launcher.SequencerControl#isEditable()
-	 */
 	@Override
 	public boolean isEditable() {
 		return true;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.examples.core.midi.launcher.SequencerControl#setValue(java.lang.String)
-	 */
 	@Override
 	public IStatus setValue(String newValue) {
 		try {
@@ -61,9 +52,6 @@ public class ClockControl extends TimeControl {
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.examples.core.midi.launcher.SequencerControl#validateValue(java.lang.String)
-	 */
 	@Override
 	public IStatus validateValue(String value) {
 		try {

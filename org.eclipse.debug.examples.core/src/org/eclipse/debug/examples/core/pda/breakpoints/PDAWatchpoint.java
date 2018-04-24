@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2013 IBM Corporation and others.
+ * Copyright (c) 2005, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -16,7 +16,6 @@ import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.debug.core.model.IBreakpoint;
 import org.eclipse.debug.core.model.IWatchpoint;
 import org.eclipse.debug.examples.core.pda.model.PDADebugTarget;
@@ -64,66 +63,45 @@ public class PDAWatchpoint extends PDALineBreakpoint implements IWatchpoint {
 	 * @throws CoreException if unable to create the watchpoint
 	 */
 	public PDAWatchpoint(final IResource resource, final int lineNumber, final String functionName, final String varName, final boolean access, final boolean modification) throws CoreException {
-		IWorkspaceRunnable runnable = new IWorkspaceRunnable() {
-			@Override
-			public void run(IProgressMonitor monitor) throws CoreException {
-				IMarker marker = resource.createMarker("org.eclipse.debug.examples.core.pda.markerType.watchpoint"); //$NON-NLS-1$
-				setMarker(marker);
-				setEnabled(true);
-				ensureMarker().setAttribute(IMarker.LINE_NUMBER, lineNumber);
-				ensureMarker().setAttribute(IBreakpoint.ID, getModelIdentifier());
-				setAccess(access);
-				setModification(modification);
-				setVariable(functionName, varName);
-				marker.setAttribute(IMarker.MESSAGE, "Watchpoint: " + resource.getName() + " [line: " + lineNumber + "]"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-			}
+		IWorkspaceRunnable runnable = monitor -> {
+			IMarker marker = resource.createMarker("org.eclipse.debug.examples.core.pda.markerType.watchpoint"); //$NON-NLS-1$
+			setMarker(marker);
+			setEnabled(true);
+			ensureMarker().setAttribute(IMarker.LINE_NUMBER, lineNumber);
+			ensureMarker().setAttribute(IBreakpoint.ID, getModelIdentifier());
+			setAccess(access);
+			setModification(modification);
+			setVariable(functionName, varName);
+			marker.setAttribute(IMarker.MESSAGE, "Watchpoint: " + resource.getName() + " [line: " + lineNumber + "]"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		};
 		run(getMarkerRule(resource), runnable);
 	}
 
-    /* (non-Javadoc)
-     * @see org.eclipse.debug.core.model.IWatchpoint#isAccess()
-     */
     @Override
 	public boolean isAccess() throws CoreException {
         return getMarker().getAttribute(ACCESS, true);
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.debug.core.model.IWatchpoint#setAccess(boolean)
-     */
     @Override
 	public void setAccess(boolean access) throws CoreException {
         setAttribute(ACCESS, access);
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.debug.core.model.IWatchpoint#isModification()
-     */
     @Override
 	public boolean isModification() throws CoreException {
         return getMarker().getAttribute(MODIFICATION, true);
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.debug.core.model.IWatchpoint#setModification(boolean)
-     */
     @Override
 	public void setModification(boolean modification) throws CoreException {
         setAttribute(MODIFICATION, modification);
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.debug.core.model.IWatchpoint#supportsAccess()
-     */
     @Override
 	public boolean supportsAccess() {
         return true;
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.debug.core.model.IWatchpoint#supportsModification()
-     */
     @Override
 	public boolean supportsModification() {
         return true;
@@ -179,9 +157,6 @@ public class PDAWatchpoint extends PDALineBreakpoint implements IWatchpoint {
         return fLastSuspendType;
     }
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.examples.core.pda.breakpoints.PDALineBreakpoint#createRequest(org.eclipse.debug.examples.core.pda.model.PDADebugTarget)
-	 */
 	@Override
 	protected void createRequest(PDADebugTarget target) throws CoreException {
         int flag = 0;
@@ -194,17 +169,11 @@ public class PDAWatchpoint extends PDALineBreakpoint implements IWatchpoint {
 		target.sendCommand(new PDAWatchCommand(getFunctionName(), getVariableName(), flag));
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.examples.core.pda.breakpoints.PDALineBreakpoint#clearRequest(org.eclipse.debug.examples.core.pda.model.PDADebugTarget)
-	 */
 	@Override
 	protected void clearRequest(PDADebugTarget target) throws CoreException {
 	    target.sendCommand(new PDAWatchCommand(getFunctionName(), getVariableName(), 0));
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.examples.core.pda.model.IPDAEventListener#handleEvent(java.lang.String)
-	 */
 	@Override
 	public void handleEvent(PDAEvent event) {
         if (event instanceof PDASuspendedEvent || event instanceof PDAVMSuspendedEvent) {

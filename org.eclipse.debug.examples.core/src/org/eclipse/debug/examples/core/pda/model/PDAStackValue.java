@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2009 IBM Corporation and others.
+ * Copyright (c) 2005, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -43,55 +43,38 @@ public class PDAStackValue extends PDADebugElement implements IValue {
 	    return fThread;
 	}
 
-    /* (non-Javadoc)
-     * @see org.eclipse.debug.core.model.IValue#getValueString()
-     */
     @Override
 	public String getValueString() throws DebugException {
         return fValue;
     }
-    /* (non-Javadoc)
-     * @see org.eclipse.debug.core.model.IValue#isAllocated()
-     */
+
     @Override
 	public boolean isAllocated() throws DebugException {
         return true;
     }
-    /* (non-Javadoc)
-     * @see org.eclipse.debug.core.model.IValue#getVariables()
-     */
+
     @Override
 	public IVariable[] getVariables() throws DebugException {
         return new IVariable[0];
     }
-    /* (non-Javadoc)
-     * @see org.eclipse.debug.core.model.IValue#hasVariables()
-     */
+
     @Override
 	public boolean hasVariables() throws DebugException {
         return false;
     }
-    /* (non-Javadoc)
-     * @see org.eclipse.debug.core.model.IValue#getReferenceTypeName()
-     */
+
     @Override
 	public String getReferenceTypeName() throws DebugException {
         return null;
     }
-	/*
-	 *  (non-Javadoc)
-	 * @see java.lang.Object#equals(java.lang.Object)
-	 */
+
     @Override
 	public boolean equals(Object obj) {
         return obj instanceof PDAStackValue &&
             ((PDAStackValue)obj).fValue.equals(fValue) &&
             ((PDAStackValue)obj).fIndex == fIndex;
     }
-    /*
-     *  (non-Javadoc)
-     * @see java.lang.Object#hashCode()
-     */
+
     @Override
 	public int hashCode() {
         return super.hashCode() + fIndex;

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 IBM Corporation and others.
+ * Copyright (c) 2008, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -30,9 +30,6 @@ public abstract class TimeControl extends SequencerControl {
 		super(name, launch);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.examples.core.midi.launcher.SequencerControl#getValue()
-	 */
 	@Override
 	public String getValue() {
 		long position = getTimeValue();
@@ -65,25 +62,16 @@ public abstract class TimeControl extends SequencerControl {
 	 */
 	protected abstract long getTimeValue();
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.examples.core.midi.launcher.SequencerControl#isEditable()
-	 */
 	@Override
 	public boolean isEditable() {
 		return false;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.examples.core.midi.launcher.SequencerControl#setValue(java.lang.String)
-	 */
 	@Override
 	public IStatus setValue(String newValue) {
 		return null;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.examples.core.midi.launcher.SequencerControl#validateValue(java.lang.String)
-	 */
 	@Override
 	public IStatus validateValue(String value) {
 		return null;

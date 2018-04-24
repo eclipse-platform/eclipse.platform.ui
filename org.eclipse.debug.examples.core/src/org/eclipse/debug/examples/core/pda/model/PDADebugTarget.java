@@ -107,9 +107,6 @@ public class PDADebugTarget extends PDADebugElement implements IDebugTarget, IBr
 			setSystem(true);
 		}
 
-		/* (non-Javadoc)
-		 * @see org.eclipse.core.runtime.jobs.Job#run(org.eclipse.core.runtime.IProgressMonitor)
-		 */
 		@Override
 		protected IStatus run(IProgressMonitor monitor) {
 			String message = ""; //$NON-NLS-1$
@@ -212,39 +209,24 @@ public class PDADebugTarget extends PDADebugElement implements IDebugTarget, IBr
         sendCommand(new PDAEventStopCommand(PDAEventStopCommand.NOSUCHLABEL, true));
 	}
 
-    /* (non-Javadoc)
-	 * @see org.eclipse.debug.core.model.IDebugTarget#getProcess()
-	 */
 	@Override
 	public IProcess getProcess() {
 		return fProcess;
 	}
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.core.model.IDebugTarget#getThreads()
-	 */
 	@Override
 	public IThread[] getThreads() throws DebugException {
 	    synchronized (fThreads) {
 	        return fThreads.values().toArray(new IThread[fThreads.size()]);
 	    }
 	}
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.core.model.IDebugTarget#hasThreads()
-	 */
 	@Override
 	public boolean hasThreads() throws DebugException {
 		return fThreads.size() > 0;
 	}
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.core.model.IDebugTarget#getName()
-	 */
 	@Override
 	public String getName() throws DebugException {
 		return "PDA"; //$NON-NLS-1$
 	}
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.core.model.IDebugTarget#supportsBreakpoint(org.eclipse.debug.core.model.IBreakpoint)
-	 */
 	@Override
 	public boolean supportsBreakpoint(IBreakpoint breakpoint) {
 		if (!isTerminated() && breakpoint.getModelIdentifier().equals(getModelIdentifier())) {
@@ -271,37 +253,27 @@ public class PDADebugTarget extends PDADebugElement implements IDebugTarget, IBr
 		}
 		return false;
 	}
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.core.model.IDebugElement#getDebugTarget()
-	 */
+
 	@Override
 	public IDebugTarget getDebugTarget() {
 		return this;
 	}
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.core.model.IDebugElement#getLaunch()
-	 */
+
 	@Override
 	public ILaunch getLaunch() {
 		return fLaunch;
 	}
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.core.model.ITerminate#canTerminate()
-	 */
+
 	@Override
 	public boolean canTerminate() {
 		return getProcess().canTerminate();
 	}
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.core.model.ITerminate#isTerminated()
-	 */
+
 	@Override
 	public synchronized boolean isTerminated() {
 		return fTerminated || getProcess().isTerminated();
 	}
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.core.model.ITerminate#terminate()
-	 */
+
 	@Override
 	public void terminate() throws DebugException {
 //#ifdef ex2
@@ -310,47 +282,32 @@ public class PDADebugTarget extends PDADebugElement implements IDebugTarget, IBr
 	    sendCommand(new PDATerminateCommand());
 //#endif
 	}
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.core.model.ISuspendResume#canResume()
-	 */
+
 	@Override
 	public boolean canResume() {
 		return !isTerminated() && isSuspended();
 	}
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.core.model.ISuspendResume#canSuspend()
-	 */
+
 	@Override
 	public boolean canSuspend() {
 		return !isTerminated() && !isSuspended();
 	}
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.core.model.ISuspendResume#isSuspended()
-	 */
+
 	@Override
 	public synchronized boolean isSuspended() {
 		return !isTerminated() && fVMSuspended;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.core.model.ISuspendResume#resume()
-	 */
 	@Override
 	public void resume() throws DebugException {
 	    sendCommand(new PDAVMResumeCommand());
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.core.model.ISuspendResume#suspend()
-	 */
 	@Override
 	public void suspend() throws DebugException {
         sendCommand(new PDAVMSuspendCommand());
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.core.IBreakpointListener#breakpointAdded(org.eclipse.debug.core.model.IBreakpoint)
-	 */
 	@Override
 	public void breakpointAdded(IBreakpoint breakpoint) {
 		if (supportsBreakpoint(breakpoint)) {
@@ -363,9 +320,7 @@ public class PDADebugTarget extends PDADebugElement implements IDebugTarget, IBr
 			}
 		}
 	}
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.core.IBreakpointListener#breakpointRemoved(org.eclipse.debug.core.model.IBreakpoint, org.eclipse.core.resources.IMarkerDelta)
-	 */
+
 	@Override
 	public void breakpointRemoved(IBreakpoint breakpoint, IMarkerDelta delta) {
 		if (supportsBreakpoint(breakpoint)) {
@@ -376,9 +331,7 @@ public class PDADebugTarget extends PDADebugElement implements IDebugTarget, IBr
 			}
 		}
 	}
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.core.IBreakpointListener#breakpointChanged(org.eclipse.debug.core.model.IBreakpoint, org.eclipse.core.resources.IMarkerDelta)
-	 */
+
 	@Override
 	public void breakpointChanged(IBreakpoint breakpoint, IMarkerDelta delta) {
 		if (supportsBreakpoint(breakpoint)) {
@@ -392,36 +345,26 @@ public class PDADebugTarget extends PDADebugElement implements IDebugTarget, IBr
 			}
 		}
 	}
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.core.model.IDisconnect#canDisconnect()
-	 */
+
 	@Override
 	public boolean canDisconnect() {
 		return false;
 	}
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.core.model.IDisconnect#disconnect()
-	 */
+
 	@Override
 	public void disconnect() throws DebugException {
 	}
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.core.model.IDisconnect#isDisconnected()
-	 */
+
 	@Override
 	public boolean isDisconnected() {
 		return false;
 	}
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.core.model.IMemoryBlockRetrieval#supportsStorageRetrieval()
-	 */
+
 	@Override
 	public boolean supportsStorageRetrieval() {
 		return true;
 	}
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.core.model.IMemoryBlockRetrieval#getMemoryBlock(long, long)
-	 */
+
 	@Override
 	public IMemoryBlock getMemoryBlock(long startAddress, long length) throws DebugException {
 		return new PDAMemoryBlock(this, startAddress, length);
@@ -512,9 +455,6 @@ public class PDADebugTarget extends PDADebugElement implements IDebugTarget, IBr
         fTerminated = terminated;
     }
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.examples.core.pda.model.PDADebugElement#sendRequest(java.lang.String)
-	 */
 	private String sendRequest(String request) throws DebugException {
 		synchronized (fRequestSocket) {
 			fRequestWriter.println(request);
@@ -556,9 +496,6 @@ public class PDADebugTarget extends PDADebugElement implements IDebugTarget, IBr
         }
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.examples.core.pda.model.IPDAEventListener#handleEvent(java.lang.String)
-	 */
 	@Override
 	public void handleEvent(PDAEvent event) {
 		if (event instanceof PDAStartedEvent) {

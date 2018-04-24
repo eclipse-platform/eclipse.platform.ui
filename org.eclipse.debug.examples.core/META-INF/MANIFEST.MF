@@ -19,7 +19,7 @@ Export-Package: org.eclipse.debug.examples.ant.tasks;x-friends:="org.eclipse.deb
  org.eclipse.debug.examples.core.pda.protocol;x-friends:="org.eclipse.debug.examples.ui",
  org.eclipse.debug.examples.core.pda.sourcelookup;x-friends:="org.eclipse.debug.examples.ui",
  org.eclipse.debug.examples.pdavm;x-friends:="org.eclipse.debug.examples.ui"
-Bundle-RequiredExecutionEnvironment: JavaSE-1.7
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Bundle-ActivationPolicy: lazy
 Bundle-Vendor: %Bundle-Vendor
 Automatic-Module-Name: org.eclipse.debug.examples.core

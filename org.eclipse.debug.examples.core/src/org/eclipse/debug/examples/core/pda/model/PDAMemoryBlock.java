@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2011 IBM Corporation and others.
+ * Copyright (c) 2010, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -39,41 +39,26 @@ public class PDAMemoryBlock extends PDADebugElement implements IMemoryBlock {
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.core.model.IMemoryBlock#getStartAddress()
-	 */
 	@Override
 	public long getStartAddress() {
 		return fStart;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.core.model.IMemoryBlock#getLength()
-	 */
 	@Override
 	public long getLength() {
 		return fLength;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.core.model.IMemoryBlock#getBytes()
-	 */
 	@Override
 	public byte[] getBytes() throws DebugException {
 		return fBytes;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.core.model.IMemoryBlock#supportsValueModification()
-	 */
 	@Override
 	public boolean supportsValueModification() {
 		return true;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.core.model.IMemoryBlock#setValue(long, byte[])
-	 */
 	@Override
 	public void setValue(long offset, byte[] bytes) throws DebugException {
 		int i = 0;

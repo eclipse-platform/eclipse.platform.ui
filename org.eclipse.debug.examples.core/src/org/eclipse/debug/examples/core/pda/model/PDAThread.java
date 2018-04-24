@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2013 IBM Corporation and others.
+ * Copyright (c) 2005, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -108,9 +108,6 @@ public class PDAThread extends PDADebugElement implements IThread, IPDAEventList
         fireTerminateEvent();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.core.model.IThread#getStackFrames()
-	 */
 	@Override
 	public IStackFrame[] getStackFrames() throws DebugException {
 		if (isSuspended()) {
@@ -124,23 +121,16 @@ public class PDAThread extends PDADebugElement implements IThread, IPDAEventList
 		return new IStackFrame[0];
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.core.model.IThread#hasStackFrames()
-	 */
 	@Override
 	public boolean hasStackFrames() throws DebugException {
 		return isSuspended();
 	}
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.core.model.IThread#getPriority()
-	 */
+
 	@Override
 	public int getPriority() throws DebugException {
 		return 0;
 	}
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.core.model.IThread#getTopStackFrame()
-	 */
+
 	@Override
 	public IStackFrame getTopStackFrame() throws DebugException {
 		IStackFrame[] frames = getStackFrames();
@@ -149,17 +139,12 @@ public class PDAThread extends PDADebugElement implements IThread, IPDAEventList
 		}
 		return null;
 	}
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.core.model.IThread#getName()
-	 */
+
 	@Override
 	public String getName() {
 		return "Main thread"; //$NON-NLS-1$
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.core.model.IThread#getBreakpoints()
-	 */
 	@Override
 	public synchronized IBreakpoint[] getBreakpoints() {
 		if (fBreakpoint == null) {
@@ -178,23 +163,16 @@ public class PDAThread extends PDADebugElement implements IThread, IPDAEventList
 		suspended(DebugEvent.BREAKPOINT);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.core.model.ISuspendResume#canResume()
-	 */
 	@Override
 	public boolean canResume() {
 		return isSuspended() && !getDebugTarget().isSuspended();
 	}
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.core.model.ISuspendResume#canSuspend()
-	 */
+
 	@Override
 	public boolean canSuspend() {
 		return !isSuspended();
 	}
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.core.model.ISuspendResume#isSuspended()
-	 */
+
 	@Override
 	public boolean isSuspended() {
 	    if (getDebugTarget().isTerminated()) {
@@ -207,9 +185,7 @@ public class PDAThread extends PDADebugElement implements IThread, IPDAEventList
 	        return fSuspended;
 	    }
 	}
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.core.model.ISuspendResume#resume()
-	 */
+
 	@Override
 	public void resume() throws DebugException {
 		//#ifdef ex2
@@ -218,9 +194,7 @@ public class PDAThread extends PDADebugElement implements IThread, IPDAEventList
 		sendCommand(new PDAResumeCommand(fThreadId));
 		//#endif
 	}
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.core.model.ISuspendResume#suspend()
-	 */
+
 	@Override
 	public void suspend() throws DebugException {
 		//#ifdef ex2
@@ -229,70 +203,50 @@ public class PDAThread extends PDADebugElement implements IThread, IPDAEventList
 	    sendCommand(new PDASuspendCommand(fThreadId));
 		//#endif
 	}
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.core.model.IStep#canStepInto()
-	 */
+
 	@Override
 	public boolean canStepInto() {
 		return false;
 	}
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.core.model.IStep#canStepOver()
-	 */
+
 	@Override
 	public boolean canStepOver() {
 		return isSuspended();
 	}
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.core.model.IStep#canStepReturn()
-	 */
+
 	@Override
 	public boolean canStepReturn() {
 		return false;
 	}
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.core.model.IStep#isStepping()
-	 */
+
 	@Override
 	public boolean isStepping() {
 		return fStepping;
 	}
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.core.model.IStep#stepInto()
-	 */
+
 	@Override
 	public void stepInto() throws DebugException {
 	}
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.core.model.IStep#stepOver()
-	 */
+
 	@Override
 	public void stepOver() throws DebugException {
 		sendCommand(new PDAStepCommand(fThreadId));
 	}
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.core.model.IStep#stepReturn()
-	 */
+
 	@Override
 	public void stepReturn() throws DebugException {
 	}
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.core.model.ITerminate#canTerminate()
-	 */
+
 	@Override
 	public boolean canTerminate() {
 		return !isTerminated();
 	}
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.core.model.ITerminate#isTerminated()
-	 */
+
 	@Override
 	public boolean isTerminated() {
 		return getDebugTarget().isTerminated();
 	}
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.core.model.ITerminate#terminate()
-	 */
+
 	@Override
 	public void terminate() throws DebugException {
 	    getDebugTarget().terminate();
@@ -337,9 +291,6 @@ public class PDAThread extends PDADebugElement implements IThread, IPDAEventList
 		return fErrorEvent;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.examples.core.pda.model.IPDAEventListener#handleEvent(java.lang.String)
-	 */
 	@Override
 	public void handleEvent(PDAEvent _event) {
 	    if (_event instanceof PDARunControlEvent && fThreadId == ((PDARunControlEvent)_event).fThreadId) {
