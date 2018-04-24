@@ -648,7 +648,7 @@ public class ModelServiceImpl implements EModelService {
 			}
 		}
 
-		if (elementRefs.size() == 0) {
+		if (elementRefs.isEmpty()) {
 			return null;
 		}
 

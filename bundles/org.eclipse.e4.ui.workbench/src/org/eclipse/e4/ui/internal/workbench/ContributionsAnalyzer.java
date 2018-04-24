@@ -342,7 +342,7 @@ public final class ContributionsAnalyzer {
 			}
 		}
 
-		boolean done = toContribute.size() == 0;
+		boolean done = toContribute.isEmpty();
 		while (!done) {
 			ArrayList<MMenuContribution> curList = new ArrayList<>(toContribute);
 			int retryCount = toContribute.size();
@@ -356,7 +356,7 @@ public final class ContributionsAnalyzer {
 			}
 			// We're done if the retryList is now empty (everything done) or
 			// if the list hasn't changed at all (no hope)
-			done = (toContribute.size() == 0) || (toContribute.size() == retryCount);
+			done = (toContribute.isEmpty()) || (toContribute.size() == retryCount);
 		}
 	}
 

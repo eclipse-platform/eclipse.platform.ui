@@ -232,13 +232,13 @@ public class TrimBarLayout extends Layout {
 		bounds.height -= (marginTop + marginBottom);
 
 		// If we were called directly we need to fill the caches
-		if (lines.size() == 0) {
+		if (lines.isEmpty()) {
 			if (horizontal)
 				computeSize(composite, bounds.width, SWT.DEFAULT, true);
 			else
 				computeSize(composite, SWT.DEFAULT, bounds.height, true);
 		}
-		if (lines.size() == 0)
+		if (lines.isEmpty())
 			return;
 
 		for (TrimLine curLine : lines) {
@@ -336,7 +336,7 @@ public class TrimBarLayout extends Layout {
 	 *         TrimBar-Control's bounds.
 	 */
 	public Control ctrlFromPoint(Composite trimComp, Point trimPos) {
-		if (trimComp == null || trimComp.isDisposed() || lines == null || lines.size() == 0)
+		if (trimComp == null || trimComp.isDisposed() || lines == null || lines.isEmpty())
 			return null;
 
 		Control[] kids = trimComp.getChildren();

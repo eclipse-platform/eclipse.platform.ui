@@ -97,7 +97,7 @@ class Overlay {
 	public void removeAdornment(Adornment a) {
 		adornments.remove(a);
 
-		if (adornments.size() == 0) {
+		if (adornments.isEmpty()) {
 			overlayShell.setVisible(false);
 		} else {
 			overlayShell.redraw();

@@ -605,7 +605,7 @@ public class MinMaxAddon {
 			return false;
 		}
 		MPerspectiveStack ps = (MPerspectiveStack) element;
-		return ps.getChildren().size() == 0;
+		return ps.getChildren().isEmpty();
 	}
 
 	void minimize(MUIElement element) {

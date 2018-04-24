@@ -1068,7 +1068,7 @@ public class PartServiceImpl implements EPartService {
 		MElementContainer<? extends MUIElement> searchRoot = getContainer();
 		@SuppressWarnings("unchecked")
 		List<MUIElement> children = (List<MUIElement>) searchRoot.getChildren();
-		if (children.size() == 0) {
+		if (children.isEmpty()) {
 			MPartStack stack = modelService.createModelElement(MPartStack.class);
 			children.add(stack);
 			return stack;

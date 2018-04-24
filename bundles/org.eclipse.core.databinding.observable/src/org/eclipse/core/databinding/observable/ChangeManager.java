@@ -81,7 +81,7 @@ import org.eclipse.core.runtime.ListenerList;
 		if (listenerTypeIndex != -1) {
 			boolean hadListeners = hasListeners();
 			listenerLists[listenerTypeIndex].remove(listener);
-			if (listenerLists[listenerTypeIndex].size() == 0) {
+			if (listenerLists[listenerTypeIndex].isEmpty()) {
 				if (hadListeners && !hasListeners()) {
 					this.lastListenerRemoved();
 				}

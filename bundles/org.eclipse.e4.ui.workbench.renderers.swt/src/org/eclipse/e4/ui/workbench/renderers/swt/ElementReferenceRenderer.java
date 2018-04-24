@@ -99,7 +99,7 @@ public class ElementReferenceRenderer extends SWTPartRenderer {
 
 		IEclipseContext curContext = modelService.getContainingContext(ph);
 
-		if (refs.size() == 0) {
+		if (refs.isEmpty()) {
 			// Ensure that the image is the 'original' image for this
 			// part. See bug 347471 for details
 			if (refElement instanceof MPart) {

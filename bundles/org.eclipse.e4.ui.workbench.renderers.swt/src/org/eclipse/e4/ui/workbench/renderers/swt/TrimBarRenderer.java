@@ -43,7 +43,7 @@ public class TrimBarRenderer extends SWTPartRenderer {
 		@Override
 		public void run() {
 			layoutJob = null;
-			if (barsToLayout.size() == 0)
+			if (barsToLayout.isEmpty())
 				return;
 			for (MTrimBar bar : barsToLayout) {
 				Composite trimCtrl = (Composite) bar.getWidget();
@@ -152,7 +152,7 @@ public class TrimBarRenderer extends SWTPartRenderer {
 			}
 		}
 
-		boolean done = toContribute.size() == 0;
+		boolean done = toContribute.isEmpty();
 		while (!done) {
 			ArrayList<MTrimContribution> curList = new ArrayList<>(
 					toContribute);
@@ -188,7 +188,7 @@ public class TrimBarRenderer extends SWTPartRenderer {
 			}
 			// We're done if the retryList is now empty (everything done) or
 			// if the list hasn't changed at all (no hope)
-			done = (toContribute.size() == 0)
+			done = (toContribute.isEmpty())
 					|| (toContribute.size() == retryCount);
 		}
 	}

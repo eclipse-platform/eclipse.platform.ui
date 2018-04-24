@@ -84,7 +84,7 @@ public final class WorkbenchLogger extends Logger {
 			}
 		}
 
-		FrameworkLogEntry[] children = childlist.size() == 0 ? null
+		FrameworkLogEntry[] children = childlist.isEmpty() ? null
 				: childlist.toArray(new FrameworkLogEntry[childlist.size()]);
 
 		return new FrameworkLogEntry(status.getPlugin(), status.getSeverity(), status.getCode(),

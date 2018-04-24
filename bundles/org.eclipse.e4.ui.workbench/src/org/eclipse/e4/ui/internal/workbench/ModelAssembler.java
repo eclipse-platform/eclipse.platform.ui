@@ -342,7 +342,7 @@ public class ModelAssembler {
 		E4XMIResource applicationResource = (E4XMIResource) ((EObject) application).eResource();
 
 		List<MApplicationElement> elements = fragment.getElements();
-		if (elements.size() == 0) {
+		if (elements.isEmpty()) {
 			return new ArrayList<>();
 		}
 

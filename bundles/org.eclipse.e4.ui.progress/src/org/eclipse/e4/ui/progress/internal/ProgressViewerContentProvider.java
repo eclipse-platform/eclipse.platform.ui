@@ -136,7 +136,7 @@ public class ProgressViewerContentProvider extends ProgressContentProvider {
 
 		Set<JobTreeElement> kept = finishedJobs.getKeptAsSet();
 
-		if (kept.size() == 0)
+		if (kept.isEmpty())
 			return elements;
 
 		Set<Object> all = new HashSet<>();

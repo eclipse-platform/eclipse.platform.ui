@@ -81,7 +81,7 @@ public class Activator implements BundleActivator {
 			}
 		}
 
-		FrameworkLogEntry[] children = (FrameworkLogEntry[]) (childlist.size() == 0 ? null : childlist.toArray(new FrameworkLogEntry[childlist.size()]));
+		FrameworkLogEntry[] children = (FrameworkLogEntry[]) (childlist.isEmpty() ? null : childlist.toArray(new FrameworkLogEntry[childlist.size()]));
 
 		return new FrameworkLogEntry(status.getPlugin(), status.getSeverity(), status.getCode(), status.getMessage(), stackCode, t, children);
 	}

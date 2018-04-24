@@ -102,7 +102,7 @@ public class BindingTableManager {
 				}
 			}
 		}
-		return matches.size() == 0 ? null : matches;
+		return matches.isEmpty() ? null : matches;
 	}
 
 	public Collection<Binding> getAllConflicts() {
@@ -163,7 +163,7 @@ public class BindingTableManager {
 			ParameterizedCommand parameterizedCommand) {
 		ArrayList<Binding> bindings = (ArrayList<Binding>) getSequencesFor(contextSet,
 				parameterizedCommand);
-		if (bindings.size() == 0) {
+		if (bindings.isEmpty()) {
 			return null;
 		}
 		return bindings.get(0);

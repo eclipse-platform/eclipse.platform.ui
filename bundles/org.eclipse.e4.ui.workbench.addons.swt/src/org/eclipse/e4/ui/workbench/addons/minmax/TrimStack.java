@@ -737,7 +737,7 @@ public class TrimStack {
 		MUIElement result;
 		List<MPerspectiveStack> ps = modelService.findElements(window, null,
 				MPerspectiveStack.class, null);
-		if (ps.size() == 0) {
+		if (ps.isEmpty()) {
 			String toolControlId = toolControl.getElementId();
 			int index = toolControlId.indexOf('(');
 			String stackId = toolControlId.substring(0, index);
