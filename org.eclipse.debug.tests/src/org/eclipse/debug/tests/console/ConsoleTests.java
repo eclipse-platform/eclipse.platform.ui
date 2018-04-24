@@ -44,7 +44,7 @@ public class ConsoleTests extends AbstractDebugTest {
 		super(name);
 	}
 
-	public void testConsoleOutputStreamEncoding() throws IOException, InterruptedException {
+	public void testConsoleOutputStreamEncoding() throws IOException {
 		String testString = "abc\u00e4\u00f6\u00fcdef"; //$NON-NLS-1$
 		// abcdef need 1 byte in UTF-8 each
 		// Ã¤Ã¶Ã¼ (\u00e4\u00f6\u00fc) need 2 bytes each
@@ -73,7 +73,7 @@ public class ConsoleTests extends AbstractDebugTest {
 		TestCase.assertEquals("closing the stream should not alter the document", testString, document.get()); //$NON-NLS-1$
 	}
 
-	public void testConsoleOutputStreamLastR() throws IOException, InterruptedException {
+	public void testConsoleOutputStreamLastR() throws IOException {
 		String testString = "a\r"; //$NON-NLS-1$
 		byte[] testStringBuffer = testString.getBytes(StandardCharsets.UTF_8);
 		TestCase.assertEquals("Test string \"" + testString + "\" should consist of 2 UTF-8 bytes", 2, testStringBuffer.length); //$NON-NLS-1$ //$NON-NLS-2$
