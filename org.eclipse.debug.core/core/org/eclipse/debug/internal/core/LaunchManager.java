@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2017 IBM Corporation and others.
+ * Copyright (c) 2000, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -186,9 +186,6 @@ public class LaunchManager extends PlatformObject implements ILaunchManager, IRe
 		private int fType;
 		private ILaunchConfiguration fConfiguration;
 
-		/**
-		 * @see org.eclipse.core.runtime.ISafeRunnable#handleException(java.lang.Throwable)
-		 */
 		@Override
 		public void handleException(Throwable exception) {
 			IStatus status = new Status(IStatus.ERROR, DebugPlugin.getUniqueIdentifier(), DebugPlugin.INTERNAL_ERROR, "An exception occurred during launch configuration change notification.", exception);  //$NON-NLS-1$
@@ -212,9 +209,6 @@ public class LaunchManager extends PlatformObject implements ILaunchManager, IRe
 			fListener = null;
 		}
 
-		/**
-		 * @see org.eclipse.core.runtime.ISafeRunnable#run()
-		 */
 		@Override
 		public void run() throws Exception {
 			switch (fType) {
@@ -244,9 +238,6 @@ public class LaunchManager extends PlatformObject implements ILaunchManager, IRe
 		private ILaunch[] fNotifierLaunches;
 		private ILaunch[] fRegistered;
 
-		/**
-		 * @see org.eclipse.core.runtime.ISafeRunnable#handleException(java.lang.Throwable)
-		 */
 		@Override
 		public void handleException(Throwable exception) {
 			IStatus status = new Status(IStatus.ERROR, DebugPlugin.getUniqueIdentifier(), DebugPlugin.INTERNAL_ERROR, "An exception occurred during launch change notification.", exception);  //$NON-NLS-1$
@@ -272,9 +263,6 @@ public class LaunchManager extends PlatformObject implements ILaunchManager, IRe
 			fListener = null;
 		}
 
-		/**
-		 * @see org.eclipse.core.runtime.ISafeRunnable#run()
-		 */
 		@Override
 		public void run() throws Exception {
 			switch (fType) {
@@ -295,7 +283,7 @@ public class LaunchManager extends PlatformObject implements ILaunchManager, IRe
 								}
 							} else {
 								if (registered == null) {
-									registered = new ArrayList<ILaunch>(fNotifierLaunches.length);
+									registered = new ArrayList<>(fNotifierLaunches.length);
 									for (int k = 0; k < j; k++) {
 										registered.add(fNotifierLaunches[k]);
 									}
@@ -330,9 +318,6 @@ public class LaunchManager extends PlatformObject implements ILaunchManager, IRe
 	 */
 	class MappedResourceVisitor implements IResourceDeltaVisitor {
 
-		/* (non-Javadoc)
-		 * @see org.eclipse.core.resources.IResourceDeltaVisitor#visit(org.eclipse.core.resources.IResourceDelta)
-		 */
 		@Override
 		public boolean visit(IResourceDelta delta) throws CoreException {
 			if (0 != (delta.getFlags() & IResourceDelta.OPEN)) {
@@ -358,9 +343,6 @@ public class LaunchManager extends PlatformObject implements ILaunchManager, IRe
 	 */
 	class LaunchManagerVisitor implements IResourceDeltaVisitor {
 
-        /**
-		 * @see IResourceDeltaVisitor#visit(IResourceDelta)
-		 */
 		@Override
 		public boolean visit(IResourceDelta delta) {
 			if (delta == null) {
@@ -412,9 +394,6 @@ public class LaunchManager extends PlatformObject implements ILaunchManager, IRe
 		private int fType;
 		private ILaunch fLaunch;
 
-		/**
-		 * @see org.eclipse.core.runtime.ISafeRunnable#handleException(java.lang.Throwable)
-		 */
 		@Override
 		public void handleException(Throwable exception) {
 			IStatus status = new Status(IStatus.ERROR, DebugPlugin.getUniqueIdentifier(), DebugPlugin.INTERNAL_ERROR, "An exception occurred during launch change notification.", exception);  //$NON-NLS-1$
@@ -438,9 +417,6 @@ public class LaunchManager extends PlatformObject implements ILaunchManager, IRe
 			fListener = null;
 		}
 
-		/**
-		 * @see org.eclipse.core.runtime.ISafeRunnable#run()
-		 */
 		@Override
 		public void run() throws Exception {
 			switch (fType) {
@@ -472,9 +448,7 @@ public class LaunchManager extends PlatformObject implements ILaunchManager, IRe
 		protected ResourceProxyVisitor(List<IResource> list) {
 			fList= list;
 		}
-		/**
-		 * @see org.eclipse.core.resources.IResourceProxyVisitor#visit(org.eclipse.core.resources.IResourceProxy)
-		 */
+
 		@Override
 		public boolean visit(IResourceProxy proxy) {
 			if (proxy.getType() == IResource.FILE) {
@@ -581,7 +555,7 @@ public class LaunchManager extends PlatformObject implements ILaunchManager, IRe
 	 * Launch configuration cache. Keys are <code>LaunchConfiguration</code>,
 	 * values are <code>LaunchConfigurationInfo</code>.
 	 */
-	private Map<ILaunchConfiguration, LaunchConfigurationInfo> fLaunchConfigurations = new HashMap<ILaunchConfiguration, LaunchConfigurationInfo>(10);
+	private Map<ILaunchConfiguration, LaunchConfigurationInfo> fLaunchConfigurations = new HashMap<>(10);
 
 	/**
 	 * A cache of launch configuration names currently in the workspace.
@@ -621,13 +595,13 @@ public class LaunchManager extends PlatformObject implements ILaunchManager, IRe
 	/**
 	 * Collection of launches
 	 */
-	private List<ILaunch> fLaunches = new ArrayList<ILaunch>(10);
+	private List<ILaunch> fLaunches = new ArrayList<>(10);
 	/**
 	 * Set of launches for efficient 'isRegistered()' check TODO remove this -
 	 * Launches don't implement hashCode() or equals() - so its no more
 	 * efficient than walking the other collection
 	 */
-	private Set<ILaunch> fLaunchSet = new HashSet<ILaunch>(10);
+	private Set<ILaunch> fLaunchSet = new HashSet<>(10);
 
 	/**
 	 * Collection of listeners
@@ -696,9 +670,6 @@ public class LaunchManager extends PlatformObject implements ILaunchManager, IRe
 	 */
 	private Set<String> fActiveModes;
 
-	/**
-	 * @see ILaunchManager#addLaunch(ILaunch)
-	 */
 	@Override
 	public void addLaunch(ILaunch launch) {
 		if (internalAddLaunch(launch)) {
@@ -707,20 +678,14 @@ public class LaunchManager extends PlatformObject implements ILaunchManager, IRe
 		}
 	}
 
-	/**
-	 * @see ILaunchManager#addLaunchConfigurationListener(ILaunchConfigurationListener)
-	 */
 	@Override
 	public void addLaunchConfigurationListener(ILaunchConfigurationListener listener) {
 		fLaunchConfigurationListeners.add(listener);
 	}
 
-	/**
-	 * @see org.eclipse.debug.core.ILaunchManager#addLaunches(org.eclipse.debug.core.ILaunch[])
-	 */
 	@Override
 	public void addLaunches(ILaunch[] launches) {
-		List<ILaunch> added = new ArrayList<ILaunch>(launches.length);
+		List<ILaunch> added = new ArrayList<>(launches.length);
 		for (int i = 0; i < launches.length; i++) {
 			if (internalAddLaunch(launches[i])) {
 				added.add(launches[i]);
@@ -735,17 +700,11 @@ public class LaunchManager extends PlatformObject implements ILaunchManager, IRe
 		}
 	}
 
-	/**
-	 * @see org.eclipse.debug.core.ILaunchManager#addLaunchListener(org.eclipse.debug.core.ILaunchesListener)
-	 */
 	@Override
 	public void addLaunchListener(ILaunchesListener listener) {
 		fLaunchesListeners.add(listener);
 	}
 
-	/**
-	 * @see ILaunchManager#addLaunchListener(ILaunchListener)
-	 */
 	@Override
 	public void addLaunchListener(ILaunchListener listener) {
 		fListeners.add(listener);
@@ -886,9 +845,6 @@ public class LaunchManager extends PlatformObject implements ILaunchManager, IRe
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.core.ILaunchManager#getEncoding(org.eclipse.debug.core.ILaunchConfiguration)
-	 */
 	@Override
 	public String getEncoding(ILaunchConfiguration configuration) throws CoreException {
 		String encoding = configuration.getAttribute(DebugPlugin.ATTR_CONSOLE_ENCODING, (String)null);
@@ -990,14 +946,14 @@ public class LaunchManager extends PlatformObject implements ILaunchManager, IRe
 		if (container instanceof IProject && !((IProject)container).isOpen()) {
 			return Collections.EMPTY_LIST;
 		}
-		List<IResource> list = new ArrayList<IResource>(10);
+		List<IResource> list = new ArrayList<>(10);
 		ResourceProxyVisitor visitor= new ResourceProxyVisitor(list);
 		try {
 			container.accept(visitor, IResource.NONE);
 		} catch (CoreException ce) {
 			//Closed project...should not be possible with previous check
 		}
-		List<ILaunchConfiguration> configs = new ArrayList<ILaunchConfiguration>(list.size());
+		List<ILaunchConfiguration> configs = new ArrayList<>(list.size());
 		for (IResource resource : list) {
 			ILaunchConfiguration config = getLaunchConfiguration((IFile) resource);
 			if(config != null && config.exists()) {
@@ -1034,7 +990,7 @@ public class LaunchManager extends PlatformObject implements ILaunchManager, IRe
 		IPath containerPath = LOCAL_LAUNCH_CONFIGURATION_CONTAINER_PATH;
 		final File directory = containerPath.toFile();
 		if (directory.isDirectory()) {
-			List<ILaunchConfiguration> configs = new ArrayList<ILaunchConfiguration>();
+			List<ILaunchConfiguration> configs = new ArrayList<>();
 			FilenameFilter configFilter = new FilenameFilter() {
 				@Override
 				public boolean accept(File dir, String name) {
@@ -1091,9 +1047,6 @@ public class LaunchManager extends PlatformObject implements ILaunchManager, IRe
 		new LaunchesNotifier().notify(launches, update);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.core.ILaunchManager#generateUniqueLaunchConfigurationNameFrom(java.lang.String)
-	 */
 	@Override
 	public String generateUniqueLaunchConfigurationNameFrom(String baseName) {
 		int index = 1;
@@ -1177,7 +1130,7 @@ public class LaunchManager extends PlatformObject implements ILaunchManager, IRe
 	private synchronized List<ILaunchConfiguration> getAllLaunchConfigurations() {
 		if (fLaunchConfigurationIndex == null) {
 			try {
-				fLaunchConfigurationIndex = new ArrayList<ILaunchConfiguration>(20);
+				fLaunchConfigurationIndex = new ArrayList<>(20);
 				List<ILaunchConfiguration> configs = findLocalLaunchConfigurations();
 				verifyConfigurations(configs, fLaunchConfigurationIndex);
 				configs = findLaunchConfigurations(ResourcesPlugin.getWorkspace().getRoot());
@@ -1251,7 +1204,7 @@ public class LaunchManager extends PlatformObject implements ILaunchManager, IRe
 		}
 
 		// read each launch configuration
-		List<ILaunchConfiguration> configs = new ArrayList<ILaunchConfiguration>(4);
+		List<ILaunchConfiguration> configs = new ArrayList<>(4);
 		NodeList list = root.getChildNodes();
 		int length = list.getLength();
 		Node node = null;
@@ -1279,13 +1232,10 @@ public class LaunchManager extends PlatformObject implements ILaunchManager, IRe
 		return new ConfigurationNotifier();
 	}
 
-	/**
-	 * @see ILaunchManager#getDebugTargets()
-	 */
 	@Override
 	public IDebugTarget[] getDebugTargets() {
 		synchronized (fLaunches) {
-			List<IDebugTarget> allTargets = new ArrayList<IDebugTarget>(fLaunches.size());
+			List<IDebugTarget> allTargets = new ArrayList<>(fLaunches.size());
 			IDebugTarget[] targets = null;
 			for (ILaunch launch : fLaunches) {
 				targets = launch.getDebugTargets();
@@ -1322,16 +1272,13 @@ public class LaunchManager extends PlatformObject implements ILaunchManager, IRe
 		return fgMRVisitor;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.core.ILaunchManager#getEnvironment(org.eclipse.debug.core.ILaunchConfiguration)
-	 */
 	@Override
 	public String[] getEnvironment(ILaunchConfiguration configuration) throws CoreException {
 		Map<String, String> configEnv = configuration.getAttribute(ATTR_ENVIRONMENT_VARIABLES, (Map<String, String>) null);
 		if (configEnv == null) {
 			return null;
 		}
-		Map<String, String> env = new HashMap<String, String>();
+		Map<String, String> env = new HashMap<>();
 		// build base environment
 		boolean append = configuration.getAttribute(ATTR_APPEND_ENVIRONMENT_VARIABLES, true);
 		if (append) {
@@ -1376,7 +1323,7 @@ public class LaunchManager extends PlatformObject implements ILaunchManager, IRe
                 env.put(key, value);
             }
 		}
-		List<String> strings = new ArrayList<String>(env.size());
+		List<String> strings = new ArrayList<>(env.size());
 		StringBuffer buffer = null;
 		for (Entry<String, String> entry : env.entrySet()) {
 			buffer = new StringBuffer(entry.getKey());
@@ -1472,35 +1419,23 @@ public class LaunchManager extends PlatformObject implements ILaunchManager, IRe
 		return false;
 	}
 
-	/**
-	 * @see ILaunchManager#getLaunchConfiguration(IFile)
-	 */
 	@Override
 	public ILaunchConfiguration getLaunchConfiguration(IFile file) {
 		hookResourceChangeListener();
 		return new LaunchConfiguration(file);
 	}
 
-	/**
-	 * @see ILaunchManager#getLaunchConfiguration(String)
-	 */
 	@Override
 	public ILaunchConfiguration getLaunchConfiguration(String memento) throws CoreException {
 		hookResourceChangeListener();
 		return new LaunchConfiguration(memento);
 	}
 
-	/**
-	 * @see ILaunchManager#getLaunchConfigurations()
-	 */
 	@Override
 	public synchronized ILaunchConfiguration[] getLaunchConfigurations() {
 		return getLaunchConfigurations(ILaunchConfiguration.CONFIGURATION);
 	}
 
-	/**
-	 * @see org.eclipse.debug.core.ILaunchManager#getLaunchConfigurations(int)
-	 */
 	@Override
 	public ILaunchConfiguration[] getLaunchConfigurations(int kinds) {
 		List<ILaunchConfiguration> allConfigs = getAllLaunchConfigurations();
@@ -1508,7 +1443,7 @@ public class LaunchManager extends PlatformObject implements ILaunchManager, IRe
 			// all kinds
 			return allConfigs.toArray(new ILaunchConfiguration[allConfigs.size()]);
 		} else {
-			List<ILaunchConfiguration> select = new ArrayList<ILaunchConfiguration>(allConfigs.size());
+			List<ILaunchConfiguration> select = new ArrayList<>(allConfigs.size());
 			Iterator<ILaunchConfiguration> iterator = allConfigs.iterator();
 			while (iterator.hasNext()) {
 				ILaunchConfiguration config = iterator.next();
@@ -1524,20 +1459,14 @@ public class LaunchManager extends PlatformObject implements ILaunchManager, IRe
 		}
 	}
 
-	/**
-	 * @see ILaunchManager#getLaunchConfigurations(ILaunchConfigurationType)
-	 */
 	@Override
 	public synchronized ILaunchConfiguration[] getLaunchConfigurations(ILaunchConfigurationType type) throws CoreException {
 		return getLaunchConfigurations(type, ILaunchConfiguration.CONFIGURATION);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.core.ILaunchManager#getLaunchConfigurations(org.eclipse.debug.core.ILaunchConfigurationType, int)
-	 */
 	@Override
 	public synchronized ILaunchConfiguration[] getLaunchConfigurations(ILaunchConfigurationType type, int kinds) throws CoreException {
-		List<ILaunchConfiguration> configs = new ArrayList<ILaunchConfiguration>();
+		List<ILaunchConfiguration> configs = new ArrayList<>();
 		for (ILaunchConfiguration config : getAllLaunchConfigurations()) {
 			if (config.getType().equals(type) && ((config.getKind() & kinds) > 0)) {
 				configs.add(config);
@@ -1555,7 +1484,7 @@ public class LaunchManager extends PlatformObject implements ILaunchManager, IRe
 	 *  in the given project
 	 */
 	protected synchronized List<ILaunchConfiguration> getLaunchConfigurations(IProject project) {
-		List<ILaunchConfiguration> configs = new ArrayList<ILaunchConfiguration>();
+		List<ILaunchConfiguration> configs = new ArrayList<>();
 		for (ILaunchConfiguration config : getAllLaunchConfigurations()) {
 			IFile file = config.getFile();
 			if (file != null && file.getProject().equals(project)) {
@@ -1565,9 +1494,6 @@ public class LaunchManager extends PlatformObject implements ILaunchManager, IRe
 		return configs;
 	}
 
-	/**
-	 * @see ILaunchManager#getLaunchConfigurationType(String)
-	 */
 	@Override
 	public ILaunchConfigurationType getLaunchConfigurationType(String id) {
 		ILaunchConfigurationType[] types = getLaunchConfigurationTypes();
@@ -1579,18 +1505,12 @@ public class LaunchManager extends PlatformObject implements ILaunchManager, IRe
 		return null;
 	}
 
-	/**
-	 * @see ILaunchManager#getLaunchConfigurationTypes()
-	 */
 	@Override
 	public ILaunchConfigurationType[] getLaunchConfigurationTypes() {
 		initializeLaunchConfigurationTypes();
 		return fLaunchConfigurationTypes.toArray(new ILaunchConfigurationType[fLaunchConfigurationTypes.size()]);
 	}
 
-	/**
-	 * @see ILaunchManager#getLaunches()
-	 */
 	@Override
 	public ILaunch[] getLaunches() {
 		synchronized (fLaunches) {
@@ -1598,18 +1518,12 @@ public class LaunchManager extends PlatformObject implements ILaunchManager, IRe
 		}
 	}
 
-	/**)
-	 * @see org.eclipse.debug.core.ILaunchManager#getLaunchMode(java.lang.String)
-	 */
 	@Override
 	public ILaunchMode getLaunchMode(String mode) {
 		initializeLaunchModes();
 		return fLaunchModes.get(mode);
 	}
 
-	/**
-	 * @see org.eclipse.debug.core.ILaunchManager#getLaunchModes()
-	 */
 	@Override
 	public ILaunchMode[] getLaunchModes() {
 		initializeLaunchModes();
@@ -1642,7 +1556,7 @@ public class LaunchManager extends PlatformObject implements ILaunchManager, IRe
 	 */
 	public LaunchDelegate[] getLaunchDelegates(String typeid) {
 		initializeLaunchDelegates();
-		ArrayList<LaunchDelegate> list = new ArrayList<LaunchDelegate>();
+		ArrayList<LaunchDelegate> list = new ArrayList<>();
 		for (Entry<String, LaunchDelegate> entry : fLaunchDelegates.entrySet()) {
 			LaunchDelegate ld = entry.getValue();
 			if (ld.getLaunchConfigurationTypeId().equals(typeid)) {
@@ -1679,7 +1593,7 @@ public class LaunchManager extends PlatformObject implements ILaunchManager, IRe
 	 */
 	private synchronized void initializeLaunchDelegates() {
 		if(fLaunchDelegates == null) {
-			fLaunchDelegates = new HashMap<String, LaunchDelegate>();
+			fLaunchDelegates = new HashMap<>();
 			//get all launch delegate contributions
 			IExtensionPoint extensionPoint = Platform.getExtensionRegistry().getExtensionPoint(DebugPlugin.getUniqueIdentifier(), DebugPlugin.EXTENSION_POINT_LAUNCH_DELEGATES);
 			IConfigurationElement[] infos = extensionPoint.getConfigurationElements();
@@ -1713,7 +1627,7 @@ public class LaunchManager extends PlatformObject implements ILaunchManager, IRe
 	 */
 	private synchronized void initializePreferredDelegates() {
 		if(fPreferredDelegates == null) {
-			fPreferredDelegates = new HashSet<PreferredDelegate>();
+			fPreferredDelegates = new HashSet<>();
 			String preferred = Platform.getPreferencesService().getString(DebugPlugin.getUniqueIdentifier(), LaunchManager.PREF_PREFERRED_DELEGATES, IInternalDebugCoreConstants.EMPTY_STRING, null);
 			if(!IInternalDebugCoreConstants.EMPTY_STRING.equals(preferred)) {
 				try {
@@ -1727,7 +1641,7 @@ public class LaunchManager extends PlatformObject implements ILaunchManager, IRe
 						String delegateid = element.getAttribute(IConfigurationElementConstants.ID);
 						typeid = element.getAttribute(IConfigurationElementConstants.TYPE_ID);
                         String[] modes = element.getAttribute(IConfigurationElementConstants.MODES).split(","); //$NON-NLS-1$
-						modeset = new HashSet<String>(Arrays.asList(modes));
+						modeset = new HashSet<>(Arrays.asList(modes));
 						LaunchDelegate delegate = getLaunchDelegateExtension(typeid, delegateid, modeset);
 						if (delegate != null) {
     						//take type id, modeset, delegate and create entry
@@ -1779,7 +1693,7 @@ public class LaunchManager extends PlatformObject implements ILaunchManager, IRe
             while(tokenizer.hasMoreTokens()) {
                 StringTokenizer tokenizer2 = new StringTokenizer(tokenizer.nextToken(), ","); //$NON-NLS-1$
                 String delegateId = tokenizer2.nextToken();
-				HashSet<String> modeset = new HashSet<String>();
+				HashSet<String> modeset = new HashSet<>();
                 while(tokenizer2.hasMoreTokens()) {
                     modeset.add(tokenizer2.nextToken());
                 }
@@ -1824,7 +1738,7 @@ public class LaunchManager extends PlatformObject implements ILaunchManager, IRe
 	 * @return collection of launch configurations stored locally
 	 */
 	protected synchronized List<ILaunchConfiguration> getLocalLaunchConfigurations() {
-		List<ILaunchConfiguration> configs = new ArrayList<ILaunchConfiguration>();
+		List<ILaunchConfiguration> configs = new ArrayList<>();
 		for (ILaunchConfiguration config : getAllLaunchConfigurations()) {
 			if (config.isLocal()) {
 				configs.add(config);
@@ -1840,7 +1754,7 @@ public class LaunchManager extends PlatformObject implements ILaunchManager, IRe
 	 * @since 3.2
 	 */
 	public ILaunchConfiguration[] getMappedConfigurations(IResource resource) {
-		List<ILaunchConfiguration> configurations = new ArrayList<ILaunchConfiguration>();
+		List<ILaunchConfiguration> configurations = new ArrayList<>();
 		for (ILaunchConfiguration config : getAllLaunchConfigurations()) {
 			try {
 				IResource[] resources = config.getMappedResources();
@@ -1864,12 +1778,9 @@ public class LaunchManager extends PlatformObject implements ILaunchManager, IRe
 		return configurations.toArray(new ILaunchConfiguration[configurations.size()]);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.core.ILaunchManager#getMigrationCandidates()
-	 */
 	@Override
 	public ILaunchConfiguration[] getMigrationCandidates() throws CoreException {
-		List<ILaunchConfiguration> configs = new ArrayList<ILaunchConfiguration>();
+		List<ILaunchConfiguration> configs = new ArrayList<>();
 		for (ILaunchConfiguration config : getAllLaunchConfigurations()) {
 			if (!config.isReadOnly() && config.isMigrationCandidate()) {
 				configs.add(config);
@@ -1878,9 +1789,6 @@ public class LaunchManager extends PlatformObject implements ILaunchManager, IRe
 		return configs.toArray(new ILaunchConfiguration[configs.size()]);
 	}
 
-	/**
-	 * @see org.eclipse.debug.core.ILaunchManager#getMovedFrom(org.eclipse.debug.core.ILaunchConfiguration)
-	 */
 	@Override
 	public ILaunchConfiguration getMovedFrom(ILaunchConfiguration addedConfiguration) {
 		if (addedConfiguration.equals(fTo)) {
@@ -1889,9 +1797,6 @@ public class LaunchManager extends PlatformObject implements ILaunchManager, IRe
 		return null;
 	}
 
-	/**
-	 * @see org.eclipse.debug.core.ILaunchManager#getMovedTo(org.eclipse.debug.core.ILaunchConfiguration)
-	 */
 	@Override
 	public ILaunchConfiguration getMovedTo(ILaunchConfiguration removedConfiguration) {
 		if (removedConfiguration.equals(fFrom)) {
@@ -1900,44 +1805,35 @@ public class LaunchManager extends PlatformObject implements ILaunchManager, IRe
 		return null;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.core.ILaunchManager#getNativeEnvironment()
-	 */
 	@Override
 	public synchronized Map<String, String> getNativeEnvironment() {
 		if (fgNativeEnv == null) {
 			Map<String, String> casePreserved = getNativeEnvironmentCasePreserved();
 			if (Platform.getOS().equals(Constants.OS_WIN32)) {
-				fgNativeEnv = new HashMap<String, String>();
+				fgNativeEnv = new HashMap<>();
 				for (Entry<String, String> entry : casePreserved.entrySet()) {
 					fgNativeEnv.put(entry.getKey().toUpperCase(), entry.getValue());
 				}
 			} else {
-				fgNativeEnv = new HashMap<String, String>(casePreserved);
+				fgNativeEnv = new HashMap<>(casePreserved);
 			}
 		}
-		return new HashMap<String, String>(fgNativeEnv);
+		return new HashMap<>(fgNativeEnv);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.core.ILaunchManager#getNativeEnvironmentCasePreserved()
-	 */
 	@Override
 	public synchronized Map<String, String> getNativeEnvironmentCasePreserved() {
 		if (fgNativeEnvCasePreserved == null) {
-			fgNativeEnvCasePreserved = new HashMap<String, String>();
+			fgNativeEnvCasePreserved = new HashMap<>();
 			cacheNativeEnvironment(fgNativeEnvCasePreserved);
 		}
-		return new HashMap<String, String>(fgNativeEnvCasePreserved);
+		return new HashMap<>(fgNativeEnvCasePreserved);
 	}
 
-	/**
-	 * @see ILaunchManager#getProcesses()
-	 */
 	@Override
 	public IProcess[] getProcesses() {
 		synchronized (fLaunches) {
-			List<IProcess> allProcesses = new ArrayList<IProcess>(fLaunches.size());
+			List<IProcess> allProcesses = new ArrayList<>(fLaunches.size());
 			IProcess[] processes = null;
 			for (ILaunch launch : fLaunches) {
 				processes = launch.getProcesses();
@@ -1949,18 +1845,12 @@ public class LaunchManager extends PlatformObject implements ILaunchManager, IRe
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.core.ILaunchManager#getSourceContainerType(java.lang.String)
-	 */
 	@Override
 	public ISourceContainerType getSourceContainerType(String id) {
 		initializeSourceContainerTypes();
 		return sourceContainerTypes.get(id);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.core.ILaunchManager#getSourceContainerTypes()
-	 */
 	@Override
 	public ISourceContainerType[] getSourceContainerTypes() {
 		initializeSourceContainerTypes();
@@ -1968,9 +1858,6 @@ public class LaunchManager extends PlatformObject implements ILaunchManager, IRe
 		return containers.toArray(new ISourceContainerType[containers.size()]);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.core.ILaunchManager#newSourcePathComputer(org.eclipse.debug.core.ILaunchConfiguration)
-	 */
 	@Override
 	public ISourcePathComputer getSourcePathComputer(ILaunchConfiguration configuration) throws CoreException {
 		String id = null;
@@ -1983,9 +1870,6 @@ public class LaunchManager extends PlatformObject implements ILaunchManager, IRe
 		return getSourcePathComputer(id);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.core.ILaunchManager#getSourcePathComputer(java.lang.String)
-	 */
 	@Override
 	public ISourcePathComputer getSourcePathComputer(String id) {
 		initializeSourceContainerTypes();
@@ -2009,7 +1893,7 @@ public class LaunchManager extends PlatformObject implements ILaunchManager, IRe
 		if (fComparators == null) {
 			IExtensionPoint extensionPoint= Platform.getExtensionRegistry().getExtensionPoint(DebugPlugin.getUniqueIdentifier(), DebugPlugin.EXTENSION_POINT_LAUNCH_CONFIGURATION_COMPARATORS);
 			IConfigurationElement[] infos= extensionPoint.getConfigurationElements();
-			fComparators = new HashMap<String, LaunchConfigurationComparator>(infos.length);
+			fComparators = new HashMap<>(infos.length);
 			IConfigurationElement configurationElement = null;
 			String attr = null;
 			for (int i= 0; i < infos.length; i++) {
@@ -2020,7 +1904,7 @@ public class LaunchManager extends PlatformObject implements ILaunchManager, IRe
 				} else {
 					// invalid status handler
 					IStatus s = new Status(IStatus.ERROR, DebugPlugin.getUniqueIdentifier(), DebugException.INTERNAL_ERROR,
- MessageFormat.format("Invalid launch configuration comparator extension defined by plug-in {0} - attribute not specified.", new Object[] { configurationElement.getContributor().getName() }), null); //$NON-NLS-1$
+							MessageFormat.format("Invalid launch configuration comparator extension defined by plug-in {0} - attribute not specified.", configurationElement.getContributor().getName()), null); //$NON-NLS-1$
 					DebugPlugin.log(s);
 				}
 			}
@@ -2035,7 +1919,7 @@ public class LaunchManager extends PlatformObject implements ILaunchManager, IRe
 			hookResourceChangeListener();
 			IExtensionPoint extensionPoint= Platform.getExtensionRegistry().getExtensionPoint(DebugPlugin.getUniqueIdentifier(), DebugPlugin.EXTENSION_POINT_LAUNCH_CONFIGURATION_TYPES);
 			IConfigurationElement[] infos = extensionPoint.getConfigurationElements();
-			fLaunchConfigurationTypes = new ArrayList<ILaunchConfigurationType>(infos.length);
+			fLaunchConfigurationTypes = new ArrayList<>(infos.length);
 			for (int i= 0; i < infos.length; i++) {
 				fLaunchConfigurationTypes.add(new LaunchConfigurationType(infos[i]));
 			}
@@ -2050,7 +1934,7 @@ public class LaunchManager extends PlatformObject implements ILaunchManager, IRe
 			try {
 				IExtensionPoint extensionPoint= Platform.getExtensionRegistry().getExtensionPoint(DebugPlugin.getUniqueIdentifier(), DebugPlugin.EXTENSION_POINT_LAUNCH_MODES);
 				IConfigurationElement[] infos= extensionPoint.getConfigurationElements();
-				fLaunchModes = new HashMap<String, ILaunchMode>();
+				fLaunchModes = new HashMap<>();
 				ILaunchMode mode = null;
 				for (int i= 0; i < infos.length; i++) {
 					mode = new LaunchMode(infos[i]);
@@ -2068,7 +1952,7 @@ public class LaunchManager extends PlatformObject implements ILaunchManager, IRe
 		if (sourceContainerTypes == null) {
 			IExtensionPoint extensionPoint= Platform.getExtensionRegistry().getExtensionPoint(DebugPlugin.getUniqueIdentifier(), DebugPlugin.EXTENSION_POINT_SOURCE_CONTAINER_TYPES);
 			IConfigurationElement[] extensions = extensionPoint.getConfigurationElements();
-			sourceContainerTypes = new HashMap<String, ISourceContainerType>();
+			sourceContainerTypes = new HashMap<>();
 			for (int i = 0; i < extensions.length; i++) {
 				sourceContainerTypes.put(
 						extensions[i].getAttribute(IConfigurationElementConstants.ID),
@@ -2076,7 +1960,7 @@ public class LaunchManager extends PlatformObject implements ILaunchManager, IRe
 			}
 			extensionPoint= Platform.getExtensionRegistry().getExtensionPoint(DebugPlugin.getUniqueIdentifier(), DebugPlugin.EXTENSION_POINT_SOURCE_PATH_COMPUTERS);
 			extensions = extensionPoint.getConfigurationElements();
-			sourcePathComputers = new HashMap<String, ISourcePathComputer>();
+			sourcePathComputers = new HashMap<>();
 			for (int i = 0; i < extensions.length; i++) {
 				sourcePathComputers.put(
 						extensions[i].getAttribute(IConfigurationElementConstants.ID),
@@ -2092,7 +1976,7 @@ public class LaunchManager extends PlatformObject implements ILaunchManager, IRe
 		if (fSourceLocators == null) {
 			IExtensionPoint extensionPoint= Platform.getExtensionRegistry().getExtensionPoint(DebugPlugin.getUniqueIdentifier(), DebugPlugin.EXTENSION_POINT_SOURCE_LOCATORS);
 			IConfigurationElement[] infos= extensionPoint.getConfigurationElements();
-			fSourceLocators = new HashMap<String, IConfigurationElement>(infos.length);
+			fSourceLocators = new HashMap<>(infos.length);
 			IConfigurationElement configurationElement = null;
 			String id = null;
 			for (int i= 0; i < infos.length; i++) {
@@ -2103,7 +1987,7 @@ public class LaunchManager extends PlatformObject implements ILaunchManager, IRe
 				} else {
 					// invalid status handler
 					IStatus s = new Status(IStatus.ERROR, DebugPlugin.getUniqueIdentifier(), DebugException.INTERNAL_ERROR,
- MessageFormat.format("Invalid source locator extension defined by plug-in \"{0}\": \"id\" not specified.", new Object[] { configurationElement.getContributor().getName() }), null); //$NON-NLS-1$
+							MessageFormat.format("Invalid source locator extension defined by plug-in \"{0}\": \"id\" not specified.", configurationElement.getContributor().getName()), null); //$NON-NLS-1$
 					DebugPlugin.log(s);
 				}
 			}
@@ -2146,9 +2030,7 @@ public class LaunchManager extends PlatformObject implements ILaunchManager, IRe
 			return fLaunches.remove(launch);
 		}
 	}
-	/**
-	 * @see ILaunchManager#isExistingLaunchConfigurationName(String)
-	 */
+
 	@Override
 	public boolean isExistingLaunchConfigurationName(String name) {
 		String[] sortedConfigNames = getAllSortedConfigNames();
@@ -2187,9 +2069,6 @@ public class LaunchManager extends PlatformObject implements ILaunchManager, IRe
 		return Platform.getPreferencesService().getBoolean(DebugPlugin.getUniqueIdentifier(), DebugPlugin.PREF_DELETE_CONFIGS_ON_PROJECT_DELETE, true, null);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.core.ILaunchManager#isRegistered(org.eclipse.debug.core.ILaunch)
-	 */
 	@Override
 	public boolean isRegistered(ILaunch launch) {
 		synchronized (fLaunches) {
@@ -2293,9 +2172,6 @@ public class LaunchManager extends PlatformObject implements ILaunchManager, IRe
 		}
 	}
 
-	/**
-	 * @see ILaunchManager#newSourceLocator(String)
-	 */
 	@Override
 	public IPersistableSourceLocator newSourceLocator(String identifier) throws CoreException {
 		initializeSourceLocators();
@@ -2338,9 +2214,6 @@ public class LaunchManager extends PlatformObject implements ILaunchManager, IRe
 		}
 	}
 
-	/**
-	 * @see ILaunchManager#removeLaunch(ILaunch)
-	 */
 	@Override
 	public void removeLaunch(final ILaunch launch) {
 		if (internalRemoveLaunch(launch)) {
@@ -2349,20 +2222,14 @@ public class LaunchManager extends PlatformObject implements ILaunchManager, IRe
 		}
 	}
 
-	/**
-	 * @see ILaunchManager#removeLaunchConfigurationListener(ILaunchConfigurationListener)
-	 */
 	@Override
 	public void removeLaunchConfigurationListener(ILaunchConfigurationListener listener) {
 		fLaunchConfigurationListeners.remove(listener);
 	}
 
-	/**
-	 * @see org.eclipse.debug.core.ILaunchManager#removeLaunches(org.eclipse.debug.core.ILaunch[])
-	 */
 	@Override
 	public void removeLaunches(ILaunch[] launches) {
-		List<ILaunch> removed = new ArrayList<ILaunch>(launches.length);
+		List<ILaunch> removed = new ArrayList<>(launches.length);
 		for (int i = 0; i < launches.length; i++) {
 			if (internalRemoveLaunch(launches[i])) {
 				removed.add(launches[i]);
@@ -2376,17 +2243,12 @@ public class LaunchManager extends PlatformObject implements ILaunchManager, IRe
 			}
 		}
 	}
-	/**
-	 * @see org.eclipse.debug.core.ILaunchManager#removeLaunchListener(org.eclipse.debug.core.ILaunchesListener)
-	 */
+
 	@Override
 	public void removeLaunchListener(ILaunchesListener listener) {
 		fLaunchesListeners.remove(listener);
 	}
 
-	/**
-	 * @see ILaunchManager#removeLaunchListener(ILaunchListener)
-	 */
 	@Override
 	public void removeLaunchListener(ILaunchListener listener) {
 		fListeners.remove(listener);
@@ -2427,7 +2289,7 @@ public class LaunchManager extends PlatformObject implements ILaunchManager, IRe
 	 * @return the list of associated launch configurations
 	 */
 	private ArrayList<ILaunchConfiguration> collectAssociatedLaunches(IResource resource) {
-		ArrayList<ILaunchConfiguration> list = new ArrayList<ILaunchConfiguration>();
+		ArrayList<ILaunchConfiguration> list = new ArrayList<>();
 		try {
 			ILaunchConfiguration[] configs = DebugPlugin.getDefault().getLaunchManager().getLaunchConfigurations();
 			IResource[] resources = null;
@@ -2669,7 +2531,7 @@ public class LaunchManager extends PlatformObject implements ILaunchManager, IRe
 	 * @since 3.4.0
 	 */
 	public void importConfigurations(File[] files, IProgressMonitor monitor) throws CoreException {
-		Map<String, ILaunchConfiguration> sharedConfigs = new HashMap<String, ILaunchConfiguration>();
+		Map<String, ILaunchConfiguration> sharedConfigs = new HashMap<>();
 		for (ILaunchConfiguration config : getAllLaunchConfigurations()) {
 			if (!config.isLocal()) {
 				StringBuffer buf = new StringBuffer(config.getName());
@@ -2712,10 +2574,10 @@ public class LaunchManager extends PlatformObject implements ILaunchManager, IRe
 				}
 			} catch (IOException e) {
 				if (stati == null) {
-					stati = new ArrayList<Status>();
+					stati = new ArrayList<>();
 				}
 				stati.add(new Status(IStatus.ERROR, DebugPlugin.getUniqueIdentifier(), DebugPlugin.ERROR,
- MessageFormat.format(DebugCoreMessages.LaunchManager_27, new Object[] { source.getPath() }), e));
+						MessageFormat.format(DebugCoreMessages.LaunchManager_27, source.getPath()), e));
 			}
 			lmonitor.worked(1);
 		}
@@ -2763,7 +2625,7 @@ public class LaunchManager extends PlatformObject implements ILaunchManager, IRe
 		if (fActiveModes == null) {
 			ILaunchConfigurationType[] types = getLaunchConfigurationTypes();
 			ILaunchMode[] modes = getLaunchModes();
-			fActiveModes = new HashSet<String>(3);
+			fActiveModes = new HashSet<>(3);
 			for (int i = 0; i < types.length; i++) {
 				for (int j = 0; j < modes.length; j++) {
 					if (types[i].supportsMode(modes[j].getIdentifier())) {
@@ -2775,9 +2637,6 @@ public class LaunchManager extends PlatformObject implements ILaunchManager, IRe
 		return fActiveModes.contains(mode);
 	}
 
-	/**
-	 * @see org.eclipse.debug.core.ILaunchManager#generateLaunchConfigurationName(java.lang.String)
-	 */
 	@Override
 	public String generateLaunchConfigurationName(String namePrefix) {
 		String name = generateUniqueLaunchConfigurationNameFrom(namePrefix);
@@ -2803,9 +2662,6 @@ public class LaunchManager extends PlatformObject implements ILaunchManager, IRe
 		return generateUniqueLaunchConfigurationNameFrom(name);
 	}
 
-	/**
-	 * @see org.eclipse.debug.core.ILaunchManager#isValidLaunchConfigurationName(java.lang.String)
-	 */
 	@Override
 	public boolean isValidLaunchConfigurationName(String configname) throws IllegalArgumentException {
 		if(Platform.OS_WIN32.equals(Platform.getOS())) {

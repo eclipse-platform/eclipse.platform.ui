@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 IBM Corporation and others.
+ * Copyright (c) 2000, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -18,7 +18,6 @@ import java.util.Map.Entry;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.PlatformObject;
 import org.eclipse.core.runtime.Status;
-
 import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.DebugPlugin;
@@ -321,7 +320,7 @@ public class RuntimeProcess extends PlatformObject implements IProcess {
 	@Override
 	public void setAttribute(String key, String value) {
 		if (fAttributes == null) {
-			fAttributes = new HashMap<String, String>(5);
+			fAttributes = new HashMap<>(5);
 		}
 		Object origVal = fAttributes.get(key);
 		if (origVal != null && origVal.equals(value)) {
@@ -343,9 +342,6 @@ public class RuntimeProcess extends PlatformObject implements IProcess {
 		return fAttributes.get(key);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.core.runtime.IAdaptable#getAdapter(java.lang.Class)
-	 */
 	@SuppressWarnings("unchecked")
 	@Override
 	public <T> T getAdapter(Class<T> adapter) {

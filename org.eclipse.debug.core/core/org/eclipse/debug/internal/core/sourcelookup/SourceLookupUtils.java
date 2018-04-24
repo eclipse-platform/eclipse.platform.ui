@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2013 IBM Corporation and others.
+ * Copyright (c) 2003, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -37,7 +37,7 @@ public class SourceLookupUtils {
 	 * is about to be closed or deleted, when a launch is
 	 * removed, and when a debug target or process terminates.
 	 */
-	private static HashMap<String, ZipFile> fgZipFileCache = new HashMap<String, ZipFile>(5);
+	private static HashMap<String, ZipFile> fgZipFileCache = new HashMap<>(5);
 	private static ArchiveCleaner fgCleaner = null;
 
 	/**
@@ -102,9 +102,6 @@ public class SourceLookupUtils {
 	 */
 	static class ArchiveCleaner implements IResourceChangeListener, ILaunchesListener2 {
 
-		/* (non-Javadoc)
-		 * @see org.eclipse.debug.core.ILaunchesListener#launchesRemoved(org.eclipse.debug.core.ILaunch[])
-		 */
 		@Override
 		public void launchesRemoved(ILaunch[] launches) {
 			for (int i = 0; i < launches.length; i++) {
@@ -116,31 +113,19 @@ public class SourceLookupUtils {
 			}
 		}
 
-		/* (non-Javadoc)
-		 * @see org.eclipse.debug.core.ILaunchesListener#launchesAdded(org.eclipse.debug.core.ILaunch[])
-		 */
 		@Override
 		public void launchesAdded(ILaunch[] launches) {
 		}
 
-		/* (non-Javadoc)
-		 * @see org.eclipse.debug.core.ILaunchesListener#launchesChanged(org.eclipse.debug.core.ILaunch[])
-		 */
 		@Override
 		public void launchesChanged(ILaunch[] launches) {
 		}
 
-		/* (non-Javadoc)
-		 * @see org.eclipse.core.resources.IResourceChangeListener#resourceChanged(org.eclipse.core.resources.IResourceChangeEvent)
-		 */
 		@Override
 		public void resourceChanged(IResourceChangeEvent event) {
 			SourceLookupUtils.closeArchives();
 		}
 
-		/* (non-Javadoc)
-		 * @see org.eclipse.debug.core.ILaunchesListener2#launchesTerminated(org.eclipse.debug.core.ILaunch[])
-		 */
 		@Override
 		public void launchesTerminated(ILaunch[] launches) {
 			SourceLookupUtils.closeArchives();

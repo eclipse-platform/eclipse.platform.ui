@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2016 IBM Corporation and others.
+ * Copyright (c) 2000, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -397,7 +397,7 @@ public class DebugPlugin extends Plugin {
 	 *
 	 * @since 3.1
 	 */
-	private List<Object> fEventQueue = new ArrayList<Object>();
+	private List<Object> fEventQueue = new ArrayList<>();
 
 	/**
 	 * Job to fire events to listeners.
@@ -423,9 +423,7 @@ public class DebugPlugin extends Plugin {
             setPriority(Job.INTERACTIVE);
             setSystem(true);
         }
-        /* (non-Javadoc)
-         * @see org.eclipse.core.runtime.jobs.Job#run(org.eclipse.core.runtime.IProgressMonitor)
-         */
+
         @Override
 		protected IStatus run(IProgressMonitor monitor) {
 
@@ -445,16 +443,11 @@ public class DebugPlugin extends Plugin {
             return Status.OK_STATUS;
         }
 
-        /* (non-Javadoc)
-         * @see org.eclipse.core.runtime.jobs.Job#shouldRun()
-         */
         @Override
 		public boolean shouldRun() {
             return shouldSchedule();
         }
-        /* (non-Javadoc)
-         * @see org.eclipse.core.internal.jobs.InternalJob#shouldSchedule()
-         */
+
         @Override
 		public boolean shouldSchedule() {
             return !(isShuttingDown() || fEventListeners.isEmpty());
@@ -679,9 +672,6 @@ public class DebugPlugin extends Plugin {
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.core.runtime.Plugin#start(org.osgi.framework.BundleContext)
-	 */
 	@Override
 	public void start(BundleContext context) throws Exception {
 		super.start(context);
@@ -1001,7 +991,7 @@ public class DebugPlugin extends Plugin {
 	private void initializeStatusHandlers() {
 		IExtensionPoint extensionPoint = Platform.getExtensionRegistry().getExtensionPoint(DebugPlugin.PI_DEBUG_CORE, EXTENSION_POINT_STATUS_HANDLERS);
 		IConfigurationElement[] infos= extensionPoint.getConfigurationElements();
-		fStatusHandlers = new HashMap<StatusHandlerKey, IConfigurationElement>(infos.length);
+		fStatusHandlers = new HashMap<>(infos.length);
 		for (int i= 0; i < infos.length; i++) {
 			IConfigurationElement configurationElement = infos[i];
 			String id = configurationElement.getAttribute("plugin"); //$NON-NLS-1$
@@ -1029,7 +1019,7 @@ public class DebugPlugin extends Plugin {
 	private void initializeProcessFactories() {
 		IExtensionPoint extensionPoint = Platform.getExtensionRegistry().getExtensionPoint(DebugPlugin.PI_DEBUG_CORE, EXTENSION_POINT_PROCESS_FACTORIES);
 		IConfigurationElement[] infos= extensionPoint.getConfigurationElements();
-		fProcessFactories = new HashMap<String, IConfigurationElement>(infos.length);
+		fProcessFactories = new HashMap<>(infos.length);
 		for (int i= 0; i < infos.length; i++) {
 			IConfigurationElement configurationElement = infos[i];
 			String id = configurationElement.getAttribute("id"); //$NON-NLS-1$
@@ -1093,18 +1083,12 @@ public class DebugPlugin extends Plugin {
 
 		}
 
-		/* (non-Javadoc)
-		 * @see org.eclipse.core.runtime.ISafeRunnable#handleException(java.lang.Throwable)
-		 */
 		@Override
 		public void handleException(Throwable exception) {
 			IStatus status = new Status(IStatus.ERROR, getUniqueIdentifier(), ERROR, DebugCoreMessages.DebugPlugin_6, exception);
 			log(status);
 		}
 
-		/* (non-Javadoc)
-		 * @see org.eclipse.core.runtime.ISafeRunnable#run()
-		 */
 		@Override
 		public void run() throws Exception {
 			fRunnable.run();
@@ -1123,9 +1107,6 @@ public class DebugPlugin extends Plugin {
 		private IDebugEventFilter fFilter;
 		private int fMode;
 
-		/**
-		 * @see org.eclipse.core.runtime.ISafeRunnable#handleException(java.lang.Throwable)
-		 */
 		@Override
 		public void handleException(Throwable exception) {
 			switch (fMode) {
@@ -1142,9 +1123,6 @@ public class DebugPlugin extends Plugin {
 			}
 		}
 
-		/**
-		 * @see org.eclipse.core.runtime.ISafeRunnable#run()
-		 */
 		@Override
 		public void run() throws Exception {
 			switch (fMode) {
@@ -1281,7 +1259,7 @@ public class DebugPlugin extends Plugin {
 
 	private static String[] parseArgumentsWindows(String args, boolean split) {
 		// see http://msdn.microsoft.com/en-us/library/a1y7w461.aspx
-		List<String> result = new ArrayList<String>();
+		List<String> result = new ArrayList<>();
 
 		final int DEFAULT= 0;
 		final int ARG= 1;
@@ -1391,7 +1369,7 @@ public class DebugPlugin extends Plugin {
 
 	private static String[] parseArgumentsImpl(String args, boolean split) {
 		// man sh, see topic QUOTING
-		List<String> result = new ArrayList<String>();
+		List<String> result = new ArrayList<>();
 
 		final int DEFAULT= 0;
 		final int ARG= 1;

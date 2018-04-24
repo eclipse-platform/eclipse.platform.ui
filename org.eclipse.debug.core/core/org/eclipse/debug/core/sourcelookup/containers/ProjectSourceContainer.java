@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2013 IBM Corporation and others.
+ * Copyright (c) 2004, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -70,25 +70,16 @@ public class ProjectSourceContainer extends ContainerSourceContainer {
 		return (IProject) getContainer();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.core.sourcelookup.ISourceContainer#getType()
-	 */
 	@Override
 	public ISourceContainerType getType() {
 		return getSourceContainerType(TYPE_ID);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.core.sourcelookup.ISourceContainer#isComposite()
-	 */
 	@Override
 	public boolean isComposite() {
 		return true;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.core.sourcelookup.containers.CompositeSourceContainer#createSourceContainers()
-	 */
 	@Override
 	protected ISourceContainer[] createSourceContainers() throws CoreException {
 		if (getProject().isOpen()) {
@@ -96,7 +87,7 @@ public class ProjectSourceContainer extends ContainerSourceContainer {
 				IProject project = getProject();
 				IProject[] projects = getAllReferencedProjects(project);
 				ISourceContainer[] folders = super.createSourceContainers();
-				List<ISourceContainer> all = new ArrayList<ISourceContainer>(folders.length + projects.length);
+				List<ISourceContainer> all = new ArrayList<>(folders.length + projects.length);
 				for (int i = 0; i < folders.length; i++) {
 					all.add(folders[i]);
 				}
@@ -115,7 +106,7 @@ public class ProjectSourceContainer extends ContainerSourceContainer {
 	}
 
 	private IProject[] getAllReferencedProjects(IProject project) throws CoreException {
-		Set<IProject> all = new HashSet<IProject>();
+		Set<IProject> all = new HashSet<>();
 		getAllReferencedProjects(all, project);
 		return all.toArray(new IProject[all.size()]);
 	}

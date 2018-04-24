@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2016 IBM Corporation and others.
+ * Copyright (c) 2000, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -58,7 +58,7 @@ public class Launch extends PlatformObject implements ILaunch, IDisconnect, ILau
 	 * in this collection), or empty if
 	 * there are no debug targets.
 	 */
-	private List<IDebugTarget> fTargets = new ArrayList<IDebugTarget>();
+	private List<IDebugTarget> fTargets = new ArrayList<>();
 
 	/**
 	 * The configuration that was launched, or null.
@@ -69,7 +69,7 @@ public class Launch extends PlatformObject implements ILaunch, IDisconnect, ILau
 	 * The system processes associated with
 	 * this launch, or empty if none.
 	 */
-	private List<IProcess> fProcesses = new ArrayList<IProcess>();
+	private List<IProcess> fProcesses = new ArrayList<>();
 
 	/**
 	 * The source locator to use in the debug session
@@ -157,7 +157,7 @@ public class Launch extends PlatformObject implements ILaunch, IDisconnect, ILau
 		readLock.lock();
 		ArrayList<Object> children;
 		try {
-			children = new ArrayList<Object>(getDebugTargets0());
+			children = new ArrayList<>(getDebugTargets0());
 			children.addAll(getProcesses0());
 		} finally {
 			readLock.unlock();
@@ -321,7 +321,7 @@ public class Launch extends PlatformObject implements ILaunch, IDisconnect, ILau
 	@Override
 	public void setAttribute(String key, String value) {
 		if (fAttributes == null) {
-			fAttributes = new HashMap<String, String>(5);
+			fAttributes = new HashMap<>(5);
 		}
 		fAttributes.put(key, value);
 	}

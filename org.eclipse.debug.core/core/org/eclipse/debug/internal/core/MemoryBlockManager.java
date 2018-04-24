@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2015 IBM Corporation and others.
+ * Copyright (c) 2004, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -37,8 +37,8 @@ import org.eclipse.debug.core.model.IMemoryBlockRetrieval;
  */
 public class MemoryBlockManager implements IMemoryBlockManager, IDebugEventSetListener {
 
-	private ArrayList<IMemoryBlockListener> listeners = new ArrayList<IMemoryBlockListener>();
-	private ArrayList<IMemoryBlock> memoryBlocks = new ArrayList<IMemoryBlock>();
+	private ArrayList<IMemoryBlockListener> listeners = new ArrayList<>();
+	private ArrayList<IMemoryBlock> memoryBlocks = new ArrayList<>();
 
 	private static final int ADDED = 0;
 	private static final int REMOVED = 1;
@@ -52,17 +52,11 @@ public class MemoryBlockManager implements IMemoryBlockManager, IDebugEventSetLi
 		private int fType;
 		private IMemoryBlock[] fMemoryBlocks;
 
-		/**
-		 * @see org.eclipse.core.runtime.ISafeRunnable#handleException(java.lang.Throwable)
-		 */
 		@Override
 		public void handleException(Throwable exception) {
 			DebugPlugin.log(exception);
 		}
 
-		/**
-		 * @see org.eclipse.core.runtime.ISafeRunnable#run()
-		 */
 		@Override
 		public void run() throws Exception {
 			switch (fType) {
@@ -109,9 +103,6 @@ public class MemoryBlockManager implements IMemoryBlockManager, IDebugEventSetLi
 		return new MemoryBlockNotifier();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.ui.IMemoryBlockManager#addMemoryBlock(org.eclipse.debug.core.model.IMemoryBlock)
-	 */
 	@Override
 	public void addMemoryBlocks(IMemoryBlock[] mem) {
 		if (memoryBlocks == null) {
@@ -123,7 +114,7 @@ public class MemoryBlockManager implements IMemoryBlockManager, IDebugEventSetLi
 		}
 
 		if(mem.length > 0) {
-			ArrayList<IMemoryBlock> newMemoryBlocks = new ArrayList<IMemoryBlock>();
+			ArrayList<IMemoryBlock> newMemoryBlocks = new ArrayList<>();
 			for (int i=0; i<mem.length; i++) {
 				// do not allow duplicates
 				if (!memoryBlocks.contains(mem[i])) {
@@ -139,9 +130,6 @@ public class MemoryBlockManager implements IMemoryBlockManager, IDebugEventSetLi
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.ui.IMemoryBlockManager#removeMemoryBlock(org.eclipse.debug.core.model.IMemoryBlock)
-	 */
 	@Override
 	public void removeMemoryBlocks(IMemoryBlock[] memBlocks) {
 		if (memoryBlocks == null) {
@@ -171,9 +159,6 @@ public class MemoryBlockManager implements IMemoryBlockManager, IDebugEventSetLi
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.ui.IMemoryBlockManager#addListener(org.eclipse.debug.ui.IMemoryBlockListener)
-	 */
 	@Override
 	public void addListener(IMemoryBlockListener listener) {
 
@@ -189,9 +174,6 @@ public class MemoryBlockManager implements IMemoryBlockManager, IDebugEventSetLi
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.ui.IMemoryBlockManager#removeListener(org.eclipse.debug.ui.IMemoryBlockListener)
-	 */
 	@Override
 	public void removeListener(IMemoryBlockListener listener) {
 
@@ -207,20 +189,14 @@ public class MemoryBlockManager implements IMemoryBlockManager, IDebugEventSetLi
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.core.IMemoryBlockManager#getMemoryBlocks()
-	 */
 	@Override
 	public IMemoryBlock[] getMemoryBlocks() {
 		return memoryBlocks.toArray(new IMemoryBlock[memoryBlocks.size()]);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.ui.IMemoryBlockManager#getMemoryBlocks(org.eclipse.debug.core.model.IDebugTarget)
-	 */
 	@Override
 	public IMemoryBlock[] getMemoryBlocks(IDebugTarget debugTarget) {
-		ArrayList<IMemoryBlock> memoryBlocksList = new ArrayList<IMemoryBlock>();
+		ArrayList<IMemoryBlock> memoryBlocksList = new ArrayList<>();
 		for (IMemoryBlock block : memoryBlocks) {
 			if (block.getDebugTarget() == debugTarget) {
 				memoryBlocksList.add(block);
@@ -229,12 +205,9 @@ public class MemoryBlockManager implements IMemoryBlockManager, IDebugEventSetLi
 		return memoryBlocksList.toArray(new IMemoryBlock[memoryBlocksList.size()]);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.ui.IMemoryBlockManager#getMemoryBlocks(org.eclipse.debug.core.model.IMemoryBlockRetrieval)
-	 */
 	@Override
 	public IMemoryBlock[] getMemoryBlocks(IMemoryBlockRetrieval retrieve) {
-		ArrayList<IMemoryBlock> memoryBlocksList = new ArrayList<IMemoryBlock>();
+		ArrayList<IMemoryBlock> memoryBlocksList = new ArrayList<>();
 		for (IMemoryBlock block : memoryBlocks) {
 			if (block instanceof IMemoryBlockExtension) {
 				if (((IMemoryBlockExtension) block).getMemoryBlockRetrieval() == retrieve) {
@@ -264,9 +237,6 @@ public class MemoryBlockManager implements IMemoryBlockManager, IDebugEventSetLi
 		getMemoryBlockNotifier().notify(memBlocks, event);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.core.IDebugEventSetListener#handleDebugEvents(org.eclipse.debug.core.DebugEvent[])
-	 */
 	@Override
 	public void handleDebugEvents(DebugEvent[] events) {
 		for (int i=0; i < events.length; i++) {

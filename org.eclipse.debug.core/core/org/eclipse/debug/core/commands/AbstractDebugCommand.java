@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2013 IBM Corporation and others.
+ * Copyright (c) 2006, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -62,9 +62,6 @@ public abstract class AbstractDebugCommand implements IDebugCommandHandler {
 			getJobManager().addJobChangeListener(this);
 		}
 
-		/* (non-Javadoc)
-		 * @see org.eclipse.core.runtime.jobs.Job#run(org.eclipse.core.runtime.IProgressMonitor)
-		 */
 		@Override
 		protected IStatus run(IProgressMonitor monitor) {
 			run = true;
@@ -118,9 +115,6 @@ public abstract class AbstractDebugCommand implements IDebugCommandHandler {
 			return Status.OK_STATUS;
 		}
 
-		/* (non-Javadoc)
-		 * @see org.eclipse.core.runtime.jobs.Job#belongsTo(java.lang.Object)
-		 */
 		@Override
 		public boolean belongsTo(Object family) {
 			Object myFamily = getEnabledStateJobFamily(request);
@@ -177,21 +171,11 @@ public abstract class AbstractDebugCommand implements IDebugCommandHandler {
 			fObject = lock;
 		}
 
-		/*
-		 * (non-Javadoc)
-		 *
-		 * @see org.eclipse.core.runtime.jobs.ISchedulingRule#contains(org.eclipse.core.runtime.jobs.ISchedulingRule)
-		 */
 		@Override
 		public boolean contains(ISchedulingRule rule) {
 			return rule == this;
 		}
 
-		/*
-		 * (non-Javadoc)
-		 *
-		 * @see org.eclipse.core.runtime.jobs.ISchedulingRule#isConflicting(org.eclipse.core.runtime.jobs.ISchedulingRule)
-		 */
 		@Override
 		public boolean isConflicting(ISchedulingRule rule) {
 			if (rule instanceof SerialPerObjectRule) {
@@ -203,9 +187,6 @@ public abstract class AbstractDebugCommand implements IDebugCommandHandler {
 
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.core.commands.IDebugCommandHandler#execute(org.eclipse.debug.core.commands.IDebugCommandRequest)
-	 */
 	@Override
 	public boolean execute(final IDebugCommandRequest request) {
 		Job job = new Job(getExecuteTaskName()) {
@@ -259,9 +240,6 @@ public abstract class AbstractDebugCommand implements IDebugCommandHandler {
 		return false;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.core.commands.IDebugCommandHandler#canExecute(org.eclipse.debug.core.commands.IEnabledStateRequest)
-	 */
 	@Override
 	public void canExecute(final IEnabledStateRequest request) {
 		Job job = new UpdateJob(request);
@@ -411,7 +389,7 @@ public abstract class AbstractDebugCommand implements IDebugCommandHandler {
 		if (objects.length == 1) {
 			return objects;
 		} else {
-			LinkedHashSet<Object> set = new LinkedHashSet<Object>(objects.length);
+			LinkedHashSet<Object> set = new LinkedHashSet<>(objects.length);
 			for (int i = 0; i < objects.length; i++) {
 				set.add(objects[i]);
 			}

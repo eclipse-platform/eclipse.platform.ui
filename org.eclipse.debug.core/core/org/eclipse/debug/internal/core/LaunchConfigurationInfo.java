@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2017 IBM Corporation and others.
+ * Copyright (c) 2000, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -175,7 +175,7 @@ public class LaunchConfigurationInfo {
 			throw new DebugException(
 				new Status(
 				 IStatus.ERROR, DebugPlugin.getUniqueIdentifier(),
- DebugException.REQUEST_FAILED, MessageFormat.format(DebugCoreMessages.LaunchConfigurationInfo_Attribute__0__is_not_of_type_java_lang_String__1, new Object[] { key }), null
+							DebugException.REQUEST_FAILED, MessageFormat.format(DebugCoreMessages.LaunchConfigurationInfo_Attribute__0__is_not_of_type_java_lang_String__1, key), null
 				)
 			);
 		}
@@ -202,7 +202,7 @@ public class LaunchConfigurationInfo {
 			throw new DebugException(
 				new Status(
 				 IStatus.ERROR, DebugPlugin.getUniqueIdentifier(),
- DebugException.REQUEST_FAILED, MessageFormat.format(DebugCoreMessages.LaunchConfigurationInfo_Attribute__0__is_not_of_type_int__2, new Object[] { key }), null
+							DebugException.REQUEST_FAILED, MessageFormat.format(DebugCoreMessages.LaunchConfigurationInfo_Attribute__0__is_not_of_type_int__2, key), null
 				)
 			);
 		}
@@ -229,7 +229,7 @@ public class LaunchConfigurationInfo {
 			throw new DebugException(
 				new Status(
 				 IStatus.ERROR, DebugPlugin.getUniqueIdentifier(),
- DebugException.REQUEST_FAILED, MessageFormat.format(DebugCoreMessages.LaunchConfigurationInfo_Attribute__0__is_not_of_type_boolean__3, new Object[] { key }), null
+							DebugException.REQUEST_FAILED, MessageFormat.format(DebugCoreMessages.LaunchConfigurationInfo_Attribute__0__is_not_of_type_boolean__3, key), null
 				)
 			);
 		}
@@ -257,7 +257,7 @@ public class LaunchConfigurationInfo {
 			throw new DebugException(
 				new Status(
 				 IStatus.ERROR, DebugPlugin.getUniqueIdentifier(),
- DebugException.REQUEST_FAILED, MessageFormat.format(DebugCoreMessages.LaunchConfigurationInfo_Attribute__0__is_not_of_type_java_util_List__1, new Object[] { key }), null
+							DebugException.REQUEST_FAILED, MessageFormat.format(DebugCoreMessages.LaunchConfigurationInfo_Attribute__0__is_not_of_type_java_util_List__1, key), null
 				)
 			);
 		}
@@ -288,7 +288,7 @@ public class LaunchConfigurationInfo {
 			throw new DebugException(
 				new Status(
 				 IStatus.ERROR, DebugPlugin.getUniqueIdentifier(),
- DebugException.REQUEST_FAILED, MessageFormat.format(DebugCoreMessages.LaunchConfigurationInfo_35, new Object[] { key }), null
+							DebugException.REQUEST_FAILED, MessageFormat.format(DebugCoreMessages.LaunchConfigurationInfo_35, key), null
 				)
 			);
 		}
@@ -328,7 +328,7 @@ public class LaunchConfigurationInfo {
 			throw new DebugException(
 				new Status(
 				 IStatus.ERROR, DebugPlugin.getUniqueIdentifier(),
- DebugException.REQUEST_FAILED, MessageFormat.format(DebugCoreMessages.LaunchConfigurationInfo_Attribute__0__is_not_of_type_java_util_Map__1, new Object[] { key }), null
+							DebugException.REQUEST_FAILED, MessageFormat.format(DebugCoreMessages.LaunchConfigurationInfo_Attribute__0__is_not_of_type_java_util_Map__1, key), null
 				)
 			);
 		}
@@ -398,7 +398,7 @@ public class LaunchConfigurationInfo {
 	 * @return a copy of this info's attribute map
 	 */
 	protected TreeMap<String, Object> getAttributes() {
-		return new TreeMap<String, Object>(getAttributeTable());
+		return new TreeMap<>(getAttributeTable());
 	}
 
 	/**
@@ -541,7 +541,7 @@ public class LaunchConfigurationInfo {
 		Element setElement = doc.createElement(elementType);
 		setElement.setAttribute(KEY, setKey);
 		// persist in sorted order
-		List<String> list = new ArrayList<String>(set);
+		List<String> list = new ArrayList<>(set);
 		Collections.sort(list);
 		Element element = null;
 		for (String str : list) {
@@ -567,7 +567,7 @@ public class LaunchConfigurationInfo {
 		Element mapElement = doc.createElement(elementType);
 		mapElement.setAttribute(KEY, mapKey);
 		// persist in sorted order based on keys
-		List<String> keys = new ArrayList<String>(map.keySet());
+		List<String> keys = new ArrayList<>(map.keySet());
 		Collections.sort(keys);
 		for (String key : keys) {
 			String value = map.get(key);
@@ -610,7 +610,7 @@ public class LaunchConfigurationInfo {
 
 		ILaunchConfigurationType type = DebugPlugin.getDefault().getLaunchManager().getLaunchConfigurationType(id);
 		if (type == null) {
-			String message= MessageFormat.format(DebugCoreMessages.LaunchConfigurationInfo_missing_type, new Object[]{id});
+			String message = MessageFormat.format(DebugCoreMessages.LaunchConfigurationInfo_missing_type, id);
 			throw new DebugException(
 					new Status(
 					 IStatus.ERROR, DebugPlugin.getUniqueIdentifier(),
@@ -705,7 +705,7 @@ public class LaunchConfigurationInfo {
 		String listKey = element.getAttribute(KEY);
 		NodeList nodeList = element.getChildNodes();
 		int entryCount = nodeList.getLength();
-		List<String> list = new ArrayList<String>(entryCount);
+		List<String> list = new ArrayList<>(entryCount);
 		Node node = null;
 		Element selement = null;
 		for (int i = 0; i < entryCount; i++) {
@@ -734,7 +734,7 @@ public class LaunchConfigurationInfo {
 		String setKey = element.getAttribute(KEY);
 		NodeList nodeList = element.getChildNodes();
 		int entryCount = nodeList.getLength();
-		Set<String> set = new HashSet<String>(entryCount);
+		Set<String> set = new HashSet<>(entryCount);
 		Node node = null;
 		Element selement = null;
 		for(int i = 0; i < entryCount; i++) {
@@ -761,7 +761,7 @@ public class LaunchConfigurationInfo {
 		String mapKey = element.getAttribute(KEY);
 		NodeList nodeList = element.getChildNodes();
 		int entryCount = nodeList.getLength();
-		Map<String, String> map = new HashMap<String, String>(entryCount);
+		Map<String, String> map = new HashMap<>(entryCount);
 		Node node = null;
 		Element selement = null;
 		for (int i = 0; i < entryCount; i++) {

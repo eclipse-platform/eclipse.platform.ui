@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2016 IBM Corporation and others.
+ *  Copyright (c) 2000, 2018 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -100,20 +100,20 @@ public class BreakpointManager implements IBreakpointManager, IResourceChangeLis
 	 * to tell if a marker has been created & changed since the breakpoint has been
 	 * registered (see bug 138473).
 	 */
-	private Set<IMarker> fPostChangMarkersChanged = new HashSet<IMarker>();
+	private Set<IMarker> fPostChangMarkersChanged = new HashSet<>();
 
 	/**
 	 * A collection of breakpoint markers that have received a POST_BUILD notification
 	 * of being added.
 	 */
-	private Set<IMarker> fPostBuildMarkersAdded = new HashSet<IMarker>();
+	private Set<IMarker> fPostBuildMarkersAdded = new HashSet<>();
 
 	/**
 	 * Collection of breakpoints being added currently. Used to
 	 * suppress change notification of "REGISTERED" attribute when
 	 * being added.
 	 */
-	private List<IBreakpoint> fSuppressChange = new ArrayList<IBreakpoint>();
+	private List<IBreakpoint> fSuppressChange = new ArrayList<>();
 
 	/**
 	 * A table of breakpoint extension points, keyed by
@@ -259,8 +259,8 @@ public class BreakpointManager implements IBreakpointManager, IResourceChangeLis
 	 * Constructs a new breakpoint manager.
 	 */
 	public BreakpointManager() {
-		fMarkersToBreakpoints = new HashMap<IMarker, IBreakpoint>(10);
-		fBreakpointExtensions = new HashMap<String, IConfigurationElement>(15);
+		fMarkersToBreakpoints = new HashMap<>(10);
+		fBreakpointExtensions = new HashMap<>(15);
 	}
 
 	/**
@@ -273,7 +273,7 @@ public class BreakpointManager implements IBreakpointManager, IResourceChangeLis
 	private void loadBreakpoints(IResource resource, boolean notify) throws CoreException {
 		initBreakpointExtensions();
 		IMarker[] markers= getPersistedMarkers(resource);
-		List<IBreakpoint> added = new ArrayList<IBreakpoint>();
+		List<IBreakpoint> added = new ArrayList<>();
 		for (int i = 0; i < markers.length; i++) {
 			IMarker marker= markers[i];
 			try {
@@ -313,8 +313,8 @@ public class BreakpointManager implements IBreakpointManager, IResourceChangeLis
 	 */
 	protected IMarker[] getPersistedMarkers(IResource resource) throws CoreException {
 		IMarker[] markers= resource.findMarkers(IBreakpoint.BREAKPOINT_MARKER, true, IResource.DEPTH_INFINITE);
-		final List<IMarker> delete = new ArrayList<IMarker>();
-		List<IMarker> persisted = new ArrayList<IMarker>();
+		final List<IMarker> delete = new ArrayList<>();
+		List<IMarker> persisted = new ArrayList<>();
 		for (int i = 0; i < markers.length; i++) {
 			IMarker marker= markers[i];
 			// ensure the marker has a valid model identifier attribute
@@ -458,7 +458,7 @@ public class BreakpointManager implements IBreakpointManager, IResourceChangeLis
 	public IBreakpoint[] getBreakpoints(String modelIdentifier) {
 		Vector<IBreakpoint> allBreakpoints = getBreakpoints0();
 		synchronized (allBreakpoints) {
-			ArrayList<IBreakpoint> temp = new ArrayList<IBreakpoint>(allBreakpoints.size());
+			ArrayList<IBreakpoint> temp = new ArrayList<>(allBreakpoints.size());
 			for (IBreakpoint breakpoint : allBreakpoints) {
 				String id= breakpoint.getModelIdentifier();
 				if (id != null && id.equals(modelIdentifier)) {
@@ -507,7 +507,7 @@ public class BreakpointManager implements IBreakpointManager, IResourceChangeLis
 	 */
 	@Override
 	public void removeBreakpoints(IBreakpoint[] breakpoints, final boolean delete) throws CoreException {
-		final List<IBreakpoint> remove = new ArrayList<IBreakpoint>(breakpoints.length);
+		final List<IBreakpoint> remove = new ArrayList<>(breakpoints.length);
 		List<IBreakpoint> bps = getBreakpoints0();
 		for (int i = 0; i < breakpoints.length; i++) {
 			IBreakpoint breakpoint = breakpoints[i];
@@ -611,8 +611,8 @@ public class BreakpointManager implements IBreakpointManager, IResourceChangeLis
 	 * @throws CoreException if a problem is encountered
 	 */
 	private void addBreakpoints(IBreakpoint[] breakpoints, boolean notify) throws CoreException {
-		List<IBreakpoint> added = new ArrayList<IBreakpoint>(breakpoints.length);
-		final List<IBreakpoint> update = new ArrayList<IBreakpoint>();
+		List<IBreakpoint> added = new ArrayList<>(breakpoints.length);
+		final List<IBreakpoint> update = new ArrayList<>();
 		for (int i = 0; i < breakpoints.length; i++) {
 			IBreakpoint breakpoint = breakpoints[i];
 			if (!getBreakpoints0().contains(breakpoint)) {
@@ -671,7 +671,7 @@ public class BreakpointManager implements IBreakpointManager, IResourceChangeLis
 	@Override
 	public void fireBreakpointChanged(IBreakpoint breakpoint) {
 		if (getBreakpoints0().contains(breakpoint)) {
-			List<IBreakpoint> changed = new ArrayList<IBreakpoint>();
+			List<IBreakpoint> changed = new ArrayList<>();
 			changed.add(breakpoint);
 			fireUpdate(changed, null, CHANGED);
 		}
@@ -723,23 +723,23 @@ public class BreakpointManager implements IBreakpointManager, IResourceChangeLis
 		/**
 		 * Moved markers
 		 */
-		private List<IMarker> fMoved = new ArrayList<IMarker>();
+		private List<IMarker> fMoved = new ArrayList<>();
 		/**
 		 * Removed breakpoints
 		 */
-		private List<IBreakpoint> fRemoved = new ArrayList<IBreakpoint>();
+		private List<IBreakpoint> fRemoved = new ArrayList<>();
 
 		/**
 		 * Added breakpoints.
 		 * @since 3.7
 		 */
-		private List<IBreakpoint> fAdded = new ArrayList<IBreakpoint>();
+		private List<IBreakpoint> fAdded = new ArrayList<>();
 
 		/**
 		 * Changed breakpoints and associated marker deltas
 		 */
-		private List<IBreakpoint> fChanged = new ArrayList<IBreakpoint>();
-		private List<IMarkerDelta> fChangedDeltas = new ArrayList<IMarkerDelta>();
+		private List<IBreakpoint> fChanged = new ArrayList<>();
+		private List<IMarkerDelta> fChangedDeltas = new ArrayList<>();
 
 		/**
 		 * Resets the visitor for a delta traversal - empties
@@ -1342,7 +1342,7 @@ public class BreakpointManager implements IBreakpointManager, IResourceChangeLis
 	 */
 	private synchronized void initializeImportParticipants() {
 		if(fImportParticipants == null) {
-			fImportParticipants = new HashMap<String, ArrayList<BreakpointImportParticipantDelegate>>();
+			fImportParticipants = new HashMap<>();
 			fDefaultParticipant = new DefaultImportParticipant();
 			IExtensionPoint ep = Platform.getExtensionRegistry().getExtensionPoint(DebugPlugin.getUniqueIdentifier(), DebugPlugin.EXTENSION_POINT_BREAKPOINT_IMPORT_PARTICIPANTS);
 			IConfigurationElement[] elements = ep.getConfigurationElements();
@@ -1353,7 +1353,7 @@ public class BreakpointManager implements IBreakpointManager, IResourceChangeLis
 				if(type != null) {
 					list = fImportParticipants.get(type);
 					if(list == null) {
-						list = new ArrayList<BreakpointImportParticipantDelegate>();
+						list = new ArrayList<>();
 						fImportParticipants.put(type, list);
 					}
 					list.add(new BreakpointImportParticipantDelegate(elements[i]));

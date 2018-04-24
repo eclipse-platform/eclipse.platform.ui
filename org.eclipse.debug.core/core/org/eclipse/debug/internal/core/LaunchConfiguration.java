@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2017 IBM Corporation and others.
+ * Copyright (c) 2000, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -282,9 +282,6 @@ public class LaunchConfiguration extends PlatformObject implements ILaunchConfig
 		throw new CoreException(s);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.core.ILaunchConfiguration#contentsEqual(org.eclipse.debug.core.ILaunchConfiguration)
-	 */
 	@Override
 	public boolean contentsEqual(ILaunchConfiguration object) {
 		try {
@@ -301,18 +298,12 @@ public class LaunchConfiguration extends PlatformObject implements ILaunchConfig
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.core.ILaunchConfiguration#copy(java.lang.String)
-	 */
 	@Override
 	public ILaunchConfigurationWorkingCopy copy(String name) throws CoreException {
 		ILaunchConfigurationWorkingCopy copy = new LaunchConfigurationWorkingCopy(this, name);
 		return copy;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.core.ILaunchConfiguration#delete()
-	 */
 	@Override
 	public void delete() throws CoreException {
 		if (exists()) {
@@ -345,9 +336,6 @@ public class LaunchConfiguration extends PlatformObject implements ILaunchConfig
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.core.ILaunchConfiguration#delete(int)
-	 */
 	@Override
 	public void delete(int flag) throws CoreException {
 		if (flag == UPDATE_PROTOTYPE_CHILDREN && isPrototype()) {
@@ -404,9 +392,6 @@ public class LaunchConfiguration extends PlatformObject implements ILaunchConfig
 		return false;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.core.ILaunchConfiguration#exists()
-	 */
 	@Override
 	public boolean exists() {
 		IFile file = getFile();
@@ -423,77 +408,47 @@ public class LaunchConfiguration extends PlatformObject implements ILaunchConfig
 		return false;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.core.ILaunchConfiguration#getAttribute(java.lang.String, boolean)
-	 */
 	@Override
 	public boolean getAttribute(String attributeName, boolean defaultValue) throws CoreException {
 		return getInfo().getBooleanAttribute(attributeName, defaultValue);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.core.ILaunchConfiguration#getAttribute(java.lang.String, int)
-	 */
 	@Override
 	public int getAttribute(String attributeName, int defaultValue) throws CoreException {
 		return getInfo().getIntAttribute(attributeName, defaultValue);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.core.ILaunchConfiguration#getAttribute(java.lang.String, java.util.List)
-	 */
 	@Override
 	public List<String> getAttribute(String attributeName, List<String> defaultValue) throws CoreException {
 		return getInfo().getListAttribute(attributeName, defaultValue);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * org.eclipse.debug.core.ILaunchConfiguration#getAttribute(java.lang.String
-	 * , java.util.Set)
-	 */
 	@Override
 	public Set<String> getAttribute(String attributeName, Set<String> defaultValue) throws CoreException {
 		return getInfo().getSetAttribute(attributeName, defaultValue);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.core.ILaunchConfiguration#getAttribute(java.lang.String, java.util.Map)
-	 */
 	@Override
 	public Map<String, String> getAttribute(String attributeName, Map<String, String> defaultValue) throws CoreException {
 		return getInfo().getMapAttribute(attributeName, defaultValue);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.core.ILaunchConfiguration#getAttribute(java.lang.String, java.lang.String)
-	 */
 	@Override
 	public String getAttribute(String attributeName, String defaultValue) throws CoreException {
 		return getInfo().getStringAttribute(attributeName, defaultValue);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.core.ILaunchConfiguration#getAttributes()
-	 */
 	@Override
 	public Map<String, Object> getAttributes() throws CoreException {
 		LaunchConfigurationInfo info = getInfo();
 		return info.getAttributes();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.core.ILaunchConfiguration#getCategory()
-	 */
 	@Override
 	public String getCategory() throws CoreException {
 		return getType().getCategory();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.core.ILaunchConfiguration#getFile()
-	 */
 	@Override
 	public IFile getFile() {
 		IContainer container = getContainer();
@@ -541,9 +496,6 @@ public class LaunchConfiguration extends PlatformObject implements ILaunchConfig
 		return (LaunchManager)DebugPlugin.getDefault().getLaunchManager();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.core.ILaunchConfiguration#getLocation()
-	 */
 	@Override
 	public IPath getLocation() {
 		try {
@@ -580,9 +532,6 @@ public class LaunchConfiguration extends PlatformObject implements ILaunchConfig
 		return null;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.core.ILaunchConfiguration#getResource()
-	 */
 	@Override
 	public IResource[] getMappedResources() throws CoreException {
 		List<String> paths = getAttribute(ATTR_MAPPED_RESOURCE_PATHS, (List<String>) null);
@@ -593,7 +542,7 @@ public class LaunchConfiguration extends PlatformObject implements ILaunchConfig
 		if (types == null || types.size() != paths.size()) {
 			throw new CoreException(newStatus(DebugCoreMessages.LaunchConfiguration_0, DebugPlugin.ERROR, null));
 		}
-		ArrayList<IResource> list = new ArrayList<IResource>();
+		ArrayList<IResource> list = new ArrayList<>();
 		IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
 		for(int i = 0; i < paths.size(); i++) {
 			String pathStr = paths.get(i);
@@ -635,9 +584,6 @@ public class LaunchConfiguration extends PlatformObject implements ILaunchConfig
 		return list.toArray(new IResource[list.size()]);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.core.ILaunchConfiguration#getMemento()
-	 */
 	@Override
 	public String getMemento() throws CoreException {
 		IPath relativePath = null;
@@ -668,9 +614,6 @@ public class LaunchConfiguration extends PlatformObject implements ILaunchConfig
 		throw new CoreException(status);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.core.ILaunchConfiguration#getName()
-	 */
 	@Override
 	public String getName() {
 		return fName;
@@ -691,28 +634,19 @@ public class LaunchConfiguration extends PlatformObject implements ILaunchConfig
 	@Override
 	public Set<String> getModes() throws CoreException {
 		Set<String> options = getAttribute(ATTR_LAUNCH_MODES, (Set<String>) null);
-		return (options != null ? new HashSet<String>(options) : new HashSet<String>(0));
+		return (options != null ? new HashSet<>(options) : new HashSet<>(0));
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.core.ILaunchConfiguration#getType()
-	 */
 	@Override
 	public ILaunchConfigurationType getType() throws CoreException {
 		return getInfo().getType();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.core.ILaunchConfiguration#getWorkingCopy()
-	 */
 	@Override
 	public ILaunchConfigurationWorkingCopy getWorkingCopy() throws CoreException {
 		return new LaunchConfigurationWorkingCopy(this);
 	}
 
-	/* (non-Javadoc)
-	 * @see java.lang.Object#hashCode()
-	 */
 	@Override
 	public int hashCode() {
 		IContainer container = getContainer();
@@ -723,9 +657,6 @@ public class LaunchConfiguration extends PlatformObject implements ILaunchConfig
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.core.ILaunchConfiguration#hasAttribute(java.lang.String)
-	 */
 	@Override
 	public boolean hasAttribute(String attributeName) throws CoreException {
 		return getInfo().hasAttribute(attributeName);
@@ -761,49 +692,31 @@ public class LaunchConfiguration extends PlatformObject implements ILaunchConfig
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.core.ILaunchConfiguration#isLocal()
-	 */
 	@Override
 	public boolean isLocal() {
 		return getContainer() == null;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.core.ILaunchConfiguration#isMigrationCandidate()
-	 */
 	@Override
 	public boolean isMigrationCandidate() throws CoreException {
 		return ((LaunchConfigurationType)getType()).isMigrationCandidate(this);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.core.ILaunchConfiguration#isWorkingCopy()
-	 */
 	@Override
 	public boolean isWorkingCopy() {
 		return false;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.core.ILaunchConfiguration#launch(java.lang.String, org.eclipse.core.runtime.IProgressMonitor)
-	 */
 	@Override
 	public ILaunch launch(String mode, IProgressMonitor monitor) throws CoreException {
 		return launch(mode, monitor, false);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.core.ILaunchConfiguration#launch(java.lang.String, org.eclipse.core.runtime.IProgressMonitor, boolean)
-	 */
 	@Override
 	public ILaunch launch(String mode, IProgressMonitor monitor, boolean build) throws CoreException {
 	    return launch(mode, monitor, build, true);
 	}
 
-	/* (non-Javadoc)
-     * @see org.eclipse.debug.core.ILaunchConfiguration#launch(java.lang.String, org.eclipse.core.runtime.IProgressMonitor, boolean, boolean)
-     */
     @Override
 	public ILaunch launch(String mode, IProgressMonitor monitor, boolean build, boolean register) throws CoreException {
     	/* Setup progress monitor
@@ -879,8 +792,7 @@ public class LaunchConfiguration extends PlatformObject implements ILaunchConfig
 				// ensure the launch mode is valid
 				if (!mode.equals(launch.getLaunchMode())) {
 					IStatus status = new Status(IStatus.ERROR, DebugPlugin.getUniqueIdentifier(), DebugPlugin.ERROR,
- MessageFormat.format(DebugCoreMessages.LaunchConfiguration_14, new Object[] {
-							mode, launch.getLaunchMode() }), null);
+							MessageFormat.format(DebugCoreMessages.LaunchConfiguration_14, mode, launch.getLaunchMode()), null);
 					throw new CoreException(status);
 				}
 			}
@@ -968,9 +880,6 @@ public class LaunchConfiguration extends PlatformObject implements ILaunchConfig
     	}
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.debug.core.ILaunchConfiguration#migrate()
-     */
     @Override
 	public void migrate() throws CoreException {
 		((LaunchConfigurationType)getType()).migrate(this);
@@ -1010,17 +919,11 @@ public class LaunchConfiguration extends PlatformObject implements ILaunchConfig
 		fContainer = container;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.core.ILaunchConfiguration#supportsMode(java.lang.String)
-	 */
 	@Override
 	public boolean supportsMode(String mode) throws CoreException {
 		return getType().supportsMode(mode);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.core.ILaunchConfiguration#isReadOnly()
-	 */
 	@Override
 	public boolean isReadOnly() {
 		try {
@@ -1033,9 +936,6 @@ public class LaunchConfiguration extends PlatformObject implements ILaunchConfig
 		return true;
 	}
 
-	/**
-	 * @see org.eclipse.debug.core.ILaunchConfiguration#getPreferredDelegate(java.util.Set)
-	 */
 	@Override
 	public ILaunchDelegate getPreferredDelegate(Set<String> modes) throws CoreException {
 		Map<String, String> delegates = getAttribute(LaunchConfiguration.ATTR_PREFERRED_LAUNCHERS, (Map<String, String>) null);
@@ -1048,17 +948,11 @@ public class LaunchConfiguration extends PlatformObject implements ILaunchConfig
 		return null;
 	}
 
-	/**
-	 * @see java.lang.Object#toString()
-	 */
 	@Override
 	public String toString() {
 		return getName();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.core.ILaunchConfiguration#getPrototype()
-	 */
 	@Override
 	public ILaunchConfiguration getPrototype() throws CoreException {
 		String memento = getAttribute(ATTR_PROTOTYPE, (String)null);
@@ -1070,13 +964,10 @@ public class LaunchConfiguration extends PlatformObject implements ILaunchConfig
 		return null;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.core.ILaunchConfiguration#getPrototypeChildren()
-	 */
 	@Override
 	public Collection<ILaunchConfiguration> getPrototypeChildren() throws CoreException {
 		ILaunchConfiguration[] configurations = getLaunchManager().getLaunchConfigurations(getType());
-		List<ILaunchConfiguration> proteges = new ArrayList<ILaunchConfiguration>();
+		List<ILaunchConfiguration> proteges = new ArrayList<>();
 		for (int i = 0; i < configurations.length; i++) {
 			ILaunchConfiguration config = configurations[i];
 			if (this.equals(config.getPrototype())) {
@@ -1086,9 +977,6 @@ public class LaunchConfiguration extends PlatformObject implements ILaunchConfig
 		return proteges;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.core.ILaunchConfiguration#isPrototype()
-	 */
 	@Override
 	public boolean isPrototype() {
 		return fIsPrototype;
@@ -1121,9 +1009,6 @@ public class LaunchConfiguration extends PlatformObject implements ILaunchConfig
 		return false;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.core.ILaunchConfiguration#getKind()
-	 */
 	@Override
 	public int getKind() throws CoreException {
 		if (fIsPrototype) {
@@ -1132,10 +1017,6 @@ public class LaunchConfiguration extends PlatformObject implements ILaunchConfig
 		return CONFIGURATION;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.debug.core.ILaunchConfiguration#isAttributeModified(java.lang.String)
-	 */
 	@Override
 	public boolean isAttributeModified(String attribute) throws CoreException {
 		ILaunchConfiguration prototype = getPrototype();
@@ -1147,25 +1028,13 @@ public class LaunchConfiguration extends PlatformObject implements ILaunchConfig
 		return false;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * org.eclipse.debug.core.ILaunchConfiguration#getPrototypeVisibleAttributes
-	 * ()
-	 */
 	@Override
 	public Set<String> getPrototypeVisibleAttributes() throws CoreException {
 		return getInfo().getVisibleAttributes();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.debug.core.ILaunchConfiguration#
-	 * setPrototypeAttributeVisibility(java.lang.String, boolean)
-	 */
 	@Override
 	public void setPrototypeAttributeVisibility(String attribute, boolean visible) throws CoreException {
 		getInfo().setAttributeVisibility(attribute, visible);
 	}
 }
-

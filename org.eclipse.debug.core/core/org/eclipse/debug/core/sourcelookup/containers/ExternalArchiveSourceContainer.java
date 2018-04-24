@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2013 IBM Corporation and others.
+ * Copyright (c) 2000, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -45,7 +45,7 @@ public class ExternalArchiveSourceContainer extends AbstractSourceContainer {
 	private boolean fDisposed;
 	private boolean fDetectRoots;
 	private Set<String> fPotentialRoots;
-	private List<String> fRoots = new ArrayList<String>();
+	private List<String> fRoots = new ArrayList<>();
 	private String fArchivePath;
 	/**
 	 * Unique identifier for the external archive source container type
@@ -115,7 +115,7 @@ public class ExternalArchiveSourceContainer extends AbstractSourceContainer {
 						if (isQualfied || entryName.length() == newname.length() || entryName.charAt(entryName.length() - newname.length() - 1) == '/') {
 							if (isFindDuplicates()) {
 								if (matches == null) {
-									matches = new ArrayList<ZipEntryStorage>();
+									matches = new ArrayList<>();
 								}
 								matches.add(new ZipEntryStorage(file, entry));
 							} else {
@@ -147,7 +147,7 @@ public class ExternalArchiveSourceContainer extends AbstractSourceContainer {
 			return null;
 		}
 		if (fPotentialRoots == null) {
-			fPotentialRoots = new HashSet<String>();
+			fPotentialRoots = new HashSet<>();
 			fPotentialRoots.add(""); //$NON-NLS-1$
 			// all potential roots are the directories
 			try {

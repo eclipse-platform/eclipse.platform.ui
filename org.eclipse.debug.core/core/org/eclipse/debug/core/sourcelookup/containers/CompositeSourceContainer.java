@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2013 IBM Corporation and others.
+ * Copyright (c) 2003, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -32,17 +32,11 @@ public abstract class CompositeSourceContainer extends AbstractSourceContainer {
 
 	private ISourceContainer[] fContainers;
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.core.sourcelookup.ISourceContainer#isComposite()
-	 */
 	@Override
 	public boolean isComposite() {
 		return true;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.core.sourcelookup.ISourceContainer#findSourceElements(java.lang.String)
-	 */
 	@Override
 	public Object[] findSourceElements(String name) throws CoreException {
 		return findSourceElements(name, getSourceContainers());
@@ -73,7 +67,7 @@ public abstract class CompositeSourceContainer extends AbstractSourceContainer {
 		CoreException single = null;
 		MultiStatus multiStatus = null;
 		if (isFindDuplicates()) {
-			results = new ArrayList<Object>();
+			results = new ArrayList<>();
 		}
 		for (int i = 0; i < containers.length; i++) {
 			ISourceContainer container = containers[i];
@@ -124,9 +118,6 @@ public abstract class CompositeSourceContainer extends AbstractSourceContainer {
 	 */
 	protected abstract ISourceContainer[] createSourceContainers() throws CoreException;
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.core.sourcelookup.ISourceContainer#getSourceContainers()
-	 */
 	@Override
 	public synchronized ISourceContainer[] getSourceContainers() throws CoreException {
 		if (fContainers == null) {
@@ -139,9 +130,6 @@ public abstract class CompositeSourceContainer extends AbstractSourceContainer {
 		return fContainers;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.core.sourcelookup.ISourceContainer#dispose()
-	 */
 	@Override
 	public void dispose() {
 		super.dispose();

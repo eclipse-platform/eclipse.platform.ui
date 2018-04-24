@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2013 IBM Corporation and others.
+ * Copyright (c) 2003, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -68,9 +68,6 @@ public class DirectorySourceContainer extends CompositeSourceContainer {
 		fSubfolders = subfolders;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.core.sourcelookup.ISourceContainer#getName()
-	 */
 	@Override
 	public String getName() {
 		return fDirectory.getName();
@@ -87,20 +84,14 @@ public class DirectorySourceContainer extends CompositeSourceContainer {
 		return fDirectory;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.core.sourcelookup.ISourceContainer#getType()
-	 */
 	@Override
 	public ISourceContainerType getType() {
 		return getSourceContainerType(TYPE_ID);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.core.sourcelookup.ISourceContainer#findSourceElements(java.lang.String)
-	 */
 	@Override
 	public Object[] findSourceElements(String name) throws CoreException {
-		ArrayList<Object> sources = new ArrayList<Object>();
+		ArrayList<Object> sources = new ArrayList<>();
 		File directory = getDirectory();
 		File file = new File(directory, name);
 		if (file.exists() && file.isFile()) {
@@ -132,17 +123,11 @@ public class DirectorySourceContainer extends CompositeSourceContainer {
 		return sources.toArray();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.core.sourcelookup.ISourceContainer#isComposite()
-	 */
 	@Override
 	public boolean isComposite() {
 		return fSubfolders;
 	}
 
-	/* (non-Javadoc)
-	 * @see java.lang.Object#equals(java.lang.Object)
-	 */
 	@Override
 	public boolean equals(Object obj) {
 		if (obj instanceof DirectorySourceContainer) {
@@ -151,23 +136,18 @@ public class DirectorySourceContainer extends CompositeSourceContainer {
 		}
 		return false;
 	}
-	/* (non-Javadoc)
-	 * @see java.lang.Object#hashCode()
-	 */
+
 	@Override
 	public int hashCode() {
 		return getDirectory().hashCode();
 	}
 
-    /* (non-Javadoc)
-	 * @see org.eclipse.debug.core.sourcelookup.containers.CompositeSourceContainer#createSourceContainers()
-	 */
 	@Override
 	protected ISourceContainer[] createSourceContainers() throws CoreException {
 		if (isComposite()) {
 			String[] files = fDirectory.list();
 			if (files != null) {
-				List<ISourceContainer> dirs = new ArrayList<ISourceContainer>();
+				List<ISourceContainer> dirs = new ArrayList<>();
 				for (int i = 0; i < files.length; i++) {
 					String name = files[i];
 					File file = new File(getDirectory(), name);

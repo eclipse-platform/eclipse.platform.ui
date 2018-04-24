@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2016 IBM Corporation and others.
+ * Copyright (c) 2000, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -72,7 +72,7 @@ public class ExpressionManager extends PlatformObject implements IExpressionMana
 	 * Mapping of debug model identifiers (String) to
 	 * expression delegate extensions (IConfigurationElement)
 	 */
-	private Map<String, IConfigurationElement> fWatchExpressionDelegates = new HashMap<String, IConfigurationElement>();
+	private Map<String, IConfigurationElement> fWatchExpressionDelegates = new HashMap<>();
 
 	// Constants for add/remove/change/insert/move notification
 	private static final int ADDED = 1;
@@ -117,9 +117,6 @@ public class ExpressionManager extends PlatformObject implements IExpressionMana
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.core.IExpressionManager#newWatchExpressionDelegate(java.lang.String)
-	 */
 	@Override
 	public IWatchExpressionDelegate newWatchExpressionDelegate(String debugModel) {
 		try {
@@ -134,9 +131,6 @@ public class ExpressionManager extends PlatformObject implements IExpressionMana
 		}
 	}
 
-    /* (non-Javadoc)
-     * @see org.eclipse.debug.core.IExpressionManager#hasWatchExpressionDelegate(java.lang.String)
-     */
     @Override
 	public boolean hasWatchExpressionDelegate(String id) {
         IConfigurationElement element= fWatchExpressionDelegates.get(id);
@@ -179,7 +173,7 @@ public class ExpressionManager extends PlatformObject implements IExpressionMana
 					boolean enabled= TRUE_VALUE.equals(element.getAttribute(ENABLED_TAG));
 					IWatchExpression expression= newWatchExpression(expressionText, enabled);
 					if (fExpressions == null) {
-						fExpressions = new Vector<IExpression>(list.getLength());
+						fExpressions = new Vector<>(list.getLength());
 					}
 					fExpressions.add(expression);
 				} else {
@@ -201,9 +195,6 @@ public class ExpressionManager extends PlatformObject implements IExpressionMana
 		return new WatchExpression(expressionText, enabled);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.core.IExpressionManager#newWatchExpression(java.lang.String)
-	 */
 	@Override
 	public IWatchExpression newWatchExpression(String expressionText) {
 		return new WatchExpression(expressionText);
@@ -254,17 +245,11 @@ public class ExpressionManager extends PlatformObject implements IExpressionMana
 		return LaunchManager.serializeDocument(document);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.core.IExpressionManager#addExpression(org.eclipse.debug.core.model.IExpression)
-	 */
 	@Override
 	public void addExpression(IExpression expression) {
 		addExpressions(new IExpression[]{expression});
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.core.IExpressionManager#addExpressions(org.eclipse.debug.core.model.IExpression[])
-	 */
 	@Override
 	public void addExpressions(IExpression[] expressions) {
 		List<IExpression> added = doAdd(expressions);
@@ -282,10 +267,10 @@ public class ExpressionManager extends PlatformObject implements IExpressionMana
 	 * @return list of expressions that were actually added.
 	 */
 	private List<IExpression> doAdd(IExpression[] expressions) {
-		List<IExpression> added = new ArrayList<IExpression>(expressions.length);
+		List<IExpression> added = new ArrayList<>(expressions.length);
 		synchronized (this) {
 			if (fExpressions == null) {
-				fExpressions = new Vector<IExpression>(expressions.length);
+				fExpressions = new Vector<>(expressions.length);
 			}
 			for (int i = 0; i < expressions.length; i++) {
 				IExpression expression = expressions[i];
@@ -298,9 +283,6 @@ public class ExpressionManager extends PlatformObject implements IExpressionMana
 		return added;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.core.IExpressionManager#getExpressions()
-	 */
 	@Override
 	public synchronized IExpression[] getExpressions() {
 		if (fExpressions == null) {
@@ -311,15 +293,12 @@ public class ExpressionManager extends PlatformObject implements IExpressionMana
 		return temp;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.core.IExpressionManager#getExpressions(java.lang.String)
-	 */
 	@Override
 	public synchronized IExpression[] getExpressions(String modelIdentifier) {
 		if (fExpressions == null) {
 			return new IExpression[0];
 		}
-		ArrayList<IExpression> temp = new ArrayList<IExpression>(fExpressions.size());
+		ArrayList<IExpression> temp = new ArrayList<>(fExpressions.size());
 		for (IExpression expression : fExpressions) {
 			String id = expression.getModelIdentifier();
 			if (id != null && id.equals(modelIdentifier)) {
@@ -353,7 +332,7 @@ public class ExpressionManager extends PlatformObject implements IExpressionMana
 				if (!insertBefore){
 					insertionIndex++;
 				}
-				inserted = new ArrayList<IExpression>(expressions.length);
+				inserted = new ArrayList<>(expressions.length);
 				for (int i = 0; i < expressions.length; i++) {
 					IExpression expression = expressions[i];
 					if (fExpressions.indexOf(expression) == -1) {
@@ -390,7 +369,7 @@ public class ExpressionManager extends PlatformObject implements IExpressionMana
 	 * @since 3.4
 	 */
 	public void moveExpressions(IExpression[] expressions, IExpression insertionLocation, boolean insertBefore){
-		List<IExpression> movedExpressions = new ArrayList<IExpression>(expressions.length);
+		List<IExpression> movedExpressions = new ArrayList<>(expressions.length);
 		int insertionIndex = -1;
 		IExpression[] movedExpressionsArray = null;
 		synchronized (this) {
@@ -427,20 +406,14 @@ public class ExpressionManager extends PlatformObject implements IExpressionMana
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.core.IExpressionManager#removeExpression(org.eclipse.debug.core.model.IExpression)
-	 */
 	@Override
 	public void removeExpression(IExpression expression) {
 		removeExpressions(new IExpression[] {expression});
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.core.IExpressionManager#removeExpressions(org.eclipse.debug.core.model.IExpression[])
-	 */
 	@Override
 	public void removeExpressions(IExpression[] expressions) {
-		List<IExpression> removed = new ArrayList<IExpression>(expressions.length);
+		List<IExpression> removed = new ArrayList<>(expressions.length);
 		synchronized (this) {
 			if (fExpressions == null) {
 				return;
@@ -461,9 +434,6 @@ public class ExpressionManager extends PlatformObject implements IExpressionMana
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.core.IExpressionManager#addExpressionListener(org.eclipse.debug.core.IExpressionListener)
-	 */
 	@Override
 	public void addExpressionListener(IExpressionListener listener) {
 		if (fListeners == null) {
@@ -472,9 +442,6 @@ public class ExpressionManager extends PlatformObject implements IExpressionMana
 		fListeners.add(listener);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.core.IExpressionManager#removeExpressionListener(org.eclipse.debug.core.IExpressionListener)
-	 */
 	@Override
 	public void removeExpressionListener(IExpressionListener listener) {
 		if (fListeners == null) {
@@ -526,17 +493,11 @@ public class ExpressionManager extends PlatformObject implements IExpressionMana
 		getExpressionsNotifier().notify(expressions, update, index);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.core.IExpressionManager#hasExpressions()
-	 */
 	@Override
 	public synchronized boolean hasExpressions() {
 		return fExpressions != null && !fExpressions.isEmpty();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.core.IExpressionManager#addExpressionListener(org.eclipse.debug.core.IExpressionsListener)
-	 */
 	@Override
 	public void addExpressionListener(IExpressionsListener listener) {
 		if (fExpressionsListeners == null) {
@@ -545,9 +506,6 @@ public class ExpressionManager extends PlatformObject implements IExpressionMana
 		fExpressionsListeners.add(listener);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.core.IExpressionManager#removeExpressionListener(org.eclipse.debug.core.IExpressionsListener)
-	 */
 	@Override
 	public void removeExpressionListener(IExpressionsListener listener) {
 		if (fExpressionsListeners == null) {
@@ -570,18 +528,12 @@ public class ExpressionManager extends PlatformObject implements IExpressionMana
 		private int fType;
 		private IExpression fExpression;
 
-		/* (non-Javadoc)
-		 * @see org.eclipse.core.runtime.ISafeRunnable#handleException(java.lang.Throwable)
-		 */
 		@Override
 		public void handleException(Throwable exception) {
 			IStatus status = new Status(IStatus.ERROR, DebugPlugin.getUniqueIdentifier(), DebugPlugin.INTERNAL_ERROR, "An exception occurred during expression change notification.", exception);  //$NON-NLS-1$
 			DebugPlugin.log(status);
 		}
 
-		/* (non-Javadoc)
-		 * @see org.eclipse.core.runtime.ISafeRunnable#run()
-		 */
 		@Override
 		public void run() throws Exception {
 			switch (fType) {
@@ -641,18 +593,12 @@ public class ExpressionManager extends PlatformObject implements IExpressionMana
 		private int fIndex;
 		private IExpression[] fNotifierExpressions;
 
-		/* (non-Javadoc)
-		 * @see org.eclipse.core.runtime.ISafeRunnable#handleException(java.lang.Throwable)
-		 */
 		@Override
 		public void handleException(Throwable exception) {
 			IStatus status = new Status(IStatus.ERROR, DebugPlugin.getUniqueIdentifier(), DebugPlugin.INTERNAL_ERROR, "An exception occurred during expression change notification.", exception);  //$NON-NLS-1$
 			DebugPlugin.log(status);
 		}
 
-		/* (non-Javadoc)
-		 * @see org.eclipse.core.runtime.ISafeRunnable#run()
-		 */
 		@Override
 		public void run() throws Exception {
 			switch (fType) {

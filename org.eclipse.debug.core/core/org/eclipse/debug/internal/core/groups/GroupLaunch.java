@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2009, 2016 QNX Software Systems and others.
+ *  Copyright (c) 2009, 2018 QNX Software Systems and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -49,7 +49,7 @@ public class GroupLaunch extends Launch implements ILaunchesListener2 {
 	 * A map of all our sub-launches and the current processes that belong to
 	 * each one.
 	 */
-	private Map<ILaunch, IProcess[]> subLaunches = new HashMap<ILaunch, IProcess[]>();
+	private Map<ILaunch, IProcess[]> subLaunches = new HashMap<>();
 
 	public GroupLaunch(ILaunchConfiguration launchConfiguration, String mode) {
 		super(launchConfiguration, mode, null);

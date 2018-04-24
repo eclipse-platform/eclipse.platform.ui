@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2015 IBM Corporation and others.
+ * Copyright (c) 2006, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -60,7 +60,7 @@ public abstract class StepCommand extends AbstractDebugCommand {
 			return true;
 		}
 		// check if frames from same thread
-		Set<IThread> threads = new HashSet<IThread>(targets.length);
+		Set<IThread> threads = new HashSet<>(targets.length);
 		for (int i = 0; i < targets.length; i++) {
 			Object object = targets[i];
 			IStackFrame frame = null;

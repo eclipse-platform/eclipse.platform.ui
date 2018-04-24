@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2013 IBM Corporation and others.
+ * Copyright (c) 2003, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -80,12 +80,9 @@ public abstract class ContainerSourceContainer extends CompositeSourceContainer 
 		return fContainer;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.core.sourcelookup.ISourceContainer#findSourceElements(java.lang.String)
-	 */
 	@Override
 	public Object[] findSourceElements(String name) throws CoreException {
-		ArrayList<Object> sources = new ArrayList<Object>();
+		ArrayList<Object> sources = new ArrayList<>();
 
 		// An IllegalArgumentException is thrown from the "getFile" method
 		// if the path created by appending the file name to the container
@@ -146,17 +143,11 @@ public abstract class ContainerSourceContainer extends CompositeSourceContainer 
 		return sources.toArray();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.core.sourcelookup.ISourceContainer#getName()
-	 */
 	@Override
 	public String getName() {
 		return getContainer().getName();
 	}
 
-	/* (non-Javadoc)
-	 * @see java.lang.Object#equals(java.lang.Object)
-	 */
 	@Override
 	public boolean equals(Object obj) {
 		if (obj != null && obj instanceof ContainerSourceContainer) {
@@ -166,30 +157,21 @@ public abstract class ContainerSourceContainer extends CompositeSourceContainer 
 		return false;
 	}
 
-	/* (non-Javadoc)
-	 * @see java.lang.Object#hashCode()
-	 */
 	@Override
 	public int hashCode() {
 		return getContainer().hashCode();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.core.sourcelookup.ISourceContainer#isComposite()
-	 */
 	@Override
 	public boolean isComposite() {
 		return fSubfolders;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.core.sourcelookup.containers.CompositeSourceContainer#createSourceContainers()
-	 */
 	@Override
 	protected ISourceContainer[] createSourceContainers() throws CoreException {
 		if(fSubfolders) {
 			IResource[] resources = getContainer().members();
-			List<ISourceContainer> list = new ArrayList<ISourceContainer>(resources.length);
+			List<ISourceContainer> list = new ArrayList<>(resources.length);
 			for (int i = 0; i < resources.length; i++) {
 				IResource resource = resources[i];
 				if (resource.getType() == IResource.FOLDER) {

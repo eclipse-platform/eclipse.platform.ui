@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2013 IBM Corporation and others.
+ *  Copyright (c) 2000, 2018 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -33,32 +33,23 @@ public abstract class AbstractSourceLookupParticipant implements ISourceLookupPa
 
 	protected static final Object[] EMPTY = new Object[0];
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.core.sourcelookup.ISourceLookupParticipant#init(org.eclipse.debug.core.sourcelookup.ISourceLookupDirector)
-	 */
 	@Override
 	public void init(ISourceLookupDirector director) {
 		fDirector = director;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.core.sourcelookup.ISourceLookupParticipant#dispose()
-	 */
 	@Override
 	public void dispose() {
 		fDirector = null;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.core.sourcelookup.ISourceLookupParticipant#findSourceElements(java.lang.Object)
-	 */
 	@Override
 	public Object[] findSourceElements(Object object) throws CoreException {
 		List<Object> results = null;
 		CoreException single = null;
 		MultiStatus multiStatus = null;
 		if (isFindDuplicates()) {
-			results = new ArrayList<Object>();
+			results = new ArrayList<>();
 		}
 		String name = getSourceName(object);
 		if (name != null) {
@@ -162,9 +153,6 @@ public abstract class AbstractSourceLookupParticipant implements ISourceLookupPa
 		return new ISourceContainer[0];
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.core.sourcelookup.ISourceLookupParticipant#sourceContainersChanged(org.eclipse.debug.core.sourcelookup.ISourceLookupDirector)
-	 */
 	@Override
 	public void sourceContainersChanged(ISourceLookupDirector director) {
 	}

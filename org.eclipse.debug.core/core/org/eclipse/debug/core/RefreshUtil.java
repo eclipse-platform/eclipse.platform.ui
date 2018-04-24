@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2013 IBM Corporation and others.
+ * Copyright (c) 2009, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -135,8 +135,7 @@ public class RefreshUtil {
 				}
 				lmonitor.worked(1);
 			}
-		}
- finally {
+		} finally {
 			lmonitor.done();
 		}
 		if (!status.isOK()) {
@@ -161,9 +160,7 @@ public class RefreshUtil {
 			Path path = new Path(pathString);
 			IResource resource = ResourcesPlugin.getWorkspace().getRoot().findMember(path);
 			if (resource == null) {
-				throw new CoreException(new Status(IStatus.ERROR, DebugPlugin.getUniqueIdentifier(),
-						IStatus.ERROR, MessageFormat.format(DebugCoreMessages.RefreshUtil_1,
- new Object[] { pathString }), null));
+				throw new CoreException(new Status(IStatus.ERROR, DebugPlugin.getUniqueIdentifier(), IStatus.ERROR, MessageFormat.format(DebugCoreMessages.RefreshUtil_1, pathString), null));
 			}
 			return new IResource[] { resource };
 		} else if (memento.startsWith("${working_set:")) { //$NON-NLS-1$
@@ -194,7 +191,7 @@ public class RefreshUtil {
 				}
 			}
 		}
-		throw new CoreException(new Status(IStatus.ERROR, DebugPlugin.getUniqueIdentifier(), MessageFormat.format(DebugCoreMessages.RefreshUtil_0, new Object[] { memento })));
+		throw new CoreException(new Status(IStatus.ERROR, DebugPlugin.getUniqueIdentifier(), MessageFormat.format(DebugCoreMessages.RefreshUtil_0, memento)));
 	}
 
 	/**
@@ -236,7 +233,7 @@ public class RefreshUtil {
 			return null;
 		}
 
-		List<IAdaptable> resourcesList = new ArrayList<IAdaptable>();
+		List<IAdaptable> resourcesList = new ArrayList<>();
 		StringReader reader = new StringReader(wsMemento);
 
 		XMLMemento memento = null;

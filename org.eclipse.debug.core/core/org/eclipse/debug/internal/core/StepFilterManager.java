@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 IBM Corporation and others.
+ * Copyright (c) 2000, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -50,16 +50,11 @@ public class StepFilterManager implements ILaunchListener {
 		DebugPlugin.getDefault().getLaunchManager().removeLaunchListener(this);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.core.ILaunchListener#launchAdded(org.eclipse.debug.core.ILaunch)
-	 */
 	@Override
 	public void launchAdded(ILaunch launch) {
 		launchChanged(launch);
 	}
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.core.ILaunchListener#launchChanged(org.eclipse.debug.core.ILaunch)
-	 */
+
 	@Override
 	public void launchChanged(ILaunch launch) {
 		IStepFiltersHandler command = launch.getAdapter(IStepFiltersHandler.class);
@@ -91,9 +86,6 @@ public class StepFilterManager implements ILaunchListener {
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.core.ILaunchListener#launchRemoved(org.eclipse.debug.core.ILaunch)
-	 */
 	@Override
 	public void launchRemoved(ILaunch launch) {}
 
@@ -109,7 +101,7 @@ public class StepFilterManager implements ILaunchListener {
 	 */
 	public IStepFilter[] getStepFilters(String modelIdentifier) {
 		initialize();
-		List<IStepFilter> select = new ArrayList<IStepFilter>();
+		List<IStepFilter> select = new ArrayList<>();
 		for (StepFilter extension : stepFilters) {
 			for (IStepFilter stepFilter : extension.getStepFilters(modelIdentifier)) {
 				select.add(stepFilter);
@@ -124,7 +116,7 @@ public class StepFilterManager implements ILaunchListener {
 		if (stepFilters == null) {
 			IExtensionPoint point = Platform.getExtensionRegistry().getExtensionPoint(DebugPlugin.getUniqueIdentifier(), DebugPlugin.EXTENSION_POINT_STEP_FILTERS);
 			IConfigurationElement[] extensions = point.getConfigurationElements();
-			stepFilters = new ArrayList<StepFilter>();
+			stepFilters = new ArrayList<>();
 			for (IConfigurationElement extension : extensions) {
 				try {
 					stepFilters.add(new StepFilter(extension));

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2013 IBM Corporation and others.
+ * Copyright (c) 2006, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -77,9 +77,6 @@ public final class LaunchDelegate implements ILaunchDelegate {
 		fElement = element;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.core.ILaunchDelegateProxy#getDelegate()
-	 */
 	@Override
 	public ILaunchConfigurationDelegate getDelegate() throws CoreException {
 		if(fDelegate == null) {
@@ -93,9 +90,6 @@ public final class LaunchDelegate implements ILaunchDelegate {
 		return fDelegate;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.core.ILaunchDelegateProxy#getId()
-	 */
 	@Override
 	public String getId() {
 		return fElement.getAttribute(IConfigurationElementConstants.ID);
@@ -124,7 +118,7 @@ public final class LaunchDelegate implements ILaunchDelegate {
 	 * @since 3.3
 	 */
 	private Set<String> parseModes(IConfigurationElement element) {
-		HashSet<String> set = new HashSet<String>();
+		HashSet<String> set = new HashSet<>();
 		String modes = element.getAttribute(IConfigurationElementConstants.MODES);
 		if (modes != null) {
 			String[] strings = modes.split(","); //$NON-NLS-1$
@@ -135,14 +129,11 @@ public final class LaunchDelegate implements ILaunchDelegate {
 		return set;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.core.ILaunchDelegateProxy#getModes()
-	 */
 	@Override
 	public List<Set<String>> getModes() {
 		if(fLaunchModes == null) {
-			fLaunchModes = new ArrayList<Set<String>>();
-			fPerspectiveIds = new HashMap<Set<String>, String>();
+			fLaunchModes = new ArrayList<>();
+			fPerspectiveIds = new HashMap<>();
 			IConfigurationElement[] children = fElement.getChildren(IConfigurationElementConstants.MODE_COMBINATION);
 			Set<String> modeset = null;
 			for (int i = 0; i < children.length; i++) {
@@ -157,7 +148,7 @@ public final class LaunchDelegate implements ILaunchDelegate {
 			if (modes != null) {
 				String[] strings = modes.split(","); //$NON-NLS-1$
 				for (int i = 0; i < strings.length; i++) {
-					modeset = new HashSet<String>();
+					modeset = new HashSet<>();
 					modeset.add(strings[i].trim());
 					fLaunchModes.add(modeset);
 				}
@@ -215,9 +206,6 @@ public final class LaunchDelegate implements ILaunchDelegate {
 		return fElement.getAttribute(IConfigurationElementConstants.SOURCE_PATH_COMPUTER);
 	}
 
-	/**
-	 * @see org.eclipse.debug.core.ILaunchDelegate#getDescription()
-	 */
 	@Override
 	public String getDescription() {
 		String desc = fElement.getAttribute(IConfigurationElementConstants.DELEGATE_DESCRIPTION);
@@ -227,17 +215,11 @@ public final class LaunchDelegate implements ILaunchDelegate {
 		return desc;
 	}
 
-	/**
-	 * @see org.eclipse.debug.core.ILaunchDelegate#getPluginIdentifier()
-	 */
 	@Override
 	public String getPluginIdentifier() {
 		return fElement.getContributor().getName();
 	}
 
-	/**
-	 * @see java.lang.Object#equals(java.lang.Object)
-	 */
 	@Override
 	public boolean equals(Object obj) {
 		if(obj == null) {
@@ -252,9 +234,6 @@ public final class LaunchDelegate implements ILaunchDelegate {
 		return id == null ? 0 : id.hashCode();
 	}
 
-	/**
-	 * @see org.eclipse.debug.core.ILaunchDelegate#getPerspectiveId(java.util.Set)
-	 */
 	@Override
 	public String getPerspectiveId(Set<String> modes) {
 		if(fPerspectiveIds == null) {

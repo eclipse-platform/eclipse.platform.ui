@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2013 IBM Corporation and others.
+ * Copyright (c) 2006, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -44,14 +44,11 @@ public class DebugOptions implements DebugOptionsListener {
 	 * @param context the bundle context
 	 */
 	public DebugOptions(BundleContext context) {
-		Hashtable<String, String> props = new Hashtable<String, String>(2);
+		Hashtable<String, String> props = new Hashtable<>(2);
 		props.put(org.eclipse.osgi.service.debug.DebugOptions.LISTENER_SYMBOLICNAME, DebugPlugin.getUniqueIdentifier());
 		context.registerService(DebugOptionsListener.class.getName(), this, props);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.osgi.service.debug.DebugOptionsListener#optionsChanged(org.eclipse.osgi.service.debug.DebugOptions)
-	 */
 	@Override
 	public void optionsChanged(org.eclipse.osgi.service.debug.DebugOptions options) {
 		fgDebugTrace = options.newDebugTrace(DebugPlugin.getUniqueIdentifier());

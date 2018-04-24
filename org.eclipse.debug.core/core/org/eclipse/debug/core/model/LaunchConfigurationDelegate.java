@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2013 IBM Corporation and others.
+ * Copyright (c) 2004, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -106,17 +106,11 @@ public abstract class LaunchConfigurationDelegate implements ILaunchConfiguratio
 	 */
 	protected static final IStatus complileErrorProjectPromptStatus = new Status(IStatus.INFO, DEBUG_CORE, 203, IInternalDebugCoreConstants.EMPTY_STRING, null);
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.core.model.ILaunchConfigurationDelegate2#getLaunch(org.eclipse.debug.core.ILaunchConfiguration, java.lang.String)
-	 */
 	@Override
 	public ILaunch getLaunch(ILaunchConfiguration configuration, String mode) throws CoreException {
 		return null;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.core.model.ILaunchConfigurationDelegate2#buildForLaunch(org.eclipse.debug.core.ILaunchConfiguration, java.lang.String, org.eclipse.core.runtime.IProgressMonitor)
-	 */
 	@Override
 	public boolean buildForLaunch(ILaunchConfiguration configuration, String mode, IProgressMonitor monitor) throws CoreException {
 		if (monitor != null) {
@@ -163,9 +157,6 @@ public abstract class LaunchConfigurationDelegate implements ILaunchConfiguratio
 		return null;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.core.model.ILaunchConfigurationDelegate2#finalLaunchCheck(org.eclipse.debug.core.ILaunchConfiguration, java.lang.String, org.eclipse.core.runtime.IProgressMonitor)
-	 */
 	@Override
 	public boolean finalLaunchCheck(ILaunchConfiguration configuration, String mode, IProgressMonitor monitor) throws CoreException {
 		monitor.beginTask("", 1); //$NON-NLS-1$
@@ -177,7 +168,7 @@ public abstract class LaunchConfigurationDelegate implements ILaunchConfiguratio
 			boolean continueLaunch = true;
 
 			monitor.subTask(DebugCoreMessages.LaunchConfigurationDelegate_6);
-			List<IAdaptable> errors = new ArrayList<IAdaptable>();
+			List<IAdaptable> errors = new ArrayList<>();
 			for (int i = 0; i < projects.length; i++) {
 				monitor.subTask(MessageFormat.format(DebugCoreMessages.LaunchConfigurationDelegate_7, new Object[] { projects[i].getName() }));
 				if (existsProblems(projects[i])) {
@@ -298,7 +289,7 @@ public abstract class LaunchConfigurationDelegate implements ILaunchConfiguratio
 	 *  projects
 	 */
 	protected IProject[] computeReferencedBuildOrder(IProject[] baseProjects) throws CoreException {
-		HashSet<IProject> unorderedProjects = new HashSet<IProject>();
+		HashSet<IProject> unorderedProjects = new HashSet<>();
 		for(int i = 0; i< baseProjects.length; i++) {
 			unorderedProjects.add(baseProjects[i]);
 			addReferencedProjects(baseProjects[i], unorderedProjects);
@@ -341,9 +332,9 @@ public abstract class LaunchConfigurationDelegate implements ILaunchConfiguratio
 	protected IProject[] computeBuildOrder(IProject[] projects) {
 		String[] orderedNames = ResourcesPlugin.getWorkspace().getDescription().getBuildOrder();
 		if (orderedNames != null) {
-			List<IProject> orderedProjects = new ArrayList<IProject>(projects.length);
+			List<IProject> orderedProjects = new ArrayList<>(projects.length);
 			//Projects may not be in the build order but should be built if selected
-			List<IProject> unorderedProjects = new ArrayList<IProject>(projects.length);
+			List<IProject> unorderedProjects = new ArrayList<>(projects.length);
 			for(int i = 0; i < projects.length; ++i) {
 				unorderedProjects.add(projects[i]);
 			}

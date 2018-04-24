@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 IBM Corporation and others.
+ * Copyright (c) 2000, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -83,7 +83,7 @@ public class LogicalStructureManager {
 	public ILogicalStructureType[] getLogicalStructureTypes(IValue value) {
 		initialize();
 		// looks in the logical structure types
-		List<ILogicalStructureType> select = new ArrayList<ILogicalStructureType>();
+		List<ILogicalStructureType> select = new ArrayList<>();
 		for (ILogicalStructureType type : fTypes) {
 			if (type.providesLogicalStructure(value)) {
 				select.add(type);
@@ -103,7 +103,7 @@ public class LogicalStructureManager {
      * Loads the map of structure selections from the preference store.
      */
     private void loadStructureTypeSelections() {
-		fStructureTypeSelections = new HashMap<String, Integer>();
+		fStructureTypeSelections = new HashMap<>();
         String selections= Platform.getPreferencesService().getString(DebugPlugin.getUniqueIdentifier(), PREF_STRUCTURE_SELECTIONS, IInternalDebugCoreConstants.EMPTY_STRING, null);
     	// selections are stored in the form:
     	// selection|selection|...selection|
@@ -138,7 +138,7 @@ public class LogicalStructureManager {
      * Loads the collection of known structures identifiers from the preference store
      */
     private void loadStructureTypeIds() {
-		fStructureTypeIds = new ArrayList<String>();
+		fStructureTypeIds = new ArrayList<>();
     	// Types are stored as a comma-separated, ordered list.
         String types= Platform.getPreferencesService().getString(DebugPlugin.getUniqueIdentifier(), PREF_STRUCTURE_IDS, IInternalDebugCoreConstants.EMPTY_STRING, null);
         StringTokenizer tokenizer= new StringTokenizer(types, ","); //$NON-NLS-1$
@@ -243,7 +243,7 @@ public class LogicalStructureManager {
 			//get the logical structure types from the extension points
 			IExtensionPoint point = Platform.getExtensionRegistry().getExtensionPoint(DebugPlugin.getUniqueIdentifier(), DebugPlugin.EXTENSION_POINT_LOGICAL_STRUCTURE_TYPES);
 			IConfigurationElement[] extensions = point.getConfigurationElements();
-			fTypes = new ArrayList<LogicalStructureType>(extensions.length);
+			fTypes = new ArrayList<>(extensions.length);
 			for (int i = 0; i < extensions.length; i++) {
 				IConfigurationElement extension = extensions[i];
 				LogicalStructureType type;
@@ -257,7 +257,7 @@ public class LogicalStructureManager {
 			// get the logical structure providers from the extension point
 			point= Platform.getExtensionRegistry().getExtensionPoint(DebugPlugin.getUniqueIdentifier(), DebugPlugin.EXTENSION_POINT_LOGICAL_STRUCTURE_PROVIDERS);
 			extensions= point.getConfigurationElements();
-			fTypeProviders = new ArrayList<LogicalStructureProvider>(extensions.length);
+			fTypeProviders = new ArrayList<>(extensions.length);
 			for (int i= 0; i < extensions.length; i++) {
 				try {
 					fTypeProviders.add(new LogicalStructureProvider(extensions[i]));

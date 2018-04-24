@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2017 IBM Corporation and others.
+ * Copyright (c) 2000, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -117,36 +117,24 @@ public class LaunchConfigurationType extends PlatformObject implements ILaunchCo
 		initializePreferredDelegates();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.core.ILaunchConfigurationType#getAttribute(java.lang.String)
-	 */
 	@Override
 	public String getAttribute(String attributeName) {
 		return fElement.getAttribute(attributeName);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.core.ILaunchConfigurationType#getCategory()
-	 */
 	@Override
 	public String getCategory() {
 		return fElement.getAttribute(IConfigurationElementConstants.CATEGORY);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.core.ILaunchConfigurationType#getDelegate()
-	 */
 	@Override
 	public ILaunchConfigurationDelegate getDelegate() throws CoreException {
 		return getDelegate(ILaunchManager.RUN_MODE);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.core.ILaunchConfigurationType#getDelegate(java.lang.String)
-	 */
 	@Override
 	public ILaunchConfigurationDelegate getDelegate(String mode) throws CoreException {
-		Set<String> modes = new HashSet<String>();
+		Set<String> modes = new HashSet<>();
 		modes.add(mode);
 		ILaunchDelegate[] delegates = getDelegates(modes);
 		if (delegates.length > 0) {
@@ -155,20 +143,13 @@ public class LaunchConfigurationType extends PlatformObject implements ILaunchCo
 		IStatus status = null;
 		ILaunchMode launchMode = DebugPlugin.getDefault().getLaunchManager().getLaunchMode(mode);
 		if (launchMode == null) {
-			status = new Status(IStatus.ERROR, DebugPlugin.getUniqueIdentifier(),
-					MessageFormat.format(DebugCoreMessages.LaunchConfigurationType_7,
- new Object[] { mode }));
+			status = new Status(IStatus.ERROR, DebugPlugin.getUniqueIdentifier(), MessageFormat.format(DebugCoreMessages.LaunchConfigurationType_7, mode));
 		} else {
-			status = new Status(IStatus.ERROR, DebugPlugin.getUniqueIdentifier(),
-				MessageFormat.format(DebugCoreMessages.LaunchConfigurationType_7,
- new Object[] { ((LaunchManager) DebugPlugin.getDefault().getLaunchManager()).getLaunchModeName(mode) }));
+			status = new Status(IStatus.ERROR, DebugPlugin.getUniqueIdentifier(), MessageFormat.format(DebugCoreMessages.LaunchConfigurationType_7, ((LaunchManager) DebugPlugin.getDefault().getLaunchManager()).getLaunchModeName(mode)));
 		}
 		throw new CoreException(status);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.core.ILaunchConfigurationType#getDelegates(java.util.Set)
-	 */
 	@Override
 	public ILaunchDelegate[] getDelegates(Set<String> modes) throws CoreException {
 		initializeDelegates();
@@ -179,13 +160,10 @@ public class LaunchConfigurationType extends PlatformObject implements ILaunchCo
 		return delegates.toArray(new ILaunchDelegate[delegates.size()]);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.core.ILaunchConfigurationType#setPreferredDelegate(java.util.Set, org.eclipse.debug.core.ILaunchDelegate)
-	 */
 	@Override
 	public void setPreferredDelegate(Set<String> modes, ILaunchDelegate delegate) {
 		if(fPreferredDelegates == null) {
-			fPreferredDelegates = new HashMap<Set<String>, ILaunchDelegate>();
+			fPreferredDelegates = new HashMap<>();
 		}
 		if (delegate == null) {
 			fPreferredDelegates.remove(modes);
@@ -195,9 +173,6 @@ public class LaunchConfigurationType extends PlatformObject implements ILaunchCo
 		((LaunchManager)DebugPlugin.getDefault().getLaunchManager()).persistPreferredLaunchDelegate(this);
 	}
 
-	/**
-	 * @see org.eclipse.debug.core.ILaunchConfigurationType#getPreferredDelegate(java.util.Set)
-	 */
 	@Override
 	public ILaunchDelegate getPreferredDelegate(Set<String> modes) {
 		initializePreferredDelegates();
@@ -233,7 +208,7 @@ public class LaunchConfigurationType extends PlatformObject implements ILaunchCo
 	 */
 	private synchronized void initializePreferredDelegates() {
 		if(fPreferredDelegates == null) {
-			fPreferredDelegates = new HashMap<Set<String>, ILaunchDelegate>();
+			fPreferredDelegates = new HashMap<>();
 			initializeDelegates();
 			LaunchManager lm = (LaunchManager) DebugPlugin.getDefault().getLaunchManager();
 			ILaunchDelegate delegate = null;
@@ -252,7 +227,7 @@ public class LaunchConfigurationType extends PlatformObject implements ILaunchCo
 	private synchronized void initializeDelegates() {
 		if (fDelegates == null) {
 			// initialize delegate
-			fDelegates = new Hashtable<Set<String>, Set<ILaunchDelegate>>();
+			fDelegates = new Hashtable<>();
 			LaunchDelegate[] launchDelegates = getLaunchDelegateExtensions();
 			LaunchDelegate delegate = null;
 			List<Set<String>> modelist = null;
@@ -263,7 +238,7 @@ public class LaunchConfigurationType extends PlatformObject implements ILaunchCo
 				for (Set<String> modes : modelist) {
 					tmp = fDelegates.get(modes);
 					if (tmp == null) {
-						tmp = new HashSet<ILaunchDelegate>();
+						tmp = new HashSet<>();
 						fDelegates.put(modes, tmp);
 					}
 					tmp.add(delegate);
@@ -281,33 +256,21 @@ public class LaunchConfigurationType extends PlatformObject implements ILaunchCo
 		return ((LaunchManager) DebugPlugin.getDefault().getLaunchManager()).getLaunchDelegates(getIdentifier());
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.core.ILaunchConfigurationType#getIdentifier()
-	 */
 	@Override
 	public String getIdentifier() {
 		return fElement.getAttribute(IConfigurationElementConstants.ID);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.core.ILaunchConfigurationType#getName()
-	 */
 	@Override
 	public String getName() {
 		return fElement.getAttribute(IConfigurationElementConstants.NAME);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.core.ILaunchConfigurationType#getPluginId()
-	 */
 	@Override
 	public String getPluginIdentifier() {
 		return fElement.getContributor().getName();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.core.ILaunchConfigurationType#getSourceLocatorId()
-	 */
 	@Override
 	public String getSourceLocatorId() {
 		if(fSourceLocator == null) {
@@ -333,9 +296,6 @@ public class LaunchConfigurationType extends PlatformObject implements ILaunchCo
 		return fSourceLocator;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.core.ILaunchConfigurationType#getSourcePathComputer()
-	 */
 	@Override
 	public ISourcePathComputer getSourcePathComputer() {
 		if(fSourcePathComputer == null) {
@@ -369,13 +329,10 @@ public class LaunchConfigurationType extends PlatformObject implements ILaunchCo
 		return fSourcePathComputer;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.core.ILaunchConfigurationType#getSupportedModes()
-	 */
 	@Override
 	public Set<String> getSupportedModes() {
 		if(fModes == null) {
-			fModes = new HashSet<String>();
+			fModes = new HashSet<>();
 			LaunchDelegate[] delegates = getLaunchDelegateExtensions();
 			List<Set<String>> modesets = null;
 			for(int i= 0; i < delegates.length; i++) {
@@ -388,9 +345,6 @@ public class LaunchConfigurationType extends PlatformObject implements ILaunchCo
 		return fModes;
 	}
 
-	/**
-	 * @see org.eclipse.debug.core.ILaunchConfigurationType#getSupportedModeCombinations()
-	 */
 	@Override
 	public Set<Set<String>> getSupportedModeCombinations() {
 		if(fModeCombinations == null) {
@@ -427,9 +381,6 @@ public class LaunchConfigurationType extends PlatformObject implements ILaunchCo
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.core.ILaunchConfigurationType#isPublic()
-	 */
 	@Override
 	public boolean isPublic() {
 		String publicString = fElement.getAttribute(IConfigurationElementConstants.PUBLIC);
@@ -456,9 +407,6 @@ public class LaunchConfigurationType extends PlatformObject implements ILaunchCo
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.core.ILaunchConfigurationType#newInstance(org.eclipse.core.resources.IContainer, java.lang.String)
-	 */
 	@Override
 	public ILaunchConfigurationWorkingCopy newInstance(IContainer container, String name) throws CoreException {
 		// validate the configuration name - see bug 275741
@@ -478,9 +426,6 @@ public class LaunchConfigurationType extends PlatformObject implements ILaunchCo
 		return new LaunchConfigurationWorkingCopy(container, name, this);
 	}
 
-	/**
-	 * @see org.eclipse.debug.core.ILaunchConfigurationType#supportsMode(java.lang.String)
-	 */
 	@Override
 	public boolean supportsMode(String mode) {
 		if(fModeCombinations == null) {
@@ -494,17 +439,11 @@ public class LaunchConfigurationType extends PlatformObject implements ILaunchCo
 		return false;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.core.ILaunchConfigurationType#getContributorName()
-	 */
 	@Override
 	public String getContributorName() {
 		return fElement.getContributor().getName();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.core.ILaunchConfigurationType#supportsModeCombination(java.util.Set)
-	 */
 	@Override
 	public boolean supportsModeCombination(Set<String> modes) {
 		if(fModeCombinations == null) {
@@ -520,27 +459,17 @@ public class LaunchConfigurationType extends PlatformObject implements ILaunchCo
 		fPreferredDelegates = null;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.core.ILaunchConfigurationType#getPrototypes()
-	 */
 	@Override
 	public ILaunchConfiguration[] getPrototypes() throws CoreException {
 		return DebugPlugin.getDefault().getLaunchManager().getLaunchConfigurations(this, ILaunchConfiguration.PROTOTYPE);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.core.ILaunchConfigurationType#newPrototypeInstance(org.eclipse.core.resources.IContainer, java.lang.String)
-	 */
 	@Override
 	public ILaunchConfigurationWorkingCopy newPrototypeInstance(IContainer container, String name) throws CoreException {
 		LaunchConfigurationWorkingCopy wc = new LaunchConfigurationWorkingCopy(container, name, this, true);
 		return wc;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.debug.core.ILaunchConfigurationType#supportsPrototypes()
-	 */
 	@Override
 	public boolean supportsPrototypes() {
 		String allowPrototypesString = fElement.getAttribute(IConfigurationElementConstants.ALLOW_PROTOTYPES);
