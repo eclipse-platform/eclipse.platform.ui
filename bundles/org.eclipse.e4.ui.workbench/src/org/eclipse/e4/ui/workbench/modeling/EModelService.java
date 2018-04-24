@@ -110,27 +110,26 @@ public interface EModelService {
 
 	/**
 	 * Creates instances of model elements. The method supports any type extending
-	 * {@link MApplicationElement}, both in the standard e4 UI model and in an extension models.
+	 * {@link MApplicationElement}, both in the standard e4 UI model and in an
+	 * extension models.
 	 *
 	 * <p>
-	 * <b>Caution:</b> To create model element instances of extension models you need to register
-	 * them with the <code>the org.eclipse.e4.workbench.model.definition.enrichment</code>
+	 * <b>Caution:</b> To create model element instances of extension models you
+	 * need to register them with the
+	 * <code>the org.eclipse.e4.workbench.model.definition.enrichment</code>
 	 * ExtensionPoint.
 	 * </p>
 	 *
-	 * @param elementType
-	 *            the class to instantiate. Cannot be <code>null</code>
+	 * @param elementType the class to instantiate. Cannot be <code>null</code>
 	 * @return a new instance
-	 * @throws NullPointerException
-	 *             if the passed class is <code>null</code>
-	 * @throws IllegalArgumentException
-	 *             if the passed class is not supported.
+	 * @throws NullPointerException     if the passed class is <code>null</code>
+	 * @throws IllegalArgumentException if the passed class is not supported.
 	 */
 	<T extends MApplicationElement> T createModelElement(Class<T> elementType);
 
 	/**
-	 * This is a convenience method that constructs a new Selector based on {@link ElementMatcher}
-	 * and forwards the call on to the base API
+	 * This is a convenience method that constructs a new Selector based on
+	 * {@link ElementMatcher} and forwards the call on to the base API
 	 * {@link EModelService#findElements(MApplicationElement, Class, int, Selector)}.
 	 *
 	 * @see EModelService#findElements(MApplicationElement, Class, int, Selector)
@@ -148,45 +147,47 @@ public interface EModelService {
 			List<String> tagsToMatch);
 
 	/**
-	 * Return a list of any elements that match the given search criteria. The search is recursive
-	 * and includes the specified search root. Any of the search parameters may be specified as
-	 * <code>null</code> in which case that field will always 'match'.
+	 * Return a list of any elements that match the given search criteria. The
+	 * search is recursive and includes the specified search root. Any of the search
+	 * parameters may be specified as <code>null</code> in which case that field
+	 * will always 'match'.
 	 * <p>
-	 * NOTE: This is a generically typed method with the List's generic type expected to be the
-	 * value of the 'clazz' parameter. If the 'clazz' parameter is null then the returned list is
-	 * untyped.
+	 * NOTE: This is a generically typed method with the List's generic type
+	 * expected to be the value of the 'clazz' parameter. If the 'clazz' parameter
+	 * is null then the returned list is untyped.
 	 * </p>
 	 *
-	 * @param <T>
-	 *            The generic type of the returned list
-	 * @param searchRoot
-	 *            The element at which to start the search. This element must be non-null and is
-	 *            included in the search.
-	 * @param clazz
-	 *            The type of element to be searched for. If non-null this also defines the return
-	 *            type of the List.
-	 * @param searchFlags
-	 *            A bitwise combination of the following constants:
-	 *            <ul>
-	 *            <li><b>OUTSIDE_PERSPECTIVE</b> Include the elements in the window's model that are
-	 *            not in a perspective</;i>
-	 *            <li><b>IN_ANY_PERSPECTIVE</b> Include the elements in all perspectives</;i>
-	 *            <li><b>IN_ACTIVE_PERSPECTIVE</b> Include the elements in the currently active
-	 *            perspective only</;i>
-	 *            <li><b>IN_MAIN_MENU</b> Include elements in an MWindow's main menu</;i>
-	 *            <li><b>IN_PART</b> Include MMenu and MToolbar elements owned by parts</;i>
-	 *            <li><b>IN_ACTIVE_PERSPECTIVE</b> Include the elements in the currently active
-	 *            perspective only</;i>
-	 *            <li><b>IN_SHARED_AREA</b> Include the elements in the shared area</;i>
-	 *            <li><b>IN_TRIM</b> Include the elements in the window's trim</;i>
-	 *            </ul>
-	 *            Note that you may omit both perspective flags but still define
-	 *            <b>IN_SHARED_AREA</b>; the flags <b>OUTSIDE_PERSPECTIVE | IN_SHARED_AREA</b> for
-	 *            example will search the presentation <i>excluding</i> the elements in perspective
-	 *            stacks.
-	 * @param matcher
-	 *            An implementation of a Selector that will return true for elements that it wants
-	 *            in the returned list.
+	 * @param             <T> The generic type of the returned list
+	 * @param searchRoot  The element at which to start the search. This element
+	 *                    must be non-null and is included in the search.
+	 * @param clazz       The type of element to be searched for. If non-null this
+	 *                    also defines the return type of the List.
+	 * @param searchFlags A bitwise combination of the following constants:
+	 *                    <ul>
+	 *                    <li><b>OUTSIDE_PERSPECTIVE</b> Include the elements in the
+	 *                    window's model that are not in a perspective</;i>
+	 *                    <li><b>IN_ANY_PERSPECTIVE</b> Include the elements in all
+	 *                    perspectives</;i>
+	 *                    <li><b>IN_ACTIVE_PERSPECTIVE</b> Include the elements in
+	 *                    the currently active perspective only</;i>
+	 *                    <li><b>IN_MAIN_MENU</b> Include elements in an MWindow's
+	 *                    main menu</;i>
+	 *                    <li><b>IN_PART</b> Include MMenu and MToolbar elements
+	 *                    owned by parts</;i>
+	 *                    <li><b>IN_ACTIVE_PERSPECTIVE</b> Include the elements in
+	 *                    the currently active perspective only</;i>
+	 *                    <li><b>IN_SHARED_AREA</b> Include the elements in the
+	 *                    shared area</;i>
+	 *                    <li><b>IN_TRIM</b> Include the elements in the window's
+	 *                    trim</;i>
+	 *                    </ul>
+	 *                    Note that you may omit both perspective flags but still
+	 *                    define <b>IN_SHARED_AREA</b>; the flags
+	 *                    <b>OUTSIDE_PERSPECTIVE | IN_SHARED_AREA</b> for example
+	 *                    will search the presentation <i>excluding</i> the elements
+	 *                    in perspective stacks.
+	 * @param matcher     An implementation of a Selector that will return true for
+	 *                    elements that it wants in the returned list.
 	 * @return The generically typed list of matching elements.
 	 *
 	 * @since 1.1
@@ -195,65 +196,63 @@ public interface EModelService {
 			int searchFlags, Selector matcher);
 
 	/**
-	 * Returns the first element, recursively searching under the specified search root (inclusive)
+	 * Returns the first element, recursively searching under the specified search
+	 * root (inclusive)
 	 *
-	 * @param id
-	 *            The id to search for, must not be null
-	 * @param searchRoot
-	 *            The element at which to start the search, must not be null
-	 * @return The first element with a matching id or <code>null</code> if one is not found
+	 * @param id         The id to search for, must not be null
+	 * @param searchRoot The element at which to start the search, must not be null
+	 * @return The first element with a matching id or <code>null</code> if one is
+	 *         not found
 	 */
 	MUIElement find(String id, MUIElement searchRoot);
 
 	/**
-	 * Locate the context that is closest to the given element in the parent hierarchy. It does not
-	 * include the context of the supplied element (should it have one).
+	 * Locate the context that is closest to the given element in the parent
+	 * hierarchy. It does not include the context of the supplied element (should it
+	 * have one).
 	 *
-	 * @param element
-	 *            the element to locate parent context for
+	 * @param element the element to locate parent context for
 	 * @return the containing context for this element
 	 */
 	IEclipseContext getContainingContext(MUIElement element);
 
 	/**
-	 * Brings the specified element to the top of its containment structure. If the specified
-	 * element is a top-level window, then it will be selected as the application's currently active
-	 * window. Otherwise, the element may merely be brought up to be seen by the user but not
-	 * necessarily have its containing window become the application's active window.
+	 * Brings the specified element to the top of its containment structure. If the
+	 * specified element is a top-level window, then it will be selected as the
+	 * application's currently active window. Otherwise, the element may merely be
+	 * brought up to be seen by the user but not necessarily have its containing
+	 * window become the application's active window.
 	 *
-	 * @param element
-	 *            The element to bring to the top
+	 * @param element The element to bring to the top
 	 */
 	void bringToTop(MUIElement element);
 
 	/**
 	 * Clones the element, creating a deep copy of its structure.
 	 *
-	 * NOTE: The cloned element gets the original element added into its 'transientData' map using
-	 * the CLONED_FROM_KEY key. This is useful in cases where there may be other information the
-	 * newly cloned element needs from the original.
+	 * NOTE: The cloned element gets the original element added into its
+	 * 'transientData' map using the CLONED_FROM_KEY key. This is useful in cases
+	 * where there may be other information the newly cloned element needs from the
+	 * original.
 	 *
-	 * @param element
-	 *            The element to clone
-	 * @param snippetContainer
-	 *            An optional MUIElement where the cloned snippet is to be saved. null if the clone
-	 *            need not be saved
+	 * @param element          The element to clone
+	 * @param snippetContainer An optional MUIElement where the cloned snippet is to
+	 *                         be saved. null if the clone need not be saved
 	 * @return The newly cloned element
 	 */
 	MUIElement cloneElement(MUIElement element, MSnippetContainer snippetContainer);
 
 	/**
-	 * If a snippet with the given id exists a clone is created and returned. returns
-	 * <code>null</code> if no snippet can be found.
+	 * If a snippet with the given id exists a clone is created and returned.
+	 * returns <code>null</code> if no snippet can be found.
 	 *
-	 * @param snippetContainer
-	 *            The container of the snippet to clone used
-	 * @param snippetId
-	 *            The element id of the snippet to clone
-	 * @param refWin
-	 *            The window that Placeholder references should be resolved using
+	 * @param snippetContainer The container of the snippet to clone used
+	 * @param snippetId        The element id of the snippet to clone
+	 * @param refWin           The window that Placeholder references should be
+	 *                         resolved using
 	 *
-	 * @return The cloned snippet or <code>null</code> if no snippet with the given id can be found
+	 * @return The cloned snippet or <code>null</code> if no snippet with the given
+	 *         id can be found
 	 */
 	MUIElement cloneSnippet(MSnippetContainer snippetContainer, String snippetId,
 			MWindow refWin);
@@ -261,10 +260,8 @@ public interface EModelService {
 	/**
 	 * Convenience method to find a snippet by id in a particular container
 	 *
-	 * @param snippetContainer
-	 *            The container to look in
-	 * @param id
-	 *            The id of the root element of the snippet
+	 * @param snippetContainer The container to look in
+	 * @param id               The id of the root element of the snippet
 	 * @return The root element of the snippet or <code>null</code> if none is found
 	 */
 	MUIElement findSnippet(MSnippetContainer snippetContainer, String id);
@@ -279,87 +276,71 @@ public interface EModelService {
 	int countRenderableChildren(MUIElement element);
 
 	/**
-	 * Given a containing MWindow find the MPlaceholder that is currently being used to host the
-	 * given element (if any)
+	 * Given a containing MWindow find the MPlaceholder that is currently being used
+	 * to host the given element (if any)
 	 *
-	 * @param window
-	 *            The containing window
-	 * @param element
-	 *            The element to find the MPlaceholder for
+	 * @param window  The containing window
+	 * @param element The element to find the MPlaceholder for
 	 * @return the MPlaceholder or null if none is found
 	 */
 	MPlaceholder findPlaceholderFor(MWindow window, MUIElement element);
 
 	/**
-	 * Move the element to a new location. The element will be placed at the end of the new parent's
-	 * list of children.
+	 * Move the element to a new location. The element will be placed at the end of
+	 * the new parent's list of children.
 	 *
-	 * @param element
-	 *            The element to move
-	 * @param newParent
-	 *            The new parent for the element.
+	 * @param element   The element to move
+	 * @param newParent The new parent for the element.
 	 */
 	<T extends MUIElement> void move(T element, MElementContainer<? super T> newParent);
 
 	/**
-	 * Move the element to a new location. The element will be placed at the end of the new parent's
-	 * list of children. If 'leavePlaceholder is true then an instance of MPlaceholder will be
-	 * inserted into the model at the element's original location.
+	 * Move the element to a new location. The element will be placed at the end of
+	 * the new parent's list of children. If 'leavePlaceholder is true then an
+	 * instance of MPlaceholder will be inserted into the model at the element's
+	 * original location.
 	 *
-	 * @param element
-	 *            The element to move
-	 * @param newParent
-	 *            The new parent for the element.
-	 * @param leavePlaceholder
-	 *            true if a placeholder for the element should be added
+	 * @param element          The element to move
+	 * @param newParent        The new parent for the element.
+	 * @param leavePlaceholder true if a placeholder for the element should be added
 	 */
 	<T extends MUIElement> void move(T element, MElementContainer<? super T> newParent,
 			boolean leavePlaceholder);
 
 	/**
-	 * Move the element to a new location. The element will be placed at the specified index in the
-	 * new parent's list of children.
+	 * Move the element to a new location. The element will be placed at the
+	 * specified index in the new parent's list of children.
 	 *
-	 * @param element
-	 *            The element to move
-	 * @param newParent
-	 *            The new parent for the element.
-	 * @param index
-	 *            The index to insert the element at; -1 means at the end
+	 * @param element   The element to move
+	 * @param newParent The new parent for the element.
+	 * @param index     The index to insert the element at; -1 means at the end
 	 */
 	<T extends MUIElement> void move(T element, MElementContainer<? super T> newParent, int index);
 
 	/**
-	 * Move the element to a new location. The element will be placed at the end of the new parent's
-	 * list of children.
+	 * Move the element to a new location. The element will be placed at the end of
+	 * the new parent's list of children.
 	 *
-	 * @param element
-	 *            The element to move
-	 * @param newParent
-	 *            The new parent for the element.
-	 * @param index
-	 *            The index to insert the element at; -1 means at the end
-	 * @param leavePlaceholder
-	 *            true if a placeholder for the element should be added
+	 * @param element          The element to move
+	 * @param newParent        The new parent for the element.
+	 * @param index            The index to insert the element at; -1 means at the
+	 *                         end
+	 * @param leavePlaceholder true if a placeholder for the element should be added
 	 */
 	<T extends MUIElement> void move(T element, MElementContainer<? super T> newParent, int index,
 			boolean leavePlaceholder);
 
 	/**
-	 * Inserts the given element into the UI Model by either creating a new sash
-	 * or augmenting an existing sash if the orientation permits.
+	 * Inserts the given element into the UI Model by either creating a new sash or
+	 * augmenting an existing sash if the orientation permits.
 	 *
-	 * @param toInsert
-	 *            The element to insert
-	 * @param relTo
-	 *            The element that the new one is to be relative to
-	 * @param where
-	 *            Indication of where the inserted element should be placed:
-	 *            {@link #LEFT_OF}, {@link #RIGHT_OF}, {@link #ABOVE},
-	 *            {@link #BELOW}.
-	 * @param ratio
-	 *            The percentage of the area to be occupied by the inserted
-	 *            element; should be a number greater than 0 and less than 1
+	 * @param toInsert The element to insert
+	 * @param relTo    The element that the new one is to be relative to
+	 * @param where    Indication of where the inserted element should be placed:
+	 *                 {@link #LEFT_OF}, {@link #RIGHT_OF}, {@link #ABOVE},
+	 *                 {@link #BELOW}.
+	 * @param ratio    The percentage of the area to be occupied by the inserted
+	 *                 element; should be a number greater than 0 and less than 1
 	 */
 	void insert(MPartSashContainerElement toInsert, MPartSashContainerElement relTo,
 			int where, float ratio);
@@ -367,107 +348,93 @@ public interface EModelService {
 	/**
 	 * Created a separate (detached) window containing the given element.
 	 *
-	 * @param mPartSashContainerElement
-	 *            The element to detach
-	 * @param x
-	 *            The X position of the new window
-	 * @param y
-	 *            The Y position of the new window
-	 * @param width
-	 *            The Width of the new window
-	 * @param height
-	 *            The Height of the new window
+	 * @param mPartSashContainerElement The element to detach
+	 * @param x                         The X position of the new window
+	 * @param y                         The Y position of the new window
+	 * @param width                     The Width of the new window
+	 * @param height                    The Height of the new window
 	 */
 	void detach(MPartSashContainerElement mPartSashContainerElement, int x, int y, int width, int height);
 
 	/**
-	 * Get the top-level window containing this UI element. A <code>null</code> return value
-	 * indicates that the element is not directly contained in the UI model (but may, for example,
-	 * be a model snippet hosted in a Dialog...)
+	 * Get the top-level window containing this UI element. A <code>null</code>
+	 * return value indicates that the element is not directly contained in the UI
+	 * model (but may, for example, be a model snippet hosted in a Dialog...)
 	 *
-	 * @param element
-	 *            The element to get the window for
+	 * @param element The element to get the window for
 	 *
-	 * @return the top-level window containing this UI element. A <code>null</code> return value
-	 *         indicates that the element is not directly contained in the UI model (but may, for
-	 *         example, be a model snippet hosted in a Dialog...)
+	 * @return the top-level window containing this UI element. A <code>null</code>
+	 *         return value indicates that the element is not directly contained in
+	 *         the UI model (but may, for example, be a model snippet hosted in a
+	 *         Dialog...)
 	 */
 	MWindow getTopLevelWindowFor(MUIElement element);
 
 	/**
-	 * @param element
-	 *            The element to get the perspective for
-	 * @return The MPerspective containing this element or <code>null</code> if the element is not
-	 *         in a perspective
+	 * @param element The element to get the perspective for
+	 * @return The MPerspective containing this element or <code>null</code> if the
+	 *         element is not in a perspective
 	 */
 	MPerspective getPerspectiveFor(MUIElement element);
 
 	/**
-	 * Returns the window's MTrimBar for the specified side. If necessary the bar will be created.
+	 * Returns the window's MTrimBar for the specified side. If necessary the bar
+	 * will be created.
 	 *
-	 * @param window
-	 *            The window to get the trim bar for
-	 * @param sv
-	 *            The value for the specified side
+	 * @param window The window to get the trim bar for
+	 * @param sv     The value for the specified side
 	 *
 	 * @return The appropriate trim bar
 	 */
 	MTrimBar getTrim(MTrimmedWindow window, SideValue sv);
 
 	/**
-	 * Return the active perspective for the given window. This is a convenience method that just
-	 * returns the MPerspectiveStack's selectedElement.
+	 * Return the active perspective for the given window. This is a convenience
+	 * method that just returns the MPerspectiveStack's selectedElement.
 	 *
-	 * @param window
-	 *            The window to determine the active perspective for.
+	 * @param window The window to determine the active perspective for.
 	 *
-	 * @return The active perspective or <code>null</code> if there is no MPerspectiveStack, it's
-	 *         empty or has no selected element.
+	 * @return The active perspective or <code>null</code> if there is no
+	 *         MPerspectiveStack, it's empty or has no selected element.
 	 */
 	MPerspective getActivePerspective(MWindow window);
 
 	/**
-	 * This is a convenience method that will clean the model of all traces of a given perspective.
-	 * There may be elements (i.e. minimized stacks...) in the window's trim that are associated
-	 * with a perspective as well as the need to properly clean up any detached windows associated
-	 * with the perspective.
+	 * This is a convenience method that will clean the model of all traces of a
+	 * given perspective. There may be elements (i.e. minimized stacks...) in the
+	 * window's trim that are associated with a perspective as well as the need to
+	 * properly clean up any detached windows associated with the perspective.
 	 *
-	 * @param persp
-	 *            the perspective to remove
-	 * @param window
-	 *            the window to remove it from
+	 * @param persp  the perspective to remove
+	 * @param window the window to remove it from
 	 */
 	void resetPerspectiveModel(MPerspective persp, MWindow window);
 
 	/**
 	 * Remove the given perspective completely from the model.
 	 *
-	 * @param persp
-	 *            the perspective to remove
-	 * @param window
-	 *            the window to remove it from
+	 * @param persp  the perspective to remove
+	 * @param window the window to remove it from
 	 */
 	void removePerspectiveModel(MPerspective persp, MWindow window);
 
 	/**
 	 * Count the number of 'toBeRendered' children
 	 *
-	 * @param container
-	 *            The container to check
+	 * @param container The container to check
 	 * @return The number of children whose toBeRendered flag is <code>true</code>
 	 *
 	 */
 	int toBeRenderedCount(MElementContainer<?> container);
 
 	/**
-	 * Get the container of the given element. This is a convenience method that will always return
-	 * the actual container for the element, even where the element's 'getParent' might return null
-	 * (trim, detached windows...)
+	 * Get the container of the given element. This is a convenience method that
+	 * will always return the actual container for the element, even where the
+	 * element's 'getParent' might return null (trim, detached windows...)
 	 *
-	 * @param element
-	 *            The element to get the container for
-	 * @return The element's container. This may be <code>null</code> if the element being checked
-	 *         is a snippet unattached to the UI Model itself.
+	 * @param element The element to get the container for
+	 * @return The element's container. This may be <code>null</code> if the element
+	 *         being checked is a snippet unattached to the UI Model itself.
 	 */
 	MUIElement getContainer(MUIElement element);
 
@@ -494,16 +461,17 @@ public interface EModelService {
 	/**
 	 * Returns the descriptor for the given part id.
 	 * <p>
-	 * <b>NOTE:</b> In order to support multiple instance parts there is a convention where the
-	 * part's id may be in the form 'partId:secondaryId'. If the given id contains a ':' then only
-	 * the substring before the ':' will be used to find the descriptor.
+	 * <b>NOTE:</b> In order to support multiple instance parts there is a
+	 * convention where the part's id may be in the form 'partId:secondaryId'. If
+	 * the given id contains a ':' then only the substring before the ':' will be
+	 * used to find the descriptor.
 	 * </p>
 	 * <p>
-	 * In order to support this convention it's required that no descriptor contain a ':' in its id
+	 * In order to support this convention it's required that no descriptor contain
+	 * a ':' in its id
 	 * </p>
 	 *
-	 * @param id
-	 *            The id of the descriptor to return
+	 * @param id The id of the descriptor to return
 	 * @return The descriptor matching the id or <code>null</code> if none exists
 	 */
 	MPartDescriptor getPartDescriptor(String id);
@@ -511,8 +479,7 @@ public interface EModelService {
 	/**
 	 * Creates a new part from the given descriptor.
 	 *
-	 * @param descriptor
-	 *            a part descriptor, must not be <code>null</code>
+	 * @param descriptor a part descriptor, must not be <code>null</code>
 	 * @return a new part
 	 * @see EPartService#createPart(String)
 	 * @since 1.5
@@ -520,58 +487,56 @@ public interface EModelService {
 	MPart createPart(MPartDescriptor descriptor);
 
 	/**
-	 * This method ensures that there will never be two placeholders for the same referenced element
-	 * visible in the presentation at the same time. It does this by hiding placeholders which are
-	 * contained in any MPerspective if there is a placeholder for the element in any 'shared' area
-	 * (i.e. visible regardless of which perspective is visible) by setting its 'toBeRendered' state
-	 * to <code>false</code>.
+	 * This method ensures that there will never be two placeholders for the same
+	 * referenced element visible in the presentation at the same time. It does this
+	 * by hiding placeholders which are contained in any MPerspective if there is a
+	 * placeholder for the element in any 'shared' area (i.e. visible regardless of
+	 * which perspective is visible) by setting its 'toBeRendered' state to
+	 * <code>false</code>.
 	 *
-	 * @param window
-	 *            The window to modify
-	 * @param perspective
-	 *            if non-null specifies the specific perspective to modify, otherwise all
-	 *            perspectives in the window are checked
+	 * @param window      The window to modify
+	 * @param perspective if non-null specifies the specific perspective to modify,
+	 *                    otherwise all perspectives in the window are checked
 	 */
 	void hideLocalPlaceholders(MWindow window, MPerspective perspective);
 
 	/**
-	 * Returns <code>true</code> iff the supplied element represents the single visible element in
-	 * the shared area. This method is used to test for this condition since (by convention) there
-	 * must be at least one stack in the shared area at all times.
+	 * Returns <code>true</code> iff the supplied element represents the single
+	 * visible element in the shared area. This method is used to test for this
+	 * condition since (by convention) there must be at least one stack in the
+	 * shared area at all times.
 	 *
-	 * @param stack
-	 *            The element to test
+	 * @param stack The element to test
 	 * @return <code>true</code> iff the element is the last visible stack
 	 */
 	boolean isLastEditorStack(MUIElement stack);
 
 	/**
-	 * Allows an element to be rendered in an arbitrary UI container (I.e. SWT Composite).
+	 * Allows an element to be rendered in an arbitrary UI container (I.e. SWT
+	 * Composite).
 	 *
-	 * @param element
-	 *            The element to be rendered.
-	 * @param hostWindow
-	 *            The MWindow the element is being hosted under. Must be non-nulland rendered.
-	 * @param uiContainer
-	 *            The UI container acting as the rendered element's parent. Must be non-null.
-	 * @param hostContext
-	 *            The IEclipseContext to use for hosting the element. Must be non-null.
+	 * @param element     The element to be rendered.
+	 * @param hostWindow  The MWindow the element is being hosted under. Must be
+	 *                    non-nulland rendered.
+	 * @param uiContainer The UI container acting as the rendered element's parent.
+	 *                    Must be non-null.
+	 * @param hostContext The IEclipseContext to use for hosting the element. Must
+	 *                    be non-null.
 	 */
 	void hostElement(MUIElement element, MWindow hostWindow, Object uiContainer,
 			IEclipseContext hostContext);
 
 	/**
-	 * Tests whether the given element is being 'hosted'. This method is used to allow UI Elements
-	 * to act as if they are contained within a given MWindow even though the element is not
-	 * actually structurally contained in that window's UI Model.
+	 * Tests whether the given element is being 'hosted'. This method is used to
+	 * allow UI Elements to act as if they are contained within a given MWindow even
+	 * though the element is not actually structurally contained in that window's UI
+	 * Model.
 	 *
-	 * @param element
-	 *            The element to test. Must be non-null.
-	 * @param hostWindow
-	 *            The window to test the element against. Must be non-null.
+	 * @param element    The element to test. Must be non-null.
+	 * @param hostWindow The window to test the element against. Must be non-null.
 	 *
-	 * @return <code>true</code> iff the given element or one of its ancestors is currently being
-	 *         hosted in the given MWindow.
+	 * @return <code>true</code> iff the given element or one of its ancestors is
+	 *         currently being hosted in the given MWindow.
 	 */
 	boolean isHostedElement(MUIElement element, MWindow hostWindow);
 }
