@@ -1428,7 +1428,8 @@ public class StackRenderer extends LazyStackRenderer implements IPreferenceChang
 			closeableElements += getCloseableSiblingParts(part).size();
 
 			if (closeableElements >= 2) {
-				needSeparatorAfterDetach = createSeparator(menu, needSeparatorAfterDetach);
+				// needSeparatorAfterDetach is not updated as it is not used anymore
+				createSeparator(menu, needSeparatorAfterDetach);
 				createMenuItem(menu, SWTRenderersMessages.menuCloseOthers, e -> closeSiblingParts(menu, true));
 
 				// create menu for parts on the left
