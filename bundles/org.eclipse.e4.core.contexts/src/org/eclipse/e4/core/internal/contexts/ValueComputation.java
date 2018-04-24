@@ -54,7 +54,7 @@ public class ValueComputation extends Computation {
 		if (cachedValue != NotAValue)
 			return cachedValue;
 		if (this.computing)
-			throw new RuntimeException("Cycle while computing value" + this.toString()); //$NON-NLS-1$
+			throw new RuntimeException("Cycle while computing value " + this.toString()); //$NON-NLS-1$
 
 		originatingContext.pushComputation(this);
 		computing = true;
