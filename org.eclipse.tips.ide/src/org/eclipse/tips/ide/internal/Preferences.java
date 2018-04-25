@@ -11,7 +11,9 @@
 package org.eclipse.tips.ide.internal;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
@@ -57,14 +59,19 @@ public class Preferences extends AbstractPreferenceInitializer {
 	/**
 	 * Loads the read tips from disk.
 	 * 
-	 * @return the integer array of read tips.
+	 * @return a map that stores the read tip hashes per provider.
 	 */
-	public static List<Integer> loadReadState() {
-		ArrayList<Integer> result = new ArrayList<>();
+	public static Map<String, List<Integer>> getReadState() {
+		HashMap<String, List<Integer>> result = new HashMap<>();
 		IEclipsePreferences node = ConfigurationScope.INSTANCE.getNode("org.eclipse.tips.ide.read");
 		try {
-			for (String key : node.keys()) {
-				result.add(Integer.valueOf(node.getInt(key, 0)));
+			for (String key : node.childrenNames()) {
+				ArrayList<Integer> tips = new ArrayList<>();
+				org.osgi.service.prefs.Preferences tipsNode = node.node(key);
+				for (String tipKey : tipsNode.keys()) {
+					tips.add(Integer.valueOf(tipsNode.getInt(tipKey, 0)));
+				}
+				result.put(key, tips);
 			}
 		} catch (BackingStoreException e) {
 			Status status = new Status(IStatus.ERROR, "org.eclipse.tips.ide", e.getMessage(), e);
@@ -79,11 +86,17 @@ public class Preferences extends AbstractPreferenceInitializer {
 	 * @param pReadTips the list with read tips
 	 * @return the status of the call
 	 */
-	public static IStatus saveReadState(List<Integer> pReadTips) {
+	public static IStatus saveReadState(Map<String, List<Integer>> pReadTips) {
 		try {
 			IEclipsePreferences node = ConfigurationScope.INSTANCE.getNode("org.eclipse.tips.ide.read");
+			for (String child : pReadTips.keySet()) {
+				if (node.nodeExists(child)) {
+					node.node(child).removeNode();
+				}
+			}
 			node.clear();
-			pReadTips.forEach(value -> node.putInt(value.toString(), value.intValue()));
+			pReadTips.forEach(
+					(key, tips) -> tips.forEach(value -> node.node(key).putInt(value.toString(), value.intValue())));
 			node.flush();
 			return Status.OK_STATUS;
 		} catch (BackingStoreException e) {

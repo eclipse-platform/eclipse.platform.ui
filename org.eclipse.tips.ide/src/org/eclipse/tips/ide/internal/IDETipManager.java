@@ -13,7 +13,9 @@ package org.eclipse.tips.ide.internal;
 import java.io.ByteArrayInputStream;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.xml.parsers.DocumentBuilderFactory;
 
@@ -48,7 +50,7 @@ public class IDETipManager extends DefaultTipManager {
 
 	private TipSourceProvider fSourceProvider = new TipSourceProvider();
 
-	private List<Integer> fReadTips = new ArrayList<>();
+	private Map<String, List<Integer>> fReadTips = new HashMap<>();
 
 	private boolean fNewTips;
 
@@ -97,7 +99,7 @@ public class IDETipManager extends DefaultTipManager {
 			evaluationService.addSourceProvider(fSourceProvider);
 			fSourceProviderAdded = true;
 		}
-		fReadTips.addAll(Preferences.loadReadState());
+		fReadTips = Preferences.getReadState();
 		return super.open(startUp);
 	}
 
@@ -107,7 +109,7 @@ public class IDETipManager extends DefaultTipManager {
 	 * @param pReadTips the tips to save
 	 *
 	 */
-	private void saveReadState(List<Integer> pReadTips) {
+	private void saveReadState(Map<String, List<Integer>> pReadTips) {
 		Job job = new Job("Tips save read state..") {
 			@Override
 			protected IStatus run(IProgressMonitor monitor) {
@@ -175,16 +177,22 @@ public class IDETipManager extends DefaultTipManager {
 
 	@Override
 	public boolean isRead(Tip tip) {
-		if (fReadTips.contains(Integer.valueOf(tip.hashCode()))) {
+		if (fReadTips.containsKey(tip.getProviderId())
+				&& fReadTips.get(tip.getProviderId()).contains(Integer.valueOf(tip.hashCode()))) {
 			return true;
 		}
 		return false;
 	}
 
 	@Override
-	public TipManager setAsRead(Tip tip) {
+	public synchronized TipManager setAsRead(Tip tip) {
 		if (!isRead(tip)) {
-			fReadTips.add(Integer.valueOf(tip.hashCode()));
+			List<Integer> readTips = fReadTips.get(tip.getProviderId());
+			if (readTips == null) {
+				readTips = new ArrayList<>();
+				fReadTips.put(tip.getProviderId(), readTips);
+			}
+			readTips.add(Integer.valueOf(tip.hashCode()));
 		}
 		return this;
 	}
@@ -201,7 +209,7 @@ public class IDETipManager extends DefaultTipManager {
 	public void dispose() {
 		try {
 			refreshUI();
-			saveReadState(Collections.unmodifiableList(fReadTips));
+			saveReadState(Collections.unmodifiableMap(fReadTips));
 		} finally {
 			super.dispose();
 		}

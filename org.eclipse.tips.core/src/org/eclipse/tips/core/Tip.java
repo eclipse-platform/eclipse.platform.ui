@@ -20,9 +20,9 @@ import java.util.List;
  *
  */
 public abstract class Tip {
-	
+
 	private String providerId;
-	
+
 	private final List<TipAction> fActions = new ArrayList<>();
 
 	/**
@@ -35,15 +35,10 @@ public abstract class Tip {
 	}
 
 	/**
-	 * For the sanity of the Framework, Tips should be created really fast.
-	 *
-	 * @param pProvider
-	 *            the associated {@link TipProvider}
-	 * @param actions
-	 *            the list of actions which may not be null
+	 * @return the id of the provider that created this tip.
 	 */
-	public Tip(List<TipAction> actions) {
-		fActions.addAll(actions);
+	public String getProviderId() {
+		return providerId;
 	}
 
 	/**
@@ -63,7 +58,6 @@ public abstract class Tip {
 	 * @return the date this tip was published which may not be null.
 	 */
 	public abstract Date getCreationDate();
-
 
 	/**
 	 * @return the subject which may not be null.
