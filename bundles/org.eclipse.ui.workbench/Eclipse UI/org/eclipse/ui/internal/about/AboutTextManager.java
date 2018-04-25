@@ -39,7 +39,7 @@ public class AboutTextManager {
         ArrayList linkRanges = new ArrayList();
         ArrayList links = new ArrayList();
 
-        // slightly modified version of jface url detection
+		// Slightly modified version of JFace URL detection,
         // see org.eclipse.jface.text.hyperlink.URLHyperlinkDetector
 
 		int urlSeparatorOffset= s.indexOf("://"); //$NON-NLS-1$
