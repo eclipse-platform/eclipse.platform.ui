@@ -18,19 +18,17 @@ import org.eclipse.ui.views.markers.internal.MarkerMessages;
 
 class MarkerCategory extends MarkerSupportItem {
 
-	boolean refreshing;
+	final int start;
 
-	int start;
+	final int end;
 
-	int end;
+	private volatile MarkerEntry[] children;
 
-	MarkerEntry[] children;
-
-	private String name;
+	private final String name;
 
 	private int severity = -1;
 
-	private Markers markers;
+	private final Markers markers;
 
 	/**
 	 * Create a new instance of the receiver that has the markers between
@@ -46,22 +44,36 @@ class MarkerCategory extends MarkerSupportItem {
 		this.markers = markers;
 		start = startIndex;
 		end = endIndex;
-		refreshing=false;
 		name = categoryName;
 	}
 
 	@Override
 	MarkerSupportItem[] getChildren() {
-		if (children == null) {
-			MarkerItem[] allMarkers = markers.getMarkerEntryArray();
-			int totalSize = getChildrenCount();
-			children = new MarkerEntry[totalSize];
-			System.arraycopy(allMarkers, start, children, 0, totalSize);
-			for (MarkerEntry markerEntry : children) {
-				markerEntry.setCategory(this);
-			}
+		MarkerEntry[] myChildren = children;
+		if (myChildren != null) {
+			return myChildren;
 		}
-		return children;
+		MarkerItem[] allMarkers = markers.getMarkerEntryArray();
+		int markersLength = allMarkers.length;
+		if (start >= markersLength || end >= markersLength) {
+			// NB: the array can be changed after our creation via
+			// markers::updateWithNewMarkers so that the expected array size doesn't match
+			// anymore to our start/end values. Just return nothing in this case and let the
+			// "children" be null to avoid persistence of inconsistent data
+			return new MarkerEntry[0];
+		}
+		int totalSize = getChildrenCount();
+		myChildren = new MarkerEntry[totalSize];
+		System.arraycopy(allMarkers, start, myChildren, 0, totalSize);
+		for (MarkerEntry markerEntry : myChildren) {
+			markerEntry.setCategory(this);
+		}
+		children = myChildren;
+		return myChildren;
+	}
+
+	void resetChildren() {
+		children = null;
 	}
 
 	@Override

@@ -158,7 +158,7 @@ class Markers {
 					}
 					lastCategory = category;
 					// sort various categories
-					category.children = null; // reset cached children
+					category.resetChildren(); // reset cached children
 					int avaliable = category.end - category.start + 1;
 					int effLimit = getShowingLimit(avaliable);
 					MarkerSortUtil.sortStartingKElement(markerEntryArray,
