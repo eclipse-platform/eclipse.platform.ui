@@ -497,7 +497,7 @@ public class WizardFileSystemResourceExportPage1 extends
     	// there must be some resources selected for Export
     	boolean isValid = true;
         List resourcesToExport = getWhiteCheckedResources();
-    	if (resourcesToExport.size() == 0){
+    	if (resourcesToExport.isEmpty()){
     		setErrorMessage(DataTransferMessages.FileExport_noneSelected);
             isValid =  false;
     	} else {

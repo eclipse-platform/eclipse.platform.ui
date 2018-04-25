@@ -58,7 +58,7 @@ class MarkerResourceUtil {
 			Collection<MarkerFieldFilterGroup> enabledFilters, boolean andFilters) {
 		IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
 
-		if (enabledFilters==null||enabledFilters.size() == 0) {
+		if (enabledFilters==null||enabledFilters.isEmpty()) {
 			HashSet<IResource> set = new HashSet<>(1);
 			set.add(root);
 			return set;
@@ -122,7 +122,7 @@ class MarkerResourceUtil {
 	 */
 	static Set<IResource> getResourcesFiltersOred(Collection<MarkerFieldFilterGroup> enabledFilters,
 			IResource[] selectedResources, IWorkspaceRoot root) {
-		if (enabledFilters==null||enabledFilters.size() == 0) {
+		if (enabledFilters==null||enabledFilters.isEmpty()) {
 			HashSet<IResource> set = new HashSet<>(1);
 			set.add(root);
 			return set;
@@ -164,7 +164,7 @@ class MarkerResourceUtil {
 	 */
 	static Set<IResource> getResourcesFiltersAnded(Collection<MarkerFieldFilterGroup> enabledFilters,
 			IResource[] selectedResources, IWorkspaceRoot root) {
-		if (enabledFilters==null||enabledFilters.size() == 0) {
+		if (enabledFilters==null||enabledFilters.isEmpty()) {
 			HashSet<IResource> set = new HashSet<>(1);
 			set.add(root);
 			return set;

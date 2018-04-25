@@ -145,7 +145,7 @@ public class NavigatorContentServiceLabelProvider extends EventManager
 	@Override
 	public StyledString getStyledText(Object anElement) {
 		Collection extensions = contentService.findPossibleLabelExtensions(anElement);
-		if (extensions.size() == 0)
+		if (extensions.isEmpty())
 			return new StyledString(NLS.bind(CommonNavigatorMessages.NavigatorContentServiceLabelProvider_Error_no_label_provider_for_0_, makeSmallString(anElement)));
 
 		StyledString text = null;

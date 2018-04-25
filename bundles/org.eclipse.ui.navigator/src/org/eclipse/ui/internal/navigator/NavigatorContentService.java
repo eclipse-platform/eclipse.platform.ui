@@ -258,7 +258,7 @@ public class NavigatorContentService implements IExtensionActivationListener,
 			}
 		}
 
-		if (boundDescriptors.size() == 0) {
+		if (boundDescriptors.isEmpty()) {
 			return NO_DESCRIPTORS;
 		}
 
@@ -462,7 +462,7 @@ public class NavigatorContentService implements IExtensionActivationListener,
 	public ILabelProvider[] findRelevantLabelProviders(Object anElement) {
 		Collection<NavigatorContentExtension> extensions = findPossibleLabelExtensions(anElement);
 
-		if (extensions.size() == 0) {
+		if (extensions.isEmpty()) {
 			return NO_LABEL_PROVIDERS;
 		}
 		List<ICommonLabelProvider> resultProvidersList = new ArrayList<ICommonLabelProvider>();
@@ -1070,7 +1070,7 @@ public class NavigatorContentService implements IExtensionActivationListener,
 
 	private void notifyListeners(final NavigatorContentExtension aDescriptorInstance) {
 
-		if (listeners.size() == 0) {
+		if (listeners.isEmpty()) {
 			return;
 		}
 
@@ -1099,7 +1099,7 @@ public class NavigatorContentService implements IExtensionActivationListener,
 
 	private ITreeContentProvider[] extractContentProviders(
 			Set<NavigatorContentExtension> theDescriptorInstances) {
-		if (theDescriptorInstances.size() == 0) {
+		if (theDescriptorInstances.isEmpty()) {
 			return NO_CONTENT_PROVIDERS;
 		}
 		List<SafeDelegateTreeContentProvider> resultProvidersList = new ArrayList<SafeDelegateTreeContentProvider>();
@@ -1112,7 +1112,7 @@ public class NavigatorContentService implements IExtensionActivationListener,
 
 	private Set<NavigatorContentExtension> extractDescriptorInstances(Set<INavigatorContentDescriptor> theDescriptors,
 			boolean toLoadAllIfNecessary) {
-		if (theDescriptors.size() == 0) {
+		if (theDescriptors.isEmpty()) {
 			return Collections.EMPTY_SET;
 		}
 		Set<NavigatorContentExtension> resultInstances = new TreeSet<NavigatorContentExtension>(ExtensionSequenceNumberComparator.INSTANCE);

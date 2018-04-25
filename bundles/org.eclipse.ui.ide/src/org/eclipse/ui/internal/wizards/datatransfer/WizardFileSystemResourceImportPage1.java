@@ -1249,7 +1249,7 @@ public class WizardFileSystemResourceImportPage1 extends WizardResourceImportPag
         }
 
         List resourcesToExport = selectionGroup.getAllWhiteCheckedItems();
-        if (resourcesToExport.size() == 0){
+        if (resourcesToExport.isEmpty()){
         	setMessage(null);
         	setErrorMessage(DataTransferMessages.FileImport_noneSelected);
         	return false;

@@ -752,7 +752,7 @@ public class BindingPersistence extends PreferencePersistence {
 			}
 		}
 
-		if(bindings.size() == 0) {
+		if(bindings.isEmpty()) {
 			// no modifier was applied/error occurred  ...
 			KeyBinding binding = new KeyBinding(keySequence,
 					parameterizedCommand, schemeId, contextId, locale,

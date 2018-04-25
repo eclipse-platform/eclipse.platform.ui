@@ -1347,7 +1347,7 @@ public class ExtendedMarkersView extends ViewPart {
 	void updateStatusLine(IStructuredSelection newSelection) {
 		String message;
 
-		if (newSelection == null || newSelection.size() == 0) {
+		if (newSelection == null || newSelection.isEmpty()) {
 			message = MarkerSupportInternalUtilities.EMPTY_STRING;
 		} else if (newSelection.size() == 1) {
 			// Use the Message attribute of the marker

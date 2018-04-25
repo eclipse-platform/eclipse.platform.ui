@@ -554,7 +554,7 @@ public class MarkerGroup {
 			}
 		}
 		entries.removeAll(removed);
-		if (entries.size() == 0) {
+		if (entries.isEmpty()) {
 			typesToMappings.remove(type);
 		}
 	}

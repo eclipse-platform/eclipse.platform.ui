@@ -40,7 +40,7 @@ public class FiltersContribution extends MarkersContribution {
 
 		Collection<MarkerFieldFilterGroup> groups = view.getAllFilters();
 
-		if (groups.size() == 0) {
+		if (groups.isEmpty()) {
 			return new IContributionItem[0];
 		}
 

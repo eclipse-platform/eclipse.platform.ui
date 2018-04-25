@@ -180,7 +180,7 @@ public class PerspectiveBuilder {
 
 	private void addTrimBars() {
 		Map<String, Integer> fastViewBars = perspReader.getFastViewBars();
-		if (fastViewBars.size() == 0 && defaultFastViews.size() == 0) {
+		if (fastViewBars.isEmpty() && defaultFastViews.isEmpty()) {
 			return;
 		}
 
@@ -428,7 +428,7 @@ public class PerspectiveBuilder {
 			psc.getChildren().add(stack);
 			List<MPartSashContainer> list = modelService.findElements(perspective, null, MPartSashContainer.class,
 					null);
-			if (list == null || list.size() == 0) {
+			if (list == null || list.isEmpty()) {
 				perspective.getChildren().add(psc);
 			} else {
 				int size = list.size();

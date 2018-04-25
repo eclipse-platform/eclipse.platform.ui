@@ -80,7 +80,7 @@ public class CommonFilterDescriptorManager {
 				visibleFilters.add(descriptor);
 			}
 		}
-		if (visibleFilters.size() == 0) {
+		if (visibleFilters.isEmpty()) {
 			return NO_FILTER_DESCRIPTORS;
 		}
 		return visibleFilters

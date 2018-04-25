@@ -831,7 +831,7 @@ public abstract class FilteredItemsSelectionDialog extends SelectionStatusDialog
 
 		currentSelection = selection.toArray();
 
-		if (selection.size() == 0) {
+		if (selection.isEmpty()) {
 			status = new Status(IStatus.ERROR, PlatformUI.PLUGIN_ID,
 					IStatus.ERROR, EMPTY_STRING, null);
 

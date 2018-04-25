@@ -661,7 +661,7 @@ public abstract class AbstractWorkingSetManager extends EventManager implements
 						for (WorkingSetDescriptor descriptor : descriptors) {
 							List workingSets = getWorkingSetsForId(descriptor
 									.getId());
-							if (workingSets.size() == 0) {
+							if (workingSets.isEmpty()) {
 								continue;
 							}
 							final IWorkingSetUpdater updater = getUpdater(descriptor);

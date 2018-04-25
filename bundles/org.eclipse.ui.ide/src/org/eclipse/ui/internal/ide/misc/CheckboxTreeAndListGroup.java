@@ -810,7 +810,7 @@ public class CheckboxTreeAndListGroup extends EventManager implements
 						Object key1 = entry.getKey();
 				        //Replace the items in the checked state store with those from the supplied items
 						List selections = entry.getValue();
-				        if (selections.size() == 0) {
+				        if (selections.isEmpty()) {
 							//If it is empty remove it from the list
 				            checkedStateStore.remove(key1);
 						} else {

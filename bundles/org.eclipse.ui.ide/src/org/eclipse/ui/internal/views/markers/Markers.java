@@ -81,7 +81,7 @@ class Markers {
 				markerToEntryMap = null;
 			}
 			markerCounts = null;
-			if (markerEntries.size() == 0) {
+			if (markerEntries.isEmpty()) {
 				categories = EMPTY_CATEGORY_ARRAY;
 				markerEntryArray = EMPTY_ENTRY_ARRAY;
 				return true;

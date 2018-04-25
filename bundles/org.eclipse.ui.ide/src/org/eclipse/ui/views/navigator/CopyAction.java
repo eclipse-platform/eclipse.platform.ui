@@ -194,7 +194,7 @@ import org.eclipse.ui.part.ResourceTransfer;
 		}
 
 		List<? extends IResource> selectedResources = getSelectedResources();
-        if (selectedResources.size() == 0) {
+        if (selectedResources.isEmpty()) {
 			return false;
 		}
 

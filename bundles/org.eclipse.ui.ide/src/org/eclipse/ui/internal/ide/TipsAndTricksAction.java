@@ -81,7 +81,7 @@ public class TipsAndTricksAction extends PartEventAction implements
 
         Shell shell = workbenchWindow.getShell();
 
-        if (tipsAndTricksFeatures.size() == 0) {
+        if (tipsAndTricksFeatures.isEmpty()) {
             MessageDialog.openInformation(shell, IDEWorkbenchMessages.TipsAndTricksMessageDialog_title,
                     IDEWorkbenchMessages.TipsAndTricksMessageDialog_message);
             return;

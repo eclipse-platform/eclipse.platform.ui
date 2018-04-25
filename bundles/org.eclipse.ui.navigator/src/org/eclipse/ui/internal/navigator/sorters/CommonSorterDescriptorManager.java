@@ -95,7 +95,7 @@ public class CommonSorterDescriptorManager {
 				applicableSorters.add(descriptor);
 			}
 		}
-		if (applicableSorters.size() == 0) {
+		if (applicableSorters.isEmpty()) {
 			return NO_SORTER_DESCRIPTORS;
 		}
 		return applicableSorters
@@ -113,7 +113,7 @@ public class CommonSorterDescriptorManager {
 	public CommonSorterDescriptor[] findApplicableSorters(INavigatorContentDescriptor theSource) {
 
 		Set<CommonSorterDescriptor> sorters = getCommonSorters(theSource);
-		if (sorters.size() == 0) {
+		if (sorters.isEmpty()) {
 			return NO_SORTER_DESCRIPTORS;
 		}
 		return sorters

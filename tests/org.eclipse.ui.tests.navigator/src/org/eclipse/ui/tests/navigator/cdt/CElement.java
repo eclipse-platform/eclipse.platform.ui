@@ -59,7 +59,7 @@ public class CElement implements IAdaptable {
 
 	public List getChildren() {
 		try {
-			if (_children.size() == 0 && _resource instanceof IContainer) {
+			if (_children.isEmpty() && _resource instanceof IContainer) {
 				IResource members[] = ((IContainer) _resource).members();
 				for (int i = 0; i < members.length; i++) {
 					if (members[i] instanceof IProject)

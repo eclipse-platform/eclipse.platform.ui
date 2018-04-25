@@ -341,7 +341,7 @@ public class NavigatorContentExtension implements IMementoAware,
 				overridingExtensions.add(contentService.getExtension(overridingDescriptor));
 			}
 		}
-		if (overridingExtensions.size() == 0) {
+		if (overridingExtensions.isEmpty()) {
 			return NO_EXTENSIONS;
 		}
 		if (Policy.DEBUG_EXTENSION_SETUP) {

@@ -67,7 +67,7 @@ public class LinkHelperService {
 		for (LinkHelperDescriptor descriptor : descriptors) {
 			helpers.add(getLinkHelper(descriptor));
 		}
-		if (helpers.size() == 0)
+		if (helpers.isEmpty())
 			return CANT_GET_NO_HELP;
 		return (ILinkHelper[]) helpers.toArray(new ILinkHelper[helpers.size()]);
 
@@ -91,7 +91,7 @@ public class LinkHelperService {
 		for (LinkHelperDescriptor descriptor : descriptors) {
 			helpers.add(getLinkHelper(descriptor));
 		}
-		if (helpers.size() == 0)
+		if (helpers.isEmpty())
 			return CANT_GET_NO_HELP;
 		return (ILinkHelper[]) helpers.toArray(new ILinkHelper[helpers.size()]);
 	}

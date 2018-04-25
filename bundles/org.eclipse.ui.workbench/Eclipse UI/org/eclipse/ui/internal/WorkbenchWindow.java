@@ -1177,7 +1177,7 @@ STATUS_LINE_ID, model);
 			}
 		}
 
-		if (items.size() == 0)
+		if (items.isEmpty())
 			return;
 
 		// Iterate over the items until they've all been placed or until

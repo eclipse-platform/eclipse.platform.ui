@@ -506,7 +506,7 @@ public class WizardArchiveFileResourceImportPage1 extends
         }
 
         List resourcesToExport = selectionGroup.getAllWhiteCheckedItems();
-        if (resourcesToExport.size() == 0){
+        if (resourcesToExport.isEmpty()){
         	setErrorMessage(DataTransferMessages.FileImport_noneSelected);
         	return false;
         }

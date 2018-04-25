@@ -115,7 +115,7 @@ public class TabbedPropertyViewer extends StructuredViewer {
 	 */
 	@Override
 	protected void setSelectionToWidget(List l, boolean reveal) {
-		if (l == null || l.size() == 0) { // clear selection
+		if (l == null || l.isEmpty()) { // clear selection
 			list.deselectAll();
 		} else {
 			Object object = l.get(0);

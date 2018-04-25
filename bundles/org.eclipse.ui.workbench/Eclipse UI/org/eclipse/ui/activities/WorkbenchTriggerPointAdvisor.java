@@ -188,7 +188,7 @@ public class WorkbenchTriggerPointAdvisor implements ITriggerPointAdvisor,
 	protected boolean doComputeEnablement(IActivityManager activityManager,
 			IIdentifier identifier, boolean disabledExpressionActivitiesTakePrecedence) {
 		final Set activityIds = identifier.getActivityIds();
-		if (activityIds.size() == 0) {
+		if (activityIds.isEmpty()) {
 			return true;
 		}
 

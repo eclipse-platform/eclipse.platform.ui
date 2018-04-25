@@ -125,7 +125,7 @@ public class QuickStartAction extends Action implements
 
         Shell shell = workbenchWindow.getShell();
 
-        if (welcomeFeatures.size() == 0) {
+        if (welcomeFeatures.isEmpty()) {
             MessageDialog.openInformation(shell, IDEWorkbenchMessages.QuickStartMessageDialog_title,
                     IDEWorkbenchMessages.QuickStartMessageDialog_message);
             return null;

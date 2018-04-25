@@ -166,7 +166,7 @@ public class FileEditorMapping extends Object implements IFileEditorMapping,
 
     @Override
 	public IEditorDescriptor getDefaultEditor() {
-        if (editors.size() == 0 || WorkbenchActivityHelper.restrictUseOf(editors.get(0))) {
+        if (editors.isEmpty() || WorkbenchActivityHelper.restrictUseOf(editors.get(0))) {
 			return null;
 		}
         return editors.get(0);

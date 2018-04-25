@@ -170,7 +170,7 @@ public class NavigatorFilterService implements INavigatorFilterService {
 		/* return the enforced viewer filters always */
 		filters.addAll(enforcedViewerFilters);
 
-		if (filters.size() == 0) {
+		if (filters.isEmpty()) {
 			return NO_FILTERS;
 		}
 		return filters

@@ -908,7 +908,7 @@ public class TabbedPropertySheetPage
 		}
 
 		IStructuredSelection structuredSelection = (IStructuredSelection) selection;
-		if (structuredSelection.size() == 0) {
+		if (structuredSelection.isEmpty()) {
 			return;
 		}
 

@@ -341,7 +341,7 @@ public final class NavigatorActivationService implements
 			setActive(deactivatedExtensions, false);
 		}
 
-		if (activatedDescriptors.size() == 0) {
+		if (activatedDescriptors.isEmpty()) {
 			return NO_DESCRIPTORS;
 		}
 		return activatedDescriptors
@@ -378,7 +378,7 @@ public final class NavigatorActivationService implements
 			}
 			setActive(activatedExtensions,	true);
 		}
-		if (activatedDescriptors.size() == 0) {
+		if (activatedDescriptors.isEmpty()) {
 			return NO_DESCRIPTORS;
 		}
 

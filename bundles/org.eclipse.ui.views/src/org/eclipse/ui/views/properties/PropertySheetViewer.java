@@ -1086,7 +1086,7 @@ class PropertySheetViewer extends Viewer {
 		List<IPropertySheetEntry> childEntries = getFilteredEntries(rootEntry.getChildEntries());
 
 		// if the list is empty, just set an empty categories array
-		if (childEntries.size() == 0) {
+		if (childEntries.isEmpty()) {
 			categories = new PropertySheetCategory[0];
 			return;
 		}

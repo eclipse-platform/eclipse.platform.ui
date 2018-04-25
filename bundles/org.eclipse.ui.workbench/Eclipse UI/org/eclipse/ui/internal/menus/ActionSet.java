@@ -447,7 +447,7 @@ public class ActionSet {
 		}
 		MElementContainer<MMenuElement> item = (MElementContainer<MMenuElement>) menu.getChildren()
 				.get(idx);
-		if (item.getChildren().size() == 0) {
+		if (item.getChildren().isEmpty()) {
 			if (segment + 1 == menuPath.segmentCount()) {
 				return menu;
 			}

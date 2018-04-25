@@ -222,6 +222,6 @@ public class FileSystemSupportRegistry implements IExtensionChangeHandler {
 	 * @return <code>true</code> if there is only one file system.
 	 */
 	public boolean hasOneFileSystem() {
-		return registeredContributions.size() == 0;
+		return registeredContributions.isEmpty();
 	}
 }

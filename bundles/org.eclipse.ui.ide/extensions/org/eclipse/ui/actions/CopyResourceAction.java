@@ -282,7 +282,7 @@ public class CopyResourceAction extends SelectionListenerAction implements
 
         // to enable this command all selected resources must be siblings
 		List<? extends IResource> selectedResources = getSelectedResources();
-        if (selectedResources.size() == 0) {
+        if (selectedResources.isEmpty()) {
 			return false;
 		}
         IContainer firstParent = ((IResource) selectedResources.get(0))

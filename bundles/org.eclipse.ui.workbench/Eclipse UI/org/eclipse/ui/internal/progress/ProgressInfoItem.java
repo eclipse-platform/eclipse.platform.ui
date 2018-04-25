@@ -746,7 +746,7 @@ public class ProgressInfoItem extends Composite {
 			link = new Link(this, SWT.NONE);
 
 			FormData linkData = new FormData();
-			if (index == 0 || taskEntries.size() == 0) {
+			if (index == 0 || taskEntries.isEmpty()) {
 				Control top = progressBar;
 				if (top == null) {
 					top = progressLabel;

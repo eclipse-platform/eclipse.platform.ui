@@ -301,7 +301,7 @@ public class TabbedPropertyRegistry {
 				result.add(filteredDescriptor);
 			}
 		}
-		if (result.size() == 0) {
+		if (result.isEmpty()) {
 			return EMPTY_DESCRIPTOR_ARRAY;
 		}
 		return (ITabDescriptor[]) result.toArray(new ITabDescriptor[result
@@ -428,7 +428,7 @@ public class TabbedPropertyRegistry {
 	 * Sorts the tab descriptors in the given list according to afterTab.
 	 */
 	protected List sortTabDescriptorsByAfterTab(List tabs) {
-		if (tabs.size() == 0 || propertyCategories == null) {
+		if (tabs.isEmpty() || propertyCategories == null) {
 			return tabs;
 		}
 		List sorted = new ArrayList();

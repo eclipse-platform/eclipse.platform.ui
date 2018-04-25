@@ -420,7 +420,7 @@ public abstract class ObjectContributorManager implements IExtensionChangeHandle
 		}
 		if (objectList == null) {
 			objectList = addContributorsFor(objectClass);
-			if (objectList.size() == 0) {
+			if (objectList.isEmpty()) {
 				objectList = Collections.EMPTY_LIST;
 			}
 			else {
@@ -449,7 +449,7 @@ public abstract class ObjectContributorManager implements IExtensionChangeHandle
 		}
 		if (resourceList == null) {
 			resourceList = addContributorsFor(resourceClass);
-			if (resourceList.size() == 0) {
+			if (resourceList.isEmpty()) {
 				resourceList = Collections.EMPTY_LIST;
 			} else {
 				resourceList = Collections.unmodifiableList(filterOnlyAdaptableContributors(resourceList));
@@ -484,7 +484,7 @@ public abstract class ObjectContributorManager implements IExtensionChangeHandle
 			}
 			else {
 				adaptableList = (List) contributors.get(adapterType);
-				if (adaptableList == null || adaptableList.size() == 0) {
+				if (adaptableList == null || adaptableList.isEmpty()) {
 					adaptableList = Collections.EMPTY_LIST;
 				} else {
 					adaptableList = Collections.unmodifiableList(filterOnlyAdaptableContributors(adaptableList));
@@ -666,7 +666,7 @@ public abstract class ObjectContributorManager implements IExtensionChangeHandle
      * for the given collection of objects.
      */
     private List getCommonClasses(List objects, List commonAdapters) {
-        if (objects == null || objects.size() == 0) {
+        if (objects == null || objects.isEmpty()) {
 			return null;
 		}
 
@@ -874,7 +874,7 @@ public abstract class ObjectContributorManager implements IExtensionChangeHandle
      * themselves so as to prevent double registration of actions.
      */
     private Class getCommonResourceClass(List objects) {
-        if (objects == null || objects.size() == 0) {
+        if (objects == null || objects.isEmpty()) {
             return null;
         }
         Class resourceClass = LegacyResourceSupport.getResourceClass();
@@ -913,7 +913,7 @@ public abstract class ObjectContributorManager implements IExtensionChangeHandle
      * Return the ResourceMapping class if the elements all adapt to it.
      */
     private Class getResourceMappingClass(List objects) {
-        if (objects == null || objects.size() == 0) {
+        if (objects == null || objects.isEmpty()) {
             return null;
         }
         Class resourceMappingClass = LegacyResourceSupport
@@ -951,7 +951,7 @@ public abstract class ObjectContributorManager implements IExtensionChangeHandle
      * collection of objects.
      */
     private Class getCommonClass(List objects) {
-        if (objects == null || objects.size() == 0) {
+        if (objects == null || objects.isEmpty()) {
 			return null;
 		}
         Class commonClass = objects.get(0).getClass();

@@ -82,7 +82,7 @@ class Binding {
 	}
 
 	boolean isRootExtension(String anExtensionId) {
-		if (rootPatterns.size() == 0) {
+		if (rootPatterns.isEmpty()) {
 			return false;
 		}
 		// Have we seen this pattern before?

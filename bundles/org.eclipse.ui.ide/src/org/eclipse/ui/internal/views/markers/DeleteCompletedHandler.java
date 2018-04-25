@@ -41,7 +41,7 @@ public class DeleteCompletedHandler extends MarkerViewHandler {
 
 		final List<IMarker> completed = getCompletedTasks(view);
 		// Check if there is anything to do
-		if (completed.size() == 0) {
+		if (completed.isEmpty()) {
 			MessageDialog.openInformation(view.getSite().getShell(),
 					MarkerMessages.deleteCompletedTasks_dialogTitle,
 					MarkerMessages.deleteCompletedTasks_noneCompleted);

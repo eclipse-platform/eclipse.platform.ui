@@ -91,7 +91,7 @@ public class PropertyPageContributorManager extends ObjectContributorManager {
 		} else
 			result = getContributors(object);
 
-		if (result == null || result.size() == 0) {
+		if (result == null || result.isEmpty()) {
 			return false;
 		}
 

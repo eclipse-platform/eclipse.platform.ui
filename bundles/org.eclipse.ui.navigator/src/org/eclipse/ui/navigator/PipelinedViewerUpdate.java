@@ -102,7 +102,7 @@ public final class PipelinedViewerUpdate {
 			properties.remove(aTarget);
 		}
 
-		if (properties.size() == 0) {
+		if (properties.isEmpty()) {
 			properties = null;
 		}
 

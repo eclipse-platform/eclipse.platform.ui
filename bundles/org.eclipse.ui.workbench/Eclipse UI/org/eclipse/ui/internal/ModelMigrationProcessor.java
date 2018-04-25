@@ -59,7 +59,7 @@ public class ModelMigrationProcessor {
 				break;
 			}
 		}
-		if (toBeRemoved.size() == 0) {
+		if (toBeRemoved.isEmpty()) {
 			return;
 		}
 		List<MHandler> handlers = application.getHandlers();

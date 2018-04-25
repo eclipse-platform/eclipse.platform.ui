@@ -71,7 +71,7 @@ public class LinkHelperManager {
 				helpersList.add(descriptor);
 			}
 		}
-		if (helpersList.size() == 0) {
+		if (helpersList.isEmpty()) {
 			return NO_DESCRIPTORS;
 		}
 		return helpersList
@@ -104,7 +104,7 @@ public class LinkHelperManager {
 				helpersList.add(descriptor);
 			}
 		}
-		if (helpersList.size() == 0) {
+		if (helpersList.isEmpty()) {
 			return NO_DESCRIPTORS;
 		}
 		return helpersList

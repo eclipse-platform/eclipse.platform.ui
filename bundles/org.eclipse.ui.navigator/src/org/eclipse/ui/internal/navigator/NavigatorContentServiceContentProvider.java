@@ -133,7 +133,7 @@ public class NavigatorContentServiceContentProvider implements ITreeContentProvi
 
 	private Object[] internalGetChildren(final Object aParentElement,
 			final Object aParentElementOrPath, final Set enabledExtensions, final boolean elements) {
-		if (enabledExtensions.size() == 0) {
+		if (enabledExtensions.isEmpty()) {
 			return NO_CHILDREN;
 		}
 		final Set finalSet = new LinkedHashSet();

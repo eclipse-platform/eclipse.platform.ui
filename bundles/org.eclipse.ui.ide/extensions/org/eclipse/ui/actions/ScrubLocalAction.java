@@ -79,6 +79,6 @@ public class ScrubLocalAction extends WorkspaceAction {
     @Override
 	protected boolean updateSelection(IStructuredSelection s) {
         return super.updateSelection(s)
-                && getSelectedNonResources().size() == 0;
+                && getSelectedNonResources().isEmpty();
     }
 }
