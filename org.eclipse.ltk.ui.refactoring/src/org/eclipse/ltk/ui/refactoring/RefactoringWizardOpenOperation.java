@@ -13,6 +13,7 @@ package org.eclipse.ltk.ui.refactoring;
 import java.lang.reflect.InvocationTargetException;
 
 import org.eclipse.swt.custom.BusyIndicator;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 
 import org.eclipse.core.runtime.Assert;
@@ -200,7 +201,12 @@ public class RefactoringWizardOpenOperation {
 				}
 			}
 		};
-		BusyIndicator.showWhile(parent != null ? parent.getDisplay() : null, r);
+
+		Display display = null;
+		if (parent != null && !parent.isDisposed()) {
+			display= parent.getDisplay();
+		}
+		BusyIndicator.showWhile(display, r);
 		if (canceled[0] != null)
 			throw canceled[0];
 		return result[0];
