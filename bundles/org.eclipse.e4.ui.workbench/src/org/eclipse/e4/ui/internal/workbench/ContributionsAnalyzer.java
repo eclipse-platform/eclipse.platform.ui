@@ -312,8 +312,13 @@ public final class ContributionsAnalyzer {
 		}
 
 		if (result == missingEvaluate) {
+			String className="null";//$NON-NLS-1$
+			if (imperativeExpressionObject != null) {
+				className = imperativeExpressionObject.getClass().getName();
+			}
 			throw new IllegalStateException(
-					"There is no method annotated with @Evaluate in the imperative expression class"); //$NON-NLS-1$
+					"There is no method annotated with @Evaluate in the " + className + " imperative expression class " //$NON-NLS-1$ //$NON-NLS-2$
+			);
 		}
 		return (boolean) result;
 	}
