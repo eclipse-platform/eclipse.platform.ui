@@ -134,7 +134,7 @@ public class HandledContributionItem extends AbstractContributionItem {
 		if (getModel().getCommand() != null && getModel().getWbCommand() == null) {
 			String cmdId = getModel().getCommand().getElementId();
 			if (cmdId == null) {
-				Activator.log(LogService.LOG_ERROR, "Unable to generate parameterized command for " + getModel() //$NON-NLS-1$
+				logger.error("Unable to generate  parameterized command for " + getModel() //$NON-NLS-1$
 						+ ". ElementId is not allowed to be null."); //$NON-NLS-1$
 				return;
 			}
@@ -148,8 +148,10 @@ public class HandledContributionItem extends AbstractContributionItem {
 				WorkbenchSWTActivator.trace(Policy.DEBUG_MENUS_FLAG, "command: " + parmCmd, null); //$NON-NLS-1$
 			}
 			if (parmCmd == null) {
-				Activator.log(LogService.LOG_ERROR, "Unable to generate parameterized command for " + getModel() //$NON-NLS-1$
-								+ " with " + parameters); //$NON-NLS-1$
+				logger.error(
+						"Unable to generate the parameterized " + "command with the id \"" + cmdId + "\" with the " //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+								+ parameters
+								+ " parameter(s). Model details: " + getModel());//$NON-NLS-1$
 				return;
 			}
 
