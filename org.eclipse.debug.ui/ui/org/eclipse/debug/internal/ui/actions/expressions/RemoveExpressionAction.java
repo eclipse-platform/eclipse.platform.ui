@@ -74,7 +74,7 @@ public class RemoveExpressionAction extends AbstractSelectionActionDelegate {
 	 */
 	@Override
 	protected boolean isEnabledFor(Object element) {
-		return (element instanceof IExpression) || (element instanceof IAdaptable);
+		return DebugPlugin.getAdapter(element, IExpression.class) != null;
 	}
 }
 
