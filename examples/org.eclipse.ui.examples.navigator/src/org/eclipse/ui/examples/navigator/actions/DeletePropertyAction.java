@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2006 IBM Corporation and others.
+ * Copyright (c) 2005, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -33,109 +33,103 @@ import org.eclipse.ui.examples.navigator.PropertiesTreeData;
 import org.eclipse.ui.internal.examples.navigator.Activator;
 
 /**
- * A sample action that can delete a PropertiesTreeData item from a property file. 
- * 
+ * A sample action that can delete a PropertiesTreeData item from a property file.
+ *
  * @since 3.2
  */
 public class DeletePropertyAction extends ActionDelegate {
-	
+
 	private IStructuredSelection selection = StructuredSelection.EMPTY;
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.actions.ActionDelegate#selectionChanged(org.eclipse.jface.action.IAction, org.eclipse.jface.viewers.ISelection)
-	 */
+	@Override
 	public void selectionChanged(IAction action, ISelection sel) {
 		if(sel instanceof IStructuredSelection)
 			selection = (IStructuredSelection) sel;
-		else 
+		else
 			selection = StructuredSelection.EMPTY;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.actions.ActionDelegate#run(org.eclipse.jface.action.IAction)
-	 */
+	@Override
 	public void run(IAction action) {
-		  
+
 		WorkspaceModifyOperation deletePropertyOperation = new WorkspaceModifyOperation() {
-			/* (non-Javadoc)
-			 * @see org.eclipse.ui.actions.WorkspaceModifyOperation#execute(org.eclipse.core.runtime.IProgressMonitor)
-			 */
+			@Override
 			protected void execute(IProgressMonitor monitor) throws CoreException {
 				// In production code, you should always externalize strings, but this is an example.
-				monitor.beginTask("Deleting property from selection", 5); //$NON-NLS-1$ 
+				monitor.beginTask("Deleting property from selection", 5); //$NON-NLS-1$
 				try {
 					if(selection.size() == 1) {
-						
+
 						 Object firstElement = selection.getFirstElement();
 						 if(firstElement instanceof PropertiesTreeData) {
 							 PropertiesTreeData data = (PropertiesTreeData) firstElement;
-							 
+
 							 IFile propertiesFile = data.getFile();
 							 monitor.worked(1);
-							 
+
 							 if(propertiesFile != null && propertiesFile.isAccessible()) {
-								 
+
 								 try {
-									// load the model 
+									// load the model
 									 Properties properties = new Properties();
 									 properties.load(propertiesFile.getContents());
-									 monitor.worked(1);  
-									 
-									 // delete the property 
+									 monitor.worked(1);
+
+									 // delete the property
 									 properties.remove(data.getName());
 									 monitor.worked(1);
-									 
+
 									 // persist the model to a temporary storage medium (byte[])
 									 ByteArrayOutputStream output = new ByteArrayOutputStream();
 									 properties.store(output, null);
 									 monitor.worked(1);
-									 
-									 // set the contents of the properties file 
+
+									 // set the contents of the properties file
 									 propertiesFile.setContents(
-											 			new ByteArrayInputStream(output.toByteArray()), 
+											 			new ByteArrayInputStream(output.toByteArray()),
 											 					IResource.FORCE | IResource.KEEP_HISTORY, monitor);
 									 monitor.worked(1);
 								} catch (IOException e) {
-									 // handle error gracefully 
+									 // handle error gracefully
 									Activator.logError(0, "Could not delete property!", e); //$NON-NLS-1$
-									MessageDialog.openError(Display.getDefault().getActiveShell(), 
+									MessageDialog.openError(Display.getDefault().getActiveShell(),
 							 				"Error Deleting Property",  //$NON-NLS-1$
 							 				"Could not delete property!");   //$NON-NLS-1$
 								}
-									 
-							 } else // shouldn't happen, but handle error condition 
-								 MessageDialog.openError(Display.getDefault().getActiveShell(), 
+
+							 } else // shouldn't happen, but handle error condition
+								 MessageDialog.openError(Display.getDefault().getActiveShell(),
 										 				"Error Deleting Property",  //$NON-NLS-1$
 										 				"The properties file was not accessible!");   //$NON-NLS-1$
-							 
-						 } else // shouldn't happen, but handle error condition 
-							 MessageDialog.openError(Display.getDefault().getActiveShell(), 
+
+						 } else // shouldn't happen, but handle error condition
+							 MessageDialog.openError(Display.getDefault().getActiveShell(),
 						 				"Error Deleting Property",  //$NON-NLS-1$
 						 				"The element that was selected was not of the right type.");   //$NON-NLS-1$
-					 } else // shouldn't happen, but handle error condition 
-						 MessageDialog.openError(Display.getDefault().getActiveShell(), 
+					 } else // shouldn't happen, but handle error condition
+						 MessageDialog.openError(Display.getDefault().getActiveShell(),
 					 				"Error Deleting Property",  //$NON-NLS-1$
 					 				"An invalid number of properties were selected.");   //$NON-NLS-1$
 				} finally {
 					monitor.done();
 				}
 			}
-		};		
+		};
 		try {
 			PlatformUI.getWorkbench().getProgressService().run(true, false, deletePropertyOperation);
-		} catch (InvocationTargetException e) { 
-			// handle error gracefully			
+		} catch (InvocationTargetException e) {
+			// handle error gracefully
 			Activator.logError(0, "Could not delete property!", e); //$NON-NLS-1$
-			MessageDialog.openError(Display.getDefault().getActiveShell(), 
+			MessageDialog.openError(Display.getDefault().getActiveShell(),
 	 				"Error Deleting Property",  //$NON-NLS-1$
 	 				"Could not delete property!");   //$NON-NLS-1$
 		} catch (InterruptedException e) {
 			 // handle error gracefully
 			Activator.logError(0, "Could not delete property!", e); //$NON-NLS-1$
-			MessageDialog.openError(Display.getDefault().getActiveShell(), 
+			MessageDialog.openError(Display.getDefault().getActiveShell(),
 	 				"Error Deleting Property",  //$NON-NLS-1$
 	 				"Could not delete property!");   //$NON-NLS-1$
 		}
-		 
+
 	}
 }

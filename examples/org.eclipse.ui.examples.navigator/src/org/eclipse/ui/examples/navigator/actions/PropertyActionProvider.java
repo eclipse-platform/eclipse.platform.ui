@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006 IBM Corporation and others.
+ * Copyright (c) 2006, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -25,46 +25,40 @@ import org.eclipse.ui.navigator.ICommonViewerWorkbenchSite;
  *
  */
 public class PropertyActionProvider extends CommonActionProvider {
-	
+
 	private OpenPropertyAction openAction;
 
 	/**
 	 * Construct Property Action provider.
 	 */
-	public PropertyActionProvider() { 		
+	public PropertyActionProvider() {
 	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.navigator.CommonActionProvider#init(org.eclipse.ui.navigator.ICommonActionExtensionSite)
-	 */
+
+	@Override
 	public void init(ICommonActionExtensionSite aSite) {
-	
+
 		ICommonViewerSite viewSite = aSite.getViewSite();
 		if(viewSite instanceof ICommonViewerWorkbenchSite) {
-			ICommonViewerWorkbenchSite workbenchSite = 
+			ICommonViewerWorkbenchSite workbenchSite =
 				(ICommonViewerWorkbenchSite) viewSite;
-			openAction = 
-				new OpenPropertyAction(workbenchSite.getPage(), 
+			openAction =
+				new OpenPropertyAction(workbenchSite.getPage(),
 										workbenchSite.getSelectionProvider());
 		}
-	}	
+	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.actions.ActionGroup#fillActionBars(org.eclipse.ui.IActionBars)
-	 */
-	public void fillActionBars(IActionBars actionBars) { 
+	@Override
+	public void fillActionBars(IActionBars actionBars) {
 		/* Set up the property open action when enabled. */
 		if(openAction.isEnabled())
 			actionBars.setGlobalActionHandler(ICommonActionConstants.OPEN, openAction);
 	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.actions.ActionGroup#fillContextMenu(org.eclipse.jface.action.IMenuManager)
-	 */
+
+	@Override
 	public void fillContextMenu(IMenuManager menu) {
 		if(openAction.isEnabled())
-			menu.appendToGroup(ICommonMenuConstants.GROUP_OPEN, openAction);		
+			menu.appendToGroup(ICommonMenuConstants.GROUP_OPEN, openAction);
 	}
-	
-	
+
+
 }

@@ -15,3 +15,4 @@ Require-Bundle: org.eclipse.core.resources,
  org.eclipse.jface.text
 Bundle-Activator: org.eclipse.ui.internal.examples.navigator.Activator
 Automatic-Module-Name: org.eclipse.ui.examples.navigator
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006 IBM Corporation and others.
+ * Copyright (c) 2006, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -36,85 +36,81 @@ import org.eclipse.ui.texteditor.ITextEditor;
  *
  */
 public class OpenPropertyAction extends Action {
-	
+
 	private IWorkbenchPage page;
 	private PropertiesTreeData data;
-	private ISelectionProvider provider; 
+	private ISelectionProvider provider;
 
 
 	/**
-	 * Construct the OpenPropertyAction with the given page. 
+	 * Construct the OpenPropertyAction with the given page.
 	 * @param p The page to use as context to open the editor.
-	 * @param selectionProvider The selection provider 
+	 * @param selectionProvider The selection provider
 	 */
 	public OpenPropertyAction(IWorkbenchPage p, ISelectionProvider selectionProvider) {
 		setText("Open Property"); //$NON-NLS-1$
 		page = p;
 		provider = selectionProvider;
 	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.action.Action#isEnabled()
-	 */
+
+	@Override
 	public boolean isEnabled() {
 		ISelection selection = provider.getSelection();
 		if(!selection.isEmpty()) {
 			IStructuredSelection sSelection = (IStructuredSelection) selection;
-			if(sSelection.size() == 1 && 
-			   sSelection.getFirstElement() instanceof PropertiesTreeData) 
+			if(sSelection.size() == 1 &&
+			   sSelection.getFirstElement() instanceof PropertiesTreeData)
 			{
-				data = ((PropertiesTreeData)sSelection.getFirstElement()); 				
+				data = ((PropertiesTreeData)sSelection.getFirstElement());
 				return true;
 			}
 		}
 		return false;
 	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.action.Action#run()
-	 */
-	public void run() { 
-		/* In production code, you should always externalize strings, 
+
+	@Override
+	public void run() {
+		/* In production code, you should always externalize strings,
 		 * 	but this is an example. */
 		try {
 			if(isEnabled()) {
 				IFile propertiesFile = data.getFile();
-				IEditorPart editor = IDE.openEditor(page, propertiesFile); 
-				
+				IEditorPart editor = IDE.openEditor(page, propertiesFile);
+
 				if (editor instanceof ITextEditor) {
 					ITextEditor textEditor = (ITextEditor) editor;
-					
-					IDocumentProvider documentProvider = 
+
+					IDocumentProvider documentProvider =
 						textEditor.getDocumentProvider();
-					IDocument document = 
+					IDocument document =
 						documentProvider.getDocument(editor.getEditorInput());
-					
-					FindReplaceDocumentAdapter searchAdapter = 
+
+					FindReplaceDocumentAdapter searchAdapter =
 						new FindReplaceDocumentAdapter(document);
-					
+
 					try {
-						String searchText = data.getName()+"="; //$NON-NLS-1$ 
-						IRegion region = searchAdapter.find(0, 
-															searchText, 
-															true /* forwardSearch */, 
-															true /* caseSensitive */, 
-															false /* wholeWord */, 
-															false /* regExSearch */); 
-						
+						String searchText = data.getName()+"="; //$NON-NLS-1$
+						IRegion region = searchAdapter.find(0,
+															searchText,
+															true /* forwardSearch */,
+															true /* caseSensitive */,
+															false /* wholeWord */,
+															false /* regExSearch */);
+
 						((ITextEditor)editor).selectAndReveal(region.getOffset(), region.getLength());
-						
+
 					} catch (BadLocationException e) {
 						Activator.logError(0, "Could not open property!", e); //$NON-NLS-1$
-						MessageDialog.openError(Display.getDefault().getActiveShell(), 
+						MessageDialog.openError(Display.getDefault().getActiveShell(),
 				 				"Error Opening Property",  //$NON-NLS-1$
 				 				"Could not open property!");   //$NON-NLS-1$
 					}
 					return;
 				}
-			} 
-		} catch (PartInitException e) { 
+			}
+		} catch (PartInitException e) {
 			Activator.logError(0, "Could not open property!", e); //$NON-NLS-1$
-			MessageDialog.openError(Display.getDefault().getActiveShell(), 
+			MessageDialog.openError(Display.getDefault().getActiveShell(),
 	 				"Error Opening Property",  //$NON-NLS-1$
 	 				"Could not open property!");   //$NON-NLS-1$
 		}

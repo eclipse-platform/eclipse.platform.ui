@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006 IBM Corporation.
+ * Copyright (c) 2006, 2018 IBM Corporation.
  * Licensed Material - Property of IBM. All rights reserved.
  * US Government Users Restricted Rights - Use, duplication or disclosure
  * restricted by GSA ADP Schedule Contract with IBM Corp.
@@ -45,7 +45,7 @@ public class PropertiesContentProvider implements ITreeContentProvider,
 
 	private static final Object PROPERTIES_EXT = "properties"; //$NON-NLS-1$
 
-	private final Map/*<IFile, PropertiesTreeData[]>*/ cachedModelMap = new HashMap();
+	private final Map<IFile, PropertiesTreeData[]> cachedModelMap = new HashMap<>();
 
 	private StructuredViewer viewer;
 	
@@ -63,6 +63,7 @@ public class PropertiesContentProvider implements ITreeContentProvider,
 	 * Return the model elements for a *.properties IFile or
 	 * NO_CHILDREN for otherwise.
 	 */
+	@Override
 	public Object[] getChildren(Object parentElement) {  
 		Object[] children = null;
 		if (parentElement instanceof PropertiesTreeData) { 
@@ -71,9 +72,9 @@ public class PropertiesContentProvider implements ITreeContentProvider,
 			/* possible model file */
 			IFile modelFile = (IFile) parentElement;
 			if(PROPERTIES_EXT.equals(modelFile.getFileExtension())) {				
-				children = (PropertiesTreeData[]) cachedModelMap.get(modelFile);
+				children = cachedModelMap.get(modelFile);
 				if(children == null && updateModel(modelFile) != null) {
-					children = (PropertiesTreeData[]) cachedModelMap.get(modelFile);
+					children = cachedModelMap.get(modelFile);
 				}
 			}
 		}   
@@ -93,13 +94,13 @@ public class PropertiesContentProvider implements ITreeContentProvider,
 					model.load(modelFile.getContents()); 
 					
 					String propertyName; 
-					List properties = new ArrayList();
-					for(Enumeration names = model.propertyNames(); names.hasMoreElements(); ) {
-						propertyName = (String) names.nextElement();
+					List<PropertiesTreeData> properties = new ArrayList<>();
+					for(@SuppressWarnings("unchecked")
+					Enumeration<String> names = (Enumeration<String>) model.propertyNames(); names.hasMoreElements(); ) {
+						propertyName = names.nextElement();
 						properties.add(new PropertiesTreeData(propertyName,  model.getProperty(propertyName), modelFile));
 					}
-					PropertiesTreeData[] propertiesTreeData = (PropertiesTreeData[])
-						properties.toArray(new PropertiesTreeData[properties.size()]);
+					PropertiesTreeData[] propertiesTreeData = properties.toArray(new PropertiesTreeData[properties.size()]);
 					
 					cachedModelMap.put(modelFile, propertiesTreeData);
 					return model; 
@@ -113,6 +114,7 @@ public class PropertiesContentProvider implements ITreeContentProvider,
 		return null; 
 	}
 
+	@Override
 	public Object getParent(Object element) {
 		if (element instanceof PropertiesTreeData) {
 			PropertiesTreeData data = (PropertiesTreeData) element;
@@ -121,6 +123,7 @@ public class PropertiesContentProvider implements ITreeContentProvider,
 		return null;
 	}
 
+	@Override
 	public boolean hasChildren(Object element) {		
 		if (element instanceof PropertiesTreeData) {
 			return false;		
@@ -130,26 +133,25 @@ public class PropertiesContentProvider implements ITreeContentProvider,
 		return false;
 	}
 
+	@Override
 	public Object[] getElements(Object inputElement) {
 		return getChildren(inputElement);
 	}
 
+	@Override
 	public void dispose() {
 		cachedModelMap.clear();
 		ResourcesPlugin.getWorkspace().removeResourceChangeListener(this); 
 	}
 
+	@Override
 	public void inputChanged(Viewer aViewer, Object oldInput, Object newInput) {
 		if (oldInput != null && !oldInput.equals(newInput))
 			cachedModelMap.clear();
 		viewer = (StructuredViewer) aViewer;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.core.resources.IResourceChangeListener#resourceChanged(org.eclipse.core.resources.IResourceChangeEvent)
-	 */
+	@Override
 	public void resourceChanged(IResourceChangeEvent event) {
 
 		IResourceDelta delta = event.getDelta();
@@ -160,11 +162,7 @@ public class PropertiesContentProvider implements ITreeContentProvider,
 		} 
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.core.resources.IResourceDeltaVisitor#visit(org.eclipse.core.resources.IResourceDelta)
-	 */
+	@Override
 	public boolean visit(IResourceDelta delta) {
 
 		IResource source = delta.getResource();
@@ -178,6 +176,7 @@ public class PropertiesContentProvider implements ITreeContentProvider,
 			if (PROPERTIES_EXT.equals(file.getFileExtension())) {
 				updateModel(file);
 				new UIJob("Update Properties Model in CommonViewer") {  //$NON-NLS-1$
+					@Override
 					public IStatus runInUIThread(IProgressMonitor monitor) {
 						if (viewer != null && !viewer.getControl().isDisposed())
 							viewer.refresh(file);
