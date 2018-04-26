@@ -444,7 +444,7 @@ public class ModelAssembler {
 		for (MApplicationElement importedElement : imports) {
 			MApplicationElement realElement = ModelUtils.findElementById(application, importedElement.getElementId());
 			if (realElement == null) {
-				logger.warn("Could not resolve an import element for '" + realElement + "'"); //$NON-NLS-1$ //$NON-NLS-2$
+				logger.warn("Could not resolve an import element for '" + importedElement.getElementId() + "'"); //$NON-NLS-1$ //$NON-NLS-2$
 			}
 			importMaps.put(importedElement, realElement);
 		}
