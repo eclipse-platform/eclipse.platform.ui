@@ -46,12 +46,12 @@ public class HandlerServiceImpl implements EHandlerService {
 	 */
 	private static final String SWT_TRIGGER = "org.eclipse.swt.widgets.Event"; //$NON-NLS-1$
 	static final String TMP_STATIC_CONTEXT = "tmp-staticContext"; //$NON-NLS-1$
-	public final static String H_ID = "handler::"; //$NON-NLS-1$
-	public final static String PARM_MAP = "parmMap::"; //$NON-NLS-1$
-	public final static String CAN_EXECUTE = "HandlerServiceImpl.canExecute"; //$NON-NLS-1$
-	public final static String NOT_HANDLED = "HandlerServiceImpl.notHandled"; //$NON-NLS-1$
-	public final static String STATIC_CONTEXT = "HandlerServiceImpl.staticContext"; //$NON-NLS-1$
-	public final static String HANDLER_EXCEPTION = "HandlerServiceImpl.exception"; //$NON-NLS-1$
+	public static final String H_ID = "handler::"; //$NON-NLS-1$
+	public static final String PARM_MAP = "parmMap::"; //$NON-NLS-1$
+	public static final String CAN_EXECUTE = "HandlerServiceImpl.canExecute"; //$NON-NLS-1$
+	public static final String NOT_HANDLED = "HandlerServiceImpl.notHandled"; //$NON-NLS-1$
+	public static final String STATIC_CONTEXT = "HandlerServiceImpl.staticContext"; //$NON-NLS-1$
+	public static final String HANDLER_EXCEPTION = "HandlerServiceImpl.exception"; //$NON-NLS-1$
 
 	private static LinkedList<ExecutionContexts> contextStack = new LinkedList<ExecutionContexts>();
 
@@ -112,8 +112,7 @@ public class HandlerServiceImpl implements EHandlerService {
 		while (i.hasNext()) {
 			Map.Entry entry = (Map.Entry) i.next();
 			String parameterId = (String) entry.getKey();
-			staticContext.set(
-					parameterId,
+			staticContext.set(parameterId,
 					convertParameterValue(command.getCommand(), parameterId,
 							(String) entry.getValue()));
 		}
@@ -140,8 +139,7 @@ public class HandlerServiceImpl implements EHandlerService {
 					return valueConverter.convertToObject(value);
 				}
 			}
-		} catch (NotDefinedException e) {
-		} catch (ParameterValueConversionException e) {
+		} catch (NotDefinedException | ParameterValueConversionException e) {
 		}
 		return value;
 	}
@@ -172,7 +170,6 @@ public class HandlerServiceImpl implements EHandlerService {
 	public boolean canExecute(ParameterizedCommand command, IEclipseContext staticContext) {
 		final IEclipseContext executionContext = getExecutionContext();
 		addParms(command, staticContext);
-		// executionContext.set(STATIC_CONTEXT, staticContext);
 		push(executionContext, staticContext);
 		try {
 			Command cmd = command.getCommand();
@@ -180,7 +177,6 @@ public class HandlerServiceImpl implements EHandlerService {
 			return cmd.isEnabled();
 		} finally {
 			pop();
-			// executionContext.remove(STATIC_CONTEXT);
 		}
 	}
 
@@ -203,23 +199,14 @@ public class HandlerServiceImpl implements EHandlerService {
 	public Object executeHandler(ParameterizedCommand command, IEclipseContext staticContext) {
 		final IEclipseContext executionContext = getExecutionContext();
 		addParms(command, staticContext);
-		// executionContext.set(STATIC_CONTEXT, staticContext);
 		push(executionContext, staticContext);
 		try {
-			// Command cmd = command.getCommand();
 			return command.executeWithChecks(staticContext.get(SWT_TRIGGER), new ExpressionContext(
 					peek().context));
-		} catch (ExecutionException e) {
-			staticContext.set(HANDLER_EXCEPTION, e);
-		} catch (NotDefinedException e) {
-			staticContext.set(HANDLER_EXCEPTION, e);
-		} catch (NotEnabledException e) {
-			staticContext.set(HANDLER_EXCEPTION, e);
-		} catch (NotHandledException e) {
+		} catch (ExecutionException | NotDefinedException | NotEnabledException | NotHandledException e) {
 			staticContext.set(HANDLER_EXCEPTION, e);
 		} finally {
 			pop();
-			// executionContext.remove(STATIC_CONTEXT);
 		}
 		return null;
 	}
