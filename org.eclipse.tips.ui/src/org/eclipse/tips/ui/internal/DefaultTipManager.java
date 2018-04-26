@@ -71,7 +71,7 @@ public abstract class DefaultTipManager extends TipManager {
 				}
 			}
 		}
-		return false;
+		return true;
 	}
 
 }

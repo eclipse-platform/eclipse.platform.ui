@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.tips.ide.internal;
 
+import java.io.File;
+import java.io.FilenameFilter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -21,6 +23,7 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.preferences.AbstractPreferenceInitializer;
 import org.eclipse.core.runtime.preferences.ConfigurationScope;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
+import org.eclipse.jface.preference.PreferenceStore;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.FrameworkUtil;
 import org.osgi.service.prefs.BackingStoreException;
@@ -29,7 +32,7 @@ import org.osgi.service.prefs.BackingStoreException;
  * Internal class to store preferences.
  *
  */
-public class Preferences extends AbstractPreferenceInitializer {
+public class TipsPreferences extends AbstractPreferenceInitializer {
 
 	/**
 	 * Preference store key to indicate showing tips at startup.
@@ -41,7 +44,7 @@ public class Preferences extends AbstractPreferenceInitializer {
 	 */
 	public static final String PREF_SERVE_READ_TIPS = "serve_read_tips";
 
-	public Preferences() {
+	public TipsPreferences() {
 	}
 
 	@Override
@@ -63,21 +66,45 @@ public class Preferences extends AbstractPreferenceInitializer {
 	 */
 	public static Map<String, List<Integer>> getReadState() {
 		HashMap<String, List<Integer>> result = new HashMap<>();
-		IEclipsePreferences node = ConfigurationScope.INSTANCE.getNode("org.eclipse.tips.ide.read");
+
 		try {
-			for (String key : node.childrenNames()) {
+			File stateLocation = getStateLocation();
+			for (String key : stateLocation.list(getStateFileNameFilter(stateLocation))) {
+				PreferenceStore store = new PreferenceStore(new File(stateLocation, key).getAbsolutePath());
+				store.load();
 				ArrayList<Integer> tips = new ArrayList<>();
-				org.osgi.service.prefs.Preferences tipsNode = node.node(key);
-				for (String tipKey : tipsNode.keys()) {
-					tips.add(Integer.valueOf(tipsNode.getInt(tipKey, 0)));
+				for (String tipKey : store.preferenceNames()) {
+					if (!"provider".equals(tipKey)) {
+						tips.add(Integer.valueOf(store.getInt(tipKey)));
+					}
 				}
-				result.put(key, tips);
+				result.put(store.getString("provider"), tips);
 			}
-		} catch (BackingStoreException e) {
+		} catch (Exception e) {
 			Status status = new Status(IStatus.ERROR, "org.eclipse.tips.ide", e.getMessage(), e);
 			log(status);
 		}
 		return result;
+	}
+
+	private static FilenameFilter getStateFileNameFilter(File stateLocation) {
+		return new FilenameFilter() {
+			@Override
+			public boolean accept(File pDir, String pName) {
+				if (pDir.equals(stateLocation) && pName.endsWith(".state")) {
+					return true;
+				}
+				return false;
+			}
+		};
+	}
+
+	private static File getStateLocation() throws Exception {
+		File file = new File(IDETipManager.getStateLocation(), "org.eclipse.tips.ide.state");
+		if (!file.exists()) {
+			file.mkdirs();
+		}
+		return file;
 	}
 
 	/**
@@ -88,18 +115,16 @@ public class Preferences extends AbstractPreferenceInitializer {
 	 */
 	public static IStatus saveReadState(Map<String, List<Integer>> pReadTips) {
 		try {
-			IEclipsePreferences node = ConfigurationScope.INSTANCE.getNode("org.eclipse.tips.ide.read");
+			File stateLocation = getStateLocation();
 			for (String child : pReadTips.keySet()) {
-				if (node.nodeExists(child)) {
-					node.node(child).removeNode();
-				}
+				PreferenceStore store = new PreferenceStore(
+						new File(stateLocation, child.trim() + ".state").getAbsolutePath());
+				pReadTips.get(child).forEach(value -> store.setValue(value.toString(), value.intValue()));
+				store.setValue("provider", child);
+				store.save();
 			}
-			node.clear();
-			pReadTips.forEach(
-					(key, tips) -> tips.forEach(value -> node.node(key).putInt(value.toString(), value.intValue())));
-			node.flush();
 			return Status.OK_STATUS;
-		} catch (BackingStoreException e) {
+		} catch (Exception e) {
 			e.printStackTrace();
 			return new Status(IStatus.ERROR, "org.eclipse.tips.ide", e.getMessage(), e);
 		}
@@ -112,7 +137,7 @@ public class Preferences extends AbstractPreferenceInitializer {
 
 	private static void log(IStatus status) {
 		if (status.matches(IStatus.ERROR | IStatus.WARNING)) {
-			Bundle bundle = FrameworkUtil.getBundle(Preferences.class);
+			Bundle bundle = FrameworkUtil.getBundle(TipsPreferences.class);
 			Platform.getLog(bundle).log(status);
 		}
 		if (System.getProperty("org.eclipse.tips.consolelog") != null) {

@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.tips.json;
 
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -49,10 +50,8 @@ public abstract class JsonTipProvider extends TipProvider {
 	 * A method to set the a url containing a JSon file that describes this tip
 	 * provider.
 	 *
-	 * @param jsonUrl
-	 *            the uRL to the Json file describing the provider and tips
-	 * @throws MalformedURLException
-	 *             in case of an incorrect URL
+	 * @param jsonUrl the uRL to the Json file describing the provider and tips
+	 * @throws MalformedURLException in case of an incorrect URL
 	 */
 	public void setJsonUrl(String jsonUrl) throws MalformedURLException {
 		fJsonUrl = new URL(jsonUrl);
@@ -64,14 +63,16 @@ public abstract class JsonTipProvider extends TipProvider {
 		ArrayList<Tip> result = new ArrayList<>();
 		try {
 			subMonitor.beginTask(getDescription() + " Loading Tips", -1);
-			JsonObject value = (JsonObject) new JsonParser().parse(new InputStreamReader(fJsonUrl.openStream()));
-			JsonObject provider = value.getAsJsonObject(JsonConstants.P_PROVIDER);
-			fDescription = Util.getValueOrDefault(provider, JsonConstants.P_DESCRIPTION, "not set");
-			fImage = Util.getValueOrDefault(provider, JsonConstants.P_IMAGE, null);
-			setExpression(Util.getValueOrDefault(provider, JsonConstants.P_EXPRESSION, null));
-			JsonArray tips = provider.getAsJsonArray(JsonConstants.P_TIPS);
-			subMonitor.beginTask(getDescription() + " Creating Tips", -1);
-			tips.forEach(parm -> result.add(createJsonTip(parm)));
+			try (InputStream stream = fJsonUrl.openStream(); InputStreamReader reader = new InputStreamReader(stream)) {
+				JsonObject value = (JsonObject) new JsonParser().parse(reader);
+				JsonObject provider = value.getAsJsonObject(JsonConstants.P_PROVIDER);
+				fDescription = Util.getValueOrDefault(provider, JsonConstants.P_DESCRIPTION, "not set");
+				fImage = Util.getValueOrDefault(provider, JsonConstants.P_IMAGE, null);
+				setExpression(Util.getValueOrDefault(provider, JsonConstants.P_EXPRESSION, null));
+				JsonArray tips = provider.getAsJsonArray(JsonConstants.P_TIPS);
+				subMonitor.beginTask(getDescription() + " Creating Tips", -1);
+				tips.forEach(parm -> result.add(createJsonTip(parm)));
+			}
 		} catch (Exception e) {
 			Status status = new Status(IStatus.ERROR, "org.eclipse.tips.json", e.getMessage(), e);
 			getManager().log(status);

@@ -17,6 +17,7 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.tips.core.TipProvider;
+import org.eclipse.tips.json.internal.ProviderLoader;
 import org.eclipse.ui.IStartup;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.progress.UIJob;
@@ -27,6 +28,7 @@ import org.osgi.framework.FrameworkUtil;
  * Early startup to run the TipManager in the IDE.
  *
  */
+@SuppressWarnings("restriction")
 public class Startup implements IStartup {
 
 	@Override
@@ -39,6 +41,25 @@ public class Startup implements IStartup {
 	 * Reloads the tip providers.
 	 */
 	public static void loadProviders() {
+		loadExternalProviders();
+		loadInternalProviders();
+	}
+
+	private static void loadExternalProviders() {
+		String baseURL = System.getProperty("org.eclipse.tips.ide.provider.url");
+		if (baseURL == null) {
+			baseURL = "http://www.eclipse.org/downloads/download.php?r=1&file=/e4/tips/";
+		}
+		try {
+			ProviderLoader.loadProviderData(IDETipManager.getInstance(), baseURL, IDETipManager.getStateLocation());
+		} catch (Exception e) {
+			IDETipManager.getInstance()
+					.log(new Status(IStatus.ERROR, FrameworkUtil.getBundle(Startup.class).getSymbolicName(),
+							"Failure getting the Tips state location.", e));
+		}
+	}
+
+	private static void loadInternalProviders() {
 		IConfigurationElement[] elements = Platform.getExtensionRegistry()
 				.getConfigurationElementsFor("org.eclipse.tips.core.tips");
 		for (IConfigurationElement element : elements) {

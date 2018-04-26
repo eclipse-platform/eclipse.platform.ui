@@ -11,6 +11,8 @@
 package org.eclipse.tips.ide.internal;
 
 import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -99,7 +101,7 @@ public class IDETipManager extends DefaultTipManager {
 			evaluationService.addSourceProvider(fSourceProvider);
 			fSourceProviderAdded = true;
 		}
-		fReadTips = Preferences.getReadState();
+		fReadTips = TipsPreferences.getReadState();
 		return super.open(startUp);
 	}
 
@@ -115,7 +117,7 @@ public class IDETipManager extends DefaultTipManager {
 			protected IStatus run(IProgressMonitor monitor) {
 				SubMonitor subMonitor = SubMonitor.convert(monitor, IProgressMonitor.UNKNOWN);
 				subMonitor.setTaskName("Saving read tips..");
-				IStatus status = Preferences.saveReadState(pReadTips);
+				IStatus status = TipsPreferences.saveReadState(pReadTips);
 				subMonitor.done();
 				return status;
 			}
@@ -143,23 +145,23 @@ public class IDETipManager extends DefaultTipManager {
 
 	@Override
 	public boolean isRunAtStartup() {
-		return Preferences.isRunAtStartup();
+		return TipsPreferences.isRunAtStartup();
 	}
 
 	@Override
 	public TipManager setRunAtStartup(boolean runAtStartup) {
-		Preferences.setRunAtStartup(runAtStartup);
+		TipsPreferences.setRunAtStartup(runAtStartup);
 		return this;
 	}
 
 	@Override
 	public boolean mustServeReadTips() {
-		return Preferences.isServeReadTips();
+		return TipsPreferences.isServeReadTips();
 	}
 
 	@Override
 	public TipManager setServeReadTips(boolean serveRead) {
-		Preferences.setServeReadTips(serveRead);
+		TipsPreferences.setServeReadTips(serveRead);
 		return this;
 	}
 
@@ -266,5 +268,30 @@ public class IDETipManager extends DefaultTipManager {
 		IEvaluationService evalService = PlatformUI.getWorkbench().getService(IEvaluationService.class);
 		IEvaluationContext currentState = evalService.getCurrentState();
 		return currentState;
+	}
+
+	/**
+	 * Returns the state location of the IDE tips. First the property
+	 * "org.eclipse.tips.statelocation" is read. If it does not exist then the state
+	 * location will be <b>${user.home}/.eclipse/org.eclipse.tips.state</b>
+	 * 
+	 * @return the state location file
+	 * @throws Exception if something went wrong
+	 */
+	public static File getStateLocation() throws Exception {
+		String stateLocation = System.getProperty("org.eclipse.tips.statelocation");
+		if (stateLocation == null) {
+			stateLocation = System.getProperty("user.home") + File.separator + ".eclipse" + File.separator
+					+ "org.eclipse.tips.state";
+		}
+		File locationDir = new File(stateLocation);
+		if (!locationDir.exists()) {
+			locationDir.mkdirs();
+		}
+
+		if (!locationDir.canRead() || !locationDir.canWrite()) {
+			throw new IOException("Could not read or write the state location: " + locationDir.getAbsolutePath());
+		}
+		return locationDir;
 	}
 }
