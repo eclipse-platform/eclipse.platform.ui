@@ -30,10 +30,11 @@ import org.eclipse.ui.tests.internal.util.VerifyDialog;
 import junit.framework.Assert;
 
 /**
- * A <code>DialogCheck</code> is used test a dialog in various ways.
+ * A <code>DialogCheck</code> is used test a dialog in
+ * various ways.
  * <p>
- * For interactive tests use <code>assertDialog</code>. For automated tests use
- * <code>assert DialogTexts</code>.
+ * For interactive tests use <code>assertDialog</code>.
+ * For automated tests use <code>assert DialogTexts</code>.
  * </p>
  */
 public class DialogCheck {
