@@ -36,7 +36,7 @@ public interface IPropertyTester {
 	 * @return <code>true</code> if the tester provides an implementation
 	 *  for the given property; otherwise <code>false</code> is returned
 	 */
-	public boolean handles(String namespace, String property);
+	boolean handles(String namespace, String property);
 
 	/**
 	 * Returns whether the implementation class for this property tester is
@@ -45,7 +45,7 @@ public interface IPropertyTester {
 	 * @return <code>true</code>if the implementation class is loaded;
 	 *  <code>false</code> otherwise
 	 */
-	public boolean isInstantiated();
+	boolean isInstantiated();
 
 	/**
 	 * Returns <code>true</code> if the implementation class of this property
@@ -54,7 +54,7 @@ public interface IPropertyTester {
 	 *
 	 * @return whether the implementation class can be loaded or not
 	 */
-	public boolean isDeclaringPluginActive();
+	boolean isDeclaringPluginActive();
 
 	/**
 	 * Loads the implementation class for this property tester and returns an
@@ -64,7 +64,7 @@ public interface IPropertyTester {
 	 *
 	 * @throws CoreException if the implementation class cannot be loaded
 	 */
-	public IPropertyTester instantiate() throws CoreException;
+	IPropertyTester instantiate() throws CoreException;
 
 	/**
 	 * Executes the property test determined by the parameter <code>property</code>.
@@ -80,5 +80,5 @@ public interface IPropertyTester {
 	 * @return returns <code>true</code> if the property is equal to the expected value; otherwise
 	 *         <code>false</code> is returned
 	 */
-	public boolean test(Object receiver, String property, Object[] args, Object expectedValue);
+	boolean test(Object receiver, String property, Object[] args, Object expectedValue);
 }

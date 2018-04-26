@@ -32,5 +32,5 @@ public interface IIterable<T> {
 	 *
 	 * @return an iterator
 	 */
-	public Iterator<T> iterator();
+	Iterator<T> iterator();
 }

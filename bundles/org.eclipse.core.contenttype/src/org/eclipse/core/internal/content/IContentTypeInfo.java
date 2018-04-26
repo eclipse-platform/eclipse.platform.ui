@@ -19,11 +19,11 @@ public abstract interface IContentTypeInfo {
 	/**
 	 * Returns a reference to the corresponding content type.
 	 */
-	public abstract ContentType getContentType();
+	ContentType getContentType();
 
 	/**
 	 * Returns the default value for the given property, delegating to the
 	 * ancestor type if necessary.
 	 */
-	public abstract String getDefaultProperty(QualifiedName key);
+	String getDefaultProperty(QualifiedName key);
 }

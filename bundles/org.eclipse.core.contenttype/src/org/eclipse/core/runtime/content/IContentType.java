@@ -27,20 +27,20 @@ public interface IContentType extends IContentTypeSettings {
 	 * File spec type flag constant, indicating that predefined file
 	 * specifications should not be taken into account.
 	 */
-	public static final int IGNORE_PRE_DEFINED = 0b1;
+	int IGNORE_PRE_DEFINED = 0b1;
 	/**
 	 * File spec type flag constant, indicating that user-defined file
 	 * specifications should not be taken into account.
 	 */
-	public static final int IGNORE_USER_DEFINED = 0b10;
+	int IGNORE_USER_DEFINED = 0b10;
 	/**
 	 * File spec type constant, indicating a file name specification.
 	 */
-	public static final int FILE_NAME_SPEC = 0b100;
+	int FILE_NAME_SPEC = 0b100;
 	/**
 	 * File spec type constant, indicating a file extension specification.
 	 */
-	public static final int FILE_EXTENSION_SPEC = 0b1000;
+	int FILE_EXTENSION_SPEC = 0b1000;
 	/**
 	 * File spec type constant, indicating a file name pattern specification.
 	 * <code>?</code> represents any single character, <code>*<code> represent any
@@ -48,7 +48,7 @@ public interface IContentType extends IContentTypeSettings {
 	 *
 	 * @since 3.7
 	 */
-	public static final int FILE_PATTERN_SPEC = 0b10000;
+	int FILE_PATTERN_SPEC = 0b10000;
 
 	/**
 	 * Returns a reference to this content type's base type. If this content type
@@ -56,7 +56,7 @@ public interface IContentType extends IContentTypeSettings {
 	 *
 	 * @return this content type's base type, or <code>null</code>
 	 */
-	public IContentType getBaseType();
+	IContentType getBaseType();
 
 	/**
 	 * Returns the default content description for this content type. A default
@@ -73,7 +73,7 @@ public interface IContentType extends IContentTypeSettings {
 	 *  @return a content description
 	 *  @since 3.1
 	 */
-	public IContentDescription getDefaultDescription();
+	IContentDescription getDefaultDescription();
 
 	/**
 	 * Tries to obtain a description for the given contents.
@@ -90,7 +90,7 @@ public interface IContentType extends IContentTypeSettings {
 	 * @throws IOException if an error occurs while reading the contents
 	 * @see IContentDescription
 	 */
-	public IContentDescription getDescriptionFor(InputStream contents, QualifiedName[] options) throws IOException;
+	IContentDescription getDescriptionFor(InputStream contents, QualifiedName[] options) throws IOException;
 
 	/**
 	 * Tries to obtain a description for the given contents.
@@ -110,7 +110,7 @@ public interface IContentType extends IContentTypeSettings {
 	 * @throws IOException if an error occurs while reading the contents
 	 * @see IContentDescription
 	 */
-	public IContentDescription getDescriptionFor(Reader contents, QualifiedName[] options) throws IOException;
+	IContentDescription getDescriptionFor(Reader contents, QualifiedName[] options) throws IOException;
 
 	/**
 	 * Returns the default charset for this content type if one has been defined,
@@ -121,8 +121,7 @@ public interface IContentType extends IContentTypeSettings {
 	 *
 	 * @return the default charset, or <code>null</code>
 	 */
-	@Override
-	public String getDefaultCharset();
+	@Override String getDefaultCharset();
 
 	/**
 	 * Returns file specifications from this content type. The type mask
@@ -147,8 +146,7 @@ public interface IContentType extends IContentTypeSettings {
 	 * @see #IGNORE_PRE_DEFINED
 	 * @see #IGNORE_USER_DEFINED
 	 */
-	@Override
-	public String[] getFileSpecs(int type);
+	@Override String[] getFileSpecs(int type);
 
 	/**
 	 * Returns this content type's unique identifier. Each content type has an
@@ -156,15 +154,14 @@ public interface IContentType extends IContentTypeSettings {
 	 *
 	 * @return this content type's unique identifier
 	 */
-	@Override
-	public String getId();
+	@Override String getId();
 
 	/**
 	 * Returns a user-friendly name for this content type.
 	 *
 	 * @return this content type's name
 	 */
-	public String getName();
+	String getName();
 
 	/**
 	 * Returns whether this content type is associated with the
@@ -175,7 +172,7 @@ public interface IContentType extends IContentTypeSettings {
 	 * the given file name, <code>false</code> otherwise
 	 * @see #isAssociatedWith(String, IScopeContext)
 	 */
-	public boolean isAssociatedWith(String fileName);
+	boolean isAssociatedWith(String fileName);
 
 	/**
 	 * Returns whether this content type is associated with the
@@ -187,7 +184,7 @@ public interface IContentType extends IContentTypeSettings {
 	 * the given file name, <code>false</code> otherwise
 	 * @since 3.1
 	 */
-	public boolean isAssociatedWith(String fileName, IScopeContext context);
+	boolean isAssociatedWith(String fileName, IScopeContext context);
 
 	/**
 	 * Returns whether this content type is a kind of the given content
@@ -202,7 +199,7 @@ public interface IContentType extends IContentTypeSettings {
 	 * @return <code>true</code> if this content type is a kind of the
 	 * given content type, <code>false</code> otherwise
 	 */
-	public boolean isKindOf(IContentType another);
+	boolean isKindOf(IContentType another);
 
 	/**
 	 * Returns the settings for this content type in the given
@@ -216,5 +213,5 @@ public interface IContentType extends IContentTypeSettings {
 	 * </ul>
 	 * @since 3.1
 	 */
-	public IContentTypeSettings getSettings(IScopeContext context) throws CoreException;
+	IContentTypeSettings getSettings(IScopeContext context) throws CoreException;
 }

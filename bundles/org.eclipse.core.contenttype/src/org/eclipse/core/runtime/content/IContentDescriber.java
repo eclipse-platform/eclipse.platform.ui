@@ -45,21 +45,21 @@ public interface IContentDescriber {
 	 *
 	 * @see #describe
 	 */
-	public final static int INDETERMINATE = 1;
+	int INDETERMINATE = 1;
 	/**
 	 * Description result constant, indicating the contents are invalid for
 	 * the intended content type.
 	 *
 	 * @see #describe
 	 */
-	public final static int INVALID = 0;
+	int INVALID = 0;
 	/**
 	 * Description result constant, indicating the contents are valid for
 	 * the intended content type.
 	 *
 	 * @see #describe
 	 */
-	public final static int VALID = 2;
+	int VALID = 2;
 
 	/**
 	 * Tries to fill a description for the given contents. Returns
@@ -86,7 +86,7 @@ public interface IContentDescriber {
 	 * @see #INVALID
 	 * @see #INDETERMINATE
 	 */
-	public int describe(InputStream contents, IContentDescription description) throws IOException;
+	int describe(InputStream contents, IContentDescription description) throws IOException;
 
 	/**
 	 * Returns the properties supported by this describer.
@@ -94,5 +94,5 @@ public interface IContentDescriber {
 	 * @return the supported properties
 	 * @see #describe
 	 */
-	public QualifiedName[] getSupportedOptions();
+	QualifiedName[] getSupportedOptions();
 }

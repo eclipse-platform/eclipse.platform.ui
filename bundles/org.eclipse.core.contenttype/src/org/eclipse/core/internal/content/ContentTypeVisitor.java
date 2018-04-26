@@ -18,5 +18,5 @@ public interface ContentTypeVisitor {
 	/**
 	 * @return CONTINUE, RETURN or STOP
 	 */
-	public int visit(ContentType contentType);
+	int visit(ContentType contentType);
 }

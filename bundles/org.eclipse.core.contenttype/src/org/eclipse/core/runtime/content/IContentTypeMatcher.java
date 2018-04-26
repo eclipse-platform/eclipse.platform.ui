@@ -46,7 +46,7 @@ public interface IContentTypeMatcher {
 	 * @return the preferred content type associated to the given file name, or <code>null</code>
 	 * @throws IOException if an error occurs while reading the contents
 	 */
-	public IContentType findContentTypeFor(InputStream contents, String fileName) throws IOException;
+	IContentType findContentTypeFor(InputStream contents, String fileName) throws IOException;
 
 	/**
 	 * Returns the preferred content type for the given file name. If multiple content types
@@ -56,7 +56,7 @@ public interface IContentTypeMatcher {
 	 * @param fileName the name of the file
 	 * @return the preferred content type associated to the given file name, or <code>null</code>
 	 */
-	public IContentType findContentTypeFor(String fileName);
+	IContentType findContentTypeFor(String fileName);
 
 	/**
 	 * Returns the content types associated to the given contents and file name.
@@ -79,7 +79,7 @@ public interface IContentTypeMatcher {
 	 * @return all content types associated to the given contents and file name
 	 * @throws IOException if an error occurs while reading the contents
 	 */
-	public IContentType[] findContentTypesFor(InputStream contents, String fileName) throws IOException;
+	IContentType[] findContentTypesFor(InputStream contents, String fileName) throws IOException;
 
 	/**
 	 * Returns all content types known by the platform that are associated to the given file name.
@@ -90,7 +90,7 @@ public interface IContentTypeMatcher {
 	 * @param fileName the name of the file
 	 * @return all content types associated to the given file spec
 	 */
-	public IContentType[] findContentTypesFor(String fileName);
+	IContentType[] findContentTypesFor(String fileName);
 
 	/**
 	 * Tries to obtain a description for the given contents and file name.
@@ -113,7 +113,7 @@ public interface IContentTypeMatcher {
 	 * @throws IOException if an error occurs while reading the contents
 	 * @see IContentDescription
 	 */
-	public IContentDescription getDescriptionFor(InputStream contents, String fileName, QualifiedName[] options) throws IOException;
+	IContentDescription getDescriptionFor(InputStream contents, String fileName, QualifiedName[] options) throws IOException;
 
 	/**
 	 * Tries to obtain a description for the given contents and file name.
@@ -136,5 +136,5 @@ public interface IContentTypeMatcher {
 	 * @throws IOException if an error occurs while reading the contents
 	 * @see IContentDescription
 	 */
-	public IContentDescription getDescriptionFor(Reader contents, String fileName, QualifiedName[] options) throws IOException;
+	IContentDescription getDescriptionFor(Reader contents, String fileName, QualifiedName[] options) throws IOException;
 }

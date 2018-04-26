@@ -113,7 +113,7 @@ public interface IContentTypeManager extends IContentTypeMatcher {
 		 *
 		 * @param event the content type change event
 		 */
-		public void contentTypeChanged(ContentTypeChangeEvent event);
+		void contentTypeChanged(ContentTypeChangeEvent event);
 	}
 
 	/**
@@ -163,7 +163,7 @@ public interface IContentTypeManager extends IContentTypeMatcher {
 	 * </pre>
 	 * </p>
 	 */
-	public final static String CT_TEXT = "org.eclipse.core.runtime.text"; //$NON-NLS-1$
+	String CT_TEXT = "org.eclipse.core.runtime.text"; //$NON-NLS-1$
 
 	/**
 	 * Register the given listener for notification of content type changes.
@@ -174,7 +174,7 @@ public interface IContentTypeManager extends IContentTypeMatcher {
 	 * @see #removeContentTypeChangeListener(IContentTypeManager.IContentTypeChangeListener)
 	 * @see IContentTypeManager.IContentTypeChangeListener
 	 */
-	public void addContentTypeChangeListener(IContentTypeChangeListener listener);
+	void addContentTypeChangeListener(IContentTypeChangeListener listener);
 
 	/**
 	 * Returns all content types known by the platform.
@@ -184,7 +184,7 @@ public interface IContentTypeManager extends IContentTypeMatcher {
 	 *
 	 * @return all content types known by the platform.
 	 */
-	public IContentType[] getAllContentTypes();
+	IContentType[] getAllContentTypes();
 
 	/**
 	 * Returns the content type with the given identifier, or <code>null</code>
@@ -193,7 +193,7 @@ public interface IContentTypeManager extends IContentTypeMatcher {
 	 * @param contentTypeIdentifier the identifier for the content type
 	 * @return the content type, or <code>null</code>
 	 */
-	public IContentType getContentType(String contentTypeIdentifier);
+	IContentType getContentType(String contentTypeIdentifier);
 
 	/**
 	 * Returns a newly created content type matcher using the given content type selection policy
@@ -205,7 +205,7 @@ public interface IContentTypeManager extends IContentTypeMatcher {
 	 * @return a content type matcher that uses the given policy
 	 * @since 3.1
 	 */
-	public IContentTypeMatcher getMatcher(ISelectionPolicy customPolicy, IScopeContext context);
+	IContentTypeMatcher getMatcher(ISelectionPolicy customPolicy, IScopeContext context);
 
 	/**
 	 * De-register the given listener from receiving notification of content type changes.
@@ -216,7 +216,7 @@ public interface IContentTypeManager extends IContentTypeMatcher {
 	 * @see #addContentTypeChangeListener(IContentTypeManager.IContentTypeChangeListener)
 	 * @see IContentTypeManager.IContentTypeChangeListener
 	 */
-	public void removeContentTypeChangeListener(IContentTypeChangeListener listener);
+	void removeContentTypeChangeListener(IContentTypeChangeListener listener);
 
 	/**
 	 * Adds a new content-type to the registry. The content-type identifier
@@ -234,7 +234,7 @@ public interface IContentTypeManager extends IContentTypeMatcher {
 	 *             If the type was not added due to an internal error.
 	 * @since 3.6
 	 */
-	public IContentType addContentType(String contentTypeIdentifier, String name, IContentType baseType)
+	IContentType addContentType(String contentTypeIdentifier, String name, IContentType baseType)
 			throws CoreException;
 
 	/**
@@ -257,5 +257,5 @@ public interface IContentTypeManager extends IContentTypeMatcher {
 	 *             removed.
 	 * @since 3.6
 	 */
-	public void removeContentType(String contentTypeIdentifier) throws CoreException;
+	void removeContentType(String contentTypeIdentifier) throws CoreException;
 }

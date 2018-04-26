@@ -35,5 +35,5 @@ public interface IVariableResolver {
 	 * @exception CoreException if an errors occurs while resolving
 	 *  the variable
 	 */
-	public Object resolve(String name, Object[] args) throws CoreException;
+	Object resolve(String name, Object[] args) throws CoreException;
 }

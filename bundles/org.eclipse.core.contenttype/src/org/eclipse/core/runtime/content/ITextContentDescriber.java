@@ -60,5 +60,5 @@ public interface ITextContentDescriber extends IContentDescriber {
 	 * @see #INVALID
 	 * @see #INDETERMINATE
 	 */
-	public int describe(Reader contents, IContentDescription description) throws IOException;
+	int describe(Reader contents, IContentDescription description) throws IOException;
 }

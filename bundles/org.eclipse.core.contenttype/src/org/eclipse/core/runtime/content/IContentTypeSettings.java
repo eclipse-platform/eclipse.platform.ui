@@ -28,18 +28,18 @@ public interface IContentTypeSettings {
 	/**
 	 * File spec type constant, indicating a file extension specification.
 	 */
-	public static final int FILE_EXTENSION_SPEC = 0b1000;
+	int FILE_EXTENSION_SPEC = 0b1000;
 	/**
 	 * File spec type constant, indicating a file name specification.
 	 */
-	public static final int FILE_NAME_SPEC = 0b100;
+	int FILE_NAME_SPEC = 0b100;
 
 	/**
 	 * File spec type constant, indicating a file pattern specification
-	 * 
+	 *
 	 * @since 3.7
 	 */
-	public static final int FILE_PATTERN_SPEC = 0b10000;
+	int FILE_PATTERN_SPEC = 0b10000;
 
 	/**
 	 * Adds a user-defined file specification to the corresponding content type. Has no
@@ -60,7 +60,7 @@ public interface IContentTypeSettings {
 	 * @see #FILE_EXTENSION_SPEC
 	 * @see #FILE_PATTERN_SPEC
 	 */
-	public void addFileSpec(String fileSpec, int type) throws CoreException;
+	void addFileSpec(String fileSpec, int type) throws CoreException;
 
 	/**
 	 * Returns the default charset for the corresponding content type if
@@ -69,7 +69,7 @@ public interface IContentTypeSettings {
 	 *
 	 * @return the default charset, or <code>null</code>
 	 */
-	public String getDefaultCharset();
+	String getDefaultCharset();
 
 	/**
 	 * Returns the file specifications for the corresponding content type. The type mask
@@ -83,7 +83,7 @@ public interface IContentTypeSettings {
 	 * @see #FILE_NAME_SPEC
 	 * @see #FILE_EXTENSION_SPEC
 	 */
-	public String[] getFileSpecs(int type);
+	String[] getFileSpecs(int type);
 
 	/**
 	 * Returns the corresponding content type's unique identifier. Each content
@@ -92,7 +92,7 @@ public interface IContentTypeSettings {
 	 *
 	 * @return the content type unique identifier
 	 */
-	public String getId();
+	String getId();
 
 	/**
 	 * Removes a user-defined file specification from the corresponding content type. Has no
@@ -111,7 +111,7 @@ public interface IContentTypeSettings {
 	 * @see #FILE_NAME_SPEC
 	 * @see #FILE_EXTENSION_SPEC
 	 */
-	public void removeFileSpec(String fileSpec, int type) throws CoreException;
+	void removeFileSpec(String fileSpec, int type) throws CoreException;
 
 	/**
 	 * Sets the default charset for the corresponding content type. If
@@ -124,12 +124,12 @@ public interface IContentTypeSettings {
 	 * <li> An error occurred persisting this setting.</li>
 	 * </ul>
 	 */
-	public void setDefaultCharset(String userCharset) throws CoreException;
+	void setDefaultCharset(String userCharset) throws CoreException;
 
 	/**
 	 * @return whether the content-type was defined via user action, using
 	 *         {@link IContentTypeManager#addContentType(String, String, IContentType)}
 	 * @since 3.6
 	 */
-	public boolean isUserDefined();
+	boolean isUserDefined();
 }

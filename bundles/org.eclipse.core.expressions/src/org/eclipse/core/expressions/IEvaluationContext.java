@@ -37,7 +37,7 @@ public interface IEvaluationContext {
 	 *
 	 * @since 3.4
 	 */
-	public static Object UNDEFINED_VARIABLE = new Object();
+	Object UNDEFINED_VARIABLE = new Object();
 
 	/**
 	 * Returns the parent context or <code>null</code> if
@@ -45,14 +45,14 @@ public interface IEvaluationContext {
 	 *
 	 * @return the parent evaluation context or <code>null</code>
 	 */
-	public IEvaluationContext getParent();
+	IEvaluationContext getParent();
 
 	/**
 	 * Returns the root evaluation context.
 	 *
 	 * @return the root evaluation context
 	 */
-	public IEvaluationContext getRoot();
+	IEvaluationContext getRoot();
 
 	/**
 	 * Specifies whether this evaluation context allows activation
@@ -65,7 +65,7 @@ public interface IEvaluationContext {
 	 * @param value whether this evaluation context allows plug-in activation
 	 * @since 3.2
 	 */
-	public void setAllowPluginActivation(boolean value);
+	void setAllowPluginActivation(boolean value);
 
 	/**
 	 * Returns whether this evaluation context supports plug-in
@@ -76,7 +76,7 @@ public interface IEvaluationContext {
 	 * @return whether plug-in activation is supported or not
 	 * @since 3.2
 	 */
-	public boolean getAllowPluginActivation();
+	boolean getAllowPluginActivation();
 
 	/**
 	 * Returns the default variable.
@@ -84,7 +84,7 @@ public interface IEvaluationContext {
 	 * @return the default variable or <code>null</code> if
 	 *  no default variable is managed.
 	 */
-	public Object getDefaultVariable();
+	Object getDefaultVariable();
 
 	/**
 	 * Adds a new named variable to this context. If a variable
@@ -94,7 +94,7 @@ public interface IEvaluationContext {
 	 * @param name the variable's name
 	 * @param value the variable's value
 	 */
-	public void addVariable(String name, Object value);
+	void addVariable(String name, Object value);
 
 	/**
 	 * Removes the variable managed under the given name
@@ -104,7 +104,7 @@ public interface IEvaluationContext {
 	 * @return the currently stored value or <code>null</code> if
 	 *  the variable doesn't exist
 	 */
-	public Object removeVariable(String name);
+	Object removeVariable(String name);
 
 	/**
 	 * Returns the variable managed under the given name.
@@ -113,7 +113,7 @@ public interface IEvaluationContext {
 	 * @return the variable's value or <code>null</code> if the content
 	 *  doesn't manage a variable with the given name
 	 */
-	public Object getVariable(String name);
+	Object getVariable(String name);
 
 	/**
 	 * Resolves a variable for the given name and arguments. This
@@ -129,5 +129,5 @@ public interface IEvaluationContext {
 	 * @exception CoreException if an errors occurs while resolving
 	 *  the variable
 	 */
-	public Object resolveVariable(String name, Object[] args) throws CoreException;
+	Object resolveVariable(String name, Object[] args) throws CoreException;
 }

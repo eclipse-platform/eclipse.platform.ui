@@ -29,5 +29,5 @@ public interface ICountable {
 	 *
 	 * @return the number of elements
 	 */
-	public int count();
+	int count();
 }

@@ -48,31 +48,31 @@ public interface IContentDescription {
 	/**
 	 * Key for the "charset" property.
 	 */
-	public final static QualifiedName CHARSET = new QualifiedName(IContentConstants.RUNTIME_NAME, "charset"); //$NON-NLS-1$
+	QualifiedName CHARSET = new QualifiedName(IContentConstants.RUNTIME_NAME, "charset"); //$NON-NLS-1$
 	/**
 	 * Key for the "byte order mark" property. This property is only meaningful
 	 * when describing byte streams.
 	 */
-	public final static QualifiedName BYTE_ORDER_MARK = new QualifiedName(IContentConstants.RUNTIME_NAME, "bom"); //$NON-NLS-1$
+	QualifiedName BYTE_ORDER_MARK = new QualifiedName(IContentConstants.RUNTIME_NAME, "bom"); //$NON-NLS-1$
 	/**
 	 * Options constant meaning that all properties should be described.
 	 */
-	public final static QualifiedName[] ALL = null;
+	QualifiedName[] ALL = null;
 	/**
 	 * Constant that identifies the Byte-Order-Mark for contents encoded with
 	 * the UTF-8 character encoding scheme.
 	 */
-	public final static byte[] BOM_UTF_8 = {(byte) 0xEF, (byte) 0xBB, (byte) 0xBF};
+	byte[] BOM_UTF_8 = {(byte) 0xEF, (byte) 0xBB, (byte) 0xBF};
 	/**
 	 * Constant that identifies the Byte-Order-Mark for contents encoded with
 	 * the UTF-16 Big Endian character encoding scheme.
 	 */
-	public final static byte[] BOM_UTF_16BE = {(byte) 0xFE, (byte) 0xFF};
+	byte[] BOM_UTF_16BE = {(byte) 0xFE, (byte) 0xFF};
 	/**
 	 * Constant that identifies the Byte-Order-Mark for contents encoded with
 	 * the UTF-16 Little Endian character encoding scheme.
 	 */
-	public final static byte[] BOM_UTF_16LE = {(byte) 0xFF, (byte) 0xFE};
+	byte[] BOM_UTF_16LE = {(byte) 0xFF, (byte) 0xFE};
 
 	/**
 	 * Returns whether the given property is requested to be described. This
@@ -83,7 +83,7 @@ public interface IContentDescription {
 	 * @return <code>true</code> if the property is to be described,
 	 * <code>false</code> otherwise
 	 */
-	public boolean isRequested(QualifiedName key);
+	boolean isRequested(QualifiedName key);
 
 	/**
 	 * Returns the charset name to be used when reading the contents
@@ -97,7 +97,7 @@ public interface IContentDescription {
 	 * </p>
 	 * @return a charset name, or <code>null</code>
 	 */
-	public String getCharset();
+	String getCharset();
 
 	/**
 	 * Returns the content type detected. Returns <code>null</code> if the
@@ -105,7 +105,7 @@ public interface IContentDescription {
 	 *
 	 * @return the corresponding content type, or <code>null</code>
 	 */
-	public IContentType getContentType();
+	IContentType getContentType();
 
 	/**
 	 * Returns the value of custom property set by the content describer,
@@ -119,7 +119,7 @@ public interface IContentDescription {
 	 * @return the property value, or <code>null</code>, if the property is not
 	 * found
 	 */
-	public Object getProperty(QualifiedName key);
+	Object getProperty(QualifiedName key);
 
 	/**
 	 * Sets the given property to the given value.
@@ -139,5 +139,5 @@ public interface IContentDescription {
 	 * @throws IllegalStateException if called after this description has been
 	 * filled in
 	 */
-	public void setProperty(QualifiedName key, Object value);
+	void setProperty(QualifiedName key, Object value);
 }

@@ -78,7 +78,7 @@ public final class XMLRootHandler extends DefaultHandler implements LexicalHandl
 	}
 
 	@Override
-	public final void comment(final char[] ch, final int start, final int length) {
+	public void comment(final char[] ch, final int start, final int length) {
 		// Not interested.
 	}
 
@@ -98,7 +98,7 @@ public final class XMLRootHandler extends DefaultHandler implements LexicalHandl
 	 *             If the <code>XMLReader</code> does not support the lexical
 	 *             handler configuration option.
 	 */
-	private final SAXParser createParser(SAXParserFactory parserFactory) throws ParserConfigurationException, SAXException, SAXNotRecognizedException, SAXNotSupportedException {
+	private SAXParser createParser(SAXParserFactory parserFactory) throws ParserConfigurationException, SAXException, SAXNotRecognizedException, SAXNotSupportedException {
 		// Initialize the parser.
 		final SAXParser parser = parserFactory.newSAXParser();
 		final XMLReader reader = parser.getXMLReader();
@@ -117,17 +117,17 @@ public final class XMLRootHandler extends DefaultHandler implements LexicalHandl
 	}
 
 	@Override
-	public final void endCDATA() {
+	public void endCDATA() {
 		// Not interested.
 	}
 
 	@Override
-	public final void endDTD() {
+	public void endDTD() {
 		// Not interested.
 	}
 
 	@Override
-	public final void endEntity(final String name) {
+	public void endEntity(final String name) {
 		// Not interested.
 	}
 
@@ -174,12 +174,12 @@ public final class XMLRootHandler extends DefaultHandler implements LexicalHandl
 	}
 
 	@Override
-	public final void startCDATA() {
+	public void startCDATA() {
 		// Not interested.
 	}
 
 	@Override
-	public final void startDTD(final String name, final String publicId, final String systemId) throws SAXException {
+	public void startDTD(final String name, final String publicId, final String systemId) throws SAXException {
 		dtdFound = systemId;
 		// If we don't care about the top-level element, we can stop here.
 		if (!checkRoot)
@@ -187,14 +187,14 @@ public final class XMLRootHandler extends DefaultHandler implements LexicalHandl
 	}
 
 	@Override
-	public final void startElement(final String uri, final String elementName, final String qualifiedName, final Attributes attributes) throws SAXException {
+	public void startElement(final String uri, final String elementName, final String qualifiedName, final Attributes attributes) throws SAXException {
 		elementFound = elementName;
 		namespaceFound = uri;
 		throw new StopParsingException();
 	}
 
 	@Override
-	public final void startEntity(final String name) {
+	public void startEntity(final String name) {
 		// Not interested.
 	}
 }
