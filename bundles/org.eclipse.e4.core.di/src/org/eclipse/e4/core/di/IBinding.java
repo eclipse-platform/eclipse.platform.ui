@@ -13,7 +13,7 @@ package org.eclipse.e4.core.di;
 /**
  * Describes binding between object description and its implementation to be
  * used by the dependency injection.
- * 
+ *
  * @see IInjector#addBinding(Class)
  * @see IInjector#addBinding(IBinding)
  * @noimplement This interface is not intended to be implemented by clients.
@@ -27,12 +27,12 @@ public interface IBinding {
 	 * @param name name for this binding
 	 * @return binding for the specified name
 	 */
-	public IBinding named(String name);
+	IBinding named(String name);
 
 	/**
 	 * Creates a binding for the specified class
 	 * @param clazz class for this binding
 	 * @return binding for the specified class
 	 */
-	public IBinding implementedBy(Class<?> clazz);
+	IBinding implementedBy(Class<?> clazz);
 }

@@ -25,7 +25,7 @@ import org.osgi.framework.BundleContext;
  * {@link IRequestor#resolveArguments(boolean)} and
  * {@link IRequestor#execute()}.
  * </p>
- * 
+ *
  * @see IRequestor#resolveArguments(boolean)
  * @see IRequestor#execute()
  * @since 1.7

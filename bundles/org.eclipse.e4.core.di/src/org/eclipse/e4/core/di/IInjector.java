@@ -60,7 +60,7 @@ public interface IInjector {
 	 * Methods may return this to indicate that the requested object was not found
 	 * wherever <code>null</code> can be a valid return value.
 	 */
-	final public static Object NOT_A_VALUE = new Object();
+	Object NOT_A_VALUE = new Object();
 
 	/**
 	 * Injects data from the supplier into a domain object. See the class comment for details on
@@ -69,7 +69,7 @@ public interface IInjector {
 	 * @param objectSupplier primary object supplier for the injection
 	 * @throws InjectionException if an exception occurred while performing this operation
 	 */
-	public void inject(Object object, PrimaryObjectSupplier objectSupplier) throws InjectionException;
+	void inject(Object object, PrimaryObjectSupplier objectSupplier) throws InjectionException;
 
 	/**
 	 * Injects data from the supplier into a domain object. See the class comment
@@ -92,7 +92,7 @@ public interface IInjector {
 	 *             if an exception occurred while performing this operation
 	 * @since 1.7
 	 */
-	public void inject(Object object, PrimaryObjectSupplier objectSupplier, PrimaryObjectSupplier staticSupplier)
+	void inject(Object object, PrimaryObjectSupplier objectSupplier, PrimaryObjectSupplier staticSupplier)
 			throws InjectionException;
 
 	/**
@@ -101,7 +101,7 @@ public interface IInjector {
 	 * @param objectSupplier primary object supplier for the injection
 	 * @throws InjectionException if an exception occurred while performing this operation
 	 */
-	public void uninject(Object object, PrimaryObjectSupplier objectSupplier) throws InjectionException;
+	void uninject(Object object, PrimaryObjectSupplier objectSupplier) throws InjectionException;
 
 	/**
 	 * Call the annotated method on an object, injecting the parameters from the supplier.
@@ -115,7 +115,7 @@ public interface IInjector {
 	 * @return the return value of the method call, might be <code>null</code>
 	 * @throws InjectionException if an exception occurred while performing this operation
 	 */
-	public Object invoke(Object object, Class<? extends Annotation> qualifier, PrimaryObjectSupplier objectSupplier) throws InjectionException;
+	Object invoke(Object object, Class<? extends Annotation> qualifier, PrimaryObjectSupplier objectSupplier) throws InjectionException;
 
 	/**
 	 * Call the annotated method on an object, injecting the parameters from the supplier.
@@ -129,7 +129,7 @@ public interface IInjector {
 	 * @return the return value of the method call, might be <code>null</code>
 	 * @throws InjectionException if an exception occurred while performing this operation
 	 */
-	public Object invoke(Object object, Class<? extends Annotation> qualifier, Object defaultValue, PrimaryObjectSupplier objectSupplier) throws InjectionException;
+	Object invoke(Object object, Class<? extends Annotation> qualifier, Object defaultValue, PrimaryObjectSupplier objectSupplier) throws InjectionException;
 
 	/**
 	 * Call the annotated method on an object, injecting the parameters from the suppliers.
@@ -144,7 +144,7 @@ public interface IInjector {
 	 * @return the return value of the method call, might be <code>null</code>
 	 * @throws InjectionException if an exception occurred while performing this operation
 	 */
-	public Object invoke(Object object, Class<? extends Annotation> qualifier, Object defaultValue, PrimaryObjectSupplier objectSupplier, PrimaryObjectSupplier localSupplier) throws InjectionException;
+	Object invoke(Object object, Class<? extends Annotation> qualifier, Object defaultValue, PrimaryObjectSupplier objectSupplier, PrimaryObjectSupplier localSupplier) throws InjectionException;
 
 	/**
 	 * Obtain an instance of the specified class and inject it with the data from the supplier.
@@ -156,7 +156,7 @@ public interface IInjector {
 	 * @see Scope
 	 * @see Singleton
 	 */
-	public <T> T make(Class<T> clazz, PrimaryObjectSupplier objectSupplier) throws InjectionException;
+	<T> T make(Class<T> clazz, PrimaryObjectSupplier objectSupplier) throws InjectionException;
 
 	/**
 	 * Obtain an instance of the specified class and inject it with the data from the supplier.
@@ -174,21 +174,21 @@ public interface IInjector {
 	 * @see Scope
 	 * @see Singleton
 	 */
-	public <T> T make(Class<T> clazz, PrimaryObjectSupplier objectSupplier, PrimaryObjectSupplier staticSupplier) throws InjectionException;
+	<T> T make(Class<T> clazz, PrimaryObjectSupplier objectSupplier, PrimaryObjectSupplier staticSupplier) throws InjectionException;
 
 	/**
 	 * Creates a binding for the specified class and adds it to the injector.
 	 * @param clazz the class that the injector should be aware of
 	 * @return binding for the specified class
 	 */
-	public IBinding addBinding(Class<?> clazz);
+	IBinding addBinding(Class<?> clazz);
 
 	/**
 	 * Adds binding to the injector.
 	 * @param binding the binding to add to the injector
 	 * @return the binding added to the injector
 	 */
-	public IBinding addBinding(IBinding binding);
+	IBinding addBinding(IBinding binding);
 
 	/**
 	 * Specifies object supplier to inject internally created objects,
@@ -197,5 +197,5 @@ public interface IInjector {
 	 * implicitly created by this injector
 	 * @since 1.2
 	 */
-	public void setDefaultSupplier(PrimaryObjectSupplier objectSupplier);
+	void setDefaultSupplier(PrimaryObjectSupplier objectSupplier);
 }

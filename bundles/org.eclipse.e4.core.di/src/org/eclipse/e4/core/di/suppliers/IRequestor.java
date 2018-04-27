@@ -24,7 +24,7 @@ import org.eclipse.e4.core.di.InjectionException;
  * expected to execute requestor again when it detects change in the injected
  * value).
  * </p>
- * 
+ *
  * @noimplement This interface is not intended to be implemented by clients.
  * @noextend This interface is not intended to be extended by clients.
  * @since 1.7
@@ -36,7 +36,7 @@ public interface IRequestor {
 	 * @param initial <code>true</code> if this is the initial attempt to resolve arguments
 	 * @throws InjectionException if an exception occurred while performing this task
 	 */
-	public void resolveArguments(boolean initial) throws InjectionException;
+	void resolveArguments(boolean initial) throws InjectionException;
 
 	/**
 	 * Call this method to perform requestor's task. This method should be called
@@ -45,33 +45,33 @@ public interface IRequestor {
 	 * @return result of the task
 	 * @throws InjectionException if an exception occurred while performing this task
 	 */
-	public Object execute() throws InjectionException;
+	Object execute() throws InjectionException;
 
 	/**
 	 * The injected object that initiated this request
 	 * @return the object that initiated this request, may return <code>null</code>
 	 */
-	public Object getRequestingObject();
+	Object getRequestingObject();
 
 	/**
 	 * Class of the injected object
 	 * @return class of the injected object, may return <code>null</code>
 	 */
-	public Class<?> getRequestingObjectClass();
+	Class<?> getRequestingObjectClass();
 
 	/**
 	 * Determines if this requestor is still valid. Once requestor becomes invalid, it
 	 * stays invalid. Invalid requestors can be safely removed from computations.
 	 * @return <code>true</code> if this requestor is valid, <code>false</code> otherwise
 	 */
-	public boolean isValid();
+	boolean isValid();
 
 	/**
 	 * Notifies the requestor that an object supplier has been disposed of.
 	 * @param objectSupplier the object supplier being disposed of
 	 * @throws InjectionException if an exception occurred while performing this task
 	 */
-	public void disposed(PrimaryObjectSupplier objectSupplier) throws InjectionException;
+	void disposed(PrimaryObjectSupplier objectSupplier) throws InjectionException;
 
 	/**
 	 * Notifies the requestor that an object should be un-injected.
@@ -80,5 +80,5 @@ public interface IRequestor {
 	 * @throws InjectionException if an exception occurred while performing this task
 	 * @return <code>true</code> if the object was uninjected, <code>false</code> otherwise
 	 */
-	public boolean uninject(Object object, PrimaryObjectSupplier objectSupplier) throws InjectionException;
+	boolean uninject(Object object, PrimaryObjectSupplier objectSupplier) throws InjectionException;
 }

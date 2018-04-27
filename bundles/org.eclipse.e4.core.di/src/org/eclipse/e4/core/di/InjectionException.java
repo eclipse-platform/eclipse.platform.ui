@@ -13,7 +13,7 @@ package org.eclipse.e4.core.di;
 /**
  * The exception indicates a error that occurred while performing dependency
  * injection. Use {@link #getCause()} to obtain underlying exception, if any.
- * 
+ *
  * @since 1.7
  */
 public class InjectionException extends RuntimeException {

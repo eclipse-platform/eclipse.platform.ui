@@ -20,7 +20,7 @@ import javax.inject.Qualifier;
  * From the view point of the injector, objects are described by a type with a
  * set of optional qualifiers.
  * </p>
- * 
+ *
  * @see Qualifier
  * @noextend This interface is not intended to be extended by clients.
  * @noimplement This interface is not intended to be implemented by clients.
@@ -32,7 +32,7 @@ public interface IObjectDescriptor {
 	 * The formal type that the objects should be assignable to.
 	 * @return the expected object's type
 	 */
-	public Type getDesiredType();
+	Type getDesiredType();
 
 	/**
 	 * Use this method to find out if the object descriptor has a qualifier.
@@ -40,7 +40,7 @@ public interface IObjectDescriptor {
 	 * @return <code>true</code> if the object descriptor has the qualifier;
 	 * <code>false</code>otherwise
 	 */
-	public boolean hasQualifier(Class<? extends Annotation> clazz);
+	boolean hasQualifier(Class<? extends Annotation> clazz);
 
 	/**
 	 * Returns an instance of the qualifier, if it is present in this descriptor,
@@ -49,13 +49,13 @@ public interface IObjectDescriptor {
 	 * @param clazz the qualifier's class
 	 * @return the qualifier instance, if present, or <code>null</code>
 	 */
-	public <T extends Annotation> T getQualifier(Class<T> clazz);
+	<T extends Annotation> T getQualifier(Class<T> clazz);
 
 	/**
 	 * Returns qualifiers specified for this object descriptor, or <code>null</code>.
 	 * @return qualifiers for this descriptor, or <code>null</code> if there are
 	 * no qualifiers specified
 	 */
-	public Annotation[] getQualifiers();
+	Annotation[] getQualifiers();
 
 }
