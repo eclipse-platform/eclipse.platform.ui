@@ -24,7 +24,7 @@
 
   <modules>
     <!--
-    <module>org.eclipse.e4.emf.xpath.test</module>
+    
     <module>org.eclipse.e4.ui.compatibility.tests</module>
     <module>org.eclipse.e4.ui.keybinding.tests</module>
     <module>org.eclipse.e4.ui.menu.tests</module>
@@ -35,6 +35,7 @@
     <module>org.eclipse.e4.ui.menu.tests.p4</module>
     <module>org.eclipse.ui.tests.browser</module>
     -->
+    <module>org.eclipse.e4.emf.xpath.test</module>
     <module>org.eclipse.jface.tests.databinding</module>
     <module>org.eclipse.jface.tests.databinding.conformance</module>
     <module>org.eclipse.ui.monitoring.tests</module>
@@ -51,7 +52,7 @@
     <module>org.eclipse.e4.ui.tests</module>
     <module>org.eclipse.e4.ui.tests.css.core</module>
     <module>org.eclipse.e4.ui.tests.css.swt</module>
-	<module>org.eclipse.e4.ui.workbench.addons.swt.test</module>
+    <module>org.eclipse.e4.ui.workbench.addons.swt.test</module>
   </modules>
   <properties>
     <code.ignoredWarnings>${tests.ignoredWarnings}</code.ignoredWarnings>
