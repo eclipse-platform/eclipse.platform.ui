@@ -30,7 +30,7 @@ public interface IEventBroker {
 	/**
 	 * The name of the default event attribute used to pass data.
 	 */
-	public String DATA = "org.eclipse.e4.data"; //$NON-NLS-1$
+	String DATA = "org.eclipse.e4.data"; //$NON-NLS-1$
 
 	/**
 	 * Publish event synchronously (the method does not return until the event is processed).
@@ -46,7 +46,7 @@ public interface IEventBroker {
 	 * @return <code>true</code> if this operation was performed successfully; <code>false</code>
 	 *         otherwise
 	 */
-	public boolean send(String topic, Object data);
+	boolean send(String topic, Object data);
 
 	/**
 	 * Publish event asynchronously (this method returns immediately).
@@ -62,7 +62,7 @@ public interface IEventBroker {
 	 * @return <code>true</code> if this operation was performed successfully; <code>false</code>
 	 *         otherwise
 	 */
-	public boolean post(String topic, Object data);
+	boolean post(String topic, Object data);
 
 	/**
 	 * Subscribe for events on the given topic.
@@ -77,7 +77,7 @@ public interface IEventBroker {
 	 * @return <code>true</code> if this operation was performed successfully; <code>false</code>
 	 *         otherwise
 	 */
-	public boolean subscribe(String topic, EventHandler eventHandler);
+	boolean subscribe(String topic, EventHandler eventHandler);
 
 	/**
 	 * Subscribe for events on the given topic.
@@ -98,7 +98,7 @@ public interface IEventBroker {
 	 * @return <code>true</code> if this operation was performed successfully;
 	 *         <code>false</code> otherwise
 	 */
-	public boolean subscribe(String topic, String filter, EventHandler eventHandler,
+	boolean subscribe(String topic, String filter, EventHandler eventHandler,
 			boolean headless);
 
 	/**
@@ -109,5 +109,5 @@ public interface IEventBroker {
 	 * @return <code>true</code> if this operation was performed successfully; <code>false</code>
 	 *         otherwise
 	 */
-	public boolean unsubscribe(EventHandler eventHandler);
+	boolean unsubscribe(EventHandler eventHandler);
 }

@@ -16,8 +16,8 @@ import org.osgi.framework.Bundle;
 // TBD only used by Languages block, move it there?
 public interface IContributionFactorySpi {
 
-	public Object create(Bundle bundle, String className, IEclipseContext context);
+	Object create(Bundle bundle, String className, IEclipseContext context);
 
-	public Object call(Object object, String methodName, IEclipseContext context,
+	Object call(Object object, String methodName, IEclipseContext context,
 			Object defaultValue);
 }

@@ -35,6 +35,6 @@ public interface IMessageFactoryService {
 	 *            bundle with a given locale.
 	 * @return An instance of the given messages class and {@link Locale}.
 	 */
-	public <M> M getMessageInstance(final Locale locale, final Class<M> messages,
+	<M> M getMessageInstance(final Locale locale, final Class<M> messages,
 			ResourceBundleProvider provider);
 }

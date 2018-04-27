@@ -17,10 +17,10 @@ import org.osgi.framework.Bundle;
 // Change it into an utility method somewhere.
 public interface IContributionFactory {
 
-	public Object create(String uriString, IEclipseContext context);
+	Object create(String uriString, IEclipseContext context);
 
-	public Object create(String uriString, IEclipseContext context, IEclipseContext staticContext);
+	Object create(String uriString, IEclipseContext context, IEclipseContext staticContext);
 
-	public Bundle getBundle(String uriString);
+	Bundle getBundle(String uriString);
 
 }
