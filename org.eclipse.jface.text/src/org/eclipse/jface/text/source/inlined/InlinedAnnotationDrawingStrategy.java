@@ -268,23 +268,25 @@ class InlinedAnnotationDrawingStrategy implements IDrawingStrategy {
 				// START TO REMOVE
 				// The inline annotation replaces one character by taking a place width
 				// GlyphMetrics
-				// Here we need to redraw this first character because GlyphMetrics clip this
+				// Here we need to redraw this first character (if it's not a line delimiter) because GlyphMetrics clip this
 				// character.
-				int charX= x + bounds.width - charWidth;
-				int charY= y;
-				if (style != null) {
-					if (style.background != null) {
-						gc.setBackground(style.background);
-						gc.fillRectangle(charX, charY, charWidth + 1, bounds.height);
+				if (!("\r".equals(s) || "\n".equals(s))) { //$NON-NLS-1$ //$NON-NLS-2$
+					int charX= x + bounds.width - charWidth;
+					int charY= y;
+					if (style != null) {
+						if (style.background != null) {
+							gc.setBackground(style.background);
+							gc.fillRectangle(charX, charY, charWidth + 1, bounds.height);
+						}
+						if (style.foreground != null) {
+							gc.setForeground(style.foreground);
+						} else {
+							gc.setForeground(textWidget.getForeground());
+						}
+						gc.setFont(annotation.getFont(style.fontStyle));
 					}
-					if (style.foreground != null) {
-						gc.setForeground(style.foreground);
-					} else {
-						gc.setForeground(textWidget.getForeground());
-					}
-					gc.setFont(annotation.getFont(style.fontStyle));
+					gc.drawString(s, charX, charY, true);
 				}
-				gc.drawString(s, charX, charY, true);
 				// END TO REMOVE
 			} else if (style != null && style.metrics != null && style.metrics.width != 0) {
 				// line content annotation had an , reset it
