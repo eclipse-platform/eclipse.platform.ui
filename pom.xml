@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  Copyright (c) 2012, 2015 Eclipse Foundation and others.
+  Copyright (c) 2012, 2018 Eclipse Foundation and others.
   All rights reserved. This program and the accompanying materials
   are made available under the terms of the Eclipse Distribution License v1.0
   which accompanies this distribution, and is available at
@@ -24,8 +24,6 @@
   <packaging>pom</packaging>
   <properties>
     <tycho.scmUrl>scm:git:git://git.eclipse.org/gitroot/platform/eclipse.platform.ua.git</tycho.scmUrl>
-    <!-- See bug 443174 - remove when parent pom doesn't set skipTests to true -->
-    <skipTests>false</skipTests>
   </properties>
 
   <!-- 
