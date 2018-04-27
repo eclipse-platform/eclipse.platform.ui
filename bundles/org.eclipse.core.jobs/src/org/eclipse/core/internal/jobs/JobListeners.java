@@ -21,7 +21,7 @@ import org.eclipse.osgi.util.NLS;
  */
 class JobListeners {
 	interface IListenerDoit {
-		public void notify(IJobChangeListener listener, IJobChangeEvent event);
+		void notify(IJobChangeListener listener, IJobChangeEvent event);
 	}
 
 	private final IListenerDoit aboutToRun = IJobChangeListener::aboutToRun;

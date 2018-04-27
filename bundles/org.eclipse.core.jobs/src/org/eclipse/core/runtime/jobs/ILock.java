@@ -71,7 +71,7 @@ public interface ILock {
 	 * <code>false</code> otherwise.
 	 * @exception InterruptedException if the thread was interrupted
 	 */
-	public boolean acquire(long delay) throws InterruptedException;
+	boolean acquire(long delay) throws InterruptedException;
 
 	/**
 	 * Acquires this lock.  If the lock is in use, the calling thread will block until the lock
@@ -85,7 +85,7 @@ public interface ILock {
 	 * This implementation ignores attempts to interrupt the thread.  If response to
 	 * interruption is needed, use the method <code>acquire(long)</code>
 	 */
-	public void acquire();
+	void acquire();
 
 	/**
 	 * Returns the number of nested acquires on this lock that have not been released.
@@ -94,11 +94,11 @@ public interface ILock {
 	 *
 	 * @return the number of nested acquires that have not been released
 	 */
-	public int getDepth();
+	int getDepth();
 
 	/**
 	 * Releases this lock. Locks must only be released by the thread that currently
 	 * owns the lock.
 	 */
-	public void release();
+	void release();
 }

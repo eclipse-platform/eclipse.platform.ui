@@ -25,5 +25,5 @@ public interface IJobStatus extends IStatus {
 	 *
 	 * @return the job associated with this status
 	 */
-	public Job getJob();
+	Job getJob();
 }

@@ -51,5 +51,5 @@ public interface IJobFunction {
 	 * @see Job#ASYNC_FINISH
 	 * @see Job#done(IStatus)
 	 */
-	public IStatus run(IProgressMonitor monitor);
+	IStatus run(IProgressMonitor monitor);
 }

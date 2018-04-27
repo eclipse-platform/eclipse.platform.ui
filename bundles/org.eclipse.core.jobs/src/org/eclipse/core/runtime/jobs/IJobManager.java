@@ -44,7 +44,7 @@ public interface IJobManager {
 	 * all worker threads to be created as non-daemon threads.
 	 * @since 3.3
 	 */
-	public static final String PROP_USE_DAEMON_THREADS = "eclipse.jobs.daemon"; //$NON-NLS-1$
+	String PROP_USE_DAEMON_THREADS = "eclipse.jobs.daemon"; //$NON-NLS-1$
 
 	/**
 	 * Registers a job listener with the job manager.
@@ -54,7 +54,7 @@ public interface IJobManager {
 	 * @see #removeJobChangeListener(IJobChangeListener)
 	 * @see IJobChangeListener
 	 */
-	public void addJobChangeListener(IJobChangeListener listener);
+	void addJobChangeListener(IJobChangeListener listener);
 
 	/**
 	 * Begins applying this rule in the calling thread.  If the rule conflicts with another
@@ -96,7 +96,7 @@ public interface IJobManager {
 	 * 	before the rule becomes available
 	 * @see ISchedulingRule#contains(ISchedulingRule)
 	 */
-	public void beginRule(ISchedulingRule rule, IProgressMonitor monitor);
+	void beginRule(ISchedulingRule rule, IProgressMonitor monitor);
 
 	/**
 	 * Cancels all jobs in the given job family.  Jobs in the family that are currently waiting
@@ -107,7 +107,7 @@ public interface IJobManager {
 	 * @param family the job family to cancel, or <code>null</code> to cancel all jobs
 	 * @see Job#belongsTo(Object)
 	 */
-	public void cancel(Object family);
+	void cancel(Object family);
 
 	/**
 	 * Returns a progress monitor that can be used to provide aggregated progress
@@ -118,7 +118,7 @@ public interface IJobManager {
 	 * <p>
 	 * Recommended usage (this snippet runs two jobs in sequence in a single
 	 * progress group):
-	 * 
+	 *
 	 * <pre>
 	 * Job parseJob, compileJob;
 	 * IProgressMonitor pm = Job.getJobManager().createProgressGroup();
@@ -139,7 +139,7 @@ public interface IJobManager {
 	 * @see IProgressMonitor
 	 * @return a progress monitor
 	 */
-	public IProgressMonitor createProgressGroup();
+	IProgressMonitor createProgressGroup();
 
 	/**
 	 * Returns the scheduling rule currently held by this thread, or <code>null</code>
@@ -155,7 +155,7 @@ public interface IJobManager {
 	 * @return the current rule or <code>null</code>
 	 * @since 3.5
 	 */
-	public ISchedulingRule currentRule();
+	ISchedulingRule currentRule();
 
 	/**
 	 * Returns the job that is currently running in this thread, or <code>null</code> if there
@@ -163,7 +163,7 @@ public interface IJobManager {
 	 *
 	 * @return the job or <code>null</code>
 	 */
-	public Job currentJob();
+	Job currentJob();
 
 	/**
 	 * Ends the application of a rule to the calling thread.  Calls to <tt>endRule</tt>
@@ -180,7 +180,7 @@ public interface IJobManager {
 	 * there is no matching begin, or that does not match the most recent begin.
 	 * @see ISchedulingRule#contains(ISchedulingRule)
 	 */
-	public void endRule(ISchedulingRule rule);
+	void endRule(ISchedulingRule rule);
 
 	/**
 	 * Returns all waiting, executing and sleeping jobs belonging
@@ -190,7 +190,7 @@ public interface IJobManager {
 	 * @return the job array
 	 * @see Job#belongsTo(Object)
 	 */
-	public Job[] find(Object family);
+	Job[] find(Object family);
 
 	/**
 	 * Returns whether the job manager is currently idle.  The job manager is
@@ -200,7 +200,7 @@ public interface IJobManager {
 	 * <code>false</code> otherwise
 	 * @since 3.1
 	 */
-	public boolean isIdle();
+	boolean isIdle();
 
 	/**
 	 * Returns whether the job manager is currently suspended.
@@ -211,7 +211,7 @@ public interface IJobManager {
 	 * @see #suspend()
 	 * @see #resume()
 	 */
-	public boolean isSuspended();
+	boolean isSuspended();
 
 	/**
 	 * Waits until all jobs of the given family are finished.  This method will block the
@@ -240,7 +240,7 @@ public interface IJobManager {
 	 * @see Job#belongsTo(Object)
 	 * @see #suspend()
 	 */
-	public void join(Object family, IProgressMonitor monitor) throws InterruptedException, OperationCanceledException;
+	void join(Object family, IProgressMonitor monitor) throws InterruptedException, OperationCanceledException;
 
 	/**
 	 * Creates a new lock object.  All lock objects supplied by the job manager
@@ -249,7 +249,7 @@ public interface IJobManager {
 	 *
 	 * @return the new lock object
 	 */
-	public ILock newLock();
+	ILock newLock();
 
 	/**
 	 * Removes a job listener from the job manager.
@@ -259,7 +259,7 @@ public interface IJobManager {
 	 * @see #addJobChangeListener(IJobChangeListener)
 	 * @see IJobChangeListener
 	 */
-	public void removeJobChangeListener(IJobChangeListener listener);
+	void removeJobChangeListener(IJobChangeListener listener);
 
 	/**
 	 * Resumes execution of jobs after a previous <code>suspend</code>.  All
@@ -277,8 +277,7 @@ public interface IJobManager {
 	 * and can result in concurrency problems in all clients that use the suspended rule.
 	 * @see #suspend(ISchedulingRule, IProgressMonitor)
 	 */
-	@Deprecated
-	public void resume(ISchedulingRule rule);
+	@Deprecated void resume(ISchedulingRule rule);
 
 	/**
 	 * Resumes execution of jobs after a previous <code>suspend</code>.  All
@@ -292,7 +291,7 @@ public interface IJobManager {
 	 * @see #suspend()
 	 * @see #isSuspended()
 	 */
-	public void resume();
+	void resume();
 
 	/**
 	 * Provides a hook that is notified whenever a thread is about to wait on a lock,
@@ -303,7 +302,7 @@ public interface IJobManager {
 	 * </p>
 	 * @see LockListener
 	 */
-	public void setLockListener(LockListener listener);
+	void setLockListener(LockListener listener);
 
 	/**
 	 * Registers a progress provider with the job manager.  If there was a
@@ -316,7 +315,7 @@ public interface IJobManager {
 	 * @param provider the new provider, or <code>null</code> if no progress
 	 * is needed
 	 */
-	public void setProgressProvider(ProgressProvider provider);
+	void setProgressProvider(ProgressProvider provider);
 
 	/**
 	 * Suspends execution of all jobs.  Jobs that are already running
@@ -340,7 +339,7 @@ public interface IJobManager {
 	 * @see #join(Object, IProgressMonitor)
 	 * @see #isSuspended()
 	 */
-	public void suspend();
+	void suspend();
 
 	/**
 	 * Defers execution of all jobs with scheduling rules that conflict with the
@@ -378,8 +377,7 @@ public interface IJobManager {
 	 * Cancelation can occur even if no progress monitor is provided.
 	 * @see #resume(ISchedulingRule)
 	 */
-	@Deprecated
-	public void suspend(ISchedulingRule rule, IProgressMonitor monitor);
+	@Deprecated void suspend(ISchedulingRule rule, IProgressMonitor monitor);
 
 	/**
 	 * Requests that all jobs in the given job family be suspended.  Jobs currently
@@ -393,7 +391,7 @@ public interface IJobManager {
 	 * @param family the job family to sleep, or <code>null</code> to sleep all jobs.
 	 * @see Job#belongsTo(Object)
 	 */
-	public void sleep(Object family);
+	void sleep(Object family);
 
 	/**
 	 * Transfers ownership of a scheduling rule to another thread.  The identical
@@ -413,7 +411,7 @@ public interface IJobManager {
 	 * @param destinationThread The new owner for the transferred rule.
 	 * @since 3.1
 	 */
-	public void transferRule(ISchedulingRule rule, Thread destinationThread);
+	void transferRule(ISchedulingRule rule, Thread destinationThread);
 
 	/**
 	 * Resumes scheduling of all sleeping jobs in the given family.  This method
@@ -422,5 +420,5 @@ public interface IJobManager {
 	 * @param family the job family to wake up, or <code>null</code> to wake up all jobs
 	 * @see Job#belongsTo(Object)
 	 */
-	public void wakeUp(Object family);
+	void wakeUp(Object family);
 }

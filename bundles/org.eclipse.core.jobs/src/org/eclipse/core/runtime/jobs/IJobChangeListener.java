@@ -41,7 +41,7 @@ public interface IJobChangeListener {
 	 *
 	 * @param event the event details
 	 */
-	public void aboutToRun(IJobChangeEvent event);
+	void aboutToRun(IJobChangeEvent event);
 
 	/**
 	 * Notification that a job was previously sleeping and has now been rescheduled
@@ -49,7 +49,7 @@ public interface IJobChangeListener {
 	 *
 	 * @param event the event details
 	 */
-	public void awake(IJobChangeEvent event);
+	void awake(IJobChangeEvent event);
 
 	/**
 	 * Notification that a job has completed execution, either due to cancelation, successful
@@ -58,14 +58,14 @@ public interface IJobChangeListener {
 	 *
 	 * @param event the event details
 	 */
-	public void done(IJobChangeEvent event);
+	void done(IJobChangeEvent event);
 
 	/**
 	 * Notification that a job has started running.
 	 *
 	 * @param event the event details
 	 */
-	public void running(IJobChangeEvent event);
+	void running(IJobChangeEvent event);
 
 	/**
 	 * Notification that a job is being added to the queue of scheduled jobs.
@@ -75,7 +75,7 @@ public interface IJobChangeListener {
 	 * @param event the event details, including the job instance and the scheduling
 	 * delay
 	 */
-	public void scheduled(IJobChangeEvent event);
+	void scheduled(IJobChangeEvent event);
 
 	/**
 	 * Notification that a job was waiting to run and has now been put in the
@@ -83,5 +83,5 @@ public interface IJobChangeListener {
 	 *
 	 * @param event the event details
 	 */
-	public void sleeping(IJobChangeEvent event);
+	void sleeping(IJobChangeEvent event);
 }

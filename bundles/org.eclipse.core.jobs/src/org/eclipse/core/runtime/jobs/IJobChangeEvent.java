@@ -29,14 +29,14 @@ public interface IJobChangeEvent {
 	 *
 	 * @return the delay time for this event
 	 */
-	public long getDelay();
+	long getDelay();
 
 	/**
 	 * The job on which this event occurred.
 	 *
 	 * @return the job for this event
 	 */
-	public Job getJob();
+	Job getJob();
 
 	/**
 	 * The result returned by the job's run method, or <code>null</code> if
@@ -44,7 +44,7 @@ public interface IJobChangeEvent {
 	 *
 	 * @return the status for this event
 	 */
-	public IStatus getResult();
+	IStatus getResult();
 
 	/**
 	 * The result returned by the job's job group, if this event signals
@@ -54,5 +54,5 @@ public interface IJobChangeEvent {
 	 * @return the job group status for this event, or <code>null</code>
 	 * @since 3.7
 	 */
-	public IStatus getJobGroupResult();
+	IStatus getJobGroupResult();
 }

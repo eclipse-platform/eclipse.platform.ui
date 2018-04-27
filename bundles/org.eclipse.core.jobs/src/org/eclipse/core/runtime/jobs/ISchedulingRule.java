@@ -45,7 +45,7 @@ public interface ISchedulingRule {
 	 * @return <code>true</code> if this rule contains the given rule, and
 	 * <code>false</code> otherwise.
 	 */
-	public boolean contains(ISchedulingRule rule);
+	boolean contains(ISchedulingRule rule);
 
 	/**
 	 * Returns whether this scheduling rule is compatible with another scheduling rule.
@@ -65,5 +65,5 @@ public interface ISchedulingRule {
 	 * @return <code>true</code> if the rule is conflicting, and <code>false</code>
 	 * 	otherwise.
 	 */
-	public boolean isConflicting(ISchedulingRule rule);
+	boolean isConflicting(ISchedulingRule rule);
 }
