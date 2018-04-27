@@ -25,8 +25,6 @@
 .MPart Composite,
 .MPart LayoutComposite,
 .MPart Label,
-.MPart Hyperlink,
-.MPart ImageHyperlink,
 .MPart ScrolledForm,
 .MPart Form,
 .MPart Section,
@@ -53,11 +51,16 @@
     background-color: #2F2F2F;
     color: #AAAAAA;
 }
+
+.MPart Hyperlink,
+.MPart ImageHyperlink {
+    background-color: #2F2F2F;
+    color: #6fc5ee;
+}
+
 .MPartStack.active .MPart Composite,
 .MPartStack.active .MPart LayoutComposite,
 .MPartStack.active .MPart Label,
-.MPartStack.active .MPart Hyperlink,
-.MPartStack.active .MPart ImageHyperlink,
 .MPartStack.active .MPart ScrolledForm,
 .MPartStack.active .MPart Form,
 .MPartStack.active .MPart Section,
@@ -83,6 +86,12 @@
 .MPartStack.active .MPart LayoutComposite > * > LayoutComposite > Section > LayoutComposite > * /*LayoutComposite > MasterDetailBlock$... > LayoutComposite > Section > LayoutComposite > ExtensionsSection$...*/ {
     background-color: #262626;
     color: #999999;
+}
+
+.MPartStack.active .MPart Hyperlink,
+.MPartStack.active .MPart ImageHyperlink {
+    background-color: #262626;
+    color: #6fc5ee;
 }
 
 .MPart Section > Label {
@@ -211,7 +220,6 @@
     background-color: #415062;
     color: #E98787;
 }
-
 /* ------------------------------------------------------------- */
 
 #org-eclipse-jdt-ui-SourceView StyledText,
