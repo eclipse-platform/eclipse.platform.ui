@@ -26,7 +26,7 @@ import java.lang.annotation.Target;
  * several class methods are tagged with this annotation, only one of them will
  * be called.
  * </p>
- * 
+ *
  * @since 1.6
  */
 @Documented
