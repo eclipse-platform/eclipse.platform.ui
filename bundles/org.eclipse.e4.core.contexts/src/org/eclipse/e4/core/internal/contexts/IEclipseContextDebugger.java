@@ -12,11 +12,11 @@ package org.eclipse.e4.core.internal.contexts;
 
 public interface IEclipseContextDebugger {
 
-	public static final String SERVICE_NAME = IEclipseContextDebugger.class.getName();
+	String SERVICE_NAME = IEclipseContextDebugger.class.getName();
 
 	public enum EventType {
 		CONSTRUCTED, DISPOSED, LISTENER_ADDED
 	}
 
-	public void notify(EclipseContext context, EventType type, Object data);
+	void notify(EclipseContext context, EventType type, Object data);
 }

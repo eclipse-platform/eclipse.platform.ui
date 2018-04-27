@@ -23,5 +23,5 @@ public interface IContextDisposalListener {
 	 * Notifies that the context has been disposed
 	 * @param context the context being disposed
 	 */
-	public void disposed(IEclipseContext context);
+	void disposed(IEclipseContext context);
 }

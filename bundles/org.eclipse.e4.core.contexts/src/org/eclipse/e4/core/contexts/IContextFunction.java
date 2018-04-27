@@ -48,7 +48,7 @@ public interface IContextFunction {
 	 *
 	 * @see BundleContext#getServiceReference(String)
 	 */
-	public static final String SERVICE_NAME = IContextFunction.class.getName();
+	String SERVICE_NAME = IContextFunction.class.getName();
 
 	/**
 	 * An OSGi service property used to indicate the context key this function
@@ -56,7 +56,7 @@ public interface IContextFunction {
 	 *
 	 * @see BundleContext#getServiceReference(String)
 	 */
-	public static final String SERVICE_CONTEXT_KEY = "service.context.key"; //$NON-NLS-1$
+	String SERVICE_CONTEXT_KEY = "service.context.key"; //$NON-NLS-1$
 
 	/**
 	 * Evaluates the function based on the provided arguments and context to
@@ -70,6 +70,6 @@ public interface IContextFunction {
 	 * @return The concrete value. Implementations may return {@link org.eclipse.e4.core.di.IInjector#NOT_A_VALUE}
 	 * 		to cause lookup to continue up the context hierarchy.
 	 */
-	public Object compute(IEclipseContext context, String contextKey);
+	Object compute(IEclipseContext context, String contextKey);
 
 }

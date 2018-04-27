@@ -50,7 +50,7 @@ public interface IEclipseContext {
 	 *
 	 * @since 1.6
 	 */
-	public static final String TOPIC_DISPOSE = "org/eclipse/e4/core/contexts/IEclipseContext/DISPOSE"; //$NON-NLS-1$
+	String TOPIC_DISPOSE = "org/eclipse/e4/core/contexts/IEclipseContext/DISPOSE"; //$NON-NLS-1$
 
 	/**
 	 * Returns whether this context or a parent has a value stored for the given
@@ -61,7 +61,7 @@ public interface IEclipseContext {
 	 * @return <code>true</code> if this context has a value for the given name,
 	 *         and <code>false</code> otherwise.
 	 */
-	public boolean containsKey(String name);
+	boolean containsKey(String name);
 
 	/**
 	 * Returns whether this context or a parent has a value stored for the given class.
@@ -70,7 +70,7 @@ public interface IEclipseContext {
 	 *         <code>false</code> otherwise.
 	 * @see #containsKey(String)
 	 */
-	public boolean containsKey(Class<?> clazz);
+	boolean containsKey(Class<?> clazz);
 
 	/**
 	 * Returns the context value associated with the given name. Returns <code>null</code> if no
@@ -83,7 +83,7 @@ public interface IEclipseContext {
 	 * @param name the name of the value to return
 	 * @return an object corresponding to the given name, or <code>null</code>
 	 */
-	public Object get(String name);
+	Object get(String name);
 
 	/**
 	 * Returns the context value associated with the given class.
@@ -91,7 +91,7 @@ public interface IEclipseContext {
 	 * @return an object corresponding to the given class, or <code>null</code>
 	 * @see #get(String)
 	 */
-	public <T> T get(Class<T> clazz);
+	<T> T get(Class<T> clazz);
 
 	/**
 	 * Returns the context value associated with the given name in this context, or <code>null</code> if
@@ -106,7 +106,7 @@ public interface IEclipseContext {
 	 * @param name the name of the value to return
 	 * @return an object corresponding to the given name, or <code>null</code>
 	 */
-	public Object getLocal(String name);
+	Object getLocal(String name);
 
 	/**
 	 * Returns the context value associated with the given class in this context, or <code>null</code> if
@@ -118,7 +118,7 @@ public interface IEclipseContext {
 	 * @return An object corresponding to the given class, or <code>null</code>
 	 * @see #getLocal(String)
 	 */
-	public <T> T getLocal(Class<T> clazz);
+	<T> T getLocal(Class<T> clazz);
 
 	/**
 	 * Removes the given name and any corresponding value from this context.
@@ -129,14 +129,14 @@ public interface IEclipseContext {
 	 * </p>
 	 * @param name the name to remove
 	 */
-	public void remove(String name);
+	void remove(String name);
 
 	/**
 	 * Removes the value for the given class from this context.
 	 * @param clazz The class to remove
 	 * @see #remove(String)
 	 */
-	public void remove(Class<?> clazz);
+	void remove(Class<?> clazz);
 
 	/**
 	 * Executes a runnable within this context. If the runnable accesses any values in this context
@@ -167,7 +167,7 @@ public interface IEclipseContext {
 	 *            The runnable to execute and register for change tracking
 	 * @see RunAndTrack
 	 */
-	public void runAndTrack(final RunAndTrack runnable);
+	void runAndTrack(final RunAndTrack runnable);
 
 	/**
 	 * Sets a value to be associated with a given name in this context. The value may be an
@@ -184,7 +184,7 @@ public interface IEclipseContext {
 	 * @param value the value to be stored, or a {@link ContextFunction} that can return
 	 * the stored value.
 	 */
-	public void set(String name, Object value);
+	void set(String name, Object value);
 
 	/**
 	 * Sets a value to be associated with a given class in this context.
@@ -192,7 +192,7 @@ public interface IEclipseContext {
 	 * @param value The value to be stored
 	 * @see #set(String, Object)
 	 */
-	public <T> void set(Class<T> clazz, T value);
+	<T> void set(Class<T> clazz, T value);
 
 	/**
 	 * Modifies the value to be associated with the given name.
@@ -210,7 +210,7 @@ public interface IEclipseContext {
 	 * @param value the value to be stored, or a {@link ContextFunction} that can return the stored value.
 	 * @throws IllegalArgumentException if the variable has not been declared as modifiable
 	 */
-	public void modify(String name, Object value);
+	void modify(String name, Object value);
 
 	/**
 	 * Modifies the value to be associated with the given class.
@@ -219,14 +219,14 @@ public interface IEclipseContext {
 	 * @throws IllegalArgumentException if the variable has not been declared as modifiable
 	 * @see #modify(String, Object)
 	 */
-	public <T> void modify(Class<T> clazz, T value);
+	<T> void modify(Class<T> clazz, T value);
 
 	/**
 	 * Declares the named value as modifiable by descendants of this context. If the value does not
 	 * exist in this context, a <code>null</code> value added for the name.
 	 * @param name the name to be declared as modifiable by descendants
 	 */
-	public void declareModifiable(String name);
+	void declareModifiable(String name);
 
 	/**
 	 * Declares the value for the class as modifiable by descendants of this context.
@@ -234,31 +234,31 @@ public interface IEclipseContext {
 	 * @param clazz the class to be declared as modifiable by descendants
 	 * @see #declareModifiable(String)
 	 */
-	public void declareModifiable(Class<?> clazz);
+	void declareModifiable(Class<?> clazz);
 
 	/**
 	 * Process waiting updates for listeners that support batch notifications.
 	 */
-	public void processWaiting();
+	void processWaiting();
 
 	/**
 	 * Creates a new context using this context as a parent.
 	 * @return a new child context
 	 */
-	public IEclipseContext createChild();
+	IEclipseContext createChild();
 
 	/**
 	 * Creates a new named context using this context as a parent.
 	 * @param name the name to identify this context
 	 * @return a new child context
 	 */
-	public IEclipseContext createChild(String name);
+	IEclipseContext createChild(String name);
 
 	/**
 	 * Returns parent context, or <code>null</code> if there is no parent context.
 	 * @return the parent context, or <code>null</code>
 	 */
-	public IEclipseContext getParent();
+	IEclipseContext getParent();
 
 	/**
 	 * Sets parent context. Pass in <code>null</code> to indicate that this context has
@@ -266,42 +266,42 @@ public interface IEclipseContext {
 	 * @param parentContext the new parent context, or <code>null</code> to indicate
 	 * that this context has no parent
 	 */
-	public void setParent(IEclipseContext parentContext);
+	void setParent(IEclipseContext parentContext);
 
 	/**
 	 * Marks this context as active.
 	 */
-	public void activate();
+	void activate();
 
 	/**
 	 * Marks this context as inactive.
 	 */
-	public void deactivate();
+	void deactivate();
 
 	/**
 	 * Marks this context and its parent contexts as active.
 	 */
-	public void activateBranch();
+	void activateBranch();
 
 	/**
 	 * Returns active child for this context. May return <code>null</code>
 	 * if there are no active children.
 	 * @return active child context or <code>null</code>
 	 */
-	public IEclipseContext getActiveChild();
+	IEclipseContext getActiveChild();
 
 	/**
 	 * Follows active child chain to return the active leaf for this context.
 	 * May return the context itself if it has no active children.
 	 * @return leaf active context
 	 */
-	public IEclipseContext getActiveLeaf();
+	IEclipseContext getActiveLeaf();
 
 	/**
 	 * Disposes of this object. If this object is already disposed this method
 	 * will have no effect.
 	 */
-	public void dispose();
+	void dispose();
 
 	/**
 	 * Returns the value stored on the active leaf node of the context's tree.
@@ -319,7 +319,7 @@ public interface IEclipseContext {
 	 * @return an object corresponding to the given class, or <code>null</code>
 	 * @see IEclipseContext#getActiveLeaf()
 	 */
-	public <T> T getActive(Class<T> clazz);
+	<T> T getActive(Class<T> clazz);
 
 	/**
 	 * Returns the named value stored on the active leaf node of the context's tree.
@@ -337,6 +337,6 @@ public interface IEclipseContext {
 	 * @return an object corresponding to the given name, or <code>null</code>
 	 * @see IEclipseContext#getActiveLeaf()
 	 */
-	public Object getActive(final String name);
+	Object getActive(final String name);
 
 }
