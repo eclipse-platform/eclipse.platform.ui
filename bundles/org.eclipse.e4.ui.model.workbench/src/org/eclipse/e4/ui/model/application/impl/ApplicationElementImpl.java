@@ -334,8 +334,7 @@ public abstract class ApplicationElementImpl extends org.eclipse.emf.ecore.impl.
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	@Override
-	public String toString() {
+	private String toStringGen() {
 		if (eIsProxy()) return super.toString();
 
 		StringBuilder result = new StringBuilder(super.toString());
@@ -346,6 +345,14 @@ public abstract class ApplicationElementImpl extends org.eclipse.emf.ecore.impl.
 		result.append(", contributorURI: "); //$NON-NLS-1$
 		result.append(contributorURI);
 		result.append(')');
+		return result.toString();
+	}
+
+	public String toString() {
+		String result = toStringGen();
+		if (elementId != null) {
+			result = elementId + "=" + result.replace(" (elementId: " + elementId + ", ", " (");
+		}
 		return result.toString();
 	}
 
