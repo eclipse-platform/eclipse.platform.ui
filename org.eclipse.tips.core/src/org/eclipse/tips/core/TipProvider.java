@@ -21,6 +21,7 @@ import java.util.stream.Collectors;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.tips.core.internal.FinalTip;
+import org.eclipse.tips.core.internal.LogUtil;
 
 /**
  * Class to provide tips to the tip framework. It is the job of this provider to
@@ -268,9 +269,10 @@ public abstract class TipProvider {
 	 * @see #loadNewTips(IProgressMonitor)
 	 */
 	public TipProvider setTips(List<Tip> tips) {
-		if (!getManager().isOpen()) {
-			return this;
-		}
+//		if (!getManager().isOpen()) {
+//			return this;
+//		}
+		getManager().log(LogUtil.info(String.format("Setting tips")));
 		doSetTips(tips, true);
 		fReady = true;
 		fChangeSupport.firePropertyChange(PROP_READY, false, true);

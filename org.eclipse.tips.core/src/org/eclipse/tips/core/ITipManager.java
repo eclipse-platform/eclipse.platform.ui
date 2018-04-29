@@ -61,14 +61,14 @@ public interface ITipManager {
 	 * @return this
 	 */
 	public ITipManager register(TipProvider provider);
-	
+
 	/**
 	 * Opens the Tip of the Day dialog.
 	 *
 	 * @param startUp When called from a startup situation, true must be passed for
-	 *                <code>startup</code>. If in a manual starting situation,
-	 *                false must be passed. This enables the manager to decide to
-	 *                skip opening the dialog at startup (e.g., no new tip items).
+	 *                <code>startup</code>. If in a manual starting situation, false
+	 *                must be passed. This enables the manager to decide to skip
+	 *                opening the dialog at startup (e.g., no new tip items).
 	 *
 	 * @return this
 	 *
@@ -82,4 +82,14 @@ public interface ITipManager {
 	 * @return true if this manager is open, false otherwise.
 	 */
 	public boolean isOpen();
+
+	/**
+	 * Indicates if this manager has providers with tips (based on the read or
+	 * unread requirement). Be aware that subsequent calls to this method may return
+	 * different results based on the async nature of loading providers.
+	 * 
+	 * @return true if this {@link TipManager} has providers with tips.
+	 * @see TipProvider#getTips()
+	 */
+	public boolean hasContent();
 }

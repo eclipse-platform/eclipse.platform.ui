@@ -16,6 +16,8 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.SubMonitor;
+import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.tips.core.TipProvider;
 import org.eclipse.tips.json.internal.ProviderLoader;
 import org.eclipse.ui.IStartup;
@@ -33,33 +35,47 @@ public class Startup implements IStartup {
 
 	@Override
 	public void earlyStartup() {
-		openManager();
 		loadProviders();
+		openManager();
 	}
 
 	/**
 	 * Reloads the tip providers.
 	 */
 	public static void loadProviders() {
-		loadExternalProviders();
 		loadInternalProviders();
-	}
-
-	private static void loadExternalProviders() {
-		String baseURL = System.getProperty("org.eclipse.tips.ide.provider.url");
-		if (baseURL == null) {
-			baseURL = "http://www.eclipse.org/downloads/download.php?r=1&file=/e4/tips/";
-		}
-		try {
-			ProviderLoader.loadProviderData(IDETipManager.getInstance(), baseURL, IDETipManager.getStateLocation());
-		} catch (Exception e) {
-			IDETipManager.getInstance()
-					.log(new Status(IStatus.ERROR, FrameworkUtil.getBundle(Startup.class).getSymbolicName(),
-							"Failure getting the Tips state location.", e));
-		}
+		loadExternalProviders();
 	}
 
 	private static void loadInternalProviders() {
+		getInternalProvidersJob().schedule();
+	}
+
+	private static Job getInternalProvidersJob() {
+		Job job = new Job("Load default IDE Tip Providers") {
+
+			@Override
+			protected IStatus run(IProgressMonitor pArg0) {
+				String baseURL = System.getProperty("org.eclipse.tips.ide.provider.url");
+				if (baseURL == null) {
+					baseURL = "http://www.eclipse.org/downloads/download.php?r=1&file=/e4/tips/";
+				}
+				try {
+					ProviderLoader.loadProviderData(IDETipManager.getInstance(), baseURL,
+							IDETipManager.getStateLocation());
+				} catch (Exception e) {
+					Status status = new Status(IStatus.ERROR, FrameworkUtil.getBundle(Startup.class).getSymbolicName(),
+							"Failure getting the Tips state location.", e);
+					IDETipManager.getInstance().log(status);
+					return status;
+				}
+				return Status.OK_STATUS;
+			};
+		};
+		return job;
+	}
+
+	private static void loadExternalProviders() {
 		IConfigurationElement[] elements = Platform.getExtensionRegistry()
 				.getConfigurationElementsFor("org.eclipse.tips.core.tips");
 		for (IConfigurationElement element : elements) {
@@ -116,14 +132,69 @@ public class Startup implements IStartup {
 	}
 
 	private static void openManager() {
-		UIJob job = new UIJob(PlatformUI.getWorkbench().getDisplay(), "Tip of the Day") {
+		if (IDETipManager.getInstance().hasContent()) {
+			getOpenUIJob().schedule();
+		} else {
+			getWaitJob().schedule();
+		}
+	}
+
+	private static Job getWaitJob() {
+		Job waitJob = new Job("Tip Delay") {
+
+			@Override
+			protected IStatus run(IProgressMonitor pMonitor) {
+				int attempts = 3;
+				SubMonitor monitor = SubMonitor.convert(pMonitor, attempts);
+				for (int i = 0; i < attempts; i++) {
+					monitor.setTaskName("Checking for content " + i);
+					if (openOrSleep(monitor)) {
+						if (monitor.isCanceled()) {
+							return Status.CANCEL_STATUS;
+						} else {
+							monitor.done();
+							return Status.OK_STATUS;
+						}
+					}
+					monitor.worked(1);
+				}
+				monitor.done();
+				return Status.OK_STATUS;
+			}
+
+			private boolean openOrSleep(SubMonitor pMonitor) {
+				if (IDETipManager.getInstance().hasContent()) {
+					getOpenUIJob().schedule();
+					return true;
+				}
+				if (sleep(1000)) {
+					pMonitor.setCanceled(true);
+					return true;
+				}
+				return false;
+			}
+
+			private boolean sleep(int millis) {
+				try {
+					Thread.sleep(millis);
+					return false;
+				} catch (InterruptedException e) {
+					return true;
+				}
+			}
+		};
+		return waitJob;
+	}
+
+	private static UIJob getOpenUIJob() {
+		UIJob uiJob = new UIJob(PlatformUI.getWorkbench().getDisplay(), "Tip of the Day") {
 			@Override
 			public IStatus runInUIThread(IProgressMonitor monitor) {
 				IDETipManager.getInstance().open(true);
 				return Status.OK_STATUS;
 			}
 		};
-		job.schedule();
+		return uiJob;
 	}
 
 	private static void log(CoreException e) {

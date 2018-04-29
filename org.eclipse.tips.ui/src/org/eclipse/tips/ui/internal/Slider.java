@@ -112,7 +112,10 @@ public class Slider extends Composite {
 	}
 
 	private void setupProviderListener() {
-		fPropertyChangeListener = provider -> getDisplay().asyncExec(() -> load());
+		fPropertyChangeListener = provider -> {
+			if (!isDisposed())
+				getDisplay().asyncExec(() -> load());
+		};
 	}
 
 	private static Image getImage(String icon) {
@@ -314,6 +317,9 @@ public class Slider extends Composite {
 
 	private void paintButton(GC gc, Composite providerButton, TipProvider provider) {
 		gc.setAdvanced(true);
+		if (!gc.getAdvanced()) {
+			throw new RuntimeException("not advanced");
+		}
 		if (provider.equals(fSelectedProvider)) {
 			gc.setForeground(getDisplay().getSystemColor(SWT.COLOR_LIST_SELECTION_TEXT));
 			gc.setBackground(getDisplay().getSystemColor(SWT.COLOR_LIST_SELECTION));
@@ -357,12 +363,9 @@ public class Slider extends Composite {
 		if (provider.getTips().isEmpty()) {
 			return getProviderImage(provider, selectProviderImage(provider));
 		}
-		GC gc2 = new GC(providerButton);
-		gc2.setAdvanced(true);
-		gc2.setFont(SWTResourceManager.getBoldFont(gc2.getFont()));
+
 		int tipCount = provider.getTips().size();
-		Point textExtent = gc2.textExtent(tipCount + "");
-		gc2.dispose();
+		Point textExtent = getTipCountTextSize(providerButton, tipCount);
 
 		Image image = null;
 		if (tipCount > 9) {
@@ -383,7 +386,7 @@ public class Slider extends Composite {
 		}
 		gc.setForeground(getDisplay().getSystemColor(SWT.COLOR_WHITE));
 		gc.setFont(SWTResourceManager.getBoldFont(gc.getFont()));
-		gc.setAlpha(210);
+		gc.setAlpha(200);
 		gc.setTextAntialias(SWT.ON);
 		if (tipCount > 9) {
 			gc.fillOval(0, 0, textExtent.x + 8, textExtent.y + 5);
@@ -397,5 +400,14 @@ public class Slider extends Composite {
 		image.dispose();
 		gc.dispose();
 		return result;
+	}
+
+	private Point getTipCountTextSize(Composite providerButton, int tipCount) {
+		GC gc2 = new GC(providerButton);
+		gc2.setAdvanced(true);
+		gc2.setFont(SWTResourceManager.getBoldFont(gc2.getFont()));
+		Point textExtent = gc2.textExtent(tipCount + "");
+		gc2.dispose();
+		return textExtent;
 	}
 }

@@ -16,6 +16,8 @@ import java.util.Map;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.tips.core.ITipManager;
+import org.eclipse.tips.core.internal.LogUtil;
 import org.eclipse.ui.AbstractSourceProvider;
 import org.eclipse.ui.ISources;
 import org.eclipse.ui.IWorkbenchWindow;
@@ -26,10 +28,13 @@ import org.eclipse.ui.progress.UIJob;
  * Internal class to source a new boolean variable in the IDE called "newtips".
  *
  */
+@SuppressWarnings("restriction")
 public class TipSourceProvider extends AbstractSourceProvider {
 	private boolean fNewTips;
+	private ITipManager fManager;
 
-	public TipSourceProvider() {
+	public TipSourceProvider(ITipManager manager) {
+		fManager = manager;
 	}
 
 	@Override
@@ -52,8 +57,8 @@ public class TipSourceProvider extends AbstractSourceProvider {
 	 * Propagate the new status of the <code>newtips</code> variable but always
 	 * layouts all workbench windows to update the trim status.
 	 *
-	 * @param newTips
-	 *            true if there are new tips, false if there are no more new tips.
+	 * @param newTips true if there are new tips, false if there are no more new
+	 *                tips.
 	 */
 	public synchronized void setStatus(boolean newTips) {
 		boolean changed = fNewTips != newTips;
@@ -71,7 +76,7 @@ public class TipSourceProvider extends AbstractSourceProvider {
 					fireSourceChanged(ISources.ACTIVE_WORKBENCH_WINDOW, getCurrentState());
 				}
 				for (IWorkbenchWindow window : PlatformUI.getWorkbench().getWorkbenchWindows()) {
-					System.out.println("layout on " + window + " -> " + fNewTips);
+					fManager.log(LogUtil.info("Layout on " + window + " -> " + fNewTips));
 					window.getShell().layout(true, true);
 				}
 				return Status.OK_STATUS;

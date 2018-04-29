@@ -19,12 +19,13 @@ import java.net.URL;
 public interface IUrlTip {
 
 	/**
-	 * Return an URL with the primary goal to be rendered by the tip manager.
-	 * Implementations of Tip may also use the URL to aid the rendering (e.g. by
-	 * providing other data than HTML, e.g. a text file).
+	 * Return the string representation of an {@link URL} with the primary goal to
+	 * be rendered by the tip manager. Implementations of Tip may also use the URL
+	 * to aid the rendering (e.g. by providing other data than HTML, e.g. a text
+	 * file).
 	 *
-	 * @return the URL to the (remote) content
+	 * @return the string representation of URL to the (remote) content
 	 *
 	 */
-	public URL getURL();
+	public String getURL();
 }

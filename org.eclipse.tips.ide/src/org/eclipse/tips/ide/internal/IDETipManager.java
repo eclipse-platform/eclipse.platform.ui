@@ -27,7 +27,6 @@ import org.eclipse.core.expressions.ExpressionConverter;
 import org.eclipse.core.expressions.IEvaluationContext;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.core.runtime.jobs.Job;
@@ -39,8 +38,6 @@ import org.eclipse.tips.core.internal.TipManager;
 import org.eclipse.tips.ui.internal.DefaultTipManager;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.services.IEvaluationService;
-import org.osgi.framework.Bundle;
-import org.osgi.framework.FrameworkUtil;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -50,7 +47,7 @@ import org.w3c.dom.Element;
 @SuppressWarnings("restriction")
 public class IDETipManager extends DefaultTipManager {
 
-	private TipSourceProvider fSourceProvider = new TipSourceProvider();
+	private TipSourceProvider fSourceProvider = new TipSourceProvider(this);
 
 	private Map<String, List<Integer>> fReadTips = new HashMap<>();
 
@@ -75,13 +72,14 @@ public class IDETipManager extends DefaultTipManager {
 
 	@Override
 	public ITipManager register(TipProvider provider) {
+		log(LogUtil.info("Registering provider " + provider.getID()));
 		super.register(provider);
 		load(provider);
 		return this;
 	}
 
 	private void load(TipProvider provider) {
-		Job job = new Job("Loading " + provider.getDescription()) {
+		Job job = new Job("Loading " + provider.getID()) {
 			@Override
 			protected IStatus run(IProgressMonitor monitor) {
 				return provider.loadNewTips(monitor);
@@ -89,6 +87,7 @@ public class IDETipManager extends DefaultTipManager {
 		};
 		job.addJobChangeListener(new ProviderLoadJobChangeListener(this, provider));
 		job.schedule();
+		provider.getManager().log(LogUtil.info(String.format("Load new tips job started for %s", provider.getID())));
 	}
 
 	@Override
@@ -167,13 +166,7 @@ public class IDETipManager extends DefaultTipManager {
 
 	@Override
 	public ITipManager log(IStatus status) {
-		if (status.matches(IStatus.ERROR | IStatus.WARNING)) {
-			Bundle bundle = FrameworkUtil.getBundle(getClass());
-			Platform.getLog(bundle).log(status);
-		}
-		if (System.getProperty("org.eclipse.tips.consolelog") != null) {
-			System.out.println(status.toString());
-		}
+		TipsPreferences.log(status);
 		return this;
 	}
 
@@ -200,6 +193,7 @@ public class IDETipManager extends DefaultTipManager {
 	}
 
 	protected synchronized IDETipManager setNewTips(boolean newTips) {
+		log(LogUtil.info(String.format("New tips %s", newTips + "")));
 		if (fNewTips != newTips) {
 			fNewTips = newTips;
 			fSourceProvider.setStatus(fNewTips);

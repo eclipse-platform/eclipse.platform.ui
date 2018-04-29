@@ -31,21 +31,18 @@ public class JsonHTMLTip extends Tip implements IJsonTip, IHtmlTip {
 	private Date fDate;
 	private String fHtml;
 	private TipImage fTipImage;
-	private String fJsonObject;
+	private JsonObject fJsonObject;
 
 	/**
 	 * Creates the tip out od the passed Json object.
 	 *
-	 * @param jsonObject
-	 *            the json object
-	 * @param provider
-	 *            the provider
-	 * @throws ParseException
-	 *             when the json object could not be parsed.
+	 * @param jsonObject the json object
+	 * @param provider   the provider
+	 * @throws ParseException when the json object could not be parsed.
 	 */
 	public JsonHTMLTip(String providerId, JsonObject jsonObject) throws ParseException {
 		super(providerId);
-		fJsonObject = jsonObject.toString();
+		fJsonObject = jsonObject;
 		fSubject = Util.getValueOrDefault(jsonObject, JsonConstants.T_SUBJECT, "Not set");
 		fDate = getDate(jsonObject);
 		fHtml = Util.getValueOrDefault(jsonObject, JsonConstants.T_HTML, null);
@@ -75,7 +72,7 @@ public class JsonHTMLTip extends Tip implements IJsonTip, IHtmlTip {
 
 	@Override
 	public String getJsonObject() {
-		return fJsonObject;
+		return fJsonObject.toString();
 	}
 
 	@Override
@@ -85,7 +82,7 @@ public class JsonHTMLTip extends Tip implements IJsonTip, IHtmlTip {
 
 	@Override
 	public String getHTML() {
-		return fHtml;
+		return Util.replace(fJsonObject, fHtml);
 	}
 
 	@Override

@@ -24,9 +24,10 @@ import org.eclipse.tips.core.internal.LogUtil;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.FrameworkUtil;
 
+@SuppressWarnings("restriction")
 public class TipsTipProvider extends org.eclipse.tips.core.TipProvider {
 
-	private TipImage fImage64, fImage48;
+	private TipImage fImage48;
 
 	@Override
 	public TipImage getImage() {

@@ -100,4 +100,9 @@ public class JsonConstants {
 	 * Tip URL
 	 */
 	public static final String T_URL = "url";
+
+	/**
+	 * Tip variables
+	 */
+	public static final String T_VARIABLES = "variables";
 }

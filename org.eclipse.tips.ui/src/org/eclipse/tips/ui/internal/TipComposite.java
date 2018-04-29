@@ -11,6 +11,7 @@
 package org.eclipse.tips.ui.internal;
 
 import java.io.IOException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Timer;
@@ -85,10 +86,8 @@ public class TipComposite extends Composite implements ProviderSelectionListener
 	/**
 	 * Constructor.
 	 *
-	 * @param parent
-	 *            the parent
-	 * @param style
-	 *            the style
+	 * @param parent the parent
+	 * @param style  the style
 	 */
 	public TipComposite(Composite parent, int style) {
 		super(parent, style);
@@ -280,8 +279,7 @@ public class TipComposite extends Composite implements ProviderSelectionListener
 	/**
 	 * Sets the selected provider.
 	 *
-	 * @param provider
-	 *            the {@link TipProvider}
+	 * @param provider the {@link TipProvider}
 	 */
 	public void setProvider(TipProvider provider) {
 		fProvider = provider;
@@ -345,7 +343,7 @@ public class TipComposite extends Composite implements ProviderSelectionListener
 		} else if (tip instanceof IUrlTip) {
 			loadContentUrl((IUrlTip) tip);
 		} else {
-			fTipManager.log(LogUtil.error(getClass(), "Unknown Tip implementation: " + tip)) ;
+			fTipManager.log(LogUtil.error(getClass(), "Unknown Tip implementation: " + tip));
 		}
 		fContentComposite.requestLayout();
 	}
@@ -360,7 +358,8 @@ public class TipComposite extends Composite implements ProviderSelectionListener
 
 	private void loadContentUrl(IUrlTip tip) {
 		try {
-			fBrowser.setUrl(FileLocator.resolve(tip.getURL()).toString());
+			String url = FileLocator.resolve(new URL(tip.getURL())).toString();
+			fBrowser.setUrl(url);
 		} catch (IOException e) {
 			fTipManager.log(LogUtil.error(getClass(), e));
 		}
@@ -473,8 +472,7 @@ public class TipComposite extends Composite implements ProviderSelectionListener
 	/**
 	 * Get the timeout script in case the tips takes too to load.
 	 *
-	 * @param timeout
-	 *            the timeout in milliseconds
+	 * @param timeout the timeout in milliseconds
 	 * @return the script
 	 */
 	private static String getLoadingScript(int timeout) {
@@ -559,8 +557,7 @@ public class TipComposite extends Composite implements ProviderSelectionListener
 	/**
 	 * Sets the {@link TipManager}
 	 *
-	 * @param tipManager
-	 *            the {@link TipManager} that opened the dialog.
+	 * @param tipManager the {@link TipManager} that opened the dialog.
 	 */
 	public void setTipManager(TipManager tipManager) {
 		fTipManager = tipManager;

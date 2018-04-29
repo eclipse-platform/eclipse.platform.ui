@@ -122,8 +122,7 @@ public class SleakTipManager extends TipManager {
 
 	@Override
 	public ITipManager log(IStatus pStatus) {
-		// TODO Auto-generated method stub
-		return null;
+		return this;
 	}
 
 	@Override

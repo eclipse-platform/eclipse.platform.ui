@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.tips.json;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.MalformedURLException;
@@ -45,6 +46,7 @@ public abstract class JsonTipProvider extends TipProvider {
 	private URL fJsonUrl;
 	private String fDescription;
 	private String fImage;
+	private JsonObject fJsonObject;
 
 	/**
 	 * A method to set the a url containing a JSon file that describes this tip
@@ -57,30 +59,68 @@ public abstract class JsonTipProvider extends TipProvider {
 		fJsonUrl = new URL(jsonUrl);
 	}
 
+	/**
+	 * Returns a specific portion of the underlying json file as a json object, if
+	 * the json object was not yet fetched it will be done here, making it a
+	 * potential costly operation. The passed part can be an array to indicate a
+	 * structure e.g. {"provider","variables"}.
+	 * 
+	 * @param part one or more keys of the underlying json file, may not be null.
+	 * @return the JSon Object as a string
+	 * @throws IOException
+	 * @see {@link #loadNewTips(IProgressMonitor)}
+	 */
+	public synchronized String getJsonObject(String... part) throws IOException {
+		if (fJsonObject == null) {
+			fJsonObject = loadJsonObject();
+		}
+		JsonObject temp = fJsonObject.getAsJsonObject(part[0]);
+		for (int i = 1; i < part.length; i++) {
+			temp = temp.getAsJsonObject(part[0]);
+
+		}
+		return temp.getAsString();
+	}
+
+	/**
+	 *
+	 * {@inheritDoc}
+	 * 
+	 * <p>
+	 * <b>Implementation Details</b><br>
+	 * The implementation of this method in this provider will fetch the json file
+	 * and store it locally.
+	 * 
+	 */
 	@Override
-	public IStatus loadNewTips(IProgressMonitor monitor) {
+	public synchronized IStatus loadNewTips(IProgressMonitor monitor) {
 		SubMonitor subMonitor = SubMonitor.convert(monitor);
 		ArrayList<Tip> result = new ArrayList<>();
 		try {
 			subMonitor.beginTask(getDescription() + " Loading Tips", -1);
-			try (InputStream stream = fJsonUrl.openStream(); InputStreamReader reader = new InputStreamReader(stream)) {
-				JsonObject value = (JsonObject) new JsonParser().parse(reader);
-				JsonObject provider = value.getAsJsonObject(JsonConstants.P_PROVIDER);
-				fDescription = Util.getValueOrDefault(provider, JsonConstants.P_DESCRIPTION, "not set");
-				fImage = Util.getValueOrDefault(provider, JsonConstants.P_IMAGE, null);
-				setExpression(Util.getValueOrDefault(provider, JsonConstants.P_EXPRESSION, null));
-				JsonArray tips = provider.getAsJsonArray(JsonConstants.P_TIPS);
-				subMonitor.beginTask(getDescription() + " Creating Tips", -1);
-				tips.forEach(parm -> result.add(createJsonTip(parm)));
-			}
+			fJsonObject = loadJsonObject();
+			JsonObject provider = fJsonObject.getAsJsonObject(JsonConstants.P_PROVIDER);
+			fDescription = Util.getValueOrDefault(provider, JsonConstants.P_DESCRIPTION, "not set");
+			fImage = Util.getValueOrDefault(provider, JsonConstants.P_IMAGE, null);
+			setExpression(Util.getValueOrDefault(provider, JsonConstants.P_EXPRESSION, null));
+			JsonArray tips = provider.getAsJsonArray(JsonConstants.P_TIPS);
+			subMonitor.beginTask(getDescription() + " Creating Tips", -1);
+			tips.forEach(parm -> result.add(createJsonTip(parm)));
 		} catch (Exception e) {
 			Status status = new Status(IStatus.ERROR, "org.eclipse.tips.json", e.getMessage(), e);
 			getManager().log(status);
 			return status;
 		}
+		getManager().log(LogUtil.info(String.format("%s Tips loaded ", result.size() + "")));
 		setTips(result);
 		subMonitor.done();
 		return Status.OK_STATUS;
+	}
+
+	private JsonObject loadJsonObject() throws IOException {
+		try (InputStream stream = fJsonUrl.openStream(); InputStreamReader reader = new InputStreamReader(stream)) {
+			return (JsonObject) new JsonParser().parse(reader);
+		}
 	}
 
 	@Override
@@ -89,7 +129,6 @@ public abstract class JsonTipProvider extends TipProvider {
 			return null;
 		}
 		return new TipImage(fImage);
-
 	}
 
 	@Override
@@ -99,15 +138,35 @@ public abstract class JsonTipProvider extends TipProvider {
 
 	private Tip createJsonTip(JsonElement parm) {
 		JsonObject json = (JsonObject) parm;
+		replaceVariables(json);
 		try {
-			if (json.get(JsonConstants.T_URL) == null) {
-				return new JsonHTMLTip(getID(), json);
-			} else {
+			if (json.get(JsonConstants.T_URL) != null) {
 				return new JsonUrlTip(getID(), json);
+			} else {
+				return new JsonHTMLTip(getID(), json);
 			}
 		} catch (ParseException e) {
 			getManager().log(LogUtil.error(getClass(), e));
 			throw new RuntimeException(e);
+		}
+	}
+
+	private void replaceVariables(JsonObject pJson) {
+		String url = Util.getValueOrDefault(pJson, JsonConstants.T_URL, null);
+		String html = Util.getValueOrDefault(pJson, JsonConstants.T_HTML, null);
+		JsonObject vars = fJsonObject.getAsJsonObject(JsonConstants.P_PROVIDER)
+				.getAsJsonObject(JsonConstants.T_VARIABLES);
+		if (vars != null) {
+			if (url != null) {
+				url = Util.replace(vars, url);
+				pJson.remove(JsonConstants.T_URL);
+				pJson.addProperty(JsonConstants.T_URL, url);
+			}
+			if (html != null) {
+				html = Util.replace(vars, html);
+				pJson.remove(JsonConstants.T_HTML);
+				pJson.addProperty(JsonConstants.T_HTML, html);
+			}
 		}
 	}
 

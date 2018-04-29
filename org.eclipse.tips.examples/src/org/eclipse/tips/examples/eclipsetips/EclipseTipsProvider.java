@@ -26,17 +26,20 @@ import org.eclipse.tips.examples.tips.MediaWikiTip;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.FrameworkUtil;
 
+@SuppressWarnings("restriction")
 public class EclipseTipsProvider extends org.eclipse.tips.core.TipProvider {
 
 	public int fCurrentTip;
 
 	private Tip createTip1() {
-		return new org.eclipse.tips.examples.tips.TwitterTip(getID(), "https://twitter.com/EclipseJavaIDE/status/919915440041840641", DateUtil.getDateFromYYMMDD("08/12/017"),
+		return new org.eclipse.tips.examples.tips.TwitterTip(getID(),
+				"https://twitter.com/EclipseJavaIDE/status/919915440041840641", DateUtil.getDateFromYYMMDD("08/12/017"),
 				"Twitter Tip");
 	}
 
 	private Tip createTip2() {
-		return new org.eclipse.tips.examples.tips.MediaWikiTip(getID(), "https://wiki.eclipse.org/Tip_of_the_Day/Eclipse_Tips/Show_In_System_Explorer",
+		return new org.eclipse.tips.examples.tips.MediaWikiTip(getID(),
+				"https://wiki.eclipse.org/Tip_of_the_Day/Eclipse_Tips/Show_In_System_Explorer",
 				DateUtil.getDateFromYYMMDD("08/01/2017"), "Show in Systems Explorer");
 	}
 
@@ -82,7 +85,6 @@ public class EclipseTipsProvider extends org.eclipse.tips.core.TipProvider {
 		}
 		return fImage48;
 	}
-
 
 	@Override
 	public synchronized IStatus loadNewTips(IProgressMonitor pMonitor) {

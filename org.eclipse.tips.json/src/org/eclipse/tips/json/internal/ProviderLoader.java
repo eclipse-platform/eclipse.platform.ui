@@ -23,10 +23,12 @@ import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
 
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.tips.core.ITipManager;
+import org.eclipse.tips.core.internal.LogUtil;
 import org.eclipse.tips.json.JsonTipProvider;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.FrameworkUtil;
@@ -40,6 +42,7 @@ import com.google.gson.JsonParser;
  * A helper class to load providers from an internet location.
  *
  */
+@SuppressWarnings("restriction")
 public class ProviderLoader {
 
 	/**
@@ -56,11 +59,12 @@ public class ProviderLoader {
 
 	private static void loadProviders(ITipManager pManager, String pBaseURL, File stateLocation) {
 		try {
-			URL webFile = new URL(pBaseURL + "providers.json");
-			File target = new File(stateLocation, "providers.json");
+			URL webFile = new URL(pBaseURL + "index.json");
+			File target = new File(stateLocation, "index.json");
 			try (InputStream in = webFile.openStream()) {
 				Files.copy(in, target.toPath(), StandardCopyOption.REPLACE_EXISTING);
 			}
+			pManager.log(LogUtil.info("Internal Providers index file loaded to " + target.toPath()));
 			createProviders(pManager, target, pBaseURL, stateLocation);
 		} catch (Exception e) {
 			String symbolicName = FrameworkUtil.getBundle(ProviderLoader.class).getSymbolicName();
@@ -80,12 +84,15 @@ public class ProviderLoader {
 	private static void loadProvider(ITipManager pManager, JsonElement pProvider, String pBaseURL, File userLocation) {
 		JsonObject provider = pProvider.getAsJsonObject();
 		String version = Util.getValueOrDefault(provider, "version", null);
+		String location = Util.getValueOrDefault(provider, "location", null);
 		String bundleName = Util.getValueOrDefault(provider, "require-bundle", null);
 		if (version == null || bundleName == null) {
 			logInvalidProvider(pManager, provider);
 			return;
 		}
-
+		pManager.log(LogUtil
+				.info(String.format("Provider points to location %s. Last fetched version %s. Requires bundle %s",
+						location, version, bundleName)));
 		Bundle bundle = Platform.getBundle(bundleName);
 		if (bundle == null) {
 			logInvalidProvider(pManager, provider);
@@ -109,7 +116,8 @@ public class ProviderLoader {
 			String existingVersion = getFileContent(versionFile);
 			File providerFile = new File(fileLocation, "provider.json");
 			if (!version.equals(existingVersion) || !providerFile.exists()) {
-				URL webFile = new URL(pBaseURL + "/" + bundleName + "/provider.json");
+				pManager.log(LogUtil.info(String.format("Old version: %s. New version %s", existingVersion, version)));
+				URL webFile = new URL(pBaseURL + "/" + location);
 				try (InputStream in = webFile.openStream()) {
 					Files.copy(in, providerFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
 				}
@@ -128,17 +136,27 @@ public class ProviderLoader {
 
 	private static void registerProvider(ITipManager pManager, String bundleName, File pFileLocation)
 			throws IOException, MalformedURLException {
-		File fileLocation;
 		JsonTipProvider tipProvider = new JsonTipProvider() {
 
 			@Override
 			public String getID() {
 				return bundleName + ".json.provider";
 			}
+
+			@Override
+			public synchronized IStatus loadNewTips(IProgressMonitor pMonitor) {
+				getManager().log(LogUtil.info(String.format("Load new tips START for %s", getID())));
+				IStatus status = super.loadNewTips(pMonitor);
+				getManager().log(status);
+				getManager().log(LogUtil.info(String.format("Load new tips END   for %s", getID())));
+				return status;
+			}
 		};
 
-		fileLocation = new File(pFileLocation, "provider.json");
-		tipProvider.setJsonUrl(fileLocation.toURI().toURL().toString());
+		File providerFile = new File(pFileLocation, "provider.json");
+		String fileLocation = providerFile.toURI().toURL().toString();
+		tipProvider.setJsonUrl(fileLocation);
+		pManager.log(LogUtil.info(String.format("Provider file stored at %s", fileLocation)));
 		pManager.register(tipProvider);
 	}
 

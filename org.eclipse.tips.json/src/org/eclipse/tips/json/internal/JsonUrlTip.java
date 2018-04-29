@@ -10,8 +10,6 @@
  *******************************************************************************/
 package org.eclipse.tips.json.internal;
 
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -30,21 +28,18 @@ public class JsonUrlTip extends Tip implements IUrlTip, IJsonTip {
 	private String fSubject;
 	private Date fDate;
 	private String fUrl;
-	private String fJsonObject;
+	private JsonObject fJsonObject;
 
 	/**
 	 * Creates the tip out of the passed Json object.
 	 *
-	 * @param jsonObject
-	 *            the json object
-	 * @param provider
-	 *            the provider
-	 * @throws ParseException
-	 *             when the json object could not be parsed.
+	 * @param jsonObject the json object
+	 * @param provider   the provider
+	 * @throws ParseException when the json object could not be parsed.
 	 */
 	public JsonUrlTip(String providerId, JsonObject jsonObject) throws ParseException {
 		super(providerId);
-		fJsonObject = jsonObject.toString();
+		fJsonObject = jsonObject;
 		fSubject = Util.getValueOrDefault(jsonObject, JsonConstants.T_SUBJECT, "Not set");
 		fDate = getDate(jsonObject);
 		fUrl = Util.getValueOrDefault(jsonObject, JsonConstants.T_URL, null);
@@ -62,17 +57,8 @@ public class JsonUrlTip extends Tip implements IUrlTip, IJsonTip {
 	}
 
 	@Override
-	public URL getURL() {
-		if (fUrl == null) {
-			return null;
-		}
-		try {
-			return new URL(fUrl);
-		} catch (MalformedURLException e) {
-			// TODO shoud thrown exeception and calling code should log
-//			getProvider().getManager().log(LogUtil.error(getClass(), e));
-			return null;
-		}
+	public String getURL() {
+		return Util.replace(fJsonObject, fUrl);
 	}
 
 	@Override
@@ -82,6 +68,6 @@ public class JsonUrlTip extends Tip implements IUrlTip, IJsonTip {
 
 	@Override
 	public String getJsonObject() {
-		return fJsonObject;
+		return fJsonObject.getAsString();
 	}
 }

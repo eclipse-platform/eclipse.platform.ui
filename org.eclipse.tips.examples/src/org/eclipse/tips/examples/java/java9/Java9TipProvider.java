@@ -28,9 +28,9 @@ import org.osgi.framework.FrameworkUtil;
 
 /**
  *
-
  *
  */
+@SuppressWarnings("restriction")
 public class Java9TipProvider extends TipProvider {
 
 	@Override

@@ -11,13 +11,15 @@
 package org.eclipse.tips.examples.json;
 
 import java.net.MalformedURLException;
+import java.net.URL;
 
 import org.eclipse.tips.json.JsonTipProvider;
 
 public class JsonTipProviderPhoton extends JsonTipProvider {
 
 	public JsonTipProviderPhoton() throws MalformedURLException {
-		setJsonUrl("https://raw.githubusercontent.com/wimjongman/jsontips/master/photon/m3tips.json");
+		URL resource = getClass().getResource("provider.json");
+		setJsonUrl(resource.toString());
 	}
 
 	@Override

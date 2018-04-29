@@ -10,12 +10,10 @@
  *******************************************************************************/
 package org.eclipse.tips.examples.tipsframework;
 
-import java.net.URL;
 import java.util.Date;
 
 import org.eclipse.tips.core.IUrlTip;
 import org.eclipse.tips.core.Tip;
-import org.eclipse.tips.core.TipProvider;
 import org.eclipse.tips.examples.DateUtil;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.FrameworkUtil;
@@ -37,8 +35,8 @@ public class MatrixRainTip extends Tip implements IUrlTip {
 	}
 
 	@Override
-	public URL getURL() {
+	public String getURL() {
 		Bundle bundle = FrameworkUtil.getBundle(getClass());
-		return bundle.getEntry("matrixrain/index.html");
+		return bundle.getEntry("matrixrain/index.html").toString();
 	}
 }

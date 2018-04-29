@@ -27,9 +27,10 @@ import org.eclipse.tips.examples.tipsframework.Navigate2Tip;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.FrameworkUtil;
 
+@SuppressWarnings("restriction")
 public class TestProvider extends org.eclipse.tips.core.TipProvider {
 
-	private TipImage fImage64, fImage48;
+	private TipImage fImage48;
 
 	@Override
 	public TipImage getImage() {

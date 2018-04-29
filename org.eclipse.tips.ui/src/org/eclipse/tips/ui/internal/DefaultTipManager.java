@@ -13,7 +13,6 @@ package org.eclipse.tips.ui.internal;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.tips.core.ITipManager;
-import org.eclipse.tips.core.TipProvider;
 import org.eclipse.tips.core.internal.LogUtil;
 import org.eclipse.tips.core.internal.TipManager;
 
@@ -65,13 +64,8 @@ public abstract class DefaultTipManager extends TipManager {
 			return true;
 		}
 		if (startUp && isRunAtStartup()) {
-			for (TipProvider provider : getProviders()) {
-				if (provider.isReady() && !provider.getTips().isEmpty()) {
-					return true;
-				}
-			}
+			return hasContent();
 		}
-		return true;
+		return false;
 	}
-
 }

@@ -13,6 +13,7 @@ package org.eclipse.tips.ide.internal;
 import java.io.File;
 import java.io.FilenameFilter;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -135,13 +136,14 @@ public class TipsPreferences extends AbstractPreferenceInitializer {
 		return node;
 	}
 
-	private static void log(IStatus status) {
-		if (status.matches(IStatus.ERROR | IStatus.WARNING)) {
+	public static void log(IStatus status) {
+		if (status.matches(IStatus.ERROR | IStatus.WARNING) || isDebug()) {
 			Bundle bundle = FrameworkUtil.getBundle(TipsPreferences.class);
 			Platform.getLog(bundle).log(status);
 		}
-		if (System.getProperty("org.eclipse.tips.consolelog") != null) {
-			System.out.println(status.toString());
+		if (isConsoleLog()) {
+			System.out.println(
+					String.format("%1$tR:%1$tS:%1$tN - %2$s", Calendar.getInstance().getTime(), status.toString()));
 		}
 	}
 
@@ -171,5 +173,19 @@ public class TipsPreferences extends AbstractPreferenceInitializer {
 		} catch (BackingStoreException e) {
 			throw new RuntimeException(e);
 		}
+	}
+
+	/**
+	 * @return true if tips are in debug mode.
+	 */
+	public static boolean isDebug() {
+		return !System.getProperty("org.eclipse.tips.debug", "false").equals("false");
+	}
+
+	/**
+	 * @return true if console logging is required
+	 */
+	public static boolean isConsoleLog() {
+		return !System.getProperty("org.eclipse.tips.consolelog", "false").equals("false");
 	}
 }

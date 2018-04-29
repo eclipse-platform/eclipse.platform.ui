@@ -15,8 +15,6 @@ import java.util.Date;
 import org.eclipse.tips.core.IHtmlTip;
 import org.eclipse.tips.core.Tip;
 import org.eclipse.tips.core.TipImage;
-import org.eclipse.tips.core.TipProvider;
-import org.eclipse.tips.core.internal.LogUtil;
 import org.eclipse.tips.examples.DateUtil;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.FrameworkUtil;

@@ -249,4 +249,14 @@ public abstract class TipManager implements ITipManager {
 	public boolean isDisposed() {
 		return fIsDiposed;
 	}
+
+	@Override
+	public boolean hasContent() {
+		for (TipProvider provider : getProviders()) {
+			if (provider.isReady() && !provider.getTips().isEmpty()) {
+				return true;
+			}
+		}
+		return false;
+	}
 }
