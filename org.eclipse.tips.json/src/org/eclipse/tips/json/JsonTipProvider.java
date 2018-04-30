@@ -15,6 +15,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.text.MessageFormat;
 import java.text.ParseException;
 import java.util.ArrayList;
 
@@ -43,6 +44,7 @@ import com.google.gson.JsonParser;
 @SuppressWarnings("restriction")
 public abstract class JsonTipProvider extends TipProvider {
 
+	private static final String SPACE = " "; //$NON-NLS-1$
 	private URL fJsonUrl;
 	private String fDescription;
 	private String fImage;
@@ -97,21 +99,21 @@ public abstract class JsonTipProvider extends TipProvider {
 		SubMonitor subMonitor = SubMonitor.convert(monitor);
 		ArrayList<Tip> result = new ArrayList<>();
 		try {
-			subMonitor.beginTask(getDescription() + " Loading Tips", -1);
+			subMonitor.beginTask(getDescription() + SPACE + Messages.JsonTipProvider_1, -1);
 			fJsonObject = loadJsonObject();
 			JsonObject provider = fJsonObject.getAsJsonObject(JsonConstants.P_PROVIDER);
-			fDescription = Util.getValueOrDefault(provider, JsonConstants.P_DESCRIPTION, "not set");
+			fDescription = Util.getValueOrDefault(provider, JsonConstants.P_DESCRIPTION, "not set"); //$NON-NLS-1$
 			fImage = Util.getValueOrDefault(provider, JsonConstants.P_IMAGE, null);
 			setExpression(Util.getValueOrDefault(provider, JsonConstants.P_EXPRESSION, null));
 			JsonArray tips = provider.getAsJsonArray(JsonConstants.P_TIPS);
-			subMonitor.beginTask(getDescription() + " Creating Tips", -1);
+			subMonitor.beginTask(getDescription() + SPACE + Messages.JsonTipProvider_2, -1);
 			tips.forEach(parm -> result.add(createJsonTip(parm)));
 		} catch (Exception e) {
-			Status status = new Status(IStatus.ERROR, "org.eclipse.tips.json", e.getMessage(), e);
+			Status status = new Status(IStatus.ERROR, "org.eclipse.tips.json", e.getMessage(), e); //$NON-NLS-1$
 			getManager().log(status);
 			return status;
 		}
-		getManager().log(LogUtil.info(String.format("%s Tips loaded ", result.size() + "")));
+		getManager().log(LogUtil.info(MessageFormat.format(Messages.JsonTipProvider_4, result.size() + ""))); //$NON-NLS-1$
 		setTips(result);
 		subMonitor.done();
 		return Status.OK_STATUS;

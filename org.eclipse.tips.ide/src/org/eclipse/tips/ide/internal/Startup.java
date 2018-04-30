@@ -33,6 +33,14 @@ import org.osgi.framework.FrameworkUtil;
 @SuppressWarnings("restriction")
 public class Startup implements IStartup {
 
+	private static final String BCKSLASH = "\""; //$NON-NLS-1$
+	private static final String EQ = "="; //$NON-NLS-1$
+	private static final String SLASH = "/"; //$NON-NLS-1$
+	private static final String LT = "<"; //$NON-NLS-1$
+	private static final String EMPTY = ""; //$NON-NLS-1$
+	private static final String GT = ">"; //$NON-NLS-1$
+	private static final String SPACE = " "; //$NON-NLS-1$
+
 	@Override
 	public void earlyStartup() {
 		loadProviders();
@@ -52,20 +60,20 @@ public class Startup implements IStartup {
 	}
 
 	private static Job getInternalProvidersJob() {
-		Job job = new Job("Load default IDE Tip Providers") {
+		Job job = new Job(Messages.Startup_0) {
 
 			@Override
 			protected IStatus run(IProgressMonitor pArg0) {
-				String baseURL = System.getProperty("org.eclipse.tips.ide.provider.url");
+				String baseURL = System.getProperty("org.eclipse.tips.ide.provider.url"); //$NON-NLS-1$
 				if (baseURL == null) {
-					baseURL = "http://www.eclipse.org/downloads/download.php?r=1&file=/e4/tips/";
+					baseURL = "http://www.eclipse.org/downloads/download.php?r=1&file=/e4/tips/"; //$NON-NLS-1$
 				}
 				try {
 					ProviderLoader.loadProviderData(IDETipManager.getInstance(), baseURL,
 							IDETipManager.getStateLocation());
 				} catch (Exception e) {
 					Status status = new Status(IStatus.ERROR, FrameworkUtil.getBundle(Startup.class).getSymbolicName(),
-							"Failure getting the Tips state location.", e);
+							Messages.Startup_3, e);
 					IDETipManager.getInstance().log(status);
 					return status;
 				}
@@ -77,11 +85,11 @@ public class Startup implements IStartup {
 
 	private static void loadExternalProviders() {
 		IConfigurationElement[] elements = Platform.getExtensionRegistry()
-				.getConfigurationElementsFor("org.eclipse.tips.core.tips");
+				.getConfigurationElementsFor("org.eclipse.tips.core.tips"); //$NON-NLS-1$
 		for (IConfigurationElement element : elements) {
-			if (element.getName().equals("provider")) {
+			if (element.getName().equals("provider")) { //$NON-NLS-1$
 				try {
-					TipProvider provider = (TipProvider) element.createExecutableExtension("class");
+					TipProvider provider = (TipProvider) element.createExecutableExtension("class"); //$NON-NLS-1$
 					provider.setExpression(getExpression(element));
 					IDETipManager.getInstance().register(provider);
 				} catch (CoreException e) {
@@ -95,7 +103,7 @@ public class Startup implements IStartup {
 	 * @return the core expression
 	 */
 	private static String getExpression(IConfigurationElement element) {
-		IConfigurationElement[] enablements = element.getChildren("enablement");
+		IConfigurationElement[] enablements = element.getChildren("enablement"); //$NON-NLS-1$
 		if (enablements.length == 0) {
 			return null;
 		}
@@ -105,28 +113,28 @@ public class Startup implements IStartup {
 	}
 
 	private static String getXML(IConfigurationElement[] children) {
-		String result = "";
+		String result = EMPTY;
 		for (IConfigurationElement element : children) {
 			IConfigurationElement[] myChildren = element.getChildren();
-			result += "<" + element.getName() + " " + getXMLAttributes(element) + ">";
+			result += LT + element.getName() + SPACE + getXMLAttributes(element) + GT;
 			if (myChildren.length > 0) {
 				result += getXML(myChildren);
 			} else {
 				String value = element.getValue();
-				result += value == null ? "" : value;
+				result += value == null ? EMPTY : value;
 			}
-			result += "</" + element.getName() + ">";
+			result += LT + SLASH + element.getName() + GT;
 		}
 		return result;
 	}
 
 	private static String getXMLAttributes(IConfigurationElement element) {
-		String result = "";
+		String result = EMPTY;
 		for (String name : element.getAttributeNames()) {
 			result += name;
-			result += "=\"";
+			result += EQ + BCKSLASH;
 			result += element.getAttribute(name);
-			result += "\" ";
+			result += BCKSLASH + SPACE;
 		}
 		return result;
 	}
@@ -140,14 +148,14 @@ public class Startup implements IStartup {
 	}
 
 	private static Job getWaitJob() {
-		Job waitJob = new Job("Tip Delay") {
+		Job waitJob = new Job(Messages.Startup_18) {
 
 			@Override
 			protected IStatus run(IProgressMonitor pMonitor) {
 				int attempts = 3;
 				SubMonitor monitor = SubMonitor.convert(pMonitor, attempts);
 				for (int i = 0; i < attempts; i++) {
-					monitor.setTaskName("Checking for content " + i);
+					monitor.setTaskName(Messages.Startup_19 + i);
 					if (openOrSleep(monitor)) {
 						if (monitor.isCanceled()) {
 							return Status.CANCEL_STATUS;
@@ -187,7 +195,7 @@ public class Startup implements IStartup {
 	}
 
 	private static UIJob getOpenUIJob() {
-		UIJob uiJob = new UIJob(PlatformUI.getWorkbench().getDisplay(), "Tip of the Day") {
+		UIJob uiJob = new UIJob(PlatformUI.getWorkbench().getDisplay(), Messages.Startup_20) {
 			@Override
 			public IStatus runInUIThread(IProgressMonitor monitor) {
 				IDETipManager.getInstance().open(true);

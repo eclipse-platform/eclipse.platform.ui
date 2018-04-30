@@ -28,7 +28,7 @@ import org.eclipse.swt.graphics.ImageLoader;
  */
 public class ImageUtil {
 
-	private static final String COMMA = ",";
+	private static final String COMMA = ","; //$NON-NLS-1$
 
 	/**
 	 * Calculate a height that will fit in the proposed rectangle given the passed
@@ -106,23 +106,23 @@ public class ImageUtil {
 	}
 
 	private static String getHeader(int format) {
-		return "data:image/" + getExtension(format) + ";base64,";
+		return "data:image/" + getExtension(format) + ";base64,"; //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
 	private static String getExtension(int format) {
 		switch (format) {
 		case SWT.IMAGE_BMP:
-			return "bmp";
+			return "bmp"; //$NON-NLS-1$
 		case SWT.IMAGE_BMP_RLE:
-			return "bmp";
+			return "bmp"; //$NON-NLS-1$
 		case SWT.IMAGE_GIF:
-			return "gif";
+			return "gif"; //$NON-NLS-1$
 		case SWT.IMAGE_ICO:
-			return "ico";
+			return "ico"; //$NON-NLS-1$
 		case SWT.IMAGE_JPEG:
-			return "jpeg";
+			return "jpeg"; //$NON-NLS-1$
 		default:
-			return "png";
+			return "png"; //$NON-NLS-1$
 		}
 	}
 

@@ -12,6 +12,7 @@ package org.eclipse.tips.core.internal;
 
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeSupport;
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -73,7 +74,8 @@ public abstract class TipManager implements ITipManager {
 	@Override
 	public ITipManager register(TipProvider provider) {
 		checkDisposed();
-		log(LogUtil.info("Registering provider: " + provider.getID() + " : " + provider.getDescription()));
+		String message = MessageFormat.format(Messages.TipManager_0, provider.getID() ,provider.getDescription());
+		log(LogUtil.info(message));
 		provider.setManager(this);
 		addToMaps(provider, Integer.valueOf(getPriority(provider)));
 		provider.getChangeSupport().addPropertyChangeListener(event -> {
@@ -92,7 +94,7 @@ public abstract class TipManager implements ITipManager {
 
 	private void checkDisposed() {
 		if (isDisposed()) {
-			throw new RuntimeException("This TipManager is disposed.");
+			throw new RuntimeException(Messages.TipManager_2);
 		}
 
 	}

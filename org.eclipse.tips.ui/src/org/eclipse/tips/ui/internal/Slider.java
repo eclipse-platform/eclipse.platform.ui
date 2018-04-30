@@ -70,7 +70,7 @@ public class Slider extends Composite {
 		gd_leftButton.widthHint = fIconSize / 2 + 8;
 		gd_leftButton.heightHint = fIconSize;
 		fLeftButton.setLayoutData(gd_leftButton);
-		fLeftButton.setImage(getImage("icons/" + fIconSize + "/aleft.png"));
+		fLeftButton.setImage(getImage("icons/" + fIconSize + "/aleft.png")); //$NON-NLS-1$ //$NON-NLS-2$
 		fLeftButton.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
@@ -88,7 +88,7 @@ public class Slider extends Composite {
 		gd_rightButton.widthHint = fIconSize / 2 + 8;
 		gd_rightButton.heightHint = fIconSize;
 		fRightButton.setLayoutData(gd_rightButton);
-		fRightButton.setImage(getImage("icons/" + fIconSize + "/aright.png"));
+		fRightButton.setImage(getImage("icons/" + fIconSize + "/aright.png")); //$NON-NLS-1$ //$NON-NLS-2$
 		fRightButton.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
@@ -119,7 +119,7 @@ public class Slider extends Composite {
 	}
 
 	private static Image getImage(String icon) {
-		return ResourceManager.getPluginImage("org.eclipse.tips.ui", icon);
+		return ResourceManager.getPluginImage("org.eclipse.tips.ui", icon); //$NON-NLS-1$
 	}
 
 	/**
@@ -146,15 +146,15 @@ public class Slider extends Composite {
 			if (fRightButton.isEnabled()) {
 				fRightButton.setEnabled(false);
 				fLeftButton.setEnabled(false);
-				fLeftButton.setImage(getImage("icons/" + fIconSize + "/aright.png"));
-				fRightButton.setImage(getImage("icons/" + fIconSize + "/aleft.png"));
+				fLeftButton.setImage(getImage("icons/" + fIconSize + "/aright.png")); //$NON-NLS-1$ //$NON-NLS-2$
+				fRightButton.setImage(getImage("icons/" + fIconSize + "/aleft.png")); //$NON-NLS-1$ //$NON-NLS-2$
 			}
 		} else {
 			if (!fRightButton.isEnabled()) {
 				fRightButton.setEnabled(true);
 				fLeftButton.setEnabled(true);
-				fLeftButton.setImage(getImage("icons/" + fIconSize + "/aleft.png"));
-				fRightButton.setImage(getImage("icons/" + fIconSize + "/aright.png"));
+				fLeftButton.setImage(getImage("icons/" + fIconSize + "/aleft.png")); //$NON-NLS-1$ //$NON-NLS-2$
+				fRightButton.setImage(getImage("icons/" + fIconSize + "/aright.png")); //$NON-NLS-1$ //$NON-NLS-2$
 			}
 		}
 
@@ -318,7 +318,7 @@ public class Slider extends Composite {
 	private void paintButton(GC gc, Composite providerButton, TipProvider provider) {
 		gc.setAdvanced(true);
 		if (!gc.getAdvanced()) {
-			throw new RuntimeException("not advanced");
+			throw new RuntimeException(Messages.Slider_13);
 		}
 		if (provider.equals(fSelectedProvider)) {
 			gc.setForeground(getDisplay().getSystemColor(SWT.COLOR_LIST_SELECTION_TEXT));
@@ -390,10 +390,10 @@ public class Slider extends Composite {
 		gc.setTextAntialias(SWT.ON);
 		if (tipCount > 9) {
 			gc.fillOval(0, 0, textExtent.x + 8, textExtent.y + 5);
-			gc.drawText(tipCount + "", 4, 2, true);
+			gc.drawText(tipCount + "", 4, 2, true); //$NON-NLS-1$
 		} else {
 			gc.fillOval(0, 0, textExtent.x + 15, textExtent.y + 5);
-			gc.drawText(tipCount + "", 8, 2, true);
+			gc.drawText(tipCount + "", 8, 2, true); //$NON-NLS-1$
 		}
 		Image result = ResourceManager.decorateImage(getProviderImage(provider, selectProviderImage(provider)), image,
 				SWTResourceManager.TOP_RIGHT);
@@ -406,7 +406,7 @@ public class Slider extends Composite {
 		GC gc2 = new GC(providerButton);
 		gc2.setAdvanced(true);
 		gc2.setFont(SWTResourceManager.getBoldFont(gc2.getFont()));
-		Point textExtent = gc2.textExtent(tipCount + "");
+		Point textExtent = gc2.textExtent(tipCount + ""); //$NON-NLS-1$
 		gc2.dispose();
 		return textExtent;
 	}

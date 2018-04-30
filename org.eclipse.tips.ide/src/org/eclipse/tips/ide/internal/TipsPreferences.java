@@ -35,15 +35,17 @@ import org.osgi.service.prefs.BackingStoreException;
  */
 public class TipsPreferences extends AbstractPreferenceInitializer {
 
+	private static final String FALSE = "false"; //$NON-NLS-1$
+
 	/**
 	 * Preference store key to indicate showing tips at startup.
 	 */
-	public static final String PREF_RUN_AT_STARTUP = "activate_at_startup";
+	public static final String PREF_RUN_AT_STARTUP = "activate_at_startup"; //$NON-NLS-1$
 
 	/**
 	 * Preference store key to indicate serving tips that the user as already seen.
 	 */
-	public static final String PREF_SERVE_READ_TIPS = "serve_read_tips";
+	public static final String PREF_SERVE_READ_TIPS = "serve_read_tips"; //$NON-NLS-1$
 
 	public TipsPreferences() {
 	}
@@ -75,14 +77,14 @@ public class TipsPreferences extends AbstractPreferenceInitializer {
 				store.load();
 				ArrayList<Integer> tips = new ArrayList<>();
 				for (String tipKey : store.preferenceNames()) {
-					if (!"provider".equals(tipKey)) {
+					if (!"provider".equals(tipKey)) { //$NON-NLS-1$
 						tips.add(Integer.valueOf(store.getInt(tipKey)));
 					}
 				}
-				result.put(store.getString("provider"), tips);
+				result.put(store.getString("provider"), tips); //$NON-NLS-1$
 			}
 		} catch (Exception e) {
-			Status status = new Status(IStatus.ERROR, "org.eclipse.tips.ide", e.getMessage(), e);
+			Status status = new Status(IStatus.ERROR, "org.eclipse.tips.ide", e.getMessage(), e); //$NON-NLS-1$
 			log(status);
 		}
 		return result;
@@ -92,7 +94,7 @@ public class TipsPreferences extends AbstractPreferenceInitializer {
 		return new FilenameFilter() {
 			@Override
 			public boolean accept(File pDir, String pName) {
-				if (pDir.equals(stateLocation) && pName.endsWith(".state")) {
+				if (pDir.equals(stateLocation) && pName.endsWith(".state")) { //$NON-NLS-1$
 					return true;
 				}
 				return false;
@@ -101,7 +103,7 @@ public class TipsPreferences extends AbstractPreferenceInitializer {
 	}
 
 	private static File getStateLocation() throws Exception {
-		File file = new File(IDETipManager.getStateLocation(), "org.eclipse.tips.ide.state");
+		File file = new File(IDETipManager.getStateLocation(), "org.eclipse.tips.ide.state"); //$NON-NLS-1$
 		if (!file.exists()) {
 			file.mkdirs();
 		}
@@ -119,15 +121,15 @@ public class TipsPreferences extends AbstractPreferenceInitializer {
 			File stateLocation = getStateLocation();
 			for (String child : pReadTips.keySet()) {
 				PreferenceStore store = new PreferenceStore(
-						new File(stateLocation, child.trim() + ".state").getAbsolutePath());
+						new File(stateLocation, child.trim() + ".state").getAbsolutePath()); //$NON-NLS-1$
 				pReadTips.get(child).forEach(value -> store.setValue(value.toString(), value.intValue()));
-				store.setValue("provider", child);
+				store.setValue("provider", child); //$NON-NLS-1$
 				store.save();
 			}
 			return Status.OK_STATUS;
 		} catch (Exception e) {
 			e.printStackTrace();
-			return new Status(IStatus.ERROR, "org.eclipse.tips.ide", e.getMessage(), e);
+			return new Status(IStatus.ERROR, "org.eclipse.tips.ide", e.getMessage(), e); //$NON-NLS-1$
 		}
 	}
 
@@ -143,7 +145,7 @@ public class TipsPreferences extends AbstractPreferenceInitializer {
 		}
 		if (isConsoleLog()) {
 			System.out.println(
-					String.format("%1$tR:%1$tS:%1$tN - %2$s", Calendar.getInstance().getTime(), status.toString()));
+					String.format("%1$tR:%1$tS:%1$tN - %2$s", Calendar.getInstance().getTime(), status.toString())); //$NON-NLS-1$
 		}
 	}
 
@@ -179,13 +181,13 @@ public class TipsPreferences extends AbstractPreferenceInitializer {
 	 * @return true if tips are in debug mode.
 	 */
 	public static boolean isDebug() {
-		return !System.getProperty("org.eclipse.tips.debug", "false").equals("false");
+		return !System.getProperty("org.eclipse.tips.debug", FALSE).equals(FALSE); //$NON-NLS-1$
 	}
 
 	/**
 	 * @return true if console logging is required
 	 */
 	public static boolean isConsoleLog() {
-		return !System.getProperty("org.eclipse.tips.consolelog", "false").equals("false");
+		return !System.getProperty("org.eclipse.tips.consolelog", FALSE).equals(FALSE); //$NON-NLS-1$
 	}
 }

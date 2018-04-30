@@ -52,7 +52,7 @@ public class TipDialog extends Dialog {
 		fixLayout(fTipComposite);
 		getShell().setLocation(getShell().getMonitor().getClientArea().width / 2 - parent.getSize().x / 2,
 				getShell().getMonitor().getClientArea().height / 2 - parent.getSize().y / 2);
-		getShell().setText("Tip of the Day");
+		getShell().setText(Messages.TipDialog_0);
 		fTipComposite.addDisposeListener(event -> close());
 		return area;
 	}

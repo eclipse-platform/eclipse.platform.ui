@@ -26,6 +26,9 @@ import org.osgi.framework.FrameworkUtil;
  */
 public class FinalTip extends Tip implements IHtmlTip {
 
+	private static final String EH1 = "</h1>"; //$NON-NLS-1$
+	private static final String H1 = "<h1>"; //$NON-NLS-1$
+
 	/**
 	 * Constructor.
 	 */
@@ -41,21 +44,20 @@ public class FinalTip extends Tip implements IHtmlTip {
 
 	@Override
 	public String getSubject() {
-		return "No more tips";
+		return Messages.FinalTip_2;
 	}
 
 	@Override
 	public String getHTML() {
-		return "<h1>There are no more tips</h1>" //
-				+ "This provider has no more new tips. You can toggle the " //
-				+ "<b>Unread</b> checkbox below or select another provider.";
+		return H1 + Messages.FinalTip_3 + EH1 //
+				+ Messages.FinalTip_4;
 	}
 
 	@Override
 	public TipImage getImage() {
 		Bundle bundle = FrameworkUtil.getBundle(getClass());
 		try {
-			return new TipImage(bundle.getEntry("images/nomoretips.png")).setAspectRatio(417, 640, false);
+			return new TipImage(bundle.getEntry("images/nomoretips.png")).setAspectRatio(417, 640, false); //$NON-NLS-1$
 		} catch (IOException e) {
 //			getManager().log(LogUtil.error(getClass(), e));
 		}

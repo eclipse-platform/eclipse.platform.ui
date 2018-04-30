@@ -64,9 +64,9 @@ public class TipImage {
 		while ((bytesRead = stream.read(chunk)) > 0) {
 			outputStream.write(chunk, 0, bytesRead);
 		}
-		fBase64Image = "data:image/" //
+		fBase64Image = "data:image/" // //$NON-NLS-1$
 				+ getExtension() //
-				+ ";base64," //
+				+ ";base64," // //$NON-NLS-1$
 				+ Base64.getEncoder().encodeToString(outputStream.toByteArray());
 	}
 
@@ -96,15 +96,15 @@ public class TipImage {
 	public TipImage(String base64Image) {
 		Assert.isNotNull(base64Image);
 		fURL = null;
-		if (base64Image.matches("^data:image\\/.*?;base64,.*$")) {
+		if (base64Image.matches("^data:image\\/.*?;base64,.*$")) { //$NON-NLS-1$
 			fBase64Image = base64Image;
-			int from = base64Image.indexOf("/") + 1;
-			int to = base64Image.indexOf(";");
+			int from = base64Image.indexOf("/") + 1; //$NON-NLS-1$
+			int to = base64Image.indexOf(";"); //$NON-NLS-1$
 			setExtension(base64Image.substring(from, to).trim());
 			setExtension(base64Image.substring(from, to).trim());
 		} else {
 			int length = base64Image.length();
-			throw new RuntimeException("Wrong base64 data " + base64Image.substring(0, length < 50 ? length : 50));
+			throw new RuntimeException(Messages.TipImage_5 + base64Image.substring(0, length < 50 ? length : 50));
 		}
 	}
 
@@ -260,17 +260,17 @@ public class TipImage {
 		int width = ImageUtil.getWidth(fAspectRatio, myWidthHint, myHeightHint);
 		int height = ImageUtil.getHeight(fAspectRatio, myWidthHint, myHeightHint);
 
-		String result = "";
+		String result = ""; //$NON-NLS-1$
 		if (fMaxWidth == UNDEFINED) {
-			result += " width=\"" + width + "\"";
+			result += " width=\"" + width + "\""; //$NON-NLS-1$ //$NON-NLS-2$
 		} else {
-			result += " width=\"" + Math.min(fMaxWidth, width) + "\"";
+			result += " width=\"" + Math.min(fMaxWidth, width) + "\""; //$NON-NLS-1$ //$NON-NLS-2$
 		}
 
 		if (fMaxHeight == UNDEFINED) {
-			result += " height=\"" + height + "\"";
+			result += " height=\"" + height + "\""; //$NON-NLS-1$ //$NON-NLS-2$
 		} else {
-			result += " height=\"" + Math.min(fMaxHeight, height) + "\"";
+			result += " height=\"" + Math.min(fMaxHeight, height) + "\""; //$NON-NLS-1$ //$NON-NLS-2$
 		}
 		return result;
 	}
@@ -287,11 +287,11 @@ public class TipImage {
 		if (fExtension != null) {
 			return fExtension;
 		}
-		String[] split = fURL.getPath().split("\\.");
+		String[] split = fURL.getPath().split("\\."); //$NON-NLS-1$
 		if (split.length > 1) {
 			fExtension = split[split.length - 1];
 		} else {
-			fExtension = "png";
+			fExtension = "png"; //$NON-NLS-1$
 		}
 		return fExtension;
 	}

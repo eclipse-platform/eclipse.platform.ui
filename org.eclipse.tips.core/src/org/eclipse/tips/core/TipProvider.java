@@ -53,7 +53,7 @@ public abstract class TipProvider {
 	/**
 	 * Ready property.
 	 */
-	public static final String PROP_READY = "PR";
+	public static final String PROP_READY = "PR"; //$NON-NLS-1$
 
 	private ITipManager fTipManager;
 	private int fTipIndex;
@@ -272,7 +272,7 @@ public abstract class TipProvider {
 //		if (!getManager().isOpen()) {
 //			return this;
 //		}
-		getManager().log(LogUtil.info(String.format("Setting tips")));
+		getManager().log(LogUtil.info(Messages.TipProvider_0)); 
 		doSetTips(tips, true);
 		fReady = true;
 		fChangeSupport.firePropertyChange(PROP_READY, false, true);

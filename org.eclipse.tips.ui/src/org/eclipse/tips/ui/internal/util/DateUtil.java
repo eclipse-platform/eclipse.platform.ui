@@ -30,7 +30,7 @@ public class DateUtil {
 	 *             if the date is not correct
 	 */
 	public static Date getDateFromYYMMDD(String dateYYMMDD) {
-		SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+		SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy"); //$NON-NLS-1$
 		try {
 			return sdf.parse(dateYYMMDD);
 		} catch (ParseException e) {

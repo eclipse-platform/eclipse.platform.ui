@@ -130,7 +130,7 @@ public class ResourceManager extends SWTResourceManager {
 	 */
 	public static Image decorateImage(final Image baseImage, final Image decorator, final int corner) {
 		if (corner <= 0 || corner >= LAST_CORNER_KEY) {
-			throw new IllegalArgumentException("Wrong decorate corner");
+			throw new IllegalArgumentException(Messages.ResourceManager_0);
 		}
 		Map<Image, Map<Image, Image>> cornerDecoratedImageMap = m_decoratedImageMap[corner];
 		if (cornerDecoratedImageMap == null) {

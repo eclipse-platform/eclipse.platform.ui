@@ -93,7 +93,7 @@ public class Util {
 		for (String key : object.keySet()) {
 			JsonElement jsonElement = object.get(key);
 			if (jsonElement.isJsonPrimitive()) {
-				String search = "${" + key + "}";
+				String search = "${" + key + "}"; //$NON-NLS-1$ //$NON-NLS-2$
 				String replace = jsonElement.getAsString();
 				int index = result.indexOf(search);
 				while (index > -1) {

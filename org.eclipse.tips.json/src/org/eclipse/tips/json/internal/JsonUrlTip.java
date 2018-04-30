@@ -40,14 +40,14 @@ public class JsonUrlTip extends Tip implements IUrlTip, IJsonTip {
 	public JsonUrlTip(String providerId, JsonObject jsonObject) throws ParseException {
 		super(providerId);
 		fJsonObject = jsonObject;
-		fSubject = Util.getValueOrDefault(jsonObject, JsonConstants.T_SUBJECT, "Not set");
+		fSubject = Util.getValueOrDefault(jsonObject, JsonConstants.T_SUBJECT, "Not set"); //$NON-NLS-1$
 		fDate = getDate(jsonObject);
 		fUrl = Util.getValueOrDefault(jsonObject, JsonConstants.T_URL, null);
 	}
 
 	private static Date getDate(JsonObject jsonObject) throws ParseException {
-		String date = Util.getValueOrDefault(jsonObject, JsonConstants.T_DATE, "1970-01-01");
-		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+		String date = Util.getValueOrDefault(jsonObject, JsonConstants.T_DATE, "1970-01-01"); //$NON-NLS-1$
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd"); //$NON-NLS-1$
 		return sdf.parse(date);
 	}
 

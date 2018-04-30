@@ -1,6 +1,6 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: Tip of the Day UI
+Bundle-Name: %Bundle-Name
 Bundle-SymbolicName: org.eclipse.tips.ui;singleton:=true
 Bundle-Version: 0.1.0.qualifier
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
@@ -11,3 +11,4 @@ Export-Package: org.eclipse.tips.ui,
  org.eclipse.tips.ui.internal,
  org.eclipse.tips.ui.internal.util;x-friends:="org.eclipse.tips.tests"
 Automatic-Module-Name: org.eclipse.tips.ui
+Bundle-Vendor: %Bundle-Vendor

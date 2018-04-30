@@ -13,6 +13,7 @@ package org.eclipse.tips.ide.internal;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -47,6 +48,8 @@ import org.w3c.dom.Element;
 @SuppressWarnings("restriction")
 public class IDETipManager extends DefaultTipManager {
 
+	private static final String EMPTY = ""; //$NON-NLS-1$
+
 	private TipSourceProvider fSourceProvider = new TipSourceProvider(this);
 
 	private Map<String, List<Integer>> fReadTips = new HashMap<>();
@@ -72,14 +75,14 @@ public class IDETipManager extends DefaultTipManager {
 
 	@Override
 	public ITipManager register(TipProvider provider) {
-		log(LogUtil.info("Registering provider " + provider.getID()));
+		log(LogUtil.info(Messages.IDETipManager_0 + provider.getID()));
 		super.register(provider);
 		load(provider);
 		return this;
 	}
 
 	private void load(TipProvider provider) {
-		Job job = new Job("Loading " + provider.getID()) {
+		Job job = new Job(Messages.IDETipManager_1 + provider.getID()) {
 			@Override
 			protected IStatus run(IProgressMonitor monitor) {
 				return provider.loadNewTips(monitor);
@@ -87,7 +90,7 @@ public class IDETipManager extends DefaultTipManager {
 		};
 		job.addJobChangeListener(new ProviderLoadJobChangeListener(this, provider));
 		job.schedule();
-		provider.getManager().log(LogUtil.info(String.format("Load new tips job started for %s", provider.getID())));
+		provider.getManager().log(LogUtil.info(MessageFormat.format(Messages.IDETipManager_2, provider.getID())));
 	}
 
 	@Override
@@ -111,11 +114,11 @@ public class IDETipManager extends DefaultTipManager {
 	 *
 	 */
 	private void saveReadState(Map<String, List<Integer>> pReadTips) {
-		Job job = new Job("Tips save read state..") {
+		Job job = new Job(Messages.IDETipManager_3) {
 			@Override
 			protected IStatus run(IProgressMonitor monitor) {
 				SubMonitor subMonitor = SubMonitor.convert(monitor, IProgressMonitor.UNKNOWN);
-				subMonitor.setTaskName("Saving read tips..");
+				subMonitor.setTaskName(Messages.IDETipManager_4);
 				IStatus status = TipsPreferences.saveReadState(pReadTips);
 				subMonitor.done();
 				return status;
@@ -132,7 +135,7 @@ public class IDETipManager extends DefaultTipManager {
 	 */
 	private void refreshUI() {
 		boolean newTips = getProviders().stream().filter(p -> !p.getTips().isEmpty()).count() > 0;
-		Job job = new Job("Tips status bar refresh..") {
+		Job job = new Job(Messages.IDETipManager_5) {
 			@Override
 			protected IStatus run(IProgressMonitor monitor) {
 				setNewTips(newTips);
@@ -193,7 +196,7 @@ public class IDETipManager extends DefaultTipManager {
 	}
 
 	protected synchronized IDETipManager setNewTips(boolean newTips) {
-		log(LogUtil.info(String.format("New tips %s", newTips + "")));
+		log(LogUtil.info(MessageFormat.format(Messages.IDETipManager_6, newTips + EMPTY)));
 		if (fNewTips != newTips) {
 			fNewTips = newTips;
 			fSourceProvider.setStatus(fNewTips);
@@ -225,9 +228,9 @@ public class IDETipManager extends DefaultTipManager {
 	 */
 	@Override
 	public int getPriority(TipProvider provider) {
-		log(LogUtil.info("Evaluating expression: " + provider.getExpression()));
+		log(LogUtil.info(MessageFormat.format(Messages.IDETipManager_8, provider.getExpression())));
 		int priority = doGetPriority(provider.getExpression());
-		log(LogUtil.info("Evaluating expression done. Priority: " + priority));
+		log(LogUtil.info(MessageFormat.format(Messages.IDETipManager_9, Integer.valueOf(priority))));
 		return priority;
 	}
 
@@ -236,11 +239,11 @@ public class IDETipManager extends DefaultTipManager {
 			return 20;
 		}
 		try {
-			String myExpression = "<enablement>" + expression + "</enablement>";
-			myExpression = "<?xml version=\"1.0\"?>" + myExpression;
+			String myExpression = "<enablement>" + expression + "</enablement>"; //$NON-NLS-1$ //$NON-NLS-2$
+			myExpression = "<?xml version=\"1.0\"?>" + myExpression; //$NON-NLS-1$
 			DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
 			Document doc = factory.newDocumentBuilder().parse(new ByteArrayInputStream(myExpression.getBytes()));
-			Element element = (Element) doc.getElementsByTagName("enablement").item(0);
+			Element element = (Element) doc.getElementsByTagName("enablement").item(0); //$NON-NLS-1$
 			Expression expressionObj = ExpressionConverter.getDefault().perform(element);
 			final EvaluationResult result = expressionObj.evaluate(getEvaluationContext());
 			if (result == EvaluationResult.TRUE) {
@@ -273,10 +276,10 @@ public class IDETipManager extends DefaultTipManager {
 	 * @throws Exception if something went wrong
 	 */
 	public static File getStateLocation() throws Exception {
-		String stateLocation = System.getProperty("org.eclipse.tips.statelocation");
+		String stateLocation = System.getProperty("org.eclipse.tips.statelocation"); //$NON-NLS-1$
 		if (stateLocation == null) {
-			stateLocation = System.getProperty("user.home") + File.separator + ".eclipse" + File.separator
-					+ "org.eclipse.tips.state";
+			stateLocation = System.getProperty("user.home") + File.separator + ".eclipse" + File.separator //$NON-NLS-1$ //$NON-NLS-2$
+					+ "org.eclipse.tips.state"; //$NON-NLS-1$
 		}
 		File locationDir = new File(stateLocation);
 		if (!locationDir.exists()) {
@@ -284,7 +287,7 @@ public class IDETipManager extends DefaultTipManager {
 		}
 
 		if (!locationDir.canRead() || !locationDir.canWrite()) {
-			throw new IOException("Could not read or write the state location: " + locationDir.getAbsolutePath());
+			throw new IOException(MessageFormat.format(Messages.IDETipManager_18, locationDir.getAbsolutePath()));
 		}
 		return locationDir;
 	}

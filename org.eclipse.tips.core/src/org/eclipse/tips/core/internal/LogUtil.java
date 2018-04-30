@@ -21,15 +21,15 @@ public class LogUtil {
 	}
 
 	public static IStatus error(Throwable throwable) {
-		return getStatus(IStatus.ERROR, "org.eclipse.tips.core", throwable.getMessage(), throwable);
+		return getStatus(IStatus.ERROR, "org.eclipse.tips.core", throwable.getMessage(), throwable); //$NON-NLS-1$
 	}
 
 	public static IStatus warn(Throwable throwable) {
-		return getStatus(IStatus.WARNING, "org.eclipse.tips.core", throwable.getMessage(), throwable);
+		return getStatus(IStatus.WARNING, "org.eclipse.tips.core", throwable.getMessage(), throwable); //$NON-NLS-1$
 	}
 
 	public static IStatus info(Throwable throwable) {
-		return getStatus(IStatus.INFO, "org.eclipse.tips.core", throwable.getMessage(), throwable);
+		return getStatus(IStatus.INFO, "org.eclipse.tips.core", throwable.getMessage(), throwable); //$NON-NLS-1$
 	}
 
 	public static IStatus error(Class<?> clazz, Throwable throwable) {
@@ -60,10 +60,10 @@ public class LogUtil {
 		if (FrameworkUtil.getBundle(clazz) != null) {
 			return FrameworkUtil.getBundle(clazz).getSymbolicName();
 		}
-		return "osgi.not.running";
+		return "osgi.not.running"; //$NON-NLS-1$
 	}
 
 	public static IStatus info(String message) {
-		return getStatus(IStatus.INFO, "org.eclipse.tips.core", message, null);
+		return getStatus(IStatus.INFO, "org.eclipse.tips.core", message, null); //$NON-NLS-1$
 	}
 }

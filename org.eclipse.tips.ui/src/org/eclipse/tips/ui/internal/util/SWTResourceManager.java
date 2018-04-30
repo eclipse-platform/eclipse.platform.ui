@@ -253,7 +253,7 @@ public class SWTResourceManager {
 	 */
 	public static Image decorateImage(final Image baseImage, final Image decorator, final int corner) {
 		if (corner <= 0 || corner >= LAST_CORNER_KEY) {
-			throw new IllegalArgumentException("Wrong decorate corner");
+			throw new IllegalArgumentException("Wrong decorate corner"); //$NON-NLS-1$
 		}
 		Map<Image, Map<Image, Image>> cornerDecoratedImageMap = m_decoratedImageMap[corner];
 		if (cornerDecoratedImageMap == null) {
@@ -479,10 +479,10 @@ public class SWTResourceManager {
 	}
 
 	public static void report() {
-		System.out.println("Colormap          : " + m_colorMap.size());
-		System.out.println("DecoratedImageMap : " + m_decoratedImageMap.length);
-		System.out.println("Fontmap           : " + m_fontMap.size());
-		System.out.println("CursorMap         : " + m_idToCursorMap.size());
-		System.out.println("ImageMap          : " + m_imageMap.size());
+		System.out.println("Colormap          : " + m_colorMap.size()); //$NON-NLS-1$
+		System.out.println("DecoratedImageMap : " + m_decoratedImageMap.length); //$NON-NLS-1$
+		System.out.println("Fontmap           : " + m_fontMap.size()); //$NON-NLS-1$
+		System.out.println("CursorMap         : " + m_idToCursorMap.size()); //$NON-NLS-1$
+		System.out.println("ImageMap          : " + m_imageMap.size()); //$NON-NLS-1$
 	}
 }

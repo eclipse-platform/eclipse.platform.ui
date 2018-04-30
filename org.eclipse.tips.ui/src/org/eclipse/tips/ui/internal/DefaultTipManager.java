@@ -39,7 +39,7 @@ public abstract class DefaultTipManager extends TipManager {
 	@Override
 	public ITipManager open(boolean startUp) {
 		try {
-			Assert.isTrue(!isOpen(), "Tip of the Day already open.");
+			Assert.isTrue(!isOpen(), Messages.DefaultTipManager_0);
 		} catch (Exception e) {
 			log(LogUtil.error(getClass(), e));
 			throw e;

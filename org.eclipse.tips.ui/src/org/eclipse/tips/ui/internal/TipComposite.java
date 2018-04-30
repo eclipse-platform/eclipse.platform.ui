@@ -12,6 +12,7 @@ package org.eclipse.tips.ui.internal;
 
 import java.io.IOException;
 import java.net.URL;
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Timer;
@@ -58,6 +59,7 @@ import org.eclipse.tips.ui.internal.util.ResourceManager;
 
 @SuppressWarnings("restriction")
 public class TipComposite extends Composite implements ProviderSelectionListener {
+	private static final String EMTPY = ""; //$NON-NLS-1$
 	private static final int READ_TIMER = 2000;
 	private TipProvider fProvider;
 	private Browser fBrowser;
@@ -67,7 +69,7 @@ public class TipComposite extends Composite implements ProviderSelectionListener
 	private Button fShowAtStart;
 	private Button fUnreadOnly;
 	private Button fPreviousTipButton;
-	private Pattern fGtkHackPattern = Pattern.compile("(.*?)([0-9]+)(.*?)([0-9]+)(.*?)");
+	private Pattern fGtkHackPattern = Pattern.compile("(.*?)([0-9]+)(.*?)([0-9]+)(.*?)"); //$NON-NLS-1$
 	private Composite fSWTComposite;
 	private Composite fBrowserComposite;
 	private StackLayout fContentStack;
@@ -131,7 +133,7 @@ public class TipComposite extends Composite implements ProviderSelectionListener
 		preferenceBar.setLayout(fl_composite_3);
 
 		fShowAtStart = new Button(preferenceBar, SWT.CHECK);
-		fShowAtStart.setText("Show tips at startup");
+		fShowAtStart.setText(Messages.TipComposite_1);
 		fShowAtStart.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
@@ -140,7 +142,7 @@ public class TipComposite extends Composite implements ProviderSelectionListener
 		});
 
 		fUnreadOnly = new Button(preferenceBar, SWT.CHECK);
-		fUnreadOnly.setText("Unread only");
+		fUnreadOnly.setText(Messages.TipComposite_2);
 		fUnreadOnly.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
@@ -169,7 +171,7 @@ public class TipComposite extends Composite implements ProviderSelectionListener
 
 		fSingleActionButton = new Button(fSingleActionComposite, SWT.NONE);
 		fSingleActionButton.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
-		fSingleActionButton.setText("More...");
+		fSingleActionButton.setText(Messages.TipComposite_3);
 		fSingleActionButton.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
@@ -185,7 +187,7 @@ public class TipComposite extends Composite implements ProviderSelectionListener
 		fMultiActionComposite.setLayout(gl_MultiActionComposite);
 
 		fMultiActionButton = new Button(fMultiActionComposite, SWT.NONE);
-		fMultiActionButton.setText("New Button");
+		fMultiActionButton.setText(Messages.TipComposite_4);
 		fMultiActionButton.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
@@ -194,7 +196,7 @@ public class TipComposite extends Composite implements ProviderSelectionListener
 		});
 
 		fMultiActionMenuButton = new Button(fMultiActionComposite, SWT.NONE);
-		fMultiActionMenuButton.setImage(ResourceManager.getPluginImage("org.eclipse.tips.ui", "icons/popup_menu.gif"));
+		fMultiActionMenuButton.setImage(ResourceManager.getPluginImage("org.eclipse.tips.ui", "icons/popup_menu.gif")); //$NON-NLS-1$ //$NON-NLS-2$
 		fMultiActionMenuButton.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
@@ -207,7 +209,7 @@ public class TipComposite extends Composite implements ProviderSelectionListener
 
 		fPreviousTipButton = new Button(buttonBar, SWT.NONE);
 		fPreviousTipButton.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1));
-		fPreviousTipButton.setText("Previous Tip");
+		fPreviousTipButton.setText(Messages.TipComposite_7);
 		fPreviousTipButton.addSelectionListener(new SelectionAdapter() {
 
 			@Override
@@ -219,7 +221,7 @@ public class TipComposite extends Composite implements ProviderSelectionListener
 
 		Button btnNextTip = new Button(buttonBar, SWT.NONE);
 		btnNextTip.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1));
-		btnNextTip.setText("Next Tip");
+		btnNextTip.setText(Messages.TipComposite_8);
 		btnNextTip.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
@@ -235,7 +237,7 @@ public class TipComposite extends Composite implements ProviderSelectionListener
 			}
 		});
 		btnClose.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1));
-		btnClose.setText("Close");
+		btnClose.setText(Messages.TipComposite_9);
 
 		Label label_1 = new Label(this, SWT.SEPARATOR | SWT.HORIZONTAL);
 		label_1.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1));
@@ -259,7 +261,7 @@ public class TipComposite extends Composite implements ProviderSelectionListener
 	}
 
 	private void runTipAction(TipAction tipAction) {
-		Job job = new Job("Running " + tipAction.getTooltip()) {
+		Job job = new Job(Messages.TipComposite_10 + tipAction.getTooltip()) {
 			@Override
 			protected IStatus run(IProgressMonitor monitor) {
 				try {
@@ -293,7 +295,7 @@ public class TipComposite extends Composite implements ProviderSelectionListener
 	 */
 	private void hitTimer() {
 		Tip timerTip = fCurrentTip;
-		Timer timer = new Timer("Tip read timer");
+		Timer timer = new Timer(Messages.TipComposite_11);
 		timer.schedule(new TimerTask() {
 			@Override
 			public void run() {
@@ -343,7 +345,7 @@ public class TipComposite extends Composite implements ProviderSelectionListener
 		} else if (tip instanceof IUrlTip) {
 			loadContentUrl((IUrlTip) tip);
 		} else {
-			fTipManager.log(LogUtil.error(getClass(), "Unknown Tip implementation: " + tip));
+			fTipManager.log(LogUtil.error(getClass(), Messages.TipComposite_12 + tip));
 		}
 		fContentComposite.requestLayout();
 	}
@@ -476,9 +478,13 @@ public class TipComposite extends Composite implements ProviderSelectionListener
 	 * @return the script
 	 */
 	private static String getLoadingScript(int timeout) {
-		return "<style>div{position:fixed;top:50%;left:40%}</style>" + "<div id=\"txt\"></div>"
-				+ "<script>var wss=function(){document.getElementById(\"txt\").innerHTML=\"Loading next Tip...\"};window.setTimeout(wss,"
-				+ timeout + ");</script>";
+		return "<style>div{position:fixed;top:50%;left:40%}</style>" //$NON-NLS-1$
+				+ "<div id=\"txt\"></div>" //$NON-NLS-1$
+				+ "<script>var wss=function(){document.getElementById(\"txt\").innerHTML=\"" //$NON-NLS-1$
+				+ Messages.TipComposite_0 //
+				+ "\"};window.setTimeout(wss," //$NON-NLS-1$
+				+ timeout //
+				+ ");</script>"; //$NON-NLS-1$
 	}
 
 	private String getHTML(IHtmlTip tip) throws IOException {
@@ -487,18 +493,17 @@ public class TipComposite extends Composite implements ProviderSelectionListener
 	}
 
 	private static String getScaling() {
-		if (Platform.isRunning() && Platform.getWS().startsWith("gtk")) {
-			int deviceZoom = DPIUtil.getDeviceZoom();
-			int zoom = deviceZoom;
-			return "<style>" + "body {" + "  zoom: " + zoom + "%;" + "}</style> ";
+		if (Platform.isRunning() && Platform.getWS().startsWith("gtk")) { //$NON-NLS-1$
+			Integer zoom = Integer.valueOf(DPIUtil.getDeviceZoom());
+			return MessageFormat.format("<style>body {  zoom: {0}%;}</style> ", zoom); //$NON-NLS-1$
 		}
-		return "";
+		return EMTPY;
 	}
 
 	private String encodeImage(IHtmlTip tip) throws IOException {
 		TipImage image = tip.getImage();
 		if (image == null) {
-			return "";
+			return EMTPY;
 		}
 		return encodeImageFromBase64(image);
 	}
@@ -507,12 +512,11 @@ public class TipComposite extends Composite implements ProviderSelectionListener
 		int width = fBrowser.getClientArea().width;
 		int height = Math.min(fBrowser.getClientArea().height / 2, (2 * (width / 3)));
 		String attributes = gtkHack(image.getIMGAttributes(width, height).trim());
-		String encoded = "" //
-				+ "<center> <img " //
+		String encoded = EMTPY + "<center> <img " // //$NON-NLS-1$
 				+ attributes //
-				+ " src=\"" //
+				+ " src=\"" // //$NON-NLS-1$
 				+ image.getBase64Image() //
-				+ "\"></center><br/>";
+				+ "\"></center><br/>"; //$NON-NLS-1$
 		return encoded;
 	}
 
@@ -520,7 +524,7 @@ public class TipComposite extends Composite implements ProviderSelectionListener
 		if (!Platform.isRunning()) {
 			return imageAttribute;
 		}
-		if (!Platform.getWS().startsWith("gtk")) {
+		if (!Platform.getWS().startsWith("gtk")) { //$NON-NLS-1$
 			return imageAttribute;
 		}
 		Matcher m = fGtkHackPattern.matcher(imageAttribute);

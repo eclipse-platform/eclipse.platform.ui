@@ -39,70 +39,70 @@ public class JsonConstants {
 	/**
 	 * Provider description field
 	 */
-	public static final String P_DESCRIPTION = "description";
+	public static final String P_DESCRIPTION = "description"; //$NON-NLS-1$
 
 	/**
 	 * Provider core expression field
 	 */
-	public static final String P_EXPRESSION = "expression";
+	public static final String P_EXPRESSION = "expression"; //$NON-NLS-1$
 
 	/**
 	 * Provider image field
 	 */
-	public static final String P_IMAGE = "image";
+	public static final String P_IMAGE = "image"; //$NON-NLS-1$
 
 	/**
 	 * Provider provider field
 	 */
-	public static final String P_PROVIDER = "provider";
+	public static final String P_PROVIDER = "provider"; //$NON-NLS-1$
 
 	/**
 	 * The provider tips array
 	 */
-	public static final String P_TIPS = "tips";
+	public static final String P_TIPS = "tips"; //$NON-NLS-1$
 
 	/**
 	 * Tip date field
 	 */
-	public static final String T_DATE = "date";
+	public static final String T_DATE = "date"; //$NON-NLS-1$
 
 	/**
 	 * Tip HTML
 	 */
-	public static final String T_HTML = "html";
+	public static final String T_HTML = "html"; //$NON-NLS-1$
 
 	/**
 	 * Tip image field
 	 */
-	public static final String T_IMAGE = "image";
+	public static final String T_IMAGE = "image"; //$NON-NLS-1$
 
 	/**
 	 * Tip image maximum height (int)
 	 */
-	public static final String T_MAXHEIGHT = "maxHeight";
+	public static final String T_MAXHEIGHT = "maxHeight"; //$NON-NLS-1$
 
 	/**
 	 * Tip image maximum width (int)
 	 */
-	public static final String T_MAXWIDTH = "maxWidth";
+	public static final String T_MAXWIDTH = "maxWidth"; //$NON-NLS-1$
 
 	/**
 	 * Tip image ratio field (double)
 	 */
-	public static final String T_RATIO = "ratio";
+	public static final String T_RATIO = "ratio"; //$NON-NLS-1$
 
 	/**
 	 * Tip subject field
 	 */
-	public static final String T_SUBJECT = "subject";
+	public static final String T_SUBJECT = "subject"; //$NON-NLS-1$
 
 	/**
 	 * Tip URL
 	 */
-	public static final String T_URL = "url";
+	public static final String T_URL = "url"; //$NON-NLS-1$
 
 	/**
 	 * Tip variables
 	 */
-	public static final String T_VARIABLES = "variables";
+	public static final String T_VARIABLES = "variables"; //$NON-NLS-1$
 }

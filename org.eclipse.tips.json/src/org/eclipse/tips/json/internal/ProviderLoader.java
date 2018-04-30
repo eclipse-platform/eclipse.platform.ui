@@ -59,16 +59,16 @@ public class ProviderLoader {
 
 	private static void loadProviders(ITipManager pManager, String pBaseURL, File stateLocation) {
 		try {
-			URL webFile = new URL(pBaseURL + "index.json");
-			File target = new File(stateLocation, "index.json");
+			URL webFile = new URL(pBaseURL + "index.json"); //$NON-NLS-1$
+			File target = new File(stateLocation, "index.json"); //$NON-NLS-1$
 			try (InputStream in = webFile.openStream()) {
 				Files.copy(in, target.toPath(), StandardCopyOption.REPLACE_EXISTING);
 			}
-			pManager.log(LogUtil.info("Internal Providers index file loaded to " + target.toPath()));
+			pManager.log(LogUtil.info(String.format(Messages.ProviderLoader_1, target.toPath())));
 			createProviders(pManager, target, pBaseURL, stateLocation);
 		} catch (Exception e) {
 			String symbolicName = FrameworkUtil.getBundle(ProviderLoader.class).getSymbolicName();
-			pManager.log(new Status(IStatus.ERROR, symbolicName, "Error loading provider file", e));
+			pManager.log(new Status(IStatus.ERROR, symbolicName, Messages.ProviderLoader_3, e));
 		}
 	}
 
@@ -83,15 +83,15 @@ public class ProviderLoader {
 
 	private static void loadProvider(ITipManager pManager, JsonElement pProvider, String pBaseURL, File userLocation) {
 		JsonObject provider = pProvider.getAsJsonObject();
-		String version = Util.getValueOrDefault(provider, "version", null);
-		String location = Util.getValueOrDefault(provider, "location", null);
-		String bundleName = Util.getValueOrDefault(provider, "require-bundle", null);
+		String version = Util.getValueOrDefault(provider, "version", null); //$NON-NLS-1$
+		String location = Util.getValueOrDefault(provider, "location", null); //$NON-NLS-1$
+		String bundleName = Util.getValueOrDefault(provider, "require-bundle", null); //$NON-NLS-1$
 		if (version == null || bundleName == null) {
 			logInvalidProvider(pManager, provider);
 			return;
 		}
 		pManager.log(LogUtil
-				.info(String.format("Provider points to location %s. Last fetched version %s. Requires bundle %s",
+				.info(String.format(Messages.ProviderLoader_0,
 						location, version, bundleName)));
 		Bundle bundle = Platform.getBundle(bundleName);
 		if (bundle == null) {
@@ -105,7 +105,7 @@ public class ProviderLoader {
 				fileLocation.mkdirs();
 			}
 
-			File versionFile = new File(fileLocation, "version.txt");
+			File versionFile = new File(fileLocation, "version.txt"); //$NON-NLS-1$
 			if (!versionFile.exists()) {
 				versionFile.createNewFile();
 				try (FileOutputStream fos = new FileOutputStream(versionFile)) {
@@ -114,10 +114,10 @@ public class ProviderLoader {
 			}
 
 			String existingVersion = getFileContent(versionFile);
-			File providerFile = new File(fileLocation, "provider.json");
+			File providerFile = new File(fileLocation, "provider.json"); //$NON-NLS-1$
 			if (!version.equals(existingVersion) || !providerFile.exists()) {
-				pManager.log(LogUtil.info(String.format("Old version: %s. New version %s", existingVersion, version)));
-				URL webFile = new URL(pBaseURL + "/" + location);
+				pManager.log(LogUtil.info(String.format(Messages.ProviderLoader_10, existingVersion, version)));
+				URL webFile = new URL(pBaseURL + "/" + location); //$NON-NLS-1$
 				try (InputStream in = webFile.openStream()) {
 					Files.copy(in, providerFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
 				}
@@ -130,7 +130,8 @@ public class ProviderLoader {
 		} catch (IOException e) {
 			String symbolicName = FrameworkUtil.getBundle(ProviderLoader.class).getSymbolicName();
 			pManager.log(
-					new Status(IStatus.ERROR, symbolicName, "Error loading provider from: " + pProvider.toString(), e));
+					new Status(IStatus.ERROR, symbolicName,
+							String.format(Messages.ProviderLoader_2, pProvider.toString()), e));
 		}
 	}
 
@@ -140,23 +141,23 @@ public class ProviderLoader {
 
 			@Override
 			public String getID() {
-				return bundleName + ".json.provider";
+				return bundleName + ".json.provider"; //$NON-NLS-1$
 			}
 
 			@Override
 			public synchronized IStatus loadNewTips(IProgressMonitor pMonitor) {
-				getManager().log(LogUtil.info(String.format("Load new tips START for %s", getID())));
+				getManager().log(LogUtil.info(String.format(Messages.ProviderLoader_14, getID())));
 				IStatus status = super.loadNewTips(pMonitor);
 				getManager().log(status);
-				getManager().log(LogUtil.info(String.format("Load new tips END   for %s", getID())));
+				getManager().log(LogUtil.info(String.format(Messages.ProviderLoader_15, getID())));
 				return status;
 			}
 		};
 
-		File providerFile = new File(pFileLocation, "provider.json");
+		File providerFile = new File(pFileLocation, "provider.json"); //$NON-NLS-1$
 		String fileLocation = providerFile.toURI().toURL().toString();
 		tipProvider.setJsonUrl(fileLocation);
-		pManager.log(LogUtil.info(String.format("Provider file stored at %s", fileLocation)));
+		pManager.log(LogUtil.info(String.format(Messages.ProviderLoader_17, fileLocation)));
 		pManager.register(tipProvider);
 	}
 
@@ -170,6 +171,7 @@ public class ProviderLoader {
 
 	private static void logInvalidProvider(ITipManager pManager, JsonObject pProvider) {
 		String symbolicName = FrameworkUtil.getBundle(ProviderLoader.class).getSymbolicName();
-		pManager.log(new Status(IStatus.ERROR, symbolicName, "Error loading provider from: " + pProvider.toString()));
+		pManager.log(new Status(IStatus.ERROR, symbolicName,
+				String.format(Messages.ProviderLoader_4, pProvider.toString())));
 	}
 }

@@ -69,14 +69,14 @@ public class TipSourceProvider extends AbstractSourceProvider {
 	}
 
 	private void layoutWorkbench(boolean changed) {
-		UIJob job = new UIJob(PlatformUI.getWorkbench().getDisplay(), "Tip of the Day. Layout Shell") {
+		UIJob job = new UIJob(PlatformUI.getWorkbench().getDisplay(), Messages.TipSourceProvider_0) {
 			@Override
 			public IStatus runInUIThread(IProgressMonitor monitor) {
 				if (changed) {
 					fireSourceChanged(ISources.ACTIVE_WORKBENCH_WINDOW, getCurrentState());
 				}
 				for (IWorkbenchWindow window : PlatformUI.getWorkbench().getWorkbenchWindows()) {
-					fManager.log(LogUtil.info("Layout on " + window + " -> " + fNewTips));
+					fManager.log(LogUtil.info(Messages.TipSourceProvider_1 + window + " -> " + fNewTips)); //$NON-NLS-1$
 					window.getShell().layout(true, true);
 				}
 				return Status.OK_STATUS;
