@@ -68,6 +68,7 @@
     <module>org.eclipse.tips.ui</module>
     <module>org.eclipse.tips.ide</module>
     <module>org.eclipse.tips.json</module>
+    <module>org.eclipse.tips.feature</module>
     
   </modules>
 </project>
