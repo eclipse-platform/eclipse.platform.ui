@@ -543,7 +543,7 @@ public final class SelectionProcessor {
 					gc= new GC(fStyledText);
 					int charWidth= gc.stringExtent(new String(Character.toString(character))).x;
 					int singleCharWidth= gc.stringExtent(" ").x; //$NON-NLS-1$
-					return (int)Math.ceil(charWidth / singleCharWidth);
+					return (int) Math.ceil((double) charWidth / singleCharWidth);
 				} finally {
 					if (gc != null)
 						gc.dispose();
