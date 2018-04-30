@@ -16,6 +16,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 
 import org.eclipse.core.runtime.Assert;
@@ -340,10 +341,9 @@ public class TextUtilities {
 	public static void addDocumentPartitioners(IDocument document, Map<String, ? extends IDocumentPartitioner> partitioners) {
 		if (document instanceof IDocumentExtension3) {
 			IDocumentExtension3 extension3= (IDocumentExtension3) document;
-			Iterator<String> e= partitioners.keySet().iterator();
-			while (e.hasNext()) {
-				String partitioning= e.next();
-				IDocumentPartitioner partitioner= partitioners.get(partitioning);
+			for (Entry<String, ? extends IDocumentPartitioner> entry : partitioners.entrySet()) {
+				String partitioning= entry.getKey();
+				IDocumentPartitioner partitioner= entry.getValue();
 				partitioner.connect(document);
 				extension3.setDocumentPartitioner(partitioning, partitioner);
 			}

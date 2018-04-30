@@ -166,9 +166,8 @@ class LinkedModeManager {
 	}
 
 	private void removeManager() {
-		for (Iterator<IDocument> it= fgManagers.keySet().iterator(); it.hasNext();) {
-			IDocument doc= it.next();
-			if (fgManagers.get(doc) == this)
+		for (Iterator<LinkedModeManager> it= fgManagers.values().iterator(); it.hasNext();) {
+			if (it.next() == this)
 				it.remove();
 		}
 	}

@@ -63,7 +63,7 @@ public abstract class TextStoreTest {
 		fTextStore= null;
 		fTracker= null;
 	}
-	
+
 	@Test
 	public void testGet1() throws Exception {
 		set("xxxxx");
@@ -77,7 +77,7 @@ public abstract class TextStoreTest {
 		}
 
 	}
-	
+
 	@Test
 	public void testGet2() throws Exception {
 		set("xxxxx");
@@ -91,7 +91,7 @@ public abstract class TextStoreTest {
 		}
 
 	}
-	
+
 	@Test
 	public void testEditScript1() throws Exception {
 		replace(0, fTextStore.getLength(), "x");
@@ -121,7 +121,7 @@ public abstract class TextStoreTest {
 		} catch (IndexOutOfBoundsException e) {
 		}
 	}
-	
+
 	@Test
 	public void testEmptyLines() throws Exception {
 
@@ -131,7 +131,7 @@ public abstract class TextStoreTest {
 		replace(0, 0, "\n\n\n\n\n");
 		assertTextStoreContents("\n\n\n\n\n");
 	}
-	
+
 	@Test
 	public void testInsert1() throws Exception {
 
@@ -150,7 +150,7 @@ public abstract class TextStoreTest {
 		replace(11, 5, "y\nxyz");
 		assertTextStoreContents("x\nxyyyy\nxy\ny\nxyz\nx\n");
 	}
-	
+
 	@Test
 	public void testInsert2() throws Exception {
 		replace(3, 0, "yyyy");
@@ -159,7 +159,7 @@ public abstract class TextStoreTest {
 		replace(9, 0, "y\ny\ny");
 		assertTextStoreContents("x\nxyyyy\nxy\ny\ny\nx\nx\n");
 	}
-	
+
 	@Test
 	public void testLinesNumbers() throws Exception {
 		replace(0, 10, "\na\nbb\nccc\ndddd\neeeee\n");
@@ -174,7 +174,7 @@ public abstract class TextStoreTest {
 			offset+= (i + 1);
 		}
 	}
-	
+
 	@Test
 	public void testOffsets() throws Exception {
 		for (int i= 0; i < 5; i++) {
@@ -196,7 +196,7 @@ public abstract class TextStoreTest {
 			assertTrue("invalid line number " + line + " for position " + i + " should be " + l, l == line);
 		}
 	}
-	
+
 	@Test
 	public void testRemove() throws Exception {
 		replace(3, 1, null);
@@ -211,13 +211,13 @@ public abstract class TextStoreTest {
 		replace(0, 3, null);
 		assertTextStoreContents("");
 	}
-	
+
 	@Test
 	public void testReplace() throws Exception {
 		replace(0, fTextStore.getLength(), "\tx\n\tx\n\tx\n\tx\n\tx\n");
 		assertTextStoreContents("\tx\n\tx\n\tx\n\tx\n\tx\n");
 	}
-	
+
 	@Test
 	public void testReplace2() throws Exception {
 		replace(0, fTextStore.getLength(), "x");
@@ -226,13 +226,13 @@ public abstract class TextStoreTest {
 		replace(0, fTextStore.getLength(), "x\nx\nx\n");
 		assertTextStoreContents("x\nx\nx\n");
 	}
-	
+
 	@Test
 	public void testReplace3() throws Exception {
 		replace(1, 1, "\n");
 		assertTextStoreContents("x\nx\nx\nx\nx\n");
 	}
-	
+
 	@Test
 	public void testReplace4() throws Exception {
 		int lines= fTracker.getNumberOfLines();
@@ -245,7 +245,7 @@ public abstract class TextStoreTest {
 			previous= fTracker.getLineInformation(i);
 		}
 	}
-	
+
 	@Test
 	public void testShiftLeft() throws Exception {
 		replace(0, fTextStore.getLength(), "\tx\n\tx\n\tx\n\tx\n\tx\n");
@@ -258,7 +258,7 @@ public abstract class TextStoreTest {
 
 		assertTextStoreContents("x\nx\nx\nx\nx\n");
 	}
-	
+
 	@Test
 	public void testShiftRight() throws Exception {
 		for (int i= 0; i < 5; i++) {
@@ -268,7 +268,7 @@ public abstract class TextStoreTest {
 
 		assertTextStoreContents("\tx\n\tx\n\tx\n\tx\n\tx\n");
 	}
-	
+
 	@Test
 	public void testDeleteEmptyLine() throws Exception {
 		set("x\nx\n\nx\n\n");
@@ -291,15 +291,15 @@ public abstract class TextStoreTest {
 		}
 
 	}
-	
+
 	@Test
 	public void testDeleteLines() throws Exception {
-		String content= "";
+		StringBuilder content= new StringBuilder();
 		for (int i= 0; i < 50; i++) {
-			content += "x\nx\n\nx\n\n";
-			set(content);
+			content.append("x\nx\n\nx\n\n");
+			set(content.toString());
 
-			String expected= content;
+			String expected= content.toString();
 			int lines= fTracker.getNumberOfLines();
 			for (int line= 0; line < lines; line++) {
 				int offset= fTracker.getLineOffset(0);
@@ -309,12 +309,12 @@ public abstract class TextStoreTest {
 				assertTextStoreContents(expected);
 			}
 		}
-		content= "";
+		content = new StringBuilder();
 		for (int i= 0; i < 50; i++) {
-			content += "x\nx\n\nx\n\n";
-			set(content);
+			content.append("x\nx\n\nx\n\n");
+			set(content.toString());
 
-			String expected= content;
+			String expected= content.toString();
 			int lines= fTracker.getNumberOfLines();
 			for (int line= lines - 1; line >= 0; line--) {
 				int offset= fTracker.getLineOffset(line);
@@ -325,15 +325,15 @@ public abstract class TextStoreTest {
 			}
 		}
 	}
-	
+
 	@Test
 	public void testDeleteLines2() throws Exception {
-		String content= "";
+		StringBuilder content= new StringBuilder();
 		for (int i= 0; i < 50; i++) {
-			content += "xxxxxxxxxxxxxx";
-			set(content);
+			content.append("xxxxxxxxxxxxxx");
+			set(content.toString());
 
-			String expected= content;
+			String expected= content.toString();
 			int lines= fTracker.getNumberOfLines();
 			for (int line= 0; line < lines; line++) {
 				int offset= fTracker.getLineOffset(0);
@@ -343,12 +343,12 @@ public abstract class TextStoreTest {
 				assertTextStoreContents(expected);
 			}
 		}
-		content= "";
+		content= new StringBuilder();
 		for (int i= 0; i < 50; i++) {
-			content += "xxxxxxxxxxxxxx";
-			set(content);
+			content.append("xxxxxxxxxxxxxx");
+			set(content.toString());
 
-			String expected= content;
+			String expected= content.toString();
 			int lines= fTracker.getNumberOfLines();
 			for (int line= lines - 1; line >= 0; line--) {
 				int offset= fTracker.getLineOffset(line);
@@ -359,24 +359,26 @@ public abstract class TextStoreTest {
 			}
 		}
 	}
-	
+
 	@Test
 	public void testSet() throws Exception {
-		String content= "";
+		StringBuilder content = new StringBuilder();
 		for (int i= 0; i < 35; i++) {
 			int[] lenghts= new int[i + 1];
-			for (int j= 0; j < i + 1; j++)
+			for (int j= 0; j < i + 1; j++) {
 				lenghts[j]= j;
-			for (int j= 0; j < i; j++)
-				content+= "x";
+			}
+			for (int j= 0; j < i; j++) {
+				content.append("x");
+			}
 
-			set(content);
-			assertTextStoreContents(content);
+			set(content.toString());
+			assertTextStoreContents(content.toString());
 
-			content+= "\n";
+			content.append('\n');
 		}
 	}
-	
+
 	@Test
 	public void testFunnyLastLineCompatibility() throws Exception {
 		/* empty last line */

@@ -132,9 +132,8 @@ public class EditorAccessHighlighter extends Highlighter {
 			}
 		}
 
-		for (IAnnotationModel model : setsByAnnotationModel.keySet()) {
-			Set<Annotation> set= setsByAnnotationModel.get(model);
-			removeAnnotations(model, set);
+		for (Entry<IAnnotationModel, HashSet<Annotation>> entry : setsByAnnotationModel.entrySet()) {
+			removeAnnotations(entry.getKey(), entry.getValue());
 		}
 
 	}
@@ -144,9 +143,8 @@ public class EditorAccessHighlighter extends Highlighter {
 			IAnnotationModelExtension ame= (IAnnotationModelExtension) model;
 			ame.replaceAnnotations(new Annotation[0], annotationToPositionMap);
 		} else {
-			for (Annotation element : annotationToPositionMap.keySet()) {
-				Position p= annotationToPositionMap.get(element);
-				model.addAnnotation(element, p);
+			for (Entry<Annotation, Position> entry : annotationToPositionMap.entrySet()) {
+				model.addAnnotation(entry.getKey(), entry.getValue());
 			}
 		}
 	}

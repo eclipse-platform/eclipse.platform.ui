@@ -15,6 +15,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
@@ -222,10 +223,9 @@ class ProjectionSummary {
 				if (!isCanceled(monitor))
 					extension.replaceAnnotations(null, additions);
 			} else {
-				Iterator<Annotation> e1= additions.keySet().iterator();
-				while (e1.hasNext()) {
-					AnnotationBag bag= (AnnotationBag) e1.next();
-					Position position= additions.get(bag);
+				for (Entry<Annotation, Position> entry : additions.entrySet()) {
+					AnnotationBag bag= (AnnotationBag) entry.getKey();
+					Position position= entry.getValue();
 					if (isCanceled(monitor))
 						return;
 					visualAnnotationModel.addAnnotation(bag, position);

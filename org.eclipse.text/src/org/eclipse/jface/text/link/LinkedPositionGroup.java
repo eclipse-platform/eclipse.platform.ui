@@ -16,6 +16,7 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import org.eclipse.core.runtime.Assert;
 
@@ -271,10 +272,10 @@ public class LinkedPositionGroup {
 
 			try {
 				Map<IDocument, TextEdit> result= new HashMap<>();
-				for (IDocument d : map.keySet()) {
-					TextEdit edit= new MultiTextEdit(0, d.getLength());
-					edit.addChildren(map.get(d).toArray(new TextEdit[0]));
-					result.put(d, edit);
+				for (Entry<IDocument, List<ReplaceEdit>> edits : map.entrySet()) {
+					TextEdit edit= new MultiTextEdit(0, edits.getKey().getLength());
+					edit.addChildren(edits.getValue().toArray(new TextEdit[edits.getValue().size()]));
+					result.put(edits.getKey(), edit);
 				}
 
 				return result;

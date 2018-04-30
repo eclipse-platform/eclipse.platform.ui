@@ -15,6 +15,7 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 
 import org.eclipse.core.runtime.Assert;
@@ -221,8 +222,9 @@ public class LinkedModeModel {
 
 			if (result != null) {
 				// edit all documents
-				for (IDocument doc : result.keySet()) {
-					TextEdit edit= result.get(doc);
+				for (Entry<IDocument, TextEdit> entry : result.entrySet()) {
+					IDocument doc = entry.getKey();
+					TextEdit edit= entry.getValue();
 					Replace replace= new Replace(edit);
 
 					// apply the edition, either as post notification replace

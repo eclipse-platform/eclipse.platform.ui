@@ -493,8 +493,7 @@ public class AnnotationModel implements IAnnotationModel, IAnnotationModelExtens
 			connected();
 		}
 
-		for (Object object : fAttachments.keySet()) {
-			IAnnotationModel model= fAttachments.get(object);
+		for (IAnnotationModel model : fAttachments.values()) {
 			model.connect(document);
 		}
 	}
@@ -518,8 +517,7 @@ public class AnnotationModel implements IAnnotationModel, IAnnotationModelExtens
 
 		Assert.isTrue(fDocument == document);
 
-		for (Object object : fAttachments.keySet()) {
-			IAnnotationModel model= fAttachments.get(object);
+		for (IAnnotationModel model : fAttachments.values()) {
 			model.disconnect(document);
 		}
 
