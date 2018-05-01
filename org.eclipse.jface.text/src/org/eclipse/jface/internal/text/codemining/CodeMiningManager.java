@@ -21,6 +21,8 @@ import java.util.concurrent.CompletableFuture;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+import org.eclipse.swt.graphics.Rectangle;
+
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.IProgressMonitor;
 
@@ -64,9 +66,9 @@ public class CodeMiningManager implements Runnable {
 	/**
 	 * Constructor of codemining manager with the given arguments.
 	 *
-	 * @param viewer the source viewer
+	 * @param viewer                   the source viewer
 	 * @param inlinedAnnotationSupport the inlined annotation support used to draw code minings
-	 * @param codeMiningProviders the array of codemining providers, must not be empty
+	 * @param codeMiningProviders      the array of codemining providers, must not be empty
 	 */
 	public CodeMiningManager(ISourceViewer viewer, InlinedAnnotationSupport inlinedAnnotationSupport,
 			ICodeMiningProvider[] codeMiningProviders) {
@@ -142,9 +144,9 @@ public class CodeMiningManager implements Runnable {
 	 * Return the list of {@link CompletableFuture} which provides the list of {@link ICodeMining}
 	 * for the given <code>viewer</code> by using the given providers.
 	 *
-	 * @param viewer the text viewer.
+	 * @param viewer    the text viewer.
 	 * @param providers the CodeMining list providers.
-	 * @param monitor the progress monitor.
+	 * @param monitor   the progress monitor.
 	 * @return the list of {@link CompletableFuture} which provides the list of {@link ICodeMining}
 	 *         for the given <code>viewer</code> by using the given providers.
 	 */
@@ -161,7 +163,7 @@ public class CodeMiningManager implements Runnable {
 	 * Returns a sorted Map which groups the given code minings by same position line.
 	 *
 	 * @param codeMinings list of code minings to group.
-	 * @param providers CodeMining providers used to retrieve code minings.
+	 * @param providers   CodeMining providers used to retrieve code minings.
 	 * @return a sorted Map which groups the given code minings by same position line.
 	 */
 	private static Map<Position, List<ICodeMining>> groupByLines(List<? extends ICodeMining> codeMinings,
@@ -187,8 +189,8 @@ public class CodeMiningManager implements Runnable {
 	/**
 	 * Render the codemining grouped by line position.
 	 *
-	 * @param groups code minings grouped by lines position
-	 * @param viewer the viewer
+	 * @param groups  code minings grouped by lines position
+	 * @param viewer  the viewer
 	 * @param monitor the progress monitor
 	 */
 	private void renderCodeMinings(Map<Position, List<ICodeMining>> groups, ISourceViewer viewer,
@@ -230,4 +232,56 @@ public class CodeMiningManager implements Runnable {
 		annotationsToRedraw.stream().forEach(ann -> ann.redraw());
 	}
 
+	/**
+	 * Returns <code>true</code> if the given mining has a non empty label and <code>false</code>
+	 * otherwise.
+	 *
+	 * @param mining the mining to check
+	 * @return <code>true</code> if the given mining has a non empty label and <code>false</code>
+	 *         otherwise.
+	 */
+	static boolean isValidMining(ICodeMining mining) {
+		return mining != null && mining.getLabel() != null && !mining.getLabel().isEmpty();
+	}
+
+	/**
+	 * Returns the valid code mining at the given location by using the bounds of codemining
+	 * annotations which stores only the valid code mining.
+	 *
+	 * @param minings the list of mining of the codemining annotation.
+	 * @param bounds  the bounds of the valid minings of the codemining annotation.
+	 * @param x       the x location
+	 * @param y       the y location
+	 * @return the valid code mining at the given location by using the bounds of codemining
+	 *         annotations which stores only the valid code mining.
+	 */
+	static ICodeMining getValidCodeMiningAtLocation(ICodeMining[] minings, List<Rectangle> bounds, int x, int y) {
+		for (int i= 0; i < bounds.size(); i++) {
+			Rectangle bound= bounds.get(i);
+			if (bound.contains(x, y)) {
+				return getCodeValidMiningAtIndex(minings, i);
+			}
+		}
+		return null;
+	}
+
+	/**
+	 * Returns the valid code mining at the given index.
+	 *
+	 * @param minings the list of minings
+	 * @param index   the index
+	 * @return the valid code mining at the given index.
+	 */
+	private static ICodeMining getCodeValidMiningAtIndex(ICodeMining[] minings, int index) {
+		int validIndex= 0;
+		for (ICodeMining mining : minings) {
+			if (isValidMining(mining)) {
+				if (validIndex == index) {
+					return mining;
+				}
+				validIndex++;
+			}
+		}
+		return null;
+	}
 }

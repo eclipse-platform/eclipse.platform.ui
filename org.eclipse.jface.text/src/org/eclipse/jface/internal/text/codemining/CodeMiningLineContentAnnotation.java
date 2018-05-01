@@ -62,7 +62,7 @@ public class CodeMiningLineContentAnnotation extends LineContentAnnotation imple
 	 * Code mining annotation constructor.
 	 *
 	 * @param position the position
-	 * @param viewer the viewer
+	 * @param viewer   the viewer
 	 */
 	public CodeMiningLineContentAnnotation(Position position, ISourceViewer viewer) {
 		super(position, viewer);
@@ -132,7 +132,7 @@ public class CodeMiningLineContentAnnotation extends LineContentAnnotation imple
 				// the mining is resolved with error, draw the last resolved mining
 				mining= lastResolvedMining;
 			}
-			if (mining == null || mining.getLabel() == null || mining.getLabel().isEmpty()) {
+			if (!CodeMiningManager.isValidMining(mining)) {
 				// ignore the draw of mining
 				continue;
 			}
@@ -146,6 +146,7 @@ public class CodeMiningLineContentAnnotation extends LineContentAnnotation imple
 				x+= separatorWidth;
 			}
 			initGC(textWidget, color, gc);
+			@SuppressWarnings("null")
 			Point loc= mining.draw(gc, textWidget, color, x, y);
 			fBounds.add(new Rectangle(x, y, loc.x, loc.y));
 			x+= loc.x;
@@ -158,8 +159,8 @@ public class CodeMiningLineContentAnnotation extends LineContentAnnotation imple
 	 * Initialize GC with given color and styled text background color and font.
 	 *
 	 * @param textWidget the text widget
-	 * @param color the color
-	 * @param gc the gc to initialize
+	 * @param color      the color
+	 * @param gc         the gc to initialize
 	 */
 	private void initGC(StyledText textWidget, Color color, GC gc) {
 		gc.setForeground(color);
@@ -186,14 +187,8 @@ public class CodeMiningLineContentAnnotation extends LineContentAnnotation imple
 
 	@Override
 	public Consumer<MouseEvent> getAction(MouseEvent e) {
-		for (int i= 0; i < fBounds.size(); i++) {
-			Rectangle bound= fBounds.get(i);
-			if (bound.contains(e.x, e.y)) {
-				ICodeMining mining= fMinings.get(i);
-				return mining.getAction();
-			}
-		}
-		return null;
+		ICodeMining mining= CodeMiningManager.getValidCodeMiningAtLocation(fResolvedMinings, fBounds, e.x, e.y);
+		return mining != null ? mining.getAction() : null;
 	}
 
 	@Override

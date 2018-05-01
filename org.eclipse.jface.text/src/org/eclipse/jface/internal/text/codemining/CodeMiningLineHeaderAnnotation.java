@@ -12,7 +12,6 @@ package org.eclipse.jface.internal.text.codemining;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 import java.util.function.Consumer;
 import java.util.stream.Stream;
 
@@ -89,7 +88,7 @@ public class CodeMiningLineHeaderAnnotation extends LineHeaderAnnotation impleme
 		if (fResolvedMinings == null || fResolvedMinings.length == 0) {
 			return false;
 		}
-		return Stream.of(fResolvedMinings).anyMatch(m -> Objects.nonNull(m) && !m.getLabel().isEmpty());
+		return Stream.of(fResolvedMinings).anyMatch(m -> CodeMiningManager.isValidMining(m));
 	}
 
 	@Override
@@ -137,7 +136,7 @@ public class CodeMiningLineHeaderAnnotation extends LineHeaderAnnotation impleme
 			// try to get the last resolved mining.
 			ICodeMining lastResolvedMining= (fResolvedMinings != null && fResolvedMinings.length > i) ? fResolvedMinings[i] : null;
 			if (mining.getLabel() != null) {
-				// mining is resolved with none error, update the resolved mining list
+				// mining is resolved without error, update the resolved mining list
 				fResolvedMinings[i]= mining;
 			} else if (!mining.isResolved()) {
 				// the mining is not resolved, draw the last resolved mining
@@ -151,7 +150,7 @@ public class CodeMiningLineHeaderAnnotation extends LineHeaderAnnotation impleme
 				// the mining is resolved with error, draw the last resolved mining
 				mining= lastResolvedMining;
 			}
-			if (mining == null || mining.getLabel() == null || mining.getLabel().isEmpty()) {
+			if (!CodeMiningManager.isValidMining(mining)) {
 				// ignore the draw of mining
 				continue;
 			}
@@ -165,6 +164,7 @@ public class CodeMiningLineHeaderAnnotation extends LineHeaderAnnotation impleme
 				x+= separatorWidth;
 			}
 			initGC(textWidget, color, gc);
+			@SuppressWarnings("null")
 			Point loc= mining.draw(gc, textWidget, color, x, y);
 			fBounds.add(new Rectangle(x, y, loc.x, loc.y));
 			x+= loc.x;
@@ -204,14 +204,8 @@ public class CodeMiningLineHeaderAnnotation extends LineHeaderAnnotation impleme
 
 	@Override
 	public Consumer<MouseEvent> getAction(MouseEvent e) {
-		for (int i= 0; i < fBounds.size(); i++) {
-			Rectangle bound= fBounds.get(i);
-			if (bound.contains(e.x, e.y)) {
-				ICodeMining mining= fMinings.get(i);
-				return mining.getAction();
-			}
-		}
-		return null;
+		ICodeMining mining= CodeMiningManager.getValidCodeMiningAtLocation(fResolvedMinings, fBounds, e.x, e.y);
+		return mining != null ? mining.getAction() : null;
 	}
 
 	@Override
