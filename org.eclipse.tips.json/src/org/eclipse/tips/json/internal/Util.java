@@ -4,6 +4,7 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.util.Map.Entry;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -90,10 +91,10 @@ public class Util {
 
 	private static String doReplace(JsonObject object, String input) {
 		String result = input;
-		for (String key : object.keySet()) {
-			JsonElement jsonElement = object.get(key);
+		for (Entry<String, JsonElement> entry : object.entrySet()) {
+			JsonElement jsonElement = entry.getValue();
 			if (jsonElement.isJsonPrimitive()) {
-				String search = "${" + key + "}"; //$NON-NLS-1$ //$NON-NLS-2$
+				String search = "${" + entry.getKey() + "}"; //$NON-NLS-1$ //$NON-NLS-2$
 				String replace = jsonElement.getAsString();
 				int index = result.indexOf(search);
 				while (index > -1) {
