@@ -96,7 +96,7 @@ class InlinedAnnotationDrawingStrategy implements IDrawingStrategy {
 			// Colorize line spacing area with the background of StyledText to avoid having highlighted line color
 			gc.setBackground(textWidget.getBackground());
 			Rectangle client= textWidget.getClientArea();
-			textWidget.drawBackground(gc, 0, y, client.width, annotation.getHeight());
+			gc.fillRectangle(0, y, client.width, annotation.getHeight());
 
 			// Draw the line header annotation
 			annotation.setLocation(x, y);
