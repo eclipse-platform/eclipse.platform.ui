@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,8 +9,6 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.jface.text.templates.persistence;
-
-import org.eclipse.core.runtime.Assert;
 
 import org.eclipse.jface.text.templates.Template;
 
@@ -27,154 +25,113 @@ import org.eclipse.jface.text.templates.Template;
  *
  * @since 3.0
  * @noextend This class is not intended to be subclassed by clients.
+ * @deprecated See {@link org.eclipse.text.templates.TemplatePersistenceData}
  */
-public class TemplatePersistenceData {
-	private final Template fOriginalTemplate;
-	private final String fId;
-	private final boolean fOriginalIsEnabled;
+@Deprecated
+public class TemplatePersistenceData extends org.eclipse.text.templates.TemplatePersistenceData {
 
-	private Template fCustomTemplate= null;
-	private boolean fIsDeleted= false;
-	private boolean fCustomIsEnabled= true;
+	org.eclipse.text.templates.TemplatePersistenceData ref;
 
 	/**
-	 * Creates a new, user-added instance that is not linked to a contributed
-	 * template.
+	 * In some cases, we must continue to respect the deprecated TemplatePresistenceData
+	 * even though we are given {@link org.eclipse.text.templates.TemplatePersistenceData}.
 	 *
-	 * @param template the template which is stored by the new instance
-	 * @param enabled whether the template is enabled
+	 * @param data The {@link org.eclipse.text.templates.TemplatePersistenceData} that will
+	 * underlie this object.
+	 * @since 3.14
 	 */
+	public TemplatePersistenceData(org.eclipse.text.templates.TemplatePersistenceData data) {
+		super(data.getTemplate(), data.isEnabled(), data.getId()); // these are ignored
+		this.ref= data;
+	}
+
 	public TemplatePersistenceData(Template template, boolean enabled) {
-		this(template, enabled, null);
+		super(template, enabled);
 	}
 
-	/**
-	 * Creates a new instance. If <code>id</code> is not <code>null</code>,
-	 * the instance is represents a template that is contributed and can be
-	 * identified via its id.
-	 *
-	 * @param template the template which is stored by the new instance
-	 * @param enabled whether the template is enabled
-	 * @param id the id of the template, or <code>null</code> if a user-added
-	 *        instance should be created
-	 */
 	public TemplatePersistenceData(Template template, boolean enabled, String id) {
-		Assert.isNotNull(template);
-		fOriginalTemplate= template;
-		fCustomTemplate= template;
-		fOriginalIsEnabled= enabled;
-		fCustomIsEnabled= enabled;
-		fId= id;
+		super(template, enabled, id);
 	}
 
-	/**
-	 * Returns the id of this template store, or <code>null</code> if there is none.
-	 *
-	 * @return the id of this template store
-	 */
+	@Override
 	public String getId() {
-		return fId;
+		return (ref != null) ? ref.getId() : super.getId();
 	}
 
-	/**
-	 * Returns the deletion state of the stored template. This is only relevant
-	 * of contributed templates.
-	 *
-	 * @return the deletion state of the stored template
-	 */
+	@Override
 	public boolean isDeleted() {
-		return fIsDeleted;
+		return (ref != null) ? ref.isDeleted() : super.isDeleted();
 	}
 
-	/**
-	 * Sets the deletion state of the stored template.
-	 *
-	 * @param isDeleted the deletion state of the stored template
-	 */
+	@Override
 	public void setDeleted(boolean isDeleted) {
-		fIsDeleted= isDeleted;
+		if (ref != null) {
+			ref.setDeleted(isDeleted);
+		} else {
+			super.setDeleted(isDeleted);
+		}
 	}
 
-	/**
-	 * Returns the template encapsulated by the receiver.
-	 *
-	 * @return the template encapsulated by the receiver
-	 */
+	@Override
 	public Template getTemplate() {
-		return fCustomTemplate;
+		return (ref != null) ? ref.getTemplate() : super.getTemplate();
 	}
 
-
-	/**
-	 * Sets the template encapsulated by the receiver.
-	 *
-	 * @param template the new template
-	 */
+	@Override
 	public void setTemplate(Template template) {
-		fCustomTemplate= template;
+		if (ref != null) {
+			ref.setTemplate(template);
+		} else {
+			super.setTemplate(template);
+		}
 	}
 
-	/**
-	 * Returns whether the receiver represents a custom template, i.e. is either
-	 * a user-added template or a contributed template that has been modified.
-	 *
-	 * @return <code>true</code> if the contained template is a custom
-	 *         template and cannot be reconstructed from the contributed
-	 *         templates
-	 */
+	@Override
 	public boolean isCustom() {
-		return fId == null
-				|| fIsDeleted
-				|| fOriginalIsEnabled != fCustomIsEnabled
-				|| !fOriginalTemplate.equals(fCustomTemplate);
+		return (ref != null) ? ref.isCustom() : super.isCustom();
 	}
 
-	/**
-	 * Returns whether the receiver represents a modified template, i.e. a
-	 * contributed template that has been changed.
-	 *
-	 * @return <code>true</code> if the contained template is contributed but has been modified, <code>false</code> otherwise
-	 */
+	@Override
 	public boolean isModified() {
-		return isCustom() && !isUserAdded();
+		return (ref != null) ? ref.isModified() : super.isModified();
 	}
 
-	/**
-	 * Returns <code>true</code> if the contained template was added by a
-	 * user, i.e. does not reference a contributed template.
-	 *
-	 * @return <code>true</code> if the contained template was added by a user, <code>false</code> otherwise
-	 */
+	@Override
 	public boolean isUserAdded() {
-		return fId == null;
+		return (ref != null) ? ref.isUserAdded() : super.isUserAdded();
 	}
 
-
-	/**
-	 * Reverts the template to its original setting.
-	 */
+	@Override
 	public void revert() {
-		fCustomTemplate= fOriginalTemplate;
-		fCustomIsEnabled= fOriginalIsEnabled;
-		fIsDeleted= false;
+		if (ref != null) {
+			ref.revert();
+		} else {
+			super.revert();
+		}
 	}
 
-
-	/**
-	 * Returns the enablement state of the contained template.
-	 *
-	 * @return the enablement state of the contained template
-	 */
+	@Override
 	public boolean isEnabled() {
-		return fCustomIsEnabled;
+		return (ref != null) ? ref.isEnabled() : super.isEnabled();
 	}
 
-	/**
-	 * Sets the enablement state of the contained template.
-	 *
-	 * @param isEnabled the new enablement state of the contained template
-	 */
+	@Override
 	public void setEnabled(boolean isEnabled) {
-		fCustomIsEnabled= isEnabled;
+		if (ref != null) {
+			ref.setEnabled(isEnabled);
+		} else {
+			super.setEnabled(isEnabled);
+		}
 	}
+
+	@Override
+	public boolean equals(Object other) {
+		return (ref != null) ? ref.equals(other) : super.equals(other);
+	}
+
+	@Override
+	public int hashCode() {
+		return (ref != null) ? ref.hashCode() : super.hashCode();
+	}
+
 }

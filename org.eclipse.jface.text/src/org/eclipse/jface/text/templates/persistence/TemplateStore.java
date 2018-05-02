@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -15,18 +15,18 @@ import java.io.Reader;
 import java.io.StringReader;
 import java.io.StringWriter;
 import java.util.ArrayList;
-import java.util.List;
 
 import org.eclipse.core.runtime.Assert;
+
+import org.eclipse.text.templates.ContextTypeRegistry;
+import org.eclipse.text.templates.TemplatePersistenceData;
+import org.eclipse.text.templates.TemplateReaderWriter;
+import org.eclipse.text.templates.TemplateStoreCore;
 
 import org.eclipse.jface.preference.IPersistentPreferenceStore;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
-
-import org.eclipse.jface.text.templates.ContextTypeRegistry;
-import org.eclipse.jface.text.templates.Template;
-import org.eclipse.jface.text.templates.TemplateException;
 
 /**
  * A collection of templates. Clients may instantiate this class. In order to
@@ -35,21 +35,16 @@ import org.eclipse.jface.text.templates.TemplateException;
  *
  * @since 3.0
  */
-public class TemplateStore {
-	/** The stored templates. */
-	private final List<TemplatePersistenceData> fTemplates= new ArrayList<>();
+public class TemplateStore extends TemplateStoreCore {
 	/** The preference store. */
 	private IPreferenceStore fPreferenceStore;
+
 	/**
-	 * The key into <code>fPreferenceStore</code> the value of which holds custom templates
-	 * encoded as XML.
+	 * The property listener, if any is registered, <code>null</code> otherwise.
+	 *
+	 * @since 3.2
 	 */
-	private String fKey;
-	/**
-	 * The context type registry, or <code>null</code> if all templates regardless
-	 * of context type should be loaded.
-	 */
-	private ContextTypeRegistry fRegistry;
+	private IPropertyChangeListener fPropertyListener;
 	/**
 	 * Set to <code>true</code> if property change events should be ignored (e.g. during writing
 	 * to the preference store).
@@ -57,13 +52,6 @@ public class TemplateStore {
 	 * @since 3.2
 	 */
 	private boolean fIgnorePreferenceStoreChanges= false;
-	/**
-	 * The property listener, if any is registered, <code>null</code> otherwise.
-	 *
-	 * @since 3.2
-	 */
-	private IPropertyChangeListener fPropertyListener;
-
 
 	/**
 	 * Creates a new template store.
@@ -74,10 +62,10 @@ public class TemplateStore {
 	 *        templates
 	 */
 	public TemplateStore(IPreferenceStore store, String key) {
+		super(null, key);
 		Assert.isNotNull(store);
 		Assert.isNotNull(key);
 		fPreferenceStore= store;
-		fKey= key;
 	}
 
 	/**
@@ -92,9 +80,9 @@ public class TemplateStore {
 	 * @param key the key into <code>store</code> where to store custom
 	 *        templates
 	 */
-	public TemplateStore(ContextTypeRegistry registry, IPreferenceStore store, String key) {
-		this(store, key);
-		fRegistry= registry;
+	public TemplateStore(org.eclipse.jface.text.templates.ContextTypeRegistry registry, IPreferenceStore store, String key) {
+		super(registry, null, key);
+		fPreferenceStore= store;
 	}
 
 	/**
@@ -102,8 +90,9 @@ public class TemplateStore {
 	 *
 	 * @throws IOException if loading fails.
 	 */
+	@Override
 	public void load() throws IOException {
-		fTemplates.clear();
+		internalGetTemplates().clear();
 		loadContributedTemplates();
 		loadCustomTemplates();
 	}
@@ -116,6 +105,7 @@ public class TemplateStore {
 	 *
 	 * @since 3.2
 	 */
+	@Override
 	public final void startListeningForPreferenceChanges() {
 		if (fPropertyListener == null) {
 			fPropertyListener= new IPropertyChangeListener() {
@@ -126,7 +116,7 @@ public class TemplateStore {
 					 * save operation, and clients may trigger reloading by listening to preference store
 					 * updates.
 					 */
-					if (!fIgnorePreferenceStoreChanges && fKey.equals(event.getProperty()))
+					if (!fIgnorePreferenceStoreChanges && getKey().equals(event.getProperty()))
 						try {
 							load();
 						} catch (IOException x) {
@@ -145,6 +135,7 @@ public class TemplateStore {
 	 *
 	 * @since 3.2
 	 */
+	@Override
 	public final void stopListeningForPreferenceChanges() {
 		if (fPropertyListener != null) {
 			fPreferenceStore.removePropertyChangeListener(fPropertyListener);
@@ -153,53 +144,14 @@ public class TemplateStore {
 	}
 
 	/**
-	 * Handles an {@link IOException} thrown during reloading the preferences due to a preference
-	 * store update. The default is to write to stderr.
-	 *
-	 * @param x the exception
-	 * @since 3.2
-	 */
-	protected void handleException(IOException x) {
-		x.printStackTrace();
-	}
-
-	/**
-	 * Hook method to load contributed templates. Contributed templates are superseded
-	 * by customized versions of user added templates stored in the preferences.
-	 * <p>
-	 * The default implementation does nothing.</p>
-	 *
-	 * @throws IOException if loading fails
-	 */
-	protected void loadContributedTemplates() throws IOException {
-	}
-
-	/**
-	 * Adds a template to the internal store. The added templates must have
-	 * a unique id.
-	 *
-	 * @param data the template data to add
-	 */
-	protected void internalAdd(TemplatePersistenceData data) {
-		if (!data.isCustom()) {
-			// check if the added template is not a duplicate id
-			String id= data.getId();
-			for (TemplatePersistenceData persistenceData : fTemplates) {
-				if (persistenceData.getId() != null && persistenceData.getId().equals(id))
-					return;
-			}
-			fTemplates.add(data);
-		}
-	}
-
-	/**
 	 * Saves the templates to the preferences.
 	 *
 	 * @throws IOException if the templates cannot be written
 	 */
+	@Override
 	public void save() throws IOException {
 		ArrayList<TemplatePersistenceData> custom= new ArrayList<>();
-		for (TemplatePersistenceData data : fTemplates) {
+		for (TemplatePersistenceData data : internalGetTemplates()) {
 			if (data.isCustom() && !(data.isUserAdded() && data.isDeleted())) // don't save deleted user-added templates
 				custom.add(data);
 		}
@@ -210,63 +162,11 @@ public class TemplateStore {
 
 		fIgnorePreferenceStoreChanges= true;
 		try {
-			fPreferenceStore.setValue(fKey, output.toString());
+			fPreferenceStore.setValue(getKey(), output.toString());
 			if (fPreferenceStore instanceof IPersistentPreferenceStore)
 				((IPersistentPreferenceStore)fPreferenceStore).save();
 		} finally {
 			fIgnorePreferenceStoreChanges= false;
-		}
-	}
-
-	/**
-	 * Adds a template encapsulated in its persistent form.
-	 *
-	 * @param data the template to add
-	 */
-	public void add(TemplatePersistenceData data) {
-
-		if (!validateTemplate(data.getTemplate()))
-			return;
-
-		if (data.isUserAdded()) {
-			fTemplates.add(data);
-		} else {
-			for (TemplatePersistenceData persistenceData : fTemplates) {
-				if (persistenceData.getId() != null && persistenceData.getId().equals(data.getId())) {
-					persistenceData.setTemplate(data.getTemplate());
-					persistenceData.setDeleted(data.isDeleted());
-					persistenceData.setEnabled(data.isEnabled());
-					return;
-				}
-			}
-
-			// add an id which is not contributed as add-on
-			if (data.getTemplate() != null) {
-				TemplatePersistenceData newData= new TemplatePersistenceData(data.getTemplate(), data.isEnabled());
-				fTemplates.add(newData);
-			}
-		}
-	}
-
-	/**
-	 * Removes a template from the store.
-	 *
-	 * @param data the template to remove
-	 */
-	public void delete(TemplatePersistenceData data) {
-		if (data.isUserAdded())
-			fTemplates.remove(data);
-		else
-			data.setDeleted(true);
-	}
-
-	/**
-	 * Restores all contributed templates that have been deleted.
-	 */
-	public void restoreDeleted() {
-		for (TemplatePersistenceData data : fTemplates) {
-			if (data.isDeleted())
-				data.setDeleted(false);
 		}
 	}
 
@@ -276,14 +176,15 @@ public class TemplateStore {
 	 * @param doSave <code>true</code> if the store should be saved after restoring
 	 * @since 3.5
 	 */
+	@Override
 	public void restoreDefaults(boolean doSave) {
 		String oldValue= null;
 		if (!doSave)
-			oldValue= fPreferenceStore.getString(fKey);
+			oldValue= fPreferenceStore.getString(getKey());
 
 		try {
 			fIgnorePreferenceStoreChanges= true;
-			fPreferenceStore.setToDefault(fKey);
+			fPreferenceStore.setToDefault(getKey());
 		} finally {
 			fIgnorePreferenceStoreChanges= false;
 		}
@@ -298,130 +199,15 @@ public class TemplateStore {
 		if (oldValue != null) {
 			try {
 				fIgnorePreferenceStoreChanges= true;
-				fPreferenceStore.putValue(fKey, oldValue);
+				fPreferenceStore.putValue(getKey(), oldValue);
 			} finally {
 				fIgnorePreferenceStoreChanges= false;
 			}
 		}
 	}
 
-	/**
-	 * Deletes all user-added templates and reverts all contributed templates.
-	 * <p>
-	 * <strong>Note:</strong> the store will be saved after restoring.
-	 * </p>
-	 */
-	public void restoreDefaults() {
-		restoreDefaults(true);
-	}
-
-	/**
-	 * Returns all enabled templates.
-	 *
-	 * @return all enabled templates
-	 */
-	public Template[] getTemplates() {
-		return getTemplates(null);
-	}
-
-	/**
-	 * Returns all enabled templates for the given context type.
-	 *
-	 * @param contextTypeId the id of the context type of the requested templates, or <code>null</code> if all templates should be returned
-	 * @return all enabled templates for the given context type
-	 */
-	public Template[] getTemplates(String contextTypeId) {
-		List<Template> templates= new ArrayList<>();
-		for (TemplatePersistenceData data : fTemplates) {
-			if (data.isEnabled() && !data.isDeleted() && (contextTypeId == null || contextTypeId.equals(data.getTemplate().getContextTypeId())))
-				templates.add(data.getTemplate());
-		}
-
-		return templates.toArray(new Template[templates.size()]);
-	}
-
-	/**
-	 * Returns the first enabled template that matches the name.
-	 *
-	 * @param name the name of the template searched for
-	 * @return the first enabled template that matches both name and context type id, or <code>null</code> if none is found
-	 */
-	public Template findTemplate(String name) {
-		return findTemplate(name, null);
-	}
-
-	/**
-	 * Returns the first enabled template that matches both name and context type id.
-	 *
-	 * @param name the name of the template searched for
-	 * @param contextTypeId the context type id to clip unwanted templates, or <code>null</code> if any context type is OK
-	 * @return the first enabled template that matches both name and context type id, or <code>null</code> if none is found
-	 */
-	public Template findTemplate(String name, String contextTypeId) {
-		Assert.isNotNull(name);
-
-		for (TemplatePersistenceData data : fTemplates) {
-			Template template= data.getTemplate();
-			if (data.isEnabled() && !data.isDeleted()
-					&& (contextTypeId == null || contextTypeId.equals(template.getContextTypeId()))
-					&& name.equals(template.getName()))
-				return template;
-		}
-
-		return null;
-	}
-
-	/**
-	 * Returns the first enabled template that matches the given template id.
-	 *
-	 * @param id the id of the template searched for
-	 * @return the first enabled template that matches id, or <code>null</code> if none is found
-	 * @since 3.1
-	 */
-	public Template findTemplateById(String id) {
-		TemplatePersistenceData data= getTemplateData(id);
-		if (data != null && !data.isDeleted())
-			return data.getTemplate();
-
-		return null;
-	}
-
-	/**
-	 * Returns all template data.
-	 *
-	 * @param includeDeleted whether to include deleted data
-	 * @return all template data, whether enabled or not
-	 */
-	public TemplatePersistenceData[] getTemplateData(boolean includeDeleted) {
-		List<TemplatePersistenceData> datas= new ArrayList<>();
-		for (TemplatePersistenceData data : fTemplates) {
-			if (includeDeleted || !data.isDeleted())
-				datas.add(data);
-		}
-
-		return datas.toArray(new TemplatePersistenceData[datas.size()]);
-	}
-
-	/**
-	 * Returns the template data of the template with id <code>id</code> or
-	 * <code>null</code> if no such template can be found.
-	 *
-	 * @param id the id of the template data
-	 * @return the template data of the template with id <code>id</code> or <code>null</code>
-	 * @since 3.1
-	 */
-	public TemplatePersistenceData getTemplateData(String id) {
-		Assert.isNotNull(id);
-		for (TemplatePersistenceData data : fTemplates) {
-			if (id.equals(data.getId()))
-				return data;
-		}
-
-		return null;
-	}
-
 	private void loadCustomTemplates() throws IOException {
-		String pref= fPreferenceStore.getString(fKey);
+		String pref= fPreferenceStore.getString(getKey());
 		if (pref != null && pref.trim().length() > 0) {
 			Reader input= new StringReader(pref);
 			TemplateReaderWriter reader= new TemplateReaderWriter();
@@ -432,51 +218,42 @@ public class TemplateStore {
 		}
 	}
 
-	/**
-	 * Validates a template against the context type registered in the context
-	 * type registry. Returns always <code>true</code> if no registry is
-	 * present.
-	 *
-	 * @param template the template to validate
-	 * @return <code>true</code> if validation is successful or no context
-	 *         type registry is specified, <code>false</code> if validation
-	 *         fails
-	 */
-	private boolean validateTemplate(Template template) {
-		String contextTypeId= template.getContextTypeId();
-		if (contextExists(contextTypeId)) {
-			if (fRegistry != null)
-				try {
-					fRegistry.getContextType(contextTypeId).validate(template.getPattern());
-				} catch (TemplateException e) {
-					return false;
-				}
-			return true;
+	@Override
+	protected final org.eclipse.jface.text.templates.ContextTypeRegistry getRegistry() {
+		ContextTypeRegistry registry= super.getRegistry();
+		org.eclipse.jface.text.templates.ContextTypeRegistry res= new org.eclipse.jface.text.templates.ContextTypeRegistry();
+		registry.contextTypes().forEachRemaining(t -> res.addContextType(t));
+		return res;
+	}
+
+	public void add(org.eclipse.jface.text.templates.persistence.TemplatePersistenceData data) {
+		super.add(data);
+	}
+
+	public void delete(org.eclipse.jface.text.templates.persistence.TemplatePersistenceData data) {
+		super.delete(data);
+	}
+
+	@Override
+	public org.eclipse.jface.text.templates.persistence.TemplatePersistenceData[] getTemplateData(boolean includeDeleted) {
+		TemplatePersistenceData[] list= super.getTemplateData(includeDeleted);
+		org.eclipse.jface.text.templates.persistence.TemplatePersistenceData[] wraps= new org.eclipse.jface.text.templates.persistence.TemplatePersistenceData[list.length];
+		for (int i= 0; i < wraps.length; i++) {
+			wraps[i]= new org.eclipse.jface.text.templates.persistence.TemplatePersistenceData(list[i]);
 		}
-
-		return false;
+		return wraps;
 	}
 
-	/**
-	 * Returns <code>true</code> if a context type id specifies a valid context type
-	 * or if no context type registry is present.
-	 *
-	 * @param contextTypeId the context type id to look for
-	 * @return <code>true</code> if the context type specified by the id
-	 *         is present in the context type registry, or if no registry is
-	 *         specified
-	 */
-	private boolean contextExists(String contextTypeId) {
-		return contextTypeId != null && (fRegistry == null || fRegistry.getContextType(contextTypeId) != null);
+	@Override
+	public org.eclipse.jface.text.templates.persistence.TemplatePersistenceData getTemplateData(String id) {
+		TemplatePersistenceData data= super.getTemplateData(id);
+		org.eclipse.jface.text.templates.persistence.TemplatePersistenceData wrap= new org.eclipse.jface.text.templates.persistence.TemplatePersistenceData(data);
+		return wrap;
 	}
 
-	/**
-	 * Returns the registry.
-	 *
-	 * @return Returns the registry
-	 */
-	protected final ContextTypeRegistry getRegistry() {
-		return fRegistry;
+	protected void internalAdd(org.eclipse.jface.text.templates.persistence.TemplatePersistenceData data) {
+		super.internalAdd(data);
 	}
+
 }
 

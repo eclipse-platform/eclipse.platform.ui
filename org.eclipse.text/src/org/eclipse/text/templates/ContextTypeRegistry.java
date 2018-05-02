@@ -8,9 +8,13 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.jface.text.templates;
+package org.eclipse.text.templates;
 
 import java.util.Iterator;
+import java.util.LinkedHashMap;
+import java.util.Map;
+
+import org.eclipse.jface.text.templates.TemplateContextType;
 
 /**
  * A registry for context types. Editor implementors will usually instantiate a
@@ -20,24 +24,39 @@ import java.util.Iterator;
  * extension point, use a <code>ContributionContextTypeRegistry</code>.
  * </p>
  *
- * @since 3.0
- * @deprecated See {@link ContextTypeRegistry} from org.eclipse.text
+ * @since 3.7
  */
-@Deprecated
-public class ContextTypeRegistry extends org.eclipse.text.templates.ContextTypeRegistry {
+public class ContextTypeRegistry {
 
-	@Override
+	/** all known context types */
+	private final Map<String, TemplateContextType> fContextTypes= new LinkedHashMap<>();
+
+	/**
+	 * Adds a context type to the registry. If there already is a context type
+	 * with the same ID registered, it is replaced.
+	 *
+	 * @param contextType the context type to add
+	 */
 	public void addContextType(TemplateContextType contextType) {
-		super.addContextType(contextType);
+		fContextTypes.put(contextType.getId(), contextType);
 	}
 
-	@Override
+	/**
+	 * Returns the context type if the id is valid, <code>null</code> otherwise.
+	 *
+	 * @param id the id of the context type to retrieve
+	 * @return the context type if <code>name</code> is valid, <code>null</code> otherwise
+	 */
 	public TemplateContextType getContextType(String id) {
-		return super.getContextType(id);
+		return fContextTypes.get(id);
 	}
 
-	@Override
+	/**
+	 * Returns an iterator over all registered context types.
+	 *
+	 * @return an iterator over all registered context types
+	 */
 	public Iterator<TemplateContextType> contextTypes() {
-		return super.contextTypes();
+		return fContextTypes.values().iterator();
 	}
 }
