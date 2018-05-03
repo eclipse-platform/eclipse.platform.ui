@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2017 IBM Corporation and others.
+ * Copyright (c) 2000, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -201,6 +201,10 @@ public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 	 * Preference key for print margin ruler column.
 	 */
 	private final static String PRINT_MARGIN_COLUMN= AbstractDecoratedTextEditorPreferenceConstants.EDITOR_PRINT_MARGIN_COLUMN;
+	/**
+	 * Preference key for telling whether editors are allowed to override the global print margin preferences.
+	 */
+	private final static String PRINT_MARGIN_ALLOW_OVERRIDE= AbstractDecoratedTextEditorPreferenceConstants.EDITOR_PRINT_MARGIN_ALLOW_OVERRIDE;
 	/**
 	 * Preference key to get whether the overwrite mode is disabled.
 	 * @since 3.1
@@ -951,6 +955,10 @@ public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 		if (fSourceViewerDecorationSupport == null) {
 			fSourceViewerDecorationSupport= new SourceViewerDecorationSupport(viewer, getOverviewRuler(), getAnnotationAccess(), getSharedColors());
 			configureSourceViewerDecorationSupport(fSourceViewerDecorationSupport);
+			
+			// Fix for overridden print margin column, see https://bugs.eclipse.org/468307
+			if (!getPreferenceStore().getBoolean(PRINT_MARGIN_ALLOW_OVERRIDE))
+				fSourceViewerDecorationSupport.setMarginPainterPreferenceKeys(PRINT_MARGIN, PRINT_MARGIN_COLOR, PRINT_MARGIN_COLUMN);
 		}
 		return fSourceViewerDecorationSupport;
 	}

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 IBM Corporation and others.
+ * Copyright (c) 2000, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -126,6 +126,17 @@ public class AbstractDecoratedTextEditorPreferenceConstants {
 	 * </p>
 	 */
 	public final static String EDITOR_PRINT_MARGIN_COLUMN= "printMarginColumn"; //$NON-NLS-1$
+
+	/**
+	 * Tells whether editors are allowed to override the print margin preference (value
+	 * <code>"printMarginAllowOverride"</code>).
+	 * <p>
+	 * The preference value is of type <code>boolean</code>.
+	 * </p>
+	 * 
+	 * @noreference This field is not intended to be referenced by clients.
+	 */
+	public final static String EDITOR_PRINT_MARGIN_ALLOW_OVERRIDE= "printMarginAllowOverride"; //$NON-NLS-1$
 
 	/**
 	 * A named preference that controls whether the editor shows unknown
@@ -675,6 +686,7 @@ public class AbstractDecoratedTextEditorPreferenceConstants {
 
 		store.setDefault(AbstractDecoratedTextEditorPreferenceConstants.EDITOR_PRINT_MARGIN, false);
 		store.setDefault(AbstractDecoratedTextEditorPreferenceConstants.EDITOR_PRINT_MARGIN_COLUMN, 80);
+		store.setDefault(AbstractDecoratedTextEditorPreferenceConstants.EDITOR_PRINT_MARGIN_ALLOW_OVERRIDE, false);
 
 		store.setDefault(AbstractDecoratedTextEditorPreferenceConstants.EDITOR_LINE_NUMBER_RULER, false);
 

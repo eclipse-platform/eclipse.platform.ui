@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 IBM Corporation and others.
+ * Copyright (c) 2000, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -35,6 +35,7 @@ final class TextEditorMessages extends NLS {
 	public static String TextEditorPreferencePage_convertTabsToSpaces;
 	public static String TextEditorPreferencePage_undoHistorySize;
 	public static String TextEditorPreferencePage_printMarginColumn;
+	public static String TextEditorPreferencePage_printMarginAllowOverride;
 	public static String TextEditorPreferencePage_showLineNumbers;
 	public static String TextEditorPreferencePage_highlightCurrentLine;
 	public static String TextEditorPreferencePage_showPrintMargin;
