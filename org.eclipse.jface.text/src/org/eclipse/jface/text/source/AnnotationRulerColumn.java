@@ -821,7 +821,14 @@ public class AnnotationRulerColumn implements IVerticalRulerColumn, IVerticalRul
 					r.height= textBounds.height;
 					r.y = textBounds.y;
 				}
-
+				// adjust the annotation position at the bottom of the line if line height has custom line height
+				int defaultLineHeight= fCachedTextWidget.getLineHeight();
+				int lineHeight= fCachedTextWidget.getLineHeight(offset);
+				if (lineHeight > defaultLineHeight) {
+					int adjust= lineHeight - defaultLineHeight;
+					r.y+= adjust;
+					r.height-= adjust;
+				}
 				if (r.y < dimension.y && fAnnotationAccessExtension != null)  // annotation within visible area
 					fAnnotationAccessExtension.paint(annotation, gc, fCanvas, r);
 			}
