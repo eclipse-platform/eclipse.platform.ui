@@ -127,7 +127,7 @@ class InlinedAnnotationDrawingStrategy implements IDrawingStrategy {
 				// FIXME: remove this code when we need not redraw the character (see https://bugs.eclipse.org/bugs/show_bug.cgi?id=531769)
 				// START TO REMOVE
 				int charX= x + bounds.width - charWidth;
-				int charY= y + bounds.height - height;
+				int charY= y + bounds.height - textWidget.getLineHeight();
 				if (style != null) {
 					if (style.background != null) {
 						gc.setBackground(style.background);
