@@ -38,7 +38,7 @@ public class MidiEventLabelProvider extends ElementLabelProvider {
 			return Long.toString(event.getTick());
 		} else if (TrackColumnPresentation.COL_BYTES.equals(columnId)) {
 			byte[] bytes = message.getMessage();
-			StringBuffer buffer = new StringBuffer();
+			StringBuilder buffer = new StringBuilder();
 			for (int i = 0; i < message.getLength(); i++) {
 				buffer.append(' ');
 				appendByte(buffer, bytes[i]);
@@ -47,7 +47,7 @@ public class MidiEventLabelProvider extends ElementLabelProvider {
 		} else if (TrackColumnPresentation.COL_COMMAND.equals(columnId)) {
 			if (message instanceof ShortMessage) {
 				ShortMessage sm = (ShortMessage) message;
-				StringBuffer buf = new StringBuffer();
+				StringBuilder buf = new StringBuilder();
 				appendByte(buf, (byte)sm.getCommand());
 				return buf.toString();
 			}
@@ -76,7 +76,7 @@ public class MidiEventLabelProvider extends ElementLabelProvider {
 	 * @param buffer
 	 * @param b
 	 */
-	private void appendByte(StringBuffer buffer, byte b) {
+	private void appendByte(StringBuilder buffer, byte b) {
 		String hex = Integer.toHexString(b & 0xFF).toUpperCase();
 		for (int i = hex.length(); i < 2; i++) {
 			buffer.append('0');

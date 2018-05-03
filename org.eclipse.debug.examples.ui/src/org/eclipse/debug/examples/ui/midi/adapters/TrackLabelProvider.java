@@ -39,7 +39,7 @@ public class TrackLabelProvider extends ElementLabelProvider {
 				break;
 			}
 		}
-		StringBuffer buf = new StringBuffer();
+		StringBuilder buf = new StringBuilder();
 		buf.append("Track "); //$NON-NLS-1$
 		buf.append(i);
 		buf.append(" ["); //$NON-NLS-1$

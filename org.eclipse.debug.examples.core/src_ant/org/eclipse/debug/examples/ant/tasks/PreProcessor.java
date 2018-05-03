@@ -114,7 +114,7 @@ public class PreProcessor extends Task {
 		if (!fDestDir.exists()) {
 			throw new BuildException("destdir does not exist: " + fDestDir.getAbsolutePath()); //$NON-NLS-1$
 		}
-		StringBuffer buf = new StringBuffer("Symbols: "); //$NON-NLS-1$
+		StringBuilder buf = new StringBuilder("Symbols: "); //$NON-NLS-1$
 		String[] symbols = fSymbols.toArray(new String[fSymbols.size()]);
 		for (int i = 0; i < symbols.length; i++) {
 			String symbol = symbols[i];
@@ -182,7 +182,7 @@ public class PreProcessor extends Task {
 	public String preProcessFile(File srcFile, String strip) {
 		try {
 			boolean changed = false;
-			StringBuffer buffer = new StringBuffer();
+			StringBuilder buffer = new StringBuilder();
 			try (FileReader fileReader = new FileReader(srcFile); BufferedReader reader = new BufferedReader(fileReader)) {
 				String line = reader.readLine();
 				String activeSymbol = null;

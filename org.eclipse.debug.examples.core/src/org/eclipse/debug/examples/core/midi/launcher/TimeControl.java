@@ -37,7 +37,7 @@ public abstract class TimeControl extends SequencerControl {
 		int sec = (int) (position / 1000000);
 		int min = sec / 60;
 		sec = sec % 60;
-		StringBuffer clock = new StringBuffer();
+		StringBuilder clock = new StringBuilder();
 		clock.append(min);
 		while (clock.length() < 2) {
 			clock.insert(0, 0);

@@ -28,7 +28,7 @@ public class PDAContentAssistProcessor implements IContentAssistProcessor {
     @Override
 	public ICompletionProposal[] computeCompletionProposals(ITextViewer viewer, int offset) {
         int index = offset - 1;
-        StringBuffer prefix = new StringBuffer();
+        StringBuilder prefix = new StringBuilder();
         IDocument document = viewer.getDocument();
         while (index > 0) {
             try {

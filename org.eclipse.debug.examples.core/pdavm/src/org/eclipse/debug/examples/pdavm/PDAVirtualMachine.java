@@ -787,7 +787,7 @@ public class PDAVirtualMachine {
             }
         }
 
-        StringBuffer result = new StringBuffer();
+        StringBuilder result = new StringBuilder();
 		for (Iterator<String> itr = children.iterator(); itr.hasNext();) {
             result.append(itr.next());
             result.append('|');
@@ -813,7 +813,7 @@ public class PDAVirtualMachine {
             return;
         }
 
-        StringBuffer result = new StringBuffer();
+        StringBuilder result = new StringBuilder();
 		for (Iterator<?> itr = thread.fStack.iterator(); itr.hasNext();) {
             result.append(itr.next());
             result.append('|');
@@ -868,7 +868,7 @@ public class PDAVirtualMachine {
         System.arraycopy(fCode, 0, thread.fThreadCode, 0, fCode.length);
         for (int i = 0; i < numEvalLines; i++) {
             String line = tokenizer.nextToken();
-            StringBuffer lineBuf = new StringBuffer(line.length());
+            StringBuilder lineBuf = new StringBuilder(line.length());
             Matcher matcher = fPackPattern.matcher(line);
             int lastMatchEnd = 0;
             while (matcher.find()) {
@@ -938,7 +938,7 @@ public class PDAVirtualMachine {
             Register reg = itr.next();
             groups.add(reg.fGroup);
         }
-        StringBuffer response = new StringBuffer();
+        StringBuilder response = new StringBuilder();
 		for (Iterator<String> itr = groups.iterator(); itr.hasNext();) {
             response.append(itr.next());
             response.append('|');
@@ -973,7 +973,7 @@ public class PDAVirtualMachine {
     void debugRegisters(Args args) {
         String group = args.getNextStringArg();
 
-        StringBuffer response = new StringBuffer();
+        StringBuilder response = new StringBuilder();
 		for (Iterator<Register> itr = fRegisters.values().iterator(); itr.hasNext();) {
             Register reg = itr.next();
             if (group.equals(reg.fGroup)) {
@@ -1102,7 +1102,7 @@ public class PDAVirtualMachine {
             return;
         }
 
-        StringBuffer result = new StringBuffer();
+        StringBuilder result = new StringBuilder();
 
 		for (Iterator<Frame> itr = thread.fFrames.iterator(); itr.hasNext();) {
             Frame frame = itr.next();
@@ -1129,7 +1129,7 @@ public class PDAVirtualMachine {
      * filename | line number | function name | var | var | var | var ...
      */
     private String printFrame(Frame frame) {
-        StringBuffer buf = new StringBuffer();
+        StringBuilder buf = new StringBuilder();
         buf.append(fFilename);
         buf.append('|');
         buf.append(frame.fPC);
@@ -1234,7 +1234,7 @@ public class PDAVirtualMachine {
     }
 
     void debugThreads() {
-        StringBuffer response = new StringBuffer();
+        StringBuilder response = new StringBuilder();
 		for (Iterator<Integer> itr = fThreads.keySet().iterator(); itr.hasNext();) {
             response.append(itr.next());
             response.append(' ');
