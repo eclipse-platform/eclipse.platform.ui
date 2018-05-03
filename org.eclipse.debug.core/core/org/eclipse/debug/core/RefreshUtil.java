@@ -213,7 +213,7 @@ public class RefreshUtil {
 		} catch (IOException e) {
 			DebugPlugin.log(e);
 		}
-		StringBuffer buf = new StringBuffer();
+		StringBuilder buf = new StringBuilder();
 		buf.append("${working_set:"); //$NON-NLS-1$
 		buf.append(writer.toString());
 		buf.append("}"); //$NON-NLS-1$

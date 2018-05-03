@@ -48,7 +48,7 @@ public class OutputStreamMonitor implements IFlushableStreamMonitor {
 	/**
 	 * The local copy of the stream contents
 	 */
-	private StringBuffer fContents;
+	private StringBuilder fContents;
 
 	/**
 	 * The thread which reads from the stream
@@ -81,7 +81,7 @@ public class OutputStreamMonitor implements IFlushableStreamMonitor {
 	public OutputStreamMonitor(InputStream stream, String encoding) {
         fStream = new BufferedInputStream(stream, 8192);
         fEncoding = encoding;
-		fContents= new StringBuffer();
+		fContents= new StringBuilder();
 	}
 
 	/* (non-Javadoc)

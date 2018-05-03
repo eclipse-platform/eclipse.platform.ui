@@ -90,7 +90,7 @@ public class ResourceResolver implements IDynamicVariableResolver {
 	 * @return variable reference expression
 	 */
 	protected String getReferenceExpression(IDynamicVariable variable, String argument) {
-		StringBuffer reference = new StringBuffer();
+		StringBuilder reference = new StringBuilder();
 		reference.append("${"); //$NON-NLS-1$
 		reference.append(variable.getName());
 		if (argument != null) {

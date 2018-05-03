@@ -383,7 +383,7 @@ public final class DebugEvent extends EventObject {
 	 */
 	@Override
 	public String toString() {
-		StringBuffer buf = new StringBuffer("DebugEvent["); //$NON-NLS-1$
+		StringBuilder buf = new StringBuilder("DebugEvent["); //$NON-NLS-1$
 		if (getSource() != null) {
 			buf.append(getSource().toString());
 		} else {

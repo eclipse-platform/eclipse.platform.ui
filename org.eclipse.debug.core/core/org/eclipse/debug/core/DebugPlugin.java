@@ -1267,7 +1267,7 @@ public class DebugPlugin extends Plugin {
 
 		int state= DEFAULT;
 		int backslashes= 0;
-		StringBuffer buf= new StringBuffer();
+		StringBuilder buf= new StringBuilder();
 		int len= args.length();
 		for (int i= 0; i < len; i++) {
 			char ch= args.charAt(i);
@@ -1377,7 +1377,7 @@ public class DebugPlugin extends Plugin {
 		final int IN_SINGLE_QUOTE= 3;
 
 		int state= DEFAULT;
-		StringBuffer buf= new StringBuffer();
+		StringBuilder buf= new StringBuilder();
 		int len= args.length();
 		for (int i= 0; i < len; i++) {
 			char ch= args.charAt(i);
@@ -1531,7 +1531,7 @@ public class DebugPlugin extends Plugin {
 	 */
 	public static String renderArguments(String[] arguments, int[] segments) {
 		boolean isWin32= Platform.getOS().equals(Constants.OS_WIN32);
-		StringBuffer buf = new StringBuffer();
+		StringBuilder buf = new StringBuilder();
 		int count = arguments.length;
 		for (int i = 0; i < count; i++) {
 			if (i > 0) {

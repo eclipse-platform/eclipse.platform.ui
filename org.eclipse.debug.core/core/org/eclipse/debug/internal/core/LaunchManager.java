@@ -1109,9 +1109,9 @@ public class LaunchManager extends PlatformObject implements ILaunchManager, IRe
 			}
 		}
 		String newname = base;
-		StringBuffer buffer = null;
+		StringBuilder buffer = null;
 		while (isExistingLaunchConfigurationName(newname) || reservednames.contains(newname)) {
-			buffer = new StringBuffer(base);
+			buffer = new StringBuilder(base);
 			buffer.append(" ("); //$NON-NLS-1$
 			buffer.append(String.valueOf(index));
 			index++;
@@ -1324,9 +1324,9 @@ public class LaunchManager extends PlatformObject implements ILaunchManager, IRe
             }
 		}
 		List<String> strings = new ArrayList<>(env.size());
-		StringBuffer buffer = null;
+		StringBuilder buffer = null;
 		for (Entry<String, String> entry : env.entrySet()) {
-			buffer = new StringBuffer(entry.getKey());
+			buffer = new StringBuilder(entry.getKey());
 			buffer.append('=').append(entry.getValue());
 			strings.add(buffer.toString());
 		}
@@ -2383,7 +2383,7 @@ public class LaunchManager extends PlatformObject implements ILaunchManager, IRe
         String preferenceName = PREF_PREFERRED_DELEGATES + '/' + type.getIdentifier();
 		Map<Set<String>, ILaunchDelegate> preferred = type.getPreferredDelegates();
         if(preferred != null && preferred.size() > 0) {
-            StringBuffer str = new StringBuffer();
+            StringBuilder str = new StringBuilder();
 			for (Entry<Set<String>, ILaunchDelegate> entry : preferred.entrySet()) {
 				Set<String> modes = entry.getKey();
 				ILaunchDelegate delegate = entry.getValue();
@@ -2534,7 +2534,7 @@ public class LaunchManager extends PlatformObject implements ILaunchManager, IRe
 		Map<String, ILaunchConfiguration> sharedConfigs = new HashMap<>();
 		for (ILaunchConfiguration config : getAllLaunchConfigurations()) {
 			if (!config.isLocal()) {
-				StringBuffer buf = new StringBuffer(config.getName());
+				StringBuilder buf = new StringBuilder(config.getName());
 				buf.append('.');
 				if (config.isPrototype()) {
 					buf.append(ILaunchConfiguration.LAUNCH_CONFIGURATION_PROTOTYPE_FILE_EXTENSION);

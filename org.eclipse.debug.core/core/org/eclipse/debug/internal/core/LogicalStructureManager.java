@@ -125,7 +125,7 @@ public class LogicalStructureManager {
      * Stores the map of structure selections to the preference store
      */
     private void storeStructureTypeSelections() {
-        StringBuffer buffer= new StringBuffer();
+        StringBuilder buffer= new StringBuilder();
 		for (Entry<String, Integer> entry : fStructureTypeSelections.entrySet()) {
 			buffer.append(entry.getKey());
             buffer.append(entry.getValue());
@@ -154,7 +154,7 @@ public class LogicalStructureManager {
      * Stores the collection of known structure identifiers to the preference store
      */
     private void storeStructureTypeIds() {
-        StringBuffer buffer= new StringBuffer();
+        StringBuilder buffer= new StringBuilder();
 		for (String id : fStructureTypeIds) {
 			buffer.append(id).append(',');
         }
@@ -225,7 +225,7 @@ public class LogicalStructureManager {
      *  structure types
      */
     protected String getComboString(ILogicalStructureType[] types) {
-        StringBuffer comboKey= new StringBuffer();
+        StringBuilder comboKey= new StringBuilder();
         for (int i = 0; i < types.length; i++) {
             ILogicalStructureType type = types[i];
             int typeIndex = fStructureTypeIds.indexOf(type.getId());

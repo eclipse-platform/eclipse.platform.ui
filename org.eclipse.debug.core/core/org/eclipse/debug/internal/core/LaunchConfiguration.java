@@ -465,7 +465,7 @@ public class LaunchConfiguration extends PlatformObject implements ILaunchConfig
 	 *  	"Abc.launch" or "Abc.prototype"
 	 */
 	protected String getFileName() {
-		StringBuffer buf = new StringBuffer(getName());
+		StringBuilder buf = new StringBuilder(getName());
 		buf.append('.');
 		if (isPrototype()) {
 			buf.append(ILaunchConfiguration.LAUNCH_CONFIGURATION_PROTOTYPE_FILE_EXTENSION);

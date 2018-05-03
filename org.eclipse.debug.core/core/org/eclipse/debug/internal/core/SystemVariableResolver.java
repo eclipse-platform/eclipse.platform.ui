@@ -54,7 +54,7 @@ public class SystemVariableResolver implements IDynamicVariableResolver {
 	}
 
 	private static String getCorrectPath(String path) {
-		StringBuffer buf = new StringBuffer();
+		StringBuilder buf = new StringBuilder();
 		for (int i = 0; i < path.length(); i++) {
 			char c = path.charAt(i);
 			if (Platform.getOS().equals("win32")) { //$NON-NLS-1$
