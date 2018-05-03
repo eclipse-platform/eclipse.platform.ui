@@ -39,11 +39,31 @@ import org.junit.Before;
 import org.junit.Test;
 
 public class ExampleQueriesTestCase {
+
 	private ResourceSet resourceSet;
 	private XPathContext xpathContext;
 	private Resource resource;
 
+	@Before
+	public void setUp() {
+		resourceSet = new ResourceSetImpl();
+		resourceSet.getResourceFactoryRegistry().getExtensionToFactoryMap()
+				.put(Resource.Factory.Registry.DEFAULT_EXTENSION, new XMIResourceFactoryImpl());
 
+		// Register the package to ensure it is available during loading.
+		resourceSet.getPackageRegistry().put(XpathtestPackage.eNS_URI, XpathtestPackage.eINSTANCE);
+		URI uri = URI.createPlatformPluginURI("/org.eclipse.e4.emf.xpath.test/model/Test.xmi", true);
+		resource = resourceSet.getResource(uri, true);
+		XPathContextFactory<EObject> f = EcoreXPathContextFactory.newInstance();
+		xpathContext = f.newContext(resource.getContents().get(0));
+	}
+
+	@After
+	public void tearDown() {
+		xpathContext = null;
+		resource.unload();
+		resourceSet.getResources().remove(resource);
+	}
 
 	@Test
 	public void testSimpleQuery() {
@@ -95,30 +115,6 @@ public class ExampleQueriesTestCase {
 		//assertFalse(i.hasNext());
 	}
 
-	@Before
-	public void setUp() {
-		resourceSet = new ResourceSetImpl();
-		resourceSet
-				.getResourceFactoryRegistry()
-				.getExtensionToFactoryMap()
-				.put(Resource.Factory.Registry.DEFAULT_EXTENSION,
-						new XMIResourceFactoryImpl());
 
-		// Register the package to ensure it is available during loading.
-		resourceSet.getPackageRegistry().put(XpathtestPackage.eNS_URI,
-				XpathtestPackage.eINSTANCE);
-		URI uri = URI.createPlatformPluginURI(
-				"/org.eclipse.e4.emf.xpath.test/model/Test.xmi", true);
-		resource = resourceSet.getResource(uri, true);
-		XPathContextFactory<EObject> f = EcoreXPathContextFactory.newInstance();
-		xpathContext = f.newContext(resource.getContents().get(0));
-	}
-
-	@After
-	public void tearDown() {
-		xpathContext = null;
-		resource.unload();
-		resourceSet.getResources().remove(resource);
-	}
 
 }

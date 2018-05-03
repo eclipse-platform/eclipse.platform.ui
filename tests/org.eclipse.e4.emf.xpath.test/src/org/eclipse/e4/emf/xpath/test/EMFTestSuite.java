@@ -16,7 +16,9 @@ import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
 
 @RunWith(Suite.class)
-@SuiteClasses(ExampleQueriesTestCase.class)
+@SuiteClasses({
+		ExampleQueriesTestCase.class,
+		ExampleQueriesApplicationTest.class })
 public class EMFTestSuite {
 
 }
