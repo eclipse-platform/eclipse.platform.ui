@@ -107,7 +107,7 @@ public class RemoveAllBreakpointsAction extends AbstractRemoveAllActionDelegate 
 							ActionMessages.RemoveAllBreakpointsAction_3,
 							!prompt
 							);
-			int x = mdwt.open();
+			mdwt.open();
 			if (mdwt.getReturnCode() != IDialogConstants.YES_ID) {
 				proceed = false;
 			}
