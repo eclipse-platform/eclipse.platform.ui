@@ -26,7 +26,6 @@ import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.MouseListener;
 import org.eclipse.swt.events.MouseMoveListener;
-import org.eclipse.swt.events.MouseTrackListener;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Device;
 import org.eclipse.swt.graphics.Font;
@@ -232,7 +231,7 @@ public class InlinedAnnotationSupport {
 		}
 	}
 
-	private class MouseTracker implements MouseTrackListener, MouseMoveListener, MouseListener {
+	private class MouseTracker implements MouseMoveListener, MouseListener {
 
 		private AbstractInlinedAnnotation fAnnotation;
 
@@ -252,7 +251,7 @@ public class InlinedAnnotationSupport {
 		}
 
 		@Override
-		public void mouseHover(MouseEvent e) {
+		public void mouseMove(MouseEvent e) {
 			AbstractInlinedAnnotation oldAnnotation= fAnnotation;
 			update(e);
 			if (oldAnnotation != null) {
@@ -265,19 +264,6 @@ public class InlinedAnnotationSupport {
 			}
 			if (fAnnotation != null) {
 				fAnnotation.onMouseHover(e);
-			}
-		}
-
-		@Override
-		public void mouseMove(MouseEvent e) {
-			if (fAnnotation != null) {
-				AbstractInlinedAnnotation oldAnnotation= fAnnotation;
-				update(e);
-				if (!oldAnnotation.equals(fAnnotation)) {
-					oldAnnotation.onMouseOut(e);
-					fAnnotation= null;
-					fAction= null;
-				}
 			}
 		}
 
@@ -300,17 +286,6 @@ public class InlinedAnnotationSupport {
 				fAction.accept(e);
 			}
 		}
-
-		@Override
-		public void mouseEnter(MouseEvent e) {
-			// Do nothing
-		}
-
-		@Override
-		public void mouseExit(MouseEvent e) {
-			// Do nothing
-		}
-
 	}
 
 	/**
@@ -356,7 +331,6 @@ public class InlinedAnnotationSupport {
 		visibleLines= new VisibleLines();
 		fViewer.addViewportListener(visibleLines);
 		text.addMouseListener(fMouseTracker);
-		text.addMouseTrackListener(fMouseTracker);
 		text.addMouseMoveListener(fMouseTracker);
 		setColor(text.getDisplay().getSystemColor(SWT.COLOR_DARK_GRAY));
 	}
@@ -385,7 +359,6 @@ public class InlinedAnnotationSupport {
 		StyledText text= this.fViewer.getTextWidget();
 		if (text != null && !text.isDisposed()) {
 			text.removeMouseListener(this.fMouseTracker);
-			text.removeMouseTrackListener(this.fMouseTracker);
 			text.removeMouseMoveListener(this.fMouseTracker);
 		}
 		if (fViewer != null) {
