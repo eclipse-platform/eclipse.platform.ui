@@ -40,7 +40,7 @@ public class StringSubstitutionEngine {
 	/**
 	 * Resulting string
 	 */
-	private StringBuffer fResult;
+	private StringBuilder fResult;
 
 	/**
 	 * Whether substitutions were performed
@@ -55,10 +55,10 @@ public class StringSubstitutionEngine {
 	class VariableReference {
 
 		// the text inside the variable reference
-		private StringBuffer fText;
+		private StringBuilder fText;
 
 		public VariableReference() {
-			fText = new StringBuffer();
+			fText = new StringBuilder();
 		}
 
 		public void append(String text) {
@@ -95,7 +95,7 @@ public class StringSubstitutionEngine {
 					for (; i<resolvedVariableSets.size(); i++) {
 						conflictingSet.addAll(resolvedVariableSets.get(i));
 					}
-					StringBuffer problemVariableList = new StringBuffer();
+					StringBuilder problemVariableList = new StringBuilder();
 					for (String string : conflictingSet) {
 						problemVariableList.append(string);
 						problemVariableList.append(", "); //$NON-NLS-1$
@@ -134,7 +134,7 @@ public class StringSubstitutionEngine {
 	 * @exception CoreException if unable to resolve a variable
 	 */
 	private HashSet<String> substitute(String expression, boolean reportUndefinedVariables, boolean resolveVariables, IStringVariableManager manager) throws CoreException {
-		fResult = new StringBuffer(expression.length());
+		fResult = new StringBuilder(expression.length());
 		fStack = new Stack<>();
 		fSubs = false;
 
@@ -285,7 +285,7 @@ public class StringSubstitutionEngine {
 	}
 
 	private String getOriginalVarText(VariableReference var) {
-		StringBuffer res = new StringBuffer(var.getText());
+		StringBuilder res = new StringBuilder(var.getText());
 		res.insert(0, VARIABLE_START);
 		res.append(VARIABLE_END);
 		return res.toString();

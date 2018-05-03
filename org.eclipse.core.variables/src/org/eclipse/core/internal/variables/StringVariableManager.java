@@ -572,7 +572,7 @@ public class StringVariableManager implements IStringVariableManager, IPreferenc
 	 */
 	@Override
 	public String generateVariableExpression(String varName, String arg) {
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 		buffer.append("${"); //$NON-NLS-1$
 		buffer.append(varName);
 		if (arg != null) {
