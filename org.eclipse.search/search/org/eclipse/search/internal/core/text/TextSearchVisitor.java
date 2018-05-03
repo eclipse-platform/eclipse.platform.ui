@@ -379,7 +379,7 @@ public class TextSearchVisitor {
 			try {
 				fCollector.beginReporting();
 				Map<IFile, IDocument> documentsInEditors= PlatformUI.isWorkbenchRunning() ? evalNonFileBufferDocuments() : Collections.emptyMap();
-				int filesPerJob= (files.length + jobCount - 1) / jobCount;
+				int filesPerJob = Math.max(1, files.length / jobCount);
 				IFile[] filesByLocation= new IFile[files.length];
 				System.arraycopy(files, 0, filesByLocation, 0, files.length);
 				// Sorting files to search by location allows to more easily reuse
