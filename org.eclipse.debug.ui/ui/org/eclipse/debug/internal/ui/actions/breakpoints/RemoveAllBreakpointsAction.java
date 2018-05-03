@@ -45,32 +45,20 @@ public class RemoveAllBreakpointsAction extends AbstractRemoveAllActionDelegate 
 
 	private Shell fShell;
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.actions.selection.AbstractRemoveAllActionDelegate#isEnabled()
-	 */
 	@Override
 	protected boolean isEnabled() {
 		return DebugPlugin.getDefault().getBreakpointManager().hasBreakpoints();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.core.IBreakpointsListener#breakpointsAdded(org.eclipse.debug.core.model.IBreakpoint[])
-	 */
 	@Override
 	public void breakpointsAdded(IBreakpoint[] breakpoints) {
 		update();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.core.IBreakpointsListener#breakpointsChanged(org.eclipse.debug.core.model.IBreakpoint[], org.eclipse.core.resources.IMarkerDelta[])
-	 */
 	@Override
 	public void breakpointsChanged(IBreakpoint[] breakpoints, IMarkerDelta[] deltas) {
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.core.IBreakpointsListener#breakpointsRemoved(org.eclipse.debug.core.model.IBreakpoint[], org.eclipse.core.resources.IMarkerDelta[])
-	 */
 	@Override
 	public void breakpointsRemoved(IBreakpoint[] breakpoints, IMarkerDelta[] deltas) {
 		if (getAction() != null) {
@@ -78,26 +66,17 @@ public class RemoveAllBreakpointsAction extends AbstractRemoveAllActionDelegate 
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.actions.selection.AbstractRemoveAllActionDelegate#initialize()
-	 */
 	@Override
 	protected void initialize() {
 		DebugPlugin.getDefault().getBreakpointManager().addBreakpointListener(this);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IWorkbenchWindowActionDelegate#dispose()
-	 */
 	@Override
 	public void dispose() {
 		DebugPlugin.getDefault().getBreakpointManager().removeBreakpointListener(this);
 		super.dispose();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IActionDelegate#run(org.eclipse.jface.action.IAction)
-	 */
 	@Override
 	public void run(IAction action) {
 		final IBreakpointManager breakpointManager= DebugPlugin.getDefault().getBreakpointManager();
@@ -152,20 +131,12 @@ public class RemoveAllBreakpointsAction extends AbstractRemoveAllActionDelegate 
 		}
 	}
 
-	/*
-	 * @see org.eclipse.debug.internal.ui.actions.AbstractRemoveAllActionDelegate#init(org.eclipse.ui.IViewPart)
-	 * @since 3.7
-	 */
 	@Override
 	public void init(IViewPart view) {
 		super.init(view);
 		fShell= view.getSite().getShell();
 	}
 
-	/*
-	 * @see org.eclipse.debug.internal.ui.actions.AbstractRemoveAllActionDelegate#init(org.eclipse.ui.IWorkbenchWindow)
-	 * @since 3.7
-	 */
 	@Override
 	public void init(IWorkbenchWindow window) {
 		super.init(window);
