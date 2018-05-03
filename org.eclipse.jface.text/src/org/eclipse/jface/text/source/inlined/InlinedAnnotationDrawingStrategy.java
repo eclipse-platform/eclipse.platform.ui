@@ -93,15 +93,15 @@ class InlinedAnnotationDrawingStrategy implements IDrawingStrategy {
 			int x= bounds.x;
 			int y= bounds.y;
 
-			int height= annotation.getHeight();
 			// Colorize line spacing area with the background of StyledText to avoid having highlighted line color
 			gc.setBackground(textWidget.getBackground());
 			Rectangle client= textWidget.getClientArea();
-			gc.fillRectangle(0, y, client.width, height);
+			gc.fillRectangle(0, y, client.width, annotation.getHeight());
 
 			// Draw the line header annotation
 			annotation.setLocation(x, y);
 			annotation.draw(gc, textWidget, offset, length, color, x, y);
+			int height= annotation.getHeight();
 			if (height != 0) {
 				// The inline annotation replaces one character by taking a place width
 				// GlyphMetrics
@@ -127,7 +127,7 @@ class InlinedAnnotationDrawingStrategy implements IDrawingStrategy {
 				// FIXME: remove this code when we need not redraw the character (see https://bugs.eclipse.org/bugs/show_bug.cgi?id=531769)
 				// START TO REMOVE
 				int charX= x + bounds.width - charWidth;
-				int charY= y + bounds.height - textWidget.getLineHeight();
+				int charY= y + bounds.height - height;
 				if (style != null) {
 					if (style.background != null) {
 						gc.setBackground(style.background);
