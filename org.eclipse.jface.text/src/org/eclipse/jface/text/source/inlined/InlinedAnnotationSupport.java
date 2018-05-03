@@ -536,7 +536,7 @@ public class InlinedAnnotationSupport {
 	private AbstractInlinedAnnotation getInlinedAnnotationAtPoint(ISourceViewer viewer, int x, int y) {
 		if (fInlinedAnnotations != null) {
 			for (AbstractInlinedAnnotation ann : fInlinedAnnotations) {
-				if (ann.contains(x, y)) {
+				if (ann.contains(x, y) && isInVisibleLines(ann.getPosition().getOffset())) {
 					return ann;
 				}
 			}
