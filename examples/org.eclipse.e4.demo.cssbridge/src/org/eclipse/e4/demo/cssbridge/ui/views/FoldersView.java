@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2014 IBM Corporation and others.
+ * Copyright (c) 2014, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -19,7 +19,6 @@ import org.eclipse.e4.demo.cssbridge.model.FolderType;
 import org.eclipse.e4.demo.cssbridge.model.TreeItem;
 import org.eclipse.jface.viewers.IColorProvider;
 import org.eclipse.jface.viewers.IFontProvider;
-import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.StructuredSelection;
@@ -31,7 +30,6 @@ import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.IViewSite;
@@ -78,12 +76,7 @@ public class FoldersView extends ViewPart {
 		}
 	};
 
-	private Listener shellReskinListener = new Listener() {
-		@Override
-		public void handleEvent(Event event) {
-			viewer.refresh();
-		}
-	};
+	private Listener shellReskinListener = event -> viewer.refresh();
 
 	@Override
 	public void init(IViewSite site) throws PartInitException {
@@ -141,7 +134,7 @@ public class FoldersView extends ViewPart {
 	}
 
 	private static class ViewContentProvider implements
-			IStructuredContentProvider, ITreeContentProvider {
+			ITreeContentProvider {
 		@Override
 		public void inputChanged(Viewer v, Object oldInput, Object newInput) {
 		}
@@ -190,11 +183,9 @@ public class FoldersView extends ViewPart {
 
 		@Override
 		public Image getImage(Object elem) {
-			ISharedImages sharedImages = PlatformUI.getWorkbench()
-					.getSharedImages();
+			ISharedImages sharedImages = PlatformUI.getWorkbench().getSharedImages();
 			return sharedImages
-					.getImage(isFolderType(elem) ? ISharedImages.IMG_OBJ_ELEMENT
-							: ISharedImages.IMG_OBJ_FOLDER);
+					.getImage(isFolderType(elem) ? ISharedImages.IMG_OBJ_ELEMENT : ISharedImages.IMG_OBJ_FOLDER);
 		}
 
 		@Override

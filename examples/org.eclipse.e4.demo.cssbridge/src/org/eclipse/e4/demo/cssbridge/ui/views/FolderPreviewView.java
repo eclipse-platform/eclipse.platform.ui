@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2015 IBM Corporation and others.
+ * Copyright (c) 2015, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -27,7 +27,6 @@ import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.ColumnLabelProvider;
-import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.TableViewerColumn;
@@ -47,7 +46,6 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Link;
 import org.eclipse.swt.widgets.Listener;
@@ -58,7 +56,6 @@ import org.eclipse.ui.ISelectionListener;
 import org.eclipse.ui.ISelectionService;
 import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.IViewSite;
-import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.part.ViewPart;
@@ -84,14 +81,11 @@ public class FolderPreviewView extends ViewPart {
 
 	private TableViewer viewer;
 
-	private ISelectionListener mailFolderChangedListener = new ISelectionListener() {
-		@Override
-		public void selectionChanged(IWorkbenchPart part, ISelection selection) {
-			if (part instanceof FoldersView && selection instanceof StructuredSelection) {
-				Object selected = ((TreeSelection) selection).getFirstElement();
-				if (selected instanceof TreeItem && ((TreeItem) selected).getValue() instanceof FolderType) {
-					updateMailFolder((FolderType) ((TreeItem) selected).getValue());
-				}
+	private ISelectionListener mailFolderChangedListener = (part, selection) -> {
+		if (part instanceof FoldersView && selection instanceof StructuredSelection) {
+			Object selected = ((TreeSelection) selection).getFirstElement();
+			if (selected instanceof TreeItem && ((TreeItem) selected).getValue() instanceof FolderType) {
+				updateMailFolder((FolderType) ((TreeItem) selected).getValue());
 			}
 		}
 	};
@@ -139,13 +133,10 @@ public class FolderPreviewView extends ViewPart {
 		}
 	};
 
-	private Listener shellReskinListener = new Listener() {
-		@Override
-		public void handleEvent(Event event) {
-			viewer.refresh();
-			refreshControl(messageBodyComposite);
-			messageText.setBackground(viewer.getTable().getBackground());
-		}
+	private Listener shellReskinListener = event -> {
+		viewer.refresh();
+		refreshControl(messageBodyComposite);
+		messageText.setBackground(viewer.getTable().getBackground());
 	};
 
 	private SelectionAdapter senderLinkSelectionAdapter = new SelectionAdapter() {

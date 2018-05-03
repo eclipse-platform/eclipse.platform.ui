@@ -1,6 +1,6 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: CSS bridge demo
+Bundle-Name: %Bundle-Name
 Bundle-SymbolicName: org.eclipse.e4.demo.cssbridge;singleton:=true
 Bundle-Version: 1.1.0.qualifier
 Bundle-Activator: org.eclipse.e4.demo.cssbridge.ui.Activator
@@ -11,3 +11,5 @@ Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Bundle-ActivationPolicy: lazy
 Service-Component: OSGI-INF/mailservice.xml
 Automatic-Module-Name: org.eclipse.e4.demo.cssbridge
+Bundle-Vendor: %Bundle-Vendor
+Bundle-Localization: plugin

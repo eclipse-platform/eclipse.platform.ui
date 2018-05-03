@@ -13,7 +13,7 @@
    <extension
          point="org.eclipse.ui.perspectives">
       <perspective
-            name="CSS bridge demo perspective"
+            name="%perspective.name"
             class="org.eclipse.e4.demo.cssbridge.ui.Perspective"
             id="org.eclipse.e4.demo.cssbridge.ui.perspective">
       </perspective>
@@ -21,13 +21,13 @@
    <extension
          point="org.eclipse.ui.views">
       <view
-            name="FolderPreviewView"
+            name="%view.name"
             allowMultiple="false"
             class="org.eclipse.e4.demo.cssbridge.ui.views.FolderPreviewView"
             id="org.eclipse.e4.demo.cssbridge.ui.views.folderPreviewView">
       </view>
       <view
-            name="FoldersView"
+            name="%view.name.0"
             allowMultiple="false"
             class="org.eclipse.e4.demo.cssbridge.ui.views.FoldersView"
             id="org.eclipse.e4.demo.cssbridge.ui.views.foldersView">
@@ -36,30 +36,30 @@
    <extension
          point="org.eclipse.ui.commands">
       <category
-            name="Mail"
+            name="%category.name"
             id="org.eclipse.e4.demo.cssbridge.css.theme.switcher.category">
       </category>
 	  <command
-            name="Switch to the 'Empty' CSS theme"
-            description="Switching to the 'Empty' CSS theme (without CSS styling)"
+            name="%command.name"
+            description="%command.description"
             categoryId="org.eclipse.e4.demo.cssbridge.css.theme.switcher.category"
             id="org.eclipse.e4.demo.cssbridge.switch.to.empty.css.theme">
       </command>
       <command
-            name="Switch to the 'Blue' CSS theme"
-            description="Switching to the 'Blue' CSS theme"
+            name="%command.name.0"
+            description="%command.description.0"
             categoryId="org.eclipse.e4.demo.cssbridge.css.theme.switcher.category"
             id="org.eclipse.e4.demo.cssbridge.switch.to.blue.css.theme">
       </command>
       <command
-            name="Switch to the 'Green' CSS theme"
-            description="Switching to the 'Green' CSS theme"
+            name="%command.name.1"
+            description="%command.description.1"
             categoryId="org.eclipse.e4.demo.cssbridge.css.theme.switcher.category"
             id="org.eclipse.e4.demo.cssbridge.switch.to.green.css.theme">
       </command>
       <command
-            name="Switch to the 'Red' CSS theme"
-            description="Switching to the 'Red' CSS theme"
+            name="%command.name.2"
+            description="%command.description.2"
             categoryId="org.eclipse.e4.demo.cssbridge.css.theme.switcher.category"
             id="org.eclipse.e4.demo.cssbridge.switch.to.red.css.theme">
       </command>            
@@ -70,7 +70,7 @@
          point="org.eclipse.core.runtime.products">
       <product
             application="org.eclipse.e4.demo.cssbridge.application"
-            name="The CSS bridge demo application">
+            name="%product.name">
          <property
                name="windowImages"
                value="icons/app.gif">
