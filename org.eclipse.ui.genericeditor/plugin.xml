@@ -86,15 +86,7 @@
       </menuContribution>
       <menuContribution
             allPopups="false"
-            locationURI="toolbar:org.eclipse.ui.edit.text.actionSet.presentation?after=additions">
-         <separator
-               name="Presentation"
-               visible="false">
-         </separator>
-      </menuContribution>
-      <menuContribution
-            allPopups="false"
-            locationURI="toolbar:org.eclipse.ui.edit.text.actionSet.presentation?before=Presentation">
+            locationURI="toolbar:org.eclipse.ui.edit.text.actionSet.presentation">
          <command
                commandId="org.eclipse.ui.genericeditor.togglehighlight"
                label="%command.toggle.highlight.label"
