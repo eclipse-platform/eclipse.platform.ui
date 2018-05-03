@@ -20,6 +20,8 @@ import java.util.ResourceBundle;
 
 import org.osgi.framework.Bundle;
 
+import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Shell;
 
 import org.eclipse.core.commands.ExecutionException;
@@ -400,13 +402,14 @@ public class MarkerRulerAction extends ResourceAction implements IUpdate {
 		String proposal= (o instanceof String) ? (String) o : ""; //$NON-NLS-1$
 		String title= getString(fBundle, fPrefix + "add.dialog.title", fPrefix + "add.dialog.title"); //$NON-NLS-2$ //$NON-NLS-1$
 		String message= getString(fBundle, fPrefix + "add.dialog.message", fPrefix + "add.dialog.message"); //$NON-NLS-2$ //$NON-NLS-1$
+		String addButtonText= getString(fBundle, fPrefix + "add.dialog.addbutton", fPrefix + "add.dialog.addbutton"); //$NON-NLS-1$ //$NON-NLS-2$
 		IInputValidator inputValidator= new IInputValidator() {
 			@Override
 			public String isValid(String newText) {
 				return (newText == null || newText.trim().length() == 0) ? " " : null; //$NON-NLS-1$
 			}
 		};
-		InputDialog dialog= new InputDialog(fTextEditor.getSite().getShell(), title, message, proposal, inputValidator);
+		AddBookmarkDialog dialog= new AddBookmarkDialog(fTextEditor.getSite().getShell(), title, message, proposal, inputValidator, addButtonText);
 
 		String label= null;
 		if (dialog.open() != Window.CANCEL)
@@ -421,6 +424,24 @@ public class MarkerRulerAction extends ResourceAction implements IUpdate {
 
 		MarkerUtilities.setMessage(attributes, label);
 		return true;
+	}
+
+	class AddBookmarkDialog extends InputDialog {
+
+		private final String addButtonText;
+
+		public AddBookmarkDialog(Shell parentShell, String dialogTitle, String dialogMessage, String initialValue, IInputValidator validator, String addButtonText) {
+			super(parentShell, dialogTitle, dialogMessage, initialValue, validator);
+			this.addButtonText= addButtonText;
+		}
+
+		@Override
+		protected void createButtonsForButtonBar(Composite parent) {
+			super.createButtonsForButtonBar(parent);
+			Button okButton= getOkButton();
+			okButton.setText(addButtonText);
+		}
+
 	}
 
 	/**
