@@ -219,7 +219,9 @@ class AsyncCompletionProposalPopup extends CompletionProposalPopup {
 
 	@Override
 	List<ICompletionProposal> computeProposals(int offset) {
-		fProposalShell.dispose();
+		if (fProposalShell != null) {
+			fProposalShell.dispose();
+		}
 		showProposals(true);
 		return fComputedProposals;
 	}
