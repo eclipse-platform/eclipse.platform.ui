@@ -202,6 +202,13 @@ class AsyncCompletionProposalPopup extends CompletionProposalPopup {
 						List<ICompletionProposal> newProposals = new ArrayList<>(computedProposals);
 						fComputedProposals = newProposals;
 						Display.getDefault().asyncExec(() -> {
+							if (!autoActivated && remaining.isEmpty() && newProposals.size() == 1 && canAutoInsert(newProposals.get(0))) {
+								if (Helper.okToUse(fProposalShell)) {
+									insertProposal(newProposals.get(0), (char) 0, 0, fInvocationOffset);
+									hide();
+								}
+								return;
+							}
 							setProposals(newProposals, false);
 							displayProposals();
 						});
@@ -229,7 +236,16 @@ class AsyncCompletionProposalPopup extends CompletionProposalPopup {
 	@Override
 	void createProposalSelector() {
 		super.createProposalSelector();
-		fProposalShell.addDisposeListener(e -> hide());
+		fProposalShell.addDisposeListener(e -> cancelFutures());
+	}
+
+	void cancelFutures() {
+		if (fFutures != null) {
+			for (Future<?> future : fFutures) {
+				future.cancel(true);
+			}
+			fFutures= null;
+		}
 	}
 
 	@Override
@@ -252,11 +268,7 @@ class AsyncCompletionProposalPopup extends CompletionProposalPopup {
 	@Override
 	public void hide() {
 		super.hide();
-		if (fFutures != null) {
-			for (Future<?> future : fFutures) {
-				future.cancel(true);
-			}
-		}
+		cancelFutures();
 	}
 
 	protected List<CompletableFuture<List<ICompletionProposal>>> buildCompletionFuturesOrJobs(int invocationOffset) {
