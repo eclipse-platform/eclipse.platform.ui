@@ -59,7 +59,7 @@ import org.eclipse.tips.ui.internal.util.ResourceManager;
 
 @SuppressWarnings("restriction")
 public class TipComposite extends Composite implements ProviderSelectionListener {
-	private static final String EMTPY = ""; //$NON-NLS-1$
+	private static final String EMPTY = ""; //$NON-NLS-1$
 	private static final int READ_TIMER = 2000;
 	private TipProvider fProvider;
 	private Browser fBrowser;
@@ -495,15 +495,15 @@ public class TipComposite extends Composite implements ProviderSelectionListener
 	private static String getScaling() {
 		if (Platform.isRunning() && Platform.getWS().startsWith("gtk")) { //$NON-NLS-1$
 			Integer zoom = Integer.valueOf(DPIUtil.getDeviceZoom());
-			return MessageFormat.format("<style>body {  zoom: {0}%;}</style> ", zoom); //$NON-NLS-1$
+			return MessageFormat.format("<style>body '{'  zoom: {0}%;'}'</style> ", zoom); //$NON-NLS-1$
 		}
-		return EMTPY;
+		return EMPTY;
 	}
 
 	private String encodeImage(IHtmlTip tip) throws IOException {
 		TipImage image = tip.getImage();
 		if (image == null) {
-			return EMTPY;
+			return EMPTY;
 		}
 		return encodeImageFromBase64(image);
 	}
@@ -512,7 +512,7 @@ public class TipComposite extends Composite implements ProviderSelectionListener
 		int width = fBrowser.getClientArea().width;
 		int height = Math.min(fBrowser.getClientArea().height / 2, (2 * (width / 3)));
 		String attributes = gtkHack(image.getIMGAttributes(width, height).trim());
-		String encoded = EMTPY + "<center> <img " // //$NON-NLS-1$
+		String encoded = EMPTY + "<center> <img " // //$NON-NLS-1$
 				+ attributes //
 				+ " src=\"" // //$NON-NLS-1$
 				+ image.getBase64Image() //
