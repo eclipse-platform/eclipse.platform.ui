@@ -284,12 +284,25 @@ public class KeyBindingDispatcher {
 				}
 			}
 
+			if (isTracingEnabled()) {
+				logger.trace("Command " + parameterizedCommand + ", defined: " + commandDefined + ", handled: " //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+						+ commandHandled + " in context: " + context); //$NON-NLS-1$
+			}
+
 			handlerService.executeHandler(parameterizedCommand, staticContext);
 			final Object commandException = staticContext.get(HandlerServiceImpl.HANDLER_EXCEPTION);
 			if (commandException instanceof CommandException) {
 				commandHandled = false;
-				if (logger != null && commandException instanceof ExecutionException) {
-					logger.error((Throwable) commandException);
+				if (commandException instanceof ExecutionException) {
+					if (logger != null) {
+						logger.error((Throwable) commandException,
+								"Execution exception for: " + parameterizedCommand + " in context: " + context); //$NON-NLS-1$//$NON-NLS-2$
+					}
+				} else {
+					if (isTracingEnabled()) {
+						logger.trace((Throwable) commandException,
+								"Command exception for: " + parameterizedCommand + " in context: " + context); //$NON-NLS-1$ //$NON-NLS-2$
+					}
 				}
 			}
 			/*
@@ -303,6 +316,10 @@ public class KeyBindingDispatcher {
 			staticContext.dispose();
 		}
 		return (commandDefined && commandHandled);
+	}
+
+	private boolean isTracingEnabled() {
+		return logger != null && logger.isTraceEnabled();
 	}
 
 	private IEclipseContext createContext(final Event trigger) {
@@ -339,6 +356,9 @@ public class KeyBindingDispatcher {
 		// Allow special key out-of-order processing.
 		List<KeyStroke> keyStrokes = generatePossibleKeyStrokes(event);
 		if (isOutOfOrderKey(keyStrokes)) {
+			if (isTracingEnabled()) {
+				logger.trace("Out of order key: " + keyStrokes + " in context " + context); //$NON-NLS-1$ //$NON-NLS-2$
+			}
 			Widget widget = event.widget;
 			if ((event.character == SWT.DEL)
 					&& ((event.stateMask & SWT.MODIFIER_MASK) == 0)
@@ -514,6 +534,9 @@ public class KeyBindingDispatcher {
 						keyStroke);
 				if (isPartialMatch(sequenceAfterKeyStroke)) {
 					incrementState(sequenceAfterKeyStroke);
+					if (isTracingEnabled()) {
+						logger.trace("Partial match: " + sequenceAfterKeyStroke + " in context " + context); //$NON-NLS-1$ //$NON-NLS-2$
+					}
 					return true;
 
 				} else if (isUniqueMatch(sequenceAfterKeyStroke, staticContext)) {
@@ -522,6 +545,9 @@ public class KeyBindingDispatcher {
 					try {
 						return executeCommand(cmd, event) || !sequenceBeforeKeyStroke.isEmpty();
 					} catch (final CommandException e) {
+						if (isTracingEnabled()) {
+							logger.trace(e, "Can't happen in context: " + context); //$NON-NLS-1$
+						}
 						return true;
 					}
 
@@ -532,6 +558,10 @@ public class KeyBindingDispatcher {
 								|| (event.keyCode == SWT.ARROW_RIGHT) || (event.keyCode == SWT.CR)
 								|| (event.keyCode == SWT.PAGE_UP) || (event.keyCode == SWT.PAGE_DOWN))) {
 					// We don't want to swallow keyboard navigation keys.
+					if (isTracingEnabled()) {
+						logger.trace(
+								"No execution due key assist: " + sequenceAfterKeyStroke + " in context " + context); //$NON-NLS-1$ //$NON-NLS-2$
+					}
 					return false;
 
 				} else {
@@ -539,6 +569,14 @@ public class KeyBindingDispatcher {
 					if (!errorMatches.isEmpty()) {
 						errorSequence = sequenceAfterKeyStroke;
 						errorMatch = errorMatches;
+						if (isTracingEnabled()) {
+							logger.trace("Error matches for key: " + sequenceAfterKeyStroke + ", :" + errorMatches); //$NON-NLS-1$//$NON-NLS-2$
+						}
+					} else {
+						if (isTracingEnabled() && !Character.isLetterOrDigit(event.character)) {
+							logger.trace("No binding for keys: " + sequenceBeforeKeyStroke + " " //$NON-NLS-1$//$NON-NLS-2$
+									+ sequenceAfterKeyStroke + " in context " + context); //$NON-NLS-1$
+						}
 					}
 				}
 			}
@@ -574,6 +612,13 @@ public class KeyBindingDispatcher {
 		boolean eatKey = false;
 		if (!keyStrokes.isEmpty()) {
 			eatKey = press(keyStrokes, event);
+			if (isTracingEnabled() && !Character.isLetterOrDigit(event.character)) {
+				if (eatKey) {
+					logger.trace("Event processing done for: " + keyStrokes + " in context " + context); //$NON-NLS-1$//$NON-NLS-2$
+				} else {
+					logger.trace("Event processing forwarded for: " + keyStrokes + " in context " + context); //$NON-NLS-1$//$NON-NLS-2$
+				}
+			}
 		}
 
 		if (eatKey) {
