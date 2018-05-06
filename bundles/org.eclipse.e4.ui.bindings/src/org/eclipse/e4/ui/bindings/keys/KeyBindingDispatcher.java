@@ -470,13 +470,12 @@ public class KeyBindingDispatcher {
 	 * @param keySequence
 	 *            The key sequence to check for a perfect match; must never be
 	 *            <code>null</code>.
-	 * @param context
+	 * @param context2
 	 * @return <code>true</code> if there is a perfect match; <code>false</code>
 	 *         otherwise.
 	 */
-	private boolean isUniqueMatch(KeySequence keySequence, IEclipseContext context) {
-		return getBindingService().isPerfectMatch(keySequence)
-				|| getExecutableMatches(keySequence, context).size() == 1;
+	private boolean isUniqueMatch(KeySequence keySequence, IEclipseContext context2) {
+		return getExecutableMatches(keySequence, context2).size() == 1;
 	}
 
 	/**
@@ -492,8 +491,8 @@ public class KeyBindingDispatcher {
 		Collection<Binding> conflicts = getBindingService().getConflictsFor(keySequence);
 		if (conflicts != null) {
 			return conflicts.stream()
-					.filter(match -> getHandlerService().canExecute(match.getParameterizedCommand(), context))
-					.collect(Collectors.toList());
+					.filter(match -> getHandlerService().canExecute(match.getParameterizedCommand(), context2))
+					.collect(Collectors.toSet());
 		}
 		return Collections.emptySet();
 	}
@@ -507,40 +506,44 @@ public class KeyBindingDispatcher {
 		KeySequence errorSequence = null;
 		Collection<Binding> errorMatch = null;
 
-		IEclipseContext createContext = createContext(event);
+		IEclipseContext staticContext = createContext(event);
 		KeySequence sequenceBeforeKeyStroke = state;
-		for (KeyStroke keyStroke : potentialKeyStrokes) {
-			KeySequence sequenceAfterKeyStroke = KeySequence.getInstance(sequenceBeforeKeyStroke,
-					keyStroke);
-			if (isPartialMatch(sequenceAfterKeyStroke)) {
-				incrementState(sequenceAfterKeyStroke);
-				return true;
-
-			} else if (isUniqueMatch(sequenceAfterKeyStroke, createContext)) {
-				final ParameterizedCommand cmd = getExecutableMatches(sequenceAfterKeyStroke, context).iterator().next()
-						.getParameterizedCommand();
-				try {
-					return executeCommand(cmd, event) || !sequenceBeforeKeyStroke.isEmpty();
-				} catch (final CommandException e) {
+		try {
+			for (KeyStroke keyStroke : potentialKeyStrokes) {
+				KeySequence sequenceAfterKeyStroke = KeySequence.getInstance(sequenceBeforeKeyStroke,
+						keyStroke);
+				if (isPartialMatch(sequenceAfterKeyStroke)) {
+					incrementState(sequenceAfterKeyStroke);
 					return true;
-				}
 
-			} else if ((keyAssistDialog != null)
-					&& (keyAssistDialog.getShell() != null)
-					&& ((event.keyCode == SWT.ARROW_DOWN) || (event.keyCode == SWT.ARROW_UP)
-							|| (event.keyCode == SWT.ARROW_LEFT)
-							|| (event.keyCode == SWT.ARROW_RIGHT) || (event.keyCode == SWT.CR)
-							|| (event.keyCode == SWT.PAGE_UP) || (event.keyCode == SWT.PAGE_DOWN))) {
-				// We don't want to swallow keyboard navigation keys.
-				return false;
+				} else if (isUniqueMatch(sequenceAfterKeyStroke, staticContext)) {
+					Collection<Binding> executableMatches = getExecutableMatches(sequenceAfterKeyStroke, staticContext);
+					final ParameterizedCommand cmd = executableMatches.iterator().next().getParameterizedCommand();
+					try {
+						return executeCommand(cmd, event) || !sequenceBeforeKeyStroke.isEmpty();
+					} catch (final CommandException e) {
+						return true;
+					}
 
-			} else {
-				Collection<Binding> errorMatches = getExecutableMatches(sequenceAfterKeyStroke, context);
-				if (errorMatches != null && !errorMatches.isEmpty()) {
-					errorSequence = sequenceAfterKeyStroke;
-					errorMatch = errorMatches;
+				} else if ((keyAssistDialog != null)
+						&& (keyAssistDialog.getShell() != null)
+						&& ((event.keyCode == SWT.ARROW_DOWN) || (event.keyCode == SWT.ARROW_UP)
+								|| (event.keyCode == SWT.ARROW_LEFT)
+								|| (event.keyCode == SWT.ARROW_RIGHT) || (event.keyCode == SWT.CR)
+								|| (event.keyCode == SWT.PAGE_UP) || (event.keyCode == SWT.PAGE_DOWN))) {
+					// We don't want to swallow keyboard navigation keys.
+					return false;
+
+				} else {
+					Collection<Binding> errorMatches = getExecutableMatches(sequenceAfterKeyStroke, staticContext);
+					if (!errorMatches.isEmpty()) {
+						errorSequence = sequenceAfterKeyStroke;
+						errorMatch = errorMatches;
+					}
 				}
 			}
+		} finally {
+			staticContext.dispose();
 		}
 		resetState(true);
 		if (sequenceBeforeKeyStroke.isEmpty() && errorSequence != null) {
