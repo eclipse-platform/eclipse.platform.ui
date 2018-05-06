@@ -295,7 +295,7 @@ public class DecorationScheduler {
 				}
 
 				SubMonitor subMonitor = SubMonitor.convert(monitor);
-				subMonitor.setTaskName("WorkbenchMessages.DecorationScheduler_CalculatingTask"); //$NON-NLS-1$
+				subMonitor.setTaskName(WorkbenchMessages.DecorationScheduler_CalculatingTask);
 				// will block if there are no resources to be decorated
 				DecorationReference reference;
 
