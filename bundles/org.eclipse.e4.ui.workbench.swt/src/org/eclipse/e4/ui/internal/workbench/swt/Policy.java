@@ -12,6 +12,7 @@ package org.eclipse.e4.ui.internal.workbench.swt;
 
 public class Policy {
 	public static final String DEBUG_FLAG = "/debug"; //$NON-NLS-1$
+	public static final String TRACE_FLAG = "/trace"; //$NON-NLS-1$
 	public static final String DEBUG_CMDS_FLAG = "/trace/commands"; //$NON-NLS-1$
 	public static final String DEBUG_CONTEXTS_FLAG = "/trace/eclipse.context"; //$NON-NLS-1$
 	public static final String DEBUG_MENUS_FLAG = "/trace/menus"; //$NON-NLS-1$
@@ -20,6 +21,8 @@ public class Policy {
 
 	/***/
 	public static boolean DEBUG;
+	/***/
+	public static boolean TRACE;
 	/***/
 	public static boolean DEBUG_MENUS;
 	/***/

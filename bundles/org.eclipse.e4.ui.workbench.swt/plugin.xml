@@ -6,7 +6,7 @@
      are made available under the terms of the Eclipse Public License v1.0
      which accompanies this distribution, and is available at
      http://www.eclipse.org/legal/epl-v10.html
-    
+
      Contributors:
          IBM Corporation - initial API and implementation
  -->
@@ -50,5 +50,17 @@
                type="org.eclipse.core.expressions.ICountable">
          </adapter>
       </factory>
+   </extension>
+
+   <extension
+         point="org.eclipse.ui.trace.traceComponents">
+      <component
+            id="org.eclipse.e4.ui.workbench.swt.trace"
+            label="%trace.component.label">
+         <bundle
+               consumed="false"
+               name="org.eclipse.e4.ui.workbench.swt">
+         </bundle>
+      </component>
    </extension>
 </plugin>

@@ -27,7 +27,7 @@
             type="e4xmi">
       </parser>
    </extension>
-   
+
    <extension
       point="org.eclipse.core.contenttype.contentTypes">
      <content-type
@@ -64,5 +64,17 @@
       <definitionEnrichment
             ePackageNS="http://www.eclipse.org/ui/2010/UIModel/fragment">
       </definitionEnrichment>
+   </extension>
+
+   <extension
+         point="org.eclipse.ui.trace.traceComponents">
+      <component
+            id="org.eclipse.e4.ui.workbench.trace"
+            label="%trace.component.label">
+         <bundle
+               consumed="false"
+               name="org.eclipse.e4.ui.workbench">
+         </bundle>
+      </component>
    </extension>
 </plugin>

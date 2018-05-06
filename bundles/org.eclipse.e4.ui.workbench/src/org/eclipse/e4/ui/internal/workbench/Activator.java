@@ -25,6 +25,8 @@ import static org.eclipse.e4.ui.internal.workbench.Policy.DEBUG_RENDERER;
 import static org.eclipse.e4.ui.internal.workbench.Policy.DEBUG_RENDERER_FLAG;
 import static org.eclipse.e4.ui.internal.workbench.Policy.DEBUG_WORKBENCH;
 import static org.eclipse.e4.ui.internal.workbench.Policy.DEBUG_WORKBENCH_FLAG;
+import static org.eclipse.e4.ui.internal.workbench.Policy.TRACE;
+import static org.eclipse.e4.ui.internal.workbench.Policy.TRACE_FLAG;
 
 import java.util.Hashtable;
 import java.util.List;
@@ -136,6 +138,7 @@ public class Activator implements BundleActivator, DebugOptionsListener {
 	public void optionsChanged(DebugOptions options) {
 		trace = options.newDebugTrace(PI_WORKBENCH);
 		DEBUG = options.getBooleanOption(PI_WORKBENCH + DEBUG_FLAG, false);
+		TRACE = options.getBooleanOption(PI_WORKBENCH + TRACE_FLAG, false);
 		DEBUG_CMDS = options.getBooleanOption(PI_WORKBENCH + DEBUG_CMDS_FLAG, false);
 		DEBUG_CONTEXTS = options.getBooleanOption(PI_WORKBENCH + DEBUG_CONTEXTS_FLAG, false);
 		DEBUG_CONTEXTS_VERBOSE = options.getBooleanOption(PI_WORKBENCH + DEBUG_CONTEXTS_VERBOSE_FLAG, false);
