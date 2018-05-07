@@ -82,11 +82,11 @@ public class PrototypeTab extends AbstractLaunchConfigurationTab {
 
 	private static final String PROTOTYPE_TAB_ID = "org.eclipse.debug.ui.prototypeTab"; //$NON-NLS-1$
 
-	private static final String ATTRIBUTE = "Attribute"; //$NON-NLS-1$
+	private static final String ATTRIBUTE = LaunchConfigurationsMessages.PrototypeTab_Atrribute_label;
 
-	private static final String MODIFIED = "Modified"; //$NON-NLS-1$
+	private static final String MODIFIED = LaunchConfigurationsMessages.PrototypeTab_Modified_label;
 
-	private static final String PROTOTYPE_VALUE = "Prototype Value"; //$NON-NLS-1$
+	private static final String PROTOTYPE_VALUE = LaunchConfigurationsMessages.PrototypeTab_Property_Value_label;
 
 	private ILaunchConfiguration fSelectedLaunchConfiguration;
 
