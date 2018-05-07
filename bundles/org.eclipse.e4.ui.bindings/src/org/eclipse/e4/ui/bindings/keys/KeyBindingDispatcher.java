@@ -16,6 +16,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 import javax.inject.Inject;
 import org.eclipse.core.commands.Command;
@@ -23,6 +24,7 @@ import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.commands.IHandler;
 import org.eclipse.core.commands.ParameterizedCommand;
 import org.eclipse.core.commands.common.CommandException;
+import org.eclipse.core.commands.contexts.ContextManager;
 import org.eclipse.e4.core.commands.EHandlerService;
 import org.eclipse.e4.core.commands.internal.HandlerServiceImpl;
 import org.eclipse.e4.core.contexts.EclipseContextFactory;
@@ -286,7 +288,7 @@ public class KeyBindingDispatcher {
 
 			if (isTracingEnabled()) {
 				logger.trace("Command " + parameterizedCommand + ", defined: " + commandDefined + ", handled: " //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-						+ commandHandled + " in context: " + context); //$NON-NLS-1$
+						+ commandHandled + " in " + describe(context)); //$NON-NLS-1$
 			}
 
 			handlerService.executeHandler(parameterizedCommand, staticContext);
@@ -296,12 +298,23 @@ public class KeyBindingDispatcher {
 				if (commandException instanceof ExecutionException) {
 					if (logger != null) {
 						logger.error((Throwable) commandException,
-								"Execution exception for: " + parameterizedCommand + " in context: " + context); //$NON-NLS-1$//$NON-NLS-2$
+								"Execution exception for: " + parameterizedCommand + " in " //$NON-NLS-1$//$NON-NLS-2$
+										+ describe(context));
 					}
 				} else {
 					if (isTracingEnabled()) {
 						logger.trace((Throwable) commandException,
-								"Command exception for: " + parameterizedCommand + " in context: " + context); //$NON-NLS-1$ //$NON-NLS-2$
+								"Command exception for: " + parameterizedCommand + " in " //$NON-NLS-1$ //$NON-NLS-2$
+										+ describe(context));
+						ContextManager contextManager = context.get(ContextManager.class);
+						if (contextManager != null) {
+							Set<?> activeContextIds = contextManager.getActiveContextIds();
+							if (activeContextIds != null && !activeContextIds.isEmpty()) {
+								StringBuilder sb = new StringBuilder("\n\tAll active contexts: "); //$NON-NLS-1$
+								sb.append(activeContextIds);
+								logger.trace(sb.toString());
+							}
+						}
 					}
 				}
 			}
@@ -357,7 +370,7 @@ public class KeyBindingDispatcher {
 		List<KeyStroke> keyStrokes = generatePossibleKeyStrokes(event);
 		if (isOutOfOrderKey(keyStrokes)) {
 			if (isTracingEnabled()) {
-				logger.trace("Out of order key: " + keyStrokes + " in context " + context); //$NON-NLS-1$ //$NON-NLS-2$
+				logger.trace("Out of order key: " + keyStrokes + " in " + describe(context)); //$NON-NLS-1$ //$NON-NLS-2$
 			}
 			Widget widget = event.widget;
 			if ((event.character == SWT.DEL)
@@ -535,7 +548,7 @@ public class KeyBindingDispatcher {
 				if (isPartialMatch(sequenceAfterKeyStroke)) {
 					incrementState(sequenceAfterKeyStroke);
 					if (isTracingEnabled()) {
-						logger.trace("Partial match: " + sequenceAfterKeyStroke + " in context " + context); //$NON-NLS-1$ //$NON-NLS-2$
+						logger.trace("Partial match: " + sequenceAfterKeyStroke + " in " + describe(context)); //$NON-NLS-1$ //$NON-NLS-2$
 					}
 					return true;
 
@@ -546,7 +559,7 @@ public class KeyBindingDispatcher {
 						return executeCommand(cmd, event) || !sequenceBeforeKeyStroke.isEmpty();
 					} catch (final CommandException e) {
 						if (isTracingEnabled()) {
-							logger.trace(e, "Can't happen in context: " + context); //$NON-NLS-1$
+							logger.trace(e, "Can't happen in " + describe(context)); //$NON-NLS-1$
 						}
 						return true;
 					}
@@ -560,7 +573,8 @@ public class KeyBindingDispatcher {
 					// We don't want to swallow keyboard navigation keys.
 					if (isTracingEnabled()) {
 						logger.trace(
-								"No execution due key assist: " + sequenceAfterKeyStroke + " in context " + context); //$NON-NLS-1$ //$NON-NLS-2$
+								"No execution due key assist: " + sequenceAfterKeyStroke + " in " //$NON-NLS-1$ //$NON-NLS-2$
+										+ describe(context));
 					}
 					return false;
 
@@ -575,7 +589,7 @@ public class KeyBindingDispatcher {
 					} else {
 						if (isTracingEnabled() && !Character.isLetterOrDigit(event.character)) {
 							logger.trace("No binding for keys: " + sequenceBeforeKeyStroke + " " //$NON-NLS-1$//$NON-NLS-2$
-									+ sequenceAfterKeyStroke + " in context " + context); //$NON-NLS-1$
+									+ sequenceAfterKeyStroke + " in " + describe(context)); //$NON-NLS-1$
 						}
 					}
 				}
@@ -614,9 +628,10 @@ public class KeyBindingDispatcher {
 			eatKey = press(keyStrokes, event);
 			if (isTracingEnabled() && !Character.isLetterOrDigit(event.character)) {
 				if (eatKey) {
-					logger.trace("Event processing done for: " + keyStrokes + " in context " + context); //$NON-NLS-1$//$NON-NLS-2$
+					logger.trace("Event processing done for: " + keyStrokes + " in " + describe(context)); //$NON-NLS-1$//$NON-NLS-2$
 				} else {
-					logger.trace("Event processing forwarded for: " + keyStrokes + " in context " + context); //$NON-NLS-1$//$NON-NLS-2$
+					logger.trace(
+							"Event processing forwarded for: " + keyStrokes + " in " + describe(context)); //$NON-NLS-1$//$NON-NLS-2$
 				}
 			}
 		}
@@ -668,6 +683,19 @@ public class KeyBindingDispatcher {
 				keyAssistDialog.close(true);
 			}
 		}
+	}
+
+	private String describe(IEclipseContext context) {
+		StringBuilder sb = new StringBuilder("\n\tcontext chain: "); //$NON-NLS-1$
+		IEclipseContext activeContext = context;
+		IEclipseContext child = context.getActiveChild();
+		while (child != null) {
+			sb.append(activeContext).append(" -> "); //$NON-NLS-1$
+			activeContext = child;
+			child = child.getActiveChild();
+		}
+		sb.append(activeContext);
+		return sb.toString();
 	}
 
 }
