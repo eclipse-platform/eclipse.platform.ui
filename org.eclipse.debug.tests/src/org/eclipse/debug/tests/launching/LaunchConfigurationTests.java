@@ -21,8 +21,7 @@ import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
 import java.nio.charset.CharsetDecoder;
 import java.nio.charset.CodingErrorAction;
-import java.nio.charset.IllegalCharsetNameException;
-import java.nio.charset.UnsupportedCharsetException;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -139,16 +138,7 @@ public class LaunchConfigurationTests extends AbstractLaunchTest implements ILau
 	 * @throws IOException if a problem occurred reading the stream.
 	 */
 	public static char[] getInputStreamAsCharArray(InputStream stream) throws IOException {
-		Charset charset = null;
-		try {
-			charset = Charset.forName("UTF-8"); //$NON-NLS-1$
-		} catch (IllegalCharsetNameException e) {
-			System.err.println("Illegal charset name : " + "UTF-8"); //$NON-NLS-1$ //$NON-NLS-2$
-			return null;
-		} catch(UnsupportedCharsetException e) {
-			System.err.println("Unsupported charset : " + "UTF-8"); //$NON-NLS-1$ //$NON-NLS-2$
-			return null;
-		}
+		Charset charset = StandardCharsets.UTF_8;
 		CharsetDecoder charsetDecoder = charset.newDecoder();
 		charsetDecoder.onMalformedInput(CodingErrorAction.REPLACE).onUnmappableCharacter(CodingErrorAction.REPLACE);
 		byte[] contents = getInputStreamAsByteArray(stream, -1);

@@ -310,9 +310,8 @@ public class LaunchConfigurationWorkingCopy extends LaunchConfiguration implemen
 					BufferedOutputStream stream = null;
 					try {
 						stream = new BufferedOutputStream(file.openOutputStream(EFS.NONE, null));
-						stream.write(xml.getBytes("UTF8")); //$NON-NLS-1$
-					}
-					finally {
+						stream.write(xml.getBytes(StandardCharsets.UTF_8));
+					} finally {
 						if(stream != null) {
 							stream.close();
 						}

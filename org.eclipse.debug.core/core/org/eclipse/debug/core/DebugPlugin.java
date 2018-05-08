@@ -16,6 +16,7 @@ import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -1223,7 +1224,7 @@ public class DebugPlugin extends Plugin {
 		try{
 			DocumentBuilder parser = DocumentBuilderFactory.newInstance().newDocumentBuilder();
 			parser.setErrorHandler(new DefaultHandler());
-			stream = new ByteArrayInputStream(document.getBytes("UTF8")); //$NON-NLS-1$
+			stream = new ByteArrayInputStream(document.getBytes(StandardCharsets.UTF_8));
 			root = parser.parse(stream).getDocumentElement();
 		} catch (ParserConfigurationException e) {
 			abort("Unable to parse XML document.", e);  //$NON-NLS-1$

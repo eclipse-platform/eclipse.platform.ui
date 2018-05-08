@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2015 IBM Corporation and others.
+ * Copyright (c) 2005, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -17,6 +17,7 @@ import java.io.OutputStreamWriter;
 import java.io.StringWriter;
 import java.io.Writer;
 import java.lang.reflect.InvocationTargetException;
+import java.nio.charset.StandardCharsets;
 import java.util.Map.Entry;
 
 import org.eclipse.core.resources.IMarker;
@@ -140,7 +141,7 @@ public class ExportBreakpointsOperation implements IRunnableWithProgress {
 				localmonitor.worked(1);
 			}
 			if (writer == null) {
-				try (Writer outWriter = new OutputStreamWriter(new FileOutputStream(fFileName), "UTF-8")) { //$NON-NLS-1$
+				try (Writer outWriter = new OutputStreamWriter(new FileOutputStream(fFileName), StandardCharsets.UTF_8)) {
 					memento.save(outWriter);
 				}
 			} else {

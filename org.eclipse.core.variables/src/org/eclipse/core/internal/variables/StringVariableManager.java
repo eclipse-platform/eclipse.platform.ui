@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2016 IBM Corporation and others.
+ * Copyright (c) 2000, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -15,6 +15,7 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -278,7 +279,7 @@ public class StringVariableManager implements IStringVariableManager, IPreferenc
 		}
 		Element root= null;
 		try {
-			ByteArrayInputStream stream = new ByteArrayInputStream(variablesString.getBytes("UTF-8")); //$NON-NLS-1$
+			ByteArrayInputStream stream = new ByteArrayInputStream(variablesString.getBytes(StandardCharsets.UTF_8));
 			DocumentBuilder parser = DocumentBuilderFactory.newInstance().newDocumentBuilder();
 			parser.setErrorHandler(new DefaultHandler());
 			root = parser.parse(stream).getDocumentElement();
