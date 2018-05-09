@@ -84,6 +84,9 @@ public class KeyBindingDispatcher {
 		@Override
 		public final void handleEvent(final Event event) {
 			if (!enabled) {
+				if (isTracingEnabled()) {
+					logger.trace("KeyBindingDispatcher is DISABLED in all contexts!"); //$NON-NLS-1$
+				}
 				return;
 			}
 
@@ -106,7 +109,15 @@ public class KeyBindingDispatcher {
 		 *            Whether key binding filter should be enabled.
 		 */
 		public final void setEnabled(final boolean enabled) {
+			boolean oldState = this.enabled;
 			this.enabled = enabled;
+			if (oldState && !enabled && isTracingEnabled()) {
+				logger.trace(new Exception("Probably illegal method call (except for very few cases)"), //$NON-NLS-1$
+						"KeyBindingDispatcher is DISABLED!"); //$NON-NLS-1$
+			}
+			if (!oldState && enabled && isTracingEnabled()) {
+				logger.trace("KeyBindingDispatcher is ENABLED!"); //$NON-NLS-1$
+			}
 		}
 	}
 
@@ -306,6 +317,15 @@ public class KeyBindingDispatcher {
 						logger.trace((Throwable) commandException,
 								"Command exception for: " + parameterizedCommand + " in " //$NON-NLS-1$ //$NON-NLS-2$
 										+ describe(context));
+						if (handlerService instanceof HandlerServiceImpl) {
+							HandlerServiceImpl serviceImpl = (HandlerServiceImpl) handlerService;
+							IEclipseContext serviceContext = serviceImpl.getContext();
+							if (serviceContext != null) {
+								StringBuilder sb = new StringBuilder("\n\tExecution context: "); //$NON-NLS-1$
+								sb.append(describe(serviceContext));
+								logger.trace(sb.toString());
+							}
+						}
 						ContextManager contextManager = context.get(ContextManager.class);
 						if (contextManager != null) {
 							Set<?> activeContextIds = contextManager.getActiveContextIds();
