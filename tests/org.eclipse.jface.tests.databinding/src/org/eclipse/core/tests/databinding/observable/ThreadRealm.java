@@ -28,7 +28,6 @@ public class ThreadRealm extends Realm {
     private final LinkedList<Runnable> queue = new LinkedList<Runnable>();
 
     private volatile boolean block;
-	private volatile boolean doProcess;
 
     /**
      * Initializes the realm.
@@ -91,15 +90,12 @@ public class ThreadRealm extends Realm {
 
         try {
             synchronized (queue) {
-				doProcess = true;
-				queue.notifyAll();
                 while (!queue.isEmpty()) {
                     if (!block)
                         throw new IllegalStateException(
                                 "Cannot process queue, ThreadRealm is not blocking on its thread");
                     queue.wait();
                 }
-				doProcess = false;
             }
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
@@ -131,14 +127,13 @@ public class ThreadRealm extends Realm {
 
             while (block) {
                 Runnable runnable = null;
-				while (!doProcess) {
-					synchronized (queue) {
-						queue.wait();
-					}
+                synchronized (queue) {
+                    if (queue.isEmpty()) {
+                        queue.wait();
+                    } else {
+                        runnable = queue.getFirst();
+                    }
                 }
-				synchronized (queue) {
-					runnable = queue.peek();
-				}
 
                 if (runnable != null) {
                     safeRun(runnable);

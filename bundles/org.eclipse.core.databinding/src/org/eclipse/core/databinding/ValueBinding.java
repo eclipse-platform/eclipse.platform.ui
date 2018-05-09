@@ -159,7 +159,7 @@ class ValueBinding extends Binding {
 		if (policy == UpdateValueStrategy.POLICY_ON_REQUEST && !explicit)
 			return;
 
-		execAfterDisposalCheck(source, () -> {
+		source.getRealm().exec(() -> {
 			boolean destinationRealmReached = false;
 			final MultiStatus multiStatus = BindingStatus.ok();
 			try {
@@ -190,7 +190,7 @@ class ValueBinding extends Binding {
 
 				// Set value
 				destinationRealmReached = true;
-				execAfterDisposalCheck(destination, () -> {
+				destination.getRealm().exec(() -> {
 					if (destination == target) {
 						updatingTarget = true;
 					} else {
