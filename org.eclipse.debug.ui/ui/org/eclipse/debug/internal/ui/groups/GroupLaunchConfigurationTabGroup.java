@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2009, 2012, 2016 QNX Software Systems and others.
+ *  Copyright (c) 2009, 2018 QNX Software Systems and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -9,18 +9,25 @@
  *      QNX Software Systems - initial API and implementation
  *      Freescale Semiconductor
  *      SSI Schaefer
+ *      IBM Corporation - Bug 517809
  *******************************************************************************/
 package org.eclipse.debug.internal.ui.groups;
 
 import java.text.MessageFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.TreeSet;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
+import org.eclipse.debug.internal.core.DebugCoreMessages;
 import org.eclipse.debug.internal.core.groups.GroupLaunchConfigurationDelegate;
 import org.eclipse.debug.internal.core.groups.GroupLaunchElement;
 import org.eclipse.debug.internal.core.groups.GroupLaunchElement.GroupElementPostLaunchAction;
@@ -29,11 +36,15 @@ import org.eclipse.debug.internal.ui.DebugUIMessages;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
 import org.eclipse.debug.internal.ui.SWTFactory;
+import org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationManager;
+import org.eclipse.debug.internal.ui.launchConfigurations.LaunchHistory;
 import org.eclipse.debug.ui.AbstractLaunchConfigurationTab;
 import org.eclipse.debug.ui.AbstractLaunchConfigurationTabGroup;
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.ILaunchConfigurationDialog;
 import org.eclipse.debug.ui.ILaunchConfigurationTab;
+import org.eclipse.debug.ui.ILaunchGroup;
+import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.BaseLabelProvider;
 import org.eclipse.jface.viewers.CheckStateChangedEvent;
 import org.eclipse.jface.viewers.CheckboxTreeViewer;
@@ -148,7 +159,7 @@ public class GroupLaunchConfigurationTabGroup extends AbstractLaunchConfiguratio
 
 			// launch mode
 			if (columnIndex == 1) {
-				return el.mode + (el.adoptIfRunning ? DebugUIMessages.GroupLaunchConfigurationTabGroup_lblAdopt : ""); //$NON-NLS-1$
+				return getLabel(el.mode) + (el.adoptIfRunning ? DebugUIMessages.GroupLaunchConfigurationTabGroup_lblAdopt : ""); //$NON-NLS-1$
 			}
 
 			// launch post action
@@ -578,5 +589,93 @@ public class GroupLaunchConfigurationTabGroup extends AbstractLaunchConfiguratio
 				new CommonTabLite() //
 		};
 		setTabs(tabs);
+	}
+
+	public static Map<String, ILaunchGroup> getModes() {
+		if (modes == null) {
+			initializeModes();
+		}
+		return modes;
+	}
+
+	private static Map<String, ILaunchGroup> modes;
+
+	/**
+	 * Required to satisfy the tree in mode inherit.
+	 */
+	private static final class InheritModeGroup implements ILaunchGroup {
+
+		@Override
+		public ImageDescriptor getImageDescriptor() {
+			return null;
+		}
+
+		@Override
+		public ImageDescriptor getBannerImageDescriptor() {
+			return null;
+		}
+
+		@Override
+		public String getLabel() {
+			return DebugCoreMessages.GroupLaunchElement_inherit_launch_mode_label;
+		}
+
+		@Override
+		public String getIdentifier() {
+			return null;
+		}
+
+		@Override
+		public String getCategory() {
+			return null;
+		}
+
+		@Override
+		public String getMode() {
+			return null;
+		}
+
+		@Override
+		public boolean isPublic() {
+			return false;
+		}
+
+	}
+
+	private static synchronized void initializeModes() {
+		if (modes != null) {
+			return;
+		}
+		modes = new LinkedHashMap<>();
+		modes.put(GroupLaunchElement.MODE_INHERIT, new InheritModeGroup());
+		Set<ILaunchGroup> sortedGroups = new TreeSet<>((a, b) -> {
+			return a.getLabel().compareTo(b.getLabel());
+		});
+		LaunchConfigurationManager mgr = DebugUIPlugin.getDefault().getLaunchConfigurationManager();
+		sortedGroups.addAll(Arrays.asList(mgr.getLaunchGroups()));
+		for (ILaunchGroup launchGroup : sortedGroups) {
+			LaunchHistory history = mgr.getLaunchHistory(launchGroup.getIdentifier());
+			if (history == null) {
+				// mode currently not supported.
+				continue;
+			}
+
+			String modeName = launchGroup.getMode();
+			if (!modes.containsKey(modeName)) {
+				modes.put(modeName, launchGroup);
+			}
+		}
+	}
+
+	public static String getLabel(String mode) {
+		if (mode == null || mode.isEmpty())
+		{
+			return ""; //$NON-NLS-1$
+		}
+		if (modes == null) {
+			initializeModes();
+		}
+		ILaunchGroup launchGrp = modes.get(mode);
+		return DebugUIPlugin.removeAccelerators(launchGrp.getLabel());
 	}
 }

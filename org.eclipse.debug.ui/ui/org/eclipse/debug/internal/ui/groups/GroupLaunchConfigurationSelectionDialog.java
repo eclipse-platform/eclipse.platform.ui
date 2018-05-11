@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2009, 2017 QNX Software Systems and others.
+ *  Copyright (c) 2009, 2018 QNX Software Systems and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -10,17 +10,15 @@
  *      Freescale Semiconductor
  *      SSI Schaefer
  *      Axel Richard (Obeo) - Bug 41353 - Launch configurations prototypes
+ *      IBM Corporation - Bug 517809
  *******************************************************************************/
 package org.eclipse.debug.internal.ui.groups;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
-import java.util.TreeSet;
 import java.util.regex.Pattern;
 
 import org.eclipse.core.runtime.CoreException;
@@ -28,23 +26,19 @@ import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationType;
 import org.eclipse.debug.core.ILaunchManager;
-import org.eclipse.debug.internal.core.DebugCoreMessages;
 import org.eclipse.debug.internal.core.groups.GroupLaunchConfigurationDelegate;
 import org.eclipse.debug.internal.core.groups.GroupLaunchElement;
 import org.eclipse.debug.internal.core.groups.GroupLaunchElement.GroupElementPostLaunchAction;
 import org.eclipse.debug.internal.ui.DebugUIMessages;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationFilteredTree;
-import org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationManager;
 import org.eclipse.debug.internal.ui.launchConfigurations.LaunchGroupFilter;
-import org.eclipse.debug.internal.ui.launchConfigurations.LaunchHistory;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.debug.ui.ILaunchGroup;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.TitleAreaDialog;
 import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.jface.layout.GridLayoutFactory;
-import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -152,25 +146,7 @@ class GroupLaunchConfigurationSelectionDialog extends TitleAreaDialog implements
 		// dialog message area (not title bar)
 		setTitle(fForEditing ? DebugUIMessages.GroupLaunchConfigurationSelectionDialog_15 : DebugUIMessages.GroupLaunchConfigurationSelectionDialog_14);
 
-		Map<String, ILaunchGroup> modes = new LinkedHashMap<>();
-		modes.put(GroupLaunchElement.MODE_INHERIT, new InheritModeGroup());
-		Set<ILaunchGroup> sortedGroups = new TreeSet<>((a, b) -> {
-			return a.getLabel().compareTo(b.getLabel());
-		});
-		LaunchConfigurationManager mgr = DebugUIPlugin.getDefault().getLaunchConfigurationManager();
-		sortedGroups.addAll(Arrays.asList(mgr.getLaunchGroups()));
-		for (ILaunchGroup launchGroup : sortedGroups) {
-			LaunchHistory history = mgr.getLaunchHistory(launchGroup.getIdentifier());
-			if (history == null) {
-				// mode currently not supported.
-				continue;
-			}
-
-			String modeName = launchGroup.getMode();
-			if (!modes.containsKey(modeName)) {
-				modes.put(modeName, launchGroup);
-			}
-		}
+		Map<String, ILaunchGroup> modes = GroupLaunchConfigurationTabGroup.getModes();
 
 		// the tree requires a non-null group. use inherit as dummy as this will
 		// not cause filtering.
@@ -457,45 +433,4 @@ class GroupLaunchConfigurationSelectionDialog extends TitleAreaDialog implements
 		fSelection = fInitialSelection;
 	}
 
-	/**
-	 * Required to satisfy the tree in mode inherit.
-	 */
-	private static final class InheritModeGroup implements ILaunchGroup {
-
-		@Override
-		public ImageDescriptor getImageDescriptor() {
-			return null;
-		}
-
-		@Override
-		public ImageDescriptor getBannerImageDescriptor() {
-			return null;
-		}
-
-		@Override
-		public String getLabel() {
-			return DebugCoreMessages.GroupLaunchElement_inherit_launch_mode_label;
-		}
-
-		@Override
-		public String getIdentifier() {
-			return null;
-		}
-
-		@Override
-		public String getCategory() {
-			return null;
-		}
-
-		@Override
-		public String getMode() {
-			return null;
-		}
-
-		@Override
-		public boolean isPublic() {
-			return false;
-		}
-
-	}
 }
