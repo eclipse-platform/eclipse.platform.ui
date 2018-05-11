@@ -62,37 +62,14 @@ public abstract class JsonTipProvider extends TipProvider {
 	}
 
 	/**
-	 * Returns a specific portion of the underlying json file as a json object, if
-	 * the json object was not yet fetched it will be done here, making it a
-	 * potential costly operation. The passed part can be an array to indicate a
-	 * structure e.g. {"provider","variables"}.
-	 * 
-	 * @param part one or more keys of the underlying json file, may not be null.
-	 * @return the JSon Object as a string
-	 * @throws IOException
-	 * @see {@link #loadNewTips(IProgressMonitor)}
-	 */
-	public synchronized String getJsonObject(String... part) throws IOException {
-		if (fJsonObject == null) {
-			fJsonObject = loadJsonObject();
-		}
-		JsonObject temp = fJsonObject.getAsJsonObject(part[0]);
-		for (int i = 1; i < part.length; i++) {
-			temp = temp.getAsJsonObject(part[0]);
-
-		}
-		return temp.getAsString();
-	}
-
-	/**
 	 *
 	 * {@inheritDoc}
-	 * 
+	 *
 	 * <p>
 	 * <b>Implementation Details</b><br>
 	 * The implementation of this method in this provider will fetch the json file
 	 * and store it locally.
-	 * 
+	 *
 	 */
 	@Override
 	public synchronized IStatus loadNewTips(IProgressMonitor monitor) {
@@ -101,6 +78,10 @@ public abstract class JsonTipProvider extends TipProvider {
 		try {
 			subMonitor.beginTask(getDescription() + SPACE + Messages.JsonTipProvider_1, -1);
 			fJsonObject = loadJsonObject();
+			if (fJsonObject == null) {
+				return new Status(IStatus.INFO, "org.eclipse.tips.json",
+						MessageFormat.format("Could not parse json for {0}. Cache invalidated.", getID()), null);
+			}
 			JsonObject provider = fJsonObject.getAsJsonObject(JsonConstants.P_PROVIDER);
 			fDescription = Util.getValueOrDefault(provider, JsonConstants.P_DESCRIPTION, "not set"); //$NON-NLS-1$
 			fImage = Util.getValueOrDefault(provider, JsonConstants.P_IMAGE, null);
@@ -121,7 +102,12 @@ public abstract class JsonTipProvider extends TipProvider {
 
 	private JsonObject loadJsonObject() throws IOException {
 		try (InputStream stream = fJsonUrl.openStream(); InputStreamReader reader = new InputStreamReader(stream)) {
-			return (JsonObject) new JsonParser().parse(reader);
+			Object result = new JsonParser().parse(reader);
+			if (result instanceof JsonObject) {
+				return (JsonObject) result;
+			} else {
+				return null;
+			}
 		}
 	}
 

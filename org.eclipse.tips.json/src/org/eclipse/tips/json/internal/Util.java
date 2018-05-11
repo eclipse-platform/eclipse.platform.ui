@@ -4,7 +4,14 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.text.MessageFormat;
 import java.util.Map.Entry;
+
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
+import org.osgi.framework.FrameworkUtil;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -14,7 +21,7 @@ public class Util {
 
 	/**
 	 * Parses the passed json or returns a default value.
-	 * 
+	 *
 	 * @param jsonObject
 	 * @param element      the value to return in case the jsonObject does not
 	 *                     contain the specified value.
@@ -31,7 +38,7 @@ public class Util {
 
 	/**
 	 * Parses the passed json or returns a default value.
-	 * 
+	 *
 	 * @param jsonObject
 	 * @param element      the value to return in case the jsonObject does not
 	 *                     contain the specified value.
@@ -48,7 +55,7 @@ public class Util {
 
 	/**
 	 * Parses the passed json or returns a default value.
-	 * 
+	 *
 	 * @param jsonObject
 	 * @param element      the value to return in case the jsonObject does not
 	 *                     contain the specified value.
@@ -69,13 +76,13 @@ public class Util {
 	 * {@link JsonConstants#T_VARIABLES} object then this is parsed as well.
 	 * <p>
 	 * Example:
-	 * 
+	 *
 	 * <pre>
-	 * json object: {"first": "Wim", "last": "Jongman", "variables": {"title": "Mr.", "age": 53}} 
+	 * json object: {"first": "Wim", "last": "Jongman", "variables": {"title": "Mr.", "age": 53}}
 	 * input: "${title} ${first} ${last} is ${age} years old."
 	 * output: "Mr. Wim Jongman is 53 years old"
 	 * </pre>
-	 * 
+	 *
 	 * @param object the input json object
 	 * @param input  the string to scan
 	 * @return the replaced string
@@ -108,13 +115,47 @@ public class Util {
 
 	/**
 	 * @param input the json string representation
-	 * @return the parsed json object
+	 * @return the parsed json object or null if a json object could not be found in
+	 *         the string
 	 * @throws IOException
 	 */
 	public static JsonObject getJson(String input) throws IOException {
 		try (InputStream stream = new ByteArrayInputStream(input.getBytes());
 				InputStreamReader reader = new InputStreamReader(stream)) {
-			return (JsonObject) new JsonParser().parse(reader);
+			JsonElement element = new JsonParser().parse(reader);
+			if (element instanceof JsonObject) {
+				return (JsonObject) element;
+			} else {
+				return null;
+			}
 		}
+	}
+
+	/**
+	 * Checks if the URL is valid.
+	 *
+	 * @param pUrl
+	 * @return A status indicating the result.
+	 * @throws IOException
+	 */
+	public static IStatus isValidUrl(String pUrl) {
+		String symbolicName = FrameworkUtil.getBundle(Util.class).getSymbolicName();
+		try {
+			URL url = new URL(pUrl);
+			HttpURLConnection httpCon = (HttpURLConnection) url.openConnection();
+			int responseCode = httpCon.getResponseCode();
+			if (responseCode != 200) {
+				return new Status(IStatus.ERROR, symbolicName, MessageFormat
+						.format("Received response code {0} from {1}.", new Object[] { responseCode + "", pUrl }));
+			}
+			if (httpCon.getContentLength() <= 0) {
+				return new Status(IStatus.ERROR, symbolicName,
+						MessageFormat.format("Received empty file from {0}.", pUrl));
+			}
+		} catch (Exception e) {
+			return new Status(IStatus.ERROR, symbolicName, MessageFormat.format("Received empty file from {0}.", pUrl),
+					e);
+		}
+		return Status.OK_STATUS;
 	}
 }

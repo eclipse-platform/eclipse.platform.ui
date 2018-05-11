@@ -19,7 +19,6 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.tips.core.TipProvider;
-import org.eclipse.tips.json.internal.ProviderLoader;
 import org.eclipse.ui.IStartup;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.progress.UIJob;
@@ -30,10 +29,9 @@ import org.osgi.framework.FrameworkUtil;
  * Early startup to run the TipManager in the IDE.
  *
  */
-@SuppressWarnings("restriction")
 public class Startup implements IStartup {
 
-	private static final String BCKSLASH = "\""; //$NON-NLS-1$
+	private static final String DBLQUOTE = "\""; //$NON-NLS-1$
 	private static final String EQ = "="; //$NON-NLS-1$
 	private static final String SLASH = "/"; //$NON-NLS-1$
 	private static final String LT = "<"; //$NON-NLS-1$
@@ -47,43 +45,7 @@ public class Startup implements IStartup {
 		openManager();
 	}
 
-	/**
-	 * Reloads the tip providers.
-	 */
 	public static void loadProviders() {
-		loadInternalProviders();
-		loadExternalProviders();
-	}
-
-	private static void loadInternalProviders() {
-		getInternalProvidersJob().schedule();
-	}
-
-	private static Job getInternalProvidersJob() {
-		Job job = new Job(Messages.Startup_0) {
-
-			@Override
-			protected IStatus run(IProgressMonitor pArg0) {
-				String baseURL = System.getProperty("org.eclipse.tips.ide.provider.url"); //$NON-NLS-1$
-				if (baseURL == null) {
-					baseURL = "http://www.eclipse.org/downloads/download.php?r=1&file=/e4/tips/"; //$NON-NLS-1$
-				}
-				try {
-					ProviderLoader.loadProviderData(IDETipManager.getInstance(), baseURL,
-							IDETipManager.getStateLocation());
-				} catch (Exception e) {
-					Status status = new Status(IStatus.ERROR, FrameworkUtil.getBundle(Startup.class).getSymbolicName(),
-							Messages.Startup_3, e);
-					IDETipManager.getInstance().log(status);
-					return status;
-				}
-				return Status.OK_STATUS;
-			};
-		};
-		return job;
-	}
-
-	private static void loadExternalProviders() {
 		IConfigurationElement[] elements = Platform.getExtensionRegistry()
 				.getConfigurationElementsFor("org.eclipse.tips.core.tips"); //$NON-NLS-1$
 		for (IConfigurationElement element : elements) {
@@ -132,9 +94,9 @@ public class Startup implements IStartup {
 		String result = EMPTY;
 		for (String name : element.getAttributeNames()) {
 			result += name;
-			result += EQ + BCKSLASH;
+			result += EQ + DBLQUOTE;
 			result += element.getAttribute(name);
-			result += BCKSLASH + SPACE;
+			result += DBLQUOTE + SPACE;
 		}
 		return result;
 	}

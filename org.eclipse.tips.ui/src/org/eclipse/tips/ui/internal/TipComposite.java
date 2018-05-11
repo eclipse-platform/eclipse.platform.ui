@@ -351,11 +351,7 @@ public class TipComposite extends Composite implements ProviderSelectionListener
 	}
 
 	private void loadContentHtml(IHtmlTip tip) {
-		try {
-			fBrowser.setText(getScaling() + getHTML(tip).trim());
-		} catch (IOException e) {
-			fTipManager.log(LogUtil.error(getClass(), e));
-		}
+		fBrowser.setText(getScaling() + getHTML(tip).trim());
 	}
 
 	private void loadContentUrl(IUrlTip tip) {
@@ -487,7 +483,7 @@ public class TipComposite extends Composite implements ProviderSelectionListener
 				+ ");</script>"; //$NON-NLS-1$
 	}
 
-	private String getHTML(IHtmlTip tip) throws IOException {
+	private String getHTML(IHtmlTip tip) {
 		String encodedImage = encodeImage(tip);
 		return tip.getHTML() + encodedImage;
 	}
@@ -500,7 +496,7 @@ public class TipComposite extends Composite implements ProviderSelectionListener
 		return EMPTY;
 	}
 
-	private String encodeImage(IHtmlTip tip) throws IOException {
+	private String encodeImage(IHtmlTip tip) {
 		TipImage image = tip.getImage();
 		if (image == null) {
 			return EMPTY;
@@ -508,7 +504,7 @@ public class TipComposite extends Composite implements ProviderSelectionListener
 		return encodeImageFromBase64(image);
 	}
 
-	private String encodeImageFromBase64(TipImage image) throws IOException {
+	private String encodeImageFromBase64(TipImage image) {
 		int width = fBrowser.getClientArea().width;
 		int height = Math.min(fBrowser.getClientArea().height / 2, (2 * (width / 3)));
 		String attributes = gtkHack(image.getIMGAttributes(width, height).trim());
