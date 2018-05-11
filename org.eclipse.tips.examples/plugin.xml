@@ -14,18 +14,12 @@
 <plugin>
    <extension
          point="org.eclipse.tips.core.tips">
-      <category
-            id="org.eclipse.tips.examples.tips.tipsfw"
-            name="Tips Framework">
-      </category>
       <provider
-            category="org.eclipse.tips.examples.tips.tipsfw"
             class="org.eclipse.tips.examples.tipsframework.TipsTipProvider"
             description="Eclipse Tips"
             id="org.eclipse.tips.examples.tips.tipsframework.TipsTipProvider">
       </provider>
       <provider
-            category="org.eclipse.tips.examples.tips.tipsfw"
             class="org.eclipse.tips.examples.json.JsonTipProviderPhoton"
             description="Eclipse Photon New and Noteworthy"
             id="org.eclipse.tips.examples.tips.tipsframework.photonnn">
@@ -33,17 +27,7 @@
    </extension>
    <extension
          point="org.eclipse.tips.core.tips">
-      <category
-            id="org.eclipse.tips.examples.tips.java"
-            name="Java">
-      </category>
-      <category
-            id="org.eclipse.tips.examples.tips.java9"
-            name="Java9"
-            parentCategory="org.eclipse.tips.examples.tips.java9">
-      </category>
       <provider
-            category="org.eclipse.tips.examples.tips.java9"
             class="org.eclipse.tips.examples.java.java9.Java9TipProvider"
             description="Java 9 Tips"
             id="org.eclipse.tips.examples.tips.java.java9.Java9TipProvider">
@@ -59,12 +43,7 @@
    </extension>
    <extension
          point="org.eclipse.tips.core.tips">
-      <category
-            id="org.eclipse.tips.examples.tips.eclipsetips"
-            name="Eclipse IDE Tips">
-      </category>
       <provider
-            category="org.eclipse.tips.examples.tips.eclipsetips"
             class="org.eclipse.tips.examples.eclipsetips.EclipseTipsProvider"
             description="Eclipse Tips"
             id="org.eclipse.tips.examples.tips.eclipsetips.EclipseTipsProvider">
@@ -72,12 +51,7 @@
    </extension>
    <extension
          point="org.eclipse.tips.core.tips">
-      <category
-            id="org.eclipse.tips.examples.tips.eclipsetips"
-            name="Eclipse IDE Tips">
-      </category>
       <provider
-            category="org.eclipse.tips.examples.tips.eclipsetips"
             class="org.eclipse.tips.examples.test.TestProvider"
             description="Test Provider"
             id="org.eclipse.tips.examples.tips.test.TestProvider">
@@ -86,7 +60,6 @@
    <extension
          point="org.eclipse.tips.core.tips">
       <provider
-            category="org.eclipse.tips.examples.tips.eclipsetips"
             class="org.eclipse.tips.examples.swttip.SwtTipsProvider"
             description="SWT Tips Provider"
             id="org.eclipse.tips.examples.swttip.SWTTipsProvider">

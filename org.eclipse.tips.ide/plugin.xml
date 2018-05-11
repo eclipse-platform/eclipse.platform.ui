@@ -186,4 +186,12 @@
             class="org.eclipse.tips.ide.internal.Preferences">
       </initializer>
    </extension>
+   <extension
+         point="org.eclipse.tips.core.tips">
+      <provider
+            class="org.eclipse.tips.ide.internal.provider.TipsTipProvider"
+            description="Tips about Tips"
+            id="org.eclipse.tips.ide.internal.provider.TipsTipProvider">
+      </provider>
+   </extension>
 </plugin>
