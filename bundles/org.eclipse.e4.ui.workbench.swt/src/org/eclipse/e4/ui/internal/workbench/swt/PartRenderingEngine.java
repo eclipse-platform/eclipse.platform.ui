@@ -67,6 +67,7 @@ import org.eclipse.e4.ui.model.application.ui.MGenericStack;
 import org.eclipse.e4.ui.model.application.ui.MUIElement;
 import org.eclipse.e4.ui.model.application.ui.advanced.MPerspective;
 import org.eclipse.e4.ui.model.application.ui.advanced.MPlaceholder;
+import org.eclipse.e4.ui.model.application.ui.basic.MPart;
 import org.eclipse.e4.ui.model.application.ui.basic.MPartStack;
 import org.eclipse.e4.ui.model.application.ui.basic.MTrimmedWindow;
 import org.eclipse.e4.ui.model.application.ui.basic.MWindow;
@@ -106,6 +107,8 @@ import org.w3c.dom.Element;
 import org.w3c.dom.css.CSSStyleDeclaration;
 
 public class PartRenderingEngine implements IPresentationEngine {
+	private static final String TAG_EDITOR = "Editor";
+
 	public static final String EARLY_STARTUP_HOOK = "runEarlyStartup";
 
 	public static final String engineURI = "bundleclass://org.eclipse.e4.ui.workbench.swt/"
@@ -516,6 +519,14 @@ public class PartRenderingEngine implements IPresentationEngine {
 		String elementId = element.getElementId();
 		if (elementId != null && elementId.length() != 0) {
 			builder.append(" (").append(elementId).append(") ");
+		}
+		List<String> tags = element.getTags();
+		if (element instanceof MPart && tags.contains(TAG_EDITOR)) {
+			tags.stream().filter(x -> !x.equals(TAG_EDITOR)).forEach(x -> builder.append(" ").append(x));
+			String label = ((MPart) element).getLabel();
+			if (label != null) {
+				builder.append(" (").append(label).append(") ");
+			}
 		}
 		builder.append("Context");
 		return builder.toString();
