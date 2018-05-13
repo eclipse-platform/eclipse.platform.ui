@@ -11,11 +11,17 @@
 package org.eclipse.e4.ui.internal.workbench.swt;
 
 import static org.eclipse.e4.ui.internal.workbench.swt.Policy.DEBUG;
+import static org.eclipse.e4.ui.internal.workbench.swt.Policy.DEBUG_CMDS;
+import static org.eclipse.e4.ui.internal.workbench.swt.Policy.DEBUG_CMDS_FLAG;
+import static org.eclipse.e4.ui.internal.workbench.swt.Policy.DEBUG_CONTEXTS;
+import static org.eclipse.e4.ui.internal.workbench.swt.Policy.DEBUG_CONTEXTS_FLAG;
 import static org.eclipse.e4.ui.internal.workbench.swt.Policy.DEBUG_FLAG;
 import static org.eclipse.e4.ui.internal.workbench.swt.Policy.DEBUG_MENUS;
 import static org.eclipse.e4.ui.internal.workbench.swt.Policy.DEBUG_MENUS_FLAG;
 import static org.eclipse.e4.ui.internal.workbench.swt.Policy.DEBUG_RENDERER;
 import static org.eclipse.e4.ui.internal.workbench.swt.Policy.DEBUG_RENDERER_FLAG;
+import static org.eclipse.e4.ui.internal.workbench.swt.Policy.DEBUG_WORKBENCH;
+import static org.eclipse.e4.ui.internal.workbench.swt.Policy.DEBUG_WORKBENCH_FLAG;
 import static org.eclipse.e4.ui.internal.workbench.swt.Policy.TRACE;
 import static org.eclipse.e4.ui.internal.workbench.swt.Policy.TRACE_FLAG;
 
@@ -140,8 +146,11 @@ public class WorkbenchSWTActivator implements BundleActivator, DebugOptionsListe
 		trace = options.newDebugTrace(PI_RENDERERS);
 		DEBUG = options.getBooleanOption(PI_RENDERERS + DEBUG_FLAG, false);
 		TRACE = options.getBooleanOption(PI_RENDERERS + TRACE_FLAG, false);
+		DEBUG_CMDS = options.getBooleanOption(PI_RENDERERS + DEBUG_CMDS_FLAG, false);
+		DEBUG_CONTEXTS = options.getBooleanOption(PI_RENDERERS + DEBUG_CONTEXTS_FLAG, false);
 		DEBUG_MENUS = options.getBooleanOption(PI_RENDERERS + DEBUG_MENUS_FLAG, false);
 		DEBUG_RENDERER = options.getBooleanOption(PI_RENDERERS + DEBUG_RENDERER_FLAG, false);
+		DEBUG_WORKBENCH = options.getBooleanOption(PI_RENDERERS + DEBUG_WORKBENCH_FLAG, false);
 	}
 
 	public DebugTrace getTrace() {
