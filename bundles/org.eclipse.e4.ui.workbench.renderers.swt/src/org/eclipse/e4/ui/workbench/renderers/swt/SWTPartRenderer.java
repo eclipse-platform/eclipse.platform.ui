@@ -21,6 +21,8 @@ import org.eclipse.e4.ui.css.core.engine.CSSEngine;
 import org.eclipse.e4.ui.css.swt.dom.WidgetElement;
 import org.eclipse.e4.ui.internal.workbench.swt.AbstractPartRenderer;
 import org.eclipse.e4.ui.internal.workbench.swt.CSSConstants;
+import org.eclipse.e4.ui.internal.workbench.swt.Policy;
+import org.eclipse.e4.ui.internal.workbench.swt.WorkbenchSWTActivator;
 import org.eclipse.e4.ui.model.application.descriptor.basic.MPartDescriptor;
 import org.eclipse.e4.ui.model.application.ui.MElementContainer;
 import org.eclipse.e4.ui.model.application.ui.MUIElement;
@@ -367,8 +369,22 @@ public abstract class SWTPartRenderer extends AbstractPartRenderer {
 		if (element.getWidget() instanceof Control) {
 			// Have SWT set the focus
 			Control ctrl = (Control) element.getWidget();
-			if (!ctrl.isDisposed())
+			if (!ctrl.isDisposed()) {
+				if (Policy.DEBUG_FOCUS) {
+					WorkbenchSWTActivator.trace(Policy.DEBUG_FOCUS_FLAG, "Force focus for: " + element, null); //$NON-NLS-1$
+				}
 				ctrl.forceFocus();
+			} else {
+				if (Policy.DEBUG_FOCUS) {
+					WorkbenchSWTActivator.trace(Policy.DEBUG_FOCUS_FLAG,
+							"Trying to force focus for disposed control: " + element, new IllegalStateException()); //$NON-NLS-1$
+				}
+			}
+		} else {
+			if (Policy.DEBUG_FOCUS) {
+				WorkbenchSWTActivator.trace(Policy.DEBUG_FOCUS_FLAG,
+						"Trying to force focus for non-control element: " + element, new IllegalStateException()); //$NON-NLS-1$
+			}
 		}
 	}
 

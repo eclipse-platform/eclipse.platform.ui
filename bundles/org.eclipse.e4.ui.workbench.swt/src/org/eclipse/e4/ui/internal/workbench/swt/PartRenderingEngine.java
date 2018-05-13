@@ -782,8 +782,13 @@ public class PartRenderingEngine implements IPresentationEngine {
 	public void focusGui(MUIElement element) {
 		AbstractPartRenderer renderer = (AbstractPartRenderer) element
 				.getRenderer();
-		if (renderer == null || element.getWidget() == null)
+		if (renderer == null || element.getWidget() == null) {
+			if (Policy.DEBUG_FOCUS) {
+				WorkbenchSWTActivator.trace(Policy.DEBUG_FOCUS_FLAG,
+						"Trying to focus GUI on element without renderer or widget: " + element, new Exception()); //$NON-NLS-1$
+			}
 			return;
+		}
 
 		Object implementation = element instanceof MContribution ? ((MContribution) element)
 				.getObject() : null;
@@ -802,6 +807,10 @@ public class PartRenderingEngine implements IPresentationEngine {
 			if (returnValue == defaultValue) {
 				// No @Focus method, force the focus
 				renderer.forceFocus(element);
+			} else {
+				if (Policy.DEBUG_FOCUS) {
+					WorkbenchSWTActivator.trace(Policy.DEBUG_FOCUS_FLAG, "Focused GUI on element: " + element, null); //$NON-NLS-1$
+				}
 			}
 		} catch (InjectionException e) {
 			log("Failed to grant focus to element", "Failed to grant focus to element ({0})", //$NON-NLS-1$ //$NON-NLS-2$

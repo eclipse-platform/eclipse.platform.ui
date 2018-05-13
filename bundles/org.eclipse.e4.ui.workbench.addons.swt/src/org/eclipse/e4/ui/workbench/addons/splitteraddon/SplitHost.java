@@ -19,6 +19,8 @@ import org.eclipse.e4.ui.di.Focus;
 import org.eclipse.e4.ui.di.Persist;
 import org.eclipse.e4.ui.di.PersistState;
 import org.eclipse.e4.ui.di.UIEventTopic;
+import org.eclipse.e4.ui.internal.workbench.swt.Policy;
+import org.eclipse.e4.ui.internal.workbench.swt.WorkbenchSWTActivator;
 import org.eclipse.e4.ui.model.application.ui.MElementContainer;
 import org.eclipse.e4.ui.model.application.ui.MUIElement;
 import org.eclipse.e4.ui.model.application.ui.basic.MCompositePart;
@@ -121,12 +123,22 @@ public class SplitHost {
 	void setFocus() {
 		MPart ap = findInnerActive(myPart);
 		if (ap == null) {
+			if (Policy.DEBUG_FOCUS) {
+				WorkbenchSWTActivator.trace(Policy.DEBUG_FOCUS_FLAG, "Focus not set, no selected element in: " + myPart, //$NON-NLS-1$
+						new IllegalStateException());
+			}
 			return;
 		}
 
 		Control ctrl = (Control) ap.getWidget();
-		if (ap.getObject() != null && ctrl != null && !ctrl.isDisposed()) {
-			ContextInjectionFactory.invoke(ap.getObject(), Focus.class, ap.getContext(), null);
+		Object object = ap.getObject();
+		if (object != null && ctrl != null && !ctrl.isDisposed()) {
+			ContextInjectionFactory.invoke(object, Focus.class, ap.getContext(), null);
+		} else {
+			if (Policy.DEBUG_FOCUS) {
+				WorkbenchSWTActivator.trace(Policy.DEBUG_FOCUS_FLAG,
+						"Focus not set, object is null or widget is disposed: " + object, new IllegalStateException()); //$NON-NLS-1$
+			}
 		}
 	}
 

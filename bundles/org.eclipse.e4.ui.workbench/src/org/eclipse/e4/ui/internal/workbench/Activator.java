@@ -19,6 +19,8 @@ import static org.eclipse.e4.ui.internal.workbench.Policy.DEBUG_CONTEXTS_FLAG;
 import static org.eclipse.e4.ui.internal.workbench.Policy.DEBUG_CONTEXTS_VERBOSE;
 import static org.eclipse.e4.ui.internal.workbench.Policy.DEBUG_CONTEXTS_VERBOSE_FLAG;
 import static org.eclipse.e4.ui.internal.workbench.Policy.DEBUG_FLAG;
+import static org.eclipse.e4.ui.internal.workbench.Policy.DEBUG_FOCUS;
+import static org.eclipse.e4.ui.internal.workbench.Policy.DEBUG_FOCUS_FLAG;
 import static org.eclipse.e4.ui.internal.workbench.Policy.DEBUG_MENUS;
 import static org.eclipse.e4.ui.internal.workbench.Policy.DEBUG_MENUS_FLAG;
 import static org.eclipse.e4.ui.internal.workbench.Policy.DEBUG_RENDERER;
@@ -140,6 +142,7 @@ public class Activator implements BundleActivator, DebugOptionsListener {
 		DEBUG = options.getBooleanOption(PI_WORKBENCH + DEBUG_FLAG, false);
 		TRACE = options.getBooleanOption(PI_WORKBENCH + TRACE_FLAG, false);
 		DEBUG_CMDS = options.getBooleanOption(PI_WORKBENCH + DEBUG_CMDS_FLAG, false);
+		DEBUG_FOCUS = options.getBooleanOption(PI_WORKBENCH + DEBUG_FOCUS_FLAG, false);
 		DEBUG_CONTEXTS = options.getBooleanOption(PI_WORKBENCH + DEBUG_CONTEXTS_FLAG, false);
 		DEBUG_CONTEXTS_VERBOSE = options.getBooleanOption(PI_WORKBENCH + DEBUG_CONTEXTS_VERBOSE_FLAG, false);
 		DEBUG_MENUS = options.getBooleanOption(PI_WORKBENCH + DEBUG_MENUS_FLAG, false);

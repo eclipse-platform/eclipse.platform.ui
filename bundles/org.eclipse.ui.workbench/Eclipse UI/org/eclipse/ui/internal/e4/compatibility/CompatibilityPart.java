@@ -27,6 +27,8 @@ import org.eclipse.e4.core.services.log.Logger;
 import org.eclipse.e4.ui.di.Focus;
 import org.eclipse.e4.ui.di.Persist;
 import org.eclipse.e4.ui.di.PersistState;
+import org.eclipse.e4.ui.internal.workbench.Activator;
+import org.eclipse.e4.ui.internal.workbench.Policy;
 import org.eclipse.e4.ui.model.application.ui.basic.MPart;
 import org.eclipse.e4.ui.model.application.ui.menu.MMenu;
 import org.eclipse.e4.ui.workbench.IPresentationEngine;
@@ -201,10 +203,14 @@ public abstract class CompatibilityPart implements ISelectionChangedListener {
 	@Focus
 	void delegateSetFocus() {
 		if (focusDelegatingInProgress) {
-			if (logger != null && logger.isDebugEnabled()) {
-				logger.debug("Ignored attempt to set focus during set focus for: " + this); //$NON-NLS-1$
+			if (Policy.DEBUG_FOCUS) {
+				Activator.trace(Policy.DEBUG_FOCUS_FLAG, "Ignored attempt to set focus during set focus for: " + this, //$NON-NLS-1$
+						null);
 			}
 			return;
+		}
+		if (Policy.DEBUG_FOCUS) {
+			Activator.trace(Policy.DEBUG_FOCUS_FLAG, "Starting set focus for: " + this, null); //$NON-NLS-1$
 		}
 		focusDelegatingInProgress = true;
 		try {
@@ -222,6 +228,9 @@ public abstract class CompatibilityPart implements ISelectionChangedListener {
 			}
 		} finally {
 			focusDelegatingInProgress = false;
+		}
+		if (Policy.DEBUG_FOCUS) {
+			Activator.trace(Policy.DEBUG_FOCUS_FLAG, "Done with set focus for: " + this, null); //$NON-NLS-1$
 		}
 	}
 

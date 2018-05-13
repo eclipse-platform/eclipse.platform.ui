@@ -16,6 +16,8 @@ import static org.eclipse.e4.ui.internal.workbench.swt.Policy.DEBUG_CMDS_FLAG;
 import static org.eclipse.e4.ui.internal.workbench.swt.Policy.DEBUG_CONTEXTS;
 import static org.eclipse.e4.ui.internal.workbench.swt.Policy.DEBUG_CONTEXTS_FLAG;
 import static org.eclipse.e4.ui.internal.workbench.swt.Policy.DEBUG_FLAG;
+import static org.eclipse.e4.ui.internal.workbench.swt.Policy.DEBUG_FOCUS;
+import static org.eclipse.e4.ui.internal.workbench.swt.Policy.DEBUG_FOCUS_FLAG;
 import static org.eclipse.e4.ui.internal.workbench.swt.Policy.DEBUG_MENUS;
 import static org.eclipse.e4.ui.internal.workbench.swt.Policy.DEBUG_MENUS_FLAG;
 import static org.eclipse.e4.ui.internal.workbench.swt.Policy.DEBUG_RENDERER;
@@ -148,6 +150,7 @@ public class WorkbenchSWTActivator implements BundleActivator, DebugOptionsListe
 		TRACE = options.getBooleanOption(PI_RENDERERS + TRACE_FLAG, false);
 		DEBUG_CMDS = options.getBooleanOption(PI_RENDERERS + DEBUG_CMDS_FLAG, false);
 		DEBUG_CONTEXTS = options.getBooleanOption(PI_RENDERERS + DEBUG_CONTEXTS_FLAG, false);
+		DEBUG_FOCUS = options.getBooleanOption(PI_RENDERERS + DEBUG_FOCUS_FLAG, false);
 		DEBUG_MENUS = options.getBooleanOption(PI_RENDERERS + DEBUG_MENUS_FLAG, false);
 		DEBUG_RENDERER = options.getBooleanOption(PI_RENDERERS + DEBUG_RENDERER_FLAG, false);
 		DEBUG_WORKBENCH = options.getBooleanOption(PI_RENDERERS + DEBUG_WORKBENCH_FLAG, false);

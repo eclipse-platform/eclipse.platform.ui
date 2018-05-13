@@ -1,5 +1,6 @@
 org.eclipse.e4.ui.workbench.swt/debug = false
 org.eclipse.e4.ui.workbench.swt/trace = false
+org.eclipse.e4.ui.workbench.swt/trace/focus = false
 org.eclipse.e4.ui.workbench.swt/trace/commands = false
 org.eclipse.e4.ui.workbench.swt/trace/menus = false
 org.eclipse.e4.ui.workbench.swt/trace/eclipse.context = false

@@ -11,7 +11,10 @@
 package org.eclipse.ui.internal;
 
 import org.eclipse.e4.core.contexts.ContextInjectionFactory;
+import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.ui.di.Focus;
+import org.eclipse.e4.ui.internal.workbench.Activator;
+import org.eclipse.e4.ui.internal.workbench.Policy;
 import org.eclipse.e4.ui.model.application.ui.basic.MPart;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.part.ViewPart;
@@ -44,9 +47,20 @@ public class E4PartWrapper extends ViewPart {
 
 	@Override
 	public void setFocus() {
-		if (wrappedPart.getObject() != null && wrappedPart.getContext() != null)
-			ContextInjectionFactory.invoke(wrappedPart.getObject(), Focus.class,
-					wrappedPart.getContext());
+		Object object = wrappedPart.getObject();
+		IEclipseContext context = wrappedPart.getContext();
+		if (object != null && context != null) {
+			ContextInjectionFactory.invoke(object, Focus.class, context);
+			if (Policy.DEBUG_FOCUS) {
+				Activator.trace(Policy.DEBUG_FOCUS_FLAG, "Focused: " + object, null); //$NON-NLS-1$
+			}
+		} else {
+			if (Policy.DEBUG_FOCUS) {
+				Activator.trace(Policy.DEBUG_FOCUS_FLAG,
+						"Focus not set, object or context missing: " + object + ", " + context, //$NON-NLS-1$ //$NON-NLS-2$
+						new IllegalStateException());
+			}
+		}
 	}
 }
 

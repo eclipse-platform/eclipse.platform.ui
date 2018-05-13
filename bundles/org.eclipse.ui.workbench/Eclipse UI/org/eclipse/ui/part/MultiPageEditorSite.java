@@ -14,6 +14,8 @@ import java.util.ArrayList;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.e4.core.contexts.ContextFunction;
 import org.eclipse.e4.core.contexts.IEclipseContext;
+import org.eclipse.e4.ui.internal.workbench.Activator;
+import org.eclipse.e4.ui.internal.workbench.Policy;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.viewers.ILabelDecorator;
 import org.eclipse.jface.viewers.IPostSelectionProvider;
@@ -61,7 +63,7 @@ public class MultiPageEditorSite implements IEditorSite, INestable {
 	/**
 	 * The nested editor.
 	 */
-	private IEditorPart editor;
+	private final IEditorPart editor;
 
 	/**
 	 * The list of popup menu extenders; <code>null</code> if none registered.
@@ -71,32 +73,32 @@ public class MultiPageEditorSite implements IEditorSite, INestable {
 	/**
 	 * The multi-page editor.
 	 */
-	private MultiPageEditorPart multiPageEditor;
+	private final MultiPageEditorPart multiPageEditor;
 
 	/**
 	 * The post selection changed listener.
 	 */
-	private ISelectionChangedListener postSelectionChangedListener = null;
+	private ISelectionChangedListener postSelectionChangedListener;
 
 	/**
 	 * The selection change listener, initialized lazily; <code>null</code> if
 	 * not yet created.
 	 */
-	private ISelectionChangedListener selectionChangedListener = null;
+	private ISelectionChangedListener selectionChangedListener;
 
 	/**
 	 * The selection provider; <code>null</code> if none.
 	 *
 	 * @see MultiPageEditorSite#setSelectionProvider(ISelectionProvider)
 	 */
-	private ISelectionProvider selectionProvider = null;
+	private ISelectionProvider selectionProvider;
 
 	/**
 	 * The cached copy of the key binding service specific to this multi-page
 	 * editor site. This value is <code>null</code> if it is not yet
 	 * initialized.
 	 */
-	private IKeyBindingService service = null;
+	private IKeyBindingService service;
 
 	/**
 	 * The local service locator for this multi-page editor site. This value is
@@ -106,9 +108,9 @@ public class MultiPageEditorSite implements IEditorSite, INestable {
 
 	private NestableContextService contextService;
 
-	private IEclipseContext context;
+	private final IEclipseContext context;
 
-	private boolean active = false;
+	private boolean active;
 
 	/**
 	 * Creates a site for the given editor nested within the given multi-page
@@ -177,6 +179,9 @@ public class MultiPageEditorSite implements IEditorSite, INestable {
 	@Override
 	public final void activate() {
 		active = true;
+		if (Policy.DEBUG_CONTEXTS) {
+			Activator.trace(Policy.DEBUG_CONTEXTS_FLAG, "Activating " + this, null);//$NON-NLS-1$
+		}
 		context.activate();
 		serviceLocator.activate();
 
@@ -194,6 +199,9 @@ public class MultiPageEditorSite implements IEditorSite, INestable {
 	@Override
 	public final void deactivate() {
 		active = false;
+		if (Policy.DEBUG_CONTEXTS) {
+			Activator.trace(Policy.DEBUG_CONTEXTS_FLAG, "Deactivating " + this, null);//$NON-NLS-1$
+		}
 		if (contextService != null) {
 			contextService.deactivate();
 		}
@@ -206,6 +214,9 @@ public class MultiPageEditorSite implements IEditorSite, INestable {
 	 * Dispose the contributions.
 	 */
 	public void dispose() {
+		if (Policy.DEBUG_CONTEXTS) {
+			Activator.trace(Policy.DEBUG_CONTEXTS_FLAG, "Disposing " + this, null);//$NON-NLS-1$
+		}
 		if (menuExtenders != null) {
 			for (int i = 0; i < menuExtenders.size(); i++) {
 				((PopupMenuExtender) menuExtenders.get(i)).dispose();
@@ -590,4 +601,14 @@ public class MultiPageEditorSite implements IEditorSite, INestable {
 			}
 		}
 	}
+
+	@Override
+	public String toString() {
+		StringBuilder builder = new StringBuilder();
+		builder.append(context);
+		builder.append(", active="); //$NON-NLS-1$
+		builder.append(active);
+		return builder.toString();
+	}
+
 }

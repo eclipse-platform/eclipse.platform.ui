@@ -684,10 +684,17 @@ public class PartServiceImpl implements EPartService {
 	private void activate(MPart part, boolean requiresFocus, boolean activateBranch) {
 		if (part == null) {
 			if (constructed && activePart != null) {
+				if (Policy.DEBUG_FOCUS) {
+					Activator.trace(Policy.DEBUG_FOCUS_FLAG, "Deactivated: " + activePart, null);//$NON-NLS-1$
+				}
 				firePartDeactivated(activePart);
 			}
 			activePart = part;
 			return;
+		}
+
+		if (Policy.DEBUG_FOCUS) {
+			Activator.trace(Policy.DEBUG_FOCUS_FLAG, "Activating " + part, null);//$NON-NLS-1$
 		}
 
 		// Delegate activations to a CompositePart's inner part (if any)
@@ -705,6 +712,9 @@ public class PartServiceImpl implements EPartService {
 
 		// only activate parts that is under our control
 		if (!isInContainer(part)) {
+			if (Policy.DEBUG_FOCUS) {
+				Activator.trace(Policy.DEBUG_FOCUS_FLAG, "Activation failed, part is not in container: " + part, null);//$NON-NLS-1$
+			}
 			return;
 		}
 
@@ -716,6 +726,9 @@ public class PartServiceImpl implements EPartService {
 			// pending when this service was instantiated
 			partActivationHistory.prepend(part);
 			UIEvents.publishEvent(UIEvents.UILifeCycle.ACTIVATE, part);
+			if (Policy.DEBUG_FOCUS) {
+				Activator.trace(Policy.DEBUG_FOCUS_FLAG, "Trying to activate already active part: " + part, null);//$NON-NLS-1$
+			}
 			return;
 		}
 		if (contextService != null) {
@@ -729,6 +742,9 @@ public class PartServiceImpl implements EPartService {
 		activePart = part;
 
 		if (constructed && lastActivePart != null && lastActivePart != activePart) {
+			if (Policy.DEBUG_FOCUS) {
+				Activator.trace(Policy.DEBUG_FOCUS_FLAG, "Deactivated: " + lastActivePart, null);//$NON-NLS-1$
+			}
 			firePartDeactivated(lastActivePart);
 		}
 
@@ -761,6 +777,9 @@ public class PartServiceImpl implements EPartService {
 			}
 			if (contextManager != null) {
 				contextManager.deferUpdates(false);
+			}
+			if (Policy.DEBUG_FOCUS) {
+				Activator.trace(Policy.DEBUG_FOCUS_FLAG, "Activation done: " + part, null);//$NON-NLS-1$
 			}
 		}
 	}

@@ -1,5 +1,6 @@
 org.eclipse.e4.ui.workbench/debug = false
 org.eclipse.e4.ui.workbench/trace = false
+org.eclipse.e4.ui.workbench/trace/focus = false
 org.eclipse.e4.ui.workbench/trace/menus = false
 org.eclipse.e4.ui.workbench/trace/commands = false
 org.eclipse.e4.ui.workbench/trace/eclipse.context = false
