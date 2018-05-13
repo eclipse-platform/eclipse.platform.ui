@@ -708,7 +708,7 @@ public class LineNumberRulerColumn implements IVerticalRulerColumn {
 
 		if (fBuffer != null) {
 			Rectangle r= fBuffer.getBounds();
-			if (r.width != size.x || r.height != size.y) {
+			if (IS_MAC_BUG_516293 || r.width != size.x || r.height != size.y) {
 				fBuffer.dispose();
 				fBuffer= null;
 			}
