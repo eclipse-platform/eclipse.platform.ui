@@ -50,6 +50,12 @@ public class EclipseContext implements IEclipseContext {
 	 */
 	public static final String DEBUG_STRING = "debugString"; //$NON-NLS-1$
 
+	/**
+	 * String used in {@link #toString()} to name contexts not providing the value
+	 * for the {@link #DEBUG_STRING} variable
+	 */
+	public static final String ANONYMOUS_CONTEXT_NAME = "Anonymous Context"; //$NON-NLS-1$
+
 	static class Scheduled {
 
 		public TrackableComputationExt runnable;
@@ -218,8 +224,9 @@ public class EclipseContext implements IEclipseContext {
 			}
 		}
 
-		if (debugAddOn != null)
+		if (debugAddOn != null) {
 			debugAddOn.notify(this, IEclipseContextDebugger.EventType.DISPOSED, null);
+		}
 	}
 
 	@Override
@@ -437,7 +444,7 @@ public class EclipseContext implements IEclipseContext {
 	@Override
 	public String toString() {
 		Object debugString = localValues.get(DEBUG_STRING);
-		return debugString instanceof String ? ((String) debugString) : "Anonymous Context"; //$NON-NLS-1$
+		return debugString instanceof String ? ((String) debugString) : ANONYMOUS_CONTEXT_NAME;
 	}
 
 	private void trackAccess(String name) {
@@ -672,6 +679,9 @@ public class EclipseContext implements IEclipseContext {
 		if (this == parent.getActiveChild())
 			return;
 		parent.set(ACTIVE_CHILD, this);
+		if (debugAddOn != null) {
+			debugAddOn.notify(this, IEclipseContextDebugger.EventType.ACTIVATED, null);
+		}
 	}
 
 	@Override
@@ -689,6 +699,9 @@ public class EclipseContext implements IEclipseContext {
 		if (this != parent.getActiveChild())
 			return; // this is not an active context; return
 		parent.set(ACTIVE_CHILD, null);
+		if (debugAddOn != null) {
+			debugAddOn.notify(this, IEclipseContextDebugger.EventType.DEACTIVATED, null);
+		}
 	}
 
 	// This method is for debug only, do not use externally

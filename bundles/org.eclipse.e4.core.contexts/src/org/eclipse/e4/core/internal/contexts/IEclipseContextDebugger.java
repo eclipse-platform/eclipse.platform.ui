@@ -15,7 +15,7 @@ public interface IEclipseContextDebugger {
 	String SERVICE_NAME = IEclipseContextDebugger.class.getName();
 
 	public enum EventType {
-		CONSTRUCTED, DISPOSED, LISTENER_ADDED
+		CONSTRUCTED, DISPOSED, LISTENER_ADDED, ACTIVATED, DEACTIVATED
 	}
 
 	void notify(EclipseContext context, EventType type, Object data);
