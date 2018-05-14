@@ -293,4 +293,5 @@ class AsyncCompletionProposalPopup extends CompletionProposalPopup {
 		}
 		return IDocument.DEFAULT_CONTENT_TYPE;
 	}
+
 }

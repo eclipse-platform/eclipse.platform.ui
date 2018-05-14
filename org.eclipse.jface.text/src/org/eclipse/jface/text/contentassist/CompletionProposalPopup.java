@@ -1900,7 +1900,7 @@ class CompletionProposalPopup implements IContentAssistListener {
 	 */
 	void setMessage(String message) {
 		Assert.isNotNull(message);
-		if (isActive() && fMessageText != null)
+		if (isActive() && fMessageText != null && !fMessageText.isDisposed())
 			fMessageText.setText(message + " "); //$NON-NLS-1$
 	}
 
@@ -1923,7 +1923,7 @@ class CompletionProposalPopup implements IContentAssistListener {
 	 * @since 3.2
 	 */
 	public void setStatusLineVisible(boolean show) {
-		if (!isActive() || show == (fMessageText != null))
+		if (!isActive() || show == (fMessageText != null && !fMessageText.isDisposed()))
 			return; // nothing to do
 
 		if (show) {
