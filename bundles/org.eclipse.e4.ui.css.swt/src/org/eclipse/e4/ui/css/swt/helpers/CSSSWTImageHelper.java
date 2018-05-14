@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2015 Angelo Zerr and others.
+ * Copyright (c) 2008, 2018 Angelo Zerr and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,9 +11,10 @@
  *******************************************************************************/
 package org.eclipse.e4.ui.css.swt.helpers;
 
-import java.io.IOException;
-import java.io.InputStream;
+import java.net.URL;
 import org.eclipse.e4.ui.css.core.util.resources.IResourcesLocatorManager;
+import org.eclipse.e4.ui.css.core.utils.StringUtils;
+import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.graphics.Device;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Button;
@@ -50,30 +51,12 @@ public class CSSSWTImageHelper {
 	private static Image loadImageFromURL(Device device, String path,
 			IResourcesLocatorManager manager) throws Exception {
 		Image result = null;
-		InputStream in = null;
-		try {
-			// URL url = new URL(path);
-			in = manager.getInputStream(path);
-			if (in != null) {
-				result = new Image(device, in);
-			}
-			// } catch (IOException e) {
-			// e.printStackTrace();
-			// return null;
-			// } catch (SWTException e) {
-			// if (e.code != SWT.ERROR_INVALID_IMAGE) {
-			// throw e;
-			// }
-		} finally {
-			try {
-				if (in != null) {
-					in.close();
-				}
-			} catch (IOException e) {
-				// e.printStackTrace();
-				throw e;
-			}
+
+		String s = manager.resolve(path);
+		if (!StringUtils.isEmpty(s)) {
+			result = ImageDescriptor.createFromURL(new URL(s)).createImage();
 		}
+
 		return result;
 	}
 

@@ -30,5 +30,6 @@ Require-Bundle: org.eclipse.e4.ui.css.core;bundle-version="0.12.200",
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Bundle-Activator: org.eclipse.e4.ui.internal.css.swt.CSSActivator
 Bundle-ActivationPolicy: lazy
-Import-Package: org.w3c.dom.css
+Import-Package: org.eclipse.jface.resource,
+ org.w3c.dom.css
 Automatic-Module-Name: org.eclipse.e4.ui.css.swt
