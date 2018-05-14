@@ -663,8 +663,8 @@ public class ContentTypesPreferencePage extends PreferencePage implements
 		buttonsComposite.setLayoutData(new GridData(SWT.DEFAULT, SWT.TOP, false, false));
 		buttonsComposite.setLayout(new GridLayout(1, false));
 		Button addRootContentTypeButton = new Button(buttonsComposite, SWT.PUSH);
-		setButtonLayoutData(addRootContentTypeButton);
 		addRootContentTypeButton.setText(WorkbenchMessages.ContentTypes_addRootContentTypeButton);
+		setButtonLayoutData(addRootContentTypeButton);
 		addRootContentTypeButton.addSelectionListener(widgetSelectedAdapter(e -> {
 			String id = "userCreated" + System.currentTimeMillis(); //$NON-NLS-1$
 			IContentTypeManager manager = (IContentTypeManager) contentTypesViewer.getInput();
@@ -682,8 +682,8 @@ public class ContentTypesPreferencePage extends PreferencePage implements
 			}
 		}));
 		addChildContentTypeButton = new Button(buttonsComposite, SWT.PUSH);
-		setButtonLayoutData(addChildContentTypeButton);
 		addChildContentTypeButton.setText(WorkbenchMessages.ContentTypes_addChildContentTypeButton);
+		setButtonLayoutData(addChildContentTypeButton);
 		addChildContentTypeButton.addSelectionListener(widgetSelectedAdapter(e -> {
 			String id = "userCreated" + System.currentTimeMillis(); //$NON-NLS-1$
 			IContentTypeManager manager = (IContentTypeManager) contentTypesViewer.getInput();
@@ -703,8 +703,8 @@ public class ContentTypesPreferencePage extends PreferencePage implements
 		}));
 		addChildContentTypeButton.setEnabled(getSelectedContentType() != null);
 		removeContentTypeButton = new Button(buttonsComposite, SWT.PUSH);
-		setButtonLayoutData(removeContentTypeButton);
 		removeContentTypeButton.setText(WorkbenchMessages.ContentTypes_removeContentTypeButton);
+		setButtonLayoutData(removeContentTypeButton);
 		removeContentTypeButton.addSelectionListener(widgetSelectedAdapter(e -> {
 			IContentType selectedContentType = getSelectedContentType();
 			try {
