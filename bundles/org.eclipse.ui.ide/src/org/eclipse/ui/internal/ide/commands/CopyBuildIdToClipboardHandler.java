@@ -41,6 +41,8 @@ public class CopyBuildIdToClipboardHandler extends AbstractHandler {
 	private static final String OSGI_ARCH = "osgi.arch"; //$NON-NLS-1$
 	/** Platform windowing system */
 	private static final String OSGI_WS = "osgi.ws"; //$NON-NLS-1$
+	/** Java version */
+	private static final String JAVA_VERSION = "java.version"; //$NON-NLS-1$
 	/** GTK version */
 	private static final String SWT_GTK_VERSION = "org.eclipse.swt.internal.gtk.version"; //$NON-NLS-1$
 	/** WebKitGTK version */
@@ -68,11 +70,15 @@ public class CopyBuildIdToClipboardHandler extends AbstractHandler {
 		if (gtkVer != null) {
 			osInfo += String.format(" %s", gtkVer); //$NON-NLS-1$
 		}
+
 		// defined after launching WebKit, e.g. in Welcome Window
 		String webkitGtkVer = sp.getProperty(SWT_WEBKITGTK_VERSION);
 		if (webkitGtkVer != null) {
 			osInfo += String.format(", WebKit %s", webkitGtkVer); //$NON-NLS-1$
 		}
+
+		String javaVersion = System.getProperty(JAVA_VERSION); // $NON-NLS-1$
+		osInfo += String.format("%nJava version: %s", javaVersion);//$NON-NLS-1$
 
 		String toCopy = String.format("%s%n%s%n%s%n%s%n", lines[0], lines[2], lines[3], osInfo); //$NON-NLS-1$
 
