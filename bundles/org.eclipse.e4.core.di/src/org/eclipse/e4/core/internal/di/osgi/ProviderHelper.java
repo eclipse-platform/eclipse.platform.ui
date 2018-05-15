@@ -24,8 +24,6 @@ import org.osgi.framework.BundleContext;
 import org.osgi.framework.Constants;
 import org.osgi.framework.FrameworkUtil;
 import org.osgi.framework.InvalidSyntaxException;
-import org.osgi.framework.ServiceEvent;
-import org.osgi.framework.ServiceListener;
 import org.osgi.framework.ServiceReference;
 
 /**
@@ -43,12 +41,9 @@ public class ProviderHelper {
 			BundleContext bundleContext = bundle.getBundleContext();
 			String filter = '(' + Constants.OBJECTCLASS + '=' + ExtendedObjectSupplier.SERVICE_NAME + ')';
 			try {
-				bundleContext.addServiceListener(new ServiceListener() {
-					@Override
-					public void serviceChanged(ServiceEvent event) {
-						synchronized (extendedSuppliers) {
-							extendedSuppliers.clear();
-						}
+				bundleContext.addServiceListener(event -> {
+					synchronized (extendedSuppliers) {
+						extendedSuppliers.clear();
 					}
 				}, filter);
 			} catch (InvalidSyntaxException e) {

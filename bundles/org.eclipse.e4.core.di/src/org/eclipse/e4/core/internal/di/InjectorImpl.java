@@ -25,7 +25,6 @@ import java.security.CodeSource;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -382,13 +381,10 @@ public class InjectorImpl implements IInjector {
 			ArrayList<Constructor<?>> sortedConstructors = new ArrayList<>(constructors.length);
 			for (Constructor<?> constructor : constructors)
 				sortedConstructors.add(constructor);
-			Collections.sort(sortedConstructors, new Comparator<Constructor<?>>() {
-				@Override
-				public int compare(Constructor<?> c1, Constructor<?> c2) {
-					int l1 = c1.getParameterTypes().length;
-					int l2 = c2.getParameterTypes().length;
-					return l2 - l1;
-				}
+			Collections.sort(sortedConstructors, (c1, c2) -> {
+				int l1 = c1.getParameterTypes().length;
+				int l2 = c2.getParameterTypes().length;
+				return l2 - l1;
 			});
 
 			for (Constructor<?> constructor : sortedConstructors) {
@@ -822,13 +818,10 @@ public class InjectorImpl implements IInjector {
 			constructors = c.getDeclaredConstructors();
 			// Sort the constructors by descending number of constructor
 			// arguments
-			Arrays.sort(constructors, new Comparator<Constructor<?>>() {
-				@Override
-				public int compare(Constructor<?> c1, Constructor<?> c2) {
-					int l1 = c1.getParameterTypes().length;
-					int l2 = c2.getParameterTypes().length;
-					return l2 - l1;
-				}
+			Arrays.sort(constructors, (c1, c2) -> {
+				int l1 = c1.getParameterTypes().length;
+				int l2 = c2.getParameterTypes().length;
+				return l2 - l1;
 			});
 			constructorsCache.put(c, constructors);
 		}
