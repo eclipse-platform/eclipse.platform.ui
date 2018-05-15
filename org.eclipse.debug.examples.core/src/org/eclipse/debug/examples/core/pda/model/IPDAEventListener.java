@@ -39,6 +39,6 @@ public interface IPDAEventListener {
 	 *
 	 * @param event the event
 	 */
-	public void handleEvent(PDAEvent event);
+	void handleEvent(PDAEvent event);
 
 }
