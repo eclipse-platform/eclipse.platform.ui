@@ -29,5 +29,5 @@ public interface IHyperlink2 extends IHyperlink {
 	 *
 	 * @param event the SWT event which triggered this hyperlink
 	 */
-	public void linkActivated(Event event);
+	void linkActivated(Event event);
 }

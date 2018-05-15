@@ -24,7 +24,7 @@ public interface IConsoleManager {
 	 *
 	 * @param listener listener to register
 	 */
-	public void addConsoleListener(IConsoleListener listener);
+	void addConsoleListener(IConsoleListener listener);
 
 	/**
 	 * Unregisters the given listener for console notifications. Has
@@ -32,7 +32,7 @@ public interface IConsoleManager {
 	 *
 	 * @param listener listener to unregister
 	 */
-	public void removeConsoleListener(IConsoleListener listener);
+	void removeConsoleListener(IConsoleListener listener);
 
 	/**
 	 * Adds the given consoles to the console manager. Has no effect for
@@ -41,7 +41,7 @@ public interface IConsoleManager {
 	 *
 	 * @param consoles consoles to add
 	 */
-	public void addConsoles(IConsole[] consoles);
+	void addConsoles(IConsole[] consoles);
 
 	/**
 	 * Removes the given consoles from the console manager. If the consoles are
@@ -50,14 +50,14 @@ public interface IConsoleManager {
 	 *
 	 * @param consoles consoles to remove
 	 */
-	public void removeConsoles(IConsole[] consoles);
+	void removeConsoles(IConsole[] consoles);
 
 	/**
 	 * Returns a collection of consoles registered with the console manager.
 	 *
 	 * @return a collection of consoles registered with the console manager
 	 */
-	public IConsole[] getConsoles();
+	IConsole[] getConsoles();
 
 	/**
 	 * Opens the console view and displays given the console.
@@ -67,7 +67,7 @@ public interface IConsoleManager {
 	 *
 	 * @param console console to display
 	 */
-	public void showConsoleView(IConsole console);
+	void showConsoleView(IConsole console);
 
 	/**
 	 * Warns that the content of the given console has changed in
@@ -76,7 +76,7 @@ public interface IConsoleManager {
 	 *
 	 * @param console the console that has changed
 	 */
-	public void warnOfContentChange(IConsole console);
+	void warnOfContentChange(IConsole console);
 
 	/**
 	 * Creates and returns a collection of new pattern match listeners enabled for
@@ -94,7 +94,7 @@ public interface IConsoleManager {
 	 * @see IPatternMatchListener
 	 * @since 3.1
 	 */
-	public IPatternMatchListener[] createPatternMatchListeners(IConsole console);
+	IPatternMatchListener[] createPatternMatchListeners(IConsole console);
 
 	/**
 	 * Requests a redraw of any visible console page containing the specified console.
@@ -102,6 +102,6 @@ public interface IConsoleManager {
 	 * @param console the console to be refreshed
 	 * @since 3.1
 	 */
-	public void refresh(IConsole console);
+	void refresh(IConsole console);
 
 }

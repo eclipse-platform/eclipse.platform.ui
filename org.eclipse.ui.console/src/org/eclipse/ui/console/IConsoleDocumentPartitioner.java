@@ -36,7 +36,7 @@ public interface IConsoleDocumentPartitioner extends IDocumentPartitioner {
 	 * @return whether this partitioner's document is read-only at the specified
 	 * offset
 	 */
-	public boolean isReadOnly(int offset);
+	boolean isReadOnly(int offset);
 
 	/**
 	 * Returns style ranges for the specified region of this partitioner's document
@@ -47,5 +47,5 @@ public interface IConsoleDocumentPartitioner extends IDocumentPartitioner {
 	 * @return style ranges for the specified region of this partitioner's document
 	 * to use when rendering, or <code>null</code> if none
 	 */
-	public StyleRange[] getStyleRanges(int offset, int length);
+	StyleRange[] getStyleRanges(int offset, int length);
 }

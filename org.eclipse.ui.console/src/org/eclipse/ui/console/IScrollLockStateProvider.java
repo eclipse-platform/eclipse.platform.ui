@@ -29,7 +29,7 @@ public interface IScrollLockStateProvider {
 	 * @param scrollLock <code>true</code> to turn scroll lock on, otherwise
 	 *            <code>false</code>
 	 */
-	public void setScrollLock(boolean scrollLock);
+	void setScrollLock(boolean scrollLock);
 
 
 	/**
@@ -39,7 +39,7 @@ public interface IScrollLockStateProvider {
 	 * @return <code>true</code> if scroll lock is on, <code>false</code>
 	 *         otherwise
 	 */
-	public boolean getScrollLock();
+	boolean getScrollLock();
 
 	/**
 	 * Sets the auto-scroll lock state, e.g. when the user moves the caret
@@ -48,7 +48,7 @@ public interface IScrollLockStateProvider {
 	 * @param scrollLock <code>true</code> to turn auto-scroll lock on,
 	 *            otherwise <code>false</code>
 	 */
-	public void setAutoScrollLock(boolean scrollLock);
+	void setAutoScrollLock(boolean scrollLock);
 
 	/**
 	 * Returns the auto-scroll lock state.
@@ -57,5 +57,5 @@ public interface IScrollLockStateProvider {
 	 * @return <code>true</code> if auto-scroll lock is on, <code>false</code>
 	 *         otherwise
 	 */
-	public boolean getAutoScrollLock();
+	boolean getAutoScrollLock();
 }

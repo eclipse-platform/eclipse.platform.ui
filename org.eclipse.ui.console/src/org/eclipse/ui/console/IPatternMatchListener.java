@@ -59,7 +59,7 @@ public interface IPatternMatchListener extends IPatternMatchListenerDelegate {
 	 *
 	 * @return the regular expression to be used for matching
 	 */
-	public String getPattern();
+	String getPattern();
 
 	/**
 	 * Returns the flags to use when compiling this pattern match listener's
@@ -69,7 +69,7 @@ public interface IPatternMatchListener extends IPatternMatchListenerDelegate {
 	 * regular expression
 	 * @see java.util.regex.Pattern#compile(java.lang.String, int)
 	 */
-	public int getCompilerFlags();
+	int getCompilerFlags();
 
 	/**
 	 * Returns a simple regular expression used to identify lines that may
@@ -82,6 +82,6 @@ public interface IPatternMatchListener extends IPatternMatchListenerDelegate {
 	 * @return a simple regular expression used to identify lines that may
 	 * match this pattern matcher's complete pattern, or <code>null</code>
 	 */
-	public String getLineQualifier();
+	String getLineQualifier();
 
 }

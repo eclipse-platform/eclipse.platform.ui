@@ -43,6 +43,6 @@ public interface IConsoleFactory {
 	 * Opens a console in the console view. Implementations may create a new
 	 * console or activate an existing console.
 	 */
-	public void openConsole();
+	void openConsole();
 
 }

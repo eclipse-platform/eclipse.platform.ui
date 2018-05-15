@@ -22,16 +22,16 @@ public interface IHyperlink {
 	/**
 	 * Notification that the mouse has entered this link's region.
 	 */
-	public void linkEntered();
+	void linkEntered();
 
 	/**
 	 * Notification that the mouse has exited this link's region
 	 */
-	public void linkExited();
+	void linkExited();
 
 	/**
 	 * Notification that this link has been activated. Performs
 	 * context specific linking.
 	 */
-	public void linkActivated();
+	void linkActivated();
 }

@@ -37,7 +37,7 @@ public interface IConsole {
 	 *
 	 * @return the name of this console
 	 */
-	public String getName();
+	String getName();
 
 	/**
 	 * Returns an image descriptor for this console, or <code>null</code>
@@ -46,7 +46,7 @@ public interface IConsole {
 	 * @return an image descriptor for this console, or <code>null</code>
 	 *  if none
 	 */
-	public ImageDescriptor getImageDescriptor();
+	ImageDescriptor getImageDescriptor();
 
 	/**
 	 * Creates and returns a new page for this console. The page is displayed
@@ -55,7 +55,7 @@ public interface IConsole {
 	 * @param view the view in which the page is to be created
 	 * @return a page book view page representation of this console
 	 */
-	public IPageBookViewPage createPage(IConsoleView view);
+	IPageBookViewPage createPage(IConsoleView view);
 
 	/**
 	 * Adds a listener for changes to properties of this console.
@@ -75,7 +75,7 @@ public interface IConsole {
 	 *
 	 * @param listener a property change listener
 	 */
-	public void addPropertyChangeListener(IPropertyChangeListener listener);
+	void addPropertyChangeListener(IPropertyChangeListener listener);
 
 	/**
 	 * Removes the given property listener from this console page.
@@ -83,7 +83,7 @@ public interface IConsole {
 	 *
 	 * @param listener a property listener
 	 */
-	public void removePropertyChangeListener(IPropertyChangeListener listener);
+	void removePropertyChangeListener(IPropertyChangeListener listener);
 
 	/**
 	 * Returns a unique identifier for this console's type, or <code>null</code>
@@ -92,6 +92,6 @@ public interface IConsole {
 	 * @return a unique identifier for this console's type, or <code>null</code>
 	 * @since 3.1
 	 */
-	public String getType();
+	String getType();
 
 }

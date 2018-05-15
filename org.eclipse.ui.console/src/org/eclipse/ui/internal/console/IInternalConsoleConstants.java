@@ -14,23 +14,23 @@ package org.eclipse.ui.internal.console;
 public interface IInternalConsoleConstants {
 
 	// tool images
-	public static final String IMG_LCL_PIN = "IMG_LCL_PIN"; //$NON-NLS-1$
-	public static final String IMG_LCL_LOCK = "IMG_LCL_LOCK"; //$NON-NLS-1$
-	public static final String IMG_LCL_WRAP = "IMG_LCL_WRAP"; //$NON-NLS-1$
+	String IMG_LCL_PIN = "IMG_LCL_PIN"; //$NON-NLS-1$
+	String IMG_LCL_LOCK = "IMG_LCL_LOCK"; //$NON-NLS-1$
+	String IMG_LCL_WRAP = "IMG_LCL_WRAP"; //$NON-NLS-1$
 
 	// disabled local tool images
-	public static final String IMG_DLCL_PIN = "IMG_DLCL_PIN"; //$NON-NLS-1$
-	public static final String IMG_DLCL_CLEAR= "IMG_DLCL_CLEAR"; //$NON-NLS-1$
-	public static final String IMG_DLCL_LOCK = "IMG_DLCL_LOCK"; //$NON-NLS-1$
-	public static final String IMG_DLCL_WRAP = "IMG_DLCL_WRAP"; //$NON-NLS-1$
-	public static final String IMG_DLCL_CLOSE = "IMG_DLCL_CLOSE"; //$NON-NLS-1$
-	public static final String IMG_DLCL_NEW_CON = "IMG_DLCL_NEW_CON"; //$NON-NLS-1$
+	String IMG_DLCL_PIN = "IMG_DLCL_PIN"; //$NON-NLS-1$
+	String IMG_DLCL_CLEAR= "IMG_DLCL_CLEAR"; //$NON-NLS-1$
+	String IMG_DLCL_LOCK = "IMG_DLCL_LOCK"; //$NON-NLS-1$
+	String IMG_DLCL_WRAP = "IMG_DLCL_WRAP"; //$NON-NLS-1$
+	String IMG_DLCL_CLOSE = "IMG_DLCL_CLOSE"; //$NON-NLS-1$
+	String IMG_DLCL_NEW_CON = "IMG_DLCL_NEW_CON"; //$NON-NLS-1$
 
 	// enabled local tool images
-	public static final String IMG_ELCL_PIN = "IMG_ELCL_PIN"; //$NON-NLS-1$
-	public static final String IMG_ELCL_CLEAR= "IMG_ELCL_CLEAR"; //$NON-NLS-1$
-	public static final String IMG_ELCL_LOCK = "IMG_ELCL_LOCK"; //$NON-NLS-1$
-	public static final String IMG_ELCL_WRAP = "IMG_ELCL_WRAP"; //$NON-NLS-1$
-	public static final String IMG_ELCL_CLOSE = "IMG_ELCL_CLOSE"; //$NON-NLS-1$
-	public static final String IMG_ELCL_NEW_CON = "IMG_ELCL_NEW_CON"; //$NON-NLS-1$
+	String IMG_ELCL_PIN = "IMG_ELCL_PIN"; //$NON-NLS-1$
+	String IMG_ELCL_CLEAR= "IMG_ELCL_CLEAR"; //$NON-NLS-1$
+	String IMG_ELCL_LOCK = "IMG_ELCL_LOCK"; //$NON-NLS-1$
+	String IMG_ELCL_WRAP = "IMG_ELCL_WRAP"; //$NON-NLS-1$
+	String IMG_ELCL_CLOSE = "IMG_ELCL_CLOSE"; //$NON-NLS-1$
+	String IMG_ELCL_NEW_CON = "IMG_ELCL_NEW_CON"; //$NON-NLS-1$
 }

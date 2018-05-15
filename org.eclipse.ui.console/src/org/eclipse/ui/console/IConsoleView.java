@@ -27,7 +27,7 @@ public interface IConsoleView extends IViewPart, IScrollLockStateProvider {
 	 *
 	 * @param console console to display, cannot be <code>null</code>
 	 */
-	public void display(IConsole console);
+	void display(IConsole console);
 
 	/**
 	 * Pins this console view. No other console page will be displayed until
@@ -37,7 +37,7 @@ public interface IConsoleView extends IViewPart, IScrollLockStateProvider {
 	 * top of the stack, <code>false</code> otherwise
 	 * @since 3.1
 	 */
-	public void setPinned(boolean pin);
+	void setPinned(boolean pin);
 
 	/**
 	 * Displays and pins the given console in this console view. No
@@ -48,8 +48,7 @@ public interface IConsoleView extends IViewPart, IScrollLockStateProvider {
 	 * @deprecated rather than pinning a specific console, a console view is
 	 *  pinned - use <code>setPinned(boolean)</code>
 	 */
-	@Deprecated
-	public void pin(IConsole console);
+	@Deprecated void pin(IConsole console);
 
 	/**
 	 * Returns whether this console view is currently pinned to a
@@ -58,7 +57,7 @@ public interface IConsoleView extends IViewPart, IScrollLockStateProvider {
 	 * @return whether this console view is currently pinned to a
 	 *  specific console
 	 */
-	public boolean isPinned();
+	boolean isPinned();
 
 	/**
 	 * Returns the console currently being displayed, or <code>null</code>
@@ -67,14 +66,14 @@ public interface IConsoleView extends IViewPart, IScrollLockStateProvider {
 	 * @return the console currently being displayed, or <code>null</code>
 	 *  if none
 	 */
-	public IConsole getConsole();
+	IConsole getConsole();
 
 	/**
 	 * Warns that the content of the given console has changed.
 	 *
 	 * @param console the console that has changed
 	 */
-	public void warnOfContentChange(IConsole console);
+	void warnOfContentChange(IConsole console);
 
 	/**
 	 * Sets the scroll lock state of the currently active console.
@@ -82,8 +81,7 @@ public interface IConsoleView extends IViewPart, IScrollLockStateProvider {
 	 * @param scrollLock <code>true</code> to turn scroll lock on, otherwise <code>false</code>
 	 * @since 3.1
 	 */
-	@Override
-	public void setScrollLock(boolean scrollLock);
+	@Override void setScrollLock(boolean scrollLock);
 
 	/**
 	 * Returns the scroll lock state of the currently active console.
@@ -91,8 +89,7 @@ public interface IConsoleView extends IViewPart, IScrollLockStateProvider {
 	 * @return <code>true</code> if scroll lock is on, <code>false</code> otherwise
 	 * @since 3.1
 	 */
-	@Override
-	public boolean getScrollLock();
+	@Override boolean getScrollLock();
 
 	/**
 	 * Sets the word wrap state of the currently active console.
@@ -101,7 +98,7 @@ public interface IConsoleView extends IViewPart, IScrollLockStateProvider {
 	 *            <code>false</code>
 	 * @since 3.6
 	 */
-	public void setWordWrap(boolean wordWrap);
+	void setWordWrap(boolean wordWrap);
 
 	/**
 	 * Returns the word wrap state of the currently active console.
@@ -110,6 +107,6 @@ public interface IConsoleView extends IViewPart, IScrollLockStateProvider {
 	 *         otherwise
 	 * @since 3.6
 	 */
-	public boolean getWordWrap();
+	boolean getWordWrap();
 
 }

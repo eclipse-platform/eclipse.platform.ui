@@ -29,18 +29,18 @@ public interface IPatternMatchListenerDelegate {
 	 *
 	 * @param console the console in which pattern matching will be performed
 	 */
-	public void connect(TextConsole console);
+	void connect(TextConsole console);
 
 	/**
 	 * Notification that pattern matching has been completed in the console
 	 * this delegate was last connected to.
 	 */
-	public void disconnect();
+	void disconnect();
 
 	/**
 	 * Notification that a match has been found.
 	 *
 	 * @param event event describing where the match was found
 	 */
-	public void matchFound(PatternMatchEvent event);
+	void matchFound(PatternMatchEvent event);
 }

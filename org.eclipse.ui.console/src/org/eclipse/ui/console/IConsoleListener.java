@@ -26,7 +26,7 @@ public interface IConsoleListener {
 	 *
 	 * @param consoles added consoles
 	 */
-	public void consolesAdded(IConsole[] consoles);
+	void consolesAdded(IConsole[] consoles);
 
 	/**
 	 * Notification the given consoles have been removed from the
@@ -34,6 +34,6 @@ public interface IConsoleListener {
 	 *
 	 * @param consoles removed consoles
 	 */
-	public void consolesRemoved(IConsole[] consoles);
+	void consolesRemoved(IConsole[] consoles);
 
 }

@@ -50,22 +50,22 @@ public interface IConsolePageParticipant extends IAdaptable {
 	 * @param page the page corresponding to the given console
 	 * @param console the console for which a page has been created
 	 */
-	public void init(IPageBookViewPage page, IConsole console);
+	void init(IPageBookViewPage page, IConsole console);
 
 	/**
 	 * Disposes this page participant. Marks the end of this
 	 * page participant's lifecycle.
 	 */
-	public void dispose();
+	void dispose();
 
 	/**
 	 * Notification this participant's page has been activated.
 	 */
-	public void activated();
+	void activated();
 
 	/**
 	 * Notification this participant's page has been deactivated.
 	 */
-	public void deactivated();
+	void deactivated();
 
 }
