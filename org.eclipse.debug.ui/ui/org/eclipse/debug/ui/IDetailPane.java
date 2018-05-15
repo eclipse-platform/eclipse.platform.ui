@@ -37,7 +37,7 @@ public interface IDetailPane {
 	 *
 	 * @param partSite The workbench part site that this detail pane has been created in or <code>null</code>
 	 */
-	public void init(IWorkbenchPartSite partSite);
+	void init(IWorkbenchPartSite partSite);
 
 	/**
 	 * Creates and returns the main control for this detail pane using the given composite as a
@@ -46,13 +46,13 @@ public interface IDetailPane {
 	 * @param parent The parent composite that UI components should be added to
 	 * @return The main control for this detail pane
 	 */
-	public Control createControl(Composite parent);
+	Control createControl(Composite parent);
 
 	/**
 	 * Disposes this detail pane. This is the last method invoked on a detail pane and should
 	 * dispose of all UI components including the main composite returned in <code>createControl()</code>.
 	 */
-	public void dispose();
+	void dispose();
 
 	/**
 	 * Displays details for the given selection, possible <code>null</code>.  An empty selection
@@ -60,7 +60,7 @@ public interface IDetailPane {
 	 *
 	 * @param selection The selection to be displayed, possibly empty or <code>null</code>
 	 */
-	public void display(IStructuredSelection selection);
+	void display(IStructuredSelection selection);
 
 	/**
 	 * Allows this detail pane to give focus to an appropriate control, and returns whether
@@ -70,14 +70,14 @@ public interface IDetailPane {
 	 *
 	 * @return whether focus was taken
 	 */
-	public boolean setFocus();
+	boolean setFocus();
 
 	/**
 	 * Returns a unique identifier for this detail pane.
 	 *
 	 * @return A unique identifier for this detail pane
 	 */
-	public String getID();
+	String getID();
 
 	/**
 	 * The human readable name of this detail pane. This is a short description of the type
@@ -85,13 +85,13 @@ public interface IDetailPane {
 	 *
 	 * @return name of this detail pane
 	 */
-	public String getName();
+	String getName();
 
 	/**
 	 * A brief description of this detail pane, or <code>null</code> if none
 	 *
 	 * @return a description of this detail pane, or <code>null</code> if none
 	 */
-	public String getDescription();
+	String getDescription();
 
 }

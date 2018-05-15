@@ -23,6 +23,6 @@ public interface IDebugExceptionHandler {
 	 *
 	 * @param e debug exception
 	 */
-	public abstract void handleException(DebugException e);
+	void handleException(DebugException e);
 
 }

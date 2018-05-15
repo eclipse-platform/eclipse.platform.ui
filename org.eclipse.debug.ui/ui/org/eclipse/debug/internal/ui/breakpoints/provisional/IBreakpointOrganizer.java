@@ -35,21 +35,21 @@ public interface IBreakpointOrganizer extends IBreakpointOrganizerDelegate {
      *
      * @return a label for this breakpoint organizer
      */
-    public String getLabel();
+    String getLabel();
 
     /**
      * Returns an image descriptor for this breakpoint organizer or <code>null</code>.
      *
      * @return an image descriptor for this breakpoint organizer or <code>null</code>
      */
-    public ImageDescriptor getImageDescriptor();
+    ImageDescriptor getImageDescriptor();
 
     /**
      * Returns a unique identifier for this breakpoint organizer.
      *
      * @return a unique identifier for this breakpoint organizer
      */
-    public String getIdentifier();
+    String getIdentifier();
 
     /**
      * Returns the label for breakpoints that do not fall into a category
@@ -58,6 +58,6 @@ public interface IBreakpointOrganizer extends IBreakpointOrganizerDelegate {
      * @return label for breakpoints that do not fall into a category
      * for this organizer
      */
-    public String getOthersLabel();
+    String getOthersLabel();
 
 }

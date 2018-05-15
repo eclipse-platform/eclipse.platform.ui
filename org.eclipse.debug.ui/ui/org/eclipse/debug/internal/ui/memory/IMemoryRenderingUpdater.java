@@ -35,6 +35,6 @@ public interface IMemoryRenderingUpdater extends IMemoryBlockExtension {
 	/**
 	 * @return true if the updater will manage the update of a rendering
 	 */
-	public boolean supportsManagedUpdate(IMemoryRendering rendering);
+	boolean supportsManagedUpdate(IMemoryRendering rendering);
 
 }

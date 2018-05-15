@@ -35,7 +35,7 @@ public interface ITreeModelViewer extends ISelectionProvider {
      * @see #setAutoExpandLevel(int)
      * @see #getAutoExpandLevel()
      */
-    public static final int ALL_LEVELS = -1;
+    int ALL_LEVELS = -1;
 
     /**
      * Returns the Display object that this viewer is in.  The
@@ -44,14 +44,14 @@ public interface ITreeModelViewer extends ISelectionProvider {
      *
      * @return The display.
      */
-    public Display getDisplay();
+    Display getDisplay();
 
     /**
      * Returns this viewer's presentation context.
      *
      * @return presentation context
      */
-    public IPresentationContext getPresentationContext();
+    IPresentationContext getPresentationContext();
 
     /**
      * Returns the current input of this viewer, or <code>null</code>
@@ -60,7 +60,7 @@ public interface ITreeModelViewer extends ISelectionProvider {
      *
      * @return Input object
      */
-    public Object getInput();
+    Object getInput();
 
     /**
      * Sets the input of this viewer.  Setting the input resets the
@@ -69,15 +69,14 @@ public interface ITreeModelViewer extends ISelectionProvider {
      *
      * @param object Input element, or <code>null</code> if none.
      */
-    public void setInput(Object object);
+    void setInput(Object object);
 
     /**
      * Returns the current selection in viewer.
      *
      * @return selection object
      */
-    @Override
-	public ISelection getSelection();
+    @Override ISelection getSelection();
 
     /**
      * Sets a new selection for this viewer and optionally makes it visible.
@@ -90,7 +89,7 @@ public interface ITreeModelViewer extends ISelectionProvider {
      * @param force <code>true</code> if the selection should override the
      *   model selection policy
      */
-    public void setSelection(ISelection selection, boolean reveal, boolean force);
+    void setSelection(ISelection selection, boolean reveal, boolean force);
 
     /**
      * Attempts to set the selection for this viewer and optionally makes it visible.
@@ -104,7 +103,7 @@ public interface ITreeModelViewer extends ISelectionProvider {
      * @return <code>true</code> if the selection was set and <code>false</code> if the
      *  model selection policy overrides the selection attempt
      */
-    public boolean trySelection(ISelection selection, boolean reveal, boolean force);
+    boolean trySelection(ISelection selection, boolean reveal, boolean force);
 
     /**
      * Returns the auto-expand level.
@@ -113,7 +112,7 @@ public interface ITreeModelViewer extends ISelectionProvider {
      *         the tree are expanded automatically
      * @see #setAutoExpandLevel
      */
-    public int getAutoExpandLevel();
+    int getAutoExpandLevel();
 
     /**
      * Sets the auto-expand level to be used when the input of the viewer is set
@@ -133,7 +132,7 @@ public interface ITreeModelViewer extends ISelectionProvider {
      *            non-negative level, or <code>ALL_LEVELS</code> to expand all
      *            levels of the tree
      */
-    public void setAutoExpandLevel(int level);
+    void setAutoExpandLevel(int level);
 
     /**
      * Returns the label data for the given element and for the given column,
@@ -147,49 +146,49 @@ public interface ITreeModelViewer extends ISelectionProvider {
      * <code>null</code> if the given element is not found or is not
      * materialized in the virtual viewer.
      */
-    public ViewerLabel getElementLabel(TreePath path, String columnId);
+    ViewerLabel getElementLabel(TreePath path, String columnId);
 
     /**
      * Registers the specified listener for view update notifications.
      *
      * @param listener Listener to add
      */
-    public void addViewerUpdateListener(IViewerUpdateListener listener);
+    void addViewerUpdateListener(IViewerUpdateListener listener);
 
     /**
      * Removes the specified listener from update notifications.
      *
      * @param listener Listener to remove
      */
-    public void removeViewerUpdateListener(IViewerUpdateListener listener);
+    void removeViewerUpdateListener(IViewerUpdateListener listener);
 
     /**
      * Registers the specified listener for state update notifications.
      *
      * @param listener Listener to add
      */
-    public void addStateUpdateListener(IStateUpdateListener listener);
+    void addStateUpdateListener(IStateUpdateListener listener);
 
     /**
      * Removes the specified listener from state update notifications.
      *
      * @param listener Listener to remove
      */
-    public void removeStateUpdateListener(IStateUpdateListener listener);
+    void removeStateUpdateListener(IStateUpdateListener listener);
 
     /**
      * Registers the specified listener for view label update notifications.
      *
      * @param listener Listener to add
      */
-    public void addLabelUpdateListener(ILabelUpdateListener listener);
+    void addLabelUpdateListener(ILabelUpdateListener listener);
 
     /**
      * Removes the specified listener from view label update notifications.
      *
      * @param listener Listener to remove
      */
-    public void removeLabelUpdateListener(ILabelUpdateListener listener);
+    void removeLabelUpdateListener(ILabelUpdateListener listener);
 
     /**
      * Registers the given listener for model delta notification.
@@ -198,14 +197,14 @@ public interface ITreeModelViewer extends ISelectionProvider {
      *
      * @param listener Listener to add
      */
-    public void addModelChangedListener(IModelChangedListener listener);
+    void addModelChangedListener(IModelChangedListener listener);
 
     /**
      * Removes the given listener from model delta notification.
      *
      * @param listener Listener to remove
      */
-    public void removeModelChangedListener(IModelChangedListener listener);
+    void removeModelChangedListener(IModelChangedListener listener);
 
     /**
      * Writes state information into a delta for the sub-tree at the given
@@ -221,7 +220,7 @@ public interface ITreeModelViewer extends ISelectionProvider {
      * return <code>false</code> if an element at the given path cannot
      * be found.
      */
-    public boolean saveElementState(TreePath path, ModelDelta delta, int flagsToSave);
+    boolean saveElementState(TreePath path, ModelDelta delta, int flagsToSave);
 
     /**
      * Causes the viewer to process the given delta as if it came from a
@@ -230,7 +229,7 @@ public interface ITreeModelViewer extends ISelectionProvider {
      *
      * @param delta Delta to process.
      */
-    public void updateViewer(IModelDelta delta);
+    void updateViewer(IModelDelta delta);
 
     /**
      * Triggers an update of the given element and its children.  If
@@ -239,12 +238,12 @@ public interface ITreeModelViewer extends ISelectionProvider {
      *
      * @param element Element to update.
      */
-    public void refresh(Object element);
+    void refresh(Object element);
 
     /**
      * Triggers a full update of all the elements in the tree.
      */
-    public void refresh();
+    void refresh();
 
     /**
      * Returns the paths at which the given element is found realized in viewer
@@ -253,27 +252,27 @@ public interface ITreeModelViewer extends ISelectionProvider {
      * @param element Element to find.
      * @return Array of paths for given element.
      */
-    public TreePath[] getElementPaths(Object element);
+    TreePath[] getElementPaths(Object element);
 
     /**
      * Returns filters currently configured in viewer.
      *
      * @return filter array in viewer.
      */
-    public ViewerFilter[] getFilters();
+    ViewerFilter[] getFilters();
 
     /**
      * Add a new filter to use in viewer.
      *
      * @param filter Filter to add.
      */
-    public void addFilter(ViewerFilter filter);
+    void addFilter(ViewerFilter filter);
 
     /**
      * Sets viewer filters to the filters in array.
      *
      * @param filters New filter array to use.
      */
-	public void setFilters(ViewerFilter... filters);
+	void setFilters(ViewerFilter... filters);
 
  }

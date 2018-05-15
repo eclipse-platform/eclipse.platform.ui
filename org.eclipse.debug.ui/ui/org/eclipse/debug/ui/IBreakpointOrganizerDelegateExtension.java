@@ -32,7 +32,7 @@ public interface IBreakpointOrganizerDelegateExtension extends IBreakpointOrgani
      * @param breakpoints breakpoints add
      * @param category the breakpoints' new category
      */
-    public void addBreakpoints(IBreakpoint[] breakpoints, IAdaptable category);
+    void addBreakpoints(IBreakpoint[] breakpoints, IAdaptable category);
 
     /**
      * Removes the specified breakpoints from the given category. Only
@@ -42,7 +42,7 @@ public interface IBreakpointOrganizerDelegateExtension extends IBreakpointOrgani
      * @param breakpoints breakpoints to remove
      * @param category the category the breakpoint is remove from
      */
-    public void removeBreakpoints(IBreakpoint[] breakpoints, IAdaptable category);
+    void removeBreakpoints(IBreakpoint[] breakpoints, IAdaptable category);
 
 
 }

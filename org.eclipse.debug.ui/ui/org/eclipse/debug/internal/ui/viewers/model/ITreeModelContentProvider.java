@@ -34,7 +34,7 @@ public interface ITreeModelContentProvider extends ILazyTreePathContentProvider 
      * @since 3.6
      * @see #setModelDeltaMask(int)
      */
-    public static final int ALL_MODEL_DELTA_FLAGS = ~0;
+    int ALL_MODEL_DELTA_FLAGS = ~0;
 
     /**
      * Bit-mask which allows only flags which control selection and expansion.
@@ -42,7 +42,7 @@ public interface ITreeModelContentProvider extends ILazyTreePathContentProvider 
      * @since 3.6
      * @see #setModelDeltaMask(int)
      */
-    public static final int CONTROL_MODEL_DELTA_FLAGS =
+    int CONTROL_MODEL_DELTA_FLAGS =
         IModelDelta.EXPAND | IModelDelta.COLLAPSE | IModelDelta.SELECT | IModelDelta.REVEAL | IModelDelta.FORCE;
 
     /**
@@ -52,7 +52,7 @@ public interface ITreeModelContentProvider extends ILazyTreePathContentProvider 
      * @since 3.6
      * @see #setModelDeltaMask(int)
      */
-    public static final int UPDATE_MODEL_DELTA_FLAGS =
+    int UPDATE_MODEL_DELTA_FLAGS =
         IModelDelta.ADDED | IModelDelta.CONTENT | IModelDelta.INSERTED | IModelDelta.INSTALL | IModelDelta.REMOVED |
         IModelDelta.REPLACED | IModelDelta.STATE | IModelDelta.UNINSTALL;
 
@@ -64,7 +64,7 @@ public interface ITreeModelContentProvider extends ILazyTreePathContentProvider 
      * @param index index of child element in viewer (filtered) space
      * @return index of child element in model (raw) space
      */
-    public int viewToModelIndex(TreePath parentPath, int index);
+    int viewToModelIndex(TreePath parentPath, int index);
 
     /**
      * Translates and returns the given child count from the viewer coordinate
@@ -74,7 +74,7 @@ public interface ITreeModelContentProvider extends ILazyTreePathContentProvider 
      * @param count number of child elements in viewer (filtered) space
      * @return number of child elements in model (raw) space
      */
-    public int viewToModelCount(TreePath parentPath, int count);
+    int viewToModelCount(TreePath parentPath, int count);
 
     /**
      * Translates and returns the given child index from the model coordinate
@@ -84,7 +84,7 @@ public interface ITreeModelContentProvider extends ILazyTreePathContentProvider 
      * @param index index of child element in model (raw) space
      * @return index of child element in viewer (filtered) space or -1 if filtered
      */
-    public int modelToViewIndex(TreePath parentPath, int index);
+    int modelToViewIndex(TreePath parentPath, int index);
 
     /**
      * Returns whether the children of given element should be filtered.
@@ -98,7 +98,7 @@ public interface ITreeModelContentProvider extends ILazyTreePathContentProvider 
      * @return whether there are any {@link TreeModelViewerFilter} filters
      * applicable to given parent
      */
-    public boolean areTreeModelViewerFiltersApplicable(Object parentElement);
+    boolean areTreeModelViewerFiltersApplicable(Object parentElement);
 
     /**
      * Returns whether the given element is filtered.
@@ -109,14 +109,14 @@ public interface ITreeModelContentProvider extends ILazyTreePathContentProvider 
      *            the child element
      * @return whether to filter the element
      */
-    public boolean shouldFilter(Object parentElementOrTreePath, Object element);
+    boolean shouldFilter(Object parentElementOrTreePath, Object element);
 
     /**
      * Notification the given element is being unmapped.
      *
      * @param path Path to unmap
      */
-    public void unmapPath(TreePath path);
+    void unmapPath(TreePath path);
 
     /**
      * Sets the bit mask which will be used to filter the {@link IModelDelta}
@@ -127,7 +127,7 @@ public interface ITreeModelContentProvider extends ILazyTreePathContentProvider 
      *
      * @since 3.6
      */
-    public void setModelDeltaMask(int mask);
+    void setModelDeltaMask(int mask);
 
     /**
      * Returns the current model delta mask.
@@ -137,7 +137,7 @@ public interface ITreeModelContentProvider extends ILazyTreePathContentProvider 
      * @see #setModelDeltaMask(int)
      * @since 3.6
      */
-    public int getModelDeltaMask();
+    int getModelDeltaMask();
 
     /**
      * Translates and returns the given child count from the model coordinate
@@ -147,19 +147,19 @@ public interface ITreeModelContentProvider extends ILazyTreePathContentProvider 
      * @param count child count element in model (raw) space
      * @return child count in viewer (filtered) space
      */
-    public int modelToViewChildCount(TreePath parentPath, int count);
+    int modelToViewChildCount(TreePath parentPath, int count);
 
     /**
      * Registers the specified listener for view update notifications.
      * @param listener Listener to add
      */
-    public void addViewerUpdateListener(IViewerUpdateListener listener);
+    void addViewerUpdateListener(IViewerUpdateListener listener);
 
     /**
      * Removes the specified listener from update notifications.
      * @param listener Listener to remove
      */
-    public void removeViewerUpdateListener(IViewerUpdateListener listener);
+    void removeViewerUpdateListener(IViewerUpdateListener listener);
 
     /**
      * Registers the given listener for model delta notification.
@@ -167,13 +167,13 @@ public interface ITreeModelContentProvider extends ILazyTreePathContentProvider 
      * the delta.
      * @param listener Listener to add
      */
-    public void addModelChangedListener(IModelChangedListener listener);
+    void addModelChangedListener(IModelChangedListener listener);
 
     /**
      * Removes the given listener from model delta notification.
      * @param listener Listener to remove
      */
-    public void removeModelChangedListener(IModelChangedListener listener);
+    void removeModelChangedListener(IModelChangedListener listener);
 
     /**
      * Causes the content provider to save the expansion and selection state
@@ -181,21 +181,21 @@ public interface ITreeModelContentProvider extends ILazyTreePathContentProvider 
      * re-populated.
      * @param path Path of the element to save.
      */
-    public void preserveState(TreePath path);
+    void preserveState(TreePath path);
 
     /**
      * Registers the specified listener for state update notifications.
      * @param listener Listener to add
      * @since 3.6
      */
-    public void addStateUpdateListener(IStateUpdateListener listener);
+    void addStateUpdateListener(IStateUpdateListener listener);
 
     /**
      * Removes the specified listener from state update notifications.
      * @param listener Listener to remove
      * @since 3.6
      */
-    public void removeStateUpdateListener(IStateUpdateListener listener);
+    void removeStateUpdateListener(IStateUpdateListener listener);
 
     /**
      * Instructs the content provider to process the given model delta.  This
@@ -208,7 +208,7 @@ public interface ITreeModelContentProvider extends ILazyTreePathContentProvider 
      *
      * @since 3.6
      */
-    public void updateModel(IModelDelta delta, int mask);
+    void updateModel(IModelDelta delta, int mask);
 
     /**
      * Instructs the content provider to cancel any pending state changes
@@ -221,7 +221,7 @@ public interface ITreeModelContentProvider extends ILazyTreePathContentProvider 
      * @param path Path of the element for which to cancel pending changes.
      * @param flags Flags indicating the changes to cancel.
      */
-    public void cancelRestore(TreePath path, int flags);
+    void cancelRestore(TreePath path, int flags);
 
     /**
      * Notifies the content provider that a client called {@link Viewer#setInput(Object)},
@@ -234,7 +234,7 @@ public interface ITreeModelContentProvider extends ILazyTreePathContentProvider 
      *
      * @since 3.8
      */
-    public void postInputChanged(IInternalTreeModelViewer viewer, Object oldInput, Object newInput);
+    void postInputChanged(IInternalTreeModelViewer viewer, Object oldInput, Object newInput);
 
     /**
      * Notifies the receiver that the given element has had its
@@ -244,5 +244,5 @@ public interface ITreeModelContentProvider extends ILazyTreePathContentProvider 
      * @param checked The new checked state of the element
      * @return false if the check state should not change
      */
-    public boolean setChecked(TreePath path, boolean checked);
+    boolean setChecked(TreePath path, boolean checked);
 }

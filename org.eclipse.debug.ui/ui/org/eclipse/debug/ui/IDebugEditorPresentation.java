@@ -37,7 +37,7 @@ public interface IDebugEditorPresentation {
 	 *  source
 	 * @return <code>true</code> if annotations were added to the given editor part <code>false</code> otherwise
 	 */
-	public boolean addAnnotations(IEditorPart editorPart, IStackFrame frame);
+	boolean addAnnotations(IEditorPart editorPart, IStackFrame frame);
 
 	/**
 	 * Removes any debug related annotations from the given editor.
@@ -50,5 +50,5 @@ public interface IDebugEditorPresentation {
 	 * @param thread the thread for which stack frame annotations were
 	 *  added to the editor
 	 */
-	public void removeAnnotations(IEditorPart editorPart, IThread thread);
+	void removeAnnotations(IEditorPart editorPart, IThread thread);
 }

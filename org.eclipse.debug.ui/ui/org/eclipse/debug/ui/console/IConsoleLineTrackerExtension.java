@@ -24,6 +24,6 @@ public interface IConsoleLineTrackerExtension extends IConsoleLineTracker {
 	 * Notification that all output streams connected to the console have been
 	 * closed. No more lines will be appended after this method is called.
 	 */
-	public void consoleClosed();
+	void consoleClosed();
 
 }

@@ -35,15 +35,14 @@ public interface IInternalTreeModelViewer extends ITreeModelViewer {
      * @return an array of viewer filters
      * @see org.eclipse.jface.viewers.StructuredViewer#setFilters(ViewerFilter[])
      */
-    @Override
-	public ViewerFilter[] getFilters();
+    @Override ViewerFilter[] getFilters();
 
     /**
      * Reveals the given element in the viewer.
      * @param path Path to the element's parent.
      * @param index Index of the element to be revealed.
      */
-    public void reveal(TreePath path, int index);
+    void reveal(TreePath path, int index);
 
     /**
      * Triggers an update of the given element's state.  If multiple instances
@@ -51,7 +50,7 @@ public interface IInternalTreeModelViewer extends ITreeModelViewer {
      *
      * @param element Element to update.
      */
-    public void update(Object element);
+    void update(Object element);
 
     /**
      * Sets the given object to be the element at the given index of the given parent.
@@ -64,7 +63,7 @@ public interface IInternalTreeModelViewer extends ITreeModelViewer {
      * @param element Element object.
      * @noreference This method is not intended to be referenced by clients.
      */
-    public void replace(Object parentOrTreePath, final int index, Object element);
+    void replace(Object parentOrTreePath, final int index, Object element);
 
     /**
      * Set the number of children of the given element or tree path. To set the
@@ -78,7 +77,7 @@ public interface IInternalTreeModelViewer extends ITreeModelViewer {
      * @param count new value
      * @noreference This method is not intended to be referenced by clients.
      */
-    public void setChildCount(final Object elementOrTreePath, final int count);
+    void setChildCount(final Object elementOrTreePath, final int count);
 
     /**
      * Inform the viewer about whether the given element or tree path has
@@ -92,7 +91,7 @@ public interface IInternalTreeModelViewer extends ITreeModelViewer {
      * @param hasChildren new value.
      * @noreference This method is not intended to be referenced by clients.
      */
-    public void setHasChildren(final Object elementOrTreePath, final boolean hasChildren);
+    void setHasChildren(final Object elementOrTreePath, final boolean hasChildren);
 
     /**
      * Performs auto expand on an element at the specified path if the auto expand
@@ -104,7 +103,7 @@ public interface IInternalTreeModelViewer extends ITreeModelViewer {
      * @param elementPath tree path to element to consider for expansion
      * @noreference This method is not intended to be referenced by clients.
      */
-    public void autoExpand(TreePath elementPath);
+    void autoExpand(TreePath elementPath);
 
     /**
      * Sets whether the node corresponding to the given element or tree path is
@@ -121,7 +120,7 @@ public interface IInternalTreeModelViewer extends ITreeModelViewer {
      *
      * @noreference This method is not intended to be referenced by clients.
      */
-    public void setExpandedState(Object elementOrTreePath, boolean expanded);
+    void setExpandedState(Object elementOrTreePath, boolean expanded);
 
     /**
      * Expands all ancestors of the given element or tree path so that the given
@@ -139,7 +138,7 @@ public interface IInternalTreeModelViewer extends ITreeModelViewer {
      *
      * @noreference This method is not intended to be referenced by clients.
      */
-    public void expandToLevel(Object elementOrTreePath, int level);
+    void expandToLevel(Object elementOrTreePath, int level);
 
     /**
      * Removes the given element from the viewer. The selection is updated if
@@ -150,7 +149,7 @@ public interface IInternalTreeModelViewer extends ITreeModelViewer {
      * @param elementOrTreePath the element, or the tree path to the element
      * @noreference This method is not intended to be referenced by clients.
      */
-    public void remove(Object elementOrTreePath);
+    void remove(Object elementOrTreePath);
 
     /**
      * Removes the element at the specified index of the parent.  The selection is updated if required.
@@ -162,7 +161,7 @@ public interface IInternalTreeModelViewer extends ITreeModelViewer {
      * @param index child index
      * @noreference This method is not intended to be referenced by clients.
      */
-    public void remove(Object parentOrTreePath, final int index);
+    void remove(Object parentOrTreePath, final int index);
 
     /**
      * Inserts the given element as a new child element of the given parent
@@ -179,7 +178,7 @@ public interface IInternalTreeModelViewer extends ITreeModelViewer {
      * the last position
      * @noreference This method is not intended to be referenced by clients.
      */
-    public void insert(Object parentOrTreePath, Object element, int position);
+    void insert(Object parentOrTreePath, Object element, int position);
 
     /**
      * Returns whether the candidate selection should override the current
@@ -188,7 +187,7 @@ public interface IInternalTreeModelViewer extends ITreeModelViewer {
      * @param candidate Proposed new selection.
      * @return whether new selection should override the current
      */
-    public boolean overrideSelection(ISelection current, ISelection candidate);
+    boolean overrideSelection(ISelection current, ISelection candidate);
 
     /**
      * Returns whether the node corresponding to the given element or tree path
@@ -199,7 +198,7 @@ public interface IInternalTreeModelViewer extends ITreeModelViewer {
      * @return <code>true</code> if the node is expanded, and
      *         <code>false</code> if collapsed
      */
-    public boolean getExpandedState(Object elementOrTreePath);
+    boolean getExpandedState(Object elementOrTreePath);
 
     /**
      * Returns whether the node corresponding to the given element or tree path
@@ -208,7 +207,7 @@ public interface IInternalTreeModelViewer extends ITreeModelViewer {
      * @param elementOrTreePath Path to element
      * @return Returns whether the given element has children.
      */
-    public boolean getHasChildren(Object elementOrTreePath);
+    boolean getHasChildren(Object elementOrTreePath);
 
     /**
      * Returns the child count of the element at the given path. <br>
@@ -218,7 +217,7 @@ public interface IInternalTreeModelViewer extends ITreeModelViewer {
      * @param path Path to get count for.
      * @return The child count.
      */
-    public int getChildCount(TreePath path);
+    int getChildCount(TreePath path);
 
     /**
      * Returns the element which is a child of the element at the
@@ -228,7 +227,7 @@ public interface IInternalTreeModelViewer extends ITreeModelViewer {
      * @param index Index of child element.
      * @return Child element.
      */
-    public Object getChildElement(TreePath path, int index);
+    Object getChildElement(TreePath path, int index);
 
     /**
      * Returns the tree path of the element that is at the top of the
@@ -237,7 +236,7 @@ public interface IInternalTreeModelViewer extends ITreeModelViewer {
      * @return the tree path of the element at the top of the
      * viewer.
      */
-    public TreePath getTopElementPath();
+    TreePath getTopElementPath();
 
     /**
      * Finds the index of the given element with a parent of given path.
@@ -247,7 +246,7 @@ public interface IInternalTreeModelViewer extends ITreeModelViewer {
      *
      * @return The element's index, or -1 if not found.
      */
-    public int findElementIndex(TreePath parentPath, Object element);
+    int findElementIndex(TreePath parentPath, Object element);
 
     /**
      * Returns a boolean indicating whether all the child elements of the
@@ -256,14 +255,14 @@ public interface IInternalTreeModelViewer extends ITreeModelViewer {
      * @param parentPath Path of parent element.
      * @return true if all children realized
      */
-    public boolean getElementChildrenRealized(TreePath parentPath);
+    boolean getElementChildrenRealized(TreePath parentPath);
 
     /**
      * Clears the selection in the viewer, if any, without firing
      * selection change notification. This is only to be used by
      * the platform.
      */
-    public void clearSelectionQuiet();
+    void clearSelectionQuiet();
 
     /**
      * Sets the element's display information.
@@ -283,7 +282,7 @@ public interface IInternalTreeModelViewer extends ITreeModelViewer {
      * <code>null</code>.
      * @noreference This method is not intended to be referenced by clients.
      */
-    public void setElementData(TreePath path, int numColumns, String[] labels, ImageDescriptor[] images, FontData[] fontDatas, RGB[] foregrounds, RGB[] backgrounds);
+    void setElementData(TreePath path, int numColumns, String[] labels, ImageDescriptor[] images, FontData[] fontDatas, RGB[] foregrounds, RGB[] backgrounds);
 
     /**
      * Returns identifiers of the visible columns in this viewer, or <code>null</code>
@@ -291,7 +290,7 @@ public interface IInternalTreeModelViewer extends ITreeModelViewer {
      *
      * @return visible columns or <code>null</code>
      */
-    public String[] getVisibleColumns();
+    String[] getVisibleColumns();
 
     /**
      * Sets the element check state data.
@@ -300,7 +299,7 @@ public interface IInternalTreeModelViewer extends ITreeModelViewer {
      * @param checked if true, item will be checked
      * @param grayed if true item will be grayed
      */
-    public void setElementChecked(TreePath path, boolean checked, boolean grayed);
+    void setElementChecked(TreePath path, boolean checked, boolean grayed);
 
     /**
      * Retrieves the element check state.
@@ -308,7 +307,7 @@ public interface IInternalTreeModelViewer extends ITreeModelViewer {
      * @param path Path of element to return check state for.
      * @return the element checked state
      */
-    public boolean getElementChecked(TreePath path);
+    boolean getElementChecked(TreePath path);
 
     /**
      * Retrieves the element's check box grayed state.
@@ -316,5 +315,5 @@ public interface IInternalTreeModelViewer extends ITreeModelViewer {
      * @param path Path of element to return grayed state for.
      * @return the element grayed state
      */
-    public boolean getElementGrayed(TreePath path);
+    boolean getElementGrayed(TreePath path);
 }

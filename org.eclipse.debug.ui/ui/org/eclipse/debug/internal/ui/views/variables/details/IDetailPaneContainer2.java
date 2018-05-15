@@ -25,5 +25,5 @@ public interface IDetailPaneContainer2 extends IDetailPaneContainer {
 	 *
 	 * @param provider  the selection provider or <code>null</code>
 	 */
-	public void setSelectionProvider(ISelectionProvider provider);
+	void setSelectionProvider(ISelectionProvider provider);
 }

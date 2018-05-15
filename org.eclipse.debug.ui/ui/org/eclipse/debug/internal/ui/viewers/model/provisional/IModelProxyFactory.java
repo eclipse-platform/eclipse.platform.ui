@@ -31,5 +31,5 @@ public interface IModelProxyFactory {
 	 * @param context presentation context
 	 * @return model proxy or <code>null</code>
 	 */
-	public IModelProxy createModelProxy(Object element, IPresentationContext context);
+	IModelProxy createModelProxy(Object element, IPresentationContext context);
 }

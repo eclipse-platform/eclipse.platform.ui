@@ -45,7 +45,7 @@ public interface IDetailPaneFactory {
 	 * @param selection The current selection
 	 * @return Set of String IDs for possible detail pane types, possibly empty
 	 */
-	public Set<String> getDetailPaneTypes(IStructuredSelection selection);
+	Set<String> getDetailPaneTypes(IStructuredSelection selection);
 
 	/**
 	 * Returns the identifier of the default detail pane type to use for the given
@@ -56,7 +56,7 @@ public interface IDetailPaneFactory {
 	 * @param selection The current selection
 	 * @return a detail pane type identifier or <code>null</code>
 	 */
-	public String getDefaultDetailPane(IStructuredSelection selection);
+	String getDefaultDetailPane(IStructuredSelection selection);
 
 	/**
 	 * Creates and returns a detail pane corresponding to the given detail pane
@@ -66,7 +66,7 @@ public interface IDetailPaneFactory {
 	 * @param paneID The id of the detain pane type to be created
 	 * @return detail pane or <code>null</code> if one could not be created
 	 */
-	public IDetailPane createDetailPane(String paneID);
+	IDetailPane createDetailPane(String paneID);
 
 	/**
 	 * Returns a name for the detail pane type associated with the given ID
@@ -76,7 +76,7 @@ public interface IDetailPaneFactory {
 	 * @param paneID detail pane type identifier
 	 * @return detail pane name or <code>null</code> if none
 	 */
-	public String getDetailPaneName(String paneID);
+	String getDetailPaneName(String paneID);
 
 	/**
 	 * Returns a description for the detail pane type associated with the given ID
@@ -85,6 +85,6 @@ public interface IDetailPaneFactory {
 	 * @param paneID detail pane type identifier
 	 * @return detail pane description or <code>null</code> if none
 	 */
-	public String getDetailPaneDescription(String paneID);
+	String getDetailPaneDescription(String paneID);
 
 }

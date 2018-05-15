@@ -31,6 +31,6 @@ public interface IResettableMemoryRendering extends IMemoryRendering {
 	 *
 	 * @throws DebugException when there is a problem resetting this memory rendering.
 	 */
-	public void resetRendering() throws DebugException;
+	void resetRendering() throws DebugException;
 
 }

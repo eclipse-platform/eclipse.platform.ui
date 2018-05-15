@@ -50,7 +50,7 @@ public interface IToggleBreakpointsTarget {
 	 * @param selection selection on which line breakpoints should be toggled
 	 * @throws CoreException if unable to perform the action
 	 */
-	public void toggleLineBreakpoints(IWorkbenchPart part, ISelection selection) throws CoreException;
+	void toggleLineBreakpoints(IWorkbenchPart part, ISelection selection) throws CoreException;
 
 	/**
 	 * Returns whether line breakpoints can be toggled on the given selection.
@@ -62,7 +62,7 @@ public interface IToggleBreakpointsTarget {
 	 * @param selection selection on which line breakpoints may be toggled
 	 * @return whether line breakpoints can be toggled on the given selection
 	 */
-	public boolean canToggleLineBreakpoints(IWorkbenchPart part, ISelection selection);
+	boolean canToggleLineBreakpoints(IWorkbenchPart part, ISelection selection);
 
 	/**
 	 * Creates new method breakpoints or removes existing breakpoints.
@@ -74,7 +74,7 @@ public interface IToggleBreakpointsTarget {
 	 * @param selection selection on which method breakpoints should be toggled
 	 * @throws CoreException if unable to perform the action
 	 */
-	public void toggleMethodBreakpoints(IWorkbenchPart part, ISelection selection) throws CoreException;
+	void toggleMethodBreakpoints(IWorkbenchPart part, ISelection selection) throws CoreException;
 
 	/**
 	 * Returns whether method breakpoints can be toggled on the given selection.
@@ -86,7 +86,7 @@ public interface IToggleBreakpointsTarget {
 	 * @param selection selection on which method breakpoints may be toggled
 	 * @return whether method breakpoints can be toggled on the given selection
 	 */
-	public boolean canToggleMethodBreakpoints(IWorkbenchPart part, ISelection selection);
+	boolean canToggleMethodBreakpoints(IWorkbenchPart part, ISelection selection);
 
 	/**
 	 * Creates new watchpoints or removes existing breakpoints.
@@ -98,7 +98,7 @@ public interface IToggleBreakpointsTarget {
 	 * @param selection selection on which watchpoints should be toggled
 	 * @throws CoreException if unable to perform the action
 	 */
-	public void toggleWatchpoints(IWorkbenchPart part, ISelection selection) throws CoreException;
+	void toggleWatchpoints(IWorkbenchPart part, ISelection selection) throws CoreException;
 
 	/**
 	 * Returns whether watchpoints can be toggled on the given selection.
@@ -110,5 +110,5 @@ public interface IToggleBreakpointsTarget {
 	 * @param selection selection on which watchpoints may be toggled
 	 * @return whether watchpoints can be toggled on the given selection
 	 */
-	public boolean canToggleWatchpoints(IWorkbenchPart part, ISelection selection);
+	boolean canToggleWatchpoints(IWorkbenchPart part, ISelection selection);
 }

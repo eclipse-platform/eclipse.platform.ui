@@ -30,5 +30,5 @@ public interface IViewActionProvider {
 	 * @param actionID action id
 	 * @return action or null
 	 */
-	public IAction getAction(IPresentationContext presentationContext, String actionID);
+	IAction getAction(IPresentationContext presentationContext, String actionID);
 }

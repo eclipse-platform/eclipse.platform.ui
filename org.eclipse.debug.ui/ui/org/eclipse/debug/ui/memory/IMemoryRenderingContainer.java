@@ -26,7 +26,7 @@ public interface IMemoryRenderingContainer {
 	 *
 	 * @return the rendering site hosting this container
 	 */
-	public IMemoryRenderingSite getMemoryRenderingSite();
+	IMemoryRenderingSite getMemoryRenderingSite();
 
 	/**
 	 * Returns the identifier of this container. Identifiers
@@ -34,7 +34,7 @@ public interface IMemoryRenderingContainer {
 	 *
 	 * @return the identifier of this container
 	 */
-	public String getId();
+	String getId();
 
 	/**
 	 * Adds the given rendering to this container. A rendering must be
@@ -43,7 +43,7 @@ public interface IMemoryRenderingContainer {
 	 *
 	 * @param rendering the rendering to add
 	 */
-	public void addMemoryRendering(IMemoryRendering rendering);
+	void addMemoryRendering(IMemoryRendering rendering);
 
 	/**
 	 * Removes the given rendering from this container. This
@@ -51,14 +51,14 @@ public interface IMemoryRenderingContainer {
 	 *
 	 * @param rendering the rendering to remove
 	 */
-	public void removeMemoryRendering(IMemoryRendering rendering);
+	void removeMemoryRendering(IMemoryRendering rendering);
 
 	/**
 	 * Returns all renderings currently hosted by this container.
 	 *
 	 * @return all renderings currently hosted by this container
 	 */
-	public IMemoryRendering[] getRenderings();
+	IMemoryRendering[] getRenderings();
 
 	/**
 	 * Returns the active rendering in this container, or <code>null</code>
@@ -67,12 +67,12 @@ public interface IMemoryRenderingContainer {
 	 * @return the active rendering in this container, or <code>null</code>
 	 * if none
 	 */
-	public IMemoryRendering getActiveRendering();
+	IMemoryRendering getActiveRendering();
 
 	/**
 	 * Returns the label for this container.
 	 *
 	 * @return the label for this container
 	 */
-	public String getLabel();
+	String getLabel();
 }

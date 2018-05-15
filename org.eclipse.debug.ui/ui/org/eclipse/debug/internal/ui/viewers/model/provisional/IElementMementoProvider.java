@@ -34,7 +34,7 @@ public interface IElementMementoProvider {
 	 *  The requests array is guaranteed to have at least one element, and for
      *  all requests to have the same presentation context.
 	 */
-	public void encodeElements(IElementMementoRequest[] requests);
+	void encodeElements(IElementMementoRequest[] requests);
 
 	/**
 	 * Determines whether mementos represent associated elements specified in the requests.
@@ -43,6 +43,6 @@ public interface IElementMementoProvider {
 	 *  The requests array is guaranteed to have at least one element, and for
      *  all requests to have the same presentation context.
 	 */
-	public void compareElements(IElementCompareRequest[] requests);
+	void compareElements(IElementCompareRequest[] requests);
 
 }

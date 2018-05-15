@@ -37,6 +37,6 @@ public interface IWatchExpressionFactoryAdapterExtension extends IWatchExpressio
 	 * @param variable variable a watch expression is required for
 	 * @return whether an expression can be created
 	 */
-	public boolean canCreateWatchExpression(IVariable variable);
+	boolean canCreateWatchExpression(IVariable variable);
 
 }

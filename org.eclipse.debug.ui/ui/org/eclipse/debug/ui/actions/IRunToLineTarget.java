@@ -51,7 +51,7 @@ public interface IRunToLineTarget {
 	 * @param target suspended element to perform the "run to line" action on
 	 * @throws CoreException if unable to perform the action
 	 */
-	public void runToLine(IWorkbenchPart part, ISelection selection, ISuspendResume target) throws CoreException;
+	void runToLine(IWorkbenchPart part, ISelection selection, ISuspendResume target) throws CoreException;
 
 	/**
 	 * Returns whether a run to line operation can be performed on the given
@@ -63,5 +63,5 @@ public interface IRunToLineTarget {
 	 * @return if a run to line operation can be performed on the given
 	 * element that is currently selected and suspended in the Debug view
 	 */
-	public boolean canRunToLine(IWorkbenchPart part, ISelection selection, ISuspendResume target);
+	boolean canRunToLine(IWorkbenchPart part, ISelection selection, ISuspendResume target);
 }

@@ -27,7 +27,7 @@ public interface IMemoryRenderingManager extends IMemoryRenderingBindingsProvide
      *
      * @return all contributed memory rendering types
      */
-    public IMemoryRenderingType[] getRenderingTypes();
+    IMemoryRenderingType[] getRenderingTypes();
 
     /**
      * Returns the memory rendering type with the given identifier, or
@@ -41,7 +41,7 @@ public interface IMemoryRenderingManager extends IMemoryRenderingBindingsProvide
      * @return the memory rendering type with the given identifier, or
      * <code>null</code> if none
      */
-    public IMemoryRenderingType getRenderingType(String id);
+    IMemoryRenderingType getRenderingType(String id);
 
 }
 

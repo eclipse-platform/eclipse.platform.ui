@@ -135,7 +135,7 @@ public interface ILaunchShortcut {
 	 * 	launch manager
 	 * @see org.eclipse.debug.core.ILaunchManager
 	 */
-	public void launch(ISelection selection, String mode);
+	void launch(ISelection selection, String mode);
 
 	/**
 	 * Locates a launchable entity in the given active editor, and launches
@@ -149,5 +149,5 @@ public interface ILaunchShortcut {
 	 * 		manager
 	 * @see org.eclipse.debug.core.ILaunchManager
 	 */
-	public void launch(IEditorPart editor, String mode);
+	void launch(IEditorPart editor, String mode);
 }

@@ -40,6 +40,6 @@ public interface ISourceDisplay {
 	 * @param forceSourceLookup whether source lookup should be performed,
 	 *  ignoring any previously cached results for the same element
 	 */
-	public void displaySource(Object element, IWorkbenchPage page, boolean forceSourceLookup);
+	void displaySource(Object element, IWorkbenchPage page, boolean forceSourceLookup);
 
 }

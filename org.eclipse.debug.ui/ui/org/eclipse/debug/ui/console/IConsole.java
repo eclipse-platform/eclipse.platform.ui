@@ -38,7 +38,7 @@ public interface IConsole {
 	 *
 	 * @param streamsProxy the proxy to connect this console to
 	 */
-	public void connect(IStreamsProxy streamsProxy);
+	void connect(IStreamsProxy streamsProxy);
 
 	/**
 	 * Connects this console to the given stream monitor, uniquely identified by
@@ -48,7 +48,7 @@ public interface IConsole {
 	 * @param streamMonitor the monitor to connect this console to
 	 * @param streamIdentifer the stream identifier to connect this console to
 	 */
-	public void connect(IStreamMonitor streamMonitor, String streamIdentifer);
+	void connect(IStreamMonitor streamMonitor, String streamIdentifer);
 
 	/**
 	 * Adds the given hyperlink to this console. The link will be notified when
@@ -64,8 +64,7 @@ public interface IConsole {
 	 * @param length the length of the associated hyperlink text
 	 * @deprecated replaced with addLink(IHyperlink link, int offset, int length)
 	 */
-	@Deprecated
-	public void addLink(IConsoleHyperlink link, int offset, int length);
+	@Deprecated void addLink(IConsoleHyperlink link, int offset, int length);
 
 	/**
 	 * Adds the given hyperlink to this console. The link will be notified when
@@ -81,7 +80,7 @@ public interface IConsole {
 	 * @param length the length of the associated hyperlink text
 	 * @since 3.1
 	 */
-	public void addLink(IHyperlink link, int offset, int length);
+	void addLink(IHyperlink link, int offset, int length);
 
 	/**
 	 * Returns the region of text associated with the given hyperlink, or
@@ -92,8 +91,7 @@ public interface IConsole {
 	 * @return region of text associated with the hyperlink, or <code>null</code>
 	 * @deprecated replaced with getRegion(IHyperlink link) instead
 	 */
-	@Deprecated
-	public IRegion getRegion(IConsoleHyperlink link);
+	@Deprecated IRegion getRegion(IConsoleHyperlink link);
 
 	/**
 	 * Returns the region of text associated with the given hyperlink, or
@@ -104,21 +102,21 @@ public interface IConsole {
 	 * @return region of text associated with the hyperlink, or <code>null</code>
 	 * @since 3.1
 	 */
-	public IRegion getRegion(IHyperlink link);
+	IRegion getRegion(IHyperlink link);
 
 	/**
 	 * Returns the document associated with this console.
 	 *
 	 * @return document
 	 */
-	public IDocument getDocument();
+	IDocument getDocument();
 
 	/**
 	 * Returns the process associated with this console.
 	 *
 	 * @return the process associated with this console
 	 */
-	public IProcess getProcess();
+	IProcess getProcess();
 
 	/**
 	 * Adds the given pattern match listener to this console. The listener will
@@ -126,7 +124,7 @@ public interface IConsole {
 	 * @param matchListener the listener to add
 	 * @since 3.1
 	 */
-	public void addPatternMatchListener(IPatternMatchListener matchListener);
+	void addPatternMatchListener(IPatternMatchListener matchListener);
 
     /**
      * Removes the given pattern match listener from this console. The listener will be
@@ -134,7 +132,7 @@ public interface IConsole {
      * @param matchListener the pattern match listener to remove.
      * @since 3.1
      */
-	public void removePatternMatchListener(IPatternMatchListener matchListener);
+	void removePatternMatchListener(IPatternMatchListener matchListener);
 
 	/**
 	 * Returns the stream associated with the specified stream identifier.
@@ -142,5 +140,5 @@ public interface IConsole {
      * @return The stream or <code>null</code> if none found with matching streamIdentifier
      * @since 3.1
      */
-	public IOConsoleOutputStream getStream(String streamIdentifier);
+	IOConsoleOutputStream getStream(String streamIdentifier);
 }

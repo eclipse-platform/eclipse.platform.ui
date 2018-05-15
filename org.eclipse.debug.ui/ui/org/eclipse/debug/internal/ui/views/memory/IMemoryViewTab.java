@@ -25,39 +25,39 @@ public interface IMemoryViewTab {
 	/**
 	 * Remove the view tab.
 	 */
-	public void dispose();
+	void dispose();
 
 	/**
 	 * @return if the view tab is disposed
 	 */
-	public boolean isDisposed();
+	boolean isDisposed();
 
 	/**
 	 * @return enablement state of the view tab.
 	 */
-	public boolean isEnabled();
+	boolean isEnabled();
 
 	/**
 	 * Sets the enablament state of the view tab.
 	 *
 	 * @param enabled
 	 */
-	public void setEnabled(boolean enabled);
+	void setEnabled(boolean enabled);
 
 	/**
 	 * Set view tab's label
 	 *
 	 * @param label
 	 */
-	public void setTabLabel(String label);
+	void setTabLabel(String label);
 
 	/**
 	 * @return view tab's label, null if the label is not available
 	 */
-	public String getTabLabel();
+	String getTabLabel();
 
 	/**
 	 * @return the rendering of this view tab
 	 */
-	public IMemoryRendering getRendering();
+	IMemoryRendering getRendering();
 }

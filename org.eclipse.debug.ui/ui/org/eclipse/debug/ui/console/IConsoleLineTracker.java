@@ -49,7 +49,7 @@ public interface IConsoleLineTracker {
 	 *
 	 * @param console console that has been created
 	 */
-	public void init(IConsole console);
+	void init(IConsole console);
 
 	/**
 	 * Notification that a line of text has been appended to the console. The
@@ -59,10 +59,10 @@ public interface IConsoleLineTracker {
 	 * @param line region describing the offset and length of line appended to
 	 * the console, excluding the line delimiter
 	 */
-	public void lineAppended(IRegion line);
+	void lineAppended(IRegion line);
 
 	/**
 	 * Disposes this console line tracker.
 	 */
-	public void dispose();
+	void dispose();
 }

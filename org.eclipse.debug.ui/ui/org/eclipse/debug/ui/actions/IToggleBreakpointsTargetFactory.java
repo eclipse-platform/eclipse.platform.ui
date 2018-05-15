@@ -73,7 +73,7 @@ public interface IToggleBreakpointsTargetFactory {
      * @return Set of <code>String</code> IDs for possible toggle breakpoint
      * targets, possibly empty
      */
-	public Set<String> getToggleTargets(IWorkbenchPart part, ISelection selection);
+	Set<String> getToggleTargets(IWorkbenchPart part, ISelection selection);
 
     /**
      * Returns the identifier of the default toggle breakpoints target to use
@@ -84,7 +84,7 @@ public interface IToggleBreakpointsTargetFactory {
      * @param selection The current selection
      * @return a breakpoint toggle target identifier or <code>null</code>
      */
-    public String getDefaultToggleTarget(IWorkbenchPart part, ISelection selection);
+    String getDefaultToggleTarget(IWorkbenchPart part, ISelection selection);
 
     /**
      * Creates and returns a toggle breakpoint target corresponding to the
@@ -94,7 +94,7 @@ public interface IToggleBreakpointsTargetFactory {
      * @param targetID The id of the toggle target to be created
      * @return toggle target or <code>null</code> if one could not be created
      */
-    public IToggleBreakpointsTarget createToggleTarget(String targetID);
+    IToggleBreakpointsTarget createToggleTarget(String targetID);
 
     /**
      * Returns a human readable name for the breakpoint toggle target associated with the
@@ -104,7 +104,7 @@ public interface IToggleBreakpointsTargetFactory {
      * @param targetID toggle breakpoints target identifier
      * @return toggle target name
      */
-    public String getToggleTargetName(String targetID);
+    String getToggleTargetName(String targetID);
 
     /**
      * Returns a description for the breakpoint toggle target associated with the
@@ -113,6 +113,6 @@ public interface IToggleBreakpointsTargetFactory {
      * @param targetID toggle breakpoints target identifier
      * @return toggle target name or <code>null</code> if none
      */
-    public String getToggleTargetDescription(String targetID);
+    String getToggleTargetDescription(String targetID);
 
 }

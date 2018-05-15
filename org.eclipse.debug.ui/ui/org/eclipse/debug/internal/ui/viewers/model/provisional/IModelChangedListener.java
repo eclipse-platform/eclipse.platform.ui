@@ -26,6 +26,6 @@ public interface IModelChangedListener {
 	 * @param delta model delta
 	 * @param proxy proxy that created the delta
 	 */
-	public void modelChanged(IModelDelta delta, IModelProxy proxy);
+	void modelChanged(IModelDelta delta, IModelProxy proxy);
 
 }

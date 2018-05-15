@@ -40,7 +40,7 @@ public interface IModelSelectionPolicy {
 	 * @param context Presentation context of the viewer.
 	 * @return true if selection is contained in model.
 	 */
-	public boolean contains(ISelection selection, IPresentationContext context);
+	boolean contains(ISelection selection, IPresentationContext context);
 
 	/**
 	 * Returns whether the candidate selection overrides the
@@ -52,7 +52,7 @@ public interface IModelSelectionPolicy {
 	 * @param context Presentation context of viewer.
 	 * @return true if candidate selection should be set to viewer
 	 */
-	public boolean overrides(ISelection existing, ISelection candidate, IPresentationContext context);
+	boolean overrides(ISelection existing, ISelection candidate, IPresentationContext context);
 
 	/**
 	 * Returns whether the given selection should be maintained in the
@@ -62,7 +62,7 @@ public interface IModelSelectionPolicy {
 	 * @param context Presentation context of viewer.
 	 * @return true if selection is sticky
 	 */
-	public boolean isSticky(ISelection selection, IPresentationContext context);
+	boolean isSticky(ISelection selection, IPresentationContext context);
 
 	/**
 	 * Replaces an invalid selection.
@@ -82,5 +82,5 @@ public interface IModelSelectionPolicy {
 	 *            the selection after the update, or <code>null</code> if none
 	 * @return new selection or <code>null</code> if none
 	 */
-    public ISelection replaceInvalidSelection(ISelection invalidSelection, ISelection newSelection);
+    ISelection replaceInvalidSelection(ISelection invalidSelection, ISelection newSelection);
 }

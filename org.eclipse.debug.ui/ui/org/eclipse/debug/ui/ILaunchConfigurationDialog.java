@@ -35,8 +35,7 @@ public interface ILaunchConfigurationDialog extends IRunnableContext {
 	 * @deprecated the launch dialog no longer supports launching without
 	 * 	opening - this constant will never be returned by the dialog
 	 */
-	@Deprecated
-	public static final int LAUNCHED_BEFORE_OPENING = 2;
+	@Deprecated int LAUNCHED_BEFORE_OPENING = 2;
 
 	/**
 	 * Adjusts the enable state of this dialog's buttons
@@ -46,7 +45,7 @@ public interface ILaunchConfigurationDialog extends IRunnableContext {
 	 * update.
 	 * </p>
 	 */
-	public void updateButtons();
+	void updateButtons();
 
 	/**
 	 * Updates the message (or error message) shown in the message line to
@@ -57,14 +56,14 @@ public interface ILaunchConfigurationDialog extends IRunnableContext {
 	 * update.
 	 * </p>
 	 */
-	public void updateMessage();
+	void updateMessage();
 
 	/**
 	 * Sets the contents of the name field to the given name.
 	 *
 	 * @param name new name value
 	 */
-	public void setName(String name);
+	void setName(String name);
 
 	/**
 	 * Returns a unique launch configuration name, using the given name
@@ -73,7 +72,7 @@ public interface ILaunchConfigurationDialog extends IRunnableContext {
 	 * @param name seed from which to generate a new unique name
 	 * @return the new unique launch configuration name
 	 */
-	public String generateName(String name);
+	String generateName(String name);
 
 	/**
 	 * Returns the tabs currently being displayed, or
@@ -81,7 +80,7 @@ public interface ILaunchConfigurationDialog extends IRunnableContext {
 	 *
 	 * @return currently displayed tabs, or <code>null</code>
 	 */
-	public ILaunchConfigurationTab[] getTabs();
+	ILaunchConfigurationTab[] getTabs();
 
 	/**
 	 * Returns the currently active <code>ILaunchConfigurationTab</code>
@@ -89,7 +88,7 @@ public interface ILaunchConfigurationDialog extends IRunnableContext {
 	 *
 	 * @return currently active <code>ILaunchConfigurationTab</code>, or <code>null</code>.
 	 */
-	public ILaunchConfigurationTab getActiveTab();
+	ILaunchConfigurationTab getActiveTab();
 
 	/**
 	 * Returns the mode in which this dialog was opened -
@@ -98,7 +97,7 @@ public interface ILaunchConfigurationDialog extends IRunnableContext {
 	 * @return one of <code>RUN_MODE</code> or <code>DEBUG_MODE</code> defined in <code>ILaunchManager</code>
 	 * @see org.eclipse.debug.core.ILaunchManager
 	 */
-	public String getMode();
+	String getMode();
 
 	/**
 	 * Sets the displayed tab to the given tab. Has no effect if the specified
@@ -107,7 +106,7 @@ public interface ILaunchConfigurationDialog extends IRunnableContext {
 	 * @param tab the tab to display/activate
 	 * @since 2.1
 	 */
-	public void setActiveTab(ILaunchConfigurationTab tab);
+	void setActiveTab(ILaunchConfigurationTab tab);
 
 	/**
 	 * Sets the displayed tab to the tab with the given index. Has no effect if
@@ -117,6 +116,6 @@ public interface ILaunchConfigurationDialog extends IRunnableContext {
 	 * @param index the index of the tab to display
 	 * @since 2.1
 	 */
-	public void setActiveTab(int index);
+	void setActiveTab(int index);
 
 }

@@ -40,7 +40,7 @@ public interface IToggleBreakpointsTargetExtension2 extends IToggleBreakpointsTa
 	 * @param event the accompanying {@link Event} which can be <code>null</code> if unavailable
 	 * @throws CoreException if unable to perform the action
 	 */
-	public void toggleBreakpointsWithEvent(IWorkbenchPart part, ISelection selection, Event event) throws CoreException;
+	void toggleBreakpointsWithEvent(IWorkbenchPart part, ISelection selection, Event event) throws CoreException;
 
 	/**
 	 * Returns whether breakpoints can be toggled on the given selection with the given {@link Event}.
@@ -53,5 +53,5 @@ public interface IToggleBreakpointsTargetExtension2 extends IToggleBreakpointsTa
 	 * @param event the accompanying {@link Event} which can be <code>null</code> if unavailable
 	 * @return whether breakpoints can be toggled on the given selection with the given {@link Event}
 	 */
-	public boolean canToggleBreakpointsWithEvent(IWorkbenchPart part, ISelection selection, Event event);
+	boolean canToggleBreakpointsWithEvent(IWorkbenchPart part, ISelection selection, Event event);
 }

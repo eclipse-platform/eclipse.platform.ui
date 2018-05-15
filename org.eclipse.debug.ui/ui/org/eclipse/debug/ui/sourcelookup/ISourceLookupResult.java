@@ -31,7 +31,7 @@ public interface ISourceLookupResult {
      *
      * @return the artifact for which source lookup was performed
      */
-    public Object getArtifact();
+    Object getArtifact();
 
     /**
      * Returns the source element resolved during source lookup,
@@ -39,7 +39,7 @@ public interface ISourceLookupResult {
      *
      * @return resolved source element or <code>null</code> if unknown
      */
-    public Object getSourceElement();
+    Object getSourceElement();
 
     /**
      * Returns the identifier of an editor used to display this result,
@@ -48,7 +48,7 @@ public interface ISourceLookupResult {
      * @return the identifier of an editor used to display this result,
      * or <code>null</code> if unknown
      */
-    public String getEditorId();
+    String getEditorId();
 
     /**
      * Returns the editor input used to display result,
@@ -57,5 +57,5 @@ public interface ISourceLookupResult {
      * @return the editor input used to display result,
      * or <code>null</code> if unknown
      */
-    public IEditorInput getEditorInput();
+    IEditorInput getEditorInput();
 }

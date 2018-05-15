@@ -31,7 +31,7 @@ public interface IAsynchronousLabelAdapter {
      * @param context the context in which the label has been requested
      * @param monitor request monitor to report the result to
      */
-    public void retrieveLabel(Object object, IPresentationContext context, ILabelRequestMonitor result);
+    void retrieveLabel(Object object, IPresentationContext context, ILabelRequestMonitor result);
 
 
 }

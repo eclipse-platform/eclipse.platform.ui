@@ -19,5 +19,5 @@ import org.eclipse.debug.core.IRequest;
  */
 public interface ICommandParticipant {
 
-	public void requestDone(IRequest request);
+	void requestDone(IRequest request);
 }

@@ -27,5 +27,5 @@ public interface IViewerInputRequestor {
 	 *
 	 * @param update viewer input update request
 	 */
-	public void viewerInputComplete(IViewerInputUpdate update);
+	void viewerInputComplete(IViewerInputUpdate update);
 }

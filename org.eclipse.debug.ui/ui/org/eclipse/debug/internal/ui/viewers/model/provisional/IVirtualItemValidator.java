@@ -27,12 +27,12 @@ public interface IVirtualItemValidator {
      * @param item Item to be tested.
      * @return returns true if the item should be considered visible.
      */
-    public boolean isItemVisible(VirtualItem item);
+    boolean isItemVisible(VirtualItem item);
 
     /**
      * Indicates that the viewer requested to reveal the given item in viewer.
      *
      * @param item Item to show.
      */
-    public void showItem(VirtualItem item);
+    void showItem(VirtualItem item);
 }

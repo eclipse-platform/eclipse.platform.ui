@@ -94,14 +94,14 @@ public interface ILaunchConfigurationTabGroup {
 	 * @param mode the mode the launch configuration dialog was
 	 *  opened in
 	 */
-	public void createTabs(ILaunchConfigurationDialog dialog, String mode);
+	void createTabs(ILaunchConfigurationDialog dialog, String mode);
 
 	/**
 	 * Returns the tabs contained in this tab group.
 	 *
 	 * @return the tabs contained in this tab group
 	 */
-	public ILaunchConfigurationTab[] getTabs();
+	ILaunchConfigurationTab[] getTabs();
 
 	/**
 	 * Notifies this launch configuration tab group that it has
@@ -109,7 +109,7 @@ public interface ILaunchConfigurationTabGroup {
 	 * of this tab group's lifecycle, allowing this tab group to
 	 * perform any cleanup required.
 	 */
-	public void dispose();
+	void dispose();
 
 	/**
 	 * Initializes the given launch configuration with
@@ -121,7 +121,7 @@ public interface ILaunchConfigurationTabGroup {
 	 *
 	 * @param configuration launch configuration
 	 */
-	public void setDefaults(ILaunchConfigurationWorkingCopy configuration);
+	void setDefaults(ILaunchConfigurationWorkingCopy configuration);
 
 	/**
 	 * Initializes this group's tab controls with values from the given
@@ -130,7 +130,7 @@ public interface ILaunchConfigurationTabGroup {
 	 *
 	 * @param configuration launch configuration
 	 */
-	public void initializeFrom(ILaunchConfiguration configuration);
+	void initializeFrom(ILaunchConfiguration configuration);
 
 	/**
 	 * Copies values from this group's tabs into the given
@@ -138,7 +138,7 @@ public interface ILaunchConfigurationTabGroup {
 	 *
 	 * @param configuration launch configuration
 	 */
-	public void performApply(ILaunchConfigurationWorkingCopy configuration);
+	void performApply(ILaunchConfigurationWorkingCopy configuration);
 
 	/**
 	 * Notifies this tab that a configuration has been
@@ -153,7 +153,6 @@ public interface ILaunchConfigurationTabGroup {
 	 *  than the launch dialog, this method cannot be relied upon for launching
 	 *  functionality.
 	 */
-	@Deprecated
-	public void launched(ILaunch launch);
+	@Deprecated void launched(ILaunch launch);
 }
 

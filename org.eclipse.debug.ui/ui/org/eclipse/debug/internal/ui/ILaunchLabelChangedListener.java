@@ -29,11 +29,11 @@ public interface ILaunchLabelChangedListener {
 	 * This method is called back to by <code>LaunchingResourceManager</code> iff the cache of labels
 	 * for the current set of listeners has changed
 	 */
-	public void labelChanged();
+	void labelChanged();
 
 	/**
 	 * Returns the launch group that this listener is associated with.
 	 * @return the launch group that this listener is associated with, or <code>null</code> if none
 	 */
-	public ILaunchGroup getLaunchGroup();
+	ILaunchGroup getLaunchGroup();
 }

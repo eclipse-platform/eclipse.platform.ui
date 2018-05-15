@@ -23,7 +23,7 @@ public interface ICheckUpdate extends ILabelUpdate {
      * Property of the presentation context which indicates that the viewer
      * has the check box style.
      */
-    public static final String PROP_CHECK = "org.eclipse.debug.ui.check";  //$NON-NLS-1$
+    String PROP_CHECK = "org.eclipse.debug.ui.check";  //$NON-NLS-1$
 
     /**
      * Sets the check state of the tree node.
@@ -31,6 +31,6 @@ public interface ICheckUpdate extends ILabelUpdate {
      * @param checked Whether element should be checked.
      * @param grayed Whether element should be grayed out.
      */
-    public void setChecked(boolean checked, boolean grayed);
+    void setChecked(boolean checked, boolean grayed);
 
 }

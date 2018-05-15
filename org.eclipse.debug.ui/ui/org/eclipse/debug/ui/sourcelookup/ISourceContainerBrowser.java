@@ -45,7 +45,7 @@ public interface ISourceContainerBrowser {
 	 * @param director the director the new containers will be added to
 	 * @return the new source containers to add
 	 */
-	public ISourceContainer[] addSourceContainers(Shell shell, ISourceLookupDirector director);
+	ISourceContainer[] addSourceContainers(Shell shell, ISourceLookupDirector director);
 
 	/**
 	 * Returns whether this browser can add any source containers to the
@@ -56,7 +56,7 @@ public interface ISourceContainerBrowser {
 	 * @return whether this browser can add any source containers to the
 	 * given source lookup director
 	 */
-	public boolean canAddSourceContainers(ISourceLookupDirector director);
+	boolean canAddSourceContainers(ISourceLookupDirector director);
 
 	/**
 	 * Edits and returns source containers to replace the given source
@@ -67,7 +67,7 @@ public interface ISourceContainerBrowser {
 	 * @param containers the source containers to be edited
 	 * @return the replacement source containers
 	 */
-	public ISourceContainer[] editSourceContainers(Shell shell, ISourceLookupDirector director, ISourceContainer[] containers);
+	ISourceContainer[] editSourceContainers(Shell shell, ISourceLookupDirector director, ISourceContainer[] containers);
 
 	/**
 	 * Returns whether this browser can edit the given source containers.
@@ -77,6 +77,6 @@ public interface ISourceContainerBrowser {
 	 * @param containers the containers to edit
 	 * @return whether this browser can edit the given source containers
 	 */
-	public boolean canEditSourceContainers(ISourceLookupDirector director, ISourceContainer[] containers);
+	boolean canEditSourceContainers(ISourceLookupDirector director, ISourceContainer[] containers);
 
 }

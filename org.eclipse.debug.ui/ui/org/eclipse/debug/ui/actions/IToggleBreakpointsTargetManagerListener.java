@@ -26,5 +26,5 @@ public interface IToggleBreakpointsTargetManagerListener {
     /**
      * Called when the preferred toggle targets have changed.
      */
-    public void preferredTargetsChanged();
+    void preferredTargetsChanged();
 }

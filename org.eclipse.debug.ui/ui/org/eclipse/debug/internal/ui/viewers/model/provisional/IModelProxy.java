@@ -53,7 +53,7 @@ public interface IModelProxy {
 	 * @param context presentation context in which the proxy will be installed
 	 * @see IModelProxy2#initialize(ITreeModelViewer)
 	 */
-	public void init(IPresentationContext context);
+	void init(IPresentationContext context);
 
 	/**
 	 * Notification this model proxy has been installed in the specified
@@ -70,7 +70,7 @@ public interface IModelProxy {
      * @see IModelProxy2#initialize(ITreeModelViewer)
 	 * @since 3.3
 	 */
-	public void installed(Viewer viewer);
+	void installed(Viewer viewer);
 
 	/**
 	 * Disposes this model proxy.
@@ -79,21 +79,21 @@ public interface IModelProxy {
 	 * be called by clients.
 	 * </p>
 	 */
-	public void dispose();
+	void dispose();
 
 	/**
 	 * Registers the given listener for model delta notification.
 	 *
 	 * @param listener model delta listener
 	 */
-	public void addModelChangedListener(IModelChangedListener listener);
+	void addModelChangedListener(IModelChangedListener listener);
 
 	/**
 	 * Unregisters the given listener from model delta notification.
 	 *
 	 * @param listener model delta listener
 	 */
-	public void removeModelChangedListener(IModelChangedListener listener);
+	void removeModelChangedListener(IModelChangedListener listener);
 
 	/**
 	 * Returns whether this proxy has been disposed.
@@ -101,6 +101,6 @@ public interface IModelProxy {
 	 * @return whether this proxy has been disposed
 	 * @since 3.3
 	 */
-	public boolean isDisposed();
+	boolean isDisposed();
 
 }

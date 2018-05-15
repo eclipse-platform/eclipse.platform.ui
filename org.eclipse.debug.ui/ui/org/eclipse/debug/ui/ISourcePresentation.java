@@ -56,7 +56,7 @@ public interface ISourcePresentation {
 	 *  method
 	 * @return an editor input, or <code>null</code> if none
 	 */
-	public IEditorInput getEditorInput(Object element);
+	IEditorInput getEditorInput(Object element);
 
 	/**
 	 * Returns the id of the editor to use to display the
@@ -70,5 +70,5 @@ public interface ISourcePresentation {
 	 *  input
 	 * @return an editor id, or <code>null</code> if none
 	 */
-	public String getEditorId(IEditorInput input, Object element);
+	String getEditorId(IEditorInput input, Object element);
 }

@@ -13,12 +13,12 @@ package org.eclipse.debug.internal.ui.views.memory.renderings;
 
 public interface IContentChangeComputer {
 
-	public void clearCache();
+	void clearCache();
 
-	public void cache(Object[] elements);
+	void cache(Object[] elements);
 
-	public Object[] compare(Object[] newElements);
+	Object[] compare(Object[] newElements);
 
-	public boolean isEmpty();
+	boolean isEmpty();
 
 }

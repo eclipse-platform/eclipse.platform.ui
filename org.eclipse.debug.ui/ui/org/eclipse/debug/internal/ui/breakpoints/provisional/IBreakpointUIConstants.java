@@ -24,7 +24,7 @@ public interface IBreakpointUIConstants {
      *
      * @see org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationContext#getProperty(String)
      */
-    public static final String PROP_BREAKPOINTS_ORGANIZERS      = "BreakpointOrganizers";   //$NON-NLS-1$
+    String PROP_BREAKPOINTS_ORGANIZERS      = "BreakpointOrganizers";   //$NON-NLS-1$
 
     /**
      * Breakpoints presentation context property used to retrieve a flag
@@ -36,7 +36,7 @@ public interface IBreakpointUIConstants {
      *
      * @see org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationContext#getProperty(String)
      */
-    public static final String PROP_BREAKPOINTS_FILTER_SELECTION = "FilterSelection";       //$NON-NLS-1$
+    String PROP_BREAKPOINTS_FILTER_SELECTION = "FilterSelection";       //$NON-NLS-1$
 
     /**
      * Breakpoints presentation context property used to retrieve a flag
@@ -48,7 +48,7 @@ public interface IBreakpointUIConstants {
      *
      * @see org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationContext#getProperty(String)
      */
-    public static final String PROP_BREAKPOINTS_TRACK_SELECTION = "TrackSelection";         //$NON-NLS-1$
+    String PROP_BREAKPOINTS_TRACK_SELECTION = "TrackSelection";         //$NON-NLS-1$
 
     /**
      * Breakpoints presentation context property used to retrieve a
@@ -58,8 +58,8 @@ public interface IBreakpointUIConstants {
      *
      * @see org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationContext#getProperty(String)
      */
-    public static final String PROP_BREAKPOINTS_ELEMENT_COMPARATOR = "ElementComparator";   //$NON-NLS-1$
+    String PROP_BREAKPOINTS_ELEMENT_COMPARATOR = "ElementComparator";   //$NON-NLS-1$
 
-	public static final String PROP_BREAKPOINTS_ELEMENT_COMPARATOR_SORT = "ElementComparatorSort"; //$NON-NLS-1$
+	String PROP_BREAKPOINTS_ELEMENT_COMPARATOR_SORT = "ElementComparatorSort"; //$NON-NLS-1$
 
 }

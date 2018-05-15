@@ -50,7 +50,7 @@ public interface IAddMemoryRenderingsTarget {
 	 * @return <code>true</code> if a memory rendering can be added from the specified
 	 * part with the given selection, <code>false</code> otherwise
 	 */
-	public boolean canAddMemoryRenderings(IWorkbenchPart part, ISelection selection);
+	boolean canAddMemoryRenderings(IWorkbenchPart part, ISelection selection);
 
 	/**
 	 * Adds memory renderings. Based on the part and selection (active debug context), this
@@ -71,7 +71,7 @@ public interface IAddMemoryRenderingsTarget {
 	 * @see org.eclipse.debug.ui.memory.IMemoryRenderingSite
 	 * @see org.eclipse.debug.ui.memory.IMemoryRenderingContainer
 	 */
-	public void addMemoryRenderings(IWorkbenchPart part, ISelection selection, IMemoryRenderingType[] renderingTypes) throws CoreException;
+	void addMemoryRenderings(IWorkbenchPart part, ISelection selection, IMemoryRenderingType[] renderingTypes) throws CoreException;
 
 	/**
 	 * Returns a list of rendering types that can be added from the given workbench part and active
@@ -81,5 +81,5 @@ public interface IAddMemoryRenderingsTarget {
 	 * @param selection the active debug context
 	 * @return a list of rendering types that can be added, possibly empty
 	 */
-	public IMemoryRenderingType[] getMemoryRenderingTypes(IWorkbenchPart part, ISelection selection);
+	IMemoryRenderingType[] getMemoryRenderingTypes(IWorkbenchPart part, ISelection selection);
 }

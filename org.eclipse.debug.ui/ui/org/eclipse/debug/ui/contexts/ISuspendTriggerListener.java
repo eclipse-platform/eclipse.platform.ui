@@ -34,6 +34,6 @@ public interface ISuspendTriggerListener {
 	 * @param launch the launch that has suspended
 	 * @param context the context on which the launch suspended
 	 */
-	public void suspended(ILaunch launch, Object context);
+	void suspended(ILaunch launch, Object context);
 
 }

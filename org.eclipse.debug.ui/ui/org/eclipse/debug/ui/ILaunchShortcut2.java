@@ -51,7 +51,7 @@ public interface ILaunchShortcut2 extends ILaunchShortcut {
 	 *  but does not exist, or <code>null</code> if default resource mappings should
 	 *  be used to derive associated configurations
 	 */
-	public ILaunchConfiguration[] getLaunchConfigurations(ISelection selection);
+	ILaunchConfiguration[] getLaunchConfigurations(ISelection selection);
 
 	/**
 	 * Returns an array of existing <code>ILaunchConfiguration</code>s that could be
@@ -65,7 +65,7 @@ public interface ILaunchShortcut2 extends ILaunchShortcut {
 	 *  could be created but does not exist, or <code>null</code> if default resource
 	 *  mappings should be used to derive associated configurations
 	 */
-	public ILaunchConfiguration[] getLaunchConfigurations(IEditorPart editorpart);
+	ILaunchConfiguration[] getLaunchConfigurations(IEditorPart editorpart);
 
 	/**
 	 * Returns an <code>IResource</code> that maps to the given selection for launch
@@ -77,7 +77,7 @@ public interface ILaunchShortcut2 extends ILaunchShortcut {
 	 * @return an <code>IResource</code> that maps to the given selection for launch
 	 *  purposes or <code>null</code> if none
 	 */
-	public IResource getLaunchableResource(ISelection selection);
+	IResource getLaunchableResource(ISelection selection);
 
 	/**
 	 * Returns an <code>IResource</code> that maps to given editor part for launch
@@ -89,5 +89,5 @@ public interface ILaunchShortcut2 extends ILaunchShortcut {
 	 * @return an <code>IResource</code> that maps to given editor part for launch
 	 *  purposes, or <code>null</code> if none
 	 */
-	public IResource getLaunchableResource(IEditorPart editorpart);
+	IResource getLaunchableResource(IEditorPart editorpart);
 }

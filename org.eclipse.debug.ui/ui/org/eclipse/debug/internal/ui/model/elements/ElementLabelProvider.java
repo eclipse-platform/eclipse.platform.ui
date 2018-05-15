@@ -50,7 +50,7 @@ public abstract class ElementLabelProvider implements IElementLabelProvider {
 		 * @param updates updates
 		 * @return whether the updates were queued
 		 */
-		public boolean queue(ILabelUpdate[] updates);
+		boolean queue(ILabelUpdate[] updates);
 	}
 
 	/**

@@ -26,33 +26,33 @@ public interface ILabelResult {
 	 *
 	 * @return
 	 */
-	public String[] getLabels();
+	String[] getLabels();
 
 	/**
 	 * Returns the images for the element.
 	 *
 	 * @return
 	 */
-	public Image[] getImages();
+	Image[] getImages();
 
 	/**
 	 * Returns the element the label is for.
 	 *
 	 * @return
 	 */
-	public Object getElement();
+	Object getElement();
 
 	/**
 	 * Returns the path to the element in the tree.
 	 *
 	 * @return
 	 */
-	public TreePath getTreePath();
+	TreePath getTreePath();
 
 	/**
 	 * Returns this element's depth in the tree.
 	 *
 	 * @return
 	 */
-	public int getDepth();
+	int getDepth();
 }

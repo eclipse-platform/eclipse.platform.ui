@@ -31,5 +31,5 @@ public interface IHelpContextIdProvider {
 	 * @return the help context id that should be used in place of the given help context id
 	 * or <code>null</code> if default is to be used
 	 */
-	public String getHelpContextId(String helpId);
+	String getHelpContextId(String helpId);
 }

@@ -26,5 +26,5 @@ public interface IElementMementoRequest extends IViewerUpdate {
 	 *
 	 * @return memento
 	 */
-	public IMemento getMemento();
+	IMemento getMemento();
 }

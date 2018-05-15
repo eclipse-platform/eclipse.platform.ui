@@ -31,5 +31,5 @@ public interface IModelSelectionPolicyFactory {
 	 * @param context presentation context
 	 * @return model selection policy or <code>null</code>
 	 */
-	public IModelSelectionPolicy createModelSelectionPolicyAdapter(Object element, IPresentationContext context);
+	IModelSelectionPolicy createModelSelectionPolicyAdapter(Object element, IPresentationContext context);
 }

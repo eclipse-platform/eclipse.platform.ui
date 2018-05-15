@@ -26,7 +26,7 @@ public interface IPersistableDebugElement {
 	 * @return the value of the specified property
 	 * @throws CoreException when an error has occurred getting this property
 	 */
-	public Object getProperty(Object context, String propertyId) throws CoreException;
+	Object getProperty(Object context, String propertyId) throws CoreException;
 
 	/**
 	 * Sets the property with the specified propertyId.  Clients are expected
@@ -36,7 +36,7 @@ public interface IPersistableDebugElement {
 	 * @param value is the value of the property
 	 * @throws CoreException when an error has occurred setting this property
 	 */
-	public void setProperty(Object context, String propertyId, Object value) throws CoreException;
+	void setProperty(Object context, String propertyId, Object value) throws CoreException;
 
 	/**
 	 * @param context is the contex who is asking if this property is supported
@@ -44,6 +44,6 @@ public interface IPersistableDebugElement {
 	 * @return true if the peristable debug element wishes to handle persistence of
 	 * the specified property.
 	 */
-	public boolean supportsProperty(Object context, String propertyId);
+	boolean supportsProperty(Object context, String propertyId);
 
 }

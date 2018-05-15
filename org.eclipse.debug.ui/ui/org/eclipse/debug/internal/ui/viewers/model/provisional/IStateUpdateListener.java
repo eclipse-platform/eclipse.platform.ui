@@ -23,7 +23,7 @@ public interface IStateUpdateListener {
 	 *
 	 * @param input Input object for the state operation.
 	 */
-	public void stateSaveUpdatesBegin(Object input);
+	void stateSaveUpdatesBegin(Object input);
 
 	/**
 	 * Notification that viewer updates are complete. Corresponds to
@@ -31,14 +31,14 @@ public interface IStateUpdateListener {
 	 *
      * @param input Input object for the state operation.
 	 */
-	public void stateSaveUpdatesComplete(Object input);
+	void stateSaveUpdatesComplete(Object input);
 
 	/**
      * Notification that a sequence of viewer updates are starting.
      *
      * @param input Input object for the state operation.
      */
-    public void stateRestoreUpdatesBegin(Object input);
+    void stateRestoreUpdatesBegin(Object input);
 
     /**
      * Notification that viewer updates are complete. Corresponds to
@@ -46,7 +46,7 @@ public interface IStateUpdateListener {
      *
      * @param input Input object for the state operation.
      */
-    public void stateRestoreUpdatesComplete(Object input);
+    void stateRestoreUpdatesComplete(Object input);
 
 	/**
 	 * Notification that a specific update has started within
@@ -55,7 +55,7 @@ public interface IStateUpdateListener {
      * @param input Input object for the state operation.
 	 * @param update update
 	 */
-	public void stateUpdateStarted(Object input, IViewerUpdate update);
+	void stateUpdateStarted(Object input, IViewerUpdate update);
 
 	/**
 	 * Notification that a specific update has completed within a
@@ -64,5 +64,5 @@ public interface IStateUpdateListener {
      * @param input Input object for the state operation.
 	 * @param update update
 	 */
-	public void stateUpdateComplete(Object input, IViewerUpdate update);
+	void stateUpdateComplete(Object input, IViewerUpdate update);
 }

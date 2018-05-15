@@ -33,7 +33,7 @@ public interface IMemoryRenderingSynchronizationService {
      * @param properties properties the listener is interested in, or <code>null</code>
      *  to indicate all properties.
      */
-    public void addPropertyChangeListener(IPropertyChangeListener listener, String[] properties);
+    void addPropertyChangeListener(IPropertyChangeListener listener, String[] properties);
 
     /**
      * Removes the given listener for property change notification.
@@ -41,7 +41,7 @@ public interface IMemoryRenderingSynchronizationService {
      *
      * @param listener a property change listener
      */
-    public void removePropertyChangeListener(IPropertyChangeListener listener);
+    void removePropertyChangeListener(IPropertyChangeListener listener);
 
     /**
      * Returns the current value of the specified property for the given memory block, or
@@ -51,7 +51,7 @@ public interface IMemoryRenderingSynchronizationService {
      * @param property the name of the property
      * @return the property value or <code>null</code>
      */
-    public Object getProperty(IMemoryBlock block, String property);
+    Object getProperty(IMemoryBlock block, String property);
 
     /**
      * Sets the rendering currently providing sychronization information for
@@ -60,7 +60,7 @@ public interface IMemoryRenderingSynchronizationService {
      * @param rendering active rendering providing synchronization information or
      *  <code>null</code>
      */
-    public void setSynchronizationProvider(IMemoryRendering rendering);
+    void setSynchronizationProvider(IMemoryRendering rendering);
 
     /**
      * Returns the rendering currently providing synchronization information for
@@ -68,5 +68,5 @@ public interface IMemoryRenderingSynchronizationService {
      *
      * @return rendering providing synchronization information or <code>null</code>
      */
-    public IMemoryRendering getSynchronizationProvider();
+    IMemoryRendering getSynchronizationProvider();
 }

@@ -64,7 +64,7 @@ public interface IInstructionPointerPresentation extends IDebugModelPresentation
 	 *  source
 	 *  @return annotation or <code>null</code>
 	 */
-	public Annotation getInstructionPointerAnnotation(IEditorPart editorPart, IStackFrame frame);
+	Annotation getInstructionPointerAnnotation(IEditorPart editorPart, IStackFrame frame);
 
 	/**
 	 * Returns an identifier of a <code>org.eclipse.ui.editors.annotationTypes</code> extension used for
@@ -76,7 +76,7 @@ public interface IInstructionPointerPresentation extends IDebugModelPresentation
 	 *  source
 	 *  @return annotation type identifier or <code>null</code>
 	 */
-	public String getInstructionPointerAnnotationType(IEditorPart editorPart, IStackFrame frame);
+	String getInstructionPointerAnnotationType(IEditorPart editorPart, IStackFrame frame);
 
 	/**
 	 * Returns the instruction pointer image used for the specified stack frame in the specified
@@ -90,7 +90,7 @@ public interface IInstructionPointerPresentation extends IDebugModelPresentation
 	 *  source
 	 *  @return image or <code>null</code>
 	 */
-	public Image getInstructionPointerImage(IEditorPart editorPart, IStackFrame frame);
+	Image getInstructionPointerImage(IEditorPart editorPart, IStackFrame frame);
 
 	/**
 	 * Returns the text to associate with the instruction pointer annotation used for the
@@ -105,5 +105,5 @@ public interface IInstructionPointerPresentation extends IDebugModelPresentation
 	 *  source
 	 *  @return message or <code>null</code>
 	 */
-	public String getInstructionPointerText(IEditorPart editorPart, IStackFrame frame);
+	String getInstructionPointerText(IEditorPart editorPart, IStackFrame frame);
 }

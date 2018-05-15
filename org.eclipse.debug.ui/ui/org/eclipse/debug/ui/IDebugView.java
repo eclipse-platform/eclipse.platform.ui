@@ -43,7 +43,7 @@ public interface IDebugView extends IViewPart {
 	 *
 	 * @see #setAction(String, IAction)
 	 */
-	public static final String COPY_ACTION = ActionFactory.COPY.getId();
+	String COPY_ACTION = ActionFactory.COPY.getId();
 
 	/**
 	 * Action id for a view's cut action. Any view
@@ -53,7 +53,7 @@ public interface IDebugView extends IViewPart {
 	 *
 	 * @see #setAction(String, IAction)
 	 */
-	public static final String CUT_ACTION = ActionFactory.CUT.getId();
+	String CUT_ACTION = ActionFactory.CUT.getId();
 
 	/**
 	 * Action id for a view's double-click action. Any view
@@ -63,7 +63,7 @@ public interface IDebugView extends IViewPart {
 	 *
 	 * @see #setAction(String, IAction)
 	 */
-	public static final String DOUBLE_CLICK_ACTION = "Double_Click_ActionId";	 //$NON-NLS-1$
+	String DOUBLE_CLICK_ACTION = "Double_Click_ActionId";	 //$NON-NLS-1$
 
 	/**
 	 * Action id for a view's find action. Any view
@@ -73,7 +73,7 @@ public interface IDebugView extends IViewPart {
 	 *
 	 * @see #setAction(String, IAction)
 	 */
-	public static final String FIND_ACTION = ActionFactory.FIND.getId();
+	String FIND_ACTION = ActionFactory.FIND.getId();
 
 	/**
 	 * Action id for a view's paste action. Any view
@@ -83,7 +83,7 @@ public interface IDebugView extends IViewPart {
 	 *
 	 * @see #setAction(String, IAction)
 	 */
-	public static final String PASTE_ACTION = ActionFactory.PASTE.getId();
+	String PASTE_ACTION = ActionFactory.PASTE.getId();
 
 	/**
 	 * Action id for a view's remove action. Any view
@@ -93,7 +93,7 @@ public interface IDebugView extends IViewPart {
 	 *
 	 * @see #setAction(String, IAction)
 	 */
-	public static final String REMOVE_ACTION = "Remove_ActionId"; //$NON-NLS-1$
+	String REMOVE_ACTION = "Remove_ActionId"; //$NON-NLS-1$
 
 	/**
 	 * Action id for a view's select all action. Any view
@@ -103,14 +103,14 @@ public interface IDebugView extends IViewPart {
 	 *
 	 * @see #setAction(String, IAction)
 	 */
-	public static final String SELECT_ALL_ACTION = ActionFactory.SELECT_ALL.getId();
+	String SELECT_ALL_ACTION = ActionFactory.SELECT_ALL.getId();
 
 	/**
 	 * Returns the viewer contained in this debug view.
 	 *
 	 * @return viewer
 	 */
-	public Viewer getViewer();
+	Viewer getViewer();
 
 	/**
 	 * Returns the debug model presentation for this view specified
@@ -121,7 +121,7 @@ public interface IDebugView extends IViewPart {
 	 * @return the debug model presentation, or <code>null</code> if no
 	 *     presentation is registered for the specified id
 	 */
-	public IDebugModelPresentation getPresentation(String id);
+	IDebugModelPresentation getPresentation(String id);
 
 	/**
 	 * Installs the given action under the given action id.
@@ -137,7 +137,7 @@ public interface IDebugView extends IViewPart {
 	 * @param action the action, or <code>null</code> to clear it
 	 * @see #getAction
 	 */
-	public void setAction(String actionID, IAction action);
+	void setAction(String actionID, IAction action);
 
 	/**
 	 * Adds the given IUpdate to this view's collection of updatable
@@ -147,7 +147,7 @@ public interface IDebugView extends IViewPart {
 	 *
 	 * @param updatable The IUpdate instance to be added
 	 */
-	public void add(IUpdate updatable);
+	void add(IUpdate updatable);
 
 	/**
 	 * Removes the given IUpdate from this view's collection of updatable
@@ -156,7 +156,7 @@ public interface IDebugView extends IViewPart {
  	 *
 	 * @param updatable The IUpdate instance to be removed
 	 */
-	public void remove(IUpdate updatable);
+	void remove(IUpdate updatable);
 
 	/**
 	 * Returns the action installed under the given action id.
@@ -165,7 +165,7 @@ public interface IDebugView extends IViewPart {
 	 * @return the action, or <code>null</code> if none
 	 * @see #setAction
 	 */
-	public IAction getAction(String actionID);
+	IAction getAction(String actionID);
 
 	/**
 	 * Returns the context menu manager for this view.
@@ -173,6 +173,5 @@ public interface IDebugView extends IViewPart {
 	 * @return the context menu manager for this view, or <code>null</code> if none
 	 * @deprecated See AbstractDebugView#getContextMenuManagers()
 	 */
-	@Deprecated
-	public IMenuManager getContextMenuManager();
+	@Deprecated IMenuManager getContextMenuManager();
 }

@@ -31,7 +31,7 @@ public interface IElementEditor {
 	 * @param parent parent control to create the cell editor in
 	 * @return cell editor or <code>null</code>
 	 */
-	public CellEditor getCellEditor(IPresentationContext context, String columnId, Object element, Composite parent);
+	CellEditor getCellEditor(IPresentationContext context, String columnId, Object element, Composite parent);
 
 	/**
 	 * Returns a cell modifier for the specified element in the given context
@@ -41,6 +41,6 @@ public interface IElementEditor {
 	 *
 	 * @return cell modifier or <code>null</code>
 	 */
-	public ICellModifier getCellModifier(IPresentationContext context, Object element);
+	ICellModifier getCellModifier(IPresentationContext context, Object element);
 
 }

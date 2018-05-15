@@ -30,21 +30,21 @@ public interface IDetailPaneContainer {
 	 *
 	 * @return the ID of the current detail pane
 	 */
-	public String getCurrentPaneID();
+	String getCurrentPaneID();
 
 	/**
 	 * Returns the selection to be displayed in the detail pane.
 	 *
 	 * @return the selection to be displayed in the detail pane.
 	 */
-	public IStructuredSelection getCurrentSelection();
+	IStructuredSelection getCurrentSelection();
 
 	/**
 	 * Returns the composite that detail panes will be added to.
 	 *
 	 * @return the composite that detail panes will be added to
 	 */
-	public Composite getParentComposite();
+	Composite getParentComposite();
 
 	/**
 	 * Returns the workbench part site that the detail pane is in or <code>null</code>
@@ -52,18 +52,18 @@ public interface IDetailPaneContainer {
 	 *
 	 * @return the workbench part site the detail pane is in or <code>null</code>
 	 */
-	public IWorkbenchPartSite getWorkbenchPartSite();
+	IWorkbenchPartSite getWorkbenchPartSite();
 
 	/**
 	 * Refreshes the current detail pane with the current selection.
 	 */
-	public void refreshDetailPaneContents();
+	void refreshDetailPaneContents();
 
 	/**
 	 * Informs the container that the type of detail pane being used has changed.
 	 *
 	 * @param newPaneID ID of the new detail pane
 	 */
-	public void paneChanged(String newPaneID);
+	void paneChanged(String newPaneID);
 
 }

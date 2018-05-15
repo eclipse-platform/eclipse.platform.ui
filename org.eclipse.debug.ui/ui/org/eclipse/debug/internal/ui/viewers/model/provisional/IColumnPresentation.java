@@ -27,12 +27,12 @@ public interface IColumnPresentation {
 	 *
 	 * @param context Presentation context.
 	 */
-	public void init(IPresentationContext context);
+	void init(IPresentationContext context);
 
 	/**
 	 * Disposes this column presentation
 	 */
-	public void dispose();
+	void dispose();
 
 	/**
 	 * Returns an array of all columns supported by this adapter as
@@ -40,7 +40,7 @@ public interface IColumnPresentation {
 	 *
 	 * @return column identifiers
 	 */
-	public String[] getAvailableColumns();
+	String[] getAvailableColumns();
 
 	/**
 	 * Returns an ordered array of columns that should be displayed initially for
@@ -48,7 +48,7 @@ public interface IColumnPresentation {
 	 *
 	 * @return initial columns to display
 	 */
-	public String[] getInitialColumns();
+	String[] getInitialColumns();
 
 	/**
 	 * Returns the column header for the column with the given identifier.
@@ -56,7 +56,7 @@ public interface IColumnPresentation {
 	 * @param id a column identifier included in <code>getColumns()</code>
 	 * @return column header
 	 */
-	public String getHeader(String id);
+	String getHeader(String id);
 
 	/**
 	 * Returns the image for the column with the given identifier, or <code>null</code>
@@ -64,7 +64,7 @@ public interface IColumnPresentation {
 	 * @param id column id
 	 * @return image descriptor or <code>null</code>
 	 */
-	public ImageDescriptor getImageDescriptor(String id);
+	ImageDescriptor getImageDescriptor(String id);
 
 	/**
 	 * Returns an identifier for this columns presentation.
@@ -75,7 +75,7 @@ public interface IColumnPresentation {
 	 *
 	 * @return identifier
 	 */
-	public String getId();
+	String getId();
 
 	/**
 	 * Returns whether this column presentation is optional. When a column presentation
@@ -83,6 +83,6 @@ public interface IColumnPresentation {
 	 *
 	 * @return whether this column presentation is optional
 	 */
-	public boolean isOptional();
+	boolean isOptional();
 
 }

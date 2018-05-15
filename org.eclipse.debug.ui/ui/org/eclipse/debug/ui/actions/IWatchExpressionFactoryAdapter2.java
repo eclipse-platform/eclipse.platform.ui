@@ -38,7 +38,7 @@ public interface IWatchExpressionFactoryAdapter2  {
      * @exception org.eclipse.core.runtime.CoreException if unable to create a watch
      *  expression
      */
-    public String createWatchExpression(Object element) throws CoreException;
+    String createWatchExpression(Object element) throws CoreException;
 
     /**
 	 * Returns whether a watch expression can be created for the specified variable.
@@ -46,6 +46,6 @@ public interface IWatchExpressionFactoryAdapter2  {
 	 * @param variable the specified variable
 	 * @return whether an expression can be created
 	 */
-	public boolean canCreateWatchExpression(Object variable);
+	boolean canCreateWatchExpression(Object variable);
 
 }

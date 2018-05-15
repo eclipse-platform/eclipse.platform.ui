@@ -26,7 +26,7 @@ public interface IColumnPresentationFactory {
 	 * @param element the input element
 	 * @return column presentation or <code>null</code>
 	 */
-	public IColumnPresentation createColumnPresentation(IPresentationContext context, Object element);
+	IColumnPresentation createColumnPresentation(IPresentationContext context, Object element);
 
 	/**
 	 * Returns the type of column presentation to be used for the given context and object
@@ -37,5 +37,5 @@ public interface IColumnPresentationFactory {
 	 * @param element input element
 	 * @return column presentation id or <code>null</code>
 	 */
-	public String getColumnPresentationId(IPresentationContext context, Object element);
+	String getColumnPresentationId(IPresentationContext context, Object element);
 }

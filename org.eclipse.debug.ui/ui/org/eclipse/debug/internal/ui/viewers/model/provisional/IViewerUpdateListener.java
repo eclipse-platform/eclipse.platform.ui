@@ -21,13 +21,13 @@ public interface IViewerUpdateListener {
 	/**
 	 * Notification that a sequence of viewer updates are starting.
 	 */
-	public void viewerUpdatesBegin();
+	void viewerUpdatesBegin();
 
 	/**
 	 * Notification that viewer updates are complete. Corresponds to
 	 * a <code>viewerUpdatesBegin()</code> notification.
 	 */
-	public void viewerUpdatesComplete();
+	void viewerUpdatesComplete();
 
 	/**
 	 * Notification that a specific update has started within
@@ -35,7 +35,7 @@ public interface IViewerUpdateListener {
 	 *
 	 * @param update update
 	 */
-	public void updateStarted(IViewerUpdate update);
+	void updateStarted(IViewerUpdate update);
 
 	/**
 	 * Notification that a specific update has completed within a
@@ -43,5 +43,5 @@ public interface IViewerUpdateListener {
 	 *
 	 * @param update update
 	 */
-	public void updateComplete(IViewerUpdate update);
+	void updateComplete(IViewerUpdate update);
 }

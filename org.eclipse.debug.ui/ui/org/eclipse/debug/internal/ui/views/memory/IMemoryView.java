@@ -21,18 +21,18 @@ public interface IMemoryView {
 	/**
 	 * @return the top view tab from the Memory View
 	 */
-	public IMemoryViewTab getTopMemoryTab();
+	IMemoryViewTab getTopMemoryTab();
 
 	/**
 	 * @return all view tabs from current tab folder
 	 */
-	public IMemoryViewTab[] getAllViewTabs();
+	IMemoryViewTab[] getAllViewTabs();
 
 	/**
 	 * Move specified view tab to the top
 	 *
 	 * @param viewTab
 	 */
-	public void moveToTop(IMemoryViewTab viewTab);
+	void moveToTop(IMemoryViewTab viewTab);
 
 }

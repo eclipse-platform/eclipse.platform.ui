@@ -31,7 +31,7 @@ public interface IAsynchronousContentAdapter {
      * @param context the context in which children have been requested
      * @param monitor request monitor to report children to
      */
-    public void retrieveChildren(Object parent, IPresentationContext context, IChildrenRequestMonitor result);
+    void retrieveChildren(Object parent, IPresentationContext context, IChildrenRequestMonitor result);
 
     /**
      * Asynchronously determines whether the given element contains children in the specified
@@ -43,6 +43,6 @@ public interface IAsynchronousContentAdapter {
      * @param context the context in which children may exist
      * @param monitor request monitor to report the result to
      */
-    public void isContainer(Object element, IPresentationContext context, IContainerRequestMonitor result);
+    void isContainer(Object element, IPresentationContext context, IContainerRequestMonitor result);
 
 }

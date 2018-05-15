@@ -26,14 +26,14 @@ public interface IViewerUpdate extends IRequest {
 	 *
 	 * @return context this update was requested in
 	 */
-	public IPresentationContext getPresentationContext();
+	IPresentationContext getPresentationContext();
 
     /**
      * Returns the model element associated with this request.
      *
      * @return associated model element
      */
-    public Object getElement();
+    Object getElement();
 
     /**
      * Returns the viewer tree path to the model element associated with this
@@ -41,7 +41,7 @@ public interface IViewerUpdate extends IRequest {
      *
      * @return tree path, possibly empty
      */
-    public TreePath getElementPath();
+    TreePath getElementPath();
 
     /**
      * Returns the element that was the viewer input at the time the
@@ -50,5 +50,5 @@ public interface IViewerUpdate extends IRequest {
      * @return viewer input element, possibly <code>null</code>
      * @since 3.4
      */
-    public Object getViewerInput();
+    Object getViewerInput();
 }

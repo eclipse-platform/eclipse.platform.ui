@@ -39,6 +39,6 @@ public interface ICheckboxModelProxy {
      * @param checked The new checked state of the element
      * @return false if the check state should not change
      */
-    public boolean setChecked(IPresentationContext context, Object viewerInput, TreePath path, boolean checked);
+    boolean setChecked(IPresentationContext context, Object viewerInput, TreePath path, boolean checked);
 
 }

@@ -24,5 +24,5 @@ public interface IHasChildrenUpdate extends IViewerUpdate {
 	 *
 	 * @param hasChildren whether there are children
 	 */
-	public void setHasChilren(boolean hasChildren);
+	void setHasChilren(boolean hasChildren);
 }

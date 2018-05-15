@@ -16,5 +16,5 @@ import org.eclipse.debug.internal.ui.viewers.model.provisional.IStatusMonitor;
 
 public interface IPresentationErrorListener {
 
-	public void handlePresentationFailure(IStatusMonitor monitor, IStatus status);
+	void handlePresentationFailure(IStatusMonitor monitor, IStatus status);
 }

@@ -39,7 +39,7 @@ public interface IToggleBreakpointsTargetExtension extends IToggleBreakpointsTar
 	 * @param selection selection on which line breakpoints should be toggled
 	 * @throws CoreException if unable to perform the action
 	 */
-	public void toggleBreakpoints(IWorkbenchPart part, ISelection selection) throws CoreException;
+	void toggleBreakpoints(IWorkbenchPart part, ISelection selection) throws CoreException;
 
 	/**
 	 * Returns whether line breakpoints can be toggled on the given selection.
@@ -51,6 +51,6 @@ public interface IToggleBreakpointsTargetExtension extends IToggleBreakpointsTar
 	 * @param selection selection on which line breakpoints may be toggled
 	 * @return whether line breakpoints can be toggled on the given selection
 	 */
-	public boolean canToggleBreakpoints(IWorkbenchPart part, ISelection selection);
+	boolean canToggleBreakpoints(IWorkbenchPart part, ISelection selection);
 
 }

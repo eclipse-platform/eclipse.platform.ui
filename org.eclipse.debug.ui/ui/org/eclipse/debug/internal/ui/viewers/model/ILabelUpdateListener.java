@@ -22,13 +22,13 @@ public interface ILabelUpdateListener {
 	/**
 	 * Notification that a sequence of viewer updates are starting.
 	 */
-	public void labelUpdatesBegin();
+	void labelUpdatesBegin();
 
 	/**
 	 * Notification that viewer updates are complete. Corresponds to
 	 * a <code>viewerUpdatesBegin()</code> notification.
 	 */
-	public void labelUpdatesComplete();
+	void labelUpdatesComplete();
 
 	/**
 	 * Notification that a specific update has started within
@@ -36,7 +36,7 @@ public interface ILabelUpdateListener {
 	 *
 	 * @param update update
 	 */
-	public void labelUpdateStarted(ILabelUpdate update);
+	void labelUpdateStarted(ILabelUpdate update);
 
 	/**
 	 * Notification that a specific update has completed within a
@@ -44,5 +44,5 @@ public interface ILabelUpdateListener {
 	 *
 	 * @param update update
 	 */
-	public void labelUpdateComplete(ILabelUpdate update);
+	void labelUpdateComplete(ILabelUpdate update);
 }

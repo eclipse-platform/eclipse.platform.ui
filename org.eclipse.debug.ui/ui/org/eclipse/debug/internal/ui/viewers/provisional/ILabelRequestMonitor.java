@@ -30,34 +30,34 @@ public interface ILabelRequestMonitor extends IStatusMonitor {
 	 *
 	 * @param text
 	 */
-    public void setLabels(String[] text);
+    void setLabels(String[] text);
 
     /**
      * Sets the font of the label.
      *
      * @param fontData
      */
-    public void setFontDatas(FontData[] fontData);
+    void setFontDatas(FontData[] fontData);
 
     /**
      * Sets the image of the label.
      *
      * @param image
      */
-    public void setImageDescriptors(ImageDescriptor[] image);
+    void setImageDescriptors(ImageDescriptor[] image);
 
     /**
      * Sets the foreground color of the label.
      *
      * @param foreground
      */
-    public void setForegrounds(RGB[] foreground);
+    void setForegrounds(RGB[] foreground);
 
     /**
      * Sets the background color of the label.
      *
      * @param background
      */
-    public void setBackgrounds(RGB[] background);
+    void setBackgrounds(RGB[] background);
 
 }

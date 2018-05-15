@@ -75,7 +75,7 @@ public interface IMemoryRendering extends IAdaptable{
      * @param container container hosting this rendering
      * @param block the memory block to render
      */
-    public void init(IMemoryRenderingContainer container, IMemoryBlock block);
+    void init(IMemoryRenderingContainer container, IMemoryBlock block);
 
     /**
      * Creates the top level control for this rendering under the given parent composite.
@@ -88,7 +88,7 @@ public interface IMemoryRendering extends IAdaptable{
      * @param parent the parent composite
      * @return the new top level control
      */
-    public Control createControl(Composite parent);
+    Control createControl(Composite parent);
 
     /**
      * Returns the top level control for this rendering.
@@ -98,42 +98,42 @@ public interface IMemoryRendering extends IAdaptable{
      * </p>
      * @return the top level control or <code>null</code>
      */
-    public Control getControl();
+    Control getControl();
 
     /**
      * Disposes this rendering.
      */
-    public void dispose();
+    void dispose();
 
     /**
      * Notification this rendering has become the active rendering. Only one
      * rendering can be active at once. Generally, the active rendering is
      * visible and has focus.
      */
-    public void activated();
+    void activated();
 
     /**
      * Notification this rendering is no longer the active rendering.
      */
-    public void deactivated();
+    void deactivated();
 
     /**
      * Notification this rendering has become visible in its container.
      * Note that a rendering does not have to be active to be visible.
      */
-    public void becomesVisible();
+    void becomesVisible();
 
     /**
      * Notification this rendering has become hidden in its container.
      */
-    public void becomesHidden();
+    void becomesHidden();
 
     /**
      * Returns the memory block displayed by this rendering.
      *
      * @return the memory block displayed by this rendering
      */
-    public IMemoryBlock getMemoryBlock();
+    IMemoryBlock getMemoryBlock();
 
     /**
      * Returns the identifier associated with this rendering's type.
@@ -141,7 +141,7 @@ public interface IMemoryRendering extends IAdaptable{
      * @return the identifier associated with this rendering's type
      * @see IMemoryRenderingType
      */
-    public String getRenderingId();
+    String getRenderingId();
 
     /**
      * Adds a listener for property changes to this rendering.
@@ -149,7 +149,7 @@ public interface IMemoryRendering extends IAdaptable{
      *
      * @param listener a property change listener
      */
-    public void addPropertyChangeListener(IPropertyChangeListener listener);
+    void addPropertyChangeListener(IPropertyChangeListener listener);
 
     /**
      * Removes the given property change listener from this rendering.
@@ -157,7 +157,7 @@ public interface IMemoryRendering extends IAdaptable{
      *
      * @param listener a property change listener
      */
-    public void removePropertyChangeListener(IPropertyChangeListener listener);
+    void removePropertyChangeListener(IPropertyChangeListener listener);
 
     /**
      * Returns an image for this rendering. Clients should not dispose
@@ -166,12 +166,12 @@ public interface IMemoryRendering extends IAdaptable{
      *
      * @return an image for this rendering
      */
-    public Image getImage();
+    Image getImage();
 
     /**
      * Returns a label for this rendering.
      *
      * @return a label for this rendering
      */
-    public String getLabel();
+    String getLabel();
 }

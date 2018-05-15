@@ -74,7 +74,7 @@ public interface ILaunchConfigurationTab {
 	 *
 	 * @param parent the parent composite
 	 */
-	public void createControl(Composite parent);
+	void createControl(Composite parent);
 
 	/**
 	 * Returns the top level control for this tab.
@@ -85,7 +85,7 @@ public interface ILaunchConfigurationTab {
 	 *
 	 * @return the top level control or <code>null</code>
 	 */
-	public Control getControl();
+	Control getControl();
 
 	/**
 	 * Initializes the given launch configuration with
@@ -97,7 +97,7 @@ public interface ILaunchConfigurationTab {
 	 *
 	 * @param configuration launch configuration
 	 */
-	public void setDefaults(ILaunchConfigurationWorkingCopy configuration);
+	void setDefaults(ILaunchConfigurationWorkingCopy configuration);
 
 	/**
 	 * Initializes this tab's controls with values from the given
@@ -107,14 +107,14 @@ public interface ILaunchConfigurationTab {
 	 *
 	 * @param configuration launch configuration
 	 */
-	public void initializeFrom(ILaunchConfiguration configuration);
+	void initializeFrom(ILaunchConfiguration configuration);
 
 	/**
 	 * Notifies this launch configuration tab that it has
 	 * been disposed. Marks the end of this tab's lifecycle,
 	 * allowing this tab to perform any cleanup required.
 	 */
-	public void dispose();
+	void dispose();
 
 	/**
 	 * Copies values from this tab into the given
@@ -122,7 +122,7 @@ public interface ILaunchConfigurationTab {
 	 *
 	 * @param configuration launch configuration
 	 */
-	public void performApply(ILaunchConfigurationWorkingCopy configuration);
+	void performApply(ILaunchConfigurationWorkingCopy configuration);
 
 	/**
 	 * Returns the current error message for this tab.
@@ -135,7 +135,7 @@ public interface ILaunchConfigurationTab {
 	 *
 	 * @return the error message, or <code>null</code> if none
 	 */
-	public String getErrorMessage();
+	String getErrorMessage();
 
 	/**
 	 * Returns the current message for this tab.
@@ -147,7 +147,7 @@ public interface ILaunchConfigurationTab {
 	 *
 	 * @return the message, or <code>null</code> if none
 	 */
-	public String getMessage();
+	String getMessage();
 
 	/**
 	 * Returns whether this tab is in a valid state in the context of the specified launch configuration.
@@ -161,7 +161,7 @@ public interface ILaunchConfigurationTab {
 	 *
 	 * @return whether this tab is in a valid state
 	 */
-	public boolean isValid(ILaunchConfiguration launchConfig);
+	boolean isValid(ILaunchConfiguration launchConfig);
 
 	/**
 	 * Returns whether this tab is in a state that allows the launch configuration whose values
@@ -177,7 +177,7 @@ public interface ILaunchConfigurationTab {
 	 *
 	 * @return whether this tab is in a state that allows the current launch configuration to be saved
 	 */
-	public boolean canSave();
+	boolean canSave();
 
 	/**
 	 * Sets the launch configuration dialog that hosts this tab.
@@ -186,7 +186,7 @@ public interface ILaunchConfigurationTab {
 	 *
 	 * @param dialog launch configuration dialog
 	 */
-	public void setLaunchConfigurationDialog(ILaunchConfigurationDialog dialog);
+	void setLaunchConfigurationDialog(ILaunchConfigurationDialog dialog);
 
 	/**
 	 * Notifies this tab that the specified configuration has been
@@ -201,22 +201,21 @@ public interface ILaunchConfigurationTab {
 	 *  than the launch dialog, this method cannot be relied upon for launching
 	 *  functionality.
 	 */
-	@Deprecated
-	public void launched(ILaunch launch);
+	@Deprecated void launched(ILaunch launch);
 
 	/**
 	 * Returns the name of this tab.
 	 *
 	 * @return the name of this tab
 	 */
-	public String getName();
+	String getName();
 
 	/**
 	 * Returns the image for this tab, or <code>null</code> if none
 	 *
 	 * @return the image for this tab, or <code>null</code> if none
 	 */
-	public Image getImage();
+	Image getImage();
 
 	/**
 	 * Notification that this tab has become the active tab in the launch
@@ -225,7 +224,7 @@ public interface ILaunchConfigurationTab {
 	 * @param workingCopy the launch configuration being edited
 	 * @since 3.0
 	 */
-	public void activated(ILaunchConfigurationWorkingCopy workingCopy);
+	void activated(ILaunchConfigurationWorkingCopy workingCopy);
 
 	/**
 	 * Notification that this tab is no longer the active tab in the launch
@@ -234,7 +233,7 @@ public interface ILaunchConfigurationTab {
 	 * @param workingCopy the launch configuration being edited
 	 * @since 3.0
 	 */
-	public void deactivated(ILaunchConfigurationWorkingCopy workingCopy);
+	void deactivated(ILaunchConfigurationWorkingCopy workingCopy);
 
 	/**
 	 * Checks if it is OK to leave the Tab.
@@ -242,7 +241,7 @@ public interface ILaunchConfigurationTab {
 	 * @return <code>true</code> if OK to leave the tab or <code>false</code>
 	 * @since 3.12
 	 */
-	public default boolean OkToLeaveTab() {
+	default boolean OkToLeaveTab() {
 		return true;
 	}
 
@@ -251,7 +250,7 @@ public interface ILaunchConfigurationTab {
 	 *
 	 * @since 3.12
 	 */
-	public default void postApply() {
+	default void postApply() {
 	}
 }
 

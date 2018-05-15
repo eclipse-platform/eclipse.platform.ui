@@ -48,7 +48,7 @@ public interface IToggleBreakpointsTargetManager {
      * @param selection active selection in part
      * @return Set of toggle target IDs or an empty set
      */
-	public Set<String> getEnabledToggleBreakpointsTargetIDs(IWorkbenchPart part, ISelection selection);
+	Set<String> getEnabledToggleBreakpointsTargetIDs(IWorkbenchPart part, ISelection selection);
 
     /**
      * Returns the ID of the calculated preferred toggle breakpoints target for the
@@ -58,7 +58,7 @@ public interface IToggleBreakpointsTargetManager {
      * @param selection active selection in part
      * @return The toggle target IDs or null if none.
      */
-    public String getPreferredToggleBreakpointsTargetID(IWorkbenchPart part, ISelection selection);
+    String getPreferredToggleBreakpointsTargetID(IWorkbenchPart part, ISelection selection);
 
     /**
      * Given the ID of toggle breakpoint target, this method will try to find the factory
@@ -68,7 +68,7 @@ public interface IToggleBreakpointsTargetManager {
      * @param selection The active selection to use with toggle target
      * @return The instantiated target or null
      */
-    public IToggleBreakpointsTarget getToggleBreakpointsTarget(IWorkbenchPart part, ISelection selection);
+    IToggleBreakpointsTarget getToggleBreakpointsTarget(IWorkbenchPart part, ISelection selection);
 
     /**
      * Given the ID of a toggle breakpoints target, this method will try
@@ -77,7 +77,7 @@ public interface IToggleBreakpointsTargetManager {
      * @param id The ID of the requested toggle breakpoint target.
      * @return The name of the target.
      */
-    public String getToggleBreakpointsTargetName(String id);
+    String getToggleBreakpointsTargetName(String id);
 
     /**
      * Given the ID of a toggle breakpoints target, this method will try
@@ -86,19 +86,19 @@ public interface IToggleBreakpointsTargetManager {
      * @param id The ID of the requested toggle breakpoint target.
      * @return The description of the target or null.
      */
-    public String getToggleBreakpointsTargetDescription(String id);
+    String getToggleBreakpointsTargetDescription(String id);
 
     /**
      * Adds the given listener to the list of listeners notified when the preferred
      * toggle breakpoints targets change.
      * @param listener The listener to add.
      */
-    public void addChangedListener(IToggleBreakpointsTargetManagerListener listener);
+    void addChangedListener(IToggleBreakpointsTargetManagerListener listener);
 
     /**
      * Removes the given listener from the list of listeners notified when the preferred
      * toggle breakpoints targets change.
      * @param listener The listener to add.
      */
-    public void removeChangedListener(IToggleBreakpointsTargetManagerListener listener);
+    void removeChangedListener(IToggleBreakpointsTargetManagerListener listener);
 }

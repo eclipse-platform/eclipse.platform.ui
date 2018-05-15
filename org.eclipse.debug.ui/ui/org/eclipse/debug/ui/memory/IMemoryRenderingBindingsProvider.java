@@ -36,7 +36,7 @@ public interface IMemoryRenderingBindingsProvider {
      * @param block memory block
 	 * @return all rendering types bound to the given memory block
 	 */
-	public IMemoryRenderingType[] getRenderingTypes(IMemoryBlock block);
+	IMemoryRenderingType[] getRenderingTypes(IMemoryBlock block);
 
     /**
      * Returns default rendering types bound to the given memory block,
@@ -46,7 +46,7 @@ public interface IMemoryRenderingBindingsProvider {
      * @return default rendering types bound to the given memory block,
      * possibly empty
      */
-    public IMemoryRenderingType[] getDefaultRenderingTypes(IMemoryBlock block);
+    IMemoryRenderingType[] getDefaultRenderingTypes(IMemoryBlock block);
 
     /**
      * Returns the primary rendering type bound to the given memory block,
@@ -56,7 +56,7 @@ public interface IMemoryRenderingBindingsProvider {
      * @return the primary rendering type bound to the given memory block,
      * or <code>null</code> if none
      */
-    public IMemoryRenderingType getPrimaryRenderingType(IMemoryBlock block);
+    IMemoryRenderingType getPrimaryRenderingType(IMemoryBlock block);
 
     /**
      * Adds a listener to this binding provider.  The listener will be notified
@@ -66,7 +66,7 @@ public interface IMemoryRenderingBindingsProvider {
      * </p>
      * @param listener listener to add
      */
-	public void addListener(IMemoryRenderingBindingsListener listener);
+	void addListener(IMemoryRenderingBindingsListener listener);
 
     /**
      * Removes a listener from this binding provider.
@@ -75,5 +75,5 @@ public interface IMemoryRenderingBindingsProvider {
      * </p>
      * @param listener listener to remove
      */
-	public void removeListener(IMemoryRenderingBindingsListener listener);
+	void removeListener(IMemoryRenderingBindingsListener listener);
 }

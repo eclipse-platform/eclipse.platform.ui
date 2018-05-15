@@ -32,5 +32,5 @@ public interface IArgumentSelector {
 	 * @return argument for the given variable or <code>null</code>
 	 *  if none
 	 */
-	public String selectArgument(IStringVariable variable, Shell shell);
+	String selectArgument(IStringVariable variable, Shell shell);
 }

@@ -46,13 +46,13 @@ public interface ISuspendTrigger {
      *
      * @param listener suspend listener
      */
-	public void addSuspendTriggerListener(ISuspendTriggerListener listener);
+	void addSuspendTriggerListener(ISuspendTriggerListener listener);
 
     /**
      * Unregisters the given listener for suspend notifications.
      *
      * @param listener suspend listener
      */
-	public void removeSuspendTriggerListener(ISuspendTriggerListener listener);
+	void removeSuspendTriggerListener(ISuspendTriggerListener listener);
 
 }

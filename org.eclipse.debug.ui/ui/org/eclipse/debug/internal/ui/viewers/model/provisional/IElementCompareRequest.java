@@ -24,5 +24,5 @@ public interface IElementCompareRequest extends IElementMementoRequest {
 	 *
 	 * @param equal whether the memento represents the element
 	 */
-	public void setEqual(boolean equal);
+	void setEqual(boolean equal);
 }

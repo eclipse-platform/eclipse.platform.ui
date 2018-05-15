@@ -36,14 +36,14 @@ public interface IDebugContextManager {
 	 *
 	 * @param listener debug context listener
 	 */
-	public void addDebugContextListener(IDebugContextListener listener);
+	void addDebugContextListener(IDebugContextListener listener);
 
 	/**
 	 * Unregisters the given listener for context notification in all windows.
 	 *
 	 * @param listener debug context listener
 	 */
-	public void removeDebugContextListener(IDebugContextListener listener);
+	void removeDebugContextListener(IDebugContextListener listener);
 
 	/**
 	 * Returns the debug context service for the specified window.
@@ -51,5 +51,5 @@ public interface IDebugContextManager {
 	 * @param window workbench window
 	 * @return debug context service
 	 */
-	public IDebugContextService getContextService(IWorkbenchWindow window);
+	IDebugContextService getContextService(IWorkbenchWindow window);
 }

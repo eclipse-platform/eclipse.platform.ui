@@ -61,7 +61,7 @@ public interface IConsoleColorProvider {
 	 * @return whether the console associated with this color provider's
 	 * process can currently accept keyboard input
 	 */
-	public boolean isReadOnly();
+	boolean isReadOnly();
 
 	/**
 	 * Returns the color to draw output associated with the given stream.
@@ -69,7 +69,7 @@ public interface IConsoleColorProvider {
 	 * @param streamIdentifer the identifier of the stream
 	 * @return Color
 	 */
-	public Color getColor(String streamIdentifer);
+	Color getColor(String streamIdentifer);
 
 	/**
 	 * Connects this color provider to the given process and console.
@@ -79,10 +79,10 @@ public interface IConsoleColorProvider {
 	 * @param process the process to connect this color provider to
 	 * @param console the console  to connect this color provider to
 	 */
-	public void connect(IProcess process, IConsole console);
+	void connect(IProcess process, IConsole console);
 
 	/**
 	 * Disconnects this color provider.
 	 */
-	public void disconnect();
+	void disconnect();
 }

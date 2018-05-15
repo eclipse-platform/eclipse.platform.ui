@@ -28,13 +28,13 @@ public interface IBreakpointContainer {
     /**
      * Returns the breakpoint organizer that this container uses.
      */
-    public IBreakpointOrganizer getOrganizer();
+    IBreakpointOrganizer getOrganizer();
 
     /**
      * Returns the breakpoint category that this container is based on.
      * @return
      */
-    public IAdaptable getCategory();
+    IAdaptable getCategory();
 
     /**
      * Returns whether this breakpoint container contains the given breakpoint.
@@ -43,10 +43,10 @@ public interface IBreakpointContainer {
      * @return Returns <code>true</code> if this container contains the
      * given breakpoint.
      */
-    public boolean contains(IBreakpoint breakpoint);
+    boolean contains(IBreakpoint breakpoint);
 
     /**
      * Returns the array of breakpoints in this container.
      */
-    public IBreakpoint[] getBreakpoints();
+    IBreakpoint[] getBreakpoints();
 }

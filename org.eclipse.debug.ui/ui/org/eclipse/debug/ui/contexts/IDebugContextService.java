@@ -32,14 +32,14 @@ public interface IDebugContextService {
 	 *
 	 * @param listener debug context listener
 	 */
-	public void addDebugContextListener(IDebugContextListener listener);
+	void addDebugContextListener(IDebugContextListener listener);
 	/**
 	 * Unregisters for the given listener for debug context change notification
 	 * in this service's window.
 	 *
 	 * @param listener debug context listener
 	 */
-	public void removeDebugContextListener(IDebugContextListener listener);
+	void removeDebugContextListener(IDebugContextListener listener);
 
 	/**
 	 * Registers for the given debug context listener for context notification
@@ -48,7 +48,7 @@ public interface IDebugContextService {
 	 * @param listener debug context listener
 	 * @param partId part identifier
 	 */
-	public void addDebugContextListener(IDebugContextListener listener, String partId);
+	void addDebugContextListener(IDebugContextListener listener, String partId);
 
 	/**
 	 * Unregisters the given debug context listener for context change notification
@@ -57,7 +57,7 @@ public interface IDebugContextService {
 	 * @param listener debug context listener
 	 * @param partId part identifier
 	 */
-	public void removeDebugContextListener(IDebugContextListener listener, String partId);
+	void removeDebugContextListener(IDebugContextListener listener, String partId);
 
 	/**
 	 * Returns the active context in this service's window
@@ -65,7 +65,7 @@ public interface IDebugContextService {
 	 *
 	 * @return active context or <code>null</code>
 	 */
-	public ISelection getActiveContext();
+	ISelection getActiveContext();
 
 	/**
 	 * Returns the active context in the specified part of this service's window
@@ -74,7 +74,7 @@ public interface IDebugContextService {
 	 * @param partId part identifier
 	 * @return active context or <code>null</code>
 	 */
-	public ISelection getActiveContext(String partId);
+	ISelection getActiveContext(String partId);
 
 	/**
 	 * Registers the given debug context listener for post context change notification
@@ -83,7 +83,7 @@ public interface IDebugContextService {
 	 *
 	 * @param listener debug context listener
 	 */
-	public void addPostDebugContextListener(IDebugContextListener listener);
+	void addPostDebugContextListener(IDebugContextListener listener);
 
 	/**
 	 * Unregisters the given debug context listener for post context change notification
@@ -91,7 +91,7 @@ public interface IDebugContextService {
 	 *
 	 * @param listener debug context listener.
 	 */
-	public void removePostDebugContextListener(IDebugContextListener listener);
+	void removePostDebugContextListener(IDebugContextListener listener);
 
 	/**
 	 * Registers the given debug context listener for post context change notification
@@ -101,7 +101,7 @@ public interface IDebugContextService {
 	 * @param listener debug context listener
 	 * @param partId part identifier
 	 */
-	public void addPostDebugContextListener(IDebugContextListener listener, String partId);
+	void addPostDebugContextListener(IDebugContextListener listener, String partId);
 
 	/**
 	 * Unregisters the given debug context listener for post context change notification
@@ -110,21 +110,21 @@ public interface IDebugContextService {
 	 * @param listener debug context listener
 	 * @param partId part identifier
 	 */
-	public void removePostDebugContextListener(IDebugContextListener listener, String partId);
+	void removePostDebugContextListener(IDebugContextListener listener, String partId);
 
 	/**
 	 * Registers the given debug context provider with this service.
 	 *
 	 * @param provider debug context provider
 	 */
-	public void addDebugContextProvider(IDebugContextProvider provider);
+	void addDebugContextProvider(IDebugContextProvider provider);
 
 	/**
 	 * Unregisters the given debug context provider from this service.
 	 *
 	 * @param provider debug context provider
 	 */
-	public void removeDebugContextProvider(IDebugContextProvider provider);
+	void removeDebugContextProvider(IDebugContextProvider provider);
 
 	/**
 	 * Returns the active context in the specified part of this service's window

@@ -97,24 +97,24 @@ class ViewerStateTracker {
          *
          * @param request to add
          */
-        public void addRequest(ElementMementoRequest request);
+        void addRequest(ElementMementoRequest request);
 
         /**
          * Notification the request is complete.
          *
          * @param request that was completed
          */
-        public void requestComplete(ElementMementoRequest request);
+        void requestComplete(ElementMementoRequest request);
 
         /**
          * Process the queued requests. Accepts no more new requests.
          */
-        public void processReqeusts();
+        void processReqeusts();
 
         /**
          * Cancels the requests in progress.
          */
-        public void cancel();
+        void cancel();
     }
 
     /**

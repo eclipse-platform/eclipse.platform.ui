@@ -45,7 +45,7 @@ public interface IMemoryBlockTablePresentation extends IDebugModelPresentation
 	 * @return a collection of labels to head columns in a <code>AbstractTableRendering</code>
      * rendering, or <code>null</code> if default labels should be used
 	 */
-	public String[] getColumnLabels(IMemoryBlock blk, int bytesPerLine, int numColumns);
+	String[] getColumnLabels(IMemoryBlock blk, int bytesPerLine, int numColumns);
 
 
 	/**
@@ -57,6 +57,6 @@ public interface IMemoryBlockTablePresentation extends IDebugModelPresentation
 	 * @return a label for a row starting at the given address within the given
      * memory block, or <code>null</code> if default rendering should be used
 	 */
-	public String getRowLabel(IMemoryBlock blk, BigInteger address);
+	String getRowLabel(IMemoryBlock blk, BigInteger address);
 
 }

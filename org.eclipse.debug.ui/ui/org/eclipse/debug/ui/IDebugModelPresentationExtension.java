@@ -37,5 +37,5 @@ public interface IDebugModelPresentationExtension extends IDebugModelPresentatio
 	 * @param element the element a label is to be retrieved for
 	 * @return whether label related methods should be called on the UI thread
 	 */
-	public boolean requiresUIThread(Object element);
+	boolean requiresUIThread(Object element);
 }

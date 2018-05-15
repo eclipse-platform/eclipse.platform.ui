@@ -35,7 +35,7 @@ public interface IAddMemoryBlocksTarget {
 	 * @return <code>true</code> if the add memory block operation can be performed from the given part and selection, <code>false</code> otherwise
 	 * @throws CoreException if unable to perform the action
 	 */
-	public boolean canAddMemoryBlocks(IWorkbenchPart part, ISelection selection) throws CoreException;
+	boolean canAddMemoryBlocks(IWorkbenchPart part, ISelection selection) throws CoreException;
 
 	/**
 	 * Returns whether this target will support adding memory block from the specified
@@ -44,7 +44,7 @@ public interface IAddMemoryBlocksTarget {
 	 * @return true if the target wants to support adding memory block from the given
 	 * part, false otherwise.
 	 */
-	public boolean supportsAddMemoryBlocks(IWorkbenchPart part);
+	boolean supportsAddMemoryBlocks(IWorkbenchPart part);
 
 
 	/**
@@ -62,5 +62,5 @@ public interface IAddMemoryBlocksTarget {
 	 * @see org.eclipse.debug.ui.memory.IMemoryRenderingManager
 	 * @see org.eclipse.debug.core.IMemoryBlockManager
 	 */
-	public void addMemoryBlocks(IWorkbenchPart part, ISelection selection) throws CoreException;
+	void addMemoryBlocks(IWorkbenchPart part, ISelection selection) throws CoreException;
 }

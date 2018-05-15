@@ -34,7 +34,7 @@ public interface IDetailPane3 extends IDetailPane, ISaveablePart {
 	 *
 	 * @param listener a property listener
 	 */
-	public void addPropertyListener(IPropertyListener listener);
+	void addPropertyListener(IPropertyListener listener);
 
 	/**
 	 * Removes the given property listener from this workbench part.
@@ -42,5 +42,5 @@ public interface IDetailPane3 extends IDetailPane, ISaveablePart {
 	 *
 	 * @param listener a property listener
 	 */
-    public void removePropertyListener(IPropertyListener listener);
+    void removePropertyListener(IPropertyListener listener);
 }

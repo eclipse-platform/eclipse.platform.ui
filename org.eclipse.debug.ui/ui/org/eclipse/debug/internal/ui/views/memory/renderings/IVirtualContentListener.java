@@ -13,22 +13,22 @@ package org.eclipse.debug.internal.ui.views.memory.renderings;
 
 public interface IVirtualContentListener {
 
-	public int BUFFER_START = 0;
-	public int BUFFER_END = 1;
+	int BUFFER_START = 0;
+	int BUFFER_END = 1;
 
 	/**
 	 * Called when the viewer is at the beginning of its bufferred content
 	 */
-	public void handledAtBufferStart();
+	void handledAtBufferStart();
 
 	/**
 	 * Called when viewer is at the end of its bufferred content
 	 */
-	public void handleAtBufferEnd();
+	void handleAtBufferEnd();
 
 	/**
 	 * @return
 	 */
-	public int getThreshold(int bufferEndOrStart);
+	int getThreshold(int bufferEndOrStart);
 
 }

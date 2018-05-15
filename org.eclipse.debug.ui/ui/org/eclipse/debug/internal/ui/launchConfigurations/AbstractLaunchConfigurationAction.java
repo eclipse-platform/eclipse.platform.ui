@@ -38,7 +38,7 @@ public abstract class AbstractLaunchConfigurationAction extends SelectionListene
 		 *
 		 * @return whether this action should proceed
 		 */
-		public boolean getConfirmation();
+		boolean getConfirmation();
 	}
 
 	/**

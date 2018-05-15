@@ -34,5 +34,5 @@ public interface IDetailPane2 extends IDetailPane {
 	 *
 	 * @return the selection provider of this detail pane or <code>null</code>
 	 */
-	public ISelectionProvider getSelectionProvider();
+	ISelectionProvider getSelectionProvider();
 }

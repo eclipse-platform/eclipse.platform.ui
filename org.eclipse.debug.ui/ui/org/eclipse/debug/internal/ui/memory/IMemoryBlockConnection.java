@@ -23,5 +23,5 @@ public interface IMemoryBlockConnection {
 	/**
 	 * Update the content of a memory block in a connection.
 	 */
-	public void update();
+	void update();
 }

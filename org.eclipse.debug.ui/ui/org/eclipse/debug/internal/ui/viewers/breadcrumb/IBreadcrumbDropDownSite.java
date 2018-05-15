@@ -25,16 +25,16 @@ public interface IBreadcrumbDropDownSite {
      * viewer.
      * @param selection Selection to set to breadcrumb.
      */
-    public void notifySelection(ISelection selection);
+    void notifySelection(ISelection selection);
 
     /**
      * Notifies the breadcrumb that the drop-down viewer should be closed.
      */
-    public void close();
+    void close();
 
     /**
      * Notifies the breadcrumb that the drop-down viewer's contents have
      * changed and viewer shell should be adjusted for the new size.
      */
-    public void updateSize();
+    void updateSize();
 }

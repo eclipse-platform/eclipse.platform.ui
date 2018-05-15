@@ -34,29 +34,29 @@ public interface IMemoryViewPane {
 	 * @param label
 	 * @return the control of the view pane
 	 */
-	public Control createViewPane(Composite parent, String paneId, String label);
+	Control createViewPane(Composite parent, String paneId, String label);
 
 	/**
 	 * Restore view pane based on current selection from the debug view. Create
 	 * memory blocks or renderings that currently exist in the debug session.
 	 */
-	public void restoreViewPane();
+	void restoreViewPane();
 
 	/**
 	 * Dispose the view pane
 	 */
-	public void dispose();
+	void dispose();
 
 	/**
 	 * @return unique identifier of the view pane
 	 */
-	public String getId();
+	String getId();
 
 	/**
 	 * @return array of actions to be contributed to the view pane's acition
 	 *         bar.
 	 */
-	public IAction[] getActions();
+	IAction[] getActions();
 
 	/**
 	 * Add the given selection listener to the view pane. The selection listener
@@ -64,7 +64,7 @@ public interface IMemoryViewPane {
 	 *
 	 * @param listener
 	 */
-	public void addSelectionListener(ISelectionChangedListener listener);
+	void addSelectionListener(ISelectionChangedListener listener);
 
 	/**
 	 * Remove the selection listener from the view pane. The listener will no
@@ -72,28 +72,28 @@ public interface IMemoryViewPane {
 	 *
 	 * @param listener
 	 */
-	public void removeSelctionListener(ISelectionChangedListener listener);
+	void removeSelctionListener(ISelectionChangedListener listener);
 
 	/**
 	 * @return the selection provider of the view pane
 	 */
-	public ISelectionProvider getSelectionProvider();
+	ISelectionProvider getSelectionProvider();
 
 	/**
 	 * @return the control for ths memory view pane
 	 */
-	public Control getControl();
+	Control getControl();
 
 	/**
 	 * Called when the view pane becomes visible or hidden
 	 *
 	 * @param visible visibility state of teh view pane
 	 */
-	public void setVisible(boolean visible);
+	void setVisible(boolean visible);
 
 	/**
 	 * @return if the view pane is currently visible
 	 */
-	public boolean isVisible();
+	boolean isVisible();
 
 }

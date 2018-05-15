@@ -25,5 +25,5 @@ public interface IChildrenCountUpdate extends IViewerUpdate {
 	 *
 	 * @param numChildren number of children
 	 */
-	public void setChildCount(int numChildren);
+	void setChildCount(int numChildren);
 }

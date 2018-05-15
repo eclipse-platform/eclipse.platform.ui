@@ -32,7 +32,7 @@ public interface IElementContentProvider {
 	 *  a store for the result.  The update array is guaranteed to have at least
 	 *  one element, and for all updates to have the same presentation context.
 	 */
-	public void update(IChildrenCountUpdate[] updates);
+	void update(IChildrenCountUpdate[] updates);
 
 	/**
 	 * Updates children as requested by the given updates.
@@ -41,7 +41,7 @@ public interface IElementContentProvider {
 	 *  The update array is guaranteed to have at least one element, and for
      *  all updates to have the same presentation context.
 	 */
-	public void update(IChildrenUpdate[] updates);
+	void update(IChildrenUpdate[] updates);
 
 	/**
 	 * Updates whether elements have children.
@@ -50,6 +50,6 @@ public interface IElementContentProvider {
 	 *  a store for the result.  The update array is guaranteed to have at least
 	 *  one element, and for all updates to have the same presentation context.
 	 */
-	public void update(IHasChildrenUpdate[] updates);
+	void update(IHasChildrenUpdate[] updates);
 
 }

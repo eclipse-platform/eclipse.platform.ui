@@ -22,5 +22,5 @@ public interface ILaunchConfigurationTab2 extends ILaunchConfigurationTab {
 	 * @return Returns a warning message to be displayed to the user
 	 * or <code>null</code> if none is present.
 	 */
-	public String getWarningMessage();
+	String getWarningMessage();
 }

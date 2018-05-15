@@ -26,14 +26,14 @@ public interface IChildrenUpdate extends IViewerUpdate {
 	 *
 	 * @return offset at which children have been requested for
 	 */
-	public int getOffset();
+	int getOffset();
 
 	/**
 	 * Returns the number of children requested.
 	 *
 	 * @return number of children requested
 	 */
-	public int getLength();
+	int getLength();
 
 	/**
 	 * Sets the child for this request's parent at the given offset.
@@ -41,5 +41,5 @@ public interface IChildrenUpdate extends IViewerUpdate {
 	 * @param child child
 	 * @param offset child offset
 	 */
-	public void setChild(Object child, int offset);
+	void setChild(Object child, int offset);
 }

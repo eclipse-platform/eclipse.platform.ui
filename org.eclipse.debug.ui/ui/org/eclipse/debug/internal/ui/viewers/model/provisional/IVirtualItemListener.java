@@ -26,7 +26,7 @@ public interface IVirtualItemListener {
      *
      * @param item The item that was revealed.
      */
-    public void revealed(VirtualItem item);
+    void revealed(VirtualItem item);
 
     /**
      * Called when an item is disposed.  It tells the viewer to
@@ -34,5 +34,5 @@ public interface IVirtualItemListener {
      *
      * @param item The itam that was disposed.
      */
-    public void disposed(VirtualItem item);
+    void disposed(VirtualItem item);
 }

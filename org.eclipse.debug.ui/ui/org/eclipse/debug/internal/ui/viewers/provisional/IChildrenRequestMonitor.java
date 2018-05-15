@@ -26,12 +26,12 @@ public interface IChildrenRequestMonitor extends IStatusMonitor {
 	 *
 	 * @param child child to add
 	 */
-    public void addChild(Object child);
+    void addChild(Object child);
 
     /**
      * Adds the given children to this request.
      *
      * @param children children to add
      */
-    public void addChildren(Object[] children);
+    void addChildren(Object[] children);
 }

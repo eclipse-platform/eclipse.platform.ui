@@ -52,7 +52,7 @@ public interface ILaunchGroup {
 	 *
 	 * @return the image for this launch group, or <code>null</code> if none
 	 */
-	public ImageDescriptor getImageDescriptor();
+	ImageDescriptor getImageDescriptor();
 
 	/**
 	 * Returns the banner image for this launch group, or <code>null</code> if
@@ -61,42 +61,42 @@ public interface ILaunchGroup {
 	 * @return the banner image for this launch group, or <code>null</code> if
 	 * none
 	 */
-	public ImageDescriptor getBannerImageDescriptor();
+	ImageDescriptor getBannerImageDescriptor();
 
 	/**
 	 * Returns the label for this launch group
 	 *
 	 * @return the label for this launch group
 	 */
-	public String getLabel();
+	String getLabel();
 
 	/**
 	 * Returns the id for this launch group
 	 *
 	 * @return the id for this launch group
 	 */
-	public String getIdentifier();
+	String getIdentifier();
 
 	/**
 	 * Returns the category for this launch group, possibly <code>null</code>
 	 *
 	 * @return the category for this launch group, possibly <code>null</code>
 	 */
-	public String getCategory();
+	String getCategory();
 
 	/**
 	 * Returns the mode for this launch group
 	 *
 	 * @return the mode for this launch group
 	 */
-	public String getMode();
+	String getMode();
 
 	/**
 	 * Returns whether this launch group is public
 	 *
 	 * @return boolean
 	 */
-	public boolean isPublic();
+	boolean isPublic();
 
 }
 

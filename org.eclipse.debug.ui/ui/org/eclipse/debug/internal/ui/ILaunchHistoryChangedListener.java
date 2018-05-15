@@ -24,5 +24,5 @@ public interface ILaunchHistoryChangedListener {
 	 * or last launched items could have changed.  To examine the history items, retrieve them
 	 * from the <code>DebugUIPlugin</code>.
 	 */
-	public void launchHistoryChanged();
+	void launchHistoryChanged();
 }

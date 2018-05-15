@@ -32,7 +32,7 @@ public interface IViewerInputProvider {
 	 * @param update provides details about the request and stores the newly
 	 * 	computed viewer input
 	 */
-	public void update(IViewerInputUpdate update);
+	void update(IViewerInputUpdate update);
 
 
 }

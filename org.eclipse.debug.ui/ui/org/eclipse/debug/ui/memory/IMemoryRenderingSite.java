@@ -32,7 +32,7 @@ public interface IMemoryRenderingSite {
      *
      * @return the view site hosting memory renderings for this rendering site
      */
-    public IWorkbenchPartSite getSite();
+    IWorkbenchPartSite getSite();
 
     /**
      * Returns the syncrhonization service for this rendering site
@@ -40,14 +40,14 @@ public interface IMemoryRenderingSite {
      *
      * @return the syncrhonization service for this rendering site or <code>null</code>
      */
-    public IMemoryRenderingSynchronizationService getSynchronizationService();
+    IMemoryRenderingSynchronizationService getSynchronizationService();
 
     /**
      * Returns all the memory rendering containers within this rendering site.
      *
      * @return all the memory rendering containers within this rendering site
      */
-    public IMemoryRenderingContainer[] getMemoryRenderingContainers();
+    IMemoryRenderingContainer[] getMemoryRenderingContainers();
 
     /**
      * Returns the rendering container with the given id or <code>null</code>
@@ -57,7 +57,7 @@ public interface IMemoryRenderingSite {
      * @return the rendering container with the given id or <code>null</code>
      * if none
      */
-    public IMemoryRenderingContainer getContainer(String id);
+    IMemoryRenderingContainer getContainer(String id);
 
 
 }

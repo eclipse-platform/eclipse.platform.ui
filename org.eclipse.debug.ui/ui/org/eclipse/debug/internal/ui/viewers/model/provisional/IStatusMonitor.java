@@ -46,7 +46,7 @@ public interface IStatusMonitor extends IProgressMonitor {
      *
      * @param status request status
      */
-    public void setStatus(IStatus status);
+    void setStatus(IStatus status);
 
     /**
      * Returns the status of this request, or <code>null</code>.
@@ -54,5 +54,5 @@ public interface IStatusMonitor extends IProgressMonitor {
      * @return request status - <code>null</code> is equivalent
      *  to an OK status
      */
-    public IStatus getStatus();
+    IStatus getStatus();
 }

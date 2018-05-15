@@ -43,6 +43,6 @@ public interface IWatchExpressionFactoryAdapter {
 	 * @exception org.eclipse.core.runtime.CoreException if unable to create a watch
 	 *  expression
 	 */
-	public String createWatchExpression(IVariable variable) throws CoreException;
+	String createWatchExpression(IVariable variable) throws CoreException;
 
 }

@@ -54,7 +54,7 @@ public interface IVariableValueEditor {
      *  platform should prompt the user to edit the given variable using the default
      *  variable editor
      */
-    public boolean editVariable(IVariable variable, Shell shell);
+    boolean editVariable(IVariable variable, Shell shell);
 
     /**
      * Saves the given expression to the given variable, if appropriate. If this
@@ -70,5 +70,5 @@ public interface IVariableValueEditor {
      *  <code>true</code> if no more work should be done, <code>false</code> if the debug
      *  platform should perform the default save operation
      */
-    public boolean saveVariable(IVariable variable, String expression, Shell shell);
+    boolean saveVariable(IVariable variable, String expression, Shell shell);
 }

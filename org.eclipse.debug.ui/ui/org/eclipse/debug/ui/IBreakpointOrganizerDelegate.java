@@ -63,7 +63,7 @@ public interface IBreakpointOrganizerDelegate {
      *
      * @see IPropertyChangeListener
      */
-    public static final String P_CATEGORY_CHANGED = DebugUIPlugin.getUniqueIdentifier() + ".P_CATEGORY_CHANGED"; //$NON-NLS-1$
+    String P_CATEGORY_CHANGED = DebugUIPlugin.getUniqueIdentifier() + ".P_CATEGORY_CHANGED"; //$NON-NLS-1$
 
     /**
      * Returns objects representing the categories of the specified
@@ -75,7 +75,7 @@ public interface IBreakpointOrganizerDelegate {
      * @param breakpoint breakpoint to classify
      * @return categories of the given breakpoint or <code>null</code>
      */
-    public IAdaptable[] getCategories(IBreakpoint breakpoint);
+    IAdaptable[] getCategories(IBreakpoint breakpoint);
 
     /**
      * Adds the specified listener. Has no effect if an identical listener is
@@ -83,7 +83,7 @@ public interface IBreakpointOrganizerDelegate {
      *
      * @param listener listener to add
      */
-    public void addPropertyChangeListener(IPropertyChangeListener listener);
+    void addPropertyChangeListener(IPropertyChangeListener listener);
 
     /**
      * Removes the specified listener. Has no effect if an identical listener
@@ -91,7 +91,7 @@ public interface IBreakpointOrganizerDelegate {
      *
      * @param listener listener to remove
      */
-    public void removePropertyChangeListener(IPropertyChangeListener listener);
+    void removePropertyChangeListener(IPropertyChangeListener listener);
 
     /**
      * Adds the specified breakpoint to the given category. Only called
@@ -101,7 +101,7 @@ public interface IBreakpointOrganizerDelegate {
      * @param breakpoint breakpoint to recategorize
      * @param category the breakpoint's new category
      */
-    public void addBreakpoint(IBreakpoint breakpoint, IAdaptable category);
+    void addBreakpoint(IBreakpoint breakpoint, IAdaptable category);
 
     /**
      * Removes the specified breakpoint from the given category. Only
@@ -111,7 +111,7 @@ public interface IBreakpointOrganizerDelegate {
      * @param breakpoint breakpoint to recategorize
      * @param category the category the breakpoint is remove from
      */
-    public void removeBreakpoint(IBreakpoint breakpoint, IAdaptable category);
+    void removeBreakpoint(IBreakpoint breakpoint, IAdaptable category);
 
     /**
      * Returns whether the given breakpoint can be categorized in the
@@ -122,7 +122,7 @@ public interface IBreakpointOrganizerDelegate {
      * @return whether the given breakpoint can be categorized in the
      * specified category
      */
-    public boolean canAdd(IBreakpoint breakpoint, IAdaptable category);
+    boolean canAdd(IBreakpoint breakpoint, IAdaptable category);
 
     /**
      * Returns whether the given breakpoint can be removed from the given
@@ -133,7 +133,7 @@ public interface IBreakpointOrganizerDelegate {
      * @return whether the given breakpoint can be removed from the given
      * category
      */
-    public boolean canRemove(IBreakpoint breakpoint, IAdaptable category);
+    boolean canRemove(IBreakpoint breakpoint, IAdaptable category);
 
     /**
      * Returns all categories managed by this organizer, or <code>null</code>.
@@ -144,11 +144,11 @@ public interface IBreakpointOrganizerDelegate {
      *
      * @return all categories managed by this organizer, or <code>null</code>
      */
-    public IAdaptable[] getCategories();
+    IAdaptable[] getCategories();
 
     /**
      * Disposes this breakpoint organizer.
      */
-    public void dispose();
+    void dispose();
 
 }

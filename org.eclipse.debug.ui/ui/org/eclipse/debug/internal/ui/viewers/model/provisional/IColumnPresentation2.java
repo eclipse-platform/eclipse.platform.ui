@@ -30,6 +30,6 @@ public interface IColumnPresentation2 extends IColumnPresentation {
 	 *         and let the caller to decide the width. The caller may make the initial width
 	 *         be treeWidgetWidth / visibleColumnIds.length
 	 */
-	public int getInitialColumnWidth(String id, int treeWidgetWidth, String[] visibleColumnIds);
+	int getInitialColumnWidth(String id, int treeWidgetWidth, String[] visibleColumnIds);
 
 }

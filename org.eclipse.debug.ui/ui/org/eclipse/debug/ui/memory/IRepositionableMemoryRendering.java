@@ -32,7 +32,7 @@ public interface IRepositionableMemoryRendering extends IMemoryRendering{
 	 * Returns the currently selected address of this rendering or <code>null</code> if none
 	 * @return the currently selected address of this rendering or <code>null</code> if none
 	 */
-	public BigInteger getSelectedAddress();
+	BigInteger getSelectedAddress();
 
 	/**
 	 * Returns the currently selected content as <code>MemoryByte</code> array.
@@ -40,7 +40,7 @@ public interface IRepositionableMemoryRendering extends IMemoryRendering{
 	 * @return the currently selected as <code>MemoryByte</code> array or empty if there is
 	 * no selection.
 	 */
-	public MemoryByte[] getSelectedAsBytes();
+	MemoryByte[] getSelectedAsBytes();
 
 	/**
 	 * Position the rendering to the given address.
@@ -49,5 +49,5 @@ public interface IRepositionableMemoryRendering extends IMemoryRendering{
 	 * @throws DebugException when there is a problem repositioning the rendering to the
 	 * address
 	 */
-	public void goToAddress(BigInteger address) throws DebugException ;
+	void goToAddress(BigInteger address) throws DebugException ;
 }

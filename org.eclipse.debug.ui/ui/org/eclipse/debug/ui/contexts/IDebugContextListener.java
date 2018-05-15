@@ -29,6 +29,6 @@ public interface IDebugContextListener {
 	 *
 	 * @param event debug context event
 	 */
-	public void debugContextChanged(DebugContextEvent event);
+	void debugContextChanged(DebugContextEvent event);
 
 }

@@ -44,5 +44,5 @@ public interface IModelProxyFactory2 {
 	 * @param context presentation context
 	 * @return model proxy or <code>null</code>
 	 */
-	public IModelProxy createTreeModelProxy(Object input, TreePath path, IPresentationContext context);
+	IModelProxy createTreeModelProxy(Object input, TreePath path, IPresentationContext context);
 }

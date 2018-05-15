@@ -35,7 +35,7 @@ public interface IImportExportConstants {
 	 * @see WizardImportBreakpointsPage
 	 *
 	 */
-	public static final String IE_NODE_BREAKPOINTS = "breakpoints"; //$NON-NLS-1$
+	String IE_NODE_BREAKPOINTS = "breakpoints"; //$NON-NLS-1$
 
 	/**
 	 * The name of the node type for each of the imported or exported breakpoints
@@ -43,7 +43,7 @@ public interface IImportExportConstants {
 	 * @see WizardExportBreakpointsPage
 	 * @see WizardImportBreakpointsPage
 	 */
-	public static final String IE_NODE_BREAKPOINT = "breakpoint"; //$NON-NLS-1$
+	String IE_NODE_BREAKPOINT = "breakpoint"; //$NON-NLS-1$
 
 	/**
 	 * <p>
@@ -55,7 +55,7 @@ public interface IImportExportConstants {
 	 * @see WizardExportBreakpointsPage
 	 * @see WizardImportBreakpointsPage
 	 */
-	public static final String IE_NODE_VALUE = "value"; //$NON-NLS-1$
+	String IE_NODE_VALUE = "value"; //$NON-NLS-1$
 
 	/**
 	 * Each breakpoint has an associated resource, which is described with this element
@@ -64,7 +64,7 @@ public interface IImportExportConstants {
 	 * @see WizardExportBreakpointsPage
 	 * @see WizardImportBreakpointsPage
 	 */
-	public static final String IE_NODE_RESOURCE = "resource"; //$NON-NLS-1$
+	String IE_NODE_RESOURCE = "resource"; //$NON-NLS-1$
 
 	/**
 	 * To validate the resource when filtering importable breakpoints we need to know its path.
@@ -73,7 +73,7 @@ public interface IImportExportConstants {
 	 * @see WizardExportBreakpointsPage
 	 * @see WizardImportBreakpointsPage
 	 */
-	public static final String IE_NODE_PATH = "path"; //$NON-NLS-1$
+	String IE_NODE_PATH = "path"; //$NON-NLS-1$
 
 	/**
 	 * To filter the type of path searched for within the workspace to allow for the filtering of
@@ -84,7 +84,7 @@ public interface IImportExportConstants {
 	 * @see WizardExportBreakpointsPage
 	 * @see WizardImportBreakpointsPage
 	 */
-	public static final String IE_NODE_TYPE = "type"; //$NON-NLS-1$
+	String IE_NODE_TYPE = "type"; //$NON-NLS-1$
 
 	/**
 	 * The name for the marker node in the corresponding XMLMemento
@@ -92,7 +92,7 @@ public interface IImportExportConstants {
 	 * @see WizardExportBreakpointsPage
 	 * @see WizardImportBreakpointsPage
 	 */
-	public static final String IE_NODE_MARKER = "marker"; //$NON-NLS-1$
+	String IE_NODE_MARKER = "marker"; //$NON-NLS-1$
 
 	/**
 	 * The name for a marker attribute node in the corresponding XMLMemento
@@ -100,7 +100,7 @@ public interface IImportExportConstants {
 	 * @see WizardExportBreakpointsPage
 	 * @see WizardImportBreakpointsPage
 	 */
-	public static final String IE_NODE_ATTRIB = "attrib"; //$NON-NLS-1$
+	String IE_NODE_ATTRIB = "attrib"; //$NON-NLS-1$
 
 	/**
 	 * The generalized name for the "name" node used in marker attribute nodes.
@@ -110,7 +110,7 @@ public interface IImportExportConstants {
 	 * @see WizardExportBreakpointsPage
 	 * @see WizardImportBreakpointsPage
 	 */
-	public static final String IE_NODE_NAME = "name"; //$NON-NLS-1$
+	String IE_NODE_NAME = "name"; //$NON-NLS-1$
 
 	/**
 	 * The name of the enabled attribute, which is part of the breakpoint node information
@@ -118,7 +118,7 @@ public interface IImportExportConstants {
 	 * @see WizardExportBreakpointsPage
 	 * @see WizardImportBreakpointsPage
 	 */
-	public static final String IE_BP_ENABLED = "enabled"; //$NON-NLS-1$
+	String IE_BP_ENABLED = "enabled"; //$NON-NLS-1$
 
 	/**
 	 * The name of the registered attribute, which is part of the breakpoint node information
@@ -126,25 +126,25 @@ public interface IImportExportConstants {
 	 * @see WizardExportBreakpointsPage
 	 * @see WizardImportBreakpointsPage
 	 */
-	public static final String IE_BP_REGISTERED = "registered"; //$NON-NLS-1$
+	String IE_BP_REGISTERED = "registered"; //$NON-NLS-1$
 
 	/**
 	 * The name of the persistent attribute for breakpoint information
 	 */
-	public static final String IE_BP_PERSISTANT = "persistant"; //$NON-NLS-1$
+	String IE_BP_PERSISTANT = "persistant"; //$NON-NLS-1$
 
 	/**
 	 * The default file extension for breakpoint export files
 	 */
-	public static final String EXTENSION = "bkpt";  //$NON-NLS-1$
+	String EXTENSION = "bkpt";  //$NON-NLS-1$
 
 	/**
 	 * the charstart attribute from a marker
 	 */
-	public static final String CHARSTART = "charStart"; //$NON-NLS-1$
+	String CHARSTART = "charStart"; //$NON-NLS-1$
 
 	/**
 	 * The delimiter for the listing of working sets that a marker belongs to
 	 */
-	public static final String DELIMITER = "<;#>"; //$NON-NLS-1$
+	String DELIMITER = "<;#>"; //$NON-NLS-1$
 }

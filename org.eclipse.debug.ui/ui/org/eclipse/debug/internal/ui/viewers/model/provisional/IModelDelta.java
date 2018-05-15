@@ -39,74 +39,74 @@ public interface IModelDelta {
 	 * Indicates an element has not changed, but has children that have
 	 * changed in some way.
 	 */
-	public static int NO_CHANGE = 0;
+	int NO_CHANGE = 0;
 	/**
 	 * Indicates an element has been added to the model, as described by
 	 * its path.
 	 */
-	public static int ADDED = 1;
+	int ADDED = 1;
 	/**
 	 * Indicates an element has been removed from the model, as described by
 	 * its path.
 	 */
-	public static int REMOVED = 1 << 1;
+	int REMOVED = 1 << 1;
 	/**
 	 * Indicates an element has been replaced in the model, as described by
 	 * its path. In this case a replacement element is also specified in the
 	 * model delta node.
 	 */
-	public static int REPLACED = 1 << 3;
+	int REPLACED = 1 << 3;
 	/**
 	 * Indicates an element has been inserted into the model, as described
 	 * by its path and index.
 	 */
-	public static int INSERTED = 1 << 4;
+	int INSERTED = 1 << 4;
 
 	// how an element changed
 
 	/**
 	 * Indicates an elements content has changed (i.e. its children).
 	 */
-	public static int CONTENT = 1 << 10;
+	int CONTENT = 1 << 10;
 	/**
 	 * Indicates an elements state has changed (i.e. label)
 	 */
-	public static int STATE = 1 << 11;
+	int STATE = 1 << 11;
 
 	// Suggested actions
 
 	/**
 	 * Suggests that the element should be expanded, as described by its path.
 	 */
-	public static int EXPAND = 1 << 20;
+	int EXPAND = 1 << 20;
 	/**
 	 * Suggests that the element should be selected, as described by its path.
 	 */
-	public static int SELECT = 1 << 21;
+	int SELECT = 1 << 21;
 
 	/**
 	 * Suggests that the element should be revealed, as described by its path.
 	 * @since 3.3
 	 */
-	public static int REVEAL = 1 << 24;
+	int REVEAL = 1 << 24;
 
 	/**
 	 * Indicates a model proxy should be installed for the given element
 	 * @since 3.3
 	 */
-	public static int INSTALL = 1 << 22;
+	int INSTALL = 1 << 22;
 
 	/**
 	 * Indicates a model proxy should be uninstalled for the given element
 	 * @since 3.3
 	 */
-	public static int UNINSTALL = 1 << 23;
+	int UNINSTALL = 1 << 23;
 
 	/**
 	 * Suggests that the element should be collapsed, as described by its path.
 	 * @since 3.3
 	 */
-	public static int COLLAPSE = 1 << 25;
+	int COLLAPSE = 1 << 25;
 
 	/**
 	 * Flag indicating that the view layout deltas should override the
@@ -116,7 +116,7 @@ public interface IModelDelta {
 	 * @see IModelSelectionPolicy
 =	 * @since 3.5
 	 */
-	public static int FORCE = 1 << 26;
+	int FORCE = 1 << 26;
 
 	/**
 	 * Returns the parent of this node, or <code>null</code> if this is
@@ -124,14 +124,14 @@ public interface IModelDelta {
 	 *
 	 * @return parent node or <code>null</code> if this is a root node
 	 */
-	public IModelDelta getParentDelta();
+	IModelDelta getParentDelta();
 
 	/**
 	 * Returns the model element this node describes.
 	 *
 	 * @return associated model element
 	 */
-	public Object getElement();
+	Object getElement();
 
 	/**
 	 * Returns flags describing how this element changed. A bit mask of the
@@ -139,14 +139,14 @@ public interface IModelDelta {
 	 *
 	 * @return change flags
 	 */
-	public int getFlags();
+	int getFlags();
 
 	/**
 	 * Returns nodes describing changed children, possibly an empty collection.
 	 *
 	 * @return changed children, possibly empty
 	 */
-	public IModelDelta[] getChildDeltas();
+	IModelDelta[] getChildDeltas();
 
 	/**
 	 * When a node indicates the <code>IModelDelta.REPLACED</code> flag, this method
@@ -154,7 +154,7 @@ public interface IModelDelta {
 	 *
 	 * @return replacement element or <code>null</code>
 	 */
-	public Object getReplacementElement();
+	Object getReplacementElement();
 
 	/**
 	 * Returns this node's index in its parents child collection or -1 if unknown.
@@ -166,7 +166,7 @@ public interface IModelDelta {
 	 * </p>
 	 * @return insertion index or -1
 	 */
-	public int getIndex();
+	int getIndex();
 
 	/**
 	 * Returns the total number of children this element has, or -1 if unknown. Note
@@ -178,7 +178,7 @@ public interface IModelDelta {
 	 *
 	 * @return total number of child elements this element has
 	 */
-	public int getChildCount();
+	int getChildCount();
 
 	/**
 	 * Accepts the given visitor.
@@ -186,6 +186,6 @@ public interface IModelDelta {
 	 * @param visitor delta visitor to accept
 	 * @since 3.3
 	 */
-	public void accept(IModelDeltaVisitor visitor);
+	void accept(IModelDeltaVisitor visitor);
 
 }

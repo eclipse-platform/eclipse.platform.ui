@@ -31,6 +31,6 @@ public interface IMemoryRenderingTypeDelegate {
      * @return a new rendering of the given type or <code>null</code>
      * @exception CoreException if unable to create the rendering
      */
-    public IMemoryRendering createRendering(String id) throws CoreException;
+    IMemoryRendering createRendering(String id) throws CoreException;
 
 }

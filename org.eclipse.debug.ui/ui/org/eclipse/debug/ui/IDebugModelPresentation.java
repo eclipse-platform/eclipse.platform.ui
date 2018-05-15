@@ -92,7 +92,7 @@ public interface IDebugModelPresentation extends ILabelProvider, ISourcePresenta
 	 * variables.
 	 * @see #setAttribute(String, Object)
 	 */
-	public final static String DISPLAY_VARIABLE_TYPE_NAMES= IDebugUIConstants.PLUGIN_ID + ".displayVariableTypeNames"; //$NON-NLS-1$
+	String DISPLAY_VARIABLE_TYPE_NAMES= IDebugUIConstants.PLUGIN_ID + ".displayVariableTypeNames"; //$NON-NLS-1$
 	/**
 	 * Sets a presentation attribute of this label provider. For example,
 	 * see the presentation attribute <code>DISPLAY_VARIABLE_TYPE_NAMES</code>
@@ -111,8 +111,7 @@ public interface IDebugModelPresentation extends ILabelProvider, ISourcePresenta
 	 *    image should be used
 	 * @see ILabelProvider
 	 */
-	@Override
-	public Image getImage(Object element);
+	@Override Image getImage(Object element);
 	/**
 	 * Returns a label for the element, or <code>null</code> if a default
 	 * label should be used.
@@ -122,8 +121,7 @@ public interface IDebugModelPresentation extends ILabelProvider, ISourcePresenta
 	 *    label should be used
 	 * @see ILabelProvider
 	 */
-	@Override
-	public String getText(Object element);
+	@Override String getText(Object element);
 
 	/**
 	 * Computes a detailed description of the given value, reporting

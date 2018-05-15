@@ -31,5 +31,5 @@ public interface IElementLabelProvider {
 	 *  stores label attributes.  The update array is guaranteed to have at least one element, and for
 	 *  all updates to have the same presentation context.
 	 */
-	public void update(ILabelUpdate[] updates);
+	void update(ILabelUpdate[] updates);
 }

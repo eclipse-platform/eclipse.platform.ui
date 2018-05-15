@@ -32,14 +32,14 @@ public interface IMemoryRenderingType {
      *
      * @return a label for this type of memory rendering
      */
-    public String getLabel();
+    String getLabel();
 
     /**
      * Returns the unique identifier for this rendering type.
      *
      * @return the unique identifier for this rendering type
      */
-    public String getId();
+    String getId();
 
     /**
      * Creates and returns a new rendering of this type or <code>null</code>
@@ -49,6 +49,6 @@ public interface IMemoryRenderingType {
      * @exception CoreException if an exception occurs creating
      *  the rendering
      */
-    public IMemoryRendering createRendering() throws CoreException;
+    IMemoryRendering createRendering() throws CoreException;
 
 }

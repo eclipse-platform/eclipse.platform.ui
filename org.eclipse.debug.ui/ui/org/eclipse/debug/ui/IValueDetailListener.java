@@ -30,5 +30,5 @@ public interface IValueDetailListener {
 	 * @param value the value for which the detail is provided
 	 * @param result the detailed description of the given value
 	 */
-	public void detailComputed(IValue value, String result);
+	void detailComputed(IValue value, String result);
 }

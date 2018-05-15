@@ -34,19 +34,19 @@ public interface ITreeModelLabelProvider extends IBaseLabelProvider {
      * @return true if element label provider is found and update will
      * be requested.
      */
-    public boolean update(TreePath elementPath);
+    boolean update(TreePath elementPath);
 
     /**
      * Registers the specified listener for view label update notifications.
      * @param listener Listener to add
      */
-    public void addLabelUpdateListener(ILabelUpdateListener listener);
+    void addLabelUpdateListener(ILabelUpdateListener listener);
 
     /**
      * Removes the specified listener from view label update notifications.
      * @param listener Listener to remove
      */
-    public void removeLabelUpdateListener(ILabelUpdateListener listener);
+    void removeLabelUpdateListener(ILabelUpdateListener listener);
 
     /**
      * Returns an image for the given image descriptor or <code>null</code>. Adds the image
@@ -55,7 +55,7 @@ public interface ITreeModelLabelProvider extends IBaseLabelProvider {
      * @param descriptor image descriptor or <code>null</code>
      * @return image or <code>null</code>
      */
-    public Image getImage(ImageDescriptor descriptor);
+    Image getImage(ImageDescriptor descriptor);
 
     /**
      * Returns a font for the given font data or <code>null</code>. Adds the font to the font
@@ -64,7 +64,7 @@ public interface ITreeModelLabelProvider extends IBaseLabelProvider {
      * @param fontData font data or <code>null</code>
      * @return font font or <code>null</code>
      */
-    public Font getFont(FontData fontData);
+    Font getFont(FontData fontData);
 
     /**
      * Returns a color for the given RGB or <code>null</code>. Adds the color to the color
@@ -73,5 +73,5 @@ public interface ITreeModelLabelProvider extends IBaseLabelProvider {
      * @param rgb RGB or <code>null</code>
      * @return color or <code>null</code>
      */
-    public Color getColor(RGB rgb);
+    Color getColor(RGB rgb);
 }
