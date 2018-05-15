@@ -24,7 +24,7 @@ public interface IErrorReportingExpression extends IExpression {
 	 *
 	 * @return whether this expression's result has errors
 	 */
-	public boolean hasErrors();
+	boolean hasErrors();
 	/**
 	 * Returns this expression's error messages, if any. An expression can
 	 * have errors if errors were generated the last time its value was
@@ -32,5 +32,5 @@ public interface IErrorReportingExpression extends IExpression {
 	 *
 	 * @return this expression's error messages
 	 */
-	public String[] getErrorMessages();
+	String[] getErrorMessages();
 }

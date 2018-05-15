@@ -45,19 +45,19 @@ public interface IDebugElement extends IAdaptable {
 	 *
 	 * @return the plug-in identifier
 	 */
-	public String getModelIdentifier();
+	String getModelIdentifier();
 	/**
 	 * Returns the debug target this element is contained in.
 	 *
 	 * @return the debug target this element is contained in
 	 */
-	public IDebugTarget getDebugTarget();
+	IDebugTarget getDebugTarget();
 	/**
 	 * Returns the launch this element is contained in.
 	 *
 	 * @return the launch this element is contained in
 	 */
-	public ILaunch getLaunch();
+	ILaunch getLaunch();
 }
 
 

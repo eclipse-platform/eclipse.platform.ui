@@ -31,7 +31,7 @@ public interface IBreakpointManagerListener {
 	 *
 	 * @param enabled whether or not the breakpoint manager is enabled
 	 */
-	public void breakpointManagerEnablementChanged(boolean enabled);
+	void breakpointManagerEnablementChanged(boolean enabled);
 
 	/**
 	 * Notifies the listener that the breakpoint manager's trigger point has
@@ -40,6 +40,6 @@ public interface IBreakpointManagerListener {
 	 * @param triggerBreakpoint new trigger breakpoint or <code>null<code>
 	 * @since 3.11
 	 */
-	public default void breakpointManagerTriggerPointChanged(IBreakpoint triggerBreakpoint) {
+	default void breakpointManagerTriggerPointChanged(IBreakpoint triggerBreakpoint) {
 	}
 }

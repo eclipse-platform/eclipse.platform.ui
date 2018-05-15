@@ -30,6 +30,6 @@ public interface IDebugModelProvider {
 	 *
 	 * @return a collection of debug model identifiers
 	 */
-	public String[] getModelIdentifiers();
+	String[] getModelIdentifiers();
 
 }

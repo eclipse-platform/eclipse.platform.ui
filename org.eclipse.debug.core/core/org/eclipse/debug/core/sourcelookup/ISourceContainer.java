@@ -40,7 +40,7 @@ public interface ISourceContainer extends IAdaptable {
 	 *
 	 * @param director the director this container has been added to
 	 */
-	public void init(ISourceLookupDirector director);
+	void init(ISourceLookupDirector director);
 
 	/**
 	 * Returns a collection of source elements in this container corresponding to the
@@ -61,7 +61,7 @@ public interface ISourceContainer extends IAdaptable {
 	 * @return a collection of source elements corresponding to the given name
 	 * @exception CoreException if an exception occurs while searching for source elements
 	 */
-	public Object[] findSourceElements(String name) throws CoreException;
+	Object[] findSourceElements(String name) throws CoreException;
 
 	/**
 	 * The name of this source container that can be used for presentation purposes.
@@ -69,7 +69,7 @@ public interface ISourceContainer extends IAdaptable {
 	 *
 	 * @return the name of this source container
 	 */
-	public String getName();
+	String getName();
 
 	/**
 	 * Returns the source containers this container is composed of. An empty
@@ -81,7 +81,7 @@ public interface ISourceContainer extends IAdaptable {
 	 *  an empty collection
 	 * @exception CoreException if unable to retrieve source containers
 	 */
-	public ISourceContainer[] getSourceContainers() throws CoreException;
+	ISourceContainer[] getSourceContainers() throws CoreException;
 
 	/**
 	 * Returns whether this container is a composite container. A composite
@@ -90,19 +90,19 @@ public interface ISourceContainer extends IAdaptable {
 	 *
 	 * @return whether this container is a composite container
 	 */
-	public boolean isComposite();
+	boolean isComposite();
 
 	/**
 	 * Returns this container's type.
 	 *
 	 * @return this container's type
 	 */
-	public ISourceContainerType getType();
+	ISourceContainerType getType();
 
 	/**
 	 * Disposes this source container. This method is called when the source
 	 * director associated with this source container is disposed.
 	 */
-	public void dispose();
+	void dispose();
 
 }

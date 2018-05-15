@@ -36,7 +36,7 @@ public interface IMemoryBlockManager {
 	 *
 	 * @param memoryBlocks memory blocks to add
 	 */
-	public void addMemoryBlocks(IMemoryBlock[] memoryBlocks);
+	void addMemoryBlocks(IMemoryBlock[] memoryBlocks);
 
 	/**
 	 * Removes the given memory blocks from the memory block manager.
@@ -45,7 +45,7 @@ public interface IMemoryBlockManager {
 	 *
 	 * @param memoryBlocks memory blocks to remove
 	 */
-	public void removeMemoryBlocks(IMemoryBlock[] memoryBlocks);
+	void removeMemoryBlocks(IMemoryBlock[] memoryBlocks);
 
 	/**
 	 * Registers the given listener for memory block addition and
@@ -54,7 +54,7 @@ public interface IMemoryBlockManager {
 	 *
 	 * @param listener the listener to add
 	 */
-	public void addListener(IMemoryBlockListener listener);
+	void addListener(IMemoryBlockListener listener);
 
 	/**
 	 * Unregisters the given listener for memory block addition and
@@ -63,14 +63,14 @@ public interface IMemoryBlockManager {
 	 *
 	 * @param listener the listener to remove
 	 */
-	public void removeListener(IMemoryBlockListener listener);
+	void removeListener(IMemoryBlockListener listener);
 
 	/**
 	 * Returns all registered memory blocks.
 	 *
 	 * @return all registered memory blocks
 	 */
-	public IMemoryBlock[] getMemoryBlocks();
+	IMemoryBlock[] getMemoryBlocks();
 
 	/**
 	 * Returns all registered memory blocks associated with the
@@ -82,7 +82,7 @@ public interface IMemoryBlockManager {
 	 * @return all registered memory blocks associated with the given debug
 	 *  target
 	 */
-	public IMemoryBlock[] getMemoryBlocks(IDebugTarget debugTarget);
+	IMemoryBlock[] getMemoryBlocks(IDebugTarget debugTarget);
 
 	/**
 	 * Returns all registered memory blocks that originated from the
@@ -92,6 +92,6 @@ public interface IMemoryBlockManager {
 	 * @return all registered memory blocks that originated from the
 	 *  given memory retrieval source
 	 */
-	public IMemoryBlock[] getMemoryBlocks(IMemoryBlockRetrieval source);
+	IMemoryBlock[] getMemoryBlocks(IMemoryBlockRetrieval source);
 
 }

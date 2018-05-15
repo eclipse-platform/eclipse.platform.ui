@@ -68,7 +68,7 @@ public interface ILaunchConfiguration extends IAdaptable {
 	 * The file extension for launch configuration files
 	 * (value <code>"launch"</code>).
 	 */
-	public static final String LAUNCH_CONFIGURATION_FILE_EXTENSION = "launch"; //$NON-NLS-1$
+	String LAUNCH_CONFIGURATION_FILE_EXTENSION = "launch"; //$NON-NLS-1$
 
 	/**
 	 * The file extension for launch configuration prototype files (value
@@ -76,7 +76,7 @@ public interface ILaunchConfiguration extends IAdaptable {
 	 *
 	 * @since 3.12
 	 */
-	public static final String LAUNCH_CONFIGURATION_PROTOTYPE_FILE_EXTENSION = "prototype"; //$NON-NLS-1$
+	String LAUNCH_CONFIGURATION_PROTOTYPE_FILE_EXTENSION = "prototype"; //$NON-NLS-1$
 
 	/**
 	 * Launch configuration attribute storing an identifier of
@@ -86,7 +86,7 @@ public interface ILaunchConfiguration extends IAdaptable {
 	 *
 	 * @see org.eclipse.debug.core.model.IPersistableSourceLocator
 	 */
-	public static final String ATTR_SOURCE_LOCATOR_ID = DebugPlugin.getUniqueIdentifier() + ".source_locator_id"; //$NON-NLS-1$
+	String ATTR_SOURCE_LOCATOR_ID = DebugPlugin.getUniqueIdentifier() + ".source_locator_id"; //$NON-NLS-1$
 
 	/**
 	 * Launch configuration attribute storing a memento of a
@@ -98,7 +98,7 @@ public interface ILaunchConfiguration extends IAdaptable {
 	 *
 	 * @see org.eclipse.debug.core.model.IPersistableSourceLocator
 	 */
-	public static final String ATTR_SOURCE_LOCATOR_MEMENTO = DebugPlugin.getUniqueIdentifier() + ".source_locator_memento"; //$NON-NLS-1$
+	String ATTR_SOURCE_LOCATOR_MEMENTO = DebugPlugin.getUniqueIdentifier() + ".source_locator_memento"; //$NON-NLS-1$
 
 	/**
 	 * Flag indicating that only this configuration is to be modified by an operation.
@@ -106,7 +106,7 @@ public interface ILaunchConfiguration extends IAdaptable {
 	 *
 	 * @since 3.12
 	 */
-	public static final int UPDATE_NONE = 0;
+	int UPDATE_NONE = 0;
 
 	/**
 	 * Flag indicating that this prototype and any effected prototype children of this prototype
@@ -114,7 +114,7 @@ public interface ILaunchConfiguration extends IAdaptable {
 	 *
 	 * @since 3.12
 	 */
-	public static final int UPDATE_PROTOTYPE_CHILDREN = 1;
+	int UPDATE_PROTOTYPE_CHILDREN = 1;
 
 	/**
 	 * Type constant (bit mask value 1) which identifies a launch configuration.
@@ -122,7 +122,7 @@ public interface ILaunchConfiguration extends IAdaptable {
 	 * @see #getKind()
 	 * @since 3.12
 	 */
-	public static final int CONFIGURATION = 0x1;
+	int CONFIGURATION = 0x1;
 
 	/**
 	 * Type constant (bit mask value 2) which identifies a launch configuration prototype.
@@ -130,7 +130,7 @@ public interface ILaunchConfiguration extends IAdaptable {
 	 * @see #getKind()
 	 * @since 3.12
 	 */
-	public static final int PROTOTYPE = 0x2;
+	int PROTOTYPE = 0x2;
 
 	/**
 	 * Returns whether the contents of this launch configuration are
@@ -140,7 +140,7 @@ public interface ILaunchConfiguration extends IAdaptable {
 	 * @return whether the contents of this launch configuration are equal to the contents
 	 * of the specified launch configuration.
 	 */
-	public boolean contentsEqual(ILaunchConfiguration configuration);
+	boolean contentsEqual(ILaunchConfiguration configuration);
 
 	/**
 	 * Returns a copy of this launch configuration, as a
@@ -160,7 +160,7 @@ public interface ILaunchConfiguration extends IAdaptable {
 	 * </ul>
 	 * @see ILaunchConfigurationWorkingCopy#getOriginal()
 	 */
-	public ILaunchConfigurationWorkingCopy copy(String name) throws CoreException;
+	ILaunchConfigurationWorkingCopy copy(String name) throws CoreException;
 
 	/**
 	 * Deletes this launch configuration. This configuration's underlying
@@ -175,7 +175,7 @@ public interface ILaunchConfiguration extends IAdaptable {
 	 *                configuration's underlying storage.</li>
 	 *                </ul>
 	 */
-	public void delete() throws CoreException;
+	void delete() throws CoreException;
 
 	/**
 	 * Deletes this launch configuration. This configuration's underlying
@@ -194,7 +194,7 @@ public interface ILaunchConfiguration extends IAdaptable {
 	 *                </ul>
 	 * @since 3.12
 	 */
-	public void delete(int flag) throws CoreException;
+	void delete(int flag) throws CoreException;
 
 	/**
 	 * Returns whether this launch configuration's underlying
@@ -203,7 +203,7 @@ public interface ILaunchConfiguration extends IAdaptable {
 	 * @return whether this launch configuration's underlying
 	 *  storage exists
 	 */
-	public boolean exists();
+	boolean exists();
 
 	/**
 	 * Returns the boolean-valued attribute with the given name.
@@ -220,7 +220,7 @@ public interface ILaunchConfiguration extends IAdaptable {
 	 *  have a boolean value</li>
 	 * </ul>
 	 */
-	public boolean getAttribute(String attributeName, boolean defaultValue) throws CoreException;
+	boolean getAttribute(String attributeName, boolean defaultValue) throws CoreException;
 
 	/**
 	 * Returns the integer-valued attribute with the given name.
@@ -237,7 +237,7 @@ public interface ILaunchConfiguration extends IAdaptable {
 	 *  have an integer value</li>
 	 * </ul>
 	 */
-	public int getAttribute(String attributeName, int defaultValue) throws CoreException;
+	int getAttribute(String attributeName, int defaultValue) throws CoreException;
 
 	/**
 	 * Returns the <code>java.util.List</code>-valued attribute with the given name.
@@ -254,7 +254,7 @@ public interface ILaunchConfiguration extends IAdaptable {
 	 *  have a List value</li>
 	 * </ul>
 	 */
-	public List<String> getAttribute(String attributeName, List<String> defaultValue) throws CoreException;
+	List<String> getAttribute(String attributeName, List<String> defaultValue) throws CoreException;
 
 	/**
 	 * Returns the <code>java.util.Set</code>-valued attribute with the given name.
@@ -273,7 +273,7 @@ public interface ILaunchConfiguration extends IAdaptable {
 	 *
 	 * @since 3.3
 	 */
-	public Set<String> getAttribute(String attributeName, Set<String> defaultValue) throws CoreException;
+	Set<String> getAttribute(String attributeName, Set<String> defaultValue) throws CoreException;
 
 	/**
 	 * Returns the <code>java.util.Map</code>-valued attribute with the given name.
@@ -290,7 +290,7 @@ public interface ILaunchConfiguration extends IAdaptable {
 	 *  have a Map value</li>
 	 * </ul>
 	 */
-	public Map<String, String> getAttribute(String attributeName, Map<String, String> defaultValue) throws CoreException;
+	Map<String, String> getAttribute(String attributeName, Map<String, String> defaultValue) throws CoreException;
 
 	/**
 	 * Returns the string-valued attribute with the given name.
@@ -307,7 +307,7 @@ public interface ILaunchConfiguration extends IAdaptable {
 	 *  have a String value</li>
 	 * </ul>
 	 */
-	public String getAttribute(String attributeName, String defaultValue) throws CoreException;
+	String getAttribute(String attributeName, String defaultValue) throws CoreException;
 
 	/**
 	 * Returns a map containing the attributes in this launch configuration.
@@ -322,7 +322,7 @@ public interface ILaunchConfiguration extends IAdaptable {
 	 * @exception CoreException unable to generate/retrieve an attribute map
 	 * @since 2.1
 	 */
-	public Map<String, Object> getAttributes() throws CoreException;
+	Map<String, Object> getAttributes() throws CoreException;
 
 	/**
 	 * Returns this launch configuration's type's category, or <code>null</code>
@@ -335,7 +335,7 @@ public interface ILaunchConfiguration extends IAdaptable {
 	 * </ul>
 	 * @since 2.1
 	 */
-	public String getCategory() throws CoreException;
+	String getCategory() throws CoreException;
 
 	/**
 	 * Returns the file this launch configuration is stored
@@ -346,7 +346,7 @@ public interface ILaunchConfiguration extends IAdaptable {
 	 *  in, or <code>null</code> if this configuration is stored
 	 *  locally with the workspace
 	 */
-	public IFile getFile();
+	IFile getFile();
 
 	/**
 	 * Returns the location of this launch configuration as a
@@ -365,8 +365,7 @@ public interface ILaunchConfiguration extends IAdaptable {
 	 * @deprecated Since a launch configuration does not need to be stored in the local
 	 *  file system, this attribute should no longer be used to identify a launch configuration.
 	 */
-	@Deprecated
-	public IPath getLocation();
+	@Deprecated IPath getLocation();
 
 	/**
 	 * Returns the resources this launch configuration is associated with or <code>null</code>
@@ -377,7 +376,7 @@ public interface ILaunchConfiguration extends IAdaptable {
 	 * @throws CoreException unable to get the mapped resource
 	 * @since 3.2
 	 */
-	public IResource[] getMappedResources() throws CoreException;
+	IResource[] getMappedResources() throws CoreException;
 
 	/**
 	 * Returns a memento for this launch configuration, or <code>null</code>
@@ -390,7 +389,7 @@ public interface ILaunchConfiguration extends IAdaptable {
 	 * @exception CoreException if an exception occurs generating this
 	 *  launch configuration's memento
 	 */
-	public String getMemento() throws CoreException;
+	String getMemento() throws CoreException;
 
 	/**
 	 * Returns the name of this launch configuration. This is
@@ -398,7 +397,7 @@ public interface ILaunchConfiguration extends IAdaptable {
 	 *
 	 * @return the name of this launch configuration
 	 */
-	public String getName();
+	String getName();
 
 	/**
 	 * Returns the launch modes that have been set on this configuration.
@@ -413,7 +412,7 @@ public interface ILaunchConfiguration extends IAdaptable {
 	 * @exception CoreException if an exception occurs retrieving modes
 	 * @since 3.3
 	 */
-	public Set<String> getModes() throws CoreException;
+	Set<String> getModes() throws CoreException;
 
 	/**
 	 * Returns the preferred launch delegate that has been set on this
@@ -425,7 +424,7 @@ public interface ILaunchConfiguration extends IAdaptable {
 	 * @exception CoreException if an exception occurs retrieving preferred delegate
 	 * @since 3.3
 	 */
-	public ILaunchDelegate getPreferredDelegate(Set<String> modes) throws CoreException;
+	ILaunchDelegate getPreferredDelegate(Set<String> modes) throws CoreException;
 
 	/**
 	 * Returns the type of this launch configuration. This is a
@@ -438,7 +437,7 @@ public interface ILaunchConfiguration extends IAdaptable {
 	 * </ul>
 	 * @see ILaunchConfigurationType
 	 */
-	public ILaunchConfigurationType getType() throws CoreException;
+	ILaunchConfigurationType getType() throws CoreException;
 
 	/**
 	 * Returns a working copy of this launch configuration.
@@ -465,7 +464,7 @@ public interface ILaunchConfiguration extends IAdaptable {
 	 * </ul>
 	 * @see ILaunchConfigurationWorkingCopy#getOriginal()
 	 */
-	public ILaunchConfigurationWorkingCopy getWorkingCopy() throws CoreException;
+	ILaunchConfigurationWorkingCopy getWorkingCopy() throws CoreException;
 
 	/**
 	 * Returns whether this configuration contains an attribute with the given name.
@@ -476,7 +475,7 @@ public interface ILaunchConfiguration extends IAdaptable {
 	 *
 	 * @since 3.4
 	 */
-	public boolean hasAttribute(String attributeName) throws CoreException;
+	boolean hasAttribute(String attributeName) throws CoreException;
 
 	/**
 	 * Returns whether this launch configuration is stored
@@ -485,7 +484,7 @@ public interface ILaunchConfiguration extends IAdaptable {
 	 * @return whether this launch configuration is stored
 	 *  locally with the workspace
 	 */
-	public boolean isLocal();
+	boolean isLocal();
 
 	/**
 	 * Returns whether this launch configuration is a candidate for migration.
@@ -495,7 +494,7 @@ public interface ILaunchConfiguration extends IAdaptable {
 	 * @see ILaunchConfigurationMigrationDelegate
 	 * @since 3.2
 	 */
-	public boolean isMigrationCandidate() throws CoreException ;
+	boolean isMigrationCandidate() throws CoreException ;
 
 	/**
 	 * Returns whether this launch configuration is a working
@@ -507,7 +506,7 @@ public interface ILaunchConfiguration extends IAdaptable {
 	 * @return whether this launch configuration is a working
 	 *  copy
 	 */
-	public boolean isWorkingCopy();
+	boolean isWorkingCopy();
 
 	/**
 	 * Launches this configuration in the specified mode by delegating to
@@ -530,7 +529,7 @@ public interface ILaunchConfiguration extends IAdaptable {
 	 * <li>the launch fails (in the delegate)</code>
 	 * </ul>
 	 */
-	public ILaunch launch(String mode, IProgressMonitor monitor) throws CoreException;
+	ILaunch launch(String mode, IProgressMonitor monitor) throws CoreException;
 
 	/**
 	 * Launches this configuration in the specified mode by delegating to
@@ -574,7 +573,7 @@ public interface ILaunchConfiguration extends IAdaptable {
 	 * @throws CoreException if an exception occurs during the launch sequence
 	 * @since 3.0
 	 */
-	public ILaunch launch(String mode, IProgressMonitor monitor, boolean build) throws CoreException;
+	ILaunch launch(String mode, IProgressMonitor monitor, boolean build) throws CoreException;
 
 	/**
 	 * Launches this configuration in the specified mode by delegating to
@@ -623,7 +622,7 @@ public interface ILaunchConfiguration extends IAdaptable {
 	 * @throws CoreException if an exception occurs during the launch sequence
 	 * @since 3.1
 	 */
-	public ILaunch launch(String mode, IProgressMonitor monitor, boolean build, boolean register) throws CoreException;
+	ILaunch launch(String mode, IProgressMonitor monitor, boolean build, boolean register) throws CoreException;
 
 	/**
 	 * Migrates this launch configuration to be compatible with current tooling.
@@ -633,7 +632,7 @@ public interface ILaunchConfiguration extends IAdaptable {
 	 * @since 3.2
 	 * @see ILaunchConfigurationMigrationDelegate
 	 */
-	public void migrate() throws CoreException;
+	void migrate() throws CoreException;
 
 	/**
 	 * Returns whether this launch configuration supports the
@@ -649,7 +648,7 @@ public interface ILaunchConfiguration extends IAdaptable {
 	 * <li>Unable to retrieve this launch configuration's type.</li>
 	 * </ul>
 	 */
-	public boolean supportsMode(String mode) throws CoreException;
+	boolean supportsMode(String mode) throws CoreException;
 
 	/**
 	 * Returns whether this launch configuration is read-only.
@@ -659,7 +658,7 @@ public interface ILaunchConfiguration extends IAdaptable {
 	 *
 	 * @since 3.3
 	 */
-	public boolean isReadOnly();
+	boolean isReadOnly();
 
 	/**
 	 * Returns the prototype this launch configuration was created from or
@@ -671,7 +670,7 @@ public interface ILaunchConfiguration extends IAdaptable {
 	 *             longer exists
 	 * @since 3.12
 	 */
-	public ILaunchConfiguration getPrototype() throws CoreException;
+	ILaunchConfiguration getPrototype() throws CoreException;
 
 	/**
 	 * Check if the given attribute has the same value than the one from its prototype.
@@ -680,7 +679,7 @@ public interface ILaunchConfiguration extends IAdaptable {
 	 * @throws CoreException if an exception occurs while checking
 	 * @since 3.12
 	 */
-	public boolean isAttributeModified(String attribute) throws CoreException;
+	boolean isAttributeModified(String attribute) throws CoreException;
 
 	/**
 	 * Returns whether this configuration is a prototype.
@@ -688,7 +687,7 @@ public interface ILaunchConfiguration extends IAdaptable {
 	 * @return whether this configuration is a prototype
 	 * @since 3.12
 	 */
-	public boolean isPrototype();
+	boolean isPrototype();
 
 	/**
 	 * Returns all configurations made from this prototype, possibly an empty
@@ -698,7 +697,7 @@ public interface ILaunchConfiguration extends IAdaptable {
 	 * @throws CoreException if unable to retrieve this prototype's children
 	 * @since 3.12
 	 */
-	public Collection<ILaunchConfiguration> getPrototypeChildren() throws CoreException;
+	Collection<ILaunchConfiguration> getPrototypeChildren() throws CoreException;
 
 	/**
 	 * Returns this configuration's kind. One of CONFIGURATION or PROTOTYPE.
@@ -710,7 +709,7 @@ public interface ILaunchConfiguration extends IAdaptable {
 	 * @throws CoreException if unable to retrieve this configuration's kind
 	 * @since 3.12
 	 */
-	public int getKind() throws CoreException;
+	int getKind() throws CoreException;
 
 	/**
 	 * Get the visible attributes of this prototype (return <code>null</code> if
@@ -723,7 +722,7 @@ public interface ILaunchConfiguration extends IAdaptable {
 	 *             attribute set.
 	 * @since 3.12
 	 */
-	public Set<String> getPrototypeVisibleAttributes() throws CoreException;
+	Set<String> getPrototypeVisibleAttributes() throws CoreException;
 
 	/**
 	 * Set the visibility of the given prototype's attribute.
@@ -734,5 +733,5 @@ public interface ILaunchConfiguration extends IAdaptable {
 	 *             visibility
 	 * @since 3.12
 	 */
-	public void setPrototypeAttributeVisibility(String attribute, boolean visible) throws CoreException;
+	void setPrototypeAttributeVisibility(String attribute, boolean visible) throws CoreException;
 }

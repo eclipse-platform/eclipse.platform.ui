@@ -39,7 +39,7 @@ public interface ISourceContainerTypeDelegate {
 	 * @exception CoreException if unable to construct a source container based
 	 *  on the given memento
 	 */
-	public ISourceContainer createSourceContainer(String memento) throws CoreException;
+	ISourceContainer createSourceContainer(String memento) throws CoreException;
 
 	/**
 	 * Constructs and returns a memento for the given source container. A memento
@@ -50,6 +50,6 @@ public interface ISourceContainerTypeDelegate {
 	 * @return a memento for the source container
 	 * @exception CoreException if unable to create a memento
 	 */
-	public String getMemento(ISourceContainer container) throws CoreException;
+	String getMemento(ISourceContainer container) throws CoreException;
 
 }

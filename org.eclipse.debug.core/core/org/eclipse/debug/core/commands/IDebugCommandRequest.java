@@ -27,5 +27,5 @@ public interface IDebugCommandRequest extends IRequest {
 	 *
 	 * @return elements to execute a command on
 	 */
-	public Object[] getElements();
+	Object[] getElements();
 }

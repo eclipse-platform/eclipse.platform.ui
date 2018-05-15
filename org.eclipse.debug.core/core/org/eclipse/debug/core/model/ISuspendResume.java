@@ -26,19 +26,19 @@ public interface ISuspendResume {
 	 *
 	 * @return whether this element can currently be resumed
 	 */
-	public boolean canResume();
+	boolean canResume();
 	/**
 	 * Returns whether this element can currently be suspended.
 	 *
 	 * @return whether this element can currently be suspended
 	 */
-	public boolean canSuspend();
+	boolean canSuspend();
 	/**
 	 * Returns whether this element is currently suspended.
 	 *
 	 * @return whether this element is currently suspended
 	 */
-	public boolean isSuspended();
+	boolean isSuspended();
 	/**
 	 * Causes this element to resume its execution, generating a <code>RESUME</code> event.
 	 * Has no effect on an element that is not suspended. This call is non-blocking.
@@ -48,7 +48,7 @@ public interface ISuspendResume {
 	 * <li>NOT_SUPPORTED - The capability is not supported by the target
 	 * </ul>
 	 */
-	public void resume() throws DebugException;
+	void resume() throws DebugException;
 	/**
 	 * Causes this element to suspend its execution, generating a <code>SUSPEND</code> event.
 	 * Has no effect on an already suspended element.
@@ -59,5 +59,5 @@ public interface ISuspendResume {
 	 * <li>NOT_SUPPORTED - The capability is not supported by the target
 	 * </ul>
 	 */
-	public void suspend() throws DebugException;
+	void suspend() throws DebugException;
 }

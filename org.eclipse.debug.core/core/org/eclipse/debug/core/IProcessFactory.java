@@ -62,5 +62,5 @@ public interface IProcessFactory {
 	 * @return the process
 	 * @see IProcess
 	 */
-	public IProcess newProcess(ILaunch launch, Process process, String label, Map<String, String> attributes);
+	IProcess newProcess(ILaunch launch, Process process, String label, Map<String, String> attributes);
 }

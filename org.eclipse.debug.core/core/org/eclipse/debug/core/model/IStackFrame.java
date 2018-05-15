@@ -51,7 +51,7 @@ public interface IStackFrame extends IDebugElement, IStep, ISuspendResume, ITerm
 	 * @return thread
 	 * @since 2.0
 	 */
-	public IThread getThread();
+	IThread getThread();
 	/**
 	 * Returns the visible variables in this stack frame. An empty
 	 * collection is returned if there are no visible variables.
@@ -64,7 +64,7 @@ public interface IStackFrame extends IDebugElement, IStep, ISuspendResume, ITerm
 	 * </ul>
 	 * @since 2.0
 	 */
-	public IVariable[] getVariables() throws DebugException;
+	IVariable[] getVariables() throws DebugException;
 
 	/**
 	 * Returns whether this stack frame currently contains any visible variables.
@@ -77,7 +77,7 @@ public interface IStackFrame extends IDebugElement, IStep, ISuspendResume, ITerm
 	 * </ul>
 	 * @since 2.0
 	 */
-	public boolean hasVariables() throws DebugException;
+	boolean hasVariables() throws DebugException;
 
 	/**
 	 * Returns the line number of the instruction pointer in
@@ -93,7 +93,7 @@ public interface IStackFrame extends IDebugElement, IStep, ISuspendResume, ITerm
 	 * the failure.</li>
 	 * </ul>
 	 */
-	public int getLineNumber() throws DebugException;
+	int getLineNumber() throws DebugException;
 
 	/**
 	 * Returns the index of the first character in the associated source
@@ -114,7 +114,7 @@ public interface IStackFrame extends IDebugElement, IStep, ISuspendResume, ITerm
 	 * </ul>
 	 * @since 2.0
 	 */
-	public int getCharStart() throws DebugException;
+	int getCharStart() throws DebugException;
 
 	/**
 	 * Returns the index of the last character in the associated source
@@ -135,7 +135,7 @@ public interface IStackFrame extends IDebugElement, IStep, ISuspendResume, ITerm
 	 * </ul>
 	 * @since 2.0
 	 */
-	public int getCharEnd() throws DebugException;
+	int getCharEnd() throws DebugException;
 
 	/**
 	 * Returns the name of this stack frame. Name format is debug model
@@ -148,7 +148,7 @@ public interface IStackFrame extends IDebugElement, IStep, ISuspendResume, ITerm
 	 * the failure.</li>
 	 * </ul>
 	 */
-	public String getName() throws DebugException;
+	String getName() throws DebugException;
 
 	/**
 	 * Returns the register groups assigned to this stack frame,
@@ -165,7 +165,7 @@ public interface IStackFrame extends IDebugElement, IStep, ISuspendResume, ITerm
 	 * </ul>
 	 * @since 2.0
 	 */
-	public IRegisterGroup[] getRegisterGroups() throws DebugException;
+	IRegisterGroup[] getRegisterGroups() throws DebugException;
 
 	/**
 	 * Returns whether this stack frame contains any register groups.
@@ -178,5 +178,5 @@ public interface IStackFrame extends IDebugElement, IStep, ISuspendResume, ITerm
 	 * </ul>
 	 * @since 2.0
 	 */
-	public boolean hasRegisterGroups() throws DebugException;
+	boolean hasRegisterGroups() throws DebugException;
 }

@@ -26,6 +26,6 @@ public interface IWatchExpressionListener {
 	 *
 	 * @param result the result of the evaluation
 	 */
-	public void watchEvaluationFinished(IWatchExpressionResult result);
+	void watchEvaluationFinished(IWatchExpressionResult result);
 
 }

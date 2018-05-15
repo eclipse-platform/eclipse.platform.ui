@@ -45,6 +45,6 @@ public interface ILogicalStructureProvider {
 	 * @param value value for which logical structure types are being requested
 	 * @return the logical structure types which are applicable to the given value
 	 */
-	public ILogicalStructureType[] getLogicalStructureTypes(IValue value);
+	ILogicalStructureType[] getLogicalStructureTypes(IValue value);
 
 }

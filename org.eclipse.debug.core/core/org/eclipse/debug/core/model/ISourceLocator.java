@@ -60,7 +60,7 @@ public interface ISourceLocator {
 	 * @param stackFrame the stack frame for which to locate source
 	 * @return an object representing a source element.
 	 */
-	 public Object getSourceElement(IStackFrame stackFrame);
+	 Object getSourceElement(IStackFrame stackFrame);
 
 }
 

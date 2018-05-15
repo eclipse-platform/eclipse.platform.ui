@@ -49,7 +49,7 @@ public interface IVariable extends IDebugElement, IValueModification {
 	 * status code contains the underlying exception responsible for
 	 * the failure.</li>
 	 */
-	public IValue getValue() throws DebugException;
+	IValue getValue() throws DebugException;
 	/**
 	 * Returns the name of this variable. Name format is debug model
 	 * specific, and should be specified by a debug model.
@@ -60,7 +60,7 @@ public interface IVariable extends IDebugElement, IValueModification {
 	 * status code contains the underlying exception responsible for
 	 * the failure.</li>
 	 */
-	public String getName() throws DebugException;
+	String getName() throws DebugException;
 	/**
 	 * Returns a description of the type of data this variable is
 	 * declared to reference. Note that the declared type of a
@@ -73,7 +73,7 @@ public interface IVariable extends IDebugElement, IValueModification {
 	 * status code contains the underlying exception responsible for
 	 * the failure.</li>
 	 */
-	public String getReferenceTypeName() throws DebugException;
+	String getReferenceTypeName() throws DebugException;
 
 	/**
 	 * Returns whether this variable's value has changed since the last suspend event.
@@ -89,7 +89,7 @@ public interface IVariable extends IDebugElement, IValueModification {
 	 * @exception DebugException if an exception occurs determining if this variable's
 	 *   value has changed since the last suspend event
 	 */
-	public boolean hasValueChanged() throws DebugException;
+	boolean hasValueChanged() throws DebugException;
 
 
 }

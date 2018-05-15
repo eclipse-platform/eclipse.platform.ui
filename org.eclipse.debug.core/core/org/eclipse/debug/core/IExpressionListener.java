@@ -33,14 +33,14 @@ public interface IExpressionListener {
 	 *
 	 * @param expression the added expression
 	 */
-	public void expressionAdded(IExpression expression);
+	void expressionAdded(IExpression expression);
 	/**
 	 * Notifies this listener that the given expression has been removed
 	 * from the expression manager.
 	 *
 	 * @param expression the removed expression
 	 */
-	public void expressionRemoved(IExpression expression);
+	void expressionRemoved(IExpression expression);
 
 	/**
 	 * Notifies this listener that the given expression has
@@ -48,6 +48,6 @@ public interface IExpressionListener {
 	 *
 	 * @param expression the changed expression
 	 */
-	public void expressionChanged(IExpression expression);
+	void expressionChanged(IExpression expression);
 
 }

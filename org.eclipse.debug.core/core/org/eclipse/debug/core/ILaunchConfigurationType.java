@@ -92,7 +92,7 @@ public interface ILaunchConfigurationType extends IAdaptable {
 	 * @return the specified extension attribute, or <code>null</code>
 	 * @since 2.1
 	 */
-	public String getAttribute(String attributeName);
+	String getAttribute(String attributeName);
 
 	/**
 	 * Returns this launch configuration type's category, or <code>null</code>
@@ -102,7 +102,7 @@ public interface ILaunchConfigurationType extends IAdaptable {
 	 * @return this launch configuration type's category, or <code>null</code>
 	 * @since 2.1
 	 */
-	public String getCategory();
+	String getCategory();
 
 	/**
 	 * Returns the launch configuration delegate for launch
@@ -114,8 +114,7 @@ public interface ILaunchConfigurationType extends IAdaptable {
 	 *  delegate
 	 * @deprecated use <code>getDelegate(String)</code> to specify mode
 	 */
-	@Deprecated
-	public ILaunchConfigurationDelegate getDelegate() throws CoreException;
+	@Deprecated ILaunchConfigurationDelegate getDelegate() throws CoreException;
 
 	/**
 	 * Returns the launch configuration delegate for launch
@@ -133,8 +132,7 @@ public interface ILaunchConfigurationType extends IAdaptable {
 	 *  instead, as there can be more than one capable delegate per mode or combination
 	 *  of modes
 	 */
-	@Deprecated
-	public ILaunchConfigurationDelegate getDelegate(String mode) throws CoreException;
+	@Deprecated ILaunchConfigurationDelegate getDelegate(String mode) throws CoreException;
 
 	/**
 	 * Returns the delegates capable of launching in the specified modes, possibly
@@ -146,7 +144,7 @@ public interface ILaunchConfigurationType extends IAdaptable {
 	 * @throws CoreException if a problem is encountered
 	 * @since 3.3
 	 */
-	public ILaunchDelegate[] getDelegates(Set<String> modes) throws CoreException;
+	ILaunchDelegate[] getDelegates(Set<String> modes) throws CoreException;
 
 	/**
 	 * Returns the preferred launch delegate for this type in the specified mode combination
@@ -158,7 +156,7 @@ public interface ILaunchConfigurationType extends IAdaptable {
 	 *
 	 * @since 3.3
 	 */
-	public ILaunchDelegate getPreferredDelegate(Set<String> modes) throws CoreException;
+	ILaunchDelegate getPreferredDelegate(Set<String> modes) throws CoreException;
 
 	/**
 	 * Sets the preferred launch delegate for this type in the specified mode combination.
@@ -171,7 +169,7 @@ public interface ILaunchConfigurationType extends IAdaptable {
 	 *
 	 * @since 3.3
 	 */
-	public void setPreferredDelegate(Set<String> modes, ILaunchDelegate delegate) throws CoreException;
+	void setPreferredDelegate(Set<String> modes, ILaunchDelegate delegate) throws CoreException;
 
 	/**
 	 * Returns whether this launch configuration supports the specified launch
@@ -181,21 +179,21 @@ public interface ILaunchConfigurationType extends IAdaptable {
 	 * @return whether the launch mode combination is supported
 	 * @since 3.3
 	 */
-	public boolean supportsModeCombination(Set<String> modes);
+	boolean supportsModeCombination(Set<String> modes);
 
 	/**
 	 * Returns the unique identifier for this type of launch configuration
 	 *
 	 * @return the unique identifier for this type of launch configuration
 	 */
-	public String getIdentifier();
+	String getIdentifier();
 
 	/**
 	 * Returns the name of this type of launch configuration.
 	 *
 	 * @return the name of this type of launch configuration
 	 */
-	public String getName();
+	String getName();
 
 	/**
 	 * Returns the identifier of the plug-in that contributes this launch configuration type.
@@ -203,7 +201,7 @@ public interface ILaunchConfigurationType extends IAdaptable {
 	 * @return the identifier of the plug-in that contributes this launch configuration type
 	 * @since 3.0
 	 */
-	public String getPluginIdentifier();
+	String getPluginIdentifier();
 
 	/**
 	 * Returns the identifier of the persistable source locator registered with
@@ -218,7 +216,7 @@ public interface ILaunchConfigurationType extends IAdaptable {
 	 *  this launch configurations type, or <code>null</code> if unspecified
 	 * @since 3.0
 	 */
-	public String getSourceLocatorId();
+	String getSourceLocatorId();
 
 	/**
 	 * Returns the source path computer registered with this launch configuration
@@ -233,7 +231,7 @@ public interface ILaunchConfigurationType extends IAdaptable {
 	 * type or <code>null</code> if unspecified
 	 * @since 3.0
 	 */
-	public ISourcePathComputer getSourcePathComputer();
+	ISourcePathComputer getSourcePathComputer();
 
 	/**
 	 * Returns all of the registered supported modes for this launch configuration type.
@@ -250,8 +248,7 @@ public interface ILaunchConfigurationType extends IAdaptable {
 	 * @deprecated Since 3.3 all modes are provided as sets and not individual strings. The method <code>getSupportedModeCombinations</code>
 	 * should be used instead to retrieve the complete listing of supported modes and their allowable combinations.
 	 */
-	@Deprecated
-	public Set<String> getSupportedModes();
+	@Deprecated Set<String> getSupportedModes();
 
 	/**
 	 * Returns a <code>java.util.Set</code> of <code>java.util.Set</code>s containing all of the
@@ -261,7 +258,7 @@ public interface ILaunchConfigurationType extends IAdaptable {
 	 *
 	 * @since 3.3
 	 */
-	public Set<Set<String>> getSupportedModeCombinations();
+	Set<Set<String>> getSupportedModeCombinations();
 
 	/**
 	 * Returns whether this launch configuration type is public.  Public configuration
@@ -272,7 +269,7 @@ public interface ILaunchConfigurationType extends IAdaptable {
 	 *
 	 * @return whether this launch configuration type is public.
 	 */
-	public boolean isPublic();
+	boolean isPublic();
 
 	/**
 	 * Returns a new launch configuration working copy of this type,
@@ -294,7 +291,7 @@ public interface ILaunchConfigurationType extends IAdaptable {
 	 *  of launch configuration could not be created for any
 	 *  reason
 	 */
-	public ILaunchConfigurationWorkingCopy newInstance(IContainer container, String name) throws CoreException;
+	ILaunchConfigurationWorkingCopy newInstance(IContainer container, String name) throws CoreException;
 
 	/**
 	 * Returns whether this type of launch configuration supports
@@ -306,7 +303,7 @@ public interface ILaunchConfigurationType extends IAdaptable {
 	 * @return whether this kind of launch configuration supports the
 	 *  specified mode
 	 */
-	public boolean supportsMode(String mode);
+	boolean supportsMode(String mode);
 
 	/**
 	 * Returns the name of the plug-in that contributed this launch configuration type.
@@ -314,7 +311,7 @@ public interface ILaunchConfigurationType extends IAdaptable {
 	 * @return name of contributing plug-in
 	 * @since 3.3
 	 */
-	public String getContributorName();
+	String getContributorName();
 
 	/**
 	 * Returns all launch configuration prototypes of the this type, possibly
@@ -324,7 +321,7 @@ public interface ILaunchConfigurationType extends IAdaptable {
 	 * @throws CoreException if unable to retrieve the prototypes
 	 * @since 3.12
 	 */
-	public ILaunchConfiguration[] getPrototypes() throws CoreException;
+	ILaunchConfiguration[] getPrototypes() throws CoreException;
 
 	/**
 	 * Returns a new launch configuration working copy of this type, that
@@ -348,7 +345,7 @@ public interface ILaunchConfigurationType extends IAdaptable {
 	 *                configuration could not be created for any reason
 	 * @since 3.12
 	 */
-	public ILaunchConfigurationWorkingCopy newPrototypeInstance(IContainer container, String name) throws CoreException;
+	ILaunchConfigurationWorkingCopy newPrototypeInstance(IContainer container, String name) throws CoreException;
 
 	/**
 	 * Returns whether this type of launch configuration supports prototypes.
@@ -356,5 +353,5 @@ public interface ILaunchConfigurationType extends IAdaptable {
 	 * @return whether this kind of launch configuration supports the prototypes
 	 * @since 3.12
 	 */
-	public boolean supportsPrototypes();
+	boolean supportsPrototypes();
 }

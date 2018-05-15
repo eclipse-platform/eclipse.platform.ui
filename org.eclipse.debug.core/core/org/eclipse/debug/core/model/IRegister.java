@@ -33,7 +33,7 @@ public interface IRegister extends IVariable {
 	 * status code contains the underlying exception responsible for
 	 * the failure.</li>
 	 */
-	public IRegisterGroup getRegisterGroup() throws DebugException;
+	IRegisterGroup getRegisterGroup() throws DebugException;
 
 }
 

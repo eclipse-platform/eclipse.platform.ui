@@ -38,7 +38,7 @@ public interface IWatchExpression extends IErrorReportingExpression {
 	 * evaluate even when it is disabled. Note that implementations should
 	 * generally be asynchronous to avoid blocking the calling thread.
 	 */
-	public void evaluate();
+	void evaluate();
 	/**
 	 * Sets the context for this watch expression, or <code>null</code> if none.
 	 * If the given context is valid for this expression, this expression may
@@ -57,7 +57,7 @@ public interface IWatchExpression extends IErrorReportingExpression {
 	 * @param context context in which to update this expression's value, or
 	 * 	<code>null</code> if none
 	 */
-	public void setExpressionContext(IDebugElement context);
+	void setExpressionContext(IDebugElement context);
 	/**
 	 * Sets this watch expression's snippet of code. This method
 	 * causes the new snippet to be evaluated immediately in
@@ -65,7 +65,7 @@ public interface IWatchExpression extends IErrorReportingExpression {
 	 *
 	 * @param expressionText the snippet which will be evaluated
 	 */
-	public void setExpressionText(String expressionText);
+	void setExpressionText(String expressionText);
 	/**
 	 * Returns whether the result of this watch expression is pending.
 	 * An expression is pending if an evaluation has been requested, but
@@ -73,14 +73,14 @@ public interface IWatchExpression extends IErrorReportingExpression {
 	 *
 	 * @return whether this expression's result is pending
 	 */
-	public boolean isPending();
+	boolean isPending();
 	/**
 	 * Returns whether this expression is enabled. An enabled expression will
 	 * update its value. A disabled expression will not.
 	 *
 	 * @return whether this expression is enabled
 	 */
-	public boolean isEnabled();
+	boolean isEnabled();
 	/**
 	 * Sets this expression's enabled state. This method
 	 * causes the new snippet to be evaluated immediately in
@@ -88,6 +88,6 @@ public interface IWatchExpression extends IErrorReportingExpression {
 	 *
 	 * @param enabled whether this expression should be enabled
 	 */
-	public void setEnabled(boolean enabled);
+	void setEnabled(boolean enabled);
 
 }

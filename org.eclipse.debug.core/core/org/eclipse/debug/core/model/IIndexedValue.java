@@ -37,7 +37,7 @@ public interface IIndexedValue extends IValue {
 	 * @throws DebugException if unable to retrieve the variable at the
 	 * given offset
 	 */
-	public IVariable getVariable(int offset) throws DebugException;
+	IVariable getVariable(int offset) throws DebugException;
 
 	/**
 	 * Returns a subset of the elements in this collection of variables as
@@ -49,7 +49,7 @@ public interface IIndexedValue extends IValue {
 	 *  specified by the given offset and length
 	 * @throws DebugException if unable to retrieve the variables
 	 */
-	public IVariable[] getVariables(int offset, int length) throws DebugException;
+	IVariable[] getVariables(int offset, int length) throws DebugException;
 
 	/**
 	 * Returns the number of entries in this indexed collection.
@@ -58,7 +58,7 @@ public interface IIndexedValue extends IValue {
 	 * @throws DebugException if unable to determine the number
 	 * of entries in this collection
 	 */
-	public int getSize() throws DebugException;
+	int getSize() throws DebugException;
 
 	/**
 	 * Returns the index of the first variable contained in this value.
@@ -67,5 +67,5 @@ public interface IIndexedValue extends IValue {
 	 *
 	 * @return the index of the first variable contained in this value
 	 */
-	public int getInitialOffset();
+	int getInitialOffset();
 }

@@ -30,7 +30,7 @@ public interface IExpressionsListener2 extends IExpressionsListener {
 	 * @param expressions array of expressions to be moved
 	 * @param index the index the expressions will be added to, adjusted for moved expressions
 	 */
-	public void expressionsMoved(IExpression[] expressions, int index);
+	void expressionsMoved(IExpression[] expressions, int index);
 
 	/**
 	 * Fires the model delta necessary to update the viewer after one or more
@@ -40,6 +40,6 @@ public interface IExpressionsListener2 extends IExpressionsListener {
 	 * @param expressions array of expressions to be moved
 	 * @param index the index the expressions will be added to
 	 */
-	public void expressionsInserted(IExpression[] expressions, int index);
+	void expressionsInserted(IExpression[] expressions, int index);
 
 }

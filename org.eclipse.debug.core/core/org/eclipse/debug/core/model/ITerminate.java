@@ -26,13 +26,13 @@ public interface ITerminate {
 	 *
 	 * @return whether this element can be terminated
 	 */
-	public boolean canTerminate();
+	boolean canTerminate();
 	/**
 	 * Returns whether this element is terminated.
 	 *
 	 * @return whether this element is terminated
 	 */
-	public boolean isTerminated();
+	boolean isTerminated();
 	/**
 	 * Causes this element to terminate, generating a <code>TERMINATE</code> event.
 	 * Implementations may be blocking or non-blocking.
@@ -42,5 +42,5 @@ public interface ITerminate {
 	 * <li>NOT_SUPPORTED - The capability is not supported by the target
 	 * </ul>
 	 */
-	public void terminate() throws DebugException;
+	void terminate() throws DebugException;
 }

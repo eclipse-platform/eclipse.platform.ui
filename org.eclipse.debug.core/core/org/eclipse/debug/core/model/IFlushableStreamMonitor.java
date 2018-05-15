@@ -25,7 +25,7 @@ public interface IFlushableStreamMonitor extends IStreamMonitor {
 	/**
 	 * Empties the contents of this stream monitor's underlying buffer.
 	 */
-	public void flushContents();
+	void flushContents();
 
 	/**
 	 * Sets whether the contents of this monitor's underlying stream should be
@@ -37,7 +37,7 @@ public interface IFlushableStreamMonitor extends IStreamMonitor {
 	 * @param buffer whether the contents of this monitor's underlying stream
 	 * should be buffered
 	 */
-	public void setBuffered(boolean buffer);
+	void setBuffered(boolean buffer);
 
 	/**
 	 * Returns whether the contents of this monitor's underlying stream is
@@ -46,5 +46,5 @@ public interface IFlushableStreamMonitor extends IStreamMonitor {
 	 * @return whether the contents of this monitor's underlying stream is
 	 * buffered
 	 */
-	public boolean isBuffered();
+	boolean isBuffered();
 }

@@ -34,5 +34,5 @@ public interface IDebugEventFilter {
 	 * @param events set of debug events to filter
 	 * @return  the set of debug events to fire
 	 */
-	public DebugEvent[] filterDebugEvents(DebugEvent[] events);
+	DebugEvent[] filterDebugEvents(DebugEvent[] events);
 }

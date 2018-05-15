@@ -55,7 +55,7 @@ public interface IDebugCommandHandler {
 	 * </p>
 	 * @param request specifies elements to operate on and collects enabled state
 	 */
-	public void canExecute(IEnabledStateRequest request);
+	void canExecute(IEnabledStateRequest request);
 
 	/**
 	 * Executes this command on the elements specified in the given request
@@ -77,6 +77,6 @@ public interface IDebugCommandHandler {
 	 * @param request specifies elements to operate on and collects execution status
 	 * @return whether this handler remains enabled while command is executing
 	 */
-	public boolean execute(IDebugCommandRequest request);
+	boolean execute(IDebugCommandRequest request);
 
 }

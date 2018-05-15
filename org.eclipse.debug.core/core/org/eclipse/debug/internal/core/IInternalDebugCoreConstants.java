@@ -23,7 +23,7 @@ public interface IInternalDebugCoreConstants {
 	/**
 	 * Represents the empty string
 	 */
-	public static final String EMPTY_STRING = ""; //$NON-NLS-1$
+	String EMPTY_STRING = ""; //$NON-NLS-1$
 
 	/**
 	 * Boolean preference controlling whether status handler extensions
@@ -32,13 +32,13 @@ public interface IInternalDebugCoreConstants {
 	 *
 	 * @since 3.4.2
 	 */
-	public static final String PREF_ENABLE_STATUS_HANDLERS = DebugPlugin.getUniqueIdentifier() + ".PREF_ENABLE_STATUS_HANDLERS"; //$NON-NLS-1$
+	String PREF_ENABLE_STATUS_HANDLERS = DebugPlugin.getUniqueIdentifier() + ".PREF_ENABLE_STATUS_HANDLERS"; //$NON-NLS-1$
 
 	/**
 	 * Persistence of breakpoint manager enabled state.
 	 *
 	 * @since 3.6
 	 */
-	public static final String PREF_BREAKPOINT_MANAGER_ENABLED_STATE =  DebugPlugin.getUniqueIdentifier() + ".PREF_BREAKPOINT_MANAGER_ENABLED_STATE"; //$NON-NLS-1$
+	String PREF_BREAKPOINT_MANAGER_ENABLED_STATE =  DebugPlugin.getUniqueIdentifier() + ".PREF_BREAKPOINT_MANAGER_ENABLED_STATE"; //$NON-NLS-1$
 
 }

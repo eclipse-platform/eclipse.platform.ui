@@ -36,7 +36,7 @@ public interface ILaunch extends ITerminate, IAdaptable {
 	 * @return an array (element type:<code>IDebugTarget</code> or <code>IProcess</code>),
 	 * 	or an empty array
 	 */
-	public Object[] getChildren();
+	Object[] getChildren();
 	/**
 	 * Returns the primary (first) debug target associated with this launch, or <code>null</code>
 	 * if no debug target is associated with this launch. All debug targets
@@ -45,7 +45,7 @@ public interface ILaunch extends ITerminate, IAdaptable {
 	 *
 	 * @return the primary debug target associated with this launch, or <code>null</code>
 	 */
-	public IDebugTarget getDebugTarget();
+	IDebugTarget getDebugTarget();
 
 	/**
 	 * Returns the processes that were launched,
@@ -53,7 +53,7 @@ public interface ILaunch extends ITerminate, IAdaptable {
 	 *
 	 * @return array of processes
 	 */
-	public IProcess[] getProcesses();
+	IProcess[] getProcesses();
 
 	/**
 	 * Returns all the debug targets associated with this launch,
@@ -64,7 +64,7 @@ public interface ILaunch extends ITerminate, IAdaptable {
 	 * @return array of debug targets
 	 * @since 2.0
 	 */
-	public IDebugTarget[] getDebugTargets();
+	IDebugTarget[] getDebugTargets();
 
 	/**
 	 * Adds the given debug target to this launch. Has no effect
@@ -75,7 +75,7 @@ public interface ILaunch extends ITerminate, IAdaptable {
 	 * @param target debug target to add to this launch
 	 * @since 2.0
 	 */
-	public void addDebugTarget(IDebugTarget target);
+	void addDebugTarget(IDebugTarget target);
 
 	/**
 	 * Removes the given debug target from this launch. Has no effect
@@ -86,7 +86,7 @@ public interface ILaunch extends ITerminate, IAdaptable {
 	 * @param target debug target to remove from this launch
 	 * @since 2.0
 	 */
-	public void removeDebugTarget(IDebugTarget target);
+	void removeDebugTarget(IDebugTarget target);
 
 	/**
 	 * Adds the given process to this launch. Has no effect
@@ -97,7 +97,7 @@ public interface ILaunch extends ITerminate, IAdaptable {
 	 * @param process the process to add to this launch
 	 * @since 2.0
 	 */
-	public void addProcess(IProcess process);
+	void addProcess(IProcess process);
 
 	/**
 	 * Removes the given process from this launch. Has no effect
@@ -108,7 +108,7 @@ public interface ILaunch extends ITerminate, IAdaptable {
 	 * @param process the process to remove from this launch
 	 * @since 2.0
 	 */
-	public void removeProcess(IProcess process);
+	void removeProcess(IProcess process);
 
 	/**
 	 * Returns the source locator to use for locating source elements for
@@ -117,7 +117,7 @@ public interface ILaunch extends ITerminate, IAdaptable {
 	 *
 	 * @return the source locator
 	 */
-	public ISourceLocator getSourceLocator();
+	ISourceLocator getSourceLocator();
 
 	/**
 	 * Sets the source locator to use for locating source elements for
@@ -127,7 +127,7 @@ public interface ILaunch extends ITerminate, IAdaptable {
 	 * @param sourceLocator source locator or <code>null</code>
 	 * @since 2.0
 	 */
-	public void setSourceLocator(ISourceLocator sourceLocator);
+	void setSourceLocator(ISourceLocator sourceLocator);
 
 	/**
 	 * Returns the mode of this launch - one of the mode constants defined by
@@ -136,7 +136,7 @@ public interface ILaunch extends ITerminate, IAdaptable {
 	 * @return the launch mode
 	 * @see ILaunchManager
 	 */
-	public String getLaunchMode();
+	String getLaunchMode();
 
 	/**
 	 * Returns the configuration that was launched, or <code>null</code>
@@ -145,7 +145,7 @@ public interface ILaunch extends ITerminate, IAdaptable {
 	 * @return the launched configuration or <code>null</code>
 	 * @since 2.0
 	 */
-	public ILaunchConfiguration getLaunchConfiguration();
+	ILaunchConfiguration getLaunchConfiguration();
 
 	/**
 	 * Sets the value of a client defined attribute.
@@ -154,7 +154,7 @@ public interface ILaunch extends ITerminate, IAdaptable {
 	 * @param value the attribute value
 	 * @since 2.0
 	 */
-	public void setAttribute(String key, String value);
+	void setAttribute(String key, String value);
 
 	/**
 	 * Returns the value of a client defined attribute.
@@ -163,7 +163,7 @@ public interface ILaunch extends ITerminate, IAdaptable {
 	 * @return value the attribute value, or <code>null</code> if undefined
 	 * @since 2.0
 	 */
-	public String getAttribute(String key);
+	String getAttribute(String key);
 
 	/**
 	 * Returns whether this launch contains at least one process
@@ -173,6 +173,6 @@ public interface ILaunch extends ITerminate, IAdaptable {
 	 * or debug target
 	 * @since 2.0
 	 */
-	public boolean hasChildren();
+	boolean hasChildren();
 
 }

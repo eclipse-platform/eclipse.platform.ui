@@ -34,7 +34,7 @@ public interface IStreamsProxy {
 	 *
 	 * @return an error stream monitor, or <code>null</code> if none
 	 */
-	public IStreamMonitor getErrorStreamMonitor();
+	IStreamMonitor getErrorStreamMonitor();
 	/**
 	 * Returns a monitor for the output stream of this proxy's process,
 	 * or <code>null</code> if not supported.
@@ -43,7 +43,7 @@ public interface IStreamsProxy {
 	 *
 	 * @return an output stream monitor, or <code>null</code> if none
 	 */
-	public IStreamMonitor getOutputStreamMonitor();
+	IStreamMonitor getOutputStreamMonitor();
 	/**
 	 * Writes the given text to the output stream connected to the
 	 * standard input stream of this proxy's process.
@@ -53,5 +53,5 @@ public interface IStreamsProxy {
 	 *		underlying <code>OutputStream</code>.
 	 *
 	 */
-	public void write(String input) throws IOException;
+	void write(String input) throws IOException;
 }

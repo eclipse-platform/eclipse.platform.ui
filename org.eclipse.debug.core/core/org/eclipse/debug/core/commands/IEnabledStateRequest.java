@@ -28,5 +28,5 @@ public interface IEnabledStateRequest extends IDebugCommandRequest {
 	 *
 	 * @param result whether enabled
 	 */
-	public void setEnabled(boolean result);
+	void setEnabled(boolean result);
 }

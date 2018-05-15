@@ -28,7 +28,7 @@ public interface IMemoryBlockRetrieval {
 	 * @return whether this debug target supports the retrieval
 	 *  of memory blocks
 	 */
-	public boolean supportsStorageRetrieval();
+	boolean supportsStorageRetrieval();
 
 	/**
 	 * Returns a memory block that starts at the specified
@@ -47,6 +47,6 @@ public interface IMemoryBlockRetrieval {
 	 *  ranges</li>
 	 * </ul>
 	 */
-	public IMemoryBlock getMemoryBlock(long startAddress, long length) throws DebugException;
+	IMemoryBlock getMemoryBlock(long startAddress, long length) throws DebugException;
 }
 

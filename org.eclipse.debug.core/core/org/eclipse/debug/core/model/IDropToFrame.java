@@ -25,7 +25,7 @@ public interface IDropToFrame {
      * Returns whether this element can currently perform a drop to frame.
      * @return whether this element can currently perform a drop to frame
      */
-    public boolean canDropToFrame();
+    boolean canDropToFrame();
 
     /**
      * Performs a drop to frame on this element. Implementations must generate
@@ -39,5 +39,5 @@ public interface IDropToFrame {
      * <li>NOT_SUPPORTED - The capability is not supported by the target</li>
      * </ul>
      */
-    public void dropToFrame() throws DebugException;
+    void dropToFrame() throws DebugException;
 }

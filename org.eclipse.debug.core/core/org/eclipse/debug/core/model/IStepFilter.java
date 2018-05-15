@@ -43,6 +43,6 @@ public interface IStepFilter {
 	 * @param object the object to filter
 	 * @return whether the step for the given object should be filtered.
 	 */
-	public boolean isFiltered(Object object);
+	boolean isFiltered(Object object);
 
 }

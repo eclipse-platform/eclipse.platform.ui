@@ -34,7 +34,7 @@ public interface IWatchpoint extends IBreakpoint {
 	 * @exception CoreException if unable to access the property
 	 * 	on this breakpoint's underlying marker
 	 */
-	public boolean isAccess() throws CoreException;
+	boolean isAccess() throws CoreException;
 	/**
 	 * Sets whether this breakpoint will suspend execution when its associated
 	 * variable is accessed.
@@ -43,7 +43,7 @@ public interface IWatchpoint extends IBreakpoint {
 	 * @exception CoreException if unable to set the property on this breakpoint's
 	 *  underlying marker or if the capability is not supported
 	 */
-	public void setAccess(boolean access) throws CoreException;
+	void setAccess(boolean access) throws CoreException;
 	/**
 	 * Returns whether this watchpoint will suspend execution when its associated
 	 * variable is written.
@@ -52,7 +52,7 @@ public interface IWatchpoint extends IBreakpoint {
 	 * @exception CoreException if unable to access the property
 	 * 	on this breakpoint's underlying marker
 	 */
-	public boolean isModification() throws CoreException;
+	boolean isModification() throws CoreException;
 	/**
 	 * Sets whether this breakpoint will suspend execution when its associated
 	 * variable is modified.
@@ -61,7 +61,7 @@ public interface IWatchpoint extends IBreakpoint {
 	 * @exception CoreException if unable to set the property on
 	 * 	this breakpoint's underlying marker or if the capability is not supported
 	 */
-	public void setModification(boolean modification) throws CoreException;
+	void setModification(boolean modification) throws CoreException;
 	/**
 	 * Returns whether this breakpoints supports the capability to suspend
 	 * when an associated variable is read.
@@ -69,7 +69,7 @@ public interface IWatchpoint extends IBreakpoint {
 	 * @return whether this breakpoints supports the capability to suspend
 	 * when an associated variable is read
 	 */
-	public boolean supportsAccess();
+	boolean supportsAccess();
 	/**
 	 * Returns whether this breakpoints supports the ability to suspend
 	 * when an associated variable is written.
@@ -77,7 +77,7 @@ public interface IWatchpoint extends IBreakpoint {
 	 * @return whether this breakpoints supports the ability to suspend
 	 * when an associated variable is written
 	 */
-	public boolean supportsModification();
+	boolean supportsModification();
 
 }
 

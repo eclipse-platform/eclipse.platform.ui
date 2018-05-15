@@ -36,7 +36,7 @@ public interface IRegisterGroup extends IDebugElement {
 	 * status code contains the underlying exception responsible for
 	 * the failure.</li>
 	 */
-	public String getName() throws DebugException;
+	String getName() throws DebugException;
 
 	/**
 	 * Returns the registers in this register group.
@@ -47,7 +47,7 @@ public interface IRegisterGroup extends IDebugElement {
 	 * status code contains the underlying exception responsible for
 	 * the failure.</li>
 	 */
-	public IRegister[] getRegisters() throws DebugException;
+	IRegister[] getRegisters() throws DebugException;
 
 	/**
 	 * Returns whether this register group currently contains any registers.
@@ -58,7 +58,7 @@ public interface IRegisterGroup extends IDebugElement {
 	 * status code contains the underlying exception responsible for
 	 * the failure.</li>
 	 */
-	public boolean hasRegisters() throws DebugException;
+	boolean hasRegisters() throws DebugException;
 
 }
 

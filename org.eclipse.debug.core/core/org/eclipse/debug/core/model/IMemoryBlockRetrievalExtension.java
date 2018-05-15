@@ -32,5 +32,5 @@ public interface IMemoryBlockRetrievalExtension extends IMemoryBlockRetrieval {
 	 * @throws DebugException if unable to retrieve the specified memory
 	 */
 
-	public IMemoryBlockExtension getExtendedMemoryBlock(String expression, Object context) throws DebugException;
+	IMemoryBlockExtension getExtendedMemoryBlock(String expression, Object context) throws DebugException;
 }

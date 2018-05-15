@@ -49,7 +49,7 @@ public interface IBreakpointManager {
 	 * </ul>
 	 * @since 2.0
 	 */
-	public void addBreakpoint(IBreakpoint breakpoint) throws CoreException;
+	void addBreakpoint(IBreakpoint breakpoint) throws CoreException;
 
 	/**
 	 * Adds the given breakpoints to the collection of registered breakpoints
@@ -66,7 +66,7 @@ public interface IBreakpointManager {
 	 * </ul>
 	 * @since 2.1
 	 */
-	public void addBreakpoints(IBreakpoint[] breakpoints) throws CoreException;
+	void addBreakpoints(IBreakpoint[] breakpoints) throws CoreException;
 
 	/**
 	 * Returns the breakpoint associated with the given marker or
@@ -77,7 +77,7 @@ public interface IBreakpointManager {
 	 * 	or <code>null</code> if none exists
 	 * @since 2.0
 	 */
-	public IBreakpoint getBreakpoint(IMarker marker);
+	IBreakpoint getBreakpoint(IMarker marker);
 
 	/**
 	 * Returns a collection of all registered breakpoints.
@@ -86,7 +86,7 @@ public interface IBreakpointManager {
 	 * @return an array of breakpoints
 	 * @since 2.0
 	 */
-	public IBreakpoint[] getBreakpoints();
+	IBreakpoint[] getBreakpoints();
 
 	/**
 	 * Returns whether there are any registered breakpoints.
@@ -94,7 +94,7 @@ public interface IBreakpointManager {
 	 * @return whether there are any registered breakpoints
 	 * @since 2.0
 	 */
-	public boolean hasBreakpoints();
+	boolean hasBreakpoints();
 
 	/**
 	 * Returns a collection of all breakpoints registered for the
@@ -105,7 +105,7 @@ public interface IBreakpointManager {
 	 * @return an array of breakpoints
 	 * @since 2.0
 	 */
-	public IBreakpoint[] getBreakpoints(String modelIdentifier);
+	IBreakpoint[] getBreakpoints(String modelIdentifier);
 
 	/**
 	 * Returns whether the given breakpoint is currently
@@ -115,7 +115,7 @@ public interface IBreakpointManager {
 	 * @return whether the breakpoint is registered
 	 * @since 2.0
 	 */
-	public boolean isRegistered(IBreakpoint breakpoint);
+	boolean isRegistered(IBreakpoint breakpoint);
 
 	/**
 	 * Notifies all registered listeners that the given
@@ -130,7 +130,7 @@ public interface IBreakpointManager {
 	 * @param breakpoint the breakpoint that has changed.
 	 * @since 2.0
 	 */
-	public void fireBreakpointChanged(IBreakpoint breakpoint);
+	void fireBreakpointChanged(IBreakpoint breakpoint);
 
 	/**
 	 * Removes the given breakpoint from the breakpoint manager, deletes
@@ -146,7 +146,7 @@ public interface IBreakpointManager {
 	 * 	underlying marker.
 	 * @since 2.0
 	 */
-	public void removeBreakpoint(IBreakpoint breakpoint, boolean delete) throws CoreException;
+	void removeBreakpoint(IBreakpoint breakpoint, boolean delete) throws CoreException;
 
 	/**
 	 * Removes the given breakpoints from the breakpoint manager, deletes
@@ -162,7 +162,7 @@ public interface IBreakpointManager {
 	 * 	underlying marker.
 	 * @since 2.1
 	 */
-	public void removeBreakpoints(IBreakpoint[] breakpoints, boolean delete) throws CoreException;
+	void removeBreakpoints(IBreakpoint[] breakpoints, boolean delete) throws CoreException;
 
 	/**
 	 * Adds the given listener to the collection of registered breakpoint listeners.
@@ -170,7 +170,7 @@ public interface IBreakpointManager {
 	 *
 	 * @param listener the listener to add
 	 */
-	public void addBreakpointListener(IBreakpointListener listener);
+	void addBreakpointListener(IBreakpointListener listener);
 
 	/**
 	 * Removes the given listener from the collection of registered breakpoint listeners.
@@ -178,7 +178,7 @@ public interface IBreakpointManager {
 	 *
 	 * @param listener the listener to remove
 	 */
-	public void removeBreakpointListener(IBreakpointListener listener);
+	void removeBreakpointListener(IBreakpointListener listener);
 
 	/**
 	 * Adds the given listener to the collection of registered breakpoint listeners.
@@ -187,7 +187,7 @@ public interface IBreakpointManager {
 	 * @param listener the listener to add
 	 * @since 2.1
 	 */
-	public void addBreakpointListener(IBreakpointsListener listener);
+	void addBreakpointListener(IBreakpointsListener listener);
 
 	/**
 	 * Removes the given listener from the collection of registered breakpoint listeners.
@@ -196,7 +196,7 @@ public interface IBreakpointManager {
 	 * @param listener the listener to remove
 	 * @since 2.1
 	 */
-	public void removeBreakpointListener(IBreakpointsListener listener);
+	void removeBreakpointListener(IBreakpointsListener listener);
 
 	/**
 	 * Adds the given listener to the collection of registered breakpoint manager
@@ -205,7 +205,7 @@ public interface IBreakpointManager {
 	 * @param listener the listener to add
 	 * @since 3.0
 	 */
-	public void addBreakpointManagerListener(IBreakpointManagerListener listener);
+	void addBreakpointManagerListener(IBreakpointManagerListener listener);
 
 	/**
 	 * Removes the given listener from the collection of registered breakpoint manager
@@ -214,7 +214,7 @@ public interface IBreakpointManager {
 	 * @param listener the listener to remove
 	 * @since 3.0
 	 */
-	public void removeBreakpointManagerListener(IBreakpointManagerListener listener);
+	void removeBreakpointManagerListener(IBreakpointManagerListener listener);
 
 	/**
 	 * Returns whether or not this breakpoint manager is enabled.
@@ -225,7 +225,7 @@ public interface IBreakpointManager {
 	 * @return whether or not this breakpoint manager is enabled
 	 * @since 3.0
 	 */
-	public boolean isEnabled();
+	boolean isEnabled();
 
 	/**
 	 * Sets the enabled state of this breakpoint manager. When
@@ -236,7 +236,7 @@ public interface IBreakpointManager {
 	 *  enabled
 	 * @since 3.0
 	 */
-	public void setEnabled(boolean enabled);
+	void setEnabled(boolean enabled);
 
     /**
      * Returns the name (user readable String) of the given
@@ -247,7 +247,7 @@ public interface IBreakpointManager {
      * @return the name of the given breakpoint's type or <code>null</code>
      * @since 3.1
      */
-    public String getTypeName(IBreakpoint breakpoint);
+    String getTypeName(IBreakpoint breakpoint);
 
     /**
      * Returns an array of {@link IBreakpointImportParticipant}s for the given
@@ -259,7 +259,7 @@ public interface IBreakpointManager {
      * @throws CoreException if an exception occurs
      * @since 3.5
      */
-    public IBreakpointImportParticipant[] getImportParticipants(String markertype) throws CoreException;
+    IBreakpointImportParticipant[] getImportParticipants(String markertype) throws CoreException;
 
 	/**
 	 * Returns the triggers for the breakpoints associated with the workspace or
@@ -269,7 +269,7 @@ public interface IBreakpointManager {
 	 *         <code>null</code> if none exists
 	 * @since 3.11
 	 */
-	public IBreakpoint[] getTriggerPoints();
+	IBreakpoint[] getTriggerPoints();
 
 	/**
 	 * Adds the given breakpoint as the triggering breakpoint in the workspace
@@ -287,7 +287,7 @@ public interface IBreakpointManager {
 	 *                </ul>
 	 * @since 3.11
 	 */
-	public void addTriggerPoint(IBreakpoint breakpoint) throws CoreException;
+	void addTriggerPoint(IBreakpoint breakpoint) throws CoreException;
 
 	/**
 	 * Removes the given breakpoint as the trigger breakpoint in the workspace
@@ -305,7 +305,7 @@ public interface IBreakpointManager {
 	 *                </ul>
 	 * @since 3.11
 	 */
-	public void removeTriggerPoint(IBreakpoint breakpoint) throws CoreException;
+	void removeTriggerPoint(IBreakpoint breakpoint) throws CoreException;
 
 	/**
 	 * Removes all the trigger points from the breakpoint manager.
@@ -314,7 +314,7 @@ public interface IBreakpointManager {
 	 *                underlying marker.
 	 * @since 3.11
 	 */
-	public void removeAllTriggerPoints() throws CoreException;
+	void removeAllTriggerPoints() throws CoreException;
 
 	/**
 	 * Returns whether a workspace has active TriggerPoints
@@ -323,7 +323,7 @@ public interface IBreakpointManager {
 	 *         cannot suspend and return <code>false> otherwise.
 	 * @since 3.11
 	 */
-	public boolean hasActiveTriggerPoints();
+	boolean hasActiveTriggerPoints();
 
 	/**
 	 * Revisit all the trigger points to activate/deactivate trigger points.
@@ -333,14 +333,14 @@ public interface IBreakpointManager {
 	 * @param enable enable if <code>true</code> or disable if <code>false</code>
 	 * @since 3.11
 	 */
-	public void enableTriggerPoints(IBreakpoint[] triggerPoints, boolean enable);
+	void enableTriggerPoints(IBreakpoint[] triggerPoints, boolean enable);
 
 	/**
 	 * Touch and refresh the display of all breakpoints.
 	 *
 	 * @since 3.11
 	 */
-	public void refreshTriggerpointDisplay();
+	void refreshTriggerpointDisplay();
 
 }
 

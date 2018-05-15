@@ -46,6 +46,6 @@ public interface IWatchExpressionDelegate {
 	 * @param context the context for the evaluation
 	 * @param listener the listener to notify when the evaluation completes
 	 */
-	public void evaluateExpression(String expression, IDebugElement context, IWatchExpressionListener listener);
+	void evaluateExpression(String expression, IDebugElement context, IWatchExpressionListener listener);
 
 }

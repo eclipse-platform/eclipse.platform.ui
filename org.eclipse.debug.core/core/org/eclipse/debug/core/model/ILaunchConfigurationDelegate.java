@@ -49,6 +49,6 @@ public interface ILaunchConfigurationDelegate {
 	 *  targets to
 	 * @exception CoreException if launching fails
 	 */
-	public void launch(ILaunchConfiguration configuration, String mode, ILaunch launch, IProgressMonitor monitor) throws CoreException;
+	void launch(ILaunchConfiguration configuration, String mode, ILaunch launch, IProgressMonitor monitor) throws CoreException;
 
 }

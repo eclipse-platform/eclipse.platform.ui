@@ -53,7 +53,7 @@ public interface ISourceContainerType extends ISourceContainerTypeDelegate {
 	 *
 	 * @return the name of this source container type
 	 */
-	public String getName();
+	String getName();
 
 	/**
 	 * Returns the unique identifier associated with this source container type.
@@ -62,7 +62,7 @@ public interface ISourceContainerType extends ISourceContainerTypeDelegate {
 	 *
 	 * @return the unique identifier associated with this source container type
 	 */
-	public String getId();
+	String getId();
 
 	/**
 	 * Returns a short description of this source container type that can be used
@@ -70,6 +70,6 @@ public interface ISourceContainerType extends ISourceContainerTypeDelegate {
 	 *
 	 * @return a short description of this source container type, or <code>null</code>
 	 */
-	public String getDescription();
+	String getDescription();
 
 }

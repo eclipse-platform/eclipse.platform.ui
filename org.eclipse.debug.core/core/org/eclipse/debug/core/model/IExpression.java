@@ -36,7 +36,7 @@ public interface IExpression extends IDebugElement {
 	 *
 	 * @return the expression
 	 */
-	public abstract String getExpressionText();
+	String getExpressionText();
 
 	/**
 	 * Returns the current value of this expression or
@@ -45,7 +45,7 @@ public interface IExpression extends IDebugElement {
 	 *
 	 * @return value or <code>null</code>
 	 */
-	public abstract IValue getValue();
+	IValue getValue();
 
 	/**
 	 * Returns the debug target this expression is associated
@@ -55,8 +55,7 @@ public interface IExpression extends IDebugElement {
 	 * @return debug target or <code>null</code>
 	 * @see IDebugElement#getDebugTarget()
 	 */
-	@Override
-	public abstract IDebugTarget getDebugTarget();
+	@Override IDebugTarget getDebugTarget();
 
 	/**
 	 * Notifies this expression that it has been removed
@@ -64,5 +63,5 @@ public interface IExpression extends IDebugElement {
 	 * is be performed such that this expression can be
 	 * garbage collected.
 	 */
-	public abstract void dispose();
+	void dispose();
 }

@@ -37,7 +37,7 @@ public interface IProcess extends IAdaptable, ITerminate {
 	 *
 	 * @since 2.1
 	 */
-	public final static String ATTR_CMDLINE= DebugPlugin.getUniqueIdentifier() + ".ATTR_CMDLINE"; //$NON-NLS-1$
+	String ATTR_CMDLINE= DebugPlugin.getUniqueIdentifier() + ".ATTR_CMDLINE"; //$NON-NLS-1$
 
 	/**
 	 * Attribute key for a common, optional, process property. The value of this
@@ -47,7 +47,7 @@ public interface IProcess extends IAdaptable, ITerminate {
 	 *
 	 * @since 2.1
 	 */
-	public final static String ATTR_PROCESS_TYPE = DebugPlugin.getUniqueIdentifier() + ".ATTR_PROCESS_TYPE"; //$NON-NLS-1$
+	String ATTR_PROCESS_TYPE = DebugPlugin.getUniqueIdentifier() + ".ATTR_PROCESS_TYPE"; //$NON-NLS-1$
 
 	/**
 	 * Attribute key for a common, optional, process property. The value of this
@@ -56,27 +56,27 @@ public interface IProcess extends IAdaptable, ITerminate {
 	 *
 	 * @since 3.0
 	 */
-	public final static String ATTR_PROCESS_LABEL = DebugPlugin.getUniqueIdentifier() + ".ATTR_PROCESS_LABEL"; //$NON-NLS-1$
+	String ATTR_PROCESS_LABEL = DebugPlugin.getUniqueIdentifier() + ".ATTR_PROCESS_LABEL"; //$NON-NLS-1$
 
 	/**
 	 * Returns a human-readable label for this process.
 	 *
 	 * @return a label for this process
 	 */
-	public String getLabel();
+	String getLabel();
 	/**
 	 * Returns the launch this element originated from.
 	 *
 	 * @return the launch this process is contained in
 	 */
-	public ILaunch getLaunch();
+	ILaunch getLaunch();
 	/**
 	 * Returns a proxy to the standard input, output, and error streams
 	 * for this process, or <code>null</code> if not supported.
 	 *
 	 * @return a streams proxy, or <code>null</code> if not supported
 	 */
-	public IStreamsProxy getStreamsProxy();
+	IStreamsProxy getStreamsProxy();
 
 	/**
 	 * Sets the value of a client defined attribute.
@@ -84,7 +84,7 @@ public interface IProcess extends IAdaptable, ITerminate {
 	 * @param key the attribute key
 	 * @param value the attribute value
 	 */
-	public void setAttribute(String key, String value);
+	void setAttribute(String key, String value);
 
 	/**
 	 * Returns the value of a client defined attribute.
@@ -92,7 +92,7 @@ public interface IProcess extends IAdaptable, ITerminate {
 	 * @param key the attribute key
 	 * @return value the String attribute value, or <code>null</code> if undefined
 	 */
-	public String getAttribute(String key);
+	String getAttribute(String key);
 
 	/**
 	 * Returns the exit value of this process. Conventionally, 0 indicates
@@ -101,5 +101,5 @@ public interface IProcess extends IAdaptable, ITerminate {
 	 * @return the exit value of this process
 	 * @exception DebugException if this process has not yet terminated
 	 */
-	public int getExitValue() throws DebugException;
+	int getExitValue() throws DebugException;
 }

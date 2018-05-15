@@ -26,7 +26,7 @@ public interface ILaunchConfigurationListener {
 	 *
 	 * @param configuration the newly created launch configuration
 	 */
-	public void launchConfigurationAdded(ILaunchConfiguration configuration);
+	void launchConfigurationAdded(ILaunchConfiguration configuration);
 
 	/**
 	 * The given launch configuration has changed in some way.
@@ -35,7 +35,7 @@ public interface ILaunchConfigurationListener {
 	 * @param configuration the launch configuration that has
 	 *  changed
 	 */
-	public void launchConfigurationChanged(ILaunchConfiguration configuration);
+	void launchConfigurationChanged(ILaunchConfiguration configuration);
 
 	/**
 	 * The given launch configuration has been deleted.
@@ -48,6 +48,6 @@ public interface ILaunchConfigurationListener {
 	 *
 	 * @param configuration the deleted launch configuration
 	 */
-	public void launchConfigurationRemoved(ILaunchConfiguration configuration);
+	void launchConfigurationRemoved(ILaunchConfiguration configuration);
 }
 

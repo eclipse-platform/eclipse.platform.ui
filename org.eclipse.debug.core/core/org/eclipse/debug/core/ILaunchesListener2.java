@@ -26,5 +26,5 @@ public interface ILaunchesListener2 extends ILaunchesListener {
 	 *
 	 * @param launches the launches that have terminated
 	 */
-	public void launchesTerminated(ILaunch[] launches);
+	void launchesTerminated(ILaunch[] launches);
 }

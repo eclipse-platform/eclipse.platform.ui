@@ -38,7 +38,7 @@ public interface ISourceLookupParticipant {
 	 * @param director the source lookup director that this participant
 	 *  has been added to
 	 */
-	public void init(ISourceLookupDirector director);
+	void init(ISourceLookupDirector director);
 
 	/**
 	 * Returns a collection of source elements corresponding to the given debug
@@ -59,7 +59,7 @@ public interface ISourceLookupParticipant {
 	 *  debug artifact, possibly empty
 	 * @exception CoreException if an exception occurs while searching for source
 	 */
-	public Object[] findSourceElements(Object object) throws CoreException;
+	Object[] findSourceElements(Object object) throws CoreException;
 
 	/**
 	 * Returns the source file name associated with the given debug artifact that
@@ -70,14 +70,14 @@ public interface ISourceLookupParticipant {
 	 *  or <code>null</code> if none.
 	 * @throws CoreException if unable to determine a source file name
 	 */
-	public String getSourceName(Object object) throws CoreException;
+	String getSourceName(Object object) throws CoreException;
 
 	/**
 	 * Disposes this source lookup participant. This method is called when
 	 * the source lookup director associated with this participant is
 	 * disposed.
 	 */
-	public void dispose();
+	void dispose();
 
 	/**
 	 * Notification that the source lookup containers in the given source
@@ -86,5 +86,5 @@ public interface ISourceLookupParticipant {
 	 * @param director source lookup director that is directing this
 	 * participant
 	 */
-	public void sourceContainersChanged(ISourceLookupDirector director);
+	void sourceContainersChanged(ISourceLookupDirector director);
 }

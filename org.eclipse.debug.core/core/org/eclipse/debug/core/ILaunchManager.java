@@ -35,16 +35,16 @@ public interface ILaunchManager {
 	/**
 	 * A launch in a normal, non-debug mode(value <code>"run"</code>).
 	 */
-	public static final String RUN_MODE= "run"; //$NON-NLS-1$
+	String RUN_MODE= "run"; //$NON-NLS-1$
 	/**
 	 * A launch in a special debug mode (value <code>"debug"</code>).
 	 */
-	public static final String DEBUG_MODE= "debug"; //$NON-NLS-1$
+	String DEBUG_MODE= "debug"; //$NON-NLS-1$
 	/**
 	 * A launch in a special profile mode (value <code>"profile"</code>).
 	 * @since 3.0
 	 */
-	public static final String PROFILE_MODE= "profile"; //$NON-NLS-1$
+	String PROFILE_MODE= "profile"; //$NON-NLS-1$
 
 	/**
 	 * Launch configuration attribute - a boolean value that indicates if the
@@ -54,7 +54,7 @@ public interface ILaunchManager {
 	 *
 	 * @since 3.6
 	 */
-	public static final String ATTR_PRIVATE = "org.eclipse.debug.ui.private"; //$NON-NLS-1$
+	String ATTR_PRIVATE = "org.eclipse.debug.ui.private"; //$NON-NLS-1$
 
 	/**
 	 * Launch configuration attribute name. The value is a map of environment
@@ -64,7 +64,7 @@ public interface ILaunchManager {
 	 *
 	 * @since 3.0
 	 */
-	public static final String ATTR_ENVIRONMENT_VARIABLES = DebugPlugin.getUniqueIdentifier() + ".environmentVariables"; //$NON-NLS-1$
+	String ATTR_ENVIRONMENT_VARIABLES = DebugPlugin.getUniqueIdentifier() + ".environmentVariables"; //$NON-NLS-1$
 
 	/**
 	 * Launch configuration attribute name. The value is a boolean value specifying
@@ -75,7 +75,7 @@ public interface ILaunchManager {
 	 *
 	 * @since 3.0
 	 */
-	public static final String ATTR_APPEND_ENVIRONMENT_VARIABLES = DebugPlugin.getUniqueIdentifier() + ".appendEnvironmentVariables"; //$NON-NLS-1$
+	String ATTR_APPEND_ENVIRONMENT_VARIABLES = DebugPlugin.getUniqueIdentifier() + ".appendEnvironmentVariables"; //$NON-NLS-1$
 
 	/**
 	 * Adds the specified launch and notifies listeners. Has no
@@ -84,7 +84,7 @@ public interface ILaunchManager {
 	 * @param launch the launch to add
 	 * @since 2.0
 	 */
-	public void addLaunch(ILaunch launch);
+	void addLaunch(ILaunch launch);
 	/**
 	 * Adds the given launch configuration listener to the list
 	 * of listeners notified when a launch configuration is
@@ -94,7 +94,7 @@ public interface ILaunchManager {
 	 * @param listener launch configuration listener
 	 * @since 2.0
 	 */
-	public void addLaunchConfigurationListener(ILaunchConfigurationListener listener);
+	void addLaunchConfigurationListener(ILaunchConfigurationListener listener);
 	/**
 	 * Adds the specified launch objects and notifies listeners. Has no
 	 * effect on identical launch objects already registered.
@@ -102,7 +102,7 @@ public interface ILaunchManager {
 	 * @param launches the launch objects to add
 	 * @since 2.1
 	 */
-	public void addLaunches(ILaunch[] launches);
+	void addLaunches(ILaunch[] launches);
 	/**
 	 * Adds the given listener to the collection of registered launch listeners.
 	 * Has no effect if an identical listener is already registered.
@@ -110,14 +110,14 @@ public interface ILaunchManager {
 	 * @param listener the listener to register
 	 * @since 2.1
 	 */
-	public void addLaunchListener(ILaunchesListener listener);
+	void addLaunchListener(ILaunchesListener listener);
 	/**
 	 * Adds the given listener to the collection of registered launch listeners.
 	 * Has no effect if an identical listener is already registered.
 	 *
 	 * @param listener the listener to register
 	 */
-	public void addLaunchListener(ILaunchListener listener);
+	void addLaunchListener(ILaunchListener listener);
 	/**
 	 * Return a String that can be used as the name of a launch configuration.  The name
 	 * is guaranteed to be unique (no existing launch configurations will have this name).
@@ -132,8 +132,7 @@ public interface ILaunchManager {
 	 * @deprecated since 3.6 clients should use the {@link #generateLaunchConfigurationName(String)} method which
 	 * will perform validation of the name and correct unsupported name parts.
 	 */
-	@Deprecated
-	public String generateUniqueLaunchConfigurationNameFrom(String namePrefix);
+	@Deprecated String generateUniqueLaunchConfigurationNameFrom(String namePrefix);
 
 	/**
 	 * Returns a string that can be used as the name of a launch configuration.  The name
@@ -151,7 +150,7 @@ public interface ILaunchManager {
 	 * @return launch configuration name
 	 * @since 3.6
 	 */
-	public String generateLaunchConfigurationName(String namePrefix);
+	String generateLaunchConfigurationName(String namePrefix);
 
 	/**
 	 * Returns if the given name is valid or not. If an invalid name part is located
@@ -164,7 +163,7 @@ public interface ILaunchManager {
 	 * is either a reserved system name (like 'aux' on Win 32) or the name contains invalid characters (like ':' or '/').
 	 * @since 3.6
 	 */
-	public boolean isValidLaunchConfigurationName(String configname) throws IllegalArgumentException;
+	boolean isValidLaunchConfigurationName(String configname) throws IllegalArgumentException;
 
 	/**
 	 * Returns the collection of debug targets currently registered with this
@@ -172,7 +171,7 @@ public interface ILaunchManager {
 	 *
 	 * @return an array of debug targets
 	 */
-	public IDebugTarget[] getDebugTargets();
+	IDebugTarget[] getDebugTargets();
 	/**
 	 * Returns an array of environment variables to be used when
 	 * launching the given configuration or <code>null</code> if unspecified.
@@ -185,7 +184,7 @@ public interface ILaunchManager {
 	 * unable to resolve a variable in an environment variable's value
 	 * @since 3.0
 	 */
-	public String[] getEnvironment(ILaunchConfiguration configuration) throws CoreException;
+	String[] getEnvironment(ILaunchConfiguration configuration) throws CoreException;
 	/**
 	 * This method returns the character encoding to use when launching the specified <code>ILaunchConfiguration</code>.
 	 * The returned encoding can be derived from one of three places in the following order:
@@ -203,7 +202,7 @@ public interface ILaunchManager {
 	 *
 	 * @since 3.4
 	 */
-	public String getEncoding(ILaunchConfiguration configuration) throws CoreException;
+	String getEncoding(ILaunchConfiguration configuration) throws CoreException;
 	/**
 	 * Returns a handle to the launch configuration contained
 	 * in the specified file. This method does not check if the specified <code>IFile</code> is
@@ -218,7 +217,7 @@ public interface ILaunchManager {
 	 *  in the specified file
 	 * @since 2.0
 	 */
-	public ILaunchConfiguration getLaunchConfiguration(IFile file);
+	ILaunchConfiguration getLaunchConfiguration(IFile file);
 	/**
 	 * Returns a handle to the launch configuration specified by
 	 * the given memento. The configuration may not exist.
@@ -234,7 +233,7 @@ public interface ILaunchManager {
 	 * @see ILaunchConfiguration#getMemento()
 	 * @since 2.0
 	 */
-	public ILaunchConfiguration getLaunchConfiguration(String memento) throws CoreException;
+	ILaunchConfiguration getLaunchConfiguration(String memento) throws CoreException;
 	/**
 	 * Returns all launch configurations defined in the workspace.
 	 *
@@ -243,7 +242,7 @@ public interface ILaunchManager {
 	 * @since 2.0
 	 * @see ILaunchConfigurationType#getPrototypes()
 	 */
-	public ILaunchConfiguration[] getLaunchConfigurations() throws CoreException;
+	ILaunchConfiguration[] getLaunchConfigurations() throws CoreException;
 	/**
 	 * Returns all launch configurations of the specified type defined in the workspace
 	 * <p>
@@ -256,7 +255,7 @@ public interface ILaunchManager {
 	 * @since 2.0
 	 * @see ILaunchConfigurationType#getPrototypes()
 	 */
-	public ILaunchConfiguration[] getLaunchConfigurations(ILaunchConfigurationType type) throws CoreException;
+	ILaunchConfiguration[] getLaunchConfigurations(ILaunchConfigurationType type) throws CoreException;
 
 	/**
 	 * Returns all launch configurations defined in the workspace of the specified
@@ -271,7 +270,7 @@ public interface ILaunchManager {
 	 * @see ILaunchConfiguration#getKind()
 	 * @see ILaunchConfigurationType#getPrototypes()
 	 */
-	public ILaunchConfiguration[] getLaunchConfigurations(int kinds) throws CoreException;
+	ILaunchConfiguration[] getLaunchConfigurations(int kinds) throws CoreException;
 
 	/**
 	 * Returns all launch configurations of the specified type defined in the workspace
@@ -288,7 +287,7 @@ public interface ILaunchManager {
 	 * @see ILaunchConfiguration#getKind()
 	 * @see ILaunchConfigurationType#getPrototypes()
 	 */
-	public ILaunchConfiguration[] getLaunchConfigurations(ILaunchConfigurationType type, int kinds) throws CoreException;
+	ILaunchConfiguration[] getLaunchConfigurations(ILaunchConfigurationType type, int kinds) throws CoreException;
 
 	/**
 	 * Returns the launch configuration type extension with the specified
@@ -299,7 +298,7 @@ public interface ILaunchManager {
 	 * id, or <code>null</code> if it does not exist
 	 * @since 2.0
 	 */
-	public ILaunchConfigurationType getLaunchConfigurationType(String id);
+	ILaunchConfigurationType getLaunchConfigurationType(String id);
 
 	/**
 	 * Returns all defined launch configuration type extensions
@@ -307,7 +306,7 @@ public interface ILaunchManager {
 	 * @return all defined launch configuration type extensions
 	 * @since 2.0
 	 */
-	public ILaunchConfigurationType[] getLaunchConfigurationTypes();
+	ILaunchConfigurationType[] getLaunchConfigurationTypes();
 
 	/**
 	 * Returns the collection of launches currently registered
@@ -315,7 +314,7 @@ public interface ILaunchManager {
 	 *
 	 * @return an array of launches
 	 */
-	public ILaunch[] getLaunches();
+	ILaunch[] getLaunches();
 
 	/**
 	 * Returns the launch mode registered with the given mode identifier,
@@ -325,7 +324,7 @@ public interface ILaunchManager {
 	 * @return launch mode or <code>null</code>
 	 * @since 3.0
 	 */
-	public ILaunchMode getLaunchMode(String mode);
+	ILaunchMode getLaunchMode(String mode);
 
 	/**
 	 * Returns all registered launch modes.
@@ -333,7 +332,7 @@ public interface ILaunchManager {
 	 * @return all registered launch modes
 	 * @since 3.0
 	 */
-	public ILaunchMode[] getLaunchModes();
+	ILaunchMode[] getLaunchModes();
 
 	/**
 	 * Returns a collection of launch configurations that required migration to be
@@ -344,7 +343,7 @@ public interface ILaunchManager {
 	 * 	 migration candidates
 	 * @since 3.2
 	 */
-	public ILaunchConfiguration[] getMigrationCandidates() throws CoreException;
+	ILaunchConfiguration[] getMigrationCandidates() throws CoreException;
 
 	/**
 	 * When a launch configuration is created or moved, registered launch
@@ -368,7 +367,7 @@ public interface ILaunchManager {
 	 * result of a move
 	 * @since 2.1
 	 */
-	public ILaunchConfiguration getMovedFrom(ILaunchConfiguration addedConfiguration);
+	ILaunchConfiguration getMovedFrom(ILaunchConfiguration addedConfiguration);
 
 	/**
 	 * When a launch configuration is deleted or moved, registered launch
@@ -392,7 +391,7 @@ public interface ILaunchManager {
 	 * result of a move
 	 * @since 2.1
 	 */
-	public ILaunchConfiguration getMovedTo(ILaunchConfiguration removedConfiguration);
+	ILaunchConfiguration getMovedTo(ILaunchConfiguration removedConfiguration);
 
 	/**
 	 * Returns the native system environment variables as a map of
@@ -413,7 +412,7 @@ public interface ILaunchManager {
 	 * (key type: <code>String</code>; value type: <code>String</code>)
 	 * @since 3.0
 	 */
-	public Map<String, String> getNativeEnvironment();
+	Map<String, String> getNativeEnvironment();
 
 	/**
 	 * Returns the native system environment variables as a map of
@@ -434,7 +433,7 @@ public interface ILaunchManager {
 	 * (key type: <code>String</code>; value type: <code>String</code>)
 	 * @since 3.1
 	 */
-	public Map<String, String> getNativeEnvironmentCasePreserved();
+	Map<String, String> getNativeEnvironmentCasePreserved();
 
 	/**
 	 * Returns the collection of processes currently registered with this
@@ -442,7 +441,7 @@ public interface ILaunchManager {
 	 *
 	 * @return an array of processes
 	 */
-	public IProcess[] getProcesses();
+	IProcess[] getProcesses();
 
 	/**
 	 * Returns the source container type extension registered with the
@@ -453,7 +452,7 @@ public interface ILaunchManager {
 	 * given unique identifier, or <code>null</code> if none
 	 * @since 3.0
 	 */
-	public ISourceContainerType getSourceContainerType(String id);
+	ISourceContainerType getSourceContainerType(String id);
 
 	/**
 	 * Returns all registered source container type extensions.
@@ -461,7 +460,7 @@ public interface ILaunchManager {
 	 * @return all registered source container type extensions
 	 * @since 3.0
 	 */
-	public ISourceContainerType[] getSourceContainerTypes();
+	ISourceContainerType[] getSourceContainerTypes();
 
 	/**
 	 * Returns a source path computer to compute a default source lookup path for
@@ -476,7 +475,7 @@ public interface ILaunchManager {
 	 *  path computer
 	 * @since 3.0
 	 */
-	public ISourcePathComputer getSourcePathComputer(ILaunchConfiguration configuration) throws CoreException;
+	ISourcePathComputer getSourcePathComputer(ILaunchConfiguration configuration) throws CoreException;
 
 	/**
 	 * Returns the source path computer extension registered with the given
@@ -487,7 +486,7 @@ public interface ILaunchManager {
 	 * unique identifier, or <code>null</code> if none
 	 * @since 3.0
 	 */
-	public ISourcePathComputer getSourcePathComputer(String id);
+	ISourcePathComputer getSourcePathComputer(String id);
 
 	/**
 	 * Return <code>true</code> if there is a launch configuration with the specified name,
@@ -498,7 +497,7 @@ public interface ILaunchManager {
 	 * @exception CoreException if unable to retrieve existing launch configuration names
 	 * @since 2.0
 	 */
-	public boolean isExistingLaunchConfigurationName(String name) throws CoreException;
+	boolean isExistingLaunchConfigurationName(String name) throws CoreException;
 
 	/**
 	 * Returns whether the given launch is currently registered.
@@ -507,7 +506,7 @@ public interface ILaunchManager {
 	 * @return whether the launch is currently registered
 	 * @since 3.1
 	 */
-	public boolean isRegistered(ILaunch launch);
+	boolean isRegistered(ILaunch launch);
 
 	/**
 	 * Creates and returns a new source locator of the specified
@@ -520,7 +519,7 @@ public interface ILaunchManager {
 	 *  the source locator
 	 * @since 2.0
 	 */
-	public IPersistableSourceLocator newSourceLocator(String identifier) throws CoreException;
+	IPersistableSourceLocator newSourceLocator(String identifier) throws CoreException;
 
 	/**
 	 * Removes the specified launch and notifies listeners.
@@ -530,7 +529,7 @@ public interface ILaunchManager {
 	 * @param launch the launch to remove
 	 * @since 2.0
 	 */
-	public void removeLaunch(ILaunch launch);
+	void removeLaunch(ILaunch launch);
 
 	/**
 	 * Removes the given launch configuration listener from the list
@@ -541,7 +540,7 @@ public interface ILaunchManager {
 	 * @param listener launch configuration listener
 	 * @since 2.0
 	 */
-	public void removeLaunchConfigurationListener(ILaunchConfigurationListener listener);
+	void removeLaunchConfigurationListener(ILaunchConfigurationListener listener);
 
 	/**
 	 * Removes the specified launch objects and notifies listeners.
@@ -551,7 +550,7 @@ public interface ILaunchManager {
 	 * @param launches the launch objects to remove
 	 * @since 2.1
 	 */
-	public void removeLaunches(ILaunch[] launches);
+	void removeLaunches(ILaunch[] launches);
 
 	/**
 	 * Removes the given listener from the collection of registered launch listeners.
@@ -560,7 +559,7 @@ public interface ILaunchManager {
 	 * @param listener the listener to unregister
 	 * @since 2.1
 	 */
-	public void removeLaunchListener(ILaunchesListener listener);
+	void removeLaunchListener(ILaunchesListener listener);
 
 	/**
 	 * Removes the given listener from the collection of registered launch listeners.
@@ -568,7 +567,7 @@ public interface ILaunchManager {
 	 *
 	 * @param listener the listener to unregister
 	 */
-	public void removeLaunchListener(ILaunchListener listener);
+	void removeLaunchListener(ILaunchListener listener);
 
 }
 

@@ -45,7 +45,7 @@ public interface IDebugTarget extends IDebugElement, ITerminate, ISuspendResume,
 	 *
 	 * @return the system process associated with this debug target
 	 */
-	public IProcess getProcess();
+	IProcess getProcess();
 	/**
 	 * Returns the threads contained in this debug target. An
 	 * empty collection is returned if this debug target contains
@@ -58,7 +58,7 @@ public interface IDebugTarget extends IDebugElement, ITerminate, ISuspendResume,
 	 * the failure.</li></ul>
 	 * @since 2.0
 	 */
-	public IThread[] getThreads() throws DebugException;
+	IThread[] getThreads() throws DebugException;
 
 	/**
 	 * Returns whether this debug target currently contains any threads.
@@ -70,7 +70,7 @@ public interface IDebugTarget extends IDebugElement, ITerminate, ISuspendResume,
 	 * the failure.</li></ul>
 	 * @since 2.0
 	 */
-	public boolean hasThreads() throws DebugException;
+	boolean hasThreads() throws DebugException;
 
 	/**
 	 * Returns the name of this debug target. Name format is debug model
@@ -82,7 +82,7 @@ public interface IDebugTarget extends IDebugElement, ITerminate, ISuspendResume,
 	 * status code contains the underlying exception responsible for
 	 * the failure.</li></ul>
 	 */
-	public String getName() throws DebugException;
+	String getName() throws DebugException;
 
 	/**
 	 * Returns whether this target can install the given breakpoint.
@@ -90,7 +90,7 @@ public interface IDebugTarget extends IDebugElement, ITerminate, ISuspendResume,
 	 * @param breakpoint breakpoint to consider
 	 * @return whether this target can install the given breakpoint
 	 */
-	public boolean supportsBreakpoint(IBreakpoint breakpoint);
+	boolean supportsBreakpoint(IBreakpoint breakpoint);
 }
 
 

@@ -35,5 +35,5 @@ public interface IDebugEventSetListener {
 	 *
 	 * @param events the debug events
 	 */
-	public void handleDebugEvents(DebugEvent[] events);
+	void handleDebugEvents(DebugEvent[] events);
 }

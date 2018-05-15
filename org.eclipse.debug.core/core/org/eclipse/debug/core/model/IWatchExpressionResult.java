@@ -34,7 +34,7 @@ public interface IWatchExpressionResult {
 	 * @return the resulting value, possibly
 	 * <code>null</code>
 	 */
-	public IValue getValue();
+	IValue getValue();
 
 	/**
 	 * Returns whether the evaluation had any problems
@@ -45,7 +45,7 @@ public interface IWatchExpressionResult {
 	 * @see #getErrorMessages()
 	 * @see #getException()
 	 */
-	public boolean hasErrors();
+	boolean hasErrors();
 
 	/**
 	 * Returns an array of problem messages. Each message describes a problem that
@@ -53,14 +53,14 @@ public interface IWatchExpressionResult {
 	 *
 	 * @return evaluation error messages, or an empty array if no errors occurred
 	 */
-	public String[] getErrorMessages();
+	String[] getErrorMessages();
 
 	/**
 	 * Returns the expression that was evaluated.
 	 *
 	 * @return The string expression.
 	 */
-	public String getExpressionText();
+	String getExpressionText();
 
 	/**
 	 * Returns any exception that occurred while performing the evaluation
@@ -72,5 +72,5 @@ public interface IWatchExpressionResult {
 	 * @return The exception that occurred during the evaluation
 	 * @see org.eclipse.debug.core.DebugException
 	 */
-	public DebugException getException();
+	DebugException getException();
 }

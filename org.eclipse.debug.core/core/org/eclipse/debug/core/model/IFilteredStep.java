@@ -30,7 +30,7 @@ public interface IFilteredStep extends IStep {
 	 *
 	 * @return whether this element can currently perform a filtered step into
 	 */
-	public boolean canStepWithFilters();
+	boolean canStepWithFilters();
 	/**
 	 * Steps into the current statement, generating <code>RESUME</code>
 	 * and <code>SUSPEND</code> events for the associated thread, applying step
@@ -43,5 +43,5 @@ public interface IFilteredStep extends IStep {
 	 * <li>NOT_SUPPORTED - The capability is not supported by the target</li>
 	 * </ul>
 	 */
-	public void stepWithFilters() throws DebugException;
+	void stepWithFilters() throws DebugException;
 }

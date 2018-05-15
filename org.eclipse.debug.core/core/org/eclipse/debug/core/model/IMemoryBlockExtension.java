@@ -34,7 +34,7 @@ public interface IMemoryBlockExtension extends IMemoryBlock {
 	 *
 	 * @return the expression used to create this memory block
 	 */
-	public String getExpression();
+	String getExpression();
 
 	/**
 	 * Returns the base address of this memory block as a big integer. The
@@ -43,7 +43,7 @@ public interface IMemoryBlockExtension extends IMemoryBlock {
 	 * @return the base address of this memory block
 	 * @throws DebugException if unable to retrieve the base address
 	 */
-	public BigInteger getBigBaseAddress() throws DebugException;
+	BigInteger getBigBaseAddress() throws DebugException;
 
 	/**
 	 * Returns the hard start address of this memory block as a big integer, or
@@ -54,7 +54,7 @@ public interface IMemoryBlockExtension extends IMemoryBlock {
 	 * @return the hard start address of this memory block or <code>null</code>
 	 * @throws DebugException if unable to retrieve the start address of this memory block.
 	 */
-	public BigInteger getMemoryBlockStartAddress() throws DebugException;
+	BigInteger getMemoryBlockStartAddress() throws DebugException;
 
 	/**
 	 * Returns the hard end address of this memory block as a big integer, or
@@ -65,7 +65,7 @@ public interface IMemoryBlockExtension extends IMemoryBlock {
 	 * @return the hard end address of this memory block or <code>null</code>
 	 * @throws DebugException if unable to retrieve the end address of this memory block.
 	 */
-	public BigInteger getMemoryBlockEndAddress() throws DebugException;
+	BigInteger getMemoryBlockEndAddress() throws DebugException;
 
 	/**
 	 * Returns the length of this memory block, or -1 if unbounded.
@@ -77,7 +77,7 @@ public interface IMemoryBlockExtension extends IMemoryBlock {
 	 * @return length of this memory block or -1 if unbounded
 	 * @throws DebugException if unable to retrieve the length of this memory block.
 	 */
-	public BigInteger getBigLength() throws DebugException;
+	BigInteger getBigLength() throws DebugException;
 
 	/**
 	 * Returns the address size of this memory block in number of bytes. The address
@@ -86,7 +86,7 @@ public interface IMemoryBlockExtension extends IMemoryBlock {
 	 * @return address size in number of bytes
 	 * @throws DebugException if unable to retrieve the address size
 	 */
-	public int getAddressSize() throws DebugException;
+	int getAddressSize() throws DebugException;
 
 	/**
 	 * Returns whether the base address of this memory block can be modified.
@@ -94,7 +94,7 @@ public interface IMemoryBlockExtension extends IMemoryBlock {
 	 * @return whether the base address of this memory block can be modified
 	 * @throws DebugException is unable to determine if base address modification is supported
 	 */
-	public boolean supportBaseAddressModification() throws DebugException;
+	boolean supportBaseAddressModification() throws DebugException;
 
 	/**
 	 * Returns whether this memory block manages the change state of its bytes.
@@ -107,7 +107,7 @@ public interface IMemoryBlockExtension extends IMemoryBlock {
 	 * </p>
 	 * @return whether this memory block manages the change state of its bytes
 	 */
-	public boolean supportsChangeManagement();
+	boolean supportsChangeManagement();
 
 	/**
 	 * Sets the base address of this memory block to the given address.
@@ -116,7 +116,7 @@ public interface IMemoryBlockExtension extends IMemoryBlock {
 	 * @throws DebugException if unable to modify the base address, or modification
 	 *  of the base address fails
 	 */
-	public void setBaseAddress(BigInteger address) throws DebugException;
+	void setBaseAddress(BigInteger address) throws DebugException;
 
 	/**
 	 * Returns bytes from this memory block based on the base address and
@@ -140,7 +140,7 @@ public interface IMemoryBlockExtension extends IMemoryBlock {
 	 *  a failure communicating with the target
 	 * @see MemoryByte
 	 */
-	public MemoryByte[] getBytesFromOffset(BigInteger unitOffset, long addressableUnits) throws DebugException;
+	MemoryByte[] getBytesFromOffset(BigInteger unitOffset, long addressableUnits) throws DebugException;
 
 	/**
 	 * Returns bytes from this memory block based on the given address and the
@@ -163,7 +163,7 @@ public interface IMemoryBlockExtension extends IMemoryBlock {
 	 *  a failure communicating with the target
 	 * @see MemoryByte
 	 */
-	public MemoryByte[] getBytesFromAddress(BigInteger address, long units) throws DebugException;
+	MemoryByte[] getBytesFromAddress(BigInteger address, long units) throws DebugException;
 
 	/**
 	 * Sets bytes in this memory block at the specified offset within this memory block to
@@ -184,7 +184,7 @@ public interface IMemoryBlockExtension extends IMemoryBlock {
 	 * </ul>
 	 * @see org.eclipse.debug.core.DebugEvent
 	 */
-	public void setValue(BigInteger offset, byte[] bytes) throws DebugException;
+	void setValue(BigInteger offset, byte[] bytes) throws DebugException;
 
 	/**
 	 * Connects the given client to this memory block. Allows a memory block
@@ -199,7 +199,7 @@ public interface IMemoryBlockExtension extends IMemoryBlock {
 	 * </p>
 	 * @param client the client to connect
 	 */
-	public void connect(Object client);
+	void connect(Object client);
 
 	/**
 	 * Disconnects the given client from this memory block. Has no effect if
@@ -207,7 +207,7 @@ public interface IMemoryBlockExtension extends IMemoryBlock {
 	 *
 	 * @param client the client to disconnect
 	 */
-	public void disconnect(Object client);
+	void disconnect(Object client);
 
 	/**
 	 * Returns the possibly empty list of clients currently connected to this
@@ -216,20 +216,20 @@ public interface IMemoryBlockExtension extends IMemoryBlock {
 	 * @return the possibly empty list of clients currently connected to this
 	 * memory block
 	 */
-	public Object[] getConnections();
+	Object[] getConnections();
 
 	/**
 	 * Dispose this memory block. Connected clients are disconnected.
 	 * @throws DebugException if the memory block cannot be disposed.
 	 */
-	public void dispose() throws DebugException;
+	void dispose() throws DebugException;
 
 	/**
 	 * Returns the origin of this memory block.
 	 *
 	 * @return the origin of this memory block
 	 */
-	public IMemoryBlockRetrieval getMemoryBlockRetrieval();
+	IMemoryBlockRetrieval getMemoryBlockRetrieval();
 
 	/**
 	 * Returns this memory block's addressable size in number of bytes. The addressable size
@@ -239,5 +239,5 @@ public interface IMemoryBlockExtension extends IMemoryBlock {
 	 * @return this memory block's addressable size
 	 * @throws DebugException if the addressable size cannot be obtained.
 	 */
-	public int getAddressableSize() throws DebugException;
+	int getAddressableSize() throws DebugException;
 }

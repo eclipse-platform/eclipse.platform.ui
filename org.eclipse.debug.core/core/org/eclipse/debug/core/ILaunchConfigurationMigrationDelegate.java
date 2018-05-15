@@ -38,7 +38,7 @@ public interface ILaunchConfigurationMigrationDelegate {
 	 * @throws CoreException if an exception occurs determining the status of the
 	 *  given configuration
 	 */
-	public boolean isCandidate(ILaunchConfiguration candidate) throws CoreException;
+	boolean isCandidate(ILaunchConfiguration candidate) throws CoreException;
 
 	/**
 	 * Migrates the given launch configuration to be compatible with the current tooling.
@@ -47,6 +47,6 @@ public interface ILaunchConfigurationMigrationDelegate {
 	 *  or working copy
 	 * @throws CoreException if an exception occurs during migration
 	 */
-	public void migrate(ILaunchConfiguration candidate) throws CoreException;
+	void migrate(ILaunchConfiguration candidate) throws CoreException;
 
 }

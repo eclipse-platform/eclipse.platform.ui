@@ -30,7 +30,7 @@ public interface ILaunchListener {
 	 * @param launch the removed launch
 	 * @since 2.0
 	 */
-	public void launchRemoved(ILaunch launch);
+	void launchRemoved(ILaunch launch);
 	/**
 	 * Notifies this listener that the specified launch
 	 * has been added.
@@ -38,7 +38,7 @@ public interface ILaunchListener {
 	 * @param launch the newly added launch
 	 * @since 2.0
 	 */
-	public void launchAdded(ILaunch launch);
+	void launchAdded(ILaunch launch);
 	/**
 	 * Notifies this listener that the specified launch
 	 * has changed. For example, a process or debug target
@@ -47,5 +47,5 @@ public interface ILaunchListener {
 	 * @param launch the changed launch
 	 * @since 2.0
 	 */
-	public void launchChanged(ILaunch launch);
+	void launchChanged(ILaunch launch);
 }

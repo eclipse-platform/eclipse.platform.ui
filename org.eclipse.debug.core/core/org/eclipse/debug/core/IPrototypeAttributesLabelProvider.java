@@ -25,5 +25,5 @@ public interface IPrototypeAttributesLabelProvider {
 	 * @param attribute the given attribute.
 	 * @return a human readable label of this attribute.
 	 */
-	public String getAttributeLabel(String attribute);
+	String getAttributeLabel(String attribute);
 }

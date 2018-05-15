@@ -68,7 +68,7 @@ public interface ILogicalStructureType extends ILogicalStructureTypeDelegate, IL
 	 * @return a simple description of the logical structure provided by this
 	 * structure type, possibly <code>null</code>
 	 */
-	public String getDescription();
+	String getDescription();
 
 	/**
 	 * Returns this logical structure type's unique identifier, as defined
@@ -76,6 +76,6 @@ public interface ILogicalStructureType extends ILogicalStructureTypeDelegate, IL
 	 *
 	 * @return this logical structure type's unique identifier
 	 */
-	public String getId();
+	String getId();
 
 }

@@ -57,7 +57,7 @@ public interface IPersistableSourceLocator extends ISourceLocator {
 	 *  this source locator
 	 * @exception CoreException if unable to construct a memento
 	 */
-	public String getMemento() throws CoreException;
+	String getMemento() throws CoreException;
 
 	/**
 	 * Initializes this source locator based on the given
@@ -66,7 +66,7 @@ public interface IPersistableSourceLocator extends ISourceLocator {
 	 * @param memento a memento to initialize this source locator
 	 * @exception CoreException on failure to initialize
 	 */
-	public void initializeFromMemento(String memento) throws CoreException;
+	void initializeFromMemento(String memento) throws CoreException;
 
 	/**
 	 * Initializes this source locator to perform default
@@ -76,7 +76,7 @@ public interface IPersistableSourceLocator extends ISourceLocator {
 	 *  will be performing source lookup for
 	 * @exception CoreException on failure to initialize
 	 */
-	public void initializeDefaults(ILaunchConfiguration configuration) throws CoreException;
+	void initializeDefaults(ILaunchConfiguration configuration) throws CoreException;
 
 }
 

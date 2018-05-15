@@ -49,7 +49,7 @@ public interface IValue extends IDebugElement {
 	 * status code contains the underlying exception responsible for
 	 * the failure.</li>
 	 */
-	public String getReferenceTypeName() throws DebugException;
+	String getReferenceTypeName() throws DebugException;
 
 	/**
 	 * Returns this value as a <code>String</code>.
@@ -60,7 +60,7 @@ public interface IValue extends IDebugElement {
 	 * status code contains the underlying exception responsible for
 	 * the failure.</li>
 	 */
-	public String getValueString() throws DebugException;
+	String getValueString() throws DebugException;
 
 	/**
 	 * Returns whether this value is currently allocated.
@@ -74,7 +74,7 @@ public interface IValue extends IDebugElement {
 	 * status code contains the underlying exception responsible for
 	 * the failure.</li>
 	 */
-	public boolean isAllocated() throws DebugException;
+	boolean isAllocated() throws DebugException;
 	/**
 	 * Returns the visible variables in this value. An empty
 	 * collection is returned if there are no visible variables.
@@ -87,7 +87,7 @@ public interface IValue extends IDebugElement {
 	 * </ul>
 	 * @since 2.0
 	 */
-	public IVariable[] getVariables() throws DebugException;
+	IVariable[] getVariables() throws DebugException;
 
 	/**
 	 * Returns whether this value currently contains any visible variables.
@@ -100,5 +100,5 @@ public interface IValue extends IDebugElement {
 	 * </ul>
 	 * @since 2.0
 	 */
-	public boolean hasVariables() throws DebugException;
+	boolean hasVariables() throws DebugException;
 }

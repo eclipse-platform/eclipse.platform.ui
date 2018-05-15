@@ -40,7 +40,7 @@ public interface ILaunchConfigurationDelegate2 extends ILaunchConfigurationDeleg
 	 * @return a launch object or <code>null</code>
 	 * @throws CoreException if unable to launch
 	 */
-	public ILaunch getLaunch(ILaunchConfiguration configuration, String mode) throws CoreException;
+	ILaunch getLaunch(ILaunchConfiguration configuration, String mode) throws CoreException;
 
 	/**
 	 * Optionally performs any required building before launching the given
@@ -66,7 +66,7 @@ public interface ILaunchConfigurationDelegate2 extends ILaunchConfigurationDeleg
 	 *  build before the launch
 	 * @throws CoreException if an exception occurs while building
 	 */
-	public boolean buildForLaunch(ILaunchConfiguration configuration, String mode, IProgressMonitor monitor) throws CoreException;
+	boolean buildForLaunch(ILaunchConfiguration configuration, String mode, IProgressMonitor monitor) throws CoreException;
 
 	/**
 	 * Returns whether a launch should proceed. This method is called after
@@ -85,7 +85,7 @@ public interface ILaunchConfigurationDelegate2 extends ILaunchConfigurationDeleg
 	 * @return whether the launch should proceed
 	 * @throws CoreException if an exception occurs during final checks
 	 */
-	public boolean finalLaunchCheck(ILaunchConfiguration configuration, String mode, IProgressMonitor monitor) throws CoreException;
+	boolean finalLaunchCheck(ILaunchConfiguration configuration, String mode, IProgressMonitor monitor) throws CoreException;
 
 	/**
 	 * Returns whether a launch should proceed. This method is called first
@@ -102,5 +102,5 @@ public interface ILaunchConfigurationDelegate2 extends ILaunchConfigurationDeleg
 	 * @return whether the launch should proceed
 	 * @throws CoreException if an exception occurs while performing pre-launch checks
 	 */
-	public boolean preLaunchCheck(ILaunchConfiguration configuration, String mode, IProgressMonitor monitor) throws CoreException;
+	boolean preLaunchCheck(ILaunchConfiguration configuration, String mode, IProgressMonitor monitor) throws CoreException;
 }

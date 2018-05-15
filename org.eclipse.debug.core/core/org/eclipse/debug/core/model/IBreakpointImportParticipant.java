@@ -54,7 +54,7 @@ public interface IBreakpointImportParticipant {
 	 * @return true if the breakpoint matches the given attributes, false otherwise
 	 * @throws CoreException if an exception occurs
 	 */
-	public boolean matches(Map<String, Object> attributes, IBreakpoint breakpoint) throws CoreException;
+	boolean matches(Map<String, Object> attributes, IBreakpoint breakpoint) throws CoreException;
 
 	/**
 	 * Verifies the state of the breakpoint once it has been imported. This method can be used to correct
@@ -65,6 +65,6 @@ public interface IBreakpointImportParticipant {
 	 * @param breakpoint the breakpoint to be verified
 	 * @throws CoreException if an exception occurs
 	 */
-	public void verify(IBreakpoint breakpoint) throws CoreException;
+	void verify(IBreakpoint breakpoint) throws CoreException;
 
 }

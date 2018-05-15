@@ -74,5 +74,5 @@ public interface IStatusHandler {
 	 * @return an object representing the resolution of the status
 	 * @exception CoreException if unable to resolve the status
 	 */
-	public Object handleStatus(IStatus status, Object source) throws CoreException;
+	Object handleStatus(IStatus status, Object source) throws CoreException;
 }

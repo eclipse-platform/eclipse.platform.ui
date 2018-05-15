@@ -53,13 +53,13 @@ public interface ISourcePathComputer extends ISourcePathComputerDelegate {
 	 * default source path computer should be used. A default source path computer
 	 * can be associated with a launch configuration type.
 	 */
-	public static final String ATTR_SOURCE_PATH_COMPUTER_ID = DebugPlugin.getUniqueIdentifier() + ".SOURCE_PATH_COMPUTER_ID"; //$NON-NLS-1$
+	String ATTR_SOURCE_PATH_COMPUTER_ID = DebugPlugin.getUniqueIdentifier() + ".SOURCE_PATH_COMPUTER_ID"; //$NON-NLS-1$
 
 	/**
 	 * Returns the unique identifier for this source path computer.
 	 *
 	 * @return the unique identifier for this source path computer
 	 */
-	public String getId();
+	String getId();
 
 }

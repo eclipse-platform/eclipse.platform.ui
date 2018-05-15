@@ -27,7 +27,7 @@ public interface IDisconnect {
 	 *
 	 * @return whether this element can currently disconnect
 	 */
-	public boolean canDisconnect();
+	boolean canDisconnect();
 	/**
 	 * Disconnects this element from its target. Generally, disconnecting
 	 * ends a debug session with a debug target, but allows the target
@@ -38,13 +38,13 @@ public interface IDisconnect {
 	 * <li>NOT_SUPPORTED - The capability is not supported by the target
 	 * </ul>
 	 */
-	public void disconnect() throws DebugException;
+	void disconnect() throws DebugException;
 	/**
 	 * Returns whether this element is disconnected.
 	 *
 	 * @return whether this element is disconnected
 	 */
-	public boolean isDisconnected();
+	boolean isDisconnected();
 }
 
 

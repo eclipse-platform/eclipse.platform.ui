@@ -33,7 +33,7 @@ public interface IValueModification {
 	 * <li>NOT_SUPPORTED - The capability is not supported by the target
 	 * </ul>
 	 */
-	public void setValue(String expression) throws DebugException;
+	void setValue(String expression) throws DebugException;
 
 	/**
 	 * Sets the value of this variable to the given value.
@@ -45,14 +45,14 @@ public interface IValueModification {
 	 * </ul>
 	 * @since 2.0
 	 */
-	public void setValue(IValue value) throws DebugException;
+	void setValue(IValue value) throws DebugException;
 
 	/**
 	 * Returns whether this variable supports value modification.
 	 *
 	 * @return whether this variable supports value modification
 	 */
-	public boolean supportsValueModification();
+	boolean supportsValueModification();
 
 	/**
 	 * Returns whether the given expression is valid to be used in
@@ -65,7 +65,7 @@ public interface IValueModification {
 	 * <li>NOT_SUPPORTED - The capability is not supported by the target
 	 * </ul>
 	 */
-	public boolean verifyValue(String expression) throws DebugException;
+	boolean verifyValue(String expression) throws DebugException;
 
 	/**
 	 * Returns whether the given value can be used as
@@ -79,7 +79,7 @@ public interface IValueModification {
 	 * </ul>
 	 * @since 2.0
 	 */
-	public boolean verifyValue(IValue value) throws DebugException;
+	boolean verifyValue(IValue value) throws DebugException;
 }
 
 

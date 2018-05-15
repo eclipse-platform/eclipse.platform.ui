@@ -44,6 +44,6 @@ public interface ISourcePathComputerDelegate {
 	 *  given launch configuration
 	 * @exception CoreException if unable to compute a default source lookup path
 	 */
-	public ISourceContainer[] computeSourceContainers(ILaunchConfiguration configuration, IProgressMonitor monitor) throws CoreException;
+	ISourceContainer[] computeSourceContainers(ILaunchConfiguration configuration, IProgressMonitor monitor) throws CoreException;
 
 }

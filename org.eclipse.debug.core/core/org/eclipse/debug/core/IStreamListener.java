@@ -29,5 +29,5 @@ public interface IStreamListener {
 	 * @param text the appended text
 	 * @param monitor the stream monitor to which text was appended
 	 */
-	public void streamAppended(String text, IStreamMonitor monitor);
+	void streamAppended(String text, IStreamMonitor monitor);
 }

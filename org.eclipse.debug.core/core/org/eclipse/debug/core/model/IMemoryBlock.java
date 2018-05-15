@@ -31,14 +31,14 @@ public interface IMemoryBlock extends IDebugElement {
 	 *
 	 * @return the start address of this memory block
 	 */
-	public long getStartAddress();
+	long getStartAddress();
 
 	/**
 	 * Returns the length of this memory block in bytes.
 	 *
 	 * @return the length of this memory block in bytes
 	 */
-	public long getLength();
+	long getLength();
 
 	/**
 	 * Returns the values of the bytes currently contained
@@ -52,14 +52,14 @@ public interface IMemoryBlock extends IDebugElement {
 	 * the failure.</li>
 	 * </ul>
 	 */
-	public byte[] getBytes() throws DebugException;
+	byte[] getBytes() throws DebugException;
 
 	/**
 	 * Returns whether this memory block supports value modification
 	 *
 	 * @return whether this memory block supports value modification
 	 */
-	public boolean supportsValueModification();
+	boolean supportsValueModification();
 
 	/**
 	 * Sets the value of the bytes in this memory block at the specified
@@ -78,7 +78,7 @@ public interface IMemoryBlock extends IDebugElement {
 	 *   beyond the end of this memory block (index of out of range)</li>
 	 * </ul>
 	 */
-	public void setValue(long offset, byte[] bytes) throws DebugException;
+	void setValue(long offset, byte[] bytes) throws DebugException;
 
 }
 

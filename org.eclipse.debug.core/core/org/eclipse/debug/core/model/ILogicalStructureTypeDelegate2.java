@@ -41,6 +41,6 @@ public interface ILogicalStructureTypeDelegate2 {
 	 * @return a simple description of the logical structure provided by this
 	 * structure type delegate, for the given value
 	 */
-	public String getDescription(IValue value);
+	String getDescription(IValue value);
 
 }

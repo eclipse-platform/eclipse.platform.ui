@@ -31,7 +31,7 @@ public interface ILaunchDelegate {
 	 *
 	 * @return launch delegate identifier
 	 */
-	public String getId();
+	String getId();
 
 	/**
 	 * Returns a human readable name for this launch delegate
@@ -39,7 +39,7 @@ public interface ILaunchDelegate {
 	 *
 	 * @return name or <code>null</code>
 	 */
-	public String getName();
+	String getName();
 
 	/**
 	 * Returns a description of this launch delegate, or
@@ -47,14 +47,14 @@ public interface ILaunchDelegate {
 	 *
 	 * @return description or <code>null</code>
 	 */
-	public String getDescription();
+	String getDescription();
 
 	/**
 	 * Returns the name of the plug-in that contributed this delegate.
 	 *
 	 * @return contributor name
 	 */
-	public String getContributorName();
+	String getContributorName();
 
 	/**
 	 * Returns the underlying launch configuration.
@@ -63,7 +63,7 @@ public interface ILaunchDelegate {
 	 * @return launch configuration delegate
 	 * @exception CoreException if unable to instantiate the delegate
 	 */
-	public ILaunchConfigurationDelegate getDelegate() throws CoreException;
+	ILaunchConfigurationDelegate getDelegate() throws CoreException;
 
 	/**
 	 * Returns the complete set of launch modes supported by this delegate as a list of sets.
@@ -73,20 +73,20 @@ public interface ILaunchDelegate {
 	 *
 	 * @return the complete set of launch modes this delegate supports
 	 */
-	public List<Set<String>> getModes();
+	List<Set<String>> getModes();
 
 	/**
 	 * Returns the id of the plug-in that contributed this launch delegate.
 	 *
 	 * @return the id of the plug-in that contributed this launch delegate
 	 */
-	public String getPluginIdentifier();
+	String getPluginIdentifier();
 
 	/**
 	 * Returns the specified perspective id for the given mode set, or null if one is not provided
 	 * @param modes the set of modes to get the perspective id
 	 * @return the perspective id associated with the given mode set, or <code>null</code> if none provided
 	 */
-	public String getPerspectiveId(Set<String> modes);
+	String getPerspectiveId(Set<String> modes);
 
 }

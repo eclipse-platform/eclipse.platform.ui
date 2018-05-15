@@ -44,7 +44,7 @@ public interface IStepFilters {
 	 *
 	 * @return whether this debug target supports step filters
 	 */
-	public boolean supportsStepFilters();
+	boolean supportsStepFilters();
 
 	/**
 	 * Returns whether step filters are currently enabled in this
@@ -53,12 +53,12 @@ public interface IStepFilters {
 	 * @return whether step filters are currently enabled in this
 	 * debug target
 	 */
-	public boolean isStepFiltersEnabled();
+	boolean isStepFiltersEnabled();
 
 	/**
 	 * Sets whether step filters are enabled in this debug target.
 	 *
 	 * @param enabled whether step filters are enabled in this debug target
 	 */
-	public void setStepFiltersEnabled(boolean enabled);
+	void setStepFiltersEnabled(boolean enabled);
 }

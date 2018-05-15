@@ -33,7 +33,7 @@ public interface ILogicalStructureTypeDelegate {
 	 * @return whether this structure type can provide a logical structure for
 	 * the given value
 	 */
-	public boolean providesLogicalStructure(IValue value);
+	boolean providesLogicalStructure(IValue value);
 
 	/**
 	 * Returns a value representing a logical structure of the given value.
@@ -43,6 +43,6 @@ public interface ILogicalStructureTypeDelegate {
 	 * @throws CoreException if an exception occurs generating a logical
 	 *  structure
 	 */
-	public IValue getLogicalStructure(IValue value) throws CoreException;
+	IValue getLogicalStructure(IValue value) throws CoreException;
 
 }

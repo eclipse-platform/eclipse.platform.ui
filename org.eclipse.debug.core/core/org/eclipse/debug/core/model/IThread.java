@@ -47,7 +47,7 @@ public interface IThread extends IDebugElement, ISuspendResume, IStep, ITerminat
 	 * </ul>
 	 * @since 2.0
 	 */
-	public IStackFrame[] getStackFrames() throws DebugException;
+	IStackFrame[] getStackFrames() throws DebugException;
 
 	/**
 	 * Returns whether this thread currently contains any stack
@@ -61,7 +61,7 @@ public interface IThread extends IDebugElement, ISuspendResume, IStep, ITerminat
 	 * </ul>
 	 * @since 2.0
 	 */
-	public boolean hasStackFrames() throws DebugException;
+	boolean hasStackFrames() throws DebugException;
 
 	/**
 	 * Returns the priority of this thread. The meaning of this
@@ -73,7 +73,7 @@ public interface IThread extends IDebugElement, ISuspendResume, IStep, ITerminat
 	 * status code contains the underlying exception responsible for
 	 * the failure.</li>
 	 */
-	public int getPriority() throws DebugException;
+	int getPriority() throws DebugException;
 	/**
 	 * Returns the top stack frame or <code>null</code> if there is
 	 * currently no top stack frame.
@@ -84,7 +84,7 @@ public interface IThread extends IDebugElement, ISuspendResume, IStep, ITerminat
 	 * status code contains the underlying exception responsible for
 	 * the failure.</li>
 	 */
-	public IStackFrame getTopStackFrame() throws DebugException;
+	IStackFrame getTopStackFrame() throws DebugException;
 	/**
 	 * Returns the name of this thread. Name format is debug model
 	 * specific, and should be specified by a debug model.
@@ -95,7 +95,7 @@ public interface IThread extends IDebugElement, ISuspendResume, IStep, ITerminat
 	 * status code contains the underlying exception responsible for
 	 * the failure.</li>
 	 */
-	public String getName() throws DebugException;
+	String getName() throws DebugException;
 
 	/**
 	 * Returns the breakpoints that caused this thread to suspend,
@@ -107,5 +107,5 @@ public interface IThread extends IDebugElement, ISuspendResume, IStep, ITerminat
 	 *
 	 * @return the collection of breakpoints that caused this thread to suspend
 	 */
-	public IBreakpoint[] getBreakpoints();
+	IBreakpoint[] getBreakpoints();
 }

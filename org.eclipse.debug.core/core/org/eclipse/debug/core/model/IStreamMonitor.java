@@ -32,19 +32,19 @@ public interface IStreamMonitor {
 	 *
 	 * @param listener the listener to add
 	 */
-	public void addListener(IStreamListener listener);
+	void addListener(IStreamListener listener);
 	/**
 	 * Returns the entire current contents of the stream. An empty
 	 * String is returned if the stream is empty.
 	 *
 	 * @return the stream contents as a <code>String</code>
 	 */
-	public String getContents();
+	String getContents();
 	/**
 	 * Removes the given listener from this stream monitor's registered listeners.
 	 * Has no effect if the listener is not already registered.
 	 *
 	 * @param listener the listener to remove
 	 */
-	public void removeListener(IStreamListener listener);
+	void removeListener(IStreamListener listener);
 }

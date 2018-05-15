@@ -73,13 +73,13 @@ public interface IBreakpoint extends IAdaptable {
 	 * Root breakpoint marker type
 	 * (value <code>"org.eclipse.debug.core.breakpointMarker"</code>).
 	 */
-	public static final String BREAKPOINT_MARKER = DebugPlugin.getUniqueIdentifier() + ".breakpointMarker"; //$NON-NLS-1$
+	String BREAKPOINT_MARKER = DebugPlugin.getUniqueIdentifier() + ".breakpointMarker"; //$NON-NLS-1$
 
 	/**
 	 * Line breakpoint marker type
 	 * (value <code>"org.eclipse.debug.core.lineBreakpoint"</code>).
 	 */
-	public static final String LINE_BREAKPOINT_MARKER = DebugPlugin.getUniqueIdentifier() + ".lineBreakpointMarker"; //$NON-NLS-1$
+	String LINE_BREAKPOINT_MARKER = DebugPlugin.getUniqueIdentifier() + ".lineBreakpointMarker"; //$NON-NLS-1$
 
 	/**
 	 * Enabled breakpoint marker attribute (value <code>"org.eclipse.debug.core.enabled"</code>).
@@ -88,14 +88,14 @@ public interface IBreakpoint extends IAdaptable {
 	 *
 	 * @see org.eclipse.core.resources.IMarker#getAttribute(String, boolean)
 	 */
-	public static final String ENABLED= "org.eclipse.debug.core.enabled"; //$NON-NLS-1$
+	String ENABLED= "org.eclipse.debug.core.enabled"; //$NON-NLS-1$
 
 	/**
 	 * Debug model identifier breakpoint marker attribute (value <code>"org.eclipse.debug.core.id"</code>).
 	 * The attribute is a <code>String</code> corresponding to the
 	 * identifier of the debug model a breakpoint is associated with.
 	 */
-	public static final String ID= "org.eclipse.debug.core.id"; //$NON-NLS-1$
+	String ID= "org.eclipse.debug.core.id"; //$NON-NLS-1$
 
 	/**
 	 * Registered breakpoint marker attribute (value <code>"org.eclipse.debug.core.registered"</code>).
@@ -104,7 +104,7 @@ public interface IBreakpoint extends IAdaptable {
 	 *
 	 * @see org.eclipse.core.resources.IMarker#getAttribute(String, boolean)
 	 */
-	public static final String REGISTERED= "org.eclipse.debug.core.registered"; //$NON-NLS-1$
+	String REGISTERED= "org.eclipse.debug.core.registered"; //$NON-NLS-1$
 
 	/**
 	 * Persisted breakpoint marker attribute (value <code>"org.eclipse.debug.core.persisted"</code>).
@@ -114,7 +114,7 @@ public interface IBreakpoint extends IAdaptable {
 	 *
 	 * @see org.eclipse.core.resources.IMarker#getAttribute(String, boolean)
 	 */
-	public static final String PERSISTED= "org.eclipse.debug.core.persisted"; //$NON-NLS-1$
+	String PERSISTED= "org.eclipse.debug.core.persisted"; //$NON-NLS-1$
 
 	/**
 	 * Deletes this breakpoint's underlying marker, and removes
@@ -123,7 +123,7 @@ public interface IBreakpoint extends IAdaptable {
 	 * @exception CoreException if unable to delete this breakpoint's
 	 *  underlying marker
 	 */
-	public void delete() throws CoreException;
+	void delete() throws CoreException;
 
 	/**
 	 * Returns the marker associated with this breakpoint, or
@@ -132,7 +132,7 @@ public interface IBreakpoint extends IAdaptable {
 	 * @return associated marker, or <code>null</code> if there is
 	 * 	no associated marker.
 	 */
-	public IMarker getMarker();
+	IMarker getMarker();
 	/**
 	 * Sets the marker associated with this breakpoint. This method is
 	 * called once at breakpoint creation.
@@ -140,7 +140,7 @@ public interface IBreakpoint extends IAdaptable {
 	 * @param marker the marker to associate with this breakpoint
 	 * @exception CoreException if an error occurs accessing the marker
 	 */
-	public void setMarker(IMarker marker) throws CoreException;
+	void setMarker(IMarker marker) throws CoreException;
 	/**
 	 * Returns the identifier of the debug model this breakpoint is
 	 * associated with.
@@ -148,7 +148,7 @@ public interface IBreakpoint extends IAdaptable {
 	 * @return the identifier of the debug model this breakpoint is
 	 * 	associated with
 	 */
-	public String getModelIdentifier();
+	String getModelIdentifier();
 	/**
 	 * Returns whether this breakpoint is enabled
 	 *
@@ -156,7 +156,7 @@ public interface IBreakpoint extends IAdaptable {
 	 * @exception CoreException if unable to access the associated
 	 *  attribute from this breakpoint's underlying marker
 	 */
-	public boolean isEnabled() throws CoreException;
+	boolean isEnabled() throws CoreException;
 	/**
 	 * Sets the enabled state of this breakpoint. This has no effect
 	 * if the current enabled state is the same as specified by the
@@ -166,7 +166,7 @@ public interface IBreakpoint extends IAdaptable {
 	 * @exception CoreException if unable to set the associated attribute on
 	 *  this breakpoint's underlying marker.
 	 */
-	public void setEnabled(boolean enabled) throws CoreException;
+	void setEnabled(boolean enabled) throws CoreException;
 
 	/**
 	 * Returns whether this breakpoint is currently registered with
@@ -177,7 +177,7 @@ public interface IBreakpoint extends IAdaptable {
 	 * @exception CoreException if unable to access the associated
 	 *  attribute on this breakpoint's underlying marker
 	 */
-	public boolean isRegistered() throws CoreException;
+	boolean isRegistered() throws CoreException;
 
 	/**
 	 * Sets whether this breakpoint is currently registered with the
@@ -188,7 +188,7 @@ public interface IBreakpoint extends IAdaptable {
 	 * @exception CoreException if unable to set the associated attribute
 	 *  on this breakpoint's underlying marker.
 	 */
-	public void setRegistered(boolean registered) throws CoreException;
+	void setRegistered(boolean registered) throws CoreException;
 
 	/**
 	 * Returns whether this breakpoint is to be persisted across
@@ -201,7 +201,7 @@ public interface IBreakpoint extends IAdaptable {
 	 * @exception CoreException if unable to access the associated attribute
 	 *  on this breakpoint's underlying marker
 	 */
-	public boolean isPersisted() throws CoreException;
+	boolean isPersisted() throws CoreException;
 
 	/**
 	 * Sets whether this breakpoint is to be persisted across
@@ -215,7 +215,7 @@ public interface IBreakpoint extends IAdaptable {
 	 * @exception CoreException if unable to set the associated attribute on
 	 *  this breakpoint's underlying marker.
 	 */
-	public void setPersisted(boolean registered) throws CoreException;
+	void setPersisted(boolean registered) throws CoreException;
 
 }
 

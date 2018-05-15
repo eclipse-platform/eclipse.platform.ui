@@ -38,11 +38,11 @@ public interface IPersistableSourceLocator2 extends IPersistableSourceLocator {
 	 *  being created for
 	 * @exception CoreException on failure to initialize
 	 */
-	public void initializeFromMemento(String memento, ILaunchConfiguration configuration) throws CoreException;
+	void initializeFromMemento(String memento, ILaunchConfiguration configuration) throws CoreException;
 
 	/**
 	 * Disposes this source locator. This method is called when a source
 	 * locator's associated launch is removed from the launch manager.
 	 */
-	public void dispose();
+	void dispose();
 }

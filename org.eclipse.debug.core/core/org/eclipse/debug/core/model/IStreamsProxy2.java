@@ -30,5 +30,5 @@ public interface IStreamsProxy2 extends IStreamsProxy {
      *
      * @throws IOException if unable to close the stream
      */
-    public void closeInputStream() throws IOException;
+    void closeInputStream() throws IOException;
 }

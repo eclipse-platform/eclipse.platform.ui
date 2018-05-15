@@ -41,14 +41,14 @@ public interface ILaunchesListener {
 	 *
 	 * @param launches the removed launch objects
 	 */
-	public void launchesRemoved(ILaunch[] launches);
+	void launchesRemoved(ILaunch[] launches);
 	/**
 	 * Notifies this listener that the specified launches
 	 * have been added.
 	 *
 	 * @param launches the newly added launch objects
 	 */
-	public void launchesAdded(ILaunch[] launches);
+	void launchesAdded(ILaunch[] launches);
 	/**
 	 * Notifies this listener that the specified launches
 	 * have changed. For example, a process or debug target
@@ -56,5 +56,5 @@ public interface ILaunchesListener {
 	 *
 	 * @param launches the changed launch object
 	 */
-	public void launchesChanged(ILaunch[] launches);
+	void launchesChanged(ILaunch[] launches);
 }

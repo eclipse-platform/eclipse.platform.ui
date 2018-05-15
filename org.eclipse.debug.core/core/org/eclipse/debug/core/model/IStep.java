@@ -32,19 +32,19 @@ public interface IStep {
 	 *
 	 * @return whether this element can currently perform a step into
 	 */
-	public boolean canStepInto();
+	boolean canStepInto();
 	/**
 	 * Returns whether this element can currently perform a step over.
 	 *
 	 * @return whether this element can currently perform a step over
 	 */
-	public boolean canStepOver();
+	boolean canStepOver();
 	/**
 	 * Returns whether this element can currently perform a step return.
 	 *
 	 * @return whether this element can currently perform a step return
 	 */
-	public boolean canStepReturn();
+	boolean canStepReturn();
 	/**
 	 * Returns whether this element is currently stepping.
 	 * <p>
@@ -56,7 +56,7 @@ public interface IStep {
 	 *
 	 * @return whether this element is currently stepping
 	 */
-	public boolean isStepping();
+	boolean isStepping();
 	/**
 	 * Steps into the current statement, generating <code>RESUME</code>
 	 * and <code>SUSPEND</code> events for the associated thread. Can only be called
@@ -68,7 +68,7 @@ public interface IStep {
 	 * <li>NOT_SUPPORTED - The capability is not supported by the target</li>
 	 * </ul>
 	 */
-	public void stepInto() throws DebugException;
+	void stepInto() throws DebugException;
 	/**
 	 * Steps over the current statement, generating <code>RESUME</code>
 	 * and <code>SUSPEND</code> events for the associated thread. Can only be called
@@ -80,7 +80,7 @@ public interface IStep {
 	 * <li>NOT_SUPPORTED - The capability is not supported by the target</li>
 	 * </ul>
 	 */
-	public void stepOver() throws DebugException;
+	void stepOver() throws DebugException;
 	/**
 	 * Steps to the next return statement in the current scope,
 	 * generating <code>RESUME</code> and <code>SUSPEND</code> events for
@@ -92,5 +92,5 @@ public interface IStep {
 	 * <li>NOT_SUPPORTED - The capability is not supported by the target</li>
 	 * </ul>
 	 */
-	public void stepReturn() throws DebugException;
+	void stepReturn() throws DebugException;
 }

@@ -38,14 +38,14 @@ public interface ILaunchMode {
 	 *
 	 * @return the unique identifier for this launch mode
 	 */
-	public String getIdentifier();
+	String getIdentifier();
 
 	/**
 	 * Returns a human readable label for this launch mode.
 	 *
 	 * @return a human readable label for this launch mode
 	 */
-	public String getLabel();
+	String getLabel();
 
 	/**
 	 * Returns a human readable label for this launch mode when used in a
@@ -60,5 +60,5 @@ public interface ILaunchMode {
 	 * cascade menu
 	 * @since 3.2
 	 */
-	public String getLaunchAsLabel();
+	String getLaunchAsLabel();
 }

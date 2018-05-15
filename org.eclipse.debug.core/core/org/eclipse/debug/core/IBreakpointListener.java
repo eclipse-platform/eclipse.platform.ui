@@ -34,7 +34,7 @@ public interface IBreakpointListener {
 	 * @param breakpoint the added breakpoint
 	 * @since 2.0
 	 */
-	public void breakpointAdded(IBreakpoint breakpoint);
+	void breakpointAdded(IBreakpoint breakpoint);
 	/**
 	 * Notifies this listener that the given breakpoint has been removed
 	 * from the breakpoint manager.
@@ -49,7 +49,7 @@ public interface IBreakpointListener {
 	 * @see org.eclipse.core.resources.IMarkerDelta
 	 * @since 2.0
 	 */
-	public void breakpointRemoved(IBreakpoint breakpoint, IMarkerDelta delta);
+	void breakpointRemoved(IBreakpoint breakpoint, IMarkerDelta delta);
 
 	/**
 	 * Notifies this listener that an attribute of the given breakpoint has
@@ -64,6 +64,6 @@ public interface IBreakpointListener {
 	 * @see org.eclipse.core.resources.IMarkerDelta
 	 * @since 2.0
 	 */
-	public void breakpointChanged(IBreakpoint breakpoint, IMarkerDelta delta);
+	void breakpointChanged(IBreakpoint breakpoint, IMarkerDelta delta);
 
 }

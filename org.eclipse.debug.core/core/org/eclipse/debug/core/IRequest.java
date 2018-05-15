@@ -43,7 +43,7 @@ public interface IRequest {
      *
      * @param status request status or <code>null</code>
      */
-    public void setStatus(IStatus status);
+    void setStatus(IStatus status);
 
     /**
      * Returns the status of this request, or <code>null</code>.
@@ -51,7 +51,7 @@ public interface IRequest {
      * @return request status - <code>null</code> is equivalent
      *  to an OK status
      */
-    public IStatus getStatus();
+    IStatus getStatus();
 
     /**
      * Indicates this request is complete. Clients must call this method
@@ -59,7 +59,7 @@ public interface IRequest {
      * processing is complete. Only clients fulfilling a request should call this
      * method. Clients making a request are not intended to call this method.
      */
-    public void done();
+    void done();
 
     /**
      * Cancels this request. A request may be canceled by the originator of request
@@ -67,7 +67,7 @@ public interface IRequest {
      * this request with more details. A client fulfilling a request must still call
      * <code>done()</code> to indicate the request is complete.
      */
-    public void cancel();
+    void cancel();
 
     /**
      * Returns whether this request has been canceled.
@@ -79,6 +79,6 @@ public interface IRequest {
      * </p>
      * @return whether this request has been canceled
      */
-    public boolean isCanceled();
+    boolean isCanceled();
 
 }

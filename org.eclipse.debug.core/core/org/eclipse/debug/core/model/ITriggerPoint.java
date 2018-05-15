@@ -33,7 +33,7 @@ public interface ITriggerPoint extends IAdaptable {
 	 * @see org.eclipse.core.resources.IMarker#getAttribute(String, boolean)
 	 *
 	 */
-	public static final String TRIGGERPOINT = "org.eclipse.debug.core.triggerpoint"; //$NON-NLS-1$
+	String TRIGGERPOINT = "org.eclipse.debug.core.triggerpoint"; //$NON-NLS-1$
 
 	/**
 	 * Returns whether this breakpoint is defined as a trigger point in the
@@ -43,7 +43,7 @@ public interface ITriggerPoint extends IAdaptable {
 	 * @exception CoreException if unable to access the associated attribute on
 	 *                this breakpoint's underlying marker
 	 */
-	public boolean isTriggerPoint() throws CoreException;
+	boolean isTriggerPoint() throws CoreException;
 
 	/**
 	 * Sets whether this breakpoint is to be treated as a trigger point for the
@@ -56,7 +56,7 @@ public interface ITriggerPoint extends IAdaptable {
 	 * @exception CoreException if unable to set the associated attribute on
 	 *                this breakpoint's underlying marker.
 	 */
-	public void setTriggerPoint(boolean trigger) throws CoreException;
+	void setTriggerPoint(boolean trigger) throws CoreException;
 
 }
 

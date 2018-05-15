@@ -53,7 +53,7 @@ public interface ILaunchConfigurationWorkingCopy extends ILaunchConfiguration, I
 	 * @return whether this configuration has been modified
 	 *  since it was last saved or created
 	 */
-	public boolean isDirty();
+	boolean isDirty();
 
 	/**
 	 * Saves this working copy to its underlying file and returns
@@ -73,7 +73,7 @@ public interface ILaunchConfigurationWorkingCopy extends ILaunchConfiguration, I
 	 *  writing this configuration to its underlying file.
 	 *  @see #doSave(int)
 	 */
-	public ILaunchConfiguration doSave() throws CoreException;
+	ILaunchConfiguration doSave() throws CoreException;
 
 	/**
 	 * Saves this working copy to its underlying file and returns a handle to
@@ -97,7 +97,7 @@ public interface ILaunchConfigurationWorkingCopy extends ILaunchConfiguration, I
 	 *                underlying storage
 	 * @since 3.12
 	 */
-	public ILaunchConfiguration doSave(int flag) throws CoreException;
+	ILaunchConfiguration doSave(int flag) throws CoreException;
 
 	/**
 	 * Sets the integer-valued attribute with the given name.
@@ -105,7 +105,7 @@ public interface ILaunchConfigurationWorkingCopy extends ILaunchConfiguration, I
 	 * @param attributeName the name of the attribute, cannot be <code>null</code>
 	 * @param value the value
 	 */
-	public void setAttribute(String attributeName, int value);
+	void setAttribute(String attributeName, int value);
 
 	/**
 	 * Sets the String-valued attribute with the given name.
@@ -115,7 +115,7 @@ public interface ILaunchConfigurationWorkingCopy extends ILaunchConfiguration, I
 	 * @param attributeName the name of the attribute, cannot be <code>null</code>
 	 * @param value the value, or <code>null</code> if the attribute is to be undefined
 	 */
-	public void setAttribute(String attributeName, String value);
+	void setAttribute(String attributeName, String value);
 
 	/**
 	 * Sets the <code>java.util.List</code>-valued attribute with the given name.
@@ -126,7 +126,7 @@ public interface ILaunchConfigurationWorkingCopy extends ILaunchConfiguration, I
 	 * @param attributeName the name of the attribute, cannot be <code>null</code>
 	 * @param value the value, or <code>null</code> if the attribute is to be undefined
 	 */
-	public void setAttribute(String attributeName, List<String> value);
+	void setAttribute(String attributeName, List<String> value);
 
 	/**
 	 * Sets the <code>java.util.Map</code>-valued attribute with the given name.
@@ -137,7 +137,7 @@ public interface ILaunchConfigurationWorkingCopy extends ILaunchConfiguration, I
 	 * @param attributeName the name of the attribute, cannot be <code>null</code>
 	 * @param value the value, or <code>null</code> if the attribute is to be undefined
 	 */
-	public void setAttribute(String attributeName, Map<String, String> value);
+	void setAttribute(String attributeName, Map<String, String> value);
 
 	/**
 	 * Sets the <code>java.util.Set</code>-valued attribute with the given name.
@@ -149,7 +149,7 @@ public interface ILaunchConfigurationWorkingCopy extends ILaunchConfiguration, I
 	 * @param value the value, or <code>null</code> if the attribute is to be undefined
 	 * @since 3.6
 	 */
-	public void setAttribute(String attributeName, Set<String> value);
+	void setAttribute(String attributeName, Set<String> value);
 
 	/**
 	 * Sets the boolean-valued attribute with the given name.
@@ -157,7 +157,7 @@ public interface ILaunchConfigurationWorkingCopy extends ILaunchConfiguration, I
 	 * @param attributeName the name of the attribute, cannot be <code>null</code>
 	 * @param value the value
 	 */
-	public void setAttribute(String attributeName, boolean value);
+	void setAttribute(String attributeName, boolean value);
 
 	/**
 	 * Sets the valued attribute with the given name.
@@ -166,7 +166,7 @@ public interface ILaunchConfigurationWorkingCopy extends ILaunchConfiguration, I
 	 * @param value the value
 	 * @since 3.12
 	 */
-	public void setAttribute(String attributeName, Object value);
+	void setAttribute(String attributeName, Object value);
 
 	/**
 	 * Returns the original launch configuration this working copy
@@ -175,7 +175,7 @@ public interface ILaunchConfigurationWorkingCopy extends ILaunchConfiguration, I
 	 *
 	 * @return the original launch configuration, or <code>null</code>
 	 */
-	public ILaunchConfiguration getOriginal();
+	ILaunchConfiguration getOriginal();
 
 	/**
 	 * Renames this launch configuration to the specified name.
@@ -187,7 +187,7 @@ public interface ILaunchConfigurationWorkingCopy extends ILaunchConfiguration, I
 	 *
 	 * @param name the new name for this configuration
 	 */
-	public void rename(String name);
+	void rename(String name);
 
 	/**
 	 * Sets the container this launch configuration will be stored
@@ -211,7 +211,7 @@ public interface ILaunchConfigurationWorkingCopy extends ILaunchConfiguration, I
 	 *  launch configuration, or <code>null</code> if this
 	 *  configuration is to be stored locally
 	 */
-	public void setContainer(IContainer container);
+	void setContainer(IContainer container);
 
 	/**
 	 * Sets the attributes of this launch configuration to be the ones contained
@@ -226,7 +226,7 @@ public interface ILaunchConfigurationWorkingCopy extends ILaunchConfiguration, I
 	 *  Attribute names are not allowed to be <code>null</code>
 	 * @since 2.1
 	 */
-	public void setAttributes(Map<String, ? extends Object> attributes);
+	void setAttributes(Map<String, ? extends Object> attributes);
 
 	/**
 	 * Sets the resources associated with this launch configuration, possibly <code>null</code>.
@@ -236,7 +236,7 @@ public interface ILaunchConfigurationWorkingCopy extends ILaunchConfiguration, I
 	 * @param resources the resource to map to this launch configuration or <code>null</code>
 	 * @since 3.2
 	 */
-	public void setMappedResources(IResource[] resources);
+	void setMappedResources(IResource[] resources);
 
 	/**
 	 * Set the launch modes for this configuration. Over-writes existing launch
@@ -252,7 +252,7 @@ public interface ILaunchConfigurationWorkingCopy extends ILaunchConfiguration, I
 	 *
 	 * @since 3.3
 	 */
-	public void setModes(Set<String> modes);
+	void setModes(Set<String> modes);
 
 	/**
 	 * Set the preferred launch delegates' id for the given mode set. Passing in <code>null</code> as a delegate
@@ -264,7 +264,7 @@ public interface ILaunchConfigurationWorkingCopy extends ILaunchConfiguration, I
 	 *
 	 * @since 3.3
 	 */
-	public void setPreferredLaunchDelegate(Set<String> modes, String delegateId);
+	void setPreferredLaunchDelegate(Set<String> modes, String delegateId);
 
 	/**
 	 * Adds the specified launch modes to this configuration's settings.
@@ -277,7 +277,7 @@ public interface ILaunchConfigurationWorkingCopy extends ILaunchConfiguration, I
 	 *
 	 * @since 3.3
 	 */
-	public void addModes(Set<String> modes);
+	void addModes(Set<String> modes);
 
 	/**
 	 * Removes the specified launch modes from this configuration's settings.
@@ -290,7 +290,7 @@ public interface ILaunchConfigurationWorkingCopy extends ILaunchConfiguration, I
 	 *
 	 * @since 3.3
 	 */
-	public void removeModes(Set<String> modes);
+	void removeModes(Set<String> modes);
 
 	/**
 	 * Removes the specified attribute from the this configuration and returns
@@ -305,7 +305,7 @@ public interface ILaunchConfigurationWorkingCopy extends ILaunchConfiguration, I
 	 *
 	 * @since 3.4
 	 */
-	public Object removeAttribute(String attributeName);
+	Object removeAttribute(String attributeName);
 
 	/**
 	 * Returns the parent of this working copy or <code>null</code> if this working
@@ -314,7 +314,7 @@ public interface ILaunchConfigurationWorkingCopy extends ILaunchConfiguration, I
 	 * @return parent or <code>null</code>
 	 * @since 3.3
 	 */
-	public ILaunchConfigurationWorkingCopy getParent();
+	ILaunchConfigurationWorkingCopy getParent();
 
 	/**
 	 * Copies all attributes from the given prototype to this working.
@@ -324,7 +324,7 @@ public interface ILaunchConfigurationWorkingCopy extends ILaunchConfiguration, I
 	 * @exception CoreException if unable to retrieve attributes from the prototype
 	 * @since 3.12
 	 */
-	public void copyAttributes(ILaunchConfiguration prototype) throws CoreException;
+	void copyAttributes(ILaunchConfiguration prototype) throws CoreException;
 	
 	/**
 	 * Sets the prototype that this configuration is based on, possibly <code>null</code>,
@@ -345,5 +345,5 @@ public interface ILaunchConfigurationWorkingCopy extends ILaunchConfiguration, I
 	 *  </ul>
 	 * @since 3.12
 	 */
-	public void setPrototype(ILaunchConfiguration prototype, boolean copy) throws CoreException;
+	void setPrototype(ILaunchConfiguration prototype, boolean copy) throws CoreException;
 }

@@ -32,7 +32,7 @@ public interface ISourceLookupDirector extends IPersistableSourceLocator2 {
 	 * @return the launch configuration associated with this source
 	 * lookup director, or <code>null</code> if none
 	 */
-	public ILaunchConfiguration getLaunchConfiguration();
+	ILaunchConfiguration getLaunchConfiguration();
 
 	/**
 	 * Returns the source lookup participants currently registered with
@@ -41,7 +41,7 @@ public interface ISourceLookupDirector extends IPersistableSourceLocator2 {
 	 * @return the source lookup participants currently registered with
 	 * this director, possibly an empty collection
 	 */
-	public ISourceLookupParticipant[] getParticipants();
+	ISourceLookupParticipant[] getParticipants();
 
 	/**
 	 * Returns the source containers currently registered with this
@@ -50,7 +50,7 @@ public interface ISourceLookupDirector extends IPersistableSourceLocator2 {
 	 * @return the source containers currently registered with this
 	 * director, possibly an empty collection
 	 */
-	public ISourceContainer[] getSourceContainers();
+	ISourceContainer[] getSourceContainers();
 
 	/**
 	 * Sets the source containers this source lookup director
@@ -59,7 +59,7 @@ public interface ISourceLookupDirector extends IPersistableSourceLocator2 {
 	 * @param containers the source containers this source lookup director
 	 * should search when looking for source, possibly an empty collection
 	 */
-	public void setSourceContainers(ISourceContainer[] containers);
+	void setSourceContainers(ISourceContainer[] containers);
 
 	/**
 	 * Returns whether to search exhaustively for all source elements
@@ -70,7 +70,7 @@ public interface ISourceLookupDirector extends IPersistableSourceLocator2 {
 	 * @return whether to search exhaustively for all source elements
 	 * with the same name
 	 */
-	public boolean isFindDuplicates();
+	boolean isFindDuplicates();
 
 	/**
 	 * Sets whether to search exhaustively for all source elements
@@ -81,13 +81,13 @@ public interface ISourceLookupDirector extends IPersistableSourceLocator2 {
 	 * @param findDuplicates whether to search exhaustively for all source elements
 	 * with the same name
 	 */
-	public void setFindDuplicates(boolean findDuplicates);
+	void setFindDuplicates(boolean findDuplicates);
 
 	/**
 	 * Notifies this source lookup director that it should initialize
 	 * its set of source lookup participants.
 	 */
-	public void initializeParticipants();
+	void initializeParticipants();
 
 	/**
 	 * Returns whether this source director supports the given type
@@ -97,7 +97,7 @@ public interface ISourceLookupDirector extends IPersistableSourceLocator2 {
 	 * @return whether this source director supports the given type
 	 * of source location
 	 */
-	public boolean supportsSourceContainerType(ISourceContainerType type);
+	boolean supportsSourceContainerType(ISourceContainerType type);
 
 	/**
 	 * Clears any source lookup results associated with the given
@@ -106,28 +106,28 @@ public interface ISourceLookupDirector extends IPersistableSourceLocator2 {
 	 *
 	 * @param element debug artifact to clear source lookup results for
 	 */
-	public void clearSourceElements(Object element);
+	void clearSourceElements(Object element);
 
 	/**
 	 * Adds the given source lookup participants to this director.
 	 *
 	 * @param participants participants to add
 	 */
-	public void addParticipants(ISourceLookupParticipant[] participants);
+	void addParticipants(ISourceLookupParticipant[] participants);
 
 	/**
 	 * Removes the given source lookup participants from this director.
 	 *
 	 * @param participants participants to remove
 	 */
-	public void removeParticipants(ISourceLookupParticipant[] participants);
+	void removeParticipants(ISourceLookupParticipant[] participants);
 
 	/**
 	 * Returns the identifier of this type of source locator.
 	 *
 	 * @return the identifier of this type of source locator
 	 */
-	public String getId();
+	String getId();
 
 	/**
 	 * Returns the source path computer to use with this source lookup
@@ -139,7 +139,7 @@ public interface ISourceLookupDirector extends IPersistableSourceLocator2 {
 	 * @return the source path computer to use with this source lookup
 	 *  director, possibly <code>null</code>
 	 */
-	public ISourcePathComputer getSourcePathComputer();
+	ISourcePathComputer getSourcePathComputer();
 
 	/**
 	 * Sets the source path computer for this source lookup director.
@@ -150,7 +150,7 @@ public interface ISourceLookupDirector extends IPersistableSourceLocator2 {
 	 *
 	 * @param computer source path computer or <code>null</code>
 	 */
-	public void setSourcePathComputer(ISourcePathComputer computer);
+	void setSourcePathComputer(ISourcePathComputer computer);
 
 	/**
 	 * Returns a collection of source elements corresponding to the given debug
@@ -166,7 +166,7 @@ public interface ISourceLookupDirector extends IPersistableSourceLocator2 {
 	 *  debug artifact, possibly empty
 	 * @exception CoreException if an exception occurs while searching for source
 	 */
-	public Object[] findSourceElements(Object object) throws CoreException;
+	Object[] findSourceElements(Object object) throws CoreException;
 
 	/**
 	 * Returns a source element that corresponds to the given debug artifact, or
@@ -177,6 +177,6 @@ public interface ISourceLookupDirector extends IPersistableSourceLocator2 {
 	 * @param element the debug artifact for which to locate source
 	 * @return an object representing a source element.
 	 */
-	 public Object getSourceElement(Object element);
+	 Object getSourceElement(Object element);
 
 }
