@@ -26,5 +26,5 @@ public interface IValueVariableInitializer {
 	 *
 	 * @param variable variable to initialize
 	 */
-	public void initialize(IValueVariable variable);
+	void initialize(IValueVariable variable);
 }

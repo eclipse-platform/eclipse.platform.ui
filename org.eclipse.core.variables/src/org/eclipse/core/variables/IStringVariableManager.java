@@ -23,27 +23,27 @@ public interface IStringVariableManager {
 	 * Simple identifier constant (value <code>"dynamicVariables"</code>) for the
 	 * dynamic variables extension point.
 	 */
-	public static final String EXTENSION_POINT_DYNAMIC_VARIABLES = "dynamicVariables"; //$NON-NLS-1$
+	String EXTENSION_POINT_DYNAMIC_VARIABLES = "dynamicVariables"; //$NON-NLS-1$
 
 	/**
 	 * Simple identifier constant (value <code>"valueVariables"</code>) for the
 	 * value variables extension point.
 	 */
-	public static final String EXTENSION_POINT_VALUE_VARIABLES = "valueVariables"; //$NON-NLS-1$
+	String EXTENSION_POINT_VALUE_VARIABLES = "valueVariables"; //$NON-NLS-1$
 
 	/**
 	 * Returns all registered variables.
 	 *
 	 * @return a collection of all registered variables
 	 */
-	public IStringVariable[] getVariables();
+	IStringVariable[] getVariables();
 
 	/**
 	 * Returns all registered value variables.
 	 *
 	 * @return a collection of all registered value variables
 	 */
-	public IValueVariable[] getValueVariables();
+	IValueVariable[] getValueVariables();
 
 	/**
 	 * Returns the value variable with the given name, or <code>null</code>
@@ -53,14 +53,14 @@ public interface IStringVariableManager {
 	 * @return the value variable with the given name, or <code>null</code>
 	 * if none
 	 */
-	public IValueVariable getValueVariable(String name);
+	IValueVariable getValueVariable(String name);
 
 	/**
 	 * Returns all registered dynamic variables.
 	 *
 	 * @return a collection of all registered dynamic variables
 	 */
-	public IDynamicVariable[] getDynamicVariables();
+	IDynamicVariable[] getDynamicVariables();
 
 	/**
 	 * Returns the dynamic variable with the given name or <code>null</code>
@@ -70,7 +70,7 @@ public interface IStringVariableManager {
 	 * @return the dynamic variable with the given name or <code>null</code>
 	 * if none
 	 */
-	public IDynamicVariable getDynamicVariable(String name);
+	IDynamicVariable getDynamicVariable(String name);
 
     /**
      * Returns the plug-in identifier of the plug-in that contributed the
@@ -82,7 +82,7 @@ public interface IStringVariableManager {
      *  given variable or <code>null</code>
      * @since 3.1
      */
-    public String getContributingPluginId(IStringVariable variable);
+    String getContributingPluginId(IStringVariable variable);
 
 	/**
 	 * Recursively resolves and replaces all variable references in the given
@@ -94,7 +94,7 @@ public interface IStringVariableManager {
 	 * @return expression with variable references replaced with variable values
 	 * @throws CoreException if unable to resolve the value of one or more variables
 	 */
-	public String performStringSubstitution(String expression) throws CoreException;
+	String performStringSubstitution(String expression) throws CoreException;
 
 	/**
 	 * Recursively resolves and replaces all variable references in the given
@@ -108,7 +108,7 @@ public interface IStringVariableManager {
 	 * @return expression with variable references replaced with variable values
 	 * @throws CoreException if unable to resolve the value of one or more variables
 	 */
-	public String performStringSubstitution(String expression, boolean reportUndefinedVariables) throws CoreException;
+	String performStringSubstitution(String expression, boolean reportUndefinedVariables) throws CoreException;
 
 	/**
 	 * Validates variables references in the given expression and reports errors
@@ -117,7 +117,7 @@ public interface IStringVariableManager {
 	 * @param expression expression referencing variables
 	 * @throws CoreException if one or more referenced variables do not exist
 	 */
-	public void validateStringVariables(String expression) throws CoreException;
+	void validateStringVariables(String expression) throws CoreException;
 
 	/**
 	 * Returns a new read-write value variable with the given name and description
@@ -127,7 +127,7 @@ public interface IStringVariableManager {
 	 * @param description variable description, possibly <code>null</code>
 	 * @return a new value variable
 	 */
-	public IValueVariable newValueVariable(String name, String description);
+	IValueVariable newValueVariable(String name, String description);
 
 	/**
 	 * Returns a new value variable with the given properties.
@@ -140,7 +140,7 @@ public interface IStringVariableManager {
 	 * @return a new value variable
 	 * @since 3.3
 	 */
-	public IValueVariable newValueVariable(String name, String description, boolean readOnly, String value);
+	IValueVariable newValueVariable(String name, String description, boolean readOnly, String value);
 
 	/**
 	 * Adds the given variables to the variable registry.
@@ -149,7 +149,7 @@ public interface IStringVariableManager {
 	 * @throws CoreException if one or more variables to add has a name collision with
 	 *  an existing variable
 	 */
-	public void addVariables(IValueVariable[] variables) throws CoreException;
+	void addVariables(IValueVariable[] variables) throws CoreException;
 
 	/**
 	 * Removes the given variables from the registry. Has no effect for unregistered
@@ -157,7 +157,7 @@ public interface IStringVariableManager {
 	 *
 	 * @param variables variables to remove
 	 */
-	public void removeVariables(IValueVariable[] variables);
+	void removeVariables(IValueVariable[] variables);
 
 	/**
 	 * Registers the given listener for value variable notifications. Has no effect
@@ -165,7 +165,7 @@ public interface IStringVariableManager {
 	 *
 	 * @param listener value variable listener to add
 	 */
-	public void addValueVariableListener(IValueVariableListener listener);
+	void addValueVariableListener(IValueVariableListener listener);
 
 	/**
 	 * Removes the given listener from the list of registered value variable
@@ -173,7 +173,7 @@ public interface IStringVariableManager {
 	 *
 	 * @param listener value variable listener to remove
 	 */
-	public void removeValueVariableListener(IValueVariableListener listener);
+	void removeValueVariableListener(IValueVariableListener listener);
 
 	/**
 	 * Convenience method that returns an expression referencing the given
@@ -186,6 +186,6 @@ public interface IStringVariableManager {
 	 * @return an expression referencing the given variable and
 	 *  optional argument
 	 */
-	public String generateVariableExpression(String varName, String arg);
+	String generateVariableExpression(String varName, String arg);
 
 }

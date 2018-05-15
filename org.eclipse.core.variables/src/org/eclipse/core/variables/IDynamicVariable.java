@@ -48,7 +48,7 @@ public interface IDynamicVariable extends IStringVariable {
 	 *   <code>null</code>
 	 * @throws CoreException if unable to resolve a value for this variable
 	 */
-	public String getValue(String argument) throws CoreException;
+	String getValue(String argument) throws CoreException;
 
 	/**
 	 * Returns whether this variable supports an argument, as specified
@@ -56,5 +56,5 @@ public interface IDynamicVariable extends IStringVariable {
 	 *
 	 * @return whether this variable supports an argument
 	 */
-	public boolean supportsArgument();
+	boolean supportsArgument();
 }

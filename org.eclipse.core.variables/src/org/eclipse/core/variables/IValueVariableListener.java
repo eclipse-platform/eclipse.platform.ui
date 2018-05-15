@@ -27,7 +27,7 @@ public interface IValueVariableListener {
 	 *
 	 * @param variables added variables
 	 */
-	public void variablesAdded(IValueVariable[] variables);
+	void variablesAdded(IValueVariable[] variables);
 
 	/**
 	 * Notification the given variables have been removed from the variable
@@ -35,13 +35,13 @@ public interface IValueVariableListener {
 	 *
 	 * @param variables removed variables
 	 */
-	public void variablesRemoved(IValueVariable[] variables);
+	void variablesRemoved(IValueVariable[] variables);
 
 	/**
 	 * Notification the given variables have been changed value.
 	 *
 	 * @param variables changed variables
 	 */
-	public void variablesChanged(IValueVariable[] variables);
+	void variablesChanged(IValueVariable[] variables);
 
 }

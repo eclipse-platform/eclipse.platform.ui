@@ -32,5 +32,5 @@ public interface IDynamicVariableResolver {
 	 * @return variable value, possibly <code>null</code>
 	 * @throws CoreException if unable to resolve a value for the given variable
 	 */
-	public String resolveValue(IDynamicVariable variable, String argument) throws CoreException;
+	String resolveValue(IDynamicVariable variable, String argument) throws CoreException;
 }

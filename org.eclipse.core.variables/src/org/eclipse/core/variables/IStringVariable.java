@@ -45,13 +45,13 @@ public interface IStringVariable {
 	 *
 	 * @return variable name
 	 */
-	public String getName();
+	String getName();
 
 	/**
 	 * Returns a human readable description of this variable, possibly <code>null</code>
 	 *
 	 * @return a description of this variable, or <code>null</code> if none
 	 */
-	public String getDescription();
+	String getDescription();
 
 }
