@@ -216,7 +216,7 @@ public class StackRenderer extends LazyStackRenderer implements IPreferenceChang
 	@SuppressWarnings("unchecked")
 	@Inject
 	@Optional
-	private void subscribeTopicTransientDataChanged(
+	void subscribeTopicTransientDataChanged(
 			@UIEventTopic(UIEvents.ApplicationElement.TOPIC_TRANSIENTDATA) org.osgi.service.event.Event event) {
 		Object changedElement = event.getProperty(UIEvents.EventTags.ELEMENT);
 
@@ -253,7 +253,7 @@ public class StackRenderer extends LazyStackRenderer implements IPreferenceChang
 	 */
 	@Inject
 	@Optional
-	private void subscribeTopicTagsChanged(@UIEventTopic(UIEvents.ApplicationElement.TOPIC_TAGS) Event event) {
+	void subscribeTopicTagsChanged(@UIEventTopic(UIEvents.ApplicationElement.TOPIC_TAGS) Event event) {
 
 		if (tabStateHandler == null) {
 			tabStateHandler = new TabStateHandler();
@@ -283,7 +283,7 @@ public class StackRenderer extends LazyStackRenderer implements IPreferenceChang
 
 	@Inject
 	@Optional
-	private void subscribeTopicChildrenChanged(@UIEventTopic(UIEvents.ElementContainer.TOPIC_CHILDREN) Event event) {
+	void subscribeTopicChildrenChanged(@UIEventTopic(UIEvents.ElementContainer.TOPIC_CHILDREN) Event event) {
 
 		Object changedObj = event.getProperty(UIEvents.EventTags.ELEMENT);
 		// only interested in changes to toolbars
@@ -309,7 +309,7 @@ public class StackRenderer extends LazyStackRenderer implements IPreferenceChang
 
 	@Inject
 	@Optional
-	private void subscribeTopicUILabelChanged(@UIEventTopic(UIEvents.UILabel.TOPIC_ALL) Event event) {
+	void subscribeTopicUILabelChanged(@UIEventTopic(UIEvents.UILabel.TOPIC_ALL) Event event) {
 		MUIElement element = (MUIElement) event.getProperty(UIEvents.EventTags.ELEMENT);
 		if (!(element instanceof MPart))
 			return;
@@ -351,7 +351,7 @@ public class StackRenderer extends LazyStackRenderer implements IPreferenceChang
 
 	@Inject
 	@Optional
-	private void subscribeTopicDirtyChanged(@UIEventTopic(UIEvents.Dirtyable.TOPIC_DIRTY) Event event) {
+	void subscribeTopicDirtyChanged(@UIEventTopic(UIEvents.Dirtyable.TOPIC_DIRTY) Event event) {
 		Object objElement = event.getProperty(UIEvents.EventTags.ELEMENT);
 
 		// Ensure that this event is for a MMenuItem
@@ -367,13 +367,13 @@ public class StackRenderer extends LazyStackRenderer implements IPreferenceChang
 
 	@Inject
 	@Optional
-	private void subscribeTopicClosablePartChanged(@UIEventTopic(UIEvents.Part.TOPIC_CLOSEABLE) Event event) {
+	void subscribeTopicClosablePartChanged(@UIEventTopic(UIEvents.Part.TOPIC_CLOSEABLE) Event event) {
 		updateClosableTab(event);
 	}
 
 	@Inject
 	@Optional
-	private void subscribeTopicClosablePlaceholderChanged(
+	void subscribeTopicClosablePlaceholderChanged(
 			@UIEventTopic(UIEvents.Placeholder.TOPIC_CLOSEABLE) Event event) {
 		updateClosableTab(event);
 	}
@@ -430,13 +430,13 @@ public class StackRenderer extends LazyStackRenderer implements IPreferenceChang
 
 	@Inject
 	@Optional
-	private void subscribeTopicVisibleChanged(@UIEventTopic(UIEvents.UIElement.TOPIC_VISIBLE) Event event) {
+	void subscribeTopicVisibleChanged(@UIEventTopic(UIEvents.UIElement.TOPIC_VISIBLE) Event event) {
 		shouldViewMenuBeRendered(event);
 	}
 
 	@Inject
 	@Optional
-	private void subscribeTopicToBeRenderedChanged(@UIEventTopic(UIEvents.UIElement.TOPIC_TOBERENDERED) Event event) {
+	void subscribeTopicToBeRenderedChanged(@UIEventTopic(UIEvents.UIElement.TOPIC_TOBERENDERED) Event event) {
 		shouldViewMenuBeRendered(event);
 	}
 
@@ -481,7 +481,7 @@ public class StackRenderer extends LazyStackRenderer implements IPreferenceChang
 
 	@Inject
 	@Optional
-	private void subscribeTopicActivateChanged(@UIEventTopic(UIEvents.UILifeCycle.ACTIVATE) Event event) {
+	void subscribeTopicActivateChanged(@UIEventTopic(UIEvents.UILifeCycle.ACTIVATE) Event event) {
 		// Manages CSS styling based on active part changes
 		MUIElement changed = (MUIElement) event.getProperty(UIEvents.EventTags.ELEMENT);
 		if (!(changed instanceof MPart)) {
@@ -527,7 +527,7 @@ public class StackRenderer extends LazyStackRenderer implements IPreferenceChang
 
 	@Inject
 	@Optional
-	private void subscribeTopicSelectedelementChanged(
+	void subscribeTopicSelectedelementChanged(
 			@UIEventTopic(UIEvents.ElementContainer.TOPIC_SELECTEDELEMENT) Event event) {
 		if (tabStateHandler == null) {
 			tabStateHandler = new TabStateHandler();
