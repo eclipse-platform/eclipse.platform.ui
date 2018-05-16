@@ -148,7 +148,7 @@ public class RegistryCSSPropertyHandlerProvider extends AbstractCSSPropertyHandl
 			return stylableElement.getDefaultStyleDeclaration(pseudoE);
 		}
 		if (newStyle != null) {
-			StringBuilder style = null;
+			StringBuilder builder = null;
 			int length = newStyle.getLength();
 			for (int i = 0; i < length; i++) {
 				String propertyName = newStyle.item(i);
@@ -158,24 +158,24 @@ public class RegistryCSSPropertyHandlerProvider extends AbstractCSSPropertyHandl
 						propertyName = compositePropertyName;
 						String s = getCSSPropertyStyle(engine, stylableElement, propertyName, pseudoE);
 						if (s != null) {
-							if (style == null) {
-								style = new StringBuilder();
+							if (builder == null) {
+								builder = new StringBuilder();
 							}
-							style.append(s);
+							builder.append(s);
 						}
 					}
 				} else {
 					String s = getCSSPropertyStyle(engine, stylableElement, propertyName, pseudoE);
 					if (s != null) {
-						if (style == null) {
-							style = new StringBuilder();
+						if (builder == null) {
+							builder = new StringBuilder();
 						}
-						style.append(s);
+						builder.append(s);
 					}
 				}
 			}
-			if (style != null) {
-				CSSStyleDeclaration defaultStyleDeclaration = engine.parseStyleDeclaration(style.toString());
+			if (builder != null) {
+				CSSStyleDeclaration defaultStyleDeclaration = engine.parseStyleDeclaration(builder.toString());
 				stylableElement.setDefaultStyleDeclaration(pseudoE, defaultStyleDeclaration);
 				return defaultStyleDeclaration;
 			}
