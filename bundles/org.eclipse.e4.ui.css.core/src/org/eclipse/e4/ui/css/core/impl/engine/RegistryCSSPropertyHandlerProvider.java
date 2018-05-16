@@ -63,12 +63,6 @@ public class RegistryCSSPropertyHandlerProvider extends AbstractCSSPropertyHandl
 		configure(PROPERTY_HANDLERS_EXTPOINT);
 	}
 
-	public RegistryCSSPropertyHandlerProvider(IExtensionRegistry registry, String extensionPointId) {
-		this.registry = registry;
-		// FIXME: should install a registry listener to make this dynamic
-		configure(extensionPointId);
-	}
-
 	/** @return true if some extensions were found */
 	protected boolean configure(String extensionPointId) {
 		IExtensionPoint extPoint = registry.getExtensionPoint(extensionPointId);
