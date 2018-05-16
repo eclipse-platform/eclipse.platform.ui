@@ -18,8 +18,11 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.util.Iterator;
 import java.util.LinkedList;
+import java.util.Map.Entry;
 import java.util.Properties;
+import java.util.Set;
 import java.util.SortedSet;
+import java.util.TreeMap;
 import java.util.TreeSet;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IBundleGroup;
@@ -47,6 +50,7 @@ public class ConfigurationLogDefaultSection implements ISystemSummarySection {
     @Override
 	public void write(PrintWriter writer) {
         appendProperties(writer);
+		appendEnvironmentVariables(writer);
         appendFeatures(writer);
         appendRegistry(writer);
         appendUserPreferences(writer);
@@ -185,4 +189,31 @@ public class ConfigurationLogDefaultSection implements ISystemSummarySection {
 
         // ByteArray streams don't need to be closed
     }
+
+	/**
+	 * Appends environment variables.
+	 */
+	private void appendEnvironmentVariables(PrintWriter writer) {
+		writer.println();
+		writer.println(WorkbenchMessages.SystemSummary_systemVariables);
+		TreeMap<String, String> envSorted = new TreeMap<>(System.getenv());
+		Set<Entry<String, String>> entrySet = envSorted.entrySet();
+		for (Entry<String, String> entry : entrySet) {
+			String key = entry.getKey();
+			String value = entry.getValue();
+
+			writer.print(key);
+			writer.print('=');
+
+			if (key.toUpperCase().indexOf("PASSWORD") != -1) { //$NON-NLS-1$
+				// We should obscure any property that may be a password
+				for (int j = 0; j < value.length(); j++) {
+					writer.print('*');
+				}
+				writer.println();
+			} else {
+				writer.println(value);
+			}
+		}
+	}
 }

@@ -810,6 +810,7 @@ public class WorkbenchMessages extends NLS {
 	// =================================================================
 	public static String SystemSummary_timeStamp;
 	public static String SystemSummary_systemProperties;
+	public static String SystemSummary_systemVariables;
 	public static String SystemSummary_features;
 	public static String SystemSummary_pluginRegistry;
 	public static String SystemSummary_userPreferences;
