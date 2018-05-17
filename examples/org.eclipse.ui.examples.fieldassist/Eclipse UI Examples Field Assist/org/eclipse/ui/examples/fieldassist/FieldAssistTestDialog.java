@@ -11,6 +11,9 @@
  *******************************************************************************/
 package org.eclipse.ui.examples.fieldassist;
 
+import static org.eclipse.swt.events.SelectionListener.widgetDefaultSelectedAdapter;
+import static org.eclipse.swt.events.SelectionListener.widgetSelectedAdapter;
+
 import java.text.MessageFormat;
 
 import org.eclipse.core.runtime.IStatus;
@@ -35,8 +38,6 @@ import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -646,21 +647,15 @@ public class FieldAssistTestDialog extends StatusDialog {
 		Text text = new Text(main, SWT.BORDER);
 		ControlDecoration dec = new ControlDecoration(text, getDecorationLocationBits());
 		dec.setMarginWidth(marginWidth);
-		dec.addSelectionListener(new SelectionListener() {
-			@Override
-			public void widgetSelected(SelectionEvent event) {
-				MessageDialog
-						.openInformation(
-								getShell(),
-								TaskAssistExampleMessages.ExampleDialog_SelectionTitle,
-								TaskAssistExampleMessages.ExampleDialog_SelectionMessage);
-			}
+		dec.addSelectionListener(widgetSelectedAdapter(e-> {
+			MessageDialog.openInformation(
+					getShell(),
+					TaskAssistExampleMessages.ExampleDialog_SelectionTitle,
+					TaskAssistExampleMessages.ExampleDialog_SelectionMessage);
 
-			@Override
-			public void widgetDefaultSelected(SelectionEvent e) {
-				// Nothing on default select
-			}
-		});
+		}));
+
+
 
 		textField = new UserField(dec, text, new TextContentAdapter());
 		dec.addMenuDetectListener(event -> {
@@ -703,21 +698,16 @@ public class FieldAssistTestDialog extends StatusDialog {
 			comboField.quickFixMenu.setLocation(event.x, event.y);
 			comboField.quickFixMenu.setVisible(true);
 		});
-		dec.addSelectionListener(new SelectionListener() {
-			@Override
-			public void widgetDefaultSelected(SelectionEvent event) {
-				MessageDialog
-						.openInformation(
-								getShell(),
-								TaskAssistExampleMessages.ExampleDialog_DefaultSelectionTitle,
-								TaskAssistExampleMessages.ExampleDialog_DefaultSelectionMessage);
-			}
+		dec.addSelectionListener(widgetDefaultSelectedAdapter(e-> {
+			MessageDialog
+			.openInformation(
+					getShell(),
+					TaskAssistExampleMessages.ExampleDialog_DefaultSelectionTitle,
+					TaskAssistExampleMessages.ExampleDialog_DefaultSelectionMessage);
 
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				// Do nothing on selection
-			}
-		});
+		}));
+
+
 
 		if (showRequiredFieldLabelIndicator) {
 			addRequiredFieldIndicator(label);
@@ -773,17 +763,7 @@ public class FieldAssistTestDialog extends StatusDialog {
 		Menu newMenu = new Menu(field.control);
 		MenuItem item = new MenuItem(newMenu, SWT.PUSH);
 		item.setText(TaskAssistExampleMessages.ExampleDialog_DecorationMenuItem);
-		item.addSelectionListener(new SelectionListener() {
-			@Override
-			public void widgetSelected(SelectionEvent event) {
-				field.quickFix();
-			}
-
-			@Override
-			public void widgetDefaultSelected(SelectionEvent event) {
-
-			}
-		});
+		item.addSelectionListener(widgetSelectedAdapter(e-> field.quickFix()));
 		return newMenu;
 	}
 
