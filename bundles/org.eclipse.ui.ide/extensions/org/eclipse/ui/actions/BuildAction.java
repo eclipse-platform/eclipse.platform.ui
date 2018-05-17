@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2017 IBM Corporation and others.
+ * Copyright (c) 2000, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -314,9 +314,13 @@ public class BuildAction extends WorkspaceAction {
         projectsToBuild = null;
 		IProject[] projects = getProjectsToBuild().toArray(new IProject[0]);
 		if (projects.length > 1) {
-			setText(IDEWorkbenchMessages.BuildAction_text_plural);
+			if (IDEWorkbenchMessages.BuildAction_text.equals(getText())) {
+				setText(IDEWorkbenchMessages.BuildAction_text_plural);
+			}
 		} else {
-			setText(IDEWorkbenchMessages.BuildAction_text);
+			if (IDEWorkbenchMessages.BuildAction_text_plural.equals(getText())) {
+				setText(IDEWorkbenchMessages.BuildAction_text);
+			}
 		}
         return BuildUtilities.isEnabled(projects, IncrementalProjectBuilder.INCREMENTAL_BUILD);
     }
