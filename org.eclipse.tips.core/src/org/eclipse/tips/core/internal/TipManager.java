@@ -40,6 +40,21 @@ public abstract class TipManager implements ITipManager {
 	private PropertyChangeSupport fChangeSupport = new PropertyChangeSupport(this);
 
 	/**
+	 * May start a dialog at startup.
+	 */
+	public static final int START_DIALOG = 0;
+
+	/**
+	 * May do background tasks but not show a dialog on startup.
+	 */
+	public static final int START_BACKGROUND = 1;
+
+	/**
+	 * Tips may only start on explicit user request.
+	 */
+	public static final int START_DISABLE = 2;
+
+	/**
 	 * Instantiates a new TipManager.
 	 */
 	public TipManager() {
@@ -63,7 +78,7 @@ public abstract class TipManager implements ITipManager {
 	 * call super, and then asynchronously call the
 	 * {@link TipProvider#loadNewTips(org.eclipse.core.runtime.IProgressMonitor)}
 	 * method.
-	 * 
+	 *
 	 * This manager then starts listening to the a {@link TipProvider#PROP_READY}
 	 * property change event and resends it through its own change support.
 	 *
@@ -74,7 +89,7 @@ public abstract class TipManager implements ITipManager {
 	@Override
 	public ITipManager register(TipProvider provider) {
 		checkDisposed();
-		String message = MessageFormat.format(Messages.TipManager_0, provider.getID() ,provider.getDescription());
+		String message = MessageFormat.format(Messages.TipManager_0, provider.getID(), provider.getDescription());
 		log(LogUtil.info(message));
 		provider.setManager(this);
 		addToMaps(provider, Integer.valueOf(getPriority(provider)));
@@ -164,27 +179,32 @@ public abstract class TipManager implements ITipManager {
 
 	/**
 	 * Determines if the Tips framework must run at startup. The default
-	 * implementation returns true, subclasses should probably override this.
+	 * implementation returns {@link #START_DIALOG} , subclasses should probably
+	 * override this if they want to give users a choice.
 	 *
-	 * @return true if the Tips framework should run at startup.
-	 * @see TipManager#setRunAtStartup(boolean)
+	 * @return Returns {@link #START_DIALOG}, {@link #START_BACKGROUND} or
+	 *         {@link #START_DISABLE}.
+	 * @see TipManager#setStartUpBehavior(int)
 	 */
-	public boolean isRunAtStartup() {
+	public int getStartupBehavior() {
 		checkDisposed();
-		return true;
+		return START_DIALOG;
 	}
 
 	/**
-	 * Determines if the Tips framework must run at startup.
+	 * Determines what level of startup actions the Tips framework may do.
 	 *
-	 * @param shouldRun true if the tips should be displayed at startup, false
-	 *                  otherwise.
+	 * @param startupBehavior Use {@link TipManager#START_DIALOG} to allow a dialog
+	 *                        at startup and possibly query for new content,
+	 *                        {@link #START_BACKGROUND} to query for new content but
+	 *                        not show a dialog or {@link #START_DISABLE} to not do
+	 *                        startup actions at all.
 	 *
 	 * @return this
 	 *
 	 * @see #isRunAtStartup()
 	 */
-	public abstract TipManager setRunAtStartup(boolean shouldRun);
+	public abstract TipManager setStartupBehavior(int startupBehavior);
 
 	/**
 	 * The default implementation disposes of this manager and all the TipProviders

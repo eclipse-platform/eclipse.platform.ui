@@ -20,18 +20,18 @@ import org.eclipse.tips.core.internal.TipManager;
 @SuppressWarnings("restriction")
 public class TestTipManager extends TipManager {
 
-	private boolean fShouldRun = true;
 	private List<Integer> fReadList = new ArrayList<>();
+	private int fStartupBehavior = TipManager.START_DIALOG;
 
 	@Override
-	public TipManager setRunAtStartup(boolean shouldRun) {
-		fShouldRun = shouldRun;
+	public TipManager setStartupBehavior(int pStartupBehavior) {
+		fStartupBehavior = pStartupBehavior;
 		return this;
 	}
 
 	@Override
-	public boolean isRunAtStartup() {
-		return fShouldRun;
+	public int getStartupBehavior() {
+		return fStartupBehavior;
 	}
 
 	@Override

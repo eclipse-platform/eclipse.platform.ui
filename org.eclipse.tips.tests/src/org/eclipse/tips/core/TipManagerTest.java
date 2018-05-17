@@ -64,17 +64,20 @@ public class TipManagerTest {
 	}
 
 	@Test
-	public void testIsRunAtStartup() {
-		assertTrue(fManager.isRunAtStartup());
-		fManager.setRunAtStartup(false);
-		assertTrue(!fManager.isRunAtStartup());
-	}
+	public void testGetStartupBeahvior() {
+		assertTrue(fManager.getStartupBehavior() == TipManager.START_DIALOG);
+		assertTrue(fManager.getStartupBehavior() != TipManager.START_BACKGROUND);
+		assertTrue(fManager.getStartupBehavior() != TipManager.START_DISABLE);
 
-	@Test
-	public void testSetRunAtStartup() {
-		assertTrue(fManager.isRunAtStartup());
-		fManager.setRunAtStartup(false);
-		assertTrue(!fManager.isRunAtStartup());
+		fManager.setStartupBehavior(TipManager.START_BACKGROUND);
+		assertTrue(fManager.getStartupBehavior() == TipManager.START_BACKGROUND);
+		assertTrue(fManager.getStartupBehavior() != TipManager.START_DIALOG);
+		assertTrue(fManager.getStartupBehavior() != TipManager.START_DISABLE);
+
+		fManager.setStartupBehavior(TipManager.START_DISABLE);
+		assertTrue(fManager.getStartupBehavior() != TipManager.START_BACKGROUND);
+		assertTrue(fManager.getStartupBehavior() != TipManager.START_DIALOG);
+		assertTrue(fManager.getStartupBehavior() == TipManager.START_DISABLE);
 	}
 
 	@Test
@@ -147,8 +150,8 @@ public class TipManagerTest {
 	@Test
 	public void testIsRead() {
 		fManager.register(fProvider1);
-		fProvider1.setTips(Arrays.asList(new TestTip(fProvider1.getID(),"<b>bold</b>", "Tip 1"),
-				new TestTip(fProvider1.getID(),"<b>bold2</b>", "Tip 2")));
+		fProvider1.setTips(Arrays.asList(new TestTip(fProvider1.getID(), "<b>bold</b>", "Tip 1"),
+				new TestTip(fProvider1.getID(), "<b>bold2</b>", "Tip 2")));
 		fManager.setAsRead(fProvider1.getCurrentTip());
 		assertTrue(fManager.isRead(fProvider1.getCurrentTip()));
 	}
@@ -156,8 +159,8 @@ public class TipManagerTest {
 	@Test
 	public void testSetRead() {
 		fManager.register(fProvider1);
-		fProvider1.setTips(Arrays.asList(new TestTip(fProvider1.getID(),"<b>bold</b>", "Tip 1"),
-				new TestTip(fProvider1.getID(),"<b>bold2</b>", "Tip 2")));
+		fProvider1.setTips(Arrays.asList(new TestTip(fProvider1.getID(), "<b>bold</b>", "Tip 1"),
+				new TestTip(fProvider1.getID(), "<b>bold2</b>", "Tip 2")));
 		fManager.setAsRead(fProvider1.getCurrentTip());
 		assertTrue(fManager.isRead(fProvider1.getCurrentTip()));
 	}
@@ -165,8 +168,8 @@ public class TipManagerTest {
 	@Test
 	public void testSetServeUnread() {
 		fManager.register(fProvider1);
-		fProvider1.setTips(Arrays.asList(new TestTip(fProvider1.getID(),"<b>bold</b>", "Tip 1"),
-				new TestTip(fProvider1.getID(),"<b>bold2</b>", "Tip 2")));
+		fProvider1.setTips(Arrays.asList(new TestTip(fProvider1.getID(), "<b>bold</b>", "Tip 1"),
+				new TestTip(fProvider1.getID(), "<b>bold2</b>", "Tip 2")));
 		fManager.setAsRead(fProvider1.getCurrentTip());
 		assertTrue(fProvider1.getTips().size() + "", fProvider1.getTips().size() == 1);
 		fManager.setServeReadTips(true);

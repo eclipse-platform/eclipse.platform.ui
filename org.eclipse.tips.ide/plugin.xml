@@ -183,7 +183,7 @@
    <extension
          point="org.eclipse.core.runtime.preferences">
       <initializer
-            class="org.eclipse.tips.ide.internal.Preferences">
+            class="org.eclipse.tips.ide.internal.TipsPreferences">
       </initializer>
    </extension>
    <extension

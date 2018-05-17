@@ -43,7 +43,6 @@ import org.eclipse.swt.widgets.Display;
  * @author scheglov_ke
  * @author Dan Rubel
  */
-@SuppressWarnings("unused")
 public class SWTResourceManager {
 	////////////////////////////////////////////////////////////////////////////
 	//

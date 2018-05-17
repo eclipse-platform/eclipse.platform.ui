@@ -14,6 +14,7 @@ import java.io.IOException;
 import java.net.URL;
 import java.text.MessageFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -45,6 +46,8 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
+import org.eclipse.swt.widgets.ToolBar;
+import org.eclipse.swt.widgets.ToolItem;
 import org.eclipse.tips.core.IHtmlTip;
 import org.eclipse.tips.core.IUrlTip;
 import org.eclipse.tips.core.Tip;
@@ -66,7 +69,6 @@ public class TipComposite extends Composite implements ProviderSelectionListener
 	private Slider fSlider;
 	private TipManager fTipManager;
 	private Tip fCurrentTip;
-	private Button fShowAtStart;
 	private Button fUnreadOnly;
 	private Button fPreviousTipButton;
 	private Pattern fGtkHackPattern = Pattern.compile("(.*?)([0-9]+)(.*?)([0-9]+)(.*?)"); //$NON-NLS-1$
@@ -84,6 +86,8 @@ public class TipComposite extends Composite implements ProviderSelectionListener
 	private Composite fContentComposite;
 	private List<Image> fActionImages = new ArrayList<>();
 	private Menu fActionMenu;
+	private ToolBar ftoolBar;
+	private ToolItem fStartupItem;
 
 	/**
 	 * Constructor.
@@ -132,13 +136,15 @@ public class TipComposite extends Composite implements ProviderSelectionListener
 		fl_composite_3.spacing = 5;
 		preferenceBar.setLayout(fl_composite_3);
 
-		fShowAtStart = new Button(preferenceBar, SWT.CHECK);
-		fShowAtStart.setText(Messages.TipComposite_1);
-		fShowAtStart.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				fTipManager.setRunAtStartup(fShowAtStart.getSelection());
-			}
+		final Menu menu = new Menu(getShell(), SWT.POP_UP);
+		menu.addListener(SWT.Show, event -> startupMenuAboutToShow(menu));
+
+		ftoolBar = new ToolBar(preferenceBar, SWT.FLAT | SWT.RIGHT);
+
+		fStartupItem = new ToolItem(ftoolBar, SWT.DROP_DOWN);
+		fStartupItem.setText(Messages.TipComposite_13);
+		fStartupItem.addListener(SWT.Selection, event -> {
+				showStartupOptions(menu);
 		});
 
 		fUnreadOnly = new Button(preferenceBar, SWT.CHECK);
@@ -250,6 +256,47 @@ public class TipComposite extends Composite implements ProviderSelectionListener
 		fSlider.setLayoutData(new GridData(SWT.FILL, SWT.BOTTOM, false, false, 1, 1));
 		fContentStack.topControl = fBrowserComposite;
 		fSlider.addTipProviderListener(this);
+	}
+
+	private void showStartupOptions(final Menu menu) {
+		Rectangle rect = fStartupItem.getBounds();
+		Point pt = new Point(rect.x, rect.y + rect.height);
+		pt = ftoolBar.toDisplay(pt);
+		menu.setLocation(pt.x, pt.y);
+		menu.setVisible(true);
+	}
+
+	private Image getStartupItemImage(int startup) {
+		switch (startup) {
+		case 1:
+			return ResourceManager.getPluginImage("org.eclipse.tips.ui", "icons/lightbulb.png"); //$NON-NLS-1$ //$NON-NLS-2$
+		case 2:
+			return ResourceManager.getPluginImage("org.eclipse.tips.ui", "icons/stop.png"); //$NON-NLS-1$ //$NON-NLS-2$
+		default:
+			return ResourceManager.getPluginImage("org.eclipse.tips.ui", "icons/run.gif"); //$NON-NLS-1$ //$NON-NLS-2$
+		}
+	}
+
+	private void startupMenuAboutToShow(final Menu menu) {
+		Arrays.asList(menu.getItems()).forEach(item -> item.dispose());
+
+		MenuItem item0 = new MenuItem(menu, SWT.CHECK);
+		item0.setText(Messages.TipComposite_1);
+		item0.setSelection(fTipManager.getStartupBehavior() == TipManager.START_DIALOG);
+		item0.addListener(SWT.Selection, event -> fTipManager.setStartupBehavior(TipManager.START_DIALOG));
+		item0.setImage(getStartupItemImage(TipManager.START_DIALOG));
+
+		MenuItem item1 = new MenuItem(menu, SWT.CHECK);
+		item1.setText(Messages.TipComposite_5);
+		item1.setSelection(fTipManager.getStartupBehavior() == TipManager.START_BACKGROUND);
+		item1.addListener(SWT.Selection, event -> fTipManager.setStartupBehavior(TipManager.START_BACKGROUND));
+		item1.setImage(getStartupItemImage(TipManager.START_BACKGROUND));
+
+		MenuItem item2 = new MenuItem(menu, SWT.CHECK);
+		item2.setText(Messages.TipComposite_6);
+		item2.setSelection(fTipManager.getStartupBehavior() == TipManager.START_DISABLE);
+		item2.addListener(SWT.Selection, event -> fTipManager.setStartupBehavior(TipManager.START_DISABLE));
+		item2.setImage(getStartupItemImage(TipManager.START_DISABLE));
 	}
 
 	private void showActionMenu() {
@@ -564,7 +611,6 @@ public class TipComposite extends Composite implements ProviderSelectionListener
 
 		getDisplay().syncExec(() -> {
 			fSlider.setTipManager(fTipManager);
-			fShowAtStart.setSelection(fTipManager.isRunAtStartup());
 			fUnreadOnly.setSelection(!fTipManager.mustServeReadTips());
 			fPreviousTipButton.setEnabled(fTipManager.mustServeReadTips());
 		});

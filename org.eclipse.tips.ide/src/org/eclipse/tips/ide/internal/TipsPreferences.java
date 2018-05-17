@@ -25,6 +25,7 @@ import org.eclipse.core.runtime.preferences.AbstractPreferenceInitializer;
 import org.eclipse.core.runtime.preferences.ConfigurationScope;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eclipse.jface.preference.PreferenceStore;
+import org.eclipse.tips.core.internal.TipManager;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.FrameworkUtil;
 import org.osgi.service.prefs.BackingStoreException;
@@ -33,6 +34,7 @@ import org.osgi.service.prefs.BackingStoreException;
  * Internal class to store preferences.
  *
  */
+@SuppressWarnings("restriction")
 public class TipsPreferences extends AbstractPreferenceInitializer {
 
 	private static final String FALSE = "false"; //$NON-NLS-1$
@@ -40,7 +42,7 @@ public class TipsPreferences extends AbstractPreferenceInitializer {
 	/**
 	 * Preference store key to indicate showing tips at startup.
 	 */
-	public static final String PREF_RUN_AT_STARTUP = "activate_at_startup"; //$NON-NLS-1$
+	public static final String PREF_STARTUP_BEHAVIOR = "activate_at_startup"; //$NON-NLS-1$
 
 	/**
 	 * Preference store key to indicate serving tips that the user as already seen.
@@ -53,7 +55,7 @@ public class TipsPreferences extends AbstractPreferenceInitializer {
 	@Override
 	public void initializeDefaultPreferences() {
 		IEclipsePreferences node = getPreferences();
-		node.putBoolean(PREF_RUN_AT_STARTUP, true);
+		node.putInt(PREF_STARTUP_BEHAVIOR, TipManager.START_DIALOG);
 		node.putBoolean(PREF_SERVE_READ_TIPS, false);
 		try {
 			node.flush();
@@ -64,7 +66,7 @@ public class TipsPreferences extends AbstractPreferenceInitializer {
 
 	/**
 	 * Loads the read tips from disk.
-	 * 
+	 *
 	 * @return a map that stores the read tip hashes per provider.
 	 */
 	public static Map<String, List<Integer>> getReadState() {
@@ -91,14 +93,11 @@ public class TipsPreferences extends AbstractPreferenceInitializer {
 	}
 
 	private static FilenameFilter getStateFileNameFilter(File stateLocation) {
-		return new FilenameFilter() {
-			@Override
-			public boolean accept(File pDir, String pName) {
-				if (pDir.equals(stateLocation) && pName.endsWith(".state")) { //$NON-NLS-1$
-					return true;
-				}
-				return false;
+		return (pDir, pName) -> {
+			if (pDir.equals(stateLocation) && pName.endsWith(".state")) { //$NON-NLS-1$
+				return true;
 			}
+			return false;
 		};
 	}
 
@@ -112,7 +111,7 @@ public class TipsPreferences extends AbstractPreferenceInitializer {
 
 	/**
 	 * Saves the list with read tips to disk.
-	 * 
+	 *
 	 * @param pReadTips the list with read tips
 	 * @return the status of the call
 	 */
@@ -149,17 +148,29 @@ public class TipsPreferences extends AbstractPreferenceInitializer {
 		}
 	}
 
-	public static boolean isRunAtStartup() {
-		return getPreferences().getBoolean(PREF_RUN_AT_STARTUP, true);
+	public static int getStartupBehavior() {
+		return getPreferences().getInt(PREF_STARTUP_BEHAVIOR, getDefaultStartupBehavior());
+	}
+
+	private static int getDefaultStartupBehavior() {
+		String startupBehavior = System.getProperty("org.eclipse.tips.startup");
+		if ("dialog".equals(startupBehavior)) {
+			return TipManager.START_DIALOG;
+		} else if ("background".equals(startupBehavior)) {
+			return TipManager.START_BACKGROUND;
+		} else if ("disable".equals(startupBehavior)) {
+			return TipManager.START_DISABLE;
+		}
+		return TipManager.START_DIALOG;
 	}
 
 	public static boolean isServeReadTips() {
 		return getPreferences().getBoolean(PREF_SERVE_READ_TIPS, false);
 	}
 
-	public static void setRunAtStartup(boolean runAtStartup) {
+	public static void setStartupBehavior(int startupBehavior) {
 		IEclipsePreferences node = getPreferences();
-		node.putBoolean(PREF_RUN_AT_STARTUP, runAtStartup);
+		node.putInt(PREF_STARTUP_BEHAVIOR, startupBehavior);
 		try {
 			node.flush();
 		} catch (BackingStoreException e) {

@@ -92,12 +92,12 @@ public class TipImageURLTest {
 	}
 
 	@Test
-	public void testSetExtension() throws IOException {
+	public void testSetExtension() {
 		// assertTrue(getTipImage().getIMGAttributes(19, 10).contains("png"));
 	}
 
 	@Test
-	public void testSetExtension2() throws IOException {
+	public void testSetExtension2() {
 		// assertTrue(getTipImage().setExtension("bmp").getBase64Image().contains("bmp"));
 		// assertTrue(getTipImage().getIMGAttributes(19, 10).contains("png"));
 	}

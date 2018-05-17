@@ -38,6 +38,15 @@ public abstract class DefaultTipManager extends TipManager {
 	 */
 	@Override
 	public ITipManager open(boolean startUp) {
+		if (isOpen() && !isDialogOpen()) {
+			setOpen(false);
+		} else if (isOpen() && isDialogOpen()) {
+			if (fTipDialog.getShell().getMinimized()) {
+				fTipDialog.getShell().setMinimized(false);
+			}
+			fTipDialog.getShell().forceActive();
+			return this;
+		}
 		try {
 			Assert.isTrue(!isOpen(), Messages.DefaultTipManager_0);
 		} catch (Exception e) {
@@ -58,12 +67,16 @@ public abstract class DefaultTipManager extends TipManager {
 		return this;
 	}
 
+	private boolean isDialogOpen() {
+		return !(fTipDialog == null || fTipDialog.getShell() == null || fTipDialog.getShell().isDisposed());
+	}
+
 	// Open if not a startup call or if there are unread tips.
 	private boolean mustOpen(boolean startUp) {
 		if (!startUp) {
 			return true;
 		}
-		if (startUp && isRunAtStartup()) {
+		if (startUp && getStartupBehavior() == TipManager.START_DIALOG) {
 			return hasContent();
 		}
 		return false;

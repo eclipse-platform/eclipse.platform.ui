@@ -116,7 +116,7 @@ public class SleakTipManager extends TipManager {
 	}
 
 	@Override
-	public TipManager setRunAtStartup(boolean pShouldRun) {
+	public TipManager setStartupBehavior(int pStartupBehavior) {
 		return this;
 	}
 

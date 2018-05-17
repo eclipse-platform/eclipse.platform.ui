@@ -96,6 +96,7 @@ public class IDETipManager extends DefaultTipManager {
 	@Override
 	public ITipManager open(boolean startUp) {
 		if (isOpen()) {
+			super.open(startUp);
 			return this;
 		}
 		if (!fSourceProviderAdded) {
@@ -109,7 +110,7 @@ public class IDETipManager extends DefaultTipManager {
 
 	/**
 	 * Saves the tip read status to disk.
-	 * 
+	 *
 	 * @param pReadTips the tips to save
 	 *
 	 */
@@ -146,13 +147,13 @@ public class IDETipManager extends DefaultTipManager {
 	}
 
 	@Override
-	public boolean isRunAtStartup() {
-		return TipsPreferences.isRunAtStartup();
+	public int getStartupBehavior() {
+		return TipsPreferences.getStartupBehavior();
 	}
 
 	@Override
-	public TipManager setRunAtStartup(boolean runAtStartup) {
-		TipsPreferences.setRunAtStartup(runAtStartup);
+	public TipManager setStartupBehavior(int startupBehavior) {
+		TipsPreferences.setStartupBehavior(startupBehavior);
 		return this;
 	}
 
@@ -197,8 +198,9 @@ public class IDETipManager extends DefaultTipManager {
 
 	protected synchronized IDETipManager setNewTips(boolean newTips) {
 		log(LogUtil.info(MessageFormat.format(Messages.IDETipManager_6, newTips + EMPTY)));
-		if (fNewTips != newTips) {
-			fNewTips = newTips;
+		boolean newValue = newTips && getStartupBehavior() != START_DISABLE;
+		if (fNewTips != newValue) {
+			fNewTips = newValue;
 			fSourceProvider.setStatus(fNewTips);
 		}
 		return this;
@@ -271,7 +273,7 @@ public class IDETipManager extends DefaultTipManager {
 	 * Returns the state location of the IDE tips. First the property
 	 * "org.eclipse.tips.statelocation" is read. If it does not exist then the state
 	 * location will be <b>${user.home}/.eclipse/org.eclipse.tips.state</b>
-	 * 
+	 *
 	 * @return the state location file
 	 * @throws Exception if something went wrong
 	 */

@@ -19,6 +19,7 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.tips.core.TipProvider;
+import org.eclipse.tips.core.internal.TipManager;
 import org.eclipse.ui.IStartup;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.progress.UIJob;
@@ -29,6 +30,7 @@ import org.osgi.framework.FrameworkUtil;
  * Early startup to run the TipManager in the IDE.
  *
  */
+@SuppressWarnings("restriction")
 public class Startup implements IStartup {
 
 	private static final String DBLQUOTE = "\""; //$NON-NLS-1$
@@ -41,6 +43,12 @@ public class Startup implements IStartup {
 
 	@Override
 	public void earlyStartup() {
+		if (!(TipsPreferences.getStartupBehavior() == TipManager.START_DISABLE)) {
+			start();
+		}
+	}
+
+	public void start() {
 		loadProviders();
 		openManager();
 	}

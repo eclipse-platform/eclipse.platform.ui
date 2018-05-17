@@ -27,7 +27,7 @@ public class Tip4_Navigate extends Tip implements IHtmlTip {
 		if (fImage == null) {
 			try {
 				Bundle bundle = FrameworkUtil.getBundle(getClass());
-				fImage = new TipImage(bundle.getEntry("images/tips/navigate1.png")).setAspectRatio(570, 91, true);
+				fImage = new TipImage(bundle.getEntry("images/tips/navigate1.png")).setAspectRatio(640, 96, true);
 			} catch (Exception e) {
 			}
 		}
@@ -50,11 +50,20 @@ public class Tip4_Navigate extends Tip implements IHtmlTip {
 
 	@Override
 	public String getHTML() {
-		return "<h2>Navigating Tips</h2>You can navigate tips by using the button bar."
-				+ "<br><br><b>Show tips at startup</b><br>A toggle to show this dialog when you start Eclipse."
-				+ "<br><b>Unread only</b><br>Shows all Tips when unchecked or unread Tips when checked."
-				+ "<br><b>Next Tip</b><br>Navigates to the next tip."
-				+ "<br><b>Previous Tip</b><br>Navigates to the previous tip <i>if reading all tips</i>."
-				+ "<br><b>Close</b><br>Closes the Dialog (<b>Escape</b> does the same)." + "<br><br><br>";
+		return "<h2>Navigating Tips</h2>You can navigate tips by using the button bar." //
+				+ "<br><br><b>Startup Options</b>" //
+				+ "<ul style=\"margin: 5\">" //
+				+ "<li>Show dialog on new tips - Opens the dialog on every start</li>" //
+				+ "<li>Indicate new tips in status bar - When new tips arrive an icon appears</li>" //
+				+ "<li>Disable - Only start tips when requested from the menu</li>" //
+				+ "</ul>" //
+				+ "<b>Unread only</b>" //
+				+ "<ul style=\"margin: 5\"><li>Shows all tips when unchecked or unread tips when checked.</li></ul>" //
+				+ "<b>Next Tip</b>" //
+				+ "<ul style=\"margin: 5\"><li>Navigates to the next tip.</li></ul>" //
+				+ "<b>Previous Tip</b>" //
+				+ "<ul style=\"margin: 5\"><li>Navigates to the previous tip <i>if reading all tips</i>.</li></ul>" //
+				+ "<b>Close</b>" //
+				+ "<ul style=\"margin: 5\"><li>Closes the Dialog (<b>Escape</b> does the same).</i></ul><br>";
 	}
 }
