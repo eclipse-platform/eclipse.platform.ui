@@ -8,9 +8,13 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Lucas Bullen (Red Hat Inc.) - [Bug 203792] filter should support multiple keywords
+ *     Mickael Istria (Red Hat Inc.) - [534277] erroneous filtering with multiple words
  *******************************************************************************/
 package org.eclipse.ui.internal.misc;
 
+import com.ibm.icu.text.BreakIterator;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Vector;
 
 /**
@@ -25,27 +29,192 @@ public class StringMatcher {
 
     protected boolean fIgnoreCase;
 
-    protected boolean fHasLeadingStar;
+	protected String[] patternWords;
 
-    protected boolean fHasTrailingStar;
-
-	protected String fSegments[]; // the given pattern is split into * separated segments
-
-    /* boundary value beyond which we don't need to search in the text */
-    protected int fBound = 0;
-
-    protected String[] wordsSplitted;
-
-    protected Word words[];
+	protected Word wholePatternWord;
+	protected Word[] splittedPatternWords;
 
     protected static final char fSingleWildCard = '\u0000';
 
-    public class Word {
-        boolean hasTrailingStar = false;
-        boolean hasLeadingStar = false;
-        int bound = 0;
-        String[] fragments = null;
-        String pattern = null;
+	class Word {
+		private boolean hasTrailingStar = false;
+		private boolean hasLeadingStar = false;
+		private int bound = 0;
+		private String[] fragments = null;
+		private final String pattern;
+
+		Word(String pattern) {
+			this.pattern = pattern;
+		}
+
+		public Word(String pattern, int fLength, String[] wordsSplitted) {
+			this(pattern);
+			this.bound = fLength;
+			this.fragments = wordsSplitted;
+		}
+
+		private void parseWildcards() {
+			if (this.pattern.startsWith("*")) { //$NON-NLS-1$
+				this.hasLeadingStar = true;
+			}
+			if (this.pattern.endsWith("*")) {//$NON-NLS-1$
+				/* make sure it's not an escaped wildcard */
+				if (this.pattern.length() > 1 && this.pattern.charAt(this.pattern.length() - 2) != '\\') {
+					this.hasTrailingStar = true;
+				}
+			}
+
+			Vector<String> temp = new Vector<>();
+
+			int pos = 0;
+			StringBuilder buf = new StringBuilder();
+			while (pos < this.pattern.length()) {
+				char c = this.pattern.charAt(pos++);
+				switch (c) {
+				case '\\':
+					if (pos >= this.pattern.length()) {
+						buf.append(c);
+					} else {
+						char next = this.pattern.charAt(pos++);
+						/* if it's an escape sequence */
+						if (next == '*' || next == '?' || next == '\\') {
+							buf.append(next);
+						} else {
+							/* not an escape sequence, just insert literally */
+							buf.append(c);
+							buf.append(next);
+						}
+					}
+					break;
+				case '*':
+					if (buf.length() > 0) {
+						/* new segment */
+						temp.addElement(buf.toString());
+						this.bound += buf.length();
+						buf.setLength(0);
+					}
+					break;
+				case '?':
+					/* append special character representing single match wildcard */
+					buf.append(fSingleWildCard);
+					break;
+				default:
+					buf.append(c);
+				}
+			}
+
+			/* add last buffer to segment list */
+			if (buf.length() > 0) {
+				temp.addElement(buf.toString());
+				this.bound += buf.length();
+			}
+
+			this.fragments = new String[temp.size()];
+			temp.copyInto(this.fragments);
+		}
+
+		boolean match(String text, int start, int end) {
+			boolean found = true;
+			if (fIgnoreWildCards) {
+				if ((end - start == this.pattern.length())
+						&& this.pattern.regionMatches(fIgnoreCase, 0, text, start, this.pattern.length()))
+					return true;
+				return false;
+			}
+			String[] segments = null;
+			segments = this.fragments;
+			int segCount = segments.length;
+			if (segCount == 0 && (this.hasLeadingStar || this.hasTrailingStar)) {
+				return true;
+			}
+			if (start == end) {
+				if (this.pattern.length() == 0)
+					return true;
+				return false;
+			}
+			if (this.pattern.length() == 0) {
+				if (start == end)
+					return true;
+				return false;
+			}
+
+			int tCurPos = start;
+			int bound = end - this.bound;
+			if (bound < 0) {
+				return false;
+			}
+			int i = 0;
+			String current = segments[i];
+			int segLength = current.length();
+
+			/* process first segment */
+			if (!hasLeadingStar) {
+				if (!regExpRegionMatches(text, start, current, 0, segLength)) {
+					return false;
+				}
+				++i;
+				tCurPos = tCurPos + segLength;
+			}
+			if ((segments.length == 1) && (!hasLeadingStar) && (!hasTrailingStar)) {
+				// only one segment to match, no wildcards specified
+				if (tCurPos == end)
+					return true;
+				return false;
+			}
+			/* process middle segments */
+			while (i < segCount && found) {
+				current = segments[i];
+				int currentMatch;
+				int k = current.indexOf(fSingleWildCard);
+				if (k < 0) {
+					currentMatch = textPosIn(text, tCurPos, end, current);
+					if (currentMatch < 0) {
+						found = false;
+					}
+				} else {
+					currentMatch = regExpPosIn(text, tCurPos, end, current);
+					if (currentMatch < 0) {
+						found = false;
+					}
+				}
+				if (!found)
+					return false;
+				tCurPos = currentMatch + current.length();
+				i++;
+			}
+
+			/* process final segment */
+			if (!hasTrailingStar && tCurPos != end) {
+				int clen = current.length();
+				if (regExpRegionMatches(text, end - clen, current, 0, clen))
+					return true;
+				return false;
+			}
+			if (i == segCount)
+				return true;
+			return false;
+		}
+
+		/**
+		 * @param text
+		 * @param start
+		 * @param end
+		 * @return whether the current pattern word matches at least one word in the
+		 *         given text
+		 */
+		public boolean matchTextWord(String text, int start, int end) {
+			String[] textWords = getWords(text.substring(start, end));
+			if (textWords.length == 0) {
+				return pattern.isEmpty();
+			}
+			for (String subword : textWords) {
+				if (match(subword, 0, subword.length())) {
+					return true;
+				}
+			}
+			return false;
+		}
+
     }
 
     public static class Position {
@@ -102,74 +271,17 @@ public class StringMatcher {
         if (fIgnoreWildCards) {
             parseNoWildCards();
         } else {
-            parseWildCardsForWords();
-			parseWildCards();
+			if (wholePatternWord != null) {
+				wholePatternWord.parseWildcards();
+			}
+			if (splittedPatternWords != null && splittedPatternWords.length > 1) {
+				for (Word word : splittedPatternWords) {
+					word.parseWildcards();
+				}
+			}
         }
     }
 
-    /**
-     * Find the first occurrence of the pattern between <code>start</code)(inclusive)
-     * and <code>end</code>(exclusive).
-     * @param text the String object to search in
-     * @param start the starting index of the search range, inclusive
-     * @param end the ending index of the search range, exclusive
-     * @return an <code>StringMatcher.Position</code> object that keeps the starting
-     * (inclusive) and ending positions (exclusive) of the first occurrence of the
-     * pattern in the specified range of the text; return null if not found or subtext
-     * is empty (start==end). A pair of zeros is returned if pattern is empty string
-     * Note that for pattern like "*abc*" with leading and trailing stars, position of "abc"
-     * is returned. For a pattern like"*??*" in text "abcdf", (1,3) is returned
-     */
-    public StringMatcher.Position find(String text, int start, int end) {
-        if (text == null) {
-			throw new IllegalArgumentException();
-		}
-
-        int tlen = text.length();
-        if (start < 0) {
-			start = 0;
-		}
-        if (end > tlen) {
-			end = tlen;
-		}
-        if (end < 0 || start >= end) {
-			return null;
-		}
-        if (fLength == 0) {
-			return new Position(start, start);
-		}
-        if (fIgnoreWildCards) {
-            int x = posIn(text, start, end);
-            if (x < 0) {
-				return null;
-			}
-            return new Position(x, x + fLength);
-        }
-
-        int segCount = fSegments.length;
-        if (segCount == 0) {
-			return new Position(start, end);
-		}
-
-        int curPos = start;
-        int matchStart = -1;
-        int i;
-        for (i = 0; i < segCount && curPos < end; ++i) {
-            String current = fSegments[i];
-            int nextMatch = regExpPosIn(text, curPos, end, current);
-            if (nextMatch < 0) {
-				return null;
-			}
-            if (i == 0) {
-				matchStart = nextMatch;
-			}
-            curPos = nextMatch + current.length();
-        }
-        if (i < segCount) {
-			return null;
-		}
-        return new Position(matchStart, curPos);
-    }
 
     /**
      * match the given <code>text</code> with the pattern
@@ -183,116 +295,38 @@ public class StringMatcher {
     	return match(text, 0, text.length());
     }
 
-    /**
-     * Given the starting (inclusive) and the ending (exclusive) positions in the
-     * <code>text</code>, determine if the given substring matches with aPattern
-     * @return true if the specified portion of the text matches the pattern
-     * @param text a String object that contains the substring to match
-     * @param start marks the starting position (inclusive) of the substring
-     * @param end marks the ending index (exclusive) of the substring
-     */
-    public boolean match(String text, int start, int end) {
-        boolean found = true;
-        String[] segments = null;
-        if (null == text) {
+	/**
+	 * Given the starting (inclusive) and the ending (exclusive) positions in the
+	 * <code>text</code>, determine if the given substring matches with aPattern
+	 * @return true if the specified portion of the text matches the pattern
+	 * @param text a String object that contains the substring to match
+	 * @param start marks the starting position (inclusive) of the substring
+	 * @param end marks the ending index (exclusive) of the substring
+	 */
+	public boolean match(String text, int start, int end) {
+		if (null == text) {
 			throw new IllegalArgumentException();
 		}
-
-        if (start > end) {
+		if (start > end) {
 			return false;
 		}
-        for (int j = 0; j < words.length; j++) {
-        	if (fIgnoreWildCards) {
-				if ((end - start == words[j].pattern.length())
-						&& words[j].pattern.regionMatches(fIgnoreCase, 0, text, start, words[j].pattern.length()))
-					return true;
-				continue;
-        	}
-        	segments = words[j].fragments;
-			fHasLeadingStar = words[j].hasLeadingStar;
-			fHasTrailingStar = words[j].hasTrailingStar;
-        int segCount = segments.length;
-        if (segCount == 0 && (fHasLeadingStar || fHasTrailingStar)) {
+		int tlen = text.length();
+		start = Math.max(0, start);
+		end = Math.min(end, tlen);
+
+		if (wholePatternWord != null && wholePatternWord.match(text, start, end)) {
 			return true;
 		}
-        if (start == end) {
-        	if (words[j].pattern.length() == 0)
-				return true;
-			continue;
-		}
-        if (words[j].pattern.length() == 0) {
-			if (start == end)
-				return true;
-			continue;
-		}
-
-        int tlen = text.length();
-        if (start < 0) {
-			start = 0;
-		}
-        if (end > tlen) {
-			end = tlen;
-		}
-
-        int tCurPos = start;
-        int bound = end - words[j].bound;
-        if (bound < 0) {
-			continue;
-		}
-        int i = 0;
-        String current = segments[i];
-        int segLength = current.length();
-
-        /* process first segment */
-        if (!fHasLeadingStar) {
-            if (!regExpRegionMatches(text, start, current, 0, segLength)) {
-                continue;
-            }
-				++i;
-				tCurPos = tCurPos + segLength;
-        }
-        if ((segments.length == 1) && (!fHasLeadingStar)
-                && (!fHasTrailingStar)) {
-            // only one segment to match, no wildcards specified
-        	if (tCurPos == end)
-				return true;
-			continue;
-        }
-        /* process middle segments */
-        while (i < segCount && found) {
-            current = segments[i];
-            int currentMatch;
-            int k = current.indexOf(fSingleWildCard);
-            if (k < 0) {
-                currentMatch = textPosIn(text, tCurPos, end, current);
-                if (currentMatch < 0) {
-					found = false;
+		if (splittedPatternWords != null && splittedPatternWords.length > 0) {
+			for (Word word : splittedPatternWords) {
+				if (!word.match(text, start, end) && !word.matchTextWord(text, start, end)) {
+					return false;
 				}
-            } else {
-                currentMatch = regExpPosIn(text, tCurPos, end, current);
-                if (currentMatch < 0) {
-                	found = false;
-				}
-            }
-            if(!found)
-            	continue;
-            tCurPos = currentMatch + current.length();
-            i++;
-        }
-
-        /* process final segment */
-        if (!fHasTrailingStar && tCurPos != end) {
-            int clen = current.length();
-            if (regExpRegionMatches(text, end - clen, current, 0, clen))
-				return true;
-			continue;
-        }
-        if (i == segCount)
+			}
 			return true;
-		continue;
-    } //end of for loop
-    return false;
-    }
+		}
+		return false;
+	}
 
 	/**
 	 * This method parses the given pattern into words separated by spaces
@@ -301,20 +335,20 @@ public class StringMatcher {
 	 */
 	private void parsePatternIntoWords() {
 		String trimedPattern = fPattern.trim();
-		wordsSplitted = trimedPattern.split("\\s+"); //$NON-NLS-1$
-		int wordsIndex = 0;
 		if (!trimedPattern.isEmpty()) {
-			words = new Word[wordsSplitted.length + 1];
-			words[wordsIndex] = new Word();
-			words[wordsIndex].pattern = trimedPattern;
-			wordsIndex = 1;
-		} else {
-			words = new Word[wordsSplitted.length];
-		}
-		for (int i = 0; i < wordsSplitted.length; i++) {
-			words[wordsIndex] = new Word();
-			words[wordsIndex].pattern = wordsSplitted[i];
-			wordsIndex++;
+			this.wholePatternWord = new Word(trimedPattern);
+			patternWords = trimedPattern.split("\\s+"); //$NON-NLS-1$
+			if (patternWords.length > 1) {
+				this.splittedPatternWords = new Word[patternWords.length];
+				for (int i = 0; i < patternWords.length; i++) {
+					String patternWord = patternWords[i];
+					if (!patternWord.endsWith("*")) { //$NON-NLS-1$
+						patternWord += '*';
+					}
+					this.splittedPatternWords[i] = new Word(patternWord);
+					// words may be found anywhere in the line
+				}
+			}
 		}
 	}
 
@@ -323,144 +357,11 @@ public class StringMatcher {
      * Since wildcards are not being used in this case, the pattern consists of a single segment.
      */
     private void parseNoWildCards() {
-        fSegments = new String[1];
-        fSegments[0] = fPattern;
-        fBound = fLength;
-        words = new Word[1];
-        words[0].pattern = fPattern;
-        words[0].bound = fLength;
-        words[0].fragments = wordsSplitted;
+		this.wholePatternWord = new Word(fPattern, fLength, patternWords);
+		this.wholePatternWord.bound = fLength;
+		this.wholePatternWord.fragments = patternWords;
     }
 
-    /**
-     * Parses the given pattern into segments seperated by wildcard '*' characters.
-     * @param p, a String object that is a simple regular expression with '*' and/or '?'
-     */
-    private void parseWildCards() {
-        if (fPattern.startsWith("*")) { //$NON-NLS-1$
-			fHasLeadingStar = true;
-		}
-        if (fPattern.endsWith("*")) {//$NON-NLS-1$
-            /* make sure it's not an escaped wildcard */
-            if (fLength > 1 && fPattern.charAt(fLength - 2) != '\\') {
-                fHasTrailingStar = true;
-            }
-        }
-
-        Vector temp = new Vector();
-
-        int pos = 0;
-        StringBuilder buf = new StringBuilder();
-        while (pos < fLength) {
-            char c = fPattern.charAt(pos++);
-            switch (c) {
-            case '\\':
-                if (pos >= fLength) {
-                    buf.append(c);
-                } else {
-                    char next = fPattern.charAt(pos++);
-                    /* if it's an escape sequence */
-                    if (next == '*' || next == '?' || next == '\\') {
-                        buf.append(next);
-                    } else {
-                        /* not an escape sequence, just insert literally */
-                        buf.append(c);
-                        buf.append(next);
-                    }
-                }
-                break;
-            case '*':
-                if (buf.length() > 0) {
-                    /* new segment */
-                    temp.addElement(buf.toString());
-                    fBound += buf.length();
-                    buf.setLength(0);
-                }
-                break;
-            case '?':
-                /* append special character representing single match wildcard */
-                buf.append(fSingleWildCard);
-                break;
-            default:
-                buf.append(c);
-            }
-        }
-
-        /* add last buffer to segment list */
-        if (buf.length() > 0) {
-            temp.addElement(buf.toString());
-            fBound += buf.length();
-        }
-
-        fSegments = new String[temp.size()];
-        temp.copyInto(fSegments);
-    }
-
-    /**
-	 * Parses the given words into segments separated by wildcard '*'
-	 */
-	private void parseWildCardsForWords() {
-		for (int i = 0; i < words.length; i++) {
-
-			if (words[i].pattern.startsWith("*")) { //$NON-NLS-1$
-				words[i].hasLeadingStar = true;
-			}
-			if (words[i].pattern.endsWith("*")) {//$NON-NLS-1$
-				/* make sure it's not an escaped wildcard */
-				if (words[i].pattern.length() > 1 && words[i].pattern.charAt(words[i].pattern.length() - 2) != '\\') {
-					words[i].hasTrailingStar = true;
-				}
-			}
-
-			Vector temp = new Vector();
-
-			int pos = 0;
-			StringBuilder buf = new StringBuilder();
-			while (pos < words[i].pattern.length()) {
-				char c = words[i].pattern.charAt(pos++);
-				switch (c) {
-				case '\\':
-					if (pos >= words[i].pattern.length()) {
-						buf.append(c);
-					} else {
-						char next = words[i].pattern.charAt(pos++);
-						/* if it's an escape sequence */
-						if (next == '*' || next == '?' || next == '\\') {
-							buf.append(next);
-						} else {
-							/* not an escape sequence, just insert literally */
-							buf.append(c);
-							buf.append(next);
-						}
-					}
-					break;
-				case '*':
-					if (buf.length() > 0) {
-						/* new segment */
-						temp.addElement(buf.toString());
-						words[i].bound += buf.length();
-						buf.setLength(0);
-					}
-					break;
-				case '?':
-					/* append special character representing single match wildcard */
-					buf.append(fSingleWildCard);
-					break;
-				default:
-					buf.append(c);
-				}
-			}
-
-			/* add last buffer to segment list */
-			if (buf.length() > 0) {
-				temp.addElement(buf.toString());
-				words[i].bound += buf.length();
-			}
-
-			words[i].fragments = new String[temp.size()];
-			temp.copyInto(words[i].fragments);
-		} // end of for loop
-	}
 
     /**
      * @param text a string which contains no wildcard
@@ -577,5 +478,41 @@ public class StringMatcher {
 
         return -1;
     }
+
+	/**
+	 * Take the given filter text and break it down into words using a
+	 * BreakIterator.
+	 *
+	 * @param text
+	 * @return an array of words
+	 */
+	public static String[] getWords(String text) {
+		List<String> words = new ArrayList<>();
+		// Break the text up into words, separating based on whitespace and
+		// common punctuation.
+		// Previously used String.split(..., "\\W"), where "\W" is a regular
+		// expression (see the Javadoc for class Pattern).
+		// Need to avoid both String.split and regular expressions, in order to
+		// compile against JCL Foundation (bug 80053).
+		// Also need to do this in an NL-sensitive way. The use of BreakIterator
+		// was suggested in bug 90579.
+		BreakIterator iter = BreakIterator.getWordInstance();
+		iter.setText(text);
+		int i = iter.first();
+		while (i != java.text.BreakIterator.DONE && i < text.length()) {
+			int j = iter.following(i);
+			if (j == java.text.BreakIterator.DONE) {
+				j = text.length();
+			}
+			// match the word
+			if (Character.isLetterOrDigit(text.charAt(i))) {
+				String word = text.substring(i, j);
+				words.add(word);
+			}
+			i = j;
+		}
+		return words.toArray(new String[words.size()]);
+	}
+
 }
 

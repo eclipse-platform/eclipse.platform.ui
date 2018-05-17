@@ -26,6 +26,7 @@ import org.eclipse.ui.tests.dialogs.UIAutomatedSuite;
 import org.eclipse.ui.tests.encoding.EncodingTestSuite;
 import org.eclipse.ui.tests.fieldassist.FieldAssistTestSuite;
 import org.eclipse.ui.tests.filteredtree.FilteredTreeTests;
+import org.eclipse.ui.tests.filteredtree.PatternFilterTest;
 import org.eclipse.ui.tests.keys.KeysTestSuite;
 import org.eclipse.ui.tests.menus.MenusTestSuite;
 import org.eclipse.ui.tests.multipageeditor.MultiPageEditorTestSuite;
@@ -69,6 +70,7 @@ import org.junit.runners.Suite;
 	ContextsTestSuite.class,
 	ConcurrencyTestSuite.class,
 	FilteredTreeTests.class,
+	PatternFilterTest.class,
 	StatusHandlingTestSuite.class,
 	MenusTestSuite.class,
 	QuickAccessTestSuite.class,

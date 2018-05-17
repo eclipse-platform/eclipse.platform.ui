@@ -12,15 +12,12 @@
  *******************************************************************************/
 package org.eclipse.ui.dialogs;
 
-import com.ibm.icu.text.BreakIterator;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import org.eclipse.jface.viewers.AbstractTreeViewer;
+import org.eclipse.jface.viewers.ContentViewer;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.ITreeContentProvider;
-import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.ui.internal.misc.StringMatcher;
@@ -250,11 +247,12 @@ public class PatternFilter extends ViewerFilter {
      * @return true if the given element has children that matches the filter text
      */
     protected boolean isParentMatch(Viewer viewer, Object element){
-        Object[] children = ((ITreeContentProvider) ((AbstractTreeViewer) viewer)
-                .getContentProvider()).getChildren(element);
+		if (viewer instanceof AbstractTreeViewer
+				&& ((AbstractTreeViewer) viewer).getContentProvider() instanceof ITreeContentProvider) {
+			Object[] children = ((ITreeContentProvider) ((AbstractTreeViewer) viewer).getContentProvider())
+					.getChildren(element);
 
-        if ((children != null) && (children.length > 0)) {
-			return isAnyVisible(viewer, element, children);
+			return children != null && children.length > 0 && isAnyVisible(viewer, element, children);
 		}
         return false;
     }
@@ -270,48 +268,13 @@ public class PatternFilter extends ViewerFilter {
      * @return true if the given element's label matches the filter text
      */
     protected boolean isLeafMatch(Viewer viewer, Object element){
-        String labelText = ((ILabelProvider) ((StructuredViewer) viewer)
+		String labelText = ((ILabelProvider) ((ContentViewer) viewer)
                 .getLabelProvider()).getText(element);
 
         if(labelText == null) {
 			return false;
 		}
         return wordMatches(labelText);
-    }
-
-    /**
-     * Take the given filter text and break it down into words using a
-     * BreakIterator.
-     *
-     * @param text
-     * @return an array of words
-     */
-    private String[] getWords(String text){
-    	List words = new ArrayList();
-		// Break the text up into words, separating based on whitespace and
-		// common punctuation.
-		// Previously used String.split(..., "\\W"), where "\W" is a regular
-		// expression (see the Javadoc for class Pattern).
-		// Need to avoid both String.split and regular expressions, in order to
-		// compile against JCL Foundation (bug 80053).
-		// Also need to do this in an NL-sensitive way. The use of BreakIterator
-		// was suggested in bug 90579.
-		BreakIterator iter = BreakIterator.getWordInstance();
-		iter.setText(text);
-		int i = iter.first();
-		while (i != java.text.BreakIterator.DONE && i < text.length()) {
-			int j = iter.following(i);
-			if (j == java.text.BreakIterator.DONE) {
-				j = text.length();
-			}
-			// match the word
-			if (Character.isLetterOrDigit(text.charAt(i))) {
-				String word = text.substring(i, j);
-				words.add(word);
-			}
-			i = j;
-		}
-		return (String[]) words.toArray(new String[words.size()]);
     }
 
 	/**
@@ -333,14 +296,13 @@ public class PatternFilter extends ViewerFilter {
 		}
 
 		// Otherwise check if any of the words of the text matches
-		String[] words = getWords(text);
+		String[] words = StringMatcher.getWords(text);
 		for (String word : words) {
-			if (match(word)) {
-				return true;
+			if (!match(word)) {
+				return false;
 			}
 		}
-
-		return false;
+		return words.length > 0;
 	}
 
 	/**

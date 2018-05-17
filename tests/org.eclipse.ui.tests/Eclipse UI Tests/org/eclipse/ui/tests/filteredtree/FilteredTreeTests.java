@@ -116,6 +116,9 @@ public class FilteredTreeTests extends UITestCase {
 		applyPattern("0-0-0-0 name-*");
 		assertNumberOfTopLevelItems(1);
 
+		applyPattern("0-0-0-0 name unknownWord");
+		assertNumberOfTopLevelItems(0);
+
 		applyPattern("");
 		assertNumberOfTopLevelItems(NUM_ITEMS);
 
