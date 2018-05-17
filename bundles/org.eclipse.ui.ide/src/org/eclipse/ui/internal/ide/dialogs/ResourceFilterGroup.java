@@ -1292,7 +1292,7 @@ public class ResourceFilterGroup {
 				byte[] buffer = (byte[]) super.nativeToJava(transferData);
 				if (buffer == null)
 					return null;
-				FilterCopy[] myData = new FilterCopy[0];
+				FilterCopy[] myData;
 				try {
 					ByteArrayInputStream in = new ByteArrayInputStream(buffer);
 					DataInputStream readIn = new DataInputStream(in);
