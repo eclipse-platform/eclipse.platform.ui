@@ -15,14 +15,14 @@ t SPDX-License-Identifier: EPL-2.0
 
 package org.eclipse.e4.ui.tests.css.core.parser;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.eclipse.e4.ui.css.core.engine.CSSEngine;
 import org.eclipse.e4.ui.css.core.impl.dom.Measure;
 import org.eclipse.e4.ui.tests.css.core.util.ParserTestUtil;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.w3c.dom.css.CSSPrimitiveValue;
 import org.w3c.dom.css.CSSValue;
 import org.w3c.dom.css.CSSValueList;
@@ -31,7 +31,7 @@ public class ValueTest {
 
 	private CSSEngine engine;
 
-	@Before
+	@BeforeEach
 	public void setUp() {
 		engine = ParserTestUtil.createEngine();
 	}

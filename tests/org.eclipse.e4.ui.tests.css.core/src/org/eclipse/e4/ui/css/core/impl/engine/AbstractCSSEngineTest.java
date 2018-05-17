@@ -13,21 +13,21 @@
  *******************************************************************************/
 package org.eclipse.e4.ui.css.core.impl.engine;
 
-import static org.junit.Assert.assertNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 import java.util.Objects;
 
 import org.eclipse.e4.ui.css.core.dom.IElementProvider;
 import org.eclipse.e4.ui.css.core.dom.parsers.CSSParser;
 import org.eclipse.e4.ui.css.core.engine.CSSEngine;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.w3c.dom.Element;
 
 public class AbstractCSSEngineTest {
 	private AbstractCSSEngine objectUnderTest;
 
-	@Before
+	@BeforeEach
 	public void setUp() {
 		objectUnderTest = new AbstractCSSEngine() {
 

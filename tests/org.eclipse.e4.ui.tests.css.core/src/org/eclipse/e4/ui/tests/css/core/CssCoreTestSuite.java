@@ -26,12 +26,12 @@ import org.eclipse.e4.ui.tests.css.core.parser.SelectorTest;
 import org.eclipse.e4.ui.tests.css.core.parser.StyleRuleTest;
 import org.eclipse.e4.ui.tests.css.core.parser.ValueTest;
 import org.eclipse.e4.ui.tests.css.core.parser.ViewCSSTest;
+import org.junit.platform.runner.JUnitPlatform;
+import org.junit.platform.suite.api.SelectClasses;
 import org.junit.runner.RunWith;
-import org.junit.runners.Suite;
-import org.junit.runners.Suite.SuiteClasses;
 
-@RunWith(Suite.class)
-@SuiteClasses({
+@RunWith(JUnitPlatform.class)
+@SelectClasses({
 	CascadeTest.class,
 	FontFaceRulesTest.class,
 	MediaRulesTest.class,

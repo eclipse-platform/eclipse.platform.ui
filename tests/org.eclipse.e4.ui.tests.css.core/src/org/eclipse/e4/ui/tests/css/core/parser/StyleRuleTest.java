@@ -14,12 +14,12 @@
  *******************************************************************************/
 package org.eclipse.e4.ui.tests.css.core.parser;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.eclipse.e4.ui.tests.css.core.util.ParserTestUtil;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.w3c.dom.css.CSSPrimitiveValue;
 import org.w3c.dom.css.CSSRule;
 import org.w3c.dom.css.CSSRuleList;
@@ -55,11 +55,11 @@ public class StyleRuleTest {
 		assertTrue(value instanceof CSSPrimitiveValue);
 		RGBColor colorValue = ((CSSPrimitiveValue) value).getRGBColorValue();
 		assertEquals(255.0f, colorValue.getRed().getFloatValue(
-				CSSPrimitiveValue.CSS_NUMBER), 0f);
+				CSSPrimitiveValue.CSS_NUMBER));
 		assertEquals(2.0f, colorValue.getGreen().getFloatValue(
-				CSSPrimitiveValue.CSS_NUMBER), 0f);
+				CSSPrimitiveValue.CSS_NUMBER));
 		assertEquals(32.0f, colorValue.getBlue().getFloatValue(
-				CSSPrimitiveValue.CSS_NUMBER), 0f);
+				CSSPrimitiveValue.CSS_NUMBER));
 	}
 
 	@Test
@@ -144,11 +144,11 @@ public class StyleRuleTest {
 		assertTrue(value instanceof CSSPrimitiveValue);
 		RGBColor colorValue = ((CSSPrimitiveValue) value).getRGBColorValue();
 		assertEquals(255.0f, colorValue.getRed().getFloatValue(
-				CSSPrimitiveValue.CSS_NUMBER), 0f);
+				CSSPrimitiveValue.CSS_NUMBER));
 		assertEquals(2.0f, colorValue.getGreen().getFloatValue(
-				CSSPrimitiveValue.CSS_NUMBER), 0f);
+				CSSPrimitiveValue.CSS_NUMBER));
 		assertEquals(32.0f, colorValue.getBlue().getFloatValue(
-				CSSPrimitiveValue.CSS_NUMBER), 0f);
+				CSSPrimitiveValue.CSS_NUMBER));
 	}
 
 	@Test

@@ -13,12 +13,12 @@ t SPDX-License-Identifier: EPL-2.0
  ******************************************************************************/
 package org.eclipse.e4.ui.tests.css.core.parser;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import org.eclipse.e4.ui.tests.css.core.util.ParserTestUtil;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 import org.w3c.dom.css.CSSRuleList;
 import org.w3c.dom.css.CSSStyleSheet;
 
@@ -28,7 +28,7 @@ import org.w3c.dom.css.CSSStyleSheet;
 public class MediaRulesTest {
 
 	@Test
-	@Ignore("//THIS TEST KNOWN TO FAIL Dec 16/08")
+	@Disabled("//THIS TEST KNOWN TO FAIL Dec 16/08")
 	public void testMediaRule() throws Exception {
 		String css = "@media screen, print {\n"
 				+ "BODY { line-height: 1.2 }\n"

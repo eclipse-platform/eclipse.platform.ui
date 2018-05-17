@@ -14,7 +14,7 @@ t SPDX-License-Identifier: EPL-2.0
  ******************************************************************************/
 package org.eclipse.e4.ui.tests.css.core.parser;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.io.IOException;
 
@@ -24,8 +24,8 @@ import org.eclipse.e4.ui.css.swt.engine.CSSSWTEngineImpl;
 import org.eclipse.e4.ui.tests.css.core.util.ParserTestUtil;
 import org.eclipse.e4.ui.tests.css.core.util.TestElement;
 import org.eclipse.swt.widgets.Display;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.w3c.dom.css.CSSStyleDeclaration;
 import org.w3c.dom.css.CSSStyleSheet;
 import org.w3c.dom.css.ViewCSS;
@@ -36,7 +36,7 @@ public class CascadeTest {
 	private Display display;
 	private CSSSWTEngineImpl engine;
 
-	@Before
+	@BeforeEach
 	public void setUp() throws Exception {
 		display = Display.getDefault();
 		engine = new CSSSWTEngineImpl(display);

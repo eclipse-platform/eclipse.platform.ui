@@ -13,11 +13,11 @@ t SPDX-License-Identifier: EPL-2.0
  ******************************************************************************/
 package org.eclipse.e4.ui.tests.css.core.parser;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import org.eclipse.e4.ui.tests.css.core.util.ParserTestUtil;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.w3c.dom.css.CSSStyleSheet;
 
 /**

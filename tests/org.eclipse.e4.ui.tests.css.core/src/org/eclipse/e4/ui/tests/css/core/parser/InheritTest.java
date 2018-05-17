@@ -12,6 +12,8 @@ t SPDX-License-Identifier: EPL-2.0
  *******************************************************************************/
 package org.eclipse.e4.ui.tests.css.core.parser;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 import java.io.IOException;
 import java.util.Collection;
 import java.util.Collections;
@@ -23,12 +25,11 @@ import org.eclipse.e4.ui.css.core.impl.dom.DocumentCSSImpl;
 import org.eclipse.e4.ui.css.core.impl.engine.CSSEngineImpl;
 import org.eclipse.e4.ui.tests.css.core.util.ParserTestUtil;
 import org.eclipse.e4.ui.tests.css.core.util.TestElement;
+import org.junit.jupiter.api.Test;
 import org.w3c.dom.Element;
 import org.w3c.dom.css.CSSStyleDeclaration;
 import org.w3c.dom.css.CSSStyleSheet;
 import org.w3c.dom.css.CSSValue;
-
-import junit.framework.TestCase;
 
 /**
  * Test the 'inherit' value independently of the SWT CSS engine. To do this, we
@@ -36,8 +37,9 @@ import junit.framework.TestCase;
  *
  * @author Stefan Winkler
  */
-public class InheritTest extends TestCase {
+public class InheritTest {
 
+	@Test
 	public void testInheritFromParent() throws Exception {
 		String css = "Canvas { property: myValue; }\n"
 				+ "Button { property: inherit; }\n";
@@ -53,6 +55,7 @@ public class InheritTest extends TestCase {
 		assertEquals("myValue", button.getAttribute("property"));
 	}
 
+	@Test
 	public void testInheritAsDefault() throws Exception {
 		String css = "* { property: inherit; }\n"
 				+ "Canvas { property: myValue; }\n";
@@ -68,6 +71,7 @@ public class InheritTest extends TestCase {
 		assertEquals("myValue", button.getAttribute("property"));
 	}
 
+	@Test
 	public void testInheritExplicitProperty() throws Exception {
 		String css = "Button { property: inherit; }\n";
 
