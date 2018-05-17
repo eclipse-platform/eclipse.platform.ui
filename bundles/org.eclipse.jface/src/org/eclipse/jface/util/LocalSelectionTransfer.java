@@ -128,8 +128,8 @@ public class LocalSelectionTransfer extends ByteArrayTransfer {
     @Override
 	public Object nativeToJava(TransferData transferData) {
         Object result = super.nativeToJava(transferData);
-        if (isInvalidNativeType(result)) {
-        	Policy.getLog().log(new Status(
+        if (result != null && isInvalidNativeType(result)) {
+            Policy.getLog().log(new Status(
                             IStatus.ERROR,
                             Policy.JFACE,
                             IStatus.ERROR,
