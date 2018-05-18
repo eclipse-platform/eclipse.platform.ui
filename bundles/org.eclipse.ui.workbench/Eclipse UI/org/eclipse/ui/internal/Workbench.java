@@ -618,26 +618,10 @@ public final class Workbench extends EventManager implements IWorkbench,
 
 				MApplication appModel = e4Workbench.getApplication();
 				IEclipseContext context = e4Workbench.getContext();
-
 				WorkbenchMigrationProcessor migrationProcessor = null;
-				try {
-					migrationProcessor = ContextInjectionFactory.make(WorkbenchMigrationProcessor.class, context);
-				} catch (InjectionException e1) {
-					WorkbenchPlugin.log(e1);
+				if (isFirstE4WorkbenchRun(appModel)) {
+					migrationProcessor = rune3WorkbenchMigration(context);
 				}
-
-				if (migrationProcessor != null && isFirstE4WorkbenchRun(appModel)
-						&& migrationProcessor.isLegacyWorkbenchDetected()) {
-					try {
-						WorkbenchPlugin
-								.log(StatusUtil.newStatus(IStatus.INFO, "Workbench migration started", null)); //$NON-NLS-1$
-						migrationProcessor.migrate();
-					} catch (Exception e2) {
-						WorkbenchPlugin.log("Workbench migration failed", e2); //$NON-NLS-1$
-						migrationProcessor.restoreDefaultModel();
-					}
-				}
-
 				// create the workbench instance
 				Workbench workbench = new Workbench(display, advisor, e4Workbench
 						.getApplication(), e4Workbench.getContext());
@@ -700,6 +684,26 @@ public final class Workbench extends EventManager implements IWorkbench,
 			}
 		});
 		return returnCode[0];
+	}
+
+	private static WorkbenchMigrationProcessor rune3WorkbenchMigration(IEclipseContext context) {
+		WorkbenchMigrationProcessor migrationProcessor = null;
+		try {
+			migrationProcessor = ContextInjectionFactory.make(WorkbenchMigrationProcessor.class, context);
+		} catch (InjectionException e1) {
+			WorkbenchPlugin.log(e1);
+		}
+
+		if (migrationProcessor != null && migrationProcessor.isLegacyWorkbenchDetected()) {
+			try {
+				WorkbenchPlugin.log(StatusUtil.newStatus(IStatus.INFO, "Workbench migration started", null)); //$NON-NLS-1$
+				migrationProcessor.migrate();
+			} catch (Exception e2) {
+				WorkbenchPlugin.log("Workbench migration failed", e2); //$NON-NLS-1$
+				migrationProcessor.restoreDefaultModel();
+			}
+		}
+		return migrationProcessor;
 	}
 
 	private static void setSearchContribution(MApplication app, boolean enabled) {
