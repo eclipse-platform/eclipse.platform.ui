@@ -1589,9 +1589,6 @@ public final class Workbench extends EventManager implements IWorkbench,
 		return WorkbenchPlugin.getDefault().getWorkingSetManager();
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public ILocalWorkingSetManager createLocalWorkingSetManager() {
 		return new LocalWorkingSetManager(WorkbenchPlugin.getDefault().getBundleContext());
@@ -2820,16 +2817,10 @@ public final class Workbench extends EventManager implements IWorkbench,
 		} else
 			synchronizer = null;
 
-		// // prime the splash nice and early
-		// if (createSplash)
-		// createSplashWrapper();
-
-		// ModalContext should not spin the event loop (there is no UI yet to
-		// block)
+		// ModalContext should not spin the event loop (there is no UI yet to block)
 		ModalContext.setAllowReadAndDispatch(false);
 
-		// if the -debug command line argument is used and the event loop is
-		// being
+		// if the -debug command line argument is used and the event loop is being
 		// run while starting the Workbench, log a warning.
 		if (WorkbenchPlugin.getDefault().isDebugging()) {
 			display.asyncExec(() -> {
@@ -2925,8 +2916,6 @@ public final class Workbench extends EventManager implements IWorkbench,
 
 				if (synchronizer != null)
 					synchronizer.started();
-				// the event loop
-				// runEventLoop(handler, display);
 			}
 			returnCode = PlatformUI.RETURN_OK;
 			if (!initOK[0]) {
@@ -3034,8 +3023,7 @@ public final class Workbench extends EventManager implements IWorkbench,
 							"Exceptions during shutdown", ex)); //$NON-NLS-1$
 		}
 
-		// notify regular workbench clients of shutdown, and clear the list when
-		// done
+		// notify regular workbench clients of shutdown, and clear the list when done
 		firePostShutdown();
 		workbenchListeners.clear();
 
