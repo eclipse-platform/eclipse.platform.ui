@@ -70,6 +70,7 @@ import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.SafeRunner;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.core.runtime.dynamichelpers.IExtensionTracker;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.e4.core.contexts.ContextFunction;
@@ -289,57 +290,25 @@ public final class Workbench extends EventManager implements IWorkbench,
 	private static final String CMD_DATA = "-data"; //$NON-NLS-1$
 	private static final String CMD_VMARGS = "-vmargs"; //$NON-NLS-1$
 
-	private final class StartupProgressBundleListener implements SynchronousBundleListener {
+	private static final class StartupProgressBundleListener implements SynchronousBundleListener {
 
-		private final IProgressMonitor progressMonitor;
+		private final SubMonitor subMonitor;
+		private Display displayForStartupListener;
 
-		private final int maximumProgressCount;
 
-		// stack of names of bundles currently starting
-		private final List<String> starting;
-
-		StartupProgressBundleListener(IProgressMonitor progressMonitor, int maximumProgressCount) {
-			super();
-			this.progressMonitor = progressMonitor;
-			this.maximumProgressCount = maximumProgressCount;
-			this.starting = new ArrayList<>();
+		StartupProgressBundleListener(IProgressMonitor progressMonitor, Display display) {
+			displayForStartupListener = display;
+			subMonitor = SubMonitor.convert(progressMonitor);
+			subMonitor.setTaskName(WorkbenchMessages.Startup_Loading_Workbench);
 		}
 
 		@Override
 		public void bundleChanged(BundleEvent event) {
 			int eventType = event.getType();
-			String bundleName;
-			boolean worked = false;
-			// Note: no calls to any non-trivial Eclipse code outside this class
-			// should be made inside the synchronized block below. Such calls
-			// can cause deadlocks on startup, see bug 502095.
-			// Progress monitor calls *are* non-trivial.
-			synchronized (this) {
-				if (eventType == BundleEvent.STARTING) {
-					starting.add(bundleName = event.getBundle().getSymbolicName());
-				} else if (eventType == BundleEvent.STARTED) {
-					progressCount++;
-					if (progressCount <= maximumProgressCount) {
-						worked = true;
-					}
-					int index = starting.lastIndexOf(event.getBundle().getSymbolicName());
-					if (index >= 0) {
-						starting.remove(index);
-					}
-					if (index != starting.size()) {
-						return; // not currently displayed
-					}
-					bundleName = index == 0 ? null : (String) starting.get(index - 1);
-				} else {
-					return; // uninteresting event
-				}
-			}
-			if (worked) {
-				progressMonitor.worked(1);
-			}
-			if (bundleName != null) {
-				String taskName = NLS.bind(WorkbenchMessages.Startup_Loading, bundleName);
-				progressMonitor.subTask(taskName);
+			if (eventType == BundleEvent.STARTED) {
+				subMonitor.setWorkRemaining(5).worked(1);
+				spinEventQueueToUpdateUi(displayForStartupListener);
+
 			}
 		}
 	}
@@ -442,12 +411,6 @@ public final class Workbench extends EventManager implements IWorkbench,
 	 * initialized during workbench during the <code>init</code> method.
 	 */
 	private final ServiceLocator serviceLocator;
-
-	/**
-	 * A count of how many plug-ins were loaded while restoring the workbench
-	 * state. Initially -1 for unknown number.
-	 */
-	private int progressCount = -1;
 
 	/**
 	 * Listener list for registered IWorkbenchListeners .
@@ -595,6 +558,10 @@ public final class Workbench extends EventManager implements IWorkbench,
 	public static int createAndRunWorkbench(final Display display, final WorkbenchAdvisor advisor) {
 		final int[] returnCode = new int[1];
 		Realm.runWithDefault(DisplayRealm.getRealm(display), () -> {
+			spinEventQueueToUpdateUi(display);
+			boolean showProgress = PrefUtil.getAPIPreferenceStore()
+					.getBoolean(IWorkbenchPreferenceConstants.SHOW_PROGRESS_ON_STARTUP);
+
 			final String nlExtensions = Platform.getNLExtensions();
 			if (nlExtensions.length() > 0) {
 				ULocale.setDefault(Category.FORMAT,
@@ -629,25 +596,17 @@ public final class Workbench extends EventManager implements IWorkbench,
 				// prime the splash nice and early
 				workbench.createSplashWrapper();
 
+				spinEventQueueToUpdateUi(display);
 				AbstractSplashHandler handler = getSplash();
 
-				boolean showProgress = PrefUtil.getAPIPreferenceStore().getBoolean(
-								IWorkbenchPreferenceConstants.SHOW_PROGRESS_ON_STARTUP);
 
-				IProgressMonitor progressMonitor = null;
 				SynchronousBundleListener bundleListener = null;
 				if (handler != null && showProgress) {
-					progressMonitor = handler.getBundleProgressMonitor();
-					if (progressMonitor != null) {
-						double cutoff = 0.95;
-						int expectedProgressCount = Math.max(1, WorkbenchPlugin.getDefault()
-								.getBundleCount() / 10);
-						progressMonitor.beginTask("", expectedProgressCount); //$NON-NLS-1$
-						bundleListener = workbench.new StartupProgressBundleListener(
-								progressMonitor, (int) (expectedProgressCount * cutoff));
-						WorkbenchPlugin.getDefault().addBundleListener(bundleListener);
-					}
+					IProgressMonitor progressMonitor = SubMonitor.convert(handler.getBundleProgressMonitor());
+					bundleListener = new Workbench.StartupProgressBundleListener(progressMonitor, display);
+					WorkbenchPlugin.getDefault().addBundleListener(bundleListener);
 				}
+
 				setSearchContribution(appModel, true);
 				// run the legacy workbench once
 				returnCode[0] = workbench.runUI();
@@ -871,6 +830,7 @@ public final class Workbench extends EventManager implements IWorkbench,
 				splash.init(splashShell);
 			}
 
+
 			@Override
 			public void handleException(Throwable e) {
 				StatusManager.getManager().handle(
@@ -884,6 +844,14 @@ public final class Workbench extends EventManager implements IWorkbench,
 			}
 		};
 		SafeRunner.run(run);
+	}
+
+	private static void spinEventQueueToUpdateUi(final Display display) {
+		// Ensure that the splash screen is rendered
+		int safetyCounter = 0;
+		while (display.readAndDispatch() && safetyCounter++ < 100) {
+			// process until the queue is empty or until we hit the safetyCounter limit
+		}
 	}
 
 	/**
@@ -2491,10 +2459,7 @@ public final class Workbench extends EventManager implements IWorkbench,
 			// assume we are loading a tenth of the installed plug-ins.
 			// (The Eclipse SDK loads 7 of 86 plug-ins at startup as of
 			// 2005-5-20)
-			final int expectedProgressCount = Math.max(1, WorkbenchPlugin.getDefault()
-					.getBundleCount() / 10);
-
-			runStartupWithProgress(expectedProgressCount, () -> doOpenFirstTimeWindow());
+			runStartupWithProgress(() -> doOpenFirstTimeWindow());
 		}
 	}
 
@@ -2524,31 +2489,23 @@ public final class Workbench extends EventManager implements IWorkbench,
 		}
 	}
 
-	private void runStartupWithProgress(final int expectedProgressCount, final Runnable runnable) {
-		progressCount = 0;
-		final double cutoff = 0.95;
+	private void runStartupWithProgress(final Runnable runnable) {
 
 		AbstractSplashHandler handler = getSplash();
 		IProgressMonitor progressMonitor = null;
-		if (handler != null)
+		if (handler != null) {
 			progressMonitor = handler.getBundleProgressMonitor();
+		}
 
 		if (progressMonitor == null) {
 			// cannot report progress (e.g. if the splash screen is not showing)
 			// fall back to starting without showing progress.
 			runnable.run();
 		} else {
-			progressMonitor.beginTask("", expectedProgressCount); //$NON-NLS-1$
-			SynchronousBundleListener bundleListener = new StartupProgressBundleListener(
-					progressMonitor, (int) (expectedProgressCount * cutoff));
+			SynchronousBundleListener bundleListener = new StartupProgressBundleListener(progressMonitor, display);
 			WorkbenchPlugin.getDefault().addBundleListener(bundleListener);
 			try {
 				runnable.run();
-				progressMonitor.subTask(WorkbenchMessages.Startup_Done);
-				int remainingWork = expectedProgressCount
-						- Math.min(progressCount, (int) (expectedProgressCount * cutoff));
-				progressMonitor.worked(remainingWork);
-				progressMonitor.done();
 			} finally {
 				WorkbenchPlugin.getDefault().removeBundleListener(bundleListener);
 			}
