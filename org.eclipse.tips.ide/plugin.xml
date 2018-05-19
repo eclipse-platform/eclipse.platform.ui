@@ -39,7 +39,7 @@
                commandId="org.eclipse.tips.ide.command.open"
                icon="icons/lightbulb.png"
                id="org.eclipse.tips.ide.tip.menu"
-               label="Tip of the Day"
+               label="Tip of the Da&amp;y"
                style="push"> variable="newtips">
          </command>
       </menuContribution>
