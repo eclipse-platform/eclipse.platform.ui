@@ -290,7 +290,7 @@ class CompletionProposalPopup implements IContentAssistListener {
 	/** Listener filling the document event queue. */
 	private IDocumentListener fDocumentListener;
 	/** The filter list of proposals. */
-	private List<ICompletionProposal> fFilteredProposals;
+	List<ICompletionProposal> fFilteredProposals;
 	/** The computed list of proposals. */
 	List<ICompletionProposal> fComputedProposals;
 	/** The offset for which the proposals have been computed. */
@@ -1267,7 +1267,7 @@ class CompletionProposalPopup implements IContentAssistListener {
 	 *
 	 * @since 3.2
 	 */
-	private void ensureDocumentListenerInstalled() {
+	void ensureDocumentListenerInstalled() {
 		if (fDocumentListener == null) {
 			fDocumentListener=  new IDocumentListener()  {
 				@Override
@@ -1619,7 +1619,7 @@ class CompletionProposalPopup implements IContentAssistListener {
 
 					if (count == 1 && canAutoInsert(fFilteredProposals.get(0))) {
 						insertProposal(fFilteredProposals.get(0), (char) 0, 0, fInvocationOffset);
-						hide();
+							hide();
 					} else {
 						ensureDocumentListenerInstalled();
 						if (count > 0 && completeCommonPrefix())
@@ -1630,8 +1630,8 @@ class CompletionProposalPopup implements IContentAssistListener {
 							setProposals(fComputedProposals, false);
 							displayProposals();
 						}
+						}
 					}
-				}
 			});
 		}
 		return getErrorMessage();
@@ -1647,7 +1647,7 @@ class CompletionProposalPopup implements IContentAssistListener {
 	 *         selector can be closed, <code>false</code> otherwise
 	 * @since 3.0
 	 */
-	private boolean completeCommonPrefix() {
+	boolean completeCommonPrefix() {
 
 		// 0: insert single proposals
 		if (fFilteredProposals.size() == 1) {
