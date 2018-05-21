@@ -51,25 +51,29 @@ public class ResourceManager extends SWTResourceManager {
 	private static Map<ImageDescriptor, Image> m_descriptorImageMap = new HashMap<>();
 
 	/**
-	 * Returns an {@link ImageDescriptor} stored in the file at the specified path
-	 * relative to the specified class.
+	 * Returns an {@link ImageDescriptor} stored in the file at the specified
+	 * path relative to the specified class.
 	 *
 	 * @param clazz
-	 *            the {@link Class} relative to which to find the image descriptor.
+	 *            the {@link Class} relative to which to find the image
+	 *            descriptor.
 	 * @param path
 	 *            the path to the image file.
-	 * @return the {@link ImageDescriptor} stored in the file at the specified path.
+	 * @return the {@link ImageDescriptor} stored in the file at the specified
+	 *         path.
 	 */
 	public static ImageDescriptor getImageDescriptor(Class<?> clazz, String path) {
 		return ImageDescriptor.createFromFile(clazz, path);
 	}
 
 	/**
-	 * Returns an {@link ImageDescriptor} stored in the file at the specified path.
+	 * Returns an {@link ImageDescriptor} stored in the file at the specified
+	 * path.
 	 *
 	 * @param path
 	 *            the path to the image file.
-	 * @return the {@link ImageDescriptor} stored in the file at the specified path.
+	 * @return the {@link ImageDescriptor} stored in the file at the specified
+	 *         path.
 	 */
 	public static ImageDescriptor getImageDescriptor(String path) {
 		try {
@@ -105,7 +109,8 @@ public class ResourceManager extends SWTResourceManager {
 	private static Map<Image, Map<Image, Image>>[] m_decoratedImageMap = new Map[LAST_CORNER_KEY];
 
 	/**
-	 * Returns an {@link Image} composed of a base image decorated by another image.
+	 * Returns an {@link Image} composed of a base image decorated by another
+	 * image.
 	 *
 	 * @param baseImage
 	 *            the base {@link Image} that should be decorated.
@@ -118,7 +123,8 @@ public class ResourceManager extends SWTResourceManager {
 	}
 
 	/**
-	 * Returns an {@link Image} composed of a base image decorated by another image.
+	 * Returns an {@link Image} composed of a base image decorated by another
+	 * image.
 	 *
 	 * @param baseImage
 	 *            the base {@link Image} that should be decorated.
@@ -151,16 +157,15 @@ public class ResourceManager extends SWTResourceManager {
 			CompositeImageDescriptor compositImageDesc = new CompositeImageDescriptor() {
 				@Override
 				protected void drawCompositeImage(int width, int height) {
-					drawImage(createCachedImageDataProvider(baseImage), 0, 0);
+					drawImage(baseImage.getImageData(), 0, 0);
 					if (corner == TOP_LEFT) {
-						drawImage(createCachedImageDataProvider(decorator), 0, 0);
+						drawImage(decorator.getImageData(), 0, 0);
 					} else if (corner == TOP_RIGHT) {
-						drawImage(createCachedImageDataProvider(decorator), bib.width - dib.width, 0);
+						drawImage(decorator.getImageData(), bib.width - dib.width, 0);
 					} else if (corner == BOTTOM_LEFT) {
-						drawImage(createCachedImageDataProvider(decorator), 0, bib.height - dib.height);
+						drawImage(decorator.getImageData(), 0, bib.height - dib.height);
 					} else if (corner == BOTTOM_RIGHT) {
-						drawImage(createCachedImageDataProvider(decorator), bib.width - dib.width,
-								bib.height - dib.height);
+						drawImage(decorator.getImageData(), bib.width - dib.width, bib.height - dib.height);
 					}
 				}
 
@@ -227,8 +232,8 @@ public class ResourceManager extends SWTResourceManager {
 	}
 
 	/**
-	 * Instance of {@link PluginResourceProvider}, used by WindowBuilder at design
-	 * time.
+	 * Instance of {@link PluginResourceProvider}, used by WindowBuilder at
+	 * design time.
 	 */
 	private static PluginResourceProvider m_designTimePluginResourceProvider = null;
 
@@ -257,7 +262,8 @@ public class ResourceManager extends SWTResourceManager {
 	}
 
 	/**
-	 * Returns an {@link Image} based on a {@link Bundle} and resource entry path.
+	 * Returns an {@link Image} based on a {@link Bundle} and resource entry
+	 * path.
 	 *
 	 * @param symbolicName
 	 *            the symbolic name of the {@link Bundle}.
@@ -308,9 +314,11 @@ public class ResourceManager extends SWTResourceManager {
 	 *            the plugin {@link Object} containing the image.
 	 * @param name
 	 *            the path to th eimage within the plugin.
-	 * @return the {@link ImageDescriptor} stored in the file at the specified path.
+	 * @return the {@link ImageDescriptor} stored in the file at the specified
+	 *         path.
 	 *
-	 * @deprecated Use {@link #getPluginImageDescriptor(String, String)} instead.
+	 * @deprecated Use {@link #getPluginImageDescriptor(String, String)}
+	 *             instead.
 	 */
 	@Deprecated
 	public static ImageDescriptor getPluginImageDescriptor(Object plugin, String name) {
@@ -335,8 +343,8 @@ public class ResourceManager extends SWTResourceManager {
 	 *            the symbolic name of the {@link Bundle}.
 	 * @param path
 	 *            the path of the resource entry.
-	 * @return the {@link ImageDescriptor} based on a {@link Bundle} and resource
-	 *         entry path.
+	 * @return the {@link ImageDescriptor} based on a {@link Bundle} and
+	 *         resource entry path.
 	 */
 	public static ImageDescriptor getPluginImageDescriptor(String symbolicName, String path) {
 		try {
@@ -423,9 +431,9 @@ public class ResourceManager extends SWTResourceManager {
 	//
 	////////////////////////////////////////////////////////////////////////////
 	/**
-	 * Dispose of cached objects and their underlying OS resources. This should only
-	 * be called when the cached objects are no longer needed (e.g. on application
-	 * shutdown).
+	 * Dispose of cached objects and their underlying OS resources. This should
+	 * only be called when the cached objects are no longer needed (e.g. on
+	 * application shutdown).
 	 */
 	public static void dispose() {
 		disposeColors();
