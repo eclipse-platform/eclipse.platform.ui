@@ -67,8 +67,8 @@ public abstract class JsonTipProvider extends TipProvider {
 	 *
 	 * <p>
 	 * <b>Implementation Details</b><br>
-	 * The implementation of this method in this provider will fetch the json file
-	 * and store it locally.
+	 * The implementation of this method in this provider will parse the json file
+	 * which was set with {@link #setJsonUrl(String)}.
 	 *
 	 */
 	@Override

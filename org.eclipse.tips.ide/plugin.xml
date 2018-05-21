@@ -193,5 +193,18 @@
             description="Tips about Tips"
             id="org.eclipse.tips.ide.internal.provider.TipsTipProvider">
       </provider>
+            <provider
+            class="org.eclipse.tips.ide.internal.provider.TwitterTipProvider"
+            description="Eclipse IDE Twitter Tip Collection"
+            id="org.eclipse.tips.ide.internal.provider.TwitterTipProvider">
+            <enablement>
+            <with
+                  variable="activeWorkbenchWindow.activePerspective">
+               <equals
+                     value="org.eclipse.jdt.ui.JavaPerspective">
+               </equals>
+            </with>
+         </enablement>
+      </provider>
    </extension>
 </plugin>
