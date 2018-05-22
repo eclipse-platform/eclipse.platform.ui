@@ -30,6 +30,7 @@ import org.eclipse.swt.events.FocusEvent;
 import org.eclipse.swt.events.KeyAdapter;
 import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
@@ -308,6 +309,7 @@ public class SelectPerspectiveDialog extends Dialog implements ISelectionChanged
 	private void popUp(final String description) {
 		perspDescPopupDialog = new PopupDialog(getShell(), PopupDialog.HOVER_SHELLSTYLE, true, false, false, false, false, null, null) {
 			private static final int CURSOR_SIZE = 15;
+			private Label label = null;
 
 			@Override
 			protected Point getInitialLocation(Point initialSize) {
@@ -320,8 +322,27 @@ public class SelectPerspectiveDialog extends Dialog implements ISelectionChanged
 			}
 
 			@Override
+			protected void adjustBounds() {
+				// grow/shrink a wrappable Label's height to show its content as it changes
+				Display display = getShell().getDisplay();
+				if (display != null && label != null) {
+					Rectangle clientArea = display.getClientArea();
+					if (clientArea != null && clientArea.width > 0) {
+						int workbenchWidth = clientArea.width;
+						int currentHeight = label.getSize().y;
+						int preferredHeight = label.computeSize(workbenchWidth, SWT.DEFAULT).y;
+						if (currentHeight != preferredHeight) {
+							GridData data = (GridData) label.getLayoutData();
+							data.heightHint = preferredHeight;
+							getShell().pack();
+						}
+					}
+				}
+			}
+
+			@Override
 			protected Control createDialogArea(Composite parent) {
-				Label label = new Label(parent, SWT.WRAP);
+				label = new Label(parent, SWT.WRAP);
 				label.setText(description);
 				label.addFocusListener(new FocusAdapter() {
 					@Override
