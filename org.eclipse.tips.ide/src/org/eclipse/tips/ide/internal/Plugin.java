@@ -8,24 +8,18 @@
  * Contributors:
  *     wim.jongman@remainsoftware.com - initial API and implementation
  *******************************************************************************/
-package org.eclipse.tips.core;
+package org.eclipse.tips.ide.internal;
 
-import java.net.MalformedURLException;
-import java.net.URL;
+import org.eclipse.ui.plugin.AbstractUIPlugin;
 
-import org.eclipse.tips.json.JsonTipProvider;
+public class Plugin extends AbstractUIPlugin {
+	private static Plugin instance;
 
-public class JsonTestProvider extends JsonTipProvider {
-
-	public JsonTestProvider() throws MalformedURLException {
-		URL resource = getClass().getResource("twittertips.json"); // $NON-NLS-1$
-		if (resource != null) {
-			setJsonUrl(resource.toString());
-		}
+	public Plugin() {
+		instance = this;
 	}
 
-	@Override
-	public String getID() {
-		return getClass().getName();
+	public static AbstractUIPlugin getInstance() {
+		return instance;
 	}
 }

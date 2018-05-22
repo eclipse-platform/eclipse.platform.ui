@@ -11,6 +11,7 @@
 package org.eclipse.tips.ui.internal;
 
 import org.eclipse.jface.dialogs.Dialog;
+import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
@@ -36,11 +37,18 @@ public class TipDialog extends Dialog {
 	private TipManager fTipManager;
 	private TipComposite fTipComposite;
 	private int fShellStyle;
+	private IDialogSettings fDialogSettings;
 
-	public TipDialog(Shell parentShell, TipManager tipManager, int shellStyle) {
+	public TipDialog(Shell parentShell, TipManager tipManager, int shellStyle, IDialogSettings dialogSettings) {
 		super(parentShell);
 		fTipManager = tipManager;
+		fDialogSettings = dialogSettings;
 		fShellStyle = (shellStyle == DEFAULT_STYLE) ? (SWT.RESIZE | SWT.SHELL_TRIM) : shellStyle;
+	}
+
+	@Override
+	protected IDialogSettings getDialogBoundsSettings() {
+		return fDialogSettings;
 	}
 
 	@Override
@@ -50,12 +58,21 @@ public class TipDialog extends Dialog {
 		fixLayout(area);
 		fTipComposite = new TipComposite(area, SWT.NONE);
 		fixLayout(fTipComposite);
-		getShell().setLocation(getShell().getMonitor().getClientArea().width / 2 - parent.getSize().x / 2,
-				getShell().getMonitor().getClientArea().height / 2 - parent.getSize().y / 2);
 		getShell().setText(Messages.TipDialog_0);
 		fTipComposite.addDisposeListener(event -> close());
 		return area;
 	}
+
+//	private Point getLocation() {
+//		Shell parentShell = getParentShell();
+//		if (parentShell == null) {
+//			return null;
+//		}
+//		int absx = parentShell.getSize().x / 2 - getShell().getSize().x / 2;
+//		int absy = parentShell.getSize().y / 2 - getShell().getSize().y / 2;
+//		absy = absy > 20 ? 20 : absy;
+//		return new Point(parentShell.getLocation().x + absx, parentShell.getLocation().y + absy);
+//	}
 
 	@Override
 	protected void createButtonsForButtonBar(Composite pParent) {
@@ -64,10 +81,11 @@ public class TipDialog extends Dialog {
 	@Override
 	protected Control createButtonBar(Composite pParent) {
 		Control bar = super.createButtonBar(pParent);
-		fixLayout((Composite) bar);
+		// fixLayout((Composite) bar);
+		bar.setLayoutData(GridDataFactory.swtDefaults().hint(1, 1).create());
 		return bar;
 	}
-	
+
 	@Override
 	protected int getShellStyle() {
 		return fShellStyle;

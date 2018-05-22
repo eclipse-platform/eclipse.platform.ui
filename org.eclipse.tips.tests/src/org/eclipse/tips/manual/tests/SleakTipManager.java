@@ -15,7 +15,6 @@ import java.net.MalformedURLException;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.swt.graphics.DeviceData;
-import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.tips.core.ITipManager;
@@ -25,6 +24,7 @@ import org.eclipse.tips.core.TipProvider;
 import org.eclipse.tips.core.internal.TipManager;
 import org.eclipse.tips.ui.internal.TipDialog;
 import org.eclipse.tips.ui.internal.util.ResourceManager;
+import org.eclipse.tips.ui.internal.util.SWTResourceManager;
 
 /**
  * Class to manage the tip providers and start the tip of the day UI.
@@ -63,15 +63,14 @@ public class SleakTipManager extends TipManager {
 			DeviceData data = new DeviceData();
 			data.tracking = true;
 			Display display = new Display(data);
-			Shell shell = new Shell(display);
-			shell.setLayout(new FillLayout());
 			new Sleak().open();
-			TipDialog tipDialog = new TipDialog(shell, SleakTipManager.this, TipDialog.DEFAULT_STYLE);
-			shell.addDisposeListener(pE -> dispose());
+			TipDialog tipDialog = new TipDialog(null, SleakTipManager.this, TipDialog.DEFAULT_STYLE, null);
 			tipDialog.open();
+			Shell shell = tipDialog.getShell();
+			shell.addDisposeListener(pE -> dispose());
 			shell.pack();
 			shell.open();
-			while (!shell.isDisposed()) {
+			while (!display.isDisposed()) {
 				if (!display.readAndDispatch()) {
 					display.sleep();
 				}
@@ -111,6 +110,7 @@ public class SleakTipManager extends TipManager {
 
 	@Override
 	public void dispose() {
+		SWTResourceManager.dispose();
 		ResourceManager.dispose();
 		super.dispose();
 	}

@@ -14,3 +14,5 @@ Require-Bundle: org.eclipse.ui;bundle-version="3.108.0",
 Export-Package: org.eclipse.tips.ide.internal;x-internal:=true
 Automatic-Module-Name: org.eclipse.tips.ide
 Bundle-Vendor: %Bundle-Vendor
+Bundle-Activator: org.eclipse.tips.ide.internal.Plugin
+Bundle-ActivationPolicy: lazy

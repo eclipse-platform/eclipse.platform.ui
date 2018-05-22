@@ -105,7 +105,7 @@ public class IDETipManager extends DefaultTipManager {
 			fSourceProviderAdded = true;
 		}
 		fReadTips = TipsPreferences.getReadState();
-		return super.open(startUp);
+		return super.open(startUp, Plugin.getInstance().getDialogSettings());
 	}
 
 	/**
