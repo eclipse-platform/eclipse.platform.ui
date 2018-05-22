@@ -23,6 +23,8 @@ import java.util.function.Consumer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StyleRange;
 import org.eclipse.swt.custom.StyledText;
+import org.eclipse.swt.events.ControlEvent;
+import org.eclipse.swt.events.ControlListener;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.MouseListener;
 import org.eclipse.swt.events.MouseMoveListener;
@@ -126,17 +128,17 @@ public class InlinedAnnotationSupport {
 	 * Class to track start/end offset of visible lines.
 	 *
 	 */
-	private class VisibleLines implements IViewportListener, IDocumentListener {
+	private class VisibleLines implements IViewportListener, IDocumentListener, ControlListener {
 
 		private int startOffset;
 
 		private Integer endOffset;
 
 		public VisibleLines() {
+			install();
 			fViewer.getTextWidget().getDisplay().asyncExec(() -> {
 				compute();
 			});
-			fViewer.getDocument().addDocumentListener(this);
 		}
 
 		@Override
@@ -152,6 +154,16 @@ public class InlinedAnnotationSupport {
 		@Override
 		public void documentChanged(DocumentEvent event) {
 			// Do nothing
+		}
+
+		@Override
+		public void controlMoved(ControlEvent e) {
+			// Do nothing
+		}
+
+		@Override
+		public void controlResized(ControlEvent e) {
+			compute();
 		}
 
 		@SuppressWarnings("boxing")
@@ -225,9 +237,21 @@ public class InlinedAnnotationSupport {
 		 * Uninstall visible lines
 		 */
 		void uninstall() {
-			if (fViewer != null && fViewer.getDocument() != null) {
-				fViewer.getDocument().removeDocumentListener(this);
+			if (fViewer != null) {
+				fViewer.removeViewportListener(this);
+				if (fViewer.getDocument() != null) {
+					fViewer.getDocument().removeDocumentListener(this);
+				}
+				if (fViewer.getTextWidget() != null) {
+					fViewer.getTextWidget().removeControlListener(this);
+				}
 			}
+		}
+
+		void install() {
+			fViewer.addViewportListener(this);
+			fViewer.getDocument().addDocumentListener(this);
+			fViewer.getTextWidget().addControlListener(this);
 		}
 	}
 
@@ -329,7 +353,6 @@ public class InlinedAnnotationSupport {
 			((ITextViewerExtension4) fViewer).addTextPresentationListener(updateStylesWidth);
 		}
 		visibleLines= new VisibleLines();
-		fViewer.addViewportListener(visibleLines);
 		text.addMouseListener(fMouseTracker);
 		text.addMouseMoveListener(fMouseTracker);
 		setColor(text.getDisplay().getSystemColor(SWT.COLOR_DARK_GRAY));
@@ -365,7 +388,6 @@ public class InlinedAnnotationSupport {
 			if (fViewer instanceof ITextViewerExtension4) {
 				((ITextViewerExtension4) fViewer).removeTextPresentationListener(updateStylesWidth);
 			}
-			fViewer.removeViewportListener(visibleLines);
 		}
 		if (visibleLines != null) {
 			visibleLines.uninstall();
