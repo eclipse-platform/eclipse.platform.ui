@@ -627,8 +627,7 @@ public final class Workbench extends EventManager implements IWorkbench,
 						.getApplication(), e4Workbench.getContext());
 
 				// prime the splash nice and early
-				if (createSplash)
-					workbench.createSplashWrapper();
+				workbench.createSplashWrapper();
 
 				AbstractSplashHandler handler = getSplash();
 
