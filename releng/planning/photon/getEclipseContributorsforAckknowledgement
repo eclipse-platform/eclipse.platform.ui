@@ -1,0 +1,72 @@
+#!/bin/bash
+
+# Allows to extract a list of contributors for the Eclipse platform repos
+# Run from directory which contains all the repos listed below
+
+function addContributorsFromRepo {
+    cd $1
+    echo "Working on $1"
+    git checkout master
+    git pull
+    git log R4_7..master --pretty=format:"%an" | sort -u  >>  ../contributors.txt
+    cd ..
+}
+
+function removeName {
+    sed -i -- "s/$1//" contributors.txt
+} 
+
+> contributors.txt
+addContributorsFromRepo eclipse.platform.ui
+addContributorsFromRepo eclipse.platform.ua
+addContributorsFromRepo eclipse.platform.ui.tools
+addContributorsFromRepo eclipse.platform.text
+addContributorsFromRepo eclipse.platform.releng
+addContributorsFromRepo eclipse.platform.team
+#addContributorsFromRepo eclipse.platform.images
+addContributorsFromRepo eclipse.platform.swt
+addContributorsFromRepo eclipse.platform.swt.binaries
+addContributorsFromRepo eclipse.platform.debug
+addContributorsFromRepo eclipse.platform
+
+
+
+
+
+# Add names for certain users, which are only using short names or strange writting
+sed -i -- 's/nbros/Nicolas Bros/' contributors.txt
+sed -i -- 's/zakgof/Oleksandr Zakusylo/' contributors.txt
+sed -i -- 's/drgler/Daniel Kruegler/' contributors.txt
+sed -i -- 's/utsavoza/Utsav Oza/' contributors.txt
+sed -i -- 's/jkaesser/Joachim Kaesser/' contributors.txt
+sed -i -- 's/kalyan prasad/Kalyan Prasad/' contributors.txt
+sed -i -- 's/Martin SCHREIBER/Martin Schreiber/' contributors.txt
+sed -i -- 's/angelozerr/Angelo Zerr/' contributors.txt
+sed -i -- 's/sprieschl/Stefan Prieschl/' contributors.txt
+sed -i -- 's/laeubi/Christoph Läubrich/' contributors.txt
+
+
+
+
+
+# Users already present with different name
+removeName "Lothar L."
+removeName "Ralf M Petter"
+removeName "psuzzi"
+removeName "minnist"
+removeName "azerr"
+removeName "Eclipse Platform RelEng Bot"
+removeName "genie.releng"
+
+# could not find out who this is:
+removeName "fingerl"
+removeName "initialflame"
+removeName "ncazottes"
+
+
+
+
+sort -u  contributors.txt -o contributors.txt
+sed ':a;N;$!ba;s/\n/, /g' contributors.txt  > result.txt
+
+
