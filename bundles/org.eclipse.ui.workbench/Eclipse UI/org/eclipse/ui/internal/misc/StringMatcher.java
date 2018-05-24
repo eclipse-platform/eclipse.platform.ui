@@ -314,7 +314,8 @@ public class StringMatcher {
 		start = Math.max(0, start);
 		end = Math.min(end, tlen);
 
-		if (wholePatternWord != null && wholePatternWord.match(text, start, end)) {
+		if (wholePatternWord != null
+				&& (wholePatternWord.match(text, start, end) || wholePatternWord.matchTextWord(text, start, end))) {
 			return true;
 		}
 		if (splittedPatternWords != null && splittedPatternWords.length > 0) {
