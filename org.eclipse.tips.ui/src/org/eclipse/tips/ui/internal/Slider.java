@@ -145,16 +145,16 @@ public class Slider extends Composite {
 		if (spaceCount >= providerCount) {
 			if (fRightButton.isEnabled()) {
 				fRightButton.setEnabled(false);
+				fRightButton.setVisible(false);
 				fLeftButton.setEnabled(false);
-				fLeftButton.setImage(getImage("icons/" + fIconSize + "/aright.png")); //$NON-NLS-1$ //$NON-NLS-2$
-				fRightButton.setImage(getImage("icons/" + fIconSize + "/aleft.png")); //$NON-NLS-1$ //$NON-NLS-2$
+				fLeftButton.setVisible(false);
 			}
 		} else {
 			if (!fRightButton.isEnabled()) {
 				fRightButton.setEnabled(true);
+				fRightButton.setVisible(true);
 				fLeftButton.setEnabled(true);
-				fLeftButton.setImage(getImage("icons/" + fIconSize + "/aleft.png")); //$NON-NLS-1$ //$NON-NLS-2$
-				fRightButton.setImage(getImage("icons/" + fIconSize + "/aright.png")); //$NON-NLS-1$ //$NON-NLS-2$
+				fLeftButton.setVisible(true);
 			}
 		}
 
