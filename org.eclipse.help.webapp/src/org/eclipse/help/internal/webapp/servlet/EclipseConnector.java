@@ -28,7 +28,6 @@ import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.eclipse.core.runtime.URIUtil;
 import org.eclipse.help.internal.base.BaseHelpSystem;
 import org.eclipse.help.internal.base.MissingContentManager;
 import org.eclipse.help.internal.base.remote.RemoteHelpInputStream;
@@ -113,7 +112,6 @@ public class EclipseConnector {
 				// enable activities matching url
 				// HelpBasePlugin.getActivitySupport().enableActivities(url);
 
-				url = URIUtil.fromString(url).toString();
 				url = "help:" + url; //$NON-NLS-1$
 			}
 

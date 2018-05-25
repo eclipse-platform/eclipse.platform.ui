@@ -33,7 +33,8 @@ import org.junit.runners.Suite;
 	HelpServerBinding.class,
 	HtmlCoderTest.class,
 	TocZipTest.class,
-	JsonHelperTests.class
+	JsonHelperTests.class,
+	EclipseConnectorTests.class
 })
 public class AllWebappTests {
 }
