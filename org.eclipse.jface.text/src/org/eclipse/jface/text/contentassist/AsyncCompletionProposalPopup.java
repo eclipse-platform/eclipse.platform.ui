@@ -304,7 +304,7 @@ class AsyncCompletionProposalPopup extends CompletionProposalPopup {
 
 	@Override
 	protected List<ICompletionProposal> computeFilteredProposals(int offset, DocumentEvent event) {
-		if(fComputedProposals.size() > 0 && fComputedProposals.get(0) instanceof ComputingProposal) {
+		if(fComputedProposals != null && fComputedProposals.size() > 0 && fComputedProposals.get(0) instanceof ComputingProposal) {
 			Set<CompletableFuture<List<ICompletionProposal>>> remaining = Collections.synchronizedSet(new HashSet<>(fFutures));
 			for (CompletableFuture<List<ICompletionProposal>> future : fFutures) {
 				future.thenRun(() -> {
