@@ -19,6 +19,7 @@ import java.util.List;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.tips.core.Tip;
@@ -53,10 +54,10 @@ public class TipsTipProvider extends org.eclipse.tips.core.TipProvider {
 		tips.add(new Tip1_Welcome(getID()));
 		tips.add(new Tip2_StartingTips(getID()));
 		tips.add(new Tip3_StartingTips(getID()));
-		tips.add(new Tip4_Navigate(getID()));
-		tips.add(new Tip5_Navigate(getID()));
 		tips.add(new Tip6_ActionsTip(getID()));
-		tips.add(new Tip7_Extend(getID()));
+		if (Platform.getBundle("org.eclipse.pde.ui") != null) {
+			tips.add(new Tip7_Extend(getID()));
+		}
 		setTips(tips);
 		subMonitor.done();
 		return Status.OK_STATUS;

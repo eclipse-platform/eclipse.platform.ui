@@ -51,7 +51,7 @@ public class Tip6_ActionsTip extends Tip implements IHtmlTip {
 	@Override
 	public List<TipAction> getActions() {
 		Runnable runnable = () -> Display.getDefault()
-				.syncExec(() -> MessageDialog.openConfirm(null, getSubject(), "We can do anything we want."));
+				.syncExec(() -> MessageDialog.openConfirm(null, getSubject(), "A dialog was opened."));
 		Runnable clock = () -> Display.getDefault().syncExec(() -> MessageDialog.openConfirm(null, getSubject(),
 				DateFormat.getTimeInstance().format(Calendar.getInstance().getTime())));
 		Runnable runner2 = () -> Display.getDefault().syncExec(() -> {
@@ -63,11 +63,8 @@ public class Tip6_ActionsTip extends Tip implements IHtmlTip {
 		ArrayList<TipAction> actions = new ArrayList<>();
 		actions.add(new TipAction("Clock", "What is the time?", clock, getImage("icons/clock.png")));
 		actions.add(
-				new TipAction("Open Preferences", "Opens the preferences", runner2, getImage("icons/bug_link.png")));
-		actions.add(
-				new TipAction("Cut or Paste", "Just another silly action", runnable, getImage("icons/lightbulb.png")));
-		actions.add(new TipAction("Eclipse Rocks, Idea Scissors", "Paper", runnable, getImage("icons/cut.png")));
-		actions.add(new TipAction("Totally Bonkers", "The quick brown fox", runnable, getImage("icons/notfound.png")));
+				new TipAction("Open Preferences", "Opens the preferences", runner2, null));
+		actions.add(new TipAction("Open Dialog", "Opens a Dialog", runnable, getImage("icons/asterisk.png")));
 		return actions;
 	}
 
