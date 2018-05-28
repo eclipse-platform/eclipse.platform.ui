@@ -196,7 +196,7 @@ public class TipComposite extends Composite implements ProviderSelectionListener
 		});
 
 		fMultiActionMenuButton = new Button(fMultiActionComposite, SWT.NONE);
-		fMultiActionMenuButton.setImage(ResourceManager.getPluginImage("org.eclipse.tips.ui", "icons/popup_menu.gif")); //$NON-NLS-1$ //$NON-NLS-2$
+		fMultiActionMenuButton.setImage(ResourceManager.getPluginImage("org.eclipse.tips.ui", "icons/popup_menu.png")); //$NON-NLS-1$ //$NON-NLS-2$
 		fMultiActionMenuButton.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
@@ -267,7 +267,7 @@ public class TipComposite extends Composite implements ProviderSelectionListener
 		case 2:
 			return ResourceManager.getPluginImage("org.eclipse.tips.ui", "icons/stop.png"); //$NON-NLS-1$ //$NON-NLS-2$
 		default:
-			return ResourceManager.getPluginImage("org.eclipse.tips.ui", "icons/run.gif"); //$NON-NLS-1$ //$NON-NLS-2$
+			return ResourceManager.getPluginImage("org.eclipse.tips.ui", "icons/run_exc.png"); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 	}
 
