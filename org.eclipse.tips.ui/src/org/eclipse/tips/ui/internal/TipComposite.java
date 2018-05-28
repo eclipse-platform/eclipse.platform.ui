@@ -12,19 +12,15 @@ package org.eclipse.tips.ui.internal;
 
 import java.io.IOException;
 import java.net.URL;
-import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.swt.SWT;
@@ -36,7 +32,6 @@ import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
-import org.eclipse.swt.internal.DPIUtil;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -71,7 +66,6 @@ public class TipComposite extends Composite implements ProviderSelectionListener
 	private Tip fCurrentTip;
 	private Button fUnreadOnly;
 	private Button fPreviousTipButton;
-	private Pattern fGtkHackPattern = Pattern.compile("(.*?)([0-9]+)(.*?)([0-9]+)(.*?)"); //$NON-NLS-1$
 	private Composite fSWTComposite;
 	private Composite fBrowserComposite;
 	private StackLayout fContentStack;
@@ -398,7 +392,7 @@ public class TipComposite extends Composite implements ProviderSelectionListener
 	}
 
 	private void loadContentHtml(IHtmlTip tip) {
-		fBrowser.setText(getScaling() + getHTML(tip).trim());
+		fBrowser.setText(getHTML(tip).trim());
 	}
 
 	private void loadContentUrl(IUrlTip tip) {
@@ -430,7 +424,7 @@ public class TipComposite extends Composite implements ProviderSelectionListener
 	 * could not load fast enough.
 	 */
 	private void loadTimeOutScript() {
-		fBrowser.setText(getScaling() + getLoadingScript(500));
+		fBrowser.setText(getLoadingScript(500));
 		while (!isDisposed()) {
 			if (!getDisplay().readAndDispatch()) {
 				break;
@@ -535,14 +529,6 @@ public class TipComposite extends Composite implements ProviderSelectionListener
 		return tip.getHTML() + encodedImage;
 	}
 
-	private static String getScaling() {
-		if (Platform.isRunning() && Platform.getWS().startsWith("gtk")) { //$NON-NLS-1$
-			Integer zoom = Integer.valueOf(DPIUtil.getDeviceZoom());
-			return MessageFormat.format("<style>body '{'  zoom: {0}%;'}'</style> ", zoom); //$NON-NLS-1$
-		}
-		return EMPTY;
-	}
-
 	private String encodeImage(IHtmlTip tip) {
 		TipImage image = tip.getImage();
 		if (image == null) {
@@ -554,28 +540,13 @@ public class TipComposite extends Composite implements ProviderSelectionListener
 	private String encodeImageFromBase64(TipImage image) {
 		int width = fBrowser.getClientArea().width;
 		int height = Math.min(fBrowser.getClientArea().height / 2, (2 * (width / 3)));
-		String attributes = gtkHack(image.getIMGAttributes(width, height).trim());
+		String attributes = image.getIMGAttributes(width, height).trim();
 		String encoded = EMPTY + "<center> <img " // //$NON-NLS-1$
 				+ attributes //
 				+ " src=\"" // //$NON-NLS-1$
 				+ image.getBase64Image() //
 				+ "\"></center><br/>"; //$NON-NLS-1$
 		return encoded;
-	}
-
-	private String gtkHack(String imageAttribute) {
-		if (!Platform.isRunning()) {
-			return imageAttribute;
-		}
-		if (!Platform.getWS().startsWith("gtk")) { //$NON-NLS-1$
-			return imageAttribute;
-		}
-		Matcher m = fGtkHackPattern.matcher(imageAttribute);
-		if (!m.matches()) {
-			return imageAttribute;
-		}
-		return m.group(1) + (Integer.parseInt(m.group(2)) * 120 / 100) + m.group(3)
-				+ (Integer.parseInt(m.group(4)) * 120 / 100) + m.group(5);
 	}
 
 	@Override
