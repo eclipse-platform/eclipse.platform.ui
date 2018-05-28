@@ -37,7 +37,7 @@
             locationURI="menu:help?before=tipsAndTricks">
          <command
                commandId="org.eclipse.tips.ide.command.open"
-               icon="icons/lightbulb.png"
+               icon="platform:/plugin/org.eclipse.tips.ui/icons/lightbulb.png"
                id="org.eclipse.tips.ide.tip.menu"
                label="Tip of the Da&amp;y"
                style="push"> variable="newtips">
@@ -51,7 +51,7 @@
                label="Tip of the Day Toolbar">
             <command
                   commandId="org.eclipse.tips.ide.command.trim.open"
-                  icon="icons/lightbulb.png"
+                  icon="platform:/plugin/org.eclipse.tips.ui/icons/lightbulb.png"
                   id="org.eclipse.tips.ide.tip.tool"
                   label="Tip of the Day"
                   style="push">

@@ -22,11 +22,6 @@ public class Constants {
 	public static final String BUNDLE_ID = "org.eclipse.tips.ide"; //$NON-NLS-1$
 
 	/**
-	 * Dialog. menu and tool item icon.
-	 */
-	public static final String ICON = "icons/lightbulb.png"; //$NON-NLS-1$
-
-	/**
 	 * The workbench variable to be used on core expressions.
 	 */
 	public static final String SOURCE_UNREAD_TIPS = "newtips"; //$NON-NLS-1$

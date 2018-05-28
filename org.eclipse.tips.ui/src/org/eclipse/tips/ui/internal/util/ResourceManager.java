@@ -11,7 +11,6 @@
 package org.eclipse.tips.ui.internal.util;
 
 import java.io.File;
-import java.io.InputStream;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import java.net.MalformedURLException;
@@ -288,19 +287,13 @@ public class ResourceManager extends SWTResourceManager {
 	 */
 	private static Image getPluginImageFromUrl(URL url) {
 		try {
-			try {
-				String key = url.toExternalForm();
-				Image image = m_URLImageMap.get(key);
-				if (image == null) {
-					try (InputStream stream = url.openStream()) {
-						image = getImage(stream);
-						m_URLImageMap.put(key, image);
-					}
-				}
-				return image;
-			} catch (Throwable e) {
-				// Ignore any exceptions
+			String key = url.toExternalForm();
+			Image image = m_URLImageMap.get(key);
+			if (image == null) {
+				image = ImageDescriptor.createFromURL(url).createImage();
+				m_URLImageMap.put(key, image);
 			}
+			return image;
 		} catch (Throwable e) {
 			// Ignore any exceptions
 		}

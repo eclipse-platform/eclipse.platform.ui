@@ -15,11 +15,13 @@ import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.tips.core.internal.TipManager;
+import org.eclipse.tips.ui.internal.util.ResourceManager;
 
 /**
  * The dialog containing the tips.
@@ -109,5 +111,14 @@ public class TipDialog extends Dialog {
 			fTipComposite.setTipManager(fTipManager);
 		}
 		return result;
+	}
+
+	@Override
+	protected void configureShell(Shell pNewShell) {
+		super.configureShell(pNewShell);
+		Image pluginImage = ResourceManager.getPluginImage("org.eclipse.tips.ui", "icons/lightbulb.png"); //$NON-NLS-1$//$NON-NLS-2$
+		if (pluginImage != null) {
+			pNewShell.setImage(pluginImage);
+		}
 	}
 }
