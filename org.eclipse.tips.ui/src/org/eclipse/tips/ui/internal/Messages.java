@@ -12,6 +12,7 @@ public class Messages extends NLS {
 	public static String TipComposite_11;
 	public static String TipComposite_12;
 	public static String TipComposite_13;
+	public static String TipComposite_14;
 	public static String TipComposite_2;
 	public static String TipComposite_3;
 	public static String TipComposite_4;

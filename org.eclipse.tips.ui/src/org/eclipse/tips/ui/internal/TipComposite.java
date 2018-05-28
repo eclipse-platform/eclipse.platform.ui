@@ -138,7 +138,7 @@ public class TipComposite extends Composite implements ProviderSelectionListener
 		fStartupItem = new ToolItem(ftoolBar, SWT.DROP_DOWN);
 		fStartupItem.setText(Messages.TipComposite_13);
 		fStartupItem.addListener(SWT.Selection, event -> {
-				showStartupOptions(menu);
+			showStartupOptions(menu);
 		});
 
 		fUnreadOnly = new Button(preferenceBar, SWT.CHECK);
@@ -250,6 +250,8 @@ public class TipComposite extends Composite implements ProviderSelectionListener
 		fSlider.setLayoutData(new GridData(SWT.FILL, SWT.BOTTOM, false, false, 1, 1));
 		fContentStack.topControl = fBrowserComposite;
 		fSlider.addTipProviderListener(this);
+
+		loadWaitingScript();
 	}
 
 	private void showStartupOptions(final Menu menu) {
@@ -420,7 +422,7 @@ public class TipComposite extends Composite implements ProviderSelectionListener
 	}
 
 	/**
-	 * Sets content in the browser that displays a message after 500ms if the Tip
+	 * Sets content in the browser that displays a message after 1500ms if the Tip
 	 * could not load fast enough.
 	 */
 	private void loadTimeOutScript() {
@@ -430,6 +432,35 @@ public class TipComposite extends Composite implements ProviderSelectionListener
 				break;
 			}
 		}
+	}
+
+	/**
+	 * Sets content in the browser that displays a message after 1500ms if tips
+	 * could not be loaded.
+	 */
+	private void loadWaitingScript() {
+		fBrowser.setText(getWaitingScript(1500));
+		while (!isDisposed()) {
+			if (!getDisplay().readAndDispatch()) {
+				break;
+			}
+		}
+	}
+
+	/**
+	 * Get the timeout script in case the tips are not loading.
+	 *
+	 * @param timeout the timeout in milliseconds
+	 * @return the script
+	 */
+	private static String getWaitingScript(int timeout) {
+		return "<style>div{height: 90vh;display: flex;justify-content: center;align-items: center;}</style>" //$NON-NLS-1$
+				+ "<div id=\"txt\"></div>" //$NON-NLS-1$
+				+ "<script>var wss=function(){document.getElementById(\"txt\").innerHTML=\"" //$NON-NLS-1$
+				+ Messages.TipComposite_14 //
+				+ "\"};window.setTimeout(wss," //$NON-NLS-1$
+				+ timeout //
+				+ ");</script>"; //$NON-NLS-1$
 	}
 
 	private void enableActionButtons(Tip tip) {
@@ -509,7 +540,7 @@ public class TipComposite extends Composite implements ProviderSelectionListener
 	}
 
 	/**
-	 * Get the timeout script in case the tips takes too to load.
+	 * Get the timeout script in case a tip takes time to load.
 	 *
 	 * @param timeout the timeout in milliseconds
 	 * @return the script
