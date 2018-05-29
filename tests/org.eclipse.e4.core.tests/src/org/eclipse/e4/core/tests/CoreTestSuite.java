@@ -12,6 +12,9 @@
 
 package org.eclipse.e4.core.tests;
 
+import org.junit.runner.RunWith;
+import org.junit.runners.Suite;
+
 import org.eclipse.e4.core.internal.tests.contexts.ActivationTest;
 import org.eclipse.e4.core.internal.tests.contexts.ContextDynamicTest;
 import org.eclipse.e4.core.internal.tests.contexts.DependenciesLeakTest;
@@ -37,7 +40,6 @@ import org.eclipse.e4.core.internal.tests.contexts.inject.ParentContextDisposalT
 import org.eclipse.e4.core.internal.tests.contexts.inject.ProviderInjectionTest;
 import org.eclipse.e4.core.internal.tests.contexts.inject.ServiceContextTest;
 import org.eclipse.e4.core.internal.tests.contexts.inject.TestConstructorInjection;
-import org.eclipse.e4.core.internal.tests.di.AtInjectTest;
 import org.eclipse.e4.core.internal.tests.di.AutoConstructWithCreatableTest;
 import org.eclipse.e4.core.internal.tests.di.DisposeClassLinkTest;
 import org.eclipse.e4.core.internal.tests.di.InjectArraysTest;
@@ -56,8 +58,6 @@ import org.eclipse.e4.core.internal.tests.di.extensions.InjectionOSGiTest;
 import org.eclipse.e4.core.internal.tests.di.extensions.InjectionPreferencesTest;
 import org.eclipse.e4.core.internal.tests.di.extensions.ServiceSupplierTestCase;
 import org.eclipse.e4.core.internal.tests.nls.NLSTest;
-import org.junit.runner.RunWith;
-import org.junit.runners.Suite;
 
 import junit.framework.JUnit4TestAdapter;
 import junit.framework.Test;
@@ -78,7 +78,6 @@ import junit.framework.Test;
 		InjectBaseTypeTest.class,
 		InvokeTestMissingAnnotation.class,
 		InjectionResultLeakTest.class,
-		AtInjectTest.class,
 		AutoConstructWithCreatableTest.class,
 
 		// Contexts
