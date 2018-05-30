@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2015 IBM Corporation and others.
+ * Copyright (c) 2015, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,7 +11,6 @@
 package org.eclipse.ant.tests.ui;
 
 import org.eclipse.ant.tests.ui.testplugin.AbstractAntUITest;
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jdt.core.JavaCore;
 
 public class APITests extends AbstractAntUITest {
@@ -20,7 +19,7 @@ public class APITests extends AbstractAntUITest {
 		super(name);
 	}
 
-	public void testCompareJavaVersions() throws CoreException {
+	public void testCompareJavaVersions() {
 		String vmver = "1.6"; //$NON-NLS-1$
 		int comparison = JavaCore.compareJavaVersions(vmver, JavaCore.VERSION_1_7);
 		assertEquals("VM less than 1.7 version: ", -1, comparison); //$NON-NLS-1$
