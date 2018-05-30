@@ -24,7 +24,6 @@
     <code.ignoredWarnings>${tests.ignoredWarnings}</code.ignoredWarnings>
   </properties>
   <modules>
-    <module>com.google.code.atinject.tck</module>
     <module>org.eclipse.core.expressions.tests</module>
     <module>org.eclipse.core.tests.harness</module>
     <module>org.eclipse.core.tests.runtime</module>
