@@ -17,9 +17,16 @@
     <version>4.9.0-SNAPSHOT</version>
   </parent>
   <artifactId>eclipse.platform.resources.tests</artifactId>
-  <version>4.9.0-SNAPSHOT</version>
   <packaging>pom</packaging>
   <properties>
     <code.ignoredWarnings>${tests.ignoredWarnings}</code.ignoredWarnings>
   </properties>
+  <modules>
+    <module>org.eclipse.core.tests.filesystem.feature</module>
+    <module>org.eclipse.core.tests.resources</module>
+    <module>org.eclipse.core.tests.resources.saveparticipant</module>
+    <module>org.eclipse.core.tests.resources.saveparticipant1</module>
+    <module>org.eclipse.core.tests.resources.saveparticipant2</module>
+    <module>org.eclipse.core.tests.resources.saveparticipant3</module>
+  </modules>
 </project>
