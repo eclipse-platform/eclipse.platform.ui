@@ -144,8 +144,32 @@ public class TipsPreferences extends AbstractPreferenceInitializer {
 		}
 		if (isConsoleLog()) {
 			System.out.println(
-					String.format("%1$tR:%1$tS:%1$tN - %2$s", Calendar.getInstance().getTime(), status.toString())); //$NON-NLS-1$
+					String.format("%1$tR:%1$tS:%1$tN - %2$s", Calendar.getInstance().getTime(), format(status))); //$NON-NLS-1$
 		}
+	}
+
+	/**
+	 * Converts the passed status object to a readable string and tries to get the
+	 * location where the log method was called.
+	 *
+	 * @param pStatus the status to format
+	 * @return the formatted status to string.
+	 */
+	private static Object format(IStatus pStatus) {
+		StackTraceElement[] stackTrace = Thread.currentThread().getStackTrace();
+		String origin = "<unknown>"; //$NON-NLS-1$
+		if (stackTrace.length > 3) {
+			StackTraceElement ste = stackTrace[4];
+			String[] fqcn = ste.getClassName().split("\\.");
+			String clazz = fqcn[fqcn.length - 1];
+			origin = clazz + "#" + ste.getMethodName() + "(" + ste.getLineNumber() + ")";
+		}
+
+		String statusLine = pStatus.toString();
+		if (statusLine.endsWith(" null")) {
+			statusLine = statusLine.substring(0, statusLine.length() - " null".length());
+		}
+		return statusLine + " : " + origin;
 	}
 
 	public static int getStartupBehavior() {

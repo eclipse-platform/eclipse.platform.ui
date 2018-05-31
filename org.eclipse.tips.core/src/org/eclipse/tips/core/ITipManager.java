@@ -84,10 +84,10 @@ public interface ITipManager {
 	public boolean isOpen();
 
 	/**
-	 * Indicates if this manager has providers with tips (based on the read or
-	 * unread requirement). Be aware that subsequent calls to this method may return
-	 * different results based on the async nature of loading providers.
-	 * 
+	 * Indicates if this manager has providers with unread tips. Be aware that
+	 * subsequent calls to this method may return different results based on the
+	 * async nature of loading providers.
+	 *
 	 * @return true if this {@link TipManager} has providers with tips.
 	 * @see TipProvider#getTips()
 	 */

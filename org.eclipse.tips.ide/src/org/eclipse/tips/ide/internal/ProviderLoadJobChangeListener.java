@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.tips.ide.internal;
 
+import java.util.List;
+
 import org.eclipse.core.runtime.jobs.IJobChangeEvent;
 import org.eclipse.core.runtime.jobs.JobChangeAdapter;
 import org.eclipse.tips.core.Tip;
@@ -40,11 +42,7 @@ public class ProviderLoadJobChangeListener extends JobChangeAdapter {
 	 */
 	@Override
 	public void done(IJobChangeEvent event) {
-		for (Tip tip : fProvider.getTips(null)) {
-			if (!fManager.isRead(tip)) {
-				fManager.setNewTips(true);
-				return;
-			}
-		}
+		List<Tip> unreadTips = fProvider.getTips(tip -> !fManager.isRead(tip));
+		fManager.setNewTips(!unreadTips.isEmpty());
 	}
 }

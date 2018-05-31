@@ -16,7 +16,6 @@ import java.io.IOException;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -52,7 +51,7 @@ public class IDETipManager extends DefaultTipManager {
 
 	private TipSourceProvider fSourceProvider = new TipSourceProvider(this);
 
-	private Map<String, List<Integer>> fReadTips = new HashMap<>();
+	private Map<String, List<Integer>> fReadTips = TipsPreferences.getReadState();
 
 	private boolean fNewTips;
 
@@ -104,7 +103,6 @@ public class IDETipManager extends DefaultTipManager {
 			evaluationService.addSourceProvider(fSourceProvider);
 			fSourceProviderAdded = true;
 		}
-		fReadTips = TipsPreferences.getReadState();
 		return super.open(startUp, Plugin.getInstance().getDialogSettings());
 	}
 
@@ -135,7 +133,7 @@ public class IDETipManager extends DefaultTipManager {
 	 * @param newTips
 	 */
 	private void refreshUI() {
-		boolean newTips = getProviders().stream().filter(p -> !p.getTips().isEmpty()).count() > 0;
+		boolean newTips = hasNewTips();
 		Job job = new Job(Messages.IDETipManager_5) {
 			@Override
 			protected IStatus run(IProgressMonitor monitor) {
@@ -144,6 +142,16 @@ public class IDETipManager extends DefaultTipManager {
 			}
 		};
 		job.schedule();
+	}
+
+	private boolean hasNewTips() {
+		log(LogUtil.info("START: Query all providers for new tips."));//$NON-NLS-1$
+		int newTipCount = 0;
+		for (TipProvider provider : getProviders()) {
+			newTipCount += provider.getTips(tip -> !isRead(tip)).size();
+		}
+		log(LogUtil.info("END:   Query all providers for new tips: " + (newTipCount > 0)));//$NON-NLS-1$
+		return newTipCount > 0;
 	}
 
 	@Override

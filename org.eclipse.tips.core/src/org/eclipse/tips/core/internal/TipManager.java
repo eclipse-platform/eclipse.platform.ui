@@ -275,7 +275,7 @@ public abstract class TipManager implements ITipManager {
 	@Override
 	public boolean hasContent() {
 		for (TipProvider provider : getProviders()) {
-			if (provider.isReady() && !provider.getTips().isEmpty()) {
+			if (provider.isReady() && !provider.getTips(tip -> !isRead(tip)).isEmpty()) {
 				return true;
 			}
 		}
