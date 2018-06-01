@@ -19,6 +19,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.eclipse.core.filesystem.EFS;
@@ -76,19 +77,19 @@ import com.ibm.icu.text.MessageFormat;
  */
 public class ExportLaunchConfigurationsWizardPage extends WizardPage {
 
+	private ILaunchManager lm = DebugPlugin.getDefault().getLaunchManager();
+
 	/**
 	 * The content provider for the tree viewer
 	 * @since 3.4.0
 	 */
 	class ConfigContentProvider implements ITreeContentProvider {
 
-		ILaunchManager lm = DebugPlugin.getDefault().getLaunchManager();
-
 		@Override
 		public Object[] getChildren(Object parentElement) {
 			if(parentElement instanceof ILaunchConfigurationType) {
 				try {
-					return lm.getLaunchConfigurations((ILaunchConfigurationType) parentElement, ILaunchConfiguration.CONFIGURATION | ILaunchConfiguration.PROTOTYPE);
+					return getConfigurationTypeChildren((ILaunchConfigurationType) parentElement);
 				}
 				catch (Exception e) {
 					DebugUIPlugin.logErrorMessage(e.getMessage());
@@ -96,6 +97,7 @@ public class ExportLaunchConfigurationsWizardPage extends WizardPage {
 			}
 			return null;
 		}
+
 		@Override
 		public Object getParent(Object element) {
 			if(element instanceof ILaunchConfiguration) {
@@ -113,7 +115,7 @@ public class ExportLaunchConfigurationsWizardPage extends WizardPage {
 		}
 		@Override
 		public Object[] getElements(Object inputElement) {
-			return lm.getLaunchConfigurationTypes();
+			return getUsedLaunchConfigurationTypes();
 		}
 	}
 	private String OVERWRITE = "overwrite"; //$NON-NLS-1$
@@ -169,7 +171,7 @@ public class ExportLaunchConfigurationsWizardPage extends WizardPage {
 		fViewer.setComparator(new WorkbenchViewerComparator());
 		fContentProvider = new ConfigContentProvider();
 		fViewer.setContentProvider(fContentProvider);
-		fViewer.setInput(DebugPlugin.getDefault().getLaunchManager().getLaunchConfigurationTypes());
+		fViewer.setInput(getUsedLaunchConfigurationTypes());
 		//we don't want to see builders....
 		fViewer.addFilter(new LaunchCategoryFilter(IInternalDebugUIConstants.ID_EXTERNAL_TOOL_BUILDER_LAUNCH_CATEGORY));
 		//need to force load the children so that select all works initially
@@ -213,6 +215,25 @@ public class ExportLaunchConfigurationsWizardPage extends WizardPage {
 				setPageComplete(isComplete());
 			}
 		});
+	}
+
+	/**
+	 * @return launch configuration types which currently have configuration or
+	 *         prototype children, and are therefore relevant for exporting
+	 */
+	private ILaunchConfigurationType[] getUsedLaunchConfigurationTypes() {
+		return Arrays.stream(DebugPlugin.getDefault().getLaunchManager().getLaunchConfigurationTypes()).filter(launchConfigType -> {
+			try {
+				return getConfigurationTypeChildren(launchConfigType).length > 0;
+			} catch (CoreException e) {
+				DebugUIPlugin.logErrorMessage(e.getMessage());
+			}
+			return true;
+		}).toArray(ILaunchConfigurationType[]::new);
+	}
+
+	private ILaunchConfiguration[] getConfigurationTypeChildren(ILaunchConfigurationType launchConfigurationTypeParent) throws CoreException {
+		return lm.getLaunchConfigurations(launchConfigurationTypeParent, ILaunchConfiguration.CONFIGURATION | ILaunchConfiguration.PROTOTYPE);
 	}
 
 	/**
