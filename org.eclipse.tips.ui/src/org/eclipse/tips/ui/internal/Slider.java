@@ -39,6 +39,7 @@ import org.eclipse.tips.ui.internal.util.SWTResourceManager;
 @SuppressWarnings("restriction")
 public class Slider extends Composite {
 
+	private static final int RESIZE_RELOAD_DELAY = 100;
 	private Composite fScroller;
 	private TipProvider fSelectedProvider;
 	private int fSpacing = 5;
@@ -51,6 +52,9 @@ public class Slider extends Composite {
 	private HashMap<String, Image> fProviderImageCache = new HashMap<>();
 	private int fIconSize = 48;
 	private PropertyChangeListener fPropertyChangeListener;
+	private int fLeftRightButtonWidth;
+	private long fLastResizeEventTime;
+	private boolean fResizeRequestPending;
 
 	/**
 	 * Constructor for the Slider widget.
@@ -66,10 +70,8 @@ public class Slider extends Composite {
 		setLayout(layout);
 
 		fLeftButton = new Button(this, SWT.FLAT);
-		GridData gd_leftButton = new GridData(SWT.FILL, SWT.FILL, false, false, 1, 1);
-		gd_leftButton.widthHint = fIconSize / 2 + 8;
-		gd_leftButton.heightHint = fIconSize;
-		fLeftButton.setLayoutData(gd_leftButton);
+		fLeftRightButtonWidth = fIconSize / 2 + 8;
+		setLeftRightButtonGridData(fLeftButton, fLeftRightButtonWidth);
 		fLeftButton.setImage(getImage("icons/" + fIconSize + "/aleft.png")); //$NON-NLS-1$ //$NON-NLS-2$
 		fLeftButton.addSelectionListener(new SelectionAdapter() {
 			@Override
@@ -84,10 +86,7 @@ public class Slider extends Composite {
 		fScroller.setLayoutData(layoutData);
 
 		fRightButton = new Button(this, SWT.FLAT);
-		GridData gd_rightButton = new GridData(SWT.FILL, SWT.FILL, false, false, 1, 1);
-		gd_rightButton.widthHint = fIconSize / 2 + 8;
-		gd_rightButton.heightHint = fIconSize;
-		fRightButton.setLayoutData(gd_rightButton);
+		setLeftRightButtonGridData(fRightButton, fLeftRightButtonWidth);
 		fRightButton.setImage(getImage("icons/" + fIconSize + "/aright.png")); //$NON-NLS-1$ //$NON-NLS-2$
 		fRightButton.addSelectionListener(new SelectionAdapter() {
 			@Override
@@ -98,6 +97,39 @@ public class Slider extends Composite {
 
 		setupDisposeListener();
 		setupProviderListener();
+		setupResizeListener();
+	}
+
+	// Recalculation of slider is expensive. Make sure it is done only once when
+	// resizing.
+	private void setupResizeListener() {
+		addListener(SWT.Resize, event -> {
+			fLastResizeEventTime = System.currentTimeMillis();
+			if (!fResizeRequestPending) {
+				fResizeRequestPending = true;
+				submitResizeExecution();
+			}
+		});
+	}
+
+	private void submitResizeExecution() {
+		getDisplay().timerExec(RESIZE_RELOAD_DELAY / 2, () -> {
+			long currentTime = System.currentTimeMillis();
+			if (currentTime - fLastResizeEventTime > RESIZE_RELOAD_DELAY) {
+				load();
+				fResizeRequestPending = false;
+			}
+			if (fResizeRequestPending) {
+				submitResizeExecution();
+			}
+		});
+	}
+
+	private void setLeftRightButtonGridData(Button pButton, int pWidth) {
+		GridData gridData = new GridData(SWT.FILL, SWT.FILL, false, false, 1, 1);
+		gridData.widthHint = pWidth;
+		gridData.heightHint = fIconSize;
+		pButton.setLayoutData(gridData);
 	}
 
 	private void setupDisposeListener() {
@@ -129,7 +161,7 @@ public class Slider extends Composite {
 	 *
 	 */
 	public void load() {
-		if (isDisposed() || fScroller.isDisposed()) {
+		if (isDisposed() || fScroller.isDisposed() || fTipManager == null) {
 			return;
 		}
 		Arrays.stream(fScroller.getChildren()).filter(control -> !control.isDisposed())
@@ -144,17 +176,11 @@ public class Slider extends Composite {
 
 		if (spaceCount >= providerCount) {
 			if (fRightButton.isEnabled()) {
-				fRightButton.setEnabled(false);
-				fRightButton.setVisible(false);
-				fLeftButton.setEnabled(false);
-				fLeftButton.setVisible(false);
+				enableLeftRightButtons(false);
 			}
 		} else {
 			if (!fRightButton.isEnabled()) {
-				fRightButton.setEnabled(true);
-				fRightButton.setVisible(true);
-				fLeftButton.setEnabled(true);
-				fLeftButton.setVisible(true);
+				enableLeftRightButtons(true);
 			}
 		}
 
@@ -168,6 +194,18 @@ public class Slider extends Composite {
 			}
 			createProviderButton(providers.get(i + fSliderIndex), newSpacing, i);
 		}
+		setBackground(fScroller.getBackground());
+	}
+
+	private void enableLeftRightButtons(boolean enable) {
+		fRightButton.setEnabled(enable);
+		fRightButton.setVisible(enable);
+		setLeftRightButtonGridData(fRightButton, enable ? fLeftRightButtonWidth : 0);
+		fLeftButton.setEnabled(enable);
+		fLeftButton.setVisible(enable);
+		setLeftRightButtonGridData(fLeftButton, enable ? fLeftRightButtonWidth : 0);
+		fRightButton.requestLayout();
+		fLeftButton.requestLayout();
 	}
 
 	private Composite createProviderButton(TipProvider provider, int spacing, int index) {
