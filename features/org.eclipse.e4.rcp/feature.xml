@@ -2,7 +2,7 @@
 <feature
       id="org.eclipse.e4.rcp"
       label="%featureName"
-      version="1.6.100.qualifier"
+      version="1.6.200.qualifier"
       provider-name="%providerName"
       license-feature="org.eclipse.license"
       license-feature-version="0.0.0">
@@ -170,14 +170,14 @@
          install-size="0"
          version="0.0.0"
          unpack="false"/>
-   
+
    <plugin
          id="org.apache.batik.constants"
          download-size="0"
          install-size="0"
          version="0.0.0"
          unpack="false"/>
-         
+
    <plugin
          id="org.apache.xmlgraphics"
          download-size="0"
