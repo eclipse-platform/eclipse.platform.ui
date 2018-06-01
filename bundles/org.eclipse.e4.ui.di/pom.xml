@@ -19,6 +19,6 @@
   </parent>
   <groupId>org.eclipse.e4</groupId>
   <artifactId>org.eclipse.e4.ui.di</artifactId>
-  <version>1.2.200-SNAPSHOT</version>
+  <version>1.2.300-SNAPSHOT</version>
   <packaging>eclipse-plugin</packaging>
 </project>

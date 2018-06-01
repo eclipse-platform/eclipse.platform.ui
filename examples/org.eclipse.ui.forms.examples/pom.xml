@@ -19,7 +19,7 @@
   </parent>
   <groupId>org.eclipse.ui</groupId>
   <artifactId>org.eclipse.ui.forms.examples</artifactId>
-  <version>3.2.0</version>
+  <version>3.2.100</version>
   <packaging>eclipse-plugin</packaging>
 
   <properties>
