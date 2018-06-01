@@ -64,6 +64,7 @@ public class LinkPrototypeAction extends AbstractLaunchConfigurationAction {
 			DecoratingLabelProvider labelProvider = new DecoratingLabelProvider(DebugUITools.newDebugModelPresentation(), PlatformUI.getWorkbench().getDecoratorManager().getLabelDecorator());
 			ElementListSelectionDialog selectPrototypeDialog = new ElementListSelectionDialog(getShell(), labelProvider);
 			selectPrototypeDialog.setElements(prototypes);
+			selectPrototypeDialog.setInitialSelections(firstLaunchConfiguration.getPrototype());
 			selectPrototypeDialog.setMultipleSelection(false);
 			selectPrototypeDialog.setEmptySelectionMessage("You have to select a prototype."); //$NON-NLS-1$
 			selectPrototypeDialog.setTitle("Please select a prototype"); //$NON-NLS-1$
