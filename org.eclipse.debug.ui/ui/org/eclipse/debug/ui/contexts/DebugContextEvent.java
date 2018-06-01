@@ -12,6 +12,7 @@ package org.eclipse.debug.ui.contexts;
 
 import java.util.EventObject;
 
+import org.eclipse.core.runtime.Assert;
 import org.eclipse.jface.viewers.ISelection;
 
 /**
@@ -64,6 +65,7 @@ public class DebugContextEvent extends EventObject {
 	 */
 	public DebugContextEvent(IDebugContextProvider source, ISelection context, int flags) {
 		super(source);
+		Assert.isNotNull(context, "DebugContextEvent context must not be null"); //$NON-NLS-1$
 		fContext = context;
 		fFlags = flags;
 	}
