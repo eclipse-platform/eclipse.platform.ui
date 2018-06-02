@@ -89,7 +89,7 @@ import org.eclipse.ui.part.ShowInContext;
  * sheet page of their own.
  * </p>
  * <p>
- * The workbench will automatically instantiates this class when a Property
+ * The workbench will automatically instantiate this class when a Property
  * Sheet view is needed for a workbench window. This class is not intended
  * to be instantiated or subclassed by clients.
  * </p>
