@@ -145,4 +145,44 @@ public class CountExpression extends Expression {
 		return HASH_INITIAL * HASH_FACTOR + fMode
 			* HASH_FACTOR + fSize;
 	}
+
+	@Override
+	public String toString() {
+		StringBuilder builder = new StringBuilder(getClass().getSimpleName());
+		builder.append(" [ size="); //$NON-NLS-1$
+		builder.append(fSize);
+		builder.append(", mode: "); //$NON-NLS-1$
+		builder.append(fMode);
+		switch (fMode) {
+		case GREATER_THAN:
+			builder.append(" GREATER_THAN"); //$NON-NLS-1$
+			break;
+		case LESS_THAN:
+			builder.append(" LESS_THAN"); //$NON-NLS-1$ // -N)
+			break;
+		case ANY_NUMBER:
+			builder.append(" ANY_NUMBER"); //$NON-NLS-1$ // *
+			break;
+		case EXACT:
+			builder.append(" EXACT"); //$NON-NLS-1$ // N
+			break;
+		case ONE_OR_MORE:
+			builder.append(" ONE_OR_MORE"); //$NON-NLS-1$ // +
+			break;
+		case NONE_OR_ONE:
+			builder.append(" NONE_OR_ONE"); //$NON-NLS-1$ // ?
+			break;
+		case NONE:
+			builder.append(" NONE"); //$NON-NLS-1$ // !
+			break;
+		case UNKNOWN:
+			builder.append(" UNKNOWN"); //$NON-NLS-1$ ;
+			break;
+		default:
+			break;
+		}
+		builder.append("]"); //$NON-NLS-1$
+		return builder.toString();
+	}
+
 }

@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.core.internal.expressions;
 
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
@@ -17,6 +18,7 @@ import java.util.List;
 import org.w3c.dom.Element;
 
 import org.eclipse.core.expressions.EvaluationResult;
+import org.eclipse.core.expressions.Expression;
 import org.eclipse.core.expressions.ExpressionInfo;
 import org.eclipse.core.expressions.IEvaluationContext;
 import org.eclipse.core.expressions.IIterable;
@@ -236,5 +238,18 @@ public class IterateExpression extends CompositeExpression {
 	protected int computeHashCode() {
 		return HASH_INITIAL * HASH_FACTOR + hashCode(fExpressions)
 			* HASH_FACTOR + fOperator;
+	}
+
+	@Override
+	public String toString() {
+		StringBuilder builder = new StringBuilder(getClass().getSimpleName());
+		builder.append(" [type=").append(fOperator == AND ? "AND" : "OR"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+		Expression[] children = getChildren();
+		if (children.length > 0) {
+			builder.append(", children="); //$NON-NLS-1$
+			builder.append(Arrays.toString(children));
+		}
+		builder.append("]"); //$NON-NLS-1$
+		return builder.toString();
 	}
 }

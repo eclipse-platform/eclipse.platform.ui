@@ -54,4 +54,9 @@ public class NotExpression extends Expression {
 	protected int computeHashCode() {
 		return HASH_INITIAL * HASH_FACTOR + fExpression.hashCode();
 	}
+
+	@Override
+	public String toString() {
+		return getClass().getSimpleName();
+	}
 }

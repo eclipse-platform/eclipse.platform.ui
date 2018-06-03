@@ -97,4 +97,13 @@ public class ReferenceExpression extends Expression {
 	protected int computeHashCode() {
 		return HASH_INITIAL * HASH_FACTOR + fDefinitionId.hashCode();
 	}
+
+	@Override
+	public String toString() {
+		StringBuilder builder = new StringBuilder(getClass().getSimpleName());
+		builder.append(" [definitionId="); //$NON-NLS-1$
+		builder.append(fDefinitionId);
+		builder.append("]"); //$NON-NLS-1$
+		return builder.toString();
+	}
 }

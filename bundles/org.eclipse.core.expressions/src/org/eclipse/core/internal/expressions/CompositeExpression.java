@@ -11,6 +11,7 @@
 package org.eclipse.core.internal.expressions;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.eclipse.core.expressions.EvaluationResult;
@@ -82,4 +83,17 @@ public abstract class CompositeExpression extends Expression {
 	protected int computeHashCode() {
 		return HASH_INITIAL * HASH_FACTOR + hashCode(fExpressions);
 	}
+
+	@Override
+	public String toString() {
+		StringBuilder builder = new StringBuilder(getClass().getSimpleName());
+		Expression[] children = getChildren();
+		if (children.length > 0) {
+			builder.append(" [children="); //$NON-NLS-1$
+			builder.append(Arrays.toString(children));
+			builder.append("]"); //$NON-NLS-1$
+		}
+		return builder.toString();
+	}
+
 }

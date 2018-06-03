@@ -10,10 +10,13 @@
  *******************************************************************************/
 package org.eclipse.core.internal.expressions;
 
+import java.util.Arrays;
+
 import org.w3c.dom.Element;
 
 import org.eclipse.core.expressions.EvaluationContext;
 import org.eclipse.core.expressions.EvaluationResult;
+import org.eclipse.core.expressions.Expression;
 import org.eclipse.core.expressions.ExpressionInfo;
 import org.eclipse.core.expressions.IEvaluationContext;
 
@@ -89,5 +92,21 @@ public class ResolveExpression extends CompositeExpression {
 		return HASH_INITIAL * HASH_FACTOR + hashCode(fExpressions)
 			* HASH_FACTOR + hashCode(fArgs)
 			* HASH_FACTOR + fVariable.hashCode();
+	}
+
+	@Override
+	public String toString() {
+		StringBuilder builder = new StringBuilder(getClass().getSimpleName());
+		builder.append(" [variable=").append(fVariable); //$NON-NLS-1$
+		if (fArgs != null) {
+			builder.append(", args=").append(Arrays.toString(fArgs)); //$NON-NLS-1$
+		}
+		Expression[] children = getChildren();
+		if (children.length > 0) {
+			builder.append(", children="); //$NON-NLS-1$
+			builder.append(Arrays.toString(children));
+		}
+		builder.append("]"); //$NON-NLS-1$
+		return builder.toString();
 	}
 }

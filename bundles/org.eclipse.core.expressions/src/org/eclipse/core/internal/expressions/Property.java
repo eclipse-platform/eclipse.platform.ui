@@ -16,9 +16,9 @@ import org.eclipse.core.runtime.Assert;
 
 public class Property {
 
-	private Class<?> fType;
-	private String fNamespace;
-	private String fName;
+	private final Class<?> fType;
+	private final String fNamespace;
+	private final String fName;
 
 	private IPropertyTester fTester;
 
@@ -69,5 +69,22 @@ public class Property {
 	@Override
 	public int hashCode() {
 		return (fType.hashCode() << 16) | fNamespace.hashCode() << 8 | fName.hashCode();
+	}
+
+	@Override
+	public String toString() {
+		StringBuilder builder = new StringBuilder();
+		builder.append("Property ["); //$NON-NLS-1$
+		builder.append(fNamespace);
+		builder.append("."); //$NON-NLS-1$
+		builder.append(fName);
+		builder.append(", type="); //$NON-NLS-1$
+		builder.append(fType);
+		if (fTester != null) {
+			builder.append(", tester="); //$NON-NLS-1$
+			builder.append(fTester);
+		}
+		builder.append("]"); //$NON-NLS-1$
+		return builder.toString();
 	}
 }

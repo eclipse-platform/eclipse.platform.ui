@@ -70,4 +70,13 @@ public class EqualsExpression extends Expression {
 	protected int computeHashCode() {
 		return HASH_INITIAL * HASH_FACTOR + fExpectedValue.hashCode();
 	}
+
+	@Override
+	public String toString() {
+		StringBuilder builder = new StringBuilder(getClass().getSimpleName());
+		builder.append(" [expected="); //$NON-NLS-1$
+		builder.append(fExpectedValue);
+		builder.append("]"); //$NON-NLS-1$
+		return builder.toString();
+	}
 }
