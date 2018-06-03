@@ -13,7 +13,6 @@ package org.eclipse.ui.internal.handlers;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
@@ -28,7 +27,7 @@ import org.eclipse.ui.internal.ExceptionHandler;
 
 /**
  * Handles the cut command in both dialogs and windows. This handler is enabled
- * if the focus control supports the "cut" method.
+ * if the focus control supports the "cut", "copy" or "paste" methods.
  *
  * @since 3.0
  */
