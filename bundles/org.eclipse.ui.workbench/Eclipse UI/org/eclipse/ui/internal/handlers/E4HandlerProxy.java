@@ -48,9 +48,9 @@ import org.eclipse.ui.menus.UIElement;
  *
  */
 public class E4HandlerProxy implements IHandler2, IHandlerListener, IElementUpdater {
-	public HandlerActivation activation = null;
-	private Command command;
-	private IHandler handler;
+	public HandlerActivation activation;
+	private final Command command;
+	private final IHandler handler;
 	private boolean logExecute = true;
 	private boolean logSetEnabled = true;
 
@@ -177,4 +177,20 @@ public class E4HandlerProxy implements IHandler2, IHandlerListener, IElementUpda
 			WorkbenchPlugin.log(status);
 		}
 	}
+
+	@Override
+	public String toString() {
+		StringBuilder builder = new StringBuilder();
+		builder.append("E4HandlerProxy ["); //$NON-NLS-1$
+		builder.append("handler="); //$NON-NLS-1$
+		builder.append(handler);
+		if (command != null) {
+			builder.append(", "); //$NON-NLS-1$
+			builder.append("command="); //$NON-NLS-1$
+			builder.append(command);
+		}
+		builder.append("]"); //$NON-NLS-1$
+		return builder.toString();
+	}
+
 }
