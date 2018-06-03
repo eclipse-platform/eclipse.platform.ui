@@ -11,9 +11,9 @@
 package org.eclipse.ui.internal.expressions;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
-
 import org.eclipse.core.expressions.EvaluationResult;
 import org.eclipse.core.expressions.Expression;
 import org.eclipse.core.expressions.ExpressionInfo;
@@ -88,5 +88,18 @@ public abstract class CompositeExpression extends Expression {
 			expression.collectExpressionInfo(info);
 		}
 	}
+
+	@Override
+	public String toString() {
+		StringBuilder builder = new StringBuilder(getClass().getSimpleName());
+		Expression[] children = getChildren();
+		if (children.length > 0) {
+			builder.append(" [children="); //$NON-NLS-1$
+			builder.append(Arrays.toString(children));
+			builder.append("]"); //$NON-NLS-1$
+		}
+		return builder.toString();
+	}
+
 }
 

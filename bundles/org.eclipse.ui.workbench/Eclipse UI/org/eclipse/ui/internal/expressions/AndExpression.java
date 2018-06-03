@@ -10,10 +10,7 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.expressions;
 
-import java.util.Iterator;
-
 import org.eclipse.core.expressions.EvaluationResult;
-import org.eclipse.core.expressions.Expression;
 import org.eclipse.core.expressions.IEvaluationContext;
 import org.eclipse.core.runtime.CoreException;
 
@@ -49,21 +46,4 @@ public final class AndExpression extends CompositeExpression {
 		return evaluateAnd(context);
 	}
 
-	@Override
-	public final String toString() {
-		final StringBuilder buffer = new StringBuilder();
-		buffer.append("AndExpression("); //$NON-NLS-1$
-		if (fExpressions != null) {
-			final Iterator itr = fExpressions.iterator();
-			while (itr.hasNext()) {
-				final Expression expression = (Expression) itr.next();
-				buffer.append(expression.toString());
-				if (itr.hasNext()) {
-					buffer.append(',');
-				}
-			}
-		}
-		buffer.append(')');
-		return buffer.toString();
-	}
 }
