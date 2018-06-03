@@ -36,6 +36,7 @@ import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.handlers.IHandlerService;
 import org.eclipse.ui.ide.IDE;
+import org.eclipse.ui.internal.util.BundleUtility;
 import org.eclipse.ui.part.IPage;
 import org.eclipse.ui.tests.SelectionProviderView;
 import org.eclipse.ui.tests.harness.util.FileUtil;
@@ -46,6 +47,7 @@ import org.eclipse.ui.views.properties.PropertySheet;
 import org.eclipse.ui.views.properties.PropertySheetEntry;
 import org.eclipse.ui.views.properties.PropertySheetPage;
 import org.eclipse.ui.views.properties.PropertyShowInContext;
+import org.osgi.framework.Bundle;
 
 /**
  * @since 3.4
@@ -307,14 +309,15 @@ public class MultiInstancePropertySheetTest extends AbstractPropertySheetTest {
 		}
 	}
 
-	/**
-	 * @throws ExecutionException
-	 * @throws NotDefinedException
-	 * @throws NotEnabledException
-	 * @throws NotHandledException
-	 */
-	private void executeNewPropertySheetHandler() throws ExecutionException,
-			NotDefinedException, NotEnabledException, NotHandledException {
+	private void executeNewPropertySheetHandler() throws Exception {
+		// Activate bundle to make sure HandlerProxy.isOkToLoad() allows to load the
+		// handler to avoid NotHandledException error
+		String bundleId = "org.eclipse.ui.views";
+		boolean activated = BundleUtility.isActivated(bundleId);
+		if (!activated) {
+			Bundle bundle = Platform.getBundle(bundleId);
+			bundle.start();
+		}
 
 		// the propertysheet is the active part if its view toolbar command gets
 		// pressed
@@ -334,8 +337,7 @@ public class MultiInstancePropertySheetTest extends AbstractPropertySheetTest {
 	 * @throws NotDefinedException
 	 * @throws ExecutionException
 	 */
-	public void testParentIsPinned() throws ExecutionException,
-			NotDefinedException, NotEnabledException, NotHandledException {
+	public void testParentIsPinned() throws Exception {
 		executeNewPropertySheetHandler();
 
 		IAction pinAction = getPinPropertySheetAction(propertySheet);

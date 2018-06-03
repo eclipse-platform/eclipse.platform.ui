@@ -86,7 +86,7 @@ public final class HandlerProxy extends AbstractHandlerWithState implements
 	 * forced to load the real handler. At this point, the configuration element
 	 * is converted, nulled out, and this handler gains a reference.
 	 */
-	private IHandler handler = null;
+	private IHandler handler;
 
 	/**
 	 * The name of the configuration element attribute which contains the
@@ -323,14 +323,9 @@ public final class HandlerProxy extends AbstractHandlerWithState implements
 
 	@Override
 	public final boolean isHandled() {
-		if (configurationElement != null && handler == null) {
-			return true;
-		}
-
 		if (isOkToLoad() && loadHandler()) {
 			return handler.isHandled();
 		}
-
 		return false;
 	}
 
