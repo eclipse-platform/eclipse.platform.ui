@@ -24,5 +24,5 @@ public interface IJsonTip {
 	 *
 	 * @return the JsonObject describing the tip.
 	 */
-	public String getJsonObject();
+	String getJsonObject();
 }

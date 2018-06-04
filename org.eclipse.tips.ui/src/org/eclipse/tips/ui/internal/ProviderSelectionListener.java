@@ -25,5 +25,5 @@ public interface ProviderSelectionListener {
 	 * @param provider
 	 *            the {@link TipProvider} that was selected
 	 */
-	public void selected(TipProvider provider);
+	void selected(TipProvider provider);
 }

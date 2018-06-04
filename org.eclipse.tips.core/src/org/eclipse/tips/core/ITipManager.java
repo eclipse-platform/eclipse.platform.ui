@@ -25,7 +25,7 @@ public interface ITipManager {
 	 * @return true or false
 	 * @see TipManager#setServeReadTips(boolean)
 	 */
-	public boolean mustServeReadTips();
+	boolean mustServeReadTips();
 
 	/**
 	 * Consults TipManager to determine the Tip's read status.
@@ -33,7 +33,7 @@ public interface ITipManager {
 	 * @param tip the tip to query for its read status
 	 * @return true if the tip is read, false otherwise.
 	 */
-	public abstract boolean isRead(Tip tip);
+	boolean isRead(Tip tip);
 
 	/**
 	 * Instructs the TipManager to mark this tip as read.
@@ -41,7 +41,7 @@ public interface ITipManager {
 	 * @param tip the tip to set as read.
 	 * @return this
 	 */
-	public abstract ITipManager setAsRead(Tip tip);
+	ITipManager setAsRead(Tip tip);
 
 	/**
 	 * Central place of logging for the Tip Framework.
@@ -49,7 +49,7 @@ public interface ITipManager {
 	 * @param status the {@link IStatus} which may not be null
 	 * @return this
 	 */
-	public ITipManager log(IStatus status);
+	ITipManager log(IStatus status);
 
 	/**
 	 * Binds the passed provider to this manager. After registration, ITipManager
@@ -60,7 +60,7 @@ public interface ITipManager {
 	 * @param provider the {@link TipProvider} to register which may not be null.
 	 * @return this
 	 */
-	public ITipManager register(TipProvider provider);
+	ITipManager register(TipProvider provider);
 
 	/**
 	 * Opens the Tip of the Day dialog.
@@ -74,14 +74,14 @@ public interface ITipManager {
 	 *
 	 * @see #isOpen()
 	 */
-	public ITipManager open(boolean startUp);
+	ITipManager open(boolean startUp);
 
 	/**
 	 * Returns the open state.
 	 *
 	 * @return true if this manager is open, false otherwise.
 	 */
-	public boolean isOpen();
+	boolean isOpen();
 
 	/**
 	 * Indicates if this manager has providers with unread tips. Be aware that
@@ -91,5 +91,5 @@ public interface ITipManager {
 	 * @return true if this {@link TipManager} has providers with tips.
 	 * @see TipProvider#getTips()
 	 */
-	public boolean hasContent();
+	boolean hasContent();
 }

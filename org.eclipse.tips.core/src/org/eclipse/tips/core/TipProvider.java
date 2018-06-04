@@ -230,7 +230,7 @@ public abstract class TipProvider {
 	/**
 	 * A convenience method to get the list of tips based on the read status of the
 	 * tip and the requirement to serve unread or all tips.
-	 * 
+	 *
 	 * @return the list of tips based on the description above
 	 * @see ITipManager#mustServeReadTips()
 	 * @see ITipManager#isRead(Tip)
@@ -272,7 +272,7 @@ public abstract class TipProvider {
 //		if (!getManager().isOpen()) {
 //			return this;
 //		}
-		getManager().log(LogUtil.info(Messages.TipProvider_0)); 
+		getManager().log(LogUtil.info(Messages.TipProvider_0));
 		doSetTips(tips, true);
 		fReady = true;
 		fChangeSupport.firePropertyChange(PROP_READY, false, true);

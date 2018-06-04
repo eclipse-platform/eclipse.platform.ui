@@ -28,5 +28,5 @@ public interface ISwtTip {
 	 * @param parent
 	 *            the parent composite
 	 */
-	public abstract void createControl(Composite parent);
+	void createControl(Composite parent);
 }

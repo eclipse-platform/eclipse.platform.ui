@@ -24,7 +24,7 @@ public interface IHtmlTip {
 	 * @return the HMTL of the tip
 	 * @see #getImage()
 	 */
-	public String getHTML();
+	String getHTML();
 
 	/**
 	 * Returns the {@link TipImage}.
@@ -32,6 +32,6 @@ public interface IHtmlTip {
 	 * @return a TipImage with information about the image or <code>null</code> if the this information cannot be created
 	 * @see #getHTML()
 	 */
-	public TipImage getImage();
+	TipImage getImage();
 
 }

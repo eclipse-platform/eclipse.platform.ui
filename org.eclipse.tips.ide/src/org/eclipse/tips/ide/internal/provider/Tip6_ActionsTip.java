@@ -57,8 +57,9 @@ public class Tip6_ActionsTip extends Tip implements IHtmlTip {
 		Runnable runner2 = () -> Display.getDefault().syncExec(() -> {
 			PreferenceDialog pref = PreferencesUtil.createPreferenceDialogOn(
 					PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), "myPreferencePage", null, null);
-			if (pref != null)
+			if (pref != null) {
 				pref.open();
+			}
 		});
 		ArrayList<TipAction> actions = new ArrayList<>();
 		actions.add(new TipAction("Clock", "What is the time?", clock, getImage("icons/clock.png")));

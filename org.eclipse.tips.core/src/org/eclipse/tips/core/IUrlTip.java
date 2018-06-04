@@ -27,5 +27,5 @@ public interface IUrlTip {
 	 * @return the string representation of URL to the (remote) content
 	 *
 	 */
-	public String getURL();
+	String getURL();
 }

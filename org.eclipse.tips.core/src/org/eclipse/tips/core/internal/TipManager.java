@@ -233,8 +233,9 @@ public abstract class TipManager implements ITipManager {
 	@Override
 	public boolean isOpen() {
 		// checkDisposed();
-		if (isDisposed())
+		if (isDisposed()) {
 			return false;
+		}
 		return fOpen;
 	}
 

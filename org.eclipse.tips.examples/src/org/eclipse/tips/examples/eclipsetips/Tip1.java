@@ -35,7 +35,7 @@ public class Tip1 extends Tip implements IHtmlTip {
 	public String getSubject() {
 		return "This is SwtTipImpl";
 	}
-	
+
 	@Override
 	public String getHTML() {
 		return "<h1>Iterate with Iterator</h1>" //

@@ -76,28 +76,37 @@ public abstract class Tip {
 
 	@Override
 	public boolean equals(Object obj) {
-		if (this == obj)
+		if (this == obj) {
 			return true;
-		if (obj == null)
+		}
+		if (obj == null) {
 			return false;
-		if (getClass() != obj.getClass())
+		}
+		if (getClass() != obj.getClass()) {
 			return false;
+		}
 		Tip other = (Tip) obj;
 		if (getCreationDate() == null) {
-			if (other.getCreationDate() != null)
+			if (other.getCreationDate() != null) {
 				return false;
-		} else if (!getCreationDate().equals(other.getCreationDate()))
+			}
+		} else if (!getCreationDate().equals(other.getCreationDate())) {
 			return false;
+		}
 		if (providerId == null) {
-			if (other.providerId != null)
+			if (other.providerId != null) {
 				return false;
-		} else if (!providerId.equals(other.providerId))
+			}
+		} else if (!providerId.equals(other.providerId)) {
 			return false;
+		}
 		if (getSubject() == null) {
-			if (other.getSubject() != null)
+			if (other.getSubject() != null) {
 				return false;
-		} else if (!getSubject().equals(other.getSubject()))
+			}
+		} else if (!getSubject().equals(other.getSubject())) {
 			return false;
+		}
 		return true;
 	}
 }
