@@ -18,7 +18,7 @@ import java.util.List;
 import java.util.Vector;
 
 /**
- * A string pattern matcher, suppporting "*" and "?" wildcards.
+ * A string pattern matcher, supporting "*" and "?" wildcards.
  */
 public class StringMatcher {
     protected String fPattern;
@@ -410,14 +410,16 @@ public class StringMatcher {
     }
 
     /**
-     *
-     * @return boolean
-     * @param text a String to match
-     * @param start int that indicates the starting index of match, inclusive
-     * @param end</code> int that indicates the ending index of match, exclusive
-     * @param p String,  String, a simple regular expression that may contain '?'
-     * @param ignoreCase boolean indicating wether code>p</code> is case sensitive
-     */
+	 *
+	 * @return boolean
+	 * @param text       a String to match
+	 * @param start      int that indicates the starting index of match, inclusive
+	 * @param            end</code> int that indicates the ending index of match,
+	 *                   exclusive
+	 * @param p          String, String, a simple regular expression that may
+	 *                   contain '?'
+	 * @param ignoreCase boolean indicating whether code>p</code> is case sensitive
+	 */
     protected boolean regExpRegionMatches(String text, int tStart, String p,
             int pStart, int plen) {
         while (plen-- > 0) {
@@ -441,8 +443,7 @@ public class StringMatcher {
 				}
                 // comparing after converting to upper case doesn't handle all cases;
                 // also compare after converting to lower case
-                if (Character.toLowerCase(tchar) == Character
-                        .toLowerCase(pchar)) {
+				if (Character.toLowerCase(tchar) == Character.toLowerCase(pchar)) {
 					continue;
 				}
             }
