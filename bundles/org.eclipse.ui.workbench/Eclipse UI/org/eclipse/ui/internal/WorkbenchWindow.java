@@ -1649,7 +1649,8 @@ STATUS_LINE_ID, model);
 		return close(true);
 	}
 
-	protected boolean isClosing() {
+	@Override
+	public boolean isClosing() {
 		return closing || getWorkbenchImpl().isClosing();
 	}
 

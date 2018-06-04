@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 IBM Corporation and others.
+ * Copyright (c) 2000, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -223,4 +223,14 @@ public interface IWorkbenchWindow extends IPageService, IRunnableContext,
 	 * @since 3.1
 	 */
     IExtensionTracker getExtensionTracker();
+
+	/**
+	 * Returns a boolean indicating whether the workbench window is in the process
+	 * of closing.
+	 *
+	 * @return <code>true</code> if the workbench window is in the process of
+	 *         closing, <code>false</code> otherwise
+	 * @since 3.112
+	 */
+	boolean isClosing();
 }
