@@ -1338,4 +1338,17 @@
          </command>
       </menuContribution>
    </extension>
+
+   <extension
+         point="org.eclipse.ui.views">
+      <view
+            category="org.eclipse.ui"
+            class="org.eclipse.ui.internal.views.minimap.MinimapView"
+            icon="icons/full/eview16/minimap.png"
+            id="org.eclipse.ui.views.minimap.MinimapView"
+            name="%MinimapView.name"
+            allowMultiple="false"
+            restorable="true">
+      </view>
+   </extension>   
 </plugin>
