@@ -181,16 +181,19 @@ public abstract class SharedScrolledComposite extends ScrolledComposite {
 			contentCache.flush();
 		}
 
-		int minWidth = contentCache.computeMinimumWidth();
-		int minHeight = contentCache.computeSize(minWidth, SWT.DEFAULT).y;
-
-		if (!(expandHorizontal && expandVertical)) {
-			Point preferredSize = contentCache.computeSize(SWT.DEFAULT, SWT.DEFAULT);
-
-			c.setSize(preferredSize);
+		int minControlWidth = Math.max(contentCache.computeMinimumWidth(), clientArea.width);
+		int controlWidth = minControlWidth;
+		if (!expandHorizontal) {
+			controlWidth = Math.min(controlWidth, contentCache.computeSize(SWT.DEFAULT, SWT.DEFAULT).x);
 		}
 
-		setMinSize(new Point(minWidth, minHeight));
+		int controlHeight = contentCache.computeSize(controlWidth, SWT.DEFAULT).y;
+
+		if (!(expandHorizontal && expandVertical)) {
+			c.setSize(controlWidth, controlHeight);
+		}
+
+		setMinSize(new Point(controlWidth, controlHeight));
 		FormUtil.updatePageIncrement(this);
 
 		// reduce vertical scroll increment if necessary

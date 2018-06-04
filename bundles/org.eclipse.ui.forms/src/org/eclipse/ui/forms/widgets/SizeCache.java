@@ -20,6 +20,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Layout;
+import org.eclipse.swt.widgets.Link;
 import org.eclipse.swt.widgets.List;
 import org.eclipse.swt.widgets.ProgressBar;
 import org.eclipse.swt.widgets.Sash;
@@ -36,7 +37,15 @@ import org.eclipse.swt.widgets.Tree;
  * @since 3.0
  */
 public class SizeCache {
-    private Control control;
+	/**
+	 * The maximum value (pixels) to return from {@link #computeMaximumWidth()} for
+	 * wrapping controls that don't implement {@link ILayoutExtension}. This
+	 * constant serves a similar purpose to the one in {@link LayoutGenerator}. It
+	 * ensures that really long controls prefer to wrap when possible when they get
+	 * too long.
+	 */
+	private static final int MAXIMUM_MINIMUM_WIDTH_FOR_WRAPPING_CONTROLS = 200;
+	private Control control;
 
     private Point preferredSize;
 
@@ -408,6 +417,17 @@ public class SizeCache {
         || control instanceof Label);
     }
 
+	private static boolean isWrapControl(Control control) {
+		boolean wrapping = (control.getStyle() & SWT.WRAP) != 0;
+
+		// Links are always wrapping, even though they don't use the SWT.WRAP
+		// flag
+		if (control instanceof Link) {
+			wrapping = true;
+		}
+		return wrapping;
+	}
+
 	public int computeMinimumWidth() {
 		if (minimumWidth == -1) {
 			if (control instanceof Composite) {
@@ -425,6 +445,14 @@ public class SizeCache {
 
 		if (minimumWidth == -1) {
 			Point minWidth = computeSize(SWT.DEFAULT, SWT.DEFAULT);
+			// If this is a wrapping SWT control, clamp the minimum width to a hardcoded
+			// maximum. If the control's preferred (unwrapped) size was larger than this,
+			// we could still make it smaller and it would adapt by wrapping. However, if
+			// we made it too small it would still become unusable, so we can't clamp it
+			// to 0.
+			if (isWrapControl(control) && minWidth.x > MAXIMUM_MINIMUM_WIDTH_FOR_WRAPPING_CONTROLS) {
+				minWidth = computeSize(MAXIMUM_MINIMUM_WIDTH_FOR_WRAPPING_CONTROLS, SWT.DEFAULT);
+			}
 			minimumWidth = minWidth.x;
 			heightAtMinimumWidth = minWidth.y;
 		}

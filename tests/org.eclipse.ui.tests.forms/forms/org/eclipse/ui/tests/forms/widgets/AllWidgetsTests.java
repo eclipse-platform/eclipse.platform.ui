@@ -17,10 +17,7 @@ import org.junit.runners.Suite;
  * Tests forms widgets (automated).
  */
 @RunWith(Suite.class)
-@Suite.SuiteClasses({
-	ExpandableCompositeTest.class,
-	FormTextModelTest.class
-})
+@Suite.SuiteClasses({ ExpandableCompositeTest.class, FormTextModelTest.class, ScrolledFormTest.class })
 public class AllWidgetsTests {
 
 }
