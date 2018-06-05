@@ -185,7 +185,7 @@ public class TipsPreferences extends AbstractPreferenceInitializer {
 		} else if ("disable".equals(startupBehavior)) {
 			return TipManager.START_DISABLE;
 		}
-		return TipManager.START_DIALOG;
+		return TipManager.START_BACKGROUND;
 	}
 
 	public static boolean isServeReadTips() {
