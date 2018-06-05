@@ -66,6 +66,7 @@ import org.eclipse.ui.IReusableEditor;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchPartReference;
+import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.progress.UIJob;
 import org.eclipse.ui.texteditor.IDocumentProvider;
@@ -554,7 +555,7 @@ public class SourceLookupFacility implements IPageListener, IPartListener2, IPro
 		Runnable r = new Runnable() {
 			@Override
 			public void run() {
-				if (!page.getWorkbenchWindow().getWorkbench().isClosing()) {
+				if (!isClosing(page)) {
 					try {
 						editor[0] = page.openEditor(input, id, false, IWorkbenchPage.MATCH_ID|IWorkbenchPage.MATCH_INPUT);
 					} catch (PartInitException e) {
@@ -568,6 +569,22 @@ public class SourceLookupFacility implements IPageListener, IPartListener2, IPro
 		};
 		BusyIndicator.showWhile(DebugUIPlugin.getStandardDisplay(), r);
 		return editor[0];
+	}
+
+	private boolean isClosing(final IWorkbenchPage page) {
+		IWorkbenchWindow pageWindow = page.getWorkbenchWindow();
+
+		boolean isWorkbenchClosing = pageWindow.getWorkbench().isClosing();
+		if (isWorkbenchClosing) {
+			return true;
+		}
+
+		boolean isWorkbenchPageWindowClosing = pageWindow.isClosing();
+		if (isWorkbenchPageWindowClosing) {
+			return true;
+		}
+
+		return false;
 	}
 
     /* (non-Javadoc)
