@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2012 IBM Corporation and others.
+ *  Copyright (c) 2000, 2018 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -12,6 +12,7 @@ package org.eclipse.debug.internal.ui;
 
 
 import org.eclipse.core.runtime.Assert;
+import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.layout.PixelConverter;
 import org.eclipse.jface.resource.JFaceResources;
@@ -690,5 +691,18 @@ public class SWTFactory {
 	 */
 	public static void showPreferencePage(String page_id, String[] page_filters) {
 		PreferencesUtil.createPreferenceDialogOn(DebugUIPlugin.getShell(), page_id, page_filters, null).open();
+	}
+
+	/**
+	 * This method allows users to open a specific property page and supply a
+	 * custom set of page filter items.
+	 *
+	 *
+	 * @param page_id the id for the page to open
+	 * @param page_filters the listing of pages to be shown in the dialog
+	 * @since 3.13
+	 */
+	public static void showPropertyPage(IAdaptable element, String page_id, String[] page_filters) {
+		PreferencesUtil.createPropertyDialogOn(DebugUIPlugin.getShell(), element, page_id, page_filters, null).open();
 	}
 }
