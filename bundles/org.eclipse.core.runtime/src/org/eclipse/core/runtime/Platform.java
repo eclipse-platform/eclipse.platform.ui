@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 IBM Corporation and others.
+ * Copyright (c) 2000, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -27,7 +27,6 @@ import org.eclipse.osgi.service.debug.DebugOptions;
 import org.eclipse.osgi.service.environment.EnvironmentInfo;
 import org.eclipse.osgi.service.resolver.PlatformAdmin;
 import org.osgi.framework.Bundle;
-import org.osgi.service.packageadmin.PackageAdmin;
 
 /**
  * The central class of the Eclipse Platform Runtime. This class cannot
@@ -212,8 +211,9 @@ public final class Platform {
 	 * Note this constant has been moved from the deprecated
 	 * org.eclipse.core.boot.BootLoader class and its value has not changed.
 	 * </p>
+	 *
 	 * @since 3.0
-	 * * @deprecated not supported anymore
+	 * @deprecated not supported anymore
 	 */
 	@Deprecated
 	public static final String OS_AIX = "aix";//$NON-NLS-1$
@@ -300,8 +300,12 @@ public final class Platform {
 	 * Note this constant has been moved from the deprecated
 	 * org.eclipse.core.boot.BootLoader class and its value has not changed.
 	 * </p>
+	 *
 	 * @since 3.0
+	 *
+	 * @deprecated not supported anymore
 	 */
+	@Deprecated
 	public static final String ARCH_PA_RISC = "PA_RISC";//$NON-NLS-1$
 
 	/**
@@ -311,8 +315,12 @@ public final class Platform {
 	 * Note this constant has been moved from the deprecated
 	 * org.eclipse.core.boot.BootLoader class and its value has not changed.
 	 * </p>
+	 *
 	 * @since 3.0
+	 *
+	 * @deprecated not supported anymore
 	 */
+	@Deprecated
 	public static final String ARCH_PPC = "ppc";//$NON-NLS-1$
 
 	/**
@@ -322,8 +330,12 @@ public final class Platform {
 	 * Note this constant has been moved from the deprecated
 	 * org.eclipse.core.boot.BootLoader class and its value has not changed.
 	 * </p>
+	 *
 	 * @since 3.0
+	 *
+	 * @deprecated not supported anymore
 	 */
+	@Deprecated
 	public static final String ARCH_SPARC = "sparc";//$NON-NLS-1$
 
 	/**
@@ -350,7 +362,10 @@ public final class Platform {
 	 * IA64-based architecture.
 	 *
 	 * @since 3.0
+	 *
+	 * @deprecated not supported anymore
 	 */
+	@Deprecated
 	public static final String ARCH_IA64 = "ia64"; //$NON-NLS-1$
 
 	/**
@@ -358,7 +373,10 @@ public final class Platform {
 	 * IA64 32bit-based architecture.
 	 *
 	 * @since 3.1
+	 *
+	 * @deprecated not supported anymore
 	 */
+	@Deprecated
 	public static final String ARCH_IA64_32 = "ia64_32";//$NON-NLS-1$
 
 	/**
@@ -1329,12 +1347,15 @@ public final class Platform {
 	/**
 	 * Checks if the specified bundle is a fragment bundle.
 	 * <p>
-	 * Clients are also able to acquire the {@link PackageAdmin} service
-	 * to query if the given bundle is a fragment by asking for the bundle type
-	 * and checking against constants on the service interface.
+	 * Clients are also able to acquire the
+	 * {@link org.osgi.service.packageadmin.PackageAdmin} service to query if the
+	 * given bundle is a fragment by asking for the bundle type and checking against
+	 * constants on the service interface.
 	 * </p>
+	 *
 	 * @param bundle the bundle to query
-	 * @return true if the specified bundle is a fragment bundle; otherwise false is returned.
+	 * @return true if the specified bundle is a fragment bundle; otherwise false is
+	 *         returned.
 	 * @since 3.0
 	 */
 	public static boolean isFragment(Bundle bundle) {
@@ -1342,16 +1363,19 @@ public final class Platform {
 	}
 
 	/**
-	 * Returns an array of attached fragment bundles for the specified bundle.  If the
-	 * specified bundle is a fragment then <tt>null</tt> is returned.  If no fragments are
-	 * attached to the specified bundle then <tt>null</tt> is returned.
+	 * Returns an array of attached fragment bundles for the specified bundle. If
+	 * the specified bundle is a fragment then <tt>null</tt> is returned. If no
+	 * fragments are attached to the specified bundle then <tt>null</tt> is
+	 * returned.
 	 * <p>
-	 * Clients are also able to acquire the {@link PackageAdmin} service and query
-	 * it for the fragments of the given bundle.
+	 * Clients are also able to acquire the
+	 * {@link org.osgi.service.packageadmin.PackageAdmin} service and query it for
+	 * the fragments of the given bundle.
 	 * </p>
+	 *
 	 * @param bundle the bundle to get the attached fragment bundles for.
 	 * @return an array of fragment bundles or <tt>null</tt> if the bundle does not
-	 * have any attached fragment bundles.
+	 *         have any attached fragment bundles.
 	 * @since 3.0
 	 */
 	public static Bundle[] getFragments(Bundle bundle) {
@@ -1360,18 +1384,20 @@ public final class Platform {
 
 	/**
 	 * Returns the resolved bundle with the specified symbolic name that has the
-	 * highest version.  If no resolved bundles are installed that have the
-	 * specified symbolic name then null is returned.
+	 * highest version. If no resolved bundles are installed that have the specified
+	 * symbolic name then null is returned.
 	 * <p>
-	 * Clients are also able to acquire the {@link PackageAdmin} service and query
-	 * it for the bundle with the specified symbolic name. Clients can ask the
-	 * service for all bundles with that particular name and then determine the
-	 * one with the highest version. Note that clients may want to filter
-	 * the results based on the state of the bundles.
+	 * Clients are also able to acquire the
+	 * {@link org.osgi.service.packageadmin.PackageAdmin} service and query it for
+	 * the bundle with the specified symbolic name. Clients can ask the service for
+	 * all bundles with that particular name and then determine the one with the
+	 * highest version. Note that clients may want to filter the results based on
+	 * the state of the bundles.
 	 * </p>
+	 *
 	 * @param symbolicName the symbolic name of the bundle to be returned.
-	 * @return the bundle that has the specified symbolic name with the
-	 * highest version, or <tt>null</tt> if no bundle is found.
+	 * @return the bundle that has the specified symbolic name with the highest
+	 *         version, or <tt>null</tt> if no bundle is found.
 	 * @since 3.0
 	 */
 	public static Bundle getBundle(String symbolicName) {
@@ -1379,23 +1405,25 @@ public final class Platform {
 	}
 
 	/**
-	 * Returns all bundles with the specified symbolic name.  If no resolved bundles
-	 * with the specified symbolic name can be found, <tt>null</tt> is returned.
-	 * If the version argument is not null then only the Bundles that have
-	 * the specified symbolic name and a version greater than or equal to the
-	 * specified version are returned. The returned bundles are ordered in
-	 * descending bundle version order.
+	 * Returns all bundles with the specified symbolic name. If no resolved bundles
+	 * with the specified symbolic name can be found, <tt>null</tt> is returned. If
+	 * the version argument is not null then only the Bundles that have the
+	 * specified symbolic name and a version greater than or equal to the specified
+	 * version are returned. The returned bundles are ordered in descending bundle
+	 * version order.
 	 * <p>
-	 * Clients are also able to acquire the {@link PackageAdmin} service and query
-	 * it for all bundle versions with the given symbolic name, after turning the
-	 * specific version into a version range. Note that clients may want to filter
-	 * the results based on the state of the bundles.
+	 * Clients are also able to acquire the
+	 * {@link org.osgi.service.packageadmin.PackageAdmin} service and query it for
+	 * all bundle versions with the given symbolic name, after turning the specific
+	 * version into a version range. Note that clients may want to filter the
+	 * results based on the state of the bundles.
 	 * </p>
+	 *
 	 * @param symbolicName the symbolic name of the bundles that are to be returned.
-	 * @param version the version that the return bundle versions must match,
-	 * or <tt>null</tt> if no version matching is to be done.
-	 * @return the array of Bundles with the specified name that match the
-	 * specified version and match rule, or <tt>null</tt> if no bundles are found.
+	 * @param version      the version that the return bundle versions must match,
+	 *                     or <tt>null</tt> if no version matching is to be done.
+	 * @return the array of Bundles with the specified name that match the specified
+	 *         version and match rule, or <tt>null</tt> if no bundles are found.
 	 */
 	public static Bundle[] getBundles(String symbolicName, String version) {
 		return InternalPlatform.getDefault().getBundles(symbolicName, version);
@@ -1403,15 +1431,17 @@ public final class Platform {
 
 	/**
 	 * Returns an array of host bundles that the specified fragment bundle is
-	 * attached to or <tt>null</tt> if the specified bundle is not attached to a host.
-	 * If the bundle is not a fragment bundle then <tt>null</tt> is returned.
+	 * attached to or <tt>null</tt> if the specified bundle is not attached to a
+	 * host. If the bundle is not a fragment bundle then <tt>null</tt> is returned.
 	 * <p>
-	 * Clients are also able to acquire the {@link PackageAdmin} service and query
-	 * it for the hosts for the given bundle.
+	 * Clients are also able to acquire the
+	 * {@link org.osgi.service.packageadmin.PackageAdmin} service and query it for
+	 * the hosts for the given bundle.
 	 * </p>
+	 *
 	 * @param bundle the bundle to get the host bundles for.
-	 * @return an array of host bundles or null if the bundle does not have any
-	 * host bundles.
+	 * @return an array of host bundles or null if the bundle does not have any host
+	 *         bundles.
 	 * @since 3.0
 	 */
 	public static Bundle[] getHosts(Bundle bundle) {
