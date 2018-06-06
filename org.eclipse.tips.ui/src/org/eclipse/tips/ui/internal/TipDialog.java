@@ -65,17 +65,6 @@ public class TipDialog extends Dialog {
 		return area;
 	}
 
-//	private Point getLocation() {
-//		Shell parentShell = getParentShell();
-//		if (parentShell == null) {
-//			return null;
-//		}
-//		int absx = parentShell.getSize().x / 2 - getShell().getSize().x / 2;
-//		int absy = parentShell.getSize().y / 2 - getShell().getSize().y / 2;
-//		absy = absy > 20 ? 20 : absy;
-//		return new Point(parentShell.getLocation().x + absx, parentShell.getLocation().y + absy);
-//	}
-
 	@Override
 	protected void createButtonsForButtonBar(Composite pParent) {
 	}
@@ -83,7 +72,6 @@ public class TipDialog extends Dialog {
 	@Override
 	protected Control createButtonBar(Composite pParent) {
 		Control bar = super.createButtonBar(pParent);
-		// fixLayout((Composite) bar);
 		bar.setLayoutData(GridDataFactory.swtDefaults().hint(1, 1).create());
 		return bar;
 	}

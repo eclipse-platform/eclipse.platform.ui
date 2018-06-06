@@ -28,7 +28,6 @@ import org.eclipse.swt.browser.Browser;
 import org.eclipse.swt.custom.StackLayout;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
@@ -100,10 +99,8 @@ public class TipComposite extends Composite implements ProviderSelectionListener
 		fContentStack = new StackLayout();
 		fContentComposite.setLayout(fContentStack);
 		GridData gd_gridComposite = new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1);
-		gd_gridComposite.widthHint = 900;
-		gd_gridComposite.heightHint = 600;
-		// gd_gridComposite.minimumWidth = -1;
-		// gd_gridComposite.minimumHeight = -1;
+		gd_gridComposite.widthHint = 600;
+		gd_gridComposite.heightHint = 400;
 		fContentComposite.setLayoutData(gd_gridComposite);
 
 		fBrowserComposite = new Composite(fContentComposite, SWT.NONE);
@@ -473,7 +470,6 @@ public class TipComposite extends Composite implements ProviderSelectionListener
 			fSingleActionButton.setImage(getActionImage(action.getTipImage()));
 			fSingleActionButton.setText(action.getText());
 			fSingleActionButton.setToolTipText(action.getTooltip());
-			blinkActionComposite(fSingleActionComposite);
 		} else {
 			TipAction action = tip.getActions().get(0);
 			fActionStack.topControl = fMultiActionComposite;
@@ -481,7 +477,6 @@ public class TipComposite extends Composite implements ProviderSelectionListener
 			fMultiActionButton.setText(action.getText());
 			fMultiActionButton.setToolTipText(action.getTooltip());
 			loadActionMenu(tip);
-			blinkActionComposite(fMultiActionComposite);
 		}
 		fEmptyActionComposite.getParent().requestLayout();
 		fNavigationBar.requestLayout();
@@ -504,23 +499,6 @@ public class TipComposite extends Composite implements ProviderSelectionListener
 			item.setImage(getActionImage(action.getTipImage()));
 			item.addListener(SWT.Selection, e -> runTipAction(action));
 		});
-	}
-
-	private void blinkActionComposite(Composite composite) {
-		Color bg = composite.getParent().getBackground();
-		Color red = getDisplay().getSystemColor(SWT.COLOR_RED);
-		boolean flip = false;
-		for (int i = 1; i < 6; i++) {
-			boolean flop = flip;
-			if (!composite.isDisposed()) {
-				getDisplay().timerExec(i * 200, () -> {
-					if (!composite.isDisposed()) {
-						composite.getParent().setBackground(flop ? bg : red);
-					}
-				});
-			}
-			flip = !flip;
-		}
 	}
 
 	private Image getActionImage(TipImage tipImage) {
