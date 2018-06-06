@@ -53,7 +53,6 @@
 
   <modules>
     <module>bundles/org.eclipse.core.filesystem</module>
-    <module>bundles/org.eclipse.core.filesystem.linux.ppc64</module>
     <module>bundles/org.eclipse.core.filesystem.linux.ppc64le</module>
     <module>bundles/org.eclipse.core.filesystem.linux.x86</module>
     <module>bundles/org.eclipse.core.filesystem.linux.x86_64</module>
