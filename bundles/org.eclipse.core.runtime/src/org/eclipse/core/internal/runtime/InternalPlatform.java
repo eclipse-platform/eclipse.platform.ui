@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 IBM Corporation and others.
+ * Copyright (c) 2000, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,62 +12,27 @@
  *******************************************************************************/
 package org.eclipse.core.internal.runtime;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Date;
-import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.Hashtable;
-import java.util.List;
-import java.util.Map;
-import java.util.Properties;
-import java.util.ResourceBundle;
-import java.util.StringTokenizer;
-
+import java.util.*;
 import org.eclipse.core.internal.preferences.exchange.ILegacyPreferences;
 import org.eclipse.core.internal.preferences.exchange.IProductPreferencesService;
 import org.eclipse.core.internal.preferences.legacy.InitLegacyPreferences;
 import org.eclipse.core.internal.preferences.legacy.ProductPreferencesService;
-import org.eclipse.core.runtime.Assert;
-import org.eclipse.core.runtime.IAdapterManager;
-import org.eclipse.core.runtime.IBundleGroupProvider;
-import org.eclipse.core.runtime.IExtensionRegistry;
-import org.eclipse.core.runtime.ILog;
-import org.eclipse.core.runtime.ILogListener;
-import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.IProduct;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Path;
-import org.eclipse.core.runtime.Platform;
-import org.eclipse.core.runtime.Plugin;
-import org.eclipse.core.runtime.RegistryFactory;
+import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.content.IContentTypeManager;
 import org.eclipse.core.runtime.preferences.IPreferencesService;
 import org.eclipse.equinox.app.IApplicationContext;
+import org.eclipse.equinox.internal.app.*;
 import org.eclipse.equinox.internal.app.Activator;
-import org.eclipse.equinox.internal.app.CommandLineArgs;
-import org.eclipse.equinox.internal.app.EclipseAppContainer;
-import org.eclipse.equinox.internal.app.IBranding;
-import org.eclipse.equinox.log.ExtendedLogReaderService;
-import org.eclipse.equinox.log.ExtendedLogService;
-import org.eclipse.equinox.log.Logger;
+import org.eclipse.equinox.log.*;
 import org.eclipse.osgi.framework.log.FrameworkLog;
 import org.eclipse.osgi.service.datalocation.Location;
 import org.eclipse.osgi.service.debug.DebugOptions;
 import org.eclipse.osgi.service.environment.EnvironmentInfo;
 import org.eclipse.osgi.service.resolver.PlatformAdmin;
-import org.osgi.framework.Bundle;
-import org.osgi.framework.BundleContext;
-import org.osgi.framework.BundleException;
-import org.osgi.framework.Filter;
-import org.osgi.framework.InvalidSyntaxException;
-import org.osgi.framework.ServiceReference;
-import org.osgi.framework.ServiceRegistration;
+import org.osgi.framework.*;
 import org.osgi.service.packageadmin.PackageAdmin;
 import org.osgi.util.tracker.ServiceTracker;
 
@@ -237,12 +202,10 @@ public final class InternalPlatform {
 	public String getBundleId(Object object) {
 		if (object == null)
 			return null;
-		PackageAdmin packageAdmin = getBundleAdmin();
-		if (packageAdmin == null)
-			return null;
-		Bundle source = packageAdmin.getBundle(object.getClass());
+		Bundle source = FrameworkUtil.getBundle(object.getClass());
 		if (source != null && source.getSymbolicName() != null)
 			return source.getSymbolicName();
+
 		return null;
 	}
 
@@ -830,7 +793,7 @@ public final class InternalPlatform {
 		groupProviderTracker = new ServiceTracker<>(context, filter, null);
 		groupProviderTracker.open();
 
-		logReaderTracker = new ServiceTracker<>(context, ExtendedLogReaderService.class.getName(), null);
+		logReaderTracker = new ServiceTracker<>(context, ExtendedLogReaderService.class, null);
 		logReaderTracker.open();
 
 		extendedLogTracker = new ServiceTracker<>(context, ExtendedLogService.class, null);
@@ -863,11 +826,11 @@ public final class InternalPlatform {
 	}
 
 	private PackageAdmin getBundleAdmin() {
-		return bundleTracker == null ? null : (PackageAdmin) bundleTracker.getService();
+		return bundleTracker == null ? null : bundleTracker.getService();
 	}
 
 	private DebugOptions getDebugOptions() {
-		return debugTracker == null ? null : (DebugOptions) debugTracker.getService();
+		return debugTracker == null ? null : debugTracker.getService();
 	}
 
 	private void closeOSGITrackers() {
