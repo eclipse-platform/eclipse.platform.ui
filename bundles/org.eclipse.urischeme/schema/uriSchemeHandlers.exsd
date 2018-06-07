@@ -1,0 +1,163 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!-- Schema file written by PDE -->
+<schema targetNamespace="org.eclipse.core.runtime" xmlns="http://www.w3.org/2001/XMLSchema">
+<annotation>
+      <appinfo>
+         <meta.schema plugin="org.eclipse.core.runtime" id="uriSchemeHandlers" name="URI Scheme Handlers"/>
+      </appinfo>
+      <documentation>
+         &lt;p&gt;
+This extension point is used to add implementations of URI scheme handlers. The term URI scheme refers to the definition in &lt;a href=&quot;https://tools.ietf.org/html/rfc3986&quot; target=&quot;_external&quot;&gt;RFC 3986&lt;/a&gt;.
+An URI schema (the part before the colon) defines the context and thus defines the type of URI, which determines the interpretation of the following part. Examples of popular schemes include &lt;code&gt;https&lt;/code&gt;, &lt;code&gt;mailto&lt;/code&gt;, &lt;code&gt;file&lt;/code&gt;, &lt;code&gt;data&lt;/code&gt;, and &lt;code&gt;irc&lt;/code&gt;.
+Custom URI schemes can be used to trigger processing inside an application - so this extension point allow plug-in developers to add handlers for their custom URI scheme.
+&lt;/p&gt;
+&lt;p&gt;
+The identifing key of such a handler is the URI scheme name. If multiple handlers are registered for the same URI scheme the first found handler is called. The order of the handlers in undefined.
+&lt;/p&gt;
+&lt;!-- Add details about the preference page once it is available--&gt;
+      </documentation>
+   </annotation>
+
+   <element name="extension">
+      <annotation>
+         <appinfo>
+            <meta.element internal="true" />
+         </appinfo>
+      </annotation>
+      <complexType>
+         <sequence>
+            <element ref="uriSchemeHandler" minOccurs="1" maxOccurs="unbounded"/>
+         </sequence>
+         <attribute name="point" type="string" use="required">
+            <annotation>
+               <documentation>
+                  a fully qualified identifier of the target extension point
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="id" type="string">
+            <annotation>
+               <documentation>
+                  an optional identifier of the extension instance
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="name" type="string">
+            <annotation>
+               <documentation>
+                  an optional name of the extension instance
+               </documentation>
+               <appinfo>
+                  <meta.attribute translatable="true"/>
+               </appinfo>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="uriSchemeHandler">
+      <annotation>
+         <documentation>
+            &lt;p&gt;Associates an URI scheme with a hander implementation.&lt;/p&gt;
+         </documentation>
+      </annotation>
+      <complexType>
+         <attribute name="uriScheme" type="string" use="required">
+            <annotation>
+               <documentation>
+                  The URI scheme name.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="uriSchemeDescription" type="string" use="required">
+            <annotation>
+               <documentation>
+                  A human readable description of the URI scheme.
+               </documentation>
+               <appinfo>
+                  <meta.attribute translatable="true"/>
+               </appinfo>
+            </annotation>
+         </attribute>
+         <attribute name="class" type="string" use="required">
+            <annotation>
+               <documentation>
+                  The fully qualified name of the handler class implementing &lt;code&gt;org.eclipse.urischeme.IUriSchemeHandler&lt;/code&gt;.
+               </documentation>
+               <appinfo>
+                  <meta.attribute kind="java" basedOn=":org.eclipse.urischeme.IUriSchemeHandler"/>
+               </appinfo>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <annotation>
+      <appinfo>
+         <meta.section type="since"/>
+      </appinfo>
+      <documentation>
+         4.9
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appinfo>
+         <meta.section type="examples"/>
+      </appinfo>
+      <documentation>
+         &lt;p&gt;
+The following defines a handler for the &lt;code&gt;hello&lt;/code&gt; protocol.
+&lt;/p&gt;
+&lt;pre&gt;
+ &lt;extension
+       point=&quot;org.eclipse.ui.uriSchemeHandlers&quot;&gt;
+    &lt;uriSchemeHandler
+          class=&quot;org.eclipse.ui.examples.urischemehandler.listeners.HelloListener&quot;
+          uriSchemeDescription=&quot;The Hello World demo protocol&quot;
+          uriScheme=&quot;hello&quot;&gt;
+    &lt;/uriSchemeHandler&gt;
+ &lt;/extension&gt;
+&lt;/pre&gt;
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appinfo>
+         <meta.section type="apiinfo"/>
+      </appinfo>
+      <documentation>
+         &lt;p&gt;
+The value of the &lt;code&gt;class&lt;/code&gt; attribute must be the fully qualified name of a class that implements the&lt;code&gt;org.eclipse.swt.widgets.Listener&lt;/code&gt; interface.
+&lt;/p&gt;
+&lt;p&gt;
+Handlers are called in the user interface thread when it free for the next time. Handler implementations should not perform long running tasks in the user interface thread.
+&lt;/p&gt;
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appinfo>
+         <meta.section type="implementation"/>
+      </appinfo>
+      <documentation>
+         &lt;p&gt;
+There is no productive implementation provided. An example can be found in the org.eclipse.ui.examples.uriSchemeHandler plug-in.
+&lt;/p&gt;
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appinfo>
+         <meta.section type="copyright"/>
+      </appinfo>
+      <documentation>
+         Copyright (c) 2002, 2007 IBM Corporation and others.&lt;br&gt;
+All rights reserved. This program and the accompanying materials are made
+available under the terms of the Eclipse Public License v1.0 which accompanies
+this distribution, and is available at &lt;a 
+href=&quot;http://www.eclipse.org/legal/epl-v10.html&quot;&gt;http://www.eclipse.org/legal/epl-v10.html&lt;/a&gt;
+      </documentation>
+   </annotation>
+
+</schema>

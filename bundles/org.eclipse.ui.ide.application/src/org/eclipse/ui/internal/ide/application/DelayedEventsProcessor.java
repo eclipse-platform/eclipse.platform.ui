@@ -15,6 +15,8 @@ package org.eclipse.ui.internal.ide.application;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 
 import org.eclipse.core.runtime.CoreException;
@@ -35,24 +37,29 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
 import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
+import org.eclipse.urischeme.IUriSchemeProcessor;
 
 /**
- * Helper class used to process delayed events.
- * Events currently supported:
+ * Helper class used to process delayed events. Events currently supported:
  * <ul>
  * <li>SWT.OpenDocument</li>
  * </ul>
+ *
  * @since 3.3
  */
 public class DelayedEventsProcessor implements Listener {
+
 	private ArrayList<String> filesToOpen = new ArrayList<>(1);
+	private ArrayList<Event> urlsToOpen = new ArrayList<>(1);
 
 	/**
 	 * Constructor.
+	 *
 	 * @param display display used as a source of event
 	 */
 	public DelayedEventsProcessor(Display display) {
 		display.addListener(SWT.OpenDocument, this);
+		display.addListener(SWT.OpenUrl, this);
 	}
 
 	@Override
@@ -60,20 +67,26 @@ public class DelayedEventsProcessor implements Listener {
 		final String path = event.text;
 		if (path == null)
 			return;
-		// If we start supporting events that can arrive on a non-UI thread, the following
-		// line will need to be in a "synchronized" block:
-		filesToOpen.add(path);
+		// If we start supporting events that can arrive on a non-UI thread, the
+		// following lines will need to be in a "synchronized" block:
+		if (event.type == SWT.OpenUrl) {
+			urlsToOpen.add(event);
+		} else {
+			filesToOpen.add(path);
+		}
 	}
 
 	/**
 	 * Process delayed events.
+	 *
 	 * @param display display associated with the workbench
 	 */
 	public void catchUp(Display display) {
-		if (filesToOpen.isEmpty())
+		if (filesToOpen.isEmpty() && urlsToOpen.isEmpty())
 			return;
 
-		// If we start supporting events that can arrive on a non-UI thread, the following
+		// If we start supporting events that can arrive on a non-UI thread, the
+		// following
 		// lines will need to be in a "synchronized" block:
 		String[] filePaths = new String[filesToOpen.size()];
 		filesToOpen.toArray(filePaths);
@@ -82,20 +95,72 @@ public class DelayedEventsProcessor implements Listener {
 		for (String filePath : filePaths) {
 			openFile(display, filePath);
 		}
+
+		Event[] events = new Event[urlsToOpen.size()];
+		urlsToOpen.toArray(events);
+		urlsToOpen.clear();
+
+		for (Event event : events) {
+			openUrl(display, event);
+		}
+	}
+
+	/**
+	 * Handles an URL asynchronously (e.g. clicked in another application).<br>
+	 * Handlers are registered via Extension Point
+	 * "org.eclipse.ui.uriSchemeHandlers". Matching is done by uri scheme.
+	 *
+	 * @param display the display to run the asynchronous operation.
+	 * @param event   the url to open is contained in <code>event.text</code>.
+	 *
+	 */
+	private static void openUrl(Display display, Event event) {
+		display.asyncExec(() -> {
+			String uriScheme = getUriSchemeFromEvent(event.text);
+			try {
+				IUriSchemeProcessor.INSTANCE.handleUri(uriScheme, event.text);
+
+			} catch (CoreException e) {
+				String message = NLS.bind(IDEWorkbenchMessages.OpenDelayedUrlAction_cannotHandle, uriScheme);
+				IDEWorkbenchPlugin.log(message, new Status(IStatus.ERROR, IDEApplication.PLUGIN_ID, message, e));
+				IWorkbenchWindow window = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
+				if (window == null) {
+					return;
+				}
+				MessageDialog.open(MessageDialog.ERROR, window.getShell(),
+						IDEWorkbenchMessages.OpenDelayedUrlAction_title, message, SWT.SHEET);
+			}
+		});
+	}
+
+	private static String getUriSchemeFromEvent(String uriString) {
+		try {
+			URI uri = new URI(uriString);
+			return uri.getScheme();
+
+		} catch (URISyntaxException e) {
+			String message = NLS.bind(IDEWorkbenchMessages.OpenDelayedUrlAction_invalidURL, uriString);
+			IDEWorkbenchPlugin.log(message, new Status(IStatus.ERROR, IDEApplication.PLUGIN_ID, message, e));
+			IWorkbenchWindow window = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
+			if (window == null) {
+				return null;
+			}
+			MessageDialog.open(MessageDialog.ERROR, window.getShell(), IDEWorkbenchMessages.OpenDelayedUrlAction_title,
+					message, SWT.SHEET);
+			return null;
+		}
 	}
 
 	/**
 	 * Opens a file from a path in the filesystem (asynchronously).
 	 *
-	 * @param display
-	 *            the display to run the asynchronous operation.
-	 * @param initialPath
-	 *            the path to be used, optionally suffixed with '+line:col' or
-	 *            ':line:col' to open it at the given line/col.
+	 * @param display     the display to run the asynchronous operation.
+	 * @param initialPath the path to be used, optionally suffixed with '+line:col'
+	 *                    or ':line:col' to open it at the given line/col.
 	 *
-	 *            For example: "{@code file.py+10}" will open file.py at line
-	 *            10; "{@code file.py+10:3}" will open file.py at line 10,
-	 *            column 3. Note that the line and column are 1-based.
+	 *                    For example: "{@code file.py+10}" will open file.py at
+	 *                    line 10; "{@code file.py+10:3}" will open file.py at line
+	 *                    10, column 3. Note that the line and column are 1-based.
 	 */
 	public static void openFile(Display display, final String initialPath) {
 		display.asyncExec(new Runnable() {
@@ -115,8 +180,7 @@ public class DelayedEventsProcessor implements Listener {
 						String msg = NLS.bind(IDEWorkbenchMessages.OpenDelayedFileAction_message_noWindow,
 								details.path);
 						MessageDialog.open(MessageDialog.ERROR, window.getShell(),
-								IDEWorkbenchMessages.OpenDelayedFileAction_title,
-								msg, SWT.SHEET);
+								IDEWorkbenchMessages.OpenDelayedFileAction_title, msg, SWT.SHEET);
 					}
 					try {
 						IEditorPart openEditor = IDE.openInternalEditorOnFileStore(page, details.fileStore);
@@ -166,8 +230,7 @@ public class DelayedEventsProcessor implements Listener {
 						CoreException eLog = new PartInitException(e.getMessage());
 						IDEWorkbenchPlugin.log(msg, new Status(IStatus.ERROR, IDEApplication.PLUGIN_ID, msg, eLog));
 						MessageDialog.open(MessageDialog.ERROR, window.getShell(),
-								IDEWorkbenchMessages.OpenDelayedFileAction_title,
-								msg, SWT.SHEET);
+								IDEWorkbenchMessages.OpenDelayedFileAction_title, msg, SWT.SHEET);
 					}
 				}
 			}

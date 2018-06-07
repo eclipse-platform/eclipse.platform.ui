@@ -1070,6 +1070,12 @@ public class IDEWorkbenchMessages extends NLS {
 	public static String OpenDelayedFileAction_message_fileNotFound;
 	public static String OpenDelayedFileAction_message_noWindow;
 
+	public static String OpenDelayedUrlAction_cannotHandle;
+
+	public static String OpenDelayedUrlAction_invalidURL;
+
+	public static String OpenDelayedUrlAction_title;
+
 	public static String editorAssociationOverride_error_couldNotCreate_message;
 	public static String editorAssociationOverride_error_invalidElementName_message;
 	public static String editorAssociationOverride_error_invalidExtension_message;
