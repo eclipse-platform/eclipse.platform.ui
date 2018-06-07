@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <psf version="2.0">
 <provider id="org.eclipse.egit.core.GitProvider">
-<project reference="1.0,https://git.eclipse.org/r/platform/eclipse.platform.runtime,master,tests/com.google.code.atinject.tck"/>
 <project reference="1.0,https://git.eclipse.org/r/platform/eclipse.platform.ui,master,bundles/org.eclipse.core.commands"/>
 <project reference="1.0,https://git.eclipse.org/r/platform/eclipse.platform.ui,master,bundles/org.eclipse.core.databinding"/>
 <project reference="1.0,https://git.eclipse.org/r/platform/eclipse.platform.ui,master,bundles/org.eclipse.core.databinding.beans"/>
