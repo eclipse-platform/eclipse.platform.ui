@@ -1246,42 +1246,43 @@ public class TreeModelContentProvider implements ITreeModelContentProvider, ICon
         for (int i = 0; i < nodes.length; i++) {
             IModelDelta node = nodes[i];
             int flags = node.getFlags() & mask;
-
-            if ((flags & IModelDelta.ADDED) != 0) {
-                handleAdd(node);
-            }
-            if ((flags & IModelDelta.REMOVED) != 0) {
-                handleRemove(node);
-            }
-            if ((flags & IModelDelta.CONTENT) != 0) {
-                handleContent(node);
-            }
-            if ((flags & IModelDelta.STATE) != 0) {
-                handleState(node);
-            }
-            if ((flags & IModelDelta.INSERTED) != 0) {
-                handleInsert(node);
-            }
-            if ((flags & IModelDelta.REPLACED) != 0) {
-                handleReplace(node);
-            }
-            if ((flags & IModelDelta.INSTALL) != 0) {
-                handleInstall(node);
-            }
-            if ((flags & IModelDelta.UNINSTALL) != 0) {
-                handleUninstall(node);
-            }
-            if ((flags & IModelDelta.EXPAND) != 0) {
-                handleExpand(node);
-            }
-            if ((flags & IModelDelta.COLLAPSE) != 0) {
-                handleCollapse(node);
-            }
-            if ((flags & IModelDelta.SELECT) != 0) {
-                handleSelect(node);
-            }
-            if ((flags & IModelDelta.REVEAL) != 0) {
-                handleReveal(node);
+			if (flags != 0) {
+				if ((flags & IModelDelta.ADDED) != 0) {
+					handleAdd(node);
+				}
+				if ((flags & IModelDelta.REMOVED) != 0) {
+					handleRemove(node);
+				}
+				if ((flags & IModelDelta.CONTENT) != 0) {
+					handleContent(node);
+				}
+				if ((flags & IModelDelta.STATE) != 0) {
+					handleState(node);
+				}
+				if ((flags & IModelDelta.INSERTED) != 0) {
+					handleInsert(node);
+				}
+				if ((flags & IModelDelta.REPLACED) != 0) {
+					handleReplace(node);
+				}
+				if ((flags & IModelDelta.INSTALL) != 0) {
+					handleInstall(node);
+				}
+				if ((flags & IModelDelta.UNINSTALL) != 0) {
+					handleUninstall(node);
+				}
+				if ((flags & IModelDelta.EXPAND) != 0) {
+					handleExpand(node);
+				}
+				if ((flags & IModelDelta.COLLAPSE) != 0) {
+					handleCollapse(node);
+				}
+				if ((flags & IModelDelta.SELECT) != 0) {
+					handleSelect(node);
+				}
+				if ((flags & IModelDelta.REVEAL) != 0) {
+					handleReveal(node);
+				}
             }
             updateNodes(node.getChildDeltas(), mask);
         }
@@ -1342,9 +1343,6 @@ public class TreeModelContentProvider implements ITreeModelContentProvider, ICon
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.viewers.model.provisional.viewers.ModelContentProvider#handleContent(org.eclipse.debug.internal.ui.viewers.provisional.IModelDelta)
-	 */
  	protected void handleContent(IModelDelta delta) {
 		if (delta.getParentDelta() == null && delta.getChildCount() == 0) {
 			// if the delta is for the root, ensure the root still matches viewer input
@@ -1357,18 +1355,12 @@ public class TreeModelContentProvider implements ITreeModelContentProvider, ICon
 		getViewer().refresh(getElement(treePath));
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.viewers.model.ModelContentProvider#handleCollapse(org.eclipse.debug.internal.ui.viewers.model.provisional.IModelDelta)
-	 */
  	protected void handleCollapse(IModelDelta delta) {
 		TreePath elementPath = getViewerTreePath(delta);
 		getViewer().setExpandedState(elementPath, false);
         cancelRestore(elementPath, IModelDelta.EXPAND);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.viewers.model.provisional.viewers.ModelContentProvider#handleExpand(org.eclipse.debug.internal.ui.viewers.provisional.IModelDelta)
-	 */
  	protected void handleExpand(IModelDelta delta) {
 		// expand each parent, then this node
 		IModelDelta parentDelta = delta.getParentDelta();
@@ -1712,18 +1704,11 @@ public class TreeModelContentProvider implements ITreeModelContentProvider, ICon
 		}
 	}
 
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.viewers.ILazyTreePathContentProvider#getParents(java.lang.Object)
-	 */
 	@Override
 	public TreePath[] getParents(Object element) {
 		return null;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.viewers.ILazyTreePathContentProvider#updateChildCount(org.eclipse.jface.viewers.TreePath, int)
-	 */
 	@Override
 	public void updateChildCount(TreePath treePath, int currentChildCount) {
         Assert.isTrue( getViewer().getDisplay().getThread() == Thread.currentThread() );
@@ -1734,9 +1719,6 @@ public class TreeModelContentProvider implements ITreeModelContentProvider, ICon
 		doUpdateChildCount(treePath);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.viewers.ILazyTreePathContentProvider#updateElement(org.eclipse.jface.viewers.TreePath, int)
-	 */
 	@Override
 	public void updateElement(TreePath parentPath, int viewIndex) {
         Assert.isTrue( getViewer().getDisplay().getThread() == Thread.currentThread() );
@@ -1748,9 +1730,6 @@ public class TreeModelContentProvider implements ITreeModelContentProvider, ICon
 		doUpdateElement(parentPath, modelIndex);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.viewers.ILazyTreePathContentProvider#updateHasChildren(org.eclipse.jface.viewers.TreePath)
-	 */
 	@Override
 	public void updateHasChildren(TreePath path) {
         Assert.isTrue( getViewer().getDisplay().getThread() == Thread.currentThread() );
