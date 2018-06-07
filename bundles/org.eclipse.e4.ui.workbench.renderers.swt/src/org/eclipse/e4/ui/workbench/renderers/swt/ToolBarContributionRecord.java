@@ -26,6 +26,7 @@ import org.eclipse.e4.core.contexts.IContextFunction;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.ui.internal.workbench.ContributionsAnalyzer;
 import org.eclipse.e4.ui.model.application.ui.MElementContainer;
+import org.eclipse.e4.ui.model.application.ui.basic.MWindow;
 import org.eclipse.e4.ui.model.application.ui.menu.MToolBar;
 import org.eclipse.e4.ui.model.application.ui.menu.MToolBarContribution;
 import org.eclipse.e4.ui.model.application.ui.menu.MToolBarElement;
@@ -33,6 +34,7 @@ import org.eclipse.e4.ui.model.application.ui.menu.MToolBarSeparator;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.jface.action.ToolBarManager;
+import org.eclipse.swt.widgets.Shell;
 
 public class ToolBarContributionRecord {
 	public static final String FACTORY = "ToolBarContributionFactory"; //$NON-NLS-1$
@@ -84,12 +86,32 @@ public class ToolBarContributionRecord {
 		if (changed) {
 			ToolBarManager managerForModel = getManagerForModel();
 			managerForModel.markDirty();
-			// Make sure the MToolBar model is visible because
-			// TrimBarLayout.hideManagedTB hides and IPresentationEngine moves
-			// it to the Limbo-Shell
-			Stream.of(managerForModel.getItems()).filter(i -> i.isVisible()).findFirst()
-					.ifPresent((i) -> toolbarModel.setVisible(true));
+			if (isVisible) {
+				// Make sure the MToolBar model is visible because
+				// TrimBarLayout.hideManagedTB hides and IPresentationEngine moves
+				// it to the Limbo-Shell
+				Stream.of(managerForModel.getItems()).filter(i -> i.isVisible()).findFirst().ifPresent((i) -> {
+					MWindow window = getWindow();
+					if (window != null) {
+						Object widget = window.getWidget();
+						if (widget instanceof Shell) {
+							((Shell) widget).requestLayout();
+						}
+					}
+				});
+			}
 		}
+	}
+
+	private MWindow getWindow() {
+		EObject n = (EObject) toolbarModel;
+		while (n.eContainer() != null) {
+			n = n.eContainer();
+			if (n instanceof MWindow) {
+				return (MWindow) n;
+			}
+		}
+		return null;
 	}
 
 	public void updateIsVisible(ExpressionContext exprContext) {
