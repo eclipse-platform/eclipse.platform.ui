@@ -30,12 +30,12 @@ public class ModelDelta implements IModelDelta {
 	private Object fElement;
 	private int fFlags;
 	private ModelDelta[] fNodes = EMPTY_NODES;
-	private List<ModelDelta> fNodesList = null;
+	private List<ModelDelta> fNodesList;
 	// TODO this is not good, we are mixing a delta with an array of deltas
 	private Map<Object, Object> fNodesMap;
 	private Object fReplacement;
-	private int fIndex = -1;
-	private int fChildCount = -1;
+	private int fIndex;
+	private int fChildCount;
 	private static final ModelDelta[] EMPTY_NODES = new ModelDelta[0];
 
 	/**
@@ -47,6 +47,8 @@ public class ModelDelta implements IModelDelta {
 	public ModelDelta(Object element, int flags) {
 		fElement = element;
 		fFlags = flags;
+		fIndex = -1;
+		fChildCount = -1;
 	}
 
 	/**
@@ -58,9 +60,8 @@ public class ModelDelta implements IModelDelta {
 	 * @param flags change flags
 	 */
 	public ModelDelta(Object element, Object replacement, int flags) {
-        fElement = element;
+		this(element, flags);
         fReplacement = replacement;
-        fFlags = flags;
     }
 
 	/**
@@ -72,9 +73,8 @@ public class ModelDelta implements IModelDelta {
 	 * @param flags change flags
 	 */
     public ModelDelta(Object element, int index, int flags) {
-        fElement = element;
+		this(element, flags);
         fIndex = index;
-        fFlags = flags;
     }
 
 	/**
@@ -87,23 +87,15 @@ public class ModelDelta implements IModelDelta {
 	 * @param childCount number of children this node has
 	 */
     public ModelDelta(Object element, int index, int flags, int childCount) {
-        fElement = element;
-        fIndex = index;
-        fFlags = flags;
+		this(element, index, flags);
         fChildCount = childCount;
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.debug.internal.ui.viewers.IModelDelta#getElement()
-     */
     @Override
 	public Object getElement() {
 		return fElement;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.viewers.IModelDelta#getFlags()
-	 */
 	@Override
 	public int getFlags() {
 		return fFlags;
@@ -261,33 +253,21 @@ public class ModelDelta implements IModelDelta {
 		fParent = node;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.viewers.IModelDelta#getParent()
-	 */
 	@Override
 	public IModelDelta getParentDelta() {
 		return fParent;
 	}
 
-    /* (non-Javadoc)
-     * @see org.eclipse.debug.internal.ui.viewers.IModelDelta#getReplacementElement()
-     */
     @Override
 	public Object getReplacementElement() {
         return fReplacement;
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.debug.internal.ui.viewers.IModelDelta#getIndex()
-     */
     @Override
 	public int getIndex() {
         return fIndex;
     }
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.viewers.IModelDelta#getNodes()
-	 */
 	@Override
 	public IModelDelta[] getChildDeltas() {
 	    if (fNodes == null) {
@@ -381,17 +361,11 @@ public class ModelDelta implements IModelDelta {
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.viewers.provisional.IModelDelta#getChildCount()
-	 */
 	@Override
 	public int getChildCount() {
 		return fChildCount;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.viewers.provisional.IModelDelta#accept(org.eclipse.debug.internal.ui.viewers.provisional.IModelDeltaVisitor)
-	 */
 	@Override
 	public void accept(IModelDeltaVisitor visitor) {
 		doAccept(visitor, 0);
