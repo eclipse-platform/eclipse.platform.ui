@@ -184,14 +184,14 @@ public class LaunchView extends AbstractDebugView
 	/**
 	 * Model presentation or <code>null</code> if none
 	 */
-	private IDebugModelPresentation fPresentation = null;
+	private IDebugModelPresentation fPresentation;
 
 	private IPresentationContext fPresentationContext;
 
-	private EditLaunchConfigurationAction fEditConfigAction = null;
-	private AddToFavoritesAction fAddToFavoritesAction = null;
-	private EditSourceLookupPathAction fEditSourceAction = null;
-	private LookupSourceAction fLookupAction = null;
+	private EditLaunchConfigurationAction fEditConfigAction;
+	private AddToFavoritesAction fAddToFavoritesAction;
+	private EditSourceLookupPathAction fEditSourceAction;
+	private LookupSourceAction fLookupAction;
 
 	/**
 	 * Current view mode (auto vs. breadcrumb, vs. tree view).
@@ -248,7 +248,7 @@ public class LaunchView extends AbstractDebugView
      *
      * @since 3.5
      */
-    private boolean fBreadcrumbDropDownAutoExpand = false;
+	private boolean fBreadcrumbDropDownAutoExpand;
 
     /**
      * Action handlers. Maps action identifiers to IHandler's.
@@ -365,9 +365,6 @@ public class LaunchView extends AbstractDebugView
 			fViewer.removeModelChangedListener(this);
 		}
 
-		/* (non-Javadoc)
-		 * @see org.eclipse.debug.ui.contexts.IDebugContextProvider#getActiveContext()
-		 */
 		@Override
 		public synchronized ISelection getActiveContext() {
 			return fContext;
@@ -428,9 +425,6 @@ public class LaunchView extends AbstractDebugView
 			}
 		}
 
-		/* (non-Javadoc)
-		 * @see org.eclipse.debug.internal.ui.viewers.model.provisional.IModelChangedListener#modelChanged(org.eclipse.debug.internal.ui.viewers.model.provisional.IModelDelta)
-		 */
 		@Override
 		public void modelChanged(IModelDelta delta, IModelProxy proxy) {
 			delta.accept(fVisitor);
@@ -532,17 +526,11 @@ public class LaunchView extends AbstractDebugView
 
 	private ContextProviderProxy fContextProviderProxy;
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.ui.AbstractDebugView#getHelpContextId()
-	 */
 	@Override
 	protected String getHelpContextId() {
 		return IDebugHelpContextIds.DEBUG_VIEW;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.ui.AbstractDebugView#createActions()
-	 */
 	@Override
 	protected void createActions() {
 		setAction("Properties", new PropertyDialogAction(getSite(), getSite().getSelectionProvider())); //$NON-NLS-1$
@@ -879,9 +867,6 @@ public class LaunchView extends AbstractDebugView
         }
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.ui.AbstractDebugView#createViewer(org.eclipse.swt.widgets.Composite)
-	 */
 	@Override
 	protected Viewer createViewer(Composite parent) {
 		fPresentation = new DelegatingModelPresentation();
@@ -937,9 +922,6 @@ public class LaunchView extends AbstractDebugView
         fDebugToolbarInView = isDebugToolbarShownInPerspective(perspective);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IViewPart#init(org.eclipse.ui.IViewSite)
-	 */
 	@Override
 	public void init(IViewSite site) throws PartInitException {
 		super.init(site);
@@ -948,9 +930,6 @@ public class LaunchView extends AbstractDebugView
 		fContextService = site.getService(IContextService.class);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IViewPart#init(org.eclipse.ui.IViewSite, org.eclipse.ui.IMemento)
-	 */
 	@Override
 	public void init(IViewSite site, IMemento memento) throws PartInitException {
 		super.init(site, memento);
@@ -959,9 +938,6 @@ public class LaunchView extends AbstractDebugView
         fContextService = site.getService(IContextService.class);
 	}
 
-    /* (non-Javadoc)
-     * @see org.eclipse.ui.part.PageBookView#partDeactivated(org.eclipse.ui.IWorkbenchPart)
-     */
     @Override
 	public void partDeactivated(IWorkbenchPart part) {
         String id = part.getSite().getId();
@@ -995,9 +971,6 @@ public class LaunchView extends AbstractDebugView
         memento.putBoolean(BREADCRUMB_DROPDOWN_AUTO_EXPAND, getBreadcrumbDropDownAutoExpand());
     }
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.ui.AbstractDebugView#configureToolBar(org.eclipse.jface.action.IToolBarManager)
-	 */
 	@Override
 	protected void configureToolBar(IToolBarManager tbm) {
 		tbm.add(new Separator(IDebugUIConstants.THREAD_GROUP));
@@ -1085,10 +1058,6 @@ public class LaunchView extends AbstractDebugView
        System.setProperty(IDebugUIConstants.DEBUG_VIEW_TOOBAR_VISIBLE, Boolean.toString(show));
    }
 
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IWorkbenchPart#dispose()
-	 */
 	@Override
 	public void dispose() {
 	    fContextService.removeContextManagerListener(this);
@@ -1152,9 +1121,6 @@ public class LaunchView extends AbstractDebugView
 		updateObjects();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.viewers.IDoubleClickListener#doubleClick(org.eclipse.jface.viewers.DoubleClickEvent)
-	 */
 	@Override
 	public void doubleClick(DoubleClickEvent event) {
 		ISelection selection= event.getSelection();
@@ -1170,9 +1136,6 @@ public class LaunchView extends AbstractDebugView
 		viewer.refresh(o);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IPerspectiveListener#perspectiveActivated(org.eclipse.ui.IWorkbenchPage, org.eclipse.ui.IPerspectiveDescriptor)
-	 */
 	@Override
 	public void perspectiveActivated(IWorkbenchPage page, IPerspectiveDescriptor perspective) {
 		setActive(page.findView(getSite().getId()) != null);
@@ -1181,24 +1144,15 @@ public class LaunchView extends AbstractDebugView
         updateCheckedDebugToolBarAction();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IPerspectiveListener#perspectiveChanged(org.eclipse.ui.IWorkbenchPage, org.eclipse.ui.IPerspectiveDescriptor, java.lang.String)
-	 */
 	@Override
 	public void perspectiveChanged(IWorkbenchPage page, IPerspectiveDescriptor perspective, String changeId) {
 		setActive(page.findView(getSite().getId()) != null);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IPerspectiveListener2#perspectiveChanged(org.eclipse.ui.IWorkbenchPage, org.eclipse.ui.IPerspectiveDescriptor, org.eclipse.ui.IWorkbenchPartReference, java.lang.String)
-	 */
 	@Override
 	public void perspectiveChanged(IWorkbenchPage page, IPerspectiveDescriptor perspective, IWorkbenchPartReference partRef, String changeId) {
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IPageListener#pageActivated(org.eclipse.ui.IWorkbenchPage)
-	 */
 	@Override
 	public void pageActivated(IWorkbenchPage page) {
 		if (getSite().getPage().equals(page)) {
@@ -1207,31 +1161,19 @@ public class LaunchView extends AbstractDebugView
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IPageListener#pageClosed(org.eclipse.ui.IWorkbenchPage)
-	 */
 	@Override
 	public void pageClosed(IWorkbenchPage page) {
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IPageListener#pageOpened(org.eclipse.ui.IWorkbenchPage)
-	 */
 	@Override
 	public void pageOpened(IWorkbenchPage page) {
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.ui.IDebugView#getPresentation(java.lang.String)
-	 */
 	@Override
 	public IDebugModelPresentation getPresentation(String id) {
 		return ((DelegatingModelPresentation)fPresentation).getPresentation(id);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.ui.AbstractDebugView#fillContextMenu(org.eclipse.jface.action.IMenuManager)
-	 */
 	@Override
 	protected void fillContextMenu(IMenuManager menu) {
         TreeSelection sel = (TreeSelection) fTreeViewerDebugContextProvider.getActiveContext();
@@ -1343,9 +1285,6 @@ public class LaunchView extends AbstractDebugView
 		return fIsActive && getViewer() != null;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.part.IShowInTarget#show(org.eclipse.ui.part.ShowInContext)
-	 */
 	@Override
 	public boolean show(ShowInContext context) {
 		ISelection selection = context.getSelection();
@@ -1370,9 +1309,6 @@ public class LaunchView extends AbstractDebugView
 		return false;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.part.IShowInSource#getShowInContext()
-	 */
 	@Override
 	public ShowInContext getShowInContext() {
 		if (isActive()) {
@@ -1391,9 +1327,6 @@ public class LaunchView extends AbstractDebugView
 		return null;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.part.IShowInTargetList#getShowInTargetIds()
-	 */
 	@Override
 	public String[] getShowInTargetIds() {
 		if (isActive()) {
@@ -1412,16 +1345,10 @@ public class LaunchView extends AbstractDebugView
 		return new String[0];
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IPartListener2#partClosed(org.eclipse.ui.IWorkbenchPartReference)
-	 */
 	@Override
 	public void partClosed(IWorkbenchPartReference partRef) {
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IPartListener2#partVisible(org.eclipse.ui.IWorkbenchPartReference)
-	 */
 	@Override
 	public void partVisible(IWorkbenchPartReference partRef) {
 		IWorkbenchPart part = partRef.getPart(false);
@@ -1438,16 +1365,10 @@ public class LaunchView extends AbstractDebugView
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IPartListener2#partOpened(org.eclipse.ui.IWorkbenchPartReference)
-	 */
 	@Override
 	public void partOpened(IWorkbenchPartReference partRef) {
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IPartListener2#partActivated(org.eclipse.ui.IWorkbenchPartReference)
-	 */
 	@Override
 	public void partActivated(IWorkbenchPartReference partRef) {
 		// Ensure that the system property matches the debug toolbar state.
@@ -1456,46 +1377,28 @@ public class LaunchView extends AbstractDebugView
 				Boolean.toString(isDebugToolbarShownInPerspective(getSite().getPage().getPerspective())) );
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IPartListener2#partBroughtToTop(org.eclipse.ui.IWorkbenchPartReference)
-	 */
 	@Override
 	public void partBroughtToTop(IWorkbenchPartReference partRef) {
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IPartListener2#partDeactivated(org.eclipse.ui.IWorkbenchPartReference)
-	 */
 	@Override
 	public void partDeactivated(IWorkbenchPartReference partRef) {
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IPartListener2#partHidden(org.eclipse.ui.IWorkbenchPartReference)
-	 */
 	@Override
 	public void partHidden(IWorkbenchPartReference partRef) {
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IPartListener2#partInputChanged(org.eclipse.ui.IWorkbenchPartReference)
-	 */
 	@Override
 	public void partInputChanged(IWorkbenchPartReference partRef) {
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.ui.AbstractDebugView#becomesVisible()
-	 */
 	@Override
 	protected void becomesVisible() {
 		super.becomesVisible();
 		getViewer().refresh();
 	}
 
-    /* (non-Javadoc)
-     * @see org.eclipse.debug.internal.ui.viewers.model.provisional.viewers.IViewerUpdateListener#updateComplete(org.eclipse.debug.internal.ui.viewers.provisional.IAsynchronousRequestMonitor)
-     */
     @Override
 	public void updateComplete(IViewerUpdate update) {
         if (!update.isCanceled()) {
@@ -1505,17 +1408,10 @@ public class LaunchView extends AbstractDebugView
         }
     }
 
-
-    /* (non-Javadoc)
-     * @see org.eclipse.debug.internal.ui.viewers.model.provisional.viewers.IViewerUpdateListener#updateStarted(org.eclipse.debug.internal.ui.viewers.provisional.IAsynchronousRequestMonitor)
-     */
     @Override
 	public void updateStarted(IViewerUpdate update) {
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.debug.internal.ui.viewers.model.provisional.viewers.IViewerUpdateListener#viewerUpdatesBegin()
-     */
     @Override
 	public synchronized void viewerUpdatesBegin() {
         IWorkbenchSiteProgressService progressService =
@@ -1525,9 +1421,6 @@ public class LaunchView extends AbstractDebugView
         }
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.debug.internal.ui.viewers.model.provisional.viewers.IViewerUpdateListener#viewerUpdatesComplete()
-     */
     @Override
 	public synchronized void viewerUpdatesComplete() {
         IWorkbenchSiteProgressService progressService =
