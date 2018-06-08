@@ -98,6 +98,7 @@ import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.ITreeSelection;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
+import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.jface.viewers.TreePath;
 import org.eclipse.jface.viewers.TreeSelection;
@@ -866,9 +867,13 @@ public class LaunchView extends AbstractDebugView
             if (getSite().getPage().getActivePart() == this) {
                 setFocus();
             }
-            fBreadcrumbPage.fCrumb.debugContextChanged(new DebugContextEvent(
+            ISelection activeContext = fTreeViewerDebugContextProvider.getActiveContext();
+			if (activeContext == null) {
+				activeContext = StructuredSelection.EMPTY;
+			}
+			fBreadcrumbPage.fCrumb.debugContextChanged(new DebugContextEvent(
                 fTreeViewerDebugContextProvider,
-                fTreeViewerDebugContextProvider.getActiveContext(),
+                activeContext,
                 DebugContextEvent.ACTIVATED));
             fContextProviderProxy.setActiveProvider(fBreadcrumbPage.getContextProvider());
         }
