@@ -551,7 +551,7 @@ public final class VerticalRuler implements IVerticalRuler, IVerticalRulerExtens
 		try {
 			IRegion r= viewer.getVisibleRegion();
 			IDocument d= viewer.getDocument();
-			return widgetLine += d.getLineOfOffset(r.getOffset());
+			return widgetLine + d.getLineOfOffset(r.getOffset());
 		} catch (BadLocationException x) {
 		}
 		return widgetLine;

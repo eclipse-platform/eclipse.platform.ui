@@ -728,7 +728,7 @@ public class CompositeRuler implements IVerticalRuler, IVerticalRulerExtension, 
 		try {
 			IRegion r= viewer.getVisibleRegion();
 			IDocument d= viewer.getDocument();
-			return widgetLine += d.getLineOfOffset(r.getOffset());
+			return widgetLine + d.getLineOfOffset(r.getOffset());
 		} catch (BadLocationException x) {
 		}
 		return widgetLine;
