@@ -54,8 +54,6 @@ public class HTMLTextPresenter implements DefaultInformationControl.IInformation
 	protected void adaptTextPresentation(TextPresentation presentation, int offset, int insertLength) {
 
 		int yoursStart= offset;
-		int yoursEnd=   offset + insertLength -1;
-		yoursEnd= Math.max(yoursStart, yoursEnd);
 
 		Iterator<StyleRange> e= presentation.getAllStyleRangeIterator();
 		while (e.hasNext()) {

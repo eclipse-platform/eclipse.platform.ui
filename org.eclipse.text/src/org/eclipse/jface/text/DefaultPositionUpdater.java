@@ -98,8 +98,6 @@ public class DefaultPositionUpdater implements IPositionUpdater {
 		myEnd= Math.max(myStart, myEnd);
 
 		int yoursStart= fOffset;
-		int yoursEnd=   fOffset + fReplaceLength -1;
-		yoursEnd= Math.max(yoursStart, yoursEnd);
 
 		if (myEnd < yoursStart)
 			return;
