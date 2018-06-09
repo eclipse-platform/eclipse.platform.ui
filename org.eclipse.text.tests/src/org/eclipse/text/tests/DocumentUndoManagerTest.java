@@ -134,10 +134,9 @@ public class DocumentUndoManagerTest extends TestCase {
 
 	private void doChange(IDocument document, int count) {
 		try {
-			String before= document.get();
 
 			if (DEBUG)
-				System.out.println(before);
+				System.out.println(document.get());
 
 			Position[] positions= new Position[count];
 			String[] strings= new String[count];
