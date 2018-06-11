@@ -892,22 +892,22 @@ public final class Platform {
 	}
 
 	/**
-	 * Returns a URL for the given path in the given bundle.  Returns <code>null</code> if the URL
-	 * could not be computed or created.
+	 * Returns a URL for the given path in the given bundle. Returns
+	 * <code>null</code> if the URL could not be computed or created.
 	 *
 	 * @param bundle the bundle in which to search
-	 * @param path path relative to plug-in installation location
-	 * @return a URL for the given path or <code>null</code>.  The actual form
-	 * of the returned URL is not specified.
+	 * @param path   path relative to plug-in installation location
+	 * @return a URL for the given path or <code>null</code>. The actual form of the
+	 *         returned URL is not specified.
 	 * @see #find(Bundle, IPath, Map)
 	 * @see #resolve(URL)
 	 * @see #asLocalURL(URL)
 	 * @since 3.0
-	 * @deprecated use {@link FileLocator#find(Bundle, IPath, Map)}
+	 * @deprecated use {@link FileLocator#find(Bundle, IPath)}
 	 */
 	@Deprecated
 	public static URL find(Bundle bundle, IPath path) {
-		return FileLocator.find(bundle, path, null);
+		return FileLocator.find(bundle, path);
 	}
 
 	/**
