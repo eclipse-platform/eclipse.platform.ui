@@ -37,7 +37,6 @@ public class BundleUtility {
         return bundle != null && (bundle.getState() & (Bundle.ACTIVE | Bundle.STOPPING)) != 0;
     }
 
-    // TODO: needs a better name
     public static boolean isReady(Bundle bundle) {
     	return bundle != null && isReady(bundle.getState());
     }
