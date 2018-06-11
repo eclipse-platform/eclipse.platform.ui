@@ -78,4 +78,12 @@ public abstract class QuickAccessProvider {
 	}
 
 	protected abstract void doReset();
+
+	/**
+	 * @return {@code true} if this provider requires UI operations to load its
+	 *         elements, {@code false} otherwise.
+	 */
+	public boolean requiresUiAccess() {
+		return false;
+	}
 }

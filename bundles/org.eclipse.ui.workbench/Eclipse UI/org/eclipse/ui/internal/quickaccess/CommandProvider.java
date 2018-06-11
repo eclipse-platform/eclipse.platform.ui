@@ -13,6 +13,7 @@
 
 package org.eclipse.ui.internal.quickaccess;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -44,13 +45,16 @@ public class CommandProvider extends QuickAccessProvider {
 		currentSnapshot = c;
 	}
 
-	private Map idToElement;
+	private final Map<String, CommandElement> idToCommand;
 	private IHandlerService handlerService;
 	private ICommandService commandService;
 	private EHandlerService ehandlerService;
 	private ICommandImageService commandImageService;
 
+	private boolean allCommandsRetrieved;
+
 	public CommandProvider() {
+		idToCommand = Collections.synchronizedMap(new HashMap<>());
 	}
 
 	@Override
@@ -60,42 +64,48 @@ public class CommandProvider extends QuickAccessProvider {
 
 	@Override
 	public QuickAccessElement getElementForId(String id) {
-		getElements();
-		return (CommandElement) idToElement.get(id);
+		retrieveCommand(id);
+		return idToCommand.get(id);
 	}
 
 	@Override
 	public QuickAccessElement[] getElements() {
-		if (idToElement == null) {
-			idToElement = new HashMap();
+		if (!allCommandsRetrieved) {
+			ICommandService commandService = getCommandService();
+			Collection<String> commandIds = commandService.getDefinedCommandIds();
+			for (String commandId : commandIds) {
+				retrieveCommand(commandId);
+			}
+			allCommandsRetrieved = true;
+		}
+		synchronized (idToCommand) {
+			return idToCommand.values().stream().toArray(QuickAccessElement[]::new);
+		}
+	}
+
+	private void retrieveCommand(final String currentCommandId) {
+		boolean commandRetrieved = idToCommand.containsKey(currentCommandId);
+		if (!commandRetrieved) {
 			ICommandService commandService = getCommandService();
 			EHandlerService ehandlerService = getEHandlerService();
-			final Collection commandIds = commandService.getDefinedCommandIds();
-			final Iterator commandIdItr = commandIds.iterator();
-			while (commandIdItr.hasNext()) {
-				final String currentCommandId = (String) commandIdItr.next();
-				final Command command = commandService
-						.getCommand(currentCommandId);
-				ParameterizedCommand pcmd = new ParameterizedCommand(command, null);
-				if (command != null && ehandlerService.canExecute(pcmd)) {
-					try {
-						Collection combinations = ParameterizedCommand
-								.generateCombinations(command);
-						for (Iterator it = combinations.iterator(); it
-								.hasNext();) {
-							ParameterizedCommand pc = (ParameterizedCommand) it.next();
-							String id = pc.serialize();
-							idToElement.put(id,
-									new CommandElement(pc, id, this));
+
+			final Command command = commandService.getCommand(currentCommandId);
+			ParameterizedCommand pcmd = new ParameterizedCommand(command, null);
+			if (command != null && ehandlerService.canExecute(pcmd)) {
+				try {
+					Collection<?> combinations = ParameterizedCommand.generateCombinations(command);
+					for (Iterator<?> it = combinations.iterator(); it.hasNext();) {
+						ParameterizedCommand pc = (ParameterizedCommand) it.next();
+						String id = pc.serialize();
+						synchronized (idToCommand) {
+							idToCommand.put(id, new CommandElement(pc, id, this));
 						}
-					} catch (final NotDefinedException e) {
-						// It is safe to just ignore undefined commands.
 					}
+				} catch (final NotDefinedException e) {
+					// It is safe to just ignore undefined commands.
 				}
 			}
 		}
-		return (QuickAccessElement[]) idToElement.values().toArray(
-				new QuickAccessElement[idToElement.values().size()]);
 	}
 
 	@Override
@@ -166,7 +176,10 @@ public class CommandProvider extends QuickAccessProvider {
 
 	@Override
 	protected void doReset() {
-		idToElement = null;
+		allCommandsRetrieved = false;
+		synchronized (idToCommand) {
+			idToCommand.clear();
+		}
 		if (currentSnapshot instanceof ExpressionContext) {
 			((ExpressionContext) currentSnapshot).eclipseContext.dispose();
 		}

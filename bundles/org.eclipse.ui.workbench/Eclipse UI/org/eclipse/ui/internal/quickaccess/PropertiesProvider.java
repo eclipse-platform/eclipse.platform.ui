@@ -87,4 +87,9 @@ public class PropertiesProvider extends QuickAccessProvider {
 	protected void doReset() {
 		idToElement = null;
 	}
+
+	@Override
+	public boolean requiresUiAccess() {
+		return true;
+	}
 }

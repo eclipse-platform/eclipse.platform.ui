@@ -17,9 +17,13 @@
 package org.eclipse.ui.internal.quickaccess;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
+import java.util.Objects;
+import java.util.stream.Collectors;
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import javax.inject.Inject;
@@ -31,6 +35,12 @@ import org.eclipse.core.expressions.Expression;
 import org.eclipse.core.expressions.ExpressionInfo;
 import org.eclipse.core.expressions.IEvaluationContext;
 import org.eclipse.core.runtime.Assert;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.OperationCanceledException;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.SubMonitor;
+import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.e4.core.commands.ECommandService;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.di.annotations.Optional;
@@ -83,6 +93,7 @@ import org.eclipse.ui.contexts.IContextService;
 import org.eclipse.ui.handlers.IHandlerService;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.keys.IBindingService;
+import org.eclipse.ui.progress.UIJob;
 import org.eclipse.ui.swt.IFocusService;
 
 
@@ -108,11 +119,11 @@ public class SearchField {
 
 	private Map<String, QuickAccessProvider> providerMap = new HashMap<>();
 
-	private Map<String, QuickAccessElement> elementMap = new HashMap<>();
+	private Map<String, QuickAccessElement> elementMap = Collections.synchronizedMap(new HashMap<>());
 
-	private Map<QuickAccessElement, ArrayList<String>> textMap = new HashMap<>();
+	private Map<QuickAccessElement, ArrayList<String>> textMap = Collections.synchronizedMap(new HashMap<>());
 
-	private LinkedList<QuickAccessElement> previousPicksList = new LinkedList<>();
+	private List<QuickAccessElement> previousPicksList = Collections.synchronizedList(new LinkedList<>());
 	private int dialogHeight = -1;
 	private int dialogWidth = -1;
 	private Control previousFocusControl;
@@ -129,6 +140,10 @@ public class SearchField {
 	private IBindingService bindingService;
 
 	private TriggerSequence triggerSequence = null;
+
+	private volatile boolean isLoadingPreviousElements;
+	private Job restoreDialogEntriesJob;
+	private UIJob refreshQuickAccessContents;
 
 	@PostConstruct
 	void createControls(final Composite parent, MApplication application, MWindow window) {
@@ -170,6 +185,7 @@ public class SearchField {
 		restoreDialog();
 
 		quickAccessContents = new QuickAccessContents(providers) {
+
 			@Override
 			protected void updateFeedback(boolean filterTextEmpty, boolean showAllMatches) {
 			}
@@ -223,6 +239,14 @@ public class SearchField {
 						// after selection, closes the shell
 						quickAccessContents.doClose();
 					}
+				}
+			}
+
+			@Override
+			public void refresh(String filter) {
+				super.refresh(filter);
+				if (isLoadingPreviousElements) {
+					showHintText(QuickAccessMessages.QuickAccessContents_RestoringPreviousChoicesLabel, null);
 				}
 			}
 		};
@@ -589,10 +613,6 @@ public class SearchField {
 	private void restoreDialog() {
 		IDialogSettings dialogSettings = getDialogSettings();
 		if (dialogSettings != null) {
-			String[] orderedElements = dialogSettings.getArray(ORDERED_ELEMENTS);
-			String[] orderedProviders = dialogSettings.getArray(ORDERED_PROVIDERS);
-			String[] textEntries = dialogSettings.getArray(TEXT_ENTRIES);
-			String[] textArray = dialogSettings.getArray(TEXT_ARRAY);
 			try {
 				dialogHeight = dialogSettings.getInt(DIALOG_HEIGHT);
 				dialogWidth = dialogSettings.getInt(DIALOG_WIDTH);
@@ -601,48 +621,103 @@ public class SearchField {
 				dialogWidth = -1;
 			}
 
-			if (orderedElements != null && orderedProviders != null && textEntries != null
-					&& textArray != null) {
-				int arrayIndex = 0;
-				for (int i = 0; i < orderedElements.length; i++) {
-					QuickAccessProvider quickAccessProvider = providerMap.get(orderedProviders[i]);
-					int numTexts = Integer.parseInt(textEntries[i]);
-					if (quickAccessProvider != null) {
-						QuickAccessElement quickAccessElement = quickAccessProvider
-								.getElementForId(orderedElements[i]);
-						if (quickAccessElement != null) {
-							ArrayList<String> arrayList = new ArrayList<>();
-							for (int j = arrayIndex; j < arrayIndex + numTexts; j++) {
-								String text = textArray[j];
-								// text length can be zero for old workspaces,
-								// see bug 190006
-								if (text.length() > 0) {
-									arrayList.add(text);
-									elementMap.put(text, quickAccessElement);
-								}
-							}
-							textMap.put(quickAccessElement, arrayList);
-							previousPicksList.add(quickAccessElement);
-						}
+			/*
+			 * add place holders, so that we don't change element order due to first
+			 * restoring non-UI elements and then restoring UI elements
+			 */
+			String[] orderedProviders = dialogSettings.getArray(ORDERED_PROVIDERS);
+			previousPicksList.addAll(Arrays.asList(new QuickAccessElement[orderedProviders.length]));
+
+			isLoadingPreviousElements = true;
+			refreshQuickAccessContents = new UIJob("Finish restoring quick access elements") { //$NON-NLS-1$
+				@Override
+				public IStatus runInUIThread(IProgressMonitor monitor) {
+					try {
+						restoreDialogEntries(dialogSettings, true, monitor);
+						quickAccessContents.refresh(quickAccessContents.filterText.getText());
+						List<QuickAccessElement> previousPicks = getLoadedPreviousPicks();
+						previousPicksList.clear();
+						previousPicksList.addAll(previousPicks);
+					} finally {
+						isLoadingPreviousElements = false;
 					}
-					arrayIndex += numTexts;
+					return Status.OK_STATUS;
 				}
+			};
+			refreshQuickAccessContents.setSystem(true);
+			restoreDialogEntriesJob = Job.createSystem("Restore quick access elements", (IProgressMonitor monitor) -> { //$NON-NLS-1$
+				try {
+					restoreDialogEntries(dialogSettings, false, monitor);
+					return Status.OK_STATUS;
+				} catch (OperationCanceledException e) {
+					return Status.CANCEL_STATUS;
+				} finally {
+					refreshQuickAccessContents.schedule();
+				}
+			});
+			restoreDialogEntriesJob.schedule();
+		}
+	}
+
+	private void restoreDialogEntries(IDialogSettings dialogSettings, boolean restoreUiElements,
+			IProgressMonitor monitor)
+			throws OperationCanceledException {
+		String[] orderedElements = dialogSettings.getArray(ORDERED_ELEMENTS);
+		String[] orderedProviders = dialogSettings.getArray(ORDERED_PROVIDERS);
+		String[] textEntries = dialogSettings.getArray(TEXT_ENTRIES);
+		String[] textArray = dialogSettings.getArray(TEXT_ARRAY);
+
+		if (orderedElements != null && orderedProviders != null && textEntries != null && textArray != null) {
+			int arrayIndex = 0;
+			int elementCount = orderedElements.length;
+			SubMonitor subMonitor = SubMonitor.convert(monitor, "Restoring quick access elements.", elementCount); //$NON-NLS-1$
+
+			for (int i = 0; i < elementCount; i++) {
+				QuickAccessProvider quickAccessProvider = providerMap.get(orderedProviders[i]);
+				int numTexts = Integer.parseInt(textEntries[i]);
+				subMonitor.split(1).setTaskName("Restoring quick access element \"" + orderedElements[i] + "\"."); //$NON-NLS-1$ //$NON-NLS-2$
+				if (quickAccessProvider != null && restoreUiElements == quickAccessProvider.requiresUiAccess()) {
+					QuickAccessElement quickAccessElement = quickAccessProvider.getElementForId(orderedElements[i]);
+
+					if (quickAccessElement != null) {
+						ArrayList<String> arrayList = new ArrayList<>();
+						for (int j = arrayIndex; j < arrayIndex + numTexts; j++) {
+							String text = textArray[j];
+							// text length can be zero for old workspaces,
+							// see bug 190006
+							if (text.length() > 0) {
+								arrayList.add(text);
+								elementMap.put(text, quickAccessElement);
+							}
+						}
+						textMap.put(quickAccessElement, arrayList);
+						previousPicksList.set(i, quickAccessElement);
+					}
+				}
+				arrayIndex += numTexts;
 			}
 		}
 	}
 
 	@PreDestroy
 	void dispose() {
+		if (restoreDialogEntriesJob != null) {
+			restoreDialogEntriesJob.cancel();
+		}
+		if (refreshQuickAccessContents != null) {
+			refreshQuickAccessContents.cancel();
+		}
 		storeDialog();
 	}
 
 	private void storeDialog() {
-		String[] orderedElements = new String[previousPicksList.size()];
-		String[] orderedProviders = new String[previousPicksList.size()];
-		String[] textEntries = new String[previousPicksList.size()];
+		List<QuickAccessElement> previousPicks = getLoadedPreviousPicks();
+		String[] orderedElements = new String[previousPicks.size()];
+		String[] orderedProviders = new String[previousPicks.size()];
+		String[] textEntries = new String[previousPicks.size()];
 		ArrayList<String> arrayList = new ArrayList<>();
 		for (int i = 0; i < orderedElements.length; i++) {
-			QuickAccessElement quickAccessElement = previousPicksList.get(i);
+			QuickAccessElement quickAccessElement = previousPicks.get(i);
 			ArrayList<String> elementText = textMap.get(quickAccessElement);
 			Assert.isNotNull(elementText);
 			orderedElements[i] = quickAccessElement.getId();
@@ -658,6 +733,16 @@ public class SearchField {
 		dialogSettings.put(TEXT_ARRAY, textArray);
 		dialogSettings.put(DIALOG_HEIGHT, dialogHeight);
 		dialogSettings.put(DIALOG_WIDTH, dialogWidth);
+	}
+
+	/**
+	 * If the original list was not fully restored yet, it may contain null elements, so we
+	 * return here only already resolved, non null elements
+	 */
+	private List<QuickAccessElement> getLoadedPreviousPicks() {
+		List<QuickAccessElement> previousPicks = previousPicksList.stream().filter(Objects::nonNull)
+				.collect(Collectors.toList());
+		return previousPicks;
 	}
 
 	private IDialogSettings getDialogSettings() {
@@ -683,15 +768,16 @@ public class SearchField {
 		// If list is max size, remove last(oldest) element
 		// Remove entries for removed element from elementMap and textMap
 		// Add element to front of previousPicksList
+
 		previousPicksList.remove(element);
 		if (previousPicksList.size() == MAXIMUM_NUMBER_OF_ELEMENTS) {
-			Object removedElement = previousPicksList.removeLast();
+			Object removedElement = previousPicksList.remove(previousPicksList.size() - 1);
 			ArrayList<String> removedList = textMap.remove(removedElement);
 			for (int i = 0; i < removedList.size(); i++) {
 				elementMap.remove(removedList.get(i));
 			}
 		}
-		previousPicksList.addFirst(element);
+		previousPicksList.add(0, element);
 
 		// textMap:
 		// Get list of strings for element from textMap
