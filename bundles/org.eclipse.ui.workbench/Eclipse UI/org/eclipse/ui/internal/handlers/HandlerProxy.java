@@ -323,8 +323,15 @@ public final class HandlerProxy extends AbstractHandlerWithState implements
 
 	@Override
 	public final boolean isHandled() {
-		if (isOkToLoad() && loadHandler()) {
+		boolean okToLoad = isOkToLoad();
+		if (okToLoad && loadHandler()) {
 			return handler.isHandled();
+		}
+		if (!okToLoad) {
+			// That is crazy, but we should answer "true" for contributions from not loaded
+			// plugins, otherwise pure declarative commands defined in not active bundles
+			// will not run for the first time
+			return true;
 		}
 		return false;
 	}
