@@ -12,6 +12,7 @@
 package org.eclipse.ui.internal.util;
 
 import java.net.URL;
+import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
@@ -61,7 +62,7 @@ public class BundleUtility {
         if (bundle == null) {
 			return null;
 		}
-        return Platform.find(bundle, new Path(path));
+		return FileLocator.find(bundle, new Path(path));
     }
 
     public static URL find(String bundleId, String path) {
