@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+
+   <extension
+         point="org.eclipse.ui.commands">
+      <category
+            id="org.eclipse.ui.examples.uriSchemeHandler.commands.category"
+            name="Sample Category">
+      </category>
+      <command
+            categoryId="org.eclipse.ui.examples.uriSchemeHandler.commands.category"
+            name="Fire OpenUrl Event"
+            id="org.eclipse.ui.examples.uriSchemeHandler.commands.sampleCommand">
+      </command>
+   </extension>
+   <extension
+         point="org.eclipse.ui.handlers">
+      <handler
+            class="org.eclipse.ui.examples.urischemehandler.commandHandlers.OpenUrlEventCreationHandler"
+            commandId="org.eclipse.ui.examples.uriSchemeHandler.commands.sampleCommand">
+      </handler>
+   </extension>
+   <extension
+         point="org.eclipse.ui.bindings">
+      <key
+            commandId="org.eclipse.ui.examples.uriSchemeHandler.commands.sampleCommand"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
+            contextId="org.eclipse.ui.contexts.window"
+            sequence="M1+6">
+      </key>
+   </extension>
+   <extension
+         point="org.eclipse.ui.menus">
+      <menuContribution
+            locationURI="menu:org.eclipse.ui.main.menu?after=additions">
+         <menu
+               id="org.eclipse.ui.examples.uriSchemeHandler.menus.sampleMenu"
+               label="OpenUrl Menu"
+               mnemonic="M">
+            <command
+                  commandId="org.eclipse.ui.examples.uriSchemeHandler.commands.sampleCommand"
+                  id="org.eclipse.ui.examples.uriSchemeHandler.menus.sampleCommand"
+                  mnemonic="S">
+            </command>
+         </menu>
+      </menuContribution>
+      <menuContribution
+            locationURI="toolbar:org.eclipse.ui.main.toolbar?after=additions">
+         <toolbar
+               id="org.eclipse.ui.examples.uriSchemeHandler.toolbars.sampleToolbar">
+            <command
+                  id="org.eclipse.ui.examples.uriSchemeHandler.toolbars.sampleCommand"
+                  commandId="org.eclipse.ui.examples.uriSchemeHandler.commands.sampleCommand"
+                  icon="icons/sample.png"
+                  tooltip="Fire OpenUrl event">
+            </command>
+         </toolbar>
+      </menuContribution>
+   </extension>
+   <extension
+         point="org.eclipse.urischeme.uriSchemeHandlers">
+      <uriSchemeHandler
+            class="org.eclipse.ui.examples.urischemehandler.uriHandlers.HelloSchemeHandler"
+            uriSchemeDescription="The Hello World demo protocol"
+            uriScheme="hello">
+      </uriSchemeHandler>
+   </extension>
+
+</plugin>

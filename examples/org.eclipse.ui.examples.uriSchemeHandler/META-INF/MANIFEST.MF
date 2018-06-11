@@ -1,0 +1,9 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: UriSchemeHandler
+Bundle-SymbolicName: org.eclipse.ui.examples.uriSchemeHandler;singleton:=true
+Bundle-Version: 1.0.0.qualifier
+Require-Bundle: org.eclipse.ui,
+ org.eclipse.urischeme
+Automatic-Module-Name: org.eclipse.ui.examples.uriSchemeHandler
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8

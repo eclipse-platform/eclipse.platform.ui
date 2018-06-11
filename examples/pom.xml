@@ -34,6 +34,7 @@
     <module>org.eclipse.jface.snippets</module>
     <module>org.eclipse.ui.examples.job</module>
     <module>org.eclipse.ui.examples.navigator</module>
+    <module>org.eclipse.ui.examples.uriSchemeHandler</module>
     <module>org.eclipse.ui.forms.examples</module>
   </modules>
 </project>
