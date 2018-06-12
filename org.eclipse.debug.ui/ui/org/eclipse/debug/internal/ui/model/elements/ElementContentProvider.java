@@ -30,12 +30,24 @@ public abstract class ElementContentProvider implements IElementContentProvider 
 
 	protected static final Object[] EMPTY = new Object[0];
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.viewers.model.provisional.IElementContentProvider#updateChildren(java.lang.Object, int, int, org.eclipse.debug.internal.ui.viewers.provisional.IPresentationContext, org.eclipse.debug.internal.ui.viewers.model.provisional.IElementRequestMonitor)
-	 */
+	protected abstract class ElementContentProviderJob extends Job {
+
+		public ElementContentProviderJob(String name) {
+			super(name);
+			setSystem(true);
+			setUser(false);
+		}
+
+		@Override
+		public boolean belongsTo(Object family) {
+			return family == ElementContentProvider.class;
+		}
+
+	}
+
 	@Override
 	public void update(final IChildrenUpdate[] updates) {
-		Job job = new Job("children update") { //$NON-NLS-1$
+		Job job = new ElementContentProviderJob("Debug children update") { //$NON-NLS-1$
 			@Override
 			protected IStatus run(IProgressMonitor monitor) {
 				for (int i = 0; i < updates.length; i++) {
@@ -48,17 +60,13 @@ public abstract class ElementContentProvider implements IElementContentProvider 
 				return Status.OK_STATUS;
 			}
 		};
-		job.setSystem(true);
 		job.setRule(getRule(updates));
 		job.schedule();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.viewers.model.provisional.IElementContentProvider#update(org.eclipse.debug.internal.ui.viewers.model.provisional.IChildrenCountUpdate)
-	 */
 	@Override
 	public void update(final IChildrenCountUpdate[] updates) {
-		Job job = new Job("child count update") { //$NON-NLS-1$
+		Job job = new ElementContentProviderJob("Debug child count update") { //$NON-NLS-1$
 			@Override
 			protected IStatus run(IProgressMonitor monitor) {
 				for (int i = 0; i < updates.length; i++) {
@@ -71,7 +79,6 @@ public abstract class ElementContentProvider implements IElementContentProvider 
 				return Status.OK_STATUS;
 			}
 		};
-		job.setSystem(true);
 		job.setRule(getRule(updates));
 		job.schedule();
 	}
@@ -192,12 +199,9 @@ public abstract class ElementContentProvider implements IElementContentProvider 
     	return null;
     }
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.viewers.model.provisional.IElementContentProvider#update(org.eclipse.debug.internal.ui.viewers.model.provisional.IHasChildrenUpdate[])
-	 */
 	@Override
 	public void update(final IHasChildrenUpdate[] updates) {
-		Job job = new Job("has children update") { //$NON-NLS-1$
+		Job job = new ElementContentProviderJob("Debug has children update") { //$NON-NLS-1$
 			@Override
 			protected IStatus run(IProgressMonitor monitor) {
 				for (int i = 0; i < updates.length; i++) {
@@ -210,7 +214,6 @@ public abstract class ElementContentProvider implements IElementContentProvider 
 				return Status.OK_STATUS;
 			}
 		};
-		job.setSystem(true);
 		job.setRule(getRule(updates));
 		job.schedule();
 	}
