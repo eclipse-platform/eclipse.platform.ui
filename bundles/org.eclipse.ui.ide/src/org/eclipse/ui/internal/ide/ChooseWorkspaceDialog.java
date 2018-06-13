@@ -208,7 +208,7 @@ public class ChooseWorkspaceDialog extends TitleAreaDialog {
     @Override
 	protected void configureShell(Shell shell) {
         super.configureShell(shell);
-        shell.setText(IDEWorkbenchMessages.ChooseWorkspaceDialog_dialogName);
+        shell.setText(NLS.bind(IDEWorkbenchMessages.ChooseWorkspaceDialog_dialogName, getWindowTitle()));
 		shell.addTraverseListener(e -> {
 			// Bug 462707: [WorkbenchLauncher] dialog not closed on ESC.
 			// The dialog doesn't always have a parent, so
