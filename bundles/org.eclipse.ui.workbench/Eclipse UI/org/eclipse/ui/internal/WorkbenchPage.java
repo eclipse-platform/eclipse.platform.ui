@@ -164,7 +164,6 @@ import org.eclipse.ui.internal.e4.compatibility.CompatibilityPart;
 import org.eclipse.ui.internal.e4.compatibility.CompatibilityView;
 import org.eclipse.ui.internal.e4.compatibility.ModeledPageLayout;
 import org.eclipse.ui.internal.e4.compatibility.SelectionService;
-import org.eclipse.ui.internal.EditorReference;
 import org.eclipse.ui.internal.menus.MenuHelper;
 import org.eclipse.ui.internal.misc.ExternalEditor;
 import org.eclipse.ui.internal.misc.StatusUtil;
@@ -1293,7 +1292,9 @@ public class WorkbenchPage implements IWorkbenchPage {
 		part = showPart(mode, part);
 
 		ViewReference ref = getViewReference(part);
-
+		if (ref == null) {
+			throw new PartInitException(NLS.bind(WorkbenchMessages.ViewFactory_initException, viewId));
+		}
 		return (IViewPart) ref.getPart(true);
 	}
 	private MPart showPart(int mode, MPart part) {
