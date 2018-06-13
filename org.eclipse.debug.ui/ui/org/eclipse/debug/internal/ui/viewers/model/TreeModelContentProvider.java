@@ -27,10 +27,12 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.ISafeRunnable;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.ListenerList;
+import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.SafeRunner;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
+import org.eclipse.debug.internal.ui.model.elements.ElementContentProvider;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.ICheckboxModelProxy;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IChildrenUpdate;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IElementContentProvider;
@@ -451,7 +453,7 @@ public class TreeModelContentProvider implements ITreeModelContentProvider, ICon
 					DebugUIPlugin.trace("Delayed queue size: " + fQueue.size()); //$NON-NLS-1$
 				}
 			}
-			schedule(50);
+			schedule();
 		}
 
 		public void shutdown() {
@@ -488,6 +490,11 @@ public class TreeModelContentProvider implements ITreeModelContentProvider, ICon
                 doModelChanged(delta, proxy);
             }
             else {
+				try {
+					Job.getJobManager().join(ElementContentProvider.class, null);
+				} catch (OperationCanceledException | InterruptedException e) {
+					DebugUIPlugin.log(new Status(IStatus.WARNING, DebugUIPlugin.getUniqueIdentifier(), "Interrupted while waiting on ElementContentProvider jobs", e)); //$NON-NLS-1$
+				}
 				fDelayedDoModelChangeJob.runDelayed(delta, proxy);
             }
         }
