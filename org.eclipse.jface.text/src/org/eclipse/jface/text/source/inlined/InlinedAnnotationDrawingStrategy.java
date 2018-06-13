@@ -242,10 +242,9 @@ class InlinedAnnotationDrawingStrategy implements IDrawingStrategy {
 			String s= textWidget.getText(offset, offset);
 			Point charBounds= gc.stringExtent(s);
 			int charWidth= charBounds.x;
-			int charHeight= charBounds.y;
 
 			// When line text has line header annotation, there is a space on the top, adjust the y by using char height
-			y+= bounds.height - charHeight;
+			y+= bounds.height - textWidget.getLineHeight();
 
 			// Draw the line content annotation
 			annotation.setLocation(x, y);
