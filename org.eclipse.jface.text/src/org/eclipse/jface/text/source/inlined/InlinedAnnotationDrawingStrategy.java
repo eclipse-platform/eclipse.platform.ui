@@ -46,11 +46,11 @@ class InlinedAnnotationDrawingStrategy implements IDrawingStrategy {
 	 * Draw the inlined annotation.
 	 *
 	 * @param annotation the annotation to be drawn
-	 * @param gc         the graphics context, <code>null</code> when in clearing mode
+	 * @param gc the graphics context, <code>null</code> when in clearing mode
 	 * @param textWidget the text widget to draw on
-	 * @param offset     the offset of the line
-	 * @param length     the length of the line
-	 * @param color      the color of the line
+	 * @param offset the offset of the line
+	 * @param length the length of the line
+	 * @param color the color of the line
 	 */
 	public static void draw(AbstractInlinedAnnotation annotation, GC gc, StyledText textWidget, int offset, int length,
 			Color color) {
@@ -65,11 +65,11 @@ class InlinedAnnotationDrawingStrategy implements IDrawingStrategy {
 	 * Draw the line header annotation in the line spacing of the previous line.
 	 *
 	 * @param annotation the annotation to be drawn
-	 * @param gc         the graphics context, <code>null</code> when in clearing mode
+	 * @param gc the graphics context, <code>null</code> when in clearing mode
 	 * @param textWidget the text widget to draw on
-	 * @param offset     the offset of the line
-	 * @param length     the length of the line
-	 * @param color      the color of the line
+	 * @param offset the offset of the line
+	 * @param length the length of the line
+	 * @param color the color of the line
 	 */
 	private static void draw(LineHeaderAnnotation annotation, GC gc, StyledText textWidget, int offset, int length,
 			Color color) {
@@ -79,9 +79,9 @@ class InlinedAnnotationDrawingStrategy implements IDrawingStrategy {
 		} catch (Exception e) {
 			return;
 		}
-		if (annotation.isMarkedDeleted() || annotation.getPosition().isDeleted()) {
+		if (isDeleted(annotation)) {
 			// When annotation is deleted, update metrics to null to remove extra spaces of the line header annotation.
-			if (style != null) {
+			if (style != null && style.metrics != null) {
 				style.metrics= null;
 				textWidget.setStyleRange(style);
 			}
@@ -163,7 +163,7 @@ class InlinedAnnotationDrawingStrategy implements IDrawingStrategy {
 	 * Returns the style to apply with GlyphMetrics ascent only if needed.
 	 *
 	 * @param annotation the line header annotation
-	 * @param style      the current style and null otherwise.
+	 * @param style the current style and null otherwise.
 	 * @return the style to apply with GlyphMetrics ascent only if needed.
 	 */
 	static StyleRange updateStyle(LineHeaderAnnotation annotation, StyleRange style) {
@@ -210,11 +210,11 @@ class InlinedAnnotationDrawingStrategy implements IDrawingStrategy {
 	 * {@link GlyphMetrics}.
 	 *
 	 * @param annotation the annotation to be drawn
-	 * @param gc         the graphics context, <code>null</code> when in clearing mode
+	 * @param gc the graphics context, <code>null</code> when in clearing mode
 	 * @param textWidget the text widget to draw on
-	 * @param offset     the offset of the line
-	 * @param length     the length of the line
-	 * @param color      the color of the line
+	 * @param offset the offset of the line
+	 * @param length the length of the line
+	 * @param color the color of the line
 	 */
 	private static void draw(LineContentAnnotation annotation, GC gc, StyledText textWidget, int offset, int length,
 			Color color) {
@@ -224,9 +224,9 @@ class InlinedAnnotationDrawingStrategy implements IDrawingStrategy {
 		} catch (Exception e) {
 			return;
 		}
-		if (annotation.isMarkedDeleted() || annotation.getPosition().isDeleted()) {
+		if (isDeleted(annotation)) {
 			// When annotation is deleted, update metrics to null to remove extra spaces of the line content annotation.
-			if (style != null) {
+			if (style != null && style.metrics != null) {
 				style.metrics= null;
 				textWidget.setStyleRange(style);
 			}
@@ -302,7 +302,7 @@ class InlinedAnnotationDrawingStrategy implements IDrawingStrategy {
 	 * Returns the style to apply with GlyphMetrics width only if needed.
 	 *
 	 * @param annotation the line content annotation
-	 * @param style      the current style and null otherwise.
+	 * @param style the current style and null otherwise.
 	 * @return the style to apply with GlyphMetrics width only if needed.
 	 */
 	static StyleRange updateStyle(LineContentAnnotation annotation, StyleRange style) {
@@ -337,5 +337,15 @@ class InlinedAnnotationDrawingStrategy implements IDrawingStrategy {
 		}
 		style.metrics= metrics;
 		return style;
+	}
+
+	/**
+	 * Returns <code>true</code> if inlined annotation is deleted and <code>false</code> otherwise.
+	 *
+	 * @param annotation the inlined annotation to check
+	 * @return <code>true</code> if inlined annotation is deleted and <code>false</code> otherwise.
+	 */
+	private static boolean isDeleted(AbstractInlinedAnnotation annotation) {
+		return annotation.isMarkedDeleted() || annotation.getPosition().isDeleted() || annotation.getPosition().getLength() == 0;
 	}
 }
