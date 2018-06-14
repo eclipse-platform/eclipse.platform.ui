@@ -15,6 +15,12 @@ package org.eclipse.ui.tests.api;
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertThat;
 
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.stream.Collectors;
+
 import org.eclipse.core.internal.content.ContentTypeManager;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
@@ -24,6 +30,7 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.content.IContentType;
 import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.swt.program.Program;
 import org.eclipse.ui.IEditorDescriptor;
 import org.eclipse.ui.IEditorRegistry;
 import org.eclipse.ui.IFileEditorMapping;
@@ -120,13 +127,24 @@ public class IEditorRegistryTest extends TestCase {
 		IEditorDescriptor[] sortedEditorsFromOS = ((EditorRegistry) fReg).getSortedEditorsFromOS();
 		assertThat("The OS should have at least one external editor", sortedEditorsFromOS.length,
 				Matchers.greaterThan(1));
+
+		List<EditorDescriptor> list = Arrays.asList(sortedEditorsFromOS).stream().map(x -> (EditorDescriptor) x)
+				.collect(Collectors.toList());
+		Map<String, List<Program>> map = list.stream().collect(Collectors.groupingBy(IEditorDescriptor::getId,
+				Collectors.mapping(EditorDescriptor::getProgram, Collectors.toList())));
+
+		assertTrue(!map.isEmpty());
+
 		// cycle through external editors
-		for (IEditorDescriptor ied : sortedEditorsFromOS) {
-			EditorDescriptor ed = (EditorDescriptor) ied;
+		for (Entry<String, List<Program>> entry : map.entrySet()) {
+			String id = entry.getKey();
 			// find external editor from registry
-			EditorDescriptor found = (EditorDescriptor) fReg.findEditor(ed.getId());
+			EditorDescriptor found = (EditorDescriptor) fReg.findEditor(id);
 			assertNotNull("Found editor must not be null", found);
-			assertEquals("External editor should be found using find(id)", ed.getProgram(), found.getProgram());
+			List<Program> candidates = entry.getValue();
+			boolean contains = candidates.contains(found.getProgram());
+			assertTrue("No matching external editor found for id: " + id + ", list: " + candidates + ", expected: "
+					+ found + " / " + found.getProgram(), contains);
 		}
 	}
 
