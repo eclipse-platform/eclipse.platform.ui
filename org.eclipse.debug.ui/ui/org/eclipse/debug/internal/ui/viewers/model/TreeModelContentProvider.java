@@ -399,7 +399,7 @@ public class TreeModelContentProvider implements ITreeModelContentProvider, ICon
 	private class DelayedDoModelChangedJob extends WorkbenchJob {
 
 		// queue of submitted deltas to process
-		private final List<DelayedDoModelChange> fQueue = new ArrayList<>();
+		private final List<Object> fQueue = new ArrayList<>();
 		private boolean shutdown;
 
 		public DelayedDoModelChangedJob() {
@@ -410,7 +410,7 @@ public class TreeModelContentProvider implements ITreeModelContentProvider, ICon
 
 		@Override
 		public IStatus runInUIThread(IProgressMonitor monitor) {
-			List<DelayedDoModelChange> currentBatch = new ArrayList<>();
+			List<Object> currentBatch = new ArrayList<>();
 			synchronized (fQueue) {
 				if (shutdown || fQueue.isEmpty()) {
 					return Status.OK_STATUS;
@@ -421,21 +421,26 @@ public class TreeModelContentProvider implements ITreeModelContentProvider, ICon
 			if (DebugUIPlugin.DEBUG_CONTENT_PROVIDER) {
 				DebugUIPlugin.trace("Delayed batch size: " + currentBatch.size()); //$NON-NLS-1$
 			}
-			for (Iterator<DelayedDoModelChange> iterator = currentBatch.iterator(); iterator.hasNext();) {
-				DelayedDoModelChange change = iterator.next();
+			for (Iterator<?> iterator = currentBatch.iterator(); iterator.hasNext();) {
+				Object task = iterator.next();
 				if (monitor.isCanceled()) {
 					restoreQueue(currentBatch);
 					return Status.CANCEL_STATUS;
 				}
-				if (!change.proxy.isDisposed()) {
-					doModelChanged(change.delta, change.proxy);
+				if (task instanceof DelayedDoModelChange) {
+					DelayedDoModelChange change = (DelayedDoModelChange) task;
+					if (!change.proxy.isDisposed()) {
+						doModelChanged(change.delta, change.proxy);
+					}
+				} else {
+					((Runnable) task).run();
 				}
 				iterator.remove();
 			}
 			return Status.OK_STATUS;
 		}
 
-		private void restoreQueue(List<DelayedDoModelChange> currentBatch) {
+		private void restoreQueue(List<Object> currentBatch) {
 			synchronized (fQueue) {
 				currentBatch.addAll(fQueue);
 				fQueue.clear();
@@ -444,11 +449,19 @@ public class TreeModelContentProvider implements ITreeModelContentProvider, ICon
 		}
 
 		public void runDelayed(final IModelDelta delta, final IModelProxy proxy) {
+			runDelayed(new DelayedDoModelChange(delta, proxy));
+		}
+
+		public void runDelayed(final Runnable uiTask) {
+			runDelayed((Object) uiTask);
+		}
+
+		private void runDelayed(final Object task) {
 			synchronized (fQueue) {
 				if (shutdown) {
 					return;
 				}
-				fQueue.add(new DelayedDoModelChange(delta, proxy));
+				fQueue.add(task);
 				if (DebugUIPlugin.DEBUG_CONTENT_PROVIDER) {
 					DebugUIPlugin.trace("Delayed queue size: " + fQueue.size()); //$NON-NLS-1$
 				}
@@ -1779,7 +1792,7 @@ public class TreeModelContentProvider implements ITreeModelContentProvider, ICon
             if (Thread.currentThread() == display.getThread()) {
             	performUpdates();
             } else {
-            	display.asyncExec(updateJob);
+				fDelayedDoModelChangeJob.runDelayed(updateJob);
             }
 	    }
 	}
