@@ -22,7 +22,7 @@ import org.eclipse.ui.internal.genericeditor.hover.TextHoverRegistry.TextHoverEx
 /**
  * A comparator that allows to sort elements according to their relative
  * placement (isBefore and isAfter)
- *TODO: generalizing to any kind of extension supporting isBefore and isAfter
+ * TODO: generalizing to any kind of extension supporting isBefore and isAfter
  */
 class OrderedExtensionComparator implements Comparator<TextHoverExtension> {
 
@@ -53,9 +53,6 @@ class OrderedExtensionComparator implements Comparator<TextHoverExtension> {
 			return true;
 		}
 		String id1 = arg1.getId();
-		if (id1 == null) {
-			return false; 
-		}
 		if (before0.equals(id1)) {
 			return true;
 		}
@@ -75,9 +72,6 @@ class OrderedExtensionComparator implements Comparator<TextHoverExtension> {
 			return true;
 		}
 		String id1 = arg1.getId();
-		if (id1 == null) {
-			return false; 
-		}
 		if (after0.equals(id1)) {
 			return true;
 		}
