@@ -49,7 +49,7 @@ public class SearchPattern {
 
 	/**
 	 * Match rule: The search pattern matches the search result only if cases
-	 * are the same. Can be combined to previous rules, e.g.
+	 * are the same. Can be combined with previous rules, e.g.
 	 * {@link #RULE_EXACT_MATCH} | {@link #RULE_CASE_SENSITIVE}
 	 */
 	public static final int RULE_CASE_SENSITIVE = 0x0008;
@@ -72,7 +72,7 @@ public class SearchPattern {
 	 *
 	 *
 	 * <br>
-	 * Can be combined to {@link #RULE_PREFIX_MATCH} match rule. For example,
+	 * Can be combined with {@link #RULE_PREFIX_MATCH} match rule. For example,
 	 * when prefix match rule is combined with Camel Case match rule,
 	 * <code>"nPE"</code> pattern will match <code>nPException</code>. <br>
 	 * Match rule {@link #RULE_PATTERN_MATCH} may also be combined but both
@@ -104,9 +104,10 @@ public class SearchPattern {
 	private int allowedRules;
 
 	/**
-	 * Creates new instance of SearchPattern Default allowedRules for it is
-	 * result of belong logic operation: ( RULE_EXACT_MATCH | RULE_PREFIX_MATCH |
-	 * RULE_PATTERN_MATCH | RULE_CAMELCASE_MATCH )
+	 * Creates a new instance of SearchPattern with the following match rules
+	 * configured: {@link #RULE_EXACT_MATCH} | {@link #RULE_PREFIX_MATCH} |
+	 * {@link #RULE_PATTERN_MATCH} | {@link #RULE_CAMELCASE_MATCH} |
+	 * {@link #RULE_BLANK_MATCH} )
 	 *
 	 */
 	public SearchPattern() {
