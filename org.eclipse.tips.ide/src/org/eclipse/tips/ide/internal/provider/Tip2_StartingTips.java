@@ -36,7 +36,7 @@ public class Tip2_StartingTips extends Tip implements IHtmlTip {
 
 	@Override
 	public String getHTML() {
-		return "<h2>Opening the Tips Dialog</h2>The tips are started automatically at startup if there are tips available."
+		return "<h2>Opening the Tips Dialog</h2>The tips are shown automatically at startup if there are tips available."
 				+ " In case the tips are not loaded at startup you can activate the tips manually from the Help menu."
 				+ "<br><br>" + "Press <b><i>Next Tip</i></b> to learn more.<br><br>";
 	}

@@ -38,7 +38,7 @@ public class Tip3_StartingTips extends Tip implements IHtmlTip {
 	public String getHTML() {
 		return "<h2>Tips Available?</h2>In case you do not want to start tips at startup, you can still see if there are tips available. "
 				+ "Check the bottom right corner to see a little lightbulb. This lightbulb only appears if there is something to read."
-				+ "<br><br>" + "Press <b><i>Next Tip</i></b> to see how to navigate Tips.<br><br>";
+				+ "<br><br>" + "Press <b><i>Next Tip</i></b> to see how to navigate tips.<br><br>";
 	}
 
 	private TipImage fImage;

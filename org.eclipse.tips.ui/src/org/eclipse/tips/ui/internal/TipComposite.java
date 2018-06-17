@@ -12,6 +12,7 @@ package org.eclipse.tips.ui.internal;
 
 import java.io.IOException;
 import java.net.URL;
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -301,7 +302,7 @@ public class TipComposite extends Composite implements ProviderSelectionListener
 	}
 
 	private void runTipAction(TipAction tipAction) {
-		Job job = new Job(Messages.TipComposite_10 + tipAction.getTooltip()) {
+		Job job = new Job(MessageFormat.format(Messages.TipComposite_10, tipAction.getTooltip())) {
 			@Override
 			protected IStatus run(IProgressMonitor monitor) {
 				try {

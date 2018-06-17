@@ -81,7 +81,7 @@ public class IDETipManager extends DefaultTipManager {
 	}
 
 	private void load(TipProvider provider) {
-		Job job = new Job(Messages.IDETipManager_1 + provider.getID()) {
+		Job job = new Job(MessageFormat.format(Messages.IDETipManager_1, provider.getID())) {
 			@Override
 			protected IStatus run(IProgressMonitor monitor) {
 				return provider.loadNewTips(monitor);
@@ -141,6 +141,7 @@ public class IDETipManager extends DefaultTipManager {
 				return Status.OK_STATUS;
 			}
 		};
+		job.setSystem(true);
 		job.schedule();
 	}
 

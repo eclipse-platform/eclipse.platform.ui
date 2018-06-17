@@ -28,7 +28,7 @@ import org.eclipse.tips.core.internal.LogUtil;
  * manage its tips. Examples of managing tips are:
  *
  * <ul>
- * <li>Loading tips from the internet</li>
+ * <li>Loading tips from the Internet</li>
  * <li>Serve next, previous and current tip on request</li>
  * </ul>
  *
@@ -36,7 +36,7 @@ import org.eclipse.tips.core.internal.LogUtil;
  * TipManager will insert itself by calling {@link #setManager(ITipManager)}.
  * Then the TipManager will asynchronous call this providers'
  * {@link #loadNewTips(IProgressMonitor)} method. The job of the load() method
- * is to do long work like fetching new tips from the internet and storing them
+ * is to do long work like fetching new tips from the Internet and storing them
  * locally. There is no defined method on how tips should be stored locally,
  * implementers are free to do what is needed.
  *
@@ -69,22 +69,18 @@ public abstract class TipProvider {
 	 * requirement to only serve read tips. Subclasses may replace this predicate if
 	 * they want to add some additional tests.
 	 */
-	private Predicate<Tip> fUnreadTipPredicate = new Predicate<Tip>() {
-
-		@Override
-		public boolean test(Tip pTip) {
-			if (getManager().mustServeReadTips()) {
-				return true;
-			}
-			return !getManager().isRead(pTip);
+	private Predicate<Tip> fUnreadTipPredicate = pTip -> {
+		if (getManager().mustServeReadTips()) {
+			return true;
 		}
+		return !getManager().isRead(pTip);
 	};
 
 	/**
 	 * The zero argument constructor must be able to instantiate the TipProvider.
 	 * This method may also be used to quickly set the available tips by calling the
 	 * {@link #setTips(List)} method. The constructor may not be used to load tips
-	 * from the internet. Use the {@link #loadNewTips(IProgressMonitor)} method for
+	 * from the Internet. Use the {@link #loadNewTips(IProgressMonitor)} method for
 	 * this purpose.
 	 *
 	 * @see #loadNewTips(IProgressMonitor)

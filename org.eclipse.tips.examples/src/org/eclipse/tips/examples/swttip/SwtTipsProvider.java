@@ -47,7 +47,7 @@ public class SwtTipsProvider extends TipProvider {
 	public synchronized List<Tip> getTips() {
 		List<Tip> tips = super.getTips();
 		if (tips.size() <= 1) {
-			Job job = new Job(getDescription() + " is getting more tips.") {
+			Job job = new Job("Load tips for " + getDescription()) {
 
 				@Override
 				protected IStatus run(IProgressMonitor pMonitor) {

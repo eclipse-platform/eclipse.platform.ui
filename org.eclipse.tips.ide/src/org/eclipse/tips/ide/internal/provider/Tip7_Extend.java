@@ -75,7 +75,7 @@ public class Tip7_Extend extends Tip implements IHtmlTip {
 
 	@Override
 	public String getHTML() {
-		return "<h2>Extending Tips</h2>You can extend this framework and add your own trip provider for your project. Press the action button to open the Eclipse Wiki for more information."
+		return "<h2>Extending Tips</h2>You can extend this framework and add your own tip provider for your project. Press the action button to open the Eclipse Wiki for more information."
 				+ "<br><br>";
 	}
 
