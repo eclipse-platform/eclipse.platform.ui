@@ -161,6 +161,7 @@ public class Startup implements IStartup {
 				}
 			}
 		};
+		waitJob.setSystem(true);
 		return waitJob;
 	}
 
