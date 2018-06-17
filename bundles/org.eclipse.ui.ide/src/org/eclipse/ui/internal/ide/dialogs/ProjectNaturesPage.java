@@ -31,6 +31,7 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.layout.GridLayoutFactory;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.jface.resource.ImageDescriptor;
@@ -77,6 +78,12 @@ public class ProjectNaturesPage extends PropertyPage {
 	private TableViewer activeNaturesList;
 	private boolean warningAlreadyShown = false;
 
+	/**
+	 * Create project natures property page and set description.
+	 */
+	public ProjectNaturesPage() {
+		setDescription(IDEWorkbenchMessages.ProjectNaturesPage_label);
+	}
 
 	/**
 	 * @see PreferencePage#createContents
@@ -89,7 +96,7 @@ public class ProjectNaturesPage extends PropertyPage {
 		Font font = parent.getFont();
 
 		Composite composite = new Composite(parent, SWT.NONE);
-		GridLayout layout = new GridLayout(1, false);
+		GridLayout layout = GridLayoutFactory.fillDefaults().create();
 		composite.setLayout(layout);
 		composite.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		composite.setFont(font);
@@ -97,22 +104,19 @@ public class ProjectNaturesPage extends PropertyPage {
 		initialize();
 
 		Composite header = new Composite(composite, SWT.NONE);
-		header.setLayout(new GridLayout(2, false));
-		Label description = createDescriptionLabel(header);
-		description.setLayoutData(new GridData(SWT.FILL, SWT.TOP, true, false, 2, 1));
-		header.setLayout(new GridLayout(2, false));
+		header.setLayout(
+				GridLayoutFactory.fillDefaults().numColumns(2).extendedMargins(0, 0, 10, 0).spacing(10, 0).create());
 		Label warningImageLabel = new Label(header, SWT.NONE);
 		warningImageLabel.setImage(header.getDisplay().getSystemImage(SWT.ICON_WARNING));
 		Label warningLabel = new Label(header, SWT.WRAP);
 		warningLabel.setText(IDEWorkbenchMessages.ProjectNaturesPage_warningMessage);
 		GridData warningMessageLayoutData = new GridData(SWT.FILL, SWT.CENTER, true, false);
 		warningMessageLayoutData.widthHint = 400;
-		warningMessageLayoutData.verticalIndent = 10;
 		warningLabel.setLayoutData(warningMessageLayoutData);
 
 		Composite naturesComposite = new Composite(composite, SWT.NONE);
 		naturesComposite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 2, 1));
-		naturesComposite.setLayout(new GridLayout(2, false));
+		naturesComposite.setLayout(GridLayoutFactory.fillDefaults().numColumns(2).create());
 		this.activeNaturesList = new TableViewer(naturesComposite);
 		this.activeNaturesList.getTable().setFont(font);
 		this.activeNaturesList.getControl().setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
@@ -131,7 +135,7 @@ public class ProjectNaturesPage extends PropertyPage {
 		this.activeNaturesList.setInput(this.naturesIdsWorkingCopy);
 
 		Composite buttonComposite = new Composite(naturesComposite, SWT.NONE);
-		buttonComposite.setLayout(new GridLayout(1, false));
+		buttonComposite.setLayout(GridLayoutFactory.swtDefaults().margins(0, 0).create());
 		buttonComposite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, false));
 		Button addButton = new Button(buttonComposite, SWT.PUSH);
 		addButton.setLayoutData(new GridData(SWT.FILL, SWT.TOP, false, false));
@@ -296,12 +300,11 @@ public class ProjectNaturesPage extends PropertyPage {
 	}
 
 	/**
-	 * Initializes a ProjectReferencePage.
+	 * Initializes a ProjectNaturesPage.
 	 */
 	private void initialize() {
 		project = (IProject) getElement().getAdapter(IResource.class);
 		noDefaultAndApplyButton();
-		setDescription(IDEWorkbenchMessages.ProjectNaturesPage_label);
 	}
 
 	/**
