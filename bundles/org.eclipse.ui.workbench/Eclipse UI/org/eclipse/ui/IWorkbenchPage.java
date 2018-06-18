@@ -28,8 +28,7 @@ import org.eclipse.jface.util.IPropertyChangeListener;
  * <ul>
  * <li>Unless a view explicitly allows for multiple instances in its plug-in
  * declaration there will be only one instance in a given workbench page.</li>
- * <li>Only one editor can exist for each editor input within a page.
- * <li>
+ * <li>Only one editor can exist for each editor input within a page.</li>
  * </ul>
  * </p>
  * <p>

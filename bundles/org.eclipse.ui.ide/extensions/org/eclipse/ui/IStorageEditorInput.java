@@ -18,7 +18,7 @@ import org.eclipse.core.runtime.CoreException;
  * <p>
  * Clients implementing this editor input interface should override
  * <code>Object.equals(Object)</code> to answer true for two inputs
- * that are the same. The <code>IWorbenchPage.openEditor</code> APIs
+ * that are the same. The <code>IWorkbenchPage.openEditor</code> APIs
  * are dependent on this to find an editor with the same input.
  * </p><p>
  * Clients should implement this interface to declare new types of

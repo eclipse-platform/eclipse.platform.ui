@@ -435,7 +435,7 @@ public class DecoratorManager implements ILabelProviderListener,
 
 
 	/**
-	 * Decorate the text in the reciever using the context.
+	 * Decorate the text in the receiver using the context.
 	 * @param text
 	 * @param element
 	 * @param context

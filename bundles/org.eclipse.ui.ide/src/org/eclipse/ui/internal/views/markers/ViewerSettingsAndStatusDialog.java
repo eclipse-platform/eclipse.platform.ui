@@ -136,16 +136,16 @@ public abstract class ViewerSettingsAndStatusDialog extends ViewSettingsDialog {
 	/**
 	 * Display the message and an appropriate icon.
 	 *
-	 * @param messgage
+	 * @param message
 	 * @param severity
 	 */
-	protected void handleStatusUdpate(int severity, String messgage) {
+	protected void handleStatusUdpate(int severity, String message) {
 		Image image = null;
 		Button okBttn = getButton(OK);
 		switch (severity) {
 		case IStatus.ERROR: {
-			if (messgage == null) {
-				messgage = getErrorMessage();
+			if (message == null) {
+				message = getErrorMessage();
 			}
 			image = getErrorImage();
 			break;
@@ -159,10 +159,10 @@ public abstract class ViewerSettingsAndStatusDialog extends ViewSettingsDialog {
 		default:
 			image = getInfoImage();
 		}
-		if (messgage == null) {
-			messgage = getDefaultMessage();
+		if (message == null) {
+			message = getDefaultMessage();
 		}
-		if (messgage.equals(MarkerSupportInternalUtilities.EMPTY_STRING)) {
+		if (message.equals(MarkerSupportInternalUtilities.EMPTY_STRING)) {
 			handleMessageAreaVisibility(false);
 			image = null;
 		} else {
@@ -174,7 +174,7 @@ public abstract class ViewerSettingsAndStatusDialog extends ViewSettingsDialog {
 		}
 		if (msgParent != null) {
 			setMessageImage(image);
-			setMessageText(messgage);
+			setMessageText(message);
 			msgParent.layout();
 		}
 	}

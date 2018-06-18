@@ -287,7 +287,7 @@ public class MarkerGroup {
 	}
 
 	/**
-	 * Process the markerContentEntries for the reciever.
+	 * Process the markerContentEntries for the receiver.
 	 */
 	private void processEntries() {
 		if(configurationElement == null) {

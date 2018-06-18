@@ -196,7 +196,7 @@ public abstract class PreferencePage extends DialogPage implements
      * <p>
      * This framework method must be implemented by concrete subclasses. Any
      * subclass returning a <code>Composite</code> object whose <code>Layout</code>
-     * has default margins (for example, a <code>GridLayout</code>) are expected to
+     * has default margins (for example, a <code>GridLayout</code>) is expected to
      * set the margins of this <code>Layout</code> to 0 pixels.
      * </p>
      *

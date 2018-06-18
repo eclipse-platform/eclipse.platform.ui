@@ -57,7 +57,7 @@ public class ColorSelector extends EventManager {
     private Image fImage;
 
     /**
-     * Create a new instance of the reciever and the button that it wrappers in
+     * Create a new instance of the receiver and the button that it wrappers in
      * the supplied parent <code>Composite</code>.
      *
      * @param parent

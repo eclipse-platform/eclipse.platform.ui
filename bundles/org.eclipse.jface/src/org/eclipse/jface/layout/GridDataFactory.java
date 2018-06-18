@@ -16,7 +16,7 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Control;
 
 /**
- * This class provides a convienient shorthand for creating and initializing
+ * This class provides a convenient shorthand for creating and initializing
  * GridData. This offers several benefits over creating GridData normal way:
  *
  * <ul>

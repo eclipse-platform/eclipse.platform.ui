@@ -88,7 +88,7 @@ public abstract class FieldEditorPreferencePage extends PreferencePage
     private Composite fieldEditorParent;
 
     /**
-	 * Create a new instance of the reciever.
+	 * Create a new instance of the receiver.
 	 */
 	public FieldEditorPreferencePage() {
 		this(FLAT);

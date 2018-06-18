@@ -17,7 +17,7 @@ import org.eclipse.core.resources.IFile;
  * <p>
  * Clients implementing this editor input interface should override
  * <code>Object.equals(Object)</code> to answer true for two inputs
- * that are the same. The <code>IWorbenchPage.openEditor</code> APIs
+ * that are the same. The <code>IWorkbenchPage.openEditor</code> APIs
  * are dependent on this to find an editor with the same input.
  * </p><p>
  * File-oriented editors should support this as a valid input type, and allow

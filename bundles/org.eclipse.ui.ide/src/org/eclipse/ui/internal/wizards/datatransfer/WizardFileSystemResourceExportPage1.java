@@ -249,12 +249,12 @@ public class WizardFileSystemResourceExportPage1 extends
     }
 
     /**
-     *	If the target for export does not exist then attempt to create it.
-     *	Answer a boolean indicating whether the target exists (ie.- if it
-     *	either pre-existed or this method was able to create it)
-     *
-     *	@return boolean
-     */
+	 * If the target for export does not exist then attempt to create it. Answer a
+	 * boolean indicating whether the target exists (i.e. if it either pre-existed
+	 * or this method was able to create it)
+	 *
+	 * @return boolean
+	 */
     protected boolean ensureTargetIsValid(File targetDirectory) {
         if (targetDirectory.exists() && !targetDirectory.isDirectory()) {
             displayErrorDialog(DataTransferMessages.FileExport_directoryExists);
@@ -364,7 +364,7 @@ public class WizardFileSystemResourceExportPage1 extends
     }
 
     /**
-	 * Updates the content providers to show/hide linked resurces
+	 * Updates the content providers to show/hide linked resources
 	 */
 	protected void handleResolveLinkedResourcesCheckboxSelected() {
 		updateContentProviders(resolveLinkedResourcesCheckbox.getSelection());

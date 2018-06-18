@@ -298,7 +298,7 @@ public class ProgressInfoItem extends Composite {
 	}
 
 	/**
-	 * Cancel or remove the reciever.
+	 * Cancel or remove the receiver.
 	 *
 	 */
 	protected void cancelOrRemove() {

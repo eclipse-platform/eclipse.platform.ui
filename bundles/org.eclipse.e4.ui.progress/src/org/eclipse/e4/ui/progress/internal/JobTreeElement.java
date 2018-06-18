@@ -60,7 +60,7 @@ public abstract class JobTreeElement implements Comparable<Object> {
 	}
 
 	/**
-	 * Get the image for the reciever.
+	 * Get the image for the receiver.
 	 *
 	 * @return Image or <code>null</code>.
 	 */

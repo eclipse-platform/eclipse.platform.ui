@@ -40,7 +40,7 @@ public abstract class WorkbenchJob extends UIJob {
     }
 
     /**
-     * Add a new instance of the reciever with the
+     * Add a new instance of the receiver with the
      * supplied name.
      * @param name String
      */

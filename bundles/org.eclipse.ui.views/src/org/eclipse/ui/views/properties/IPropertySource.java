@@ -49,7 +49,7 @@ public interface IPropertySource {
 	 * <p>
 	 * This value is also used when an <code>IPropertySource</code> is being
 	 * used as the value in a <code>setPropertyValue</code> message. The
-	 * reciever of the message would then typically use the editable value to
+	 * receiver of the message would then typically use the editable value to
 	 * update the original property source or construct a new instance.
 	 * </p>
 	 * <p>

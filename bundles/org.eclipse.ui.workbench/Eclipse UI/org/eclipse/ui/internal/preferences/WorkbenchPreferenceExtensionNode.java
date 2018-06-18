@@ -50,7 +50,7 @@ public abstract class WorkbenchPreferenceExtensionNode extends WorkbenchPreferen
 	private String pluginId;
 
 	/**
-	 * Create a new instance of the reciever.
+	 * Create a new instance of the receiver.
 	 *
 	 * @param id
 	 * @param configurationElement

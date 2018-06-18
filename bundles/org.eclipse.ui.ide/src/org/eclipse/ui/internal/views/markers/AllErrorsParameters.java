@@ -32,7 +32,7 @@ public class AllErrorsParameters extends FiltersContributionParameters {
 	}
 
 	/**
-	 * Create a new instance of the reciever.
+	 * Create a new instance of the receiver.
 	 */
 	public AllErrorsParameters() {
 		super();

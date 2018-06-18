@@ -29,7 +29,7 @@ import org.eclipse.ui.IWorkbenchWizard;
 public interface IWizardDescriptor extends IWorkbenchPartDescriptor, IAdaptable {
 
 	/**
-	 * Answer the selection for the reciever based on whether the it can handle
+	 * Answer the selection for the receiver based on whether the it can handle
 	 * the selection. If it can return the selection. If it can handle the
 	 * adapted to IResource value of the selection. If it satisfies neither of
 	 * these conditions return an empty IStructuredSelection.

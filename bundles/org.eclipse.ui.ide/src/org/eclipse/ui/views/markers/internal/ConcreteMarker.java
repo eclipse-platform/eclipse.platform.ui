@@ -10,12 +10,12 @@
  *******************************************************************************/
 package org.eclipse.ui.views.markers.internal;
 
-import com.ibm.icu.text.CollationKey;
-import com.ibm.icu.text.Collator;
-
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
+
+import com.ibm.icu.text.CollationKey;
+import com.ibm.icu.text.Collator;
 
 /**
  * This is a concrete class that stores the same type of information as the IMarkers
@@ -223,7 +223,7 @@ public class ConcreteMarker extends MarkerNode{
 
 
 	/**
-	 * Get the group for the reciever.
+	 * Get the group for the receiver.
 	 * @return Returns the group.
 	 */
 	public Object getGroup() {

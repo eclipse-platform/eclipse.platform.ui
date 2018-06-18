@@ -144,10 +144,10 @@ public abstract class FontDescriptor extends DeviceResourceDescriptor {
 	}
 
 	/**
-     * Returns a FontDescriptor that is equivalent to the reciever, but uses
+     * Returns a FontDescriptor that is equivalent to the receiver, but uses
      * the given style bits.
      *
-     * <p>Does not modify the reciever.</p>
+     * <p>Does not modify the receiver.</p>
      *
      * @param style a bitwise combination of SWT.NORMAL, SWT.ITALIC and SWT.BOLD
      * @return a new FontDescriptor with the given style
@@ -161,7 +161,7 @@ public abstract class FontDescriptor extends DeviceResourceDescriptor {
 			next.setStyle(style);
 		}
 
-    	// Optimization: avoid holding onto extra instances by returning the reciever if
+    	// Optimization: avoid holding onto extra instances by returning the receiver if
     	// if it is exactly the same as the result
     	FontDescriptor result = new ArrayFontDescriptor(data);
     	if (result.equals(this)) {
@@ -172,10 +172,10 @@ public abstract class FontDescriptor extends DeviceResourceDescriptor {
     }
 
     /**
-     * <p>Returns a FontDescriptor that is equivalent to the reciever, but
-     * has the given style bits, in addition to any styles the reciever already has.</p>
+     * <p>Returns a FontDescriptor that is equivalent to the receiver, but
+     * has the given style bits, in addition to any styles the receiver already has.</p>
      *
-     * <p>Does not modify the reciever.</p>
+     * <p>Does not modify the receiver.</p>
      *
      * @param style a bitwise combination of SWT.NORMAL, SWT.ITALIC and SWT.BOLD
      * @return a new FontDescriptor with the given additional style bits
@@ -188,7 +188,7 @@ public abstract class FontDescriptor extends DeviceResourceDescriptor {
 			next.setStyle(next.getStyle() | style);
 		}
 
-    	// Optimization: avoid allocating extra instances by returning the reciever if
+    	// Optimization: avoid allocating extra instances by returning the receiver if
     	// if it is exactly the same as the result
     	FontDescriptor result = new ArrayFontDescriptor(data);
     	if (result.equals(this)) {
@@ -199,10 +199,10 @@ public abstract class FontDescriptor extends DeviceResourceDescriptor {
     }
 
     /**
-     * <p>Returns a new FontDescriptor that is equivalent to the reciever, but
+     * <p>Returns a new FontDescriptor that is equivalent to the receiver, but
      * has the given height.</p>
      *
-     * <p>Does not modify the reciever.</p>
+     * <p>Does not modify the receiver.</p>
      *
      * @param height a height, in points
      * @return a new FontDescriptor with the height, in points
@@ -215,7 +215,7 @@ public abstract class FontDescriptor extends DeviceResourceDescriptor {
 			next.setHeight(height);
 		}
 
-    	// Optimization: avoid holding onto extra instances by returning the reciever if
+    	// Optimization: avoid holding onto extra instances by returning the receiver if
     	// if it is exactly the same as the result
     	FontDescriptor result = new ArrayFontDescriptor(data);
     	if (result.equals(this)) {
@@ -226,14 +226,14 @@ public abstract class FontDescriptor extends DeviceResourceDescriptor {
     }
 
     /**
-     * <p>Returns a FontDescriptor that is equivalent to the reciever, but whose height
+     * <p>Returns a FontDescriptor that is equivalent to the receiver, but whose height
      * is larger by the given number of points.</p>
      *
-     * <p>Does not modify the reciever.</p>
+     * <p>Does not modify the receiver.</p>
      *
      * @param heightDelta a change in height, in points. Negative values will return smaller
      * fonts.
-     * @return a FontDescriptor whose height differs from the reciever by the given number
+     * @return a FontDescriptor whose height differs from the receiver by the given number
      * of points.
      * @since 3.3
      */
