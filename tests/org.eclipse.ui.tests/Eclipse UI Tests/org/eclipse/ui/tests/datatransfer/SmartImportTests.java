@@ -15,6 +15,7 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.nio.file.Files;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
@@ -240,15 +241,14 @@ public class SmartImportTests extends UITestCase {
 		assertFalse("Root project shouldn't have been configured",
 				ImportMeProjectConfigurator.configuredProjects.contains(rootProject));
 
-		// XXX Bug 535940: disabled failing assertions,
-		// ImportMeProjectConfigurator.configuredProjects is always empty
-//		assertEquals("Should have one project configured", 1,
-//				ImportMeProjectConfigurator.configuredProjects.size());
-//		Set<IProject> modules = new HashSet<>(Arrays.asList(projects));
-//		modules.remove(rootProject);
-//		assertEquals(modules.size(), ImportMeProjectConfigurator.configuredProjects.size());
-//		assertTrue("All modules should be configured",
-//				ImportMeProjectConfigurator.configuredProjects.containsAll(modules));
+		// Bug 535940: ImportMeProjectConfigurator.configuredProjects is always empty if
+		// running terst locally
+		assertEquals("Should have one project configured", 1, ImportMeProjectConfigurator.configuredProjects.size());
+		Set<IProject> modules = new HashSet<>(Arrays.asList(projects));
+		modules.remove(rootProject);
+		assertEquals(modules.size(), ImportMeProjectConfigurator.configuredProjects.size());
+		assertTrue("All modules should be configured",
+				ImportMeProjectConfigurator.configuredProjects.containsAll(modules));
 	}
 
 	@Test
