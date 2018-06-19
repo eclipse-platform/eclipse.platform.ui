@@ -390,4 +390,16 @@ public abstract class Breakpoint extends PlatformObject implements IBreakpoint, 
     	}
     }
 
+	@Override
+	public String toString() {
+		StringBuilder builder = new StringBuilder(getClass().getSimpleName());
+		builder.append(" on ["); //$NON-NLS-1$
+		if (fMarker != null) {
+			builder.append("marker="); //$NON-NLS-1$
+			builder.append(fMarker);
+		}
+		builder.append("]"); //$NON-NLS-1$
+		return builder.toString();
+	}
+
 }
