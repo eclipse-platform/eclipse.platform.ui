@@ -50,6 +50,13 @@ public class DecoratorsPreferencePage extends PreferencePage implements
 
     private CheckboxTableViewer checkboxViewer;
 
+	/**
+	 * Create decorators preference page with description header.
+	 */
+	public DecoratorsPreferencePage() {
+		setDescription(WorkbenchMessages.DecoratorsPreferencePage_explanation);
+	}
+
     /**
      * @see PreferencePage#createContents(Composite)
      */
@@ -70,10 +77,6 @@ public class DecoratorsPreferencePage extends PreferencePage implements
         layout.marginHeight = 0;
         layout.verticalSpacing = 10;
         mainComposite.setLayout(layout);
-
-        Label topLabel = new Label(mainComposite, SWT.NONE);
-        topLabel.setText(WorkbenchMessages.DecoratorsPreferencePage_explanation);
-        topLabel.setFont(font);
 
         createDecoratorsArea(mainComposite);
         createDescriptionArea(mainComposite);
@@ -103,8 +106,9 @@ public class DecoratorsPreferencePage extends PreferencePage implements
         // Checkbox table viewer of decorators
         checkboxViewer = CheckboxTableViewer.newCheckList(decoratorsComposite,
                 SWT.SINGLE | SWT.TOP | SWT.BORDER);
-        checkboxViewer.getTable().setLayoutData(
-                new GridData(GridData.FILL_BOTH));
+        GridData layoutData = new GridData(GridData.FILL_BOTH);
+		layoutData.heightHint = 300;
+		checkboxViewer.getTable().setLayoutData(layoutData);
         checkboxViewer.getTable().setFont(decoratorsComposite.getFont());
         checkboxViewer.setLabelProvider(new LabelProvider() {
             @Override
@@ -184,7 +188,9 @@ public class DecoratorsPreferencePage extends PreferencePage implements
 
         descriptionText = new Text(textComposite, SWT.MULTI | SWT.WRAP
                 | SWT.READ_ONLY | SWT.BORDER | SWT.H_SCROLL);
-        descriptionText.setLayoutData(new GridData(GridData.FILL_BOTH));
+		GridData layoutData = new GridData(GridData.FILL_BOTH);
+		layoutData.minimumHeight = 50;
+		descriptionText.setLayoutData(layoutData);
         descriptionText.setFont(mainFont);
     }
 
