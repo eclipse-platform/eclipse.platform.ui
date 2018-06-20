@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2008 IBM Corporation and others.
+ * Copyright (c) 2005, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -20,7 +20,7 @@ import com.ibm.icu.text.MessageFormat;
 public class Messages {
 
 	public static String format(String message, Object object) {
-		return MessageFormat.format(message, new Object[] { object});
+		return MessageFormat.format(message, object);
 	}
 
 	public static String format(String message, Object[] objects) {
