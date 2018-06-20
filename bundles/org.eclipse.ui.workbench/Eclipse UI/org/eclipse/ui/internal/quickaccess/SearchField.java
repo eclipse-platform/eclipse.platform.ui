@@ -626,7 +626,9 @@ public class SearchField {
 			 * restoring non-UI elements and then restoring UI elements
 			 */
 			String[] orderedProviders = dialogSettings.getArray(ORDERED_PROVIDERS);
-			previousPicksList.addAll(Arrays.asList(new QuickAccessElement[orderedProviders.length]));
+			if (orderedProviders != null) {
+				previousPicksList.addAll(Arrays.asList(new QuickAccessElement[orderedProviders.length]));
+			}
 
 			isLoadingPreviousElements = true;
 			refreshQuickAccessContents = new UIJob("Finish restoring quick access elements") { //$NON-NLS-1$
