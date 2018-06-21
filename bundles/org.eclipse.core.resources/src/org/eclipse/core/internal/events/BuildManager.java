@@ -448,7 +448,7 @@ public class BuildManager implements ICoreConstants, IManager, ILifecycleListene
 			} catch (CoreException ex) {
 				status.add(new Status(IStatus.ERROR, ResourcesPlugin.PI_RESOURCES, ex.getMessage(), ex));
 			}
-		}, buildJobGroup);
+		}, config -> getRule(config, trigger, null, Collections.emptyMap()), buildJobGroup);
 		graphProcessor.processGraphWithParallelJobs();
 		try {
 			Job.getJobManager().join(graphProcessor, monitor);

@@ -15,13 +15,13 @@ package org.eclipse.core.internal.events;
 
 import java.util.*;
 import java.util.function.BiConsumer;
+import java.util.function.Function;
 import org.eclipse.core.internal.resources.ComputeProjectOrder;
 import org.eclipse.core.internal.resources.ComputeProjectOrder.Digraph;
 import org.eclipse.core.internal.resources.ComputeProjectOrder.Digraph.Edge;
 import org.eclipse.core.internal.resources.ComputeProjectOrder.VertexOrder;
 import org.eclipse.core.runtime.*;
-import org.eclipse.core.runtime.jobs.Job;
-import org.eclipse.core.runtime.jobs.JobGroup;
+import org.eclipse.core.runtime.jobs.*;
 
 /**
  *
@@ -34,11 +34,13 @@ class GraphProcessor<T> {
 	final private Set<T> processed;
 	final private VertexOrder<T> sequentialOrder;
 	final private JobGroup buildJobGroup;
-	final BiConsumer<T, GraphProcessor<T>> processor;
+	final private BiConsumer<T, GraphProcessor<T>> processor;
+	final private Function<T, ISchedulingRule> ruleFactory;
 
-	GraphProcessor(Digraph<T> graph1, Class<T> clazz, final BiConsumer<T, GraphProcessor<T>> processor, JobGroup buildJobGroup) {
+	GraphProcessor(Digraph<T> graph1, Class<T> clazz, final BiConsumer<T, GraphProcessor<T>> processor, Function<T, ISchedulingRule> ruleFactory, JobGroup buildJobGroup) {
 		this.graph = graph1;
 		this.processor = processor;
+		this.ruleFactory = ruleFactory;
 		this.buildJobGroup = buildJobGroup;
 		toProcess = new HashSet<>(graph.vertexMap.keySet());
 		processing = new HashSet<>();
@@ -131,6 +133,9 @@ class GraphProcessor<T> {
 				return super.belongsTo(family) || family == GraphProcessor.this;
 			}
 		};
+		if (this.ruleFactory != null) {
+			buildJob.setRule(this.ruleFactory.apply(item));
+		}
 		buildJob.setJobGroup(buildJobGroup);
 		buildJob.schedule();
 	}
