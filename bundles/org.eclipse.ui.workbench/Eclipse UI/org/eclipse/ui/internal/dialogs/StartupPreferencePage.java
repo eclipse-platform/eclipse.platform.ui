@@ -40,19 +40,14 @@ import org.osgi.framework.Constants;
 /**
  * The Startup preference page.
  */
-public class StartupPreferencePage extends PreferencePage implements
-        IWorkbenchPreferencePage {
+public class StartupPreferencePage extends PreferencePage implements IWorkbenchPreferencePage {
     private Table pluginsList;
 
     private Workbench workbench;
 
-    /**
-     * @see PreferencePage#createContents(Composite)
-     */
     @Override
 	protected Control createContents(Composite parent) {
-    	PlatformUI.getWorkbench().getHelpSystem().setHelp(parent,
-				IWorkbenchHelpContextIds.STARTUP_PREFERENCE_PAGE);
+    	PlatformUI.getWorkbench().getHelpSystem().setHelp(parent,IWorkbenchHelpContextIds.STARTUP_PREFERENCE_PAGE);
 
         Composite composite = createComposite(parent);
 
@@ -67,8 +62,8 @@ public class StartupPreferencePage extends PreferencePage implements
         layout.marginWidth = 0;
         layout.marginHeight = 0;
         composite.setLayout(layout);
-        GridData data = new GridData(GridData.FILL_BOTH
-                | GridData.VERTICAL_ALIGN_FILL | GridData.HORIZONTAL_ALIGN_FILL);
+		GridData data = new GridData(
+				GridData.FILL_BOTH | GridData.VERTICAL_ALIGN_FILL | GridData.HORIZONTAL_ALIGN_FILL);
         composite.setLayoutData(data);
         composite.setFont(parent.getFont());
 
@@ -81,8 +76,7 @@ public class StartupPreferencePage extends PreferencePage implements
         label.setFont(parent.getFont());
         GridData data = new GridData(GridData.FILL_HORIZONTAL);
         label.setLayoutData(data);
-        pluginsList = new Table(parent, SWT.BORDER | SWT.CHECK | SWT.H_SCROLL
-                | SWT.V_SCROLL);
+		pluginsList = new Table(parent, SWT.BORDER | SWT.CHECK | SWT.H_SCROLL | SWT.V_SCROLL);
         data = new GridData(GridData.FILL_BOTH);
         pluginsList.setFont(parent.getFont());
         pluginsList.setLayoutData(data);
@@ -90,9 +84,8 @@ public class StartupPreferencePage extends PreferencePage implements
 		viewer.setLabelProvider(new LabelProvider() {
 			@Override
 			public String getText(Object element) {
-				return Platform.getBundle(((ContributionInfo) element).getBundleId())
-						.getHeaders().get(
-						Constants.BUNDLE_NAME);
+				return Platform.getBundle(((ContributionInfo) element).getBundleId()).getHeaders()
+						.get(Constants.BUNDLE_NAME);
 			}
 		});
 		viewer.setContentProvider(ArrayContentProvider.getInstance());
@@ -101,7 +94,7 @@ public class StartupPreferencePage extends PreferencePage implements
     }
 
 	private void updateCheckState() {
-        HashSet disabledPlugins = new HashSet(Arrays.asList(workbench.getDisabledEarlyActivatedPlugins()));
+		HashSet<String> disabledPlugins = new HashSet<>(Arrays.asList(workbench.getDisabledEarlyActivatedPlugins()));
 		for (int i = 0; i < pluginsList.getItemCount(); i++) {
 			TableItem item = pluginsList.getItem(i);
 			String pluginId = ((ContributionInfo) item.getData()).getBundleId();
@@ -109,17 +102,11 @@ public class StartupPreferencePage extends PreferencePage implements
         }
     }
 
-    /**
-     * @see IWorkbenchPreferencePage
-     */
     @Override
 	public void init(IWorkbench workbench) {
         this.workbench = (Workbench) workbench;
     }
 
-    /**
-     * @see PreferencePage
-     */
     @Override
 	protected void performDefaults() {
 		IPreferenceStore store = PrefUtil.getInternalPreferenceStore();
@@ -127,13 +114,10 @@ public class StartupPreferencePage extends PreferencePage implements
 		updateCheckState();
     }
 
-    /**
-     * @see PreferencePage
-     */
     @Override
 	public boolean performOk() {
         StringBuilder preference = new StringBuilder();
-        TableItem items[] = pluginsList.getItems();
+		TableItem[] items = pluginsList.getItems();
         for (int i = 0; i < items.length; i++) {
             if (!items[i].getChecked()) {
 				preference.append(((ContributionInfo) items[i].getData()).getBundleId());
