@@ -34,9 +34,7 @@ public class ContributionInfo {
 	 * @param configurationElement
 	 *            an optional configuration element, or <code>null</code>.
 	 */
-	public ContributionInfo(String bundleId, String elementType,
-			IConfigurationElement configurationElement) {
-		super();
+	public ContributionInfo(String bundleId, String elementType, IConfigurationElement configurationElement) {
 		this.bundleId = bundleId;
 		this.elementType = elementType;
 		this.configurationElement = configurationElement;
