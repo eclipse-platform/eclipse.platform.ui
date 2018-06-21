@@ -4,5 +4,4 @@
    <extension-point id="org.eclipse.e4.ui.css.core.elementProvider" name="%extension-point.elementprovider.name" schema="schema/org.eclipse.e4.ui.css.core.elementProvider.exsd"/>
    <extension-point id="org.eclipse.e4.ui.css.core.propertyHandler" name="%extension-point.properties.name" schema="schema/org.eclipse.e4.ui.css.core.propertyHandler.exsd"/>
 
-   <!-- Following extension points are deprecated and will be removed -->
 </plugin>
