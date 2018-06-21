@@ -1,0 +1,4 @@
+# To force a version qualifier update add the bug here
+Bug 403352 - Update all parent versions to match our build stream
+Bug 485690 - comparator errors in UI performance test bundle
+Bug 511251 - Comparator errors in I20170127-2200

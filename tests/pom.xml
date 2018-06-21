@@ -43,6 +43,7 @@
     <module>org.eclipse.ui.tests.forms</module>
     <module>org.eclipse.ui.tests.harness</module>
     <module>org.eclipse.ui.tests.navigator</module>
+    <module>org.eclipse.ui.tests.pluginchecks</module>
     <module>org.eclipse.ui.tests.performance</module>
     <module>org.eclipse.ui.tests.rcp</module>
     <module>org.eclipse.ui.tests.views.properties.tabbed</module>
