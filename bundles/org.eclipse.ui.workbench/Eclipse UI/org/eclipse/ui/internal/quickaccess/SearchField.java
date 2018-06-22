@@ -94,6 +94,7 @@ import org.eclipse.ui.handlers.IHandlerService;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.keys.IBindingService;
 import org.eclipse.ui.progress.UIJob;
+import org.eclipse.ui.progress.WorkbenchJob;
 import org.eclipse.ui.swt.IFocusService;
 
 
@@ -631,12 +632,15 @@ public class SearchField {
 			}
 
 			isLoadingPreviousElements = true;
-			refreshQuickAccessContents = new UIJob("Finish restoring quick access elements") { //$NON-NLS-1$
+			refreshQuickAccessContents = new WorkbenchJob("Finish restoring quick access elements") { //$NON-NLS-1$
 				@Override
 				public IStatus runInUIThread(IProgressMonitor monitor) {
 					try {
+						if (txtQuickAccess.isDisposed()) {
+							return Status.OK_STATUS;
+						}
 						restoreDialogEntries(dialogSettings, true, monitor);
-						quickAccessContents.refresh(quickAccessContents.filterText.getText());
+						quickAccessContents.refresh(txtQuickAccess.getText());
 						List<QuickAccessElement> previousPicks = getLoadedPreviousPicks();
 						previousPicksList.clear();
 						previousPicksList.addAll(previousPicks);
@@ -648,11 +652,14 @@ public class SearchField {
 			};
 			refreshQuickAccessContents.setSystem(true);
 			restoreDialogEntriesJob = Job.createSystem("Restore quick access elements", (IProgressMonitor monitor) -> { //$NON-NLS-1$
+				if (txtQuickAccess.isDisposed()) {
+					isLoadingPreviousElements = false;
+					return;
+				}
 				try {
 					restoreDialogEntries(dialogSettings, false, monitor);
-					return Status.OK_STATUS;
 				} catch (OperationCanceledException e) {
-					return Status.CANCEL_STATUS;
+					// ignore
 				} finally {
 					refreshQuickAccessContents.schedule();
 				}
