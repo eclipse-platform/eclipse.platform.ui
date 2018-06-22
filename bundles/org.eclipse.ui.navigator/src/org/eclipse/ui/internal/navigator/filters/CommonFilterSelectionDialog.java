@@ -26,8 +26,8 @@ import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.custom.CTabItem;
+import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -164,7 +164,7 @@ public class CommonFilterSelectionDialog extends TrayDialog {
 
 		customizationsTabFolder.setFont(superComposite.getFont());
 
-		customizationsTabFolder.addSelectionListener(new SelectionListener() {
+		customizationsTabFolder.addSelectionListener(new SelectionAdapter() {
 
 			@Override
 			public void widgetSelected(SelectionEvent e) {
@@ -173,10 +173,6 @@ public class CommonFilterSelectionDialog extends TrayDialog {
 				}
 			}
 
-			@Override
-			public void widgetDefaultSelected(SelectionEvent e) {
-
-			}
 
 		});
 

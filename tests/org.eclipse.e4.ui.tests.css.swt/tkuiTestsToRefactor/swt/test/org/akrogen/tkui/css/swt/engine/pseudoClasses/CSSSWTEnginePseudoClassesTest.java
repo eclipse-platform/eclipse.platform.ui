@@ -52,14 +52,9 @@ public class CSSSWTEnginePseudoClassesTest {
 			text3.setText("bla bla bla...");
 
 			final Button checkbox = new Button(panel1, SWT.CHECK);
-			checkbox.addSelectionListener(new SelectionListener() {
+			checkbox.addSelectionListener(new SelectionAdapter() {
 				public void widgetSelected(SelectionEvent e) {
 					System.out.println(checkbox.getSelection());
-				}
-
-				public void widgetDefaultSelected(SelectionEvent e) {
-					// TODO Auto-generated method stub
-
 				}
 			});
 

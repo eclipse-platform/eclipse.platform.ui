@@ -75,8 +75,8 @@ import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.SashForm;
+import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -1022,10 +1022,7 @@ public class CustomizePerspectiveDialog extends TrayDialog {
 		showCommandGroupFilterButton
 				.setText(WorkbenchMessages.HideItems_turnOnActionSets);
 		showCommandGroupFilterButton
-				.addSelectionListener(new SelectionListener() {
-					@Override
-					public void widgetDefaultSelected(SelectionEvent e) {
-					}
+				.addSelectionListener(new SelectionAdapter() {
 
 					@Override
 					public void widgetSelected(SelectionEvent e) {
@@ -1176,10 +1173,7 @@ public class CustomizePerspectiveDialog extends TrayDialog {
 		showCommandGroupFilterButton
 				.setText(WorkbenchMessages.HideItems_turnOnActionSets);
 		showCommandGroupFilterButton
-				.addSelectionListener(new SelectionListener() {
-					@Override
-					public void widgetDefaultSelected(SelectionEvent e) {
-					}
+				.addSelectionListener(new SelectionAdapter() {
 
 					@Override
 					public void widgetSelected(SelectionEvent e) {

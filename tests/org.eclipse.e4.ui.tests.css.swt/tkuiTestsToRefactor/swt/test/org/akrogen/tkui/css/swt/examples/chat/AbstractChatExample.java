@@ -106,7 +106,7 @@ public abstract class AbstractChatExample {
 		 */
 		{
 			tree = new Tree(form, SWT.SINGLE);
-			tree.addSelectionListener(new SelectionListener() {
+			tree.addSelectionListener(new SelectionAdapter() {
 				public void widgetDefaultSelected(SelectionEvent e) {
 					if (((TreeItem) e.item).getParentItem() != null) {
 						try {
@@ -117,8 +117,6 @@ public abstract class AbstractChatExample {
 					}
 				}
 
-				public void widgetSelected(SelectionEvent e) {
-				}
 			});
 			for (int i = 0; i < GROUPS.length; i++) {
 				String g = GROUPS[i];

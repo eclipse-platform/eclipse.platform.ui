@@ -44,6 +44,7 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.ListViewer;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.layout.GridData;
@@ -204,7 +205,7 @@ public class MasterDetailScenarios extends ScenariosTestCase {
 		assertFalse(txtDescription.getEnabled());
 
 		Button addButton = new Button(getComposite(), SWT.PUSH);
-		addButton.addSelectionListener(new SelectionListener() {
+		addButton.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				Lodging selectedLodging = (Lodging) selectedLodgingObservable
@@ -231,10 +232,6 @@ public class MasterDetailScenarios extends ScenariosTestCase {
 						.getText());
 			}
 
-			@Override
-			public void widgetDefaultSelected(SelectionEvent e) {
-				widgetSelected(e);
-			}
 		});
 
 		Button removeButton = new Button(getComposite(), SWT.PUSH);

@@ -27,6 +27,7 @@ import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerComparator;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.layout.GridData;
@@ -353,11 +354,7 @@ public class TypesConfigurationArea extends GroupFilterConfigurationArea {
 	private SelectionListener getSelectAllButtonListener(
 			final ITreeContentProvider typesContentProvider,
 			final boolean checked) {
-		return new SelectionListener() {
-			@Override
-			public void widgetDefaultSelected(SelectionEvent e) {
-			}
-
+		return new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				for (Object element : typesContentProvider.getElements(typesViewer.getInput())) {

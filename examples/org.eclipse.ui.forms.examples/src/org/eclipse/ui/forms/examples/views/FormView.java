@@ -11,8 +11,8 @@
 package org.eclipse.ui.forms.examples.views;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
@@ -91,15 +91,11 @@ public class FormView extends ViewPart {
 
 		enableHyperlink = toolkit.createButton(form.getBody(), "Hyperlink Enabled", SWT.CHECK);
 		enableHyperlink.setSelection(true);
-		enableHyperlink.addSelectionListener(new SelectionListener() {
+		enableHyperlink.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				ih.setEnabled(enableHyperlink.getSelection());
 				form.reflow(true);
-			}
-
-			@Override
-			public void widgetDefaultSelected(SelectionEvent e) {
 			}
 		});
 
@@ -109,7 +105,7 @@ public class FormView extends ViewPart {
 
 		clearHyperlinkImage = toolkit.createButton(form.getBody(), "Hyperlink has image", SWT.CHECK);
 		clearHyperlinkImage.setSelection(true);
-		clearHyperlinkImage.addSelectionListener(new SelectionListener() {
+		clearHyperlinkImage.addSelectionListener(new SelectionAdapter() {
 
 			@Override
 			public void widgetSelected(SelectionEvent e) {
@@ -121,9 +117,6 @@ public class FormView extends ViewPart {
 				form.reflow(true);
 			}
 
-			@Override
-			public void widgetDefaultSelected(SelectionEvent e) {
-			}
 		});
 		td = new TableWrapData();
 		td.colspan = 2;
