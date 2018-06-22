@@ -22,6 +22,7 @@ import org.eclipse.tips.core.Tip;
 import org.eclipse.tips.core.TipImage;
 import org.eclipse.tips.core.internal.LogUtil;
 import org.eclipse.tips.examples.DateUtil;
+import org.eclipse.tips.examples.browserfunction.BrowserFunctionTip;
 import org.eclipse.tips.examples.tips.MediaWikiTip;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.FrameworkUtil;
@@ -99,6 +100,7 @@ public class EclipseTipsProvider extends org.eclipse.tips.core.TipProvider {
 		tips.add(createTip3());
 		tips.add(createTip4());
 		tips.add(createTip5());
+		tips.add(new BrowserFunctionTip(getID()));
 		setTips(tips);
 		subMonitor.done();
 		return Status.OK_STATUS;

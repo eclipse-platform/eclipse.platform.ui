@@ -18,6 +18,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
+import java.util.function.Function;
 
 import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -26,6 +27,7 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.browser.Browser;
+import org.eclipse.swt.browser.BrowserFunction;
 import org.eclipse.swt.custom.StackLayout;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -51,6 +53,7 @@ import org.eclipse.tips.core.TipImage;
 import org.eclipse.tips.core.TipProvider;
 import org.eclipse.tips.core.internal.LogUtil;
 import org.eclipse.tips.core.internal.TipManager;
+import org.eclipse.tips.ui.IBrowserFunctionProvider;
 import org.eclipse.tips.ui.ISwtTip;
 import org.eclipse.tips.ui.internal.util.ImageUtil;
 import org.eclipse.tips.ui.internal.util.ResourceManager;
@@ -79,6 +82,7 @@ public class TipComposite extends Composite implements ProviderSelectionListener
 	private Button fMultiActionButton;
 	private Composite fContentComposite;
 	private List<Image> fActionImages = new ArrayList<>();
+	private List<BrowserFunction> fBrowserFunctions = new ArrayList<>();
 	private Menu fActionMenu;
 	private ToolBar ftoolBar;
 	private ToolItem fStartupItem;
@@ -379,16 +383,36 @@ public class TipComposite extends Composite implements ProviderSelectionListener
 	}
 
 	private void loadContent(Tip tip) {
+		disposeBrowserFunctions();
 		if (tip instanceof ISwtTip) {
 			loadContentSWT(tip);
 		} else if (tip instanceof IHtmlTip) {
 			loadContentHtml((IHtmlTip) tip);
+			applyBrowserFunctions(tip);
 		} else if (tip instanceof IUrlTip) {
 			loadContentUrl((IUrlTip) tip);
+			applyBrowserFunctions(tip);
 		} else {
 			fTipManager.log(LogUtil.error(getClass(), Messages.TipComposite_12 + tip));
 		}
+
 		fContentComposite.requestLayout();
+	}
+
+	private void applyBrowserFunctions(Tip tip) {
+		if (tip instanceof IBrowserFunctionProvider) {
+			((IBrowserFunctionProvider) tip).getBrowserFunctions()
+					.forEach((name, function) -> fBrowserFunctions.add(createBrowserFunction(name, function)));
+		}
+	}
+
+	private BrowserFunction createBrowserFunction(String functionName, Function<Object[], Object> function) {
+		return new BrowserFunction(getBrowser(), functionName) {
+			@Override
+			public Object function(Object[] arguments) {
+				return function.apply(arguments);
+			}
+		};
 	}
 
 	private void loadContentHtml(IHtmlTip tip) {
@@ -416,7 +440,13 @@ public class TipComposite extends Composite implements ProviderSelectionListener
 	private void prepareForHTML() {
 		fContentStack.topControl = fBrowserComposite;
 		loadTimeOutScript();
+
 		fBrowserComposite.requestLayout();
+	}
+
+	private void disposeBrowserFunctions() {
+		fBrowserFunctions.forEach(BrowserFunction::dispose);
+		fBrowserFunctions.clear();
 	}
 
 	/**
