@@ -96,6 +96,7 @@ public class FullScreenHandler extends AbstractHandler {
 				fullScreenInfoPopup.close();
 			}
 		}
+		shell.requestLayout();
 		return Status.OK_STATUS;
 	}
 
