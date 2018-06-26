@@ -11,6 +11,7 @@
 package org.eclipse.uirscheme.suite;
 
 import org.eclipse.urischeme.internal.UriSchemeProcessorUnitTest;
+import org.eclipse.urischeme.internal.registration.TestUnitDesktopFileWriter;
 import org.eclipse.urischeme.internal.registration.TestUnitPlistFileWriter;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
@@ -19,7 +20,8 @@ import org.junit.runners.Suite.SuiteClasses;
 @RunWith(Suite.class)
 @SuiteClasses({
 		UriSchemeProcessorUnitTest.class, //
-		TestUnitPlistFileWriter.class
+		TestUnitPlistFileWriter.class, //
+		TestUnitDesktopFileWriter.class
 })
 public class AllUnitTests {
 }
