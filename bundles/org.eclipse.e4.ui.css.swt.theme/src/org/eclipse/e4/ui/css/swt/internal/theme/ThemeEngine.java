@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2017 Tom Schindl and others.
+ * Copyright (c) 2010, 2018 Tom Schindl and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -267,7 +267,6 @@ public class ThemeEngine implements IThemeEngine {
 		if (ws != null && !ws.equals(currentWS)) {
 			String wsName;
 			switch (ws) {
-			case Platform.WS_CARBON:	wsName="Carbon";break;
 			case Platform.WS_COCOA:		wsName="Cocoa";break;
 			case Platform.WS_GTK:		wsName="GTK";break;
 			case Platform.WS_WPF:		wsName="WPF";break;
