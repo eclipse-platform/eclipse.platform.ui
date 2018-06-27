@@ -8,12 +8,8 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Stefan Xenos, IBM - bug 156790: Adopt GridLayoutFactory within JFace
- *     Mickael Istria (Red Hat Inc.) - 484347 allow links in MessageDialog
  *******************************************************************************/
 package org.eclipse.jface.dialogs;
-
-import java.util.ArrayList;
-import java.util.List;
 
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.jface.layout.GridDataFactory;
@@ -23,14 +19,12 @@ import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.accessibility.AccessibleAdapter;
 import org.eclipse.swt.accessibility.AccessibleEvent;
-import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.Link;
 import org.eclipse.swt.widgets.Shell;
 
 /**
@@ -53,21 +47,11 @@ public abstract class IconAndMessageDialog extends Dialog {
 	 * Message label is the label the message is shown on.
 	 */
 	protected Label messageLabel;
-	/**
-	 * Message link is the link the message is shown on when some listeners
-	 * exist for link.
-	 */
-	protected Link messageLink;
 
 	/**
 	 * Return the label for the image.
 	 */
 	protected Label imageLabel;
-
-	/**
-	 * The selection listeners for the messageLink.
-	 */
-	protected List<SelectionListener> linkSelectionListeners;
 
 	/**
 	 * Constructor for IconAndMessageDialog.
@@ -81,18 +65,6 @@ public abstract class IconAndMessageDialog extends Dialog {
 	}
 
 	/**
-	 * Adds a listener for the {@link Link} that is used as message label.
-	 *
-	 * @param listener
-	 */
-	public void addLinkSelectionListener(SelectionListener listener) {
-		if (this.linkSelectionListeners == null) {
-			this.linkSelectionListeners = new ArrayList<>();
-		}
-		this.linkSelectionListeners.add(listener);
-	}
-
-	/**
 	 * Create the area the message will be shown in.
 	 * <p>
 	 * The parent composite is assumed to use GridLayout as its layout manager,
@@ -100,8 +72,8 @@ public abstract class IconAndMessageDialog extends Dialog {
 	 * {@link Dialog#createDialogArea}.
 	 * </p>
 	 * <p>
-	 * <strong>Note:</strong> Clients are expected to call this method,
-	 * otherwise neither the icon nor the message will appear.
+	 * <strong>Note:</strong> Clients are expected to call this method, otherwise
+	 * neither the icon nor the message will appear.
 	 * </p>
 	 *
 	 * @param composite
@@ -122,26 +94,15 @@ public abstract class IconAndMessageDialog extends Dialog {
 		}
 		// create message
 		if (message != null) {
-			Control messageControl = null;
-			if (this.linkSelectionListeners == null || this.linkSelectionListeners.isEmpty()) {
-				messageLabel = new Label(composite, getMessageLabelStyle());
-				messageLabel.setText(message);
-				messageControl = messageLabel;
-			} else {
-				messageLink = new Link(composite, getMessageLabelStyle());
-				messageLink.setText(message);
-				for (SelectionListener listener : this.linkSelectionListeners) {
-					messageLink.addSelectionListener(listener);
-				}
-				messageControl = messageLink;
-			}
+			messageLabel = new Label(composite, getMessageLabelStyle());
+			messageLabel.setText(message);
 			GridDataFactory
 					.fillDefaults()
 					.align(SWT.FILL, SWT.BEGINNING)
 					.grab(true, false)
 					.hint(
 							convertHorizontalDLUsToPixels(IDialogConstants.MINIMUM_MESSAGE_AREA_WIDTH),
-							SWT.DEFAULT).applyTo(messageControl);
+							SWT.DEFAULT).applyTo(messageLabel);
 		}
 		return composite;
 	}
