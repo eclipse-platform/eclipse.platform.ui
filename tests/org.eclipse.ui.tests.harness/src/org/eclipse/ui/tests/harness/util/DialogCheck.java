@@ -130,6 +130,7 @@ public class DialogCheck {
 		dialog.setBlockOnOpen(false);
 		dialog.open();
 		Shell shell = dialog.getShell();
+		UITestCase.processEvents();
 		verifyCompositeText(shell);
 		dialog.close();
 		// close "verify results" dialog, it makes other tests unhappy
