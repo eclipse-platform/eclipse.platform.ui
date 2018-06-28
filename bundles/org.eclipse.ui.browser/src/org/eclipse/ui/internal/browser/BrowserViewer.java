@@ -449,17 +449,19 @@ public class BrowserViewer extends Composite {
                         }// else
                         //    combo.setText(""); //$NON-NLS-1$
                     }
-                    // enable auto-refresh button if URL is a file
-                    File temp = getFile(browser.getUrl());
-                    if (temp != null && temp.exists()) {
-                        autoRefresh.setEnabled(true);
-                        if (autoRefresh.getSelection()) {
-                            fileChangedWatchService(temp);
-                        }
-					} else {
-						autoRefresh.setSelection(false);
-						toggleAutoRefresh();
-						autoRefresh.setEnabled(false);
+					if (showToolbar) {
+						// enable auto-refresh button if URL is a file
+						File temp = getFile(browser.getUrl());
+						if (temp != null && temp.exists()) {
+							autoRefresh.setEnabled(true);
+							if (autoRefresh.getSelection()) {
+								fileChangedWatchService(temp);
+							}
+						} else {
+							autoRefresh.setSelection(false);
+							toggleAutoRefresh();
+							autoRefresh.setEnabled(false);
+						}
                     }
                 }
             });
