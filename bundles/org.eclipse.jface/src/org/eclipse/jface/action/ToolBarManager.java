@@ -216,7 +216,6 @@ public class ToolBarManager extends ContributionManager implements IToolBarManag
 			}
 
 			// OK, we need to re-layout the TB
-			layoutBar.getParent().pack();
 			layoutBar.getParent().layout();
 
 			// Now, if we're in a CoolBar then change the CoolItem size as well
