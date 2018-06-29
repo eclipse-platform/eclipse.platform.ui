@@ -191,7 +191,7 @@ public class MinimapWidget {
 			FontData fontDatum = fontData[0];
 
 			scaledFont = new Font(editorFont.getDevice(), fontDatum.getName(),
-					Math.round(fontDatum.getHeight() * getScale()), fontDatum.getStyle());
+					(int) Math.ceil(fontDatum.getHeight() * getScale()), fontDatum.getStyle());
 			fScaledFonts.put(editorFont, scaledFont);
 			return scaledFont;
 		}
@@ -209,7 +209,11 @@ public class MinimapWidget {
 
 		@Override
 		public void viewportChanged(int verticalOffset) {
-			updateMinimap();
+			fMinimapTextWidget.getDisplay().asyncExec(() -> {
+				if (!fMinimapTextWidget.isDisposed()) {
+					updateMinimap();
+				}
+			});
 		}
 
 		void updateMinimap() {
