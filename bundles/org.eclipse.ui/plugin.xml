@@ -794,7 +794,70 @@
                value="false">
          </parameter>
       </key>
-
+     <key
+            commandId="org.eclipse.ui.navigate.nextTab"
+            contextId="org.eclipse.ui.contexts.dialogAndWindow"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
+            sequence="M1+PAGE_DOWN">
+      </key>
+      <key
+            contextId="org.eclipse.ui.contexts.dialogAndWindow"
+            platform="carbon"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
+            sequence="M1+PAGE_DOWN">
+      </key>
+      <key
+            contextId="org.eclipse.ui.contexts.dialogAndWindow"
+            platform="cocoa"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
+            sequence="M1+PAGE_DOWN">
+      </key>
+      <key
+            commandId="org.eclipse.ui.navigate.nextTab"
+            contextId="org.eclipse.ui.contexts.dialogAndWindow"
+            platform="carbon"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
+            sequence="M4+PAGE_DOWN">
+      </key>
+      <key
+            commandId="org.eclipse.ui.navigate.nextTab"
+            contextId="org.eclipse.ui.contexts.dialogAndWindow"
+            platform="cocoa"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
+            sequence="M4+PAGE_DOWN">
+      </key>
+      <key
+            commandId="org.eclipse.ui.navigate.previousTab"
+            contextId="org.eclipse.ui.contexts.dialogAndWindow"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
+            sequence="M1+PAGE_UP">
+      </key>
+      <key
+            contextId="org.eclipse.ui.contexts.dialogAndWindow"
+            platform="carbon"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
+            sequence="M1+PAGE_UP">
+      </key>
+      <key
+            contextId="org.eclipse.ui.contexts.dialogAndWindow"
+            platform="cocoa"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
+            sequence="M1+PAGE_UP">
+      </key>
+      <key
+            commandId="org.eclipse.ui.navigate.previousTab"
+            contextId="org.eclipse.ui.contexts.dialogAndWindow"
+            platform="carbon"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
+            sequence="M4+PAGE_UP">
+      </key>
+      <key
+            commandId="org.eclipse.ui.navigate.previousTab"
+            contextId="org.eclipse.ui.contexts.dialogAndWindow"
+            platform="cocoa"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
+            sequence="M4+PAGE_UP">
+      </key>
    </extension>
    
    <extension
