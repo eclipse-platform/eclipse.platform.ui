@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 IBM Corporation and others.
+ * Copyright (c) 2000, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -980,6 +980,12 @@ public class IFileTest extends ResourceTest {
 					((FussyProgressMonitor) monitor).prepare();
 				}
 				file.setContents(stream, force, false, monitor);
+				boolean isOutOfSyncTestFile = outOfSync(file);
+				if (isOutOfSyncTestFile) {
+					// The test expects this file to be out of sync, when modified on file system
+					// level later on. We wait a moment to let this actually be the case.
+					Thread.sleep(10);
+				}
 				if (monitor instanceof FussyProgressMonitor) {
 					((FussyProgressMonitor) monitor).sanityCheck();
 				}

@@ -14,10 +14,14 @@
 CORE.C=../unixfile.c
 LIB_NAME_FULL=libunixfile_1_0_0.jnilib
 
-JDK_INCLUDE=-I /System/Library/Frameworks/JavaVM.framework/Headers
+JAVA_HOME=$(shell /usr/libexec/java_home)
+
+JDK_INCLUDE=-I $(JAVA_HOME)/include -I $(JAVA_HOME)/include/darwin
+MACOSX_DEPLOYMENT_TARGET=10.10
+
 FRAMEWORKS=-framework JavaVM -framework CoreServices
 # define MACOSX to include Mac OS X specific code
-CC_FLAGS=-arch x86_64 -mmacosx-version-min=10.4 -DMACOSX
+CC_FLAGS=-arch x86_64 -mmacosx-version-min=10.10 -DMACOSX
 
 core:
 	cc $(JDK_INCLUDE) $(CORE.C) -o $(LIB_NAME_FULL) -bundle $(FRAMEWORKS) $(CC_FLAGS)

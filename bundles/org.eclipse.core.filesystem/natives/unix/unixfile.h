@@ -37,6 +37,14 @@ extern "C" {
 #endif
 
 /*
+ * Class:     Java_org_eclipse_core_internal_filesystem_local_unix_UnixFileNatives_initializeStructStatFieldIDs
+ * Method:    initializeStructStatFieldIDs
+ * Signature: ()V
+ */
+JNIEXPORT jint JNICALL Java_org_eclipse_core_internal_filesystem_local_unix_UnixFileNatives_initializeStructStatFieldIDs
+  (JNIEnv *env, jclass clazz);
+
+/*
  * Class:     org_eclipse_core_internal_filesystem_local_unix_UnixFileNatives
  * Method:    chmod
  * Signature: ([BI)I

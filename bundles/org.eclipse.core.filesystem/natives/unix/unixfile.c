@@ -24,6 +24,40 @@
 
 #include "unixfile.h"
 
+/* The lstat stat field st_mode. */
+static jfieldID attrs_st_mode;
+/* The lstat stat field st_size. */
+static jfieldID attrs_st_size;
+/* The lstat stat field st_mtime_sec. */
+static jfieldID attrs_st_mtime;
+/* The lstat stat field st_mtime_nsec divided by 1 000 000. Only filled on Linux based operating systems. */
+static jfieldID attrs_st_mtime_msec;
+/* Only filled on MACOSX. */
+static jfieldID attrs_st_flags;
+
+/*
+ * Class:     Java_org_eclipse_core_internal_filesystem_local_unix_UnixFileNatives_initializeStructStatFieldIDs
+ * Method:    initializeStructStatFieldIDs
+ * Signature: ()V
+ */
+JNIEXPORT jint JNICALL Java_org_eclipse_core_internal_filesystem_local_unix_UnixFileNatives_initializeStructStatFieldIDs
+  (JNIEnv *env, jclass clazz)
+{
+    jclass structStatClass = (*env)->FindClass(env, "org/eclipse/core/internal/filesystem/local/unix/StructStat");
+
+    attrs_st_mode = (*env)->GetFieldID(env, structStatClass, "st_mode", "I");
+    attrs_st_size = (*env)->GetFieldID(env, structStatClass, "st_size", "J");
+    attrs_st_mtime = (*env)->GetFieldID(env, structStatClass, "st_mtime", "J");
+
+#ifdef MACOSX
+    attrs_st_flags = (*env)->GetFieldID(env, structStatClass, "st_flags", "J");
+#endif
+
+#ifndef MACOSX
+    attrs_st_mtime_msec = (*env)->GetFieldID(env, structStatClass, "st_mtime_msec", "J");
+#endif
+}
+
 /*
  * Get a null-terminated byte array from a java byte array. The returned bytearray
  * needs to be freed when not used anymore. Use free(result) to do that.
@@ -54,22 +88,24 @@ jint convertStatToObject(JNIEnv *env, struct stat info, jobject stat_object)
 	cls = (*env)->GetObjectClass(env, stat_object);
 	if (cls == 0) return -1;
 
-	fid = (*env)->GetFieldID(env, cls, "st_mode", "I");
-	if (fid == 0) return -1;
-	(*env)->SetIntField(env, stat_object, fid, info.st_mode);
+	if (attrs_st_mode == 0) return -1;
+	(*env)->SetIntField(env, stat_object, attrs_st_mode, info.st_mode);
 
-	fid = (*env)->GetFieldID(env, cls, "st_size", "J");
-	if (fid == 0) return -1;
-	(*env)->SetLongField(env, stat_object, fid, info.st_size);
+	if (attrs_st_size == 0) return -1;
+	(*env)->SetLongField(env, stat_object, attrs_st_size, info.st_size);
 
-	fid = (*env)->GetFieldID(env, cls, "st_mtime", "J");
-	if (fid == 0) return -1;
-	(*env)->SetLongField(env, stat_object, fid, info.st_mtime);
+	if (attrs_st_mtime == 0) return -1;
+	(*env)->SetLongField(env, stat_object, attrs_st_mtime, info.st_mtime);
+
+#ifndef MACOSX
+	if (attrs_st_mtime_msec == 0) return -1;
+	(*env)->SetLongField(env, stat_object, attrs_st_mtime_msec, (info.st_mtim.tv_nsec / (1000 * 1000)));
+#endif
+
 
 #ifdef MACOSX
-	fid = (*env)->GetFieldID(env, cls, "st_flags", "J");
-	if (fid == 0) return -1;
-	(*env)->SetLongField(env, stat_object, fid, info.st_flags);
+	if (attrs_st_flags == 0) return -1;
+	(*env)->SetLongField(env, stat_object, attrs_st_flags, info.st_flags);
 #endif
 
 	return 0;

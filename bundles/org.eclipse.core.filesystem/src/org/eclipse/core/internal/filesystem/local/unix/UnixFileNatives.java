@@ -38,6 +38,7 @@ public abstract class UnixFileNatives {
 		try {
 			System.loadLibrary(LIBRARY_NAME);
 			_usingNatives = true;
+			initializeStructStatFieldIDs();
 			_libattr = libattr();
 		} catch (UnsatisfiedLinkError e) {
 			if (isLibraryPresent())
@@ -186,6 +187,8 @@ public abstract class UnixFileNatives {
 	private static boolean isSupported(int attr) {
 		return (libattr & attr) != 0;
 	}
+
+	private static final native void initializeStructStatFieldIDs();
 
 	private static final native int chmod(byte[] path, int mode);
 
