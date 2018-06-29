@@ -38,7 +38,7 @@ public class DragCursors {
 
     public static final int FASTVIEW = 7;
 
-    private final static Cursor cursors[] = new Cursor[8];
+    private static final Cursor cursors[] = new Cursor[8];
 
     public static int positionToDragCursor(int swtPositionConstant) {
         switch (swtPositionConstant) {

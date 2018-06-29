@@ -39,13 +39,13 @@ public abstract class AbstractKeyFormatter implements IKeyFormatter {
      * The key for the delimiter between keys. This is used in the
      * internationalization bundles.
      */
-    protected final static String KEY_DELIMITER_KEY = "KEY_DELIMITER"; //$NON-NLS-1$
+    protected static final String KEY_DELIMITER_KEY = "KEY_DELIMITER"; //$NON-NLS-1$
 
     /**
      * The key for the delimiter between key strokes. This is used in the
      * internationalization bundles.
      */
-    protected final static String KEY_STROKE_DELIMITER_KEY = "KEY_STROKE_DELIMITER"; //$NON-NLS-1$
+    protected static final String KEY_STROKE_DELIMITER_KEY = "KEY_STROKE_DELIMITER"; //$NON-NLS-1$
 
     /**
      * The bundle in which to look up the internationalized text for all of the
@@ -53,7 +53,7 @@ public abstract class AbstractKeyFormatter implements IKeyFormatter {
      * the internationalized strings. Some platforms (namely Carbon) provide
      * special Unicode characters and glyphs for some keys.
      */
-    private final static ResourceBundle RESOURCE_BUNDLE = ResourceBundle
+    private static final ResourceBundle RESOURCE_BUNDLE = ResourceBundle
             .getBundle(AbstractKeyFormatter.class.getName());
 
     @Override

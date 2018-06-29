@@ -104,7 +104,7 @@ public abstract class AbstractCSSEngine implements CSSEngine {
 	 * Default {@link IResourcesLocatorManager} used to get InputStream, Reader
 	 * resource like Image.
 	 */
-	private final static IResourcesLocatorManager defaultResourcesLocatorManager = ResourcesLocatorManager.INSTANCE;
+	private static final IResourcesLocatorManager defaultResourcesLocatorManager = ResourcesLocatorManager.INSTANCE;
 
 	/**
 	 * w3c {@link DocumentCSS}.

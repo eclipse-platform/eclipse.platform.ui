@@ -156,7 +156,7 @@ implements ControlListener, Listener, DisposeListener, KeyListener, MouseWheelLi
 
 	protected boolean installed = false;
 
-	private final static boolean isWindowsOS = Platform.OS_WIN32.equals(Platform.getOS());
+	private static final boolean isWindowsOS = Platform.OS_WIN32.equals(Platform.getOS());
 
 	public AbstractThemedScrollBarAdapter(Scrollable scrollable, AbstractScrollHandler horizontalScrollHandler,
 			AbstractScrollHandler verticalScrollHandler, IScrollBarSettings scrollBarSettings) {

@@ -27,11 +27,11 @@ import org.eclipse.ui.activities.NotDefinedException;
 import org.eclipse.ui.internal.util.Util;
 
 final class Activity implements IActivity {
-    private final static int HASH_FACTOR = 89;
+    private static final int HASH_FACTOR = 89;
 
-    private final static int HASH_INITIAL = Activity.class.getName().hashCode();
+    private static final int HASH_INITIAL = Activity.class.getName().hashCode();
 
-    private final static Set strongReferences = new HashSet();
+    private static final Set strongReferences = new HashSet();
 
     private Set activityRequirementBindings;
 

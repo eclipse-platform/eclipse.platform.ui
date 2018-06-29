@@ -53,9 +53,9 @@ import org.eclipse.ui.model.WorkbenchViewerComparator;
  * @since 2.0
  */
 public class WorkingSetSelectionDialog extends AbstractWorkingSetDialog {
-    private final static int SIZING_SELECTION_WIDGET_HEIGHT = 200;
+    private static final int SIZING_SELECTION_WIDGET_HEIGHT = 200;
 
-    private final static int SIZING_SELECTION_WIDGET_WIDTH = 50;
+    private static final int SIZING_SELECTION_WIDGET_WIDTH = 50;
 
     private ILabelProvider labelProvider;
 

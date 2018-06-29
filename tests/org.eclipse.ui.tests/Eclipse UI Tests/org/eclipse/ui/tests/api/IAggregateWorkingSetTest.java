@@ -37,9 +37,9 @@ import org.eclipse.ui.tests.harness.util.UITestCase;
 
 public class IAggregateWorkingSetTest extends UITestCase {
 
-	final static String WORKING_SET_NAME = "testws";
-	final static String AGGREGATE_WORKING_SET_NAME_ = "testaggregatews";
-	final static String WSET_PAGE_ID="org.eclipse.ui.resourceWorkingSetPage";
+	static final String WORKING_SET_NAME = "testws";
+	static final String AGGREGATE_WORKING_SET_NAME_ = "testaggregatews";
+	static final String WSET_PAGE_ID="org.eclipse.ui.resourceWorkingSetPage";
 	IWorkspace fWorkspace;
 
 	IWorkingSet[] components;

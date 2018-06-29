@@ -31,8 +31,8 @@ public class WizardTest extends TestCase {
 
 	static boolean DID_FINISH = false; //accessed from this test AND wizard
 
-	protected final static String WIZARD_TITLE = "TEST WIZARD TITLE";
-	protected final static String PAGE_TITLE = "TEST PAGE TITLE";
+	protected static final String WIZARD_TITLE = "TEST WIZARD TITLE";
+	protected static final String PAGE_TITLE = "TEST PAGE TITLE";
 	protected RGB color1;
 	protected RGB color2;
 

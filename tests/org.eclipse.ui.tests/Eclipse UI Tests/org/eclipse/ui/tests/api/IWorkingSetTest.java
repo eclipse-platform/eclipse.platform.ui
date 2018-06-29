@@ -29,9 +29,9 @@ import org.eclipse.ui.tests.menus.ObjectContributionClasses.ICommon;
 import org.eclipse.ui.tests.menus.ObjectContributionClasses.IModelElement;
 
 public class IWorkingSetTest extends UITestCase {
-    final static String WORKING_SET_NAME_1 = "ws1";
+    static final String WORKING_SET_NAME_1 = "ws1";
 
-    final static String WORKING_SET_NAME_2 = "ws2";
+    static final String WORKING_SET_NAME_2 = "ws2";
 
     IWorkspace fWorkspace;
 

@@ -39,7 +39,7 @@ public class ProgressCanvasViewer extends AbstractProgressViewer {
 
     Object[] displayedItems = new Object[0];
 
-    private final static List<Object> EMPTY_LIST = new ArrayList<>();
+    private static final List<Object> EMPTY_LIST = new ArrayList<>();
 
     /**
      * Font metrics to use for determining pixel sizes.

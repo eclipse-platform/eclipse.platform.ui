@@ -32,15 +32,15 @@ class BookmarkLabelProvider extends LabelProvider implements
     private Image image;
     private ImageDescriptor desc;
 
-    final static int COLUMN_ICON = 0;
+    static final int COLUMN_ICON = 0;
 
-    final static int COLUMN_DESCRIPTION = 1;
+    static final int COLUMN_DESCRIPTION = 1;
 
-    final static int COLUMN_RESOURCE = 2;
+    static final int COLUMN_RESOURCE = 2;
 
-    final static int COLUMN_FOLDER = 3;
+    static final int COLUMN_FOLDER = 3;
 
-    final static int COLUMN_LOCATION = 4;
+    static final int COLUMN_LOCATION = 4;
 
     public BookmarkLabelProvider(BookmarkNavigator view) {
         desc = IDEWorkbenchPlugin.getIDEImageDescriptor("obj16/bkmrk_tsk.png"); //$NON-NLS-1$

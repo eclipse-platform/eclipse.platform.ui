@@ -31,13 +31,13 @@ import org.w3c.dom.css.CSSPrimitiveValue;
 import org.w3c.dom.css.CSSValue;
 
 public class CSSPropertyThemeElementDefinitionHandler implements ICSSPropertyHandler {
-	private final static String CATEGORY_PROP = "category";
+	private static final String CATEGORY_PROP = "category";
 
-	private final static String LABEL_PROP = "label";
+	private static final String LABEL_PROP = "label";
 
-	private final static String DESCRIPTION_PROP = "description";
+	private static final String DESCRIPTION_PROP = "description";
 
-	private final static String MESSAGE_QUERY_PARAM = "message";
+	private static final String MESSAGE_QUERY_PARAM = "message";
 
 	private Map<Long, ResourceBundle> bundleToResourceBundles = new WeakHashMap<Long, ResourceBundle>();
 

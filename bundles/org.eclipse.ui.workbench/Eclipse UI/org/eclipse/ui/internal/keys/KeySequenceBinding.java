@@ -25,9 +25,9 @@ public final class KeySequenceBinding implements IKeySequenceBinding {
      */
     public static final String DEFAULT_CONTEXT_ID = "org.eclipse.ui.contexts.window"; //$NON-NLS-1$
 
-    private final static int HASH_FACTOR = 89;
+    private static final int HASH_FACTOR = 89;
 
-    private final static int HASH_INITIAL = KeySequenceBinding.class.getName()
+    private static final int HASH_INITIAL = KeySequenceBinding.class.getName()
             .hashCode();
 
     private transient int hashCode;

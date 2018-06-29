@@ -40,7 +40,7 @@ public class MessageDialog extends IconAndMessageDialog {
 	 *
 	 * @see #MessageDialog(Shell, String, Image, String, int, int, String...)
 	 */
-    public final static int NONE = 0;
+    public static final int NONE = 0;
 
     /**
 	 * Constant for the error image, or a simple dialog with the error image and
@@ -49,7 +49,7 @@ public class MessageDialog extends IconAndMessageDialog {
 	 * @see #MessageDialog(Shell, String, Image, String, int, int, String...)
 	 * @see #open(int, Shell, String, String, int)
 	 */
-    public final static int ERROR = 1;
+    public static final int ERROR = 1;
 
     /**
 	 * Constant for the info image, or a simple dialog with the info image and a
@@ -58,7 +58,7 @@ public class MessageDialog extends IconAndMessageDialog {
 	 * @see #MessageDialog(Shell, String, Image, String, int, int, String...)
 	 * @see #open(int, Shell, String, String, int)
 	 */
-    public final static int INFORMATION = 2;
+    public static final int INFORMATION = 2;
 
     /**
 	 * Constant for the question image, or a simple dialog with the question
@@ -67,7 +67,7 @@ public class MessageDialog extends IconAndMessageDialog {
 	 * @see #MessageDialog(Shell, String, Image, String, int, int, String...)
 	 * @see #open(int, Shell, String, String, int)
 	 */
-    public final static int QUESTION = 3;
+    public static final int QUESTION = 3;
 
     /**
 	 * Constant for the warning image, or a simple dialog with the warning image
@@ -76,7 +76,7 @@ public class MessageDialog extends IconAndMessageDialog {
 	 * @see #MessageDialog(Shell, String, Image, String, int, int, String...)
 	 * @see #open(int, Shell, String, String, int)
 	 */
-    public final static int WARNING = 4;
+    public static final int WARNING = 4;
 
     /**
      * Constant for a simple dialog with the question image and OK/Cancel buttons (value 5).
@@ -84,7 +84,7 @@ public class MessageDialog extends IconAndMessageDialog {
      * @see #open(int, Shell, String, String, int)
      * @since 3.5
      */
-    public final static int CONFIRM = 5;
+    public static final int CONFIRM = 5;
 
     /**
      * Constant for a simple dialog with the question image and Yes/No/Cancel buttons (value 6).
@@ -92,7 +92,7 @@ public class MessageDialog extends IconAndMessageDialog {
      * @see #open(int, Shell, String, String, int)
      * @since 3.5
      */
-    public final static int QUESTION_WITH_CANCEL = 6;
+    public static final int QUESTION_WITH_CANCEL = 6;
 
     /**
      * Labels for buttons in the button bar (localized strings).

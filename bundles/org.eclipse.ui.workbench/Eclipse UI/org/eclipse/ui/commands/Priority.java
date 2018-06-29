@@ -49,17 +49,17 @@ public final class Priority implements Comparable {
 	/**
 	 * An instance representing 'legacy' priority.
 	 */
-	public final static Priority LEGACY = new Priority(ISources.LEGACY_LEGACY);
+	public static final Priority LEGACY = new Priority(ISources.LEGACY_LEGACY);
 
 	/**
 	 * An instance representing 'low' priority.
 	 */
-	public final static Priority LOW = new Priority(ISources.LEGACY_LOW);
+	public static final Priority LOW = new Priority(ISources.LEGACY_LOW);
 
 	/**
 	 * An instance representing 'medium' priority.
 	 */
-	public final static Priority MEDIUM = new Priority(ISources.LEGACY_MEDIUM);
+	public static final Priority MEDIUM = new Priority(ISources.LEGACY_MEDIUM);
 
 	/**
 	 * The string representation of this priority. This is computed once

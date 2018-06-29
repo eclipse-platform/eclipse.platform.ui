@@ -27,10 +27,10 @@ public class MarginTest extends CSSSWTTestCase {
 
 	private static final RGB RED = new RGB(255, 0, 0);
 
-	private final static int TOP = 0;
-	private final static int RIGHT = 1;
-	private final static int BOTTOM = 2;
-	private final static int LEFT = 3;
+	private static final int TOP = 0;
+	private static final int RIGHT = 1;
+	private static final int BOTTOM = 2;
+	private static final int LEFT = 3;
 
 	protected Control createTestControl(String styleSheet) {
 		engine = createEngine(styleSheet, display);

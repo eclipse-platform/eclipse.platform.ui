@@ -170,27 +170,27 @@ public final class IDE {
 		/**
 		 * Identifies a project image.
 		 */
-		public final static String IMG_OBJ_PROJECT = "IMG_OBJ_PROJECT"; //$NON-NLS-1$
+		public static final String IMG_OBJ_PROJECT = "IMG_OBJ_PROJECT"; //$NON-NLS-1$
 
 		/**
 		 * Identifies a closed project image.
 		 */
-		public final static String IMG_OBJ_PROJECT_CLOSED = "IMG_OBJ_PROJECT_CLOSED"; //$NON-NLS-1$
+		public static final String IMG_OBJ_PROJECT_CLOSED = "IMG_OBJ_PROJECT_CLOSED"; //$NON-NLS-1$
 
 		/**
 		 * Identifies the image used for "open marker".
 		 */
-		public final static String IMG_OPEN_MARKER = "IMG_OPEN_MARKER"; //$NON-NLS-1$
+		public static final String IMG_OPEN_MARKER = "IMG_OPEN_MARKER"; //$NON-NLS-1$
 
 		/**
 		 * Identifies the default image used to indicate a task.
 		 */
-		public final static String IMG_OBJS_TASK_TSK = "IMG_OBJS_TASK_TSK"; //$NON-NLS-1$
+		public static final String IMG_OBJS_TASK_TSK = "IMG_OBJS_TASK_TSK"; //$NON-NLS-1$
 
 		/**
 		 * Identifies the default image used to indicate a bookmark.
 		 */
-		public final static String IMG_OBJS_BKMRK_TSK = "IMG_OBJS_BKMRK_TSK"; //$NON-NLS-1$
+		public static final String IMG_OBJS_BKMRK_TSK = "IMG_OBJS_BKMRK_TSK"; //$NON-NLS-1$
 	}
 
 	/**

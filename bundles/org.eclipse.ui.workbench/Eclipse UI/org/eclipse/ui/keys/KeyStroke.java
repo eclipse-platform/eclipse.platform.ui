@@ -58,24 +58,24 @@ public final class KeyStroke implements Comparable {
      * in the formal key stroke grammar. This is not to be displayed to the
      * user. It is only intended as an internal representation.
      */
-    public final static String KEY_DELIMITER = "\u002B"; //$NON-NLS-1$
+    public static final String KEY_DELIMITER = "\u002B"; //$NON-NLS-1$
 
     /**
      * An internal constant used only in this object's hash code algorithm.
      */
-    private final static int HASH_FACTOR = 89;
+    private static final int HASH_FACTOR = 89;
 
     /**
      * An internal constant used only in this object's hash code algorithm.
      */
-    private final static int HASH_INITIAL = KeyStroke.class.getName()
+    private static final int HASH_INITIAL = KeyStroke.class.getName()
             .hashCode();
 
     /**
      * The set of delimiters for <code>Key</code> objects allowed during
      * parsing of the formal string representation.
      */
-    public final static String KEY_DELIMITERS = KEY_DELIMITER;
+    public static final String KEY_DELIMITERS = KEY_DELIMITER;
 
     /**
      * Gets an instance of <code>KeyStroke</code> given a single modifier key

@@ -19,11 +19,11 @@ import org.eclipse.core.runtime.preferences.IEclipsePreferences.PreferenceChange
 import org.osgi.service.prefs.Preferences;
 
 public class EclipsePreferencesHelper {
-	public final static String PROPS_OVERRIDDEN_BY_CSS_PROP = "overriddenByCSS";
+	public static final String PROPS_OVERRIDDEN_BY_CSS_PROP = "overriddenByCSS";
 
-	public final static String SEPARATOR = ",";
+	public static final String SEPARATOR = ",";
 
-	private final static String MULTI_VALUE_FORMATTER = "%s%s" + SEPARATOR;
+	private static final String MULTI_VALUE_FORMATTER = "%s%s" + SEPARATOR;
 
 	private static IPreferenceChangeListener preferenceChangeListener;
 

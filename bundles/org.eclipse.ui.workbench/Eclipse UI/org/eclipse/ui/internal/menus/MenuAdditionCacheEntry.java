@@ -57,17 +57,17 @@ import org.eclipse.ui.menus.CommandContributionItem;
 public class MenuAdditionCacheEntry {
 	private static final String AFTER_ADDITIONS = "after=additions"; //$NON-NLS-1$
 
-	final static String MAIN_TOOLBAR = ActionSet.MAIN_TOOLBAR;
+	static final String MAIN_TOOLBAR = ActionSet.MAIN_TOOLBAR;
 
-	final static String TRIM_COMMAND1 = "org.eclipse.ui.trim.command1"; //$NON-NLS-1$
+	static final String TRIM_COMMAND1 = "org.eclipse.ui.trim.command1"; //$NON-NLS-1$
 
-	final static String TRIM_COMMAND2 = "org.eclipse.ui.trim.command2"; //$NON-NLS-1$
+	static final String TRIM_COMMAND2 = "org.eclipse.ui.trim.command2"; //$NON-NLS-1$
 
-	final static String TRIM_VERTICAL1 = "org.eclipse.ui.trim.vertical1"; //$NON-NLS-1$
+	static final String TRIM_VERTICAL1 = "org.eclipse.ui.trim.vertical1"; //$NON-NLS-1$
 
-	final static String TRIM_VERTICAL2 = "org.eclipse.ui.trim.vertical2"; //$NON-NLS-1$
+	static final String TRIM_VERTICAL2 = "org.eclipse.ui.trim.vertical2"; //$NON-NLS-1$
 
-	final static String TRIM_STATUS = "org.eclipse.ui.trim.status"; //$NON-NLS-1$
+	static final String TRIM_STATUS = "org.eclipse.ui.trim.status"; //$NON-NLS-1$
 
 	/**
 	 * Test whether the location URI is in one of the pre-defined workbench trim

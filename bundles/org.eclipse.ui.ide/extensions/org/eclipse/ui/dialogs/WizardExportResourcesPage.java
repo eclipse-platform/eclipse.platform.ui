@@ -83,11 +83,11 @@ public abstract class WizardExportResourcesPage extends WizardDataTransferPage {
 
     private boolean showLinkedResources;
 
-    private final static String SELECT_TYPES_TITLE = IDEWorkbenchMessages.WizardTransferPage_selectTypes;
+    private static final String SELECT_TYPES_TITLE = IDEWorkbenchMessages.WizardTransferPage_selectTypes;
 
-    private final static String SELECT_ALL_TITLE = IDEWorkbenchMessages.WizardTransferPage_selectAll;
+    private static final String SELECT_ALL_TITLE = IDEWorkbenchMessages.WizardTransferPage_selectAll;
 
-    private final static String DESELECT_ALL_TITLE = IDEWorkbenchMessages.WizardTransferPage_deselectAll;
+    private static final String DESELECT_ALL_TITLE = IDEWorkbenchMessages.WizardTransferPage_deselectAll;
 
     /**
      * Creates an export wizard page. If the current resource selection

@@ -48,7 +48,7 @@ public class EnablementDialog extends Dialog {
 	/**
      * The translation bundle in which to look up internationalized text.
      */
-    private final static ResourceBundle RESOURCE_BUNDLE = ResourceBundle
+    private static final ResourceBundle RESOURCE_BUNDLE = ResourceBundle
             .getBundle(EnablementDialog.class.getName());
 
     private Button dontAskButton;

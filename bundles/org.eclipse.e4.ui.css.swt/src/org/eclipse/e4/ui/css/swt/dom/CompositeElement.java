@@ -23,7 +23,7 @@ import org.w3c.dom.Node;
  *
  */
 public class CompositeElement extends ControlElement {
-	private final static String BACKGROUND_OVERRIDDEN_BY_CSS_MARKER = "bgOverriddenByCSS";
+	private static final String BACKGROUND_OVERRIDDEN_BY_CSS_MARKER = "bgOverriddenByCSS";
 
 	public CompositeElement(Composite composite, CSSEngine engine) {
 		super(composite, engine);

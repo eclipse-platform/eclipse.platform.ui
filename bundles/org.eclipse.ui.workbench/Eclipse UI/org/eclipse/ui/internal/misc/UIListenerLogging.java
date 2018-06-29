@@ -28,39 +28,39 @@ import org.eclipse.ui.internal.util.Util;
 public class UIListenerLogging {
 
     // Types of listeners that can be logged (the names of the options that enable/disable their logging)
-    private final static String LISTENER_EVENTS = PlatformUI.PLUGIN_ID + "/debug"; //$NON-NLS-1$
-    public  final static String PAGE_PARTLISTENER_EVENTS = PlatformUI.PLUGIN_ID + "/listeners/IWorkbenchPage.IPartListener"; //$NON-NLS-1$
-    public  final static String PAGE_PARTLISTENER2_EVENTS = PlatformUI.PLUGIN_ID + "/listeners/IWorkbenchPage.IPartListener2"; //$NON-NLS-1$
-    private final static String PAGE_PROPERTY_EVENTS = PlatformUI.PLUGIN_ID + "/listeners/IWorkbenchPage.IPropertyChangeListener"; //$NON-NLS-1$
-    private final static String WINDOW_PAGE_EVENTS = PlatformUI.PLUGIN_ID + "/listeners/IWorkbenchWindow.IPageListener"; //$NON-NLS-1$
-    private final static String WINDOW_PERSPECTIVE_EVENTS = PlatformUI.PLUGIN_ID + "/listeners/IWorkbenchWindow.IPerspectiveListener"; //$NON-NLS-1$
-    public  final static String WINDOW_PARTLISTENER_EVENTS = PlatformUI.PLUGIN_ID + "/listeners/IWorkbenchWindow.IPartListener"; //$NON-NLS-1$
-    public  final static String WINDOW_PARTLISTENER2_EVENTS = PlatformUI.PLUGIN_ID + "/listeners/IWorkbenchWindow.IPartListener2"; //$NON-NLS-1$
-    private final static String PARTREFERENCE_PROPERTY_EVENTS = PlatformUI.PLUGIN_ID + "/listeners/IWorkbenchPartReference"; //$NON-NLS-1$
+    private static final String LISTENER_EVENTS = PlatformUI.PLUGIN_ID + "/debug"; //$NON-NLS-1$
+    public  static final String PAGE_PARTLISTENER_EVENTS = PlatformUI.PLUGIN_ID + "/listeners/IWorkbenchPage.IPartListener"; //$NON-NLS-1$
+    public  static final String PAGE_PARTLISTENER2_EVENTS = PlatformUI.PLUGIN_ID + "/listeners/IWorkbenchPage.IPartListener2"; //$NON-NLS-1$
+    private static final String PAGE_PROPERTY_EVENTS = PlatformUI.PLUGIN_ID + "/listeners/IWorkbenchPage.IPropertyChangeListener"; //$NON-NLS-1$
+    private static final String WINDOW_PAGE_EVENTS = PlatformUI.PLUGIN_ID + "/listeners/IWorkbenchWindow.IPageListener"; //$NON-NLS-1$
+    private static final String WINDOW_PERSPECTIVE_EVENTS = PlatformUI.PLUGIN_ID + "/listeners/IWorkbenchWindow.IPerspectiveListener"; //$NON-NLS-1$
+    public  static final String WINDOW_PARTLISTENER_EVENTS = PlatformUI.PLUGIN_ID + "/listeners/IWorkbenchWindow.IPartListener"; //$NON-NLS-1$
+    public  static final String WINDOW_PARTLISTENER2_EVENTS = PlatformUI.PLUGIN_ID + "/listeners/IWorkbenchWindow.IPartListener2"; //$NON-NLS-1$
+    private static final String PARTREFERENCE_PROPERTY_EVENTS = PlatformUI.PLUGIN_ID + "/listeners/IWorkbenchPartReference"; //$NON-NLS-1$
 
-    public final static boolean enabled = internal_isEnabled(LISTENER_EVENTS);
+    public static final boolean enabled = internal_isEnabled(LISTENER_EVENTS);
 
     // IPartListener events
-    public final static String PE_ACTIVATED = "partActivated"; //$NON-NLS-1$
-    public final static String PE_PART_BROUGHT_TO_TOP = "partBroughtToTop"; //$NON-NLS-1$
-    public final static String PE_PART_CLOSED = "partClosed"; //$NON-NLS-1$
-    public final static String PE_PART_DEACTIVATED = "partDeactivated"; //$NON-NLS-1$
-    public final static String PE_PART_OPENED = "partOpened"; //$NON-NLS-1$
+    public static final String PE_ACTIVATED = "partActivated"; //$NON-NLS-1$
+    public static final String PE_PART_BROUGHT_TO_TOP = "partBroughtToTop"; //$NON-NLS-1$
+    public static final String PE_PART_CLOSED = "partClosed"; //$NON-NLS-1$
+    public static final String PE_PART_DEACTIVATED = "partDeactivated"; //$NON-NLS-1$
+    public static final String PE_PART_OPENED = "partOpened"; //$NON-NLS-1$
 
     // IPartListener2 events
-    public final static String PE2_ACTIVATED = "partActivated"; //$NON-NLS-1$
-    public final static String PE2_PART_VISIBLE = "partVisible"; //$NON-NLS-1$
-    public final static String PE2_PART_HIDDEN = "partHidden"; //$NON-NLS-1$
-    public final static String PE2_PART_BROUGHT_TO_TOP = "partBroughtToTop"; //$NON-NLS-1$
-    public final static String PE2_PART_CLOSED = "partClosed"; //$NON-NLS-1$
-    public final static String PE2_PART_DEACTIVATED = "partDectivated"; //$NON-NLS-1$
-    public final static String PE2_PART_OPENED = "partOpened"; //$NON-NLS-1$
+    public static final String PE2_ACTIVATED = "partActivated"; //$NON-NLS-1$
+    public static final String PE2_PART_VISIBLE = "partVisible"; //$NON-NLS-1$
+    public static final String PE2_PART_HIDDEN = "partHidden"; //$NON-NLS-1$
+    public static final String PE2_PART_BROUGHT_TO_TOP = "partBroughtToTop"; //$NON-NLS-1$
+    public static final String PE2_PART_CLOSED = "partClosed"; //$NON-NLS-1$
+    public static final String PE2_PART_DEACTIVATED = "partDectivated"; //$NON-NLS-1$
+    public static final String PE2_PART_OPENED = "partOpened"; //$NON-NLS-1$
     public static final String PE2_PART_INPUT_CHANGED = "partInputChanged"; //$NON-NLS-1$
 
     // IPageListener events
-    public final static String WPE_PAGE_ACTIVATED = "pageActivated"; //$NON-NLS-1$
-    public final static String WPE_PAGE_OPENED = "pageOpened"; //$NON-NLS-1$
-    public final static String WPE_PAGE_CLOSED = "pageClosed"; //$NON-NLS-1$
+    public static final String WPE_PAGE_ACTIVATED = "pageActivated"; //$NON-NLS-1$
+    public static final String WPE_PAGE_OPENED = "pageOpened"; //$NON-NLS-1$
+    public static final String WPE_PAGE_CLOSED = "pageClosed"; //$NON-NLS-1$
 
     // IPerspectiveListener events
     public static final String PLE_PERSP_PRE_DEACTIVATE = "perspectivePreDeactivate"; //$NON-NLS-1$

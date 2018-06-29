@@ -60,9 +60,9 @@ public class ResourceSelectionDialog extends SelectionDialog {
     private CheckboxTreeAndListGroup selectionGroup;
 
     // constants
-    private final static int SIZING_SELECTION_WIDGET_WIDTH = 400;
+    private static final int SIZING_SELECTION_WIDGET_WIDTH = 400;
 
-    private final static int SIZING_SELECTION_WIDGET_HEIGHT = 300;
+    private static final int SIZING_SELECTION_WIDGET_HEIGHT = 300;
 
     /**
      * Creates a resource selection dialog rooted at the given element.

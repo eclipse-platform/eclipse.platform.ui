@@ -37,7 +37,7 @@ import org.w3c.dom.NodeList;
  *
  */
 public class CTabFolderElement extends CompositeElement implements ChildVisibilityAwareElement {
-	private final static String BACKGROUND_SET_BY_TAB_RENDERER = "bgSetByTabRenderer"; //$NON-NLS-1$
+	private static final String BACKGROUND_SET_BY_TAB_RENDERER = "bgSetByTabRenderer"; //$NON-NLS-1$
 
 	private SelectionListener selectionListener = new SelectionAdapter() {
 		@Override

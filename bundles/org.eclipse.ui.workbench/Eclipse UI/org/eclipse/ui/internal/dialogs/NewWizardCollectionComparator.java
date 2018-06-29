@@ -28,7 +28,7 @@ class NewWizardCollectionComparator extends ViewerComparator {
 	/**
 	 * Static instance of this class.
 	 */
-    public final static NewWizardCollectionComparator INSTANCE = new NewWizardCollectionComparator();
+    public static final NewWizardCollectionComparator INSTANCE = new NewWizardCollectionComparator();
 
 
     /**

@@ -30,9 +30,9 @@ import org.eclipse.ui.part.ViewPart;
 
 public class SelectionProviderView extends ViewPart implements
         ISelectionProvider {
-    public final static String ID = "org.eclipse.ui.tests.SelectionProviderView";
+    public static final String ID = "org.eclipse.ui.tests.SelectionProviderView";
 
-    public final static String ID_2 = "org.eclipse.ui.tests.SelectionProviderView2";
+    public static final String ID_2 = "org.eclipse.ui.tests.SelectionProviderView2";
 
 	private ListenerList<ISelectionChangedListener> selectionChangedListeners = new ListenerList<>();
 

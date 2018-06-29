@@ -24,7 +24,7 @@ import org.eclipse.ui.keys.SpecialKey;
 
 public final class MacKeyFormatter extends AbstractKeyFormatter {
 
-    private final static class MacModifierKeyComparator extends
+    private static final class MacModifierKeyComparator extends
             AbstractModifierKeyComparator {
 
         @Override
@@ -49,11 +49,11 @@ public final class MacKeyFormatter extends AbstractKeyFormatter {
         }
     }
 
-    private final static HashMap KEY_LOOKUP = new HashMap();
+    private static final HashMap KEY_LOOKUP = new HashMap();
 
-    private final static Comparator MODIFIER_KEY_COMPARATOR = new MacModifierKeyComparator();
+    private static final Comparator MODIFIER_KEY_COMPARATOR = new MacModifierKeyComparator();
 
-    private final static ResourceBundle RESOURCE_BUNDLE = ResourceBundle
+    private static final ResourceBundle RESOURCE_BUNDLE = ResourceBundle
             .getBundle(MacKeyFormatter.class.getName());
 
     static {

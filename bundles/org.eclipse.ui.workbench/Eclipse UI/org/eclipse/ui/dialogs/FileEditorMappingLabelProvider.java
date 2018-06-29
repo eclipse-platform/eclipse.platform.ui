@@ -41,7 +41,7 @@ public class FileEditorMappingLabelProvider extends LabelProvider implements
     /**
      * Singleton instance accessor.
      */
-    public final static FileEditorMappingLabelProvider INSTANCE = new FileEditorMappingLabelProvider();
+    public static final FileEditorMappingLabelProvider INSTANCE = new FileEditorMappingLabelProvider();
 
     /**
      * Images that will require disposal.

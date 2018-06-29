@@ -62,14 +62,14 @@ class NewWizardNewPage implements ISelectionChangedListener {
     // id constants
     private static final String DIALOG_SETTING_SECTION_NAME = "NewWizardSelectionPage."; //$NON-NLS-1$
 
-    private final static int SIZING_LISTS_HEIGHT = 200;
+    private static final int SIZING_LISTS_HEIGHT = 200;
 
-    private final static int SIZING_VIEWER_WIDTH = 300;
+    private static final int SIZING_VIEWER_WIDTH = 300;
 
-    private final static String STORE_EXPANDED_CATEGORIES_ID = DIALOG_SETTING_SECTION_NAME
+    private static final String STORE_EXPANDED_CATEGORIES_ID = DIALOG_SETTING_SECTION_NAME
             + "STORE_EXPANDED_CATEGORIES_ID"; //$NON-NLS-1$
 
-    private final static String STORE_SELECTED_ID = DIALOG_SETTING_SECTION_NAME
+    private static final String STORE_SELECTED_ID = DIALOG_SETTING_SECTION_NAME
             + "STORE_SELECTED_ID"; //$NON-NLS-1$
 
     private NewWizardSelectionPage page;

@@ -67,13 +67,13 @@ public class StatusDialogManagerTest extends TestCase {
 	private static final String ACTION_NAME = "actionname";
 	private static final String JOB_NAME = "jobname";
 	private static final String THROWABLE = "throwable";
-	private final static String MESSAGE_1 = "TEST_MESSAGE_1";
-	private final static String MESSAGE_2 = "TEST_MESSAGE_2";
-	private final static String TITLE = "TEST_TITLE";
-	private final static NullPointerException NPE = new NullPointerException();
-	private final static NullPointerException NPE_WITH_MESSAGE = new NullPointerException(
+	private static final String MESSAGE_1 = "TEST_MESSAGE_1";
+	private static final String MESSAGE_2 = "TEST_MESSAGE_2";
+	private static final String TITLE = "TEST_TITLE";
+	private static final NullPointerException NPE = new NullPointerException();
+	private static final NullPointerException NPE_WITH_MESSAGE = new NullPointerException(
 			THROWABLE);
-	private final static String NPE_NAME = NPE.getClass().getName();
+	private static final String NPE_NAME = NPE.getClass().getName();
 
 	private boolean automatedMode;
 	WorkbenchStatusDialogManager wsdm;

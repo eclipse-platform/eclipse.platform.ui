@@ -15,9 +15,9 @@ import org.eclipse.ui.activities.ICategoryActivityBinding;
 import org.eclipse.ui.internal.util.Util;
 
 public final class CategoryActivityBinding implements ICategoryActivityBinding {
-    private final static int HASH_FACTOR = 89;
+    private static final int HASH_FACTOR = 89;
 
-    private final static int HASH_INITIAL = CategoryActivityBinding.class
+    private static final int HASH_INITIAL = CategoryActivityBinding.class
             .getName().hashCode();
 
     private String activityId;

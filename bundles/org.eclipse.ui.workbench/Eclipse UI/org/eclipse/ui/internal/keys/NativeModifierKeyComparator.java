@@ -27,7 +27,7 @@ class NativeModifierKeyComparator implements Comparator {
     /**
      * The sort order value to use when the modifier key is not recognized.
      */
-    private final static int UNKNOWN_KEY = Integer.MAX_VALUE;
+    private static final int UNKNOWN_KEY = Integer.MAX_VALUE;
 
     @Override
 	public int compare(Object left, Object right) {

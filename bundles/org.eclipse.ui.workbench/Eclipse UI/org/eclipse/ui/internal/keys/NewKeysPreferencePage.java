@@ -133,7 +133,7 @@ public class NewKeysPreferencePage extends PreferencePage implements IWorkbenchP
 
 	private static final String TRACING_COMPONENT = "NewKeysPref"; //$NON-NLS-1$
 
-	public final static String TAG_DIALOG_SECTION = "org.eclipse.ui.preferences.keysPreferencePage"; //$NON-NLS-1$
+	public static final String TAG_DIALOG_SECTION = "org.eclipse.ui.preferences.keysPreferencePage"; //$NON-NLS-1$
 
 	private static final String TAG_FILTER_ACTION_SETS = "actionSetFilter"; //$NON-NLS-1$
 

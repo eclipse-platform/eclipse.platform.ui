@@ -45,12 +45,12 @@ public final class RadioState extends PersistentState implements
 	/**
 	 * The state ID for a radio state understood by the system.
 	 */
-	public final static String STATE_ID = "org.eclipse.ui.commands.radioState"; //$NON-NLS-1$
+	public static final String STATE_ID = "org.eclipse.ui.commands.radioState"; //$NON-NLS-1$
 
 	/**
 	 * The parameter ID for a radio state understood by the system.
 	 */
-	public final static String PARAMETER_ID = "org.eclipse.ui.commands.radioStateParameter"; //$NON-NLS-1$
+	public static final String PARAMETER_ID = "org.eclipse.ui.commands.radioStateParameter"; //$NON-NLS-1$
 
 	public RadioState() {
 		setShouldPersist(true);

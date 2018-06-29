@@ -28,11 +28,11 @@ import org.eclipse.ui.tests.harness.util.ArrayUtil;
 import org.eclipse.ui.tests.harness.util.UITestCase;
 
 public class IWorkingSetManagerTest extends UITestCase {
-    final static String WORKING_SET_NAME_1 = "ws1";
+    static final String WORKING_SET_NAME_1 = "ws1";
 
-    final static String WORKING_SET_NAME_2 = "ws2";
+    static final String WORKING_SET_NAME_2 = "ws2";
 
-    final static String WORKING_SET_NAME_3 = "ws3";
+    static final String WORKING_SET_NAME_3 = "ws3";
 
     IWorkingSetManager fWorkingSetManager;
 

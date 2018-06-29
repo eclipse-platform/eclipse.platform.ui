@@ -19,8 +19,8 @@ import org.eclipse.core.expressions.PropertyTester;
  * @since 3.4
  */
 public class UserPropertyTester extends PropertyTester {
-	private final static String IS_ADMIN = "isAdmin"; //$NON-NLS-1$
-	private final static String ID = "id"; //$NON-NLS-1$
+	private static final String IS_ADMIN = "isAdmin"; //$NON-NLS-1$
+	private static final String ID = "id"; //$NON-NLS-1$
 
 	@Override
 	public boolean test(Object receiver, String property, Object[] args,

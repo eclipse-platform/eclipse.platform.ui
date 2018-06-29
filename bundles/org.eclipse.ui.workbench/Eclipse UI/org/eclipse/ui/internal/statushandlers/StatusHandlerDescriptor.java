@@ -28,7 +28,7 @@ public class StatusHandlerDescriptor implements IPluginContribution {
 
 	private AbstractStatusHandler cachedInstance;
 
-	private final static String PREFIX = "prefix"; //$NON-NLS-1$
+	private static final String PREFIX = "prefix"; //$NON-NLS-1$
 
 	private IConfigurationElement configElement;
 

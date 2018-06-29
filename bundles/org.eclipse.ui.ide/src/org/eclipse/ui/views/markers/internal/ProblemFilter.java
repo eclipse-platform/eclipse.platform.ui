@@ -47,28 +47,28 @@ public class ProblemFilter extends MarkerFilter {
 	 */
 	public static final String TAG_SEVERITY = "severity"; //$NON-NLS-1$
 
-	final static boolean DEFAULT_CONTAINS = true;
+	static final boolean DEFAULT_CONTAINS = true;
 
-	final static String DEFAULT_DESCRIPTION = ""; //$NON-NLS-1$
+	static final String DEFAULT_DESCRIPTION = ""; //$NON-NLS-1$
 
-	final static boolean DEFAULT_SELECT_BY_SEVERITY = false;
+	static final boolean DEFAULT_SELECT_BY_SEVERITY = false;
 
-	final static int DEFAULT_SEVERITY = 0;
+	static final int DEFAULT_SEVERITY = 0;
 
 	/**
 	 * Severity for errors
 	 */
-	public final static int SEVERITY_ERROR = 1 << 2;
+	public static final int SEVERITY_ERROR = 1 << 2;
 
 	/**
 	 * Severity for warnings
 	 */
-	public final static int SEVERITY_WARNING = 1 << 1;
+	public static final int SEVERITY_WARNING = 1 << 1;
 
 	/**
 	 * Severity for infos
 	 */
-	public final static int SEVERITY_INFO = 1 << 0;
+	public static final int SEVERITY_INFO = 1 << 0;
 
 	private boolean contains;
 

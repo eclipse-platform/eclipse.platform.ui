@@ -25,7 +25,7 @@ import org.eclipse.ui.services.IEvaluationService;
  * @since 3.3
  */
 public abstract class AbstractEvaluationHandler extends AbstractEnabledHandler {
-	private final static String PROP_ENABLED = "enabled"; //$NON-NLS-1$
+	private static final String PROP_ENABLED = "enabled"; //$NON-NLS-1$
 	private IEvaluationService evaluationService;
 	private IPropertyChangeListener enablementListener;
 	private IEvaluationReference enablementRef;

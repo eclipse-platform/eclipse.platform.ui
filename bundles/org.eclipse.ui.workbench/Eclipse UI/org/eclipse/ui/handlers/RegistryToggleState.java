@@ -46,7 +46,7 @@ public final class RegistryToggleState extends ToggleState implements
 	 *
 	 * @since 3.5
 	 */
-	public final static String STATE_ID = "org.eclipse.ui.commands.toggleState";  //$NON-NLS-1$
+	public static final String STATE_ID = "org.eclipse.ui.commands.toggleState";  //$NON-NLS-1$
 
 	/**
 	 * Reads the <code>default</code> parameter from the given string. This

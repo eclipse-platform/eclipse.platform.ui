@@ -81,7 +81,7 @@ public class TrimBarLayout extends Layout {
 	 * within its containing {@link MTrimBar}. Items after a spacer will be
 	 * aligned to the right side of the {@link MTrimBar}.
 	 */
-	public final static String SPACER = "stretch"; //$NON-NLS-1$
+	public static final String SPACER = "stretch"; //$NON-NLS-1$
 
 	/**
 	 * When applied as a tag to a tool control (e.g. LayoutModifierToolControl)
@@ -89,7 +89,7 @@ public class TrimBarLayout extends Layout {
 	 * items to its immediate left and right so that in case the
 	 * {@link MTrimBar} must be wrapped, then the glued items stay together.
 	 */
-	public final static String GLUE = "glue"; //$NON-NLS-1$
+	public static final String GLUE = "glue"; //$NON-NLS-1$
 
 	private final boolean horizontal;
 

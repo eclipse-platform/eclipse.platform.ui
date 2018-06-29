@@ -23,24 +23,24 @@ class BookmarkSorter extends ViewerComparator {
 
     private int[] priorities;
 
-    final static int ASCENDING = 1;
+    static final int ASCENDING = 1;
 
-    final static int DESCENDING = -1;
+    static final int DESCENDING = -1;
 
-    final static int DESCRIPTION = 0;
+    static final int DESCRIPTION = 0;
 
-    final static int RESOURCE = 1;
+    static final int RESOURCE = 1;
 
-    final static int FOLDER = 2;
+    static final int FOLDER = 2;
 
-    final static int LOCATION = 3;
+    static final int LOCATION = 3;
 
-    final static int CREATION_TIME = 4;
+    static final int CREATION_TIME = 4;
 
-    final static int[] DEFAULT_PRIORITIES = { FOLDER, RESOURCE, LOCATION,
+    static final int[] DEFAULT_PRIORITIES = { FOLDER, RESOURCE, LOCATION,
             DESCRIPTION, CREATION_TIME };
 
-    final static int[] DEFAULT_DIRECTIONS = { ASCENDING, //description
+    static final int[] DEFAULT_DIRECTIONS = { ASCENDING, //description
             ASCENDING, //resource
             ASCENDING, //folder
             ASCENDING, //location

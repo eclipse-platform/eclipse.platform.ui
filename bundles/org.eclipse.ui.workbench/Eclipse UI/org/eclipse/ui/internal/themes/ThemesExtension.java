@@ -23,7 +23,7 @@ import org.eclipse.ui.internal.WorkbenchPlugin;
  *
  */
 public class ThemesExtension implements IThemesExtension {
-	public final static String DEFAULT_CATEGORY_ID = "org.eclipse.ui.themes.CssTheme"; //$NON-NLS-1$
+	public static final String DEFAULT_CATEGORY_ID = "org.eclipse.ui.themes.CssTheme"; //$NON-NLS-1$
 
 
 	private List<IThemeElementDefinitionOverridable<?>> definitions = new ArrayList<>();

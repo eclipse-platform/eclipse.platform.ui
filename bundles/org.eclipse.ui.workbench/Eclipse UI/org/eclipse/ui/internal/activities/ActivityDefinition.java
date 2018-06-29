@@ -21,9 +21,9 @@ import org.eclipse.core.expressions.Expression;
 import org.eclipse.ui.internal.util.Util;
 
 public final class ActivityDefinition implements Comparable {
-    private final static int HASH_FACTOR = 89;
+    private static final int HASH_FACTOR = 89;
 
-    private final static int HASH_INITIAL = ActivityDefinition.class.getName()
+    private static final int HASH_INITIAL = ActivityDefinition.class.getName()
             .hashCode();
 
     static Map activityDefinitionsById(Collection activityDefinitions,

@@ -31,10 +31,10 @@ import com.ibm.icu.text.SimpleDateFormat;
  * </p>
  */
 public abstract class DateConversionSupport {
-	private final static int DATE_FORMAT=DateFormat.SHORT;
-	private final static int DEFAULT_FORMATTER_INDEX=0;
+	private static final int DATE_FORMAT=DateFormat.SHORT;
+	private static final int DEFAULT_FORMATTER_INDEX=0;
 
-	private final static int NUM_VIRTUAL_FORMATTERS=1;
+	private static final int NUM_VIRTUAL_FORMATTERS=1;
 
 	/**
 	 * Alternative formatters for date, time and date/time.

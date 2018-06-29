@@ -32,7 +32,7 @@ class DataTransferWizardCollectionComparator extends ViewerComparator {
 	/**
 	 * Static instance of this class.
 	 */
-    public final static DataTransferWizardCollectionComparator INSTANCE = new DataTransferWizardCollectionComparator();
+    public static final DataTransferWizardCollectionComparator INSTANCE = new DataTransferWizardCollectionComparator();
 
     /**
      * Creates an instance of <code>DataTransferWizardCollectionSorter</code>.  Since this

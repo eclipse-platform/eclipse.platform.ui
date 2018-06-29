@@ -18,7 +18,7 @@ import org.eclipse.swt.widgets.ToolBar;
 
 public class ToolBarManagerTest extends JFaceActionTest {
 
-	private final static int DEFAULT_STYLE = SWT.WRAP | SWT.FLAT | SWT.RIGHT;
+	private static final int DEFAULT_STYLE = SWT.WRAP | SWT.FLAT | SWT.RIGHT;
 
 	public ToolBarManagerTest(String name) {
 		super(name);

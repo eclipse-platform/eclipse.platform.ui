@@ -33,7 +33,7 @@ public final class CellData {
      * to determine the control size. If modifierType is set to NONE, then the widthHint
      * and heightHint fields will be ignored.
      */
-    public final static int NONE = 0;
+    public static final int NONE = 0;
 
     /**
      * hintType flag (value = 1) indicating that the widthHint and heightHint should be used
@@ -44,7 +44,7 @@ public final class CellData {
      * its width and height hints to the default size for that control. This will cause
      * the hints to be used instead of the preferred size of the tree control.</p>
      */
-    public final static int OVERRIDE = 1;
+    public static final int OVERRIDE = 1;
 
     /**
      * hintType(value = 2) indicating that the width of the control should be no less than
@@ -56,7 +56,7 @@ public final class CellData {
      * label is too large to fit on the button.
      * </p>
      */
-    public final static int MINIMUM = 2;
+    public static final int MINIMUM = 2;
 
     /**
      * hintType flag (value = 3) indicating that the width of the control should be no more than
@@ -69,7 +69,7 @@ public final class CellData {
      * extra space in the column if the text widget does not fill an entire line.
      * </p>
      */
-    public final static int MAXIMUM = 3;
+    public static final int MAXIMUM = 3;
 
     /**
      * This flag controls how the width and height hints are to be treated. See the constants

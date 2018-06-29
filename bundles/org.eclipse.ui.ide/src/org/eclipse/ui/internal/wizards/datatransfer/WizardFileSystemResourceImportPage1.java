@@ -110,19 +110,19 @@ public class WizardFileSystemResourceImportPage1 extends WizardResourceImportPag
     private FileSystemStructureProvider fileSystemStructureProvider = new FileSystemStructureProvider();
 
     // dialog store id constants
-    private final static String STORE_SOURCE_NAMES_ID = "WizardFileSystemResourceImportPage1.STORE_SOURCE_NAMES_ID";//$NON-NLS-1$
+    private static final String STORE_SOURCE_NAMES_ID = "WizardFileSystemResourceImportPage1.STORE_SOURCE_NAMES_ID";//$NON-NLS-1$
 
-    private final static String STORE_OVERWRITE_EXISTING_RESOURCES_ID = "WizardFileSystemResourceImportPage1.STORE_OVERWRITE_EXISTING_RESOURCES_ID";//$NON-NLS-1$
+    private static final String STORE_OVERWRITE_EXISTING_RESOURCES_ID = "WizardFileSystemResourceImportPage1.STORE_OVERWRITE_EXISTING_RESOURCES_ID";//$NON-NLS-1$
 
-    private final static String STORE_CREATE_CONTAINER_STRUCTURE_ID = "WizardFileSystemResourceImportPage1.STORE_CREATE_CONTAINER_STRUCTURE_ID";//$NON-NLS-1$
+    private static final String STORE_CREATE_CONTAINER_STRUCTURE_ID = "WizardFileSystemResourceImportPage1.STORE_CREATE_CONTAINER_STRUCTURE_ID";//$NON-NLS-1$
 
-    private final static String STORE_CREATE_VIRTUAL_FOLDERS_ID = "WizardFileSystemResourceImportPage1.STORE_CREATE_VIRTUAL_FOLDERS_ID";//$NON-NLS-1$
+    private static final String STORE_CREATE_VIRTUAL_FOLDERS_ID = "WizardFileSystemResourceImportPage1.STORE_CREATE_VIRTUAL_FOLDERS_ID";//$NON-NLS-1$
 
-    private final static String STORE_CREATE_LINKS_IN_WORKSPACE_ID = "WizardFileSystemResourceImportPage1.STORE_CREATE_LINKS_IN_WORKSPACE_ID";//$NON-NLS-1$
+    private static final String STORE_CREATE_LINKS_IN_WORKSPACE_ID = "WizardFileSystemResourceImportPage1.STORE_CREATE_LINKS_IN_WORKSPACE_ID";//$NON-NLS-1$
 
-    private final static String STORE_PATH_VARIABLE_SELECTED_ID = "WizardFileSystemResourceImportPage1.STORE_PATH_VARIABLE_SELECTED_ID";//$NON-NLS-1$
+    private static final String STORE_PATH_VARIABLE_SELECTED_ID = "WizardFileSystemResourceImportPage1.STORE_PATH_VARIABLE_SELECTED_ID";//$NON-NLS-1$
 
-    private final static String STORE_PATH_VARIABLE_NAME_ID = "WizardFileSystemResourceImportPage1.STORE_PATH_VARIABLE_NAME_ID";//$NON-NLS-1$
+    private static final String STORE_PATH_VARIABLE_NAME_ID = "WizardFileSystemResourceImportPage1.STORE_PATH_VARIABLE_NAME_ID";//$NON-NLS-1$
 
     private static final String SELECT_TYPES_TITLE = DataTransferMessages.DataTransfer_selectTypes;
 

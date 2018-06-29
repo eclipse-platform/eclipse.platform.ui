@@ -19,7 +19,7 @@ import org.eclipse.e4.ui.internal.css.swt.definition.IColorDefinitionOverridable
 import org.w3c.dom.css.CSSValue;
 
 public class CSSPropertyColorDefinitionHandler implements ICSSPropertyHandler {
-	private final static String COLOR_PROP = "color";
+	private static final String COLOR_PROP = "color";
 
 	@Override
 	public boolean applyCSSProperty(Object element, String property,

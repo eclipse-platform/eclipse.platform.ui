@@ -74,7 +74,7 @@ public class ToolControlRenderer extends SWTPartRenderer {
 	 *
 	 * @see RegistryToggleState.STATE_ID
 	 */
-	public final static String STATE_ID = "org.eclipse.ui.commands.toggleState"; //$NON-NLS-1$
+	public static final String STATE_ID = "org.eclipse.ui.commands.toggleState"; //$NON-NLS-1$
 
 	@Inject
 	private MApplication application;

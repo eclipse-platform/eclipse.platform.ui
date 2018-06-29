@@ -29,7 +29,7 @@ import org.w3c.dom.css.CSSValueList;
 public class CSSPropertyPaddingSWTHandler extends
 AbstractCSSPropertyPaddingHandler {
 
-	public final static ICSSPropertyPaddingHandler INSTANCE = new CSSPropertyPaddingSWTHandler();
+	public static final ICSSPropertyPaddingHandler INSTANCE = new CSSPropertyPaddingSWTHandler();
 
 	@Override
 	public boolean applyCSSProperty(Object element, String property,

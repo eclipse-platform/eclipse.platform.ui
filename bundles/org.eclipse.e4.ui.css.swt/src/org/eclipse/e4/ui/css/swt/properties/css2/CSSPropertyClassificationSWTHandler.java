@@ -24,7 +24,7 @@ import org.w3c.dom.css.CSSValue;
 public class CSSPropertyClassificationSWTHandler extends
 AbstractCSSPropertyClassificationHandler {
 
-	public final static ICSSPropertyClassificationHandler INSTANCE = new CSSPropertyClassificationSWTHandler();
+	public static final ICSSPropertyClassificationHandler INSTANCE = new CSSPropertyClassificationSWTHandler();
 
 	@Override
 	public boolean applyCSSProperty(Object element, String property,

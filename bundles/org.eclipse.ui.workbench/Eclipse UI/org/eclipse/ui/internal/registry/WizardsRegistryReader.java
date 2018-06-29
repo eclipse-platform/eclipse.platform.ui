@@ -51,7 +51,7 @@ public class WizardsRegistryReader extends RegistryReader {
     /**
      * Examples wizard category id
      */
-    public final static String FULL_EXAMPLES_WIZARD_CATEGORY = "org.eclipse.ui.Examples";//$NON-NLS-1$
+    public static final String FULL_EXAMPLES_WIZARD_CATEGORY = "org.eclipse.ui.Examples";//$NON-NLS-1$
     /**
      * Other wizard category id
      */
@@ -63,7 +63,7 @@ public class WizardsRegistryReader extends RegistryReader {
 
     final private static String UNCATEGORIZED_WIZARD_CATEGORY_LABEL = WorkbenchMessages.NewWizardsRegistryReader_otherCategory;
 
-    private final static String CATEGORY_SEPARATOR = "/";//$NON-NLS-1$
+    private static final String CATEGORY_SEPARATOR = "/";//$NON-NLS-1$
 
     private WorkbenchWizardElement[] primaryWizards = new WorkbenchWizardElement[0];
 

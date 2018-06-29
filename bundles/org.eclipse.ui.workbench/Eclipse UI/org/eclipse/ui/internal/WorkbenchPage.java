@@ -4637,7 +4637,7 @@ public class WorkbenchPage implements IWorkbenchPage {
 		return tracker;
 	}
 
-	private final static String[] EMPTY_STRING_ARRAY = new String[0];
+	private static final String[] EMPTY_STRING_ARRAY = new String[0];
 
 	private String[] getArrayForTag(String tagPrefix) {
 		List<String> id = getCollectionForTag(tagPrefix);

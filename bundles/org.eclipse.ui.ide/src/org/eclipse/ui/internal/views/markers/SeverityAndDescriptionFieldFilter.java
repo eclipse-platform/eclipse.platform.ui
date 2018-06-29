@@ -25,9 +25,9 @@ import org.eclipse.ui.views.markers.MarkerFieldFilter;
  */
 public abstract class SeverityAndDescriptionFieldFilter extends DescriptionFieldFilter {
 
-	final static int SEVERITY_ERROR = 1 << IMarker.SEVERITY_ERROR;
-	final static int SEVERITY_WARNING = 1 << IMarker.SEVERITY_WARNING;
-	final static int SEVERITY_INFO = 1 << IMarker.SEVERITY_INFO;
+	static final int SEVERITY_ERROR = 1 << IMarker.SEVERITY_ERROR;
+	static final int SEVERITY_WARNING = 1 << IMarker.SEVERITY_WARNING;
+	static final int SEVERITY_INFO = 1 << IMarker.SEVERITY_INFO;
 	protected int selectedSeverities = SEVERITY_ERROR + SEVERITY_WARNING + SEVERITY_INFO;
 	private static final String TAG_SELECTED_SEVERITIES = "selectedSeverities"; //$NON-NLS-1$
 

@@ -24,7 +24,7 @@ import org.junit.Before;
 
 public class UITest {
 
-	final static private String engineURI = "bundleclass://org.eclipse.e4.ui.tests/org.eclipse.e4.ui.tests.application.HeadlessContextPresentationEngine"; //$NON-NLS-1$
+	static final private String engineURI = "bundleclass://org.eclipse.e4.ui.tests/org.eclipse.e4.ui.tests.application.HeadlessContextPresentationEngine"; //$NON-NLS-1$
 
 	protected IEclipseContext applicationContext;
 	protected MApplication application;

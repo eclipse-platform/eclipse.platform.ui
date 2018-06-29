@@ -28,7 +28,7 @@ public class FileSystemStructureProvider implements IImportStructureProvider {
     /**
      * Holds a singleton instance of this class.
      */
-    public final static FileSystemStructureProvider INSTANCE = new FileSystemStructureProvider();
+    public static final FileSystemStructureProvider INSTANCE = new FileSystemStructureProvider();
 
     /**
      * Creates an instance of <code>FileSystemStructureProvider</code>.

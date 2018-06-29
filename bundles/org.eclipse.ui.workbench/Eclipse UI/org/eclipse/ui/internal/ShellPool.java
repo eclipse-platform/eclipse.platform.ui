@@ -40,7 +40,7 @@ public class ShellPool {
 
     private LinkedList availableShells = new LinkedList();
 
-    private final static String CLOSE_LISTENER = "close listener"; //$NON-NLS-1$
+    private static final String CLOSE_LISTENER = "close listener"; //$NON-NLS-1$
 
     private boolean isDisposed = false;
 

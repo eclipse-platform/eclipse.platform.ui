@@ -77,12 +77,12 @@ public abstract class Binding {
 	/**
 	 * A factor for computing the hash code for all key bindings.
 	 */
-	private final static int HASH_FACTOR = 89;
+	private static final int HASH_FACTOR = 89;
 
 	/**
 	 * The seed for the hash code for all key bindings.
 	 */
-	private final static int HASH_INITIAL = Binding.class.getName().hashCode();
+	private static final int HASH_INITIAL = Binding.class.getName().hashCode();
 
 	/**
 	 * The type of binding that is defined by the system (i.e., by the

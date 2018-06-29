@@ -33,7 +33,7 @@ public class FileStoreStructureProvider implements IImportStructureProvider {
 	/**
 	 * Holds a singleton instance of this class.
 	 */
-	public final static FileStoreStructureProvider INSTANCE = new FileStoreStructureProvider();
+	public static final FileStoreStructureProvider INSTANCE = new FileStoreStructureProvider();
 
 	@Override
 	public List getChildren(Object element) {

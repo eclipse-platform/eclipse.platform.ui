@@ -72,9 +72,9 @@ public class AboutDialog extends TrayDialog {
 	 */
 	private static final String COPY_BUILD_ID_COMMAND = "org.eclipse.ui.ide.copyBuildIdCommand"; //$NON-NLS-1$
 
-	private final static int MAX_IMAGE_WIDTH_FOR_TEXT = 250;
+	private static final int MAX_IMAGE_WIDTH_FOR_TEXT = 250;
 
-    private final static int DETAILS_ID = IDialogConstants.CLIENT_ID + 1;
+    private static final int DETAILS_ID = IDialogConstants.CLIENT_ID + 1;
 
     private String productName;
 

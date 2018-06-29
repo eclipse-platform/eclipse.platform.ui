@@ -32,7 +32,7 @@ import org.w3c.dom.css.CSSValue;
 
 public class CSSPropertyBackgroundSWTHandler extends
 AbstractCSSPropertyBackgroundHandler {
-	public final static ICSSPropertyBackgroundHandler INSTANCE = new CSSPropertyBackgroundSWTHandler();
+	public static final ICSSPropertyBackgroundHandler INSTANCE = new CSSPropertyBackgroundSWTHandler();
 
 	@Override
 	public boolean applyCSSProperty(Object element, String property,

@@ -43,7 +43,7 @@ public class BindingModel extends CommonModel {
 	public static final String PROP_BINDINGS = "bindings"; //$NON-NLS-1$
 	public static final String PROP_CONFLICT_ELEMENT_MAP = "bindingConfictMap"; //$NON-NLS-1$
 
-	final static boolean deletes(final Binding del, final Binding binding) {
+	static final boolean deletes(final Binding del, final Binding binding) {
 		boolean deletes = true;
 		deletes &= Util.equals(del.getContextId(), binding.getContextId());
 		deletes &= Util.equals(del.getTriggerSequence(), binding

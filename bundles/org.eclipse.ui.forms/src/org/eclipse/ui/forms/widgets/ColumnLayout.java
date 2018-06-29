@@ -74,7 +74,7 @@ public final class ColumnLayout extends Layout implements ILayoutExtension {
 
 	private LayoutCache cache = new LayoutCache();
 
-	private final static int MIN_SIZE = -2;
+	private static final int MIN_SIZE = -2;
 
 	/**
 	 * Creates a new instance of the column layout.

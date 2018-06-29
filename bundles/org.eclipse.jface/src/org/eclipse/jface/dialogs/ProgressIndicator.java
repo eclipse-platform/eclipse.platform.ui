@@ -24,7 +24,7 @@ import org.eclipse.swt.widgets.ProgressBar;
  * advance and no <code>worked</code> method needs to be called.
  */
 public class ProgressIndicator extends Composite {
-    private final static int PROGRESS_MAX = 1000; // value to use for max in
+    private static final int PROGRESS_MAX = 1000; // value to use for max in
 
     // progress bar
     private boolean animated = true;

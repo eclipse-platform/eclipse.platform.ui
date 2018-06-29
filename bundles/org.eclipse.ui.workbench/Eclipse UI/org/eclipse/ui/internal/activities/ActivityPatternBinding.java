@@ -17,9 +17,9 @@ import org.eclipse.ui.activities.IActivityPatternBinding;
 import org.eclipse.ui.internal.util.Util;
 
 public final class ActivityPatternBinding implements IActivityPatternBinding {
-    private final static int HASH_FACTOR = 89;
+    private static final int HASH_FACTOR = 89;
 
-    private final static int HASH_INITIAL = ActivityPatternBinding.class
+    private static final int HASH_INITIAL = ActivityPatternBinding.class
             .getName().hashCode();
 
     private String activityId;

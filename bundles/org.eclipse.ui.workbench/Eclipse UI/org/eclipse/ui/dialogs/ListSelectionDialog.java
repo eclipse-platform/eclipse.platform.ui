@@ -72,9 +72,9 @@ public class ListSelectionDialog extends SelectionDialog {
     CheckboxTableViewer listViewer;
 
     // sizing constants
-    private final static int SIZING_SELECTION_WIDGET_HEIGHT = 250;
+    private static final int SIZING_SELECTION_WIDGET_HEIGHT = 250;
 
-    private final static int SIZING_SELECTION_WIDGET_WIDTH = 300;
+    private static final int SIZING_SELECTION_WIDGET_WIDTH = 300;
 
     /**
      * Creates a list selection dialog.

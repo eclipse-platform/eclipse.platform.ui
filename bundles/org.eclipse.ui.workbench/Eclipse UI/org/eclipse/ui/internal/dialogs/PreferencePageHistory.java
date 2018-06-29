@@ -159,7 +159,7 @@ class PreferencePageHistory {
 				IMenuCreator {
 			private Menu lastMenu;
 
-			protected final static int MAX_ENTRIES = 5;
+			protected static final int MAX_ENTRIES = 5;
 
 			HistoryNavigationAction() {
 				super("", IAction.AS_DROP_DOWN_MENU); //$NON-NLS-1$

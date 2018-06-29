@@ -101,7 +101,7 @@ public interface IWorkbench {
 	 *
 	 * @since 1.4
 	 */
-	public final static String APPLICATION_CONTEXT_KEY = "applicationContext"; //$NON-NLS-1$
+	public static final String APPLICATION_CONTEXT_KEY = "applicationContext"; //$NON-NLS-1$
 
 	/**
 	 * This named context parameter is used to specify whether a {@link MPart}

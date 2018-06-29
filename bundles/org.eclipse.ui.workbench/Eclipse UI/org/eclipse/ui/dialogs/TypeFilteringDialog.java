@@ -55,11 +55,11 @@ public class TypeFilteringDialog extends SelectionDialog {
     CheckboxTableViewer listViewer;
 
     // sizing constants
-    private final static int SIZING_SELECTION_WIDGET_HEIGHT = 250;
+    private static final int SIZING_SELECTION_WIDGET_HEIGHT = 250;
 
-    private final static int SIZING_SELECTION_WIDGET_WIDTH = 300;
+    private static final int SIZING_SELECTION_WIDGET_WIDTH = 300;
 
-    private final static String TYPE_DELIMITER = WorkbenchMessages.TypesFiltering_typeDelimiter;
+    private static final String TYPE_DELIMITER = WorkbenchMessages.TypesFiltering_typeDelimiter;
 
     //Define a title for the filter entry field.
     private String filterTitle = WorkbenchMessages.TypesFiltering_otherExtensions;

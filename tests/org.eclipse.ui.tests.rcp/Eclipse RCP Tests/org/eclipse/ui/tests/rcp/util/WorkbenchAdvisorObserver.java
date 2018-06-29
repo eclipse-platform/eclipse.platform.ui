@@ -39,27 +39,27 @@ public class WorkbenchAdvisorObserver extends RCPTestWorkbenchAdvisor {
 
 	private Iterator<String> iterator;
 
-    public final static String INITIALIZE = "initialize"; //$NON-NLS-1$
+    public static final String INITIALIZE = "initialize"; //$NON-NLS-1$
 
-    public final static String PRE_STARTUP = "preStartup"; //$NON-NLS-1$
+    public static final String PRE_STARTUP = "preStartup"; //$NON-NLS-1$
 
-    public final static String POST_STARTUP = "postStartup"; //$NON-NLS-1$
+    public static final String POST_STARTUP = "postStartup"; //$NON-NLS-1$
 
-    public final static String PRE_WINDOW_OPEN = "preWindowOpen"; //$NON-NLS-1$
+    public static final String PRE_WINDOW_OPEN = "preWindowOpen"; //$NON-NLS-1$
 
-    public final static String FILL_ACTION_BARS = "fillActionBars"; //$NON-NLS-1$
+    public static final String FILL_ACTION_BARS = "fillActionBars"; //$NON-NLS-1$
 
-    public final static String POST_WINDOW_RESTORE = "postWindowRestore"; //$NON-NLS-1$
+    public static final String POST_WINDOW_RESTORE = "postWindowRestore"; //$NON-NLS-1$
 
-    public final static String POST_WINDOW_OPEN = "postWindowOpen"; //$NON-NLS-1$
+    public static final String POST_WINDOW_OPEN = "postWindowOpen"; //$NON-NLS-1$
 
-    public final static String PRE_WINDOW_SHELL_CLOSE = "preWindowShellClose"; //$NON-NLS-1$
+    public static final String PRE_WINDOW_SHELL_CLOSE = "preWindowShellClose"; //$NON-NLS-1$
 
-    public final static String EVENT_LOOP_EXCEPTION = "eventLoopException"; //$NON-NLS-1$
+    public static final String EVENT_LOOP_EXCEPTION = "eventLoopException"; //$NON-NLS-1$
 
-    public final static String PRE_SHUTDOWN = "preShutdown"; //$NON-NLS-1$
+    public static final String PRE_SHUTDOWN = "preShutdown"; //$NON-NLS-1$
 
-    public final static String POST_SHUTDOWN = "postShutdown"; //$NON-NLS-1$
+    public static final String POST_SHUTDOWN = "postShutdown"; //$NON-NLS-1$
 
     public IWorkbenchConfigurer workbenchConfig;
 

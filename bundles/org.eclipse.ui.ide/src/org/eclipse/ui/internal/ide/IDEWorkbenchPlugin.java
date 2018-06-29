@@ -83,7 +83,7 @@ public class IDEWorkbenchPlugin extends AbstractUIPlugin {
 
     public static final String PL_PROJECT_NATURE_IMAGES = "projectNatureImages"; //$NON-NLS-1$
 
-	private final static String ICONS_PATH = "$nl$/icons/full/";//$NON-NLS-1$
+	private static final String ICONS_PATH = "$nl$/icons/full/";//$NON-NLS-1$
 
 	private static final int PROBLEMS_VIEW_CREATION_DELAY= 6000;
 

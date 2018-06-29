@@ -41,9 +41,9 @@ public final class AboutSystemPage extends ProductInfoPage {
 	// This id is used when the system page is opened in its own dialog
 	private static final String ID = "productInfo.system"; //$NON-NLS-1$
 
-	private final static int BROWSE_ERROR_LOG_BUTTON = IDialogConstants.CLIENT_ID;
+	private static final int BROWSE_ERROR_LOG_BUTTON = IDialogConstants.CLIENT_ID;
 
-	private final static int COPY_TO_CLIPBOARD_BUTTON = IDialogConstants.CLIENT_ID + 1;
+	private static final int COPY_TO_CLIPBOARD_BUTTON = IDialogConstants.CLIENT_ID + 1;
 
 	private Text text;
 

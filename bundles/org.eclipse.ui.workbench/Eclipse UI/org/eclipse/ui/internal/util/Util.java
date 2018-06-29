@@ -41,15 +41,15 @@ import org.eclipse.ui.internal.WorkbenchPlugin;
 
 public final class Util {
 
-    public final static SortedMap EMPTY_SORTED_MAP = Collections
+    public static final SortedMap EMPTY_SORTED_MAP = Collections
             .unmodifiableSortedMap(new TreeMap());
 
-    public final static SortedSet EMPTY_SORTED_SET = Collections
+    public static final SortedSet EMPTY_SORTED_SET = Collections
             .unmodifiableSortedSet(new TreeSet());
 
-    public final static String ZERO_LENGTH_STRING = ""; //$NON-NLS-1$
+    public static final String ZERO_LENGTH_STRING = ""; //$NON-NLS-1$
 
-    public final static String[] EMPTY_STRING_ARRAY = new String[0];
+    public static final String[] EMPTY_STRING_ARRAY = new String[0];
 
     /**
      * Ensures that a string is not null. Converts null strings into empty

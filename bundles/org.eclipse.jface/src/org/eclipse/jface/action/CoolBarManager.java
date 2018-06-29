@@ -41,7 +41,7 @@ public class CoolBarManager extends ContributionManager implements
     /**
      * A separator created by the end user.
      */
-    public final static String USER_SEPARATOR = "UserSeparator"; //$NON-NLS-1$
+    public static final String USER_SEPARATOR = "UserSeparator"; //$NON-NLS-1$
 
     /**
      * The original creation order of the contribution items.

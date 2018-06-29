@@ -22,7 +22,7 @@ public class E4Util {
 	// debug tracing
 	private static final String OPTION_DEBUG_E4 = "org.eclipse.ui.workbench/debug/e4"; //$NON-NLS-1$;
 
-	public final static boolean DEBUG_E4;
+	public static final boolean DEBUG_E4;
 
 	static {
 		WorkbenchPlugin activator = WorkbenchPlugin.getDefault();

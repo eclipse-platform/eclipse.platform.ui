@@ -70,7 +70,7 @@ public class WizardFileSystemResourceExportPage1 extends
 
     private static final String STORE_CREATE_STRUCTURE_ID = "WizardFileSystemResourceExportPage1.STORE_CREATE_STRUCTURE_ID"; //$NON-NLS-1$
 
-	private final static String STORE_RESOLVE_LINKED_RESOURCES_ID = "WizardFileSystemResourceExportPage1.STORE_RESOLVE_LINKED_RESOURCES_ID"; //$NON-NLS-1$
+	private static final String STORE_RESOLVE_LINKED_RESOURCES_ID = "WizardFileSystemResourceExportPage1.STORE_RESOLVE_LINKED_RESOURCES_ID"; //$NON-NLS-1$
 
     //messages
     private static final String SELECT_DESTINATION_MESSAGE = DataTransferMessages.FileExport_selectDestinationMessage;

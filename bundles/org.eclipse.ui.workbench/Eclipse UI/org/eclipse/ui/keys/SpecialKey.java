@@ -48,283 +48,283 @@ public final class SpecialKey extends NaturalKey {
 	 * The single static instance of <code>SpecialKey</code> which represents
 	 * the 'Arrow Down' key.
 	 */
-	public final static SpecialKey ARROW_DOWN;
+	public static final SpecialKey ARROW_DOWN;
 
 	/**
 	 * The single static instance of <code>SpecialKey</code> which represents
 	 * the 'Arrow Left' key.
 	 */
-	public final static SpecialKey ARROW_LEFT;
+	public static final SpecialKey ARROW_LEFT;
 
 	/**
 	 * The single static instance of <code>SpecialKey</code> which represents
 	 * the 'Arrow Right' key.
 	 */
-	public final static SpecialKey ARROW_RIGHT;
+	public static final SpecialKey ARROW_RIGHT;
 
 	/**
 	 * The single static instance of <code>SpecialKey</code> which represents
 	 * the 'Arrow Up' key.
 	 */
-	public final static SpecialKey ARROW_UP;
+	public static final SpecialKey ARROW_UP;
 
 	/**
 	 * The single static instance of <code>SpecialKey</code> which represents
 	 * the 'Break' key.
 	 */
-	public final static SpecialKey BREAK;
+	public static final SpecialKey BREAK;
 
 	/**
 	 * The single static instance of <code>SpecialKey</code> which represents
 	 * the 'Caps Lock' key.
 	 */
-	public final static SpecialKey CAPS_LOCK;
+	public static final SpecialKey CAPS_LOCK;
 
 	/**
 	 * The single static instance of <code>SpecialKey</code> which represents
 	 * the 'End' key.
 	 */
-	public final static SpecialKey END;
+	public static final SpecialKey END;
 
 	/**
 	 * The single static instance of <code>SpecialKey</code> which represents
 	 * the 'F1' key.
 	 */
-	public final static SpecialKey F1;
+	public static final SpecialKey F1;
 
 	/**
 	 * The single static instance of <code>SpecialKey</code> which represents
 	 * the 'F10' key.
 	 */
-	public final static SpecialKey F10;
+	public static final SpecialKey F10;
 
 	/**
 	 * The single static instance of <code>SpecialKey</code> which represents
 	 * the 'F11' key.
 	 */
-	public final static SpecialKey F11;
+	public static final SpecialKey F11;
 
 	/**
 	 * The single static instance of <code>SpecialKey</code> which represents
 	 * the 'F12' key.
 	 */
-	public final static SpecialKey F12;
+	public static final SpecialKey F12;
 
 	/**
 	 * The single static instance of <code>SpecialKey</code> which represents
 	 * the 'F13' key.
 	 */
-	public final static SpecialKey F13;
+	public static final SpecialKey F13;
 
 	/**
 	 * The single static instance of <code>SpecialKey</code> which represents
 	 * the 'F14' key.
 	 */
-	public final static SpecialKey F14;
+	public static final SpecialKey F14;
 
 	/**
 	 * The single static instance of <code>SpecialKey</code> which represents
 	 * the 'F15' key.
 	 */
-	public final static SpecialKey F15;
+	public static final SpecialKey F15;
 
 	/**
 	 * The single static instance of <code>SpecialKey</code> which represents
 	 * the 'F2' key.
 	 */
-	public final static SpecialKey F2;
+	public static final SpecialKey F2;
 
 	/**
 	 * The single static instance of <code>SpecialKey</code> which represents
 	 * the 'F3' key.
 	 */
-	public final static SpecialKey F3;
+	public static final SpecialKey F3;
 
 	/**
 	 * The single static instance of <code>SpecialKey</code> which represents
 	 * the 'F4' key.
 	 */
-	public final static SpecialKey F4;
+	public static final SpecialKey F4;
 
 	/**
 	 * The single static instance of <code>SpecialKey</code> which represents
 	 * the 'F5' key.
 	 */
-	public final static SpecialKey F5;
+	public static final SpecialKey F5;
 
 	/**
 	 * The single static instance of <code>SpecialKey</code> which represents
 	 * the 'F6' key.
 	 */
-	public final static SpecialKey F6;
+	public static final SpecialKey F6;
 
 	/**
 	 * The single static instance of <code>SpecialKey</code> which represents
 	 * the 'F7' key.
 	 */
-	public final static SpecialKey F7;
+	public static final SpecialKey F7;
 
 	/**
 	 * The single static instance of <code>SpecialKey</code> which represents
 	 * the 'F8' key.
 	 */
-	public final static SpecialKey F8;
+	public static final SpecialKey F8;
 
 	/**
 	 * The single static instance of <code>SpecialKey</code> which represents
 	 * the 'F9' key.
 	 */
-	public final static SpecialKey F9;
+	public static final SpecialKey F9;
 
 	/**
 	 * The single static instance of <code>SpecialKey</code> which represents
 	 * the 'Home' key.
 	 */
-	public final static SpecialKey HOME;
+	public static final SpecialKey HOME;
 
 	/**
 	 * The single static instance of <code>SpecialKey</code> which represents
 	 * the 'Insert' key.
 	 */
-	public final static SpecialKey INSERT;
+	public static final SpecialKey INSERT;
 
 	/**
 	 * The single static instance of <code>SpecialKey</code> which represents
 	 * the 'NumLock' key.
 	 */
-	public final static SpecialKey NUM_LOCK;
+	public static final SpecialKey NUM_LOCK;
 
 	/**
 	 * The single static instance of <code>SpecialKey</code> which represents
 	 * the '0' key on the numpad.
 	 */
-	public final static SpecialKey NUMPAD_0;
+	public static final SpecialKey NUMPAD_0;
 
 	/**
 	 * The single static instance of <code>SpecialKey</code> which represents
 	 * the '1' key on the numpad.
 	 */
-	public final static SpecialKey NUMPAD_1;
+	public static final SpecialKey NUMPAD_1;
 
 	/**
 	 * The single static instance of <code>SpecialKey</code> which represents
 	 * the '2' key on the numpad.
 	 */
-	public final static SpecialKey NUMPAD_2;
+	public static final SpecialKey NUMPAD_2;
 
 	/**
 	 * The single static instance of <code>SpecialKey</code> which represents
 	 * the '3' key on the numpad.
 	 */
-	public final static SpecialKey NUMPAD_3;
+	public static final SpecialKey NUMPAD_3;
 
 	/**
 	 * The single static instance of <code>SpecialKey</code> which represents
 	 * the '4' key on the numpad.
 	 */
-	public final static SpecialKey NUMPAD_4;
+	public static final SpecialKey NUMPAD_4;
 
 	/**
 	 * The single static instance of <code>SpecialKey</code> which represents
 	 * the '5' key on the numpad.
 	 */
-	public final static SpecialKey NUMPAD_5;
+	public static final SpecialKey NUMPAD_5;
 
 	/**
 	 * The single static instance of <code>SpecialKey</code> which represents
 	 * the '6' key on the numpad.
 	 */
-	public final static SpecialKey NUMPAD_6;
+	public static final SpecialKey NUMPAD_6;
 
 	/**
 	 * The single static instance of <code>SpecialKey</code> which represents
 	 * the '7' key on the numpad.
 	 */
-	public final static SpecialKey NUMPAD_7;
+	public static final SpecialKey NUMPAD_7;
 
 	/**
 	 * The single static instance of <code>SpecialKey</code> which represents
 	 * the '8' key on the numpad.
 	 */
-	public final static SpecialKey NUMPAD_8;
+	public static final SpecialKey NUMPAD_8;
 
 	/**
 	 * The single static instance of <code>SpecialKey</code> which represents
 	 * the '9' key on the numpad.
 	 */
-	public final static SpecialKey NUMPAD_9;
+	public static final SpecialKey NUMPAD_9;
 
 	/**
 	 * The single static instance of <code>SpecialKey</code> which represents
 	 * the 'Add' key on the numpad.
 	 */
-	public final static SpecialKey NUMPAD_ADD;
+	public static final SpecialKey NUMPAD_ADD;
 
 	/**
 	 * The single static instance of <code>SpecialKey</code> which represents
 	 * the 'Decimal' key on the numpad.
 	 */
-	public final static SpecialKey NUMPAD_DECIMAL;
+	public static final SpecialKey NUMPAD_DECIMAL;
 
 	/**
 	 * The single static instance of <code>SpecialKey</code> which represents
 	 * the 'Divide' key on the numpad.
 	 */
-	public final static SpecialKey NUMPAD_DIVIDE;
+	public static final SpecialKey NUMPAD_DIVIDE;
 
 	/**
 	 * The single static instance of <code>SpecialKey</code> which represents
 	 * the 'Enter' key on the numpad.
 	 */
-	public final static SpecialKey NUMPAD_ENTER;
+	public static final SpecialKey NUMPAD_ENTER;
 
 	/**
 	 * The single static instance of <code>SpecialKey</code> which represents
 	 * the '=' key on the numpad.
 	 */
-	public final static SpecialKey NUMPAD_EQUAL;
+	public static final SpecialKey NUMPAD_EQUAL;
 
 	/**
 	 * The single static instance of <code>SpecialKey</code> which represents
 	 * the 'Multiply' key on the numpad.
 	 */
-	public final static SpecialKey NUMPAD_MULTIPLY;
+	public static final SpecialKey NUMPAD_MULTIPLY;
 
 	/**
 	 * The single static instance of <code>SpecialKey</code> which represents
 	 * the 'Subtract' key on the numpad.
 	 */
-	public final static SpecialKey NUMPAD_SUBTRACT;
+	public static final SpecialKey NUMPAD_SUBTRACT;
 
 	/**
 	 * The single static instance of <code>SpecialKey</code> which represents
 	 * the 'Page Down' key.
 	 */
-	public final static SpecialKey PAGE_DOWN;
+	public static final SpecialKey PAGE_DOWN;
 
 	/**
 	 * The single static instance of <code>SpecialKey</code> which represents
 	 * the 'Page Up' key.
 	 */
-	public final static SpecialKey PAGE_UP;
+	public static final SpecialKey PAGE_UP;
 
 	/**
 	 * The single static instance of <code>SpecialKey</code> which represents
 	 * the 'Pause' key.
 	 */
-	public final static SpecialKey PAUSE;
+	public static final SpecialKey PAUSE;
 
 	/**
 	 * The single static instance of <code>SpecialKey</code> which represents
 	 * the 'Print Screen' key.
 	 */
-	public final static SpecialKey PRINT_SCREEN;
+	public static final SpecialKey PRINT_SCREEN;
 
 	/**
 	 * The single static instance of <code>SpecialKey</code> which represents
 	 * the 'Scroll Lock' key.
 	 */
-	public final static SpecialKey SCROLL_LOCK;
+	public static final SpecialKey SCROLL_LOCK;
 
 	static {
 		final IKeyLookup lookup = KeyLookupFactory.getDefault();

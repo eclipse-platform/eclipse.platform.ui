@@ -37,7 +37,7 @@ final class ExtensionActivityRegistry extends AbstractActivityRegistry {
 	/**
 	 * Prefix for all activity preferences
 	 */
-	private final static String PREFIX = "UIActivities."; //$NON-NLS-1$
+	private static final String PREFIX = "UIActivities."; //$NON-NLS-1$
 
     private List activityRequirementBindingDefinitions;
 

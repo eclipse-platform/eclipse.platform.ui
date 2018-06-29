@@ -59,20 +59,20 @@ public class BindingTableTests {
 	private static final String CORR_INDENT_ID = "org.eclipse.jdt.ui.correctIndentation";
 	private static final String INDENT_LINE_ID = "org.eclipse.wst.jsdt.ui.indentLine";
 
-	final static String[] CONTEXTS = { ID_DIALOG_AND_WINDOW, "DAW", null,
+	static final String[] CONTEXTS = { ID_DIALOG_AND_WINDOW, "DAW", null,
 			ID_DIALOG, "Dialog", ID_DIALOG_AND_WINDOW, ID_WINDOW, "Window",
 			ID_DIALOG_AND_WINDOW, ID_TEXT, "Text Scope", ID_WINDOW, ID_JAVA,
 			"Java scope", ID_TEXT, ID_JS, "JavaScript scope", ID_TEXT, };
-	final static String[] ORDERED_IDS = { ID_DIALOG_AND_WINDOW, ID_DIALOG,
+	static final String[] ORDERED_IDS = { ID_DIALOG_AND_WINDOW, ID_DIALOG,
 			ID_WINDOW, ID_TEXT, ID_JAVA, ID_JS, };
 
-	final static String[] COMMANDS = { COPY_ID, "Copy", CUT_ID, "Cut",
+	static final String[] COMMANDS = { COPY_ID, "Copy", CUT_ID, "Cut",
 			PASTE_ID, "Paste", REFRESH_ID, "Refresh", EXIT_ID, "Exit",
 			ABOUT_ID, "About", TAG_ID, "Word Completion", RENAME_ID, "Rename",
 			SHOW_TOOLTIP_ID, "Show Tooltip Description", CORR_INDENT_ID,
 			"Correct Indentation", INDENT_LINE_ID, "Indent Line", };
 
-	final static String[] BINDINGS = { COPY_ID, "M1+C", ID_WINDOW, CUT_ID,
+	static final String[] BINDINGS = { COPY_ID, "M1+C", ID_WINDOW, CUT_ID,
 			"M1+X", ID_WINDOW, PASTE_ID, "M1+V", ID_WINDOW, REFRESH_ID, "F5",
 			ID_DIALOG_AND_WINDOW, EXIT_ID, "CTRL+Q", ID_DIALOG_AND_WINDOW,
 			ABOUT_ID, "CTRL+5 A", ID_DIALOG_AND_WINDOW, TAG_ID, "ALT+/",

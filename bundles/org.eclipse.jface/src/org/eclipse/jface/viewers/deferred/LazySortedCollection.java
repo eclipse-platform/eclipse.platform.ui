@@ -71,13 +71,13 @@ public class LazySortedCollection {
         }
     };
 
-    private final static int DIR_LEFT = 0;
-    private final static int DIR_RIGHT = 1;
-    private final static int DIR_UNSORTED = 2;
+    private static final int DIR_LEFT = 0;
+    private static final int DIR_RIGHT = 1;
+    private static final int DIR_UNSORTED = 2;
 
     // Direction constants indicating root nodes
-    private final static int DIR_ROOT = 3;
-    private final static int DIR_UNUSED = 4;
+    private static final int DIR_ROOT = 3;
+    private static final int DIR_UNUSED = 4;
 
     private final class Edge {
         private int startNode;

@@ -70,27 +70,27 @@ public/*final*/class WorkbenchImages {
 
     /* Declare Common paths */
 
-    public final static String ICONS_PATH = "$nl$/icons/full/";//$NON-NLS-1$
+    public static final String ICONS_PATH = "$nl$/icons/full/";//$NON-NLS-1$
 
-    private final static String PATH_ETOOL = ICONS_PATH + "etool16/"; //Enabled toolbar icons.//$NON-NLS-1$
+    private static final String PATH_ETOOL = ICONS_PATH + "etool16/"; //Enabled toolbar icons.//$NON-NLS-1$
 
-    private final static String PATH_DTOOL = ICONS_PATH + "dtool16/"; //Disabled toolbar icons.//$NON-NLS-1$
+    private static final String PATH_DTOOL = ICONS_PATH + "dtool16/"; //Disabled toolbar icons.//$NON-NLS-1$
 
-    private final static String PATH_ELOCALTOOL = ICONS_PATH + "elcl16/"; //Enabled local toolbar icons.//$NON-NLS-1$
+    private static final String PATH_ELOCALTOOL = ICONS_PATH + "elcl16/"; //Enabled local toolbar icons.//$NON-NLS-1$
 
-    private final static String PATH_DLOCALTOOL = ICONS_PATH + "dlcl16/"; //Disabled local toolbar icons.//$NON-NLS-1$
+    private static final String PATH_DLOCALTOOL = ICONS_PATH + "dlcl16/"; //Disabled local toolbar icons.//$NON-NLS-1$
 
-    private final static String PATH_EVIEW = ICONS_PATH + "eview16/"; //View icons//$NON-NLS-1$
+    private static final String PATH_EVIEW = ICONS_PATH + "eview16/"; //View icons//$NON-NLS-1$
 
-	private final static String PATH_OVERLAY = ICONS_PATH + "ovr16/"; //$NON-NLS-1$
+	private static final String PATH_OVERLAY = ICONS_PATH + "ovr16/"; //$NON-NLS-1$
 
-    private final static String PATH_OBJECT = ICONS_PATH + "obj16/"; //Model object icons//$NON-NLS-1$
+    private static final String PATH_OBJECT = ICONS_PATH + "obj16/"; //Model object icons//$NON-NLS-1$
 
-    private final static String PATH_POINTER = ICONS_PATH + "pointer/"; //Pointer icons//$NON-NLS-1$
+    private static final String PATH_POINTER = ICONS_PATH + "pointer/"; //Pointer icons//$NON-NLS-1$
 
-    private final static String PATH_WIZBAN = ICONS_PATH + "wizban/"; //Wizard icons//$NON-NLS-1$
+    private static final String PATH_WIZBAN = ICONS_PATH + "wizban/"; //Wizard icons//$NON-NLS-1$
 
-	private final static String PATH_PREF = ICONS_PATH + "pref/"; // Preferences icons//$NON-NLS-1$
+	private static final String PATH_PREF = ICONS_PATH + "pref/"; // Preferences icons//$NON-NLS-1$
 
     /**
      * Declares a workbench image given the path of the image file (relative to
@@ -103,7 +103,7 @@ public/*final*/class WorkbenchImages {
      * @param shared <code>true</code> if this is a shared image, and
      * <code>false</code> if this is not a shared image
      */
-    private final static void declareImage(String key, String path,
+    private static final void declareImage(String key, String path,
             boolean shared) {
         URL url = BundleUtility.find(PlatformUI.PLUGIN_ID, path);
         ImageDescriptor desc = ImageDescriptor.createFromURL(url);
@@ -136,7 +136,7 @@ public/*final*/class WorkbenchImages {
      * Declares all the workbench's images, including both "shared" ones and
      * internal ones.
      */
-    private final static void declareImages() {
+    private static final void declareImages() {
 		// Overlays
 		declareImage(ISharedImages.IMG_DEC_FIELD_ERROR, PATH_OVERLAY + "error_ovr.png", true); //$NON-NLS-1$
 		declareImage(ISharedImages.IMG_DEC_FIELD_WARNING, PATH_OVERLAY + "warning_ovr.png", true); //$NON-NLS-1$
@@ -340,7 +340,7 @@ public/*final*/class WorkbenchImages {
      * @deprecated As of 3.0, since the workbench itself no longer uses the hover image variants
      */
     @Deprecated
-	private final static void declareHoverImages() {
+	private static final void declareHoverImages() {
         declareImage(ISharedImages.IMG_TOOL_UNDO_HOVER, PATH_ETOOL
         		+ "undo_edit.png", true); //$NON-NLS-1$
         declareImage(ISharedImages.IMG_TOOL_REDO_HOVER, PATH_ETOOL

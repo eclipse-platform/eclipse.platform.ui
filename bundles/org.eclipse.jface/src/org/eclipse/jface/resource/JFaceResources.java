@@ -55,7 +55,7 @@ public class JFaceResources {
 	/**
 	 * The path to the icons in the resources.
 	 */
-	private final static String ICONS_PATH = "$nl$/icons/full/";//$NON-NLS-1$
+	private static final String ICONS_PATH = "$nl$/icons/full/";//$NON-NLS-1$
 
 	/**
 	 * Map of Display onto DeviceResourceManager. Holds all the resources for

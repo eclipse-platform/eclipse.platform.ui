@@ -67,7 +67,7 @@ public class ResourceTransfer extends ByteArrayTransfer {
 	 * Eclipse packages), same with copy/paste of a *full* array of 10.000.000
 	 * elements.
 	 */
-	private final static int MAX_RESOURCES_TO_TRANSFER = 1000 * 1000;
+	private static final int MAX_RESOURCES_TO_TRANSFER = 1000 * 1000;
 
 	/**
 	 * Singleton instance.

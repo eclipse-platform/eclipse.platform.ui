@@ -21,9 +21,9 @@ import org.w3c.dom.css.CSSValue;
 import org.w3c.dom.css.CSSValueList;
 
 public class EclipsePreferencesHandler implements ICSSPropertyHandler {
-	public final static String PREFERENCES_PROP = "preferences";
+	public static final String PREFERENCES_PROP = "preferences";
 
-	private final static Pattern PROPERTY_NAME_AND_VALUE_PATTERN = Pattern
+	private static final Pattern PROPERTY_NAME_AND_VALUE_PATTERN = Pattern
 			.compile("(.+)\\s*=\\s*(.*)");
 
 	@Override

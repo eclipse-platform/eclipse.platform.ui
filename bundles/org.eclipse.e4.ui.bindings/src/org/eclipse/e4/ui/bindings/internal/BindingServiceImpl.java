@@ -34,8 +34,8 @@ import org.eclipse.jface.bindings.keys.ParseException;
  */
 public class BindingServiceImpl implements EBindingService {
 
-	final static String ACTIVE_CONTEXTS = "activeContexts"; //$NON-NLS-1$
-	final static String USER_TYPE = "user"; //$NON-NLS-1$
+	static final String ACTIVE_CONTEXTS = "activeContexts"; //$NON-NLS-1$
+	static final String USER_TYPE = "user"; //$NON-NLS-1$
 
 	@Inject
 	private IEclipseContext context;

@@ -28,7 +28,7 @@ public interface IContributionManagerOverrides {
      *
      * @since 2.0
      */
-    public final static String P_ENABLED = "enabled"; //$NON-NLS-1$
+    public static final String P_ENABLED = "enabled"; //$NON-NLS-1$
 
     /**
      * Find out the enablement of the item

@@ -23,7 +23,7 @@ public class PropertyMapUnion implements IPropertyMap {
 
     private Map values;
 
-    private final static class PropertyInfo {
+    private static final class PropertyInfo {
         Object value;
         boolean commonAttribute;
 

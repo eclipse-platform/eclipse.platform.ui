@@ -48,45 +48,45 @@ public final class ModifierKey extends Key {
 	 * The single static instance of <code>ModifierKey</code> which represents
 	 * the 'Alt' key.
 	 */
-	public final static ModifierKey ALT;
+	public static final ModifierKey ALT;
 
 	/**
 	 * The single static instance of <code>ModifierKey</code> which represents
 	 * the 'Command' key.
 	 */
-	public final static ModifierKey COMMAND;
+	public static final ModifierKey COMMAND;
 
 	/**
 	 * The single static instance of <code>ModifierKey</code> which represents
 	 * the 'Ctrl' key.
 	 */
-	public final static ModifierKey CTRL;
+	public static final ModifierKey CTRL;
 
 	/**
 	 * The name of the 'M1' key.
 	 */
-	private final static String M1_NAME = "M1"; //$NON-NLS-1$
+	private static final String M1_NAME = "M1"; //$NON-NLS-1$
 
 	/**
 	 * The name of the 'M2' key.
 	 */
-	private final static String M2_NAME = "M2"; //$NON-NLS-1$
+	private static final String M2_NAME = "M2"; //$NON-NLS-1$
 
 	/**
 	 * The name of the 'M3' key.
 	 */
-	private final static String M3_NAME = "M3"; //$NON-NLS-1$
+	private static final String M3_NAME = "M3"; //$NON-NLS-1$
 
 	/**
 	 * The name of the 'M4' key.
 	 */
-	private final static String M4_NAME = "M4"; //$NON-NLS-1$
+	private static final String M4_NAME = "M4"; //$NON-NLS-1$
 
 	/**
 	 * The single static instance of <code>ModifierKey</code> which represents
 	 * the 'Shift' key.
 	 */
-	public final static ModifierKey SHIFT;
+	public static final ModifierKey SHIFT;
 
 	static {
 		final IKeyLookup lookup = KeyLookupFactory.getDefault();

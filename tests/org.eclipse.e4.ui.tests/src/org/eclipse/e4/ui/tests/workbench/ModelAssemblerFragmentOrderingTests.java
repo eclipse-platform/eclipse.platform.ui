@@ -68,8 +68,8 @@ public class ModelAssemblerFragmentOrderingTests {
 	private ModelAssembler assembler;
 	private Logger logger;
 	private MToolBar toolBar;
-	private final static String MAIN_TOOLBAR_ID = "org.eclipse.e4.ui.tests.modelassembler.fragmentordering.mainWindow.mainToolBar";
-	private final static String MAIN_WINDOW_ID = "org.eclipse.e4.ui.tests.modelassembler.fragmentordering.mainWindow";
+	private static final String MAIN_TOOLBAR_ID = "org.eclipse.e4.ui.tests.modelassembler.fragmentordering.mainWindow.mainToolBar";
+	private static final String MAIN_WINDOW_ID = "org.eclipse.e4.ui.tests.modelassembler.fragmentordering.mainWindow";
 
 	@Before
 	public void setup() {

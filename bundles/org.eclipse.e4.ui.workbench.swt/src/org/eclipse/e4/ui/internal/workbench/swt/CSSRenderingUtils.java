@@ -45,9 +45,9 @@ public class CSSRenderingUtils {
 
 	private static final String DRAG_HANDLE = "org.eclipse.e4.ui.workbench.swt.DRAG_HANDLE";
 
-	private final static String FRAME_IMAGE_PROP = "frame-image";
+	private static final String FRAME_IMAGE_PROP = "frame-image";
 
-	private final static String HANDLE_IMAGE_PROP = "handle-image";
+	private static final String HANDLE_IMAGE_PROP = "handle-image";
 
 	// NOTE: The CSS engine 'owns' the image it returns (it caches it)
 	// so we have to cache any rotated versions to match

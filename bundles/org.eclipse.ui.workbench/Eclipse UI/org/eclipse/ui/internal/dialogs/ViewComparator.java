@@ -21,7 +21,7 @@ import org.eclipse.ui.internal.WorkbenchMessages;
  */
 public class ViewComparator extends ViewerComparator {
 
-	private final static String EMPTY_STRING = ""; //$NON-NLS-1$
+	private static final String EMPTY_STRING = ""; //$NON-NLS-1$
 
 	/**
 	 * Returns a negative, zero, or positive number depending on whether the

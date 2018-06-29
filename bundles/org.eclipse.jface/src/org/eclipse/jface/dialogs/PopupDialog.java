@@ -203,41 +203,41 @@ public class PopupDialog extends Window {
 	 * Shell style appropriate for a simple hover popup that cannot get focus.
 	 *
 	 */
-	public final static int HOVER_SHELLSTYLE = SWT.NO_FOCUS | SWT.ON_TOP | SWT.TOOL;
+	public static final int HOVER_SHELLSTYLE = SWT.NO_FOCUS | SWT.ON_TOP | SWT.TOOL;
 
 	/**
 	 * Shell style appropriate for an info popup that can get focus.
 	 */
-	public final static int INFOPOPUP_SHELLSTYLE = SWT.TOOL;
+	public static final int INFOPOPUP_SHELLSTYLE = SWT.TOOL;
 
 	/**
 	 * Shell style appropriate for a resizable info popup that can get focus.
 	 */
-	public final static int INFOPOPUPRESIZE_SHELLSTYLE = SWT.RESIZE;
+	public static final int INFOPOPUPRESIZE_SHELLSTYLE = SWT.RESIZE;
 
 	/**
 	 * Margin width (in pixels) to be used in layouts inside popup dialogs
 	 * (value is 0).
 	 */
-	public final static int POPUP_MARGINWIDTH = 0;
+	public static final int POPUP_MARGINWIDTH = 0;
 
 	/**
 	 * Margin height (in pixels) to be used in layouts inside popup dialogs
 	 * (value is 0).
 	 */
-	public final static int POPUP_MARGINHEIGHT = 0;
+	public static final int POPUP_MARGINHEIGHT = 0;
 
 	/**
 	 * Vertical spacing (in pixels) between cells in the layouts inside popup
 	 * dialogs (value is 1).
 	 */
-	public final static int POPUP_VERTICALSPACING = 1;
+	public static final int POPUP_VERTICALSPACING = 1;
 
 	/**
 	 * Vertical spacing (in pixels) between cells in the layouts inside popup
 	 * dialogs (value is 1).
 	 */
-	public final static int POPUP_HORIZONTALSPACING = 1;
+	public static final int POPUP_HORIZONTALSPACING = 1;
 
 	/**
 	 * Image registry key for menu image.

@@ -30,7 +30,7 @@ import org.eclipse.core.commands.common.AbstractBitSetEvent;
  */
 public final class BindingManagerEvent extends AbstractBitSetEvent {
 
-	private final static TriggerSequence[] EMTPY_SEQUENCE = new TriggerSequence[0];
+	private static final TriggerSequence[] EMTPY_SEQUENCE = new TriggerSequence[0];
 
 	/**
 	 * The bit used to represent whether the map of active bindings has changed.

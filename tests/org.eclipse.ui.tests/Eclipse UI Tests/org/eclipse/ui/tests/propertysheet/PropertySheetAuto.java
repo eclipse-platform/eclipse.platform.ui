@@ -67,17 +67,17 @@ public class PropertySheetAuto extends UITestCase {
         private double engineSize = 0.0;
 
         // property ids
-        private final static String prefix = "org.eclipse.ui.tests.standardcomponents.propertysheetauto.";
+        private static final String prefix = "org.eclipse.ui.tests.standardcomponents.propertysheetauto.";
 
-        private final static String MODEL_YEAR = prefix + "modelyear";
+        private static final String MODEL_YEAR = prefix + "modelyear";
 
-        private final static String COLOR = prefix + "color";
+        private static final String COLOR = prefix + "color";
 
-        private final static String MANUFACTURER = prefix + "manufacturer";
+        private static final String MANUFACTURER = prefix + "manufacturer";
 
-        private final static String MODEL = prefix + "model";
+        private static final String MODEL = prefix + "model";
 
-        private final static String ENGINE_SIZE = prefix + "enginesize";
+        private static final String ENGINE_SIZE = prefix + "enginesize";
 
         private IPropertyDescriptor[] descriptors;
 

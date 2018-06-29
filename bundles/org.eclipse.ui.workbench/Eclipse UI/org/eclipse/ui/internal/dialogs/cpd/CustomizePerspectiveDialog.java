@@ -165,9 +165,9 @@ public class CustomizePerspectiveDialog extends TrayDialog {
 
 	private TabFolder tabFolder;
 
-	private final static int TAB_WIDTH_IN_DLUS = 490;
+	private static final int TAB_WIDTH_IN_DLUS = 490;
 
-	private final static int TAB_HEIGHT_IN_DLUS = 230;
+	private static final int TAB_HEIGHT_IN_DLUS = 230;
 
 	private final String shortcutMenuColumnHeaders[] = {
 			WorkbenchMessages.ActionSetSelection_menuColumnHeader,

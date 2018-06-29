@@ -56,27 +56,27 @@ public class ImportTypeDialog extends TrayDialog {
 	/**
 	 * Copy the files and folders to the destination
 	 */
-	public final static int IMPORT_COPY 			= 1;
+	public static final int IMPORT_COPY 			= 1;
 	/**
 	 * Import only files
 	 */
-	public final static int IMPORT_FILES_ONLY		= 16;
+	public static final int IMPORT_FILES_ONLY		= 16;
 	/**
 	 * Create linked resources for each file and folder
 	 */
-	public final static int IMPORT_LINK 			= 4;
+	public static final int IMPORT_LINK 			= 4;
 	/**
 	 * Move the files and folders to the destination
 	 */
-	public final static int IMPORT_MOVE 			= 8;
+	public static final int IMPORT_MOVE 			= 8;
 	/**
 	 * Do not perform an import operation
 	 */
-	public final static int IMPORT_NONE 			= 0;
+	public static final int IMPORT_NONE 			= 0;
 	/**
 	 * Recreate the file and folder hierarchy using groups and links
 	 */
-	public final static int IMPORT_VIRTUAL_FOLDERS_AND_LINKS = 2;
+	public static final int IMPORT_VIRTUAL_FOLDERS_AND_LINKS = 2;
 
 	private Button copyButton = null;
 

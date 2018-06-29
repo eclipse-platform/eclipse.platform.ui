@@ -154,7 +154,7 @@ public class PathVariablesGroup {
     // If null, the workspace variables are being edited instead.
     private IResource currentResource = null;
 
-    private final static String PARENT_VARIABLE_NAME = "PARENT"; //$NON-NLS-1$
+    private static final String PARENT_VARIABLE_NAME = "PARENT"; //$NON-NLS-1$
 
 	/**
      * Creates a new PathVariablesGroup.

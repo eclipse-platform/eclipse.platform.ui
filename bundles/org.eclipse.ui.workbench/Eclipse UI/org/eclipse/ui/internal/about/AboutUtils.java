@@ -41,7 +41,7 @@ import org.eclipse.ui.statushandlers.StatusManager;
 
 public class AboutUtils {
 
-	private final static String ERROR_LOG_COPY_FILENAME = "log"; //$NON-NLS-1$
+	private static final String ERROR_LOG_COPY_FILENAME = "log"; //$NON-NLS-1$
 
 	/**
 	 * Scan the contents of the about text

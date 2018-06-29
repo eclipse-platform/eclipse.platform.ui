@@ -43,12 +43,12 @@ public class MarkerResolutionSelectionDialog extends SelectionDialog {
     /**
      * List width in characters.
      */
-    private final static int LIST_WIDTH = 60;
+    private static final int LIST_WIDTH = 60;
 
     /**
      * List height in characters.
      */
-    private final static int LIST_HEIGHT = 10;
+    private static final int LIST_HEIGHT = 10;
 
     /**
      * The marker resolutions.

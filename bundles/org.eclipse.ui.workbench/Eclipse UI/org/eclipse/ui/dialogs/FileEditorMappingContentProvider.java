@@ -29,7 +29,7 @@ public class FileEditorMappingContentProvider implements IStructuredContentProvi
     /**
      * Singleton instance accessor.
      */
-    public final static FileEditorMappingContentProvider INSTANCE = new FileEditorMappingContentProvider();
+    public static final FileEditorMappingContentProvider INSTANCE = new FileEditorMappingContentProvider();
 
     /**
      * Creates an instance of this class.  The private visibility of this

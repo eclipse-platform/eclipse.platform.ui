@@ -38,7 +38,7 @@ public class ArbitraryPropertyTest extends UITestCase {
 	 */
 	private static final String USER_PROP = "org.eclipse.ui.test.user";
 
-	final static String VIEW_ID = "org.eclipse.ui.tests.workbenchpart.OverriddenTitleView";
+	static final String VIEW_ID = "org.eclipse.ui.tests.workbenchpart.OverriddenTitleView";
 
 	/**
 	 * @param testName

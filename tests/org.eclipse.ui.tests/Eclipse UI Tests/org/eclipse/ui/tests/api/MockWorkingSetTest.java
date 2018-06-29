@@ -20,11 +20,11 @@ import org.eclipse.ui.internal.registry.WorkingSetRegistry;
  * Tests the WorkingSetDescriptor and WorkingSetRegistry.
  */
 public class MockWorkingSetTest extends TestCase {
-    final static String WORKING_SET_ID = "org.eclipse.ui.tests.api.MockWorkingSet";
+    static final String WORKING_SET_ID = "org.eclipse.ui.tests.api.MockWorkingSet";
 
-    final static String WORKING_SET_NAME = "Mock Working Set";
+    static final String WORKING_SET_NAME = "Mock Working Set";
 
-    final static String WORKING_SET_PAGE_CLASS_NAME = "org.eclipse.ui.tests.api.MockWorkingSetPage";
+    static final String WORKING_SET_PAGE_CLASS_NAME = "org.eclipse.ui.tests.api.MockWorkingSetPage";
 
     WorkingSetRegistry fRegistry;
 

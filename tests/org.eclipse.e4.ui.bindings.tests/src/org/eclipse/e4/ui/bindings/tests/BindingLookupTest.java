@@ -50,7 +50,7 @@ public class BindingLookupTest {
 	private static final String ID_JAVA = "org.eclipse.jdt.ui.javaScope";
 	private static final String ID_JS = "org.eclipse.wst.jsdt.ui.javaScriptScope";
 
-	final static String[] CONTEXTS = { ID_DIALOG_AND_WINDOW, "DAW", null,
+	static final String[] CONTEXTS = { ID_DIALOG_AND_WINDOW, "DAW", null,
 			ID_DIALOG, "Dialog", ID_DIALOG_AND_WINDOW, ID_WINDOW, "Window",
 			ID_DIALOG_AND_WINDOW, ID_TEXT, "Text Scope", ID_WINDOW, ID_JAVA,
 			"Java scope", ID_TEXT, ID_JS, "JavaScript scope", ID_TEXT, };

@@ -19,7 +19,7 @@ import org.eclipse.jface.viewers.ViewerComparator;
  */
 public class ViewComparator extends ViewerComparator {
 
-	private final static String EMPTY_STRING = "";
+	private static final String EMPTY_STRING = "";
 
 	/**
 	 * ViewSorter constructor comment.

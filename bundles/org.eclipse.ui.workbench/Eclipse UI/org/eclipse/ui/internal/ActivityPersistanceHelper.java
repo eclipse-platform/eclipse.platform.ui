@@ -37,7 +37,7 @@ final class ActivityPersistanceHelper {
     /**
      * Prefix for all activity preferences
      */
-    protected final static String PREFIX = "UIActivities."; //$NON-NLS-1$
+    protected static final String PREFIX = "UIActivities."; //$NON-NLS-1$
 
     /**
      * Singleton instance.

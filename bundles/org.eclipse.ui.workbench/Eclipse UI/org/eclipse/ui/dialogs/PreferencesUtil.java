@@ -37,7 +37,7 @@ public final class PreferencesUtil {
 	 * Constant denoting no option.
 	 * @since 3.5
 	 */
-	public final static int OPTION_NONE = 0;
+	public static final int OPTION_NONE = 0;
 
 	/**
 	 * Constant for configuring a preferences or properties dialog in which the
@@ -48,7 +48,7 @@ public final class PreferencesUtil {
 	 * .
 	 * @since 3.5
 	 */
-	public final static int OPTION_FILTER_LOCKED = 1;
+	public static final int OPTION_FILTER_LOCKED = 1;
 
 	/**
 	 * Apply the data to the first page if there is any.

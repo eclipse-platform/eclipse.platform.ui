@@ -28,7 +28,7 @@ import org.w3c.dom.css.CSSValue;
 public class CSSPropertyBorderSWTHandler extends
 		AbstractCSSPropertyBorderHandler implements ICSSPropertyHandler2 {
 
-	public final static ICSSPropertyBorderHandler INSTANCE = new CSSPropertyBorderSWTHandler();
+	public static final ICSSPropertyBorderHandler INSTANCE = new CSSPropertyBorderSWTHandler();
 
 	@Override
 	public boolean applyCSSProperty(Object element, String property,

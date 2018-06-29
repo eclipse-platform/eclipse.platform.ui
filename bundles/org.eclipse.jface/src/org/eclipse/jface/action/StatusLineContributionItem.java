@@ -33,7 +33,7 @@ import org.eclipse.jface.util.Util;
  */
 public class StatusLineContributionItem extends ContributionItem {
 
-	private final static int DEFAULT_CHAR_WIDTH = 40;
+	private static final int DEFAULT_CHAR_WIDTH = 40;
 
 	/**
 	 * A constant indicating that the contribution should compute its actual
@@ -42,7 +42,7 @@ public class StatusLineContributionItem extends ContributionItem {
 	 *
 	 * @since 3.6
 	 */
-	public final static int CALC_TRUE_WIDTH = -1;
+	public static final int CALC_TRUE_WIDTH = -1;
 
 	private int charWidth;
 

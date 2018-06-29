@@ -22,12 +22,12 @@ import org.eclipse.ui.activities.IdentifierEvent;
 import org.eclipse.ui.internal.util.Util;
 
 final class Identifier implements IIdentifier {
-    private final static int HASH_FACTOR = 89;
+    private static final int HASH_FACTOR = 89;
 
-    private final static int HASH_INITIAL = Identifier.class.getName()
+    private static final int HASH_INITIAL = Identifier.class.getName()
             .hashCode();
 
-	private final static Set<Identifier> strongReferences = new HashSet<>();
+	private static final Set<Identifier> strongReferences = new HashSet<>();
 
 	private Set<String> activityIds = Collections.emptySet();
 

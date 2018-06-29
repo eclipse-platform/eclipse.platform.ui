@@ -83,7 +83,7 @@ import org.eclipse.ui.internal.util.Util;
  */
 public class EditorRegistry extends EventManager implements IEditorRegistry, IExtensionChangeHandler {
 
-	private final static IEditorDescriptor [] EMPTY = new IEditorDescriptor[0];
+	private static final IEditorDescriptor [] EMPTY = new IEditorDescriptor[0];
 
 	class RelatedRegistry {
 

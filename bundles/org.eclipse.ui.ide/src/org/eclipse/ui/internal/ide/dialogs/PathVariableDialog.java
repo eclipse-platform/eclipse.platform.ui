@@ -157,19 +157,19 @@ public class PathVariableDialog extends TitleAreaDialog {
      * Constant for defining this dialog as intended to create a new variable
      * (value = 1).
      */
-    public final static int NEW_VARIABLE = 1;
+    public static final int NEW_VARIABLE = 1;
 
     /**
      * Constant for defining this dialog as intended to edit an existing
      * variable (value = 2).
      */
-    public final static int EXISTING_VARIABLE = 2;
+    public static final int EXISTING_VARIABLE = 2;
 
     /**
      * Constant for defining this dialog as intended to edit an existing link
      * location (value = 3).
      */
-    public final static int EDIT_LINK_LOCATION = 3;
+    public static final int EDIT_LINK_LOCATION = 3;
 
     private IResource currentResource = null;
 

@@ -47,7 +47,7 @@ public class TabDescriptor extends AbstractTabDescriptor {
 
 	private static final String ATT_AFTER_TAB = "afterTab"; //$NON-NLS-1$
 
-	private final static String TAB_ERROR = TabbedPropertyMessages.TabDescriptor_Tab_error;
+	private static final String TAB_ERROR = TabbedPropertyMessages.TabDescriptor_Tab_error;
 
 	private String id;
 

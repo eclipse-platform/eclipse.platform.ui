@@ -22,7 +22,7 @@ public interface IServiceConstants {
 	* This value can be <code>null</code> if there is no selection
 	* </p>
 	*/
-	public final static String ACTIVE_SELECTION = "org.eclipse.ui.selection"; //$NON-NLS-1$
+	public static final String ACTIVE_SELECTION = "org.eclipse.ui.selection"; //$NON-NLS-1$
 
 	/**
 	 * Due to the possibly misleading nature of this field's name, it has been
@@ -32,7 +32,7 @@ public interface IServiceConstants {
 	 * @noreference This field is not intended to be referenced by clients.
 	 */
 	@Deprecated
-	public final static String SELECTION = ACTIVE_SELECTION;
+	public static final String SELECTION = ACTIVE_SELECTION;
 
 	/**
 	 * The set of the contexts that are currently active.

@@ -35,12 +35,12 @@ public class Category implements IWorkbenchAdapter, IPluginContribution, IAdapta
     /**
      * Name of the miscellaneous category
      */
-    public final static String MISC_NAME = WorkbenchMessages.ICategory_other;
+    public static final String MISC_NAME = WorkbenchMessages.ICategory_other;
 
     /**
      * Identifier of the miscellaneous category
      */
-    public final static String MISC_ID = "org.eclipse.ui.internal.otherCategory"; //$NON-NLS-1$
+    public static final String MISC_ID = "org.eclipse.ui.internal.otherCategory"; //$NON-NLS-1$
 
     private String id;
 

@@ -16,9 +16,9 @@ import org.eclipse.ui.internal.util.Util;
 
 public final class ActivityRequirementBinding implements
         IActivityRequirementBinding {
-    private final static int HASH_FACTOR = 89;
+    private static final int HASH_FACTOR = 89;
 
-    private final static int HASH_INITIAL = ActivityRequirementBinding.class
+    private static final int HASH_INITIAL = ActivityRequirementBinding.class
             .getName().hashCode();
 
     private String requiredActivityId;

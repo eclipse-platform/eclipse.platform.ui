@@ -30,11 +30,11 @@ implements ISelectionBackgroundCustomizationElement, IHeaderCustomizationElement
 
 	private static boolean showedUnsupportedWarning = false;
 
-	private final static String TREE_ARROWS_FOREGROUND_COLOR = "org.eclipse.e4.ui.css.swt.treeArrowsForegroundColor"; //$NON-NLS-1$
-	private final static String TREE_ARROWS_MODE = "org.eclipse.e4.ui.css.swt.treeArrowsMode"; //$NON-NLS-1$
+	private static final String TREE_ARROWS_FOREGROUND_COLOR = "org.eclipse.e4.ui.css.swt.treeArrowsForegroundColor"; //$NON-NLS-1$
+	private static final String TREE_ARROWS_MODE = "org.eclipse.e4.ui.css.swt.treeArrowsMode"; //$NON-NLS-1$
 
-	private final static String TREE_ARROWS_MODE_TRIANGLE = "triangle"; //$NON-NLS-1$
-	private final static String TREE_ARROWS_MODE_SQUARE = "square"; //$NON-NLS-1$
+	private static final String TREE_ARROWS_MODE_TRIANGLE = "triangle"; //$NON-NLS-1$
+	private static final String TREE_ARROWS_MODE_SQUARE = "square"; //$NON-NLS-1$
 
 	private static abstract class TreeItemPaintListener implements Listener {
 		@Override

@@ -36,12 +36,12 @@ public final class ActionHandler extends AbstractHandler {
      * indicates whether the action should be displayed with as a checked check
      * box.
      */
-    private final static String ATTRIBUTE_CHECKED = "checked"; //$NON-NLS-1$
+    private static final String ATTRIBUTE_CHECKED = "checked"; //$NON-NLS-1$
 
     /**
      * The attribute name for the enabled property of the wrapped action.
      */
-    private final static String ATTRIBUTE_ENABLED = "enabled"; //$NON-NLS-1$
+    private static final String ATTRIBUTE_ENABLED = "enabled"; //$NON-NLS-1$
 
     /**
      * <p>
@@ -49,20 +49,20 @@ public final class ActionHandler extends AbstractHandler {
      * <code>RetargetAction</code> has a handler.
      * </p>
      */
-    private final static String ATTRIBUTE_HANDLED = IHandlerAttributes.ATTRIBUTE_HANDLED;
+    private static final String ATTRIBUTE_HANDLED = IHandlerAttributes.ATTRIBUTE_HANDLED;
 
     /**
      * The attribute name for the identifier of the wrapped action. This is the
      * action identifier, and not the command identifier.
      */
-    private final static String ATTRIBUTE_ID = "id"; //$NON-NLS-1$
+    private static final String ATTRIBUTE_ID = "id"; //$NON-NLS-1$
 
     /**
      * The attribute name for the visual style of the wrapped action. The style
      * can be things like a pull-down menu, a check box, a radio button or a
      * push button.
      */
-    private final static String ATTRIBUTE_STYLE = "style"; //$NON-NLS-1$
+    private static final String ATTRIBUTE_STYLE = "style"; //$NON-NLS-1$
 
     /**
      * The wrapped action. This value is never <code>null</code>.

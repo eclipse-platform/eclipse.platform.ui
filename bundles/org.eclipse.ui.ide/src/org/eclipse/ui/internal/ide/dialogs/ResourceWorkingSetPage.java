@@ -71,9 +71,9 @@ import org.eclipse.ui.model.WorkbenchLabelProvider;
  */
 public class ResourceWorkingSetPage extends WizardPage implements
         IWorkingSetPage {
-    private final static int SIZING_SELECTION_WIDGET_WIDTH = 50;
+    private static final int SIZING_SELECTION_WIDGET_WIDTH = 50;
 
-    private final static int SIZING_SELECTION_WIDGET_HEIGHT = 200;
+    private static final int SIZING_SELECTION_WIDGET_HEIGHT = 200;
 
     private Text text;
 

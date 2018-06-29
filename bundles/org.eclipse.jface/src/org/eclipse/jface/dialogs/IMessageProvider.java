@@ -24,22 +24,22 @@ public interface IMessageProvider {
      * icon.
      * </p>
      */
-    public final static int NONE = 0;
+    public static final int NONE = 0;
 
     /**
      * Constant for an info message (value 1).
      */
-    public final static int INFORMATION = 1;
+    public static final int INFORMATION = 1;
 
     /**
      * Constant for a warning message (value 2).
      */
-    public final static int WARNING = 2;
+    public static final int WARNING = 2;
 
     /**
      * Constant for an error message (value 3).
      */
-    public final static int ERROR = 3;
+    public static final int ERROR = 3;
 
     /**
      * Returns the current message for this message provider.

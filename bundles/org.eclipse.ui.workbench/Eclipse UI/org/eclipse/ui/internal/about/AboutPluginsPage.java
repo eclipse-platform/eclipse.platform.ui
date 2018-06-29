@@ -224,9 +224,9 @@ public class AboutPluginsPage extends ProductInfoPage {
 	 */
 	private static final int TABLE_HEIGHT = 200;
 
-	private final static int MORE_ID = IDialogConstants.CLIENT_ID + 1;
-	private final static int SIGNING_ID = MORE_ID + 1;
-	private final static int COLUMNS_ID = MORE_ID + 2;
+	private static final int MORE_ID = IDialogConstants.CLIENT_ID + 1;
+	private static final int SIGNING_ID = MORE_ID + 1;
+	private static final int COLUMNS_ID = MORE_ID + 2;
 
 	private static final IPath baseNLPath = new Path("$nl$"); //$NON-NLS-1$
 

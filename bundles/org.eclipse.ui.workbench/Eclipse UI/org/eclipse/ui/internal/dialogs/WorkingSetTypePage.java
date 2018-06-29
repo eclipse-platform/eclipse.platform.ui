@@ -44,9 +44,9 @@ import org.eclipse.ui.internal.registry.WorkingSetDescriptor;
  * @since 2.0
  */
 public class WorkingSetTypePage extends WizardPage {
-    private final static int SIZING_SELECTION_WIDGET_WIDTH = 50;
+    private static final int SIZING_SELECTION_WIDGET_WIDTH = 50;
 
-    private final static int SIZING_SELECTION_WIDGET_HEIGHT = 200;
+    private static final int SIZING_SELECTION_WIDGET_HEIGHT = 200;
 
     private TableViewer typesListViewer;
 

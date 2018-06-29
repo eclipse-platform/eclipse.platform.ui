@@ -21,8 +21,8 @@ import org.eclipse.ui.IMemento;
  */
 public class TestResults {
 	private Map<String, TestResultFilter> results = new HashMap<>();
-    private final static String ATT_NAME = "name";
-    private final static String ATT_TEST = "test";
+    private static final String ATT_NAME = "name";
+    private static final String ATT_TEST = "test";
 
     public TestResults() {
     }

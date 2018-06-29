@@ -36,7 +36,7 @@ public class PreferenceManager {
     /**
      * The id of the root node.
      */
-    private final static String ROOT_NODE_ID = ""; //$NON-NLS-1$
+    private static final String ROOT_NODE_ID = ""; //$NON-NLS-1$
 
     /**
      * The root node.

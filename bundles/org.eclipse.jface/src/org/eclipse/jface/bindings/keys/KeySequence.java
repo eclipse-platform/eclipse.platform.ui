@@ -50,7 +50,7 @@ public final class KeySequence extends TriggerSequence implements Comparable {
 	/**
 	 * An empty key sequence instance for use by everyone.
 	 */
-	private final static KeySequence EMPTY_KEY_SEQUENCE = new KeySequence(
+	private static final KeySequence EMPTY_KEY_SEQUENCE = new KeySequence(
 			new KeyStroke[0]);
 
 	/**
@@ -58,13 +58,13 @@ public final class KeySequence extends TriggerSequence implements Comparable {
 	 * expressed in the formal key stroke grammar. This is not to be displayed
 	 * to the user. It is only intended as an internal representation.
 	 */
-	public final static String KEY_STROKE_DELIMITER = "\u0020"; //$NON-NLS-1$
+	public static final String KEY_STROKE_DELIMITER = "\u0020"; //$NON-NLS-1$
 
 	/**
 	 * The set of delimiters for <code>KeyStroke</code> objects allowed during
 	 * parsing of the formal string representation.
 	 */
-	public final static String KEY_STROKE_DELIMITERS = KEY_STROKE_DELIMITER
+	public static final String KEY_STROKE_DELIMITERS = KEY_STROKE_DELIMITER
 			+ "\b\r\u007F\u001B\f\n\0\t\u000B"; //$NON-NLS-1$
 
 	/**

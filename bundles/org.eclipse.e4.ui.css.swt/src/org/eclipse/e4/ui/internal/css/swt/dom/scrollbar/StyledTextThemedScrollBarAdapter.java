@@ -39,7 +39,7 @@ public class StyledTextThemedScrollBarAdapter extends AbstractThemedScrollBarAda
 
 	private final int fInitialBottomMargin;
 
-	private final static boolean isWindowsOS = Platform.OS_WIN32.equals(Platform.getOS());
+	private static final boolean isWindowsOS = Platform.OS_WIN32.equals(Platform.getOS());
 
 	public StyledTextThemedScrollBarAdapter(StyledText styledText) {
 		this(styledText, new ScrollBarSettings());

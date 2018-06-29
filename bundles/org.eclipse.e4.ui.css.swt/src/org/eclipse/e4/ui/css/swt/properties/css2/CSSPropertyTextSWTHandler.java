@@ -30,7 +30,7 @@ import org.w3c.dom.css.CSSValue;
 
 public class CSSPropertyTextSWTHandler extends AbstractCSSPropertyTextHandler {
 
-	public final static ICSSPropertyTextHandler INSTANCE = new CSSPropertyTextSWTHandler();
+	public static final ICSSPropertyTextHandler INSTANCE = new CSSPropertyTextSWTHandler();
 
 	@Override
 	public boolean applyCSSProperty(Object element, String property,

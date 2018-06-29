@@ -64,7 +64,7 @@ public class TitleAreaDialog extends TrayDialog {
 	 * @deprecated
 	 */
 	@Deprecated
-	public final static String INFO_MESSAGE = "INFO_MESSAGE"; //$NON-NLS-1$
+	public static final String INFO_MESSAGE = "INFO_MESSAGE"; //$NON-NLS-1$
 
 	/**
 	 * Message type constant used to display a warning icon with the message.
@@ -73,7 +73,7 @@ public class TitleAreaDialog extends TrayDialog {
 	 * @deprecated
 	 */
 	@Deprecated
-	public final static String WARNING_MESSAGE = "WARNING_MESSAGE"; //$NON-NLS-1$
+	public static final String WARNING_MESSAGE = "WARNING_MESSAGE"; //$NON-NLS-1$
 
 	// Space between an image and a label
 	private static final int H_GAP_IMAGE = 5;

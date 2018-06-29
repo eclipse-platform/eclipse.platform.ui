@@ -39,7 +39,7 @@ public class NavigatorUIPluginImages {
 	private static URL fgIconLocation;
 
 	// Create image registry
-	private final static ImageRegistry NAVIGATORUIPLUGIN_REGISTRY = NavigatorPlugin.getDefault().getImageRegistry();
+	private static final ImageRegistry NAVIGATORUIPLUGIN_REGISTRY = NavigatorPlugin.getDefault().getImageRegistry();
 
 	// Create the icon location
 	static {

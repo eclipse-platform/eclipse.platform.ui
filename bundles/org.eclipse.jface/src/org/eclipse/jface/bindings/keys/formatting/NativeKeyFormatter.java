@@ -36,24 +36,24 @@ public final class NativeKeyFormatter extends AbstractKeyFormatter {
 	 * The key into the internationalization resource bundle for the delimiter
 	 * to use between keys (on the Carbon platform).
 	 */
-	private final static String CARBON_KEY_DELIMITER_KEY = "CARBON_KEY_DELIMITER"; //$NON-NLS-1$
+	private static final String CARBON_KEY_DELIMITER_KEY = "CARBON_KEY_DELIMITER"; //$NON-NLS-1$
 
 	/**
 	 * A look-up table for the string representations of various carbon keys.
 	 */
-	private final static HashMap<String, String> CARBON_KEY_LOOK_UP = new HashMap<>();
+	private static final HashMap<String, String> CARBON_KEY_LOOK_UP = new HashMap<>();
 
 	/**
 	 * The resource bundle used by <code>format()</code> to translate formal
 	 * string representations by locale.
 	 */
-	private final static ResourceBundle RESOURCE_BUNDLE;
+	private static final ResourceBundle RESOURCE_BUNDLE;
 
 	/**
 	 * The key into the internationalization resource bundle for the delimiter
 	 * to use between key strokes (on the Win32 platform).
 	 */
-	private final static String WIN32_KEY_STROKE_DELIMITER_KEY = "WIN32_KEY_STROKE_DELIMITER"; //$NON-NLS-1$
+	private static final String WIN32_KEY_STROKE_DELIMITER_KEY = "WIN32_KEY_STROKE_DELIMITER"; //$NON-NLS-1$
 
 	static {
 		RESOURCE_BUNDLE = ResourceBundle.getBundle(NativeKeyFormatter.class

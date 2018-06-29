@@ -40,7 +40,7 @@ public class Theme extends EventManager implements ITheme {
     /**
      * The translation bundle in which to look up internationalized text.
      */
-    private final static ResourceBundle RESOURCE_BUNDLE = ResourceBundle
+    private static final ResourceBundle RESOURCE_BUNDLE = ResourceBundle
             .getBundle(Theme.class.getName());
 
     private CascadingColorRegistry themeColorRegistry;

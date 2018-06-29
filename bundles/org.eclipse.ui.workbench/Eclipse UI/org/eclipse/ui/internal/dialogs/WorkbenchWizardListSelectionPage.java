@@ -46,7 +46,7 @@ public abstract class WorkbenchWizardListSelectionPage extends
     // id constants
     private static final String DIALOG_SETTING_SECTION_NAME = "WizardListSelectionPage."; //$NON-NLS-1$
 
-    private final static int SIZING_LISTS_HEIGHT = 200;
+    private static final int SIZING_LISTS_HEIGHT = 200;
 
     private static final String STORE_SELECTED_WIZARD_ID = DIALOG_SETTING_SECTION_NAME
             + "STORE_SELECTED_WIZARD_ID"; //$NON-NLS-1$

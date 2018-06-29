@@ -19,11 +19,11 @@ import org.eclipse.e4.ui.internal.css.swt.definition.IThemesExtension;
 import org.w3c.dom.css.CSSValue;
 
 public class CSSPropertyThemesExtensionHandler implements ICSSPropertyHandler {
-	private final static String DEFINITION_LIST_SEPARATOR = ",";
+	private static final String DEFINITION_LIST_SEPARATOR = ",";
 
-	private final static String FONT_DEFINITION_PROP = "font-definition";
+	private static final String FONT_DEFINITION_PROP = "font-definition";
 
-	private final static String COLOR_DEFINITION_PROP = "color-definition";
+	private static final String COLOR_DEFINITION_PROP = "color-definition";
 
 	@Override
 	public boolean applyCSSProperty(Object element, String property,

@@ -24,8 +24,8 @@ import org.eclipse.ui.views.markers.internal.ProblemFilter;
  */
 public class CompletionFieldFilter extends CompatibilityFieldFilter {
 
-	final static int COMPLETED = 2;
-	final static int NOT_COMPLETED = 1;
+	static final int COMPLETED = 2;
+	static final int NOT_COMPLETED = 1;
 	private static int ALL_SELECTED = COMPLETED + NOT_COMPLETED;
 	private int completion = ALL_SELECTED;
 	private static String COMPLETION_ATTRIBUTE = "completion"; //$NON-NLS-1$

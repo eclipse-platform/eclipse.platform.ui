@@ -21,7 +21,7 @@ import org.eclipse.ui.keys.ModifierKey;
 
 public final class KdeKeyFormatter extends AbstractKeyFormatter {
 
-    private final static class KdeModifierKeyComparator extends
+    private static final class KdeModifierKeyComparator extends
             AbstractModifierKeyComparator {
 
         @Override
@@ -42,9 +42,9 @@ public final class KdeKeyFormatter extends AbstractKeyFormatter {
         }
     }
 
-    private final static Comparator MODIFIER_KEY_COMPARATOR = new KdeModifierKeyComparator();
+    private static final Comparator MODIFIER_KEY_COMPARATOR = new KdeModifierKeyComparator();
 
-    private final static ResourceBundle RESOURCE_BUNDLE = ResourceBundle
+    private static final ResourceBundle RESOURCE_BUNDLE = ResourceBundle
             .getBundle(KdeKeyFormatter.class.getName());
 
     @Override

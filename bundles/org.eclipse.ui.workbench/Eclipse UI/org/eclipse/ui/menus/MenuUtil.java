@@ -25,39 +25,39 @@ public class MenuUtil {
 	 *
 	 * @since 3.7
 	 */
-	public final static String WORKBENCH_MENU = "menu:org.eclipse.ui.workbench.menu"; //$NON-NLS-1$
+	public static final String WORKBENCH_MENU = "menu:org.eclipse.ui.workbench.menu"; //$NON-NLS-1$
 	/** Main Menu */
-	public final static String MAIN_MENU = "menu:org.eclipse.ui.main.menu"; //$NON-NLS-1$
+	public static final String MAIN_MENU = "menu:org.eclipse.ui.main.menu"; //$NON-NLS-1$
 	/** Main ToolBar (CoolBar) */
-	public final static String MAIN_TOOLBAR = "toolbar:org.eclipse.ui.main.toolbar"; //$NON-NLS-1$
+	public static final String MAIN_TOOLBAR = "toolbar:org.eclipse.ui.main.toolbar"; //$NON-NLS-1$
 
 	/** -Any- Popup Menu */
-	public final static String ANY_POPUP = "popup:org.eclipse.ui.popup.any"; //$NON-NLS-1$
+	public static final String ANY_POPUP = "popup:org.eclipse.ui.popup.any"; //$NON-NLS-1$
 
 	/** Top Left Trim Area */
-	public final static String TRIM_COMMAND1 = "toolbar:org.eclipse.ui.trim.command1"; //$NON-NLS-1$
+	public static final String TRIM_COMMAND1 = "toolbar:org.eclipse.ui.trim.command1"; //$NON-NLS-1$
 	/** Top Right Trim Area */
-	public final static String TRIM_COMMAND2 = "toolbar:org.eclipse.ui.trim.command2"; //$NON-NLS-1$
+	public static final String TRIM_COMMAND2 = "toolbar:org.eclipse.ui.trim.command2"; //$NON-NLS-1$
 	/** Left Vertical Trim Area */
-	public final static String TRIM_VERTICAL1 = "toolbar:org.eclipse.ui.trim.vertical1"; //$NON-NLS-1$
+	public static final String TRIM_VERTICAL1 = "toolbar:org.eclipse.ui.trim.vertical1"; //$NON-NLS-1$
 	/** Right Vertical Trim Area */
-	public final static String TRIM_VERTICAL2 = "toolbar:org.eclipse.ui.trim.vertical2"; //$NON-NLS-1$
+	public static final String TRIM_VERTICAL2 = "toolbar:org.eclipse.ui.trim.vertical2"; //$NON-NLS-1$
 	/** Bottom (Status) Trim Area */
-	public final static String TRIM_STATUS = "toolbar:org.eclipse.ui.trim.status"; //$NON-NLS-1$
+	public static final String TRIM_STATUS = "toolbar:org.eclipse.ui.trim.status"; //$NON-NLS-1$
 
 	/**
 	 * Valid query attribute. Usage <b>menu:menu.id?before=contribution.id</b>.
 	 *
 	 * @since 3.6
 	 */
-	public final static String QUERY_BEFORE = "before"; //$NON-NLS-1$
+	public static final String QUERY_BEFORE = "before"; //$NON-NLS-1$
 
 	/**
 	 * Valid query attribute. Usage <b>menu:menu.id?after=contribution.id</b>.
 	 *
 	 * @since 3.6
 	 */
-	public final static String QUERY_AFTER = "after"; //$NON-NLS-1$
+	public static final String QUERY_AFTER = "after"; //$NON-NLS-1$
 
 	/**
 	 * Valid query attribute. Usage <b>menu:menu.id?endof=contribution.id</b>.
@@ -70,7 +70,7 @@ public class MenuUtil {
 	 *
 	 * @since 3.6
 	 */
-	public final static String QUERY_ENDOF = "endof"; //$NON-NLS-1$
+	public static final String QUERY_ENDOF = "endof"; //$NON-NLS-1$
 
 	/**
 	 * Contributions of targets to this location will be included with the show
@@ -78,7 +78,7 @@ public class MenuUtil {
 	 *
 	 * @since 3.4
 	 */
-	public final static String SHOW_IN_MENU_ID = "popup:org.eclipse.ui.menus.showInMenu"; //$NON-NLS-1$
+	public static final String SHOW_IN_MENU_ID = "popup:org.eclipse.ui.menus.showInMenu"; //$NON-NLS-1$
 
 	/**
 	 * @param id

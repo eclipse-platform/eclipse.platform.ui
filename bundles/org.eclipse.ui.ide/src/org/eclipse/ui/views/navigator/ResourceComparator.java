@@ -39,12 +39,12 @@ public class ResourceComparator extends ViewerComparator {
     /**
      * Constructor argument value that indicates to sort items by name.
      */
-    public final static int NAME = 1;
+    public static final int NAME = 1;
 
     /**
      * Constructor argument value that indicates to sort items by extension.
      */
-    public final static int TYPE = 2;
+    public static final int TYPE = 2;
 
     private int criteria;
 

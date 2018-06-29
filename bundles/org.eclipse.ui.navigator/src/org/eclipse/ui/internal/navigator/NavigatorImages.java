@@ -28,7 +28,7 @@ import org.eclipse.swt.graphics.Image;
 public class NavigatorImages {
 
 	// Create image registry
-	private final static ImageRegistry NAVIGATOR_PLUGIN_REGISTRY = NavigatorPlugin
+	private static final ImageRegistry NAVIGATOR_PLUGIN_REGISTRY = NavigatorPlugin
 			.getDefault().getImageRegistry();
 
 	private static URL ICONS_LOCATION;

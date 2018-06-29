@@ -60,13 +60,13 @@ public class CTabRendering extends CTabFolderRenderer implements ICTabRendering 
 	}
 
 	// drop shadow constants
-	final static int SIDE_DROP_WIDTH = 3;
-	final static int BOTTOM_DROP_WIDTH = 4;
+	static final int SIDE_DROP_WIDTH = 3;
+	static final int BOTTOM_DROP_WIDTH = 4;
 
 	// keylines
-	final static int OUTER_KEYLINE = 1;
-	final static int INNER_KEYLINE = 0;
-	final static int TOP_KEYLINE = 0;
+	static final int OUTER_KEYLINE = 1;
+	static final int INNER_KEYLINE = 0;
+	static final int TOP_KEYLINE = 0;
 
 	// Item Constants
 	static final int ITEM_TOP_MARGIN = 2;

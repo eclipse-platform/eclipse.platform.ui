@@ -72,13 +72,13 @@ import org.xml.sax.SAXException;
  */
 public class WelcomeEditor extends EditorPart {
 
-    private final static int HORZ_SCROLL_INCREMENT = 20;
+    private static final int HORZ_SCROLL_INCREMENT = 20;
 
-    private final static int VERT_SCROLL_INCREMENT = 20;
+    private static final int VERT_SCROLL_INCREMENT = 20;
 
     // width at which wrapping will stop and a horizontal scroll bar will be
     // introduced
-    private final static int WRAP_MIN_WIDTH = 150;
+    private static final int WRAP_MIN_WIDTH = 150;
 
     private Composite editorComposite;
 

@@ -28,12 +28,12 @@ import org.w3c.dom.css.CSSValueList;
 public class CSSPropertyMarginSWTHandler extends
 		AbstractCSSPropertyMarginHandler {
 
-	public final static ICSSPropertyMarginHandler INSTANCE = new CSSPropertyMarginSWTHandler();
+	public static final ICSSPropertyMarginHandler INSTANCE = new CSSPropertyMarginSWTHandler();
 
-	private final static int TOP = 0;
-	private final static int RIGHT = 1;
-	private final static int BOTTOM = 2;
-	private final static int LEFT = 3;
+	private static final int TOP = 0;
+	private static final int RIGHT = 1;
+	private static final int BOTTOM = 2;
+	private static final int LEFT = 3;
 
 	@Override
 	public boolean applyCSSProperty(Object element, String property,

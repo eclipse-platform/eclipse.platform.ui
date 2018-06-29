@@ -38,7 +38,7 @@ public class AddReadmeMarkerAction extends Action {
 
     private String message;
 
-    private final static String MARKER_TYPE = "org.eclipse.ui.examples.readmetool.readmemarker"; //$NON-NLS-1$
+    private static final String MARKER_TYPE = "org.eclipse.ui.examples.readmetool.readmemarker"; //$NON-NLS-1$
 
     /**
      * Creates a new action for the given text editor.

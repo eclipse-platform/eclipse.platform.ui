@@ -67,11 +67,11 @@ public class AboutFeaturesPage extends ProductInfoPage {
 
 	private static final int INFO_HEIGHT = 100;
 
-	private final static int MORE_ID = IDialogConstants.CLIENT_ID + 1;
+	private static final int MORE_ID = IDialogConstants.CLIENT_ID + 1;
 
-	private final static int PLUGINS_ID = IDialogConstants.CLIENT_ID + 2;
+	private static final int PLUGINS_ID = IDialogConstants.CLIENT_ID + 2;
 
-	private final static int COLUMNS_ID = IDialogConstants.CLIENT_ID + 3;
+	private static final int COLUMNS_ID = IDialogConstants.CLIENT_ID + 3;
 
 	private Table table;
 

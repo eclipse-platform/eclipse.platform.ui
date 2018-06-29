@@ -20,9 +20,9 @@ import java.util.Map;
 import org.eclipse.ui.internal.util.Util;
 
 public final class CategoryActivityBindingDefinition {
-    private final static int HASH_FACTOR = 89;
+    private static final int HASH_FACTOR = 89;
 
-    private final static int HASH_INITIAL = CategoryActivityBindingDefinition.class
+    private static final int HASH_INITIAL = CategoryActivityBindingDefinition.class
             .getName().hashCode();
 
     static Map categoryActivityBindingDefinitionsByCategoryId(

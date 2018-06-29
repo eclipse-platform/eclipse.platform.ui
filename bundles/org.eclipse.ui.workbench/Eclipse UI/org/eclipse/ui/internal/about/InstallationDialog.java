@@ -134,8 +134,8 @@ public class InstallationDialog extends TrayDialog implements
 
 	protected static final String ID = "ID"; //$NON-NLS-1$
 	private static final String DIALOG_SETTINGS_SECTION = "InstallationDialogSettings"; //$NON-NLS-1$
-	private final static int TAB_WIDTH_IN_DLUS = 440;
-	private final static int TAB_HEIGHT_IN_DLUS = 320;
+	private static final int TAB_WIDTH_IN_DLUS = 440;
+	private static final int TAB_HEIGHT_IN_DLUS = 320;
 
 	private static String lastSelectedTabId = null;
 	private TabFolder folder;

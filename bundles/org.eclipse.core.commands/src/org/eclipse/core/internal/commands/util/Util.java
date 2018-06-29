@@ -37,20 +37,20 @@ public final class Util {
      * A shared, unmodifiable, empty, sorted map. This value is guaranteed to
      * always be the same.
      */
-	public final static SortedMap<?, ?> EMPTY_SORTED_MAP = Collections
+	public static final SortedMap<?, ?> EMPTY_SORTED_MAP = Collections
 			.unmodifiableSortedMap(new TreeMap<>());
 
     /**
      * A shared, unmodifiable, empty, sorted set. This value is guaranteed to
      * always be the same.
      */
-	public final static SortedSet<?> EMPTY_SORTED_SET = Collections.unmodifiableSortedSet(new TreeSet<>());
+	public static final SortedSet<?> EMPTY_SORTED_SET = Collections.unmodifiableSortedSet(new TreeSet<>());
 
     /**
      * A shared, zero-length string -- for avoiding non-externalized string
      * tags. This value is guaranteed to always be the same.
      */
-    public final static String ZERO_LENGTH_STRING = ""; //$NON-NLS-1$
+    public static final String ZERO_LENGTH_STRING = ""; //$NON-NLS-1$
 
     /**
      * Asserts the the given object is an instance of the given class --

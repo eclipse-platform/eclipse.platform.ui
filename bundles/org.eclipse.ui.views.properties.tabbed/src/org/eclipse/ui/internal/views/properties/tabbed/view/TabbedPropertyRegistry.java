@@ -49,11 +49,11 @@ import com.ibm.icu.text.MessageFormat;
  */
 public class TabbedPropertyRegistry {
 
-	private final static String NO_TAB_ERROR = TabbedPropertyMessages.TabbedPropertyRegistry_Non_existing_tab;
+	private static final String NO_TAB_ERROR = TabbedPropertyMessages.TabbedPropertyRegistry_Non_existing_tab;
 
-	private final static String CONTRIBUTOR_ERROR = TabbedPropertyMessages.TabbedPropertyRegistry_contributor_error;
+	private static final String CONTRIBUTOR_ERROR = TabbedPropertyMessages.TabbedPropertyRegistry_contributor_error;
 
-	private final static String TAB_ERROR = TabbedPropertyMessages.TabDescriptor_Tab_unknown_category;
+	private static final String TAB_ERROR = TabbedPropertyMessages.TabDescriptor_Tab_unknown_category;
 
 	// extension point constants
 	private static final String EXTPT_CONTRIBUTOR = "propertyContributor"; //$NON-NLS-1$

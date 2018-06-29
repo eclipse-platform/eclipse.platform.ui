@@ -82,7 +82,7 @@ package org.eclipse.jface.viewers.deferred;
      * Object that holds a start index and length. Allows
      * the visible range to be returned as an atomic operation.
      */
-    public final static class Range {
+    public static final class Range {
         int start = 0;
         int length = 0;
 

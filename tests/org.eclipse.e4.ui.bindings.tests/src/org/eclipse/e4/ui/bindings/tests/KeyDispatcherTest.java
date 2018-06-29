@@ -56,7 +56,7 @@ public class KeyDispatcherTest {
 	private static final String ID_DIALOG_AND_WINDOW = "org.eclipse.ui.contexts.dialogAndWindow";
 	private static final String ID_WINDOW = "org.eclipse.ui.contexts.window";
 
-	final static String[] CONTEXTS = { ID_DIALOG_AND_WINDOW, "DAW", null,
+	static final String[] CONTEXTS = { ID_DIALOG_AND_WINDOW, "DAW", null,
 			ID_DIALOG, "Dialog", ID_DIALOG_AND_WINDOW, ID_WINDOW, "Window",
 			ID_DIALOG_AND_WINDOW, };
 

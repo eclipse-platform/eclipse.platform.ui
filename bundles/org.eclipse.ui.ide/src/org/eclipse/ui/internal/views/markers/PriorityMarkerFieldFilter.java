@@ -25,9 +25,9 @@ import org.eclipse.ui.views.markers.internal.ProblemFilter;
  */
 public class PriorityMarkerFieldFilter extends CompatibilityFieldFilter {
 
-	final static int PRIORITY_HIGH = 1 << IMarker.PRIORITY_HIGH;
-	final static int PRIORITY_NORMAL = 1 << IMarker.PRIORITY_NORMAL;
-	final static int PRIORITY_LOW = 1 << IMarker.PRIORITY_LOW;
+	static final int PRIORITY_HIGH = 1 << IMarker.PRIORITY_HIGH;
+	static final int PRIORITY_NORMAL = 1 << IMarker.PRIORITY_NORMAL;
+	static final int PRIORITY_LOW = 1 << IMarker.PRIORITY_LOW;
 
 	private static final String TAG_SELECTED_PRIORITIES = "selectedPriorities"; //$NON-NLS-1$
 

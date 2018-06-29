@@ -51,8 +51,8 @@ import org.eclipse.ui.part.ViewPart;
  */
 
 public class MenuContributionHarness extends ViewPart {
-	public final static String VIEW_ID = "org.eclipse.ui.tests.api.MenuTestHarness";
-	public final static String CONTEXT_TEST1_ID = "org.eclipse.ui.menus.contexts.test1";
+	public static final String VIEW_ID = "org.eclipse.ui.tests.api.MenuTestHarness";
+	public static final String CONTEXT_TEST1_ID = "org.eclipse.ui.menus.contexts.test1";
 
 	IMenuService menuSvc;
 

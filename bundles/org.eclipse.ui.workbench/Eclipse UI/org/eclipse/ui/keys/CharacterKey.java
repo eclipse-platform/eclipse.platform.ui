@@ -44,61 +44,61 @@ public final class CharacterKey extends NaturalKey {
 	 * The single static instance of <code>CharacterKey</code> which
 	 * represents the backspace key (U+0008).
 	 */
-	public final static CharacterKey BS;
+	public static final CharacterKey BS;
 
 	/**
 	 * The single static instance of <code>CharacterKey</code> which
 	 * represents the carriage return (U+000D) key
 	 */
-	public final static CharacterKey CR;
+	public static final CharacterKey CR;
 
 	/**
 	 * The single static instance of <code>CharacterKey</code> which
 	 * represents the delete (U+007F) key.
 	 */
-	public final static CharacterKey DEL;
+	public static final CharacterKey DEL;
 
 	/**
 	 * The single static instance of <code>CharacterKey</code> which
 	 * represents the escape (U+001B) key.
 	 */
-	public final static CharacterKey ESC;
+	public static final CharacterKey ESC;
 
 	/**
 	 * The single static instance of <code>CharacterKey</code> which
 	 * represents the form feed (U+000C) key.
 	 */
-	public final static CharacterKey FF;
+	public static final CharacterKey FF;
 
 	/**
 	 * The single static instance of <code>CharacterKey</code> which
 	 * represents the line feed (U+000A) key.
 	 */
-	public final static CharacterKey LF;
+	public static final CharacterKey LF;
 
 	/**
 	 * The single static instance of <code>CharacterKey</code> which
 	 * represents the null (U+0000) key.
 	 */
-	public final static CharacterKey NUL;
+	public static final CharacterKey NUL;
 
 	/**
 	 * The single static instance of <code>CharacterKey</code> which
 	 * represents the space (U+0020) key.
 	 */
-	public final static CharacterKey SPACE;
+	public static final CharacterKey SPACE;
 
 	/**
 	 * The single static instance of <code>CharacterKey</code> which
 	 * represents the tab (U+0009) key.
 	 */
-	public final static CharacterKey TAB;
+	public static final CharacterKey TAB;
 
 	/**
 	 * The single static instance of <code>CharacterKey</code> which
 	 * represents the vertical tab (U+000B) key.
 	 */
-	public final static CharacterKey VT;
+	public static final CharacterKey VT;
 
 	/**
 	 * Creates an instance of <code>CharacterKey</code> given a unicode

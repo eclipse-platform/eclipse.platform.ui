@@ -47,7 +47,7 @@ IFontProvider, IStyledLabelProvider {
 			SWT.COLOR_BLACK);
 	public static Font FONT = new Font(Display.getDefault(), new FontData());
 
-	public final static Map
+	public static final Map
 		descriptionQueries = new HashMap(),
 		backgroundQueries = new HashMap(),
 		foregroundQueries = new HashMap(),

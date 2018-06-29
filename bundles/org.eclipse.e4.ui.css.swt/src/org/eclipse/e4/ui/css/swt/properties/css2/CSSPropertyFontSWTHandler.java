@@ -39,7 +39,7 @@ import org.w3c.dom.css.CSSValue;
 public class CSSPropertyFontSWTHandler extends AbstractCSSPropertyFontHandler
 implements ICSSPropertyHandler2 {
 
-	public final static ICSSPropertyFontHandler INSTANCE = new CSSPropertyFontSWTHandler();
+	public static final ICSSPropertyFontHandler INSTANCE = new CSSPropertyFontSWTHandler();
 
 	/**
 	 * The key for the SWT event listener that will be attached to a CTabFolder
