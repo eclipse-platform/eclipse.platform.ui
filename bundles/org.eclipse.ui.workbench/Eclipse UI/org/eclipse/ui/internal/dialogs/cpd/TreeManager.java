@@ -72,7 +72,7 @@ public class TreeManager {
 		 * @param changedItem
 		 *            The item whose check state has changed
 		 */
-		public void checkChanged(TreeItem changedItem);
+		void checkChanged(TreeItem changedItem);
 	}
 
 	/**

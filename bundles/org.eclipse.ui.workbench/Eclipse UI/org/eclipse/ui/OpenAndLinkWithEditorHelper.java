@@ -41,7 +41,7 @@ public abstract class OpenAndLinkWithEditorHelper {
 	private final class InternalListener implements IOpenListener, ISelectionChangedListener, IDoubleClickListener {
 
 		@Override
-		public final void open(OpenEvent event) {
+		public void open(OpenEvent event) {
 			lastOpenSelection = event.getSelection();
 			OpenAndLinkWithEditorHelper.this.open(lastOpenSelection, OpenStrategy.activateOnOpen());
 		}

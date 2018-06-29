@@ -31,11 +31,11 @@ public interface IObjectContributor {
      * @param object the object to text
      * @return boolean
      */
-    public boolean isApplicableTo(Object object);
+    boolean isApplicableTo(Object object);
 
     /**
      * Return whether or not the receiver can adapt to IResource.
      * @return boolean
      */
-    public boolean canAdapt();
+    boolean canAdapt();
 }

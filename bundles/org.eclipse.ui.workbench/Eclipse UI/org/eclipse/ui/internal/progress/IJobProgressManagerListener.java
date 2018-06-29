@@ -31,13 +31,13 @@ interface IJobProgressManagerListener {
      * Refresh the IJobProgressManagerListeners as a result of a change in info.
      * @param info
      */
-    public void refreshJobInfo(JobInfo info);
+    void refreshJobInfo(JobInfo info);
 
     /**
      * Refresh the IJobProgressManagerListeners as a result of a change in groups.
      * @param info
      */
-    public void refreshGroup(GroupInfo info);
+    void refreshGroup(GroupInfo info);
 
     /**
      * Refresh the viewer for all jobs.
@@ -53,7 +53,7 @@ interface IJobProgressManagerListener {
 
     /**
 	 * Refresh the viewer as a result of a removal of group.
-	 * 
+	 *
 	 * @param group
 	 */
     void removeGroup(final GroupInfo group);

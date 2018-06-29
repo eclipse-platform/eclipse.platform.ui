@@ -30,5 +30,5 @@ public interface IWorkbenchContribution {
 	 *            the locator which services can be retrieved. Will not be
 	 *            <code>null</code>
 	 */
-	public void initialize(IServiceLocator serviceLocator);
+	void initialize(IServiceLocator serviceLocator);
 }

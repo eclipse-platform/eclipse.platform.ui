@@ -26,7 +26,7 @@ import org.eclipse.ui.views.IViewDescriptor;
 public final class ViewParameterValues implements IParameterValues {
 
 	@Override
-	public final Map getParameterValues() {
+	public Map getParameterValues() {
 		final Map values = new HashMap();
 
 		final IViewDescriptor[] views = PlatformUI.getWorkbench()

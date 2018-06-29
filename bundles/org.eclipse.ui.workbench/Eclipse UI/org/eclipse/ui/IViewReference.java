@@ -27,7 +27,7 @@ public interface IViewReference extends IWorkbenchPartReference {
      * @see IWorkbenchPage#showView(String, String, int)
      * @since 3.0
      */
-    public String getSecondaryId();
+    String getSecondaryId();
 
     /**
      * Returns the <code>IViewPart</code> referenced by this object.
@@ -35,10 +35,10 @@ public interface IViewReference extends IWorkbenchPartReference {
      * it failed to be restored.  Tries to restore the view
      * if <code>restore</code> is true.
      */
-    public IViewPart getView(boolean restore);
+    IViewPart getView(boolean restore);
 
     /**
      * Returns true if the view is a fast view otherwise returns false.
      */
-    public boolean isFastView();
+    boolean isFastView();
 }

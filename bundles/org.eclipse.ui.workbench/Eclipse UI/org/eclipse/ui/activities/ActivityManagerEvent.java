@@ -161,7 +161,7 @@ public final class ActivityManagerEvent {
      *         be empty, but never <code>null</code>. This set will only
      *         contain strings.
      */
-    public final Set getPreviouslyDefinedActivityIds() {
+    public Set getPreviouslyDefinedActivityIds() {
         return previouslyDefinedActivityIds;
     }
 
@@ -172,7 +172,7 @@ public final class ActivityManagerEvent {
      *         be empty, but never <code>null</code>. This set will only
      *         contain strings.
      */
-    public final Set getPreviouslyDefinedCategoryIds() {
+    public Set getPreviouslyDefinedCategoryIds() {
         return previouslyDefinedCategoryIds;
     }
 
@@ -183,7 +183,7 @@ public final class ActivityManagerEvent {
      *         be empty, but never <code>null</code>. This set will only
      *         contain strings.
      */
-    public final Set getPreviouslyEnabledActivityIds() {
+    public Set getPreviouslyEnabledActivityIds() {
         return previouslyEnabledActivityIds;
     }
 

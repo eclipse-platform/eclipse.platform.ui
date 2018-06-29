@@ -38,7 +38,7 @@ public interface IActionSetDescriptor {
      * @return the new action set
      * @exception CoreException if the action set cannot be created
      */
-    public IActionSet createActionSet() throws CoreException;
+    IActionSet createActionSet() throws CoreException;
 
     /**
      * Returns the description of this action set.
@@ -46,7 +46,7 @@ public interface IActionSetDescriptor {
      *
      * @return the description
      */
-    public String getDescription();
+    String getDescription();
 
     /**
      * Returns the id of this action set.
@@ -54,7 +54,7 @@ public interface IActionSetDescriptor {
      *
      * @return the action set id
      */
-    public String getId();
+    String getId();
 
     /**
      * Returns the label of this action set.
@@ -62,14 +62,14 @@ public interface IActionSetDescriptor {
      *
      * @return the label
      */
-    public String getLabel();
+    String getLabel();
 
     /**
      * Returns whether this action set is initially visible.
      *
      * @return whether this action set is initially visible
      */
-    public boolean isInitiallyVisible();
+    boolean isInitiallyVisible();
 
     /**
      * Sets whether this action set is initially visible.
@@ -77,7 +77,7 @@ public interface IActionSetDescriptor {
      * @param visible whether the action set should be visible initially.
      * @since 3.0
      */
-    public void setInitiallyVisible(boolean visible);
+    void setInitiallyVisible(boolean visible);
 
     /**
      * Returns the conconfigurationfig element.
@@ -85,5 +85,5 @@ public interface IActionSetDescriptor {
      * @return the configuration element
      * @since 3.1
      */
-    public IConfigurationElement getConfigurationElement();
+    IConfigurationElement getConfigurationElement();
 }

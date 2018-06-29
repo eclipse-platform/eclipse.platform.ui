@@ -23,7 +23,7 @@ public interface ISizeProvider {
      * Constant used to indicate infinite size. This is equal to Integer.MAX_VALUE, ensuring
      * that it is greater than any other integer.
      */
-    public static final int INFINITE = Integer.MAX_VALUE;
+    int INFINITE = Integer.MAX_VALUE;
 
     /**
      * Returns a bitwise combination of flags indicating how and when computePreferredSize should
@@ -62,7 +62,7 @@ public interface ISizeProvider {
      * computePreferredSize(true,...)
      * @return any bitwise combination of SWT.MAX, SWT.MIN, SWT.WRAP, and SWT.FILL
      */
-    public int getSizeFlags(boolean width);
+    int getSizeFlags(boolean width);
 
     /**
 	 * <p>
@@ -148,5 +148,5 @@ public interface ISizeProvider {
 	 *
 	 * @see ISizeProvider#getSizeFlags(boolean)
 	 */
-    public int computePreferredSize(boolean width, int availableParallel, int availablePerpendicular, int preferredResult);
+    int computePreferredSize(boolean width, int availableParallel, int availablePerpendicular, int preferredResult);
 }

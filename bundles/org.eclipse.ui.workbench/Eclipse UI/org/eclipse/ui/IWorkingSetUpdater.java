@@ -30,7 +30,7 @@ public interface IWorkingSetUpdater {
 	 *
 	 * @param workingSet the working set to add to this updater
 	 */
-	public void add(IWorkingSet workingSet);
+	void add(IWorkingSet workingSet);
 
 	/**
 	 * Removes a working set from this updater.
@@ -40,7 +40,7 @@ public interface IWorkingSetUpdater {
 	 * @return <code>true</code> if the updater changed (e.g.
 	 *  the element got removed)
 	 */
-	public boolean remove(IWorkingSet workingSet);
+	boolean remove(IWorkingSet workingSet);
 
 	/**
 	 * Returns <code>true</code> if the updater contains the
@@ -52,11 +52,11 @@ public interface IWorkingSetUpdater {
 	 * @return whether the updater contains the given working
 	 *  set
 	 */
-	public boolean contains(IWorkingSet workingSet);
+	boolean contains(IWorkingSet workingSet);
 
 	/**
 	 * Disposes this working set updater. Implementations of this
 	 * method typically remove listeners from some delta providers.
 	 */
-	public void dispose();
+	void dispose();
 }

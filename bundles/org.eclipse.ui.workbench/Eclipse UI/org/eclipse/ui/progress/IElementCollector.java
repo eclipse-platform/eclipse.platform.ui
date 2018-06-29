@@ -31,7 +31,7 @@ public interface IElementCollector {
      * @param monitor
      *            The monitor to send updates to.
      */
-    public void add(Object element, IProgressMonitor monitor);
+    void add(Object element, IProgressMonitor monitor);
 
     /**
      * Add the elements to the IElementCollector. Send any progress information
@@ -42,11 +42,11 @@ public interface IElementCollector {
      * @param monitor
      *            The monitor to send updates to.
      */
-    public void add(Object[] elements, IProgressMonitor monitor);
+    void add(Object[] elements, IProgressMonitor monitor);
 
     /**
      * The element collection is done. Clean up any temporary state.
      *
      */
-    public void done();
+    void done();
 }

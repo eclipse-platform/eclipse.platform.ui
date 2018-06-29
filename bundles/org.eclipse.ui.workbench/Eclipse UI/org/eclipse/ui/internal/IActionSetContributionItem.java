@@ -19,10 +19,10 @@ public interface IActionSetContributionItem {
     /**
      * Returns the action set id.
      */
-    public String getActionSetId();
+    String getActionSetId();
 
     /**
      * Sets the action set id.
      */
-    public void setActionSetId(String newActionSetId);
+    void setActionSetId(String newActionSetId);
 }

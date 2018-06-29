@@ -38,7 +38,7 @@ public interface IDeferredWorkbenchAdapter extends IWorkbenchAdapter {
      * @param  monitor a progress monitor that will never be <code>null<code> to
      *                   support reporting and cancellation.
      */
-    public void fetchDeferredChildren(Object object,
+    void fetchDeferredChildren(Object object,
             IElementCollector collector, IProgressMonitor monitor);
 
     /**
@@ -54,7 +54,7 @@ public interface IDeferredWorkbenchAdapter extends IWorkbenchAdapter {
      * @return <code>true</code>if the adapter may have childen, and <code>false</code>
      * 	otherwise.
      */
-    public boolean isContainer();
+    boolean isContainer();
 
     /**
      * Returns the rule used to schedule the deferred fetching of children for this adapter.
@@ -63,5 +63,5 @@ public interface IDeferredWorkbenchAdapter extends IWorkbenchAdapter {
      * @return the scheduling rule. May be <code>null</code>.
      * @see org.eclipse.core.runtime.jobs.Job#setRule(ISchedulingRule)
      */
-    public ISchedulingRule getRule(Object object);
+    ISchedulingRule getRule(Object object);
 }

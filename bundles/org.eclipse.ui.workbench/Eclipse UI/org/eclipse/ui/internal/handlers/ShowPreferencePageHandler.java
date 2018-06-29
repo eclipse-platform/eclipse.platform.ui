@@ -41,7 +41,7 @@ public final class ShowPreferencePageHandler extends AbstractHandler {
 	}
 
 	@Override
-	public final Object execute(final ExecutionEvent event) {
+	public Object execute(final ExecutionEvent event) {
 		final String preferencePageId = event
 				.getParameter(IWorkbenchCommandConstants.WINDOW_PREFERENCES_PARM_PAGEID);
 		final IWorkbenchWindow activeWorkbenchWindow = HandlerUtil

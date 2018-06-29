@@ -43,7 +43,7 @@ public interface INestableKeyBindingService extends IKeyBindingService {
      * the case of a <code>null</code> parameter); <code>false</code> if
      * nothing changed.
      */
-    public boolean activateKeyBindingService(IWorkbenchSite nestedSite);
+    boolean activateKeyBindingService(IWorkbenchSite nestedSite);
 
     /**
      * An accessor for the nested key binding service associated with a
@@ -55,7 +55,7 @@ public interface INestableKeyBindingService extends IKeyBindingService {
      * @return The associated service, if any; or a new associated service, if
      * none existed previously.
      */
-    public IKeyBindingService getKeyBindingService(IWorkbenchSite nestedSite);
+    IKeyBindingService getKeyBindingService(IWorkbenchSite nestedSite);
 
     /**
      * Removes a nested key binding service from this key binding service.  The
@@ -67,6 +67,6 @@ public interface INestableKeyBindingService extends IKeyBindingService {
      * @return <code>true</code> if the service existed and could be removed;
      * <code>false</code> otherwise.
      */
-    public boolean removeKeyBindingService(IWorkbenchSite nestedSite);
+    boolean removeKeyBindingService(IWorkbenchSite nestedSite);
 
 }

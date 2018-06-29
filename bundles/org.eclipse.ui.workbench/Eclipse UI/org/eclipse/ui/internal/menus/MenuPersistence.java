@@ -89,7 +89,7 @@ final public class MenuPersistence extends RegistryPersistence {
 	}
 
 	@Override
-	protected final void read() {
+	protected void read() {
 		super.read();
 
 		readAdditions();

@@ -64,7 +64,7 @@ public interface IActionBars {
      * can be propagated throughout the workbench.
      * </p>
      */
-    public void clearGlobalActionHandlers();
+    void clearGlobalActionHandlers();
 
     /**
      * Returns the global action handler for the action with the given id.
@@ -75,7 +75,7 @@ public interface IActionBars {
      * @see IWorkbenchActionConstants
      * @see #setGlobalActionHandler(String, IAction)
      */
-    public IAction getGlobalActionHandler(String actionId);
+    IAction getGlobalActionHandler(String actionId);
 
     /**
      * Returns the menu manager.
@@ -87,7 +87,7 @@ public interface IActionBars {
      *
      * @return the menu manager
      */
-    public IMenuManager getMenuManager();
+    IMenuManager getMenuManager();
 
     /**
 	 * Returns the service locator for these action bars. The locator is found
@@ -96,7 +96,7 @@ public interface IActionBars {
 	 * @return The service locator; never <code>null</code>.
 	 * @since 3.2
 	 */
-	public IServiceLocator getServiceLocator();
+	IServiceLocator getServiceLocator();
 
     /**
 	 * Returns the status line manager.
@@ -108,7 +108,7 @@ public interface IActionBars {
 	 *
 	 * @return the status line manager
 	 */
-    public IStatusLineManager getStatusLineManager();
+    IStatusLineManager getStatusLineManager();
 
     /**
      * Returns the tool bar manager.
@@ -120,7 +120,7 @@ public interface IActionBars {
      *
      * @return the tool bar manager
      */
-    public IToolBarManager getToolBarManager();
+    IToolBarManager getToolBarManager();
 
     /**
      * Sets the global action handler for the action with the given id.
@@ -135,7 +135,7 @@ public interface IActionBars {
      *	<code>null</code> to clear any existing handler
      * @see IWorkbenchActionConstants
      */
-    public void setGlobalActionHandler(String actionId, IAction handler);
+    void setGlobalActionHandler(String actionId, IAction handler);
 
 	/**
 	 * Updates the action bars.
@@ -148,5 +148,5 @@ public interface IActionBars {
 	 * @see #setGlobalActionHandler(String, IAction)
 	 * @see #clearGlobalActionHandlers()
 	 */
-    public void updateActionBars();
+    void updateActionBars();
 }

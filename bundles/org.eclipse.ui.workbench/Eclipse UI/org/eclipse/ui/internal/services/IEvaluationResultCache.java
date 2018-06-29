@@ -36,7 +36,7 @@ public interface IEvaluationResultCache {
 	 * mechanism by which <code>ISourceProvider</code> events can invalidate
 	 * state on a <code>IEvaluationResultCache</code> instance.
 	 */
-	public void clearResult();
+	void clearResult();
 
 	/**
 	 * Returns the expression controlling the activation or visibility of this
@@ -45,7 +45,7 @@ public interface IEvaluationResultCache {
 	 * @return The expression associated with this item; may be
 	 *         <code>null</code>.
 	 */
-	public Expression getExpression();
+	Expression getExpression();
 
 	/**
 	 * Returns the priority that has been given to this expression.
@@ -53,7 +53,7 @@ public interface IEvaluationResultCache {
 	 * @return The priority.
 	 * @see ISources
 	 */
-	public int getSourcePriority();
+	int getSourcePriority();
 
 	/**
 	 * Evaluates the expression -- given the current state of the workbench.
@@ -66,7 +66,7 @@ public interface IEvaluationResultCache {
 	 * @return <code>true</code> if the expression currently evaluates to
 	 *         <code>true</code>; <code>false</code> otherwise.
 	 */
-	public boolean evaluate(IEvaluationContext context);
+	boolean evaluate(IEvaluationContext context);
 
 	/**
 	 * Forces the cached result to be a particular value. This will <b>not</b>
@@ -76,5 +76,5 @@ public interface IEvaluationResultCache {
 	 *            The cached result to use.
 	 * @since 3.3
 	 */
-	public void setResult(boolean result);
+	void setResult(boolean result);
 }

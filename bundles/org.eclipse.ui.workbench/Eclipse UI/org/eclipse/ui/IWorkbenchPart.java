@@ -96,7 +96,7 @@ public interface IWorkbenchPart extends IAdaptable {
      * The property id for <code>getTitle</code>, <code>getTitleImage</code>
      * and <code>getTitleToolTip</code>.
      */
-    public static final int PROP_TITLE = IWorkbenchPartConstants.PROP_TITLE;
+    int PROP_TITLE = IWorkbenchPartConstants.PROP_TITLE;
 
     /**
      * Adds a listener for changes to properties of this workbench part.
@@ -107,7 +107,7 @@ public interface IWorkbenchPart extends IAdaptable {
      *
      * @param listener a property listener
      */
-    public void addPropertyListener(IPropertyListener listener);
+    void addPropertyListener(IPropertyListener listener);
 
     /**
      * Creates the SWT controls for this workbench part.
@@ -129,7 +129,7 @@ public interface IWorkbenchPart extends IAdaptable {
      *
      * @param parent the parent control
      */
-    public void createPartControl(Composite parent);
+    void createPartControl(Composite parent);
 
     /**
      * Disposes of this workbench part.
@@ -149,7 +149,7 @@ public interface IWorkbenchPart extends IAdaptable {
      * appropriate times).
      * </p>
      */
-    public void dispose();
+    void dispose();
 
     /**
      * Returns the site for this workbench part. The site can be
@@ -160,7 +160,7 @@ public interface IWorkbenchPart extends IAdaptable {
      * @return The part site; this value may be <code>null</code> if the part
      *         has not yet been initialized
      */
-    public IWorkbenchPartSite getSite();
+    IWorkbenchPartSite getSite();
 
     /**
      * Returns the title of this workbench part. If this value changes
@@ -173,7 +173,7 @@ public interface IWorkbenchPart extends IAdaptable {
      *
      * @return the workbench part title (not <code>null</code>)
      */
-    public String getTitle();
+    String getTitle();
 
     /**
      * Returns the title image of this workbench part.  If this value changes
@@ -187,7 +187,7 @@ public interface IWorkbenchPart extends IAdaptable {
      *
      * @return the title image
      */
-    public Image getTitleImage();
+    Image getTitleImage();
 
     /**
      * Returns the title tool tip text of this workbench part.
@@ -201,7 +201,7 @@ public interface IWorkbenchPart extends IAdaptable {
      *
      * @return the workbench part title tool tip (not <code>null</code>)
      */
-    public String getTitleToolTip();
+    String getTitleToolTip();
 
     /**
 	 * Removes the given property listener from this workbench part. Has no
@@ -210,7 +210,7 @@ public interface IWorkbenchPart extends IAdaptable {
 	 * @param listener
 	 *            a property listener
 	 */
-    public void removePropertyListener(IPropertyListener listener);
+    void removePropertyListener(IPropertyListener listener);
 
     /**
      * Asks this part to take focus within the workbench. Parts must
@@ -222,5 +222,5 @@ public interface IWorkbenchPart extends IAdaptable {
      * <code>IWorkbenchPage.activate(IWorkbenchPart) instead</code>.
      * </p>
      */
-    public void setFocus();
+    void setFocus();
 }

@@ -68,20 +68,20 @@ public final class LegacySelectionEnablerWrapper extends
 	}
 
 	@Override
-	public final void collectExpressionInfo(final ExpressionInfo info) {
+	public void collectExpressionInfo(final ExpressionInfo info) {
 		super.collectExpressionInfo(info);
 		info.markDefaultVariableAccessed();
 	}
 
 	@Override
-	protected final int computeHashCode() {
+	protected int computeHashCode() {
 		int hashCode = HASH_INITIAL * HASH_FACTOR + hashCode(getWindow());
 		hashCode = hashCode * HASH_FACTOR + hashCode(enabler);
 		return hashCode;
 	}
 
 	@Override
-	public final boolean equals(final Object object) {
+	public boolean equals(final Object object) {
 		if (object instanceof LegacySelectionEnablerWrapper) {
 			final LegacySelectionEnablerWrapper that = (LegacySelectionEnablerWrapper) object;
 			return equals(this.enabler, that.enabler)
@@ -92,7 +92,7 @@ public final class LegacySelectionEnablerWrapper extends
 	}
 
 	@Override
-	public final EvaluationResult evaluate(final IEvaluationContext context)
+	public EvaluationResult evaluate(final IEvaluationContext context)
 			throws CoreException {
 		final EvaluationResult result = super.evaluate(context);
 		if (result == EvaluationResult.FALSE) {
@@ -112,7 +112,7 @@ public final class LegacySelectionEnablerWrapper extends
 	}
 
 	@Override
-	public final String toString() {
+	public String toString() {
 		final StringBuilder buffer = new StringBuilder();
 		buffer.append("LegacySelectionEnablerWrapper("); //$NON-NLS-1$
 		buffer.append(enabler);

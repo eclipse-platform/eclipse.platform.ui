@@ -100,7 +100,7 @@ public final class HandlerPersistence extends RegistryPersistence {
 	 *            The service handling the activations; must not be
 	 *            <code>null</code>.
 	 */
-	private final void clearActivations(final IHandlerService handlerService) {
+	private void clearActivations(final IHandlerService handlerService) {
 		handlerService.deactivateHandlers(handlerActivations);
 		Iterator i = handlerActivations.iterator();
 		while (i.hasNext()) {
@@ -121,13 +121,13 @@ public final class HandlerPersistence extends RegistryPersistence {
 	}
 
 	@Override
-	public final void dispose() {
+	public void dispose() {
 		super.dispose();
 		clearActivations(handlerService);
 	}
 
 	@Override
-	protected final boolean isChangeImportant(final IRegistryChangeEvent event) {
+	protected boolean isChangeImportant(final IRegistryChangeEvent event) {
 		return false;
 	}
 
@@ -165,12 +165,12 @@ public final class HandlerPersistence extends RegistryPersistence {
 	 *            from the registry; must not be <code>null</code>.
 	 */
 	@Override
-	protected final void read() {
+	protected void read() {
 		super.read();
 		reRead();
 	}
 
-	public final void reRead() {
+	public void reRead() {
 		// Create the extension registry mementos.
 		final IExtensionRegistry registry = Platform.getExtensionRegistry();
 		int commandDefinitionCount = 0;
@@ -233,7 +233,7 @@ public final class HandlerPersistence extends RegistryPersistence {
 	 *            The number of configuration elements that are really in the
 	 *            array.
 	 */
-	private final void readDefaultHandlersFromRegistry(
+	private void readDefaultHandlersFromRegistry(
 			final IConfigurationElement[] configurationElements,
 			final int configurationElementCount) {
 		for (int i = 0; i < configurationElementCount; i++) {
@@ -274,7 +274,7 @@ public final class HandlerPersistence extends RegistryPersistence {
 	 *            The handler service to which the handlers should be added;
 	 *            must not be <code>null</code>.
 	 */
-	private final void readHandlersFromRegistry(
+	private void readHandlersFromRegistry(
 			final IConfigurationElement[] configurationElements,
 			final int configurationElementCount) {
 		final List warningsToLog = new ArrayList(1);
@@ -338,7 +338,7 @@ public final class HandlerPersistence extends RegistryPersistence {
 	 *            The handler service to which the handlers should be added;
 	 *            must not be <code>null</code>.
 	 */
-	private final void readHandlerSubmissionsFromRegistry(
+	private void readHandlerSubmissionsFromRegistry(
 			final IConfigurationElement[] configurationElements,
 			final int configurationElementCount) {
 		final List warningsToLog = new ArrayList(1);

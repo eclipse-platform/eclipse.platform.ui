@@ -31,7 +31,7 @@ public interface ITriggerPointManager {
      * of {@link WorkbenchActivityHelper#allowUseOf(Object)} for trigger point
      * determination logic.
      */
-	public static final String UNKNOWN_TRIGGER_POINT_ID = "org.eclipse.ui.internal.UnknownTriggerPoint"; //$NON-NLS-1$
+	String UNKNOWN_TRIGGER_POINT_ID = "org.eclipse.ui.internal.UnknownTriggerPoint"; //$NON-NLS-1$
 
 	/**
 	 * Return the trigger point with the given id.

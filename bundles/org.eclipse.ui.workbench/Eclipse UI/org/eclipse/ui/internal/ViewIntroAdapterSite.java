@@ -73,7 +73,7 @@ final class ViewIntroAdapterSite implements IIntroSite {
     }
 
     @Override
-	public final <T> T getService(final Class<T> key) {
+	public <T> T getService(final Class<T> key) {
     		return viewSite.getService(key);
     }
 
@@ -88,7 +88,7 @@ final class ViewIntroAdapterSite implements IIntroSite {
     }
 
 	@Override
-	public final boolean hasService(final Class<?> key) {
+	public boolean hasService(final Class<?> key) {
 		return viewSite.hasService(key);
 	}
 

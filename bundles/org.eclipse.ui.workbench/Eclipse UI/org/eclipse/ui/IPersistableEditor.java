@@ -42,5 +42,5 @@ public interface IPersistableEditor extends IPersistable {
 	 * @param memento
 	 *            the saved state for this editor. May be <code>null</code>.
 	 */
-	public void restoreState(IMemento memento);
+	void restoreState(IMemento memento);
 }

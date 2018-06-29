@@ -33,7 +33,7 @@ public interface IPerspectiveListener3 extends IPerspectiveListener2 {
      *            the perspective descriptor that was opened
      * @see IWorkbenchPage#setPerspective(IPerspectiveDescriptor)
      */
-    public void perspectiveOpened(IWorkbenchPage page,
+    void perspectiveOpened(IWorkbenchPage page,
             IPerspectiveDescriptor perspective);
 
     /**
@@ -47,7 +47,7 @@ public interface IPerspectiveListener3 extends IPerspectiveListener2 {
      * @see IWorkbenchPage#closePerspective(IPerspectiveDescriptor, boolean, boolean)
      * @see IWorkbenchPage#closeAllPerspectives(boolean, boolean)
      */
-    public void perspectiveClosed(IWorkbenchPage page,
+    void perspectiveClosed(IWorkbenchPage page,
             IPerspectiveDescriptor perspective);
 
     /**
@@ -60,7 +60,7 @@ public interface IPerspectiveListener3 extends IPerspectiveListener2 {
      *            the perspective descriptor that was deactivated
      * @see IWorkbenchPage#setPerspective(IPerspectiveDescriptor)
      */
-    public void perspectiveDeactivated(IWorkbenchPage page,
+    void perspectiveDeactivated(IWorkbenchPage page,
             IPerspectiveDescriptor perspective);
 
     /**
@@ -75,7 +75,7 @@ public interface IPerspectiveListener3 extends IPerspectiveListener2 {
      *            the new perspective descriptor
      * @see IWorkbenchPage#savePerspectiveAs(IPerspectiveDescriptor)
      */
-    public void perspectiveSavedAs(IWorkbenchPage page,
+    void perspectiveSavedAs(IWorkbenchPage page,
             IPerspectiveDescriptor oldPerspective,
             IPerspectiveDescriptor newPerspective);
 }

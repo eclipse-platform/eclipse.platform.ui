@@ -30,5 +30,5 @@ public interface IWorkbenchWindowPulldownDelegate2 extends
      *
      * @return the menu
      */
-    public Menu getMenu(Menu parent);
+    Menu getMenu(Menu parent);
 }

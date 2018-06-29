@@ -39,5 +39,5 @@ public interface ISelectionListener extends EventListener {
      * @param selection the current selection. This may be <code>null</code>
      * 		if <code>INullSelectionListener</code> is implemented.
      */
-    public void selectionChanged(IWorkbenchPart part, ISelection selection);
+    void selectionChanged(IWorkbenchPart part, ISelection selection);
 }

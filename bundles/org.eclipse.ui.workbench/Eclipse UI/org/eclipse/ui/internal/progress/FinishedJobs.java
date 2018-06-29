@@ -30,7 +30,7 @@ public class FinishedJobs extends EventManager {
 	/*
 	 * Interface for notify listeners.
 	 */
-	static interface KeptJobsListener {
+	interface KeptJobsListener {
 
 		/**
 		 * A job to be kept has finished

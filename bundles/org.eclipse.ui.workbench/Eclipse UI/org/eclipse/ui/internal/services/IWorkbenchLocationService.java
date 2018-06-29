@@ -32,43 +32,43 @@ public interface IWorkbenchLocationService {
 	 * @return the service scope. May return <code>null</code>.
 	 * @see IServiceScopes#PARTSITE_SCOPE
 	 */
-	public String getServiceScope();
+	String getServiceScope();
 
 	/**
 	 * A more numeric representation of the service level.
 	 *
 	 * @return the level - 0==workbench, 1==workbench window or dialog, etc
 	 */
-	public int getServiceLevel();
+	int getServiceLevel();
 
 	/**
 	 * @return the workbench. May return <code>null</code>.
 	 */
-	public IWorkbench getWorkbench();
+	IWorkbench getWorkbench();
 
 	/**
 	 * @return the workbench window in this service locator hierarchy. May
 	 * 	return <code>null</code>.
 	 */
-	public IWorkbenchWindow getWorkbenchWindow();
+	IWorkbenchWindow getWorkbenchWindow();
 
 	/**
 	 * @return the part site in this service locator hierarchy. May return
 	 * 	<code>null</code>.
 	 */
-	public IWorkbenchPartSite getPartSite();
+	IWorkbenchPartSite getPartSite();
 
 	/**
 	 * @return the inner editor site for a multi-page editor in this service
 	 * 	locator hierarchy. May return <code>null</code>.
 	 * @see MultiPageEditorSite
 	 */
-	public IEditorSite getMultiPageEditorSite();
+	IEditorSite getMultiPageEditorSite();
 
 	/**
 	 * @return the inner page site for a page based view in this service locator
 	 * 	hierarchy. May return <code>null</code>.
 	 * @see PageBookView
 	 */
-	public IPageSite getPageSite();
+	IPageSite getPageSite();
 }

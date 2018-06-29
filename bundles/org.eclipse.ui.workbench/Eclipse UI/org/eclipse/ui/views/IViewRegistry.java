@@ -37,26 +37,26 @@ public interface IViewRegistry {
      * @param id the id to search for
      * @return the descriptor or <code>null</code>
      */
-    public IViewDescriptor find(String id);
+    IViewDescriptor find(String id);
 
     /**
      * Returns an array of view categories.
      *
      * @return the categories.  Never <code>null</code>.
      */
-    public IViewCategory[] getCategories();
+    IViewCategory[] getCategories();
 
     /**
      * Return a list of views defined in the registry.
      *
      * @return the views.  Never <code>null</code>.
      */
-    public IViewDescriptor[] getViews();
+    IViewDescriptor[] getViews();
 
     /**
      * Return a list of sticky views defined in the registry.
      *
      * @return the sticky views.  Never <code>null</code>.
      */
-    public IStickyViewDescriptor[] getStickyViews();
+    IStickyViewDescriptor[] getStickyViews();
 }

@@ -47,7 +47,7 @@ public final class ActiveContextSourceProvider extends AbstractSourceProvider
 	private IContextService contextService;
 
 	@Override
-	public final void contextManagerChanged(final ContextManagerEvent event) {
+	public void contextManagerChanged(final ContextManagerEvent event) {
 		if (event.isActiveContextsChanged()) {
 			final Map currentState = getCurrentState();
 
@@ -61,12 +61,12 @@ public final class ActiveContextSourceProvider extends AbstractSourceProvider
 	}
 
 	@Override
-	public final void dispose() {
+	public void dispose() {
 		contextService.removeContextManagerListener(this);
 	}
 
 	@Override
-	public final Map getCurrentState() {
+	public Map getCurrentState() {
 		final Map currentState = new TreeMap();
 		final Collection activeContextIds = contextService
 				.getActiveContextIds();
@@ -75,7 +75,7 @@ public final class ActiveContextSourceProvider extends AbstractSourceProvider
 	}
 
 	@Override
-	public final String[] getProvidedSourceNames() {
+	public String[] getProvidedSourceNames() {
 		return PROVIDED_SOURCE_NAMES;
 	}
 

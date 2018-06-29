@@ -41,5 +41,5 @@ public interface IDisposable {
 	 * be detached. Dispose will only be called once during the life cycle of a
 	 * service.
 	 */
-	public void dispose();
+	void dispose();
 }

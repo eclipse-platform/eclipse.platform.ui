@@ -31,7 +31,7 @@ public interface IElementReference {
 	 *
 	 * @return The command id. Will not be <code>null</code>.
 	 */
-	public String getCommandId();
+	String getCommandId();
 
 	/**
 	 * The callback that was registered.
@@ -39,7 +39,7 @@ public interface IElementReference {
 	 * @return Adapts to provide appropriate user feedback. Will not be
 	 *         <code>null</code>.
 	 */
-	public UIElement getElement();
+	UIElement getElement();
 
 	/**
 	 * Parameters that help scope this callback registration. For example, it
@@ -48,5 +48,5 @@ public interface IElementReference {
 	 *
 	 * @return scoping parameters. Will not be <code>null</code>.
 	 */
-	public Map getParameters();
+	Map getParameters();
 }

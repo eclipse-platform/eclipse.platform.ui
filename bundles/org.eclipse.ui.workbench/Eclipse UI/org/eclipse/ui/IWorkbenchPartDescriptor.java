@@ -26,19 +26,19 @@ public interface IWorkbenchPartDescriptor {
      *
      * @return the id of the part
      */
-    public String getId();
+    String getId();
 
     /**
      * Returns the descriptor of the image for this part.
      *
      * @return the descriptor of the image to display next to this part
      */
-    public ImageDescriptor getImageDescriptor();
+    ImageDescriptor getImageDescriptor();
 
     /**
      * Returns the label to show for this part.
      *
      * @return the part label
      */
-    public String getLabel();
+    String getLabel();
 }

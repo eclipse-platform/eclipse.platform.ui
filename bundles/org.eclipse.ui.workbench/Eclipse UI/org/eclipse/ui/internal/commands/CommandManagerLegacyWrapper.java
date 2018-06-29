@@ -139,7 +139,7 @@ public final class CommandManagerLegacyWrapper implements ICommandManager,
 	}
 
 	@Override
-	public final void addCommandManagerListener(
+	public void addCommandManagerListener(
 			final ICommandManagerListener commandManagerListener) {
 		if (commandManagerListener == null) {
 			throw new NullPointerException("Cannot add a null listener."); //$NON-NLS-1$
@@ -158,7 +158,7 @@ public final class CommandManagerLegacyWrapper implements ICommandManager,
 	}
 
 	@Override
-	public final void bindingManagerChanged(final BindingManagerEvent event) {
+	public void bindingManagerChanged(final BindingManagerEvent event) {
 		final boolean schemeDefinitionsChanged = event.getScheme() != null;
 		final Set previousSchemes;
 		if (schemeDefinitionsChanged) {
@@ -188,7 +188,7 @@ public final class CommandManagerLegacyWrapper implements ICommandManager,
 	}
 
 	@Override
-	public final void commandManagerChanged(
+	public void commandManagerChanged(
 			final org.eclipse.core.commands.CommandManagerEvent event) {
 		// Figure out the set of previous category identifiers.
 		final boolean categoryIdsChanged = event.isCategoryChanged();
@@ -228,7 +228,7 @@ public final class CommandManagerLegacyWrapper implements ICommandManager,
 	}
 
 	@Override
-	public final void contextManagerChanged(final ContextManagerEvent event) {
+	public void contextManagerChanged(final ContextManagerEvent event) {
 		fireCommandManagerChanged(new CommandManagerEvent(this, event
 				.isActiveContextsChanged(), false, false, false, false, false,
 				false, null, null, null));
@@ -409,7 +409,7 @@ public final class CommandManagerLegacyWrapper implements ICommandManager,
 	 *            The map of command identifier (<code>String</code>) to
 	 *            handler (<code>IHandler</code>).
 	 */
-	public final void setHandlersByCommandId(final Map handlersByCommandId) {
+	public void setHandlersByCommandId(final Map handlersByCommandId) {
 		// Wrap legacy handlers so they can be passed to the new API.
 		final Iterator entryItr = handlersByCommandId.entrySet().iterator();
 		while (entryItr.hasNext()) {

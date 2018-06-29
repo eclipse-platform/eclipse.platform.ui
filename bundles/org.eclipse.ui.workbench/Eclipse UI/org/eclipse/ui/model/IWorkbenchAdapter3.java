@@ -34,5 +34,5 @@ public interface IWorkbenchAdapter3 {
 	 *
 	 * @return the styled string.
 	 */
-	public StyledString getStyledText(Object element);
+	StyledString getStyledText(Object element);
 }

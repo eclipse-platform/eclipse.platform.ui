@@ -30,14 +30,14 @@ public interface IProductConstants {
      * </p>
      * @see org.eclipse.swt.widgets.Display#setAppName
      */
-    public static final String APP_NAME = "appName"; //$NON-NLS-1$
+    String APP_NAME = "appName"; //$NON-NLS-1$
 
     /**
      * The text to show in an "about" dialog for this product.
      * Products designed to run "headless" typically would not
      * have such text.
      */
-    public static final String ABOUT_TEXT = "aboutText"; //$NON-NLS-1$
+    String ABOUT_TEXT = "aboutText"; //$NON-NLS-1$
 
     /**
      * An image which can be shown in an "about" dialog for this
@@ -54,7 +54,7 @@ public interface IProductConstants {
      * blurb beside it.
      * </p>
      */
-    public static final String ABOUT_IMAGE = "aboutImage"; //$NON-NLS-1$
+    String ABOUT_IMAGE = "aboutImage"; //$NON-NLS-1$
 
     /**
      * A file for customizing default preference
@@ -70,7 +70,7 @@ public interface IProductConstants {
      * Where <code>qualifier</code> is typically the bundle id.
      * </p>
      */
-    public static final String PREFERENCE_CUSTOMIZATION = "preferenceCustomization"; //$NON-NLS-1$
+    String PREFERENCE_CUSTOMIZATION = "preferenceCustomization"; //$NON-NLS-1$
 
     /**
      * An image to be used as the window icon for this product (16x16).
@@ -85,8 +85,7 @@ public interface IProductConstants {
      * </p>
      * @deprecated use WINDOW_IMAGES instead (see recommendations there)
      */
-    @Deprecated
-	public static final String WINDOW_IMAGE = "windowImage"; //$NON-NLS-1$
+    @Deprecated String WINDOW_IMAGE = "windowImage"; //$NON-NLS-1$
 
     /**
      * An array of one or more images to be used for this product.  The
@@ -109,7 +108,7 @@ public interface IProductConstants {
      * application switcher.
      * </p>
      */
-    public static final String WINDOW_IMAGES = "windowImages"; //$NON-NLS-1$
+    String WINDOW_IMAGES = "windowImages"; //$NON-NLS-1$
 
     /**
      * The product's welcome page (special XML-based format).
@@ -123,7 +122,7 @@ public interface IProductConstants {
      * <code>org.eclipse.ui.intro</code> extension point should be used instead.
      * </p>
      */
-    public static final String WELCOME_PAGE = "welcomePage"; //$NON-NLS-1$
+    String WELCOME_PAGE = "welcomePage"; //$NON-NLS-1$
 
     /**
      * The rectangle relative to the splash image's top left corner where
@@ -137,7 +136,7 @@ public interface IProductConstants {
      * @since 3.2
      * @see org.eclipse.ui.IWorkbenchPreferenceConstants#SHOW_PROGRESS_ON_STARTUP
      */
-    public static final String STARTUP_PROGRESS_RECT = "startupProgressRect"; //$NON-NLS-1$
+    String STARTUP_PROGRESS_RECT = "startupProgressRect"; //$NON-NLS-1$
 
     /**
      * The rectangle relative to the splash image's top left corner where
@@ -151,7 +150,7 @@ public interface IProductConstants {
      * @since 3.2
      * @see org.eclipse.ui.IWorkbenchPreferenceConstants#SHOW_PROGRESS_ON_STARTUP
      */
-    public static final String STARTUP_MESSAGE_RECT = "startupMessageRect"; //$NON-NLS-1$
+    String STARTUP_MESSAGE_RECT = "startupMessageRect"; //$NON-NLS-1$
 
     /**
      * The foreground color to be used when reporting progress at startup.
@@ -165,6 +164,6 @@ public interface IProductConstants {
      * @since 3.2
      * @see org.eclipse.ui.IWorkbenchPreferenceConstants#SHOW_PROGRESS_ON_STARTUP
      */
-    public static final String STARTUP_FOREGROUND_COLOR = "startupForegroundColor"; //$NON-NLS-1$
+    String STARTUP_FOREGROUND_COLOR = "startupForegroundColor"; //$NON-NLS-1$
 
 }

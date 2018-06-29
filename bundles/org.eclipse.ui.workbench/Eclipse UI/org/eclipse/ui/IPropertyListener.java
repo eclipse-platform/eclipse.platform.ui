@@ -26,5 +26,5 @@ public interface IPropertyListener {
      * @param propId the id of the property which has changed; property ids
      *   are generally defined as constants on the source class
      */
-    public void propertyChanged(Object source, int propId);
+    void propertyChanged(Object source, int propId);
 }

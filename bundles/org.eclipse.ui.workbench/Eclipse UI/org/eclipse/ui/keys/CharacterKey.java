@@ -112,7 +112,7 @@ public final class CharacterKey extends NaturalKey {
 	 * @return an instance of <code>CharacterKey</code> representing the
 	 *         character.
 	 */
-	public static final CharacterKey getInstance(final char character) {
+	public static CharacterKey getInstance(final char character) {
 		return new CharacterKey(character);
 	}
 
@@ -162,7 +162,7 @@ public final class CharacterKey extends NaturalKey {
 	 *
 	 * @return the character that this object represents.
 	 */
-	public final char getCharacter() {
+	public char getCharacter() {
 		return (char) key;
 	}
 }

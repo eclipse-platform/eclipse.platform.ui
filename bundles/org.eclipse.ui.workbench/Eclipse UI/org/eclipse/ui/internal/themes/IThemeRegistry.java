@@ -88,9 +88,9 @@ public interface IThemeRegistry {
      *
      * @since 3.0
      */
-    public static final Comparator ID_COMPARATOR = new Comparator() {
+    Comparator ID_COMPARATOR = new Comparator() {
 
-        @Override
+		@Override
 		public int compare(Object arg0, Object arg1) {
             String str0 = getCompareString(arg0);
             String str1 = getCompareString(arg1);
@@ -118,7 +118,7 @@ public interface IThemeRegistry {
      * @return the element matching the provided id, or <code>null</code> if
      * not found
      */
-    public ThemeElementCategory findCategory(String id);
+    ThemeElementCategory findCategory(String id);
 
     /**
      * Returns the color matching the provided id.
@@ -127,7 +127,7 @@ public interface IThemeRegistry {
      * @return the element matching the provided id, or <code>null</code> if
      * not found
      */
-    public ColorDefinition findColor(String id);
+    ColorDefinition findColor(String id);
 
     /**
      * Returns the font matching the provided id.
@@ -136,7 +136,7 @@ public interface IThemeRegistry {
      * @return the element matching the provided id, or <code>null</code> if
      * not found
      */
-    public FontDefinition findFont(String id);
+    FontDefinition findFont(String id);
 
     /**
      *  Returns the theme matching the provided id.
@@ -145,21 +145,21 @@ public interface IThemeRegistry {
      * @return the element matching the provided id, or <code>null</code> if
      * not found
      */
-    public IThemeDescriptor findTheme(String id);
+    IThemeDescriptor findTheme(String id);
 
     /**
      * Returns a list of categories defined in the registry.
      *
      * @return the categories in this registry
      */
-    public ThemeElementCategory[] getCategories();
+    ThemeElementCategory[] getCategories();
 
     /**
      * Returns a list of colors defined in the registry.
      *
      * @return the colors in this registry
      */
-    public ColorDefinition[] getColors();
+    ColorDefinition[] getColors();
 
     /**
      * Returns a list of colors defined for the given theme.  This is the
@@ -168,7 +168,7 @@ public interface IThemeRegistry {
      * @param themeId the theme id
      * @return the colors in this theme
      */
-    public ColorDefinition[] getColorsFor(String themeId);
+    ColorDefinition[] getColorsFor(String themeId);
 
     /**
      * Returns a list of fonts defined for the given theme.  This is the
@@ -177,28 +177,28 @@ public interface IThemeRegistry {
      * @param themeId the theme id
      * @return the fonts in this theme
      */
-    public FontDefinition[] getFontsFor(String themeId);
+    FontDefinition[] getFontsFor(String themeId);
 
     /**
      * Returns a list of fonts defined in the registry.
      *
      * @return the fonts in this registry
      */
-    public FontDefinition[] getFonts();
+    FontDefinition[] getFonts();
 
     /**
      * Returns a list of themes defined in the registry.
      *
      * @return the themes in this registry
      */
-    public IThemeDescriptor[] getThemes();
+    IThemeDescriptor[] getThemes();
 
     /**
      * Return the data map.
      *
      * @return the data map
      */
-    public Map getData();
+    Map getData();
 
     /**
      * Return the set of category presentation bindings.
@@ -206,5 +206,5 @@ public interface IThemeRegistry {
      * @param category the category to test
      * @return the set of bindings or <code>null</code> if this category has no bindings
      */
-    public Set getPresentationsBindingsFor(ThemeElementCategory category);
+    Set getPresentationsBindingsFor(ThemeElementCategory category);
 }

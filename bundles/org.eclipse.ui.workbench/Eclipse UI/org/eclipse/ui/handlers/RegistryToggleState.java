@@ -56,7 +56,7 @@ public final class RegistryToggleState extends ToggleState implements
 	 * @param defaultString
 	 *            The string to parse; may be <code>null</code>.
 	 */
-	private final void readDefault(final String defaultString) {
+	private void readDefault(final String defaultString) {
 		if ("true".equalsIgnoreCase(defaultString)) { //$NON-NLS-1$
 			setValue(Boolean.TRUE);
 		}
@@ -70,7 +70,7 @@ public final class RegistryToggleState extends ToggleState implements
 	 * @param persistedString
 	 *            The string to parse; may be <code>null</code>.
 	 */
-	private final void readPersisted(final String persistedString) {
+	private void readPersisted(final String persistedString) {
 		if ("false".equalsIgnoreCase(persistedString)) { //$NON-NLS-1$
 			setShouldPersist(false);
 		}else {
@@ -79,7 +79,7 @@ public final class RegistryToggleState extends ToggleState implements
 	}
 
 	@Override
-	public final void setInitializationData(
+	public void setInitializationData(
 			final IConfigurationElement configurationElement,
 			final String propertyName, final Object data) {
 		if (data instanceof String) {

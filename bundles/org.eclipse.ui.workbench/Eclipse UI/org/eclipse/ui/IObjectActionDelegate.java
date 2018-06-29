@@ -34,5 +34,5 @@ public interface IObjectActionDelegate extends IActionDelegate {
 	 * @param targetPart
 	 *            the new part target; must not be <code>null</code>.
 	 */
-    public void setActivePart(IAction action, IWorkbenchPart targetPart);
+    void setActivePart(IAction action, IWorkbenchPart targetPart);
 }

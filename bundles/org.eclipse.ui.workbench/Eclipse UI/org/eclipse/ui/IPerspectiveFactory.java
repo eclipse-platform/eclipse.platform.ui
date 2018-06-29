@@ -80,5 +80,5 @@ public interface IPerspectiveFactory {
      *
      * @param layout the page layout
      */
-    public void createInitialLayout(IPageLayout layout);
+    void createInitialLayout(IPageLayout layout);
 }

@@ -54,14 +54,14 @@ public interface IWorkbenchSite extends IAdaptable, IShellProvider,
 	 *
 	 * @return the page containing this workbench site
 	 */
-	public IWorkbenchPage getPage();
+	IWorkbenchPage getPage();
 
 	/**
 	 * Returns the selection provider for this workbench site.
 	 *
 	 * @return the selection provider, or <code>null</code> if none
 	 */
-	public ISelectionProvider getSelectionProvider();
+	ISelectionProvider getSelectionProvider();
 
 	/**
 	 * Returns the shell for this workbench site. Not intended to be called from
@@ -75,15 +75,14 @@ public interface IWorkbenchSite extends IAdaptable, IShellProvider,
 	 *
 	 * @return the shell for this workbench site
 	 */
-	@Override
-	public Shell getShell();
+	@Override Shell getShell();
 
 	/**
 	 * Returns the workbench window containing this workbench site.
 	 *
 	 * @return the workbench window containing this workbench site
 	 */
-	public IWorkbenchWindow getWorkbenchWindow();
+	IWorkbenchWindow getWorkbenchWindow();
 
 	/**
 	 * Sets the selection provider for this workbench site.
@@ -91,6 +90,6 @@ public interface IWorkbenchSite extends IAdaptable, IShellProvider,
 	 * @param provider
 	 *            the selection provider, or <code>null</code> to clear it
 	 */
-	public void setSelectionProvider(ISelectionProvider provider);
+	void setSelectionProvider(ISelectionProvider provider);
 
 }

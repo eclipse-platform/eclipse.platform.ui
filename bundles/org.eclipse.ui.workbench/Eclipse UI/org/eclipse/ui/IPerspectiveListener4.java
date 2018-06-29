@@ -39,7 +39,7 @@ public interface IPerspectiveListener4 extends IPerspectiveListener3 {
 	 *            the perspective descriptor that was deactivated
 	 * @see IWorkbenchPage#setPerspective(IPerspectiveDescriptor)
 	 */
-	public void perspectivePreDeactivate(IWorkbenchPage page,
+	void perspectivePreDeactivate(IWorkbenchPage page,
 			IPerspectiveDescriptor perspective);
 
 }

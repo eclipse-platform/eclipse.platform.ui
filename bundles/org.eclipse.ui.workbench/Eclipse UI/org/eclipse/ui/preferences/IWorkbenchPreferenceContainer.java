@@ -31,7 +31,7 @@ public interface IWorkbenchPreferenceContainer {
 	 * @return boolean <code>true</code> if the page was
 	 * opened successfully and data was applied.
 	 */
-	public boolean openPage(String preferencePageId, Object data);
+	boolean openPage(String preferencePageId, Object data);
 
 	/**
 	 * Get the working copy manager in use by this preference
@@ -39,12 +39,12 @@ public interface IWorkbenchPreferenceContainer {
 	 * IWorkingCopyManager#applyChanges()
 	 * @return IWorkingCopyManager
 	 */
-	public IWorkingCopyManager getWorkingCopyManager();
+	IWorkingCopyManager getWorkingCopyManager();
 
 	/**
 	 * Register a job to be run after the container has been closed.
 	 * @param job
 	 */
-	public void registerUpdateJob(Job job);
+	void registerUpdateJob(Job job);
 
 }

@@ -52,7 +52,7 @@ public interface IPerspectiveDescriptor {
      * @return the description
      * @since 3.0
      */
-    public String getDescription();
+    String getDescription();
 
     /**
      * Returns this perspective's id. For perspectives declared via an extension,
@@ -60,7 +60,7 @@ public interface IPerspectiveDescriptor {
      *
      * @return the perspective id
      */
-    public String getId();
+    String getId();
 
     /**
      * Returns the descriptor of the image to show for this perspective.
@@ -69,7 +69,7 @@ public interface IPerspectiveDescriptor {
      *
      * @return the descriptor of the image to show for this perspective
      */
-    public ImageDescriptor getImageDescriptor();
+    ImageDescriptor getImageDescriptor();
 
     /**
      * Returns this perspective's label. For perspectives declared via an extension,
@@ -77,5 +77,5 @@ public interface IPerspectiveDescriptor {
      *
      * @return the label
      */
-    public String getLabel();
+    String getLabel();
 }

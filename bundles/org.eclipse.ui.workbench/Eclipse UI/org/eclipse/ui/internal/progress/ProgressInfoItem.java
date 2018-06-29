@@ -118,17 +118,17 @@ public class ProgressInfoItem extends Composite {
 		/**
 		 * Select the item previous to the receiver.
 		 */
-		public void selectPrevious();
+		void selectPrevious();
 
 		/**
 		 * Select the next previous to the receiver.
 		 */
-		public void selectNext();
+		void selectNext();
 
 		/**
 		 * Select the receiver.
 		 */
-		public void select();
+		void select();
 	}
 
 	IndexListener indexListener;

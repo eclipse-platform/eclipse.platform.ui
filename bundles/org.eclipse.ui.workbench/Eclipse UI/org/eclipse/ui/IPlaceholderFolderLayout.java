@@ -40,7 +40,7 @@ public interface IPlaceholderFolderLayout {
      *
      * @param viewId the compound view id (wildcards allowed)
      */
-    public void addPlaceholder(String viewId);
+    void addPlaceholder(String viewId);
 
     /**
 	 * Returns the property with the given id or <code>null</code>. Folder
@@ -54,7 +54,7 @@ public interface IPlaceholderFolderLayout {
 	 *         set.
 	 * @since 3.3
 	 */
-    public String getProperty(String id);
+    String getProperty(String id);
 
     /**
 	 * Sets the given property to the given value. Folder properties are an
@@ -74,5 +74,5 @@ public interface IPlaceholderFolderLayout {
 	 *            property value. <code>null</code> will clear the property.
 	 * @since 3.3
 	 */
-    public void setProperty(String id, String value);
+    void setProperty(String id, String value);
 }

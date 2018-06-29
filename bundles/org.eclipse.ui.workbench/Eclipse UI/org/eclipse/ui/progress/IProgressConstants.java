@@ -27,7 +27,7 @@ public interface IProgressConstants {
     /**
      * Common prefix for properties defined in this interface.
      */
-    static final String PROPERTY_PREFIX = PlatformUI.PLUGIN_ID
+    String PROPERTY_PREFIX = PlatformUI.PLUGIN_ID
             + ".workbench.progress"; //$NON-NLS-1$
 
     /**
@@ -39,7 +39,7 @@ public interface IProgressConstants {
      * if its value is <code>true</code>.
      * </p>
      */
-    public static final QualifiedName KEEP_PROPERTY = new QualifiedName(
+    QualifiedName KEEP_PROPERTY = new QualifiedName(
             PROPERTY_PREFIX, "keep"); //$NON-NLS-1$
 
     /**
@@ -60,7 +60,7 @@ public interface IProgressConstants {
      * Non finished jobs of the same family are left alone.
      * </p>
      **/
-    public static final QualifiedName KEEPONE_PROPERTY = new QualifiedName(
+    QualifiedName KEEPONE_PROPERTY = new QualifiedName(
             PROPERTY_PREFIX, "keepone"); //$NON-NLS-1$
 
 	/**
@@ -85,7 +85,7 @@ public interface IProgressConstants {
 	 * @see org.eclipse.jface.action.IAction
 	 * @see org.eclipse.ui.actions.ActionFactory.IWorkbenchAction
 	 **/
-    public static final QualifiedName ACTION_PROPERTY = new QualifiedName(
+    QualifiedName ACTION_PROPERTY = new QualifiedName(
             PROPERTY_PREFIX, "action"); //$NON-NLS-1$
 
     /**
@@ -99,13 +99,13 @@ public interface IProgressConstants {
      * @see org.eclipse.jface.resource.ImageDescriptor
      * @see org.eclipse.ui.progress.IProgressService
      **/
-    public static final QualifiedName ICON_PROPERTY = new QualifiedName(
+    QualifiedName ICON_PROPERTY = new QualifiedName(
             PROPERTY_PREFIX, "icon"); //$NON-NLS-1$
 
     /**
      * Constant for the progress view id.
      */
-    public static String PROGRESS_VIEW_ID = "org.eclipse.ui.views.ProgressView"; //$NON-NLS-1$
+    String PROGRESS_VIEW_ID = "org.eclipse.ui.views.ProgressView"; //$NON-NLS-1$
 
     /**
      * This is a property set on a user job if the user has not decided to
@@ -118,7 +118,7 @@ public interface IProgressConstants {
      * </p>
      * @see org.eclipse.core.runtime.jobs.Job#isUser()
      */
-    public static final QualifiedName PROPERTY_IN_DIALOG = new QualifiedName(
+    QualifiedName PROPERTY_IN_DIALOG = new QualifiedName(
             IProgressConstants.PROPERTY_PREFIX, "inDialog"); //$NON-NLS-1$
 
     /**
@@ -130,6 +130,6 @@ public interface IProgressConstants {
      * </p>
      * @since 3.1
      */
-    public static final QualifiedName NO_IMMEDIATE_ERROR_PROMPT_PROPERTY = new QualifiedName(
+    QualifiedName NO_IMMEDIATE_ERROR_PROMPT_PROPERTY = new QualifiedName(
             PROPERTY_PREFIX, "delayErrorPrompt"); //$NON-NLS-1$
 }

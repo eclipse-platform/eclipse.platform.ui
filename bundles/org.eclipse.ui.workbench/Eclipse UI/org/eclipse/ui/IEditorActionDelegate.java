@@ -28,5 +28,5 @@ public interface IEditorActionDelegate extends IActionDelegate {
      * @param action the action proxy that handles presentation portion of the action
      * @param targetEditor the new editor target
      */
-    public void setActiveEditor(IAction action, IEditorPart targetEditor);
+    void setActiveEditor(IAction action, IEditorPart targetEditor);
 }

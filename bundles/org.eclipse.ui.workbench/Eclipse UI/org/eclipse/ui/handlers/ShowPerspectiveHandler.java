@@ -42,7 +42,7 @@ public final class ShowPerspectiveHandler extends AbstractHandler {
 
 
 	@Override
-	public final Object execute(final ExecutionEvent event)
+	public Object execute(final ExecutionEvent event)
 			throws ExecutionException {
 		IWorkbenchWindow window = HandlerUtil
 				.getActiveWorkbenchWindowChecked(event);
@@ -94,7 +94,7 @@ public final class ShowPerspectiveHandler extends AbstractHandler {
 	 * @throws ExecutionException
 	 *             If the perspective could not be opened.
 	 */
-	private final void openOther(final IWorkbenchWindow activeWorkbenchWindow)
+	private void openOther(final IWorkbenchWindow activeWorkbenchWindow)
 			throws ExecutionException {
 		final SelectPerspectiveDialog dialog = new SelectPerspectiveDialog(
 				activeWorkbenchWindow.getShell(), WorkbenchPlugin.getDefault()
@@ -129,7 +129,7 @@ public final class ShowPerspectiveHandler extends AbstractHandler {
 	 * @throws ExecutionException
 	 *             If the perspective could not be opened.
 	 */
-	private final void openPerspective(final String perspectiveId,
+	private void openPerspective(final String perspectiveId,
 			final IWorkbenchWindow activeWorkbenchWindow)
 			throws ExecutionException {
 		final IWorkbench workbench = PlatformUI.getWorkbench();

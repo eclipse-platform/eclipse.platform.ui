@@ -149,7 +149,7 @@ public final class ContextAuthority extends ExpressionAuthority {
 	 * @param activation
 	 *            The activation; must not be <code>null</code>.
 	 */
-	final void activateContext(final IContextActivation activation) {
+	void activateContext(final IContextActivation activation) {
 		// First we update the contextActivationsByContextId map.
 		final String contextId = activation.getContextId();
 		final Object value = contextActivationsByContextId.get(contextId);
@@ -201,7 +201,7 @@ public final class ContextAuthority extends ExpressionAuthority {
 	 *            The previously active shell; may be <code>null</code> or
 	 *            disposed.
 	 */
-	private final void checkWindowType(final Shell newShell,
+	private void checkWindowType(final Shell newShell,
 			final Shell oldShell) {
 		/*
 		 * If the previous active shell was recognized as a dialog by default,
@@ -300,7 +300,7 @@ public final class ContextAuthority extends ExpressionAuthority {
 	 * @return <code>true</code> if there is at least one active context;
 	 *         <code>false</code> otherwise.
 	 */
-	private final boolean containsActive(final Collection activations) {
+	private boolean containsActive(final Collection activations) {
 		final Iterator activationItr = activations.iterator();
 		while (activationItr.hasNext()) {
 			final IContextActivation activation = (IContextActivation) activationItr
@@ -320,7 +320,7 @@ public final class ContextAuthority extends ExpressionAuthority {
 	 * @param activation
 	 *            The activation; must not be <code>null</code>.
 	 */
-	final void deactivateContext(final IContextActivation activation) {
+	void deactivateContext(final IContextActivation activation) {
 		// First we update the handlerActivationsByCommandId map.
 		final String contextId = activation.getContextId();
 		final Object value = contextActivationsByContextId.get(contextId);
@@ -371,7 +371,7 @@ public final class ContextAuthority extends ExpressionAuthority {
 	 *
 	 * @return The currently active shell; may be <code>null</code>.
 	 */
-	final Shell getActiveShell() {
+	Shell getActiveShell() {
 		return (Shell) getVariable(ISources.ACTIVE_SHELL_NAME);
 	}
 
@@ -386,7 +386,7 @@ public final class ContextAuthority extends ExpressionAuthority {
 	 *         <code>IWorkbenchContextSupport.TYPE_DIALOG</code>, or
 	 *         <code>IWorkbenchContextSupport.TYPE_NONE</code>.
 	 */
-	public final int getShellType(final Shell shell) {
+	public int getShellType(final Shell shell) {
 		// If the shell is null, then return none.
 		if (shell == null) {
 			return IContextService.TYPE_NONE;
@@ -469,7 +469,7 @@ public final class ContextAuthority extends ExpressionAuthority {
 	 *         (i.e., the registration has changed); <code>false</code>
 	 *         otherwise.
 	 */
-	public final boolean registerShell(final Shell shell, final int type) {
+	public boolean registerShell(final Shell shell, final int type) {
 		// We do not allow null shell registration. It is reserved.
 		if (shell == null) {
 			throw new NullPointerException("The shell was null"); //$NON-NLS-1$
@@ -596,7 +596,7 @@ public final class ContextAuthority extends ExpressionAuthority {
 	 *            A bit mask of all the source priorities that have changed.
 	 */
 	@Override
-	protected final void sourceChanged(final int sourcePriority) {
+	protected void sourceChanged(final int sourcePriority) {
 		// If tracing, then track how long it takes to process the activations.
 		long startTime = 0L;
 		if (DEBUG_PERFORMANCE) {
@@ -696,7 +696,7 @@ public final class ContextAuthority extends ExpressionAuthority {
 	 * @return <code>true</code> if the shell had been registered;
 	 *         <code>false</code> otherwise.
 	 */
-	public final boolean unregisterShell(final Shell shell) {
+	public boolean unregisterShell(final Shell shell) {
 		// Don't allow this method to play with the special null slot.
 		if (shell == null) {
 			return false;
@@ -743,7 +743,7 @@ public final class ContextAuthority extends ExpressionAuthority {
 	 *            Whether the context should be active; <code>false</code>
 	 *            otherwise.
 	 */
-	private final void updateContext(final String contextId,
+	private void updateContext(final String contextId,
 			final boolean active) {
 		if (active) {
 			contextManager.addActiveContext(contextId);
@@ -767,7 +767,7 @@ public final class ContextAuthority extends ExpressionAuthority {
 	 *            <code>null</code>, then the variable is removed.
 	 */
 	@Override
-	protected final void updateEvaluationContext(final String name,
+	protected void updateEvaluationContext(final String name,
 			final Object value) {
 		/*
 		 * Bug 84056. If we update the active workbench window, then we risk
@@ -801,7 +801,7 @@ public final class ContextAuthority extends ExpressionAuthority {
 	 * DO NOT CALL THIS METHOD.
 	 * </p>
 	 */
-	final void updateShellKludge() {
+	void updateShellKludge() {
 		updateCurrentState();
 		sourceChanged(ISources.ACTIVE_SHELL);
 	}

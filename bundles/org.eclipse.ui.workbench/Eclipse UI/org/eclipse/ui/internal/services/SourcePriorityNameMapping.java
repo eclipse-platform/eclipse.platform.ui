@@ -106,7 +106,7 @@ public final class SourcePriorityNameMapping implements ISources {
 	 *            simply a single bit shifted to a particular place.
 	 * @see ISources
 	 */
-	public static final void addMapping(final String sourceName,
+	public static void addMapping(final String sourceName,
 			final int sourcePriority) {
 		if (sourceName == null) {
 			throw new NullPointerException("The source name cannot be null."); //$NON-NLS-1$
@@ -133,7 +133,7 @@ public final class SourcePriorityNameMapping implements ISources {
 	 * @return The bit mask of all the sources required for this expression;
 	 *         <code>0</code> if none.
 	 */
-	public static final int computeSourcePriority(final Expression expression) {
+	public static int computeSourcePriority(final Expression expression) {
 		int sourcePriority = ISources.WORKBENCH;
 
 		if (expression == null) {
@@ -165,7 +165,7 @@ public final class SourcePriorityNameMapping implements ISources {
 	 * @return The source priority that matches, if any;
 	 *         <code>NO_SOURCE_PRIORITY</code> if none is found.
 	 */
-	public static final int getMapping(final String sourceName) {
+	public static int getMapping(final String sourceName) {
 		final Object object = sourcePrioritiesByName.get(sourceName);
 		if (object instanceof Integer) {
 			return ((Integer) object).intValue();

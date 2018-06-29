@@ -23,20 +23,20 @@ public interface IThemeElementDefinition {
      *
      * @return the name for this element
      */
-    public String getName();
+    String getName();
 
     /**
      * Returns the id for this element.
      *
      * @return the id for this element.  This will never be <code>null</code>.
      */
-    public String getId();
+    String getId();
 
     /**
      * Returns the description for this element.
      *
      * @return the description for this element.  This may be <code>null</code>.
      */
-    public String getDescription();
+    String getDescription();
 
 }

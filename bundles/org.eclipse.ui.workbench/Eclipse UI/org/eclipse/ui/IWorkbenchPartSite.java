@@ -34,7 +34,7 @@ public interface IWorkbenchPartSite extends IWorkbenchSite {
      *
      * @return the registry extension id
      */
-    public String getId();
+    String getId();
 
     /**
      * Returns the unique identifier of the plug-in that defines this workbench
@@ -42,7 +42,7 @@ public interface IWorkbenchPartSite extends IWorkbenchSite {
      *
      * @return the unique identifier of the declaring plug-in
      */
-    public String getPluginId();
+    String getPluginId();
 
     /**
      * Returns the registered name for this workbench site's part.
@@ -53,7 +53,7 @@ public interface IWorkbenchPartSite extends IWorkbenchSite {
      *
      * @return the part name
      */
-    public String getRegisteredName();
+    String getRegisteredName();
 
     /**
      * Registers a pop-up menu with a particular id for extension.
@@ -68,7 +68,7 @@ public interface IWorkbenchPartSite extends IWorkbenchSite {
      * @param menuManager the menu manager
      * @param selectionProvider the selection provider
      */
-    public void registerContextMenu(String menuId, MenuManager menuManager,
+    void registerContextMenu(String menuId, MenuManager menuManager,
             ISelectionProvider selectionProvider);
 
     /**
@@ -106,7 +106,7 @@ public interface IWorkbenchPartSite extends IWorkbenchSite {
      * @param menuManager the menu manager
      * @param selectionProvider the selection provider
      */
-    public void registerContextMenu(MenuManager menuManager,
+    void registerContextMenu(MenuManager menuManager,
             ISelectionProvider selectionProvider);
 
     /**
@@ -122,8 +122,7 @@ public interface IWorkbenchPartSite extends IWorkbenchSite {
 	 * @see IContextService
 	 * @see IHandlerService
 	 */
-    @Deprecated
-	public IKeyBindingService getKeyBindingService();
+    @Deprecated IKeyBindingService getKeyBindingService();
 
     /**
      * Returns the part associated with this site
@@ -132,5 +131,5 @@ public interface IWorkbenchPartSite extends IWorkbenchSite {
      *
      * @return the part associated with this site
      */
-    public IWorkbenchPart getPart();
+    IWorkbenchPart getPart();
 }

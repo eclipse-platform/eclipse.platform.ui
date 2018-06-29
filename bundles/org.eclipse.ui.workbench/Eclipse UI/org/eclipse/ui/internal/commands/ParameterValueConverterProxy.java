@@ -58,13 +58,13 @@ public final class ParameterValueConverterProxy extends
 	}
 
 	@Override
-	public final Object convertToObject(final String parameterValue)
+	public Object convertToObject(final String parameterValue)
 			throws ParameterValueConversionException {
 		return getConverter().convertToObject(parameterValue);
 	}
 
 	@Override
-	public final String convertToString(final Object parameterValue)
+	public String convertToString(final Object parameterValue)
 			throws ParameterValueConversionException {
 		return getConverter().convertToString(parameterValue);
 	}

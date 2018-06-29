@@ -941,7 +941,7 @@ public final class KeysPreferencePage extends PreferencePage implements
 		editButton.addSelectionListener(new SelectionListener() {
 
 			@Override
-			public final void widgetDefaultSelected(final SelectionEvent event) {
+			public void widgetDefaultSelected(final SelectionEvent event) {
 				selectedTableKeyBindings();
 			}
 
@@ -963,7 +963,7 @@ public final class KeysPreferencePage extends PreferencePage implements
 		buttonExport.addSelectionListener(new SelectionListener() {
 
 			@Override
-			public final void widgetDefaultSelected(final SelectionEvent event) {
+			public void widgetDefaultSelected(final SelectionEvent event) {
 				selectedButtonExport();
 			}
 
@@ -1303,7 +1303,7 @@ public final class KeysPreferencePage extends PreferencePage implements
 
 		final SafeRunnable runnable = new SafeRunnable() {
 			@Override
-			public final void run() throws IOException {
+			public void run() throws IOException {
 				Writer fileWriter = null;
 				try {
 					fileWriter = new BufferedWriter(new FileWriter(filePath));
@@ -2244,7 +2244,7 @@ public final class KeysPreferencePage extends PreferencePage implements
 			 * @since 3.1
 			 */
 			@Override
-			public final int compare(final Object object1, final Object object2) {
+			public int compare(final Object object1, final Object object2) {
 				final Binding binding1 = (Binding) object1;
 				final Binding binding2 = (Binding) object2;
 
@@ -2345,7 +2345,7 @@ public final class KeysPreferencePage extends PreferencePage implements
 			 * @see Object#equals(java.lang.Object)
 			 */
 			@Override
-			public final boolean equals(final Object object) {
+			public boolean equals(final Object object) {
 				return super.equals(object);
 			}
 		});

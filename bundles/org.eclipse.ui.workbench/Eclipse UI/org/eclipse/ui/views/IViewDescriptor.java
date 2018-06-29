@@ -39,7 +39,7 @@ public interface IViewDescriptor extends IWorkbenchPartDescriptor, IAdaptable {
      * @return the view part
      * @throws CoreException thrown if there is a problem creating the part
      */
-    public IViewPart createView() throws CoreException;
+    IViewPart createView() throws CoreException;
 
     /**
      * Returns an array of strings that represent
@@ -48,50 +48,47 @@ public interface IViewDescriptor extends IWorkbenchPartDescriptor, IAdaptable {
      * view in places like submenus.
      * @return array of category tokens or null if not specified.
      */
-    public String[] getCategoryPath();
+    String[] getCategoryPath();
 
     /**
      * Returns the description of this view.
      *
      * @return the description
      */
-    public String getDescription();
+    String getDescription();
 
     /**
      * Returns the id of the view.
      *
      * @return the id
      */
-    @Override
-	public String getId();
+    @Override String getId();
 
     /**
      * Returns the descriptor for the icon to show for this view.
      */
-    @Override
-	public ImageDescriptor getImageDescriptor();
+    @Override ImageDescriptor getImageDescriptor();
 
     /**
      * Returns the label to show for this view.
      *
      * @return the label
      */
-    @Override
-	public String getLabel();
+    @Override String getLabel();
 
     /**
      * Returns the default fast view width ratio for this view.
      *
      * @return the fast view width ratio
      */
-    public float getFastViewWidthRatio();
+    float getFastViewWidthRatio();
 
     /**
      * Returns whether this view allows multiple instances.
      *
      * @return whether this view allows multiple instances
      */
-    public boolean getAllowMultiple();
+    boolean getAllowMultiple();
 
     /**
      * Returns whether this view can be restored upon workbench restart.
@@ -99,6 +96,6 @@ public interface IViewDescriptor extends IWorkbenchPartDescriptor, IAdaptable {
      * @return whether whether this view can be restored upon workbench restart
      * @since 3.4
      */
-    public boolean isRestorable();
+    boolean isRestorable();
 
 }

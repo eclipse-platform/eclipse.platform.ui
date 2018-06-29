@@ -122,7 +122,7 @@ public final class ActionHandler extends AbstractHandler {
      *
      * @since 3.1
      */
-    private final void attachListener() {
+    private void attachListener() {
         if (propertyChangeListener == null) {
             attributeValuesByName = getAttributeValuesByNameFromAction();
 
@@ -155,7 +155,7 @@ public final class ActionHandler extends AbstractHandler {
      * @since 3.1
      *
      */
-    private final void detachListener() {
+    private void detachListener() {
         this.action.removePropertyChangeListener(propertyChangeListener);
         propertyChangeListener = null;
         attributeValuesByName = null;
@@ -253,7 +253,7 @@ public final class ActionHandler extends AbstractHandler {
 
 	@Override
 	@Deprecated
-	public final String toString() {
+	public String toString() {
 		final StringBuilder buffer = new StringBuilder();
 
 		buffer.append("ActionHandler(action="); //$NON-NLS-1$

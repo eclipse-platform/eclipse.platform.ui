@@ -25,12 +25,12 @@ public interface INavigationLocationProvider {
      *
      * @return INavigationLocation
      */
-    public INavigationLocation createEmptyNavigationLocation();
+    INavigationLocation createEmptyNavigationLocation();
 
     /**
      * Creates a navigation location describing the current state.
      *
      * @return INavigationLocation
      */
-    public INavigationLocation createNavigationLocation();
+    INavigationLocation createNavigationLocation();
 }

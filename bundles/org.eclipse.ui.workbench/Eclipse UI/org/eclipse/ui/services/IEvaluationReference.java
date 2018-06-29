@@ -28,13 +28,13 @@ public interface IEvaluationReference extends IEvaluationResultCache {
 	 *
 	 * @return the listener for updates.
 	 */
-	public IPropertyChangeListener getListener();
+	IPropertyChangeListener getListener();
 
 	/**
 	 * The property used in change notifications.
 	 *
 	 * @return the property name.
 	 */
-	public String getProperty();
+	String getProperty();
 
 }

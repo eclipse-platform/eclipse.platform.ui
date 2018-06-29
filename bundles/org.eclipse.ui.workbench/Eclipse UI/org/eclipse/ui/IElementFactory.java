@@ -47,5 +47,5 @@ public interface IElementFactory {
 	 * @return an object, or <code>null</code> if the element could not be
 	 *         created
 	 */
-    public IAdaptable createElement(IMemento memento);
+    IAdaptable createElement(IMemento memento);
 }

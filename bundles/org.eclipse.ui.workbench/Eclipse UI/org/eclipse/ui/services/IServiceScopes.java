@@ -23,31 +23,31 @@ public interface IServiceScopes {
 	/**
 	 * The global service locator scope.
 	 */
-	public static final String WORKBENCH_SCOPE = "org.eclipse.ui.services.IWorkbench"; //$NON-NLS-1$
+	String WORKBENCH_SCOPE = "org.eclipse.ui.services.IWorkbench"; //$NON-NLS-1$
 
 	/**
 	 * A sub-scope to the global scope that is not the workbench window.
 	 *
 	 * @since 3.5
 	 */
-	public static final String DIALOG_SCOPE = "org.eclipse.ui.services.IDialog"; //$NON-NLS-1$
+	String DIALOG_SCOPE = "org.eclipse.ui.services.IDialog"; //$NON-NLS-1$
 	/**
 	 * A workbench window service locator scope.
 	 */
-	public static final String WINDOW_SCOPE = "org.eclipse.ui.IWorkbenchWindow"; //$NON-NLS-1$
+	String WINDOW_SCOPE = "org.eclipse.ui.IWorkbenchWindow"; //$NON-NLS-1$
 
 	/**
 	 * A part site service locator scope.  Found in editors and views.
 	 */
-	public static final String PARTSITE_SCOPE = "org.eclipse.ui.part.IWorkbenchPartSite"; //$NON-NLS-1$
+	String PARTSITE_SCOPE = "org.eclipse.ui.part.IWorkbenchPartSite"; //$NON-NLS-1$
 
 	/**
 	 * A page site service locator scope.  Found in pages in a PageBookView.
 	 */
-	public static final String PAGESITE_SCOPE = "org.eclipse.ui.part.PageSite"; //$NON-NLS-1$
+	String PAGESITE_SCOPE = "org.eclipse.ui.part.PageSite"; //$NON-NLS-1$
 
 	/**
 	 * An editor site within a MultiPageEditorPart.
 	 */
-	public static final String MPESITE_SCOPE = "org.eclipse.ui.part.MultiPageEditorSite"; //$NON-NLS-1$
+	String MPESITE_SCOPE = "org.eclipse.ui.part.MultiPageEditorSite"; //$NON-NLS-1$
 }

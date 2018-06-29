@@ -57,7 +57,7 @@ final class LegacySchemeListenerWrapper implements ISchemeListener {
 	}
 
 	@Override
-	public final boolean equals(final Object object) {
+	public boolean equals(final Object object) {
 		if (object instanceof LegacySchemeListenerWrapper) {
 			final LegacySchemeListenerWrapper wrapper = (LegacySchemeListenerWrapper) object;
 			return listener.equals(wrapper.listener);
@@ -72,12 +72,12 @@ final class LegacySchemeListenerWrapper implements ISchemeListener {
 	}
 
 	@Override
-	public final int hashCode() {
+	public int hashCode() {
 		return listener.hashCode();
 	}
 
 	@Override
-	public final void schemeChanged(final SchemeEvent schemeEvent) {
+	public void schemeChanged(final SchemeEvent schemeEvent) {
 		final IKeyConfiguration keyConfiguration = new SchemeLegacyWrapper(
 				schemeEvent.getScheme(), bindingManager);
 		final boolean definedChanged = schemeEvent.isDefinedChanged();

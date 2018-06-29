@@ -109,7 +109,7 @@ public final class LegacyHandlerProxy extends AbstractHandler {
 	 * @return <code>true</code> if the handler is now non-null;
 	 *         <code>false</code> otherwise.
 	 */
-	private final boolean loadHandler() {
+	private boolean loadHandler() {
 		if (handler == null) {
 			// Load the handler.
 			try {
@@ -135,7 +135,7 @@ public final class LegacyHandlerProxy extends AbstractHandler {
 	}
 
 	@Override
-	public final String toString() {
+	public String toString() {
 		final StringBuilder buffer = new StringBuilder();
 
 		buffer.append("LegacyProxy("); //$NON-NLS-1$

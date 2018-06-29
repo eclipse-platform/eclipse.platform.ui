@@ -32,25 +32,25 @@ public interface ISaveablePart2 extends ISaveablePart {
 	 * Standard return code constant (value 0) indicating that the part
 	 * needs to be saved.
 	 */
-	public static final int YES = 0;
+	int YES = 0;
 
 	/**
 	 * Standard return code constant (value 1) indicating that the part
 	 * does not need to be saved and the part should be closed.
 	 */
-	public static final int NO = 1;
+	int NO = 1;
 
 	/**
 	 * Standard return code constant (value 2) indicating that the part
 	 * does not need to be saved and the part should not be closed.
 	 */
-	public static final int CANCEL = 2;
+	int CANCEL = 2;
 
 	/**
 	 * Standard return code constant (value 3) indicating that the default
 	 * behavior for prompting the user to save will be used.
 	 */
-	public static final int DEFAULT = 3;
+	int DEFAULT = 3;
 
     /**
      * Prompts the user for input on what to do with unsaved data.
@@ -66,6 +66,6 @@ public interface ISaveablePart2 extends ISaveablePart {
 	 * @return the return code, must be either <code>YES</code>,
 	 * <code>NO</code>, <code>CANCEL</code> or <code>DEFAULT</code>.
 	 */
-	public int promptToSaveOnClose();
+	int promptToSaveOnClose();
 
 }

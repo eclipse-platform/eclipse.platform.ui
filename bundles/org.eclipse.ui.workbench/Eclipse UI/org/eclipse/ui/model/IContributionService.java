@@ -24,12 +24,12 @@ public interface IContributionService {
 	/**
 	 * contributionType value for the PropertyDialog
 	 */
-	public static final String TYPE_PROPERTY = "property"; //$NON-NLS-1$
+	String TYPE_PROPERTY = "property"; //$NON-NLS-1$
 
 	/**
 	 * contributionType value for Preferences
 	 */
-	public static final String TYPE_PREFERENCE = "preference"; //$NON-NLS-1$
+	String TYPE_PREFERENCE = "preference"; //$NON-NLS-1$
 
 	/**
 	 * Return a comparator for ordering contributions within the user interface.
@@ -40,5 +40,5 @@ public interface IContributionService {
 	 * @see #TYPE_PREFERENCE
 	 * @see #TYPE_PROPERTY
 	 */
-	public ContributionComparator getComparatorFor(String contributionType);
+	ContributionComparator getComparatorFor(String contributionType);
 }

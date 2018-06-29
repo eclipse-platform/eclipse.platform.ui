@@ -139,7 +139,7 @@ public final class EvaluationService implements IEvaluationService {
 		context.set(RE_EVAL, Boolean.valueOf(evaluate));
 	}
 
-	protected final void changeVariable(final String name, final Object value) {
+	protected void changeVariable(final String name, final Object value) {
 		if (name == null || variableFilter.contains(name)) {
 			return;
 		}

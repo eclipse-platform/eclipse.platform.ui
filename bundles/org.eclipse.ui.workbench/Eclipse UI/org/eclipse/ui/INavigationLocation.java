@@ -24,33 +24,33 @@ public interface INavigationLocation {
     /**
      * Disposes of this location and frees any allocated resource.
      */
-    public void dispose();
+    void dispose();
 
     /**
      * Release any state kept by this location. Any relevant state should be
      * saved by the previous call of saveState(IMemento). This object will
      * not be used until restoreState is called again.
      */
-    public void releaseState();
+    void releaseState();
 
     /**
      * Persists the state of this location into the <code>memento</code>
      *
      * @param memento the storage were the state should be saved into.
      */
-    public void saveState(IMemento memento);
+    void saveState(IMemento memento);
 
     /**
      * Restore the state of this location from the <code>memento</code>
      *
      * @param memento the storage were the state was saved into.
      */
-    public void restoreState(IMemento memento);
+    void restoreState(IMemento memento);
 
     /**
      * Restore the context saved by this location.
      */
-    public void restoreLocation();
+    void restoreLocation();
 
     /**
      * Merge the receiver into <code>currentLocation</code>. Return true if
@@ -64,7 +64,7 @@ public interface INavigationLocation {
      * @param currentLocation where the receiver should be merged into
      * @return boolean true if the merge was possible
      */
-    public boolean mergeInto(INavigationLocation currentLocation);
+    boolean mergeInto(INavigationLocation currentLocation);
 
     /**
      * Returns the input used for this location. Returns <code>null</code> if the
@@ -72,7 +72,7 @@ public interface INavigationLocation {
      *
      * @return the input for this location
      */
-    public Object getInput();
+    Object getInput();
 
     /**
      * Returns the display name for this location.  This name is used in the
@@ -80,7 +80,7 @@ public interface INavigationLocation {
      *
      * @return the display name
      */
-    public String getText();
+    String getText();
 
     /**
      * Sets the location's input.
@@ -90,11 +90,11 @@ public interface INavigationLocation {
      *
      * @param input the editor input.
      */
-    public void setInput(Object input);
+    void setInput(Object input);
 
     /**
      * The message <code>update</code> is sent to the active location before
      * another location becomes active.
      */
-    public void update();
+    void update();
 }

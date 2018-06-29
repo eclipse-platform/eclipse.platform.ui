@@ -34,7 +34,7 @@ public interface IPerspectiveListener2 extends IPerspectiveListener {
      * @param partRef the reference to the affected part
      * @param changeId one of the <code>CHANGE_*</code> constants on IWorkbenchPage
      */
-    public void perspectiveChanged(IWorkbenchPage page,
+    void perspectiveChanged(IWorkbenchPage page,
             IPerspectiveDescriptor perspective,
             IWorkbenchPartReference partRef, String changeId);
 }

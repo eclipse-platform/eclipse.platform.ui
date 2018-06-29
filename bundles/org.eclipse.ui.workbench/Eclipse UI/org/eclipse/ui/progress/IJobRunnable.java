@@ -37,6 +37,6 @@ public interface IJobRunnable {
 	 * @return resulting status of the run. The result must not be
 	 *         <code>null</code>
 	 */
-	public IStatus run(IProgressMonitor monitor);
+	IStatus run(IProgressMonitor monitor);
 
 }

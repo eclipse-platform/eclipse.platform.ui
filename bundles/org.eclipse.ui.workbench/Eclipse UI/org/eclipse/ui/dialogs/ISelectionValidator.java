@@ -27,5 +27,5 @@ public interface ISelectionValidator {
      * @return the error message, or <code>null</code> indicating
      *	that the value is valid
      */
-    public String isValid(Object selection);
+    String isValid(Object selection);
 }

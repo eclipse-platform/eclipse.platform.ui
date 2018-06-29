@@ -35,7 +35,7 @@ public interface IActionCommandMappingService {
 	 * @return The identifier of the corresponding command; <code>null</code>
 	 *         if none.
 	 */
-	public String getCommandId(String actionId);
+	String getCommandId(String actionId);
 
 	/**
 	 * Maps an action identifier to a command identifier. This is used for
@@ -48,8 +48,8 @@ public interface IActionCommandMappingService {
 	 * @param commandId
 	 *            The identifier of the command; must not be <code>null</code>
 	 */
-	public void map(String actionId, String commandId);
+	void map(String actionId, String commandId);
 
-	public String getGeneratedCommandId(String targetId, String actionId);
+	String getGeneratedCommandId(String targetId, String actionId);
 }
 

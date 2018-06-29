@@ -178,7 +178,7 @@ public final class WorkbenchActivityHelper {
 	 *            the contribution to use
 	 * @return the unified id
 	 */
-	public static final String createUnifiedId(IPluginContribution contribution) {
+	public static String createUnifiedId(IPluginContribution contribution) {
 		final String pluginId = contribution.getPluginId();
 		if (pluginId != null) {
 			return pluginId + '/' + contribution.getLocalId();
@@ -211,7 +211,7 @@ public final class WorkbenchActivityHelper {
 	 * @return whether the object should be filtered
 	 * @see #createUnifiedId(IPluginContribution)
 	 */
-	public static final boolean filterItem(Object object) {
+	public static boolean filterItem(Object object) {
 		if (object instanceof IPluginContribution) {
 			IPluginContribution contribution = (IPluginContribution) object;
 			IWorkbenchActivitySupport workbenchActivitySupport = PlatformUI
@@ -232,7 +232,7 @@ public final class WorkbenchActivityHelper {
 	 *
 	 * @return whether the UI is set up to filter contributions
 	 */
-	public static final boolean isFiltering() {
+	public static boolean isFiltering() {
 		return !PlatformUI.getWorkbench().getActivitySupport()
 				.getActivityManager().getDefinedActivityIds().isEmpty();
 	}
@@ -410,7 +410,7 @@ public final class WorkbenchActivityHelper {
 	 *         given category becomes enabled
 	 * @since 3.1
 	 */
-	public static final Set getContainedCategories(
+	public static Set getContainedCategories(
 			IActivityManager activityManager, String categoryId) {
 		ICategory category = activityManager.getCategory(categoryId);
 		if (!category.isDefined()) {

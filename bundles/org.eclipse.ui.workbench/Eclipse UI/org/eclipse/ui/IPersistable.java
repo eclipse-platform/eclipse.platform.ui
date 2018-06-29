@@ -23,5 +23,5 @@ public interface IPersistable {
      *
      * @param memento the storage area for object's state
      */
-    public void saveState(IMemento memento);
+    void saveState(IMemento memento);
 }

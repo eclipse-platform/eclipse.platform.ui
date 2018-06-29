@@ -44,7 +44,7 @@ public interface IWorkbenchListener {
      * @return <code>true</code> to allow the workbench to proceed with shutdown,
      *   <code>false</code> to veto a non-forced shutdown
      */
-    public boolean preShutdown(IWorkbench workbench, boolean forced);
+    boolean preShutdown(IWorkbench workbench, boolean forced);
 
     /**
      * Performs arbitrary finalization after the workbench stops running.
@@ -55,6 +55,6 @@ public interface IWorkbenchListener {
      *
      * @param workbench the workbench
      */
-    public void postShutdown(IWorkbench workbench);
+    void postShutdown(IWorkbench workbench);
 
 }

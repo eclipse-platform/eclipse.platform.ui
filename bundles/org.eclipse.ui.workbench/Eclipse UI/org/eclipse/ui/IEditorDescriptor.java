@@ -41,24 +41,21 @@ public interface IEditorDescriptor extends IWorkbenchPartDescriptor {
      *
      * @return the id of the editor
      */
-    @Override
-	public String getId();
+    @Override String getId();
 
     /**
      * Returns the descriptor of the image for this editor.
      *
      * @return the descriptor of the image to display next to this editor
      */
-    @Override
-	public ImageDescriptor getImageDescriptor();
+    @Override ImageDescriptor getImageDescriptor();
 
     /**
      * Returns the label to show for this editor.
      *
      * @return the editor label
      */
-    @Override
-	public String getLabel();
+    @Override String getLabel();
 
     /**
      * Returns whether this editor descriptor will open a regular editor
@@ -68,7 +65,7 @@ public interface IEditorDescriptor extends IWorkbenchPartDescriptor {
      * <code>false</code> otherwise
      * @since 3.0
      */
-    public boolean isInternal();
+    boolean isInternal();
 
     /**
      * Returns whether this editor descriptor will open an external
@@ -78,7 +75,7 @@ public interface IEditorDescriptor extends IWorkbenchPartDescriptor {
      * otherwise
      * @since 3.0
      */
-    public boolean isOpenInPlace();
+    boolean isOpenInPlace();
 
     /**
      * Returns whether this editor descriptor will open an external editor
@@ -88,7 +85,7 @@ public interface IEditorDescriptor extends IWorkbenchPartDescriptor {
      * otherwise
      * @since 3.0
      */
-    public boolean isOpenExternal();
+    boolean isOpenExternal();
 
     /**
      * Returns the editor matching strategy object for editors
@@ -98,5 +95,5 @@ public interface IEditorDescriptor extends IWorkbenchPartDescriptor {
      * @return the editor matching strategy, or <code>null</code> if none
      * @since 3.1
      */
-    public IEditorMatchingStrategy getEditorMatchingStrategy();
+    IEditorMatchingStrategy getEditorMatchingStrategy();
 }

@@ -51,7 +51,7 @@ public interface IMenuService extends IServiceWithSources {
 	 *            the contribution factory. Must not be <code>null</code>
 	 * @see #removeContributionFactory(AbstractContributionFactory)
 	 */
-	public void addContributionFactory(AbstractContributionFactory factory);
+	void addContributionFactory(AbstractContributionFactory factory);
 
 	/**
 	 * Remove the contributed factory from the menu service. If the factory is
@@ -61,7 +61,7 @@ public interface IMenuService extends IServiceWithSources {
 	 *            the contribution factory to remove. Must not be
 	 *            <code>null</code>.
 	 */
-	public void removeContributionFactory(AbstractContributionFactory factory);
+	void removeContributionFactory(AbstractContributionFactory factory);
 
 	/**
 	 * Populate a <code>ContributionManager</code> at the specified starting
@@ -76,7 +76,7 @@ public interface IMenuService extends IServiceWithSources {
 	 *            manager. The format is the Menu API URI format.
 	 * @see #releaseContributions(ContributionManager)
 	 */
-	public void populateContributionManager(ContributionManager mgr,
+	void populateContributionManager(ContributionManager mgr,
 			String location);
 
 	/**
@@ -94,7 +94,7 @@ public interface IMenuService extends IServiceWithSources {
 	 *            The manager that was populated by a call to
 	 *            {@link #populateContributionManager(ContributionManager, String)}
 	 */
-	public void releaseContributions(ContributionManager mgr);
+	void releaseContributions(ContributionManager mgr);
 
 	/**
 	 * Get the current state of eclipse as seen by the menu service.
@@ -104,5 +104,5 @@ public interface IMenuService extends IServiceWithSources {
 	 * @see org.eclipse.ui.ISources
 	 * @see org.eclipse.ui.services.IEvaluationService
 	 */
-	public IEvaluationContext getCurrentState();
+	IEvaluationContext getCurrentState();
 }

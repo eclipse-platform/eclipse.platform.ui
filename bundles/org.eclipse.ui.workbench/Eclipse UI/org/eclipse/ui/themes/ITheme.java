@@ -91,7 +91,7 @@ public interface ITheme {
      * @return the data, or the default value <code>0</code> if none exists or
      * if the value cannot be treated as an integer.
      */
-    public int getInt(String key);
+    int getInt(String key);
 
     /**
      * Returns the label of this theme.

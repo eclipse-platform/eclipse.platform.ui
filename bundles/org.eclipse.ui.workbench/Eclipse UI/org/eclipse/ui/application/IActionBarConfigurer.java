@@ -39,7 +39,7 @@ public interface IActionBarConfigurer {
      * @return the workbench window configurer
      * @since 3.1
      */
-    public IWorkbenchWindowConfigurer getWindowConfigurer();
+    IWorkbenchWindowConfigurer getWindowConfigurer();
 
 
     /**
@@ -47,21 +47,21 @@ public interface IActionBarConfigurer {
      *
      * @return the menu manager
      */
-    public IMenuManager getMenuManager();
+    IMenuManager getMenuManager();
 
     /**
      * Returns the status line manager of a workbench window.
      *
      * @return the status line manager
      */
-    public IStatusLineManager getStatusLineManager();
+    IStatusLineManager getStatusLineManager();
 
     /**
      * Returns the cool bar manager of the workbench window.
      *
      * @return the cool bar manager
      */
-    public ICoolBarManager getCoolBarManager();
+    ICoolBarManager getCoolBarManager();
 
     /**
      * Register the action as a global action with a workbench
@@ -77,6 +77,6 @@ public interface IActionBarConfigurer {
      * @param action the global action
      * @see org.eclipse.ui.actions.RetargetAction
      */
-    public void registerGlobalAction(IAction action);
+    void registerGlobalAction(IAction action);
 
 }

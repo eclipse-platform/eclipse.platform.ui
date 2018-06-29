@@ -52,7 +52,7 @@ public interface IIntroPart extends IAdaptable {
 	 * @since 3.2 this property now covers changes to <code>getTitle</code> in
 	 *        addition to <code>getTitleImage</code>
 	 */
-	public static final int PROP_TITLE = IWorkbenchPart.PROP_TITLE;
+	int PROP_TITLE = IWorkbenchPart.PROP_TITLE;
 
     /**
 	 * Returns the site for this intro part.
@@ -78,7 +78,7 @@ public interface IIntroPart extends IAdaptable {
      * @exception PartInitException if this part was not initialized
      * successfully
      */
-    public void init(IIntroSite site, IMemento memento)
+    void init(IIntroSite site, IMemento memento)
             throws PartInitException;
 
     /**
@@ -96,7 +96,7 @@ public interface IIntroPart extends IAdaptable {
      * @param standby <code>true</code> to put this part in its partially
      * visible standy mode, and <code>false</code> to make it fully visible
      */
-    public void standbyStateChanged(boolean standby);
+    void standbyStateChanged(boolean standby);
 
     /**
      * Saves the object state within a memento.
@@ -107,7 +107,7 @@ public interface IIntroPart extends IAdaptable {
      *
      * @param memento a memento to receive the object state
      */
-    public void saveState(IMemento memento);
+    void saveState(IMemento memento);
 
     /**
      * Adds a listener for changes to properties of this intro part.
@@ -121,7 +121,7 @@ public interface IIntroPart extends IAdaptable {
      *
      * @param listener a property listener
      */
-    public void addPropertyListener(IPropertyListener listener);
+    void addPropertyListener(IPropertyListener listener);
 
     /**
      * Creates the SWT controls for this intro part.
@@ -143,7 +143,7 @@ public interface IIntroPart extends IAdaptable {
      *
      * @param parent the parent control
      */
-    public void createPartControl(Composite parent);
+    void createPartControl(Composite parent);
 
     /**
      * Disposes of this intro part.
@@ -163,7 +163,7 @@ public interface IIntroPart extends IAdaptable {
      * appropriate times).
      * </p>
      */
-    public void dispose();
+    void dispose();
 
     /**
      * Returns the title image of this intro part.  If this value changes
@@ -177,7 +177,7 @@ public interface IIntroPart extends IAdaptable {
      *
      * @return the title image
      */
-    public Image getTitleImage();
+    Image getTitleImage();
 
     /**
      * Returns the title of this intro part. If this value changes
@@ -191,7 +191,7 @@ public interface IIntroPart extends IAdaptable {
      * @return the intro part title (not <code>null</code>)
      * @since 3.2
      */
-    public String getTitle();
+    String getTitle();
 
     /**
 	 * Removes the given property listener from this intro part. Has no effect
@@ -200,7 +200,7 @@ public interface IIntroPart extends IAdaptable {
 	 * @param listener
 	 *            a property listener
 	 */
-    public void removePropertyListener(IPropertyListener listener);
+    void removePropertyListener(IPropertyListener listener);
 
     /**
      * Asks this part to take focus within the workbench.
@@ -210,5 +210,5 @@ public interface IIntroPart extends IAdaptable {
      * {@link IIntroManager#showIntro(IWorkbenchWindow, boolean)}.
      * </p>
      */
-    public void setFocus();
+    void setFocus();
 }

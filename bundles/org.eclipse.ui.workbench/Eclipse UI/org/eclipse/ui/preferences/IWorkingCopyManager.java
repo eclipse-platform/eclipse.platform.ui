@@ -29,7 +29,7 @@ public interface IWorkingCopyManager {
 	 *            the original node
 	 * @return the working copy node
 	 */
-	public IEclipsePreferences getWorkingCopy(IEclipsePreferences original);
+	IEclipsePreferences getWorkingCopy(IEclipsePreferences original);
 
 	/**
 	 * Apply the changes for <em>all</em> working copies, to their original
@@ -40,7 +40,7 @@ public interface IWorkingCopyManager {
 	 * @throws BackingStoreException
 	 *             if there were problems accessing the backing store
 	 */
-	public void applyChanges() throws BackingStoreException;
+	void applyChanges() throws BackingStoreException;
 
 
 }

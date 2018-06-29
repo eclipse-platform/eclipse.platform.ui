@@ -31,6 +31,6 @@ public interface IActionBars2 extends IActionBars {
      *
      * @return the cool bar manager.
      */
-    public ICoolBarManager getCoolBarManager();
+    ICoolBarManager getCoolBarManager();
 
 }

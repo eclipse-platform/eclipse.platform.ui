@@ -38,7 +38,7 @@ public interface ISourceProvider {
 	 * @param listener
 	 *            The listener to add; must not be <code>null</code>.
 	 */
-	public void addSourceProviderListener(ISourceProviderListener listener);
+	void addSourceProviderListener(ISourceProviderListener listener);
 
 	/**
 	 * Allows the source provider an opportunity to clean up resources (e.g.,
@@ -46,7 +46,7 @@ public interface ISourceProvider {
 	 * creator after the source provider has been removed from all the services
 	 * with which it was registered.
 	 */
-	public void dispose();
+	void dispose();
 
 	/**
 	 * Returns the current state of the sources tracked by this provider. This
@@ -62,7 +62,7 @@ public interface ISourceProvider {
 	 *         values (<code>Object</code>). This may be empty, and may be
 	 *         <code>null</code>.
 	 */
-	public Map getCurrentState();
+	Map getCurrentState();
 
 	/**
 	 * Returns the names of those sources provided by this class. This is used
@@ -72,7 +72,7 @@ public interface ISourceProvider {
 	 * @return An array of source names. This value should never be
 	 *         <code>null</code> or empty.
 	 */
-	public String[] getProvidedSourceNames();
+	String[] getProvidedSourceNames();
 
 	/**
 	 * Removes a listener from this source provider. This listener will be
@@ -81,5 +81,5 @@ public interface ISourceProvider {
 	 * @param listener
 	 *            The listener to remove; must not be <code>null</code>.
 	 */
-	public void removeSourceProviderListener(ISourceProviderListener listener);
+	void removeSourceProviderListener(ISourceProviderListener listener);
 }

@@ -27,7 +27,7 @@ public interface IPageBookViewPage extends IPage {
      *
      * @return the page site or <code>null</code>
      */
-    public IPageSite getSite();
+    IPageSite getSite();
 
     /**
      * Initializes this page with the given page site.
@@ -40,5 +40,5 @@ public interface IPageBookViewPage extends IPage {
      * @param site the page site
      * @exception PartInitException if this page was not initialized successfully
      */
-    public void init(IPageSite site) throws PartInitException;
+    void init(IPageSite site) throws PartInitException;
 }

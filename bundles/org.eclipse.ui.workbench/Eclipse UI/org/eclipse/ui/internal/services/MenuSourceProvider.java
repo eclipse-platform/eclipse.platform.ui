@@ -56,7 +56,7 @@ public final class MenuSourceProvider extends AbstractSourceProvider {
 	 *            The ids of the menu that is now showing; must not be
 	 *            <code>null</code>.
 	 */
-	public final void addShowingMenus(final Set menuIds,
+	public void addShowingMenus(final Set menuIds,
 			final ISelection localSelection, final ISelection localEditorInput) {
 		this.menuIds.addAll(menuIds);
 		if (DEBUG) {
@@ -81,14 +81,14 @@ public final class MenuSourceProvider extends AbstractSourceProvider {
 	}
 
 	@Override
-	public final void dispose() {
+	public void dispose() {
 		menuIds.clear();
 		selection = null;
 		input = null;
 	}
 
 	@Override
-	public final Map getCurrentState() {
+	public Map getCurrentState() {
 		final Map state = new HashMap();
 		state.put(ISources.ACTIVE_MENU_NAME, menuIds);
 		state.put(ISources.ACTIVE_MENU_SELECTION_NAME,
@@ -100,7 +100,7 @@ public final class MenuSourceProvider extends AbstractSourceProvider {
 	}
 
 	@Override
-	public final String[] getProvidedSourceNames() {
+	public String[] getProvidedSourceNames() {
 		return PROVIDED_SOURCE_NAMES;
 	}
 
@@ -111,7 +111,7 @@ public final class MenuSourceProvider extends AbstractSourceProvider {
 	 *            The ids of the menu that is no longer shown; must not be
 	 *            <code>null</code>.
 	 */
-	public final void removeShowingMenus(final Set menuIds,
+	public void removeShowingMenus(final Set menuIds,
 			final ISelection localSelection, final ISelection localEditorInput) {
 		this.menuIds.removeAll(menuIds);
 		if (DEBUG) {

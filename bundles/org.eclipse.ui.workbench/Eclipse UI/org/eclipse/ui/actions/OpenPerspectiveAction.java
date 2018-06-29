@@ -72,7 +72,7 @@ public final class OpenPerspectiveAction extends Action implements
 
 
     @Override
-	public final void runWithEvent(final Event event) {
+	public void runWithEvent(final Event event) {
         callback.run(descriptor, new SelectionEvent(event));
     }
 

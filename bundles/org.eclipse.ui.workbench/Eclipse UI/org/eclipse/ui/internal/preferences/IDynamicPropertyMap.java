@@ -21,7 +21,7 @@ public interface IDynamicPropertyMap extends IPropertyMap {
      * @param listener
      * @since 3.1
      */
-    public void addListener(IPropertyMapListener listener);
+    void addListener(IPropertyMapListener listener);
 
     /**
      * Attaches a listener that will receive notifications when any
@@ -33,7 +33,7 @@ public interface IDynamicPropertyMap extends IPropertyMap {
      * @param propertyIds
      * @since 3.1
      */
-    public void addListener(String[] propertyIds, IPropertyMapListener listener);
+    void addListener(String[] propertyIds, IPropertyMapListener listener);
 
     /**
      * Removes a property map listener from this map . The listener will no longer
@@ -42,5 +42,5 @@ public interface IDynamicPropertyMap extends IPropertyMap {
      * @param listener
      * @since 3.1
      */
-    public void removeListener(IPropertyMapListener listener);
+    void removeListener(IPropertyMapListener listener);
 }

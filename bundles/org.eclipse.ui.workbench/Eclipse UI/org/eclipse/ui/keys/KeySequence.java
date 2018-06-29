@@ -161,7 +161,7 @@ public final class KeySequence implements Comparable {
 	 *            sequence; must not be <code>null</code>.
 	 * @return a key sequence; never <code>null</code>.
 	 */
-	public static final KeySequence getInstance(
+	public static KeySequence getInstance(
 			final org.eclipse.jface.bindings.keys.KeySequence newKeySequence) {
 		final org.eclipse.jface.bindings.keys.KeyStroke[] newKeyStrokes = newKeySequence
 				.getKeyStrokes();

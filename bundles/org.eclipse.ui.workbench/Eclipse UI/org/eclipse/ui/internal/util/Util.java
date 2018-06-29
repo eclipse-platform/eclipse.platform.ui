@@ -186,7 +186,7 @@ public final class Util {
      *         <code>null</code>. Otherwise, the left identity hash code
      *         minus the right identity hash code.
      */
-    public static final int compareIdentity(Object left, Object right) {
+    public static int compareIdentity(Object left, Object right) {
         if (left == null && right == null) {
 			return 0;
 		} else if (left == null) {
@@ -318,7 +318,7 @@ public final class Util {
 	 *         elements at the same position are equal; <code>false</code>
 	 *         otherwise.
 	 */
-	public static final boolean equals(final Object[] leftArray,
+	public static boolean equals(final Object[] leftArray,
 			final Object[] rightArray) {
 		if (leftArray == rightArray) {
 			return true;

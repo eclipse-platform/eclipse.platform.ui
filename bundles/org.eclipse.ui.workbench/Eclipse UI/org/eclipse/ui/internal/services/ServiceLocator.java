@@ -104,7 +104,7 @@ public final class ServiceLocator implements IDisposable, INestable,
 	}
 
 	@Override
-	public final void activate() {
+	public void activate() {
 		activated = true;
 
 		for (Object service : services.values()) {
@@ -126,7 +126,7 @@ public final class ServiceLocator implements IDisposable, INestable,
 	}
 
 	@Override
-	public final void deactivate() {
+	public void deactivate() {
 		activated = false;
 
 		for (Object service : services.values()) {
@@ -149,7 +149,7 @@ public final class ServiceLocator implements IDisposable, INestable,
 	}
 
 	@Override
-	public final void dispose() {
+	public void dispose() {
 		disposeServices();
 		if (services.size() > 0) {
 			// If someone registered during shutdown, dispose of it too.
@@ -196,7 +196,7 @@ public final class ServiceLocator implements IDisposable, INestable,
 	}
 
 	@Override
-	public final <T> T getService(final Class<T> key) {
+	public <T> T getService(final Class<T> key) {
 		IEclipseContext context = e4Context;
 		if (context == null) {
 			return null;
@@ -242,7 +242,7 @@ public final class ServiceLocator implements IDisposable, INestable,
 	}
 
 	@Override
-	public final boolean hasService(final Class<?> key) {
+	public boolean hasService(final Class<?> key) {
 		IEclipseContext context = e4Context;
 		if (context == null) {
 			return false;
@@ -262,7 +262,7 @@ public final class ServiceLocator implements IDisposable, INestable,
 	 *            The service to register. This must be some implementation of
 	 *            <code>api</code>. This value must not be <code>null</code>.
 	 */
-	public final void registerService(final Class api, final Object service) {
+	public void registerService(final Class api, final Object service) {
 		registerService(api, service, true);
 	}
 

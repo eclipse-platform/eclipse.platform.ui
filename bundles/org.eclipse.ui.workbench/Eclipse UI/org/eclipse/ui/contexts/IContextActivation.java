@@ -39,15 +39,14 @@ public interface IContextActivation extends IEvaluationResultCache {
 	 *
 	 * @deprecated Use {@link IEvaluationResultCache#clearResult()} instead.
 	 */
-	@Deprecated
-	public void clearActive();
+	@Deprecated void clearActive();
 
 	/**
 	 * Returns the identifier of the context that is being activated.
 	 *
 	 * @return The context identifier; never <code>null</code>.
 	 */
-	public String getContextId();
+	String getContextId();
 
 	/**
 	 * Returns the context service from which this activation was requested.
@@ -56,7 +55,7 @@ public interface IContextActivation extends IEvaluationResultCache {
 	 *
 	 * @return The context service; never <code>null</code>.
 	 */
-	public IContextService getContextService();
+	IContextService getContextService();
 
 	/**
 	 * Returns whether this context activation is currently active -- given the
@@ -72,6 +71,5 @@ public interface IContextActivation extends IEvaluationResultCache {
 	 *             {@link IEvaluationResultCache#evaluate(IEvaluationContext)}
 	 *             instead.
 	 */
-	@Deprecated
-	public boolean isActive(IEvaluationContext context);
+	@Deprecated boolean isActive(IEvaluationContext context);
 }

@@ -31,5 +31,5 @@ public interface ICachingLayout {
     /**
      * Flushes cached data for the given control
      */
-    public void flush(Control dirtyControl);
+    void flush(Control dirtyControl);
 }

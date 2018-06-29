@@ -26,12 +26,12 @@ public final class AndExpression extends CompositeExpression {
 			.hashCode();
 
 	@Override
-	protected final int computeHashCode() {
+	protected int computeHashCode() {
 		return HASH_INITIAL * HASH_FACTOR + hashCode(fExpressions);
 	}
 
 	@Override
-	public final boolean equals(final Object object) {
+	public boolean equals(final Object object) {
 		if (object instanceof AndExpression) {
 			final AndExpression that = (AndExpression) object;
 			return equals(this.fExpressions, that.fExpressions);
@@ -41,7 +41,7 @@ public final class AndExpression extends CompositeExpression {
 	}
 
 	@Override
-	public final EvaluationResult evaluate(final IEvaluationContext context)
+	public EvaluationResult evaluate(final IEvaluationContext context)
 			throws CoreException {
 		return evaluateAnd(context);
 	}

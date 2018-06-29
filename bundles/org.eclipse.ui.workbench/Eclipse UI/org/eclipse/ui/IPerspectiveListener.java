@@ -28,7 +28,7 @@ public interface IPerspectiveListener {
      * @param perspective the perspective descriptor that was activated
      * @see IWorkbenchPage#setPerspective
      */
-    public void perspectiveActivated(IWorkbenchPage page,
+    void perspectiveActivated(IWorkbenchPage page,
             IPerspectiveDescriptor perspective);
 
     /**
@@ -40,6 +40,6 @@ public interface IPerspectiveListener {
      * @param perspective the perspective descriptor
      * @param changeId one of the <code>CHANGE_*</code> constants on IWorkbenchPage
      */
-    public void perspectiveChanged(IWorkbenchPage page,
+    void perspectiveChanged(IWorkbenchPage page,
             IPerspectiveDescriptor perspective, String changeId);
 }

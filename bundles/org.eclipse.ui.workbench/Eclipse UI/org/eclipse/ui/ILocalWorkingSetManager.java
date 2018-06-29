@@ -36,7 +36,7 @@ public interface ILocalWorkingSetManager extends IWorkingSetManager {
 	 *
 	 * @param memento the memento to save the state to
 	 */
-	public void saveState(IMemento memento);
+	void saveState(IMemento memento);
 
 	/**
 	 * Restores the state of the working set manager from the given
@@ -45,5 +45,5 @@ public interface ILocalWorkingSetManager extends IWorkingSetManager {
 	 *
 	 * @param memento the memento to restore the state from
 	 */
-	public void restoreState(IMemento memento);
+	void restoreState(IMemento memento);
 }

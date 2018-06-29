@@ -64,7 +64,7 @@ public final class ShowViewHandler extends AbstractHandler {
     }
 
 	@Override
-	public final Object execute(final ExecutionEvent event) throws ExecutionException {
+	public Object execute(final ExecutionEvent event) throws ExecutionException {
 		IWorkbenchWindow workbenchWindow = HandlerUtil.getActiveWorkbenchWindowChecked(event);
 		EPartService partService = workbenchWindow.getService(EPartService.class);
 		MApplication app = workbenchWindow.getService(MApplication.class);
@@ -91,7 +91,7 @@ public final class ShowViewHandler extends AbstractHandler {
 	/**
 	 * Opens a view selection dialog, allowing the user to chose a view.
 	 */
-	private static final void openOther(ExecutionEvent event, IWorkbenchWindow workbenchWindow, MApplication app,
+	private static void openOther(ExecutionEvent event, IWorkbenchWindow workbenchWindow, MApplication app,
 			EPartService partService) {
 		Shell shell = HandlerUtil.getActiveShell(event);
 		IEclipseContext ctx = workbenchWindow.getService(IEclipseContext.class);
@@ -117,7 +117,7 @@ public final class ShowViewHandler extends AbstractHandler {
 	 * @param viewDescriptor
 	 *            The view to open; must not be <code>null</code>
 	 */
-	private static final void openView(IWorkbenchWindow window, final MPartDescriptor viewDescriptor,
+	private static void openView(IWorkbenchWindow window, final MPartDescriptor viewDescriptor,
 			EPartService partService) {
 		/*
 		 * TODO: see bug 483699: the code below duplicates the code in

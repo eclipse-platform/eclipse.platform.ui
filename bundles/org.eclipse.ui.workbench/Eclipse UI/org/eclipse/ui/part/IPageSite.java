@@ -50,7 +50,7 @@ public interface IPageSite extends IWorkbenchSite {
      * @param menuManager the menu manager
      * @param selectionProvider the selection provider
      */
-    public void registerContextMenu(String menuId, MenuManager menuManager,
+    void registerContextMenu(String menuId, MenuManager menuManager,
             ISelectionProvider selectionProvider);
 
     /**
@@ -59,5 +59,5 @@ public interface IPageSite extends IWorkbenchSite {
      *
      * @return the action bars
      */
-    public IActionBars getActionBars();
+    IActionBars getActionBars();
 }

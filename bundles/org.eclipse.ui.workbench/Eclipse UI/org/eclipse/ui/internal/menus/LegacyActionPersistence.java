@@ -130,7 +130,7 @@ public final class LegacyActionPersistence extends RegistryPersistence {
 	 * Deactivates all of the activations made by this class, and then clears
 	 * the collection. This should be called before every read.
 	 */
-	private final void clearActivations() {
+	private void clearActivations() {
 		final IHandlerService service = window
 				.getService(IHandlerService.class);
 		if (service == null) {
@@ -155,7 +155,7 @@ public final class LegacyActionPersistence extends RegistryPersistence {
 	 * collection. This should be called before every read.
 	 *
 	 */
-	private final void clearImages() {
+	private void clearImages() {
 		// TODO Implement
 	}
 
@@ -163,7 +163,7 @@ public final class LegacyActionPersistence extends RegistryPersistence {
 	 * Removes all of the contributions made by this class, and then clears the
 	 * collection. This should be called before every read.
 	 */
-	private final void clearMenus() {
+	private void clearMenus() {
 		menuContributions.clear();
 	}
 
@@ -189,7 +189,7 @@ public final class LegacyActionPersistence extends RegistryPersistence {
 	 * @return the fully-parameterized command; <code>null</code> if an error
 	 *         occurred.
 	 */
-	private final ParameterizedCommand convertActionToCommand(
+	private ParameterizedCommand convertActionToCommand(
 			final IConfigurationElement element, final String primaryId,
 			final String secondaryId, final List warningsToLog) {
 		String commandId = readOptional(element, ATT_DEFINITION_ID);
@@ -286,7 +286,7 @@ public final class LegacyActionPersistence extends RegistryPersistence {
 	 *            The collection of warnings while parsing this extension point;
 	 *            must not be <code>null</code>.
 	 */
-	private final void convertActionToHandler(
+	private void convertActionToHandler(
 			final IConfigurationElement element, final String actionId,
 			final ParameterizedCommand command,
 			final Expression activeWhenExpression, final String viewId,
@@ -383,7 +383,7 @@ public final class LegacyActionPersistence extends RegistryPersistence {
 
 
 	@Override
-	public final void dispose() {
+	public void dispose() {
 		super.dispose();
 		clear();
 	}
@@ -395,7 +395,7 @@ public final class LegacyActionPersistence extends RegistryPersistence {
 	}
 
 	@Override
-	protected final boolean isChangeImportant(final IRegistryChangeEvent event) {
+	protected boolean isChangeImportant(final IRegistryChangeEvent event) {
 		return !((event.getExtensionDeltas(PlatformUI.PLUGIN_ID,
 				IWorkbenchRegistryConstants.PL_ACTION_SETS).length == 0)
 				&& (event.getExtensionDeltas(PlatformUI.PLUGIN_ID,
@@ -418,7 +418,7 @@ public final class LegacyActionPersistence extends RegistryPersistence {
 	 * </p>
 	 */
 	@Override
-	public final void read() {
+	public void read() {
 		clear();
 		LegacyActionPersistence.super.read();
 
@@ -493,7 +493,7 @@ public final class LegacyActionPersistence extends RegistryPersistence {
 	 * @return References to the created menu elements; may be <code>null</code>,
 	 *         and may be empty.
 	 */
-	private final void readActions(final String primaryId,
+	private void readActions(final String primaryId,
 			final IConfigurationElement[] elements, final List warningsToLog,
 			final Expression visibleWhenExpression, final String viewId) {
 		for (final IConfigurationElement configElement : elements) {
@@ -543,7 +543,7 @@ public final class LegacyActionPersistence extends RegistryPersistence {
 	 *         may be <code>null</code> if there was a problem parsing the
 	 *         configuration element.
 	 */
-	private final void readActionsAndMenus(
+	private void readActionsAndMenus(
 			final IConfigurationElement element, final String id,
 			final List warningsToLog,
 			final Expression visibleWhenExpression, final String viewId) {
@@ -567,7 +567,7 @@ public final class LegacyActionPersistence extends RegistryPersistence {
 	 *            The number of configuration elements that are really in the
 	 *            array.
 	 */
-	private final void readActionSets(
+	private void readActionSets(
 			final IConfigurationElement[] configurationElements,
 			final int configurationElementCount) {
 		//
@@ -627,7 +627,7 @@ public final class LegacyActionPersistence extends RegistryPersistence {
 	 *            The number of configuration elements that are really in the
 	 *            array.
 	 */
-	private final void readEditorContributions(
+	private void readEditorContributions(
 			final IConfigurationElement[] configurationElements,
 			final int configurationElementCount) {
 		final List warningsToLog = new ArrayList(1);
@@ -675,7 +675,7 @@ public final class LegacyActionPersistence extends RegistryPersistence {
 	 *            The number of configuration elements that are really in the
 	 *            array.
 	 */
-	private final void readViewContributions(
+	private void readViewContributions(
 			final IConfigurationElement[] configurationElements,
 			final int configurationElementCount) {
 		final List warningsToLog = new ArrayList(1);

@@ -29,5 +29,5 @@ public interface IFolderLayout extends IPlaceholderFolderLayout {
      *
      * @param viewId the view id
      */
-    public void addView(String viewId);
+    void addView(String viewId);
 }

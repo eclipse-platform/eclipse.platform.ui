@@ -380,7 +380,7 @@ public final class BindingService implements IBindingService {
 		return bindingService.getPerfectMatch(binding.getTriggerSequence());
 	}
 
-	private final String[] getSchemeIds(String schemeId) {
+	private String[] getSchemeIds(String schemeId) {
 		final List<String> strings = new ArrayList<>();
 		while (schemeId != null) {
 			strings.add(schemeId);
@@ -400,7 +400,7 @@ public final class BindingService implements IBindingService {
 	 *
 	 * Returns an in based on scheme 1 < scheme 2
 	 */
-	private final int compareSchemes(final String schemeId1, final String schemeId2) {
+	private int compareSchemes(final String schemeId1, final String schemeId2) {
 		if (activeSchemeIds == null) {
 			return 0;
 		}
@@ -518,7 +518,7 @@ public final class BindingService implements IBindingService {
 	 * @param binding
 	 *            The binding to be added; must not be <code>null</code>.
 	 */
-	public final void addBinding(final Binding binding) {
+	public void addBinding(final Binding binding) {
 		MBindingTable table = getMTable(binding.getContextId());
 		createORupdateMKeyBinding(application, table, binding);
 	}
@@ -720,7 +720,7 @@ public final class BindingService implements IBindingService {
 	 * @param binding
 	 *            The binding to be removed; must not be <code>null</code>.
 	 */
-	public final void removeBinding(final Binding binding) {
+	public void removeBinding(final Binding binding) {
 		MKeyBinding mKeyBinding;
 		MBindingTable table = null;
 		for (MBindingTable bt : application.getBindingTables()) {

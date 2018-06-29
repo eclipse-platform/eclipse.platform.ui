@@ -23,7 +23,7 @@ public class ThemeElementDefinition {
 	private static final ResourceBundle RESOURCE_BUNDLE = ResourceBundle.getBundle(Theme.class
 			.getName());
 
-	public static interface State {
+	public interface State {
 		int UNKNOWN = 0;
 
 		int OVERRIDDEN = 1;

@@ -65,7 +65,7 @@ public abstract class ActionFactory {
          * This operation has no effect if the action has already been
          * disposed.
          */
-        public void dispose();
+        void dispose();
     }
 
     private static class WorkbenchCommandAction extends CommandAction implements

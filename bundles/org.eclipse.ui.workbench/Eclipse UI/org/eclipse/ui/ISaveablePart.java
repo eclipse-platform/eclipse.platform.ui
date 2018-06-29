@@ -26,7 +26,7 @@ public interface ISaveablePart {
     /**
      * The property id for <code>isDirty</code>.
      */
-    public static final int PROP_DIRTY = IWorkbenchPartConstants.PROP_DIRTY;
+    int PROP_DIRTY = IWorkbenchPartConstants.PROP_DIRTY;
 
     /**
      * Saves the contents of this part.
@@ -46,7 +46,7 @@ public interface ISaveablePart {
      *
      * @param monitor the progress monitor
      */
-    public void doSave(IProgressMonitor monitor);
+    void doSave(IProgressMonitor monitor);
 
     /**
      * Saves the contents of this part to another object.
@@ -61,7 +61,7 @@ public interface ISaveablePart {
      * reflecting the new dirty state (<code>PROP_DIRTY</code> property).
      * </p>
      */
-    public void doSaveAs();
+    void doSaveAs();
 
     /**
      * Returns whether the contents of this part have changed since the last save
@@ -77,7 +77,7 @@ public interface ISaveablePart {
      *   saving, and <code>false</code> if they have not changed since the last
      *   save
      */
-    public boolean isDirty();
+    boolean isDirty();
 
     /**
      * Returns whether the "Save As" operation is supported by this part.
@@ -85,7 +85,7 @@ public interface ISaveablePart {
      * @return <code>true</code> if "Save As" is supported, and <code>false</code>
      *  if not supported
      */
-    public boolean isSaveAsAllowed();
+    boolean isSaveAsAllowed();
 
     /**
      * Returns whether the contents of this part should be saved when the part
@@ -94,5 +94,5 @@ public interface ISaveablePart {
      * @return <code>true</code> if the contents of the part should be saved on
      *   close, and <code>false</code> if the contents are expendable
      */
-    public boolean isSaveOnCloseNeeded();
+    boolean isSaveOnCloseNeeded();
 }

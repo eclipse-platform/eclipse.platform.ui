@@ -44,7 +44,6 @@ public interface IActionDelegateWithEvent {
      * @since  2.0
      * @deprecated Use org.eclipse.ui.IActionDelegate2 instead.
      */
-    @Deprecated
-	public void runWithEvent(IAction action, Event event);
+    @Deprecated void runWithEvent(IAction action, Event event);
 
 }

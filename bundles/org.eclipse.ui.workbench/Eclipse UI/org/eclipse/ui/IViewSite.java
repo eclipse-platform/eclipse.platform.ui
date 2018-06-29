@@ -26,7 +26,7 @@ public interface IViewSite extends IWorkbenchPartSite {
      *
      * @return the action bars
      */
-    public IActionBars getActionBars();
+    IActionBars getActionBars();
 
 	/**
 	 * Returns the secondary id for this part site's part, or <code>null</code>
@@ -37,5 +37,5 @@ public interface IViewSite extends IWorkbenchPartSite {
 	 * @see IWorkbenchPage#showView(String, String, int)
 	 * @since 3.0
 	 */
-    public String getSecondaryId();
+    String getSecondaryId();
 }

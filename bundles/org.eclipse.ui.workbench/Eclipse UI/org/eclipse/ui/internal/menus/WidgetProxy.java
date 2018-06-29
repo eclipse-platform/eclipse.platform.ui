@@ -89,35 +89,35 @@ final class WidgetProxy implements IWorkbenchWidget {
 	}
 
 	@Override
-	public final void dispose() {
+	public void dispose() {
 		if (loadWidget()) {
 			widget.dispose();
 		}
 	}
 
 	@Override
-	public final void fill(final Composite parent) {
+	public void fill(final Composite parent) {
 		if (loadWidget()) {
 			widget.fill(parent);
 		}
 	}
 
 	@Override
-	public final void fill(final CoolBar parent, final int index) {
+	public void fill(final CoolBar parent, final int index) {
 		if (loadWidget()) {
 			widget.fill(parent, index);
 		}
 	}
 
 	@Override
-	public final void fill(final Menu parent, final int index) {
+	public void fill(final Menu parent, final int index) {
 		if (loadWidget()) {
 			widget.fill(parent, index);
 		}
 	}
 
 	@Override
-	public final void fill(final ToolBar parent, final int index) {
+	public void fill(final ToolBar parent, final int index) {
 		if (loadWidget()) {
 			widget.fill(parent, index);
 		}
@@ -140,7 +140,7 @@ final class WidgetProxy implements IWorkbenchWidget {
 	 * @param oldSide The side the trim was previously displayed on
 	 * @param newSide The new side that the trim will be displayed on
 	 */
-	public final void fill(Composite parent, int oldSide, int newSide) {
+	public void fill(Composite parent, int oldSide, int newSide) {
 		if (loadWidget()) {
 			if (isMoveableTrimWidget()) {
 				((AbstractWorkbenchTrimWidget) widget).fill(parent, oldSide, newSide);
@@ -157,7 +157,7 @@ final class WidgetProxy implements IWorkbenchWidget {
 	 * @return <code>true</code> if the widget is now non-null;
 	 *         <code>false</code> otherwise.
 	 */
-	private final boolean loadWidget() {
+	private boolean loadWidget() {
 		if (firstLoad) {
 			// Load the handler.
 			try {
@@ -193,7 +193,7 @@ final class WidgetProxy implements IWorkbenchWidget {
 	 * @return <code>true</code> iff the <code>IWidget</code> implementation
 	 * is actually based on <code>AbstractTrimWidget</code>
 	 */
-	private final boolean isMoveableTrimWidget() {
+	private boolean isMoveableTrimWidget() {
 		if (loadWidget()) {
 			return widget instanceof AbstractWorkbenchTrimWidget;
 		}
@@ -202,7 +202,7 @@ final class WidgetProxy implements IWorkbenchWidget {
 	}
 
 	@Override
-	public final String toString() {
+	public String toString() {
 		if (widget == null) {
 			return configurationElement.getAttribute(widgetAttributeName);
 		}

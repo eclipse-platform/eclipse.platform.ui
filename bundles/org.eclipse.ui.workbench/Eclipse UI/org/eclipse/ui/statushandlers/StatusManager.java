@@ -409,7 +409,7 @@ public class StatusManager {
 		 * @param adapters
 		 *            - affected {@link StatusAdapter}s
 		 */
-		public void statusManagerNotified(int type, StatusAdapter[] adapters);
+		void statusManagerNotified(int type, StatusAdapter[] adapters);
 	}
 
 	/**
@@ -426,7 +426,7 @@ public class StatusManager {
 		 * This type notifications are used when a particular
 		 * {@link StatusAdapter} was handled.
 		 */
-		public static final int HANDLED = 0x01;
+		int HANDLED = 0x01;
 
 	}
 }

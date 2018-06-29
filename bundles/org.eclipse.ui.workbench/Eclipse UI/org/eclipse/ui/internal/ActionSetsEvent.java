@@ -58,7 +58,7 @@ public final class ActionSetsEvent {
 	 *
 	 * @return The action sets that are now active; may be <code>null</code>.
 	 */
-	public final IActionSetDescriptor[] getNewActionSets() {
+	public IActionSetDescriptor[] getNewActionSets() {
 		return newActionSets;
 	}
 }

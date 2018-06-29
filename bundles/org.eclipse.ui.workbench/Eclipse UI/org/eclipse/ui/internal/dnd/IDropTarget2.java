@@ -22,5 +22,5 @@ public interface IDropTarget2 extends IDropTarget {
 	/**
 	 * This is called whenever a drag operation is cancelled
 	 */
-	public void dragFinished(boolean dropPerformed);
+	void dragFinished(boolean dropPerformed);
 }

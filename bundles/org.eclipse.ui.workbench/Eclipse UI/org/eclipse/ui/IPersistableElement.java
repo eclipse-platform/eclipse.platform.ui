@@ -48,5 +48,5 @@ public interface IPersistableElement extends IPersistable {
      * @return the element factory id
      * @see IElementFactory
      */
-    public String getFactoryId();
+    String getFactoryId();
 }

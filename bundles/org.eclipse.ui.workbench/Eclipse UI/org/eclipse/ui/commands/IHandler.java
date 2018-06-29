@@ -47,8 +47,7 @@ public interface IHandler {
      * longer referenced. This can be used as an opportunity to unhook listeners
      * from other objects.
      */
-	@Deprecated
-    public void dispose();
+	@Deprecated void dispose();
 
     /**
      * Executes with the map of parameter values by name.

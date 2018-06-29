@@ -36,7 +36,7 @@ public interface IContributionRoot {
 	 * @param visibleWhen
 	 *            the visibility expression. May be <code>null</code>.
 	 */
-	public void addContributionItem(IContributionItem item,
+	void addContributionItem(IContributionItem item,
 			Expression visibleWhen);
 
 	/**
@@ -51,6 +51,6 @@ public interface IContributionRoot {
 	 *            the visibility expression. May be <code>null</code> in which
 	 *            case this method is a no-op.
 	 */
-	public void registerVisibilityForChild(IContributionItem item,
+	void registerVisibilityForChild(IContributionItem item,
 			Expression visibleWhen);
 }

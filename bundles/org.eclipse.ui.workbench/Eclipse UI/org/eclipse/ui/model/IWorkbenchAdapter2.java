@@ -34,7 +34,7 @@ public interface IWorkbenchAdapter2 {
      * @return	the foreground color for the element, or <code>null</code>
      *   to use the default foreground color
      */
-    public RGB getForeground(Object element);
+    RGB getForeground(Object element);
 
     /**
      * Provides a background color for the given element.
@@ -43,7 +43,7 @@ public interface IWorkbenchAdapter2 {
      * @return	the background color for the element, or <code>null</code>
      *   to use the default background color
      */
-    public RGB getBackground(Object element);
+    RGB getBackground(Object element);
 
     /**
      * Provides a font the given element.
@@ -52,6 +52,6 @@ public interface IWorkbenchAdapter2 {
      * @return	the font for the element, or <code>null</code>
      *   to use the default font
      */
-    public FontData getFont(Object element);
+    FontData getFont(Object element);
 
 }

@@ -27,7 +27,7 @@ public interface TestDropLocation {
      *
      * @return a location in display coordinates
      */
-    public Point getLocation();
+    Point getLocation();
 
     /**
      * The drop code will pretend that only the given shells are open,
@@ -35,5 +35,5 @@ public interface TestDropLocation {
      *
      * @return the shells to check for drop targets, from bottom to top.
      */
-    public Shell[] getShells();
+    Shell[] getShells();
 }

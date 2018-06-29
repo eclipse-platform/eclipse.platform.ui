@@ -26,7 +26,7 @@ public interface IWorkbenchPart2 extends IWorkbenchPart {
      * @return the name of this view, or the empty string if the name is being managed
      * by the workbench (not <code>null</code>)
      */
-    public String getPartName();
+    String getPartName();
 
     /**
      * Returns the content description of this part. The content description is an optional
@@ -39,6 +39,6 @@ public interface IWorkbenchPart2 extends IWorkbenchPart {
      *
      * @return the content description of this part (not <code>null</code>)
      */
-    public String getContentDescription();
+    String getContentDescription();
 
 }

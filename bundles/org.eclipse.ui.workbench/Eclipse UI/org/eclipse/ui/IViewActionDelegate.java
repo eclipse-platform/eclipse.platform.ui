@@ -22,5 +22,5 @@ public interface IViewActionDelegate extends IActionDelegate {
      *
      * @param view the view that provides the context for this delegate
      */
-    public void init(IViewPart view);
+    void init(IViewPart view);
 }

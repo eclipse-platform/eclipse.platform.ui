@@ -25,6 +25,6 @@ public interface ISaveableFilter {
 	 *    contain zero or more parts.
 	 * @return whether the given saveable matches this filter
 	 */
-	public boolean select(Saveable saveable, IWorkbenchPart[] containingParts);
+	boolean select(Saveable saveable, IWorkbenchPart[] containingParts);
 
 }

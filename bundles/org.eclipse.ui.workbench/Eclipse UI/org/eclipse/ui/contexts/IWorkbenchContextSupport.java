@@ -38,26 +38,26 @@ public interface IWorkbenchContextSupport {
 	 * The identifier for the context that is active when a shell registered as
 	 * a dialog.
 	 */
-	public static final String CONTEXT_ID_DIALOG = IContextService.CONTEXT_ID_DIALOG;
+	String CONTEXT_ID_DIALOG = IContextService.CONTEXT_ID_DIALOG;
 
 	/**
 	 * The identifier for the context that is active when a shell is registered
 	 * as either a window or a dialog.
 	 */
-	public static final String CONTEXT_ID_DIALOG_AND_WINDOW = IContextService.CONTEXT_ID_DIALOG_AND_WINDOW;
+	String CONTEXT_ID_DIALOG_AND_WINDOW = IContextService.CONTEXT_ID_DIALOG_AND_WINDOW;
 
 	/**
 	 * The identifier for the context that is active when a shell is registered
 	 * as a window.
 	 */
-	public static final String CONTEXT_ID_WINDOW = IContextService.CONTEXT_ID_WINDOW;
+	String CONTEXT_ID_WINDOW = IContextService.CONTEXT_ID_WINDOW;
 
 	/**
 	 * The type used for registration indicating that the shell should be
 	 * treated as a dialog. When the given shell is active, the "In Dialogs"
 	 * context should also be active.
 	 */
-	public static final int TYPE_DIALOG = IContextService.TYPE_DIALOG;
+	int TYPE_DIALOG = IContextService.TYPE_DIALOG;
 
 	/**
 	 * The type used for registration indicating that the shell should not
@@ -66,14 +66,14 @@ public interface IWorkbenchContextSupport {
 	 * "In Dialogs" or "In Windows" contexts.
 	 *
 	 */
-	public static final int TYPE_NONE = IContextService.TYPE_NONE;
+	int TYPE_NONE = IContextService.TYPE_NONE;
 
 	/**
 	 * The type used for registration indicating that the shell should be
 	 * treated as a window. When the given shell is active, the "In Windows"
 	 * context should also be active.
 	 */
-	public static final int TYPE_WINDOW = IContextService.TYPE_WINDOW;
+	int TYPE_WINDOW = IContextService.TYPE_WINDOW;
 
 	/**
 	 * <p>
@@ -139,7 +139,7 @@ public interface IWorkbenchContextSupport {
 	 *         <code>IWorkbenchContextSupport.TYPE_NONE</code>.
 	 * @since 3.1
 	 */
-	public int getShellType(final Shell shell);
+	int getShellType(final Shell shell);
 
 	/**
 	 * Tests whether the global key binding architecture is currently active.
@@ -147,7 +147,7 @@ public interface IWorkbenchContextSupport {
 	 * @return <code>true</code> if the key bindings are active;
 	 *         <code>false</code> otherwise.
 	 */
-	public boolean isKeyFilterEnabled();
+	boolean isKeyFilterEnabled();
 
 	/**
 	 * Opens the key assistant dialog positioned near the key binding entry in
@@ -155,7 +155,7 @@ public interface IWorkbenchContextSupport {
 	 *
 	 * @since 3.1
 	 */
-	public void openKeyAssistDialog();
+	void openKeyAssistDialog();
 
 	/**
 	 * <p>
@@ -189,7 +189,7 @@ public interface IWorkbenchContextSupport {
 	 *         (i.e., the registration has changed); <code>false</code>
 	 *         otherwise.
 	 */
-	public boolean registerShell(final Shell shell, final int type);
+	boolean registerShell(final Shell shell, final int type);
 
 	/**
 	 * <p>
@@ -246,7 +246,7 @@ public interface IWorkbenchContextSupport {
 	 * @param enabled
 	 *            Whether the key filter should be enabled.
 	 */
-	public void setKeyFilterEnabled(final boolean enabled);
+	void setKeyFilterEnabled(final boolean enabled);
 
 	/**
 	 * <p>
@@ -267,5 +267,5 @@ public interface IWorkbenchContextSupport {
 	 * @return <code>true</code> if the shell had been registered;
 	 *         <code>false</code> otherwise.
 	 */
-	public boolean unregisterShell(final Shell shell);
+	boolean unregisterShell(final Shell shell);
 }

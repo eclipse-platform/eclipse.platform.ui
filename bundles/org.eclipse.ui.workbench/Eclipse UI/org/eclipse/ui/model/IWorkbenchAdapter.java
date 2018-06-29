@@ -33,7 +33,7 @@ public interface IWorkbenchAdapter {
      * @param o The object to get the children for.
      * @return Object[]
      */
-    public Object[] getChildren(Object o);
+    Object[] getChildren(Object o);
 
     /**
      * Returns an image descriptor to be used for displaying an object in the workbench.
@@ -42,7 +42,7 @@ public interface IWorkbenchAdapter {
      * @param object The object to get an image descriptor for.
      * @return ImageDescriptor
      */
-    public ImageDescriptor getImageDescriptor(Object object);
+    ImageDescriptor getImageDescriptor(Object object);
 
     /**
      * Returns the label text for this element.  This is typically
@@ -53,7 +53,7 @@ public interface IWorkbenchAdapter {
      * @param o The object to get a label for.
      * @return String
      */
-    public String getLabel(Object o);
+    String getLabel(Object o);
 
     /**
      * Returns the logical parent of the given object in its tree.
@@ -63,5 +63,5 @@ public interface IWorkbenchAdapter {
      * @param o The object to get the parent for.
      * @return Object
      */
-    public Object getParent(Object o);
+    Object getParent(Object o);
 }

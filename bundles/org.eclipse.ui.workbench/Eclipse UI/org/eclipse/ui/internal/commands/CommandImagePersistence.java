@@ -71,7 +71,7 @@ public final class CommandImagePersistence extends RegistryPersistence {
 	 *            The command service for the workbench; must not be
 	 *            <code>null</code>.
 	 */
-	private static final void readImagesFromRegistry(
+	private static void readImagesFromRegistry(
 			final IConfigurationElement[] configurationElements,
 			final int configurationElementCount,
 			final CommandImageManager commandImageManager,
@@ -168,7 +168,7 @@ public final class CommandImagePersistence extends RegistryPersistence {
 	}
 
 	@Override
-	protected final boolean isChangeImportant(final IRegistryChangeEvent event) {
+	protected boolean isChangeImportant(final IRegistryChangeEvent event) {
 		final IExtensionDelta[] imageDeltas = event.getExtensionDeltas(
 				PlatformUI.PLUGIN_ID,
 				IWorkbenchRegistryConstants.PL_COMMAND_IMAGES);
@@ -183,7 +183,7 @@ public final class CommandImagePersistence extends RegistryPersistence {
 	 * Reads all of the command images from the registry.
 	 */
 	@Override
-	protected final void read() {
+	protected void read() {
 		super.read();
 
 		// Create the extension registry mementos.

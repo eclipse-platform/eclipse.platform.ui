@@ -27,13 +27,13 @@ public interface IEditorReference extends IWorkbenchPartReference {
      * restore this editor. Returns null if the editor
      * is not persistable.
      */
-    public String getFactoryId();
+    String getFactoryId();
 
 	/**
 	 * Returns the editor input's name. May return null if the name is not
 	 * available or if the editor failed to be restored.
 	 */
-    public String getName();
+    String getName();
 
     /**
      * Returns the editor referenced by this object.
@@ -41,12 +41,12 @@ public interface IEditorReference extends IWorkbenchPartReference {
      * it failed to be restored. Tries to restore the editor
      * if <code>restore</code> is true.
      */
-    public IEditorPart getEditor(boolean restore);
+    IEditorPart getEditor(boolean restore);
 
 	/**
 	 * Returns true if the editor is pinned, otherwise returns false.
 	 */
-    public boolean isPinned();
+    boolean isPinned();
 
     /**
      * Returns the editor input for the editor referenced by this object.
@@ -59,5 +59,5 @@ public interface IEditorReference extends IWorkbenchPartReference {
      * @throws PartInitException if there was an error restoring the editor input
      * @since 3.1
      */
-    public IEditorInput getEditorInput() throws PartInitException;
+    IEditorInput getEditorInput() throws PartInitException;
 }

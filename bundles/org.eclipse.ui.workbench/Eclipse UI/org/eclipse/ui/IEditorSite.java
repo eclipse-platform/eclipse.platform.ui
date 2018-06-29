@@ -34,7 +34,7 @@ public interface IEditorSite extends IWorkbenchPartSite {
      *
      * @return the editor action bar contributor, or <code>null</code> if none exists
      */
-    public IEditorActionBarContributor getActionBarContributor();
+    IEditorActionBarContributor getActionBarContributor();
 
     /**
 	 * Returns the action bars for this part site. Editors of the same type (and
@@ -44,7 +44,7 @@ public interface IEditorSite extends IWorkbenchPartSite {
 	 * @return the action bars
 	 * @since 2.1
 	 */
-    public IActionBars getActionBars();
+    IActionBars getActionBars();
 
     /**
      * <p>
@@ -75,7 +75,7 @@ public interface IEditorSite extends IWorkbenchPartSite {
      *      ISelectionProvider)
      * @since 3.1
      */
-    public void registerContextMenu(MenuManager menuManager,
+    void registerContextMenu(MenuManager menuManager,
             ISelectionProvider selectionProvider, boolean includeEditorInput);
 
     /**
@@ -110,6 +110,6 @@ public interface IEditorSite extends IWorkbenchPartSite {
      *      ISelectionProvider)
      * @since 3.1
      */
-    public void registerContextMenu(String menuId, MenuManager menuManager,
+    void registerContextMenu(String menuId, MenuManager menuManager,
             ISelectionProvider selectionProvider, boolean includeEditorInput);
 }

@@ -44,6 +44,6 @@ public interface ISaveablesLifecycleListener {
 	 *
 	 * @param event
 	 */
-	public void handleLifecycleEvent(SaveablesLifecycleEvent event);
+	void handleLifecycleEvent(SaveablesLifecycleEvent event);
 
 }

@@ -43,7 +43,7 @@ public interface ISourceProviderListener {
 	 * @see org.eclipse.core.expressions.IEvaluationContext
 	 * @see ISources
 	 */
-	public void sourceChanged(final int sourcePriority,
+	void sourceChanged(final int sourcePriority,
 			final Map sourceValuesByName);
 
 	/**
@@ -61,6 +61,6 @@ public interface ISourceProviderListener {
 	 * @see org.eclipse.core.expressions.IEvaluationContext
 	 * @see ISources
 	 */
-	public void sourceChanged(final int sourcePriority,
+	void sourceChanged(final int sourcePriority,
 			final String sourceName, final Object sourceValue);
 }

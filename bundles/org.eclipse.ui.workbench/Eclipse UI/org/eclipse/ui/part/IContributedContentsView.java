@@ -26,5 +26,5 @@ public interface IContributedContentsView {
      *
      * @return the part which contributed the current contents
      */
-    public IWorkbenchPart getContributingPart();
+    IWorkbenchPart getContributingPart();
 }

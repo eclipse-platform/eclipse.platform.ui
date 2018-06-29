@@ -41,7 +41,7 @@ public interface IPartService {
      * @param listener a part listener
      * @see #removePartListener(IPartListener)
      */
-    public void addPartListener(IPartListener listener);
+    void addPartListener(IPartListener listener);
 
     /**
      * Adds the given listener for part lifecycle events.
@@ -62,14 +62,14 @@ public interface IPartService {
      * @see org.eclipse.jface.dialogs.IPageChangeProvider
      * @see org.eclipse.jface.dialogs.IPageChangedListener
      */
-    public void addPartListener(IPartListener2 listener);
+    void addPartListener(IPartListener2 listener);
 
     /**
      * Returns the active part.
      *
      * @return the active part, or <code>null</code> if no part is currently active
      */
-    public IWorkbenchPart getActivePart();
+    IWorkbenchPart getActivePart();
 
     /**
      * Returns the active part reference.
@@ -77,7 +77,7 @@ public interface IPartService {
      * @return the active part reference, or <code>null</code> if no part
      * is currently active
      */
-    public IWorkbenchPartReference getActivePartReference();
+    IWorkbenchPartReference getActivePartReference();
 
     /**
 	 * Removes the given part listener. Has no effect if an identical listener
@@ -86,7 +86,7 @@ public interface IPartService {
 	 * @param listener
 	 *            a part listener
 	 */
-    public void removePartListener(IPartListener listener);
+    void removePartListener(IPartListener listener);
 
     /**
 	 * Removes the given part listener. Has no effect if an identical listener
@@ -95,5 +95,5 @@ public interface IPartService {
 	 * @param listener
 	 *            a part listener
 	 */
-    public void removePartListener(IPartListener2 listener);
+    void removePartListener(IPartListener2 listener);
 }

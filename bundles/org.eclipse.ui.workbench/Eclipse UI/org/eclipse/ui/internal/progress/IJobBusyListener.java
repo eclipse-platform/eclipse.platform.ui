@@ -23,12 +23,12 @@ interface IJobBusyListener {
      * Increment the busy count for job.
      * @param job
      */
-    public void incrementBusy(Job job);
+    void incrementBusy(Job job);
 
     /**
      * Decrement the busy count for job.
      * @param job
      */
-    public void decrementBusy(Job job);
+    void decrementBusy(Job job);
 
 }

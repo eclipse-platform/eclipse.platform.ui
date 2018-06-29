@@ -31,7 +31,7 @@ public interface IObjectActionContributor extends IObjectContributor {
      *
      * @return <code>true</code> if any contributions were made, and <code>false</code> otherwise.
      */
-    public boolean contributeObjectActions(IWorkbenchPart part,
+    boolean contributeObjectActions(IWorkbenchPart part,
             IMenuManager menu, ISelectionProvider selProv,
             List actionIdOverrides);
 
@@ -43,7 +43,7 @@ public interface IObjectActionContributor extends IObjectContributor {
      *
      * @return <code>true</code> if any contributions were made, and <code>false</code> otherwise.
      */
-    public boolean contributeObjectMenus(IMenuManager menu,
+    boolean contributeObjectMenus(IMenuManager menu,
             ISelectionProvider selProv);
 
     /**
@@ -51,5 +51,5 @@ public interface IObjectActionContributor extends IObjectContributor {
      * this contribution wants to override. Actions of these identifiers will
      * not be contributed.
      */
-    public void contributeObjectActionIdOverrides(List actionIdOverrides);
+    void contributeObjectActionIdOverrides(List actionIdOverrides);
 }

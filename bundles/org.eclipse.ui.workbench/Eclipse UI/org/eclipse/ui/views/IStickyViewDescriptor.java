@@ -28,7 +28,7 @@ public interface IStickyViewDescriptor {
      *
      * @return the id of the view to be made sticky
      */
-    public String getId();
+    String getId();
 
     /**
      * Return the location of this sticky view.  Must be one of
@@ -37,19 +37,19 @@ public interface IStickyViewDescriptor {
      *
      * @return the location constant
      */
-    public int getLocation();
+    int getLocation();
 
     /**
      * Return whether this view should be closeable.
      *
      * @return whether this view should be closeeable
      */
-    public boolean isCloseable();
+    boolean isCloseable();
 
     /**
      * Return whether this view should be moveable.
      *
      * @return whether this view should be moveable
      */
-    public boolean isMoveable();
+    boolean isMoveable();
 }

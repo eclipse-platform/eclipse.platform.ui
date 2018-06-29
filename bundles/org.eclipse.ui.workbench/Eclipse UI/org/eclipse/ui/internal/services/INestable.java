@@ -48,12 +48,12 @@ public interface INestable {
 	 * become active. The service should modify its state as appropriate.
 	 *
 	 */
-	public void activate();
+	void activate();
 
 	/**
 	 * Notifies this service that the component within which it exists has
 	 * become inactive. The service should modify its state as appropriate.
 	 */
-	public void deactivate();
+	void deactivate();
 }
 

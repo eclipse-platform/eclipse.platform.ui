@@ -48,7 +48,7 @@ public final class WorkbenchPartLabelProvider extends LabelProvider implements
     }
 
     @Override
-	public final Image getImage(Object element) {
+	public Image getImage(Object element) {
         if (element instanceof IWorkbenchPart) {
             return ((IWorkbenchPart) element).getTitleImage();
         }
@@ -75,7 +75,7 @@ public final class WorkbenchPartLabelProvider extends LabelProvider implements
     }
 
     @Override
-	public final String getText(Object element) {
+	public String getText(Object element) {
         if (element instanceof IWorkbenchPart) {
             IWorkbenchPart part = (IWorkbenchPart) element;
             String path = part.getTitleToolTip();
@@ -100,7 +100,7 @@ public final class WorkbenchPartLabelProvider extends LabelProvider implements
      * @see ITableLabelProvider#getColumnImage
      */
     @Override
-	public final Image getColumnImage(Object element, int columnIndex) {
+	public Image getColumnImage(Object element, int columnIndex) {
         return getImage(element);
     }
 
@@ -108,7 +108,7 @@ public final class WorkbenchPartLabelProvider extends LabelProvider implements
      * @see ITableLabelProvider#getColumnText
      */
     @Override
-	public final String getColumnText(Object element, int columnIndex) {
+	public String getColumnText(Object element, int columnIndex) {
         return getText(element);
     }
 

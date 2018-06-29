@@ -35,7 +35,7 @@ public interface IWorkbenchPart3 extends IWorkbenchPart2 {
 	 * @param listener
 	 *            Must not be <code>null</code>.
 	 */
-	public void addPartPropertyListener(IPropertyChangeListener listener);
+	void addPartPropertyListener(IPropertyChangeListener listener);
 
 	/**
 	 * Remove a change listener from the arbitrary properties set.
@@ -47,7 +47,7 @@ public interface IWorkbenchPart3 extends IWorkbenchPart2 {
 	 * @param listener
 	 *            Must not be <code>null</code>.
 	 */
-	public void removePartPropertyListener(IPropertyChangeListener listener);
+	void removePartPropertyListener(IPropertyChangeListener listener);
 
 	/**
 	 * Return the value for the arbitrary property key, or <code>null</code>.
@@ -56,7 +56,7 @@ public interface IWorkbenchPart3 extends IWorkbenchPart2 {
 	 *            the arbitrary property. Must not be <code>null</code>.
 	 * @return the property value, or <code>null</code>.
 	 */
-	public String getPartProperty(String key);
+	String getPartProperty(String key);
 
 	/**
 	 * Set an arbitrary property on the part. It is the implementor's
@@ -71,7 +71,7 @@ public interface IWorkbenchPart3 extends IWorkbenchPart2 {
 	 *            the property value. A <code>null</code> value will remove
 	 *            that property.
 	 */
-	public void setPartProperty(String key, String value);
+	void setPartProperty(String key, String value);
 
 	/**
 	 * Return an unmodifiable map of the arbitrary properties. This method can
@@ -79,5 +79,5 @@ public interface IWorkbenchPart3 extends IWorkbenchPart2 {
 	 *
 	 * @return A Map of the properties. Must not be <code>null</code>.
 	 */
-	public Map<String, String> getPartProperties();
+	Map<String, String> getPartProperties();
 }

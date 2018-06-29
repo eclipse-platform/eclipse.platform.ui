@@ -53,12 +53,12 @@ public interface IEditorPart extends IWorkbenchPart, ISaveablePart {
     /**
      * The property id for <code>isDirty</code>.
      */
-    public static final int PROP_DIRTY = IWorkbenchPartConstants.PROP_DIRTY;
+    int PROP_DIRTY = IWorkbenchPartConstants.PROP_DIRTY;
 
     /**
      * The property id for <code>getEditorInput</code>.
      */
-    public static final int PROP_INPUT = IWorkbenchPartConstants.PROP_INPUT;
+    int PROP_INPUT = IWorkbenchPartConstants.PROP_INPUT;
 
     /**
      * Returns the input for this editor.  If this value changes the part must
@@ -66,7 +66,7 @@ public interface IEditorPart extends IWorkbenchPart, ISaveablePart {
      *
      * @return the editor input
      */
-    public IEditorInput getEditorInput();
+    IEditorInput getEditorInput();
 
     /**
      * Returns the site for this editor.
@@ -80,7 +80,7 @@ public interface IEditorPart extends IWorkbenchPart, ISaveablePart {
      * @return the editor site; this value may be <code>null</code> if the editor
      *         has not yet been initialized
      */
-    public IEditorSite getEditorSite();
+    IEditorSite getEditorSite();
 
     /**
      * Initializes this editor with the given editor site and input.
@@ -98,6 +98,6 @@ public interface IEditorPart extends IWorkbenchPart, ISaveablePart {
      * @param input the editor input
      * @exception PartInitException if this editor was not initialized successfully
      */
-    public void init(IEditorSite site, IEditorInput input)
+    void init(IEditorSite site, IEditorInput input)
             throws PartInitException;
 }

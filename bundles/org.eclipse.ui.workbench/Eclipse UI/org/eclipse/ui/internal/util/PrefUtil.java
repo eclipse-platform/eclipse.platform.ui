@@ -39,7 +39,7 @@ public class PrefUtil {
     /**
      * Callback interface to obtain and save the UI preference store.
      */
-    public static interface ICallback {
+    public interface ICallback {
         IPreferenceStore getPreferenceStore();
 
         void savePreferences();

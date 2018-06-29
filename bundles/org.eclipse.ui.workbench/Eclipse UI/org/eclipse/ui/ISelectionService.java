@@ -47,7 +47,7 @@ public interface ISelectionService {
      * @param listener a selection listener
      * @see #removeSelectionListener(ISelectionListener)
      */
-    public void addSelectionListener(ISelectionListener listener);
+    void addSelectionListener(ISelectionListener listener);
 
     /**
      * Adds a part-specific selection listener which is notified when selection changes
@@ -73,7 +73,7 @@ public interface ISelectionService {
      * @since 2.0
      * @see #removeSelectionListener(String, ISelectionListener)
      */
-    public void addSelectionListener(String partId, ISelectionListener listener);
+    void addSelectionListener(String partId, ISelectionListener listener);
 
     /**
      * Adds the given post selection listener.It is equivalent to selection
@@ -91,7 +91,7 @@ public interface ISelectionService {
      * @param listener a selection listener
      * @see #removePostSelectionListener(ISelectionListener)
      */
-    public void addPostSelectionListener(ISelectionListener listener);
+    void addPostSelectionListener(ISelectionListener listener);
 
     /**
      * Adds a part-specific selection listener which is notified when selection changes
@@ -117,7 +117,7 @@ public interface ISelectionService {
      * @since 2.0
      * @see #removePostSelectionListener(String, ISelectionListener)
      */
-	public void addPostSelectionListener(String partId, ISelectionListener listener);
+	void addPostSelectionListener(String partId, ISelectionListener listener);
 
     /**
      * Returns the current selection in the active part.  If the selection in the
@@ -126,7 +126,7 @@ public interface ISelectionService {
      *
      * @return the current selection, or <code>null</code> if undefined
      */
-    public ISelection getSelection();
+    ISelection getSelection();
 
     /**
      * Returns the current selection in the part with the given id.  If the part is not open,
@@ -137,7 +137,7 @@ public interface ISelectionService {
      * @return the current selection, or <code>null</code> if undefined
      * @since 2.0
      */
-    public ISelection getSelection(String partId);
+    ISelection getSelection(String partId);
 
     /**
      * Removes the given selection listener.
@@ -145,7 +145,7 @@ public interface ISelectionService {
      *
      * @param listener a selection listener
      */
-    public void removeSelectionListener(ISelectionListener listener);
+    void removeSelectionListener(ISelectionListener listener);
 
     /**
      * Removes the given part-specific selection listener.
@@ -155,7 +155,7 @@ public interface ISelectionService {
      * @param listener a selection listener
      * @since 2.0
      */
-	public void removeSelectionListener(String partId, ISelectionListener listener);
+	void removeSelectionListener(String partId, ISelectionListener listener);
 
     /**
      * Removes the given post selection listener.
@@ -163,7 +163,7 @@ public interface ISelectionService {
      *
      * @param listener a selection listener
      */
-    public void removePostSelectionListener(ISelectionListener listener);
+    void removePostSelectionListener(ISelectionListener listener);
 
     /**
      * Removes the given part-specific post selection listener.
@@ -173,5 +173,5 @@ public interface ISelectionService {
      * @param listener a selection listener
      * @since 2.0
      */
-	public void removePostSelectionListener(String partId, ISelectionListener listener);
+	void removePostSelectionListener(String partId, ISelectionListener listener);
 }

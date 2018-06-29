@@ -65,7 +65,7 @@ public interface IViewPart extends IWorkbenchPart, IPersistable {
      * @return the view site; this value may be <code>null</code> if the view
      *         has not yet been initialized
      */
-    public IViewSite getViewSite();
+    IViewSite getViewSite();
 
     /**
      * Initializes this view with the given view site.
@@ -78,7 +78,7 @@ public interface IViewPart extends IWorkbenchPart, IPersistable {
      * @param site the view site
      * @exception PartInitException if this view was not initialized successfully
      */
-    public void init(IViewSite site) throws PartInitException;
+    void init(IViewSite site) throws PartInitException;
 
     /**
      * Initializes this view with the given view site.  A memento is passed to
@@ -95,13 +95,12 @@ public interface IViewPart extends IWorkbenchPart, IPersistable {
      * @param memento the IViewPart state or null if there is no previous saved state
      * @exception PartInitException if this view was not initialized successfully
      */
-    public void init(IViewSite site, IMemento memento) throws PartInitException;
+    void init(IViewSite site, IMemento memento) throws PartInitException;
 
     /**
      * Saves the object state within a memento.
      *
      * @param memento a memento to receive the object state
      */
-    @Override
-	public void saveState(IMemento memento);
+    @Override void saveState(IMemento memento);
 }

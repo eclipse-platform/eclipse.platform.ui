@@ -37,7 +37,7 @@ public interface IHandlerActivation extends IEvaluationResultCache, Comparable {
 	 *
 	 * @since 3.2
 	 */
-	public static final int ROOT_DEPTH = 1;
+	int ROOT_DEPTH = 1;
 
 	/**
 	 * Clears the cached computation of the <code>isActive</code> method, if
@@ -47,15 +47,14 @@ public interface IHandlerActivation extends IEvaluationResultCache, Comparable {
 	 *
 	 * @deprecated Use {@link IEvaluationResultCache#clearResult()} instead.
 	 */
-	@Deprecated
-	public void clearActive();
+	@Deprecated void clearActive();
 
 	/**
 	 * Returns the identifier of the command whose handler is being activated.
 	 *
 	 * @return The command identifier; never <code>null</code>.
 	 */
-	public String getCommandId();
+	String getCommandId();
 
 	/**
 	 * Returns the depth at which this activation was created within the
@@ -67,14 +66,14 @@ public interface IHandlerActivation extends IEvaluationResultCache, Comparable {
 	 *         hierarchy; should be a positive integer.
 	 * @since 3.2
 	 */
-	public int getDepth();
+	int getDepth();
 
 	/**
 	 * Returns the handler that should be activated.
 	 *
 	 * @return The handler; may be <code>null</code>.
 	 */
-	public IHandler getHandler();
+	IHandler getHandler();
 
 	/**
 	 * Returns the handler service from which this activation was requested.
@@ -83,7 +82,7 @@ public interface IHandlerActivation extends IEvaluationResultCache, Comparable {
 	 *
 	 * @return The handler service; never <code>null</code>.
 	 */
-	public IHandlerService getHandlerService();
+	IHandlerService getHandlerService();
 
 	/**
 	 * Returns whether this handler activation is currently active -- given the
@@ -99,6 +98,5 @@ public interface IHandlerActivation extends IEvaluationResultCache, Comparable {
 	 *             {@link IEvaluationResultCache#evaluate(IEvaluationContext)}
 	 *             instead.
 	 */
-	@Deprecated
-	public boolean isActive(IEvaluationContext context);
+	@Deprecated boolean isActive(IEvaluationContext context);
 }

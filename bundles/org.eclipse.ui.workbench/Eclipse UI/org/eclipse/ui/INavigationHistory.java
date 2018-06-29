@@ -43,19 +43,19 @@ public interface INavigationHistory {
      *
      * @param part the editor part
      */
-    public void markLocation(IEditorPart part);
+    void markLocation(IEditorPart part);
 
     /**
      * Returns the current location.
      *
      * @return the current location
      */
-    public INavigationLocation getCurrentLocation();
+    INavigationLocation getCurrentLocation();
 
     /**
      * Returns all entries in the history.
      *
      * @return all entries in the history
      */
-    public INavigationLocation[] getLocations();
+    INavigationLocation[] getLocations();
 }

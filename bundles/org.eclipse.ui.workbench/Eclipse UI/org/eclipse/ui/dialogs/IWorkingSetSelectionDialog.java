@@ -33,7 +33,7 @@ public interface IWorkingSetSelectionDialog {
      *
      * @return the working sets selected in the dialog.
      */
-    public IWorkingSet[] getSelection();
+    IWorkingSet[] getSelection();
 
     /**
      * Displays the working set selection dialog.
@@ -44,12 +44,12 @@ public interface IWorkingSetSelectionDialog {
      * 	selection dismissed.
      * @see org.eclipse.jface.window.Window
      */
-    public int open();
+    int open();
 
     /**
      * Sets the working sets that are initially selected in the dialog.
      *
      * @param workingSets the working sets to select in the dialog.
      */
-    public void setSelection(IWorkingSet[] workingSets);
+    void setSelection(IWorkingSet[] workingSets);
 }

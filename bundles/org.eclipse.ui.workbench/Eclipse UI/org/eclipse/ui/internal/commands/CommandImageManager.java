@@ -73,7 +73,7 @@ public final class CommandImageManager extends EventManager {
 	 * @param listener
 	 *            The listener to attach; must not be <code>null</code>.
 	 */
-	public final void addCommandImageManagerListener(
+	public void addCommandImageManagerListener(
 			final ICommandImageManagerListener listener) {
 		addListenerObject(listener);
 	}
@@ -92,7 +92,7 @@ public final class CommandImageManager extends EventManager {
 	 * @param url
 	 *            The URL to the image. Should not be <code>null</code>.
 	 */
-	public final void bind(final String commandId, final int type,
+	public void bind(final String commandId, final int type,
 			final String style, final URL url) {
 		final ImageDescriptor descriptor = ImageDescriptor.createFromURL(url);
 		bind(commandId, type, style, descriptor);
@@ -112,7 +112,7 @@ public final class CommandImageManager extends EventManager {
 	 * @param descriptor
 	 *            The image descriptor. Should not be <code>null</code>.
 	 */
-	public final void bind(final String commandId, final int type,
+	public void bind(final String commandId, final int type,
 			final String style, final ImageDescriptor descriptor) {
 		Object[] images = (Object[]) imagesById.get(commandId);
 		if (images == null) {
@@ -153,7 +153,7 @@ public final class CommandImageManager extends EventManager {
 	/**
 	 * Removes all of the images from this manager.
 	 */
-	public final void clear() {
+	public void clear() {
 		imagesById.clear();
 		if (isListenerAttached()) {
 			final String[] commandIds = (String[]) imagesById.keySet().toArray(
@@ -171,7 +171,7 @@ public final class CommandImageManager extends EventManager {
 	 *            The event to send to all of the listeners; must not be
 	 *            <code>null</code>.
 	 */
-	private final void fireManagerChanged(final CommandImageManagerEvent event) {
+	private void fireManagerChanged(final CommandImageManagerEvent event) {
 		if (event == null) {
 			throw new NullPointerException();
 		}
@@ -193,7 +193,7 @@ public final class CommandImageManager extends EventManager {
 	 *            required; must not be <code>null</code>.
 	 * @return A style tag that is not currently used; may be <code>null</code>.
 	 */
-	public final String generateUnusedStyle(final String commandId) {
+	public String generateUnusedStyle(final String commandId) {
 		final Object[] existingImages = (Object[]) imagesById.get(commandId);
 		if (existingImages == null) {
 			return null;
@@ -231,7 +231,7 @@ public final class CommandImageManager extends EventManager {
 	 * @return An image appropriate for the given command; never
 	 *         <code>null</code>.
 	 */
-	public final ImageDescriptor getImageDescriptor(final String commandId) {
+	public ImageDescriptor getImageDescriptor(final String commandId) {
 		return getImageDescriptor(commandId, TYPE_DEFAULT, null);
 	}
 
@@ -247,7 +247,7 @@ public final class CommandImageManager extends EventManager {
 	 * @return An image appropriate for the given command; <code>null</code>
 	 *         if the given image type cannot be found.
 	 */
-	public final ImageDescriptor getImageDescriptor(final String commandId,
+	public ImageDescriptor getImageDescriptor(final String commandId,
 			final int type) {
 		return getImageDescriptor(commandId, type, null);
 	}
@@ -266,7 +266,7 @@ public final class CommandImageManager extends EventManager {
 	 * @return An image appropriate for the given command; <code>null</code>
 	 *         if the given image style and type cannot be found.
 	 */
-	public final ImageDescriptor getImageDescriptor(final String commandId,
+	public ImageDescriptor getImageDescriptor(final String commandId,
 			final int type, final String style) {
 		if (commandId == null) {
 			throw new NullPointerException();
@@ -321,7 +321,7 @@ public final class CommandImageManager extends EventManager {
 	 * @return An image appropriate for the given command; <code>null</code>
 	 *         if the given image style cannot be found.
 	 */
-	public final ImageDescriptor getImageDescriptor(final String commandId,
+	public ImageDescriptor getImageDescriptor(final String commandId,
 			final String style) {
 		return getImageDescriptor(commandId, TYPE_DEFAULT, style);
 	}
@@ -332,7 +332,7 @@ public final class CommandImageManager extends EventManager {
 	 * @param listener
 	 *            The listener to be removed; must not be <code>null</code>.
 	 */
-	public final void removeCommandImageManagerListener(
+	public void removeCommandImageManagerListener(
 			final ICommandImageManagerListener listener) {
 		removeListenerObject(listener);
 	}

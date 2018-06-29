@@ -27,6 +27,6 @@ public interface IReusableEditor extends IEditorPart {
      *
      * @param input the editor input
      */
-    public void setInput(IEditorInput input);
+    void setInput(IEditorInput input);
 }
 

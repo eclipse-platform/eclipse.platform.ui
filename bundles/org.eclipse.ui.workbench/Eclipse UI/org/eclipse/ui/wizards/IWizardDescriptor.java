@@ -67,7 +67,7 @@ public interface IWizardDescriptor extends IWorkbenchPartDescriptor, IAdaptable 
 	 *
 	 * @return the description image for this wizard or <code>null</code>
 	 */
-	public ImageDescriptor getDescriptionImage();
+	ImageDescriptor getDescriptionImage();
 
 	/**
 	 * Return the help system href for this wizard.

@@ -56,7 +56,7 @@ public final class SourceProviderService implements ISourceProviderService,
 	}
 
 	@Override
-	public final void dispose() {
+	public void dispose() {
 		final Iterator sourceProviderItr = sourceProviders.iterator();
 		while (sourceProviderItr.hasNext()) {
 			final ISourceProvider sourceProvider = (ISourceProvider) sourceProviderItr
@@ -68,17 +68,17 @@ public final class SourceProviderService implements ISourceProviderService,
 	}
 
 	@Override
-	public final ISourceProvider getSourceProvider(final String sourceName) {
+	public ISourceProvider getSourceProvider(final String sourceName) {
 		return (ISourceProvider) sourceProvidersByName.get(sourceName);
 	}
 
 	@Override
-	public final ISourceProvider[] getSourceProviders() {
+	public ISourceProvider[] getSourceProviders() {
 		return (ISourceProvider[]) sourceProviders
 				.toArray(new ISourceProvider[sourceProviders.size()]);
 	}
 
-	public final void registerProvider(final ISourceProvider sourceProvider) {
+	public void registerProvider(final ISourceProvider sourceProvider) {
 		if (sourceProvider == null) {
 			throw new NullPointerException("The source provider cannot be null"); //$NON-NLS-1$
 		}
@@ -89,7 +89,7 @@ public final class SourceProviderService implements ISourceProviderService,
 		sourceProviders.add(sourceProvider);
 	}
 
-	public final void unregisterProvider(ISourceProvider sourceProvider) {
+	public void unregisterProvider(ISourceProvider sourceProvider) {
 		if (sourceProvider == null) {
 			throw new NullPointerException("The source provider cannot be null"); //$NON-NLS-1$
 		}
@@ -100,7 +100,7 @@ public final class SourceProviderService implements ISourceProviderService,
 		sourceProviders.remove(sourceProvider);
 	}
 
-	public final void readRegistry() {
+	public void readRegistry() {
 		for (AbstractSourceProvider sourceProvider : WorkbenchServiceRegistry.getRegistry().getSourceProviders()) {
 			sourceProvider.initialize(locator);
 			registerProvider(sourceProvider);

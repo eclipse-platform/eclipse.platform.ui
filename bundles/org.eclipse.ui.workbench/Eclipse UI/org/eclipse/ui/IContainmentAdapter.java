@@ -22,25 +22,25 @@ public interface IContainmentAdapter {
     /**
      * Checks whether the given element corresponds to the containment context.
      */
-    public static final int CHECK_CONTEXT = 1;
+    int CHECK_CONTEXT = 1;
 
     /**
      * Checks whether the given element corresponds to a direct child of the
      * containment context.  Does not include the containment context itself.
      */
-    public static final int CHECK_IF_CHILD = 2;
+    int CHECK_IF_CHILD = 2;
 
     /**
      * Checks whether the given element corresponds to an ancestor of the
      * containment context.  Does not include the containment context itself.
      */
-    public static final int CHECK_IF_ANCESTOR = 4;
+    int CHECK_IF_ANCESTOR = 4;
 
     /**
      * Checks whether the given element corresponds to a descendant of the
      * containment context.  Does not include the containment context itself.
      */
-    public static final int CHECK_IF_DESCENDANT = 8;
+    int CHECK_IF_DESCENDANT = 8;
 
     /**
      * Returns whether the given element is considered contained
@@ -55,5 +55,5 @@ public interface IContainmentAdapter {
      *    <code>CHECK_IF_CHILD</code>, <code>CHECK_IF_ANCESTOR</code>,
      *    <code>CHECK_IF_DESCENDENT</code> logically ORed together.
      */
-    public boolean contains(Object containmentContext, Object element, int flags);
+    boolean contains(Object containmentContext, Object element, int flags);
 }

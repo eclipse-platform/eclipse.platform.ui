@@ -68,7 +68,7 @@ public final class ExtensionParameterValues implements IParameterValues,
 	}
 
 	@Override
-	public final void setInitializationData(final IConfigurationElement config,
+	public void setInitializationData(final IConfigurationElement config,
 			final String propertyName, final Object data) {
 		if (data == null) {
 			parameterValues = Collections.EMPTY_MAP;

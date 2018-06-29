@@ -43,7 +43,7 @@ public interface IWorkbenchPropertyPage extends IPreferencePage {
      *
      * @return the object that owns the properties shown in this page
      */
-    public IAdaptable getElement();
+    IAdaptable getElement();
 
     /**
      * Sets the object that owns the properties shown in this page.
@@ -59,5 +59,5 @@ public interface IWorkbenchPropertyPage extends IPreferencePage {
      *
      * @param element the object that owns the properties shown in this page
      */
-    public void setElement(IAdaptable element);
+    void setElement(IAdaptable element);
 }

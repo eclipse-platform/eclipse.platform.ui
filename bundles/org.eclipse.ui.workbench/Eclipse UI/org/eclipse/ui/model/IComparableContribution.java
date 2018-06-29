@@ -26,7 +26,7 @@ public interface IComparableContribution extends IAdaptable {
 	/**
 	 * The default priority (0);
 	 */
-	public static final int PRIORITY_DEFAULT = 0;
+	int PRIORITY_DEFAULT = 0;
 
 	/**
 	 * Return the priority of this contribution. Lower values constitute higher
@@ -53,7 +53,6 @@ public interface IComparableContribution extends IAdaptable {
 	 * provided by the platform will provide this adapter.</dd>
 	 * </dl>
 	 */
-	@Override
-	public <T> T getAdapter(Class<T> adapter);
+	@Override <T> T getAdapter(Class<T> adapter);
 
 }

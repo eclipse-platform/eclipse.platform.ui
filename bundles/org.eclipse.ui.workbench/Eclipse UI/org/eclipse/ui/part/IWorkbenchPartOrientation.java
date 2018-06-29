@@ -34,5 +34,5 @@ public interface IWorkbenchPartOrientation {
 	 * @see SWT#LEFT_TO_RIGHT
 	 * @see Window#getDefaultOrientation()
 	 */
-	public int getOrientation();
+	int getOrientation();
 }

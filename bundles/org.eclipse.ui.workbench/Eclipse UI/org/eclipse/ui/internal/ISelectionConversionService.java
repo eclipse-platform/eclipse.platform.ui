@@ -39,7 +39,7 @@ public interface ISelectionConversionService {
 	 * @return the converted selection or an empty selection; never
 	 *         <code>null</code>.
 	 */
-	public IStructuredSelection convertToResources(
+	IStructuredSelection convertToResources(
 			IStructuredSelection originalSelection);
 
 }

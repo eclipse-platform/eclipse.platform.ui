@@ -29,6 +29,6 @@ public interface IPropertyPageContributor extends IObjectContributor {
      * @param object the type for which page should be contributed.
      * @return true the page that was added, <code>null</code> if no page was added.
      */
-    public PreferenceNode contributePropertyPage(PropertyPageManager manager,
+    PreferenceNode contributePropertyPage(PropertyPageManager manager,
             Object object);
 }

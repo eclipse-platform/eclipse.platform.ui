@@ -37,5 +37,5 @@ public interface IPathEditorInput extends IEditorInput {
      *
      * @return a local file system path
      */
-    public IPath getPath();
+    IPath getPath();
 }

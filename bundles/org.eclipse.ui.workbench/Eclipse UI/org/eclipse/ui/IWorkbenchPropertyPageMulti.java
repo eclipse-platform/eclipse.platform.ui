@@ -29,6 +29,6 @@ public interface IWorkbenchPropertyPageMulti extends IPreferencePage {
 	 * @param elements
 	 *            objects that own the properties shown in this page
 	 */
-	public void setElements(IAdaptable[] elements);
+	void setElements(IAdaptable[] elements);
 
 }

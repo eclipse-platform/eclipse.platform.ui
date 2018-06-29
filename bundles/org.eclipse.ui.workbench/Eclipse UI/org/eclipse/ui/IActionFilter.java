@@ -56,5 +56,5 @@ public interface IActionFilter {
      * @param value the attribute value
      * @return <code>true</code> if the attribute matches; <code>false</code> otherwise
      */
-    public boolean testAttribute(Object target, String name, String value);
+    boolean testAttribute(Object target, String name, String value);
 }

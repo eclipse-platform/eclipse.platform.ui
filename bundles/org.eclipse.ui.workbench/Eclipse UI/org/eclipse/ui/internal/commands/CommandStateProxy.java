@@ -111,7 +111,7 @@ public final class CommandStateProxy extends PersistentState {
 	}
 
 	@Override
-	public final void addListener(final IStateListener listener) {
+	public void addListener(final IStateListener listener) {
 		if (state == null) {
 			addListenerObject(listener);
 		} else {
@@ -120,7 +120,7 @@ public final class CommandStateProxy extends PersistentState {
 	}
 
 	@Override
-	public final void dispose() {
+	public void dispose() {
 		if (state != null) {
 			state.dispose();
 			if (state instanceof PersistentState) {
@@ -134,7 +134,7 @@ public final class CommandStateProxy extends PersistentState {
 	}
 
 	@Override
-	public final Object getValue() {
+	public Object getValue() {
 		if (loadState()) {
 			return state.getValue();
 		}
@@ -143,7 +143,7 @@ public final class CommandStateProxy extends PersistentState {
 	}
 
 	@Override
-	public final void load(final IPreferenceStore store,
+	public void load(final IPreferenceStore store,
 			final String preferenceKey) {
 		if (loadState() && state instanceof PersistentState) {
 			final PersistentState persistableState = (PersistentState) state;
@@ -162,7 +162,7 @@ public final class CommandStateProxy extends PersistentState {
 	 * @return <code>true</code> if the state is now non-null;
 	 *         <code>false</code> otherwise.
 	 */
-	private final boolean loadState() {
+	private boolean loadState() {
 		return loadState(false);
 	}
 
@@ -176,7 +176,7 @@ public final class CommandStateProxy extends PersistentState {
 	 * @return <code>true</code> if the state is now non-null;
 	 *         <code>false</code> otherwise.
 	 */
-	private final boolean loadState(final boolean readPersistence) {
+	private boolean loadState(final boolean readPersistence) {
 		if (state == null) {
 			try {
 				state = (State) configurationElement
@@ -221,7 +221,7 @@ public final class CommandStateProxy extends PersistentState {
 	}
 
 	@Override
-	public final void removeListener(final IStateListener listener) {
+	public void removeListener(final IStateListener listener) {
 		if (state == null) {
 			removeListenerObject(listener);
 		} else {
@@ -230,7 +230,7 @@ public final class CommandStateProxy extends PersistentState {
 	}
 
 	@Override
-	public final void save(final IPreferenceStore store,
+	public void save(final IPreferenceStore store,
 			final String preferenceKey) {
 		if (loadState() && state instanceof PersistentState) {
 			((PersistentState) state).save(store, preferenceKey);
@@ -238,7 +238,7 @@ public final class CommandStateProxy extends PersistentState {
 	}
 
 	@Override
-	public final void setId(final String id) {
+	public void setId(final String id) {
 		super.setId(id);
 		if (state != null) {
 			state.setId(id);
@@ -246,21 +246,21 @@ public final class CommandStateProxy extends PersistentState {
 	}
 
 	@Override
-	public final void setShouldPersist(final boolean persisted) {
+	public void setShouldPersist(final boolean persisted) {
 		if (loadState(persisted) && state instanceof PersistentState) {
 			((PersistentState) state).setShouldPersist(persisted);
 		}
 	}
 
 	@Override
-	public final void setValue(final Object value) {
+	public void setValue(final Object value) {
 		if (loadState()) {
 			state.setValue(value);
 		}
 	}
 
 	@Override
-	public final boolean shouldPersist() {
+	public boolean shouldPersist() {
 		if (loadState() && state instanceof PersistentState) {
 			return ((PersistentState) state).shouldPersist();
 		}
@@ -269,7 +269,7 @@ public final class CommandStateProxy extends PersistentState {
 	}
 
 	@Override
-	public final String toString() {
+	public String toString() {
 		if (state == null) {
 			return configurationElement.getAttribute(stateAttributeName);
 		}

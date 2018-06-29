@@ -21,5 +21,5 @@ public interface IDropActionDelegate {
      * @param target The object that the drop is occurring over.
      * @return boolean True if the drop was successful, and false otherwise.
      */
-    public boolean run(Object source, Object target);
+    boolean run(Object source, Object target);
 }

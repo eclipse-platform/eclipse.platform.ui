@@ -21,12 +21,12 @@ public interface IWorkbenchWindowActionDelegate extends IActionDelegate {
      * Disposes this action delegate.  The implementor should unhook any references
      * to itself so that garbage collection can occur.
      */
-    public void dispose();
+    void dispose();
 
     /**
      * Initializes this action delegate with the workbench window it will work in.
      *
      * @param window the window that provides the context for this delegate
      */
-    public void init(IWorkbenchWindow window);
+    void init(IWorkbenchWindow window);
 }

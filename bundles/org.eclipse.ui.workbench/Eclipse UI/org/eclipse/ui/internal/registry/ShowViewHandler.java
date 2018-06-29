@@ -47,7 +47,7 @@ public final class ShowViewHandler extends AbstractHandler {
 	}
 
 	@Override
-	public final Object execute(final ExecutionEvent event)
+	public Object execute(final ExecutionEvent event)
 			throws ExecutionException {
 		final IWorkbenchWindow activeWorkbenchWindow = HandlerUtil
 				.getActiveWorkbenchWindowChecked(event);

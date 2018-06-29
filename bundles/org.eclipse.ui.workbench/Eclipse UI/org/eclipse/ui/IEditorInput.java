@@ -60,7 +60,7 @@ public interface IEditorInput extends IAdaptable {
 	 * @return <code>true</code> if the editor input exists;
 	 *         <code>false</code> otherwise
 	 */
-	public boolean exists();
+	boolean exists();
 
 	/**
 	 * Returns the image descriptor for this input.
@@ -79,7 +79,7 @@ public interface IEditorInput extends IAdaptable {
 	 * @return the image descriptor for this input; may be <code>null</code> if
 	 * there is no image.
 	 */
-	public ImageDescriptor getImageDescriptor();
+	ImageDescriptor getImageDescriptor();
 
 	/**
 	 * Returns the name of this editor input for display purposes.
@@ -89,7 +89,7 @@ public interface IEditorInput extends IAdaptable {
 	 *
 	 * @return the name string; never <code>null</code>;
 	 */
-	public String getName();
+	String getName();
 
 	/**
 	 * Returns an object that can be used to save the state of this editor
@@ -98,7 +98,7 @@ public interface IEditorInput extends IAdaptable {
 	 * @return the persistable element, or <code>null</code> if this editor
 	 *         input cannot be persisted
 	 */
-	public IPersistableElement getPersistable();
+	IPersistableElement getPersistable();
 
 	/**
 	 * Returns the tool tip text for this editor input. This text is used to
@@ -109,5 +109,5 @@ public interface IEditorInput extends IAdaptable {
 	 *
 	 * @return the tool tip text; never <code>null</code>.
 	 */
-	public String getToolTipText();
+	String getToolTipText();
 }

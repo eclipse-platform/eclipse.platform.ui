@@ -36,7 +36,7 @@ public interface IPerspectiveRegistry {
      *
      * @since 3.0
      */
-    public IPerspectiveDescriptor clonePerspective(String id, String label,
+    IPerspectiveDescriptor clonePerspective(String id, String label,
             IPerspectiveDescriptor desc) throws IllegalArgumentException;
 
 	/**
@@ -46,7 +46,7 @@ public interface IPerspectiveRegistry {
 	 * @param persp the perspective to delete
 	 * @since 3.2
 	 */
-	public void deletePerspective(IPerspectiveDescriptor persp);
+	void deletePerspective(IPerspectiveDescriptor persp);
 
     /**
      * Finds and returns the registered perspective with the given perspective id.
@@ -55,7 +55,7 @@ public interface IPerspectiveRegistry {
      * @return the perspective, or <code>null</code> if none
      * @see IPerspectiveDescriptor#getId
      */
-    public IPerspectiveDescriptor findPerspectiveWithId(String perspectiveId);
+    IPerspectiveDescriptor findPerspectiveWithId(String perspectiveId);
 
     /**
      * Finds and returns the registered perspective with the given label.
@@ -64,7 +64,7 @@ public interface IPerspectiveRegistry {
      * @return the perspective, or <code>null</code> if none
      * @see IPerspectiveDescriptor#getLabel
      */
-    public IPerspectiveDescriptor findPerspectiveWithLabel(String label);
+    IPerspectiveDescriptor findPerspectiveWithLabel(String label);
 
     /**
      * Returns the id of the default perspective for the workbench.  This identifies one
@@ -75,14 +75,14 @@ public interface IPerspectiveRegistry {
      *
      * @return the default perspective id, or <code>null</code>
      */
-    public String getDefaultPerspective();
+    String getDefaultPerspective();
 
     /**
      * Returns a list of the perspectives known to the workbench.
      *
      * @return a list of perspectives
      */
-    public IPerspectiveDescriptor[] getPerspectives();
+    IPerspectiveDescriptor[] getPerspectives();
 
     /**
      * Sets the default perspective for the workbench to the given perspective id.
@@ -94,7 +94,7 @@ public interface IPerspectiveRegistry {
      *
      * @param id a perspective id, or <code>null</code>
      */
-    public void setDefaultPerspective(String id);
+    void setDefaultPerspective(String id);
 
     /**
      * Reverts a perspective back to its original definition
@@ -104,5 +104,5 @@ public interface IPerspectiveRegistry {
      *
      * @since 3.0
      */
-    public void revertPerspective(IPerspectiveDescriptor perspToRevert);
+    void revertPerspective(IPerspectiveDescriptor perspToRevert);
 }

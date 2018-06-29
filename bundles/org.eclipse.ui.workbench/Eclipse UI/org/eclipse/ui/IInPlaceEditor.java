@@ -25,7 +25,7 @@ public interface IInPlaceEditor extends IEditorPart {
      * Informs the in-place editor that the system file it is
      * editing was deleted by the application.
      */
-    public void sourceDeleted();
+    void sourceDeleted();
 
     /**
      * Informs the in-place editor that the system file it is
@@ -33,5 +33,5 @@ public interface IInPlaceEditor extends IEditorPart {
      *
      * @param input the new in-place editor input to use
      */
-    public void sourceChanged(IInPlaceEditorInput input);
+    void sourceChanged(IInPlaceEditorInput input);
 }

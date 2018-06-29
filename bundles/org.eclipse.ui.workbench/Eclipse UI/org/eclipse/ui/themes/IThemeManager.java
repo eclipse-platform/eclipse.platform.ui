@@ -36,12 +36,12 @@ public interface IThemeManager {
     /**
      * Indicates that the current theme has changed to a new theme.
      */
-    public static final String CHANGE_CURRENT_THEME = "CHANGE_CURRENT_THEME"; //$NON-NLS-1$
+    String CHANGE_CURRENT_THEME = "CHANGE_CURRENT_THEME"; //$NON-NLS-1$
 
     /**
      * The default theme id.
      */
-    public static final String DEFAULT_THEME = "org.eclipse.ui.defaultTheme"; //$NON-NLS-1$
+    String DEFAULT_THEME = "org.eclipse.ui.defaultTheme"; //$NON-NLS-1$
 
     /**
      * Adds a property listener to the manager.  Any events fired by the

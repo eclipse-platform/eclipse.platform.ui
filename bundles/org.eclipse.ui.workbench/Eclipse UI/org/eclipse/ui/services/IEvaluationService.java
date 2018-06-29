@@ -68,12 +68,12 @@ public interface IEvaluationService extends IServiceWithSources {
 	/**
 	 * A general property that can be used.
 	 */
-	public static final String RESULT = "org.eclipse.ui.services.result"; //$NON-NLS-1$
+	String RESULT = "org.eclipse.ui.services.result"; //$NON-NLS-1$
 
 	/**
 	 * The property used to notify any service listeners.
 	 */
-	public static final String PROP_NOTIFYING = "org.eclipse.ui.services.notifying"; //$NON-NLS-1$
+	String PROP_NOTIFYING = "org.eclipse.ui.services.notifying"; //$NON-NLS-1$
 
 	/**
 	 * When a source change starts recalculating expressions the
@@ -90,7 +90,7 @@ public interface IEvaluationService extends IServiceWithSources {
 	 *            The listener to be notified. Must not be <code>null</code>.
 	 *            Has no effect if the listener has already been added.
 	 */
-	public void addServiceListener(IPropertyChangeListener listener);
+	void addServiceListener(IPropertyChangeListener listener);
 
 	/**
 	 * Remove the listener for {@link #PROP_NOTIFYING} property changes.
@@ -99,7 +99,7 @@ public interface IEvaluationService extends IServiceWithSources {
 	 *            The listener to remove. Must not be <code>null</code>. Has
 	 *            no effect if the listener is not currently registered.
 	 */
-	public void removeServiceListener(IPropertyChangeListener listener);
+	void removeServiceListener(IPropertyChangeListener listener);
 
 	/**
 	 * Add a listener that can be notified when the workbench application
@@ -119,7 +119,7 @@ public interface IEvaluationService extends IServiceWithSources {
 	 * @return a token that can be used to remove this listener.
 	 * {@link #removeEvaluationListener(IEvaluationReference)}
 	 */
-	public IEvaluationReference addEvaluationListener(Expression expression,
+	IEvaluationReference addEvaluationListener(Expression expression,
 			IPropertyChangeListener listener, String property);
 
 	/**
@@ -141,7 +141,7 @@ public interface IEvaluationService extends IServiceWithSources {
 	 *            The listener to re-add.
 	 * @see #removeEvaluationListener(IEvaluationReference)
 	 */
-	public void addEvaluationReference(IEvaluationReference ref);
+	void addEvaluationReference(IEvaluationReference ref);
 
 	/**
 	 * Remove the listener represented by the evaluation reference.
@@ -149,7 +149,7 @@ public interface IEvaluationService extends IServiceWithSources {
 	 * @param ref
 	 *            the reference to be removed.
 	 */
-	public void removeEvaluationListener(IEvaluationReference ref);
+	void removeEvaluationListener(IEvaluationReference ref);
 
 	/**
 	 * Get an IEvaluationContext that contains the current state of the
@@ -162,7 +162,7 @@ public interface IEvaluationService extends IServiceWithSources {
 	 * @return the latest context.
 	 * @see ISources#ACTIVE_CURRENT_SELECTION_NAME
 	 */
-	public IEvaluationContext getCurrentState();
+	IEvaluationContext getCurrentState();
 
 	/**
 	 * Request that this service re-evaluate all registered core expressions
@@ -186,5 +186,5 @@ public interface IEvaluationService extends IServiceWithSources {
 	 *            <code>null</code>.
 	 * @since 3.4
 	 */
-	public void requestEvaluation(String propertyName);
+	void requestEvaluation(String propertyName);
 }

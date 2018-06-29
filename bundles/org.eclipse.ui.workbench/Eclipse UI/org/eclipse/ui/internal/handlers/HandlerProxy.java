@@ -262,7 +262,7 @@ public final class HandlerProxy extends AbstractHandlerWithState implements
 	 * Passes the dipose on to the proxied handler, if it has been loaded.
 	 */
 	@Override
-	public final void dispose() {
+	public void dispose() {
 		if (handler != null) {
 			if (handlerListener != null) {
 				handler.removeHandlerListener(handlerListener);
@@ -279,7 +279,7 @@ public final class HandlerProxy extends AbstractHandlerWithState implements
 	}
 
 	@Override
-	public final Object execute(final ExecutionEvent event)
+	public Object execute(final ExecutionEvent event)
 			throws ExecutionException {
 		if (loadHandler()) {
 			if (!isEnabled()) {
@@ -298,7 +298,7 @@ public final class HandlerProxy extends AbstractHandlerWithState implements
 	}
 
 	@Override
-	public final boolean isEnabled() {
+	public boolean isEnabled() {
 		if (enabledWhenExpression != null) {
 			// proxyEnabled reflects the enabledWhen clause
 			if (!getProxyEnabled()) {
@@ -322,7 +322,7 @@ public final class HandlerProxy extends AbstractHandlerWithState implements
 	}
 
 	@Override
-	public final boolean isHandled() {
+	public boolean isHandled() {
 		boolean okToLoad = isOkToLoad();
 		if (okToLoad && loadHandler()) {
 			return handler.isHandled();
@@ -343,7 +343,7 @@ public final class HandlerProxy extends AbstractHandlerWithState implements
 	 * @return <code>true</code> if the handler is now non-null;
 	 *         <code>false</code> otherwise.
 	 */
-	private final boolean loadHandler() {
+	private boolean loadHandler() {
 		if (handler == null) {
 			// Load the handler.
 			try {
@@ -390,7 +390,7 @@ public final class HandlerProxy extends AbstractHandlerWithState implements
 	}
 
 	@Override
-	public final String toString() {
+	public String toString() {
 		if (handler == null) {
 			if (configurationElement != null) {
 				String configurationElementAttribute = getConfigurationElementAttribute();

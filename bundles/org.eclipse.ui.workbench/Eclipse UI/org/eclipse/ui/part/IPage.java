@@ -37,7 +37,7 @@ public interface IPage {
      *
      * @param parent the parent control
      */
-    public void createControl(Composite parent);
+    void createControl(Composite parent);
 
     /**
      * Disposes of this page.
@@ -55,7 +55,7 @@ public interface IPage {
      * so the control may never have been created.
      * </p>
      */
-    public void dispose();
+    void dispose();
 
     /**
      * Returns the SWT control for this page.
@@ -63,7 +63,7 @@ public interface IPage {
      * @return the SWT control for this page, or <code>null</code> if this
      *   page does not have a control
      */
-    public Control getControl();
+    Control getControl();
 
     /**
      * Allows the page to make contributions to the given action bars.
@@ -75,10 +75,10 @@ public interface IPage {
      *
      * @param actionBars the action bars for this page
      */
-    public void setActionBars(IActionBars actionBars);
+    void setActionBars(IActionBars actionBars);
 
     /**
      * Asks this page to take focus within its pagebook view.
      */
-    public void setFocus();
+    void setFocus();
 }

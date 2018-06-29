@@ -59,10 +59,10 @@ public interface IServiceLocatorCreator {
 	 * @return the created service locator. The returned service locator will be
 	 *         an instance of {@link IDisposable}.
 	 */
-	public IServiceLocator createServiceLocator(IServiceLocator parent,
+	IServiceLocator createServiceLocator(IServiceLocator parent,
 			AbstractServiceFactory factory, IDisposable owner);
 
-	public IServiceLocator createServiceLocator(IServiceLocator parent,
+	IServiceLocator createServiceLocator(IServiceLocator parent,
 			AbstractServiceFactory factory, IDisposable owner, IEclipseContext context);
 
 }

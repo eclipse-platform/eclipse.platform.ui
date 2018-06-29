@@ -24,6 +24,6 @@ public interface IEditable {
      *
      * @return whether this object is editable.
      */
-    public boolean isEditable();
+    boolean isEditable();
 
 }

@@ -42,7 +42,7 @@ public interface IPageService {
      * @param listener a page listener
      * @see #removePageListener(IPageListener)
      */
-    public void addPageListener(IPageListener listener);
+    void addPageListener(IPageListener listener);
 
     /**
      * Adds the given listener for a page's perspective lifecycle events.
@@ -56,14 +56,14 @@ public interface IPageService {
      * @param listener a perspective listener
      * @see #removePerspectiveListener(IPerspectiveListener)
      */
-    public void addPerspectiveListener(IPerspectiveListener listener);
+    void addPerspectiveListener(IPerspectiveListener listener);
 
     /**
      * Returns the active page.
      *
      * @return the active page, or <code>null</code> if no page is currently active
      */
-    public IWorkbenchPage getActivePage();
+    IWorkbenchPage getActivePage();
 
     /**
 	 * Removes the given page listener. Has no effect if an identical listener
@@ -72,7 +72,7 @@ public interface IPageService {
 	 * @param listener
 	 *            a page listener
 	 */
-    public void removePageListener(IPageListener listener);
+    void removePageListener(IPageListener listener);
 
     /**
 	 * Removes the given page's perspective listener. Has no effect if an
@@ -81,5 +81,5 @@ public interface IPageService {
 	 * @param listener
 	 *            a perspective listener
 	 */
-    public void removePerspectiveListener(IPerspectiveListener listener);
+    void removePerspectiveListener(IPerspectiveListener listener);
 }

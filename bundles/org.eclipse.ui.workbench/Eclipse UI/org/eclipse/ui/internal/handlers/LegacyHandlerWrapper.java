@@ -55,18 +55,18 @@ public final class LegacyHandlerWrapper implements IHandler {
 	}
 
 	@Override
-	public final void addHandlerListener(final IHandlerListener handlerListener) {
+	public void addHandlerListener(final IHandlerListener handlerListener) {
 		handler.addHandlerListener(new LegacyHandlerListenerWrapper(this,
 				handlerListener));
 	}
 
 	@Override
-	public final void dispose() {
+	public void dispose() {
 		handler.dispose();
 	}
 
 	@Override
-	public final boolean equals(final Object object) {
+	public boolean equals(final Object object) {
 		if (object instanceof org.eclipse.ui.commands.IHandler) {
 			return this.handler == object;
 		}
@@ -79,7 +79,7 @@ public final class LegacyHandlerWrapper implements IHandler {
 	}
 
 	@Override
-	public final Object execute(final ExecutionEvent event)
+	public Object execute(final ExecutionEvent event)
 			throws ExecutionException {
 		// Debugging output
 		if (DEBUG_HANDLERS) {
@@ -102,12 +102,12 @@ public final class LegacyHandlerWrapper implements IHandler {
 	}
 
 	@Override
-	public final int hashCode() {
+	public int hashCode() {
 		return this.handler.hashCode();
 	}
 
 	@Override
-	public final boolean isEnabled() {
+	public boolean isEnabled() {
 		final Object enabled = handler.getAttributeValuesByName().get(
 				ILegacyAttributeNames.ENABLED);
 		if (enabled instanceof Boolean) {
@@ -118,7 +118,7 @@ public final class LegacyHandlerWrapper implements IHandler {
 	}
 
 	@Override
-	public final boolean isHandled() {
+	public boolean isHandled() {
 		final Object handled = handler.getAttributeValuesByName().get(
 				ILegacyAttributeNames.HANDLED);
 		if (handled instanceof Boolean) {
@@ -129,14 +129,14 @@ public final class LegacyHandlerWrapper implements IHandler {
 	}
 
 	@Override
-	public final void removeHandlerListener(
+	public void removeHandlerListener(
 			final IHandlerListener handlerListener) {
 		handler.removeHandlerListener(new LegacyHandlerListenerWrapper(this,
 				handlerListener));
 	}
 
 	@Override
-	public final String toString() {
+	public String toString() {
 		final StringBuilder buffer = new StringBuilder();
 
 		buffer.append("LegacyHandlerWrapper("); //$NON-NLS-1$

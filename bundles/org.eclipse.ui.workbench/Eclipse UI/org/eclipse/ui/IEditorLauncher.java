@@ -49,5 +49,5 @@ public interface IEditorLauncher {
      *
      * @param file the local file system path of the file to edit
      */
-    public void open(IPath file);
+    void open(IPath file);
 }

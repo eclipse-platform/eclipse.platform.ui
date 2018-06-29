@@ -29,5 +29,5 @@ public interface IShowInSource {
      *
      * @return the context to show, or <code>null</code>
      */
-    public ShowInContext getShowInContext();
+    ShowInContext getShowInContext();
 }

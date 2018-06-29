@@ -68,19 +68,19 @@ public final class LegacyActionSetExpression extends WorkbenchWindowExpression {
 	}
 
 	@Override
-	public final void collectExpressionInfo(final ExpressionInfo info) {
+	public void collectExpressionInfo(final ExpressionInfo info) {
 		super.collectExpressionInfo(info);
 		info.addVariableNameAccess(ISources.ACTIVE_CONTEXT_NAME);
 	}
 
-	protected final int computeHhashCode() {
+	protected int computeHhashCode() {
 		int hashCode = HASH_INITIAL * HASH_FACTOR + hashCode(getWindow());
 		hashCode = hashCode * HASH_FACTOR + hashCode(actionSetId);
 		return hashCode;
 	}
 
 	@Override
-	public final boolean equals(final Object object) {
+	public boolean equals(final Object object) {
 		if (object instanceof LegacyActionSetExpression) {
 			final LegacyActionSetExpression that = (LegacyActionSetExpression) object;
 			return equals(this.actionSetId, that.actionSetId)
@@ -91,7 +91,7 @@ public final class LegacyActionSetExpression extends WorkbenchWindowExpression {
 	}
 
 	@Override
-	public final EvaluationResult evaluate(final IEvaluationContext context)
+	public EvaluationResult evaluate(final IEvaluationContext context)
 			throws CoreException {
 		final EvaluationResult result = super.evaluate(context);
 		if (result == EvaluationResult.FALSE) {
@@ -106,7 +106,7 @@ public final class LegacyActionSetExpression extends WorkbenchWindowExpression {
 	}
 
 	@Override
-	public final String toString() {
+	public String toString() {
 		final StringBuilder buffer = new StringBuilder();
 		buffer.append("ActionSetExpression("); //$NON-NLS-1$
 		buffer.append(actionSetId);

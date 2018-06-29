@@ -35,7 +35,7 @@ public interface IServiceWithSources extends IDisposable {
 	 * @param provider
 	 *            The provider to add; must not be <code>null</code>.
 	 */
-	public void addSourceProvider(ISourceProvider provider);
+	void addSourceProvider(ISourceProvider provider);
 
 	/**
 	 * Removes a source provider from this service. Most of the time, this
@@ -45,5 +45,5 @@ public interface IServiceWithSources extends IDisposable {
 	 * @param provider
 	 *            The provider to remove; must not be <code>null</code>.
 	 */
-	public void removeSourceProvider(ISourceProvider provider);
+	void removeSourceProvider(ISourceProvider provider);
 }

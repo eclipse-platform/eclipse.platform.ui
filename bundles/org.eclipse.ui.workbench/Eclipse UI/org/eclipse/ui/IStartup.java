@@ -42,6 +42,6 @@ public interface IStartup {
      * @see org.eclipse.swt.widgets.Display#asyncExec
      * @see org.eclipse.swt.widgets.Display#syncExec
      */
-    public void earlyStartup();
+    void earlyStartup();
 }
 

@@ -60,7 +60,7 @@ public interface IActionDelegate {
      * @param action the action proxy that handles the presentation portion of the
      *   action
      */
-    public void run(IAction action);
+    void run(IAction action);
 
     /**
      * Notifies this action delegate that the selection in the workbench has changed.
@@ -79,5 +79,5 @@ public interface IActionDelegate {
      * @param selection the current selection, or <code>null</code> if there
      * 		is no selection.
      */
-    public void selectionChanged(IAction action, ISelection selection);
+    void selectionChanged(IAction action, ISelection selection);
 }

@@ -35,5 +35,5 @@ public interface IAggregateWorkingSet extends IWorkingSet {
 	 *
 	 * @return the working sets contained in this aggregate working set.
 	 */
-	public IWorkingSet[] getComponents();
+	IWorkingSet[] getComponents();
 }

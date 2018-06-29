@@ -26,5 +26,5 @@ public interface ISystemSummarySection {
      * configuration details log.
      * @param writer puts information into the system summary
      */
-    public void write(PrintWriter writer);
+    void write(PrintWriter writer);
 }

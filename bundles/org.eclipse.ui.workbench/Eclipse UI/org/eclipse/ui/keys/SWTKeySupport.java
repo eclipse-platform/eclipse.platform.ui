@@ -323,7 +323,7 @@ public final class SWTKeySupport {
      *            The key stroke to convert; must not be <code>null</code>.
      * @return The SWT accelerator value
      */
-    public static final int convertKeyStrokeToAccelerator(
+    public static int convertKeyStrokeToAccelerator(
             final KeyStroke keyStroke) {
         int accelerator = 0;
         final Iterator iterator = keyStroke.getModifierKeys().iterator();

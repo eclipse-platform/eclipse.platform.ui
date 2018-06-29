@@ -51,7 +51,7 @@ public final class ActionSetSourceProvider extends AbstractSourceProvider
 	}
 
 	@Override
-	public final void actionSetsChanged(final ActionSetsEvent event) {
+	public void actionSetsChanged(final ActionSetsEvent event) {
 		final IActionSetDescriptor[] newActionSets = event.getNewActionSets();
 		if (!Util.equals(newActionSets, activeActionSets)) {
 			if (DEBUG) {
@@ -77,19 +77,19 @@ public final class ActionSetSourceProvider extends AbstractSourceProvider
 	}
 
 	@Override
-	public final void dispose() {
+	public void dispose() {
 		activeActionSets = null;
 	}
 
 	@Override
-	public final Map getCurrentState() {
+	public Map getCurrentState() {
 		final Map currentState = new HashMap();
 		currentState.put(ISources.ACTIVE_ACTION_SETS_NAME, activeActionSets);
 		return currentState;
 	}
 
 	@Override
-	public final String[] getProvidedSourceNames() {
+	public String[] getProvidedSourceNames() {
 		return PROVIDED_SOURCE_NAMES;
 	}
 }

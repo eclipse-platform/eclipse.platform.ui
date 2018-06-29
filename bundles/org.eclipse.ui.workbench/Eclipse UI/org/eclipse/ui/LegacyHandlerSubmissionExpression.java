@@ -84,7 +84,7 @@ public final class LegacyHandlerSubmissionExpression extends Expression {
 	 * @since 3.2
 	 */
 	@Override
-	public final void collectExpressionInfo(final ExpressionInfo info) {
+	public void collectExpressionInfo(final ExpressionInfo info) {
 		if (activePartId != null) {
 			info.addVariableNameAccess(ISources.ACTIVE_PART_ID_NAME);
 		}
@@ -99,7 +99,7 @@ public final class LegacyHandlerSubmissionExpression extends Expression {
 	}
 
 	@Override
-	protected final int computeHashCode() {
+	protected int computeHashCode() {
 		int hashCode = HASH_INITIAL * HASH_FACTOR + hashCode(activePartId);
 		hashCode = hashCode * HASH_FACTOR + hashCode(activeShell);
 		hashCode = hashCode * HASH_FACTOR + hashCode(activeSite);
@@ -107,7 +107,7 @@ public final class LegacyHandlerSubmissionExpression extends Expression {
 	}
 
 	@Override
-	public final boolean equals(final Object object) {
+	public boolean equals(final Object object) {
 		if (object instanceof LegacyHandlerSubmissionExpression) {
 			final LegacyHandlerSubmissionExpression that = (LegacyHandlerSubmissionExpression) object;
 			return equals(this.activePartId, that.activePartId)
@@ -131,7 +131,7 @@ public final class LegacyHandlerSubmissionExpression extends Expression {
 	 *         matches; <code>EvaluationResult.FALSE</code> otherwise.
 	 */
 	@Override
-	public final EvaluationResult evaluate(final IEvaluationContext context) {
+	public EvaluationResult evaluate(final IEvaluationContext context) {
 		if (activePartId != null) {
 			final Object value = context
 					.getVariable(ISources.ACTIVE_PART_ID_NAME);
@@ -162,7 +162,7 @@ public final class LegacyHandlerSubmissionExpression extends Expression {
 	}
 
 	@Override
-	public final String toString() {
+	public String toString() {
 		final StringBuilder buffer = new StringBuilder();
 		buffer.append("LegacyHandlerSubmission("); //$NON-NLS-1$
 		buffer.append(activeShell);

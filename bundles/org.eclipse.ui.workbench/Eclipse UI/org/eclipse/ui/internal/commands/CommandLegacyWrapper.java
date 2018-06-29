@@ -83,13 +83,13 @@ final class CommandLegacyWrapper implements ICommand {
 
 
 	@Override
-	public final void addCommandListener(final ICommandListener commandListener) {
+	public void addCommandListener(final ICommandListener commandListener) {
 		command.addCommandListener(new LegacyCommandListenerWrapper(
 				commandListener, bindingManager));
 	}
 
 	@Override
-	public final Object execute(Map parameterValuesByName)
+	public Object execute(Map parameterValuesByName)
 			throws ExecutionException, NotHandledException {
 		try {
 			IHandlerService service = PlatformUI.getWorkbench().getService(
@@ -106,7 +106,7 @@ final class CommandLegacyWrapper implements ICommand {
 	}
 
 	@Override
-	public final Map getAttributeValuesByName() {
+	public Map getAttributeValuesByName() {
 		final Map attributeValues = new HashMap();
 		// avoid using Boolean.valueOf to allow compilation against JCL
 		// Foundation (bug 80053)
@@ -118,7 +118,7 @@ final class CommandLegacyWrapper implements ICommand {
 	}
 
 	@Override
-	public final String getCategoryId() throws NotDefinedException {
+	public String getCategoryId() throws NotDefinedException {
 		try {
 			return command.getCategory().getId();
 		} catch (final org.eclipse.core.commands.common.NotDefinedException e) {
@@ -127,7 +127,7 @@ final class CommandLegacyWrapper implements ICommand {
 	}
 
 	@Override
-	public final String getDescription() throws NotDefinedException {
+	public String getDescription() throws NotDefinedException {
 		try {
 			return command.getDescription();
 		} catch (final org.eclipse.core.commands.common.NotDefinedException e) {
@@ -136,12 +136,12 @@ final class CommandLegacyWrapper implements ICommand {
 	}
 
 	@Override
-	public final String getId() {
+	public String getId() {
 		return command.getId();
 	}
 
 	@Override
-	public final List getKeySequenceBindings() {
+	public List getKeySequenceBindings() {
 		final List legacyBindings = new ArrayList();
 		if (parameterizedCommand == null) {
 			parameterizedCommand = new ParameterizedCommand(command, null);
@@ -166,7 +166,7 @@ final class CommandLegacyWrapper implements ICommand {
 	}
 
 	@Override
-	public final String getName() throws NotDefinedException {
+	public String getName() throws NotDefinedException {
 		try {
 			return command.getName();
 		} catch (final org.eclipse.core.commands.common.NotDefinedException e) {
@@ -175,24 +175,24 @@ final class CommandLegacyWrapper implements ICommand {
 	}
 
 	@Override
-	public final boolean isDefined() {
+	public boolean isDefined() {
 		return command.isDefined();
 	}
 
 	@Override
-	public final boolean isHandled() {
+	public boolean isHandled() {
 		return command.isHandled();
 	}
 
 	@Override
-	public final void removeCommandListener(
+	public void removeCommandListener(
 			final ICommandListener commandListener) {
 		command.removeCommandListener(new LegacyCommandListenerWrapper(
 				commandListener, bindingManager));
 	}
 
 	@Override
-	public final int compareTo(final Object o) {
+	public int compareTo(final Object o) {
 		return command.compareTo(o);
 	}
 

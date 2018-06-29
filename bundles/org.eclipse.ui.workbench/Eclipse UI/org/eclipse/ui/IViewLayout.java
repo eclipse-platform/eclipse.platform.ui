@@ -27,14 +27,14 @@ public interface IViewLayout {
      *
      * @return <code>true</code> if the view is closeable, <code>false</code> if not
      */
-    public boolean isCloseable();
+    boolean isCloseable();
 
     /**
      * Sets whether the view is closeable.
      *
      * @param closeable <code>true</code> if the view is closeable, <code>false</code> if not
      */
-    public void setCloseable(boolean closeable);
+    void setCloseable(boolean closeable);
 
     /**
      * Returns whether the view is moveable.
@@ -42,21 +42,21 @@ public interface IViewLayout {
      *
      * @return <code>true</code> if the view is moveable, <code>false</code> if not
      */
-    public boolean isMoveable();
+    boolean isMoveable();
 
     /**
      * Sets whether the view is moveable.
      *
      * @param moveable <code>true</code> if the view is moveable, <code>false</code> if not
      */
-    public void setMoveable(boolean moveable);
+    void setMoveable(boolean moveable);
 
     /**
      * Returns whether the view is a standalone view.
      *
      * @see IPageLayout#addStandaloneView
      */
-    public boolean isStandalone();
+    boolean isStandalone();
 
     /**
      * Returns whether the view shows its title.
@@ -64,5 +64,5 @@ public interface IViewLayout {
      *
      * @see IPageLayout#addStandaloneView
      */
-    public boolean getShowTitle();
+    boolean getShowTitle();
 }

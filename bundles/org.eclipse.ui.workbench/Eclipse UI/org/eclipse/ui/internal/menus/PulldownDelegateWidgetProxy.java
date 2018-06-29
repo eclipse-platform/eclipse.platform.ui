@@ -201,7 +201,7 @@ final class PulldownDelegateWidgetProxy implements IWidget {
 
 	private final Listener selectionListener = new Listener() {
 		@Override
-		public final void handleEvent(final Event event) {
+		public void handleEvent(final Event event) {
 			final Widget item = event.widget;
 			if (item == null) {
 				return;
@@ -298,24 +298,24 @@ final class PulldownDelegateWidgetProxy implements IWidget {
 	 * Passes the dipose on to the proxied handler, if it has been loaded.
 	 */
 	@Override
-	public final void dispose() {
+	public void dispose() {
 		if (delegate != null) {
 			delegate.dispose();
 		}
 	}
 
 	@Override
-	public final void fill(final Composite parent) {
+	public void fill(final Composite parent) {
 		// This does not need to be supported.
 	}
 
 	@Override
-	public final void fill(CoolBar parent, final int index) {
+	public void fill(CoolBar parent, final int index) {
 		// This does not need to be supported.
 	}
 
 	@Override
-	public final void fill(final Menu parent, final int index) {
+	public void fill(final Menu parent, final int index) {
 		if ((widget != null) || (parent == null)) {
 			return;
 		}
@@ -354,7 +354,7 @@ final class PulldownDelegateWidgetProxy implements IWidget {
 	}
 
 	@Override
-	public final void fill(final ToolBar parent, final int index) {
+	public void fill(final ToolBar parent, final int index) {
 		if ((widget != null) && (parent == null)) {
 			return;
 		}
@@ -397,7 +397,7 @@ final class PulldownDelegateWidgetProxy implements IWidget {
 	 * @return <code>true</code> if the delegate is now non-null;
 	 *         <code>false</code> otherwise.
 	 */
-	private final boolean loadDelegate() {
+	private boolean loadDelegate() {
 		if (delegate == null) {
 			// Load the handler.
 			try {
@@ -427,7 +427,7 @@ final class PulldownDelegateWidgetProxy implements IWidget {
 	}
 
 	@Override
-	public final String toString() {
+	public String toString() {
 		if (delegate == null) {
 			return configurationElement.getAttribute(delegateAttributeName);
 		}

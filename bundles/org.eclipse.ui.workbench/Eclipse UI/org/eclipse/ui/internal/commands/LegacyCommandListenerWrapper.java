@@ -58,7 +58,7 @@ final class LegacyCommandListenerWrapper implements ICommandListener {
 	}
 
 	@Override
-	public final void commandChanged(final CommandEvent commandEvent) {
+	public void commandChanged(final CommandEvent commandEvent) {
 		final ICommand command = new CommandLegacyWrapper(commandEvent.getCommand(),
 				bindingManager);
 		final boolean definedChanged = commandEvent.isDefinedChanged();
@@ -73,7 +73,7 @@ final class LegacyCommandListenerWrapper implements ICommandListener {
 	}
 
 	@Override
-	public final boolean equals(final Object object) {
+	public boolean equals(final Object object) {
 		if (object instanceof LegacyCommandListenerWrapper) {
 			final LegacyCommandListenerWrapper wrapper = (LegacyCommandListenerWrapper) object;
 			return listener.equals(wrapper.listener);
@@ -88,7 +88,7 @@ final class LegacyCommandListenerWrapper implements ICommandListener {
 	}
 
 	@Override
-	public final int hashCode() {
+	public int hashCode() {
 		return listener.hashCode();
 	}
 }

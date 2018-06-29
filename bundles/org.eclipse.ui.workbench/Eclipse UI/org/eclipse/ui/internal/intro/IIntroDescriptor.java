@@ -31,14 +31,14 @@ public interface IIntroDescriptor {
      *
      * @return the id of the part
      */
-    public String getId();
+    String getId();
 
     /**
      * Returns the descriptor of the image for this part.
      *
      * @return the descriptor of the image to display next to this part
      */
-    public ImageDescriptor getImageDescriptor();
+    ImageDescriptor getImageDescriptor();
 
     /**
 	 * Return the label override string for this part.
@@ -47,5 +47,5 @@ public interface IIntroDescriptor {
 	 *         been specified
      * @since 3.2
 	 */
-	public String getLabelOverride();
+	String getLabelOverride();
 }

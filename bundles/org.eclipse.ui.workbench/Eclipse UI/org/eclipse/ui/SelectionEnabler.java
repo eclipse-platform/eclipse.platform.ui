@@ -198,7 +198,7 @@ public final class SelectionEnabler {
 	}
 
 	@Override
-	public final boolean equals(final Object object) {
+	public boolean equals(final Object object) {
 		if (object instanceof SelectionEnabler) {
 			final SelectionEnabler that = (SelectionEnabler) object;
 			return Util.equals(this.classes, that.classes)
@@ -216,7 +216,7 @@ public final class SelectionEnabler {
 	 * @return The hash code for this object.
 	 */
 	@Override
-	public final int hashCode() {
+	public int hashCode() {
 		if (hashCode == HASH_CODE_NOT_COMPUTED) {
 			hashCode = HASH_INITIAL * HASH_FACTOR + Util.hashCode(classes);
 			hashCode = hashCode * HASH_FACTOR

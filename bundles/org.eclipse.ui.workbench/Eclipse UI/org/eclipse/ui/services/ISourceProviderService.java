@@ -45,7 +45,7 @@ public interface ISourceProviderService {
 	 *         <code>null</code> if no such source exists.
 	 * @see org.eclipse.ui.ISources
 	 */
-	public ISourceProvider getSourceProvider(final String sourceName);
+	ISourceProvider getSourceProvider(final String sourceName);
 
 	/**
 	 * Retrieves all of the source providers registered with this service at the
@@ -59,6 +59,6 @@ public interface ISourceProviderService {
 	 * @return The source providers registered with this service. This value is
 	 *         never <code>null</code>, but may be empty.
 	 */
-	public ISourceProvider[] getSourceProviders();
+	ISourceProvider[] getSourceProviders();
 
 }

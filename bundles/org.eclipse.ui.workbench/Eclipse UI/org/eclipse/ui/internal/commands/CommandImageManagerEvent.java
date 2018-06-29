@@ -89,7 +89,7 @@ public final class CommandImageManagerEvent {
 	 * @return The identifiers of the commands whose bindings have changed;
 	 *         neither <code>null</code> nor empty.
 	 */
-	public final String[] getChangedCommandIds() {
+	public String[] getChangedCommandIds() {
 		final String[] copy = new String[changedCommandIds.length];
 		System.arraycopy(changedCommandIds, 0, copy, 0,
 				changedCommandIds.length);
@@ -102,7 +102,7 @@ public final class CommandImageManagerEvent {
 	 * @return the instance of the interface that changed. Guaranteed not to be
 	 *         <code>null</code>.
 	 */
-	public final CommandImageManager getCommandImageManager() {
+	public CommandImageManager getCommandImageManager() {
 		return commandImageManager;
 	}
 
@@ -115,7 +115,7 @@ public final class CommandImageManagerEvent {
 	 * @return <code>true</code> if one of the command's images has changed;
 	 *         <code>false</code> otherwise.
 	 */
-	public final boolean isCommandIdChanged(final String commandId) {
+	public boolean isCommandIdChanged(final String commandId) {
 		// PERFORMANCE
 		for (String changedCommandId : changedCommandIds) {
 			if (commandId.equals(changedCommandId)) {
@@ -135,7 +135,7 @@ public final class CommandImageManagerEvent {
 	 * @return <code>true</code> if the command's image has changed
 	 * @see CommandImageManager#getImageDescriptor(String)
 	 */
-	public final boolean isCommandImageChanged(final String commandId) {
+	public boolean isCommandImageChanged(final String commandId) {
 		return isCommandIdChanged(commandId)
 				&& (type == CommandImageManager.TYPE_DEFAULT)
 				&& (style == null);
@@ -156,7 +156,7 @@ public final class CommandImageManagerEvent {
 	 *         changed.
 	 * @see CommandImageManager#getImageDescriptor(String, int)
 	 */
-	public final boolean isCommandImageChanged(final String commandId,
+	public boolean isCommandImageChanged(final String commandId,
 			final int type) {
 		return isCommandIdChanged(commandId)
 				&& ((type == CommandImageManager.TYPE_DEFAULT) || (type == this.type))
@@ -181,7 +181,7 @@ public final class CommandImageManagerEvent {
 	 *         style has changed.
 	 * @see CommandImageManager#getImageDescriptor(String, int, String)
 	 */
-	public final boolean isCommandImageChanged(final String commandId,
+	public boolean isCommandImageChanged(final String commandId,
 			final int type, final String style) {
 		return isCommandIdChanged(commandId)
 				&& ((type == CommandImageManager.TYPE_DEFAULT) || (type == this.type))
@@ -200,7 +200,7 @@ public final class CommandImageManagerEvent {
 	 *         changed.
 	 * @see CommandImageManager#getImageDescriptor(String, String)
 	 */
-	public final boolean isCommandImageChanged(final String commandId,
+	public boolean isCommandImageChanged(final String commandId,
 			final String style) {
 		return isCommandIdChanged(commandId)
 				&& (type == CommandImageManager.TYPE_DEFAULT)

@@ -48,8 +48,7 @@ public interface IWorkbenchSiteProgressService extends IProgressService {
      * The property that is sent with busy notifications.
      * @deprecated this property is no longer in use in the Eclipse SDK
      */
-    @Deprecated
-	public static final String BUSY_PROPERTY = "SITE_BUSY"; //$NON-NLS-1$
+    @Deprecated String BUSY_PROPERTY = "SITE_BUSY"; //$NON-NLS-1$
 
 	/**
 	 * Jobs scheduled with this method will cause the part's presentation to be
@@ -68,7 +67,7 @@ public interface IWorkbenchSiteProgressService extends IProgressService {
 	 *            while this job is running.
 	 * @see Job#schedule(long)
 	 */
-    public void schedule(Job job, long delay, boolean useHalfBusyCursor);
+    void schedule(Job job, long delay, boolean useHalfBusyCursor);
 
 	/**
 	 * Jobs scheduled with this method will cause the part's presentation to be
@@ -82,7 +81,7 @@ public interface IWorkbenchSiteProgressService extends IProgressService {
 	 *            The delay in scheduling.
 	 * @see Job#schedule(long)
 	 */
-    public void schedule(Job job, long delay);
+    void schedule(Job job, long delay);
 
 	/**
 	 * Jobs scheduled with this method will cause the part's presentation to be
@@ -94,20 +93,20 @@ public interface IWorkbenchSiteProgressService extends IProgressService {
 	 *            The job to schedule
 	 * @see Job#schedule()
 	 */
-    public void schedule(Job job);
+    void schedule(Job job);
 
     /**
      * Show busy state if any job of the specified family is running.
      * @param family Object
      * @see Job#belongsTo(Object)
      */
-    public void showBusyForFamily(Object family);
+    void showBusyForFamily(Object family);
 
     /**
 	 * Warn that the content of the part has changed. How this change is
 	 * displayed to the end user is left up to the workbench renderer.
 	 */
-    public void warnOfContentChange();
+    void warnOfContentChange();
 
     /**
 	 * Increments the busy counter for this workbench site. This API should only
@@ -125,7 +124,7 @@ public interface IWorkbenchSiteProgressService extends IProgressService {
 	 *
 	 * @since 3.3
 	 */
-	public void incrementBusy();
+	void incrementBusy();
 
     /**
 	 * Decrements the busy counter for this workbench site. This API should only
@@ -134,6 +133,6 @@ public interface IWorkbenchSiteProgressService extends IProgressService {
 	 *
 	 * @since 3.3
 	 */
-	public void decrementBusy();
+	void decrementBusy();
 
 }

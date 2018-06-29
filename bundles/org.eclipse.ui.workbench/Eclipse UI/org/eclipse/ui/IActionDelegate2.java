@@ -45,14 +45,14 @@ public interface IActionDelegate2 extends IActionDelegate {
      * @param action the proxy action that handles the presentation portion of
      * the action.
      */
-    public void init(IAction action);
+    void init(IAction action);
 
     /**
      * Allows the action delegate to clean up. This lifecycle method is called
      * when the proxy action is done with this action delegate. This is the last
      * method called.
      */
-    public void dispose();
+    void dispose();
 
     /**
      * Performs this action, passing the SWT event which triggered it. This
@@ -67,5 +67,5 @@ public interface IActionDelegate2 extends IActionDelegate {
      * @param event the SWT event which triggered this action being run
      * @since 2.0
      */
-    public void runWithEvent(IAction action, Event event);
+    void runWithEvent(IAction action, Event event);
 }

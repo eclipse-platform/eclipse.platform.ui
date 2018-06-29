@@ -33,7 +33,7 @@ public interface IInstallationPageContainer {
 	 *            the button to be managed
 	 *
 	 */
-	public void registerPageButton(InstallationPage page, Button button);
+	void registerPageButton(InstallationPage page, Button button);
 
 	/**
 	 * Closes any modal containers that were used to launch this installation
@@ -41,6 +41,6 @@ public interface IInstallationPageContainer {
 	 * task (such as a background job) that requires progress indication, in
 	 * order to allow platform progress indication to behave as expected.
 	 */
-	public void closeModalContainers();
+	void closeModalContainers();
 
 }

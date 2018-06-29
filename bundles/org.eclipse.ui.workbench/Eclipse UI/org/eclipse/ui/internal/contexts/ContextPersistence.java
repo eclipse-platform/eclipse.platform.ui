@@ -53,7 +53,7 @@ public final class ContextPersistence extends RegistryPersistence {
 	 *            The context manager to which the commands should be added;
 	 *            must not be <code>null</code>.
 	 */
-	private static final void readContextsFromRegistry(
+	private static void readContextsFromRegistry(
 			final IConfigurationElement[] configurationElements,
 			final int configurationElementCount,
 			final ContextManager contextManager) {
@@ -122,7 +122,7 @@ public final class ContextPersistence extends RegistryPersistence {
 	}
 
 	@Override
-	protected final boolean isChangeImportant(final IRegistryChangeEvent event) {
+	protected boolean isChangeImportant(final IRegistryChangeEvent event) {
 		final IExtensionDelta[] acceleratorScopeDeltas = event
 				.getExtensionDeltas(PlatformUI.PLUGIN_ID,
 						IWorkbenchRegistryConstants.PL_ACCELERATOR_SCOPES);
@@ -151,7 +151,7 @@ public final class ContextPersistence extends RegistryPersistence {
 	 *            from the registry; must not be <code>null</code>.
 	 */
 	@Override
-	protected final void read() {
+	protected void read() {
 		super.read();
 		reRead();
 	}

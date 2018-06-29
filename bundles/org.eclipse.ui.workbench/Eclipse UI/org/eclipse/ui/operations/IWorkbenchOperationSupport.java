@@ -34,13 +34,13 @@ public interface IWorkbenchOperationSupport {
 	 *
 	 * @return the workbench operation context
 	 */
-	public IUndoContext getUndoContext();
+	IUndoContext getUndoContext();
 
 	/**
 	 * Returns the operation history for the workbench.
 	 *
 	 * @return the workbench operation history
 	 */
-	public IOperationHistory getOperationHistory();
+	IOperationHistory getOperationHistory();
 
 }

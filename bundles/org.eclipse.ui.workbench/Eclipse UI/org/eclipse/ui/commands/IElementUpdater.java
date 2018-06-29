@@ -39,5 +39,5 @@ public interface IElementUpdater {
 	 *            Any parameters registered with the callback. Will not be
 	 *            <code>null</code>, but it may be empty.
 	 */
-	public void updateElement(UIElement element, Map parameters);
+	void updateElement(UIElement element, Map parameters);
 }

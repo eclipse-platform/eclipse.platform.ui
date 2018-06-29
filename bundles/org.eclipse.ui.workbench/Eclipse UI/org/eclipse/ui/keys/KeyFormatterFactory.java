@@ -39,7 +39,7 @@ public final class KeyFormatterFactory {
      *
      * @return The compact formatter; never <code>null</code>.
      */
-    public static final IKeyFormatter getCompactKeyFormatter() {
+    public static IKeyFormatter getCompactKeyFormatter() {
         return COMPACT_KEY_FORMATTER;
     }
 

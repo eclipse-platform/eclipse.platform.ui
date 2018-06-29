@@ -256,7 +256,7 @@ public class NewKeysPreferencePage extends PreferencePage implements IWorkbenchP
 		}
 
 		@Override
-		public final int compare(final Viewer viewer, final Object a,
+		public int compare(final Viewer viewer, final Object a,
 				final Object b) {
 			int result = 0;
 			Iterator<Integer> i = sortColumns.iterator();

@@ -31,7 +31,7 @@ public interface IActionBarConfigurer2 extends IActionBarConfigurer {
 	 *
 	 * @return the tool bar manager
 	 */
-	public IToolBarManager createToolBarManager();
+	IToolBarManager createToolBarManager();
 
 	/**
 	 * Creates a toolbar contribution item for the window's tool bar. The action
@@ -44,7 +44,7 @@ public interface IActionBarConfigurer2 extends IActionBarConfigurer {
 	 *            the id of the contribution
 	 * @return the tool bar contribution item
 	 */
-	public IToolBarContributionItem createToolBarContributionItem(
+	IToolBarContributionItem createToolBarContributionItem(
 			IToolBarManager toolBarManager, String id);
 
 }

@@ -38,7 +38,7 @@ public interface IWorkingSetPage extends IWizardPage {
      * Implementers may store the page result (new/changed working
      * set returned in getSelection) here.
      */
-    public void finish();
+    void finish();
 
     /**
      * Returns the working set edited or created on the page
@@ -51,7 +51,7 @@ public interface IWorkingSetPage extends IWizardPage {
      *
      * @return the working set edited or created on the page.
      */
-    public IWorkingSet getSelection();
+    IWorkingSet getSelection();
 
     /**
      * Sets the working set edited on the page.
@@ -61,5 +61,5 @@ public interface IWorkingSetPage extends IWizardPage {
      *
      * @param workingSet the working set edited on the page.
      */
-    public void setSelection(IWorkingSet workingSet);
+    void setSelection(IWorkingSet workingSet);
 }

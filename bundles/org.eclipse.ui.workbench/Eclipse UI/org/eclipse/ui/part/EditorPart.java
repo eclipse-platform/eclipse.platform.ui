@@ -172,11 +172,11 @@ public abstract class EditorPart extends WorkbenchPart implements IEditorPart {
 
 
     /*
-	 * Returns whether the "save as" operation is supported by this editor. 
+	 * Returns whether the "save as" operation is supported by this editor.
 	 * <p>
 	 * Subclasses must override this method to implement the open-save-close
 	 * lifecycle for an editor. For greater details, see
-	 * <code>IEditorPart</code> 
+	 * <code>IEditorPart</code>
 	 * </p>
 	 *
 	 * @see IEditorPart

@@ -24,5 +24,5 @@ interface IReorderListener {
 	 * @param newIndex
 	 *
 	 */
-	public void reorder(Object obj, int newIndex);
+	void reorder(Object obj, int newIndex);
 }

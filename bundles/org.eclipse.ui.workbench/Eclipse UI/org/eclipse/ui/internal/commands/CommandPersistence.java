@@ -76,7 +76,7 @@ public final class CommandPersistence extends RegistryPersistence {
 	 *            The command service to which the categories should be added;
 	 *            must not be <code>null</code>.
 	 */
-	private static final void readCategoriesFromRegistry(
+	private static void readCategoriesFromRegistry(
 			final IConfigurationElement[] configurationElements,
 			final int configurationElementCount, final CommandManager commandManager) {
 
@@ -137,7 +137,7 @@ public final class CommandPersistence extends RegistryPersistence {
 	 *            The command service to which the commands should be added;
 	 *            must not be <code>null</code>.
 	 */
-	private static final void readCommandsFromRegistry(
+	private static void readCommandsFromRegistry(
 			final IConfigurationElement[] configurationElements,
 			final int configurationElementCount, final CommandManager commandManager) {
 		final List warningsToLog = new ArrayList(1);
@@ -237,7 +237,7 @@ public final class CommandPersistence extends RegistryPersistence {
 	 * @return The array of parameters found for this configuration element;
 	 *         <code>null</code> if none can be found.
 	 */
-	private static final Parameter[] readParameters(
+	private static Parameter[] readParameters(
 			final IConfigurationElement configurationElement, final List warningsToLog,
 			final CommandManager commandManager) {
 		final IConfigurationElement[] parameterElements = configurationElement
@@ -312,7 +312,7 @@ public final class CommandPersistence extends RegistryPersistence {
 	 *            must not be <code>null</code>.
 	 * @since 3.2
 	 */
-	private static final void readParameterTypesFromRegistry(
+	private static void readParameterTypesFromRegistry(
 			final IConfigurationElement[] configurationElements,
 			final int configurationElementCount, final CommandManager commandManager) {
 
@@ -374,7 +374,7 @@ public final class CommandPersistence extends RegistryPersistence {
 	 *            The command for which the state is being read; may be
 	 *            <code>null</code>.
 	 */
-	private static final void readState(
+	private static void readState(
 			final IConfigurationElement configurationElement,
 			final List warningsToLog, final Command command) {
 		final IConfigurationElement[] stateElements = configurationElement
@@ -421,7 +421,7 @@ public final class CommandPersistence extends RegistryPersistence {
 	}
 
 	@Override
-	protected final boolean isChangeImportant(final IRegistryChangeEvent event) {
+	protected boolean isChangeImportant(final IRegistryChangeEvent event) {
 		return false;
 	}
 
@@ -448,7 +448,7 @@ public final class CommandPersistence extends RegistryPersistence {
 	 *            from the registry; must not be <code>null</code>.
 	 */
 	@Override
-	protected final void read() {
+	protected void read() {
 		super.read();
 		reRead();
 	}

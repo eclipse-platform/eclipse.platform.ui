@@ -67,7 +67,7 @@ public final class PreferencePageParameterValues implements IParameterValues {
 	 *            preference page tree. This will be <code>null</code> for the
 	 *            root level preference page nodes.
 	 */
-	private final void collectParameterValues(final Map values,
+	private void collectParameterValues(final Map values,
 			final IPreferenceNode[] preferenceNodes, final String namePrefix) {
 
 		for (final IPreferenceNode preferenceNode : preferenceNodes) {
@@ -87,7 +87,7 @@ public final class PreferencePageParameterValues implements IParameterValues {
 	}
 
 	@Override
-	public final Map getParameterValues() {
+	public Map getParameterValues() {
 		if (preferenceMap == null) {
 			preferenceMap = new TreeMap();
 

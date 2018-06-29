@@ -29,12 +29,12 @@ public abstract class AnimationItem {
         /**
          * The animation has started.
          */
-        public abstract void animationStart();
+        void animationStart();
 
         /**
          * The animation has ended.
          */
-        public abstract void animationDone();
+        void animationDone();
     }
 
     //Create a containter that does nothing by default

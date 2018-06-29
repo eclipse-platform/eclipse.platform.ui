@@ -23,11 +23,11 @@ public interface ILegacyAttributeNames {
 	/**
 	 * Whether the handler is capable of executing right now.
 	 */
-	public final String ENABLED = IAction.ENABLED;
+	String ENABLED = IAction.ENABLED;
 
 	/**
 	 * Whether the handler is capable of handling delegation of responsibilities
 	 * at this time.
 	 */
-	public final String HANDLED = IAction.HANDLED;
+	String HANDLED = IAction.HANDLED;
 }

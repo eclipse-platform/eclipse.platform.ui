@@ -29,5 +29,5 @@ public interface ISetSelectionTarget {
      *
      * @param selection the new element to select
      */
-    public void selectReveal(ISelection selection);
+    void selectReveal(ISelection selection);
 }

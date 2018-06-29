@@ -32,5 +32,5 @@ public interface IShowInTargetList {
      *
      * @see IShowInTarget
      */
-    public String[] getShowInTargetIds();
+    String[] getShowInTargetIds();
 }

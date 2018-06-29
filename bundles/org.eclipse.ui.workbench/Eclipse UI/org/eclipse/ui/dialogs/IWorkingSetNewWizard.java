@@ -38,5 +38,5 @@ public interface IWorkingSetNewWizard extends IWizard {
      * @return the new working set or <code>null</code> if the wizard has been
      * 	cancelled.
      */
-    public IWorkingSet getSelection();
+    IWorkingSet getSelection();
 }

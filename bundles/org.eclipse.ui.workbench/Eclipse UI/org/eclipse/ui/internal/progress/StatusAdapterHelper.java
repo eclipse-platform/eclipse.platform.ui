@@ -53,7 +53,7 @@ public class StatusAdapterHelper {
 
 	/**
 	 * Return the adapter for this info.
-	 * 
+	 *
 	 * @param info
 	 * @return can return null
 	 */

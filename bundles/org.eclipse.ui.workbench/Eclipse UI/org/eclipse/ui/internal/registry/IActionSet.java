@@ -43,7 +43,7 @@ public interface IActionSet {
      * ]
      * </p>
      */
-    public void dispose();
+    void dispose();
 
     /**
      * Initializes this action set, which is expected to add it actions as required
@@ -52,5 +52,5 @@ public interface IActionSet {
      * @param window the workbench window
      * @param bars the action bars
      */
-    public void init(IWorkbenchWindow window, IActionBars bars);
+    void init(IWorkbenchWindow window, IActionBars bars);
 }

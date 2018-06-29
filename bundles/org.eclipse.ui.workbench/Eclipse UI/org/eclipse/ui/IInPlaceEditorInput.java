@@ -35,5 +35,5 @@ public interface IInPlaceEditorInput extends IPathEditorInput {
      * @param editor the in-place editor associated with this input
      * 		or <code>null</code> to disassociate.
      */
-    public void setInPlaceEditor(IInPlaceEditor editor);
+    void setInPlaceEditor(IInPlaceEditor editor);
 }

@@ -62,7 +62,7 @@ public interface IProgressService extends IRunnableContext {
      * @return int
      * @see IProgressService#busyCursorWhile(IRunnableWithProgress)
      */
-    public int getLongOperationTime();
+    int getLongOperationTime();
 
     /**
      * Register the ImageDescriptor to be the icon used for
@@ -71,7 +71,7 @@ public interface IProgressService extends IRunnableContext {
      * @param family The family to associate with
      * @see Job#belongsTo(Object)
      */
-    public void registerIconForFamily(ImageDescriptor icon, Object family);
+    void registerIconForFamily(ImageDescriptor icon, Object family);
 
     /**
      * Runs the given operation in the UI thread using the given runnable context.
@@ -104,7 +104,7 @@ public interface IProgressService extends IRunnableContext {
      *  acknowledges cancelation by throwing this exception.
      *
      */
-    public void runInUI(IRunnableContext context,
+    void runInUI(IRunnableContext context,
             IRunnableWithProgress runnable, ISchedulingRule rule)
             throws InvocationTargetException, InterruptedException;
 
@@ -116,7 +116,7 @@ public interface IProgressService extends IRunnableContext {
      * @return Icon or <code>null</code> if there isn't one.
      * @see IProgressService#registerIconForFamily(ImageDescriptor,Object)
      */
-    public Image getIconFor(Job job);
+    Image getIconFor(Job job);
 
     /**
      * Set the cursor to busy and run the runnable in a non-UI Thread.
@@ -134,7 +134,7 @@ public interface IProgressService extends IRunnableContext {
      * @throws InvocationTargetException
      * @throws InterruptedException
      */
-    public void busyCursorWhile(IRunnableWithProgress runnable)
+    void busyCursorWhile(IRunnableWithProgress runnable)
             throws InvocationTargetException, InterruptedException;
 
     /**
@@ -144,8 +144,7 @@ public interface IProgressService extends IRunnableContext {
      *
      * @since 3.2
      */
-    @Override
-	public void run(boolean fork, boolean cancelable, IRunnableWithProgress runnable) throws InvocationTargetException, InterruptedException;
+    @Override void run(boolean fork, boolean cancelable, IRunnableWithProgress runnable) throws InvocationTargetException, InterruptedException;
 
     /**
      * Open a dialog on job when it starts to run and close it
@@ -160,6 +159,6 @@ public interface IProgressService extends IRunnableContext {
      * @param job The Job that will be reported in the dialog. job
      * must not be <code>null</code>.
      */
-    public void showInDialog(Shell shell, Job job);
+    void showInDialog(Shell shell, Job job);
 
 }

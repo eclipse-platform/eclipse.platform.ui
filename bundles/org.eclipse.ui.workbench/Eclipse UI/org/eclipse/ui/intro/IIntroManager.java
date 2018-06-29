@@ -43,7 +43,7 @@ public interface IIntroManager {
      * if part is <code>null</code> or it is not the intro part returned
      * by {@link #getIntro()}.
      */
-    public boolean closeIntro(IIntroPart part);
+    boolean closeIntro(IIntroPart part);
 
     /**
      * Returns the intro part. Returns <code>null</code> if there is no intro
@@ -53,7 +53,7 @@ public interface IIntroManager {
      *
      * @return the intro part, or <code>null</code> if none is available
      */
-    public IIntroPart getIntro();
+    IIntroPart getIntro();
 
     /**
      * Return whether an intro is available. Note that this checks whether
@@ -65,7 +65,7 @@ public interface IIntroManager {
      * @return <code>true</code> if there is an intro that could be shown, and
      * <code>false</code> if there is no intro
      */
-    public boolean hasIntro();
+    boolean hasIntro();
 
     /**
      * Return the standby state of the given intro part.
@@ -93,7 +93,7 @@ public interface IIntroManager {
      * @param standby <code>true</code> to put the part in its partially
      * visible standy mode, and <code>false</code> to make it fully visible.
      */
-    public void setIntroStandby(IIntroPart part, boolean standby);
+    void setIntroStandby(IIntroPart part, boolean standby);
 
     /**
      * Shows the intro part in the given workbench window. If the intro part has
@@ -108,7 +108,7 @@ public interface IIntroManager {
      * if no intro part is available or if <code>preferredWindow</code> is
      * <code>null</code> and there is no currently active workbench window
      */
-    public IIntroPart showIntro(IWorkbenchWindow preferredWindow,
+    IIntroPart showIntro(IWorkbenchWindow preferredWindow,
             boolean standby);
 
     /**
@@ -119,5 +119,5 @@ public interface IIntroManager {
 	 *
 	 * @since 3.3
 	 */
-    public boolean isNewContentAvailable();
+    boolean isNewContentAvailable();
 }

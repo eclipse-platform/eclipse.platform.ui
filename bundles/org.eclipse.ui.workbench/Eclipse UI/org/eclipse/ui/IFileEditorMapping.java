@@ -37,14 +37,14 @@ public interface IFileEditorMapping {
      *   is no default editor registered. Will also return <code>null</code> if
      *   the default editor exists but fails the Expressions check.
      */
-    public IEditorDescriptor getDefaultEditor();
+    IEditorDescriptor getDefaultEditor();
 
     /**
      * Returns the list of editors registered for this type mapping.
      *
      * @return a possibly empty list of editors.
      */
-    public IEditorDescriptor[] getEditors();
+    IEditorDescriptor[] getEditors();
 
     /**
      * Returns the list of editors formerly registered for this type mapping
@@ -52,14 +52,14 @@ public interface IFileEditorMapping {
      *
      * @return a possibly empty list of editors
      */
-    public IEditorDescriptor[] getDeletedEditors();
+    IEditorDescriptor[] getDeletedEditors();
 
     /**
      * Returns the file's extension for this type mapping.
      *
      * @return the extension for this mapping
      */
-    public String getExtension();
+    String getExtension();
 
     /**
      * Returns the descriptor of the image to use for a file of this type.
@@ -70,7 +70,7 @@ public interface IFileEditorMapping {
      *
      * @return the descriptor of the image to use for a resource of this type
      */
-    public ImageDescriptor getImageDescriptor();
+    ImageDescriptor getImageDescriptor();
 
     /**
      * Returns the label to use for this mapping.
@@ -78,12 +78,12 @@ public interface IFileEditorMapping {
      *
      * @return the label to use for this mapping
      */
-    public String getLabel();
+    String getLabel();
 
     /**
      * Returns the file's name for this type mapping.
      *
      * @return the name for this mapping
      */
-    public String getName();
+    String getName();
 }

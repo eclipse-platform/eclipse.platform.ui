@@ -37,7 +37,7 @@ public interface IActionSetsListener {
 	 *            The event carrying information about the new state of the
 	 *            action sets; never <code>null</code>.
 	 */
-	public void actionSetsChanged(ActionSetsEvent event);
+	void actionSetsChanged(ActionSetsEvent event);
 
 }
 

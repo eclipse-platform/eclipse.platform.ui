@@ -41,7 +41,7 @@ public interface IServiceLocator {
 	 *         found.
 	 */
 
-	public <T> T getService(Class<T> api);
+	<T> T getService(Class<T> api);
 
 	/**
 	 * Whether this service exists within the scope of this service locator.
@@ -55,5 +55,5 @@ public interface IServiceLocator {
 	 * @return <code>true</code> if the service locator can find a service for
 	 *         the given API; <code>false</code> otherwise.
 	 */
-	public boolean hasService(Class<?> api);
+	boolean hasService(Class<?> api);
 }

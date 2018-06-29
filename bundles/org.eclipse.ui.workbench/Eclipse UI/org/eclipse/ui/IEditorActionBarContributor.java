@@ -55,7 +55,7 @@ public interface IEditorActionBarContributor {
      * @param page the workbench page for this contributor
      * @since 2.0
      */
-    public void init(IActionBars bars, IWorkbenchPage page);
+    void init(IActionBars bars, IWorkbenchPage page);
 
     /**
      * Sets the active editor for the contributor.
@@ -64,12 +64,12 @@ public interface IEditorActionBarContributor {
      *
      * @param targetEditor the new editor target
      */
-    public void setActiveEditor(IEditorPart targetEditor);
+    void setActiveEditor(IEditorPart targetEditor);
 
     /**
      * Disposes this contributor.
      *
      * @since 2.0
      */
-    public void dispose();
+    void dispose();
 }

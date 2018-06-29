@@ -111,7 +111,7 @@ public final class PreferencesUtil {
 	 * @since 3.1
 	 * @see PreferenceDialog#PreferenceDialog(Shell, PreferenceManager)
 	 */
-	public static final PreferenceDialog createPreferenceDialogOn(Shell shell,
+	public static PreferenceDialog createPreferenceDialogOn(Shell shell,
 			String preferencePageId, String[] displayedIds, Object data) {
 		return createPreferenceDialogOn(shell, preferencePageId, displayedIds, data,
 				OPTION_NONE);
@@ -146,7 +146,7 @@ public final class PreferencesUtil {
 	 *         <code>null</code> if it could not be created.
 	 * @since 3.1
 	 */
-	public static final PreferenceDialog createPropertyDialogOn(Shell shell,
+	public static PreferenceDialog createPropertyDialogOn(Shell shell,
 			final IAdaptable element, String propertyPageId,
 			String[] displayedIds, Object data) {
 		return createPropertyDialogOn(shell, element, propertyPageId, displayedIds, data,
@@ -186,7 +186,7 @@ public final class PreferencesUtil {
 	 * @since 3.5
 	 * @see PreferenceDialog#PreferenceDialog(Shell, PreferenceManager)
 	 */
-	public static final PreferenceDialog createPreferenceDialogOn(Shell shell,
+	public static PreferenceDialog createPreferenceDialogOn(Shell shell,
 			String preferencePageId, String[] displayedIds, Object data, int options) {
 		FilteredPreferenceDialog dialog = WorkbenchPreferenceDialog
 		.createDialogOn(shell, preferencePageId);
@@ -227,7 +227,7 @@ public final class PreferencesUtil {
 	 *         <code>null</code> if it could not be created.
 	 * @since 3.5
 	 */
-	public static final PreferenceDialog createPropertyDialogOn(Shell shell,
+	public static PreferenceDialog createPropertyDialogOn(Shell shell,
 			final IAdaptable element, String propertyPageId,
 			String[] displayedIds, Object data, int options) {
 
@@ -275,7 +275,7 @@ public final class PreferencesUtil {
 	 *         <code>null</code> if it could not be created.
 	 * @since 3.6
 	 */
-	public static final PreferenceDialog createPropertyDialogOn(Shell shell,
+	public static PreferenceDialog createPropertyDialogOn(Shell shell,
 			final Object element, String propertyPageId, String[] displayedIds,
 			Object data, int options) {
 		FilteredPreferenceDialog dialog = PropertyDialog.createDialogOn(shell,

@@ -34,7 +34,7 @@ public final class ContextManagerFactory {
 	 *         outside the contract of the interface. Guaranteed not to be
 	 *         <code>null</code>.
 	 */
-	public static final ContextManagerLegacyWrapper getContextManagerWrapper(
+	public static ContextManagerLegacyWrapper getContextManagerWrapper(
 			final ContextManager contextManager) {
 		return new ContextManagerLegacyWrapper(contextManager);
 	}

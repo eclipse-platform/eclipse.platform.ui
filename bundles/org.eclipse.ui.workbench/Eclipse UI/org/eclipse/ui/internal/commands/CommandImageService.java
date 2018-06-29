@@ -79,7 +79,7 @@ public final class CommandImageService implements ICommandImageService {
 	 * @param descriptor
 	 *            The image descriptor. Should not be <code>null</code>.
 	 */
-	public final void bind(final String commandId, final int type,
+	public void bind(final String commandId, final int type,
 			final String style, final ImageDescriptor descriptor) {
 		commandImageManager.bind(commandId, type, style, descriptor);
 	}
@@ -98,13 +98,13 @@ public final class CommandImageService implements ICommandImageService {
 	 * @param url
 	 *            The URL to the image. Should not be <code>null</code>.
 	 */
-	public final void bind(final String commandId, final int type,
+	public void bind(final String commandId, final int type,
 			final String style, final URL url) {
 		commandImageManager.bind(commandId, type, style, url);
 	}
 
 	@Override
-	public final void dispose() {
+	public void dispose() {
 		commandImagePersistence.dispose();
 	}
 
@@ -118,34 +118,34 @@ public final class CommandImageService implements ICommandImageService {
 	 *            required; must not be <code>null</code>.
 	 * @return A style tag that is not currently used; may be <code>null</code>.
 	 */
-	public final String generateUnusedStyle(final String commandId) {
+	public String generateUnusedStyle(final String commandId) {
 		return commandImageManager.generateUnusedStyle(commandId);
 	}
 
 	@Override
-	public final ImageDescriptor getImageDescriptor(final String commandId) {
+	public ImageDescriptor getImageDescriptor(final String commandId) {
 		return commandImageManager.getImageDescriptor(commandId);
 	}
 
 	@Override
-	public final ImageDescriptor getImageDescriptor(final String commandId,
+	public ImageDescriptor getImageDescriptor(final String commandId,
 			final int type) {
 		return commandImageManager.getImageDescriptor(commandId, type);
 	}
 
 	@Override
-	public final ImageDescriptor getImageDescriptor(final String commandId,
+	public ImageDescriptor getImageDescriptor(final String commandId,
 			final int type, final String style) {
 		return commandImageManager.getImageDescriptor(commandId, type, style);
 	}
 
 	@Override
-	public final ImageDescriptor getImageDescriptor(final String commandId,
+	public ImageDescriptor getImageDescriptor(final String commandId,
 			final String style) {
 		return commandImageManager.getImageDescriptor(commandId, style);
 	}
 
-	public final void readRegistry() {
+	public void readRegistry() {
 		commandImagePersistence.read();
 	}
 }

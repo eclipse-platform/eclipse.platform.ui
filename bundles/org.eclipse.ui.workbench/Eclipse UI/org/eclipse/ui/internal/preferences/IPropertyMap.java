@@ -31,7 +31,7 @@ public interface IPropertyMap {
      * cannot compute the set of valid keys
      * @since 3.1
      */
-    public Set keySet();
+    Set keySet();
 
     /**
      * Returns the value of the given property. Returns null if the given
@@ -44,7 +44,7 @@ public interface IPropertyMap {
      * does not exist or has the wrong type
      * @since 3.1
      */
-    public Object getValue(String propertyId, Class propertyType);
+    Object getValue(String propertyId, Class propertyType);
 
     /**
      * If this map represents the union of multiple property maps, this
@@ -56,7 +56,7 @@ public interface IPropertyMap {
      * @return true iff the given property existed in every child map
      * @since 3.1
      */
-    public boolean isCommonProperty(String propertyId);
+    boolean isCommonProperty(String propertyId);
 
     /**
      * Returns true iff the given property exists.
@@ -65,7 +65,7 @@ public interface IPropertyMap {
      * @return true iff the given property exists in this map
      * @since 3.1
      */
-    public boolean propertyExists(String propertyId);
+    boolean propertyExists(String propertyId);
 
     /**
      * Sets the value of the given property to the given value (optional
@@ -77,5 +77,5 @@ public interface IPropertyMap {
      * is read-only
      * @since 3.1
      */
-    public void setValue(String propertyId, Object newValue);
+    void setValue(String propertyId, Object newValue);
 }

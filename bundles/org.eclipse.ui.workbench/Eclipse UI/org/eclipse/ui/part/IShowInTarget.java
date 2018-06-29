@@ -33,5 +33,5 @@ public interface IShowInTarget {
      * @return <code>true</code> if the context could be shown,
      *   <code>false</code> otherwise
      */
-    public boolean show(ShowInContext context);
+    boolean show(ShowInContext context);
 }
