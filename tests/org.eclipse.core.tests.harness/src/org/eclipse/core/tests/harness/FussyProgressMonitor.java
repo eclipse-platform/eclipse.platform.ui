@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.core.tests.harness;
 
+import static org.junit.Assert.assertFalse;
+
 import junit.framework.AssertionFailedError;
 import org.eclipse.core.runtime.jobs.Job;
 
@@ -88,12 +90,7 @@ public class FussyProgressMonitor extends TestProgressMonitor {
 
 	@Override
 	public void beginTask(String name, int newTotalWork) {
-		//if (beginTaskCalled && doneCalls > 0) {
-		// this is a second call to beginTask which is allowed because
-		// the previous task is done.
-		//prepare();
-		//}
-		assertTrue("beginTask may only be called once (old name=" + taskName + ")", beginTaskCalled == false);
+		assertFalse("beginTask may only be called once (old name=" + taskName + ")", beginTaskCalled);
 		beginTaskCalled = true;
 		taskName = name;
 		assertTrue("total work must be positive or UNKNOWN", newTotalWork > 0 || newTotalWork == UNKNOWN);
@@ -128,8 +125,6 @@ public class FussyProgressMonitor extends TestProgressMonitor {
 	 * should be called before every use of a FussyProgressMonitor
 	 */
 	public void prepare() {
-		//if (!sanityCheckCalled)
-		//EclipseWorkspaceTest.log("sanityCheck has not been called for previous use");
 		sanityCheckCalled = false;
 		taskName = null;
 		totalWork = 0;
@@ -147,7 +142,6 @@ public class FussyProgressMonitor extends TestProgressMonitor {
 			CoreTest.debug("sanityCheck has already been called");
 		}
 		sanityCheckCalled = true;
-		//	EclipseWorkspaceTest.log("sanity checking: " + taskName + " : " + (System.currentTimeMillis() - beginTime) + " ms, " + workedSoFar);
 		long duration = System.currentTimeMillis() - beginTime;
 		if (duration > NOTICEABLE_DELAY && beginTaskCalled) {
 			assertTrue("this operation took: " + duration + "ms, it should report progress", workedSoFar > 0);
