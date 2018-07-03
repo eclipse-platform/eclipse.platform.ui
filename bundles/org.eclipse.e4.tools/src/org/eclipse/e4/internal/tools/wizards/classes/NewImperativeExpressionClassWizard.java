@@ -60,6 +60,7 @@ public class NewImperativeExpressionClassWizard extends AbstractNewClassWizard {
 				return new ImperativeExpressionClass(root);
 			}
 
+			@SuppressWarnings("unchecked")
 			@Override
 			protected void createFields(Composite parent, DataBindingContext dbc) {
 				final IWidgetValueProperty textProp = WidgetProperties

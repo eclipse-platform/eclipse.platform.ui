@@ -57,6 +57,7 @@ public class NewPartClassWizard extends AbstractNewClassWizard {
 			Messages.NewPartClassWizard_CreateNewPart, root, ResourcesPlugin.getWorkspace()
 			.getRoot(), initialString) {
 
+			@SuppressWarnings("unchecked")
 			@Override
 			protected void createFields(Composite parent, DataBindingContext dbc) {
 				final IWidgetValueProperty textProp = WidgetProperties

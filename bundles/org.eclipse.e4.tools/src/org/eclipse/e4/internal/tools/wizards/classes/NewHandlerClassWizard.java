@@ -62,6 +62,7 @@ public class NewHandlerClassWizard extends AbstractNewClassWizard {
 				return new HandlerClass(root);
 			}
 
+			@SuppressWarnings("unchecked")
 			@Override
 			protected void createFields(Composite parent, DataBindingContext dbc) {
 				final IWidgetValueProperty textProp = WidgetProperties

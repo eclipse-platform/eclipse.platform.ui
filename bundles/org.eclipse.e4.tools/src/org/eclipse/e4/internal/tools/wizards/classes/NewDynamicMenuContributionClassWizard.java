@@ -58,6 +58,7 @@ AbstractNewClassWizard {
 				return new DynamicMenuContributionClass(root);
 			}
 
+			@SuppressWarnings("unchecked")
 			@Override
 			protected void createFields(Composite parent, DataBindingContext dbc) {
 				final IWidgetValueProperty textProp = WidgetProperties

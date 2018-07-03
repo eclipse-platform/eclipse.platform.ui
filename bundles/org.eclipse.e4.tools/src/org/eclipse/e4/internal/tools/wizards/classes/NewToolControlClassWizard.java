@@ -58,6 +58,7 @@ public class NewToolControlClassWizard extends AbstractNewClassWizard {
 				return new ToolControlClass(root);
 			}
 
+			@SuppressWarnings("unchecked")
 			@Override
 			protected void createFields(Composite parent, DataBindingContext dbc) {
 				final IWidgetValueProperty textProp = WidgetProperties.text(SWT.Modify);

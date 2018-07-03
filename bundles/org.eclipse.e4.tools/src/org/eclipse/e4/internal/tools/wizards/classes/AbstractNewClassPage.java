@@ -185,6 +185,7 @@ public abstract class AbstractNewClassPage extends WizardPage {
 		}
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public void createControl(Composite parent) {
 		final Image img = new Image(parent.getDisplay(), getClass().getClassLoader().getResourceAsStream(
@@ -220,10 +221,9 @@ public abstract class AbstractNewClassPage extends WizardPage {
 			t.setEditable(false);
 
 			final Binding bd = dbc.bindValue(
-					WidgetProperties.text().observe(t),
-					BeanProperties.value(FRAGMENT_ROOT).observe(clazz),
-					new UpdateValueStrategy().setBeforeSetValidator(new PFRootValidator()),
-					new UpdateValueStrategy().setConverter(new PackageFragmentRootToStringConverter())
+					WidgetProperties.text().observe(t), BeanProperties.value(FRAGMENT_ROOT).observe(clazz),
+					new UpdateValueStrategy<>().setBeforeSetValidator(new PFRootValidator()),
+					new UpdateValueStrategy<>().setConverter(new PackageFragmentRootToStringConverter())
 					);
 
 			final Button b = new Button(parent, SWT.PUSH);
@@ -251,9 +251,8 @@ public abstract class AbstractNewClassPage extends WizardPage {
 			final Binding bd = dbc.bindValue(
 					WidgetProperties.text(SWT.Modify).observe(tClassPackage),
 					BeanProperties.value(PACKAGE_FRAGMENT).observe(clazz),
-					new UpdateValueStrategy().setConverter(new StringToPackageFragmentConverter(clazz)),
-					new UpdateValueStrategy().setConverter(new PackageFragmentToStringConverter())
-					);
+					new UpdateValueStrategy<>().setConverter(new StringToPackageFragmentConverter(clazz)),
+					new UpdateValueStrategy<>().setConverter(new PackageFragmentToStringConverter()));
 
 			final Button b = new Button(parent, SWT.PUSH);
 			b.setText(Messages.AbstractNewClassPage_Browse);
@@ -280,7 +279,7 @@ public abstract class AbstractNewClassPage extends WizardPage {
 			tClassName.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 			dbc.bindValue(textProp.observe(tClassName),
 					BeanProperties.value(PROPERTY_NAME, String.class).observe(clazz),
-					new UpdateValueStrategy().setBeforeSetValidator(new ClassnameValidator()), null);
+					new UpdateValueStrategy<>().setBeforeSetValidator(new ClassnameValidator()), null);
 
 			new Label(parent, SWT.NONE);
 		}
@@ -292,7 +291,6 @@ public abstract class AbstractNewClassPage extends WizardPage {
 
 		final ISWTObservableValue obsPackage = WidgetProperties.text(SWT.Modify).observe(tClassPackage);
 		final ISWTObservableValue obsClass = WidgetProperties.text(SWT.Modify).observe(tClassName);
-		@SuppressWarnings("unchecked")
 		final ClassMultiValidator multiValidator = new ClassMultiValidator(clazz, obsPackage, obsClass);
 		dbc.addValidationStatusProvider(multiValidator);
 
@@ -483,7 +481,7 @@ public abstract class AbstractNewClassPage extends WizardPage {
 
 	}
 
-	static class ClassnameValidator implements IValidator {
+	static class ClassnameValidator implements IValidator<Object> {
 
 		@Override
 		public IStatus validate(Object value) {
@@ -500,7 +498,7 @@ public abstract class AbstractNewClassPage extends WizardPage {
 		}
 	}
 
-	static class PFRootValidator implements IValidator {
+	static class PFRootValidator implements IValidator<Object> {
 
 		@Override
 		public IStatus validate(Object value) {
@@ -514,7 +512,7 @@ public abstract class AbstractNewClassPage extends WizardPage {
 		}
 	}
 
-	static class PackageFragmentRootToStringConverter extends Converter {
+	static class PackageFragmentRootToStringConverter extends Converter<Object, Object> {
 
 		public PackageFragmentRootToStringConverter() {
 			super(IPackageFragmentRoot.class, String.class);
@@ -530,7 +528,7 @@ public abstract class AbstractNewClassPage extends WizardPage {
 		}
 	}
 
-	static class PackageFragmentToStringConverter extends Converter {
+	static class PackageFragmentToStringConverter extends Converter<Object, Object> {
 
 		public PackageFragmentToStringConverter() {
 			super(IPackageFragment.class, String.class);
@@ -546,7 +544,7 @@ public abstract class AbstractNewClassPage extends WizardPage {
 		}
 	}
 
-	static class StringToPackageFragmentConverter extends Converter {
+	static class StringToPackageFragmentConverter extends Converter<Object, Object> {
 
 		private final JavaClass clazz;
 
