@@ -64,7 +64,7 @@ abstract public class FindInRecentScopeActionDelegate extends RetrieverAction im
 
 	// IActionDelegate
 	@Override
-	final public void run(IAction action) {
+	public final void run(IAction action) {
 		run();
 	}
 

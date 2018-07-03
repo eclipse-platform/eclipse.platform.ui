@@ -14,7 +14,7 @@ package org.eclipse.ui.texteditor;
 /**
  * @noreference This class is not intended to be referenced by clients.
  */
-final public class TextZoomOutHandler extends AbstractTextZoomHandler {
+public final class TextZoomOutHandler extends AbstractTextZoomHandler {
 
 	public TextZoomOutHandler() {
 		super(-2);
