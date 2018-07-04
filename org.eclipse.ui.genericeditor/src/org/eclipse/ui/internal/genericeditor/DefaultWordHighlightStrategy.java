@@ -25,6 +25,7 @@ import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.ISynchronizable;
+import org.eclipse.jface.text.ITextSelection;
 import org.eclipse.jface.text.ITextViewer;
 import org.eclipse.jface.text.ITextViewerExtension5;
 import org.eclipse.jface.text.Position;
@@ -35,9 +36,10 @@ import org.eclipse.jface.text.source.Annotation;
 import org.eclipse.jface.text.source.IAnnotationModel;
 import org.eclipse.jface.text.source.IAnnotationModelExtension;
 import org.eclipse.jface.text.source.ISourceViewer;
+import org.eclipse.jface.viewers.IPostSelectionProvider;
+import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.osgi.util.NLS;
-import org.eclipse.swt.custom.CaretEvent;
-import org.eclipse.swt.custom.CaretListener;
 
 /**
  *
@@ -52,7 +54,7 @@ import org.eclipse.swt.custom.CaretListener;
  *
  */
 public class DefaultWordHighlightStrategy
-		implements IReconcilingStrategy, IReconcilingStrategyExtension, CaretListener, IPreferenceChangeListener {
+		implements IReconcilingStrategy, IReconcilingStrategyExtension, IPreferenceChangeListener {
 
 	private static final String ANNOTATION_TYPE = "org.eclipse.ui.genericeditor.text"; //$NON-NLS-1$
 
@@ -67,14 +69,20 @@ public class DefaultWordHighlightStrategy
 
 	private Annotation[] fOccurrenceAnnotations = null;
 
-	private void applyHighlights(int offset) {
+	private ISelectionChangedListener editorSelectionChangedListener = event -> applyHighlights(event.getSelection());
+
+	private void applyHighlights(ISelection selection) {
+		if (!(selection instanceof ITextSelection)) {
+			return;
+		}
+		ITextSelection textSelection = (ITextSelection) selection;
 		if (sourceViewer == null || !enabled) {
 			removeOccurrenceAnnotations();
 			return;
 		}
 
 		String text = document.get();
-		offset = ((ITextViewerExtension5) sourceViewer).widgetOffset2ModelOffset(offset);
+		int offset = ((ITextViewerExtension5) sourceViewer).widgetOffset2ModelOffset(textSelection.getOffset());
 
 		String word = findCurrentWord(text, offset);
 		if (word == null) {
@@ -143,12 +151,14 @@ public class DefaultWordHighlightStrategy
 		preferences.addPreferenceChangeListener(this);
 		this.enabled = preferences.getBoolean(ToggleHighlight.TOGGLE_HIGHLIGHT_PREFERENCE, true);
 		this.sourceViewer = (ISourceViewer) viewer;
-		this.sourceViewer.getTextWidget().addCaretListener(this);
+		((IPostSelectionProvider) sourceViewer.getSelectionProvider())
+				.addPostSelectionChangedListener(editorSelectionChangedListener);
 	}
 
 	public void uninstall() {
 		if (sourceViewer != null) {
-			sourceViewer.getTextWidget().removeCaretListener(this);
+			((IPostSelectionProvider) sourceViewer.getSelectionProvider())
+					.removePostSelectionChangedListener(editorSelectionChangedListener);
 		}
 		IEclipsePreferences preferences = InstanceScope.INSTANCE.getNode(GenericEditorPlugin.BUNDLE_ID);
 		preferences.removePreferenceChangeListener(this);
@@ -167,16 +177,11 @@ public class DefaultWordHighlightStrategy
 	}
 
 	@Override
-	public void caretMoved(CaretEvent event) {
-		applyHighlights(event.caretOffset);
-	}
-
-	@Override
 	public void initialReconcile() {
 		if (sourceViewer != null) {
 			sourceViewer.getTextWidget().getDisplay().asyncExec(() -> {
 				if (sourceViewer != null && sourceViewer.getTextWidget() != null) {
-					applyHighlights(sourceViewer.getTextWidget().getCaretOffset());
+					applyHighlights(sourceViewer.getSelectionProvider().getSelection());
 				}
 			});
 		}
