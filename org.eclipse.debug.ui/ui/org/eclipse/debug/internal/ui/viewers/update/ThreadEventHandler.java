@@ -69,7 +69,7 @@ public class ThreadEventHandler extends DebugEventHandler {
 		if (event.isEvaluation()) {
         	ModelDelta delta = buildRootDelta();
     		ModelDelta node = addPathToThread(delta, thread);
-    		node = node.addNode(thread, IModelDelta.NO_CHANGE);
+			node = node.addNode(thread, IModelDelta.STATE);
 			try {
 				IStackFrame frame = thread.getTopStackFrame();
                 if (frame != null) {
