@@ -108,21 +108,32 @@ public class ExternalArchiveSourceContainer extends AbstractSourceContainer {
 				// search
 				Enumeration<? extends ZipEntry> entries = file.entries();
 				List<ZipEntryStorage> matches = null;
-				while (entries.hasMoreElements()) {
-					entry = entries.nextElement();
-					String entryName = entry.getName();
-					if (entryName.endsWith(newname)) {
-						if (isQualfied || entryName.length() == newname.length() || entryName.charAt(entryName.length() - newname.length() - 1) == '/') {
-							if (isFindDuplicates()) {
-								if (matches == null) {
-									matches = new ArrayList<>();
+				try {
+					File zipFile = new File(fArchivePath);
+					String zipFileCanonical = zipFile.getCanonicalPath();
+					while (entries.hasMoreElements()) {
+						entry = entries.nextElement();
+						String entryName = entry.getName();
+						if (entryName.endsWith(newname)) {
+							String zipEntryCanonical = (new File(zipFile, entryName)).getCanonicalPath();
+							if (!zipEntryCanonical.startsWith(zipFileCanonical + File.separator)) {
+								throw new CoreException(new Status(IStatus.ERROR, DebugPlugin.getUniqueIdentifier(), "Invalid path: " + zipEntryCanonical)); //$NON-NLS-1$
+							}
+							if (isQualfied || entryName.length() == newname.length() || entryName.charAt(entryName.length() - newname.length() - 1) == '/') {
+								if (isFindDuplicates()) {
+									if (matches == null) {
+										matches = new ArrayList<>();
+									}
+									matches.add(new ZipEntryStorage(file, entry));
+								} else {
+									return new Object[] {
+											new ZipEntryStorage(file, entry) };
 								}
-								matches.add(new ZipEntryStorage(file, entry));
-							} else {
-								return new Object[]{new ZipEntryStorage(file, entry)};
 							}
 						}
 					}
+				} catch (IOException e) {
+					throw new CoreException(new Status(IStatus.ERROR, DebugPlugin.getUniqueIdentifier(), "Invalid path: " + fArchivePath)); //$NON-NLS-1$
 				}
 				if (matches != null) {
 					return matches.toArray();
