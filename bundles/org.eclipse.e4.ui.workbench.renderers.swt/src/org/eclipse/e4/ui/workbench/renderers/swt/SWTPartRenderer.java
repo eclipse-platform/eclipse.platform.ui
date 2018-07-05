@@ -12,9 +12,7 @@
  *******************************************************************************/
 package org.eclipse.e4.ui.workbench.renderers.swt;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.services.log.Logger;
 import org.eclipse.e4.ui.css.core.engine.CSSEngine;
@@ -34,6 +32,9 @@ import org.eclipse.e4.ui.workbench.IResourceUtilities;
 import org.eclipse.e4.ui.workbench.swt.util.ISWTResourceUtilities;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EObject;
+import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.jface.resource.ImageRegistry;
+import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.swt.accessibility.AccessibleListener;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Control;
@@ -43,8 +44,6 @@ import org.eclipse.swt.widgets.Widget;
 public abstract class SWTPartRenderer extends AbstractPartRenderer {
 
 	private static final String ICON_URI_FOR_PART = "IconUriForPart"; //$NON-NLS-1$
-
-	private Map<String, Image> imageMap = new HashMap<>();
 
 	private String pinURI = "platform:/plugin/org.eclipse.e4.ui.workbench.renderers.swt/icons/full/ovr16/pinned_ovr.png"; //$NON-NLS-1$
 	private Image pinImage;
@@ -142,7 +141,7 @@ public abstract class SWTPartRenderer extends AbstractPartRenderer {
 		me.setWidget(widget);
 	}
 
-	public Object unbindWidget(MUIElement me) {
+	public static Object unbindWidget(MUIElement me) {
 		Widget widget = (Widget) me.getWidget();
 		if (widget != null) {
 			me.setWidget(null);
@@ -210,11 +209,12 @@ public abstract class SWTPartRenderer extends AbstractPartRenderer {
 		if (iconURI == null || iconURI.length() == 0)
 			return null;
 
-		Image image = imageMap.get(iconURI);
+		ImageRegistry registry = JFaceResources.getImageRegistry();
+		Image image = registry.get(iconURI);
 		if (image == null) {
-			image = resUtils.imageDescriptorFromURI(URI.createURI(iconURI))
-					.createImage();
-			imageMap.put(iconURI, image);
+			ImageDescriptor descriptor = resUtils.imageDescriptorFromURI(URI.createURI(iconURI));
+			registry.put(iconURI, descriptor);
+			image = registry.get(iconURI);
 		}
 		return image;
 	}
@@ -319,12 +319,6 @@ public abstract class SWTPartRenderer extends AbstractPartRenderer {
 
 		resUtils = (ISWTResourceUtilities) context.get(IResourceUtilities.class);
 		pinImage = getImageFromURI(pinURI);
-
-		Display.getCurrent().disposeExec(() -> {
-			for (Image image : imageMap.values()) {
-				image.dispose();
-			}
-		});
 	}
 
 	@Override
