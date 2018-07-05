@@ -59,4 +59,10 @@ public class RetargetActionWithDefault extends RetargetAction {
 			super.setActionHandler(handler);
 		}
 	}
+
+	@Override
+	public void dispose() {
+		defaultHandler = null;
+		super.dispose();
+	}
 }

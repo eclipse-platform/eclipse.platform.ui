@@ -65,6 +65,7 @@ public class PerspectiveTracker extends PerspectiveAdapter implements
         if (window != null) {
             window.removePageListener(this);
             window.removePerspectiveListener(this);
+			window = null;
         }
     }
 

@@ -294,4 +294,10 @@ public class ReopenEditorMenu extends ContributionItem {
         }
     }
 
+	@Override
+	public void dispose() {
+		window = null;
+		super.dispose();
+	}
+
 }

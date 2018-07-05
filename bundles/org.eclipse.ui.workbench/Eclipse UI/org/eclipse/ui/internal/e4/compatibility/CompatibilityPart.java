@@ -444,6 +444,7 @@ public abstract class CompatibilityPart implements ISelectionChangedListener {
 		if (part.getTags().contains(IWorkbenchConstants.TAG_USE_DEPENDENCY_INJECTION)) {
 			ContextInjectionFactory.uninject(legacyPart, part.getContext());
 		}
+		legacyPart = null;
 	}
 
 	@Persist

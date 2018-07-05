@@ -38,8 +38,8 @@ import org.eclipse.ui.wizards.IWizardDescriptor;
  */
 public class NewWizardMenu extends BaseNewWizardMenu {
 
-    private final IAction newExampleAction;
-    private final IAction newProjectAction;
+	private IAction newExampleAction;
+	private IAction newProjectAction;
 
     private boolean enabled = true;
 
@@ -219,5 +219,12 @@ public class NewWizardMenu extends BaseNewWizardMenu {
 			return super.getContributionItems();
 		}
 		return new IContributionItem[0];
+	}
+
+	@Override
+	public void dispose() {
+		newExampleAction = null;
+		newProjectAction = null;
+		super.dispose();
 	}
 }

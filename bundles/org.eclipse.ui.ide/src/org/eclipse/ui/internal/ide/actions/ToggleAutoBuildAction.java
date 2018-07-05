@@ -39,7 +39,7 @@ public class ToggleAutoBuildAction extends Action implements
 
     @Override
 	public void dispose() {
-        //nothing to dispose
+		window = null;
     }
 
     @Override

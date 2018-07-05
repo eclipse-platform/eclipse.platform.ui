@@ -152,4 +152,12 @@ public class BuildSetMenu extends ContributionItem {
 	public boolean isDynamic() {
         return true;
     }
+
+	@Override
+	public void dispose() {
+		window = null;
+		selectBuildWorkingSetAction = null;
+		actionBars = null;
+		super.dispose();
+	}
 }

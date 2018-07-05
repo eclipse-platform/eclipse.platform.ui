@@ -135,6 +135,9 @@ public class SlaveCommandService implements ICommandService, IUpdateService {
 				unregisterElement((IElementReference) element);
 			}
 		}
+		fScopingValue = null;
+		fContext = null;
+		fParentService = null;
 	}
 
 	@Override

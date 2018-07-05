@@ -717,6 +717,11 @@ public class SearchField {
 			refreshQuickAccessContents.cancel();
 		}
 		storeDialog();
+		elementMap.clear();
+		previousPicksList.clear();
+		providerMap.clear();
+		textMap.clear();
+		partService = null;
 	}
 
 	private void storeDialog() {

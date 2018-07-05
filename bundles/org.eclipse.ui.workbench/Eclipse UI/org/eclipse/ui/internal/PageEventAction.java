@@ -14,8 +14,8 @@ import org.eclipse.ui.IPageListener;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.actions.ActionFactory;
-import org.eclipse.ui.actions.PartEventAction;
 import org.eclipse.ui.actions.ActionFactory.IWorkbenchAction;
+import org.eclipse.ui.actions.PartEventAction;
 
 /**
  * The abstract superclass for actions that listen to page activation and
@@ -161,6 +161,7 @@ public abstract class PageEventAction extends PartEventAction implements
             // action has already been disposed
             return;
         }
+		super.partDeactivated(null);
         workbenchWindow.removePageListener(this);
         workbenchWindow.getPartService().removePartListener(this);
         workbenchWindow = null;

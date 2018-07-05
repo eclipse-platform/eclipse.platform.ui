@@ -129,4 +129,10 @@ public class SwitchToWindowMenu extends ContributionItem {
 	public boolean isDynamic() {
         return true;
     }
+
+	@Override
+	public void dispose() {
+		workbenchWindow = null;
+		super.dispose();
+	}
 }

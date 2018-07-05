@@ -41,7 +41,7 @@ public class BuildCleanAction extends Action implements ActionFactory.IWorkbench
 
 	@Override
 	public void dispose() {
-		//nothing to dispose
+		window = null;
 	}
 
 	@Override

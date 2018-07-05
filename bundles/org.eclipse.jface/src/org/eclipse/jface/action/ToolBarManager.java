@@ -179,6 +179,7 @@ public class ToolBarManager extends ContributionManager implements IToolBarManag
 			getContextMenuManager().dispose();
 			setContextMenuManager(null);
 		}
+		super.setOverrides(null);
 	}
 
 	/**
