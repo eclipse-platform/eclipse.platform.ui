@@ -154,7 +154,6 @@ public class EditorActionBars extends SubActionBars2 {
 	 */
 	@Override
 	public void dispose() {
-		super.dispose();
 		if (editorContributor != null) {
 			editorContributor.dispose();
 		}
@@ -208,6 +207,7 @@ public class EditorActionBars extends SubActionBars2 {
 		}
 		coolItemToolBarMgr = null;
 		editorHandlerExpression = null;
+		super.dispose();
 	}
 
 	/**

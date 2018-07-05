@@ -149,10 +149,10 @@ public final class ViewIntroAdapterPart extends ViewPart {
 		eventBroker.unsubscribe(zoomChangeListener);
 
     	setBarVisibility(true);
-        super.dispose();
         getSite().getWorkbenchWindow().getWorkbench().getIntroManager()
                 .closeIntro(introPart);
         introPart.dispose();
+		super.dispose();
     }
 
     @Override

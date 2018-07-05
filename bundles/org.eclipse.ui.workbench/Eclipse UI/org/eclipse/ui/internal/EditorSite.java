@@ -132,12 +132,11 @@ public class EditorSite extends PartSite implements IEditorSite {
 
     @Override
 	public void dispose() {
-        super.dispose();
-
         if (ab != null) {
             ab.dispose();
 			ab = null;
         }
+		super.dispose();
     }
 
     @Override

@@ -245,19 +245,20 @@ public class PropertySheet extends PageBookView
 
     @Override
 	public void dispose() {
-        // run super.
-        super.dispose();
+		IWorkbenchPartSite site = getSite();
+		IWorkbenchPage page = site.getPage();
+		ISaveablesLifecycleListener saveables = site.getService(ISaveablesLifecycleListener.class);
 
         // remove ourselves as a selection and registry listener
-        getSite().getPage().removePostSelectionListener(this);
+		page.removePostSelectionListener(this);
         RegistryFactory.getRegistry().removeListener(this);
-		ISaveablesLifecycleListener saveables = getSite().getService(ISaveablesLifecycleListener.class);
 		if (saveables instanceof SaveablesList) {
 			((SaveablesList) saveables).removeModelLifecycleListener(saveablesTracker);
 		}
         currentPart = null;
         currentSelection = null;
         pinPropertySheetAction = null;
+        super.dispose();
     }
 
     @Override
