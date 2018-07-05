@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2017 IBM Corporation and others.
+ * Copyright (c) 2000, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -110,9 +110,23 @@ public class FormTextModel {
 			reset();
 			return;
 		}
-		taggedText = taggedText.replace("&", "&amp;"); //$NON-NLS-1$//$NON-NLS-2$
+		taggedText = processAmpersandEscapes(taggedText);
 		InputStream stream = new ByteArrayInputStream(taggedText.getBytes(StandardCharsets.UTF_8));
 		parseInputStream(stream, expandURLs);
+	}
+
+	private String processAmpersandEscapes(String pTaggedText) {
+		try {
+			String taggedText = pTaggedText.replaceAll("&quot;", "&#034;"); //$NON-NLS-1$//$NON-NLS-2$
+			taggedText = taggedText.replaceAll("&apos;", "&#039;"); //$NON-NLS-1$//$NON-NLS-2$
+			taggedText = taggedText.replaceAll("&lt;", "&#060;"); //$NON-NLS-1$//$NON-NLS-2$
+			taggedText = taggedText.replaceAll("&gt;", "&#062;"); //$NON-NLS-1$//$NON-NLS-2$
+			taggedText = taggedText.replaceAll("&amp;", "&#038;"); //$NON-NLS-1$//$NON-NLS-2$
+			taggedText = taggedText.replaceAll("&([^#])", "&#038;$1"); //$NON-NLS-1$//$NON-NLS-2$
+			return taggedText;
+		} catch (Exception e) {
+			return pTaggedText;
+		}
 	}
 
 	public void parseInputStream(InputStream is, boolean expandURLs) {
