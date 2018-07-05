@@ -12,12 +12,12 @@ package org.eclipse.ui.internal;
 
 import java.util.ArrayList;
 import java.util.Iterator;
-
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.swt.events.HelpListener;
 import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IActionDelegate;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchWindow;
@@ -138,6 +138,10 @@ public class WWinPluginAction extends PluginAction implements
      */
     private static void addToActionList(WWinPluginAction action) {
         staticActionList.add(action);
+		Shell shell = action.window.getShell();
+		if (shell != null) {
+			shell.addDisposeListener(x -> action.dispose());
+		}
     }
 
     /**
@@ -183,6 +187,9 @@ public class WWinPluginAction extends PluginAction implements
      */
     @Override
 	public void dispose() {
+		if (window == null) {
+			return;
+		}
         removeFromActionList(this);
         if (retargetAction != null) {
             window.getPartService().removePartListener(retargetAction);
@@ -191,6 +198,7 @@ public class WWinPluginAction extends PluginAction implements
         }
         window.getSelectionService().removeSelectionListener(this);
         super.dispose();
+		window = null;
     }
 
     /**
