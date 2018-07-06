@@ -70,6 +70,7 @@ public abstract class Page implements IPageBookViewPage {
         if (ctrl != null && !ctrl.isDisposed()) {
 			ctrl.dispose();
 		}
+		site = null;
     }
 
     /**
