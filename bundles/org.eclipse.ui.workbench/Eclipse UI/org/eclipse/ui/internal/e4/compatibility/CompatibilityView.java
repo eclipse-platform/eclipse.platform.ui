@@ -266,6 +266,7 @@ public class CompatibilityView extends CompatibilityPart {
 				tbmr.clearModelToManager(toolbar, tbm);
 				clearOpaqueToolBarItems(tbmr, toolbar);
 			}
+			toolbar.getTransientData().clear();
 		}
 
 		super.disposeSite(site);
