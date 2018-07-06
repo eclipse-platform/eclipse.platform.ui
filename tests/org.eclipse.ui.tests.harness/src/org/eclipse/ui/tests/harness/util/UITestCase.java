@@ -289,12 +289,16 @@ public abstract class UITestCase extends TestCase {
 		Display display = PlatformUI.getWorkbench().getDisplay();
 		Shell[] shells = display.getShells();
 		for (Shell s : shells) {
-			s.setMinimized(true);
+			if (s.isVisible()) {
+				s.setMinimized(true);
+			}
 			processEvents();
 		}
 		waitForJobs(200, 3000);
 		for (Shell s : shells) {
-			s.setMinimized(false);
+			if (s.isVisible()) {
+				s.setMinimized(false);
+			}
 			processEvents();
 		}
 		waitForJobs(200, 3000);
