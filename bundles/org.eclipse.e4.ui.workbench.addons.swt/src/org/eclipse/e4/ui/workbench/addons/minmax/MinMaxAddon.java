@@ -305,6 +305,10 @@ public class MinMaxAddon {
 
 		MPerspectiveStack ps = (MPerspectiveStack) changedElement;
 		MWindow window = modelService.getTopLevelWindowFor(ps);
+		final Shell winShell = (Shell) window.getWidget();
+		if (winShell == null) {
+			return;
+		}
 		List<MToolControl> tcList = modelService.findElements(window, null, MToolControl.class,
 				null);
 
@@ -344,7 +348,6 @@ public class MinMaxAddon {
 			}
 		}
 
-		final Shell winShell = (Shell) window.getWidget();
 		winShell.getDisplay().asyncExec(() -> {
 			if (!winShell.isDisposed()) {
 				winShell.layout(true, true);

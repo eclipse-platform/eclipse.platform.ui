@@ -63,7 +63,7 @@ public class CloseAllHandler extends AbstractEvaluationHandler {
 					IWorkbenchPart part = InternalHandlerUtil.getActivePart(context);
 					Object perspective = InternalHandlerUtil.getVariable(context,
 							ISources.ACTIVE_WORKBENCH_WINDOW_ACTIVE_PERSPECTIVE_NAME);
-					if (part != null && perspective != null) {
+					if (part != null && perspective != null && part.getSite() != null) {
 						IWorkbenchPage page = part.getSite().getPage();
 						if (page != null) {
 							IEditorReference[] refArray = page.getEditorReferences();

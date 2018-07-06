@@ -1394,7 +1394,11 @@ public class PartServiceImpl implements EPartService {
 
 	private boolean isActiveChild(MPart part) {
 		IEclipseContext context = part.getContext();
-		return context != null && context.getParent().getActiveChild() == context;
+		if (context == null) {
+			return false;
+		}
+		IEclipseContext parent = context.getParent();
+		return parent != null && parent.getActiveChild() == context;
 	}
 
 	@Override

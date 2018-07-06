@@ -459,7 +459,11 @@ public class EditorActionBars extends SubActionBars2 {
 			}
 		}
 
-		ICoolBarManager coolBarManager = getCastedParent().getCoolBarManager();
+		IActionBars2 castedParent = getCastedParent();
+		if (castedParent == null) {
+			return;
+		}
+		ICoolBarManager coolBarManager = castedParent.getCoolBarManager();
 		if ((coolItemToolBarMgr != null) && (coolBarManager != null)) {
 			for (IContributionItem item : coolItemToolBarMgr.getItems()) {
 				item.setVisible(visible || !forceVisibility);

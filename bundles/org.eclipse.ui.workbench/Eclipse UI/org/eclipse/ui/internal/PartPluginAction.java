@@ -13,6 +13,7 @@ package org.eclipse.ui.internal;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.ui.IWorkbenchPart;
+import org.eclipse.ui.IWorkbenchPartSite;
 
 /**
  * This class adds to the PluginAction support by
@@ -45,8 +46,11 @@ public class PartPluginAction extends PluginAction {
      * Unregisters this action as a listener of the workbench part.
      */
     protected void unregisterSelectionListener(IWorkbenchPart aPart) {
-        ISelectionProvider selectionProvider = aPart.getSite()
-                .getSelectionProvider();
+        IWorkbenchPartSite site = aPart.getSite();
+		if (site == null) {
+			return;
+		}
+		ISelectionProvider selectionProvider = site.getSelectionProvider();
         if (selectionProvider != null) {
             selectionProvider.removeSelectionChangedListener(this);
         }
