@@ -2007,6 +2007,9 @@ STATUS_LINE_ID, model);
 					}
 				}
 			}
+			if (page != null) {
+				page.close();
+			}
 			if (getActivePage() != null) {
 				firePageClosed();
 			}
