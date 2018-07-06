@@ -662,6 +662,8 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 			} catch (WorkbenchException e) {
 				WorkbenchPlugin.log(e);
 			}
+			menuOverride = new MenuOverrides(page);
+			toolbarOverride = new ToolbarOverrides(page);
 
 			ContextInjectionFactory.inject(page, model.getContext());
 			windowContext.set(IWorkbenchPage.class, page);
@@ -1949,8 +1951,9 @@ STATUS_LINE_ID, model);
 			// clear some lables
 			// Remove the handler submissions. Bug 64024.
 			final IWorkbench workbench = getWorkbench();
-			final IHandlerService handlerService = workbench
-					.getService(IHandlerService.class);
+			LegacyHandlerService windowHs = (LegacyHandlerService) model.getContext().get(IHandlerService.class);
+			windowHs.dispose();
+			final IHandlerService handlerService = workbench.getService(IHandlerService.class);
 			handlerService.deactivateHandlers(handlerActivations);
 			final Iterator<IHandlerActivation> activationItr = handlerActivations.iterator();
 			while (activationItr.hasNext()) {
@@ -2007,6 +2010,9 @@ STATUS_LINE_ID, model);
 			if (getActivePage() != null) {
 				firePageClosed();
 			}
+			menuOverride = null;
+			toolbarOverride = null;
+			page = null;
 			fireWindowClosed();
 		} finally {
 
@@ -2902,7 +2908,15 @@ STATUS_LINE_ID, model);
 		return oldCBM;
 	}
 
-	private IContributionManagerOverrides toolbarOverride = new IContributionManagerOverrides() {
+	private IContributionManagerOverrides toolbarOverride;
+
+	static class ToolbarOverrides implements IContributionManagerOverrides {
+
+		private WorkbenchPage page;
+
+		ToolbarOverrides(WorkbenchPage page) {
+			this.page = page;
+		}
 
 		@Override
 		public Integer getAccelerator(IContributionItem item) {
@@ -2956,7 +2970,15 @@ STATUS_LINE_ID, model);
 		return menuManager;
 	}
 
-	private IContributionManagerOverrides menuOverride = new IContributionManagerOverrides() {
+	private IContributionManagerOverrides menuOverride;
+
+	static class MenuOverrides implements IContributionManagerOverrides {
+
+		private WorkbenchPage page;
+
+		MenuOverrides(WorkbenchPage page) {
+			this.page = page;
+		}
 
 		@Override
 		public Integer getAccelerator(IContributionItem item) {
@@ -2998,7 +3020,7 @@ STATUS_LINE_ID, model);
 			}
 			return null;
 		}
-	};
+	}
 
 	ToolBarManager2 toolBarManager = new ToolBarManager2();
 
