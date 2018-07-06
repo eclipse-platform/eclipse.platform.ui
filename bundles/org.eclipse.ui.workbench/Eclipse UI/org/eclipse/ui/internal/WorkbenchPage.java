@@ -786,7 +786,9 @@ public class WorkbenchPage implements IWorkbenchPage {
 		 */
 		private void deactivateContributions(IWorkbenchPart part, boolean remove) {
 			PartSite site = (PartSite) part.getSite();
-			site.deactivateActionBars(remove);
+			if (site != null) {
+				site.deactivateActionBars(remove);
+			}
 		}
 
 		/**
@@ -1821,7 +1823,9 @@ public class WorkbenchPage implements IWorkbenchPage {
 		modelToPerspectiveMapping.clear();
 
 		if (unsetPage) {
-			legacyWindow.setActivePage(null);
+			if (!legacyWindow.isClosing()) {
+				legacyWindow.setActivePage(null);
+			}
 			partService.removePartListener(e4PartListener);
 			broker.unsubscribe(selectionHandler);
 			broker.unsubscribe(widgetHandler);
@@ -1835,9 +1839,43 @@ public class WorkbenchPage implements IWorkbenchPage {
 			propertyChangeListeners.clear();
 
 			selectionService.dispose();
-
-			ContextInjectionFactory.uninject(this, window.getContext());
+			if (!legacyWindow.isClosing()) {
+				ContextInjectionFactory.uninject(this, window.getContext());
+			}
 		}
+		if (workingSetPropertyChangeListener != null) {
+			WorkbenchPlugin.getDefault().getWorkingSetManager()
+					.removePropertyChangeListener(workingSetPropertyChangeListener);
+			workingSetPropertyChangeListener = null;
+		}
+//		_perspectiveStack = null;
+		actionBars = null;
+		actionSets = null;
+		actionSwitcher.activePart = null;
+		actionSwitcher.topEditor = null;
+		activationList.clear();
+		aggregateWorkingSet = null;
+		application = null;
+		broker = null;
+		childrenHandler = null;
+		composite = null;
+		firingHandler = null;
+		input = null;
+		legacyWindow = null;
+//		modelService = null;
+		navigationHistory = null;
+		pageChangedListener = null;
+		partBeingActivated = null;
+		partEvents.clear();
+		partService = null;
+		referenceRemovalEventHandler = null;
+		selectionHandler = null;
+		selectionService = null;
+		sortedPerspectives.clear();
+		tracker = null;
+		widgetHandler = null;
+//		window = null;
+		workingSet = null;
 		return true;
 	}
 
@@ -1854,6 +1892,7 @@ public class WorkbenchPage implements IWorkbenchPage {
 	 * Cleanup.
 	 */
 	public void dispose() {
+		legacyWindow = null;
 
 // // Always unzoom
 		// if (isZoomed()) {
