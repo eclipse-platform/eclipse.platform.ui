@@ -132,6 +132,7 @@ public class PluginActionContributionItem extends ActionContributionItem
 	public void dispose() {
         unhookListeners();
         disposeIdentifier();
+		setParent(null);
     }
 
     @Override

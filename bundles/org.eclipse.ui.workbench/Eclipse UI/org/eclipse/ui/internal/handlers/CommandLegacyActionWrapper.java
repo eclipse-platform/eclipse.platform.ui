@@ -139,9 +139,9 @@ public final class CommandLegacyActionWrapper extends AbstractAction {
 
 	/**
 	 * A service locator that can be used for retrieving command-based services.
-	 * This value is never <code>null</code>.
+	 * This value is <code>null</code> after disposal.
 	 */
-	private final IServiceLocator serviceLocator;
+	private IServiceLocator serviceLocator;
 
 	/**
 	 * The image style to use for this action. This value may be
@@ -544,4 +544,7 @@ public final class CommandLegacyActionWrapper extends AbstractAction {
 		setDescription(text);
 	}
 
+	void dispose() {
+		serviceLocator = null;
+	}
 }

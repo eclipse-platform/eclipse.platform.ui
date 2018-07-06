@@ -155,7 +155,7 @@ public abstract class PartSite implements IWorkbenchPartSite {
 
 	private WorkbenchSiteProgressService progressService;
 
-	protected final ServiceLocator serviceLocator;
+	protected ServiceLocator serviceLocator;
 
 	protected MPart model;
 
@@ -346,25 +346,35 @@ public abstract class PartSite implements IWorkbenchPartSite {
 
 		if (pageService != null) {
 			pageService.dispose();
+			pageService = null;
 		}
 
 		if (partService != null) {
 			partService.dispose();
+			partService = null;
 		}
 
 		if (selectionService != null) {
 			selectionService.dispose();
+			selectionService = null;
 		}
 
 		if (contextService != null) {
 			contextService.dispose();
+			contextService = null;
 		}
 
 		if (serviceLocator != null) {
 			serviceLocator.dispose();
+			serviceLocator = null;
 		}
-		menuService = null;
+		if (menuService != null) {
+			menuService.dispose();
+			menuService = null;
+		}
 		part = null;
+		workbenchWindow = null;
+		e4Context = null;
 	}
 
 	/**
@@ -402,7 +412,8 @@ public abstract class PartSite implements IWorkbenchPartSite {
 	 */
 	@Override
 	public IWorkbenchPage getPage() {
-		return getWorkbenchWindow().getActivePage();
+		IWorkbenchWindow window = getWorkbenchWindow();
+		return window == null ? null : window.getActivePage();
 	}
 
 
@@ -610,12 +621,12 @@ public abstract class PartSite implements IWorkbenchPartSite {
 
 	@Override
 	public final <T> T getService(final Class<T> key) {
-		return serviceLocator.getService(key);
+		return serviceLocator == null ? null : serviceLocator.getService(key);
 	}
 
 	@Override
 	public final boolean hasService(final Class<?> key) {
-		return serviceLocator.hasService(key);
+		return serviceLocator == null ? false : serviceLocator.hasService(key);
 	}
 
 	/**

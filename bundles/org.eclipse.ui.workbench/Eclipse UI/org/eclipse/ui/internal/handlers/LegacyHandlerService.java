@@ -272,6 +272,9 @@ public class LegacyHandlerService implements IHandlerService {
 	@Override
 	public void dispose() {
 		clearActivations();
+		defaultExpression = null;
+		eclipseContext = null;
+		evalContext = null;
 	}
 
 	@Override

@@ -84,6 +84,8 @@ public class ActionBarAdvisor {
 
     private Map actions = new HashMap();
 
+	private boolean menuCreated;
+
     /**
      * Creates a new action bar advisor to configure a workbench
      * window's action bars via the given action bar configurer.
@@ -150,6 +152,7 @@ public class ActionBarAdvisor {
         }
         if ((flags & FILL_MENU_BAR) != 0) {
             fillMenuBar(actionBarConfigurer.getMenuManager());
+			menuCreated = true;
         }
         if ((flags & FILL_COOL_BAR) != 0) {
             fillCoolBar(actionBarConfigurer.getCoolBarManager());
@@ -276,15 +279,17 @@ public class ActionBarAdvisor {
     }
 
     /**
-     * Disposes this action bar advisor.
-     * Called when the window is being closed.
-     * This should dispose any allocated resources and remove any added listeners.
-     * <p>
-     * The default implementation calls <code>disposeActions()</code>.
-     * Subclasses may extend.
-     * </p>
-     */
+	 * Disposes this action bar advisor. Called when the window is being closed.
+	 * This should dispose any allocated resources and remove any added listeners.
+	 * <p>
+	 * The default implementation calls <code>disposeActions()</code> and releases
+	 * menu manager. Subclasses may extend.
+	 * </p>
+	 */
     public void dispose() {
+    	if (menuCreated) {
+    		actionBarConfigurer.getMenuManager().dispose();
+    	}
         disposeActions();
     }
 

@@ -239,6 +239,10 @@ public final class ActionDelegateHandlerProxy implements ISelectionListener,
 	@Override
 	public void dispose() {
 		disposeDelegate();
+		if (action != null) {
+			action.dispose();
+			action = null;
+		}
 	}
 
 	/**

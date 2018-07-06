@@ -774,6 +774,7 @@ public class CommandContributionItem extends ContributionItem {
 		bindingService = null;
 		menuService = null;
 		handlerService = null;
+		serviceLocator = null;
 		disposeOldImages();
 		super.dispose();
 	}
