@@ -37,6 +37,7 @@ import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Item;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Menu;
@@ -95,6 +96,20 @@ public abstract class AbstractTableInformationControl {
 
 	/** The current search pattern */
 	private SearchPattern fSearchPattern;
+
+	/**
+	 * True if the focus is still in one of the control elements.
+	 *
+	 * @return
+	 */
+	public boolean hasFocus() {
+		if (fShell == null || fShell.isDisposed()) {
+			return false;
+		}
+		// check if the focus is still in dialog elements
+		Control fc = fShell.getDisplay().getFocusControl();
+		return fc == fFilterText || fc == fTableViewer.getTable() || fc == fComposite || fc == fShell;
+	}
 
 	/**
 	 * Creates an information control with the given shell as parent. The given

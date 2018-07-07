@@ -1197,7 +1197,13 @@ public class StackRenderer extends LazyStackRenderer implements IPreferenceChang
 
 		editorList.setVisible(true);
 		editorList.setFocus();
-		editorList.getShell().addListener(SWT.Deactivate, event -> editorList.getShell().getDisplay().asyncExec(() -> editorList.dispose()));
+		editorList.getShell().addListener(SWT.Deactivate, event -> {
+			editorList.getShell().getDisplay().asyncExec(() -> {
+				if (!editorList.hasFocus()) {
+					editorList.dispose();
+				}
+			});
+		});
 	}
 
 	private Point getChevronLocation(CTabFolder tabFolder) {
