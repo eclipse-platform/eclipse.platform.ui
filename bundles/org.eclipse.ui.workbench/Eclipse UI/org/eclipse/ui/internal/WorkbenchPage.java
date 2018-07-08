@@ -1793,28 +1793,29 @@ public class WorkbenchPage implements IWorkbenchPage {
 			return false;
 		}
 
-		Collection<MPart> partsToHide = partService.getParts();
-		// workaround for bug 455281
-		List<MPart> partsOutsidePersp = modelService.findElements(window, null, MPart.class, null,
-				EModelService.OUTSIDE_PERSPECTIVE);
-		partsToHide.removeAll(partsOutsidePersp);
+		if (!legacyWindow.isClosing()) {
+			Collection<MPart> partsToHide = partService.getParts();
+			// workaround for bug 455281
+			List<MPart> partsOutsidePersp = modelService.findElements(window, null, MPart.class, null,
+					EModelService.OUTSIDE_PERSPECTIVE);
+			partsToHide.removeAll(partsOutsidePersp);
 
-		for (MPart part : partsToHide) {
-			// no save, no confirm, force
-			hidePart(part, false, true, true);
-		}
-
-		MPerspectiveStack perspectiveStack = modelService.findElements(window, null,
-				MPerspectiveStack.class, null).get(0);
-		MPerspective current = perspectiveStack.getSelectedElement();
-		for (Object perspective : perspectiveStack.getChildren().toArray()) {
-			if (perspective != current) {
-				modelService.removePerspectiveModel((MPerspective) perspective, window);
+			for (MPart part : partsToHide) {
+				// no save, no confirm, force
+				hidePart(part, false, true, true);
 			}
-		}
+			MPerspectiveStack perspectiveStack = modelService.findElements(window, null, MPerspectiveStack.class, null)
+					.get(0);
+			MPerspective current = perspectiveStack.getSelectedElement();
+			for (Object perspective : perspectiveStack.getChildren().toArray()) {
+				if (perspective != current) {
+					modelService.removePerspectiveModel((MPerspective) perspective, window);
+				}
+			}
 
-		if (current != null) {
-			modelService.removePerspectiveModel(current, window);
+			if (current != null) {
+				modelService.removePerspectiveModel(current, window);
+			}
 		}
 
 		viewReferences.clear();
