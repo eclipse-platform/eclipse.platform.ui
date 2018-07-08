@@ -2268,6 +2268,9 @@ public class WorkbenchPage implements IWorkbenchPage {
 
     @Override
 	public IWorkbenchPart getActivePart() {
+		if (partService == null) {
+			return null;
+		}
 		MPart part = partService.getActivePart();
 		return getWorkbenchPart(part);
 	}

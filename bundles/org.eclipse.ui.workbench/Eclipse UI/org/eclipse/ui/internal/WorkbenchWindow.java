@@ -2007,15 +2007,19 @@ STATUS_LINE_ID, model);
 					}
 				}
 			}
-			if (page != null) {
-				page.close();
-			}
+			// We fire "page closed" *before* closing the page for compatibility reasons:
+			// since we never really closed the page, the clients expect that page
+			// is fully functional during this call
 			if (getActivePage() != null) {
 				firePageClosed();
 			}
+			// now it is safe to close the page and release all references
+			if (page != null) {
+				page.close();
+				page = null;
+			}
 			menuOverride = null;
 			toolbarOverride = null;
-			page = null;
 			fireWindowClosed();
 		} finally {
 

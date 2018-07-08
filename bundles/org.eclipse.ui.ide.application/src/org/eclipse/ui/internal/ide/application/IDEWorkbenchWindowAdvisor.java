@@ -497,6 +497,10 @@ public class IDEWorkbenchWindowAdvisor extends WorkbenchWindowAdvisor {
 			lastActiveEditor.removePropertyListener(editorPropertyListener);
 		}
 
+		if (window.isClosing()) {
+			return;
+		}
+
 		lastActiveEditor = activeEditor;
 		lastActivePage = currentPage;
 		lastPerspective = persp;
