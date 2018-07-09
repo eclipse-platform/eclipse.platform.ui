@@ -69,6 +69,7 @@ class BreadcrumbItem extends Item {
 
         fExpandBlock= new BreadcrumbItemDropDown(this, fContainer);
 		fDetailsBlock= new BreadcrumbItemDetails(this, fContainer);
+		fContainer.setData("org.eclipse.e4.ui.css.id", "DebugBreadcrumbItemComposite"); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
 	/**
@@ -214,8 +215,9 @@ class BreadcrumbItem extends Item {
 		fDetailsBlock.setText(string);
 
 		//more or less space might be required for the label
-		if (fIsLast)
+		if (fIsLast) {
 			fContainer.layout(true, true);
+		}
 	}
 
 	/*

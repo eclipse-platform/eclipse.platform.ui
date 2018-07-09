@@ -26,13 +26,11 @@ import org.eclipse.swt.events.PaintEvent;
 import org.eclipse.swt.events.PaintListener;
 import org.eclipse.swt.events.TraverseEvent;
 import org.eclipse.swt.events.TraverseListener;
-import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 
@@ -129,6 +127,13 @@ class BreadcrumbItemDetails {
 		});
 
 		fDetailComposite.setTabList(new Control[] { fTextComposite });
+
+		fDetailComposite.setData("org.eclipse.e4.ui.css.id", "DebugBreadcrumbItemDetailComposite"); //$NON-NLS-1$ //$NON-NLS-2$
+		fTextComposite.setData("org.eclipse.e4.ui.css.id", "DebugBreadcrumbItemDetailTextComposite"); //$NON-NLS-1$ //$NON-NLS-2$
+		fImageComposite.setData("org.eclipse.e4.ui.css.id", "DebugBreadcrumbItemDetailImageComposite"); //$NON-NLS-1$ //$NON-NLS-2$
+		fElementImage.setData("org.eclipse.e4.ui.css.id", "DebugBreadcrumbItemDetailImageLabel"); //$NON-NLS-1$ //$NON-NLS-2$
+		fElementText.setData("org.eclipse.e4.ui.css.id", "DebugBreadcrumbItemDetailTextLabel"); //$NON-NLS-1$ //$NON-NLS-2$
+
 	}
 
 	/**
@@ -192,18 +197,21 @@ class BreadcrumbItemDetails {
 	public int getWidth() {
 		int result= 2;
 
-		if (fElementImage.getImage() != null)
+		if (fElementImage.getImage() != null) {
 			result+= fElementImage.computeSize(SWT.DEFAULT, SWT.DEFAULT).x;
+		}
 
-		if (fTextVisible && fElementText.getText().length() > 0)
+		if (fTextVisible && fElementText.getText().length() > 0) {
 			result+= fElementText.computeSize(SWT.DEFAULT, SWT.DEFAULT).x;
+		}
 
 		return result;
 	}
 
 	public void setTextVisible(boolean enabled) {
-		if (fTextVisible == enabled)
+		if (fTextVisible == enabled) {
 			return;
+		}
 
 		fTextVisible= enabled;
 
@@ -224,7 +232,6 @@ class BreadcrumbItemDetails {
 				fImageComposite.setFocus();
 			}
 		}
-		updateSelection();
 	}
 
 	/**
@@ -237,17 +244,18 @@ class BreadcrumbItemDetails {
 	}
 
 	public void setSelected(boolean selected) {
-		if (selected == fSelected)
+		if (selected == fSelected) {
 			return;
+		}
 
 		fSelected= selected;
 
-		updateSelection();
 	}
 
 	public void setFocus(boolean enabled) {
-		if (enabled == fHasFocus)
+		if (enabled == fHasFocus) {
 			return;
+		}
 
 		fHasFocus= enabled;
 		if (fHasFocus) {
@@ -257,39 +265,6 @@ class BreadcrumbItemDetails {
 				fImageComposite.setFocus();
 			}
 		}
-		updateSelection();
-	}
-
-	private void updateSelection() {
-		Color background;
-		Color foreground;
-
-		if (fSelected) {
-			background= Display.getDefault().getSystemColor(SWT.COLOR_LIST_SELECTION);
-			foreground= Display.getDefault().getSystemColor(SWT.COLOR_LIST_SELECTION_TEXT);
-		} else {
-			foreground= null;
-			background= null;
-		}
-
-		if (isTextVisible()) {
-			fTextComposite.setBackground(background);
-			fElementText.setBackground(background);
-			fElementText.setForeground(foreground);
-
-			fImageComposite.setBackground(null);
-			fElementImage.setBackground(null);
-		} else {
-			fImageComposite.setBackground(background);
-			fElementImage.setBackground(background);
-
-			fTextComposite.setBackground(null);
-			fElementText.setBackground(null);
-			fElementText.setForeground(null);
-		}
-
-		fTextComposite.redraw();
-		fImageComposite.redraw();
 	}
 
 	/**
@@ -385,7 +360,6 @@ class BreadcrumbItemDetails {
 			public void focusGained(FocusEvent e) {
 				if (!fHasFocus) {
 					fHasFocus= true;
-					updateSelection();
 				}
 			}
 
@@ -393,7 +367,6 @@ class BreadcrumbItemDetails {
 			public void focusLost(FocusEvent e) {
 				if (fHasFocus) {
 					fHasFocus= false;
-					updateSelection();
 				}
 			}
 		});

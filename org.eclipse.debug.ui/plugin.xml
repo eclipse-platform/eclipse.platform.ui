@@ -3266,6 +3266,12 @@ M4 = Platform-specific fourth key
                refid="org.eclipse.e4.ui.css.theme.e4_dark">
          </themeid>
       </stylesheet>
+      <stylesheet
+            uri="css/e4-light_debug_prefstyle.css">
+         <themeid
+               refid="org.eclipse.e4.ui.css.theme.e4_default">
+         </themeid>
+      </stylesheet>
   </extension>
    <extension
          point="org.eclipse.debug.ui.launchConfigurationTypeImages">

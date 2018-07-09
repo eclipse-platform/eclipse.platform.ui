@@ -207,6 +207,7 @@ class BreadcrumbItemDropDown implements IBreadcrumbDropDownSite {
 				}
 			});
 		}
+		fToolBar.setData("org.eclipse.e4.ui.css.id", "DebugBreadcrumbItemDropDownToolBar"); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
 	/**

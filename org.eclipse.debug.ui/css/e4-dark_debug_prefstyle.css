@@ -22,3 +22,23 @@ IEclipsePreferences#org-eclipse-debug-ui {
 		'org.eclipse.debug.ui.inColor=140,175,210'
 		'org.eclipse.debug.ui.outColor=235,235,235'
 }
+
+#DebugBreadcrumbComposite,
+#DebugBreadcrumbItemComposite,
+#DebugBreadcrumbItemDetailComposite,
+#DebugBreadcrumbItemDetailTextComposite,
+#DebugBreadcrumbItemDetailImageComposite,
+#DebugBreadcrumbItemDetailTextLabel,
+#DebugBreadcrumbItemDetailImageLabel,
+#DebugBreadcrumbItemDropDownToolBar
+{
+    /*
+     * Bug 465666
+     *
+     * Note: as we can't change the arrow to black, we configure
+     * the background with the lighter color used for the background
+     * of toolbars and make the foreground color brighter too.
+     */
+    background-color:#515658;
+    color: white;
+}
