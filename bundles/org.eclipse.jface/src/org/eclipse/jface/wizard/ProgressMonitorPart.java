@@ -176,10 +176,14 @@ public class ProgressMonitorPart extends Composite implements
 
     @Override
 	public void done() {
-        fLabel.setText("");//$NON-NLS-1$
+		if (!fLabel.isDisposed()) {
+			fLabel.setText("");//$NON-NLS-1$
+		}
         fSubTaskName = ""; //$NON-NLS-1$
-        fProgressIndicator.sendRemainingWork();
-        fProgressIndicator.done();
+		if (!fProgressIndicator.isDisposed()) {
+			fProgressIndicator.sendRemainingWork();
+			fProgressIndicator.done();
+		}
         if (fToolBar != null && !fToolBar.isDisposed())
         	fToolBar.setVisible(false);
     }
