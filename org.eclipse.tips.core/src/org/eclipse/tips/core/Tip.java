@@ -52,25 +52,20 @@ public abstract class Tip {
 	}
 
 	/**
-	 * Return the publish date of the tip. The UI could decide to serve newer tips
-	 * first. Note that this date is used to calculate the hash code of the Tip so
-	 * it should return the same value for the same tip.
+	 * Return the publish date of the tip. The UI could decide to server newer tips
+	 * first.
 	 *
 	 * @return the date this tip was published which may not be null.
 	 */
 	public abstract Date getCreationDate();
 
 	/**
-	 * Returns a meaningful short description of the tip. The description is used in
-	 * calculation of the hash code so once it is set for the tip, it may not
-	 * change.
-	 *
 	 * @return the subject which may not be null.
 	 */
 	public abstract String getSubject();
 
 	@Override
-	public final int hashCode() {
+	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
 		result = prime * result + ((getCreationDate() == null) ? 0 : getCreationDate().hashCode());
@@ -80,7 +75,7 @@ public abstract class Tip {
 	}
 
 	@Override
-	public final boolean equals(Object obj) {
+	public boolean equals(Object obj) {
 		if (this == obj) {
 			return true;
 		}
