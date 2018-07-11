@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2017 IBM Corporation and others.
+ * Copyright (c) 2005, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -322,9 +322,9 @@ public class ExportArchiveFileOperationTest extends UITestCase implements
         if (root.exists()){
         	File[] files = root.listFiles();
         	if (files != null){
-        		for (int i = 0; i < files.length; i++) {
-					if (!files[i].delete()) {
-						fail("Could not delete " + files[i].getAbsolutePath());
+        		for (File file : files) {
+					if (!file.delete()) {
+						fail("Could not delete " + file.getAbsolutePath());
 					}
 				}
         	}
@@ -370,8 +370,8 @@ public class ExportArchiveFileOperationTest extends UITestCase implements
     private void verifyCompressed(String type){
     	String fileName = "";
 		boolean compressed = false;
-    	try{
-	    	if (ZIP_FILE_EXT.equals(type)){
+		try {
+			if (ZIP_FILE_EXT.equals(type)) {
 				try (ZipFile zipFile = new ZipFile(filePath)) {
 					fileName = zipFile.getName();
 					Enumeration<? extends ZipEntry> entries = zipFile.entries();
@@ -380,24 +380,21 @@ public class ExportArchiveFileOperationTest extends UITestCase implements
 						compressed = entry.getMethod() == ZipEntry.DEFLATED;
 					}
 				}
-	    	}
-	    	else{
-	    		File file = new File(filePath);
-	    		InputStream in = new FileInputStream(file);
-	    		// Check if it's a GZIPInputStream.
-	    		try {
-	    			in = new GZIPInputStream(in);
-	    			compressed = true;
-	    		} catch(IOException e) {
-	    			compressed = false;
-	    		}
-	    		fileName = file.getName();
-	    		in.close();
-	    	}
-    	}
-    	catch (IOException e){
-    		fail(e.getMessage());
-    	}
+			} else {
+				File file = new File(filePath);
+				try (InputStream fin = new FileInputStream(file)) {
+					// Check if it's a GZIPInputStream.
+					try (InputStream in = new GZIPInputStream(fin)) {
+						compressed = true;
+					} catch (IOException e) {
+						compressed = false;
+					}
+					fileName = file.getName();
+				}
+			}
+		} catch (IOException e) {
+			fail(e.getMessage());
+		}
     	assertTrue(fileName + " does not appear to be compressed.", compressed);
     }
 
