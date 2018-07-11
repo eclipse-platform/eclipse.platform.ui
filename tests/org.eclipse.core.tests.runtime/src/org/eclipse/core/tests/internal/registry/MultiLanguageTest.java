@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2015 IBM Corporation and others.
+ * Copyright (c) 2009, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -112,14 +112,11 @@ public class MultiLanguageTest extends TestCase {
 		BundleContext context = RuntimeTestsPlugin.getContext();
 
 		final boolean[] flag = new boolean[] {false};
-		FrameworkListener listener = new FrameworkListener() {
-			@Override
-			public void frameworkEvent(FrameworkEvent event) {
-				if (event.getType() == FrameworkEvent.PACKAGES_REFRESHED) {
-					synchronized (flag) {
-						flag[0] = true;
-						flag.notifyAll();
-					}
+		FrameworkListener listener = event -> {
+			if (event.getType() == FrameworkEvent.PACKAGES_REFRESHED) {
+				synchronized (flag) {
+					flag[0] = true;
+					flag.notifyAll();
 				}
 			}
 		};

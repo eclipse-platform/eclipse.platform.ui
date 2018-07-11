@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2015 IBM Corporation and others.
+ * Copyright (c) 2004, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -72,10 +72,11 @@ public class PreferencesServiceTest extends RuntimeTest {
 			IPreferencesService service = Platform.getPreferencesService();
 			this.output = new ByteArrayOutputStream();
 			try {
-				if (useTransfers)
+				if (useTransfers) {
 					service.exportPreferences(node, transfers, output);
-				else
+				} else {
 					service.exportPreferences(node, output, excludes);
+				}
 			} catch (CoreException e) {
 				fail("0.0", e);
 			}
@@ -227,15 +228,18 @@ public class PreferencesServiceTest extends RuntimeTest {
 	}
 
 	private void assertEquals(String message, String[] one, String[] two) {
-		if (one == null && two == null)
+		if (one == null && two == null) {
 			return;
-		if (one == two)
+		}
+		if (one == two) {
 			return;
+		}
 		assertNotNull(message + ".1", one);
 		assertNotNull(message + ".2", two);
 		assertEquals(message + ".3", one.length, two.length);
-		for (int i = 0; i < one.length; i++)
+		for (int i = 0; i < one.length; i++) {
 			assertEquals(message + ".4." + i, one[i], two[i]);
+		}
 	}
 
 	public void testLookupOrder() {
@@ -474,9 +478,6 @@ public class PreferencesServiceTest extends RuntimeTest {
 		}
 	}
 
-	/*
-	 * @see junit.framework.TestCase#tearDown()
-	 */
 	@Override
 	protected void tearDown() throws Exception {
 		super.tearDown();
@@ -577,8 +578,9 @@ public class PreferencesServiceTest extends RuntimeTest {
 		// old values shouldn't exist anymore
 		for (String qualifier : qualifiers) {
 			Preferences current = node.node(qualifier);
-			for (String oldKey : oldKeys)
+			for (String oldKey : oldKeys) {
 				assertNull("4.0." + current.absolutePath() + IPath.SEPARATOR + oldKey, current.get(oldKey, null));
+			}
 			for (String newKey : newKeys) {
 				actual = current.get(newKey, null);
 				assertNotNull("4.1." + current.absolutePath() + IPath.SEPARATOR + newKey, actual);
@@ -591,8 +593,9 @@ public class PreferencesServiceTest extends RuntimeTest {
 		for (String qualifier : qualifiers) {
 			// version id
 			properties.put(qualifier, "2.1.3");
-			for (String key : keys)
+			for (String key : keys) {
 				properties.put(qualifier + IPath.SEPARATOR + key, getUniqueString());
+			}
 		}
 		ByteArrayOutputStream output = new ByteArrayOutputStream();
 		try {
@@ -725,8 +728,9 @@ public class PreferencesServiceTest extends RuntimeTest {
 	public void testExportDefaults() {
 		String qualifier = getUniqueString();
 		IEclipsePreferences node = DefaultScope.INSTANCE.getNode(qualifier);
-		for (int i = 0; i < 10; i++)
+		for (int i = 0; i < 10; i++) {
 			node.put(Integer.toString(i), getUniqueString());
+		}
 
 		ExportVerifier verifier = new ExportVerifier(node, (String[]) null);
 		verifier.verify();
@@ -763,6 +767,7 @@ public class PreferencesServiceTest extends RuntimeTest {
 	/**
 	 * @deprecated this tests deprecated functions, so deprecation added to avoid warnings
 	 */
+	@Deprecated
 	public void testValidateVersions() {
 		final char BUNDLE_VERSION_PREFIX = '@';
 
@@ -785,12 +790,13 @@ public class PreferencesServiceTest extends RuntimeTest {
 		} catch (IOException e) {
 			fail("2.0", e);
 		} finally {
-			if (output != null)
+			if (output != null) {
 				try {
 					output.close();
 				} catch (IOException e) {
 					// ignore
 				}
+			}
 		}
 		result = org.eclipse.core.runtime.Preferences.validatePreferenceVersions(path);
 		assertTrue("2.0", !result.isOK());
@@ -813,18 +819,20 @@ public class PreferencesServiceTest extends RuntimeTest {
 		} catch (IOException e) {
 			fail("4.0", e);
 		} finally {
-			if (input != null)
+			if (input != null) {
 				try {
 					input.close();
 				} catch (IOException e) {
 					// ignore
 				}
+			}
 		}
 		// change all version numbers to "0" so the validation will fail
 		for (Enumeration<Object> e = properties.keys(); e.hasMoreElements();) {
 			String key = (String) e.nextElement();
-			if (key.charAt(0) == BUNDLE_VERSION_PREFIX)
+			if (key.charAt(0) == BUNDLE_VERSION_PREFIX) {
 				properties.put(key, "0");
+			}
 		}
 		output = null;
 		try {
@@ -833,12 +841,13 @@ public class PreferencesServiceTest extends RuntimeTest {
 		} catch (IOException e) {
 			fail("4.1", e);
 		} finally {
-			if (output != null)
+			if (output != null) {
 				try {
 					output.close();
 				} catch (IOException e) {
 					// ignore
 				}
+			}
 		}
 		result = org.eclipse.core.runtime.Preferences.validatePreferenceVersions(path);
 		assertTrue("4.2", !result.isOK());
@@ -1035,14 +1044,12 @@ public class PreferencesServiceTest extends RuntimeTest {
 		testNode.put(VALID_KEY_1, "value1");
 		testNode.put(VALID_KEY_2, "value2");
 
-		IPreferenceNodeVisitor visitor = new IPreferenceNodeVisitor() {
-			@Override
-			public boolean visit(IEclipsePreferences node) throws BackingStoreException {
-				String[] keys = node.keys();
-				for (String key : keys)
-					verifier.addExpected(node.absolutePath(), key);
-				return true;
+		IPreferenceNodeVisitor visitor = node -> {
+			String[] keys = node.keys();
+			for (String key : keys) {
+				verifier.addExpected(node.absolutePath(), key);
 			}
+			return true;
 		};
 		try {
 			((IEclipsePreferences) service.getRootNode().node(TestScope.SCOPE)).accept(visitor);

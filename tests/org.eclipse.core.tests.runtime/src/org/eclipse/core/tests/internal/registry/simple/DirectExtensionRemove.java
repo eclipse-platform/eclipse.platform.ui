@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2015 IBM Corporation and others.
+ * Copyright (c) 2006, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -95,31 +95,28 @@ public class DirectExtensionRemove extends BaseExtensionRegistryRun {
 
 		// remove extension1
 		// listener to verify that valid CEs are included in the notification
-		IRegistryChangeListener listener = new IRegistryChangeListener() {
-			@Override
-			public void registryChanged(IRegistryChangeEvent event) {
-				IExtensionDelta[] deltas = event.getExtensionDeltas();
-				assertTrue(deltas.length == 1);
-				for (IExtensionDelta delta : deltas) {
-					assertTrue(delta.getKind() == IExtensionDelta.REMOVED);
-					IExtension extension = delta.getExtension();
-					assertNotNull(extension);
+		IRegistryChangeListener listener = event -> {
+			IExtensionDelta[] deltas = event.getExtensionDeltas();
+			assertTrue(deltas.length == 1);
+			for (IExtensionDelta delta : deltas) {
+				assertTrue(delta.getKind() == IExtensionDelta.REMOVED);
+				IExtension extension = delta.getExtension();
+				assertNotNull(extension);
 
-					IConfigurationElement[] l_ces11 = extension.getConfigurationElements();
-					assertNotNull(l_ces11);
-					assertEquals(1, l_ces11.length);
-					String[] l_attrs1 = l_ces11[0].getAttributeNames();
-					assertNotNull(l_attrs1);
-					assertEquals(1, l_attrs1.length);
-					assertEquals("class", l_attrs1[0]); //$NON-NLS-1$
-					IConfigurationElement[] l_ces12 = l_ces11[0].getChildren();
-					assertNotNull(l_ces12);
-					assertEquals(1, l_ces12.length);
-					String[] l_attrs2 = l_ces12[0].getAttributeNames();
-					assertNotNull(l_attrs2);
-					assertEquals(1, l_attrs2.length);
-					assertEquals("value", l_attrs2[0]); //$NON-NLS-1$
-				}
+				IConfigurationElement[] l_ces11 = extension.getConfigurationElements();
+				assertNotNull(l_ces11);
+				assertEquals(1, l_ces11.length);
+				String[] l_attrs1 = l_ces11[0].getAttributeNames();
+				assertNotNull(l_attrs1);
+				assertEquals(1, l_attrs1.length);
+				assertEquals("class", l_attrs1[0]); //$NON-NLS-1$
+				IConfigurationElement[] l_ces12 = l_ces11[0].getChildren();
+				assertNotNull(l_ces12);
+				assertEquals(1, l_ces12.length);
+				String[] l_attrs2 = l_ces12[0].getAttributeNames();
+				assertNotNull(l_attrs2);
+				assertEquals(1, l_attrs2.length);
+				assertEquals("value", l_attrs2[0]); //$NON-NLS-1$
 			}
 		};
 
