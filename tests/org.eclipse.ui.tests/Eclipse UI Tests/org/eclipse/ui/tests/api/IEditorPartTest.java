@@ -13,9 +13,18 @@
  *******************************************************************************/
 package org.eclipse.ui.tests.api;
 
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.runtime.ILogListener;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.ui.IEditorPart;
+import org.eclipse.ui.ISaveablePart;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.part.FileEditorInput;
 import org.eclipse.ui.tests.harness.util.CallHistory;
@@ -85,4 +94,50 @@ public class IEditorPartTest extends IWorkbenchPartTest {
 		assertFalse(history.contains("saveState"));
 		assertFalse(history.contains("restoreState"));
 	}
+
+	public void testGetShellAfterClose() throws Throwable {
+		IProject proj = FileUtil.createProject("IEditorPartTest");
+		IFile file = FileUtil.createFile("IEditorPartTest.txt", proj);
+		MockEditorWithState editor = (MockEditorWithState) fPage.openEditor(new FileEditorInput(file),
+				MockEditorWithState.ID);
+
+		assertNotNull(editor.getSite().getShell());
+
+		closePart(fPage, editor);
+		processEvents();
+
+		Map<String, List<IStatus>> errors = new LinkedHashMap<>();
+		ILogListener listener = (status, plugin) -> {
+			List<IStatus> list = errors.get(plugin);
+			if (list == null) {
+				list = new ArrayList<>();
+				errors.put(status.getPlugin(), list);
+			}
+			list.add(status);
+		};
+
+		try {
+			Platform.addLogListener(listener);
+
+			// Will dispose the PartSite after close()
+			closePart(fPage, editor);
+			processEvents();
+
+			// Should log error
+			editor.getSite().getShell();
+		} finally {
+			Platform.removeLogListener(listener);
+		}
+
+		List<IStatus> list = errors.get("org.eclipse.ui.workbench");
+		if (list == null || list.isEmpty()) {
+			fail("No error reported on accessing shell after part disposal");
+		}
+		assertEquals(1, list.size());
+		Throwable ex = list.get(0).getException();
+		assertTrue("Unexpected exception: " + ex, ex instanceof IllegalStateException);
+		assertTrue("Unexpected exception message: " + ex.getMessage(),
+				ex.getMessage().contains("IWorkbenchSite.getShell() was called after part disposal"));
+	}
+
 }

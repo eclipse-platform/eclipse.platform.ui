@@ -43,6 +43,7 @@ import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchPartReference;
 import org.eclipse.ui.IWorkbenchPartSite;
 import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.SubActionBars;
 import org.eclipse.ui.contexts.IContextService;
 import org.eclipse.ui.handlers.IHandlerService;
@@ -471,6 +472,14 @@ public abstract class PartSite implements IWorkbenchPartSite {
 		if (control != null && !control.isDisposed()) {
 			return control.getShell();
 		}
+
+		// If someone works with disposed parts, we can't help, it is a bug
+		if (e4Context == null) {
+			WorkbenchPlugin.log(new IllegalStateException(
+					"IWorkbenchSite.getShell() was called after part disposal: " + toString())); //$NON-NLS-1$
+			return PlatformUI.getWorkbench().getDisplay().getActiveShell();
+		}
+
 		// likely means the part has been destroyed, return the parent window's
 		// shell, we don't just arbitrarily return the workbench window's shell
 		// because we may be in a detached window
