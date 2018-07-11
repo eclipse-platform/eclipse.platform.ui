@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2015 Wind River Systems, Inc. and others.
+ * Copyright (c) 2007, 2018 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -25,9 +25,6 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.Platform;
 
-/**
- *
- */
 public class SymlinkTest extends FileSystemTest {
 	/**
 	 * Symbolic links on Windows behave differently compared to Unix-based systems. Symbolic links
@@ -362,8 +359,7 @@ public class SymlinkTest extends FileSystemTest {
 
 	public void testSymlinkEnabled() {
 		String os = Platform.getOS();
-		String arch = Platform.getOSArch();
-		if (Platform.OS_LINUX.equals(os) || (Platform.OS_SOLARIS.equals(os) && Platform.ARCH_SPARC.equals(arch)) || Platform.OS_MACOSX.equals(os) || Platform.OS_AIX.equals(os) || isWindowsVistaOrHigher()) {
+		if (Platform.OS_LINUX.equals(os) || Platform.OS_MACOSX.equals(os) || isWindowsVistaOrHigher()) {
 			assertTrue(haveSymlinks());
 		} else {
 			assertFalse(haveSymlinks());

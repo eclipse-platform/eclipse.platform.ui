@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2012 IBM Corporation and others.
+ *  Copyright (c) 2000, 2018 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -526,8 +526,7 @@ public class FileStoreTest extends LocalStoreTest {
 
 	public void testPermissionsEnabled() {
 		String os = Platform.getOS();
-		String arch = Platform.getOSArch();
-		if (Platform.OS_LINUX.equals(os) || (Platform.OS_SOLARIS.equals(os) && Platform.ARCH_SPARC.equals(arch)) || Platform.OS_MACOSX.equals(os) || Platform.OS_AIX.equals(os)) {
+		if (Platform.OS_LINUX.equals(os) || Platform.OS_MACOSX.equals(os)) {
 			assertTrue(isAttributeSupported(EFS.ATTRIBUTE_OWNER_READ));
 			assertTrue(isAttributeSupported(EFS.ATTRIBUTE_OWNER_WRITE));
 			assertTrue(isAttributeSupported(EFS.ATTRIBUTE_OWNER_EXECUTE));
