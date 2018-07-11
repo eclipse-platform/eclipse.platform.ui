@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2016 IBM Corporation and others.
+ * Copyright (c) 2004, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -26,11 +26,11 @@ import org.osgi.service.packageadmin.PackageAdmin;
 public class BundleTestingHelper {
 
 	public static Bundle[] getBundles(BundleContext context, String symbolicName, String version) {
-		ServiceReference<?> packageAdminReference = context.getServiceReference(PackageAdmin.class.getName());
+		ServiceReference<PackageAdmin> packageAdminReference = context.getServiceReference(PackageAdmin.class);
 		if (packageAdminReference == null) {
 			throw new IllegalStateException("No package admin service found");
 		}
-		PackageAdmin packageAdmin = (PackageAdmin) context.getService(packageAdminReference);
+		PackageAdmin packageAdmin = context.getService(packageAdminReference);
 		Bundle[] result = packageAdmin.getBundles(symbolicName, version);
 		context.ungetService(packageAdminReference);
 		return result;
