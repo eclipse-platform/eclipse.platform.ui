@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2003, 2015 IBM Corporation and others.
+ *  Copyright (c) 2003, 2018 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -16,8 +16,6 @@
  *******************************************************************************/
 package org.eclipse.core.tests.runtime.jobs;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
 import org.eclipse.core.internal.jobs.JobManager;
 import org.eclipse.core.internal.jobs.Worker;
 import org.eclipse.core.runtime.*;
@@ -35,14 +33,6 @@ public class JobTest extends AbstractJobTest {
 
 	public JobTest(String name) {
 		super(name);
-	}
-
-	public static Test suite() {
-		return new TestSuite(JobTest.class);
-		//		TestSuite suite = new TestSuite();
-		//		for (int i = 0; i < 1000; i++)
-		//			suite.addTest(new JobTest("testSetProgressGroup"));
-		//		return suite;
 	}
 
 	//see bug #43591

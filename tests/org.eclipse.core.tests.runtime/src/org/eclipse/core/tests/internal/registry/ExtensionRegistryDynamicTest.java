@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2015 IBM Corporation and others.
+ * Copyright (c) 2004, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,7 +11,7 @@
 package org.eclipse.core.tests.internal.registry;
 
 import java.io.IOException;
-import junit.framework.*;
+import junit.framework.TestCase;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.dynamichelpers.*;
 import org.eclipse.core.tests.harness.BundleTestingHelper;
@@ -47,10 +47,12 @@ public class ExtensionRegistryDynamicTest extends TestCase {
 			assertEquals("1.2", IExtensionDelta.ADDED, listener.eventTypeReceived(20000));
 		} finally {
 			listener.unregister();
-			if (bundle01 != null)
+			if (bundle01 != null) {
 				bundle01.uninstall();
-			if (bundle02 != null)
+			}
+			if (bundle02 != null) {
 				bundle02.uninstall();
+			}
 		}
 	}
 
@@ -72,10 +74,12 @@ public class ExtensionRegistryDynamicTest extends TestCase {
 			assertEquals("2.2", IExtensionDelta.ADDED, listener.eventTypeReceived(10000));
 		} finally {
 			listener.unregister();
-			if (bundle01 != null)
+			if (bundle01 != null) {
 				bundle01.uninstall();
-			if (bundle02 != null)
+			}
+			if (bundle02 != null) {
 				bundle02.uninstall();
+			}
 		}
 	}
 
@@ -132,17 +136,15 @@ public class ExtensionRegistryDynamicTest extends TestCase {
 			assertTrue(removalCalled);
 		} finally {
 			listener.unregister();
-			if (lastListener != null)
+			if (lastListener != null) {
 				lastListener.unregister();
-			if (bundle01 != null)
+			}
+			if (bundle01 != null) {
 				bundle01.uninstall();
-			if (bundle02 != null)
+			}
+			if (bundle02 != null) {
 				bundle02.uninstall();
+			}
 		}
 	}
-
-	public static Test suite() {
-		return new TestSuite(ExtensionRegistryDynamicTest.class);
-	}
-
 }

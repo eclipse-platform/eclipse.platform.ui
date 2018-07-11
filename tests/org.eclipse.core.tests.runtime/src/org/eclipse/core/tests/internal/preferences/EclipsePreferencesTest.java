@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2015 IBM Corporation and others.
+ * Copyright (c) 2004, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,8 +12,6 @@ package org.eclipse.core.tests.internal.preferences;
 
 import java.io.*;
 import java.util.*;
-import junit.framework.Test;
-import junit.framework.TestSuite;
 import org.eclipse.core.internal.preferences.EclipsePreferences;
 import org.eclipse.core.internal.preferences.TestHelper;
 import org.eclipse.core.internal.runtime.InternalPlatform;
@@ -57,22 +55,30 @@ public class EclipsePreferencesTest extends RuntimeTest {
 		public StringBuilder log = new StringBuilder();
 
 		private String typeCode(Object value) {
-			if (value == null)
+			if (value == null) {
 				return "";
-			if (value instanceof Boolean)
+			}
+			if (value instanceof Boolean) {
 				return "B";
-			if (value instanceof Integer)
+			}
+			if (value instanceof Integer) {
 				return "I";
-			if (value instanceof Long)
+			}
+			if (value instanceof Long) {
 				return "L";
-			if (value instanceof Float)
+			}
+			if (value instanceof Float) {
 				return "F";
-			if (value instanceof Double)
+			}
+			if (value instanceof Double) {
 				return "D";
-			if (value instanceof String)
+			}
+			if (value instanceof String) {
 				return "S";
-			if (value instanceof byte[])
+			}
+			if (value instanceof byte[]) {
 				return "b";
+			}
 			assertTrue("0.0: " + value, false);
 			return null;
 		}
@@ -93,14 +99,6 @@ public class EclipsePreferencesTest extends RuntimeTest {
 
 	public EclipsePreferencesTest(String name) {
 		super(name);
-	}
-
-	public static Test suite() {
-		// all test methods are named "test..."
-		return new TestSuite(EclipsePreferencesTest.class);
-		//		TestSuite suite = new TestSuite();
-		//		suite.addTest(new EclipsePreferencesTest("testFileFormat"));
-		//		return suite;
 	}
 
 	private IEclipsePreferences getScopeRoot() {
@@ -628,8 +626,9 @@ public class EclipsePreferencesTest extends RuntimeTest {
 	public void testRemoveNode() {
 		Preferences root = getScopeRoot();
 		ArrayList<Preferences> list = new ArrayList<>();
-		for (int i = 0; i < 5; i++)
+		for (int i = 0; i < 5; i++) {
 			list.add(root.node(getUniqueString()));
+		}
 
 		// all exist
 		for (Iterator<Preferences> i = list.iterator(); i.hasNext();) {
@@ -757,15 +756,18 @@ public class EclipsePreferencesTest extends RuntimeTest {
 	}
 
 	private void assertEquals(String message, byte[] one, byte[] two) {
-		if (one == null && two == null)
+		if (one == null && two == null) {
 			return;
-		if (one == two)
+		}
+		if (one == two) {
 			return;
+		}
 		assertNotNull(message + ".1", one);
 		assertNotNull(message + ".2", two);
 		assertEquals(message + ".3", one.length, two.length);
-		for (int i = 0; i < one.length; i++)
+		for (int i = 0; i < one.length; i++) {
 			assertEquals(message + ".4." + i, one[i], two[i]);
+		}
 	}
 
 	public void testChildrenNames() {
@@ -782,8 +784,9 @@ public class EclipsePreferencesTest extends RuntimeTest {
 		assertEquals("1.1", 0, result.length);
 
 		// add children
-		for (String childrenName : childrenNames)
+		for (String childrenName : childrenNames) {
 			node.node(childrenName);
+		}
 		try {
 			result = node.childrenNames();
 		} catch (BackingStoreException e) {
@@ -834,21 +837,24 @@ public class EclipsePreferencesTest extends RuntimeTest {
 		// create some more children and check
 		parent = node;
 		Preferences[] nodes = new Preferences[childrenNames.length];
-		for (int i = 0; i < childrenNames.length; i++)
+		for (int i = 0; i < childrenNames.length; i++) {
 			nodes[i] = parent.node(childrenNames[i]);
-		for (String childrenName : childrenNames)
+		}
+		for (String childrenName : childrenNames) {
 			try {
 				assertTrue("4.0", parent.nodeExists(childrenName));
 				assertTrue("4.1", !parent.nodeExists(fake));
 			} catch (BackingStoreException e) {
 				fail("4.99", e);
 			}
-		for (Preferences preferenceNode : nodes)
+		}
+		for (Preferences preferenceNode : nodes) {
 			try {
 				assertTrue("4.2", preferenceNode.nodeExists(""));
 			} catch (BackingStoreException e) {
 				fail("4.100", e);
 			}
+		}
 
 		// remove children and check
 		for (int i = 0; i < nodes.length; i++) {
@@ -876,8 +882,9 @@ public class EclipsePreferencesTest extends RuntimeTest {
 
 		// fill the node up with values
 		try {
-			for (int i = 0; i < keys.length; i++)
+			for (int i = 0; i < keys.length; i++) {
 				node.put(keys[i], values[i]);
+			}
 			assertEquals("2.0", keys.length, node.keys().length);
 			assertEquals("2.1", keys, node.keys(), false);
 		} catch (BackingStoreException e) {
@@ -888,8 +895,9 @@ public class EclipsePreferencesTest extends RuntimeTest {
 		try {
 			node.clear();
 			assertEquals("3.0", 0, node.keys().length);
-			for (int i = 0; i < keys.length; i++)
+			for (int i = 0; i < keys.length; i++) {
 				assertNull("3.1." + i, node.get(keys[i], null));
+			}
 		} catch (BackingStoreException e) {
 			fail("3.99", e);
 		}
@@ -1047,8 +1055,9 @@ public class EclipsePreferencesTest extends RuntimeTest {
 
 		// create fake plug-in and store 2.1 format tests in legacy location
 		Bundle runtimeBundle = Platform.getBundle(Platform.PI_RUNTIME);
-		if (runtimeBundle == null)
+		if (runtimeBundle == null) {
 			return;
+		}
 		String runtimeStateLocation = Platform.getStateLocation(runtimeBundle).toString();
 		IPath pluginStateLocation = new Path(runtimeStateLocation.replaceAll(Platform.PI_RUNTIME, pluginID));
 		IPath oldFile = pluginStateLocation.append(OLD_PREFS_FILENAME);
@@ -1062,12 +1071,13 @@ public class EclipsePreferencesTest extends RuntimeTest {
 		} catch (IOException e) {
 			fail("1.0", e);
 		} finally {
-			if (output != null)
+			if (output != null) {
 				try {
 					output.close();
 				} catch (IOException e) {
 					// ignore
 				}
+			}
 		}
 
 		// access fake plug-in via new preferences APIs which should invoke conversion
@@ -1171,8 +1181,9 @@ public class EclipsePreferencesTest extends RuntimeTest {
 		BufferedReader reader = new BufferedReader(new FileReader(location.toFile()));
 		String line;
 		try {
-			while ((line = reader.readLine()) != null)
+			while ((line = reader.readLine()) != null) {
 				result.add(line);
+			}
 		} finally {
 			reader.close();
 		}
@@ -1256,8 +1267,9 @@ public class EclipsePreferencesTest extends RuntimeTest {
 
 	private Properties loadProperties(IPath location) {
 		Properties result = new Properties();
-		if (!location.toFile().exists())
+		if (!location.toFile().exists()) {
 			return result;
+		}
 		InputStream input = null;
 		try {
 			input = new FileInputStream(location.toFile());
@@ -1265,12 +1277,13 @@ public class EclipsePreferencesTest extends RuntimeTest {
 		} catch (IOException e) {
 			fail("loadProperties", e);
 		} finally {
-			if (input != null)
+			if (input != null) {
 				try {
 					input.close();
 				} catch (IOException e) {
 					// ignore
 				}
+			}
 		}
 		return result;
 	}
@@ -1383,8 +1396,9 @@ public class EclipsePreferencesTest extends RuntimeTest {
 		defaultScope.getNode(TEST_NODE_PATH).putByteArray(TEST_PREF_KEY, testArray);
 		final byte[] returnArray = Platform.getPreferencesService().getByteArray(TEST_NODE_PATH, TEST_PREF_KEY, new byte[] {}, null);
 		assertEquals("1.0 Wrong size", testArray.length, returnArray.length);
-		for (int i = 0; i < testArray.length; i++)
+		for (int i = 0; i < testArray.length; i++) {
 			assertEquals("2.0 Wrong value at: " + i, testArray[i], returnArray[i]);
+		}
 	}
 
 	/*
@@ -1400,8 +1414,9 @@ public class EclipsePreferencesTest extends RuntimeTest {
 			File file = RuntimeTestsPlugin.getTestData("testData/preferences/test3");
 			Collection<String> expectedChildren = Arrays.asList(file.list());
 			String[] children = node.childrenNames();
-			for (String child : children)
+			for (String child : children) {
 				assertTrue("1.1." + child, expectedChildren.contains(child));
+			}
 		} catch (BackingStoreException e) {
 			fail("1.99", e);
 		}

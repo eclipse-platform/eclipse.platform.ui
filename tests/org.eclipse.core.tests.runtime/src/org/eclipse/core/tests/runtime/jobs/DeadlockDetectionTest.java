@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2015 IBM Corporation and others.
+ * Copyright (c) 2003, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,7 +11,7 @@
 package org.eclipse.core.tests.runtime.jobs;
 
 import java.util.*;
-import junit.framework.*;
+import junit.framework.TestCase;
 import org.eclipse.core.internal.jobs.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.jobs.*;
@@ -30,13 +30,6 @@ public class DeadlockDetectionTest extends TestCase {
 
 	public DeadlockDetectionTest(String name) {
 		super(name);
-	}
-
-	public static Test suite() {
-		return new TestSuite(DeadlockDetectionTest.class);
-		//		TestSuite suite = new TestSuite();
-		//		suite.addTest(new DeadlockDetectionTest("testImplicitRules"));
-		//		return suite;
 	}
 
 	/**
@@ -61,8 +54,9 @@ public class DeadlockDetectionTest extends TestCase {
 	 * Asks all threads to stop executing
 	 */
 	private void kill(ArrayList<RandomTestRunnable> allRunnables) {
-		for (RandomTestRunnable r : allRunnables)
+		for (RandomTestRunnable r : allRunnables) {
 			r.kill();
+		}
 	}
 
 	/**
@@ -224,8 +218,9 @@ public class DeadlockDetectionTest extends TestCase {
 		assertTrue("3.0", !first.isAlive());
 		assertTrue("4.0", !second.isAlive());
 		//the underlying array has to be empty
-		if (!getLockManager().isEmpty())
+		if (!getLockManager().isEmpty()) {
 			assertTrue("Jobs not removed from graph.", getLockManager().isEmpty());
+		}
 	}
 
 	/**
@@ -795,8 +790,9 @@ public class DeadlockDetectionTest extends TestCase {
 			assertTrue("Timeout waiting for job to end: " + elapsed, elapsed < 30000);
 		}
 		//wait until all jobs are done
-		for (Job job : jobs)
+		for (Job job : jobs) {
 			waitForCompletion(job);
+		}
 
 		for (int i = 0; i < jobs.length; i++) {
 			assertEquals("10." + i, Job.NONE, jobs[i].getState());
@@ -1246,7 +1242,8 @@ public class DeadlockDetectionTest extends TestCase {
 	}
 
 	private void start(ArrayList<RandomTestRunnable> allRunnables) {
-		for (RandomTestRunnable r : allRunnables)
+		for (RandomTestRunnable r : allRunnables) {
 			r.start();
+		}
 	}
 }

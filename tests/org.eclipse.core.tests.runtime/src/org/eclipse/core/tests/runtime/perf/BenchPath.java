@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 IBM Corporation and others.
+ * Copyright (c) 2000, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,8 +11,6 @@
 package org.eclipse.core.tests.runtime.perf;
 
 import java.util.HashMap;
-import junit.framework.Test;
-import junit.framework.TestSuite;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.tests.harness.PerformanceTestRunner;
@@ -27,13 +25,6 @@ public class BenchPath extends RuntimeTest {
 		super(testName);
 	}
 
-	public static Test suite() {
-		return new TestSuite(BenchPath.class);
-		//	TestSuite suite = new TestSuite(BenchPath.class.getName());
-		//	suite.addTest(new BenchPath("testToString"));
-		//	return suite;
-	}
-
 	/**
 	 * Tests performance of equals and hashCode by using paths
 	 * as keys in a hash map.
@@ -42,14 +33,16 @@ public class BenchPath extends RuntimeTest {
 		final int REPEAT = 500000;
 		final IPath[] paths = generateVariousPaths();
 		final HashMap<IPath, String> map = new HashMap<>(32);
-		for (IPath path : paths)
+		for (IPath path : paths) {
 			map.put(path, "");
+		}
 		final int numPaths = paths.length;
 		new PerformanceTestRunner() {
 			@Override
 			protected void test() {
-				for (int p = 0; p < numPaths; p++)
+				for (int p = 0; p < numPaths; p++) {
 					map.get(paths[p]);
+				}
 			}
 		}.run(this, 10, REPEAT);
 	}
@@ -98,8 +91,9 @@ public class BenchPath extends RuntimeTest {
 		new PerformanceTestRunner() {
 			@Override
 			protected void test() {
-				for (int p = paths.length; --p >= 0;)
+				for (int p = paths.length; --p >= 0;) {
 					paths[p].toOSString();
+				}
 			}
 		}.run(this, 10, REPEAT);
 	}
@@ -113,8 +107,9 @@ public class BenchPath extends RuntimeTest {
 		new PerformanceTestRunner() {
 			@Override
 			protected void test() {
-				for (int p = paths.length; --p >= 0;)
+				for (int p = paths.length; --p >= 0;) {
 					paths[p].toString();
+				}
 			}
 		}.run(this, 10, REPEAT);
 	}

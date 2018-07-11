@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2004, 2015 IBM Corporation and others.
+ *  Copyright (c) 2004, 2018 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -12,8 +12,6 @@ package org.eclipse.core.tests.runtime;
 
 import java.io.*;
 import java.util.*;
-import junit.framework.Test;
-import junit.framework.TestSuite;
 import org.eclipse.core.internal.preferences.legacy.PreferenceForwarder;
 import org.eclipse.core.internal.runtime.RuntimeLog;
 import org.eclipse.core.runtime.*;
@@ -28,6 +26,7 @@ import org.osgi.service.prefs.BackingStoreException;
  * @deprecated This class tests intentionally tests deprecated functionality, so tag
  * added to hide deprecation reference warnings.
  */
+@Deprecated
 public class PreferenceForwarderTest extends RuntimeTest {
 
 	class Tracer implements Preferences.IPropertyChangeListener {
@@ -35,19 +34,33 @@ public class PreferenceForwarderTest extends RuntimeTest {
 
 		private String typeCode(Object value) {
 			if (value == null)
+			 {
 				return ""; //$NON-NLS-1$
+			}
 			if (value instanceof Boolean)
+			 {
 				return "B"; //$NON-NLS-1$
+			}
 			if (value instanceof Integer)
+			 {
 				return "I"; //$NON-NLS-1$
+			}
 			if (value instanceof Long)
+			 {
 				return "L"; //$NON-NLS-1$
+			}
 			if (value instanceof Float)
+			 {
 				return "F"; //$NON-NLS-1$
+			}
 			if (value instanceof Double)
+			 {
 				return "D"; //$NON-NLS-1$
+			}
 			if (value instanceof String)
+			 {
 				return "S"; //$NON-NLS-1$
+			}
 			assertTrue("0.0", false); //$NON-NLS-1$
 			return null;
 		}
@@ -68,15 +81,6 @@ public class PreferenceForwarderTest extends RuntimeTest {
 
 	public PreferenceForwarderTest(String name) {
 		super(name);
-	}
-
-	public static Test suite() {
-		// all test methods are named "test..."
-		return new TestSuite(PreferenceForwarderTest.class);
-
-		//				TestSuite suite = new TestSuite();
-		//				suite.addTest(new PreferenceForwarderTest("testListenerOnRemove"));
-		//				return suite;
 	}
 
 	@Override

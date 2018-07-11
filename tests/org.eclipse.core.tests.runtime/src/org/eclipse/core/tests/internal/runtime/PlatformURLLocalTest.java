@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2015 IBM Corporation and others.
+ * Copyright (c) 2005, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -15,8 +15,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
-import junit.framework.Test;
-import junit.framework.TestSuite;
 import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.tests.harness.BundleTestingHelper;
@@ -37,10 +35,6 @@ public class PlatformURLLocalTest extends RuntimeTest {
 		} catch (MalformedURLException e) {
 			fail(tag + ".2", e);
 		}
-	}
-
-	public static Test suite() {
-		return new TestSuite(PlatformURLLocalTest.class);
 	}
 
 	public PlatformURLLocalTest(String name) {
@@ -104,8 +98,9 @@ public class PlatformURLLocalTest extends RuntimeTest {
 			InputStream in = test.openStream();
 			in.close();
 		} finally {
-			if (bundle != null)
+			if (bundle != null) {
 				bundle.uninstall();
+			}
 		}
 	}
 
@@ -118,8 +113,9 @@ public class PlatformURLLocalTest extends RuntimeTest {
 			InputStream in = test.openStream();
 			in.close();
 		} finally {
-			if (bundle != null)
+			if (bundle != null) {
 				bundle.uninstall();
+			}
 		}
 	}
 
@@ -132,8 +128,9 @@ public class PlatformURLLocalTest extends RuntimeTest {
 			InputStream in = test.openStream();
 			in.close();
 		} finally {
-			if (bundle != null)
+			if (bundle != null) {
 				bundle.uninstall();
+			}
 		}
 	}
 }

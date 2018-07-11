@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2015 IBM Corporation and others.
+ * Copyright (c) 2005, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,11 +11,10 @@
 package org.eclipse.core.tests.internal.registry.simple;
 
 import java.io.File;
-import junit.framework.Test;
-import junit.framework.TestSuite;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.spi.RegistryStrategy;
-import org.eclipse.core.tests.internal.registry.simple.utils.*;
+import org.eclipse.core.tests.internal.registry.simple.utils.ExeExtensionStrategy;
+import org.eclipse.core.tests.internal.registry.simple.utils.ExecutableRegistryObject;
 import org.eclipse.core.tests.runtime.RuntimeTestsPlugin;
 import org.osgi.framework.Bundle;
 
@@ -77,9 +76,5 @@ public class XMLExecutableExtension extends BaseExtensionRegistryRun {
 				e.printStackTrace();
 			}
 		}
-	}
-
-	public static Test suite() {
-		return new TestSuite(XMLExecutableExtension.class);
 	}
 }

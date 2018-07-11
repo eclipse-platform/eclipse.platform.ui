@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2015 IBM Corporation and others.
+ * Copyright (c) 2009, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,17 +10,12 @@
  *******************************************************************************/
 package org.eclipse.core.tests.runtime;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
 import org.eclipse.core.runtime.*;
 
 /**
  * Tests for {@link SafeRunner}.
  */
 public class SafeRunnerTest extends RuntimeTest {
-	public static Test suite() {
-		return new TestSuite(SafeRunnerTest.class);
-	}
 
 	/**
 	 * Ensures that cancelation exceptions are handled
@@ -126,8 +121,9 @@ public class SafeRunnerTest extends RuntimeTest {
 			SafeRunner.run(new ISafeRunnable() {
 				@Override
 				public void handleException(Throwable exception) {
-					if (exception instanceof IllegalArgumentException)
+					if (exception instanceof IllegalArgumentException) {
 						throw (IllegalArgumentException) exception;
+					}
 				}
 
 				@Override

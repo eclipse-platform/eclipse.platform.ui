@@ -13,8 +13,6 @@ package org.eclipse.core.tests.internal.preferences;
 
 import java.io.*;
 import java.util.*;
-import junit.framework.Test;
-import junit.framework.TestSuite;
 import org.eclipse.core.internal.preferences.EclipsePreferences;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.preferences.*;
@@ -107,14 +105,6 @@ public class PreferencesServiceTest extends RuntimeTest {
 
 	public PreferencesServiceTest(String name) {
 		super(name);
-	}
-
-	public static Test suite() {
-		// all test methods are named "test..."
-		return new TestSuite(PreferencesServiceTest.class);
-		//				TestSuite suite = new TestSuite();
-		//				suite.addTest(new PreferencesServiceTest("testValidateVersions"));
-		//				return suite;
 	}
 
 	public void testImportExportBasic() {

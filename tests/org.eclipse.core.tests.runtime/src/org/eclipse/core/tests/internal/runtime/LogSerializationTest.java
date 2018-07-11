@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 IBM Corporation and others.
+ * Copyright (c) 2000, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,8 +11,6 @@
 package org.eclipse.core.tests.internal.runtime;
 
 import java.io.*;
-import junit.framework.Test;
-import junit.framework.TestSuite;
 import org.eclipse.core.internal.runtime.RuntimeLog;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.tests.runtime.RuntimeTest;
@@ -35,13 +33,6 @@ public class LogSerializationTest extends RuntimeTest {
 
 	public LogSerializationTest() {
 		super("");
-	}
-
-	public static Test suite() {
-		return new TestSuite(LogSerializationTest.class);
-		//	TestSuite suite = new TestSuite();
-		//	suite.addTest(new LogSerializationTest("testDeepMultiStatus"));
-		//	return suite;
 	}
 
 	protected void assertEquals(String msg, IStatus[] expected, IStatus[] actual) {

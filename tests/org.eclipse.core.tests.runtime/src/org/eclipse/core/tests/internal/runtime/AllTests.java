@@ -31,8 +31,8 @@ public class AllTests extends TestCase {
 
 	public static Test suite() {
 		TestSuite suite = new TestSuite(AllTests.class.getName());
-		suite.addTest(LogSerializationTest.suite());
-		suite.addTest(PlatformURLLocalTest.suite());
+		suite.addTestSuite(LogSerializationTest.class);
+		suite.addTestSuite(PlatformURLLocalTest.class);
 		suite.addTest(PlatformURLSessionTest.suite());
 		suite.addTest(FileLocatorTest.suite());
 		return suite;

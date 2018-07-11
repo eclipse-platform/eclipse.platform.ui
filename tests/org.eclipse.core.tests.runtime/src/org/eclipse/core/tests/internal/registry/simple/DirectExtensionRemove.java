@@ -10,8 +10,6 @@
  *******************************************************************************/
 package org.eclipse.core.tests.internal.registry.simple;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.tests.internal.registry.simple.utils.SimpleRegistryListener;
 
@@ -200,9 +198,4 @@ public class DirectExtensionRemove extends BaseExtensionRegistryRun {
 			assertNotNull(delta.getExtensionPoint());
 		}
 	}
-
-	public static Test suite() {
-		return new TestSuite(DirectExtensionRemove.class);
-	}
-
 }

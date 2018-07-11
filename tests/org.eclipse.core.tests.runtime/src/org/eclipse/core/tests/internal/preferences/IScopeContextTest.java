@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2015 IBM Corporation and others.
+ * Copyright (c) 2004, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,8 +11,6 @@
  *******************************************************************************/
 package org.eclipse.core.tests.internal.preferences;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.preferences.*;
@@ -30,14 +28,6 @@ public class IScopeContextTest extends RuntimeTest {
 
 	public IScopeContextTest(String name) {
 		super(name);
-	}
-
-	public static Test suite() {
-		// all test methods are named "test..."
-		return new TestSuite(IScopeContextTest.class);
-		//		TestSuite suite = new TestSuite();
-		//		suite.addTest(new IScopeContextTest("test"));
-		//		return suite;
 	}
 
 	public void testGetNode() {

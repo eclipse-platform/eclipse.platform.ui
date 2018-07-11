@@ -24,23 +24,23 @@ public class AllTests extends TestCase {
 
 	public static Test suite() {
 		TestSuite suite = new TestSuite(AllTests.class.getName());
-		suite.addTest(CoreExceptionTest.suite());
-		suite.addTest(IAdapterManagerTest.suite());
-		suite.addTest(IAdapterManagerServiceTest.suite());
-		suite.addTest(AdapterManagerDynamicTest.suite());
-		suite.addTest(OperationCanceledExceptionTest.suite());
-		suite.addTest(PathTest.suite());
-		suite.addTest(PlatformTest.suite());
+		suite.addTestSuite(CoreExceptionTest.class);
+		suite.addTestSuite(IAdapterManagerTest.class);
+		suite.addTestSuite(IAdapterManagerServiceTest.class);
+		suite.addTestSuite(AdapterManagerDynamicTest.class);
+		suite.addTestSuite(OperationCanceledExceptionTest.class);
+		suite.addTestSuite(PathTest.class);
+		suite.addTestSuite(PlatformTest.class);
 		suite.addTest(PluginVersionIdentifierTest.suite());
 		suite.addTestSuite(SubMonitorTest.class);
 		suite.addTestSuite(SubProgressTest.class);
 		suite.addTestSuite(SubMonitorSmallTicksTest.class);
-		suite.addTest(ProgressMonitorWrapperTest.suite());
+		suite.addTestSuite(ProgressMonitorWrapperTest.class);
 		suite.addTest(QualifiedNameTest.suite());
-		suite.addTest(SafeRunnerTest.suite());
+		suite.addTestSuite(SafeRunnerTest.class);
 		suite.addTest(StatusTest.suite());
-		suite.addTest(URIUtilTest.suite());
-		suite.addTest(URLTest.suite());
+		suite.addTestSuite(URIUtilTest.class);
+		suite.addTestSuite(URLTest.class);
 		return suite;
 	}
 }

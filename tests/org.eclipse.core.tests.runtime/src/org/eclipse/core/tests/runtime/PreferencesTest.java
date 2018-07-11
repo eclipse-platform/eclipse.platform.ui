@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 IBM Corporation and others.
+ * Copyright (c) 2000, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,8 +12,6 @@ package org.eclipse.core.tests.runtime;
 
 import java.io.*;
 import java.util.*;
-import junit.framework.Test;
-import junit.framework.TestSuite;
 import org.eclipse.core.runtime.Preferences;
 
 /**
@@ -69,14 +67,6 @@ public class PreferencesTest extends RuntimeTest {
 
 	public PreferencesTest(String name) {
 		super(name);
-	}
-
-	public static Test suite() {
-		// all test methods are named "test..."
-		return new TestSuite(PreferencesTest.class);
-		//		TestSuite suite = new TestSuite();
-		//		suite.addTest(new PreferencesTest("testListeners2"));
-		//		return suite;
 	}
 
 	@Override

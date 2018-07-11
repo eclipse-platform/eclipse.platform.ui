@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2015 IBM Corporation and others.
+ * Copyright (c) 2007, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,7 +12,7 @@ package org.eclipse.core.tests.internal.registry;
 
 import java.io.*;
 import java.net.URL;
-import junit.framework.*;
+import junit.framework.TestCase;
 import org.eclipse.core.internal.registry.osgi.RegistryStrategyOSGI;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.tests.runtime.RuntimeTestsPlugin;
@@ -141,9 +141,4 @@ public class InputErrorTest extends TestCase {
 		String value = configElements[0].getAttribute("testAttr");
 		assertTrue(expectedValue.equals(value));
 	}
-
-	public static Test suite() {
-		return new TestSuite(InputErrorTest.class);
-	}
-
 }

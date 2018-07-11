@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2012 IBM Corporation and others.
+ * Copyright (c) 2000, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,8 +10,6 @@
  *******************************************************************************/
 package org.eclipse.core.tests.runtime;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
 import org.eclipse.core.runtime.*;
 
 /**
@@ -31,13 +29,10 @@ public class ProgressMonitorWrapperTest extends RuntimeTest {
 		super(name);
 	}
 
-	public static Test suite() {
-		return new TestSuite(ProgressMonitorWrapperTest.class);
-	}
-
 	/**
 	 * @deprecated to suppress deprecation warnings
 	 */
+	@Deprecated
 	public void testProgressMonitorWrapper() {
 		NullProgressMonitor nullMonitor = new NullProgressMonitor();
 		SubProgressMonitor wrapped = new SubProgressMonitor(nullMonitor, 10);

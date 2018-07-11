@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2015 IBM Corporation and others.
+ * Copyright (c) 2004, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,23 +13,13 @@ package org.eclipse.core.tests.internal.registry;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
-
-import org.eclipse.core.runtime.ContributorFactoryOSGi;
-import org.eclipse.core.runtime.ContributorFactorySimple;
-import org.eclipse.core.runtime.IContributor;
-import org.eclipse.core.runtime.IExtension;
-import org.eclipse.core.runtime.IExtensionPoint;
-import org.eclipse.core.runtime.IExtensionRegistry;
-import org.eclipse.core.runtime.RegistryFactory;
+import junit.framework.TestCase;
+import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.spi.IDynamicExtensionRegistry;
 import org.eclipse.core.tests.harness.BundleTestingHelper;
 import org.eclipse.core.tests.runtime.RuntimeTestsPlugin;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleException;
-
-import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
 
 /**
  * Tests contributor resolution for Bundle-based contributors.
@@ -67,10 +57,12 @@ public class ContributorsTest extends TestCase {
 			assertNotNull(contributingFragment);
 			assertTrue(contributingFragment.equals(fragment));
 		} finally {
-			if (bundle != null)
+			if (bundle != null) {
 				bundle.uninstall();
-			if (fragment != null)
+			}
+			if (fragment != null) {
 				fragment.uninstall();
+			}
 		}
 	}
 
@@ -120,12 +112,15 @@ public class ContributorsTest extends TestCase {
 			assertTrue(extsFragmentA[0].getUniqueIdentifier().equals("org.eclipse.test.registryByContrib.ExtensionFA"));
 
 		} finally {
-			if (bundleA != null)
+			if (bundleA != null) {
 				bundleA.uninstall();
-			if (bundleB != null)
+			}
+			if (bundleB != null) {
 				bundleB.uninstall();
-			if (fragment != null)
+			}
+			if (fragment != null) {
 				fragment.uninstall();
+			}
 		}
 	}
 
@@ -174,9 +169,4 @@ public class ContributorsTest extends TestCase {
 		IContributor nonBundleContributor = ContributorFactorySimple.createContributor(fileName);
 		return registry.addContribution(is, nonBundleContributor, false, urlA.getFile(), null, null);
 	}
-
-	public static Test suite() {
-		return new TestSuite(ContributorsTest.class);
-	}
-
 }

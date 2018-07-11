@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2005, 2015 IBM Corporation and others.
+ *  Copyright (c) 2005, 2018 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -11,8 +11,6 @@
 package org.eclipse.core.tests.runtime.perf;
 
 import java.util.ArrayList;
-import junit.framework.Test;
-import junit.framework.TestSuite;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eclipse.core.tests.harness.PerformanceTestRunner;
@@ -24,13 +22,6 @@ import org.osgi.service.prefs.Preferences;
 public class PreferencePerformanceTest extends RuntimeTest {
 	private static final int INNER_LOOP = 10000;
 	private static final int KEYS_PER_NODE = 1000;
-
-	public static Test suite() {
-		return new TestSuite(PreferencePerformanceTest.class);
-		//		TestSuite suite = new TestSuite(PreferencePerformanceTest.class.getName());
-		//		suite.addTest(new PreferencePerformanceTest("testPutStringKeys"));
-		//		return suite;
-	}
 
 	public PreferencePerformanceTest() {
 		super();
@@ -115,8 +106,9 @@ public class PreferencePerformanceTest extends RuntimeTest {
 			@Override
 			protected void setUp() {
 				prefs = getScopeRoot().node(qualifier);
-				for (int i = 0; i < keys.length; i++)
+				for (int i = 0; i < keys.length; i++) {
 					prefs.put(keys[i], values[i]);
+				}
 			}
 
 			//  clean-up
@@ -132,8 +124,9 @@ public class PreferencePerformanceTest extends RuntimeTest {
 			// test retrieval
 			@Override
 			protected void test() {
-				for (String key : keys)
+				for (String key : keys) {
 					prefs.get(key, null);
+				}
 			}
 		};
 		runner.setFingerprintName("Retrieve preference values");
@@ -160,8 +153,9 @@ public class PreferencePerformanceTest extends RuntimeTest {
 			@Override
 			protected void setUp() {
 				prefs = getScopeRoot().node(qualifier);
-				for (int i = 0; i < keys.length; i++)
+				for (int i = 0; i < keys.length; i++) {
 					prefs.put(keys[i], values[i]);
+				}
 			}
 
 			// clean-up
@@ -177,8 +171,9 @@ public class PreferencePerformanceTest extends RuntimeTest {
 			// how long to get the values?
 			@Override
 			protected void test() {
-				for (int i = 0; i < keys.length; i++)
+				for (int i = 0; i < keys.length; i++) {
 					prefs.get(missingKeys[i], null);
+				}
 			}
 		}.run(this, 10, INNER_LOOP);
 	}
@@ -202,8 +197,9 @@ public class PreferencePerformanceTest extends RuntimeTest {
 			@Override
 			protected void setUp() {
 				prefs = getScopeRoot().node(qualifier);
-				for (int i = 0; i < keys.length; i++)
+				for (int i = 0; i < keys.length; i++) {
 					prefs.put(keys[i], values[i]);
+				}
 			}
 
 			// clean-up
@@ -219,8 +215,9 @@ public class PreferencePerformanceTest extends RuntimeTest {
 			// how long to get the values?
 			@Override
 			protected void test() {
-				for (String key : keys)
+				for (String key : keys) {
 					prefs.get(key, null);
+				}
 			}
 		}.run(this, 10, INNER_LOOP);
 	}
@@ -243,8 +240,9 @@ public class PreferencePerformanceTest extends RuntimeTest {
 			@Override
 			protected void setUp() {
 				prefs = getScopeRoot().node(qualifier);
-				for (int i = 0; i < keys.length; i++)
+				for (int i = 0; i < keys.length; i++) {
 					prefs.put(keys[i], values[i]);
+				}
 			}
 
 			// clean-up
@@ -260,8 +258,9 @@ public class PreferencePerformanceTest extends RuntimeTest {
 			// how long to get the values?
 			@Override
 			protected void test() {
-				for (String key : keys)
+				for (String key : keys) {
 					prefs.get(key, null);
+				}
 			}
 		}.run(this, 10, INNER_LOOP);
 	}
@@ -304,8 +303,9 @@ public class PreferencePerformanceTest extends RuntimeTest {
 			// how long to set the values?
 			@Override
 			protected void test() {
-				for (int i = 0; i < keys.length; i++)
+				for (int i = 0; i < keys.length; i++) {
 					prefs.put(keys[i], values[i]);
+				}
 			}
 		}.run(this, 10, INNER_LOOP);
 	}
@@ -334,8 +334,9 @@ public class PreferencePerformanceTest extends RuntimeTest {
 			@Override
 			protected void setUp() {
 				prefs = getScopeRoot().node(qualifier);
-				for (int i = 0; i < keys.length; i++)
+				for (int i = 0; i < keys.length; i++) {
 					prefs.put(keys[i], values[i]);
+				}
 			}
 
 			// clean-up at the end of each run
@@ -353,8 +354,9 @@ public class PreferencePerformanceTest extends RuntimeTest {
 			// the test is how long it takes to remove all the values
 			@Override
 			protected void test() {
-				for (String key : keys)
+				for (String key : keys) {
 					prefs.remove(key);
+				}
 			}
 		}.run(this, 50, 1);
 	}

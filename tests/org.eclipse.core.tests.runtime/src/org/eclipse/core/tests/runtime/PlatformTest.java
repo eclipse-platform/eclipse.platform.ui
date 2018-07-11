@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 IBM Corporation and others.
+ * Copyright (c) 2000, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,8 +12,6 @@ package org.eclipse.core.tests.runtime;
 
 import java.io.*;
 import java.util.*;
-import junit.framework.Test;
-import junit.framework.TestSuite;
 import org.eclipse.core.runtime.*;
 import org.eclipse.osgi.framework.log.FrameworkLog;
 import org.osgi.framework.ServiceReference;
@@ -58,10 +56,6 @@ public class PlatformTest extends RuntimeTest {
 		super.tearDown();
 		logService.setFile(originalLocation, true);
 		RuntimeTestsPlugin.getContext().ungetService(logRef);
-	}
-
-	public static Test suite() {
-		return new TestSuite(PlatformTest.class);
 	}
 
 	public void testGetCommandLine() {

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2012 IBM Corporation and others.
+ * Copyright (c) 2007, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,7 +11,7 @@
 package org.eclipse.core.tests.internal.registry;
 
 import java.io.IOException;
-import junit.framework.*;
+import junit.framework.TestCase;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.tests.harness.BundleTestingHelper;
 import org.eclipse.core.tests.runtime.RuntimeTestsPlugin;
@@ -83,10 +83,12 @@ public class RegistryListenerTest extends TestCase {
 
 		} finally {
 			listener.unregister();
-			if (bundle01 != null)
+			if (bundle01 != null) {
 				bundle01.uninstall();
-			if (bundle02 != null)
+			}
+			if (bundle02 != null) {
 				bundle02.uninstall();
+			}
 		}
 	}
 
@@ -139,10 +141,12 @@ public class RegistryListenerTest extends TestCase {
 
 		} finally {
 			listener.unregister();
-			if (bundle02 != null)
+			if (bundle02 != null) {
 				bundle02.uninstall();
-			if (bundle01 != null)
+			}
+			if (bundle01 != null) {
 				bundle01.uninstall();
+			}
 		}
 	}
 
@@ -218,8 +222,9 @@ public class RegistryListenerTest extends TestCase {
 			listenerGlobal.unregister();
 			listener1.unregister();
 			listener2.unregister();
-			if (bundle != null)
+			if (bundle != null) {
 				bundle.uninstall();
+			}
 		}
 	}
 
@@ -265,8 +270,9 @@ public class RegistryListenerTest extends TestCase {
 		} finally {
 			// second unregistration should have no effect
 			listener.unregister();
-			if (bundle != null)
+			if (bundle != null) {
 				bundle.uninstall();
+			}
 		}
 	}
 
@@ -286,9 +292,4 @@ public class RegistryListenerTest extends TestCase {
 			assertTrue(found);
 		}
 	}
-
-	public static Test suite() {
-		return new TestSuite(RegistryListenerTest.class);
-	}
-
 }

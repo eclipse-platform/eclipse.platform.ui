@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2012 IBM Corporation and others.
+ * Copyright (c) 2008, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,8 +12,6 @@ package org.eclipse.core.tests.runtime;
 
 import java.io.*;
 import java.net.*;
-import junit.framework.Test;
-import junit.framework.TestSuite;
 import org.eclipse.core.runtime.*;
 
 /**
@@ -24,10 +22,6 @@ public class URIUtilTest extends RuntimeTest {
 	private static final boolean WINDOWS = java.io.File.separatorChar == '\\';
 
 	private static final String[] testPaths = new String[] {"abc", "with spaces", "with%percent"};
-
-	public static Test suite() {
-		return new TestSuite(URIUtilTest.class);
-	}
 
 	// re-enable once bug 331314 is fixed
 	public void testBug331314() {
@@ -90,15 +84,17 @@ public class URIUtilTest extends RuntimeTest {
 	 * @throws URISyntaxException
 	 */
 	public void testToFileUNC() throws URISyntaxException {
-		if (!WINDOWS)
+		if (!WINDOWS) {
 			return;
+		}
 		//UNC paths
 		URI path = new URI("file://HOST/some/path");
 		File result = URIUtil.toFile(path);
-		if (File.pathSeparatorChar == '/')
+		if (File.pathSeparatorChar == '/') {
 			assertTrue("2.0", result.getAbsolutePath().startsWith("//"));
-		else
+		} else {
 			assertTrue("2.1", result.getAbsolutePath().startsWith("\\\\"));
+		}
 		assertTrue("2.2", new Path(result.toString()).isUNC());
 	}
 
@@ -194,8 +190,9 @@ public class URIUtilTest extends RuntimeTest {
 	 * relative URIs (file:c:/tmp).
 	 */
 	public void testWindowsPathsFromURI() throws MalformedURLException, URISyntaxException {
-		if (!WINDOWS)
+		if (!WINDOWS) {
 			return;
+		}
 		assertEquals("1.1", new URI("file:/c:/foo/bar.txt"), URIUtil.toURI(new URL("file:c:/foo/bar.txt")));
 		assertEquals("1.2", new URI("file:/c:/foo/bar.txt"), URIUtil.toURI(new URL("file:/c:/foo/bar.txt")));
 	}
@@ -205,8 +202,9 @@ public class URIUtilTest extends RuntimeTest {
 	 * relative URIs (file:c:/tmp).
 	 */
 	public void testWindowsPathsFromString() throws URISyntaxException {
-		if (!WINDOWS)
+		if (!WINDOWS) {
 			return;
+		}
 		assertEquals("1.1", new URI("file:/c:/foo/bar.txt"), URIUtil.fromString("file:c:/foo/bar.txt"));
 		assertEquals("1.2", new URI("file:/c:/foo/bar.txt"), URIUtil.fromString("file:/c:/foo/bar.txt"));
 	}
@@ -336,8 +334,9 @@ public class URIUtilTest extends RuntimeTest {
 	}
 
 	public void testAppendWindows() throws URISyntaxException {
-		if (!WINDOWS)
+		if (!WINDOWS) {
 			return;
+		}
 		URI base = new URI("file:/C:/a%20b");
 		URI result = URIUtil.append(base, "file.txt");
 		assertEquals("1.0", "file:/C:/a%20b/file.txt", result.toString());
@@ -402,8 +401,9 @@ public class URIUtilTest extends RuntimeTest {
 	}
 
 	public void testSameURIWindows() throws URISyntaxException {
-		if (!WINDOWS)
+		if (!WINDOWS) {
 			return;
+		}
 		//device and case variants
 		assertTrue("1.0", URIUtil.sameURI(new URI("file:C:/a"), new URI("file:c:/a")));
 		assertTrue("1.1", URIUtil.sameURI(new URI("file:/C:/a"), new URI("file:/c:/a")));
@@ -447,8 +447,9 @@ public class URIUtilTest extends RuntimeTest {
 		}
 
 		// run some Windows-specific tests with drive letters
-		if (!WINDOWS)
+		if (!WINDOWS) {
 			return;
+		}
 		data = new URI[][] {
 				// simple path
 				new URI[] {new URI("b"), new URI("file:/c:/a/"), new URI("file:/c:/a/b")}, //
@@ -519,8 +520,9 @@ public class URIUtilTest extends RuntimeTest {
 		}
 
 		// test some Windows-specific paths with drive letters
-		if (!WINDOWS)
+		if (!WINDOWS) {
 			return;
+		}
 		data = new URI[][] {
 				// simple path
 				new URI[] {new URI("file:/c:/a/b"), new URI("file:/c:/a/x"), new URI("../b")},

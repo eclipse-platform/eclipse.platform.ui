@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2015 IBM Corporation and others.
+ * Copyright (c) 2008, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,7 +11,7 @@
 package org.eclipse.core.tests.runtime;
 
 import java.io.IOException;
-import junit.framework.*;
+import junit.framework.TestCase;
 import org.eclipse.core.runtime.IAdapterManager;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.tests.harness.BundleTestingHelper;
@@ -41,10 +41,6 @@ public class AdapterManagerDynamicTest extends TestCase {
 
 	public AdapterManagerDynamicTest(String name) {
 		super(name);
-	}
-
-	public static Test suite() {
-		return new TestSuite(AdapterManagerDynamicTest.class);
 	}
 
 	public AdapterManagerDynamicTest() {
@@ -123,10 +119,12 @@ public class AdapterManagerDynamicTest extends TestCase {
 		} finally {
 			listener.unregister();
 			// in case of exception in the process
-			if (bundle01 != null)
+			if (bundle01 != null) {
 				bundle01.uninstall();
-			if (bundle02 != null)
+			}
+			if (bundle02 != null) {
 				bundle02.uninstall();
+			}
 		}
 	}
 

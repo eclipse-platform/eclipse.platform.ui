@@ -13,7 +13,7 @@ package org.eclipse.core.tests.internal.registry;
 
 import java.io.File;
 import java.util.Locale;
-import junit.framework.*;
+import junit.framework.TestCase;
 import org.eclipse.core.internal.registry.IRegistryConstants;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.spi.RegistryStrategy;
@@ -330,10 +330,6 @@ public class MultiLanguageTest extends TestCase {
 		assertEquals(eclipseFinnish, subdivisionElements[0].getAttribute("division", "fi_FI"));
 		assertEquals(catsAndDogsFinnish, elementValue.getValue("fi_FI"));
 		assertEquals(catsAndDogsFinnish, elementValue.getValue("fi_FI")); // check internal cache
-	}
-
-	public static Test suite() {
-		return new TestSuite(MultiLanguageTest.class);
 	}
 
 	/*

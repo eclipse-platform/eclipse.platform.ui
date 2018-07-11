@@ -31,14 +31,14 @@ public class AllTests extends TestCase {
 
 	public static Test suite() {
 		TestSuite suite = new TestSuite(AllTests.class.getName());
-		suite.addTest(EclipsePreferencesTest.suite());
-		suite.addTest(PreferencesServiceTest.suite());
-		suite.addTest(IScopeContextTest.suite());
+		suite.addTestSuite(EclipsePreferencesTest.class);
+		suite.addTestSuite(PreferencesServiceTest.class);
+		suite.addTestSuite(IScopeContextTest.class);
 		suite.addTest(TestBug388004.suite());
 		suite.addTest(TestBug380859.suite());
-		suite.addTest(PreferenceExportTest.suite());
-		suite.addTest(PreferenceForwarderTest.suite());
-		suite.addTest(PreferencesTest.suite());
+		suite.addTestSuite(PreferenceExportTest.class);
+		suite.addTestSuite(PreferenceForwarderTest.class);
+		suite.addTestSuite(PreferencesTest.class);
 		return suite;
 	}
 }

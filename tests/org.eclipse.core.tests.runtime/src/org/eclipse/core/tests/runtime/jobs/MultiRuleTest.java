@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2012 IBM Corporation and others.
+ * Copyright (c) 2008, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,8 +10,6 @@
  *******************************************************************************/
 package org.eclipse.core.tests.runtime.jobs;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.core.runtime.jobs.MultiRule;
 
@@ -19,9 +17,6 @@ import org.eclipse.core.runtime.jobs.MultiRule;
  * Tests for {@link MultiRule}.
  */
 public class MultiRuleTest extends AbstractJobTest {
-	public static Test suite() {
-		return new TestSuite(MultiRuleTest.class);
-	}
 
 	public void testCombine() {
 		ISchedulingRule child1 = new PathRule("/a");

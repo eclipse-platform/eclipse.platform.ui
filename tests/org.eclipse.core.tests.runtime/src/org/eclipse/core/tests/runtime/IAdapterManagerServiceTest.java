@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2015 IBM Corporation and others.
+ * Copyright (c) 2007, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,7 +11,7 @@
  *******************************************************************************/
 package org.eclipse.core.tests.runtime;
 
-import junit.framework.*;
+import junit.framework.TestCase;
 import org.eclipse.core.runtime.IAdapterFactory;
 import org.eclipse.core.runtime.IAdapterManager;
 import org.osgi.framework.BundleContext;
@@ -31,10 +31,6 @@ public class IAdapterManagerServiceTest extends TestCase {
 
 	public IAdapterManagerServiceTest(String name) {
 		super(name);
-	}
-
-	public static Test suite() {
-		return new TestSuite(IAdapterManagerServiceTest.class);
 	}
 
 	public IAdapterManagerServiceTest() {
