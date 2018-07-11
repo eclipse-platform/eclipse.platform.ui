@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2015 IBM Corporation and others.
+ * Copyright (c) 2004, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,7 +11,6 @@
 package org.eclipse.core.tests.session;
 
 import java.util.Arrays;
-import java.util.Comparator;
 import java.util.Enumeration;
 import java.util.HashSet;
 import java.util.Set;
@@ -112,12 +111,7 @@ public class SessionTestSuite extends TestSuite {
 			allTests[i] = e.nextElement();
 		}
 		if (sort) {
-			Arrays.sort(allTests, new Comparator<Test>() {
-				@Override
-				public int compare(Test o1, Test o2) {
-					return ((TestCase) o1).getName().compareTo(((TestCase) o2).getName());
-				}
-			});
+			Arrays.sort(allTests, (o1, o2) -> ((TestCase) o1).getName().compareTo(((TestCase) o2).getName()));
 		}
 		return allTests;
 	}
