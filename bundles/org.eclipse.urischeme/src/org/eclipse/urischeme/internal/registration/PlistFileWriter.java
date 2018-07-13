@@ -10,13 +10,16 @@
  *******************************************************************************/
 package org.eclipse.urischeme.internal.registration;
 
+import static java.util.stream.Collectors.toList;
+
 import java.io.BufferedWriter;
 import java.io.Closeable;
 import java.io.IOException;
 import java.io.Reader;
 import java.io.Writer;
-import java.net.URI;
-import java.net.URISyntaxException;
+import java.util.Collection;
+import java.util.List;
+import java.util.function.Predicate;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -73,6 +76,22 @@ public class PlistFileWriter {
 	}
 
 	/**
+	 * Takes the given schemes and checks whether they are registered. Returns a
+	 * list with these schemes that are registered.
+	 *
+	 * @param schemes The schemes that should be checked for registrations.
+	 * @return the registered schemes.
+	 */
+	public List<String> getRegisteredSchemes(Collection<String> schemes) {
+		Predicate<String> matchingSchemes = scheme -> {
+			Util.assertUriSchemeIsLegal(scheme);
+			return getExistingElementFor(scheme) != null;
+		};
+
+		return schemes.stream().filter(matchingSchemes).collect(toList());
+	}
+
+	/**
 	 * Adds an entry for the given scheme in the CFBundleURLSchemes element of the
 	 * .plist file. Creates the CFBundleURLTypes element if not yet existing.
 	 * Otherwise adds CFBundleURLSchemes element.
@@ -92,7 +111,7 @@ public class PlistFileWriter {
 	 */
 	public void addScheme(String scheme, String schemeDescription) {
 		// check precondition
-		throwExceptionOnIllegalScheme(scheme);
+		Util.assertUriSchemeIsLegal(scheme);
 
 		if (getExistingElementFor(scheme) != null) {
 			return;
@@ -146,7 +165,7 @@ public class PlistFileWriter {
 	 *
 	 */
 	public void removeScheme(String scheme) {
-		throwExceptionOnIllegalScheme(scheme);
+		Util.assertUriSchemeIsLegal(scheme);
 
 		Element dict = getExistingElementFor(scheme);
 		if (dict == null) {
@@ -295,13 +314,4 @@ public class PlistFileWriter {
 			throw new IllegalStateException(e); // cannot happen
 		}
 	}
-
-	private void throwExceptionOnIllegalScheme(String scheme) {
-		try {
-			new URI(scheme, "foo", ""); //$NON-NLS-1$ //$NON-NLS-2$
-		} catch (URISyntaxException e1) {
-			throw new IllegalArgumentException("'Scheme' must only contain letters"); //$NON-NLS-1$
-		}
-	}
-
 }
