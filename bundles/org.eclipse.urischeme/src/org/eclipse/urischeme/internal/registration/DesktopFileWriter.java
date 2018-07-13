@@ -10,13 +10,18 @@
  *******************************************************************************/
 package org.eclipse.urischeme.internal.registration;
 
+import static java.util.stream.Collectors.joining;
+import static java.util.stream.Collectors.toList;
+
+import java.util.Collection;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.function.Function;
-import java.util.stream.Collectors;
+import java.util.function.Predicate;
 
 /**
  * Used to change the MimeType property of a Linux .desktop file. Adds handler
@@ -43,6 +48,27 @@ public class DesktopFileWriter {
 	 */
 	public DesktopFileWriter(List<String> lines) {
 		properties = getProperties(lines);
+	}
+
+	/**
+	 * Takes the given schemes and checks whether they are registered. Returns a
+	 * list with these schemes that are registered.
+	 *
+	 * @param schemes The schemes that should be checked for registrations.
+	 * @return the registered schemes.
+	 */
+	public List<String> getRegisteredSchemes(Collection<String> schemes) {
+		String mimeType = properties.get(KEY_MIME_TYPE);
+		if (mimeType == null || mimeType.isEmpty()) {
+			return Collections.emptyList();
+		}
+		Predicate<String> matchingSchemes = scheme -> {
+			Util.assertUriSchemeIsLegal(scheme);
+			String handlerPlusScheme = getHandlerPlusScheme(scheme);
+			return mimeType.contains(handlerPlusScheme);
+		};
+
+		return schemes.stream().filter(matchingSchemes).collect(toList());
 	}
 
 	/**
@@ -135,7 +161,7 @@ public class DesktopFileWriter {
 		};
 		String result = this.properties.entrySet().stream() //
 				.map(toList) //
-				.collect(Collectors.joining(LINE_SEPARATOR));
+				.collect(joining(LINE_SEPARATOR));
 
 		return result.getBytes();
 	}
