@@ -17,6 +17,7 @@
  *******************************************************************************/
 package org.eclipse.ui.dialogs;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -262,8 +263,12 @@ public class ProjectLocationSelectionDialog extends SelectionStatusDialog {
 		Matcher m = p.matcher(fileNameNoExtension);
 		if (m.find()) {
 			// String ends with a number: increment it by 1
-			int newNumber = Integer.parseInt(m.group()) + 1;
-			return m.replaceFirst(Integer.toString(newNumber));
+			try {
+				BigDecimal newNumber = new BigDecimal(m.group()).add(new BigDecimal(1));
+				return m.replaceFirst(newNumber.toPlainString());
+			} catch (NumberFormatException e) {
+				return m.replaceFirst("2"); //$NON-NLS-1$
+			}
 		}
 		return fileNameNoExtension + "2"; //$NON-NLS-1$
 	}

@@ -15,6 +15,7 @@ package org.eclipse.ui.actions;
 
 import java.io.File;
 import java.lang.reflect.InvocationTargetException;
+import java.math.BigDecimal;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -161,8 +162,14 @@ public class CopyFilesAndFoldersOperation {
 		Matcher m = p.matcher(fileNameNoExtension);
 		if (m.find()) {
 			// String ends with a number: increment it by 1
-			int newNumber = Integer.parseInt(m.group()) + 1;
-			String numberStr = m.replaceFirst(Integer.toString(newNumber));
+			String numberStr;
+			BigDecimal newNumber = null;
+			try {
+				newNumber = new BigDecimal(m.group()).add(new BigDecimal(1));
+				numberStr = m.replaceFirst(newNumber.toPlainString());
+			} catch (NumberFormatException e) {
+				numberStr = m.replaceFirst("2"); //$NON-NLS-1$
+			}
 			return numberStr + fileExtension;
 		}
 		return fileNameNoExtension + "2" + fileExtension; //$NON-NLS-1$
