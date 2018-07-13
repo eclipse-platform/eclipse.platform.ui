@@ -213,14 +213,30 @@ public class DocumentLineDiffer implements ILineDiffer, IDocumentListener, IAnno
 	 * @since 3.2
 	 */
 	private final IDocumentRewriteSessionListener fSessionListener= new IDocumentRewriteSessionListener() {
+
+		/**
+		 * <code>true</code> if this line differ was suspended because of a
+		 * {@link DocumentRewriteSessionEvent#SESSION_START session start} and
+		 * needs to be resumed after a
+		 * {@link DocumentRewriteSessionEvent#SESSION_STOP session stop} event,
+		 * <code>false</code> otherwise.
+		 */
+		private boolean fResumeOnRewriteSessionStop;
+
 		@Override
 		public void documentRewriteSessionChanged(DocumentRewriteSessionEvent event) {
 			if (event.getSession().getSessionType() == DocumentRewriteSessionType.UNRESTRICTED_SMALL)
 				return;
-			if (DocumentRewriteSessionEvent.SESSION_START.equals(event.getChangeType()))
+			if (DocumentRewriteSessionEvent.SESSION_START.equals(event.getChangeType())) {
+				fResumeOnRewriteSessionStop = !isSuspended();
 				suspend();
-			else if (DocumentRewriteSessionEvent.SESSION_STOP.equals(event.getChangeType()))
+			}
+			else if (fResumeOnRewriteSessionStop
+					&& DocumentRewriteSessionEvent.SESSION_STOP.equals(event.getChangeType())) {
 				resume();
+				fResumeOnRewriteSessionStop= false;
+			}
+
 		}
 	};
 

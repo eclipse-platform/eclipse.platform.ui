@@ -1497,7 +1497,7 @@ public abstract class AbstractDocument implements IDocument, IDocumentExtension,
 
 	@Override
 	public void stopRewriteSession(DocumentRewriteSession session) {
-		if (fDocumentRewriteSession == session) {
+		if (fDocumentRewriteSession != null && fDocumentRewriteSession == session) {
 
 			if (DEBUG)
 				System.out.println("AbstractDocument: Stopping rewrite session: " + session); //$NON-NLS-1$
