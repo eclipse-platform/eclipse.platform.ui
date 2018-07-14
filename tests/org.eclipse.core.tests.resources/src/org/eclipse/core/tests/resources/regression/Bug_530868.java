@@ -20,6 +20,7 @@ import org.eclipse.core.internal.filesystem.local.LocalFileNativesManager;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.tests.resources.ResourceTest;
 
 
@@ -62,7 +63,10 @@ public class Bug_530868 extends ResourceTest {
 	 */
 	public void testMillisecondResolution() throws Exception {
 		assertTrue("can only run if native provider is used", LocalFileNativesManager.isUsingNatives());
-
+		if (Platform.OS_MACOSX.equals(Platform.getOS())) {
+			// Mac still has no milliseconds resolution
+			return;
+		}
 		/*
 		 * Run 3 times in case we have seconds resolution due to a bug, but by chance we
 		 * happened to modify the file in-between two seconds.
