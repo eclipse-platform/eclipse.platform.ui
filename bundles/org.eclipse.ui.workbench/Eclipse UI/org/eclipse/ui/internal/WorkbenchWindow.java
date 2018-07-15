@@ -1982,7 +1982,6 @@ STATUS_LINE_ID, model);
 
 			getActionBarAdvisor().dispose();
 			getWindowAdvisor().dispose();
-			coolbarToTrim.dispose();
 
 			// Null out the progress region. Bug 64024.
 			progressRegion = null;
@@ -1996,6 +1995,7 @@ STATUS_LINE_ID, model);
 			}
 
 			engine.removeGui(model);
+			coolbarToTrim.dispose();
 
 			MElementContainer<MUIElement> parent = window.getParent();
 			if (remove) {

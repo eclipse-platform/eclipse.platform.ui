@@ -20,6 +20,7 @@ import org.eclipse.e4.core.commands.ExpressionContext;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.contexts.RunAndTrack;
 import org.eclipse.e4.ui.internal.workbench.ContributionsAnalyzer;
+import org.eclipse.e4.ui.internal.workbench.swt.AbstractPartRenderer;
 import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.ui.MElementContainer;
 import org.eclipse.e4.ui.model.application.ui.MUIElement;
@@ -28,6 +29,9 @@ import org.eclipse.e4.ui.model.application.ui.basic.MTrimBar;
 import org.eclipse.e4.ui.model.application.ui.basic.MTrimElement;
 import org.eclipse.e4.ui.model.application.ui.basic.MTrimmedWindow;
 import org.eclipse.e4.ui.model.application.ui.menu.MTrimContribution;
+import org.eclipse.e4.ui.model.application.ui.menu.impl.ToolBarImpl;
+import org.eclipse.e4.ui.workbench.swt.factories.IRendererFactory;
+import org.eclipse.jface.action.ToolBarManager;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 
@@ -198,9 +202,33 @@ public class TrimBarRenderer extends SWTPartRenderer {
 	 *            the trimBar to be cleaned up
 	 */
 	protected void cleanUp(MTrimBar element) {
+		IRendererFactory rendererFactory = context.get(IRendererFactory.class);
 		for (MTrimElement child : element.getPendingCleanup()) {
 			element.getChildren().remove(child);
+			if (child instanceof ToolBarImpl) {
+				ToolBarImpl tb = (ToolBarImpl) child;
+				releaseToolbar(rendererFactory, tb);
+			}
 		}
 		element.getPendingCleanup().clear();
+		List<MTrimElement> children = element.getChildren();
+		for (MTrimElement mTrimElement : children) {
+			if (mTrimElement instanceof ToolBarImpl) {
+				ToolBarImpl tb = (ToolBarImpl) mTrimElement;
+				releaseToolbar(rendererFactory, tb);
+			}
+		}
+	}
+
+	private void releaseToolbar(IRendererFactory rendererFactory, ToolBarImpl tb) {
+		AbstractPartRenderer apr = rendererFactory.getRenderer(tb, null);
+		if (apr instanceof ToolBarManagerRenderer) {
+			ToolBarManagerRenderer tbmr = (ToolBarManagerRenderer) apr;
+			ToolBarManager tbm = tbmr.getManager(tb);
+			tbmr.clearModelToManager(tb, null);
+			if (tbm != null) {
+				tbm.dispose();
+			}
+		}
 	}
 }

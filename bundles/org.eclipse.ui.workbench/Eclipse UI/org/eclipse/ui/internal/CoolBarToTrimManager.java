@@ -18,6 +18,7 @@ package org.eclipse.ui.internal;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 import org.eclipse.e4.core.contexts.ContextInjectionFactory;
 import org.eclipse.e4.ui.internal.workbench.OpaqueElementUtil;
 import org.eclipse.e4.ui.model.application.MApplication;
@@ -76,6 +77,12 @@ public class CoolBarToTrimManager extends ContributionManager implements ICoolBa
 			super.setVisible(visible);
 			tb.setVisible(visible);
 		}
+
+		@Override
+		public void dispose() {
+			tb.getTransientData().remove(OBJECT);
+			super.dispose();
+		}
 	}
 
 	private static final String TOOLBAR_SEPARATOR = "toolbarSeparator"; //$NON-NLS-1$
@@ -84,6 +91,7 @@ public class CoolBarToTrimManager extends ContributionManager implements ICoolBa
 	private static final String PREV_CHILD_VISIBLE = "prevChildVisible"; //$NON-NLS-1$
 	private MTrimBar topTrim;
 	private List<MTrimElement> workbenchTrimElements;
+	private List<ToolBarContributionItemExtension> toolbarExtensions;
 	private IRendererFactory rendererFactory;
 	private ToolBarManagerRenderer renderer;
 	private MApplication application;
@@ -103,6 +111,7 @@ public class CoolBarToTrimManager extends ContributionManager implements ICoolBa
 		this.window = window;
 		rendererFactory = rf;
 		this.workbenchTrimElements = workbenchTrimElements;
+		toolbarExtensions = new ArrayList<>();
 
 		modelService = window.getContext().get(EModelService.class);
 		topTrim = (MTrimBar) modelService.find(MAIN_TOOLBAR_ID, window);
@@ -291,8 +300,28 @@ public class CoolBarToTrimManager extends ContributionManager implements ICoolBa
 
 	@Override
 	public void dispose() {
-		workbenchTrimElements.stream().filter(e -> e instanceof MToolBar).map(e -> (MToolBar) e)
-				.forEach(e -> renderer.clearModelToManager(e, null));
+		if (renderer == null) {
+			return;
+		}
+		for (ToolBarContributionItemExtension ext : toolbarExtensions) {
+			ToolBarManager manager = renderer.getManager(ext.tb);
+			if (manager != null) {
+				manager.dispose();
+			}
+			renderer.clearModelToManager(ext.tb, null);
+			ext.dispose();
+		}
+		toolbarExtensions.clear();
+		List<MToolBar> toolbars = workbenchTrimElements.stream().filter(e -> e instanceof MToolBar)
+				.map(e -> (MToolBar) e).collect(Collectors.toList());
+
+		for (MToolBar mToolBar : toolbars) {
+			ToolBarManager manager = renderer.getManager(mToolBar);
+			if (manager != null) {
+				manager.dispose();
+			}
+			renderer.clearModelToManager(mToolBar, null);
+		}
 
 		ArrayList<MToolBarElement> toRemove = new ArrayList<>();
 		for (MTrimElement child : topTrim.getChildren()) {
@@ -309,6 +338,9 @@ public class CoolBarToTrimManager extends ContributionManager implements ICoolBa
 				}
 			}
 		}
+		toolbarOverrides = null;
+		renderer = null;
+		rendererFactory = null;
 	}
 
 	@Override
@@ -325,8 +357,10 @@ public class CoolBarToTrimManager extends ContributionManager implements ICoolBa
 		ToolBarManagerRenderer renderer = (ToolBarManagerRenderer) rendererFactory.getRenderer(model, null);
 		final ToolBarManager manager = renderer.getManager(model);
 		if (manager != null) {
-			final ToolBarContributionItem toolBarContributionItem = new ToolBarContributionItemExtension(manager, model);
+			final ToolBarContributionItemExtension toolBarContributionItem = new ToolBarContributionItemExtension(
+					manager, model);
 			model.getTransientData().put(OBJECT, toolBarContributionItem);
+			toolbarExtensions.add(toolBarContributionItem);
 			return toolBarContributionItem;
 		} else if (model.getTags().contains(TOOLBAR_SEPARATOR)) {
 			if (model.getTransientData().get(OBJECT) != null) {
@@ -359,8 +393,10 @@ public class CoolBarToTrimManager extends ContributionManager implements ICoolBa
 				ToolBarManagerRenderer renderer = (ToolBarManagerRenderer) rendererFactory.getRenderer(tb, null);
 				final ToolBarManager manager = renderer.getManager(tb);
 				if (manager != null) {
-					ToolBarContributionItem toolBarContributionItem = new ToolBarContributionItemExtension(manager, tb);
+					ToolBarContributionItemExtension toolBarContributionItem = new ToolBarContributionItemExtension(
+							manager, tb);
 					tb.getTransientData().put(OBJECT, toolBarContributionItem);
+					toolbarExtensions.add(toolBarContributionItem);
 					items.add(toolBarContributionItem);
 				} else if (tb.getTags().contains(TOOLBAR_SEPARATOR)) {
 					if (tb.getTransientData().get(OBJECT) != null) {
