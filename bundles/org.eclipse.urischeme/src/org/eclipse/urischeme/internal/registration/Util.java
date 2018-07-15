@@ -18,7 +18,6 @@ import java.net.URISyntaxException;
 
 @SuppressWarnings("javadoc")
 public class Util {
-
 	/**
 	 * Checks if the given uriScheme is a valid uri scheme. Uses the {@link URI}
 	 * class for checking.
@@ -35,7 +34,7 @@ public class Util {
 		try {
 			new URI(uriScheme, "foo", ""); //$NON-NLS-1$ //$NON-NLS-2$
 		} catch (URISyntaxException e) {
-			throw new IllegalArgumentException("'Scheme' must only contain letters"); //$NON-NLS-1$
+			throw new IllegalArgumentException("'Scheme' does not conform to RFC 2396"); //$NON-NLS-1$
 		}
 	}
 }

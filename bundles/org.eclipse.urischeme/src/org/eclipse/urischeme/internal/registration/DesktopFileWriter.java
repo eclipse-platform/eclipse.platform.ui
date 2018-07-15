@@ -14,17 +14,14 @@
 package org.eclipse.urischeme.internal.registration;
 
 import static java.util.stream.Collectors.joining;
-import static java.util.stream.Collectors.toList;
 
-import java.util.Collection;
-import java.util.Collections;
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.function.Function;
-import java.util.function.Predicate;
 
 /**
  * Used to change the MimeType property of a Linux .desktop file. Adds handler
@@ -37,7 +34,7 @@ public class DesktopFileWriter {
 	private static final String EQUAL_SIGN = "="; //$NON-NLS-1$
 	private static final String KEY_MIME_TYPE = "MimeType"; //$NON-NLS-1$
 	private static final String KEY_EXEC = "Exec"; //$NON-NLS-1$
-	private static final String EXEC_URI_PLACEHOLDER = "%u"; //$NON-NLS-1$
+	private static final String EXEC_URI_PLACEHOLDER = " %u"; //$NON-NLS-1$
 	private Map<String, String> properties;
 
 	/**
@@ -54,24 +51,19 @@ public class DesktopFileWriter {
 	}
 
 	/**
-	 * Takes the given schemes and checks whether they are registered. Returns a
-	 * list with these schemes that are registered.
+	 * Checks if the given scheme is registered in this .desktop file
 	 *
-	 * @param schemes The schemes that should be checked for registrations.
-	 * @return the registered schemes.
+	 * @param scheme that should be checked for registration
+	 * @return true if scheme is in the value of the MimeType property of given
+	 *         .desktop file; false otherwise
 	 */
-	public List<String> getRegisteredSchemes(Collection<String> schemes) {
+	public boolean isRegistered(String scheme) {
+		Util.assertUriSchemeIsLegal(scheme);
 		String mimeType = properties.get(KEY_MIME_TYPE);
 		if (mimeType == null || mimeType.isEmpty()) {
-			return Collections.emptyList();
+			return false;
 		}
-		Predicate<String> matchingSchemes = scheme -> {
-			Util.assertUriSchemeIsLegal(scheme);
-			String handlerPlusScheme = getHandlerPlusScheme(scheme);
-			return mimeType.contains(handlerPlusScheme);
-		};
-
-		return schemes.stream().filter(matchingSchemes).collect(toList());
+		return mimeType.contains(getHandlerPlusScheme(scheme));
 	}
 
 	/**
@@ -168,11 +160,42 @@ public class DesktopFileWriter {
 
 		return result.getBytes();
 	}
+
+	/**
+	 * Returns the minimal content for a .desktop file needed for registering mime
+	 * types in Linux.<br />
+	 *
+	 * The caller can call {@link #DesktopFileWriter(List)} afterwards to create an
+	 * instance.
+	 *
+	 * @param eclipseExecutableLocation the location of the eclipse executable in
+	 *                                  the file system, spaces will be escaped
+	 *
+	 * @return The minimal file content as list (one entry = one file line)
+	 */
+	public static List<String> getMinimalDesktopFileContent(String eclipseExecutableLocation) {
+		String executable = escapeSpaces(eclipseExecutableLocation);
+		return Arrays.asList(//
+				"[Desktop Entry]", // //$NON-NLS-1$
+				"Exec=" + executable, // //$NON-NLS-1$
+				"NoDisplay=true", // //$NON-NLS-1$
+				"Type=Application" //$NON-NLS-1$
+		);
+	}
+
+	private static String escapeSpaces(String path) {
+		return path.replace(" ", "\\ "); //$NON-NLS-1$ //$NON-NLS-2$
+	}
+
+	private static String unescapeSpaces(String path) {
+		return path.replace("\\ ", " "); //$NON-NLS-1$ //$NON-NLS-2$
+	}
+
 	private void addUriPlaceholderToExecProperty() {
 		if (this.properties.containsKey(KEY_EXEC)) {
 			String execValue = this.properties.get(KEY_EXEC);
 			if (!execValue.contains(EXEC_URI_PLACEHOLDER)) {
-				this.properties.put(KEY_EXEC, execValue + " " + EXEC_URI_PLACEHOLDER); //$NON-NLS-1$
+				this.properties.put(KEY_EXEC, execValue + EXEC_URI_PLACEHOLDER);
 			}
 		}
 
@@ -198,9 +221,6 @@ public class DesktopFileWriter {
 
 	private void assertDesktopEntryPresent(Map<String, String> props) {
 		Iterator<Entry<String, String>> iterator = props.entrySet().iterator();
-		if (iterator.hasNext() == false) {
-			throw new IllegalStateException("File seems not to be a 'desktop' file"); //$NON-NLS-1$
-		}
 		String firstLine = iterator.next().getKey();
 		if ("[Desktop Entry]".equals(firstLine) == false) { //$NON-NLS-1$
 			throw new IllegalStateException("File seems not to be a 'desktop' file"); //$NON-NLS-1$
@@ -215,5 +235,14 @@ public class DesktopFileWriter {
 
 	private String getHandlerPlusScheme(String scheme) {
 		return "x-scheme-handler/" + scheme + ";";//$NON-NLS-1$ //$NON-NLS-2$
+	}
+
+	/**
+	 * @return the location of the Eclipse executable for the running Eclipse
+	 */
+	public String getExecutableLocation() {
+		String executableLocation = properties.get(KEY_EXEC);
+		executableLocation = executableLocation.replace(EXEC_URI_PLACEHOLDER, ""); //$NON-NLS-1$ // cut uri placeholder
+		return unescapeSpaces(executableLocation);
 	}
 }

@@ -1,0 +1,327 @@
+Checking data integrity......done.
+Status: Database is seeded.
+Status: Preferences are loaded.
+Seeded System Version: ######
+Seeded Model Code: #######
+CacheGUID: ########
+CacheSequenceNum: 12172
+Date Initialized: #######
+Path: #################
+DB Object: ##############
+Store Object: ###############
++++++++++++++++++++++ MEMORY USAGE +++++++++++++++++++++
+sizeof(Data):                  ### ( ### bytes) --------
+sizeof(Table):                  ## (  ## bytes) --------
+sizeof(Unit):                    # (   # bytes) --------
+sizeof(IdentifierCache):         # (   # bytes) --------
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+--------------------------------------------------------------------------------
+BundleClass: kLSBundleClassApplication
+Container mount state: mounted
+bundle	id:            9796
+	Mach-O UUIDs:  #################
+	Device Familie 
+	Counterpart ID 
+	sequenceNum:   9796
+	FamilyID:      0
+	PurchaserID:   0
+	DownloaderID:  0
+	installType:   0
+	appContainer:  #
+	dataContainer: #
+	path:          /Applications/Calculator.app
+	name:          Calculator
+	displayName:   (null)
+	itemName:      (null)
+	teamID:        0000000000
+	staticSize:    0
+	storeFront:    0
+	versionID:     0
+	sourceAppID:   (null)
+	ratingLabel:   (null)
+	ratingRank:    0
+	genre::        (null)
+	genreID:       0
+	category:      public.app-category.utilities
+	2ry category:  public.app-category.productivity
+	identifier:    com.apple.calculator (0x8000bf7d)
+	vendor:        (null)
+	type:          (null)
+	version:       123.0 (<00000000 00ec0100>)
+	versionString: 123
+	displayVersion 10.13
+	codeInfoID:    (null)
+	signerOrg:     (null)
+	mod date:      ##############
+	reg date:      ##############
+	type code:     'APPL'
+	creator code:  '????'
+	bundle flags:  apple-internal  has-display-name  (0000000000000003)
+	Icon flags:    relative-icon-path  supports-asset-catalog  (0000000000000005)
+	arch flags:    x86_64  (0000000000000008)
+	item flags:    container  package  application  extension-hidden  native-app  (000000000010008e)
+	iconName:      AppIcon
+	iconDict:      {
+    CFBundlePrimaryIcon =     {
+        CFBundleIconName = AppIcon;
+    };
+}
+	icons:         Contents/Resources/AppIcon.icns
+	executable:    Contents/MacOS/Calculator
+	inode:         1752
+	exec inode:    9188046
+	container id:  4
+	min version:   10.10 (<00004001 00280000>)
+	mach min ver:  10.13 (<0000a001 00280000>)
+	execSDK ver:   10.13 (<0000a001 00280000>)
+	plistCommon:   {
+    CFBundleDevelopmentRegion = English;
+    CFBundleExecutable = Calculator;
+    CFBundleGetInfoString = "10.13, Copyright \U00a9 2001-2017, Apple Inc.";
+    CFBundleHelpBookFolder = "Calculator.help";
+    CFBundleHelpBookName = "com.apple.Calculator.help";
+    CFBundleIconFile = AppIcon;
+    CFBundleIconName = AppIcon;
+    CFBundleIdentifier = "com.apple.calculator";
+    CFBundleInfoDictionaryVersion = "6.0";
+    CFBundleName = Calculator;
+    CFBundlePackageType = APPL;
+    CFBundleShortVersionString = "10.13";
+    CFBundleSignature = "????";
+    CFBundleSupportedPlatforms =     (
+        MacOSX
+    );
+    CFBundleVersion = 123;
+    NSMainNibFile = Calculator;
+    NSPrincipalClass = NSApplication;
+    NSSupportsSuddenTermination = 1;
+}
+	library:       (null)
+	schemesList:   NONE
+	activityTypes: NOTIFICATION#:com.apple.calculator, pv-d0fb7e13705334
+	entitlements:  4 entitlements
+	entitlements:  {
+    "com.apple.security.app-sandbox" = 1;
+    "com.apple.security.files.user-selected.read-write" = 1;
+    "com.apple.security.network.client" = 1;
+    "com.apple.security.print" = 1;
+}
+--------------------------------------------------------------------------------
+BundleClass: kLSBundleClassApplication
+Container mount state: mounted
+bundle	id:            ####
+	Mach-O UUIDs:  #####
+	Device Familie 
+	Counterpart ID 
+	sequenceNum:   ####
+	FamilyID:      0
+	PurchaserID:   0
+	DownloaderID:  0
+	installType:   0
+	appContainer:  #
+	dataContainer: #
+	path:          /Users/myuser/Applications/Eclipse.app
+	name:          Eclipse
+	displayName:   Eclipse
+	itemName:      (null)
+	teamID:        (null)
+	staticSize:    0
+	storeFront:    0
+	versionID:     0
+	sourceAppID:   (null)
+	ratingLabel:   (null)
+	ratingRank:    0
+	genre::        (null)
+	genreID:       0
+	category:      (null)
+	2ry category:  (null)
+	identifier:    org.eclipse.sdk.ide (0x800072f6)
+	vendor:        (null)
+	type:          (null)
+	version:       4.7.3 (<0300e000 00100000>)
+	versionString: 4.7.3.M20180330-0640
+	displayVersion 4.7.3
+	codeInfoID:    (null)
+	signerOrg:     (null)
+	mod date:      ###############
+	reg date:      ###############
+	type code:     'APPL'
+	creator code:  '????'
+	bundle flags:  has-display-name  (0000000000000002)
+	Icon flags:    relative-icon-path  (0000000000000001)
+	arch flags:    x86_64  (0000000000000008)
+	item flags:    container  package  application  extension-hidden  native-app  (000000000010008e)
+	iconName:      (null)
+	icons:         Contents/Resources/Eclipse.icns
+	executable:    Contents/MacOS/eclipse
+	inode:         ######
+	exec inode:    ######
+	container id:  4
+	mach min ver:  10.10 (<00004001 00280000>)
+	execSDK ver:   10.10 (<00004001 00280000>)
+	plistCommon:   {
+    CFBundleDevelopmentRegion = English;
+    CFBundleDisplayName = Eclipse;
+    CFBundleExecutable = eclipse;
+    CFBundleGetInfoString = "Eclipse 4.7 for Mac OS X, Copyright IBM Corp. and others 2002, 2016. All rights reserved.";
+    CFBundleIconFile = "Eclipse.icns";
+    CFBundleIdentifier = "org.eclipse.sdk.ide";
+    CFBundleInfoDictionaryVersion = "6.0";
+    CFBundleName = Eclipse;
+    CFBundlePackageType = APPL;
+    CFBundleShortVersionString = "4.7.3";
+    CFBundleSignature = "????";
+    CFBundleURLTypes =     (
+                {
+            CFBundleURLName = "The adt demo protocol";
+            CFBundleURLSchemes =             (
+                adt
+            );
+        }
+    );
+    CFBundleVersion = "4.7.3.M20180330-0640";
+    NSHighResolutionCapable = 1;
+}
+	library:       (null)
+	schemesList:   NONE
+	activityTypes: NOTIFICATION#:org.eclipse.sdk.ide, pv-cd21293c654b55
+	--------------------------------------------------------
+	claim	id:            42056
+		name:          The adt protocol
+		rank:          Default
+		roles:         Viewer  
+		flags:         url-type  
+		icon:          
+		bindings:      adt:
+--------------------------------------------------------------------------------
+BundleClass: kLSBundleClassApplication
+Container mount state: mounted
+bundle	id:            8668
+	Mach-O UUIDs:  ##########################
+	Device Familie 
+	Counterpart ID 
+	sequenceNum:   8668
+	FamilyID:      0
+	PurchaserID:   0
+	DownloaderID:  0
+	installType:   0
+	appContainer:  #
+	dataContainer: #
+	path:          /Applications/Stickies.app
+	name:          Stickies
+	displayName:   (null)
+	itemName:      (null)
+	teamID:        0000000000
+	staticSize:    0
+	storeFront:    0
+	versionID:     0
+	sourceAppID:   (null)
+	ratingLabel:   (null)
+	ratingRank:    0
+	genre::        (null)
+	genreID:       0
+	category:      public.app-category.productivity
+	2ry category:  (null)
+	identifier:    com.apple.Stickies (0x8000b3aa)
+	canonical id:  com.apple.stickies (0x8000b3a9)
+	vendor:        (null)
+	type:          (null)
+	version:       (null) (<00000000 00000000>)
+	versionString: (null)
+	displayVersion 10.1
+	codeInfoID:    (null)
+	signerOrg:     (null)
+	mod date:      04.06.18, 15:11
+	reg date:      04.06.18, 15:13
+	type code:     'APPL'
+	creator code:  'notz'
+	bundle flags:  apple-internal  has-display-name  (0000000000000003)
+	plist flags:   (0000000000010000)
+	Icon flags:    relative-icon-path  (0000000000000001)
+	arch flags:    x86_64  (0000000000000008)
+	item flags:    container  package  application  extension-hidden  native-app  services  (000000000030008e)
+	iconName:      (null)
+	icons:         Contents/Resources/Stickies.icns
+	executable:    Contents/MacOS/Stickies
+	inode:         66390
+	exec inode:    9193526
+	container id:  4
+	min version:   10.8 (<00000001 00280000>)
+	mach min ver:  10.13 (<0000a001 00280000>)
+	execSDK ver:   10.13 (<0000a001 00280000>)
+	plistCommon:   {
+    CFBundleDevelopmentRegion = English;
+    CFBundleDocumentTypes =     (
+                {
+            CFBundleTypeName = StickieDocument;
+            CFBundleTypeRole = Editor;
+            NSDocumentClass = StickiesDocument;
+        }
+    );
+    CFBundleExecutable = Stickies;
+    CFBundleHelpBookFolder = "Stickies.help";
+    CFBundleHelpBookName = "com.apple.Stickies.help";
+    CFBundleIconFile = "Stickies.icns";
+    CFBundleIdentifier = "com.apple.Stickies";
+    CFBundleInfoDictionaryVersion = "6.0";
+    CFBundleName = Stickies;
+    CFBundlePackageType = APPL;
+    CFBundleShortVersionString = "10.1";
+    CFBundleSignature = notz;
+    CFBundleSupportedPlatforms =     (
+        MacOSX
+    );
+    CFBundleVersion = "";
+    NSMainNibFile = MainMenu;
+    NSPrincipalClass = NSApplication;
+    NSServices =     (
+                {
+            NSExecutable = Stickies;
+            NSKeyEquivalent =             {
+                default = Y;
+            };
+            NSMenuItem =             {
+                default = "Make Sticky";
+            };
+            NSMessage = makeStickyFromTextService;
+            NSPortName = Stickies;
+            NSSendTypes =             (
+                NSStringPboardType,
+                NSRTFPboardType,
+                NSRTFDPboardType
+            );
+        }
+    );
+    NSSupportsSuddenTermination = YES;
+}
+	library:       (null)
+	schemesList:   NONE
+	activityTypes: pv-f07aec335ad51f, NOTIFICATION#:com.apple.Stickies
+	--------------------------------------------------------
+	claim	id:            32636
+		name:          StickieDocument
+		rank:          Default
+		roles:         Editor  
+		flags:         apple-internal  doc-type  resolves-icloud-conflicts  
+		icon:          
+		bindings:      
+	--------------------------------------------------------
+	service	id:            1324
+		menu:          Make Sticky
+		key:           Y
+		port:          Stickies
+		message:       makeStickyFromTextService
+		user data:     (null)
+		timeout:       -1
+		send types:    "NSStringPboardType", "NSRTFPboardType", "NSRTFDPboardType"
+		return types:  
+--------------------------------------------------------------------------------
+handler	id:            9568
+	content type:  public.vcard
+	options:       
+	all roles:     com.microsoft.outlook (0x80006d8a)
+--------------------------------------------------------------------------------
+handler	id:            9572
+	content type:  com.apple.ical.ics
+	options:       
+	all roles:     com.microsoft.outlook (0x80006d8a)

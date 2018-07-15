@@ -14,12 +14,11 @@
 package org.eclipse.urischeme.internal.registration;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import java.io.StringReader;
 import java.io.StringWriter;
-import java.util.Arrays;
-import java.util.List;
 
 import org.junit.Test;
 
@@ -232,44 +231,26 @@ public class TestUnitPlistFileWriter {
 	}
 
 	@Test
-	public void returnsRegisteredSchemeOnerequested() {
+	public void returnsTrueForRegisteredScheme() {
 		PlistFileWriter writer = getWriterWithSchemes("adt");
 
-		List<String> schemes = writer.getRegisteredSchemes(Arrays.asList("adt"));
-		assertEquals(1, schemes.size());
-		assertTrue(schemes.contains("adt"));
+		assertTrue(writer.isRegisteredScheme("adt"));
+		assertFalse(writer.isRegisteredScheme("other"));
 	}
 
 	@Test
-	public void returnsRegisteredSchemeTwoRequested() {
-		PlistFileWriter writer = getWriterWithSchemes("adt");
-
-		List<String> schemes = writer.getRegisteredSchemes(Arrays.asList("adt", "other"));
-		assertEquals(1, schemes.size());
-		assertTrue(schemes.contains("adt"));
-	}
-
-	@Test
-	public void returnsNoRegisteredSchemeTwoRequested() {
-		PlistFileWriter writer = getWriterWithSchemes("yetAnother");
-
-		List<String> schemes = writer.getRegisteredSchemes(Arrays.asList("adt", "other"));
-		assertEquals(0, schemes.size());
-	}
-
-	@Test
-	public void returnsNoRegisteredSchemeTwoRequestedNoneRegistered() {
+	public void returnsFalseWhenNoSchemeIsRegistered() {
 		PlistFileWriter writer = getWriter();
 
-		List<String> schemes = writer.getRegisteredSchemes(Arrays.asList("adt", "other"));
-		assertEquals(0, schemes.size());
+		assertFalse(writer.isRegisteredScheme("adt"));
+		assertFalse(writer.isRegisteredScheme("other"));
 	}
 
 	@Test(expected = IllegalArgumentException.class)
 	public void getRegisteredFailsOnIllegalScheme() {
 		PlistFileWriter writer = getWriterWithSchemes("adt");
 
-		writer.getRegisteredSchemes(Arrays.asList("&/%"));
+		writer.isRegisteredScheme("&/%");
 	}
 
 	private void assertSchemesInOrder(PlistFileWriter writer, String... schemes ) {

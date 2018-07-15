@@ -14,6 +14,7 @@
 package org.eclipse.urischeme.internal.registration;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 
@@ -209,48 +210,28 @@ public class TestUnitDesktopFileWriter {
 	}
 
 	@Test
-	public void returnsRegisteredSchemeOnerequested() {
+	public void returnsTrueForRegisteredScheme() {
 		DesktopFileWriter writer = getWriterFor(
 				fileContentWith("Exec=/usr/bin/eclipse %u", "MimeType=x-scheme-handler/adt;"));
 
-		List<String> schemes = writer.getRegisteredSchemes(Arrays.asList("adt"));
-		assertEquals(1, schemes.size());
-		assertTrue(schemes.contains("adt"));
+		assertTrue(writer.isRegistered("adt"));
+		assertFalse(writer.isRegistered("other"));
 	}
 
 	@Test
-	public void returnsRegisteredSchemeTwoRequested() {
-		DesktopFileWriter writer = getWriterFor(
-				fileContentWith("Exec=/usr/bin/eclipse %u", "MimeType=x-scheme-handler/adt;"));
-
-		List<String> schemes = writer.getRegisteredSchemes(Arrays.asList("adt", "other"));
-		assertEquals(1, schemes.size());
-		assertTrue(schemes.contains("adt"));
-	}
-
-	@Test
-	public void returnsNoRegisteredSchemeTwoRequested() {
-		DesktopFileWriter writer = getWriterFor(
-				fileContentWith("Exec=/usr/bin/eclipse %u", "MimeType=x-scheme-handler/yetAnother;"));
-
-		List<String> schemes = writer.getRegisteredSchemes(Arrays.asList("adt", "other"));
-		assertEquals(0, schemes.size());
-	}
-
-	@Test
-	public void returnsNoRegisteredSchemeTwoRequestedNoneRegistered() {
+	public void returnsFalseWhenNoSchemeIsRegistered() {
 		DesktopFileWriter writer = getWriterFor(fileContentWith("Exec=/usr/bin/eclipse %u", ""));
 
-		List<String> schemes = writer.getRegisteredSchemes(Arrays.asList("adt", "other"));
-		assertEquals(0, schemes.size());
+		assertFalse(writer.isRegistered("adt"));
+		assertFalse(writer.isRegistered("other"));
 	}
 
 	@Test(expected = IllegalArgumentException.class)
-	public void getRegisteredFailsOnIllegalScheme() {
+	public void isRegisteredFailsOnIllegalScheme() {
 		DesktopFileWriter writer = getWriterFor(
 				fileContentWith("Exec=/usr/bin/eclipse %u", "MimeType=x-scheme-handler/adt;"));
 
-		writer.getRegisteredSchemes(Arrays.asList("&/%"));
+		writer.isRegistered("&/%");
 	}
 
 	@Test
@@ -261,6 +242,65 @@ public class TestUnitDesktopFileWriter {
 
 		String expected = String.join(LINE_SEPARATOR, fileContent);
 		assertThat(new String(writer.getResult()), new IsEqual<String>(expected));
+	}
+
+	@Test
+	public void returnsMinimalDesktopFile() {
+		List<String> actual = DesktopFileWriter.getMinimalDesktopFileContent("/home/myuser/Eclipse/eclipse/eclipse");
+		List<String> expected = Arrays.asList(//
+				"[Desktop Entry]", //
+				"Exec=/home/myuser/Eclipse/eclipse/eclipse", //
+				"NoDisplay=true", //
+				"Type=Application");
+		assertEquals(expected, actual);
+	}
+
+	@Test
+	public void returnsMinimalDesktopFileWithSpaceEscapedInLocation() {
+		List<String> actual = DesktopFileWriter
+				.getMinimalDesktopFileContent("/home/myuser/Eclipse/eclipse (copy)/eclipse");
+		List<String> expected = Arrays.asList(//
+				"[Desktop Entry]", //
+				"Exec=/home/myuser/Eclipse/eclipse\\ (copy)/eclipse", //
+				"NoDisplay=true", //
+				"Type=Application");
+		assertEquals(expected, actual);
+	}
+
+	@Test
+	public void returnsMinimalDesktopFileWithMultipleSpacesEscapedInLocation() {
+		List<String> actual = DesktopFileWriter
+				.getMinimalDesktopFileContent("/home/myuser/Eclipse/eclipse   (copy)/eclipse");
+		List<String> expected = Arrays.asList(//
+				"[Desktop Entry]", //
+				"Exec=/home/myuser/Eclipse/eclipse\\ \\ \\ (copy)/eclipse", //
+				"NoDisplay=true", //
+				"Type=Application");
+		assertEquals(expected, actual);
+	}
+
+	@Test
+	public void returnsExecutablePathWithoutParameter() {
+		DesktopFileWriter writer = getWriterFor(
+				fileContentWith("Exec=/usr/bin/eclipse %u", "MimeType=x-scheme-handler/adt;"));
+
+		assertEquals("/usr/bin/eclipse", writer.getExecutableLocation());
+	}
+
+	@Test
+	public void returnsUnescapedSpaceExecutablePathWithoutParameter() {
+		DesktopFileWriter writer = getWriterFor(
+				fileContentWith("Exec=/usr/bin/eclipse\\ (copy) %u", "MimeType=x-scheme-handler/adt;"));
+
+		assertEquals("/usr/bin/eclipse (copy)", writer.getExecutableLocation());
+	}
+
+	@Test
+	public void returnsUnescapedMultipleSpacesExecutablePathWithoutParameter() {
+		DesktopFileWriter writer = getWriterFor(
+				fileContentWith("Exec=/usr/bin/eclipse\\ \\ (copy) %u", "MimeType=x-scheme-handler/adt;"));
+
+		assertEquals("/usr/bin/eclipse  (copy)", writer.getExecutableLocation());
 	}
 
 	private Matcher<String> containsLine(String line) {

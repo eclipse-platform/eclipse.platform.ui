@@ -13,16 +13,11 @@
  *******************************************************************************/
 package org.eclipse.urischeme.internal.registration;
 
-import static java.util.stream.Collectors.toList;
-
 import java.io.BufferedWriter;
 import java.io.Closeable;
 import java.io.IOException;
 import java.io.Reader;
 import java.io.Writer;
-import java.util.Collection;
-import java.util.List;
-import java.util.function.Predicate;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -79,19 +74,15 @@ public class PlistFileWriter {
 	}
 
 	/**
-	 * Takes the given schemes and checks whether they are registered. Returns a
-	 * list with these schemes that are registered.
+	 * Checks if the given scheme is registered in this .plist file
 	 *
-	 * @param schemes The schemes that should be checked for registrations.
-	 * @return the registered schemes.
+	 * @param scheme that should be checked for registration
+	 * @return <code>true</code> if scheme registered; <code>false</code> otherwise
 	 */
-	public List<String> getRegisteredSchemes(Collection<String> schemes) {
-		Predicate<String> matchingSchemes = scheme -> {
-			Util.assertUriSchemeIsLegal(scheme);
-			return getExistingElementFor(scheme) != null;
-		};
+	public boolean isRegisteredScheme(String scheme) {
+		Util.assertUriSchemeIsLegal(scheme);
 
-		return schemes.stream().filter(matchingSchemes).collect(toList());
+		return getExistingElementFor(scheme) != null;
 	}
 
 	/**
