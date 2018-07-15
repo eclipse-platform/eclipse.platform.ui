@@ -47,8 +47,10 @@ import org.eclipse.ui.internal.PartSite;
 import org.eclipse.ui.internal.ViewActionBuilder;
 import org.eclipse.ui.internal.ViewReference;
 import org.eclipse.ui.internal.WorkbenchPartReference;
+import org.eclipse.ui.internal.menus.WorkbenchMenuService;
 import org.eclipse.ui.internal.registry.ViewDescriptor;
 import org.eclipse.ui.internal.testing.ContributionInfoMessages;
+import org.eclipse.ui.menus.IMenuService;
 import org.eclipse.ui.testing.ContributionInfo;
 
 public class CompatibilityView extends CompatibilityPart {
@@ -209,7 +211,7 @@ public class CompatibilityView extends CompatibilityPart {
 		return true;
 	}
 
-	private void clearOpaqueMenuItems(MenuManagerRenderer renderer, MMenu menu) {
+	public static void clearOpaqueMenuItems(MenuManagerRenderer renderer, MMenu menu) {
 		for (Iterator<MMenuElement> it = menu.getChildren().iterator(); it.hasNext();) {
 			MMenuElement child = it.next();
 			IContributionItem contribution = renderer.getContribution(child);
@@ -266,13 +268,23 @@ public class CompatibilityView extends CompatibilityPart {
 				tbmr.clearModelToManager(toolbar, tbm);
 				clearOpaqueToolBarItems(tbmr, toolbar);
 			}
-			toolbar.getTransientData().clear();
+			toolbar.getTransientData().remove(ToolBarManagerRenderer.POST_PROCESSING_FUNCTION);
 		}
 
+		clearMenuServiceContributions(site, part);
 		super.disposeSite(site);
 	}
 
-	private void clearOpaqueToolBarItems(ToolBarManagerRenderer tbmr, MToolBar toolbar) {
+	private static void clearMenuServiceContributions(PartSite site, MPart part) {
+		IMenuService menuService = site.getService(IMenuService.class);
+		if (!(menuService instanceof WorkbenchMenuService)) {
+			return;
+		}
+		WorkbenchMenuService service = (WorkbenchMenuService) menuService;
+		service.clearContributions(site, part);
+	}
+
+	public static void clearOpaqueToolBarItems(ToolBarManagerRenderer tbmr, MToolBar toolbar) {
 		// remove opaque mappings
 		for (Iterator<MToolBarElement> it = toolbar.getChildren().iterator(); it.hasNext();) {
 			MToolBarElement element = it.next();

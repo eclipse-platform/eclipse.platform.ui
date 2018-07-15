@@ -14,6 +14,7 @@ package org.eclipse.ui.internal.menus;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import org.eclipse.core.expressions.IEvaluationContext;
 import org.eclipse.e4.core.commands.ExpressionContext;
@@ -49,12 +50,15 @@ import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.ToolBarManager;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.ToolBar;
+import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.ISourceProvider;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.internal.PartSite;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.WorkbenchWindow;
+import org.eclipse.ui.internal.e4.compatibility.CompatibilityView;
 import org.eclipse.ui.internal.services.IWorkbenchLocationService;
 import org.eclipse.ui.internal.services.ServiceLocator;
 import org.eclipse.ui.menus.AbstractContributionFactory;
@@ -469,6 +473,59 @@ public class WorkbenchMenuService implements IMenuService {
 		final IPresentationEngine engine = e4Context.get(IPresentationEngine.class);
 		engine.removeGui(mMenu);
 		mMenu.getTransientData().remove(ModelUtils.CONTAINING_PARENT);
+	}
+
+	/**
+	 * Disposes contributions created by service for given part. See bug 537046.
+	 *
+	 * @param site
+	 * @param part
+	 */
+	public void clearContributions(PartSite site, MPart part) {
+		List<MToolBar> toolbars = getContributedToolbars(part);
+		IEclipseContext context = part.getContext();
+		IRendererFactory rendererFactory = context.get(IRendererFactory.class);
+		IActionBars actionBars = site.getActionBars();
+		if (toolbars != null) {
+			for (MToolBar mToolBar : toolbars) {
+				((Notifier) mToolBar).eAdapters().clear();
+				AbstractPartRenderer apr = rendererFactory.getRenderer(mToolBar, null);
+				if (apr instanceof ToolBarManagerRenderer) {
+					ToolBarManager tbm = (ToolBarManager) actionBars.getToolBarManager();
+					ToolBarManagerRenderer tbmr = (ToolBarManagerRenderer) apr;
+					tbmr.clearModelToManager(mToolBar, tbm);
+					CompatibilityView.clearOpaqueToolBarItems(tbmr, mToolBar);
+				}
+				mToolBar.getTransientData().remove(ToolBarManagerRenderer.POST_PROCESSING_FUNCTION);
+				final IPresentationEngine engine = context.get(IPresentationEngine.class);
+				engine.removeGui(mToolBar);
+				mToolBar.getTransientData().remove(ModelUtils.CONTAINING_PARENT);
+			}
+		}
+		List<MMenu> menus = getContributedMenus(part);
+		if (menus != null) {
+			for (MMenu mMenu : menus) {
+				((Notifier) mMenu).eAdapters().clear();
+				AbstractPartRenderer apr = rendererFactory.getRenderer(mMenu, null);
+				if (apr instanceof MenuManagerRenderer) {
+					MenuManager tbm = (MenuManager) actionBars.getMenuManager();
+					MenuManagerRenderer tbmr = (MenuManagerRenderer) apr;
+					tbmr.clearModelToManager(mMenu, tbm);
+					CompatibilityView.clearOpaqueMenuItems(tbmr, mMenu);
+				}
+				final IPresentationEngine engine = context.get(IPresentationEngine.class);
+				engine.removeGui(mMenu);
+				mMenu.getTransientData().remove(ModelUtils.CONTAINING_PARENT);
+			}
+		}
+	}
+
+	private List<MMenu> getContributedMenus(MPart part) {
+		return (List<MMenu>) part.getTransientData().get(POPULATED_MENUS);
+	}
+
+	private List<MToolBar> getContributedToolbars(MPart part) {
+		return (List<MToolBar>) part.getTransientData().get(POPULATED_TOOL_BARS);
 	}
 
 	@Override
