@@ -1,6 +1,7 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: Tests
+Bundle-Name: %Plugin.name
+Bundle-Vendor: %Plugin.Providername
 Bundle-SymbolicName: org.eclipse.tests.urischeme
 Bundle-Version: 1.0.0.qualifier
 Fragment-Host: org.eclipse.urischeme;bundle-version="1.0.0"
