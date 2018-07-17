@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2015 IBM Corporation and others.
+ * Copyright (c) 2007, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -177,9 +177,7 @@ public class StringToNumberParser {
 			bigInteger = BigInteger.valueOf(number.longValue());
 		} else if (number instanceof Float || number instanceof Double) {
 			double doubleValue = number.doubleValue();
-			if (!Double.isNaN(doubleValue)
-					&& doubleValue != Double.NEGATIVE_INFINITY
-					&& doubleValue != Double.POSITIVE_INFINITY) {
+			if (!Double.isNaN(doubleValue) && !Double.isInfinite(doubleValue)) {
 				bigInteger = new BigDecimal(doubleValue).toBigInteger();
 			} else {
 				return false;
@@ -241,9 +239,7 @@ public class StringToNumberParser {
 		} else if (number instanceof Float || number instanceof Double) {
 			double doubleValue = number.doubleValue();
 
-			if (!Double.isNaN(doubleValue)
-					&& doubleValue != Double.NEGATIVE_INFINITY
-					&& doubleValue != Double.POSITIVE_INFINITY) {
+			if (!Double.isNaN(doubleValue) && !Double.isInfinite(doubleValue)) {
 				bigDecimal = new BigDecimal(doubleValue);
 			} else {
 				return false;
@@ -263,7 +259,13 @@ public class StringToNumberParser {
 			// clause and the if condition below, they were commented because
 			// the
 			// compiler complained about dead code..
-			bigDecimal = new BigDecimal(number.doubleValue());
+			double doubleValue = number.doubleValue();
+
+			if (!Double.isNaN(doubleValue) && !Double.isInfinite(doubleValue)) {
+				bigDecimal = new BigDecimal(doubleValue);
+			} else {
+				return false;
+			}
 		}
 
 		/* if (bigDecimal != null) */{
