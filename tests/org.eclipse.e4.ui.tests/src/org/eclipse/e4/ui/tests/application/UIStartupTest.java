@@ -124,12 +124,7 @@ public abstract class UIStartupTest extends HeadlessApplicationTest {
 	public void testGetFirstPart_GetContext() {
 		// need to wrap this since the renderer will try build the UI for the
 		// part if it hasn't been built
-		Realm.runWithDefault(DisplayRealm.getRealm(display), new Runnable() {
-			@Override
-			public void run() {
-				UIStartupTest.super.testGetFirstPart_GetContext();
-			}
-		});
+		Realm.runWithDefault(DisplayRealm.getRealm(display), () -> UIStartupTest.super.testGetFirstPart_GetContext());
 	}
 
 	@Test
@@ -137,12 +132,7 @@ public abstract class UIStartupTest extends HeadlessApplicationTest {
 	public void testGetSecondPart_GetContext() {
 		// need to wrap this since the renderer will try build the UI for the
 		// part if it hasn't been built
-		Realm.runWithDefault(DisplayRealm.getRealm(display), new Runnable() {
-			@Override
-			public void run() {
-				UIStartupTest.super.testGetSecondPart_GetContext();
-			}
-		});
+		Realm.runWithDefault(DisplayRealm.getRealm(display), () -> UIStartupTest.super.testGetSecondPart_GetContext());
 	}
 
 	private static MWindowElement getNonContainer(MWindowElement activeChild) {
@@ -166,55 +156,43 @@ public abstract class UIStartupTest extends HeadlessApplicationTest {
 	@Override
 	protected IEclipseContext createApplicationContext() {
 		final IEclipseContext[] contexts = new IEclipseContext[1];
-		Realm.runWithDefault(DisplayRealm.getRealm(display), new Runnable() {
-			@Override
-			public void run() {
-				contexts[0] = UIStartupTest.super.createApplicationContext();
-				contexts[0].set(IResourceUtilities.class.getName(),
-						new ResourceUtility());
-				contexts[0].set(IStylingEngine.class,
-						new IStylingEngine() {
-							@Override
-							public void style(Object widget) {
-								// no-op
-							}
+		Realm.runWithDefault(DisplayRealm.getRealm(display), () -> {
+			contexts[0] = UIStartupTest.super.createApplicationContext();
+			contexts[0].set(IResourceUtilities.class.getName(), new ResourceUtility());
+			contexts[0].set(IStylingEngine.class, new IStylingEngine() {
+				@Override
+				public void style(Object widget) {
+					// no-op
+				}
 
-							@Override
-							public void setId(Object widget, String id) {
-								// no-op
-							}
+				@Override
+				public void setId(Object widget, String id) {
+					// no-op
+				}
 
-							@Override
-							public void setClassname(Object widget,
-									String classname) {
-								// no-op
-							}
+				@Override
+				public void setClassname(Object widget, String classname) {
+					// no-op
+				}
 
-							@Override
-							public CSSStyleDeclaration getStyle(Object widget) {
-								// TODO Auto-generated method stub
-								return null;
-							}
+				@Override
+				public CSSStyleDeclaration getStyle(Object widget) {
+					// TODO Auto-generated method stub
+					return null;
+				}
 
-							@Override
-							public void setClassnameAndId(Object widget,
-									String classname, String id) {
-								// no-op
-							}
-						});
-			}
+				@Override
+				public void setClassnameAndId(Object widget, String classname, String id) {
+					// no-op
+				}
+			});
 		});
 		return contexts[0];
 	}
 
 	@Override
 	protected void createGUI(final MUIElement uiRoot) {
-		Realm.runWithDefault(DisplayRealm.getRealm(display), new Runnable() {
-			@Override
-			public void run() {
-				UIStartupTest.super.createGUI(uiRoot);
-			}
-		});
+		Realm.runWithDefault(DisplayRealm.getRealm(display), () -> UIStartupTest.super.createGUI(uiRoot));
 	}
 
 }

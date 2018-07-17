@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2015 Brad Reynolds and others.
+ * Copyright (c) 2006, 2018 Brad Reynolds and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -44,37 +44,34 @@ public class Snippet008ComputedValue {
 	 */
 	public static void main(String[] args) {
 		final Display display = new Display();
-		Realm.runWithDefault(DisplayRealm.getRealm(display), new Runnable() {
-			@Override
-			public void run() {
-				Shell shell = new Shell(display);
-				shell.setLayout(new FillLayout());
+		Realm.runWithDefault(DisplayRealm.getRealm(display), () -> {
+			Shell shell = new Shell(display);
+			shell.setLayout(new FillLayout());
 
-				final UI ui = new UI(shell);
-				final Data data = new Data();
+			final UI ui = new UI(shell);
+			final Data data = new Data();
 
-				// Bind the UI to the Data.
-				DataBindingContext dbc = new DataBindingContext();
-				dbc.bindValue((IObservableValue<String>) WidgetProperties.text(SWT.Modify).observe(ui.firstName),
-						data.firstName);
-				dbc.bindValue((IObservableValue<String>) WidgetProperties.text(SWT.Modify).observe(ui.lastName),
-						data.lastName);
+			// Bind the UI to the Data.
+			DataBindingContext dbc = new DataBindingContext();
+			dbc.bindValue((IObservableValue<String>) WidgetProperties.text(SWT.Modify).observe(ui.firstName),
+					data.firstName);
+			dbc.bindValue((IObservableValue<String>) WidgetProperties.text(SWT.Modify).observe(ui.lastName),
+					data.lastName);
 
-				// Construct the formatted name observable.
-				FormattedName formattedName = new FormattedName(data.firstName, data.lastName);
+			// Construct the formatted name observable.
+			FormattedName formattedName = new FormattedName(data.firstName, data.lastName);
 
-				// Bind the formatted name Text to the formatted name
-				// observable.
-				dbc.bindValue((IObservableValue<String>) WidgetProperties.text(SWT.None).observe(ui.formattedName),
-						formattedName,
-						new UpdateValueStrategy<String, String>(false, UpdateValueStrategy.POLICY_NEVER), null);
+			// Bind the formatted name Text to the formatted name
+			// observable.
+			dbc.bindValue((IObservableValue<String>) WidgetProperties.text(SWT.None).observe(ui.formattedName),
+					formattedName, new UpdateValueStrategy<String, String>(false, UpdateValueStrategy.POLICY_NEVER),
+					null);
 
-				shell.pack();
-				shell.open();
-				while (!shell.isDisposed()) {
-					if (!display.readAndDispatch())
-						display.sleep();
-				}
+			shell.pack();
+			shell.open();
+			while (!shell.isDisposed()) {
+				if (!display.readAndDispatch())
+					display.sleep();
 			}
 		});
 		display.dispose();

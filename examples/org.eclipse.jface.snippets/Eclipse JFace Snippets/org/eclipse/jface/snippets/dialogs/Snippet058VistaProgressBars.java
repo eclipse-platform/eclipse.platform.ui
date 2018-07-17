@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2014 IBM Corporation and others.
+ * Copyright (c) 2005, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,7 +13,6 @@ package org.eclipse.jface.snippets.dialogs;
 
 import java.lang.reflect.InvocationTargetException;
 
-import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IProgressMonitorWithBlocking;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
@@ -48,42 +47,32 @@ public class Snippet058VistaProgressBars {
 	private static IRunnableWithProgress createRunnableFor(
 			final ProgressMonitorDialog dialog) {
 
-		return new IRunnableWithProgress() {
+		return monitor -> {
 
-			@Override
-			public void run(IProgressMonitor monitor)
-					throws InvocationTargetException, InterruptedException {
+			IProgressMonitorWithBlocking blocking = (IProgressMonitorWithBlocking) monitor;
 
-				IProgressMonitorWithBlocking blocking = (IProgressMonitorWithBlocking) monitor;
-
-				blocking.beginTask("Vista Coolness", 100);
-				for (int i = 0; i < 10; i++) {
-					blocking.setBlocked(new Status(IStatus.WARNING, "Blocked",
-							"This is blocked on Vista"));
-					blocking.worked(5);
-					spin(dialog.getShell().getDisplay());
-					blocking.clearBlocked();
-					blocking.worked(5);
-					spin(dialog.getShell().getDisplay());
-					if (monitor.isCanceled())
-						return;
-				}
-				blocking.done();
+			blocking.beginTask("Vista Coolness", 100);
+			for (int i = 0; i < 10; i++) {
+				blocking.setBlocked(new Status(IStatus.WARNING, "Blocked", "This is blocked on Vista"));
+				blocking.worked(5);
+				spin(dialog.getShell().getDisplay());
+				blocking.clearBlocked();
+				blocking.worked(5);
+				spin(dialog.getShell().getDisplay());
+				if (monitor.isCanceled())
+					return;
 			}
+			blocking.done();
 		};
 	}
 
 	private static void spin(final Display display) {
-		display.syncExec(new Runnable() {
+		display.syncExec(() -> {
+			long endTime = System.currentTimeMillis() + 1000;
 
-			@Override
-			public void run() {
-				long endTime = System.currentTimeMillis() + 1000;
+			while (System.currentTimeMillis() < endTime)
+				display.readAndDispatch();
 
-				while (System.currentTimeMillis() < endTime)
-					display.readAndDispatch();
-
-			}
 		});
 
 	}

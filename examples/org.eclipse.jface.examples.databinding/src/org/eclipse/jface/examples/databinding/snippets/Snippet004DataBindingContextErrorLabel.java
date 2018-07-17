@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2016 Brad Reynolds and others.
+ * Copyright (c) 2006, 2018 Brad Reynolds and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -44,44 +44,36 @@ import org.eclipse.swt.widgets.Text;
 public class Snippet004DataBindingContextErrorLabel {
 	public static void main(String[] args) {
 		final Display display = new Display();
-		Realm.runWithDefault(DisplayRealm.getRealm(display), new Runnable() {
-			@SuppressWarnings("unchecked")
-			@Override
-			public void run() {
-				Shell shell = new Shell(display);
-				shell.setText("Data Binding Snippet 004");
-				shell.setLayout(new GridLayout(2, false));
+		Realm.runWithDefault(DisplayRealm.getRealm(display), () -> {
+			Shell shell = new Shell(display);
+			shell.setText("Data Binding Snippet 004");
+			shell.setLayout(new GridLayout(2, false));
 
-				new Label(shell, SWT.NONE).setText("Enter '5' to be valid:");
+			new Label(shell, SWT.NONE).setText("Enter '5' to be valid:");
 
-				Text text = new Text(shell, SWT.BORDER);
-				WritableValue<String> value = WritableValue.withValueType(String.class);
-				new Label(shell, SWT.NONE).setText("Error:");
+			Text text = new Text(shell, SWT.BORDER);
+			WritableValue<String> value = WritableValue.withValueType(String.class);
+			new Label(shell, SWT.NONE).setText("Error:");
 
-				Label errorLabel = new Label(shell, SWT.BORDER);
-				errorLabel.setForeground(display.getSystemColor(SWT.COLOR_RED));
-				GridDataFactory.swtDefaults().hint(200, SWT.DEFAULT)
-						.applyTo(errorLabel);
+			Label errorLabel = new Label(shell, SWT.BORDER);
+			errorLabel.setForeground(display.getSystemColor(SWT.COLOR_RED));
+			GridDataFactory.swtDefaults().hint(200, SWT.DEFAULT).applyTo(errorLabel);
 
-				DataBindingContext dbc = new DataBindingContext();
+			DataBindingContext dbc = new DataBindingContext();
 
-				// Bind the text to the value.
-				dbc.bindValue((IObservableValue<String>) WidgetProperties.text(SWT.Modify).observe(text),
-						value, new UpdateValueStrategy<String, String>()
-								.setAfterConvertValidator(new FiveValidator()), null);
+			// Bind the text to the value.
+			dbc.bindValue((IObservableValue<String>) WidgetProperties.text(SWT.Modify).observe(text), value,
+					new UpdateValueStrategy<String, String>().setAfterConvertValidator(new FiveValidator()), null);
 
-				// Bind the error label to the validation error on the dbc.
-				dbc.bindValue(
-						WidgetProperties.text().observe(errorLabel),
-						new AggregateValidationStatus(dbc.getBindings(),
-								AggregateValidationStatus.MAX_SEVERITY));
+			// Bind the error label to the validation error on the dbc.
+			dbc.bindValue(WidgetProperties.text().observe(errorLabel),
+					new AggregateValidationStatus(dbc.getBindings(), AggregateValidationStatus.MAX_SEVERITY));
 
-				shell.pack();
-				shell.open();
-				while (!shell.isDisposed()) {
-					if (!display.readAndDispatch())
-						display.sleep();
-				}
+			shell.pack();
+			shell.open();
+			while (!shell.isDisposed()) {
+				if (!display.readAndDispatch())
+					display.sleep();
 			}
 		});
 		display.dispose();

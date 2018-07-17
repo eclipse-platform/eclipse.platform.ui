@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2014 IBM Corporation and others.
+ * Copyright (c) 2008, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -48,13 +48,10 @@ public class Snippet022ComputedListCombo {
 		final Shell shell = new Shell(display);
 		shell.setLayout(new GridLayout(1, false));
 
-		Realm.runWithDefault(DisplayRealm.getRealm(display), new Runnable() {
-			@Override
-			public void run() {
-				Snippet022ComputedListCombo snippet = new Snippet022ComputedListCombo();
-				snippet.createModel();
-				snippet.createControls(shell);
-			}
+		Realm.runWithDefault(DisplayRealm.getRealm(display), () -> {
+			Snippet022ComputedListCombo snippet = new Snippet022ComputedListCombo();
+			snippet.createModel();
+			snippet.createControls(shell);
 		});
 
 		shell.pack();

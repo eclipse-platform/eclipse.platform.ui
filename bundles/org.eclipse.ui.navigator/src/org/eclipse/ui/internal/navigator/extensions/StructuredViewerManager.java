@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2015 IBM Corporation and others.
+ * Copyright (c) 2003, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -15,9 +15,9 @@ import java.util.Map;
 
 import org.eclipse.core.runtime.SafeRunner;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
+import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.jface.viewers.StructuredViewerInternals;
 import org.eclipse.jface.viewers.Viewer;
-import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Item;
 import org.eclipse.ui.internal.navigator.NavigatorContentService;
@@ -207,20 +207,17 @@ public class StructuredViewerManager {
 		Display display = localViewer.getControl().getDisplay();
 		if (display.isDisposed())
 			return;
-		display.syncExec(new Runnable() {
-			@Override
-			public void run() {
-				if (localViewer.getControl().isDisposed())
-					return;
-				SafeRunner.run(new NavigatorSafeRunnable() {
-					@Override
-					public void run() throws Exception {
-						localViewer.getControl().setRedraw(false);
-						localViewer.refresh();
-					}
-				});
-				localViewer.getControl().setRedraw(true);
-			}
+		display.syncExec(() -> {
+			if (localViewer.getControl().isDisposed())
+				return;
+			SafeRunner.run(new NavigatorSafeRunnable() {
+				@Override
+				public void run() throws Exception {
+					localViewer.getControl().setRedraw(false);
+					localViewer.refresh();
+				}
+			});
+			localViewer.getControl().setRedraw(true);
 		});
 
 	}

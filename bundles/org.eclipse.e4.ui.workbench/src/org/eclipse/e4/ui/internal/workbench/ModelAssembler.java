@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2016 BestSolution.at and others.
+ * Copyright (c) 2010, 2018 BestSolution.at and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -476,21 +476,17 @@ public class ModelAssembler {
 					final MApplicationElement internalElment = el;
 					final EObject internalImportObject = importObject;
 
-					commands.add(new Runnable() {
-
-						@Override
-						public void run() {
-							if (internalFeature.isMany()) {
-								logger.error("Replacing"); //$NON-NLS-1$
-								@SuppressWarnings("unchecked")
-								List<Object> l = (List<Object>) interalTarget.eGet(internalFeature);
-								int index = l.indexOf(internalImportObject);
-								if (index >= 0) {
-									l.set(index, internalElment);
-								}
-							} else {
-								interalTarget.eSet(internalFeature, internalElment);
+					commands.add(() -> {
+						if (internalFeature.isMany()) {
+							logger.error("Replacing"); //$NON-NLS-1$
+							@SuppressWarnings("unchecked")
+							List<Object> l = (List<Object>) interalTarget.eGet(internalFeature);
+							int index = l.indexOf(internalImportObject);
+							if (index >= 0) {
+								l.set(index, internalElment);
 							}
+						} else {
+							interalTarget.eSet(internalFeature, internalElment);
 						}
 					});
 				}

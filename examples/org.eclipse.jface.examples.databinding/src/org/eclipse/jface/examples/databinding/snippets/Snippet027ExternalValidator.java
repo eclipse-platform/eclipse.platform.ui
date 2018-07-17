@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2014 Code 9 Corporation and others.
+ * Copyright (c) 2008, 2018 Code 9 Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -247,20 +247,16 @@ public class Snippet027ExternalValidator extends WizardPage {
 	public static void main(String[] args) {
 		Display display = new Display();
 
-		Realm.runWithDefault(DisplayRealm.getRealm(display), new Runnable() {
-			@Override
-			public void run() {
-				IWizard wizard = new ExternalValidationWizard();
-				WizardDialog dialog = new WizardDialog(null, wizard);
-				dialog.open();
+		Realm.runWithDefault(DisplayRealm.getRealm(display), () -> {
+			IWizard wizard = new ExternalValidationWizard();
+			WizardDialog dialog = new WizardDialog(null, wizard);
+			dialog.open();
 
-				// The SWT event loop
-				Display display = Display.getCurrent();
-				while (dialog.getShell() != null
-						&& !dialog.getShell().isDisposed()) {
-					if (!display.readAndDispatch()) {
-						display.sleep();
-					}
+			// The SWT event loop
+			Display display1 = Display.getCurrent();
+			while (dialog.getShell() != null && !dialog.getShell().isDisposed()) {
+				if (!display1.readAndDispatch()) {
+					display1.sleep();
 				}
 			}
 		});

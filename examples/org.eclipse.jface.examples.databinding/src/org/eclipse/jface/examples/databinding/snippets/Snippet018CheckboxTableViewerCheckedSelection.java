@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2014 Matthew Hall and others.
+ * Copyright (c) 2008, 2018 Matthew Hall and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -31,7 +31,6 @@ import org.eclipse.jface.databinding.swt.DisplayRealm;
 import org.eclipse.jface.databinding.swt.WidgetProperties;
 import org.eclipse.jface.databinding.viewers.ViewerSupport;
 import org.eclipse.jface.databinding.viewers.ViewersObservables;
-import org.eclipse.jface.dialogs.IInputValidator;
 import org.eclipse.jface.dialogs.InputDialog;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.layout.GridDataFactory;
@@ -48,9 +47,7 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
@@ -63,17 +60,14 @@ public class Snippet018CheckboxTableViewerCheckedSelection {
 	public static void main(String[] args) {
 		// The SWT event loop
 		final Display display = Display.getDefault();
-		Realm.runWithDefault(DisplayRealm.getRealm(display), new Runnable() {
-			@Override
-			public void run() {
-				ViewModel viewModel = createSampleModel();
+		Realm.runWithDefault(DisplayRealm.getRealm(display), () -> {
+			ViewModel viewModel = createSampleModel();
 
-				Shell shell = new View(viewModel).createShell();
-				shell.open();
-				while (!shell.isDisposed())
-					if (!display.readAndDispatch())
-						display.sleep();
-			}
+			Shell shell = new View(viewModel).createShell();
+			shell.open();
+			while (!shell.isDisposed())
+				if (!display.readAndDispatch())
+					display.sleep();
 		});
 		display.dispose();
 	}
@@ -299,40 +293,27 @@ public class Snippet018CheckboxTableViewerCheckedSelection {
 
 			final IObservableList people = BeanProperties.list(viewModel.getClass(), "people").observe(viewModel);
 
-			addPersonButton.addListener(SWT.Selection, new Listener() {
-				@Override
-				public void handleEvent(Event event) {
-					InputDialog dlg = new InputDialog(shell, "Add Person",
-							"Enter name:", "<Name>", new IInputValidator() {
-								@Override
-								public String isValid(String newText) {
-									if (newText == null
-											|| newText.length() == 0)
-										return "Name cannot be empty";
-									return null;
-								}
-							});
-					if (dlg.open() == Window.OK) {
-						Person person = new Person();
-						person.setName(dlg.getValue());
-						people.add(person);
-						peopleViewer.setSelection(new StructuredSelection(
-								person));
-					}
+			addPersonButton.addListener(SWT.Selection, event -> {
+				InputDialog dlg = new InputDialog(shell, "Add Person", "Enter name:", "<Name>", newText -> {
+					if (newText == null || newText.length() == 0)
+						return "Name cannot be empty";
+					return null;
+				});
+				if (dlg.open() == Window.OK) {
+					Person person = new Person();
+					person.setName(dlg.getValue());
+					people.add(person);
+					peopleViewer.setSelection(new StructuredSelection(person));
 				}
 			});
 
-			removePersonButton.addListener(SWT.Selection, new Listener() {
-				@Override
-				public void handleEvent(Event event) {
-					IStructuredSelection selected = peopleViewer.getStructuredSelection();
-					if (selected.isEmpty())
-						return;
-					Person person = (Person) selected.getFirstElement();
-					if (MessageDialog.openConfirm(shell, "Remove person",
-							"Remove " + person.getName() + "?"))
-						people.remove(person);
-				}
+			removePersonButton.addListener(SWT.Selection, event -> {
+				IStructuredSelection selected = peopleViewer.getStructuredSelection();
+				if (selected.isEmpty())
+					return;
+				Person person = (Person) selected.getFirstElement();
+				if (MessageDialog.openConfirm(shell, "Remove person", "Remove " + person.getName() + "?"))
+					people.remove(person);
 			});
 
 			ViewerSupport.bind(peopleViewer, people, BeanProperties.values(

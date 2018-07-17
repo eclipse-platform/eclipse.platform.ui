@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2014 Matthew Hall and others.
+ * Copyright (c) 2009, 2018 Matthew Hall and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -63,16 +63,13 @@ public class Snippet030DateAndTimeObservableValue {
 	 */
 	public void open() {
 		final Display display = Display.getDefault();
-		Realm.runWithDefault(DisplayRealm.getRealm(display), new Runnable() {
-			@Override
-			public void run() {
-				createContents();
-				shell.pack();
-				shell.open();
-				while (!shell.isDisposed()) {
-					if (!display.readAndDispatch())
-						display.sleep();
-				}
+		Realm.runWithDefault(DisplayRealm.getRealm(display), () -> {
+			createContents();
+			shell.pack();
+			shell.open();
+			while (!shell.isDisposed()) {
+				if (!display.readAndDispatch())
+					display.sleep();
 			}
 		});
 	}

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2015 Wind River Systems, Inc. and others.
+ * Copyright (c) 2006, 2018 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -104,12 +104,7 @@ public class CNavigatorContentProvider implements
 					if (viewPart instanceof CommonNavigator) {
 						final CommonNavigator cn = ((CommonNavigator) viewPart);
 						viewPart.getSite().getShell().getDisplay().asyncExec(
-								new Runnable() {
-									@Override
-									public void run() {
-										cn.setLinkingEnabled(true);
-									}
-								});
+								() -> cn.setLinkingEnabled(true));
 					}
 				}
 			}

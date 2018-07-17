@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2015 IBM Corporation and others.
+ * Copyright (c) 2006, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -93,20 +93,12 @@ public class SWTUtil {
 				result = new WorkQueue(d);
 				final WorkQueue q = result;
 				mapDisplayOntoWorkQueue.put(d, result);
-				d.asyncExec(new Runnable() {
-					@Override
-					public void run() {
-						d.disposeExec(new Runnable() {
-							@Override
-							public void run() {
-								synchronized (mapDisplayOntoWorkQueue) {
-									q.cancelAll();
-									mapDisplayOntoWorkQueue.remove(d);
-								}
-							}
-						});
+				d.asyncExec(() -> d.disposeExec(() -> {
+					synchronized (mapDisplayOntoWorkQueue) {
+						q.cancelAll();
+						mapDisplayOntoWorkQueue.remove(d);
 					}
-				});
+				}));
 			}
 			return result;
 		}

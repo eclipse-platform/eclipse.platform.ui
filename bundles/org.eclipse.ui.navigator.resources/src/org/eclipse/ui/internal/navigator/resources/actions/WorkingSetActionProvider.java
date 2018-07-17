@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2016 IBM Corporation and others.
+ * Copyright (c) 2006, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -139,41 +139,38 @@ public class WorkingSetActionProvider extends CommonActionProvider {
 		}
 	}
 
-	private IPropertyChangeListener filterChangeListener = new IPropertyChangeListener() {
-		@Override
-		public void propertyChange(PropertyChangeEvent event) {
+	private IPropertyChangeListener filterChangeListener = event -> {
 
-			if (ignoreFilterChangeEvents)
-				return;
+		if (ignoreFilterChangeEvents)
+			return;
 
-			IWorkingSet newWorkingSet = (IWorkingSet) event.getNewValue();
+		IWorkingSet newWorkingSet = (IWorkingSet) event.getNewValue();
 
-			setWorkingSet(newWorkingSet);
-			if (newWorkingSet != null) {
-				if (!contentService.isActive(WorkingSetsContentProvider.EXTENSION_ID)) {
-					contentService.getActivationService().activateExtensions(
-							new String[] { WorkingSetsContentProvider.EXTENSION_ID }, false);
-					contentService.getActivationService().persistExtensionActivations();
-				}
-				if (newWorkingSet.isAggregateWorkingSet()) {
-					IAggregateWorkingSet agWs = (IAggregateWorkingSet) newWorkingSet;
-					IWorkingSet[] comps = agWs.getComponents();
-					if (comps.length > 1) {
-						viewer.getCommonNavigator().setWorkingSetLabel(
-								WorkbenchNavigatorMessages.WorkingSetActionProvider_multipleWorkingSets);
-					} else if (comps.length > 0) {
-						viewer.getCommonNavigator().setWorkingSetLabel(comps[0].getLabel());
-					} else {
-						viewer.getCommonNavigator().setWorkingSetLabel(null);
-					}
-				} else
-					viewer.getCommonNavigator().setWorkingSetLabel(workingSet.getLabel());
-			} else {
-				viewer.getCommonNavigator().setWorkingSetLabel(null);
+		setWorkingSet(newWorkingSet);
+		if (newWorkingSet != null) {
+			if (!contentService.isActive(WorkingSetsContentProvider.EXTENSION_ID)) {
+				contentService.getActivationService()
+						.activateExtensions(new String[] { WorkingSetsContentProvider.EXTENSION_ID }, false);
+				contentService.getActivationService().persistExtensionActivations();
 			}
-
-			viewer.getFrameList().reset();
+			if (newWorkingSet.isAggregateWorkingSet()) {
+				IAggregateWorkingSet agWs = (IAggregateWorkingSet) newWorkingSet;
+				IWorkingSet[] comps = agWs.getComponents();
+				if (comps.length > 1) {
+					viewer.getCommonNavigator().setWorkingSetLabel(
+							WorkbenchNavigatorMessages.WorkingSetActionProvider_multipleWorkingSets);
+				} else if (comps.length > 0) {
+					viewer.getCommonNavigator().setWorkingSetLabel(comps[0].getLabel());
+				} else {
+					viewer.getCommonNavigator().setWorkingSetLabel(null);
+				}
+			} else
+				viewer.getCommonNavigator().setWorkingSetLabel(workingSet.getLabel());
+		} else {
+			viewer.getCommonNavigator().setWorkingSetLabel(null);
 		}
+
+		viewer.getFrameList().reset();
 	};
 
 	private WorkingSetManagerListener managerChangeListener = new WorkingSetManagerListener();
@@ -223,12 +220,9 @@ public class WorkingSetActionProvider extends CommonActionProvider {
 		workingSetActionGroup = new WorkingSetFilterActionGroup(aSite.getViewSite().getShell(), filterChangeListener);
 		workingSetRootModeActionGroup = new WorkingSetRootModeActionGroup(viewer, extensionStateModel);
 
-		topLevelModeListener = new IPropertyChangeListener() {
-			@Override
-			public void propertyChange(PropertyChangeEvent event) {
-				setWorkingSet(workingSet);
-				viewer.getFrameList().reset();
-			}
+		topLevelModeListener = event -> {
+			setWorkingSet(workingSet);
+			viewer.getFrameList().reset();
 		};
 
 		if (contentService.isActive(WorkingSetsContentProvider.EXTENSION_ID)) {
@@ -337,27 +331,24 @@ public class WorkingSetActionProvider extends CommonActionProvider {
 		super.restoreState(aMemento);
 
 		// Need to run this async to avoid being reentered when processing a selection change
-		viewer.getControl().getShell().getDisplay().asyncExec(new Runnable() {
-			@Override
-			public void run() {
-				boolean showWorkingSets = true;
-				if (aMemento != null) {
-					Integer showWorkingSetsInt = aMemento
-							.getInteger(WorkingSetsContentProvider.SHOW_TOP_LEVEL_WORKING_SETS);
-					showWorkingSets = showWorkingSetsInt == null || showWorkingSetsInt.intValue() == 1;
-					extensionStateModel.setBooleanProperty(WorkingSetsContentProvider.SHOW_TOP_LEVEL_WORKING_SETS,
-							showWorkingSets);
-					workingSetRootModeActionGroup.setShowTopLevelWorkingSets(showWorkingSets);
+		viewer.getControl().getShell().getDisplay().asyncExec(() -> {
+			boolean showWorkingSets = true;
+			if (aMemento != null) {
+				Integer showWorkingSetsInt = aMemento
+						.getInteger(WorkingSetsContentProvider.SHOW_TOP_LEVEL_WORKING_SETS);
+				showWorkingSets = showWorkingSetsInt == null || showWorkingSetsInt.intValue() == 1;
+				extensionStateModel.setBooleanProperty(WorkingSetsContentProvider.SHOW_TOP_LEVEL_WORKING_SETS,
+						showWorkingSets);
+				workingSetRootModeActionGroup.setShowTopLevelWorkingSets(showWorkingSets);
 
-					String lastWorkingSetName = aMemento.getString(TAG_CURRENT_WORKING_SET_NAME);
-					initWorkingSetFilter(lastWorkingSetName);
-				} else {
-					showWorkingSets = false;
+				String lastWorkingSetName = aMemento.getString(TAG_CURRENT_WORKING_SET_NAME);
+				initWorkingSetFilter(lastWorkingSetName);
+			} else {
+				showWorkingSets = false;
 
-					extensionStateModel.setBooleanProperty(WorkingSetsContentProvider.SHOW_TOP_LEVEL_WORKING_SETS,
-							showWorkingSets);
-					workingSetRootModeActionGroup.setShowTopLevelWorkingSets(showWorkingSets);
-				}
+				extensionStateModel.setBooleanProperty(WorkingSetsContentProvider.SHOW_TOP_LEVEL_WORKING_SETS,
+						showWorkingSets);
+				workingSetRootModeActionGroup.setShowTopLevelWorkingSets(showWorkingSets);
 			}
 		});
 	}

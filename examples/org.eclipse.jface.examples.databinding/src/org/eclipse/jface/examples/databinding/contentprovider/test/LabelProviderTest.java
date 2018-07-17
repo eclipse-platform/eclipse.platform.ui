@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2015 IBM Corporation and others.
+ * Copyright (c) 2006, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -17,8 +17,6 @@ import java.util.Collections;
 import org.eclipse.core.databinding.observable.Realm;
 import org.eclipse.core.databinding.observable.set.WritableSet;
 import org.eclipse.core.databinding.observable.value.IObservableValue;
-import org.eclipse.core.databinding.observable.value.IValueChangeListener;
-import org.eclipse.core.databinding.observable.value.ValueChangeEvent;
 import org.eclipse.jface.databinding.swt.DisplayRealm;
 import org.eclipse.jface.databinding.viewers.ListeningLabelProvider;
 import org.eclipse.jface.databinding.viewers.ObservableSetContentProvider;
@@ -92,12 +90,7 @@ public class LabelProviderTest {
 			list.setContentProvider(contentProvider);
 			list.setLabelProvider(new ListeningLabelProvider(contentProvider
 					.getKnownElements()) {
-				RenamableItem.Listener listener = new RenamableItem.Listener() {
-					@Override
-					public void handleChanged(RenamableItem item) {
-						fireChangeEvent(Collections.singleton(item));
-					}
-				};
+				RenamableItem.Listener listener = item -> fireChangeEvent(Collections.singleton(item));
 
 				@Override
 				public void updateLabel(ViewerLabel label, Object element) {
@@ -139,14 +132,11 @@ public class LabelProviderTest {
 				renameButton.setText("Rename"); //$NON-NLS-1$
 
 				selectedRenamable
-						.addValueChangeListener(new IValueChangeListener<RenamableItem>() {
-							@Override
-					public void handleValueChange(ValueChangeEvent<? extends RenamableItem> event) {
-						boolean shouldEnable = selectedRenamable.getValue() != null;
-						removeButton.setEnabled(shouldEnable);
-						renameButton.setEnabled(shouldEnable);
-					}
-				});
+						.addValueChangeListener(event -> {
+							boolean shouldEnable = selectedRenamable.getValue() != null;
+							removeButton.setEnabled(shouldEnable);
+							renameButton.setEnabled(shouldEnable);
+						});
 				removeButton.setEnabled(false);
 				renameButton.setEnabled(false);
 
@@ -182,19 +172,15 @@ public class LabelProviderTest {
 	 */
 	public static void main(String[] args) {
 		final Display display = Display.getDefault();
-		Realm.runWithDefault(DisplayRealm.getRealm(display), new Runnable() {
+		Realm.runWithDefault(DisplayRealm.getRealm(display), () -> {
+			LabelProviderTest test = new LabelProviderTest();
+			Shell s = test.getShell();
+			s.pack();
+			s.setVisible(true);
 
-			@Override
-			public void run() {
-				LabelProviderTest test = new LabelProviderTest();
-				Shell s = test.getShell();
-				s.pack();
-				s.setVisible(true);
-
-				while (!s.isDisposed()) {
-					if (!display.readAndDispatch())
-						display.sleep();
-				}
+			while (!s.isDisposed()) {
+				if (!display.readAndDispatch())
+					display.sleep();
 			}
 		});
 		display.dispose();

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2016 IBM Corporation and others.
+ * Copyright (c) 2003, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -129,17 +129,14 @@ public class ResourceExtensionContentProvider extends WorkbenchContentProvider {
 		if (ctrl.getDisplay().getThread() == Thread.currentThread()) {
 			runUpdates(runnables);
 		} else {
-			ctrl.getDisplay().asyncExec(new Runnable(){
-				@Override
-				public void run() {
-					//Abort if this happens after disposes
-					Control ctrl = viewer.getControl();
-					if (ctrl == null || ctrl.isDisposed()) {
-						return;
-					}
-
-					runUpdates(runnables);
+			ctrl.getDisplay().asyncExec(() -> {
+				// Abort if this happens after disposes
+				Control ctrl1 = viewer.getControl();
+				if (ctrl1 == null || ctrl1.isDisposed()) {
+					return;
 				}
+
+				runUpdates(runnables);
 			});
 		}
 
@@ -266,35 +263,31 @@ public class ResourceExtensionContentProvider extends WorkbenchContentProvider {
 		// heuristic test for items moving within same folder (i.e. renames)
 		final boolean hasRename = numMovedFrom > 0 && numMovedTo > 0;
 
-		Runnable addAndRemove = new Runnable(){
-			@Override
-			public void run() {
-				if (viewer instanceof AbstractTreeViewer) {
-					AbstractTreeViewer treeViewer = (AbstractTreeViewer) viewer;
-					// Disable redraw until the operation is finished so we don't
-					// get a flash of both the new and old item (in the case of
-					// rename)
-					// Only do this if we're both adding and removing files (the
-					// rename case)
-					if (hasRename) {
-						treeViewer.getControl().setRedraw(false);
-					}
-					try {
-						if (addedObjects.length > 0) {
-							treeViewer.add(resource, addedObjects);
-						}
-						if (removedObjects.length > 0) {
-							treeViewer.remove(removedObjects);
-						}
-					}
-					finally {
-						if (hasRename) {
-							treeViewer.getControl().setRedraw(true);
-						}
-					}
-				} else {
-					((StructuredViewer) viewer).refresh(resource);
+		Runnable addAndRemove = () -> {
+			if (viewer instanceof AbstractTreeViewer) {
+				AbstractTreeViewer treeViewer = (AbstractTreeViewer) viewer;
+				// Disable redraw until the operation is finished so we don't
+				// get a flash of both the new and old item (in the case of
+				// rename)
+				// Only do this if we're both adding and removing files (the
+				// rename case)
+				if (hasRename) {
+					treeViewer.getControl().setRedraw(false);
 				}
+				try {
+					if (addedObjects.length > 0) {
+						treeViewer.add(resource, addedObjects);
+					}
+					if (removedObjects.length > 0) {
+						treeViewer.remove(removedObjects);
+					}
+				} finally {
+					if (hasRename) {
+						treeViewer.getControl().setRedraw(true);
+					}
+				}
+			} else {
+				((StructuredViewer) viewer).refresh(resource);
 			}
 		};
 		addAndRemoveRunnables.add(addAndRemove);
@@ -306,12 +299,7 @@ public class ResourceExtensionContentProvider extends WorkbenchContentProvider {
 	 * @return Runnable
 	 */
 	private Runnable getRefreshRunnable(final IResource resource) {
-		return new Runnable(){
-			@Override
-			public void run() {
-				((StructuredViewer) viewer).refresh(resource);
-			}
-		};
+		return () -> ((StructuredViewer) viewer).refresh(resource);
 	}
 
 	/**

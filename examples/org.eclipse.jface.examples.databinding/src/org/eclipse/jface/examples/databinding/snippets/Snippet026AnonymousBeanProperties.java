@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2014 Matthew Hall and others.
+ * Copyright (c) 2008, 2018 Matthew Hall and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -63,15 +63,12 @@ public class Snippet026AnonymousBeanProperties {
 
 	public static void main(String[] args) {
 		Display display = new Display();
-		Realm.runWithDefault(DisplayRealm.getRealm(display), new Runnable() {
-			@Override
-			public void run() {
-				try {
-					Snippet026AnonymousBeanProperties window = new Snippet026AnonymousBeanProperties();
-					window.open();
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
+		Realm.runWithDefault(DisplayRealm.getRealm(display), () -> {
+			try {
+				Snippet026AnonymousBeanProperties window = new Snippet026AnonymousBeanProperties();
+				window.open();
+			} catch (Exception e) {
+				e.printStackTrace();
 			}
 		});
 	}

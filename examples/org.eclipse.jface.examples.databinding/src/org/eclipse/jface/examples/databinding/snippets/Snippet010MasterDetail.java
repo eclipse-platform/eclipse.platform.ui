@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2014 Brad Reynolds and others.
+ * Copyright (c) 2007, 2018 Brad Reynolds and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -40,40 +40,35 @@ import org.eclipse.swt.widgets.Text;
 public class Snippet010MasterDetail {
 	public static void main(String[] args) {
 		final Display display = new Display();
-		Realm.runWithDefault(DisplayRealm.getRealm(display), new Runnable() {
-			@SuppressWarnings("unchecked")
-			@Override
-			public void run() {
-				Shell shell = new Shell(display);
-				shell.setLayout(new GridLayout());
+		Realm.runWithDefault(DisplayRealm.getRealm(display), () -> {
+			Shell shell = new Shell(display);
+			shell.setLayout(new GridLayout());
 
-				Person[] persons = new Person[] { new Person("Me"),
-						new Person("Myself"), new Person("I") };
+			Person[] persons = new Person[] { new Person("Me"), new Person("Myself"), new Person("I") };
 
-				ListViewer viewer = new ListViewer(shell);
-				viewer.setContentProvider(new ArrayContentProvider());
-				viewer.setInput(persons);
+			ListViewer viewer = new ListViewer(shell);
+			viewer.setContentProvider(new ArrayContentProvider());
+			viewer.setInput(persons);
 
-				Text name = new Text(shell, SWT.BORDER | SWT.READ_ONLY);
+			Text name = new Text(shell, SWT.BORDER | SWT.READ_ONLY);
 
-				// 1. Observe changes in selection.
-				IObservableValue<Object> selection = ViewersObservables.observeSingleSelection(viewer);
+			// 1. Observe changes in selection.
+			IObservableValue<Object> selection = ViewersObservables.observeSingleSelection(viewer);
 
-				// 2. Observe the name property of the current selection.
-				IObservableValue<String> detailObservable = BeanProperties
-						.value((Class<?>) selection.getValueType(), "name", String.class).observeDetail(selection);
+			// 2. Observe the name property of the current selection.
+			IObservableValue<String> detailObservable = BeanProperties
+					.value((Class<?>) selection.getValueType(), "name", String.class).observeDetail(selection);
 
-				// 3. Bind the Text widget to the name detail (selection's
-				// name).
-				new DataBindingContext().bindValue(
-						(IObservableValue<String>) WidgetProperties.text(SWT.NONE).observe(name), detailObservable,
-						new UpdateValueStrategy<Object, String>(false, UpdateValueStrategy.POLICY_NEVER), null);
+			// 3. Bind the Text widget to the name detail (selection's
+			// name).
+			new DataBindingContext().bindValue((IObservableValue<String>) WidgetProperties.text(SWT.NONE).observe(name),
+					detailObservable, new UpdateValueStrategy<Object, String>(false, UpdateValueStrategy.POLICY_NEVER),
+					null);
 
-				shell.open();
-				while (!shell.isDisposed()) {
-					if (!display.readAndDispatch())
-						display.sleep();
-				}
+			shell.open();
+			while (!shell.isDisposed()) {
+				if (!display.readAndDispatch())
+					display.sleep();
 			}
 		});
 		display.dispose();

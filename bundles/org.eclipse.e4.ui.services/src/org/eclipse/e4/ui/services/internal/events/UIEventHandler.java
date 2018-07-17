@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2015 IBM Corporation and others.
+ * Copyright (c) 2009, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,7 +11,6 @@
 package org.eclipse.e4.ui.services.internal.events;
 
 import org.eclipse.e4.ui.di.UISynchronize;
-
 import org.osgi.service.event.Event;
 import org.osgi.service.event.EventHandler;
 
@@ -33,13 +32,7 @@ public class UIEventHandler implements EventHandler {
 		if (uiSync == null)
 			eventHandler.handleEvent(event);
 		else {
-			uiSync.syncExec(new Runnable() {
-
-				@Override
-				public void run() {
-					eventHandler.handleEvent(event);
-				}
-			});
+			uiSync.syncExec(() -> eventHandler.handleEvent(event));
 		}
 	}
 }

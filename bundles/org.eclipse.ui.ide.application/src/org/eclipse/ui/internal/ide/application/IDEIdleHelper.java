@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2015 IBM Corporation and others.
+ * Copyright (c) 2005, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,15 +11,12 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.ide.application;
 
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.IJobFunction;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.SWTException;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.application.IWorkbenchConfigurer;
@@ -163,12 +160,7 @@ class IDEIdleHelper {
 						}
 					}
 				};
-		idleListener = new Listener() {
-			@Override
-			public void handleEvent(Event event) {
-				display.timerExec(IDLE_INTERVAL, handler);
-			}
-		};
+		idleListener = event -> display.timerExec(IDLE_INTERVAL, handler);
 		display.addFilter(SWT.KeyUp, idleListener);
 		display.addFilter(SWT.MouseUp, idleListener);
 	}
@@ -177,34 +169,31 @@ class IDEIdleHelper {
 	 * Creates the job that performs garbage collection
 	 */
 	private void createGarbageCollectionJob() {
-		gcJob = Job.create(IDEWorkbenchMessages.IDEIdleHelper_backgroundGC, new IJobFunction() {
-			@Override
-			public IStatus run(IProgressMonitor monitor) {
-				final Display display = configurer.getWorkbench().getDisplay();
-				if (display != null && !display.isDisposed()) {
-					final long start = System.currentTimeMillis();
-					System.gc();
-					System.runFinalization();
-					lastGC = start;
-					final int duration = (int) (System.currentTimeMillis() - start);
+		gcJob = Job.create(IDEWorkbenchMessages.IDEIdleHelper_backgroundGC, (IJobFunction) monitor -> {
+			final Display display = configurer.getWorkbench().getDisplay();
+			if (display != null && !display.isDisposed()) {
+				final long start = System.currentTimeMillis();
+				System.gc();
+				System.runFinalization();
+				lastGC = start;
+				final int duration = (int) (System.currentTimeMillis() - start);
+				if (Policy.DEBUG_GC) {
+					System.out.println("Explicit GC took: " + duration); //$NON-NLS-1$
+				}
+				if (duration > maxGC) {
 					if (Policy.DEBUG_GC) {
-						System.out.println("Explicit GC took: " + duration); //$NON-NLS-1$
+						System.out.println("Further explicit GCs disabled due to long GC"); //$NON-NLS-1$
 					}
-					if (duration > maxGC) {
-						if (Policy.DEBUG_GC) {
-							System.out.println("Further explicit GCs disabled due to long GC"); //$NON-NLS-1$
-						}
-						shutdown();
-					} else {
-						//if the gc took a long time, ensure the next gc doesn't happen for awhile
-						nextGCInterval = Math.max(minGCInterval, GC_DELAY_MULTIPLIER * duration);
-						if (Policy.DEBUG_GC) {
-							System.out.println("Next GC to run in: " + nextGCInterval); //$NON-NLS-1$
-						}
+					shutdown();
+				} else {
+					// if the gc took a long time, ensure the next gc doesn't happen for awhile
+					nextGCInterval = Math.max(minGCInterval, GC_DELAY_MULTIPLIER * duration);
+					if (Policy.DEBUG_GC) {
+						System.out.println("Next GC to run in: " + nextGCInterval); //$NON-NLS-1$
 					}
 				}
-				return Status.OK_STATUS;
 			}
+			return Status.OK_STATUS;
 		});
 		gcJob.setSystem(true);
 	}
@@ -219,13 +208,10 @@ class IDEIdleHelper {
 		final Display display = configurer.getWorkbench().getDisplay();
 		if (display != null && !display.isDisposed()) {
 			try {
-				display.asyncExec(new Runnable() {
-					@Override
-					public void run() {
-						display.timerExec(-1, handler);
-						display.removeFilter(SWT.KeyUp, idleListener);
-						display.removeFilter(SWT.MouseUp, idleListener);
-					}
+				display.asyncExec(() -> {
+					display.timerExec(-1, handler);
+					display.removeFilter(SWT.KeyUp, idleListener);
+					display.removeFilter(SWT.MouseUp, idleListener);
 				});
 			} catch (SWTException ex) {
 				// ignore (display might be disposed)

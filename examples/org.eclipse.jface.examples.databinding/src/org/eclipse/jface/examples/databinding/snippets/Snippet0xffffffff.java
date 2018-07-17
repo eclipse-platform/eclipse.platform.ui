@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2014 The Pampered Chef, Inc. and others.
+ * Copyright (c) 2006, 2018 The Pampered Chef, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,13 +12,10 @@
 
 package org.eclipse.jface.examples.databinding.snippets;
 
-import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.ModifyEvent;
-import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.layout.RowLayout;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
@@ -137,29 +134,18 @@ public class Snippet0xffffffff {
 
 			// Bind it (manually)
 			name.setText(viewModel.getPerson().getName());
-			name.addModifyListener(new ModifyListener() {
-				@Override
-				public void modifyText(ModifyEvent e) {
-					final String text = name.getText();
-					// validation
-					// conversion
-					viewModel.getPerson().setName(text);
-				}
+			name.addModifyListener(e -> {
+				final String text = name.getText();
+				// validation
+				// conversion
+				viewModel.getPerson().setName(text);
 			});
 			viewModel.person.addPropertyChangeListener("name",
-					new PropertyChangeListener() {
-						@Override
-						public void propertyChange(PropertyChangeEvent evt) {
-							display.asyncExec(new Runnable() {
-								@Override
-								public void run() {
-									final String newName = viewModel.person.getName();
-									// conversion
-									name.setText(newName);
-								}
-							});
-						}
-					});
+					evt -> display.asyncExec(() -> {
+						final String newName = viewModel.person.getName();
+						// conversion
+						name.setText(newName);
+					}));
 
 			// Open and return the Shell
 			shell.pack();

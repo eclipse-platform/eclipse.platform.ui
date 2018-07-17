@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2015 IBM Corporation and others.
+ * Copyright (c) 2005, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -16,8 +16,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.jface.viewers.ArrayContentProvider;
-import org.eclipse.jface.viewers.ISelectionChangedListener;
-import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.wizard.IWizardPage;
 import org.eclipse.jface.wizard.Wizard;
@@ -109,14 +107,7 @@ public class Snippet047WizardWithLongRunningOperation {
 			v = new TableViewer(comp, SWT.FULL_SELECTION);
 			v.setContentProvider(new ArrayContentProvider());
 			v.getTable().setLayoutData(new GridData(GridData.FILL_BOTH));
-			v.addSelectionChangedListener(new ISelectionChangedListener() {
-
-				@Override
-				public void selectionChanged(SelectionChangedEvent event) {
-					getWizard().getContainer().updateButtons();
-				}
-
-			});
+			v.addSelectionChangedListener(event -> getWizard().getContainer().updateButtons());
 
 			final Composite barContainer = new Composite(comp, SWT.NONE);
 			barContainer.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
@@ -149,44 +140,28 @@ public class Snippet047WizardWithLongRunningOperation {
 							if (v.getTable().isDisposed()) {
 								return;
 							}
-							parent.getDisplay().asyncExec(new Runnable() {
-
-								@Override
-								public void run() {
-									v.setInput(ms);
-									((GridData) barContainer.getLayoutData()).exclude = true;
-									comp.layout(true);
-								}
-
+							parent.getDisplay().asyncExec(() -> {
+								v.setInput(ms);
+								((GridData) barContainer.getLayoutData()).exclude = true;
+								comp.layout(true);
 							});
 						} catch (InterruptedException e) {
 							e.printStackTrace();
 						}
 
 					} else {
-						parent.getDisplay().syncExec(new Runnable() {
-
-							@Override
-							public void run() {
-								v.setInput(ms);
-							}
-
-						});
+						parent.getDisplay().syncExec(() -> v.setInput(ms));
 
 						for (int i = 0; i < 10; i++) {
 							final int j = i;
 							if (v.getTable().isDisposed()) {
 								return;
 							}
-							parent.getDisplay().asyncExec(new Runnable() {
-
-								@Override
-								public void run() {
-									MyModel tmp = new MyModel(j);
-									v.add(tmp);
-									ms.add(tmp);
-									bar.setSelection(j + 1);
-								}
+							parent.getDisplay().asyncExec(() -> {
+								MyModel tmp = new MyModel(j);
+								v.add(tmp);
+								ms.add(tmp);
+								bar.setSelection(j + 1);
 							});
 
 							try {
@@ -196,25 +171,15 @@ public class Snippet047WizardWithLongRunningOperation {
 							}
 						}
 
-						parent.getDisplay().asyncExec(new Runnable() {
-
-							@Override
-							public void run() {
-								((GridData) barContainer.getLayoutData()).exclude = true;
-								comp.layout(true);
-							}
-
+						parent.getDisplay().asyncExec(() -> {
+							((GridData) barContainer.getLayoutData()).exclude = true;
+							comp.layout(true);
 						});
 					}
 
-					parent.getDisplay().syncExec(new Runnable() {
-
-						@Override
-						public void run() {
-							loading = false;
-							getWizard().getContainer().updateButtons();
-						}
-
+					parent.getDisplay().syncExec(() -> {
+						loading = false;
+						getWizard().getContainer().updateButtons();
 					});
 				}
 

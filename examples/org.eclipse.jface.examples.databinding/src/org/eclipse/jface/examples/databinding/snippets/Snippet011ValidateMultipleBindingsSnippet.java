@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2014 Brad Reynolds and others.
+ * Copyright (c) 2007, 2018 Brad Reynolds and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -42,12 +42,7 @@ import org.eclipse.swt.widgets.Text;
 public class Snippet011ValidateMultipleBindingsSnippet {
 	public static void main(String[] args) {
 		Realm.runWithDefault(DisplayRealm.getRealm(Display.getDefault()),
-				new Runnable() {
-					@Override
-					public void run() {
-						Snippet011ValidateMultipleBindingsSnippet.run();
-					}
-				});
+				() -> Snippet011ValidateMultipleBindingsSnippet.run());
 	}
 
 	private static void run() {

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2015 IBM Corporation and others.
+ * Copyright (c) 2006, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -22,7 +22,6 @@ import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.Adapters;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.OperationCanceledException;
@@ -460,14 +459,12 @@ public class ResourceDropAdapterAssistant extends CommonDropAdapterAssistant {
 				final Refactoring refactoring = descriptor.createRefactoring(refactoringStatus);
 
 				returnStatus = null;
-				IRunnableWithProgress checkOp = new IRunnableWithProgress() {
-					@Override
-					public void run(IProgressMonitor monitor) {
-						try {
+				IRunnableWithProgress checkOp = monitor -> {
+					try {
 						refactoringStatus = refactoring.checkAllConditions(monitor);
 					} catch (CoreException ex) {
 						returnStatus = WorkbenchNavigatorPlugin.createErrorStatus(0, ex.getLocalizedMessage(), ex);
-					}}
+					}
 				};
 
 				if (returnStatus != null)
@@ -491,22 +488,15 @@ public class ResourceDropAdapterAssistant extends CommonDropAdapterAssistant {
 				final PerformRefactoringOperation op = new PerformRefactoringOperation(refactoring,
 						CheckConditionsOperation.ALL_CONDITIONS);
 
-				final IWorkspaceRunnable r = new IWorkspaceRunnable() {
-					@Override
-					public void run(IProgressMonitor monitor) throws CoreException {
-						op.run(monitor);
-					}
-				};
+				final IWorkspaceRunnable r = monitor -> op.run(monitor);
 
 				returnStatus = null;
-				IRunnableWithProgress refactorOp = new IRunnableWithProgress() {
-					@Override
-					public void run(IProgressMonitor monitor) {
-						try {
-							ResourcesPlugin.getWorkspace().run(r, ResourcesPlugin.getWorkspace().getRoot(), IWorkspace.AVOID_UPDATE, monitor);
-						} catch (CoreException ex) {
-							returnStatus = WorkbenchNavigatorPlugin.createErrorStatus(0, ex.getLocalizedMessage(), ex);
-						}
+				IRunnableWithProgress refactorOp = monitor -> {
+					try {
+						ResourcesPlugin.getWorkspace().run(r, ResourcesPlugin.getWorkspace().getRoot(),
+								IWorkspace.AVOID_UPDATE, monitor);
+					} catch (CoreException ex) {
+						returnStatus = WorkbenchNavigatorPlugin.createErrorStatus(0, ex.getLocalizedMessage(), ex);
 					}
 				};
 
@@ -547,12 +537,9 @@ public class ResourceDropAdapterAssistant extends CommonDropAdapterAssistant {
 		// Run the import operation asynchronously.
 		// Otherwise the drag source (e.g., Windows Explorer) will be blocked
 		// while the operation executes. Fixes bug 16478.
-		Display.getCurrent().asyncExec(new Runnable() {
-			@Override
-			public void run() {
-				getShell().forceActive();
-				new CopyFilesAndFoldersOperation(getShell()).copyOrLinkFiles(names, target, currentOperation);
-			}
+		Display.getCurrent().asyncExec(() -> {
+			getShell().forceActive();
+			new CopyFilesAndFoldersOperation(getShell()).copyOrLinkFiles(names, target, currentOperation);
 		});
 		return problems;
 	}

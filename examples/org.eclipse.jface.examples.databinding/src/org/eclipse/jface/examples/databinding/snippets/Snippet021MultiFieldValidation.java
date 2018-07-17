@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2014 Matthew Hall and others.
+ * Copyright (c) 2008, 2018 Matthew Hall and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -29,7 +29,6 @@ import org.eclipse.jface.databinding.swt.DisplayRealm;
 import org.eclipse.jface.databinding.swt.WidgetProperties;
 import org.eclipse.jface.databinding.viewers.ObservableListContentProvider;
 import org.eclipse.jface.databinding.wizard.WizardPageSupport;
-import org.eclipse.jface.dialogs.IInputValidator;
 import org.eclipse.jface.dialogs.InputDialog;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.ListViewer;
@@ -252,17 +251,12 @@ public class Snippet021MultiFieldValidation extends WizardPage {
 			public void widgetSelected(final SelectionEvent e) {
 				InputDialog dialog = new InputDialog(getShell(),
 						"Input addend", "Enter an integer addend", "0",
-						new IInputValidator() {
-							@Override
-							public String isValid(String newText) {
-								try {
-									Integer.valueOf(newText);
-									return null;
-								} catch (NumberFormatException e) {
-									return "Enter a number between "
-											+ Integer.MIN_VALUE + " and "
-											+ Integer.MAX_VALUE;
-								}
+						newText -> {
+							try {
+								Integer.valueOf(newText);
+								return null;
+							} catch (NumberFormatException e1) {
+								return "Enter a number between " + Integer.MIN_VALUE + " and " + Integer.MAX_VALUE;
 							}
 						});
 				if (dialog.open() == Window.OK) {
@@ -334,20 +328,16 @@ public class Snippet021MultiFieldValidation extends WizardPage {
 	public static void main(String[] args) {
 		Display display = new Display();
 
-		Realm.runWithDefault(DisplayRealm.getRealm(display), new Runnable() {
-			@Override
-			public void run() {
-				IWizard wizard = new MultiFieldValidationWizard();
-				WizardDialog dialog = new WizardDialog(null, wizard);
-				dialog.open();
+		Realm.runWithDefault(DisplayRealm.getRealm(display), () -> {
+			IWizard wizard = new MultiFieldValidationWizard();
+			WizardDialog dialog = new WizardDialog(null, wizard);
+			dialog.open();
 
-				// The SWT event loop
-				Display display = Display.getCurrent();
-				while (dialog.getShell() != null
-						&& !dialog.getShell().isDisposed()) {
-					if (!display.readAndDispatch()) {
-						display.sleep();
-					}
+			// The SWT event loop
+			Display display1 = Display.getCurrent();
+			while (dialog.getShell() != null && !dialog.getShell().isDisposed()) {
+				if (!display1.readAndDispatch()) {
+					display1.sleep();
 				}
 			}
 		});

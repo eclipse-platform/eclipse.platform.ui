@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2015 IBM Corporation and others.
+ * Copyright (c) 2006, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -30,7 +30,6 @@ import org.eclipse.jface.viewers.ITreePathContentProvider;
 import org.eclipse.jface.viewers.ITreeSelection;
 import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.jface.viewers.TreePath;
-import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.ISaveablesLifecycleListener;
@@ -150,28 +149,24 @@ public class NavigatorSaveablesService implements INavigatorSaveablesService, Vi
 
 	private SaveablesProvider[] saveablesProviders;
 
-	private DisposeListener disposeListener = new DisposeListener() {
-
-		@Override
-		public void widgetDisposed(DisposeEvent e) {
-			// synchronize in the same order as in the init method.
-			synchronized (instances) {
-				synchronized (NavigatorSaveablesService.this) {
-					if (saveablesProviders != null) {
-						for (SaveablesProvider saveablesProvider : saveablesProviders) {
-							saveablesProvider.dispose();
-						}
+	private DisposeListener disposeListener = e -> {
+		// synchronize in the same order as in the init method.
+		synchronized (instances) {
+			synchronized (NavigatorSaveablesService.this) {
+				if (saveablesProviders != null) {
+					for (SaveablesProvider saveablesProvider : saveablesProviders) {
+						saveablesProvider.dispose();
 					}
-					removeInstance(NavigatorSaveablesService.this);
-					contentService = null;
-					currentSaveables = null;
-					outsideListener = null;
-					saveablesLifecycleListener = null;
-					saveablesSource = null;
-					viewer = null;
-					saveablesProviders = null;
-					disposeListener = null;
 				}
+				removeInstance(NavigatorSaveablesService.this);
+				contentService = null;
+				currentSaveables = null;
+				outsideListener = null;
+				saveablesLifecycleListener = null;
+				saveablesSource = null;
+				viewer = null;
+				saveablesProviders = null;
+				disposeListener = null;
 			}
 		}
 	};
@@ -509,45 +504,29 @@ public class NavigatorSaveablesService implements INavigatorSaveablesService, Vi
 		final Set<Saveable> addedSaveables = new HashSet<Saveable>(newSaveables);
 		addedSaveables.removeAll(oldSaveables);
 		if (addedSaveables.size() > 0) {
-			Display.getDefault().asyncExec(new Runnable() {
-				@Override
-				public void run() {
-					if (isDisposed()) {
-						return;
-					}
-					outsideListener.handleLifecycleEvent(new SaveablesLifecycleEvent(
-							saveablesSource, SaveablesLifecycleEvent.POST_OPEN,
-							addedSaveables
-							.toArray(new Saveable[addedSaveables.size()]),
-							false));
+			Display.getDefault().asyncExec(() -> {
+				if (isDisposed()) {
+					return;
 				}
+				outsideListener.handleLifecycleEvent(
+						new SaveablesLifecycleEvent(saveablesSource, SaveablesLifecycleEvent.POST_OPEN,
+								addedSaveables.toArray(new Saveable[addedSaveables.size()]), false));
 			});
 		}
 		// TODO this will make the closing of saveables non-cancelable.
 		// Ideally, we should react to PRE_CLOSE events and fire
 		// an appropriate PRE_CLOSE
 		if (removedSaveables.size() > 0) {
-			Display.getDefault().asyncExec(new Runnable() {
-				@Override
-				public void run() {
-					if (isDisposed()) {
-						return;
-					}
-					outsideListener
-							.handleLifecycleEvent(new SaveablesLifecycleEvent(
-									saveablesSource,
-									SaveablesLifecycleEvent.PRE_CLOSE,
-									removedSaveables
-											.toArray(new Saveable[removedSaveables
-													.size()]), true));
-					outsideListener
-							.handleLifecycleEvent(new SaveablesLifecycleEvent(
-									saveablesSource,
-									SaveablesLifecycleEvent.POST_CLOSE,
-									removedSaveables
-											.toArray(new Saveable[removedSaveables
-													.size()]), false));
+			Display.getDefault().asyncExec(() -> {
+				if (isDisposed()) {
+					return;
 				}
+				outsideListener.handleLifecycleEvent(
+						new SaveablesLifecycleEvent(saveablesSource, SaveablesLifecycleEvent.PRE_CLOSE,
+								removedSaveables.toArray(new Saveable[removedSaveables.size()]), true));
+				outsideListener.handleLifecycleEvent(
+						new SaveablesLifecycleEvent(saveablesSource, SaveablesLifecycleEvent.POST_CLOSE,
+								removedSaveables.toArray(new Saveable[removedSaveables.size()]), false));
 			});
 		}
 	}

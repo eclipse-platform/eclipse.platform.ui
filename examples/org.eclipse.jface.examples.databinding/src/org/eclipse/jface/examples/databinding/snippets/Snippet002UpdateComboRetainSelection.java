@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2014 The Pampered Chef, Inc. and others.
+ * Copyright (c) 2006, 2018 The Pampered Chef, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -48,23 +48,20 @@ import org.eclipse.swt.widgets.Shell;
 public class Snippet002UpdateComboRetainSelection {
     public static void main(String[] args) {
     	final Display display = new Display();
-		Realm.runWithDefault(DisplayRealm.getRealm(display), new Runnable() {
-    		@Override
-			public void run() {
-    			ViewModel viewModel = new ViewModel();
-    			Shell shell = new View(viewModel).createShell();
+		Realm.runWithDefault(DisplayRealm.getRealm(display), () -> {
+			ViewModel viewModel = new ViewModel();
+			Shell shell = new View(viewModel).createShell();
 
-    			// The SWT event loop
-    			while (!shell.isDisposed()) {
-    				if (!display.readAndDispatch()) {
-    					display.sleep();
-    				}
-    			}
+			// The SWT event loop
+			while (!shell.isDisposed()) {
+				if (!display.readAndDispatch()) {
+					display.sleep();
+				}
+			}
 
-    			// Print the results
-    			System.out.println(viewModel.getText());
-    		}
-    	});
+			// Print the results
+			System.out.println(viewModel.getText());
+		});
     	display.dispose();
     }
 

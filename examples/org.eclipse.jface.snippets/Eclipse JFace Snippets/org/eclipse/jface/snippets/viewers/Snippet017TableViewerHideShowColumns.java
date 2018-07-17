@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2016 Tom Schindl and others.
+ * Copyright (c) 2006, 2018 Tom Schindl and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -47,24 +47,11 @@ public class Snippet017TableViewerHideShowColumns {
 
 		@Override
 		public void run() {
-			column.getDisplay().syncExec(new Runnable() {
-
-				@Override
-				public void run() {
-					column.setData("restoredWidth", Integer.valueOf(width));
-				}
-			});
+			column.getDisplay().syncExec(() -> column.setData("restoredWidth", Integer.valueOf(width)));
 
 			for( int i = width; i >= 0; i-- ) {
 				final int index = i;
-				column.getDisplay().syncExec(new Runnable() {
-
-					@Override
-					public void run() {
-						column.setWidth(index);
-					}
-
-				});
+				column.getDisplay().syncExec(() -> column.setWidth(index));
 			}
 		}
 	};
@@ -83,14 +70,7 @@ public class Snippet017TableViewerHideShowColumns {
 		public void run() {
 			for( int i = 0; i <= width; i++ ) {
 				final int index = i;
-				column.getDisplay().syncExec(new Runnable() {
-
-					@Override
-					public void run() {
-						column.setWidth(index);
-					}
-
-				});
+				column.getDisplay().syncExec(() -> column.setWidth(index));
 			}
 		}
 	}

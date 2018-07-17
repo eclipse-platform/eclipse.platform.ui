@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2014 vogella GmbH and others.
+ * Copyright (c) 2014, 2018 vogella GmbH and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -61,12 +61,7 @@ public class DisplayRealm extends Realm {
 
 	@Override
 	public void asyncExec(final Runnable runnable) {
-		Runnable safeRunnable = new Runnable() {
-			@Override
-			public void run() {
-				safeRun(runnable);
-			}
-		};
+		Runnable safeRunnable = () -> safeRun(runnable);
 		if (!display.isDisposed()) {
 			display.asyncExec(safeRunnable);
 		}
@@ -75,12 +70,7 @@ public class DisplayRealm extends Realm {
 	@Override
 	public void timerExec(int milliseconds, final Runnable runnable) {
 		if (!display.isDisposed()) {
-			Runnable safeRunnable = new Runnable() {
-				@Override
-				public void run() {
-					safeRun(runnable);
-				}
-			};
+			Runnable safeRunnable = () -> safeRun(runnable);
 			display.timerExec(milliseconds, safeRunnable);
 		}
 	}

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2016 Tom Schindl and others.
+ * Copyright (c) 2006, 2018 Tom Schindl and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -115,14 +115,9 @@ public class Snippet046UpdateViewerFromBackgroundThread {
 								return;
 							}
 							final int j = i;
-							v.getTable().getDisplay().asyncExec(new Runnable() {
-
-								@Override
-								public void run() {
-									model[j].finished = true;
-									v.update(model[j], null);
-								}
-
+							v.getTable().getDisplay().asyncExec(() -> {
+								model[j].finished = true;
+								v.update(model[j], null);
 							});
 							try {
 								Thread.sleep(1000);

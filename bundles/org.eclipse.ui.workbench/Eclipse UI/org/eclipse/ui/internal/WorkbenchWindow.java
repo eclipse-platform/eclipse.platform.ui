@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2017 IBM Corporation and others.
+ * Copyright (c) 2000, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -701,20 +701,17 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 						model.getContext());
 				shell.setMenuBar(menu);
 
-				menuUpdater = new Runnable() {
-					@Override
-					public void run() {
-						try {
-							if (model.getMainMenu() == null || model.getWidget() == null
-									|| menu.isDisposed() || mainMenu.getWidget() == null) {
-								return;
-							}
-							MenuManagerRendererFilter.updateElementVisibility(mainMenu, renderer,
-									menuManager, windowContext.getActiveLeaf(), 1, false);
-							menuManager.update(true);
-						} finally {
-							canUpdateMenus = true;
+				menuUpdater = () -> {
+					try {
+						if (model.getMainMenu() == null || model.getWidget() == null || menu.isDisposed()
+								|| mainMenu.getWidget() == null) {
+							return;
 						}
+						MenuManagerRendererFilter.updateElementVisibility(mainMenu, renderer, menuManager,
+								windowContext.getActiveLeaf(), 1, false);
+						menuManager.update(true);
+					} finally {
+						canUpdateMenus = true;
 					}
 				};
 
@@ -1634,12 +1631,7 @@ STATUS_LINE_ID, model);
 
 	public boolean close(final boolean remove) {
 		final boolean[] ret = new boolean[1];
-		BusyIndicator.showWhile(null, new Runnable() {
-			@Override
-			public void run() {
-				ret[0] = busyClose(remove);
-			}
-		});
+		BusyIndicator.showWhile(null, () -> ret[0] = busyClose(remove));
 		return ret[0];
 	}
 
@@ -2075,14 +2067,11 @@ STATUS_LINE_ID, model);
 	public IWorkbenchPage openPage(final String perspectiveId, final IAdaptable input)
 			throws WorkbenchException {
 		final Object[] result = new Object[1];
-		BusyIndicator.showWhile(null, new Runnable() {
-			@Override
-			public void run() {
-				try {
-					result[0] = busyOpenPage(perspectiveId, input);
-				} catch (WorkbenchException e) {
-					result[0] = e;
-				}
+		BusyIndicator.showWhile(null, () -> {
+			try {
+				result[0] = busyOpenPage(perspectiveId, input);
+			} catch (WorkbenchException e) {
+				result[0] = e;
 			}
 		});
 
@@ -2219,19 +2208,15 @@ STATUS_LINE_ID, model);
 				final InvocationTargetException[] ite = new InvocationTargetException[1];
 				final InterruptedException[] ie = new InterruptedException[1];
 
-				BusyIndicator.showWhile(getShell().getDisplay(), new Runnable() {
-					@Override
-					public void run() {
-						try {
-							ModalContext.run(runnable, fork, manager.getProgressMonitor(),
-									getShell().getDisplay());
-						} catch (InvocationTargetException e) {
-							ite[0] = e;
-						} catch (InterruptedException e) {
-							ie[0] = e;
-						} finally {
-							manager.getProgressMonitor().done();
-						}
+				BusyIndicator.showWhile(getShell().getDisplay(), () -> {
+					try {
+						ModalContext.run(runnable, fork, manager.getProgressMonitor(), getShell().getDisplay());
+					} catch (InvocationTargetException e1) {
+						ite[0] = e1;
+					} catch (InterruptedException e2) {
+						ie[0] = e2;
+					} finally {
+						manager.getProgressMonitor().done();
 					}
 				});
 

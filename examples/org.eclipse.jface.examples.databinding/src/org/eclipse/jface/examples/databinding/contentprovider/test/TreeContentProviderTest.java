@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2015 IBM Corporation and others.
+ * Copyright (c) 2006, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -27,8 +27,6 @@ import org.eclipse.jface.viewers.IViewerLabelProvider;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.ViewerLabel;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.DisposeEvent;
-import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.FillLayout;
@@ -92,12 +90,7 @@ public class TreeContentProviderTest {
 		GridLayoutFactory.fillDefaults().margins(LayoutConstants.getMargins())
 				.generateLayout(shell);
 
-		shell.addDisposeListener(new DisposeListener() {
-			@Override
-			public void widgetDisposed(DisposeEvent e) {
-				dispose();
-			}
-		});
+		shell.addDisposeListener(e -> dispose());
 	}
 
 	/**
@@ -118,28 +111,24 @@ public class TreeContentProviderTest {
 		// SimpleNodes as top-level nodes, and sets of randomly generated
 		// Doubles below each
 		// SimpleNode.
-		IObservableFactory<SimpleNode, IObservable> childrenFactory = new IObservableFactory<SimpleNode, IObservable>() {
-			@Override
-			public IObservable createObservable(SimpleNode element) {
-				// If the parent is the root node, return the union of some
-				// randomly-generated
-				// nodes and some hardcoded nodes
-				if (element == tree.getInput()) {
-					// Set of hardcoded nodes
-					WritableSet<SimpleNode> topElements = new WritableSet<>();
-					topElements.add(new SimpleNode("Random Set 1", set1));
-					topElements.add(new SimpleNode("Random Set 2", set2));
-					topElements.add(new SimpleNode("Random Set 3", set3));
-					topElements.add(new SimpleNode("Union of the other sets",
-							union));
-					return topElements;
-				}
-
-				// We return a new DelegatingObservableSet in order to
-				// prevent the
-				// original from being disposed.
-				return Observables.proxyObservableSet(element.getChildren());
+		IObservableFactory<SimpleNode, IObservable> childrenFactory = element -> {
+			// If the parent is the root node, return the union of some
+			// randomly-generated
+			// nodes and some hardcoded nodes
+			if (element == tree.getInput()) {
+				// Set of hardcoded nodes
+				WritableSet<SimpleNode> topElements = new WritableSet<>();
+				topElements.add(new SimpleNode("Random Set 1", set1));
+				topElements.add(new SimpleNode("Random Set 2", set2));
+				topElements.add(new SimpleNode("Random Set 3", set3));
+				topElements.add(new SimpleNode("Union of the other sets", union));
+				return topElements;
 			}
+
+			// We return a new DelegatingObservableSet in order to
+			// prevent the
+			// original from being disposed.
+			return Observables.proxyObservableSet(element.getChildren());
 		};
 
 		// Label provider for the tree
@@ -181,18 +170,15 @@ public class TreeContentProviderTest {
 	 */
 	public static void main(String[] args) {
 		final Display display = Display.getDefault();
-		Realm.runWithDefault(DisplayRealm.getRealm(display), new Runnable() {
-			@Override
-			public void run() {
-				TreeContentProviderTest test = new TreeContentProviderTest();
-				Shell s = test.getShell();
-				s.pack();
-				s.setVisible(true);
+		Realm.runWithDefault(DisplayRealm.getRealm(display), () -> {
+			TreeContentProviderTest test = new TreeContentProviderTest();
+			Shell s = test.getShell();
+			s.pack();
+			s.setVisible(true);
 
-				while (!s.isDisposed()) {
-					if (!display.readAndDispatch())
-						display.sleep();
-				}
+			while (!s.isDisposed()) {
+				if (!display.readAndDispatch())
+					display.sleep();
 			}
 		});
 		display.dispose();

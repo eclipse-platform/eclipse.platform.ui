@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2016 IBM Corporation and others.
+ * Copyright (c) 2000, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -30,7 +30,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -92,7 +91,6 @@ import org.eclipse.jface.dialogs.DialogSettings;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.dialogs.IPageChangeProvider;
 import org.eclipse.jface.dialogs.IPageChangedListener;
-import org.eclipse.jface.dialogs.PageChangedEvent;
 import org.eclipse.jface.internal.provisional.action.ICoolBarManager2;
 import org.eclipse.jface.operation.IRunnableContext;
 import org.eclipse.jface.preference.IPreferenceStore;
@@ -533,18 +531,15 @@ public class WorkbenchPage implements IWorkbenchPage {
 	/**
 	 * A listener that forwards page change events to our part listeners.
 	 */
-	private IPageChangedListener pageChangedListener = new IPageChangedListener() {
-		@Override
-		public void pageChanged(final PageChangedEvent event) {
-			for (final IPartListener2 listener : partListener2List) {
-				if (listener instanceof IPageChangedListener) {
-					SafeRunner.run(new SafeRunnable() {
-						@Override
-						public void run() throws Exception {
-							((IPageChangedListener) listener).pageChanged(event);
-						}
-					});
-				}
+	private IPageChangedListener pageChangedListener = event -> {
+		for (final IPartListener2 listener : partListener2List) {
+			if (listener instanceof IPageChangedListener) {
+				SafeRunner.run(new SafeRunnable() {
+					@Override
+					public void run() throws Exception {
+						((IPageChangedListener) listener).pageChanged(event);
+					}
+				});
 			}
 		}
 	};
@@ -576,28 +571,22 @@ public class WorkbenchPage implements IWorkbenchPage {
      */
     private IWorkbenchPartReference partBeingActivated = null;
 
+	private IWorkingSet[] workingSets = new IWorkingSet[0];
 
+	private IPropertyChangeListener workingSetPropertyChangeListener = event -> {
+		String property = event.getProperty();
+		if (IWorkingSetManager.CHANGE_WORKING_SET_REMOVE.equals(property)) {
+			if (event.getOldValue().equals(workingSet)) {
+				setWorkingSet(null);
+			}
 
-    private IPropertyChangeListener workingSetPropertyChangeListener = new IPropertyChangeListener() {
-        /*
-         * Remove the working set from the page if the working set is deleted.
-         */
-        @Override
-		public void propertyChange(PropertyChangeEvent event) {
-            String property = event.getProperty();
-            if (IWorkingSetManager.CHANGE_WORKING_SET_REMOVE.equals(property)) {
-            		if(event.getOldValue().equals(workingSet)) {
-						setWorkingSet(null);
-					}
-
-            		// room for optimization here
-				List<IWorkingSet> newList = new ArrayList<>(Arrays.asList(workingSets));
-				if (newList.remove(event.getOldValue())) {
-					setWorkingSets(newList.toArray(new IWorkingSet[newList.size()]));
-				}
-            }
-        }
-    };
+			// room for optimization here
+			List<IWorkingSet> newList = new ArrayList<>(Arrays.asList(workingSets));
+			if (newList.remove(event.getOldValue())) {
+				setWorkingSets(newList.toArray(new IWorkingSet[newList.size()]));
+			}
+		}
+	};
 
 	private ActionSwitcher actionSwitcher = new ActionSwitcher();
 
@@ -607,7 +596,6 @@ public class WorkbenchPage implements IWorkbenchPage {
     private int deferCount = 0;
 
 
-	private IWorkingSet[] workingSets = new IWorkingSet[0];
 	private String aggregateWorkingSetId;
 
 	// determines if a prompt is shown when opening large files
@@ -883,31 +871,28 @@ public class WorkbenchPage implements IWorkbenchPage {
 	 * An event handler that listens for an MArea's widget being set so that we
 	 * can install DND support into its control.
 	 */
-	private EventHandler widgetHandler = new EventHandler() {
-		@Override
-		public void handleEvent(Event event) {
-			Object element = event.getProperty(UIEvents.EventTags.ELEMENT);
-			Object newValue = event.getProperty(UIEvents.EventTags.NEW_VALUE);
+	private EventHandler widgetHandler = event -> {
+		Object element = event.getProperty(UIEvents.EventTags.ELEMENT);
+		Object newValue = event.getProperty(UIEvents.EventTags.NEW_VALUE);
 
-			if (element instanceof MArea) {
-				// If it's an MArea in this window install the DND handling
-				if (modelService.findElements(window, null, MArea.class, null).contains(element)) {
-					if (newValue instanceof Control) {
-						installAreaDropSupport((Control) newValue);
-					}
+		if (element instanceof MArea) {
+			// If it's an MArea in this window install the DND handling
+			if (modelService.findElements(window, null, MArea.class, null).contains(element)) {
+				if (newValue instanceof Control) {
+					installAreaDropSupport((Control) newValue);
 				}
-			} else if (element instanceof MPart && newValue == null) {
-				// If it's a 'e4' part then remove the reference for it
-				MPart changedPart = (MPart) element;
-				Object impl = changedPart.getObject();
-				if (impl != null && !(impl instanceof CompatibilityPart)) {
-					EditorReference eRef = getEditorReference(changedPart);
-					if (eRef != null)
-						editorReferences.remove(eRef);
-					ViewReference vRef = getViewReference(changedPart);
-					if (vRef != null)
-						viewReferences.remove(vRef);
-				}
+			}
+		} else if (element instanceof MPart && newValue == null) {
+			// If it's a 'e4' part then remove the reference for it
+			MPart changedPart = (MPart) element;
+			Object impl = changedPart.getObject();
+			if (impl != null && !(impl instanceof CompatibilityPart)) {
+				EditorReference eRef = getEditorReference(changedPart);
+				if (eRef != null)
+					editorReferences.remove(eRef);
+				ViewReference vRef = getViewReference(changedPart);
+				if (vRef != null)
+					viewReferences.remove(vRef);
 			}
 		}
 	};
@@ -1368,12 +1353,7 @@ public class WorkbenchPage implements IWorkbenchPage {
     @Override
 	public boolean close() {
         final boolean[] ret = new boolean[1];
-        BusyIndicator.showWhile(null, new Runnable() {
-            @Override
-			public void run() {
-				ret[0] = close(true, true);
-            }
-        });
+		BusyIndicator.showWhile(null, () -> ret[0] = close(true, true));
         return ret[0];
     }
 
@@ -2558,17 +2538,14 @@ public class WorkbenchPage implements IWorkbenchPage {
 	 *            the collection of part ids to rearrange
 	 */
 	public void sortShowInPartIds(ArrayList<?> partIds) {
-		Collections.sort(partIds, new Comparator<Object>() {
-			@Override
-			public int compare(Object ob1, Object ob2) {
-				int index1 = mruShowInPartIds.indexOf(ob1);
-				int index2 = mruShowInPartIds.indexOf(ob2);
-				if (index1 != -1 && index2 == -1)
-					return -1;
-				if (index1 == -1 && index2 != -1)
-					return 1;
-				return index1 - index2;
-			}
+		Collections.sort(partIds, (ob1, ob2) -> {
+			int index1 = mruShowInPartIds.indexOf(ob1);
+			int index2 = mruShowInPartIds.indexOf(ob2);
+			if (index1 != -1 && index2 == -1)
+				return -1;
+			if (index1 == -1 && index2 != -1)
+				return 1;
+			return index1 - index2;
 		});
 	}
 
@@ -2993,86 +2970,81 @@ public class WorkbenchPage implements IWorkbenchPage {
 		return modelService.findElements(perspective, null, MPartStack.class, null);
 	}
 
-	private EventHandler selectionHandler = new EventHandler() {
-		@Override
-		public void handleEvent(Event event) {
-			Object changedElement = event.getProperty(UIEvents.EventTags.ELEMENT);
+	private EventHandler selectionHandler = event -> {
+		Object changedElement = event.getProperty(UIEvents.EventTags.ELEMENT);
 
-			if (!(changedElement instanceof MPerspectiveStack)) {
-				return;
-			}
-
-			List<MPerspectiveStack> theStack = modelService.findElements(window, null,
-					MPerspectiveStack.class, null);
-			if (theStack.isEmpty()) {
-				return;
-			} else if (!theStack.isEmpty() && changedElement != theStack.get(0)) {
-				return;
-			}
-
-			MPerspective oldPersp = (MPerspective) event.getProperty(UIEvents.EventTags.OLD_VALUE);
-			MPerspective newPersp = (MPerspective) event.getProperty(UIEvents.EventTags.NEW_VALUE);
-			// updatePerspectiveActionSets(oldPersp, newPersp);
-
-			// ((CoolBarToTrimManager)
-			// legacyWindow.getCoolBarManager2()).updateAll(true);
-			// legacyWindow.menuManager.updateAll(true);
-
-			List<MPart> hiddenParts = new ArrayList<>();
-			List<MPart> visibleParts = new ArrayList<>();
-
-			List<MPartStack> oldStacks = getPartStacks(oldPersp);
-			List<MPartStack> newStacks = getPartStacks(newPersp);
-
-			for (MPartStack oldStack : oldStacks) {
-				MStackElement element = oldStack.getSelectedElement();
-				if (element instanceof MPlaceholder) {
-					hiddenParts.add((MPart) ((MPlaceholder) element).getRef());
-				} else if (element instanceof MPart) {
-					hiddenParts.add((MPart) element);
-				}
-			}
-
-			for (MPartStack newStack : newStacks) {
-				MStackElement element = newStack.getSelectedElement();
-				if (element instanceof MPlaceholder) {
-					visibleParts.add((MPart) ((MPlaceholder) element).getRef());
-				} else if (element instanceof MPart) {
-					visibleParts.add((MPart) element);
-				}
-			}
-
-			List<MPart> ignoredParts = new ArrayList<>();
-			for (MPart hiddenPart : hiddenParts) {
-				if (visibleParts.contains(hiddenPart)) {
-					ignoredParts.add(hiddenPart);
-				}
-			}
-
-			hiddenParts.removeAll(ignoredParts);
-			visibleParts.removeAll(ignoredParts);
-
-			for (MPart hiddenPart : hiddenParts) {
-				firePartHidden(hiddenPart);
-			}
-
-			for (MPart visiblePart : visibleParts) {
-				firePartVisible(visiblePart);
-			}
-
-			updateActionSets(getPerspective(oldPersp), getPerspective(newPersp));
-
-			// might've been set to null if we were closing the perspective
-			if (newPersp != null) {
-				IPerspectiveDescriptor perspective = getPerspectiveDesc(newPersp
-						.getElementId());
-				legacyWindow.firePerspectiveActivated(WorkbenchPage.this, perspective);
-
-				sortedPerspectives.remove(perspective);
-				sortedPerspectives.add(perspective);
-			}
-			legacyWindow.updateActionSets();
+		if (!(changedElement instanceof MPerspectiveStack)) {
+			return;
 		}
+
+		List<MPerspectiveStack> theStack = modelService.findElements(window, null, MPerspectiveStack.class, null);
+		if (theStack.isEmpty()) {
+			return;
+		} else if (!theStack.isEmpty() && changedElement != theStack.get(0)) {
+			return;
+		}
+
+		MPerspective oldPersp = (MPerspective) event.getProperty(UIEvents.EventTags.OLD_VALUE);
+		MPerspective newPersp = (MPerspective) event.getProperty(UIEvents.EventTags.NEW_VALUE);
+		// updatePerspectiveActionSets(oldPersp, newPersp);
+
+		// ((CoolBarToTrimManager)
+		// legacyWindow.getCoolBarManager2()).updateAll(true);
+		// legacyWindow.menuManager.updateAll(true);
+
+		List<MPart> hiddenParts = new ArrayList<>();
+		List<MPart> visibleParts = new ArrayList<>();
+
+		List<MPartStack> oldStacks = getPartStacks(oldPersp);
+		List<MPartStack> newStacks = getPartStacks(newPersp);
+
+		for (MPartStack oldStack : oldStacks) {
+			MStackElement element1 = oldStack.getSelectedElement();
+			if (element1 instanceof MPlaceholder) {
+				hiddenParts.add((MPart) ((MPlaceholder) element1).getRef());
+			} else if (element1 instanceof MPart) {
+				hiddenParts.add((MPart) element1);
+			}
+		}
+
+		for (MPartStack newStack : newStacks) {
+			MStackElement element2 = newStack.getSelectedElement();
+			if (element2 instanceof MPlaceholder) {
+				visibleParts.add((MPart) ((MPlaceholder) element2).getRef());
+			} else if (element2 instanceof MPart) {
+				visibleParts.add((MPart) element2);
+			}
+		}
+
+		List<MPart> ignoredParts = new ArrayList<>();
+		for (MPart hiddenPart1 : hiddenParts) {
+			if (visibleParts.contains(hiddenPart1)) {
+				ignoredParts.add(hiddenPart1);
+			}
+		}
+
+		hiddenParts.removeAll(ignoredParts);
+		visibleParts.removeAll(ignoredParts);
+
+		for (MPart hiddenPart2 : hiddenParts) {
+			firePartHidden(hiddenPart2);
+		}
+
+		for (MPart visiblePart : visibleParts) {
+			firePartVisible(visiblePart);
+		}
+
+		updateActionSets(getPerspective(oldPersp), getPerspective(newPersp));
+
+		// might've been set to null if we were closing the perspective
+		if (newPersp != null) {
+			IPerspectiveDescriptor perspective = getPerspectiveDesc(newPersp.getElementId());
+			legacyWindow.firePerspectiveActivated(WorkbenchPage.this, perspective);
+
+			sortedPerspectives.remove(perspective);
+			sortedPerspectives.add(perspective);
+		}
+		legacyWindow.updateActionSets();
 	};
 
 	/**
@@ -3211,17 +3183,13 @@ public class WorkbenchPage implements IWorkbenchPage {
         final IEditorPart result[] = new IEditorPart[1];
         final PartInitException ex[] = new PartInitException[1];
 		BusyIndicator.showWhile(legacyWindow.getWorkbench().getDisplay(),
-                new Runnable() {
-                    @Override
-					public void run() {
-                        try {
-					result[0] = busyOpenEditor(input, editorID, activate, matchFlags, editorState,
-							notify);
-                        } catch (PartInitException e) {
-                            ex[0] = e;
-                        }
-                    }
-                });
+				() -> {
+					try {
+						result[0] = busyOpenEditor(input, editorID, activate, matchFlags, editorState, notify);
+					} catch (PartInitException e) {
+						ex[0] = e;
+					}
+				});
         if (ex[0] != null) {
 			throw ex[0];
 		}
@@ -4411,14 +4379,11 @@ public class WorkbenchPage implements IWorkbenchPage {
 		// Run op in busy cursor.
 		final String compoundId = secondaryID != null ? viewID + ':' + secondaryID : viewID;
 		final Object[] result = new Object[1];
-		BusyIndicator.showWhile(null, new Runnable() {
-			@Override
-			public void run() {
-				try {
-					result[0] = busyShowView(compoundId, mode);
-				} catch (PartInitException e) {
-					result[0] = e;
-				}
+		BusyIndicator.showWhile(null, () -> {
+			try {
+				result[0] = busyShowView(compoundId, mode);
+			} catch (PartInitException e) {
+				result[0] = e;
 			}
 		});
 		if (result[0] instanceof IViewPart) {
@@ -4631,31 +4596,27 @@ public class WorkbenchPage implements IWorkbenchPage {
 
 				// sort the list by activation order (most recently activated
 				// first)
-				Collections.sort(stack, new Comparator<CompatibilityView>() {
-					@Override
-					public int compare(CompatibilityView o1, CompatibilityView o2) {
-						MPart model1 = o1.getModel();
-						MPart model2 = o2.getModel();
+				Collections.sort(stack, (o1, o2) -> {
+					MPart model1 = o1.getModel();
+					MPart model2 = o2.getModel();
 
-						/*
-						 * WORKAROUND: Since we only have the activation list
-						 * and not a bingToTop list, we can't set/know the order
-						 * for inactive stacks. This workaround makes sure that
-						 * the topmost part is at least at the first position.
-						 */
-						if (model1 == topPart)
-							return Integer.MIN_VALUE;
-						if (model2 == topPart)
-							return Integer.MAX_VALUE;
+					/*
+					 * WORKAROUND: Since we only have the activation list and not a bingToTop list,
+					 * we can't set/know the order for inactive stacks. This workaround makes sure
+					 * that the topmost part is at least at the first position.
+					 */
+					if (model1 == topPart)
+						return Integer.MIN_VALUE;
+					if (model2 == topPart)
+						return Integer.MAX_VALUE;
 
-						int pos1 = activationList.indexOf(model1);
-						int pos2 = activationList.indexOf(model2);
-						if (pos1 == -1)
-							pos1 = Integer.MAX_VALUE;
-						if (pos2 == -1)
-							pos2 = Integer.MAX_VALUE;
-						return pos1 - pos2;
-					}
+					int pos1 = activationList.indexOf(model1);
+					int pos2 = activationList.indexOf(model2);
+					if (pos1 == -1)
+						pos1 = Integer.MAX_VALUE;
+					if (pos2 == -1)
+						pos2 = Integer.MAX_VALUE;
+					return pos1 - pos2;
 				});
 
 				IViewPart[] result = new IViewPart[stack.size()];
@@ -5352,56 +5313,48 @@ public class WorkbenchPage implements IWorkbenchPage {
 	private static final int FIRE_PART_VISIBLE = 0x1;
 	private static final int FIRE_PART_BROUGHTTOTOP = 0x2;
 
-	private EventHandler firingHandler = new EventHandler() {
-		@Override
-		public void handleEvent(Event event) {
-			Object element = event.getProperty(UIEvents.EventTags.ELEMENT);
-			Object value = event.getProperty(UIEvents.EventTags.NEW_VALUE);
-			if (value instanceof CompatibilityPart && element instanceof MPart) {
-				Integer events = partEvents.remove(element);
-				if (events != null) {
-					int e = events.intValue();
-					if ((e & FIRE_PART_VISIBLE) == FIRE_PART_VISIBLE) {
-						firePartVisible((MPart) element);
-					}
-					if ((e & FIRE_PART_BROUGHTTOTOP) == FIRE_PART_BROUGHTTOTOP) {
-						firePartBroughtToTop((MPart) element);
-					}
+	private EventHandler firingHandler = event -> {
+		Object element = event.getProperty(UIEvents.EventTags.ELEMENT);
+		Object value = event.getProperty(UIEvents.EventTags.NEW_VALUE);
+		if (value instanceof CompatibilityPart && element instanceof MPart) {
+			Integer events = partEvents.remove(element);
+			if (events != null) {
+				int e = events.intValue();
+				if ((e & FIRE_PART_VISIBLE) == FIRE_PART_VISIBLE) {
+					firePartVisible((MPart) element);
+				}
+				if ((e & FIRE_PART_BROUGHTTOTOP) == FIRE_PART_BROUGHTTOTOP) {
+					firePartBroughtToTop((MPart) element);
 				}
 			}
 		}
 	};
 
-	private EventHandler childrenHandler = new EventHandler() {
-		@Override
-		public void handleEvent(Event event) {
-			Object changedObj = event.getProperty(UIEvents.EventTags.ELEMENT);
+	private EventHandler childrenHandler = event -> {
+		Object changedObj = event.getProperty(UIEvents.EventTags.ELEMENT);
 
-			// ...in this window ?
-			MUIElement changedElement = (MUIElement) changedObj;
-			if (modelService.getTopLevelWindowFor(changedElement) != window)
-				return;
+		// ...in this window ?
+		MUIElement changedElement = (MUIElement) changedObj;
+		if (modelService.getTopLevelWindowFor(changedElement) != window)
+			return;
 
-			if (UIEvents.isADD(event)) {
-				for (Object o : UIEvents.asIterable(event, UIEvents.EventTags.NEW_VALUE)) {
-					if (!(o instanceof MUIElement))
-						continue;
+		if (UIEvents.isADD(event)) {
+			for (Object o : UIEvents.asIterable(event, UIEvents.EventTags.NEW_VALUE)) {
+				if (!(o instanceof MUIElement))
+					continue;
 
-					// We have to iterate through the new elements to see if any
-					// contain (or are) MParts (e.g. we may have dragged a split
-					// editor which contains two editors, both with EditorRefs)
-					MUIElement element = (MUIElement) o;
-					List<MPart> addedParts = modelService.findElements(element, null, MPart.class,
-							null);
-					for (MPart part : addedParts) {
-						IWorkbenchPartReference ref = (IWorkbenchPartReference) part
-								.getTransientData().get(
-								IWorkbenchPartReference.class.getName());
+				// We have to iterate through the new elements to see if any
+				// contain (or are) MParts (e.g. we may have dragged a split
+				// editor which contains two editors, both with EditorRefs)
+				MUIElement element = (MUIElement) o;
+				List<MPart> addedParts = modelService.findElements(element, null, MPart.class, null);
+				for (MPart part : addedParts) {
+					IWorkbenchPartReference ref = (IWorkbenchPartReference) part.getTransientData()
+							.get(IWorkbenchPartReference.class.getName());
 
-						// For now we only check for editors changing pages
-						if (ref instanceof EditorReference && getEditorReference(part) == null) {
-							addEditorReference((EditorReference) ref);
-						}
+					// For now we only check for editors changing pages
+					if (ref instanceof EditorReference && getEditorReference(part) == null) {
+						addEditorReference((EditorReference) ref);
 					}
 				}
 			}
@@ -5517,24 +5470,20 @@ public class WorkbenchPage implements IWorkbenchPage {
 
 		final IPathEditorInput pathInput = getPathEditorInput(input);
 		if (pathInput != null && pathInput.getPath() != null) {
-			BusyIndicator.showWhile(legacyWindow.getWorkbench().getDisplay(), new Runnable() {
-				@Override
-				public void run() {
-					try {
-						if (desc.getLauncher() != null) {
-							// open using launcher
-							Object launcher = WorkbenchPlugin.createExtension(desc
-									.getConfigurationElement(),
-									IWorkbenchRegistryConstants.ATT_LAUNCHER);
-							((IEditorLauncher) launcher).open(pathInput.getPath());
-						} else {
-							// open using command
-							ExternalEditor oEditor = new ExternalEditor(pathInput.getPath(), desc);
-							oEditor.open();
-						}
-					} catch (CoreException e) {
-						ex[0] = e;
+			BusyIndicator.showWhile(legacyWindow.getWorkbench().getDisplay(), () -> {
+				try {
+					if (desc.getLauncher() != null) {
+						// open using launcher
+						Object launcher = WorkbenchPlugin.createExtension(desc.getConfigurationElement(),
+								IWorkbenchRegistryConstants.ATT_LAUNCHER);
+						((IEditorLauncher) launcher).open(pathInput.getPath());
+					} else {
+						// open using command
+						ExternalEditor oEditor = new ExternalEditor(pathInput.getPath(), desc);
+						oEditor.open();
 					}
+				} catch (CoreException e) {
+					ex[0] = e;
 				}
 			});
 		} else {
@@ -5601,50 +5550,46 @@ public class WorkbenchPage implements IWorkbenchPage {
 	 * An event handler for listening to parts and placeholders being
 	 * unrendered.
 	 */
-	private EventHandler referenceRemovalEventHandler = new EventHandler() {
-		@Override
-		public void handleEvent(Event event) {
-			if (Boolean.TRUE.equals(event.getProperty(UIEvents.EventTags.NEW_VALUE))) {
-				return;
-			}
+	private EventHandler referenceRemovalEventHandler = event -> {
+		if (Boolean.TRUE.equals(event.getProperty(UIEvents.EventTags.NEW_VALUE))) {
+			return;
+		}
 
-			Object element = event.getProperty(UIEvents.EventTags.ELEMENT);
-			if (element instanceof MPlaceholder) {
-				MUIElement ref = ((MPlaceholder) element).getRef();
-				// a placeholder has been unrendered, check to see if the shared
-				// area needs to be unzoomed
-				unzoomSharedArea(ref);
+		Object element = event.getProperty(UIEvents.EventTags.ELEMENT);
+		if (element instanceof MPlaceholder) {
+			MUIElement ref = ((MPlaceholder) element).getRef();
+			// a placeholder has been unrendered, check to see if the shared
+			// area needs to be unzoomed
+			unzoomSharedArea(ref);
 
-				if (ref instanceof MPart) {
-					// find all placeholders for this part
-					List<MPlaceholder> placeholders = modelService.findElements(window,
-							ref.getElementId(), MPlaceholder.class, null,
-							EModelService.IN_ANY_PERSPECTIVE | EModelService.IN_SHARED_AREA
-									| EModelService.OUTSIDE_PERSPECTIVE);
-					for (MPlaceholder placeholder : placeholders) {
-						if (placeholder.getRef() == ref && placeholder.isToBeRendered()) {
-							// if there's a rendered placeholder, return
-							return;
-						}
-					}
-
-					// no rendered placeholders around, unsubscribe
-					ViewReference reference = getViewReference((MPart) ref);
-					if (reference != null) {
-						reference.unsubscribe();
+			if (ref instanceof MPart) {
+				// find all placeholders for this part
+				List<MPlaceholder> placeholders = modelService.findElements(window, ref.getElementId(),
+						MPlaceholder.class, null, EModelService.IN_ANY_PERSPECTIVE | EModelService.IN_SHARED_AREA
+								| EModelService.OUTSIDE_PERSPECTIVE);
+				for (MPlaceholder placeholder : placeholders) {
+					if (placeholder.getRef() == ref && placeholder.isToBeRendered()) {
+						// if there's a rendered placeholder, return
+						return;
 					}
 				}
-			} else if (element instanceof MPart) {
-				MPart part = (MPart) element;
-				// a part has been unrendered, check to see if the shared
-				// area needs to be unzoomed
-				unzoomSharedArea(part);
 
-				if (CompatibilityEditor.MODEL_ELEMENT_ID.equals(part.getElementId())) {
-					EditorReference reference = getEditorReference(part);
-					if (reference != null) {
-						reference.unsubscribe();
-					}
+				// no rendered placeholders around, unsubscribe
+				ViewReference reference1 = getViewReference((MPart) ref);
+				if (reference1 != null) {
+					reference1.unsubscribe();
+				}
+			}
+		} else if (element instanceof MPart) {
+			MPart part = (MPart) element;
+			// a part has been unrendered, check to see if the shared
+			// area needs to be unzoomed
+			unzoomSharedArea(part);
+
+			if (CompatibilityEditor.MODEL_ELEMENT_ID.equals(part.getElementId())) {
+				EditorReference reference2 = getEditorReference(part);
+				if (reference2 != null) {
+					reference2.unsubscribe();
 				}
 			}
 		}

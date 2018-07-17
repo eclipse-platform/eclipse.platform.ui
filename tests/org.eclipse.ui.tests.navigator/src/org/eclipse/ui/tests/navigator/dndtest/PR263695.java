@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 IBM Corporation and others.
+ * Copyright (c) 2000, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -17,35 +17,42 @@ package org.eclipse.ui.tests.navigator.dndtest;
  * For a list of all SWT example snippets see
  * http://www.eclipse.org/swt/snippets/
  */
-
-
-import org.eclipse.swt.*;
-import org.eclipse.swt.dnd.*;
-import org.eclipse.swt.graphics.*;
-import org.eclipse.swt.layout.*;
-import org.eclipse.swt.widgets.*;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.dnd.DND;
+import org.eclipse.swt.dnd.DragSource;
+import org.eclipse.swt.dnd.DragSourceEvent;
+import org.eclipse.swt.dnd.DragSourceListener;
+import org.eclipse.swt.dnd.DropTarget;
+import org.eclipse.swt.dnd.DropTargetAdapter;
+import org.eclipse.swt.dnd.DropTargetEvent;
+import org.eclipse.swt.dnd.TextTransfer;
+import org.eclipse.swt.dnd.Transfer;
+import org.eclipse.swt.graphics.Rectangle;
+import org.eclipse.swt.layout.FillLayout;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Listener;
+import org.eclipse.swt.widgets.Shell;
 
 public class PR263695 {
 
         public static void main(String[] args) {
                 final Display display = new Display();
 
-                Listener listener = new Listener() {
-                        @Override
-						public void handleEvent(Event event) {
-                                switch (event.type) {
-                                case SWT.MouseDown:
-                                        System.out.println("down");
-                                        break;
-                                case SWT.MouseUp:
-                                        System.out.println("up");
-                                        break;
-                                case SWT.MouseMove:
-                                        System.out.println("move");
-                                        break;
-                                }
-                        }
-                };
+		Listener listener = event -> {
+			switch (event.type) {
+			case SWT.MouseDown:
+				System.out.println("down");
+				break;
+			case SWT.MouseUp:
+				System.out.println("up");
+				break;
+			case SWT.MouseMove:
+				System.out.println("move");
+				break;
+			}
+		};
                 display.addFilter(SWT.MouseMove, listener);
                 display.addFilter(SWT.MouseDown, listener);
                 display.addFilter(SWT.MouseUp, listener);
@@ -72,52 +79,59 @@ public class PR263695 {
 
                 display.setCursorLocation(downX, downY);
 
-                Thread t = new Thread(new Runnable(){
-                        @Override
-						public void run() {
-                                try { Thread.sleep(2000); } catch
-(InterruptedException e) {}
-                                int sleep = 50;
-                                Event event = new Event();
-                                event.type = SWT.MouseDown;
-                                event.button = 1;
-                                display.post(event);
+		Thread t = new Thread(() -> {
+			try {
+				Thread.sleep(2000);
+			} catch (InterruptedException e1) {
+			}
+			int sleep = 50;
+			Event event = new Event();
+			event.type = SWT.MouseDown;
+			event.button = 1;
+			display.post(event);
 
-                                try { Thread.sleep(sleep); } catch
-(InterruptedException e) {}
-                                event = new Event();
-                                event.type = SWT.MouseMove;
-                                event.x = downX;
-                                event.y = downY+20;
-                                display.post(event);
+			try {
+				Thread.sleep(sleep);
+			} catch (InterruptedException e2) {
+			}
+			event = new Event();
+			event.type = SWT.MouseMove;
+			event.x = downX;
+			event.y = downY + 20;
+			display.post(event);
 
-                                try { Thread.sleep(sleep); } catch
-(InterruptedException e) {}
-                                System.out.println("move to target");
-                                event = new Event();
-                                event.type = SWT.MouseMove;
-                                event.x = upX;
-                                event.y = upY;
-                                display.post(event);
+			try {
+				Thread.sleep(sleep);
+			} catch (InterruptedException e3) {
+			}
+			System.out.println("move to target");
+			event = new Event();
+			event.type = SWT.MouseMove;
+			event.x = upX;
+			event.y = upY;
+			display.post(event);
 
-                                try { Thread.sleep(sleep); } catch
-(InterruptedException e) {}
-                                System.out.println("move inside target");
-                                event = new Event();
-                                event.type = SWT.MouseMove;
-                                event.x = upX;
-                                event.y = upY + 20;
-                                display.post(event);
+			try {
+				Thread.sleep(sleep);
+			} catch (InterruptedException e4) {
+			}
+			System.out.println("move inside target");
+			event = new Event();
+			event.type = SWT.MouseMove;
+			event.x = upX;
+			event.y = upY + 20;
+			display.post(event);
 
-                                try { Thread.sleep(sleep); } catch
-(InterruptedException e) {}
-                                System.out.println("release");
-                                event = new Event();
-                                event.type = SWT.MouseUp;
-                                event.button = 1;
-                                display.post(event);
-                        }
-                });
+			try {
+				Thread.sleep(sleep);
+			} catch (InterruptedException e5) {
+			}
+			System.out.println("release");
+			event = new Event();
+			event.type = SWT.MouseUp;
+			event.button = 1;
+			display.post(event);
+		});
                 t.start();
 
 

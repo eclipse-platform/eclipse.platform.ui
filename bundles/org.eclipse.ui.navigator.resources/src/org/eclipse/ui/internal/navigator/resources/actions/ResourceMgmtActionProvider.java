@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2017 IBM Corporation and others.
+ * Copyright (c) 2006, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -207,12 +207,7 @@ public class ResourceMgmtActionProvider extends CommonActionProvider {
 	}
 
 	protected void makeActions() {
-		IShellProvider sp = new IShellProvider() {
-			@Override
-			public Shell getShell() {
-				return shell;
-			}
-		};
+		IShellProvider sp = () -> shell;
 
 		openProjectAction = new OpenResourceAction(sp);
 
@@ -233,13 +228,11 @@ public class ResourceMgmtActionProvider extends CommonActionProvider {
 						try {
 							op.run(monitor);
 							if (shell != null && !shell.isDisposed()) {
-								shell.getDisplay().asyncExec(new Runnable() {
-									@Override
-									public void run() {
-										StructuredViewer viewer = getActionSite().getStructuredViewer();
-										if (viewer != null && viewer.getControl() != null && !viewer.getControl().isDisposed()) {
-											viewer.refresh();
-										}
+								shell.getDisplay().asyncExec(() -> {
+									StructuredViewer viewer = getActionSite().getStructuredViewer();
+									if (viewer != null && viewer.getControl() != null
+											&& !viewer.getControl().isDisposed()) {
+										viewer.refresh();
 									}
 								});
 							}

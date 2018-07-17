@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2015 IBM Corporation and others.
+ * Copyright (c) 2005, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -109,58 +109,48 @@ public class AsynchronousTestSet extends ObservableSet<Object> {
 		if (!isStale()) {
 			setStale(true);
 			final int sleepTime = (int) (randomNumberGenerator.nextDouble() * (AVERAGE_BUSY_TIME * 2));
-			Thread newThread = new Thread(new Runnable() {
-				@Override
-				public void run() {
+			Thread newThread = new Thread(() -> {
 
-					// Simulate work by sleeping
-					try {
-						Thread.sleep(sleepTime);
-					} catch (InterruptedException e) {
+				// Simulate work by sleeping
+				try {
+					Thread.sleep(sleepTime);
+				} catch (InterruptedException e) {
+				}
+
+				// Add and remove some elements -- important: fire all
+				// events in the UI thread
+				display.asyncExec(() -> {
+					final Set<Object> toAdd = new HashSet<>();
+					final Set<Object> toRemove = new HashSet<>();
+
+					// Compute elements to add and remove (basically
+					// just fills the toAdd
+					// and toRemove sets with random elements)
+					int delta = (randomNumberGenerator.nextInt(AVERAGE_DELTA * 4) - AVERAGE_DELTA * 2);
+					int extraAdds = randomNumberGenerator.nextInt(AVERAGE_DELTA);
+					int addCount = delta + extraAdds;
+					int removeCount = -delta + extraAdds;
+
+					if (addCount > 0) {
+						for (int i1 = 0; i1 < addCount; i1++) {
+							toAdd.add(Integer.valueOf(randomNumberGenerator.nextInt(20)));
+						}
 					}
 
-					// Add and remove some elements -- important: fire all
-					// events in the UI thread
-					display.asyncExec(new Runnable() {
-						@Override
-						public void run() {
-							final Set<Object> toAdd = new HashSet<>();
-							final Set<Object> toRemove = new HashSet<>();
-
-							// Compute elements to add and remove (basically
-							// just fills the toAdd
-							// and toRemove sets with random elements)
-							int delta = (randomNumberGenerator
-									.nextInt(AVERAGE_DELTA * 4) - AVERAGE_DELTA * 2);
-							int extraAdds = randomNumberGenerator
-									.nextInt(AVERAGE_DELTA);
-							int addCount = delta + extraAdds;
-							int removeCount = -delta + extraAdds;
-
-							if (addCount > 0) {
-								for (int i = 0; i < addCount; i++) {
-									toAdd.add(Integer.valueOf(randomNumberGenerator
-											.nextInt(20)));
-								}
-							}
-
-							if (removeCount > 0) {
-								Iterator<Object> oldElements = wrappedSet.iterator();
-								for (int i = 0; i < removeCount
-										&& oldElements.hasNext(); i++) {
-									toRemove.add(oldElements.next());
-								}
-							}
-
-							toAdd.removeAll(wrappedSet);
-							wrappedSet.addAll(toAdd);
-							wrappedSet.removeAll(toRemove);
-
-							setStale(false);
-							fireSetChange(Diffs.createSetDiff(toAdd, toRemove));
+					if (removeCount > 0) {
+						Iterator<Object> oldElements = wrappedSet.iterator();
+						for (int i2 = 0; i2 < removeCount && oldElements.hasNext(); i2++) {
+							toRemove.add(oldElements.next());
 						}
-					});
-				}
+					}
+
+					toAdd.removeAll(wrappedSet);
+					wrappedSet.addAll(toAdd);
+					wrappedSet.removeAll(toRemove);
+
+					setStale(false);
+					fireSetChange(Diffs.createSetDiff(toAdd, toRemove));
+				});
 			});
 
 			newThread.start();

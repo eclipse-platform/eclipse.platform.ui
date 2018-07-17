@@ -1,5 +1,5 @@
 /************************************************************************************************************
- * Copyright (c) 2007, 2014 Matthew Hall and others. All rights reserved. This program and the
+ * Copyright (c) 2007, 2018 Matthew Hall and others. All rights reserved. This program and the
  * accompanying materials are made available under the terms of the Eclipse Public License v1.0 which
  * accompanies this distribution, and is available at http://www.eclipse.org/legal/epl-v10.html
  *
@@ -99,21 +99,17 @@ public class Snippet015DelayTextModifyEvents {
 	public static void main(String[] args) {
 		final Display display = new Display();
 
-		Realm.runWithDefault(DisplayRealm.getRealm(display), new Runnable() {
-			@Override
-			public void run() {
-				Shell shell = new Shell();
-				shell.setLayout(new GridLayout(3, false));
+		Realm.runWithDefault(DisplayRealm.getRealm(display), () -> {
+			Shell shell = new Shell();
+			shell.setLayout(new GridLayout(3, false));
 
-				createControls(shell);
+			createControls(shell);
 
-				shell.pack();
-				shell.open();
-				while (!shell.isDisposed())
-					if (!display.readAndDispatch())
-						display.sleep();
-			}
-
+			shell.pack();
+			shell.open();
+			while (!shell.isDisposed())
+				if (!display.readAndDispatch())
+					display.sleep();
 		});
 
 		display.dispose();

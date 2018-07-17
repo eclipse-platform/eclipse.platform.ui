@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2016 IBM Corporation and others.
+ * Copyright (c) 2009, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -27,7 +27,6 @@ import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.contexts.RunAndTrack;
 import org.eclipse.e4.core.di.annotations.Optional;
 import org.eclipse.e4.core.internal.contexts.EclipseContext;
-import org.eclipse.e4.core.internal.contexts.IContextDisposalListener;
 import org.eclipse.e4.core.services.events.IEventBroker;
 import org.eclipse.e4.core.services.log.Logger;
 import org.eclipse.e4.ui.model.application.ui.basic.MPart;
@@ -35,7 +34,6 @@ import org.eclipse.e4.ui.services.IServiceConstants;
 import org.eclipse.e4.ui.workbench.UIEvents;
 import org.eclipse.e4.ui.workbench.modeling.EPartService;
 import org.eclipse.e4.ui.workbench.modeling.ISelectionListener;
-import org.osgi.service.event.Event;
 import org.osgi.service.event.EventHandler;
 
 public class SelectionAggregator {
@@ -49,18 +47,14 @@ public class SelectionAggregator {
 	private Map<String, ListenerList<ISelectionListener>> targetedPostListeners = new HashMap<>();
 	private Set<IEclipseContext> tracked = new HashSet<>();
 
-	private EventHandler eventHandler = new EventHandler() {
-		@Override
-		public void handleEvent(Event event) {
-			Object element = event.getProperty(UIEvents.EventTags.ELEMENT);
-			if (element instanceof MPart) {
-				MPart part = (MPart) element;
+	private EventHandler eventHandler = event -> {
+		Object element = event.getProperty(UIEvents.EventTags.ELEMENT);
+		if (element instanceof MPart) {
+			MPart part = (MPart) element;
 
-				String partId = part.getElementId();
-				if (targetedListeners.containsKey(partId)
-						|| targetedPostListeners.containsKey(partId))
-					track(part);
-			}
+			String partId = part.getElementId();
+			if (targetedListeners.containsKey(partId) || targetedPostListeners.containsKey(partId))
+				track(part);
 		}
 	};
 
@@ -202,12 +196,7 @@ public class SelectionAggregator {
 		IEclipseContext context = part.getContext();
 		if (context != null && tracked.add(context)) {
 			if (context instanceof EclipseContext) {
-				((EclipseContext) context).notifyOnDisposal(new IContextDisposalListener() {
-					@Override
-					public void disposed(IEclipseContext context) {
-						tracked.remove(context);
-					}
-				});
+				((EclipseContext) context).notifyOnDisposal(context1 -> tracked.remove(context1));
 			}
 
 			context.runAndTrack(new RunAndTrack() {
@@ -225,19 +214,9 @@ public class SelectionAggregator {
 
 					if (activePart == part) {
 						myContext.set(IServiceConstants.ACTIVE_SELECTION, selection);
-						runExternalCode(new Runnable() {
-							@Override
-							public void run() {
-								notifyListeners(part, selection);
-							}
-						});
+						runExternalCode(() -> notifyListeners(part, selection));
 					} else {
-						runExternalCode(new Runnable() {
-							@Override
-							public void run() {
-								notifyTargetedListeners(part, selection);
-							}
-						});
+						runExternalCode(() -> notifyTargetedListeners(part, selection));
 						// we don't need to keep tracking non-active parts unless
 						// they have targeted listeners
 						String partId = part.getElementId();
@@ -265,19 +244,9 @@ public class SelectionAggregator {
 					}
 
 					if (activePart == part) {
-						runExternalCode(new Runnable() {
-							@Override
-							public void run() {
-								notifyPostListeners(part, postSelection);
-							}
-						});
+						runExternalCode(() -> notifyPostListeners(part, postSelection));
 					} else {
-						runExternalCode(new Runnable() {
-							@Override
-							public void run() {
-								notifyTargetedPostListeners(part, postSelection);
-							}
-						});
+						runExternalCode(() -> notifyTargetedPostListeners(part, postSelection));
 						// we don't need to keep tracking non-active parts unless
 						// they have targeted listeners
 						String partId = part.getElementId();

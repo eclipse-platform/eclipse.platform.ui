@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2015 IBM Corporation and others.
+ * Copyright (c) 2010, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -736,13 +736,7 @@ public class MenuHelper {
 					}
 				};
 				action.addPropertyChangeListener(propListener);
-				Runnable obj = new Runnable() {
-					@Override
-					@Execute
-					public void run() {
-						action.removePropertyChangeListener(propListener);
-					}
-				};
+				Runnable obj = () -> action.removePropertyChangeListener(propListener);
 				model.setSelected(action.isChecked());
 				return obj;
 			}

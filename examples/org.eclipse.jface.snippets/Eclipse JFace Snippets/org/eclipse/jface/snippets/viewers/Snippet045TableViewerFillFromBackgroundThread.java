@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2015 Tom Schindl and others.
+ * Copyright (c) 2006, 2018 Tom Schindl and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -132,14 +132,10 @@ public class Snippet045TableViewerFillFromBackgroundThread {
 
 			@Override
 			public void run() {
-				shell.getDisplay().syncExec(new Runnable() {
-
-					@Override
-					public void run() {
-						MyModel el = new MyModel(++COUNTER);
-						v.add(el);
-						model.add(el);
-					}
+				shell.getDisplay().syncExec(() -> {
+					MyModel el = new MyModel(++COUNTER);
+					v.add(el);
+					model.add(el);
 				});
 			}
 		};

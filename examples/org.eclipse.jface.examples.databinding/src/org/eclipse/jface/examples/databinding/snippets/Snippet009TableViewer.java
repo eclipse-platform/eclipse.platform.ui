@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2014 The Pampered Chef, Inc. and others.
+ * Copyright (c) 2006, 2018 The Pampered Chef, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -40,18 +40,15 @@ public class Snippet009TableViewer {
 		// In an RCP application, the threading Realm will be set for you
 		// automatically by the Workbench. In an SWT application, you can do
 		// this once, wrpping your binding method call.
-		Realm.runWithDefault(DisplayRealm.getRealm(display), new Runnable() {
-			@Override
-			public void run() {
+		Realm.runWithDefault(DisplayRealm.getRealm(display), () -> {
 
-				ViewModel viewModel = new ViewModel();
-				Shell shell = new View(viewModel).createShell();
+			ViewModel viewModel = new ViewModel();
+			Shell shell = new View(viewModel).createShell();
 
-				// The SWT event loop
-				while (!shell.isDisposed()) {
-					if (!display.readAndDispatch()) {
-						display.sleep();
-					}
+			// The SWT event loop
+			while (!shell.isDisposed()) {
+				if (!display.readAndDispatch()) {
+					display.sleep();
 				}
 			}
 		});

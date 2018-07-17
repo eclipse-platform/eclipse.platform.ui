@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2014 Eric Rizzo and others.
+ * Copyright (c) 2009, 2018 Eric Rizzo and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -33,16 +33,13 @@ public class Snippet034ComboViewerAndEnum {
 		Display display = new Display();
 		final Person model = new Person("Pat", Gender.Unknown);
 
-		Realm.runWithDefault(DisplayRealm.getRealm(display), new Runnable() {
-			@Override
-			public void run() {
-				final Shell shell = new View(model).createShell();
-				// The SWT event loop
-				Display display = Display.getCurrent();
-				while (!shell.isDisposed()) {
-					if (!display.readAndDispatch()) {
-						display.sleep();
-					}
+		Realm.runWithDefault(DisplayRealm.getRealm(display), () -> {
+			final Shell shell = new View(model).createShell();
+			// The SWT event loop
+			Display display1 = Display.getCurrent();
+			while (!shell.isDisposed()) {
+				if (!display1.readAndDispatch()) {
+					display1.sleep();
 				}
 			}
 		});

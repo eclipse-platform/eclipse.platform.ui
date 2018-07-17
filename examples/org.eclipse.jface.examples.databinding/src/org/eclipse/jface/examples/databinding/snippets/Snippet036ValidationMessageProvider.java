@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2014 Ovidio Mallo and others.
+ * Copyright (c) 2009, 2018 Ovidio Mallo and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -57,19 +57,15 @@ public class Snippet036ValidationMessageProvider {
 	public static void main(String[] args) {
 		Display display = new Display();
 
-		Realm.runWithDefault(DisplayRealm.getRealm(display), new Runnable() {
-			@Override
-			public void run() {
-				IWizard wizard = new MessageProviderWizard();
-				WizardDialog wizardDialog = new WizardDialog(null, wizard);
-				wizardDialog.open();
+		Realm.runWithDefault(DisplayRealm.getRealm(display), () -> {
+			IWizard wizard = new MessageProviderWizard();
+			WizardDialog wizardDialog = new WizardDialog(null, wizard);
+			wizardDialog.open();
 
-				Display display = Display.getCurrent();
-				while (wizardDialog.getShell() != null
-						&& !wizardDialog.getShell().isDisposed()) {
-					if (!display.readAndDispatch()) {
-						display.sleep();
-					}
+			Display display1 = Display.getCurrent();
+			while (wizardDialog.getShell() != null && !wizardDialog.getShell().isDisposed()) {
+				if (!display1.readAndDispatch()) {
+					display1.sleep();
 				}
 			}
 		});

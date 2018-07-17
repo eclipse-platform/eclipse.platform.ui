@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2015 IBM Corporation and others.
+ * Copyright (c) 2003, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -18,8 +18,6 @@ import org.eclipse.swt.events.FocusAdapter;
 import org.eclipse.swt.events.FocusEvent;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Event;
-import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeItem;
@@ -83,46 +81,37 @@ public class NavigatorSiteEditor implements INavigatorSiteEditor {
 		// Create text editor parent. This draws a nice bounding rect.
 		textEditorParent = createParent();
 		textEditorParent.setVisible(false);
-		textEditorParent.addListener(SWT.Paint, new Listener() {
-			@Override
-			public void handleEvent(Event e) {
-				Point textSize = textEditor.getSize();
-				Point parentSize = textEditorParent.getSize();
-				e.gc.drawRectangle(0, 0, Math.min(textSize.x + 4, parentSize.x - 1), parentSize.y - 1);
-			}
+		textEditorParent.addListener(SWT.Paint, e -> {
+			Point textSize = textEditor.getSize();
+			Point parentSize = textEditorParent.getSize();
+			e.gc.drawRectangle(0, 0, Math.min(textSize.x + 4, parentSize.x - 1), parentSize.y - 1);
 		});
 
 		// Create inner text editor.
 		textEditor = new Text(textEditorParent, SWT.NONE);
 		textEditorParent.setBackground(textEditor.getBackground());
-		textEditor.addListener(SWT.Modify, new Listener() {
-			@Override
-			public void handleEvent(Event e) {
-				Point textSize = textEditor.computeSize(SWT.DEFAULT, SWT.DEFAULT);
-				textSize.x += textSize.y; // Add extra space for new characters.
-				Point parentSize = textEditorParent.getSize();
-				textEditor.setBounds(2, 1, Math.min(textSize.x, parentSize.x - 4), parentSize.y - 2);
-				textEditorParent.redraw();
-			}
+		textEditor.addListener(SWT.Modify, e -> {
+			Point textSize = textEditor.computeSize(SWT.DEFAULT, SWT.DEFAULT);
+			textSize.x += textSize.y; // Add extra space for new characters.
+			Point parentSize = textEditorParent.getSize();
+			textEditor.setBounds(2, 1, Math.min(textSize.x, parentSize.x - 4), parentSize.y - 2);
+			textEditorParent.redraw();
 		});
-		textEditor.addListener(SWT.Traverse, new Listener() {
-			@Override
-			public void handleEvent(Event event) {
-				//Workaround for Bug 20214 due to extra
-				//traverse events
-				switch (event.detail) {
-					case SWT.TRAVERSE_ESCAPE :
-						//Do nothing in this case
-						disposeTextWidget();
-						event.doit = true;
-						event.detail = SWT.TRAVERSE_NONE;
-						break;
-					case SWT.TRAVERSE_RETURN :
-						saveChangesAndDispose(runnable);
-						event.doit = true;
-						event.detail = SWT.TRAVERSE_NONE;
-						break;
-				}
+		textEditor.addListener(SWT.Traverse, event -> {
+			// Workaround for Bug 20214 due to extra
+			// traverse events
+			switch (event.detail) {
+			case SWT.TRAVERSE_ESCAPE:
+				// Do nothing in this case
+				disposeTextWidget();
+				event.doit = true;
+				event.detail = SWT.TRAVERSE_NONE;
+				break;
+			case SWT.TRAVERSE_RETURN:
+				saveChangesAndDispose(runnable);
+				event.doit = true;
+				event.detail = SWT.TRAVERSE_NONE;
+				break;
 			}
 		});
 		textEditor.addFocusListener(new FocusAdapter() {
@@ -216,16 +205,13 @@ public class NavigatorSiteEditor implements INavigatorSiteEditor {
 		// this action is completed. Otherwise this leads to problems when the
 		// icon of the item being renamed is clicked (i.e., which causes the rename
 		// text widget to lose focus and trigger this method).
-		Runnable editRunnable = new Runnable() {
-			@Override
-			public void run() {
-				disposeTextWidget();
-				if (newText.length() > 0 && newText.equals(text) == false) {
-					text = newText;
-					runnable.run();
-				}
-				text = null;
+		Runnable editRunnable = () -> {
+			disposeTextWidget();
+			if (newText.length() > 0 && newText.equals(text) == false) {
+				text = newText;
+				runnable.run();
 			}
+			text = null;
 		};
 		navigatorTree.getShell().getDisplay().asyncExec(editRunnable);
 	}
