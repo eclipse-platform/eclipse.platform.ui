@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2009 Matthew Hall and others.
+ * Copyright (c) 2007, 2018 Matthew Hall and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -80,13 +80,7 @@ public class SWTDelayedObservableValueDecoratorTest extends
 
 	@Test
 	public void testFocusOut_FiresPendingValueChange() {
-		assertFiresPendingValueChange(new Runnable() {
-			@Override
-			public void run() {
-				// simulate focus-out event
-				shell.notifyListeners(SWT.FocusOut, new Event());
-			}
-		});
+		assertFiresPendingValueChange(() -> shell.notifyListeners(SWT.FocusOut, new Event()));
 	}
 
 	private void assertFiresPendingValueChange(Runnable runnable) {

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 Matthew Hall and others.
+ * Copyright (c) 2008, 2018 Matthew Hall and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -41,6 +41,7 @@ public class BidiObservableMapTest extends AbstractDefaultRealmTestCase {
 	private Object value1;
 	private Object value2;
 
+	@Override
 	@Before
 	public void setUp() throws Exception {
 		super.setUp();
@@ -79,97 +80,70 @@ public class BidiObservableMapTest extends AbstractDefaultRealmTestCase {
 
 	@Test
 	public void testGetKeys_Empty() throws Exception {
-		withAndWithoutListeners(new Runnable() {
-			@Override
-			public void run() {
-				assertEquals(Collections.EMPTY_SET, bidiMap.getKeys(value1));
-			}
-		});
+		withAndWithoutListeners(() -> assertEquals(Collections.EMPTY_SET, bidiMap.getKeys(value1)));
 	}
 
 	@Test
 	public void testGetKeys_NullKey() throws Exception {
-		withAndWithoutListeners(new Runnable() {
-			@Override
-			public void run() {
-				wrappedMap.put(null, value1);
-				assertEquals(Collections.singleton(null), bidiMap
-						.getKeys(value1));
-			}
+		withAndWithoutListeners(() -> {
+			wrappedMap.put(null, value1);
+			assertEquals(Collections.singleton(null), bidiMap.getKeys(value1));
 		});
 	}
 
 	@Test
 	public void testGetKeys_NullValue() throws Exception {
-		withAndWithoutListeners(new Runnable() {
-			@Override
-			public void run() {
-				wrappedMap.put(key1, null);
-				assertEquals(Collections.singleton(key1), bidiMap.getKeys(null));
-			}
+		withAndWithoutListeners(() -> {
+			wrappedMap.put(key1, null);
+			assertEquals(Collections.singleton(key1), bidiMap.getKeys(null));
 		});
 	}
 
 	@Test
 	public void testGetKeys_SinglePut() throws Exception {
-		withAndWithoutListeners(new Runnable() {
-			@Override
-			public void run() {
-				wrappedMap.put(key1, value1);
-				assertEquals(Collections.singleton(key1), bidiMap
-						.getKeys(value1));
-			}
+		withAndWithoutListeners(() -> {
+			wrappedMap.put(key1, value1);
+			assertEquals(Collections.singleton(key1), bidiMap.getKeys(value1));
 		});
 	}
 
 	@Test
 	public void testGetKeys_ReplaceValue() throws Exception {
-		withAndWithoutListeners(new Runnable() {
-			@Override
-			public void run() {
-				wrappedMap.put(key1, value1);
-				assertEquals(Collections.singleton(key1), bidiMap
-						.getKeys(value1));
-				assertEquals(Collections.EMPTY_SET, bidiMap.getKeys(value2));
-				wrappedMap.put(key1, value2);
-				assertEquals(Collections.EMPTY_SET, bidiMap.getKeys(value1));
-				assertEquals(Collections.singleton(key1), bidiMap
-						.getKeys(value2));
-			}
+		withAndWithoutListeners(() -> {
+			wrappedMap.put(key1, value1);
+			assertEquals(Collections.singleton(key1), bidiMap.getKeys(value1));
+			assertEquals(Collections.EMPTY_SET, bidiMap.getKeys(value2));
+			wrappedMap.put(key1, value2);
+			assertEquals(Collections.EMPTY_SET, bidiMap.getKeys(value1));
+			assertEquals(Collections.singleton(key1), bidiMap.getKeys(value2));
 		});
 	}
 
 	@Test
 	public void testGetKeys_MultipleKeysWithSameValue() throws Exception {
-		withAndWithoutListeners(new Runnable() {
-			@Override
-			public void run() {
-				wrappedMap.put(key1, value1);
-				wrappedMap.put(key2, value1);
+		withAndWithoutListeners(() -> {
+			wrappedMap.put(key1, value1);
+			wrappedMap.put(key2, value1);
 
-				Set expected = new HashSet();
-				expected.add(key1);
-				expected.add(key2);
-				assertEquals(expected, bidiMap.getKeys(value1));
-			}
+			Set expected = new HashSet();
+			expected.add(key1);
+			expected.add(key2);
+			assertEquals(expected, bidiMap.getKeys(value1));
 		});
 	}
 
 	@Test
 	public void testContainsValue_PutAndRemove() throws Exception {
-		withAndWithoutListeners(new Runnable() {
-			@Override
-			public void run() {
-				assertFalse(bidiMap.containsValue(value1));
-				wrappedMap.put(key1, value1);
-				assertTrue(bidiMap.containsValue(value1));
-				wrappedMap.put(key2, value1);
-				assertTrue(bidiMap.containsValue(value1));
-				wrappedMap.remove(key1);
-				assertTrue(bidiMap.containsValue(value1));
-				wrappedMap.remove(key2);
-				assertFalse(bidiMap.containsValue(value1));
-			}
+		withAndWithoutListeners(() -> {
+			assertFalse(bidiMap.containsValue(value1));
+			wrappedMap.put(key1, value1);
+			assertTrue(bidiMap.containsValue(value1));
+			wrappedMap.put(key2, value1);
+			assertTrue(bidiMap.containsValue(value1));
+			wrappedMap.remove(key1);
+			assertTrue(bidiMap.containsValue(value1));
+			wrappedMap.remove(key2);
+			assertFalse(bidiMap.containsValue(value1));
 		});
 	}
 }

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2007 Brad Reynolds and others.
+ * Copyright (c) 2006, 2018 Brad Reynolds and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -39,15 +39,12 @@ public class AbstractObservableValueTest {
 
 	@Test
 	public void testSetValueRealmChecks() throws Exception {
-		RealmTester.exerciseCurrent(new Runnable() {
-			@Override
-			public void run() {
-				ObservableValueStub observable = new ObservableValueStub();
-				try {
-					observable.setValue(null);
-				} catch (UnsupportedOperationException e) {
-					// do nothing
-				}
+		RealmTester.exerciseCurrent(() -> {
+			ObservableValueStub observable = new ObservableValueStub();
+			try {
+				observable.setValue(null);
+			} catch (UnsupportedOperationException e) {
+				// do nothing
 			}
 		});
 	}
@@ -76,12 +73,9 @@ public class AbstractObservableValueTest {
 
 	@Test
 	public void testFireValueChangeRealmChecks() throws Exception {
-		RealmTester.exerciseCurrent(new Runnable() {
-			@Override
-			public void run() {
-				ObservableValueStub observable = new ObservableValueStub();
-				observable.fireValueChange(null);
-			}
+		RealmTester.exerciseCurrent(() -> {
+			ObservableValueStub observable = new ObservableValueStub();
+			observable.fireValueChange(null);
 		});
 	}
 

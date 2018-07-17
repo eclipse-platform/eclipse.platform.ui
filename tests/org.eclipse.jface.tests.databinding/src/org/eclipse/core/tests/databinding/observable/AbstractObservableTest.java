@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2009 Brad Reynolds.
+ * Copyright (c) 2006, 2018 Brad Reynolds.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -20,13 +20,11 @@ import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 
 import org.eclipse.core.databinding.observable.AbstractObservable;
-import org.eclipse.core.databinding.observable.DisposeEvent;
 import org.eclipse.core.databinding.observable.IDisposeListener;
 import org.eclipse.core.databinding.observable.IObservable;
 import org.eclipse.core.databinding.observable.IStaleListener;
 import org.eclipse.core.databinding.observable.ObservableTracker;
 import org.eclipse.core.databinding.observable.Realm;
-import org.eclipse.core.databinding.observable.StaleEvent;
 import org.eclipse.jface.databinding.conformance.ObservableContractTest;
 import org.eclipse.jface.databinding.conformance.ObservableStaleContractTest;
 import org.eclipse.jface.databinding.conformance.delegate.AbstractObservableContractDelegate;
@@ -189,12 +187,9 @@ public class AbstractObservableTest extends AbstractDefaultRealmTestCase {
 	public void testFireStaleRealmChecks() throws Exception {
 		RealmTester.setDefault(new CurrentRealm(true));
 
-		RealmTester.exerciseCurrent(new Runnable() {
-			@Override
-			public void run() {
-				observable = new ObservableStub();
-				observable.fireStale();
-			}
+		RealmTester.exerciseCurrent(() -> {
+			observable = new ObservableStub();
+			observable.fireStale();
 		});
 	}
 
@@ -202,26 +197,17 @@ public class AbstractObservableTest extends AbstractDefaultRealmTestCase {
 	public void testFireChangeRealmChecks() throws Exception {
 		RealmTester.setDefault(new CurrentRealm(true));
 
-		RealmTester.exerciseCurrent(new Runnable() {
-			@Override
-			public void run() {
-				observable = new ObservableStub();
-				observable.fireChange();
-			}
+		RealmTester.exerciseCurrent(() -> {
+			observable = new ObservableStub();
+			observable.fireChange();
 		});
 	}
 
 	@Test
 	public void testAddDisposeListener_HasListenersFalse() {
-		IDisposeListener disposeListener = new IDisposeListener() {
-			@Override
-			public void handleDispose(DisposeEvent staleEvent) {
-			}
+		IDisposeListener disposeListener = staleEvent -> {
 		};
-		IStaleListener staleListener = new IStaleListener() {
-			@Override
-			public void handleStale(StaleEvent staleEvent) {
-			}
+		IStaleListener staleListener = staleEvent -> {
 		};
 
 		assertFalse(observable.hasListeners());

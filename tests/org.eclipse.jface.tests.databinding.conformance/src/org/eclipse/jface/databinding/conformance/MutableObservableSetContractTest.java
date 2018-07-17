@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2014 Brad Reynolds and others.
+ * Copyright (c) 2007, 2018 Brad Reynolds and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -19,14 +19,14 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
-import junit.framework.Test;
-
 import org.eclipse.core.databinding.observable.IObservablesListener;
 import org.eclipse.core.databinding.observable.set.IObservableSet;
 import org.eclipse.jface.databinding.conformance.delegate.IObservableCollectionContractDelegate;
 import org.eclipse.jface.databinding.conformance.util.ChangeEventTracker;
 import org.eclipse.jface.databinding.conformance.util.SetChangeEventTracker;
 import org.eclipse.jface.databinding.conformance.util.SuiteBuilder;
+
+import junit.framework.Test;
 
 /**
  */
@@ -57,75 +57,42 @@ public class MutableObservableSetContractTest extends
 	}
 
 	public void testAdd_SetChangeEvent() throws Exception {
-		assertSetChangeEventFired(new Runnable() {
-			@Override
-			public void run() {
-				set.add(delegate.createElement(set));
-			}
-		}, "Set.add(Object)", set);
+		assertSetChangeEventFired(() -> set.add(delegate.createElement(set)), "Set.add(Object)", set);
 	}
 
 	public void testAdd_SetDiffEntry() throws Exception {
 		set.add(delegate.createElement(set));
 		final Object element = delegate.createElement(set);
 
-		assertAddDiffEntry(new Runnable() {
-			@Override
-			public void run() {
-				set.add(element);
-			}
-		}, "Set.add(Object)", set, element);
+		assertAddDiffEntry(() -> set.add(element), "Set.add(Object)", set, element);
 	}
 
 	public void testAdd_GetterCalled() throws Exception {
-		assertGetterCalled(new Runnable() {
-			@Override
-			public void run() {
-				set.add(delegate.createElement(set));
-			}
-		}, "Set.add(Object)", set);
+		assertGetterCalled(() -> set.add(delegate.createElement(set)), "Set.add(Object)", set);
 	}
 
 	public void testAddAll_SetChangeEvent() throws Exception {
-		assertSetChangeEventFired(new Runnable() {
-			@Override
-			public void run() {
-				set.addAll(Arrays.asList(new Object[] { delegate
-						.createElement(set) }));
-			}
-		}, "Set.addAll(Collection", set);
+		assertSetChangeEventFired(() -> set.addAll(Arrays.asList(new Object[] { delegate.createElement(set) })),
+				"Set.addAll(Collection", set);
 	}
 
 	public void testAddAll_SetDiffEntry() throws Exception {
 		final Object element = delegate.createElement(set);
 
-		assertAddDiffEntry(new Runnable() {
-			@Override
-			public void run() {
-				set.addAll(Arrays.asList(new Object[] { element }));
-			}
-		}, "Set.addAll(Collection)", set, element);
+		assertAddDiffEntry(() -> set.addAll(Arrays.asList(new Object[] { element })), "Set.addAll(Collection)", set,
+				element);
 	}
 
 	public void testAddAll_GetterCalled() throws Exception {
-		assertGetterCalled(new Runnable() {
-			@Override
-			public void run() {
-				set.addAll(Collections.singleton(delegate.createElement(set)));
-			}
-		}, "Set.addAll(Collection)", set);
+		assertGetterCalled(() -> set.addAll(Collections.singleton(delegate.createElement(set))),
+				"Set.addAll(Collection)", set);
 	}
 
 	public void testRemove_SetChangeEvent() throws Exception {
 		final Object element = delegate.createElement(set);
 		set.add(element);
 
-		assertSetChangeEventFired(new Runnable() {
-			@Override
-			public void run() {
-				set.remove(element);
-			}
-		}, "Set.remove(Object)", set);
+		assertSetChangeEventFired(() -> set.remove(element), "Set.remove(Object)", set);
 	}
 
 	public void testRemove_SetDiffEntry() throws Exception {
@@ -133,58 +100,35 @@ public class MutableObservableSetContractTest extends
 		final Object element = delegate.createElement(set);
 		set.add(element);
 
-		assertRemoveDiffEntry(new Runnable() {
-			@Override
-			public void run() {
-				set.remove(element);
-			}
-		}, "Set.remove(Object)", set, element);
+		assertRemoveDiffEntry(() -> set.remove(element), "Set.remove(Object)", set, element);
 	}
 
 	public void testRemove_GetterCalled() throws Exception {
 		final Object element = delegate.createElement(set);
 		set.add(element);
-		assertGetterCalled(new Runnable() {
-			@Override
-			public void run() {
-				set.remove(element);
-			}
-		}, "Set.remove(Object)", set);
+		assertGetterCalled(() -> set.remove(element), "Set.remove(Object)", set);
 	}
 
 	public void testRemoveAll_SetChangeEvent() throws Exception {
 		final Object element = delegate.createElement(set);
 		set.add(element);
 
-		assertSetChangeEventFired(new Runnable() {
-			@Override
-			public void run() {
-				set.removeAll(Arrays.asList(new Object[] { element }));
-			}
-		}, "Set.removeAll(Collection)", set);
+		assertSetChangeEventFired(() -> set.removeAll(Arrays.asList(new Object[] { element })),
+				"Set.removeAll(Collection)", set);
 	}
 
 	public void testRemoveAll_SetDiffEntry() throws Exception {
 		final Object element = delegate.createElement(set);
 		set.add(element);
 
-		assertRemoveDiffEntry(new Runnable() {
-			@Override
-			public void run() {
-				set.removeAll(Arrays.asList(new Object[] { element }));
-			}
-		}, "Set.removeAll(Collection)", set, element);
+		assertRemoveDiffEntry(() -> set.removeAll(Arrays.asList(new Object[] { element })), "Set.removeAll(Collection)",
+				set, element);
 	}
 
 	public void testRemoveAll_GetterCalled() throws Exception {
 		final Object element = delegate.createElement(set);
 		set.add(element);
-		assertGetterCalled(new Runnable() {
-			@Override
-			public void run() {
-				set.removeAll(Collections.singleton(element));
-			}
-		}, "Set.removeAll(Collection)", set);
+		assertGetterCalled(() -> set.removeAll(Collections.singleton(element)), "Set.removeAll(Collection)", set);
 	}
 
 	public void testRetainAll_SetChangeEvent() throws Exception {
@@ -192,12 +136,8 @@ public class MutableObservableSetContractTest extends
 		set.add(element1);
 		set.add(delegate.createElement(set));
 
-		assertSetChangeEventFired(new Runnable() {
-			@Override
-			public void run() {
-				set.retainAll(Arrays.asList(new Object[] { element1 }));
-			}
-		}, "Set.retainAll(Collection", set);
+		assertSetChangeEventFired(() -> set.retainAll(Arrays.asList(new Object[] { element1 })),
+				"Set.retainAll(Collection", set);
 	}
 
 	public void testRetainAll_SetDiffEntry() throws Exception {
@@ -206,55 +146,31 @@ public class MutableObservableSetContractTest extends
 		Object element2 = delegate.createElement(set);
 		set.add(element2);
 
-		assertRemoveDiffEntry(new Runnable() {
-			@Override
-			public void run() {
-				set.retainAll(Arrays.asList(new Object[] { element1 }));
-			}
-		}, "Set.retainAll(Collection)", set, element2);
+		assertRemoveDiffEntry(() -> set.retainAll(Arrays.asList(new Object[] { element1 })),
+				"Set.retainAll(Collection)", set, element2);
 	}
 
 	public void testRetainAll_GetterCalled() throws Exception {
 		set.add(delegate.createElement(set));
-		assertGetterCalled(new Runnable() {
-			@Override
-			public void run() {
-				set.retainAll(Collections.EMPTY_SET);
-			}
-		}, "Set.retainAll(Collection)", set);
+		assertGetterCalled(() -> set.retainAll(Collections.EMPTY_SET), "Set.retainAll(Collection)", set);
 	}
 
 	public void testClear_SetChangeEvent() throws Exception {
 		set.add(delegate.createElement(set));
 
-		assertSetChangeEventFired(new Runnable() {
-			@Override
-			public void run() {
-				set.clear();
-			}
-		}, "Set.clear()", set);
+		assertSetChangeEventFired(() -> set.clear(), "Set.clear()", set);
 	}
 
 	public void testClear_SetDiffEntry() throws Exception {
 		Object element = delegate.createElement(set);
 		set.add(element);
 
-		assertRemoveDiffEntry(new Runnable() {
-			@Override
-			public void run() {
-				set.clear();
-			}
-		}, "Set.clear()", set, element);
+		assertRemoveDiffEntry(() -> set.clear(), "Set.clear()", set, element);
 	}
 
 	public void testClear_GetterCalled() throws Exception {
 		set.add(delegate.createElement(set));
-		assertGetterCalled(new Runnable() {
-			@Override
-			public void run() {
-				set.clear();
-			}
-		}, "Set.clear()", set);
+		assertGetterCalled(() -> set.clear(), "Set.clear()", set);
 	}
 
 	/**

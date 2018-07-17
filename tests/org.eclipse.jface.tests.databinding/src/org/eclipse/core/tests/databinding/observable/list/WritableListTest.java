@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2009 IBM Corporation and others.
+ * Copyright (c) 2006, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -56,57 +56,42 @@ public class WritableListTest {
 
 	@Test
 	public void testSetRealmChecks() throws Exception {
-		RealmTester.exerciseCurrent(new Runnable() {
-			@Override
-			public void run() {
-				WritableList list = new WritableList();
-				list.add("");
-				list.set(0, "");
-			}
+		RealmTester.exerciseCurrent(() -> {
+			WritableList list = new WritableList();
+			list.add("");
+			list.set(0, "");
 		});
 	}
 
 	@Test
 	public void testAddRealmChecks() throws Exception {
-		RealmTester.exerciseCurrent(new Runnable() {
-			@Override
-			public void run() {
-				WritableList list = new WritableList();
-				list.add("");
-			}
+		RealmTester.exerciseCurrent(() -> {
+			WritableList list = new WritableList();
+			list.add("");
 		});
 	}
 
 	@Test
 	public void testAddByIndexRealmChecks() throws Exception {
-		RealmTester.exerciseCurrent(new Runnable() {
-			@Override
-			public void run() {
-				WritableList list = new WritableList();
-				list.add(0, "");
-			}
+		RealmTester.exerciseCurrent(() -> {
+			WritableList list = new WritableList();
+			list.add(0, "");
 		});
 	}
 
 	@Test
 	public void testAddAllRealmChecks() throws Exception {
-		RealmTester.exerciseCurrent(new Runnable() {
-			@Override
-			public void run() {
-				WritableList list = new WritableList();
-				list.addAll(Collections.EMPTY_LIST);
-			}
+		RealmTester.exerciseCurrent(() -> {
+			WritableList list = new WritableList();
+			list.addAll(Collections.EMPTY_LIST);
 		});
 	}
 
 	@Test
 	public void testAddAllByIndexRealmChecks() throws Exception {
-		RealmTester.exerciseCurrent(new Runnable() {
-			@Override
-			public void run() {
-				WritableList list = new WritableList();
-				list.addAll(0, Collections.EMPTY_LIST);
-			}
+		RealmTester.exerciseCurrent(() -> {
+			WritableList list = new WritableList();
+			list.addAll(0, Collections.EMPTY_LIST);
 		});
 	}
 
@@ -117,12 +102,7 @@ public class WritableListTest {
 		list.add("");
 		list.add("");
 
-		RealmTester.exerciseCurrent(new Runnable() {
-			@Override
-			public void run() {
-				list.remove("");
-			}
-		});
+		RealmTester.exerciseCurrent(() -> list.remove(""));
 		RealmTester.setDefault(null);
 	}
 
@@ -133,46 +113,32 @@ public class WritableListTest {
 		list.add("");
 		list.add("");
 
-		RealmTester.exerciseCurrent(new Runnable() {
-			@Override
-			public void run() {
-				list.remove(list.size() - 1);
-			}
-		});
+		RealmTester.exerciseCurrent(() -> list.remove(list.size() - 1));
 
 		RealmTester.setDefault(null);
 	}
 
 	@Test
 	public void testRemoveAllRealmChecks() throws Exception {
-		RealmTester.exerciseCurrent(new Runnable() {
-			@Override
-			public void run() {
-				WritableList list = new WritableList();
-				list.removeAll(Collections.EMPTY_LIST);
-			}
+		RealmTester.exerciseCurrent(() -> {
+			WritableList list = new WritableList();
+			list.removeAll(Collections.EMPTY_LIST);
 		});
 	}
 
 	@Test
 	public void testRetainAllRealmChecks() throws Exception {
-		RealmTester.exerciseCurrent(new Runnable() {
-			@Override
-			public void run() {
-				WritableList list = new WritableList();
-				list.retainAll(Collections.EMPTY_LIST);
-			}
+		RealmTester.exerciseCurrent(() -> {
+			WritableList list = new WritableList();
+			list.retainAll(Collections.EMPTY_LIST);
 		});
 	}
 
 	@Test
 	public void testClearRealmChecks() throws Exception {
-		RealmTester.exerciseCurrent(new Runnable() {
-			@Override
-			public void run() {
-				WritableList list = new WritableList();
-				list.clear();
-			}
+		RealmTester.exerciseCurrent(() -> {
+			WritableList list = new WritableList();
+			list.clear();
 		});
 	}
 

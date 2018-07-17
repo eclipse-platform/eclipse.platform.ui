@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2014 IBM Corporation and others.
+ * Copyright (c) 2007, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -18,8 +18,6 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-import junit.framework.Test;
-
 import org.eclipse.core.databinding.observable.IObservablesListener;
 import org.eclipse.core.databinding.observable.list.IObservableList;
 import org.eclipse.core.databinding.observable.list.ListDiff;
@@ -28,6 +26,8 @@ import org.eclipse.jface.databinding.conformance.util.ChangeEventTracker;
 import org.eclipse.jface.databinding.conformance.util.ListChangeEventTracker;
 import org.eclipse.jface.databinding.conformance.util.SuiteBuilder;
 import org.junit.Assert;
+
+import junit.framework.Test;
 
 /**
  * Mutability tests for IObservableList.
@@ -71,12 +71,8 @@ public class MutableObservableListContractTest extends
 
 	public void testAdd_ListChangeEvent() throws Exception {
 		final Object element = delegate.createElement(list);
-		assertListChangeEventFired(new Runnable() {
-			@Override
-			public void run() {
-				list.add(element);
-			}
-		}, "List.add(Object)", list, Collections.singletonList(element));
+		assertListChangeEventFired(() -> list.add(element), "List.add(Object)", list,
+				Collections.singletonList(element));
 	}
 
 	public void testAdd_ListDiffEntry() throws Exception {
@@ -84,44 +80,25 @@ public class MutableObservableListContractTest extends
 		list.add(element0);
 		final Object element1 = delegate.createElement(list);
 
-		assertListChangeEventFired(new Runnable() {
-			@Override
-			public void run() {
-				list.add(element1);
-			}
-		}, "List.add(Object)", list,
+		assertListChangeEventFired(() -> list.add(element1), "List.add(Object)", list,
 				Arrays.asList(new Object[] { element0, element1 }));
 	}
 
 	public void testAddAtIndex_ChangeEvent() throws Exception {
-		assertChangeEventFired(new Runnable() {
-			@Override
-			public void run() {
-				list.add(0, delegate.createElement(list));
-			}
-		}, "List.add(int, Object)", list);
+		assertChangeEventFired(() -> list.add(0, delegate.createElement(list)), "List.add(int, Object)", list);
 	}
 
 	public void testAddAtIndex_ListChangeEvent() throws Exception {
 		final Object element = delegate.createElement(list);
-		assertListChangeEventFired(new Runnable() {
-			@Override
-			public void run() {
-				list.add(0, element);
-			}
-		}, "List.add(int, Object)", list, Collections.singletonList(element));
+		assertListChangeEventFired(() -> list.add(0, element), "List.add(int, Object)", list,
+				Collections.singletonList(element));
 	}
 
 	public void testAddAtIndex_ChangeEventFiredAfterElementIsAdded()
 			throws Exception {
 		final Object element = delegate.createElement(list);
 
-		assertContainsDuringChangeEvent(new Runnable() {
-			@Override
-			public void run() {
-				list.add(0, element);
-			}
-		}, "List.add(int, Collection)", list, element);
+		assertContainsDuringChangeEvent(() -> list.add(0, element), "List.add(int, Collection)", list, element);
 	}
 
 	public void testAddAtIndex_ListDiffEntry() throws Exception {
@@ -129,34 +106,21 @@ public class MutableObservableListContractTest extends
 		list.add(element0);
 		final Object element1 = delegate.createElement(list);
 
-		assertListChangeEventFired(new Runnable() {
-			@Override
-			public void run() {
-				list.add(1, element1);
-			}
-		}, "List.add(int, Object)", list,
+		assertListChangeEventFired(() -> list.add(1, element1), "List.add(int, Object)", list,
 				Arrays.asList(new Object[] { element0, element1 }));
 	}
 
 	public void testAddAll_ListChangeEvent() throws Exception {
 		final Object element = delegate.createElement(list);
-		assertListChangeEventFired(new Runnable() {
-			@Override
-			public void run() {
-				list.addAll(Collections.singletonList(element));
-			}
-		}, "List.addAll(Collection", list, Collections.singletonList(element));
+		assertListChangeEventFired(() -> list.addAll(Collections.singletonList(element)), "List.addAll(Collection",
+				list, Collections.singletonList(element));
 	}
 
 	public void testAddAll_ListDiffEntry() throws Exception {
 		final Object element = delegate.createElement(list);
 
-		assertListChangeEventFired(new Runnable() {
-			@Override
-			public void run() {
-				list.addAll(Collections.singletonList(element));
-			}
-		}, "List.addAll(Collection)", list, Collections.singletonList(element));
+		assertListChangeEventFired(() -> list.addAll(Collections.singletonList(element)), "List.addAll(Collection)",
+				list, Collections.singletonList(element));
 	}
 
 	public void testAddAll_ListDiffEntry2() throws Exception {
@@ -164,33 +128,20 @@ public class MutableObservableListContractTest extends
 		list.add(element0);
 		final Object element1 = delegate.createElement(list);
 
-		assertListChangeEventFired(new Runnable() {
-			@Override
-			public void run() {
-				list.addAll(Collections.singletonList(element1));
-			}
-		}, "List.addAll(Collection)", list,
+		assertListChangeEventFired(() -> list.addAll(Collections.singletonList(element1)), "List.addAll(Collection)",
+				list,
 				Arrays.asList(new Object[] { element0, element1 }));
 	}
 
 	public void testAddAllAtIndex_ChangeEvent() throws Exception {
-		assertChangeEventFired(new Runnable() {
-			@Override
-			public void run() {
-				list.addAll(0, Arrays.asList(new Object[] { delegate
-						.createElement(list) }));
-			}
-		}, "List.addAll(int, Collection)", list);
+		assertChangeEventFired(() -> list.addAll(0, Arrays.asList(new Object[] { delegate.createElement(list) })),
+				"List.addAll(int, Collection)", list);
 	}
 
 	public void testAddAllAtIndex_ListChangeEvent() throws Exception {
 		final Object element = delegate.createElement(list);
-		assertListChangeEventFired(new Runnable() {
-			@Override
-			public void run() {
-				list.addAll(0, Collections.singletonList(element));
-			}
-		}, "List.addAll(int, Collection)", list,
+		assertListChangeEventFired(() -> list.addAll(0, Collections.singletonList(element)),
+				"List.addAll(int, Collection)", list,
 				Collections.singletonList(element));
 	}
 
@@ -198,12 +149,8 @@ public class MutableObservableListContractTest extends
 			throws Exception {
 		final Object element = delegate.createElement(list);
 
-		assertContainsDuringChangeEvent(new Runnable() {
-			@Override
-			public void run() {
-				list.addAll(0, Arrays.asList(new Object[] { element }));
-			}
-		}, "List.addAll(int, Collection)", list, element);
+		assertContainsDuringChangeEvent(() -> list.addAll(0, Arrays.asList(new Object[] { element })),
+				"List.addAll(int, Collection)", list, element);
 	}
 
 	public void testAddAllAtIndex_ListDiffEntry() throws Exception {
@@ -211,24 +158,15 @@ public class MutableObservableListContractTest extends
 		list.add(element0);
 		final Object element1 = delegate.createElement(list);
 
-		assertListChangeEventFired(new Runnable() {
-			@Override
-			public void run() {
-				list.addAll(1, Collections.singletonList(element1));
-			}
-		}, "List.addAll(int, Collection)", list,
+		assertListChangeEventFired(() -> list.addAll(1, Collections.singletonList(element1)),
+				"List.addAll(int, Collection)", list,
 				Arrays.asList(new Object[] { element0, element1 }));
 	}
 
 	public void testSet_ChangeEvent() throws Exception {
 		list.add(delegate.createElement(list));
 
-		assertChangeEventFired(new Runnable() {
-			@Override
-			public void run() {
-				list.set(0, delegate.createElement(list));
-			}
-		}, "List.set(int, Object)", list);
+		assertChangeEventFired(() -> list.set(0, delegate.createElement(list)), "List.set(int, Object)", list);
 	}
 
 	public void testSet_ListChangeEvent() throws Exception {
@@ -236,12 +174,7 @@ public class MutableObservableListContractTest extends
 		list.add(element0);
 		final Object element1 = delegate.createElement(list);
 
-		assertListChangeEventFired(new Runnable() {
-			@Override
-			public void run() {
-				assertSame(element0, list.set(0, element1));
-			}
-		}, "List.set(int, Object)", list,
+		assertListChangeEventFired(() -> assertSame(element0, list.set(0, element1)), "List.set(int, Object)", list,
 				Arrays.asList(new Object[] { element1 }));
 	}
 
@@ -250,12 +183,8 @@ public class MutableObservableListContractTest extends
 		list.add(element1);
 		final Object element2 = delegate.createElement(list);
 
-		assertContainsDuringChangeEvent(new Runnable() {
-			@Override
-			public void run() {
-				assertSame(element1, list.set(0, element2));
-			}
-		}, "List.set(int, Object)", list, element2);
+		assertContainsDuringChangeEvent(() -> assertSame(element1, list.set(0, element2)), "List.set(int, Object)",
+				list, element2);
 	}
 
 	public void testSet_ListChangeEvent2() throws Exception {
@@ -265,12 +194,7 @@ public class MutableObservableListContractTest extends
 		list.add(oldElement1);
 		final Object newElement1 = delegate.createElement(list);
 
-		assertListChangeEventFired(new Runnable() {
-			@Override
-			public void run() {
-				list.set(1, newElement1);
-			}
-		}, "List.set(int, Object)", list,
+		assertListChangeEventFired(() -> list.set(1, newElement1), "List.set(int, Object)", list,
 				Arrays.asList(new Object[] { element0, newElement1 }));
 	}
 
@@ -278,12 +202,7 @@ public class MutableObservableListContractTest extends
 		list.add(delegate.createElement(list));
 		list.add(delegate.createElement(list));
 
-		assertChangeEventFired(new Runnable() {
-			@Override
-			public void run() {
-				list.move(0, 1);
-			}
-		}, "IObservableList.move(int, int)", list);
+		assertChangeEventFired(() -> list.move(0, 1), "IObservableList.move(int, int)", list);
 	}
 
 	public void testMove_NoChangeEventAtSameIndex() throws Exception {
@@ -309,12 +228,7 @@ public class MutableObservableListContractTest extends
 		final Object element1 = delegate.createElement(list);
 		list.add(element1);
 
-		assertListChangeEventFired(new Runnable() {
-			@Override
-			public void run() {
-				assertSame(element0, list.move(0, 1));
-			}
-		}, "IObservableList.move(int, int)", list,
+		assertListChangeEventFired(() -> assertSame(element0, list.move(0, 1)), "IObservableList.move(int, int)", list,
 				Arrays.asList(new Object[] { element1, element0 }));
 	}
 
@@ -339,12 +253,7 @@ public class MutableObservableListContractTest extends
 		Object element1 = delegate.createElement(list);
 		list.add(element1);
 
-		assertListChangeEventFired(new Runnable() {
-			@Override
-			public void run() {
-				list.move(0, 1);
-			}
-		}, "IObservableList.move(int, int)", list,
+		assertListChangeEventFired(() -> list.move(0, 1), "IObservableList.move(int, int)", list,
 				Arrays.asList(new Object[] { element1, element0 }));
 	}
 
@@ -352,12 +261,7 @@ public class MutableObservableListContractTest extends
 		final Object element = delegate.createElement(list);
 		list.add(element);
 
-		assertListChangeEventFired(new Runnable() {
-			@Override
-			public void run() {
-				list.remove(element);
-			}
-		}, "List.remove(Object)", list, Collections.EMPTY_LIST);
+		assertListChangeEventFired(() -> list.remove(element), "List.remove(Object)", list, Collections.EMPTY_LIST);
 	}
 
 	public void testRemove_ListDiffEntry() throws Exception {
@@ -366,34 +270,20 @@ public class MutableObservableListContractTest extends
 		final Object element1 = delegate.createElement(list);
 		list.add(element1);
 
-		assertListChangeEventFired(new Runnable() {
-			@Override
-			public void run() {
-				list.remove(element1);
-			}
-		}, "List.remove(Object)", list, Collections.singletonList(element0));
+		assertListChangeEventFired(() -> list.remove(element1), "List.remove(Object)", list,
+				Collections.singletonList(element0));
 	}
 
 	public void testRemoveAtIndex_ChangeEvent() throws Exception {
 		list.add(delegate.createElement(list));
 
-		assertChangeEventFired(new Runnable() {
-			@Override
-			public void run() {
-				list.remove(0);
-			}
-		}, "List.remove(int)", list);
+		assertChangeEventFired(() -> list.remove(0), "List.remove(int)", list);
 	}
 
 	public void testRemoveAtIndex_ListChangeEvent() throws Exception {
 		list.add(delegate.createElement(list));
 
-		assertListChangeEventFired(new Runnable() {
-			@Override
-			public void run() {
-				list.remove(0);
-			}
-		}, "List.remove(int)", list, Collections.EMPTY_LIST);
+		assertListChangeEventFired(() -> list.remove(0), "List.remove(int)", list, Collections.EMPTY_LIST);
 	}
 
 	public void testRemoveAtIndex_ChangeEventFiredAfterElementIsRemoved()
@@ -401,12 +291,7 @@ public class MutableObservableListContractTest extends
 		final Object element = delegate.createElement(list);
 		list.add(element);
 
-		assertDoesNotContainDuringChangeEvent(new Runnable() {
-			@Override
-			public void run() {
-				list.remove(0);
-			}
-		}, "List.remove(int)", list, element);
+		assertDoesNotContainDuringChangeEvent(() -> list.remove(0), "List.remove(int)", list, element);
 	}
 
 	public void testRemoveAtIndex_ListDiffEntry() throws Exception {
@@ -415,36 +300,23 @@ public class MutableObservableListContractTest extends
 		Object element1 = delegate.createElement(list);
 		list.add(element1);
 
-		assertListChangeEventFired(new Runnable() {
-			@Override
-			public void run() {
-				list.remove(1);
-			}
-		}, "List.remove(int)", list, Collections.singletonList(element0));
+		assertListChangeEventFired(() -> list.remove(1), "List.remove(int)", list, Collections.singletonList(element0));
 	}
 
 	public void testRemoveAll_ListChangeEvent() throws Exception {
 		final Object element = delegate.createElement(list);
 		list.add(element);
 
-		assertListChangeEventFired(new Runnable() {
-			@Override
-			public void run() {
-				list.removeAll(Collections.singletonList(element));
-			}
-		}, "List.removeAll(Collection)", list, Collections.EMPTY_LIST);
+		assertListChangeEventFired(() -> list.removeAll(Collections.singletonList(element)),
+				"List.removeAll(Collection)", list, Collections.EMPTY_LIST);
 	}
 
 	public void testRemoveAll_ListDiffEntry() throws Exception {
 		final Object element = delegate.createElement(list);
 		list.add(element);
 
-		assertListChangeEventFired(new Runnable() {
-			@Override
-			public void run() {
-				list.removeAll(Collections.singletonList(element));
-			}
-		}, "List.removeAll(Collection)", list, Collections.EMPTY_LIST);
+		assertListChangeEventFired(() -> list.removeAll(Collections.singletonList(element)),
+				"List.removeAll(Collection)", list, Collections.EMPTY_LIST);
 	}
 
 	public void testRemoveAll_ListDiffEntry2() throws Exception {
@@ -453,12 +325,8 @@ public class MutableObservableListContractTest extends
 		final Object element1 = delegate.createElement(list);
 		list.add(element1);
 
-		assertListChangeEventFired(new Runnable() {
-			@Override
-			public void run() {
-				list.removeAll(Arrays.asList(new Object[] { element1 }));
-			}
-		}, "List.removeAll(Collection)", list,
+		assertListChangeEventFired(() -> list.removeAll(Arrays.asList(new Object[] { element1 })),
+				"List.removeAll(Collection)", list,
 				Collections.singletonList(element0));
 	}
 
@@ -467,12 +335,8 @@ public class MutableObservableListContractTest extends
 		list.add(element0);
 		list.add(delegate.createElement(list));
 
-		assertListChangeEventFired(new Runnable() {
-			@Override
-			public void run() {
-				list.retainAll(Arrays.asList(new Object[] { element0 }));
-			}
-		}, "List.retainAll(Collection", list,
+		assertListChangeEventFired(() -> list.retainAll(Arrays.asList(new Object[] { element0 })),
+				"List.retainAll(Collection", list,
 				Collections.singletonList(element0));
 	}
 
@@ -481,35 +345,21 @@ public class MutableObservableListContractTest extends
 		list.add(element);
 		list.add(delegate.createElement(list));
 
-		assertListChangeEventFired(new Runnable() {
-			@Override
-			public void run() {
-				list.retainAll(Arrays.asList(new Object[] { element }));
-			}
-		}, "List.retainAll(Collection)", list,
+		assertListChangeEventFired(() -> list.retainAll(Arrays.asList(new Object[] { element })),
+				"List.retainAll(Collection)", list,
 				Collections.singletonList(element));
 	}
 
 	public void testClear_ListChangeEvent() throws Exception {
 		list.add(delegate.createElement(list));
 
-		assertListChangeEventFired(new Runnable() {
-			@Override
-			public void run() {
-				list.clear();
-			}
-		}, "List.clear()", list, Collections.EMPTY_LIST);
+		assertListChangeEventFired(() -> list.clear(), "List.clear()", list, Collections.EMPTY_LIST);
 	}
 
 	public void testClear_ListDiffEntry() throws Exception {
 		list.add(delegate.createElement(list));
 
-		assertListChangeEventFired(new Runnable() {
-			@Override
-			public void run() {
-				list.clear();
-			}
-		}, "List.clear()", list, Collections.EMPTY_LIST);
+		assertListChangeEventFired(() -> list.clear(), "List.clear()", list, Collections.EMPTY_LIST);
 	}
 
 	public void testClear_ClearsList() {

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006-2008 Brad Reynolds and others.
+ * Copyright (c) 2006, 2018 Brad Reynolds and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -48,51 +48,39 @@ public class WritableMapTest {
 
 	@Test
 	public void testPutRealmChecks() throws Exception {
-		RealmTester.exerciseCurrent(new Runnable() {
-			@Override
-			public void run() {
-				WritableMap map = new WritableMap();
-				map.put("", "");
-			}
+		RealmTester.exerciseCurrent(() -> {
+			WritableMap map = new WritableMap();
+			map.put("", "");
 		});
 	}
 
 	@Test
 	public void testRemoveRealmChecks() throws Exception {
-		RealmTester.exerciseCurrent(new Runnable() {
-			@Override
-			public void run() {
-				WritableMap map = new WritableMap();
-				CurrentRealm realm = (CurrentRealm) Realm.getDefault();
-				boolean current = realm.isCurrent();
-				realm.setCurrent(true);
-				map.put("", "");
-				realm.setCurrent(current);
+		RealmTester.exerciseCurrent(() -> {
+			WritableMap map = new WritableMap();
+			CurrentRealm realm = (CurrentRealm) Realm.getDefault();
+			boolean current = realm.isCurrent();
+			realm.setCurrent(true);
+			map.put("", "");
+			realm.setCurrent(current);
 
-				map.remove("");
-			}
+			map.remove("");
 		});
 	}
 
 	@Test
 	public void testClearRealmChecks() throws Exception {
-		RealmTester.exerciseCurrent(new Runnable() {
-			@Override
-			public void run() {
-				WritableMap map = new WritableMap();
-				map.clear();
-			}
+		RealmTester.exerciseCurrent(() -> {
+			WritableMap map = new WritableMap();
+			map.clear();
 		});
 	}
 
 	@Test
 	public void testPutAllRealmChecks() throws Exception {
-		RealmTester.exerciseCurrent(new Runnable() {
-			@Override
-			public void run() {
-				WritableMap map = new WritableMap();
-				map.putAll(Collections.EMPTY_MAP);
-			}
+		RealmTester.exerciseCurrent(() -> {
+			WritableMap map = new WritableMap();
+			map.putAll(Collections.EMPTY_MAP);
 		});
 	}
 

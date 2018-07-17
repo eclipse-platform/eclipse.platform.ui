@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2008 Brad Reynolds and others.
+ * Copyright (c) 2006, 2018 Brad Reynolds and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -19,20 +19,12 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import org.eclipse.core.databinding.observable.ChangeEvent;
 import org.eclipse.core.databinding.observable.Diffs;
-import org.eclipse.core.databinding.observable.DisposeEvent;
-import org.eclipse.core.databinding.observable.IChangeListener;
-import org.eclipse.core.databinding.observable.IDisposeListener;
 import org.eclipse.core.databinding.observable.IObservable;
 import org.eclipse.core.databinding.observable.IObservableCollection;
-import org.eclipse.core.databinding.observable.IStaleListener;
 import org.eclipse.core.databinding.observable.ObservableTracker;
 import org.eclipse.core.databinding.observable.Realm;
-import org.eclipse.core.databinding.observable.StaleEvent;
 import org.eclipse.core.databinding.observable.list.AbstractObservableList;
-import org.eclipse.core.databinding.observable.list.IListChangeListener;
-import org.eclipse.core.databinding.observable.list.ListChangeEvent;
 import org.eclipse.core.databinding.observable.list.ListDiff;
 import org.eclipse.core.databinding.observable.list.ListDiffEntry;
 import org.eclipse.jface.databinding.conformance.ObservableListContractTest;
@@ -64,32 +56,17 @@ public class AbstractObservableListTest {
 
 	@Test
 	public void testFireChangeRealmChecks() throws Exception {
-		RealmTester.exerciseCurrent(new Runnable() {
-			@Override
-			public void run() {
-				list.fireChange();
-			}
-		});
+		RealmTester.exerciseCurrent(() -> list.fireChange());
 	}
 
 	@Test
 	public void testFireStaleRealmChecks() throws Exception {
-		RealmTester.exerciseCurrent(new Runnable() {
-			@Override
-			public void run() {
-				list.fireStale();
-			}
-		});
+		RealmTester.exerciseCurrent(() -> list.fireStale());
 	}
 
 	@Test
 	public void testFireListChangeRealmChecks() throws Exception {
-		RealmTester.exerciseCurrent(new Runnable() {
-			@Override
-			public void run() {
-				list.fireListChange(null);
-			}
-		});
+		RealmTester.exerciseCurrent(() -> list.fireListChange(null));
 	}
 
 	@Test
@@ -100,12 +77,7 @@ public class AbstractObservableListTest {
 		list.add(new Object());
 
 		final List<ListDiffEntry> diffEntries = new ArrayList<ListDiffEntry>();
-		list.addListChangeListener(new IListChangeListener() {
-			@Override
-			public void handleListChange(ListChangeEvent event) {
-				diffEntries.addAll(Arrays.asList(event.diff.getDifferences()));
-			}
-		});
+		list.addListChangeListener(event -> diffEntries.addAll(Arrays.asList(event.diff.getDifferences())));
 
 		list.move(0, 1);
 
@@ -139,88 +111,64 @@ public class AbstractObservableListTest {
 	@Test
 	public void testAddListChangeListener_AfterDispose() {
 		list.dispose();
-		list.addListChangeListener(new IListChangeListener() {
-			@Override
-			public void handleListChange(ListChangeEvent event) {
-				// do nothing
-			}
+		list.addListChangeListener(event -> {
+			// do nothing
 		});
 	}
 
 	@Test
 	public void testRemoveListChangeListener_AfterDispose() {
 		list.dispose();
-		list.removeListChangeListener(new IListChangeListener() {
-			@Override
-			public void handleListChange(ListChangeEvent event) {
-				// do nothing
-			}
+		list.removeListChangeListener(event -> {
+			// do nothing
 		});
 	}
 
 	@Test
 	public void testAddChangeListener_AfterDispose() {
 		list.dispose();
-		list.addChangeListener(new IChangeListener() {
-			@Override
-			public void handleChange(ChangeEvent event) {
-				// do nothing
-			}
+		list.addChangeListener(event -> {
+			// do nothing
 		});
 	}
 
 	@Test
 	public void testRemoveChangeListener_AfterDispose() {
 		list.dispose();
-		list.removeChangeListener(new IChangeListener() {
-			@Override
-			public void handleChange(ChangeEvent event) {
-				// do nothing
-			}
+		list.removeChangeListener(event -> {
+			// do nothing
 		});
 	}
 
 	@Test
 	public void testAddStaleListener_AfterDispose() {
 		list.dispose();
-		list.addStaleListener(new IStaleListener() {
-			@Override
-			public void handleStale(StaleEvent staleEvent) {
-				// do nothing
-			}
+		list.addStaleListener(staleEvent -> {
+			// do nothing
 		});
 	}
 
 	@Test
 	public void testRemoveStaleListener_AfterDispose() {
 		list.dispose();
-		list.removeStaleListener(new IStaleListener() {
-			@Override
-			public void handleStale(StaleEvent staleEvent) {
-				// do nothing
-			}
+		list.removeStaleListener(staleEvent -> {
+			// do nothing
 		});
 	}
 
 	@Test
 	public void testAddDisposeListener_AfterDispose() {
 		list.dispose();
-		list.addDisposeListener(new IDisposeListener() {
-			@Override
-			public void handleDispose(DisposeEvent event) {
-				// do nothing
-			}
+		list.addDisposeListener(event -> {
+			// do nothing
 		});
 	}
 
 	@Test
 	public void testRemoveDisposeListener_AfterDispose() {
 		list.dispose();
-		list.removeDisposeListener(new IDisposeListener() {
-			@Override
-			public void handleDispose(DisposeEvent event) {
-				// do nothing
-			}
+		list.removeDisposeListener(event -> {
+			// do nothing
 		});
 	}
 

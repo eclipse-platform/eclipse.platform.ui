@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2014 IBM Corporation and others.
+ * Copyright (c) 2007, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -16,8 +16,6 @@ package org.eclipse.jface.databinding.conformance;
 import java.util.Arrays;
 import java.util.Collections;
 
-import junit.framework.Test;
-
 import org.eclipse.core.databinding.observable.ChangeEvent;
 import org.eclipse.core.databinding.observable.IChangeListener;
 import org.eclipse.core.databinding.observable.IObservableCollection;
@@ -26,6 +24,8 @@ import org.eclipse.jface.databinding.conformance.util.ChangeEventTracker;
 import org.eclipse.jface.databinding.conformance.util.CurrentRealm;
 import org.eclipse.jface.databinding.conformance.util.RealmTester;
 import org.eclipse.jface.databinding.conformance.util.SuiteBuilder;
+
+import junit.framework.Test;
 
 /**
  * Mutability tests for IObservableCollection.
@@ -65,85 +65,51 @@ public class MutableObservableCollectionContractTest extends
 	}
 
 	public void testAdd_ChangeEvent() throws Exception {
-		assertChangeEventFired(new Runnable() {
-			@Override
-			public void run() {
-				collection.add(delegate.createElement(collection));
-			}
-		}, "Collection.add(Object)", collection);
+		assertChangeEventFired(() -> collection.add(delegate.createElement(collection)), "Collection.add(Object)",
+				collection);
 	}
 
 	public void testAdd_RealmCheck() throws Exception {
-		RealmTester.exerciseCurrent(new Runnable() {
-			@Override
-			public void run() {
-				collection.add(delegate.createElement(collection));
-			}
-		}, (CurrentRealm) collection.getRealm());
+		RealmTester.exerciseCurrent(() -> collection.add(delegate.createElement(collection)),
+				(CurrentRealm) collection.getRealm());
 	}
 
 	public void testAdd_ChangeEventFiredAfterElementIsAdded() throws Exception {
 		final Object element = delegate.createElement(collection);
 
-		assertContainsDuringChangeEvent(new Runnable() {
-			@Override
-			public void run() {
-				collection.add(element);
-			}
-		}, "Collection.add(Object)", collection, element);
+		assertContainsDuringChangeEvent(() -> collection.add(element), "Collection.add(Object)", collection, element);
 	}
 
 	public void testAddAll_ChangeEvent() throws Exception {
-		assertChangeEventFired(new Runnable() {
-			@Override
-			public void run() {
-				collection.addAll(Arrays.asList(new Object[] { delegate
-						.createElement(collection) }));
-			}
-		}, "Collection.addAll(Collection)", collection);
+		assertChangeEventFired(
+				() -> collection.addAll(Arrays.asList(new Object[] { delegate.createElement(collection) })),
+				"Collection.addAll(Collection)", collection);
 	}
 
 	public void testAddAll_RealmCheck() throws Exception {
-		RealmTester.exerciseCurrent(new Runnable() {
-			@Override
-			public void run() {
-				collection.addAll(Arrays.asList(new Object[] { delegate
-						.createElement(collection) }));
-			}
-		}, (CurrentRealm) collection.getRealm());
+		RealmTester.exerciseCurrent(
+				() -> collection.addAll(Arrays.asList(new Object[] { delegate.createElement(collection) })),
+				(CurrentRealm) collection.getRealm());
 	}
 
 	public void testAddAll_ChangeEventFiredAfterElementsAreAdded()
 			throws Exception {
 		final Object element = delegate.createElement(collection);
 
-		assertContainsDuringChangeEvent(new Runnable() {
-			@Override
-			public void run() {
-				collection.addAll(Arrays.asList(new Object[] { element }));
-			}
-		}, "Collection.addAll(Collection)", collection, element);
+		assertContainsDuringChangeEvent(() -> collection.addAll(Arrays.asList(new Object[] { element })),
+				"Collection.addAll(Collection)", collection, element);
 	}
 
 	public void testRemove_ChangeEvent() throws Exception {
 		final Object element = delegate.createElement(collection);
 		collection.add(element);
 
-		assertChangeEventFired(new Runnable() {
-			@Override
-			public void run() {
-				collection.remove(element);
-			}
-		}, "Collection.remove(Object)", collection);
+		assertChangeEventFired(() -> collection.remove(element), "Collection.remove(Object)", collection);
 	}
 
 	public void testRemove_RealmCheck() throws Exception {
-		RealmTester.exerciseCurrent(new Runnable() {
-			@Override
-			public void run() {
-				collection.remove(delegate.createElement(collection));
-			}
-		}, (CurrentRealm) collection.getRealm());
+		RealmTester.exerciseCurrent(() -> collection.remove(delegate.createElement(collection)),
+				(CurrentRealm) collection.getRealm());
 	}
 
 	public void testRemove_ChangeEventFiredAfterElementIsRemoved()
@@ -151,34 +117,22 @@ public class MutableObservableCollectionContractTest extends
 		final Object element = delegate.createElement(collection);
 		collection.add(element);
 
-		assertDoesNotContainDuringChangeEvent(new Runnable() {
-			@Override
-			public void run() {
-				collection.remove(element);
-			}
-		}, "Collection.remove(Object)", collection, element);
+		assertDoesNotContainDuringChangeEvent(() -> collection.remove(element), "Collection.remove(Object)", collection,
+				element);
 	}
 
 	public void testRemoveAll_ChangeEvent() throws Exception {
 		final Object element = delegate.createElement(collection);
 		collection.add(element);
 
-		assertChangeEventFired(new Runnable() {
-			@Override
-			public void run() {
-				collection.removeAll(Arrays.asList(new Object[] { element }));
-			}
-		}, "Collection.removeAll(Collection)", collection);
+		assertChangeEventFired(() -> collection.removeAll(Arrays.asList(new Object[] { element })),
+				"Collection.removeAll(Collection)", collection);
 	}
 
 	public void testRemoveAll_RealmCheck() throws Exception {
-		RealmTester.exerciseCurrent(new Runnable() {
-			@Override
-			public void run() {
-				collection.removeAll(Arrays.asList(new Object[] { delegate
-						.createElement(collection) }));
-			}
-		}, (CurrentRealm) collection.getRealm());
+		RealmTester.exerciseCurrent(
+				() -> collection.removeAll(Arrays.asList(new Object[] { delegate.createElement(collection) })),
+				(CurrentRealm) collection.getRealm());
 	}
 
 	public void testRemoveAll_ChangeEventFiredAfterElementsAreRemoved()
@@ -186,12 +140,8 @@ public class MutableObservableCollectionContractTest extends
 		final Object element = delegate.createElement(collection);
 		collection.add(element);
 
-		assertDoesNotContainDuringChangeEvent(new Runnable() {
-			@Override
-			public void run() {
-				collection.removeAll(Arrays.asList(new Object[] { element }));
-			}
-		}, "Collection.removeAll(Collection)", collection, element);
+		assertDoesNotContainDuringChangeEvent(() -> collection.removeAll(Arrays.asList(new Object[] { element })),
+				"Collection.removeAll(Collection)", collection, element);
 	}
 
 	public void testRemoveAll_NoChange() throws Exception {
@@ -208,22 +158,13 @@ public class MutableObservableCollectionContractTest extends
 		Object element2 = delegate.createElement(collection);
 		collection.add(element2);
 
-		assertChangeEventFired(new Runnable() {
-			@Override
-			public void run() {
-				collection.retainAll(Arrays.asList(new Object[] { element1 }));
-			}
-
-		}, "Collection.retainAll(Collection)", collection);
+		assertChangeEventFired(() -> collection.retainAll(Arrays.asList(new Object[] { element1 })),
+				"Collection.retainAll(Collection)", collection);
 	}
 
 	public void testRetainAll_RealmCheck() throws Exception {
-		RealmTester.exerciseCurrent(new Runnable() {
-			@Override
-			public void run() {
-				collection.retainAll(Collections.EMPTY_LIST);
-			}
-		}, (CurrentRealm) collection.getRealm());
+		RealmTester.exerciseCurrent(() -> collection.retainAll(Collections.EMPTY_LIST),
+				(CurrentRealm) collection.getRealm());
 	}
 
 	public void testRetainAll_ChangeEventFiredAfterElementsAreRetained()
@@ -266,21 +207,11 @@ public class MutableObservableCollectionContractTest extends
 	public void testClear_ChangeEvent() throws Exception {
 		collection.add(delegate.createElement(collection));
 
-		assertChangeEventFired(new Runnable() {
-			@Override
-			public void run() {
-				collection.clear();
-			}
-		}, "List.clear()", collection);
+		assertChangeEventFired(() -> collection.clear(), "List.clear()", collection);
 	}
 
 	public void testClear_RealmCheck() throws Exception {
-		RealmTester.exerciseCurrent(new Runnable() {
-			@Override
-			public void run() {
-				collection.clear();
-			}
-		}, (CurrentRealm) collection.getRealm());
+		RealmTester.exerciseCurrent(() -> collection.clear(), (CurrentRealm) collection.getRealm());
 	}
 
 	public void testClear_ChangeEventFiredAfterElementIsRemoved()
@@ -288,12 +219,7 @@ public class MutableObservableCollectionContractTest extends
 		Object element = delegate.createElement(collection);
 		collection.add(element);
 
-		assertDoesNotContainDuringChangeEvent(new Runnable() {
-			@Override
-			public void run() {
-				collection.clear();
-			}
-		}, "List.clear()", collection, element);
+		assertDoesNotContainDuringChangeEvent(() -> collection.clear(), "List.clear()", collection, element);
 	}
 
 	/**

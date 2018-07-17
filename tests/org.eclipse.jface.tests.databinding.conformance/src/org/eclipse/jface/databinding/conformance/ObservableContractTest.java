@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2014 Brad Reynolds and others.
+ * Copyright (c) 2007, 2018 Brad Reynolds and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,12 +13,8 @@
 
 package org.eclipse.jface.databinding.conformance;
 
-import junit.framework.Test;
-
 import org.eclipse.core.databinding.observable.ChangeEvent;
-import org.eclipse.core.databinding.observable.DisposeEvent;
 import org.eclipse.core.databinding.observable.IChangeListener;
-import org.eclipse.core.databinding.observable.IDisposeListener;
 import org.eclipse.core.databinding.observable.IObservable;
 import org.eclipse.core.databinding.observable.ObservableTracker;
 import org.eclipse.core.databinding.observable.Realm;
@@ -27,6 +23,8 @@ import org.eclipse.jface.databinding.conformance.util.CurrentRealm;
 import org.eclipse.jface.databinding.conformance.util.DisposeEventTracker;
 import org.eclipse.jface.databinding.conformance.util.RealmTester;
 import org.eclipse.jface.databinding.conformance.util.SuiteBuilder;
+
+import junit.framework.Test;
 
 /**
  * Tests for IObservable that don't require mutating the observable.
@@ -65,13 +63,7 @@ public class ObservableContractTest extends ObservableDelegateTest {
 	public void testConstruction_CallsObservableCreated() {
 		final IObservable[] created = new IObservable[1];
 		IObservable[] collected = ObservableTracker
-				.runAndCollect(new Runnable() {
-					@Override
-					public void run() {
-						created[0] = delegate
-								.createObservable(new CurrentRealm(true));
-					}
-				});
+				.runAndCollect(() -> created[0] = delegate.createObservable(new CurrentRealm(true)));
 		assertTrue(collected.length > 0);
 		boolean wasCollected = false;
 		for (int i = 0; i < collected.length; i++) {
@@ -112,12 +104,7 @@ public class ObservableContractTest extends ObservableDelegateTest {
 	}
 
 	public void testChange_RealmCheck() throws Exception {
-		RealmTester.exerciseCurrent(new Runnable() {
-			@Override
-			public void run() {
-				delegate.change(observable);
-			}
-		}, (CurrentRealm) observable.getRealm());
+		RealmTester.exerciseCurrent(() -> delegate.change(observable), (CurrentRealm) observable.getRealm());
 	}
 
 	public void testChange_ObservableRealmIsTheCurrentRealm() throws Exception {
@@ -156,21 +143,11 @@ public class ObservableContractTest extends ObservableDelegateTest {
 	}
 
 	public void testIsStale_RealmChecks() throws Exception {
-		RealmTester.exerciseCurrent(new Runnable() {
-			@Override
-			public void run() {
-				observable.isStale();
-			}
-		}, (CurrentRealm) observable.getRealm());
+		RealmTester.exerciseCurrent(() -> observable.isStale(), (CurrentRealm) observable.getRealm());
 	}
 
 	public void testIsStale_GetterCalled() throws Exception {
-		assertGetterCalled(new Runnable() {
-			@Override
-			public void run() {
-				observable.isStale();
-			}
-		}, "isStale", observable);
+		assertGetterCalled(() -> observable.isStale(), "isStale", observable);
 	}
 
 	public void testIsDisposed() throws Exception {
@@ -190,12 +167,7 @@ public class ObservableContractTest extends ObservableDelegateTest {
 	public void testHandleDispose_IsDisposedTrue() {
 		// Ensures observable.isDisposed() == true before
 		// the dispose listeners are called
-		observable.addDisposeListener(new IDisposeListener() {
-			@Override
-			public void handleDispose(DisposeEvent staleEvent) {
-				assertTrue(observable.isDisposed());
-			}
-		});
+		observable.addDisposeListener(staleEvent -> assertTrue(observable.isDisposed()));
 		observable.dispose();
 	}
 

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2014 IBM Corporation and others.
+ * Copyright (c) 2007, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -15,13 +15,13 @@ package org.eclipse.jface.databinding.conformance;
 
 import java.util.Arrays;
 
-import junit.framework.Test;
-
 import org.eclipse.core.databinding.observable.IObservableCollection;
 import org.eclipse.jface.databinding.conformance.delegate.IObservableCollectionContractDelegate;
 import org.eclipse.jface.databinding.conformance.util.CurrentRealm;
 import org.eclipse.jface.databinding.conformance.util.RealmTester;
 import org.eclipse.jface.databinding.conformance.util.SuiteBuilder;
+
+import junit.framework.Test;
 
 /**
  * Tests for IObservableCollection that don't mutate the collection.
@@ -60,149 +60,75 @@ public class ObservableCollectionContractTest extends ObservableContractTest {
 	}
 
 	public void testIterator_GetterCalled() throws Exception {
-		assertGetterCalled(new Runnable() {
-			@Override
-			public void run() {
-				collection.iterator();
-			}
-		}, "Collection.iterator()", collection);
+		assertGetterCalled(() -> collection.iterator(), "Collection.iterator()", collection);
 	}
 
 	public void testIterator_RealmCheck() throws Exception {
-		RealmTester.exerciseCurrent(new Runnable() {
-			@Override
-			public void run() {
-				collection.iterator();
-			}
-		}, (CurrentRealm) collection.getRealm());
+		RealmTester.exerciseCurrent(() -> collection.iterator(), (CurrentRealm) collection.getRealm());
 	}
 
 	public void testSize_GetterCalled() throws Exception {
-		assertGetterCalled(new Runnable() {
-			@Override
-			public void run() {
-				collection.size();
-			}
-		}, "Collection.size()", collection);
+		assertGetterCalled(() -> collection.size(), "Collection.size()", collection);
 	}
 
 	public void testSize_RealmCheck() throws Exception {
-		RealmTester.exerciseCurrent(new Runnable() {
-			@Override
-			public void run() {
-				collection.size();
-			}
-		}, (CurrentRealm) collection.getRealm());
+		RealmTester.exerciseCurrent(() -> collection.size(), (CurrentRealm) collection.getRealm());
 	}
 
 	public void testIsEmpty_GetterCalled() throws Exception {
-		assertGetterCalled(new Runnable() {
-			@Override
-			public void run() {
-				collection.isEmpty();
-			}
-		}, "Collection.isEmpty()", collection);
+		assertGetterCalled(() -> collection.isEmpty(), "Collection.isEmpty()", collection);
 	}
 
 	public void testIsEmpty_RealmCheck() throws Exception {
-		RealmTester.exerciseCurrent(new Runnable() {
-			@Override
-			public void run() {
-				collection.isEmpty();
-			}
-		}, (CurrentRealm) collection.getRealm());
+		RealmTester.exerciseCurrent(() -> collection.isEmpty(), (CurrentRealm) collection.getRealm());
 	}
 
 	public void testContains_GetterCalled() throws Exception {
-		assertGetterCalled(new Runnable() {
-			@Override
-			public void run() {
-				collection.contains(delegate.createElement(collection));
-			}
-		}, "Collection.contains(...)", collection);
+		assertGetterCalled(() -> collection.contains(delegate.createElement(collection)), "Collection.contains(...)",
+				collection);
 	}
 
 	public void testContains_RealmCheck() throws Exception {
-		RealmTester.exerciseCurrent(new Runnable() {
-			@Override
-			public void run() {
-				collection.contains(delegate.createElement(collection));
-			}
-		}, (CurrentRealm) collection.getRealm());
+		RealmTester.exerciseCurrent(() -> collection.contains(delegate.createElement(collection)),
+				(CurrentRealm) collection.getRealm());
 	}
 
 	public void testContainsAll_GetterCalled() throws Exception {
-		assertGetterCalled(new Runnable() {
-			@Override
-			public void run() {
-				collection.containsAll(Arrays.asList(new Object[] { delegate
-						.createElement(collection) }));
-			}
-		}, "Collection.containsAll(Collection)", collection);
+		assertGetterCalled(
+				() -> collection.containsAll(Arrays.asList(new Object[] { delegate.createElement(collection) })),
+				"Collection.containsAll(Collection)", collection);
 	}
 
 	public void testContainsAll_RealmCheck() throws Exception {
-		RealmTester.exerciseCurrent(new Runnable() {
-			@Override
-			public void run() {
-				collection.containsAll(Arrays.asList(new Object[] { delegate
-						.createElement(collection) }));
-			}
-		}, (CurrentRealm) collection.getRealm());
+		RealmTester.exerciseCurrent(
+				() -> collection.containsAll(Arrays.asList(new Object[] { delegate.createElement(collection) })),
+				(CurrentRealm) collection.getRealm());
 	}
 
 	public void testToArray_GetterCalled() throws Exception {
-		assertGetterCalled(new Runnable() {
-			@Override
-			public void run() {
-				collection.toArray();
-			}
-		}, "Collection.toArray()", collection);
+		assertGetterCalled(() -> collection.toArray(), "Collection.toArray()", collection);
 	}
 
 	public void testToArray_RealmCheck() throws Exception {
-		RealmTester.exerciseCurrent(new Runnable() {
-			@Override
-			public void run() {
-				collection.toArray();
-			}
-		}, (CurrentRealm) collection.getRealm());
+		RealmTester.exerciseCurrent(() -> collection.toArray(), (CurrentRealm) collection.getRealm());
 	}
 
 	public void testToArrayWithObjectArray_GetterCalled() throws Exception {
-		assertGetterCalled(new Runnable() {
-			@Override
-			public void run() {
-				collection.toArray(new Object[collection.size()]);
-			}
-		}, "Collection.toArray(Object[])", collection);
+		assertGetterCalled(() -> collection.toArray(new Object[collection.size()]), "Collection.toArray(Object[])",
+				collection);
 	}
 
 	public void testToArrayWithObjectArray_RealmCheck() throws Exception {
-		RealmTester.exerciseCurrent(new Runnable() {
-			@Override
-			public void run() {
-				collection.toArray(new Object[collection.size()]);
-			}
-		}, (CurrentRealm) collection.getRealm());
+		RealmTester.exerciseCurrent(() -> collection.toArray(new Object[collection.size()]),
+				(CurrentRealm) collection.getRealm());
 	}
 
 	public void testEquals_GetterCalled() throws Exception {
-		assertGetterCalled(new Runnable() {
-			@Override
-			public void run() {
-				collection.equals(collection);
-			}
-		}, "Collection.equals(Object)", collection);
+		assertGetterCalled(() -> collection.equals(collection), "Collection.equals(Object)", collection);
 	}
 
 	public void testEquals_RealmCheck() throws Exception {
-		RealmTester.exerciseCurrent(new Runnable() {
-			@Override
-			public void run() {
-				collection.equals(collection);
-			}
-		}, (CurrentRealm) collection.getRealm());
+		RealmTester.exerciseCurrent(() -> collection.equals(collection), (CurrentRealm) collection.getRealm());
 	}
 
 	public void testEquals_IdentityEquals() throws Exception {
@@ -210,21 +136,11 @@ public class ObservableCollectionContractTest extends ObservableContractTest {
 	}
 
 	public void testHashCode_GetterCalled() throws Exception {
-		assertGetterCalled(new Runnable() {
-			@Override
-			public void run() {
-				collection.hashCode();
-			}
-		}, "Collection.hashCode()", collection);
+		assertGetterCalled(() -> collection.hashCode(), "Collection.hashCode()", collection);
 	}
 
 	public void testHashCode_RealmCheck() throws Exception {
-		RealmTester.exerciseCurrent(new Runnable() {
-			@Override
-			public void run() {
-				collection.hashCode();
-			}
-		}, (CurrentRealm) collection.getRealm());
+		RealmTester.exerciseCurrent(() -> collection.hashCode(), (CurrentRealm) collection.getRealm());
 	}
 
 	public void testGetElementType_ReturnsType() throws Exception {

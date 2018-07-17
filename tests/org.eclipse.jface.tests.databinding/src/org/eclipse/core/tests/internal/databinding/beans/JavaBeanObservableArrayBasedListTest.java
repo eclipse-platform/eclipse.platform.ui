@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2010 Brad Reynolds and others.
+ * Copyright (c) 2007, 2018 Brad Reynolds and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -148,12 +148,7 @@ public class JavaBeanObservableArrayBasedListTest extends
 
 	@Test
 	public void testAdd_FiresPropertyChangeEvent() throws Exception {
-		assertPropertyChangeEvent(bean, new Runnable() {
-			@Override
-			public void run() {
-				list.add("0");
-			}
-		});
+		assertPropertyChangeEvent(bean, () -> list.add("0"));
 	}
 
 	@Test
@@ -182,12 +177,7 @@ public class JavaBeanObservableArrayBasedListTest extends
 
 	@Test
 	public void testAddAtIndexPropertyChangeEvent() throws Exception {
-		assertPropertyChangeEvent(bean, new Runnable() {
-			@Override
-			public void run() {
-				list.add(0, "0");
-			}
-		});
+		assertPropertyChangeEvent(bean, () -> list.add(0, "0"));
 	}
 
 	@Test
@@ -223,12 +213,7 @@ public class JavaBeanObservableArrayBasedListTest extends
 	public void testRemovePropertyChangeEvent() throws Exception {
 		list.add("0");
 
-		assertPropertyChangeEvent(bean, new Runnable() {
-			@Override
-			public void run() {
-				list.remove("0");
-			}
-		});
+		assertPropertyChangeEvent(bean, () -> list.remove("0"));
 	}
 
 	@Test
@@ -264,12 +249,7 @@ public class JavaBeanObservableArrayBasedListTest extends
 	@Test
 	public void testRemoveAtIndexPropertyChangeEvent() throws Exception {
 		list.add("0");
-		assertPropertyChangeEvent(bean, new Runnable() {
-			@Override
-			public void run() {
-				list.remove(0);
-			}
-		});
+		assertPropertyChangeEvent(bean, () -> list.remove(0));
 	}
 
 	@Test
@@ -303,12 +283,7 @@ public class JavaBeanObservableArrayBasedListTest extends
 
 	@Test
 	public void testAddAllPropertyChangeEvent() throws Exception {
-		assertPropertyChangeEvent(bean, new Runnable() {
-			@Override
-			public void run() {
-				list.addAll(Arrays.asList(new String[] { "0", "1" }));
-			}
-		});
+		assertPropertyChangeEvent(bean, () -> list.addAll(Arrays.asList(new String[] { "0", "1" })));
 	}
 
 	@Test
@@ -347,12 +322,7 @@ public class JavaBeanObservableArrayBasedListTest extends
 
 	@Test
 	public void testAddAllAtIndexPropertyChangeEvent() throws Exception {
-		assertPropertyChangeEvent(bean, new Runnable() {
-			@Override
-			public void run() {
-				list.addAll(0, Arrays.asList(new String[] { "1", "2" }));
-			}
-		});
+		assertPropertyChangeEvent(bean, () -> list.addAll(0, Arrays.asList(new String[] { "1", "2" })));
 	}
 
 	@Test
@@ -390,12 +360,7 @@ public class JavaBeanObservableArrayBasedListTest extends
 	@Test
 	public void testRemoveAllPropertyChangeEvent() throws Exception {
 		list.add("0");
-		assertPropertyChangeEvent(bean, new Runnable() {
-			@Override
-			public void run() {
-				list.removeAll(Arrays.asList(new String[] { "0" }));
-			}
-		});
+		assertPropertyChangeEvent(bean, () -> list.removeAll(Arrays.asList(new String[] { "0" })));
 	}
 
 	@Test
@@ -436,12 +401,7 @@ public class JavaBeanObservableArrayBasedListTest extends
 	public void testRetainAllPropertyChangeEvent() throws Exception {
 		list.addAll(Arrays.asList(new String[] { "0", "1" }));
 
-		assertPropertyChangeEvent(bean, new Runnable() {
-			@Override
-			public void run() {
-				list.retainAll(Arrays.asList(new String[] { "0" }));
-			}
-		});
+		assertPropertyChangeEvent(bean, () -> list.retainAll(Arrays.asList(new String[] { "0" })));
 	}
 
 	@Test
@@ -497,12 +457,7 @@ public class JavaBeanObservableArrayBasedListTest extends
 	@Test
 	public void testSetPropertyChangeEvent() throws Exception {
 		list.add("0");
-		assertPropertyChangeEvent(bean, new Runnable() {
-			@Override
-			public void run() {
-				list.set(0, "1");
-			}
-		});
+		assertPropertyChangeEvent(bean, () -> list.set(0, "1"));
 	}
 
 	@Test

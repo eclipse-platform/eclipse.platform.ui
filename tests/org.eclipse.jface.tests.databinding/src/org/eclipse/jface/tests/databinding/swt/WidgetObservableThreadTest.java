@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009 Matthew Hall and others.
+ * Copyright (c) 2009, 2018 Matthew Hall and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -36,6 +36,7 @@ public class WidgetObservableThreadTest extends AbstractSWTTestCase {
 	protected ThreadRealm threadRealm;
 	private DataBindingContext ctx;
 
+	@Override
 	@Before
 	public void setUp() throws Exception {
 		super.setUp();
@@ -52,15 +53,13 @@ public class WidgetObservableThreadTest extends AbstractSWTTestCase {
         threadRealm.waitUntilBlocking();
 	}
 
+	@Override
 	@After
 	public void tearDown() throws Exception {
 		if (ctx != null) {
-			threadRealm.exec(new Runnable() {
-				@Override
-				public void run() {
-					ctx.dispose();
-					ctx = null;
-				}
+			threadRealm.exec(() -> {
+				ctx.dispose();
+				ctx = null;
 			});
 			threadRealm.processQueue();
 		}
@@ -79,14 +78,10 @@ public class WidgetObservableThreadTest extends AbstractSWTTestCase {
 		assertEquals("oldValue", bean.getValue());
 		assertEquals("", text.getText());
 
-		threadRealm.exec(new Runnable() {
-			@Override
-			public void run() {
-				ctx = new DataBindingContext();
-				ctx.bindValue(WidgetProperties.text(SWT.Modify).observe(text),
-						BeanProperties.value("value")
-								.observe(threadRealm, bean));
-			}
+		threadRealm.exec(() -> {
+			ctx = new DataBindingContext();
+			ctx.bindValue(WidgetProperties.text(SWT.Modify).observe(text),
+					BeanProperties.value("value").observe(threadRealm, bean));
 		});
 		threadRealm.processQueue();
 
@@ -105,12 +100,7 @@ public class WidgetObservableThreadTest extends AbstractSWTTestCase {
 		assertEquals("newValue", bean.getValue());
 		assertEquals("newValue", text.getText());
 
-		threadRealm.exec(new Runnable() {
-			@Override
-			public void run() {
-				bean.setValue("newerValue");
-			}
-		});
+		threadRealm.exec(() -> bean.setValue("newerValue"));
 		threadRealm.processQueue();
 
 		assertEquals("newerValue", bean.getValue());

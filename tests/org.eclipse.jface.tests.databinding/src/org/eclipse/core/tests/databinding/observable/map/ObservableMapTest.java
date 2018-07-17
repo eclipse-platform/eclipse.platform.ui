@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2009 IBM Corporation and others.
+ * Copyright (c) 2006, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -68,32 +68,17 @@ public class ObservableMapTest {
 
 	@Test
 	public void testIsStaleRealmChecks() throws Exception {
-		RealmTester.exerciseCurrent(new Runnable() {
-			@Override
-			public void run() {
-				map.isStale();
-			}
-		});
+		RealmTester.exerciseCurrent(() -> map.isStale());
 	}
 
 	@Test
 	public void testSetStaleRealmChecks() throws Exception {
-		RealmTester.exerciseCurrent(new Runnable() {
-			@Override
-			public void run() {
-				map.setStale(true);
-			}
-		});
+		RealmTester.exerciseCurrent(() -> map.setStale(true));
 	}
 
 	@Test
 	public void testFireMapChangeRealmChecks() throws Exception {
-		RealmTester.exerciseCurrent(new Runnable() {
-			@Override
-			public void run() {
-				map.fireMapChange(null);
-			}
-		});
+		RealmTester.exerciseCurrent(() -> map.fireMapChange(null));
 	}
 
 	@Test

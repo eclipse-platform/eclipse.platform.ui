@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2010 Matthew Hall and others.
+ * Copyright (c) 2008, 2018 Matthew Hall and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -144,12 +144,7 @@ public class JavaBeanObservableArrayBasedSetTest extends
 
 	@Test
 	public void testAdd_FiresPropertyChangeEvent() throws Exception {
-		assertPropertyChangeEvent(bean, new Runnable() {
-			@Override
-			public void run() {
-				set.add("0");
-			}
-		});
+		assertPropertyChangeEvent(bean, () -> set.add("0"));
 	}
 
 	@Test
@@ -184,12 +179,7 @@ public class JavaBeanObservableArrayBasedSetTest extends
 	public void testRemovePropertyChangeEvent() throws Exception {
 		set.add("0");
 
-		assertPropertyChangeEvent(bean, new Runnable() {
-			@Override
-			public void run() {
-				set.remove("0");
-			}
-		});
+		assertPropertyChangeEvent(bean, () -> set.remove("0"));
 	}
 
 	@Test
@@ -222,12 +212,7 @@ public class JavaBeanObservableArrayBasedSetTest extends
 
 	@Test
 	public void testAddAllPropertyChangeEvent() throws Exception {
-		assertPropertyChangeEvent(bean, new Runnable() {
-			@Override
-			public void run() {
-				set.addAll(Arrays.asList(new String[] { "0", "1" }));
-			}
-		});
+		assertPropertyChangeEvent(bean, () -> set.addAll(Arrays.asList(new String[] { "0", "1" })));
 	}
 
 	@Test
@@ -260,12 +245,7 @@ public class JavaBeanObservableArrayBasedSetTest extends
 	@Test
 	public void testRemoveAllPropertyChangeEvent() throws Exception {
 		set.add("0");
-		assertPropertyChangeEvent(bean, new Runnable() {
-			@Override
-			public void run() {
-				set.removeAll(Arrays.asList(new String[] { "0" }));
-			}
-		});
+		assertPropertyChangeEvent(bean, () -> set.removeAll(Arrays.asList(new String[] { "0" })));
 	}
 
 	@Test
@@ -301,12 +281,7 @@ public class JavaBeanObservableArrayBasedSetTest extends
 	public void testRetainAllPropertyChangeEvent() throws Exception {
 		set.addAll(Arrays.asList(new String[] { "0", "1" }));
 
-		assertPropertyChangeEvent(bean, new Runnable() {
-			@Override
-			public void run() {
-				set.retainAll(Arrays.asList(new String[] { "0" }));
-			}
-		});
+		assertPropertyChangeEvent(bean, () -> set.retainAll(Arrays.asList(new String[] { "0" })));
 	}
 
 	@Test

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2014 IBM Corporation and others.
+ * Copyright (c) 2007, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,8 +13,6 @@
 
 package org.eclipse.jface.databinding.conformance;
 
-import junit.framework.Test;
-
 import org.eclipse.core.databinding.observable.value.IObservableValue;
 import org.eclipse.jface.databinding.conformance.delegate.IObservableValueContractDelegate;
 import org.eclipse.jface.databinding.conformance.util.ChangeEventTracker;
@@ -22,6 +20,8 @@ import org.eclipse.jface.databinding.conformance.util.CurrentRealm;
 import org.eclipse.jface.databinding.conformance.util.RealmTester;
 import org.eclipse.jface.databinding.conformance.util.SuiteBuilder;
 import org.eclipse.jface.databinding.conformance.util.ValueChangeEventTracker;
+
+import junit.framework.Test;
 
 /**
  * Mutability tests for IObservableValue.
@@ -106,12 +106,8 @@ public class MutableObservableValueContractTest extends ObservableDelegateTest {
 	}
 
 	public void testSetValue_RealmChecks() throws Exception {
-		RealmTester.exerciseCurrent(new Runnable() {
-			@Override
-			public void run() {
-				observable.setValue(delegate.createValue(observable));
-			}
-		}, (CurrentRealm) observable.getRealm());
+		RealmTester.exerciseCurrent(() -> observable.setValue(delegate.createValue(observable)),
+				(CurrentRealm) observable.getRealm());
 	}
 
 	public static Test suite(IObservableValueContractDelegate delegate) {

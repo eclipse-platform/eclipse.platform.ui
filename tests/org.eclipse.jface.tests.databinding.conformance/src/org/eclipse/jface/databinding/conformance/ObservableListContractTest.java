@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2014 IBM Corporation and others.
+ * Copyright (c) 2007, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,12 +13,12 @@
 
 package org.eclipse.jface.databinding.conformance;
 
-import junit.framework.Test;
-
 import org.eclipse.core.databinding.observable.list.IObservableList;
 import org.eclipse.jface.databinding.conformance.delegate.IObservableCollectionContractDelegate;
 import org.eclipse.jface.databinding.conformance.util.CurrentRealm;
 import org.eclipse.jface.databinding.conformance.util.SuiteBuilder;
+
+import junit.framework.Test;
 
 /**
  * Tests for IObservableList that don't require mutating the collection.
@@ -61,41 +61,21 @@ public class ObservableListContractTest extends
 	}
 
 	public void testListIterator_GetterCalled() throws Exception {
-		assertGetterCalled(new Runnable() {
-			@Override
-			public void run() {
-				list.listIterator();
-			}
-		}, "List.listIterator()", list);
+		assertGetterCalled(() -> list.listIterator(), "List.listIterator()", list);
 	}
 
 	public void testGet_GetterCalled() throws Exception {
 		list = (IObservableList) delegate.createObservableCollection(
 				new CurrentRealm(true), 1);
-		assertGetterCalled(new Runnable() {
-			@Override
-			public void run() {
-				list.get(0);
-			}
-		}, "List.get(int)", list);
+		assertGetterCalled(() -> list.get(0), "List.get(int)", list);
 	}
 
 	public void testIndexOf_GetterCalled() throws Exception {
-		assertGetterCalled(new Runnable() {
-			@Override
-			public void run() {
-				list.indexOf(delegate.createElement(list));
-			}
-		}, "List.indexOf(int)", list);
+		assertGetterCalled(() -> list.indexOf(delegate.createElement(list)), "List.indexOf(int)", list);
 	}
 
 	public void testLastIndexOf_GetterCalled() throws Exception {
-		assertGetterCalled(new Runnable() {
-			@Override
-			public void run() {
-				list.lastIndexOf(delegate.createElement(list));
-			}
-		}, "List.lastIndexOf(Object)", list);
+		assertGetterCalled(() -> list.lastIndexOf(delegate.createElement(list)), "List.lastIndexOf(Object)", list);
 	}
 
 	public void testListIteratorAtIndex_GetterCalled() throws Exception {
@@ -103,23 +83,13 @@ public class ObservableListContractTest extends
 		// not be mutable
 		list = (IObservableList) delegate.createObservableCollection(
 				new CurrentRealm(true), 1);
-		assertGetterCalled(new Runnable() {
-			@Override
-			public void run() {
-				list.listIterator(0);
-			}
-		}, "List.listIterator(int)", list);
+		assertGetterCalled(() -> list.listIterator(0), "List.listIterator(int)", list);
 	}
 
 	public void testSubList_GetterCalled() throws Exception {
 		list = (IObservableList) delegate.createObservableCollection(
 				new CurrentRealm(true), 1);
-		assertGetterCalled(new Runnable() {
-			@Override
-			public void run() {
-				list.subList(0, 1);
-			}
-		}, "List.subList(int, int)", list);
+		assertGetterCalled(() -> list.subList(0, 1), "List.subList(int, int)", list);
 	}
 
 	public static Test suite(IObservableCollectionContractDelegate delegate) {

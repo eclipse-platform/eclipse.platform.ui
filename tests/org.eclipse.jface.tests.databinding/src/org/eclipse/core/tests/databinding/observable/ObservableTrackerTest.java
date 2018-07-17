@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2009 Matthew Hall and others.
+ * Copyright (c) 2007, 2018 Matthew Hall and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -26,7 +26,6 @@ import org.eclipse.core.databinding.observable.AbstractObservable;
 import org.eclipse.core.databinding.observable.IObservable;
 import org.eclipse.core.databinding.observable.ObservableTracker;
 import org.eclipse.core.databinding.observable.Realm;
-import org.eclipse.core.databinding.util.ILogger;
 import org.eclipse.core.databinding.util.Policy;
 import org.eclipse.core.internal.databinding.IdentitySet;
 import org.eclipse.core.runtime.AssertionFailedException;
@@ -39,12 +38,8 @@ public class ObservableTrackerTest extends AbstractDefaultRealmTestCase {
 	@Test
 	public void testRunAndMonitor_GetterCalled() throws Exception {
 		final IObservable observable = new ObservableStub();
-		IObservable[] result = ObservableTracker.runAndMonitor(new Runnable() {
-			@Override
-			public void run() {
-				ObservableTracker.getterCalled(observable);
-			}
-		}, null, null);
+		IObservable[] result = ObservableTracker.runAndMonitor(() -> ObservableTracker.getterCalled(observable), null,
+				null);
 		assertEquals(1, result.length);
 		assertSame(observable, result[0]);
 	}
@@ -77,12 +72,7 @@ public class ObservableTrackerTest extends AbstractDefaultRealmTestCase {
 	@Test
 	public void testRunAndCollect() throws Exception {
 		final IObservable[] created = new IObservable[1];
-		IObservable[] collected = ObservableTracker.runAndCollect(new Runnable() {
-			@Override
-			public void run() {
-				created[0] = new ObservableStub();
-			}
-		});
+		IObservable[] collected = ObservableTracker.runAndCollect(() -> created[0] = new ObservableStub());
 		assertEquals(1, collected.length);
 		assertSame(created[0], collected[0]);
 	}
@@ -90,59 +80,35 @@ public class ObservableTrackerTest extends AbstractDefaultRealmTestCase {
 	@Test
 	public void testRunAndIgnore_RunAndMonitor() throws Exception {
 		final IObservable observable = new ObservableStub();
-		IObservable[] result = ObservableTracker.runAndMonitor(new Runnable() {
-			@Override
-			public void run() {
-				ObservableTracker.runAndIgnore(new Runnable() {
-					@Override
-					public void run() {
-						ObservableTracker.getterCalled(observable);
-					}
-				});
-			}
-		}, null, null);
+		IObservable[] result = ObservableTracker.runAndMonitor(
+				() -> ObservableTracker.runAndIgnore(() -> ObservableTracker.getterCalled(observable)), null, null);
 		assertEquals(0, result.length);
 	}
 
 	@Test
 	public void testRunAndIgnore_RunAndCollect() throws Exception {
-		IObservable[] result = ObservableTracker.runAndCollect(new Runnable() {
-			@Override
-			public void run() {
-				ObservableTracker.runAndIgnore(new Runnable() {
-					@Override
-					public void run() {
-						new ObservableStub();
-					}
-				});
-			}
-		});
+		IObservable[] result = ObservableTracker
+				.runAndCollect(() -> ObservableTracker.runAndIgnore(() -> new ObservableStub()));
 		assertEquals(0, result.length);
 	}
 
 	@Test
 	public void testSetIgnore_RunAndMonitor() throws Exception {
 		final IObservable observable = new ObservableStub();
-		IObservable[] result = ObservableTracker.runAndMonitor(new Runnable() {
-			@Override
-			public void run() {
-				ObservableTracker.setIgnore(true);
-				ObservableTracker.getterCalled(observable);
-				ObservableTracker.setIgnore(false);
-			}
+		IObservable[] result = ObservableTracker.runAndMonitor(() -> {
+			ObservableTracker.setIgnore(true);
+			ObservableTracker.getterCalled(observable);
+			ObservableTracker.setIgnore(false);
 		}, null, null);
 		assertEquals(0, result.length);
 	}
 
 	@Test
 	public void testSetIgnore_RunAndCollect() throws Exception {
-		IObservable[] result = ObservableTracker.runAndCollect(new Runnable() {
-			@Override
-			public void run() {
-				ObservableTracker.setIgnore(true);
-				new ObservableStub();
-				ObservableTracker.setIgnore(false);
-			}
+		IObservable[] result = ObservableTracker.runAndCollect(() -> {
+			ObservableTracker.setIgnore(true);
+			new ObservableStub();
+			ObservableTracker.setIgnore(false);
 		});
 		assertEquals(0, result.length);
 	}
@@ -151,19 +117,16 @@ public class ObservableTrackerTest extends AbstractDefaultRealmTestCase {
 	public void testSetIgnore_Nested_RunAndCollect() throws Exception {
 		final List<ObservableStub> list = new ArrayList<ObservableStub>();
 
-		Set collected = new IdentitySet(Arrays.asList(ObservableTracker.runAndCollect(new Runnable() {
-			@Override
-			public void run() {
-				list.add(new ObservableStub()); // list[0] collected
-				ObservableTracker.setIgnore(true);
-				list.add(new ObservableStub()); // list[1] ignored
-				ObservableTracker.setIgnore(true);
-				list.add(new ObservableStub()); // list[2] ignored
-				ObservableTracker.setIgnore(false);
-				list.add(new ObservableStub()); // list[3] ignored
-				ObservableTracker.setIgnore(false);
-				list.add(new ObservableStub()); // list[4] collected
-			}
+		Set collected = new IdentitySet(Arrays.asList(ObservableTracker.runAndCollect(() -> {
+			list.add(new ObservableStub()); // list[0] collected
+			ObservableTracker.setIgnore(true);
+			list.add(new ObservableStub()); // list[1] ignored
+			ObservableTracker.setIgnore(true);
+			list.add(new ObservableStub()); // list[2] ignored
+			ObservableTracker.setIgnore(false);
+			list.add(new ObservableStub()); // list[3] ignored
+			ObservableTracker.setIgnore(false);
+			list.add(new ObservableStub()); // list[4] collected
 		})));
 
 		// Have to compare result in identity set because ObservableTracker may
@@ -179,19 +142,16 @@ public class ObservableTrackerTest extends AbstractDefaultRealmTestCase {
 		final IObservable[] observables = { new ObservableStub(), new ObservableStub(), new ObservableStub(),
 				new ObservableStub(), new ObservableStub() };
 
-		Set result = new IdentitySet(Arrays.asList(ObservableTracker.runAndMonitor(new Runnable() {
-			@Override
-			public void run() {
-				ObservableTracker.getterCalled(observables[0]); // monitored
-				ObservableTracker.setIgnore(true);
-				ObservableTracker.getterCalled(observables[1]); // ignored
-				ObservableTracker.setIgnore(true);
-				ObservableTracker.getterCalled(observables[2]); // ignored
-				ObservableTracker.setIgnore(false);
-				ObservableTracker.getterCalled(observables[3]); // ignored
-				ObservableTracker.setIgnore(false);
-				ObservableTracker.getterCalled(observables[4]); // monitored
-			}
+		Set result = new IdentitySet(Arrays.asList(ObservableTracker.runAndMonitor(() -> {
+			ObservableTracker.getterCalled(observables[0]); // monitored
+			ObservableTracker.setIgnore(true);
+			ObservableTracker.getterCalled(observables[1]); // ignored
+			ObservableTracker.setIgnore(true);
+			ObservableTracker.getterCalled(observables[2]); // ignored
+			ObservableTracker.setIgnore(false);
+			ObservableTracker.getterCalled(observables[3]); // ignored
+			ObservableTracker.setIgnore(false);
+			ObservableTracker.getterCalled(observables[4]); // monitored
 		}, null, null)));
 
 		// Have to compare result in identity set because ObservableTracker may
@@ -205,20 +165,9 @@ public class ObservableTrackerTest extends AbstractDefaultRealmTestCase {
 	@Test
 	public void testSetIgnore_RunAndMonitor_UnmatchedIgnore_LogsError() {
 		final List<IStatus> log = new ArrayList<IStatus>();
-		Policy.setLog(new ILogger() {
-			@Override
-			public void log(IStatus status) {
-				log.add(status);
-			}
-		});
+		Policy.setLog(status -> log.add(status));
 
-		ObservableTracker.runAndMonitor(new Runnable() {
-			@Override
-			public void run() {
-				ObservableTracker.setIgnore(true);
-				// do not call call setIgnore(false)
-			}
-		}, null, null);
+		ObservableTracker.runAndMonitor(() -> ObservableTracker.setIgnore(true), null, null);
 
 		assertEquals(1, log.size());
 		IStatus status = log.get(0);
@@ -229,20 +178,9 @@ public class ObservableTrackerTest extends AbstractDefaultRealmTestCase {
 	@Test
 	public void testSetIgnore_RunAndCollect_UnmatchedIgnore_LogsError() {
 		final List<IStatus> log = new ArrayList<IStatus>();
-		Policy.setLog(new ILogger() {
-			@Override
-			public void log(IStatus status) {
-				log.add(status);
-			}
-		});
+		Policy.setLog(status -> log.add(status));
 
-		ObservableTracker.runAndCollect(new Runnable() {
-			@Override
-			public void run() {
-				ObservableTracker.setIgnore(true);
-				// do not call call setIgnore(false)
-			}
-		});
+		ObservableTracker.runAndCollect(() -> ObservableTracker.setIgnore(true));
 
 		assertEquals(1, log.size());
 		IStatus status = log.get(0);

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2014 Brad Reynolds and others.
+ * Copyright (c) 2007, 2018 Brad Reynolds and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -16,8 +16,6 @@ package org.eclipse.jface.databinding.conformance;
 import java.util.ArrayList;
 import java.util.List;
 
-import junit.framework.Test;
-
 import org.eclipse.core.databinding.observable.ChangeEvent;
 import org.eclipse.core.databinding.observable.IChangeListener;
 import org.eclipse.core.databinding.observable.IObservablesListener;
@@ -29,6 +27,8 @@ import org.eclipse.jface.databinding.conformance.util.CurrentRealm;
 import org.eclipse.jface.databinding.conformance.util.RealmTester;
 import org.eclipse.jface.databinding.conformance.util.SuiteBuilder;
 import org.eclipse.jface.databinding.conformance.util.ValueChangeEventTracker;
+
+import junit.framework.Test;
 
 /**
  * @since 3.2
@@ -167,21 +167,11 @@ public class ObservableValueContractTest extends ObservableContractTest {
 	}
 
 	public void testGetValue_GetterCalled() throws Exception {
-		assertGetterCalled(new Runnable() {
-			@Override
-			public void run() {
-				observable.getValue();
-			}
-		}, formatFail("IObservableValue.getValue()"), observable);
+		assertGetterCalled(() -> observable.getValue(), formatFail("IObservableValue.getValue()"), observable);
 	}
 
 	public void testGetValue_RealmCheck() throws Exception {
-		RealmTester.exerciseCurrent(new Runnable() {
-			@Override
-			public void run() {
-				observable.getValue();
-			}
-		}, (CurrentRealm) observable.getRealm());
+		RealmTester.exerciseCurrent(() -> observable.getValue(), (CurrentRealm) observable.getRealm());
 	}
 
 	public static Test suite(IObservableValueContractDelegate delegate) {

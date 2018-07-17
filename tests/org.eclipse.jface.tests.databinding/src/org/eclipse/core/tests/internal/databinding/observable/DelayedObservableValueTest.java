@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2008 Matthew Hall and others.
+ * Copyright (c) 2007, 2018 Matthew Hall and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -92,12 +92,9 @@ public class DelayedObservableValueTest extends AbstractDefaultRealmTestCase {
 
 	@Test
 	public void testGetValue_FiresPendingValueChange() {
-		assertFiresPendingValueChange(new Runnable() {
-			@Override
-			public void run() {
-				final Object value = delayed.getValue();
-				assertEquals(newValue, value);
-			}
+		assertFiresPendingValueChange(() -> {
+			final Object value = delayed.getValue();
+			assertEquals(newValue, value);
 		});
 	}
 

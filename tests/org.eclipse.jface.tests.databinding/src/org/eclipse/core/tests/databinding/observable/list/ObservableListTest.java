@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2008 IBM Corporation and others.
+ * Copyright (c) 2006, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -23,8 +23,6 @@ import org.eclipse.core.databinding.observable.Diffs;
 import org.eclipse.core.databinding.observable.IObservable;
 import org.eclipse.core.databinding.observable.IObservableCollection;
 import org.eclipse.core.databinding.observable.Realm;
-import org.eclipse.core.databinding.observable.list.IListChangeListener;
-import org.eclipse.core.databinding.observable.list.ListChangeEvent;
 import org.eclipse.core.databinding.observable.list.ListDiff;
 import org.eclipse.core.databinding.observable.list.ListDiffEntry;
 import org.eclipse.core.databinding.observable.list.ObservableList;
@@ -58,22 +56,12 @@ public class ObservableListTest {
 
 	@Test
 	public void testIsStaleRealmChecks() throws Exception {
-		RealmTester.exerciseCurrent(new Runnable() {
-			@Override
-			public void run() {
-				list.isStale();
-			}
-		});
+		RealmTester.exerciseCurrent(() -> list.isStale());
 	}
 
 	@Test
 	public void testSetStaleRealmChecks() throws Exception {
-		RealmTester.exerciseCurrent(new Runnable() {
-			@Override
-			public void run() {
-				list.setStale(false);
-			}
-		});
+		RealmTester.exerciseCurrent(() -> list.setStale(false));
 	}
 
 	@Test
@@ -84,12 +72,7 @@ public class ObservableListTest {
 		list.add(1, new Object());
 
 		final List diffEntries = new ArrayList();
-		list.addListChangeListener(new IListChangeListener() {
-			@Override
-			public void handleListChange(ListChangeEvent event) {
-				diffEntries.addAll(Arrays.asList(event.diff.getDifferences()));
-			}
-		});
+		list.addListChangeListener(event -> diffEntries.addAll(Arrays.asList(event.diff.getDifferences())));
 
 		list.move(0, 1);
 
