@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2015 Ovidio Mallo and others.
+ * Copyright (c) 2009, 2018 Ovidio Mallo and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -32,7 +32,7 @@ public class ValidationMessageProvider implements IValidationMessageProvider {
 	@Override
 	public String getMessage(ValidationStatusProvider statusProvider) {
 		if (statusProvider != null) {
-			IStatus status = (IStatus) statusProvider.getValidationStatus()
+			IStatus status = statusProvider.getValidationStatus()
 					.getValue();
 			return status.getMessage();
 		}
@@ -51,7 +51,7 @@ public class ValidationMessageProvider implements IValidationMessageProvider {
 			return IMessageProvider.NONE;
 		}
 
-		IStatus status = (IStatus) statusProvider.getValidationStatus()
+		IStatus status = statusProvider.getValidationStatus()
 				.getValue();
 		int severity = status.getSeverity();
 		switch (severity) {

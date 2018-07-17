@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2014 Ovidio Mallo and others.
+ * Copyright (c) 2009, 2018 Ovidio Mallo and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -35,7 +35,7 @@ import org.eclipse.core.runtime.IStatus;
 		for (Iterator it = validationStatusProviders.iterator(); it.hasNext();) {
 			ValidationStatusProvider provider = (ValidationStatusProvider) it
 					.next();
-			IStatus status = (IStatus) provider.getValidationStatus()
+			IStatus status = provider.getValidationStatus()
 					.getValue();
 			if (status.getSeverity() > maxSeverity) {
 				maxSeverity = status.getSeverity();
