@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2009 Matthew Hall and others.
+ * Copyright (c) 2007, 2018 Matthew Hall and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -19,7 +19,6 @@ import static org.junit.Assert.fail;
 import java.util.Arrays;
 import java.util.Collections;
 
-import org.eclipse.core.databinding.observable.IObservable;
 import org.eclipse.core.databinding.observable.list.IObservableList;
 import org.eclipse.core.databinding.observable.list.WritableList;
 import org.eclipse.core.databinding.observable.masterdetail.IObservableFactory;
@@ -43,6 +42,7 @@ public class ObservableListTreeContentProviderTest extends
 	private ObservableListTreeContentProvider contentProvider;
 	private Object input;
 
+	@Override
 	@Before
 	public void setUp() throws Exception {
 		super.setUp();
@@ -52,6 +52,7 @@ public class ObservableListTreeContentProviderTest extends
 		input = new Object();
 	}
 
+	@Override
 	@After
 	public void tearDown() throws Exception {
 		shell.dispose();
@@ -80,12 +81,7 @@ public class ObservableListTreeContentProviderTest extends
 	public void testGetElements_ChangesFollowObservedList() {
 		final IObservableList elements = new WritableList();
 		final Object input = new Object();
-		initContentProvider(new IObservableFactory() {
-			@Override
-			public IObservable createObservable(Object target) {
-				return target == input ? elements : null;
-			}
-		});
+		initContentProvider(target -> target == input ? elements : null);
 
 		assertTrue(Arrays.equals(new Object[0], contentProvider
 				.getElements("unknown input")));
@@ -106,12 +102,7 @@ public class ObservableListTreeContentProviderTest extends
 	@Test
 	public void testViewerUpdate_RemoveElementAfterMutation() {
 		final IObservableList children = new WritableList();
-		initContentProvider(new IObservableFactory() {
-			@Override
-			public IObservable createObservable(Object target) {
-				return target == input ? children : null;
-			}
-		});
+		initContentProvider(target -> target == input ? children : null);
 
 		Mutable element = new Mutable();
 		children.add(element);
@@ -129,15 +120,12 @@ public class ObservableListTreeContentProviderTest extends
 
 		final IObservableList children = new WritableList();
 		final IObservableList children2 = new WritableList();
-		initContentProvider(new IObservableFactory() {
-			@Override
-			public IObservable createObservable(Object target) {
-				if (target == input)
-					return children;
-				if (target == input2)
-					return children2;
-				return null;
-			}
+		initContentProvider(target -> {
+			if (target == input)
+				return children;
+			if (target == input2)
+				return children2;
+			return null;
 		});
 
 		Object element = new Object();
@@ -156,15 +144,12 @@ public class ObservableListTreeContentProviderTest extends
 
 		final IObservableList children = new WritableList();
 		final IObservableList children2 = new WritableList();
-		initContentProvider(new IObservableFactory() {
-			@Override
-			public IObservable createObservable(Object target) {
-				if (target == input)
-					return children;
-				if (target == input2)
-					return children2;
-				return null;
-			}
+		initContentProvider(target -> {
+			if (target == input)
+				return children;
+			if (target == input2)
+				return children2;
+			return null;
 		});
 
 		// Realized elements must be allocated before adding the element

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2008 Matthew Hall and others.
+ * Copyright (c) 2007, 2018 Matthew Hall and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -23,10 +23,8 @@ import java.util.List;
 import org.eclipse.core.databinding.observable.AbstractObservable;
 import org.eclipse.core.databinding.observable.IObservable;
 import org.eclipse.core.databinding.observable.IObservableCollection;
-import org.eclipse.core.databinding.observable.IStaleListener;
 import org.eclipse.core.databinding.observable.ObservableTracker;
 import org.eclipse.core.databinding.observable.Realm;
-import org.eclipse.core.databinding.observable.StaleEvent;
 import org.eclipse.core.databinding.observable.list.ComputedList;
 import org.eclipse.jface.databinding.conformance.ObservableListContractTest;
 import org.eclipse.jface.databinding.conformance.delegate.AbstractObservableCollectionContractDelegate;
@@ -72,12 +70,7 @@ public class ComputedListTest extends AbstractDefaultRealmTestCase {
 	@Test
 	public void testDependency_NoStaleEventIfAlreadyDirty() {
 		list.dependency.fireChange();
-		list.addStaleListener(new IStaleListener() {
-			@Override
-			public void handleStale(StaleEvent staleEvent) {
-				fail("Should not fire stale when list is already dirty");
-			}
-		});
+		list.addStaleListener(staleEvent -> fail("Should not fire stale when list is already dirty"));
 		list.dependency.fireStale();
 	}
 

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2009 Brad Reynolds and others.
+ * Copyright (c) 2006, 2018	 Brad Reynolds and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -33,8 +33,6 @@ import org.eclipse.core.databinding.conversion.IConverter;
 import org.eclipse.core.databinding.observable.Diffs;
 import org.eclipse.core.databinding.observable.value.AbstractObservableValue;
 import org.eclipse.core.databinding.observable.value.IObservableValue;
-import org.eclipse.core.databinding.observable.value.IValueChangeListener;
-import org.eclipse.core.databinding.observable.value.ValueChangeEvent;
 import org.eclipse.core.databinding.observable.value.ValueDiff;
 import org.eclipse.core.databinding.observable.value.WritableValue;
 import org.eclipse.core.databinding.validation.IValidator;
@@ -374,18 +372,8 @@ public class ValueBindingTest extends AbstractDefaultRealmTestCase {
 		model.setValue("1");
 		target.setValue("2");
 
-		target.addValueChangeListener(new IValueChangeListener<Object>() {
-			@Override
-			public void handleValueChange(ValueChangeEvent<?> event) {
-				log.add("target-set");
-			}
-		});
-		model.addValueChangeListener(new IValueChangeListener<String>() {
-			@Override
-			public void handleValueChange(ValueChangeEvent<? extends String> event) {
-				log.add("model-set");
-			}
-		});
+		target.addValueChangeListener(event -> log.add("target-set"));
+		model.addValueChangeListener(event -> log.add("model-set"));
 		binding = dbc.bindValue(target, model, targetToModel, modelToTarget);
 	}
 
@@ -406,12 +394,9 @@ public class ValueBindingTest extends AbstractDefaultRealmTestCase {
 	}
 
 	private IValidator<Object> loggingValidator(final List<String> log, final String message) {
-		return new IValidator<Object>() {
-			@Override
-			public IStatus validate(Object value) {
-				log.add(message);
-				return ValidationStatus.ok();
-			}
+		return value -> {
+			log.add(message);
+			return ValidationStatus.ok();
 		};
 	}
 
@@ -427,39 +412,19 @@ public class ValueBindingTest extends AbstractDefaultRealmTestCase {
 	}
 
 	private IValidator<Object> warningValidator() {
-		return new IValidator<Object>() {
-			@Override
-			public IStatus validate(Object value) {
-				return ValidationStatus.warning("");
-			}
-		};
+		return value -> ValidationStatus.warning("");
 	}
 
 	private IValidator<Object> infoValidator() {
-		return new IValidator<Object>() {
-			@Override
-			public IStatus validate(Object value) {
-				return ValidationStatus.info("");
-			}
-		};
+		return value -> ValidationStatus.info("");
 	}
 
 	private IValidator<Object> errorValidator() {
-		return new IValidator<Object>() {
-			@Override
-			public IStatus validate(Object value) {
-				return ValidationStatus.error("");
-			}
-		};
+		return value -> ValidationStatus.error("");
 	}
 
 	private IValidator<Object> cancelValidator() {
-		return new IValidator<Object>() {
-			@Override
-			public IStatus validate(Object value) {
-				return ValidationStatus.cancel("");
-			}
-		};
+		return value -> ValidationStatus.cancel("");
 	}
 
 	private static class ObservableValueStub<T> extends AbstractObservableValue<T> {

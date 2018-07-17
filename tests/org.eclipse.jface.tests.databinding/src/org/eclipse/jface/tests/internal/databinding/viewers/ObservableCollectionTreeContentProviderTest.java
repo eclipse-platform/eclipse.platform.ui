@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2017 Matthew Hall and others.
+ * Copyright (c) 2008, 2018 Matthew Hall and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -20,10 +20,8 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
 
-import org.eclipse.core.databinding.observable.IObservable;
 import org.eclipse.core.databinding.observable.list.IObservableList;
 import org.eclipse.core.databinding.observable.list.WritableList;
-import org.eclipse.core.databinding.observable.masterdetail.IObservableFactory;
 import org.eclipse.core.databinding.observable.set.IObservableSet;
 import org.eclipse.jface.databinding.conformance.util.ChangeEventTracker;
 import org.eclipse.jface.databinding.conformance.util.DisposeEventTracker;
@@ -44,6 +42,7 @@ public class ObservableCollectionTreeContentProviderTest extends AbstractDefault
 	private TreeViewer viewer;
 	ObservableListTreeContentProvider contentProvider;
 
+	@Override
 	@Before
 	public void setUp() throws Exception {
 		super.setUp();
@@ -51,6 +50,7 @@ public class ObservableCollectionTreeContentProviderTest extends AbstractDefault
 		viewer = new TreeViewer(shell);
 	}
 
+	@Override
 	@After
 	public void tearDown() throws Exception {
 		shell.dispose();
@@ -64,13 +64,10 @@ public class ObservableCollectionTreeContentProviderTest extends AbstractDefault
 		final Object input = new Object();
 		Object[] rootElements = new Object[] { "one", "two", "three" };
 		final IObservableList rootElementList = new WritableList(Arrays.asList(rootElements), null);
-		contentProvider = new ObservableListTreeContentProvider(new IObservableFactory() {
-			@Override
-			public IObservable createObservable(Object target) {
-				if (target == input)
-					return rootElementList;
-				return null;
-			}
+		contentProvider = new ObservableListTreeContentProvider(target -> {
+			if (target == input)
+				return rootElementList;
+			return null;
 		}, null);
 		viewer.setContentProvider(contentProvider);
 		viewer.setInput(input);
@@ -84,13 +81,10 @@ public class ObservableCollectionTreeContentProviderTest extends AbstractDefault
 	public void testGetKnownElements_DisposedWithoutModificationOnContentProviderDispose() {
 		final Object input = new Object();
 		final IObservableList rootElementList = new WritableList(Collections.singletonList("element"), null);
-		contentProvider = new ObservableListTreeContentProvider(new IObservableFactory() {
-			@Override
-			public IObservable createObservable(Object target) {
-				if (target == input)
-					return rootElementList;
-				return null;
-			}
+		contentProvider = new ObservableListTreeContentProvider(target -> {
+			if (target == input)
+				return rootElementList;
+			return null;
 		}, null);
 		contentProvider.inputChanged(viewer, null, input);
 

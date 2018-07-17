@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2016 Conrad Groth and others.
+ * Copyright (c) 2016, 2018 Conrad Groth and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -20,9 +20,7 @@ import org.eclipse.core.databinding.SetBinding;
 import org.eclipse.core.databinding.UpdateSetStrategy;
 import org.eclipse.core.databinding.observable.set.IObservableSet;
 import org.eclipse.core.databinding.observable.set.WritableSet;
-import org.eclipse.core.databinding.util.ILogger;
 import org.eclipse.core.databinding.util.Policy;
-import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jface.tests.databinding.AbstractDefaultRealmTestCase;
 import org.junit.After;
 import org.junit.Assert;
@@ -75,12 +73,9 @@ public class SetBindingTest extends AbstractDefaultRealmTestCase {
 	 */
 	@Test
 	public void testAddListenerAndInitialSyncAreUninterruptable() {
-		Policy.setLog(new ILogger() {
-			@Override
-			public void log(IStatus status) {
-				if (!status.isOK()) {
-					Assert.fail("The databinding logger has the not-ok status " + status);
-				}
+		Policy.setLog(status -> {
+			if (!status.isOK()) {
+				Assert.fail("The databinding logger has the not-ok status " + status);
 			}
 		});
 

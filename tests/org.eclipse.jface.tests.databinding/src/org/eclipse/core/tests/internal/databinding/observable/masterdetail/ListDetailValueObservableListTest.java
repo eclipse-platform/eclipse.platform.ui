@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010 Ovidio Mallo and others.
+ * Copyright (c) 2010, 2018 Ovidio Mallo and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -319,14 +319,11 @@ public class ListDetailValueObservableListTest extends
 	@Test
 	public void testDetailObservableValuesAreDisposed() {
 		final List detailObservables = new ArrayList();
-		IObservableFactory detailValueFactory = new IObservableFactory() {
-			@Override
-			public IObservable createObservable(Object target) {
-				WritableValue detailObservable = new WritableValue();
-				// Remember the created observables.
-				detailObservables.add(detailObservable);
-				return detailObservable;
-			}
+		IObservableFactory detailValueFactory = target -> {
+			WritableValue detailObservable = new WritableValue();
+			// Remember the created observables.
+			detailObservables.add(detailObservable);
+			return detailObservable;
 		};
 
 		WritableList masterList = new WritableList();

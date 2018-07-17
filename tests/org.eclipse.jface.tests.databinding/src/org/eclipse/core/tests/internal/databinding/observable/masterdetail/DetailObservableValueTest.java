@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2009 Brad Reynolds and others.
+ * Copyright (c) 2006, 2018 Brad Reynolds and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -25,8 +25,6 @@ import org.eclipse.core.databinding.observable.Realm;
 import org.eclipse.core.databinding.observable.masterdetail.IObservableFactory;
 import org.eclipse.core.databinding.observable.masterdetail.MasterDetailObservables;
 import org.eclipse.core.databinding.observable.value.IObservableValue;
-import org.eclipse.core.databinding.observable.value.IValueChangeListener;
-import org.eclipse.core.databinding.observable.value.ValueChangeEvent;
 import org.eclipse.core.databinding.observable.value.WritableValue;
 import org.eclipse.core.internal.databinding.observable.masterdetail.DetailObservableValue;
 import org.eclipse.jface.databinding.conformance.MutableObservableValueContractTest;
@@ -153,12 +151,7 @@ public class DetailObservableValueTest extends AbstractDefaultRealmTestCase {
 
 		final IObservableValue[] detailObservable = new IObservableValue[1];
 
-		master.addValueChangeListener(new IValueChangeListener() {
-			@Override
-			public void handleValueChange(ValueChangeEvent event) {
-				detailObservable[0].dispose();
-			}
-		});
+		master.addValueChangeListener(event -> detailObservable[0].dispose());
 
 		detailObservable[0] = MasterDetailObservables.detailValue(master,
 				factory, null);

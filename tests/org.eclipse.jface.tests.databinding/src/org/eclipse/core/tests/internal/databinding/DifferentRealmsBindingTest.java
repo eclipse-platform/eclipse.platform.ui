@@ -47,12 +47,9 @@ public class DifferentRealmsBindingTest {
 	List<IStatus> errorStatusses = new ArrayList<>();
 
 	DataBindingContext dbc;
-	ILogger logger = new ILogger() {
-		@Override
-		public void log(IStatus status) {
-			if (!status.isOK()) {
-				errorStatusses.add(status);
-			}
+	ILogger logger = status -> {
+		if (!status.isOK()) {
+			errorStatusses.add(status);
 		}
 	};
 

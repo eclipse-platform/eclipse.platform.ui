@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2009 IBM Corporation and others.
+ * Copyright (c) 2005, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -117,12 +117,7 @@ public class DatabindingContextTest extends AbstractDefaultRealmTestCase {
 		errors.addChangeListener(errorsCounter);
 		assertEquals(0, errors.size());
 
-		IValidator<String> validator = new IValidator<String>() {
-			@Override
-			public IStatus validate(String value) {
-				return ValidationStatus.error(errorMessage);
-			}
-		};
+		IValidator<String> validator = value -> ValidationStatus.error(errorMessage);
 
 		dbc.bindValue(targetObservable, modelObservable,
 				new UpdateValueStrategy<String, String>().setAfterGetValidator(validator), null);

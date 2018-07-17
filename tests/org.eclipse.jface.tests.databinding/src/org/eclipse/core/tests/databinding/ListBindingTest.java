@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2015 IBM Corporation and others.
+ * Copyright (c) 2006, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -32,7 +32,6 @@ import org.eclipse.core.databinding.conversion.IConverter;
 import org.eclipse.core.databinding.observable.IObservable;
 import org.eclipse.core.databinding.observable.list.IObservableList;
 import org.eclipse.core.databinding.observable.list.WritableList;
-import org.eclipse.core.databinding.util.ILogger;
 import org.eclipse.core.databinding.util.Policy;
 import org.eclipse.core.databinding.validation.ValidationStatus;
 import org.eclipse.core.internal.databinding.BindingStatus;
@@ -242,14 +241,10 @@ public class ListBindingTest extends AbstractDefaultRealmTestCase {
 		dbc.bindList(target, model, new UpdateListStrategy<>(), modelToTarget);
 		CountDownLatch latch = new CountDownLatch(1);
 
-		Policy.setLog(new ILogger() {
-
-			@Override
-			public void log(IStatus status) {
-				latch.countDown();
-				Assert.assertEquals(IStatus.ERROR, status.getSeverity());
-				Assert.assertTrue(status.getException() instanceof IllegalArgumentException);
-			}
+		Policy.setLog(status -> {
+			latch.countDown();
+			Assert.assertEquals(IStatus.ERROR, status.getSeverity());
+			Assert.assertTrue(status.getException() instanceof IllegalArgumentException);
 		});
 
 		model.add("first");
@@ -274,14 +269,10 @@ public class ListBindingTest extends AbstractDefaultRealmTestCase {
 		dbc.bindList(target, model, new UpdateListStrategy<>(), new UpdateListStrategy<>());
 		CountDownLatch latch = new CountDownLatch(1);
 
-		Policy.setLog(new ILogger() {
-
-			@Override
-			public void log(IStatus status) {
-				latch.countDown();
-				Assert.assertEquals(IStatus.ERROR, status.getSeverity());
-				Assert.assertTrue(status.getException() instanceof IllegalArgumentException);
-			}
+		Policy.setLog(status -> {
+			latch.countDown();
+			Assert.assertEquals(IStatus.ERROR, status.getSeverity());
+			Assert.assertTrue(status.getException() instanceof IllegalArgumentException);
 		});
 
 		model.add("first");
@@ -305,14 +296,10 @@ public class ListBindingTest extends AbstractDefaultRealmTestCase {
 		dbc.bindList(target, model, new UpdateListStrategy<>(), new UpdateListStrategy<>());
 		CountDownLatch latch = new CountDownLatch(1);
 
-		Policy.setLog(new ILogger() {
-
-			@Override
-			public void log(IStatus status) {
-				latch.countDown();
-				Assert.assertEquals(IStatus.ERROR, status.getSeverity());
-				Assert.assertTrue(status.getException() instanceof IllegalArgumentException);
-			}
+		Policy.setLog(status -> {
+			latch.countDown();
+			Assert.assertEquals(IStatus.ERROR, status.getSeverity());
+			Assert.assertTrue(status.getException() instanceof IllegalArgumentException);
 		});
 
 		model.add("first");
@@ -337,14 +324,10 @@ public class ListBindingTest extends AbstractDefaultRealmTestCase {
 		dbc.bindList(target, model, new UpdateListStrategy<>(), new UpdateListStrategy<>());
 		CountDownLatch latch = new CountDownLatch(1);
 
-		Policy.setLog(new ILogger() {
-
-			@Override
-			public void log(IStatus status) {
-				latch.countDown();
-				Assert.assertEquals(IStatus.ERROR, status.getSeverity());
-				Assert.assertTrue(status.getException() instanceof IllegalArgumentException);
-			}
+		Policy.setLog(status -> {
+			latch.countDown();
+			Assert.assertEquals(IStatus.ERROR, status.getSeverity());
+			Assert.assertTrue(status.getException() instanceof IllegalArgumentException);
 		});
 
 		model.add("first");
@@ -358,12 +341,9 @@ public class ListBindingTest extends AbstractDefaultRealmTestCase {
 	 */
 	@Test
 	public void testAddListenerAndInitialSyncAreUninterruptable() {
-		Policy.setLog(new ILogger() {
-			@Override
-			public void log(IStatus status) {
-				if (!status.isOK()) {
-					Assert.fail("The databinding logger has the not-ok status " + status);
-				}
+		Policy.setLog(status -> {
+			if (!status.isOK()) {
+				Assert.fail("The databinding logger has the not-ok status " + status);
 			}
 		});
 

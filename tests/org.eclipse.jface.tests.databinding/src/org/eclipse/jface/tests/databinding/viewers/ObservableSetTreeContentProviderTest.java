@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2009 Matthew Hall and others.
+ * Copyright (c) 2007, 2018 Matthew Hall and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -20,7 +20,6 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-import org.eclipse.core.databinding.observable.IObservable;
 import org.eclipse.core.databinding.observable.Realm;
 import org.eclipse.core.databinding.observable.masterdetail.IObservableFactory;
 import org.eclipse.core.databinding.observable.set.IObservableSet;
@@ -45,6 +44,7 @@ public class ObservableSetTreeContentProviderTest extends AbstractDefaultRealmTe
 	private ObservableSetTreeContentProvider contentProvider;
 	private Object input;
 
+	@Override
 	@Before
 	public void setUp() throws Exception {
 		super.setUp();
@@ -54,6 +54,7 @@ public class ObservableSetTreeContentProviderTest extends AbstractDefaultRealmTe
 		input = new Object();
 	}
 
+	@Override
 	@After
 	public void tearDown() throws Exception {
 		shell.dispose();
@@ -82,12 +83,7 @@ public class ObservableSetTreeContentProviderTest extends AbstractDefaultRealmTe
 	public void testGetElements_ChangesFollowObservedList() {
 		final IObservableSet elements = new WritableSet();
 		final Object input = new Object();
-		initContentProvider(new IObservableFactory() {
-			@Override
-			public IObservable createObservable(Object target) {
-				return target == input ? elements : null;
-			}
-		});
+		initContentProvider(target -> target == input ? elements : null);
 
 		assertTrue(Arrays.equals(new Object[0], contentProvider.getElements("unknown input")));
 
@@ -120,12 +116,7 @@ public class ObservableSetTreeContentProviderTest extends AbstractDefaultRealmTe
 		viewer.setComparer(comparer);
 
 		final IObservableSet children = ObservableViewerElementSet.withComparer(Realm.getDefault(), null, comparer);
-		initContentProvider(new IObservableFactory() {
-			@Override
-			public IObservable createObservable(Object target) {
-				return target == input ? children : null;
-			}
-		});
+		initContentProvider(target -> target == input ? children : null);
 
 		Mutable element = new Mutable();
 		children.add(element);
@@ -143,15 +134,12 @@ public class ObservableSetTreeContentProviderTest extends AbstractDefaultRealmTe
 
 		final IObservableSet children = new WritableSet();
 		final IObservableSet children2 = new WritableSet();
-		initContentProvider(new IObservableFactory() {
-			@Override
-			public IObservable createObservable(Object target) {
-				if (target == input)
-					return children;
-				if (target == input2)
-					return children2;
-				return null;
-			}
+		initContentProvider(target -> {
+			if (target == input)
+				return children;
+			if (target == input2)
+				return children2;
+			return null;
 		});
 
 		Object element = new Object();
@@ -170,15 +158,12 @@ public class ObservableSetTreeContentProviderTest extends AbstractDefaultRealmTe
 
 		final IObservableSet children = new WritableSet();
 		final IObservableSet children2 = new WritableSet();
-		initContentProvider(new IObservableFactory() {
-			@Override
-			public IObservable createObservable(Object target) {
-				if (target == input)
-					return children;
-				if (target == input2)
-					return children2;
-				return null;
-			}
+		initContentProvider(target -> {
+			if (target == input)
+				return children;
+			if (target == input2)
+				return children2;
+			return null;
 		});
 
 		// Realized elements must be allocated before adding the element

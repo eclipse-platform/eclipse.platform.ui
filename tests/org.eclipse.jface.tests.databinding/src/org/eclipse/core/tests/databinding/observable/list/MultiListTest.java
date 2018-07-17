@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 Matthew Hall and others.
+ * Copyright (c) 2008, 2018 Matthew Hall and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -21,9 +21,7 @@ import java.util.List;
 
 import org.eclipse.core.databinding.observable.IObservable;
 import org.eclipse.core.databinding.observable.IObservableCollection;
-import org.eclipse.core.databinding.observable.IStaleListener;
 import org.eclipse.core.databinding.observable.Realm;
-import org.eclipse.core.databinding.observable.StaleEvent;
 import org.eclipse.core.databinding.observable.list.ListDiffEntry;
 import org.eclipse.core.databinding.observable.list.MultiList;
 import org.eclipse.core.databinding.observable.list.WritableList;
@@ -71,12 +69,7 @@ public class MultiListTest extends AbstractDefaultRealmTestCase {
 	@Test
 	public void testStaleEvent_NoFireEventIfAlreadyStale() {
 		multiList.subLists[0].setStale(true);
-		multiList.addStaleListener(new IStaleListener() {
-			@Override
-			public void handleStale(StaleEvent staleEvent) {
-				fail("Should not fire stale when list is already dirty");
-			}
-		});
+		multiList.addStaleListener(staleEvent -> fail("Should not fire stale when list is already dirty"));
 		multiList.subLists[1].setStale(true);
 	}
 

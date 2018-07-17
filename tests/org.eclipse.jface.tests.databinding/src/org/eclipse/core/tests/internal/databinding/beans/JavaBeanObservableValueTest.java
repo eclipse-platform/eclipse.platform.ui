@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2009 Brad Reynolds and others.
+ * Copyright (c) 2006, 2018 Brad Reynolds and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -26,9 +26,7 @@ import org.eclipse.core.databinding.beans.BeansObservables;
 import org.eclipse.core.databinding.beans.IBeanObservable;
 import org.eclipse.core.databinding.beans.IBeanProperty;
 import org.eclipse.core.databinding.beans.PojoObservables;
-import org.eclipse.core.databinding.observable.ChangeEvent;
 import org.eclipse.core.databinding.observable.Diffs;
-import org.eclipse.core.databinding.observable.IChangeListener;
 import org.eclipse.core.databinding.observable.IObservable;
 import org.eclipse.core.databinding.observable.Realm;
 import org.eclipse.core.databinding.observable.value.ComputedValue;
@@ -118,12 +116,7 @@ public class JavaBeanObservableValueTest extends AbstractDefaultRealmTestCase {
 				return Boolean.valueOf(name.getValue() != null);
 			}
 		};
-		cv.addChangeListener(new IChangeListener() {
-			@Override
-			public void handleChange(ChangeEvent event) {
-				cv.getValue();
-			}
-		});
+		cv.addChangeListener(event -> cv.getValue());
 		person.setName("foo");
 	}
 

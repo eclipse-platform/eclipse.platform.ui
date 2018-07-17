@@ -28,13 +28,10 @@ import org.eclipse.core.databinding.conversion.Converter;
 import org.eclipse.core.databinding.conversion.IConverter;
 import org.eclipse.core.databinding.conversion.NumberToStringConverter;
 import org.eclipse.core.databinding.conversion.StringToNumberConverter;
-import org.eclipse.core.databinding.observable.ChangeEvent;
-import org.eclipse.core.databinding.observable.IChangeListener;
 import org.eclipse.core.databinding.observable.value.IObservableValue;
 import org.eclipse.core.databinding.validation.IValidator;
 import org.eclipse.core.databinding.validation.ValidationStatus;
 import org.eclipse.core.internal.databinding.conversion.IdentityConverter;
-import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.databinding.swt.SWTObservables;
 import org.eclipse.jface.examples.databinding.model.Account;
@@ -265,19 +262,16 @@ public class PropertyScenarios extends ScenariosTestCase {
         final String max15CharactersMessage = "Maximum length for name is 15 characters.";
         adventure.setName("ValidValue");
 
-        IValidator validator = new IValidator() {
-            @Override
-			public IStatus validate(Object value) {
-                String stringValue = (String) value;
-                if (stringValue.length() > 15) {
-                    return ValidationStatus.error(max15CharactersMessage);
-                } else if (stringValue.indexOf(' ') != -1) {
-                    return ValidationStatus.cancel(noSpacesMessage);
-                } else {
-                    return Status.OK_STATUS;
-                }
-            }
-        };
+		IValidator validator = value -> {
+			String stringValue = (String) value;
+			if (stringValue.length() > 15) {
+				return ValidationStatus.error(max15CharactersMessage);
+			} else if (stringValue.indexOf(' ') != -1) {
+				return ValidationStatus.cancel(noSpacesMessage);
+			} else {
+				return Status.OK_STATUS;
+			}
+		};
 
 //        BindSpec bindSpec = new DefaultBindSpec().setModelToTargetConverter(new IdentityConverter(String.class))
 //                .setTargetToModelConverter(new IdentityConverter(String.class))
@@ -315,21 +309,18 @@ public class PropertyScenarios extends ScenariosTestCase {
         final String cannotBeNegativeMessage = "Price cannot be negative.";
         final String mustBeCurrencyMessage = "Price must be a currency.";
 
-        IValidator validator = new IValidator() {
-            @Override
-			public IStatus validate(Object value) {
-                String stringValue = (String) value;
-                try {
-                    double doubleValue = new Double(stringValue).doubleValue();
-                    if (doubleValue < 0.0) {
-                        return ValidationStatus.error(cannotBeNegativeMessage);
-                    }
-                    return Status.OK_STATUS;
-                } catch (NumberFormatException ex) {
-                    return ValidationStatus.error(mustBeCurrencyMessage);
-                }
-            }
-        };
+		IValidator validator = value -> {
+			String stringValue = (String) value;
+			try {
+				double doubleValue = new Double(stringValue).doubleValue();
+				if (doubleValue < 0.0) {
+					return ValidationStatus.error(cannotBeNegativeMessage);
+				}
+				return Status.OK_STATUS;
+			} catch (NumberFormatException ex) {
+				return ValidationStatus.error(mustBeCurrencyMessage);
+			}
+		};
 
         //Create a number formatter that will display one decimal position.
 		NumberFormat numberFormat = NumberFormat.getInstance();
@@ -405,21 +396,18 @@ public class PropertyScenarios extends ScenariosTestCase {
             }
         };
 
-        IValidator validator = new IValidator() {
-            @Override
-			public IStatus validate(Object value) {
-                String stringValue = (String) value;
-                try {
-                    double doubleValue = currencyFormat.parse(stringValue).doubleValue();
-                    if (doubleValue < 0.0) {
-                        return ValidationStatus.error(cannotBeNegativeMessage);
-                    }
-                    return Status.OK_STATUS;
-                } catch (ParseException e) {
-                    return ValidationStatus.error(mustBeCurrencyMessage);
-                }
-            }
-        };
+		IValidator validator = value -> {
+			String stringValue = (String) value;
+			try {
+				double doubleValue = currencyFormat.parse(stringValue).doubleValue();
+				if (doubleValue < 0.0) {
+					return ValidationStatus.error(cannotBeNegativeMessage);
+				}
+				return Status.OK_STATUS;
+			} catch (ParseException e) {
+				return ValidationStatus.error(mustBeCurrencyMessage);
+			}
+		};
 
         getDbc().bindValue(SWTObservables.observeText(text, SWT.Modify),
                 BeansObservables.observeValue(adventure, "price"),
@@ -581,13 +569,7 @@ new UpdateValueStrategy().setConverter(toDouble).setAfterGetValidator(validator)
 
         IObservableValue uv = BeansObservables.observeValue(adventure, "name");
 
-        uv.addChangeListener(new IChangeListener() {
-            @Override
-			public void handleChange(ChangeEvent event) {
-                // Count how many times adventure has changed
-                counter[0]++;
-            }
-        });
+		uv.addChangeListener(event -> counter[0]++);
 
         String name = adventure.getName() + "Foo";
         enterText(t1, name);

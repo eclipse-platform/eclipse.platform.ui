@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 Matthew Hall and others.
+ * Copyright (c) 2008, 2018 Matthew Hall and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -23,10 +23,8 @@ import java.util.Set;
 import org.eclipse.core.databinding.observable.AbstractObservable;
 import org.eclipse.core.databinding.observable.IObservable;
 import org.eclipse.core.databinding.observable.IObservableCollection;
-import org.eclipse.core.databinding.observable.IStaleListener;
 import org.eclipse.core.databinding.observable.ObservableTracker;
 import org.eclipse.core.databinding.observable.Realm;
-import org.eclipse.core.databinding.observable.StaleEvent;
 import org.eclipse.core.databinding.observable.set.ComputedSet;
 import org.eclipse.jface.databinding.conformance.ObservableCollectionContractTest;
 import org.eclipse.jface.databinding.conformance.delegate.AbstractObservableCollectionContractDelegate;
@@ -70,12 +68,7 @@ public class ComputedSetTest extends AbstractDefaultRealmTestCase {
 	@Test
 	public void testDependency_NoStaleEventIfAlreadyDirty() {
 		set.dependency.fireChange();
-		set.addStaleListener(new IStaleListener() {
-			@Override
-			public void handleStale(StaleEvent staleEvent) {
-				fail("Should not fire stale when set is already dirty");
-			}
-		});
+		set.addStaleListener(staleEvent -> fail("Should not fire stale when set is already dirty"));
 		set.dependency.fireStale();
 	}
 

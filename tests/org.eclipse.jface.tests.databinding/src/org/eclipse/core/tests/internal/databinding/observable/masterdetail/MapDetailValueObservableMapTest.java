@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010 Ovidio Mallo and others.
+ * Copyright (c) 2010, 2018 Ovidio Mallo and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -21,7 +21,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.eclipse.core.databinding.beans.BeansObservables;
-import org.eclipse.core.databinding.observable.IObservable;
 import org.eclipse.core.databinding.observable.map.WritableMap;
 import org.eclipse.core.databinding.observable.masterdetail.IObservableFactory;
 import org.eclipse.core.databinding.observable.value.WritableValue;
@@ -254,14 +253,11 @@ public class MapDetailValueObservableMapTest extends
 	@Test
 	public void testDetailObservableValuesAreDisposed() {
 		final Map detailObservables = new HashMap();
-		IObservableFactory detailValueFactory = new IObservableFactory() {
-			@Override
-			public IObservable createObservable(Object target) {
-				WritableValue detailObservable = new WritableValue();
-				// Remember the created observables.
-				detailObservables.put(target, detailObservable);
-				return detailObservable;
-			}
+		IObservableFactory detailValueFactory = target -> {
+			WritableValue detailObservable = new WritableValue();
+			// Remember the created observables.
+			detailObservables.put(target, detailObservable);
+			return detailObservable;
 		};
 
 		WritableMap masterMap = new WritableMap();

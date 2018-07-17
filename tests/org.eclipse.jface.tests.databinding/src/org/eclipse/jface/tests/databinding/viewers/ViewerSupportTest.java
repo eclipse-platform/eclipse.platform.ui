@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009 Matthew Hall and others.
+ * Copyright (c) 2009, 2018 Matthew Hall and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -26,8 +26,6 @@ import org.eclipse.core.databinding.property.set.ISetProperty;
 import org.eclipse.core.databinding.property.value.IValueProperty;
 import org.eclipse.core.databinding.util.ILogger;
 import org.eclipse.core.databinding.util.Policy;
-import org.eclipse.core.runtime.ISafeRunnable;
-import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.tests.internal.databinding.beans.Bean;
 import org.eclipse.jface.databinding.viewers.ViewerSupport;
 import org.eclipse.jface.tests.databinding.AbstractSWTTestCase;
@@ -49,33 +47,29 @@ public class ViewerSupportTest extends AbstractSWTTestCase {
 	private AbstractTableViewer structuredViewer;
 	private AbstractTreeViewer treeViewer;
 
+	@Override
 	@Before
 	public void setUp() throws Exception {
 		super.setUp();
 
 		oldLog = Policy.getLog();
-		Policy.setLog(new ILogger() {
-			@Override
-			public void log(IStatus status) {
-				if (status.getException() != null)
-					throw new RuntimeException(status.getException());
-				fail("Unexpected status: " + status);
-			}
+		Policy.setLog(status -> {
+			if (status.getException() != null)
+				throw new RuntimeException(status.getException());
+			fail("Unexpected status: " + status);
 		});
 
 		oldRunner = SafeRunnable.getRunner();
-		SafeRunnable.setRunner(new ISafeRunnableRunner() {
-			@Override
-			public void run(ISafeRunnable code) {
-				try {
-					code.run();
-				} catch (Exception e) {
-					throw new RuntimeException(e);
-				}
+		SafeRunnable.setRunner(code -> {
+			try {
+				code.run();
+			} catch (Exception e) {
+				throw new RuntimeException(e);
 			}
 		});
 	}
 
+	@Override
 	@After
 	public void tearDown() throws Exception {
 		if (structuredViewer != null)

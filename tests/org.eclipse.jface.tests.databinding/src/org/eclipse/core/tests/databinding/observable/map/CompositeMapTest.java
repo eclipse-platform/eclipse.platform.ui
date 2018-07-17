@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2009 IBM Corporation and others.
+ * Copyright (c) 2007, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -20,10 +20,8 @@ import java.util.Collections;
 
 import org.eclipse.core.databinding.beans.BeansObservables;
 import org.eclipse.core.databinding.observable.AbstractObservable;
-import org.eclipse.core.databinding.observable.IObservable;
 import org.eclipse.core.databinding.observable.map.CompositeMap;
 import org.eclipse.core.databinding.observable.map.IObservableMap;
-import org.eclipse.core.databinding.observable.masterdetail.IObservableFactory;
 import org.eclipse.core.databinding.observable.set.IObservableSet;
 import org.eclipse.core.databinding.observable.set.WritableSet;
 import org.eclipse.jface.databinding.conformance.util.MapChangeEventTracker;
@@ -53,19 +51,15 @@ public class CompositeMapTest extends AbstractDefaultRealmTestCase {
 		}
 	}
 
+	@Override
 	@Before
 	public void setUp() throws Exception {
 		super.setUp();
 		persons = new WritableSet();
 		first = BeansObservables.observeMap(persons,
 				SimplePerson.class, "cart");
-		composedMap = new CompositeMap(first, new IObservableFactory() {
-			@Override
-			public IObservable createObservable(Object target) {
-				return BeansObservables.observeMap((IObservableSet) target,
-						SimpleCart.class, "numItems");
-			}
-		});
+		composedMap = new CompositeMap(first,
+				target -> BeansObservables.observeMap((IObservableSet) target, SimpleCart.class, "numItems"));
 	}
 
 	@Test

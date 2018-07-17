@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009 Matthew Hall and others.
+ * Copyright (c) 2009, 2018 Matthew Hall and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -21,11 +21,9 @@ import java.util.Collections;
 import java.util.List;
 
 import org.eclipse.core.databinding.observable.ChangeSupport;
-import org.eclipse.core.databinding.observable.DisposeEvent;
 import org.eclipse.core.databinding.observable.IDisposeListener;
 import org.eclipse.core.databinding.observable.IStaleListener;
 import org.eclipse.core.databinding.observable.Realm;
-import org.eclipse.core.databinding.observable.StaleEvent;
 import org.eclipse.jface.tests.databinding.AbstractDefaultRealmTestCase;
 import org.junit.Before;
 import org.junit.Test;
@@ -37,6 +35,7 @@ import org.junit.Test;
 public class ChangeSupportTest extends AbstractDefaultRealmTestCase {
 	private ChangeSupportStub changeSupport;
 
+	@Override
 	@Before
 	public void setUp() throws Exception {
 		super.setUp();
@@ -46,15 +45,9 @@ public class ChangeSupportTest extends AbstractDefaultRealmTestCase {
 
 	@Test
 	public void testAddDisposeListener_HasListenersFalse() {
-		IDisposeListener disposeListener = new IDisposeListener() {
-			@Override
-			public void handleDispose(DisposeEvent staleEvent) {
-			}
+		IDisposeListener disposeListener = staleEvent -> {
 		};
-		IStaleListener staleListener = new IStaleListener() {
-			@Override
-			public void handleStale(StaleEvent staleEvent) {
-			}
+		IStaleListener staleListener = staleEvent -> {
 		};
 
 		assertFalse(changeSupport.hasListeners());

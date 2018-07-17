@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2009 Matthew Hall and others.
+ * Copyright (c) 2008, 2018 Matthew Hall and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -17,10 +17,8 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
-import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 
-import org.eclipse.core.databinding.observable.ChangeEvent;
 import org.eclipse.core.databinding.observable.IChangeListener;
 import org.eclipse.core.databinding.observable.map.ComputedObservableMap;
 import org.eclipse.core.databinding.observable.set.IObservableSet;
@@ -41,6 +39,7 @@ public class ComputedObservableMapTest extends AbstractDefaultRealmTestCase {
 	private String propertyName;
 	private Bean bean;
 
+	@Override
 	@Before
 	public void setUp() throws Exception {
 		super.setUp();
@@ -100,11 +99,8 @@ public class ComputedObservableMapTest extends AbstractDefaultRealmTestCase {
 
 	@Test
 	public void testRemoveLastListener_DoNotDiscardKeySet() {
-		IChangeListener listener = new IChangeListener() {
-			@Override
-			public void handleChange(ChangeEvent event) {
-				// do nothing
-			}
+		IChangeListener listener = event -> {
+			// do nothing
 		};
 		map.addChangeListener(listener); // first listener added
 		map.removeChangeListener(listener); // last listener removed
@@ -138,13 +134,8 @@ public class ComputedObservableMapTest extends AbstractDefaultRealmTestCase {
 	}
 
 	static class ComputedObservableMapStub extends ComputedObservableMap {
-		private PropertyChangeListener listener = new PropertyChangeListener() {
-			@Override
-			public void propertyChange(PropertyChangeEvent evt) {
-				fireSingleChange(evt.getSource(), evt.getOldValue(), evt
-						.getNewValue());
-			}
-		};
+		private PropertyChangeListener listener = evt -> fireSingleChange(evt.getSource(), evt.getOldValue(),
+				evt.getNewValue());
 
 		ComputedObservableMapStub(IObservableSet keySet) {
 			super(keySet);
