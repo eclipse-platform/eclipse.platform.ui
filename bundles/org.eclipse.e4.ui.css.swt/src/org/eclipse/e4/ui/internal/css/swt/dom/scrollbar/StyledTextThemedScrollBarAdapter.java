@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2017 Fabio Zadrozny and others.
+ * Copyright (c) 2017, 2018 Fabio Zadrozny and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -105,20 +105,17 @@ public class StyledTextThemedScrollBarAdapter extends AbstractThemedScrollBarAda
 					return;
 				}
 				fCheckedTimes++;
-				Display.getDefault().asyncExec(new Runnable() {
-					@Override
-					public void run() {
-						if (fStyledText.isDisposed()) {
-							return;
-						}
-						if (!fStyledText.getAlwaysShowScrollBars()) {
-							// We conflict with the setting to make it
-							// visible or invisible
-							fStyledText.setAlwaysShowScrollBars(true);
-						}
-						if (fScrollBar != null && !fScrollBar.isDisposed()) {
-							fScrollBar.setVisible(false);
-						}
+				Display.getDefault().asyncExec(() -> {
+					if (fStyledText.isDisposed()) {
+						return;
+					}
+					if (!fStyledText.getAlwaysShowScrollBars()) {
+						// We conflict with the setting to make it
+						// visible or invisible
+						fStyledText.setAlwaysShowScrollBars(true);
+					}
+					if (fScrollBar != null && !fScrollBar.isDisposed()) {
+						fScrollBar.setVisible(false);
 					}
 				});
 			}
@@ -536,13 +533,9 @@ public class StyledTextThemedScrollBarAdapter extends AbstractThemedScrollBarAda
 		 * Asynchronously asks for a redraw of the whole StyledText.
 		 */
 		private void redrawAsync() {
-			Display.getCurrent().asyncExec(new Runnable() {
-
-				@Override
-				public void run() {
-					if (fStyledText != null && !fStyledText.isDisposed()) {
-						fStyledText.redraw();
-					}
+			Display.getCurrent().asyncExec(() -> {
+				if (fStyledText != null && !fStyledText.isDisposed()) {
+					fStyledText.redraw();
 				}
 			});
 		}
@@ -584,14 +577,10 @@ public class StyledTextThemedScrollBarAdapter extends AbstractThemedScrollBarAda
 			if (fStyledText.getRightMargin() != rightMargin || fStyledText.getBottomMargin() != bottomMargin) {
 				final int applyRightMargin = rightMargin;
 				final int applyBottomMargin = bottomMargin;
-				Display.getDefault().asyncExec(new Runnable() {
-
-					@Override
-					public void run() {
-						if (fStyledText != null && !fStyledText.isDisposed()) {
-							fStyledText.setMargins(fStyledText.getLeftMargin(), fStyledText.getTopMargin(),
-									applyRightMargin, applyBottomMargin);
-						}
+				Display.getDefault().asyncExec(() -> {
+					if (fStyledText != null && !fStyledText.isDisposed()) {
+						fStyledText.setMargins(fStyledText.getLeftMargin(), fStyledText.getTopMargin(),
+								applyRightMargin, applyBottomMargin);
 					}
 				});
 				return true;
@@ -626,17 +615,13 @@ public class StyledTextThemedScrollBarAdapter extends AbstractThemedScrollBarAda
 			gc.setLineStyle(SWT.LINE_SOLID);
 			gc.setAntialias(SWT.ON);
 			gc.setLineWidth(1);
-			return new AutoCloseable() {
-
-				@Override
-				public void close() throws Exception {
-					gc.setForeground(oldForeground);
-					gc.setBackground(oldBackground);
-					gc.setAlpha(oldAlpha);
-					gc.setLineStyle(oldLineStyle);
-					gc.setLineWidth(oldLineWidth);
-					gc.setAntialias(oldAntialias);
-				}
+			return () -> {
+				gc.setForeground(oldForeground);
+				gc.setBackground(oldBackground);
+				gc.setAlpha(oldAlpha);
+				gc.setLineStyle(oldLineStyle);
+				gc.setLineWidth(oldLineWidth);
+				gc.setAntialias(oldAntialias);
 			};
 		}
 
