@@ -1455,7 +1455,6 @@ public class PartServiceImpl implements EPartService {
 		return true;
 	}
 
-	@SuppressWarnings("deprecation")
 	/**
 	 * @noreference This method is not intended to be referenced by clients.
 	 * @see <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=509868">Bug

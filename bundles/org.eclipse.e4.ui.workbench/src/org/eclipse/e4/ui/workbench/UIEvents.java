@@ -1077,7 +1077,6 @@ public class UIEvents {
 	 * @see <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=509868">Bug
 	 *      509868</a>
 	 */
-	@SuppressWarnings("javadoc")
 	@Deprecated
 	public interface Input {
 
