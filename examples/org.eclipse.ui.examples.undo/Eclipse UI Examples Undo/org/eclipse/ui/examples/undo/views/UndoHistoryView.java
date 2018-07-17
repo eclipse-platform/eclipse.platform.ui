@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2014 IBM Corporation and others.
+ * Copyright (c) 2005, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -22,15 +22,11 @@ import org.eclipse.core.commands.operations.IUndoableOperation;
 import org.eclipse.core.commands.operations.OperationHistoryEvent;
 import org.eclipse.core.commands.operations.OperationHistoryFactory;
 import org.eclipse.jface.action.Action;
-import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.util.IPropertyChangeListener;
-import org.eclipse.jface.util.PropertyChangeEvent;
-import org.eclipse.jface.viewers.DoubleClickEvent;
-import org.eclipse.jface.viewers.IDoubleClickListener;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
@@ -43,8 +39,6 @@ import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.DisposeEvent;
-import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
@@ -137,15 +131,12 @@ public class UndoHistoryView extends ViewPart implements
 			case OperationHistoryEvent.REDONE:
 				if (event.getOperation().hasContext(fContext)
 						&& display != null) {
-					display.syncExec(new Runnable() {
-						@Override
-						public void run() {
-							// refresh all labels in case any operation has
-							// changed dynamically
-							// without notifying the operation history.
-							if (!viewer.getTable().isDisposed()) {
-								viewer.refresh(true);
-							}
+					display.syncExec(() -> {
+						// refresh all labels in case any operation has
+						// changed dynamically
+						// without notifying the operation history.
+						if (!viewer.getTable().isDisposed()) {
+							viewer.refresh(true);
 						}
 					});
 				}
@@ -201,22 +192,14 @@ public class UndoHistoryView extends ViewPart implements
 	 * Add any listeners needed by this view.
 	 */
 	private void addListeners() {
-		propertyChangeListener = new IPropertyChangeListener(){
-			@Override
-			public void propertyChange(PropertyChangeEvent event) {
-				if (event.getProperty() == PreferenceConstants.PREF_SHOWDEBUG) {
-					showDebug = UndoPlugin.getDefault().getPreferenceStore().getBoolean(PreferenceConstants.PREF_SHOWDEBUG);
-					viewer.refresh();
-				}
+		propertyChangeListener = event -> {
+			if (event.getProperty() == PreferenceConstants.PREF_SHOWDEBUG) {
+				showDebug = UndoPlugin.getDefault().getPreferenceStore().getBoolean(PreferenceConstants.PREF_SHOWDEBUG);
+				viewer.refresh();
 			}
 		};
 		UndoPlugin.getDefault().getPreferenceStore().addPropertyChangeListener(propertyChangeListener);
-		viewer.getControl().addDisposeListener(new DisposeListener() {
-			@Override
-			public void widgetDisposed(DisposeEvent event) {
-				removeListeners();
-			}
-		});
+		viewer.getControl().addDisposeListener(event -> removeListeners());
 	}
 
 	/*
@@ -257,9 +240,9 @@ public class UndoHistoryView extends ViewPart implements
 				.getUndoHistory(IOperationHistory.GLOBAL_UNDO_CONTEXT);
 		for (IUndoableOperation operation : operations) {
 			IUndoContext[] contexts = operation.getContexts();
-			for (int j = 0; j < contexts.length; j++) {
-				if (!input.contains(contexts[j])) {
-					input.add(contexts[j]);
+			for (IUndoContext context : contexts) {
+				if (!input.contains(context)) {
+					input.add(context);
 				}
 			}
 		}
@@ -307,12 +290,7 @@ public class UndoHistoryView extends ViewPart implements
 	private void hookContextMenu() {
 		MenuManager menuMgr = new MenuManager("#PopupMenu");
 		menuMgr.setRemoveAllWhenShown(true);
-		menuMgr.addMenuListener(new IMenuListener() {
-			@Override
-			public void menuAboutToShow(IMenuManager manager) {
-				UndoHistoryView.this.fillContextMenu(manager);
-			}
-		});
+		menuMgr.addMenuListener(manager -> UndoHistoryView.this.fillContextMenu(manager));
 		Menu menu = menuMgr.createContextMenu(viewer.getControl());
 		viewer.getControl().setMenu(menu);
 		getSite().registerContextMenu(menuMgr, viewer);
@@ -417,12 +395,7 @@ public class UndoHistoryView extends ViewPart implements
 	 * Register a double click action with the double click event.
 	 */
 	private void hookDoubleClickAction() {
-		viewer.addDoubleClickListener(new IDoubleClickListener() {
-			@Override
-			public void doubleClick(DoubleClickEvent event) {
-				doubleClickAction.run();
-			}
-		});
+		viewer.addDoubleClickListener(event -> doubleClickAction.run());
 	}
 
 	/*

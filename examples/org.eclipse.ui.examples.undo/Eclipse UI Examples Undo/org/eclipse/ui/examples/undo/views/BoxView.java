@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2014 IBM Corporation and others.
+ * Copyright (c) 2005, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -18,21 +18,14 @@ import org.eclipse.core.commands.operations.IUndoContext;
 import org.eclipse.core.commands.operations.ObjectUndoContext;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IAction;
-import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.util.IPropertyChangeListener;
-import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.DisposeEvent;
-import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
-import org.eclipse.swt.events.MouseMoveListener;
-import org.eclipse.swt.events.PaintEvent;
-import org.eclipse.swt.events.PaintListener;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Canvas;
@@ -243,51 +236,38 @@ public class BoxView extends ViewPart {
 			public void mouseDoubleClick(MouseEvent event) {
 			}
 		});
-		paintCanvas.addMouseMoveListener(new MouseMoveListener() {
-			@Override
-			public void mouseMove(MouseEvent event) {
-				if (dragInProgress) {
-					clearRubberBandSelection();
-					tempPosition.x = event.x;
-					tempPosition.y = event.y;
-					addRubberBandSelection();
-				} else if (moveInProgress) {
-					clearRubberBandSelection();
-					anchorPosition.x = event.x - diffX;
-					anchorPosition.y = event.y - diffY;
-					tempPosition.x = anchorPosition.x + movingBox.getWidth();
-					tempPosition.y = anchorPosition.y + movingBox.getHeight();
-					addRubberBandSelection();
-				}
+		paintCanvas.addMouseMoveListener(event -> {
+			if (dragInProgress) {
+				clearRubberBandSelection();
+				tempPosition.x = event.x;
+				tempPosition.y = event.y;
+				addRubberBandSelection();
+			} else if (moveInProgress) {
+				clearRubberBandSelection();
+				anchorPosition.x = event.x - diffX;
+				anchorPosition.y = event.y - diffY;
+				tempPosition.x = anchorPosition.x + movingBox.getWidth();
+				tempPosition.y = anchorPosition.y + movingBox.getHeight();
+				addRubberBandSelection();
 			}
 		});
-		paintCanvas.addPaintListener(new PaintListener() {
-			@Override
-			public void paintControl(PaintEvent event) {
-				event.gc.setForeground(paintCanvas.getForeground());
-				boxes.draw(event.gc);
-			}
+		paintCanvas.addPaintListener(event -> {
+			event.gc.setForeground(paintCanvas.getForeground());
+			boxes.draw(event.gc);
 		});
 
-		paintCanvas.addDisposeListener(new DisposeListener() {
-			@Override
-			public void widgetDisposed(DisposeEvent event) {
-				// dispose the gc
-				gc.dispose();
-				// dispose listeners
-				removeListeners();
-			}
+		paintCanvas.addDisposeListener(event -> {
+			// dispose the gc
+			gc.dispose();
+			// dispose listeners
+			removeListeners();
 		});
 
 		// listen for a change in the undo limit
-		propertyChangeListener = new IPropertyChangeListener() {
-			@Override
-			public void propertyChange(PropertyChangeEvent event) {
-				if (event.getProperty() == PreferenceConstants.PREF_UNDOLIMIT) {
-					int limit = UndoPlugin.getDefault().getPreferenceStore()
-							.getInt(PreferenceConstants.PREF_UNDOLIMIT);
-					getOperationHistory().setLimit(undoContext, limit);
-				}
+		propertyChangeListener = event -> {
+			if (event.getProperty() == PreferenceConstants.PREF_UNDOLIMIT) {
+				int limit = UndoPlugin.getDefault().getPreferenceStore().getInt(PreferenceConstants.PREF_UNDOLIMIT);
+				getOperationHistory().setLimit(undoContext, limit);
 			}
 		};
 		UndoPlugin.getDefault().getPreferenceStore().addPropertyChangeListener(
@@ -312,12 +292,7 @@ public class BoxView extends ViewPart {
 	private void hookContextMenu() {
 		MenuManager menuMgr = new MenuManager("#PopupMenu");
 		menuMgr.setRemoveAllWhenShown(true);
-		menuMgr.addMenuListener(new IMenuListener() {
-			@Override
-			public void menuAboutToShow(IMenuManager manager) {
-				BoxView.this.fillContextMenu(manager);
-			}
-		});
+		menuMgr.addMenuListener(manager -> BoxView.this.fillContextMenu(manager));
 		Menu menu = menuMgr.createContextMenu(paintCanvas);
 		paintCanvas.setMenu(menu);
 	}
