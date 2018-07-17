@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2015 IBM Corporation and others.
+ * Copyright (c) 2004, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -313,20 +313,17 @@ public class ProgressMonitorJobsDialog extends ProgressMonitorDialog {
                 if (!PlatformUI.isWorkbenchRunning()) {
 					return;
 				}
-            	getUISynchronize().syncExec(new Runnable() {
-                    @Override
-					public void run() {
-						//Reset the watch if it is not safe to open
-						 if (!ProgressManagerUtil.safeToOpen(ProgressMonitorJobsDialog.this,null)){
-							  watchTicks();
-							  return;
-						 }
+				getUISynchronize().syncExec(() -> {
+					// Reset the watch if it is not safe to open
+					if (!ProgressManagerUtil.safeToOpen(ProgressMonitorJobsDialog.this, null)) {
+						watchTicks();
+						return;
+					}
 
-                        if (!alreadyClosed) {
-							open();
-						}
-                    }
-                });
+					if (!alreadyClosed) {
+						open();
+					}
+				});
             }
 
             @Override
