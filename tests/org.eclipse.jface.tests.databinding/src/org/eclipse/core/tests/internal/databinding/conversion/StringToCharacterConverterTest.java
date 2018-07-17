@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 Matt Carter and others.
+ * Copyright (c) 2007, 2018 Matt Carter and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -36,7 +36,7 @@ public class StringToCharacterConverterTest {
 	@Test
 	public void testConvertsToCharacter() throws Exception {
 		Character value = Character.valueOf('X');
-		Character result = (Character) converter.convert(Character
+		Character result = converter.convert(Character
 				.toString(value.charValue()));
 
 		assertEquals(value, result);
@@ -45,7 +45,7 @@ public class StringToCharacterConverterTest {
 	@Test
 	public void testConvertsToCharacterPrimitive() throws Exception {
 		Character value = Character.valueOf('Y');
-		Character result = (Character) primitiveConverter.convert(String
+		Character result = primitiveConverter.convert(String
 				.valueOf(value.charValue()));
 		assertEquals(value, result);
 	}

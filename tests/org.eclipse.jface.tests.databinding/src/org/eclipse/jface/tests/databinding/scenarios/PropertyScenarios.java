@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2009 IBM Corporation and others.
+ * Copyright (c) 2005, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -65,14 +65,16 @@ public class PropertyScenarios extends ScenariosTestCase {
 
     private Adventure adventure;
 
-    @Before
+    @Override
+	@Before
 	public void setUp() throws Exception {
         super.setUp();
         // do any setup work here
         adventure = SampleData.WINTER_HOLIDAY;
     }
 
-    @After
+    @Override
+	@After
 	public void tearDown() throws Exception {
         // do any teardown work here
         super.tearDown();
@@ -290,16 +292,16 @@ public class PropertyScenarios extends ScenariosTestCase {
 						String.class)));
 
         // no validation message
-        assertTrue(((IStatus)binding.getValidationStatus().getValue()).isOK());
+		assertTrue(binding.getValidationStatus().getValue().isOK());
         enterText(text, "Invalid Value");
-        assertEquals(noSpacesMessage, ((IStatus) binding.getValidationStatus().getValue()).getMessage());
+        assertEquals(noSpacesMessage, binding.getValidationStatus().getValue().getMessage());
         assertEquals("ValidValue", adventure.getName());
         text.setText("InvalidValueBecauseTooLong");
         assertEquals(max15CharactersMessage,
-                ((IStatus) binding.getValidationStatus().getValue()).getMessage());
+                binding.getValidationStatus().getValue().getMessage());
         assertEquals("ValidValue", adventure.getName());
         enterText(text, "anothervalid");
-        assertTrue(((IStatus)binding.getValidationStatus().getValue()).isOK());
+        assertTrue(binding.getValidationStatus().getValue().isOK());
         assertEquals("anothervalid", adventure.getName());
     }
 
@@ -610,8 +612,8 @@ new UpdateValueStrategy().setConverter(toDouble).setAfterGetValidator(validator)
         Text errorText = new Text(getComposite(), SWT.NONE);
 
         getDbc().bindValue(SWTObservables.observeText(errorText, SWT.Modify), b.getValidationStatus(), new UpdateValueStrategy(false, UpdateValueStrategy.POLICY_NEVER), null);
-        assertTrue(((IStatus)b.getValidationStatus().getValue()).isOK());
+        assertTrue(b.getValidationStatus().getValue().isOK());
         enterText(text, "foo");
-        assertFalse(((IStatus)b.getValidationStatus().getValue()).isOK());
+        assertFalse(b.getValidationStatus().getValue().isOK());
     }
 }
