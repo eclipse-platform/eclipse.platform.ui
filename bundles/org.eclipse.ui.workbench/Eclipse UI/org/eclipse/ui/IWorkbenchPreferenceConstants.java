@@ -605,4 +605,14 @@ public interface IWorkbenchPreferenceConstants {
 	 * @since 3.7
 	 */
 	String RECENTLY_USED_WORKINGSETS_SIZE = "RECENTLY_USED_WORKINGSETS_SIZE"; //$NON-NLS-1$
+
+	/**
+	 * Workbench preference id for hiding the quick access search field per default.
+	 * <p>
+	 * Boolean-valued. The default value for this preference is: <code>false</code>.
+	 * </p>
+	 *
+	 * @since 3.112
+	 */
+	String HIDE_QUICK_ACCESS_PER_DEFAULT = "hideQuickAccessPerDefault"; //$NON-NLS-1$
 }

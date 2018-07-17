@@ -968,6 +968,9 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 								IPresentationEngine.HIDDEN_EXPLICITLY)) {
 							quickAccessElement.getTags().add(IPresentationEngine.HIDDEN_EXPLICITLY);
 						}
+					} else if (!model.getTags().contains(QUICK_ACCESS_DEFAULT_VISIBILITY_CHANGED)
+							&& hidesQuickAccessPerDefault()) {
+						quickAccessElement.getTags().add(IPresentationEngine.HIDDEN_EXPLICITLY);
 					}
 				}
 			}
@@ -977,6 +980,12 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 
 	private static final String QUICK_ACCESS_ID = "SearchField"; //$NON-NLS-1$
 	private static final String QUICK_ACCESS_HIDDEN = "QUICK_ACCESS_HIDDEN"; //$NON-NLS-1$
+	private static final String QUICK_ACCESS_DEFAULT_VISIBILITY_CHANGED = "QUICK_ACCESS_DEFAULT_VISIBILITY_CHANGED"; //$NON-NLS-1$
+
+	private static boolean hidesQuickAccessPerDefault() {
+		IPreferenceStore preferenceStore = PlatformUI.getPreferenceStore();
+		return preferenceStore.getBoolean(IWorkbenchPreferenceConstants.HIDE_QUICK_ACCESS_PER_DEFAULT);
+	}
 
 	@Inject
 	private void hideQuickAccess(
@@ -1001,15 +1010,22 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 					IPresentationEngine.HIDDEN_EXPLICITLY)) {
 				if (!model.getTags().contains(QUICK_ACCESS_HIDDEN)) {
 					model.getTags().add(QUICK_ACCESS_HIDDEN);
+					quickAccessDefaultVisibilityChanged();
 				}
 			}
 		} else if (UIEvents.isREMOVE(event)) {
 			if (UIEvents.contains(event, UIEvents.EventTags.OLD_VALUE,
 					IPresentationEngine.HIDDEN_EXPLICITLY)) {
 				model.getTags().remove(QUICK_ACCESS_HIDDEN);
+				quickAccessDefaultVisibilityChanged();
 			}
 		}
 	}
+
+	private void quickAccessDefaultVisibilityChanged() {
+		model.getTags().add(QUICK_ACCESS_DEFAULT_VISIBILITY_CHANGED);
+	}
+
 
 	/**
 	 * Moves the given element from its current position to the position
