@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2017 IBM Corporation and others.
+ * Copyright (c) 2000, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -40,7 +40,6 @@ import org.eclipse.swt.events.KeyAdapter;
 import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.MouseListener;
-import org.eclipse.swt.events.TraverseEvent;
 import org.eclipse.swt.events.TraverseListener;
 import org.eclipse.swt.events.VerifyEvent;
 import org.eclipse.swt.graphics.Color;
@@ -211,12 +210,9 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 			if (Helper.okToUse(control)) {
 				Display d= control.getDisplay();
 				if (d != null) {
-					d.asyncExec(new Runnable() {
-						@Override
-						public void run() {
-							if (!fProposalPopup.hasFocus() && (fContextInfoPopup == null || !fContextInfoPopup.hasFocus()))
-								hide();
-						}
+					d.asyncExec(() -> {
+						if (!fProposalPopup.hasFocus() && (fContextInfoPopup == null || !fContextInfoPopup.hasFocus()))
+							hide();
 					});
 				}
 			}
@@ -368,24 +364,21 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 				return;
 
 			try {
-				d.syncExec(new Runnable() {
-					@Override
-					public void run() {
-						if (isProposalPopupActive())
-							return;
+				d.syncExec(() -> {
+					if (isProposalPopupActive())
+						return;
 
-						if (control.isDisposed() || !control.isFocusControl())
-							return;
+					if (control.isDisposed() || !control.isFocusControl())
+						return;
 
-						if (showStyle == SHOW_PROPOSALS) {
-							if (!prepareToShowCompletions(true))
-								return;
-							fProposalPopup.showProposals(true);
-							fLastAutoActivation= System.currentTimeMillis();
-						} else if (showStyle == SHOW_CONTEXT_INFO && fContextInfoPopup != null) {
-							promoteKeyListener();
-							fContextInfoPopup.showContextProposals(true);
-						}
+					if (showStyle == SHOW_PROPOSALS) {
+						if (!prepareToShowCompletions(true))
+							return;
+						fProposalPopup.showProposals(true);
+						fLastAutoActivation= System.currentTimeMillis();
+					} else if (showStyle == SHOW_CONTEXT_INFO && fContextInfoPopup != null) {
+						promoteKeyListener();
+						fContextInfoPopup.showContextProposals(true);
 					}
 				});
 			} catch (SWTError e) {
@@ -1544,12 +1537,9 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 
 		if (Helper.okToUse(fContentAssistSubjectControlAdapter.getControl())) {
 			fContentAssistSubjectControlShell= fContentAssistSubjectControlAdapter.getControl().getShell();
-			fCASCSTraverseListener= new TraverseListener() {
-				@Override
-				public void keyTraversed(TraverseEvent e) {
-					if (e.detail == SWT.TRAVERSE_ESCAPE && isProposalPopupActive())
-						e.doit= false;
-				}
+			fCASCSTraverseListener= e -> {
+				if (e.detail == SWT.TRAVERSE_ESCAPE && isProposalPopupActive())
+					e.doit= false;
 			};
 			fContentAssistSubjectControlShell.addTraverseListener(fCASCSTraverseListener);
 		}

@@ -167,16 +167,13 @@ class SelectResourcesBlock implements ICheckStateListener, ISelectionChangedList
 	public void checkStateChanged(final CheckStateChangedEvent event) {
 
 		//Potentially long operation - show a busy cursor
-		BusyIndicator.showWhile(treeViewer.getControl().getDisplay(), new Runnable() {
-			@Override
-			public void run() {
-				if (event.getCheckable().equals(treeViewer))
-					treeItemChecked(event.getElement(), event.getChecked());
-				else
-					listItemChecked(event.getElement(), event.getChecked(), true);
+		BusyIndicator.showWhile(treeViewer.getControl().getDisplay(), () -> {
+			if (event.getCheckable().equals(treeViewer))
+				treeItemChecked(event.getElement(), event.getChecked());
+			else
+				listItemChecked(event.getElement(), event.getChecked(), true);
 
-				notifyCheckStateChangeListeners(event);
-			}
+			notifyCheckStateChangeListeners(event);
 		});
 	}
 
@@ -292,37 +289,34 @@ class SelectResourcesBlock implements ICheckStateListener, ISelectionChangedList
 	 * @param element the element to be expanded
 	 */
 	private void expandTreeElement(final Object element) {
-		BusyIndicator.showWhile(treeViewer.getControl().getDisplay(), new Runnable() {
-			@Override
-			public void run() {
+		BusyIndicator.showWhile(treeViewer.getControl().getDisplay(), () -> {
 
-				// First see if the children need to be given their checked
-				// state at all. If they've
-				// already been realized then this won't be necessary
-				if (expandedTreeNodes.contains(element))
-					checkNewTreeElements(treeContentProvider.getChildren(element));
-				else {
+			// First see if the children need to be given their checked
+			// state at all. If they've
+			// already been realized then this won't be necessary
+			if (expandedTreeNodes.contains(element))
+				checkNewTreeElements(treeContentProvider.getChildren(element));
+			else {
 
-					expandedTreeNodes.add(element);
-					if (whiteCheckedTreeItems.contains(element)) {
-						//If this is the first expansion and this is a white
-						// checked node then check the children
-						Object[] children= treeContentProvider.getChildren(element);
-						for (int i= 0; i < children.length; ++i) {
-							if (!whiteCheckedTreeItems.contains(children[i])) {
-								Object child= children[i];
-								setWhiteChecked(child, true);
-								treeViewer.setChecked(child, true);
-								checkedStateStore.put(child, new ArrayList<>());
-							}
+				expandedTreeNodes.add(element);
+				if (whiteCheckedTreeItems.contains(element)) {
+					//If this is the first expansion and this is a white
+					// checked node then check the children
+					Object[] children= treeContentProvider.getChildren(element);
+					for (int i= 0; i < children.length; ++i) {
+						if (!whiteCheckedTreeItems.contains(children[i])) {
+							Object child= children[i];
+							setWhiteChecked(child, true);
+							treeViewer.setChecked(child, true);
+							checkedStateStore.put(child, new ArrayList<>());
 						}
-
-						//Now be sure to select the list of items too
-						setListForWhiteSelection(element);
 					}
-				}
 
+					//Now be sure to select the list of items too
+					setListForWhiteSelection(element);
+				}
 			}
+
 		});
 	}
 
@@ -589,12 +583,9 @@ class SelectResourcesBlock implements ICheckStateListener, ISelectionChangedList
 		if (!(expandedTreeNodes.contains(treeElement)) && whiteCheckedTreeItems.contains(treeElement)) {
 
 			//Potentially long operation - show a busy cursor
-			BusyIndicator.showWhile(treeViewer.getControl().getDisplay(), new Runnable() {
-				@Override
-				public void run() {
-					setListForWhiteSelection(treeElement);
-					listViewer.setAllChecked(true);
-				}
+			BusyIndicator.showWhile(treeViewer.getControl().getDisplay(), () -> {
+				setListForWhiteSelection(treeElement);
+				listViewer.setAllChecked(true);
 			});
 
 		} else {
@@ -680,23 +671,17 @@ class SelectResourcesBlock implements ICheckStateListener, ISelectionChangedList
 			return;
 
 		//Potentially long operation - show a busy cursor
-		BusyIndicator.showWhile(treeViewer.getControl().getDisplay(), new Runnable() {
-			@Override
-			public void run() {
-				setTreeChecked(root, selection);
-				listViewer.setAllChecked(selection);
-			}
+		BusyIndicator.showWhile(treeViewer.getControl().getDisplay(), () -> {
+			setTreeChecked(root, selection);
+			listViewer.setAllChecked(selection);
 		});
 	}
 	
 	public void refresh() {
 		//Potentially long operation - show a busy cursor
-		BusyIndicator.showWhile(treeViewer.getControl().getDisplay(), new Runnable() {
-			@Override
-			public void run() {
-				treeViewer.refresh();
-				populateListViewer(currentTreeSelection);
-			}
+		BusyIndicator.showWhile(treeViewer.getControl().getDisplay(), () -> {
+			treeViewer.refresh();
+			populateListViewer(currentTreeSelection);
 		});
 	}
 

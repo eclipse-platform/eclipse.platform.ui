@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2017 IBM Corporation and others.
+ * Copyright (c) 2000, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -15,12 +15,8 @@ import java.util.Iterator;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StyledText;
-import org.eclipse.swt.events.DisposeEvent;
-import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.MouseListener;
-import org.eclipse.swt.events.PaintEvent;
-import org.eclipse.swt.events.PaintListener;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Image;
@@ -150,20 +146,14 @@ public final class VerticalRuler implements IVerticalRuler, IVerticalRulerExtens
 
 		fCanvas= new Canvas(parent, SWT.NO_BACKGROUND);
 
-		fCanvas.addPaintListener(new PaintListener() {
-			@Override
-			public void paintControl(PaintEvent event) {
-				if (fTextViewer != null)
-					doubleBufferPaint(event.gc);
-			}
+		fCanvas.addPaintListener(event -> {
+			if (fTextViewer != null)
+				doubleBufferPaint(event.gc);
 		});
 
-		fCanvas.addDisposeListener(new DisposeListener() {
-			@Override
-			public void widgetDisposed(DisposeEvent e) {
-				handleDispose();
-				fTextViewer= null;
-			}
+		fCanvas.addDisposeListener(e -> {
+			handleDispose();
+			fTextViewer= null;
 		});
 
 		fCanvas.addMouseListener(new MouseListener() {
@@ -457,12 +447,7 @@ public final class VerticalRuler implements IVerticalRuler, IVerticalRulerExtens
 		if (fCanvas != null && !fCanvas.isDisposed()) {
 			Display d= fCanvas.getDisplay();
 			if (d != null) {
-				d.asyncExec(new Runnable() {
-					@Override
-					public void run() {
-						redraw();
-					}
-				});
+				d.asyncExec(() -> redraw());
 			}
 		}
 	}

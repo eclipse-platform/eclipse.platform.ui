@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2016 IBM Corporation and others.
+ * Copyright (c) 2000, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -18,10 +18,8 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.SWTError;
 import org.eclipse.swt.browser.Browser;
 import org.eclipse.swt.browser.LocationListener;
-import org.eclipse.swt.browser.OpenWindowListener;
 import org.eclipse.swt.browser.ProgressAdapter;
 import org.eclipse.swt.browser.ProgressEvent;
-import org.eclipse.swt.browser.WindowEvent;
 import org.eclipse.swt.custom.StyleRange;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Font;
@@ -226,13 +224,8 @@ public class BrowserInformationControl extends AbstractInformationControl implem
 				fCompleted= true;
 			}
 		});
-
-		fBrowser.addOpenWindowListener(new OpenWindowListener() {
-			@Override
-			public void open(WindowEvent event) {
-				event.required= true; // Cancel opening of new windows
-			}
-		});
+		// Cancel opening of new windows
+		fBrowser.addOpenWindowListener(event -> event.required= true);
 
 		// Replace browser's built-in context menu with none
 		fBrowser.setMenu(new Menu(getShell(), SWT.NONE));
@@ -344,12 +337,7 @@ public class BrowserInformationControl extends AbstractInformationControl implem
 		final Display display= shell.getDisplay();
 
 		// Make sure the display wakes from sleep after timeout:
-		display.timerExec(100, new Runnable() {
-			@Override
-			public void run() {
-				fCompleted= true;
-			}
-		});
+		display.timerExec(100, () -> fCompleted= true);
 
 		while (!fCompleted) {
 			// Drive the event loop to process the events required to load the browser widget's contents:

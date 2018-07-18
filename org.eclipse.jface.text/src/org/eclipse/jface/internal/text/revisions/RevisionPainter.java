@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2016 IBM Corporation and others.
+ * Copyright (c) 2006, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -21,8 +21,6 @@ import java.util.Map.Entry;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StyledText;
-import org.eclipse.swt.events.DisposeEvent;
-import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.MouseMoveListener;
 import org.eclipse.swt.events.MouseTrackListener;
@@ -740,12 +738,7 @@ public final class RevisionPainter {
 		fControl.addMouseMoveListener(fMouseHandler);
 		fControl.addListener(SWT.MouseUp, fMouseHandler);
 		fControl.addListener(SWT.MouseDown, fMouseHandler);
-		fControl.addDisposeListener(new DisposeListener() {
-			@Override
-			public void widgetDisposed(DisposeEvent e) {
-				handleDispose();
-			}
-		});
+		fControl.addDisposeListener(e -> handleDispose());
 
 		fRevisionSelectionProvider.install(fViewer);
 	}
@@ -1351,12 +1344,7 @@ public final class RevisionPainter {
 		if (isConnected() && !fControl.isDisposed()) {
 			Display d= fControl.getDisplay();
 			if (d != null) {
-				d.asyncExec(new Runnable() {
-					@Override
-					public void run() {
-						redraw();
-					}
-				});
+				d.asyncExec(() -> redraw());
 			}
 		}
 	}

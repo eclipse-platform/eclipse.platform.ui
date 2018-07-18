@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 IBM Corporation and others.
+ * Copyright (c) 2000, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -286,21 +286,11 @@ abstract public class AbstractHoverInformationControlManager extends AbstractInf
 										final IInputChangedListener inputChangeListener= new DelayedInputChangeListener(delayedICP, getInformationControlReplacer());
 										delayedICP.setDelayedInputChangeListener(inputChangeListener);
 										// cancel automatic input updating after a small timeout:
-										control.getShell().getDisplay().timerExec(1000, new Runnable() {
-											@Override
-											public void run() {
-												delayedICP.setDelayedInputChangeListener(null);
-											}
-										});
+										control.getShell().getDisplay().timerExec(1000, () -> delayedICP.setDelayedInputChangeListener(null));
 									}
 
 									// XXX: workaround for https://bugs.eclipse.org/bugs/show_bug.cgi?id=212392 :
-									control.getShell().getDisplay().asyncExec(new Runnable() {
-										@Override
-										public void run() {
-											replaceInformationControl(true);
-										}
-									});
+									control.getShell().getDisplay().asyncExec(() -> replaceInformationControl(true));
 								} else {
 									fWaitForMouseUp= true;
 								}
@@ -855,15 +845,12 @@ abstract public class AbstractHoverInformationControlManager extends AbstractInf
 		        if (monitor.isCanceled() || display.isDisposed()) {
 					return Status.CANCEL_STATUS;
 				}
-				display.syncExec(new Runnable() {
-					@Override
-					public void run() {
-						fReplacingDelayJob= null;
-						if (monitor.isCanceled())
-							return;
-						if (! fWaitForMouseUp)
-							replaceInformationControl(false);
-					}
+				display.syncExec(() -> {
+					fReplacingDelayJob= null;
+					if (monitor.isCanceled())
+						return;
+					if (!fWaitForMouseUp)
+						replaceInformationControl(false);
 				});
 				return Status.OK_STATUS;
 			}

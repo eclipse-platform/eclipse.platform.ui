@@ -19,8 +19,6 @@ import java.util.Map;
 import java.util.Set;
 
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.ModifyEvent;
-import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
@@ -620,18 +618,14 @@ public class TextEditorDefaultsPreferencePage extends PreferencePage implements 
 			textControl.setToolTipText(preference.getDescription());
 
 			if (domain != null) {
-				textControl.addModifyListener(new ModifyListener() {
-					@Override
-					public void modifyText(ModifyEvent e) {
-						String value= textControl.getText();
-						IStatus status= domain.validate(value);
-						if (!status.matches(IStatus.ERROR)) {
-							fDialogOverlayStore.setValue(preference.getKey(), value);
-							setErrorMessage(null);
-						}
-						else {
-							setErrorMessage(NLSUtility.format(TextEditorMessages.TextEditorDefaultsPreferencePage_showWhitespaceCharactersDialogInvalidInput, value));
-						}
+				textControl.addModifyListener(e -> {
+					String value= textControl.getText();
+					IStatus status= domain.validate(value);
+					if (!status.matches(IStatus.ERROR)) {
+						fDialogOverlayStore.setValue(preference.getKey(), value);
+						setErrorMessage(null);
+					} else {
+						setErrorMessage(NLSUtility.format(TextEditorMessages.TextEditorDefaultsPreferencePage_showWhitespaceCharactersDialogInvalidInput, value));
 					}
 				});
 			}
@@ -1044,13 +1038,10 @@ public class TextEditorDefaultsPreferencePage extends PreferencePage implements 
 
 		for (int i= 0; i < fAppearanceColorListModel.length; i++)
 			fAppearanceColorList.add(fAppearanceColorListModel[i][0]);
-		fAppearanceColorList.getDisplay().asyncExec(new Runnable() {
-			@Override
-			public void run() {
-				if (fAppearanceColorList != null && !fAppearanceColorList.isDisposed()) {
-					fAppearanceColorList.select(0);
-					handleAppearanceColorListSelection();
-				}
+		fAppearanceColorList.getDisplay().asyncExec(() -> {
+			if (fAppearanceColorList != null && !fAppearanceColorList.isDisposed()) {
+				fAppearanceColorList.select(0);
+				handleAppearanceColorListSelection();
 			}
 		});
 	}
@@ -1301,15 +1292,12 @@ public class TextEditorDefaultsPreferencePage extends PreferencePage implements 
 		textControl.setToolTipText(preference.getDescription());
 
 		if (domain != null) {
-			textControl.addModifyListener(new ModifyListener() {
-				@Override
-				public void modifyText(ModifyEvent e) {
-					String value= textControl.getText();
-					IStatus status= domain.validate(value);
-					if (!status.matches(IStatus.ERROR))
-						fOverlayStore.setValue(preference.getKey(), value);
-					updateStatus(domain);
-				}
+			textControl.addModifyListener(e -> {
+				String value= textControl.getText();
+				IStatus status= domain.validate(value);
+				if (!status.matches(IStatus.ERROR))
+					fOverlayStore.setValue(preference.getKey(), value);
+				updateStatus(domain);
 			});
 		}
 

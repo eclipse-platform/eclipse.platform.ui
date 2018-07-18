@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 IBM Corporation and others.
+ * Copyright (c) 2000, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -49,12 +49,9 @@ public class HTMLPrinter {
 		final Display display= Display.getDefault();
 		if (display != null && !display.isDisposed()) {
 			try {
-				display.asyncExec(new Runnable() {
-					@Override
-					public void run() {
-						cacheColors(display);
-						installColorUpdater(display);
-					}
+				display.asyncExec(() -> {
+					cacheColors(display);
+					installColorUpdater(display);
 				});
 			} catch (SWTError err) {
 				// see https://bugs.eclipse.org/bugs/show_bug.cgi?id=45294

@@ -67,7 +67,6 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
-import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.Shell;
 
@@ -114,7 +113,6 @@ import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
-import org.eclipse.jface.window.IShellProvider;
 
 import org.eclipse.jface.text.AbstractInformationControlManager;
 import org.eclipse.jface.text.BadLocationException;
@@ -402,30 +400,27 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 		@Override
 		public void elementStateValidationChanged(final Object element, final boolean isStateValidated) {
 			if (element != null && element.equals(getEditorInput())) {
-				Runnable r= new Runnable() {
-					@Override
-					public void run() {
-						enableSanityChecking(true);
-						if (isStateValidated) {
-							if (fValidator != null) {
-								ISourceViewer viewer= fSourceViewer;
-								if (viewer != null) {
-									StyledText textWidget= viewer.getTextWidget();
-									if (textWidget != null && !textWidget.isDisposed())
-										textWidget.removeVerifyListener(fValidator);
-									fValidator= null;
-								}
+				Runnable r = () -> {
+					enableSanityChecking(true);
+					if (isStateValidated) {
+						if (fValidator != null) {
+							ISourceViewer viewer1 = fSourceViewer;
+							if (viewer1 != null) {
+								StyledText textWidget1 = viewer1.getTextWidget();
+								if (textWidget1 != null && !textWidget1.isDisposed())
+									textWidget1.removeVerifyListener(fValidator);
+								fValidator = null;
 							}
-							enableStateValidation(false);
-						} else if (!isStateValidated && fValidator == null) {
-							ISourceViewer viewer= fSourceViewer;
-							if (viewer != null) {
-								StyledText textWidget= viewer.getTextWidget();
-								if (textWidget != null && !textWidget.isDisposed()) {
-									fValidator= new Validator();
-									enableStateValidation(true);
-									textWidget.addVerifyListener(fValidator);
-								}
+						}
+						enableStateValidation(false);
+					} else if (!isStateValidated && fValidator == null) {
+						ISourceViewer viewer2 = fSourceViewer;
+						if (viewer2 != null) {
+							StyledText textWidget2 = viewer2.getTextWidget();
+							if (textWidget2 != null && !textWidget2.isDisposed()) {
+								fValidator = new Validator();
+								enableStateValidation(true);
+								textWidget2.addVerifyListener(fValidator);
 							}
 						}
 					}
@@ -438,12 +433,9 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 		@Override
 		public void elementDirtyStateChanged(Object element, boolean isDirty) {
 			if (element != null && element.equals(getEditorInput())) {
-				Runnable r= new Runnable() {
-					@Override
-					public void run() {
-						enableSanityChecking(true);
-						firePropertyChange(PROP_DIRTY);
-					}
+				Runnable r = () -> {
+					enableSanityChecking(true);
+					firePropertyChange(PROP_DIRTY);
 				};
 				execute(r, false);
 			}
@@ -452,13 +444,10 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 		@Override
 		public void elementContentAboutToBeReplaced(Object element) {
 			if (element != null && element.equals(getEditorInput())) {
-				Runnable r= new Runnable() {
-					@Override
-					public void run() {
-						enableSanityChecking(true);
-						rememberSelection();
-						resetHighlightRange();
-					}
+				Runnable r = () -> {
+					enableSanityChecking(true);
+					rememberSelection();
+					resetHighlightRange();
 				};
 				execute(r, false);
 			}
@@ -467,14 +456,11 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 		@Override
 		public void elementContentReplaced(Object element) {
 			if (element != null && element.equals(getEditorInput())) {
-				Runnable r= new Runnable() {
-					@Override
-					public void run() {
-						enableSanityChecking(true);
-						firePropertyChange(PROP_DIRTY);
-						restoreSelection();
-						handleElementContentReplaced();
-					}
+				Runnable r = () -> {
+					enableSanityChecking(true);
+					firePropertyChange(PROP_DIRTY);
+					restoreSelection();
+					handleElementContentReplaced();
 				};
 				execute(r, false);
 			}
@@ -483,12 +469,9 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 		@Override
 		public void elementDeleted(Object deletedElement) {
 			if (deletedElement != null && deletedElement.equals(getEditorInput())) {
-				Runnable r= new Runnable() {
-					@Override
-					public void run() {
-						enableSanityChecking(true);
-						close(false);
-					}
+				Runnable r = () -> {
+					enableSanityChecking(true);
+					close(false);
 				};
 				execute(r, false);
 			}
@@ -548,14 +531,11 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 							}
 
 							if (wasDirty && changed != null) {
-								Runnable r2= new Runnable() {
-									@Override
-									public void run() {
-										validateState(getEditorInput());
-										d.getDocument(getEditorInput()).set(previousContent);
-										updateStatusField(ITextEditorActionConstants.STATUS_CATEGORY_ELEMENT_STATE);
-										restoreSelection();
-									}
+								Runnable r2 = () -> {
+									validateState(getEditorInput());
+									d.getDocument(getEditorInput()).set(previousContent);
+									updateStatusField(ITextEditorActionConstants.STATUS_CATEGORY_ELEMENT_STATE);
+									restoreSelection();
 								};
 								execute(r2, doValidationAsync);
 							} else
@@ -607,67 +587,70 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	 */
 	class TextListener implements ITextListener, ITextInputListener {
 
+		/**
+		 * Should the last edit position be updated?
+		 *
+		 * @since 3.0
+		 */
+		private boolean fUpdateLastEditPosition = false;
+
+		/**
+		 * The editor's last edit position
+		 * 
+		 * @since 3.0
+		 */
+		private Position fLocalLastEditPosition;
+
 		/** The posted updater code. */
-		private Runnable fRunnable= new Runnable() {
-			@Override
-			public void run() {
-				fIsRunnablePosted= false;
+		private Runnable fRunnable = () -> {
+			fIsRunnablePosted = false;
 
-				if (fSourceViewer != null) {
-					updateContentDependentActions();
+			if (fSourceViewer != null) {
+				updateContentDependentActions();
 
-					// remember the last edit position
-					if (isDirty() && fUpdateLastEditPosition) {
-						fUpdateLastEditPosition= false;
-						ISelection sel= getSelectionProvider().getSelection();
-						IEditorInput input= getEditorInput();
-						IDocument document= getDocumentProvider().getDocument(input);
+				// remember the last edit position
+				if (isDirty() && fUpdateLastEditPosition) {
+					fUpdateLastEditPosition = false;
+					ISelection sel = getSelectionProvider().getSelection();
+					IEditorInput input = getEditorInput();
+					IDocument document = getDocumentProvider().getDocument(input);
 
-						if (fLocalLastEditPosition != null) {
-							if (document != null) {
-								document.removePosition(fLocalLastEditPosition);
-							}
-							fLocalLastEditPosition= null;
+					if (fLocalLastEditPosition != null) {
+						if (document != null) {
+							document.removePosition(fLocalLastEditPosition);
 						}
-
-						if (sel instanceof ITextSelection && !sel.isEmpty()) {
-							ITextSelection s= (ITextSelection) sel;
-							fLocalLastEditPosition= new Position(s.getOffset(), s.getLength());
-							if (document != null) {
-								try {
-									document.addPosition(fLocalLastEditPosition);
-								} catch (BadLocationException ex) {
-									fLocalLastEditPosition = null;
-								}
-							}
-						}
-
-						IEditorSite editorSite= getEditorSite();
-						if (editorSite instanceof MultiPageEditorSite)
-							editorSite= ((MultiPageEditorSite)editorSite).getMultiPageEditor().getEditorSite();
-						TextEditorPlugin.getDefault().setLastEditPosition(new EditPosition(input, editorSite.getId(), fLocalLastEditPosition));
+						fLocalLastEditPosition = null;
 					}
+
+					if (sel instanceof ITextSelection && !sel.isEmpty()) {
+						ITextSelection s = (ITextSelection) sel;
+						fLocalLastEditPosition = new Position(s.getOffset(), s.getLength());
+						if (document != null) {
+							try {
+								document.addPosition(fLocalLastEditPosition);
+							} catch (BadLocationException ex) {
+								fLocalLastEditPosition = null;
+							}
+						}
+					}
+
+					IEditorSite editorSite = getEditorSite();
+					if (editorSite instanceof MultiPageEditorSite)
+						editorSite = ((MultiPageEditorSite) editorSite).getMultiPageEditor().getEditorSite();
+					TextEditorPlugin.getDefault()
+							.setLastEditPosition(new EditPosition(input, editorSite.getId(), fLocalLastEditPosition));
 				}
 			}
 		};
 
 		/** Display used for posting the updater code. */
 		private Display fDisplay;
-		/**
-		 * The editor's last edit position
-		 * @since 3.0
-		 */
-		private Position fLocalLastEditPosition;
+
 		/**
 		 * Has the runnable been posted?
 		 * @since 3.0
 		 */
 		private boolean fIsRunnablePosted= false;
-		/**
-		 * Should the last edit position be updated?
-		 * @since 3.0
-		 */
-		private boolean fUpdateLastEditPosition= false;
 
 		@Override
 		public void textChanged(TextEvent event) {
@@ -983,12 +966,7 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 				 * http://dev.eclipse.org/bugs/show_bug.cgi?id=11731
 				 * Will be removed when SWT has solved the problem.
 				 */
-				window.getShell().getDisplay().asyncExec(new Runnable() {
-					@Override
-					public void run() {
-						handleActivation();
-					}
-				});
+				window.getShell().getDisplay().asyncExec(() -> handleActivation());
 			}
 		}
 
@@ -2956,17 +2934,14 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	 * @since 3.4
 	 */
 	protected IMenuListener createContextMenuListener() {
-		return new IMenuListener() {
-			@Override
-			public void menuAboutToShow(IMenuManager menu) {
-				String id= menu.getId();
-				if (getRulerContextMenuId().equals(id)) {
-					setFocus();
-					rulerContextMenuAboutToShow(menu);
-				} else if (getEditorContextMenuId().equals(id)) {
-					setFocus();
-					editorContextMenuAboutToShow(menu);
-				}
+		return menu -> {
+			String id = menu.getId();
+			if (getRulerContextMenuId().equals(id)) {
+				setFocus();
+				rulerContextMenuAboutToShow(menu);
+			} else if (getEditorContextMenuId().equals(id)) {
+				setFocus();
+				editorContextMenuAboutToShow(menu);
 			}
 		};
 	}
@@ -3024,12 +2999,9 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 					if (1 != e.button)
 						return;
 
-					Runnable runnable= new Runnable() {
-						@Override
-						public void run() {
-							if (!fDoubleClicked)
-								triggerAction(ITextEditorActionConstants.RULER_CLICK, e);
-						}
+					Runnable runnable = () -> {
+						if (!fDoubleClicked)
+							triggerAction(ITextEditorActionConstants.RULER_CLICK, e);
 					};
 					if (delay <= 0)
 						runnable.run();
@@ -3070,14 +3042,11 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 		if (fSelectionChangedListener == null) {
 			fSelectionChangedListener= new ISelectionChangedListener() {
 
-				private Runnable fRunnable= new Runnable() {
-					@Override
-					public void run() {
-						// check whether editor has not been disposed yet
-						if (fSourceViewer != null && fSourceViewer.getDocument() != null) {
-							handleCursorPositionChanged();
-							updateSelectionDependentActions();
-						}
+				private Runnable fRunnable = () -> {
+					// check whether editor has not been disposed yet
+					if (fSourceViewer != null && fSourceViewer.getDocument() != null) {
+						handleCursorPositionChanged();
+						updateSelectionDependentActions();
 					}
 				};
 
@@ -3152,25 +3121,22 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	 */
 	protected final void internalInit(IWorkbenchWindow window, final IEditorSite site, final IEditorInput input) throws PartInitException {
 
-		IRunnableWithProgress runnable= new IRunnableWithProgress() {
-			@Override
-			public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
-				try {
+		IRunnableWithProgress runnable = monitor -> {
+			try {
 
-					if (getDocumentProvider() instanceof IDocumentProviderExtension2) {
-						IDocumentProviderExtension2 extension= (IDocumentProviderExtension2) getDocumentProvider();
-						extension.setProgressMonitor(monitor);
-					}
+				if (getDocumentProvider() instanceof IDocumentProviderExtension2) {
+					IDocumentProviderExtension2 extension1 = (IDocumentProviderExtension2) getDocumentProvider();
+					extension1.setProgressMonitor(monitor);
+				}
 
-					doSetInput(input);
+				doSetInput(input);
 
-				} catch (CoreException x) {
-					throw new InvocationTargetException(x);
-				} finally {
-					if (getDocumentProvider() instanceof IDocumentProviderExtension2) {
-						IDocumentProviderExtension2 extension= (IDocumentProviderExtension2) getDocumentProvider();
-						extension.setProgressMonitor(null);
-					}
+			} catch (CoreException x) {
+				throw new InvocationTargetException(x);
+			} finally {
+				if (getDocumentProvider() instanceof IDocumentProviderExtension2) {
+					IDocumentProviderExtension2 extension2 = (IDocumentProviderExtension2) getDocumentProvider();
+					extension2.setProgressMonitor(null);
 				}
 			}
 		};
@@ -3396,12 +3362,7 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 		styledText.addKeyListener(getCursorListener());
 
 		// Disable orientation switching until we fully support it.
-		styledText.addListener(SWT.OrientationChange, new Listener() {
-			@Override
-			public void handleEvent(Event event) {
-				event.doit= false;
-			}
-		});
+		styledText.addListener(SWT.OrientationChange, event -> event.doit = false);
 
 		if (getHelpContextId() != null)
 			PlatformUI.getWorkbench().getHelpSystem().setHelp(styledText, getHelpContextId());
@@ -4293,12 +4254,9 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 		enableSanityChecking(false);
 
 		Display display= getSite().getShell().getDisplay();
-		display.asyncExec(new Runnable() {
-			@Override
-			public void run() {
-				if (fSourceViewer != null)
-					getSite().getPage().closeEditor(AbstractTextEditor.this, save);
-			}
+		display.asyncExec(() -> {
+			if (fSourceViewer != null)
+				getSite().getPage().closeEditor(AbstractTextEditor.this, save);
 		});
 	}
 
@@ -4984,12 +4942,7 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 
 			try {
 				final IEditorInput input= getEditorInput();
-				BusyIndicator.showWhile(getSite().getShell().getDisplay(), new Runnable() {
-					@Override
-					public void run() {
-						validateState(input);
-					}
-				});
+				BusyIndicator.showWhile(getSite().getShell().getDisplay(), () -> validateState(input));
 				sanityCheckState(input);
 				return !isEditorInputReadOnly() && !fTextInputListener.inputChanged;
 
@@ -5937,22 +5890,14 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 			action.setActionDefinitionId(ITextEditorActionDefinitionIds.WORD_WRAP);
 			setAction(ITextEditorActionConstants.WORD_WRAP, action);
 
-			blockAction.addPropertyChangeListener(new IPropertyChangeListener() {
-				@Override
-				public void propertyChange(PropertyChangeEvent event) {
-					if (IAction.CHECKED == event.getProperty() &&
-							Boolean.TRUE.equals(event.getNewValue())) {
-						wrapAction.setChecked(false);
-					}
+			blockAction.addPropertyChangeListener(event -> {
+				if (IAction.CHECKED == event.getProperty() && Boolean.TRUE.equals(event.getNewValue())) {
+					wrapAction.setChecked(false);
 				}
 			});
-			wrapAction.addPropertyChangeListener(new IPropertyChangeListener() {
-				@Override
-				public void propertyChange(PropertyChangeEvent event) {
-					if (IAction.CHECKED == event.getProperty() &&
-							Boolean.TRUE.equals(event.getNewValue())) {
-						blockAction.setChecked(false);
-					}
+			wrapAction.addPropertyChangeListener(event -> {
+				if (IAction.CHECKED == event.getProperty() && Boolean.TRUE.equals(event.getNewValue())) {
+					blockAction.setChecked(false);
 				}
 			});
 		}
@@ -5963,12 +5908,7 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 		setAction(ITextEditorActionConstants.OPEN_HYPERLINK, action);
 
 		PropertyDialogAction openProperties= new PropertyDialogAction(
-				new IShellProvider() {
-					@Override
-					public Shell getShell() {
-						return getSite().getShell();
-					}
-				},
+				() -> getSite().getShell(),
 				new ISelectionProvider() {
 					@Override
 					public void addSelectionChangedListener(ISelectionChangedListener listener) {

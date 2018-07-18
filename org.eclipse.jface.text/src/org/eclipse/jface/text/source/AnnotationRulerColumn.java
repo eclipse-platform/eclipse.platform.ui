@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2016 IBM Corporation and others.
+ * Copyright (c) 2000, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -26,14 +26,8 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.events.ControlAdapter;
 import org.eclipse.swt.events.ControlEvent;
-import org.eclipse.swt.events.DisposeEvent;
-import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.MouseListener;
-import org.eclipse.swt.events.MouseMoveListener;
-import org.eclipse.swt.events.MouseWheelListener;
-import org.eclipse.swt.events.PaintEvent;
-import org.eclipse.swt.events.PaintListener;
 import org.eclipse.swt.graphics.Cursor;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.GC;
@@ -264,21 +258,15 @@ public class AnnotationRulerColumn implements IVerticalRulerColumn, IVerticalRul
 
 		fCanvas= createCanvas(parentControl);
 
-		fCanvas.addPaintListener(new PaintListener() {
-			@Override
-			public void paintControl(PaintEvent event) {
-				if (fCachedTextViewer != null)
-					doubleBufferPaint(event.gc);
-			}
+		fCanvas.addPaintListener(event -> {
+			if (fCachedTextViewer != null)
+				doubleBufferPaint(event.gc);
 		});
 
-		fCanvas.addDisposeListener(new DisposeListener() {
-			@Override
-			public void widgetDisposed(DisposeEvent e) {
-				handleDispose();
-				fCachedTextViewer= null;
-				fCachedTextWidget= null;
-			}
+		fCanvas.addDisposeListener(e -> {
+			handleDispose();
+			fCachedTextViewer= null;
+			fCachedTextWidget= null;
 		});
 
 		fMouseListener= new MouseListener() {
@@ -323,19 +311,9 @@ public class AnnotationRulerColumn implements IVerticalRulerColumn, IVerticalRul
 		};
 		fCanvas.addMouseListener(fMouseListener);
 
-		fCanvas.addMouseMoveListener(new MouseMoveListener() {
-			@Override
-			public void mouseMove(MouseEvent e) {
-				handleMouseMove(e);
-			}
-		});
+		fCanvas.addMouseMoveListener(e -> handleMouseMove(e));
 
-		fCanvas.addMouseWheelListener(new MouseWheelListener() {
-			@Override
-			public void mouseScrolled(MouseEvent e) {
-				handleMouseScrolled(e);
-			}
-		});
+		fCanvas.addMouseWheelListener(e -> handleMouseScrolled(e));
 
 		if (fCachedTextViewer != null) {
 			VisibleLinesTracker.track(fCachedTextViewer, lineHeightChangeHandler);
@@ -845,12 +823,7 @@ public class AnnotationRulerColumn implements IVerticalRulerColumn, IVerticalRul
 		if (fCanvas != null && !fCanvas.isDisposed()) {
 			Display d= fCanvas.getDisplay();
 			if (d != null) {
-				d.asyncExec(new Runnable() {
-					@Override
-					public void run() {
-						redraw();
-					}
-				});
+				d.asyncExec(() -> redraw());
 			}
 		}
 	}

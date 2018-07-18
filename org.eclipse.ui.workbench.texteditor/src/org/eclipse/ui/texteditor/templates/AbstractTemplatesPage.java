@@ -53,7 +53,6 @@ import org.eclipse.core.runtime.Status;
 
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IAction;
-import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.MenuManager;
@@ -63,11 +62,8 @@ import org.eclipse.jface.layout.PixelConverter;
 import org.eclipse.jface.layout.TreeColumnLayout;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.util.IPropertyChangeListener;
-import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.viewers.AbstractTreeViewer;
 import org.eclipse.jface.viewers.ColumnPixelData;
-import org.eclipse.jface.viewers.DoubleClickEvent;
-import org.eclipse.jface.viewers.IDoubleClickListener;
 import org.eclipse.jface.viewers.IPostSelectionProvider;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.ISelectionProvider;
@@ -501,17 +497,7 @@ public abstract class AbstractTemplatesPage extends Page implements ITemplatesPa
 
 		int sashSize= fPreferenceStore.getInt(SASH_SIZE_PREF_ID);
 		fControl.setWeights(new int[] { sashSize, 100 - sashSize });
-		fTemplateChangeListener= new IPropertyChangeListener() {
-			@Override
-			public void propertyChange(PropertyChangeEvent event) {
-				getShell().getDisplay().asyncExec(new Runnable() {
-					@Override
-					public void run() {
-						refresh();
-					}
-				});
-			}
-		};
+		fTemplateChangeListener = event -> getShell().getDisplay().asyncExec(() -> refresh());
 		getTemplatePreferenceStore().addPropertyChangeListener(fTemplateChangeListener);
 		updateContextTypes(getEditorContextTypeIds());
 	}
@@ -906,12 +892,7 @@ public abstract class AbstractTemplatesPage extends Page implements ITemplatesPa
 					String pattern= ((String)clipboard.getContents(TextTransfer.getInstance()));
 					if (pattern != null) {
 						final Template template= new Template(createTemplateName(), TemplatesMessages.TemplatesPage_paste_description, getContextTypeId(), pattern.replaceAll("\\$", "\\$\\$"), true); //$NON-NLS-1$//$NON-NLS-2$
-						getShell().getDisplay().asyncExec(new Runnable() {
-							@Override
-							public void run() {
-								addTemplate(template);
-							}
-						});
+						getShell().getDisplay().asyncExec(() -> addTemplate(template));
 						return;
 					}
 					TemplatePersistenceData[] templates= (TemplatePersistenceData[])clipboard.getContents(TemplatesTransfer.getInstance());
@@ -1071,22 +1052,16 @@ public abstract class AbstractTemplatesPage extends Page implements ITemplatesPa
 
 		fTreeViewer.setComparator(new TemplateViewerComparator());
 		fTreeViewer.setInput(getTemplatePreferenceStore());
-		fTreeViewer.addDoubleClickListener(new IDoubleClickListener() {
-			@Override
-			public void doubleClick(DoubleClickEvent e) {
-				updateSelectedItems();
-				TemplatePersistenceData[] selectedTemplates= getSelectedTemplates();
-				if (selectedTemplates.length > 0)
-					insertTemplate(selectedTemplates[0].getTemplate());
-			}
+		fTreeViewer.addDoubleClickListener(e -> {
+			updateSelectedItems();
+			TemplatePersistenceData[] selectedTemplates = getSelectedTemplates();
+			if (selectedTemplates.length > 0)
+				insertTemplate(selectedTemplates[0].getTemplate());
 		});
 
-		fTreeViewer.addSelectionChangedListener(new ISelectionChangedListener() {
-			@Override
-			public void selectionChanged(SelectionChangedEvent e) {
-				updateSelectedItems();
-				updateButtons();
-			}
+		fTreeViewer.addSelectionChangedListener(e -> {
+			updateSelectedItems();
+			updateButtons();
 		});
 		fTreeViewer.expandAll();
 	}
@@ -1126,12 +1101,7 @@ public abstract class AbstractTemplatesPage extends Page implements ITemplatesPa
 	private void hookContextMenu() {
 		MenuManager menuMgr= new MenuManager(POPUP_MENU_ID);
 		menuMgr.setRemoveAllWhenShown(true);
-		menuMgr.addMenuListener(new IMenuListener() {
-			@Override
-			public void menuAboutToShow(IMenuManager manager) {
-				fillContextMenu(manager);
-			}
-		});
+		menuMgr.addMenuListener(manager -> fillContextMenu(manager));
 		fContextMenu= menuMgr.createContextMenu(fTreeViewer.getControl());
 		fTreeViewer.getControl().setMenu(fContextMenu);
 		getSite().registerContextMenu(POPUP_MENU_ID, menuMgr, fTreeViewer);
@@ -1482,25 +1452,17 @@ public abstract class AbstractTemplatesPage extends Page implements ITemplatesPa
 					final Template template= new Template(createTemplateName(),
 							TemplatesMessages.TemplatesPage_paste_description, contextId, text,
 							true);
-					getShell().getDisplay().asyncExec(new Runnable() {
-						@Override
-						public void run() {
-							addTemplate(template);
-						}
-					});
+					getShell().getDisplay().asyncExec(() -> addTemplate(template));
 					return;
 				}
 				if (templateTransfer.isSupportedType(event.currentDataType)) {
 					final TemplatePersistenceData[] templates= (TemplatePersistenceData[]) event.data;
 					final int dropType= event.detail;
-					getShell().getDisplay().asyncExec(new Runnable() {
-						@Override
-						public void run() {
-							if (dropType == DND.DROP_COPY)
-								copyTemplates(templates, contextId);
-							else
-								moveTemplates(templates, contextId);
-						}
+					getShell().getDisplay().asyncExec(() -> {
+						if (dropType == DND.DROP_COPY)
+							copyTemplates(templates, contextId);
+						else
+							moveTemplates(templates, contextId);
 					});
 				}
 			}

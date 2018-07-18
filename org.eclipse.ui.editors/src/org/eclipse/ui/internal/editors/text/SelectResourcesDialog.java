@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 IBM Corporation and others.
+ * Copyright (c) 2000, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -41,8 +41,6 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.layout.GridLayoutFactory;
-import org.eclipse.jface.viewers.CheckStateChangedEvent;
-import org.eclipse.jface.viewers.ICheckStateListener;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 
 import org.eclipse.ui.dialogs.TypeFilteringDialog;
@@ -112,12 +110,7 @@ class SelectResourcesDialog extends Dialog {
 		label.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 
 		fResourceGroup= new SelectResourcesBlock(composite, ResourcesPlugin.getWorkspace().getRoot(), getResourceProvider(IResource.FOLDER | IResource.PROJECT), WorkbenchLabelProvider.getDecoratingWorkbenchLabelProvider(), getResourceProvider(IResource.FILE), WorkbenchLabelProvider.getDecoratingWorkbenchLabelProvider(), SWT.NONE, useHeightHint(parent));
-		fResourceGroup.addCheckStateListener(new ICheckStateListener() {
-			@Override
-			public void checkStateChanged(CheckStateChangedEvent event) {
-				updateSelectionCount();
-			}
-		});
+		fResourceGroup.addCheckStateListener(event -> updateSelectionCount());
 
 		fCountIndication= new Label(composite, SWT.LEFT);
 		fCountIndication.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
@@ -245,22 +238,12 @@ class SelectResourcesDialog extends Dialog {
 
     private void filterSelection() {
 
-    	final IFilter filter= new IFilter() {
-			@Override
-			public boolean accept(IResource resource) {
-				return hasAcceptedFileType(resource);
-			}
-		};
+		final IFilter filter= resource -> hasAcceptedFileType(resource);
 
 		List<Object> list= fResourceGroup.getAllWhiteCheckedItems();
 		final IResource[] resources= list.toArray(new IResource[list.size()]);
 
-        Runnable runnable = new Runnable() {
-            @Override
-			public void run() {
-            	setSelection(resources, filter);
-			}
-        };
+		Runnable runnable= () -> setSelection(resources, filter);
 
         BusyIndicator.showWhile(getShell().getDisplay(), runnable);
     }

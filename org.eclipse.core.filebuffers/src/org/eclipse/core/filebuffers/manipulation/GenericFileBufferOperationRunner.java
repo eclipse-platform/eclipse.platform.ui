@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2015 IBM Corporation and others.
+ * Copyright (c) 2007, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,6 +13,7 @@ package org.eclipse.core.filebuffers.manipulation;
 import java.util.ArrayList;
 
 import org.eclipse.core.internal.filebuffers.FileBuffersPlugin;
+
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -105,25 +106,23 @@ public class GenericFileBufferOperationRunner {
 			fThrowable= null;
 			synchronized (fCompletionLock) {
 
-				executeInContext(new Runnable() {
-					@Override
-					public void run() {
-						synchronized(fCompletionLock) {
-							try {
-								SafeRunner.run(new ISafeRunnable() {
-									@Override
-									public void handleException(Throwable throwable) {
-										fThrowable= throwable;
-									}
-									@Override
-									public void run() throws Exception {
-										performOperation(synchronizedFileBuffers, operation, subMonitor.split(50));
-									}
-								});
-							} finally {
-								fIsCompleted= true;
-								fCompletionLock.notifyAll();
-							}
+				executeInContext(() -> {
+					synchronized (fCompletionLock) {
+						try {
+							SafeRunner.run(new ISafeRunnable() {
+								@Override
+								public void handleException(Throwable throwable) {
+									fThrowable= throwable;
+								}
+
+								@Override
+								public void run() throws Exception {
+									performOperation(synchronizedFileBuffers, operation, subMonitor.split(50));
+								}
+							});
+						} finally {
+							fIsCompleted= true;
+							fCompletionLock.notifyAll();
 						}
 					}
 				});

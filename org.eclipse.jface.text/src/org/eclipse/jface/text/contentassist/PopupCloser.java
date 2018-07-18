@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 IBM Corporation and others.
+ * Copyright (c) 2000, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -146,28 +146,22 @@ class PopupCloser extends ShellAdapter implements FocusListener, SelectionListen
 	public void focusLost(final FocusEvent e) {
 		fScrollbarClicked= false;
 		Display d= fTable.getDisplay();
-		d.asyncExec(new Runnable() {
-			@Override
-			public void run() {
-				if (Helper.okToUse(fTable) && !fTable.isFocusControl() && !fScrollbarClicked && fContentAssistant != null)
-					fContentAssistant.popupFocusLost(e);
-			}
+		d.asyncExec(() -> {
+			if (Helper.okToUse(fTable) && !fTable.isFocusControl() && !fScrollbarClicked && fContentAssistant != null)
+				fContentAssistant.popupFocusLost(e);
 		});
 	}
 
 	@Override
 	public void shellDeactivated(ShellEvent e) {
 		if (fContentAssistant != null && fDisplay != null) {
-			fDisplay.asyncExec(new Runnable() {
-				@Override
-				public void run() {
-					/*
-					 * The asyncExec is a workaround for https://bugs.eclipse.org/bugs/show_bug.cgi?id=235556 :
-					 * fContentAssistant.hasProposalPopupFocus() is still true during the shellDeactivated(..) event.
-					 */
-					if (fContentAssistant != null && ! fContentAssistant.hasProposalPopupFocus())
-						fContentAssistant.hide();
-				}
+			fDisplay.asyncExec(() -> {
+				/*
+				 * The asyncExec is a workaround for https://bugs.eclipse.org/bugs/show_bug.cgi?id=235556 :
+				 * fContentAssistant.hasProposalPopupFocus() is still true during the shellDeactivated(..) event.
+				 */
+				if (fContentAssistant != null && !fContentAssistant.hasProposalPopupFocus())
+					fContentAssistant.hide();
 			});
 		}
 	}
@@ -221,21 +215,11 @@ class PopupCloser extends ShellAdapter implements FocusListener, SelectionListen
 								final IInputChangedListener inputChangeListener= new DelayedInputChangeListener(delayedICP, fAdditionalInfoController.getInternalAccessor().getInformationControlReplacer());
 								delayedICP.setDelayedInputChangeListener(inputChangeListener);
 								// cancel automatic input updating after a small timeout:
-								control.getShell().getDisplay().timerExec(1000, new Runnable() {
-									@Override
-									public void run() {
-										delayedICP.setDelayedInputChangeListener(null);
-									}
-								});
+								control.getShell().getDisplay().timerExec(1000, () -> delayedICP.setDelayedInputChangeListener(null));
 							}
 
 							// XXX: workaround for https://bugs.eclipse.org/bugs/show_bug.cgi?id=212392 :
-							control.getShell().getDisplay().asyncExec(new Runnable() {
-								@Override
-								public void run() {
-									fAdditionalInfoController.getInternalAccessor().replaceInformationControl(true);
-								}
-							});
+							control.getShell().getDisplay().asyncExec(() -> fAdditionalInfoController.getInternalAccessor().replaceInformationControl(true));
 						}
 					}
 				}
@@ -251,12 +235,9 @@ class PopupCloser extends ShellAdapter implements FocusListener, SelectionListen
 						Control control= (Control) event.widget;
 						IInformationControlExtension5 iControl5= (IInformationControlExtension5) iControl;
 						if (iControl5.containsControl(control)) {
-							control.getDisplay().asyncExec(new Runnable() {
-								@Override
-								public void run() {
-									if (fContentAssistant != null && ! fContentAssistant.hasProposalPopupFocus())
-										fContentAssistant.hide();
-								}
+							control.getDisplay().asyncExec(() -> {
+								if (fContentAssistant != null && !fContentAssistant.hasProposalPopupFocus())
+									fContentAssistant.hide();
 							});
 						}
 					}

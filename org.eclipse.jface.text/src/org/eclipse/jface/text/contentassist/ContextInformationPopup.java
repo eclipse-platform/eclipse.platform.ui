@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2016 IBM Corporation and others.
+ * Copyright (c) 2000, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -19,8 +19,6 @@ import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.custom.VerifyKeyListener;
 import org.eclipse.swt.events.ControlEvent;
 import org.eclipse.swt.events.ControlListener;
-import org.eclipse.swt.events.DisposeEvent;
-import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -180,62 +178,59 @@ class ContextInformationPopup implements IContentAssistListener {
 	 */
 	public String showContextProposals(final boolean autoActivated) {
 		final Control control= fContentAssistSubjectControlAdapter.getControl();
-		BusyIndicator.showWhile(control.getDisplay(), new Runnable() {
-			@Override
-			public void run() {
+		BusyIndicator.showWhile(control.getDisplay(), () -> {
 
-				int offset= fContentAssistSubjectControlAdapter.getSelectedRange().x;
+			int offset= fContentAssistSubjectControlAdapter.getSelectedRange().x;
 
-				IContextInformation[] contexts= computeContextInformation(offset);
-				int count = (contexts == null ? 0 : contexts.length);
-				if (count == 1) {
+			IContextInformation[] contexts= computeContextInformation(offset);
+			int count= (contexts == null ? 0 : contexts.length);
+			if (count == 1) {
 
-					ContextFrame frame= createContextFrame(contexts[0], offset);
-					if (isDuplicate(frame))
+				ContextFrame frame1= createContextFrame(contexts[0], offset);
+				if (isDuplicate(frame1))
+					validateContextInformation();
+				else
+					// Show context information directly
+					internalShowContextInfo(frame1);
+
+			} else if (count > 0) {
+
+				// if any of the proposed context matches any of the contexts on the stack,
+				// assume that one (so, if context info is invoked repeatedly, the current
+				// info is kept)
+				int index= 0;
+				for (int i= 0; i < contexts.length; i++) {
+					IContextInformation info= contexts[i];
+					ContextFrame frame2= createContextFrame(info, offset);
+
+					// check top of stack and stored context
+					if (isDuplicate(frame2)) {
 						validateContextInformation();
-					else
-						// Show context information directly
-						internalShowContextInfo(frame);
+						return;
+					}
 
-				} else if (count > 0) {
+					if (isLastFrame(frame2)) {
+						index= i;
+					}
 
-					// if any of the proposed context matches any of the contexts on the stack,
-					// assume that one (so, if context info is invoked repeatedly, the current
-					// info is kept)
-					int index= 0;
-					for (int i= 0; i < contexts.length; i++) {
-						IContextInformation info= contexts[i];
-						ContextFrame frame= createContextFrame(info, offset);
-
-						// check top of stack and stored context
-						if (isDuplicate(frame)) {
+					// also check all other contexts
+					for (ContextFrame stackFrame : fContextFrameStack) {
+						if (stackFrame.equals(frame2)) {
 							validateContextInformation();
 							return;
 						}
-
-						if (isLastFrame(frame)) {
-							index= i;
-						}
-
-						// also check all other contexts
-						for (ContextFrame stackFrame : fContextFrameStack) {
-							if (stackFrame.equals(frame)) {
-								validateContextInformation();
-								return;
-							}
-						}
 					}
-
-					// otherwise:
-					// Precise context must be selected
-
-					if (fLineDelimiter == null)
-						fLineDelimiter= fContentAssistSubjectControlAdapter.getLineDelimiter();
-
-					createContextSelector();
-					setContexts(contexts, index);
-					displayContextSelector();
 				}
+
+				// otherwise:
+				// Precise context must be selected
+
+				if (fLineDelimiter == null)
+					fLineDelimiter= fContentAssistSubjectControlAdapter.getLineDelimiter();
+
+				createContextSelector();
+				setContexts(contexts, index);
+				displayContextSelector();
 			}
 		});
 
@@ -251,19 +246,16 @@ class ContextInformationPopup implements IContentAssistListener {
 	 */
 	public void showContextInformation(final IContextInformation info, final int offset) {
 		Control control= fContentAssistSubjectControlAdapter.getControl();
-		BusyIndicator.showWhile(control.getDisplay(), new Runnable() {
-			@Override
-			public void run() {
-				if (info == null)
+		BusyIndicator.showWhile(control.getDisplay(), () -> {
+			if (info == null)
+				validateContextInformation();
+			else {
+				ContextFrame frame= createContextFrame(info, offset);
+				if (isDuplicate(frame))
 					validateContextInformation();
-				else {
-					ContextFrame frame= createContextFrame(info, offset);
-					if (isDuplicate(frame))
-						validateContextInformation();
-					else
-						internalShowContextInfo(frame);
-					hideContextSelector();
-				}
+				else
+					internalShowContextInfo(frame);
+				hideContextSelector();
 			}
 		});
 	}
@@ -542,25 +534,17 @@ class ContextInformationPopup implements IContentAssistListener {
 			final ITextViewerExtension textViewerExtension= (ITextViewerExtension)fViewer;
 			final StyledText textWidget= fViewer.getTextWidget();
 
-			final VerifyKeyListener verifyListener= new VerifyKeyListener() {
-				@Override
-				public void verifyKey(VerifyEvent event) {
-					if (isActive() && event.keyCode == 13 && event.character == '\r' && event.widget == textWidget) {
-						event.doit= false;
-						insertSelectedContext();
-						hideContextSelector();
-					}
+			final VerifyKeyListener verifyListener= event -> {
+				if (isActive() && event.keyCode == 13 && event.character == '\r' && event.widget == textWidget) {
+					event.doit= false;
+					insertSelectedContext();
+					hideContextSelector();
 				}
 			};
 
 			textViewerExtension.prependVerifyKeyListener(verifyListener);
 
-			fContextSelectorShell.addDisposeListener(new DisposeListener() {
-				@Override
-				public void widgetDisposed(DisposeEvent e) {
-					textViewerExtension.removeVerifyKeyListener(verifyListener);
-				}
-			});
+			fContextSelectorShell.addDisposeListener(e -> textViewerExtension.removeVerifyKeyListener(verifyListener));
 		}
 
 		fContextSelectorTable= new Table(fContextSelectorShell, SWT.H_SCROLL | SWT.V_SCROLL);

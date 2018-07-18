@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2011 IBM Corporation and others.
+ * Copyright (c) 2000, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -45,7 +45,6 @@ import org.eclipse.jface.util.OpenStrategy;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.DefaultInformationControl;
 import org.eclipse.jface.text.IEventConsumer;
-import org.eclipse.jface.text.IInformationControl;
 import org.eclipse.jface.text.IInformationControlCreator;
 import org.eclipse.jface.text.ITextViewer;
 import org.eclipse.jface.text.ITextViewerExtension;
@@ -168,12 +167,9 @@ public class ContentAssistant2 implements IContentAssistant, IContentAssistantEx
 				if (control != null) {
 					Display d= control.getDisplay();
 					if (d != null) {
-						d.asyncExec(new Runnable() {
-							@Override
-							public void run() {
-								if (!hasFocus())
-									hide();
-							}
+						d.asyncExec(() -> {
+							if (!hasFocus())
+								hide();
 						});
 					}
 				}
@@ -308,14 +304,11 @@ public class ContentAssistant2 implements IContentAssistant, IContentAssistantEx
 			Display d= control.getDisplay();
 			if (d != null) {
 				try {
-					d.syncExec(new Runnable() {
-						@Override
-						public void run() {
-							if (showStyle == SHOW_PROPOSALS)
-								fProposalPopup.showProposals(true);
-							else if (showStyle == SHOW_CONTEXT_INFO)
-								fContextInfoPopup.showContextProposals(true);
-						}
+					d.syncExec(() -> {
+						if (showStyle == SHOW_PROPOSALS)
+							fProposalPopup.showProposals(true);
+						else if (showStyle == SHOW_CONTEXT_INFO)
+							fContextInfoPopup.showContextProposals(true);
 					});
 				} catch (SWTError e) {
 				}
@@ -728,12 +721,7 @@ public class ContentAssistant2 implements IContentAssistant, IContentAssistantEx
 	 * @return an <code>IInformationControlCreator</code> to be used to display context information
 	 */
 	private IInformationControlCreator getInformationControlCreator() {
-		return new IInformationControlCreator() {
-			@Override
-			public IInformationControl createInformationControl(Shell parent) {
-				return new DefaultInformationControl(parent, false);
-			}
-		};
+		return parent -> new DefaultInformationControl(parent, false);
 	}
 
 	/**

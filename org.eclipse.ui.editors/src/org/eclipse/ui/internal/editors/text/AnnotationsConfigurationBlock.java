@@ -42,10 +42,8 @@ import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.ImageRegistry;
 import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.ComboViewer;
-import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.LabelProvider;
-import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.jface.viewers.TableViewer;
@@ -297,12 +295,7 @@ class AnnotationsConfigurationBlock implements IPreferenceConfigurationBlock {
 		fIsNextPreviousTargetCheckBox.setLayoutData(gd);
 
 
-		fAnnotationTypeViewer.addSelectionChangedListener(new ISelectionChangedListener() {
-			@Override
-			public void selectionChanged(SelectionChangedEvent event) {
-				handleAnnotationListSelection();
-			}
-		});
+		fAnnotationTypeViewer.addSelectionChangedListener(event -> handleAnnotationListSelection());
 
 		fShowInTextCheckBox.addSelectionListener(new SelectionListener() {
 			@Override
@@ -390,34 +383,30 @@ class AnnotationsConfigurationBlock implements IPreferenceConfigurationBlock {
 			}
 		});
 
-		fDecorationViewer.addSelectionChangedListener(new ISelectionChangedListener() {
+		fDecorationViewer.addSelectionChangedListener(event -> {
+			String[] decoration= (String[]) fDecorationViewer.getStructuredSelection().getFirstElement();
+			ListItem item= getSelectedItem();
 
-			@Override
-			public void selectionChanged(SelectionChangedEvent event) {
-				String[] decoration= (String[]) fDecorationViewer.getStructuredSelection().getFirstElement();
-				ListItem item= getSelectedItem();
-
-				if (fShowInTextCheckBox.getSelection()) {
-					if (HIGHLIGHT.equals(decoration)) {
-						fStore.setValue(item.highlightKey, true);
-						if (item.textKey != null) {
-							fStore.setValue(item.textKey, false);
-							if (item.textStyleKey != null)
-								fStore.setValue(item.textStyleKey, AnnotationPreference.STYLE_NONE);
-						}
-					} else {
-						if (item.highlightKey != null)
-							fStore.setValue(item.highlightKey, false);
-						if (item.textKey != null) {
-							fStore.setValue(item.textKey, true);
-							if (item.textStyleKey != null)
-								fStore.setValue(item.textStyleKey, decoration[1]);
-						}
+			if (fShowInTextCheckBox.getSelection()) {
+				if (HIGHLIGHT.equals(decoration)) {
+					fStore.setValue(item.highlightKey, true);
+					if (item.textKey != null) {
+						fStore.setValue(item.textKey, false);
+						if (item.textStyleKey != null)
+							fStore.setValue(item.textStyleKey, AnnotationPreference.STYLE_NONE);
+					}
+				} else {
+					if (item.highlightKey != null)
+						fStore.setValue(item.highlightKey, false);
+					if (item.textKey != null) {
+						fStore.setValue(item.textKey, true);
+						if (item.textStyleKey != null)
+							fStore.setValue(item.textStyleKey, decoration[1]);
 					}
 				}
-
-				fAnnotationTypeViewer.refresh(item);
 			}
+
+			fAnnotationTypeViewer.refresh(item);
 		});
 
 		composite.layout();
@@ -450,12 +439,9 @@ class AnnotationsConfigurationBlock implements IPreferenceConfigurationBlock {
 			final ListItem element= fListModel[i];
 			if (data.equals(element.label)) {
 				final Control control= fAnnotationTypeViewer.getControl();
-				control.getDisplay().asyncExec(new Runnable() {
-					@Override
-					public void run() {
-						control.setFocus();
-						fAnnotationTypeViewer.setSelection(new StructuredSelection(element), true);
-					}
+				control.getDisplay().asyncExec(() -> {
+					control.setFocus();
+					fAnnotationTypeViewer.setSelection(new StructuredSelection(element), true);
 				});
 				return;
 			}
@@ -515,12 +501,9 @@ class AnnotationsConfigurationBlock implements IPreferenceConfigurationBlock {
 	public void initialize() {
 
 		fAnnotationTypeViewer.setInput(fListModel);
-		fAnnotationTypeViewer.getControl().getDisplay().asyncExec(new Runnable() {
-			@Override
-			public void run() {
-				if (fAnnotationTypeViewer != null && !fAnnotationTypeViewer.getControl().isDisposed()) {
-					fAnnotationTypeViewer.setSelection(new StructuredSelection(fListModel[0]));
-				}
+		fAnnotationTypeViewer.getControl().getDisplay().asyncExec(() -> {
+			if (fAnnotationTypeViewer != null && !fAnnotationTypeViewer.getControl().isDisposed()) {
+				fAnnotationTypeViewer.setSelection(new StructuredSelection(fListModel[0]));
 			}
 		});
 
@@ -544,15 +527,12 @@ class AnnotationsConfigurationBlock implements IPreferenceConfigurationBlock {
 			}
 		}
 
-		Comparator<ListItem> comparator= new Comparator<ListItem>() {
-			@Override
-			public int compare(ListItem o1, ListItem o2) {
-				String label1= o1.label;
-				String label2= o2.label;
+		Comparator<ListItem> comparator= (o1, o2) -> {
+			String label1= o1.label;
+			String label2= o2.label;
 
-				return Collator.getInstance().compare(label1, label2);
+			return Collator.getInstance().compare(label1, label2);
 
-			}
 		};
 		Collections.sort(listModelItems, comparator);
 

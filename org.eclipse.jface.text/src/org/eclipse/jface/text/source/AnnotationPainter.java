@@ -1067,12 +1067,9 @@ public class AnnotationPainter implements IPainter, PaintListener, IAnnotationMo
 			// changes any more. If the document gets modified between
 			// now and running the posted runnable, the position information
 			// is not accurate any longer.
-			textWidgetDisplay.asyncExec(new Runnable() {
-				@Override
-				public void run() {
-					if (fTextWidget != null && !fTextWidget.isDisposed())
-						updatePainting(event);
-				}
+			textWidgetDisplay.asyncExec(() -> {
+				if (fTextWidget != null && !fTextWidget.isDisposed())
+					updatePainting(event);
 			});
 		}
 	}

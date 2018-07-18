@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 IBM Corporation and others.
+ * Copyright (c) 2000, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -719,31 +719,28 @@ public class DefaultUndoManager implements IUndoManager, IUndoManagerExtension {
 			case OperationHistoryEvent.ABOUT_TO_REDO:
 				// if this is one of our operations
 				if (event.getOperation().hasContext(fUndoContext)) {
-					fTextViewer.getTextWidget().getDisplay().syncExec(new Runnable() {
-						@Override
-						public void run() {
+						fTextViewer.getTextWidget().getDisplay().syncExec(() -> {
 							// if we are undoing/redoing a command we generated, then ignore
 							// the document changes associated with this undo or redo.
 							if (event.getOperation() instanceof TextCommand) {
 								if (fTextViewer instanceof TextViewer)
-									((TextViewer)fTextViewer).ignoreAutoEditStrategies(true);
+									((TextViewer) fTextViewer).ignoreAutoEditStrategies(true);
 								listenToTextChanges(false);
 
 								// in the undo case only, make sure compounds are closed
 								if (type == OperationHistoryEvent.ABOUT_TO_UNDO) {
 									if (fFoldingIntoCompoundChange) {
 										endCompoundChange();
-									}
 								}
+							}
 							} else {
 								// the undo or redo has our context, but it is not one of
 								// our commands.  We will listen to the changes, but will
 								// reset the state that tracks the undo/redo history.
 								commit();
 								fLastAddedCommand= null;
-							}
 						}
-				    });
+						});
 					fOperation= event.getOperation();
 				}
 				break;
@@ -751,15 +748,12 @@ public class DefaultUndoManager implements IUndoManager, IUndoManagerExtension {
 			case OperationHistoryEvent.REDONE:
 			case OperationHistoryEvent.OPERATION_NOT_OK:
 				if (event.getOperation() == fOperation) {
-					fTextViewer.getTextWidget().getDisplay().syncExec(new Runnable() {
-						@Override
-						public void run() {
+						fTextViewer.getTextWidget().getDisplay().syncExec(() -> {
 							listenToTextChanges(true);
 							fOperation= null;
 							if (fTextViewer instanceof TextViewer)
-								((TextViewer)fTextViewer).ignoreAutoEditStrategies(false);
-				         }
-				    });
+								((TextViewer) fTextViewer).ignoreAutoEditStrategies(false);
+						});
 				}
 				break;
 			}
@@ -1178,12 +1172,7 @@ public class DefaultUndoManager implements IUndoManager, IUndoManagerExtension {
 				display= finalShell.getDisplay();
 			else
 				display= Display.getDefault();
-			display.syncExec(new Runnable() {
-				@Override
-				public void run() {
-					MessageDialog.openError(finalShell, title, ex.getLocalizedMessage());
-				}
-			});
+			display.syncExec(() -> MessageDialog.openError(finalShell, title, ex.getLocalizedMessage()));
 		}
 	}
 

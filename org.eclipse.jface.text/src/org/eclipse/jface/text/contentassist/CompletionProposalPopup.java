@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2017 IBM Corporation and others.
+ * Copyright (c) 2000, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -352,13 +352,13 @@ class CompletionProposalPopup implements IContentAssistListener {
 
 			int offset= fContentAssistSubjectControlAdapter.getSelectedRange().x;
 			List<ICompletionProposal> proposals= null;
-			try  {
+			try {
 				if (offset > -1) {
 					DocumentEvent event= TextUtilities.mergeProcessedDocumentEvents(fDocumentEvents);
 					proposals= computeFilteredProposals(offset, event);
 				}
-			} catch (BadLocationException x)  {
-			} finally  {
+			} catch (BadLocationException x) {
+			} finally {
 				fDocumentEvents.clear();
 			}
 			fFilterOffset= offset;
@@ -480,27 +480,24 @@ class CompletionProposalPopup implements IContentAssistListener {
 			// when the user types fast.
 			fContentAssistSubjectControlAdapter.addKeyListener(fKeyListener);
 
-			BusyIndicator.showWhile(control.getDisplay(), new Runnable() {
-				@Override
-				public void run() {
+			BusyIndicator.showWhile(control.getDisplay(), () -> {
 
-					fInvocationOffset= fContentAssistSubjectControlAdapter.getSelectedRange().x;
-					fFilterOffset= fInvocationOffset;
-					fLastCompletionOffset= fFilterOffset;
-					fComputedProposals= computeProposals(fInvocationOffset);
+				fInvocationOffset= fContentAssistSubjectControlAdapter.getSelectedRange().x;
+				fFilterOffset= fInvocationOffset;
+				fLastCompletionOffset= fFilterOffset;
+				fComputedProposals= computeProposals(fInvocationOffset);
 
-					int count= (fComputedProposals == null ? 0 : fComputedProposals.size());
-					if (count == 0 && hideWhenNoProposals(autoActivated))
-						return;
+				int count= (fComputedProposals == null ? 0 : fComputedProposals.size());
+				if (count == 0 && hideWhenNoProposals(autoActivated))
+					return;
 
-					if (count == 1 && !autoActivated && canAutoInsert(fComputedProposals.get(0))) {
-						insertProposal(fComputedProposals.get(0), (char) 0, 0, fInvocationOffset);
-						hide();
-					} else {
-						createProposalSelector();
-						setProposals(fComputedProposals, false);
-						displayProposals();
-					}
+				if (count == 1 && !autoActivated && canAutoInsert(fComputedProposals.get(0))) {
+					insertProposal(fComputedProposals.get(0), (char) 0, 0, fInvocationOffset);
+					hide();
+				} else {
+					createProposalSelector();
+					setProposals(fComputedProposals, false);
+					displayProposals();
 				}
 			});
 		} else {
@@ -749,18 +746,18 @@ class CompletionProposalPopup implements IContentAssistListener {
 				public void focusGained(FocusEvent e) {
 	    			if (Helper.okToUse(control)) {
 	    				if (fTraverseListener == null) {
-	    					fTraverseListener= new TraverseListener() {
-	    						@Override
+							fTraverseListener= new TraverseListener() {
+								@Override
 								public void keyTraversed(TraverseEvent event) {
-	    							if (event.detail == SWT.TRAVERSE_TAB_NEXT) {
-	    								IInformationControl iControl= fAdditionalInfoController.getCurrentInformationControl2();
-	    								if (fAdditionalInfoController.getInternalAccessor().canReplace(iControl)) {
-	    									fAdditionalInfoController.getInternalAccessor().replaceInformationControl(true);
-	    									event.doit= false;
-	    								}
-	    							}
-	    						}
-	    					};
+									if (event.detail == SWT.TRAVERSE_TAB_NEXT) {
+										IInformationControl iControl= fAdditionalInfoController.getCurrentInformationControl2();
+										if (fAdditionalInfoController.getInternalAccessor().canReplace(iControl)) {
+											fAdditionalInfoController.getInternalAccessor().replaceInformationControl(true);
+											event.doit= false;
+										}
+									}
+								}
+							};
 	    					fProposalTable.addTraverseListener(fTraverseListener);
 	    				}
 	    			}
@@ -1604,34 +1601,31 @@ class CompletionProposalPopup implements IContentAssistListener {
 			if (!Helper.okToUse(fProposalShell) && !control.isDisposed())
 				fContentAssistSubjectControlAdapter.addKeyListener(fKeyListener);
 
-			BusyIndicator.showWhile(control.getDisplay(), new Runnable() {
-				@Override
-				public void run() {
+			BusyIndicator.showWhile(control.getDisplay(), () -> {
 
-					fInvocationOffset= fContentAssistSubjectControlAdapter.getSelectedRange().x;
-					fFilterOffset= fInvocationOffset;
-					fLastCompletionOffset= fFilterOffset;
-					fFilteredProposals= computeProposals(fInvocationOffset);
+				fInvocationOffset= fContentAssistSubjectControlAdapter.getSelectedRange().x;
+				fFilterOffset= fInvocationOffset;
+				fLastCompletionOffset= fFilterOffset;
+				fFilteredProposals= computeProposals(fInvocationOffset);
 
-					int count= (fFilteredProposals == null ? 0 : fFilteredProposals.size());
-					if (count == 0 && hideWhenNoProposals(false))
-						return;
+				int count= (fFilteredProposals == null ? 0 : fFilteredProposals.size());
+				if (count == 0 && hideWhenNoProposals(false))
+					return;
 
-					if (count == 1 && canAutoInsert(fFilteredProposals.get(0))) {
-						insertProposal(fFilteredProposals.get(0), (char) 0, 0, fInvocationOffset);
-							hide();
-					} else {
-						ensureDocumentListenerInstalled();
-						if (count > 0 && completeCommonPrefix())
-							hide();
-						else {
-							fComputedProposals= fFilteredProposals;
-							createProposalSelector();
-							setProposals(fComputedProposals, false);
-							displayProposals();
-						}
-						}
+				if (count == 1 && canAutoInsert(fFilteredProposals.get(0))) {
+					insertProposal(fFilteredProposals.get(0), (char) 0, 0, fInvocationOffset);
+					hide();
+				} else {
+					ensureDocumentListenerInstalled();
+					if (count > 0 && completeCommonPrefix())
+						hide();
+					else {
+						fComputedProposals= fFilteredProposals;
+						createProposalSelector();
+						setProposals(fComputedProposals, false);
+						displayProposals();
 					}
+				}
 			});
 		}
 		return getErrorMessage();

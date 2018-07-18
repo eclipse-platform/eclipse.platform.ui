@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2008 IBM Corporation and others.
+ * Copyright (c) 2006, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -150,22 +150,16 @@ public class TextViewerUndoManager implements IUndoManager, IUndoManagerExtensio
 					if (extension != null)
 						extension.setRedraw(false);
 				}
-				fTextViewer.getTextWidget().getDisplay().syncExec(new Runnable() {
-					@Override
-					public void run() {
-						if (fTextViewer instanceof TextViewer)
-							((TextViewer)fTextViewer).ignoreAutoEditStrategies(true);
-					}
-			    });
+				fTextViewer.getTextWidget().getDisplay().syncExec(() -> {
+					if (fTextViewer instanceof TextViewer)
+						((TextViewer) fTextViewer).ignoreAutoEditStrategies(true);
+				});
 
 			} else if (((eventType & DocumentUndoEvent.UNDONE) != 0) || ((eventType & DocumentUndoEvent.REDONE) != 0))  {
-				fTextViewer.getTextWidget().getDisplay().syncExec(new Runnable() {
-					@Override
-					public void run() {
-						if (fTextViewer instanceof TextViewer)
-							((TextViewer)fTextViewer).ignoreAutoEditStrategies(false);
-					}
-			    });
+				fTextViewer.getTextWidget().getDisplay().syncExec(() -> {
+					if (fTextViewer instanceof TextViewer)
+						((TextViewer) fTextViewer).ignoreAutoEditStrategies(false);
+				});
 				if (event.isCompound()) {
 					ITextViewerExtension extension= null;
 					if (fTextViewer instanceof ITextViewerExtension)
@@ -300,12 +294,7 @@ public class TextViewerUndoManager implements IUndoManager, IUndoManagerExtensio
 				display= finalShell.getDisplay();
 			else
 				display= Display.getDefault();
-			display.syncExec(new Runnable() {
-				@Override
-				public void run() {
-					MessageDialog.openError(finalShell, title, ex.getLocalizedMessage());
-				}
-			});
+			display.syncExec(() -> MessageDialog.openError(finalShell, title, ex.getLocalizedMessage()));
 		}
 	}
 

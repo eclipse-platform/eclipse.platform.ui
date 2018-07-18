@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2016 IBM Corporation and others.
+ * Copyright (c) 2000, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -475,15 +475,12 @@ public class OverviewRuler implements IOverviewRulerExtension, IOverviewRuler {
 	 * Redraw runnable
 	 * @since 3.3
 	 */
-	private Runnable fRunnable= new Runnable() {
-		@Override
-		public void run() {
-			synchronized (fRunnableLock) {
-				fIsRunnablePosted= false;
-			}
-			redraw();
-			updateHeader();
+	private Runnable fRunnable= () -> {
+		synchronized (fRunnableLock) {
+			fIsRunnablePosted= false;
 		}
+		redraw();
+		updateHeader();
 	};
 	/**
 	 * Tells whether temporary annotations are drawn with

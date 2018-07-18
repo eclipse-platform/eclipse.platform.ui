@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2012 IBM Corporation and others.
+ * Copyright (c) 2000, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -40,7 +40,6 @@ import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.BadPartitioningException;
 import org.eclipse.jface.text.BadPositionCategoryException;
 import org.eclipse.jface.text.DefaultPositionUpdater;
-import org.eclipse.jface.text.DocumentCommand;
 import org.eclipse.jface.text.DocumentEvent;
 import org.eclipse.jface.text.IAutoEditStrategy;
 import org.eclipse.jface.text.IDocument;
@@ -333,21 +332,18 @@ public class LinkedModeUI {
 			else
 			{
 				// Post in UI thread since the assistant popup will only get the focus after we lose it.
-				display.asyncExec(new Runnable() {
-					@Override
-					public void run() {
-						if (fIsActive && viewer instanceof IEditingSupportRegistry) {
-							IEditingSupport[] helpers= ((IEditingSupportRegistry) viewer).getRegisteredSupports();
-							for (IEditingSupport helper : helpers) {
-								if (helper.ownsFocusShell())
-									return;
-							}
+				display.asyncExec(() -> {
+					if (fIsActive && viewer instanceof IEditingSupportRegistry) {
+						IEditingSupport[] helpers= ((IEditingSupportRegistry) viewer).getRegisteredSupports();
+						for (IEditingSupport helper : helpers) {
+							if (helper.ownsFocusShell())
+								return;
 						}
-
-						// else
-						leave(ILinkedModeListener.EXIT_ALL);
-
 					}
+
+					// else
+					leave(ILinkedModeListener.EXIT_ALL);
+
 				});
 			}
 		}
@@ -606,17 +602,14 @@ public class LinkedModeUI {
 	private boolean fHasOpenCompoundChange= false;
 	/** The position listener. */
 	private ILinkedModeUIFocusListener fPositionListener= new EmtpyFocusListener();
-	private IAutoEditStrategy fAutoEditVetoer= new IAutoEditStrategy() {
 
-		@Override
-		public void customizeDocumentCommand(IDocument document, DocumentCommand command) {
-			// invalidate the change to ensure that the change is performed on the document only.
-			if (fModel.anyPositionContains(command.offset)) {
-				command.doit= false;
-				command.caretOffset= command.offset + command.length;
-			}
-
+	private IAutoEditStrategy fAutoEditVetoer= (document, command) -> {
+		// invalidate the change to ensure that the change is performed on the document only.
+		if (fModel.anyPositionContains(command.offset)) {
+			command.doit= false;
+			command.caretOffset= command.offset + command.length;
 		}
+
 	};
 
 
@@ -970,24 +963,21 @@ public class LinkedModeUI {
 			return;
 
 		// See https://bugs.eclipse.org/bugs/show_bug.cgi?id=132263
-		widget.getDisplay().asyncExec(new Runnable() {
-			@Override
-			public void run() {
-				if (!widget.isDisposed())
-					try {
+		widget.getDisplay().asyncExec(() -> {
+			if (!widget.isDisposed())
+				try {
 					widget.showSelection();
-					} catch (IllegalArgumentException e) {
-						/*
-						 * See https://bugs.eclipse.org/bugs/show_bug.cgi?id=66914
-						 * if the StyledText is in setRedraw(false) mode, its
-						 * selection may not be up2date and calling showSelection
-						 * will throw an IAE.
-						 * We don't have means to find out whether the selection is valid
-						 * or whether the widget is redrawing or not therefore we try
-						 * and ignore an IAE.
-						 */
-					}
-			}
+				} catch (IllegalArgumentException e) {
+					/*
+					 * See https://bugs.eclipse.org/bugs/show_bug.cgi?id=66914
+					 * if the StyledText is in setRedraw(false) mode, its
+					 * selection may not be up2date and calling showSelection
+					 * will throw an IAE.
+					 * We don't have means to find out whether the selection is valid
+					 * or whether the widget is redrawing or not therefore we try
+					 * and ignore an IAE.
+					 */
+				}
 		});
 	}
 
@@ -1157,31 +1147,28 @@ public class LinkedModeUI {
 
 		fModel.stopForwarding(flags);
 
-		Runnable runnable= new Runnable() {
-			@Override
-			public void run() {
-				if (fExitPosition != null)
-					fExitPosition.getDocument().removePosition(fExitPosition);
+		Runnable runnable= () -> {
+			if (fExitPosition != null)
+				fExitPosition.getDocument().removePosition(fExitPosition);
 
-				for (IDocument doc : docs) {
-					doc.removePositionUpdater(fPositionUpdater);
-					boolean uninstallCat= false;
-					String[] cats= doc.getPositionCategories();
-					for (String cat : cats) {
-						if (getCategory().equals(cat)) {
-							uninstallCat= true;
-							break;
-						}
+			for (IDocument doc : docs) {
+				doc.removePositionUpdater(fPositionUpdater);
+				boolean uninstallCat= false;
+				String[] cats= doc.getPositionCategories();
+				for (String cat : cats) {
+					if (getCategory().equals(cat)) {
+						uninstallCat= true;
+						break;
 					}
-					if (uninstallCat)
-						try {
-							doc.removePositionCategory(getCategory());
-						} catch (BadPositionCategoryException e) {
-							// ignore
-						}
 				}
-				fModel.exit(flags);
+				if (uninstallCat)
+					try {
+						doc.removePositionCategory(getCategory());
+					} catch (BadPositionCategoryException e) {
+						// ignore
+					}
 			}
+			fModel.exit(flags);
 		};
 
 		// remove positions (both exit positions AND linked positions in the

@@ -42,10 +42,8 @@ import org.eclipse.jface.preference.PreferenceConverter;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.ComboViewer;
-import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.LabelProvider;
-import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.jface.viewers.TableViewer;
@@ -295,12 +293,7 @@ class LinkedModeConfigurationBlock implements IPreferenceConfigurationBlock {
 
 		createDependency(fShowInTextCheckBox, new Control[] {label, foregroundColorButton});
 
-		fAnnotationTypeViewer.addSelectionChangedListener(new ISelectionChangedListener() {
-			@Override
-			public void selectionChanged(SelectionChangedEvent event) {
-				handleAnnotationListSelection();
-			}
-		});
+		fAnnotationTypeViewer.addSelectionChangedListener(event -> handleAnnotationListSelection());
 
 		fShowInTextCheckBox.addSelectionListener(new SelectionListener() {
 			@Override
@@ -342,23 +335,19 @@ class LinkedModeConfigurationBlock implements IPreferenceConfigurationBlock {
 			}
 		});
 
-		fDecorationViewer.addSelectionChangedListener(new ISelectionChangedListener() {
+		fDecorationViewer.addSelectionChangedListener(event -> {
+			String[] decoration= (String[]) fDecorationViewer.getStructuredSelection().getFirstElement();
+			ListItem item= getSelectedItem();
 
-			@Override
-			public void selectionChanged(SelectionChangedEvent event) {
-				String[] decoration= (String[]) fDecorationViewer.getStructuredSelection().getFirstElement();
-				ListItem item= getSelectedItem();
-
-				if (fShowInTextCheckBox.getSelection()) {
-					if (HIGHLIGHT.equals(decoration)) {
-						getPreferenceStore().setValue(item.highlightKey, true);
-						getPreferenceStore().setValue(item.textKey, false);
-						getPreferenceStore().setValue(item.textStyleKey, AnnotationPreference.STYLE_NONE);
-					} else {
-						getPreferenceStore().setValue(item.highlightKey, false);
-						getPreferenceStore().setValue(item.textKey, true);
-						getPreferenceStore().setValue(item.textStyleKey, decoration[1]);
-					}
+			if (fShowInTextCheckBox.getSelection()) {
+				if (HIGHLIGHT.equals(decoration)) {
+					getPreferenceStore().setValue(item.highlightKey, true);
+					getPreferenceStore().setValue(item.textKey, false);
+					getPreferenceStore().setValue(item.textStyleKey, AnnotationPreference.STYLE_NONE);
+				} else {
+					getPreferenceStore().setValue(item.highlightKey, false);
+					getPreferenceStore().setValue(item.textKey, true);
+					getPreferenceStore().setValue(item.textStyleKey, decoration[1]);
 				}
 			}
 		});
@@ -444,13 +433,10 @@ class LinkedModeConfigurationBlock implements IPreferenceConfigurationBlock {
 		initializeFields();
 
 		fAnnotationTypeViewer.setInput(fListModel);
-		fAnnotationTypeViewer.getControl().getDisplay().asyncExec(new Runnable() {
-			@Override
-			public void run() {
-				if (fAnnotationTypeViewer != null && !fAnnotationTypeViewer.getControl().isDisposed()) {
-					fAnnotationTypeViewer.setSelection(new StructuredSelection(fListModel[0]));
-					initializeFields();
-				}
+		fAnnotationTypeViewer.getControl().getDisplay().asyncExec(() -> {
+			if (fAnnotationTypeViewer != null && !fAnnotationTypeViewer.getControl().isDisposed()) {
+				fAnnotationTypeViewer.setSelection(new StructuredSelection(fListModel[0]));
+				initializeFields();
 			}
 		});
 	}

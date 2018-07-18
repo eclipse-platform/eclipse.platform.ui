@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 IBM Corporation and others.
+ * Copyright (c) 2000, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -39,8 +39,6 @@ import org.eclipse.swt.dnd.DND;
 import org.eclipse.swt.dnd.TextTransfer;
 import org.eclipse.swt.events.ControlEvent;
 import org.eclipse.swt.events.ControlListener;
-import org.eclipse.swt.events.DisposeEvent;
-import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.KeyListener;
 import org.eclipse.swt.events.MouseAdapter;
@@ -48,8 +46,6 @@ import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.MouseListener;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
-import org.eclipse.swt.events.TraverseEvent;
-import org.eclipse.swt.events.TraverseListener;
 import org.eclipse.swt.events.VerifyEvent;
 import org.eclipse.swt.events.VerifyListener;
 import org.eclipse.swt.graphics.Color;
@@ -62,8 +58,6 @@ import org.eclipse.swt.printing.PrinterData;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Event;
-import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.ScrollBar;
 import org.eclipse.swt.widgets.Shell;
 
@@ -1702,32 +1696,25 @@ public class TextViewer extends Viewer implements
 		fTextWidget= createTextWidget(parent, styles);
 
 		// Support scroll page upon MOD1+MouseWheel
-		fTextWidget.addListener(SWT.MouseVerticalWheel, new Listener() {
+		fTextWidget.addListener(SWT.MouseVerticalWheel, event -> {
+			if (((event.stateMask & SWT.MOD1) == 0))
+				return;
 
-			@Override
-			public void handleEvent(Event event) {
-				if (((event.stateMask & SWT.MOD1) == 0))
-					return;
+			int topIndex= fTextWidget.getTopIndex();
+			int bottomIndex= JFaceTextUtil.getBottomIndex(fTextWidget);
 
-				int topIndex= fTextWidget.getTopIndex();
-				int bottomIndex= JFaceTextUtil.getBottomIndex(fTextWidget);
+			if (event.count > 0)
+				fTextWidget.setTopIndex(2 * topIndex - bottomIndex);
+			else
+				fTextWidget.setTopIndex(bottomIndex);
 
-				if (event.count > 0)
-					fTextWidget.setTopIndex(2 * topIndex - bottomIndex);
-				else
-					fTextWidget.setTopIndex(bottomIndex);
-
-				updateViewportListeners(INTERNAL);
-			}
+			updateViewportListeners(INTERNAL);
 		});
 
 		fTextWidget.addDisposeListener(
-			new DisposeListener() {
-				@Override
-				public void widgetDisposed(DisposeEvent e) {
+				e -> {
 					fDisposedControl= getControl();
 					handleDispose();
-				}
 			}
 		);
 
@@ -1738,12 +1725,9 @@ public class TextViewer extends Viewer implements
 		 * Disable SWT Shift+TAB traversal in this viewer
 		 * 1GIYQ9K: ITPUI:WINNT - StyledText swallows Shift+TAB
 		 */
-		fTextWidget.addTraverseListener(new TraverseListener() {
-			@Override
-			public void keyTraversed(TraverseEvent e) {
-				if ((SWT.SHIFT == e.stateMask) && ('\t' == e.character))
-					e.doit= !fTextWidget.getEditable();
-			}
+		fTextWidget.addTraverseListener(e -> {
+			if ((SWT.SHIFT == e.stateMask) && ('\t' == e.character))
+				e.doit= !fTextWidget.getEditable();
 		});
 
 		// where does the first line start
@@ -3720,35 +3704,32 @@ public class TextViewer extends Viewer implements
 		boolean isFirst= e.time != fLastEventTime;
 		fLastEventTime= e.time;
 		if (isFirst) {
-			wrapCompoundChange(new Runnable() {
-				@Override
-				public void run() {
-					SelectionProcessor processor= new SelectionProcessor(TextViewer.this);
-					try {
-						/* Use the selection instead of the event's coordinates. Is this dangerous? */
-						ISelection selection= getSelection();
-						int length= e.text.length();
-						if (length == 0 && e.character == '\0') {
-							// backspace in StyledText block selection mode...
-							TextEdit edit= processor.backspace(selection);
-							edit.apply(fDocument, TextEdit.UPDATE_REGIONS);
-							ISelection empty= processor.makeEmpty(selection, true);
-							setSelection(empty);
-						} else {
-							int lines= processor.getCoveredLines(selection);
-							String delim= fDocument.getLegalLineDelimiters()[0];
-							StringBuilder text= new StringBuilder(lines * length + (lines - 1) * delim.length());
+			wrapCompoundChange(() -> {
+				SelectionProcessor processor= new SelectionProcessor(TextViewer.this);
+				try {
+					/* Use the selection instead of the event's coordinates. Is this dangerous? */
+					ISelection selection= getSelection();
+					int length= e.text.length();
+					if (length == 0 && e.character == '\0') {
+						// backspace in StyledText block selection mode...
+						TextEdit edit= processor.backspace(selection);
+						edit.apply(fDocument, TextEdit.UPDATE_REGIONS);
+						ISelection empty= processor.makeEmpty(selection, true);
+						setSelection(empty);
+					} else {
+						int lines= processor.getCoveredLines(selection);
+						String delim= fDocument.getLegalLineDelimiters()[0];
+						StringBuilder text= new StringBuilder(lines * length + (lines - 1) * delim.length());
+						text.append(e.text);
+						for (int i= 0; i < lines - 1; i++) {
+							text.append(delim);
 							text.append(e.text);
-							for (int i= 0; i < lines - 1; i++) {
-								text.append(delim);
-								text.append(e.text);
-							}
-							processor.doReplace(selection, text.toString());
 						}
-					} catch (BadLocationException x) {
-						if (TRACE_ERRORS)
-							System.out.println(JFaceTextMessages.getString("TextViewer.error.bad_location.verifyText")); //$NON-NLS-1$
+						processor.doReplace(selection, text.toString());
 					}
+				} catch (BadLocationException x) {
+					if (TRACE_ERRORS)
+						System.out.println(JFaceTextMessages.getString("TextViewer.error.bad_location.verifyText")); //$NON-NLS-1$
 				}
 			});
 		}
@@ -3838,12 +3819,7 @@ public class TextViewer extends Viewer implements
 				if (!fTextWidget.isTextSelected())
 					copyMarkedRegion(true);
 				else
-					wrapCompoundChange(new Runnable() {
-						@Override
-						public void run() {
-							fTextWidget.cut();
-						}
-					});
+					wrapCompoundChange(() -> fTextWidget.cut());
 
 				selection= fTextWidget.getSelectionRange();
 				fireSelectionChanged(selection.x, selection.y);
@@ -3909,15 +3885,12 @@ public class TextViewer extends Viewer implements
 		if (!fTextWidget.getBlockSelection()) {
 			fTextWidget.invokeAction(ST.DELETE_NEXT);
 		} else {
-			wrapCompoundChange(new Runnable(){
-				@Override
-				public void run() {
-					try {
-						new SelectionProcessor(TextViewer.this).doDelete(getSelection());
-					} catch (BadLocationException e) {
-						if (TRACE_ERRORS)
-							System.out.println(JFaceTextMessages.getString("TextViewer.error.bad_location.delete")); //$NON-NLS-1$
-					}
+			wrapCompoundChange(() -> {
+				try {
+					new SelectionProcessor(TextViewer.this).doDelete(getSelection());
+				} catch (BadLocationException e) {
+					if (TRACE_ERRORS)
+						System.out.println(JFaceTextMessages.getString("TextViewer.error.bad_location.delete")); //$NON-NLS-1$
 				}
 			});
 		}
@@ -3930,51 +3903,48 @@ public class TextViewer extends Viewer implements
 		if (!fTextWidget.getBlockSelection()) {
 			fTextWidget.paste();
 		} else {
-			wrapCompoundChange(new Runnable(){
-				@Override
-				public void run() {
-					SelectionProcessor processor= new SelectionProcessor(TextViewer.this);
-					Clipboard clipboard= new Clipboard(getDisplay());
-					try {
-						/*
-						 * Paste in block selection mode. If the pasted text is not a multi-line
-						 * text, pasting behaves like typing, i.e. the pasted text replaces
-						 * the selection on each line. If the pasted text is multi-line (e.g. from
-						 * copying a column selection), the selection is replaced, line-by-line, by
-						 * the corresponding contents of the pasted text. If the selection touches
-						 * more lines than the pasted text, the selection on the remaining lines
-						 * is deleted (assuming an empty text being pasted). If the pasted
-						 * text contains more lines than the selection, the selection is extended
-						 * to the succeeding lines, or more lines are added to accommodate the
-						 * paste operation.
-						 */
-						ISelection selection= getSelection();
-						TextTransfer plainTextTransfer = TextTransfer.getInstance();
-						String contents= (String)clipboard.getContents(plainTextTransfer, DND.CLIPBOARD);
-						String toInsert;
-						if (TextUtilities.indexOf(fDocument.getLegalLineDelimiters(), contents, 0)[0] != -1) {
-							// multi-line insertion
-							toInsert= contents;
-						} else {
-							// single-line insertion
-							int length= contents.length();
-							int lines= processor.getCoveredLines(selection);
-							String delim= fDocument.getLegalLineDelimiters()[0];
-							StringBuilder text= new StringBuilder(lines * length + (lines - 1) * delim.length());
+			wrapCompoundChange(() -> {
+				SelectionProcessor processor= new SelectionProcessor(TextViewer.this);
+				Clipboard clipboard= new Clipboard(getDisplay());
+				try {
+					/*
+					 * Paste in block selection mode. If the pasted text is not a multi-line
+					 * text, pasting behaves like typing, i.e. the pasted text replaces
+					 * the selection on each line. If the pasted text is multi-line (e.g. from
+					 * copying a column selection), the selection is replaced, line-by-line, by
+					 * the corresponding contents of the pasted text. If the selection touches
+					 * more lines than the pasted text, the selection on the remaining lines
+					 * is deleted (assuming an empty text being pasted). If the pasted
+					 * text contains more lines than the selection, the selection is extended
+					 * to the succeeding lines, or more lines are added to accommodate the
+					 * paste operation.
+					 */
+					ISelection selection= getSelection();
+					TextTransfer plainTextTransfer= TextTransfer.getInstance();
+					String contents= (String) clipboard.getContents(plainTextTransfer, DND.CLIPBOARD);
+					String toInsert;
+					if (TextUtilities.indexOf(fDocument.getLegalLineDelimiters(), contents, 0)[0] != -1) {
+						// multi-line insertion
+						toInsert= contents;
+					} else {
+						// single-line insertion
+						int length= contents.length();
+						int lines= processor.getCoveredLines(selection);
+						String delim= fDocument.getLegalLineDelimiters()[0];
+						StringBuilder text= new StringBuilder(lines * length + (lines - 1) * delim.length());
+						text.append(contents);
+						for (int i= 0; i < lines - 1; i++) {
+							text.append(delim);
 							text.append(contents);
-							for (int i= 0; i < lines - 1; i++) {
-								text.append(delim);
-								text.append(contents);
-							}
-							toInsert= text.toString();
 						}
-						processor.doReplace(selection, toInsert);
-					} catch (BadLocationException x) {
-						if (TRACE_ERRORS)
-							System.out.println(JFaceTextMessages.getString("TextViewer.error.bad_location.paste")); //$NON-NLS-1$
-					} finally {
-						clipboard.dispose();
+						toInsert= text.toString();
 					}
+					processor.doReplace(selection, toInsert);
+				} catch (BadLocationException x) {
+					if (TRACE_ERRORS)
+						System.out.println(JFaceTextMessages.getString("TextViewer.error.bad_location.paste")); //$NON-NLS-1$
+				} finally {
+					clipboard.dispose();
 				}
 			});
 		}
@@ -4069,12 +4039,7 @@ public class TextViewer extends Viewer implements
 			fTextWidget.setSelection(widgetMarkOffset, selection.x);
 
 		if (delete) {
-			wrapCompoundChange(new Runnable() {
-				@Override
-				public void run() {
-					fTextWidget.cut();
-				}
-			});
+			wrapCompoundChange(() -> fTextWidget.cut());
 		} else {
 			fTextWidget.copy();
 			fTextWidget.setSelection(selection.x); // restore old cursor position

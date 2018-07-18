@@ -36,7 +36,6 @@ import org.eclipse.core.resources.IFile;
 
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IAction;
-import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.MenuManager;
@@ -298,12 +297,7 @@ public abstract class AbstractTextSearchViewPage extends Page implements ISearch
 		fBatchedUpdates = new HashSet<>();
 		fBatchedClearAll= false;
 
-		fListener = new ISearchResultListener() {
-			@Override
-			public void searchResultChanged(SearchResultEvent e) {
-				handleSearchResultChanged(e);
-			}
-		};
+		fListener = e -> handleSearchResultChanged(e);
 		fFilterActions= null;
 		fElementLimit= null;
 	}
@@ -540,13 +534,10 @@ public abstract class AbstractTextSearchViewPage extends Page implements ISearch
 		fMenu = new MenuManager("#PopUp"); //$NON-NLS-1$
 		fMenu.setRemoveAllWhenShown(true);
 		fMenu.setParent(getSite().getActionBars().getMenuManager());
-		fMenu.addMenuListener(new IMenuListener() {
-			@Override
-			public void menuAboutToShow(IMenuManager mgr) {
-				SearchView.createContextMenuGroups(mgr);
-				fillContextMenu(mgr);
-				fViewPart.fillContextMenu(mgr);
-			}
+		fMenu.addMenuListener(mgr -> {
+			SearchView.createContextMenuGroups(mgr);
+			fillContextMenu(mgr);
+			fViewPart.fillContextMenu(mgr);
 		});
 		fPagebook = new PageBook(parent, SWT.NULL);
 		fPagebook.setLayoutData(new GridData(GridData.FILL_BOTH));
@@ -597,20 +588,15 @@ public abstract class AbstractTextSearchViewPage extends Page implements ISearch
 
 			@Override
 			public void queryStarting(final ISearchQuery query) {
-				final Runnable runnable1 = new Runnable() {
-					@Override
-					public void run() {
-						updateBusyLabel();
-						AbstractTextSearchResult result = getInput();
+				final Runnable runnable1 = () -> {
+					updateBusyLabel();
+					AbstractTextSearchResult result = getInput();
 
-						if (result == null || !result.getQuery().equals(query)) {
-							return;
-						}
-						turnOffDecoration();
-						scheduleUIUpdate();
+					if (result == null || !result.getQuery().equals(query)) {
+						return;
 					}
-
-
+					turnOffDecoration();
+					scheduleUIUpdate();
 				};
 				asyncExec(runnable1);
 			}
@@ -763,12 +749,9 @@ public abstract class AbstractTextSearchViewPage extends Page implements ISearch
 
 		};
 
-		fViewer.addSelectionChangedListener(new ISelectionChangedListener() {
-			@Override
-			public void selectionChanged(SelectionChangedEvent event) {
-				fCurrentMatchIndex = -1;
-				fRemoveSelectedMatches.setEnabled(canRemoveMatchesWith(event.getSelection()));
-			}
+		fViewer.addSelectionChangedListener(event -> {
+			fCurrentMatchIndex = -1;
+			fRemoveSelectedMatches.setEnabled(canRemoveMatchesWith(event.getSelection()));
 		});
 
 		fViewer.addSelectionChangedListener(fViewerAdapter);
@@ -1288,12 +1271,9 @@ public abstract class AbstractTextSearchViewPage extends Page implements ISearch
 			if (currentDisplay == null || !currentDisplay.equals(control.getDisplay()))
 				// meaning we're not executing on the display thread of the
 				// control
-				control.getDisplay().asyncExec(new Runnable() {
-					@Override
-					public void run() {
-						if (!control.isDisposed())
-							runnable.run();
-					}
+				control.getDisplay().asyncExec(() -> {
+					if (!control.isDisposed())
+						runnable.run();
 				});
 			else
 				runnable.run();

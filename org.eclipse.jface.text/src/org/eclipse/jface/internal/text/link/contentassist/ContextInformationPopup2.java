@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 IBM Corporation and others.
+ * Copyright (c) 2000, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -106,30 +106,27 @@ class ContextInformationPopup2 implements IContentAssistListener2 {
 	 */
 	public String showContextProposals(final boolean autoActivated) {
 		final StyledText styledText= fViewer.getTextWidget();
-		BusyIndicator.showWhile(styledText.getDisplay(), new Runnable() {
-			@Override
-			public void run() {
+		BusyIndicator.showWhile(styledText.getDisplay(), () -> {
 
-				int position= fViewer.getSelectedRange().x;
+			int position= fViewer.getSelectedRange().x;
 
-				IContextInformation[] contexts= computeContextInformation(position);
-				int count = (contexts == null ? 0 : contexts.length);
-				if (count == 1) {
+			IContextInformation[] contexts= computeContextInformation(position);
+			int count= (contexts == null ? 0 : contexts.length);
+			if (count == 1) {
 
-					// Show context information directly
-					internalShowContextInfo(contexts[0], position);
+				// Show context information directly
+				internalShowContextInfo(contexts[0], position);
 
-				} else if (count > 0) {
-					// Precise context must be selected
+			} else if (count > 0) {
+				// Precise context must be selected
 
-					if (fLineDelimiter == null)
-						fLineDelimiter= styledText.getLineDelimiter();
+				if (fLineDelimiter == null)
+					fLineDelimiter= styledText.getLineDelimiter();
 
-					createContextSelector();
-					setContexts(contexts);
-					displayContextSelector();
-					hideContextInfoPopup();
-				}
+				createContextSelector();
+				setContexts(contexts);
+				displayContextSelector();
+				hideContextInfoPopup();
 			}
 		});
 
@@ -145,12 +142,9 @@ class ContextInformationPopup2 implements IContentAssistListener2 {
 	 */
 	public void showContextInformation(final IContextInformation info, final int position) {
 		Control control= fViewer.getTextWidget();
-		BusyIndicator.showWhile(control.getDisplay(), new Runnable() {
-			@Override
-			public void run() {
-				internalShowContextInfo(info, position);
-				hideContextSelector();
-			}
+		BusyIndicator.showWhile(control.getDisplay(), () -> {
+			internalShowContextInfo(info, position);
+			hideContextSelector();
 		});
 	}
 

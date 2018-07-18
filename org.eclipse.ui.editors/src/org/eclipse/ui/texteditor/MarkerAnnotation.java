@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -95,18 +95,15 @@ public class MarkerAnnotation extends SimpleMarkerAnnotation implements IQuickFi
 	protected static Map<ImageDescriptor, Image> getImageRegistry(Display display) {
 		if (fgImageRegistry == null) {
 			fgImageRegistry= new HashMap<>();
-			display.disposeExec(new Runnable() {
-				@Override
-				public void run() {
-					if (fgImageRegistry != null) {
-						Map<ImageDescriptor, Image> map= fgImageRegistry;
-						fgImageRegistry= null;
-						Iterator<Image> e= map.values().iterator();
-						while (e.hasNext()) {
-							Image image= e.next();
-							if (!image.isDisposed())
-								image.dispose();
-						}
+			display.disposeExec(() -> {
+				if (fgImageRegistry != null) {
+					Map<ImageDescriptor, Image> map= fgImageRegistry;
+					fgImageRegistry= null;
+					Iterator<Image> e= map.values().iterator();
+					while (e.hasNext()) {
+						Image image= e.next();
+						if (!image.isDisposed())
+							image.dispose();
 					}
 				}
 			});

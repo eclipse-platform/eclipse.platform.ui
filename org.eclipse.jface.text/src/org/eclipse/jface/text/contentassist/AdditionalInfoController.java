@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2010 IBM Corporation and others.
+ * Copyright (c) 2000, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -174,14 +174,11 @@ class AdditionalInfoController extends AbstractInformationControlManager {
 			public void run() {
 				final ICompletionProposal proposal= getCurrentProposal();
 				if (!fDisplay.isDisposed()) {
-					fDisplay.asyncExec(new Runnable() {
-						@Override
-						public void run() {
-							synchronized (Timer.this) {
-								if (proposal == getCurrentProposal()) {
-									Object info= proposal.getAdditionalProposalInfo();
-									showInformation(proposal, info);
-								}
+					fDisplay.asyncExec(() -> {
+						synchronized (Timer.this) {
+							if (proposal == getCurrentProposal()) {
+								Object info= proposal.getAdditionalProposalInfo();
+								showInformation(proposal, info);
 							}
 						}
 					});
@@ -256,15 +253,12 @@ class AdditionalInfoController extends AbstractInformationControlManager {
 			long current= System.currentTimeMillis();
     		schedule(IDLE, current);
 
-    		fThread= new Thread(new Runnable() {
-    			@Override
-				public void run() {
-    				try {
-	                    loop();
-                    } catch (InterruptedException x) {
-                    }
-    			}
-    		}, JFaceTextMessages.getString("InfoPopup.info_delay_timer_name")); //$NON-NLS-1$
+			fThread= new Thread((Runnable) () -> {
+				try {
+					loop();
+				} catch (InterruptedException x) {
+				}
+			}, JFaceTextMessages.getString("InfoPopup.info_delay_timer_name")); //$NON-NLS-1$
 			fThread.start();
 		}
 
@@ -359,13 +353,10 @@ class AdditionalInfoController extends AbstractInformationControlManager {
         private void triggerShowing() {
 			final Object info= fCurrentInfo;
 			if (!fDisplay.isDisposed()) {
-				fDisplay.asyncExec(new Runnable() {
-					@Override
-					public void run() {
-						synchronized (Timer.this) {
-							if (info == fCurrentInfo) {
-								showInformation(fCurrentProposal, info);
-							}
+				fDisplay.asyncExec(() -> {
+					synchronized (Timer.this) {
+						if (info == fCurrentInfo) {
+							showInformation(fCurrentProposal, info);
 						}
 					}
 				});

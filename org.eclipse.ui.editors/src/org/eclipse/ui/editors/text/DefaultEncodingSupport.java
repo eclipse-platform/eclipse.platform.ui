@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2011 IBM Corporation and others.
+ * Copyright (c) 2000, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -28,7 +28,6 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences.IPreferenceChangeListener;
-import org.eclipse.core.runtime.preferences.IEclipsePreferences.PreferenceChangeEvent;
 import org.eclipse.core.runtime.preferences.InstanceScope;
 
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -75,32 +74,25 @@ public class DefaultEncodingSupport implements IEncodingSupport {
 
 		IEclipsePreferences prefs= InstanceScope.INSTANCE.getNode(ResourcesPlugin.PI_RESOURCES);
 
-		fPreferenceChangeListener= new IPreferenceChangeListener() {
-			@Override
-			public void preferenceChange(PreferenceChangeEvent event) {
-				if (ResourcesPlugin.PREF_ENCODING.equals(event.getKey())) {
-					Runnable runnable= new Runnable() {
-						@Override
-						public void run() {
-							setEncoding(null, false); // null means: use default
-						}
-					};
-					if (Display.getCurrent() != null)
-						runnable.run();
-					else {
-						// Post runnable into UI thread
-						Shell shell;
-						if (fTextEditor != null)
-							shell= fTextEditor.getSite().getShell();
-						else
-							shell= getActiveWorkbenchShell();
-						Display display;
-						if (shell != null)
-							display= shell.getDisplay();
-						else
-							display= Display.getDefault();
-						display.asyncExec(runnable);
-					}
+		fPreferenceChangeListener= event -> {
+			if (ResourcesPlugin.PREF_ENCODING.equals(event.getKey())) {
+				// null means: use default
+				Runnable runnable= () -> setEncoding(null, false);
+				if (Display.getCurrent() != null)
+					runnable.run();
+				else {
+					// Post runnable into UI thread
+					Shell shell;
+					if (fTextEditor != null)
+						shell= fTextEditor.getSite().getShell();
+					else
+						shell= getActiveWorkbenchShell();
+					Display display;
+					if (shell != null)
+						display= shell.getDisplay();
+					else
+						display= Display.getDefault();
+					display.asyncExec(runnable);
 				}
 			}
 		};
@@ -143,12 +135,7 @@ public class DefaultEncodingSupport implements IEncodingSupport {
 				if (apply) {
 					provider.setEncoding(input, encoding);
 					Runnable encodingSetter=
-						new Runnable() {
-							   @Override
-							public void run() {
-								   fTextEditor.doRevertToSaved();
-							   }
-						};
+							() -> fTextEditor.doRevertToSaved();
 					Display display= fTextEditor.getSite().getShell().getDisplay();
 					if (display != null && !display.isDisposed())
 						BusyIndicator.showWhile(display, encodingSetter);
