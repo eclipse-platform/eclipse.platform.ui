@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2008 IBM Corporation and others.
+ * Copyright (c) 2006, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,6 +11,8 @@
 package org.eclipse.jface.text.tests;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import org.junit.Test;
@@ -27,7 +29,6 @@ import org.eclipse.core.runtime.Status;
 
 import org.eclipse.text.undo.DocumentUndoEvent;
 import org.eclipse.text.undo.DocumentUndoManager;
-import org.eclipse.text.undo.IDocumentUndoListener;
 
 import org.eclipse.jface.text.Document;
 import org.eclipse.jface.text.IDocument;
@@ -80,19 +81,14 @@ public class TextViewerUndoManagerTest extends AbstractUndoManagerTest {
 		Object newContext= new Object();
 		undoManager.connect(newContext);
 
-		undoManager.addDocumentUndoListener(new IDocumentUndoListener() {
-			@Override
-			public void documentUndoNotification(DocumentUndoEvent event) {
-				fail();
-			}
-		});
+		undoManager.addDocumentUndoListener(event -> fail());
 
 		undoManager.transferUndoHistory(tempUndoManager);
 		tempUndoManager.disconnect(context);
 
 		assertEquals(isUndoable, undoManager.undoable());
 		undoManager.undo();
-		assertEquals(false, undoManager.undoable());
+		assertFalse(undoManager.undoable());
 
 		undoManager.disconnect(newContext);
 	}
@@ -114,22 +110,18 @@ public class TextViewerUndoManagerTest extends AbstractUndoManagerTest {
 		Object context= new Object();
 		undoManager.connect(context);
 
-		undoManager.addDocumentUndoListener(new IDocumentUndoListener() {
-
-			@Override
-			public void documentUndoNotification(DocumentUndoEvent event) {
-				if (event.getEventType() == DocumentUndoEvent.ABOUT_TO_UNDO)
-					assertEquals(true, undoManager.undoable());
-				else if (event.getEventType() == DocumentUndoEvent.UNDONE)
-					assertEquals(false, undoManager.undoable());
-			}
+		undoManager.addDocumentUndoListener(event -> {
+			if (event.getEventType() == DocumentUndoEvent.ABOUT_TO_UNDO)
+				assertTrue(undoManager.undoable());
+			else if (event.getEventType() == DocumentUndoEvent.UNDONE)
+				assertFalse(undoManager.undoable());
 		});
 
 		doc.set("foo");
 
-		assertEquals(true, undoManager.undoable());
+		assertTrue(undoManager.undoable());
 		undoManager.undo();
-		assertEquals(false, undoManager.undoable());
+		assertFalse(undoManager.undoable());
 
 		undoManager.disconnect(context);
 	}

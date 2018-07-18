@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2016 IBM Corporation and others.
+ * Copyright (c) 2006, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,8 +12,8 @@
 package org.eclipse.text.tests.templates;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
-import static org.junit.Assert.fail;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -40,14 +40,9 @@ public class TemplateTranslatorTest {
 		fTranslator= new TemplateTranslator();
 	}
 
-	@Test
+	@Test(expected= NullPointerException.class)
 	public void testNullTemplate() throws Exception {
-		try {
-			fTranslator.translate((String) null);
-			fail();
-		} catch (NullPointerException x) {
-			// expected
-		}
+		fTranslator.translate((String) null);
 	}
 
 	@Test
@@ -59,6 +54,7 @@ public class TemplateTranslatorTest {
 		assertEquals("", buffer.getString());
 	}
 
+	@Test
 	public void testNoVarTemplate() throws Exception {
 		TemplateBuffer buffer= fTranslator.translate("foo bar");
 		assertNull(fTranslator.getErrorMessage());
@@ -78,7 +74,7 @@ public class TemplateTranslatorTest {
 		assertEquals(1, vars[0].getOffsets().length);
 		assertEquals(4, vars[0].getOffsets()[0]);
 		assertEquals(3, vars[0].getLength());
-		assertEquals(false, vars[0].isUnambiguous());
+		assertFalse(vars[0].isUnambiguous());
 		assertEquals("var", vars[0].getDefaultValue());
 		assertEquals(1, vars[0].getValues().length);
 		assertEquals(vars[0].getDefaultValue(), vars[0].getValues()[0]);
@@ -97,7 +93,7 @@ public class TemplateTranslatorTest {
 		assertEquals(4, vars[0].getOffsets()[0]);
 		assertEquals(12, vars[0].getOffsets()[1]);
 		assertEquals(3, vars[0].getLength());
-		assertEquals(false, vars[0].isUnambiguous());
+		assertFalse(vars[0].isUnambiguous());
 		assertEquals("var", vars[0].getDefaultValue());
 		assertEquals(1, vars[0].getValues().length);
 		assertEquals(vars[0].getDefaultValue(), vars[0].getValues()[0]);
@@ -116,7 +112,7 @@ public class TemplateTranslatorTest {
 		assertEquals(1, vars[0].getOffsets().length);
 		assertEquals(19, vars[0].getOffsets()[0]);
 		assertEquals(4, vars[0].getLength());
-		assertEquals(false, vars[0].isUnambiguous());
+		assertFalse(vars[0].isUnambiguous());
 		assertEquals("bl\u00F6d", vars[0].getDefaultValue());
 		assertEquals(1, vars[0].getValues().length);
 		assertEquals(vars[0].getDefaultValue(), vars[0].getValues()[0]);
@@ -126,7 +122,7 @@ public class TemplateTranslatorTest {
 		assertEquals(1, vars[1].getOffsets().length);
 		assertEquals(50, vars[1].getOffsets()[0]);
 		assertEquals(2, vars[1].getLength());
-		assertEquals(false, vars[1].isUnambiguous());
+		assertFalse(vars[1].isUnambiguous());
 		assertEquals("h\u00E4", vars[1].getDefaultValue());
 		assertEquals(1, vars[1].getValues().length);
 		assertEquals(vars[1].getDefaultValue(), vars[1].getValues()[0]);
@@ -144,7 +140,7 @@ public class TemplateTranslatorTest {
 		assertEquals(0, vars[0].getOffsets()[0]);
 		assertEquals(3, vars[0].getOffsets()[1]);
 		assertEquals(1, vars[0].getLength());
-		assertEquals(false, vars[0].isUnambiguous());
+		assertFalse(vars[0].isUnambiguous());
 		assertEquals("0", vars[0].getDefaultValue());
 		assertEquals(1, vars[0].getValues().length);
 		assertEquals(vars[0].getDefaultValue(), vars[0].getValues()[0]);
@@ -153,28 +149,19 @@ public class TemplateTranslatorTest {
 		assertEquals(Arrays.asList(new Object[] { "1", "2 ", "3" }), vars[0].getVariableType().getParams());
 	}
 
-	@Test
+	@Test(expected=TemplateException.class)
 	public void testIllegalSyntax1() throws Exception {
-		ensureFailure("foo ${var");
+		fTranslator.translate("foo ${var");
 	}
 
-	private void ensureFailure(String template) {
-		try {
-			fTranslator.translate(template);
-			fail();
-		} catch (TemplateException e) {
-			// expected
-		}
-	}
-
-	@Test
+	@Test(expected=TemplateException.class)
 	public void testIllegalSyntax2() throws Exception {
-		ensureFailure("foo $");
+		fTranslator.translate("foo $");
 	}
 
-	@Test
+	@Test(expected=TemplateException.class)
 	public void testIllegalSyntax3() throws Exception {
-		ensureFailure("foo ${] } bar");
+		fTranslator.translate("foo ${] } bar");
 	}
 
 	@Test
@@ -197,7 +184,7 @@ public class TemplateTranslatorTest {
 		assertEquals(1, vars[0].getOffsets().length);
 		assertEquals(4, vars[0].getOffsets()[0]);
 		assertEquals(0, vars[0].getLength());
-		assertEquals(false, vars[0].isUnambiguous());
+		assertFalse(vars[0].isUnambiguous());
 		assertEquals("", vars[0].getDefaultValue());
 		assertEquals(1, vars[0].getValues().length);
 		assertEquals(vars[0].getDefaultValue(), vars[0].getValues()[0]);
@@ -216,7 +203,7 @@ public class TemplateTranslatorTest {
 		assertEquals(1, vars[0].getOffsets().length);
 		assertEquals(4, vars[0].getOffsets()[0]);
 		assertEquals(3, vars[0].getLength());
-		assertEquals(false, vars[0].isUnambiguous());
+		assertFalse(vars[0].isUnambiguous());
 		assertEquals("var", vars[0].getDefaultValue());
 		assertEquals(1, vars[0].getValues().length);
 		assertEquals("type", vars[0].getType());
@@ -233,7 +220,7 @@ public class TemplateTranslatorTest {
 		assertEquals(1, vars[0].getOffsets().length);
 		assertEquals(4, vars[0].getOffsets()[0]);
 		assertEquals(3, vars[0].getLength());
-		assertEquals(false, vars[0].isUnambiguous());
+		assertFalse(vars[0].isUnambiguous());
 		assertEquals("var", vars[0].getDefaultValue());
 		assertEquals(1, vars[0].getValues().length);
 		assertEquals(vars[0].getDefaultValue(), vars[0].getValues()[0]);
@@ -253,7 +240,7 @@ public class TemplateTranslatorTest {
 		assertEquals(4, vars[0].getOffsets()[0]);
 		assertEquals(12, vars[0].getOffsets()[1]);
 		assertEquals(3, vars[0].getLength());
-		assertEquals(false, vars[0].isUnambiguous());
+		assertFalse(vars[0].isUnambiguous());
 		assertEquals("var", vars[0].getDefaultValue());
 		assertEquals(1, vars[0].getValues().length);
 		assertEquals(vars[0].getDefaultValue(), vars[0].getValues()[0]);
@@ -273,7 +260,7 @@ public class TemplateTranslatorTest {
 		assertEquals(4, vars[0].getOffsets()[0]);
 		assertEquals(12, vars[0].getOffsets()[1]);
 		assertEquals(3, vars[0].getLength());
-		assertEquals(false, vars[0].isUnambiguous());
+		assertFalse(vars[0].isUnambiguous());
 		assertEquals("var", vars[0].getDefaultValue());
 		assertEquals(1, vars[0].getValues().length);
 		assertEquals(vars[0].getDefaultValue(), vars[0].getValues()[0]);
@@ -281,10 +268,14 @@ public class TemplateTranslatorTest {
 		assertEquals(Collections.singletonList("param"), vars[0].getVariableType().getParams());
 	}
 
-	@Test
-	public void testIllegallyParameterizedTypeTemplate() throws Exception {
-		ensureFailure("foo ${var:type(param)} bar ${var:type(other)} end");
-		ensureFailure("foo ${var:type(param)} bar ${var:type} end");
+	@Test(expected=TemplateException.class)
+	public void testIllegallyParameterizedTypeTemplate1() throws Exception {
+		fTranslator.translate("foo ${var:type(param)} bar ${var:type(other)} end");
+	}
+	
+	@Test(expected=TemplateException.class)
+	public void testIllegallyParameterizedTypeTemplate2() throws Exception {
+		fTranslator.translate("foo ${var:type(param)} bar ${var:type} end");
 	}
 
 	@Test
@@ -298,7 +289,7 @@ public class TemplateTranslatorTest {
 		assertEquals(1, vars[0].getOffsets().length);
 		assertEquals(4, vars[0].getOffsets()[0]);
 		assertEquals(3, vars[0].getLength());
-		assertEquals(false, vars[0].isUnambiguous());
+		assertFalse(vars[0].isUnambiguous());
 		assertEquals("var", vars[0].getDefaultValue());
 		assertEquals(1, vars[0].getValues().length);
 		assertEquals(vars[0].getDefaultValue(), vars[0].getValues()[0]);
@@ -321,7 +312,7 @@ public class TemplateTranslatorTest {
 		assertEquals(1, vars[0].getOffsets().length);
 		assertEquals(4, vars[0].getOffsets()[0]);
 		assertEquals(3, vars[0].getLength());
-		assertEquals(false, vars[0].isUnambiguous());
+		assertFalse(vars[0].isUnambiguous());
 		assertEquals("var", vars[0].getDefaultValue());
 		assertEquals(1, vars[0].getValues().length);
 		assertEquals(vars[0].getDefaultValue(), vars[0].getValues()[0]);
@@ -343,7 +334,7 @@ public class TemplateTranslatorTest {
 		assertEquals(1, vars[0].getOffsets().length);
 		assertEquals(4, vars[0].getOffsets()[0]);
 		assertEquals(3, vars[0].getLength());
-		assertEquals(false, vars[0].isUnambiguous());
+		assertFalse(vars[0].isUnambiguous());
 		assertEquals("var", vars[0].getDefaultValue());
 		assertEquals(1, vars[0].getValues().length);
 		assertEquals(vars[0].getDefaultValue(), vars[0].getValues()[0]);
@@ -355,24 +346,24 @@ public class TemplateTranslatorTest {
 		assertEquals(params, vars[0].getVariableType().getParams());
 	}
 
-	@Test
+	@Test(expected=TemplateException.class)
 	public void testIllegalSyntax4() throws Exception {
-		ensureFailure("foo ${var:} bar");
+		fTranslator.translate("foo ${var:} bar");
 	}
 
-	@Test
+	@Test(expected=TemplateException.class)
 	public void testIllegalSyntax5() throws Exception {
-		ensureFailure("foo ${var:type(} bar");
+		fTranslator.translate("foo ${var:type(} bar");
 	}
 
-	@Test
+	@Test(expected=TemplateException.class)
 	public void testIllegalSyntax6() throws Exception {
-		ensureFailure("foo ${var:type(] )} bar");
+		fTranslator.translate("foo ${var:type(] )} bar");
 	}
 
-	@Test
+	@Test(expected=TemplateException.class)
 	public void testIllegalSyntax7() throws Exception {
-		ensureFailure("foo ${var:type((} bar");
+		fTranslator.translate("foo ${var:type((} bar");
 	}
 
 }

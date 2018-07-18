@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 IBM Corporation and others.
+ * Copyright (c) 2000, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -63,14 +63,14 @@ public class TextEditTests {
 	public void testCovers1() throws Exception {
 		InsertEdit insert= new InsertEdit(1, "");
 		DeleteEdit delete= new DeleteEdit(2, 2);
-		Assert.assertEquals(false, insert.covers(delete));
+		Assert.assertFalse(insert.covers(delete));
 	}
 	
 	@Test
 	public void testCovers2() throws Exception {
 		MultiTextEdit multi= new MultiTextEdit(0,0);
 		MultiTextEdit child= new MultiTextEdit(0,0);
-		Assert.assertEquals(true, multi.covers(child));
+		Assert.assertTrue(multi.covers(child));
 	}
 	
 	@Test
