@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,6 +12,7 @@ package org.eclipse.text.tests.link;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -39,14 +40,9 @@ public class LinkedPositionTest {
 		new LinkedPosition(new Document(), 123, 234);
 	}
 	
-	@Test
+	@Test(expected=Throwable.class)
 	public void testNullCreate() {
-		try {
-			new LinkedPosition(null, 1, 9);
-		} catch (Throwable e) {
-			return;
-		}
-		assertFalse(true);
+		new LinkedPosition(null, 1, 9);
 	}
 
 	/*
@@ -54,11 +50,11 @@ public class LinkedPositionTest {
 	 */	
 	@Test
 	public void testIncludesint() {
-		assertEquals(true, fPos.includes(3));
-		assertEquals(true, fPos.includes(6));
-		assertEquals(true, fPos.includes(13));
-		assertEquals(false, fPos.includes(2));
-		assertEquals(false, fPos.includes(15));
+		assertTrue(fPos.includes(3));
+		assertTrue(fPos.includes(6));
+		assertTrue(fPos.includes(13));
+		assertFalse(fPos.includes(2));
+		assertFalse(fPos.includes(15));
 	}
 	
 	@Test
@@ -72,31 +68,31 @@ public class LinkedPositionTest {
 	@Test
 	public void testOverlapsWithLinkedPosition() {
 		LinkedPosition pos= new LinkedPosition(fDoc, 0, 2);
-		assertEquals(false, fPos.overlapsWith(pos));
+		assertFalse(fPos.overlapsWith(pos));
 
 		pos= new LinkedPosition(fDoc, 0, 3);
-		assertEquals(false, fPos.overlapsWith(pos));
+		assertFalse(fPos.overlapsWith(pos));
 
 		pos= new LinkedPosition(fDoc, 1, 4);
-		assertEquals(true, fPos.overlapsWith(pos));
+		assertTrue(fPos.overlapsWith(pos));
 
 		pos= new LinkedPosition(fDoc, 3, 5);
-		assertEquals(true, fPos.overlapsWith(pos));
+		assertTrue(fPos.overlapsWith(pos));
 
 		pos= new LinkedPosition(fDoc, 5, 7);
-		assertEquals(true, fPos.overlapsWith(pos));
+		assertTrue(fPos.overlapsWith(pos));
 
 		pos= new LinkedPosition(fDoc, 7, 6);
-		assertEquals(true, fPos.overlapsWith(pos));
+		assertTrue(fPos.overlapsWith(pos));
 
 		pos= new LinkedPosition(fDoc, 7, 7);
-		assertEquals(true, fPos.overlapsWith(pos));
+		assertTrue(fPos.overlapsWith(pos));
 
 		pos= new LinkedPosition(fDoc, 13, 1);
-		assertEquals(false, fPos.overlapsWith(pos));
+		assertFalse(fPos.overlapsWith(pos));
 
 		pos= new LinkedPosition(fDoc, 14, 4);
-		assertEquals(false, fPos.overlapsWith(pos));
+		assertFalse(fPos.overlapsWith(pos));
 	}
 
 	/*
@@ -105,31 +101,31 @@ public class LinkedPositionTest {
 	@Test
 	public void testIncludesDocumentEvent() {
 		DocumentEvent de= new DocumentEvent(fDoc, 0, 2, "ignore");
-		assertEquals(false, fPos.includes(de));
+		assertFalse(fPos.includes(de));
 
 		de= new DocumentEvent(fDoc, 0, 3, "ignore");
-		assertEquals(false, fPos.includes(de));
+		assertFalse(fPos.includes(de));
 
 		de= new DocumentEvent(fDoc, 1, 4, "ignore");
-		assertEquals(false, fPos.includes(de));
+		assertFalse(fPos.includes(de));
 
 		de= new DocumentEvent(fDoc, 3, 5, "ignore");
-		assertEquals(true, fPos.includes(de));
+		assertTrue(fPos.includes(de));
 
 		de= new DocumentEvent(fDoc, 5, 7, "ignore");
-		assertEquals(true, fPos.includes(de));
+		assertTrue(fPos.includes(de));
 
 		de= new DocumentEvent(fDoc, 7, 6, "ignore");
-		assertEquals(true, fPos.includes(de));
+		assertTrue(fPos.includes(de));
 
 		de= new DocumentEvent(fDoc, 7, 7, "ignore");
-		assertEquals(false, fPos.includes(de));
+		assertFalse(fPos.includes(de));
 
 		de= new DocumentEvent(fDoc, 13, 1, "ignore");
-		assertEquals(false, fPos.includes(de));
+		assertFalse(fPos.includes(de));
 
 		de= new DocumentEvent(fDoc, 14, 4, "ignore");
-		assertEquals(false, fPos.includes(de));
+		assertFalse(fPos.includes(de));
 	}
 
 	/*
@@ -138,31 +134,31 @@ public class LinkedPositionTest {
 	@Test
 	public void testIncludesLinkedPosition() {
 		LinkedPosition pos= new LinkedPosition(fDoc, 0, 2);
-		assertEquals(false, fPos.includes(pos));
+		assertFalse(fPos.includes(pos));
 
 		pos= new LinkedPosition(fDoc, 0, 3);
-		assertEquals(false, fPos.includes(pos));
+		assertFalse(fPos.includes(pos));
 
 		pos= new LinkedPosition(fDoc, 1, 4);
-		assertEquals(false, fPos.includes(pos));
+		assertFalse(fPos.includes(pos));
 
 		pos= new LinkedPosition(fDoc, 3, 5);
-		assertEquals(true, fPos.includes(pos));
+		assertTrue(fPos.includes(pos));
 
 		pos= new LinkedPosition(fDoc, 5, 7);
-		assertEquals(true, fPos.includes(pos));
+		assertTrue(fPos.includes(pos));
 
 		pos= new LinkedPosition(fDoc, 7, 6);
-		assertEquals(true, fPos.includes(pos));
+		assertTrue(fPos.includes(pos));
 
 		pos= new LinkedPosition(fDoc, 7, 7);
-		assertEquals(false, fPos.includes(pos));
+		assertFalse(fPos.includes(pos));
 
 		pos= new LinkedPosition(fDoc, 13, 1);
-		assertEquals(false, fPos.includes(pos));
+		assertFalse(fPos.includes(pos));
 
 		pos= new LinkedPosition(fDoc, 14, 4);
-		assertEquals(false, fPos.includes(pos));
+		assertFalse(fPos.includes(pos));
 	}
 	
 	@Test
@@ -180,24 +176,17 @@ public class LinkedPositionTest {
 		assertEquals("FAUST", p.getContent());
 	}
 	
-	@Test
-	public void testBadLocationContent() {
+	@Test(expected= BadLocationException.class)
+	public void testBadLocationContentNull() throws BadLocationException {
 		LinkedPosition p= new LinkedPosition(new Document(), 23, 3);
-		try {
-			p.getContent();
-		} catch (BadLocationException e) {
-			return;
-		}
-		assertFalse(true);
+		p.getContent();
+	}
 
-		p= new LinkedPosition(fDoc, 23, 3);
+	@Test(expected= BadLocationException.class)
+	public void testBadLocationContentEmpty() throws BadLocationException {
+		LinkedPosition p= new LinkedPosition(fDoc, 23, 3);
 		fDoc.set("");
-		try {
-			p.getContent();
-		} catch (BadLocationException e) {
-			return;
-		}
-		assertFalse(true);
+		p.getContent();
 	}
 	
 	@Test
