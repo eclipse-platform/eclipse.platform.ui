@@ -238,11 +238,13 @@ public final class ActionDelegateHandlerProxy implements ISelectionListener,
 
 	@Override
 	public void dispose() {
+		stopPartListening();
 		disposeDelegate();
 		if (action != null) {
 			action.dispose();
 			action = null;
 		}
+		currentPart = null;
 	}
 
 	/**
@@ -357,9 +359,7 @@ public final class ActionDelegateHandlerProxy implements ISelectionListener,
 		if (currentPart == activePart) {
 			return;
 		}
-		if (currentPart != null) {
-			currentPart.getSite().getPage().removePartListener(this);
-		}
+		stopPartListening();
 		if (activePart != null) {
 			activePart.getSite().getPage().addPartListener(this);
 		} else {
@@ -370,6 +370,15 @@ public final class ActionDelegateHandlerProxy implements ISelectionListener,
 			}
 		}
 		currentPart = activePart;
+	}
+
+	private void stopPartListening() {
+		if (currentPart != null) {
+			IWorkbenchPage page = currentPart.getSite().getPage();
+			if (page != null) {
+				page.removePartListener(this);
+			}
+		}
 	}
 
 	/**
