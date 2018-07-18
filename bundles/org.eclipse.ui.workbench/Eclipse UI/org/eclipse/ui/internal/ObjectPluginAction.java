@@ -17,6 +17,7 @@ import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.ui.IActionDelegate;
 import org.eclipse.ui.IObjectActionDelegate;
 import org.eclipse.ui.IPartListener2;
+import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchPartReference;
 
@@ -50,6 +51,7 @@ public class ObjectPluginAction extends PluginAction implements IPartListener2 {
 	public void partClosed(IWorkbenchPartReference partRef) {
 		if (activePart != null && partRef.getPart(false) == activePart) {
 			selectionChanged(StructuredSelection.EMPTY);
+			stopPartListening();
 			disposeDelegate();
 			activePart = null;
 		}
@@ -128,7 +130,7 @@ public class ObjectPluginAction extends PluginAction implements IPartListener2 {
     public void setActivePart(IWorkbenchPart targetPart) {
     	if (activePart != targetPart) {
 			if (activePart != null) {
-				activePart.getSite().getPage().removePartListener(this);
+				stopPartListening();
 			}
 			if (targetPart != null) {
 				targetPart.getSite().getPage().addPartListener(this);
@@ -167,9 +169,18 @@ public class ObjectPluginAction extends PluginAction implements IPartListener2 {
     @Override
 	public void dispose() {
     	if (activePart!=null) {
-    		activePart.getSite().getPage().removePartListener(this);
+			stopPartListening();
     		activePart = null;
     	}
     	super.dispose();
     }
+
+	private void stopPartListening() {
+		if (activePart != null) {
+			IWorkbenchPage page = activePart.getSite().getPage();
+			if (page != null) {
+				page.removePartListener(this);
+			}
+		}
+	}
 }
