@@ -580,11 +580,11 @@ public class BrowserInformationControl extends AbstractInformationControl implem
 		GC gc= new GC(fBrowser);
 		Font font= JFaceResources.getFont(fSymbolicFontName);
 		gc.setFont(font);
-		int width= gc.getFontMetrics().getAverageCharWidth();
+		double width= gc.getFontMetrics().getAverageCharacterWidth();
 		int height= gc.getFontMetrics().getHeight();
 		gc.dispose();
 
-		return new Point(widthInChars * width, heightInChars * height);
+		return new Point((int) (widthInChars * width), heightInChars * height);
 	}
 
 }

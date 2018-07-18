@@ -761,11 +761,11 @@ public abstract class AbstractInformationControl implements IInformationControl,
 	public Point computeSizeConstraints(int widthInChars, int heightInChars) {
 		GC gc= new GC(fContentComposite);
 		gc.setFont(JFaceResources.getDialogFont());
-		int width= gc.getFontMetrics().getAverageCharWidth();
+		double width= gc.getFontMetrics().getAverageCharacterWidth();
 		int height= gc.getFontMetrics().getHeight();
 		gc.dispose();
 
-		return new Point(widthInChars * width, heightInChars * height);
+		return new Point((int) (widthInChars * width), heightInChars * height);
 	}
 
 }

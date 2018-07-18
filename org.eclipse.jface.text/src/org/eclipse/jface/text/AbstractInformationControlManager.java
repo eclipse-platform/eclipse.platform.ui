@@ -741,11 +741,11 @@ abstract public class AbstractInformationControlManager {
 
 			GC gc= new GC(subjectControl);
 			gc.setFont(subjectControl.getFont());
-			int width= gc.getFontMetrics().getAverageCharWidth();
+			double width= gc.getFontMetrics().getAverageCharacterWidth();
 			int height = gc.getFontMetrics().getHeight();
 			gc.dispose();
 
-			fSizeConstraints= new Point (fWidthConstraint * width, fHeightConstraint * height);
+			fSizeConstraints= new Point((int) (fWidthConstraint * width), fHeightConstraint * height);
 		}
 
 		return new Point(fSizeConstraints.x, fSizeConstraints.y);

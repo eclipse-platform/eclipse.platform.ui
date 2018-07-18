@@ -1,5 +1,5 @@
 /**
- *  Copyright (c) 2017 Angelo ZERR.
+ *  Copyright (c) 2017, 2018 Angelo ZERR.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -78,7 +78,7 @@ public class LineContentAnnotation extends AbstractInlinedAnnotation {
 	protected int drawAndComputeWidth(GC gc, StyledText textWidget, int offset, int length, Color color, int x, int y) {
 		// Draw the text annotation and returns the width
 		super.draw(gc, textWidget, offset, length, color, x, y);
-		return gc.stringExtent(getText()).x + 2 * gc.getFontMetrics().getAverageCharWidth();
+		return (int) (gc.stringExtent(getText()).x + 2 * gc.getFontMetrics().getAverageCharacterWidth());
 	}
 
 	int getRedrawnCharacterWidth() {

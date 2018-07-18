@@ -206,7 +206,7 @@ public class StatusLineContributionItem extends ContributionItem implements ISta
 		if (fFixedWidth < 0) {
 			GC gc= new GC(control);
 			gc.setFont(control.getFont());
-			fFixedWidth= gc.getFontMetrics().getAverageCharWidth() * fWidthInChars;
+			fFixedWidth = (int) gc.getFontMetrics().getAverageCharacterWidth() * fWidthInChars;
 			fFixedWidth += INDENT * 2;
 			gc.dispose();
 		}

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 IBM Corporation and others.
+ * Copyright (c) 2000, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -111,12 +111,12 @@ public class ProjectionSupport {
 						// height: height of the box
 						int height= ascent + descent;
 
-						int width= metrics.getAverageCharWidth();
-						gc.drawRectangle(p.x, p.y + leading, width, height);
-						int third= width/3;
+						double width= metrics.getAverageCharacterWidth();
+						gc.drawRectangle(p.x, p.y + leading, (int) width, height);
+						int third= (int) (width / 3);
 						int dotsVertical= p.y + baseline - 1;
 						gc.drawPoint(p.x + third, dotsVertical);
-						gc.drawPoint(p.x + width - third, dotsVertical);
+						gc.drawPoint((int) (p.x + width - third), dotsVertical);
 
 						gc.setForeground(c);
 

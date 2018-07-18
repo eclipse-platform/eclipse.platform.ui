@@ -378,9 +378,9 @@ public final class JFaceTextUtil {
 	public static int getAverageCharWidth(Control control) {
 		GC gc= new GC(control);
 		gc.setFont(control.getFont());
-		int increment= gc.getFontMetrics().getAverageCharWidth();
+		double increment= gc.getFontMetrics().getAverageCharacterWidth();
 		gc.dispose();
-		return increment;
+		return (int) increment;
 	}
 
 	/**
