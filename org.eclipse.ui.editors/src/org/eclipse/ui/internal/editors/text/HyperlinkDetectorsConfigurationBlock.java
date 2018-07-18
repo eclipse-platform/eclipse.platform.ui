@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2015 IBM Corporation and others.
+ * Copyright (c) 2007, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -21,8 +21,6 @@ import com.ibm.icu.text.Collator;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.KeyListener;
-import org.eclipse.swt.events.ModifyEvent;
-import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
@@ -46,11 +44,9 @@ import org.eclipse.jface.dialogs.IMessageProvider;
 import org.eclipse.jface.layout.PixelConverter;
 import org.eclipse.jface.layout.TableColumnLayout;
 import org.eclipse.jface.preference.PreferencePage;
-import org.eclipse.jface.viewers.CheckStateChangedEvent;
 import org.eclipse.jface.viewers.CheckboxTableViewer;
 import org.eclipse.jface.viewers.ColumnLayoutData;
 import org.eclipse.jface.viewers.ColumnWeightData;
-import org.eclipse.jface.viewers.ICheckStateListener;
 import org.eclipse.jface.viewers.ILabelProviderListener;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.ITableLabelProvider;
@@ -266,12 +262,7 @@ class HyperlinkDetectorsConfigurationBlock implements IPreferenceConfigurationBl
 			}
 		});
 
-		fHyperlinkDefaultKeyModifierText.addModifyListener(new ModifyListener() {
-			@Override
-			public void modifyText(ModifyEvent e) {
-				handleHyperlinkDefaultKeyModifierModified();
-			}
-		});
+		fHyperlinkDefaultKeyModifierText.addModifyListener(e -> handleHyperlinkDefaultKeyModifierModified());
 
 		addFiller(composite, 2);
 
@@ -318,14 +309,11 @@ class HyperlinkDetectorsConfigurationBlock implements IPreferenceConfigurationBl
 		fHyperlinkDetectorsViewer= new CheckboxTableViewer(hyperlinkDetectorTable);
 		fHyperlinkDetectorsViewer.setUseHashlookup(true);
 
-		fHyperlinkDetectorsViewer.addCheckStateListener(new ICheckStateListener() {
-			@Override
-			public void checkStateChanged(CheckStateChangedEvent event) {
-				String id= ((ListItem)event.getElement()).id;
-				if (id == null)
-					return;
-				fStore.setValue(id, !event.getChecked());
-			}
+		fHyperlinkDetectorsViewer.addCheckStateListener(event -> {
+			String id= ((ListItem) event.getElement()).id;
+			if (id == null)
+				return;
+			fStore.setValue(id, !event.getChecked());
 		});
 
 		fHyperlinkDetectorsViewer.setLabelProvider(new ItemLabelProvider());
@@ -380,12 +368,7 @@ class HyperlinkDetectorsConfigurationBlock implements IPreferenceConfigurationBl
 			}
 		});
 
-		fHyperlinkKeyModifierText.addModifyListener(new ModifyListener() {
-			@Override
-			public void modifyText(ModifyEvent e) {
-				handleHyperlinkKeyModifierModified();
-			}
-		});
+		fHyperlinkKeyModifierText.addModifyListener(e -> handleHyperlinkKeyModifierModified());
 
 		return composite;
 	}
@@ -435,13 +418,10 @@ class HyperlinkDetectorsConfigurationBlock implements IPreferenceConfigurationBl
 		textControl.setLayoutData(gd);
 		textControl.setTextLimit(textLimit);
 
-		textControl.addModifyListener(new ModifyListener() {
-			@Override
-			public void modifyText(ModifyEvent e) {
-				String value= textControl.getText();
-				if (key != null)
-					fStore.setValue(key, value);
-			}
+		textControl.addModifyListener(e -> {
+			String value= textControl.getText();
+			if (key != null)
+				fStore.setValue(key, value);
 		});
 
 		return new Control[] {labelControl, textControl};
@@ -525,14 +505,11 @@ class HyperlinkDetectorsConfigurationBlock implements IPreferenceConfigurationBl
 			listModelItems.add(new ListItem(desc.getId(), desc.getName(), target.getName(), modifierKeys));
 		}
 
-		Comparator<ListItem> comparator= new Comparator<ListItem>() {
-			@Override
-			public int compare(ListItem o1, ListItem o2) {
-				String label1= o1.name;
-				String label2= o2.name;
-				return Collator.getInstance().compare(label1, label2);
+		Comparator<ListItem> comparator= (o1, o2) -> {
+			String label1= o1.name;
+			String label2= o2.name;
+			return Collator.getInstance().compare(label1, label2);
 
-			}
 		};
 		Collections.sort(listModelItems, comparator);
 

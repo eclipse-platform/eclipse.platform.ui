@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 IBM Corporation and others.
+ * Copyright (c) 2000, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -37,12 +37,8 @@ import org.eclipse.jface.text.templates.TemplateVariableResolver;
  */
 final class TemplateVariableProcessor implements IContentAssistProcessor {
 
-	private static Comparator<TemplateVariableProposal> fgTemplateVariableProposalComparator= new Comparator<TemplateVariableProposal>() {
-		@Override
-		public int compare(TemplateVariableProposal proposal0, TemplateVariableProposal proposal1) {
-			return proposal0.getDisplayString().compareTo(proposal1.getDisplayString());
-		}
-	};
+	private static Comparator<TemplateVariableProposal> fgTemplateVariableProposalComparator = (proposal0,
+			proposal1) -> proposal0.getDisplayString().compareTo(proposal1.getDisplayString());
 
 
 	/** the context type */

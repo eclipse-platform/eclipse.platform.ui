@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 IBM Corporation and others.
+ * Copyright (c) 2000, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -233,16 +233,13 @@ public final class RulerColumnRegistry {
 			}
 		}
 
-		Comparator<RulerColumnDescriptor> gravityComp= new Comparator<RulerColumnDescriptor>() {
-			@Override
-			public int compare(RulerColumnDescriptor o1, RulerColumnDescriptor o2) {
-				float diff= o1.getPlacement().getGravity() - o2.getPlacement().getGravity();
-				if (diff == 0)
-					return 0;
-				if (diff < 0)
-					return -1;
-				return 1;
-			}
+		Comparator<RulerColumnDescriptor> gravityComp = (o1, o2) -> {
+			float diff = o1.getPlacement().getGravity() - o2.getPlacement().getGravity();
+			if (diff == 0)
+				return 0;
+			if (diff < 0)
+				return -1;
+			return 1;
 		};
 
 		/* Topological sort - always select the source with the least gravity */
