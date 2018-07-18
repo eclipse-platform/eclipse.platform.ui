@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -89,14 +89,11 @@ public class FileBuffersForWorkspaceFiles extends FileBufferFunctions {
 	protected boolean modifyUnderlyingFile() throws Exception {
 		IFileStore fileStore= FileBuffers.getFileStoreAtLocation(getPath());
 		assertTrue(fileStore.fetchInfo().exists());
-		OutputStream out= fileStore.openOutputStream(EFS.NONE, null);
-		try {
+		try (OutputStream out= fileStore.openOutputStream(EFS.NONE, null)) {
 			out.write("Changed content of workspace file".getBytes());
 			out.flush();
 		} catch (IOException x) {
 			fail();
-		} finally {
-			out.close();
 		}
 		IFileInfo fileInfo= fileStore.fetchInfo();
 		fileInfo.setLastModified(1000);

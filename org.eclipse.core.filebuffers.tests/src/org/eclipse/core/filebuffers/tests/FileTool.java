@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 IBM Corporation and others.
+ * Copyright (c) 2000, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -102,17 +102,9 @@ public class FileTool {
 	 */
 	public static void transferData(File source, File destination) throws IOException {
 		destination.getParentFile().mkdirs();
-		InputStream is = null;
-		OutputStream os = null;
-		try {
-			is = new FileInputStream(source);
-			os = new FileOutputStream(destination);
+		try (InputStream is= new FileInputStream(source);
+				OutputStream os= new FileOutputStream(destination)) {
 			transferData(is, os);
-		} finally {
-			if(os != null)
-				os.close();
-			if(is != null)
-				is.close();
 		}
 	}
 
@@ -196,14 +188,8 @@ public class FileTool {
 	}
 
 	public static void write(String fileName, StringBuffer content) throws IOException {
-		Writer writer= new FileWriter(fileName);
-		try {
+		try (Writer writer= new FileWriter(fileName)) {
 			writer.write(content.toString());
-		} finally {
-			try {
-				writer.close();
-			} catch (IOException e) {
-			}
 		}
 	}
 
