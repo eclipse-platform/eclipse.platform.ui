@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Stefan Winkler <stefan@winklerweb.net> - Bug 537099
  ******************************************************************************/
 
 package org.eclipse.ui.internal.views.markers;
@@ -106,9 +107,8 @@ class UIUpdateJob extends WorkbenchJob {
 					//do not expand if canceled
 					view.reexpandCategories();
 				}
-				if (view.getBuilder().readChangeFlags()[0]) {
-					// indicate changes
-				}
+				// clear the pending change flags
+				view.getBuilder().resetChangeFlags();
 			}
 
 			// show new counts

@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Stefan Winkler <stefan@winklerweb.net> - Bug 537099
  *******************************************************************************/
 package org.eclipse.ui.internal.views.markers;
 
@@ -620,9 +621,17 @@ public class CachedMarkerBuilder {
 		boolean [] changes=new boolean[changeFlags.length];
 		for (int i = 0; i < changes.length; i++) {
 			changes[i]=changeFlags[i];
-			changeFlags[i]=false;
 		}
 		return changes;
+	}
+
+	/**
+	 * Reset change flags to false
+	 */
+	void resetChangeFlags() {
+		for (int i = 0; i < changeFlags.length; i++) {
+			this.changeFlags[i] = false;
+		}
 	}
 
 	/**
