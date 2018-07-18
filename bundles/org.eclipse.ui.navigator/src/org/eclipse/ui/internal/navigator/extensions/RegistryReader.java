@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 IBM Corporation and others.
+ * Copyright (c) 2000, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -115,13 +115,10 @@ public abstract class RegistryReader {
 		// dependent in the order listed in the XML file.
 		IExtension[] sortedExtension = new IExtension[extensions.length];
 		System.arraycopy(extensions, 0, sortedExtension, 0, extensions.length);
-		Comparator<IExtension> comparer = new Comparator<IExtension>() {
-			@Override
-			public int compare(IExtension arg0, IExtension arg1) {
-				String s1 = arg0.getContributor().getName();
-				String s2 = arg1.getContributor().getName();
-				return s1.compareToIgnoreCase(s2);
-			}
+		Comparator<IExtension> comparer = (arg0, arg1) -> {
+			String s1 = arg0.getContributor().getName();
+			String s2 = arg1.getContributor().getName();
+			return s1.compareToIgnoreCase(s2);
 		};
 		Collections.sort(Arrays.asList(sortedExtension), comparer);
 		return sortedExtension;

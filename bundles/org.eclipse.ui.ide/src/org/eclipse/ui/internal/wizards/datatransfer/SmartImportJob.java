@@ -184,15 +184,12 @@ public class SmartImportJob extends Job {
 				SubMonitor loopMonitor = SubMonitor.convert(monitor,
 						DataTransferMessages.SmartImportJob_configuringSelectedDirectories,
 						directoriesToImport.size() * (configureProjects ? 3 : 2) + 1);
-				Comparator<File> rootToLeafComparator = new Comparator<File>() {
-					@Override
-					public int compare(File arg0, File arg1) {
-						int lengthDiff = arg0.getAbsolutePath().length() - arg1.getAbsolutePath().length();
-						if (lengthDiff != 0) {
-							return lengthDiff;
-						}
-						return arg0.compareTo(arg1);
+				Comparator<File> rootToLeafComparator = (arg0, arg1) -> {
+					int lengthDiff = arg0.getAbsolutePath().length() - arg1.getAbsolutePath().length();
+					if (lengthDiff != 0) {
+						return lengthDiff;
 					}
+					return arg0.compareTo(arg1);
 				};
 				SortedSet<File> directories = new TreeSet<>(rootToLeafComparator);
 				directories.addAll(this.directoriesToImport);
@@ -255,14 +252,11 @@ public class SmartImportJob extends Job {
 					importProjectAndChildrenRecursively(this.rootProject, isRootANewProject, subMonitor);
 
 					if (isRootANewProject && rootProjectWorthBeingRemoved()) {
-						Display.getDefault().syncExec(new Runnable() {
-							@Override
-							public void run() {
-								discardRootProject = MessageDialog.openQuestion(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(),
+						Display.getDefault()
+								.syncExec(() -> discardRootProject = MessageDialog.openQuestion(
+										PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(),
 										DataTransferMessages.SmartImportJob_discardRootProject_title,
-										DataTransferMessages.SmartImportJob_discardRootProject_description);
-							}
-						});
+										DataTransferMessages.SmartImportJob_discardRootProject_description));
 						if (this.discardRootProject) {
 							this.rootProject.delete(false, true, subMonitor);
 							if (isRootANewProject) {

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2001, 2016 IBM Corporation and others.
+ * Copyright (c) 2001, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,7 +13,6 @@ package org.eclipse.ui.internal.views.properties.tabbed.view;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 
@@ -90,7 +89,7 @@ public class TabbedPropertyRegistry {
 
 	protected IConfigurationElement contributorConfigurationElement;
 
-	protected List propertyCategories;
+	protected List<String> propertyCategories;
 
 	protected ILabelProvider labelProvider;
 
@@ -113,7 +112,7 @@ public class TabbedPropertyRegistry {
 	 */
 	protected TabbedPropertyRegistry(String id) {
 		this.contributorId = id;
-		this.propertyCategories = new ArrayList();
+		this.propertyCategories = new ArrayList<>();
 		IConfigurationElement[] extensions = getConfigurationElements(EXTPT_CONTRIBUTOR);
 		for (IConfigurationElement configurationElement : extensions) {
 			String contributor = configurationElement
@@ -405,21 +404,13 @@ public class TabbedPropertyRegistry {
 	/**
 	 * Sorts the tab descriptors in the given list according to category.
 	 */
-	protected List sortTabDescriptorsByCategory(List descriptors) {
-		Collections.sort(descriptors, new Comparator() {
-
-			@Override
-			public int compare(Object arg0, Object arg1) {
-				TabDescriptor one = (TabDescriptor) arg0;
-				TabDescriptor two = (TabDescriptor) arg1;
-				String categoryOne = one.getCategory();
-				String categoryTwo = two.getCategory();
-				int categoryOnePosition = getIndex(
-						propertyCategories.toArray(), categoryOne);
-				int categoryTwoPosition = getIndex(
-						propertyCategories.toArray(), categoryTwo);
-				return categoryOnePosition - categoryTwoPosition;
-			}
+	protected List<TabDescriptor> sortTabDescriptorsByCategory(List<TabDescriptor> descriptors) {
+		Collections.sort(descriptors, (one, two) -> {
+			String categoryOne = one.getCategory();
+			String categoryTwo = two.getCategory();
+			int categoryOnePosition = getIndex(propertyCategories.toArray(), categoryOne);
+			int categoryTwoPosition = getIndex(propertyCategories.toArray(), categoryTwo);
+			return categoryOnePosition - categoryTwoPosition;
 		});
 		return descriptors;
 	}
@@ -427,43 +418,37 @@ public class TabbedPropertyRegistry {
 	/**
 	 * Sorts the tab descriptors in the given list according to afterTab.
 	 */
-	protected List sortTabDescriptorsByAfterTab(List tabs) {
+	protected List<TabDescriptor> sortTabDescriptorsByAfterTab(List<TabDescriptor> tabs) {
 		if (tabs.isEmpty() || propertyCategories == null) {
 			return tabs;
 		}
-		List sorted = new ArrayList();
+		List<TabDescriptor> sorted = new ArrayList<>();
 		int categoryIndex = 0;
 		for (int i = 0; i < propertyCategories.size(); i++) {
-			List categoryList = new ArrayList();
-			String category = (String) propertyCategories.get(i);
+			List<TabDescriptor> categoryList = new ArrayList<>();
+			String category = propertyCategories.get(i);
 			int topOfCategory = categoryIndex;
 			int endOfCategory = categoryIndex;
 			while (endOfCategory < tabs.size() &&
-					((TabDescriptor) tabs.get(endOfCategory)).getCategory()
+					tabs.get(endOfCategory).getCategory()
 							.equals(category)) {
 				endOfCategory++;
 			}
 			for (int j = topOfCategory; j < endOfCategory; j++) {
-				TabDescriptor tab = (TabDescriptor) tabs.get(j);
+				TabDescriptor tab = tabs.get(j);
 				if (tab.getAfterTab().equals(TOP)) {
 					categoryList.add(0, tabs.get(j));
 				} else {
 					categoryList.add(tabs.get(j));
 				}
 			}
-			Collections.sort(categoryList, new Comparator() {
-
-				@Override
-				public int compare(Object arg0, Object arg1) {
-					TabDescriptor one = (TabDescriptor) arg0;
-					TabDescriptor two = (TabDescriptor) arg1;
-					if (two.getAfterTab().equals(one.getId())) {
-						return -1;
-					} else if (one.getAfterTab().equals(two.getId())) {
-						return 1;
-					} else {
-						return 0;
-					}
+			Collections.sort(categoryList, (one, two) -> {
+				if (two.getAfterTab().equals(one.getId())) {
+					return -1;
+				} else if (one.getAfterTab().equals(two.getId())) {
+					return 1;
+				} else {
+					return 0;
 				}
 			});
 			for (int j = 0; j < categoryList.size(); j++) {

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2015 IBM Corporation and others.
+ * Copyright (c) 2006, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,7 +13,6 @@ package org.eclipse.ui.internal.navigator.filters;
 
 import java.util.ArrayDeque;
 import java.util.Arrays;
-import java.util.Comparator;
 import java.util.Deque;
 
 import org.eclipse.core.runtime.Assert;
@@ -149,14 +148,9 @@ public class FilterActionGroup extends ActionGroup implements IMementoAware {
 			selectFiltersAction.setHoverImageDescriptor(selectFiltersIcon);
 
 			filtersMenu = new MenuManager(CommonNavigatorMessages.FilterActionGroup_RecentFilters);
-			menuListener = new IMenuListener() {
-
-				@Override
-				public void menuAboutToShow(IMenuManager manager) {
-					filtersMenu.removeAll();
-					addLRUFilterActions(filtersMenu);
-				}
-
+			menuListener = manager -> {
+				filtersMenu.removeAll();
+				addLRUFilterActions(filtersMenu);
 			};
 		}
 	}
@@ -170,13 +164,7 @@ public class FilterActionGroup extends ActionGroup implements IMementoAware {
 				.getFilterService();
 		ICommonFilterDescriptor[] filterDescriptors = lruFilterDescriptorStack
 				.toArray(new ICommonFilterDescriptor[lruFilterDescriptorStack.size()]);
-		Arrays.sort(filterDescriptors, new Comparator<ICommonFilterDescriptor>() {
-
-			@Override
-			public int compare(ICommonFilterDescriptor o1, ICommonFilterDescriptor o2) {
-				return o1.getName().compareTo(o2.getName());
-			}
-		});
+		Arrays.sort(filterDescriptors, (o1, o2) -> o1.getName().compareTo(o2.getName()));
 
 		for (ICommonFilterDescriptor filterDescriptor : filterDescriptors) {
 			manager.add(new ToggleFilterAction(commonViewer, filterService, filterDescriptor));

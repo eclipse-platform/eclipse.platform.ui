@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2015 IBM Corporation and others.
+ * Copyright (c) 2006, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,7 +12,6 @@
 package org.eclipse.ui.internal.navigator.dnd;
 
 import java.util.Arrays;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
@@ -174,21 +173,16 @@ public class NavigatorDnDService implements INavigatorDnDService {
 	}
 
 	private CommonDropAdapterAssistant[] sortAssistants(CommonDropAdapterAssistant[] array) {
-		Arrays.sort(array, new Comparator() {
-			@Override
-			public int compare(Object arg0, Object arg1) {
-				CommonDropAdapterAssistant a = (CommonDropAdapterAssistant) arg0;
-				CommonDropAdapterAssistant b = (CommonDropAdapterAssistant) arg1;
-				// This is to ensure that the navigator resources drop assistant will
-				// always be first on the list of drop assistant, if a conflict ever
-				// occurs.
-				String id = "org.eclipse.ui.navigator.resources."; //$NON-NLS-1$
-				if (a.getClass().getName().startsWith(id))
-					return -1;
-				if (b.getClass().getName().startsWith(id))
-					return 1;
-				return a.getClass().getName().compareTo(b.getClass().getName());
-			}
+		Arrays.sort(array, (a, b) -> {
+			// This is to ensure that the navigator resources drop assistant will
+			// always be first on the list of drop assistant, if a conflict ever
+			// occurs.
+			String id = "org.eclipse.ui.navigator.resources."; //$NON-NLS-1$
+			if (a.getClass().getName().startsWith(id))
+				return -1;
+			if (b.getClass().getName().startsWith(id))
+				return 1;
+			return a.getClass().getName().compareTo(b.getClass().getName());
 		});
 		return array;
 	}

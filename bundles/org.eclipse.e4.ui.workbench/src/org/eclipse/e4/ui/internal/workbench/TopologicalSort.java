@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2015 Manumitting Technologies Inc and others.
+ * Copyright (c) 2015, 2018 Manumitting Technologies Inc and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -131,17 +131,14 @@ public abstract class TopologicalSort<T, ID> {
 		// higher in-degree from some other non-cyclic node
 		int resultsIndex = 0;
 		List<ID> sortedByOutdegree = new ArrayList<>(requires.keySet());
-		Comparator<ID> outdegreeSorter = new Comparator<ID>() {
-			@Override
-			public int compare(ID o1, ID o2) {
-				assert requires.containsKey(o1) && requires.containsKey(o2);
-				int comparison = requires.get(o1).size() - requires.get(o2).size();
-				if (comparison == 0) {
-					// Select the node whose removal would have the greatest effect
-					return depends.get(o2).size() - depends.get(o1).size();
-				}
-				return comparison;
+		Comparator<ID> outdegreeSorter = (o1, o2) -> {
+			assert requires.containsKey(o1) && requires.containsKey(o2);
+			int comparison = requires.get(o1).size() - requires.get(o2).size();
+			if (comparison == 0) {
+				// Select the node whose removal would have the greatest effect
+				return depends.get(o2).size() - depends.get(o1).size();
 			}
+			return comparison;
 		};
 		Collections.sort(sortedByOutdegree, outdegreeSorter);
 
