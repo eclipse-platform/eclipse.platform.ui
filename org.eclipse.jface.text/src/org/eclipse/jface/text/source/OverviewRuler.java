@@ -22,13 +22,9 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.events.ControlAdapter;
 import org.eclipse.swt.events.ControlEvent;
-import org.eclipse.swt.events.DisposeEvent;
-import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
-import org.eclipse.swt.events.MouseMoveListener;
 import org.eclipse.swt.events.MouseTrackAdapter;
-import org.eclipse.swt.events.MouseWheelListener;
 import org.eclipse.swt.events.PaintEvent;
 import org.eclipse.swt.events.PaintListener;
 import org.eclipse.swt.graphics.Color;
@@ -581,20 +577,14 @@ public class OverviewRuler implements IOverviewRulerExtension, IOverviewRuler {
 
 		fCanvas= new Canvas(parent, SWT.NO_BACKGROUND);
 
-		fCanvas.addPaintListener(new PaintListener() {
-			@Override
-			public void paintControl(PaintEvent event) {
-				if (fTextViewer != null)
-					doubleBufferPaint(event.gc);
-			}
+		fCanvas.addPaintListener(event -> {
+			if (fTextViewer != null)
+				doubleBufferPaint(event.gc);
 		});
 
-		fCanvas.addDisposeListener(new DisposeListener() {
-			@Override
-			public void widgetDisposed(DisposeEvent event) {
-				handleDispose();
-				fTextViewer= null;
-			}
+		fCanvas.addDisposeListener(event -> {
+			handleDispose();
+			fTextViewer= null;
 		});
 
 		fCanvas.addMouseListener(new MouseAdapter() {
@@ -604,19 +594,9 @@ public class OverviewRuler implements IOverviewRulerExtension, IOverviewRuler {
 			}
 		});
 
-		fCanvas.addMouseMoveListener(new MouseMoveListener() {
-			@Override
-			public void mouseMove(MouseEvent event) {
-				handleMouseMove(event);
-			}
-		});
+		fCanvas.addMouseMoveListener(event -> handleMouseMove(event));
 
-		fCanvas.addMouseWheelListener(new MouseWheelListener() {
-			@Override
-			public void mouseScrolled(MouseEvent e) {
-				handleMouseScrolled(e);
-			}
-		});
+		fCanvas.addMouseWheelListener(e -> handleMouseScrolled(e));
 
 		if (fTextViewer != null) {
 			fTextViewer.addTextListener(fInternalListener);

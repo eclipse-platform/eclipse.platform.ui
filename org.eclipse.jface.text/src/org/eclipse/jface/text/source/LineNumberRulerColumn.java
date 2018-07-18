@@ -23,14 +23,10 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.events.ControlAdapter;
 import org.eclipse.swt.events.ControlEvent;
-import org.eclipse.swt.events.DisposeEvent;
-import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.MouseListener;
 import org.eclipse.swt.events.MouseMoveListener;
 import org.eclipse.swt.events.MouseWheelListener;
-import org.eclipse.swt.events.PaintEvent;
-import org.eclipse.swt.events.PaintListener;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.FontData;
@@ -629,21 +625,15 @@ public class LineNumberRulerColumn implements IVerticalRulerColumn {
 		fCanvas.setBackground(getBackground(fCanvas.getDisplay()));
 		fCanvas.setForeground(fForeground);
 
-		fCanvas.addPaintListener(new PaintListener() {
-			@Override
-			public void paintControl(PaintEvent event) {
-				if (fCachedTextViewer != null)
-					doubleBufferPaint(event.gc);
-			}
+		fCanvas.addPaintListener(event -> {
+			if (fCachedTextViewer != null)
+				doubleBufferPaint(event.gc);
 		});
 
-		fCanvas.addDisposeListener(new DisposeListener() {
-			@Override
-			public void widgetDisposed(DisposeEvent e) {
-				handleDispose();
-				fCachedTextViewer= null;
-				fCachedTextWidget= null;
-			}
+		fCanvas.addDisposeListener(e -> {
+			handleDispose();
+			fCachedTextViewer= null;
+			fCachedTextWidget= null;
 		});
 
 		fMouseHandler= new MouseHandler();

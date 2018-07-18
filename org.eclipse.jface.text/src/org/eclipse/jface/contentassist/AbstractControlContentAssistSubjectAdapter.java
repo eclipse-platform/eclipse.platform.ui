@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -17,8 +17,6 @@ import java.util.Set;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.VerifyKeyListener;
-import org.eclipse.swt.events.DisposeEvent;
-import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.KeyListener;
 import org.eclipse.swt.events.VerifyEvent;
@@ -327,36 +325,30 @@ public abstract class AbstractControlContentAssistSubjectAdapter implements ICon
 		} else {
 			if (fControlDecoration == null) {
 				fControlDecoration= new ControlDecoration(getControl(), (SWT.TOP | SWT.LEFT));
-				getControl().addDisposeListener(new DisposeListener() {
-					@Override
-					public void widgetDisposed(DisposeEvent e) {
-						if (fCueLabelProvider != null) {
-							fCueLabelProvider.dispose();
-							fCueLabelProvider= null;
-						}
-						if (fControlDecoration != null) {
-							fControlDecoration.dispose();
-							fControlDecoration= null;
-						}
-						if (fCachedDefaultCueImage != null) {
-							fCachedDefaultCueImage.dispose();
-							fCachedDefaultCueImage= null;
-						}
+				getControl().addDisposeListener(e -> {
+					if (fCueLabelProvider != null) {
+						fCueLabelProvider.dispose();
+						fCueLabelProvider= null;
+					}
+					if (fControlDecoration != null) {
+						fControlDecoration.dispose();
+						fControlDecoration= null;
+					}
+					if (fCachedDefaultCueImage != null) {
+						fCachedDefaultCueImage.dispose();
+						fCachedDefaultCueImage= null;
 					}
 				});
 				fControlDecoration.setShowHover(true);
 				fControlDecoration.setShowOnlyOnFocus(true);
 			}
 
-			ILabelProviderListener listener= new ILabelProviderListener() {
-				@Override
-				public void labelProviderChanged(LabelProviderChangedEvent event) {
-					fControlDecoration.setDescriptionText(labelProvider.getText(getControl()));
-					Image image= labelProvider.getImage(getControl());
-					if (image == null)
-						image= getDefaultCueImage();
-					fControlDecoration.setImage(image);
-				}
+			ILabelProviderListener listener= event -> {
+				fControlDecoration.setDescriptionText(labelProvider.getText(getControl()));
+				Image image= labelProvider.getImage(getControl());
+				if (image == null)
+					image= getDefaultCueImage();
+				fControlDecoration.setImage(image);
 			};
 			labelProvider.addListener(listener);
 			//initialize control decoration:

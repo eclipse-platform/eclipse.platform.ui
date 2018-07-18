@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2010 IBM Corporation and others.
+ * Copyright (c) 2000, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -16,8 +16,6 @@ package org.eclipse.ui.texteditor;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.ScrolledComposite;
 import org.eclipse.swt.custom.StyledText;
-import org.eclipse.swt.events.DisposeEvent;
-import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -69,29 +67,21 @@ public class InfoForm {
 		fForegroundColor= display.getSystemColor(SWT.COLOR_LIST_FOREGROUND);
 		fSeparatorColor= new Color(display, 152, 170, 203);
 
-		fPropertyChangeListener= new IPropertyChangeListener() {
-			@Override
-			public void propertyChange(PropertyChangeEvent event) {
-				handlePropertyChange(event);
-			}
-		};
+		fPropertyChangeListener = event -> handlePropertyChange(event);
 		JFaceResources.getFontRegistry().addListener(fPropertyChangeListener);
 
 		fScrolledComposite= new ScrolledComposite(parent, SWT.H_SCROLL | SWT.V_SCROLL);
 		fScrolledComposite.setAlwaysShowScrollBars(false);
 		fScrolledComposite.setExpandHorizontal(true);
 		fScrolledComposite.setExpandVertical(true);
-		fScrolledComposite.addDisposeListener(new DisposeListener() {
-			@Override
-			public void widgetDisposed(DisposeEvent e) {
-				JFaceResources.getFontRegistry().removeListener(fPropertyChangeListener);
-				fScrolledComposite= null;
-				fSeparatorColor.dispose();
-				fSeparatorColor= null;
-				fHeader= null;
-				fBanner= null;
-				fText= null;
-			}
+		fScrolledComposite.addDisposeListener(e -> {
+			JFaceResources.getFontRegistry().removeListener(fPropertyChangeListener);
+			fScrolledComposite = null;
+			fSeparatorColor.dispose();
+			fSeparatorColor = null;
+			fHeader = null;
+			fBanner = null;
+			fText = null;
 		});
 
 		Composite composite= createComposite(fScrolledComposite);

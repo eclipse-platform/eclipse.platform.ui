@@ -19,8 +19,6 @@ import org.eclipse.swt.custom.StyleRange;
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.events.ControlEvent;
 import org.eclipse.swt.events.ControlListener;
-import org.eclipse.swt.events.DisposeEvent;
-import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.KeyListener;
 import org.eclipse.swt.events.SelectionEvent;
@@ -342,13 +340,8 @@ class CompletionProposalPopup2 implements IContentAssistListener2 {
 		});
 
 		fPopupCloser.install(fContentAssistant, fProposalTable);
-
-		fProposalShell.addDisposeListener(new DisposeListener() {
-			@Override
-			public void widgetDisposed(DisposeEvent e) {
-				unregister(); // but don't dispose the shell, since we're being called from its disposal event!
-			}
-		});
+		// but don't dispose the shell, since we're being called from its disposal event!
+		fProposalShell.addDisposeListener(e -> unregister());
 
 		fProposalTable.setHeaderVisible(false);
 		fContentAssistant.addToLayout(this, fProposalShell, ContentAssistant2.LayoutManager.LAYOUT_PROPOSAL_SELECTOR, fContentAssistant.getSelectionOffset());

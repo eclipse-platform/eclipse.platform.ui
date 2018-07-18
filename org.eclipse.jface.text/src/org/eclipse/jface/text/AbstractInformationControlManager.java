@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2010 IBM Corporation and others.
+ * Copyright (c) 2000, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,7 +14,6 @@ package org.eclipse.jface.text;
 
 
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Point;
@@ -676,12 +675,7 @@ abstract public class AbstractInformationControlManager {
 	 */
 	private DisposeListener getSubjectControlDisposeListener() {
 		if (fSubjectControlDisposeListener == null) {
-			fSubjectControlDisposeListener= new DisposeListener() {
-				@Override
-				public void widgetDisposed(DisposeEvent e) {
-					handleSubjectControlDisposed();
-				}
-			};
+			fSubjectControlDisposeListener= e -> handleSubjectControlDisposed();
 		}
 		return fSubjectControlDisposeListener;
 	}
@@ -829,12 +823,7 @@ abstract public class AbstractInformationControlManager {
 
 		if (fInformationControl == null) {
 			fInformationControl= creator.createInformationControl(fSubjectControl.getShell());
-			fInformationControl.addDisposeListener(new DisposeListener() {
-				@Override
-				public void widgetDisposed(DisposeEvent e) {
-					handleInformationControlDisposed();
-				}
-			});
+			fInformationControl.addDisposeListener(e -> handleInformationControlDisposed());
 
 			if (fInformationControlCloser != null)
 				fInformationControlCloser.setInformationControl(fInformationControl);

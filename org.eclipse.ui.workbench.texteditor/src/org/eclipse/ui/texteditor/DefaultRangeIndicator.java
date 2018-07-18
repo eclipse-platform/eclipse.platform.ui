@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,8 +13,6 @@ package org.eclipse.ui.texteditor;
 
 
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.DisposeEvent;
-import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Image;
@@ -103,13 +101,10 @@ public class DefaultRangeIndicator extends Annotation implements IAnnotationPres
 		if (fImage == null) {
 			fImage= createImage(control.getDisplay(), control.getSize(), rangeIndicatorColor);
 
-			control.addDisposeListener(new DisposeListener() {
-				@Override
-				public void widgetDisposed(DisposeEvent e) {
-					if (fImage != null && !fImage.isDisposed()) {
-						fImage.dispose();
-						fImage = null;
-					}
+			control.addDisposeListener(e -> {
+				if (fImage != null && !fImage.isDisposed()) {
+					fImage.dispose();
+					fImage = null;
 				}
 			});
 		} else {

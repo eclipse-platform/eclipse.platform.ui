@@ -33,11 +33,8 @@ import com.ibm.icu.text.Collator;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StyledText;
-import org.eclipse.swt.events.DisposeEvent;
-import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.events.FocusEvent;
 import org.eclipse.swt.events.FocusListener;
-import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -51,10 +48,8 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Table;
@@ -70,7 +65,6 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.GroupMarker;
 import org.eclipse.jface.action.IAction;
-import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
@@ -84,19 +78,13 @@ import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.util.BidiUtils;
-import org.eclipse.jface.viewers.CheckStateChangedEvent;
 import org.eclipse.jface.viewers.CheckboxTableViewer;
 import org.eclipse.jface.viewers.ColumnPixelData;
 import org.eclipse.jface.viewers.ColumnWeightData;
-import org.eclipse.jface.viewers.DoubleClickEvent;
 import org.eclipse.jface.viewers.IBaseLabelProvider;
-import org.eclipse.jface.viewers.ICheckStateListener;
-import org.eclipse.jface.viewers.IDoubleClickListener;
-import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.ITableLabelProvider;
 import org.eclipse.jface.viewers.LabelProvider;
-import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.Viewer;
@@ -105,10 +93,8 @@ import org.eclipse.jface.window.Window;
 
 import org.eclipse.jface.text.Document;
 import org.eclipse.jface.text.IDocument;
-import org.eclipse.jface.text.ITextListener;
 import org.eclipse.jface.text.ITextOperationTarget;
 import org.eclipse.jface.text.ITextViewer;
-import org.eclipse.jface.text.TextEvent;
 import org.eclipse.jface.text.contentassist.ContentAssistant;
 import org.eclipse.jface.text.contentassist.IContentAssistProcessor;
 import org.eclipse.jface.text.contentassist.IContentAssistant;
@@ -305,12 +291,7 @@ public abstract class TemplatePreferencePage extends PreferencePage implements I
 			parent.setLayout(layout);
 			parent.setLayoutData(new GridData(GridData.FILL_BOTH));
 
-			ModifyListener listener= new ModifyListener() {
-				@Override
-				public void modifyText(ModifyEvent e) {
-					doTextWidgetChanged(e.widget);
-				}
-			};
+			ModifyListener listener = e -> doTextWidgetChanged(e.widget);
 
 			if (fIsNameModifiable) {
 				createLabel(parent, TemplatesMessages.EditTemplateDialog_name);
@@ -509,20 +490,12 @@ public abstract class TemplatePreferencePage extends PreferencePage implements I
 			data.heightHint= convertHeightInCharsToPixels(nLines);
 			control.setLayoutData(data);
 
-			viewer.addTextListener(new ITextListener() {
-				@Override
-				public void textChanged(TextEvent event) {
-					if (event .getDocumentEvent() != null)
-						doSourceChanged(event.getDocumentEvent().getDocument());
-				}
+			viewer.addTextListener(event -> {
+				if (event.getDocumentEvent() != null)
+					doSourceChanged(event.getDocumentEvent().getDocument());
 			});
 
-			viewer.addSelectionChangedListener(new ISelectionChangedListener() {
-				@Override
-				public void selectionChanged(SelectionChangedEvent event) {
-					updateSelectionDependentActions();
-				}
-			});
+			viewer.addSelectionChangedListener(event -> updateSelectionDependentActions());
 
 			return viewer;
 		}
@@ -555,13 +528,7 @@ public abstract class TemplatePreferencePage extends PreferencePage implements I
 			final IHandlerService handlerService= PlatformUI.getWorkbench().getAdapter(IHandlerService.class);
 			final Expression expression= new ActiveShellExpression(fPatternEditor.getControl().getShell());
 
-			getShell().addDisposeListener(new DisposeListener() {
-
-				@Override
-				public void widgetDisposed(DisposeEvent e) {
-					handlerService.deactivateHandlers(handlerActivations);
-				}
-			});
+			getShell().addDisposeListener(e -> handlerService.deactivateHandlers(handlerActivations));
 
 			fPatternEditor.getTextWidget().addFocusListener(new FocusListener() {
 				@Override
@@ -615,12 +582,7 @@ public abstract class TemplatePreferencePage extends PreferencePage implements I
 			// create context menu
 			MenuManager manager= new MenuManager(null, null);
 			manager.setRemoveAllWhenShown(true);
-			manager.addMenuListener(new IMenuListener() {
-				@Override
-				public void menuAboutToShow(IMenuManager mgr) {
-					fillContextMenu(mgr);
-				}
-			});
+			manager.addMenuListener(mgr -> fillContextMenu(mgr));
 
 			StyledText text= fPatternEditor.getTextWidget();
 			Menu menu= manager.createContextMenu(text);
@@ -931,26 +893,13 @@ public abstract class TemplatePreferencePage extends PreferencePage implements I
 		table.setSortColumn(column1);
 		table.setSortDirection(viewerComparator.getDirection());
 
-		fTableViewer.addDoubleClickListener(new IDoubleClickListener() {
-			@Override
-			public void doubleClick(DoubleClickEvent e) {
-				edit();
-			}
-		});
+		fTableViewer.addDoubleClickListener(e -> edit());
 
-		fTableViewer.addSelectionChangedListener(new ISelectionChangedListener() {
-			@Override
-			public void selectionChanged(SelectionChangedEvent e) {
-				selectionChanged1();
-			}
-		});
+		fTableViewer.addSelectionChangedListener(e -> selectionChanged1());
 
-		fTableViewer.addCheckStateListener(new ICheckStateListener() {
-			@Override
-			public void checkStateChanged(CheckStateChangedEvent event) {
-				TemplatePersistenceData d= (TemplatePersistenceData) event.getElement();
-				d.setEnabled(event.getChecked());
-			}
+		fTableViewer.addCheckStateListener(event -> {
+			TemplatePersistenceData d = (TemplatePersistenceData) event.getElement();
+			d.setEnabled(event.getChecked());
 		});
 
 		BidiUtils.applyTextDirection(fTableViewer.getControl(), BidiUtils.BTD_DEFAULT);
@@ -965,76 +914,41 @@ public abstract class TemplatePreferencePage extends PreferencePage implements I
 		fAddButton= new Button(buttons, SWT.PUSH);
 		fAddButton.setText(TemplatesMessages.TemplatePreferencePage_new);
 		fAddButton.setLayoutData(getButtonGridData(fAddButton));
-		fAddButton.addListener(SWT.Selection, new Listener() {
-			@Override
-			public void handleEvent(Event e) {
-				add();
-			}
-		});
+		fAddButton.addListener(SWT.Selection, e -> add());
 
 		fEditButton= new Button(buttons, SWT.PUSH);
 		fEditButton.setText(TemplatesMessages.TemplatePreferencePage_edit);
 		fEditButton.setLayoutData(getButtonGridData(fEditButton));
-		fEditButton.addListener(SWT.Selection, new Listener() {
-			@Override
-			public void handleEvent(Event e) {
-				edit();
-			}
-		});
+		fEditButton.addListener(SWT.Selection, e -> edit());
 
 		fRemoveButton= new Button(buttons, SWT.PUSH);
 		fRemoveButton.setText(TemplatesMessages.TemplatePreferencePage_remove);
 		fRemoveButton.setLayoutData(getButtonGridData(fRemoveButton));
-		fRemoveButton.addListener(SWT.Selection, new Listener() {
-			@Override
-			public void handleEvent(Event e) {
-				remove();
-			}
-		});
+		fRemoveButton.addListener(SWT.Selection, e -> remove());
 
 		createSeparator(buttons);
 
 		fRestoreButton= new Button(buttons, SWT.PUSH);
 		fRestoreButton.setText(TemplatesMessages.TemplatePreferencePage_restore);
 		fRestoreButton.setLayoutData(getButtonGridData(fRestoreButton));
-		fRestoreButton.addListener(SWT.Selection, new Listener() {
-			@Override
-			public void handleEvent(Event e) {
-				restoreDeleted();
-			}
-		});
+		fRestoreButton.addListener(SWT.Selection, e -> restoreDeleted());
 
 		fRevertButton= new Button(buttons, SWT.PUSH);
 		fRevertButton.setText(TemplatesMessages.TemplatePreferencePage_revert);
 		fRevertButton.setLayoutData(getButtonGridData(fRevertButton));
-		fRevertButton.addListener(SWT.Selection, new Listener() {
-			@Override
-			public void handleEvent(Event e) {
-				revert();
-			}
-		});
+		fRevertButton.addListener(SWT.Selection, e -> revert());
 
 		createSeparator(buttons);
 
 		fImportButton= new Button(buttons, SWT.PUSH);
 		fImportButton.setText(TemplatesMessages.TemplatePreferencePage_import);
 		fImportButton.setLayoutData(getButtonGridData(fImportButton));
-		fImportButton.addListener(SWT.Selection, new Listener() {
-			@Override
-			public void handleEvent(Event e) {
-				import_();
-			}
-		});
+		fImportButton.addListener(SWT.Selection, e -> import_());
 
 		fExportButton= new Button(buttons, SWT.PUSH);
 		fExportButton.setText(TemplatesMessages.TemplatePreferencePage_export);
 		fExportButton.setLayoutData(getButtonGridData(fExportButton));
-		fExportButton.addListener(SWT.Selection, new Listener() {
-			@Override
-			public void handleEvent(Event e) {
-				export();
-			}
-		});
+		fExportButton.addListener(SWT.Selection, e -> export());
 
 		fPatternViewer= doCreateViewer(parent);
 

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2016 IBM Corporation and others.
+ * Copyright (c) 2008, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,15 +11,12 @@
 package org.eclipse.jface.text;
 
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.events.FocusEvent;
 import org.eclipse.swt.events.FocusListener;
 import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.MouseMoveListener;
-import org.eclipse.swt.events.PaintEvent;
-import org.eclipse.swt.events.PaintListener;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.FontData;
@@ -33,7 +30,6 @@ import org.eclipse.swt.widgets.Canvas;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
@@ -200,12 +196,7 @@ public abstract class AbstractInformationControl implements IInformationControl,
 
 		createStatusComposite(statusFieldText, toolBarManager, foreground, background);
 
-		addDisposeListener(new DisposeListener() {
-			@Override
-			public void widgetDisposed(DisposeEvent e) {
-				handleDispose();
-			}
-		});
+		addDisposeListener(e -> handleDispose());
 
 	}
 
@@ -290,36 +281,33 @@ public abstract class AbstractInformationControl implements IInformationControl,
 		data.widthHint= size;
 		data.heightHint= size;
 		resizer.setLayoutData(data);
-		resizer.addPaintListener(new PaintListener() {
-			@Override
-			public void paintControl(PaintEvent e) {
-				Point s= resizer.getSize();
-				int x= s.x - 2;
-				int y= s.y - 2;
-				int min= Math.min(x, y);
-				if (isWin) {
-					// draw dots
-					e.gc.setBackground(resizer.getDisplay().getSystemColor(SWT.COLOR_WIDGET_HIGHLIGHT_SHADOW));
-					int end= min - 1;
-					for (int i= 0; i <= 2; i++)
-						for (int j= 0; j <= 2 - i; j++)
-							e.gc.fillRectangle(end - 4 * i, end - 4 * j, 2, 2);
-					end--;
-					e.gc.setBackground(resizer.getDisplay().getSystemColor(SWT.COLOR_WIDGET_NORMAL_SHADOW));
-					for (int i= 0; i <= 2; i++)
-						for (int j= 0; j <= 2 - i; j++)
-							e.gc.fillRectangle(end - 4 * i, end - 4 * j, 2, 2);
+		resizer.addPaintListener(e -> {
+			Point s= resizer.getSize();
+			int x= s.x - 2;
+			int y= s.y - 2;
+			int min= Math.min(x, y);
+			if (isWin) {
+				// draw dots
+				e.gc.setBackground(resizer.getDisplay().getSystemColor(SWT.COLOR_WIDGET_HIGHLIGHT_SHADOW));
+				int end= min - 1;
+				for (int i1= 0; i1 <= 2; i1++)
+					for (int j1= 0; j1 <= 2 - i1; j1++)
+						e.gc.fillRectangle(end - 4 * i1, end - 4 * j1, 2, 2);
+				end--;
+				e.gc.setBackground(resizer.getDisplay().getSystemColor(SWT.COLOR_WIDGET_NORMAL_SHADOW));
+				for (int i2= 0; i2 <= 2; i2++)
+					for (int j2= 0; j2 <= 2 - i2; j2++)
+						e.gc.fillRectangle(end - 4 * i2, end - 4 * j2, 2, 2);
 
-				} else {
-					// draw diagonal lines
-					e.gc.setForeground(resizer.getDisplay().getSystemColor(SWT.COLOR_WIDGET_NORMAL_SHADOW));
-					for (int i= 1; i < min; i+= 4) {
-						e.gc.drawLine(i, y, x, i);
-					}
-					e.gc.setForeground(resizer.getDisplay().getSystemColor(SWT.COLOR_WIDGET_HIGHLIGHT_SHADOW));
-					for (int i= 2; i < min; i+= 4) {
-						e.gc.drawLine(i, y, x, i);
-					}
+			} else {
+				// draw diagonal lines
+				e.gc.setForeground(resizer.getDisplay().getSystemColor(SWT.COLOR_WIDGET_NORMAL_SHADOW));
+				for (int i3= 1; i3 < min; i3+= 4) {
+					e.gc.drawLine(i3, y, x, i3);
+				}
+				e.gc.setForeground(resizer.getDisplay().getSystemColor(SWT.COLOR_WIDGET_HIGHLIGHT_SHADOW));
+				for (int i4= 2; i4 < min; i4+= 4) {
+					e.gc.drawLine(i4, y, x, i4);
 				}
 			}
 		});
@@ -339,18 +327,15 @@ public abstract class AbstractInformationControl implements IInformationControl,
 				Point mouseLoc= resizer.toDisplay(e.x, e.y);
 				final int mouseX= mouseLoc.x;
 				final int mouseY= mouseLoc.y;
-				fResizeListener= new MouseMoveListener() {
-					@Override
-					public void mouseMove(MouseEvent e2) {
-						Point mouseLoc2= resizer.toDisplay(e2.x, e2.y);
-						int dx= mouseLoc2.x - mouseX;
-						int dy= mouseLoc2.y - mouseY;
-						if (isRTL) {
-							setLocation(new Point(shellX + dx, shellY));
-							setSize(shellWidth - dx, shellHeight + dy);
-						} else {
-							setSize(shellWidth + dx, shellHeight + dy);
-						}
+				fResizeListener= e2 -> {
+					Point mouseLoc2= resizer.toDisplay(e2.x, e2.y);
+					int dx= mouseLoc2.x - mouseX;
+					int dy= mouseLoc2.y - mouseY;
+					if (isRTL) {
+						setLocation(new Point(shellX + dx, shellY));
+						setSize(shellWidth - dx, shellHeight + dy);
+					} else {
+						setSize(shellWidth + dx, shellHeight + dy);
 					}
 				};
 				resizer.addMouseMoveListener(fResizeListener);
@@ -396,14 +381,11 @@ public abstract class AbstractInformationControl implements IInformationControl,
 				Point mouseLoc= control.toDisplay(e.x, e.y);
 				final int mouseX= mouseLoc.x;
 				final int mouseY= mouseLoc.y;
-				fMoveListener= new MouseMoveListener() {
-					@Override
-					public void mouseMove(MouseEvent e2) {
-						Point mouseLoc2= control.toDisplay(e2.x, e2.y);
-						int dx= mouseLoc2.x - mouseX;
-						int dy= mouseLoc2.y - mouseY;
-						fShell.setLocation(shellX + dx, shellY + dy);
-					}
+				fMoveListener= e2 -> {
+					Point mouseLoc2= control.toDisplay(e2.x, e2.y);
+					int dx= mouseLoc2.x - mouseX;
+					int dy= mouseLoc2.y - mouseY;
+					fShell.setLocation(shellX + dx, shellY + dy);
 				};
 				control.addMouseMoveListener(fMoveListener);
 			}
@@ -687,16 +669,12 @@ public abstract class AbstractInformationControl implements IInformationControl,
 	@Override
 	public void addFocusListener(final FocusListener listener) {
 		if (fFocusListeners.isEmpty()) {
-			fShellListener= new Listener() {
-
-				@Override
-				public void handleEvent(Event event) {
-					for (FocusListener focusListener : fFocusListeners) {
-						if (event.type == SWT.Activate) {
-							focusListener.focusGained(new FocusEvent(event));
-						} else {
-							focusListener.focusLost(new FocusEvent(event));
-						}
+			fShellListener= event -> {
+				for (FocusListener focusListener : fFocusListeners) {
+					if (event.type == SWT.Activate) {
+						focusListener.focusGained(new FocusEvent(event));
+					} else {
+						focusListener.focusLost(new FocusEvent(event));
 					}
 				}
 			};

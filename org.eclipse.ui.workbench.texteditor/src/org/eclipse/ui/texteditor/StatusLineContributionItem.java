@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2012 IBM Corporation and others.
+ * Copyright (c) 2000, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,8 +12,6 @@ package org.eclipse.ui.texteditor;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CLabel;
-import org.eclipse.swt.events.DisposeEvent;
-import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.MouseListener;
@@ -165,12 +163,7 @@ public class StatusLineContributionItem extends ContributionItem implements ISta
 		Label sep= new Label(parent, SWT.SEPARATOR);
 		fLabel= new CLabel(parent, SWT.SHADOW_NONE);
 
-		fLabel.addDisposeListener(new DisposeListener() {
-			@Override
-			public void widgetDisposed(DisposeEvent e) {
-				fMouseListener= null;
-			}
-		});
+		fLabel.addDisposeListener(e -> fMouseListener = null);
 		if (fActionHandler != null) {
 			fMouseListener= new Listener();
 			fLabel.addMouseListener(fMouseListener);
