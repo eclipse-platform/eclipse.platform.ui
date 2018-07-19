@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2015 IBM Corporation and others.
+ * Copyright (c) 2004, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -16,7 +16,6 @@ import java.math.BigInteger;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
-
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.model.IMemoryBlock;
 import org.eclipse.debug.core.model.IMemoryBlockExtension;
@@ -43,10 +42,8 @@ import org.eclipse.debug.internal.ui.views.memory.renderings.TableRenderingConte
 import org.eclipse.debug.internal.ui.views.memory.renderings.TableRenderingLabelProvider;
 import org.eclipse.debug.internal.ui.views.memory.renderings.TableRenderingLabelProviderEx;
 import org.eclipse.debug.internal.ui.views.memory.renderings.TableRenderingLine;
-
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.IDebugUIConstants;
-
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
@@ -54,10 +51,8 @@ import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.JFaceResources;
-
 import org.eclipse.jface.text.Document;
 import org.eclipse.jface.text.TextViewer;
-
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.viewers.CellEditor;
@@ -68,13 +63,10 @@ import org.eclipse.jface.viewers.IFontProvider;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.TextCellEditor;
-
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.custom.TableCursor;
 import org.eclipse.swt.custom.TableEditor;
-import org.eclipse.swt.events.DisposeEvent;
-import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.events.FocusAdapter;
 import org.eclipse.swt.events.FocusEvent;
 import org.eclipse.swt.events.KeyAdapter;
@@ -103,7 +95,6 @@ import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.swt.widgets.Text;
-
 import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.PropertyDialogAction;
@@ -867,12 +858,10 @@ public abstract class AbstractTableRendering extends AbstractBaseTableRendering 
 		createPopupMenu(fTableViewer.getControl());
 		createPopupMenu(fTableCursor);
 
-		fMenuListener = new IMenuListener() {
-					@Override
-					public void menuAboutToShow(IMenuManager manager) {
-						fillContextMenu(manager);
-						manager.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
-					}};
+		fMenuListener = manager -> {
+			fillContextMenu(manager);
+			manager.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
+		};
 		getPopupMenuManager().addMenuListener(fMenuListener);
 
 		// now the rendering is successfully created
@@ -1161,11 +1150,7 @@ public abstract class AbstractTableRendering extends AbstractBaseTableRendering 
 		};
 		fTableCursor.addKeyListener(fCursorKeyAdapter);
 
-		fCursorTraverseListener = new TraverseListener() {
-			@Override
-			public void keyTraversed(TraverseEvent e) {
-				handleCursorTraverseEvt(e);
-			}};
+		fCursorTraverseListener = e -> handleCursorTraverseEvt(e);
 
 		fTableCursor.addTraverseListener(fCursorTraverseListener);
 
@@ -1178,17 +1163,15 @@ public abstract class AbstractTableRendering extends AbstractBaseTableRendering 
 
 		// cursor may be disposed before disposed is called
 		// remove listeners whenever the cursor is disposed
-		fTableCursor.addDisposeListener(new DisposeListener() {
-			@Override
-			public void widgetDisposed(DisposeEvent e) {
-				if (fTableCursor == null) {
-					return;
-				}
-				fTableCursor.removeTraverseListener(fCursorTraverseListener);
-				fTableCursor.removeKeyListener(fCursorKeyAdapter);
-				fTableCursor.removeMouseListener(fCursorMouseListener);
-				fTableCursor.removeSelectionListener(fCursorSelectionListener);
-			}});
+		fTableCursor.addDisposeListener(e -> {
+			if (fTableCursor == null) {
+				return;
+			}
+			fTableCursor.removeTraverseListener(fCursorTraverseListener);
+			fTableCursor.removeKeyListener(fCursorKeyAdapter);
+			fTableCursor.removeMouseListener(fCursorMouseListener);
+			fTableCursor.removeSelectionListener(fCursorSelectionListener);
+		});
 
 		fCursorSelectionListener = new SelectionAdapter() {
 					@Override
@@ -2830,12 +2813,7 @@ public abstract class AbstractTableRendering extends AbstractBaseTableRendering 
 			return;
 		}
 
-		Display.getDefault().asyncExec(new Runnable() {
-			@Override
-			public void run() {
-				format(getBytesPerLine(), newColumnSize);
-			}
-		});
+		Display.getDefault().asyncExec(() -> format(getBytesPerLine(), newColumnSize));
 	}
 
 	/**
@@ -2856,12 +2834,7 @@ public abstract class AbstractTableRendering extends AbstractBaseTableRendering 
 
 		final int columnSize = col;
 		final int rowSize = bytesPerLine;
-		Display.getDefault().asyncExec(new Runnable() {
-			@Override
-			public void run() {
-				format(rowSize, columnSize);
-			}
-		});
+		Display.getDefault().asyncExec(() -> format(rowSize, columnSize));
 	}
 
 	private void handleCursorMouseEvent(MouseEvent e){
@@ -3003,36 +2976,29 @@ public abstract class AbstractTableRendering extends AbstractBaseTableRendering 
 	{
 		final FocusEvent e = event;
 
-		Display.getDefault().syncExec(new Runnable() {
-
-			@Override
-			public void run()
+		Display.getDefault().syncExec(() -> {
+			try
 			{
-				try
-				{
-					int row = findAddressIndex(fSelectedAddress);
-					int col = fTableCursor.getColumn();
+				int row = findAddressIndex(fSelectedAddress);
+				int col = fTableCursor.getColumn();
 
-					Text text = (Text)e.getSource();
-					removeListeners(text);
+				Text text = (Text) e.getSource();
+				removeListeners(text);
 
-					// get new value
-					String newValue = text.getText();
+				// get new value
+				String newValue = text.getText();
 
-					// modify memory at fRow and fCol
-					modifyValue(row, col, newValue);
+				// modify memory at fRow and fCol
+				modifyValue(row, col, newValue);
 
-					// show cursor after modification is completed
-					setCursorAtAddress(fSelectedAddress);
-					fTableCursor.moveAbove(text);
-					fTableCursor.setVisible(false);
-					fTableCursor.setVisible(true);
-				}
-				catch (NumberFormatException e1)
-				{
-					MemoryViewUtil.openError(DebugUIMessages.MemoryViewCellModifier_failure_title,
+				// show cursor after modification is completed
+				setCursorAtAddress(fSelectedAddress);
+				fTableCursor.moveAbove(text);
+				fTableCursor.setVisible(false);
+				fTableCursor.setVisible(true);
+			} catch (NumberFormatException e1) {
+				MemoryViewUtil.openError(DebugUIMessages.MemoryViewCellModifier_failure_title,
 						DebugUIMessages.MemoryViewCellModifier_data_is_invalid, null);
-				}
 			}
 		});
 	}
@@ -3042,150 +3008,137 @@ public abstract class AbstractTableRendering extends AbstractBaseTableRendering 
 	 */
 	private void handleKeyEventInEditor(KeyEvent event) {
 		final KeyEvent e = event;
-		Display.getDefault().asyncExec(new Runnable()
-		{
-			@Override
-			public void run()
+		Display.getDefault().asyncExec(() -> {
+			Text text = (Text) e.getSource();
+			int row = findAddressIndex(fSelectedAddress);
+			int col = fTableCursor.getColumn();
+
+			try
 			{
-				Text text = (Text)e.getSource();
-				int row = findAddressIndex(fSelectedAddress);
-				int col = fTableCursor.getColumn();
-
-				try
+				switch (e.keyCode)
 				{
-					switch (e.keyCode)
-					{
-						case SWT.ARROW_UP :
+				case SWT.ARROW_UP:
 
-							// move text editor box up one row
-							if (row-1 < 0) {
-								return;
-							}
-
-							// modify value for current cell
-							modifyValue(row, col, text.getText());
-
-							row--;
-
-							//	update cursor location and selection in table
-							fTableCursor.setSelection(row, col);
-							handleCursorMoved();
-
-							// remove listeners when focus is lost
-							removeListeners(text);
-							activateCellEditor(null);
-							break;
-						case SWT.ARROW_DOWN :
-
-							// move text editor box down one row
-
-							if (row+1 >= fTableViewer.getTable().getItemCount()) {
-								return;
-							}
-
-							// modify value for current cell
-							modifyValue(row, col, text.getText());
-
-							row++;
-
-							//	update cursor location and selection in table
-							fTableCursor.setSelection(row, col);
-							handleCursorMoved();
-
-							// remove traverse listener when focus is lost
-							removeListeners(text);
-							activateCellEditor(null);
-							break;
-						case 0:
-
-						// if user has entered the max number of characters allowed in a cell, move to next cell
-						// Extra changes will be used as initial value for the next cell
-							int numCharsPerByte = getNumCharsPerByte();
-							if (numCharsPerByte > 0)
-							{
-								if (text.getText().length() > getBytesPerColumn()*numCharsPerByte)
-								{
-									String newValue = text.getText();
-									text.setText(newValue.substring(0, getBytesPerColumn()*numCharsPerByte));
-
-									modifyValue(row, col, text.getText());
-
-									// if cursor is at the end of a line, move to next line
-									if (col >= getNumCol())
-									{
-										col = 1;
-										row++;
-									}
-									else
-									{
-										// move to next column
-										row++;
-									}
-
-									// update cursor position and selected address
-									fTableCursor.setSelection(row, col);
-									handleCursorMoved();
-
-									removeListeners(text);
-
-									// activate text editor at next cell
-									activateCellEditor(newValue.substring(getBytesPerColumn()*numCharsPerByte));
-								}
-							}
-							break;
-						case SWT.ESC:
-
-							// if user has pressed escape, do not commit the changes
-							// that's why "modifyValue" is not called
-							fTableCursor.setSelection(row, col);
-							handleCursorMoved();
-
-							removeListeners(text);
-
-							// cursor needs to have focus to remove focus from cell editor
-							fTableCursor.setFocus();
-							break;
-						default :
-							numCharsPerByte = getNumCharsPerByte();
-							if (numCharsPerByte > 0)
-							{
-								if (text.getText().length()> getBytesPerColumn()* numCharsPerByte)
-								{
-									String newValue = text.getText();
-									text.setText(newValue.substring(0,getBytesPerColumn()* numCharsPerByte));
-									modifyValue(row, col, text.getText());
-									// if cursor is at the end of a line, move to next line
-									if (col >= getNumCol())
-									{
-										col = 1;
-										row++;
-									}
-									else
-									{
-										col++;
-									}
-
-									fTableCursor.setSelection(row, col);
-									handleCursorMoved();
-
-									removeListeners(text);
-
-									activateCellEditor(newValue.substring(getBytesPerColumn()*numCharsPerByte));
-								}
-							}
-						break;
+					// move text editor box up one row
+					if (row - 1 < 0) {
+						return;
 					}
-				}
-				catch (NumberFormatException e1)
-				{
-					MemoryViewUtil.openError(DebugUIMessages.MemoryViewCellModifier_failure_title,
-						DebugUIMessages.MemoryViewCellModifier_data_is_invalid, null);
 
+					// modify value for current cell
+					modifyValue(row, col, text.getText());
+
+					row--;
+
+					// update cursor location and selection in table
+					fTableCursor.setSelection(row, col);
+					handleCursorMoved();
+
+					// remove listeners when focus is lost
+					removeListeners(text);
+					activateCellEditor(null);
+					break;
+				case SWT.ARROW_DOWN:
+
+					// move text editor box down one row
+
+					if (row + 1 >= fTableViewer.getTable().getItemCount()) {
+						return;
+					}
+
+					// modify value for current cell
+					modifyValue(row, col, text.getText());
+
+					row++;
+
+					// update cursor location and selection in table
+					fTableCursor.setSelection(row, col);
+					handleCursorMoved();
+
+					// remove traverse listener when focus is lost
+					removeListeners(text);
+					activateCellEditor(null);
+					break;
+				case 0:
+
+					// if user has entered the max number of characters allowed in a cell, move to
+					// next cell
+					// Extra changes will be used as initial value for the next cell
+					int numCharsPerByte = getNumCharsPerByte();
+					if (numCharsPerByte > 0) {
+						if (text.getText().length() > getBytesPerColumn() * numCharsPerByte)
+							{
+							String newValue1 = text.getText();
+							text.setText(newValue1.substring(0, getBytesPerColumn() * numCharsPerByte));
+
+							modifyValue(row, col, text.getText());
+
+							// if cursor is at the end of a line, move to next line
+							if (col >= getNumCol()) {
+								col = 1;
+								row++;
+							} else {
+								// move to next column
+								row++;
+							}
+
+							// update cursor position and selected address
+							fTableCursor.setSelection(row, col);
+							handleCursorMoved();
+
+							removeListeners(text);
+
+							// activate text editor at next cell
+							activateCellEditor(newValue1.substring(getBytesPerColumn() * numCharsPerByte));
+							}
+					}
+					break;
+				case SWT.ESC:
+
+					// if user has pressed escape, do not commit the changes
+					// that's why "modifyValue" is not called
 					fTableCursor.setSelection(row, col);
 					handleCursorMoved();
 
 					removeListeners(text);
+
+					// cursor needs to have focus to remove focus from cell editor
+					fTableCursor.setFocus();
+					break;
+				default:
+					numCharsPerByte = getNumCharsPerByte();
+					if (numCharsPerByte > 0) {
+						if (text.getText().length() > getBytesPerColumn() * numCharsPerByte)
+							{
+							String newValue2 = text.getText();
+							text.setText(newValue2.substring(0, getBytesPerColumn() * numCharsPerByte));
+							modifyValue(row, col, text.getText());
+							// if cursor is at the end of a line, move to next line
+							if (col >= getNumCol()) {
+								col = 1;
+								row++;
+							} else
+								{
+								col++;
+							}
+
+							fTableCursor.setSelection(row, col);
+							handleCursorMoved();
+
+							removeListeners(text);
+
+							activateCellEditor(newValue2.substring(getBytesPerColumn() * numCharsPerByte));
+							}
+					}
+					break;
 				}
+			} catch (NumberFormatException e1) {
+				MemoryViewUtil.openError(DebugUIMessages.MemoryViewCellModifier_failure_title,
+						DebugUIMessages.MemoryViewCellModifier_data_is_invalid, null);
+
+				fTableCursor.setSelection(row, col);
+				handleCursorMoved();
+
+				removeListeners(text);
 			}
 		});
 	}
@@ -3484,64 +3437,54 @@ public abstract class AbstractTableRendering extends AbstractBaseTableRendering 
 
 		if (adapter == IMemoryBlockConnection.class) {
 			if (fConnection == null) {
-				fConnection = new IMemoryBlockConnection() {
-					@Override
-					public void update() {
-						try {
-							fContentProvider.takeContentSnapshot();
-							if (getMemoryBlock() instanceof IMemoryBlockExtension)
+				fConnection = () -> {
+					try {
+						fContentProvider.takeContentSnapshot();
+						if (getMemoryBlock() instanceof IMemoryBlockExtension) {
+							BigInteger address = ((IMemoryBlockExtension) getMemoryBlock()).getBigBaseAddress();
+							if (address.compareTo(fContentProvider.getContentBaseAddress()) != 0)
 							{
-								BigInteger address = ((IMemoryBlockExtension)getMemoryBlock()).getBigBaseAddress();
-								if (address.compareTo(fContentProvider.getContentBaseAddress()) != 0)
-								{
-									// get to new address
-									setSelectedAddress(address);
-									updateSyncSelectedAddress();
-									fTopRowAddress = address;
-									fContentInput.updateContentBaseAddress();
-									fContentInput.setLoadAddress(address);
+								// get to new address
+								setSelectedAddress(address);
+								updateSyncSelectedAddress();
+								fTopRowAddress = address;
+								fContentInput.updateContentBaseAddress();
+								fContentInput.setLoadAddress(address);
+							}
+							fContentProvider.loadContentForExtendedMemoryBlock();
+						} else {
+							fContentProvider.loadContentForSimpleMemoryBlock();
+						}
+
+						// update UI asynchronously
+						Display display = DebugUIPlugin.getDefault().getWorkbench().getDisplay();
+						display.asyncExec(() -> {
+							updateLabels();
+
+							if (getMemoryBlock() instanceof IMemoryBlockExtension) {
+								int topIdx = findAddressIndex(fTopRowAddress);
+								if (topIdx != -1) {
+									setTopIndex(fTableViewer.getTable(), topIdx);
 								}
-								fContentProvider.loadContentForExtendedMemoryBlock();
-							} else {
-								fContentProvider.loadContentForSimpleMemoryBlock();
 							}
 
-							// update UI asynchronously
-							Display display = DebugUIPlugin.getDefault().getWorkbench().getDisplay();
-							display.asyncExec(new Runnable() {
-								@Override
-								public void run() {
-									updateLabels();
+							// cursor needs to be refreshed after reload
+							if (isAddressVisible(fSelectedAddress)) {
+								setCursorAtAddress(fSelectedAddress);
+								fTableCursor.setVisible(true);
+								fTableCursor.redraw();
+							} else {
+								fTableCursor.setVisible(false);
+							}
 
-									if (getMemoryBlock() instanceof IMemoryBlockExtension) {
-										int topIdx = findAddressIndex(fTopRowAddress);
-										if (topIdx != -1) {
-											setTopIndex(fTableViewer.getTable(),topIdx);
-										}
-									}
+							if (!isDynamicLoad()) {
+								updateSyncPageStartAddress();
+							}
 
-									// cursor needs to be refreshed after reload
-									if (isAddressVisible(fSelectedAddress))
-									{
-										setCursorAtAddress(fSelectedAddress);
-										fTableCursor.setVisible(true);
-										fTableCursor.redraw();
-									}
-									else
-									{
-										fTableCursor.setVisible(false);
-									}
-
-									if (!isDynamicLoad()) {
-										updateSyncPageStartAddress();
-									}
-
-									updateSyncTopAddress();
-								}
-							});
-						} catch (DebugException e) {
-							displayError(e);
-						}
+							updateSyncTopAddress();
+						});
+					} catch (DebugException e) {
+						displayError(e);
 					}
 				};
 			}

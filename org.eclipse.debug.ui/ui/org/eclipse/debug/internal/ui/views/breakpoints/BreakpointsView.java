@@ -1,5 +1,5 @@
 /*****************************************************************
- * Copyright (c) 2009, 2013 Texas Instruments and others
+ * Copyright (c) 2009, 2018 Texas Instruments and others
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -526,13 +526,10 @@ public class BreakpointsView extends VariablesView implements IBreakpointManager
 	 */
 	@Override
 	public void breakpointManagerEnablementChanged(boolean enabled) {
-		DebugUIPlugin.getStandardDisplay().asyncExec(new Runnable() {
-			@Override
-			public void run() {
-				IAction action = getAction(ACTION_SKIP_BREAKPOINTS);
-				if (action != null) {
-					((SkipAllBreakpointsAction) action).updateActionCheckedState();
-				}
+		DebugUIPlugin.getStandardDisplay().asyncExec(() -> {
+			IAction action = getAction(ACTION_SKIP_BREAKPOINTS);
+			if (action != null) {
+				((SkipAllBreakpointsAction) action).updateActionCheckedState();
 			}
 		});
 	}

@@ -68,9 +68,7 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableItem;
@@ -166,19 +164,17 @@ public final class BuilderPropertyPage extends PropertyPage implements ICheckSta
                 newConfigList.add(configuration);
             }
 
-			Display.getDefault().asyncExec(new Runnable() {
-				@Override
-				public void run() {
-					TableItem[] items= viewer.getTable().getItems();
-					for (int i = 0; i < items.length; i++) {
-						TableItem item = items[i];
-						Object data= item.getData();
-						if (data == oldConfig) {
-							// Found the movedFrom config in the tree. Replace it with the new config
-							item.setData(configuration);
-							viewer.update(configuration, null);
-							break;
-						}
+			Display.getDefault().asyncExec(() -> {
+				TableItem[] items = viewer.getTable().getItems();
+				for (int i = 0; i < items.length; i++) {
+					TableItem item = items[i];
+					Object data = item.getData();
+					if (data == oldConfig) {
+						// Found the movedFrom config in the tree. Replace it
+						// with the new config
+						item.setData(configuration);
+						viewer.update(configuration, null);
+						break;
 					}
 				}
 			});
@@ -337,14 +333,12 @@ public final class BuilderPropertyPage extends PropertyPage implements ICheckSta
 			}
 		});
 
-		builderTable.addListener(SWT.MouseDoubleClick, new Listener() {
-			@Override
-			public void handleEvent(Event event) {
-				//we must not allow editing of elements that cannot be edited via the selection changed logic
-				//https://bugs.eclipse.org/bugs/show_bug.cgi?id=386820
-				if(fCanEdit) {
-					handleEditButtonPressed();
-				}
+		builderTable.addListener(SWT.MouseDoubleClick, event -> {
+			// we must not allow editing of elements that cannot be edited via
+			// the selection changed logic
+			// https://bugs.eclipse.org/bugs/show_bug.cgi?id=386820
+			if (fCanEdit) {
+				handleEditButtonPressed();
 			}
 		});
 
@@ -780,15 +774,10 @@ public final class BuilderPropertyPage extends PropertyPage implements ICheckSta
 		} else {
 			status[0] = new Status(IStatus.ERROR, ExternalToolsPlugin.PLUGIN_ID, 0, ExternalToolsUIMessages.BuilderPropertyPage_statusMessage, e);
 		}
-		Display.getDefault().asyncExec(new Runnable() {
-		    @Override
-			public void run() {
-		        Shell shell= getShell();
-		        if (shell != null) {
-		            ErrorDialog.openError(shell, ExternalToolsUIMessages.BuilderPropertyPage_errorTitle,
-		                    ExternalToolsUIMessages.BuilderPropertyPage_errorMessage,
-		                    status[0]);
-		        }
+		Display.getDefault().asyncExec(() -> {
+			Shell shell = getShell();
+			if (shell != null) {
+				ErrorDialog.openError(shell, ExternalToolsUIMessages.BuilderPropertyPage_errorTitle, ExternalToolsUIMessages.BuilderPropertyPage_errorMessage, status[0]);
 		    }
 		});
 	}
@@ -945,14 +934,10 @@ public final class BuilderPropertyPage extends PropertyPage implements ICheckSta
 		for (int i = 0; i < numCommands; i++) {
 			itemData[i]= builderTable.getItem(i).getData();
 		}
-		IRunnableWithProgress runnable= new IRunnableWithProgress() {
-			@Override
-			public void run(IProgressMonitor monitor)
-					throws InvocationTargetException, InterruptedException {
-				doPerformOk(monitor, itemData);
-				if (monitor.isCanceled()) {
-					throw new InterruptedException();
-				}
+		IRunnableWithProgress runnable = monitor -> {
+			doPerformOk(monitor, itemData);
+			if (monitor.isCanceled()) {
+				throw new InterruptedException();
 			}
 		};
 

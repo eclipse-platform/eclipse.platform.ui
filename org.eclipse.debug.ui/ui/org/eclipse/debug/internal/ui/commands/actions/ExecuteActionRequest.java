@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2013 IBM Corporation and others.
+ * Copyright (c) 2006, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -40,28 +40,13 @@ public class ExecuteActionRequest extends DebugCommandRequest {
         if (status != null) {
             switch (status.getSeverity()) {
             case IStatus.ERROR:
-                DebugUIPlugin.getStandardDisplay().asyncExec(new Runnable() {
-                    @Override
-					public void run() {
-                        MessageDialog.openError(DebugUIPlugin.getShell(), DebugUIMessages.DebugUITools_Error_1, status.getMessage());
-                    }
-                });
+					DebugUIPlugin.getStandardDisplay().asyncExec(() -> MessageDialog.openError(DebugUIPlugin.getShell(), DebugUIMessages.DebugUITools_Error_1, status.getMessage()));
                 break;
             case IStatus.WARNING:
-                DebugUIPlugin.getStandardDisplay().asyncExec(new Runnable() {
-                    @Override
-					public void run() {
-                        MessageDialog.openWarning(DebugUIPlugin.getShell(), DebugUIMessages.DebugUITools_Error_1, status.getMessage());
-                    }
-                });
+					DebugUIPlugin.getStandardDisplay().asyncExec(() -> MessageDialog.openWarning(DebugUIPlugin.getShell(), DebugUIMessages.DebugUITools_Error_1, status.getMessage()));
                 break;
             case IStatus.INFO:
-                DebugUIPlugin.getStandardDisplay().asyncExec(new Runnable() {
-                    @Override
-					public void run() {
-                        MessageDialog.openInformation(DebugUIPlugin.getShell(), DebugUIMessages.DebugUITools_Error_1, status.getMessage());
-                    }
-                });
+					DebugUIPlugin.getStandardDisplay().asyncExec(() -> MessageDialog.openInformation(DebugUIPlugin.getShell(), DebugUIMessages.DebugUITools_Error_1, status.getMessage()));
                 break;
 				default:
 					break;

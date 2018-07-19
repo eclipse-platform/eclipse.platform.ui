@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -48,12 +48,7 @@ public class ToggleShowColumnsAction extends Action implements IUpdate {
 		if (fViewer.getControl().isDisposed()) {
 			return;
 		}
-		BusyIndicator.showWhile(fViewer.getControl().getDisplay(), new Runnable() {
-			@Override
-			public void run() {
-				fViewer.setShowColumns(isChecked());
-			}
-		});
+		BusyIndicator.showWhile(fViewer.getControl().getDisplay(), () -> fViewer.setShowColumns(isChecked()));
 	}
 
 	/* (non-Javadoc)

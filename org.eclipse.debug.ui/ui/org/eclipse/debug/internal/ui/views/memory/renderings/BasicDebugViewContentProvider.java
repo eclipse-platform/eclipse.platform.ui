@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2011 IBM Corporation and others.
+ * Copyright (c) 2004, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -101,12 +101,9 @@ public abstract class BasicDebugViewContentProvider implements IStructuredConten
 		if (element == null) {
 			return;
 		}
-		Runnable r= new Runnable() {
-			@Override
-			public void run() {
-				if (!isDisposed()) {
-					doHandleDebugEvent(event);
-				}
+		Runnable r = () -> {
+			if (!isDisposed()) {
+				doHandleDebugEvent(event);
 			}
 		};
 
@@ -118,8 +115,9 @@ public abstract class BasicDebugViewContentProvider implements IStructuredConten
 	 */
 	@Override
 	public void handleDebugEvents(DebugEvent[] events) {
-		for (int i=0; i < events.length; i++)
+		for (int i=0; i < events.length; i++) {
 			handleDebugEvent(events[i]);
+		}
 	}
 
 	/**

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2013 IBM Corporation and others.
+ * Copyright (c) 2004, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -269,22 +269,19 @@ public abstract class AbstractMemoryViewPane implements IMemoryBlockListener, IS
 				// tab folders should be removed from our map.
 				final IMemoryBlockRetrieval ret = (IMemoryBlockRetrieval) source;
 				if (ret != null) {
-					Display.getDefault().asyncExec(new Runnable() {
-						@Override
-						public void run() {
-							if (isDisposed()) {
-								return;
-							}
+					Display.getDefault().asyncExec(() -> {
+						if (isDisposed()) {
+							return;
+						}
 
-							Integer key = MemoryViewUtil.getHashCode(ret);
-							Object folder = fTabFolderForDebugView.get(key);
+						Integer key = MemoryViewUtil.getHashCode(ret);
+						Object folder = fTabFolderForDebugView.get(key);
 
-							if (folder != null && folder != fEmptyTabFolder) {
-								// remove the tab folder , and all contained tab
-								// items
-								disposeOfFolder((CTabFolder) folder);
-								fTabFolderForDebugView.remove(key);
-							}
+						if (folder != null && folder != fEmptyTabFolder) {
+							// remove the tab folder , and all contained tab
+							// items
+							disposeOfFolder((CTabFolder) folder);
+							fTabFolderForDebugView.remove(key);
 						}
 					});
 				}

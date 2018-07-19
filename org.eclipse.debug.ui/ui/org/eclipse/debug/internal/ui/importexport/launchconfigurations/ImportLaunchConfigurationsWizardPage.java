@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2017 IBM Corporation and others.
+ * Copyright (c) 2007, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -308,20 +308,17 @@ public class ImportLaunchConfigurationsWizardPage extends WizardResourceImportPa
      * @param path the path from the text widget
      */
     protected void resetSelection(final IPath path) {
-    	BusyIndicator.showWhile(getShell().getDisplay(), new Runnable() {
-			@Override
-			public void run() {
-				File file = new File(path.toOSString());
-				DebugFileSystemElement dummyparent = new DebugFileSystemElement(IInternalDebugCoreConstants.EMPTY_STRING, null, true);
-				dummyparent.setPopulated();
-				DebugFileSystemElement element = new DebugFileSystemElement(FileSystemStructureProvider.INSTANCE.getLabel(file),
-						dummyparent,
-						file.isDirectory());
-				element.setFileSystemObject(file);
-				element.getFiles();
-				selectionGroup.setRoot(dummyparent);
-			}
-    	});
+		BusyIndicator.showWhile(getShell().getDisplay(), () -> {
+			File file = new File(path.toOSString());
+			DebugFileSystemElement dummyparent = new DebugFileSystemElement(IInternalDebugCoreConstants.EMPTY_STRING,
+					null, true);
+			dummyparent.setPopulated();
+			DebugFileSystemElement element = new DebugFileSystemElement(
+					FileSystemStructureProvider.INSTANCE.getLabel(file), dummyparent, file.isDirectory());
+			element.setFileSystemObject(file);
+			element.getFiles();
+			selectionGroup.setRoot(dummyparent);
+		});
     }
 
 	/* (non-Javadoc)

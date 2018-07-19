@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 IBM Corporation and others.
+ * Copyright (c) 2000, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,7 +14,6 @@ import java.io.IOException;
 
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
-
 import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.IDebugEventSetListener;
@@ -25,17 +24,14 @@ import org.eclipse.debug.core.model.IProcess;
 import org.eclipse.debug.core.model.IStreamsProxy;
 import org.eclipse.debug.core.model.IStreamsProxy2;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
-
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.debug.ui.contexts.DebugContextEvent;
 import org.eclipse.debug.ui.contexts.IDebugContextListener;
-
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.TreePath;
 import org.eclipse.jface.viewers.TreeSelection;
-
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.console.IConsole;
 import org.eclipse.ui.console.IConsoleConstants;
@@ -226,14 +222,11 @@ public class ProcessConsolePageParticipant implements IConsolePageParticipant, I
         for (int i = 0; i < events.length; i++) {
             DebugEvent event = events[i];
             if (event.getSource().equals(getProcess())) {
-                Runnable r = new Runnable() {
-                    @Override
-					public void run() {
-                        if (fTerminate != null) {
-                            fTerminate.update();
-                        }
-                    }
-                };
+				Runnable r = () -> {
+					if (fTerminate != null) {
+						fTerminate.update();
+					}
+				};
 
                 DebugUIPlugin.getStandardDisplay().asyncExec(r);
             }

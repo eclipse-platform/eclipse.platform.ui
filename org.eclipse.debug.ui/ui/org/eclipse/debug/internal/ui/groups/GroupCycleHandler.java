@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2016 SSI Schaefer and others.
+ *  Copyright (c) 2016, 2018 SSI Schaefer and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -27,12 +27,7 @@ public class GroupCycleHandler implements IStatusHandler {
 
 	@Override
 	public Object handleStatus(IStatus status, final Object source) throws CoreException {
-		PlatformUI.getWorkbench().getDisplay().asyncExec(new Runnable() {
-			@Override
-			public void run() {
-				MessageDialog.openError(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), DebugUIMessages.GroupLaunch_Error, NLS.bind(DebugUIMessages.GroupLaunch_Cycle, source.toString()));
-			}
-		});
+		PlatformUI.getWorkbench().getDisplay().asyncExec(() -> MessageDialog.openError(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), DebugUIMessages.GroupLaunch_Error, NLS.bind(DebugUIMessages.GroupLaunch_Cycle, source.toString())));
 		return null;
 	}
 

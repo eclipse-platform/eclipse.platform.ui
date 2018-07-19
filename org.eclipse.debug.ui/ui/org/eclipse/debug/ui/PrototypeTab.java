@@ -444,15 +444,12 @@ public class PrototypeTab extends AbstractLaunchConfigurationTab {
 	 * Set columns tree widths dynamically
 	 */
 	private void updateColumnsWidth() {
-		getShell().getDisplay().asyncExec(new Runnable() {
-			@Override
-			public void run() {
-				Tree tree = fAttributesTreeViewer.getTree();
-				if (tree != null && !tree.isDisposed()) {
-					TreeColumn[] columns = tree.getColumns();
-					for (TreeColumn treeColumn : columns) {
-						treeColumn.pack();
-					}
+		getShell().getDisplay().asyncExec(() -> {
+			Tree tree = fAttributesTreeViewer.getTree();
+			if (tree != null && !tree.isDisposed()) {
+				TreeColumn[] columns = tree.getColumns();
+				for (TreeColumn treeColumn : columns) {
+					treeColumn.pack();
 				}
 			}
 		});

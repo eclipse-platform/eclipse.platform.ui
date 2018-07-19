@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2004, 2013 IBM Corporation and others.
+ *  Copyright (c) 2004, 2018 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -39,19 +39,16 @@ public class TerminateAndRelaunchAction extends DebugCommandAction {
     @Override
 	public void postExecute(IRequest request, final Object[] targets) {
         if (request.getStatus() == null || request.getStatus().isOK()) {
-            DebugUIPlugin.getStandardDisplay().asyncExec(new Runnable() {
-                @Override
-				public void run() {
-                    // Must be run in the UI thread since the launch can require
-                    // prompting to proceed
-                    for (int i = 0; i < targets.length; i++) {
-                        ILaunch launch = DebugUIPlugin.getLaunch(targets[i]);
-                        if (launch != null) {
-                            RelaunchActionDelegate.relaunch(launch.getLaunchConfiguration(), launch.getLaunchMode());
-                        }
-                    }
-                }
-            });
+			DebugUIPlugin.getStandardDisplay().asyncExec(() -> {
+				// Must be run in the UI thread since the launch can require
+				// prompting to proceed
+				for (int i = 0; i < targets.length; i++) {
+					ILaunch launch = DebugUIPlugin.getLaunch(targets[i]);
+					if (launch != null) {
+						RelaunchActionDelegate.relaunch(launch.getLaunchConfiguration(), launch.getLaunchMode());
+					}
+				}
+			});
         }
     }
 

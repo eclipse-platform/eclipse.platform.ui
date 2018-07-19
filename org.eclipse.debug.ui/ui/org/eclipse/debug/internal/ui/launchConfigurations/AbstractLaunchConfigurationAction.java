@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2011 IBM Corporation and others.
+ * Copyright (c) 2000, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -98,15 +98,7 @@ public abstract class AbstractLaunchConfigurationAction extends SelectionListene
 				return;
 			}
 		}
-		Runnable r = new Runnable() {
-			/**
-			 * @see java.lang.Runnable#run()
-			 */
-			@Override
-			public void run() {
-				performAction();
-			}
-		};
+		Runnable r = () -> performAction();
 		BusyIndicator.showWhile(getShell().getDisplay(), r);
 	}
 

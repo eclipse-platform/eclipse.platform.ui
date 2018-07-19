@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -65,17 +65,14 @@ public class Prompter implements IStatusHandler {
 		final Object[] result = new Object[1];
 		final CoreException[] exception = new CoreException[1];
 		final Object lock = this;
-		Runnable r = new Runnable() {
-			@Override
-			public void run() {
-				try {
-					result[0] = handler.handleStatus(status, source);
-				} catch (CoreException e) {
-					exception[0] = e;
-				}
-				synchronized (lock) {
-					lock.notifyAll();
-				}
+		Runnable r = () -> {
+			try {
+				result[0] = handler.handleStatus(status, source);
+			} catch (CoreException e) {
+				exception[0] = e;
+			}
+			synchronized (lock) {
+				lock.notifyAll();
 			}
 		};
 		DebugUIPlugin.getStandardDisplay().syncExec(r);

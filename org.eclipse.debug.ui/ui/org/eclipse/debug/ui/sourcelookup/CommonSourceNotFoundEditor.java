@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2007 IBM Corporation and others.
+ * Copyright (c) 2003, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -242,15 +242,12 @@ public class CommonSourceNotFoundEditor extends EditorPart implements IReusableE
 	protected void closeEditor()
 	{
 		final IEditorPart editor = this;
-		DebugUIPlugin.getStandardDisplay().syncExec(new Runnable() {
-			@Override
-			public void run() {
-				IWorkbenchWindow activeWorkbenchWindow = DebugUIPlugin.getActiveWorkbenchWindow();
-				if (activeWorkbenchWindow != null) {
-					IWorkbenchPage activePage = activeWorkbenchWindow.getActivePage();
-					if (activePage != null) {
-						activePage.closeEditor(editor, false);
-					}
+		DebugUIPlugin.getStandardDisplay().syncExec(() -> {
+			IWorkbenchWindow activeWorkbenchWindow = DebugUIPlugin.getActiveWorkbenchWindow();
+			if (activeWorkbenchWindow != null) {
+				IWorkbenchPage activePage = activeWorkbenchWindow.getActivePage();
+				if (activePage != null) {
+					activePage.closeEditor(editor, false);
 				}
 			}
 		});
@@ -264,8 +261,9 @@ public class CommonSourceNotFoundEditor extends EditorPart implements IReusableE
 	 */
 	@Override
 	public void dispose() {
-		if (fLaunchesListener != null)
+		if (fLaunchesListener != null) {
 			DebugPlugin.getDefault().getLaunchManager().removeLaunchListener(fLaunchesListener);
+		}
 		super.dispose();
 	}
 

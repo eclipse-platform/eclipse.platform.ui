@@ -606,32 +606,27 @@ public class DebugUITools {
 	 */
 	public static int openLaunchConfigurationDialogOnGroup(final Shell shell, final IStructuredSelection selection, final String groupIdentifier, final IStatus status) {
 		final int[] result = new int[1];
-		Runnable r = new Runnable() {
-			/**
-			 * @see java.lang.Runnable#run()
-			 */
-			@Override
-			public void run() {
-				LaunchConfigurationsDialog dialog = (LaunchConfigurationsDialog) LaunchConfigurationsDialog.getCurrentlyVisibleLaunchConfigurationDialog();
-				if (dialog != null) {
+		Runnable r = () -> {
+			LaunchConfigurationsDialog dialog = (LaunchConfigurationsDialog) LaunchConfigurationsDialog
+					.getCurrentlyVisibleLaunchConfigurationDialog();
+			if (dialog != null) {
+				dialog.setInitialSelection(selection);
+				dialog.doInitialTreeSelection();
+				if (status != null) {
+					dialog.handleStatus(status);
+				}
+				result[0] = Window.OK;
+			} else {
+				LaunchGroupExtension ext = DebugUIPlugin.getDefault().getLaunchConfigurationManager()
+						.getLaunchGroup(groupIdentifier);
+				if (ext != null) {
+					dialog = new LaunchConfigurationsDialog(shell, ext);
+					dialog.setOpenMode(LaunchConfigurationsDialog.LAUNCH_CONFIGURATION_DIALOG_OPEN_ON_SELECTION);
 					dialog.setInitialSelection(selection);
-					dialog.doInitialTreeSelection();
-					if (status != null) {
-						dialog.handleStatus(status);
-					}
-					result[0] = Window.OK;
+					dialog.setInitialStatus(status);
+					result[0] = dialog.open();
 				} else {
-					LaunchGroupExtension ext = DebugUIPlugin.getDefault().getLaunchConfigurationManager().getLaunchGroup(groupIdentifier);
-					if(ext != null) {
-						dialog = new LaunchConfigurationsDialog(shell, ext);
-						dialog.setOpenMode(LaunchConfigurationsDialog.LAUNCH_CONFIGURATION_DIALOG_OPEN_ON_SELECTION);
-						dialog.setInitialSelection(selection);
-						dialog.setInitialStatus(status);
-						result[0] = dialog.open();
-					}
-					else {
-						result[0] = Window.CANCEL;
-					}
+					result[0] = Window.CANCEL;
 				}
 			}
 		};
@@ -982,24 +977,22 @@ public class DebugUITools {
 
 
 	private static Set<ILaunch> fgLaunchList = new LinkedHashSet<>();
-	private static Runnable fgLaunchTerminate = new Runnable() {
-		@Override
-		public void run() {
-			String launchConfigName = null;
-			Set<ILaunch> launchList;
-			try {
-				synchronized (fgLaunchList) {
-					launchList = new LinkedHashSet<>(fgLaunchList);
-					fgLaunchList.clear();
-				}
-				for (ILaunch iLaunch : launchList) {
-					launchConfigName = iLaunch.getLaunchConfiguration().getName();
-					iLaunch.terminate();
-				}
-
-			} catch (DebugException e) {
-				DebugUIPlugin.log(new Status(IStatus.ERROR, DebugUIPlugin.getUniqueIdentifier(), NLS.bind(ActionMessages.TerminateAndLaunchFailure, launchConfigName), e));
+	private static Runnable fgLaunchTerminate = () -> {
+		String launchConfigName = null;
+		Set<ILaunch> launchList;
+		try {
+			synchronized (fgLaunchList) {
+				launchList = new LinkedHashSet<>(fgLaunchList);
+				fgLaunchList.clear();
 			}
+			for (ILaunch iLaunch : launchList) {
+				launchConfigName = iLaunch.getLaunchConfiguration().getName();
+				iLaunch.terminate();
+			}
+
+		} catch (DebugException e) {
+			DebugUIPlugin.log(new Status(IStatus.ERROR, DebugUIPlugin.getUniqueIdentifier(),
+					NLS.bind(ActionMessages.TerminateAndLaunchFailure, launchConfigName), e));
 		}
 	};
 

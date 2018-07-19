@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2016 IBM Corporation and others.
+ * Copyright (c) 2006, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -759,56 +759,54 @@ public class TreeModelContentProvider implements ITreeModelContentProvider, ICon
     	}
 
     	// Wait a single cycle to allow viewer to queue requests triggered by completed updates.
-        getViewer().getDisplay().asyncExec(new Runnable() {
-            @Override
-			public void run() {
-                if (isDisposed()) {
-					return;
+		getViewer().getDisplay().asyncExec(() -> {
+			if (isDisposed()) {
+				return;
+			}
+
+			for (int i = 0; i < updates.size(); i++) {
+				ViewerUpdateMonitor update = updates.get(i);
+
+				// Search for update in list using identity test. Otherwise a completed canceled
+				// update may trigger removal of up-to-date running update on the same element.
+				List<ViewerUpdateMonitor> requests = fRequestsInProgress.get(update.getSchedulingPath());
+				boolean found = false;
+				if (requests != null) {
+					for (int j = 0; j < requests.size(); j++) {
+						if (requests.get(j) == update) {
+							found = true;
+							requests.remove(j);
+							break;
+						}
+					}
 				}
 
-            	for (int i = 0; i < updates.size(); i++) {
-            		ViewerUpdateMonitor update = updates.get(i);
-
-            		// Search for update in list using identity test.  Otherwise a completed canceled
-            		// update may trigger removal of up-to-date running update on the same element.
-					List<ViewerUpdateMonitor> requests = fRequestsInProgress.get(update.getSchedulingPath());
-	            	boolean found = false;
-	            	if (requests != null) {
-    	            	for (int j = 0; j < requests.size(); j++) {
-    	            		if (requests.get(j) == update) {
-    	            			found = true;
-    	            			requests.remove(j);
-    	            			break;
-    	            		}
-    	            	}
-	            	}
-
-	            	if (found) {
-	                    // Trigger may initiate new updates, so wait to remove requests array from
-	                    // fRequestsInProgress map.  This way updateStarted() will not send a
-	                    // redundant "UPDATE SEQUENCE STARTED" notification.
-	                    trigger(update.getSchedulingPath());
-	            	} else {
-	            		// Update may be removed from in progress list if it was canceled by schedule().
-	                    Assert.isTrue( update.isCanceled() );
-	            	}
-                    if (requests != null && requests.isEmpty()) {
-                        fRequestsInProgress.remove(update.getSchedulingPath());
-                    }
-            	}
-                if (fRequestsInProgress.isEmpty() && fWaitingRequests.isEmpty() && fModelSequenceRunning) {
-                	fModelSequenceRunning = false;
-                    if (fRevealPath != null) {
-						getViewer().reveal(fRevealPath, fRevealIndex);
-                    	fRevealPath = null;
-                    }
-                    if (DebugUIPlugin.DEBUG_UPDATE_SEQUENCE && DebugUIPlugin.DEBUG_TEST_PRESENTATION_ID(getPresentationContext())) {
-                        DebugUIPlugin.trace("MODEL SEQUENCE ENDS"); //$NON-NLS-1$
-                    }
-                    notifyUpdate(UPDATE_SEQUENCE_COMPLETE, null);
-                }
-            }
-        });
+				if (found) {
+					// Trigger may initiate new updates, so wait to remove requests array from
+					// fRequestsInProgress map. This way updateStarted() will not send a
+					// redundant "UPDATE SEQUENCE STARTED" notification.
+					trigger(update.getSchedulingPath());
+				} else {
+					// Update may be removed from in progress list if it was canceled by schedule().
+					Assert.isTrue(update.isCanceled());
+				}
+				if (requests != null && requests.isEmpty()) {
+					fRequestsInProgress.remove(update.getSchedulingPath());
+				}
+			}
+			if (fRequestsInProgress.isEmpty() && fWaitingRequests.isEmpty() && fModelSequenceRunning) {
+				fModelSequenceRunning = false;
+				if (fRevealPath != null) {
+					getViewer().reveal(fRevealPath, fRevealIndex);
+					fRevealPath = null;
+				}
+				if (DebugUIPlugin.DEBUG_UPDATE_SEQUENCE
+						&& DebugUIPlugin.DEBUG_TEST_PRESENTATION_ID(getPresentationContext())) {
+					DebugUIPlugin.trace("MODEL SEQUENCE ENDS"); //$NON-NLS-1$
+				}
+				notifyUpdate(UPDATE_SEQUENCE_COMPLETE, null);
+			}
+		});
 
     }
 
@@ -931,15 +929,12 @@ public class TreeModelContentProvider implements ITreeModelContentProvider, ICon
                 }
             }
             if (inProgressList == null || inProgressList.isEmpty()) {
-                getViewer().getDisplay().asyncExec(new Runnable() {
-                    @Override
-					public void run() {
-                    	if (isDisposed()) {
-							return;
-						}
-                        trigger(update.getSchedulingPath());
-                    }
-                });
+				getViewer().getDisplay().asyncExec(() -> {
+					if (isDisposed()) {
+						return;
+					}
+					trigger(update.getSchedulingPath());
+				});
             }
         } else {
             // there are waiting requests: coalesce with existing request and add to list
@@ -1776,14 +1771,11 @@ public class TreeModelContentProvider implements ITreeModelContentProvider, ICon
 	        display = getViewer().getDisplay();
 	        fCompletedUpdates.add(update);
             if (fCompletedUpdatesRunnable == null) {
-	            fCompletedUpdatesRunnable = new Runnable() {
-	                @Override
-					public void run() {
-	                    if (!isDisposed()) {
-	                        performUpdates();
-	                    }
-	                }
-	            };
+				fCompletedUpdatesRunnable = () -> {
+					if (!isDisposed()) {
+						performUpdates();
+					}
+				};
 	            updateJob = fCompletedUpdatesRunnable;
             }
 	    }

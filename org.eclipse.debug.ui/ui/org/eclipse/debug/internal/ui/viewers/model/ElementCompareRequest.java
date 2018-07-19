@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2011 IBM Corporation and others.
+ * Copyright (c) 2006, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -71,17 +71,19 @@ public class ElementCompareRequest extends MementoUpdate implements IElementComp
 	@Override
 	public void done() {
         ITreeModelViewer viewer = getContentProvider().getViewer();
-        if (viewer == null) return;  // disposed
+        if (viewer == null)
+		 {
+			return;  // disposed
+		}
         if (viewer.getDisplay().getThread() == Thread.currentThread()) {
             fProvider.getStateTracker().compareFinished(ElementCompareRequest.this, fDelta);
         } else {
-            viewer.getDisplay().asyncExec(new Runnable() {
-                @Override
-				public void run() {
-                    if (getContentProvider().isDisposed()) return;
-                    fProvider.getStateTracker().compareFinished(ElementCompareRequest.this, fDelta);
-                }
-            });
+			viewer.getDisplay().asyncExec(() -> {
+				if (getContentProvider().isDisposed()) {
+					return;
+				}
+				fProvider.getStateTracker().compareFinished(ElementCompareRequest.this, fDelta);
+			});
         }
 	}
 

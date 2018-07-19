@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2017 IBM Corporation and others.
+ * Copyright (c) 2000, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -219,31 +219,26 @@ public class PerspectiveManager implements ILaunchListener, ISuspendTriggerListe
 	        if (asyncDisplay == null || asyncDisplay.isDisposed()) {
 	            return Status.CANCEL_STATUS;
 	        }
-	        asyncDisplay.asyncExec(new Runnable() {
-	            @Override
-				public void run() {
-	                IStatus result = null;
-	                Throwable throwable = null;
-	                try {
-	                    if (monitor.isCanceled()) {
-							result = Status.CANCEL_STATUS;
-						} else {
-	                        result = runInUIThread(monitor);
-	                    }
+			asyncDisplay.asyncExec(() -> {
+				IStatus result = null;
+				Throwable throwable = null;
+				try {
+					if (monitor.isCanceled()) {
+						result = Status.CANCEL_STATUS;
+					} else {
+						result = runInUIThread(monitor);
+					}
 
-	                } catch(Throwable t){
-	                	throwable = t;
-	                } finally {
-	                    if (result == null) {
-							result = new Status(IStatus.ERROR,
-	                                PlatformUI.PLUGIN_ID, IStatus.ERROR,
-	                                LaunchConfigurationsMessages.PerspectiveManager_Error_1,
-	                                throwable);
-						}
-	                    done(result);
-	                }
-	            }
-	        });
+				} catch (Throwable t) {
+					throwable = t;
+				} finally {
+					if (result == null) {
+						result = new Status(IStatus.ERROR, PlatformUI.PLUGIN_ID, IStatus.ERROR,
+								LaunchConfigurationsMessages.PerspectiveManager_Error_1, throwable);
+					}
+					done(result);
+				}
+			});
 	        return Job.ASYNC_FINISH;
 		}
 
@@ -310,16 +305,13 @@ public class PerspectiveManager implements ILaunchListener, ISuspendTriggerListe
         if (trigger != null) {
             trigger.removeSuspendTriggerListener(this);
         }
-        Runnable r= new Runnable() {
-			@Override
-			public void run() {
-		        IContextActivation[] activations = fLaunchToContextActivations.remove(launch);
-		        if (activations != null) {
-		        	for (int i = 0; i < activations.length; i++) {
-						IContextActivation activation = activations[i];
-						activation.getContextService().deactivateContext(activation);
-					}
-		        }
+		Runnable r = () -> {
+			IContextActivation[] activations = fLaunchToContextActivations.remove(launch);
+			if (activations != null) {
+				for (int i = 0; i < activations.length; i++) {
+					IContextActivation activation = activations[i];
+					activation.getContextService().deactivateContext(activation);
+				}
 			}
 		};
 		async(r);
@@ -429,13 +421,10 @@ public class PerspectiveManager implements ILaunchListener, ISuspendTriggerListe
 	 *  failure is associated with
 	 */
 	protected void switchFailed(final Throwable t, final String launchName) {
-		sync(new Runnable() {
-			@Override
-			public void run() {
-				DebugUIPlugin.errorDialog(DebugUIPlugin.getShell(), LaunchConfigurationsMessages.PerspectiveManager_Error_1,
+		sync(() -> DebugUIPlugin.errorDialog(DebugUIPlugin.getShell(),
+				LaunchConfigurationsMessages.PerspectiveManager_Error_1,
  MessageFormat.format(LaunchConfigurationsMessages.PerspectiveManager_Unable_to_switch_perpsectives_as_specified_by_launch___0__4, new Object[] { launchName }),
-				 t);
-			}});
+				t));
 	}
 
 	/**

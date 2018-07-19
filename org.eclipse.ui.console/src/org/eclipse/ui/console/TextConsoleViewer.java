@@ -47,11 +47,8 @@ import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.MouseListener;
 import org.eclipse.swt.events.MouseMoveListener;
 import org.eclipse.swt.events.MouseTrackListener;
-import org.eclipse.swt.events.MouseWheelListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.events.VerifyEvent;
-import org.eclipse.swt.events.VerifyListener;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Cursor;
 import org.eclipse.swt.graphics.Font;
@@ -59,7 +56,6 @@ import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.ui.internal.console.ConsoleDocumentAdapter;
 import org.eclipse.ui.internal.console.ConsoleHyperlinkPosition;
@@ -107,18 +103,15 @@ public class TextConsoleViewer extends SourceViewer implements LineStyleListener
 		}
 	};
 	// event listener used to send event to hyperlink for IHyperlink2
-	private Listener mouseUpListener = new Listener() {
-		@Override
-		public void handleEvent(Event event) {
-			if (hyperlink != null) {
-				String selection = getTextWidget().getSelectionText();
-				if (selection.length() <= 0) {
-					if (event.button == 1) {
-						if (hyperlink instanceof IHyperlink2) {
-							((IHyperlink2) hyperlink).linkActivated(event);
-						} else {
-							hyperlink.linkActivated();
-						}
+	private Listener mouseUpListener = event -> {
+		if (hyperlink != null) {
+			String selection = getTextWidget().getSelectionText();
+			if (selection.length() <= 0) {
+				if (event.button == 1) {
+					if (hyperlink instanceof IHyperlink2) {
+						((IHyperlink2) hyperlink).linkActivated(event);
+					} else {
+						hyperlink.linkActivated();
 					}
 				}
 			}
@@ -197,25 +190,22 @@ public class TextConsoleViewer extends SourceViewer implements LineStyleListener
 		return false;
 	}
 
-	private IPositionUpdater positionUpdater = new IPositionUpdater() {
-		@Override
-		public void update(DocumentEvent event) {
-			try {
-				IDocument document = getDocument();
-				if (document != null) {
-					Position[] positions = document.getPositions(ConsoleHyperlinkPosition.HYPER_LINK_CATEGORY);
-					for (int i = 0; i < positions.length; i++) {
-						Position position = positions[i];
-						if (position.offset == event.fOffset && position.length<=event.fLength) {
-							position.delete();
-						}
-						if (position.isDeleted) {
-							document.removePosition(ConsoleHyperlinkPosition.HYPER_LINK_CATEGORY, position);
-						}
+	private IPositionUpdater positionUpdater = event -> {
+		try {
+			IDocument document = getDocument();
+			if (document != null) {
+				Position[] positions = document.getPositions(ConsoleHyperlinkPosition.HYPER_LINK_CATEGORY);
+				for (int i = 0; i < positions.length; i++) {
+					Position position = positions[i];
+					if (position.offset == event.fOffset && position.length <= event.fLength) {
+						position.delete();
+					}
+					if (position.isDeleted) {
+						document.removePosition(ConsoleHyperlinkPosition.HYPER_LINK_CATEGORY, position);
 					}
 				}
-			} catch (BadPositionCategoryException e) {
 			}
+		} catch (BadPositionCategoryException e) {
 		}
 	};
 
@@ -308,29 +298,23 @@ public class TextConsoleViewer extends SourceViewer implements LineStyleListener
 				}
 			}
 		});
-		styledText.addMouseWheelListener(new MouseWheelListener() {
-			@Override
-			public void mouseScrolled(MouseEvent e) {
-				if (isAutoScrollLockNotApplicable()) {
-					return;
+		styledText.addMouseWheelListener(e -> {
+			if (isAutoScrollLockNotApplicable()) {
+				return;
+			}
+			if (e.count < 0) { // Mouse dragged down
+				if (checkEndOfDocument()) {
+					setScrollLock(false);
 				}
-				if (e.count < 0) { // Mouse dragged down
-					if (checkEndOfDocument()) {
-						setScrollLock(false);
-					}
-				} else if (!userHoldsScrollLock.get()) {
-					setScrollLock(true);
-				}
+			} else if (!userHoldsScrollLock.get()) {
+				setScrollLock(true);
 			}
 		});
 
-		styledText.addVerifyListener(new VerifyListener() {
-			@Override
-			public void verifyText(VerifyEvent e) {
-				// unlock the auto lock if user starts typing only if it was not manual lock
-				if (scrollLockStateProvider != null && !scrollLockStateProvider.getScrollLock()) {
-					setScrollLock(false);
-				}
+		styledText.addVerifyListener(e -> {
+			// unlock the auto lock if user starts typing only if it was not manual lock
+			if (scrollLockStateProvider != null && !scrollLockStateProvider.getScrollLock()) {
+				setScrollLock(false);
 			}
 		});
 
@@ -702,12 +686,9 @@ public class TextConsoleViewer extends SourceViewer implements LineStyleListener
 	public void setConsoleWidth(int width) {
 		if (consoleWidth != width) {
 			consoleWidth = width;
-			ConsolePlugin.getStandardDisplay().asyncExec(new Runnable() {
-				@Override
-				public void run() {
-					if (documentAdapter != null) {
-						documentAdapter.setWidth(consoleWidth);
-					}
+			ConsolePlugin.getStandardDisplay().asyncExec(() -> {
+				if (documentAdapter != null) {
+					documentAdapter.setWidth(consoleWidth);
 				}
 			});
 		}

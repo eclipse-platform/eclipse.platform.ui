@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2011 IBM Corporation and others.
+ * Copyright (c) 2000, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -122,22 +122,20 @@ public class RunToLineActionDelegate implements IEditorActionDelegate, IActionDe
 		if (fAction == null) {
 			return;
 		}
-		Runnable r = new Runnable() {
-			@Override
-			public void run() {
-				boolean enabled = false;
-				if (fPartTarget != null && fTargetElement != null) {
-					IWorkbenchPartSite site = fActivePart.getSite();
-					if (site != null) {
-					    ISelectionProvider selectionProvider = site.getSelectionProvider();
-					    if (selectionProvider != null) {
-					        ISelection selection = selectionProvider.getSelection();
-					        enabled = fTargetElement.isSuspended() && fPartTarget.canRunToLine(fActivePart, selection, fTargetElement);
-					    }
+		Runnable r = () -> {
+			boolean enabled = false;
+			if (fPartTarget != null && fTargetElement != null) {
+				IWorkbenchPartSite site = fActivePart.getSite();
+				if (site != null) {
+					ISelectionProvider selectionProvider = site.getSelectionProvider();
+					if (selectionProvider != null) {
+						ISelection selection = selectionProvider.getSelection();
+						enabled = fTargetElement.isSuspended()
+								&& fPartTarget.canRunToLine(fActivePart, selection, fTargetElement);
 					}
 				}
-				fAction.setEnabled(enabled);
 			}
+			fAction.setEnabled(enabled);
 		};
 		DebugUIPlugin.getStandardDisplay().asyncExec(r);
 	}

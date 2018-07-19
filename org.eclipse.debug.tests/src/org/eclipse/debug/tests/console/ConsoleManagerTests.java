@@ -23,8 +23,6 @@ import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Event;
-import org.eclipse.swt.widgets.Listener;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.PlatformUI;
@@ -145,21 +143,18 @@ public class ConsoleManagerTests extends AbstractDebugTest {
 	}
 
 	private void showConsole(final ConsoleMock console) {
-		executorService.execute(new Runnable() {
-			@Override
-			public void run() {
-				// last one arriving here triggers execution for all at same
-				// time
-				latch.countDown();
-				try {
-					latch.await(1, TimeUnit.MINUTES);
-					System.out.println("Requesting to show: " + console); //$NON-NLS-1$
-					manager.showConsoleView(console);
-					TestUtil.waitForJobs(getName(), 200, 5000);
-				} catch (InterruptedException e) {
-					e.printStackTrace();
-					Thread.interrupted();
-				}
+		executorService.execute(() -> {
+			// last one arriving here triggers execution for all at same
+			// time
+			latch.countDown();
+			try {
+				latch.await(1, TimeUnit.MINUTES);
+				System.out.println("Requesting to show: " + console); //$NON-NLS-1$
+				manager.showConsoleView(console);
+				TestUtil.waitForJobs(getName(), 200, 5000);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+				Thread.interrupted();
 			}
 		});
 	}
@@ -213,14 +208,11 @@ public class ConsoleManagerTests extends AbstractDebugTest {
 					super.createControl(parent);
 					// This listener is get called if the page is really shown
 					// in the console view
-					getControl().addListener(SWT.Show, new Listener() {
-						@Override
-						public void handleEvent(Event event) {
-							int count = showCalled.incrementAndGet();
-							if (count == 1) {
-								count = allShownConsoles.incrementAndGet();
-								System.out.println("Shown: " + ConsoleMock.this + ", overall: " + count); //$NON-NLS-1$ //$NON-NLS-2$
-							}
+					getControl().addListener(SWT.Show, event -> {
+						int count = showCalled.incrementAndGet();
+						if (count == 1) {
+							count = allShownConsoles.incrementAndGet();
+							System.out.println("Shown: " + ConsoleMock.this + ", overall: " + count); //$NON-NLS-1$ //$NON-NLS-2$
 						}
 					});
 				}

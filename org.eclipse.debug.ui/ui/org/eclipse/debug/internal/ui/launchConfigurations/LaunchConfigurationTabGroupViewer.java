@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2017 IBM Corporation and others.
+ * Copyright (c) 2000, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -58,8 +58,6 @@ import org.eclipse.swt.custom.CTabItem;
 import org.eclipse.swt.custom.ScrolledComposite;
 import org.eclipse.swt.custom.StackLayout;
 import org.eclipse.swt.custom.ViewForm;
-import org.eclipse.swt.events.ModifyEvent;
-import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Color;
@@ -250,14 +248,11 @@ public class LaunchConfigurationTabGroupViewer {
 
 		fNameWidget = new Text(fGroupComposite, SWT.SINGLE | SWT.BORDER);
         fNameWidget.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-        fNameWidget.addModifyListener(new ModifyListener() {
-    				@Override
-					public void modifyText(ModifyEvent e) {
-    					if(!fInitializingTabs) {
-    						handleNameModified();
-    					}
-    				}
-    			}
+		fNameWidget.addModifyListener(e -> {
+			if (!fInitializingTabs) {
+				handleNameModified();
+			}
+		}
     		);
 
 		createTabFolder(fGroupComposite);
@@ -649,12 +644,7 @@ public class LaunchConfigurationTabGroupViewer {
 			setInput0(input);
 		}
 		else {
-			DebugUIPlugin.getStandardDisplay().syncExec(new Runnable() {
-				@Override
-				public void run() {
-					setInput0(input);
-				}
-			});
+			DebugUIPlugin.getStandardDisplay().syncExec(() -> setInput0(input));
 		}
 
 	}
@@ -683,12 +673,7 @@ public class LaunchConfigurationTabGroupViewer {
 		if (DebugUIPlugin.getStandardDisplay().getThread().equals(Thread.currentThread())) {
 			refreshTabs0(refresh);
 		} else {
-			DebugUIPlugin.getStandardDisplay().syncExec(new Runnable() {
-				@Override
-				public void run() {
-					refreshTabs0(refresh);
-				}
-			});
+			DebugUIPlugin.getStandardDisplay().syncExec(() -> refreshTabs0(refresh));
 		}
 	}
 
@@ -699,15 +684,12 @@ public class LaunchConfigurationTabGroupViewer {
 	 */
 	protected void refreshTabs0(boolean refreshTabs) {
 		final boolean refresh = refreshTabs;
-		Runnable r = new Runnable() {
-			@Override
-			public void run() {
-				fViewform.setRedraw(false);
-				fRefreshTabs = !refresh;
-				displayInstanceTabs(refresh);
-				refreshStatus();
-				fViewform.setRedraw(true);
-			}
+		Runnable r = () -> {
+			fViewform.setRedraw(false);
+			fRefreshTabs = !refresh;
+			displayInstanceTabs(refresh);
+			refreshStatus();
+			fViewform.setRedraw(true);
 		};
 		BusyIndicator.showWhile(getShell().getDisplay(), r);
 	}
@@ -719,35 +701,32 @@ public class LaunchConfigurationTabGroupViewer {
 	 */
 	protected void inputChanged(Object input) {
 		final Object finput = input;
-		Runnable r = new Runnable() {
-			@Override
-			public void run() {
-				try {
-					fViewform.setRedraw(false);
-					if (finput instanceof ILaunchConfiguration) {
-						ILaunchConfiguration configuration = (ILaunchConfiguration)finput;
-						boolean refreshTabs = true;
-						if (fWorkingCopy != null && fWorkingCopy.getOriginal().equals(configuration.getWorkingCopy().getOriginal())) {
-							refreshTabs = false;
-						}
-						fOriginal = configuration;
-						fWorkingCopy = configuration.getWorkingCopy();
-						// Need to refresh all the time as tabs might have changed
-						displayInstanceTabs(refreshTabs);
-					} else if (finput instanceof ILaunchConfigurationType) {
-						fDescription = getDescription((ILaunchConfigurationType)finput);
-						setNoInput();
-					} else {
-						setNoInput();
+		Runnable r = () -> {
+			try {
+				fViewform.setRedraw(false);
+				if (finput instanceof ILaunchConfiguration) {
+					ILaunchConfiguration configuration = (ILaunchConfiguration) finput;
+					boolean refreshTabs = true;
+					if (fWorkingCopy != null
+							&& fWorkingCopy.getOriginal().equals(configuration.getWorkingCopy().getOriginal())) {
+						refreshTabs = false;
 					}
-				} catch (CoreException ce) {
-					errorDialog(ce);
+					fOriginal = configuration;
+					fWorkingCopy = configuration.getWorkingCopy();
+					// Need to refresh all the time as tabs might have changed
+					displayInstanceTabs(refreshTabs);
+				} else if (finput instanceof ILaunchConfigurationType) {
+					fDescription = getDescription((ILaunchConfigurationType) finput);
+					setNoInput();
+				} else {
 					setNoInput();
 				}
-				finally {
-					refreshStatus();
-					fViewform.setRedraw(true);
-				}
+			} catch (CoreException ce) {
+				errorDialog(ce);
+				setNoInput();
+			} finally {
+				refreshStatus();
+				fViewform.setRedraw(true);
 			}
 		};
 		BusyIndicator.showWhile(getShell().getDisplay(), r);
@@ -967,22 +946,20 @@ public class LaunchConfigurationTabGroupViewer {
 		// Use a final Object array to store the tab group and any exception that
 		// results from the Runnable
 		final Object[] finalArray = new Object[2];
-		Runnable runnable = new Runnable() {
-			@Override
-			public void run() {
-				ILaunchConfigurationTabGroup tabGroup = null;
-				try {
-					tabGroup = LaunchConfigurationPresentationManager.getDefault().getTabGroup(getWorkingCopy(), getLaunchConfigurationDialog().getMode());
-					finalArray[0] = tabGroup;
-				} catch (CoreException ce) {
-					finalArray[1] = ce;
-					return;
-				}
-				tabGroup.createTabs(getLaunchConfigurationDialog(), getLaunchConfigurationDialog().getMode());
-				ILaunchConfigurationTab[] tabs = tabGroup.getTabs();
-				for (int i = 0; i < tabs.length; i++) {
-					tabs[i].setLaunchConfigurationDialog(getLaunchConfigurationDialog());
-				}
+		Runnable runnable = () -> {
+			ILaunchConfigurationTabGroup tabGroup = null;
+			try {
+				tabGroup = LaunchConfigurationPresentationManager.getDefault().getTabGroup(getWorkingCopy(),
+						getLaunchConfigurationDialog().getMode());
+				finalArray[0] = tabGroup;
+			} catch (CoreException ce) {
+				finalArray[1] = ce;
+				return;
+			}
+			tabGroup.createTabs(getLaunchConfigurationDialog(), getLaunchConfigurationDialog().getMode());
+			ILaunchConfigurationTab[] tabs = tabGroup.getTabs();
+			for (int i = 0; i < tabs.length; i++) {
+				tabs[i].setLaunchConfigurationDialog(getLaunchConfigurationDialog());
 			}
 		};
 
@@ -1504,13 +1481,12 @@ public class LaunchConfigurationTabGroupViewer {
 			getTabGroup().performApply(fWorkingCopy);
 			if (isDirty()) {
 				if(!fWorkingCopy.isLocal()) {
-					IRunnableWithProgress runnable = new IRunnableWithProgress() {
-						@Override
-						public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
-							try {
-								saved[0] = ((LaunchConfigurationWorkingCopy)fWorkingCopy).doSave(monitor);
-							}
-							catch (CoreException e) {DebugUIPlugin.log(e);}
+					IRunnableWithProgress runnable = monitor -> {
+						try {
+							saved[0] = ((LaunchConfigurationWorkingCopy) fWorkingCopy).doSave(monitor);
+						}
+						catch (CoreException e) {
+							DebugUIPlugin.log(e);
 						}
 					};
 					getLaunchConfigurationDialog().run(true, false, runnable);

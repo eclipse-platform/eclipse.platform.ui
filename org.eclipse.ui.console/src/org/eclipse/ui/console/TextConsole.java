@@ -231,12 +231,7 @@ public abstract class TextConsole extends AbstractConsole {
 		if (fTabWidth != newTabWidth) {
 			final int oldTabWidth = fTabWidth;
 			fTabWidth = newTabWidth;
-			ConsolePlugin.getStandardDisplay().asyncExec(new Runnable() {
-				@Override
-				public void run() {
-					firePropertyChange(TextConsole.this, IConsoleConstants.P_TAB_SIZE, Integer.valueOf(oldTabWidth), Integer.valueOf(fTabWidth));
-				}
-			});
+			ConsolePlugin.getStandardDisplay().asyncExec(() -> firePropertyChange(TextConsole.this, IConsoleConstants.P_TAB_SIZE, Integer.valueOf(oldTabWidth), Integer.valueOf(fTabWidth)));
 		}
 	}
 

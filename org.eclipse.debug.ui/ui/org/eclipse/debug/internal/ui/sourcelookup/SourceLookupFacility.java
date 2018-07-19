@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2016 IBM Corporation and others.
+ *  Copyright (c) 2000, 2018 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -552,18 +552,13 @@ public class SourceLookupFacility implements IPageListener, IPartListener2, IPro
 	 */
 	private IEditorPart openEditor(final IWorkbenchPage page, final IEditorInput input, final String id) {
 		final IEditorPart[] editor = new IEditorPart[] {null};
-		Runnable r = new Runnable() {
-			@Override
-			public void run() {
-				if (!isClosing(page)) {
-					try {
-						editor[0] = page.openEditor(input, id, false, IWorkbenchPage.MATCH_ID|IWorkbenchPage.MATCH_INPUT);
-					} catch (PartInitException e) {
-						DebugUIPlugin.errorDialog(DebugUIPlugin.getShell(),
-							DebugUIViewsMessages.LaunchView_Error_1,
-							DebugUIViewsMessages.LaunchView_Exception_occurred_opening_editor_for_debugger__2,
-							e);
-					}
+		Runnable r = () -> {
+			if (!isClosing(page)) {
+				try {
+					editor[0] = page.openEditor(input, id, false, IWorkbenchPage.MATCH_ID | IWorkbenchPage.MATCH_INPUT);
+				} catch (PartInitException e) {
+					DebugUIPlugin.errorDialog(DebugUIPlugin.getShell(), DebugUIViewsMessages.LaunchView_Error_1,
+							DebugUIViewsMessages.LaunchView_Exception_occurred_opening_editor_for_debugger__2, e);
 				}
 			}
 		};

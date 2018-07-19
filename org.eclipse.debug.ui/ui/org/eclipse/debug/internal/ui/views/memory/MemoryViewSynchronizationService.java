@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2012 IBM Corporation and others.
+ * Copyright (c) 2004, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -229,33 +229,30 @@ public class MemoryViewSynchronizationService implements IMemoryRenderingSynchro
 		// Make sure the synchronizer does not swallow any events
 		// Values of the properties are updated in the syncrhonizer immediately.
 		// Change events are queued up on the UI Thread.
-		Display.getDefault().syncExec(new Runnable() {
-			@Override
-			public void run() {
-				if (fSynchronizeInfo == null) {
-					return;
-				}
+		Display.getDefault().syncExec(() -> {
+			if (fSynchronizeInfo == null) {
+				return;
+			}
 
-				IMemoryRendering rendering = (IMemoryRendering) evt.getSource();
-				String propertyId = evt.getProperty();
+			IMemoryRendering rendering = (IMemoryRendering) evt.getSource();
+			String propertyId = evt.getProperty();
 
-				SynchronizeInfo info = fSynchronizeInfo.get(rendering.getMemoryBlock());
-				if (info != null) {
-					Object value = info.getProperty(propertyId);
-					if (value != null) {
-						Enumeration<PropertyListener> enumeration = fPropertyListeners.elements();
+			SynchronizeInfo info = fSynchronizeInfo.get(rendering.getMemoryBlock());
+			if (info != null) {
+				Object value = info.getProperty(propertyId);
+				if (value != null) {
+					Enumeration<PropertyListener> enumeration = fPropertyListeners.elements();
 
-						while (enumeration.hasMoreElements()) {
-							PropertyListener listener = enumeration.nextElement();
+					while (enumeration.hasMoreElements()) {
+						PropertyListener listener = enumeration.nextElement();
 
-							IPropertyChangeListener origListener = listener.getListener();
+						IPropertyChangeListener origListener = listener.getListener();
 
-							// if it's a valid property - valid means that it's
-							// listed in the property filters
-							if (listener.isValidProperty(propertyId)) {
-								PropertyChangeNotifier notifier = new PropertyChangeNotifier(origListener, evt);
-								SafeRunner.run(notifier);
-							}
+						// if it's a valid property - valid means that it's
+						// listed in the property filters
+						if (listener.isValidProperty(propertyId)) {
+							PropertyChangeNotifier notifier = new PropertyChangeNotifier(origListener, evt);
+							SafeRunner.run(notifier);
 						}
 					}
 				}

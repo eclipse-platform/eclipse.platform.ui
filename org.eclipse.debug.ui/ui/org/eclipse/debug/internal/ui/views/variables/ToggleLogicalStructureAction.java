@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2017 IBM Corporation and others.
+ * Copyright (c) 2000, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -51,12 +51,7 @@ public class ToggleLogicalStructureAction extends Action {
 			return;
 		}
 		getView().setShowLogicalStructure(isChecked());
-		BusyIndicator.showWhile(getView().getViewer().getControl().getDisplay(), new Runnable() {
-			@Override
-			public void run() {
-				getView().getViewer().refresh();
-			}
-		});
+		BusyIndicator.showWhile(getView().getViewer().getControl().getDisplay(), () -> getView().getViewer().refresh());
 	}
 
 	/* (non-Javadoc)

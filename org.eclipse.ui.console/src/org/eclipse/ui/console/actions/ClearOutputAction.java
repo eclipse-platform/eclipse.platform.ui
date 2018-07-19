@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2013 IBM Corporation and others.
+ * Copyright (c) 2000, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -79,18 +79,15 @@ public class ClearOutputAction extends Action {
 	 */
 	@Override
 	public void run() {
-		BusyIndicator.showWhile(ConsolePlugin.getStandardDisplay(), new Runnable() {
-			@Override
-			public void run() {
-				if (fIOConsole == null) {
-					IDocument document = fViewer.getDocument();
-					if (document != null) {
-						document.set(""); //$NON-NLS-1$
-					}
-					fViewer.setSelectedRange(0, 0);
-				} else {
-					fIOConsole.clearConsole();
+		BusyIndicator.showWhile(ConsolePlugin.getStandardDisplay(), () -> {
+			if (fIOConsole == null) {
+				IDocument document = fViewer.getDocument();
+				if (document != null) {
+					document.set(""); //$NON-NLS-1$
 				}
+				fViewer.setSelectedRange(0, 0);
+			} else {
+				fIOConsole.clearConsole();
 			}
 		});
 	}

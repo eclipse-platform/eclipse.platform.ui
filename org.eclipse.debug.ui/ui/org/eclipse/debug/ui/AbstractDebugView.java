@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2016 IBM Corporation and others.
+ *  Copyright (c) 2000, 2018 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -26,7 +26,6 @@ import org.eclipse.debug.internal.ui.actions.breakpoints.SkipAllBreakpointsActio
 import org.eclipse.jface.action.ActionContributionItem;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IContributionItem;
-import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.MenuManager;
@@ -555,12 +554,7 @@ public abstract class AbstractDebugView extends PageBookView implements IDebugVi
 	protected void createContextMenu(Control menuControl) {
 		MenuManager menuMgr= new MenuManager("#PopUp"); //$NON-NLS-1$
 		menuMgr.setRemoveAllWhenShown(true);
-		menuMgr.addMenuListener(new IMenuListener() {
-			@Override
-			public void menuAboutToShow(IMenuManager mgr) {
-				fillContextMenu(mgr);
-			}
-		});
+		menuMgr.addMenuListener(mgr -> fillContextMenu(mgr));
 		Menu menu= menuMgr.createContextMenu(menuControl);
 		menuControl.setMenu(menu);
 
@@ -623,30 +617,28 @@ public abstract class AbstractDebugView extends PageBookView implements IDebugVi
 
 		// This is done in a runnable to be run after this view's pane
 		// is created
-		Runnable r = new Runnable() {
-			@Override
-			public void run() {
-				if (!isAvailable()) {
-					return;
-				}
-				IContributionItem[] items = tbm.getItems();
-				if (items != null) {
-					for (int i = 0; i < items.length; i++) {
-						if (items[i] instanceof ActionContributionItem) {
-							IAction action = ((ActionContributionItem)items[i]).getAction();
-							if (!SkipAllBreakpointsAction.ACTION_ID.equals(action.getId())) {
-								if (action.getStyle() == IAction.AS_CHECK_BOX) {
-									initActionState(action);
-									if (action.isChecked()) {
-										action.run();
-									}
-								}
-							}}
-					}
-					setMemento(null);
-				}
-				updateObjects();
+		Runnable r = () -> {
+			if (!isAvailable()) {
+				return;
 			}
+			IContributionItem[] items = tbm.getItems();
+			if (items != null) {
+				for (int i = 0; i < items.length; i++) {
+					if (items[i] instanceof ActionContributionItem) {
+						IAction action = ((ActionContributionItem) items[i]).getAction();
+						if (!SkipAllBreakpointsAction.ACTION_ID.equals(action.getId())) {
+							if (action.getStyle() == IAction.AS_CHECK_BOX) {
+								initActionState(action);
+								if (action.isChecked()) {
+									action.run();
+								}
+							}
+						}
+					}
+				}
+				setMemento(null);
+			}
+			updateObjects();
 		};
 		asyncExec(r);
 	}

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2013 IBM Corporation and others.
+ * Copyright (c) 2000, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -159,17 +159,9 @@ public class StringVariableSelectionDialog extends ElementListSelectionDialog {
 
 	private void updateElements() {
 		final Display display = DebugUIPlugin.getStandardDisplay();
-		BusyIndicator.showWhile(display, new Runnable() {
-			@Override
-			public void run() {
-				final IStringVariable[] elements = VariablesPlugin.getDefault().getStringVariableManager().getVariables();
-				display.asyncExec(new Runnable() {
-					@Override
-					public void run() {
-						setListElements(elements);
-					}
-				});
-			}
+		BusyIndicator.showWhile(display, () -> {
+			final IStringVariable[] elements = VariablesPlugin.getDefault().getStringVariableManager().getVariables();
+			display.asyncExec(() -> setListElements(elements));
 		});
 	}
 
@@ -306,20 +298,14 @@ public class StringVariableSelectionDialog extends ElementListSelectionDialog {
 	 */
 	protected void editVariables() {
 		final Display display = DebugUIPlugin.getStandardDisplay();
-		BusyIndicator.showWhile(display, new Runnable() {
-			@Override
-			public void run() {
-				// show the preference page in a new dialog rather than using the utility method to re-use a
-				// preference page, in case this dialog is being opened from a preference page
-				if (showVariablesPage()) {
-					final IStringVariable[] elements = VariablesPlugin.getDefault().getStringVariableManager().getVariables();
-					display.asyncExec(new Runnable() {
-						@Override
-						public void run() {
-							setListElements(elements);
-						}
-					});
-				}
+		BusyIndicator.showWhile(display, () -> {
+			// show the preference page in a new dialog rather than using the utility method
+			// to re-use a
+			// preference page, in case this dialog is being opened from a preference page
+			if (showVariablesPage()) {
+				final IStringVariable[] elements = VariablesPlugin.getDefault().getStringVariableManager()
+						.getVariables();
+				display.asyncExec(() -> setListElements(elements));
 			}
 		});
 	}
@@ -337,13 +323,10 @@ public class StringVariableSelectionDialog extends ElementListSelectionDialog {
 		manager.addToRoot(targetNode);
 		final PreferenceDialog dialog = new PreferenceDialog(DebugUIPlugin.getShell(), manager);
 		final boolean [] result = new boolean[] { false };
-		BusyIndicator.showWhile(DebugUIPlugin.getStandardDisplay(), new Runnable() {
-			@Override
-			public void run() {
-				dialog.create();
-				dialog.setMessage(targetNode.getLabelText());
-				result[0]= (dialog.open() == Window.OK);
-			}
+		BusyIndicator.showWhile(DebugUIPlugin.getStandardDisplay(), () -> {
+			dialog.create();
+			dialog.setMessage(targetNode.getLabelText());
+			result[0] = (dialog.open() == Window.OK);
 		});
 		return result[0];
 	}

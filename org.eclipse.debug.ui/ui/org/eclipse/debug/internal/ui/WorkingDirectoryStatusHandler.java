@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -27,13 +27,10 @@ public class WorkingDirectoryStatusHandler implements IStatusHandler {
 	@Override
 	public Object handleStatus(IStatus status, Object source) {
 		final boolean[] result = new boolean[1];
-		DebugUIPlugin.getStandardDisplay().syncExec(new Runnable() {
-			@Override
-			public void run() {
-				String title= DebugUIMessages.WorkingDirectoryStatusHandler_Eclipse_Runtime_1;
-				String message= DebugUIMessages.WorkingDirectoryStatusHandler_0;
-				result[0]= (MessageDialog.openQuestion(DebugUIPlugin.getShell(), title, message));
-			}
+		DebugUIPlugin.getStandardDisplay().syncExec(() -> {
+			String title = DebugUIMessages.WorkingDirectoryStatusHandler_Eclipse_Runtime_1;
+			String message = DebugUIMessages.WorkingDirectoryStatusHandler_0;
+			result[0] = (MessageDialog.openQuestion(DebugUIPlugin.getShell(), title, message));
 		});
 		return Boolean.valueOf(result[0]);
 	}

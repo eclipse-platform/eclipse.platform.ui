@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2013 IBM Corporation and others.
+ * Copyright (c) 2000, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -71,12 +71,7 @@ public class SelectedResourceManager  {
 		}
 		else {
 			final IStructuredSelection[] selection = new IStructuredSelection[1];
-			DebugUIPlugin.getStandardDisplay().syncExec(new Runnable() {
-				@Override
-				public void run() {
-					selection[0] = getCurrentSelection0();
-				}
-			});
+			DebugUIPlugin.getStandardDisplay().syncExec(() -> selection[0] = getCurrentSelection0());
 			return selection[0];
 		}
 	}
@@ -126,12 +121,7 @@ public class SelectedResourceManager  {
 		}
 		else {
 			final IResource[] resource = new IResource[1];
-			DebugUIPlugin.getStandardDisplay().syncExec(new Runnable() {
-				@Override
-				public void run() {
-					resource[0] = getSelectedResource0();
-				}
-			});
+			DebugUIPlugin.getStandardDisplay().syncExec(() -> resource[0] = getSelectedResource0());
 			return resource[0];
 		}
 	}
@@ -189,12 +179,7 @@ public class SelectedResourceManager  {
 		}
 		else {
 			final String[] text = new String[1];
-			DebugUIPlugin.getStandardDisplay().syncExec(new Runnable() {
-				@Override
-				public void run() {
-					text[0] = getSelectedText0();
-				}
-			});
+			DebugUIPlugin.getStandardDisplay().syncExec(() -> text[0] = getSelectedText0());
 			return text[0];
 		}
 	}
@@ -241,12 +226,7 @@ public class SelectedResourceManager  {
 		}
 		else {
 			final IWorkbenchWindow[] window = new IWorkbenchWindow[1];
-			DebugUIPlugin.getStandardDisplay().syncExec(new Runnable() {
-				@Override
-				public void run() {
-					window[0] = DebugUIPlugin.getActiveWorkbenchWindow();
-				}
-			});
+			DebugUIPlugin.getStandardDisplay().syncExec(() -> window[0] = DebugUIPlugin.getActiveWorkbenchWindow());
 			return window[0];
 		}
 	}

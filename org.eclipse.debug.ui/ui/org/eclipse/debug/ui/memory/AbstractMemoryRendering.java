@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2016 IBM Corporation and others.
+ * Copyright (c) 2004, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -25,7 +25,6 @@ import org.eclipse.debug.internal.core.IInternalDebugCoreConstants;
 import org.eclipse.debug.internal.ui.views.memory.PropertyChangeNotifier;
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.jface.action.IMenuListener;
-import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.util.IPropertyChangeListener;
@@ -118,11 +117,7 @@ public abstract class AbstractMemoryRendering extends PlatformObject implements 
 		// disconnect from memory block when rendering is disposed
 		if (fMemoryBlock instanceof IMemoryBlockExtension)
 		{
-			Runnable runnable = new Runnable(){
-				@Override
-				public void run() {
-						((IMemoryBlockExtension)fMemoryBlock).disconnect(AbstractMemoryRendering.this);
-				}};
+			Runnable runnable = () -> ((IMemoryBlockExtension) fMemoryBlock).disconnect(AbstractMemoryRendering.this);
 			new ConnectionJob(runnable).schedule();
 		}
 
@@ -134,8 +129,9 @@ public abstract class AbstractMemoryRendering extends PlatformObject implements 
 			fPopupMenuMgr = null;
 		}
 
-		if (fPropertyListeners != null)
+		if (fPropertyListeners != null) {
 			fPropertyListeners = null;
+		}
 	}
 
 	/* (non-Javadoc)
@@ -143,8 +139,9 @@ public abstract class AbstractMemoryRendering extends PlatformObject implements 
 	 */
 	@Override
 	public void activated() {
-		if (fContainer.getMemoryRenderingSite().getSynchronizationService() != null)
+		if (fContainer.getMemoryRenderingSite().getSynchronizationService() != null) {
 			fContainer.getMemoryRenderingSite().getSynchronizationService().setSynchronizationProvider(this);
+		}
 	}
 
 	/* (non-Javadoc)
@@ -168,11 +165,7 @@ public abstract class AbstractMemoryRendering extends PlatformObject implements 
 
 		if (fMemoryBlock instanceof IMemoryBlockExtension)
 		{
-			Runnable runnable = new Runnable(){
-				@Override
-				public void run() {
-					((IMemoryBlockExtension)fMemoryBlock).connect(AbstractMemoryRendering.this);
-				}};
+			Runnable runnable = () -> ((IMemoryBlockExtension) fMemoryBlock).connect(AbstractMemoryRendering.this);
 			new ConnectionJob(runnable).schedule();
 		}
 	}
@@ -185,11 +178,7 @@ public abstract class AbstractMemoryRendering extends PlatformObject implements 
 		fVisible = false;
 		if (fMemoryBlock instanceof IMemoryBlockExtension)
 		{
-			Runnable runnable = new Runnable(){
-				@Override
-				public void run() {
-						((IMemoryBlockExtension)fMemoryBlock).disconnect(AbstractMemoryRendering.this);
-				}};
+			Runnable runnable = () -> ((IMemoryBlockExtension) fMemoryBlock).disconnect(AbstractMemoryRendering.this);
 			new ConnectionJob(runnable).schedule();
 		}
 	}
@@ -217,8 +206,9 @@ public abstract class AbstractMemoryRendering extends PlatformObject implements 
 	@Override
 	public void addPropertyChangeListener(IPropertyChangeListener listener) {
 
-		if (fPropertyListeners == null)
+		if (fPropertyListeners == null) {
 			fPropertyListeners = new ListenerList<>();
+		}
 
 		fPropertyListeners.add(listener);
 	}
@@ -229,8 +219,9 @@ public abstract class AbstractMemoryRendering extends PlatformObject implements 
 	@Override
 	public void removePropertyChangeListener(IPropertyChangeListener listener) {
 
-		if (fPropertyListeners == null)
+		if (fPropertyListeners == null) {
 			return;
+		}
 		fPropertyListeners.remove(listener);
 	}
 
@@ -250,8 +241,9 @@ public abstract class AbstractMemoryRendering extends PlatformObject implements 
 	 * @since 3.2
 	 */
 	protected Image decorateImage(Image image) {
-		if (fLabelDecorator != null)
+		if (fLabelDecorator != null) {
 			return fLabelDecorator.decorateImage(image, this);
+		}
 		return image;
 	}
 
@@ -261,8 +253,9 @@ public abstract class AbstractMemoryRendering extends PlatformObject implements 
 	@Override
 	public  String getLabel()
 	{
-		if (fMemoryBlock == null)
+		if (fMemoryBlock == null) {
 			return IInternalDebugCoreConstants.EMPTY_STRING;
+		}
 
 		StringBuffer label = new StringBuffer(IInternalDebugCoreConstants.EMPTY_STRING);
 
@@ -270,13 +263,16 @@ public abstract class AbstractMemoryRendering extends PlatformObject implements 
 		{
 			String expression = ((IMemoryBlockExtension)fMemoryBlock).getExpression();
 
-			if (expression == null)
+			if (expression == null) {
 				expression = IInternalDebugCoreConstants.EMPTY_STRING;
+			}
 
 			label.append(expression);
 
 			if (expression.startsWith("&")) //$NON-NLS-1$
+			 {
 				label.insert(0, "&"); //$NON-NLS-1$
+			}
 
 			// show full address if the rendering is visible
 			// hide address if the rendering is invisible
@@ -321,8 +317,9 @@ public abstract class AbstractMemoryRendering extends PlatformObject implements 
 	 * @since 3.2
 	 */
 	protected String decorateLabel(String label) {
-		if (fLabelDecorator != null)
+		if (fLabelDecorator != null) {
 			return fLabelDecorator.decorateText(label.toString(), this);
+		}
 		return label.toString();
 	}
 
@@ -356,11 +353,7 @@ public abstract class AbstractMemoryRendering extends PlatformObject implements 
 
 			ISelectionProvider selProvider = site.getSite().getSelectionProvider();
 
-			fMenuListener = new IMenuListener() {
-							@Override
-							public void menuAboutToShow(IMenuManager manager) {
-								manager.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
-							}};
+			fMenuListener = manager -> manager.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
 			fPopupMenuMgr.addMenuListener(fMenuListener);
 
 			site.getSite().registerContextMenu(menuId, fPopupMenuMgr, selProvider);
@@ -388,8 +381,9 @@ public abstract class AbstractMemoryRendering extends PlatformObject implements 
 	 */
 	protected void firePropertyChangedEvent(PropertyChangeEvent event)
 	{
-		if (fPropertyListeners == null)
+		if (fPropertyListeners == null) {
 			return;
+		}
 
 		for (IPropertyChangeListener iPropertyChangeListener : fPropertyListeners) {
 			PropertyChangeNotifier notifier = new PropertyChangeNotifier(iPropertyChangeListener, event);

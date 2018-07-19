@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2016 IBM Corporation and others.
+ * Copyright (c) 2008, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -33,8 +33,6 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.MenuDetectEvent;
 import org.eclipse.swt.events.MenuDetectListener;
-import org.eclipse.swt.events.TraverseEvent;
-import org.eclipse.swt.events.TraverseListener;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Image;
@@ -44,8 +42,6 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Event;
-import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Widget;
 
@@ -99,30 +95,22 @@ public abstract class BreadcrumbViewer extends StructuredViewer {
 		fContainer= new Composite(parent, SWT.NONE);
 		GridData layoutData= new GridData(SWT.FILL, SWT.TOP, true, false);
 		fContainer.setLayoutData(layoutData);
-		fContainer.addTraverseListener(new TraverseListener() {
-			@Override
-			public void keyTraversed(TraverseEvent e) {
-				e.doit= true;
-			}
-		});
+		fContainer.addTraverseListener(e -> e.doit = true);
 		fContainer.setBackgroundMode(SWT.INHERIT_DEFAULT);
 
-		fContainer.addListener(SWT.Resize, new Listener() {
-            @Override
-			public void handleEvent(Event event) {
-                int height= fContainer.getClientArea().height;
+		fContainer.addListener(SWT.Resize, event -> {
+			int height = fContainer.getClientArea().height;
 
-                if (fGradientBackground == null || fGradientBackground.getBounds().height != height) {
-                    Image image= height == 0 ? null : createGradientImage(height, event.display);
-                    fContainer.setBackgroundImage(image);
+			if (fGradientBackground == null || fGradientBackground.getBounds().height != height) {
+				Image image = height == 0 ? null : createGradientImage(height, event.display);
+				fContainer.setBackgroundImage(image);
 
-                    if (fGradientBackground != null) {
-						fGradientBackground.dispose();
-					}
-                    fGradientBackground= image;
-                }
-            }
-        });
+				if (fGradientBackground != null) {
+					fGradientBackground.dispose();
+				}
+				fGradientBackground = image;
+			}
+		});
 
 		hookControl(fContainer);
 
@@ -138,12 +126,9 @@ public abstract class BreadcrumbViewer extends StructuredViewer {
 		gridLayout.horizontalSpacing= 0;
 		fContainer.setLayout(gridLayout);
 
-		fContainer.addListener(SWT.Resize, new Listener() {
-			@Override
-			public void handleEvent(Event event) {
-			    updateSize();
-			    fContainer.layout(true, true);
-			}
+		fContainer.addListener(SWT.Resize, event -> {
+			updateSize();
+			fContainer.layout(true, true);
 		});
 	}
 
@@ -266,12 +251,7 @@ public abstract class BreadcrumbViewer extends StructuredViewer {
 
 		disableRedraw();
 		try {
-		    preservingSelection(new Runnable() {
-		        @Override
-				public void run() {
-		            buildItemChain(input);
-		        }
-		    });
+			preservingSelection(() -> buildItemChain(input));
 		} finally {
 			enableRedraw();
 		}

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2016 IBM Corporation and others.
+ * Copyright (c) 2000, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -206,12 +206,7 @@ public class OutputStreamMonitor implements IFlushableStreamMonitor {
 	 */
 	protected void startMonitoring() {
 		if (fThread == null) {
-			fThread= new Thread(new Runnable() {
-				@Override
-				public void run() {
-					read();
-				}
-			}, DebugCoreMessages.OutputStreamMonitor_label);
+			fThread = new Thread((Runnable) () -> read(), DebugCoreMessages.OutputStreamMonitor_label);
             fThread.setDaemon(true);
             fThread.setPriority(Thread.MIN_PRIORITY);
 			fThread.start();

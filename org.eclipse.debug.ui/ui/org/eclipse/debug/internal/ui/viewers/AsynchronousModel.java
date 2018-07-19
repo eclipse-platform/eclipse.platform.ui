@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2013 IBM Corporation and others.
+ * Copyright (c) 2006, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -608,17 +608,14 @@ public abstract class AsynchronousModel {
 
         //update viewer outside the lock
     	final ModelNode[] finalUnmap = unmap;
-        preservingSelection(new Runnable() {
-            @Override
-			public void run() {
-            	if (finalUnmap != null) {
-	            	for (int i = 0; i < finalUnmap.length; i++) {
-						viewer.unmapNode(finalUnmap[i]);
-					}
-            	}
-            	viewer.nodeChildrenChanged(parentNode);
-            }
-        });
+		preservingSelection(() -> {
+			if (finalUnmap != null) {
+				for (int i = 0; i < finalUnmap.length; i++) {
+					viewer.unmapNode(finalUnmap[i]);
+				}
+			}
+			viewer.nodeChildrenChanged(parentNode);
+		});
 
 	}
 

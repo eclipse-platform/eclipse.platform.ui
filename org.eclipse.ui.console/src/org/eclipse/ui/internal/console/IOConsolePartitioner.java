@@ -135,12 +135,7 @@ public class IOConsolePartitioner implements IConsoleDocumentPartitioner, IDocum
 	public void setWaterMarks(int low, int high) {
 		lowWaterMark = low;
 		highWaterMark = high;
-		ConsolePlugin.getStandardDisplay().asyncExec(new Runnable() {
-			@Override
-			public void run() {
-				checkBufferSize();
-			}
-		});
+		ConsolePlugin.getStandardDisplay().asyncExec(() -> checkBufferSize());
 	}
 
 	/**

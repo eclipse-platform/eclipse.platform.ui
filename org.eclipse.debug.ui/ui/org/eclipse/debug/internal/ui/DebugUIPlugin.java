@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2013 IBM Corporation and others.
+ * Copyright (c) 2000, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -89,7 +89,6 @@ import org.eclipse.jface.preference.PreferenceConverter;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.ImageRegistry;
 import org.eclipse.jface.util.IPropertyChangeListener;
-import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredSelection;
@@ -398,14 +397,11 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener, 
 		}
 		final Object [] ret = new Object[1];
 		final CoreException [] exc = new CoreException[1];
-		BusyIndicator.showWhile(null, new Runnable() {
-			@Override
-			public void run() {
-				try {
-					ret[0] = element.createExecutableExtension(classAttribute);
-				} catch (CoreException e) {
-					exc[0] = e;
-				}
+		BusyIndicator.showWhile(null, () -> {
+			try {
+				ret[0] = element.createExecutableExtension(classAttribute);
+			} catch (CoreException e) {
+				exc[0] = e;
 			}
 		});
 		if (exc[0] != null) {
@@ -570,13 +566,9 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener, 
 		getLaunchConfigurationManager().startup();
 
 		if (PlatformUI.isWorkbenchRunning()) {
-			fThemeListener= new IPropertyChangeListener() {
-
-				@Override
-				public void propertyChange(PropertyChangeEvent event) {
-					if (IThemeManager.CHANGE_CURRENT_THEME.equals(event.getProperty())) {
-						DebugUIPreferenceInitializer.setThemeBasedPreferences(getPreferenceStore(), true);
-					}
+			fThemeListener = event -> {
+				if (IThemeManager.CHANGE_CURRENT_THEME.equals(event.getProperty())) {
+					DebugUIPreferenceInitializer.setThemeBasedPreferences(getPreferenceStore(), true);
 				}
 			};
 			PlatformUI.getWorkbench().getThemeManager().addPropertyChangeListener(fThemeListener);
@@ -584,14 +576,12 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener, 
 
 		// do the asynchronous exec last - see bug 209920
 		getStandardDisplay().asyncExec(
-				new Runnable() {
-					@Override
-					public void run() {
-						//initialize the selected resource `
-						SelectedResourceManager.getDefault();
-						// forces launch shortcuts to be initialized so their key-bindings work
-						getLaunchConfigurationManager().getLaunchShortcuts();
-					}
+				() -> {
+					// initialize the selected resource `
+					SelectedResourceManager.getDefault();
+					// forces launch shortcuts to be initialized so their
+					// key-bindings work
+					getLaunchConfigurationManager().getLaunchShortcuts();
 				});
 	}
 
@@ -836,14 +826,11 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener, 
 
 	private static boolean doBuild() {
 		try {
-			PlatformUI.getWorkbench().getProgressService().busyCursorWhile(new IRunnableWithProgress() {
-				@Override
-				public void run(IProgressMonitor monitor) throws InvocationTargetException {
-					try {
-						ResourcesPlugin.getWorkspace().build(IncrementalProjectBuilder.INCREMENTAL_BUILD, monitor);
-					} catch (CoreException e) {
-						throw new InvocationTargetException(e);
-					}
+			PlatformUI.getWorkbench().getProgressService().busyCursorWhile(monitor -> {
+				try {
+					ResourcesPlugin.getWorkspace().build(IncrementalProjectBuilder.INCREMENTAL_BUILD, monitor);
+				} catch (CoreException e) {
+					throw new InvocationTargetException(e);
 				}
 			});
 		} catch (InterruptedException e) {
@@ -1088,26 +1075,25 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener, 
 		if (wait) {
 			IWorkbench workbench = DebugUIPlugin.getDefault().getWorkbench();
 			IProgressService progressService = workbench.getProgressService();
-			final IRunnableWithProgress runnable = new IRunnableWithProgress() {
-				@Override
-				public void run(IProgressMonitor monitor) throws InvocationTargetException {
-					/* Setup progress monitor
-					 * - Waiting for jobs to finish (2)
-					 * - Build & launch (98) */
-					monitor.beginTask(MessageFormat.format(DebugUIMessages.DebugUIPlugin_25, new Object[] {configuration.getName()}), 100);
+			final IRunnableWithProgress runnable = monitor -> {
+				/*
+				 * Setup progress monitor - Waiting for jobs to finish (2) -
+				 * Build & launch (98)
+				 */
+				monitor.beginTask(MessageFormat.format(DebugUIMessages.DebugUIPlugin_25, new Object[] {
+						configuration.getName() }), 100);
 
+				try {
+					jobManager.join(ResourcesPlugin.FAMILY_MANUAL_BUILD, new SubProgressMonitor(monitor, 1));
+					jobManager.join(ResourcesPlugin.FAMILY_AUTO_BUILD, new SubProgressMonitor(monitor, 1));
+				} catch (InterruptedException e1) {
+					/* continue */}
+				if (!monitor.isCanceled()) {
 					try {
-						jobManager.join(ResourcesPlugin.FAMILY_MANUAL_BUILD, new SubProgressMonitor(monitor, 1));
-						jobManager.join(ResourcesPlugin.FAMILY_AUTO_BUILD, new SubProgressMonitor(monitor, 1));
+						buildAndLaunch(configuration, mode, new SubProgressMonitor(monitor, 98));
 					}
-					catch (InterruptedException e) {/* continue*/}
-					if (!monitor.isCanceled()) {
-						try {
-							buildAndLaunch(configuration, mode,	new SubProgressMonitor(monitor, 98));
-						}
-						catch (CoreException e) {
-							throw new InvocationTargetException(e);
-						}
+					catch (CoreException e2) {
+						throw new InvocationTargetException(e2);
 					}
 				}
 			};
@@ -1119,18 +1105,16 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener, 
 				handleInvocationTargetException(e2, configuration, mode);
 			}
 		} else {
-			IRunnableWithProgress runnable = new IRunnableWithProgress() {
-				@Override
-				public void run(IProgressMonitor monitor) throws InvocationTargetException {
-					/* Setup progress monitor
-					 * - Build & launch (1) */
-					monitor.beginTask(MessageFormat.format(DebugUIMessages.DebugUIPlugin_25, new Object[] {configuration.getName()}), 1);
-					try {
-						buildAndLaunch(configuration, mode,	new SubProgressMonitor(monitor, 1));
-					}
-					catch (CoreException e) {
-						throw new InvocationTargetException(e);
-					}
+			IRunnableWithProgress runnable = monitor -> {
+				/*
+				 * Setup progress monitor - Build & launch (1)
+				 */
+				monitor.beginTask(MessageFormat.format(DebugUIMessages.DebugUIPlugin_25, new Object[] {
+						configuration.getName() }), 1);
+				try {
+					buildAndLaunch(configuration, mode, new SubProgressMonitor(monitor, 1));
+				} catch (CoreException e) {
+					throw new InvocationTargetException(e);
 				}
 			};
 			try {
@@ -1265,12 +1249,7 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener, 
 					if (group == null) {
 						return status;
 					}
-					Runnable r = new Runnable() {
-						@Override
-						public void run() {
-							DebugUITools.openLaunchConfigurationDialogOnGroup(DebugUIPlugin.getShell(), new StructuredSelection(configuration), group.getIdentifier(), status);
-						}
-					};
+					Runnable r = () -> DebugUITools.openLaunchConfigurationDialogOnGroup(DebugUIPlugin.getShell(), new StructuredSelection(configuration), group.getIdentifier(), status);
 					DebugUIPlugin.getStandardDisplay().asyncExec(r);
 				}
 				finally	{

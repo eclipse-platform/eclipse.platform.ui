@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2013 IBM Corporation and others.
+ * Copyright (c) 2006, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -39,13 +39,10 @@ public class LaunchDelegateNotAvailableHandler implements IStatusHandler {
 				final ILaunchConfiguration config = (ILaunchConfiguration) infos[0];
 				final String mode = (String) infos[1];
 				final Shell shell = DebugUIPlugin.getShell();
-				Runnable runnable = new Runnable() {
-					@Override
-					public void run() {
-						ILaunchGroup group = DebugUITools.getLaunchGroup(config, mode);
-						if (group != null) {
-							DebugUITools.openLaunchConfigurationDialog(shell, config, group.getIdentifier(), null);
-						}
+				Runnable runnable = () -> {
+					ILaunchGroup group = DebugUITools.getLaunchGroup(config, mode);
+					if (group != null) {
+						DebugUITools.openLaunchConfigurationDialog(shell, config, group.getIdentifier(), null);
 					}
 				};
 				DebugUIPlugin.getStandardDisplay().asyncExec(runnable);

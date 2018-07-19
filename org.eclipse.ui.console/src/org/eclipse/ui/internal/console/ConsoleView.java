@@ -394,26 +394,23 @@ public class ConsoleView extends PageBookView implements IConsoleView, IConsoleL
 	@Override
 	public void consolesAdded(final IConsole[] consoles) {
 		if (isAvailable()) {
-			Runnable r = new Runnable() {
-				@Override
-				public void run() {
-					for (int i = 0; i < consoles.length; i++) {
-						if (isAvailable()) {
-							IConsole console = consoles[i];
-							// ensure it's still registered since this is done asynchronously
-							IConsole[] allConsoles = getConsoleManager().getConsoles();
-							for (int j = 0; j < allConsoles.length; j++) {
-								IConsole registered = allConsoles[j];
-								if (registered.equals(console)) {
-									ConsoleWorkbenchPart part = new ConsoleWorkbenchPart(console, getSite());
-									fConsoleToPart.put(console, part);
-									fPartToConsole.put(part, console);
-									partActivated(part);
-									break;
-								}
+			Runnable r = () -> {
+				for (int i = 0; i < consoles.length; i++) {
+					if (isAvailable()) {
+						IConsole console = consoles[i];
+						// ensure it's still registered since this is done asynchronously
+						IConsole[] allConsoles = getConsoleManager().getConsoles();
+						for (int j = 0; j < allConsoles.length; j++) {
+							IConsole registered = allConsoles[j];
+							if (registered.equals(console)) {
+								ConsoleWorkbenchPart part = new ConsoleWorkbenchPart(console, getSite());
+								fConsoleToPart.put(console, part);
+								fPartToConsole.put(part, console);
+								partActivated(part);
+								break;
 							}
-
 						}
+
 					}
 				}
 			};
@@ -424,22 +421,19 @@ public class ConsoleView extends PageBookView implements IConsoleView, IConsoleL
 	@Override
 	public void consolesRemoved(final IConsole[] consoles) {
 		if (isAvailable()) {
-			Runnable r = new Runnable() {
-				@Override
-				public void run() {
-					for (int i = 0; i < consoles.length; i++) {
-						if (isAvailable()) {
-							IConsole console = consoles[i];
-							fStack.remove(console);
-							ConsoleWorkbenchPart part = fConsoleToPart.get(console);
-							if (part != null) {
-								partClosed(part);
-							}
-							if (getConsole() == null) {
-								IConsole[] available = getConsoleManager().getConsoles();
-								if (available.length > 0) {
-									display(available[available.length - 1]);
-								}
+			Runnable r = () -> {
+				for (int i = 0; i < consoles.length; i++) {
+					if (isAvailable()) {
+						IConsole console = consoles[i];
+						fStack.remove(console);
+						ConsoleWorkbenchPart part = fConsoleToPart.get(console);
+						if (part != null) {
+							partClosed(part);
+						}
+						if (getConsole() == null) {
+							IConsole[] available = getConsoleManager().getConsoles();
+							if (available.length > 0) {
+								display(available[available.length - 1]);
 							}
 						}
 					}

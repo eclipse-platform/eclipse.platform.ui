@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2005, 2016 IBM Corporation and others.
+ *  Copyright (c) 2005, 2018 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -59,12 +59,9 @@ public class DebugWindowContextService implements IDebugContextService, IPartLis
 		fWindow.getPartService().addPartListener(this);
 
 		// need to register source provider on the UI thread (bug 438396)
-		window.getShell().getDisplay().asyncExec(new Runnable() {
-			@Override
-			public void run() {
-				if (fWindow != null) {
-					fSourceProvider = new DebugContextSourceProvider(DebugWindowContextService.this, evaluationService);
-				}
+		window.getShell().getDisplay().asyncExec(() -> {
+			if (fWindow != null) {
+				fSourceProvider = new DebugContextSourceProvider(DebugWindowContextService.this, evaluationService);
 			}
 		});
 	}

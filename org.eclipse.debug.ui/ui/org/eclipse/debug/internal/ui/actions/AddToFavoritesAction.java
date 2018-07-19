@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 IBM Corporation and others.
+ * Copyright (c) 2000, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -169,22 +169,19 @@ public class AddToFavoritesAction extends SelectionListenerAction {
 	@Override
 	public void run() {
 		final CoreException[] ex = new CoreException[1];
-		BusyIndicator.showWhile(DebugUIPlugin.getStandardDisplay(), new Runnable() {
-			@Override
-			public void run() {
-				try {
-					List<String> list = getLaunchConfiguration().getAttribute(IDebugUIConstants.ATTR_FAVORITE_GROUPS, (List<String>) null);
-					if (list == null) {
-						list = new ArrayList<>();
-					}
-					list.add(getGroup().getIdentifier());
-					ILaunchConfigurationWorkingCopy copy = getLaunchConfiguration().getWorkingCopy();
-					copy.setAttribute(IDebugUIConstants.ATTR_FAVORITE_GROUPS, list);
-					copy.doSave();
-					setEnabled(false);
-				} catch (CoreException e) {
-					ex[0] = e;
+		BusyIndicator.showWhile(DebugUIPlugin.getStandardDisplay(), () -> {
+			try {
+				List<String> list = getLaunchConfiguration().getAttribute(IDebugUIConstants.ATTR_FAVORITE_GROUPS, (List<String>) null);
+				if (list == null) {
+					list = new ArrayList<>();
 				}
+				list.add(getGroup().getIdentifier());
+				ILaunchConfigurationWorkingCopy copy = getLaunchConfiguration().getWorkingCopy();
+				copy.setAttribute(IDebugUIConstants.ATTR_FAVORITE_GROUPS, list);
+				copy.doSave();
+				setEnabled(false);
+			} catch (CoreException e) {
+				ex[0] = e;
 			}
 		});
 		if (ex[0] != null) {

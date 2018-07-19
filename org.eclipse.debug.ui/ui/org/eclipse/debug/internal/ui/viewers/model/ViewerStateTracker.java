@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011, 2016 Wind River Systems and others.
+ * Copyright (c) 2011, 2018 Wind River Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -285,28 +285,30 @@ class ViewerStateTracker {
 
                                 // Process start of restore in an async cycle because we may still be inside inputChanged()
                                 // call. I.e. the "input.equals(fContentProvider.getViewer().getInput())" test may fail.
-                                fContentProvider.getViewer().getDisplay().asyncExec(new Runnable() {
-                                    @Override
-									public void run() {
-                                        if (!fContentProvider.isDisposed() && input.equals(fContentProvider.getViewer().getInput())) {
-                                            ModelDelta stateDelta2 = fViewerStates.remove(keyMementoString);
-                                            if (stateDelta2 != null) {
-                                                if (DebugUIPlugin.DEBUG_STATE_SAVE_RESTORE && DebugUIPlugin.DEBUG_TEST_PRESENTATION_ID(fContentProvider.getPresentationContext()))  {
-                                                	DebugUIPlugin.trace("STATE RESTORE BEGINS"); //$NON-NLS-1$
-                                                	DebugUIPlugin.trace("\tRESTORE: " + stateDelta2.toString()); //$NON-NLS-1$
-                                                    notifyStateUpdate(input, STATE_RESTORE_SEQUENCE_BEGINS, null);
-                                                }
-                                                stateDelta2.setElement(input);
-                                                fPendingState = stateDelta2;
-                                                doInitialRestore(fPendingState);
-                                            }
-                                        } else {
-                                            if (DebugUIPlugin.DEBUG_STATE_SAVE_RESTORE && DebugUIPlugin.DEBUG_TEST_PRESENTATION_ID(fContentProvider.getPresentationContext()))  {
-                                            	DebugUIPlugin.trace("STATE RESTORE CANCELED."); //$NON-NLS-1$
-                                            }
-                                        }
-                                    }
-                                });
+								fContentProvider.getViewer().getDisplay().asyncExec(() -> {
+									if (!fContentProvider.isDisposed()
+											&& input.equals(fContentProvider.getViewer().getInput())) {
+										ModelDelta stateDelta2 = fViewerStates.remove(keyMementoString);
+										if (stateDelta2 != null) {
+											if (DebugUIPlugin.DEBUG_STATE_SAVE_RESTORE
+													&& DebugUIPlugin.DEBUG_TEST_PRESENTATION_ID(
+															fContentProvider.getPresentationContext())) {
+												DebugUIPlugin.trace("STATE RESTORE BEGINS"); //$NON-NLS-1$
+												DebugUIPlugin.trace("\tRESTORE: " + stateDelta2.toString()); //$NON-NLS-1$
+												notifyStateUpdate(input, STATE_RESTORE_SEQUENCE_BEGINS, null);
+											}
+											stateDelta2.setElement(input);
+											fPendingState = stateDelta2;
+											doInitialRestore(fPendingState);
+										}
+									} else {
+										if (DebugUIPlugin.DEBUG_STATE_SAVE_RESTORE
+												&& DebugUIPlugin.DEBUG_TEST_PRESENTATION_ID(
+														fContentProvider.getPresentationContext())) {
+											DebugUIPlugin.trace("STATE RESTORE CANCELED."); //$NON-NLS-1$
+										}
+									}
+								});
                             } else {
                                 if (DebugUIPlugin.DEBUG_STATE_SAVE_RESTORE && DebugUIPlugin.DEBUG_TEST_PRESENTATION_ID(fContentProvider.getPresentationContext()))  {
                                 	DebugUIPlugin.trace("STATE RESTORE INPUT COMARE ENDED : " + fRequest + " - NO MATCHING STATE"); //$NON-NLS-1$ //$NON-NLS-2$
@@ -402,15 +404,12 @@ class ViewerStateTracker {
         // EXPAND node. These
         // markers are used by the restore logic to know when a delta node can
         // be removed.
-        delta.accept(new IModelDeltaVisitor() {
-            @Override
-			public boolean visit(IModelDelta d, int depth) {
-                if ((d.getFlags() & IModelDelta.EXPAND) != 0) {
-                    ((ModelDelta) d).setFlags(d.getFlags() | IModelDelta.CONTENT);
-                }
-                return true;
-            }
-        });
+		delta.accept((d, depth) -> {
+			if ((d.getFlags() & IModelDelta.EXPAND) != 0) {
+				((ModelDelta) d).setFlags(d.getFlags() | IModelDelta.CONTENT);
+			}
+			return true;
+		});
 
         if (DebugUIPlugin.DEBUG_STATE_SAVE_RESTORE && DebugUIPlugin.DEBUG_TEST_PRESENTATION_ID(fContentProvider.getPresentationContext())) {
         	DebugUIPlugin.trace("\tAPPEND DELTA: " + appendDeltaRoot); //$NON-NLS-1$
@@ -427,66 +426,57 @@ class ViewerStateTracker {
             // If the append delta is generated for a sub-tree, copy the pending delta
             // attributes into the pending delta.
             if (path.getSegmentCount() > 0) {
-                fPendingState.accept( new IModelDeltaVisitor() {
-                    @Override
-					public boolean visit(IModelDelta pendingDeltaNode, int depth) {
-                        TreePath pendingDeltaPath = fContentProvider.getViewerTreePath(pendingDeltaNode);
-                        if (path.startsWith(pendingDeltaPath, null))
-                        {
-                            ModelDelta appendDelta = findDeltaForPath(appendDeltaRoot, pendingDeltaPath);
-                            appendDelta.setFlags(pendingDeltaNode.getFlags());
-                            appendDelta.setChildCount(pendingDeltaNode.getChildCount());
-                            appendDelta.setIndex(pendingDeltaNode.getIndex());
-                            return true;
-                        }
-                        return false;
-                    }
-                });
+				fPendingState.accept((pendingDeltaNode, depth) -> {
+					TreePath pendingDeltaPath = fContentProvider.getViewerTreePath(pendingDeltaNode);
+					if (path.startsWith(pendingDeltaPath, null)) {
+						ModelDelta appendDelta = findDeltaForPath(appendDeltaRoot, pendingDeltaPath);
+						appendDelta.setFlags(pendingDeltaNode.getFlags());
+						appendDelta.setChildCount(pendingDeltaNode.getChildCount());
+						appendDelta.setIndex(pendingDeltaNode.getIndex());
+						return true;
+					}
+					return false;
+				});
             }
 
             // Copy the pending state into the new appended state.
-            fPendingState.accept( new IModelDeltaVisitor() {
-                @Override
-				public boolean visit(IModelDelta pendingDeltaNode, int depth) {
-                    // Skip the top element
-                    if (pendingDeltaNode.getParentDelta() == null) {
-                        return true;
-                    }
+			fPendingState.accept((pendingDeltaNode, depth) -> {
+				// Skip the top element
+				if (pendingDeltaNode.getParentDelta() == null) {
+					return true;
+				}
 
-                    // Find the node in the save delta which is the parent
-                    // of to the current pending delta node.
-                    // If the parent node cannot be found, it means that
-                    // most likely the user collapsed the parent node before
-                    // the children were ever expanded.
-                    // If the pending state node already exists in the parent
-                    // node, it is already processed and we can skip it.
-                    // If the pending state node does not contain any flags,
-                    // we can also skip it.
-                    ModelDelta saveDeltaNode = findSubDeltaParent(appendDeltaRoot, pendingDeltaNode);
-                    if (saveDeltaNode != null &&
-                        !isDeltaInParent(pendingDeltaNode, saveDeltaNode) &&
-                        pendingDeltaNode.getFlags() != IModelDelta.NO_CHANGE)
-                    {
-                        saveDeltaNode.setChildCount(pendingDeltaNode.getParentDelta().getChildCount());
-                        copyIntoDelta(pendingDeltaNode, saveDeltaNode);
-                    } else {
-                        if (DebugUIPlugin.DEBUG_STATE_SAVE_RESTORE && DebugUIPlugin.DEBUG_TEST_PRESENTATION_ID(fContentProvider.getPresentationContext())) {
-                        	DebugUIPlugin.trace("\tSKIPPED: " + pendingDeltaNode.getElement()); //$NON-NLS-1$
-                        }
-                    }
+				// Find the node in the save delta which is the parent
+				// of to the current pending delta node.
+				// If the parent node cannot be found, it means that
+				// most likely the user collapsed the parent node before
+				// the children were ever expanded.
+				// If the pending state node already exists in the parent
+				// node, it is already processed and we can skip it.
+				// If the pending state node does not contain any flags,
+				// we can also skip it.
+				ModelDelta saveDeltaNode = findSubDeltaParent(appendDeltaRoot, pendingDeltaNode);
+				if (saveDeltaNode != null && !isDeltaInParent(pendingDeltaNode, saveDeltaNode)
+						&& pendingDeltaNode.getFlags() != IModelDelta.NO_CHANGE) {
+					saveDeltaNode.setChildCount(pendingDeltaNode.getParentDelta().getChildCount());
+					copyIntoDelta(pendingDeltaNode, saveDeltaNode);
+				} else {
+					if (DebugUIPlugin.DEBUG_STATE_SAVE_RESTORE
+							&& DebugUIPlugin.DEBUG_TEST_PRESENTATION_ID(fContentProvider.getPresentationContext())) {
+						DebugUIPlugin.trace("\tSKIPPED: " + pendingDeltaNode.getElement()); //$NON-NLS-1$
+					}
+				}
 
-                    // If the pending delta node has a memento element, its
-                    // children should also be mementos therefore the copy
-                    // delta operation should have added all the children
-                    // of this pending delta node into the save delta.
-                    if (pendingDeltaNode.getElement() instanceof IMemento) {
-                        return false;
-                    } else {
-                        return pendingDeltaNode.getChildCount() > 0;
-                    }
-                }
-
-            });
+				// If the pending delta node has a memento element, its
+				// children should also be mementos therefore the copy
+				// delta operation should have added all the children
+				// of this pending delta node into the save delta.
+				if (pendingDeltaNode.getElement() instanceof IMemento) {
+					return false;
+				} else {
+					return pendingDeltaNode.getChildCount() > 0;
+				}
+			});
         }
 
         if (appendDeltaRoot.getChildDeltas().length > 0) {
@@ -562,55 +552,53 @@ class ViewerStateTracker {
                 	DebugUIPlugin.trace("\tSAVE OUTSTANDING RESTORE: " + fPendingState); //$NON-NLS-1$
                 }
 
-                IModelDeltaVisitor pendingStateVisitor = new IModelDeltaVisitor() {
-                    @Override
-					public boolean visit(IModelDelta pendingDeltaNode, int depth) {
-                        // Ignore the top element.
-                        if (pendingDeltaNode.getParentDelta() == null) {
-                            return true;
-                        }
+				IModelDeltaVisitor pendingStateVisitor = (pendingDeltaNode, depth) -> {
+					// Ignore the top element.
+					if (pendingDeltaNode.getParentDelta() == null) {
+						return true;
+					}
 
-                        // Find the node in the save delta which is the parent
-                        // of to the current pending delta node.
-                        // If the parent node cannot be found, it means that
-                        // most likely the user collapsed the parent node before
-                        // the children were ever expanded.
-                        // If the pending state node already exists in the
-                        // parent
-                        // node, it is already processed and we can skip it.
-                        // If the pending state node does not contain any flags,
-                        // we can also skip it.
-                        ModelDelta saveDeltaNode = findSubDeltaParent(saveDeltaRoot, pendingDeltaNode);
-                        if (saveDeltaNode != null && !isDeltaInParent(pendingDeltaNode, saveDeltaNode)
-                            && pendingDeltaNode.getFlags() != IModelDelta.NO_CHANGE) {
-                            // There should be only one delta element with
-                            // the REVEAL flag in the entire save delta. The
-                            // reveal flag in the pending delta trumps the one
-                            // in the save delta because most likely the restore
-                            // operation did not yet complete the reveal
-                            // operation.
-                            if ((pendingDeltaNode.getFlags() & IModelDelta.REVEAL) != 0) {
-                                clearRevealFlag(saveDeltaRoot);
-                            }
-                            saveDeltaNode.setChildCount(pendingDeltaNode.getParentDelta().getChildCount());
-                            copyIntoDelta(pendingDeltaNode, saveDeltaNode);
-                        } else {
-                            if (DebugUIPlugin.DEBUG_STATE_SAVE_RESTORE && DebugUIPlugin.DEBUG_TEST_PRESENTATION_ID(fContentProvider.getPresentationContext())) {
-                            	DebugUIPlugin.trace("\tSKIPPED: " + pendingDeltaNode.getElement()); //$NON-NLS-1$
-                            }
-                        }
+					// Find the node in the save delta which is the parent
+					// of to the current pending delta node.
+					// If the parent node cannot be found, it means that
+					// most likely the user collapsed the parent node before
+					// the children were ever expanded.
+					// If the pending state node already exists in the
+					// parent
+					// node, it is already processed and we can skip it.
+					// If the pending state node does not contain any flags,
+					// we can also skip it.
+					ModelDelta saveDeltaNode = findSubDeltaParent(saveDeltaRoot, pendingDeltaNode);
+					if (saveDeltaNode != null && !isDeltaInParent(pendingDeltaNode, saveDeltaNode)
+							&& pendingDeltaNode.getFlags() != IModelDelta.NO_CHANGE) {
+						// There should be only one delta element with
+						// the REVEAL flag in the entire save delta. The
+						// reveal flag in the pending delta trumps the one
+						// in the save delta because most likely the restore
+						// operation did not yet complete the reveal
+						// operation.
+						if ((pendingDeltaNode.getFlags() & IModelDelta.REVEAL) != 0) {
+							clearRevealFlag(saveDeltaRoot);
+						}
+						saveDeltaNode.setChildCount(pendingDeltaNode.getParentDelta().getChildCount());
+						copyIntoDelta(pendingDeltaNode, saveDeltaNode);
+					} else {
+						if (DebugUIPlugin.DEBUG_STATE_SAVE_RESTORE && DebugUIPlugin
+								.DEBUG_TEST_PRESENTATION_ID(fContentProvider.getPresentationContext())) {
+							DebugUIPlugin.trace("\tSKIPPED: " + pendingDeltaNode.getElement()); //$NON-NLS-1$
+						}
+					}
 
-                        // If the pending delta node has a memento element, its
-                        // children should also be mementos therefore the copy
-                        // delta operation should have added all the children
-                        // of this pending delta node into the save delta.
-                        if (pendingDeltaNode.getElement() instanceof IMemento) {
-                            return false;
-                        } else {
-                            return pendingDeltaNode.getChildCount() > 0;
-                        }
-                    }
-                };
+					// If the pending delta node has a memento element, its
+					// children should also be mementos therefore the copy
+					// delta operation should have added all the children
+					// of this pending delta node into the save delta.
+					if (pendingDeltaNode.getElement() instanceof IMemento) {
+						return false;
+					} else {
+						return pendingDeltaNode.getChildCount() > 0;
+					}
+				};
                 fPendingState.accept(pendingStateVisitor);
             }
 
@@ -627,15 +615,12 @@ class ViewerStateTracker {
     }
 
     private void clearRevealFlag(ModelDelta saveRootDelta) {
-        IModelDeltaVisitor clearDeltaVisitor = new IModelDeltaVisitor() {
-            @Override
-			public boolean visit(IModelDelta delta, int depth) {
-                if ((delta.getFlags() & IModelDelta.REVEAL) != 0) {
-                    ((ModelDelta) delta).setFlags(delta.getFlags() & ~IModelDelta.REVEAL);
-                }
-                return true;
-            }
-        };
+		IModelDeltaVisitor clearDeltaVisitor = (delta, depth) -> {
+			if ((delta.getFlags() & IModelDelta.REVEAL) != 0) {
+				((ModelDelta) delta).setFlags(delta.getFlags() & ~IModelDelta.REVEAL);
+			}
+			return true;
+		};
         saveRootDelta.accept(clearDeltaVisitor);
     }
 
@@ -817,33 +802,29 @@ class ViewerStateTracker {
             }
 
         };
-        IModelDeltaVisitor visitor = new IModelDeltaVisitor() {
-            @Override
-			public boolean visit(IModelDelta delta, int depth) {
-                // Add the CONTENT flag to all nodes with an EXPAND flag.
-                // During restoring, this flag is used as a marker indicating
-                // whether all the content of a given element has been
-                // retrieved.
-                if ((delta.getFlags() | IModelDelta.EXPAND) != 0) {
-                    ((ModelDelta)delta).setFlags(delta.getFlags() | IModelDelta.CONTENT);
-                }
+		IModelDeltaVisitor visitor = (delta, depth) -> {
+			// Add the CONTENT flag to all nodes with an EXPAND flag.
+			// During restoring, this flag is used as a marker indicating
+			// whether all the content of a given element has been
+			// retrieved.
+			if ((delta.getFlags() | IModelDelta.EXPAND) != 0) {
+				((ModelDelta) delta).setFlags(delta.getFlags() | IModelDelta.CONTENT);
+			}
 
-                // This is the root element, save the root element memento in 'inputMemento'.
-                if (delta.getParentDelta() == null) {
-                    manager.addRequest(new ElementMementoRequest(fContentProvider, input, manager,
-                        delta.getElement(), fContentProvider.getViewerTreePath(delta), inputMemento,
-                        (ModelDelta) delta));
-                } else {
-                    // If this is another node element, save the memento to a children memento.
-                    if (!(delta.getElement() instanceof XMLMemento)) {
-                        manager.addRequest(new ElementMementoRequest(fContentProvider, input, manager,
-                            delta.getElement(), fContentProvider.getViewerTreePath(delta), childrenMemento
-                                .createChild("CHILD_ELEMENT"), (ModelDelta) delta)); //$NON-NLS-1$
-                    }
-                }
-                return true;
-            }
-        };
+			// This is the root element, save the root element memento in 'inputMemento'.
+			if (delta.getParentDelta() == null) {
+				manager.addRequest(new ElementMementoRequest(fContentProvider, input, manager, delta.getElement(),
+						fContentProvider.getViewerTreePath(delta), inputMemento, (ModelDelta) delta));
+			} else {
+				// If this is another node element, save the memento to a children memento.
+				if (!(delta.getElement() instanceof XMLMemento)) {
+					manager.addRequest(new ElementMementoRequest(fContentProvider, input, manager, delta.getElement(),
+							fContentProvider.getViewerTreePath(delta), childrenMemento.createChild("CHILD_ELEMENT"), //$NON-NLS-1$
+							(ModelDelta) delta));
+				}
+			}
+			return true;
+		};
         rootDelta.accept(visitor);
         stateSaveStarted(input, manager);
         manager.processReqeusts();
@@ -932,67 +913,66 @@ class ViewerStateTracker {
 
             // If we're canceling select or reveal, cancel it for all of pending deltas
             final int mask = flags & (IModelDelta.SELECT | IModelDelta.REVEAL);
-            fPendingState.accept(new IModelDeltaVisitor() {
-                @Override
-				public boolean visit(IModelDelta delta, int depth) {
-                    int deltaFlags = delta.getFlags();
-                    int newFlags = deltaFlags & ~mask;
-                    if (DebugUIPlugin.DEBUG_STATE_SAVE_RESTORE && DebugUIPlugin.DEBUG_TEST_PRESENTATION_ID(fContentProvider.getPresentationContext())) {
-                        if (deltaFlags != newFlags) {
-                        	DebugUIPlugin.trace("\tCANCEL: " + delta.getElement() + "(" + Integer.toHexString(deltaFlags & mask) + ")"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-                        }
-                    }
-                    ((ModelDelta)delta).setFlags(newFlags);
-                    return true;
-                }
-            });
+			fPendingState.accept((delta, depth) -> {
+				int deltaFlags = delta.getFlags();
+				int newFlags = deltaFlags & ~mask;
+				if (DebugUIPlugin.DEBUG_STATE_SAVE_RESTORE
+						&& DebugUIPlugin.DEBUG_TEST_PRESENTATION_ID(fContentProvider.getPresentationContext())) {
+					if (deltaFlags != newFlags) {
+						DebugUIPlugin.trace(
+								"\tCANCEL: " + delta.getElement() + "(" + Integer.toHexString(deltaFlags & mask) + ")"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+					}
+				}
+				((ModelDelta) delta).setFlags(newFlags);
+				return true;
+			});
         }
         if ((flags & ~(IModelDelta.SELECT | IModelDelta.REVEAL)) != 0) {
             final int mask = flags & ~(IModelDelta.SELECT | IModelDelta.REVEAL);
             // For other flags (EXPAND/COLLAPSE), cancel only from the matching path.
-            fPendingState.accept(new IModelDeltaVisitor() {
-                @Override
-				public boolean visit(IModelDelta delta, int depth) {
-                    if (depth < path.getSegmentCount()) {
-                        // Descend until we reach a matching depth.
-                        TreePath deltaPath = fContentProvider.getViewerTreePath(delta);
-                        if (path.startsWith(deltaPath, null)) {
-                            return true;
-                        } else {
-                            return false;
-                        }
-                    }
-                    else if (depth == path.getSegmentCount()) {
-                        TreePath deltaPath = fContentProvider.getViewerTreePath(delta);
-                        if (deltaPath.equals(path)) {
-                            int deltaFlags = delta.getFlags();
-                            int newFlags = deltaFlags & ~mask;
-                            if (DebugUIPlugin.DEBUG_STATE_SAVE_RESTORE && DebugUIPlugin.DEBUG_TEST_PRESENTATION_ID(fContentProvider.getPresentationContext())) {
-                                if (deltaFlags != newFlags) {
-                                	DebugUIPlugin.trace("\tCANCEL: " + delta.getElement() + "(" + Integer.toHexString(deltaFlags & mask) + ")"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-                                }
-                            }
-                            ((ModelDelta)delta).setFlags(newFlags);
-                            if ((flags & IModelDelta.EXPAND) != 0) {
-                                // Descend delta to clear the EXPAND flags of a canceled expand
-                                return true;
-                            }
-                        }
-                        return false;
-                    } else {
-                        // We're clearing out flags of a matching sub-tree
-                        // assert (flags & IModelDelta.EXPAND) != 0;
+			fPendingState.accept((delta, depth) -> {
+				if (depth < path.getSegmentCount()) {
+					// Descend until we reach a matching depth.
+					TreePath deltaPath1 = fContentProvider.getViewerTreePath(delta);
+					if (path.startsWith(deltaPath1, null)) {
+						return true;
+					} else {
+						return false;
+					}
+				} else if (depth == path.getSegmentCount()) {
+					TreePath deltaPath2 = fContentProvider.getViewerTreePath(delta);
+					if (deltaPath2.equals(path)) {
+						int deltaFlags = delta.getFlags();
+						int newFlags = deltaFlags & ~mask;
+						if (DebugUIPlugin.DEBUG_STATE_SAVE_RESTORE && DebugUIPlugin
+								.DEBUG_TEST_PRESENTATION_ID(fContentProvider.getPresentationContext())) {
+							if (deltaFlags != newFlags) {
+								DebugUIPlugin.trace("\tCANCEL: " + delta.getElement() + "(" //$NON-NLS-1$ //$NON-NLS-2$
+										+ Integer.toHexString(deltaFlags & mask) + ")"); //$NON-NLS-1$
+							}
+						}
+						((ModelDelta) delta).setFlags(newFlags);
+						if ((flags & IModelDelta.EXPAND) != 0) {
+							// Descend delta to clear the EXPAND flags of a canceled expand
+							return true;
+						}
+					}
+					return false;
+				} else {
+					// We're clearing out flags of a matching sub-tree
+					// assert (flags & IModelDelta.EXPAND) != 0;
 
-                        if (DebugUIPlugin.DEBUG_STATE_SAVE_RESTORE && DebugUIPlugin.DEBUG_TEST_PRESENTATION_ID(fContentProvider.getPresentationContext())) {
-                            if (delta.getFlags() != IModelDelta.NO_CHANGE) {
-                            	DebugUIPlugin.trace("\tCANCEL: " + delta.getElement() + "(" + Integer.toHexString(delta.getFlags()) + ")"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-                            }
-                        }
-                        ((ModelDelta)delta).setFlags(IModelDelta.NO_CHANGE);
-                        return true;
-                    }
-                }
-            });
+					if (DebugUIPlugin.DEBUG_STATE_SAVE_RESTORE
+							&& DebugUIPlugin.DEBUG_TEST_PRESENTATION_ID(fContentProvider.getPresentationContext())) {
+						if (delta.getFlags() != IModelDelta.NO_CHANGE) {
+							DebugUIPlugin.trace("\tCANCEL: " + delta.getElement() + "(" //$NON-NLS-1$ //$NON-NLS-2$
+									+ Integer.toHexString(delta.getFlags()) + ")"); //$NON-NLS-1$
+						}
+					}
+					((ModelDelta) delta).setFlags(IModelDelta.NO_CHANGE);
+					return true;
+				}
+			});
         }
     }
 
@@ -1018,56 +998,54 @@ class ViewerStateTracker {
             return;
         }
 
-        IModelDeltaVisitor visitor = new IModelDeltaVisitor() {
-            @Override
-			public boolean visit(final IModelDelta delta, int depth) {
+		IModelDeltaVisitor visitor = (delta, depth) -> {
 
-                Object element = delta.getElement();
-                Object potentialMatch = depth != 0 ? path.getSegment(depth - 1) : fContentProvider.getViewer().getInput();
-                // Only process if the depth in the delta matches the tree path.
-                if (depth == path.getSegmentCount()) {
-                    if (element instanceof IMemento) {
-                        IElementMementoProvider provider = ViewerAdapterService.getMementoProvider(potentialMatch);
-                        if (provider == null) {
-                            provider = ViewerAdapterService.getMementoProvider(fContentProvider.getViewer().getInput());
-                        }
-                        if (provider != null) {
-                            CompareRequestKey key = new CompareRequestKey(path, delta);
-                            ElementCompareRequest existingRequest = fCompareRequestsInProgress
-                                .get(key);
-                            if (existingRequest != null) {
-                                // Check all the running compare updates for a
-                                // matching tree path.
-                                // If found, just update the flags.
-                                existingRequest.setKnowsHasChildren(knowsHasChildren);
-                                existingRequest.setKnowsChildCount(knowsChildCount);
-                                existingRequest.setCheckChildrenRealized(checkChildrenRealized);
-                            } else {
-                                // Start a new compare request
-                                ElementCompareRequest compareRequest = new ElementCompareRequest(
-                                    fContentProvider, fContentProvider.getViewer().getInput(), potentialMatch, path,
-                                    (IMemento) element, (ModelDelta) delta, modelIndex, knowsHasChildren,
-                                    knowsChildCount, checkChildrenRealized);
-                                fCompareRequestsInProgress.put(key, compareRequest);
-                                if (DebugUIPlugin.DEBUG_STATE_SAVE_RESTORE && DebugUIPlugin.DEBUG_TEST_PRESENTATION_ID(fContentProvider.getPresentationContext())) {
-                                	DebugUIPlugin.trace("\tSTATE BEGIN: " + compareRequest); //$NON-NLS-1$
-                                }
-                                notifyStateUpdate(element, TreeModelContentProvider.UPDATE_BEGINS, compareRequest);
-                                provider.compareElements(new IElementCompareRequest[] { compareRequest });
-                            }
-                        }
-                    } else if (element.equals(potentialMatch)) {
-                        // Element comparison already succeeded, and it matches
-                        // our element.
-                        // Call restore with delta to process the delta flags.
-                        restorePendingStateNode((ModelDelta) delta, knowsHasChildren, knowsChildCount, checkChildrenRealized);
-                    }
-                    return false;
-                }
-                // Only follow the paths that match the delta.
-                return element.equals(potentialMatch);
-            }
-        };
+			Object element = delta.getElement();
+			Object potentialMatch = depth != 0 ? path.getSegment(depth - 1) : fContentProvider.getViewer().getInput();
+			// Only process if the depth in the delta matches the tree path.
+			if (depth == path.getSegmentCount()) {
+				if (element instanceof IMemento) {
+					IElementMementoProvider provider = ViewerAdapterService.getMementoProvider(potentialMatch);
+					if (provider == null) {
+						provider = ViewerAdapterService.getMementoProvider(fContentProvider.getViewer().getInput());
+					}
+					if (provider != null) {
+						CompareRequestKey key = new CompareRequestKey(path, delta);
+						ElementCompareRequest existingRequest = fCompareRequestsInProgress.get(key);
+						if (existingRequest != null) {
+							// Check all the running compare updates for a
+							// matching tree path.
+							// If found, just update the flags.
+							existingRequest.setKnowsHasChildren(knowsHasChildren);
+							existingRequest.setKnowsChildCount(knowsChildCount);
+							existingRequest.setCheckChildrenRealized(checkChildrenRealized);
+						} else {
+							// Start a new compare request
+							ElementCompareRequest compareRequest = new ElementCompareRequest(fContentProvider,
+									fContentProvider.getViewer().getInput(), potentialMatch, path, (IMemento) element,
+									(ModelDelta) delta, modelIndex, knowsHasChildren, knowsChildCount,
+									checkChildrenRealized);
+							fCompareRequestsInProgress.put(key, compareRequest);
+							if (DebugUIPlugin.DEBUG_STATE_SAVE_RESTORE && DebugUIPlugin
+									.DEBUG_TEST_PRESENTATION_ID(fContentProvider.getPresentationContext())) {
+								DebugUIPlugin.trace("\tSTATE BEGIN: " + compareRequest); //$NON-NLS-1$
+							}
+							notifyStateUpdate(element, TreeModelContentProvider.UPDATE_BEGINS, compareRequest);
+							provider.compareElements(new IElementCompareRequest[] { compareRequest });
+						}
+					}
+				} else if (element.equals(potentialMatch)) {
+					// Element comparison already succeeded, and it matches
+					// our element.
+					// Call restore with delta to process the delta flags.
+					restorePendingStateNode((ModelDelta) delta, knowsHasChildren, knowsChildCount,
+							checkChildrenRealized);
+				}
+				return false;
+			}
+			// Only follow the paths that match the delta.
+			return element.equals(potentialMatch);
+		};
 
         try {
             fInStateRestore = true;
@@ -1153,15 +1131,12 @@ class ViewerStateTracker {
                 	DebugUIPlugin.trace("\tRESTORE REMOVED: " + delta.getElement()); //$NON-NLS-1$
                 }
 
-                delta.accept(new IModelDeltaVisitor() {
-                    @Override
-					public boolean visit(IModelDelta _visitorDelta, int depth) {
-                        ModelDelta visitorDelta = (ModelDelta) _visitorDelta;
-                        visitorDelta.setElement(ELEMENT_REMOVED);
-                        visitorDelta.setFlags(IModelDelta.NO_CHANGE);
-                        return true;
-                    }
-                });
+				delta.accept((_visitorDelta, depth) -> {
+					ModelDelta visitorDelta = (ModelDelta) _visitorDelta;
+					visitorDelta.setElement(ELEMENT_REMOVED);
+					visitorDelta.setFlags(IModelDelta.NO_CHANGE);
+					return true;
+				});
 
             }
         }
@@ -1442,16 +1417,13 @@ class ViewerStateTracker {
      */
     private ModelDelta markRevealDelta(ModelDelta rootDelta) {
         final ModelDelta[] revealDelta = new ModelDelta[1];
-        IModelDeltaVisitor visitor = new IModelDeltaVisitor() {
-            @Override
-			public boolean visit(IModelDelta delta, int depth) {
-                if ( (delta.getFlags() & IModelDelta.REVEAL) != 0) {
-                    revealDelta[0] = (ModelDelta)delta;
-                }
-                // Keep recursing only if we haven't found our delta yet.
-                return revealDelta[0] == null;
-            }
-        };
+		IModelDeltaVisitor visitor = (delta, depth) -> {
+			if ((delta.getFlags() & IModelDelta.REVEAL) != 0) {
+				revealDelta[0] = (ModelDelta) delta;
+			}
+			// Keep recursing only if we haven't found our delta yet.
+			return revealDelta[0] == null;
+		};
 
         rootDelta.accept(visitor);
         if (revealDelta[0] != null) {

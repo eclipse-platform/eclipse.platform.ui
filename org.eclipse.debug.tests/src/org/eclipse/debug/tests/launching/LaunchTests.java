@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2016 Andrey Loskutov.
+ * Copyright (c) 2016, 2018 Andrey Loskutov.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,7 +11,6 @@
 package org.eclipse.debug.tests.launching;
 
 import java.lang.reflect.InvocationHandler;
-import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 import java.util.ConcurrentModificationException;
 import java.util.concurrent.Semaphore;
@@ -53,61 +52,42 @@ public class LaunchTests extends AbstractLaunchTest {
 		super.setUp();
 		final Launch launch = new Launch(null, ILaunchManager.RUN_MODE, null);
 
-		handler = new InvocationHandler() {
-			@Override
-			public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
-				String name = method.getName();
-				if (name.equals("equals")) { //$NON-NLS-1$
-					return args.length == 1 && proxy == args[0];
-				}
-				return Boolean.TRUE;
+		handler = (proxy, method, args) -> {
+			String name = method.getName();
+			if (name.equals("equals")) { //$NON-NLS-1$
+				return args.length == 1 && proxy == args[0];
 			}
+			return Boolean.TRUE;
 		};
 
-		readIsTerminatedTask = new Runnable() {
-			@Override
-			public void run() {
-				launch.isTerminated();
+		readIsTerminatedTask = () -> launch.isTerminated();
+
+		readIsDisconnectedTask = () -> launch.isDisconnected();
+
+		writeProcessesTask = () -> {
+			IProcess process = createProcessProxy();
+			launch.addProcess(process);
+			launch.removeProcess(process);
+			try {
+				Thread.sleep(0, 1);
+			} catch (InterruptedException e) {
+				//
 			}
+			launch.addProcess(process);
+			launch.removeProcess(process);
 		};
 
-		readIsDisconnectedTask = new Runnable() {
-			@Override
-			public void run() {
-				launch.isDisconnected();
+		writeDebugTargetsTask = () -> {
+			IDebugTarget target2 = createDebugTargetProxy();
+			launch.addDebugTarget(target2);
+			launch.removeDebugTarget(target2);
+			try {
+				Thread.sleep(0, 1);
+			} catch (InterruptedException e) {
+				//
 			}
-		};
-
-		writeProcessesTask = new Runnable() {
-			@Override
-			public void run() {
-				IProcess process = createProcessProxy();
-				launch.addProcess(process);
-				launch.removeProcess(process);
-				try {
-					Thread.sleep(0, 1);
-				} catch (InterruptedException e) {
-					//
-				}
-				launch.addProcess(process);
-				launch.removeProcess(process);
-			}
-		};
-
-		writeDebugTargetsTask = new Runnable() {
-			@Override
-			public void run() {
-				IDebugTarget target2 = createDebugTargetProxy();
-				launch.addDebugTarget(target2);
-				launch.removeDebugTarget(target2);
-				try {
-					Thread.sleep(0, 1);
-				} catch (InterruptedException e) {
-					//
-				}
-				launch.addDebugTarget(target2);
-				launch.removeDebugTarget(target2);
-			}
+			launch.addDebugTarget(target2);
+			launch.removeDebugTarget(target2);
 		};
 	}
 
