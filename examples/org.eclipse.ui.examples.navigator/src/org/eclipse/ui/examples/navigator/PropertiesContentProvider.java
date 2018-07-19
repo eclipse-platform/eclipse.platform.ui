@@ -11,7 +11,6 @@ package org.eclipse.ui.examples.navigator;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -35,12 +34,12 @@ import org.eclipse.ui.progress.UIJob;
 
 /**
  * Provides the properties contained in a *.properties file as children of that
- * file in a Common Navigator.  
- * @since 3.2 
+ * file in a Common Navigator.
+ * @since 3.2
  */
 public class PropertiesContentProvider implements ITreeContentProvider,
 		IResourceChangeListener, IResourceDeltaVisitor {
-  
+
 	private static final Object[] NO_CHILDREN = new Object[0];
 
 	private static final Object PROPERTIES_EXT = "properties"; //$NON-NLS-1$
@@ -48,10 +47,10 @@ public class PropertiesContentProvider implements ITreeContentProvider,
 	private final Map<IFile, PropertiesTreeData[]> cachedModelMap = new HashMap<>();
 
 	private StructuredViewer viewer;
-	
+
 	/**
 	 * Create the PropertiesContentProvider instance.
-	 * 
+	 *
 	 * Adds the content provider as a resource change listener to track changes on disk.
 	 *
 	 */
@@ -64,46 +63,43 @@ public class PropertiesContentProvider implements ITreeContentProvider,
 	 * NO_CHILDREN for otherwise.
 	 */
 	@Override
-	public Object[] getChildren(Object parentElement) {  
+	public Object[] getChildren(Object parentElement) {
 		Object[] children = null;
-		if (parentElement instanceof PropertiesTreeData) { 
+		if (parentElement instanceof PropertiesTreeData) {
 			children = NO_CHILDREN;
 		} else if(parentElement instanceof IFile) {
 			/* possible model file */
 			IFile modelFile = (IFile) parentElement;
-			if(PROPERTIES_EXT.equals(modelFile.getFileExtension())) {				
+			if(PROPERTIES_EXT.equals(modelFile.getFileExtension())) {
 				children = cachedModelMap.get(modelFile);
 				if(children == null && updateModel(modelFile) != null) {
 					children = cachedModelMap.get(modelFile);
 				}
 			}
-		}   
+		}
 		return children != null ? children : NO_CHILDREN;
-	}  
+	}
 
 	/**
-	 * Load the model from the given file, if possible.  
-	 * @param modelFile The IFile which contains the persisted model 
-	 */ 
-	private synchronized Properties updateModel(IFile modelFile) { 
-		
+	 * Load the model from the given file, if possible.
+	 * @param modelFile The IFile which contains the persisted model
+	 */
+	private synchronized Properties updateModel(IFile modelFile) {
+
 		if(PROPERTIES_EXT.equals(modelFile.getFileExtension()) ) {
 			Properties model = new Properties();
 			if (modelFile.exists()) {
 				try {
-					model.load(modelFile.getContents()); 
-					
-					String propertyName; 
+					model.load(modelFile.getContents());
+
 					List<PropertiesTreeData> properties = new ArrayList<>();
-					for(@SuppressWarnings("unchecked")
-					Enumeration<String> names = (Enumeration<String>) model.propertyNames(); names.hasMoreElements(); ) {
-						propertyName = names.nextElement();
+					for (String propertyName : model.stringPropertyNames()) {
 						properties.add(new PropertiesTreeData(propertyName,  model.getProperty(propertyName), modelFile));
 					}
 					PropertiesTreeData[] propertiesTreeData = properties.toArray(new PropertiesTreeData[properties.size()]);
-					
+
 					cachedModelMap.put(modelFile, propertiesTreeData);
-					return model; 
+					return model;
 				} catch (IOException e) {
 				} catch (CoreException e) {
 				}
@@ -111,7 +107,7 @@ public class PropertiesContentProvider implements ITreeContentProvider,
 				cachedModelMap.remove(modelFile);
 			}
 		}
-		return null; 
+		return null;
 	}
 
 	@Override
@@ -119,14 +115,14 @@ public class PropertiesContentProvider implements ITreeContentProvider,
 		if (element instanceof PropertiesTreeData) {
 			PropertiesTreeData data = (PropertiesTreeData) element;
 			return data.getFile();
-		} 
+		}
 		return null;
 	}
 
 	@Override
-	public boolean hasChildren(Object element) {		
+	public boolean hasChildren(Object element) {
 		if (element instanceof PropertiesTreeData) {
-			return false;		
+			return false;
 		} else if(element instanceof IFile) {
 			return PROPERTIES_EXT.equals(((IFile) element).getFileExtension());
 		}
@@ -141,7 +137,7 @@ public class PropertiesContentProvider implements ITreeContentProvider,
 	@Override
 	public void dispose() {
 		cachedModelMap.clear();
-		ResourcesPlugin.getWorkspace().removeResourceChangeListener(this); 
+		ResourcesPlugin.getWorkspace().removeResourceChangeListener(this);
 	}
 
 	@Override
@@ -157,9 +153,9 @@ public class PropertiesContentProvider implements ITreeContentProvider,
 		IResourceDelta delta = event.getDelta();
 		try {
 			delta.accept(this);
-		} catch (CoreException e) { 
+		} catch (CoreException e) {
 			e.printStackTrace();
-		} 
+		}
 	}
 
 	@Override
@@ -180,12 +176,12 @@ public class PropertiesContentProvider implements ITreeContentProvider,
 					public IStatus runInUIThread(IProgressMonitor monitor) {
 						if (viewer != null && !viewer.getControl().isDisposed())
 							viewer.refresh(file);
-						return Status.OK_STATUS;						
+						return Status.OK_STATUS;
 					}
 				}.schedule();
 			}
 			return false;
 		}
 		return false;
-	} 
+	}
 }
