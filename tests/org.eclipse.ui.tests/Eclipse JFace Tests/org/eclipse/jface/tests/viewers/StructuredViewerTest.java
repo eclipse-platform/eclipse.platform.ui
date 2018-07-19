@@ -192,9 +192,9 @@ public abstract class StructuredViewerTest extends ViewerTestCase {
     public void testFilter() {
         ViewerFilter filter = new TestLabelFilter();
         fViewer.addFilter(filter);
-        assertTrue("filtered count", getItemCount() == 5);
+		assertEquals("filtered count", 5, getItemCount());
         fViewer.removeFilter(filter);
-        assertTrue("unfiltered count", getItemCount() == 10);
+		assertEquals("unfiltered count", 10, getItemCount());
 
     }
 
@@ -202,13 +202,13 @@ public abstract class StructuredViewerTest extends ViewerTestCase {
     	ViewerFilter filter = new TestLabelFilter();
 		fViewer.setFilters(filter, new TestLabelFilter2());
 //    	System.err.println("Item: " + getItemCount() );
-    	assertTrue("2 filters count", getItemCount() == 1);
+		assertEquals("2 filters count", 1, getItemCount());
 
 		fViewer.setFilters(filter);
-    	assertTrue("1 filtered count", getItemCount() == 5);
+		assertEquals("1 filtered count", 5, getItemCount());
 
 		fViewer.setFilters();
-    	assertTrue("unfiltered count", getItemCount() == 10);
+		assertEquals("unfiltered count", 10, getItemCount());
     }
 
     public void testSetAndGetData() {
@@ -381,7 +381,7 @@ public abstract class StructuredViewerTest extends ViewerTestCase {
                         | TestModelChange.SELECT, fRootElement, newElement));
         assertNull("new sibling is not visible", fViewer
                 .testFindItem(newElement));
-        assertTrue(getItemCount() == 5);
+		assertEquals(5, getItemCount());
     }
 
     public void testInsertSiblingWithFilterNotFiltered() {
@@ -393,7 +393,7 @@ public abstract class StructuredViewerTest extends ViewerTestCase {
                         | TestModelChange.SELECT, fRootElement, newElement));
         assertNotNull("new sibling is visible", fViewer
                 .testFindItem(newElement));
-        assertTrue(getItemCount() == 6);
+		assertEquals(6, getItemCount());
     }
 
     public void testInsertSiblingWithSorter() {
@@ -500,8 +500,8 @@ public abstract class StructuredViewerTest extends ViewerTestCase {
         StructuredSelection selection = new StructuredSelection(first);
         fViewer.setSelection(selection);
 		IStructuredSelection result = fViewer.getStructuredSelection();
-        assertTrue(result.size() == 1);
-        assertTrue(result.getFirstElement() == first);
+		assertEquals(1, result.size());
+		assertEquals(first, result.getFirstElement());
     }
 
     public void testSomeChildrenChanged() {

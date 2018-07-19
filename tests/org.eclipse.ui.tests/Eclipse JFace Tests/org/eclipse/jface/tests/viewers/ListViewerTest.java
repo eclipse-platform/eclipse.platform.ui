@@ -14,6 +14,8 @@
  *******************************************************************************/
 package org.eclipse.jface.tests.viewers;
 
+import static org.junit.Assert.assertNotEquals;
+
 import org.eclipse.jface.util.Util;
 import org.eclipse.jface.viewers.ListViewer;
 import org.eclipse.jface.viewers.StructuredSelection;
@@ -81,7 +83,7 @@ public class ListViewerTest extends StructuredViewerTest {
     public void testRevealBug69076() {
     	// TODO remove the Mac OS check when SWT has fixed the bug in List.java
     	// see bug 116105
-    	if (Util.isCarbon() || Util.isLinux()) {
+		if (Util.isCarbon() || Util.isLinux()) {
     		return;
     	}
 		fViewer = null;
@@ -134,7 +136,7 @@ public class ListViewerTest extends StructuredViewerTest {
 		List list = (List) fViewer.getControl();
 		int topIndex = list.getTopIndex();
 
-		assertTrue("Top item should not be the first item.", topIndex != 0);
+		assertNotEquals("Top item should not be the first item.", 0, topIndex);
 		fViewer.refresh();
 		processEvents();
 		assertEquals("Top index was not preserved after refresh.", topIndex, list.getTopIndex());
@@ -142,12 +144,8 @@ public class ListViewerTest extends StructuredViewerTest {
 		//Assert that when the previous top index after refresh is invalid no exceptions are thrown.
 		model.deleteChildren();
 
-		try {
-			fViewer.refresh();
-			assertEquals(0, list.getTopIndex());
-		} catch (Exception e) {
-			fail("Refresh failure when refreshing with an empty model.");
-		}
+		fViewer.refresh();
+		assertEquals(0, list.getTopIndex());
 	}
 
     public void testSelectionRevealBug177619() throws Exception {
@@ -162,7 +160,7 @@ public class ListViewerTest extends StructuredViewerTest {
 				return list.getTopIndex() != 0;
 			}
 		}.waitForCondition(fViewer.getControl().getDisplay(), 3000);
-		assertTrue(list.getTopIndex() != 0);
+		assertNotEquals(0, list.getTopIndex());
 	}
 
 	public void testSelectionNoRevealBug177619() throws Exception {
@@ -170,6 +168,6 @@ public class ListViewerTest extends StructuredViewerTest {
 		fViewer.setInput(model);
 
 		fViewer.setSelection(new StructuredSelection(((ListViewer)fViewer).getElementAt(50)),false);
-		assertTrue(((ListViewer)fViewer).getList().getTopIndex() == 0);
+		assertEquals(0, ((ListViewer) fViewer).getList().getTopIndex());
 	}
 }

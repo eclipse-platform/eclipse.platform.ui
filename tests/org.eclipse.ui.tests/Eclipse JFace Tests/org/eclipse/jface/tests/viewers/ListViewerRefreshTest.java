@@ -12,6 +12,8 @@
  *******************************************************************************/
 package org.eclipse.jface.tests.viewers;
 
+import static org.junit.Assert.assertNotEquals;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -103,7 +105,7 @@ public class ListViewerRefreshTest extends TestCase {
 		run("Refreshed viewer with selection.", () -> viewer.refresh());
 
 		// Checking that the viewer is not scrolling
-		assertTrue(viewer.getList().getTopIndex() == 0);
+		assertEquals(0, viewer.getList().getTopIndex());
 
 		viewer.getList().showSelection();
 
@@ -114,7 +116,7 @@ public class ListViewerRefreshTest extends TestCase {
 			}
 		}.waitForCondition(viewer.getControl().getDisplay(), 3000);
 
-		assertTrue(viewer.getList().getTopIndex() != 0);
+		assertNotEquals(0, viewer.getList().getTopIndex());
 	}
 
 	/**
