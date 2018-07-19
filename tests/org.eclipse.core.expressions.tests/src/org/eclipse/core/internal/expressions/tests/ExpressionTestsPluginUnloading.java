@@ -10,18 +10,22 @@
  *******************************************************************************/
 package org.eclipse.core.internal.expressions.tests;
 
-import java.util.ArrayList;
-import java.util.Collections;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotSame;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
+import org.junit.FixMethodOrder;
+import org.junit.Rule;
+import org.junit.Test;
+import org.junit.rules.TestName;
+import org.junit.runners.MethodSorters;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 
 import org.eclipse.core.internal.expressions.ExpressionPlugin;
 import org.eclipse.core.internal.expressions.Expressions;
-
-import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
 
 
 /**
@@ -30,25 +34,13 @@ import junit.framework.TestSuite;
  * <b>WARNING:</b> These tests start, stop, and re-start the <code>com.ibm.icu</code> bundle.
  * Don't include these in another test suite!
  */
-public class ExpressionTestsPluginUnloading extends TestCase {
+@FixMethodOrder(MethodSorters.NAME_ASCENDING)
+public class ExpressionTestsPluginUnloading {
 
-	public static Test suite() {
-		TestSuite suite= new TestSuite(ExpressionTestsPluginUnloading.class);
-		// ensure lexicographical ordering:
-		ArrayList<Test> tests = Collections.list(suite.tests());
-		Collections.sort(tests, (o1, o2) -> ((TestCase) o1).getName().compareTo(((TestCase) o2).getName()));
-		TestSuite result= new TestSuite();
-		for (Test test : tests) {
-			result.addTest(test);
-		}
-		return result;
-	}
+	@Rule
+	public TestName name = new TestName();
 
-	public ExpressionTestsPluginUnloading(String name) {
-		super(name);
-	}
-
-
+	@Test
 	public void test01PluginStopping() throws Exception {
 		Bundle bundle= getBundle("com.ibm.icu");
 
@@ -66,6 +58,7 @@ public class ExpressionTestsPluginUnloading extends TestCase {
 		doTestInstanceofICUDecimalFormat(bundle);
 	}
 
+	@Test
 	public void test02MultipleClassloaders() throws Exception {
 		Bundle expr= getBundle("org.eclipse.core.expressions.tests");
 		Bundle icu= getBundle("com.ibm.icu");
@@ -87,8 +80,12 @@ public class ExpressionTestsPluginUnloading extends TestCase {
 	private void assertInstanceOf(Object obj, String isInstance, String isNotInstance) throws Exception {
 		Class<?> clazz = obj.getClass();
 
-		System.out.println("ExpressionTestsPluginUnloading#" + getName() + "() - " + clazz.getName() + ": " + clazz.hashCode());
-		System.out.println("ExpressionTestsPluginUnloading#" + getName() + "() - ClassLoader: " + clazz.getClassLoader().hashCode());
+		System.out.println(
+				"ExpressionTestsPluginUnloading#" + name.getMethodName() + "() - " + clazz.getName() + ": "
+						+ clazz.hashCode());
+		System.out.println(
+				"ExpressionTestsPluginUnloading#" + name.getMethodName() + "() - ClassLoader: "
+						+ clazz.getClassLoader().hashCode());
 
 		for (int i= 0; i < 2; i++) { // test twice, second time is cached:
 			assertTrue(Expressions.isInstanceOf(obj, isInstance));
