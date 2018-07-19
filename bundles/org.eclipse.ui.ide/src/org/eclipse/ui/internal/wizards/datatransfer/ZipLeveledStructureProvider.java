@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2017 IBM Corporation and others.
+ * Copyright (c) 2000, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,13 +13,16 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.wizards.datatransfer;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
@@ -44,6 +47,8 @@ public class ZipLeveledStructureProvider implements
 	private Map<IPath, ZipEntry> directoryEntryCache = new HashMap<>();
 
 	private int stripLevel;
+
+	private Set<String> invalidEntries = new HashSet<>();
 
 	/**
 	 * Creates a <code>ZipFileStructureProvider</code>, which will operate on
@@ -108,7 +113,7 @@ public class ZipLeveledStructureProvider implements
 	}
 
 	@Override
-	public List getChildren(Object element) {
+	public List<?> getChildren(Object element) {
 		if (children == null) {
 			initialize();
 		}
@@ -119,6 +124,10 @@ public class ZipLeveledStructureProvider implements
 	@Override
 	public InputStream getContents(Object element) {
 		try {
+			if (invalidEntries.contains(((ZipEntry) element).getName())) {
+				throw new IOException("Cannot get content of Entry as it is outside of the target dir: " //$NON-NLS-1$
+						+ ((ZipEntry) element).getName());
+			}
 			return zipFile.getInputStream((ZipEntry) element);
 		} catch (IOException e) {
 			IDEWorkbenchPlugin.log(e.getLocalizedMessage(), e);
@@ -202,23 +211,43 @@ public class ZipLeveledStructureProvider implements
 	protected void initialize() {
 		children = new HashMap<>(1000);
 
+		IPath zipFileDirPath = (new Path(zipFile.getName())).removeLastSegments(1);
+		String canonicalDestinationDirPath = zipFileDirPath.toString();
+		File zipDestinationDir = new File(zipFileDirPath.toString());
+
+		try {
+			canonicalDestinationDirPath = zipDestinationDir.getCanonicalPath();
+		} catch (IOException e) {
+			return;
+		}
 		children.put(root, new ArrayList<>());
 		Enumeration<? extends ZipEntry> entries = zipFile.entries();
 		while (entries.hasMoreElements()) {
-			ZipEntry entry = entries.nextElement();
-			IPath path = new Path(entry.getName()).addTrailingSeparator();
+			try {
+				ZipEntry entry = entries.nextElement();
+				File destinationfile = new File(zipDestinationDir, entry.getName());
+				String canonicalDestinationFile = destinationfile.getCanonicalPath();
 
-			if (entry.isDirectory()) {
-				createContainer(path);
-			} else
-			{
-				// Ensure the container structure for all levels above this is initialized
-				// Once we hit a higher-level container that's already added we need go no further
-				int pathSegmentCount = path.segmentCount();
-				if (pathSegmentCount > 1) {
-					createContainer(path.uptoSegment(pathSegmentCount - 1));
+				if (!canonicalDestinationFile.startsWith(canonicalDestinationDirPath + File.separator)) {
+					invalidEntries.add(entry.getName());
+					throw new IOException("Entry is outside of the target dir: " + entry.getName()); //$NON-NLS-1$
 				}
-				createFile(entry);
+				IPath path = new Path(entry.getName()).addTrailingSeparator();
+
+				if (entry.isDirectory()) {
+					createContainer(path);
+				} else {
+					// Ensure the container structure for all levels above this is initialized
+					// Once we hit a higher-level container that's already added we need go no
+					// further
+					int pathSegmentCount = path.segmentCount();
+					if (pathSegmentCount > 1) {
+						createContainer(path.uptoSegment(pathSegmentCount - 1));
+					}
+					createFile(entry);
+				}
+			} catch (IOException e) {
+				IDEWorkbenchPlugin.log(e.getLocalizedMessage(), e);
 			}
 		}
 	}

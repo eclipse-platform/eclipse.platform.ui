@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2017 IBM Corporation and others.
+ * Copyright (c) 2000, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,13 +10,16 @@
  *******************************************************************************/
 package org.eclipse.ui.wizards.datatransfer;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
@@ -36,6 +39,8 @@ public class ZipFileStructureProvider implements IImportStructureProvider {
 	private Map<ZipEntry, List<ZipEntry>> children;
 
 	private Map<IPath, ZipEntry> directoryEntryCache = new HashMap<>();
+
+	private Set<String> invalidEntries = new HashSet<>();
 
     /**
      * Creates a <code>ZipFileStructureProvider</code>, which will operate
@@ -100,7 +105,7 @@ public class ZipFileStructureProvider implements IImportStructureProvider {
     }
 
     @Override
-	public List getChildren(Object element) {
+	public List<?> getChildren(Object element) {
         if (children == null) {
 			initialize();
 		}
@@ -111,6 +116,10 @@ public class ZipFileStructureProvider implements IImportStructureProvider {
     @Override
 	public InputStream getContents(Object element) {
         try {
+			if (invalidEntries.contains(((ZipEntry) element).getName())) {
+				throw new IOException("Cannot get content of Entry as it is outside of the target dir: " //$NON-NLS-1$
+						+ ((ZipEntry) element).getName());
+			}
             return zipFile.getInputStream((ZipEntry) element);
         } catch (IOException e) {
         	IDEWorkbenchPlugin.log(e.getLocalizedMessage(), e);
@@ -157,17 +166,36 @@ public class ZipFileStructureProvider implements IImportStructureProvider {
     protected void initialize() {
 		children = new HashMap<>(1000);
 
+		IPath zipFileDirPath = (new Path(zipFile.getName())).removeLastSegments(1);
+		String canonicalDestinationDirPath = zipFileDirPath.toString();
+		File zipDestinationDir = new File(zipFileDirPath.toString());
+
+		try {
+			canonicalDestinationDirPath = zipDestinationDir.getCanonicalPath();
+		} catch (IOException e) {
+			return;
+		}
 		Enumeration<? extends ZipEntry> entries = zipFile.entries();
         while (entries.hasMoreElements()) {
-            ZipEntry entry = entries.nextElement();
-            if (!entry.isDirectory()) {
-                IPath path = new Path(entry.getName()).addTrailingSeparator();
-                int pathSegmentCount = path.segmentCount();
+			try {
+				ZipEntry entry = entries.nextElement();
+				File destinationfile = new File(zipDestinationDir, entry.getName());
+				String canonicalDestinationFile = destinationfile.getCanonicalPath();
 
-                for (int i = 1; i < pathSegmentCount; i++) {
-					createContainer(path.uptoSegment(i));
+				if (!canonicalDestinationFile.startsWith(canonicalDestinationDirPath + File.separator)) {
+					invalidEntries.add(entry.getName());
+					throw new IOException("Entry is outside of the target dir: " + entry.getName()); //$NON-NLS-1$
+				} else if (!entry.isDirectory()) {
+					IPath path = new Path(entry.getName()).addTrailingSeparator();
+					int pathSegmentCount = path.segmentCount();
+
+					for (int i = 1; i < pathSegmentCount; i++) {
+						createContainer(path.uptoSegment(i));
+					}
+					createFile(entry);
 				}
-                createFile(entry);
+			} catch (IOException e) {
+				IDEWorkbenchPlugin.log(e.getLocalizedMessage(), e);
             }
         }
     }
