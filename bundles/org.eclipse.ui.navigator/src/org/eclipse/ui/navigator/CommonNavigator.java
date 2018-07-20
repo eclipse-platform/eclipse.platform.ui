@@ -670,29 +670,32 @@ public class CommonNavigator extends ViewPart implements ISetSelectionTarget, IS
 
 	@Override
 	public boolean show(ShowInContext context) {
-		IStructuredSelection selection = getSelection(context);
-		if (selection != null && !selection.isEmpty()) {
-			selectReveal(selection);
-			return true;
-		}
-		return false;
-	}
-
-	private IStructuredSelection getSelection(ShowInContext context) {
 		if (context == null)
-			return StructuredSelection.EMPTY;
+			return false;
 		ISelection selection = context.getSelection();
-		if (selection != null && !selection.isEmpty() && selection instanceof IStructuredSelection)
-			return (IStructuredSelection)selection;
+		if (selection instanceof IStructuredSelection && !selection.isEmpty()) {
+			selectReveal(selection);
+			selection = commonViewer.getSelection();
+			if (selection != null && !selection.isEmpty()) {
+				return true;
+			}
+		}
 		Object input = context.getInput();
 		if (input instanceof IEditorInput) {
 			LinkHelperService lhs = getLinkHelperService();
-			return lhs.getSelectionFor((IEditorInput) input);
+			selection = lhs.getSelectionFor((IEditorInput) input);
+			if (selection != null && !selection.isEmpty()) {
+				selectReveal(selection);
+				return true;
+			}
 		}
 		if (input != null) {
-			return new StructuredSelection(input);
+			selectReveal(new StructuredSelection(input));
+			return true;
+
 		}
-		return StructuredSelection.EMPTY;
+
+		return false;
 	}
 
 	/**
