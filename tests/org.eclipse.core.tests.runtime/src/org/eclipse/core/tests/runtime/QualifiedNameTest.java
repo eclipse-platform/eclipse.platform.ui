@@ -10,8 +10,8 @@
  *******************************************************************************/
 package org.eclipse.core.tests.runtime;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
+import static org.junit.Assert.assertNotEquals;
+
 import org.eclipse.core.runtime.QualifiedName;
 
 /**
@@ -34,15 +34,6 @@ public class QualifiedNameTest extends RuntimeTest {
 	 */
 	public QualifiedNameTest(String name) {
 		super(name);
-	}
-
-	public static Test suite() {
-
-		TestSuite suite = new TestSuite(QualifiedNameTest.class.getName());
-		suite.addTest(new QualifiedNameTest("testQualifiers"));
-		suite.addTest(new QualifiedNameTest("testLocalNames"));
-		suite.addTest(new QualifiedNameTest("testEqualsAndHashcode"));
-		return suite;
 	}
 
 	public void testQualifiers() {
@@ -111,7 +102,7 @@ public class QualifiedNameTest extends RuntimeTest {
 		assertTrue("1.1", qN2.equals(qN1));
 		assertEquals("1.2", qN1.hashCode(), qN2.hashCode());
 
-		assertTrue("2.0", !qN1.equals("org.eclipse.runtime.myClass"));
+		assertNotEquals("2.0", "org.eclipse.runtime.myClass", qN1);
 
 		QualifiedName qN3 = new QualifiedName(null, "myClass");
 		assertTrue("3.0", !qN1.equals(qN3));

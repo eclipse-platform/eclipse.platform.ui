@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2012 IBM Corporation and others.
+ * Copyright (c) 2000, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,8 +10,6 @@
  *******************************************************************************/
 package org.eclipse.core.tests.runtime;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
 import org.eclipse.core.runtime.PluginVersionIdentifier;
 
 @Deprecated
@@ -23,14 +21,6 @@ public class PluginVersionIdentifierTest extends RuntimeTest {
 
 	public PluginVersionIdentifierTest(String name) {
 		super(name);
-	}
-
-	public static Test suite() {
-		TestSuite suite = new TestSuite(PluginVersionIdentifierTest.class.getName());
-		suite.addTest(new PluginVersionIdentifierTest("testConstructor"));
-		suite.addTest(new PluginVersionIdentifierTest("testEqual"));
-		suite.addTest(new PluginVersionIdentifierTest("testComparisons"));
-		return suite;
 	}
 
 	public void testConstructor() {

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 IBM Corporation and others.
+ * Copyright (c) 2000, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,8 +11,6 @@
 package org.eclipse.core.tests.runtime;
 
 import java.util.Arrays;
-import junit.framework.Test;
-import junit.framework.TestSuite;
 import org.eclipse.core.runtime.*;
 
 public class StatusTest extends RuntimeTest {
@@ -46,17 +44,6 @@ public class StatusTest extends RuntimeTest {
 
 	public StatusTest(String name) {
 		super(name);
-	}
-
-	public static Test suite() {
-		TestSuite suite = new TestSuite(StatusTest.class.getName());
-		suite.addTest(new StatusTest("testSingleStatusReturnValues"));
-		suite.addTest(new StatusTest("testMultiStatusReturnValues"));
-		suite.addTest(new StatusTest("testAdd"));
-		suite.addTest(new StatusTest("testAddAll"));
-		suite.addTest(new StatusTest("testIsOK"));
-		suite.addTest(new StatusTest("testMerge"));
-		return suite;
 	}
 
 	@Override

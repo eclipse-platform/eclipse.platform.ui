@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2013 IBM Corporation and others.
+ * Copyright (c) 2000, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -31,14 +31,14 @@ public class AllTests extends TestCase {
 		suite.addTestSuite(OperationCanceledExceptionTest.class);
 		suite.addTestSuite(PathTest.class);
 		suite.addTestSuite(PlatformTest.class);
-		suite.addTest(PluginVersionIdentifierTest.suite());
+		suite.addTestSuite(PluginVersionIdentifierTest.class);
 		suite.addTestSuite(SubMonitorTest.class);
 		suite.addTestSuite(SubProgressTest.class);
 		suite.addTestSuite(SubMonitorSmallTicksTest.class);
 		suite.addTestSuite(ProgressMonitorWrapperTest.class);
-		suite.addTest(QualifiedNameTest.suite());
+		suite.addTestSuite(QualifiedNameTest.class);
 		suite.addTestSuite(SafeRunnerTest.class);
-		suite.addTest(StatusTest.suite());
+		suite.addTestSuite(StatusTest.class);
 		suite.addTestSuite(URIUtilTest.class);
 		suite.addTestSuite(URLTest.class);
 		return suite;
