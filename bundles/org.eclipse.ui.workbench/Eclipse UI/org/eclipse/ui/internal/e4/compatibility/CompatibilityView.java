@@ -43,11 +43,11 @@ import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.handlers.IHandlerService;
 import org.eclipse.ui.internal.ActionDescriptor;
+import org.eclipse.ui.internal.IMenuServiceWorkaround;
 import org.eclipse.ui.internal.PartSite;
 import org.eclipse.ui.internal.ViewActionBuilder;
 import org.eclipse.ui.internal.ViewReference;
 import org.eclipse.ui.internal.WorkbenchPartReference;
-import org.eclipse.ui.internal.menus.WorkbenchMenuService;
 import org.eclipse.ui.internal.registry.ViewDescriptor;
 import org.eclipse.ui.internal.testing.ContributionInfoMessages;
 import org.eclipse.ui.menus.IMenuService;
@@ -277,10 +277,10 @@ public class CompatibilityView extends CompatibilityPart {
 
 	private static void clearMenuServiceContributions(PartSite site, MPart part) {
 		IMenuService menuService = site.getService(IMenuService.class);
-		if (!(menuService instanceof WorkbenchMenuService)) {
+		if (!(menuService instanceof IMenuServiceWorkaround)) {
 			return;
 		}
-		WorkbenchMenuService service = (WorkbenchMenuService) menuService;
+		IMenuServiceWorkaround service = (IMenuServiceWorkaround) menuService;
 		service.clearContributions(site, part);
 	}
 

@@ -13,8 +13,11 @@ package org.eclipse.ui.internal.menus;
 
 import org.eclipse.core.expressions.IEvaluationContext;
 import org.eclipse.e4.ui.model.application.MApplicationElement;
+import org.eclipse.e4.ui.model.application.ui.basic.MPart;
 import org.eclipse.jface.action.ContributionManager;
 import org.eclipse.ui.ISourceProvider;
+import org.eclipse.ui.internal.IMenuServiceWorkaround;
+import org.eclipse.ui.internal.PartSite;
 import org.eclipse.ui.menus.AbstractContributionFactory;
 import org.eclipse.ui.menus.IMenuService;
 
@@ -22,7 +25,7 @@ import org.eclipse.ui.menus.IMenuService;
  * @since 3.105
  *
  */
-public class SlaveMenuService implements IMenuService {
+public class SlaveMenuService implements IMenuService, IMenuServiceWorkaround {
 	private IMenuService parentService;
 
 	/**
@@ -97,6 +100,20 @@ public class SlaveMenuService implements IMenuService {
 	@Override
 	public void releaseContributions(ContributionManager mgr) {
 		parentService.releaseContributions(mgr);
+	}
+
+	/**
+	 * Disposes contributions created by service for given part. See bug 537046.
+	 *
+	 * @param site
+	 * @param part
+	 */
+	@Override
+	public void clearContributions(PartSite site, MPart part) {
+		if (parentService instanceof IMenuServiceWorkaround) {
+			IMenuServiceWorkaround service = (IMenuServiceWorkaround) parentService;
+			service.clearContributions(site, part);
+		}
 	}
 
 	/**

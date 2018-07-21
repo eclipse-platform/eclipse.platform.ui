@@ -55,6 +55,7 @@ import org.eclipse.ui.ISourceProvider;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.internal.IMenuServiceWorkaround;
 import org.eclipse.ui.internal.PartSite;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.WorkbenchWindow;
@@ -68,7 +69,7 @@ import org.eclipse.ui.menus.IMenuService;
  * @since 3.5
  *
  */
-public class WorkbenchMenuService implements IMenuService {
+public class WorkbenchMenuService implements IMenuService, IMenuServiceWorkaround {
 
 	private static final String POPULATED_TOOL_BARS = "populatedToolBars"; //$NON-NLS-1$
 	private static final String POPULATED_MENUS = "populatedMenus"; //$NON-NLS-1$
@@ -481,6 +482,7 @@ public class WorkbenchMenuService implements IMenuService {
 	 * @param site
 	 * @param part
 	 */
+	@Override
 	public void clearContributions(PartSite site, MPart part) {
 		List<MToolBar> toolbars = getContributedToolbars(part);
 		IEclipseContext context = part.getContext();
