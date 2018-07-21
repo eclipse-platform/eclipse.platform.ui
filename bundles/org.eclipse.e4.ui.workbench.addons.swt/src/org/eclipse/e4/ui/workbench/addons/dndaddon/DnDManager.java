@@ -62,7 +62,7 @@ class DnDManager {
 	private Control dragCtrl;
 
 	private Tracker tracker;
-	boolean dragging = false;
+	boolean dragging;
 
 	private Shell overlayFrame;
 	private List<Rectangle> frames = new ArrayList<>();
@@ -176,6 +176,8 @@ class DnDManager {
 		for (DropAgent agent : dropAgents) {
 			agent.dispose();
 		}
+		info.curElement = null;
+		info = null;
 	}
 
 	private void track() {
