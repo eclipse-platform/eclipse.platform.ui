@@ -307,6 +307,7 @@ public class CoolBarToTrimManager extends ContributionManager implements ICoolBa
 			ToolBarManager manager = renderer.getManager(ext.tb);
 			if (manager != null) {
 				manager.dispose();
+				manager.removeAll();
 			}
 			renderer.clearModelToManager(ext.tb, null);
 			ext.dispose();
@@ -319,6 +320,7 @@ public class CoolBarToTrimManager extends ContributionManager implements ICoolBa
 			ToolBarManager manager = renderer.getManager(mToolBar);
 			if (manager != null) {
 				manager.dispose();
+				manager.removeAll();
 			}
 			renderer.clearModelToManager(mToolBar, null);
 		}

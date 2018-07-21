@@ -54,6 +54,7 @@ public class StandardTrim {
 	void destroy() {
 		if (manager != null) {
 			manager.dispose();
+			manager.removeAll();
 			manager = null;
 		}
 	}

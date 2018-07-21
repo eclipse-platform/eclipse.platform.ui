@@ -56,13 +56,13 @@ public class ToolBarContributionItem extends ContributionItem implements IToolBa
      * The pull down menu used to list all hidden tool items if the current
      * size is less than the preffered size.
      */
-    private MenuManager chevronMenuManager = null;
+	private MenuManager chevronMenuManager;
 
     /**
      * The widget created for this item; <code>null</code> before creation
      * and after disposal.
      */
-    private CoolItem coolItem = null;
+	private CoolItem coolItem;
 
     /**
      * Current height of cool item
@@ -78,7 +78,7 @@ public class ToolBarContributionItem extends ContributionItem implements IToolBa
      * A flag indicating that this item has been disposed. This prevents future
      * method invocations from doing things they shouldn't.
      */
-    private boolean disposed = false;
+	private boolean disposed;
 
     /**
      * Mininum number of tool items to show in the cool item widget.
@@ -89,7 +89,7 @@ public class ToolBarContributionItem extends ContributionItem implements IToolBa
      * The tool bar manager used to manage the tool items contained in the cool
      * item widget.
      */
-    private ToolBarManager toolBarManager = null;
+	private ToolBarManager toolBarManager;
 
     /**
      * Enable/disable chevron support.
@@ -155,6 +155,7 @@ public class ToolBarContributionItem extends ContributionItem implements IToolBa
         // Dispose of the ToolBar and all its contributions
         if (toolBarManager != null) {
             toolBarManager.dispose();
+            toolBarManager.removeAll();
             toolBarManager = null;
         }
 
@@ -166,7 +167,9 @@ public class ToolBarContributionItem extends ContributionItem implements IToolBa
             coolItem.dispose();
             coolItem = null;
         }
-
+        if (chevronMenuManager != null) {
+            chevronMenuManager.dispose();
+        }
         // Mark this item as disposed.
         disposed = true;
     }

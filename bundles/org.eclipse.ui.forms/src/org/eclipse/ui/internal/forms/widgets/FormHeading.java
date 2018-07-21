@@ -795,6 +795,7 @@ public class FormHeading extends Canvas {
 			addDisposeListener(e -> {
 				if (toolBarManager != null) {
 					toolBarManager.dispose();
+					toolBarManager.removeAll();
 					toolBarManager = null;
 				}
 			});

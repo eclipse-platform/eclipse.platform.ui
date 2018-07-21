@@ -311,10 +311,12 @@ public class ApplicationWindow extends Window implements IRunnableContext {
 				} else if (toolBarManager instanceof ToolBarManager) {
 					((ToolBarManager) toolBarManager).dispose();
 				}
+            	toolBarManager.removeAll();
                 toolBarManager = null;
             }
             if (statusLineManager != null) {
                 statusLineManager.dispose();
+                statusLineManager.removeAll();
                 statusLineManager = null;
             }
             if (coolBarManager != null) {
@@ -323,6 +325,7 @@ public class ApplicationWindow extends Window implements IRunnableContext {
 				} else if (coolBarManager instanceof CoolBarManager) {
 					((CoolBarManager) coolBarManager).dispose();
 				}
+            	coolBarManager.removeAll();
                 coolBarManager = null;
             }
             return true;

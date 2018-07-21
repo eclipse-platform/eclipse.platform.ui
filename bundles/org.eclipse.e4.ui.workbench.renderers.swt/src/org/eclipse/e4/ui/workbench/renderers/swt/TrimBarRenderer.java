@@ -228,6 +228,7 @@ public class TrimBarRenderer extends SWTPartRenderer {
 			tbmr.clearModelToManager(tb, null);
 			if (tbm != null) {
 				tbm.dispose();
+				tbm.removeAll();
 			}
 		}
 	}

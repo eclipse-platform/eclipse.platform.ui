@@ -169,6 +169,7 @@ public class ActionBars extends SubActionBars {
 		menuManager.dispose();
 		if (toolbarManager != null) {
 			toolbarManager.dispose();
+			toolbarManager.removeAll();
 		}
 		super.dispose();
 	}
