@@ -79,8 +79,8 @@ public class ActionSetActionBars extends SubActionBars2 {
 	 */
 	@Override
 	public void dispose() {
-		super.dispose();
 		if (coolItemToolBarMgr == null) {
+			super.dispose();
 			return;
 		}
 		// remove the action set's items from its action bar, don't use
@@ -113,6 +113,7 @@ public class ActionSetActionBars extends SubActionBars2 {
 		toolBarContributionItem = null;
 		coolItemToolBarMgr = null;
 		adjunctContributions = new ArrayList();
+		super.dispose();
 	}
 
 	/**
