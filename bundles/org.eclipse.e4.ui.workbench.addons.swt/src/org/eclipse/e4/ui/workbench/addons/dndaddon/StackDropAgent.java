@@ -260,7 +260,22 @@ public class StackDropAgent extends DropAgent {
 		boolean hiddenTabs = (vItems.size() < dropCTF.getChildren().length);
 
 		// Adjust the index if necessary
-		int elementIndex = dropStack.getChildren().indexOf(dragElement);
+		List<MStackElement> dropChildren = dropStack.getChildren();
+		int elementIndex = dropChildren.indexOf(dragElement);
+
+		// Check if we have a placeholder with same id: we must remove it before
+		// dropping
+		MStackElement childWithSameId = null;
+		if (elementIndex == -1) {
+			for (MStackElement stackElement : dropChildren) {
+				String id = stackElement.getElementId();
+				if (id != null && id.equals(dragElement.getElementId())) {
+					childWithSameId = stackElement;
+					break;
+				}
+			}
+		}
+
 		if (elementIndex != -1 && !(dragElement instanceof MPartStack)) {
 			// Get the index of this CTF entry
 			Control dragCtrl = (Control) dragElement.getWidget();
@@ -280,7 +295,7 @@ public class StackDropAgent extends DropAgent {
 		if (hiddenTabs) {
 			// some tabs are hidden
 			int nVisibleItems = vItems.size();
-			if(dropIndex<nVisibleItems){
+			if (dropIndex < nVisibleItems) {
 				CTabItem item = vItems.get(dropIndex);
 				MUIElement itemModel = (MUIElement) item.getData(AbstractPartRenderer.OWNING_ME);
 
@@ -293,7 +308,7 @@ public class StackDropAgent extends DropAgent {
 				// no existing item to put ourselves before
 				// so we'll just go to the end.
 			} else if (dropIndex == nVisibleItems) {
-				dropIndex = dropStack.getChildren().size();
+				dropIndex = dropChildren.size();
 			}
 
 
@@ -314,7 +329,7 @@ public class StackDropAgent extends DropAgent {
 				// no existing item to put ourselves before
 				// so we'll just go to the end.
 			} else if (dropIndex == ctfItemCount) {
-				dropIndex = dropStack.getChildren().size();
+				dropIndex = dropChildren.size();
 			}
 		}
 
@@ -323,10 +338,16 @@ public class StackDropAgent extends DropAgent {
 				dragElement.getParent().getChildren().remove(dragElement);
 			}
 
-			if (dropIndex >= 0 && dropIndex < dropStack.getChildren().size()) {
-				dropStack.getChildren().add(dropIndex, (MStackElement) dragElement);
+			if (dropIndex >= 0 && dropIndex < dropChildren.size()) {
+				dropChildren.add(dropIndex, (MStackElement) dragElement);
 			} else {
-				dropStack.getChildren().add((MStackElement) dragElement);
+				dropChildren.add((MStackElement) dragElement);
+			}
+
+			// Bug 410164: remove placeholder element with same id from the drop stack to
+			// avoid duplicated elements in same stack
+			if (childWithSameId != null) {
+				dropChildren.remove(childWithSameId);
 			}
 
 			// (Re)active the element being dropped
@@ -348,20 +369,20 @@ public class StackDropAgent extends DropAgent {
 				}
 
 				kids.remove(kid);
-				if (dropIndex >= 0 && dropIndex < dropStack.getChildren().size()) {
-					dropStack.getChildren().add(dropIndex, kid);
+				if (dropIndex >= 0 && dropIndex < dropChildren.size()) {
+					dropChildren.add(dropIndex, kid);
 				} else {
-					dropStack.getChildren().add(kid);
+					dropChildren.add(kid);
 				}
 			}
 
 			// Finally, move over the selected element
 			kids.remove(curSel);
 			dropIndex = dropIndex + selIndex;
-			if (dropIndex >= 0 && dropIndex < dropStack.getChildren().size()) {
-				dropStack.getChildren().add(dropIndex, curSel);
+			if (dropIndex >= 0 && dropIndex < dropChildren.size()) {
+				dropChildren.add(dropIndex, curSel);
 			} else {
-				dropStack.getChildren().add(curSel);
+				dropChildren.add(curSel);
 			}
 
 			// (Re)active the element being dropped
