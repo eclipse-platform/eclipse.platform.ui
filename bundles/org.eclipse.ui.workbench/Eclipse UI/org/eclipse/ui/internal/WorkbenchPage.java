@@ -1798,7 +1798,13 @@ public class WorkbenchPage implements IWorkbenchPage {
 			}
 		}
 
+		for (ViewReference vr : viewReferences) {
+			vr.setPage(null);
+		}
 		viewReferences.clear();
+		for (EditorReference er : editorReferences) {
+			er.setPage(null);
+		}
 		editorReferences.clear();
 		sortedPerspectives.clear();
 		modelToPerspectiveMapping.clear();
@@ -1829,7 +1835,7 @@ public class WorkbenchPage implements IWorkbenchPage {
 					.removePropertyChangeListener(workingSetPropertyChangeListener);
 			workingSetPropertyChangeListener = null;
 		}
-//		_perspectiveStack = null;
+		_perspectiveStack = null;
 		actionBars = null;
 		actionSets = null;
 		actionSwitcher.activePart = null;
