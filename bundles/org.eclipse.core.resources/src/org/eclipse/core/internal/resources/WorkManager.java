@@ -282,6 +282,13 @@ public class WorkManager implements IManager {
 	 * require a build.
 	 */
 	public void setBuild(boolean hasChanges) {
+		if (hasChanges && Policy.DEBUG_BUILD_NEEDED) {
+			Policy.debug("Set build hasChanges: " + hasChanges + " hasBuildChanges: " + hasBuildChanges); //$NON-NLS-1$ //$NON-NLS-2$
+			if (!hasBuildChanges && Policy.DEBUG_BUILD_NEEDED_STACK) {
+				Policy.debug(new RuntimeException("Set build hasChanges!")); //$NON-NLS-1$
+			}
+		}
+
 		hasBuildChanges = hasBuildChanges || hasChanges;
 	}
 
