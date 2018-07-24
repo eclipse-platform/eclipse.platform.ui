@@ -596,7 +596,7 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 
 		/**
 		 * The editor's last edit position
-		 * 
+		 *
 		 * @since 3.0
 		 */
 		private Position fLocalLastEditPosition;
@@ -6171,6 +6171,9 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 				fColumnSupport= createColumnSupport();
 			return (T) fColumnSupport;
 		}
+
+		if (ITextViewer.class.equals(required))
+			return (fSourceViewer == null ? null : (T) fSourceViewer);
 
 		return super.getAdapter(required);
 	}

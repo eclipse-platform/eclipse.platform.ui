@@ -51,10 +51,13 @@ public class MultiPageMinimapPage extends Page {
 				return;
 			}
 
+			MinimapPage minimapPage = null;
 			if (selectedPage instanceof ITextEditor) {
 				// Create and show a minimap page for the given text editor page
 				ITextEditor textEditor = (ITextEditor) selectedPage;
-				MinimapPage minimapPage = new MinimapPage(textEditor);
+				minimapPage = MinimapPage.createMinimapPage(textEditor);
+			}
+			if (minimapPage != null) {
 				minimapPage.createControl(fPageBook);
 				textWidget = minimapPage.getControl();
 				fTextWidgetMap.put(selectedPage, textWidget);

@@ -46,6 +46,9 @@ public class MinimapView extends PageBookView {
 	@Override
 	protected PageRec doCreatePage(IWorkbenchPart part) {
 		Page page = createMinimapPage(part);
+		if (page == null) {
+			return null;
+		}
 		PageSite site = new PageSite(this.getViewSite());
 		page.init(site);
 		page.createControl(this.getPageBook());
@@ -56,7 +59,7 @@ public class MinimapView extends PageBookView {
 		if (part instanceof MultiPageEditorPart) {
 			return new MultiPageMinimapPage((MultiPageEditorPart) part);
 		}
-		return new MinimapPage((ITextEditor) part);
+		return MinimapPage.createMinimapPage((ITextEditor) part);
 	}
 
 	@Override

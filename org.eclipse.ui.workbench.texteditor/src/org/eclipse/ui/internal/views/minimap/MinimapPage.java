@@ -14,7 +14,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 
 import org.eclipse.jface.text.ITextOperationTarget;
-import org.eclipse.jface.text.source.ISourceViewer;
+import org.eclipse.jface.text.ITextViewer;
 
 import org.eclipse.ui.part.Page;
 
@@ -26,11 +26,35 @@ import org.eclipse.ui.texteditor.ITextEditor;
  */
 public class MinimapPage extends Page {
 
-	private final ISourceViewer fEditorViewer;
+	/**
+	 * Try to create a MinimapPage for a text editor. Only succeeds if the
+	 * {@link ITextViewer} for the editor can be determined.
+	 *
+	 * @param textEditor
+	 *            the {@link ITextEditor} for which the page should be created.
+	 * @return the created MinimapPage or <code>null</code>
+	 */
+	public static MinimapPage createMinimapPage(ITextEditor textEditor) {
+		ITextViewer textViewer = textEditor.getAdapter(ITextViewer.class);
+		if (textViewer == null) {
+			// try fallback that sometimes works (TextViewer implements
+			// ITextOperationTarget)
+			ITextOperationTarget textOperationTarget = textEditor.getAdapter(ITextOperationTarget.class);
+			if (textOperationTarget instanceof ITextViewer) {
+				textViewer = (ITextViewer) textOperationTarget;
+			}
+		}
+		if (textViewer == null) {
+			return null;
+		}
+		return new MinimapPage(textViewer);
+	}
+
+	private final ITextViewer fEditorViewer;
 	private MinimapWidget fMinimapWidget;
 
-	public MinimapPage(ITextEditor textEditor) {
-		fEditorViewer = (ISourceViewer) textEditor.getAdapter(ITextOperationTarget.class);
+	private MinimapPage(ITextViewer textViewer) {
+		fEditorViewer = textViewer;
 	}
 
 	@Override
