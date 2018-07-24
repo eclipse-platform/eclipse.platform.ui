@@ -304,6 +304,10 @@ public class BreakpointsView extends VariablesView implements IBreakpointManager
 	 */
 	@Override
 	protected void contextActivated(ISelection selection) {
+		if (!isAvailable() || !isVisible()) {
+			return;
+		}
+
 	    IPresentationContext presentationContext = getTreeModelViewer().getPresentationContext();
 
 		if (selection == null || selection.isEmpty()) {
