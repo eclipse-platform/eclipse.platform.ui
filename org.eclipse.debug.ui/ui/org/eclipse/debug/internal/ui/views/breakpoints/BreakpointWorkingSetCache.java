@@ -19,6 +19,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
 import org.eclipse.debug.internal.ui.importexport.breakpoints.IImportExportConstants;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.ui.IWorkingSet;
 import org.eclipse.ui.IWorkingSetManager;
 import org.eclipse.ui.PlatformUI;
@@ -98,8 +99,11 @@ public class BreakpointWorkingSetCache {
 			try {
 				marker.setAttribute(IInternalDebugUIConstants.WORKING_SET_NAME, names);
 				marker.setAttribute(IInternalDebugUIConstants.WORKING_SET_ID, ids);
+			} catch (CoreException e) {
+				Object[] errorInfo = { names, ids, marker };
+				String errorMessage = NLS.bind("Failed to set working set names {0} and ids {1} on marker {2}", errorInfo); //$NON-NLS-1$
+				DebugPlugin.logMessage(errorMessage, e);
 			}
-			catch(CoreException e) {DebugPlugin.log(e);}
 		}
 	}
 
