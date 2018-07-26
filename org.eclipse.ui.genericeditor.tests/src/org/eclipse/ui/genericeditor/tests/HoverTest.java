@@ -29,6 +29,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Link;
@@ -80,13 +81,14 @@ public class HoverTest extends AbstratGenericEditorTest {
 
 	@Test
 	public void testEnabledWhenHover() throws Exception {
+		cleanFileAndEditor();
 		EnabledPropertyTester.setEnabled(true);
 		createAndOpenFile("enabledWhen.txt", "bar 'bar'");
 		Shell shell = getHoverShell(triggerCompletionAndRetrieveInformationControlManager());
 		assertNotNull(findControl(shell, StyledText.class, AlrightyHoverProvider.LABEL));
 		assertNull(findControl(shell, StyledText.class, WorldHoverProvider.LABEL));
-		cleanFileAndEditor();
 
+		cleanFileAndEditor();
 		EnabledPropertyTester.setEnabled(false);
 		createAndOpenFile("enabledWhen.txt", "bar 'bar'");
 		shell = getHoverShell(triggerCompletionAndRetrieveInformationControlManager());
@@ -216,14 +218,16 @@ public class HoverTest extends AbstratGenericEditorTest {
 	}
 
 	private AbstractInformationControlManager triggerCompletionAndRetrieveInformationControlManager() {
-		this.editor.selectAndReveal(2, 0);
+		final int caretLocation= 2;
+		this.editor.selectAndReveal(caretLocation, 0);
 		final StyledText editorTextWidget = (StyledText) this.editor.getAdapter(Control.class);
 		new DisplayHelper() {
 			@Override
 			protected boolean condition() {
-				return editorTextWidget.isFocusControl() && editorTextWidget.getSelection().x == 2;
+				return editorTextWidget.isFocusControl() && editorTextWidget.getSelection().x == caretLocation;
 			}
 		}.waitForCondition(editorTextWidget.getDisplay(), 1000);
+		assertTrue(editorTextWidget.isFocusControl() && editorTextWidget.getSelection().x == caretLocation);
 		// sending event to trigger hover computation
 		editorTextWidget.getShell().forceActive();
 		editorTextWidget.getShell().setActive();
@@ -239,11 +243,20 @@ public class HoverTest extends AbstratGenericEditorTest {
 		editorTextWidget.getDisplay().setCursorLocation(editorTextWidget.toDisplay(hoverEvent.x, hoverEvent.y));
 		editorTextWidget.notifyListeners(SWT.MouseHover, hoverEvent);
 		// Events need to be processed for hover listener to work correctly
-		DisplayHelper.sleep(editorTextWidget.getDisplay(), 1000);
+		processViewEvents(editorTextWidget.getDisplay());
 		// retrieving hover content
 		ITextViewer viewer = (ITextViewer)new Accessor(editor, AbstractTextEditor.class).invoke("getSourceViewer", new Object[0]);
 		AbstractInformationControlManager textHoverManager = (AbstractInformationControlManager)new Accessor(viewer, TextViewer.class).get("fTextHoverManager");
 		return textHoverManager;
+	}
+
+	private void processViewEvents(Display display) {
+		new DisplayHelper() {
+			@Override
+			protected boolean condition() {
+				return !display.readAndDispatch();
+			}
+		}.waitForCondition(display, 3000);
 	}
 
 }
