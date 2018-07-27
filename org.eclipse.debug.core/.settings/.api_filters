@@ -8,4 +8,12 @@
             </message_arguments>
         </filter>
     </resource>
+    <resource path="core/org/eclipse/debug/core/model/ILaunchConfigurationDelegate.java" type="org.eclipse.debug.core.model.ILaunchConfigurationDelegate">
+        <filter comment="adding default method" id="404000815">
+            <message_arguments>
+                <message_argument value="org.eclipse.debug.core.model.ILaunchConfigurationDelegate"/>
+                <message_argument value="showCommandLine(ILaunchConfiguration, String, ILaunch, IProgressMonitor)"/>
+            </message_arguments>
+        </filter>
+    </resource>
 </component>

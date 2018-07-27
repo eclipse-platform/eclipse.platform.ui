@@ -143,6 +143,9 @@ public class LaunchConfigurationTabGroupViewer {
 	private Button fApplyButton;
 	private Button fRevertButton;
 
+	Composite buttonComp;
+	private Button fShowCommandLineButton;
+
 	/**
 	 * Whether tabs are currently being disposed or initialized
 	 */
@@ -306,9 +309,20 @@ public class LaunchConfigurationTabGroupViewer {
 		});
 		fOptionsLink.setVisible(false);
 
-		Composite buttonComp = SWTFactory.createComposite(blComp, 2, 1, GridData.HORIZONTAL_ALIGN_END);
+		buttonComp = SWTFactory.createComposite(blComp, 3, 1, GridData.HORIZONTAL_ALIGN_END);
 
-		fRevertButton = SWTFactory.createPushButton(buttonComp, LaunchConfigurationsMessages.LaunchConfigurationDialog_Revert_2, null, GridData.HORIZONTAL_ALIGN_END);
+		fShowCommandLineButton = SWTFactory.createPushButton(buttonComp,
+				LaunchConfigurationsMessages.LaunchConfigurationDialog_ShowCommandLine, null,
+				GridData.HORIZONTAL_ALIGN_BEGINNING);
+		fShowCommandLineButton.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent evt) {
+				handleShowCommandLinePressed();
+			}
+		});
+
+		fRevertButton = SWTFactory.createPushButton(buttonComp,
+				LaunchConfigurationsMessages.LaunchConfigurationDialog_Revert_2, null, GridData.HORIZONTAL_ALIGN_END);
 		fRevertButton.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent evt) {
@@ -801,6 +815,11 @@ public class LaunchConfigurationTabGroupViewer {
 		fTabPlaceHolder.layout(true, true);
 	}
 
+	private void updateShowCommandLineVisibility(boolean visible) {
+		if (fShowCommandLineButton != null) {
+			fShowCommandLineButton.setVisible(visible);
+		}
+	}
     /**
      * sets the current widget focus to the 'Name' widget
      */
@@ -829,6 +848,12 @@ public class LaunchConfigurationTabGroupViewer {
 		}
 		// show the name area
 		updateVisibleControls(true);
+		if (type.supportsCommandLine()) {
+			updateShowCommandLineVisibility(true);
+		}
+		else {
+			updateShowCommandLineVisibility(false);
+		}
 
 		// Retrieve the current tab group.  If there is none, clean up and leave
 		ILaunchConfigurationTabGroup tabGroup = getTabGroup();
@@ -1522,6 +1547,19 @@ public class LaunchConfigurationTabGroupViewer {
 			}
 		}
 		catch (CoreException e) {DebugUIPlugin.log(e);}
+	}
+
+	/**
+	 * Dialog to Show the Command line
+	 */
+	protected void handleShowCommandLinePressed() {
+		ShowCommandLineDialog dialog = new ShowCommandLineDialog(getShell(),
+				LaunchConfigurationsMessages.LaunchConfigurationDialog_ShowCommandLine_Title, null, null, 0,
+				new String[] { LaunchConfigurationsMessages.LaunchConfigurationDialog_ShowCommandLine_Copy,
+						IDialogConstants.CANCEL_LABEL },
+				0,
+				fOriginal);
+		dialog.open();
 	}
 
 	/**

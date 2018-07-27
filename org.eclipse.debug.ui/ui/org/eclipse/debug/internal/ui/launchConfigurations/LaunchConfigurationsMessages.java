@@ -104,6 +104,9 @@ public class LaunchConfigurationsMessages extends NLS {
 	public static String LaunchConfigurationsDialog_Error_1;
 	public static String LaunchConfigurationsDialog_Warning_2;
 	public static String LaunchConfigurationsDialog_Information_3;
+	public static String LaunchConfigurationDialog_ShowCommandLine;
+	public static String LaunchConfigurationDialog_ShowCommandLine_Title;
+	public static String LaunchConfigurationDialog_ShowCommandLine_Copy;
 	public static String LaunchConfigurationSelectionDialog_0;
 	public static String LaunchConfigurationSelectionDialog_1;
 	public static String LaunchConfigurationSelectionDialog_deleteButtonLabel;

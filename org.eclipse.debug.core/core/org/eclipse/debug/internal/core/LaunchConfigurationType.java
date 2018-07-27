@@ -480,5 +480,16 @@ public class LaunchConfigurationType extends PlatformObject implements ILaunchCo
 		}
 		return false;
 	}
+
+	@Override
+	public boolean supportsCommandLine() {
+		String allowPrototypesString = fElement.getAttribute(IConfigurationElementConstants.ALLOW_COMMANDLINE);
+		if (allowPrototypesString != null) {
+			if (allowPrototypesString.equalsIgnoreCase("true")) { //$NON-NLS-1$
+				return true;
+			}
+		}
+		return false;
+	}
 }
 

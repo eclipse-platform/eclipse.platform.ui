@@ -163,6 +163,13 @@ Since 3.3, the &lt;code&gt;sourceLocatorId&lt;/code&gt; can also be specified vi
                </documentation>
             </annotation>
          </attribute>
+         <attribute name="allowCommandLine" type="boolean">
+            <annotation>
+               <documentation>
+                  specifies whether this launch configuration type allows command line or not.  Defaults to &lt;code&gt;false&lt;/code&gt; if not specified. This attribute was added in 4.7 release.
+               </documentation>
+            </annotation>
+         </attribute>
       </complexType>
    </element>
 
@@ -248,7 +255,7 @@ The value of the attribute &lt;b&gt;migrationDelegate&lt;/b&gt; must be a fully 
          <meta.section type="copyright"/>
       </appinfo>
       <documentation>
-         Copyright (c) 2000, 2005 IBM Corporation and others.&lt;br&gt;
+         Copyright (c) 2000, 2018 IBM Corporation and others.&lt;br&gt;
 All rights reserved. This program and the accompanying materials are made 
 available under the terms of the Eclipse Public License v1.0 which 
 accompanies this distribution, and is available at 
