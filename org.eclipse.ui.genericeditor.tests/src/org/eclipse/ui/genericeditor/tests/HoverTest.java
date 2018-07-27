@@ -227,7 +227,6 @@ public class HoverTest extends AbstratGenericEditorTest {
 				return editorTextWidget.isFocusControl() && editorTextWidget.getSelection().x == caretLocation;
 			}
 		}.waitForCondition(editorTextWidget.getDisplay(), 1000);
-		assertTrue(editorTextWidget.isFocusControl() && editorTextWidget.getSelection().x == caretLocation);
 		// sending event to trigger hover computation
 		editorTextWidget.getShell().forceActive();
 		editorTextWidget.getShell().setActive();
