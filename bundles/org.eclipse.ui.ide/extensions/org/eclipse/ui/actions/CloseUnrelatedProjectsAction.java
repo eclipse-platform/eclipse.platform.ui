@@ -195,11 +195,17 @@ public class CloseUnrelatedProjectsAction extends CloseResourceAction {
 	 * Computes the related projects of the selection.
 	 */
 	private List<IResource> computeRelated(List<? extends IResource> selection) {
+		if (selection.contains(ResourcesPlugin.getWorkspace().getRoot())) {
+			return new ArrayList<>();
+		}
 		//build the connected component set for all projects in the workspace
 		DisjointSet<IProject> set = buildConnectedComponents(ResourcesPlugin.getWorkspace().getRoot().getProjects());
 		//remove the connected components that the selected projects are in
 		for (IResource resource : selection) {
-			set.removeSet(resource);
+			IProject project = resource.getProject();
+			if (project != null) {
+				set.removeSet(project);
+			}
 		}
 		//the remainder of the projects in the disjoint set are unrelated to the selection
 		List<IResource> projects = new ArrayList<>();
