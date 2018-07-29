@@ -1553,12 +1553,7 @@ public class LaunchConfigurationTabGroupViewer {
 	 * Dialog to Show the Command line
 	 */
 	protected void handleShowCommandLinePressed() {
-		ShowCommandLineDialog dialog = new ShowCommandLineDialog(getShell(),
-				LaunchConfigurationsMessages.LaunchConfigurationDialog_ShowCommandLine_Title, null, null, 0,
-				new String[] { LaunchConfigurationsMessages.LaunchConfigurationDialog_ShowCommandLine_Copy,
-						IDialogConstants.CANCEL_LABEL },
-				0,
-				fOriginal);
+		ShowCommandLineDialog dialog = new ShowCommandLineDialog(getShell(), fOriginal);
 		dialog.open();
 	}
 

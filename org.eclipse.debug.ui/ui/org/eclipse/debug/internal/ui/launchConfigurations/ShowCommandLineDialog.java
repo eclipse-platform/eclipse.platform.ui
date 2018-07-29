@@ -24,13 +24,15 @@ import org.eclipse.debug.core.Launch;
 import org.eclipse.debug.core.model.ILaunchConfigurationDelegate;
 import org.eclipse.debug.core.model.ILaunchConfigurationDelegate2;
 import org.eclipse.debug.internal.core.DebugCoreMessages;
-import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.debug.internal.ui.DebugUIPlugin;
+import org.eclipse.jface.dialogs.Dialog;
+import org.eclipse.jface.dialogs.IDialogConstants;
+import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.dnd.Clipboard;
 import org.eclipse.swt.dnd.TextTransfer;
 import org.eclipse.swt.dnd.Transfer;
 import org.eclipse.swt.graphics.Font;
-import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
@@ -44,23 +46,37 @@ import com.ibm.icu.text.MessageFormat;
 /**
  * Allows the user to specify to see and copy the command line to be executed
  * for the launch.
- * 
+ *
  * @since 3.13
  */
-public class ShowCommandLineDialog extends MessageDialog {
+public class ShowCommandLineDialog extends Dialog {
 	Text fModuleArgumentsText;
 	ILaunchConfiguration flaunchConfiguration;
 
 
-	public ShowCommandLineDialog(Shell parentShell, String dialogTitle, Image dialogTitleImage, String dialogMessage, int dialogImageType, String[] dialogButtonLabels, int defaultIndex, ILaunchConfiguration config) {
-		super(parentShell, dialogTitle, dialogTitleImage, dialogMessage, dialogImageType, dialogButtonLabels, defaultIndex);
+	public ShowCommandLineDialog(Shell parentShell, ILaunchConfiguration config) {
+		super(parentShell);
+		setShellStyle(SWT.RESIZE | getShellStyle());
 		flaunchConfiguration = config;
 	}
 
+
 	@Override
-	protected Control createCustomArea(Composite parent) {
-		Composite comp = new Composite(parent, SWT.NONE);
-		comp.setLayout(new GridLayout());
+	protected void configureShell(Shell newShell) {
+		super.configureShell(newShell);
+		newShell.setText(LaunchConfigurationsMessages.LaunchConfigurationDialog_ShowCommandLine_Title);
+	}
+
+	@Override
+	protected void createButtonsForButtonBar(Composite parent) {
+		createButton(parent, IDialogConstants.OK_ID,
+				LaunchConfigurationsMessages.LaunchConfigurationDialog_ShowCommandLine_Copy, true);
+		createButton(parent, IDialogConstants.CANCEL_ID, IDialogConstants.CANCEL_LABEL, false);
+	}
+
+	@Override
+	protected Control createDialogArea(Composite parent) {
+		Composite comp = (Composite) super.createDialogArea(parent);
 		Font font = parent.getFont();
 
 		Group group = new Group(comp, SWT.NONE);
@@ -72,16 +88,13 @@ public class ShowCommandLineDialog extends MessageDialog {
 		group.setLayoutData(gd);
 		group.setFont(font);
 
-
-		// Label description = new Label(group, SWT.WRAP);
-		// description.setText(ActionMessages.Override_Dependencies_label1);
 		fModuleArgumentsText = new Text(group, SWT.MULTI | SWT.WRAP | SWT.BORDER | SWT.V_SCROLL);
 		gd = new GridData(GridData.FILL_BOTH);
 		gd.heightHint = convertHeightInCharsToPixels(10);
 		gd.widthHint = convertWidthInCharsToPixels(60);
 		fModuleArgumentsText.setLayoutData(gd);
 
-		String command = "Could not retrieve the command"; //$NON-NLS-1$
+		String command = ""; //$NON-NLS-1$
 		try {
 			Set<String> modes = flaunchConfiguration.getModes();
 			modes.add(ILaunchManager.RUN_MODE);
@@ -108,10 +121,15 @@ public class ShowCommandLineDialog extends MessageDialog {
 						}
 					}
 				}
-				command = delegate.showCommandLine(flaunchConfiguration, ILaunchManager.RUN_MODE, launch, null);
+				command = delegate.showCommandLine(flaunchConfiguration, ILaunchManager.RUN_MODE, launch,
+						null);
+
 			}
 		} catch (CoreException e) {
 			e.printStackTrace();
+		}
+		if (command == null || (command != null && command.length() == 0)) {
+			command = LaunchConfigurationsMessages.LaunchConfigurationDialog_ShowCommandLine_Default;
 		}
 		fModuleArgumentsText.setText(command);
 		fModuleArgumentsText.setEditable(false);
@@ -135,6 +153,21 @@ public class ShowCommandLineDialog extends MessageDialog {
 		super.buttonPressed(buttonId);
 	}
 
+	@Override
+	protected IDialogSettings getDialogBoundsSettings() {
+		IDialogSettings settings = DebugUIPlugin.getDefault().getDialogSettings();
+		IDialogSettings section = settings.getSection(getDialogSettingsSectionName());
+		if (section == null) {
+			section = settings.addNewSection(getDialogSettingsSectionName());
+		}
+		return section;
+	}
 
+	/**
+	 * @return the name to use to save the dialog settings
+	 */
+	protected String getDialogSettingsSectionName() {
+		return "SHOW_COMMAND_LINE_DIALOG"; //$NON-NLS-1$
+	}
 
 }
