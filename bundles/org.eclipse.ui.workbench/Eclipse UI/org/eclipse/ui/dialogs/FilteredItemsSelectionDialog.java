@@ -2673,8 +2673,9 @@ public abstract class FilteredItemsSelectionDialog extends SelectionStatusDialog
 		 *            memento from which the history will be retrieved
 		 */
 		public void loadHistory(IMemento memento) {
-			if (this.selectionHistory != null)
+			if (this.selectionHistory != null) {
 				this.selectionHistory.load(memento);
+			}
 		}
 
 		/**
@@ -2684,8 +2685,9 @@ public abstract class FilteredItemsSelectionDialog extends SelectionStatusDialog
 		 *            memento to which the history will be added
 		 */
 		public void saveHistory(IMemento memento) {
-			if (this.selectionHistory != null)
+			if (this.selectionHistory != null) {
 				this.selectionHistory.save(memento);
+			}
 		}
 
 		/**
@@ -3065,12 +3067,22 @@ public abstract class FilteredItemsSelectionDialog extends SelectionStatusDialog
 	 * Compares items according to the history.
 	 */
 	private class HistoryComparator implements Comparator<Object> {
+		final String filterPattern;
+		final Comparator<Object> itemsComparator;
+
+		HistoryComparator(){
+			itemsComparator = getItemsComparator();
+			if (currentlyCompletingFilter != null) {
+				filterPattern = currentlyCompletingFilter.getPattern();
+			} else {
+				filterPattern = null;
+			}
+		}
 
 		@Override
 		public int compare(Object o1, Object o2) {
 			// find perfect matches
-			if (currentlyCompletingFilter != null) {
-				String filterPattern = currentlyCompletingFilter.getPattern();
+			if (filterPattern != null) {
 				// See if any are exact matches
 				boolean m1 = filterPattern.equals(getElementName(o1));
 				boolean m2 = filterPattern.equals(getElementName(o2));
@@ -3084,8 +3096,9 @@ public abstract class FilteredItemsSelectionDialog extends SelectionStatusDialog
 
 			boolean h1 = isHistoryElement(o1);
 			boolean h2 = isHistoryElement(o2);
-			if (h1 == h2)
-				return getItemsComparator().compare(o1, o2);
+			if (h1 == h2) {
+				return itemsComparator.compare(o1, o2);
+			}
 
 			if (h1)
 				return -2;

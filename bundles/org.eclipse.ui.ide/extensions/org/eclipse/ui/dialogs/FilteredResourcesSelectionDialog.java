@@ -421,6 +421,12 @@ public class FilteredResourcesSelectionDialog extends
 
 	@Override
 	protected Comparator getItemsComparator() {
+		final String pattern;
+		if (latestFilter != null) {
+			pattern = latestFilter.getPattern();
+		} else {
+			pattern = null;
+		}
 		return (o1, o2) -> {
 			Collator collator = Collator.getInstance();
 			IResource resource1 = (IResource) o1;
@@ -434,8 +440,7 @@ public class FilteredResourcesSelectionDialog extends
 			String n1 = s1Dot == -1 ? s1 : s1.substring(0, s1Dot);
 			String n2 = s2Dot == -1 ? s2 : s2.substring(0, s2Dot);
 
-			if (latestFilter != null) {
-				String pattern = latestFilter.getPattern();
+			if (pattern != null) {
 				int patternDot = pattern.lastIndexOf('.');
 				String patternNoExtension = patternDot == -1 ? pattern : pattern.substring(0, patternDot);
 				boolean m1 = patternNoExtension.equals(n1);
