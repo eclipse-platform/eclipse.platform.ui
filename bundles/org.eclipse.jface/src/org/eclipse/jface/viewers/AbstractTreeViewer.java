@@ -1108,16 +1108,19 @@ public abstract class AbstractTreeViewer extends ColumnViewer {
 	public void expandToLevel(Object elementOrTreePath, int level, boolean disableRedraw) {
 		if (checkBusy())
 			return;
+		Control control = getControl();
 		try {
 			if (disableRedraw) {
-				getControl().setRedraw(false);
+				control.setRedraw(false);
 			}
 			Widget w = internalExpand(elementOrTreePath, true);
 			if (w != null) {
 				internalExpandToLevel(w, level);
 			}
 		} finally {
-			getControl().setRedraw(true);
+			if (disableRedraw) {
+				control.setRedraw(true);
+			}
 		}
 	}
 
