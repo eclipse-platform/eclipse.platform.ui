@@ -207,7 +207,7 @@ public abstract class FilteredItemsSelectionDialog extends SelectionStatusDialog
 
 	private ItemsFilter currentlyCompletingFilter;
 
-	private List lastCompletedResult;
+	private List<Object> lastCompletedResult;
 
 	private ItemsFilter lastCompletedFilter;
 
@@ -576,11 +576,11 @@ public abstract class FilteredItemsSelectionDialog extends SelectionStatusDialog
      * @since 3.5
      */
 	protected void fillContextMenu(IMenuManager menuManager) {
-		List selectedElements = list.getStructuredSelection().toList();
+		List<?> selectedElements = list.getStructuredSelection().toList();
 
 		Object item= null;
 
-		for (Iterator it= selectedElements.iterator(); it.hasNext();) {
+		for (Iterator<?> it = selectedElements.iterator(); it.hasNext();) {
 			item= it.next();
 			if (item instanceof ItemsListSeparator || !isHistoryElement(item)) {
 				return;
@@ -695,13 +695,13 @@ public abstract class FilteredItemsSelectionDialog extends SelectionStatusDialog
 
 				if (e.keyCode == SWT.DEL) {
 
-					List selectedElements = ((StructuredSelection) list
+					List<?> selectedElements = ((StructuredSelection) list
 							.getSelection()).toList();
 
 					Object item = null;
 					boolean isSelectedHistory = true;
 
-					for (Iterator it = selectedElements.iterator(); it
+					for (Iterator<?> it = selectedElements.iterator(); it
 							.hasNext();) {
 						item = it.next();
 						if (item instanceof ItemsListSeparator
@@ -846,12 +846,12 @@ public abstract class FilteredItemsSelectionDialog extends SelectionStatusDialog
 			status = new Status(IStatus.ERROR, PlatformUI.PLUGIN_ID,
 					IStatus.ERROR, EMPTY_STRING, null);
 
-			List items = selection.toList();
+			List<?> items = selection.toList();
 
 			Object item = null;
 			IStatus tempStatus = null;
 
-			for (Iterator it = items.iterator(); it.hasNext();) {
+			for (Iterator<?> it = items.iterator(); it.hasNext();) {
 				Object o = it.next();
 
 				if (o instanceof ItemsListSeparator) {
@@ -911,7 +911,7 @@ public abstract class FilteredItemsSelectionDialog extends SelectionStatusDialog
 	public void refresh() {
 		if (list != null && !list.getTable().isDisposed()) {
 
-			List lastRefreshSelection = ((StructuredSelection) list
+			List<?> lastRefreshSelection = ((StructuredSelection) list
 					.getSelection()).toList();
 			list.getTable().deselectAll();
 
@@ -990,13 +990,13 @@ public abstract class FilteredItemsSelectionDialog extends SelectionStatusDialog
 	@Override
 	protected void computeResult() {
 
-		List selectedElements = list.getStructuredSelection().toList();
+		List<?> selectedElements = list.getStructuredSelection().toList();
 
-		List objectsToReturn = new ArrayList();
+		List<Object> objectsToReturn = new ArrayList<>();
 
 		Object item = null;
 
-		for (Iterator it = selectedElements.iterator(); it.hasNext();) {
+		for (Iterator<?> it = selectedElements.iterator(); it.hasNext();) {
 			item = it.next();
 
 			if (!(item instanceof ItemsListSeparator)) {
@@ -1077,10 +1077,10 @@ public abstract class FilteredItemsSelectionDialog extends SelectionStatusDialog
 
 		StructuredSelection selection = (StructuredSelection) list.getStructuredSelection();
 
-		List selectedItems = selection.toList();
+		List<?> selectedItems = selection.toList();
 		Object itemToRemove = null;
 
-		for (Iterator it = selection.iterator(); it.hasNext();) {
+		for (Iterator<?> it = selection.iterator(); it.hasNext();) {
 			Object item = it.next();
 			if (item instanceof ItemsListSeparator) {
 				itemToRemove = item;
@@ -1091,7 +1091,7 @@ public abstract class FilteredItemsSelectionDialog extends SelectionStatusDialog
 		if (itemToRemove == null)
 			return new StructuredSelection(selectedItems);
 		// Create a new selection without the collision
-		List newItems = new ArrayList(selectedItems);
+		List<?> newItems = new ArrayList<>(selectedItems);
 		newItems.remove(itemToRemove);
 		return new StructuredSelection(newItems);
 
@@ -1176,8 +1176,8 @@ public abstract class FilteredItemsSelectionDialog extends SelectionStatusDialog
 	 * @param items
 	 *            items to be removed
 	 */
-	private void removeSelectedItems(List items) {
-		for (Iterator iter = items.iterator(); iter.hasNext();) {
+	private void removeSelectedItems(List<?> items) {
+		for (Iterator<?> iter = items.iterator(); iter.hasNext();) {
 			Object item = iter.next();
 			removeHistoryItem(item);
 		}
@@ -1211,7 +1211,7 @@ public abstract class FilteredItemsSelectionDialog extends SelectionStatusDialog
 	 *
 	 * @return decorated comparator
 	 */
-	private Comparator getHistoryComparator() {
+	private Comparator<Object> getHistoryComparator() {
 		return new HistoryComparator();
 	}
 
@@ -1486,7 +1486,7 @@ public abstract class FilteredItemsSelectionDialog extends SelectionStatusDialog
 
 		@Override
 		public void run() {
-			List selectedElements = ((StructuredSelection) list.getSelection()).toList();
+			List<?> selectedElements = ((StructuredSelection) list.getSelection()).toList();
 			removeSelectedItems(selectedElements);
 		}
 	}
@@ -2076,7 +2076,7 @@ public abstract class FilteredItemsSelectionDialog extends SelectionStatusDialog
 
 		private static final int MAX_HISTORY_SIZE = 60;
 
-		private final Set historyList;
+		private final Set<Object> historyList;
 
 		private final String rootNodeName;
 
@@ -2084,14 +2084,14 @@ public abstract class FilteredItemsSelectionDialog extends SelectionStatusDialog
 
 		private SelectionHistory(String rootNodeName, String infoNodeName) {
 
-			historyList = Collections.synchronizedSet(new LinkedHashSet() {
+			historyList = Collections.synchronizedSet(new LinkedHashSet<Object>() {
 
 				private static final long serialVersionUID = 0L;
 
 				@Override
 				public boolean add(Object arg0) {
 					if (this.size() >= MAX_HISTORY_SIZE) {
-						Iterator iterator = this.iterator();
+						Iterator<?> iterator = this.iterator();
 						iterator.next();
 						iterator.remove();
 					}
@@ -2449,17 +2449,17 @@ public abstract class FilteredItemsSelectionDialog extends SelectionStatusDialog
 		 * Standard object flow:
 		 * <code>items -> lastSortedItems -> lastFilteredItems</code>
 		 */
-		private Set items;
+		private Set<Object> items;
 
 		/**
 		 * Items that are duplicates.
 		 */
-		private Set duplicates;
+		private Set<Object> duplicates;
 
 		/**
 		 * List of <code>ViewerFilter</code>s to be used during filtering
 		 */
-		private List filters;
+		private List<Object> filters;
 
 		/**
 		 * Result of the last filtering.
@@ -2467,7 +2467,7 @@ public abstract class FilteredItemsSelectionDialog extends SelectionStatusDialog
 		 * Standard object flow:
 		 * <code>items -> lastSortedItems -> lastFilteredItems</code>
 		 */
-		private List lastFilteredItems;
+		private List<Object> lastFilteredItems;
 
 		/**
 		 * Result of the last sorting.
@@ -2475,7 +2475,7 @@ public abstract class FilteredItemsSelectionDialog extends SelectionStatusDialog
 		 * Standard object flow:
 		 * <code>items -> lastSortedItems -> lastFilteredItems</code>
 		 */
-		private List lastSortedItems;
+		private List<Object> lastSortedItems;
 
 		/**
 		 * Used for <code>getFilteredItems()</code> method canceling (when the
@@ -2492,10 +2492,10 @@ public abstract class FilteredItemsSelectionDialog extends SelectionStatusDialog
 		 * Creates new instance of <code>ContentProvider</code>.
 		 */
 		public ContentProvider() {
-			this.items = Collections.synchronizedSet(new HashSet(2048));
-			this.duplicates = Collections.synchronizedSet(new HashSet(256));
-			this.lastFilteredItems = new ArrayList();
-			this.lastSortedItems = Collections.synchronizedList(new ArrayList(
+			this.items = Collections.synchronizedSet(new HashSet<>(2048));
+			this.duplicates = Collections.synchronizedSet(new HashSet<>(256));
+			this.lastFilteredItems = new ArrayList<>();
+			this.lastSortedItems = Collections.synchronizedList(new ArrayList<>(
 					2048));
 		}
 
@@ -2710,7 +2710,7 @@ public abstract class FilteredItemsSelectionDialog extends SelectionStatusDialog
 		 * @param itemsFilter
 		 */
 		public void rememberResult(ItemsFilter itemsFilter) {
-			List itemsList = Collections.synchronizedList(Arrays
+			List<Object> itemsList = Collections.synchronizedList(Arrays
 					.asList(getSortedItems()));
 			// synchronization
 			if (itemsFilter == filter) {
@@ -2843,7 +2843,7 @@ public abstract class FilteredItemsSelectionDialog extends SelectionStatusDialog
 
 			// filter the elements using provided ViewerFilters
 			if (filters != null && filteredElements != null) {
-				for (Iterator iter = filters.iterator(); iter.hasNext();) {
+				for (Iterator<?> iter = filters.iterator(); iter.hasNext();) {
 					ViewerFilter f = (ViewerFilter) iter.next();
 					filteredElements = f.filter(list, parent, filteredElements);
 					monitor.worked(ticks);
@@ -2855,7 +2855,7 @@ public abstract class FilteredItemsSelectionDialog extends SelectionStatusDialog
 				return new Object[0];
 			}
 
-			ArrayList preparedElements = new ArrayList();
+			ArrayList<Object> preparedElements = new ArrayList<>();
 			int i = 0;
 			boolean hasHistory = false;
 			int reportEvery = filteredElements.length / ticks;
@@ -2916,7 +2916,7 @@ public abstract class FilteredItemsSelectionDialog extends SelectionStatusDialog
 		 */
 		public void addFilter(ViewerFilter filter) {
 			if (filters == null) {
-				filters = new ArrayList();
+				filters = new ArrayList<>();
 			}
 			filters.add(filter);
 			// currently filters are only added when dialog is restored
@@ -3064,7 +3064,7 @@ public abstract class FilteredItemsSelectionDialog extends SelectionStatusDialog
 	/**
 	 * Compares items according to the history.
 	 */
-	private class HistoryComparator implements Comparator {
+	private class HistoryComparator implements Comparator<Object> {
 
 		@Override
 		public int compare(Object o1, Object o2) {
