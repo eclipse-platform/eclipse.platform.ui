@@ -104,6 +104,7 @@ public class ProjectNaturesPage extends PropertyPage {
 		initialize();
 
 		Composite header = new Composite(composite, SWT.NONE);
+		header.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		header.setLayout(
 				GridLayoutFactory.fillDefaults().numColumns(2).extendedMargins(0, 0, 10, 0).spacing(10, 0).create());
 		Label warningImageLabel = new Label(header, SWT.NONE);
