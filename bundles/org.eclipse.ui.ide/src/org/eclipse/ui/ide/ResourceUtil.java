@@ -14,6 +14,7 @@ package org.eclipse.ui.ide;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IStorage;
 import org.eclipse.core.resources.mapping.ResourceMapping;
 import org.eclipse.core.resources.mapping.ResourceTraversal;
 import org.eclipse.core.runtime.Adapters;
@@ -21,6 +22,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IEditorReference;
+import org.eclipse.ui.IStorageEditorInput;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
 import org.eclipse.ui.part.FileEditorInput;
@@ -53,7 +55,25 @@ public final class ResourceUtil {
     public static IFile getFile(IEditorInput editorInput) {
         // Note: do not treat IFileEditorInput as a special case.  Use the adapter mechanism instead.
         // See Bug 87288 [IDE] [EditorMgmt] Should avoid explicit checks for [I]FileEditorInput
-		return Adapters.adapt(editorInput, IFile.class);
+		IFile file = Adapters.adapt(editorInput, IFile.class);
+		if (file != null) {
+			return file;
+		}
+		IResource resource = Adapters.adapt(editorInput, IResource.class);
+		if (resource instanceof IFile) {
+			return (IFile) resource;
+		}
+		if (editorInput instanceof IStorageEditorInput) {
+			try {
+				IStorage storage = ((IStorageEditorInput) editorInput).getStorage();
+				if (storage != null) {
+					file = Adapters.adapt(storage, IFile.class);
+				}
+			} catch (CoreException e) {
+				// ignore
+			}
+		}
+		return file;
     }
 
     /**
