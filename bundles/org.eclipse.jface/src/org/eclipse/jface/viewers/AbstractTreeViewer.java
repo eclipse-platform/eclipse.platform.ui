@@ -1071,7 +1071,7 @@ public abstract class AbstractTreeViewer extends ColumnViewer {
 	 */
 	public void expandToLevel(int level, boolean disableRedraw) {
 		BusyIndicator.showWhile(getControl().getDisplay(), () -> {
-			expandToLevel(getRoot(), level);
+			expandToLevel(getRoot(), level, disableRedraw);
 		});
 	}
 
