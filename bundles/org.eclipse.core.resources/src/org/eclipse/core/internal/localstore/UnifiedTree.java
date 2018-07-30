@@ -18,6 +18,7 @@
 package org.eclipse.core.internal.localstore;
 
 import java.io.IOException;
+import java.nio.file.Path;
 import java.util.*;
 import java.util.regex.Pattern;
 import org.eclipse.core.filesystem.*;
@@ -399,6 +400,9 @@ public class UnifiedTree {
 		//Pattern: A UNIX or Windows relative path that just points backward
 		private static final String REGEX = Platform.getOS().equals(Platform.OS_WIN32) ? "\\.[.\\\\]*" : "\\.[./]*"; //$NON-NLS-1$ //$NON-NLS-2$
 		public static final Pattern TRIVIAL_SYMLINK_PATTERN = Pattern.compile(REGEX);
+
+		private static final String REGEX_BACK_REPEATING = Platform.getOS().equals(Platform.OS_WIN32) ? "(\\.\\.\\\\)+.*" : "(\\.\\./)+.*"; //$NON-NLS-1$ //$NON-NLS-2$
+		public static final Pattern REPEATING_BACKWARDS_PATTERN = Pattern.compile(REGEX_BACK_REPEATING);
 	}
 
 	/**
@@ -469,21 +473,43 @@ public class UnifiedTree {
 		if (linkTarget != null && PatternHolder.TRIVIAL_SYMLINK_PATTERN.matcher(linkTarget).matches()) {
 			return true;
 		}
-		if (disable_advanced_recursive_link_checks) {
-			// Skip advanced link checking, see bug 537449
-			return false;
-		}
 		//Need canonical paths to check all other possibilities
 		try {
 			java.io.File parentFile = parentStore.toLocalFile(EFS.NONE, null);
 			//If this store cannot be represented as a local file, there is nothing we can do
 			//In the future, we could try to resolve the link target
 			//against the remote file system to do more checks.
-			if (parentFile == null)
+			if (parentFile == null) {
 				return false;
+			}
+
+			Path parent = parentFile.toPath();
+			Path realParentPath = parent.toRealPath();
+			if (disable_advanced_recursive_link_checks) {
+				// Multiple ../ backwards links can go outside the project tree
+				if (linkTarget != null && PatternHolder.REPEATING_BACKWARDS_PATTERN.matcher(linkTarget).matches()) {
+					Path targetPath = parent.resolve(linkTarget).normalize();
+
+					// Recursive if literal target points to the literal parent of this tree
+					if (parent.normalize().startsWith(targetPath)) {
+						return true;
+					}
+
+					// Recursive if resolved target points to the resolved parent of this tree
+					Path realTargetPath = targetPath.toRealPath();
+					if (realParentPath.startsWith(realTargetPath)) {
+						return true;
+					}
+
+					// If link is outside the project tree, consider as non recursive
+					// The link still can create recursion in the tree, but we can't detect it here.
+				}
+				// Skip advanced link checking, it may hide valid directories, see bug 537449
+				return false;
+			}
 			//get canonical path for both child and parent
 			java.io.File childFile = new java.io.File(parentFile, localInfo.getName());
-			String parentPath = parentFile.toPath().toRealPath().toString() + java.io.File.separatorChar;
+			String parentPath = realParentPath.toString() + java.io.File.separatorChar;
 			String childPath = childFile.toPath().toRealPath().toString() + java.io.File.separatorChar;
 			//get or instantiate the prefix and root path histories.
 			//Might be done earlier - for now, do it on demand.
