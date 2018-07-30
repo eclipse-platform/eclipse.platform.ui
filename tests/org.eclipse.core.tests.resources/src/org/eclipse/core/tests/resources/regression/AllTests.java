@@ -81,6 +81,8 @@ public class AllTests extends TestCase {
 		suite.addTest(PR_1GH2B0N_Test.suite());
 		suite.addTest(PR_1GHOM0N_Test.suite());
 		suite.addTest(Bug_530868.suite());
+		suite.addTest(Bug_185247_recursiveLinks.suite());
+		suite.addTest(Bug_185247_LinuxTests.suite());
 		return suite;
 	}
 }
