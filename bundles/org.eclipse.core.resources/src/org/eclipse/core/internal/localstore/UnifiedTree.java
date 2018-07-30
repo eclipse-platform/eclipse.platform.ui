@@ -32,6 +32,10 @@ import org.eclipse.core.runtime.jobs.Job;
  * Represents the workspace's tree merged with the file system's tree.
  */
 public class UnifiedTree {
+
+	/** Skip advanced link checking, see bug 537449 */
+	private static boolean disable_advanced_recursive_link_checks = System.getProperty("org.eclipse.core.resources.disable_advanced_recursive_link_checks") != null; //$NON-NLS-1$
+
 	/** special node to mark the separation of a node's children */
 	protected static final UnifiedTreeNode childrenMarker = new UnifiedTreeNode(null, null, null, null, false);
 
@@ -464,6 +468,10 @@ public class UnifiedTree {
 		String linkTarget = localInfo.getStringAttribute(EFS.ATTRIBUTE_LINK_TARGET);
 		if (linkTarget != null && PatternHolder.TRIVIAL_SYMLINK_PATTERN.matcher(linkTarget).matches()) {
 			return true;
+		}
+		if (disable_advanced_recursive_link_checks) {
+			// Skip advanced link checking, see bug 537449
+			return false;
 		}
 		//Need canonical paths to check all other possibilities
 		try {
