@@ -23,14 +23,21 @@ import java.io.PrintWriter;
 
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.TestWatcher;
+import org.junit.runner.Description;
 
 import org.eclipse.core.filesystem.EFS;
 import org.eclipse.core.filesystem.IFileInfo;
 import org.eclipse.core.filesystem.IFileStore;
 
+import org.eclipse.core.runtime.ILog;
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.Status;
 
 import org.eclipse.core.resources.IProject;
 
@@ -91,6 +98,28 @@ public abstract class FileBufferFunctions {
 
 	protected IPath getPath() {
 		return fPath;
+	}
+
+	@Rule
+	public TestFailReporter failReporter= new TestFailReporter();
+
+	public class TestFailReporter extends TestWatcher {
+
+		private static final String BUNDLE_ID= "org.eclipse.core.filebuffers.tests";
+
+		ILog log= Platform.getLog(Platform.getBundle(BUNDLE_ID));
+
+		@Override
+		protected void failed(Throwable e, Description description) {
+			IStatus status= new Status(IStatus.ERROR, BUNDLE_ID, "FAIL in " + description.toString(), e);
+			log.log(status);
+		}
+
+		@Override
+		protected void succeeded(Description description) {
+			IStatus status= new Status(IStatus.INFO, BUNDLE_ID, "PASS in " + description.toString());
+			log.log(status);
+		}
 	}
 
 	/*
@@ -377,14 +406,14 @@ public abstract class FileBufferFunctions {
 
 			fManager.connect(fPath, LocationKind.NORMALIZE, null);
 
-			assertTrue(listener.count == 1);
+			assertEquals(1, listener.count);
 			assertNotNull(listener.buffer);
 			IFileBuffer fileBuffer= fManager.getFileBuffer(fPath, LocationKind.NORMALIZE);
-			assertTrue(listener.buffer == fileBuffer);
+			assertSame(fileBuffer, listener.buffer);
 
 			fManager.disconnect(fPath, LocationKind.NORMALIZE, null);
-			assertTrue(listener.count == 0);
-			assertTrue(listener.buffer == fileBuffer);
+			assertEquals(0, listener.count);
+			assertSame(fileBuffer, listener.buffer);
 
 		} finally {
 			try {
@@ -428,14 +457,14 @@ public abstract class FileBufferFunctions {
 				IDocument document= fileBuffer.getDocument();
 				document.replace(0, 0, "prefix");
 
-				assertTrue(listener.count == 1);
-				assertTrue(listener.buffer == fileBuffer);
+				assertEquals(1, listener.count);
+				assertSame(fileBuffer, listener.buffer);
 				assertTrue(listener.isDirty);
 
 				fileBuffer.commit(null, true);
 
-				assertTrue(listener.count == 2);
-				assertTrue(listener.buffer == fileBuffer);
+				assertEquals(2, listener.count);
+				assertSame(fileBuffer, listener.buffer);
 				assertFalse(listener.isDirty);
 
 			} finally {
@@ -479,14 +508,14 @@ public abstract class FileBufferFunctions {
 				IDocument document= fileBuffer.getDocument();
 				document.replace(0, 0, "prefix");
 
-				assertTrue(listener.count == 1);
-				assertTrue(listener.buffer == fileBuffer);
+				assertEquals(1, listener.count);
+				assertSame(fileBuffer, listener.buffer);
 				assertTrue(listener.isDirty);
 
 				fileBuffer.revert(null);
 
-				assertTrue(listener.count == 2);
-				assertTrue(listener.buffer == fileBuffer);
+				assertEquals(2, listener.count);
+				assertSame(fileBuffer, listener.buffer);
 				assertFalse(listener.isDirty);
 
 			} finally {
@@ -536,10 +565,10 @@ public abstract class FileBufferFunctions {
 
 				fileBuffer.revert(null);
 
-				assertTrue(listener.preCount == 1);
-				assertTrue(listener.preBuffer == fileBuffer);
-				assertTrue(listener.postCount == 1);
-				assertTrue(listener.postBuffer == fileBuffer);
+				assertEquals(1, listener.preCount);
+				assertSame(fileBuffer, listener.preBuffer);
+				assertEquals(1, listener.postCount);
+				assertSame(fileBuffer, listener.postBuffer);
 
 			} finally {
 				fManager.disconnect(fPath, LocationKind.NORMALIZE, null);
@@ -585,10 +614,10 @@ public abstract class FileBufferFunctions {
 				fileBuffer= fManager.getTextFileBuffer(fPath, LocationKind.NORMALIZE);
 
 				if (modifyUnderlyingFile()) {
-					assertTrue(listener.preCount == 1);
-					assertTrue(listener.preBuffer == fileBuffer);
-					assertTrue(listener.postCount == 1);
-					assertTrue(listener.postBuffer == fileBuffer);
+					assertEquals(1, listener.preCount);
+					assertSame(fileBuffer, listener.preBuffer);
+					assertEquals(1, listener.postCount);
+					assertSame(fileBuffer, listener.postBuffer);
 				}
 
 			} finally {
@@ -632,8 +661,8 @@ public abstract class FileBufferFunctions {
 				fileBuffer.validateState(null, null);
 
 				if (isStateValidationSupported()) {
-					assertTrue(listener.count == 1);
-					assertTrue(listener.buffer == fileBuffer);
+					assertEquals(1, listener.count);
+					assertSame(fileBuffer, listener.buffer);
 					assertTrue(listener.isStateValidated);
 				}
 
@@ -679,8 +708,8 @@ public abstract class FileBufferFunctions {
 				fileBuffer.validateState(null, null);
 
 				if (isStateValidationSupported()) {
-					assertTrue(listener.count == 1);
-					assertTrue(listener.buffer == fileBuffer);
+					assertEquals(1, listener.count);
+					assertSame(fileBuffer, listener.buffer);
 					assertTrue(listener.isStateValidated);
 				}
 
@@ -726,8 +755,8 @@ public abstract class FileBufferFunctions {
 				fileBuffer.resetStateValidation();
 
 				if (isStateValidationSupported()) {
-					assertTrue(listener.count == 2);
-					assertTrue(listener.buffer == fileBuffer);
+					assertEquals(2, listener.count);
+					assertSame(fileBuffer, listener.buffer);
 					assertFalse(listener.isStateValidated);
 				}
 
@@ -774,8 +803,8 @@ public abstract class FileBufferFunctions {
 				fileBuffer.resetStateValidation();
 
 				if (isStateValidationSupported()) {
-					assertTrue(listener.count == 2);
-					assertTrue(listener.buffer == fileBuffer);
+					assertEquals(2, listener.count);
+					assertSame(fileBuffer, listener.buffer);
 					assertFalse(listener.isStateValidated);
 				}
 
@@ -817,8 +846,8 @@ public abstract class FileBufferFunctions {
 
 				fileBuffer= fManager.getTextFileBuffer(fPath, LocationKind.NORMALIZE);
 				if (deleteUnderlyingFile()) {
-					assertTrue(listener.count == 1);
-					assertTrue(listener.buffer == fileBuffer);
+					assertEquals(1, listener.count);
+					assertSame(fileBuffer, listener.buffer);
 				}
 
 			} finally {
@@ -954,8 +983,8 @@ public abstract class FileBufferFunctions {
 
 				fileBuffer= fManager.getTextFileBuffer(fPath, LocationKind.NORMALIZE);
 				if (deleteUnderlyingFile()) {
-					assertTrue(listener.count == 1);
-					assertTrue(listener.buffer == fileBuffer);
+					assertEquals(1, listener.count);
+					assertSame(fileBuffer, listener.buffer);
 				}
 
 			} finally {
@@ -995,8 +1024,8 @@ public abstract class FileBufferFunctions {
 
 				fileBuffer= fManager.getTextFileBuffer(fPath, LocationKind.NORMALIZE);
 				if (moveUnderlyingFile() != null) {
-					assertTrue(listener.count == 1);
-					assertTrue(listener.buffer == fileBuffer);
+					assertEquals(1, listener.count);
+					assertSame(fileBuffer, listener.buffer);
 				}
 
 			} finally {
@@ -1038,8 +1067,8 @@ public abstract class FileBufferFunctions {
 				fileBuffer.validateState(null, null);
 
 				if (isStateValidationSupported()) {
-					assertTrue(listener.count == 1);
-					assertTrue(listener.buffer == fileBuffer);
+					assertEquals(1, listener.count);
+					assertSame(fileBuffer, listener.buffer);
 				}
 
 			} finally {
@@ -1081,8 +1110,8 @@ public abstract class FileBufferFunctions {
 				document.replace(0, 0, "prefix");
 				fileBuffer.revert(null);
 
-				assertTrue(listener.count == 1);
-				assertTrue(listener.buffer == fileBuffer);
+				assertEquals(1, listener.count);
+				assertSame(fileBuffer, listener.buffer);
 
 			} finally {
 				fManager.disconnect(fPath, LocationKind.NORMALIZE, null);
@@ -1124,8 +1153,8 @@ public abstract class FileBufferFunctions {
 				document.replace(0, 0, "prefix");
 				fileBuffer.commit(null, true);
 
-				assertTrue(listener.count == 1);
-				assertTrue(listener.buffer == fileBuffer);
+				assertEquals(1, listener.count);
+				assertSame(fileBuffer, listener.buffer);
 
 			} finally {
 				fManager.disconnect(fPath, LocationKind.NORMALIZE, null);
