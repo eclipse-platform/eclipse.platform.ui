@@ -1553,7 +1553,8 @@ public class LaunchConfigurationTabGroupViewer {
 	 * Dialog to Show the Command line
 	 */
 	protected void handleShowCommandLinePressed() {
-		ShowCommandLineDialog dialog = new ShowCommandLineDialog(getShell(), fOriginal);
+		ShowCommandLineDialog dialog = new ShowCommandLineDialog(getShell(), getLaunchConfigurationDialog().getMode(),
+				fOriginal);
 		dialog.open();
 	}
 

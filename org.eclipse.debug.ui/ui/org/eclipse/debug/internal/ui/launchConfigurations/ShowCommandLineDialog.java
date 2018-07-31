@@ -19,7 +19,6 @@ import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchDelegate;
-import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.debug.core.Launch;
 import org.eclipse.debug.core.model.ILaunchConfigurationDelegate;
 import org.eclipse.debug.core.model.ILaunchConfigurationDelegate2;
@@ -52,10 +51,12 @@ import com.ibm.icu.text.MessageFormat;
 public class ShowCommandLineDialog extends Dialog {
 	Text fModuleArgumentsText;
 	ILaunchConfiguration flaunchConfiguration;
+	String fMode;
 
 
-	public ShowCommandLineDialog(Shell parentShell, ILaunchConfiguration config) {
+	public ShowCommandLineDialog(Shell parentShell, String mode, ILaunchConfiguration config) {
 		super(parentShell);
+		fMode = mode;
 		setShellStyle(SWT.RESIZE | getShellStyle());
 		flaunchConfiguration = config;
 	}
@@ -97,7 +98,7 @@ public class ShowCommandLineDialog extends Dialog {
 		String command = ""; //$NON-NLS-1$
 		try {
 			Set<String> modes = flaunchConfiguration.getModes();
-			modes.add(ILaunchManager.RUN_MODE);
+			modes.add(fMode);
 			ILaunchDelegate[] delegates = flaunchConfiguration.getType().getDelegates(modes);
 			if (delegates.length ==1) {
 				ILaunchConfigurationDelegate delegate = delegates[0].getDelegate();
@@ -106,22 +107,22 @@ public class ShowCommandLineDialog extends Dialog {
 				if (delegate instanceof ILaunchConfigurationDelegate2) {
 					delegate2 = (ILaunchConfigurationDelegate2) delegate;
 					if (delegate2 != null) {
-						launch = delegate2.getLaunch(flaunchConfiguration, ILaunchManager.RUN_MODE);
+						launch = delegate2.getLaunch(flaunchConfiguration, fMode);
 					}
 					if (launch == null) {
-						launch = new Launch(flaunchConfiguration, ILaunchManager.RUN_MODE, null);
+						launch = new Launch(flaunchConfiguration, fMode, null);
 					} else {
 						// ensure the launch mode is valid
-						if (!ILaunchManager.RUN_MODE.equals(launch.getLaunchMode())) {
+						if (!fMode.equals(launch.getLaunchMode())) {
 							IStatus status = new Status(IStatus.ERROR, DebugPlugin.getUniqueIdentifier(),
 									DebugPlugin.ERROR, MessageFormat.format(DebugCoreMessages.LaunchConfiguration_14,
-											ILaunchManager.RUN_MODE, launch.getLaunchMode()),
+											fMode, launch.getLaunchMode()),
 									null);
 							throw new CoreException(status);
 						}
 					}
 				}
-				command = delegate.showCommandLine(flaunchConfiguration, ILaunchManager.RUN_MODE, launch,
+				command = delegate.showCommandLine(flaunchConfiguration, fMode, launch,
 						null);
 
 			}
