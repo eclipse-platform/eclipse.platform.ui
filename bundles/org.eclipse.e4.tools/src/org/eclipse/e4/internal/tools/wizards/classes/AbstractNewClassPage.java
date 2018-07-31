@@ -53,6 +53,7 @@ import org.eclipse.jface.databinding.swt.ISWTObservableValue;
 import org.eclipse.jface.databinding.swt.IWidgetValueProperty;
 import org.eclipse.jface.databinding.swt.WidgetProperties;
 import org.eclipse.jface.databinding.wizard.WizardPageSupport;
+import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -79,6 +80,11 @@ public abstract class AbstractNewClassPage extends WizardPage {
 	private static final String FRAGMENT_ROOT = "fragmentRoot"; //$NON-NLS-1$
 	public static final String PACKAGE_FRAGMENT = "packageFragment"; //$NON-NLS-1$
 	public static final String PROPERTY_NAME = "name"; //$NON-NLS-1$
+
+	/** Name of the setting section for the new class wizard */
+	private static final String SETTING_SECTION_NEW_CLASS = "org.eclipse.e4.tools.wizards.newclass"; //$NON-NLS-1$
+	/** The package dialog setting */
+	private static final String SETTING_PACKAGE = "package"; //$NON-NLS-1$
 
 	public static class JavaClass {
 
@@ -176,13 +182,39 @@ public abstract class AbstractNewClassPage extends WizardPage {
 	 *            used to initialize the fields
 	 */
 	public void init(IStructuredSelection selection) {
-		if (selection == null || selection.isEmpty() || selection.getFirstElement() == null) {
-			return;
-		}
-		if (selection.getFirstElement() instanceof IPackageFragment) {
+		if (selection != null && !selection.isEmpty() && selection.getFirstElement() != null
+				&& selection.getFirstElement() instanceof IPackageFragment) {
 			final IPackageFragment pkg = (IPackageFragment) selection.getFirstElement();
 			initialPackage = pkg.getElementName();
+		} else {
+			String settingPackage = getDialogSettings().get(SETTING_PACKAGE);
+			if (settingPackage != null) {
+				initialPackage = settingPackage;
+			}
 		}
+	}
+
+	/**
+	 * Gets called if the wizard is finished
+	 */
+	public void performFinish() {
+		String packageName = clazz.getPackageFragment().getElementName();
+		getDialogSettings().put(SETTING_PACKAGE, packageName);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 *
+	 * @see org.eclipse.jface.wizard.WizardPage#getDialogSettings()
+	 */
+	@Override
+	protected IDialogSettings getDialogSettings() {
+		final IDialogSettings mainSettings = ToolsPlugin.getDefault().getDialogSettings();
+		IDialogSettings settingsSection = mainSettings.getSection(SETTING_SECTION_NEW_CLASS);
+		if (settingsSection == null) {
+			settingsSection = mainSettings.addNewSection(SETTING_SECTION_NEW_CLASS);
+		}
+		return settingsSection;
 	}
 
 	@SuppressWarnings("unchecked")

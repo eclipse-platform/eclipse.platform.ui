@@ -56,6 +56,7 @@ public abstract class AbstractNewClassWizard extends Wizard implements INewWizar
 	protected IPackageFragmentRoot root;
 	protected IFile file;
 	private IStructuredSelection selection;
+	private AbstractNewClassPage newClassPage;
 
 	public AbstractNewClassWizard() {
 		setWindowTitle(Messages.AbstractNewClassWizard_NewClass);
@@ -82,7 +83,8 @@ public abstract class AbstractNewClassWizard extends Wizard implements INewWizar
 	public void addPage(IWizardPage page) {
 		super.addPage(page);
 		if (page instanceof AbstractNewClassPage) {
-			((AbstractNewClassPage) page).init(getSelection());
+			newClassPage = ((AbstractNewClassPage) page);
+			newClassPage.init(getSelection());
 		}
 	}
 
@@ -270,6 +272,9 @@ public abstract class AbstractNewClassWizard extends Wizard implements INewWizar
 			} catch (final JavaModelException e1) {
 				// TODO Auto-generated catch block
 				e1.printStackTrace();
+			}
+			if (newClassPage != null) {
+				newClassPage.performFinish();
 			}
 			final String cuName = clazz.getName() + JAVA;
 			final ICompilationUnit unit = fragment.getCompilationUnit(cuName);
