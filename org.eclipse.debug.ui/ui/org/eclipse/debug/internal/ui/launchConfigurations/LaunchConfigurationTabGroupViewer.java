@@ -648,6 +648,7 @@ public class LaunchConfigurationTabGroupViewer {
 		boolean isDirty = isDirty();
 		fApplyButton.setEnabled(isDirty && canSave());
 		fRevertButton.setEnabled(isDirty);
+		fShowCommandLineButton.setEnabled(canLaunch());
 	}
 
 	/* (non-Javadoc)
