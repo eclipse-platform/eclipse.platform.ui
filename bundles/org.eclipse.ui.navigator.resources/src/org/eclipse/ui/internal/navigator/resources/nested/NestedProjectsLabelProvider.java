@@ -12,17 +12,13 @@ package org.eclipse.ui.internal.navigator.resources.nested;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.ui.IMemento;
-import org.eclipse.ui.model.WorkbenchLabelProvider;
-import org.eclipse.ui.navigator.ICommonContentExtensionSite;
-import org.eclipse.ui.navigator.ICommonLabelProvider;
+import org.eclipse.ui.internal.navigator.resources.workbench.ResourceExtensionLabelProvider;
 
-public class NestedProjectsLabelProvider extends WorkbenchLabelProvider implements ICommonLabelProvider {
-
+public class NestedProjectsLabelProvider extends ResourceExtensionLabelProvider {
 
 	@Override
 	protected String decorateText(String input, Object element) {
+		super.decorateText(input, element);
 		if (! (element instanceof IProject)) {
 			return input;
 		}
@@ -32,29 +28,6 @@ public class NestedProjectsLabelProvider extends WorkbenchLabelProvider implemen
 			return input + " (in " + location.lastSegment() + ")"; //$NON-NLS-1$ //$NON-NLS-2$
 		}
 		return input;
-	}
-
-	@Override
-	protected ImageDescriptor decorateImage(ImageDescriptor input, Object element) {
-		return super.decorateImage(input, element);
-	}
-
-	@Override
-	public void restoreState(IMemento aMemento) {
-	}
-
-	@Override
-	public void saveState(IMemento aMemento) {
-	}
-
-	@Override
-	public String getDescription(Object anElement) {
-		return null;
-	}
-
-	@Override
-	public void init(ICommonContentExtensionSite aConfig) {
-
 	}
 
 }
