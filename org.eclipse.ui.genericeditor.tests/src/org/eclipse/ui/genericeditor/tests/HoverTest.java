@@ -29,7 +29,6 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Link;
@@ -212,7 +211,7 @@ public class HoverTest extends AbstratGenericEditorTest {
 		return null;
 	}
 
-	private Object getHoverData(AbstractInformationControlManager manager) throws Exception {
+	private Object getHoverData(AbstractInformationControlManager manager) {
 		Object hoverData = new Accessor(manager, AbstractInformationControlManager.class).get("fInformation");
 		return hoverData;
 	}
@@ -226,7 +225,7 @@ public class HoverTest extends AbstratGenericEditorTest {
 			protected boolean condition() {
 				return editorTextWidget.isFocusControl() && editorTextWidget.getSelection().x == caretLocation;
 			}
-		}.waitForCondition(editorTextWidget.getDisplay(), 1000);
+		}.waitForCondition(editorTextWidget.getDisplay(), 3000);
 		// sending event to trigger hover computation
 		editorTextWidget.getShell().forceActive();
 		editorTextWidget.getShell().setActive();
@@ -241,21 +240,15 @@ public class HoverTest extends AbstratGenericEditorTest {
 		hoverEvent.doit = true;
 		editorTextWidget.getDisplay().setCursorLocation(editorTextWidget.toDisplay(hoverEvent.x, hoverEvent.y));
 		editorTextWidget.notifyListeners(SWT.MouseHover, hoverEvent);
-		// Events need to be processed for hover listener to work correctly
-		processViewEvents(editorTextWidget.getDisplay());
+		ITextViewer viewer= (ITextViewer) new Accessor(editor, AbstractTextEditor.class).invoke("getSourceViewer", new Object[0]);
+		AbstractInformationControlManager textHoverManager= (AbstractInformationControlManager) new Accessor(viewer, TextViewer.class).get("fTextHoverManager");
 		// retrieving hover content
-		ITextViewer viewer = (ITextViewer)new Accessor(editor, AbstractTextEditor.class).invoke("getSourceViewer", new Object[0]);
-		AbstractInformationControlManager textHoverManager = (AbstractInformationControlManager)new Accessor(viewer, TextViewer.class).get("fTextHoverManager");
-		return textHoverManager;
-	}
-
-	private void processViewEvents(Display display) {
 		new DisplayHelper() {
 			@Override
 			protected boolean condition() {
-				return !display.readAndDispatch();
+				return getHoverData(textHoverManager) != null;
 			}
-		}.waitForCondition(display, 3000);
+		}.waitForCondition(hoverEvent.display, 6000);
+		return textHoverManager;
 	}
-
 }
