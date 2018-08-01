@@ -47,11 +47,14 @@
       </presentationReconciler>
    </extension>
    <extension
-         point="org.eclipse.ui.genericeditor.reconcilers">
-      <reconciler
+         point="org.eclipse.ui.genericeditor.foldingReconcilers">
+      <foldingReconciler
             class="org.eclipse.ui.genericeditor.examples.dotproject.FoldingReconciler"
             contentType="org.eclipse.ui.genericeditor.examples.dotproject">
-      </reconciler>
+      </foldingReconciler>
+   </extension>
+   <extension
+         point="org.eclipse.ui.genericeditor.reconcilers">
       <reconciler
             class="org.eclipse.ui.genericeditor.examples.dotproject.BracketMatchingReconciler"
             contentType="org.eclipse.ui.genericeditor.examples.dotproject">

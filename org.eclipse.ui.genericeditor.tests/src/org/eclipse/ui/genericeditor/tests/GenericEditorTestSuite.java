@@ -22,6 +22,7 @@ import org.junit.runners.Suite.SuiteClasses;
 		StylingTest.class,
 		HoverTest.class,
 		EditorTest.class,
+		FoldingTest.class,
 		AutoEditTest.class,
 		ReconcilerTest.class,
 		HighlightTest.class

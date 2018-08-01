@@ -235,6 +235,23 @@
 		</highlightReconciler>
 	</extension>
 	<extension
+			point="org.eclipse.ui.genericeditor.foldingReconcilers">
+		<foldingReconciler
+			class="org.eclipse.ui.genericeditor.tests.contributions.FoldingReconciler"
+			contentType="org.eclipse.ui.genericeditor.tests.content-type-bar">
+		</foldingReconciler>
+		<foldingReconciler
+				class="org.eclipse.ui.genericeditor.tests.contributions.FoldingReconciler"
+				contentType="org.eclipse.ui.genericeditor.tests.enabled-when-content-type">
+			<enabledWhen>
+				<test
+						forcePluginActivation="true"
+						property="org.eclipse.ui.genericeditor.tests.contributions.enabled">
+				</test>
+			</enabledWhen>
+		</foldingReconciler>
+	</extension>
+	<extension
 			point="org.eclipse.core.expressions.propertyTesters">
     	<propertyTester
 				class="org.eclipse.ui.genericeditor.tests.contributions.EnabledPropertyTester"
