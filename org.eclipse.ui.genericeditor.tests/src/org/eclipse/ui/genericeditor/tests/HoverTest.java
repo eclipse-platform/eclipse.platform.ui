@@ -80,6 +80,7 @@ public class HoverTest extends AbstratGenericEditorTest {
 
 	@Test
 	public void testEnabledWhenHover() throws Exception {
+		Assume.assumeFalse("This test currently always fails on Mac (bug 537195), skipping", Platform.OS_MACOSX.equals(Platform.getOS()));
 		cleanFileAndEditor();
 		EnabledPropertyTester.setEnabled(true);
 		createAndOpenFile("enabledWhen.txt", "bar 'bar'");
