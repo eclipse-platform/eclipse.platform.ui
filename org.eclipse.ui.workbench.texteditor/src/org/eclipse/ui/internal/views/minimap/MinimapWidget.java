@@ -7,6 +7,7 @@
  *
  * Contributors:
  * Angelo Zerr <angelo.zerr@gmail.com> - [minimap] Initialize minimap view - Bug 535450
+ * Arne Deutsch <arne.deutsch@itemis.de> - Correct view height - Bug 536207
  *******************************************************************************/
 package org.eclipse.ui.internal.views.minimap;
 
@@ -71,10 +72,6 @@ public class MinimapWidget {
 
 		private Map<Font, Font> fScaledFonts;
 
-		private static final int RESETED = -1;
-
-		private int scaledClientAreaHeight = RESETED;
-
 		@Override
 		public void textSet(TextChangedEvent event) {
 			synchText();
@@ -87,7 +84,7 @@ public class MinimapWidget {
 
 		@Override
 		public void textChanged(TextChangedEvent event) {
-			// Do nothing
+			updateMinimapAfterTextChange();
 		}
 
 		@Override
@@ -203,31 +200,33 @@ public class MinimapWidget {
 
 		@Override
 		public void controlResized(ControlEvent e) {
-			scaledClientAreaHeight = RESETED;
-			updateMinimap();
+			updateMinimapAfterResize();
 		}
 
 		@Override
 		public void viewportChanged(int verticalOffset) {
 			fMinimapTextWidget.getDisplay().asyncExec(() -> {
 				if (!fMinimapTextWidget.isDisposed()) {
-					updateMinimap();
+					updateMinimapAfterResize();
 				}
 			});
 		}
 
-		void updateMinimap() {
+		void updateMinimapAfterResize() {
+			updateMinimap(false);
+		}
+
+		void updateMinimapAfterTextChange() {
+			updateMinimap(true);
+		}
+
+		void updateMinimap(boolean textChanged) {
 			StyledText editorTextWidget = fEditorViewer.getTextWidget();
 			int editorTopIndex = JFaceTextUtil.getPartialTopIndex(editorTextWidget);
 			int editorBottomIndex = JFaceTextUtil.getPartialBottomIndex(editorTextWidget);
-			fMinimapTracker.updateMinimap(editorTopIndex, editorBottomIndex);
-		}
-
-		int getScaledClientAreaHeight() {
-			if (scaledClientAreaHeight == RESETED) {
-				scaledClientAreaHeight = Math.round(fEditorViewer.getTextWidget().getClientArea().height * getScale());
-			}
-			return scaledClientAreaHeight;
+			int maximalLines = fEditorViewer.getTextWidget().getClientArea().height
+					/ fEditorViewer.getTextWidget().getLineHeight();
+			fMinimapTracker.updateMinimap(editorTopIndex, editorBottomIndex, maximalLines, textChanged);
 		}
 
 		void install() {
@@ -300,7 +299,15 @@ public class MinimapWidget {
 
 		private int fEditorTopIndex;
 
+		private int fEditorBottomIndex;
+
 		private int fTopIndexY;
+
+		private int fBottomIndexY;
+
+		private int fMinimalHeight;
+
+		private int fMaximalLines;
 
 		private boolean fTextChanging;
 
@@ -327,9 +334,12 @@ public class MinimapWidget {
 			fEditorViewer.setTopIndex(newTopIndex);
 		}
 
-		public void updateMinimap(int editorTopIndex, int editorBottomIndex) {
-			if (editorTopIndex != fEditorTopIndex) {
+		void updateMinimap(int editorTopIndex, int editorBottomIndex, int maximalLines, boolean textChanged) {
+			if (editorTopIndex != fEditorTopIndex || editorBottomIndex != fEditorBottomIndex
+					|| maximalLines != fMaximalLines || textChanged) {
 				fEditorTopIndex = editorTopIndex;
+				fEditorBottomIndex = editorBottomIndex;
+				fMaximalLines = maximalLines;
 				// Update the position of minimap styled text
 				fMinimapTextWidget.setRedraw(false);
 				int newMinimapTopIndex = editorTopIndex;
@@ -345,11 +355,21 @@ public class MinimapWidget {
 				}
 				fMinimapTextWidget.setTopIndex(newMinimapTopIndex);
 				fTopIndexY = fMinimapTextWidget.getLinePixel(fEditorTopIndex);
+				// "fEditorBottomIndex + 1" because fEditorBottomIndex is START
+				// of last line ... we want to include it
+				fBottomIndexY = fMinimapTextWidget.getLinePixel(fEditorBottomIndex + 1);
+				// to avoid that the highlight viewport shrinks to the text
+				// height in case all content is visible in the editor,
+				// calculate a minimal height based on the number of lines
+				// maximal shown and the line height in the minimap
+				fMinimalHeight = maximalLines > fMinimapTextWidget.getLineCount()
+						? maximalLines * fMinimapTextWidget.getLineHeight()
+						: 0;
 				fMinimapTextWidget.setRedraw(true);
 			}
 		}
 
-		public void replaceTextRange(TextChangingEvent event) {
+		void replaceTextRange(TextChangingEvent event) {
 			fTextChanging = true;
 			int start = event.start;
 			int length = event.replaceCharCount;
@@ -381,10 +401,10 @@ public class MinimapWidget {
 		@Override
 		public void paintControl(PaintEvent event) {
 			GC gc = event.gc;
-			int clientAreaHeight = fEditorTracker.getScaledClientAreaHeight();
 			int clientAreaWidth = fMinimapTextWidget.getClientArea().width;
 			gc.setBackground(fMinimapTextWidget.getSelectionBackground());
-			Rectangle rect = new Rectangle(0, fTopIndexY, clientAreaWidth, clientAreaHeight);
+			Rectangle rect = new Rectangle(0, fTopIndexY, clientAreaWidth,
+					Math.max(fBottomIndexY - fTopIndexY, fMinimalHeight));
 			gc.drawRectangle(rect.x, rect.y, Math.max(1, rect.width - 1), Math.max(1, rect.height - 1));
 			gc.setAdvanced(true);
 			if (gc.getAdvanced()) {
