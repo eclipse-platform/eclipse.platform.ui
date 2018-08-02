@@ -7,6 +7,7 @@ Bundle-Vendor: %Plugin.providerName
 Bundle-Localization: plugin
 Export-Package: 
  org.eclipse.ui.workbench.texteditor.tests,
+ org.eclipse.ui.workbench.texteditor.tests.minimap,
  org.eclipse.ui.workbench.texteditor.tests.revisions,
  org.eclipse.ui.workbench.texteditor.tests.rulers
 Require-Bundle: 
