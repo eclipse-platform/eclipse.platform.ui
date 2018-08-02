@@ -14,6 +14,8 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
 
+import org.eclipse.ui.workbench.texteditor.tests.minimap.MinimapPageTest;
+import org.eclipse.ui.workbench.texteditor.tests.minimap.MinimapWidgetTest;
 import org.eclipse.ui.workbench.texteditor.tests.revisions.ChangeRegionTest;
 import org.eclipse.ui.workbench.texteditor.tests.revisions.HunkComputerTest;
 import org.eclipse.ui.workbench.texteditor.tests.revisions.RangeTest;
@@ -35,7 +37,9 @@ import org.eclipse.ui.workbench.texteditor.tests.rulers.RulerTestSuite;
 		HunkComputerTest.class,
 		ScreenshotTest.class,
 		AbstractTextZoomHandlerTest.class,
-		DocumentLineDifferTest.class
+		DocumentLineDifferTest.class,
+		MinimapPageTest.class,
+		MinimapWidgetTest.class
 })
 public class WorkbenchTextEditorTestSuite {
 	// see @SuiteClasses
