@@ -23,6 +23,7 @@ import org.eclipse.debug.core.Launch;
 import org.eclipse.debug.core.model.ILaunchConfigurationDelegate;
 import org.eclipse.debug.core.model.ILaunchConfigurationDelegate2;
 import org.eclipse.debug.internal.core.DebugCoreMessages;
+import org.eclipse.debug.internal.core.LaunchManager;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
@@ -75,6 +76,10 @@ public class ShowCommandLineDialog extends Dialog {
 		createButton(parent, IDialogConstants.CANCEL_ID, IDialogConstants.CANCEL_LABEL, false);
 	}
 
+	private LaunchManager getLaunchManager() {
+		return (LaunchManager) DebugPlugin.getDefault().getLaunchManager();
+	}
+
 	@Override
 	protected Control createDialogArea(Composite parent) {
 		Composite comp = (Composite) super.createDialogArea(parent);
@@ -121,6 +126,8 @@ public class ShowCommandLineDialog extends Dialog {
 							throw new CoreException(status);
 						}
 					}
+					launch.setAttribute(DebugPlugin.ATTR_CONSOLE_ENCODING,
+							getLaunchManager().getEncoding(flaunchConfiguration));
 				}
 				command = delegate.showCommandLine(flaunchConfiguration, fMode, launch,
 						null);
