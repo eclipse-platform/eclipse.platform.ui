@@ -80,7 +80,7 @@ public class ResourceExtensionLabelProvider extends WorkbenchLabelProvider imple
 	}
 
 
-	private int getHighestProblemSeverity(IResource resource) {
+	protected int getHighestProblemSeverity(IResource resource) {
 		int problemSeverity = -1;
 		try {
 			for (IMarker marker : resource.findMarkers(IMarker.PROBLEM, true, IResource.DEPTH_INFINITE)) {
