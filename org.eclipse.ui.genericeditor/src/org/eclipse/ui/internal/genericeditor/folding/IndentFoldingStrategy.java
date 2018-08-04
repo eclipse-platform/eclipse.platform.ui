@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2017 IBM Corporation and others.
+ * Copyright (c) 2009, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -175,8 +175,6 @@ public class IndentFoldingStrategy implements IReconcilingStrategy, IReconciling
 			List<FoldingAnnotation> deletions = new ArrayList<FoldingAnnotation>();
 			List<FoldingAnnotation> existing = new ArrayList<FoldingAnnotation>();
 			Map<Annotation, Position> additions = new HashMap<Annotation, Position>();
-			boolean isInsert = dirtyRegion.getType().equals(DirtyRegion.INSERT);
-			boolean isRemove = dirtyRegion.getType().equals(DirtyRegion.REMOVE);
 
 			// find and mark all folding annotations with length 0 for deletion
 			markInvalidAnnotationsForDeletion(dirtyRegion, deletions, existing);
