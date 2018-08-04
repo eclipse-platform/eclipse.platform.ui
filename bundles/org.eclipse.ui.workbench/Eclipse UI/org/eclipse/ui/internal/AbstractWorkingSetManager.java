@@ -21,8 +21,11 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
+import java.util.stream.Collectors;
 import org.eclipse.core.commands.common.EventManager;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.IAdaptable;
@@ -637,60 +640,75 @@ public abstract class AbstractWorkingSetManager extends EventManager implements
 	@Override
 	public void bundleChanged(BundleEvent event) {
 		String symbolicName = event.getBundle().getSymbolicName();
-		if (symbolicName == null)
+		if (symbolicName == null) {
 			return;
+		}
 		// If the workbench isn't running anymore simply return.
 		if (!PlatformUI.isWorkbenchRunning()) {
 			return;
 		}
+		if (event.getBundle().getState() != Bundle.ACTIVE) {
+			return;
+		}
 
-		if (event.getBundle().getState() == Bundle.ACTIVE) {
-			final WorkingSetDescriptor[] descriptors = WorkbenchPlugin.getDefault()
-					.getWorkingSetRegistry().getUpdaterDescriptorsForNamespace(
-							symbolicName);
+		final List<WorkingSetDescriptor> descriptors = getUniqueDescriptors(symbolicName);
+		final Map<WorkingSetDescriptor, List<IWorkingSet>> nonEmptyDescriptors = getNonEmpty(descriptors);
+		if (nonEmptyDescriptors.isEmpty()) {
+			return;
+		}
+		Job job = new WorkbenchJob(
+				NLS.bind(WorkbenchMessages.AbstractWorkingSetManager_updatersActivating, symbolicName)) {
 
-			Job job = new WorkbenchJob(
-					NLS
-							.bind(
-									WorkbenchMessages.AbstractWorkingSetManager_updatersActivating,
-									symbolicName)) {
+			@Override
+			public IStatus runInUIThread(IProgressMonitor monitor) {
+				Set<Entry<WorkingSetDescriptor, List<IWorkingSet>>> entrySet = nonEmptyDescriptors.entrySet();
+				synchronized (updaters) {
+					for (Entry<WorkingSetDescriptor, List<IWorkingSet>> e : entrySet) {
+						final IWorkingSetUpdater updater = getUpdater(e.getKey());
+						if (updater == NULL_UPDATER) {
+							continue;
+						}
+						for (IWorkingSet workingSet : e.getValue()) {
+							SafeRunner.run(new WorkingSetRunnable() {
 
-				@Override
-				public IStatus runInUIThread(IProgressMonitor monitor) {
-					synchronized (updaters) {
-						for (WorkingSetDescriptor descriptor : descriptors) {
-							List workingSets = getWorkingSetsForId(descriptor
-									.getId());
-							if (workingSets.isEmpty()) {
-								continue;
-							}
-							final IWorkingSetUpdater updater = getUpdater(descriptor);
-							for (Iterator iter = workingSets.iterator(); iter
-									.hasNext();) {
-								final IWorkingSet workingSet = (IWorkingSet) iter
-										.next();
-								SafeRunner.run(new WorkingSetRunnable() {
-
-									@Override
-									public void run() throws Exception {
-										if (!updater.contains(workingSet)) {
-											updater.add(workingSet);
-										}
+								@Override
+								public void run() throws Exception {
+									if (!updater.contains(workingSet)) {
+										updater.add(workingSet);
 									}
-								});
-							}
+								}
+							});
 						}
 					}
-					return Status.OK_STATUS;
 				}
-			};
-			job.setSystem(true);
-			job.schedule();
-		}
+				return Status.OK_STATUS;
+			}
+		};
+		job.setSystem(true);
+		job.schedule();
 	}
 
-	private List getWorkingSetsForId(String id) {
-		List result= new ArrayList();
+	private Map<WorkingSetDescriptor, List<IWorkingSet>> getNonEmpty(final List<WorkingSetDescriptor> descriptors) {
+		Map<WorkingSetDescriptor, List<IWorkingSet>> map = descriptors.stream()
+				.collect(Collectors.toMap(d -> d, d -> getWorkingSetsForId(d.getId())));
+		Iterator<Entry<WorkingSetDescriptor, List<IWorkingSet>>> iterator = map.entrySet().iterator();
+		iterator.forEachRemaining(e -> {
+			if (e.getValue().isEmpty()) {
+				iterator.remove();
+			}
+		});
+		return map;
+	}
+
+	private static List<WorkingSetDescriptor> getUniqueDescriptors(String symbolicName) {
+		final List<WorkingSetDescriptor> descriptors = WorkbenchPlugin.getDefault()
+				.getWorkingSetRegistry().getUpdaterDescriptorsForNamespace(symbolicName);
+		// Note: WorkingSetRegistry never contains descriptors with same id
+		return descriptors;
+	}
+
+	private List<IWorkingSet> getWorkingSetsForId(String id) {
+		List<IWorkingSet> result = new ArrayList<>();
 		for (IWorkingSet ws : workingSets) {
     		if (id.equals(ws.getId())) {
 				result.add(ws);

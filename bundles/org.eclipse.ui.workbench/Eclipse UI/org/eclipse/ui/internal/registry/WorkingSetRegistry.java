@@ -12,6 +12,7 @@ package org.eclipse.ui.internal.registry;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -34,7 +35,7 @@ public class WorkingSetRegistry implements IExtensionChangeHandler {
     // @issue this is an IDE specific working set page!
     private static final String DEFAULT_PAGE_ID = "org.eclipse.ui.resourceWorkingSetPage"; //$NON-NLS-1$
 
-    private HashMap/*<String, WorkingSetDescriptor>*/ workingSetDescriptors = new HashMap();
+	private HashMap<String, WorkingSetDescriptor> workingSetDescriptors = new HashMap<>();
 
     /**
 	 *
@@ -82,8 +83,7 @@ public class WorkingSetRegistry implements IExtensionChangeHandler {
 	 */
     public IWorkingSetPage getDefaultWorkingSetPage() {
         // @issue this will return the IDE resource working set page... not good for generic workbench
-        WorkingSetDescriptor descriptor = (WorkingSetDescriptor) workingSetDescriptors
-                .get(DEFAULT_PAGE_ID);
+		WorkingSetDescriptor descriptor = workingSetDescriptors.get(DEFAULT_PAGE_ID);
 
         if (descriptor != null) {
             return descriptor.createWorkingSetPage();
@@ -98,7 +98,7 @@ public class WorkingSetRegistry implements IExtensionChangeHandler {
      * @return the working set descriptor with the given id.
      */
     public WorkingSetDescriptor getWorkingSetDescriptor(String pageId) {
-        return (WorkingSetDescriptor) workingSetDescriptors.get(pageId);
+		return workingSetDescriptors.get(pageId);
     }
 
     /**
@@ -107,7 +107,7 @@ public class WorkingSetRegistry implements IExtensionChangeHandler {
      * @return an array of all working set descriptors.
      */
     public WorkingSetDescriptor[] getWorkingSetDescriptors() {
-        return (WorkingSetDescriptor[]) workingSetDescriptors.values().toArray(
+		return workingSetDescriptors.values().toArray(
                 new WorkingSetDescriptor[workingSetDescriptors.size()]);
     }
 
@@ -147,21 +147,17 @@ public class WorkingSetRegistry implements IExtensionChangeHandler {
     	return false;
     }
 
-    public WorkingSetDescriptor[] getUpdaterDescriptorsForNamespace(
-			String namespace) {
-    	if (namespace == null) // fix for Bug 84225
-    		return new WorkingSetDescriptor[0];
-		Collection descriptors = workingSetDescriptors.values();
-		List result = new ArrayList();
-		for (Iterator iter = descriptors.iterator(); iter.hasNext();) {
-			WorkingSetDescriptor descriptor = (WorkingSetDescriptor) iter
-					.next();
+	public List<WorkingSetDescriptor> getUpdaterDescriptorsForNamespace(String namespace) {
+		if (namespace == null) { // fix for Bug 84225
+			return Collections.emptyList();
+		}
+		List<WorkingSetDescriptor> result = new ArrayList<>();
+		for (WorkingSetDescriptor descriptor : workingSetDescriptors.values()) {
 			if (namespace.equals(descriptor.getUpdaterNamespace())) {
 				result.add(descriptor);
 			}
 		}
-		return (WorkingSetDescriptor[]) result
-				.toArray(new WorkingSetDescriptor[result.size()]);
+		return result;
 	}
 
     public WorkingSetDescriptor[] getElementAdapterDescriptorsForNamespace(
@@ -188,8 +184,7 @@ public class WorkingSetRegistry implements IExtensionChangeHandler {
      * @return the working set page with the given id.
      */
     public IWorkingSetPage getWorkingSetPage(String pageId) {
-        WorkingSetDescriptor descriptor = (WorkingSetDescriptor) workingSetDescriptors
-                .get(pageId);
+		WorkingSetDescriptor descriptor = workingSetDescriptors.get(pageId);
 
         if (descriptor == null) {
             return null;
