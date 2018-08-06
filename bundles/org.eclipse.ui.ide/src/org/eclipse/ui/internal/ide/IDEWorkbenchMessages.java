@@ -525,6 +525,20 @@ public class IDEWorkbenchMessages extends NLS {
 	public static String WorkbenchPreference_unsupportedEncoding;
 	public static String WorkbenchPreference_encoding_encodingMessage;
 
+	public static String UriHandlerPreferencePage_Warning_OtherApp;
+
+	public static String UriHandlerPreferencePage_Warning_OtherApp_Description;
+
+	// --- Link Handler Preference Page ---
+	public static String UrlHandlerPreferencePage_Label_Message_Current_Application;
+	public static String UrlHandlerPreferencePage_Label_Message_Other_Application;
+	public static String UrlHandlerPreferencePage_Label_Message_No_Application;
+	public static String UrlHandlerPreferencePage_Page_Description;
+	public static String UrlHandlerPreferencePage_ColumnName_SchemeName;
+	public static String UrlHandlerPreferencePage_ColumnName_SchemeDescription;
+	public static String UrlHandlerPreferencePage_Error_Reading_Scheme;
+	public static String UrlHandlerPreferencePage_Error_Writing_Scheme;
+
 	// ---workspace ---
 	public static String IDEWorkspacePreference_autobuild;
 	public static String IDEWorkspacePreference_autobuildToolTip;

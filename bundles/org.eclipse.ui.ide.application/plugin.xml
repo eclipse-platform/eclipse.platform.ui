@@ -27,6 +27,15 @@
             id="org.eclipse.ui.preferencePages.Startup.Workspaces">
          <keywordReference id="org.eclipse.ui.ide.recentWorkspaces"/>
       </page>
+     <page
+           category="org.eclipse.ui.preferencePages.Workbench"
+           class="org.eclipse.ui.internal.ide.application.dialogs.UriSchemeHandlerPreferencePage"
+           id="org.eclipse.ui.preferencePages.General.LinkHandlers"
+           name="%PreferencePages.General.LinkHandlers">
+        <keywordReference
+              id="org.eclipse.ui.ide.application.linkhandler">
+        </keywordReference>
+     </page>
     </extension>
      <extension
          point="org.eclipse.ui.perspectives">
@@ -167,6 +176,10 @@
       <keyword
             id="org.eclipse.ui.ide.application.problems"
             label="%keyword.problems">
+      </keyword>
+      <keyword
+            id="org.eclipse.ui.ide.application.linkhandler"
+            label="%keyword.linkhanders">
       </keyword>
    </extension>
 </plugin>

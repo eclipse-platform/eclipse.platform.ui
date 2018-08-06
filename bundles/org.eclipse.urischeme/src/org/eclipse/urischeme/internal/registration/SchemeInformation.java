@@ -46,7 +46,7 @@ public class SchemeInformation implements ISchemeInformation {
 		return handlerInstanceLocation;
 	}
 
-	@SuppressWarnings("javadoc")
+	@Override
 	public void setHandled(boolean handled) {
 		this.handled = handled;
 	}
@@ -60,5 +60,4 @@ public class SchemeInformation implements ISchemeInformation {
 	public String getDescription() {
 		return schemeDescription;
 	}
-
 }

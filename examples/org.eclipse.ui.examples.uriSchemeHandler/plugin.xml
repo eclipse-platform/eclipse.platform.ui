@@ -65,6 +65,16 @@
             uriSchemeDescription="The Hello World demo protocol"
             uriScheme="hello">
       </uriSchemeHandler>
+      <uriSchemeHandler
+            class="org.eclipse.ui.examples.urischemehandler.uriHandlers.HelloSchemeHandler"
+            uriSchemeDescription="The Hello World demo protocol"
+            uriScheme="hello2">
+      </uriSchemeHandler>
+      <uriSchemeHandler
+            class="org.eclipse.ui.examples.urischemehandler.uriHandlers.HelloSchemeHandler"
+            uriSchemeDescription="The Hello World demo protocol"
+            uriScheme="hello3">
+      </uriSchemeHandler>
    </extension>
 
 </plugin>
