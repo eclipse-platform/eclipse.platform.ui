@@ -23,13 +23,10 @@ import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.resource.LocalResourceManager;
 import org.eclipse.jface.util.Geometry;
-import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.swt.widgets.Table;
-import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.ui.IWorkbenchCommandConstants;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
@@ -54,7 +51,7 @@ public class CyclePageHandler extends FilteredTableBaseHandler {
 	/**
 	 *
 	 */
-	private static final String K_INDEX = "index"; //$NON-NLS-1$
+	private static final String K_PAGE = "page"; //$NON-NLS-1$
 	/**
 	 * The character limit before text is truncated.
 	 */
@@ -80,7 +77,7 @@ public class CyclePageHandler extends FilteredTableBaseHandler {
 				}
 				item.setImage(lrm.createImage(imageDescriptor));
 			}
-			item.putData(K_INDEX, i);
+			item.putData(K_PAGE, viewPage);
 			String name = pageSwitcher.getName(viewPage);
 			if (name.length() > TEXT_LIMIT) {
 				name = name.substring(0, TEXT_LIMIT) + "..."; //$NON-NLS-1$
@@ -89,28 +86,6 @@ public class CyclePageHandler extends FilteredTableBaseHandler {
 			rows.add(item);
 		}
 		return rows;
-	}
-
-	protected void addItemz(Table table, WorkbenchPage page) {
-		for (Object availablePage : pageSwitcher.getPages()) {
-			TableItem item = null;
-			item = new TableItem(table, SWT.NONE);
-			ImageDescriptor imageDescriptor = pageSwitcher
-					.getImageDescriptor(availablePage);
-			if (imageDescriptor != null) {
-				if (lrm == null) {
-					lrm = new LocalResourceManager(JFaceResources
-							.getResources());
-				}
-				item.setImage(lrm.createImage(imageDescriptor));
-			}
-			item.setData(availablePage);
-			String name = pageSwitcher.getName(availablePage);
-			if (name.length() > TEXT_LIMIT) {
-				name = name.substring(0, TEXT_LIMIT) + "..."; //$NON-NLS-1$
-			}
-			item.setText(name);
-		}
 	}
 
 	@Override
@@ -202,7 +177,7 @@ public class CyclePageHandler extends FilteredTableBaseHandler {
 		if (selectedItem == null) {
 			return;
 		}
-		// activate the page with the selected index
-		pageSwitcher.activatePage(((FilteredTableItem) selectedItem).getData(K_INDEX));
+		// activate the selected page
+		pageSwitcher.activatePage(((FilteredTableItem) selectedItem).getData(K_PAGE));
 	}
 }
