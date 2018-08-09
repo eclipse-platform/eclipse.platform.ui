@@ -263,14 +263,24 @@ public class StackDropAgent extends DropAgent {
 		List<MStackElement> dropChildren = dropStack.getChildren();
 		int elementIndex = dropChildren.indexOf(dragElement);
 
+
 		// Check if we have a placeholder with same id: we must remove it before
-		// dropping
-		MStackElement childWithSameId = null;
-		if (elementIndex == -1) {
+		// dropping (to avoid bug 410164).
+		// Note 1: for bug 537816 we only want to apply this logic to the views, which
+		// have different id's if multiple instances exists in the same perspective,
+		// so an element with the same id is the "same" view in the perspective.
+		// Note 2: editors seem to always have same id, independently of their actual
+		// content. This is at least surprising, so we can't distinguish different
+		// editors by looking on elementId only.
+		// Note 3: currently if we drag/drop parts, it looks like for editor parts we
+		// always drop PartImpl instances, for views we drop PartStackImpl or
+		// PlaceholderImpl instances. So one could use this for the check below too.
+		MStackElement viewWithSameId = null;
+		if (elementIndex == -1 && !dragElement.getTags().contains("Editor")) { //$NON-NLS-1$
 			for (MStackElement stackElement : dropChildren) {
 				String id = stackElement.getElementId();
 				if (id != null && id.equals(dragElement.getElementId())) {
-					childWithSameId = stackElement;
+					viewWithSameId = stackElement;
 					break;
 				}
 			}
@@ -346,8 +356,8 @@ public class StackDropAgent extends DropAgent {
 
 			// Bug 410164: remove placeholder element with same id from the drop stack to
 			// avoid duplicated elements in same stack
-			if (childWithSameId != null) {
-				dropChildren.remove(childWithSameId);
+			if (viewWithSameId != null) {
+				dropChildren.remove(viewWithSameId);
 			}
 
 			// (Re)active the element being dropped
