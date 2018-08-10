@@ -194,9 +194,12 @@ public class StackRenderer extends LazyStackRenderer implements IPreferenceChang
 
 		MUIElement partParent = part.getParent();
 		if (partParent instanceof MPartStack) {
-			CTabItem item = findItemForPart(part);
-			if (item != null) {
-				itemsToSet.add(findItemForPart(part));
+			addItemToSet(itemsToSet, part);
+		} else if (partParent instanceof MPartSashContainer) {
+			MElementContainer<MUIElement> parentParent = partParent.getParent();
+			if (parentParent instanceof MPart) {
+				MPart parentParentMPart = (MPart) parentParent;
+				addItemToSet(itemsToSet, parentParentMPart);
 			}
 		} else if (part.getCurSharedRef() != null) {
 			MWindow topWin = modelService.getTopLevelWindowFor(part);
@@ -211,6 +214,13 @@ public class StackRenderer extends LazyStackRenderer implements IPreferenceChang
 		}
 
 		return itemsToSet;
+	}
+
+	private void addItemToSet(List<CTabItem> itemsToSet, MPart parentParent) {
+		CTabItem item = findItemForPart(parentParent);
+		if (item != null) {
+			itemsToSet.add(item);
+		}
 	}
 
 	@SuppressWarnings("unchecked")

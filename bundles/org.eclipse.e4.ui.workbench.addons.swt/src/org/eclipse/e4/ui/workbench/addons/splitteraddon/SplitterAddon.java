@@ -130,6 +130,12 @@ public class SplitterAddon {
 		compPart.setCloseable(true);
 		compPart.setContributionURI("bundleclass://org.eclipse.e4.ui.workbench.addons.swt/org.eclipse.e4.ui.workbench.addons.splitteraddon.SplitHost"); //$NON-NLS-1$
 
+		// Check if icon from MPart was overridden
+		Object overriddenImage = originalPart.getTransientData().get(IPresentationEngine.OVERRIDE_ICON_IMAGE_KEY);
+		if (overriddenImage != null) {
+			compPart.getTransientData().put(IPresentationEngine.OVERRIDE_ICON_IMAGE_KEY, overriddenImage);
+		}
+
 		// Always remove the composite part from the model
 		compPart.getTags().add(EPartService.REMOVE_ON_HIDE_TAG);
 
