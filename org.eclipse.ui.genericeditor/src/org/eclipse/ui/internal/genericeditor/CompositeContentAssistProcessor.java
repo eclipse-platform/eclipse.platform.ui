@@ -58,7 +58,10 @@ public class CompositeContentAssistProcessor implements IContentAssistProcessor 
 	public IContextInformation[] computeContextInformation(ITextViewer viewer, int offset) {
 		List<IContextInformation> res = new ArrayList<>();
 		for (IContentAssistProcessor processor : this.fContentAssistProcessors) {
-			res.addAll(Arrays.asList(processor.computeContextInformation(viewer, offset)));
+			IContextInformation[] contextInformation = processor.computeContextInformation(viewer, offset);
+			if (contextInformation != null) {
+				res.addAll(Arrays.asList(contextInformation));
+			}
 		}
 		return res.toArray(new IContextInformation[res.size()]);
 	}

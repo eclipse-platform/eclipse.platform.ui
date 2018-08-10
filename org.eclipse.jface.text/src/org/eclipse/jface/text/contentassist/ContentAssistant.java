@@ -1971,8 +1971,11 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 					SafeRunner.run(new ExceptionLoggingSafeRunnable(COMPLETION_ERROR_MESSAGE_KEY) {
 						@Override
 						public void run() throws Exception {
-							result.addAll(Arrays.asList( ((ISubjectControlContentAssistProcessor) p)
-									.computeCompletionProposals(contentAssistSubjectControl, offset)));
+							ICompletionProposal[] proposals= ((ISubjectControlContentAssistProcessor) p)
+									.computeCompletionProposals(contentAssistSubjectControl, offset);
+							if (proposals != null) {
+								result.addAll(Arrays.asList(proposals));
+							}
 							fLastErrorMessage= p.getErrorMessage();
 						}
 					});
@@ -2037,7 +2040,10 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 				@Override
 				public void run() throws Exception {
 					processors.forEach(p -> {
-						result.addAll(Arrays.asList(p.computeContextInformation(viewer, offset)));
+						IContextInformation[] contextInformation= p.computeContextInformation(viewer, offset);
+						if (contextInformation != null) {
+							result.addAll(Arrays.asList(contextInformation));
+						}
 						fLastErrorMessage= p.getErrorMessage();
 					});
 				}
@@ -2071,8 +2077,11 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 					SafeRunner.run(new ExceptionLoggingSafeRunnable(CONTEXT_ERROR_MESSAGE_KEY) {
 						@Override
 						public void run() throws Exception {
-							result.addAll(Arrays.asList( ((ISubjectControlContentAssistProcessor) p)
-									.computeContextInformation(contentAssistSubjectControl, offset)));
+							IContextInformation[] contextInformation= ((ISubjectControlContentAssistProcessor) p)
+									.computeContextInformation(contentAssistSubjectControl, offset);
+							if (contextInformation != null) {
+								result.addAll(Arrays.asList(contextInformation));
+							}
 							fLastErrorMessage= p.getErrorMessage();
 						}
 					});
