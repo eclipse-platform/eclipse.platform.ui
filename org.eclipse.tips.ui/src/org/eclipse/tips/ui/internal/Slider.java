@@ -407,10 +407,11 @@ public class Slider extends Composite {
 		Point textExtent = getTipCountTextSize(providerButton, tipCount);
 
 		Image image = null;
+		int imageHeight = textExtent.y + 5;
 		if (tipCount > 9) {
-			image = new Image(getDisplay(), textExtent.x + 8, textExtent.y + 5);
+			image = new Image(getDisplay(), textExtent.x + 8, imageHeight);
 		} else {
-			image = new Image(getDisplay(), textExtent.x + 15, textExtent.y + 5);
+			image = new Image(getDisplay(), imageHeight, imageHeight);
 		}
 		ImageData data = image.getImageData();
 		data.transparentPixel = data.getPixel(0, 0);
@@ -428,11 +429,11 @@ public class Slider extends Composite {
 		gc.setAlpha(200);
 		gc.setTextAntialias(SWT.ON);
 		if (tipCount > 9) {
-			gc.fillOval(0, 0, textExtent.x + 8, textExtent.y + 5);
+			gc.fillOval(0, 0, textExtent.x + 8, imageHeight);
 			gc.drawText(tipCount + "", 4, 2, true); //$NON-NLS-1$
 		} else {
-			gc.fillOval(0, 0, textExtent.x + 15, textExtent.y + 5);
-			gc.drawText(tipCount + "", 8, 2, true); //$NON-NLS-1$
+			gc.fillOval(0, 0, imageHeight, imageHeight);
+			gc.drawText(tipCount + "", (imageHeight - textExtent.x + 1) / 2, 2, true); //$NON-NLS-1$
 		}
 		Image result = ResourceManager.decorateImage(getProviderImage(provider, selectProviderImage(provider)), image,
 				SWTResourceManager.TOP_RIGHT);
