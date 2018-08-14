@@ -107,7 +107,13 @@ public class LaunchConfigurationsMessages extends NLS {
 	public static String LaunchConfigurationDialog_ShowCommandLine;
 	public static String LaunchConfigurationDialog_ShowCommandLine_Title;
 	public static String LaunchConfigurationDialog_ShowCommandLine_Copy;
+	public static String LaunchConfigurationDialog_ShowCommandLine_Close;
 	public static String LaunchConfigurationDialog_ShowCommandLine_Default;
+	public static String LaunchConfigurationDialog_ShowCommandLine_Apply_Revert_Title;
+	public static String LaunchConfigurationDialog_ShowCommandLine_Apply_Revert_Question;
+	public static String LaunchConfigurationDialog_ShowCommandLine_Apply_Revert_Apply;
+	public static String LaunchConfigurationDialog_ShowCommandLine_Apply_Revert_Revert;
+	public static String LaunchConfigurationDialog_ShowCommandLine_Apply_Revert_Cancel;
 	public static String LaunchConfigurationSelectionDialog_0;
 	public static String LaunchConfigurationSelectionDialog_1;
 	public static String LaunchConfigurationSelectionDialog_deleteButtonLabel;

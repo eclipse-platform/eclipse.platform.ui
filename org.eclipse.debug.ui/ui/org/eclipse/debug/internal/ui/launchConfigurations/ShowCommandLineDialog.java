@@ -73,7 +73,8 @@ public class ShowCommandLineDialog extends Dialog {
 	protected void createButtonsForButtonBar(Composite parent) {
 		createButton(parent, IDialogConstants.OK_ID,
 				LaunchConfigurationsMessages.LaunchConfigurationDialog_ShowCommandLine_Copy, true);
-		createButton(parent, IDialogConstants.CANCEL_ID, IDialogConstants.CANCEL_LABEL, false);
+		createButton(parent, IDialogConstants.CANCEL_ID,
+				LaunchConfigurationsMessages.LaunchConfigurationDialog_ShowCommandLine_Close, false);
 	}
 
 	private LaunchManager getLaunchManager() {

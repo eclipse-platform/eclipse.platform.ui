@@ -47,6 +47,7 @@ import org.eclipse.debug.ui.ILaunchConfigurationTabGroup;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.resource.ColorRegistry;
 import org.eclipse.jface.resource.JFaceResources;
@@ -1554,9 +1555,48 @@ public class LaunchConfigurationTabGroupViewer {
 	 * Dialog to Show the Command line
 	 */
 	protected void handleShowCommandLinePressed() {
-		ShowCommandLineDialog dialog = new ShowCommandLineDialog(getShell(), getLaunchConfigurationDialog().getMode(),
-				fOriginal);
-		dialog.open();
+		boolean showCommandLineDialog = true;
+		if (isDirty()) {
+			int returnVal = showSaveChangesDialog();
+			if (returnVal == IDialogConstants.YES_ID) {
+				handleApplyPressed();
+			} else if (returnVal == IDialogConstants.NO_ID) {
+				handleRevertPressed();
+			} else {
+				showCommandLineDialog = false;
+			}
+		}
+		if (showCommandLineDialog) {
+			ShowCommandLineDialog dialog = new ShowCommandLineDialog(getShell(),
+					getLaunchConfigurationDialog().getMode(),
+					fWorkingCopy);
+			dialog.open();
+		}
+	}
+
+	private int showSaveChangesDialog() {
+		String message = MessageFormat.format(
+				LaunchConfigurationsMessages.LaunchConfigurationDialog_ShowCommandLine_Apply_Revert_Question,
+				new Object[] { getWorkingCopy().getName() });
+		MessageDialog dialog = new MessageDialog(getShell(),
+				LaunchConfigurationsMessages.LaunchConfigurationDialog_ShowCommandLine_Apply_Revert_Title, null,
+				message,
+				MessageDialog.QUESTION,
+				new String[] {
+						LaunchConfigurationsMessages.LaunchConfigurationDialog_ShowCommandLine_Apply_Revert_Apply,
+						LaunchConfigurationsMessages.LaunchConfigurationDialog_ShowCommandLine_Apply_Revert_Revert,
+						LaunchConfigurationsMessages.LaunchConfigurationDialog_ShowCommandLine_Apply_Revert_Cancel },
+				0);
+		int ret = dialog.open();
+		int val = IDialogConstants.CANCEL_ID;
+		if (ret == 0 || ret == 1) {
+			if (ret == 0) {
+				val = IDialogConstants.YES_ID;
+			} else {
+				val = IDialogConstants.NO_ID;
+			}
+		}
+		return val;
 	}
 
 	/**
