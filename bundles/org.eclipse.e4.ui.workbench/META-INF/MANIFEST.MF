@@ -1,7 +1,7 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-SymbolicName: org.eclipse.e4.ui.workbench;singleton:=true
-Bundle-Version: 1.6.100.qualifier
+Bundle-Version: 1.7.0.qualifier
 Bundle-Name: %pluginName
 Bundle-Vendor: %providerName
 Bundle-Localization: plugin
@@ -33,7 +33,7 @@ Export-Package: org.eclipse.e4.ui.internal.workbench;
  org.eclipse.e4.ui.internal.workbench.addons;x-internal:=true,
  org.eclipse.e4.ui.internal.workbench.handlers;x-internal:=true,
  org.eclipse.e4.ui.workbench,
- org.eclipse.e4.ui.workbench.lifecycle;x-friends:="org.eclipse.e4.ui.workbench.swt",
+ org.eclipse.e4.ui.workbench.lifecycle,
  org.eclipse.e4.ui.workbench.modeling
 Bundle-Activator: org.eclipse.e4.ui.internal.workbench.Activator
 Service-Component: OSGI-INF/org.eclipse.e4.ui.internal.LocaleChangeServiceContextFunction.xml,

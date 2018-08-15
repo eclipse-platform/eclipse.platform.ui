@@ -1,0 +1,26 @@
+<!doctype html public "-//w3c//dtd html 4.0 transitional//en">
+<html>
+<head>
+   <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+   <meta name="Author" content="IBM">
+   <meta name="GENERATOR" content="Mozilla/4.75 [en] (Windows NT 5.0; U) [Netscape]">
+   <title>Package-level Javadoc</title>
+</head>
+<body>
+Application programming interfaces describing the Eclipse 4 lifecycle annotations.
+<h2>
+Package Specification</h2>
+<p>
+The package provides annotations that can be used in a lifecycle class. A product can provide a lifecycle manager object. An instance of this object will be created and called into by E4AP using a set of annotated methods. The lifecycle manager class is provided as a URI either using the "lifeCycleURI" product property or from the "-lifeCycleURI" command-line argument; only a single lifecycle manager is supported at present. The lifecycle manager is created on the application context.
+</p>
+<p>
+Currently supported annotations are those in org.eclipse.e4.ui.workbench.lifecycle:
+</p>
+<ul>
+<li>PostContextCreate: called after the application context has been created, but prior to the model having been loaded</li>
+<li>ProcessAdditions: called once the application model is loaded.</li>
+<li>ProcessRemovals: called after ProcessAdditions</li>
+<li>PreSave: called before the model is persisted</li>
+</ul>
+</body>
+</html>
