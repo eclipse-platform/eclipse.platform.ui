@@ -1,6 +1,6 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2015 IBM Corporation and others. All rights reserved. This
- * program and the accompanying materials are made available under the terms of
+ * Copyright (c) 2009, 2015 IBM Corporation and others.
+ * All rights reserved. This program and the accompanying materials are made available under the terms of
  * the Eclipse Public License v1.0 which accompanies this distribution, and is
  * available at http://www.eclipse.org/legal/epl-v10.html
  *
@@ -18,7 +18,7 @@ public class CSSPropertyMinimizedSWTHandler extends AbstractCSSPropertySWTHandle
 
 	@Override
 	public void applyCSSProperty(Control control, String property,
-		    CSSValue value, String pseudo, CSSEngine engine) throws Exception {
+			CSSValue value, String pseudo, CSSEngine engine) throws Exception {
 		boolean isMinimized = (Boolean)engine.convert(value, Boolean.class, null);
 		if (control instanceof CTabFolder) {
 			CTabFolder folder = (CTabFolder) control;

@@ -1,6 +1,6 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2015 IBM Corporation and others. All rights reserved. This
- * program and the accompanying materials are made available under the terms of
+ * Copyright (c) 2009, 2015 IBM Corporation and others.
+ * All rights reserved. This program and the accompanying materials are made available under the terms of
  * the Eclipse Public License v1.0 which accompanies this distribution, and is
  * available at http://www.eclipse.org/legal/epl-v10.html
  *
@@ -15,7 +15,7 @@ import org.eclipse.swt.widgets.Control;
 import org.w3c.dom.css.CSSValue;
 
 public class CSSPropertyMinimizeVisibleSWTHandler extends
-		AbstractCSSPropertySWTHandler {
+AbstractCSSPropertySWTHandler {
 
 	@Override
 	public void applyCSSProperty(Control control, String property,

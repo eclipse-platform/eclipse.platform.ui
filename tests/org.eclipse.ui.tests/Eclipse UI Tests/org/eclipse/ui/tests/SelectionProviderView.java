@@ -51,7 +51,7 @@ public class SelectionProviderView extends ViewPart implements
 
     @Override
 	public void createPartControl(Composite parent) {
-        text = new Text(parent, SWT.MULTI | SWT.WRAP);
+		text = new Text(parent, SWT.WRAP);
         text.setLayoutData(new GridData(GridData.FILL_BOTH));
     }
 
