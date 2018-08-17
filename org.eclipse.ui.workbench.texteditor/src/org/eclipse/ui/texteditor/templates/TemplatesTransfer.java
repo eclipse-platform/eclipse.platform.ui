@@ -16,7 +16,7 @@ package org.eclipse.ui.texteditor.templates;
 import org.eclipse.swt.dnd.ByteArrayTransfer;
 import org.eclipse.swt.dnd.TransferData;
 
-import org.eclipse.jface.text.templates.persistence.TemplatePersistenceData;
+import org.eclipse.text.templates.TemplatePersistenceData;
 
 
 /**
