@@ -1,6 +1,6 @@
 /*******************************************************************************
- * Copyright (c) 2014 Stefan Winkler and others. All rights reserved. This
- * program and the accompanying materials are made available under the terms of
+ * Copyright (c) 2014 Stefan Winkler and others.
+ * All rights reserved. This program and the accompanying materials are made available under the terms of
  * the Eclipse Public License v1.0 which accompanies this distribution, and is
  * available at http://www.eclipse.org/legal/epl-v10.html
  *
@@ -13,8 +13,6 @@ import java.io.IOException;
 import java.util.Collection;
 import java.util.Collections;
 
-import junit.framework.TestCase;
-
 import org.eclipse.e4.ui.css.core.dom.properties.ICSSPropertyHandler;
 import org.eclipse.e4.ui.css.core.dom.properties.ICSSPropertyHandlerProvider;
 import org.eclipse.e4.ui.css.core.engine.CSSEngine;
@@ -26,6 +24,8 @@ import org.w3c.dom.Element;
 import org.w3c.dom.css.CSSStyleDeclaration;
 import org.w3c.dom.css.CSSStyleSheet;
 import org.w3c.dom.css.CSSValue;
+
+import junit.framework.TestCase;
 
 /**
  * Test the 'inherit' value independently of the SWT CSS engine. To do this, we

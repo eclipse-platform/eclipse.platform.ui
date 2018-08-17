@@ -1,6 +1,7 @@
 /*******************************************************************************
  * Copyright (c) 2006, 2018 IBM Corporation.
- * Licensed Material - Property of IBM. All rights reserved.
+ * Licensed Material - Property of IBM.
+ * All rights reserved.
  * US Government Users Restricted Rights - Use, duplication or disclosure
  * restricted by GSA ADP Schedule Contract with IBM Corp.
  *
