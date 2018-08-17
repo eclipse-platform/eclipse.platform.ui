@@ -1,25 +1,10 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <component id="org.eclipse.ui.editors" version="2">
-    <resource path="META-INF/MANIFEST.MF">
-        <filter comment="The new field has @noreference, hence not a new API" id="924844039">
-            <message_arguments>
-                <message_argument value="3.11.100"/>
-                <message_argument value="3.11.0"/>
-            </message_arguments>
-        </filter>
-    </resource>
     <resource path="src/org/eclipse/ui/editors/text/ITextEditorHelpContextIds.java" type="org.eclipse.ui.editors.text.ITextEditorHelpContextIds">
         <filter id="571473929">
             <message_arguments>
                 <message_argument value="IAbstractTextEditorHelpContextIds"/>
                 <message_argument value="ITextEditorHelpContextIds"/>
-            </message_arguments>
-        </filter>
-    </resource>
-    <resource path="src/org/eclipse/ui/texteditor/AbstractDecoratedTextEditorPreferenceConstants.java" type="org.eclipse.ui.texteditor.AbstractDecoratedTextEditorPreferenceConstants">
-        <filter comment="@since tag not needed since @noreference and hence no API" id="1143996420">
-            <message_arguments>
-                <message_argument value="EDITOR_PRINT_MARGIN_ALLOW_OVERRIDE"/>
             </message_arguments>
         </filter>
     </resource>
