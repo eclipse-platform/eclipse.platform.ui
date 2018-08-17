@@ -49,20 +49,20 @@ public class MinimapPageTest {
 		@Override
 		public <T> T getAdapter(Class<T> required) {
 			switch (kind) {
-				case None:
-					return null;
 				case ITextViewer:
 					if (ITextViewer.class.equals(required)) {
 						Composite parent= new Shell();
-						return (T) new TextViewer(parent, SWT.NONE);
+						return required.cast(new TextViewer(parent, SWT.NONE));
 					}
 				case ITextOperationTarget:
 					if (ITextOperationTarget.class.equals(required)) {
 						Composite parent= new Shell();
-						return (T) new TextViewer(parent, SWT.NONE);
+						return required.cast(new TextViewer(parent, SWT.NONE));
 					}
+				case None:
+				default:
+					return null;
 			}
-			return null;
 		}
 	}
 
