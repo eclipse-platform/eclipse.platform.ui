@@ -31,7 +31,7 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Text;
+import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Widget;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.IPreferenceConstants;
@@ -119,13 +119,12 @@ public class DetailedProgressViewer extends AbstractProgressViewer {
 		noEntryArea.setBackground(noEntryArea.getDisplay()
 				.getSystemColor(SWT.COLOR_LIST_BACKGROUND));
 
-		Text noEntryLabel = new Text(noEntryArea, SWT.SINGLE);
+		Label noEntryLabel = new Label(noEntryArea, SWT.NONE);
 		noEntryLabel.setText(ProgressMessages.ProgressView_NoOperations);
 		noEntryLabel.setBackground(noEntryArea.getDisplay().getSystemColor(
 				SWT.COLOR_LIST_BACKGROUND));
 		GridData textData = new GridData(GridData.VERTICAL_ALIGN_BEGINNING);
 		noEntryLabel.setLayoutData(textData);
-		noEntryLabel.setEditable(false);
 
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(noEntryLabel,
 				IWorkbenchHelpContextIds.RESPONSIVE_UI);
