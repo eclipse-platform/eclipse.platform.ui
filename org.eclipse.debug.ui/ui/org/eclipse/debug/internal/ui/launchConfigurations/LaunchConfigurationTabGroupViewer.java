@@ -759,6 +759,7 @@ public class LaunchConfigurationTabGroupViewer {
 		disposeExistingTabs();
 		updateButtons();
 		updateVisibleControls(false);
+		updateShowCommandLineVisibility(false);
 		ILaunchConfigurationDialog lcd = getLaunchConfigurationDialog();
 		if(lcd instanceof LaunchConfigurationsDialog) {
 			if(((LaunchConfigurationsDialog)lcd).isTreeSelectionEmpty()) {
