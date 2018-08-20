@@ -4,4 +4,5 @@
 # This file does not need to be translated.
 
 0=${buildId}
-1=${releaseNumberSDK}
+1=${releaseName}
+2=${releaseNumberSDK}
