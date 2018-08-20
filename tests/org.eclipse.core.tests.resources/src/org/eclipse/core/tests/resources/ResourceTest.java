@@ -659,6 +659,12 @@ public abstract class ResourceTest extends CoreTest {
 	 */
 	public void ensureOutOfSync(final IFile file) {
 		modifyInFileSystem(file);
+		// Ensure the file is out-of-sync by waiting before touching it in the OS file system.
+		try {
+			Thread.sleep(5);
+		} catch (InterruptedException e) {
+			throw new AssertionError("unexpected interruption while ensuring that file is out-of-sync", e);
+		}
 		touchInFilesystem(file);
 		assertTrue("File not out of sync: " + file.getLocation().toOSString(), file.getLocation().toFile().lastModified() != file.getLocalTimeStamp());
 	}

@@ -980,12 +980,6 @@ public class IFileTest extends ResourceTest {
 					((FussyProgressMonitor) monitor).prepare();
 				}
 				file.setContents(stream, force, false, monitor);
-				boolean isOutOfSyncTestFile = outOfSync(file);
-				if (isOutOfSyncTestFile) {
-					// The test expects this file to be out of sync, when modified on file system
-					// level later on. We wait a moment to let this actually be the case.
-					Thread.sleep(10);
-				}
 				if (monitor instanceof FussyProgressMonitor) {
 					((FussyProgressMonitor) monitor).sanityCheck();
 				}
