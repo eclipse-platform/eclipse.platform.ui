@@ -41,7 +41,12 @@ import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
+
+import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IRegion;
+import org.eclipse.jface.text.ITextInputListener;
 import org.eclipse.jface.text.ITextPresentationListener;
 import org.eclipse.jface.text.ITextViewer;
 import org.eclipse.jface.text.ITextViewerExtension4;
@@ -51,6 +56,8 @@ import org.eclipse.jface.text.JFaceTextUtil;
 import org.eclipse.jface.text.Region;
 import org.eclipse.jface.text.TextPresentation;
 import org.eclipse.jface.text.TextViewer;
+
+import org.eclipse.ui.internal.texteditor.TextEditorPlugin;
 
 /**
  * Minimap widget which displays scaled content of the given text editor.
@@ -68,7 +75,8 @@ public class MinimapWidget {
 	 * Editor tracker used to track text changed and styles changes of the
 	 * editor content.
 	 */
-	class EditorTracker implements TextChangeListener, ControlListener, ITextPresentationListener, IViewportListener {
+	class EditorTracker implements TextChangeListener, ControlListener, ITextPresentationListener, ITextInputListener,
+			IViewportListener {
 
 		private Map<Font, Font> fScaledFonts;
 
@@ -79,7 +87,14 @@ public class MinimapWidget {
 
 		@Override
 		public void textChanging(TextChangingEvent event) {
-			fMinimapTracker.replaceTextRange(event);
+			try {
+				fMinimapTracker.replaceTextRange(event);
+			} catch (Exception e) {
+				IStatus status = new Status(IStatus.ERROR, TextEditorPlugin.PLUGIN_ID, IStatus.OK,
+						"Minimap text content synchronization failed", e); //$NON-NLS-1$
+				TextEditorPlugin.getDefault().getLog().log(status);
+				synchText();
+			}
 		}
 
 		@Override
@@ -89,7 +104,14 @@ public class MinimapWidget {
 
 		@Override
 		public void applyTextPresentation(TextPresentation presentation) {
-			addPresentation(presentation);
+			try {
+				addPresentation(presentation);
+			} catch (Exception e) {
+				synchTextAndStyles();
+				IStatus status = new Status(IStatus.ERROR, TextEditorPlugin.PLUGIN_ID, IStatus.OK,
+						"Minimap styles synchronization failed", e); //$NON-NLS-1$
+				TextEditorPlugin.getDefault().getLog().log(status);
+			}
 		}
 
 		private StyleRange modelStyleRange2WidgetStyleRange(StyleRange range) {
@@ -204,6 +226,18 @@ public class MinimapWidget {
 		}
 
 		@Override
+		public void inputDocumentChanged(IDocument oldInput, IDocument newInput) {
+			if (oldInput != newInput) {
+				synchTextAndStyles();
+			}
+		}
+
+		@Override
+		public void inputDocumentAboutToBeChanged(IDocument oldInput, IDocument newInput) {
+			// Do nothing
+		}
+
+		@Override
 		public void viewportChanged(int verticalOffset) {
 			fMinimapTextWidget.getDisplay().asyncExec(() -> {
 				if (!fMinimapTextWidget.isDisposed()) {
@@ -243,6 +277,7 @@ public class MinimapWidget {
 			if (fEditorViewer instanceof ITextViewerExtension4) {
 				((ITextViewerExtension4) fEditorViewer).addTextPresentationListener(this);
 			}
+			fEditorViewer.addTextInputListener(this);
 			// track changed of vertical bar scroll to update highlight
 			// Viewport.
 			fEditorViewer.addViewportListener(this);
@@ -281,6 +316,7 @@ public class MinimapWidget {
 			if (fEditorViewer instanceof ITextViewerExtension4) {
 				((ITextViewerExtension4) fEditorViewer).removeTextPresentationListener(this);
 			}
+			fEditorViewer.removeTextInputListener(this);
 			// track changed of vertical bar scroll to update highlight
 			// Viewport.
 			fEditorViewer.removeViewportListener(this);
