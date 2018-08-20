@@ -11,6 +11,8 @@
 
 package org.eclipse.ui.tests.quickaccess;
 
+import static org.junit.Assert.assertThat;
+
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -89,6 +91,18 @@ public class ContentMatchesTest extends UITestCase {
 		processEventsUntil(() -> table.getItemCount() > 1, 200);
 		List<String> allEntries = getAllEntries(table);
 		assertTrue(Matchers.hasItems(Matchers.containsString("Text Editors")).matches(allEntries));
+	}
+
+	public void testFindCommandByDescription() throws Exception {
+		Shell shell = searchField.getQuickAccessShell();
+		assertFalse("Quick access dialog should not be visible yet", shell.isVisible());
+		Text text = searchField.getQuickAccessSearchText();
+		text.setText("rename ltk");
+		final Table table = searchField.getQuickAccessTable();
+		processEventsUntil(() -> table.getItemCount() > 1, 200);
+		List<String> allEntries = getAllEntries(table);
+		assertThat(allEntries, Matchers
+				.hasItems(Matchers.containsString("Rename the selected resource and notify LTK participants.")));
 	}
 
 	private List<String> getAllEntries(Table table) {

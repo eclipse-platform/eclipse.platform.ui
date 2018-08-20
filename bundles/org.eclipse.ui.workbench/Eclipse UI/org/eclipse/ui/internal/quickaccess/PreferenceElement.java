@@ -31,7 +31,7 @@ public class PreferenceElement extends QuickAccessElement {
 
 	private String prefix;
 
-	private String sortLabelCache;
+	private String matchLabelCache;
 
 	/* package */PreferenceElement(IPreferenceNode preferenceNode, String prefix, PreferenceProvider preferenceProvider) {
 		super(preferenceProvider);
@@ -75,8 +75,8 @@ public class PreferenceElement extends QuickAccessElement {
 	}
 
 	@Override
-	public String getSortLabel() {
-		if (this.sortLabelCache == null) {
+	public String getMatchLabel() {
+		if (this.matchLabelCache == null) {
 			StringBuilder builder = new StringBuilder();
 			builder.append(super.getSortLabel());
 			if (preferenceNode instanceof WorkbenchPreferenceExtensionNode) {
@@ -85,9 +85,9 @@ public class PreferenceElement extends QuickAccessElement {
 					builder.append(label);
 				});
 			}
-			this.sortLabelCache = builder.toString();
+			this.matchLabelCache = builder.toString();
 		}
-		return this.sortLabelCache;
+		return this.matchLabelCache;
 	}
 
 	@Override

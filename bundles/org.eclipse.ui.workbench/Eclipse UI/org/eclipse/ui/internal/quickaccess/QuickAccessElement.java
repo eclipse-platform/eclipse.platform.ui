@@ -74,6 +74,20 @@ public abstract class QuickAccessElement {
 	}
 
 	/**
+	 * Return the label to be used for matching elements. The match string can
+	 * contain additional text that should result in a match, but isn't shown in the
+	 * quick access UI.
+	 * <p>
+	 * The match label should always be either identical to or a superset of the
+	 * actual {@link #getLabel() label}.
+	 *
+	 * @return the match label
+	 */
+	public String getMatchLabel() {
+		return getLabel();
+	}
+
+	/**
 	 * @return Returns the provider.
 	 */
 	public QuickAccessProvider getProvider() {
@@ -176,14 +190,14 @@ public abstract class QuickAccessElement {
 	 */
 	public QuickAccessEntry match(String filter,
 			QuickAccessProvider providerForMatching) {
-		String sortLabel = getSortLabel();
+		String matchLabel = getMatchLabel();
 		// first occurrence of filter
-		int index = sortLabel.toLowerCase().indexOf(filter);
+		int index = matchLabel.toLowerCase().indexOf(filter);
 		if (index != -1) {
 			index = getLabel().toLowerCase().indexOf(filter);
 			if (index != -1) { // match actual label
-				int quality = sortLabel.toLowerCase().equals(filter) ? QuickAccessEntry.MATCH_PERFECT
-						: (sortLabel.toLowerCase().startsWith(filter) ? QuickAccessEntry.MATCH_EXCELLENT
+				int quality = matchLabel.toLowerCase().equals(filter) ? QuickAccessEntry.MATCH_PERFECT
+						: (matchLabel.toLowerCase().startsWith(filter) ? QuickAccessEntry.MATCH_EXCELLENT
 								: QuickAccessEntry.MATCH_GOOD);
 				return new QuickAccessEntry(this, providerForMatching,
 						new int[][] { { index, index + filter.length() - 1 } },
@@ -200,12 +214,12 @@ public abstract class QuickAccessElement {
 			// check for whitespaces
 			p = getWhitespacesPattern(filter);
 		}
-		Matcher m = p.matcher(sortLabel);
+		Matcher m = p.matcher(matchLabel);
 		// if matches, return an entry
 		if (m.matches()) {
 			// and highlight match on the label only
 			String label = getLabel();
-			if (!sortLabel.equals(label)) {
+			if (!matchLabel.equals(label)) {
 				m = p.matcher(getLabel());
 				if (!m.matches()) {
 					return new QuickAccessEntry(this, providerForMatching, EMPTY_INDICES, EMPTY_INDICES,
@@ -226,9 +240,9 @@ public abstract class QuickAccessElement {
 					EMPTY_INDICES, quality );
 		}
 		//
-		String combinedSortLabel = (providerForMatching.getName() + " " + getSortLabel()); //$NON-NLS-1$
+		String combinedMatchLabel = (providerForMatching.getName() + " " + getMatchLabel()); //$NON-NLS-1$
 		String combinedLabel = (providerForMatching.getName() + " " + getLabel()); //$NON-NLS-1$
-		index = combinedSortLabel.toLowerCase().indexOf(filter);
+		index = combinedMatchLabel.toLowerCase().indexOf(filter);
 		if (index != -1) { // match
 			index = combinedLabel.toLowerCase().indexOf(filter);
 			if (index != -1) { // compute highlight on label
@@ -249,7 +263,7 @@ public abstract class QuickAccessElement {
 		String camelCase = CamelUtil.getCamelCase(getLabel()); // use actual label for camelcase
 		index = camelCase.indexOf(filter);
 		if (index != -1) {
-			int[][] indices = CamelUtil.getCamelCaseIndices(sortLabel, index, filter
+			int[][] indices = CamelUtil.getCamelCaseIndices(matchLabel, index, filter
 					.length());
 			return new QuickAccessEntry(this, providerForMatching, indices,
  EMPTY_INDICES,
@@ -266,7 +280,7 @@ public abstract class QuickAccessElement {
 				return new QuickAccessEntry(
 						this,
 						providerForMatching,
-						CamelUtil.getCamelCaseIndices(sortLabel, 0, lengthOfElementMatch),
+						CamelUtil.getCamelCaseIndices(matchLabel, 0, lengthOfElementMatch),
 						CamelUtil.getCamelCaseIndices(providerForMatching.getName(),
  index,
 								filter.length() - lengthOfElementMatch),
