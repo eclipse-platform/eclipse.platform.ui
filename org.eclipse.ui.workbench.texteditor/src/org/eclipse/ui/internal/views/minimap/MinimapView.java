@@ -82,4 +82,9 @@ public class MinimapView extends PageBookView {
 	protected boolean isImportant(IWorkbenchPart part) {
 		return part instanceof ITextEditor || part instanceof MultiPageEditorPart;
 	}
+
+	@Override
+	public void partBroughtToTop(IWorkbenchPart part) {
+		partActivated(part);
+	}
 }
