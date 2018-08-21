@@ -358,10 +358,20 @@ public abstract class StyledCellLabelProvider extends OwnerDrawLabelProvider {
 			int y = textBounds.y
 					+ Math.max(0, (textBounds.height - layoutBounds.height) / 2);
 
-			Rectangle saveClipping = gc.getClipping();
-			gc.setClipping(textBounds);
-			textLayout.draw(gc, x, y);
-			gc.setClipping(saveClipping);
+			if (gc.isClipped()) {
+				Rectangle saveClipping = gc.getClipping();
+				gc.setClipping(textBounds);
+				textLayout.draw(gc, x, y);
+				gc.setClipping(saveClipping);
+			} else {
+				// in the case of no clipping, a tooltip will be drawn and the horizontal
+				// alignment for the tooltip should be LEFT, so x has to be set to textBounds.x
+				// Because the other alignments are not working combined with the tooltip, since
+				// these are aligned to the textBounds.width which depends on the cell
+				// width which is wrong for the tooltip case.
+				x = textBounds.x;
+				textLayout.draw(gc, x, y);
+			}
 		}
 
 		if (drawFocus(event)) {
