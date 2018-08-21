@@ -20,6 +20,7 @@ import junit.framework.Test;
 import junit.framework.TestSuite;
 import org.eclipse.core.filesystem.IFileInfo;
 import org.eclipse.core.filesystem.IFileStore;
+import org.eclipse.core.internal.localstore.FileSystemResourceManager;
 import org.eclipse.core.internal.resources.*;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
@@ -463,10 +464,16 @@ public class FileSystemResourceManagerTest extends LocalStoreTest implements ICo
 	}
 
 	protected void write(final IFile file, final InputStream contents, final boolean force, IProgressMonitor monitor) throws CoreException {
+		assertNotNull("file cannot be null", file);
 		IWorkspaceRunnable operation = pm -> {
 			int flags = force ? IResource.FORCE : IResource.NONE;
-			IFileInfo info = ((Resource) file).getStore().fetchInfo();
-			getLocalManager().write(file, contents, info, flags, false, null);
+			IFileStore store = ((Resource) file).getStore();
+			assertNotNull("file store cannot be null", store);
+			IFileInfo info = store.fetchInfo();
+			assertNotNull("file info cannot be null for file " + file, info);
+			FileSystemResourceManager localManager = getLocalManager();
+			assertNotNull("file system resource manager cannot be null", localManager);
+			localManager.write(file, contents, info, flags, false, null);
 		};
 		getWorkspace().run(operation, null);
 	}

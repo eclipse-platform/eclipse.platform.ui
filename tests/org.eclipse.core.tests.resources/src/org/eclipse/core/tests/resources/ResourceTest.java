@@ -662,12 +662,6 @@ public abstract class ResourceTest extends CoreTest {
 	 */
 	public void ensureOutOfSync(final IFile file) {
 		modifyInFileSystem(file);
-		// Ensure the file is out-of-sync by waiting before touching it in the OS file system.
-		try {
-			Thread.sleep(5);
-		} catch (InterruptedException e) {
-			throw new AssertionError("unexpected interruption while ensuring that file is out-of-sync", e);
-		}
 		touchInFilesystem(file);
 		assertTrue("File not out of sync: " + file.getLocation().toOSString(), file.getLocation().toFile().lastModified() != file.getLocalTimeStamp());
 	}
@@ -685,7 +679,7 @@ public abstract class ResourceTest extends CoreTest {
 		// Manually check that the core.resource time-stamp is out-of-sync
 		// with the java.io.File last modified. #isSynchronized() will schedule
 		// out-of-sync resources for refresh, so we don't use that here.
-		for (int count = 0; count < 30 && getLastModifiedTime(location) == resource.getLocalTimeStamp(); count++) {
+		for (int count = 0; count < 30 && isInSync(resource); count++) {
 			try {
 				Thread.sleep(100);
 			} catch (InterruptedException e) {
@@ -699,6 +693,12 @@ public abstract class ResourceTest extends CoreTest {
 			}
 		}
 		assertTrue("File not out of sync: " + location.toOSString(), getLastModifiedTime(location) != resource.getLocalTimeStamp());
+	}
+
+	private boolean isInSync(IResource resource) {
+		IPath location = resource.getLocation();
+		long localTimeStamp = resource.getLocalTimeStamp();
+		return getLastModifiedTime(location) == localTimeStamp || location.toFile().lastModified() == localTimeStamp;
 	}
 
 	private long getLastModifiedTime(IPath fileLocation) {
