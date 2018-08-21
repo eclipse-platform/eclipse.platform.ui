@@ -38,6 +38,7 @@ public class AllTests extends TestCase {
 		suite.addTest(DeltaFlatteningTest.suite());
 		suite.addTest(ElementTreeDeltaChainTest.suite());
 		suite.addTest(ElementTreeIteratorTest.suite());
+		suite.addTest(ElementTreeHasChangesTest.suite());
 		suite.addTest(TreeFlatteningTest.suite());
 		return suite;
 	}

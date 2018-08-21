@@ -67,9 +67,13 @@ public class BuildManager implements ICoreConstants, IManager, ILifecycleListene
 			if (delta == null)
 				return null;
 			boolean pathsEqual = projectPath == null ? project == null : projectPath.equals(project);
-			if (pathsEqual && this.oldTree == anOldTree && this.newTree == aNewTree)
+			if (pathsEqual && areEqual(this.oldTree, anOldTree) && areEqual(this.newTree, aNewTree))
 				return delta;
 			return null;
+		}
+
+		private boolean areEqual(ElementTree cached, ElementTree requested) {
+			return !ElementTree.hasChanges(requested, cached, ResourceComparator.getBuildComparator(), true);
 		}
 	}
 

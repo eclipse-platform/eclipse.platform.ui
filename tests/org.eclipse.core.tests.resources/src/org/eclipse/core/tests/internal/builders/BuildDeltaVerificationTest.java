@@ -14,10 +14,12 @@
 package org.eclipse.core.tests.internal.builders;
 
 import java.io.ByteArrayInputStream;
+import java.util.*;
 import junit.framework.Test;
 import junit.framework.TestSuite;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
 
 /**
  * Tests that deltas supplied to the builder are accurate
@@ -440,6 +442,44 @@ public class BuildDeltaVerificationTest extends AbstractBuilderTest {
 
 			rebuild();
 			assertDelta();
+		} catch (CoreException e) {
+			handleCoreException(e);
+		}
+	}
+
+	public void testReuseCachedDelta() {
+		try {
+			IProject project = getWorkspace().getRoot().getProject("delta-cache");
+			create(project, false);
+
+			IProjectDescription description = project.getDescription();
+			description.setBuildSpec(new ICommand[] { createCommand(description, EmptyDeltaBuilder.BUILDER_NAME, null),
+					createCommand(description, EmptyDeltaBuilder2.BUILDER_NAME, null) });
+			project.setDescription(description, getMonitor());
+
+			project.build(IncrementalProjectBuilder.FULL_BUILD, getMonitor());
+
+			List<IResourceDelta> deltas = new ArrayList<>();
+
+			TestBuilder.BuilderRuleCallback captureDelta = new TestBuilder.BuilderRuleCallback() {
+				@Override
+				public IProject[] build(int kind, Map<String, String> args, IProgressMonitor monitor)
+						throws CoreException {
+					deltas.add(getDelta(project));
+					return super.build(kind, args, monitor);
+				}
+			};
+
+			EmptyDeltaBuilder.getInstance().setRuleCallback(captureDelta);
+			EmptyDeltaBuilder2.getInstance().setRuleCallback(captureDelta);
+
+			ByteArrayInputStream in = new ByteArrayInputStream(new byte[] { 4, 5, 6 });
+			project.getFile("test").create(in, true, getMonitor());
+
+			project.build(IncrementalProjectBuilder.INCREMENTAL_BUILD, getMonitor());
+
+			assertSame("both builders should receive the same cached delta ", deltas.get(0), deltas.get(1));
+
 		} catch (CoreException e) {
 			handleCoreException(e);
 		}
