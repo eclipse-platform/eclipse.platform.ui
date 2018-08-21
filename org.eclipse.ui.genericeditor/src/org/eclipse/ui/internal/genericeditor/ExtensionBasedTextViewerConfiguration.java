@@ -87,7 +87,7 @@ public final class ExtensionBasedTextViewerConfiguration extends TextSourceViewe
 		});
 	}
 
-	private Set<IContentType> getContentTypes() {
+	Set<IContentType> getContentTypes() {
 		if (this.contentTypes == null) {
 			this.contentTypes = new LinkedHashSet<>();
 			Queue<IContentType> types = new LinkedList<>(Arrays

@@ -17,3 +17,8 @@ IEclipsePreferences#org-eclipse-ui-editors:org-eclipse-ui-genericeditor {
         'TextOccurrenceIndicationColor=27, 98, 145'
 }
 
+IEclipsePreferences#org-eclipse-ui-genericeditor:org-eclipse-ui-genericeditor {
+  preferences:
+        'matchingBracketsColor=249,250,244'
+}
+

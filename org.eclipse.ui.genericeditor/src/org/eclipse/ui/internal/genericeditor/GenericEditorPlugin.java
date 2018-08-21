@@ -14,11 +14,20 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.genericeditor;
 
+import org.eclipse.jface.text.IAutoEditStrategy;
 import org.eclipse.jface.text.ITextHover;
 import org.eclipse.jface.text.contentassist.IContentAssistProcessor;
 import org.eclipse.jface.text.presentation.IPresentationReconciler;
+import org.eclipse.jface.text.reconciler.IReconciler;
+import org.eclipse.jface.text.source.ICharacterPairMatcher;
+import org.eclipse.jface.util.IPropertyChangeListener;
+import org.eclipse.jface.util.PropertyChangeEvent;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.genericeditor.hover.TextHoverRegistry;
+import org.eclipse.ui.internal.genericeditor.preferences.GenericEditorPluginPreferenceInitializer;
+import org.eclipse.ui.internal.genericeditor.preferences.GenericEditorPreferenceConstants;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
+import org.eclipse.ui.themes.IThemeManager;
 import org.osgi.framework.BundleContext;
 
 /**
@@ -37,16 +46,35 @@ public class GenericEditorPlugin extends AbstractUIPlugin {
 	private ReconcilerRegistry reconcilierRegistry;
 	private PresentationReconcilerRegistry presentationReconcilierRegistry;
 	private AutoEditStrategyRegistry autoEditStrategyRegistry;
+	private CharacterPairMatcherRegistry characterPairMatcherRegistry;
+
+	private IPropertyChangeListener themeListener;
 
 	@Override
-	public void start(BundleContext context) throws Exception{
+	public void start(BundleContext context) throws Exception {
 		INSTANCE = this;
 		super.start(context);
+
+		if (PlatformUI.isWorkbenchRunning()) {
+			themeListener = new IPropertyChangeListener() {
+				@Override
+				public void propertyChange(PropertyChangeEvent event) {
+					if (IThemeManager.CHANGE_CURRENT_THEME.equals(event.getProperty()))
+						GenericEditorPluginPreferenceInitializer
+								.setThemeBasedPreferences(GenericEditorPreferenceConstants.getPreferenceStore(), true);
+				}
+			};
+			PlatformUI.getWorkbench().getThemeManager().addPropertyChangeListener(themeListener);
+		}
 	}
 
 	@Override
 	public void stop(BundleContext context) throws Exception {
 		super.stop(context);
+		if (themeListener != null) {
+			PlatformUI.getWorkbench().getThemeManager().removePropertyChangeListener(themeListener);
+			themeListener = null;
+		}
 		INSTANCE = null;
 	}
 
@@ -66,7 +94,8 @@ public class GenericEditorPlugin extends AbstractUIPlugin {
 	}
 
 	/**
-	 * @return the registry allowing to access contributed {@link IContentAssistProcessor}s.
+	 * @return the registry allowing to access contributed
+	 *         {@link IContentAssistProcessor}s.
 	 * @since 1.0
 	 */
 	public synchronized ContentAssistProcessorRegistry getContentAssistProcessorRegistry() {
@@ -75,7 +104,7 @@ public class GenericEditorPlugin extends AbstractUIPlugin {
 		}
 		return this.contentAssistProcessorsRegistry;
 	}
-	
+
 	/**
 	 * @return the registry allowing to access contributed {@link IReconciler}s.
 	 * @since 1.1
@@ -88,7 +117,8 @@ public class GenericEditorPlugin extends AbstractUIPlugin {
 	}
 
 	/**
-	 * @return the registry allowing to access contributed {@link IPresentationReconciler}s.
+	 * @return the registry allowing to access contributed
+	 *         {@link IPresentationReconciler}s.
 	 * @since 1.0
 	 */
 	public synchronized PresentationReconcilerRegistry getPresentationReconcilerRegistry() {
@@ -99,7 +129,8 @@ public class GenericEditorPlugin extends AbstractUIPlugin {
 	}
 
 	/**
-	 * @return the registry allowing to access contributed {@link IAutoEditStrategy}s.
+	 * @return the registry allowing to access contributed
+	 *         {@link IAutoEditStrategy}s.
 	 * @since 1.1
 	 */
 	public synchronized AutoEditStrategyRegistry getAutoEditStrategyRegistry() {
@@ -107,5 +138,17 @@ public class GenericEditorPlugin extends AbstractUIPlugin {
 			this.autoEditStrategyRegistry = new AutoEditStrategyRegistry();
 		}
 		return this.autoEditStrategyRegistry;
+	}
+
+	/**
+	 * @return the registry allowing to access contributed
+	 *         {@link ICharacterPairMatcher}s.
+	 * @since 1.2
+	 */
+	public synchronized CharacterPairMatcherRegistry getCharacterPairMatcherRegistry() {
+		if (this.characterPairMatcherRegistry == null) {
+			this.characterPairMatcherRegistry = new CharacterPairMatcherRegistry();
+		}
+		return this.characterPairMatcherRegistry;
 	}
 }

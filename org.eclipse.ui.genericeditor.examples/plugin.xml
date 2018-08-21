@@ -56,13 +56,6 @@
       </foldingReconciler>
    </extension>
    <extension
-         point="org.eclipse.ui.genericeditor.reconcilers">
-      <reconciler
-            class="org.eclipse.ui.genericeditor.examples.dotproject.BracketMatchingReconciler"
-            contentType="org.eclipse.ui.genericeditor.examples.dotproject">
-      </reconciler>
-   </extension>
-   <extension
          point="org.eclipse.ui.editors">
       <editorContentTypeBinding
             contentTypeId="org.eclipse.ui.genericeditor.examples.dotproject"
@@ -100,6 +93,13 @@
             targetId="org.eclipse.ui.genericeditor.GenericEditor">
       </hyperlinkDetector>
    </extension>
+   <extension
+        point="org.eclipse.ui.genericeditor.characterPairMatchers">
+     <characterPairMatcher
+           class="org.eclipse.ui.genericeditor.examples.dotproject.TagCharacterPairMatcher"
+           contentType="org.eclipse.ui.genericeditor.examples.dotproject">
+     </characterPairMatcher>
+  </extension>
    <!-- ================== CodeMining support for .project ================== -->
    <!-- 1) register CodeMining provider with extension point -->
    <extension
