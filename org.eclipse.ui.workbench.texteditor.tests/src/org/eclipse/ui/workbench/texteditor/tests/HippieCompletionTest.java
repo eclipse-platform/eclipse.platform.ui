@@ -11,7 +11,10 @@
  *******************************************************************************/
 package org.eclipse.ui.workbench.texteditor.tests;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -590,8 +593,7 @@ public class HippieCompletionTest {
 
 	private List<String> createSuggestions(String prefix, List<IDocument> docsList) {
 		ArrayList<String> results= new ArrayList<>();
-		for (Iterator<IDocument> i= docsList.iterator(); i.hasNext();) {
-			IDocument doc= i.next();
+		for (IDocument doc : docsList) {
 			try {
 				results.addAll(fEngine.getCompletionsForward(doc, prefix, 0, false));
 			} catch (BadLocationException e) {
