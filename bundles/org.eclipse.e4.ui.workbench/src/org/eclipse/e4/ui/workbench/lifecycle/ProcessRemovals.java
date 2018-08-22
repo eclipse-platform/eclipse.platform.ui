@@ -17,8 +17,11 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Use this annotation to describe methods that will participate in the application lifecycle. This
- * method will be called after the {@link ProcessAdditions} calls are done.
+ * Use this annotation to describe methods that will participate in the
+ * application lifecycle. This method will be called after the
+ * {@link ProcessAdditions} calls are done.
+ *
+ * @since 1.7
  */
 @Documented
 @Target({ ElementType.METHOD })

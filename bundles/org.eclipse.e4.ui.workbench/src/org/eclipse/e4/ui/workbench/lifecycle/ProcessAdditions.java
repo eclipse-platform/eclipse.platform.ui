@@ -17,8 +17,10 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Use this annotation to describe methods that will participate in the application lifecycle. This
- * method will be called once the model is loaded.
+ * Use this annotation to describe methods that will participate in the
+ * application lifecycle. This method will be called once the model is loaded.
+ *
+ * @since 1.7
  */
 @Documented
 @Target({ ElementType.METHOD })
