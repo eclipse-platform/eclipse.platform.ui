@@ -1,18 +1,20 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?eclipse version="3.4"?>
-<!-- ====================================================================== -->
-<!-- Copyright (c) 2016, 2017 Red Hat Inc. and others.                      -->
-<!-- All rights reserved. This program and the accompanying materials       -->
-<!-- are made available under the terms of the Eclipse Public License v1.0  -->
-<!-- which accompanies this distribution, and is available at               -->
-<!-- http://www.eclipse.org/legal/epl-v10.html                              -->
-<!--                                                                        -->
-<!-- Contributors:                                                          -->
-<!--     Sopot Cela & Mickael Istria (Red Hat Inc). -initial implementation -->
-<!--     Lucas Bullen (Red Hat Inc.) - Bug 508829 custom reconciler support -->
-<!--                                 - Bug 521382 default highlighter       -->
-<!--     Simon Scholz <simon.scholz@vogella.com> - Bug 527830               -->
-<!-- ====================================================================== -->
+<!--
+ Copyright (c) 2016, 2017 Red Hat Inc. and others. 
+
+ This program and the accompanying materials
+ are made available under the terms of the Eclipse Public License 2.0
+ which accompanies this distribution, and is available at
+ https://www.eclipse.org/legal/epl-2.0/
+
+ SPDX-License-Identifier: EPL-2.0
+ 
+ Contributors:
+      Sopot Cela & Mickael Istria (Red Hat Inc). -initial implementation
+      Lucas Bullen (Red Hat Inc.) - Bug 508829, 521382
+      Simon Scholz <simon.scholz@vogella.com> - Bug 527830
+-->
 <plugin>
    <extension-point id="reconcilers" name="%ExtPoint.reconciliers" schema="schema/reconcilers.exsd"/>
    <extension-point id="presentationReconcilers" name="%ExtPoint.presentationReconciliers" schema="schema/presentationReconcilers.exsd"/>
