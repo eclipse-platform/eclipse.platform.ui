@@ -1350,19 +1350,5 @@
             allowMultiple="false"
             restorable="true">
       </view>
-   </extension>
-   <extension
-         point="org.eclipse.ui.perspectiveExtensions">
-      <perspectiveExtension
-            targetID="*">
-         <view
-               id="org.eclipse.ui.views.minimap.MinimapView"
-               minimized="false"
-               ratio="0.75f"
-               relationship="stack"
-               relative="org.eclipse.ui.views.ContentOutline"
-               visible="false">
-         </view>
-      </perspectiveExtension>
    </extension>   
 </plugin>
