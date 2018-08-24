@@ -288,7 +288,11 @@ public class ActionBarAdvisor {
 	 */
     public void dispose() {
     	if (menuCreated) {
-    		actionBarConfigurer.getMenuManager().dispose();
+			IMenuManager menuManager = actionBarConfigurer.getMenuManager();
+			if (menuManager != null) {
+				// dispose menu asynchronously to avoid "jumping" UI elements
+				PlatformUI.getWorkbench().getDisplay().asyncExec(menuManager::dispose);
+			}
     	}
         disposeActions();
     }
