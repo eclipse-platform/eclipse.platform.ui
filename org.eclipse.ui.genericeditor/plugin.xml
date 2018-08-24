@@ -83,6 +83,18 @@
       <menuContribution
             allPopups="true"
             locationURI="popup:#TextEditorContext?after=additions">
+         <menu
+               id="org.eclipse.ui.genericeditor.source.menu"
+               label="%menu.source.label">
+            <command
+                  commandId="org.eclipse.ui.edit.text.delete.line"
+                  style="push">
+            </command>
+            <command
+                  commandId="org.eclipse.ui.edit.text.copyLineDown"
+                  style="push">
+            </command>
+         </menu>
          <command
                commandId="org.eclipse.ui.genericeditor.findReferences"
                style="push">
