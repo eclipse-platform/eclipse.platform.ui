@@ -91,6 +91,7 @@ public class ExtensionBasedTextEditor extends TextEditor {
 
 	@Override
 	protected void initializeEditor() {
+		super.initializeEditor();
 		setPreferenceStore(new ChainedPreferenceStore(
 				new IPreferenceStore[] { GenericEditorPreferenceConstants.getPreferenceStore(),
 						EditorsPlugin.getDefault().getPreferenceStore() }));
