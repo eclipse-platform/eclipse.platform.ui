@@ -34,6 +34,8 @@ import org.osgi.framework.Bundle;
 
 public class BuildManager implements ICoreConstants, IManager, ILifecycleListener {
 
+	private static final String BUILDER_INIT = "BuilderInitInfo"; //$NON-NLS-1$
+
 	/**
 	 * Cache used to optimize the common case of an autobuild against
 	 * a workspace where only a single project has changed (and hence
@@ -139,6 +141,9 @@ public class BuildManager implements ICoreConstants, IManager, ILifecycleListene
 	private boolean rebuildRequested = false;
 
 	private final Bundle systemBundle = Platform.getBundle("org.eclipse.osgi"); //$NON-NLS-1$
+
+	// protects against concurrent access of session stored builders during builder initialization
+	private Object builderInitializationLock = new Object();
 
 	//used for debug/trace timing
 	private long timeStamp = -1;
@@ -601,24 +606,51 @@ public class BuildManager implements ICoreConstants, IManager, ILifecycleListene
 	private IncrementalProjectBuilder getBuilder(IBuildConfiguration buildConfiguration, ICommand command, int buildSpecIndex, MultiStatus status) throws CoreException {
 		BuildCommand buildCommand = (BuildCommand) command;
 		InternalBuilder result = buildCommand.getBuilder(buildConfiguration);
+		String builderName = command.getBuilderName();
+		IProject project = buildConfiguration.getProject();
+
 		if (result == null) {
-			result = initializeBuilder(command.getBuilderName(), buildConfiguration, buildSpecIndex, status);
-			result.setCommand(command);
-			result.setBuildConfig(buildConfiguration);
-			result.startupOnInitialize();
-			buildCommand.addBuilder(buildConfiguration, (IncrementalProjectBuilder) result);
-			// the build command holds only one builder per configuration
-			// so query the builder for the configuration once more,
-			// in case another builder was added since we last checked
+			// Synchronized builderInitializationLock blocks below are used to avoid
+			// locking during initializeBuilder() call and to make sure two threads
+			// trying to init the same builder in parallel will get properly
+			// initialized builder without deadlocks or ConcurrentModificationException
+			// See bug 538102 and bug 517411.
+			BuilderPersistentInfo info;
+			synchronized (builderInitializationLock) {
+				// get the map of builders to get the last built tree
+				BuilderPersistentInfo builderInitInProgress = getBuilderInitInfo(project, builderName);
+				if (builderInitInProgress != null) {
+					info = builderInitInProgress;
+				} else {
+					info = removePersistentBuilderInfo(builderName, buildConfiguration, buildSpecIndex);
+					setBuilderInitInfo(project, builderName, info);
+				}
+			}
+
 			result = buildCommand.getBuilder(buildConfiguration);
+			if (result == null) {
+				// Not synchronized on builderInitializationLock to avoid deadlocks if the builder init code
+				// requests a lock held by another thread which may be waiting on builderInitializationLock
+				result = initializeBuilder(command, builderName, buildConfiguration, info, status);
+			}
+
+			synchronized (builderInitializationLock) {
+				// the build command holds only one builder per configuration
+				// so query the builder for the configuration once more,
+				// in case another builder was added since we last checked
+				InternalBuilder other = buildCommand.getBuilder(buildConfiguration);
+				if (other == null) {
+					buildCommand.addBuilder(buildConfiguration, (IncrementalProjectBuilder) result);
+				} else {
+					result = other;
+				}
+				setBuilderInitInfo(project, builderName, null);
+			}
 		}
-		// in case the builder was removed, between adding and querying it (see above)
-		if (result == null) {
-			return null;
-		}
+
 		// Ensure the build configuration stays fresh for non-config aware builders
 		result.setBuildConfig(buildConfiguration);
-		if (!validateNature(result, command.getBuilderName())) {
+		if (!validateNature(result, builderName)) {
 			//skip this builder and null its last built tree because it is invalid
 			//if the nature gets added or re-enabled a full build will be triggered
 			result.setLastBuiltTree(null);
@@ -913,9 +945,9 @@ public class BuildManager implements ICoreConstants, IManager, ILifecycleListene
 	 * prevent trying to instantiate it every time a build is run.
 	 * This method NEVER returns null.
 	 */
-	private IncrementalProjectBuilder initializeBuilder(String builderName, IBuildConfiguration buildConfiguration, int buildSpecIndex, MultiStatus status) throws CoreException {
+	private InternalBuilder initializeBuilder(ICommand command, String builderName, IBuildConfiguration buildConfiguration, BuilderPersistentInfo info, MultiStatus status) {
 		IProject project = buildConfiguration.getProject();
-		IncrementalProjectBuilder builder = null;
+		InternalBuilder builder = null;
 		try {
 			builder = instantiateBuilder(builderName);
 		} catch (CoreException e) {
@@ -926,22 +958,36 @@ public class BuildManager implements ICoreConstants, IManager, ILifecycleListene
 			//unable to create the builder, so create a placeholder to fill in for it
 			builder = new MissingBuilder(builderName);
 		}
-		// get the map of builders to get the last built tree
+
+		if (info != null) {
+			ElementTree tree = info.getLastBuiltTree();
+			if (tree != null) {
+				builder.setLastBuiltTree(tree);
+			}
+			builder.setInterestingProjects(info.getInterestingProjects());
+		}
+		builder.setCommand(command);
+		builder.setBuildConfig(buildConfiguration);
+		builder.startupOnInitialize();
+		return builder;
+	}
+
+	private BuilderPersistentInfo removePersistentBuilderInfo(String builderName, IBuildConfiguration buildConfiguration, int buildSpecIndex) throws CoreException {
+		IProject project = buildConfiguration.getProject();
 		ArrayList<BuilderPersistentInfo> infos = getBuildersPersistentInfo(project);
 		if (infos != null) {
 			BuilderPersistentInfo info = getBuilderInfo(infos, builderName, buildConfiguration.getName(), buildSpecIndex);
 			if (info != null) {
 				infos.remove(info);
-				ElementTree tree = info.getLastBuiltTree();
-				if (tree != null)
-					((InternalBuilder) builder).setLastBuiltTree(tree);
-				((InternalBuilder) builder).setInterestingProjects(info.getInterestingProjects());
+				// delete the build map if it's now empty
+				if (infos.isEmpty()) {
+					setBuildersPersistentInfo(project, null);
+				}
+				return info;
 			}
-			// delete the build map if it's now empty
-			if (infos.size() == 0)
-				setBuildersPersistentInfo(project, null);
+
 		}
-		return builder;
+		return null;
 	}
 
 	/**
@@ -1126,8 +1172,37 @@ public class BuildManager implements ICoreConstants, IManager, ILifecycleListene
 		} catch (CoreException e) {
 			//project is missing -- build state will be lost
 			//can't throw an exception because this happens on startup
-			Policy.log(new ResourceStatus(IStatus.ERROR, 1, project.getFullPath(), "Project missing in setBuildersPersistentInfo", null)); //$NON-NLS-1$
+			logProjectAccessError(project, e, "Project missing in setBuildersPersistentInfo"); //$NON-NLS-1$
 		}
+	}
+
+	private void setBuilderInitInfo(IProject project, String builderName, BuilderPersistentInfo info) {
+		try {
+			project.setSessionProperty(keyForBuilderInfo(builderName), info);
+		} catch (CoreException e) {
+			//project is missing -- build state will be lost
+			//can't throw an exception because this happens on startup
+			logProjectAccessError(project, e, "Project missing in setBuilderInitInfo"); //$NON-NLS-1$
+		}
+	}
+
+	private BuilderPersistentInfo getBuilderInitInfo(IProject project, String builderName) {
+		try {
+			return (BuilderPersistentInfo) project.getSessionProperty(keyForBuilderInfo(builderName));
+		} catch (CoreException e) {
+			//project is missing -- build state will be lost
+			//can't throw an exception because this happens on startup
+			logProjectAccessError(project, e, "Project missing in getBuilderInitInfo"); //$NON-NLS-1$
+		}
+		return null;
+	}
+
+	private void logProjectAccessError(IProject project, CoreException e, String message) {
+		Policy.log(new ResourceStatus(IStatus.ERROR, 1, project.getFullPath(), message, e));
+	}
+
+	private static QualifiedName keyForBuilderInfo(String builderName) {
+		return new QualifiedName(ResourcesPlugin.PI_RESOURCES, BUILDER_INIT + builderName);
 	}
 
 	@Override
