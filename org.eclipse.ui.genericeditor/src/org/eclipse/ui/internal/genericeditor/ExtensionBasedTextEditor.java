@@ -26,8 +26,8 @@ import org.eclipse.jface.text.source.projection.ProjectionSupport;
 import org.eclipse.jface.text.source.projection.ProjectionViewer;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.IEditorInput;
+import org.eclipse.ui.editors.text.EditorsUI;
 import org.eclipse.ui.editors.text.TextEditor;
-import org.eclipse.ui.internal.editors.text.EditorsPlugin;
 import org.eclipse.ui.internal.genericeditor.preferences.GenericEditorPreferenceConstants;
 import org.eclipse.ui.texteditor.ChainedPreferenceStore;
 import org.eclipse.ui.texteditor.SourceViewerDecorationSupport;
@@ -92,9 +92,8 @@ public class ExtensionBasedTextEditor extends TextEditor {
 	@Override
 	protected void initializeEditor() {
 		super.initializeEditor();
-		setPreferenceStore(new ChainedPreferenceStore(
-				new IPreferenceStore[] { GenericEditorPreferenceConstants.getPreferenceStore(),
-						EditorsPlugin.getDefault().getPreferenceStore() }));
+		setPreferenceStore(new ChainedPreferenceStore(new IPreferenceStore[] {
+				GenericEditorPreferenceConstants.getPreferenceStore(), EditorsUI.getPreferenceStore() }));
 	}
 
 	/**
