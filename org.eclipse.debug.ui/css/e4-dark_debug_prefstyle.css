@@ -26,7 +26,8 @@ IEclipsePreferences#org-eclipse-debug-ui {
 		'org.eclipse.debug.ui.outColor=235,235,235'
 }
 
-#DebugBreadcrumbComposite,
+#DebugBreadcrumbComposite
+#DebugBreadcrumbComposite > Composite,
 #DebugBreadcrumbItemComposite,
 #DebugBreadcrumbItemDetailComposite,
 #DebugBreadcrumbItemDetailTextComposite,
