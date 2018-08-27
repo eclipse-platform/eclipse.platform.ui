@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2014, 2017 Red Hat Inc., and others
+ * Copyright (c) 2014, 2018 Red Hat Inc., and others
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -477,8 +477,10 @@ public class SmartImportRootWizardPage extends WizardPage {
 
 		Link showDetectorsLink = new Link(parent, SWT.NONE);
 		showDetectorsLink.setText(DataTransferMessages.SmartImportWizardPage_showAvailableDetectors);
-		GridData layoutData = new GridData(SWT.LEFT, SWT.CENTER, false, false, 4, 1);
-		showDetectorsLink.setLayoutData(layoutData);
+		GridData gridData = new GridData();
+        gridData.horizontalAlignment = GridData.FILL;
+        gridData.grabExcessHorizontalSpace = true;
+        showDetectorsLink.setLayoutData(gridData);
 		showDetectorsLink.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
@@ -498,6 +500,7 @@ public class SmartImportRootWizardPage extends WizardPage {
 						DataTransferMessages.SmartImportWizardPage_availableDetectors_title, message.toString());
 			}
 		});
+		GridData layoutData = new GridData(SWT.LEFT, SWT.CENTER, false, false, 4, 1);
 		final Button detectNestedProjectsCheckbox = new Button(parent, SWT.CHECK);
 		detectNestedProjectsCheckbox.setText(DataTransferMessages.SmartImportWizardPage_detectNestedProjects);
 		detectNestedProjectsCheckbox.setLayoutData(layoutData);
