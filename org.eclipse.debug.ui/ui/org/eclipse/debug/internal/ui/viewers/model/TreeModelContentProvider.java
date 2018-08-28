@@ -1437,8 +1437,8 @@ public class TreeModelContentProvider implements ITreeModelContentProvider, ICon
 			treeViewer.setChildCount(elementPath, viewCount);
 	        if (!treeViewer.getExpandedState(elementPath)) {
 	            treeViewer.expandToLevel(elementPath, 1);
-	            cancelRestore(elementPath, IModelDelta.COLLAPSE);
 	        }
+			cancelRestore(elementPath, IModelDelta.COLLAPSE);
 		}
 	}
 
