@@ -74,6 +74,7 @@ import org.eclipse.e4.ui.workbench.IExceptionHandler;
 import org.eclipse.e4.ui.workbench.IModelResourceHandler;
 import org.eclipse.e4.ui.workbench.IWorkbench;
 import org.eclipse.e4.ui.workbench.lifecycle.PostContextCreate;
+import org.eclipse.e4.ui.workbench.lifecycle.PostWorkbenchClose;
 import org.eclipse.e4.ui.workbench.lifecycle.PreSave;
 import org.eclipse.e4.ui.workbench.lifecycle.ProcessAdditions;
 import org.eclipse.e4.ui.workbench.lifecycle.ProcessRemovals;
@@ -166,6 +167,9 @@ public class E4Application implements IApplication {
 
 			saveModel();
 			workbench.close();
+			if (lcManager != null) {
+				ContextInjectionFactory.invoke(lcManager, PostWorkbenchClose.class, workbench.getContext(), null);
+			}
 
 			if (workbench.isRestart()) {
 				return EXIT_RESTART;
