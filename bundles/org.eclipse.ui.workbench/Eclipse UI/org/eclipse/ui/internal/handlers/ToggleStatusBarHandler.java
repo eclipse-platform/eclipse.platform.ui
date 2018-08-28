@@ -1,9 +1,12 @@
 /*******************************************************************************
  * Copyright (c) 2017 Patrik Suzzi.
- * All rights reserved. This program
+ *
+ * This program
  * and the accompanying materials are made available under the terms of the
- * Eclipse Public License v1.0 which accompanies this distribution, and is
- * available at http://www.eclipse.org/legal/epl-v10.html
+ * Eclipse Public License 2.0 which accompanies this distribution, and is
+t https://www.eclipse.org/legal/epl-2.0/
+t
+t SPDX-License-Identifier: EPL-2.0
  *
  * Contributors:
  * 	Patrik Suzzi <psuzzi@gmail.com> - initial API and implementation;

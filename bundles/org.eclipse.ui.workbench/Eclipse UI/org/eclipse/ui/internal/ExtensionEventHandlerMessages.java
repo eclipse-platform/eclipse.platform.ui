@@ -1,9 +1,12 @@
 /**********************************************************************
  * Copyright (c) 2005, 2015 IBM Corporation and others.
- * All rights reserved. This
+ *
+ * This
  * program and the accompanying materials are made available under the terms of
- * the Eclipse Public License v1.0 which accompanies this distribution, and is
- * available at http://www.eclipse.org/legal/epl-v10.html
+ * the Eclipse Public License 2.0 which accompanies this distribution, and is
+t https://www.eclipse.org/legal/epl-2.0/
+t
+t SPDX-License-Identifier: EPL-2.0
  *
  * Contributors:
  * IBM - Initial API and implementation
@@ -14,16 +17,7 @@ import org.eclipse.osgi.util.NLS;
 
 public class ExtensionEventHandlerMessages extends NLS {
 	private static final String BUNDLE_NAME = "org.eclipse.ui.internal.ExtensionEventHandler";//$NON-NLS-1$
-	//
-	// Copyright (c) 2003, 2004 IBM Corporation and others.
-	// All rights reserved. This program and the accompanying materials
-	// are made available under the terms of the Eclipse Public License v1.0
-	// which accompanies this distribution, and is available at
-	// http://www.eclipse.org/legal/epl-v10.html
-	//
-	// Contributors:
-	//     IBM Corporation - initial API and implementation
-	//
+
 	public static String ExtensionEventHandler_new_action_set;
 	public static String ExtensionEventHandler_following_changes;
 	public static String ExtensionEventHandler_change_format;
