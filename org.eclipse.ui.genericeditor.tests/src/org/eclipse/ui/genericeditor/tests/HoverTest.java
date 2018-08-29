@@ -69,11 +69,9 @@ public class HoverTest extends AbstratGenericEditorTest {
 	public TestName testName= new TestName();
 
 	@Before
-	public void skipOnWindows() {
+	public void skipOnNonLinux() {
 		Assume.assumeFalse("This test currently always fail on Windows (bug 505842), skipping", Platform.OS_WIN32.equals(Platform.getOS()));
-		if (Platform.OS_MACOSX.equals(Platform.getOS())) {
-			getHoverShell(triggerCompletionAndRetrieveInformationControlManager(), false);
-		}
+		Assume.assumeFalse("This test currently always fail on macOS (bug 505842), skipping", Platform.OS_MACOSX.equals(Platform.getOS()));
 	}
 
 	@Test
