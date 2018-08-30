@@ -16,10 +16,13 @@ package org.eclipse.ltk.internal.core.refactoring.resource;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Platform;
 
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.resources.mapping.IResourceChangeDescriptionFactory;
 
 import org.eclipse.ltk.core.refactoring.Change;
@@ -117,7 +120,15 @@ public class RenameResourceProcessor extends RenameProcessor {
 
 	@Override
 	public RefactoringStatus checkInitialConditions(IProgressMonitor pm) throws CoreException {
-		return RefactoringStatus.create(Resources.checkInSync(fResource));
+		IStatus status= Resources.checkInSync(fResource);
+		if (!status.isOK()) {
+			boolean autoRefresh= Platform.getPreferencesService().getBoolean(ResourcesPlugin.PI_RESOURCES, ResourcesPlugin.PREF_LIGHTWEIGHT_AUTO_REFRESH, false, null);
+			if (autoRefresh) {
+				fResource.refreshLocal(IResource.DEPTH_INFINITE, pm);
+				status= Resources.checkInSync(fResource);
+			}
+		}
+		return RefactoringStatus.create(status);
 	}
 
 	@Override
