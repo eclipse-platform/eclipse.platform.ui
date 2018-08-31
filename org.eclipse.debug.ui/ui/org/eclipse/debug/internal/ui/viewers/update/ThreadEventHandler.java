@@ -266,8 +266,18 @@ public class ThreadEventHandler extends DebugEventHandler {
     	if (isEqual(frame, prev)) {
     		if (frame == null) {
     			if (thread.isSuspended()) {
-	    			// no frames, but suspended - update & select
-	    			node = node.addNode(thread, threadIndex, flags | IModelDelta.STATE | IModelDelta.SELECT, childCount);
+					// try retrieving the top frame again, in case we ran into an evaluation earlier
+					try {
+						frame = thread.getTopStackFrame();
+					} catch (DebugException e) {
+					}
+					if (frame == null) {
+						// no frames, but suspended - update & select
+						int threadNodeFlags = flags | IModelDelta.STATE | IModelDelta.SELECT;
+						node = node.addNode(thread, threadIndex, threadNodeFlags, childCount);
+					} else {
+						node = node.addNode(thread, threadIndex, flags, childCount);
+					}
     			}
     		} else {
     			node = node.addNode(thread, threadIndex, flags, childCount);
