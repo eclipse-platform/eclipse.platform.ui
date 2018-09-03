@@ -160,6 +160,12 @@ public class BreakpointManager implements IBreakpointManager, IResourceChangeLis
 	 */
 	private Set<IBreakpoint> fTriggerPointBreakpointList = new LinkedHashSet<>();
 
+	/**
+	 * Trigger points disabled by system after the first trigger point is
+	 * enabled in a workspace.
+	 */
+	private Set<IBreakpoint> fTriggerPointDisabledList = new LinkedHashSet<>();
+
 
 	/**
 	 * Listens to POST_CHANGE notifications of breakpoint markers to detect when
@@ -1415,20 +1421,33 @@ public class BreakpointManager implements IBreakpointManager, IResourceChangeLis
 	}
 
 	@Override
-	public void enableTriggerPoints(IBreakpoint[] triggerPoints, boolean enable) {
+	public synchronized void enableTriggerPoints(IBreakpoint[] triggerPoints, boolean enable) {
 		IBreakpoint[] triggerPointList = triggerPoints;
 		if (triggerPoints == null) {
-			triggerPointList = fTriggerPointBreakpointList.toArray(new IBreakpoint[0]);
+			if (enable) {
+				triggerPointList = fTriggerPointDisabledList.toArray(new IBreakpoint[0]);
+			} else {
+				triggerPointList = fTriggerPointBreakpointList.toArray(new IBreakpoint[0]);
+				if (!fTriggerPointDisabledList.isEmpty()) {
+					fTriggerPointDisabledList = new LinkedHashSet<>();
+				}
+			}
 		}
 		for (IBreakpoint iBreakpoint : triggerPointList) {
 			try {
 				IMarker m = iBreakpoint.getMarker();
 				if (m != null && m.exists()) {
+					if (!enable && iBreakpoint.isEnabled()) {
+						fTriggerPointDisabledList.add(iBreakpoint);
+					}
 					iBreakpoint.setEnabled(enable);
 				}
 			} catch (CoreException e) {
 				e.printStackTrace();
 			}
+		}
+		if (enable) {
+			fTriggerPointDisabledList = new LinkedHashSet<>();
 		}
 	}
 
