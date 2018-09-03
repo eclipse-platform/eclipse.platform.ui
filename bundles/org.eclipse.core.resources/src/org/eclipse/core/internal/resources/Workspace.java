@@ -1203,12 +1203,12 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 		}
 		// look if one variable in the destination project matches
 		String[] variables = destPathVariableManager.getPathVariableNames();
-		for (int i = 0; i < variables.length; i++) {
-			if (!PathVariableUtil.isPreferred(variables[i]))
+		for (String other : variables) {
+			if (!PathVariableUtil.isPreferred(other))
 				continue;
-			IPath resolveDestVariable = URIUtil.toPath(destPathVariableManager.resolveURI(destPathVariableManager.getURIValue(variables[i])));
+			IPath resolveDestVariable = URIUtil.toPath(destPathVariableManager.resolveURI(destPathVariableManager.getURIValue(other)));
 			if (resolveDestVariable != null && resolveDestVariable.equals(resolvedSrcValue)) {
-				return variables[i];
+				return other;
 			}
 		}
 		// if the variable doesn't exist in the dest project, or
@@ -1633,17 +1633,20 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 	public Map<IProject, IProject[]> getDanglingReferences() {
 		IProject[] projects = getRoot().getProjects(IContainer.INCLUDE_HIDDEN);
 		Map<IProject, IProject[]> result = new HashMap<>(projects.length);
-		for (int i = 0; i < projects.length; i++) {
-			Project project = (Project) projects[i];
-			if (!project.isAccessible())
+		for (IProject project : projects) {
+			if (!project.isAccessible()) {
 				continue;
-			IProject[] refs = project.internalGetDescription().getReferencedProjects(false);
+                        }
+			IProject[] refs = ((Project)project).internalGetDescription().getReferencedProjects(false);
 			List<IProject> dangling = new ArrayList<>(refs.length);
-			for (int j = 0; j < refs.length; j++)
-				if (!refs[i].exists())
-					dangling.add(refs[i]);
-			if (!dangling.isEmpty())
-				result.put(projects[i], dangling.toArray(new IProject[dangling.size()]));
+			for (IProject ref : refs) {
+				if (!ref.exists()) {
+					dangling.add(ref);
+				}
+			}
+			if (!dangling.isEmpty()) {
+				result.put(project, dangling.toArray(new IProject[dangling.size()]));
+			}
 		}
 		return result;
 	}

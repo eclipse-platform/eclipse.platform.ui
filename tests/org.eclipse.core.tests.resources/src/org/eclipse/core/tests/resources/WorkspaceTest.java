@@ -15,6 +15,8 @@
  *******************************************************************************/
 package org.eclipse.core.tests.resources;
 
+import static org.junit.Assert.assertArrayEquals;
+
 import java.io.File;
 import java.io.InputStream;
 import junit.framework.Test;
@@ -99,6 +101,7 @@ public class WorkspaceTest extends ResourceTest {
 		suite.addTest(new WorkspaceTest("testFolderOverFile"));
 		suite.addTest(new WorkspaceTest("testProjectCreateOpenCloseDelete"));
 		suite.addTest(new WorkspaceTest("testProjectReferences"));
+		suite.addTest(new WorkspaceTest("testDanglingReferences"));
 
 		// test closing and reopening
 		suite.addTest(new WorkspaceTest("testProjectCloseOpen"));
@@ -369,6 +372,19 @@ public class WorkspaceTest extends ResourceTest {
 		assertTrue(!target.exists());
 	}
 
+	public void testDanglingReferences() throws Throwable {
+		IProject p2 = getWorkspace().getRoot().getProject("p2");
+		p2.create(new NullProgressMonitor());
+		IProject p1 = getWorkspace().getRoot().getProject("p1");
+		IProjectDescription description = getWorkspace().newProjectDescription("p1");
+		description.setReferencedProjects(new IProject[] { p2 });
+		p1.create(description, new NullProgressMonitor());
+		p1.open(new NullProgressMonitor());
+		assertFalse(getWorkspace().getDanglingReferences().containsKey(p1));
+		p2.delete(true, new NullProgressMonitor());
+		assertArrayEquals(new IProject[] { p2 }, getWorkspace().getDanglingReferences().get(p1));
+	}
+
 	public void testSetContents() throws Throwable {
 		IPath path = new Path("/testProject/testFile");
 		IFile target = getWorkspace().getRoot().getFile(path);
@@ -416,4 +432,5 @@ public class WorkspaceTest extends ResourceTest {
 		assertTrue(destination.exists());
 		assertTrue(!target.exists());
 	}
+
 }
