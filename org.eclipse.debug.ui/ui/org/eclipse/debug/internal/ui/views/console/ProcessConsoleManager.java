@@ -22,7 +22,11 @@ import java.util.Map;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtensionPoint;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchListener;
@@ -46,7 +50,54 @@ import com.ibm.icu.text.MessageFormat;
  */
 public class ProcessConsoleManager implements ILaunchListener {
 
-    /**
+	/**
+	 * Crates console for given process
+	 */
+	private final class ConsoleCreation extends Job {
+		private final ILaunch launch;
+		private final IProcess process;
+
+		ConsoleCreation(ILaunch launch, IProcess process) {
+			super("Creating console for " + process.getLabel()); //$NON-NLS-1$
+			this.launch = launch;
+			this.process = process;
+			setSystem(true);
+			setUser(false);
+		}
+
+		@Override
+		protected IStatus run(IProgressMonitor monitor) {
+			if (monitor.isCanceled() || getConsoleDocument(process) != null) {
+				return Status.CANCEL_STATUS;
+			}
+			IConsoleColorProvider colorProvider = getColorProvider(process.getAttribute(IProcess.ATTR_PROCESS_TYPE));
+			String encoding = launch.getAttribute(DebugPlugin.ATTR_CONSOLE_ENCODING);
+			ProcessConsole pc = new ProcessConsole(process, colorProvider, encoding);
+			pc.setAttribute(IDebugUIConstants.ATTR_CONSOLE_PROCESS, process);
+
+			// add new console to console manager.
+			ConsolePlugin.getDefault().getConsoleManager().addConsoles(new IConsole[] { pc });
+			return Status.OK_STATUS;
+		}
+
+		@Override
+		public boolean belongsTo(Object family) {
+			return process == family || ProcessConsoleManager.class == family;
+		}
+
+		@Override
+		public boolean shouldSchedule() {
+			Job[] jobs = Job.getJobManager().find(process);
+			for (Job job : jobs) {
+				if (job instanceof ConsoleCreation) {
+					return false;
+				}
+			}
+			return true;
+		}
+	}
+
+	/**
      * Console document content provider extensions, keyed by extension id
      */
 	private Map<String, IConfigurationElement> fColorProviders;
@@ -139,21 +190,14 @@ public class ProcessConsoleManager implements ILaunchListener {
     @Override
 	public void launchChanged(final ILaunch launch) {
         IProcess[] processes= launch.getProcesses();
-        for (int i= 0; i < processes.length; i++) {
-            if (getConsoleDocument(processes[i]) == null) {
-                IProcess process = processes[i];
-                if (process.getStreamsProxy() == null) {
-                    continue;
-                }
-
-                //create a new console.
-                IConsoleColorProvider colorProvider = getColorProvider(process.getAttribute(IProcess.ATTR_PROCESS_TYPE));
-                String encoding = launch.getAttribute(DebugPlugin.ATTR_CONSOLE_ENCODING);
-                ProcessConsole pc = new ProcessConsole(process, colorProvider, encoding);
-                pc.setAttribute(IDebugUIConstants.ATTR_CONSOLE_PROCESS, process);
-
-                //add new console to console manager.
-                ConsolePlugin.getDefault().getConsoleManager().addConsoles(new IConsole[]{pc});
+		for (IProcess process : processes) {
+			if (process.getStreamsProxy() == null) {
+				continue;
+			}
+			if (getConsoleDocument(process) == null) {
+				// create a new console in a separated thread, see bug 355011.
+				Job job = new ConsoleCreation(launch, process);
+				job.schedule();
             }
         }
 		List<IProcess> removed = getRemovedProcesses(launch);
@@ -196,6 +240,7 @@ public class ProcessConsoleManager implements ILaunchListener {
      * launch listener and kills all existing console documents.
      */
     public void shutdown() {
+		Job.getJobManager().cancel(ProcessConsoleManager.class);
         ILaunchManager launchManager= DebugPlugin.getDefault().getLaunchManager();
         ILaunch[] launches = launchManager.getLaunches();
         for (int i = 0; i < launches.length; i++) {
