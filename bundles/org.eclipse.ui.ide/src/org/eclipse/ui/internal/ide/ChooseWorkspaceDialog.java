@@ -37,6 +37,7 @@ import org.eclipse.jface.window.Window;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.osgi.util.TextProcessor;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.CLabel;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Point;
@@ -50,7 +51,6 @@ import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.DirectoryDialog;
-import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Link;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
@@ -420,10 +420,12 @@ public class ChooseWorkspaceDialog extends TitleAreaDialog {
         panel.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
         panel.setFont(parent.getFont());
 
-        Label label = new Label(panel, SWT.NONE);
+		CLabel label = new CLabel(panel, SWT.NONE);
         label.setText(IDEWorkbenchMessages.ChooseWorkspaceDialog_workspaceEntryLabel);
+		label.setMargins(0, 0, 2, 0);
 
-        text = new Combo(panel, SWT.BORDER | SWT.LEAD | SWT.DROP_DOWN);
+		text = new Combo(panel, SWT.BORDER | SWT.LEAD | SWT.DROP_DOWN);
+		new DirectoryProposalContentAssist().apply(text);
         text.setFocus();
         text.setLayoutData(new GridData(400, SWT.DEFAULT));
         text.addModifyListener(e -> {

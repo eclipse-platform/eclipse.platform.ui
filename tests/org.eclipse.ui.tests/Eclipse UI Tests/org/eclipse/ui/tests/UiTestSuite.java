@@ -16,6 +16,7 @@
  *******************************************************************************/
 package org.eclipse.ui.tests;
 
+import org.eclipse.ui.internal.ide.DirectoryProposalContentAssistTestSuite;
 import org.eclipse.ui.tests.activities.ActivitiesTestSuite;
 import org.eclipse.ui.tests.adaptable.AdaptableTestSuite;
 import org.eclipse.ui.tests.api.ApiTestSuite;
@@ -77,7 +78,8 @@ import org.junit.runners.Suite;
 	StatusHandlingTestSuite.class,
 	MenusTestSuite.class,
 	QuickAccessTestSuite.class,
-	FilteredResourcesSelectionDialogTestSuite.class
+	FilteredResourcesSelectionDialogTestSuite.class,
+	DirectoryProposalContentAssistTestSuite.class
 })
 public class UiTestSuite {
 
