@@ -2399,8 +2399,8 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 			}
 
 			// Enforce an absolute minimal size
-			size.x= Math.max(size.x, 30);
-			size.y= Math.max(size.y, 30);
+			size.x= Math.max(size.x, 50);
+			size.y= Math.max(size.y, 50);
 		}
 
 		return size;

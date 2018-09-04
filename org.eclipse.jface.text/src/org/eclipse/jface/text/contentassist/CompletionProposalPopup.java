@@ -57,6 +57,7 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
+import org.eclipse.swt.widgets.Monitor;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableItem;
@@ -81,6 +82,7 @@ import org.eclipse.jface.preference.JFacePreferences;
 import org.eclipse.jface.resource.JFaceColors;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.util.Geometry;
+import org.eclipse.jface.util.Util;
 import org.eclipse.jface.viewers.StyledString;
 
 import org.eclipse.jface.text.AbstractInformationControlManager;
@@ -637,10 +639,17 @@ class CompletionProposalPopup implements IContentAssistListener {
 			fProposalTable.setLayoutData(data);
 			fProposalShell.setSize(size);
 		} else {
-			int height= fProposalTable.getItemHeight() * 10;
+			int height= fProposalTable.getItemHeight() * 15;
 			// use golden ratio as default aspect ratio
 			final double aspectRatio= (1 + Math.sqrt(5)) / 2;
 			int width= (int) (height * aspectRatio);
+
+			// Make sure our bounds still fit to the screen
+			Monitor monitor= Util.getClosestMonitor(fProposalShell.getDisplay(), getLocation());
+			Rectangle bounds= monitor.getClientArea();
+			width= Math.min(width, bounds.width / 4);
+			height= Math.min(height, bounds.height / 4);
+
 			Rectangle trim= fProposalTable.computeTrim(0, 0, width, height);
 			data.heightHint= trim.height;
 			data.widthHint= trim.width;
