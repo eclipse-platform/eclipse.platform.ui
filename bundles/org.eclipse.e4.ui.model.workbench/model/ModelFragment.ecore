@@ -7,8 +7,7 @@
       <details key="documentation" value="&lt;p>&#xD;&#xA;&lt;strong>Developers&lt;/strong>:&#xD;&#xA;Add more detailed documentation by editing this comment in &#xD;&#xA;/org.eclipse.e4.ui.model.workbench/model/ModelFragment.ecore. &#xD;&#xA;There is a GenModel/documentation node under each type and attribute.&#xD;&#xA;&lt;/p>&#xD;&#xA;@since 1.0"/>
     </eAnnotations>
     <eStructuralFeatures xsi:type="ecore:EReference" name="imports" upperBound="-1"
-        eType="ecore:EClass platform:/plugin/org.eclipse.e4.ui.model.workbench/model/UIElements.ecore#//ApplicationElement"
-        containment="true">
+        eType="ecore:EClass UIElements.ecore#//ApplicationElement" containment="true">
       <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
         <details key="documentation" value="&lt;p>&#xD;&#xA;&lt;strong>Developers&lt;/strong>:&#xD;&#xA;Add more detailed documentation by editing this comment in &#xD;&#xA;/org.eclipse.e4.ui.model.workbench/model/ModelFragment.ecore. &#xD;&#xA;There is a GenModel/documentation node under each type and attribute.&#xD;&#xA;&lt;/p>"/>
       </eAnnotations>
@@ -24,15 +23,14 @@
     <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
       <details key="documentation" value="&lt;p>&#xD;&#xA;&lt;strong>Developers&lt;/strong>:&#xD;&#xA;Add more detailed documentation by editing this comment in &#xD;&#xA;/org.eclipse.e4.ui.model.workbench/model/ModelFragment.ecore. &#xD;&#xA;There is a GenModel/documentation node under each type and attribute.&#xD;&#xA;&lt;/p>&#xD;&#xA;@since 1.0"/>
     </eAnnotations>
-    <eOperations name="merge" upperBound="-1" eType="ecore:EClass platform:/plugin/org.eclipse.e4.ui.model.workbench/model/UIElements.ecore#//ApplicationElement">
+    <eOperations name="merge" upperBound="-1" eType="ecore:EClass UIElements.ecore#//ApplicationElement">
       <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
         <details key="documentation" value="&lt;p>&#xD;&#xA;&lt;strong>Developers&lt;/strong>:&#xD;&#xA;Add more detailed documentation by editing this comment in &#xD;&#xA;/org.eclipse.e4.ui.model.workbench/model/ModelFragment.ecore. &#xD;&#xA;There is a GenModel/documentation node under each type and attribute.&#xD;&#xA;&lt;/p>"/>
       </eAnnotations>
-      <eParameters name="application" eType="ecore:EClass platform:/plugin/org.eclipse.e4.ui.model.workbench/model/UIElements.ecore#//Application"/>
+      <eParameters name="application" eType="ecore:EClass UIElements.ecore#//Application"/>
     </eOperations>
     <eStructuralFeatures xsi:type="ecore:EReference" name="elements" upperBound="-1"
-        eType="ecore:EClass platform:/plugin/org.eclipse.e4.ui.model.workbench/model/UIElements.ecore#//ApplicationElement"
-        containment="true">
+        eType="ecore:EClass UIElements.ecore#//ApplicationElement" containment="true">
       <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
         <details key="documentation" value="&lt;p>&#xD;&#xA;&lt;strong>Developers&lt;/strong>:&#xD;&#xA;Add more detailed documentation by editing this comment in &#xD;&#xA;/org.eclipse.e4.ui.model.workbench/model/ModelFragment.ecore. &#xD;&#xA;There is a GenModel/documentation node under each type and attribute.&#xD;&#xA;&lt;/p>"/>
       </eAnnotations>
