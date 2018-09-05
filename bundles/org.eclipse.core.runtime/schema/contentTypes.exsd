@@ -6,7 +6,12 @@
          <meta.schema plugin="org.eclipse.core.runtime" id="contentTypes" name="Content Types"/>
       </appinfo>
       <documentation>
-         The content types extension point allows plug-ins to contribute to the platform content type catalog. There are two forms of contributions: &lt;cite&gt;content types&lt;/cite&gt; and &lt;cite&gt;file associations&lt;/cite&gt;.
+               &lt;p&gt;
+&lt;b&gt;WARNING: This extension point is DEPRECATED.&lt;/b&gt;&lt;br&gt;
+Do not use this extension point, it will be removed in future versions of this product.
+Instead, use the extension point &lt;a href=&quot;org.eclipse.core.contenttype.contentTypes.html&quot;&gt;org.eclipse.core.contenttype.contentTypes&lt;/a&gt;
+&lt;/p&gt;
+The content types extension point allows plug-ins to contribute to the platform content type catalog. There are two forms of contributions: &lt;cite&gt;content types&lt;/cite&gt; and &lt;cite&gt;file associations&lt;/cite&gt;.
 &lt;ul&gt;
 &lt;li&gt;
 a content type represents a file format and its naming conventions. Content types can be defined from scratch, or can inherit from existing ones, specializing them. Also, a content type can be made into an alias for another content type (see the &lt;code&gt;alias-for&lt;/code&gt; attribute). When this feature is used:
