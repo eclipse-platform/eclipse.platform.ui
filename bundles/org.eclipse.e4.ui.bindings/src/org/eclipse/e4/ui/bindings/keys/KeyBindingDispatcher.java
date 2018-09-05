@@ -326,6 +326,8 @@ public class KeyBindingDispatcher {
 							if (serviceContext != null) {
 								StringBuilder sb = new StringBuilder("\n\tExecution context: "); //$NON-NLS-1$
 								sb.append(describe(serviceContext));
+								sb.append("\n\tHandler: "); //$NON-NLS-1$
+								sb.append(obj);
 								logger.trace(sb.toString());
 							}
 						}
