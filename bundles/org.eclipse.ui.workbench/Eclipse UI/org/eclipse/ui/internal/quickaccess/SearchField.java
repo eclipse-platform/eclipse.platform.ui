@@ -114,6 +114,8 @@ public class SearchField {
 	private static final int MAXIMUM_NUMBER_OF_TEXT_ENTRIES_PER_ELEMENT = 3;
 	private static final String DIALOG_HEIGHT = "dialogHeight"; //$NON-NLS-1$
 	private static final String DIALOG_WIDTH = "dialogWidth"; //$NON-NLS-1$
+	private static final int MINIMUM_DIALOG_HEIGHT = 50;
+	private static final int MINIMUM_DIALOG_WIDTH = 150;
 
 	Shell shell;
 	private Text txtQuickAccess;
@@ -258,6 +260,7 @@ public class SearchField {
 		quickAccessContents.hookFilterText(txtQuickAccess);
 		shell = new Shell(parent.getShell(), SWT.RESIZE | SWT.ON_TOP);
 		shell.setBackground(shell.getDisplay().getSystemColor(SWT.COLOR_WHITE));
+		shell.setMinimumSize(new Point(MINIMUM_DIALOG_WIDTH, MINIMUM_DIALOG_HEIGHT));
 		shell.setText(QuickAccessMessages.QuickAccess_EnterSearch); // just for debugging, not shown anywhere
 		GridLayoutFactory.fillDefaults().applyTo(shell);
 		quickAccessContents.createHintText(shell, Window.getDefaultOrientation());
@@ -519,9 +522,11 @@ public class SearchField {
 		Rectangle tempBounds = txtQuickAccess.getBounds();
 		Rectangle compBounds = display.map(txtQuickAccess, null, tempBounds);
 		Rectangle shellBounds = txtQuickAccess.getShell().getBounds();
-		int preferredWidth = dialogWidth == -1 ? Math.max(300, (int) (shellBounds.width * 0.6)) : dialogWidth;
+		int preferredWidth = Math.max(MINIMUM_DIALOG_WIDTH,
+				dialogWidth == -1 ? (int) (shellBounds.width * 0.6) : dialogWidth);
 		int width = Math.max(preferredWidth, compBounds.width);
-		int height = dialogHeight == -1 ? Math.max(200, (int) (shellBounds.height * 0.9)) : dialogHeight;
+		int height = Math.max(MINIMUM_DIALOG_HEIGHT,
+				dialogHeight == -1 ? (int) (shellBounds.height * 0.9) : dialogHeight);
 
 		// If size would extend past the right edge of the shell, try to move it
 		// to the left of the text
