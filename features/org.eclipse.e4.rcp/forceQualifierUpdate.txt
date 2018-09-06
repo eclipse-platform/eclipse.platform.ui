@@ -12,4 +12,3 @@ Bug 529356 - Build failure in I20180102-2215
 Bug 533109 - Build failure in I20180330-2000
 Needs a touch for build failure in I20180428-1500
 Needs a touch for I20180801-0550 comparator error
-Needs a touch for felix.scr qualifier update
