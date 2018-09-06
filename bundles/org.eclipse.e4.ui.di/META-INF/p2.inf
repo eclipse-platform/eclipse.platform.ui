@@ -1,3 +1,14 @@
 requires.0.namespace = osgi.extender
 requires.0.name = osgi.component
 requires.0.range = [1.2.0, 2)
+# Bug 538564 - Tycho 1.2.0 is only able to start tests with
+# org.eclipse.equinox.ds installed (configuring its start level).
+# However, org.eclipse.equinox.ds is now discarded and org.apache.felix.scr
+# replaces it as provider for `osgi.extender`. Tycho 1.2.0 is not able to
+# set the right start level for org.apache.felix.scr.
+# So we explicitly add org.eclipse.equinox.ds to keep compatility with
+# Tycho 1.2.0: Tycho sets a start-level for org.eclipse.equinox.ds, so
+# when the bundle starts it also starts org.apache.felix.scr (as requirement).
+requires.1.namespace = osgi.bundle 
+requires.1.name = org.eclipse.equinox.ds
+requires.1.range = 0.0.0
