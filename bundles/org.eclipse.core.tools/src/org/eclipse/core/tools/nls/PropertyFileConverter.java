@@ -1,15 +1,16 @@
-/**********************************************************************
-.
-.   This
- * program and the accompanying materials are made available under the terms of
- * the Eclipse Public License 2.0 which accompanies this distribution, and is
-t https://www.eclipse.org/legal/epl-2.0/
-t
-t SPDX-License-Identifier: EPL-2.0
+/*******************************************************************************
+ * Copyright (c) 2005 IBM Corporation and others.
+ *
+ * This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License 2.0
+ * which accompanies this distribution, and is available at
+ * https://www.eclipse.org/legal/epl-2.0/
+ *
+ * SPDX-License-Identifier: EPL-2.0
  *
  * Contributors:
- * IBM - Initial API and implementation
- **********************************************************************/
+ *     IBM Corporation - initial API and implementation
+ *******************************************************************************/
 package org.eclipse.core.tools.nls;
 
 import java.io.*;
@@ -93,13 +94,14 @@ public class PropertyFileConverter {
 	private void appendPreText(StringBuilder buffer, String pkgName, String bundleName, String typeName) {
 		//if this text had typos, would it be a false pretext?
 		buffer.append("/**********************************************************************\n"); //$NON-NLS-1$
-.
-.   This\n"); //$NON-NLS-1$
-		buffer.append(" * program and the accompanying materials are made available under the terms of\n"); //$NON-NLS-1$
+		buffer.append(" * Copyright (c) 2005 IBM Corporation and others.\n"); //$NON-NLS-1$
+		buffer.append(" *\n"); //$NON-NLS-1$
+		buffer.append(" * This program and the accompanying materials are made available under the terms of\n"); //$NON-NLS-1$
 		buffer.append(" * the Eclipse Public License 2.0 which accompanies this distribution, and is\n"); //$NON-NLS-1$
-t https://www.eclipse.org/legal/epl-2.0/
-t
-t SPDX-License-Identifier: EPL-2.0\n"); //$NON-NLS-1$
+		buffer.append(" * available at\n"); //$NON-NLS-1$
+		buffer.append(" * https://www.eclipse.org/legal/epl-2.0/\n"); //$NON-NLS-1$
+		buffer.append(" * \n"); //$NON-NLS-1$
+		buffer.append(" * SPDX-License-Identifier: EPL-2.0\n"); //$NON-NLS-1$
 		buffer.append(" * \n"); //$NON-NLS-1$
 		buffer.append(" * Contributors: \n"); //$NON-NLS-1$
 		buffer.append(" * IBM - Initial API and implementation\n"); //$NON-NLS-1$
