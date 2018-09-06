@@ -196,7 +196,7 @@ public class DesktopFileWriter {
 		return props;
 	}
 
-	private void assertDesktopEntryPresent(LinkedHashMap<String, String> props) {
+	private void assertDesktopEntryPresent(Map<String, String> props) {
 		Iterator<Entry<String, String>> iterator = props.entrySet().iterator();
 		if (iterator.hasNext() == false) {
 			throw new IllegalStateException("File seems not to be a 'desktop' file"); //$NON-NLS-1$

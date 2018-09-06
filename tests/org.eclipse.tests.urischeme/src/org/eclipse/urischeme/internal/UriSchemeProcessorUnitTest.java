@@ -105,7 +105,7 @@ public class UriSchemeProcessorUnitTest {
 		configurationElementsFields.set(instance, element);
 	}
 
-	private final class ConfigElementMock implements IConfigurationElement {
+	private static final class ConfigElementMock implements IConfigurationElement {
 		private final String uriScheme;
 		private final Object handler;
 
@@ -198,8 +198,9 @@ public class UriSchemeProcessorUnitTest {
 
 		@Override
 		public String getAttribute(String name) throws InvalidRegistryObjectException {
-			if (name.equals("uriScheme"))
+			if (name.equals("uriScheme")) {
 				return uriScheme;
+			}
 			return null;
 		}
 

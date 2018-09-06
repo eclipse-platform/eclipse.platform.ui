@@ -25,7 +25,7 @@ public interface IUriSchemeProcessor {
 	/**
 	 * The singleton instance
 	 */
-	public IUriSchemeProcessor INSTANCE = new UriSchemeProcessor();
+	IUriSchemeProcessor INSTANCE = new UriSchemeProcessor();
 
 	/**
 	 * Handle an URI with the given uriScheme

@@ -227,8 +227,7 @@ public class PlistFileWriter {
 		DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
 		try {
 			DocumentBuilder builder = factory.newDocumentBuilder();
-			Document doc = builder.parse(new InputSource(reader));
-			return doc;
+			return builder.parse(new InputSource(reader));
 		} catch (ParserConfigurationException | IOException | SAXException e) {
 			throw new IllegalArgumentException(e);
 		} finally {
@@ -293,11 +292,11 @@ public class PlistFileWriter {
 	}
 
 	private void addIndent(Node node, int indent) {
-		String text = ""; //$NON-NLS-1$
+		StringBuilder builder = new StringBuilder();
 		for (int i = 0; i < indent; i++) {
-			text += "	"; //$NON-NLS-1$
+			builder.append("	"); //$NON-NLS-1$
 		}
-		node.appendChild(document.createTextNode(text));
+		node.appendChild(document.createTextNode(builder.toString()));
 	}
 
 	private Element getExistingElementFor(String scheme) {
