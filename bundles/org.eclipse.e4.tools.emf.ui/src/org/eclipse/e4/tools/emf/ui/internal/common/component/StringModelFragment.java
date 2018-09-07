@@ -383,9 +383,10 @@ public class StringModelFragment extends AbstractComponentEditor {
 
 			KeyStroke keyStroke;
 			try {
+				char[] autoactivationChar = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ.".toCharArray();
 				keyStroke = KeyStroke.getInstance("Ctrl+Space");
 				ContentProposalAdapter adapter = new ContentProposalAdapter(featureText, new TextContentAdapter(),
-						new StringModelFragmentProposalProvider(this, featureText), keyStroke, null);
+						new StringModelFragmentProposalProvider(this, featureText), keyStroke, autoactivationChar);
 				adapter.setProposalAcceptanceStyle(ContentProposalAdapter.PROPOSAL_REPLACE);
 			} catch (ParseException e) {
 				e.printStackTrace();
