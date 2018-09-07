@@ -80,6 +80,10 @@
             id="org.eclipse.ui.tests.dnd.StandaloneViewPerspective"
             name="Standalone View DnD Perspective"/>         
       <perspective
+            class="org.eclipse.ui.tests.api.PerspectiveViewsBug538199"
+            id="org.eclipse.ui.tests.api.PerspectiveViewsBug538199"
+            name="org.eclipse.ui.tests.api.PerspectiveViewsBug538199"/>
+      <perspective
             class="org.eclipse.ui.tests.internal.Bug78470Test$MyPerspective"
             id="org.eclipse.ui.tests.internal.Bug78470Test.MyPerspective"
             name="org.eclipse.ui.tests.internal.Bug78470Test.MyPerspective"/>
@@ -96,6 +100,34 @@
             id="org.eclipse.ui.tests.propertysheet.PropertySheetPerspectiveFactory3"
             name="Second UI Test Perspective for hidden Properties view instance"/>
    </extension>
+   
+   <extension
+         point="org.eclipse.ui.perspectiveExtensions">
+      <perspectiveExtension
+            targetID="*">
+         <view
+               id="org.eclipse.ui.tests.api.MockViewPartInvisibleByDefault"
+               minimized="false"
+               ratio="0.75f"
+               relationship="stack"
+               relative="org.eclipse.ui.views.ContentOutline"
+               visible="false">
+         </view>
+      </perspectiveExtension>
+      
+      <perspectiveExtension
+            targetID="org.eclipse.ui.tests.api.PerspectiveViewsBug538199">
+         <view
+               id="org.eclipse.ui.tests.api.MockViewPartVisibleByDefault"
+               minimized="false"
+               ratio="0.75f"
+               relationship="stack"
+               relative="org.eclipse.ui.views.ContentOutline"
+               visible="true">
+         </view>
+      </perspectiveExtension>
+   </extension>
+   
    <extension
          point="org.eclipse.ui.views">
 
@@ -499,6 +531,18 @@
             name="AdaptingSaveableView">
       </view>
 
+      <view
+            name="Initially invisible view"
+            icon="icons/view.gif"
+            class="org.eclipse.ui.tests.api.MockViewPart"
+            id="org.eclipse.ui.tests.api.MockViewPartInvisibleByDefault">
+      </view>
+      <view
+            name="Initially visible view"
+            icon="icons/view.gif"
+            class="org.eclipse.ui.tests.api.MockViewPart"
+            id="org.eclipse.ui.tests.api.MockViewPartVisibleByDefault">
+      </view>
    </extension>
    <extension
          point="org.eclipse.ui.editors">

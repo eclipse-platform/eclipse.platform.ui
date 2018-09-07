@@ -2494,6 +2494,43 @@ public class IWorkbenchPageTest extends UITestCase {
 	}
 
 	/**
+	 * Tests that relative view is correctly shown if visible parameter specified.
+	 * See bug 538199 - perspectiveExtension: visible="false" not honored when
+	 * relative view does not exist
+	 */
+	public void testRelativeViewVisibility() {
+		processEvents();
+
+		fActivePage.closeAllPerspectives(true, false);
+		IPerspectiveRegistry reg = fWorkbench.getPerspectiveRegistry();
+		IPerspectiveDescriptor testPerspective = reg.findPerspectiveWithId(PerspectiveViewsBug538199.ID);
+		fActivePage.setPerspective(testPerspective);
+		try {
+			fWin.getWorkbench().showPerspective(PerspectiveViewsBug538199.ID, fWin);
+		} catch (WorkbenchException e) {
+			fail("Unexpected WorkbenchException: " + e);
+		}
+		processEvents();
+		IWorkbenchPage activePage = fWin.getActivePage();
+
+		IViewPart view;
+
+		// default view which should be shown
+		view = activePage.findView(MockViewPart.ID);
+		assertNotNull("View should be there", view);
+		assertTrue("View should be visible", fActivePage.isPartVisible(view));
+
+		// relative view with property 'visible=true' specified via xml
+		view = activePage.findView("org.eclipse.ui.tests.api.MockViewPartVisibleByDefault");
+		assertTrue("Relative 'visible' view should be visible even if the relative does not exist", //$NON-NLS-1$
+				fActivePage.isPartVisible(view));
+
+		// relative view with property 'visible=false' specified via xml
+		view = activePage.findView("org.eclipse.ui.tests.api.MockViewPartInvisibleByDefault");
+		assertNull("Relative 'invisible' part should not be visible if the relative does not exist", view);
+	}
+
+	/**
 	 * Regression test for Bug 76285 [Presentations] Folder tab does not
 	 * indicate current view. Tests that, when switching between perspectives,
 	 * the remembered old part correctly handles multi-view instances.

@@ -597,7 +597,7 @@ public class ModeledPageLayout implements IPageLayout {
 	public void stackView(String id, String refId, boolean visible) {
 		MUIElement refModel = refId.equals(getEditorArea()) ? editorStack : findElement(perspModel,
 				refId);
-		if (refModel == null) {
+		if (refModel == null && visible) {
 			addView(id, LEFT, DEFAULT_VIEW_RATIO, refId);
 			return;
 		}
