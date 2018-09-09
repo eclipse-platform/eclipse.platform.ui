@@ -12,9 +12,12 @@
  *     Tom Schindl - initial API and implementation
  *     Simon Scholz <simon.scholz@vogella.com> - Bug 442343
  *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 510301
+ *     Wim Jongman <wim.jongman@remainsoftware.com> - Added a cool barcode
  *******************************************************************************/
 
 package org.eclipse.jface.snippets.viewers;
+
+import java.util.Random;
 
 import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.ColumnLabelProvider;
@@ -33,14 +36,14 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.TableItem;
 
 /**
- * Example showing how to center an image using an owner draw label provider
+ * Example showing how to centre an image and use graphics using an owner draw
+ * label provider
  *
  */
 public class Snippet051TableCenteredImage {
 	private static Image[] images;
 
-	private abstract class CenterImageLabelProvider extends
-			OwnerDrawLabelProvider {
+	private abstract class CenterImageLabelProvider extends OwnerDrawLabelProvider {
 
 		@Override
 		protected void measure(Event event, Object element) {
@@ -52,8 +55,7 @@ public class Snippet051TableCenteredImage {
 			Image img = getImage(element);
 
 			if (img != null) {
-				Rectangle bounds = ((TableItem) event.item)
-						.getBounds(event.index);
+				Rectangle bounds = ((TableItem) event.item).getBounds(event.index);
 				Rectangle imgBounds = img.getBounds();
 				bounds.width /= 2;
 				bounds.width -= imgBounds.width / 2;
@@ -64,6 +66,14 @@ public class Snippet051TableCenteredImage {
 				int y = bounds.height > 0 ? bounds.y + bounds.height : bounds.y;
 
 				event.gc.drawImage(img, x, y);
+			} else {
+				Rectangle bounds = ((TableItem) event.item).getBounds(event.index);
+				for (int i = 0; i < bounds.width; i += 4) {
+					int width = new Random().nextInt(4) + 1;
+					event.gc.setForeground(event.display.getSystemColor(SWT.COLOR_BLACK));
+					event.gc.setLineWidth(width);
+					event.gc.drawLine(bounds.x + i, bounds.y, bounds.x + i, bounds.y + bounds.height);
+				}
 			}
 		}
 
@@ -83,8 +93,7 @@ public class Snippet051TableCenteredImage {
 		}
 	}
 
-	private static Image createImage(Display display, int red, int green,
-			int blue) {
+	private static Image createImage(Display display, int red, int green, int blue) {
 		Color color = new Color(display, red, green, blue);
 		Image image = new Image(display, 10, 10);
 		GC gc = new GC(image);
@@ -96,8 +105,7 @@ public class Snippet051TableCenteredImage {
 	}
 
 	public Snippet051TableCenteredImage(Shell shell) {
-		final TableViewer v = new TableViewer(shell, SWT.BORDER
-				| SWT.FULL_SELECTION);
+		final TableViewer v = new TableViewer(shell, SWT.BORDER | SWT.FULL_SELECTION);
 		v.setContentProvider(ArrayContentProvider.getInstance());
 
 		TableViewerColumn column = new TableViewerColumn(v, SWT.NONE);
@@ -107,7 +115,7 @@ public class Snippet051TableCenteredImage {
 
 			@Override
 			public String getText(Object element) {
-				return "Column 1 => " + element.toString();
+				return "Column 1 => " + element.toString() + ((((MyModel) element).counter % 2 != 0) ? " barcode" : "");
 			}
 		});
 
@@ -118,7 +126,10 @@ public class Snippet051TableCenteredImage {
 
 			@Override
 			protected Image getImage(Object element) {
-				return images[((MyModel) element).counter % 4];
+				if (((MyModel) element).counter % 2 == 0) {
+					return images[((MyModel) element).counter / 2 % 4];
+				}
+				return null;
 			}
 
 		});

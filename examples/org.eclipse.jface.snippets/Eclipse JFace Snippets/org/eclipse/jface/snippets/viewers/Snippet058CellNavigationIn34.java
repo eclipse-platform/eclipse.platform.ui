@@ -43,10 +43,7 @@ import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Shell;
 
 /**
- * Example for full feature cell navigation until bug 230955 is fixed
- *
- * @author Tom Schindl <tom.schindl@bestsolution.at>, Niels Lippke
- *         <niels.lippke@airpas.com>
+ * Shows how to reveal columns when they are navigated.
  *
  */
 public class Snippet058CellNavigationIn34 {
@@ -57,14 +54,13 @@ public class Snippet058CellNavigationIn34 {
 		public String email;
 		public String gender;
 
-		public Person(String givenname, String surname, String email,
-				String gender) {
+		public Person(String givenname, String surname, String email, String gender) {
 			this.givenname = givenname;
 			this.surname = surname;
 			this.email = email;
 			this.gender = gender;
 		}
-	}
+		}
 
 	protected abstract class AbstractEditingSupport extends EditingSupport {
 		private final CellEditor editor;
@@ -72,35 +68,34 @@ public class Snippet058CellNavigationIn34 {
 		public AbstractEditingSupport(TableViewer viewer) {
 			super(viewer);
 			this.editor = new TextCellEditor(viewer.getTable());
-		}
+			}
 
 		public AbstractEditingSupport(TableViewer viewer, CellEditor editor) {
 			super(viewer);
 			this.editor = editor;
-		}
+			}
 
-		@Override
+			@Override
 		protected boolean canEdit(Object element) {
 			return true;
-		}
+			}
 
-		@Override
+			@Override
 		protected CellEditor getCellEditor(Object element) {
 			return editor;
-		}
+			}
 
-		@Override
+			@Override
 		protected void setValue(Object element, Object value) {
 			doSetValue(element, value);
 			getViewer().update(element, null);
-		}
+			}
 
 		protected abstract void doSetValue(Object element, Object value);
 	}
 
 	public Snippet058CellNavigationIn34(Shell shell) {
-		final TableViewer v = new TableViewer(shell, SWT.BORDER
-				| SWT.FULL_SELECTION);
+		final TableViewer v = new TableViewer(shell, SWT.BORDER | SWT.FULL_SELECTION);
 		v.setContentProvider(ArrayContentProvider.getInstance());
 
 		TableViewerColumn column = null;
@@ -177,16 +172,14 @@ public class Snippet058CellNavigationIn34 {
 			@Override
 			public String getText(Object element) {
 				return ((Person) element).gender;
-			}
+				}
 
 		});
 
-		ComboBoxCellEditor editor = new ComboBoxCellEditor(v.getTable(),
-				new String[] { "M", "F" });
+		ComboBoxCellEditor editor = new ComboBoxCellEditor(v.getTable(), new String[] { "M", "F" });
 		editor.setActivationStyle(ComboBoxCellEditor.DROP_DOWN_ON_TRAVERSE_ACTIVATION
 				| ComboBoxCellEditor.DROP_DOWN_ON_PROGRAMMATIC_ACTIVATION
-				| ComboBoxCellEditor.DROP_DOWN_ON_MOUSE_ACTIVATION
-				| ComboBoxCellEditor.DROP_DOWN_ON_KEY_ACTIVATION);
+				| ComboBoxCellEditor.DROP_DOWN_ON_MOUSE_ACTIVATION | ComboBoxCellEditor.DROP_DOWN_ON_KEY_ACTIVATION);
 
 		column.setEditingSupport(new AbstractEditingSupport(v, editor) {
 
@@ -195,7 +188,7 @@ public class Snippet058CellNavigationIn34 {
 				if (((Person) element).gender.equals("M"))
 					return Integer.valueOf(0);
 				return Integer.valueOf(1);
-			}
+				}
 
 			@Override
 			protected void doSetValue(Object element, Object value) {
@@ -203,7 +196,7 @@ public class Snippet058CellNavigationIn34 {
 					((Person) element).gender = "M";
 				} else {
 					((Person) element).gender = "F";
-				}
+					}
 			}
 
 		});
@@ -211,28 +204,24 @@ public class Snippet058CellNavigationIn34 {
 		CellNavigationStrategy naviStrat = new CellNavigationStrategy() {
 
 			@Override
-			public ViewerCell findSelectedCell(ColumnViewer viewer,
-					ViewerCell currentSelectedCell, Event event) {
-				ViewerCell cell = super.findSelectedCell(viewer,
-						currentSelectedCell, event);
+			public ViewerCell findSelectedCell(ColumnViewer viewer, ViewerCell currentSelectedCell, Event event) {
+				ViewerCell cell = super.findSelectedCell(viewer, currentSelectedCell, event);
 
 				if (cell != null) {
-					v.getTable().showColumn(
-							v.getTable().getColumn(cell.getColumnIndex()));
-				}
+						v.getTable().showColumn(
+								v.getTable().getColumn(cell.getColumnIndex()));
+					}
 				return cell;
 			}
 
 		};
 
-		TableViewerFocusCellManager focusCellManager = new TableViewerFocusCellManager(
-				v, new FocusCellOwnerDrawHighlighter(v), naviStrat);
+		TableViewerFocusCellManager focusCellManager = new TableViewerFocusCellManager(v,
+				new FocusCellOwnerDrawHighlighter(v), naviStrat);
 
-		ColumnViewerEditorActivationStrategy actSupport = new ColumnViewerEditorActivationStrategy(
-				v) {
+		ColumnViewerEditorActivationStrategy actSupport = new ColumnViewerEditorActivationStrategy(v) {
 			@Override
-			protected boolean isEditorActivationEvent(
-					ColumnViewerEditorActivationEvent event) {
+			protected boolean isEditorActivationEvent(ColumnViewerEditorActivationEvent event) {
 				return event.eventType == ColumnViewerEditorActivationEvent.TRAVERSAL
 						|| event.eventType == ColumnViewerEditorActivationEvent.MOUSE_DOUBLE_CLICK_SELECTION
 						|| (event.eventType == ColumnViewerEditorActivationEvent.KEY_PRESSED && event.keyCode == SWT.CR)
@@ -240,40 +229,32 @@ public class Snippet058CellNavigationIn34 {
 			}
 		};
 
-		int feature = ColumnViewerEditor.TABBING_HORIZONTAL
-				| ColumnViewerEditor.TABBING_MOVE_TO_ROW_NEIGHBOR
-				| ColumnViewerEditor.TABBING_VERTICAL
-				| ColumnViewerEditor.KEYBOARD_ACTIVATION;
+		int feature = ColumnViewerEditor.TABBING_HORIZONTAL | ColumnViewerEditor.TABBING_MOVE_TO_ROW_NEIGHBOR
+				| ColumnViewerEditor.TABBING_VERTICAL | ColumnViewerEditor.KEYBOARD_ACTIVATION;
 
 		TableViewerEditor.create(v, focusCellManager, actSupport, feature);
 
-		v.getColumnViewerEditor().addEditorActivationListener(
-				new ColumnViewerEditorActivationListener() {
+		v.getColumnViewerEditor().addEditorActivationListener(new ColumnViewerEditorActivationListener() {
 
-					@Override
-					public void afterEditorActivated(
-							ColumnViewerEditorActivationEvent event) {
-					}
+			@Override
+			public void afterEditorActivated(ColumnViewerEditorActivationEvent event) {
+			}
 
-					@Override
-					public void afterEditorDeactivated(
-							ColumnViewerEditorDeactivationEvent event) {
-					}
+			@Override
+			public void afterEditorDeactivated(ColumnViewerEditorDeactivationEvent event) {
+			}
 
-					@Override
-					public void beforeEditorActivated(
-							ColumnViewerEditorActivationEvent event) {
-						ViewerCell cell = (ViewerCell) event.getSource();
-						v.getTable().showColumn(
-								v.getTable().getColumn(cell.getColumnIndex()));
-					}
+			@Override
+			public void beforeEditorActivated(ColumnViewerEditorActivationEvent event) {
+				ViewerCell cell = (ViewerCell) event.getSource();
+				v.getTable().showColumn(v.getTable().getColumn(cell.getColumnIndex()));
+			}
 
-					@Override
-					public void beforeEditorDeactivated(
-							ColumnViewerEditorDeactivationEvent event) {
-					}
+			@Override
+			public void beforeEditorDeactivated(ColumnViewerEditorDeactivationEvent event) {
+			}
 
-				});
+		});
 
 		Person[] model = createModel();
 		v.setInput(model);
@@ -291,14 +272,11 @@ public class Snippet058CellNavigationIn34 {
 	}
 
 	private Person[] createModel() {
-		return new Person[] {
-				new Person("Tom", "Schindl", "tom.schindl@bestsolution.at", "M"),
-				new Person("Boris", "Bokowski", "Boris_Bokowski@ca.ibm.com",
-						"M"),
+		return new Person[] { new Person("Tom", "Schindl", "tom.schindl@bestsolution.at", "M"),
+				new Person("Boris", "Bokowski", "Boris_Bokowski@ca.ibm.com", "M"),
 				new Person("Tod", "Creasey", "Tod_Creasey@ca.ibm.com", "M"),
 				new Person("Wayne", "Beaton", "wayne@eclipse.org", "M"),
-				new Person("Jeanderson", "Candido", "jeandersonbc@gmail.com",
-						"M"),
+				new Person("Jeanderson", "Candido", "jeandersonbc@gmail.com", "M"),
 				new Person("Lars", "Vogel", "lars.vogel@gmail.com", "M"),
 				new Person("Hendrik", "Still", "hendrik.still@vogella.com", "M") };
 	}
@@ -312,6 +290,7 @@ public class Snippet058CellNavigationIn34 {
 		Shell shell = new Shell(display);
 		shell.setLayout(new FillLayout());
 		new Snippet058CellNavigationIn34(shell);
+		shell.setSize(300, 300);
 		shell.open();
 
 		while (!shell.isDisposed()) {
@@ -321,6 +300,6 @@ public class Snippet058CellNavigationIn34 {
 
 		display.dispose();
 
-	}
+		}
 
-}
+	}

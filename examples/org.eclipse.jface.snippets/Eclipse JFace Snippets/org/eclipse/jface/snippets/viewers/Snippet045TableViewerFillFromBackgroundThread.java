@@ -73,7 +73,11 @@ public class Snippet045TableViewerFillFromBackgroundThread {
 
 		@Override
 		public String getColumnText(Object element, int columnIndex) {
-			return "Column " + columnIndex + " => " + element.toString();
+			MyModel m = (MyModel) element;
+			if (m.counter == 0) {
+				return "Column " + columnIndex + " => " + "Initial input";
+			}
+			return "Column " + columnIndex + " => thread added " + element.toString();
 		}
 
 		@Override
@@ -118,6 +122,9 @@ public class Snippet045TableViewerFillFromBackgroundThread {
 		column.setText("Column 2");
 
 		final List<MyModel> model = new ArrayList<>();
+		model.add(new MyModel(0));
+		model.add(new MyModel(0));
+		model.add(new MyModel(0));
 		v.setInput(model);
 		v.setComparator(new ViewerComparator() {
 			@Override
@@ -144,7 +151,7 @@ public class Snippet045TableViewerFillFromBackgroundThread {
 		};
 
 		Timer timer = new Timer(true);
-		timer.scheduleAtFixedRate(task, 1000, 1000);
+		timer.scheduleAtFixedRate(task, 3000, 1000);
 	}
 
 	/**

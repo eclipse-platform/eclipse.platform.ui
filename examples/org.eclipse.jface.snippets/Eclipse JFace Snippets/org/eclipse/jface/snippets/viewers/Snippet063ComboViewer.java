@@ -18,6 +18,7 @@ package org.eclipse.jface.snippets.viewers;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 import org.eclipse.jface.layout.GridLayoutFactory;
 import org.eclipse.jface.layout.LayoutConstants;
@@ -66,7 +67,7 @@ public class Snippet063ComboViewer {
 
 		// Select the initial Element
 		if (model.size() > 0) {
-			v.setSelection(new StructuredSelection(model.get(0)));
+			v.setSelection(new StructuredSelection(model.get(new Random().nextInt(model.size()))));
 		}
 	}
 

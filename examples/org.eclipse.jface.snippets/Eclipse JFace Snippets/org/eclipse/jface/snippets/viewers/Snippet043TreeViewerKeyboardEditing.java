@@ -53,7 +53,7 @@ import org.eclipse.swt.widgets.Shell;
 public class Snippet043TreeViewerKeyboardEditing {
 	public Snippet043TreeViewerKeyboardEditing(final Shell shell) {
 		Button b = new Button(shell, SWT.PUSH);
-		b.setText("BBB");
+		b.setText("Press Tab, or click here to edit first child element");
 		final TreeViewer v = new TreeViewer(shell, SWT.BORDER
 				| SWT.FULL_SELECTION);
 		b.addSelectionListener(new SelectionAdapter() {

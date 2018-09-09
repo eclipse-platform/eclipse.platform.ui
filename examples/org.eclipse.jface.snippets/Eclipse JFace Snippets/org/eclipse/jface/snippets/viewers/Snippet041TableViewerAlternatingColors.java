@@ -95,6 +95,7 @@ public class Snippet041TableViewerAlternatingColors {
 	final private OptimizedIndexSearcher searcher = new OptimizedIndexSearcher();
 
 	public Snippet041TableViewerAlternatingColors(Shell shell) {
+
 		final TableViewer viewer = new TableViewer(shell, SWT.BORDER
 				| SWT.FULL_SELECTION | SWT.VIRTUAL);
 
@@ -108,6 +109,7 @@ public class Snippet041TableViewerAlternatingColors {
 		viewer.getTable().setHeaderVisible(true);
 
 		Button b = new Button(shell, SWT.PUSH);
+		b.setText("Press to toggle filter");
 		b.addSelectionListener(createAdapterFor(viewer));
 	}
 

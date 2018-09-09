@@ -13,12 +13,14 @@
  *     Jeanderson Candido <http://jeandersonbc.github.io> - Bug 414565
  *     Simon Scholz <simon.scholz@vogella.com> - Bug 442343, 442747
  *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 442278, 475361
+ *     Wim Jongman <wim.jongman@remainsoftware.com> - Added doc and made stable
  *******************************************************************************/
 package org.eclipse.jface.snippets.viewers;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.CellEditor;
 import org.eclipse.jface.viewers.ColumnLabelProvider;
 import org.eclipse.jface.viewers.ColumnViewer;
@@ -44,7 +46,7 @@ import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.swt.widgets.Shell;
 
 /**
- *
+ * Demonstrates how you can start editing a cell after selecting a context menu.
  */
 public class Snippet053StartEditorWithContextMenu extends SelectionAdapter {
 
@@ -89,7 +91,9 @@ public class Snippet053StartEditorWithContextMenu extends SelectionAdapter {
 
 	public class MyModel {
 		public MyModel parent;
+
 		public List<MyModel> child = new ArrayList<>();
+
 		public int counter;
 
 		public MyModel(int counter, MyModel parent) {
@@ -132,10 +136,14 @@ public class Snippet053StartEditorWithContextMenu extends SelectionAdapter {
 
 		@Override
 		protected void setValue(Object element, Object value) {
-			((MyModel) element).counter = Integer.parseInt(value.toString());
-			getViewer().update(element, null);
-		}
+			try {
+				((MyModel) element).counter = Integer.parseInt(value.toString());
+				getViewer().update(element, null);
+			} catch (Exception e) {
+				MessageDialog.openError(viewer.getControl().getShell(), "Oops", "We only accept numbers..");
+			}
 
+		}
 	}
 
 	public Snippet053StartEditorWithContextMenu(Shell shell) {

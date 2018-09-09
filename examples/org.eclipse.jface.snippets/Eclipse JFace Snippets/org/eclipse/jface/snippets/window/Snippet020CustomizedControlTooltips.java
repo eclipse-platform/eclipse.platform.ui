@@ -181,7 +181,8 @@ public class Snippet020CustomizedControlTooltips {
 				layout.marginWidth=5;
 				comp.setLayout(layout);
 				Link l = new Link(comp,SWT.NONE);
-				l.setText("This a custom tooltip you can: \n- pop up any control you want\n- define delays\n - ... \nGo and get Eclipse M4 from <a>http://www.eclipse.org</a>");
+				l.setText(
+						"This a custom tooltip you can: \n- pop up any control you want\n- define delays\n - ... \nGo and get Eclipse from <a>http://www.eclipse.org</a>");
 				l.setBackground(parent.getDisplay().getSystemColor(SWT.COLOR_INFO_BACKGROUND));
 				l.addSelectionListener(new SelectionAdapter() {
 					@Override
