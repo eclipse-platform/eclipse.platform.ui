@@ -1,7 +1,7 @@
 package org.eclipse.ui.tests.themes;
 
-import static org.mockito.Matchers.anyBoolean;
-import static org.mockito.Matchers.anyObject;
+import static org.mockito.ArgumentMatchers.anyBoolean;
+import static org.mockito.ArgumentMatchers.anyObject;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
@@ -119,7 +119,7 @@ public class StylingPreferencesHandlerTest extends TestCase {
 		verify(handler, times(1)).resetOverriddenPreferences();
 	}
 
-	protected static class StylingPreferencesHandlerTestable extends StylingPreferencesHandler {
+	public static class StylingPreferencesHandlerTestable extends StylingPreferencesHandler {
 		public StylingPreferencesHandlerTestable(Display display) {
 			super(display);
 		}
