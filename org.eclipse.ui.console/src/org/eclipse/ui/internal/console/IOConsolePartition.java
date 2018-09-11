@@ -75,6 +75,11 @@ public class IOConsolePartition implements ITypedRegion {
 	 * @param offset the offset in the partition
 	 */
 	public void insert(String s, int insertOffset) {
+		if (insertOffset < 0) {
+			insertOffset = 0;
+		} else if (insertOffset > buffer.length()) {
+			insertOffset = buffer.length();
+		}
 		buffer.insert(insertOffset, s);
 		length += s.length();
 	}
