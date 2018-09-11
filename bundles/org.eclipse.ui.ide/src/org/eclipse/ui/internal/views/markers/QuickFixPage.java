@@ -23,6 +23,7 @@ import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
+import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.CheckboxTableViewer;
 import org.eclipse.jface.viewers.ColumnWeightData;
 import org.eclipse.jface.viewers.ILabelProviderListener;
@@ -79,7 +80,7 @@ public class QuickFixPage extends WizardPage {
 	private TableViewer resolutionsList;
 	private CheckboxTableViewer markersTable;
 	private IWorkbenchPartSite site;
-	private final IMarker[] selectedMarkers;
+	private IMarker[] selectedMarkers;
 
 
 	/**
@@ -122,8 +123,7 @@ public class QuickFixPage extends WizardPage {
 		control.setLayout(layout);
 
 		Label resolutionsLabel = new Label(control, SWT.NONE);
-		resolutionsLabel
-				.setText(MarkerMessages.MarkerResolutionDialog_Resolutions_List_Title);
+		resolutionsLabel.setText(MarkerMessages.MarkerResolutionDialog_Resolutions_List_Title);
 
 		resolutionsLabel.setLayoutData(new FormData());
 
@@ -137,8 +137,7 @@ public class QuickFixPage extends WizardPage {
 		resolutionsList.getControl().setLayoutData(listData);
 
 		Label title = new Label(control, SWT.NONE);
-		title
-				.setText(MarkerMessages.MarkerResolutionDialog_Problems_List_Title);
+		title.setText(MarkerMessages.MarkerResolutionDialog_Problems_List_Title);
 		FormData labelData = new FormData();
 		labelData.top = new FormAttachment(resolutionsList.getControl(), 0);
 		labelData.left = new FormAttachment(0);
@@ -163,8 +162,7 @@ public class QuickFixPage extends WizardPage {
 
 		Dialog.applyDialogFont(control);
 
-		resolutionsList.setSelection(new StructuredSelection(resolutionsList
-				.getElementAt(0)));
+		resolutionsList.setSelection(new StructuredSelection(resolutionsList.getElementAt(0)));
 
 		markersTable.setCheckedElements(selectedMarkers);
 
@@ -219,25 +217,8 @@ public class QuickFixPage extends WizardPage {
 	 * @param control
 	 */
 	private void createResolutionsList(Composite control) {
-		resolutionsList= new TableViewer(control, SWT.BORDER | SWT.SINGLE
-				| SWT.V_SCROLL);
-		resolutionsList.setContentProvider(new IStructuredContentProvider() {
-			@Override
-			public Object[] getElements(Object inputElement) {
-				return resolutions.keySet().toArray();
-			}
-
-			@Override
-			public void dispose() {
-
-			}
-
-			@Override
-			public void inputChanged(Viewer viewer, Object oldInput,
-					Object newInput) {
-
-			}
-		});
+		resolutionsList = new TableViewer(control, SWT.BORDER | SWT.SINGLE | SWT.V_SCROLL);
+		resolutionsList.setContentProvider(ArrayContentProvider.getInstance());
 
 		resolutionsList.setLabelProvider(new LabelProvider() {
 			@Override
@@ -251,7 +232,7 @@ public class QuickFixPage extends WizardPage {
 			}
 		});
 
-		resolutionsList.setInput(this);
+		resolutionsList.setInput(resolutions.keySet().toArray());
 
 		resolutionsList.setComparator(new ViewerComparator() {
 			/**
@@ -292,8 +273,7 @@ public class QuickFixPage extends WizardPage {
 	 * @param control
 	 */
 	private void createMarkerTable(Composite control) {
-		markersTable = CheckboxTableViewer.newCheckList(control, SWT.BORDER
-				| SWT.V_SCROLL | SWT.SINGLE);
+		markersTable = CheckboxTableViewer.newCheckList(control, SWT.BORDER | SWT.V_SCROLL | SWT.SINGLE);
 
 		createTableColumns();
 
@@ -305,7 +285,8 @@ public class QuickFixPage extends WizardPage {
 
 			@Override
 			public Object[] getElements(Object inputElement) {
-				IMarkerResolution selected = getSelectedResolution();
+				IMarkerResolution selected = (IMarkerResolution) resolutionsList.getStructuredSelection()
+						.getFirstElement();
 				if (selected == null) {
 					return new Object[0];
 				}
@@ -317,8 +298,7 @@ public class QuickFixPage extends WizardPage {
 			}
 
 			@Override
-			public void inputChanged(Viewer viewer, Object oldInput,
-					Object newInput) {
+			public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
 
 			}
 		});
@@ -328,8 +308,7 @@ public class QuickFixPage extends WizardPage {
 			@Override
 			public Image getColumnImage(Object element, int columnIndex) {
 				if (columnIndex == 0)
-					return Util.getImage(((IMarker) element).getAttribute(
-							IMarker.SEVERITY, -1));
+					return Util.getImage(((IMarker) element).getAttribute(IMarker.SEVERITY, -1));
 				return null;
 			}
 
@@ -436,12 +415,10 @@ public class QuickFixPage extends WizardPage {
 
 		layout.addColumnData(new ColumnWeightData(70, true));
 		TableColumn tc = new TableColumn(table, SWT.NONE, 0);
-		tc
-				.setText(MarkerMessages.MarkerResolutionDialog_Problems_List_Location);
+		tc.setText(MarkerMessages.MarkerResolutionDialog_Problems_List_Location);
 		layout.addColumnData(new ColumnWeightData(30, true));
 		tc = new TableColumn(table, SWT.NONE, 0);
-		tc
-				.setText(MarkerMessages.MarkerResolutionDialog_Problems_List_Resource);
+		tc.setText(MarkerMessages.MarkerResolutionDialog_Problems_List_Resource);
 
 	}
 
@@ -451,9 +428,9 @@ public class QuickFixPage extends WizardPage {
 	 * @return IMarker or <code>null</code>
 	 */
 	public IMarker getSelectedMarker() {
-		ISelection selection = markersTable.getSelection();
-		if (!selection.isEmpty() && selection instanceof IStructuredSelection) {
-			IStructuredSelection struct = (IStructuredSelection) selection;
+		IStructuredSelection selection = markersTable.getStructuredSelection();
+		if (!selection.isEmpty()) {
+			IStructuredSelection struct = selection;
 			if (struct.size() == 1)
 				return (IMarker) struct.getFirstElement();
 		}
@@ -472,11 +449,12 @@ public class QuickFixPage extends WizardPage {
 	 */
 	void performFinish(IProgressMonitor monitor) {
 
-		final IMarkerResolution resolution = getSelectedResolution();
+		IMarkerResolution resolution = (IMarkerResolution) resolutionsList.getStructuredSelection()
+				.getFirstElement();
 		if (resolution == null)
 			return;
 
-		final Object[] checked = markersTable.getCheckedElements();
+		Object[] checked = markersTable.getCheckedElements();
 		if (checked.length == 0)
 			return;
 
@@ -488,12 +466,8 @@ public class QuickFixPage extends WizardPage {
 					System.arraycopy(checked, 0, markers, 0, checked.length);
 					((WorkbenchMarkerResolution) resolution).run(markers, monitor1);
 				});
-			} catch (InvocationTargetException e) {
-				StatusManager.getManager().handle(
-						MarkerSupportInternalUtilities.errorFor(e));
-			} catch (InterruptedException e) {
-				StatusManager.getManager().handle(
-						MarkerSupportInternalUtilities.errorFor(e));
+			} catch (InvocationTargetException | InterruptedException e) {
+				StatusManager.getManager().handle(MarkerSupportInternalUtilities.errorFor(e));
 			}
 
 		} else {
@@ -522,25 +496,6 @@ public class QuickFixPage extends WizardPage {
 			}
 
 		}
-
-	}
-
-	/**
-	 * Return the marker resolution that is currently selected/
-	 *
-	 * @return IMarkerResolution or <code>null</code> if there is no
-	 *         selection.
-	 */
-	private IMarkerResolution getSelectedResolution() {
-		ISelection selection = resolutionsList.getSelection();
-		if (!(selection instanceof IStructuredSelection)) {
-			return null;
-		}
-
-		Object first = ((IStructuredSelection) selection).getFirstElement();
-
-		return (IMarkerResolution) first;
-
 	}
 
 }
