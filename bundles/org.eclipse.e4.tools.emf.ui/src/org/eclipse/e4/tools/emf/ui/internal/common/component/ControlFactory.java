@@ -52,7 +52,6 @@ import org.eclipse.e4.ui.internal.workbench.E4XMIResource;
 import org.eclipse.e4.ui.model.application.MApplicationElement;
 import org.eclipse.e4.ui.model.application.MContribution;
 import org.eclipse.e4.ui.model.application.commands.impl.CommandsPackageImpl;
-import org.eclipse.e4.ui.model.application.descriptor.basic.MPartDescriptor;
 import org.eclipse.e4.ui.model.application.impl.ApplicationFactoryImpl;
 import org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl;
 import org.eclipse.e4.ui.model.application.ui.MUILabel;
@@ -890,7 +889,7 @@ public class ControlFactory {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				final ContributionClassDialog dialog = new ContributionClassDialog(b.getShell(), eclipseContext,
-						editor.getEditingDomain(), (MPartDescriptor) editor.getMaster().getValue(),
+						editor.getEditingDomain(), (MApplicationElement) editor.getMaster().getValue(),
 						feature, Messages);
 				dialog.open();
 			}
