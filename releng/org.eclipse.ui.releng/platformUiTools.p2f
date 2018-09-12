@@ -32,12 +32,12 @@
         <repository location='http://download.eclipse.org/tools/orbit/R-builds/R20180606145124/repository'/>
       </repositories>
     </iu>
-    <iu id='org.hamcrest.integration' name='org.hamcrest.integration' version='0.0.0'>
+    <iu id='org.hamcrest.integration' name='org.hamcrest.integration' version='1.3.0'>
       <repositories size='1'>
         <repository location='http://download.eclipse.org/tools/orbit/R-builds/R20180606145124/repository'/>
       </repositories>
     </iu>
-    <iu id='org.hamcrest.library' name='org.hamcrest.library' version='0.0.0'>
+    <iu id='org.hamcrest.library' name='org.hamcrest.library' version='1.3.0'>
       <repositories size='1'>
         <repository location='http://download.eclipse.org/tools/orbit/R-builds/R20180606145124/repository'/>
       </repositories>
@@ -92,14 +92,9 @@
             <repository location='http://download.eclipse.org/releases/photon/'/>
         </repositories>
     </iu>
-    <iu id='org.mockito' name='Java Mocking and Stubbing Framework' version='0.0.0'>
+    <iu id='org.mockito' name='Java Mocking and Stubbing Framework' version='2.13.0'>
         <repositories size='1'>
             <repository location='http://download.eclipse.org/tools/orbit/R-builds/R20180606145124/repository'/>
-        </repositories>
-    </iu>
-    <iu id='com.google.gson' name='com.google.gson' version='0.0.0'>
-        <repositories size='1'>
-            <repository location='http://download.eclipse.org/releases/photon/'/>
         </repositories>
     </iu>
     <iu id='com.github.spotbugs.plugin.eclipse.feature.group' name='SpotBugs Feature' version='0.0.0'>
