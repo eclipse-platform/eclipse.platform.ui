@@ -6,8 +6,6 @@
 
 # Prints debug information on running background jobs
 org.eclipse.core.jobs/jobs=false
-# Includes current date and time in job debug information
-org.eclipse.core.jobs/jobs/timing=false
 # Prints debug information when scheduling rules begin and end, and for mismatched beginRule/endRule pairs
 org.eclipse.core.jobs/jobs/beginend=false
 # Pedantic assertion checking on locks and deadlock reporting

@@ -22,14 +22,11 @@
  *******************************************************************************/
 package org.eclipse.core.internal.jobs;
 
-//don't use ICU because this is used for debugging only (see bug 135785)
-import java.text.*;
 import java.util.*;
 import org.eclipse.core.internal.runtime.RuntimeLog;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.jobs.*;
-import org.eclipse.osgi.service.debug.DebugOptions;
-import org.eclipse.osgi.service.debug.DebugOptionsListener;
+import org.eclipse.osgi.service.debug.*;
 import org.eclipse.osgi.util.NLS;
 
 /**
@@ -73,19 +70,17 @@ public class JobManager implements IJobManager, DebugOptionsListener {
 	private static final String OPTION_DEBUG_YIELDING = PI_JOBS + "/jobs/yielding"; //$NON-NLS-1$
 	private static final String OPTION_DEBUG_YIELDING_DETAILED = PI_JOBS + "/jobs/yielding/detailed"; //$NON-NLS-1$
 	private static final String OPTION_DEBUG_JOBS = PI_JOBS + "/jobs"; //$NON-NLS-1$
-	private static final String OPTION_DEBUG_JOBS_TIMING = PI_JOBS + "/jobs/timing"; //$NON-NLS-1$
 	private static final String OPTION_LOCKS = PI_JOBS + "/jobs/locks"; //$NON-NLS-1$
 	private static final String OPTION_SHUTDOWN = PI_JOBS + "/jobs/shutdown"; //$NON-NLS-1$
 
+	static DebugTrace DEBUG_TRACE;
 	static boolean DEBUG = false;
 	static boolean DEBUG_BEGIN_END = false;
 	static boolean DEBUG_YIELDING = false;
 	static boolean DEBUG_YIELDING_DETAILED = false;
 	static boolean DEBUG_DEADLOCK = false;
 	static boolean DEBUG_LOCKS = false;
-	static boolean DEBUG_TIMING = false;
 	static boolean DEBUG_SHUTDOWN = false;
-	private static DateFormat DEBUG_FORMAT;
 
 	/**
 	 * The singleton job manager instance. It must be a singleton because
@@ -204,16 +199,7 @@ public class JobManager implements IJobManager, DebugOptionsListener {
 	private final InternalWorker internalWorker;
 
 	public static void debug(String msg) {
-		StringBuffer msgBuf = new StringBuffer(msg.length() + 40);
-		if (DEBUG_TIMING) {
-			//lazy initialize to avoid overhead when not debugging
-			if (DEBUG_FORMAT == null)
-				DEBUG_FORMAT = new SimpleDateFormat("HH:mm:ss.SSS"); //$NON-NLS-1$
-			DEBUG_FORMAT.format(new Date(), msgBuf, new FieldPosition(0));
-			msgBuf.append('-');
-		}
-		msgBuf.append('[').append(Thread.currentThread()).append(']').append(msg);
-		System.out.println(msgBuf.toString());
+		DEBUG_TRACE.trace(null, msg);
 	}
 
 	/**
@@ -1139,13 +1125,13 @@ public class JobManager implements IJobManager, DebugOptionsListener {
 
 	@Override
 	public void optionsChanged(DebugOptions options) {
+		DEBUG_TRACE = options.newDebugTrace(PI_JOBS);
 		DEBUG = options.getBooleanOption(OPTION_DEBUG_JOBS, false);
 		DEBUG_BEGIN_END = options.getBooleanOption(OPTION_DEBUG_BEGIN_END, false);
 		DEBUG_YIELDING = options.getBooleanOption(OPTION_DEBUG_YIELDING, false);
 		DEBUG_YIELDING_DETAILED = options.getBooleanOption(OPTION_DEBUG_YIELDING_DETAILED, false);
 		DEBUG_DEADLOCK = options.getBooleanOption(OPTION_DEADLOCK_ERROR, false);
 		DEBUG_LOCKS = options.getBooleanOption(OPTION_LOCKS, false);
-		DEBUG_TIMING = options.getBooleanOption(OPTION_DEBUG_JOBS_TIMING, false);
 		DEBUG_SHUTDOWN = options.getBooleanOption(OPTION_SHUTDOWN, false);
 	}
 

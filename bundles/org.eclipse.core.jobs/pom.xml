@@ -5,7 +5,7 @@
   are made available under the terms of the Eclipse Distribution License v1.0
   which accompanies this distribution, and is available at
   http://www.eclipse.org/org/documents/edl-v10.php
- 
+
   Contributors:
      Igor Fedorenko - initial implementation
      Lars Vogel <Lars.Vogel@gmail.com> - Bug 432078
@@ -20,7 +20,7 @@
   </parent>
   <groupId>org.eclipse.core</groupId>
   <artifactId>org.eclipse.core.jobs</artifactId>
-  <version>3.10.100-SNAPSHOT</version>
+  <version>3.10.200-SNAPSHOT</version>
   <packaging>eclipse-plugin</packaging>
   <properties>
     <code.ignoredWarnings>-warn:-deprecation,raw,unchecked</code.ignoredWarnings>
