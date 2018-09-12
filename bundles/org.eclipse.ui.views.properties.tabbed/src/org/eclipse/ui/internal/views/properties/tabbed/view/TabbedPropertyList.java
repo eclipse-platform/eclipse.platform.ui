@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2001, 2015 IBM Corporation and others.
+ * Copyright (c) 2001, 2018 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -31,12 +31,8 @@ import org.eclipse.swt.events.FocusEvent;
 import org.eclipse.swt.events.FocusListener;
 import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
-import org.eclipse.swt.events.MouseMoveListener;
 import org.eclipse.swt.events.MouseTrackAdapter;
 import org.eclipse.swt.events.PaintEvent;
-import org.eclipse.swt.events.PaintListener;
-import org.eclipse.swt.events.TraverseEvent;
-import org.eclipse.swt.events.TraverseListener;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.FontMetrics;
 import org.eclipse.swt.graphics.GC;
@@ -51,7 +47,6 @@ import org.eclipse.swt.widgets.Canvas;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
-import org.eclipse.swt.widgets.Listener;
 import org.eclipse.ui.forms.FormColors;
 import org.eclipse.ui.internal.views.properties.tabbed.l10n.TabbedPropertyMessages;
 import org.eclipse.ui.views.properties.tabbed.ITabItem;
@@ -165,13 +160,7 @@ public class TabbedPropertyList
 			selected = false;
 			this.index = index;
 
-			addPaintListener(new PaintListener() {
-
-				@Override
-				public void paintControl(PaintEvent e) {
-					paint(e);
-				}
-			});
+			addPaintListener(e -> paint(e));
 			addMouseListener(new MouseAdapter() {
 
 				@Override
@@ -192,14 +181,10 @@ public class TabbedPropertyList
 					}
 				}
 			});
-			addMouseMoveListener(new MouseMoveListener() {
-
-				@Override
-				public void mouseMove(MouseEvent e) {
-					if (!hover) {
-						hover = true;
-						redraw();
-					}
+			addMouseMoveListener(e -> {
+				if (!hover) {
+					hover = true;
+					redraw();
 				}
 			});
 			addMouseTrackListener(new MouseTrackAdapter() {
@@ -452,13 +437,7 @@ public class TabbedPropertyList
 		 */
 		public TopNavigationElement(Composite parent) {
 			super(parent, SWT.NO_FOCUS);
-			addPaintListener(new PaintListener() {
-
-				@Override
-				public void paintControl(PaintEvent e) {
-					paint(e);
-				}
-			});
+			addPaintListener(e -> paint(e));
 			addMouseListener(new MouseAdapter() {
 
 				@Override
@@ -541,13 +520,7 @@ public class TabbedPropertyList
 		 */
 		public BottomNavigationElement(Composite parent) {
 			super(parent, SWT.NO_FOCUS);
-			addPaintListener(new PaintListener() {
-
-				@Override
-				public void paintControl(PaintEvent e) {
-					paint(e);
-				}
-			});
+			addPaintListener(e -> paint(e));
 			addMouseListener(new MouseAdapter() {
 
 				@Override
@@ -660,26 +633,21 @@ public class TabbedPropertyList
 				computeTopAndBottomTab();
 			}
 		});
-		this.addTraverseListener(new TraverseListener() {
-
-			@Override
-			public void keyTraversed(TraverseEvent e) {
-				if (e.detail == SWT.TRAVERSE_ARROW_PREVIOUS
-					|| e.detail == SWT.TRAVERSE_ARROW_NEXT) {
-					int nMax = elements.length - 1;
-					int nCurrent = getSelectionIndex();
-					if (e.detail == SWT.TRAVERSE_ARROW_PREVIOUS) {
-						nCurrent -= 1;
-						nCurrent = Math.max(0, nCurrent);
-					} else if (e.detail == SWT.TRAVERSE_ARROW_NEXT) {
-						nCurrent += 1;
-						nCurrent = Math.min(nCurrent, nMax);
-					}
-					select(nCurrent);
-					redraw();
-				} else {
-					e.doit = true;
+		this.addTraverseListener(e -> {
+			if (e.detail == SWT.TRAVERSE_ARROW_PREVIOUS || e.detail == SWT.TRAVERSE_ARROW_NEXT) {
+				int nMax = elements.length - 1;
+				int nCurrent = getSelectionIndex();
+				if (e.detail == SWT.TRAVERSE_ARROW_PREVIOUS) {
+					nCurrent -= 1;
+					nCurrent = Math.max(0, nCurrent);
+				} else if (e.detail == SWT.TRAVERSE_ARROW_NEXT) {
+					nCurrent += 1;
+					nCurrent = Math.min(nCurrent, nMax);
 				}
+				select(nCurrent);
+				redraw();
+			} else {
+				e.doit = true;
 			}
 		});
 	}
@@ -1306,22 +1274,12 @@ public class TabbedPropertyList
 			}
 		});
 
-		addListener(SWT.Selection, new Listener() {
-
-			@Override
-			public void handleEvent(Event event) {
-				if (isFocusControl()) {
-					accessible.setFocus(ACC.CHILDID_SELF);
-				}
-			}
-		});
-
-		addListener(SWT.FocusIn, new Listener() {
-
-			@Override
-			public void handleEvent(Event event) {
+		addListener(SWT.Selection, event -> {
+			if (isFocusControl()) {
 				accessible.setFocus(ACC.CHILDID_SELF);
 			}
 		});
+
+		addListener(SWT.FocusIn, event -> accessible.setFocus(ACC.CHILDID_SELF));
 	}
 }

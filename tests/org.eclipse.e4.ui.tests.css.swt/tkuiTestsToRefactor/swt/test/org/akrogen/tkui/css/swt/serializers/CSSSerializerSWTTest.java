@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 Angelo Zerr and others.
+ * Copyright (c) 2008, 2018 Angelo Zerr and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -29,9 +29,7 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 
@@ -127,11 +125,7 @@ public class CSSSerializerSWTTest {
 		COLOR_GREEN = new Color(display, 0, 255, 0);
 		CURSOR_HELP = new Cursor(display, SWT.CURSOR_HELP);
 
-		display.addListener(SWT.Dispose, new Listener() {
-			public void handleEvent(Event event) {
-				disposeResources();
-			}
-		});
+		display.addListener(SWT.Dispose, event -> disposeResources());
 	}
 
 	private static void disposeResources() {

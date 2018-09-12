@@ -34,8 +34,6 @@ import org.eclipse.core.databinding.observable.list.ListChangeEvent;
 import org.eclipse.core.databinding.observable.list.ListDiff;
 import org.eclipse.core.databinding.observable.list.ListDiffEntry;
 import org.eclipse.core.databinding.observable.value.IObservableValue;
-import org.eclipse.core.databinding.observable.value.IValueChangeListener;
-import org.eclipse.core.databinding.observable.value.ValueChangeEvent;
 import org.eclipse.core.databinding.util.Policy;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.MultiStatus;
@@ -43,8 +41,6 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.dialogs.DialogPage;
 import org.eclipse.jface.dialogs.IMessageProvider;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.widgets.Event;
-import org.eclipse.swt.widgets.Listener;
 
 /**
  * Connects the validation result from the given data binding context to the
@@ -89,18 +85,14 @@ public class DialogPageSupport {
 						.getElement();
 				IObservableList targets = validationStatusProvider.getTargets();
 				if (listDiffEntry.isAddition()) {
-					targets
-							.addListChangeListener(validationStatusProviderTargetsListener);
+					targets.addListChangeListener(validationStatusProviderTargetsListener);
 					for (Iterator it = targets.iterator(); it.hasNext();) {
-						((IObservable) it.next())
-								.addChangeListener(uiChangeListener);
+						((IObservable) it.next()).addChangeListener(uiChangeListener);
 					}
 				} else {
-					targets
-							.removeListChangeListener(validationStatusProviderTargetsListener);
+					targets.removeListChangeListener(validationStatusProviderTargetsListener);
 					for (Iterator it = targets.iterator(); it.hasNext();) {
-						((IObservable) it.next())
-								.removeChangeListener(uiChangeListener);
+						((IObservable) it.next()).removeChangeListener(uiChangeListener);
 					}
 				}
 			}
@@ -174,18 +166,8 @@ public class DialogPageSupport {
 		}
 
 		aggregateStatusProvider
-				.addValueChangeListener(new IValueChangeListener() {
-					@Override
-					public void handleValueChange(ValueChangeEvent event) {
-						statusProviderChanged();
-					}
-				});
-		dialogPage.getShell().addListener(SWT.Dispose, new Listener() {
-			@Override
-			public void handleEvent(Event event) {
-				dispose();
-			}
-		});
+				.addValueChangeListener(event -> statusProviderChanged());
+		dialogPage.getShell().addListener(SWT.Dispose, event -> dispose());
 		aggregateStatusProvider.addStaleListener(new IStaleListener() {
 			@Override
 			public void handleStale(StaleEvent staleEvent) {

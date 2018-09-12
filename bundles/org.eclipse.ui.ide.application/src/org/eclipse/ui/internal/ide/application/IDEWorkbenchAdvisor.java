@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2016 IBM Corporation and others.
+ * Copyright (c) 2003, 2018 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -61,7 +61,6 @@ import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.PlatformUI;
@@ -161,14 +160,11 @@ public class IDEWorkbenchAdvisor extends WorkbenchAdvisor {
 	 */
 	private final int workspaceWaitDelay;
 
-	private final Listener closeListener = new Listener() {
-		@Override
-		public void handleEvent(Event event) {
-			boolean doExit = IDEWorkbenchWindowAdvisor.promptOnExit(null);
-			event.doit = doExit;
-			if (!doExit)
-				event.type = SWT.None;
-		}
+	private final Listener closeListener = event -> {
+		boolean doExit = IDEWorkbenchWindowAdvisor.promptOnExit(null);
+		event.doit = doExit;
+		if (!doExit)
+			event.type = SWT.None;
 	};
 
 	/**
@@ -517,19 +513,14 @@ public class IDEWorkbenchAdvisor extends WorkbenchAdvisor {
 			final boolean applyPolicy = ResourcesPlugin.getWorkspace()
 					.getDescription().isApplyFileStatePolicy();
 
-			IRunnableWithProgress runnable = new IRunnableWithProgress() {
-				@Override
-				public void run(IProgressMonitor monitor) {
-					try {
-						if (applyPolicy)
-							monitor = new CancelableProgressMonitorWrapper(
-									monitor, p);
+			IRunnableWithProgress runnable = monitor -> {
+				try {
+					if (applyPolicy)
+						monitor = new CancelableProgressMonitorWrapper(monitor, p);
 
-						status.merge(((Workspace) ResourcesPlugin
-								.getWorkspace()).save(true, true, monitor));
-					} catch (CoreException e) {
-						status.merge(e.getStatus());
-					}
+					status.merge(((Workspace) ResourcesPlugin.getWorkspace()).save(true, true, monitor));
+				} catch (CoreException e) {
+					status.merge(e.getStatus());
 				}
 			};
 

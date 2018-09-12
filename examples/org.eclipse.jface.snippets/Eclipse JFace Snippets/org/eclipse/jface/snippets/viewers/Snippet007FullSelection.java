@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2014 Tom Schindl and others.
+ * Copyright (c) 2006, 2018 Tom Schindl and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -28,8 +28,6 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Event;
-import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.TableColumn;
 
@@ -75,13 +73,7 @@ public class Snippet007FullSelection {
 		v.getTable().setLinesVisible(true);
 		v.getTable().setHeaderVisible(true);
 
-		v.getTable().addListener(SWT.EraseItem, new Listener() {
-
-			@Override
-			public void handleEvent(Event event) {
-				event.detail &= ~SWT.SELECTED;
-			}
-		});
+		v.getTable().addListener(SWT.EraseItem, event -> event.detail &= ~SWT.SELECTED);
 
 	}
 

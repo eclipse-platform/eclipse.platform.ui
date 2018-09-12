@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2017 IBM Corporation and others.
+ * Copyright (c) 2009, 2018 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -135,12 +135,7 @@ public class SupportTrayTest extends TestCase {
 			};
 			Map<Object, Object> dialogState = new HashMap<>();
 			dialogState.put(IStatusDialogConstants.CURRENT_STATUS_ADAPTER, new StatusAdapter(Status.OK_STATUS));
-			SupportTray st = new SupportTray(dialogState, new Listener() {
-				@Override
-				public void handleEvent(Event event) {
-					td[0].closeTray();
-				}
-			});
+			SupportTray st = new SupportTray(dialogState, event -> td[0].closeTray());
 			td[0].setBlockOnOpen(false);
 			td[0].open();
 			td[0].openTray(st);

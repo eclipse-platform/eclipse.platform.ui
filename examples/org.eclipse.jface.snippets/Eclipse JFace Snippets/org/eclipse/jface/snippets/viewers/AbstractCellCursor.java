@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2015 IBM Corporation and others.
+ * Copyright (c) 2007, 2018 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -58,54 +58,48 @@ public abstract class AbstractCellCursor extends Canvas {
 	}
 
 	private Listener createListener() {
-		return new Listener() {
+		return event -> {
+			switch (event.type) {
+			case SWT.Paint:
+				paint(event);
+				break;
 
-			@Override
-			public void handleEvent(Event event) {
-				switch (event.type) {
-				case SWT.Paint:
-					paint(event);
-					break;
-
-				case SWT.KeyDown:
-					getParent().notifyListeners(SWT.KeyDown, event);
-					ArrayList<Object> list = new ArrayList<>();
-					for (ViewerCell cell : cells) {
-						list.add(cell.getElement());
-					}
-					AbstractCellCursor.this.viewer
-							.setSelection(new StructuredSelection(list));
-					break;
-
-				case SWT.MouseDown:
-					if (event.time < activationTime) {
-						Event cEvent = copyEvent(event);
-						cEvent.type = SWT.MouseDoubleClick;
-						getParent().notifyListeners(SWT.MouseDoubleClick,
-								cEvent);
-					} else {
-						getParent().notifyListeners(SWT.MouseDown,
-								copyEvent(event));
-					}
-					break;
-
-				case SWT.MouseDoubleClick:
-					getParent().notifyListeners(SWT.MouseDoubleClick,
-							copyEvent(event));
-					break;
-
-				case SWT.FocusIn:
-					if (isVisible()) {
-						inFocusRequest = true;
-						if (!inFocusRequest) {
-							forceFocus();
-						}
-						inFocusRequest = false;
-					}
-
-				default:
-					break;
+			case SWT.KeyDown:
+				getParent().notifyListeners(SWT.KeyDown, event);
+				ArrayList<Object> list = new ArrayList<>();
+				for (ViewerCell cell : cells) {
+					list.add(cell.getElement());
 				}
+				AbstractCellCursor.this.viewer.setSelection(new StructuredSelection(list));
+				break;
+
+			case SWT.MouseDown:
+				if (event.time < activationTime) {
+					Event cEvent = copyEvent(event);
+					cEvent.type = SWT.MouseDoubleClick;
+					getParent().notifyListeners(SWT.MouseDoubleClick,
+							cEvent);
+				} else {
+					getParent().notifyListeners(SWT.MouseDown,
+							copyEvent(event));
+				}
+				break;
+
+			case SWT.MouseDoubleClick:
+				getParent().notifyListeners(SWT.MouseDoubleClick, copyEvent(event));
+				break;
+
+			case SWT.FocusIn:
+				if (isVisible()) {
+					inFocusRequest = true;
+					if (!inFocusRequest) {
+						forceFocus();
+					}
+					inFocusRequest = false;
+				}
+
+			default:
+				break;
 			}
 		};
 	}

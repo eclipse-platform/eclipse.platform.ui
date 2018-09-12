@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011, 2015 IBM Corporation and others.
+ * Copyright (c) 2011, 2018 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -18,8 +18,6 @@ import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import org.eclipse.e4.ui.model.application.ui.basic.MWindow;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.widgets.Event;
-import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
 
 public class SampleToolControl {
@@ -32,12 +30,7 @@ public class SampleToolControl {
 	@PostConstruct
 	void construct(MWindow window) {
 		Shell shell = (Shell) window.getWidget();
-		shell.addListener(SWT.Dispose, new Listener() {
-			@Override
-			public void handleEvent(Event event) {
-				shellDisposed = true;
-			}
-		});
+		shell.addListener(SWT.Dispose, event -> shellDisposed = true);
 	}
 
 	@PreDestroy

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012, 2015 IBM Corporation and others.
+ * Copyright (c) 2012, 2018 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -17,18 +17,13 @@ package org.eclipse.e4.ui.widgets;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ControlEvent;
 import org.eclipse.swt.events.ControlListener;
-import org.eclipse.swt.events.MouseEvent;
-import org.eclipse.swt.events.MouseMoveListener;
 import org.eclipse.swt.events.PaintEvent;
-import org.eclipse.swt.events.PaintListener;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Canvas;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Event;
-import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.ToolBar;
 
 
@@ -65,35 +60,23 @@ public class ImageBasedFrame extends Canvas {
 		this.vertical = vertical;
 		this.draggable = draggable;
 
-		addPaintListener(new PaintListener() {
-			@Override
-			public void paintControl(PaintEvent e) {
-				drawFrame(e);
-			}
+		addPaintListener(e -> drawFrame(e));
+
+		addListener(SWT.MouseExit, event -> {
+			ImageBasedFrame frame = (ImageBasedFrame) event.widget;
+			frame.setCursor(null);
 		});
 
-		addListener(SWT.MouseExit, new Listener() {
-			@Override
-			public void handleEvent(Event event) {
-				ImageBasedFrame frame = (ImageBasedFrame) event.widget;
+		addMouseMoveListener(e -> {
+			// Compute the display location for the handle
+			// Note that this is an empty rect if !draggable
+			Rectangle handleRect = getHandleRect();
+
+			ImageBasedFrame frame = (ImageBasedFrame) e.widget;
+			if (handleRect.contains(e.x, e.y)) {
+				frame.setCursor(frame.getDisplay().getSystemCursor(SWT.CURSOR_SIZEALL));
+			} else {
 				frame.setCursor(null);
-			}
-		});
-
-		addMouseMoveListener(new MouseMoveListener() {
-			@Override
-			public void mouseMove(MouseEvent e) {
-				// Compute the display location for the handle
-				// Note that this is an empty rect if !draggable
-				Rectangle handleRect = getHandleRect();
-
-				ImageBasedFrame frame = (ImageBasedFrame) e.widget;
-				if (handleRect.contains(e.x, e.y)) {
-					frame.setCursor(frame.getDisplay().getSystemCursor(
-							SWT.CURSOR_SIZEALL));
-				} else {
-					frame.setCursor(null);
-				}
 			}
 		});
 

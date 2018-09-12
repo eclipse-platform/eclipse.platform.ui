@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2015 Angelo Zerr and others.
+ * Copyright (c) 2008, 2018 Angelo Zerr and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -16,8 +16,6 @@ package org.eclipse.e4.ui.css.swt.engine;
 import org.eclipse.e4.ui.css.core.engine.CSSEngine;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Event;
-import org.eclipse.swt.widgets.Listener;
 
 
 /**
@@ -28,12 +26,9 @@ public class CSSSWTApplyStylesListener {
 	CSSEngine engine;
 	public CSSSWTApplyStylesListener(Display display, final CSSEngine engine) {
 		this.engine = engine;
-		display.addListener(SWT.Skin, new Listener() {
-			@Override
-			public void handleEvent(Event event) {
-				if (engine != null) {
-					engine.applyStyles(event.widget, false);
-				}
+		display.addListener(SWT.Skin, event -> {
+			if (engine != null) {
+				engine.applyStyles(event.widget, false);
 			}
 		});
 	}

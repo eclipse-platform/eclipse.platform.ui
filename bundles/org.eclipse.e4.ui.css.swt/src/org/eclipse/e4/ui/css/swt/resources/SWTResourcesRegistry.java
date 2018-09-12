@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2015 Angelo Zerr and others.
+ * Copyright (c) 2008, 2018 Angelo Zerr and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -25,8 +25,6 @@ import org.eclipse.swt.graphics.Cursor;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Event;
-import org.eclipse.swt.widgets.Listener;
 
 /**
  * SWT Resources Registry to cache SWT Resource like Color, Cursor and Font and
@@ -40,12 +38,7 @@ public class SWTResourcesRegistry extends AbstractResourcesRegistry {
 		}
 		// When SWT Display will dispose, all SWT resources stored
 		// into cache will be dispose it too.
-		display.addListener(SWT.Dispose, new Listener() {
-			@Override
-			public void handleEvent(Event event) {
-				dispose();
-			}
-		});
+		display.addListener(SWT.Dispose, event -> dispose());
 	}
 
 	@Override

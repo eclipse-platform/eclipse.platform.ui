@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2016 IBM Corporation and others.
+ * Copyright (c) 2010, 2018 IBM Corporation and others.
  *
  * This
  * program and the accompanying materials are made available under the terms of
@@ -25,7 +25,6 @@ import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 import org.w3c.dom.css.CSSValue;
 
@@ -95,14 +94,11 @@ public class CSSPropertyUnselectedTabsSWTHandler extends AbstractCSSPropertySWTH
 			return;
 		}
 
-		final Listener resizeListener = new Listener() {
-			@Override
-			public void handleEvent(Event event) {
-				CTabFolder folder = (CTabFolder) event.widget;
-				for (Control child : folder.getChildren()) {
-					if (isReskinRequired(child)) {
-						child.reskin(SWT.NONE);
-					}
+		final Listener resizeListener = event -> {
+			CTabFolder folder1 = (CTabFolder) event.widget;
+			for (Control child : folder1.getChildren()) {
+				if (isReskinRequired(child)) {
+					child.reskin(SWT.NONE);
 				}
 			}
 		};

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2015 IBM Corporation and others.
+ * Copyright (c) 2005, 2018 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -211,13 +211,11 @@ final class PulldownDelegateWidgetProxy implements IWidget {
 			}
 
 			final int style = item.getStyle();
-			if (((style & SWT.DROP_DOWN) != 0) && (event.detail == SWT.ARROW)
-					&& (item instanceof ToolItem)) {
+			if (((style & SWT.DROP_DOWN) != 0) && (event.detail == SWT.ARROW) && (item instanceof ToolItem)) {
 				// Create the submenu.
 				final ToolItem toolItem = (ToolItem) item;
 				final ToolBar toolBar = toolItem.getParent();
-				if (loadDelegate()
-						&& (delegate instanceof IWorkbenchWindowPulldownDelegate2)) {
+				if (loadDelegate() && (delegate instanceof IWorkbenchWindowPulldownDelegate2)) {
 					final IWorkbenchWindowPulldownDelegate2 delegate2 = (IWorkbenchWindowPulldownDelegate2) delegate;
 					final MenuLoader loader = new MenuLoader(delegate2, toolBar);
 					SafeRunner.run(loader);
@@ -225,8 +223,7 @@ final class PulldownDelegateWidgetProxy implements IWidget {
 					if (subMenu != null) {
 						// position the menu below the drop down item
 						final Rectangle bounds = toolItem.getBounds();
-						final Point location = toolBar.toDisplay(new Point(
-								bounds.x, bounds.y + bounds.height));
+						final Point location = toolBar.toDisplay(new Point(bounds.x, bounds.y + bounds.height));
 						subMenu.setLocation(location);
 						subMenu.setVisible(true);
 						return; // we don't fire the command
@@ -234,14 +231,12 @@ final class PulldownDelegateWidgetProxy implements IWidget {
 				}
 			}
 
-			final IHandlerService service = locator
-					.getService(IHandlerService.class);
+			final IHandlerService service = locator.getService(IHandlerService.class);
 			try {
 				service.executeCommand(command, event);
 			} catch (final CommandException e) {
 				/*
-				 * TODO There should be an API on IHandlerService that handles
-				 * the exceptions.
+				 * TODO There should be an API on IHandlerService that handles the exceptions.
 				 */
 			}
 		}

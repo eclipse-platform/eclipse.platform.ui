@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2015 Matthew Hall and others.
+ * Copyright (c) 2008, 2018 Matthew Hall and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -19,7 +19,6 @@ import org.eclipse.core.databinding.observable.list.DecoratingObservableList;
 import org.eclipse.core.databinding.observable.list.IObservableList;
 import org.eclipse.jface.databinding.swt.ISWTObservableList;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Widget;
 
@@ -42,12 +41,7 @@ public class SWTObservableListDecorator extends DecoratingObservableList
 				disposeListener);
 	}
 
-	private Listener disposeListener = new Listener() {
-		@Override
-		public void handleEvent(Event event) {
-			SWTObservableListDecorator.this.dispose();
-		}
-	};
+	private Listener disposeListener = event -> SWTObservableListDecorator.this.dispose();
 
 	@Override
 	public synchronized void dispose() {
