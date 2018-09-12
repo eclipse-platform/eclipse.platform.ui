@@ -33,6 +33,9 @@ import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 
+import org.eclipse.core.runtime.ISafeRunnable;
+import org.eclipse.core.runtime.SafeRunner;
+
 import org.eclipse.jface.contentassist.IContentAssistSubjectControl;
 
 import org.eclipse.jface.text.BadLocationException;
@@ -341,11 +344,18 @@ class AsyncCompletionProposalPopup extends CompletionProposalPopup {
 		List<CompletableFuture<List<ICompletionProposal>>> futures = new ArrayList<>(processors.size());
 		for (IContentAssistProcessor processor : processors) {
 			futures.add(CompletableFuture.supplyAsync(() -> {
-				ICompletionProposal[] proposals= processor.computeCompletionProposals(fViewer, invocationOffset);
-				if (proposals == null) {
-					return Collections.emptyList();
-				}
-				return Arrays.asList(proposals);
+				final List<ICompletionProposal>[] result= new List[] { null };
+				SafeRunner.run(new ISafeRunnable() {
+					@Override
+					public void run() throws Exception {
+						ICompletionProposal[] proposals= processor.computeCompletionProposals(fViewer, invocationOffset);
+						if (proposals == null) {
+							result[0]= Collections.emptyList();
+						}
+						result[0]= Arrays.asList(proposals);
+					}
+				});
+				return result[0];
 			}));
 		}
 		return futures;
