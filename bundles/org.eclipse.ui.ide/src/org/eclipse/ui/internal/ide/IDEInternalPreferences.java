@@ -159,4 +159,10 @@ public interface IDEInternalPreferences {
 	 */
 	int MAX_MAX_SIMULTANEOUS_BUILD = 1000;
 
+	/**
+	 * Key to allow products define initial default grouping for the Problems view
+	 * family
+	 */
+	String INITIAL_DEFAULT_MARKER_GROUPING = "INITIAL_DEFAULT_MARKER_GROUPING"; //$NON-NLS-1$
+
 }

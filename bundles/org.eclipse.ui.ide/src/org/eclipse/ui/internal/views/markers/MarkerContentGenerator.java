@@ -101,6 +101,7 @@ public class MarkerContentGenerator {
 	private String viewId;
 
 	private IPropertyChangeListener filterPreferenceListener;
+	private String initialDefaultCategoryName;
 
 	/**
 	 * Create a new MarkerContentGenerator
@@ -212,7 +213,7 @@ public class MarkerContentGenerator {
 	}
 
 	void restoreState(IMemento memento) {
-		initDefaults();
+		initDefaults(memento);
 		if (memento == null) {
 			return;
 		}
@@ -252,7 +253,7 @@ public class MarkerContentGenerator {
 		}
 	}
 
-	private void initDefaults() {
+	private void initDefaults(IMemento memento) {
 		IPreferenceStore store = IDEWorkbenchPlugin.getDefault().getPreferenceStore();
 		markerLimitsEnabled = store.getBoolean(IDEInternalPreferences.USE_MARKER_LIMITS);
 		markerLimits = store.getInt(IDEInternalPreferences.MARKER_LIMITS_VALUE);
@@ -261,6 +262,12 @@ public class MarkerContentGenerator {
 
 		visibleFields = new MarkerField[initialFields.length];
 		System.arraycopy(initialFields, 0, visibleFields, 0, initialFields.length);
+
+		// On first startup, check if there is a custom group id set to be default
+		if (memento == null) {
+			initialDefaultCategoryName = store
+					.getString(viewId + "." + IDEInternalPreferences.INITIAL_DEFAULT_MARKER_GROUPING); //$NON-NLS-1$
+		}
 	}
 
 	/**
@@ -284,6 +291,9 @@ public class MarkerContentGenerator {
 	 * Get the category name from the receiver.
 	 */
 	String getCategoryName() {
+		if (initialDefaultCategoryName != null) {
+			return initialDefaultCategoryName;
+		}
 		return generatorDescriptor.getCategoryName();
 	}
 
