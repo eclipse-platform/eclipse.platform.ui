@@ -355,10 +355,6 @@ public class IndentFoldingStrategy implements IReconcilingStrategy, IReconciling
 		// be sure project has not been disabled
 		if (projectionAnnotationModel != null) {
 			// workaround for Platform Bug 299416
-			int offset = dirtyRegion.getOffset();
-			if (offset > 0) {
-				offset--;
-			}
 			annoIter = projectionAnnotationModel.getAnnotationIterator(0, document.getLength(), false, false);
 		}
 		return annoIter;
