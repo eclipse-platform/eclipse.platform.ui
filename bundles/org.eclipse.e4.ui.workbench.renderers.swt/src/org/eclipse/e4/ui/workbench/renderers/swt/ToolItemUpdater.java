@@ -15,13 +15,26 @@
 package org.eclipse.e4.ui.workbench.renderers.swt;
 
 import java.util.ArrayList;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Set;
 import org.eclipse.e4.ui.workbench.Selector;
+import org.eclipse.swt.widgets.Display;
 
-public class ToolItemUpdater {
+public class ToolItemUpdater implements Runnable {
 
+	private static int DELAY = 100;
+	private long count = 0;
 	private List<AbstractContributionItem> itemsToCheck = new ArrayList<>();
 	private final List<AbstractContributionItem> orphanedToolItems = new ArrayList<>();
+	private final Set<AbstractContributionItem> itemsToUpdateLater = new LinkedHashSet<>();
+
+	public ToolItemUpdater() {
+		String delayProperty = System.getProperty("ToolItemUpdaterDelayInMs"); //$NON-NLS-1$
+		if (delayProperty != null) {
+			DELAY = Integer.parseInt(delayProperty);
+		}
+	}
 
 	void registerItem(AbstractContributionItem item) {
 		if (!itemsToCheck.contains(item)) {
@@ -34,10 +47,21 @@ public class ToolItemUpdater {
 	}
 
 	public void updateContributionItems(Selector selector) {
+		boolean doRunNow = false;
 		for (final AbstractContributionItem ci : itemsToCheck) {
 			if (ci.getModel() != null && ci.getModel().getParent() != null) {
 				if (selector.select(ci.getModel())) {
-					ci.updateItemEnablement();
+					itemsToUpdateLater.add(ci);
+					count++;
+					if (count > 100) {
+						// runnable was not called the last 100 trigger times, do it now.
+						// For scenario: a plugin is forcing that updateContributionItems is called
+						// again and again in less than given DELAY frequency. TimerExec would then
+						// never be executed.
+						doRunNow = true;
+					} else {
+						Display.getDefault().timerExec(DELAY, this);
+					}
 				}
 			} else {
 				orphanedToolItems.add(ci);
@@ -46,6 +70,19 @@ public class ToolItemUpdater {
 		if (!orphanedToolItems.isEmpty()) {
 			itemsToCheck.removeAll(orphanedToolItems);
 			orphanedToolItems.clear();
+		}
+		if (doRunNow) {
+			run();
+		}
+	}
+
+	@Override
+	public void run() {
+		count = 0;
+		AbstractContributionItem[] copy = itemsToUpdateLater.toArray(new AbstractContributionItem[] {});
+		itemsToUpdateLater.clear();
+		for (AbstractContributionItem it : copy) {
+			it.updateItemEnablement();
 		}
 	}
 }
