@@ -15,6 +15,7 @@
 package org.eclipse.jface.text;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import org.eclipse.jface.fieldassist.ContentProposal;
 import org.eclipse.jface.fieldassist.IContentProposal;
@@ -54,11 +55,11 @@ public class FindReplaceDocumentAdapterContentProposalProvider implements IConte
 		/**
 		 * The high-priority proposals.
 		 */
-		private final ArrayList<ContentProposal> fPriorityProposals;
+		private final List<ContentProposal> fPriorityProposals;
 		/**
 		 * The low-priority proposals.
 		 */
-		private final ArrayList<ContentProposal> fProposals;
+		private final List<ContentProposal> fProposals;
 		/**
 		 * <code>true</code> iff <code>fExpression</code> ends with an open escape.
 		 */
