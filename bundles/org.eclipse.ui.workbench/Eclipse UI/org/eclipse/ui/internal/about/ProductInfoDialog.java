@@ -15,11 +15,11 @@ package org.eclipse.ui.internal.about;
 
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.CTabFolder;
+import org.eclipse.swt.custom.CTabItem;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.swt.widgets.TabFolder;
-import org.eclipse.swt.widgets.TabItem;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.about.InstallationPage;
 
@@ -56,8 +56,8 @@ public abstract class ProductInfoDialog extends InstallationDialog {
 	}
 
 	@Override
-	protected void createFolderItems(TabFolder folder) {
-		TabItem item = new TabItem(folder, SWT.NONE);
+	protected void createFolderItems(CTabFolder folder) {
+		CTabItem item = new CTabItem(folder, SWT.NONE);
 		item.setText(title);
 		Composite control = new Composite(folder, SWT.BORDER);
 		control.setLayout(new GridLayout());

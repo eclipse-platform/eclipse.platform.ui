@@ -32,6 +32,8 @@ import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.dialogs.TrayDialog;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.CTabFolder;
+import org.eclipse.swt.custom.CTabItem;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.FontMetrics;
 import org.eclipse.swt.graphics.GC;
@@ -43,8 +45,6 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.swt.widgets.TabFolder;
-import org.eclipse.swt.widgets.TabItem;
 import org.eclipse.ui.about.IInstallationPageContainer;
 import org.eclipse.ui.about.InstallationPage;
 import org.eclipse.ui.internal.ConfigurationInfo;
@@ -141,7 +141,7 @@ public class InstallationDialog extends TrayDialog implements
 	private static final int TAB_HEIGHT_IN_DLUS = 320;
 
 	private static String lastSelectedTabId = null;
-	private TabFolder folder;
+	private CTabFolder folder;
 	IServiceLocator serviceLocator;
 	private ButtonManager buttonManager;
 	private Map pageToId = new HashMap();
@@ -177,7 +177,7 @@ public class InstallationDialog extends TrayDialog implements
 	protected Control createDialogArea(Composite parent) {
 		Composite composite = (Composite) super.createDialogArea(parent);
 
-		folder = new TabFolder(composite, SWT.NONE);
+		folder = new CTabFolder(composite, SWT.NONE);
 		configureFolder();
 		createFolderItems(folder);
 
@@ -190,11 +190,11 @@ public class InstallationDialog extends TrayDialog implements
 		return composite;
 	}
 
-	protected void createFolderItems(TabFolder folder) {
+	protected void createFolderItems(CTabFolder folder) {
 		IConfigurationElement[] elements = ConfigurationInfo
 				.getSortedExtensions(loadElements());
 		for (IConfigurationElement element : elements) {
-			TabItem item = new TabItem(folder, SWT.NONE);
+			CTabItem item = new CTabItem(folder, SWT.NONE);
 			item.setText(element
 					.getAttribute(IWorkbenchRegistryConstants.ATT_NAME));
 			item.setData(element);
@@ -213,7 +213,7 @@ public class InstallationDialog extends TrayDialog implements
 		boolean selected = false;
 		if (folder.getItemCount() > 0) {
 			if (lastSelectedTabId != null) {
-				TabItem[] items = folder.getItems();
+				CTabItem[] items = folder.getItems();
 				for (int i = 0; i < items.length; i++)
 					if (items[i].getData(ID).equals(lastSelectedTabId)) {
 						folder.setSelection(i);
@@ -232,13 +232,13 @@ public class InstallationDialog extends TrayDialog implements
 	}
 
 	private SelectionListener createFolderSelectionListener() {
-		return widgetSelectedAdapter(e -> tabSelected((TabItem) e.item));
+		return widgetSelectedAdapter(e -> tabSelected((CTabItem) e.item));
 	}
 
 	/*
 	 * Must be called after contributions and button manager are created.
 	 */
-	private void tabSelected(TabItem item) {
+	private void tabSelected(CTabItem item) {
 		if (item.getData() instanceof IConfigurationElement) {
 			final IConfigurationElement element = (IConfigurationElement) item
 					.getData();
