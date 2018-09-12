@@ -1,12 +1,12 @@
 /*******************************************************************************
- * Copyright (c) 2013, 2015 IBM Corporation and others.
+ * Copyright (c) 2013, 2018 IBM Corporation and others.
  *
  * This
  * program and the accompanying materials are made available under the terms of
  * the Eclipse Public License 2.0 which accompanies this distribution, and is
-t https://www.eclipse.org/legal/epl-2.0/
-t
-t SPDX-License-Identifier: EPL-2.0
+ * https://www.eclipse.org/legal/epl-2.0/
+ *
+ * SPDX-License-Identifier: EPL-2.0
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
@@ -16,7 +16,6 @@ package org.eclipse.e4.ui.css.core.resources;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
-import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
@@ -47,7 +46,7 @@ public class SWTResourcesRegistryTest {
 		resources.put(new ResourceByDefinitionKey("key4"), resource4);
 
 		SWTResourcesRegistryTestable registry = spy(new SWTResourcesRegistryTestable());
-		doReturn(resources).when(registry).getCacheByType(any(Font.class));
+		doReturn(resources).when(registry).getCacheByType(Font.class);
 
 		// when
 		List<?> result = registry.removeResourcesByKeyTypeAndType(

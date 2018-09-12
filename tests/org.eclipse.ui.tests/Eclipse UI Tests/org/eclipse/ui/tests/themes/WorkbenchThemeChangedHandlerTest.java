@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2013, 2017 IBM Corporation and others.
+ * Copyright (c) 2013, 2018 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -15,9 +15,10 @@
 package org.eclipse.ui.tests.themes;
 
 import static org.eclipse.ui.internal.themes.WorkbenchThemeManager.EMPTY_COLOR_VALUE;
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyObject;
-import static org.mockito.Matchers.eq;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyObject;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.ArgumentMatchers.isNull;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
@@ -94,18 +95,18 @@ public class WorkbenchThemeChangedHandlerTest extends TestCase {
 		verify(stylingEngine, times(1)).style(fontDefinition2);
 		verify(stylingEngine, times(1)).style(colorDefinition);
 
-		verify(fontRegistry, times(2)).put(eq("fontDefinition1"), any(FontData[].class));
+		verify(fontRegistry, times(1)).put(eq("fontDefinition1"), any(FontData[].class));
 		verify(fontRegistry, times(1)).put(eq("fontDefinition1"),
 				eq(PreferenceConverter.getFontDataArrayDefaultDefault()));
 		verify(fontRegistry, never()).put(eq("fontDefinition2"), any(FontData[].class));
-		verify(colorRegistry, times(2)).put(eq("colorDefinition"), any(RGB.class));
+		verify(colorRegistry, times(1)).put(eq("colorDefinition"), any(RGB.class));
 		verify(colorRegistry, times(1)).put(eq("colorDefinition"), eq(EMPTY_COLOR_VALUE));
 
-		verify(handler, times(1)).populateDefinition(any(ITheme.class), any(org.eclipse.ui.themes.ITheme.class),
+		verify(handler, times(1)).populateDefinition(isNull(), isNull(),
 				eq(fontRegistry), eq(fontDefinition1), any(IPreferenceStore.class));
 		verify(handler, never()).populateDefinition(any(ITheme.class), any(org.eclipse.ui.themes.ITheme.class),
 				eq(fontRegistry), eq(fontDefinition2), any(IPreferenceStore.class));
-		verify(handler, times(1)).populateDefinition(any(ITheme.class), any(org.eclipse.ui.themes.ITheme.class),
+		verify(handler, times(1)).populateDefinition(isNull(), isNull(),
 				eq(colorRegistry), eq(colorDefinition), any(IPreferenceStore.class));
 
 		verify(stylingEngine, times(1)).style(fontDefinition2);
@@ -164,23 +165,23 @@ public class WorkbenchThemeChangedHandlerTest extends TestCase {
 		//then
 		verify(stylingEngine, times(1)).style(fontDefinition1);
 		verify(fontRegistry, times(1)).put("fontDefinition1", null);
-		verify(handler, times(1)).populateDefinition(any(ITheme.class), any(org.eclipse.ui.themes.ITheme.class),
-				eq(fontRegistry), eq(fontDefinition1), any(IPreferenceStore.class));
+		verify(handler, times(1)).populateDefinition(isNull(), isNull(), eq(fontRegistry), eq(fontDefinition1),
+				any(IPreferenceStore.class));
 
 		verify(stylingEngine, times(1)).style(fontDefinition2);
 		verify(fontRegistry, never()).put(eq("fontDefinition2"), any(FontData[].class));
-		verify(handler, times(1)).populateDefinition(any(ITheme.class), any(org.eclipse.ui.themes.ITheme.class),
-				eq(fontRegistry), eq(fontDefinition2), any(IPreferenceStore.class));
+		verify(handler, times(1)).populateDefinition(isNull(), isNull(), eq(fontRegistry), eq(fontDefinition2),
+				any(IPreferenceStore.class));
 
 		verify(stylingEngine, times(1)).style(colorDefinition1);
 		verify(colorRegistry, never()).put(eq("colorDefinition1"), any(RGB.class));
-		verify(handler, times(1)).populateDefinition(any(ITheme.class), any(org.eclipse.ui.themes.ITheme.class),
-				eq(colorRegistry), eq(colorDefinition1), any(IPreferenceStore.class));
+		verify(handler, times(1)).populateDefinition(isNull(), isNull(), eq(colorRegistry), eq(colorDefinition1),
+				any(IPreferenceStore.class));
 
 		verify(stylingEngine, times(1)).style(colorDefinition2);
 		verify(colorRegistry, times(1)).put("colorDefinition2", null);
-		verify(handler, times(1)).populateDefinition(any(ITheme.class), any(org.eclipse.ui.themes.ITheme.class),
-				eq(colorRegistry), eq(colorDefinition2), any(IPreferenceStore.class));
+		verify(handler, times(1)).populateDefinition(isNull(), isNull(), eq(colorRegistry), eq(colorDefinition2),
+				any(IPreferenceStore.class));
 	}
 
 	public void testAddThemeDefinitions() throws Exception {
@@ -221,15 +222,15 @@ public class WorkbenchThemeChangedHandlerTest extends TestCase {
 		verify(stylingEngine, times(1)).style(fontDefinition);
 		verify(stylingEngine, times(1)).style(colorDefinition);
 
-		verify(fontRegistry, times(1)).put(eq("fontDefinition"), any(FontData[].class));
+		verify(fontRegistry, times(1)).put("fontDefinition", null);
 		assertEquals(1, themeRegistry.getFonts().length);
-		verify(colorRegistry, times(1)).put(eq("colorDefinition"), any(RGB.class));
+		verify(colorRegistry, times(1)).put("colorDefinition", null);
 		assertEquals(1, themeRegistry.getColors().length);
 
-		verify(handler, times(1)).populateDefinition(any(ITheme.class), any(org.eclipse.ui.themes.ITheme.class),
-				eq(fontRegistry), eq(fontDefinition), any(IPreferenceStore.class));
-		verify(handler, times(1)).populateDefinition(any(ITheme.class), any(org.eclipse.ui.themes.ITheme.class),
-				eq(colorRegistry), eq(colorDefinition), any(IPreferenceStore.class));
+		verify(handler, times(1)).populateDefinition(isNull(), isNull(), eq(fontRegistry), eq(fontDefinition),
+				any(IPreferenceStore.class));
+		verify(handler, times(1)).populateDefinition(isNull(), isNull(), eq(colorRegistry), eq(colorDefinition),
+				any(IPreferenceStore.class));
 
 		verify(handler, times(1)).resetThemeRegistries(themeRegistry, fontRegistry, colorRegistry);
 
@@ -285,25 +286,25 @@ public class WorkbenchThemeChangedHandlerTest extends TestCase {
 		verify(stylingEngine, times(1)).style(colorDefinition1);
 		verify(stylingEngine, times(1)).style(colorDefinition2);
 
-		verify(fontRegistry, times(2)).put(eq("fontDefinition1"), any(FontData[].class));
+		verify(fontRegistry, times(1)).put(eq("fontDefinition1"), any(FontData[].class));
 		verify(fontRegistry, times(1)).put(eq("fontDefinition1"),
 				eq(PreferenceConverter.getFontDataArrayDefaultDefault()));
-		verify(fontRegistry, times(2)).put(eq("fontDefinition2"), any(FontData[].class));
+		verify(fontRegistry, times(1)).put(eq("fontDefinition2"), any(FontData[].class));
 		verify(fontRegistry, times(1)).put(eq("fontDefinition2"),
 				eq(PreferenceConverter.getFontDataArrayDefaultDefault()));
-		verify(colorRegistry, times(2)).put(eq("colorDefinition1"), any(RGB.class));
+		verify(colorRegistry, times(1)).put(eq("colorDefinition1"), any(RGB.class));
 		verify(colorRegistry, times(1)).put(eq("colorDefinition1"), eq(EMPTY_COLOR_VALUE));
-		verify(colorRegistry, times(2)).put(eq("colorDefinition2"), any(RGB.class));
+		verify(colorRegistry, times(1)).put(eq("colorDefinition2"), any(RGB.class));
 		verify(colorRegistry, times(1)).put(eq("colorDefinition2"), eq(EMPTY_COLOR_VALUE));
 
-		verify(handler, times(1)).populateDefinition(any(ITheme.class), any(org.eclipse.ui.themes.ITheme.class),
-				eq(fontRegistry), eq(fontDefinition1), any(IPreferenceStore.class));
-		verify(handler, times(1)).populateDefinition(any(ITheme.class), any(org.eclipse.ui.themes.ITheme.class),
-				eq(fontRegistry), eq(fontDefinition2), any(IPreferenceStore.class));
-		verify(handler, times(1)).populateDefinition(any(ITheme.class), any(org.eclipse.ui.themes.ITheme.class),
-				eq(colorRegistry), eq(colorDefinition1), any(IPreferenceStore.class));
-		verify(handler, times(1)).populateDefinition(any(ITheme.class), any(org.eclipse.ui.themes.ITheme.class),
-				eq(colorRegistry), eq(colorDefinition2), any(IPreferenceStore.class));
+		verify(handler, times(1)).populateDefinition(isNull(), isNull(), eq(fontRegistry), eq(fontDefinition1),
+				any(IPreferenceStore.class));
+		verify(handler, times(1)).populateDefinition(isNull(), isNull(), eq(fontRegistry), eq(fontDefinition2),
+				any(IPreferenceStore.class));
+		verify(handler, times(1)).populateDefinition(isNull(), isNull(), eq(colorRegistry), eq(colorDefinition1),
+				any(IPreferenceStore.class));
+		verify(handler, times(1)).populateDefinition(isNull(), isNull(), eq(colorRegistry), eq(colorDefinition2),
+				any(IPreferenceStore.class));
 
 		verify(handler, times(1)).resetThemeRegistries(themeRegistry, fontRegistry, colorRegistry);
 
