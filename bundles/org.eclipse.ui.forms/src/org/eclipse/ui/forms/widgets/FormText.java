@@ -1292,8 +1292,6 @@ public class FormText extends Canvas {
 			selectedLink = null;
 		for (int i = 0; i < paragraphs.length; i++) {
 			Paragraph p = paragraphs[i];
-			if (i > 0)
-				selData.markNewLine();
 			p.computeSelection(gc, resourceTable, selectedLink, selData);
 		}
 		gc.dispose();

@@ -72,6 +72,5 @@ public class BreakSegment extends ParagraphSegment {
 
 	@Override
 	public void computeSelection(GC gc, Hashtable<String, Object> resourceTable, SelectionData selData) {
-		selData.markNewLine();
 	}
 }
