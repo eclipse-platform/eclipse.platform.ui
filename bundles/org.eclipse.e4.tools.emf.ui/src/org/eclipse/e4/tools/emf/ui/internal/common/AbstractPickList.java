@@ -38,11 +38,12 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Group;
+import org.eclipse.swt.widgets.Table;
 
 /**
  * <p>
- * A composite widget containing a combo for picking items, a list with selectable items, and action buttons for
- * modifying the list.
+ * A composite widget containing a combo for picking items, a list with
+ * selectable items, and action buttons for modifying the list.
  * </p>
  *
  * @author Steven Spungin
@@ -59,10 +60,10 @@ public abstract class AbstractPickList extends Composite {
 
 	private final Group group;
 	private final Composite toolBar;
+	protected final Button tiAdd;
 	protected final Button tiRemove;
 	protected final Button tiUp;
 	protected final Button tiDown;
-	protected final Button tiAdd;
 	// private final AutoCompleteField autoCompleteField;
 
 	public AbstractPickList(Composite parent, int style, List<PickListFeatures> listFeatures, Messages messages,
@@ -151,6 +152,14 @@ public abstract class AbstractPickList extends Composite {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				moveDownPressed();
+				boolean enable = viewer.getTable().getSelectionIndex() + 1 < getItemCount();
+				if (tiDown.isEnabled() != enable) {
+					tiDown.setEnabled(enable);
+				}
+				if (enable == false && !tiUp.isEnabled()) {
+					tiUp.setEnabled(true);
+				}
+				tiDown.setFocus();
 			}
 		});
 
@@ -163,15 +172,20 @@ public abstract class AbstractPickList extends Composite {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				moveUpPressed();
+				boolean enable = viewer.getTable().getSelectionIndex() > 0;
+				if (tiUp.isEnabled() != enable) {
+					tiUp.setEnabled(enable);
+				}
+				if (enable == false && !tiDown.isEnabled()) {
+					tiDown.setEnabled(true);
+				}
+				tiUp.setFocus();
 			}
 		});
 
 		viewer = new TableViewer(group);
-		final GridData gd = new GridData(GridData.FILL, GridData.FILL, true, true, 1, 1);
-		viewer.getControl().setLayoutData(gd);
-
+		viewer.getControl().setLayoutData(new GridData(GridData.FILL, GridData.FILL, true, true, 1, 1));
 		viewer.addSelectionChangedListener(event -> updateUiState());
-
 		updateUiState();
 
 		if (listFeatures != null) {
@@ -251,14 +265,29 @@ public abstract class AbstractPickList extends Composite {
 	}
 
 	public void updateUiState() {
-		final IStructuredSelection selection = (IStructuredSelection) getList().getSelection();
-		final boolean selected = selection.size() > 0;
-		final int count = getItemCount();
-		final boolean tableIsFocused = getList().getTable().isFocusControl();
-		if (tiDown.isDisposed() == false) {
-			tiDown.setEnabled(selected && count > 1 && tableIsFocused);
-			tiUp.setEnabled(selected && count > 1 && tableIsFocused);
+		TableViewer tableViewer = getList();
+		Table table = tableViewer.getTable();
+		int itemCount = getItemCount();
+		int selectionCount = table.getSelectionCount();
+		int selectionIndex = table.getSelectionIndex();
+
+		if (tiRemove.isEnabled() != selectionCount > 0) {
+			tiRemove.setEnabled(selectionCount > 0);
 		}
-		tiRemove.setEnabled(selected && tableIsFocused);
+
+		// supports only single selection
+		boolean enableButtons = selectionCount > 0 && itemCount > 1 && selectionCount == 1;
+
+		// disable if last entry is selected
+		boolean enableDown = (enableButtons) ? selectionIndex + 1 < itemCount : false;
+		if (!tiDown.isDisposed() && tiDown.isEnabled() != enableDown) {
+			tiDown.setEnabled(enableDown);
+		}
+
+		// disable if first entry is selected
+		boolean enableUp = (enableButtons) ? selectionIndex > 0 : false;
+		if (!tiUp.isDisposed() && tiUp.isEnabled() != enableUp) {
+			tiUp.setEnabled(enableUp);
+		}
 	}
 }
