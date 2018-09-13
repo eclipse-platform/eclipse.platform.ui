@@ -251,7 +251,7 @@ public class MenuEditor extends AbstractComponentEditor {
 
 			// Label l = new Label(parent, SWT.NONE);
 			// l.setText(Messages.MenuEditor_Children);
-			// l.setLayoutData(new GridData(GridData.END, GridData.BEGINNING,
+			// l.setLayoutData(new GridData(GridData.BEGINNING, GridData.BEGINNING,
 			// false, false));
 			//
 			// new Label(parent, SWT.NONE);
@@ -290,7 +290,7 @@ public class MenuEditor extends AbstractComponentEditor {
 		if (!rootMenu) {
 			final Label l = new Label(parent, SWT.NONE);
 			l.setText(Messages.MenuEditor_IconURI);
-			l.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
+			l.setLayoutData(new GridData());
 
 			final Text t = new Text(parent, SWT.BORDER);
 			TextPasteHandler.createFor(t);
@@ -319,7 +319,7 @@ public class MenuEditor extends AbstractComponentEditor {
 		{
 			final Label l = new Label(parent, SWT.NONE);
 			l.setText(Messages.ModelTooling_UIElement_VisibleWhen);
-			l.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
+			l.setLayoutData(new GridData());
 
 			final ComboViewer combo = new ComboViewer(parent);
 			combo.getControl().setLayoutData(new GridData(GridData.FILL, GridData.CENTER, true, false, 2, 1));

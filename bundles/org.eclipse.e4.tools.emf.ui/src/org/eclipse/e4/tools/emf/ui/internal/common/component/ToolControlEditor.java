@@ -165,7 +165,7 @@ public class ToolControlEditor extends AbstractComponentEditor {
 			if (project != null && c != null) {
 				final Link lnk = new Link(parent, SWT.NONE);
 				lnk.setText("<A>" + Messages.ToolControlEditor_ClassURI + "</A>"); //$NON-NLS-1$//$NON-NLS-2$
-				lnk.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
+				lnk.setLayoutData(new GridData());
 				lnk.addSelectionListener(new SelectionAdapter() {
 					@Override
 					public void widgetSelected(SelectionEvent e) {
@@ -176,7 +176,7 @@ public class ToolControlEditor extends AbstractComponentEditor {
 			} else {
 				final Label l = new Label(parent, SWT.NONE);
 				l.setText(Messages.ToolControlEditor_ClassURI);
-				l.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
+				l.setLayoutData(new GridData());
 			}
 
 			final Text t = new Text(parent, SWT.BORDER);

@@ -187,7 +187,7 @@ public abstract class MenuItemEditor extends AbstractComponentEditor {
 			{
 				final Label l = new Label(parent, SWT.NONE);
 				l.setText(Messages.MenuItemEditor_Type);
-				l.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
+				l.setLayoutData(new GridData());
 
 				final ComboViewer viewer = new ComboViewer(parent);
 				viewer.setContentProvider(new ArrayContentProvider());
@@ -213,7 +213,7 @@ public abstract class MenuItemEditor extends AbstractComponentEditor {
 		{
 			final Label l = new Label(parent, SWT.NONE);
 			l.setText(Messages.MenuItemEditor_IconURI);
-			l.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
+			l.setLayoutData(new GridData());
 
 			final Text t = new Text(parent, SWT.BORDER);
 			TextPasteHandler.createFor(t);
@@ -242,7 +242,7 @@ public abstract class MenuItemEditor extends AbstractComponentEditor {
 		{
 			final Label l = new Label(parent, SWT.NONE);
 			l.setText(Messages.MenuItemEditor_Enabled);
-			l.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
+			l.setLayoutData(new GridData());
 
 			final Button b = new Button(parent, SWT.CHECK);
 			b.setLayoutData(new GridData(GridData.BEGINNING, GridData.CENTER, false, false, 2, 1));
@@ -255,7 +255,7 @@ public abstract class MenuItemEditor extends AbstractComponentEditor {
 		{
 			final Label l = new Label(parent, SWT.NONE);
 			l.setText(Messages.MenuItemEditor_Selected);
-			l.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
+			l.setLayoutData(new GridData());
 
 			final Button b = new Button(parent, SWT.CHECK);
 			b.setLayoutData(new GridData(GridData.BEGINNING, GridData.CENTER, false, false, 2, 1));
@@ -291,7 +291,7 @@ public abstract class MenuItemEditor extends AbstractComponentEditor {
 		{
 			final Label l = new Label(parent, SWT.NONE);
 			l.setText(Messages.ModelTooling_UIElement_VisibleWhen);
-			l.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
+			l.setLayoutData(new GridData());
 
 			final ComboViewer combo = new ComboViewer(parent);
 			combo.getControl().setLayoutData(new GridData(GridData.FILL, GridData.CENTER, true, false, 2, 1));

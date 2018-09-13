@@ -163,7 +163,7 @@ public class BindingTableEditor extends AbstractComponentEditor {
 		{
 			final Label l = new Label(parent, SWT.NONE);
 			l.setText(Messages.ModelTooling_Common_Id);
-			l.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
+			l.setLayoutData(new GridData());
 
 			final Text t = new Text(parent, SWT.BORDER);
 			final GridData gd = new GridData(GridData.FILL_HORIZONTAL);
@@ -178,7 +178,7 @@ public class BindingTableEditor extends AbstractComponentEditor {
 		{
 			final Label l = new Label(parent, SWT.NONE);
 			l.setText(Messages.BindingTableEditor_ContextId);
-			l.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
+			l.setLayoutData(new GridData());
 
 			final Text t = new Text(parent, SWT.BORDER);
 			t.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));

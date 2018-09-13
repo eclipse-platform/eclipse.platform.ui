@@ -166,7 +166,7 @@ public class CommandEditor extends AbstractComponentEditor {
 		ControlFactory.createTextField(parent, Messages.ModelTooling_Common_Id,
 				Messages.ModelTooling_CommandId_tooltip, master, context, textProp, EMFEditProperties.value(
 						getEditingDomain(), ApplicationPackageImpl.Literals.APPLICATION_ELEMENT__ELEMENT_ID),
-						Messages.ModelTooling_Empty_Warning);
+				Messages.ModelTooling_Empty_Warning);
 		ControlFactory.createTextField(parent, Messages.CommandEditor_Name, master, context, textProp,
 				EMFEditProperties.value(getEditingDomain(), CommandsPackageImpl.Literals.COMMAND__COMMAND_NAME));
 		ControlFactory.createTextField(parent, Messages.CommandEditor_LabelDescription, master, context, textProp,
@@ -176,7 +176,7 @@ public class CommandEditor extends AbstractComponentEditor {
 		{
 			final Label l = new Label(parent, SWT.NONE);
 			l.setText(Messages.CommandEditor_Category);
-			l.setLayoutData(new GridData(GridData.END, GridData.BEGINNING, false, false));
+			l.setLayoutData(new GridData(GridData.BEGINNING, GridData.BEGINNING, false, false));
 
 			final Text t = new Text(parent, SWT.BORDER);
 			TextPasteHandler.createFor(t);

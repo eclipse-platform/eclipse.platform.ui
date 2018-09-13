@@ -290,7 +290,7 @@ public class StringModelFragment extends AbstractComponentEditor {
 			final Label l = new Label(parent, SWT.NONE);
 			l.setText(Messages.StringModelFragment_ParentId);
 			l.setToolTipText(Messages.StringModelFragment_ParentIdTooltip);
-			l.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
+			l.setLayoutData(new GridData());
 
 			final Composite comp = new Composite(parent, SWT.NONE);
 			GridData gd = new GridData(GridData.FILL_HORIZONTAL);
@@ -336,7 +336,7 @@ public class StringModelFragment extends AbstractComponentEditor {
 			final Label l = new Label(parent, SWT.NONE);
 			l.setText(Messages.StringModelFragment_Featurename);
 			l.setToolTipText(Messages.StringModelFragment_FeaturenameTooltip);
-			l.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
+			l.setLayoutData(new GridData());
 
 			final Composite comp = new Composite(parent, SWT.NONE);
 			GridData gd = new GridData(GridData.FILL_HORIZONTAL);

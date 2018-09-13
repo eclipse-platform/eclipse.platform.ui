@@ -187,7 +187,7 @@ public class PartEditor extends AbstractComponentEditor {
 		{
 			final Label l = new Label(parent, SWT.NONE);
 			l.setText(Messages.PartEditor_IconURI);
-			l.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
+			l.setLayoutData(new GridData());
 			l.setToolTipText(Messages.PartEditor_IconURI_Tooltip);
 
 			final Text t = new Text(parent, SWT.BORDER);
@@ -228,7 +228,7 @@ public class PartEditor extends AbstractComponentEditor {
 		{
 			final Label l = new Label(parent, SWT.NONE);
 			l.setText(Messages.PartEditor_ToolBar);
-			l.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
+			l.setLayoutData(new GridData());
 
 			createRemoveToolBar = new Button(parent, SWT.CHECK);
 			createRemoveToolBar.addSelectionListener(new SelectionAdapter() {

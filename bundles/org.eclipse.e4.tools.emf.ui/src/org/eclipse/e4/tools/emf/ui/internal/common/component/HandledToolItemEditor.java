@@ -74,7 +74,7 @@ public class HandledToolItemEditor extends ToolItemEditor {
 		{
 			final Label l = new Label(parent, SWT.NONE);
 			l.setText(Messages.HandledToolItemEditor_Command);
-			l.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
+			l.setLayoutData(new GridData());
 
 			final Text t = new Text(parent, SWT.BORDER);
 			TextPasteHandler.createFor(t);

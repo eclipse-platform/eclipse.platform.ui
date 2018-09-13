@@ -183,7 +183,7 @@ public class PartDescriptorEditor extends AbstractComponentEditor {
 		{
 			final Label l = new Label(parent, SWT.NONE);
 			l.setText(Messages.PartDescriptorEditor_IconURI);
-			l.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
+			l.setLayoutData(new GridData());
 
 			final Text t = new Text(parent, SWT.BORDER);
 			TextPasteHandler.createFor(t);
@@ -232,7 +232,7 @@ public class PartDescriptorEditor extends AbstractComponentEditor {
 		{
 			final Label l = new Label(parent, SWT.NONE);
 			l.setText(Messages.PartEditor_ToolBar);
-			l.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
+			l.setLayoutData(new GridData());
 
 			createRemoveToolBar = new Button(parent, SWT.CHECK);
 			createRemoveToolBar.addSelectionListener(new SelectionAdapter() {
@@ -253,7 +253,7 @@ public class PartDescriptorEditor extends AbstractComponentEditor {
 		{
 			final Label l = new Label(parent, SWT.NONE);
 			l.setText(Messages.PartDescriptorEditor_ContainerData);
-			l.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
+			l.setLayoutData(new GridData());
 
 			final Text t = new Text(parent, SWT.BORDER);
 			final GridData gd = new GridData(GridData.FILL_HORIZONTAL);
@@ -269,7 +269,7 @@ public class PartDescriptorEditor extends AbstractComponentEditor {
 		{
 			final Label l = new Label(parent, SWT.NONE);
 			l.setText(Messages.PartDescriptorEditor_Closeable);
-			l.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
+			l.setLayoutData(new GridData());
 
 			final Button checkbox = new Button(parent, SWT.CHECK);
 			checkbox.setLayoutData(new GridData(GridData.BEGINNING, GridData.BEGINNING, false, false, 2, 1));
@@ -285,7 +285,7 @@ public class PartDescriptorEditor extends AbstractComponentEditor {
 		{
 			final Label l = new Label(parent, SWT.NONE);
 			l.setText(Messages.PartDescriptorEditor_Multiple);
-			l.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
+			l.setLayoutData(new GridData());
 
 			final Button checkbox = new Button(parent, SWT.CHECK);
 			checkbox.setLayoutData(new GridData(GridData.BEGINNING, GridData.BEGINNING, false, false, 2, 1));
@@ -301,7 +301,7 @@ public class PartDescriptorEditor extends AbstractComponentEditor {
 		{
 			final Label l = new Label(parent, SWT.NONE);
 			l.setText(Messages.PartDescriptorEditor_Category);
-			l.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
+			l.setLayoutData(new GridData());
 
 			final Text t = new Text(parent, SWT.BORDER);
 			t.setLayoutData(new GridData(GridData.FILL, GridData.BEGINNING, true, false, 2, 1));

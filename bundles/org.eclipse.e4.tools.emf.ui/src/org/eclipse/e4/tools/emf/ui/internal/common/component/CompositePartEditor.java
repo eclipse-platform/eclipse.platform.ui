@@ -255,7 +255,7 @@ public class CompositePartEditor extends AbstractComponentEditor {
 		{
 			final Label l = new Label(parent, SWT.NONE);
 			l.setText(Messages.CompositePartEditor_IconURI);
-			l.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
+			l.setLayoutData(new GridData());
 			l.setToolTipText(Messages.CompositePartEditor_IconURI_Tooltip);
 
 			final Text t = new Text(parent, SWT.BORDER);
@@ -286,7 +286,7 @@ public class CompositePartEditor extends AbstractComponentEditor {
 		{
 			final Label l = new Label(parent, SWT.NONE);
 			l.setText(Messages.CompositePartEditor_Orientation);
-			l.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
+			l.setLayoutData(new GridData());
 
 			final ComboViewer viewer = new ComboViewer(parent);
 			final GridData gd = new GridData(GridData.FILL_HORIZONTAL);
@@ -315,7 +315,7 @@ public class CompositePartEditor extends AbstractComponentEditor {
 
 			final Label l = new Label(parent, SWT.NONE);
 			l.setText(Messages.CompositePartEditor_Controls);
-			l.setLayoutData(new GridData(GridData.END, GridData.BEGINNING, false, false));
+			l.setLayoutData(new GridData(GridData.BEGINNING, GridData.BEGINNING, false, false));
 
 			final Composite buttonCompTop = new Composite(parent, SWT.NONE);
 			final GridData span2 = new GridData(GridData.FILL, GridData.BEGINNING, false, false, 2, 1);

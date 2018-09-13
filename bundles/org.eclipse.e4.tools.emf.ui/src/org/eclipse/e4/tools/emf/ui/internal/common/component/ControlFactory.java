@@ -163,7 +163,7 @@ public class ControlFactory {
 	public static void createXMIId(Composite parent, AbstractComponentEditor editor) {
 		final Label l = new Label(parent, SWT.NONE);
 		l.setText("XMI:ID"); //$NON-NLS-1$
-		l.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
+		l.setLayoutData(new GridData());
 
 		final Text t = new Text(parent, SWT.BORDER);
 		t.setEditable(false);
@@ -427,7 +427,7 @@ public class ControlFactory {
 		if (tooltip != null) {
 			l.setToolTipText(tooltip);
 		}
-		l.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
+		l.setLayoutData(new GridData());
 
 		final Text t = new Text(parent, SWT.BORDER);
 		final GridData gd = new GridData(GridData.FILL_HORIZONTAL);
@@ -480,7 +480,7 @@ public class ControlFactory {
 		if (tooltip != null) {
 			l.setToolTipText(tooltip);
 		}
-		l.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
+		l.setLayoutData(new GridData());
 
 		final Text t = new Text(parent, SWT.BORDER);
 		final GridData gd = new GridData(GridData.FILL_HORIZONTAL);
@@ -524,7 +524,7 @@ public class ControlFactory {
 
 		final Label l = new Label(parent, SWT.NONE);
 		l.setText(Messages.ModelTooling_Common_RefId);
-		l.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
+		l.setLayoutData(new GridData());
 
 		final Text t = new Text(parent, SWT.BORDER);
 		final GridData gd = new GridData(GridData.FILL_HORIZONTAL);
@@ -554,7 +554,7 @@ public class ControlFactory {
 			final EMFDataBindingContext context, String label) {
 		final Label l = new Label(parent, SWT.NONE);
 		l.setText(label);
-		l.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
+		l.setLayoutData(new GridData());
 
 		final ComboViewer viewer = new ComboViewer(parent);
 		final GridData gd = new GridData(GridData.FILL_HORIZONTAL);
@@ -757,7 +757,7 @@ public class ControlFactory {
 		if (tooltip != null) {
 			l.setToolTipText(tooltip);
 		}
-		l.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
+		l.setLayoutData(new GridData());
 
 		final Button t = new Button(parent, SWT.CHECK);
 		t.setLayoutData(new GridData(GridData.BEGINNING, GridData.CENTER, false, false, 2, 1));
@@ -856,13 +856,13 @@ public class ControlFactory {
 		if (project != null && c != null) {
 			lnk = new Link(parent, SWT.NONE);
 			lnk.setText("<A>" + title + "</A>"); //$NON-NLS-1$//$NON-NLS-2$
-			lnk.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
+			lnk.setLayoutData(new GridData());
 			lnk.addSelectionListener(adapter);
 		} else {
 			lnk = null;
 			final Label l = new Label(parent, SWT.NONE);
 			l.setText(title);
-			l.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
+			l.setLayoutData(new GridData());
 		}
 
 		final Text t = new Text(parent, SWT.BORDER);

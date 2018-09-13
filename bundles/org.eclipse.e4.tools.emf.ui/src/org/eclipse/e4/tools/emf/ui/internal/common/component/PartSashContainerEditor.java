@@ -248,7 +248,7 @@ public class PartSashContainerEditor extends AbstractComponentEditor {
 		{
 			final Label l = new Label(parent, SWT.NONE);
 			l.setText(Messages.PartSashContainerEditor_Orientation);
-			l.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
+			l.setLayoutData(new GridData());
 
 			final ComboViewer viewer = new ComboViewer(parent);
 			final GridData gd = new GridData(GridData.FILL_HORIZONTAL);

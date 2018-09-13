@@ -198,7 +198,7 @@ public class TrimBarEditor extends AbstractComponentEditor {
 		{
 			final Label l = new Label(parent, SWT.NONE);
 			l.setText(Messages.TrimBarEditor_Side);
-			l.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
+			l.setLayoutData(new GridData());
 
 			final ComboViewer viewer = new ComboViewer(parent);
 			viewer.setContentProvider(new ArrayContentProvider());

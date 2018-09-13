@@ -172,7 +172,7 @@ public class ParameterEditor extends AbstractComponentEditor {
 		{
 			final Label commandParameterIdLabel = new Label(parent, SWT.NONE);
 			commandParameterIdLabel.setText(Messages.ParameterEditor_Command_Parameter_ID);
-			commandParameterIdLabel.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
+			commandParameterIdLabel.setLayoutData(new GridData());
 
 			final Text commandParameterIdValue = new Text(parent, SWT.BORDER);
 			final GridData gd = new GridData(GridData.FILL_HORIZONTAL);

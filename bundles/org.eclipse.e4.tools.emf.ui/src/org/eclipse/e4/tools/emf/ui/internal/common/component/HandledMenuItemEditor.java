@@ -86,7 +86,7 @@ public class HandledMenuItemEditor extends MenuItemEditor {
 		{
 			final Label l = new Label(parent, SWT.NONE);
 			l.setText(Messages.HandledMenuItemEditor_Command);
-			l.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
+			l.setLayoutData(new GridData());
 
 			final Text t = new Text(parent, SWT.BORDER);
 			TextPasteHandler.createFor(t);

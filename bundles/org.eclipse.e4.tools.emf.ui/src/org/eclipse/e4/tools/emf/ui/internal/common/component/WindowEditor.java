@@ -196,7 +196,7 @@ public class WindowEditor extends AbstractComponentEditor {
 		{
 			final Label l = new Label(parent, SWT.NONE);
 			l.setText(Messages.WindowEditor_Bounds);
-			l.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
+			l.setLayoutData(new GridData());
 
 			final Composite comp = new Composite(parent, SWT.NONE);
 			final GridLayout layout = new GridLayout(4, true);
@@ -246,7 +246,7 @@ public class WindowEditor extends AbstractComponentEditor {
 		{
 			final Label l = new Label(parent, SWT.NONE);
 			l.setText(Messages.WindowEditor_IconURI);
-			l.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
+			l.setLayoutData(new GridData());
 
 			final Text t = new Text(parent, SWT.BORDER);
 			t.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
@@ -274,7 +274,7 @@ public class WindowEditor extends AbstractComponentEditor {
 		{
 			final Label l = new Label(parent, SWT.NONE);
 			l.setText(Messages.WindowEditor_MainMenu);
-			l.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
+			l.setLayoutData(new GridData());
 
 			createRemoveMainMenu = new Button(parent, SWT.CHECK);
 			createRemoveMainMenu.addSelectionListener(new SelectionAdapter() {
