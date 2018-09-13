@@ -418,9 +418,11 @@ public class StringModelFragment extends AbstractComponentEditor {
 					FragmentPackageImpl.Literals.MODEL_FRAGMENT__ELEMENTS) {
 				@Override
 				protected void addPressed() {
-					final EClass eClass = ((FeatureClass) ((IStructuredSelection) getSelection())
-							.getFirstElement()).eClass;
-					handleAdd(eClass, false);
+					if(!getSelection().isEmpty()) {
+						final EClass eClass = ((FeatureClass) ((IStructuredSelection) getSelection())
+								.getFirstElement()).eClass;
+						handleAdd(eClass, false);
+					}
 				}
 
 				@Override
