@@ -60,7 +60,6 @@ import org.eclipse.jface.databinding.swt.WidgetProperties;
 import org.eclipse.jface.databinding.viewers.ViewerProperties;
 import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.ComboViewer;
-import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.TreeViewer;
@@ -217,7 +216,7 @@ public class TrimBarEditor extends AbstractComponentEditor {
 					Messages, this, UiPackageImpl.Literals.ELEMENT_CONTAINER__CHILDREN) {
 				@Override
 				protected void addPressed() {
-					final EClass eClass = (EClass) ((IStructuredSelection) getSelection()).getFirstElement();
+					final EClass eClass = (EClass) getSelection().getFirstElement();
 					handleAddChild(eClass);
 				}
 			};

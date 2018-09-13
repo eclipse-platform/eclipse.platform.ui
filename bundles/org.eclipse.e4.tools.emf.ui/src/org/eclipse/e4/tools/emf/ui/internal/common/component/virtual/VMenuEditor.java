@@ -42,7 +42,6 @@ import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.emf.edit.command.AddCommand;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.viewers.ArrayContentProvider;
-import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.StructuredViewer;
@@ -134,7 +133,7 @@ public class VMenuEditor extends AbstractComponentEditor {
 		final AbstractPickList pickList = new E4PickList(parent, SWT.NONE, null, Messages, this, feature) {
 			@Override
 			protected void addPressed() {
-				final Types t = (Types) ((IStructuredSelection) getSelection()).getFirstElement();
+				final Types t = (Types) getSelection().getFirstElement();
 				if (t == Types.MENU) {
 					handleAdd(MenuPackageImpl.Literals.MENU);
 				} else if (t == Types.POPUP_MENU) {

@@ -209,8 +209,8 @@ public abstract class AbstractPickList extends Composite {
 		// autoCompleteField.setProposals(keySet.toArray(new String[keySet.size()]));
 	}
 
-	public ISelection getSelection() {
-		return getPicker().getSelection();
+	public IStructuredSelection getSelection() {
+		return getPicker().getStructuredSelection();
 	}
 
 	public void setSelection(ISelection selection) {

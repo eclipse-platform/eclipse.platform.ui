@@ -47,7 +47,6 @@ import org.eclipse.emf.edit.command.AddCommand;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.databinding.swt.IWidgetValueProperty;
 import org.eclipse.jface.databinding.swt.WidgetProperties;
-import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.swt.SWT;
@@ -188,7 +187,7 @@ public class ToolBarEditor extends AbstractComponentEditor {
 					UiPackageImpl.Literals.ELEMENT_CONTAINER__CHILDREN) {
 				@Override
 				protected void addPressed() {
-					final Struct struct = (Struct) ((IStructuredSelection) getSelection()).getFirstElement();
+					final Struct struct = (Struct) getSelection().getFirstElement();
 					final EClass eClass = struct.eClass;
 					handleAddChild(eClass, struct.separator);
 				}

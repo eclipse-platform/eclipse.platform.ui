@@ -52,7 +52,6 @@ import org.eclipse.emf.edit.command.AddCommand;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.databinding.swt.IWidgetValueProperty;
 import org.eclipse.jface.databinding.swt.WidgetProperties;
-import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.TreeViewer;
@@ -139,7 +138,7 @@ public class PartStackEditor extends AbstractComponentEditor {
 		.add(new Action(Messages.PartStackEditor_Editors, createImageDescriptor(ResourceProvider.IMG_Part)) {
 			@Override
 			public void run() {
-						handleImportChild(BasicPackageImpl.Literals.PART);
+				handleImportChild(BasicPackageImpl.Literals.PART);
 			}
 		});
 
@@ -234,7 +233,7 @@ public class PartStackEditor extends AbstractComponentEditor {
 					UiPackageImpl.Literals.ELEMENT_CONTAINER__CHILDREN) {
 				@Override
 				protected void addPressed() {
-					final EClass eClass = ((FeatureClass) ((IStructuredSelection) getSelection()).getFirstElement()).eClass;
+					final EClass eClass = ((FeatureClass) getSelection().getFirstElement()).eClass;
 					handleAddChild(eClass);
 				}
 			};

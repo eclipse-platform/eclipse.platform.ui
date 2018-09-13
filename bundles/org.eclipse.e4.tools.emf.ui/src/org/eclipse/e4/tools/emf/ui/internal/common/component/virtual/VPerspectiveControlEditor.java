@@ -39,7 +39,6 @@ import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.emf.edit.command.AddCommand;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.viewers.ArrayContentProvider;
-import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.swt.SWT;
@@ -137,7 +136,7 @@ public class VPerspectiveControlEditor extends AbstractComponentEditor {
 			final AbstractPickList pickList = new E4PickList(parent, SWT.NONE, null, Messages, this, UiPackageImpl.Literals.ELEMENT_CONTAINER__CHILDREN) {
 				@Override
 				protected void addPressed() {
-					final EClass eClass = (EClass) ((IStructuredSelection) getSelection()).getFirstElement();
+					final EClass eClass = (EClass) getSelection().getFirstElement();
 					handleAdd(eClass);
 				}
 			};

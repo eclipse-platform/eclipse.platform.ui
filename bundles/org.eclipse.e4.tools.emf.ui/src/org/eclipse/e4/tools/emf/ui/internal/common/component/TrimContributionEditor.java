@@ -61,7 +61,6 @@ import org.eclipse.jface.databinding.viewers.ObservableListContentProvider;
 import org.eclipse.jface.resource.FontDescriptor;
 import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.DelegatingStyledCellLabelProvider;
-import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TableViewer;
@@ -241,7 +240,7 @@ public class TrimContributionEditor extends AbstractComponentEditor {
 					UiPackageImpl.Literals.ELEMENT_CONTAINER__CHILDREN) {
 				@Override
 				protected void addPressed() {
-					final EClass eClass = (EClass) ((IStructuredSelection) getSelection()).getFirstElement();
+					final EClass eClass = (EClass) getSelection().getFirstElement();
 					handleAddChild(eClass);
 				}
 			};

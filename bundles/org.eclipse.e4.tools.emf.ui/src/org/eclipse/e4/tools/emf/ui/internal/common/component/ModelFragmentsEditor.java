@@ -47,7 +47,6 @@ import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.emf.edit.command.AddCommand;
-import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TableViewer;
@@ -168,7 +167,7 @@ public class ModelFragmentsEditor extends AbstractComponentEditor {
 				FragmentPackageImpl.Literals.MODEL_FRAGMENTS__IMPORTS) {
 			@Override
 			protected void addPressed() {
-				final EClass eClass = ((FeatureClass) ((IStructuredSelection) getSelection()).getFirstElement()).eClass;
+				final EClass eClass = ((FeatureClass) getSelection().getFirstElement()).eClass;
 				final EObject eObject = EcoreUtil.create(eClass);
 
 				final Command cmd = AddCommand.create(getEditingDomain(), getMaster().getValue(),

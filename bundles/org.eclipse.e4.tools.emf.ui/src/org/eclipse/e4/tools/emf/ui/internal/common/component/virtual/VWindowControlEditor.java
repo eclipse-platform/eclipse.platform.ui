@@ -39,7 +39,6 @@ import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.emf.edit.command.AddCommand;
 import org.eclipse.jface.action.Action;
-import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TableViewer;
@@ -149,7 +148,7 @@ public class VWindowControlEditor extends AbstractComponentEditor {
 					UiPackageImpl.Literals.ELEMENT_CONTAINER__CHILDREN) {
 				@Override
 				protected void addPressed() {
-					final EClass eClass = (EClass) ((IStructuredSelection) getSelection()).getFirstElement();
+					final EClass eClass = (EClass) getSelection().getFirstElement();
 					handleAdd(eClass);
 				}
 			};
@@ -167,7 +166,7 @@ public class VWindowControlEditor extends AbstractComponentEditor {
 			pickList
 			.setInput(new EClass[] { AdvancedPackageImpl.Literals.PERSPECTIVE_STACK,
 					BasicPackageImpl.Literals.PART_SASH_CONTAINER, BasicPackageImpl.Literals.PART_STACK,
-							BasicPackageImpl.Literals.PART,
+					BasicPackageImpl.Literals.PART,
 					AdvancedPackageImpl.Literals.AREA });
 			pickList.setSelection(new StructuredSelection(AdvancedPackageImpl.Literals.PERSPECTIVE_STACK));
 		}

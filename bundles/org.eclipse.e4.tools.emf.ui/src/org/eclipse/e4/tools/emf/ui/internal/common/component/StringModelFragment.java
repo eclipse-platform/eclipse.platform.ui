@@ -78,7 +78,6 @@ import org.eclipse.jface.fieldassist.FieldDecorationRegistry;
 import org.eclipse.jface.fieldassist.IContentProposal;
 import org.eclipse.jface.fieldassist.IContentProposalProvider;
 import org.eclipse.jface.fieldassist.TextContentAdapter;
-import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.Viewer;
@@ -419,8 +418,7 @@ public class StringModelFragment extends AbstractComponentEditor {
 				@Override
 				protected void addPressed() {
 					if(!getSelection().isEmpty()) {
-						final EClass eClass = ((FeatureClass) ((IStructuredSelection) getSelection())
-								.getFirstElement()).eClass;
+						final EClass eClass = ((FeatureClass) getSelection().getFirstElement()).eClass;
 						handleAdd(eClass, false);
 					}
 				}

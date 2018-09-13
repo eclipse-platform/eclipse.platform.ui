@@ -36,7 +36,6 @@ import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.emf.edit.command.AddCommand;
-import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TableViewer;
@@ -102,7 +101,7 @@ public class VModelImportsEditor extends AbstractComponentEditor {
 			@Override
 			protected void addPressed() {
 
-				final Object firstElement = ((IStructuredSelection) getSelection()).getFirstElement();
+				final Object firstElement = getSelection().getFirstElement();
 
 				if (firstElement != null) {
 					final FeatureClass featureClass = (FeatureClass) firstElement;

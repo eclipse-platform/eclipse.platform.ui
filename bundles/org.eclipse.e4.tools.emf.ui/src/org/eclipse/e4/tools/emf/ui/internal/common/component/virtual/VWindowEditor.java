@@ -37,7 +37,6 @@ import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.emf.edit.command.AddCommand;
 import org.eclipse.jface.action.Action;
-import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.swt.SWT;
@@ -113,7 +112,7 @@ public abstract class VWindowEditor extends AbstractComponentEditor {
 		final AbstractPickList pickList = new E4PickList(parent, SWT.NONE, null, Messages, this, targetFeature) {
 			@Override
 			protected void addPressed() {
-				final EClass eClass = (EClass) ((IStructuredSelection) getSelection()).getFirstElement();
+				final EClass eClass = (EClass) getSelection().getFirstElement();
 				handleAdd(eClass);
 			}
 
