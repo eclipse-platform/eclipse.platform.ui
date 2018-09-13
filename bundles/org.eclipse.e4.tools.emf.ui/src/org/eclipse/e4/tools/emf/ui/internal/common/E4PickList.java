@@ -37,11 +37,20 @@ import org.eclipse.emf.edit.command.RemoveCommand;
 import org.eclipse.jface.databinding.viewers.ObservableListContentProvider;
 import org.eclipse.jface.resource.FontDescriptor;
 import org.eclipse.jface.viewers.ArrayContentProvider;
+import org.eclipse.jface.viewers.CellNavigationStrategy;
+import org.eclipse.jface.viewers.ColumnViewer;
+import org.eclipse.jface.viewers.ColumnViewerEditor;
+import org.eclipse.jface.viewers.ColumnViewerEditorActivationEvent;
+import org.eclipse.jface.viewers.ColumnViewerEditorActivationStrategy;
 import org.eclipse.jface.viewers.DelegatingStyledCellLabelProvider;
+import org.eclipse.jface.viewers.FocusCellOwnerDrawHighlighter;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.StructuredSelection;
+import org.eclipse.jface.viewers.TableViewerEditor;
+import org.eclipse.jface.viewers.TableViewerFocusCellManager;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.widgets.Composite;
 
 /**
@@ -61,6 +70,7 @@ public class E4PickList extends AbstractPickList {
 
 	AbstractComponentEditor componentEditor;
 	EStructuralFeature feature;
+	TableViewerFocusCellManager focusCellMgr;
 
 	public static class Struct {
 		final public String label;
@@ -102,6 +112,14 @@ public class E4PickList extends AbstractPickList {
 				new ComponentLabelProvider(componentEditor.getEditor(), new Messages(), italicFontDescriptor)));
 		final ObservableListContentProvider cp = new ObservableListContentProvider();
 		viewer.setContentProvider(cp);
+
+		// enable tabbing and keyboard activation
+		this.focusCellMgr = new TableViewerFocusCellManager(viewer, new FocusCellOwnerDrawHighlighter(viewer),
+				new CellNavigationStrategy());
+
+		TableViewerEditor.create(viewer, this.focusCellMgr, new TableViewerEditorActivationStrategy(viewer), //
+				ColumnViewerEditor.TABBING_HORIZONTAL | ColumnViewerEditor.TABBING_MOVE_TO_ROW_NEIGHBOR
+				| ColumnViewerEditor.TABBING_VERTICAL | ColumnViewerEditor.KEYBOARD_ACTIVATION);
 	}
 
 	/**
@@ -257,4 +275,37 @@ public class E4PickList extends AbstractPickList {
 		}
 		return ((ObservableListContentProvider) viewer.getContentProvider()).getElements(viewer.getInput()).length;
 	}
+
+	private class TableViewerEditorActivationStrategy extends ColumnViewerEditorActivationStrategy {
+
+		public TableViewerEditorActivationStrategy(ColumnViewer viewer) {
+			super(viewer);
+		}
+
+		@Override
+		protected boolean isEditorActivationEvent(ColumnViewerEditorActivationEvent event) {
+			if (event != null) {
+
+				if (event.eventType == ColumnViewerEditorActivationEvent.MOUSE_CLICK_SELECTION) {
+					MouseEvent mouseEvent = (MouseEvent) event.sourceEvent;
+					if ((mouseEvent.stateMask & SWT.MOD1) != 0) {
+						return false;
+					}
+				}
+
+				if (event.eventType == ColumnViewerEditorActivationEvent.TRAVERSAL
+						|| event.eventType == ColumnViewerEditorActivationEvent.PROGRAMMATIC
+						|| event.eventType == ColumnViewerEditorActivationEvent.MOUSE_DOUBLE_CLICK_SELECTION
+						|| event.eventType == ColumnViewerEditorActivationEvent.MOUSE_CLICK_SELECTION
+						&& ((event.stateMask & SWT.MOD1) == 0)
+						|| (event.eventType == ColumnViewerEditorActivationEvent.KEY_PRESSED
+						&& (event.keyCode == SWT.F2 || event.keyCode == 32 || event.character == SWT.CR))) {
+
+					return true;
+				}
+			}
+			return false;
+		}
+	}
+
 }
