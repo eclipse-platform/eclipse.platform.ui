@@ -192,7 +192,7 @@ public class ControlFactory {
 		return createMapProperties(parent, Messages, editor, label, null, feature, vIndent);
 	}
 
-	public static Composite createMapProperties(Composite parent, final Messages Messages,
+	public static Composite createMapProperties(Composite parent, final Messages messages,
 			final AbstractComponentEditor editor, String label, String tooltip, final EStructuralFeature feature,
 			int vIndent) {
 
@@ -211,20 +211,20 @@ public class ControlFactory {
 
 					@Override
 					protected Control createDialogArea(Composite parent) {
-						getShell().setText(Messages.ControlFactory_KeyValueShellTitle);
+						getShell().setText(messages.ControlFactory_KeyValueShellTitle);
 						final Composite comp = (Composite) super.createDialogArea(parent);
 						final Composite container = new Composite(comp, SWT.NONE);
 						container.setLayout(new GridLayout(2, false));
 						container.setLayoutData(new GridData(GridData.FILL_BOTH));
 
 						Label l = new Label(container, SWT.NONE);
-						l.setText(Messages.ControlFactory_Key);
+						l.setText(messages.ControlFactory_Key);
 
 						key = new Text(container, SWT.BORDER);
 						key.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 
 						l = new Label(container, SWT.NONE);
-						l.setText(Messages.ControlFactory_Value);
+						l.setText(messages.ControlFactory_Value);
 
 						value = new Text(container, SWT.BORDER);
 						value.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
@@ -268,7 +268,7 @@ public class ControlFactory {
 		tableviewer.getControl().setLayoutData(gd);
 
 		TableViewerColumn column = new TableViewerColumn(tableviewer, SWT.NONE);
-		column.getColumn().setText(Messages.ControlFactory_Key);
+		column.getColumn().setText(Messages.ControlFactory_KeyColumn);
 		column.getColumn().setWidth(200);
 		column.setLabelProvider(new ColumnLabelProvider() {
 			@SuppressWarnings("unchecked")
@@ -314,7 +314,7 @@ public class ControlFactory {
 
 		// FIXME How can we react upon changes in the Map-Value?
 		column = new TableViewerColumn(tableviewer, SWT.NONE);
-		column.getColumn().setText(Messages.ControlFactory_Value);
+		column.getColumn().setText(Messages.ControlFactory_ValueColumn);
 		column.getColumn().setWidth(200);
 		column.setLabelProvider(new ColumnLabelProvider() {
 			@Override

@@ -175,6 +175,8 @@ public class Messages {
 	public String ControlFactory_Key;
 	public String ControlFactory_Value;
 	public String ControlFactory_KeyValueShellTitle;
+	public static String ControlFactory_KeyColumn;
+	public static String ControlFactory_ValueColumn;
 
 	public String DirectToolItemEditor_ClassURI;
 	public String DirectToolItemEditor_Label;
