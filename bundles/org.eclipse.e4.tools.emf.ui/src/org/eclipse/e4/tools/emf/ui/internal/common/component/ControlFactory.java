@@ -263,8 +263,7 @@ public class ControlFactory {
 		final ObservableListContentProvider cp = new ObservableListContentProvider();
 		tableviewer.setContentProvider(cp);
 
-		final GridData gd = new GridData(GridData.FILL_HORIZONTAL);
-		gd.heightHint = 80;
+		final GridData gd = new GridData(SWT.FILL, SWT.FILL, true, true);
 		gd.verticalIndent = vIndent;
 		tableviewer.getControl().setLayoutData(gd);
 
