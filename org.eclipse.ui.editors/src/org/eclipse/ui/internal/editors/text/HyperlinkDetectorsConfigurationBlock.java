@@ -234,7 +234,7 @@ class HyperlinkDetectorsConfigurationBlock implements IPreferenceConfigurationBl
 
 			@Override
 			public void keyReleased(KeyEvent e) {
-				if (isModifierCandidate && e.stateMask > 0 && e.stateMask == e.stateMask && e.character == 0) {// && e.time -time < 1000) {
+				if (isModifierCandidate && e.stateMask > 0 && e.character == 0) {// && e.time -time < 1000) {
 					String modifierString= fHyperlinkDefaultKeyModifierText.getText();
 					Point selection= fHyperlinkDefaultKeyModifierText.getSelection();
 					int i= selection.x - 1;
@@ -340,7 +340,7 @@ class HyperlinkDetectorsConfigurationBlock implements IPreferenceConfigurationBl
 
 			@Override
 			public void keyReleased(KeyEvent e) {
-				if (isModifierCandidate && e.stateMask > 0 && e.stateMask == e.stateMask && e.character == 0) {// && e.time -time < 1000) {
+				if (isModifierCandidate && e.stateMask > 0 && e.character == 0) {// && e.time -time < 1000) {
 					String modifierString= fHyperlinkKeyModifierText.getText();
 					Point selection= fHyperlinkKeyModifierText.getSelection();
 					int i= selection.x - 1;
