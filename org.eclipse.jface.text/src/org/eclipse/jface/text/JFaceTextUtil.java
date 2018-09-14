@@ -305,12 +305,21 @@ public final class JFaceTextUtil {
 	 *         be vertically scrolled, <code>false</code> otherwise
 	 */
 	public static boolean isShowingEntireContents(StyledText widget) {
-		if (widget.getTopPixel() != 0) // more efficient shortcut
+		if (widget.getTopPixel() != 0) {
+			// more efficient shortcut
 			return false;
+		}
 
 		int lastVisiblePixel= computeLastVisiblePixel(widget);
-		int lastPossiblePixel= widget.getLinePixel(widget.getLineCount());
-		return lastPossiblePixel <= lastVisiblePixel;
+		int bottom= widget.getLineIndex(lastVisiblePixel);
+		if (bottom + 1 < widget.getLineCount()) {
+			// There's definitely more lines below
+			return false;
+		}
+
+		// Check whether the last line is fully visible
+		int bottomLastPixel= getLinePixel(widget, bottom + 1) - 1;
+		return bottomLastPixel <= lastVisiblePixel;
 	}
 
 	/**
