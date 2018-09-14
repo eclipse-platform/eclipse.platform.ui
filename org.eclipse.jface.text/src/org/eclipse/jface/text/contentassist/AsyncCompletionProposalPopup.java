@@ -15,8 +15,10 @@ package org.eclipse.jface.text.contentassist;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
@@ -344,18 +346,18 @@ class AsyncCompletionProposalPopup extends CompletionProposalPopup {
 		List<CompletableFuture<List<ICompletionProposal>>> futures = new ArrayList<>(processors.size());
 		for (IContentAssistProcessor processor : processors) {
 			futures.add(CompletableFuture.supplyAsync(() -> {
-				final List<ICompletionProposal>[] result= new List[] { null };
+				final Collection<List<ICompletionProposal>> result= new LinkedList<>();
 				SafeRunner.run(new ISafeRunnable() {
 					@Override
 					public void run() throws Exception {
 						ICompletionProposal[] proposals= processor.computeCompletionProposals(fViewer, invocationOffset);
 						if (proposals == null) {
-							result[0]= Collections.emptyList();
+							result.add(Collections.emptyList());
 						}
-						result[0]= Arrays.asList(proposals);
+						result.add(Arrays.asList(proposals));
 					}
 				});
-				return result[0];
+				return result.iterator().next();
 			}));
 		}
 		return futures;
