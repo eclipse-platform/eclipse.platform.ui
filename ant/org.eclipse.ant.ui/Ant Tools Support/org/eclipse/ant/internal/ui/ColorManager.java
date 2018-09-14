@@ -45,8 +45,13 @@ public class ColorManager implements ISharedTextColors {
 	public Color getColor(RGB rgb) {
 		Color color = fColorTable.get(rgb);
 		if (color == null) {
-			PlatformUI.getWorkbench().getDisplay().syncExec(() -> fColorTable.put(rgb, new Color(Display.getCurrent(), rgb)));
-			color = fColorTable.get(rgb);
+			synchronized (fColorTable) {
+				color = fColorTable.get(rgb);
+				if (color == null) {
+					PlatformUI.getWorkbench().getDisplay().syncExec(() -> fColorTable.put(rgb, new Color(Display.getCurrent(), rgb)));
+					color = fColorTable.get(rgb);
+				}
+			}
 		}
 		return color;
 	}
