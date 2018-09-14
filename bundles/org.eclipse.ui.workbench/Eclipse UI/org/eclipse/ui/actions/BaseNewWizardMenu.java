@@ -155,11 +155,11 @@ public class BaseNewWizardMenu extends CompoundContributionItem {
     @Override
 	public void dispose() {
         if (workbenchWindow != null) {
-            super.dispose();
             unregisterListeners();
             showDlgAction.dispose();
             showDlgAction = null;
             workbenchWindow = null;
+			super.dispose();
         }
     }
 
@@ -255,8 +255,10 @@ public class BaseNewWizardMenu extends CompoundContributionItem {
      * @since 3.1
      */
     private void unregisterListeners() {
-        Platform.getExtensionRegistry().removeRegistryChangeListener(
-                registryListener);
-        workbenchWindow.getExtensionTracker().unregisterHandler(configListener);
+		Platform.getExtensionRegistry().removeRegistryChangeListener(registryListener);
+		IExtensionTracker extensionTracker = workbenchWindow.getExtensionTracker();
+		if (extensionTracker != null) {
+			extensionTracker.unregisterHandler(configListener);
+		}
     }
 }

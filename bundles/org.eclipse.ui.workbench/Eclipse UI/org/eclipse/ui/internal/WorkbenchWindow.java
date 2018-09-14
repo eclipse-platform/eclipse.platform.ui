@@ -2784,6 +2784,9 @@ STATUS_LINE_ID, model);
 
 	@Override
 	public IExtensionTracker getExtensionTracker() {
+		if (model == null || model.getContext() == null) {
+			return null;
+		}
 		return model.getContext().get(IExtensionTracker.class);
 	}
 
