@@ -211,7 +211,8 @@ public class KeyBindingEditor extends AbstractComponentEditor {
 		}
 
 		{
-			final E4PickList pickList = new E4PickList(parent, SWT.NONE, Arrays.asList(PickListFeatures.NO_PICKER), Messages, this, CommandsPackageImpl.Literals.KEY_BINDING__PARAMETERS) {
+			final E4PickList pickList = new E4PickList(parent, SWT.NONE, Arrays.asList(PickListFeatures.NO_PICKER),
+					this, CommandsPackageImpl.Literals.KEY_BINDING__PARAMETERS) {
 				@Override
 				protected void addPressed() {
 					handleAddParameter();

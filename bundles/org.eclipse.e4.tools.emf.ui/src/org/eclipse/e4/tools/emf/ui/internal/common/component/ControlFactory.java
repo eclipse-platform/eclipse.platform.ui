@@ -197,7 +197,7 @@ public class ControlFactory {
 			int vIndent) {
 
 		final E4PickList pickList = new E4PickList(parent, SWT.NONE, Arrays.asList(PickListFeatures.NO_PICKER),
-				Messages, editor, feature) {
+				editor, feature) {
 			@Override
 			protected List<?> getContainerChildren(Object master) {
 				return null;
@@ -622,7 +622,7 @@ public class ControlFactory {
 			final AbstractComponentEditor editor, String label, String tooltip) {
 		{
 			final E4PickList pickList = new E4PickList(parent, SWT.NONE, Arrays.asList(PickListFeatures.NO_ORDER,
-					PickListFeatures.NO_PICKER), Messages, editor, CommandsPackageImpl.Literals.BINDINGS__BINDING_CONTEXTS) {
+					PickListFeatures.NO_PICKER), editor, CommandsPackageImpl.Literals.BINDINGS__BINDING_CONTEXTS) {
 				@Override
 				protected void addPressed() {
 					final BindingContextSelectionDialog dialog = new BindingContextSelectionDialog(getShell(), editor
@@ -654,7 +654,7 @@ public class ControlFactory {
 			final AbstractComponentEditor editor, String label, String tooltip, final EStructuralFeature feature,
 			int vIndent) {
 
-		final E4StringPickList pickList = new E4StringPickList(parent, SWT.NONE, null, Messages, editor, feature) {
+		final E4StringPickList pickList = new E4StringPickList(parent, SWT.NONE, null, editor, feature) {
 			@Override
 			protected void addPressed() {
 				handleAddText(editor, feature, getTextWidget());

@@ -66,11 +66,17 @@ public abstract class AbstractPickList extends Composite {
 	protected final Button tiDown;
 	// private final AutoCompleteField autoCompleteField;
 
+	@Deprecated
 	public AbstractPickList(Composite parent, int style, List<PickListFeatures> listFeatures, Messages messages,
+			AbstractComponentEditor componentEditor) {
+		this(parent, style, listFeatures, componentEditor);
+	}
+
+	public AbstractPickList(Composite parent, int style, List<PickListFeatures> listFeatures,
 			AbstractComponentEditor componentEditor) {
 		super(parent, style);
 
-		// TODO remove dependency to Messages and AbstractComponentEditor. They
+		// TODO remove dependency AbstractComponentEditor. They
 		// are only needed for labels and icons.
 
 		setLayout(new FillLayout());
@@ -120,7 +126,7 @@ public abstract class AbstractPickList extends Composite {
 		picker.addOpenListener(event -> addPressed());
 
 		tiAdd = new Button(toolBar, SWT.PUSH);
-		tiAdd.setToolTipText(messages.ModelTooling_Common_AddEllipsis);
+		tiAdd.setToolTipText(Messages.ModelTooling_Common_AddEllipsis);
 		tiAdd.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false));
 		tiAdd.setImage(componentEditor.createImage(ResourceProvider.IMG_Obj16_table_add));
 		tiAdd.setFont(getButtonFont());
@@ -133,7 +139,7 @@ public abstract class AbstractPickList extends Composite {
 
 		tiRemove = new Button(toolBar, SWT.PUSH);
 		tiRemove.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false));
-		tiRemove.setToolTipText(messages.ModelTooling_Common_Remove);
+		tiRemove.setToolTipText(Messages.ModelTooling_Common_Remove);
 		tiRemove.setImage(componentEditor.createImage(ResourceProvider.IMG_Obj16_table_delete));
 		tiRemove.setFont(getButtonFont());
 		tiRemove.addSelectionListener(new SelectionAdapter() {
@@ -145,7 +151,7 @@ public abstract class AbstractPickList extends Composite {
 
 		tiDown = new Button(toolBar, SWT.PUSH);
 		tiDown.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false));
-		tiDown.setToolTipText(messages.ModelTooling_Common_Down);
+		tiDown.setToolTipText(Messages.ModelTooling_Common_Down);
 		tiDown.setImage(componentEditor.createImage(ResourceProvider.IMG_Obj16_arrow_down));
 		tiDown.setFont(getButtonFont());
 		tiDown.addSelectionListener(new SelectionAdapter() {
@@ -165,7 +171,7 @@ public abstract class AbstractPickList extends Composite {
 
 		tiUp = new Button(toolBar, SWT.PUSH);
 		tiUp.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false));
-		tiUp.setToolTipText(messages.ModelTooling_Common_Up);
+		tiUp.setToolTipText(Messages.ModelTooling_Common_Up);
 		tiUp.setImage(componentEditor.createImage(ResourceProvider.IMG_Obj16_arrow_up));
 		tiUp.setFont(getButtonFont());
 		tiUp.addSelectionListener(new SelectionAdapter() {

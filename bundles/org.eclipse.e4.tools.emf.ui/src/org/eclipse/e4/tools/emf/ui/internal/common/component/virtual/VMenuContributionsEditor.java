@@ -104,7 +104,9 @@ public class VMenuContributionsEditor extends AbstractComponentEditor {
 		item.setControl(parent.getParent());
 
 		{
-			final AbstractPickList pickList = new E4PickList(parent, SWT.NONE, Arrays.asList(PickListFeatures.NO_PICKER), Messages, this, MenuPackageImpl.Literals.MENU_CONTRIBUTIONS__MENU_CONTRIBUTIONS) {
+			final AbstractPickList pickList = new E4PickList(parent, SWT.NONE,
+					Arrays.asList(PickListFeatures.NO_PICKER), this,
+					MenuPackageImpl.Literals.MENU_CONTRIBUTIONS__MENU_CONTRIBUTIONS) {
 				@Override
 				protected void addPressed() {
 					handleAdd();

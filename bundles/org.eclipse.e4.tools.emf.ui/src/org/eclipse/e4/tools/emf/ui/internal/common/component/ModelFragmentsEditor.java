@@ -119,7 +119,7 @@ public class ModelFragmentsEditor extends AbstractComponentEditor {
 		{
 
 			final AbstractPickList pickList = new E4PickList(parent, SWT.NONE,
-					Arrays.asList(PickListFeatures.NO_PICKER), Messages, this,
+					Arrays.asList(PickListFeatures.NO_PICKER), this,
 					FragmentPackageImpl.Literals.MODEL_FRAGMENTS__FRAGMENTS) {
 				@Override
 				protected void addPressed() {
@@ -163,7 +163,7 @@ public class ModelFragmentsEditor extends AbstractComponentEditor {
 			ControlFactory.createXMIId(parent, this);
 		}
 
-		final E4PickList pickList = new E4PickList(parent, SWT.NONE, null, Messages, this,
+		final E4PickList pickList = new E4PickList(parent, SWT.NONE, null, this,
 				FragmentPackageImpl.Literals.MODEL_FRAGMENTS__IMPORTS) {
 			@Override
 			protected void addPressed() {

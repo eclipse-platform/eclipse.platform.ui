@@ -72,15 +72,15 @@ public class VCommandEditor extends AbstractComponentEditor {
 	@PostConstruct
 	void init() {
 		actions
-			.add(new Action(Messages.VCommandEditor_AddCommand, createImageDescriptor(ResourceProvider.IMG_Command)) {
-				@Override
-				public void run() {
-					handleAdd();
-				}
-			});
+		.add(new Action(Messages.VCommandEditor_AddCommand, createImageDescriptor(ResourceProvider.IMG_Command)) {
+			@Override
+			public void run() {
+				handleAdd();
+			}
+		});
 
 		actionsImport.add(new Action(Messages.VCommandEditor_ImportCommands,
-			createImageDescriptor(ResourceProvider.IMG_Command)) {
+				createImageDescriptor(ResourceProvider.IMG_Command)) {
 			@Override
 			public void run() {
 				handleImport();
@@ -126,8 +126,8 @@ public class VCommandEditor extends AbstractComponentEditor {
 
 		{
 			final AbstractPickList pickList = new E4PickList(parent, SWT.NONE,
-				Arrays.asList(PickListFeatures.NO_PICKER), Messages, this,
-				ApplicationPackageImpl.Literals.APPLICATION__COMMANDS) {
+					Arrays.asList(PickListFeatures.NO_PICKER), this,
+					ApplicationPackageImpl.Literals.APPLICATION__COMMANDS) {
 				@Override
 				protected void addPressed() {
 					handleAdd();

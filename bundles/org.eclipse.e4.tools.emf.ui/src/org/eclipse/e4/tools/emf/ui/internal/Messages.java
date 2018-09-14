@@ -23,9 +23,9 @@ public class Messages {
 	public String PartEditor_Part;
 	public String XmiTab_TypeTextToSearch;
 	public String ModelEditor_Import3x;
-	public String E4StringPickList_Replace;
-	public String E4StringPickList_NewValue;
-	public String E4StringPickList_ToolTipNewValue;
+	public static String E4StringPickList_Replace;
+	public static String E4StringPickList_NewValue;
+	public static String E4StringPickList_ToolTipNewValue;
 	public String MarkDuplicateAttributesHandler_MarkDuplicates;
 	public String MarkDuplicateAttributesHandler_SelectAnAttributeToMarkeDuplicate;
 	public String VCommandEditor_ImportCommands;
@@ -101,12 +101,12 @@ public class Messages {
 	public static String ContributionURIValidator_URI_starts_with_platform;
 
 	public String ModelTooling_Empty_Warning;
-	public String ModelTooling_Common_Up;
-	public String ModelTooling_Common_Down;
-	public String ModelTooling_Common_AddEllipsis;
+	public static String ModelTooling_Common_Up;
+	public static String ModelTooling_Common_Down;
+	public static String ModelTooling_Common_AddEllipsis;
 	public String ModelTooling_Common_Add;
-	public String ModelTooling_Common_Remove;
-	public String ModelTooling_Common_Replace;
+	public static String ModelTooling_Common_Remove;
+	public static String ModelTooling_Common_Replace;
 	public String ModelTooling_Common_Id;
 	public String ModelTooling_Common_RefId;
 	public String ModelTooling_Common_FindEllipsis;

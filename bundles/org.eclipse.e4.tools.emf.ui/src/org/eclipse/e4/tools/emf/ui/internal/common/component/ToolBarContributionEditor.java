@@ -246,7 +246,7 @@ public class ToolBarContributionEditor extends AbstractComponentEditor {
 
 		// ------------------------------------------------------------
 		{
-			final E4PickList pickList = new E4PickList(parent, SWT.NONE, null, Messages, this,
+			final E4PickList pickList = new E4PickList(parent, SWT.NONE, null, this,
 					UiPackageImpl.Literals.ELEMENT_CONTAINER__CHILDREN) {
 				@Override
 				protected void addPressed() {

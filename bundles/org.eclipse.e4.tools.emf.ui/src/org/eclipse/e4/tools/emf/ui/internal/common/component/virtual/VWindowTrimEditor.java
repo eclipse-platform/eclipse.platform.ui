@@ -58,7 +58,7 @@ public class VWindowTrimEditor extends AbstractComponentEditor {
 	@PostConstruct
 	void init() {
 		actions.add(new Action(Messages.VWindowTrimEditor_AddWindowTrim,
-			createImageDescriptor(ResourceProvider.IMG_WindowTrim)) {
+				createImageDescriptor(ResourceProvider.IMG_WindowTrim)) {
 			@Override
 			public void run() {
 				handleAdd();
@@ -104,8 +104,8 @@ public class VWindowTrimEditor extends AbstractComponentEditor {
 
 		{
 			final AbstractPickList pickList = new E4PickList(parent, SWT.NONE,
-				Arrays.asList(PickListFeatures.NO_PICKER), Messages, this,
-				BasicPackageImpl.Literals.TRIMMED_WINDOW__TRIM_BARS) {
+					Arrays.asList(PickListFeatures.NO_PICKER), this,
+					BasicPackageImpl.Literals.TRIMMED_WINDOW__TRIM_BARS) {
 				@Override
 				protected void addPressed() {
 					handleAdd();
@@ -138,7 +138,7 @@ public class VWindowTrimEditor extends AbstractComponentEditor {
 		setElementId(handler);
 
 		final Command cmd = AddCommand.create(getEditingDomain(), getMaster().getValue(),
-			BasicPackageImpl.Literals.TRIMMED_WINDOW__TRIM_BARS, handler);
+				BasicPackageImpl.Literals.TRIMMED_WINDOW__TRIM_BARS, handler);
 
 		if (cmd.canExecute()) {
 			getEditingDomain().getCommandStack().execute(cmd);

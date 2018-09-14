@@ -62,16 +62,16 @@ public class VHandlerEditor extends AbstractComponentEditor {
 	@PostConstruct
 	void init() {
 		actions
-			.add(new Action(Messages.VHandlerEditor_AddHandler, createImageDescriptor(ResourceProvider.IMG_Handler)) {
-				@Override
-				public void run() {
-					handleAdd();
-				}
-			});
+		.add(new Action(Messages.VHandlerEditor_AddHandler, createImageDescriptor(ResourceProvider.IMG_Handler)) {
+			@Override
+			public void run() {
+				handleAdd();
+			}
+		});
 
 		// -- import --
 		actionsImport.add(new Action(Messages.VHandlerEditor_AddHandler,
-			createImageDescriptor(ResourceProvider.IMG_Handler)) {
+				createImageDescriptor(ResourceProvider.IMG_Handler)) {
 			@Override
 			public void run() {
 				handleImport();
@@ -117,8 +117,8 @@ public class VHandlerEditor extends AbstractComponentEditor {
 
 		{
 			final AbstractPickList pickList = new E4PickList(parent, SWT.NONE,
-				Arrays.asList(PickListFeatures.NO_PICKER), Messages, this,
-				CommandsPackageImpl.Literals.HANDLER_CONTAINER__HANDLERS) {
+					Arrays.asList(PickListFeatures.NO_PICKER), this,
+					CommandsPackageImpl.Literals.HANDLER_CONTAINER__HANDLERS) {
 				@Override
 				protected void addPressed() {
 					handleAdd();
@@ -154,7 +154,7 @@ public class VHandlerEditor extends AbstractComponentEditor {
 	private void addToModel(MHandler handler) {
 		setElementId(handler);
 		final Command cmd = AddCommand.create(getEditingDomain(), getMaster().getValue(),
-			CommandsPackageImpl.Literals.HANDLER_CONTAINER__HANDLERS, handler);
+				CommandsPackageImpl.Literals.HANDLER_CONTAINER__HANDLERS, handler);
 		if (cmd.canExecute()) {
 			getEditingDomain().getCommandStack().execute(cmd);
 			getEditor().setSelection(handler);

@@ -130,7 +130,7 @@ public class VMenuEditor extends AbstractComponentEditor {
 		parent = createScrollableContainer(folder);
 		item.setControl(parent.getParent());
 
-		final AbstractPickList pickList = new E4PickList(parent, SWT.NONE, null, Messages, this, feature) {
+		final AbstractPickList pickList = new E4PickList(parent, SWT.NONE, null, this, feature) {
 			@Override
 			protected void addPressed() {
 				final Types t = (Types) getSelection().getFirstElement();

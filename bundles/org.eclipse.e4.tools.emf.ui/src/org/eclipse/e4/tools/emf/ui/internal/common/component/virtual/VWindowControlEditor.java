@@ -144,7 +144,7 @@ public class VWindowControlEditor extends AbstractComponentEditor {
 		item.setControl(parent.getParent());
 
 		{
-			final AbstractPickList pickList = new E4PickList(parent, SWT.NONE, null, Messages, this,
+			final AbstractPickList pickList = new E4PickList(parent, SWT.NONE, null, this,
 					UiPackageImpl.Literals.ELEMENT_CONTAINER__CHILDREN) {
 				@Override
 				protected void addPressed() {

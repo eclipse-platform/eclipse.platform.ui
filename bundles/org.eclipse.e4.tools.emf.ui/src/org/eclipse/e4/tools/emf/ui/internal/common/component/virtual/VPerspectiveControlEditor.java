@@ -133,7 +133,8 @@ public class VPerspectiveControlEditor extends AbstractComponentEditor {
 		item.setControl(parent.getParent());
 
 		{
-			final AbstractPickList pickList = new E4PickList(parent, SWT.NONE, null, Messages, this, UiPackageImpl.Literals.ELEMENT_CONTAINER__CHILDREN) {
+			final AbstractPickList pickList = new E4PickList(parent, SWT.NONE, null, this,
+					UiPackageImpl.Literals.ELEMENT_CONTAINER__CHILDREN) {
 				@Override
 				protected void addPressed() {
 					final EClass eClass = (EClass) getSelection().getFirstElement();

@@ -161,7 +161,8 @@ public class VWindowSharedElementsEditor extends AbstractComponentEditor {
 
 		{
 
-			final AbstractPickList pickList = new E4PickList(parent, SWT.NONE, null, Messages, this, BasicPackageImpl.Literals.WINDOW__SHARED_ELEMENTS) {
+			final AbstractPickList pickList = new E4PickList(parent, SWT.NONE, null, this,
+					BasicPackageImpl.Literals.WINDOW__SHARED_ELEMENTS) {
 				@Override
 				protected void addPressed() {
 					final EClass eClass = (EClass) getSelection().getFirstElement();

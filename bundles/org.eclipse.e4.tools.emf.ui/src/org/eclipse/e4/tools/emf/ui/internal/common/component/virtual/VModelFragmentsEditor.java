@@ -58,7 +58,7 @@ public class VModelFragmentsEditor extends AbstractComponentEditor {
 	@PostConstruct
 	void init() {
 		actions.add(new Action(Messages.VModelFragmentsEditor_AddFragment,
-			createImageDescriptor(ResourceProvider.IMG_ModelFragments)) {
+				createImageDescriptor(ResourceProvider.IMG_ModelFragments)) {
 			@Override
 			public void run() {
 				handleAdd();
@@ -104,8 +104,8 @@ public class VModelFragmentsEditor extends AbstractComponentEditor {
 
 		{
 			final AbstractPickList pickList = new E4PickList(parent, SWT.NONE,
-				Arrays.asList(PickListFeatures.NO_PICKER), Messages, this,
-				FragmentPackageImpl.Literals.MODEL_FRAGMENTS__FRAGMENTS) {
+					Arrays.asList(PickListFeatures.NO_PICKER), this,
+					FragmentPackageImpl.Literals.MODEL_FRAGMENTS__FRAGMENTS) {
 				@Override
 				protected void addPressed() {
 					handleAdd();
@@ -143,7 +143,7 @@ public class VModelFragmentsEditor extends AbstractComponentEditor {
 	private void handleAdd() {
 		final MStringModelFragment eObject = MFragmentFactory.INSTANCE.createStringModelFragment();
 		final Command cmd = AddCommand.create(getEditingDomain(), getMaster().getValue(),
-			FragmentPackageImpl.Literals.MODEL_FRAGMENTS__FRAGMENTS, eObject);
+				FragmentPackageImpl.Literals.MODEL_FRAGMENTS__FRAGMENTS, eObject);
 
 		if (cmd.canExecute()) {
 			getEditingDomain().getCommandStack().execute(cmd);

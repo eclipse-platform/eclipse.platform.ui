@@ -180,7 +180,7 @@ public class BindingContextEditor extends AbstractComponentEditor {
 				EMFEditProperties.value(getEditingDomain(), CommandsPackageImpl.Literals.BINDING_CONTEXT__DESCRIPTION));
 
 		final E4PickList pickList = new E4PickList(parent, SWT.NONE, Arrays.asList(PickListFeatures.NO_PICKER),
-				Messages, this, CommandsPackageImpl.Literals.BINDING_CONTEXT__CHILDREN) {
+				this, CommandsPackageImpl.Literals.BINDING_CONTEXT__CHILDREN) {
 			@Override
 			protected void addPressed() {
 				handleAddContext();

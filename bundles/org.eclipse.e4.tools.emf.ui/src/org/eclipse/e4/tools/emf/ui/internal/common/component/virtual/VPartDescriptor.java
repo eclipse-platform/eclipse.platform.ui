@@ -129,7 +129,9 @@ public class VPartDescriptor extends AbstractComponentEditor {
 		item.setControl(parent.getParent());
 
 		{
-			final AbstractPickList pickList = new E4PickList(parent, SWT.NONE, Arrays.asList(PickListFeatures.NO_PICKER), Messages, this, BasicPackageImpl.Literals.PART_DESCRIPTOR_CONTAINER__DESCRIPTORS) {
+			final AbstractPickList pickList = new E4PickList(parent, SWT.NONE,
+					Arrays.asList(PickListFeatures.NO_PICKER), this,
+					BasicPackageImpl.Literals.PART_DESCRIPTOR_CONTAINER__DESCRIPTORS) {
 				@Override
 				protected void addPressed() {
 					handleAdd();

@@ -57,8 +57,14 @@ public class E4StringPickList extends AbstractPickList {
 	private AbstractComponentEditor editor;
 	private EStructuralFeature feature;
 
+	@Deprecated
 	public E4StringPickList(Composite parent, int flags, List<PickListFeatures> list, Messages messages, AbstractComponentEditor editor, EStructuralFeature feature) {
-		super(parent, flags, Arrays.asList(PickListFeatures.NO_PICKER), messages, editor);
+		this(parent, flags, list, editor, feature);
+	}
+
+	public E4StringPickList(Composite parent, int flags, List<PickListFeatures> list, AbstractComponentEditor editor,
+			EStructuralFeature feature) {
+		super(parent, flags, Arrays.asList(PickListFeatures.NO_PICKER), editor);
 
 		this.editor = editor;
 		this.feature = feature;
@@ -66,7 +72,7 @@ public class E4StringPickList extends AbstractPickList {
 		// TODO does not respect NO_ORDER yet
 
 		tiReplace = new Button(getToolBar(), SWT.PUSH);
-		tiReplace.setToolTipText(messages.E4StringPickList_Replace);
+		tiReplace.setToolTipText(Messages.E4StringPickList_Replace);
 		tiReplace.setImage(editor.createImage(ResourceProvider.IMG_Obj16_world_edit));
 		tiReplace.setFont(getButtonFont());
 
@@ -75,11 +81,11 @@ public class E4StringPickList extends AbstractPickList {
 		valueParent.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 2, 1));
 
 		Label l = new Label(valueParent, SWT.NONE);
-		l.setText(messages.E4StringPickList_NewValue);
-		l.setToolTipText(messages.E4StringPickList_ToolTipNewValue);
+		l.setText(Messages.E4StringPickList_NewValue);
+		l.setToolTipText(Messages.E4StringPickList_ToolTipNewValue);
 		text = new Text(valueParent, SWT.SINGLE | SWT.LEAD | SWT.BORDER);
 		text.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
-		text.setToolTipText(messages.E4StringPickList_ToolTipNewValue);
+		text.setToolTipText(Messages.E4StringPickList_ToolTipNewValue);
 
 		tiReplace.addSelectionListener(new SelectionAdapter() {
 			@Override

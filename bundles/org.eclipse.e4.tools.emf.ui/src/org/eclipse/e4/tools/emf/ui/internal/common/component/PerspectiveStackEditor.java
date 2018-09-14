@@ -198,7 +198,7 @@ public class PerspectiveStackEditor extends AbstractComponentEditor {
 		{
 
 			final E4PickList pickList = new E4PickList(parent, SWT.NONE, Arrays.asList(PickListFeatures.NO_PICKER),
-					Messages, this, UiPackageImpl.Literals.ELEMENT_CONTAINER__CHILDREN) {
+					this, UiPackageImpl.Literals.ELEMENT_CONTAINER__CHILDREN) {
 				@Override
 				protected void addPressed() {
 					handleAddPerspective();

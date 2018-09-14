@@ -97,7 +97,8 @@ public class VModelImportsEditor extends AbstractComponentEditor {
 		parent = createScrollableContainer(folder);
 		item.setControl(parent.getParent());
 
-		final E4PickList pickList = new E4PickList(parent, SWT.NONE, null, Messages, this, FragmentPackageImpl.Literals.MODEL_FRAGMENTS__IMPORTS) {
+		final E4PickList pickList = new E4PickList(parent, SWT.NONE, null, this,
+				FragmentPackageImpl.Literals.MODEL_FRAGMENTS__IMPORTS) {
 			@Override
 			protected void addPressed() {
 

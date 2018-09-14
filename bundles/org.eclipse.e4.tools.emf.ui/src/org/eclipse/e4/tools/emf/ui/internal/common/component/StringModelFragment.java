@@ -413,7 +413,7 @@ public class StringModelFragment extends AbstractComponentEditor {
 		// ------------------------------------------------------------
 		{
 
-			pickList = new E4PickList(parent, SWT.NONE, null, Messages, this,
+			pickList = new E4PickList(parent, SWT.NONE, null, this,
 					FragmentPackageImpl.Literals.MODEL_FRAGMENT__ELEMENTS) {
 				@Override
 				protected void addPressed() {

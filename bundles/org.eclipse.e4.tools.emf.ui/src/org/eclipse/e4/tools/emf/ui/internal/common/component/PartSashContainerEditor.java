@@ -273,7 +273,7 @@ public class PartSashContainerEditor extends AbstractComponentEditor {
 				textProp, EMFEditProperties.value(getEditingDomain(), UiPackageImpl.Literals.UI_ELEMENT__CONTAINER_DATA));
 
 		{
-			final E4PickList pickList = new E4PickList(parent, SWT.NONE, null, Messages, this,
+			final E4PickList pickList = new E4PickList(parent, SWT.NONE, null, this,
 					UiPackageImpl.Literals.ELEMENT_CONTAINER__CHILDREN) {
 				@Override
 				protected void addPressed() {

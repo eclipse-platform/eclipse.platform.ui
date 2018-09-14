@@ -58,7 +58,7 @@ public class VToolBarContributionsEditor extends AbstractComponentEditor {
 	@PostConstruct
 	void init() {
 		actions.add(new Action(Messages.VToolBarContributionsEditor_AddToolBarContribution,
-			createImageDescriptor(ResourceProvider.IMG_ToolBarContribution)) {
+				createImageDescriptor(ResourceProvider.IMG_ToolBarContribution)) {
 			@Override
 			public void run() {
 				handleAdd();
@@ -104,8 +104,8 @@ public class VToolBarContributionsEditor extends AbstractComponentEditor {
 
 		{
 			final AbstractPickList pickList = new E4PickList(parent, SWT.NONE,
-				Arrays.asList(PickListFeatures.NO_PICKER), Messages, this,
-				MenuPackageImpl.Literals.TOOL_BAR_CONTRIBUTIONS__TOOL_BAR_CONTRIBUTIONS) {
+					Arrays.asList(PickListFeatures.NO_PICKER), this,
+					MenuPackageImpl.Literals.TOOL_BAR_CONTRIBUTIONS__TOOL_BAR_CONTRIBUTIONS) {
 				@Override
 				protected void addPressed() {
 					handleAdd();
@@ -135,7 +135,7 @@ public class VToolBarContributionsEditor extends AbstractComponentEditor {
 		setElementId(command);
 
 		final Command cmd = AddCommand.create(getEditingDomain(), getMaster().getValue(),
-			MenuPackageImpl.Literals.TOOL_BAR_CONTRIBUTIONS__TOOL_BAR_CONTRIBUTIONS, command);
+				MenuPackageImpl.Literals.TOOL_BAR_CONTRIBUTIONS__TOOL_BAR_CONTRIBUTIONS, command);
 
 		if (cmd.canExecute()) {
 			getEditingDomain().getCommandStack().execute(cmd);

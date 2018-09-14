@@ -58,7 +58,7 @@ public class VTrimContributionsEditor extends AbstractComponentEditor {
 	@PostConstruct
 	void init() {
 		actions.add(new Action(Messages.VTrimContributionsEditor_AddTrimContribution,
-			createImageDescriptor(ResourceProvider.IMG_TrimContribution)) {
+				createImageDescriptor(ResourceProvider.IMG_TrimContribution)) {
 			@Override
 			public void run() {
 				handleAdd();
@@ -104,8 +104,8 @@ public class VTrimContributionsEditor extends AbstractComponentEditor {
 
 		{
 			final AbstractPickList pickList = new E4PickList(parent, SWT.NONE,
-				Arrays.asList(PickListFeatures.NO_PICKER), Messages, this,
-				MenuPackageImpl.Literals.TRIM_CONTRIBUTIONS__TRIM_CONTRIBUTIONS) {
+					Arrays.asList(PickListFeatures.NO_PICKER), this,
+					MenuPackageImpl.Literals.TRIM_CONTRIBUTIONS__TRIM_CONTRIBUTIONS) {
 				@Override
 				protected void addPressed() {
 					handleAdd();
@@ -135,7 +135,7 @@ public class VTrimContributionsEditor extends AbstractComponentEditor {
 		setElementId(command);
 
 		final Command cmd = AddCommand.create(getEditingDomain(), getMaster().getValue(),
-			MenuPackageImpl.Literals.TRIM_CONTRIBUTIONS__TRIM_CONTRIBUTIONS, command);
+				MenuPackageImpl.Literals.TRIM_CONTRIBUTIONS__TRIM_CONTRIBUTIONS, command);
 
 		if (cmd.canExecute()) {
 			getEditingDomain().getCommandStack().execute(cmd);

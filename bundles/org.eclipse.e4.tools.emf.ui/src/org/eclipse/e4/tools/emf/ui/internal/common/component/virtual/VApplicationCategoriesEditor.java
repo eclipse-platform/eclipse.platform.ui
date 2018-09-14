@@ -125,7 +125,9 @@ public class VApplicationCategoriesEditor extends AbstractComponentEditor {
 		item.setControl(parent.getParent());
 
 		{
-			final AbstractPickList pickList = new E4PickList(parent, SWT.NONE, Arrays.asList(PickListFeatures.NO_PICKER), Messages, this, ApplicationPackageImpl.Literals.APPLICATION__CATEGORIES) {
+			final AbstractPickList pickList = new E4PickList(parent, SWT.NONE,
+					Arrays.asList(PickListFeatures.NO_PICKER), this,
+					ApplicationPackageImpl.Literals.APPLICATION__CATEGORIES) {
 				@Override
 				protected void addPressed() {
 					handleAdd();

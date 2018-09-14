@@ -212,7 +212,7 @@ public class BindingTableEditor extends AbstractComponentEditor {
 
 		{
 			final E4PickList pickList = new E4PickList(parent, SWT.NONE, Arrays.asList(PickListFeatures.NO_PICKER),
-					Messages, this, CommandsPackageImpl.Literals.BINDING_TABLE__BINDINGS) {
+					this, CommandsPackageImpl.Literals.BINDING_TABLE__BINDINGS) {
 				@Override
 				protected void addPressed() {
 					handleAddKeyBinding();

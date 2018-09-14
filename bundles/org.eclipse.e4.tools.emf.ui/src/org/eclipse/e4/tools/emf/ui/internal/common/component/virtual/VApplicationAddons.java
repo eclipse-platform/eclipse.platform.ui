@@ -60,12 +60,12 @@ public class VApplicationAddons extends AbstractComponentEditor {
 	@PostConstruct
 	void init() {
 		actions
-			.add(new Action(Messages.VApplicationAddons_AddAddon, createImageDescriptor(ResourceProvider.IMG_Addons)) {
-				@Override
-				public void run() {
-					handleAddAddon();
-				}
-			});
+		.add(new Action(Messages.VApplicationAddons_AddAddon, createImageDescriptor(ResourceProvider.IMG_Addons)) {
+			@Override
+			public void run() {
+				handleAddAddon();
+			}
+		});
 	}
 
 
@@ -107,8 +107,8 @@ public class VApplicationAddons extends AbstractComponentEditor {
 
 		{
 			final AbstractPickList pickList = new E4PickList(parent, SWT.NONE,
-				Arrays.asList(PickListFeatures.NO_PICKER), Messages, this,
-				ApplicationPackageImpl.Literals.APPLICATION__ADDONS) {
+					Arrays.asList(PickListFeatures.NO_PICKER), this,
+					ApplicationPackageImpl.Literals.APPLICATION__ADDONS) {
 				@Override
 				protected void addPressed() {
 					handleAddAddon();
@@ -133,7 +133,7 @@ public class VApplicationAddons extends AbstractComponentEditor {
 		setElementId(addon);
 
 		final Command cmd = AddCommand.create(getEditingDomain(), getMaster().getValue(),
-			ApplicationPackageImpl.Literals.APPLICATION__ADDONS, addon);
+				ApplicationPackageImpl.Literals.APPLICATION__ADDONS, addon);
 
 		if (cmd.canExecute()) {
 			getEditingDomain().getCommandStack().execute(cmd);

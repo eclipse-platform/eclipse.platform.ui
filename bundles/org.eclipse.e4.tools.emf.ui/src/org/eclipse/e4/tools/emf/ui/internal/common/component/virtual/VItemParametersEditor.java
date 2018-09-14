@@ -53,7 +53,7 @@ public class VItemParametersEditor extends AbstractComponentEditor {
 	private final List<Action> actions = new ArrayList<>();
 
 	private final IEMFListProperty HANDLED_ITEM__PARAMETERS = EMFProperties
-		.list(MenuPackageImpl.Literals.HANDLED_ITEM__PARAMETERS);
+			.list(MenuPackageImpl.Literals.HANDLED_ITEM__PARAMETERS);
 
 	@Inject
 	public VItemParametersEditor() {
@@ -63,7 +63,7 @@ public class VItemParametersEditor extends AbstractComponentEditor {
 	@PostConstruct
 	void init() {
 		actions.add(new Action(Messages.VItemParametersEditor_AddParameter,
-			createImageDescriptor(ResourceProvider.IMG_Parameter)) {
+				createImageDescriptor(ResourceProvider.IMG_Parameter)) {
 			@Override
 			public void run() {
 				handleAdd();
@@ -110,8 +110,8 @@ public class VItemParametersEditor extends AbstractComponentEditor {
 
 		{
 			final AbstractPickList pickList = new E4PickList(parent, SWT.NONE,
-				Arrays.asList(PickListFeatures.NO_PICKER), Messages, this,
-				MenuPackageImpl.Literals.HANDLED_ITEM__PARAMETERS) {
+					Arrays.asList(PickListFeatures.NO_PICKER), this,
+					MenuPackageImpl.Literals.HANDLED_ITEM__PARAMETERS) {
 				@Override
 				protected void addPressed() {
 					handleAdd();
@@ -144,7 +144,7 @@ public class VItemParametersEditor extends AbstractComponentEditor {
 		setElementId(handler);
 
 		final Command cmd = AddCommand.create(getEditingDomain(), getMaster().getValue(),
-			MenuPackageImpl.Literals.HANDLED_ITEM__PARAMETERS, handler);
+				MenuPackageImpl.Literals.HANDLED_ITEM__PARAMETERS, handler);
 
 		if (cmd.canExecute()) {
 			getEditingDomain().getCommandStack().execute(cmd);

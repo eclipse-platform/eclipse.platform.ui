@@ -179,7 +179,7 @@ public class VSnippetsEditor extends AbstractComponentEditor {
 		parent = createScrollableContainer(folder);
 		item.setControl(parent.getParent());
 
-		final AbstractPickList pickList = new E4PickList(parent, SWT.NONE, null, Messages, this, targetFeature) {
+		final AbstractPickList pickList = new E4PickList(parent, SWT.NONE, null, this, targetFeature) {
 			@Override
 			protected void addPressed() {
 				final EClass eClass = (EClass) getSelection().getFirstElement();

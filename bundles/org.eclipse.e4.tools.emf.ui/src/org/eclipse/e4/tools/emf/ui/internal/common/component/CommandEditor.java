@@ -207,7 +207,7 @@ public class CommandEditor extends AbstractComponentEditor {
 		// ------------------------------------------------------------
 		{
 			final E4PickList pickList = new E4PickList(parent, SWT.NONE, Arrays.asList(PickListFeatures.NO_PICKER),
-					Messages, this, CommandsPackageImpl.Literals.COMMAND__PARAMETERS) {
+					this, CommandsPackageImpl.Literals.COMMAND__PARAMETERS) {
 				@Override
 				protected void addPressed() {
 					handleAddCommandParameter();

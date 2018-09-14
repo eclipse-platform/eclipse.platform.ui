@@ -248,7 +248,7 @@ public class MenuEditor extends AbstractComponentEditor {
 				EMFEditProperties.value(getEditingDomain(), MenuPackageImpl.Literals.MENU_ELEMENT__MNEMONICS));
 
 		{
-			final E4PickList pickList = new E4PickList(parent, SWT.NONE, null, Messages, this,
+			final E4PickList pickList = new E4PickList(parent, SWT.NONE, null, this,
 					UiPackageImpl.Literals.ELEMENT_CONTAINER__CHILDREN);
 			pickList.setText(Messages.MenuEditor_Children);
 			pickList.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 3, 1));

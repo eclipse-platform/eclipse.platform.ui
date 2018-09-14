@@ -103,7 +103,9 @@ public class VRootBindingContexts extends AbstractComponentEditor {
 		item.setControl(parent.getParent());
 
 		{
-			final AbstractPickList pickList = new E4PickList(parent, SWT.NONE, Arrays.asList(PickListFeatures.NO_PICKER), Messages, this, CommandsPackageImpl.Literals.BINDING_TABLE_CONTAINER__ROOT_CONTEXT) {
+			final AbstractPickList pickList = new E4PickList(parent, SWT.NONE,
+					Arrays.asList(PickListFeatures.NO_PICKER), this,
+					CommandsPackageImpl.Literals.BINDING_TABLE_CONTAINER__ROOT_CONTEXT) {
 				@Override
 				protected void addPressed() {
 					handleAddContext();

@@ -74,9 +74,15 @@ public class E4PickList extends AbstractPickList {
 		}
 	}
 
-	public E4PickList(Composite parent, int style, List<PickListFeatures> listFeatures, final Messages messages,
+	@Deprecated
+	public E4PickList(Composite parent, int style, List<PickListFeatures> listFeatures, Messages messages,
+			AbstractComponentEditor componentEditor, final EStructuralFeature feature) {
+		this(parent, style, listFeatures, componentEditor, feature);
+	}
+
+	public E4PickList(Composite parent, int style, List<PickListFeatures> listFeatures,
 			final AbstractComponentEditor componentEditor, final EStructuralFeature feature) {
-		super(parent, style, listFeatures, messages, componentEditor);
+		super(parent, style, listFeatures, componentEditor);
 
 		this.componentEditor = componentEditor;
 		this.feature = feature;
@@ -93,7 +99,7 @@ public class E4PickList extends AbstractPickList {
 		final FontDescriptor italicFontDescriptor = FontDescriptor.createFrom(viewer.getControl().getFont())
 				.setStyle(SWT.ITALIC);
 		viewer.setLabelProvider(new DelegatingStyledCellLabelProvider(
-				new ComponentLabelProvider(componentEditor.getEditor(), messages, italicFontDescriptor)));
+				new ComponentLabelProvider(componentEditor.getEditor(), new Messages(), italicFontDescriptor)));
 		final ObservableListContentProvider cp = new ObservableListContentProvider();
 		viewer.setContentProvider(cp);
 	}
