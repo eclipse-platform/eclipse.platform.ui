@@ -16,6 +16,8 @@ package org.eclipse.jface.text.templates;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.eclipse.core.runtime.IAdaptable;
+
 import org.eclipse.jface.text.BadLocationException;
 
 /**
@@ -27,7 +29,7 @@ import org.eclipse.jface.text.BadLocationException;
  *
  * @since 3.0
  */
-public abstract class TemplateContext {
+public abstract class TemplateContext implements IAdaptable {
 
 	/** The context type of this context */
 	private final TemplateContextType fContextType;
@@ -117,5 +119,14 @@ public abstract class TemplateContext {
 	 *         in this context, <code>false</code> otherwise
 	 */
 	public abstract boolean canEvaluate(Template template);
+	
+	/**
+	 * Default implementation does nothing, clients can override to provide adapters.
+	 * {@inheritDoc}
+	 */
+	@Override
+	public <T> T getAdapter(Class<T> adapter) {
+		return null;
+	}
 
 }
