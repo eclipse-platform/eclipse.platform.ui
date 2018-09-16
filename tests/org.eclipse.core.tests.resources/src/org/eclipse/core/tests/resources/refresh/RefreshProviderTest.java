@@ -41,9 +41,6 @@ public class RefreshProviderTest extends ResourceTest {
 		super(name);
 	}
 
-	/*(non-javadoc)
-	 * Method declared on TestCase.
-	 */
 	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
@@ -54,9 +51,6 @@ public class RefreshProviderTest extends ResourceTest {
 
 	}
 
-	/*(non-javadoc)
-	 * Method declared on TestCase.
-	 */
 	@Override
 	protected void tearDown() throws Exception {
 		super.tearDown();
