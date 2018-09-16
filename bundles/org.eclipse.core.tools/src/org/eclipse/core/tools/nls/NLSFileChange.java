@@ -40,9 +40,6 @@ public class NLSFileChange extends TextFileChange {
 		this.contents = text;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ltk.core.refactoring.TextFileChange#commit(org.eclipse.jface.text.IDocument, org.eclipse.core.runtime.IProgressMonitor)
-	 */
 	@Override
 	protected void commit(IDocument document, IProgressMonitor monitor) throws CoreException {
 		if (contents == null) {
@@ -62,9 +59,6 @@ public class NLSFileChange extends TextFileChange {
 		file.setContents(input, IResource.FORCE, null);
 	}
 
-	/* (non-Javadoc)
-	 * @see Change#getModifiedElement()
-	 */
 	@Override
 	public Object getModifiedElement() {
 		return file;

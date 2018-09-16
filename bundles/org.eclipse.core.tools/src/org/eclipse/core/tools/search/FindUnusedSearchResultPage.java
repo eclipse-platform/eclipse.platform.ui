@@ -188,9 +188,6 @@ public class FindUnusedSearchResultPage extends AbstractTextSearchViewPage imple
 		mgr.appendToGroup(IContextMenuConstants.GROUP_VIEWER_SETUP, sortMenu);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.core.runtime.IAdaptable#getAdapter(java.lang.Class)
-	 */
 	@Override
 	public Object getAdapter(Class adapter) {
 		if (IShowInTargetList.class.equals(adapter)) {

@@ -33,9 +33,6 @@ public class CollapseAllAction extends Action implements IAction {
 		this.setImageDescriptor(CoreToolsPlugin.createImageDescriptor(imageName));
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.action.IAction#run()
-	 */
 	@Override
 	public void run() {
 		viewer.collapseAll();
