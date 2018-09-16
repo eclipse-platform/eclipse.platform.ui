@@ -60,9 +60,6 @@ public class TestRefreshProvider extends RefreshProvider implements IRefreshMoni
 		return monitoredResources.toArray(new IResource[monitoredResources.size()]);
 	}
 
-	/* (non-javadoc)
-	 * Method declared on RefreshProvider
-	 */
 	@Override
 	public IRefreshMonitor installMonitor(IResource resource, IRefreshResult result) {
 		if (!monitoredResources.add(resource)) {
@@ -71,9 +68,6 @@ public class TestRefreshProvider extends RefreshProvider implements IRefreshMoni
 		return this;
 	}
 
-	/* (non-javadoc)
-	 * Method declared on IRefreshResult
-	 */
 	@Override
 	public void unmonitor(IResource resource) {
 		if (resource == null) {
