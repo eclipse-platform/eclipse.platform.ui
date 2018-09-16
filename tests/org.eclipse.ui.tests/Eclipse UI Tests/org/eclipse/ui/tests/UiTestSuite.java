@@ -88,7 +88,6 @@ public class UiTestSuite {
 	// CommandsTestSuite.class,
 	// DragTestSuite.class,
 	// IntroTestSuite.class,
-	// PresentationsTestSuite.class,
 	// LeakTests.class,
 	// MultiEditorTestSuite.class,
 	// OpenSystemInPlaceEditorTest..class,
