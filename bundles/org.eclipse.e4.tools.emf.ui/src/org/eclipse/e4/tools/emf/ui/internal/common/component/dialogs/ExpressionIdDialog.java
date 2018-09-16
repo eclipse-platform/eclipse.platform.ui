@@ -76,7 +76,7 @@ public class ExpressionIdDialog extends SaveDialogBoundsSettingsDialog {
 		container.setLayout(new GridLayout(2, false));
 
 		Label l = new Label(container, SWT.NONE);
-		l.setText(Messages.ExpressionIdDialog_Id);
+		l.setText(Messages.ModelTooling_Common_Id);
 
 		final Text idField = new Text(container, SWT.BORDER | SWT.SEARCH | SWT.ICON_SEARCH);
 		idField.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));

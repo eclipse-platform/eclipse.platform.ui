@@ -164,12 +164,6 @@ public class Messages {
 	public String CommandEditor_Name;
 	public String CommandEditor_LabelDescription;
 	public String CommandEditor_Parameters;
-	public String CommandEditor_ParameterName;
-	public String CommandEditor_ParameterTypeId;
-	public String CommandEditor_ParameterOptional;
-	public String CommandEditor_ParameterOptional_No;
-	public String CommandEditor_ParameterOptional_Yes;
-	public String CommandEditor_ParameterId;
 	public String CommandEditor_Category;
 	public String CommandEditor_AddCommandParameter;
 	public String CommandEditor_NewCommandParameter;
@@ -190,8 +184,6 @@ public class Messages {
 	public String HandledMenuItemEditor_Description;
 	public String HandledMenuItemEditor_Command;
 	public String HandledMenuItemEditor_Parameters;
-	public String HandledMenuItemEditor_Tag;
-	public String HandledMenuItemEditor_Value;
 
 	public String DynamicMenuContributionEditor_Label;
 	public String DynamicMenuContributionEditor_Description;
@@ -201,8 +193,6 @@ public class Messages {
 
 	public String HandledToolItemEditor_Command;
 	public String HandledToolItemEditor_Parameters;
-	public String HandledToolItemEditor_ParametersName;
-	public String HandledToolItemEditor_ParametersValue;
 	public String HandledToolItemEditor_Label;
 	public String HandledToolItemEditor_Description;
 
@@ -267,8 +257,6 @@ public class Messages {
 	public String PartDescriptorEditor_Category;
 	public String PartDescriptorEditor_Variables;
 	public String PartDescriptorEditor_Properties;
-	public String PartDescriptorEditor_PropertiesKey;
-	public String PartDescriptorEditor_PropertiesValue;
 	public String PartDescriptorEditor_Menus;
 	public String PartDescriptorEditor_Handlers;
 	public String PartDescriptorEditor_ContainerData;
@@ -435,7 +423,6 @@ public class Messages {
 	public String CommandParameterEditor_TreeLabel;
 	public String CommandParameterEditor_TreeLabelDescritpion;
 	public String CommandParameterEditor_Name;
-	public String CommandParameterEditor_TypeId;
 	public String CommandParameterEditor_Optional;
 
 	public String ParameterEditor_TreeLabel;
@@ -694,7 +681,6 @@ public class Messages {
 	public String ExpressionIdDialog_ShellTitle;
 	public String ExpressionIdDialog_DialogTitle;
 	public String ExpressionIdDialog_DialogMessage;
-	public String ExpressionIdDialog_Id;
 
 	public String MenuIdDialog_ShellTitle;
 	public String MenuIdDialog_DialogTitle;
@@ -716,7 +702,6 @@ public class Messages {
 	public String VRootBindingContexts_AddContext;
 	public String VRootBindingContexts_TreeLabel;
 	public String VRootBindingContexts_TreeLabelDescription;
-	public String VRootBindingContexts_Contexts;
 
 	public String AreaEditor_Label;
 	public String AreaEditor_Description;
