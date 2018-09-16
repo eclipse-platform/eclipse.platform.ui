@@ -79,7 +79,7 @@ public class StringToByteConverterTest {
 	public void testThrowsIllegalArgumentExceptionIfAskedToConvertNonString()
 			throws Exception {
 		try {
-			((IConverter<Object, ?>) converter).convert(new Integer(1));
+			((IConverter<Object, ?>) converter).convert(Integer.valueOf(1));
 			fail("exception should have been thrown");
 		} catch (IllegalArgumentException e) {
 		}
