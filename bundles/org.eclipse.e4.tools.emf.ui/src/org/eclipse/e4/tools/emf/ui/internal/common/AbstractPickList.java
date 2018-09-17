@@ -52,14 +52,15 @@ import org.eclipse.swt.widgets.Table;
 public abstract class AbstractPickList extends Composite {
 
 	public static enum PickListFeatures {
-		NO_ORDER, NO_PICKER
+		NO_ORDER, NO_PICKER, NO_GROUP
 	}
 
 	protected ComboViewer picker;
 	protected TableViewer viewer;
 
-	private final Group group;
+	private final Composite composite;
 	private final Composite toolBar;
+
 	protected final Button tiAdd;
 	protected final Button tiRemove;
 	protected final Button tiUp;
@@ -81,11 +82,14 @@ public abstract class AbstractPickList extends Composite {
 
 		setLayout(new FillLayout());
 
-		group = new Group(this, SWT.NONE);
-		// gridData.horizontalIndent = 30;
-		group.setLayout(new GridLayout(1, false));
+		if (listFeatures != null && listFeatures.contains(PickListFeatures.NO_GROUP)) {
+			composite = new Composite(this, SWT.NONE);
+		} else {
+			composite = new Group(this, SWT.NONE);
+		}
+		composite.setLayout(new GridLayout(1, false));
 
-		final Composite comp = new Composite(group, SWT.NONE);
+		final Composite comp = new Composite(composite, SWT.NONE);
 
 		GridLayout layout = new GridLayout(2, false);
 		layout.marginHeight = 0;
@@ -121,7 +125,7 @@ public abstract class AbstractPickList extends Composite {
 		layout.marginWidth = 0;
 		toolBar.setLayout(layout);
 		toolBar.setLayoutData(new GridData(SWT.FILL, SWT.TOP, true, false));
-		toolBar.setFont(group.getFont());
+		toolBar.setFont(composite.getFont());
 
 		picker.addOpenListener(event -> addPressed());
 
@@ -189,7 +193,7 @@ public abstract class AbstractPickList extends Composite {
 			}
 		});
 
-		viewer = new TableViewer(group);
+		viewer = new TableViewer(composite);
 		viewer.getControl().setLayoutData(new GridData(GridData.FILL, GridData.FILL, true, true, 1, 1));
 		viewer.addSelectionChangedListener(event -> updateUiState());
 		updateUiState();
@@ -209,7 +213,7 @@ public abstract class AbstractPickList extends Composite {
 	}
 
 	protected Font getButtonFont() {
-		return group.getFont();
+		return toolBar.getFont();
 	}
 
 	protected void addPressed() {
@@ -267,7 +271,9 @@ public abstract class AbstractPickList extends Composite {
 	}
 
 	public void setText(String text) {
-		group.setText(text);
+		if (composite instanceof Group) {
+			((Group) composite).setText(text);
+		}
 	}
 
 	public void updateUiState() {

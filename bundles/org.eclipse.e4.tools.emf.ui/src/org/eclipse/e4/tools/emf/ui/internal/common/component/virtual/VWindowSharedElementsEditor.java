@@ -16,6 +16,7 @@
 package org.eclipse.e4.tools.emf.ui.internal.common.component.virtual;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import javax.annotation.PostConstruct;
@@ -27,6 +28,7 @@ import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.tools.emf.ui.common.component.AbstractComponentEditor;
 import org.eclipse.e4.tools.emf.ui.internal.ResourceProvider;
 import org.eclipse.e4.tools.emf.ui.internal.common.AbstractPickList;
+import org.eclipse.e4.tools.emf.ui.internal.common.AbstractPickList.PickListFeatures;
 import org.eclipse.e4.tools.emf.ui.internal.common.E4PickList;
 import org.eclipse.e4.tools.emf.ui.internal.common.EClassLabelProvider;
 import org.eclipse.e4.tools.emf.ui.internal.common.VirtualEntry;
@@ -161,8 +163,8 @@ public class VWindowSharedElementsEditor extends AbstractComponentEditor {
 
 		{
 
-			final AbstractPickList pickList = new E4PickList(parent, SWT.NONE, null, this,
-					BasicPackageImpl.Literals.WINDOW__SHARED_ELEMENTS) {
+			final AbstractPickList pickList = new E4PickList(parent, SWT.NONE, Arrays.asList(PickListFeatures.NO_GROUP),
+					this, BasicPackageImpl.Literals.WINDOW__SHARED_ELEMENTS) {
 				@Override
 				protected void addPressed() {
 					final EClass eClass = (EClass) getSelection().getFirstElement();

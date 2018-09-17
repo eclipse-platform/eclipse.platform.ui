@@ -37,6 +37,7 @@ import org.eclipse.e4.tools.emf.ui.common.Util;
 import org.eclipse.e4.tools.emf.ui.common.Util.InternalPackage;
 import org.eclipse.e4.tools.emf.ui.common.component.AbstractComponentEditor;
 import org.eclipse.e4.tools.emf.ui.internal.ResourceProvider;
+import org.eclipse.e4.tools.emf.ui.internal.common.AbstractPickList.PickListFeatures;
 import org.eclipse.e4.tools.emf.ui.internal.common.E4PickList;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.ControlFactory.TextPasteHandler;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.dialogs.FeatureSelectionDialog;
@@ -413,7 +414,7 @@ public class StringModelFragment extends AbstractComponentEditor {
 		// ------------------------------------------------------------
 		{
 
-			pickList = new E4PickList(parent, SWT.NONE, null, this,
+			pickList = new E4PickList(parent, SWT.NONE, Arrays.asList(PickListFeatures.NO_GROUP), this,
 					FragmentPackageImpl.Literals.MODEL_FRAGMENT__ELEMENTS) {
 				@Override
 				protected void addPressed() {
@@ -430,7 +431,6 @@ public class StringModelFragment extends AbstractComponentEditor {
 			};
 
 			pickList.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 3, 1));
-			pickList.setText(""); //$NON-NLS-1$
 
 			pickList.setLabelProvider(new LabelProvider() {
 				@Override

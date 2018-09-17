@@ -117,7 +117,7 @@ public class VHandlerEditor extends AbstractComponentEditor {
 
 		{
 			final AbstractPickList pickList = new E4PickList(parent, SWT.NONE,
-					Arrays.asList(PickListFeatures.NO_PICKER), this,
+					Arrays.asList(PickListFeatures.NO_PICKER, PickListFeatures.NO_GROUP), this,
 					CommandsPackageImpl.Literals.HANDLER_CONTAINER__HANDLERS) {
 				@Override
 				protected void addPressed() {

@@ -15,6 +15,7 @@
 package org.eclipse.e4.tools.emf.ui.internal.common.component.virtual;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -25,6 +26,7 @@ import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.tools.emf.ui.common.IEditorFeature.FeatureClass;
 import org.eclipse.e4.tools.emf.ui.common.Util;
 import org.eclipse.e4.tools.emf.ui.common.component.AbstractComponentEditor;
+import org.eclipse.e4.tools.emf.ui.internal.common.AbstractPickList.PickListFeatures;
 import org.eclipse.e4.tools.emf.ui.internal.common.E4PickList;
 import org.eclipse.e4.tools.emf.ui.internal.common.VirtualEntry;
 import org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl;
@@ -97,7 +99,7 @@ public class VModelImportsEditor extends AbstractComponentEditor {
 		parent = createScrollableContainer(folder);
 		item.setControl(parent.getParent());
 
-		final E4PickList pickList = new E4PickList(parent, SWT.NONE, null, this,
+		final E4PickList pickList = new E4PickList(parent, SWT.NONE, Arrays.asList(PickListFeatures.NO_GROUP), this,
 				FragmentPackageImpl.Literals.MODEL_FRAGMENTS__IMPORTS) {
 			@Override
 			protected void addPressed() {
@@ -126,7 +128,6 @@ public class VModelImportsEditor extends AbstractComponentEditor {
 		viewer = pickList.getList();
 
 		pickList.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 3, 1));
-		pickList.setText(""); //$NON-NLS-1$
 
 		pickList.setLabelProvider(new LabelProvider() {
 			@Override

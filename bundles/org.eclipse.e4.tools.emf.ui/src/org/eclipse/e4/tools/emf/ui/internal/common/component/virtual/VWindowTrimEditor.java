@@ -104,7 +104,7 @@ public class VWindowTrimEditor extends AbstractComponentEditor {
 
 		{
 			final AbstractPickList pickList = new E4PickList(parent, SWT.NONE,
-					Arrays.asList(PickListFeatures.NO_PICKER), this,
+					Arrays.asList(PickListFeatures.NO_PICKER, PickListFeatures.NO_GROUP), this,
 					BasicPackageImpl.Literals.TRIMMED_WINDOW__TRIM_BARS) {
 				@Override
 				protected void addPressed() {
