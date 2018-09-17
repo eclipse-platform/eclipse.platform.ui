@@ -340,7 +340,6 @@ public class ToolBarManagerRenderer extends SWTPartRenderer {
 		String[] vars = {
 				"org.eclipse.ui.internal.services.EvaluationService.evaluate", //$NON-NLS-1$
 				IServiceConstants.ACTIVE_CONTEXTS,
-				IServiceConstants.ACTIVE_PART,
 				IServiceConstants.ACTIVE_SELECTION,
 				IServiceConstants.ACTIVE_SHELL };
 		updateVariables.addAll(Arrays.asList(vars));
