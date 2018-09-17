@@ -2702,30 +2702,29 @@ public final class Workbench extends EventManager implements IWorkbench,
 		IExtensionPoint point = registry.getExtensionPoint(PlatformUI.PLUGIN_ID,
 				IWorkbenchRegistryConstants.PL_STARTUP);
 
-		final IExtension[] extensions = point.getExtensions();
+		IExtension[] extensions = point.getExtensions();
 		if (extensions.length == 0) {
 			return;
 		}
-		Job job = new Job("Workbench early startup") { //$NON-NLS-1$
+		Job job = new Job("Executing the early startup extensions") { //$NON-NLS-1$
 			@Override
 			protected IStatus run(IProgressMonitor monitor) {
-				HashSet disabledPlugins = new HashSet(Arrays
-						.asList(getDisabledEarlyActivatedPlugins()));
-				monitor.beginTask(WorkbenchMessages.Workbench_startingPlugins, extensions.length);
+				HashSet<String> disabledPlugins = new HashSet<>(Arrays.asList(getDisabledEarlyActivatedPlugins()));
+				SubMonitor subMonitor = SubMonitor.convert(monitor, WorkbenchMessages.Workbench_startingPlugins,
+						extensions.length);
 				for (IExtension extension : extensions) {
-					if (monitor.isCanceled() || !isRunning()) {
+					if (subMonitor.isCanceled() || !isRunning()) {
 						return Status.CANCEL_STATUS;
 					}
 
 					// if the plugin is not in the set of disabled plugins, then
 					// execute the code to start it
 					if (!disabledPlugins.contains(extension.getContributor().getName())) {
-						monitor.subTask(extension.getContributor().getName());
+						subMonitor.setTaskName(extension.getContributor().getName());
 						SafeRunner.run(new EarlyStartupRunnable(extension));
 					}
-					monitor.worked(1);
+					subMonitor.worked(1);
 				}
-				monitor.done();
 				return Status.OK_STATUS;
 			}
 
