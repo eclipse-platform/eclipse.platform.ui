@@ -22,6 +22,7 @@
  *******************************************************************************/
 package org.eclipse.e4.ui.workbench.renderers.swt;
 
+import java.time.Duration;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -76,9 +77,11 @@ import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.action.ToolBarManager;
+import org.eclipse.jface.util.Throttler;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.widgets.ToolItem;
 import org.eclipse.swt.widgets.Widget;
@@ -110,6 +113,12 @@ public class ToolBarManagerRenderer extends SWTPartRenderer {
 	private Map<MToolBarElement, ArrayList<ToolBarContributionRecord>> sharedElementToRecord = new HashMap<>();
 
 	private ToolItemUpdater enablementUpdater = new ToolItemUpdater();
+
+	// See Bug 536308
+	// remove disableThrottling system property in 4.11 if no problems are
+	// identified in 4.10
+	private static boolean disableThrottling = System.getProperty("bug_536308.disable.throttling") != null; //$NON-NLS-1$
+
 
 	@Inject
 	private Logger logger;
@@ -336,6 +345,8 @@ public class ToolBarManagerRenderer extends SWTPartRenderer {
 	@PostConstruct
 	public void init() {
 		context.set(ToolBarManagerRenderer.class, this);
+		Throttler throttler = new Throttler(Display.getDefault(), Duration.ofMillis(200),
+				() -> getUpdater().updateContributionItems(ALL_SELECTOR));
 
 		String[] vars = {
 				"org.eclipse.ui.internal.services.EvaluationService.evaluate", //$NON-NLS-1$
@@ -351,7 +362,14 @@ public class ToolBarManagerRenderer extends SWTPartRenderer {
 				for (String var : updateVariables) {
 					context.get(var);
 				}
-				getUpdater().updateContributionItems(ALL_SELECTOR);
+				// See Bug 536308
+				// remove disableThrottling system property in 4.11 if no problems are
+				// identified in 4.10
+				if (disableThrottling) {
+					getUpdater().updateContributionItems(ALL_SELECTOR);
+				} else {
+					throttler.throttledExec();
+				}
 				return true;
 			}
 		};
