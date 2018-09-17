@@ -1055,6 +1055,8 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 	 */
 	private boolean fAsynchronous;
 
+	private boolean fCompletionProposalTriggerCharsEnabled= true;
+
 	/**
 	 * Creates a new content assistant. The content assistant is not automatically activated,
 	 * overlays the completion proposals with context information list if necessary, and shows the
@@ -2756,5 +2758,29 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 		if (fProposalPopup != null) {
 			fProposalPopup.setSorter(fSorter);
 		}
+	}
+
+	/**
+	 * Returns whether completion trigger char are enabled. If false, completion proposal trigger
+	 * chars are ignored and only Enter key can be used to select a proposal.
+	 *
+	 * @return whether completion trigger char are enabled.
+	 * @see ICompletionProposalExtension#getTriggerCharacters()
+	 * @since 3.15
+	 */
+	public boolean isCompletionProposalTriggerCharsEnabled() {
+		return fCompletionProposalTriggerCharsEnabled;
+	}
+
+	/**
+	 * Set whether completion trigger chars are enabled. If set to false, completion proposal
+	 * trigger chars are ignored and only Enter key can be used to select a proposal.
+	 *
+	 * @param enable whether current content assistant should consider completion trigger chars.
+	 * @see ICompletionProposalExtension#getTriggerCharacters()
+	 * @since 3.15
+	 */
+	public void enableCompletionProposalTriggerChars(boolean enable) {
+		fCompletionProposalTriggerCharsEnabled= enable;
 	}
 }

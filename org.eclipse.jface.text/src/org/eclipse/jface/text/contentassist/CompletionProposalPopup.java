@@ -1369,16 +1369,18 @@ class CompletionProposalPopup implements IContentAssistListener {
 				return false;
 
 			default:
-				ICompletionProposal p= getSelectedProposal();
-				if (p instanceof ICompletionProposalExtension) {
-					ICompletionProposalExtension t= (ICompletionProposalExtension) p;
-					char[] triggers= t.getTriggerCharacters();
-					if (contains(triggers, key)) {
-						e.doit= false;
-						hide();
-						insertProposal(p, key, e.stateMask, fContentAssistSubjectControlAdapter.getSelectedRange().x);
+				if (fContentAssistant.isCompletionProposalTriggerCharsEnabled()) {
+					ICompletionProposal p= getSelectedProposal();
+					if (p instanceof ICompletionProposalExtension) {
+						ICompletionProposalExtension t= (ICompletionProposalExtension) p;
+						char[] triggers= t.getTriggerCharacters();
+						if (contains(triggers, key)) {
+							e.doit= false;
+							hide();
+							insertProposal(p, key, e.stateMask, fContentAssistSubjectControlAdapter.getSelectedRange().x);
+						}
 					}
-			}
+				}
 		}
 
 		return true;
