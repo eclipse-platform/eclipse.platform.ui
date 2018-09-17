@@ -61,7 +61,7 @@ public interface ICSSPropertyHandler {
 	 * @return retrieved CSS properties or null
 	 * @throws Exception
 	 */
-	default public String retrieveCSSProperty(Object element, String property, String pseudo, CSSEngine engine)
+	public default String retrieveCSSProperty(Object element, String property, String pseudo, CSSEngine engine)
 			throws Exception {
 		return null;
 	}
