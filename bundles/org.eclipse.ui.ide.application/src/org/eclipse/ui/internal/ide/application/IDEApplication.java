@@ -200,7 +200,7 @@ public class IDEApplication implements IApplication, IExecutableExtension {
      *         otherwise
      */
     @SuppressWarnings("rawtypes")
-	private Object checkInstanceLocation(Shell shell, Map applicationArguments) {
+	protected Object checkInstanceLocation(Shell shell, Map applicationArguments) {
         // -data @none was specified but an ide requires workspace
         Location instanceLoc = Platform.getInstanceLocation();
         if (instanceLoc == null) {
@@ -423,7 +423,7 @@ public class IDEApplication implements IApplication, IExecutableExtension {
      * @return true if the argument URL is ok to use as a workspace and false
      *         otherwise.
      */
-    private boolean checkValidWorkspace(Shell shell, URL url) {
+	protected boolean checkValidWorkspace(Shell shell, URL url) {
         // a null url is not a valid workspace
         if (url == null) {
 			return false;
@@ -434,17 +434,7 @@ public class IDEApplication implements IApplication, IExecutableExtension {
             return true;
         }
 
-        Version version = readWorkspaceVersion(url);
-        // if the version could not be read, then there is not any existing
-        // workspace data to trample, e.g., perhaps its a new directory that
-        // is just starting to be used as a workspace
-        if (version == null) {
-			return true;
-		}
-
-        final Version ide_version = toMajorMinorVersion(WORKSPACE_CHECK_REFERENCE_BUNDLE_VERSION);
-        Version workspace_version = toMajorMinorVersion(version);
-        int versionCompareResult = workspace_version.compareTo(ide_version);
+		int versionCompareResult = compareWorkspaceAndIdeVersions(url);
 
         // equality test is required since any version difference (newer
         // or older) may result in data being trampled
@@ -495,11 +485,42 @@ public class IDEApplication implements IApplication, IExecutableExtension {
 		return true;
 	}
 
+	/**
+	 * Compares the version of the workspace with the specified URL, to the version
+	 * of the running IDE.
+	 *
+	 * @param url The URL of the workspace.
+	 *
+	 * @return
+	 *         <ul>
+	 *         <li>A negative integer if the workspace has a version less than that
+	 *         of the IDE.</li>
+	 *         <li>A positive integer if the IDE has a version greater than that of
+	 *         the IDE.</li>
+	 *         <li>{@code 0} if the IDE has version equal to the IDE, or if the
+	 *         workspace has no version at all.</li>
+	 *         </ul>
+	 */
+	protected int compareWorkspaceAndIdeVersions(URL url) {
+		Version version = readWorkspaceVersion(url);
+		// if the version could not be read, then there is not any existing
+		// workspace data to trample, e.g., perhaps its a new directory that
+		// is just starting to be used as a workspace
+		if (version == null) {
+			return 0;
+		}
+
+		final Version ide_version = toMajorMinorVersion(WORKSPACE_CHECK_REFERENCE_BUNDLE_VERSION);
+		Version workspace_version = toMajorMinorVersion(version);
+		int versionCompareResult = workspace_version.compareTo(ide_version);
+		return versionCompareResult;
+	}
+
     /**
-     * Look at the argument URL for the workspace's version information. Return
-     * that version if found and null otherwise.
-     */
-    private static Version readWorkspaceVersion(URL workspace) {
+	 * @return Look at the argument URL for the workspace's version information.
+	 *         Return that version if found and null otherwise.
+	 */
+	protected static Version readWorkspaceVersion(URL workspace) {
         File versionFile = getVersionFile(workspace, false);
         if (versionFile == null || !versionFile.exists()) {
 			return null;
@@ -602,7 +623,7 @@ public class IDEApplication implements IApplication, IExecutableExtension {
      * @return An url to the file or null if the version file does not exist or
      *         could not be created.
      */
-    private static File getVersionFile(URL workspaceUrl, boolean create) {
+	protected static File getVersionFile(URL workspaceUrl, boolean create) {
         if (workspaceUrl == null) {
 			return null;
 		}
@@ -631,7 +652,7 @@ public class IDEApplication implements IApplication, IExecutableExtension {
     /**
      * @return the major and minor parts of the given version
      */
-    private static Version toMajorMinorVersion(Version version) {
+	protected static Version toMajorMinorVersion(Version version) {
         return new Version(version.getMajor(), version.getMinor(), 0);
     }
 
