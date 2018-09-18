@@ -821,10 +821,9 @@ public class CellLayout extends Layout {
         int availableHeight = composite.getClientArea().height - emptySpace.y;
 
         int[] heights = computeConstraints(true);
-        int[] widths = new int[gridInfo.getCols()];
 
         // Compute the actual column widths
-        widths = computeSizes(heights, availableWidth, false);
+		int[] widths = computeSizes(heights, availableWidth, false);
 
         // Compute the actual row heights (based on the actual column widths)
         heights = computeSizes(widths, availableHeight, true);

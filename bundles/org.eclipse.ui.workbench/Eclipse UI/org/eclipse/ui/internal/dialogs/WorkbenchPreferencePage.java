@@ -317,7 +317,6 @@ public class WorkbenchPreferencePage extends PreferencePage implements
     protected static void createSpace(Composite parent) {
         Label vfiller = new Label(parent, SWT.LEFT);
         GridData gridData = new GridData();
-        gridData = new GridData();
         gridData.horizontalAlignment = GridData.BEGINNING;
         gridData.grabExcessHorizontalSpace = false;
         gridData.verticalAlignment = GridData.CENTER;
