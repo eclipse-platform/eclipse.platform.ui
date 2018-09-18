@@ -355,9 +355,10 @@ class CompletionProposalPopup implements IContentAssistListener {
 
 			int offset= fContentAssistSubjectControlAdapter.getSelectedRange().x;
 			List<ICompletionProposal> proposals= null;
+			DocumentEvent event= null;
 			try {
 				if (offset > -1) {
-					DocumentEvent event= TextUtilities.mergeProcessedDocumentEvents(fDocumentEvents);
+					event= TextUtilities.mergeProcessedDocumentEvents(fDocumentEvents);
 					proposals= computeFilteredProposals(offset, event);
 				}
 			} catch (BadLocationException x) {
@@ -368,8 +369,19 @@ class CompletionProposalPopup implements IContentAssistListener {
 
 			if (proposals != null && proposals.size() > 0)
 				setProposals(proposals, fIsFilteredSubset);
-			else
+			else {
 				hide();
+				if (fContentAssistant.isAutoActivation() && offset > 0 && event != null) {
+					try {
+						char charBeforeOffset= event.getDocument().getChar(offset - 1);
+						if (fContentAssistant.isAutoActivationTriggerChar(charBeforeOffset)) {
+							fContentAssistant.fireSessionBeginEvent(true);
+							showProposals(true);
+						}
+					} catch (BadLocationException e) {
+					}
+				}
+			}
 		}
 	};
 	/**

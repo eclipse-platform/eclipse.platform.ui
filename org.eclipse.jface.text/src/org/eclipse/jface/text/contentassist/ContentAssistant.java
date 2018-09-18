@@ -323,7 +323,7 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 
 			// Only act on characters that are trigger candidates. This
 			// avoids computing the model selection on every keystroke
-			if (computeAllAutoActivationTriggers().indexOf(e.character) < 0) {
+			if (!isAutoActivationTriggerChar(e.character)) {
 				stop();
 				return;
 			}
@@ -935,7 +935,8 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 
 	private Closer fCloser;
 	LayoutManager fLayoutManager;
-	private AutoAssistListener fAutoAssistListener;
+
+	AutoAssistListener fAutoAssistListener;
 	private InternalListener fInternalListener;
 	private CompletionProposalPopup fProposalPopup;
 	private ContextInformationPopup fContextInfoPopup;
@@ -1183,27 +1184,26 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 	}
 
 	/**
-	 * Computes the sorted set of all auto activation trigger characters.
-	 *
-	 * @return the sorted set of all auto activation trigger characters
-	 * @since 3.1
+	 * @return whether the given char is an auto-activation trigger char
+	 * @since 3.15
 	 */
-	private String computeAllAutoActivationTriggers() {
+	boolean isAutoActivationTriggerChar(char c) {
 		if (fProcessors == null)
-			return ""; //$NON-NLS-1$
+			return false;
 
-		StringBuilder buf= new StringBuilder(5);
 		for (Set<IContentAssistProcessor> processorsForContentType : fProcessors.values()) {
 			for (IContentAssistProcessor processor : processorsForContentType) {
 				char[] triggers= processor.getCompletionProposalAutoActivationCharacters();
-				if (triggers != null)
-					buf.append(triggers);
+				if (triggers != null && new String(triggers).indexOf(c) >= 0) {
+					return true;
+				}
 				triggers= processor.getContextInformationAutoActivationCharacters();
-				if (triggers != null)
-					buf.append(triggers);
+				if (triggers != null && new String(triggers).indexOf(c) >= 0) {
+					return true;
+				}
 			}
 		}
-		return buf.toString();
+		return false;
 	}
 
 	/**
@@ -2782,5 +2782,9 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 	 */
 	public void enableCompletionProposalTriggerChars(boolean enable) {
 		fCompletionProposalTriggerCharsEnabled= enable;
+	}
+
+	boolean isAutoActivation() {
+		return fIsAutoActivated;
 	}
 }
