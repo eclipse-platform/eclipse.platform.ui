@@ -84,10 +84,11 @@ public class WizardArchiveFileResourceImportPage1 extends
         setTitle(DataTransferMessages.ArchiveExport_exportTitle);
         setDescription(DataTransferMessages.ArchiveImport_description);
 
-		if(fileImportMask == null)
+		if (fileImportMask == null) {
 			this.fileImportMask = FILE_IMPORT_MASK;
-		else
+		} else {
 			this.fileImportMask = fileImportMask;
+		}
     }
 
     /**
@@ -390,8 +391,9 @@ public class WizardArchiveFileResourceImportPage1 extends
 				fileSystemObjects);
 
 		operation.setContext(getShell());
-		if (!executeImportOperation(operation))
+		if (!executeImportOperation(operation)) {
 			return false;
+		}
 
 		ArchiveFileManipulations.closeStructureProvider(importStructureProvider, getShell());
 		return true;
