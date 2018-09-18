@@ -622,9 +622,7 @@ public class CachedMarkerBuilder {
 	 */
 	boolean[] readChangeFlags() {
 		boolean [] changes=new boolean[changeFlags.length];
-		for (int i = 0; i < changes.length; i++) {
-			changes[i]=changeFlags[i];
-		}
+		System.arraycopy(changeFlags, 0, changes, 0, changes.length);
 		return changes;
 	}
 
