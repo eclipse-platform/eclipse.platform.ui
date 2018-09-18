@@ -17,6 +17,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 import org.eclipse.core.commands.common.EventManager;
 import org.eclipse.core.runtime.IStatus;
@@ -28,7 +29,7 @@ import org.eclipse.ui.progress.IProgressConstants;
  * This singleton remembers all JobTreeElements that should be preserved (e.g.
  * because their associated Jobs have the "keep" property set).
  */
-public class FinishedJobs extends EventManager {
+public final class FinishedJobs extends EventManager {
 
 	/*
 	 * Interface for notify listeners.
@@ -54,16 +55,16 @@ public class FinishedJobs extends EventManager {
 
 	private IJobProgressManagerListener listener;
 
-	private HashSet<JobTreeElement> keptjobinfos = new HashSet<>();
+	private Set<JobTreeElement> keptjobinfos = new HashSet<>();
 
-	private HashMap<JobTreeElement, Long> finishedTime = new HashMap<>();
+	private Map<JobTreeElement, Long> finishedTime = new HashMap<>();
 
-	private static JobTreeElement[] EMPTY_INFOS;
+	private static JobTreeElement[] emptyInfos;
 
 	public static synchronized FinishedJobs getInstance() {
 		if (theInstance == null) {
 			theInstance = new FinishedJobs();
-			EMPTY_INFOS = new JobTreeElement[0];
+			emptyInfos = new JobTreeElement[0];
 		}
 		return theInstance;
 	}
@@ -98,8 +99,6 @@ public class FinishedJobs extends EventManager {
 				if (keep(info)) {
 					checkForDuplicates(info);
 					add(info);
-				} else {
-//					remove(info); ?
 				}
 			}
 
@@ -343,7 +342,7 @@ public class FinishedJobs extends EventManager {
 	JobTreeElement[] getKeptElements() {
 		JobTreeElement[] all;
 		if (keptjobinfos.isEmpty()) {
-			return EMPTY_INFOS;
+			return emptyInfos;
 		}
 
 		synchronized (keptjobinfos) {
