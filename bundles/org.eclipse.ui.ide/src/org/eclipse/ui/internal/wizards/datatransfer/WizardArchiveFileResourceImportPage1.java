@@ -59,8 +59,6 @@ public class WizardArchiveFileResourceImportPage1 extends
 
     private static final String STORE_OVERWRITE_EXISTING_RESOURCES_ID = "WizardZipFileResourceImportPage1.STORE_OVERWRITE_EXISTING_RESOURCES_ID"; //$NON-NLS-1$
 
-    private static final String STORE_SELECTED_TYPES_ID = "WizardZipFileResourceImportPage1.STORE_SELECTED_TYPES_ID"; //$NON-NLS-1$
-
 	private final String[] fileImportMask;
 
     /**
@@ -481,14 +479,6 @@ public class WizardArchiveFileResourceImportPage1 extends
 
             sourceNames = addToHistory(sourceNames, sourceNameField.getText());
             settings.put(STORE_SOURCE_NAMES_ID, sourceNames);
-
-            // update specific types to import history
-            String[] selectedTypesNames = settings
-                    .getArray(STORE_SELECTED_TYPES_ID);
-            if (selectedTypesNames == null) {
-				selectedTypesNames = new String[0];
-			}
-
             settings.put(STORE_OVERWRITE_EXISTING_RESOURCES_ID,
                     overwriteExistingResourcesCheckbox.getSelection());
         }

@@ -217,7 +217,6 @@ public class NavigatorDragAdapter extends DragSourceAdapter {
 
     private IResource[] getSelectedResources(int resourceTypes) {
 		List<IResource> resources = new ArrayList<>();
-        IResource[] result = new IResource[0];
 
         ISelection selection = selectionProvider.getSelection();
         if (!(selection instanceof IStructuredSelection) || selection.isEmpty()) {
@@ -236,7 +235,7 @@ public class NavigatorDragAdapter extends DragSourceAdapter {
                 }
             }
         }
-        result = new IResource[resources.size()];
+        IResource[] result = new IResource[resources.size()];
         resources.toArray(result);
         return result;
     }
