@@ -102,6 +102,10 @@ import org.osgi.service.event.EventHandler;
 public final class ColorsAndFontsPreferencePage extends PreferencePage
         implements IWorkbenchPreferencePage {
 
+	private static final String EMPTY = ""; //$NON-NLS-1$
+
+	private static final String SPACE = " "; //$NON-NLS-1$
+
 	private static final String SELECTED_ELEMENT_PREF = "ColorsAndFontsPreferencePage.selectedElement"; //$NON-NLS-1$
 	/**
 	 * The preference that stores the expanded state.
@@ -969,12 +973,34 @@ public final class ColorsAndFontsPreferencePage extends PreferencePage
 			protected boolean isLeafMatch(Viewer viewer, Object element) {
 				if (super.isLeafMatch(viewer, element))
 					return true;
+				return wordMatches(getText(element));
+			}
 
-				String text = null;
-				if (element instanceof ICategorizedThemeElementDefinition)
-					text = ((ICategorizedThemeElementDefinition) element).getDescription();
-
-				return text != null ? wordMatches(text) : false;
+			private String getText(Object element) {
+				String text = EMPTY;
+				if (element instanceof ICategorizedThemeElementDefinition) {
+					text += ((ICategorizedThemeElementDefinition) element).getDescription();
+				}
+				if (element instanceof FontDefinition) {
+					Font font = fontRegistry.get(((FontDefinition) element).getId());
+					if (font != null) {
+						for (FontData data : font.getFontData()) {
+							text += SPACE;
+							text += data.getName() + SPACE;
+							text += data.getHeight() + SPACE;
+							text += data.getStyle() == SWT.NORMAL ? RESOURCE_BUNDLE.getString("normalFont") + SPACE //$NON-NLS-1$
+									: EMPTY;
+							text += (data.getStyle() & SWT.BOLD) == SWT.BOLD
+									? RESOURCE_BUNDLE.getString("boldFont") + SPACE //$NON-NLS-1$
+									: EMPTY;
+							text += (data.getStyle() & SWT.ITALIC) == SWT.ITALIC
+									? RESOURCE_BUNDLE.getString("italicFont") + SPACE //$NON-NLS-1$
+									: EMPTY;
+							break;
+						}
+					}
+				}
+				return text;
 			}
 		};
 		filter.setIncludeLeadingWildcard(true);
