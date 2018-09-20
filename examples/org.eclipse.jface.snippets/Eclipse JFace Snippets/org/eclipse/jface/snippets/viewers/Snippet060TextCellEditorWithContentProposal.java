@@ -10,13 +10,14 @@
  * SPDX-License-Identifier: EPL-2.0
  *
  * Mario Winterer - initial API and implementation
- * Lars Vogel (lars.vogel@gmail.com) - Bug 413427
+ * Lars Vogel (lars.vogel@vogella.com) - Bug 413427
  *******************************************************************************/
 package org.eclipse.jface.snippets.viewers;
 
 import org.eclipse.jface.bindings.keys.IKeyLookup;
 import org.eclipse.jface.bindings.keys.KeyLookupFactory;
 import org.eclipse.jface.bindings.keys.KeyStroke;
+import org.eclipse.jface.bindings.keys.ParseException;
 import org.eclipse.jface.fieldassist.ContentProposalAdapter;
 import org.eclipse.jface.fieldassist.IContentProposalListener2;
 import org.eclipse.jface.fieldassist.IContentProposalProvider;
@@ -130,7 +131,18 @@ public class Snippet060TextCellEditorWithContentProposal {
 
 			IContentProposalProvider contentProposalProvider = new SimpleContentProposalProvider("red", "green",
 					"blue");
-			cellEditor = new TextCellEditorWithContentProposal(viewer.getTable(), contentProposalProvider, null, null);
+			KeyStroke keystroke = null;
+			try {
+				keystroke = KeyStroke.getInstance("Ctrl+Space");
+			} catch (ParseException e) {
+				e.printStackTrace();
+			}
+			String backspace = "\b"; //$NON-NLS-1$
+			String delete = "\u007F"; //$NON-NLS-1$
+			char[] autoactivationChars = ("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789" + backspace //$NON-NLS-1$
+					+ delete).toCharArray();
+			cellEditor = new TextCellEditorWithContentProposal(viewer.getTable(), contentProposalProvider, keystroke,
+					autoactivationChars);
 		}
 
 		@Override
