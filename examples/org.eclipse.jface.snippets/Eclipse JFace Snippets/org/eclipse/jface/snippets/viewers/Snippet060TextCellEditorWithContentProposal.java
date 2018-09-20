@@ -9,6 +9,7 @@
  *
  * SPDX-License-Identifier: EPL-2.0
  *
+ * Mario Winterer - initial API and implementation
  * Lars Vogel (lars.vogel@gmail.com) - Bug 413427
  *******************************************************************************/
 package org.eclipse.jface.snippets.viewers;
@@ -45,7 +46,6 @@ import org.eclipse.swt.widgets.Table;
 /**
  * Shows how to attach content assist to a text cell editor.
  *
- * @author Mario Winterer
  */
 public class Snippet060TextCellEditorWithContentProposal {
 	private static class Color {
@@ -64,7 +64,7 @@ public class Snippet060TextCellEditorWithContentProposal {
 	public static class TextCellEditorWithContentProposal extends TextCellEditor {
 
 		private ContentProposalAdapter contentProposalAdapter;
-		private boolean popupOpen = false; // true, iff popup is currently open
+		private boolean popupOpen = false; // true, if popup is currently open
 
 		public TextCellEditorWithContentProposal(Composite parent, IContentProposalProvider contentProposalProvider,
 				KeyStroke keyStroke, char[] autoActivationCharacters) {
@@ -128,8 +128,8 @@ public class Snippet060TextCellEditorWithContentProposal {
 		public ColorNameEditingSupport(TableViewer viewer) {
 			super(viewer);
 
-			IContentProposalProvider contentProposalProvider = new SimpleContentProposalProvider(new String[] { "red",
-					"green", "blue" });
+			IContentProposalProvider contentProposalProvider = new SimpleContentProposalProvider("red", "green",
+					"blue");
 			cellEditor = new TextCellEditorWithContentProposal(viewer.getTable(), contentProposalProvider, null, null);
 		}
 
