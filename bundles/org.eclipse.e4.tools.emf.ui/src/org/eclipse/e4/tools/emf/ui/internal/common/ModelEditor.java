@@ -236,13 +236,13 @@ import org.eclipse.swt.events.TreeEvent;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.TreeItem;
+import org.eclipse.ui.forms.widgets.FormToolkit;
+import org.eclipse.ui.forms.widgets.Section;
 
 public class ModelEditor implements IGotoObject {
 	private static final String ORG_ECLIPSE_E4_TOOLS_MODELEDITOR_FILTEREDTREE_ENABLED_XMITAB_DISABLED = "org.eclipse.e4.tools.modeleditor.filteredtree.enabled.xmitab.disabled";//$NON-NLS-1$
@@ -373,7 +373,7 @@ public class ModelEditor implements IGotoObject {
 
 	private XmiTab xmiTab;
 
-	private Label sectionHeaderLabel;
+	private Section headerContainer;
 
 	public ModelEditor(Composite composite, IEclipseContext context, IModelResource modelProvider, IProject project,
 			final IResourcePool resourcePool) {
@@ -547,38 +547,23 @@ public class ModelEditor implements IGotoObject {
 	}
 
 	private Composite createFormTab(Composite composite) {
-		final SashForm form = new SashForm(composite, SWT.HORIZONTAL);
-		form.setBackground(form.getDisplay().getSystemColor(SWT.COLOR_WHITE));
+		SashForm form = new SashForm(composite, SWT.HORIZONTAL);
 
 		viewer = createTreeViewerArea(form);
 
-		final Composite parent = new Composite(form, SWT.NONE);
-		final FillLayout l = new FillLayout();
-		parent.setLayout(l);
+		FormToolkit toolkit = new FormToolkit(form.getDisplay());
 
-		final Composite editingArea = new Composite(parent, SWT.BORDER);
-		final GridLayout gl = new GridLayout();
-		editingArea.setLayout(gl);
+		headerContainer = toolkit.createSection(form, Section.TITLE_BAR);
+		headerContainer.setLayoutData(new GridData(GridData.FILL_HORIZONTAL | GridData.FILL_VERTICAL));
 
-		final Composite headerContainer = new Composite(editingArea, SWT.NONE);
-		headerContainer.setLayout(new GridLayout(3, false));
-		headerContainer.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		// Composite for storing the data
+		Composite contentContainer = toolkit.createComposite(headerContainer, SWT.NONE);
+		headerContainer.setClient(contentContainer);
 
-		final Label iconLabel = new Label(headerContainer, SWT.NONE);
-		iconLabel.setLayoutData(new GridData(20, 20));
-
-		sectionHeaderLabel = new Label(headerContainer, SWT.NONE);
-		sectionHeaderLabel.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		final Label separatorLabel = new Label(headerContainer, SWT.SEPARATOR | SWT.HORIZONTAL);
-		final GridData gridData = new GridData(GridData.FILL_HORIZONTAL);
-		gridData.horizontalSpan = 2;
-		separatorLabel.setLayoutData(gridData);
-
-		final StackLayout layout = new StackLayout();
-		final Composite contentContainer = new Composite(editingArea, SWT.NONE);
-		contentContainer.setLayoutData(new GridData(GridData.FILL_BOTH));
-
+		StackLayout layout = new StackLayout();
 		contentContainer.setLayout(layout);
+
+		form.setWeights(new int[] { 2, 5 });
 
 		viewer.getTree().addKeyListener(new KeyAdapter() {
 			@Override
@@ -608,11 +593,9 @@ public class ModelEditor implements IGotoObject {
 					final AbstractComponentEditor editor1 = getEditor(obj.eClass());
 					if (editor1 != null) {
 						currentEditor = editor1;
-						sectionHeaderLabel.setText(editor1.getLabel(obj));
-						iconLabel.setImage(editor1.getImage(obj));
+						headerContainer.setText(editor1.getLabel(obj));
 						obsManager.runAndCollect(() -> {
 							final Composite comp = editor1.getEditor(contentContainer, s.getFirstElement());
-							comp.setBackgroundMode(SWT.INHERIT_DEFAULT);
 							layout.topControl = comp;
 							contentContainer.layout(true);
 						});
@@ -622,11 +605,9 @@ public class ModelEditor implements IGotoObject {
 					final AbstractComponentEditor editor2 = getEditor(entry.getId());
 					if (editor2 != null) {
 						currentEditor = editor2;
-						sectionHeaderLabel.setText(editor2.getLabel(entry));
-						iconLabel.setImage(editor2.getImage(entry));
+						headerContainer.setText(editor2.getLabel(entry));
 						obsManager.runAndCollect(() -> {
 							final Composite comp = editor2.getEditor(contentContainer, s.getFirstElement());
-							comp.setBackgroundMode(SWT.INHERIT_DEFAULT);
 							layout.topControl = comp;
 							contentContainer.layout(true);
 						});
@@ -636,11 +617,8 @@ public class ModelEditor implements IGotoObject {
 				if (selectionService != null) {
 					selectionService.setSelection(s.getFirstElement());
 				}
-
 			}
 		});
-
-		form.setWeights(new int[] { 3, 4 });
 
 		final MenuManager mgr = new MenuManager();
 		mgr.setRemoveAllWhenShown(true);
@@ -1173,7 +1151,6 @@ public class ModelEditor implements IGotoObject {
 		registerEditor(VIRTUAL_SNIPPETS, VSnippetsEditor.class);
 	}
 
-
 	public void setSelection(Object element) {
 		viewer.setSelection(new StructuredSelection(element));
 	}
@@ -1392,8 +1369,7 @@ public class ModelEditor implements IGotoObject {
 	 * Get editor from an eClass. May return the registered editor for this eclass,
 	 * or the editor for a parent EClass or the default editor
 	 *
-	 * @param eClass
-	 *            the eClass to get editor for
+	 * @param eClass the eClass to get editor for
 	 * @return the {@link AbstractComponentEditor} found (never null).
 	 */
 	public AbstractComponentEditor getEditor(EClass eClass) {
@@ -1428,10 +1404,9 @@ public class ModelEditor implements IGotoObject {
 	/**
 	 * get editor from a string key.
 	 *
-	 * @param key
-	 *            : the editor string key
-	 * @param createDefaultIfNull
-	 *            if true, returns the default editor if no editor found
+	 * @param key                 : the editor string key
+	 * @param createDefaultIfNull if true, returns the default editor if no editor
+	 *                            found
 	 * @return the {@link AbstractComponentEditor} if exists. Never null if
 	 *         createDefaultIfNull is true
 	 */
@@ -1492,7 +1467,6 @@ public class ModelEditor implements IGotoObject {
 		return false;
 	}
 
-
 	@Persist
 	public void doSave(@Optional IProgressMonitor monitor) {
 
@@ -1528,7 +1502,7 @@ public class ModelEditor implements IGotoObject {
 	}
 
 	public void setHeaderTitle(String title) {
-		sectionHeaderLabel.setText(title);
+		headerContainer.setText(title);
 	}
 
 	@PreDestroy
@@ -1542,7 +1516,9 @@ public class ModelEditor implements IGotoObject {
 		if (project == null) {
 			context.get(Display.class).removeFilter(SWT.MouseUp, keyListener);
 		}
-		ContextInjectionFactory.uninject(xmiTab, xmiTab.getContext());
+		if (xmiTab != null) {
+			ContextInjectionFactory.uninject(xmiTab, xmiTab.getContext());
+		}
 	}
 
 	public IModelResource getModelProvider() {
@@ -1970,14 +1946,10 @@ public class ModelEditor implements IGotoObject {
 		 * Create an internal Compound command containing a Remove and a Add so as to
 		 * allow the Undo
 		 *
-		 * @param data
-		 *            the object to be dragged and dropped
-		 * @param destFeature
-		 *            the target feature in the model where data must be dropped
-		 * @param parent
-		 *            the destination parent
-		 * @param index
-		 *            the index in the parent list
+		 * @param data        the object to be dragged and dropped
+		 * @param destFeature the target feature in the model where data must be dropped
+		 * @param parent      the destination parent
+		 * @param index       the index in the parent list
 		 * @see bug #429684
 		 * @return the compound command
 		 */
@@ -2005,7 +1977,6 @@ public class ModelEditor implements IGotoObject {
 
 		}
 
-
 		@Override
 		public boolean validateDrop(Object target, int operation, TransferData transferType) {
 			boolean rv = true;
@@ -2028,11 +1999,13 @@ public class ModelEditor implements IGotoObject {
 
 	}
 
-	/** This method checks if the target object is a valid target for the current instance.
-	 *  It used both for paste and for drag and drop behavior
-	 * @param target  the target object where instance should be pasted of dropped
+	/**
+	 * This method checks if the target object is a valid target for the current
+	 * instance. It used both for paste and for drag and drop behavior
+	 *
+	 * @param target   the target object where instance should be pasted of dropped
 	 * @param instance the instance of object to be pasted or dropped
-	 * @param isIndex if true, means that target is an object in a container
+	 * @param isIndex  if true, means that target is an object in a container
 	 * @return
 	 */
 	private boolean isValidTarget(Object target, Object instance, boolean isIndex) {
@@ -2050,8 +2023,7 @@ public class ModelEditor implements IGotoObject {
 			final VirtualEntry<Object> vTarget = (VirtualEntry<Object>) target;
 			if (isIndex || !vTarget.getList().contains(instance)) {
 				if (vTarget.getProperty() instanceof IEMFProperty) {
-					final EStructuralFeature feature = ((IEMFProperty) vTarget.getProperty())
-							.getStructuralFeature();
+					final EStructuralFeature feature = ((IEMFProperty) vTarget.getProperty()).getStructuralFeature();
 					final EObject parent = (EObject) vTarget.getOriginalParent();
 					final EClassifier classifier = ModelUtils.getTypeArgument(parent.eClass(),
 							feature.getEGenericType());
@@ -2072,12 +2044,10 @@ public class ModelEditor implements IGotoObject {
 		return false;
 	}
 
-
 	/**
 	 * compute a valid name for the undo/redo/paste of move commands
 	 *
-	 * @param data
-	 *            the object concerned by the command
+	 * @param data the object concerned by the command
 	 * @return a representative string for the object or 'Object' if nothing found
 	 */
 	private String getObjectNameForCommand(Object data) {

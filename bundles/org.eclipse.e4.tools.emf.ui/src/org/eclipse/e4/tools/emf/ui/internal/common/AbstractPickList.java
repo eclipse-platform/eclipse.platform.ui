@@ -75,6 +75,7 @@ public abstract class AbstractPickList extends Composite {
 
 	public AbstractPickList(Composite parent, int style, List<PickListFeatures> listFeatures,
 			AbstractComponentEditor componentEditor) {
+
 		super(parent, style);
 
 		// TODO remove dependency AbstractComponentEditor. They
@@ -87,13 +88,25 @@ public abstract class AbstractPickList extends Composite {
 		} else {
 			composite = new Group(this, SWT.NONE);
 		}
-		composite.setLayout(new GridLayout(1, false));
 
-		final Composite comp = new Composite(composite, SWT.NONE);
-
-		GridLayout layout = new GridLayout(2, false);
+		GridLayout layout = new GridLayout(1, false);
 		layout.marginHeight = 0;
 		layout.marginWidth = 0;
+		layout.marginRight = 0;
+		layout.marginLeft = 0;
+		layout.horizontalSpacing = 0;
+		layout.verticalSpacing = 0;
+		composite.setLayout(layout);
+
+		Composite comp = new Composite(composite, SWT.NONE);
+
+		layout = new GridLayout(2, false);
+		layout.marginHeight = 0;
+		layout.marginWidth = 0;
+		layout.marginRight = 0;
+		layout.marginLeft = 0;
+		layout.horizontalSpacing = 0;
+		layout.verticalSpacing = 0;
 		comp.setLayout(layout);
 		comp.setLayoutData(new GridData(SWT.FILL, SWT.TOP, true, false));
 
@@ -121,8 +134,14 @@ public abstract class AbstractPickList extends Composite {
 
 		toolBar = new Composite(comp, SWT.NONE);
 		layout = new GridLayout(5, true);
-		layout.marginHeight = 0;
-		layout.marginWidth = 0;
+		if (listFeatures != null && listFeatures.contains(PickListFeatures.NO_PICKER)) {
+			layout.marginHeight = 0;
+			layout.marginWidth = 0;
+			layout.marginRight = 0;
+			layout.marginLeft = 0;
+		}
+		layout.horizontalSpacing = 2;
+		layout.verticalSpacing = 0;
 		toolBar.setLayout(layout);
 		toolBar.setLayoutData(new GridData(SWT.FILL, SWT.TOP, true, false));
 		toolBar.setFont(composite.getFont());

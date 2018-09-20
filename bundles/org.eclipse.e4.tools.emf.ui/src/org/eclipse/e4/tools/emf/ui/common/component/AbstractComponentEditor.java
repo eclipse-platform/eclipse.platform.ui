@@ -144,10 +144,9 @@ public abstract class AbstractComponentEditor {
 	/**
 	 * Get the image described in element if this is a MUILabel
 	 *
-	 * @param element
-	 *            the element in tree to be displayed
-	 * @return image of element if iconUri is not empty (returns bad image if
-	 *         bad URI), else returns null
+	 * @param element the element in tree to be displayed
+	 * @return image of element if iconUri is not empty (returns bad image if bad
+	 *         URI), else returns null
 	 */
 	public Image getImageFromIconURI(MUILabel element) {
 
@@ -171,9 +170,8 @@ public abstract class AbstractComponentEditor {
 		return img;
 	}
 
-	/** @return true if the image of this element should be displayed in grey*/
-	private boolean shouldBeGrey(Object element)
-	{
+	/** @return true if the image of this element should be displayed in grey */
+	private boolean shouldBeGrey(Object element) {
 		// It is grey if a MUIElement is not visible or not rendered
 		// It is not grey if this is not a MUIElement or if it is rendered and
 		// visible.
@@ -183,11 +181,9 @@ public abstract class AbstractComponentEditor {
 
 	/**
 	 *
-	 * @param key
-	 *            the key of image (can be a constants from ResourceProvider or
-	 *            a platform:/ uri location
-	 * @param grey
-	 *            if true returns the grey version if original image exists
+	 * @param key  the key of image (can be a constants from ResourceProvider or a
+	 *             platform:/ uri location
+	 * @param grey if true returns the grey version if original image exists
 	 * @return the image with a give key or grey version.
 	 */
 	private Image getImage(String key, boolean grey) {
@@ -222,10 +218,8 @@ public abstract class AbstractComponentEditor {
 	/**
 	 * Get image from an element Implements algorithm described in bug #465271
 	 *
-	 * @param element
-	 *            the Application Element
-	 * @param key
-	 *            the element image key if no icon URI
+	 * @param element the Application Element
+	 * @param key     the element image key if no icon URI
 	 * @return Image or null if nothing found
 	 */
 	public Image getImage(Object element, String key) {
@@ -348,11 +342,10 @@ public abstract class AbstractComponentEditor {
 
 	/**
 	 * Translates an input <code>String</code> using the current
-	 * {@link ResourceBundleTranslationProvider} and <code>locale</code> from
-	 * the {@link TranslationService}.
+	 * {@link ResourceBundleTranslationProvider} and <code>locale</code> from the
+	 * {@link TranslationService}.
 	 *
-	 * @param string
-	 *            the string to translate, may not be null.
+	 * @param string the string to translate, may not be null.
 	 * @return the translated string or the input string if it could not be
 	 *         translated.
 	 */
@@ -457,16 +450,13 @@ public abstract class AbstractComponentEditor {
 	}
 
 	/**
-	 * Generates an ID when the another field changes. Must be called after
-	 * master is set with the objects value.
+	 * Generates an ID when the another field changes. Must be called after master
+	 * is set with the objects value.
 	 *
-	 * @param attSource
-	 *            The source attribute
-	 * @param attId
-	 *            The id attribute to generate
-	 * @param control
-	 *            optional control to disable generator after losing focus or
-	 *            disposing
+	 * @param attSource The source attribute
+	 * @param attId     The id attribute to generate
+	 * @param control   optional control to disable generator after losing focus or
+	 *                  disposing
 	 */
 	protected void enableIdGenerator(EAttribute attSource, EAttribute attId, Control control) {
 		if (generator != null) {
