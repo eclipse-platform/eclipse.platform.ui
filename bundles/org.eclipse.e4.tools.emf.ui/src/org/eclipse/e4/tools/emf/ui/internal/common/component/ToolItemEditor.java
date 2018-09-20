@@ -35,7 +35,6 @@ import org.eclipse.e4.tools.emf.ui.common.ImageTooltip;
 import org.eclipse.e4.tools.emf.ui.common.Util;
 import org.eclipse.e4.tools.emf.ui.common.component.AbstractComponentEditor;
 import org.eclipse.e4.tools.emf.ui.internal.Messages;
-import org.eclipse.e4.tools.emf.ui.internal.ResourceProvider;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.ControlFactory.TextPasteHandler;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.dialogs.ToolItemIconDialogEditor;
 import org.eclipse.e4.tools.emf.ui.internal.common.uistructure.UIViewer;
@@ -222,10 +221,7 @@ public abstract class ToolItemEditor extends AbstractComponentEditor {
 
 			new ImageTooltip(t, Messages, this);
 
-			final Button b = new Button(parent, SWT.PUSH | SWT.FLAT);
-			b.setText(Messages.ModelTooling_Common_FindEllipsis);
-			b.setImage(createImage(ResourceProvider.IMG_Obj16_zoom));
-			b.setLayoutData(new GridData(GridData.FILL, GridData.CENTER, false, false));
+			Button b = ControlFactory.createFindButton(parent, resourcePool);
 			b.addSelectionListener(new SelectionAdapter() {
 				@Override
 				public void widgetSelected(SelectionEvent e) {

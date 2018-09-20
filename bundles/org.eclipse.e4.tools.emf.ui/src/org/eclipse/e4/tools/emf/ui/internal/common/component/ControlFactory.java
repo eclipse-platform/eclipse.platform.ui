@@ -536,9 +536,7 @@ public class ControlFactory {
 				EMFEditProperties.value(editor.getEditingDomain(),
 						ApplicationPackageImpl.Literals.APPLICATION_ELEMENT__ELEMENT_ID).observeDetail(editor.getMaster()));
 
-		final Button b = new Button(parent, SWT.PUSH | SWT.FLAT);
-		b.setText(Messages.ModelTooling_Common_FindEllipsis);
-		b.setImage(editor.createImage(ResourceProvider.IMG_Obj16_zoom));
+		Button b = ControlFactory.createFindButton(parent, editor.resourcePool);
 		b.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
@@ -880,10 +878,7 @@ public class ControlFactory {
 				new UpdateValueStrategy());
 		Util.addDecoration(t, binding);
 
-		final Button b = new Button(parent, SWT.PUSH | SWT.FLAT);
-		b.setImage(editor.createImage(ResourceProvider.IMG_Obj16_zoom));
-		b.setText(Messages.ModelTooling_Common_FindEllipsis);
-		b.setLayoutData(new GridData(GridData.FILL, GridData.CENTER, false, false));
+		Button b = ControlFactory.createFindButton(parent, editor.resourcePool);
 		b.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
@@ -907,6 +902,14 @@ public class ControlFactory {
 			}
 		});
 
+	}
+
+	public static Button createFindButton(Composite parent, IResourcePool resourcePool) {
+		Button b = new Button(parent, SWT.PUSH | SWT.FLAT);
+		b.setText(Messages.ModelTooling_Common_FindEllipsis);
+		b.setImage(resourcePool.getImageUnchecked(ResourceProvider.IMG_Obj16_zoom));
+		b.setLayoutData(new GridData(GridData.FILL, GridData.CENTER, false, false));
+		return b;
 	}
 
 }

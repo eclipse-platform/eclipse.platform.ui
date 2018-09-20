@@ -182,11 +182,8 @@ public class ParameterEditor extends AbstractComponentEditor {
 			context.bindValue(textProp.observeDelayed(200, commandParameterIdValue), modelProp.observeDetail(getMaster()));
 		}
 
-		final Button chooseParameterButton = new Button(parent, SWT.PUSH | SWT.FLAT);
-		chooseParameterButton.setText(Messages.ModelTooling_Common_FindEllipsis);
-		chooseParameterButton.setImage(createImage(ResourceProvider.IMG_Obj16_zoom));
-		chooseParameterButton.addSelectionListener(new ChooseParameterButtonSelectionListener());
-		chooseParameterButton.setLayoutData(new GridData());
+		Button b = ControlFactory.createFindButton(parent, resourcePool);
+		b.addSelectionListener(new ChooseParameterButtonSelectionListener());
 	}
 
 	private final class ChooseParameterButtonSelectionListener extends SelectionAdapter {

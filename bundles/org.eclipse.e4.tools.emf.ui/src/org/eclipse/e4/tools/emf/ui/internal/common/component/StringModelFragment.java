@@ -317,8 +317,7 @@ public class StringModelFragment extends AbstractComponentEditor {
 			// force the computation of selectedContainer.
 			t.addModifyListener(e -> selectedContainer = null);
 
-			final Button b = new Button(comp, SWT.PUSH | SWT.FLAT);
-			b.setText(Messages.ModelTooling_Common_FindEllipsis);
+			Button b = ControlFactory.createFindButton(comp, resourcePool);
 			b.addSelectionListener(new SelectionAdapter() {
 				@Override
 				public void widgetSelected(SelectionEvent e) {
@@ -393,12 +392,11 @@ public class StringModelFragment extends AbstractComponentEditor {
 			}
 			featureText.addModifyListener(e -> updateChildrenChoice());
 
-			final Button button = new Button(comp, SWT.PUSH | SWT.FLAT);
-			button.setText(Messages.ModelTooling_Common_FindEllipsis);
-			button.addSelectionListener(new SelectionAdapter() {
+			Button b = ControlFactory.createFindButton(comp, resourcePool);
+			b.addSelectionListener(new SelectionAdapter() {
 				@Override
 				public void widgetSelected(SelectionEvent e) {
-					final FeatureSelectionDialog dialog = new FeatureSelectionDialog(button.getShell(),
+					final FeatureSelectionDialog dialog = new FeatureSelectionDialog(b.getShell(),
 							getEditingDomain(), (MStringModelFragment) getMaster().getValue(), Messages,
 							getSelectedContainer());
 					dialog.open();

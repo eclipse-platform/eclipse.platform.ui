@@ -190,10 +190,7 @@ public class CommandEditor extends AbstractComponentEditor {
 							FeaturePath.fromList(CommandsPackageImpl.Literals.COMMAND__CATEGORY,
 									ApplicationPackageImpl.Literals.APPLICATION_ELEMENT__ELEMENT_ID)).observeDetail(getMaster()));
 
-			final Button b = new Button(parent, SWT.PUSH | SWT.FLAT);
-			b.setText(Messages.ModelTooling_Common_FindEllipsis);
-			b.setImage(createImage(ResourceProvider.IMG_Obj16_zoom));
-			b.setLayoutData(new GridData(GridData.FILL, GridData.CENTER, false, false));
+			Button b = ControlFactory.createFindButton(parent, resourcePool);
 			b.addSelectionListener(new SelectionAdapter() {
 				@Override
 				public void widgetSelected(SelectionEvent e) {

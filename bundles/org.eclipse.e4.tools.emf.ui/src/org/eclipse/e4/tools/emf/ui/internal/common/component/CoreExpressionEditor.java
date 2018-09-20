@@ -117,9 +117,7 @@ public class CoreExpressionEditor extends AbstractComponentEditor {
 			if (getEditor().getExtensionLookup() == null) {
 				gd.horizontalSpan = 2;
 			} else {
-				final Button b = new Button(parent, SWT.PUSH | SWT.FLAT);
-				b.setText(Messages.ModelTooling_Common_FindEllipsis);
-				b.setImage(createImage(ResourceProvider.IMG_Obj16_zoom));
+				Button b = ControlFactory.createFindButton(parent, resourcePool);
 				b.addSelectionListener(new SelectionAdapter() {
 					@Override
 					public void widgetSelected(SelectionEvent e) {

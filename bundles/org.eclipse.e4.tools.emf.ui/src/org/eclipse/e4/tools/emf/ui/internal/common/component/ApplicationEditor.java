@@ -79,7 +79,6 @@ import org.eclipse.swt.custom.CTabItem;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
@@ -514,8 +513,7 @@ public class ApplicationEditor extends AbstractComponentEditor {
 				final Text t = new Text(group, SWT.BORDER);
 				t.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 
-				final Button b = new Button(group, SWT.PUSH | SWT.FLAT);
-				b.setText(Messages.ModelTooling_Common_FindEllipsis);
+				ControlFactory.createFindButton(group, resourcePool);
 			}
 
 			setControl(group);

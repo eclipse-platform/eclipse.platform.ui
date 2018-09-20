@@ -85,7 +85,7 @@ public abstract class AbstractComponentEditor {
 	@Inject
 	private ModelEditor editor;
 	@Inject
-	protected IResourcePool resourcePool;
+	public IResourcePool resourcePool;
 
 	@Inject
 	@Optional

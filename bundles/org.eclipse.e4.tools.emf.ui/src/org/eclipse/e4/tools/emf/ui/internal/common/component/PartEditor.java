@@ -200,10 +200,7 @@ public class PartEditor extends AbstractComponentEditor {
 
 			new ImageTooltip(t, Messages, this);
 
-			final Button b = new Button(parent, SWT.PUSH | SWT.FLAT);
-			b.setLayoutData(new GridData(GridData.FILL, GridData.CENTER, false, false));
-			b.setImage(createImage(ResourceProvider.IMG_Obj16_zoom));
-			b.setText(Messages.ModelTooling_Common_FindEllipsis);
+			Button b = ControlFactory.createFindButton(parent, resourcePool);
 			b.addSelectionListener(new SelectionAdapter() {
 				@Override
 				public void widgetSelected(SelectionEvent e) {
