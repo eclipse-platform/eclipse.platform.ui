@@ -27,7 +27,11 @@ import java.util.stream.Collectors;
 import org.eclipse.swt.graphics.Rectangle;
 
 import org.eclipse.core.runtime.Assert;
+import org.eclipse.core.runtime.ILog;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.Status;
 
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.ITextViewer;
@@ -143,6 +147,12 @@ public class CodeMiningManager implements Runnable {
 		}
 	}
 
+	private static void logCodeMiningProviderException(Throwable e) {
+		String PLUGIN_ID= "org.eclipse.jface.text"; //$NON-NLS-1$
+		ILog log= Platform.getLog(Platform.getBundle(PLUGIN_ID));
+		log.log(new Status(IStatus.ERROR, PLUGIN_ID, IStatus.OK, e.getMessage(), e));
+	}
+
 	/**
 	 * Return the list of {@link CompletableFuture} which provides the list of {@link ICodeMining}
 	 * for the given <code>viewer</code> by using the given providers.
@@ -156,7 +166,12 @@ public class CodeMiningManager implements Runnable {
 	private static CompletableFuture<List<? extends ICodeMining>> getCodeMinings(ITextViewer viewer,
 			List<ICodeMiningProvider> providers, IProgressMonitor monitor) {
 		List<CompletableFuture<List<? extends ICodeMining>>> com= providers.stream()
-				.map(provider -> provider.provideCodeMinings(viewer, monitor)).filter(c -> c != null)
+				.map(provider -> provider.provideCodeMinings(viewer, monitor))
+				.filter(c -> c != null)
+				.map(future -> future.exceptionally(e -> {
+					logCodeMiningProviderException(e);
+					return Collections.emptyList();
+				}))
 				.collect(Collectors.toList());
 		return CompletableFuture.allOf(com.toArray(new CompletableFuture[com.size()])).thenApply(
 				v -> com.stream().map(CompletableFuture::join).flatMap(l -> l.stream()).collect(Collectors.toList()));
