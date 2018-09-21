@@ -235,7 +235,7 @@ public class Snippet066TableViewerWithLabelDecorator {
 		persons.add(new Person(1, "Jennifer", "Nerlich"));
 		persons.add(new Person(2, "Simon", "Scholz"));
 		persons.add(new Person(3, "David", "Weiser"));
-		persons.add(new Person(3, "Fab%ian", "Pfaff"));
+		persons.add(new Person(3, "Fabian", "Pfaff"));
 
 		return persons;
 	}

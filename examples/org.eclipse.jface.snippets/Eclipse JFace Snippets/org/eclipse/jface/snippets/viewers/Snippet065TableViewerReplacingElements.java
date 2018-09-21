@@ -45,7 +45,7 @@ public class Snippet065TableViewerReplacingElements {
 		c.setLayout(new FillLayout(SWT.VERTICAL));
 		Label l = new Label(c, SWT.NONE);
 		l.setText(
-				"The elements are ordere lexicografically, i.e. 11 comes before 2,\nPress q, to rename one element.");
+				"The elements are ordered lexicografically, i.e. 11 comes before 2,\nPress q, to rename one element.");
 		final TableViewer v = new TableViewer(c);
 		String[] rootElements = new String[] { "root 1", "root 2", "root 3" };
 		final IObservableList<String> input = new WritableList<>(DisplayRealm.getRealm(shell.getDisplay()));

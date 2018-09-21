@@ -46,7 +46,7 @@ public class Snippet064TreeViewerReplacingElements {
 		c.setLayout(new FillLayout(SWT.VERTICAL));
 		Label l = new Label(c, SWT.NONE);
 		l.setText(
-				"The elements are ordere lexicografically, i.e. 11 comes before 2,\nPress q, to rename one root element.\nPress w, to rename one child element.");
+				"The elements are ordered lexicografically, i.e. 11 comes before 2,\nPress q, to rename one root element.\nPress w, to rename one child element.");
 		final TreeViewer v = new TreeViewer(c);
 		Object[] rootElements = new Object[] { "root 1", "root 2", "root 3" };
 		Object input = new Object();
