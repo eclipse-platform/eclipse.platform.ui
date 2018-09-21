@@ -129,7 +129,10 @@ public class TemplatePersistenceData extends org.eclipse.text.templates.Template
 
 	@Override
 	public boolean equals(Object other) {
-		return (ref != null) ? ref.equals(other) : super.equals(other);
+		if (ref != null && other instanceof TemplatePersistenceData && ((TemplatePersistenceData) other).ref != null) {
+			return ref.equals(((TemplatePersistenceData) other).ref);
+		}
+		return super.equals(other);
 	}
 
 	@Override

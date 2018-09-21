@@ -24,6 +24,7 @@ import org.eclipse.jface.text.tests.rules.FastPartitionerTest;
 import org.eclipse.jface.text.tests.rules.ScannerColumnTest;
 import org.eclipse.jface.text.tests.rules.WordRuleTest;
 import org.eclipse.jface.text.tests.source.LineNumberRulerColumnTest;
+import org.eclipse.jface.text.tests.templates.persistence.TemplatePersistenceDataTest;
 
 
 /**
@@ -49,7 +50,9 @@ import org.eclipse.jface.text.tests.source.LineNumberRulerColumnTest;
 		DefaultPartitionerZeroLengthTest.class,
 		FastPartitionerTest.class,
 		ScannerColumnTest.class,
-		WordRuleTest.class
+		WordRuleTest.class,
+
+		TemplatePersistenceDataTest.class,
 })
 public class JFaceTextTestSuite {
 	// see @SuiteClasses
