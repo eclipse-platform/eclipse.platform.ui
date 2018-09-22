@@ -16,7 +16,7 @@ package org.eclipse.ui.internal.statushandlers;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.Map;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.IStatus;
@@ -157,7 +157,7 @@ public class WorkbenchStatusDialogManagerImpl {
 		dialogState.put(IStatusDialogConstants.HIDE_SUPPORT_BUTTON,
 				Boolean.FALSE);
 		dialogState.put(IStatusDialogConstants.STATUS_ADAPTERS, Collections
-				.synchronizedSet(new HashSet()));
+				.synchronizedSet(new LinkedHashSet()));
 		dialogState.put(IStatusDialogConstants.STATUS_MODALS, new HashMap());
 		dialogState.put(IStatusDialogConstants.LABEL_PROVIDER, new LabelProviderWrapper(
 				dialogState));

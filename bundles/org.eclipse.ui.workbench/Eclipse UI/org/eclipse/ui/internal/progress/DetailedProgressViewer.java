@@ -14,7 +14,7 @@
 package org.eclipse.ui.internal.progress;
 
 import java.util.ArrayList;
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 import org.eclipse.jface.dialogs.IDialogConstants;
@@ -156,7 +156,7 @@ public class DetailedProgressViewer extends AbstractProgressViewer {
 		ViewerComparator sorter = getComparator();
 
 		// Use a Set in case we are getting something added that exists
-		Set<JobTreeElement> newItems = new HashSet<>(elements.length);
+		Set<JobTreeElement> newItems = new LinkedHashSet<>(elements.length);
 
 		Control[] existingChildren = control.getChildren();
 		for (Control child : existingChildren) {

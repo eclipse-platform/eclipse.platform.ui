@@ -16,7 +16,7 @@ package org.eclipse.ui.internal.progress;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
 import org.eclipse.core.commands.common.EventManager;
@@ -55,7 +55,7 @@ public final class FinishedJobs extends EventManager {
 
 	private IJobProgressManagerListener listener;
 
-	private Set<JobTreeElement> keptjobinfos = new HashSet<>();
+	private Set<JobTreeElement> keptjobinfos = new LinkedHashSet<>();
 
 	private Map<JobTreeElement, Long> finishedTime = new HashMap<>();
 

@@ -13,7 +13,6 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.progress;
 
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.Set;
@@ -150,7 +149,7 @@ public class ProgressViewerContentProvider extends ProgressContentProvider {
 			return elements;
 		}
 
-		Set<Object> all = new HashSet<>();
+		Set<Object> all = new LinkedHashSet<>();
 
 		for (Object element : elements) {
 			all.add(element);
