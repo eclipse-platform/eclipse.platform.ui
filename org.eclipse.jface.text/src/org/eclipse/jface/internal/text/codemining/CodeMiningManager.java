@@ -101,6 +101,9 @@ public class CodeMiningManager implements Runnable {
 	 */
 	public void uninstall() {
 		cancel();
+		if (fInlinedAnnotationSupport != null) {
+			fInlinedAnnotationSupport.updateAnnotations(Collections.emptySet());
+		}
 	}
 
 	/**
