@@ -102,7 +102,7 @@ public class FileTreeContentProvider implements ITreeContentProvider, IFileSearc
 					fTreeViewer.add(parent, child);
 			} else {
 				if (refreshViewer)
-					fTreeViewer.refresh(parent);
+					fTreeViewer.update(parent, null);
 				return;
 			}
 			child= parent;
