@@ -13,6 +13,9 @@
  *******************************************************************************/
 package org.eclipse.text.templates;
 
+import java.util.Objects;
+import java.util.UUID;
+
 import org.eclipse.core.runtime.Assert;
 
 import org.eclipse.jface.text.templates.Template;
@@ -39,6 +42,11 @@ public class TemplatePersistenceData {
 	private Template fCustomTemplate= null;
 	private boolean fIsDeleted= false;
 	private boolean fCustomIsEnabled= true;
+
+	/*
+	 * Required to support equals() with deprecated type org.eclipse.jface.text.templates.persistence.TemplatePersistenceData.
+	 */
+	private final UUID uniqueIdForEquals = UUID.randomUUID();
 
 	/**
 	 * Creates a new, user-added instance that is not linked to a contributed
@@ -180,4 +188,41 @@ public class TemplatePersistenceData {
 	public void setEnabled(boolean isEnabled) {
 		fCustomIsEnabled= isEnabled;
 	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(uniqueIdForEquals);
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj) {
+			return true;
+		}
+		if (!(obj instanceof TemplatePersistenceData)) {
+			return false;
+		}
+		TemplatePersistenceData other= (TemplatePersistenceData) obj;
+		return Objects.equals(uniqueIdForEquals, other.getUniqueIdForEquals());
+	}
+
+	/**
+	 * Required to support equals() with deprecated type org.eclipse.jface.text.templates.persistence.TemplatePersistenceData.
+	 * @return unique id to support {@link #equals(Object)}
+	 * @since 3.8
+	 */
+	protected UUID getUniqueIdForEquals() {
+		return uniqueIdForEquals;
+	}
+
+	/**
+	 * Required to support equals() with deprecated type org.eclipse.jface.text.templates.persistence.TemplatePersistenceData.
+	 * @param data non null
+	 * @return unique id to support {@link #equals(Object)}
+	 * @since 3.8
+	 */
+	protected static final UUID getUniqueIdForEquals(TemplatePersistenceData data) {
+		return data.getUniqueIdForEquals();
+	}
+
 }

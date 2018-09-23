@@ -13,6 +13,8 @@
  *******************************************************************************/
 package org.eclipse.jface.text.templates.persistence;
 
+import java.util.UUID;
+
 import org.eclipse.jface.text.templates.Template;
 
 
@@ -33,7 +35,7 @@ import org.eclipse.jface.text.templates.Template;
 @Deprecated
 public class TemplatePersistenceData extends org.eclipse.text.templates.TemplatePersistenceData {
 
-	org.eclipse.text.templates.TemplatePersistenceData ref;
+	private final org.eclipse.text.templates.TemplatePersistenceData ref;
 
 	/**
 	 * In some cases, we must continue to respect the deprecated TemplatePresistenceData
@@ -45,99 +47,85 @@ public class TemplatePersistenceData extends org.eclipse.text.templates.Template
 	 */
 	public TemplatePersistenceData(org.eclipse.text.templates.TemplatePersistenceData data) {
 		super(data.getTemplate(), data.isEnabled(), data.getId()); // these are ignored
-		this.ref= data;
+		this.ref= data instanceof TemplatePersistenceData ? ((TemplatePersistenceData) data).ref : data; // no double wrapping
 	}
 
 	public TemplatePersistenceData(Template template, boolean enabled) {
-		super(template, enabled);
+		this(new org.eclipse.text.templates.TemplatePersistenceData(template, enabled));
 	}
 
 	public TemplatePersistenceData(Template template, boolean enabled, String id) {
-		super(template, enabled, id);
+		this(new org.eclipse.text.templates.TemplatePersistenceData(template, enabled, id));
 	}
 
 	@Override
 	public String getId() {
-		return (ref != null) ? ref.getId() : super.getId();
+		return ref.getId();
 	}
 
 	@Override
 	public boolean isDeleted() {
-		return (ref != null) ? ref.isDeleted() : super.isDeleted();
+		return ref.isDeleted();
 	}
 
 	@Override
 	public void setDeleted(boolean isDeleted) {
-		if (ref != null) {
-			ref.setDeleted(isDeleted);
-		} else {
-			super.setDeleted(isDeleted);
-		}
+		ref.setDeleted(isDeleted);
 	}
 
 	@Override
 	public Template getTemplate() {
-		return (ref != null) ? ref.getTemplate() : super.getTemplate();
+		return ref.getTemplate();
 	}
 
 	@Override
 	public void setTemplate(Template template) {
-		if (ref != null) {
-			ref.setTemplate(template);
-		} else {
-			super.setTemplate(template);
-		}
+		ref.setTemplate(template);
 	}
 
 	@Override
 	public boolean isCustom() {
-		return (ref != null) ? ref.isCustom() : super.isCustom();
+		return ref.isCustom();
 	}
 
 	@Override
 	public boolean isModified() {
-		return (ref != null) ? ref.isModified() : super.isModified();
+		return ref.isModified();
 	}
 
 	@Override
 	public boolean isUserAdded() {
-		return (ref != null) ? ref.isUserAdded() : super.isUserAdded();
+		return ref.isUserAdded();
 	}
 
 	@Override
 	public void revert() {
-		if (ref != null) {
-			ref.revert();
-		} else {
-			super.revert();
-		}
+		ref.revert();
 	}
 
 	@Override
 	public boolean isEnabled() {
-		return (ref != null) ? ref.isEnabled() : super.isEnabled();
+		return ref.isEnabled();
 	}
 
 	@Override
 	public void setEnabled(boolean isEnabled) {
-		if (ref != null) {
-			ref.setEnabled(isEnabled);
-		} else {
-			super.setEnabled(isEnabled);
-		}
+		ref.setEnabled(isEnabled);
 	}
 
 	@Override
 	public boolean equals(Object other) {
-		if (ref != null && other instanceof TemplatePersistenceData && ((TemplatePersistenceData) other).ref != null) {
-			return ref.equals(((TemplatePersistenceData) other).ref);
-		}
-		return super.equals(other);
+		return ref.equals(other);
 	}
 
 	@Override
 	public int hashCode() {
-		return (ref != null) ? ref.hashCode() : super.hashCode();
+		return ref.hashCode();
+	}
+
+	@Override
+	protected UUID getUniqueIdForEquals() {
+		return getUniqueIdForEquals(ref);
 	}
 
 }
