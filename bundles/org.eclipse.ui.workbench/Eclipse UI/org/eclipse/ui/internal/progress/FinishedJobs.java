@@ -34,7 +34,7 @@ public final class FinishedJobs extends EventManager {
 	/*
 	 * Interface for notify listeners.
 	 */
-	interface KeptJobsListener {
+	public interface KeptJobsListener {
 
 		/**
 		 * A job to be kept has finished
@@ -46,7 +46,7 @@ public final class FinishedJobs extends EventManager {
 		/**
 		 * A kept job has been removed.
 		 *
-		 * @param jte
+		 * @param jte {@code null} if all elements were removed
 		 */
 		void removed(JobTreeElement jte);
 	}
@@ -145,7 +145,7 @@ public final class FinishedJobs extends EventManager {
 	/**
 	 * Register for notification.
 	 */
-	void addListener(KeptJobsListener l) {
+	public void addListener(KeptJobsListener l) {
 		addListenerObject(l);
 	}
 

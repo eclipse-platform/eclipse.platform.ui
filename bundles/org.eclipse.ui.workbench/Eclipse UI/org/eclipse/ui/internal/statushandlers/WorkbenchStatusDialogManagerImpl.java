@@ -30,6 +30,11 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.WorkbenchPlugin;
+import org.eclipse.ui.internal.progress.FinishedJobs;
+import org.eclipse.ui.internal.progress.FinishedJobs.KeptJobsListener;
+import org.eclipse.ui.internal.progress.JobInfo;
+import org.eclipse.ui.internal.progress.JobTreeElement;
+import org.eclipse.ui.internal.progress.StatusAdapterHelper;
 import org.eclipse.ui.progress.IProgressConstants;
 import org.eclipse.ui.statushandlers.IStatusAdapterConstants;
 import org.eclipse.ui.statushandlers.StatusAdapter;
@@ -56,7 +61,7 @@ import org.eclipse.ui.statushandlers.StatusManager.INotificationTypes;
  * @noextend This class is not intended to be subclassed by clients.
  * @noinstantiate This class is not intended to be instantiated by clients.
  */
-public class WorkbenchStatusDialogManagerImpl {
+public class WorkbenchStatusDialogManagerImpl implements KeptJobsListener {
 
 	static final QualifiedName HINT = new QualifiedName(
 			IStatusAdapterConstants.PROPERTY_PREFIX, "hint"); //$NON-NLS-1$
@@ -127,6 +132,7 @@ public class WorkbenchStatusDialogManagerImpl {
 						"WorkbenchStatusDialogManager must be instantiated in UI thread"); //$NON-NLS-1$
 
 		dialogState = initDialogState(dialogState, displayMask, dialogTitle);
+		FinishedJobs.getInstance().addListener(this);
 	}
 
 	/**
@@ -254,7 +260,7 @@ public class WorkbenchStatusDialogManagerImpl {
 				// handled
 				StatusManager.getManager().fireNotification(
 						INotificationTypes.HANDLED,
-						(StatusAdapter[]) getErrors()
+						getErrors()
 								.toArray(new StatusAdapter[] {}));
 
 				if (dialog == null) {
@@ -295,7 +301,7 @@ public class WorkbenchStatusDialogManagerImpl {
 	 *
 	 * @return collection of {@link StatusAdapter} objects
 	 */
-	public Collection getStatusAdapters() {
+	public Collection<StatusAdapter> getStatusAdapters() {
 		return Collections.unmodifiableCollection(getErrors());
 	}
 
@@ -525,9 +531,9 @@ public class WorkbenchStatusDialogManagerImpl {
 	 *
 	 * @return Collection of StatusAdapters
 	 */
-	private Collection getErrors() {
-		return (Collection) dialogState
-				.get(IStatusDialogConstants.STATUS_ADAPTERS);
+	@SuppressWarnings("unchecked")
+	private Collection<StatusAdapter> getErrors() {
+		return (Collection<StatusAdapter>) dialogState.get(IStatusDialogConstants.STATUS_ADAPTERS);
 	}
 
 	/**
@@ -538,5 +544,25 @@ public class WorkbenchStatusDialogManagerImpl {
 	private Map getModals() {
 		return (Map) dialogState
 				.get(IStatusDialogConstants.STATUS_MODALS);
+	}
+
+	@Override
+	public void finished(JobTreeElement jte) {
+		// no-op
+	}
+
+	@Override
+	public void removed(JobTreeElement jte) {
+		if (jte instanceof JobInfo) {
+			JobInfo jobInfo = (JobInfo) jte;
+			StatusAdapter statusAdapter = StatusAdapterHelper.getInstance().getStatusAdapter(jobInfo);
+			if (statusAdapter != null) {
+				getErrors().remove(statusAdapter);
+			}
+		} else if (jte == null) {
+			StatusAdapterHelper.getInstance().clear();
+			getErrors().clear();
+		}
+
 	}
 }
