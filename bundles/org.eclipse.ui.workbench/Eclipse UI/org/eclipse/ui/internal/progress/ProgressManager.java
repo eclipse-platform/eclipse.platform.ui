@@ -76,8 +76,6 @@ import org.eclipse.ui.progress.IProgressService;
 import org.eclipse.ui.progress.WorkbenchJob;
 import org.eclipse.ui.statushandlers.StatusAdapter;
 import org.eclipse.ui.statushandlers.StatusManager;
-import org.eclipse.ui.statushandlers.StatusManager.INotificationListener;
-import org.eclipse.ui.statushandlers.StatusManager.INotificationTypes;
 
 /**
  * JobProgressManager provides the progress monitor to the job manager and
@@ -140,12 +138,6 @@ public class ProgressManager extends ProgressProvider implements IProgressServic
 	// A table that maps families to keys in the Jface image table
 	private Hashtable<Object, String> imageKeyTable = new Hashtable<>();
 
-	/*
-	 * A listener that allows for removing error jobs & indicators when errors
-	 * are handled.
-	 */
-	private final INotificationListener notificationListener;
-
 	/**
 	 * Lock object for synchronizing updates of {@code pendingJobUpdates},
 	 * {@code pendingGroupUpdates}, {@code pendingJobRemoval},
@@ -201,7 +193,6 @@ public class ProgressManager extends ProgressProvider implements IProgressServic
 		if (singleton == null) {
 			return;
 		}
-		StatusManager.getManager().removeListener(singleton.notificationListener);
 		singleton.shutdown();
 	}
 
@@ -346,11 +337,8 @@ public class ProgressManager extends ProgressProvider implements IProgressServic
 
 		changeListener = createChangeListener();
 
-		notificationListener = createNotificationListener();
-
 		Job.getJobManager().setProgressProvider(this);
 		Job.getJobManager().addJobChangeListener(this.changeListener);
-		StatusManager.getManager().addListener(notificationListener);
 
 		uiRefreshThrottler = new Throttler(Display.getDefault(), Duration.ofMillis(100), this::notifyListeners);
 	}
@@ -407,15 +395,6 @@ public class ProgressManager extends ProgressProvider implements IProgressServic
 		} catch (MalformedURLException e) {
 			ProgressManagerUtil.logException(e);
 		}
-	}
-
-	private INotificationListener createNotificationListener() {
-		return (type, adapters) -> {
-			if(type == INotificationTypes.HANDLED){
-				FinishedJobs.getInstance().removeErrorJobs();
-				StatusAdapterHelper.getInstance().clear();
-			}
-		};
 	}
 
 	/**

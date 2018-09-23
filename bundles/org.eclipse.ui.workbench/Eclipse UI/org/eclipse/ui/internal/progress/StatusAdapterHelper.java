@@ -65,9 +65,9 @@ public class StatusAdapterHelper {
 			return null;
 		}
 		StatusAdapter statusAdapter = map.remove(info);
-		statusAdapter.setProperty(
-				IProgressConstants.NO_IMMEDIATE_ERROR_PROMPT_PROPERTY,
-				Boolean.FALSE);
+		if (statusAdapter != null) {
+			statusAdapter.setProperty(IProgressConstants.NO_IMMEDIATE_ERROR_PROMPT_PROPERTY, Boolean.FALSE);
+		}
 		return statusAdapter;
 	}
 
