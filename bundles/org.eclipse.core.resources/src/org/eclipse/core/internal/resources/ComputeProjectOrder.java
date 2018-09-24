@@ -19,6 +19,7 @@ package org.eclipse.core.internal.resources;
 import java.lang.reflect.Array;
 import java.util.*;
 import java.util.function.Predicate;
+import java.util.stream.Collectors;
 import org.eclipse.core.internal.resources.ComputeProjectOrder.Digraph.Edge;
 import org.eclipse.core.internal.resources.ComputeProjectOrder.Digraph.Vertex;
 import org.eclipse.core.runtime.Assert;
@@ -137,6 +138,12 @@ public class ComputeProjectOrder {
 			public int hashCode() {
 				return Objects.hash(this.from, this.to);
 			}
+
+			@Override
+			public String toString() {
+				return from.toString() + " -> " + to.toString(); //$NON-NLS-1$
+			}
+
 		}
 
 		/**
@@ -680,49 +687,56 @@ public class ComputeProjectOrder {
 	 */
 	public static <T> Digraph<T> buildFilteredDigraph(Digraph<T> initialGraph, Predicate<T> filterOut, Class<T> clazz) {
 		Digraph<T> res = new Digraph<>(clazz);
-		Set<T> toRemove = new LinkedHashSet<>(); // Make it a TreeSet using depth as comparator?
+		// Filter removed vs remaining vertices and initialize result graph with remaining vertices
+		Set<T> toRemoveIds = new LinkedHashSet<>();
 		for (Vertex<T> vertex : initialGraph.vertexList) {
 			T id = vertex.id;
 			if (!filterOut.test(id)) {
 				res.addVertex(id);
 			} else {
-				toRemove.add(id);
+				toRemoveIds.add(id);
 			}
 		}
 		if (res.vertexList.size() < 2) { // 0 or 1 node -> no edge
 			return res;
 		}
-		final Set<Edge<T>> edgesWithRemovedRef = new LinkedHashSet<>();
+		// filter "invalid" edges (a bound is filtered out) vs remaining edge.
+		// Invalid edge are stored for further processing. Valid edges are added
+		// directly to result graph.
+		final Set<Edge<T>> edgesToReplace = new LinkedHashSet<>();
 		initialGraph.getEdges().forEach(edge -> {
-			if (toRemove.contains(edge.from) || toRemove.contains(edge.to)) {
-				edgesWithRemovedRef.add(edge);
+			if (toRemoveIds.contains(edge.from) || toRemoveIds.contains(edge.to)) {
+				edgesToReplace.add(edge);
 			} else {
 				res.addEdge(edge.from, edge.to);
 			}
 		});
-		for (T idToRemove : toRemove) {
-			Set<Edge<T>> incoming = new LinkedHashSet<>();
-			Set<Edge<T>> outgoing = new LinkedHashSet<>();
-			for (Edge<T> edge : edgesWithRemovedRef) {
-				if (edge.from == idToRemove) {
-					outgoing.add(edge);
-				} else if (edge.to == idToRemove) {
-					incoming.add(edge);
-				}
-			}
-			edgesWithRemovedRef.removeAll(incoming);
-			edgesWithRemovedRef.removeAll(outgoing);
+		// Remove filtered node, 1 by 1, and update the related edges
+		for (T toRemove : toRemoveIds) {
+			// Discard edges that loop on the removed vertex, as it won't participate in filtered graph
+			// Note: this can be a common case for subgraph when there are cycles in the initial graph.
+			edgesToReplace.removeIf(edge -> edge.from == toRemove && edge.to == toRemove);
+			// Pick related edges
+			Set<Edge<T>> incoming = edgesToReplace.stream().filter(edge -> edge.to == toRemove).collect(Collectors.toSet());
+			Set<Edge<T>> outgoing = edgesToReplace.stream().filter(edge -> edge.from == toRemove).collect(Collectors.toSet());
+			// Remove related edges from the set of remaining edges to consider
+			edgesToReplace.removeAll(incoming);
+			edgesToReplace.removeAll(outgoing);
+			// Replace all occurrences of A->toRemove and toRemove->C couple by A->C
 			incoming.forEach(incomingEdge -> outgoing.forEach(outgoingEdge -> {
 				Edge<T> edge = new Edge<>(incomingEdge.from, outgoingEdge.to);
-				if (toRemove.contains(edge.from) || toRemove.contains(edge.to)) {
-					edgesWithRemovedRef.add(edge);
+				if (toRemoveIds.contains(edge.from) || toRemoveIds.contains(edge.to)) {
+					// This edge is not valid and still needs to be considered for replacement
+					edgesToReplace.add(edge);
 				} else {
+					// Edge is valid and can be pushed in the result graph
 					res.addEdge(edge.from, edge.to);
 				}
 			}));
 		}
-		if (!edgesWithRemovedRef.isEmpty()) {
-			throw new IllegalStateException("There should be no remaining edge at this point."); //$NON-NLS-1$
+		if (!edgesToReplace.isEmpty()) {
+			throw new IllegalStateException(edgesToReplace.size() + " edges are remaining at this point: " + //$NON-NLS-1$
+					edgesToReplace.toString() + "\nThere should be none. This indicates a bug in the graph filtering algorithm"); //$NON-NLS-1$
 		}
 		return res;
 	}
