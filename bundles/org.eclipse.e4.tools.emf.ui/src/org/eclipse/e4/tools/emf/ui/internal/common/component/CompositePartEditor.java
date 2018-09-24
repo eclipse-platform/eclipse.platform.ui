@@ -340,7 +340,7 @@ public class CompositePartEditor extends AbstractComponentEditor {
 			childrenDropDown.setSelection(new StructuredSelection(eClassList.get(0)));
 
 			Button b = new Button(buttonCompTop, SWT.PUSH | SWT.FLAT);
-			b.setText(Messages.ModelTooling_Common_AddEllipsis);
+			b.setText(org.eclipse.e4.tools.emf.ui.internal.Messages.ModelTooling_Common_AddEllipsis);
 			b.setImage(createImage(ResourceProvider.IMG_Obj16_table_add));
 			b.setLayoutData(new GridData(GridData.FILL, GridData.CENTER, false, false));
 			b.addSelectionListener(new SelectionAdapter() {
@@ -377,7 +377,7 @@ public class CompositePartEditor extends AbstractComponentEditor {
 			buttonCompBot.setLayout(new FillLayout());
 
 			b = new Button(buttonCompBot, SWT.PUSH | SWT.FLAT);
-			b.setText(Messages.ModelTooling_Common_Up);
+			b.setText(org.eclipse.e4.tools.emf.ui.internal.Messages.ModelTooling_Common_Up);
 			b.setImage(createImage(ResourceProvider.IMG_Obj16_arrow_up));
 			b.addSelectionListener(new SelectionAdapter() {
 				@Override
@@ -401,7 +401,7 @@ public class CompositePartEditor extends AbstractComponentEditor {
 			});
 
 			b = new Button(buttonCompBot, SWT.PUSH | SWT.FLAT);
-			b.setText(Messages.ModelTooling_Common_Down);
+			b.setText(org.eclipse.e4.tools.emf.ui.internal.Messages.ModelTooling_Common_Down);
 			b.setImage(createImage(ResourceProvider.IMG_Obj16_arrow_down));
 			b.addSelectionListener(new SelectionAdapter() {
 				@Override
@@ -425,7 +425,7 @@ public class CompositePartEditor extends AbstractComponentEditor {
 			});
 
 			b = new Button(buttonCompBot, SWT.PUSH | SWT.FLAT);
-			b.setText(Messages.ModelTooling_Common_Remove);
+			b.setText(org.eclipse.e4.tools.emf.ui.internal.Messages.ModelTooling_Common_Remove);
 			b.setImage(createImage(ResourceProvider.IMG_Obj16_table_delete));
 			b.addSelectionListener(new SelectionAdapter() {
 				@Override

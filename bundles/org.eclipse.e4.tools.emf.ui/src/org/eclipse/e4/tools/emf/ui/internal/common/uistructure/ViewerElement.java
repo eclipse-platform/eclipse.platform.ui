@@ -20,7 +20,6 @@ import javax.inject.Inject;
 
 import org.eclipse.e4.core.contexts.ContextInjectionFactory;
 import org.eclipse.e4.core.contexts.IEclipseContext;
-import org.eclipse.e4.core.services.nls.Translation;
 import org.eclipse.e4.tools.emf.ui.common.component.AbstractComponentEditor;
 import org.eclipse.e4.tools.emf.ui.internal.Messages;
 import org.eclipse.e4.tools.emf.ui.internal.ResourceProvider;
@@ -42,8 +41,6 @@ import org.eclipse.swt.widgets.Composite;
  */
 public class ViewerElement {
 
-	Messages Messages;
-
 	private StructuredViewer viewer;
 	private final AbstractComponentEditor editor;
 	private ComboViewer dropDown;
@@ -61,10 +58,9 @@ public class ViewerElement {
 	 * @param editor
 	 */
 	@Inject
-	public ViewerElement(@Translation Messages Messages, Composite parent, AbstractComponentEditor editor) {
+	public ViewerElement(Composite parent, AbstractComponentEditor editor) {
 		this.parent = parent;
 		this.editor = editor;
-		this.Messages = Messages;
 		createControl();
 	}
 
