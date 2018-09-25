@@ -62,6 +62,15 @@ class AutoBuildJob extends Job implements Preferences.IPropertyChangeListener {
 		avoidBuild = true;
 	}
 
+	/**
+	 * Prevent auto-builds if the auto-build job was not interrupted.
+	 */
+	synchronized void avoidBuildIfNotInterrupted() {
+		if (!interrupted) {
+			avoidBuild();
+		}
+	}
+
 	@Override
 	public boolean belongsTo(Object family) {
 		return family == ResourcesPlugin.FAMILY_AUTO_BUILD;

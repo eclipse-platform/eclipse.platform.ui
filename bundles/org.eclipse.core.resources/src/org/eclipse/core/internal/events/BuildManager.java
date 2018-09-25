@@ -403,9 +403,7 @@ public class BuildManager implements ICoreConstants, IManager, ILifecycleListene
 				hookEndBuild(trigger);
 			}
 		} finally {
-			monitor.done();
-			if (trigger == IncrementalProjectBuilder.INCREMENTAL_BUILD || trigger == IncrementalProjectBuilder.FULL_BUILD)
-				autoBuildJob.avoidBuild();
+			endBuild(trigger, monitor);
 		}
 	}
 
@@ -429,9 +427,18 @@ public class BuildManager implements ICoreConstants, IManager, ILifecycleListene
 				hookEndBuild(trigger);
 			}
 		} finally {
-			monitor.done();
-			if (trigger == IncrementalProjectBuilder.INCREMENTAL_BUILD || trigger == IncrementalProjectBuilder.FULL_BUILD)
-				autoBuildJob.avoidBuild();
+			endBuild(trigger, monitor);
+		}
+	}
+
+	private void endBuild(int trigger, IProgressMonitor monitor) {
+		boolean cancelledBuild = monitor.isCanceled();
+		monitor.done();
+		if (trigger == IncrementalProjectBuilder.INCREMENTAL_BUILD || trigger == IncrementalProjectBuilder.FULL_BUILD) {
+			autoBuildJob.avoidBuild();
+		} else if (cancelledBuild) {
+			// Bug 538789: if a build was explicitly cancelled, don't trigger auto-build jobs until a build is requested
+			autoBuildJob.avoidBuildIfNotInterrupted();
 		}
 	}
 
