@@ -46,7 +46,7 @@ public class LineHeaderAnnotation extends AbstractInlinedAnnotation {
 	 */
 	public int getHeight() {
 		StyledText styledText= super.getTextWidget();
-		return styledText.getLineHeight();
+		return styledText.getBaseline();
 	}
 
 	int getRedrawnCharacterHeight() {
