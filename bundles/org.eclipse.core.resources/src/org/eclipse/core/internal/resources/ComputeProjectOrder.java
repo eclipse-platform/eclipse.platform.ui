@@ -18,9 +18,8 @@ package org.eclipse.core.internal.resources;
 
 import java.lang.reflect.Array;
 import java.util.*;
+import java.util.function.Function;
 import java.util.function.Predicate;
-import java.util.stream.Collectors;
-import org.eclipse.core.internal.resources.ComputeProjectOrder.Digraph.Edge;
 import org.eclipse.core.internal.resources.ComputeProjectOrder.Digraph.Vertex;
 import org.eclipse.core.runtime.Assert;
 
@@ -678,7 +677,8 @@ public class ComputeProjectOrder {
 	 * Builds a digraph excluding the nodes that do not match filter, but keeps transitive edges. Ie if A->B->C and B is removed,
 	 * result would be A->C.
 	 *
-	 * This is an expensive operation (worst case is O(v^3) with v number of vertexes, or O(e^2) with e number of edges.
+	 * Complexity is O(#edge + #vertex). It implements a dynamic recursive deep-first graph traversing algorithm to compute
+	 * resutling edges.
 	 *
 	 * @param initialGraph
 	 * @param filterOut a filter to exclude nodes.
@@ -686,58 +686,53 @@ public class ComputeProjectOrder {
 	 * @return the filtered graph.
 	 */
 	public static <T> Digraph<T> buildFilteredDigraph(Digraph<T> initialGraph, Predicate<T> filterOut, Class<T> clazz) {
-		Digraph<T> res = new Digraph<>(clazz);
-		// Filter removed vs remaining vertices and initialize result graph with remaining vertices
-		Set<T> toRemoveIds = new LinkedHashSet<>();
+		Digraph<T> filteredGraph = new Digraph<>(clazz);
+		// build vertices
 		for (Vertex<T> vertex : initialGraph.vertexList) {
 			T id = vertex.id;
 			if (!filterOut.test(id)) {
-				res.addVertex(id);
-			} else {
-				toRemoveIds.add(id);
+				filteredGraph.addVertex(id);
 			}
 		}
-		if (res.vertexList.size() < 2) { // 0 or 1 node -> no edge
-			return res;
-		}
-		// filter "invalid" edges (a bound is filtered out) vs remaining edge.
-		// Invalid edge are stored for further processing. Valid edges are added
-		// directly to result graph.
-		final Set<Edge<T>> edgesToReplace = new LinkedHashSet<>();
-		initialGraph.getEdges().forEach(edge -> {
-			if (toRemoveIds.contains(edge.from) || toRemoveIds.contains(edge.to)) {
-				edgesToReplace.add(edge);
-			} else {
-				res.addEdge(edge.from, edge.to);
-			}
-		});
-		// Remove filtered node, 1 by 1, and update the related edges
-		for (T toRemove : toRemoveIds) {
-			// Discard edges that loop on the removed vertex, as it won't participate in filtered graph
-			// Note: this can be a common case for subgraph when there are cycles in the initial graph.
-			edgesToReplace.removeIf(edge -> edge.from == toRemove && edge.to == toRemove);
-			// Pick related edges
-			Set<Edge<T>> incoming = edgesToReplace.stream().filter(edge -> edge.to == toRemove).collect(Collectors.toSet());
-			Set<Edge<T>> outgoing = edgesToReplace.stream().filter(edge -> edge.from == toRemove).collect(Collectors.toSet());
-			// Remove related edges from the set of remaining edges to consider
-			edgesToReplace.removeAll(incoming);
-			edgesToReplace.removeAll(outgoing);
-			// Replace all occurrences of A->toRemove and toRemove->C couple by A->C
-			incoming.forEach(incomingEdge -> outgoing.forEach(outgoingEdge -> {
-				Edge<T> edge = new Edge<>(incomingEdge.from, outgoingEdge.to);
-				if (toRemoveIds.contains(edge.from) || toRemoveIds.contains(edge.to)) {
-					// This edge is not valid and still needs to be considered for replacement
-					edgesToReplace.add(edge);
-				} else {
-					// Edge is valid and can be pushed in the result graph
-					res.addEdge(edge.from, edge.to);
+		// Takes an id as input, and returns the nodes in the filteredGraph that are adjacent to this node
+		// so that if initial graph has A->B and B->C and B->D and B is removed, this function return C and D
+		// when invoked on A.
+		Function<T, Set<T>> computeAdjacents = new Function<T, Set<T>>() {
+			private Set<T> processing = new HashSet<>();
+			// Store intermediary results to not repeat same computations with the same expected results
+			private Map<T, Set<T>> adjacentsMap = new HashMap<>(initialGraph.vertexList.size(), 1.f);
+
+			@Override
+			public Set<T> apply(T id) {
+				if (adjacentsMap.containsKey(id)) {
+					return adjacentsMap.get(id);
+				} else if (processing.contains(id)) {
+					// in a cycle, skip processing as no new edge is to expect.
+					// But don't store result, return directly!
+					return Collections.emptySet();
 				}
-			}));
-		}
-		if (!edgesToReplace.isEmpty()) {
-			throw new IllegalStateException(edgesToReplace.size() + " edges are remaining at this point: " + //$NON-NLS-1$
-					edgesToReplace.toString() + "\nThere should be none. This indicates a bug in the graph filtering algorithm"); //$NON-NLS-1$
-		}
-		return res;
+				processing.add(id);
+				Set<T> resolvedAdjacents = new HashSet<>();
+				initialGraph.vertexMap.get(id).adjacent.forEach(adjacent -> {
+					if (filteredGraph.vertexMap.keySet().contains(adjacent.id)) {
+						// adjacent in target graph, just take it.
+						resolvedAdjacents.add(adjacent.id);
+					} else {
+						// adjacent filtered out, take its resolved existing adjacents
+						resolvedAdjacents.addAll(apply(adjacent.id));
+					}
+				});
+				adjacentsMap.put(id, resolvedAdjacents);
+				processing.remove(id);
+				return resolvedAdjacents;
+			}
+		};
+		filteredGraph.vertexMap.keySet().forEach(id -> {
+			computeAdjacents.apply(id).forEach(adjacent -> {
+				filteredGraph.addEdge(id, adjacent);
+			});
+		});
+
+		return filteredGraph;
 	}
 }
