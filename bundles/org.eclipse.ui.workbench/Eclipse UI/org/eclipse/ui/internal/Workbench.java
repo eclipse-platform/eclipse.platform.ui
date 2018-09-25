@@ -310,7 +310,7 @@ public final class Workbench extends EventManager implements IWorkbench,
 			int eventType = event.getType();
 			if (eventType == BundleEvent.STARTED) {
 				subMonitor.setWorkRemaining(5).worked(1);
-				spinEventQueueToUpdateUi(displayForStartupListener);
+				spinEventQueueToUpdateSplash(displayForStartupListener);
 
 			}
 		}
@@ -561,7 +561,7 @@ public final class Workbench extends EventManager implements IWorkbench,
 	public static int createAndRunWorkbench(final Display display, final WorkbenchAdvisor advisor) {
 		final int[] returnCode = new int[1];
 		Realm.runWithDefault(DisplayRealm.getRealm(display), () -> {
-			spinEventQueueToUpdateUi(display);
+			spinEventQueueToUpdateSplash(display);
 			boolean showProgress = PrefUtil.getAPIPreferenceStore()
 					.getBoolean(IWorkbenchPreferenceConstants.SHOW_PROGRESS_ON_STARTUP);
 
@@ -599,7 +599,7 @@ public final class Workbench extends EventManager implements IWorkbench,
 				// prime the splash nice and early
 				workbench.createSplashWrapper();
 
-				spinEventQueueToUpdateUi(display);
+				spinEventQueueToUpdateSplash(display);
 				AbstractSplashHandler handler = getSplash();
 
 
@@ -850,8 +850,8 @@ public final class Workbench extends EventManager implements IWorkbench,
 	}
 
 	// Ensure that the splash screen is rendered
-	private static void spinEventQueueToUpdateUi(final Display display) {
-		if (display.getThread() == Thread.currentThread()) {
+	private static void spinEventQueueToUpdateSplash(final Display display) {
+		if (!display.isDisposed() && display.getThread() == Thread.currentThread()) {
 			int safetyCounter = 0;
 			while (display.readAndDispatch() && safetyCounter++ < 100) {
 				// process until the queue is empty or until we hit the safetyCounter limit
