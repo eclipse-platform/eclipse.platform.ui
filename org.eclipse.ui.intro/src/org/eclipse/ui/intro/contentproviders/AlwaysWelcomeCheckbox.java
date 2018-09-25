@@ -73,7 +73,7 @@ public class AlwaysWelcomeCheckbox implements IIntroContentProvider,IIntroAction
 		// Use an IIntroAction url that points back to this class -
 		// particularly invoking run().
 		// This url is 'activated' using the onClick event.
-		out.print("<div id=\""+id+"\"><input type=\"checkbox\" "+  	//$NON-NLS-1$//$NON-NLS-2$
+		out.print("<div id=\""+id+"\"><input id=\"run-action-" + id + "\" type=\"checkbox\" "+  //$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$
 				"onClick=window.location="+ 						//$NON-NLS-1$
 				"\"http://org.eclipse.ui.intro/runAction?"+ 		//$NON-NLS-1$
 				"pluginId=org.eclipse.ui.intro&"+ 					//$NON-NLS-1$
@@ -87,7 +87,7 @@ public class AlwaysWelcomeCheckbox implements IIntroContentProvider,IIntroAction
 	        		IWorkbenchPreferenceConstants.SHOW_INTRO, alwaysShowIntro);
 		}
 
-		out.println("/>"+getText()+"</div>");  //$NON-NLS-1$//$NON-NLS-2$
+		out.println("/><label for=\"run-action-" + id + "\">"+getText()+"</label></div>");  //$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$
 	}
 
 
