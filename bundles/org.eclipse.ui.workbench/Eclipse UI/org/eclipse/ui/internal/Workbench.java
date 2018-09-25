@@ -849,11 +849,13 @@ public final class Workbench extends EventManager implements IWorkbench,
 		SafeRunner.run(run);
 	}
 
+	// Ensure that the splash screen is rendered
 	private static void spinEventQueueToUpdateUi(final Display display) {
-		// Ensure that the splash screen is rendered
-		int safetyCounter = 0;
-		while (display.readAndDispatch() && safetyCounter++ < 100) {
-			// process until the queue is empty or until we hit the safetyCounter limit
+		if (display.getThread() == Thread.currentThread()) {
+			int safetyCounter = 0;
+			while (display.readAndDispatch() && safetyCounter++ < 100) {
+				// process until the queue is empty or until we hit the safetyCounter limit
+			}
 		}
 	}
 
