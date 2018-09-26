@@ -1630,7 +1630,6 @@ public final class Workbench extends EventManager implements IWorkbench,
 		}
 		initializeDefaultServices();
 		initializeFonts();
-		initializeColors();
 		initializeApplicationColors();
 
 		// now that the workbench is sufficiently initialized, let the advisor
@@ -1849,19 +1848,6 @@ public final class Workbench extends EventManager implements IWorkbench,
 		}
 	}
 
-	/*
-	 * Initialize the workbench colors.
-	 *
-	 * @since 3.0
-	 */
-	private void initializeColors() {
-		StartupThreading.runWithoutExceptions(new StartupRunnable() {
-			@Override
-			public void runWithException() {
-				WorkbenchColors.startup();
-			}
-		});
-	}
 
 	@Override
 	public boolean isClosing() {
@@ -3020,7 +3006,6 @@ public final class Workbench extends EventManager implements IWorkbench,
 		WorkbenchHelpSystem.disposeIfNecessary();
 
 		// shutdown the rest of the workbench
-		WorkbenchColors.shutdown();
 		activityHelper.shutdown();
 		uninitializeImages();
 		if (WorkbenchPlugin.getDefault() != null) {
