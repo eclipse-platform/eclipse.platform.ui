@@ -561,7 +561,6 @@ public final class Workbench extends EventManager implements IWorkbench,
 	public static int createAndRunWorkbench(final Display display, final WorkbenchAdvisor advisor) {
 		final int[] returnCode = new int[1];
 		Realm.runWithDefault(DisplayRealm.getRealm(display), () -> {
-			spinEventQueueToUpdateSplash(display);
 			boolean showProgress = PrefUtil.getAPIPreferenceStore()
 					.getBoolean(IWorkbenchPreferenceConstants.SHOW_PROGRESS_ON_STARTUP);
 
@@ -599,9 +598,18 @@ public final class Workbench extends EventManager implements IWorkbench,
 				// prime the splash nice and early
 				workbench.createSplashWrapper();
 
-				spinEventQueueToUpdateSplash(display);
+				// Bug 539376, 427393, 455162: show the splash screen after
+				// the image is loaded. See IDEApplication#checkInstanceLocation
+				// where the splash shell got hidden to avoid empty shell
 				AbstractSplashHandler handler = getSplash();
-
+				if (handler != null) {
+					Shell splashShell = handler.getSplash();
+					if (splashShell != null && !splashShell.isDisposed()) {
+						splashShell.setVisible(true);
+						splashShell.forceActive();
+					}
+				}
+				spinEventQueueToUpdateSplash(display);
 
 				SynchronousBundleListener bundleListener = null;
 				if (handler != null && showProgress) {

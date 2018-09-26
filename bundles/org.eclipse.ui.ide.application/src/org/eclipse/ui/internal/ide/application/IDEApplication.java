@@ -295,13 +295,6 @@ public class IDEApplication implements IApplication, IExecutableExtension {
                 if (instanceLoc.set(workspaceUrl, true)) {
                     launchData.writePersistedData();
                     writeWorkspaceVersion();
-
-					// bug 455162, bug 427393: unhide the splash after the
-					// workspace was selected to show the progress bar
-					if (parentShellVisible && isValidShell(shell)) {
-						shell.setVisible(true);
-						shell.forceActive();
-					}
                     return null;
                 }
             } catch (IllegalStateException e) {
@@ -321,7 +314,7 @@ public class IDEApplication implements IApplication, IExecutableExtension {
 
             // by this point it has been determined that the workspace is
             // already in use -- force the user to choose again
-			MessageDialog dialog = new MessageDialog(shell, IDEWorkbenchMessages.IDEApplication_workspaceInUseTitle,
+			MessageDialog dialog = new MessageDialog(null, IDEWorkbenchMessages.IDEApplication_workspaceInUseTitle,
 					null, NLS.bind(IDEWorkbenchMessages.IDEApplication_workspaceInUseMessage, workspaceUrl.getFile()),
 					MessageDialog.ERROR, 1, IDEWorkbenchMessages.IDEApplication_workspaceInUse_Retry,
 					IDEWorkbenchMessages.IDEApplication_workspaceInUse_Choose);
