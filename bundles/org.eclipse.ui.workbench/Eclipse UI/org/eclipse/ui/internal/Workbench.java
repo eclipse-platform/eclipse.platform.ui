@@ -2904,9 +2904,8 @@ public final class Workbench extends EventManager implements IWorkbench,
 	}
 
 	private int getAutoSaveJobTime() {
-		final int minuteSaveInterval = getPreferenceStore().getInt(IPreferenceConstants.WORKBENCH_SAVE_INTERVAL);
-		final int millisecondInterval = minuteSaveInterval * 60 * 1000;
-		return millisecondInterval;
+		int minuteSaveInterval = getPreferenceStore().getInt(IPreferenceConstants.WORKBENCH_SAVE_INTERVAL);
+		return minuteSaveInterval * 60 * 1000;
 	}
 
 
