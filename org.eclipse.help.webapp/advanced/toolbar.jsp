@@ -452,7 +452,7 @@ if(buttons.length > 0){
 
 	<tr>
 		<td nowrap style="font: <%=prefs.getToolbarFont()%>" valign="middle">
-			<div id="titleTextTableDiv" style="overflow:hidden; height:22px;"><table><tr><td nowrap style="font:<%=prefs.getToolbarFont()%>"><div id="titleText" >&nbsp;<%=data.getTitle()%></div></td></tr></table>
+			<div id="titleTextTableDiv" style="overflow:hidden; height:22px;"><table><tr><td nowrap style="font:<%=prefs.getToolbarFont()%>"><div id="titleText" >&nbsp;<%= UrlUtil.JavaScriptEncode(data.getTitle()) %></div></td></tr></table>
 			</div>
 		
 		
