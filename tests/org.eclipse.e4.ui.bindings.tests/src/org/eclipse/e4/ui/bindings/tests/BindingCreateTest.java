@@ -49,8 +49,7 @@ public class BindingCreateTest {
 
 	@Before
 	public void setUp() {
-		IEclipseContext globalContext = Activator.getDefault()
-				.getGlobalContext();
+		IEclipseContext globalContext = TestUtil.getGlobalContext();
 		workbenchContext = globalContext.createChild("workbenchContext");
 		ContextInjectionFactory.make(CommandServiceAddon.class,
 				workbenchContext);

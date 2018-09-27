@@ -15,10 +15,10 @@
  *******************************************************************************/
 package org.eclipse.e4.ui.bindings.tests;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertEquals;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -92,7 +92,7 @@ public class BindingTableTests {
 	@Before
 	public void setUp() throws Exception {
 		if (loadedBindings == null) {
-			IEclipseContext globalContext = Activator.getDefault().getGlobalContext();
+			IEclipseContext globalContext = TestUtil.getGlobalContext();
 			workbenchContext = globalContext.createChild("workbenchContext");
 			loadedBindings = new ArrayList<>();
 			contextManager = new ContextManager();

@@ -129,7 +129,7 @@ public class KeyDispatcherTest {
 	@Before
 	public void setUp() {
 		display = Display.getDefault();
-		IEclipseContext globalContext = Activator.getDefault().getGlobalContext();
+		IEclipseContext globalContext = TestUtil.getGlobalContext();
 		workbenchContext = globalContext.createChild("workbenchContext");
 		ContextInjectionFactory.make(CommandServiceAddon.class, workbenchContext);
 		ContextInjectionFactory.make(ContextServiceAddon.class, workbenchContext);
@@ -154,8 +154,7 @@ public class KeyDispatcherTest {
 
 	private void defineBindingTables(IEclipseContext context) {
 		BindingTableManager btm = context.get(BindingTableManager.class);
-		ContextManager cm =  context
-				.get(ContextManager.class);
+		ContextManager cm = context.get(ContextManager.class);
 		btm.addTable(new BindingTable(cm.getContext(ID_DIALOG_AND_WINDOW)));
 		btm.addTable(new BindingTable(cm.getContext(ID_WINDOW)));
 		btm.addTable(new BindingTable(cm.getContext(ID_DIALOG)));
