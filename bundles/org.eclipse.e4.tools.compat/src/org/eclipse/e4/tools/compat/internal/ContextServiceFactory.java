@@ -18,7 +18,6 @@ import org.eclipse.core.databinding.observable.Realm;
 import org.eclipse.e4.core.contexts.ContextInjectionFactory;
 import org.eclipse.e4.core.contexts.EclipseContextFactory;
 import org.eclipse.e4.core.contexts.IEclipseContext;
-import org.eclipse.e4.core.services.contributions.IContributionFactory;
 import org.eclipse.e4.core.services.log.ILoggerProvider;
 import org.eclipse.e4.core.services.log.Logger;
 import org.eclipse.e4.tools.services.IClipboardService;
@@ -87,10 +86,6 @@ public class ContextServiceFactory extends AbstractServiceFactory {
 					d.asyncExec(runnable);
 				}
 			});
-
-			final IContributionFactory contributionFactory = ContextInjectionFactory.make(
-				ReflectionContributionFactory.class, appContext);
-			appContext.set(IContributionFactory.class.getName(), contributionFactory);
 
 			final IThemeManager manager = serviceContext.get(IThemeManager.class);
 			final IThemeEngine engine = manager.getEngineForDisplay(Display.getCurrent());
