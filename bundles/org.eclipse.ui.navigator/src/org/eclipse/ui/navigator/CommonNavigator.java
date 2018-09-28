@@ -476,8 +476,8 @@ public class CommonNavigator extends ViewPart implements ISetSelectionTarget, IS
     }
 
 	/**
-	 * @return The Navigator Content Service which populates this instance of
-	 *         Common Navigator
+	 * @return The Navigator Action Service which populates this instance of Common
+	 *         Navigator
 	 */
 	public NavigatorActionService getNavigatorActionService() {
 		return commonManager.getNavigatorActionService();
