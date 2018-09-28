@@ -25,18 +25,17 @@ import org.eclipse.jface.text.source.ISourceViewer;
  */
 public class LineHeaderAnnotation extends AbstractInlinedAnnotation {
 
-	private int redrawnCharacterHeight;
-
-	private int redrawnCharacterWidth;
+	int oldLine;
 
 	/**
 	 * Line header annotation constructor.
 	 *
 	 * @param position the position where the annotation must be drawn.
-	 * @param viewer   the {@link ISourceViewer} where the annotation must be drawn.
+	 * @param viewer the {@link ISourceViewer} where the annotation must be drawn.
 	 */
 	public LineHeaderAnnotation(Position position, ISourceViewer viewer) {
 		super(position, viewer);
+		oldLine= -1;
 	}
 
 	/**
@@ -46,23 +45,7 @@ public class LineHeaderAnnotation extends AbstractInlinedAnnotation {
 	 */
 	public int getHeight() {
 		StyledText styledText= super.getTextWidget();
-		return styledText.getBaseline();
-	}
-
-	int getRedrawnCharacterHeight() {
-		return redrawnCharacterHeight;
-	}
-
-	void setRedrawnCharacterHeight(int redrawnCharacterHeight) {
-		this.redrawnCharacterHeight= redrawnCharacterHeight;
-	}
-
-	int getRedrawnCharacterWidth() {
-		return redrawnCharacterWidth;
-	}
-
-	void setRedrawnCharacterWidth(int redrawnCharacterWidth) {
-		this.redrawnCharacterWidth= redrawnCharacterWidth;
+		return styledText.getLineHeight();
 	}
 
 	@Override

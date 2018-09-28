@@ -76,18 +76,11 @@ class InlinedAnnotationDrawingStrategy implements IDrawingStrategy {
 	 */
 	private static void draw(LineHeaderAnnotation annotation, GC gc, StyledText textWidget, int offset, int length,
 			Color color) {
-		StyleRange style= null;
-		try {
-			style= textWidget.getStyleRangeAtOffset(offset);
-		} catch (Exception e) {
-			return;
-		}
+		int line= textWidget.getLineAtOffset(offset);
 		if (isDeleted(annotation)) {
 			// When annotation is deleted, update metrics to null to remove extra spaces of the line header annotation.
-			if (style != null && style.metrics != null) {
-				style.metrics= null;
-				textWidget.setStyleRange(style);
-			}
+			if (textWidget.getLineVerticalIndent(line) > 0)
+				textWidget.setLineVerticalIndent(line, 0);
 			return;
 		}
 		if (gc != null) {
@@ -103,53 +96,20 @@ class InlinedAnnotationDrawingStrategy implements IDrawingStrategy {
 			annotation.draw(gc, textWidget, offset, length, color, x, y);
 			int height= annotation.getHeight();
 			if (height != 0) {
-				// The inline annotation replaces one character by taking a place width
-				// GlyphMetrics
-				// Here we need to redraw this first character because GlyphMetrics clip this
-				// character.
-
-				// FIXME: remove this code when we need not redraw the character (see https://bugs.eclipse.org/bugs/show_bug.cgi?id=531769)
-				// START TO REMOVE
-				String s= textWidget.getText(offset, offset);
-				Point charBounds= gc.stringExtent(s);
-				int charWidth= charBounds.x;
-				int charHeight= charBounds.y;
-				annotation.setRedrawnCharacterWidth(charWidth);
-				annotation.setRedrawnCharacterHeight(charHeight);
-				// END TO REMOVE
-
-				StyleRange newStyle= updateStyle(annotation, style);
-				if (newStyle != null) {
-					textWidget.setStyleRange(newStyle);
-					return;
-				}
-
-				// FIXME: remove this code when we need not redraw the character (see https://bugs.eclipse.org/bugs/show_bug.cgi?id=531769)
-				// START TO REMOVE
-				int charX= x + bounds.width - charWidth;
-				int charY= y + bounds.height - textWidget.getLineHeight();
-				if (style != null) {
-					if (style.background != null) {
-						gc.setBackground(style.background);
-						gc.fillRectangle(charX, charY, charWidth + 1, bounds.height);
+				if (height != textWidget.getLineVerticalIndent(line)) {
+					if (annotation.oldLine != -1 && annotation.oldLine < textWidget.getLineCount()) {
+						textWidget.setLineVerticalIndent(annotation.oldLine, 0);
 					}
-					if (style.foreground != null) {
-						gc.setForeground(style.foreground);
-					} else {
-						gc.setForeground(textWidget.getForeground());
-					}
-					gc.setFont(annotation.getFont(style.fontStyle));
+					textWidget.setLineVerticalIndent(line, height);
 				}
-				gc.drawString(s, charX, charY, true);
-				// END TO REMOVE
-			} else if (style != null && style.metrics != null && style.metrics.ascent != 0) {
-				// line header annotation had an height, reset it
-				style.metrics= null;
-				textWidget.setStyleRange(style);
+				annotation.oldLine= line;
+				return;
+			} else if (textWidget.getLineVerticalIndent(line) > 0) {
+				textWidget.setLineVerticalIndent(line, 0);
 			}
 		} else {
-			if (style != null && style.metrics != null) {
-				// Here GlyphMetrics ascent is done, the redraw of the full line width is done to avoid annotation clipping
+			if (textWidget.getLineVerticalIndent(line) > 0) {
+				// Here vertical indent is done, the redraw of the full line width is done to avoid annotation clipping
 				Rectangle bounds= textWidget.getTextBounds(offset, offset);
 				Rectangle client= textWidget.getClientArea();
 				textWidget.redraw(0, bounds.y, client.width, bounds.height, false);
@@ -157,52 +117,6 @@ class InlinedAnnotationDrawingStrategy implements IDrawingStrategy {
 				textWidget.redrawRange(offset, length, true);
 			}
 		}
-	}
-
-	/**
-	 * Returns the style to apply with GlyphMetrics ascent only if needed.
-	 *
-	 * @param annotation the line header annotation
-	 * @param style the current style and null otherwise.
-	 * @return the style to apply with GlyphMetrics ascent only if needed.
-	 */
-	static StyleRange updateStyle(LineHeaderAnnotation annotation, StyleRange style) {
-		int width= annotation.getRedrawnCharacterWidth();
-		if (width == 0) {
-			// Update GlyphMetrics only when mining was already drawn
-			return null;
-		}
-		int height= annotation.getHeight();
-		if (height == 0) {
-			return null;
-		}
-		int fullHeight= height + annotation.getRedrawnCharacterHeight();
-		if (style == null) {
-			style= new StyleRange();
-			Position position= annotation.getPosition();
-			style.start= position.getOffset();
-			style.length= 1;
-		}
-		GlyphMetrics metrics= style.metrics;
-		if (!annotation.isMarkedDeleted()) {
-			if (metrics == null) {
-				metrics= new GlyphMetrics(fullHeight, 0, width);
-			} else {
-				if (metrics.ascent == fullHeight) {
-					return null;
-				}
-				/**
-				 * We must create a new GlyphMetrics instance because comparison with similarTo used
-				 * later in StyledText#setStyleRange will compare the same (modified) and won't
-				 * realize an update happened.
-				 */
-				metrics= new GlyphMetrics(fullHeight, 0, width);
-			}
-		} else {
-			metrics= null;
-		}
-		style.metrics= metrics;
-		return style;
 	}
 
 	/**

@@ -941,7 +941,8 @@ public class LineNumberRulerColumn implements IVerticalRulerColumn {
 		}
 		int indentation= fIndentation[index];
 		int baselineBias= getBaselineBias(gc, widgetLine);
-		gc.drawString(s, indentation * fZoom / 100, (y + baselineBias) * fZoom / 100, true);
+		int verticalIndent= fCachedTextViewer.getTextWidget().getLineVerticalIndent(widgetLine);
+		gc.drawString(s, indentation * fZoom / 100, (y + baselineBias + verticalIndent) * fZoom / 100, true);
 	}
 
 	/**

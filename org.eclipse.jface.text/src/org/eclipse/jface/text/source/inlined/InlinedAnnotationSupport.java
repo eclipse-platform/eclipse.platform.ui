@@ -111,12 +111,6 @@ public class InlinedAnnotationSupport {
 							if (style != null) {
 								textPresentation.mergeStyleRange(style);
 							}
-						} else if (annotation instanceof LineHeaderAnnotation) {
-							LineHeaderAnnotation ann= (LineHeaderAnnotation) annotation;
-							StyleRange style= InlinedAnnotationDrawingStrategy.updateStyle(ann, null);
-							if (style != null) {
-								textPresentation.mergeStyleRange(style);
-							}
 						}
 					});
 		}
