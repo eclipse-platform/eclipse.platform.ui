@@ -19,6 +19,7 @@
 package org.eclipse.core.internal.events;
 
 import java.util.*;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import org.eclipse.core.internal.dtree.DeltaDataTree;
 import org.eclipse.core.internal.resources.*;
@@ -41,40 +42,31 @@ public class BuildManager implements ICoreConstants, IManager, ILifecycleListene
 	 * a workspace where only a single project has changed (and hence
 	 * only a single delta is interesting).
 	 */
-	class DeltaCache {
-		private Object delta;
+	static class DeltaCache<E> {
+		private final Map<IPath, E> deltas = new HashMap<>();
 		private ElementTree newTree;
 		private ElementTree oldTree;
-		private IPath projectPath;
-
-		public void cache(IPath project, ElementTree anOldTree, ElementTree aNewTree, Object aDelta) {
-			this.projectPath = project;
-			this.oldTree = anOldTree;
-			this.newTree = aNewTree;
-			this.delta = aDelta;
-		}
 
 		public void flush() {
-			this.projectPath = null;
+			deltas.clear();
 			this.oldTree = null;
 			this.newTree = null;
-			this.delta = null;
 		}
 
 		/**
 		 * Returns the cached resource delta for the given project and trees, or
-		 * null if there is no matching delta in the cache.
+		 * calls calculator to compute a new delta if there is no matching one in the cache.
 		 */
-		public Object getDelta(IPath project, ElementTree anOldTree, ElementTree aNewTree) {
-			if (delta == null)
-				return null;
-			boolean pathsEqual = projectPath == null ? project == null : projectPath.equals(project);
-			if (pathsEqual && areEqual(this.oldTree, anOldTree) && areEqual(this.newTree, aNewTree))
-				return delta;
-			return null;
+		public E computeIfAbsent(IPath project, ElementTree anOldTree, ElementTree aNewTree, Supplier<E> calculator) {
+			if (!(areEqual(this.oldTree, anOldTree) && areEqual(this.newTree, aNewTree))) {
+				this.oldTree = anOldTree;
+				this.newTree = aNewTree;
+				deltas.clear();
+			}
+			return deltas.computeIfAbsent(project, p -> calculator.get());
 		}
 
-		private boolean areEqual(ElementTree cached, ElementTree requested) {
+		private static boolean areEqual(ElementTree cached, ElementTree requested) {
 			return !ElementTree.hasChanges(requested, cached, ResourceComparator.getBuildComparator(), true);
 		}
 	}
@@ -129,11 +121,11 @@ public class BuildManager implements ICoreConstants, IManager, ILifecycleListene
 	/**
 	 * Caches the IResourceDelta for a pair of trees
 	 */
-	final private DeltaCache deltaCache = new DeltaCache();
+	final private DeltaCache<IResourceDelta> deltaCache = new DeltaCache<>();
 	/**
 	 * Caches the DeltaDataTree used to determine if a build is necessary
 	 */
-	final private DeltaCache deltaTreeCache = new DeltaCache();
+	final private DeltaCache<DeltaDataTree> deltaTreeCache = new DeltaCache<>();
 
 	private ILock lock;
 
@@ -779,23 +771,23 @@ public class BuildManager implements ICoreConstants, IManager, ILifecycleListene
 				//just return an empty delta rooted at this project
 				return ResourceDeltaFactory.newEmptyDelta(project);
 			}
-			//now check against the cache
-			IResourceDelta result = (IResourceDelta) deltaCache.getDelta(project.getFullPath(), currentLastBuiltTree, currentTree);
-			if (result != null)
-				return result;
 
-			long startTime = 0L;
-			if (Policy.DEBUG_BUILD_DELTA) {
-				startTime = System.currentTimeMillis();
-				Policy.debug("Computing delta for project: " + project.getName()); //$NON-NLS-1$
-			}
-			result = ResourceDeltaFactory.computeDelta(workspace, currentLastBuiltTree, currentTree, project.getFullPath(), -1);
-			deltaCache.cache(project.getFullPath(), currentLastBuiltTree, currentTree, result);
-			if (Policy.DEBUG_BUILD_FAILURE && result == null)
-				Policy.debug("Build: no delta " + debugBuilder() + " [" + debugProject() + "] " + project.getFullPath()); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-			if (Policy.DEBUG_BUILD_DELTA)
-				Policy.debug("Finished computing delta, time: " + (System.currentTimeMillis() - startTime) + "ms" + ((ResourceDelta) result).toDeepDebugString()); //$NON-NLS-1$ //$NON-NLS-2$
-			return result;
+			//now check against the cache
+			IResourceDelta resultDelta = deltaCache.computeIfAbsent(project.getFullPath(), currentLastBuiltTree, currentTree, () -> {
+				long startTime = 0L;
+				if (Policy.DEBUG_BUILD_DELTA) {
+					startTime = System.currentTimeMillis();
+					Policy.debug("Computing delta for project: " + project.getName()); //$NON-NLS-1$
+				}
+				IResourceDelta result = ResourceDeltaFactory.computeDelta(workspace, currentLastBuiltTree, currentTree, project.getFullPath(), -1);
+				if (Policy.DEBUG_BUILD_FAILURE && result == null)
+					Policy.debug("Build: no delta " + debugBuilder() + " [" + debugProject() + "] " + project.getFullPath()); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+				if (Policy.DEBUG_BUILD_DELTA)
+					Policy.debug("Finished computing delta, time: " + (System.currentTimeMillis() - startTime) + "ms" + ((ResourceDelta) result).toDeepDebugString()); //$NON-NLS-1$ //$NON-NLS-2$
+
+				return result;
+			});
+			return resultDelta;
 		} finally {
 			lock.release();
 		}
@@ -1098,17 +1090,17 @@ public class BuildManager implements ICoreConstants, IManager, ILifecycleListene
 		ElementTree oldTree = builder.getLastBuiltTree();
 		ElementTree newTree = workspace.getElementTree();
 		long start = System.currentTimeMillis();
-		currentDelta = (DeltaDataTree) deltaTreeCache.getDelta(null, oldTree, newTree);
-		if (currentDelta == null) {
+		currentDelta = deltaTreeCache.computeIfAbsent(null, oldTree, newTree, () -> {
 			if (Policy.DEBUG_BUILD_NEEDED) {
 				String message = "Checking if need to build. Starting delta computation between: " + oldTree.toString() + " and " + newTree.toString(); //$NON-NLS-1$ //$NON-NLS-2$
 				Policy.debug(message);
 			}
-			currentDelta = newTree.getDataTree().forwardDeltaWith(oldTree.getDataTree(), ResourceComparator.getBuildComparator());
+			DeltaDataTree computed = newTree.getDataTree().forwardDeltaWith(oldTree.getDataTree(), ResourceComparator.getBuildComparator());
 			if (Policy.DEBUG_BUILD_NEEDED)
 				Policy.debug("End delta computation. (" + (System.currentTimeMillis() - start) + "ms)."); //$NON-NLS-1$ //$NON-NLS-2$
-			deltaTreeCache.cache(null, oldTree, newTree, currentDelta);
-		}
+
+			return computed;
+		});
 
 		//search for the builder's project
 		if (currentDelta.findNodeAt(builder.getProject().getFullPath()) != null) {
