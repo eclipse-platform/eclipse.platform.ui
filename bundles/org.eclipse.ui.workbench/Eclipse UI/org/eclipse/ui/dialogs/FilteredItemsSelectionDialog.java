@@ -3089,12 +3089,14 @@ public abstract class FilteredItemsSelectionDialog extends SelectionStatusDialog
 				// See if any are exact matches
 				boolean m1 = filterPattern.equals(getElementName(o1));
 				boolean m2 = filterPattern.equals(getElementName(o2));
-				if (m1 && m2)
-					return 0;
-				if (m1 && !m2)
-					return -1;
-				if (m2 && !m1)
-					return 1;
+				if (!m1 || !m2) {
+					if (m1 && !m2) {
+						return -1;
+					}
+					if (m2 && !m1) {
+						return 1;
+					}
+				}
 			}
 
 			boolean h1 = isHistoryElement(o1);
@@ -3103,10 +3105,12 @@ public abstract class FilteredItemsSelectionDialog extends SelectionStatusDialog
 				return itemsComparator.compare(o1, o2);
 			}
 
-			if (h1)
+			if (h1) {
 				return -2;
-			if (h2)
+			}
+			if (h2) {
 				return +2;
+			}
 
 			return 0;
 		}
