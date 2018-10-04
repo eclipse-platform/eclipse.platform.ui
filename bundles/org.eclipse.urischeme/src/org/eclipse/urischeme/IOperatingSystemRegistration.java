@@ -17,6 +17,7 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.urischeme.IUriSchemeExtensionReader.Scheme;
 import org.eclipse.urischeme.internal.registration.RegistrationLinux;
 import org.eclipse.urischeme.internal.registration.RegistrationMacOsX;
+import org.eclipse.urischeme.internal.registration.RegistrationWindows;
 /**
  * Interface for registration or uri schemes in the different operating systems
  * (MacOSX, Linux and Windows)<br />
@@ -37,7 +38,7 @@ public interface IOperatingSystemRegistration {
 		} else if (Platform.OS_LINUX.equals(Platform.getOS())) {
 			return new RegistrationLinux();
 		} else if (Platform.OS_WIN32.equals(Platform.getOS())) {
-			// TODO: in separate commit
+			return new RegistrationWindows();
 		}
 		return null;
 	}
