@@ -55,7 +55,7 @@ public interface IFileState extends IEncodedStorage, IAdaptable {
 	 * @return <code>true</code> if this state exists, and <code>false</code>
 	 *   if it does not
 	 */
-	public boolean exists();
+	boolean exists();
 
 	/**
 	 * Returns an open input stream on the contents of this file state.
@@ -70,8 +70,7 @@ public interface IFileState extends IEncodedStorage, IAdaptable {
 	 * <li> This state does not exist.</li>
 	 * </ul>
 	 */
-	@Override
-	public InputStream getContents() throws CoreException;
+	@Override InputStream getContents() throws CoreException;
 
 	/**
 	 * Returns the full path of this file state.
@@ -82,8 +81,7 @@ public interface IFileState extends IEncodedStorage, IAdaptable {
 	 * @see IResource#getFullPath()
 	 * @see IStorage#getFullPath()
 	 */
-	@Override
-	public IPath getFullPath();
+	@Override IPath getFullPath();
 
 	/**
 	 * Returns the modification time of the file. If you create a file at
@@ -96,7 +94,7 @@ public interface IFileState extends IEncodedStorage, IAdaptable {
 	 * @return the time of last modification, in milliseconds since
 	 * January 1, 1970, 00:00:00 GMT.
 	 */
-	public long getModificationTime();
+	long getModificationTime();
 
 	/**
 	 * Returns the name of this file state.
@@ -108,8 +106,7 @@ public interface IFileState extends IEncodedStorage, IAdaptable {
 	 * @see IResource#getName()
 	 * @see IStorage#getName()
 	 */
-	@Override
-	public String getName();
+	@Override String getName();
 
 	/**
 	 * Returns whether this file state is read-only.
@@ -119,6 +116,5 @@ public interface IFileState extends IEncodedStorage, IAdaptable {
 	 *
 	 * @see IStorage
 	 */
-	@Override
-	public boolean isReadOnly();
+	@Override boolean isReadOnly();
 }

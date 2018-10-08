@@ -83,7 +83,7 @@ public interface IFolder extends IContainer, IAdaptable {
 	 * Cancelation can occur even if no progress monitor is provided.
 	 * @see IFolder#create(int,boolean,IProgressMonitor)
 	 */
-	public void create(boolean force, boolean local, IProgressMonitor monitor) throws CoreException;
+	void create(boolean force, boolean local, IProgressMonitor monitor) throws CoreException;
 
 	/**
 	 * Creates a new folder resource as a member of this handle's parent resource.
@@ -161,7 +161,7 @@ public interface IFolder extends IContainer, IAdaptable {
 	 * @see IResourceRuleFactory#createRule(IResource)
 	 * @since 2.0
 	 */
-	public void create(int updateFlags, boolean local, IProgressMonitor monitor) throws CoreException;
+	void create(int updateFlags, boolean local, IProgressMonitor monitor) throws CoreException;
 
 	/**
 	 * Creates a new folder resource as a member of this handle's parent resource.
@@ -250,7 +250,7 @@ public interface IFolder extends IContainer, IAdaptable {
 	 * @see IResource#HIDDEN
 	 * @since 2.1
 	 */
-	public void createLink(IPath localLocation, int updateFlags, IProgressMonitor monitor) throws CoreException;
+	void createLink(IPath localLocation, int updateFlags, IProgressMonitor monitor) throws CoreException;
 
 	/**
 	 * Creates a new folder resource as a member of this handle's parent resource.
@@ -338,7 +338,7 @@ public interface IFolder extends IContainer, IAdaptable {
 	 * @see IResource#HIDDEN
 	 * @since 3.2
 	 */
-	public void createLink(URI location, int updateFlags, IProgressMonitor monitor) throws CoreException;
+	void createLink(URI location, int updateFlags, IProgressMonitor monitor) throws CoreException;
 
 	/**
 	 * Deletes this resource from the workspace.
@@ -378,7 +378,7 @@ public interface IFolder extends IContainer, IAdaptable {
 	 * @see IResourceRuleFactory#deleteRule(IResource)
 	 * @see IResource#delete(int,IProgressMonitor)
 	 */
-	public void delete(boolean force, boolean keepHistory, IProgressMonitor monitor) throws CoreException;
+	void delete(boolean force, boolean keepHistory, IProgressMonitor monitor) throws CoreException;
 
 	/**
 	 * Returns a handle to the file with the given name in this folder.
@@ -394,7 +394,7 @@ public interface IFolder extends IContainer, IAdaptable {
 	 * @return the (handle of the) member file
 	 * @see #getFolder(String)
 	 */
-	public IFile getFile(String name);
+	IFile getFile(String name);
 
 	/**
 	 * Returns a handle to the folder with the given name in this folder.
@@ -410,7 +410,7 @@ public interface IFolder extends IContainer, IAdaptable {
 	 * @return the (handle of the) member folder
 	 * @see #getFile(String)
 	 */
-	public IFolder getFolder(String name);
+	IFolder getFolder(String name);
 
 	/**
 	 * Moves this resource so that it is located at the given path.
@@ -460,5 +460,5 @@ public interface IFolder extends IContainer, IAdaptable {
 	 * @see IResourceRuleFactory#moveRule(IResource, IResource)
 	 * @see IResource#move(IPath,int,IProgressMonitor)
 	 */
-	public void move(IPath destination, boolean force, boolean keepHistory, IProgressMonitor monitor) throws CoreException;
+	void move(IPath destination, boolean force, boolean keepHistory, IProgressMonitor monitor) throws CoreException;
 }

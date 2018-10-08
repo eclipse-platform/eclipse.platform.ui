@@ -81,7 +81,7 @@ public interface IWorkspace extends IAdaptable {
 	 * @see IWorkspace#run(ICoreRunnable, ISchedulingRule, int, IProgressMonitor)
 	 * @since 3.0
 	 */
-	public static final int AVOID_UPDATE = 1;
+	int AVOID_UPDATE = 1;
 
 	/**
 	 * Constant that can be passed to {@link #validateEdit(org.eclipse.core.resources.IFile[], Object)}
@@ -90,13 +90,13 @@ public interface IWorkspace extends IAdaptable {
 	 * @since 3.3
 	 * @see #validateEdit(IFile[], Object)
 	 */
-	public static final Object VALIDATE_PROMPT = FileModificationValidationContext.VALIDATE_PROMPT;
+	Object VALIDATE_PROMPT = FileModificationValidationContext.VALIDATE_PROMPT;
 
 	/**
 	 * The name of the IWorkspace OSGi service (value "org.eclipse.core.resources.IWorkspace").
 	 * @since 3.5
 	 */
-	public static final String SERVICE_NAME = IWorkspace.class.getName();
+	String SERVICE_NAME = IWorkspace.class.getName();
 
 	/**
 	 * Adds the given listener for resource change events to this workspace. Has
@@ -116,7 +116,7 @@ public interface IWorkspace extends IAdaptable {
 	 * @see #addResourceChangeListener(IResourceChangeListener, int)
 	 * @see #removeResourceChangeListener(IResourceChangeListener)
 	 */
-	public void addResourceChangeListener(IResourceChangeListener listener);
+	void addResourceChangeListener(IResourceChangeListener listener);
 
 	/**
 	 * Adds the given listener for the specified resource change events to this
@@ -149,7 +149,7 @@ public interface IWorkspace extends IAdaptable {
 	 * @see IResourceChangeEvent
 	 * @see #removeResourceChangeListener(IResourceChangeListener)
 	 */
-	public void addResourceChangeListener(IResourceChangeListener listener, int eventMask);
+	void addResourceChangeListener(IResourceChangeListener listener, int eventMask);
 
 	/**
 	 * Registers the given plug-in's workspace save participant, and returns an
@@ -173,8 +173,7 @@ public interface IWorkspace extends IAdaptable {
 	 * @see #removeSaveParticipant(Plugin)
 	 * @deprecated Use {@link #addSaveParticipant(String, ISaveParticipant)} instead
 	 */
-	@Deprecated
-	public ISavedState addSaveParticipant(Plugin plugin, ISaveParticipant participant) throws CoreException;
+	@Deprecated ISavedState addSaveParticipant(Plugin plugin, ISaveParticipant participant) throws CoreException;
 
 	/**
 	 * Registers the given plug-in's workspace save participant, and returns an
@@ -198,7 +197,7 @@ public interface IWorkspace extends IAdaptable {
 	 * @see #removeSaveParticipant(String)
 	 * @since 3.6
 	 */
-	public ISavedState addSaveParticipant(String pluginId, ISaveParticipant participant) throws CoreException;
+	ISavedState addSaveParticipant(String pluginId, ISaveParticipant participant) throws CoreException;
 
 	/**
 	 * Builds all projects in this workspace. Projects are built in the order
@@ -240,7 +239,7 @@ public interface IWorkspace extends IAdaptable {
 	 * @see IncrementalProjectBuilder#CLEAN_BUILD
 	 * @see IResourceRuleFactory#buildRule()
 	 */
-	public void build(int kind, IProgressMonitor monitor) throws CoreException;
+	void build(int kind, IProgressMonitor monitor) throws CoreException;
 
 	/**
 	 * Build the build configurations specified in the passed in build configuration array.
@@ -285,7 +284,7 @@ public interface IWorkspace extends IAdaptable {
 	 * @see IResourceRuleFactory#buildRule()
 	 * @since 3.7
 	 */
-	public void build(IBuildConfiguration[] buildConfigs, int kind, boolean buildReferences, IProgressMonitor monitor) throws CoreException;
+	void build(IBuildConfiguration[] buildConfigs, int kind, boolean buildReferences, IProgressMonitor monitor) throws CoreException;
 
 	/**
 	 * Checkpoints the operation currently in progress. This method is used in
@@ -313,7 +312,7 @@ public interface IWorkspace extends IAdaptable {
 	 * @param build whether or not to run a build
 	 * @see IWorkspace#run(ICoreRunnable, ISchedulingRule, int, IProgressMonitor)
 	 */
-	public void checkpoint(boolean build);
+	void checkpoint(boolean build);
 
 	/**
 	 * Returns the prerequisite ordering of the given projects. The computation
@@ -342,8 +341,7 @@ public interface IWorkspace extends IAdaptable {
 	 * which produces a more usable result when there are cycles in project
 	 * reference graph.
 	 */
-	@Deprecated
-	public IProject[][] computePrerequisiteOrder(IProject[] projects);
+	@Deprecated IProject[][] computePrerequisiteOrder(IProject[] projects);
 
 	/**
 	 * Data structure for holding the multi-part outcome of
@@ -434,7 +432,7 @@ public interface IWorkspace extends IAdaptable {
 	 * @return result describing the project order
 	 * @since 2.1
 	 */
-	public ProjectOrder computeProjectOrder(IProject[] projects);
+	ProjectOrder computeProjectOrder(IProject[] projects);
 
 	/**
 	 * Copies the given sibling resources so that they are located as members of
@@ -474,7 +472,7 @@ public interface IWorkspace extends IAdaptable {
 	 * Cancelation can occur even if no progress monitor is provided.
 	 * @see #copy(IResource[],IPath,int,IProgressMonitor)
 	 */
-	public IStatus copy(IResource[] resources, IPath destination, boolean force, IProgressMonitor monitor) throws CoreException;
+	IStatus copy(IResource[] resources, IPath destination, boolean force, IProgressMonitor monitor) throws CoreException;
 
 	/**
 	 * Copies the given sibling resources so that they are located as members of
@@ -554,7 +552,7 @@ public interface IWorkspace extends IAdaptable {
 	 * @see IResourceRuleFactory#copyRule(IResource, IResource)
 	 * @since 2.0
 	 */
-	public IStatus copy(IResource[] resources, IPath destination, int updateFlags, IProgressMonitor monitor) throws CoreException;
+	IStatus copy(IResource[] resources, IPath destination, int updateFlags, IProgressMonitor monitor) throws CoreException;
 
 	/**
 	 * Deletes the given resources.
@@ -590,7 +588,7 @@ public interface IWorkspace extends IAdaptable {
 	 * Cancelation can occur even if no progress monitor is provided.
 	 * @see #delete(IResource[],int,IProgressMonitor)
 	 */
-	public IStatus delete(IResource[] resources, boolean force, IProgressMonitor monitor) throws CoreException;
+	IStatus delete(IResource[] resources, boolean force, IProgressMonitor monitor) throws CoreException;
 
 	/**
 	 * Deletes the given resources.
@@ -638,7 +636,7 @@ public interface IWorkspace extends IAdaptable {
 	 * @see IResourceRuleFactory#deleteRule(IResource)
 	 * @since 2.0
 	 */
-	public IStatus delete(IResource[] resources, int updateFlags, IProgressMonitor monitor) throws CoreException;
+	IStatus delete(IResource[] resources, int updateFlags, IProgressMonitor monitor) throws CoreException;
 
 	/**
 	 * Removes the given markers from the resources with which they are
@@ -657,7 +655,7 @@ public interface IWorkspace extends IAdaptable {
 	 * </ul>
 	 * @see IResourceRuleFactory#markerRule(IResource)
 	 */
-	public void deleteMarkers(IMarker[] markers) throws CoreException;
+	void deleteMarkers(IMarker[] markers) throws CoreException;
 
 	/**
 	 * Forgets any resource tree being saved for the plug-in with the given
@@ -676,7 +674,7 @@ public interface IWorkspace extends IAdaptable {
 	 * @param pluginId the unique identifier of the plug-in, or <code>null</code>
 	 * @see ISaveContext#needDelta()
 	 */
-	public void forgetSavedTree(String pluginId);
+	void forgetSavedTree(String pluginId);
 
 	/**
 	 * Returns all filter matcher descriptors known to this workspace. Returns an empty
@@ -685,7 +683,7 @@ public interface IWorkspace extends IAdaptable {
 	 * @return the filter matcher descriptors known to this workspace
 	 * @since 3.6
 	 */
-	public IFilterMatcherDescriptor[] getFilterMatcherDescriptors();
+	IFilterMatcherDescriptor[] getFilterMatcherDescriptors();
 
 	/**
 	 * Returns the filter descriptor with the given unique identifier, or
@@ -696,7 +694,7 @@ public interface IWorkspace extends IAdaptable {
 	 * @return the filter matcher descriptor, or <code>null</code>
 	 * @since 3.6
 	 */
-	public IFilterMatcherDescriptor getFilterMatcherDescriptor(String filterMatcherId);
+	IFilterMatcherDescriptor getFilterMatcherDescriptor(String filterMatcherId);
 
 	/**
 	 * Returns all nature descriptors known to this workspace. Returns an empty
@@ -705,7 +703,7 @@ public interface IWorkspace extends IAdaptable {
 	 * @return the nature descriptors known to this workspace
 	 * @since 2.0
 	 */
-	public IProjectNatureDescriptor[] getNatureDescriptors();
+	IProjectNatureDescriptor[] getNatureDescriptors();
 
 	/**
 	 * Returns the nature descriptor with the given unique identifier, or
@@ -716,7 +714,7 @@ public interface IWorkspace extends IAdaptable {
 	 * @return the nature descriptor, or <code>null</code>
 	 * @since 2.0
 	 */
-	public IProjectNatureDescriptor getNatureDescriptor(String natureId);
+	IProjectNatureDescriptor getNatureDescriptor(String natureId);
 
 	/**
 	 * Finds all dangling project references in this workspace. Projects which
@@ -729,7 +727,7 @@ public interface IWorkspace extends IAdaptable {
 	 * @return a map (key type: <code>IProject</code>, value type:
 	 * <code>IProject[]</code>) from project to dangling project references
 	 */
-	public Map<IProject, IProject[]> getDanglingReferences();
+	Map<IProject, IProject[]> getDanglingReferences();
 
 	/**
 	 * Returns the workspace description. This object is responsible for
@@ -742,14 +740,14 @@ public interface IWorkspace extends IAdaptable {
 	 * @return the workspace description
 	 * @see #setDescription(IWorkspaceDescription)
 	 */
-	public IWorkspaceDescription getDescription();
+	IWorkspaceDescription getDescription();
 
 	/**
 	 * Returns the root resource of this workspace.
 	 *
 	 * @return the workspace root
 	 */
-	public IWorkspaceRoot getRoot();
+	IWorkspaceRoot getRoot();
 
 	/**
 	 * Returns a factory for obtaining scheduling rules prior to modifying
@@ -759,7 +757,7 @@ public interface IWorkspace extends IAdaptable {
 	 * @return a resource rule factory
 	 * @since 3.0
 	 */
-	public IResourceRuleFactory getRuleFactory();
+	IResourceRuleFactory getRuleFactory();
 
 	/**
 	 * Returns the synchronizer for this workspace.
@@ -767,7 +765,7 @@ public interface IWorkspace extends IAdaptable {
 	 * @return the synchronizer
 	 * @see ISynchronizer
 	 */
-	public ISynchronizer getSynchronizer();
+	ISynchronizer getSynchronizer();
 
 	/**
 	 * Returns whether this workspace performs autobuilds.
@@ -775,7 +773,7 @@ public interface IWorkspace extends IAdaptable {
 	 * @return <code>true</code> if autobuilding is on, <code>false</code>
 	 * otherwise
 	 */
-	public boolean isAutoBuilding();
+	boolean isAutoBuilding();
 
 	/**
 	 * Returns whether the workspace tree is currently locked. Resource changes
@@ -787,7 +785,7 @@ public interface IWorkspace extends IAdaptable {
 	 * @see IResourceChangeEvent
 	 * @since 2.1
 	 */
-	public boolean isTreeLocked();
+	boolean isTreeLocked();
 
 	/**
 	 * Reads the project description file (".project") from the given location
@@ -810,7 +808,7 @@ public interface IWorkspace extends IAdaptable {
 	 * @see IProject#getDescription()
 	 * @since 2.0
 	 */
-	public IProjectDescription loadProjectDescription(IPath projectDescriptionFile) throws CoreException;
+	IProjectDescription loadProjectDescription(IPath projectDescriptionFile) throws CoreException;
 
 	/**
 	 * Reads the project description file (".project") from the given InputStream.
@@ -835,7 +833,7 @@ public interface IWorkspace extends IAdaptable {
 	 * @see IWorkspace#loadProjectDescription(IPath)
 	 * @since 3.1
 	 */
-	public IProjectDescription loadProjectDescription(InputStream projectDescriptionFile) throws CoreException;
+	IProjectDescription loadProjectDescription(InputStream projectDescriptionFile) throws CoreException;
 
 	/**
 	 * Moves the given sibling resources so that they are located as members of
@@ -878,7 +876,7 @@ public interface IWorkspace extends IAdaptable {
 	 * Cancelation can occur even if no progress monitor is provided.
 	 * @see #move(IResource[],IPath,int,IProgressMonitor)
 	 */
-	public IStatus move(IResource[] resources, IPath destination, boolean force, IProgressMonitor monitor) throws CoreException;
+	IStatus move(IResource[] resources, IPath destination, boolean force, IProgressMonitor monitor) throws CoreException;
 
 	/**
 	 * Moves the given sibling resources so that they are located as members of
@@ -964,7 +962,7 @@ public interface IWorkspace extends IAdaptable {
 	 * @see IResourceRuleFactory#moveRule(IResource, IResource)
 	 * @since 2.0
 	 */
-	public IStatus move(IResource[] resources, IPath destination, int updateFlags, IProgressMonitor monitor) throws CoreException;
+	IStatus move(IResource[] resources, IPath destination, int updateFlags, IProgressMonitor monitor) throws CoreException;
 
 	/**
 	 * Returns a new build configuration for the project, with the given name.
@@ -990,7 +988,7 @@ public interface IWorkspace extends IAdaptable {
 	 * @see IBuildConfiguration
 	 * @since 3.7
 	 */
-	public IBuildConfiguration newBuildConfig(String projectName, String configName);
+	IBuildConfiguration newBuildConfig(String projectName, String configName);
 
 	/**
 	 * Creates and returns a new project description for a project with the
@@ -1016,7 +1014,7 @@ public interface IWorkspace extends IAdaptable {
 	 * @see IResource#copy(IProjectDescription, int, IProgressMonitor)
 	 * @see IProject#move(IProjectDescription, boolean, IProgressMonitor)
 	 */
-	public IProjectDescription newProjectDescription(String projectName);
+	IProjectDescription newProjectDescription(String projectName);
 
 	/**
 	 * Removes the given resource change listener from this workspace. Has no
@@ -1026,7 +1024,7 @@ public interface IWorkspace extends IAdaptable {
 	 * @see IResourceChangeListener
 	 * @see #addResourceChangeListener(IResourceChangeListener)
 	 */
-	public void removeResourceChangeListener(IResourceChangeListener listener);
+	void removeResourceChangeListener(IResourceChangeListener listener);
 
 	/**
 	 * Removes the workspace save participant for the given plug-in from this
@@ -1041,8 +1039,7 @@ public interface IWorkspace extends IAdaptable {
 	 * @see #addSaveParticipant(Plugin, ISaveParticipant)
 	 * @deprecated Use {@link #removeSaveParticipant(String)} instead
 	 */
-	@Deprecated
-	public void removeSaveParticipant(Plugin plugin);
+	@Deprecated void removeSaveParticipant(Plugin plugin);
 
 	/**
 	 * Removes the workspace save participant for the given plug-in from this
@@ -1057,7 +1054,7 @@ public interface IWorkspace extends IAdaptable {
 	 * @see #addSaveParticipant(String, ISaveParticipant)
 	 * @since 3.6
 	 */
-	public void removeSaveParticipant(String pluginId);
+	void removeSaveParticipant(String pluginId);
 
 	/**
 	 * Runs the given action as an atomic workspace operation.
@@ -1120,7 +1117,7 @@ public interface IWorkspace extends IAdaptable {
 	 * @see IResourceRuleFactory
 	 * @since 3.11
 	 */
-	public void run(ICoreRunnable action, ISchedulingRule rule, int flags, IProgressMonitor monitor) throws CoreException;
+	void run(ICoreRunnable action, ISchedulingRule rule, int flags, IProgressMonitor monitor) throws CoreException;
 
 	/**
 	 * Runs the given action as an atomic workspace operation.
@@ -1143,20 +1140,20 @@ public interface IWorkspace extends IAdaptable {
 	 * @see #run(ICoreRunnable, ISchedulingRule, int, IProgressMonitor)
 	 * @since 3.11
 	 */
-	public void run(ICoreRunnable action, IProgressMonitor monitor) throws CoreException;
+	void run(ICoreRunnable action, IProgressMonitor monitor) throws CoreException;
 
 	/**
 	 * Identical to {@link #run(ICoreRunnable, ISchedulingRule, int, IProgressMonitor)}.
 	 * New code should use that method.
 	 * @since 3.0
 	 */
-	public void run(IWorkspaceRunnable action, ISchedulingRule rule, int flags, IProgressMonitor monitor) throws CoreException;
+	void run(IWorkspaceRunnable action, ISchedulingRule rule, int flags, IProgressMonitor monitor) throws CoreException;
 
 	/**
 	 * Identical to {@link #run(ICoreRunnable, IProgressMonitor)}.
 	 * New code should use that method.
 	 */
-	public void run(IWorkspaceRunnable action, IProgressMonitor monitor) throws CoreException;
+	void run(IWorkspaceRunnable action, IProgressMonitor monitor) throws CoreException;
 
 	/**
 	 * Saves this workspace's valuable state on disk. Consults with all
@@ -1354,7 +1351,7 @@ public interface IWorkspace extends IAdaptable {
 	 * Cancelation can occur even if no progress monitor is provided.
 	 * @see #addSaveParticipant(Plugin, ISaveParticipant)
 	 */
-	public IStatus save(boolean full, IProgressMonitor monitor) throws CoreException;
+	IStatus save(boolean full, IProgressMonitor monitor) throws CoreException;
 
 	/**
 	 * Sets the workspace description. Its values are stored in the preference
@@ -1367,7 +1364,7 @@ public interface IWorkspace extends IAdaptable {
 	 * <li>There was a problem setting the workspace description.</li>
 	 * </ul>
 	 */
-	public void setDescription(IWorkspaceDescription description) throws CoreException;
+	void setDescription(IWorkspaceDescription description) throws CoreException;
 
 	/**
 	 * Returns a copy of the given set of natures sorted in prerequisite order.
@@ -1385,7 +1382,7 @@ public interface IWorkspace extends IAdaptable {
 	 * @see #validateNatureSet(String[])
 	 * @since 2.0
 	 */
-	public String[] sortNatureSet(String[] natureIds);
+	String[] sortNatureSet(String[] natureIds);
 
 	/**
 	 * Advises that the caller intends to modify the contents of the given files
@@ -1468,7 +1465,7 @@ public interface IWorkspace extends IAdaptable {
 	 * @see IResourceRuleFactory#validateEditRule(IResource[])
 	 * @since 2.0
 	 */
-	public IStatus validateEdit(IFile[] files, Object context);
+	IStatus validateEdit(IFile[] files, Object context);
 
 	/**
 	 * Validates that the given resource will not (or would not, if the resource
@@ -1499,7 +1496,7 @@ public interface IWorkspace extends IAdaptable {
 	 * @see IStatus#OK
 	 * @since 3.6
 	 */
-	public IStatus validateFiltered(IResource resource);
+	IStatus validateFiltered(IResource resource);
 
 	/**
 	 * Validates the given path as the location of the given resource on disk.
@@ -1545,7 +1542,7 @@ public interface IWorkspace extends IAdaptable {
 	 * @see ResourcesPlugin#PREF_DISABLE_LINKING
 	 * @since 2.1
 	 */
-	public IStatus validateLinkLocation(IResource resource, IPath location);
+	IStatus validateLinkLocation(IResource resource, IPath location);
 
 	/**
 	 * Validates the given {@link URI} as the location of the given resource on disk.
@@ -1589,7 +1586,7 @@ public interface IWorkspace extends IAdaptable {
 	 * @see ResourcesPlugin#PREF_DISABLE_LINKING
 	 * @since 3.2
 	 */
-	public IStatus validateLinkLocationURI(IResource resource, URI location);
+	IStatus validateLinkLocationURI(IResource resource, URI location);
 
 	/**
 	 * Validates the given string as the name of a resource valid for one of the
@@ -1620,7 +1617,7 @@ public interface IWorkspace extends IAdaptable {
 	 * @see IResource#FILE
 	 * @see IStatus#OK
 	 */
-	public IStatus validateName(String segment, int typeMask);
+	IStatus validateName(String segment, int typeMask);
 
 	/**
 	 * Validates that each of the given natures exists, and that all nature
@@ -1646,7 +1643,7 @@ public interface IWorkspace extends IAdaptable {
 	 * wrong with the set
 	 * @since 2.0
 	 */
-	public IStatus validateNatureSet(String[] natureIds);
+	IStatus validateNatureSet(String[] natureIds);
 
 	/**
 	 * Validates the given string as a path for a resource of the given type(s).
@@ -1689,7 +1686,7 @@ public interface IWorkspace extends IAdaptable {
 	 * @see IStatus#OK
 	 * @see IResourceStatus#getPath()
 	 */
-	public IStatus validatePath(String path, int typeMask);
+	IStatus validatePath(String path, int typeMask);
 
 	/**
 	 * Validates the given path as the location of the given project on disk.
@@ -1722,7 +1719,7 @@ public interface IWorkspace extends IAdaptable {
 	 * @see IProjectDescription#setLocation(IPath)
 	 * @see IStatus#OK
 	 */
-	public IStatus validateProjectLocation(IProject project, IPath location);
+	IStatus validateProjectLocation(IProject project, IPath location);
 
 	/**
 	 * Validates the given URI as the location of the given project.
@@ -1754,7 +1751,7 @@ public interface IWorkspace extends IAdaptable {
 	 * @see IStatus#OK
 	 * @since 3.2
 	 */
-	public IStatus validateProjectLocationURI(IProject project, URI location);
+	IStatus validateProjectLocationURI(IProject project, URI location);
 
 	/**
 	 * Returns the path variable manager for this workspace.
@@ -1763,5 +1760,5 @@ public interface IWorkspace extends IAdaptable {
 	 * @see IPathVariableManager
 	 * @since 2.1
 	 */
-	public IPathVariableManager getPathVariableManager();
+	IPathVariableManager getPathVariableManager();
 }

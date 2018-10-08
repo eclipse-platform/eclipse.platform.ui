@@ -62,12 +62,12 @@ public interface IBuildConfiguration extends IAdaptable {
 	/**
 	 * The Id of the default build configuration
 	 */
-	public static final String DEFAULT_CONFIG_NAME = ""; //$NON-NLS-1$
+	String DEFAULT_CONFIG_NAME = ""; //$NON-NLS-1$
 
 	/**
 	 * @return the project that the config is for; never null.
 	 */
-	public IProject getProject();
+	IProject getProject();
 
 	/**
 	 * Returns the human readable name of this build configuration.  If this
@@ -80,6 +80,6 @@ public interface IBuildConfiguration extends IAdaptable {
 	 * @return the name of the configuration; or null if this is a reference to the active
 	 * configuration
 	 */
-	public String getName();
+	String getName();
 
 }

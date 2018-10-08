@@ -47,7 +47,7 @@ public interface IProjectNature {
 	 *
 	 * @exception CoreException if this method fails.
 	 */
-	public void configure() throws CoreException;
+	void configure() throws CoreException;
 
 	/**
 	 * De-configures this nature for its project.  This is called by the workspace
@@ -62,14 +62,14 @@ public interface IProjectNature {
 	 * *
 	 * @exception CoreException if this method fails.
 	 */
-	public void deconfigure() throws CoreException;
+	void deconfigure() throws CoreException;
 
 	/**
 	 * Returns the project to which this project nature applies.
 	 *
 	 * @return the project handle
 	 */
-	public IProject getProject();
+	IProject getProject();
 
 	/**
 	 * Sets the project to which this nature applies.
@@ -80,5 +80,5 @@ public interface IProjectNature {
 	 *
 	 * @param project the project to which this nature applies
 	 */
-	public void setProject(IProject project);
+	void setProject(IProject project);
 }

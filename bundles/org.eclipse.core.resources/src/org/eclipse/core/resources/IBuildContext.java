@@ -36,7 +36,7 @@ public interface IBuildContext {
 	 * @return an array of all referenced build configurations that have been built
 	 * in the current build; never null.
 	 */
-	public IBuildConfiguration[] getAllReferencedBuildConfigs();
+	IBuildConfiguration[] getAllReferencedBuildConfigs();
 
 	/**
 	 * Gets a array of build configurations that will be built after this build configuration,
@@ -48,7 +48,7 @@ public interface IBuildContext {
 	 * @return an array of all referencing build configurations that will be built
 	 * in the current build; never null.
 	 */
-	public IBuildConfiguration[] getAllReferencingBuildConfigs();
+	IBuildConfiguration[] getAllReferencingBuildConfigs();
 
 	/**
 	 * Returns the full array of configurations that were requested to be built
@@ -62,5 +62,5 @@ public interface IBuildContext {
 	 *
 	 * @return an array of configurations that were requested to be built.
 	 */
-	public IBuildConfiguration[] getRequestedConfigs();
+	IBuildConfiguration[] getRequestedConfigs();
 }

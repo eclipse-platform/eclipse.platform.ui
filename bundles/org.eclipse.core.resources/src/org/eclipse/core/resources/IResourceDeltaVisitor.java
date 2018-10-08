@@ -54,5 +54,5 @@ public interface IResourceDeltaVisitor {
 	 *		be visited; <code>false</code> if they should be skipped.
 	 * @exception CoreException if the visit fails for some reason.
 	 */
-	public boolean visit(IResourceDelta delta) throws CoreException;
+	boolean visit(IResourceDelta delta) throws CoreException;
 }

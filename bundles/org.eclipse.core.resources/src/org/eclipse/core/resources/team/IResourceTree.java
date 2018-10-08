@@ -32,7 +32,7 @@ public interface IResourceTree {
 	 *
 	 * @see #movedFile(IFile, IFile)
 	 */
-	public static final long NULL_TIMESTAMP = 0L;
+	long NULL_TIMESTAMP = 0L;
 
 	/**
 	 * Adds the current state of the given file to the local history.
@@ -46,7 +46,7 @@ public interface IResourceTree {
 	 *
 	 * @param file the file to be captured
 	 */
-	public void addToLocalHistory(IFile file);
+	void addToLocalHistory(IFile file);
 
 	/**
 	 * Returns whether the given resource and its descendents to the given depth
@@ -60,7 +60,7 @@ public interface IResourceTree {
 	 * @return <code>true</code> if the resource is synchronized, and
 	 *    <code>false</code> in all other cases
 	 */
-	public boolean isSynchronized(IResource resource, int depth);
+	boolean isSynchronized(IResource resource, int depth);
 
 	/**
 	 * Computes the timestamp for the given file in the local file system.
@@ -82,7 +82,7 @@ public interface IResourceTree {
 	 * @return the local file system timestamp for the file, or
 	 *    <code>NULL_TIMESTAMP</code> if it could not be computed
 	 */
-	public long computeTimestamp(IFile file);
+	long computeTimestamp(IFile file);
 
 	/**
 	 * Returns the timestamp for the given file as recorded in the workspace
@@ -102,7 +102,7 @@ public interface IResourceTree {
 	 *    <code>NULL_TIMESTAMP</code> if the file does not exist in the
 	 *    workspace resource tree, or if the timestamp is not known
 	 */
-	public long getTimestamp(IFile file);
+	long getTimestamp(IFile file);
 
 	/**
 	 * Updates the timestamp for the given file in the workspace resource tree.
@@ -133,7 +133,7 @@ public interface IResourceTree {
 	 *    <code>NULL_TIMESTAMP</code> if unknown
 	 * @see #computeTimestamp(IFile)
 	 */
-	public void updateMovedFileTimestamp(IFile file, long timestamp);
+	void updateMovedFileTimestamp(IFile file, long timestamp);
 
 	/**
 	 * Declares that the operation has failed for the specified reason.
@@ -143,7 +143,7 @@ public interface IResourceTree {
 	 *
 	 * @param reason the reason the operation (or sub-operation) failed
 	 */
-	public void failed(IStatus reason);
+	void failed(IStatus reason);
 
 	/**
 	 * Declares that the given file has been successfully deleted from the
@@ -157,7 +157,7 @@ public interface IResourceTree {
 	 *
 	 * @param file the file that was just deleted from the local file system
 	 */
-	public void deletedFile(IFile file);
+	void deletedFile(IFile file);
 
 	/**
 	 * Declares that the given folder and all its descendents have been
@@ -172,7 +172,7 @@ public interface IResourceTree {
 	 *
 	 * @param folder the folder that was just deleted from the local file system
 	 */
-	public void deletedFolder(IFolder folder);
+	void deletedFolder(IFolder folder);
 
 	/**
 	 * Declares that the given project's content area in the local file system
@@ -189,7 +189,7 @@ public interface IResourceTree {
 	 *
 	 * @param project the project being deleted
 	 */
-	public void deletedProject(IProject project);
+	void deletedProject(IProject project);
 
 	/**
 	 * Declares that the given source file has been successfully moved to the
@@ -210,7 +210,7 @@ public interface IResourceTree {
 	 * @param destination the handle of where the file moved to
 	 * @see #computeTimestamp(IFile)
 	 */
-	public void movedFile(IFile source, IFile destination);
+	void movedFile(IFile source, IFile destination);
 
 	/**
 	 * Declares that the given source folder and its descendents have been
@@ -231,7 +231,7 @@ public interface IResourceTree {
 	 * @param source the handle of the source folder that was moved
 	 * @param destination the handle of where the folder moved to
 	 */
-	public void movedFolderSubtree(IFolder source, IFolder destination);
+	void movedFolderSubtree(IFolder source, IFolder destination);
 
 	/**
 	 * Declares that the given source project and its files and folders have
@@ -258,7 +258,7 @@ public interface IResourceTree {
 	 * @return <code>true</code> if the move succeeded, and <code>false</code>
 	 *    otherwise
 	 */
-	public boolean movedProjectSubtree(IProject source, IProjectDescription description);
+	boolean movedProjectSubtree(IProject source, IProjectDescription description);
 
 	/**
 	 * Deletes the given file in the standard manner from both the local file
@@ -278,7 +278,7 @@ public interface IResourceTree {
 	 * @param monitor the progress monitor, or <code>null</code> as per
 	 *    <code>IResource.delete(int,IProgressMonitor)</code>
 	 */
-	public void standardDeleteFile(IFile file, int updateFlags, IProgressMonitor monitor);
+	void standardDeleteFile(IFile file, int updateFlags, IProgressMonitor monitor);
 
 	/**
 	 * Deletes the given folder and its descendents in the standard manner from
@@ -298,7 +298,7 @@ public interface IResourceTree {
 	 * @param monitor the progress monitor, or <code>null</code> as per
 	 *    <code>IResource.delete(int,IProgressMonitor)</code>
 	 */
-	public void standardDeleteFolder(IFolder folder, int updateFlags, IProgressMonitor monitor);
+	void standardDeleteFolder(IFolder folder, int updateFlags, IProgressMonitor monitor);
 
 	/**
 	 * Deletes the given project and its descendents in the standard manner from
@@ -318,7 +318,7 @@ public interface IResourceTree {
 	 * @param monitor the progress monitor, or <code>null</code> as per
 	 *    <code>IResource.delete(int,IProgressMonitor)</code>
 	 */
-	public void standardDeleteProject(IProject project, int updateFlags, IProgressMonitor monitor);
+	void standardDeleteProject(IProject project, int updateFlags, IProgressMonitor monitor);
 
 	/**
 	 * Moves the given file in the standard manner from both the local file
@@ -340,7 +340,7 @@ public interface IResourceTree {
 	 * @param monitor the progress monitor, or <code>null</code> as per
 	 *    <code>IResource.move(IPath,int,IProgressMonitor)</code>
 	 */
-	public void standardMoveFile(IFile source, IFile destination, int updateFlags, IProgressMonitor monitor);
+	void standardMoveFile(IFile source, IFile destination, int updateFlags, IProgressMonitor monitor);
 
 	/**
 	 * Moves the given folder and its descendents in the standard manner from
@@ -362,7 +362,7 @@ public interface IResourceTree {
 	 * @param monitor the progress monitor, or <code>null</code> as per
 	 *    <code>IResource.move(IPath,int,IProgressMonitor)</code>
 	 */
-	public void standardMoveFolder(IFolder source, IFolder destination, int updateFlags, IProgressMonitor monitor);
+	void standardMoveFolder(IFolder source, IFolder destination, int updateFlags, IProgressMonitor monitor);
 
 	/**
 	 * Renames and/or relocates the given project in the standard manner.
@@ -382,5 +382,5 @@ public interface IResourceTree {
 	 * @param monitor the progress monitor, or <code>null</code> as per
 	 *    <code>IResource.move(IPath,int,IProgressMonitor)</code>
 	 */
-	public void standardMoveProject(IProject source, IProjectDescription description, int updateFlags, IProgressMonitor monitor);
+	void standardMoveProject(IProject source, IProjectDescription description, int updateFlags, IProgressMonitor monitor);
 }

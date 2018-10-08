@@ -33,6 +33,5 @@ public interface IWorkspaceRunnable extends ICoreRunnable {
 	 * @exception CoreException if this operation fails
 	 * @exception OperationCanceledException if this operation is canceled
 	 */
-	@Override
-	public void run(IProgressMonitor monitor) throws CoreException;
+	@Override void run(IProgressMonitor monitor) throws CoreException;
 }

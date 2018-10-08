@@ -107,7 +107,7 @@ public interface IResourceChangeEvent {
 	 * @see #getType()
 	 * @see #getDelta()
 	 */
-	public static final int POST_CHANGE = 1;
+	int POST_CHANGE = 1;
 
 	/**
 	 * Event type constant (bit mask) indicating a before-the-fact
@@ -118,7 +118,7 @@ public interface IResourceChangeEvent {
 	 * @see #getType()
 	 * @see #getResource()
 	 */
-	public static final int PRE_CLOSE = 2;
+	int PRE_CLOSE = 2;
 
 	/**
 	 * Event type constant (bit mask) indicating a before-the-fact
@@ -129,14 +129,13 @@ public interface IResourceChangeEvent {
 	 * @see #getType()
 	 * @see #getResource()
 	 */
-	public static final int PRE_DELETE = 4;
+	int PRE_DELETE = 4;
 
 	/**
 	 * @deprecated This event type has been renamed to
 	 * <code>PRE_BUILD</code>
 	 */
-	@Deprecated
-	public static final int PRE_AUTO_BUILD = 8;
+	@Deprecated int PRE_AUTO_BUILD = 8;
 
 	/**
 	 * Event type constant (bit mask) indicating a before-the-fact
@@ -148,14 +147,13 @@ public interface IResourceChangeEvent {
 	 * @see #getSource()
 	 * @since 3.0
 	 */
-	public static final int PRE_BUILD = 8;
+	int PRE_BUILD = 8;
 
 	/**
 	 * @deprecated This event type has been renamed to
 	 * <code>POST_BUILD</code>
 	 */
-	@Deprecated
-	public static final int POST_AUTO_BUILD = 16;
+	@Deprecated int POST_AUTO_BUILD = 16;
 
 	/**
 	 * Event type constant (bit mask) indicating an after-the-fact
@@ -167,7 +165,7 @@ public interface IResourceChangeEvent {
 	 * @see #getSource()
 	 * @since 3.0
 	 */
-	public static final int POST_BUILD = 16;
+	int POST_BUILD = 16;
 
 	/**
 	 * Event type constant (bit mask) indicating a before-the-fact
@@ -179,7 +177,7 @@ public interface IResourceChangeEvent {
 	 * @see #getResource()
 	 * @since 3.4
 	 */
-	public static final int PRE_REFRESH = 32;
+	int PRE_REFRESH = 32;
 
 	/**
 	 * Returns all marker deltas of the specified type that are associated
@@ -198,7 +196,7 @@ public interface IResourceChangeEvent {
 	 * @return an array of marker deltas
 	 * @since 2.0
 	 */
-	public IMarkerDelta[] findMarkerDeltas(String type, boolean includeSubtypes);
+	IMarkerDelta[] findMarkerDeltas(String type, boolean includeSubtypes);
 
 	/**
 	 * Returns the kind of build that caused this event,
@@ -217,7 +215,7 @@ public interface IResourceChangeEvent {
 	 * @return the kind of build, or <code>0</code> if not applicable
 	 * @since 3.1
 	 */
-	public int getBuildKind();
+	int getBuildKind();
 
 	/**
 	 * Returns a resource delta, rooted at the workspace, describing the set
@@ -227,7 +225,7 @@ public interface IResourceChangeEvent {
 	 * @return the resource delta, or <code>null</code> if not
 	 *   applicable
 	 */
-	public IResourceDelta getDelta();
+	IResourceDelta getDelta();
 
 	/**
 	 * Returns the resource in question or <code>null</code>
@@ -239,7 +237,7 @@ public interface IResourceChangeEvent {
 	 * </p>
 	 * @return the resource, or <code>null</code> if not applicable
 	 */
-	public IResource getResource();
+	IResource getResource();
 
 	/**
 	 * Returns an object identifying the source of this event.
@@ -252,7 +250,7 @@ public interface IResourceChangeEvent {
 	 * @return an object identifying the source of this event
 	 * @see java.util.EventObject
 	 */
-	public Object getSource();
+	Object getSource();
 
 	/**
 	 * Returns the type of event being reported.
@@ -265,5 +263,5 @@ public interface IResourceChangeEvent {
 	 * @see #PRE_DELETE
 	 * @see #PRE_REFRESH
 	 */
-	public int getType();
+	int getType();
 }

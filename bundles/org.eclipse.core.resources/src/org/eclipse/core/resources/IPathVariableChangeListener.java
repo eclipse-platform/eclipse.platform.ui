@@ -38,6 +38,6 @@ public interface IPathVariableChangeListener extends EventListener {
 	 * @see IPathVariableManager#removeChangeListener(IPathVariableChangeListener)
 	 * @see IPathVariableChangeEvent
 	 */
-	public void pathVariableChanged(IPathVariableChangeEvent event);
+	void pathVariableChanged(IPathVariableChangeEvent event);
 
 }

@@ -54,7 +54,7 @@ public interface IHistoryStore extends IManager {
 	 * copy over the file attributes to the local history? If we did that here then
 	 * we wouldn't have to have that other API.
 	 */
-	public IFileState addState(IPath key, IFileStore localFile, IFileInfo fileInfo, boolean moveContents);
+	IFileState addState(IPath key, IFileStore localFile, IFileInfo fileInfo, boolean moveContents);
 
 	/**
 	 * Returns the paths of all files with entries in this history store at or below
@@ -72,7 +72,7 @@ public interface IHistoryStore extends IManager {
 	 * @return the set of paths for files that have at least one history entry
 	 *   (element type: <code>IPath</code>)
 	 */
-	public Set<IPath> allFiles(IPath path, int depth, IProgressMonitor monitor);
+	Set<IPath> allFiles(IPath path, int depth, IProgressMonitor monitor);
 
 	/**
 	 * Clean this store applying the current policies.
@@ -94,12 +94,12 @@ public interface IHistoryStore extends IManager {
 	 * @param monitor a progress monitor, or <code>null</code> if progress
 	 *    reporting is not desired
 	 */
-	public void clean(IProgressMonitor monitor);
+	void clean(IProgressMonitor monitor);
 
 	/**
 	 * Closes the history store for the given resource.
 	 */
-	public void closeHistoryStore(IResource resource);
+	void closeHistoryStore(IResource resource);
 
 	/**
 	 * Copies the history store information from the source path given destination path.
@@ -113,7 +113,7 @@ public interface IHistoryStore extends IManager {
 	 *
 	 * TODO: should this method take a progress monitor?
 	 */
-	public void copyHistory(IResource source, IResource destination, boolean moving);
+	void copyHistory(IResource source, IResource destination, boolean moving);
 
 	/**
 	 * Verifies existence of specified resource in the history store. Returns
@@ -128,7 +128,7 @@ public interface IHistoryStore extends IManager {
 	 * @return <code>true</code>  if file state exists,
 	 * 	and <code>false</code> otherwise
 	 */
-	public boolean exists(IFileState target);
+	boolean exists(IFileState target);
 
 	/**
 	 * Returns an input stream containing the file contents of the specified state.
@@ -141,7 +141,7 @@ public interface IHistoryStore extends IManager {
 	 * @param target File state for which an input stream is requested
 	 * @return the stream for requested file state
 	 */
-	public InputStream getContents(IFileState target) throws CoreException;
+	InputStream getContents(IFileState target) throws CoreException;
 
 	/**
 	 * Returns an array of all states available for the specified resource path or
@@ -155,7 +155,7 @@ public interface IHistoryStore extends IManager {
 	 *    reporting is not desired
 	 * @return the list of file states
 	 */
-	public IFileState[] getStates(IPath path, IProgressMonitor monitor);
+	IFileState[] getStates(IPath path, IProgressMonitor monitor);
 
 	/**
 	 * Remove all of the file states for the given resource path and
@@ -169,7 +169,7 @@ public interface IHistoryStore extends IManager {
 	 * @param monitor a progress monitor, or <code>null</code> if progress
 	 *    reporting is not desired
 	 */
-	public void remove(IPath path, IProgressMonitor monitor);
+	void remove(IPath path, IProgressMonitor monitor);
 
 	/**
 	 * Go through the history store and remove all of the unreferenced states.
@@ -177,5 +177,5 @@ public interface IHistoryStore extends IManager {
 	 * As of 3.0, this method is used for testing purposes only. Otherwise the history
 	 * store is garbage collected during the #clean method.
 	 */
-	public void removeGarbage();
+	void removeGarbage();
 }

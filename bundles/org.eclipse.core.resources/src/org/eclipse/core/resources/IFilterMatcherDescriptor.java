@@ -37,51 +37,51 @@ public interface IFilterMatcherDescriptor {
 	 * An argument filter type constant (value "filter"), denoting that this
 	 * filter takes another filter as argument.
 	 */
-	public static final String ARGUMENT_TYPE_FILTER_MATCHER = "filterMatcher"; //$NON-NLS-1$
+	String ARGUMENT_TYPE_FILTER_MATCHER = "filterMatcher"; //$NON-NLS-1$
 	/**
 	 * An argument filter type constant (value "filters"), denoting that this
 	 * filter takes an array of other filters as argument.
 	 */
-	public static final String ARGUMENT_TYPE_FILTER_MATCHERS = "filterMatchers"; //$NON-NLS-1$
+	String ARGUMENT_TYPE_FILTER_MATCHERS = "filterMatchers"; //$NON-NLS-1$
 	/**
 	 * An argument filter type constant (value "none"), denoting that this
 	 * filter does not take any arguments.
 	 */
-	public static final String ARGUMENT_TYPE_NONE = "none"; //$NON-NLS-1$
+	String ARGUMENT_TYPE_NONE = "none"; //$NON-NLS-1$
 	/**
 	 * An argument filter type constant (value "string"), denoting that this
 	 * filter takes a string argument
 	 */
-	public static final String ARGUMENT_TYPE_STRING = "string"; //$NON-NLS-1$
+	String ARGUMENT_TYPE_STRING = "string"; //$NON-NLS-1$
 
 	/**
 	 * Returns the argument type expected by this filter. The result will be one of the
 	 * <tt>ARGUMENT_TYPE_*</tt> constants declared on this class.
 	 * @return The argument type of this filter extension
 	 */
-	public abstract String getArgumentType();
+	String getArgumentType();
 
 	/**
 	 * Returns a translated, human-readable description for this filter extension.
 	 * @return The human-readable filter description
 	 */
-	public abstract String getDescription();
+	String getDescription();
 
 	/**
 	 * Returns the fully qualified id of the filter extension.
 	 * @return The fully qualified id of the filter extension.
 	 */
-	public abstract String getId();
+	String getId();
 
 	/**
 	 * Returns a translated, human-readable name for this filter extension.
 	 * @return The human-readable filter name
 	 */
-	public abstract String getName();
+	String getName();
 
 	/**
 	 * TODO What is this?
 	 */
-	public abstract boolean isFirstOrdering();
+	boolean isFirstOrdering();
 
 }

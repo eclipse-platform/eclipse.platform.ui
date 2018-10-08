@@ -40,13 +40,13 @@ public interface IResourceChangeDescriptionFactory {
 	 * Record a delta that represents a content change for the given file.
 	 * @param file the file whose contents will be changed
 	 */
-	public void change(IFile file);
+	void change(IFile file);
 
 	/**
 	 *  Record the set of deltas representing the closed of a project.
 	 * @param project the project that will be closed
 	 */
-	public void close(IProject project);
+	void close(IProject project);
 
 	/**
 	 * Record the set of deltas representing a copy of the given resource to the
@@ -54,25 +54,25 @@ public interface IResourceChangeDescriptionFactory {
 	 * @param resource the resource that will be copied
 	 * @param destination the full workspace path of the destination the resource is being copied to
 	 */
-	public void copy(IResource resource, IPath destination);
+	void copy(IResource resource, IPath destination);
 
 	/**
 	 * Record a delta that represents a resource being created.
 	 * @param resource the resource that is created
 	 */
-	public void create(IResource resource);
+	void create(IResource resource);
 
 	/**
 	 * Record the set of deltas representing a deletion of the given resource.
 	 * @param resource the resource that will be deleted
 	 */
-	public void delete(IResource resource);
+	void delete(IResource resource);
 
 	/**
 	 * Return the proposed delta that has been accumulated by this factory.
 	 * @return the proposed delta that has been accumulated by this factory
 	 */
-	public IResourceDelta getDelta();
+	IResourceDelta getDelta();
 
 	/**
 	 * Record the set of deltas representing a move of the given resource to the
@@ -82,6 +82,6 @@ public interface IResourceChangeDescriptionFactory {
 	 * @param resource the resource that will be moved
 	 * @param destination the full workspace path of the destination the resource is being moved to
 	 */
-	public void move(IResource resource, IPath destination);
+	void move(IResource resource, IPath destination);
 
 }

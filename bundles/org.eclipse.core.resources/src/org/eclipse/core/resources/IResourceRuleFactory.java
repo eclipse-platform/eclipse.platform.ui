@@ -55,7 +55,7 @@ public interface IResourceRuleFactory {
 	 * @param resource the resource being created
 	 * @return a scheduling rule, or <code>null</code>
 	 */
-	public ISchedulingRule createRule(IResource resource);
+	ISchedulingRule createRule(IResource resource);
 
 	/**
 	 * Returns the scheduling rule that is required for building a project or the
@@ -63,7 +63,7 @@ public interface IResourceRuleFactory {
 	 *
 	 * @return a scheduling rule, or <code>null</code>
 	 */
-	public ISchedulingRule buildRule();
+	ISchedulingRule buildRule();
 
 	/**
 	 * Returns the scheduling rule that is required for changing the charset
@@ -73,7 +73,7 @@ public interface IResourceRuleFactory {
 	 * @return a scheduling rule, or <code>null</code>
 	 * @since 3.1
 	 */
-	public ISchedulingRule charsetRule(IResource resource);
+	ISchedulingRule charsetRule(IResource resource);
 
 	/**
 	 * Returns the scheduling rule that is required for changing the derived flag
@@ -83,7 +83,7 @@ public interface IResourceRuleFactory {
 	 * @return a scheduling rule, or <code>null</code>
 	 * @since 3.6
 	 */
-	public ISchedulingRule derivedRule(IResource resource);
+	ISchedulingRule derivedRule(IResource resource);
 
 	/**
 	 * Returns the scheduling rule that is required for copying a resource.
@@ -92,7 +92,7 @@ public interface IResourceRuleFactory {
 	 * @param destination the destination of the copy
 	 * @return a scheduling rule, or <code>null</code>
 	 */
-	public ISchedulingRule copyRule(IResource source, IResource destination);
+	ISchedulingRule copyRule(IResource source, IResource destination);
 
 	/**
 	 * Returns the scheduling rule that is required for deleting a resource.
@@ -100,7 +100,7 @@ public interface IResourceRuleFactory {
 	 * @param resource the resource to be deleted
 	 * @return a scheduling rule, or <code>null</code>
 	 */
-	public ISchedulingRule deleteRule(IResource resource);
+	ISchedulingRule deleteRule(IResource resource);
 
 	/**
 	 * Returns the scheduling rule that is required for creating, modifying, or
@@ -109,7 +109,7 @@ public interface IResourceRuleFactory {
 	 * @param resource the resource owning the marker to be modified
 	 * @return a scheduling rule, or <code>null</code>
 	 */
-	public ISchedulingRule markerRule(IResource resource);
+	ISchedulingRule markerRule(IResource resource);
 
 	/**
 	 * Returns the scheduling rule that is required for modifying a resource.
@@ -122,7 +122,7 @@ public interface IResourceRuleFactory {
 	 * @param resource the resource being modified
 	 * @return a scheduling rule, or <code>null</code>
 	 */
-	public ISchedulingRule modifyRule(IResource resource);
+	ISchedulingRule modifyRule(IResource resource);
 
 	/**
 	 * Returns the scheduling rule that is required for moving a resource.
@@ -131,7 +131,7 @@ public interface IResourceRuleFactory {
 	 * @param destination the destination of the move
 	 * @return a scheduling rule, or <code>null</code>
 	 */
-	public ISchedulingRule moveRule(IResource source, IResource destination);
+	ISchedulingRule moveRule(IResource source, IResource destination);
 
 	/**
 	 * Returns the scheduling rule that is required for performing
@@ -140,7 +140,7 @@ public interface IResourceRuleFactory {
 	 * @param resource the resource to refresh
 	 * @return a scheduling rule, or <code>null</code>
 	 */
-	public ISchedulingRule refreshRule(IResource resource);
+	ISchedulingRule refreshRule(IResource resource);
 
 	/**
 	 * Returns the scheduling rule that is required for a <code>validateEdit</code>
@@ -148,5 +148,5 @@ public interface IResourceRuleFactory {
 	 * @param resources the resources to be validated
 	 * @return a scheduling rule, or <code>null</code>
 	 */
-	public ISchedulingRule validateEditRule(IResource[] resources);
+	ISchedulingRule validateEditRule(IResource[] resources);
 }

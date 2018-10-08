@@ -38,7 +38,7 @@ public interface IModelProviderDescriptor {
 	 * Return the ids of model providers that this model provider extends.
 	 * @return the ids of model providers that this model provider extends
 	 */
-	public String[] getExtendedModels();
+	String[] getExtendedModels();
 
 	/**
 	 * Returns the unique identifier of this model provider.
@@ -52,7 +52,7 @@ public interface IModelProviderDescriptor {
 	 *
 	 * @return the unique model provider identifier
 	 */
-	public String getId();
+	String getId();
 
 	/**
 	 * Returns a displayable label for this model provider.
@@ -65,7 +65,7 @@ public interface IModelProviderDescriptor {
 	 * @return a displayable string label for this model provider,
 	 *    possibly the empty string
 	 */
-	public String getLabel();
+	String getLabel();
 
 	/**
 	 * From the provides set of resources, return those that match the enablement
@@ -76,7 +76,7 @@ public interface IModelProviderDescriptor {
 	 * @param resources the resources
 	 * @return the resources that match the descriptor's enablement rule
 	 */
-	public IResource[] getMatchingResources(IResource[] resources) throws CoreException;
+	IResource[] getMatchingResources(IResource[] resources) throws CoreException;
 
 	/**
 	 * Return the set of traversals that overlap with the resources that
@@ -87,7 +87,7 @@ public interface IModelProviderDescriptor {
 	 * that match this descriptor
 	 * @throws CoreException
 	 */
-	public ResourceTraversal[] getMatchingTraversals(ResourceTraversal[] traversals) throws CoreException;
+	ResourceTraversal[] getMatchingTraversals(ResourceTraversal[] traversals) throws CoreException;
 
 	/**
 	 * Return the model provider for this descriptor, instantiating it if it is
@@ -97,5 +97,5 @@ public interface IModelProviderDescriptor {
 	 * @exception CoreException if the model provider could not be instantiated for
 	 *             some reason
 	 */
-	public ModelProvider getModelProvider() throws CoreException;
+	ModelProvider getModelProvider() throws CoreException;
 }

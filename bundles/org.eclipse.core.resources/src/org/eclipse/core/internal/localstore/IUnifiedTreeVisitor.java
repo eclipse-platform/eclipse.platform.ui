@@ -19,5 +19,5 @@ public interface IUnifiedTreeVisitor {
 	/**
 	 * Returns true to visit the members of this node and false otherwise.
 	 */
-	public boolean visit(UnifiedTreeNode node) throws CoreException;
+	boolean visit(UnifiedTreeNode node) throws CoreException;
 }

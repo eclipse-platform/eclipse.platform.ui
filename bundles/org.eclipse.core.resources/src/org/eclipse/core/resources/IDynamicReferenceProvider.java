@@ -33,5 +33,5 @@ public interface IDynamicReferenceProvider {
 	 * @param buildConfiguration the build configuration being queried.
 	 * @return the set of projects which the given projects depends upon.
 	 */
-	public List<IProject> getDependentProjects(IBuildConfiguration buildConfiguration) throws CoreException;
+	List<IProject> getDependentProjects(IBuildConfiguration buildConfiguration) throws CoreException;
 }

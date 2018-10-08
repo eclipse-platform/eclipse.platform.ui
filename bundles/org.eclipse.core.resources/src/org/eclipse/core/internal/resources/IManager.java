@@ -17,7 +17,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 
 public interface IManager {
-	public void shutdown(IProgressMonitor monitor) throws CoreException;
+	void shutdown(IProgressMonitor monitor) throws CoreException;
 
-	public void startup(IProgressMonitor monitor) throws CoreException;
+	void startup(IProgressMonitor monitor) throws CoreException;
 }

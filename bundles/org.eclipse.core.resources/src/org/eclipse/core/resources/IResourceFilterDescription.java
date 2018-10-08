@@ -38,51 +38,51 @@ public interface IResourceFilterDescription {
 	 * the files matching the filters. All INCLUDE_ONLY filters are applied to
 	 * the resource list with an logical OR operation.
 	 */
-	public static final int INCLUDE_ONLY = 1;
+	int INCLUDE_ONLY = 1;
 
 	/**
 	 * Flag for resource filters indicating that the filter list excludes all
 	 * the files matching the filters.  All EXCLUDE_ALL filters are applied to
 	 * the resource list with an logical AND operation.
 	 */
-	public static final int EXCLUDE_ALL = 2;
+	int EXCLUDE_ALL = 2;
 
 	/**
 	 * Flag for resource filters indicating that this filter applies to files.
 	 */
-	public static final int FILES = 4;
+	int FILES = 4;
 
 	/**
 	 * Flag for resource filters indicating that this filter applies to folders.
 	 */
-	public static final int FOLDERS = 8;
+	int FOLDERS = 8;
 
 	/**
 	 * Flag for resource filters indicating that the container children of the
 	 * path inherit from this filter as well.
 	 */
-	public static final int INHERITABLE = 16;
+	int INHERITABLE = 16;
 
 	/**
 	 * Returns the description of the file info matcher corresponding to this resource
 	 * filter.
 	 * @return the file info matcher description for this resource filter
 	 */
-	public FileInfoMatcherDescription getFileInfoMatcherDescription();
+	FileInfoMatcherDescription getFileInfoMatcherDescription();
 
 	/**
 	 * Return the resource towards which this filter is set.
 	 *
 	 * @return the resource towards which this filter is set
 	 */
-	public IResource getResource();
+	IResource getResource();
 
 	/**
 	 * Return the filter type, either INCLUDE_ONLY or EXCLUDE_ALL
 	 *
 	 * @return (INCLUDE_ONLY or EXCLUDE_ALL) and/or INHERITABLE
 	 */
-	public int getType();
+	int getType();
 
 	/**
 	 * Deletes this filter description from its associated resource.
@@ -117,6 +117,6 @@ public interface IResourceFilterDescription {
 	 * @see IContainer#getFilters()
 	 * @see IContainer#createFilter(int, FileInfoMatcherDescription, int, IProgressMonitor)
 	 */
-	public void delete(int updateFlags, IProgressMonitor monitor) throws CoreException;
+	void delete(int updateFlags, IProgressMonitor monitor) throws CoreException;
 
 }

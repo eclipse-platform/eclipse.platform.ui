@@ -20,5 +20,5 @@ import org.eclipse.core.runtime.CoreException;
  * lifecycle events.
  */
 public interface ILifecycleListener {
-	public void handleEvent(LifecycleEvent event) throws CoreException;
+	void handleEvent(LifecycleEvent event) throws CoreException;
 }

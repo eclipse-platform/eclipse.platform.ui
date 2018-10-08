@@ -46,7 +46,7 @@ public interface IResourceProxy {
 	 * resource either does not exist or exists as a closed project
 	 * @see IResource#getModificationStamp()
 	 */
-	public long getModificationStamp();
+	long getModificationStamp();
 
 	/**
 	 * Returns whether the resource being visited is accessible.
@@ -55,7 +55,7 @@ public interface IResourceProxy {
 	 * <code>false</code> otherwise
 	 * @see IResource#isAccessible()
 	 */
-	public boolean isAccessible();
+	boolean isAccessible();
 
 	/**
 	 * Returns whether the resource being visited is derived.
@@ -64,7 +64,7 @@ public interface IResourceProxy {
 	 * <code>false</code> otherwise
 	 * @see IResource#isDerived()
 	 */
-	public boolean isDerived();
+	boolean isDerived();
 
 	/**
 	 * Returns whether the resource being visited is a linked resource.
@@ -73,7 +73,7 @@ public interface IResourceProxy {
 	 * <code>false</code> otherwise
 	 * @see IResource#isLinked()
 	 */
-	public boolean isLinked();
+	boolean isLinked();
 
 	/**
 	 * Returns whether the resource being visited is a phantom resource.
@@ -82,7 +82,7 @@ public interface IResourceProxy {
 	 * <code>false</code> otherwise
 	 * @see IResource#isPhantom()
 	 */
-	public boolean isPhantom();
+	boolean isPhantom();
 
 	/**
 	 * Returns whether the resource being visited is a hidden resource.
@@ -93,7 +93,7 @@ public interface IResourceProxy {
 	 *
 	 * @since 3.4
 	 */
-	public boolean isHidden();
+	boolean isHidden();
 
 	/**
 	 * Returns whether the resource being visited is a team private member.
@@ -102,7 +102,7 @@ public interface IResourceProxy {
 	 * <code>false</code> otherwise
 	 * @see IResource#isTeamPrivateMember()
 	 */
-	public boolean isTeamPrivateMember();
+	boolean isTeamPrivateMember();
 
 	/**
 	 * Returns the simple name of the resource being visited.
@@ -110,7 +110,7 @@ public interface IResourceProxy {
 	 * @return the name of the resource
 	 * @see IResource#getName()
 	 */
-	public String getName();
+	String getName();
 
 	/**
 	 * Returns the value of the session property of the resource being
@@ -127,7 +127,7 @@ public interface IResourceProxy {
 	 *     or <code>null</code> if the resource has no such property
 	 *	 @see IResource#getSessionProperty(QualifiedName)
 	 */
-	public Object getSessionProperty(QualifiedName key);
+	Object getSessionProperty(QualifiedName key);
 
 	/**
 	 * Returns the type of the resource being visited.
@@ -135,7 +135,7 @@ public interface IResourceProxy {
 	 * @return the resource type
 	 * @see IResource#getType()
 	 */
-	public int getType();
+	int getType();
 
 	/**
 	 * Returns the full workspace path of the resource being visited.
@@ -148,7 +148,7 @@ public interface IResourceProxy {
 	 * @return the full path of the resource
 	 * @see IResource#getFullPath()
 	 */
-	public IPath requestFullPath();
+	IPath requestFullPath();
 
 	/**
 	 * Returns the handle of the resource being visited.
@@ -162,5 +162,5 @@ public interface IResourceProxy {
 	 * </p>
 	 * @return the resource handle
 	 */
-	public IResource requestResource();
+	IResource requestResource();
 }

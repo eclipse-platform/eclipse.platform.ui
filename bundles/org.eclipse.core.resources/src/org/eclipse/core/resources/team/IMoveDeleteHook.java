@@ -88,7 +88,7 @@ public interface IMoveDeleteHook {
 	 * Cancelation can occur even if no progress monitor is provided.
 	 * @see IResource#delete(int,IProgressMonitor)
 	 */
-	public boolean deleteFile(IResourceTree tree, IFile file, int updateFlags, IProgressMonitor monitor);
+	boolean deleteFile(IResourceTree tree, IFile file, int updateFlags, IProgressMonitor monitor);
 
 	/**
 	 * Implements <code>IResource.delete(int,IProgressMonitor)</code> where the
@@ -145,7 +145,7 @@ public interface IMoveDeleteHook {
 	 * Cancelation can occur even if no progress monitor is provided.
 	 * @see IResource#delete(int,IProgressMonitor)
 	 */
-	public boolean deleteFolder(IResourceTree tree, IFolder folder, int updateFlags, IProgressMonitor monitor);
+	boolean deleteFolder(IResourceTree tree, IFolder folder, int updateFlags, IProgressMonitor monitor);
 
 	/**
 	 * Implements <code>IResource.delete(int,IProgressMonitor)</code> where the
@@ -202,7 +202,7 @@ public interface IMoveDeleteHook {
 	 * Cancelation can occur even if no progress monitor is provided.
 	 * @see IResource#delete(int,IProgressMonitor)
 	 */
-	public boolean deleteProject(IResourceTree tree, IProject project, int updateFlags, IProgressMonitor monitor);
+	boolean deleteProject(IResourceTree tree, IProject project, int updateFlags, IProgressMonitor monitor);
 
 	/**
 	 * Implements <code>IResource.move(IPath,int,IProgressMonitor)</code> where
@@ -264,7 +264,7 @@ public interface IMoveDeleteHook {
 	 * Cancelation can occur even if no progress monitor is provided.
 	 * @see IResource#move(org.eclipse.core.runtime.IPath,int,IProgressMonitor)
 	 */
-	public boolean moveFile(IResourceTree tree, IFile source, IFile destination, int updateFlags, IProgressMonitor monitor);
+	boolean moveFile(IResourceTree tree, IFile source, IFile destination, int updateFlags, IProgressMonitor monitor);
 
 	/**
 	 * Implements <code>IResource.move(IPath,int,IProgressMonitor)</code> where
@@ -327,7 +327,7 @@ public interface IMoveDeleteHook {
 	 * Cancelation can occur even if no progress monitor is provided.
 	 * @see IResource#move(org.eclipse.core.runtime.IPath,int,IProgressMonitor)
 	 */
-	public boolean moveFolder(IResourceTree tree, IFolder source, IFolder destination, int updateFlags, IProgressMonitor monitor);
+	boolean moveFolder(IResourceTree tree, IFolder source, IFolder destination, int updateFlags, IProgressMonitor monitor);
 
 	/**
 	 * Implements <code>IResource.move(IPath,int,IProgressMonitor)</code> and
@@ -382,5 +382,5 @@ public interface IMoveDeleteHook {
 	 * @see IResource#move(org.eclipse.core.runtime.IPath,int,IProgressMonitor)
 	 * @see IResource#move(IProjectDescription,int,IProgressMonitor)
 	 */
-	public boolean moveProject(IResourceTree tree, IProject source, IProjectDescription description, int updateFlags, IProgressMonitor monitor);
+	boolean moveProject(IResourceTree tree, IProject source, IProjectDescription description, int updateFlags, IProgressMonitor monitor);
 }

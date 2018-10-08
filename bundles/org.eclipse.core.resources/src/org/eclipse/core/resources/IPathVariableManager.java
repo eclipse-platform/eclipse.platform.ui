@@ -70,7 +70,7 @@ public interface IPathVariableManager {
 	 * </ul>
 	 * @since 3.6
 	 */
-	public URI convertToRelative(URI path, boolean force, String variableHint) throws CoreException;
+	URI convertToRelative(URI path, boolean force, String variableHint) throws CoreException;
 
 	/**
 	 * Sets the path variable with the given name to be the specified value.
@@ -106,8 +106,7 @@ public interface IPathVariableManager {
 	 * </ul>
 	 * @deprecated use {@link #setURIValue(String, URI)} instead.
 	 */
-	@Deprecated
-	public void setValue(String name, IPath value) throws CoreException;
+	@Deprecated void setValue(String name, IPath value) throws CoreException;
 
 	/**
 	 * Sets the path variable with the given name to be the specified value.
@@ -143,7 +142,7 @@ public interface IPathVariableManager {
 	 * </ul>
 	 * @since 3.6
 	 */
-	public void setURIValue(String name, URI value) throws CoreException;
+	void setURIValue(String name, URI value) throws CoreException;
 
 	/**
 	 * Returns the value of the path variable with the given name. If there is
@@ -154,8 +153,7 @@ public interface IPathVariableManager {
 	 *    variable defined with the given name
 	 * @deprecated use {@link #getURIValue(String)} instead.
 	 */
-	@Deprecated
-	public IPath getValue(String name);
+	@Deprecated IPath getValue(String name);
 
 	/**
 	 * Returns the value of the path variable with the given name. If there is
@@ -166,14 +164,14 @@ public interface IPathVariableManager {
 	 *    variable defined with the given name
 	 * @since 3.6
 	 */
-	public URI getURIValue(String name);
+	URI getURIValue(String name);
 
 	/**
 	 * Returns an array containing all defined path variable names.
 	 *
 	 * @return an array containing all defined path variable names
 	 */
-	public String[] getPathVariableNames();
+	String[] getPathVariableNames();
 
 	//	Should be added for 3.6
 	//	public String[] getPathVariableNames(String name);
@@ -187,7 +185,7 @@ public interface IPathVariableManager {
 	 * @param listener the listener
 	 * @see IPathVariableChangeListener
 	 */
-	public void addChangeListener(IPathVariableChangeListener listener);
+	void addChangeListener(IPathVariableChangeListener listener);
 
 	/**
 	 * Removes the given path variable change listener from the listeners list.
@@ -196,7 +194,7 @@ public interface IPathVariableManager {
 	 * @param listener the listener
 	 * @see IPathVariableChangeListener
 	 */
-	public void removeChangeListener(IPathVariableChangeListener listener);
+	void removeChangeListener(IPathVariableChangeListener listener);
 
 	/**
 	 * Resolves a relative <code>URI</code> object potentially containing a
@@ -216,7 +214,7 @@ public interface IPathVariableManager {
 	 * @return the resolved URI or <code>null</code>
 	 * @since 3.2
 	 */
-	public URI resolveURI(URI uri);
+	URI resolveURI(URI uri);
 
 	/**
 	 * Resolves a relative <code>IPath</code> object potentially containing a
@@ -253,8 +251,7 @@ public interface IPathVariableManager {
 	 * @return the resolved path or <code>null</code>
 	 * @deprecated use {@link #resolveURI(URI)} instead.
 	 */
-	@Deprecated
-	public IPath resolvePath(IPath path);
+	@Deprecated IPath resolvePath(IPath path);
 
 	/**
 	 * Returns <code>true</code> if the given variable is defined and
@@ -265,7 +262,7 @@ public interface IPathVariableManager {
 	 * @return <code>true</code> if the variable exists, <code>false</code>
 	 *    otherwise
 	 */
-	public boolean isDefined(String name);
+	boolean isDefined(String name);
 
 	/**
 	 * Returns whether a variable is user defined or not.
@@ -273,7 +270,7 @@ public interface IPathVariableManager {
 	 * @return true if the path is user defined.
 	 * @since 3.6
 	 */
-	public boolean isUserDefined(String name);
+	boolean isUserDefined(String name);
 
 	/**
 	 * Validates the given name as the name for a path variable. A valid path
@@ -286,7 +283,7 @@ public interface IPathVariableManager {
 	 *    object indicating what is wrong with the string
 	 * @see IStatus#OK
 	 */
-	public IStatus validateName(String name);
+	IStatus validateName(String name);
 
 	/**
 	 * Validates the given path as the value for a path variable. A path
@@ -299,7 +296,7 @@ public interface IPathVariableManager {
 	 * @see IPath#isValidPath(String)
 	 * @see IStatus#OK
 	 */
-	public IStatus validateValue(IPath path);
+	IStatus validateValue(IPath path);
 
 	/**
 	 * Validates the given path as the value for a path variable. A path
@@ -313,7 +310,7 @@ public interface IPathVariableManager {
 	 * @see IStatus#OK
 	 * @since 3.6
 	 */
-	public IStatus validateValue(URI path);
+	IStatus validateValue(URI path);
 
 	/**
 	 * Returns a variable relative path equivalent to an absolute path for a
@@ -326,7 +323,7 @@ public interface IPathVariableManager {
 	 *         if no such path is available
 	 * @since 3.6
 	 */
-	public URI getVariableRelativePathLocation(URI location);
+	URI getVariableRelativePathLocation(URI location);
 
 	/**
 	 * Converts the internal format of the linked resource location if the PARENT
@@ -337,7 +334,7 @@ public interface IPathVariableManager {
 	 * @return the converted path variable value
 	 * @since 3.6
 	 */
-	public String convertToUserEditableFormat(String value, boolean locationFormat);
+	String convertToUserEditableFormat(String value, boolean locationFormat);
 
 	/**
 	 * Converts the user editable format to the internal format.
@@ -351,5 +348,5 @@ public interface IPathVariableManager {
 	 * @return the converted path variable value
 	 * @since 3.6
 	 */
-	public String convertFromUserEditableFormat(String value, boolean locationFormat);
+	String convertFromUserEditableFormat(String value, boolean locationFormat);
 }

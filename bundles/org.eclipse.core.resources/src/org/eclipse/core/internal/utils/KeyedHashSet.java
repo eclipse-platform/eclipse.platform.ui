@@ -20,11 +20,11 @@ package org.eclipse.core.internal.utils;
 public class KeyedHashSet {
 	public interface KeyedElement {
 
-		public boolean compare(KeyedElement other);
+		boolean compare(KeyedElement other);
 
-		public Object getKey();
+		Object getKey();
 
-		public int getKeyHashCode();
+		int getKeyHashCode();
 	}
 
 	protected static final int MINIMUM_SIZE = 7;

@@ -55,7 +55,7 @@ public interface IProject extends IContainer, IAdaptable {
 	 * @see #saveSnapshot(int, URI, IProgressMonitor)
 	 * @since 3.6
 	 */
-	public static final int SNAPSHOT_TREE = 1;
+	int SNAPSHOT_TREE = 1;
 
 	/**
 	 * Invokes the <code>build</code> method of the specified builder
@@ -104,7 +104,7 @@ public interface IProject extends IContainer, IAdaptable {
 	 * @see IncrementalProjectBuilder#CLEAN_BUILD
 	 * @see IResourceRuleFactory#buildRule()
 	 */
-	public void build(int kind, String builderName, Map<String, String> args, IProgressMonitor monitor) throws CoreException;
+	void build(int kind, String builderName, Map<String, String> args, IProgressMonitor monitor) throws CoreException;
 
 	/**
 	 * Builds this project. Does nothing if the project is closed.
@@ -143,7 +143,7 @@ public interface IProject extends IContainer, IAdaptable {
 	 * @see IncrementalProjectBuilder#INCREMENTAL_BUILD
 	 * @see IResourceRuleFactory#buildRule()
 	 */
-	public void build(int kind, IProgressMonitor monitor) throws CoreException;
+	void build(int kind, IProgressMonitor monitor) throws CoreException;
 
 	/**
 	 * Builds a specific build configuration of this project. Does nothing if the project is closed
@@ -184,7 +184,7 @@ public interface IProject extends IContainer, IAdaptable {
 	 * @see IResourceRuleFactory#buildRule()
 	 * @since 3.7
 	 */
-	public void build(IBuildConfiguration config, int kind, IProgressMonitor monitor) throws CoreException;
+	void build(IBuildConfiguration config, int kind, IProgressMonitor monitor) throws CoreException;
 
 	/**
 	 * Closes this project.  The project need not be open.  Closing
@@ -223,7 +223,7 @@ public interface IProject extends IContainer, IAdaptable {
 	 * @see #isOpen()
 	 * @see IResourceRuleFactory#modifyRule(IResource)
 	 */
-	public void close(IProgressMonitor monitor) throws CoreException;
+	void close(IProgressMonitor monitor) throws CoreException;
 
 	/**
 	 * Creates a new project resource in the workspace using the given project
@@ -270,7 +270,7 @@ public interface IProject extends IContainer, IAdaptable {
 	 * @see IWorkspace#validateProjectLocation(IProject, IPath)
 	 * @see IResourceRuleFactory#createRule(IResource)
 	 */
-	public void create(IProjectDescription description, IProgressMonitor monitor) throws CoreException;
+	void create(IProjectDescription description, IProgressMonitor monitor) throws CoreException;
 
 	/**
 	 * Creates a new project resource in the workspace with files in the default
@@ -321,7 +321,7 @@ public interface IProject extends IContainer, IAdaptable {
 	 * @see IWorkspace#validateProjectLocation(IProject, IPath)
 	 * @see IResourceRuleFactory#createRule(IResource)
 	 */
-	public void create(IProgressMonitor monitor) throws CoreException;
+	void create(IProgressMonitor monitor) throws CoreException;
 
 	/**
 	 * Creates a new project resource in the workspace using the given project
@@ -379,7 +379,7 @@ public interface IProject extends IContainer, IAdaptable {
 	 *
 	 * @since 3.4
 	 */
-	public void create(IProjectDescription description, int updateFlags, IProgressMonitor monitor) throws CoreException;
+	void create(IProjectDescription description, int updateFlags, IProgressMonitor monitor) throws CoreException;
 
 	/**
 	 * Deletes this project from the workspace.
@@ -419,7 +419,7 @@ public interface IProject extends IContainer, IAdaptable {
 	 * @see IResource#delete(int,IProgressMonitor)
 	 * @see IResourceRuleFactory#deleteRule(IResource)
 	 */
-	public void delete(boolean deleteContent, boolean force, IProgressMonitor monitor) throws CoreException;
+	void delete(boolean deleteContent, boolean force, IProgressMonitor monitor) throws CoreException;
 
 	/**
 	 * Returns the active build configuration for the project.
@@ -439,7 +439,7 @@ public interface IProject extends IContainer, IAdaptable {
 	 * </ul>
 	 * @since 3.7
 	 */
-	public IBuildConfiguration getActiveBuildConfig() throws CoreException;
+	IBuildConfiguration getActiveBuildConfig() throws CoreException;
 
 	/**
 	 * Returns the project {@link IBuildConfiguration} with the given name for this project.
@@ -454,7 +454,7 @@ public interface IProject extends IContainer, IAdaptable {
 	 * @see #getBuildConfigs()
 	 * @since 3.7
 	 */
-	public IBuildConfiguration getBuildConfig(String configName) throws CoreException;
+	IBuildConfiguration getBuildConfig(String configName) throws CoreException;
 
 	/**
 	 * Returns the build configurations for this project. A project always has at
@@ -468,7 +468,7 @@ public interface IProject extends IContainer, IAdaptable {
 	 * </ul>
 	 * @since 3.7
 	 */
-	public IBuildConfiguration[] getBuildConfigs() throws CoreException;
+	IBuildConfiguration[] getBuildConfigs() throws CoreException;
 
 	/**
 	 * Returns this project's content type matcher. This content type matcher takes
@@ -484,7 +484,7 @@ public interface IProject extends IContainer, IAdaptable {
 	 * @see IContentTypeMatcher
 	 * @since 3.1
 	 */
-	public IContentTypeMatcher getContentTypeMatcher() throws CoreException;
+	IContentTypeMatcher getContentTypeMatcher() throws CoreException;
 
 	/**
 	 * Returns the description for this project.
@@ -503,7 +503,7 @@ public interface IProject extends IContainer, IAdaptable {
 	 * @see IResource#copy(IProjectDescription, int, IProgressMonitor)
 	 * @see #move(IProjectDescription, boolean, IProgressMonitor)
 	 */
-	public IProjectDescription getDescription() throws CoreException;
+	IProjectDescription getDescription() throws CoreException;
 
 	/**
 	 * Returns a handle to the file with the given name in this project.
@@ -519,7 +519,7 @@ public interface IProject extends IContainer, IAdaptable {
 	 * @return the (handle of the) member file
 	 * @see #getFolder(String)
 	 */
-	public IFile getFile(String name);
+	IFile getFile(String name);
 
 	/**
 	 * Returns a handle to the folder with the given name in this project.
@@ -535,7 +535,7 @@ public interface IProject extends IContainer, IAdaptable {
 	 * @return the (handle of the) member folder
 	 * @see #getFile(String)
 	 */
-	public IFolder getFolder(String name);
+	IFolder getFolder(String name);
 
 	/**
 	 * Returns the specified project nature for this project or <code>null</code> if
@@ -557,7 +557,7 @@ public interface IProject extends IContainer, IAdaptable {
 	 * <li> The project nature extension could not be found.</li>
 	 * </ul>
 	 */
-	public IProjectNature getNature(String natureId) throws CoreException;
+	IProjectNature getNature(String natureId) throws CoreException;
 
 	/**
 	 * Returns the location in the local file system of the project-specific
@@ -574,8 +574,7 @@ public interface IProject extends IContainer, IAdaptable {
 	 * @return a local file system path
 	 * @deprecated Use <code>IProject.getWorkingLocation(plugin.getUniqueIdentifier())</code>.
 	 */
-	@Deprecated
-	public IPath getPluginWorkingLocation(IPluginDescriptor plugin);
+	@Deprecated IPath getPluginWorkingLocation(IPluginDescriptor plugin);
 
 	/**
 	 * Returns the location in the local file system of the project-specific
@@ -592,7 +591,7 @@ public interface IProject extends IContainer, IAdaptable {
 	 * @return a local file system path
 	 * @since 3.0
 	 */
-	public IPath getWorkingLocation(String id);
+	IPath getWorkingLocation(String id);
 
 	/**
 	 * Returns the projects referenced by this project. This includes
@@ -611,7 +610,7 @@ public interface IProject extends IContainer, IAdaptable {
 	 * @see IProjectDescription#getReferencedProjects()
 	 * @see IProjectDescription#getDynamicReferences()
 	 */
-	public IProject[] getReferencedProjects() throws CoreException;
+	IProject[] getReferencedProjects() throws CoreException;
 
 	/**
 	 * Clears the cache of dynamic project references for this project. Invoking this
@@ -625,7 +624,7 @@ public interface IProject extends IContainer, IAdaptable {
 	 *
 	 * @since 3.12
 	 */
-	public void clearCachedDynamicReferences();
+	void clearCachedDynamicReferences();
 
 	/**
 	 * Returns the list of all open projects which reference
@@ -634,7 +633,7 @@ public interface IProject extends IContainer, IAdaptable {
 	 *
 	 * @return a list of open projects referencing this project
 	 */
-	public IProject[] getReferencingProjects();
+	IProject[] getReferencingProjects();
 
 	/**
 	 * Returns the build configurations referenced by the passed in build configuration
@@ -669,7 +668,7 @@ public interface IProject extends IContainer, IAdaptable {
 	 * @see IProjectDescription#getBuildConfigReferences(String)
 	 * @since 3.7
 	 */
-	public IBuildConfiguration[] getReferencedBuildConfigs(String configName, boolean includeMissing) throws CoreException;
+	IBuildConfiguration[] getReferencedBuildConfigs(String configName, boolean includeMissing) throws CoreException;
 
 	/**
 	 * Checks whether the project has the specified build configuration.
@@ -683,7 +682,7 @@ public interface IProject extends IContainer, IAdaptable {
 	 * </ul>
 	 * @since 3.7
 	 */
-	public boolean hasBuildConfig(String configName) throws CoreException;
+	boolean hasBuildConfig(String configName) throws CoreException;
 
 	/**
 	 * Returns whether the project nature specified by the given
@@ -697,7 +696,7 @@ public interface IProject extends IContainer, IAdaptable {
 	 * <li> This project is not open.</li>
 	 * </ul>
 	 */
-	public boolean hasNature(String natureId) throws CoreException;
+	boolean hasNature(String natureId) throws CoreException;
 
 	/**
 	 * Returns true if the project nature specified by the given
@@ -724,7 +723,7 @@ public interface IProject extends IContainer, IAdaptable {
 	 * @since 2.0
 	 * @see IWorkspace#validateNatureSet(String[])
 	 */
-	public boolean isNatureEnabled(String natureId) throws CoreException;
+	boolean isNatureEnabled(String natureId) throws CoreException;
 
 	/**
 	 * Returns whether this project is open.
@@ -739,7 +738,7 @@ public interface IProject extends IContainer, IAdaptable {
 	 * @see #open(IProgressMonitor)
 	 * @see #close(IProgressMonitor)
 	 */
-	public boolean isOpen();
+	boolean isOpen();
 
 	/**
 	 * Loads a snapshot of project meta-data from the given location URI.
@@ -761,7 +760,7 @@ public interface IProject extends IContainer, IAdaptable {
 	 * @see #saveSnapshot(int, URI, IProgressMonitor)
 	 * @since 3.6
 	 */
-	public void loadSnapshot(int options, URI snapshotLocation, IProgressMonitor monitor) throws CoreException;
+	void loadSnapshot(int options, URI snapshotLocation, IProgressMonitor monitor) throws CoreException;
 
 	/**
 	 * Renames this project so that it is located at the name in
@@ -807,7 +806,7 @@ public interface IProject extends IContainer, IAdaptable {
 	 * @see IResource#move(IProjectDescription,int,IProgressMonitor)
 	 * @see IResourceRuleFactory#moveRule(IResource, IResource)
 	 */
-	public void move(IProjectDescription description, boolean force, IProgressMonitor monitor) throws CoreException;
+	void move(IProjectDescription description, boolean force, IProgressMonitor monitor) throws CoreException;
 
 	/**
 	 * Opens this project.  No action is taken if the project is already open.
@@ -858,7 +857,7 @@ public interface IProject extends IContainer, IAdaptable {
 	 * @see IResourceRuleFactory#modifyRule(IResource)
 	 * @since 3.1
 	 */
-	public void open(int updateFlags, IProgressMonitor monitor) throws CoreException;
+	void open(int updateFlags, IProgressMonitor monitor) throws CoreException;
 
 	/**
 	 * Opens this project.  No action is taken if the project is already open.
@@ -889,7 +888,7 @@ public interface IProject extends IContainer, IAdaptable {
 	 * @see #close(IProgressMonitor)
 	 * @see IResourceRuleFactory#modifyRule(IResource)
 	 */
-	public void open(IProgressMonitor monitor) throws CoreException;
+	void open(IProgressMonitor monitor) throws CoreException;
 
 	/**
 	 * Writes a snapshot of project meta-data into the given location URI.
@@ -910,7 +909,7 @@ public interface IProject extends IContainer, IAdaptable {
 	 * @see #loadSnapshot(int, URI, IProgressMonitor)
 	 * @since 3.6
 	 */
-	public void saveSnapshot(int options, URI snapshotLocation, IProgressMonitor monitor) throws CoreException;
+	void saveSnapshot(int options, URI snapshotLocation, IProgressMonitor monitor) throws CoreException;
 
 	/**
 	 * Changes this project resource to match the given project
@@ -957,7 +956,7 @@ public interface IProject extends IContainer, IAdaptable {
 	 * @see IProjectNature#deconfigure()
 	 * @see #setDescription(IProjectDescription,int,IProgressMonitor)
 	 */
-	public void setDescription(IProjectDescription description, IProgressMonitor monitor) throws CoreException;
+	void setDescription(IProjectDescription description, IProgressMonitor monitor) throws CoreException;
 
 	/**
 	 * Changes this project resource to match the given project
@@ -1066,5 +1065,5 @@ public interface IProject extends IContainer, IAdaptable {
 	 * @see IResourceRuleFactory#modifyRule(IResource)
 	 * @since 2.0
 	 */
-	public void setDescription(IProjectDescription description, int updateFlags, IProgressMonitor monitor) throws CoreException;
+	void setDescription(IProjectDescription description, int updateFlags, IProgressMonitor monitor) throws CoreException;
 }

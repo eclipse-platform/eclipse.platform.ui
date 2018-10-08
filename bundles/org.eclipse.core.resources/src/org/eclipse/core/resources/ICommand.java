@@ -38,7 +38,7 @@ public interface ICommand {
 	 *		value type : <code>String</code>), or <code>null</code>
 	 * @see #setArguments(Map)
 	 */
-	public Map<String,String> getArguments();
+	Map<String,String> getArguments();
 
 	/**
 	 * Returns the name of the builder to run for this command, or
@@ -47,7 +47,7 @@ public interface ICommand {
 	 * @return the name of the builder, or <code>null</code> if not set
 	 * @see #setBuilderName(String)
 	 */
-	public String getBuilderName();
+	String getBuilderName();
 
 	/**
 	 * Returns whether this build command responds to the given kind of build.
@@ -62,7 +62,7 @@ public interface ICommand {
 	 * @see #setBuilding(int, boolean)
 	 * @since 3.1
 	 */
-	public boolean isBuilding(int kind);
+	boolean isBuilding(int kind);
 
 	/**
 	 * Returns whether this command allows configuring of what kinds of builds
@@ -76,7 +76,7 @@ public interface ICommand {
 	 * @see #setBuilding(int, boolean)
 	 * @since 3.1
 	 */
-	public boolean isConfigurable();
+	boolean isConfigurable();
 
 	/**
 	 * Sets this command's arguments to be the given table of name-values
@@ -97,7 +97,7 @@ public interface ICommand {
 	 *   both be of type <code>String</code>), or <code>null</code>
 	 * @see #getArguments()
 	 */
-	public void setArguments(Map<String,String> args);
+	void setArguments(Map<String,String> args);
 
 	/**
 	 * Sets the name of the builder to run for this command.
@@ -110,7 +110,7 @@ public interface ICommand {
 	 * @param builderName the name of the builder
 	 * @see #getBuilderName()
 	 */
-	public void setBuilderName(String builderName);
+	void setBuilderName(String builderName);
 
 	/**
 	 * Specifies whether this build command responds to the provided kind of build.
@@ -151,5 +151,5 @@ public interface ICommand {
 	 * @see IncrementalProjectBuilder#CLEAN_BUILD
 	 * @since 3.1
 	 */
-	public void setBuilding(int kind, boolean value);
+	void setBuilding(int kind, boolean value);
 }

@@ -40,7 +40,7 @@ public interface IProjectNatureDescriptor {
 	 * </p>
 	 * @return the unique nature identifier
 	 */
-	public String getNatureId();
+	String getNatureId();
 
 	/**
 	 * Returns a displayable label for this nature.
@@ -53,7 +53,7 @@ public interface IProjectNatureDescriptor {
 	 * @return a displayable string label for this nature,
 	 *    possibly the empty string
 	 */
-	public String getLabel();
+	String getLabel();
 
 	/**
 	 * Returns the unique identifiers of the natures required by this nature.
@@ -64,7 +64,7 @@ public interface IProjectNatureDescriptor {
 	 * @return an array of nature ids that this nature requires,
 	 * 	possibly an empty array.
 	 */
-	public String[] getRequiredNatureIds();
+	String[] getRequiredNatureIds();
 
 	/**
 	 * Returns the identifiers of the nature sets that this nature belongs to.
@@ -75,7 +75,7 @@ public interface IProjectNatureDescriptor {
 	 * @return an array of nature set ids that this nature belongs to,
 	 * 	possibly an empty array.
 	 */
-	public String[] getNatureSetIds();
+	String[] getNatureSetIds();
 
 	/**
 	 * Returns whether this project nature allows linked resources to be created
@@ -87,5 +87,5 @@ public interface IProjectNatureDescriptor {
 	 * @see IFile#createLink(org.eclipse.core.runtime.IPath, int, org.eclipse.core.runtime.IProgressMonitor)
 	 * @since 2.1
 	 */
-	public boolean isLinkingAllowed();
+	boolean isLinkingAllowed();
 }

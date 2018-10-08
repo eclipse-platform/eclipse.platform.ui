@@ -49,8 +49,7 @@ public interface IFile extends IResource, IEncodedStorage, IAdaptable {
 	 * @see IFile#getEncoding()
 	 * @deprecated see getEncoding for details
 	 */
-	@Deprecated
-	public int ENCODING_UNKNOWN = 0;
+	@Deprecated int ENCODING_UNKNOWN = 0;
 	/**
 	 * Character encoding constant (value 1) which identifies
 	 * files that are encoded with the US-ASCII character encoding scheme.
@@ -58,8 +57,7 @@ public interface IFile extends IResource, IEncodedStorage, IAdaptable {
 	 * @see IFile#getEncoding()
 	 * @deprecated see getEncoding for details
 	 */
-	@Deprecated
-	public int ENCODING_US_ASCII = 1;
+	@Deprecated int ENCODING_US_ASCII = 1;
 	/**
 	 * Character encoding constant (value 2) which identifies
 	 * files that are encoded with the ISO-8859-1 character encoding scheme,
@@ -68,8 +66,7 @@ public interface IFile extends IResource, IEncodedStorage, IAdaptable {
 	 * @see IFile#getEncoding()
 	 * @deprecated see getEncoding for details
 	 */
-	@Deprecated
-	public int ENCODING_ISO_8859_1 = 2;
+	@Deprecated int ENCODING_ISO_8859_1 = 2;
 	/**
 	 * Character encoding constant (value 3) which identifies
 	 * files that are encoded with the UTF-8 character encoding scheme.
@@ -77,8 +74,7 @@ public interface IFile extends IResource, IEncodedStorage, IAdaptable {
 	 * @see IFile#getEncoding()
 	 * @deprecated see getEncoding for details
 	 */
-	@Deprecated
-	public int ENCODING_UTF_8 = 3;
+	@Deprecated int ENCODING_UTF_8 = 3;
 	/**
 	 * Character encoding constant (value 4) which identifies
 	 * files that are encoded with the UTF-16BE character encoding scheme.
@@ -86,8 +82,7 @@ public interface IFile extends IResource, IEncodedStorage, IAdaptable {
 	 * @see IFile#getEncoding()
 	 * @deprecated see getEncoding for details
 	 */
-	@Deprecated
-	public int ENCODING_UTF_16BE = 4;
+	@Deprecated int ENCODING_UTF_16BE = 4;
 	/**
 	 * Character encoding constant (value 5) which identifies
 	 * files that are encoded with the UTF-16LE character encoding scheme.
@@ -95,8 +90,7 @@ public interface IFile extends IResource, IEncodedStorage, IAdaptable {
 	 * @see IFile#getEncoding()
 	 * @deprecated see getEncoding for details
 	 */
-	@Deprecated
-	public int ENCODING_UTF_16LE = 5;
+	@Deprecated int ENCODING_UTF_16LE = 5;
 	/**
 	 * Character encoding constant (value 6) which identifies
 	 * files that are encoded with the UTF-16 character encoding scheme.
@@ -104,8 +98,7 @@ public interface IFile extends IResource, IEncodedStorage, IAdaptable {
 	 * @see IFile#getEncoding()
 	 * @deprecated see getEncoding for details
 	 */
-	@Deprecated
-	public int ENCODING_UTF_16 = 6;
+	@Deprecated int ENCODING_UTF_16 = 6;
 
 	/**
 	 * Appends the entire contents of the given stream to this file.
@@ -147,7 +140,7 @@ public interface IFile extends IResource, IEncodedStorage, IAdaptable {
 	 * Cancelation can occur even if no progress monitor is provided.
 	 * @see #appendContents(java.io.InputStream,int,IProgressMonitor)
 	 */
-	public void appendContents(InputStream source, boolean force, boolean keepHistory, IProgressMonitor monitor) throws CoreException;
+	void appendContents(InputStream source, boolean force, boolean keepHistory, IProgressMonitor monitor) throws CoreException;
 
 	/**
 	 * Appends the entire contents of the given stream to this file.
@@ -222,7 +215,7 @@ public interface IFile extends IResource, IEncodedStorage, IAdaptable {
 	 * @see IResourceRuleFactory#modifyRule(IResource)
 	 * @since 2.0
 	 */
-	public void appendContents(InputStream source, int updateFlags, IProgressMonitor monitor) throws CoreException;
+	void appendContents(InputStream source, int updateFlags, IProgressMonitor monitor) throws CoreException;
 
 	/**
 	 * Creates a new file resource as a member of this handle's parent resource.
@@ -268,7 +261,7 @@ public interface IFile extends IResource, IEncodedStorage, IAdaptable {
 	 * @exception OperationCanceledException if the operation is canceled.
 	 * Cancelation can occur even if no progress monitor is provided.
 	 */
-	public void create(InputStream source, boolean force, IProgressMonitor monitor) throws CoreException;
+	void create(InputStream source, boolean force, IProgressMonitor monitor) throws CoreException;
 
 	/**
 	 * Creates a new file resource as a member of this handle's parent resource.
@@ -345,7 +338,7 @@ public interface IFile extends IResource, IEncodedStorage, IAdaptable {
 	 * @see IResourceRuleFactory#createRule(IResource)
 	 * @since 2.0
 	 */
-	public void create(InputStream source, int updateFlags, IProgressMonitor monitor) throws CoreException;
+	void create(InputStream source, int updateFlags, IProgressMonitor monitor) throws CoreException;
 
 	/**
 	 * Creates a new file resource as a member of this handle's parent resource.
@@ -429,7 +422,7 @@ public interface IFile extends IResource, IEncodedStorage, IAdaptable {
 	 * @see IResource#HIDDEN
 	 * @since 2.1
 	 */
-	public void createLink(IPath localLocation, int updateFlags, IProgressMonitor monitor) throws CoreException;
+	void createLink(IPath localLocation, int updateFlags, IProgressMonitor monitor) throws CoreException;
 
 	/**
 	 * Creates a new file resource as a member of this handle's parent resource.
@@ -512,7 +505,7 @@ public interface IFile extends IResource, IEncodedStorage, IAdaptable {
 	 * @see IResource#HIDDEN
 	 * @since 3.2
 	 */
-	public void createLink(URI location, int updateFlags, IProgressMonitor monitor) throws CoreException;
+	void createLink(URI location, int updateFlags, IProgressMonitor monitor) throws CoreException;
 
 	/**
 	 * Deletes this file from the workspace.
@@ -551,7 +544,7 @@ public interface IFile extends IResource, IEncodedStorage, IAdaptable {
 	 * @see IResource#delete(int,IProgressMonitor)
 	 * @see IResourceRuleFactory#deleteRule(IResource)
 	 */
-	public void delete(boolean force, boolean keepHistory, IProgressMonitor monitor) throws CoreException;
+	void delete(boolean force, boolean keepHistory, IProgressMonitor monitor) throws CoreException;
 
 	/**
 	 * Returns the name of a charset to be used when decoding the contents of this
@@ -586,8 +579,7 @@ public interface IFile extends IResource, IEncodedStorage, IAdaptable {
 	 * @see IContainer#getDefaultCharset()
 	 * @since 3.0
 	 */
-	@Override
-	public String getCharset() throws CoreException;
+	@Override String getCharset() throws CoreException;
 
 	/**
 	 * Returns the name of a charset to be used when decoding the contents of this
@@ -630,7 +622,7 @@ public interface IFile extends IResource, IEncodedStorage, IAdaptable {
 	 * @see IContainer#getDefaultCharset()
 	 * @since 3.0
 	 */
-	public String getCharset(boolean checkImplicit) throws CoreException;
+	String getCharset(boolean checkImplicit) throws CoreException;
 
 	/**
 	 * Returns the name of a charset to be used to encode the given contents
@@ -660,7 +652,7 @@ public interface IFile extends IResource, IEncodedStorage, IAdaptable {
 	 * @see IContainer#getDefaultCharset()
 	 * @since 3.1
 	 */
-	public String getCharsetFor(Reader reader) throws CoreException;
+	String getCharsetFor(Reader reader) throws CoreException;
 
 	/**
 	 * Returns a description for this file's current contents. Returns
@@ -694,7 +686,7 @@ public interface IFile extends IResource, IEncodedStorage, IAdaptable {
 	 * @see IContentTypeManager#getDescriptionFor(InputStream, String, QualifiedName[])
 	 * @since 3.0
 	 */
-	public IContentDescription getContentDescription() throws CoreException;
+	IContentDescription getContentDescription() throws CoreException;
 
 	/**
 	 * Returns an open input stream on the contents of this file.
@@ -727,8 +719,7 @@ public interface IFile extends IResource, IEncodedStorage, IAdaptable {
 	 *       {@link ResourcesPlugin#PREF_LIGHTWEIGHT_AUTO_REFRESH} is disabled).</li>
 	 * </ul>
 	 */
-	@Override
-	public InputStream getContents() throws CoreException;
+	@Override InputStream getContents() throws CoreException;
 
 	/**
 	 * This refinement of the corresponding <code>IStorage</code> method
@@ -757,7 +748,7 @@ public interface IFile extends IResource, IEncodedStorage, IAdaptable {
 	 *       {@link ResourcesPlugin#PREF_LIGHTWEIGHT_AUTO_REFRESH} is disabled).</li>
 	 * </ul>
 	 */
-	public InputStream getContents(boolean force) throws CoreException;
+	InputStream getContents(boolean force) throws CoreException;
 
 	/**
 	 * Returns a constant identifying the character encoding of this file, or
@@ -781,8 +772,7 @@ public interface IFile extends IResource, IEncodedStorage, IAdaptable {
 	 * </ul>
 	 * @deprecated use {@link #getCharset} instead
 	 */
-	@Deprecated
-	public int getEncoding() throws CoreException;
+	@Deprecated int getEncoding() throws CoreException;
 
 	/**
 	 * Returns the full path of this file.
@@ -794,8 +784,7 @@ public interface IFile extends IResource, IEncodedStorage, IAdaptable {
 	 * @see IResource#getFullPath()
 	 * @see IStorage#getFullPath()
 	 */
-	@Override
-	public IPath getFullPath();
+	@Override IPath getFullPath();
 
 	/**
 	 * Returns a list of past states of this file known to this workspace.
@@ -812,7 +801,7 @@ public interface IFile extends IResource, IEncodedStorage, IAdaptable {
 	 * @exception OperationCanceledException if the operation is canceled.
 	 * Cancelation can occur even if no progress monitor is provided.
 	 */
-	public IFileState[] getHistory(IProgressMonitor monitor) throws CoreException;
+	IFileState[] getHistory(IProgressMonitor monitor) throws CoreException;
 
 	/**
 	 * Returns the name of this file.
@@ -824,8 +813,7 @@ public interface IFile extends IResource, IEncodedStorage, IAdaptable {
 	 * @see IResource#getName()
 	 * @see IStorage#getName()
 	 */
-	@Override
-	public String getName();
+	@Override String getName();
 
 	/**
 	 * Returns whether this file is read-only.
@@ -836,8 +824,7 @@ public interface IFile extends IResource, IEncodedStorage, IAdaptable {
 	 * @see IStorage#isReadOnly()
 	 */
 	@SuppressWarnings("deprecation")
-	@Override
-	public boolean isReadOnly();
+	@Override boolean isReadOnly();
 
 	/**
 	 * Moves this resource to be at the given location.
@@ -887,7 +874,7 @@ public interface IFile extends IResource, IEncodedStorage, IAdaptable {
 	 * @see IResource#move(IPath,int,IProgressMonitor)
 	 * @see IResourceRuleFactory#moveRule(IResource, IResource)
 	 */
-	public void move(IPath destination, boolean force, boolean keepHistory, IProgressMonitor monitor) throws CoreException;
+	void move(IPath destination, boolean force, boolean keepHistory, IProgressMonitor monitor) throws CoreException;
 
 	/**
 	 * Sets the charset for this file. Passing a value of <code>null</code>
@@ -904,8 +891,7 @@ public interface IFile extends IResource, IEncodedStorage, IAdaptable {
 	 * @deprecated Replaced by {@link #setCharset(String, IProgressMonitor)} which
 	 * 	is a workspace operation and reports changes in resource deltas.
 	 */
-	@Deprecated
-	public void setCharset(String newCharset) throws CoreException;
+	@Deprecated void setCharset(String newCharset) throws CoreException;
 
 	/**
 	 * Sets the charset for this file. Passing a value of <code>null</code>
@@ -936,7 +922,7 @@ public interface IFile extends IResource, IEncodedStorage, IAdaptable {
 	 * @see IResourceRuleFactory#charsetRule(IResource)
 	 * @since 3.0
 	 */
-	public void setCharset(String newCharset, IProgressMonitor monitor) throws CoreException;
+	void setCharset(String newCharset, IProgressMonitor monitor) throws CoreException;
 
 	/**
 	 * Sets the contents of this file to the bytes in the given input stream.
@@ -978,7 +964,7 @@ public interface IFile extends IResource, IEncodedStorage, IAdaptable {
 	 * Cancelation can occur even if no progress monitor is provided.
 	 * @see #setContents(java.io.InputStream,int,IProgressMonitor)
 	 */
-	public void setContents(InputStream source, boolean force, boolean keepHistory, IProgressMonitor monitor) throws CoreException;
+	void setContents(InputStream source, boolean force, boolean keepHistory, IProgressMonitor monitor) throws CoreException;
 
 	/**
 	 * Sets the contents of this file to the bytes in the given file state.
@@ -1021,7 +1007,7 @@ public interface IFile extends IResource, IEncodedStorage, IAdaptable {
 	 * Cancelation can occur even if no progress monitor is provided.
 	 * @see #setContents(IFileState,int,IProgressMonitor)
 	 */
-	public void setContents(IFileState source, boolean force, boolean keepHistory, IProgressMonitor monitor) throws CoreException;
+	void setContents(IFileState source, boolean force, boolean keepHistory, IProgressMonitor monitor) throws CoreException;
 
 	/**
 	 * Sets the contents of this file to the bytes in the given input stream.
@@ -1092,7 +1078,7 @@ public interface IFile extends IResource, IEncodedStorage, IAdaptable {
 	 * @see IResourceRuleFactory#modifyRule(IResource)
 	 * @since 2.0
 	 */
-	public void setContents(InputStream source, int updateFlags, IProgressMonitor monitor) throws CoreException;
+	void setContents(InputStream source, int updateFlags, IProgressMonitor monitor) throws CoreException;
 
 	/**
 	 * Sets the contents of this file to the bytes in the given file state.
@@ -1161,5 +1147,5 @@ public interface IFile extends IResource, IEncodedStorage, IAdaptable {
 	 * @see IResourceRuleFactory#modifyRule(IResource)
 	 * @since 2.0
 	 */
-	public void setContents(IFileState source, int updateFlags, IProgressMonitor monitor) throws CoreException;
+	void setContents(IFileState source, int updateFlags, IProgressMonitor monitor) throws CoreException;
 }

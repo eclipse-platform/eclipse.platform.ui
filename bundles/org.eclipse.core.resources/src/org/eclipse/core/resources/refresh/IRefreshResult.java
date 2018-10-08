@@ -40,7 +40,7 @@ public interface IRefreshResult {
 	 * monitor, or <code>null</code> to indicate that the monitor can no
 	 * longer monitor any of the resources it was monitoring
 	 */
-	public void monitorFailed(IRefreshMonitor monitor, IResource resource);
+	void monitorFailed(IRefreshMonitor monitor, IResource resource);
 
 	/**
 	 * Requests that the provided resource be refreshed.  The refresh will
@@ -48,5 +48,5 @@ public interface IRefreshResult {
 	 *
 	 * @param resource the resource to refresh
 	 */
-	public void refresh(IResource resource);
+	void refresh(IResource resource);
 }

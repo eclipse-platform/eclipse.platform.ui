@@ -39,7 +39,7 @@ public interface IMarkerDelta {
 	 * @param attributeName the name of the attribute
 	 * @return the value, or <code>null</code> if the attribute is undefined.
 	 */
-	public Object getAttribute(String attributeName);
+	Object getAttribute(String attributeName);
 
 	/**
 	 * Returns the integer-valued attribute with the given name.
@@ -54,7 +54,7 @@ public interface IMarkerDelta {
 	 * @param defaultValue the value to use if the attribute does not exist
 	 * @return the value or the default value if the attribute is undefined.
 	 */
-	public int getAttribute(String attributeName, int defaultValue);
+	int getAttribute(String attributeName, int defaultValue);
 
 	/**
 	 * Returns the string-valued attribute with the given name.
@@ -69,7 +69,7 @@ public interface IMarkerDelta {
 	 * @param defaultValue the value to use if the attribute does not exist
 	 * @return the value or the default value if the attribute is undefined.
 	 */
-	public String getAttribute(String attributeName, String defaultValue);
+	String getAttribute(String attributeName, String defaultValue);
 
 	/**
 	 * Returns the boolean-valued attribute with the given name.
@@ -84,7 +84,7 @@ public interface IMarkerDelta {
 	 * @param defaultValue the value to use if the attribute does not exist
 	 * @return the value or the default value if the attribute is undefined.
 	 */
-	public boolean getAttribute(String attributeName, boolean defaultValue);
+	boolean getAttribute(String attributeName, boolean defaultValue);
 
 	/**
 	 * Returns a Map with all the attributes for the marker.  The result is a Map
@@ -101,7 +101,7 @@ public interface IMarkerDelta {
 	 *		value type : <code>String</code>, <code>Integer</code>, or
 	 *		<code>Boolean</code>) or <code>null</code>.
 	 */
-	public Map<String, Object> getAttributes();
+	Map<String, Object> getAttributes();
 
 	/**
 	 * Returns the attributes with the given names.  The result is an array
@@ -117,7 +117,7 @@ public interface IMarkerDelta {
 	 * @param attributeNames the names of the attributes
 	 * @return the values of the given attributes.
 	 */
-	public Object[] getAttributes(String[] attributeNames);
+	Object[] getAttributes(String[] attributeNames);
 
 	/**
 	 * Returns the id of the marker.  The id of a marker is unique
@@ -126,7 +126,7 @@ public interface IMarkerDelta {
 	 *
 	 * @return the id of the marker
 	 */
-	public long getId();
+	long getId();
 
 	/**
 	 * Returns the kind of this marker delta:
@@ -138,7 +138,7 @@ public interface IMarkerDelta {
 	 * @see IResourceDelta#REMOVED
 	 * @see IResourceDelta#CHANGED
 	 */
-	public int getKind();
+	int getKind();
 
 	/**
 	 * Returns the marker described by this change.
@@ -148,14 +148,14 @@ public interface IMarkerDelta {
 	 *
 	 * @return the marker
 	 */
-	public IMarker getMarker();
+	IMarker getMarker();
 
 	/**
 	 * Returns the resource with which this marker is associated.
 	 *
 	 * @return the resource
 	 */
-	public IResource getResource();
+	IResource getResource();
 
 	/**
 	 * Returns the type of this marker.
@@ -166,7 +166,7 @@ public interface IMarkerDelta {
 	 *
 	 * @return the type of this marker
 	 */
-	public String getType();
+	String getType();
 
 	/**
 	 * Returns whether the type of this marker is considered to be a sub-type of
@@ -179,5 +179,5 @@ public interface IMarkerDelta {
 	 * @return boolean <code>true</code>if the marker's type
 	 *		is the same as (or a sub-type of) the given type.
 	 */
-	public boolean isSubtypeOf(String superType);
+	boolean isSubtypeOf(String superType);
 }

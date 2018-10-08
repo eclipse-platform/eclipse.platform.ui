@@ -29,5 +29,5 @@ public interface IElementContentVisitor {
 	 * @return true if this element's children should be visited, and false
 	 * otherwise.
 	 */
-	public boolean visitElement(ElementTree tree, IPathRequestor requestor, Object elementContents);
+	boolean visitElement(ElementTree tree, IPathRequestor requestor, Object elementContents);
 }

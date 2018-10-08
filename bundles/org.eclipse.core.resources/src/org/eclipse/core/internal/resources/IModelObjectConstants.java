@@ -17,45 +17,45 @@
 package org.eclipse.core.internal.resources;
 
 public interface IModelObjectConstants {
-	public static final String ARGUMENTS = "arguments"; //$NON-NLS-1$
-	public static final String ID = "id"; //$NON-NLS-1$
-	public static final String AUTOBUILD = "autobuild"; //$NON-NLS-1$
-	public static final String BUILD_COMMAND = "buildCommand"; //$NON-NLS-1$
-	public static final String BUILD_ORDER = "buildOrder"; //$NON-NLS-1$
-	public static final String BUILD_SPEC = "buildSpec"; //$NON-NLS-1$
-	public static final String BUILD_TRIGGERS = "triggers"; //$NON-NLS-1$
-	public static final String TRIGGER_AUTO = "auto"; //$NON-NLS-1$
-	public static final String TRIGGER_CLEAN = "clean"; //$NON-NLS-1$
-	public static final String TRIGGER_FULL = "full"; //$NON-NLS-1$
-	public static final String TRIGGER_INCREMENTAL = "incremental"; //$NON-NLS-1$
-	public static final String COMMENT = "comment"; //$NON-NLS-1$
-	public static final String DICTIONARY = "dictionary"; //$NON-NLS-1$
-	public static final String KEY = "key"; //$NON-NLS-1$
-	public static final String LOCATION = "location"; //$NON-NLS-1$
-	public static final String LOCATION_URI = "locationURI"; //$NON-NLS-1$
-	public static final String APPLY_FILE_STATE_POLICY = "applyFileStatePolicy"; //$NON-NLS-1$
-	public static final String FILE_STATE_LONGEVITY = "fileStateLongevity"; //$NON-NLS-1$
-	public static final String MAX_FILE_STATE_SIZE = "maxFileStateSize"; //$NON-NLS-1$
-	public static final String MAX_FILE_STATES = "maxFileStates"; //$NON-NLS-1$
+	String ARGUMENTS = "arguments"; //$NON-NLS-1$
+	String ID = "id"; //$NON-NLS-1$
+	String AUTOBUILD = "autobuild"; //$NON-NLS-1$
+	String BUILD_COMMAND = "buildCommand"; //$NON-NLS-1$
+	String BUILD_ORDER = "buildOrder"; //$NON-NLS-1$
+	String BUILD_SPEC = "buildSpec"; //$NON-NLS-1$
+	String BUILD_TRIGGERS = "triggers"; //$NON-NLS-1$
+	String TRIGGER_AUTO = "auto"; //$NON-NLS-1$
+	String TRIGGER_CLEAN = "clean"; //$NON-NLS-1$
+	String TRIGGER_FULL = "full"; //$NON-NLS-1$
+	String TRIGGER_INCREMENTAL = "incremental"; //$NON-NLS-1$
+	String COMMENT = "comment"; //$NON-NLS-1$
+	String DICTIONARY = "dictionary"; //$NON-NLS-1$
+	String KEY = "key"; //$NON-NLS-1$
+	String LOCATION = "location"; //$NON-NLS-1$
+	String LOCATION_URI = "locationURI"; //$NON-NLS-1$
+	String APPLY_FILE_STATE_POLICY = "applyFileStatePolicy"; //$NON-NLS-1$
+	String FILE_STATE_LONGEVITY = "fileStateLongevity"; //$NON-NLS-1$
+	String MAX_FILE_STATE_SIZE = "maxFileStateSize"; //$NON-NLS-1$
+	String MAX_FILE_STATES = "maxFileStates"; //$NON-NLS-1$
 	/**
 	 * The project relative path is called the link name for backwards compatibility
 	 */
-	public static final String NAME = "name"; //$NON-NLS-1$
-	public static final String NATURE = "nature"; //$NON-NLS-1$
-	public static final String NATURES = "natures"; //$NON-NLS-1$
-	public static final String SNAPSHOT_INTERVAL = "snapshotInterval"; //$NON-NLS-1$
-	public static final String PROJECT = "project"; //$NON-NLS-1$
-	public static final String PROJECT_DESCRIPTION = "projectDescription"; //$NON-NLS-1$
-	public static final String PROJECTS = "projects"; //$NON-NLS-1$
-	public static final String TYPE = "type"; //$NON-NLS-1$
-	public static final String VALUE = "value"; //$NON-NLS-1$
-	public static final String WORKSPACE_DESCRIPTION = "workspaceDescription"; //$NON-NLS-1$
-	public static final String LINKED_RESOURCES = "linkedResources"; //$NON-NLS-1$
-	public static final String LINK = "link"; //$NON-NLS-1$
-	public static final String FILTERED_RESOURCES = "filteredResources"; //$NON-NLS-1$
-	public static final String FILTER = "filter"; //$NON-NLS-1$
-	public static final String MATCHER = "matcher"; //$NON-NLS-1$
-	public static final String VARIABLE = "variable"; //$NON-NLS-1$
-	public static final String VARIABLE_LIST = "variableList"; //$NON-NLS-1$
-	public static final String SNAPSHOT_LOCATION = "snapshotLocation"; //$NON-NLS-1$
+	String NAME = "name"; //$NON-NLS-1$
+	String NATURE = "nature"; //$NON-NLS-1$
+	String NATURES = "natures"; //$NON-NLS-1$
+	String SNAPSHOT_INTERVAL = "snapshotInterval"; //$NON-NLS-1$
+	String PROJECT = "project"; //$NON-NLS-1$
+	String PROJECT_DESCRIPTION = "projectDescription"; //$NON-NLS-1$
+	String PROJECTS = "projects"; //$NON-NLS-1$
+	String TYPE = "type"; //$NON-NLS-1$
+	String VALUE = "value"; //$NON-NLS-1$
+	String WORKSPACE_DESCRIPTION = "workspaceDescription"; //$NON-NLS-1$
+	String LINKED_RESOURCES = "linkedResources"; //$NON-NLS-1$
+	String LINK = "link"; //$NON-NLS-1$
+	String FILTERED_RESOURCES = "filteredResources"; //$NON-NLS-1$
+	String FILTER = "filter"; //$NON-NLS-1$
+	String MATCHER = "matcher"; //$NON-NLS-1$
+	String VARIABLE = "variable"; //$NON-NLS-1$
+	String VARIABLE_LIST = "variableList"; //$NON-NLS-1$
+	String SNAPSHOT_LOCATION = "snapshotLocation"; //$NON-NLS-1$
 }

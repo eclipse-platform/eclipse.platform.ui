@@ -20,7 +20,7 @@ import org.eclipse.core.runtime.IPath;
  * are visiting. This avoids creating paths when they are not needed.
  */
 public interface IPathRequestor {
-	public IPath requestPath();
+	IPath requestPath();
 
-	public String requestName();
+	String requestName();
 }

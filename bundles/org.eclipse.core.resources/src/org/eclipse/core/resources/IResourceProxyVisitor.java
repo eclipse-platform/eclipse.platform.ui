@@ -51,5 +51,5 @@ public interface IResourceProxyVisitor {
 	 *		be visited; <code>false</code> if they should be skipped
 	 * @exception CoreException if the visit fails for some reason.
 	 */
-	public boolean visit(IResourceProxy proxy) throws CoreException;
+	boolean visit(IResourceProxy proxy) throws CoreException;
 }

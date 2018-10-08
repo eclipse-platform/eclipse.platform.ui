@@ -14,5 +14,5 @@
 package org.eclipse.core.internal.resources;
 
 public interface IMarkerSetElement {
-	public long getId();
+	long getId();
 }

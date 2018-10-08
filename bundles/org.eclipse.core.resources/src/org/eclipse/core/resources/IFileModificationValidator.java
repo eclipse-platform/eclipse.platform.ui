@@ -49,7 +49,7 @@ public interface IFileModificationValidator {
 	 *    reasons why modifying the given files is not reasonable
 	 * @see IWorkspace#validateEdit(IFile[], Object)
 	 */
-	public IStatus validateEdit(IFile[] files, Object context);
+	IStatus validateEdit(IFile[] files, Object context);
 
 	/**
 	 * Validates that the given file can be saved.  This method is called from
@@ -67,5 +67,5 @@ public interface IFileModificationValidator {
 	 * @see IFile#setContents(java.io.InputStream, int, org.eclipse.core.runtime.IProgressMonitor)
 	 * @see IFile#appendContents(java.io.InputStream, int, org.eclipse.core.runtime.IProgressMonitor)
 	 */
-	public IStatus validateSave(IFile file);
+	IStatus validateSave(IFile file);
 }

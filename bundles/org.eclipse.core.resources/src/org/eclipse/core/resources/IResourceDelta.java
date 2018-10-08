@@ -41,7 +41,7 @@ public interface IResourceDelta extends IAdaptable {
 	 *
 	 * @see IResourceDelta#getKind()
 	 */
-	public static final int NO_CHANGE = IElementComparator.K_NO_CHANGE;
+	int NO_CHANGE = IElementComparator.K_NO_CHANGE;
 
 	/**
 	 * Delta kind constant (bit mask) indicating that the resource has been added
@@ -50,7 +50,7 @@ public interface IResourceDelta extends IAdaptable {
 	 *
 	 * @see IResourceDelta#getKind()
 	 */
-	public static final int ADDED = 0x1;
+	int ADDED = 0x1;
 
 	/**
 	 * Delta kind constant (bit mask) indicating that the resource has been removed
@@ -59,7 +59,7 @@ public interface IResourceDelta extends IAdaptable {
 	 *
 	 * @see IResourceDelta#getKind()
 	 */
-	public static final int REMOVED = 0x2;
+	int REMOVED = 0x2;
 
 	/**
 	 * Delta kind constant (bit mask) indicating that the resource has been changed.
@@ -67,7 +67,7 @@ public interface IResourceDelta extends IAdaptable {
 	 *
 	 * @see IResourceDelta#getKind()
 	 */
-	public static final int CHANGED = 0x4;
+	int CHANGED = 0x4;
 
 	/**
 	 * Delta kind constant (bit mask) indicating that a phantom resource has been added at
@@ -75,7 +75,7 @@ public interface IResourceDelta extends IAdaptable {
 	 *
 	 * @see IResourceDelta#getKind()
 	 */
-	public static final int ADDED_PHANTOM = 0x8;
+	int ADDED_PHANTOM = 0x8;
 
 	/**
 	 * Delta kind constant (bit mask) indicating that a phantom resource has been removed from
@@ -83,7 +83,7 @@ public interface IResourceDelta extends IAdaptable {
 	 *
 	 * @see IResourceDelta#getKind()
 	 */
-	public static final int REMOVED_PHANTOM = 0x10;
+	int REMOVED_PHANTOM = 0x10;
 
 	/**
 	 * The bit mask which describes all possible delta kinds,
@@ -91,7 +91,7 @@ public interface IResourceDelta extends IAdaptable {
 	 *
 	 * @see IResourceDelta#getKind()
 	 */
-	public static final int ALL_WITH_PHANTOMS = CHANGED | ADDED | REMOVED | ADDED_PHANTOM | REMOVED_PHANTOM;
+	int ALL_WITH_PHANTOMS = CHANGED | ADDED | REMOVED | ADDED_PHANTOM | REMOVED_PHANTOM;
 
 	/*====================================================================
 	 * Constants which describe resource changes:
@@ -102,7 +102,7 @@ public interface IResourceDelta extends IAdaptable {
 	 *
 	 * @see IResourceDelta#getFlags()
 	 */
-	public static final int CONTENT = 0x100;
+	int CONTENT = 0x100;
 
 	/**
 	 * Change constant (bit mask) indicating that the resource was moved from another location.
@@ -110,7 +110,7 @@ public interface IResourceDelta extends IAdaptable {
 	 *
 	 * @see IResourceDelta#getFlags()
 	 */
-	public static final int MOVED_FROM = 0x1000;
+	int MOVED_FROM = 0x1000;
 
 	/**
 	 * Change constant (bit mask) indicating that the resource was moved to another location.
@@ -118,7 +118,7 @@ public interface IResourceDelta extends IAdaptable {
 	 *
 	 * @see IResourceDelta#getFlags()
 	 */
-	public static final int MOVED_TO = 0x2000;
+	int MOVED_TO = 0x2000;
 
 	/**
 	 * Change constant (bit mask) indicating that the resource was copied from another location.
@@ -128,7 +128,7 @@ public interface IResourceDelta extends IAdaptable {
 	 * @see IResourceDelta#getFlags()
 	 * @since 3.2
 	 */
-	public static final int COPIED_FROM = 0x800;
+	int COPIED_FROM = 0x800;
 	/**
 	 * Change constant (bit mask) indicating that the resource was opened or closed.
 	 * This flag is also set when the project did not exist in the "before" state.
@@ -137,14 +137,14 @@ public interface IResourceDelta extends IAdaptable {
 	 *
 	 * @see IResourceDelta#getFlags()
 	 */
-	public static final int OPEN = 0x4000;
+	int OPEN = 0x4000;
 
 	/**
 	 * Change constant (bit mask) indicating that the type of the resource has changed.
 	 *
 	 * @see IResourceDelta#getFlags()
 	 */
-	public static final int TYPE = 0x8000;
+	int TYPE = 0x8000;
 
 	/**
 	 * Change constant (bit mask) indicating that the resource's sync status has changed.
@@ -152,7 +152,7 @@ public interface IResourceDelta extends IAdaptable {
 	 *
 	 * @see IResourceDelta#getFlags()
 	 */
-	public static final int SYNC = 0x10000;
+	int SYNC = 0x10000;
 
 	/**
 	 * Change constant (bit mask) indicating that the resource's markers have changed.
@@ -160,7 +160,7 @@ public interface IResourceDelta extends IAdaptable {
 	 *
 	 * @see IResourceDelta#getFlags()
 	 */
-	public static final int MARKERS = 0x20000;
+	int MARKERS = 0x20000;
 
 	/**
 	 * Change constant (bit mask) indicating that the resource has been
@@ -169,14 +169,14 @@ public interface IResourceDelta extends IAdaptable {
 	 *
 	 * @see IResourceDelta#getFlags()
 	 */
-	public static final int REPLACED = 0x40000;
+	int REPLACED = 0x40000;
 
 	/**
 	 * Change constant (bit mask) indicating that a project's description has changed.
 	 *
 	 * @see IResourceDelta#getFlags()
 	 */
-	public static final int DESCRIPTION = 0x80000;
+	int DESCRIPTION = 0x80000;
 
 	/**
 	 * Change constant (bit mask) indicating that the encoding of the resource has changed.
@@ -184,7 +184,7 @@ public interface IResourceDelta extends IAdaptable {
 	 * @see IResourceDelta#getFlags()
 	 * @since 3.0
 	 */
-	public static final int ENCODING = 0x100000;
+	int ENCODING = 0x100000;
 
 	/**
 	 * Change constant (bit mask) indicating that the underlying file or folder of the linked resource has been added or removed.
@@ -192,7 +192,7 @@ public interface IResourceDelta extends IAdaptable {
 	 * @see IResourceDelta#getFlags()
 	 * @since 3.4
 	 */
-	public static final int LOCAL_CHANGED = 0x200000;
+	int LOCAL_CHANGED = 0x200000;
 
 	/**
 	 * Change constant (bit mask) indicating that the derived flag of the resource has changed.
@@ -200,7 +200,7 @@ public interface IResourceDelta extends IAdaptable {
 	 * @see IResourceDelta#getFlags()
 	 * @since 3.6
 	 */
-	public static final int DERIVED_CHANGED = 0x400000;
+	int DERIVED_CHANGED = 0x400000;
 
 	/**
 	 * Accepts the given visitor.
@@ -221,7 +221,7 @@ public interface IResourceDelta extends IAdaptable {
 	 * @exception CoreException if the visitor failed with this exception.
 	 * @see IResourceDeltaVisitor#visit(IResourceDelta)
 	 */
-	public void accept(IResourceDeltaVisitor visitor) throws CoreException;
+	void accept(IResourceDeltaVisitor visitor) throws CoreException;
 
 	/**
 	 * Accepts the given visitor.
@@ -246,7 +246,7 @@ public interface IResourceDelta extends IAdaptable {
 	 * @see IResource#isPhantom()
 	 * @see IResourceDeltaVisitor#visit(IResourceDelta)
 	 */
-	public void accept(IResourceDeltaVisitor visitor, boolean includePhantoms) throws CoreException;
+	void accept(IResourceDeltaVisitor visitor, boolean includePhantoms) throws CoreException;
 
 	/**
 	 * Accepts the given visitor.
@@ -286,7 +286,7 @@ public interface IResourceDelta extends IAdaptable {
 	 * @see IResourceDeltaVisitor#visit(IResourceDelta)
 	 * @since 2.0
 	 */
-	public void accept(IResourceDeltaVisitor visitor, int memberFlags) throws CoreException;
+	void accept(IResourceDeltaVisitor visitor, int memberFlags) throws CoreException;
 
 	/**
 	 * Finds and returns the descendent delta identified by the given path in
@@ -305,7 +305,7 @@ public interface IResourceDelta extends IAdaptable {
 	 * 		descendent exists in the delta
 	 * @since 2.0
 	 */
-	public IResourceDelta findMember(IPath path);
+	IResourceDelta findMember(IPath path);
 
 	/**
 	 * Returns resource deltas for all children of this resource
@@ -326,7 +326,7 @@ public interface IResourceDelta extends IAdaptable {
 	 * @see IResourceDelta#CHANGED
 	 * @see #getAffectedChildren(int,int)
 	 */
-	public IResourceDelta[] getAffectedChildren();
+	IResourceDelta[] getAffectedChildren();
 
 	/**
 	 * Returns resource deltas for all children of this resource
@@ -352,7 +352,7 @@ public interface IResourceDelta extends IAdaptable {
 	 * @see IResourceDelta#ALL_WITH_PHANTOMS
 	 * @see #getAffectedChildren(int,int)
 	 */
-	public IResourceDelta[] getAffectedChildren(int kindMask);
+	IResourceDelta[] getAffectedChildren(int kindMask);
 
 	/**
 	 * Returns resource deltas for all children of this resource
@@ -397,7 +397,7 @@ public interface IResourceDelta extends IAdaptable {
 	 * @see IContainer#INCLUDE_HIDDEN
 	 * @since 2.0
 	 */
-	public IResourceDelta[] getAffectedChildren(int kindMask, int memberFlags);
+	IResourceDelta[] getAffectedChildren(int kindMask, int memberFlags);
 
 	/**
 	 * Returns flags which describe in more detail how a resource has been affected.
@@ -487,7 +487,7 @@ public interface IResourceDelta extends IAdaptable {
 	 * @see #getMovedToPath()
 	 * @see IResource#move(IPath, int, IProgressMonitor)
 	 */
-	public int getFlags();
+	int getFlags();
 
 	/**
 	 * Returns the full, absolute path of this resource delta.
@@ -498,7 +498,7 @@ public interface IResourceDelta extends IAdaptable {
 	 * @see IResource#getFullPath()
 	 * @see #getProjectRelativePath()
 	 */
-	public IPath getFullPath();
+	IPath getFullPath();
 
 	/**
 	 * Returns the kind of this resource delta.
@@ -515,7 +515,7 @@ public interface IResourceDelta extends IAdaptable {
 	 * @see IResourceDelta#ADDED_PHANTOM
 	 * @see IResourceDelta#REMOVED_PHANTOM
 	 */
-	public int getKind();
+	int getKind();
 
 	/**
 	 * Returns the changes to markers on the corresponding resource.
@@ -523,7 +523,7 @@ public interface IResourceDelta extends IAdaptable {
 	 *
 	 * @return the marker deltas
 	 */
-	public IMarkerDelta[] getMarkerDeltas();
+	IMarkerDelta[] getMarkerDeltas();
 
 	/**
 	 * Returns the full path (in the "before" state) from which this resource
@@ -538,7 +538,7 @@ public interface IResourceDelta extends IAdaptable {
 	 * @see #getFullPath()
 	 * @see #getFlags()
 	 */
-	public IPath getMovedFromPath();
+	IPath getMovedFromPath();
 
 	/**
 	 * Returns the full path (in the "after" state) to which this resource
@@ -553,7 +553,7 @@ public interface IResourceDelta extends IAdaptable {
 	 * @see #getFullPath()
 	 * @see #getFlags()
 	 */
-	public IPath getMovedToPath();
+	IPath getMovedToPath();
 
 	/**
 	 * Returns the project-relative path of this resource delta.
@@ -568,7 +568,7 @@ public interface IResourceDelta extends IAdaptable {
 	 * @see #getFullPath()
 	 * @see Path#EMPTY
 	 */
-	public IPath getProjectRelativePath();
+	IPath getProjectRelativePath();
 
 	/**
 	 * Returns a handle for the affected resource.
@@ -590,5 +590,5 @@ public interface IResourceDelta extends IAdaptable {
 	 *
 	 * @return the affected resource (handle)
 	 */
-	public IResource getResource();
+	IResource getResource();
 }

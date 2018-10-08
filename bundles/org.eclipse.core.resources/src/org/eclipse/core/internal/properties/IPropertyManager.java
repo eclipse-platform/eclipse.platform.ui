@@ -26,13 +26,13 @@ public interface IPropertyManager extends IManager {
 	 * @param target The resource to close the property store for
 	 * @exception CoreException
 	 */
-	public void closePropertyStore(IResource target) throws CoreException;
+	void closePropertyStore(IResource target) throws CoreException;
 
 	/**
 	 * Copy all the properties of one resource to another. Both resources
 	 * must have a property store available.
 	 */
-	public void copy(IResource source, IResource destination, int depth) throws CoreException;
+	void copy(IResource source, IResource destination, int depth) throws CoreException;
 
 	/**
 	 * Deletes all properties for the given resource and its children.
@@ -43,12 +43,12 @@ public interface IPropertyManager extends IManager {
 	 * @param depth
 	 * @exception CoreException
 	 */
-	public void deleteProperties(IResource target, int depth) throws CoreException;
+	void deleteProperties(IResource target, int depth) throws CoreException;
 
 	/**
 	 * The resource is being deleted so permanently erase its properties.
 	 */
-	public void deleteResource(IResource target) throws CoreException;
+	void deleteResource(IResource target) throws CoreException;
 
 	/**
 	 * Returns the value of the identified property on the given resource as
@@ -58,7 +58,7 @@ public interface IPropertyManager extends IManager {
 	 * of the declaring plug-in (e.g. <code>"com.example.plugin"</code>).
 	 * </p>
 	 */
-	public String getProperty(IResource target, QualifiedName name) throws CoreException;
+	String getProperty(IResource target, QualifiedName name) throws CoreException;
 
 	/**
 	 * Sets the value of the identified property on the given resource.
@@ -67,12 +67,12 @@ public interface IPropertyManager extends IManager {
 	 * of the declaring plug-in (e.g. <code>"com.example.plugin"</code>).
 	 * </p>
 	 */
-	public void setProperty(IResource target, QualifiedName name, String value) throws CoreException;
+	void setProperty(IResource target, QualifiedName name, String value) throws CoreException;
 
 	/**
 	 * Returns a map (<propertyKey: QualifiedName -> value: String>) containing
 	 * all properties defined for the given resource. In case no properties can
 	 * be found, returns an empty map.
 	 */
-	public Map<QualifiedName, String> getProperties(IResource resource) throws CoreException;
+	Map<QualifiedName, String> getProperties(IResource resource) throws CoreException;
 }

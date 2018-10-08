@@ -45,5 +45,5 @@ public interface IResourceVisitor {
 	 *		be visited; <code>false</code> if they should be skipped
 	 * @exception CoreException if the visit fails for some reason.
 	 */
-	public boolean visit(IResource resource) throws CoreException;
+	boolean visit(IResource resource) throws CoreException;
 }

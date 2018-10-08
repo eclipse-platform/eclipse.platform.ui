@@ -35,7 +35,7 @@ public interface IProjectDescription {
 	 *
 	 * @since 2.0
 	 */
-	public static final String DESCRIPTION_FILE_NAME = ".project"; //$NON-NLS-1$
+	String DESCRIPTION_FILE_NAME = ".project"; //$NON-NLS-1$
 
 	/**
 	 * Returns the build configurations referenced by the specified configuration for the
@@ -58,7 +58,7 @@ public interface IProjectDescription {
 	 * @see #setBuildConfigReferences(String, IBuildConfiguration[])
 	 * @since 3.7
 	 */
-	public IBuildConfiguration[] getBuildConfigReferences(String configName);
+	IBuildConfiguration[] getBuildConfigReferences(String configName);
 
 	/**
 	 * Returns the list of build commands to run when building the described project.
@@ -66,14 +66,14 @@ public interface IProjectDescription {
 	 *
 	 * @return the list of build commands for the described project
 	 */
-	public ICommand[] getBuildSpec();
+	ICommand[] getBuildSpec();
 
 	/**
 	 * Returns the descriptive comment for the described project.
 	 *
 	 * @return the comment for the described project
 	 */
-	public String getComment();
+	String getComment();
 
 	/**
 	 * Returns the dynamic project references for the described project. Dynamic
@@ -95,7 +95,7 @@ public interface IProjectDescription {
 	 * @return a list of projects
 	 * @since 3.0
 	 */
-	public IProject[] getDynamicReferences();
+	IProject[] getDynamicReferences();
 
 	/**
 	 * Returns the  local file system location for the described project.  The path
@@ -108,8 +108,7 @@ public interface IProjectDescription {
 	 * @deprecated Since 3.2, project locations are not necessarily in the local file
 	 * system.  The more general {@link #getLocationURI()} method should be used instead.
 	 */
-	@Deprecated
-	public IPath getLocation();
+	@Deprecated IPath getLocation();
 
 	/**
 	 * Returns the location URI for the described project.  <code>null</code> is
@@ -119,14 +118,14 @@ public interface IProjectDescription {
 	 * @since 3.2
 	 * @see #setLocationURI(URI)
 	 */
-	public URI getLocationURI();
+	URI getLocationURI();
 
 	/**
 	 * Returns the name of the described project.
 	 *
 	 * @return the name of the described project
 	 */
-	public String getName();
+	String getName();
 
 	/**
 	 * Returns the list of natures associated with the described project.
@@ -135,7 +134,7 @@ public interface IProjectDescription {
 	 * @return the list of natures for the described project
 	 * @see #setNatureIds(String[])
 	 */
-	public String[] getNatureIds();
+	String[] getNatureIds();
 
 	/**
 	 * Returns the projects referenced by the described project. These references
@@ -152,7 +151,7 @@ public interface IProjectDescription {
 	 * @see #getBuildConfigReferences(String)
 	 * @return a list of projects
 	 */
-	public IProject[] getReferencedProjects();
+	IProject[] getReferencedProjects();
 
 	/**
 	 * Returns whether the project nature specified by the given
@@ -161,7 +160,7 @@ public interface IProjectDescription {
 	 * @param natureId the nature extension identifier
 	 * @return <code>true</code> if the described project has the given nature
 	 */
-	public boolean hasNature(String natureId);
+	boolean hasNature(String natureId);
 
 	/**
 	 * Returns a new build command.
@@ -174,7 +173,7 @@ public interface IProjectDescription {
 	 * @return a new command
 	 * @see #setBuildSpec(ICommand[])
 	 */
-	public ICommand newCommand();
+	ICommand newCommand();
 
 	/**
 	 * Sets the active configuration for the described project.
@@ -186,7 +185,7 @@ public interface IProjectDescription {
 	 * @param configName the configuration to set as the active or default
 	 * @since 3.7
 	 */
-	public void setActiveBuildConfig(String configName);
+	void setActiveBuildConfig(String configName);
 
 	/**
 	 * Sets the build configurations for the described project.
@@ -211,7 +210,7 @@ public interface IProjectDescription {
 	 * @see IProjectDescription#setActiveBuildConfig(String)
 	 * @since 3.7
 	 */
-	public void setBuildConfigs(String[] configNames);
+	void setBuildConfigs(String[] configNames);
 
 	/**
 	 * Sets the build configurations referenced by the specified configuration.
@@ -241,7 +240,7 @@ public interface IProjectDescription {
 	 * @param references list of build configuration references
 	 * @since 3.7
 	 */
-	public void setBuildConfigReferences(String configName, IBuildConfiguration[] references);
+	void setBuildConfigReferences(String configName, IBuildConfiguration[] references);
 
 	/**
 	 * Sets the list of build command to run when building the described project.
@@ -255,7 +254,7 @@ public interface IProjectDescription {
 	 * @see #getBuildSpec()
 	 * @see #newCommand()
 	 */
-	public void setBuildSpec(ICommand[] buildSpec);
+	void setBuildSpec(ICommand[] buildSpec);
 
 	/**
 	 * Sets the comment for the described project.
@@ -268,7 +267,7 @@ public interface IProjectDescription {
 	 * @see IProject#setDescription(IProjectDescription, int, IProgressMonitor)
 	 * @see #getComment()
 	 */
-	public void setComment(String comment);
+	void setComment(String comment);
 
 	/**
 	 * Sets the dynamic project references for the described project.
@@ -285,8 +284,7 @@ public interface IProjectDescription {
 	 * @param projects list of projects
 	 * @since 3.0
 	 */
-	@Deprecated
-	public void setDynamicReferences(IProject[] projects);
+	@Deprecated void setDynamicReferences(IProject[] projects);
 
 	/**
 	 * Sets the local file system location for the described project.  The path must
@@ -311,7 +309,7 @@ public interface IProjectDescription {
 	 * @param location the location for the described project or <code>null</code>
 	 * @see #getLocation()
 	 */
-	public void setLocation(IPath location);
+	void setLocation(IPath location);
 
 	/**
 	 * Sets the location for the described project.
@@ -336,7 +334,7 @@ public interface IProjectDescription {
 	 * @see IWorkspace#validateProjectLocationURI(IProject, URI)
 	 * @since 3.2
 	 */
-	public void setLocationURI(URI location);
+	void setLocationURI(URI location);
 
 	/**
 	 * Sets the name of the described project.
@@ -355,7 +353,7 @@ public interface IProjectDescription {
 	 * @see IProject#setDescription(IProjectDescription, int, IProgressMonitor)
 	 * @see #getName()
 	 */
-	public void setName(String projectName);
+	void setName(String projectName);
 
 	/**
 	 * Sets the list of natures associated with the described project.
@@ -370,7 +368,7 @@ public interface IProjectDescription {
 	 * @see IProject#setDescription(IProjectDescription, int, IProgressMonitor)
 	 * @see #getNatureIds()
 	 */
-	public void setNatureIds(String[] natures);
+	void setNatureIds(String[] natures);
 
 	/**
 	 * Sets the referenced projects, ignoring any duplicates.
@@ -386,5 +384,5 @@ public interface IProjectDescription {
 	 * @see #setBuildConfigReferences(String, IBuildConfiguration[])
 	 * @see #getReferencedProjects()
 	 */
-	public void setReferencedProjects(IProject[] projects);
+	void setReferencedProjects(IProject[] projects);
 }

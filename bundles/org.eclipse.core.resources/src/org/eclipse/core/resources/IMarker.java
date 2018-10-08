@@ -89,35 +89,35 @@ public interface IMarker extends IAdaptable {
 	 *
 	 * @see #getType()
 	 */
-	public static final String MARKER = ResourcesPlugin.PI_RESOURCES + ".marker"; //$NON-NLS-1$
+	String MARKER = ResourcesPlugin.PI_RESOURCES + ".marker"; //$NON-NLS-1$
 
 	/**
 	 * Task marker type.
 	 *
 	 * @see #getType()
 	 */
-	public static final String TASK = ResourcesPlugin.PI_RESOURCES + ".taskmarker"; //$NON-NLS-1$
+	String TASK = ResourcesPlugin.PI_RESOURCES + ".taskmarker"; //$NON-NLS-1$
 
 	/**
 	 * Problem marker type.
 	 *
 	 * @see #getType()
 	 */
-	public static final String PROBLEM = ResourcesPlugin.PI_RESOURCES + ".problemmarker"; //$NON-NLS-1$
+	String PROBLEM = ResourcesPlugin.PI_RESOURCES + ".problemmarker"; //$NON-NLS-1$
 
 	/**
 	 * Text marker type.
 	 *
 	 * @see #getType()
 	 */
-	public static final String TEXT = ResourcesPlugin.PI_RESOURCES + ".textmarker"; //$NON-NLS-1$
+	String TEXT = ResourcesPlugin.PI_RESOURCES + ".textmarker"; //$NON-NLS-1$
 
 	/**
 	 * Bookmark marker type.
 	 *
 	 * @see #getType()
 	 */
-	public static final String BOOKMARK = ResourcesPlugin.PI_RESOURCES + ".bookmark"; //$NON-NLS-1$
+	String BOOKMARK = ResourcesPlugin.PI_RESOURCES + ".bookmark"; //$NON-NLS-1$
 
 	/*====================================================================
 	 * Marker attributes:
@@ -132,7 +132,7 @@ public interface IMarker extends IAdaptable {
 	 * @see #SEVERITY_INFO
 	 * @see #getAttribute(String, int)
 	 */
-	public static final String SEVERITY = "severity"; //$NON-NLS-1$
+	String SEVERITY = "severity"; //$NON-NLS-1$
 
 	/**
 	 * Message marker attribute.  A localized string describing the nature
@@ -141,7 +141,7 @@ public interface IMarker extends IAdaptable {
 	 *
 	 * @see #getAttribute(String, String)
 	 */
-	public static final String MESSAGE = "message"; //$NON-NLS-1$
+	String MESSAGE = "message"; //$NON-NLS-1$
 
 	/**
 	 * Location marker attribute.  The location is a human-readable (localized) string which
@@ -151,7 +151,7 @@ public interface IMarker extends IAdaptable {
 	 *
 	 * @see #getAttribute(String, String)
 	 */
-	public static final String LOCATION = "location"; //$NON-NLS-1$
+	String LOCATION = "location"; //$NON-NLS-1$
 
 	/**
 	 * Priority marker attribute.  A number from the set of high, normal and low
@@ -162,7 +162,7 @@ public interface IMarker extends IAdaptable {
 	 * @see #PRIORITY_LOW
 	 * @see #getAttribute(String, int)
 	 */
-	public static final String PRIORITY = "priority"; //$NON-NLS-1$
+	String PRIORITY = "priority"; //$NON-NLS-1$
 
 	/**
 	 * Done marker attribute.  A boolean value indicating whether
@@ -170,7 +170,7 @@ public interface IMarker extends IAdaptable {
 	 *
 	 * @see #getAttribute(String, String)
 	 */
-	public static final String DONE = "done"; //$NON-NLS-1$
+	String DONE = "done"; //$NON-NLS-1$
 
 	/**
 	 * Character start marker attribute.  An integer value indicating where a text
@@ -178,7 +178,7 @@ public interface IMarker extends IAdaptable {
 	 *
 	 * @see #getAttribute(String, String)
 	 */
-	public static final String CHAR_START = "charStart"; //$NON-NLS-1$
+	String CHAR_START = "charStart"; //$NON-NLS-1$
 
 	/**
 	 * Character end marker attribute.  An integer value indicating where a text
@@ -186,7 +186,7 @@ public interface IMarker extends IAdaptable {
 	 *
 	 * @see #getAttribute(String, String)
 	 */
-	public static final String CHAR_END = "charEnd"; //$NON-NLS-1$
+	String CHAR_END = "charEnd"; //$NON-NLS-1$
 
 	/**
 	 * Line number marker attribute.  An integer value indicating the line number
@@ -194,7 +194,7 @@ public interface IMarker extends IAdaptable {
 	 *
 	 * @see #getAttribute(String, String)
 	 */
-	public static final String LINE_NUMBER = "lineNumber"; //$NON-NLS-1$
+	String LINE_NUMBER = "lineNumber"; //$NON-NLS-1$
 
 	/**
 	 * Transient marker attribute.  A boolean value indicating whether the
@@ -204,7 +204,7 @@ public interface IMarker extends IAdaptable {
 	 * @see #getAttribute(String, String)
 	 * @since 2.1
 	 */
-	public static final String TRANSIENT = "transient"; //$NON-NLS-1$
+	String TRANSIENT = "transient"; //$NON-NLS-1$
 
 	/**
 	 * User editable marker attribute.  A boolean value indicating whether a
@@ -217,7 +217,7 @@ public interface IMarker extends IAdaptable {
 	 * @see #getAttribute(String, String)
 	 * @since 2.1
 	 */
-	public static final String USER_EDITABLE = "userEditable"; //$NON-NLS-1$
+	String USER_EDITABLE = "userEditable"; //$NON-NLS-1$
 
 	/**
 	 * Source id attribute.  A string attribute that can be used by tools that
@@ -230,7 +230,7 @@ public interface IMarker extends IAdaptable {
 	 * @see #getAttribute(String, String)
 	 * @since 3.3
 	 */
-	public static final String SOURCE_ID = "sourceId"; //$NON-NLS-1$
+	String SOURCE_ID = "sourceId"; //$NON-NLS-1$
 
 	/*====================================================================
 	 * Marker attributes values:
@@ -241,42 +241,42 @@ public interface IMarker extends IAdaptable {
 	 *
 	 * @see #getAttribute(String, int)
 	 */
-	public static final int PRIORITY_HIGH = 2;
+	int PRIORITY_HIGH = 2;
 
 	/**
 	 * Normal priority constant (value 1).
 	 *
 	 * @see #getAttribute(String, int)
 	 */
-	public static final int PRIORITY_NORMAL = 1;
+	int PRIORITY_NORMAL = 1;
 
 	/**
 	 * Low priority constant (value 0).
 	 *
 	 * @see #getAttribute(String, int)
 	 */
-	public static final int PRIORITY_LOW = 0;
+	int PRIORITY_LOW = 0;
 
 	/**
 	 * Error severity constant (value 2) indicating an error state.
 	 *
 	 * @see #getAttribute(String, int)
 	 */
-	public static final int SEVERITY_ERROR = 2;
+	int SEVERITY_ERROR = 2;
 
 	/**
 	 * Warning severity constant (value 1) indicating a warning.
 	 *
 	 * @see #getAttribute(String, int)
 	 */
-	public static final int SEVERITY_WARNING = 1;
+	int SEVERITY_WARNING = 1;
 
 	/**
 	 * Info severity constant (value 0) indicating information only.
 	 *
 	 * @see #getAttribute(String, int)
 	 */
-	public static final int SEVERITY_INFO = 0;
+	int SEVERITY_INFO = 0;
 
 	/**
 	 * Deletes this marker from its associated resource.  This method has no
@@ -289,7 +289,7 @@ public interface IMarker extends IAdaptable {
 	 * </ul>
 	 * @see IResourceRuleFactory#markerRule(IResource)
 	 */
-	public void delete() throws CoreException;
+	void delete() throws CoreException;
 
 	/**
 	 * Tests this marker for equality with the given object.
@@ -298,8 +298,7 @@ public interface IMarker extends IAdaptable {
 	 * @param object the other object
 	 * @return an indication of whether the objects are equal
 	 */
-	@Override
-	public boolean equals(Object object);
+	@Override boolean equals(Object object);
 
 	/**
 	 * Returns whether this marker exists in the workspace.  A marker
@@ -308,7 +307,7 @@ public interface IMarker extends IAdaptable {
 	 * @return <code>true</code> if this marker exists, otherwise
 	 *    <code>false</code>
 	 */
-	public boolean exists();
+	boolean exists();
 
 	/**
 	 * Returns the attribute with the given name.  The result is an instance of one
@@ -323,7 +322,7 @@ public interface IMarker extends IAdaptable {
 	 * <li> This marker does not exist.</li>
 	 * </ul>
 	 */
-	public Object getAttribute(String attributeName) throws CoreException;
+	Object getAttribute(String attributeName) throws CoreException;
 
 	/**
 	 * Returns the integer-valued attribute with the given name.
@@ -334,7 +333,7 @@ public interface IMarker extends IAdaptable {
 	 * @param defaultValue the value to use if no value is found
 	 * @return the value or the default value if no value was found.
 	 */
-	public int getAttribute(String attributeName, int defaultValue);
+	int getAttribute(String attributeName, int defaultValue);
 
 	/**
 	 * Returns the string-valued attribute with the given name.
@@ -345,7 +344,7 @@ public interface IMarker extends IAdaptable {
 	 * @param defaultValue the value to use if no value is found
 	 * @return the value or the default value if no value was found.
 	 */
-	public String getAttribute(String attributeName, String defaultValue);
+	String getAttribute(String attributeName, String defaultValue);
 
 	/**
 	 * Returns the boolean-valued attribute with the given name.
@@ -356,7 +355,7 @@ public interface IMarker extends IAdaptable {
 	 * @param defaultValue the value to use if no value is found
 	 * @return the value or the default value if no value was found.
 	 */
-	public boolean getAttribute(String attributeName, boolean defaultValue);
+	boolean getAttribute(String attributeName, boolean defaultValue);
 
 	/**
 	 * Returns a map with all the attributes for the marker.
@@ -370,7 +369,7 @@ public interface IMarker extends IAdaptable {
 	 * <li> This marker does not exist.</li>
 	 * </ul>
 	 */
-	public Map<String, Object> getAttributes() throws CoreException;
+	Map<String, Object> getAttributes() throws CoreException;
 
 	/**
 	 * Returns the attributes with the given names.  The result is an an array
@@ -386,7 +385,7 @@ public interface IMarker extends IAdaptable {
 	 * <li> This marker does not exist.</li>
 	 * </ul>
 	 */
-	public Object[] getAttributes(String[] attributeNames) throws CoreException;
+	Object[] getAttributes(String[] attributeNames) throws CoreException;
 
 	/**
 	 * Returns the time at which this marker was created.
@@ -400,7 +399,7 @@ public interface IMarker extends IAdaptable {
 	 * </ul>
 	 * @since 2.1
 	 */
-	public long getCreationTime() throws CoreException;
+	long getCreationTime() throws CoreException;
 
 	/**
 	 * Returns the id of the marker.  The id of a marker is unique
@@ -410,14 +409,14 @@ public interface IMarker extends IAdaptable {
 	 * @return the id of the marker
 	 * @see IResource#findMarker(long)
 	 */
-	public long getId();
+	long getId();
 
 	/**
 	 * Returns the resource with which this marker is associated.
 	 *
 	 * @return the resource with which this marker is associated
 	 */
-	public IResource getResource();
+	IResource getResource();
 
 	/**
 	 * Returns the type of this marker. The returned marker type will not be
@@ -429,7 +428,7 @@ public interface IMarker extends IAdaptable {
 	 * <li> This marker does not exist.</li>
 	 * </ul>
 	 */
-	public String getType() throws CoreException;
+	String getType() throws CoreException;
 
 	/**
 	 * Returns whether the type of this marker is considered to be a sub-type of
@@ -442,7 +441,7 @@ public interface IMarker extends IAdaptable {
 	 * <li> This marker does not exist.</li>
 	 * </ul>
 	 */
-	public boolean isSubtypeOf(String superType) throws CoreException;
+	boolean isSubtypeOf(String superType) throws CoreException;
 
 	/**
 	 * Sets the integer-valued attribute with the given name.
@@ -462,7 +461,7 @@ public interface IMarker extends IAdaptable {
 	 * </ul>
 	 * @see IResourceRuleFactory#markerRule(IResource)
 	 */
-	public void setAttribute(String attributeName, int value) throws CoreException;
+	void setAttribute(String attributeName, int value) throws CoreException;
 
 	/**
 	 * Sets the attribute with the given name.  The value must be <code>null</code> or
@@ -492,7 +491,7 @@ public interface IMarker extends IAdaptable {
 	 * </ul>
 	 * @see IResourceRuleFactory#markerRule(IResource)
 	 */
-	public void setAttribute(String attributeName, Object value) throws CoreException;
+	void setAttribute(String attributeName, Object value) throws CoreException;
 
 	/**
 	 * Sets the boolean-valued attribute with the given name.
@@ -512,7 +511,7 @@ public interface IMarker extends IAdaptable {
 	 * </ul>
 	 * @see IResourceRuleFactory#markerRule(IResource)
 	 */
-	public void setAttribute(String attributeName, boolean value) throws CoreException;
+	void setAttribute(String attributeName, boolean value) throws CoreException;
 
 	/**
 	 * Sets the given attribute key-value pairs on this marker.
@@ -544,7 +543,7 @@ public interface IMarker extends IAdaptable {
 	 * </ul>
 	 * @see IResourceRuleFactory#markerRule(IResource)
 	 */
-	public void setAttributes(String[] attributeNames, Object[] values) throws CoreException;
+	void setAttributes(String[] attributeNames, Object[] values) throws CoreException;
 
 	/**
 	 * Sets the attributes for this marker to be the ones contained in the
@@ -577,5 +576,5 @@ public interface IMarker extends IAdaptable {
 	 * </ul>
 	 * @see IResourceRuleFactory#markerRule(IResource)
 	 */
-	public void setAttributes(Map<String, ? extends Object> attributes) throws CoreException;
+	void setAttributes(Map<String, ? extends Object> attributes) throws CoreException;
 }

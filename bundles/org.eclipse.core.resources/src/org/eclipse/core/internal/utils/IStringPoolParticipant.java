@@ -31,5 +31,5 @@ public interface IStringPoolParticipant {
 	 * Instructs this participant to share its strings in the provided
 	 * pool.
 	 */
-	public void shareStrings(StringPool pool);
+	void shareStrings(StringPool pool);
 }

@@ -24,5 +24,5 @@ public interface IElementComparator extends IComparator {
 	/**
 	 * The kinds of changes
 	 */
-	public int K_NO_CHANGE = 0;
+	int K_NO_CHANGE = 0;
 }

@@ -33,7 +33,7 @@ public interface ISavedState {
 	 * @see #lookup(IPath)
 	 * @see ISaveContext#map(IPath, IPath)
 	 */
-	public IPath[] getFiles();
+	IPath[] getFiles();
 
 	/**
 	 * Returns the save number for the save participant.
@@ -43,7 +43,7 @@ public interface ISavedState {
 	 *
 	 * @return the save number
 	 */
-	public int getSaveNumber();
+	int getSaveNumber();
 
 	/**
 	 * Returns the mapped location associated with the given path
@@ -53,7 +53,7 @@ public interface ISavedState {
 	 * @see #getFiles()
 	 * @see ISaveContext#map(IPath, IPath)
 	 */
-	public IPath lookup(IPath file);
+	IPath lookup(IPath file);
 
 	/**
 	 * Used to receive notification of changes that might have happened
@@ -86,5 +86,5 @@ public interface ISavedState {
 	 * @see ISaveContext#needDelta()
 	 * @see IResourceChangeListener
 	 */
-	public void processResourceChangeEvents(IResourceChangeListener listener);
+	void processResourceChangeEvents(IResourceChangeListener listener);
 }

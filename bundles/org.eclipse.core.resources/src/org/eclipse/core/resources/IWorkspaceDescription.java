@@ -37,7 +37,7 @@ public interface IWorkspaceDescription {
 	 * @see #setBuildOrder(String[])
 	 * @see ResourcesPlugin#PREF_BUILD_ORDER
 	 */
-	public String[] getBuildOrder();
+	String[] getBuildOrder();
 
 	/**
 	 * Returns the maximum length of time, in milliseconds, a file state should be
@@ -50,7 +50,7 @@ public interface IWorkspaceDescription {
 	 * @see #isApplyFileStatePolicy()
 	 * @see ResourcesPlugin#PREF_FILE_STATE_LONGEVITY
 	 */
-	public long getFileStateLongevity();
+	long getFileStateLongevity();
 
 	/**
 	 * Returns the maximum number of times that the workspace should rebuild when
@@ -62,7 +62,7 @@ public interface IWorkspaceDescription {
 	 * @see ResourcesPlugin#PREF_MAX_BUILD_ITERATIONS
 	 * @since 2.1
 	 */
-	public int getMaxBuildIterations();
+	int getMaxBuildIterations();
 
 	/**
 	 * Returns the maximum number of states per file that can be stored in the local history.
@@ -74,7 +74,7 @@ public interface IWorkspaceDescription {
 	 * @see #isApplyFileStatePolicy()
 	 * @see ResourcesPlugin#PREF_MAX_FILE_STATES
 	 */
-	public int getMaxFileStates();
+	int getMaxFileStates();
 
 	/**
 	 * Returns the maximum permitted size of a file, in bytes, to be stored in the
@@ -86,7 +86,7 @@ public interface IWorkspaceDescription {
 	 * @see #isApplyFileStatePolicy()
 	 * @see ResourcesPlugin#PREF_MAX_FILE_STATE_SIZE
 	 */
-	public long getMaxFileStateSize();
+	long getMaxFileStateSize();
 
 	/**
 	 * Returns whether file states are discarded according to the policy specified by
@@ -102,7 +102,7 @@ public interface IWorkspaceDescription {
 	 * @see ResourcesPlugin#PREF_APPLY_FILE_STATE_POLICY
 	 * @since 3.6
 	 */
-	public boolean isApplyFileStatePolicy();
+	boolean isApplyFileStatePolicy();
 
 	/**
 	 * Returns the interval between automatic workspace snapshots.
@@ -112,7 +112,7 @@ public interface IWorkspaceDescription {
 	 * @see ResourcesPlugin#PREF_SNAPSHOT_INTERVAL
 	 * @since 2.0
 	 */
-	public long getSnapshotInterval();
+	long getSnapshotInterval();
 
 	/**
 	 * Returns whether this workspace performs autobuilds.
@@ -122,7 +122,7 @@ public interface IWorkspaceDescription {
 	 * @see #setAutoBuilding(boolean)
 	 * @see ResourcesPlugin#PREF_AUTO_BUILDING
 	 */
-	public boolean isAutoBuilding();
+	boolean isAutoBuilding();
 
 	/**
 	 * Records whether this workspace performs autobuilds.
@@ -141,7 +141,7 @@ public interface IWorkspaceDescription {
 	 * @see #isAutoBuilding()
 	 * @see ResourcesPlugin#PREF_AUTO_BUILDING
 	 */
-	public void setAutoBuilding(boolean value);
+	void setAutoBuilding(boolean value);
 
 	/**
 	 * Sets the order in which projects in the workspace should be built.
@@ -160,7 +160,7 @@ public interface IWorkspaceDescription {
 	 * @see #getBuildOrder()
 	 * @see ResourcesPlugin#PREF_BUILD_ORDER
 	 */
-	public void setBuildOrder(String[] value);
+	void setBuildOrder(String[] value);
 
 	/**
 	 * Sets the maximum time, in milliseconds, a file state should be kept in the
@@ -178,7 +178,7 @@ public interface IWorkspaceDescription {
 	 * @see #setApplyFileStatePolicy(boolean)
 	 * @see ResourcesPlugin#PREF_FILE_STATE_LONGEVITY
 	 */
-	public void setFileStateLongevity(long time);
+	void setFileStateLongevity(long time);
 
 	/**
 	 * Sets the maximum number of times that the workspace should rebuild when
@@ -195,7 +195,7 @@ public interface IWorkspaceDescription {
 	 * @see ResourcesPlugin#PREF_MAX_BUILD_ITERATIONS
 	 * @since 2.1
 	 */
-	public void setMaxBuildIterations(int number);
+	void setMaxBuildIterations(int number);
 
 	/**
 	 * Sets the maximum number of states per file that can be stored in the local history.
@@ -213,7 +213,7 @@ public interface IWorkspaceDescription {
 	 * @see #setApplyFileStatePolicy(boolean)
 	 * @see ResourcesPlugin#PREF_MAX_FILE_STATES
 	 */
-	public void setMaxFileStates(int number);
+	void setMaxFileStates(int number);
 
 	/**
 	 * Sets the maximum permitted size of a file, in bytes, to be stored in the
@@ -230,7 +230,7 @@ public interface IWorkspaceDescription {
 	 * @see #setApplyFileStatePolicy(boolean)
 	 * @see ResourcesPlugin#PREF_MAX_FILE_STATE_SIZE
 	 */
-	public void setMaxFileStateSize(long size);
+	void setMaxFileStateSize(long size);
 
 	/**
 	 * Sets whether file states are discarded according to the policy specified by
@@ -251,7 +251,7 @@ public interface IWorkspaceDescription {
 	 * @see ResourcesPlugin#PREF_APPLY_FILE_STATE_POLICY
 	 * @since 3.6
 	 */
-	public void setApplyFileStatePolicy(boolean apply);
+	void setApplyFileStatePolicy(boolean apply);
 
 	/**
 	 * Sets the interval between automatic workspace snapshots.  The new interval
@@ -267,18 +267,18 @@ public interface IWorkspaceDescription {
 	 * @see ResourcesPlugin#PREF_SNAPSHOT_INTERVAL
 	 * @since 2.0
 	 */
-	public void setSnapshotInterval(long delay);
+	void setSnapshotInterval(long delay);
 
 	/**
 	 * Set the max number of builds that can happen concurrently during workspace build.
 	 * @param n max number of jobs simultaneously allocated to workspace build. 1 means no job (current thread).
 	 * @since 3.13
 	 */
-	public void setMaxConcurrentBuilds(int n);
+	void setMaxConcurrentBuilds(int n);
 
 	/**
 	 * @return the max number of builds that can happen concurrently during workspace build. 1 means no job (current thread).
 	 * @since 3.13
 	 */
-	public int getMaxConcurrentBuilds();
+	int getMaxConcurrentBuilds();
 }

@@ -47,7 +47,7 @@ public interface IContainer extends IResource, IAdaptable {
 	 * @see IResource#isPhantom()
 	 * @since 2.0
 	 */
-	public static final int INCLUDE_PHANTOMS = 1;
+	int INCLUDE_PHANTOMS = 1;
 
 	/**
 	 * Member constant (bit mask value 2) indicating that team private members are
@@ -56,7 +56,7 @@ public interface IContainer extends IResource, IAdaptable {
 	 * @see IResource#isTeamPrivateMember()
 	 * @since 2.0
 	 */
-	public static final int INCLUDE_TEAM_PRIVATE_MEMBERS = 2;
+	int INCLUDE_TEAM_PRIVATE_MEMBERS = 2;
 
 	/**
 	 * Member constant (bit mask value 4) indicating that derived resources
@@ -65,7 +65,7 @@ public interface IContainer extends IResource, IAdaptable {
 	 * @see IResource#isDerived()
 	 * @since 3.1
 	 */
-	public static final int EXCLUDE_DERIVED = 4;
+	int EXCLUDE_DERIVED = 4;
 
 	/**
 	 * Member constant (bit mask value 8) indicating that hidden resources
@@ -74,7 +74,7 @@ public interface IContainer extends IResource, IAdaptable {
 	 * @see IResource#isHidden()
 	 * @since 3.4
 	 */
-	public static final int INCLUDE_HIDDEN = 8;
+	int INCLUDE_HIDDEN = 8;
 
 	/**
 	 * Member constant (bit mask value 16) indicating that a resource
@@ -84,7 +84,7 @@ public interface IContainer extends IResource, IAdaptable {
 	 * @see IResource#accept(IResourceVisitor, int, int)
 	 * @since 3.8
 	 */
-	public static final int DO_NOT_CHECK_EXISTENCE = 16;
+	int DO_NOT_CHECK_EXISTENCE = 16;
 
 	/**
 	 * Returns whether a resource of some type with the given path
@@ -98,7 +98,7 @@ public interface IContainer extends IResource, IAdaptable {
 	 *     exists relative to this resource, and <code>false</code> otherwise
 	 * @see IResource#exists()
 	 */
-	public boolean exists(IPath path);
+	boolean exists(IPath path);
 
 	/**
 	 * Finds and returns the member resource identified by the given path in
@@ -128,7 +128,7 @@ public interface IContainer extends IResource, IAdaptable {
 	 * @see IPath#isValidPath(String)
 	 * @see IPath#isValidSegment(String)
 	 */
-	public IResource findMember(String path);
+	IResource findMember(String path);
 
 	/**
 	 * Finds and returns the member resource identified by the given path in
@@ -168,7 +168,7 @@ public interface IContainer extends IResource, IAdaptable {
 	 * @see IPath#isValidPath(String)
 	 * @see IPath#isValidSegment(String)
 	 */
-	public IResource findMember(String path, boolean includePhantoms);
+	IResource findMember(String path, boolean includePhantoms);
 
 	/**
 	 * Finds and returns the member resource identified by the given path in
@@ -191,7 +191,7 @@ public interface IContainer extends IResource, IAdaptable {
 	 * @return the member resource, or <code>null</code> if no such
 	 * 		resource exists
 	 */
-	public IResource findMember(IPath path);
+	IResource findMember(IPath path);
 
 	/**
 	 * Finds and returns the member resource identified by the given path in
@@ -225,7 +225,7 @@ public interface IContainer extends IResource, IAdaptable {
 	 * @see #members(boolean)
 	 * @see IResource#isPhantom()
 	 */
-	public IResource findMember(IPath path, boolean includePhantoms);
+	IResource findMember(IPath path, boolean includePhantoms);
 
 	/**
 	 * Returns the default charset for resources in this container.
@@ -246,7 +246,7 @@ public interface IContainer extends IResource, IAdaptable {
 	 * @see IFile#getCharset()
 	 * @since 3.0
 	 */
-	public String getDefaultCharset() throws CoreException;
+	String getDefaultCharset() throws CoreException;
 
 	/**
 	 * Returns the default charset for resources in this container.
@@ -276,7 +276,7 @@ public interface IContainer extends IResource, IAdaptable {
 	 * @see IFile#getCharset()
 	 * @since 3.0
 	 */
-	public String getDefaultCharset(boolean checkImplicit) throws CoreException;
+	String getDefaultCharset(boolean checkImplicit) throws CoreException;
 
 	/**
 	 * Returns a handle to the file identified by the given path in this
@@ -299,7 +299,7 @@ public interface IContainer extends IResource, IAdaptable {
 	 * @return the (handle of the) member file
 	 * @see #getFolder(IPath)
 	 */
-	public IFile getFile(IPath path);
+	IFile getFile(IPath path);
 
 	/**
 	 * Returns a handle to the folder identified by the given path in this
@@ -322,7 +322,7 @@ public interface IContainer extends IResource, IAdaptable {
 	 * @return the (handle of the) member folder
 	 * @see #getFile(IPath)
 	 */
-	public IFolder getFolder(IPath path);
+	IFolder getFolder(IPath path);
 
 	/**
 	 * Returns a list of existing member resources (projects, folders and files)
@@ -345,7 +345,7 @@ public interface IContainer extends IResource, IAdaptable {
 	 * @see #findMember(IPath)
 	 * @see IResource#isAccessible()
 	 */
-	public IResource[] members() throws CoreException;
+	IResource[] members() throws CoreException;
 
 	/**
 	 * Returns a list of all member resources (projects, folders and files)
@@ -374,7 +374,7 @@ public interface IContainer extends IResource, IAdaptable {
 	 * @see IResource#exists()
 	 * @see IResource#isPhantom()
 	 */
-	public IResource[] members(boolean includePhantoms) throws CoreException;
+	IResource[] members(boolean includePhantoms) throws CoreException;
 
 	/**
 	 * Returns a list of all member resources (projects, folders and files)
@@ -418,7 +418,7 @@ public interface IContainer extends IResource, IAdaptable {
 	 * @see IResource#exists()
 	 * @since 2.0
 	 */
-	public IResource[] members(int memberFlags) throws CoreException;
+	IResource[] members(int memberFlags) throws CoreException;
 
 	/**
 	 * Returns a list of recently deleted files inside this container that
@@ -455,7 +455,7 @@ public interface IContainer extends IResource, IAdaptable {
 	 * @see IFile#getHistory(IProgressMonitor)
 	 * @since 2.0
 	 */
-	public IFile[] findDeletedMembersWithHistory(int depth, IProgressMonitor monitor) throws CoreException;
+	IFile[] findDeletedMembersWithHistory(int depth, IProgressMonitor monitor) throws CoreException;
 
 	/**
 	 * Sets the default charset for this container. Passing a value of <code>null</code>
@@ -472,8 +472,7 @@ public interface IContainer extends IResource, IAdaptable {
 	 * @deprecated Replaced by {@link #setDefaultCharset(String, IProgressMonitor)} which
 	 * 	is a workspace operation and reports changes in resource deltas.
 	 */
-	@Deprecated
-	public void setDefaultCharset(String charset) throws CoreException;
+	@Deprecated void setDefaultCharset(String charset) throws CoreException;
 
 	/**
 	 * Sets the default charset for this container. Passing a value of <code>null</code>
@@ -504,7 +503,7 @@ public interface IContainer extends IResource, IAdaptable {
 	 * @see IResourceRuleFactory#charsetRule(IResource)
 	 * @since 3.0
 	 */
-	public void setDefaultCharset(String charset, IProgressMonitor monitor) throws CoreException;
+	void setDefaultCharset(String charset, IProgressMonitor monitor) throws CoreException;
 
 	/**
 	 * Adds a new filter to this container. Filters restrict the set of files and directories
@@ -546,7 +545,7 @@ public interface IContainer extends IResource, IAdaptable {
 	 *
 	 * @since 3.6
 	 */
-	public IResourceFilterDescription createFilter(int type, FileInfoMatcherDescription matcherDescription, int updateFlags, IProgressMonitor monitor) throws CoreException;
+	IResourceFilterDescription createFilter(int type, FileInfoMatcherDescription matcherDescription, int updateFlags, IProgressMonitor monitor) throws CoreException;
 
 	/**
 	 * Retrieve all filters on this container.
@@ -561,5 +560,5 @@ public interface IContainer extends IResource, IAdaptable {
 	 * @see IResourceFilterDescription#delete(int, IProgressMonitor)
 	 * @since 3.6
 	 */
-	public IResourceFilterDescription[] getFilters() throws CoreException;
+	IResourceFilterDescription[] getFilters() throws CoreException;
 }

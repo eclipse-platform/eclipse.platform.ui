@@ -28,7 +28,7 @@ public interface IElementInfoFlattener {
 	 * @return the object associated with the given elementPath,
 	 *   which may be <code>null</code>.
 	 */
-	public Object readElement(IPath elementPath, DataInput input) throws IOException;
+	Object readElement(IPath elementPath, DataInput input) throws IOException;
 
 	/**
 	 * Writes the given element to the output stream.
@@ -38,5 +38,5 @@ public interface IElementInfoFlattener {
 	 * @param element the object associated with the given path,
 	 *   which may be <code>null</code>.
 	 */
-	public void writeElement(IPath elementPath, Object element, DataOutput output) throws IOException;
+	void writeElement(IPath elementPath, Object element, DataOutput output) throws IOException;
 }

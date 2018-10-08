@@ -36,5 +36,5 @@ public interface IRefreshMonitor {
 	 * <code>null</code> if this monitor should stop monitoring all resources
 	 * it is currently monitoring
 	 */
-	public void unmonitor(IResource resource);
+	void unmonitor(IResource resource);
 }

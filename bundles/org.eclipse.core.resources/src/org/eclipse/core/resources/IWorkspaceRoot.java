@@ -76,7 +76,7 @@ public interface IWorkspaceRoot extends IContainer, IAdaptable {
 	 * Cancelation can occur even if no progress monitor is provided.
 	 * @see IResource#delete(int,IProgressMonitor)
 	 */
-	public void delete(boolean deleteContent, boolean force, IProgressMonitor monitor) throws CoreException;
+	void delete(boolean deleteContent, boolean force, IProgressMonitor monitor) throws CoreException;
 
 	/**
 	 * Returns the handles to all the resources (workspace root, project,
@@ -115,8 +115,7 @@ public interface IWorkspaceRoot extends IContainer, IAdaptable {
 	 * @since 2.1
 	 * @deprecated use {@link #findContainersForLocationURI(URI)} instead
 	 */
-	@Deprecated
-	public IContainer[] findContainersForLocation(IPath location);
+	@Deprecated IContainer[] findContainersForLocation(IPath location);
 
 	/**
 	 * Returns the handles to all the resources (workspace root, project,
@@ -158,7 +157,7 @@ public interface IWorkspaceRoot extends IContainer, IAdaptable {
 	 *         if none
 	 * @since 3.2
 	 */
-	public IContainer[] findContainersForLocationURI(URI location);
+	IContainer[] findContainersForLocationURI(URI location);
 
 	/**
 	 * Returns the handles to all the resources (workspace root, project,
@@ -192,7 +191,7 @@ public interface IWorkspaceRoot extends IContainer, IAdaptable {
 	 *         none
 	 * @since 3.5
 	 */
-	public IContainer[] findContainersForLocationURI(URI location, int memberFlags);
+	IContainer[] findContainersForLocationURI(URI location, int memberFlags);
 
 	/**
 	 * Returns the handles of all files that are mapped to the given path in the
@@ -217,8 +216,7 @@ public interface IWorkspaceRoot extends IContainer, IAdaptable {
 	 * @since 2.1
 	 * @deprecated use {@link #findFilesForLocationURI(URI)} instead
 	 */
-	@Deprecated
-	public IFile[] findFilesForLocation(IPath location);
+	@Deprecated IFile[] findFilesForLocation(IPath location);
 
 	/**
 	 * Returns the handles of all files that are mapped to the given URI.
@@ -245,7 +243,7 @@ public interface IWorkspaceRoot extends IContainer, IAdaptable {
 	 *         none
 	 * @since 3.2
 	 */
-	public IFile[] findFilesForLocationURI(URI location);
+	IFile[] findFilesForLocationURI(URI location);
 
 	/**
 	 * Returns the handles of all files that are mapped to the given URI.
@@ -280,7 +278,7 @@ public interface IWorkspaceRoot extends IContainer, IAdaptable {
 	 *         none
 	 * @since 3.5
 	 */
-	public IFile[] findFilesForLocationURI(URI location, int memberFlags);
+	IFile[] findFilesForLocationURI(URI location, int memberFlags);
 
 	/**
 	 * Returns a handle to the  workspace root, project or folder
@@ -319,7 +317,7 @@ public interface IWorkspaceRoot extends IContainer, IAdaptable {
 	 * @return the corresponding project or folder in the workspace,
 	 *    or <code>null</code> if none
 	 */
-	public IContainer getContainerForLocation(IPath location);
+	IContainer getContainerForLocation(IPath location);
 
 	/**
 	 * Returns a handle to the file which is mapped to the given path
@@ -351,7 +349,7 @@ public interface IWorkspaceRoot extends IContainer, IAdaptable {
 	 * @return the corresponding file in the workspace,
 	 *    or <code>null</code> if none
 	 */
-	public IFile getFileForLocation(IPath location);
+	IFile getFileForLocation(IPath location);
 
 	/**
 	 * Returns a handle to the project resource with the given name
@@ -370,7 +368,7 @@ public interface IWorkspaceRoot extends IContainer, IAdaptable {
 	 * @return a project resource handle
 	 * @see #getProjects()
 	 */
-	public IProject getProject(String name);
+	IProject getProject(String name);
 
 	/**
 	 * Returns the collection of projects which exist under this root.
@@ -383,7 +381,7 @@ public interface IWorkspaceRoot extends IContainer, IAdaptable {
 	 * @see #getProject(String)
 	 * @see IResource#isHidden()
 	 */
-	public IProject[] getProjects();
+	IProject[] getProjects();
 
 	/**
 	 * Returns the collection of projects which exist under this root.
@@ -401,5 +399,5 @@ public interface IWorkspaceRoot extends IContainer, IAdaptable {
 	 * @see IResource#isHidden()
 	 * @since 3.4
 	 */
-	public IProject[] getProjects(int memberFlags);
+	IProject[] getProjects(int memberFlags);
 }

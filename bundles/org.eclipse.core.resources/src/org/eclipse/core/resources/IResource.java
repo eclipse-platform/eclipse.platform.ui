@@ -86,7 +86,7 @@ public interface IResource extends IAdaptable, ISchedulingRule {
 	 * @see IResource#getType()
 	 * @see IFile
 	 */
-	public static final int FILE = 0x1;
+	int FILE = 0x1;
 
 	/**
 	 * Type constant (bit mask value 2) which identifies folder resources.
@@ -94,7 +94,7 @@ public interface IResource extends IAdaptable, ISchedulingRule {
 	 * @see IResource#getType()
 	 * @see IFolder
 	 */
-	public static final int FOLDER = 0x2;
+	int FOLDER = 0x2;
 
 	/**
 	 * Type constant (bit mask value 4) which identifies project resources.
@@ -102,7 +102,7 @@ public interface IResource extends IAdaptable, ISchedulingRule {
 	 * @see IResource#getType()
 	 * @see IProject
 	 */
-	public static final int PROJECT = 0x4;
+	int PROJECT = 0x4;
 
 	/**
 	 * Type constant (bit mask value 8) which identifies the root resource.
@@ -110,7 +110,7 @@ public interface IResource extends IAdaptable, ISchedulingRule {
 	 * @see IResource#getType()
 	 * @see IWorkspaceRoot
 	 */
-	public static final int ROOT = 0x8;
+	int ROOT = 0x8;
 
 	/*====================================================================
 	 * Constants defining the depth of resource tree traversal:
@@ -119,18 +119,18 @@ public interface IResource extends IAdaptable, ISchedulingRule {
 	/**
 	 * Depth constant (value 0) indicating this resource, but not any of its members.
 	 */
-	public static final int DEPTH_ZERO = 0;
+	int DEPTH_ZERO = 0;
 
 	/**
 	 * Depth constant (value 1) indicating this resource and its direct members.
 	 */
-	public static final int DEPTH_ONE = 1;
+	int DEPTH_ONE = 1;
 
 	/**
 	 * Depth constant (value 2) indicating this resource and its direct and
 	 * indirect members at any depth.
 	 */
-	public static final int DEPTH_INFINITE = 2;
+	int DEPTH_INFINITE = 2;
 
 	/*====================================================================
 	 * Constants for update flags for delete, move, copy, open, etc.:
@@ -143,7 +143,7 @@ public interface IResource extends IAdaptable, ISchedulingRule {
 	 *
 	 * @since 2.0
 	 */
-	public static final int FORCE = 0x1;
+	int FORCE = 0x1;
 
 	/**
 	 * Update flag constant (bit mask value 2) indicating that the operation
@@ -153,7 +153,7 @@ public interface IResource extends IAdaptable, ISchedulingRule {
 	 * @see IFile#getHistory(IProgressMonitor)
 	 * @since 2.0
 	 */
-	public static final int KEEP_HISTORY = 0x2;
+	int KEEP_HISTORY = 0x2;
 
 	/**
 	 * Update flag constant (bit mask value 4) indicating that the operation
@@ -171,7 +171,7 @@ public interface IResource extends IAdaptable, ISchedulingRule {
 	 * @see #NEVER_DELETE_PROJECT_CONTENT
 	 * @since 2.0
 	 */
-	public static final int ALWAYS_DELETE_PROJECT_CONTENT = 0x4;
+	int ALWAYS_DELETE_PROJECT_CONTENT = 0x4;
 
 	/**
 	 * Update flag constant (bit mask value 8) indicating that the operation
@@ -189,7 +189,7 @@ public interface IResource extends IAdaptable, ISchedulingRule {
 	 * @see #ALWAYS_DELETE_PROJECT_CONTENT
 	 * @since 2.0
 	 */
-	public static final int NEVER_DELETE_PROJECT_CONTENT = 0x8;
+	int NEVER_DELETE_PROJECT_CONTENT = 0x8;
 
 	/**
 	 * Update flag constant (bit mask value 16) indicating that the link creation
@@ -199,7 +199,7 @@ public interface IResource extends IAdaptable, ISchedulingRule {
 	 * @see IFile#createLink(IPath, int, IProgressMonitor)
 	 * @since 2.1
 	 */
-	public static final int ALLOW_MISSING_LOCAL = 0x10;
+	int ALLOW_MISSING_LOCAL = 0x10;
 
 	/**
 	 * Update flag constant (bit mask value 32) indicating that a copy or move
@@ -210,7 +210,7 @@ public interface IResource extends IAdaptable, ISchedulingRule {
 	 * @see #move(IPath, int, IProgressMonitor)
 	 * @since 2.1
 	 */
-	public static final int SHALLOW = 0x20;
+	int SHALLOW = 0x20;
 
 	/**
 	 * Update flag constant (bit mask value 64) indicating that setting the
@@ -220,7 +220,7 @@ public interface IResource extends IAdaptable, ISchedulingRule {
 	 * @see IProject#setDescription(IProjectDescription, int, IProgressMonitor)
 	 * @since 3.0
 	 */
-	public static final int AVOID_NATURE_CONFIG = 0x40;
+	int AVOID_NATURE_CONFIG = 0x40;
 
 	/**
 	 * Update flag constant (bit mask value 128) indicating that opening a
@@ -231,7 +231,7 @@ public interface IResource extends IAdaptable, ISchedulingRule {
 	 * @see IFolder#createLink(URI, int, IProgressMonitor)
 	 * @since 3.1
 	 */
-	public static final int BACKGROUND_REFRESH = 0x80;
+	int BACKGROUND_REFRESH = 0x80;
 
 	/**
 	 * Update flag constant (bit mask value 256) indicating that a
@@ -243,7 +243,7 @@ public interface IResource extends IAdaptable, ISchedulingRule {
 	 * @see IResource#move(IProjectDescription, int, IProgressMonitor)
 	 * @since 3.2
 	 */
-	public static final int REPLACE = 0x100;
+	int REPLACE = 0x100;
 
 	/**
 	 * Update flag constant (bit mask value 512) indicating that ancestor
@@ -252,7 +252,7 @@ public interface IResource extends IAdaptable, ISchedulingRule {
 	 * @see IResource#isLinked(int)
 	 * @since 3.2
 	 */
-	public static final int CHECK_ANCESTORS = 0x200;
+	int CHECK_ANCESTORS = 0x200;
 
 	/**
 	 * Update flag constant (bit mask value 0x400) indicating that a
@@ -263,7 +263,7 @@ public interface IResource extends IAdaptable, ISchedulingRule {
 	 * @see IResource#setDerived(boolean)
 	 * @since 3.2
 	 */
-	public static final int DERIVED = 0x400;
+	int DERIVED = 0x400;
 
 	/**
 	 * Update flag constant (bit mask value 0x800) indicating that a
@@ -275,7 +275,7 @@ public interface IResource extends IAdaptable, ISchedulingRule {
 	 * @see IResource#setTeamPrivateMember(boolean)
 	 * @since 3.2
 	 */
-	public static final int TEAM_PRIVATE = 0x800;
+	int TEAM_PRIVATE = 0x800;
 
 	/**
 	 * Update flag constant (bit mask value 0x1000) indicating that a
@@ -283,7 +283,7 @@ public interface IResource extends IAdaptable, ISchedulingRule {
 	 *
 	 * @since 3.4
 	 */
-	public static final int HIDDEN = 0x1000;
+	int HIDDEN = 0x1000;
 
 	/**
 	 * Update flag constant (bit mask value 0x2000) indicating that a
@@ -292,7 +292,7 @@ public interface IResource extends IAdaptable, ISchedulingRule {
 	 * @see IFolder#create(int, boolean, IProgressMonitor)
 	 * @since 3.6
 	 */
-	public static final int VIRTUAL = 0x2000;
+	int VIRTUAL = 0x2000;
 
 	/*====================================================================
 	 * Other constants:
@@ -304,7 +304,7 @@ public interface IResource extends IAdaptable, ISchedulingRule {
 	 *
 	 * @see #getModificationStamp()
 	 */
-	public static final int NULL_STAMP = -1;
+	int NULL_STAMP = -1;
 
 	/**
 	 * General purpose zero-valued bit mask constant. Useful whenever you need to
@@ -320,7 +320,7 @@ public interface IResource extends IAdaptable, ISchedulingRule {
 	 *
 	 * @since 2.0
 	 */
-	public static final int NONE = 0;
+	int NONE = 0;
 
 	/**
 	 * Accepts the given visitor for an optimized traversal.
@@ -398,7 +398,7 @@ public interface IResource extends IAdaptable, ISchedulingRule {
 	 * @see IResourceProxyVisitor#visit(IResourceProxy)
 	 * @since 2.1
 	 */
-	public void accept(IResourceProxyVisitor visitor, int memberFlags) throws CoreException;
+	void accept(IResourceProxyVisitor visitor, int memberFlags) throws CoreException;
 
 	/**
 	 * Accepts the given visitor for an optimized traversal.
@@ -478,7 +478,7 @@ public interface IResource extends IAdaptable, ISchedulingRule {
 	 * @see IResourceProxyVisitor#visit(IResourceProxy)
 	 * @since 3.8
 	 */
-	public void accept(IResourceProxyVisitor visitor, int depth, int memberFlags) throws CoreException;
+	void accept(IResourceProxyVisitor visitor, int depth, int memberFlags) throws CoreException;
 
 	/**
 	 * Accepts the given visitor.
@@ -499,7 +499,7 @@ public interface IResource extends IAdaptable, ISchedulingRule {
 	 * @see IResourceVisitor#visit(IResource)
 	 * @see #accept(IResourceVisitor,int,int)
 	 */
-	public void accept(IResourceVisitor visitor) throws CoreException;
+	void accept(IResourceVisitor visitor) throws CoreException;
 
 	/**
 	 * Accepts the given visitor.
@@ -538,7 +538,7 @@ public interface IResource extends IAdaptable, ISchedulingRule {
 	 * @see IResource#DEPTH_INFINITE
 	 * @see IResource#accept(IResourceVisitor,int,int)
 	 */
-	public void accept(IResourceVisitor visitor, int depth, boolean includePhantoms) throws CoreException;
+	void accept(IResourceVisitor visitor, int depth, boolean includePhantoms) throws CoreException;
 
 	/**
 	 * Accepts the given visitor.
@@ -620,7 +620,7 @@ public interface IResource extends IAdaptable, ISchedulingRule {
 	 * @see IResourceVisitor#visit(IResource)
 	 * @since 2.0
 	 */
-	public void accept(IResourceVisitor visitor, int depth, int memberFlags) throws CoreException;
+	void accept(IResourceVisitor visitor, int depth, int memberFlags) throws CoreException;
 
 	/**
 	 * Removes the local history of this resource and its descendents.
@@ -631,7 +631,7 @@ public interface IResource extends IAdaptable, ISchedulingRule {
 	 * @param monitor a progress monitor, or <code>null</code> if progress
 	 *    reporting and cancellation are not desired
 	 */
-	public void clearHistory(IProgressMonitor monitor) throws CoreException;
+	void clearHistory(IProgressMonitor monitor) throws CoreException;
 
 	/**
 	 * Makes a copy of this resource at the given path.
@@ -677,7 +677,7 @@ public interface IResource extends IAdaptable, ISchedulingRule {
 	 * @exception OperationCanceledException if the operation is canceled.
 	 * Cancellation can occur even if no progress monitor is provided.
 	 */
-	public void copy(IPath destination, boolean force, IProgressMonitor monitor) throws CoreException;
+	void copy(IPath destination, boolean force, IProgressMonitor monitor) throws CoreException;
 
 	/**
 	 * Makes a copy of this resource at the given path. The resource's
@@ -807,7 +807,7 @@ public interface IResource extends IAdaptable, ISchedulingRule {
 	 * @see IResourceRuleFactory#copyRule(IResource, IResource)
 	 * @since 2.0
 	 */
-	public void copy(IPath destination, int updateFlags, IProgressMonitor monitor) throws CoreException;
+	void copy(IPath destination, int updateFlags, IProgressMonitor monitor) throws CoreException;
 
 	/**
 	 * Makes a copy of this project using the given project description.
@@ -848,7 +848,7 @@ public interface IResource extends IAdaptable, ISchedulingRule {
 	 * @exception OperationCanceledException if the operation is canceled.
 	 * Cancellation can occur even if no progress monitor is provided.
 	 */
-	public void copy(IProjectDescription description, boolean force, IProgressMonitor monitor) throws CoreException;
+	void copy(IProjectDescription description, boolean force, IProgressMonitor monitor) throws CoreException;
 
 	/**
 	 * Makes a copy of this project using the given project description.
@@ -928,7 +928,7 @@ public interface IResource extends IAdaptable, ISchedulingRule {
 	 * @see IResourceRuleFactory#copyRule(IResource, IResource)
 	 * @since 2.0
 	 */
-	public void copy(IProjectDescription description, int updateFlags, IProgressMonitor monitor) throws CoreException;
+	void copy(IProjectDescription description, int updateFlags, IProgressMonitor monitor) throws CoreException;
 
 	/**
 	 * Creates and returns the marker with the specified type on this resource.
@@ -945,7 +945,7 @@ public interface IResource extends IAdaptable, ISchedulingRule {
 	 * </ul>
 	 * @see IResourceRuleFactory#markerRule(IResource)
 	 */
-	public IMarker createMarker(String type) throws CoreException;
+	IMarker createMarker(String type) throws CoreException;
 
 	/**
 	 * Creates a resource proxy representing the current state of this resource.
@@ -958,7 +958,7 @@ public interface IResource extends IAdaptable, ISchedulingRule {
 	 * @return A proxy representing this resource
 	 * @since 3.2
 	 */
-	public IResourceProxy createProxy();
+	IResourceProxy createProxy();
 
 	/**
 	 * Deletes this resource from the workspace.
@@ -994,7 +994,7 @@ public interface IResource extends IAdaptable, ISchedulingRule {
 	 *
 	 * @see IResource#delete(int,IProgressMonitor)
 	 */
-	public void delete(boolean force, IProgressMonitor monitor) throws CoreException;
+	void delete(boolean force, IProgressMonitor monitor) throws CoreException;
 
 	/**
 	 * Deletes this resource from the workspace.
@@ -1101,7 +1101,7 @@ public interface IResource extends IAdaptable, ISchedulingRule {
 	 * @see IResourceRuleFactory#deleteRule(IResource)
 	 * @since 2.0
 	 */
-	public void delete(int updateFlags, IProgressMonitor monitor) throws CoreException;
+	void delete(int updateFlags, IProgressMonitor monitor) throws CoreException;
 
 	/**
 	 * Deletes all markers on this resource of the given type, and,
@@ -1128,7 +1128,7 @@ public interface IResource extends IAdaptable, ISchedulingRule {
 	 * @see IResource#DEPTH_INFINITE
 	 * @see IResourceRuleFactory#markerRule(IResource)
 	 */
-	public void deleteMarkers(String type, boolean includeSubtypes, int depth) throws CoreException;
+	void deleteMarkers(String type, boolean includeSubtypes, int depth) throws CoreException;
 
 	/**
 	 * Compares two objects for equality;
@@ -1142,8 +1142,7 @@ public interface IResource extends IAdaptable, ISchedulingRule {
 	 * @see #getFullPath()
 	 * @see #getWorkspace()
 	 */
-	@Override
-	public boolean equals(Object other);
+	@Override boolean equals(Object other);
 
 	/**
 	 * Returns whether this resource exists in the workspace.
@@ -1174,7 +1173,7 @@ public interface IResource extends IAdaptable, ISchedulingRule {
 	 * @return <code>true</code> if the resource exists, otherwise
 	 *    <code>false</code>
 	 */
-	public boolean exists();
+	boolean exists();
 
 	/**
 	 * Returns the marker with the specified id on this resource,
@@ -1188,7 +1187,7 @@ public interface IResource extends IAdaptable, ISchedulingRule {
 	 * <li> This resource is a project that is not open.</li>
 	 * </ul>
 	 */
-	public IMarker findMarker(long id) throws CoreException;
+	IMarker findMarker(long id) throws CoreException;
 
 	/**
 	 * Returns all markers of the specified type on this resource,
@@ -1210,7 +1209,7 @@ public interface IResource extends IAdaptable, ISchedulingRule {
 	 * @see IResource#DEPTH_ONE
 	 * @see IResource#DEPTH_INFINITE
 	 */
-	public IMarker[] findMarkers(String type, boolean includeSubtypes, int depth) throws CoreException;
+	IMarker[] findMarkers(String type, boolean includeSubtypes, int depth) throws CoreException;
 
 	/**
 	 * Returns the maximum value of the {@link IMarker#SEVERITY} attribute across markers
@@ -1237,7 +1236,7 @@ public interface IResource extends IAdaptable, ISchedulingRule {
 	 * @see IResource#DEPTH_INFINITE
 	 * @since 3.3
 	 */
-	public int findMaxProblemSeverity(String type, boolean includeSubtypes, int depth) throws CoreException;
+	int findMaxProblemSeverity(String type, boolean includeSubtypes, int depth) throws CoreException;
 
 	/**
 	 * Returns the file extension portion of this resource's name,
@@ -1257,7 +1256,7 @@ public interface IResource extends IAdaptable, ISchedulingRule {
 	 * @return a string file extension
 	 * @see #getName()
 	 */
-	public String getFileExtension();
+	String getFileExtension();
 
 	/**
 	 * Returns the full, absolute path of this resource relative to the
@@ -1285,7 +1284,7 @@ public interface IResource extends IAdaptable, ISchedulingRule {
 	 * @see #getProjectRelativePath()
 	 * @see Path#ROOT
 	 */
-	public IPath getFullPath();
+	IPath getFullPath();
 
 	/**
 	 * Returns a cached value of the local time stamp on disk for this resource, or
@@ -1302,7 +1301,7 @@ public interface IResource extends IAdaptable, ISchedulingRule {
 	 * @return a local file system time stamp, or {@link #NULL_STAMP}.
 	 * @since 3.0
 	 */
-	public long getLocalTimeStamp();
+	long getLocalTimeStamp();
 
 	/**
 	 * Returns the absolute path in the local file system to this resource,
@@ -1346,7 +1345,7 @@ public interface IResource extends IAdaptable, ISchedulingRule {
 	 * @see  IProjectDescription#setLocation(IPath)
 	 * @see Platform#getLocation()
 	 */
-	public IPath getLocation();
+	IPath getLocation();
 
 	/**
 	 * Returns the absolute URI of this resource,
@@ -1389,7 +1388,7 @@ public interface IResource extends IAdaptable, ISchedulingRule {
 	 * @see java.net.URI
 	 * @since 3.2
 	 */
-	public URI getLocationURI();
+	URI getLocationURI();
 
 	/**
 	 * Returns a marker handle with the given id on this resource.
@@ -1401,7 +1400,7 @@ public interface IResource extends IAdaptable, ISchedulingRule {
 	 * @return the specified marker handle
 	 * @see IMarker#getId()
 	 */
-	public IMarker getMarker(long id);
+	IMarker getMarker(long id);
 
 	/**
 	 * Returns a non-negative modification stamp, or {@link #NULL_STAMP} if
@@ -1448,7 +1447,7 @@ public interface IResource extends IAdaptable, ISchedulingRule {
 	 * @see IResource#NULL_STAMP
 	 * @see #revertModificationStamp(long)
 	 */
-	public long getModificationStamp();
+	long getModificationStamp();
 
 	/**
 	 * Returns the name of this resource.
@@ -1467,7 +1466,7 @@ public interface IResource extends IAdaptable, ISchedulingRule {
 	 * @see #getFullPath()
 	 * @see #getProjectRelativePath()
 	 */
-	public String getName();
+	String getName();
 
 	/**
 	 * Returns the path variable manager for this resource.
@@ -1476,7 +1475,7 @@ public interface IResource extends IAdaptable, ISchedulingRule {
 	 * @see IPathVariableManager
 	 * @since 3.6
 	 */
-	public IPathVariableManager getPathVariableManager();
+	IPathVariableManager getPathVariableManager();
 
 	/**
 	 * Returns the resource which is the parent of this resource,
@@ -1494,7 +1493,7 @@ public interface IResource extends IAdaptable, ISchedulingRule {
 	 * @return the parent resource of this resource,
 	 *    or <code>null</code> if it has no parent
 	 */
-	public IContainer getParent();
+	IContainer getParent();
 
 	/**
 	 * Returns a copy of the map of this resource's persistent properties.
@@ -1512,7 +1511,7 @@ public interface IResource extends IAdaptable, ISchedulingRule {
 	 * @see #setPersistentProperty(QualifiedName, String)
 	 * @since 3.4
 	 */
-	public Map<QualifiedName, String> getPersistentProperties() throws CoreException;
+	Map<QualifiedName, String> getPersistentProperties() throws CoreException;
 
 	/**
 	 * Returns the value of the persistent property of this resource identified
@@ -1529,7 +1528,7 @@ public interface IResource extends IAdaptable, ISchedulingRule {
 	 * </ul>
 	 * @see #setPersistentProperty(QualifiedName, String)
 	 */
-	public String getPersistentProperty(QualifiedName key) throws CoreException;
+	String getPersistentProperty(QualifiedName key) throws CoreException;
 
 	/**
 	 * Returns the project which contains this resource.
@@ -1546,7 +1545,7 @@ public interface IResource extends IAdaptable, ISchedulingRule {
 	 *
 	 * @return the project handle
 	 */
-	public IProject getProject();
+	IProject getProject();
 
 	/**
 	 * Returns a relative path of this resource with respect to its project.
@@ -1570,7 +1569,7 @@ public interface IResource extends IAdaptable, ISchedulingRule {
 	 * @see #getProject()
 	 * @see Path#EMPTY
 	 */
-	public IPath getProjectRelativePath();
+	IPath getProjectRelativePath();
 
 	/**
 	 * Returns the file system location of this resource, or <code>null</code> if no
@@ -1594,7 +1593,7 @@ public interface IResource extends IAdaptable, ISchedulingRule {
 	 * @see IProjectDescription#getLocation()
 	 * @since 2.1
 	 */
-	public IPath getRawLocation();
+	IPath getRawLocation();
 
 	/**
 	 * Returns the raw location of this resource, or <code>null</code> if no
@@ -1620,7 +1619,7 @@ public interface IResource extends IAdaptable, ISchedulingRule {
 	 * @see IProjectDescription#getLocationURI()
 	 * @since 3.2
 	 */
-	public URI getRawLocationURI();
+	URI getRawLocationURI();
 
 	/**
 	 * Gets this resource's extended attributes from the file system,
@@ -1655,7 +1654,7 @@ public interface IResource extends IAdaptable, ISchedulingRule {
 	 * @see ResourceAttributes
 	 * @since 3.1
 	 */
-	public ResourceAttributes getResourceAttributes();
+	ResourceAttributes getResourceAttributes();
 
 	/**
 	 * Returns a copy of the map of this resource's session properties.
@@ -1673,7 +1672,7 @@ public interface IResource extends IAdaptable, ISchedulingRule {
 	 * @see #setSessionProperty(QualifiedName, Object)
 	 * @since 3.4
 	 */
-	public Map<QualifiedName, Object> getSessionProperties() throws CoreException;
+	Map<QualifiedName, Object> getSessionProperties() throws CoreException;
 
 	/**
 	 * Returns the value of the session property of this resource identified
@@ -1690,7 +1689,7 @@ public interface IResource extends IAdaptable, ISchedulingRule {
 	 * </ul>
 	 * @see #setSessionProperty(QualifiedName, Object)
 	 */
-	public Object getSessionProperty(QualifiedName key) throws CoreException;
+	Object getSessionProperty(QualifiedName key) throws CoreException;
 
 	/**
 	 * Returns the type of this resource.
@@ -1713,7 +1712,7 @@ public interface IResource extends IAdaptable, ISchedulingRule {
 	 * @see #PROJECT
 	 * @see #ROOT
 	 */
-	public int getType();
+	int getType();
 
 	/**
 	 * Returns the workspace which manages this resource.
@@ -1723,7 +1722,7 @@ public interface IResource extends IAdaptable, ISchedulingRule {
 	 *
 	 * @return the workspace
 	 */
-	public IWorkspace getWorkspace();
+	IWorkspace getWorkspace();
 
 	/**
 	 * Returns whether this resource is accessible.  For files and folders,
@@ -1735,7 +1734,7 @@ public interface IResource extends IAdaptable, ISchedulingRule {
 	 * @see #exists()
 	 * @see IProject#isOpen()
 	 */
-	public boolean isAccessible();
+	boolean isAccessible();
 
 	/**
 	 * Returns whether this resource subtree is marked as derived. Returns
@@ -1751,7 +1750,7 @@ public interface IResource extends IAdaptable, ISchedulingRule {
 	 * @see #setDerived(boolean)
 	 * @since 2.0
 	 */
-	public boolean isDerived();
+	boolean isDerived();
 
 	/**
 	 * Returns whether this resource subtree is marked as derived. Returns
@@ -1771,7 +1770,7 @@ public interface IResource extends IAdaptable, ISchedulingRule {
 	 * @see IResource#setDerived(boolean)
 	 * @since 3.4
 	 */
-	public boolean isDerived(int options);
+	boolean isDerived(int options);
 
 	/**
 	 * Returns whether this resource is hidden in the resource tree. Returns
@@ -1785,7 +1784,7 @@ public interface IResource extends IAdaptable, ISchedulingRule {
 	 * @see #setHidden(boolean)
 	 * @since 3.4
 	 */
-	public boolean isHidden();
+	boolean isHidden();
 
 	/**
 	 * Returns whether this resource is hidden in the resource tree. Returns
@@ -1811,7 +1810,7 @@ public interface IResource extends IAdaptable, ISchedulingRule {
 	 * @see #setHidden(boolean)
 	 * @since 3.5
 	 */
-	public boolean isHidden(int options);
+	boolean isHidden(int options);
 
 	/**
 	 * Returns whether this resource has been linked to
@@ -1827,7 +1826,7 @@ public interface IResource extends IAdaptable, ISchedulingRule {
 	 * @see IFolder#createLink(IPath, int, IProgressMonitor)
 	 * @since 2.1
 	 */
-	public boolean isLinked();
+	boolean isLinked();
 
 	/**
 	 * Returns whether this resource is a virtual resource. Returns <code>true</code>
@@ -1842,7 +1841,7 @@ public interface IResource extends IAdaptable, ISchedulingRule {
 	 * @see #VIRTUAL
 	 * @since 3.6
 	 */
-	public boolean isVirtual();
+	boolean isVirtual();
 
 	/**
 	 * Returns <code>true</code> if this resource has been linked to
@@ -1872,7 +1871,7 @@ public interface IResource extends IAdaptable, ISchedulingRule {
 	 * @see IFolder#createLink(IPath, int, IProgressMonitor)
 	 * @since 3.2
 	 */
-	public boolean isLinked(int options);
+	boolean isLinked(int options);
 
 	/**
 	 * Returns whether this resource and its members (to the
@@ -1892,8 +1891,7 @@ public interface IResource extends IAdaptable, ISchedulingRule {
 	 * @deprecated This API is no longer in use.  Note that this API is unrelated
 	 * to whether the resource is in the local file system versus some other file system.
 	 */
-	@Deprecated
-	public boolean isLocal(int depth);
+	@Deprecated boolean isLocal(int depth);
 
 	/**
 	 * Returns whether this resource is a phantom resource.
@@ -1919,7 +1917,7 @@ public interface IResource extends IAdaptable, ISchedulingRule {
 	 * @see IContainer#findMember(IPath, boolean)
 	 * @see ISynchronizer
 	 */
-	public boolean isPhantom();
+	boolean isPhantom();
 
 	/**
 	 * Returns whether this resource is marked as read-only in the file system.
@@ -1928,8 +1926,7 @@ public interface IResource extends IAdaptable, ISchedulingRule {
 	 *		<code>false</code> otherwise
 	 * @deprecated use {@link #getResourceAttributes()}
 	 */
-	@Deprecated
-	public boolean isReadOnly();
+	@Deprecated boolean isReadOnly();
 
 	/**
 	 * Returns whether this resource and its descendents to the given depth
@@ -1964,7 +1961,7 @@ public interface IResource extends IAdaptable, ISchedulingRule {
 	 * @see #refreshLocal(int, IProgressMonitor)
 	 * @since 2.0
 	 */
-	public boolean isSynchronized(int depth);
+	boolean isSynchronized(int depth);
 
 	/**
 	 * Returns whether this resource is a team private member of its parent container.
@@ -1975,7 +1972,7 @@ public interface IResource extends IAdaptable, ISchedulingRule {
 	 * @see #setTeamPrivateMember(boolean)
 	 * @since 2.0
 	 */
-	public boolean isTeamPrivateMember();
+	boolean isTeamPrivateMember();
 
 	/**
 	 * Returns whether this resource is a team private member of its parent
@@ -1998,7 +1995,7 @@ public interface IResource extends IAdaptable, ISchedulingRule {
 	 * @see #setTeamPrivateMember(boolean)
 	 * @since 3.5
 	 */
-	public boolean isTeamPrivateMember(int options);
+	boolean isTeamPrivateMember(int options);
 
 	/**
 	 * Moves this resource so that it is located at the given path.
@@ -2050,7 +2047,7 @@ public interface IResource extends IAdaptable, ISchedulingRule {
 	 * Cancellation can occur even if no progress monitor is provided.
 	 * @see IResourceDelta#getFlags()
 	 */
-	public void move(IPath destination, boolean force, IProgressMonitor monitor) throws CoreException;
+	void move(IPath destination, boolean force, IProgressMonitor monitor) throws CoreException;
 
 	/**
 	 * Moves this resource so that it is located at the given path.
@@ -2180,7 +2177,7 @@ public interface IResource extends IAdaptable, ISchedulingRule {
 	 * @see IResourceRuleFactory#moveRule(IResource, IResource)
 	 * @since  2.0
 	 */
-	public void move(IPath destination, int updateFlags, IProgressMonitor monitor) throws CoreException;
+	void move(IPath destination, int updateFlags, IProgressMonitor monitor) throws CoreException;
 
 	/**
 	 * Renames or relocates this project so that it is the project specified by the given project
@@ -2228,7 +2225,7 @@ public interface IResource extends IAdaptable, ISchedulingRule {
 	 * Cancellation can occur even if no progress monitor is provided.
 	 * @see IResourceDelta#getFlags()
 	 */
-	public void move(IProjectDescription description, boolean force, boolean keepHistory, IProgressMonitor monitor) throws CoreException;
+	void move(IProjectDescription description, boolean force, boolean keepHistory, IProgressMonitor monitor) throws CoreException;
 
 	/**
 	 * Renames or relocates this project so that it is the project specified by the
@@ -2347,7 +2344,7 @@ public interface IResource extends IAdaptable, ISchedulingRule {
 	 * @see IResourceRuleFactory#moveRule(IResource, IResource)
 	 * @since  2.0
 	 */
-	public void move(IProjectDescription description, int updateFlags, IProgressMonitor monitor) throws CoreException;
+	void move(IProjectDescription description, int updateFlags, IProgressMonitor monitor) throws CoreException;
 
 	/**
 	 * Refreshes the resource hierarchy from this resource and its
@@ -2384,7 +2381,7 @@ public interface IResource extends IAdaptable, ISchedulingRule {
 	 * @see IResource#DEPTH_INFINITE
 	 * @see IResourceRuleFactory#refreshRule(IResource)
 	 */
-	public void refreshLocal(int depth, IProgressMonitor monitor) throws CoreException;
+	void refreshLocal(int depth, IProgressMonitor monitor) throws CoreException;
 
 	/**
 	 * Reverts this resource's modification stamp.  This is intended to be used by
@@ -2418,7 +2415,7 @@ public interface IResource extends IAdaptable, ISchedulingRule {
 	 * @see #getModificationStamp()
 	 * @since 3.1
 	 */
-	public void revertModificationStamp(long value) throws CoreException;
+	void revertModificationStamp(long value) throws CoreException;
 
 	/**
 	 * Sets whether this resource subtree is marked as derived.
@@ -2467,8 +2464,7 @@ public interface IResource extends IAdaptable, ISchedulingRule {
 	 * @deprecated Replaced by {@link #setDerived(boolean, IProgressMonitor)} which
 	 * is a workspace operation and reports changes in resource deltas.
 	 */
-	@Deprecated
-	public void setDerived(boolean isDerived) throws CoreException;
+	@Deprecated void setDerived(boolean isDerived) throws CoreException;
 
 	/**
 	 * Sets whether this resource subtree is marked as derived.
@@ -2524,7 +2520,7 @@ public interface IResource extends IAdaptable, ISchedulingRule {
 	 * @see IResourceRuleFactory#derivedRule(IResource)
 	 * @since 3.6
 	 */
-	public void setDerived(boolean isDerived, IProgressMonitor monitor) throws CoreException;
+	void setDerived(boolean isDerived, IProgressMonitor monitor) throws CoreException;
 
 	/**
 	 * Sets whether this resource and its members are hidden in the resource tree.
@@ -2557,7 +2553,7 @@ public interface IResource extends IAdaptable, ISchedulingRule {
 	 * @see #isHidden()
 	 * @since 3.4
 	 */
-	public void setHidden(boolean isHidden) throws CoreException;
+	void setHidden(boolean isHidden) throws CoreException;
 
 	/**
 	 * Set whether or not this resource and its members (to the
@@ -2589,8 +2585,7 @@ public interface IResource extends IAdaptable, ISchedulingRule {
 	 * @deprecated This API is no longer in use.  Note that this API is unrelated
 	 * to whether the resource is in the local file system versus some other file system.
 	 */
-	@Deprecated
-	public void setLocal(boolean flag, int depth, IProgressMonitor monitor) throws CoreException;
+	@Deprecated void setLocal(boolean flag, int depth, IProgressMonitor monitor) throws CoreException;
 
 	/**
 	 * Sets the local time stamp on disk for this resource.  The time must be represented
@@ -2612,7 +2607,7 @@ public interface IResource extends IAdaptable, ISchedulingRule {
 	 * </ul>
 	 * @since 3.0
 	 */
-	public long setLocalTimeStamp(long value) throws CoreException;
+	long setLocalTimeStamp(long value) throws CoreException;
 
 	/**
 	 * Sets the value of the persistent property of this resource identified
@@ -2645,7 +2640,7 @@ public interface IResource extends IAdaptable, ISchedulingRule {
 	 * @see #getPersistentProperty(QualifiedName)
 	 * @see #isLocal(int)
 	 */
-	public void setPersistentProperty(QualifiedName key, String value) throws CoreException;
+	void setPersistentProperty(QualifiedName key, String value) throws CoreException;
 
 	/**
 	 * Sets or unsets this resource as read-only in the file system.
@@ -2654,8 +2649,7 @@ public interface IResource extends IAdaptable, ISchedulingRule {
 	 *		<code>false</code> to unset
 	 * @deprecated use <tt>IResource#setResourceAttributes(ResourceAttributes)</tt>
 	 */
-	@Deprecated
-	public void setReadOnly(boolean readOnly);
+	@Deprecated void setReadOnly(boolean readOnly);
 
 	/**
 	 * Sets this resource with the given extended attributes. This sets the
@@ -2721,7 +2715,7 @@ public interface IResource extends IAdaptable, ISchedulingRule {
 	 * </ul>
 	 * @see #getSessionProperty(QualifiedName)
 	 */
-	public void setSessionProperty(QualifiedName key, Object value) throws CoreException;
+	void setSessionProperty(QualifiedName key, Object value) throws CoreException;
 
 	/**
 	 * Sets whether this resource subtree is a team private member of its parent container.
@@ -2758,7 +2752,7 @@ public interface IResource extends IAdaptable, ISchedulingRule {
 	 * @see #isTeamPrivateMember()
 	 * @since 2.0
 	 */
-	public void setTeamPrivateMember(boolean isTeamPrivate) throws CoreException;
+	void setTeamPrivateMember(boolean isTeamPrivate) throws CoreException;
 
 	/**
 	 * Marks this resource as having changed even though its content
@@ -2789,5 +2783,5 @@ public interface IResource extends IAdaptable, ISchedulingRule {
 	 * @see IResourceDelta#CONTENT
 	 * @see IResourceDelta#DESCRIPTION
 	 */
-	public void touch(IProgressMonitor monitor) throws CoreException;
+	void touch(IProgressMonitor monitor) throws CoreException;
 }

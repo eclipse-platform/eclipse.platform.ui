@@ -28,13 +28,13 @@ import org.eclipse.core.runtime.IPath;
 public interface IPathVariableChangeEvent {
 
 	/** Event type constant (value = 1) that denotes a value change . */
-	public final static int VARIABLE_CHANGED = 1;
+	int VARIABLE_CHANGED = 1;
 
 	/** Event type constant (value = 2) that denotes a variable creation. */
-	public final static int VARIABLE_CREATED = 2;
+	int VARIABLE_CREATED = 2;
 
 	/** Event type constant (value = 3) that denotes a variable deletion. */
-	public final static int VARIABLE_DELETED = 3;
+	int VARIABLE_DELETED = 3;
 
 	/**
 	 * Returns the variable's current value. If the event type is
@@ -45,14 +45,14 @@ public interface IPathVariableChangeEvent {
 	 *
 	 * @return the variable's current value, or <code>null</code>
 	 */
-	public IPath getValue();
+	IPath getValue();
 
 	/**
 	 * Returns the affected variable's name.
 	 *
 	 * @return the affected variable's name
 	 */
-	public String getVariableName();
+	String getVariableName();
 
 	/**
 	 * Returns an object identifying the source of this event.
@@ -60,7 +60,7 @@ public interface IPathVariableChangeEvent {
 	 * @return an object identifying the source of this event
 	 * @see java.util.EventObject
 	 */
-	public Object getSource();
+	Object getSource();
 
 	/**
 	 * Returns the type of event being reported.
@@ -70,6 +70,6 @@ public interface IPathVariableChangeEvent {
 	 * @see #VARIABLE_CREATED
 	 * @see #VARIABLE_DELETED
 	 */
-	public int getType();
+	int getType();
 
 }

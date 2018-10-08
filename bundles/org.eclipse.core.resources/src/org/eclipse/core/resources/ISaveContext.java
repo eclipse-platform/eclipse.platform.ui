@@ -40,21 +40,21 @@ public interface ISaveContext {
 	 *
 	 * @see ISaveContext#getKind()
 	 */
-	public static final int FULL_SAVE = 1;
+	int FULL_SAVE = 1;
 
 	/**
 	 * Type constant which identifies a snapshot.
 	 *
 	 * @see ISaveContext#getKind()
 	 */
-	public static final int SNAPSHOT = 2;
+	int SNAPSHOT = 2;
 
 	/**
 	 * Type constant which identifies a project save.
 	 *
 	 * @see ISaveContext#getKind()
 	 */
-	public static final int PROJECT_SAVE = 3;
+	int PROJECT_SAVE = 3;
 
 	/**
 	 * Returns current files mapped with the <code>ISaveContext.map</code>
@@ -64,7 +64,7 @@ public interface ISaveContext {
 	 *
 	 * @see #map(IPath, IPath)
 	 */
-	public IPath[] getFiles();
+	IPath[] getFiles();
 
 	/**
 	 * Returns the type of this save. The types can be:
@@ -76,7 +76,7 @@ public interface ISaveContext {
 	 *
 	 * @return the type of the current save
 	 */
-	public int getKind();
+	int getKind();
 
 	/**
 	 * Returns the number for the previous save in
@@ -91,7 +91,7 @@ public interface ISaveContext {
 	 *		if never saved before
 	 * @see ISaveParticipant#rollback(ISaveContext)
 	 */
-	public int getPreviousSaveNumber();
+	int getPreviousSaveNumber();
 
 	/**
 	 * If the current save is a project save, this method returns the project
@@ -102,7 +102,7 @@ public interface ISaveContext {
 	 *
 	 * @see #getKind()
 	 */
-	public IProject getProject();
+	IProject getProject();
 
 	/**
 	 * Returns the number for this save. This number is
@@ -116,7 +116,7 @@ public interface ISaveContext {
 	 * @return the save number
 	 * @see ISaveParticipant#saving(ISaveContext)
 	 */
-	public int getSaveNumber();
+	int getSaveNumber();
 
 	/**
 	 * Returns the current location for the given file or
@@ -126,7 +126,7 @@ public interface ISaveContext {
 	 * @see #map(IPath, IPath)
 	 * @see ISavedState#lookup(IPath)
 	 */
-	public IPath lookup(IPath file);
+	IPath lookup(IPath file);
 
 	/**
 	 * Maps the given plug-in file to its real location. This method is intended to be used
@@ -153,7 +153,7 @@ public interface ISaveContext {
 	 * @see #needSaveNumber()
 	 * @see ISavedState#lookup(IPath)
 	 */
-	public void map(IPath file, IPath location);
+	void map(IPath file, IPath location);
 
 	/**
 	 * Indicates that the saved workspace tree should be remembered so that a delta
@@ -177,7 +177,7 @@ public interface ISaveContext {
 	 * @see IWorkspace#addSaveParticipant(org.eclipse.core.runtime.Plugin, ISaveParticipant)
 	 * @see ISavedState#processResourceChangeEvents(IResourceChangeListener)
 	 */
-	public void needDelta();
+	void needDelta();
 
 	/**
 	 * Indicates that this participant has actively participated in this save.
@@ -196,5 +196,5 @@ public interface ISaveContext {
 	 * @see IWorkspace#addSaveParticipant(org.eclipse.core.runtime.Plugin, ISaveParticipant)
 	 * @see ISavedState#getSaveNumber()
 	 */
-	public void needSaveNumber();
+	void needSaveNumber();
 }

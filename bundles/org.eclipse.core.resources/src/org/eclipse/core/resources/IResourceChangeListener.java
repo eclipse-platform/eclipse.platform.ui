@@ -49,5 +49,5 @@ public interface IResourceChangeListener extends EventListener {
 	 * @param event the resource change event
 	 * @see IResourceDelta
 	 */
-	public void resourceChanged(IResourceChangeEvent event);
+	void resourceChanged(IResourceChangeEvent event);
 }

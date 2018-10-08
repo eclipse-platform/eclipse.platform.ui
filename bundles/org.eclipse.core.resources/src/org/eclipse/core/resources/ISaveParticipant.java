@@ -40,7 +40,7 @@ public interface ISaveParticipant extends EventListener {
 	 *
 	 * @param context the save context object
 	 */
-	public void doneSaving(ISaveContext context);
+	void doneSaving(ISaveContext context);
 
 	/**
 	 * Tells this participant that the workspace is about to be
@@ -58,7 +58,7 @@ public interface ISaveParticipant extends EventListener {
 	 * @exception CoreException if this method fails to snapshot
 	 *   the state of this workspace
 	 */
-	public void prepareToSave(ISaveContext context) throws CoreException;
+	void prepareToSave(ISaveContext context) throws CoreException;
 
 	/**
 	 * Tells this participant to rollback its important state.
@@ -74,7 +74,7 @@ public interface ISaveParticipant extends EventListener {
 	 * @param context the save context object
 	 * @see ISaveContext#getPreviousSaveNumber()
 	 */
-	public void rollback(ISaveContext context);
+	void rollback(ISaveContext context);
 
 	/**
 	 * Tells this participant to save its important state because
@@ -171,5 +171,5 @@ public interface ISaveParticipant extends EventListener {
 	 * @exception CoreException if this method fails
 	 * @see ISaveContext#getSaveNumber()
 	 */
-	public void saving(ISaveContext context) throws CoreException;
+	void saving(ISaveContext context) throws CoreException;
 }

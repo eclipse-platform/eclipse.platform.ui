@@ -45,7 +45,7 @@ public interface ISynchronizer {
 	 The sync partner is not registered.</li>
 	 *    </ul>
 	 */
-	public void accept(QualifiedName partner, IResource start, IResourceVisitor visitor, int depth) throws CoreException;
+	void accept(QualifiedName partner, IResource start, IResourceVisitor visitor, int depth) throws CoreException;
 
 	/**
 	 * Adds the named synchronization partner to this synchronizer's
@@ -56,7 +56,7 @@ public interface ISynchronizer {
 	 * @param partner the partner name to register
 	 * @see #remove(QualifiedName)
 	 */
-	public void add(QualifiedName partner);
+	void add(QualifiedName partner);
 
 	/**
 	 * Discards the named partner's synchronization information
@@ -75,7 +75,7 @@ public interface ISynchronizer {
 	 The sync partner is not registered.</li>
 	 *    </ul>
 	 */
-	public void flushSyncInfo(QualifiedName partner, IResource resource, int depth) throws CoreException;
+	void flushSyncInfo(QualifiedName partner, IResource resource, int depth) throws CoreException;
 
 	/**
 	 * Returns a list of synchronization partner names currently registered
@@ -84,7 +84,7 @@ public interface ISynchronizer {
 	 *
 	 * @return a list of sync partner names
 	 */
-	public QualifiedName[] getPartners();
+	QualifiedName[] getPartners();
 
 	/**
 	 * Returns the named sync partner's synchronization information for the given resource.
@@ -99,7 +99,7 @@ public interface ISynchronizer {
 	 The sync partner is not registered.</li>
 	 *    </ul>
 	 */
-	public byte[] getSyncInfo(QualifiedName partner, IResource resource) throws CoreException;
+	byte[] getSyncInfo(QualifiedName partner, IResource resource) throws CoreException;
 
 	/**
 	 * Removes the named synchronization partner from this synchronizer's
@@ -111,7 +111,7 @@ public interface ISynchronizer {
 	 * @param partner the partner name to remove from the registry
 	 * @see #add(QualifiedName)
 	 */
-	public void remove(QualifiedName partner);
+	void remove(QualifiedName partner);
 
 	/**
 	 * Sets the named sync partner's synchronization information for the given resource.
@@ -134,5 +134,5 @@ public interface ISynchronizer {
 	 The sync partner is not registered.</li>
 	 *    </ul>
 	 */
-	public void setSyncInfo(QualifiedName partner, IResource resource, byte[] info) throws CoreException;
+	void setSyncInfo(QualifiedName partner, IResource resource, byte[] info) throws CoreException;
 }

@@ -38,7 +38,7 @@ public interface IStorage extends IAdaptable {
 	 * @exception CoreException if the contents of this storage could
 	 *		not be accessed.   See any refinements for more information.
 	 */
-	public InputStream getContents() throws CoreException;
+	InputStream getContents() throws CoreException;
 
 	/**
 	 * Returns the full path of this storage.  The returned value
@@ -48,7 +48,7 @@ public interface IStorage extends IAdaptable {
 	 * @return the path related to the data represented by this storage or
 	 *		<code>null</code> if none.
 	 */
-	public IPath getFullPath();
+	IPath getFullPath();
 
 	/**
 	 * Returns the name of this storage.
@@ -60,12 +60,12 @@ public interface IStorage extends IAdaptable {
 	 *		or <code>null</code> if this storage has no name
 	 * @see #getFullPath()
 	 */
-	public String getName();
+	String getName();
 
 	/**
 	 * Returns whether this storage is read-only.
 	 *
 	 * @return <code>true</code> if this storage is read-only
 	 */
-	public boolean isReadOnly();
+	boolean isReadOnly();
 }

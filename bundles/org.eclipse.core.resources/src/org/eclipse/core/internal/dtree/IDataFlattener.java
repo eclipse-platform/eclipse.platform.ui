@@ -28,7 +28,7 @@ public interface IDataFlattener {
 	 * @return the object associated with the given path,
 	 *   which may be <code>null</code>.
 	 */
-	public Object readData(IPath path, DataInput input) throws IOException;
+	Object readData(IPath path, DataInput input) throws IOException;
 
 	/**
 	 * Writes the given data to the output stream.
@@ -38,5 +38,5 @@ public interface IDataFlattener {
 	 * @param data the object associated with the given path,
 	 *   which may be <code>null</code>.
 	 */
-	public void writeData(IPath path, Object data, DataOutput output) throws IOException;
+	void writeData(IPath path, Object data, DataOutput output) throws IOException;
 }

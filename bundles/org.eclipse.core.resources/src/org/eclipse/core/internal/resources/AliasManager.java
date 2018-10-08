@@ -68,7 +68,7 @@ public class AliasManager implements IManager, ILifecycleListener, IResourceChan
 	}
 
 	interface Doit {
-		public void doit(IResource resource);
+		void doit(IResource resource);
 	}
 
 	class FindAliasesDoit implements Doit {
