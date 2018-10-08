@@ -872,6 +872,13 @@ public class ContentProposalAdapter {
 			return ret;
 		}
 
+		/**
+		 * Asynchronously recompute proposals.
+		 */
+		private void refresh() {
+			asyncRecomputeProposals(filterText);
+		}
+
 		/*
 		 * Show the currently selected proposal's description in a secondary
 		 * popup.
@@ -2148,6 +2155,18 @@ public class ContentProposalAdapter {
 		if (isValid() && popup != null)
 			return true;
 		return false;
+	}
+
+	/**
+	 * Reloads the proposals from the content provider and fills them into the
+	 * proposal pop-up, if the pop-up is currently open.
+	 *
+	 * @since 4.10
+	 */
+	public void refresh() {
+		if (isProposalPopupOpen()) {
+			popup.refresh();
+		}
 	}
 
 }
