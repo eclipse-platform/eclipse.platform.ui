@@ -22,7 +22,6 @@ import org.eclipse.jface.bindings.keys.KeyStroke;
 import org.eclipse.jface.dialogs.PopupDialog;
 import org.eclipse.jface.preference.JFacePreferences;
 import org.eclipse.jface.resource.JFaceResources;
-import org.eclipse.jface.util.Util;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.FocusAdapter;
@@ -615,17 +614,10 @@ public class ContentProposalAdapter {
 		 */
 		@Override
 		protected final Control createDialogArea(final Composite parent) {
-			// Use virtual where appropriate (see flag definition).
-			if (USE_VIRTUAL) {
-				proposalTable = new Table(parent, SWT.H_SCROLL | SWT.V_SCROLL
-						| SWT.VIRTUAL);
+			proposalTable = new Table(parent, SWT.H_SCROLL | SWT.V_SCROLL | SWT.VIRTUAL);
 
-				Listener listener = event -> handleSetData(event);
-				proposalTable.addListener(SWT.SetData, listener);
-			} else {
-				proposalTable = new Table(parent, SWT.H_SCROLL | SWT.V_SCROLL);
-			}
-
+			Listener listener = event -> handleSetData(event);
+			proposalTable.addListener(SWT.SetData, listener);
 			// set the proposals to force population of the table.
 			setProposals(filterProposals(proposals, filterText));
 
@@ -733,25 +725,10 @@ public class ContentProposalAdapter {
 			// If there is a table
 			if (isValid()) {
 				final int newSize = newProposals.length;
-				if (USE_VIRTUAL) {
 					// Set and clear the virtual table. Data will be
 					// provided in the SWT.SetData event handler.
-					proposalTable.setItemCount(newSize);
-					proposalTable.clearAll();
-				} else {
-					// Populate the table manually
-					proposalTable.setRedraw(false);
-					proposalTable.setItemCount(newSize);
-					TableItem[] items = proposalTable.getItems();
-					for (int i = 0; i < items.length; i++) {
-						TableItem item = items[i];
-						IContentProposal proposal = newProposals[i];
-						item.setText(getString(proposal));
-						item.setImage(getImage(proposal));
-						item.setData(proposal);
-					}
-					proposalTable.setRedraw(true);
-				}
+				proposalTable.setItemCount(newSize);
+				proposalTable.clearAll();
 				// Default to the first selection if there is content.
 				if (newProposals.length > 0) {
 					selectProposal(0);
@@ -1075,14 +1052,6 @@ public class ContentProposalAdapter {
 	 */
 	@Deprecated
 	public static final int FILTER_CUMULATIVE = 3;
-
-	/*
-	 * Set to <code>true</code> to use a Table with SWT.VIRTUAL. This is a
-	 * workaround for https://bugs.eclipse.org/bugs/show_bug.cgi?id=98585#c40
-	 * The corresponding SWT bug is
-	 * https://bugs.eclipse.org/bugs/show_bug.cgi?id=90321
-	 */
-	private static final boolean USE_VIRTUAL = !Util.isMotif();
 
 	/*
 	 * The delay before showing a secondary popup.
