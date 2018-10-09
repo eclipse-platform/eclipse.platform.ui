@@ -805,12 +805,16 @@ public class ExtendedMarkersView extends ViewPart {
 
 			@Override
 			public void partHidden(IWorkbenchPartReference partRef) {
-				if (partRef.getId().equals(getSite().getId())) {
-					isViewVisible= false;
-					Markers markers = getActiveViewerInputClone();
-					Integer[] counts = markers.getMarkerCounts();
-					setTitleToolTip(getStatusMessage(markers, counts));
+				if (!partRef.getId().equals(getSite().getId())) {
+					return;
 				}
+				if (partRef.getPart(false) != ExtendedMarkersView.this) {
+					return;
+				}
+				isViewVisible = false;
+				Markers markers = getActiveViewerInputClone();
+				Integer[] counts = markers.getMarkerCounts();
+				setTitleToolTip(getStatusMessage(markers, counts));
 			}
 
 			@Override
@@ -825,16 +829,20 @@ public class ExtendedMarkersView extends ViewPart {
 
 			@Override
 			public void partVisible(IWorkbenchPartReference partRef) {
-				if (partRef.getId().equals(getSite().getId())) {
-					isViewVisible = true;
-					boolean needUpdate = hasPendingChanges();
-					if (needUpdate) {
-						// trigger UI update, the data is changed meanwhile
-						builder.getUpdateScheduler().scheduleUIUpdate(MarkerUpdateScheduler.SHORT_DELAY);
-					} else {
-						// data is same as before, only clear tooltip
-						setTitleToolTip(null);
-					}
+				if (!partRef.getId().equals(getSite().getId())) {
+					return;
+				}
+				if (partRef.getPart(false) != ExtendedMarkersView.this) {
+					return;
+				}
+				isViewVisible = true;
+				boolean needUpdate = hasPendingChanges();
+				if (needUpdate) {
+					// trigger UI update, the data is changed meanwhile
+					builder.getUpdateScheduler().scheduleUIUpdate(MarkerUpdateScheduler.SHORT_DELAY);
+				} else {
+					// data is same as before, only clear tooltip
+					setTitleToolTip(null);
 				}
 			}
 
