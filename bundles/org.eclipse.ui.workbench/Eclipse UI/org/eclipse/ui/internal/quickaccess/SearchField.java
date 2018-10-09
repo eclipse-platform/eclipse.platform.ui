@@ -43,6 +43,7 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubMonitor;
+import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.e4.core.commands.ECommandService;
 import org.eclipse.e4.core.contexts.IEclipseContext;
@@ -653,6 +654,7 @@ public class SearchField {
 					return Status.OK_STATUS;
 				}
 			};
+			refreshQuickAccessContents.setRule(RESTORE_DIALOG_ENTRIES_SCHEDULING_RULE);
 			refreshQuickAccessContents.setSystem(true);
 			restoreDialogEntriesJob = Job.createSystem("Restore quick access elements", (IProgressMonitor monitor) -> { //$NON-NLS-1$
 				if (txtQuickAccess.isDisposed()) {
@@ -667,6 +669,7 @@ public class SearchField {
 					refreshQuickAccessContents.schedule();
 				}
 			});
+			restoreDialogEntriesJob.setRule(RESTORE_DIALOG_ENTRIES_SCHEDULING_RULE);
 			restoreDialogEntriesJob.schedule();
 		}
 	}
@@ -866,4 +869,20 @@ public class SearchField {
 	public Table getQuickAccessTable(){
 		return table;
 	}
+
+	/**
+	 * Bug 539510: in case of multiple workbench windows we must avoid loading
+	 * commands simultaneously for each window
+	 */
+	private static final ISchedulingRule RESTORE_DIALOG_ENTRIES_SCHEDULING_RULE = new ISchedulingRule() {
+		@Override
+		public boolean isConflicting(ISchedulingRule rule) {
+			return RESTORE_DIALOG_ENTRIES_SCHEDULING_RULE == rule;
+		}
+
+		@Override
+		public boolean contains(ISchedulingRule rule) {
+			return RESTORE_DIALOG_ENTRIES_SCHEDULING_RULE == rule;
+		}
+	};
 }
