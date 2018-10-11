@@ -144,6 +144,7 @@ public class WorkbenchMigrationProcessor {
 				if (part.getIconURI() == null) {
 					part.setIconURI(desc.getIconURI());
 				}
+				part.setCloseable(desc.isCloseable());
 			}
 		}
 
