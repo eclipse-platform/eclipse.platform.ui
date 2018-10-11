@@ -15,6 +15,7 @@
 package org.eclipse.debug.tests.console;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 
 import org.eclipse.core.commands.Command;
@@ -185,6 +186,18 @@ public class ConsoleTests extends AbstractDebugTest {
 		} finally {
 			consoleManager.removeConsoles(consoles);
 			activePage.hideView(consoleView);
+		}
+	}
+
+	public void testIOConsoleAvailable() throws Exception {
+
+		final IOConsole console = new IOConsole("", null);
+
+		try (InputStream consoleInput = console.getInputStream()) {
+			consoleInput.available();
+			consoleInput.available();
+		} catch (IOException ioe) {
+			TestCase.assertEquals("Input Stream is closed", ioe.getMessage()); //$NON-NLS-1$
 		}
 	}
 }

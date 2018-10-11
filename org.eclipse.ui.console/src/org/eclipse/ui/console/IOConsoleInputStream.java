@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2017 IBM Corporation and others.
+ * Copyright (c) 2000, 2018 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -269,14 +269,7 @@ public class IOConsoleInputStream extends InputStream {
 	public int available() throws IOException {
 		if (closed && eofSent) {
 			throw new IOException("Input Stream Closed"); //$NON-NLS-1$
-		} else if (size == 0) {
-			if (!eofSent) {
-				eofSent = true;
-				return -1;
-			}
-			throw new IOException("Input Stream Closed"); //$NON-NLS-1$
 		}
-
 		return size;
 	}
 
