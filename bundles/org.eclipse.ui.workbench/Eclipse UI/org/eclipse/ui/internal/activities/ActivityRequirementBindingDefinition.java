@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 IBM Corporation and others.
+ * Copyright (c) 2000, 2018 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -19,7 +19,6 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
-
 import org.eclipse.ui.internal.util.Util;
 
 public final class ActivityRequirementBindingDefinition {
@@ -28,14 +27,14 @@ public final class ActivityRequirementBindingDefinition {
     private static final int HASH_INITIAL = ActivityRequirementBindingDefinition.class
             .getName().hashCode();
 
-    static Map activityRequirementBindingDefinitionsByActivityId(
-            Collection activityRequirementBindingDefinitions) {
+	static Map<String, Collection<ActivityRequirementBindingDefinition>> activityRequirementBindingDefinitionsByActivityId(
+			Collection<ActivityRequirementBindingDefinition> activityRequirementBindingDefinitions) {
         if (activityRequirementBindingDefinitions == null) {
 			throw new NullPointerException();
 		}
 
-        Map map = new HashMap();
-        Iterator iterator = activityRequirementBindingDefinitions.iterator();
+		Map<String, Collection<ActivityRequirementBindingDefinition>> map = new HashMap<>();
+		Iterator<ActivityRequirementBindingDefinition> iterator = activityRequirementBindingDefinitions.iterator();
 
         while (iterator.hasNext()) {
             Object object = iterator.next();
@@ -46,11 +45,11 @@ public final class ActivityRequirementBindingDefinition {
                     .getActivityId();
 
             if (parentActivityId != null) {
-                Collection activityRequirementBindingDefinitions2 = (Collection) map
+				Collection<ActivityRequirementBindingDefinition> activityRequirementBindingDefinitions2 = map
                         .get(parentActivityId);
 
                 if (activityRequirementBindingDefinitions2 == null) {
-                    activityRequirementBindingDefinitions2 = new HashSet();
+					activityRequirementBindingDefinitions2 = new HashSet<>();
                     map.put(parentActivityId,
                             activityRequirementBindingDefinitions2);
                 }

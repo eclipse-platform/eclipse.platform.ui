@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2015 IBM Corporation and others.
+ * Copyright (c) 2005, 2018 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -18,7 +18,6 @@ import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.Properties;
 import java.util.Set;
-
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExecutableExtension;
 import org.eclipse.jface.window.Window;
@@ -82,14 +81,14 @@ public class WorkbenchTriggerPointAdvisor implements ITriggerPointAdvisor,
 	}
 
 	@Override
-	public Set allow(ITriggerPoint triggerPoint, IIdentifier identifier) {
+	public Set<String> allow(ITriggerPoint triggerPoint, IIdentifier identifier) {
 
 		if (triggerPoint.getBooleanHint(ITriggerPoint.HINT_PRE_UI)) {
 			IActivityManager activityManager = PlatformUI.getWorkbench()
 					.getActivitySupport().getActivityManager();
-			Iterator iterator = identifier.getActivityIds().iterator();
+			Iterator<String> iterator = identifier.getActivityIds().iterator();
 			while (iterator.hasNext()) {
-				String id = (String) iterator.next();
+				String id = iterator.next();
 				IActivity activity = activityManager.getActivity(id);
 				if (activity.getExpression() != null) {
 					if (!activity.isEnabled())
@@ -117,7 +116,7 @@ public class WorkbenchTriggerPointAdvisor implements ITriggerPointAdvisor,
         EnablementDialog dialog = new EnablementDialog(Util.getShellToParentOn(), identifier
                 .getActivityIds(), strings);
         if (dialog.open() == Window.OK) {
-            Set activities = dialog.getActivitiesToEnable();
+			Set<String> activities = dialog.getActivitiesToEnable();
             if (dialog.getDontAsk()) {
 				PrefUtil.getInternalPreferenceStore().setValue(
 						IPreferenceConstants.SHOULD_PROMPT_FOR_ENABLEMENT,
@@ -134,7 +133,7 @@ public class WorkbenchTriggerPointAdvisor implements ITriggerPointAdvisor,
 	@Override
 	public void setInitializationData(IConfigurationElement config, String propertyName, Object data) {
 		if (data instanceof Hashtable) {
-			strings.putAll((Hashtable)data);
+			strings.putAll((Hashtable<?, ?>) data);
 		}
 	}
 
@@ -190,15 +189,14 @@ public class WorkbenchTriggerPointAdvisor implements ITriggerPointAdvisor,
 	 */
 	protected boolean doComputeEnablement(IActivityManager activityManager,
 			IIdentifier identifier, boolean disabledExpressionActivitiesTakePrecedence) {
-		final Set activityIds = identifier.getActivityIds();
+		final Set<String> activityIds = identifier.getActivityIds();
 		if (activityIds.isEmpty()) {
 			return true;
 		}
 
 		boolean matchesAtLeastOneEnabled = false;
 		boolean matchesDisabledExpressionActivitiesWithPrecedence = false;
-		for (Iterator iterator = activityIds.iterator(); iterator.hasNext();) {
-			String activityId = (String) iterator.next();
+		for (String activityId : activityIds) {
 			IActivity activity = activityManager.getActivity(activityId);
 
 			if (activity.isEnabled()) {

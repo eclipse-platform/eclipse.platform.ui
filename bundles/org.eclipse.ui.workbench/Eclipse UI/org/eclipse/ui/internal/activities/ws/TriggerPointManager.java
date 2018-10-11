@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2015 IBM Corporation and others.
+ * Copyright (c) 2005, 2018 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -15,7 +15,6 @@ package org.eclipse.ui.internal.activities.ws;
 
 import java.util.HashMap;
 import java.util.Set;
-
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtension;
 import org.eclipse.core.runtime.IExtensionPoint;
@@ -36,7 +35,7 @@ import org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants;
  */
 public class TriggerPointManager implements ITriggerPointManager, IExtensionChangeHandler {
 
-    private HashMap triggerMap = new HashMap();
+	private HashMap<String, AbstractTriggerPoint> triggerMap = new HashMap<>();
 
     /**
      *
@@ -84,12 +83,12 @@ public class TriggerPointManager implements ITriggerPointManager, IExtensionChan
 
     @Override
 	public ITriggerPoint getTriggerPoint(String id) {
-        return (ITriggerPoint) triggerMap.get(id);
+        return triggerMap.get(id);
     }
 
     @Override
-	public Set getDefinedTriggerPointIds() {
-        return triggerMap.entrySet();
+	public Set<String> getDefinedTriggerPointIds() {
+		return triggerMap.keySet();
     }
 
     @Override

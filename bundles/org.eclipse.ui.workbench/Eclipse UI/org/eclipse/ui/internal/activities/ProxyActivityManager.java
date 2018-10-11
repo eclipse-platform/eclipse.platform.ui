@@ -15,7 +15,6 @@
 package org.eclipse.ui.internal.activities;
 
 import java.util.Set;
-
 import org.eclipse.ui.activities.ActivityManagerEvent;
 import org.eclipse.ui.activities.IActivity;
 import org.eclipse.ui.activities.IActivityManager;
@@ -62,17 +61,17 @@ public final class ProxyActivityManager extends AbstractActivityManager {
     }
 
     @Override
-	public Set getDefinedActivityIds() {
+	public Set<String> getDefinedActivityIds() {
         return activityManager.getDefinedActivityIds();
     }
 
     @Override
-	public Set getDefinedCategoryIds() {
+	public Set<String> getDefinedCategoryIds() {
         return activityManager.getDefinedCategoryIds();
     }
 
     @Override
-	public Set getEnabledActivityIds() {
+	public Set<String> getEnabledActivityIds() {
         return activityManager.getEnabledActivityIds();
     }
 

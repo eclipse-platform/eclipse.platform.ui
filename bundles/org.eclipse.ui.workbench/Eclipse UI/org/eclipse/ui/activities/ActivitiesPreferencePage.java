@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2015 IBM Corporation and others.
+ * Copyright (c) 2004, 2018 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -15,7 +15,6 @@ package org.eclipse.ui.activities;
 
 import java.util.Hashtable;
 import java.util.Properties;
-
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExecutableExtension;
 import org.eclipse.jface.dialogs.Dialog;
@@ -150,7 +149,7 @@ public final class ActivitiesPreferencePage extends PreferencePage implements
 	@Override
 	public void setInitializationData(IConfigurationElement config, String propertyName, Object data) {
 		if (data instanceof Hashtable) {
-			strings.putAll((Hashtable)data);
+			strings.putAll((Hashtable<?, ?>) data);
 		}
 	}
 }

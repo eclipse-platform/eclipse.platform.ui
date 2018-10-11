@@ -27,7 +27,7 @@ package org.eclipse.ui.activities;
  * @see ICategory
  * @noimplement This interface is not intended to be implemented by clients.
  */
-public interface ICategoryActivityBinding extends Comparable {
+public interface ICategoryActivityBinding extends Comparable<ICategoryActivityBinding> {
 
     /**
      * Returns the identifier of the activity represented in this binding.

@@ -18,7 +18,6 @@ import static org.eclipse.swt.events.SelectionListener.widgetSelectedAdapter;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Hashtable;
-import java.util.Iterator;
 import java.util.Properties;
 import java.util.Set;
 import org.eclipse.core.runtime.IConfigurationElement;
@@ -198,10 +197,11 @@ public final class ActivityCategoryPreferencePage extends PreferencePage impleme
     }
 
     private class CategoryContentProvider implements IStructuredContentProvider {
+		@SuppressWarnings("unchecked")
 		@Override
         public Object[] getElements(Object inputElement) {
             // convert to category objects
-            return WorkbenchActivityHelper.resolveCategories(workingCopy, (Set) inputElement);
+			return WorkbenchActivityHelper.resolveCategories(workingCopy, (Set<String>) inputElement);
         }
     }
 
@@ -314,7 +314,8 @@ public final class ActivityCategoryPreferencePage extends PreferencePage impleme
         setButtonLayoutData(enableAll);
 
         Button disableAll = new Button(composite, SWT.PUSH);
-        disableAll.addSelectionListener(widgetSelectedAdapter(e -> workingCopy.setEnabledActivityIds(Collections.EMPTY_SET)));
+		disableAll.addSelectionListener(
+				widgetSelectedAdapter(e -> workingCopy.setEnabledActivityIds(Collections.emptySet())));
         disableAll.setText(ActivityMessages.ActivityEnabler_deselectAll);
         setButtonLayoutData(disableAll);
 
@@ -375,11 +376,11 @@ public final class ActivityCategoryPreferencePage extends PreferencePage impleme
         			e.doit = false; // veto the check
         			return;
         		}
-				Set activitySet = WorkbenchActivityHelper.getActivityIdsForCategory(category);
+				Set<String> activitySet = WorkbenchActivityHelper.getActivityIdsForCategory(category);
         		if (tableItem.getChecked()) {
         			activitySet.addAll(workingCopy.getEnabledActivityIds());
         		} else {
-        			HashSet newSet = new HashSet(workingCopy.getEnabledActivityIds());
+					HashSet<String> newSet = new HashSet<>(workingCopy.getEnabledActivityIds());
         			newSet.removeAll(activitySet);
         			activitySet = newSet;
         		}
@@ -441,7 +442,7 @@ public final class ActivityCategoryPreferencePage extends PreferencePage impleme
             clearDetails();
             return;
         }
-        Set categories = null;
+		Set<String> categories = null;
         if (WorkbenchActivityHelper.isEnabled(workingCopy, category.getId())) {
             categories = WorkbenchActivityHelper.getDisabledCategories(
                     workingCopy, category.getId());
@@ -513,10 +514,9 @@ public final class ActivityCategoryPreferencePage extends PreferencePage impleme
 			return;
 		}
 
-        Set defaultEnabled = new HashSet();
-        Set activityIds = workingCopy.getDefinedActivityIds();
-        for (Iterator i = activityIds.iterator(); i.hasNext();) {
-            String activityId = (String) i.next();
+		Set<String> defaultEnabled = new HashSet<>();
+		Set<String> activityIds = workingCopy.getDefinedActivityIds();
+		for (String activityId : activityIds) {
             IActivity activity = workingCopy.getActivity(activityId);
             try {
                 if (activity.isDefaultEnabled()) {
@@ -534,7 +534,7 @@ public final class ActivityCategoryPreferencePage extends PreferencePage impleme
     public void setInitializationData(IConfigurationElement config,
             String propertyName, Object data) {
         if (data instanceof Hashtable) {
-            Hashtable table = (Hashtable)data;
+			Hashtable<?, ?> table = (Hashtable<?, ?>) data;
             allowAdvanced = Boolean.valueOf((String) table.remove(ALLOW_ADVANCED)).booleanValue();
             strings.putAll(table);
         }

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2015 IBM Corporation and others.
+ * Copyright (c) 2004, 2018 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -68,30 +68,24 @@ public class TriggerPointAdvisorRegistry {
 		IExtension[] extensions = point.getExtensions();
 		extensions = RegistryReader.orderExtensions(extensions);
 
-		ArrayList list = new ArrayList(extensions.length);
+		ArrayList<TriggerPointAdvisorDescriptor> list = new ArrayList<>(extensions.length);
 		for (IExtension extension : extensions) {
-			IConfigurationElement[] elements = extension
-					.getConfigurationElements();
+			IConfigurationElement[] elements = extension.getConfigurationElements();
 			for (IConfigurationElement element : elements) {
-				if (element.getName().equals(
-						IWorkbenchRegistryConstants.TAG_TRIGGERPOINTADVISOR)) {
+				if (element.getName().equals(IWorkbenchRegistryConstants.TAG_TRIGGERPOINTADVISOR)) {
 					try {
-						TriggerPointAdvisorDescriptor descriptor = new TriggerPointAdvisorDescriptor(
-								element);
+						TriggerPointAdvisorDescriptor descriptor = new TriggerPointAdvisorDescriptor(element);
 						list.add(descriptor);
 					} catch (IllegalArgumentException e) {
 						// log an error since its not safe to open a dialog here
-						WorkbenchPlugin.log(
-								"invalid trigger point advisor extension", //$NON-NLS-1$
-								StatusUtil.newStatus(IStatus.ERROR, e
-										.getMessage(), e));
+						WorkbenchPlugin.log("invalid trigger point advisor extension", //$NON-NLS-1$
+								StatusUtil.newStatus(IStatus.ERROR, e.getMessage(), e));
 					}
 				}
 			}
 		}
 
-		return (TriggerPointAdvisorDescriptor[]) list
-				.toArray(new TriggerPointAdvisorDescriptor[list.size()]);
+		return list.toArray(new TriggerPointAdvisorDescriptor[list.size()]);
 	}
 
 	/**

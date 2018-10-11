@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2015 IBM Corporation and others.
+ * Copyright (c) 2003, 2018 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -14,10 +14,11 @@
 package org.eclipse.ui.internal.activities.ws;
 
 import java.util.Set;
-
 import org.eclipse.core.expressions.Expression;
 import org.eclipse.ui.activities.IActivity;
 import org.eclipse.ui.activities.IActivityListener;
+import org.eclipse.ui.activities.IActivityPatternBinding;
+import org.eclipse.ui.activities.IActivityRequirementBinding;
 import org.eclipse.ui.activities.ICategory;
 import org.eclipse.ui.activities.NotDefinedException;
 
@@ -59,7 +60,7 @@ public class CategorizedActivity implements IActivity {
     }
 
     @Override
-	public int compareTo(Object o) {
+	public int compareTo(IActivity o) {
         return activity.compareTo(o);
     }
 
@@ -82,12 +83,12 @@ public class CategorizedActivity implements IActivity {
     }
 
     @Override
-	public Set getActivityRequirementBindings() {
+	public Set<IActivityRequirementBinding> getActivityRequirementBindings() {
         return activity.getActivityRequirementBindings();
     }
 
     @Override
-	public Set getActivityPatternBindings() {
+	public Set<IActivityPatternBinding> getActivityPatternBindings() {
         return activity.getActivityPatternBindings();
     }
 

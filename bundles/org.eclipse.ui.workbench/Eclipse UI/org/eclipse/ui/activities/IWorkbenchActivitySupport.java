@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2015 IBM Corporation and others.
+ * Copyright (c) 2003, 2018 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -14,7 +14,6 @@
 package org.eclipse.ui.activities;
 
 import java.util.Set;
-
 import org.eclipse.jface.resource.ImageDescriptor;
 
 /**
@@ -46,7 +45,7 @@ public interface IWorkbenchActivitySupport {
      *            empty, but it must not be <code>null</code>. If this set
      *            is not empty, it must only contain instances of <code>String</code>.
      */
-    void setEnabledActivityIds(Set enabledActivityIds);
+	void setEnabledActivityIds(Set<String> enabledActivityIds);
 
     /**
      * Return the image associated with this activity.

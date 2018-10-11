@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2014 IBM Corporation and others.
+ * Copyright (c) 2000, 2018 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -19,21 +19,22 @@ import java.util.Collections;
 import java.util.List;
 
 public abstract class AbstractActivityRegistry implements IActivityRegistry {
-    protected List activityRequirementBindingDefinitions = Collections.EMPTY_LIST;
+	protected List<ActivityRequirementBindingDefinition> activityRequirementBindingDefinitions = Collections
+			.emptyList();
 
-    protected List activityDefinitions = Collections.EMPTY_LIST;
+	protected List<ActivityDefinition> activityDefinitions = Collections.emptyList();
 
-    protected List activityPatternBindingDefinitions = Collections.EMPTY_LIST;
+	protected List<ActivityPatternBindingDefinition> activityPatternBindingDefinitions = Collections.emptyList();
 
     private ActivityRegistryEvent activityRegistryEvent;
 
-    private List activityRegistryListeners;
+	private List<IActivityRegistryListener> activityRegistryListeners;
 
-    protected List categoryActivityBindingDefinitions = Collections.EMPTY_LIST;
+	protected List<CategoryActivityBindingDefinition> categoryActivityBindingDefinitions = Collections.emptyList();
 
-    protected List categoryDefinitions = Collections.EMPTY_LIST;
+	protected List<CategoryDefinition> categoryDefinitions = Collections.emptyList();
 
-    protected List defaultEnabledActivities = Collections.EMPTY_LIST;
+	protected List<String> defaultEnabledActivities = Collections.emptyList();
 
     protected AbstractActivityRegistry() {
     }
@@ -46,7 +47,7 @@ public abstract class AbstractActivityRegistry implements IActivityRegistry {
 		}
 
         if (activityRegistryListeners == null) {
-			activityRegistryListeners = new ArrayList();
+			activityRegistryListeners = new ArrayList<>();
 		}
 
         if (!activityRegistryListeners.contains(activityRegistryListener)) {
@@ -61,34 +62,34 @@ public abstract class AbstractActivityRegistry implements IActivityRegistry {
 					activityRegistryEvent = new ActivityRegistryEvent(this);
 				}
 
-                ((IActivityRegistryListener) activityRegistryListeners.get(i))
+                activityRegistryListeners.get(i)
                         .activityRegistryChanged(activityRegistryEvent);
             }
         }
     }
 
     @Override
-	public List getActivityRequirementBindingDefinitions() {
+	public List<ActivityRequirementBindingDefinition> getActivityRequirementBindingDefinitions() {
         return activityRequirementBindingDefinitions;
     }
 
     @Override
-	public List getActivityDefinitions() {
+	public List<ActivityDefinition> getActivityDefinitions() {
         return activityDefinitions;
     }
 
     @Override
-	public List getActivityPatternBindingDefinitions() {
+	public List<ActivityPatternBindingDefinition> getActivityPatternBindingDefinitions() {
         return activityPatternBindingDefinitions;
     }
 
     @Override
-	public List getCategoryActivityBindingDefinitions() {
+	public List<CategoryActivityBindingDefinition> getCategoryActivityBindingDefinitions() {
         return categoryActivityBindingDefinitions;
     }
 
     @Override
-	public List getCategoryDefinitions() {
+	public List<CategoryDefinition> getCategoryDefinitions() {
         return categoryDefinitions;
     }
 
@@ -105,7 +106,7 @@ public abstract class AbstractActivityRegistry implements IActivityRegistry {
     }
 
     @Override
-	public List getDefaultEnabledActivities() {
+	public List<String> getDefaultEnabledActivities() {
         return defaultEnabledActivities;
     }
 }

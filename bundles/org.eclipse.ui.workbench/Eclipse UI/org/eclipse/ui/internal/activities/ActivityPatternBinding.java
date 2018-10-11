@@ -15,7 +15,6 @@
 package org.eclipse.ui.internal.activities;
 
 import java.util.regex.Pattern;
-
 import org.eclipse.ui.activities.IActivityPatternBinding;
 import org.eclipse.ui.internal.util.Util;
 
@@ -82,7 +81,7 @@ public final class ActivityPatternBinding implements IActivityPatternBinding {
     }
 
     @Override
-	public int compareTo(Object object) {
+	public int compareTo(IActivityPatternBinding object) {
         ActivityPatternBinding castedObject = (ActivityPatternBinding) object;
         int compareTo = Util.compare(activityId, castedObject.activityId);
 

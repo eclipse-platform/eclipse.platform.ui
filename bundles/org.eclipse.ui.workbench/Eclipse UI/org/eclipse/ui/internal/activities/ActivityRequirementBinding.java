@@ -43,7 +43,7 @@ public final class ActivityRequirementBinding implements
     }
 
     @Override
-	public int compareTo(Object object) {
+	public int compareTo(IActivityRequirementBinding object) {
         ActivityRequirementBinding castedObject = (ActivityRequirementBinding) object;
         int compareTo = Util.compare(requiredActivityId,
                 castedObject.requiredActivityId);

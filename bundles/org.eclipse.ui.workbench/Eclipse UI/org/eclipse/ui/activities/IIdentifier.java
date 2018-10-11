@@ -38,7 +38,7 @@ import java.util.Set;
  * @see IActivityManager#getIdentifier(String)
  * @noimplement This interface is not intended to be implemented by clients.
  */
-public interface IIdentifier extends Comparable {
+public interface IIdentifier extends Comparable<IIdentifier> {
 
     /**
      * Registers an instance of <code>IIdentifierListener</code> to listen
@@ -66,7 +66,7 @@ public interface IIdentifier extends Comparable {
      *         this set is not empty, it is guaranteed to only contain
      *         instances of <code>String</code>.
      */
-    Set getActivityIds();
+	Set<String> getActivityIds();
 
     /**
      * Returns the identifier of this instance.

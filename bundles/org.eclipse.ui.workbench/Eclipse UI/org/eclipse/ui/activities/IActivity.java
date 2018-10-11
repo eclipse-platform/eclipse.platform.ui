@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 IBM Corporation and others.
+ * Copyright (c) 2000, 2018 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -15,7 +15,6 @@
 package org.eclipse.ui.activities;
 
 import java.util.Set;
-
 import org.eclipse.core.expressions.Expression;
 
 /**
@@ -44,7 +43,7 @@ import org.eclipse.core.expressions.Expression;
  * @see IActivityManager
  * @noimplement This interface is not intended to be implemented by clients.
  */
-public interface IActivity extends Comparable {
+public interface IActivity extends Comparable<IActivity> {
 
     /**
      * Registers an instance of <code>IActivityListener</code> to listen for
@@ -75,7 +74,7 @@ public interface IActivity extends Comparable {
      * 		   <code>IActivityRequirementBinding</code>.
      * @see IActivityRequirementBinding
      */
-    Set getActivityRequirementBindings();
+	Set<IActivityRequirementBinding> getActivityRequirementBindings();
 
     /**
      * Returns the set of activity pattern bindings for this instance.
@@ -93,7 +92,7 @@ public interface IActivity extends Comparable {
      *        empty, it is guaranteed to only contain instances of <code>IActivityPatternBinding</code>.
      * @see IActivityPatternBinding
      */
-    Set getActivityPatternBindings();
+	Set<IActivityPatternBinding> getActivityPatternBindings();
 
     /**
      * Returns the identifier of this instance.

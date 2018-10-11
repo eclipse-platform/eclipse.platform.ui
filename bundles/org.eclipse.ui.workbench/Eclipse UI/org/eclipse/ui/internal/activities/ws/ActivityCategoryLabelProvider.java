@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2015 IBM Corporation and others.
+ * Copyright (c) 2003, 2018 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -15,7 +15,6 @@ package org.eclipse.ui.internal.activities.ws;
 
 import java.util.HashMap;
 import java.util.Map;
-
 import org.eclipse.jface.resource.DeviceResourceException;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.JFaceResources;
@@ -36,7 +35,7 @@ import org.eclipse.ui.activities.NotDefinedException;
 public class ActivityCategoryLabelProvider extends LabelProvider {
 
 	private LocalResourceManager manager;
-	private Map descriptorMap = new HashMap();
+	private Map<Object, ImageDescriptor> descriptorMap = new HashMap<>();
 
 	/**
 	 * Create a new instance of this class.
@@ -60,7 +59,7 @@ public class ActivityCategoryLabelProvider extends LabelProvider {
     }
 
     private ImageDescriptor getDescriptor(Object element) {
-    	ImageDescriptor descriptor = (ImageDescriptor) descriptorMap.get(element);
+    	ImageDescriptor descriptor = descriptorMap.get(element);
     	if (descriptor != null) {
 			return descriptor;
 		}

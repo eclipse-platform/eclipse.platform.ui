@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 IBM Corporation and others.
+ * Copyright (c) 2000, 2018 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -31,7 +31,7 @@ import java.util.regex.Pattern;
  * @see IActivityManager#getIdentifier(String)
  * @noimplement This interface is not intended to be implemented by clients.
  */
-public interface IActivityPatternBinding extends Comparable {
+public interface IActivityPatternBinding extends Comparable<IActivityPatternBinding> {
 
     /**
      * Returns the identifier of the activity represented in this binding.

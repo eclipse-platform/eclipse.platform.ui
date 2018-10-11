@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2015 IBM Corporation and others.
+ * Copyright (c) 2005, 2018 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -15,7 +15,6 @@ package org.eclipse.ui.internal.activities.ws;
 
 import java.util.HashMap;
 import java.util.Map;
-
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.ui.internal.activities.Persistence;
 import org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants;
@@ -29,7 +28,7 @@ public class RegistryTriggerPoint extends AbstractTriggerPoint {
 
     private IConfigurationElement element;
 
-    private Map hints;
+	private Map<String, String> hints;
 
     /**
      * Create a new instance of this class.
@@ -49,7 +48,7 @@ public class RegistryTriggerPoint extends AbstractTriggerPoint {
 
     @Override
 	public String getStringHint(String key) {
-        return (String) getHints().get(key);
+        return getHints().get(key);
     }
 
     @Override
@@ -62,9 +61,9 @@ public class RegistryTriggerPoint extends AbstractTriggerPoint {
      *
      * @return the hint map
      */
-    private Map getHints() {
+	private Map<String, String> getHints() {
         if (hints == null) {
-            hints = new HashMap();
+			hints = new HashMap<>();
 
             IConfigurationElement[] hintElements = element
                     .getChildren(IWorkbenchRegistryConstants.TAG_HINT);

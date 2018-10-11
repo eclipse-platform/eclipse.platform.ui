@@ -69,7 +69,7 @@ final class Identifier implements IIdentifier {
     }
 
     @Override
-	public int compareTo(Object object) {
+	public int compareTo(IIdentifier object) {
         Identifier castedObject = (Identifier) object;
         int compareTo = Util.compare(activityIdsAsArray,
                 castedObject.activityIdsAsArray);

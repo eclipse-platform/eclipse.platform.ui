@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 IBM Corporation and others.
+ * Copyright (c) 2000, 2018 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -19,7 +19,6 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
-
 import org.eclipse.ui.internal.util.Util;
 
 public final class ActivityPatternBindingDefinition {
@@ -28,35 +27,30 @@ public final class ActivityPatternBindingDefinition {
     private static final int HASH_INITIAL = ActivityPatternBindingDefinition.class
             .getName().hashCode();
 
-    static Map activityPatternBindingDefinitionsByActivityId(
-            Collection activityPatternBindingDefinitions) {
+	static Map<String, Collection<ActivityPatternBindingDefinition>> activityPatternBindingDefinitionsByActivityId(
+			Collection<ActivityPatternBindingDefinition> activityPatternBindingDefinitions) {
         if (activityPatternBindingDefinitions == null) {
 			throw new NullPointerException();
 		}
 
-        Map map = new HashMap();
-        Iterator iterator = activityPatternBindingDefinitions.iterator();
+		Map<String, Collection<ActivityPatternBindingDefinition>> map = new HashMap<>();
+		Iterator<ActivityPatternBindingDefinition> iterator = activityPatternBindingDefinitions.iterator();
 
-        while (iterator.hasNext()) {
-            Object object = iterator.next();
-            Util.assertInstance(object, ActivityPatternBindingDefinition.class);
-            ActivityPatternBindingDefinition activityPatternBindingDefinition = (ActivityPatternBindingDefinition) object;
-            String activityId = activityPatternBindingDefinition
-                    .getActivityId();
+		while (iterator.hasNext()) {
+			ActivityPatternBindingDefinition activityPatternBindingDefinition = iterator.next();
+			String activityId = activityPatternBindingDefinition.getActivityId();
 
-            if (activityId != null) {
-                Collection activityPatternBindingDefinitions2 = (Collection) map
-                        .get(activityId);
+			if (activityId != null) {
+				Collection<ActivityPatternBindingDefinition> activityPatternBindingDefinitions2 = map.get(activityId);
 
-                if (activityPatternBindingDefinitions2 == null) {
-                    activityPatternBindingDefinitions2 = new ArrayList();
-                    map.put(activityId, activityPatternBindingDefinitions2);
-                }
+				if (activityPatternBindingDefinitions2 == null) {
+					activityPatternBindingDefinitions2 = new ArrayList<>();
+					map.put(activityId, activityPatternBindingDefinitions2);
+				}
 
-                activityPatternBindingDefinitions2
-                        .add(activityPatternBindingDefinition);
-            }
-        }
+				activityPatternBindingDefinitions2.add(activityPatternBindingDefinition);
+			}
+		}
 
         return map;
     }

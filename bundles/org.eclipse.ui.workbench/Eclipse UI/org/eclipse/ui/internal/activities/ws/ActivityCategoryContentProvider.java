@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2016 IBM Corporation and others.
+ * Copyright (c) 2003, 2018 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -55,17 +55,14 @@ public class ActivityCategoryContentProvider implements ITreeContentProvider {
 	 * @return all activities in the category.
 	 */
 	private IActivity[] getCategoryActivities(ICategory category) {
-		Set activityIds = InternalActivityHelper.getActivityIdsForCategory(
+		Set<String> activityIds = InternalActivityHelper.getActivityIdsForCategory(
 				manager, category);
-		List categoryActivities = new ArrayList(activityIds.size());
-		for (Iterator i = activityIds.iterator(); i.hasNext();) {
-			String activityId = (String) i.next();
-			categoryActivities.add(new CategorizedActivity(category, manager
-					.getActivity(activityId)));
+		List<IActivity> categoryActivities = new ArrayList<>(activityIds.size());
+		for (String activityId : activityIds) {
+			categoryActivities.add(new CategorizedActivity(category, manager.getActivity(activityId)));
 
 		}
-		return (IActivity[]) categoryActivities
-				.toArray(new IActivity[categoryActivities.size()]);
+		return categoryActivities.toArray(new IActivity[categoryActivities.size()]);
 	}
 
 	/**
@@ -77,27 +74,24 @@ public class ActivityCategoryContentProvider implements ITreeContentProvider {
 	 */
 	public Object[] getDuplicateCategoryActivities(
 			CategorizedActivity categorizedActivity) {
-		ArrayList duplicateCategorizedactivities = new ArrayList();
-		Set categoryIds = manager.getDefinedCategoryIds();
+		ArrayList<CategorizedActivity> duplicateCategorizedactivities = new ArrayList<>();
+		Set<String> categoryIds = manager.getDefinedCategoryIds();
 		ICategory currentCategory = null;
 		String currentActivityId = null;
 		IActivity[] categoryActivities = null;
 		String currentCategoryId = null;
 		// find the duplicate activities in the defined categories
-		for (Iterator i = categoryIds.iterator(); i.hasNext();) {
-			currentCategoryId = (String) i.next();
-			if (!currentCategoryId.equals(categorizedActivity.getCategory()
-					.getId())) {
+		for (Iterator<String> i = categoryIds.iterator(); i.hasNext();) {
+			currentCategoryId = i.next();
+			if (!currentCategoryId.equals(categorizedActivity.getCategory().getId())) {
 				currentCategory = manager.getCategory(currentCategoryId);
 				categoryActivities = getCategoryActivities(currentCategory);
 				// traverse the category's activities to find a duplicate
 				for (IActivity categoryActivity : categoryActivities) {
 					currentActivityId = categoryActivity.getId();
-					if (currentActivityId.equals(categorizedActivity
-							.getActivity().getId())) {
+					if (currentActivityId.equals(categorizedActivity.getActivity().getId())) {
 						duplicateCategorizedactivities
-								.add(new CategorizedActivity(currentCategory,
-										manager.getActivity(currentActivityId)));
+								.add(new CategorizedActivity(currentCategory, manager.getActivity(currentActivityId)));
 						// Assuming only one unique activity per category -
 						// break
 						break;
@@ -118,22 +112,19 @@ public class ActivityCategoryContentProvider implements ITreeContentProvider {
 	 * @return the list of child required activities.
 	 */
 	public Object[] getChildRequiredActivities(String activityId) {
-		ArrayList childRequiredActivities = new ArrayList();
+		ArrayList<CategorizedActivity> childRequiredActivities = new ArrayList<>();
 		IActivity activity = manager.getActivity(activityId);
-		Set actvitiyRequirementBindings = activity
+		Set<IActivityRequirementBinding> actvitiyRequirementBindings = activity
 				.getActivityRequirementBindings();
 		String requiredActivityId = null;
 		IActivityRequirementBinding currentActivityRequirementBinding = null;
 		Object[] currentCategoryIds = null;
-		for (Iterator i = actvitiyRequirementBindings.iterator(); i.hasNext();) {
-			currentActivityRequirementBinding = (IActivityRequirementBinding) i
-					.next();
-			requiredActivityId = currentActivityRequirementBinding
-					.getRequiredActivityId();
+		for (Iterator<IActivityRequirementBinding> i = actvitiyRequirementBindings.iterator(); i.hasNext();) {
+			currentActivityRequirementBinding = i.next();
+			requiredActivityId = currentActivityRequirementBinding.getRequiredActivityId();
 			currentCategoryIds = getActivityCategories(requiredActivityId);
 			for (Object currentCategoryId : currentCategoryIds) {
-				childRequiredActivities.add(new CategorizedActivity(manager
-						.getCategory((String) currentCategoryId),
+				childRequiredActivities.add(new CategorizedActivity(manager.getCategory((String) currentCategoryId),
 						manager.getActivity(requiredActivityId)));
 			}
 
@@ -150,35 +141,27 @@ public class ActivityCategoryContentProvider implements ITreeContentProvider {
 	 * @return the list of parent required activities.
 	 */
 	public Object[] getParentRequiredActivities(String activityId) {
-		ArrayList parentRequiredActivities = new ArrayList();
-		Set definedActivities = manager.getDefinedActivityIds();
+		ArrayList<CategorizedActivity> parentRequiredActivities = new ArrayList<>();
+		Set<String> definedActivities = manager.getDefinedActivityIds();
 		String currentActivityId = null;
-		Set activityRequirementBindings = null;
+		Set<IActivityRequirementBinding> activityRequirementBindings = null;
 		IActivityRequirementBinding currentActivityRequirementBinding = null;
 		Object[] currentCategoryIds = null;
-		for (Iterator i = definedActivities.iterator(); i.hasNext();) {
-			currentActivityId = (String) i.next();
-			activityRequirementBindings = manager
-					.getActivity(currentActivityId)
-					.getActivityRequirementBindings();
-			for (Iterator j = activityRequirementBindings.iterator(); j
-					.hasNext();) {
-				currentActivityRequirementBinding = (IActivityRequirementBinding) j
-						.next();
-				if (currentActivityRequirementBinding.getRequiredActivityId()
-						.equals(activityId)) {
+		for (Iterator<String> i = definedActivities.iterator(); i.hasNext();) {
+			currentActivityId = i.next();
+			activityRequirementBindings = manager.getActivity(currentActivityId).getActivityRequirementBindings();
+			for (Iterator<IActivityRequirementBinding> j = activityRequirementBindings.iterator(); j.hasNext();) {
+				currentActivityRequirementBinding = j.next();
+				if (currentActivityRequirementBinding.getRequiredActivityId().equals(activityId)) {
 					// We found one - add it to the list
 					currentCategoryIds = getActivityCategories(currentActivityId);
 					for (Object currentCategoryId : currentCategoryIds) {
 						parentRequiredActivities
-								.add(new CategorizedActivity(
-										manager
-												.getCategory((String) currentCategoryId),
+								.add(new CategorizedActivity(manager.getCategory((String) currentCategoryId),
 										manager.getActivity(currentActivityId)));
 					}
 				}
 			}
-
 		}
 		return parentRequiredActivities.toArray();
 	}
@@ -191,14 +174,13 @@ public class ActivityCategoryContentProvider implements ITreeContentProvider {
 	 * @return the activity's categories.
 	 */
 	private Object[] getActivityCategories(String activityId) {
-		ArrayList activityCategories = new ArrayList();
-		Set categoryIds = manager.getDefinedCategoryIds();
+		ArrayList<String> activityCategories = new ArrayList<>();
+		Set<String> categoryIds = manager.getDefinedCategoryIds();
 		String currentCategoryId = null;
 		IActivity[] categoryActivities = null;
-		for (Iterator i = categoryIds.iterator(); i.hasNext();) {
-			currentCategoryId = (String) i.next();
-			categoryActivities = getCategoryActivities(manager
-					.getCategory(currentCategoryId));
+		for (Iterator<String> i = categoryIds.iterator(); i.hasNext();) {
+			currentCategoryId = i.next();
+			categoryActivities = getCategoryActivities(manager.getCategory(currentCategoryId));
 			for (IActivity categoryActivity : categoryActivities) {
 				if (categoryActivity.getId().equals(activityId)) {
 					activityCategories.add(currentCategoryId);
@@ -212,10 +194,9 @@ public class ActivityCategoryContentProvider implements ITreeContentProvider {
     @Override
 	public Object[] getChildren(Object parentElement) {
         if (parentElement instanceof IActivityManager) {
-            Set categoryIds = manager.getDefinedCategoryIds();
-            ArrayList categories = new ArrayList(categoryIds.size());
-            for (Iterator i = categoryIds.iterator(); i.hasNext();) {
-                String categoryId = (String) i.next();
+			Set<String> categoryIds = manager.getDefinedCategoryIds();
+			ArrayList<ICategory> categories = new ArrayList<>(categoryIds.size());
+			for (String categoryId : categoryIds) {
                 ICategory category = manager.getCategory(categoryId);
 				if (getCategoryActivities(category).length > 0) {
 					categories.add(category);

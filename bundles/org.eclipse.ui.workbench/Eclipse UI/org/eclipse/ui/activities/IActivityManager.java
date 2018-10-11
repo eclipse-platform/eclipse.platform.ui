@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 IBM Corporation and others.
+ * Copyright (c) 2000, 2018 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -71,7 +71,7 @@ public interface IActivityManager {
      *         set is not empty, it is guaranteed to only contain instances of
      *         <code>String</code>.
      */
-    Set getDefinedActivityIds();
+	Set<String> getDefinedActivityIds();
 
     /**
      * Returns the set of identifiers to defined categories.
@@ -85,7 +85,7 @@ public interface IActivityManager {
      *         set is not empty, it is guaranteed to only contain instances of
      *         <code>String</code>.
      */
-    Set getDefinedCategoryIds();
+	Set<String> getDefinedCategoryIds();
 
     /**
      * Returns the set of identifiers to enabled activities.
@@ -99,7 +99,7 @@ public interface IActivityManager {
      *         set is not empty, it is guaranteed to only contain instances of
      *         <code>String</code>.
      */
-    Set getEnabledActivityIds();
+	Set<String> getEnabledActivityIds();
 
     /**
      * Returns an instance of <code>IIdentifier</code> given an identifier.

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 IBM Corporation and others.
+ * Copyright (c) 2000, 2018 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -18,7 +18,6 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-
 import org.eclipse.ui.activities.CategoryEvent;
 import org.eclipse.ui.activities.ICategory;
 import org.eclipse.ui.activities.ICategoryActivityBinding;
@@ -31,13 +30,13 @@ final class Category implements ICategory {
 
     private static final int HASH_INITIAL = Category.class.getName().hashCode();
 
-    private static final Set strongReferences = new HashSet();
+	private static final Set<Category> strongReferences = new HashSet<>();
 
-    private Set categoryActivityBindings;
+	private Set<ICategoryActivityBinding> categoryActivityBindings;
 
     private transient ICategoryActivityBinding[] categoryActivityBindingsAsArray;
 
-    private List categoryListeners;
+	private List<ICategoryListener> categoryListeners;
 
     private boolean defined;
 
@@ -66,7 +65,7 @@ final class Category implements ICategory {
 		}
 
         if (categoryListeners == null) {
-			categoryListeners = new ArrayList();
+			categoryListeners = new ArrayList<>();
 		}
 
         if (!categoryListeners.contains(categoryListener)) {
@@ -77,14 +76,14 @@ final class Category implements ICategory {
     }
 
     @Override
-	public int compareTo(Object object) {
+	public int compareTo(ICategory object) {
         Category castedObject = (Category) object;
         int compareTo = Util.compare(
                 categoryActivityBindingsAsArray,
                 castedObject.categoryActivityBindingsAsArray);
 
         if (compareTo == 0) {
-            compareTo = Util.compare(defined, castedObject.defined);
+			compareTo = Util.compare(defined, castedObject.defined);
 
             if (compareTo == 0) {
                 compareTo = Util.compare(id, castedObject.id);
@@ -128,14 +127,14 @@ final class Category implements ICategory {
 
         if (categoryListeners != null) {
 			for (int i = 0; i < categoryListeners.size(); i++) {
-				((ICategoryListener) categoryListeners.get(i))
+				categoryListeners.get(i)
                         .categoryChanged(categoryEvent);
 			}
 		}
     }
 
     @Override
-	public Set getCategoryActivityBindings() {
+	public Set<ICategoryActivityBinding> getCategoryActivityBindings() {
         return categoryActivityBindings;
     }
 
@@ -189,14 +188,14 @@ final class Category implements ICategory {
 		}
     }
 
-    boolean setCategoryActivityBindings(Set categoryActivityBindings) {
+	boolean setCategoryActivityBindings(Set<ICategoryActivityBinding> categoryActivityBindings) {
         categoryActivityBindings = Util.safeCopy(categoryActivityBindings,
                 ICategoryActivityBinding.class);
 
         if (!Util.equals(categoryActivityBindings,
                 this.categoryActivityBindings)) {
             this.categoryActivityBindings = categoryActivityBindings;
-            this.categoryActivityBindingsAsArray = (ICategoryActivityBinding[]) this.categoryActivityBindings
+            this.categoryActivityBindingsAsArray = this.categoryActivityBindings
                     .toArray(new ICategoryActivityBinding[this.categoryActivityBindings
                             .size()]);
             hashCode = HASH_INITIAL;

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 IBM Corporation and others.
+ * Copyright (c) 2000, 2018 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -19,7 +19,6 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
-
 import org.eclipse.core.expressions.Expression;
 import org.eclipse.ui.activities.ActivityEvent;
 import org.eclipse.ui.activities.IActivity;
@@ -34,15 +33,15 @@ final class Activity implements IActivity {
 
     private static final int HASH_INITIAL = Activity.class.getName().hashCode();
 
-    private static final Set strongReferences = new HashSet();
+	private static final Set<Activity> strongReferences = new HashSet<>();
 
-    private Set activityRequirementBindings;
+	private Set<IActivityRequirementBinding> activityRequirementBindings;
 
     private transient IActivityRequirementBinding[] activityRequirementBindingsAsArray;
 
-    private List activityListeners;
+	private List<IActivityListener> activityListeners;
 
-    private Set activityPatternBindings;
+	private Set<IActivityPatternBinding> activityPatternBindings;
 
     private transient IActivityPatternBinding[] activityPatternBindingsAsArray;
 
@@ -79,7 +78,7 @@ final class Activity implements IActivity {
 		}
 
         if (activityListeners == null) {
-			activityListeners = new ArrayList();
+			activityListeners = new ArrayList<>();
 		}
 
         if (!activityListeners.contains(activityListener)) {
@@ -90,7 +89,7 @@ final class Activity implements IActivity {
     }
 
     @Override
-	public int compareTo(Object object) {
+	public int compareTo(IActivity object) {
         Activity castedObject = (Activity) object;
 
         int compareTo = Util.compare(
@@ -162,19 +161,19 @@ final class Activity implements IActivity {
 
         if (activityListeners != null) {
 			for (int i = 0; i < activityListeners.size(); i++) {
-				((IActivityListener) activityListeners.get(i))
+				activityListeners.get(i)
                         .activityChanged(activityEvent);
 			}
 		}
     }
 
     @Override
-	public Set getActivityRequirementBindings() {
+	public Set<IActivityRequirementBinding> getActivityRequirementBindings() {
         return activityRequirementBindings;
     }
 
     @Override
-	public Set getActivityPatternBindings() {
+	public Set<IActivityPatternBinding> getActivityPatternBindings() {
         return activityPatternBindings;
     }
 
@@ -227,16 +226,14 @@ final class Activity implements IActivity {
     }
 
     public boolean isMatch(String string) {
-        if (isDefined()) {
-			for (Iterator iterator = activityPatternBindings.iterator(); iterator
-                    .hasNext();) {
-                ActivityPatternBinding activityPatternBinding = (ActivityPatternBinding) iterator
-                        .next();
+		if (isDefined()) {
+			for (Iterator<IActivityPatternBinding> iterator = activityPatternBindings.iterator(); iterator.hasNext();) {
+				ActivityPatternBinding activityPatternBinding = (ActivityPatternBinding) iterator.next();
 
-                if (activityPatternBinding.isMatch(string)) {
+				if (activityPatternBinding.isMatch(string)) {
 					return true;
 				}
-            }
+			}
 		}
 
         return false;
@@ -257,14 +254,14 @@ final class Activity implements IActivity {
 		}
     }
 
-    boolean setActivityRequirementBindings(Set activityRequirementBindings) {
+	boolean setActivityRequirementBindings(Set<IActivityRequirementBinding> activityRequirementBindings) {
         activityRequirementBindings = Util.safeCopy(
                 activityRequirementBindings, IActivityRequirementBinding.class);
 
         if (!Util.equals(activityRequirementBindings,
                 this.activityRequirementBindings)) {
             this.activityRequirementBindings = activityRequirementBindings;
-            this.activityRequirementBindingsAsArray = (IActivityRequirementBinding[]) this.activityRequirementBindings
+            this.activityRequirementBindingsAsArray = this.activityRequirementBindings
                     .toArray(new IActivityRequirementBinding[this.activityRequirementBindings
                             .size()]);
             hashCode = HASH_INITIAL;
@@ -275,22 +272,20 @@ final class Activity implements IActivity {
         return false;
     }
 
-    boolean setActivityPatternBindings(Set activityPatternBindings) {
-        activityPatternBindings = Util.safeCopy(activityPatternBindings,
-                IActivityPatternBinding.class);
+	boolean setActivityPatternBindings(Set<IActivityPatternBinding> activityPatternBindings) {
+		activityPatternBindings = Util.safeCopy(activityPatternBindings, IActivityPatternBinding.class);
 
-        if (!Util.equals(activityPatternBindings, this.activityPatternBindings)) {
-            this.activityPatternBindings = activityPatternBindings;
-            this.activityPatternBindingsAsArray = (IActivityPatternBinding[]) this.activityPatternBindings
-                    .toArray(new IActivityPatternBinding[this.activityPatternBindings
-                            .size()]);
-            hashCode = HASH_INITIAL;
-            string = null;
-            return true;
-        }
+		if (!Util.equals(activityPatternBindings, this.activityPatternBindings)) {
+			this.activityPatternBindings = activityPatternBindings;
+			this.activityPatternBindingsAsArray = this.activityPatternBindings
+					.toArray(new IActivityPatternBinding[this.activityPatternBindings.size()]);
+			hashCode = HASH_INITIAL;
+			string = null;
+			return true;
+		}
 
-        return false;
-    }
+		return false;
+	}
 
     boolean setDefined(boolean defined) {
         if (defined != this.defined) {

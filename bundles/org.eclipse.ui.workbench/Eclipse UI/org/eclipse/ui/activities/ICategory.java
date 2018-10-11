@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 IBM Corporation and others.
+ * Copyright (c) 2000, 2018 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -37,7 +37,7 @@ import java.util.Set;
  * @see IActivityManager
  * @noimplement This interface is not intended to be implemented by clients.
  */
-public interface ICategory extends Comparable {
+public interface ICategory extends Comparable<ICategory> {
 
     /**
      * Registers an instance of <code>ICategoryListener</code> to listen for
@@ -67,7 +67,7 @@ public interface ICategory extends Comparable {
      *         not empty, it is guaranteed to only contain instances of <code>ICategoryActivityBinding</code>.
      * @see ICategoryActivityBinding
      */
-    Set getCategoryActivityBindings();
+	Set<ICategoryActivityBinding> getCategoryActivityBindings();
 
     /**
      * Returns the identifier of this instance.

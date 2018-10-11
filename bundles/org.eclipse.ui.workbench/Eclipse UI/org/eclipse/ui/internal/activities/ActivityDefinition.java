@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 IBM Corporation and others.
+ * Copyright (c) 2000, 2018 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -19,29 +19,26 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
-
 import org.eclipse.core.expressions.Expression;
 import org.eclipse.ui.internal.util.Util;
 
-public final class ActivityDefinition implements Comparable {
+public final class ActivityDefinition implements Comparable<ActivityDefinition> {
     private static final int HASH_FACTOR = 89;
 
     private static final int HASH_INITIAL = ActivityDefinition.class.getName()
             .hashCode();
 
-    static Map activityDefinitionsById(Collection activityDefinitions,
+	static Map<String, ActivityDefinition> activityDefinitionsById(Collection<ActivityDefinition> activityDefinitions,
             boolean allowNullIds) {
         if (activityDefinitions == null) {
 			throw new NullPointerException();
 		}
 
-        Map map = new HashMap();
-        Iterator iterator = activityDefinitions.iterator();
+		Map<String, ActivityDefinition> map = new HashMap<>();
+		Iterator<ActivityDefinition> iterator = activityDefinitions.iterator();
 
         while (iterator.hasNext()) {
-            Object object = iterator.next();
-            Util.assertInstance(object, ActivityDefinition.class);
-            ActivityDefinition activityDefinition = (ActivityDefinition) object;
+			ActivityDefinition activityDefinition = iterator.next();
             String id = activityDefinition.getId();
 
             if (allowNullIds || id != null) {
@@ -52,26 +49,25 @@ public final class ActivityDefinition implements Comparable {
         return map;
     }
 
-    static Map activityDefinitionsByName(Collection activityDefinitions,
+	static Map<String, Collection<ActivityDefinition>> activityDefinitionsByName(
+			Collection<ActivityDefinition> activityDefinitions,
             boolean allowNullNames) {
         if (activityDefinitions == null) {
 			throw new NullPointerException();
 		}
 
-        Map map = new HashMap();
-        Iterator iterator = activityDefinitions.iterator();
+		Map<String, Collection<ActivityDefinition>> map = new HashMap<>();
+		Iterator<ActivityDefinition> iterator = activityDefinitions.iterator();
 
         while (iterator.hasNext()) {
-            Object object = iterator.next();
-            Util.assertInstance(object, ActivityDefinition.class);
-            ActivityDefinition activityDefinition = (ActivityDefinition) object;
+			ActivityDefinition activityDefinition = iterator.next();
             String name = activityDefinition.getName();
 
             if (allowNullNames || name != null) {
-                Collection activityDefinitions2 = (Collection) map.get(name);
+				Collection<ActivityDefinition> activityDefinitions2 = map.get(name);
 
                 if (activityDefinitions2 == null) {
-                    activityDefinitions2 = new HashSet();
+					activityDefinitions2 = new HashSet<>();
                     map.put(name, activityDefinitions2);
                 }
 
@@ -105,15 +101,14 @@ public final class ActivityDefinition implements Comparable {
     }
 
     @Override
-	public int compareTo(Object object) {
-        ActivityDefinition castedObject = (ActivityDefinition) object;
-        int compareTo = Util.compare(id, castedObject.id);
+	public int compareTo(ActivityDefinition object) {
+		int compareTo = Util.compare(id, object.id);
 
         if (compareTo == 0) {
-            compareTo = Util.compare(name, castedObject.name);
+			compareTo = Util.compare(name, object.name);
 
             if (compareTo == 0) {
-				compareTo = Util.compare(sourceId, castedObject.sourceId);
+				compareTo = Util.compare(sourceId, object.sourceId);
 			}
         }
 

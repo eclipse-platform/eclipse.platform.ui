@@ -28,7 +28,7 @@ public class ActivityContentProvider implements IStructuredContentProvider {
         if (inputElement instanceof IActivityManager) {
 			activities = ((IActivityManager) inputElement).getDefinedActivityIds().toArray();
         } else if (inputElement instanceof Collection) {
-            activities = ((Collection) inputElement).toArray();
+			activities = ((Collection<?>) inputElement).toArray();
         }
         return activities;
     }

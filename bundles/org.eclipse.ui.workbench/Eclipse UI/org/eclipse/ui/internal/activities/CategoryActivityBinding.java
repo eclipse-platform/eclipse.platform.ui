@@ -41,7 +41,7 @@ public final class CategoryActivityBinding implements ICategoryActivityBinding {
     }
 
     @Override
-	public int compareTo(Object object) {
+	public int compareTo(ICategoryActivityBinding object) {
         CategoryActivityBinding castedObject = (CategoryActivityBinding) object;
         int compareTo = Util.compare(activityId, castedObject.activityId);
 

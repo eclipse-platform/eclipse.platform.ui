@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2014 IBM Corporation and others.
+ * Copyright (c) 2000, 2018 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -19,7 +19,6 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
-
 import org.eclipse.ui.internal.util.Util;
 
 public final class CategoryActivityBindingDefinition {
@@ -28,30 +27,26 @@ public final class CategoryActivityBindingDefinition {
     private static final int HASH_INITIAL = CategoryActivityBindingDefinition.class
             .getName().hashCode();
 
-    static Map categoryActivityBindingDefinitionsByCategoryId(
-            Collection categoryActivityBindingDefinitions) {
+	static Map<String, Collection<CategoryActivityBindingDefinition>> categoryActivityBindingDefinitionsByCategoryId(
+			Collection<CategoryActivityBindingDefinition> categoryActivityBindingDefinitions) {
         if (categoryActivityBindingDefinitions == null) {
 			throw new NullPointerException();
 		}
 
-        Map map = new HashMap();
-        Iterator iterator = categoryActivityBindingDefinitions.iterator();
+		Map<String, Collection<CategoryActivityBindingDefinition>> map = new HashMap<>();
+		Iterator<CategoryActivityBindingDefinition> iterator = categoryActivityBindingDefinitions.iterator();
 
         while (iterator.hasNext()) {
-            Object object = iterator.next();
-            Util
-                    .assertInstance(object,
-                            CategoryActivityBindingDefinition.class);
-            CategoryActivityBindingDefinition categoryActivityBindingDefinition = (CategoryActivityBindingDefinition) object;
+			CategoryActivityBindingDefinition categoryActivityBindingDefinition = iterator.next();
             String categoryId = categoryActivityBindingDefinition
                     .getCategoryId();
 
             if (categoryId != null) {
-                Collection categoryActivityBindingDefinitions2 = (Collection) map
+				Collection<CategoryActivityBindingDefinition> categoryActivityBindingDefinitions2 = map
                         .get(categoryId);
 
                 if (categoryActivityBindingDefinitions2 == null) {
-                    categoryActivityBindingDefinitions2 = new HashSet();
+					categoryActivityBindingDefinitions2 = new HashSet<>();
                     map.put(categoryId, categoryActivityBindingDefinitions2);
                 }
 

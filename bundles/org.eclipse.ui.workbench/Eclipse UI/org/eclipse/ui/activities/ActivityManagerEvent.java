@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 IBM Corporation and others.
+ * Copyright (c) 2000, 2018 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -15,7 +15,6 @@
 package org.eclipse.ui.activities;
 
 import java.util.Set;
-
 import org.eclipse.ui.internal.util.Util;
 
 /**
@@ -45,21 +44,21 @@ public final class ActivityManagerEvent {
      * change occurred. If the defined activities did not changed, then this
      * value is <code>null</code>.
      */
-    private final Set previouslyDefinedActivityIds;
+	private final Set<String> previouslyDefinedActivityIds;
 
     /**
      * The set of category identifiers (strings) that were defined before the
      * change occurred. If the defined category did not changed, then this value
      * is <code>null</code>.
      */
-    private final Set previouslyDefinedCategoryIds;
+	private final Set<String> previouslyDefinedCategoryIds;
 
     /**
      * The set of activity identifiers (strings) that were enabled before the
      * change occurred. If the enabled activities did not changed, then this
      * value is <code>null</code>.
      */
-    private final Set previouslyEnabledActivityIds;
+	private final Set<String> previouslyEnabledActivityIds;
 
     /**
      * Creates a new instance of this class.
@@ -101,9 +100,8 @@ public final class ActivityManagerEvent {
             boolean definedActivityIdsChanged,
             boolean definedCategoryIdsChanged,
             boolean enabledActivityIdsChanged,
-            final Set previouslyDefinedActivityIds,
-            final Set previouslyDefinedCategoryIds,
-            final Set previouslyEnabledActivityIds) {
+			final Set<String> previouslyDefinedActivityIds, final Set<String> previouslyDefinedCategoryIds,
+			final Set<String> previouslyEnabledActivityIds) {
         if (activityManager == null) {
 			throw new NullPointerException();
 		}
@@ -164,7 +162,7 @@ public final class ActivityManagerEvent {
      *         be empty, but never <code>null</code>. This set will only
      *         contain strings.
      */
-    public Set getPreviouslyDefinedActivityIds() {
+	public Set<String> getPreviouslyDefinedActivityIds() {
         return previouslyDefinedActivityIds;
     }
 
@@ -175,7 +173,7 @@ public final class ActivityManagerEvent {
      *         be empty, but never <code>null</code>. This set will only
      *         contain strings.
      */
-    public Set getPreviouslyDefinedCategoryIds() {
+	public Set<String> getPreviouslyDefinedCategoryIds() {
         return previouslyDefinedCategoryIds;
     }
 
@@ -186,7 +184,7 @@ public final class ActivityManagerEvent {
      *         be empty, but never <code>null</code>. This set will only
      *         contain strings.
      */
-    public Set getPreviouslyEnabledActivityIds() {
+	public Set<String> getPreviouslyEnabledActivityIds() {
         return previouslyEnabledActivityIds;
     }
 

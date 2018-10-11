@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 IBM Corporation and others.
+ * Copyright (c) 2000, 2018 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -19,28 +19,25 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
-
 import org.eclipse.ui.internal.util.Util;
 
-public final class CategoryDefinition implements Comparable {
+public final class CategoryDefinition implements Comparable<CategoryDefinition> {
     private static final int HASH_FACTOR = 89;
 
     private static final int HASH_INITIAL = CategoryDefinition.class.getName()
             .hashCode();
 
-    static Map categoryDefinitionsById(Collection categoryDefinitions,
+	static Map<String, CategoryDefinition> categoryDefinitionsById(Collection<CategoryDefinition> categoryDefinitions,
             boolean allowNullIds) {
         if (categoryDefinitions == null) {
 			throw new NullPointerException();
 		}
 
-        Map map = new HashMap();
-        Iterator iterator = categoryDefinitions.iterator();
+		Map<String, CategoryDefinition> map = new HashMap<>();
+		Iterator<CategoryDefinition> iterator = categoryDefinitions.iterator();
 
         while (iterator.hasNext()) {
-            Object object = iterator.next();
-            Util.assertInstance(object, CategoryDefinition.class);
-            CategoryDefinition categoryDefinition = (CategoryDefinition) object;
+			CategoryDefinition categoryDefinition = iterator.next();
             String id = categoryDefinition.getId();
 
             if (allowNullIds || id != null) {
@@ -51,26 +48,25 @@ public final class CategoryDefinition implements Comparable {
         return map;
     }
 
-    static Map categoryDefinitionsByName(Collection categoryDefinitions,
+	static Map<String, Collection<CategoryDefinition>> categoryDefinitionsByName(
+			Collection<CategoryDefinition> categoryDefinitions,
             boolean allowNullNames) {
         if (categoryDefinitions == null) {
 			throw new NullPointerException();
 		}
 
-        Map map = new HashMap();
-        Iterator iterator = categoryDefinitions.iterator();
+		Map<String, Collection<CategoryDefinition>> map = new HashMap<>();
+		Iterator<CategoryDefinition> iterator = categoryDefinitions.iterator();
 
         while (iterator.hasNext()) {
-            Object object = iterator.next();
-            Util.assertInstance(object, CategoryDefinition.class);
-            CategoryDefinition categoryDefinition = (CategoryDefinition) object;
+			CategoryDefinition categoryDefinition = iterator.next();
             String name = categoryDefinition.getName();
 
             if (allowNullNames || name != null) {
-                Collection categoryDefinitions2 = (Collection) map.get(name);
+				Collection<CategoryDefinition> categoryDefinitions2 = map.get(name);
 
                 if (categoryDefinitions2 == null) {
-                    categoryDefinitions2 = new HashSet();
+					categoryDefinitions2 = new HashSet<>();
                     map.put(name, categoryDefinitions2);
                 }
 
@@ -102,15 +98,14 @@ public final class CategoryDefinition implements Comparable {
     }
 
     @Override
-	public int compareTo(Object object) {
-        CategoryDefinition castedObject = (CategoryDefinition) object;
-        int compareTo = Util.compare(id, castedObject.id);
+	public int compareTo(CategoryDefinition object) {
+		int compareTo = Util.compare(id, object.id);
 
         if (compareTo == 0) {
-            compareTo = Util.compare(name, castedObject.name);
+			compareTo = Util.compare(name, object.name);
 
             if (compareTo == 0) {
-				compareTo = Util.compare(sourceId, castedObject.sourceId);
+				compareTo = Util.compare(sourceId, object.sourceId);
 			}
         }
 

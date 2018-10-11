@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2018 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -21,17 +21,17 @@ public interface IActivityRegistry {
     void addActivityRegistryListener(
             IActivityRegistryListener activityRegistryListener);
 
-    List getActivityRequirementBindingDefinitions();
+	List<ActivityRequirementBindingDefinition> getActivityRequirementBindingDefinitions();
 
-    List getActivityDefinitions();
+	List<ActivityDefinition> getActivityDefinitions();
 
-    List getActivityPatternBindingDefinitions();
+	List<ActivityPatternBindingDefinition> getActivityPatternBindingDefinitions();
 
-    List getCategoryActivityBindingDefinitions();
+	List<CategoryActivityBindingDefinition> getCategoryActivityBindingDefinitions();
 
-    List getCategoryDefinitions();
+	List<CategoryDefinition> getCategoryDefinitions();
 
-    List getDefaultEnabledActivities();
+	List<String> getDefaultEnabledActivities();
 
     void removeActivityRegistryListener(
             IActivityRegistryListener activityRegistryListener);

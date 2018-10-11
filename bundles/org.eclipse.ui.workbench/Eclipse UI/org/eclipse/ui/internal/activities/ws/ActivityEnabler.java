@@ -17,7 +17,6 @@ import static org.eclipse.swt.events.SelectionListener.widgetSelectedAdapter;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -72,7 +71,7 @@ public class ActivityEnabler {
 	/**
 	 * The Set of activities that belong to at least one category.
 	 */
-	private Set managedActivities = new HashSet(7);
+	private Set<String> managedActivities = new HashSet<>(7);
 
 	/**
 	 * The content provider.
@@ -110,7 +109,7 @@ public class ActivityEnabler {
 
 		@Override
 		public void checkStateChanged(CheckStateChangedEvent event) {
-			Set checked = new HashSet(Arrays.asList(dualViewer
+			Set<Object> checked = new HashSet<>(Arrays.asList(dualViewer
 					.getCheckedElements()));
 			Object element = event.getElement();
 			if (element instanceof ICategory) {
@@ -152,7 +151,7 @@ public class ActivityEnabler {
 				dualViewer.setChecked(activity, checkedState);
 				// handle the activity check to potentially update its
 				// category's enablement
-				handleActivityCheck(new HashSet(Arrays.asList(dualViewer
+				handleActivityCheck(new HashSet<>(Arrays.asList(dualViewer
 						.getCheckedElements())), activity);
 			}
 		}
@@ -166,7 +165,7 @@ public class ActivityEnabler {
 		 * @param element
 		 *            The checked element.
 		 */
-		private void handleActivityCheck(Set checked, Object element) {
+		private void handleActivityCheck(Set<Object> checked, Object element) {
 			// clicking on an activity can potentially change the check/gray
 			// state of its category.
 			CategorizedActivity proxy = (CategorizedActivity) element;
@@ -207,7 +206,7 @@ public class ActivityEnabler {
 		 *            The checked element.
 		 *
 		 */
-		private void handleRequiredActivities(Set checked, Object element) {
+		private void handleRequiredActivities(Set<?> checked, Object element) {
 			Object[] requiredActivities = null;
 			// An element has been checked - we want to check its child required
 			// activities
@@ -219,8 +218,7 @@ public class ActivityEnabler {
 					// We want to check the element if it is unchecked
 					if (!checked.contains(requiredActivities[index])) {
 						dualViewer.setChecked(requiredActivities[index], true);
-						handleActivityCheck(new HashSet(Arrays
-								.asList(dualViewer.getCheckedElements())),
+						handleActivityCheck(new HashSet<>(Arrays.asList(dualViewer.getCheckedElements())),
 								requiredActivities[index]);
 					}
 				}
@@ -233,8 +231,7 @@ public class ActivityEnabler {
 					// We want to uncheck the element if it is checked
 					if (checked.contains(requiredActivity)) {
 						dualViewer.setChecked(requiredActivity, false);
-						handleActivityCheck(new HashSet(Arrays
-								.asList(dualViewer.getCheckedElements())),
+						handleActivityCheck(new HashSet<>(Arrays.asList(dualViewer.getCheckedElements())),
 								requiredActivity);
 					}
 				}
@@ -351,33 +348,27 @@ public class ActivityEnabler {
 	 * activity enablement.
 	 */
 	private void setInitialStates() {
-		Set enabledActivities = activitySupport
-				.getEnabledActivityIds();
+		Set<String> enabledActivities = activitySupport.getEnabledActivityIds();
 		setEnabledStates(enabledActivities);
 	}
 
-	private void setEnabledStates(Set enabledActivities) {
-		Set categories = activitySupport
+	private void setEnabledStates(Set<String> enabledActivities) {
+		Set<String> categories = activitySupport
 				.getDefinedCategoryIds();
-		List checked = new ArrayList(10), grayed = new ArrayList(10);
-		for (Iterator i = categories.iterator(); i.hasNext();) {
-			String categoryId = (String) i.next();
-			ICategory category = activitySupport
-					.getCategory(categoryId);
+		List<Object> checked = new ArrayList<>(10), grayed = new ArrayList<>(10);
+		for (String categoryId : categories) {
+			ICategory category = activitySupport.getCategory(categoryId);
 
 			int state = NONE;
 
-			Collection activities = InternalActivityHelper
-					.getActivityIdsForCategory(activitySupport, category);
+			Set<String> activities = InternalActivityHelper.getActivityIdsForCategory(activitySupport, category);
 			int foundCount = 0;
-			for (Iterator j = activities.iterator(); j.hasNext();) {
-				String activityId = (String) j.next();
+			for (String activityId : activities) {
 				managedActivities.add(activityId);
 				if (enabledActivities.contains(activityId)) {
-					IActivity activity = activitySupport
-							.getActivity(activityId);
+					IActivity activity = activitySupport.getActivity(activityId);
 					checked.add(new CategorizedActivity(category, activity));
-					//add activity proxy
+					// add activity proxy
 					foundCount++;
 				}
 			}
@@ -407,7 +398,7 @@ public class ActivityEnabler {
 	 * tree.
 	 */
 	public void updateActivityStates() {
-		Set enabledActivities = new HashSet(activitySupport.getEnabledActivityIds());
+		Set<String> enabledActivities = new HashSet<>(activitySupport.getEnabledActivityIds());
 
 		// remove all but the unmanaged activities (if any).
 		enabledActivities.removeAll(managedActivities);
@@ -426,10 +417,10 @@ public class ActivityEnabler {
 	 * Restore the default activity states.
 	 */
 	public void restoreDefaults() {
-	    Set defaultEnabled = new HashSet();
-	    Set activityIds = activitySupport.getDefinedActivityIds();
-	    for (Iterator i = activityIds.iterator(); i.hasNext();) {
-            String activityId = (String) i.next();
+		Set<String> defaultEnabled = new HashSet<>();
+		Set<String> activityIds = activitySupport.getDefinedActivityIds();
+		for (Iterator<String> i = activityIds.iterator(); i.hasNext();) {
+            String activityId = i.next();
             IActivity activity = activitySupport.getActivity(activityId);
             try {
                 if (activity.isDefaultEnabled()) {

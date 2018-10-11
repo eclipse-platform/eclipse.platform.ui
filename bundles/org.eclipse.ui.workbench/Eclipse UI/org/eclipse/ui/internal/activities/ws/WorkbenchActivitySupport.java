@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2015 IBM Corporation and others.
+ * Copyright (c) 2003, 2018 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -87,17 +87,17 @@ public class WorkbenchActivitySupport implements IWorkbenchActivitySupport, IExt
         mutableActivityManager
                 .addActivityManagerListener(new IActivityManagerListener() {
 
-                    private Set lastEnabled = new HashSet(
+					private Set<String> lastEnabled = new HashSet<>(
                             mutableActivityManager.getEnabledActivityIds());
 
                     @Override
 					public void activityManagerChanged(
                             ActivityManagerEvent activityManagerEvent) {
-                        Set activityIds = mutableActivityManager
+						Set<String> activityIds = mutableActivityManager
                                 .getEnabledActivityIds();
                         // only update the windows if we've not processed this new enablement state already.
                         if (!activityIds.equals(lastEnabled)) {
-                            lastEnabled = new HashSet(activityIds);
+							lastEnabled = new HashSet<>(activityIds);
 
                             // abort if the workbench isn't running
                             if (!PlatformUI.isWorkbenchRunning()) {
@@ -290,7 +290,7 @@ public class WorkbenchActivitySupport implements IWorkbenchActivitySupport, IExt
     }
 
     @Override
-	public void setEnabledActivityIds(Set enabledActivityIds) {
+	public void setEnabledActivityIds(Set<String> enabledActivityIds) {
         mutableActivityManager.setEnabledActivityIds(enabledActivityIds);
     }
 

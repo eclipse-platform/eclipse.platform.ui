@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2015 IBM Corporation and others.
+ * Copyright (c) 2004, 2018 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -52,7 +52,7 @@ public interface ITriggerPointAdvisor {
 	 *         required activities the change should be verified by consulting
 	 *         {@link IActivityManager#getEnabledActivityIds()}.
 	 */
-	Set allow(ITriggerPoint triggerPoint, IIdentifier identifier);
+	Set<String> allow(ITriggerPoint triggerPoint, IIdentifier identifier);
 
 	/**
 	 * Calculate the identifier's enabled state for a combination of activities

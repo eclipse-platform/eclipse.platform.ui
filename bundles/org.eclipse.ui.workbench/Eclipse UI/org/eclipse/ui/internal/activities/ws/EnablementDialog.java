@@ -56,9 +56,9 @@ public class EnablementDialog extends Dialog {
 
     private Button dontAskButton;
 
-    private Set activitiesToEnable = new HashSet(7);
+	private Set<String> activitiesToEnable = new HashSet<>(7);
 
-    private Collection activityIds;
+	private Collection<String> activityIds;
 
     private boolean dontAsk;
 
@@ -83,7 +83,7 @@ public class EnablementDialog extends Dialog {
 	 * @param activityIds the candidate activities
 	 * @param strings     string overrides
 	 */
-    public EnablementDialog(Shell parentShell, Collection activityIds, Properties strings) {
+	public EnablementDialog(Shell parentShell, Collection<String> activityIds, Properties strings) {
         super(parentShell);
         this.activityIds = activityIds;
 		this.strings = strings;
@@ -101,7 +101,7 @@ public class EnablementDialog extends Dialog {
                 .getActivitySupport().getActivityManager();
 
         if (activityIds.size() == 1) {
-            String activityId = (String) activityIds.iterator().next();
+            String activityId = activityIds.iterator().next();
             activitiesToEnable.add(activityId);
             selectedActivity = activityId;
 
@@ -127,7 +127,7 @@ public class EnablementDialog extends Dialog {
             text.setFont(dialogFont);
         } else {
             text.setText(RESOURCE_BUNDLE.getString("requiresMulti")); //$NON-NLS-1$
-            Set activityIdsCopy = new HashSet(activityIds);
+			Set<String> activityIdsCopy = new HashSet<>(activityIds);
             CheckboxTableViewer viewer = CheckboxTableViewer.newCheckList(
 					composite, SWT.CHECK | SWT.BORDER | SWT.SINGLE);
             viewer.setContentProvider(new ActivityContentProvider());
@@ -136,7 +136,7 @@ public class EnablementDialog extends Dialog {
             viewer.setCheckedElements(activityIdsCopy.toArray());
             viewer.addCheckStateListener(event -> {
 			    if (event.getChecked()) {
-					activitiesToEnable.add(event.getElement());
+					activitiesToEnable.add((String) event.getElement());
 				} else {
 					activitiesToEnable.remove(event.getElement());
 				}
@@ -270,7 +270,7 @@ public class EnablementDialog extends Dialog {
     /**
      * @return Returns the activities to enable
      */
-    public Set getActivitiesToEnable() {
+	public Set<String> getActivitiesToEnable() {
         return activitiesToEnable;
     }
 
