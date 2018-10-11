@@ -13,12 +13,18 @@
  ******************************************************************************/
 package org.eclipse.ui.internal.navigator.resources.nested;
 
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
+import java.util.concurrent.CancellationException;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
+import java.util.function.Supplier;
 
 import org.eclipse.core.internal.resources.MarkerManager;
 import org.eclipse.core.internal.resources.Workspace;
@@ -39,28 +45,32 @@ import org.eclipse.ui.navigator.ICommonContentExtensionSite;
 @SuppressWarnings("restriction")
 public class NestedProjectsLabelProvider extends ResourceExtensionLabelProvider {
 
-	private CompletableFuture<Map<IContainer, Integer>> severitiesPerContainer = null;
 	private IResourceChangeListener refreshSeveritiesOnProblemMarkerChange;
+	private ProblemsModelSupplier supplier;
+	private CompletableFuture<Map<IResource, Integer>> severities = null;
 
 	@Override
 	public void init(ICommonContentExtensionSite aConfig) {
 		super.init(aConfig);
-		this.severitiesPerContainer = refreshSeverities();
+		supplier = new ProblemsModelSupplier();
+		this.severities = refreshSeverities(null);
 		refreshSeveritiesOnProblemMarkerChange = event -> {
 			if (event.getDelta() == null) {
 				return;
 			}
+			Set<IResource> dirtyResources = new HashSet<>();
 			MarkerManager markerManager = ((Workspace) WorkbenchNavigatorPlugin.getWorkspace()).getMarkerManager();
 			try {
 				event.getDelta().accept(delta -> {
-					if (severitiesPerContainer != null) {
-						IMarkerDelta[] markerDeltas = delta.getMarkerDeltas();
-						for (IMarkerDelta markerDelta : markerDeltas) {
-							if (markerManager.isSubtype(markerDelta.getType(), IMarker.PROBLEM)) {
-								severitiesPerContainer.cancel(true);
-								severitiesPerContainer = null;
+					IMarkerDelta[] markerDeltas = delta.getMarkerDeltas();
+					for (IMarkerDelta markerDelta : markerDeltas) {
+						if (markerManager.isSubtype(markerDelta.getType(), IMarker.PROBLEM)) {
+							if (severities != null && !severities.isDone()) {
+								severities.cancel(true);
+								severities = null;
 								return false;
 							}
+							dirtyResources.add(markerDelta.getResource());
 						}
 					}
 					return true;
@@ -69,8 +79,8 @@ public class NestedProjectsLabelProvider extends ResourceExtensionLabelProvider 
 				WorkbenchNavigatorPlugin.log(e.getMessage(),
 						new Status(IStatus.ERROR, WorkbenchNavigatorPlugin.PLUGIN_ID, e.getMessage(), e));
 			}
-			if (severitiesPerContainer == null) {
-				this.severitiesPerContainer = refreshSeverities();
+			if (!dirtyResources.isEmpty()) {
+				this.severities = refreshSeverities(dirtyResources);
 			}
 		};
 		WorkbenchNavigatorPlugin.getWorkspace().addResourceChangeListener(refreshSeveritiesOnProblemMarkerChange);
@@ -82,38 +92,140 @@ public class NestedProjectsLabelProvider extends ResourceExtensionLabelProvider 
 		super.dispose();
 	}
 
-	private CompletableFuture<Map<IContainer, Integer>> refreshSeverities() {
-		return CompletableFuture.supplyAsync(() -> {
-			Map<IContainer, Integer> severities = new HashMap<>();
+	private CompletableFuture<Map<IResource, Integer>> refreshSeverities(Set<IResource> dirty) {
+		if (dirty != null) {
+			supplier.markDirty(dirty);
+		}
+		return CompletableFuture.supplyAsync(supplier);
+	}
+
+	private final class ProblemsModelSupplier implements Supplier<Map<IResource, Integer>> {
+		private Set<IResource> dirty = null;
+		private Map<IResource, Integer> cache = new HashMap<>();
+
+		@Override
+		public Map<IResource, Integer> get() {
+			Set<IResource> currentDirty = null;
+			if (dirty != null) {
+				// create a local copy to be thread safe
+				currentDirty = new HashSet<>();
+				currentDirty.addAll(this.dirty);
+				this.dirty.removeAll(currentDirty);
+				removeFromCache(currentDirty);
+			}
+
 			try {
-				for (IMarker marker : WorkbenchNavigatorPlugin.getWorkspace().getRoot().findMarkers(IMarker.PROBLEM, true, IResource.DEPTH_INFINITE)) {
-					int severity = marker.getAttribute(IMarker.SEVERITY, -1);
-					IContainer container = marker.getResource().getParent();
-					if (marker.getResource() instanceof IContainer) {
-						container = (IContainer) marker.getResource();
-					}
-					while (container != null) {
-						if (!severities.containsKey(container) || severities.get(container).intValue() < severity) {
-							severities.put(container, Integer.valueOf(severity));
-							if (container.getType() == IResource.FOLDER) {
-								container = container.getParent();
-							} else if (container.getType() == IResource.PROJECT) {
-								container = NestedProjectManager.getInstance().getMostDirectOpenContainer((IProject)container);
-							} else {
-								container = null;
-							}
-						} else {
-							container = null;
+				for (IMarker marker : WorkbenchNavigatorPlugin.getWorkspace().getRoot().findMarkers(IMarker.PROBLEM,
+						true, IResource.DEPTH_INFINITE)) {
+					IResource resource = marker.getResource();
+					if (currentDirty == null || currentDirty.contains(resource)) {
+						int severity = marker.getAttribute(IMarker.SEVERITY, 0);
+						if (severity >= 0) {
+							propagateSeverityToCache(resource, severity);
 						}
 					}
 				}
+				// initialize dirty so we won't rebuild model from scratch
+				markDirty(Collections.emptySet());
 			} catch (CoreException e) {
 				WorkbenchNavigatorPlugin.log(e.getMessage(),
 						new Status(IStatus.ERROR, WorkbenchNavigatorPlugin.PLUGIN_ID, e.getMessage(), e));
 				throw new RuntimeException(e);
+			} catch (CancellationException e) {
+				// ignore
+				return Collections.emptyMap();
 			}
-			return severities;
-		});
+			return cache;
+		}
+
+		/**
+		 * Removes element from the cache and then fix the parent hierarchy for removed
+		 * elements (remove from cache if no problem remain under node, or re-compute
+		 * and propagate new highest severity)
+		 *
+		 * @param toRemove
+		 */
+		private void removeFromCache(Set<IResource> toRemove) {
+			Set<IContainer> dirtyLeafContainers = new HashSet<>();
+			for (IResource resource : toRemove) {
+				final IContainer initialContainer = resource instanceof IContainer ? (IContainer) resource
+						: resource.getParent();
+				dirtyLeafContainers
+						.removeIf(leafContainer -> leafContainer.getLocation()
+								.isPrefixOf(initialContainer.getLocation()));
+				if (dirtyLeafContainers.stream()
+						.noneMatch(leafContainer -> initialContainer.getLocation()
+								.isPrefixOf(leafContainer.getLocation()))) {
+					dirtyLeafContainers.add(initialContainer);
+				}
+				if (resource.getType() == IResource.FILE) {
+					cache.remove(resource);
+				}
+				IContainer container = initialContainer;
+				while (container != null && cache.containsKey(container)) {
+					cache.remove(container);
+					container = getParentInView(container);
+				}
+			}
+			dirtyLeafContainers.forEach(leafContainer -> {
+				IContainer container = leafContainer;
+				while (container != null) {
+					int severity = getMaxChildrenSeverityInCache(container);
+					if (severity >= 0) {
+						propagateSeverityToCache(container, severity);
+					}
+					container = getParentInView(container);
+				}
+			});
+		}
+
+		private int getMaxChildrenSeverityInCache(IContainer container) {
+			if (!container.isAccessible()) {
+				return -1;
+			}
+			Set<IResource> children = new HashSet<>();
+			try {
+				children.addAll(Arrays.asList(container.members()));
+			} catch (CoreException ex) {
+				WorkbenchNavigatorPlugin.log("Cannot access members", //$NON-NLS-1$
+						WorkbenchNavigatorPlugin.createErrorStatus(ex.getMessage(), ex));
+			}
+			children.addAll(Arrays.asList(NestedProjectManager.getInstance().getDirectChildrenProjects(container)));
+			int[] severity = new int[] { -1 };
+			children.forEach(child -> {
+				if (cache.containsKey(child) && cache.get(child).intValue() > severity[0]) {
+					severity[0] = cache.get(child).intValue();
+				}
+			});
+			return severity[0];
+		}
+
+		private void propagateSeverityToCache(IResource resource, int severity) {
+			while (resource != null) {
+				if (!cache.containsKey(resource) || cache.get(resource).intValue() < severity) {
+					cache.put(resource, Integer.valueOf(severity));
+					resource = getParentInView(resource);
+				} else {
+					resource = null;
+				}
+			}
+		}
+
+		private IContainer getParentInView(IResource resource) {
+			if (resource.getType() == IResource.PROJECT) {
+				return NestedProjectManager.getInstance().getMostDirectOpenContainer((IProject) resource);
+			}
+			return resource.getParent();
+		}
+
+		public void markDirty(Set<IResource> dirty) {
+			synchronized (this) {
+				if (this.dirty == null) {
+					this.dirty = new HashSet<>();
+				}
+			}
+			this.dirty.addAll(dirty);
+		}
 	}
 
 	@Override
@@ -134,11 +246,12 @@ public class NestedProjectsLabelProvider extends ResourceExtensionLabelProvider 
 	protected int getHighestProblemSeverity(IResource resource) {
 		int problemSeverity = super.getHighestProblemSeverity(resource);
 		if (resource instanceof IContainer && problemSeverity < IMarker.SEVERITY_ERROR) {
+			// TODO check whether container has nested projects (at any depth)
 			try {
 				// keep a snapshot to avoid the value to suddenly turn null
-				final CompletableFuture<Map<IContainer, Integer>> severitiesSnapshot = severitiesPerContainer;
+				final CompletableFuture<Map<IResource, Integer>> severitiesSnapshot = this.severities;
 				if (severitiesSnapshot != null) {
-					Integer severity = severitiesSnapshot.get(50, TimeUnit.MILLISECONDS).get(resource);
+					Integer severity = severitiesSnapshot.get(50000000, TimeUnit.MILLISECONDS).get(resource);
 					if (severity != null) {
 						problemSeverity = Math.max(problemSeverity, severity.intValue());
 					}
