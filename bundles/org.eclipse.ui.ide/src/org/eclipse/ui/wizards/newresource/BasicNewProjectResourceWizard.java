@@ -439,22 +439,17 @@ try {
 		if (finalPersp != null && finalPersp instanceof IPluginContribution) {
 			IPluginContribution contribution = (IPluginContribution) finalPersp;
 			if (contribution.getPluginId() != null) {
-				IWorkbenchActivitySupport workbenchActivitySupport = PlatformUI
-						.getWorkbench().getActivitySupport();
-				IActivityManager activityManager = workbenchActivitySupport
-						.getActivityManager();
+				IWorkbenchActivitySupport workbenchActivitySupport = PlatformUI.getWorkbench().getActivitySupport();
+				IActivityManager activityManager = workbenchActivitySupport.getActivityManager();
 				IIdentifier identifier = activityManager
-						.getIdentifier(WorkbenchActivityHelper
-								.createUnifiedId(contribution));
-				Set idActivities = identifier.getActivityIds();
+						.getIdentifier(WorkbenchActivityHelper.createUnifiedId(contribution));
+				Set<String> idActivities = identifier.getActivityIds();
 
 				if (!idActivities.isEmpty()) {
-					Set enabledIds = new HashSet(activityManager
-							.getEnabledActivityIds());
+					Set<String> enabledIds = new HashSet<>(activityManager.getEnabledActivityIds());
 
 					if (enabledIds.addAll(idActivities)) {
-						workbenchActivitySupport
-								.setEnabledActivityIds(enabledIds);
+						workbenchActivitySupport.setEnabledActivityIds(enabledIds);
 					}
 				}
 			}
