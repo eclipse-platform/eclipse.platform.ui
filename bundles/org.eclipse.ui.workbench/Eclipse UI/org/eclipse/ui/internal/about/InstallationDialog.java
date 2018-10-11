@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2015 IBM Corporation and others.
+ * Copyright (c) 2008, 2018 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -62,7 +62,7 @@ public class InstallationDialog extends TrayDialog implements
 	class ButtonManager {
 
 		private Composite composite;
-		HashMap buttonMap = new HashMap(); // page id->Collection of page
+		HashMap<String, List<Button>> buttonMap = new HashMap<>(); // page id->Collection of page
 
 		// buttons
 
@@ -80,7 +80,7 @@ public class InstallationDialog extends TrayDialog implements
 			GC metricsGC = new GC(composite);
 			FontMetrics metrics = metricsGC.getFontMetrics();
 			metricsGC.dispose();
-			List buttons = (List) buttonMap.get(currentPageId);
+			List<Button> buttons = buttonMap.get(currentPageId);
 			Control[] children = composite.getChildren();
 
 			int visibleChildren = 0;
@@ -96,7 +96,7 @@ public class InstallationDialog extends TrayDialog implements
 			}
 			if (buttons != null) {
 				for (int i = 0; i < buttons.size(); i++) {
-					Button button = (Button) buttons.get(i);
+					Button button = buttons.get(i);
 					button.setVisible(true);
 					setButtonLayoutData(metrics, button, true);
 					GridData data = (GridData) button.getLayoutData();
@@ -122,16 +122,16 @@ public class InstallationDialog extends TrayDialog implements
 		}
 
 		public void addPageButton(String id, Button button) {
-			List list = (List) buttonMap.get(id);
+			List<Button> list = buttonMap.get(id);
 			if (list == null) {
-				list = new ArrayList(1);
+				list = new ArrayList<>(1);
 				buttonMap.put(id, list);
 			}
 			list.add(button);
 		}
 
 		public void clear() {
-			buttonMap = new HashMap();
+			buttonMap = new HashMap<>();
 		}
 	}
 
@@ -144,7 +144,7 @@ public class InstallationDialog extends TrayDialog implements
 	private CTabFolder folder;
 	IServiceLocator serviceLocator;
 	private ButtonManager buttonManager;
-	private Map pageToId = new HashMap();
+	private Map<InstallationPage, String> pageToId = new HashMap<>();
 	private Dialog modalParent;
 
 	/**
@@ -348,7 +348,7 @@ public class InstallationDialog extends TrayDialog implements
 	}
 
 	protected String pageToId(InstallationPage page) {
-		String pageId = (String) pageToId.get(page);
+		String pageId = pageToId.get(page);
 		Assert.isLegal(pageId != null);
 		return pageId;
 	}

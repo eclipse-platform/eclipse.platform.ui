@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2014 IBM Corporation and others.
+ * Copyright (c) 2004, 2018 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -24,7 +24,7 @@ import java.util.Map;
  * image identity.
  */
 public class AboutFeaturesButtonManager {
-    private Map providerMap = new HashMap();
+	private Map<Key, List<AboutBundleGroupData>> providerMap = new HashMap<>();
 
     private static class Key {
         public String providerName;
@@ -71,13 +71,13 @@ public class AboutFeaturesButtonManager {
         String providerName = info.getProviderName();
         Key key = new Key(providerName, crc);
 
-        List infoList = (List) providerMap.get(key);
+		List<AboutBundleGroupData> infoList = providerMap.get(key);
         if (infoList != null) {
             infoList.add(info);
             return false;
         }
 
-        infoList = new ArrayList();
+		infoList = new ArrayList<>();
         infoList.add(info);
         providerMap.put(key, infoList);
         return true;
@@ -97,12 +97,11 @@ public class AboutFeaturesButtonManager {
         String providerName = info.getProviderName();
         Key key = new Key(providerName, crc);
 
-        List infoList = (List) providerMap.get(key);
+		List<AboutBundleGroupData> infoList = providerMap.get(key);
         if (infoList == null) {
 			return new AboutBundleGroupData[0];
 		}
 
-        return (AboutBundleGroupData[]) infoList
-                .toArray(new AboutBundleGroupData[0]);
+		return infoList.toArray(new AboutBundleGroupData[0]);
     }
 }

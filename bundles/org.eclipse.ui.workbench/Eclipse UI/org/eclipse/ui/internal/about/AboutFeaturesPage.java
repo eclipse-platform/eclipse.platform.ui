@@ -86,7 +86,7 @@ public class AboutFeaturesPage extends ProductInfoPage {
 
 	private Composite infoArea;
 
-	private Map cachedImages = new HashMap();
+	private Map<ImageDescriptor, Image> cachedImages = new HashMap<>();
 
 	private AboutBundleGroupData[] bundleGroupInfos;
 
@@ -104,7 +104,7 @@ public class AboutFeaturesPage extends ProductInfoPage {
 
 	private Button pluginsButton, moreButton;
 
-	private static Map featuresMap;
+	private static Map<?, ?> featuresMap;
 
 	public void setBundleGroupInfos(AboutBundleGroupData[] bundleGroupInfos) {
 		this.bundleGroupInfos = bundleGroupInfos;
@@ -117,22 +117,19 @@ public class AboutFeaturesPage extends ProductInfoPage {
 
 	private void initializeBundleGroupInfos() {
 		if (bundleGroupInfos == null) {
-			IBundleGroupProvider[] providers = Platform
-					.getBundleGroupProviders();
+			IBundleGroupProvider[] providers = Platform.getBundleGroupProviders();
 
 			// create a descriptive object for each BundleGroup
-			LinkedList groups = new LinkedList();
+			LinkedList<AboutBundleGroupData> groups = new LinkedList<>();
 			if (providers != null) {
 				for (IBundleGroupProvider provider : providers) {
-					IBundleGroup[] bundleGroups = provider
-							.getBundleGroups();
+					IBundleGroup[] bundleGroups = provider.getBundleGroups();
 					for (IBundleGroup bundleGroup : bundleGroups) {
 						groups.add(new AboutBundleGroupData(bundleGroup));
 					}
 				}
 			}
-			bundleGroupInfos = (AboutBundleGroupData[]) groups
-					.toArray(new AboutBundleGroupData[0]);
+			bundleGroupInfos = groups.toArray(new AboutBundleGroupData[0]);
 		} else {
 			// the order of the array may be changed due to sorting, so create a
 			// copy, since the client set this value.
@@ -318,9 +315,9 @@ public class AboutFeaturesPage extends ProductInfoPage {
 	}
 
 	private void disposeImages() {
-		Iterator iter = cachedImages.values().iterator();
+		Iterator<Image> iter = cachedImages.values().iterator();
 		while (iter.hasNext()) {
-			Image image = (Image) iter.next();
+			Image image = iter.next();
 			image.dispose();
 		}
 	}
@@ -362,7 +359,7 @@ public class AboutFeaturesPage extends ProductInfoPage {
 		}
 
 		ImageDescriptor desc = info.getFeatureImage();
-		Image image = (Image) cachedImages.get(desc);
+		Image image = cachedImages.get(desc);
 		if (image == null && desc != null) {
 			image = desc.createImage();
 			cachedImages.put(desc, image);
@@ -477,14 +474,14 @@ public class AboutFeaturesPage extends ProductInfoPage {
 				info.getVersion(), info.getId() };
 	}
 
-	protected Collection getSelectionValue() {
+	protected Collection<Object> getSelectionValue() {
 		if (table == null || table.isDisposed())
 			return null;
 		TableItem[] items = table.getSelection();
 		if (items.length <= 0) {
 			return null;
 		}
-		ArrayList list = new ArrayList(1);
+		ArrayList<Object> list = new ArrayList<>(1);
 		list.add(items[0].getData());
 		return list;
 	}

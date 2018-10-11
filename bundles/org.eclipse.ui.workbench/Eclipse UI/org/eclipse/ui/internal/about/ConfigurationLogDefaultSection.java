@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2015 IBM Corporation and others.
+ * Copyright (c) 2003, 2018 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -66,13 +66,13 @@ public class ConfigurationLogDefaultSection implements ISystemSummarySection {
         writer.println();
         writer.println(WorkbenchMessages.SystemSummary_systemProperties);
         Properties properties = System.getProperties();
-        SortedSet set = new TreeSet((o1, o2) -> {
+		SortedSet<Object> set = new TreeSet<>((o1, o2) -> {
 		    String s1 = (String) o1;
 		    String s2 = (String) o2;
 		    return s1.compareTo(s2);
 		});
         set.addAll(properties.keySet());
-        Iterator i = set.iterator();
+		Iterator<Object> i = set.iterator();
         while (i.hasNext()) {
             String key = (String)i.next();
             String value = properties.getProperty(key);
@@ -109,26 +109,24 @@ public class ConfigurationLogDefaultSection implements ISystemSummarySection {
         writer.println();
         writer.println(WorkbenchMessages.SystemSummary_features);
 
-        IBundleGroupProvider[] providers = Platform.getBundleGroupProviders();
-        LinkedList groups = new LinkedList();
-        if (providers != null) {
+		IBundleGroupProvider[] providers = Platform.getBundleGroupProviders();
+		LinkedList<AboutBundleGroupData> groups = new LinkedList<>();
+		if (providers != null) {
 			for (IBundleGroupProvider provider : providers) {
-                IBundleGroup[] bundleGroups = provider.getBundleGroups();
-                for (IBundleGroup bundleGroup : bundleGroups) {
+				IBundleGroup[] bundleGroups = provider.getBundleGroups();
+				for (IBundleGroup bundleGroup : bundleGroups) {
 					groups.add(new AboutBundleGroupData(bundleGroup));
 				}
-            }
+			}
 		}
-        AboutBundleGroupData[] bundleGroupInfos = (AboutBundleGroupData[]) groups
-                .toArray(new AboutBundleGroupData[0]);
+		AboutBundleGroupData[] bundleGroupInfos = groups.toArray(new AboutBundleGroupData[0]);
 
         AboutData.sortById(false, bundleGroupInfos);
 
-        for (AboutBundleGroupData info : bundleGroupInfos) {
-            String[] args = new String[] { info.getId(), info.getVersion(),
-                    info.getName() };
-            writer.println(NLS.bind(WorkbenchMessages.SystemSummary_featureVersion, args));
-        }
+		for (AboutBundleGroupData info : bundleGroupInfos) {
+			String[] args = new String[] { info.getId(), info.getVersion(), info.getName() };
+			writer.println(NLS.bind(WorkbenchMessages.SystemSummary_featureVersion, args));
+		}
     }
 
     /**

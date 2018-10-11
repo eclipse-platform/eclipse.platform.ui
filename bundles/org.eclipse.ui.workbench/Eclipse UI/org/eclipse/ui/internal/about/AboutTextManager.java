@@ -39,8 +39,8 @@ public class AboutTextManager {
      * @return
      */
     public static AboutItem scan(String s) {
-        ArrayList linkRanges = new ArrayList();
-        ArrayList links = new ArrayList();
+		ArrayList<int[]> linkRanges = new ArrayList<>();
+		ArrayList<String> links = new ArrayList<>();
 
 		// Slightly modified version of JFace URL detection,
         // see org.eclipse.jface.text.hyperlink.URLHyperlinkDetector
@@ -89,8 +89,8 @@ public class AboutTextManager {
 
 			urlSeparatorOffset= s.indexOf("://", urlOffset+urlLength+1); //$NON-NLS-1$
 		}
-        return new AboutItem(s, (int[][]) linkRanges.toArray(new int[linkRanges
-                .size()][2]), (String[]) links
+        return new AboutItem(s, linkRanges.toArray(new int[linkRanges
+                .size()][2]), links
                 .toArray(new String[links.size()]));
     }
 	private StyledText styledText;

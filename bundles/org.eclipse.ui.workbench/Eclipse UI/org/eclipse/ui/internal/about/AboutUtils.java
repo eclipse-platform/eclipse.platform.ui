@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 IBM Corporation and others.
+ * Copyright (c) 2000, 2018 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -22,7 +22,6 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.StringTokenizer;
-
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
@@ -53,8 +52,8 @@ public class AboutUtils {
 	 * @return
 	 */
 	public static AboutItem scan(String s) {
-		ArrayList linkRanges = new ArrayList();
-		ArrayList links = new ArrayList();
+		ArrayList<int[]> linkRanges = new ArrayList<>();
+		ArrayList<String> links = new ArrayList<>();
 
 		// slightly modified version of jface url detection
 		// see org.eclipse.jface.text.hyperlink.URLHyperlinkDetector
@@ -104,8 +103,8 @@ public class AboutUtils {
 
 			urlSeparatorOffset = s.indexOf("://", urlOffset + urlLength + 1); //$NON-NLS-1$
 		}
-		return new AboutItem(s, (int[][]) linkRanges.toArray(new int[linkRanges
-				.size()][2]), (String[]) links
+		return new AboutItem(s, linkRanges.toArray(new int[linkRanges
+				.size()][2]), links
 				.toArray(new String[links.size()]));
 	}
 

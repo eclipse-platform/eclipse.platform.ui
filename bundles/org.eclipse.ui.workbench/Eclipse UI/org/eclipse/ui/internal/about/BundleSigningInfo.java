@@ -24,7 +24,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Properties;
 import java.util.StringTokenizer;
@@ -125,33 +124,19 @@ public class BundleSigningInfo {
 			return;
 		certificate.setText(WorkbenchMessages.BundleSigningTray_Working);
 		date.setText(WorkbenchMessages.BundleSigningTray_Working);
-		final BundleContext bundleContext = WorkbenchPlugin.getDefault()
-				.getBundleContext();
-		final ServiceReference factoryRef = bundleContext
-				.getServiceReference(SignedContentFactory.class.getName());
+		final BundleContext bundleContext = WorkbenchPlugin.getDefault().getBundleContext();
+		final ServiceReference<SignedContentFactory> factoryRef = bundleContext
+				.getServiceReference(SignedContentFactory.class);
 		if (factoryRef == null) {
-			StatusManager
-					.getManager()
-					.handle(
-							new Status(
-									IStatus.WARNING,
-									WorkbenchPlugin.PI_WORKBENCH,
-									WorkbenchMessages.BundleSigningTray_Cant_Find_Service),
-							StatusManager.LOG);
+			StatusManager.getManager().handle(new Status(IStatus.WARNING, WorkbenchPlugin.PI_WORKBENCH,
+					WorkbenchMessages.BundleSigningTray_Cant_Find_Service), StatusManager.LOG);
 			return;
 		}
 
-		final SignedContentFactory contentFactory = (SignedContentFactory) bundleContext
-				.getService(factoryRef);
+		final SignedContentFactory contentFactory = bundleContext.getService(factoryRef);
 		if (contentFactory == null) {
-			StatusManager
-					.getManager()
-					.handle(
-							new Status(
-									IStatus.WARNING,
-									WorkbenchPlugin.PI_WORKBENCH,
-									WorkbenchMessages.BundleSigningTray_Cant_Find_Service),
-							StatusManager.LOG);
+			StatusManager.getManager().handle(new Status(IStatus.WARNING, WorkbenchPlugin.PI_WORKBENCH,
+					WorkbenchMessages.BundleSigningTray_Cant_Find_Service), StatusManager.LOG);
 			return;
 		}
 
@@ -181,9 +166,9 @@ public class BundleSigningInfo {
 								signerText = WorkbenchMessages.BundleSigningTray_Unknown;
 							else {
 								StringBuilder buffer = new StringBuilder();
-								for (Iterator i = certs[0].entrySet().iterator(); i
+								for (Iterator<Entry<Object, Object>> i = certs[0].entrySet().iterator(); i
 										.hasNext();) {
-									Map.Entry entry = (Entry) i.next();
+									Entry<Object, Object> entry = i.next();
 									buffer.append(entry.getKey());
 									buffer.append('=');
 									buffer.append(entry.getValue());
@@ -249,16 +234,15 @@ public class BundleSigningInfo {
 	}
 
 	private Properties[] parseCerts(Certificate[] chain) {
-		List certs = new ArrayList(chain.length);
+		List<Properties> certs = new ArrayList<>(chain.length);
 		for (int i = 0; i < chain.length; i++) {
 			if (!(chain[i] instanceof X509Certificate))
 				continue;
-			Map cert = parseCert(((X509Certificate) chain[i]).getSubjectDN()
-					.getName());
+			Properties cert = parseCert(((X509Certificate) chain[i]).getSubjectDN().getName());
 			if (cert != null)
 				certs.add(cert);
 		}
-		return (Properties[]) certs.toArray(new Properties[certs.size()]);
+		return certs.toArray(new Properties[certs.size()]);
 
 	}
 
