@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2015 Oakland Software Incorporated and others.
+ * Copyright (c) 2008, 2018 Oakland Software Incorporated and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -50,7 +50,7 @@ public class ActivityTest extends NavigatorTestBase {
 		IWorkbenchActivitySupport actSupport = PlatformUI.getWorkbench()
 				.getActivitySupport();
 
-		Set ids = actSupport.getActivityManager().getEnabledActivityIds();
+		Set<String> ids = actSupport.getActivityManager().getEnabledActivityIds();
 
 		if (DEBUG)
 			System.out.println("enabled before: " + ids);
@@ -58,7 +58,7 @@ public class ActivityTest extends NavigatorTestBase {
 		assertFalse(verifyMenu(sel, "Test CNF Activity", USE_NEW_MENU));
 		assertFalse(verifyMenu(sel, "org.eclipse.ui.tests.navigator.activityTest1", !USE_NEW_MENU));
 
-		Set newIds = new HashSet();
+		Set<String> newIds = new HashSet<>();
 		newIds.addAll(ids);
 		newIds.add(TEST_ACTIVITY);
 		actSupport.setEnabledActivityIds(newIds);
@@ -84,14 +84,14 @@ public class ActivityTest extends NavigatorTestBase {
 		IWorkbenchActivitySupport actSupport = PlatformUI.getWorkbench()
 				.getActivitySupport();
 
-		Set ids = actSupport.getActivityManager().getEnabledActivityIds();
+		Set<String> ids = actSupport.getActivityManager().getEnabledActivityIds();
 
 		if (DEBUG)
 			System.out.println("enabled before: " + ids);
 
 		assertFalse(verifyMenu(sel, "org.eclipse.ui.tests.navigator.activityProviderTest", !USE_NEW_MENU));
 
-		Set newIds = new HashSet();
+		Set<String> newIds = new HashSet<>();
 		newIds.addAll(ids);
 		newIds.add(TEST_ACTIVITY_PROVIDER);
 		actSupport.setEnabledActivityIds(newIds);

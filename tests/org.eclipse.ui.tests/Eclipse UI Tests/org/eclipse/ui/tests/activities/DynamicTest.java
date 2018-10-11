@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2017 IBM Corporation and others.
+ * Copyright (c) 2003, 2018 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -126,8 +126,8 @@ public class DynamicTest extends UITestCase {
     public void testEnabledActivities() {
         // Add an enabled activity
 		Set<String> compareSet;
-		Set copySet = new HashSet(activityManager.getEnabledActivityIds());
-        copySet.add(activityManager.getDefinedActivityIds().toArray()[0]);
+		Set<String> copySet = new HashSet<>(activityManager.getEnabledActivityIds());
+		copySet.add(activityManager.getDefinedActivityIds().toArray(new String[0])[0]);
         activityManager.setEnabledActivityIds(copySet);
         compareSet = activityManager.getEnabledActivityIds();
         assertTrue(compareSet.size() == copySet.size());

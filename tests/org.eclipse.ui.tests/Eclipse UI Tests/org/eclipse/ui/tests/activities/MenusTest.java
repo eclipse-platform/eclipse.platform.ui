@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2013 IBM Corporation and others.
+ * Copyright (c) 2007, 2018 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -35,7 +35,7 @@ public class MenusTest extends UITestCase {
 	private TestFactory factory;
 	private IWorkbenchWindow window;
 	private IMenuService service;
-	private Set enabledActivities;
+	private Set<String> enabledActivities;
 
 	/**
 	 * @since 3.3
