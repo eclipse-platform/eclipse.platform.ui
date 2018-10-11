@@ -224,6 +224,9 @@ public class TemplateStore extends TemplateStoreCore {
 	@Override
 	protected final org.eclipse.jface.text.templates.ContextTypeRegistry getRegistry() {
 		ContextTypeRegistry registry= super.getRegistry();
+		if (registry == null) {
+			return null;
+		}
 		org.eclipse.jface.text.templates.ContextTypeRegistry res= new org.eclipse.jface.text.templates.ContextTypeRegistry();
 		registry.contextTypes().forEachRemaining(t -> res.addContextType(t));
 		return res;
