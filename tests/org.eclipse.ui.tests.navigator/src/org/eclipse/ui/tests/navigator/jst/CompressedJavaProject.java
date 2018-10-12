@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2015 IBM Corporation and others.
+ * Copyright (c) 2003, 2018 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -66,7 +66,7 @@ public class CompressedJavaProject implements ICompressedNode, IAdaptable {
 	@Override
 	public Object[] getChildren(ITreeContentProvider delegateContentProvider) {
 
-		List nonExternalSourceFolders = getNonExternalSourceFolders();
+		List<Object> nonExternalSourceFolders = getNonExternalSourceFolders();
 		if (nonExternalSourceFolders.size() == 1) {
 			Object[] sourceFolderChildren = delegateContentProvider
 					.getChildren(nonExternalSourceFolders.get(0));
@@ -78,15 +78,14 @@ public class CompressedJavaProject implements ICompressedNode, IAdaptable {
 		return nonExternalSourceFolders.toArray();
 	}
 
-	public List getNonExternalSourceFolders() {
+	public List<Object> getNonExternalSourceFolders() {
 		Object[] sourceFolders;
 		try {
 			Object jProject = WebJavaContentProvider
 					.javaCoreCreateProject(project);
-			Method m = WebJavaContentProvider.IJAVA_PROJECT_CLASS.getMethod(
-					"getPackageFragmentRoots", new Class[] {});
-			sourceFolders = (Object[]) m.invoke(jProject, new Object[] {});
-			return new ArrayList(Arrays
+			Method m = WebJavaContentProvider.IJAVA_PROJECT_CLASS.getMethod("getPackageFragmentRoots");
+			sourceFolders = (Object[]) m.invoke(jProject);
+			return new ArrayList<>(Arrays
 					.asList(sourceFolders));
 		} catch (Exception e) {
 			throw new RuntimeException(e);

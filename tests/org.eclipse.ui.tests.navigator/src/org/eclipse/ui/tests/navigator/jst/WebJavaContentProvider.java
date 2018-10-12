@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2009 IBM Corporation and others.
+ * Copyright (c) 2003, 2018 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -37,12 +37,12 @@ public class WebJavaContentProvider implements IPipelinedTreeContentProvider {
 	private static final Object[] NO_CHILDREN = new Object[0];
 	private static final String JAVA_EXTENSION_ID = "org.eclipse.jdt.java.ui.javaContent"; //$NON-NLS-1$
 
-	public static Class JAVA_CORE_CLASS;
-	public static Class IJAVA_PROJECT_CLASS;
-	public static Class IJAVA_ELEMENT_CLASS;
-	public static Class IPACKAGE_FRAGMENT_ROOT_CLASS;
-	public static Class IPACKAGE_FRAGMENT_CLASS;
-	public static Class INTERNAL_CONTAINER_CLASS;
+	public static Class<?> JAVA_CORE_CLASS;
+	public static Class<?> IJAVA_PROJECT_CLASS;
+	public static Class<?> IJAVA_ELEMENT_CLASS;
+	public static Class<?> IPACKAGE_FRAGMENT_ROOT_CLASS;
+	public static Class<?> IPACKAGE_FRAGMENT_CLASS;
+	public static Class<?> INTERNAL_CONTAINER_CLASS;
 
 	public static void staticInit(ClassLoader cl) {
 		try {

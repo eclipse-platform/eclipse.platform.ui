@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2015 Oakland Software Incorporated and others.
+ * Copyright (c) 2008, 2018 Oakland Software Incorporated and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -31,7 +31,7 @@ import org.eclipse.core.runtime.ILogListener;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredSelection;
-import org.eclipse.jface.viewers.ViewerSorter;
+import org.eclipse.jface.viewers.ViewerComparator;
 import org.eclipse.swt.widgets.TreeItem;
 import org.eclipse.ui.internal.navigator.NavigatorPlugin;
 import org.eclipse.ui.internal.navigator.sorters.CommonSorterDescriptor.WrappedViewerComparator;
@@ -329,7 +329,7 @@ public class SorterTest extends NavigatorTestBase {
 
 		INavigatorContentDescriptor desc = _contentService.getContentDescriptorById(TEST_CONTENT_COMPARATOR_MODEL);
 
-		ViewerSorter sorter = _contentService.getSorterService().findSorter(desc, _project, null, null);
+		ViewerComparator sorter = _contentService.getSorterService().findSorter(desc, _project, null, null);
 		assertNotNull(sorter);
 		WrappedViewerComparator wrapper = (WrappedViewerComparator) sorter;
 		TestComparatorData original = (TestComparatorData) wrapper.getWrappedComparator();

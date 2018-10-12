@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2009 IBM Corporation and others.
+ * Copyright (c) 2003, 2018 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -46,25 +46,24 @@ public class TestExtensionTreeData {
 	}
 
 	public TestExtensionTreeData[] getChildren() {
-		Set updatedChildren = new HashSet();
+		Set<TestExtensionTreeData> updatedChildren = new HashSet<>();
 		if (model != null) {
 			String childrenString = model.getProperty(getName());
 			if (childrenString != null) {
 				String[] childrenElements = childrenString.split(",");
-				for (int i = 0; i < childrenElements.length; i++) {
-					if (children.containsKey(childrenElements[i])) {
-						updatedChildren.add(children.get(childrenElements[i]));
+				for (String childrenElement : childrenElements) {
+					if (children.containsKey(childrenElement)) {
+						updatedChildren.add(children.get(childrenElement));
 					} else {
-						TestExtensionTreeData newChild = new TestExtensionTreeData(
-								this, childrenElements[i], model, container);
+						TestExtensionTreeData newChild = new TestExtensionTreeData(this, childrenElement, model,
+								container);
 						children.put(newChild.getName(), newChild);
 						updatedChildren.add(newChild);
 					}
 				}
 			}
 		}
-		return (TestExtensionTreeData[]) updatedChildren
-				.toArray(new TestExtensionTreeData[updatedChildren.size()]);
+		return updatedChildren.toArray(new TestExtensionTreeData[updatedChildren.size()]);
 	}
 
 	public String getName() {

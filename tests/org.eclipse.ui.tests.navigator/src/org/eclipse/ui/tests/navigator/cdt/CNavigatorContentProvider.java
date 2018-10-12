@@ -59,7 +59,7 @@ public class CNavigatorContentProvider implements
 	 */
 	private boolean fLinkingEnabledDelayed;
 
-	protected Map _resourceToModel = new HashMap();
+	protected Map<IResource, CElement> _resourceToModel = new HashMap<>();
 
 	protected CRoot _root;
 	protected Object _realInput;
@@ -137,7 +137,7 @@ public class CNavigatorContentProvider implements
 			}
 			return projects;
 		}
-		CElement cElement = (CElement) _resourceToModel.get(parent);
+		CElement cElement = _resourceToModel.get(parent);
 		if (cElement == null)
 			return new Object[]{};
 		return cElement.getChildren().toArray();
@@ -273,7 +273,7 @@ public class CNavigatorContentProvider implements
 			IProject project = container.getProject();
 			if (project != null && hasCNature(project)) {
 				CElement element = new CContainer(this, container,
-						(CElement) _resourceToModel.get(container.getParent()));
+						_resourceToModel.get(container.getParent()));
 				if (element != null) {
 					final Set children = modification.getChildren();
 					return convertToCElements(children);
@@ -302,7 +302,7 @@ public class CNavigatorContentProvider implements
 				if (resource.isAccessible()
 						&& hasCNature(resource.getProject())) {
 					if ((newChild = new CElement(this, resource,
-							(CElement) _resourceToModel.get(resource
+							_resourceToModel.get(resource
 									.getParent()))) != null) {
 						iter.remove();
 						convertedChildren.add(newChild);
@@ -314,7 +314,7 @@ public class CNavigatorContentProvider implements
 				if (resource.isAccessible()
 						&& hasCNature(resource.getProject())) {
 					if ((newChild = new CContainer(this, resource,
-							(CElement) _resourceToModel.get(resource
+							_resourceToModel.get(resource
 									.getParent()))) != null) {
 						iter.remove();
 						convertedChildren.add(newChild);
