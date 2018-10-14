@@ -66,7 +66,7 @@ public interface INavigatorContentExtension extends IAdaptable {
 	/**
 	 * The real underlying implementation may only support the
 	 * {@link ILabelProvider} interface, but a simple delegate is used when this
-	 * is the case to ensure that clients may anticpate an
+	 * is the case to ensure that clients may anticipate an
 	 * {@link ICommonLabelProvider} interface.
 	 *
 	 * <p>Since 3.4, the returned label provider may also implement
