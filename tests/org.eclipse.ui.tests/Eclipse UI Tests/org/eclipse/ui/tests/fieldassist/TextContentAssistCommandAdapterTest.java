@@ -15,6 +15,8 @@
  ******************************************************************************/
 package org.eclipse.ui.tests.fieldassist;
 
+import static org.junit.Assert.assertFalse;
+
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.expressions.EvaluationResult;
@@ -27,6 +29,7 @@ import org.eclipse.ui.IWorkbenchCommandConstants;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.handlers.IHandlerActivation;
 import org.eclipse.ui.handlers.IHandlerService;
+import org.junit.Test;
 
 public class TextContentAssistCommandAdapterTest extends
 		AbstractContentAssistCommandAdapterTest {
@@ -41,6 +44,7 @@ public class TextContentAssistCommandAdapterTest extends
 	 * https://bugs.eclipse.org/bugs/show_bug.cgi?id=301196
 	 *
 	 */
+	@Test
 	public void testBug301196CorrectHandlerConflictResolution() throws Exception {
 
 		final boolean[] handlerInvocationIndicator = new boolean[] {false};

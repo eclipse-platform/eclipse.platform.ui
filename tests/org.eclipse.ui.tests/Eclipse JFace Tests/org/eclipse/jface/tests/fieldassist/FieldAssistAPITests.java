@@ -14,8 +14,13 @@
  ******************************************************************************/
 package org.eclipse.jface.tests.fieldassist;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.fail;
+
 import org.eclipse.jface.fieldassist.ContentProposal;
 import org.eclipse.jface.fieldassist.IContentProposal;
+import org.junit.Test;
 
 public class FieldAssistAPITests extends AbstractFieldAssistTestCase {
 
@@ -24,6 +29,7 @@ public class FieldAssistAPITests extends AbstractFieldAssistTestCase {
 	private String content = "Name";
 	private IContentProposal proposal;
 
+	@Test
 	public void testSimpleContentProposal() {
 		proposal = new ContentProposal(content);
 		assertEquals("1.0", content, proposal.getContent());
@@ -32,6 +38,7 @@ public class FieldAssistAPITests extends AbstractFieldAssistTestCase {
 		assertEquals("1.3", content.length(), proposal.getCursorPosition());
 	}
 
+	@Test
 	public void testContentProposalWithCursor() {
 		proposal = new ContentProposal(content, label, description, 3);
 		assertEquals("3.0", content, proposal.getContent());
@@ -40,6 +47,7 @@ public class FieldAssistAPITests extends AbstractFieldAssistTestCase {
 		assertEquals("3.3", 3, proposal.getCursorPosition());
 	}
 
+	@Test
 	public void testContentProposalWithLabel() {
 		proposal = new ContentProposal(content, label, description);
 		assertEquals("3.0", content, proposal.getContent());
@@ -48,6 +56,7 @@ public class FieldAssistAPITests extends AbstractFieldAssistTestCase {
 		assertEquals("3.3", content.length(), proposal.getCursorPosition());
 	}
 
+	@Test
 	public void testContentProposalWithDescription() {
 		proposal = new ContentProposal(content, description);
 		assertEquals("2.0", content, proposal.getContent());

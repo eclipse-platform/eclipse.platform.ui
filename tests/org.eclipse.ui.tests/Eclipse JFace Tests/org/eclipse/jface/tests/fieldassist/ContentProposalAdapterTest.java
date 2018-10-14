@@ -13,6 +13,10 @@
 *******************************************************************************/
 package org.eclipse.jface.tests.fieldassist;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+
 import org.eclipse.jface.fieldassist.ContentProposalAdapter;
 import org.eclipse.jface.fieldassist.IContentProposalProvider;
 import org.eclipse.jface.fieldassist.SimpleContentProposalProvider;
@@ -23,10 +27,11 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 
-import junit.framework.TestCase;
-
-public class ContentProposalAdapterTest extends TestCase {
+public class ContentProposalAdapterTest {
 
 	/**
 	 * A shell that hosts the decorated text control
@@ -66,6 +71,7 @@ public class ContentProposalAdapterTest extends TestCase {
 	 * Tests whether no proposal popup was opened if TAB was pressed within
 	 * activation delay.
 	 */
+	@Test
 	public void testBug520372AutoActivationDelayTab() throws Exception {
 		sendKeyDownToControl('o');
 		sendKeyDownToControl(SWT.TAB);
@@ -82,6 +88,7 @@ public class ContentProposalAdapterTest extends TestCase {
 	 * Tests whether no proposal popup was opened if CR was pressed within
 	 * activation delay.
 	 */
+	@Test
 	public void testBug520372AutoActivationDelayCR() throws Exception {
 		sendKeyDownToControl('o');
 		sendKeyDownToControl(SWT.CR);
@@ -98,6 +105,7 @@ public class ContentProposalAdapterTest extends TestCase {
 	 * Tests whether no proposal popup was opened if ESC was pressed within
 	 * activation delay.
 	 */
+	@Test
 	public void testBug520372AutoActivationDelayESC() throws Exception {
 		sendKeyDownToControl('o');
 		sendKeyDownToControl(SWT.ESC);
@@ -108,10 +116,8 @@ public class ContentProposalAdapterTest extends TestCase {
 
 	// most of the following code is copied from AbstractFieldAssistTestCase
 
-	@Override
-	final protected void setUp() throws Exception {
-		super.setUp();
-
+	@Before
+	public final void setUp() throws Exception {
 		Display display = getDisplay();
 		originalShellCount = display.getShells().length;
 		controlShell = new Shell(display);
@@ -122,8 +128,8 @@ public class ContentProposalAdapterTest extends TestCase {
 		assertNotNull(contentProposalAdapter);
 	}
 
-	@Override
-	final protected void tearDown() throws Exception {
+	@After
+	public final void tearDown() throws Exception {
 		if (controlShell != null) {
 			spinEventLoop();
 			controlShell.close();
@@ -134,8 +140,6 @@ public class ContentProposalAdapterTest extends TestCase {
 			}
 			this.display = null;
 		}
-
-		super.tearDown();
 	}
 
 	private Display getDisplay() {

@@ -14,8 +14,11 @@
  ******************************************************************************/
 package org.eclipse.ui.tests.fieldassist;
 
+import static org.junit.Assert.assertFalse;
+
 import org.eclipse.jface.tests.fieldassist.AbstractFieldAssistWindow;
 import org.eclipse.swt.widgets.Combo;
+import org.junit.Test;
 
 public class ComboContentAssistCommandAdapterTest extends
 		AbstractContentAssistCommandAdapterTest {
@@ -29,6 +32,7 @@ public class ComboContentAssistCommandAdapterTest extends
 		return (Combo)getFieldAssistWindow().getFieldAssistControl();
 	}
 
+	@Test
 	public void testBug243612() throws Exception {
 		getFieldAssistWindow().open();
 

@@ -13,16 +13,21 @@
  ******************************************************************************/
 package org.eclipse.jface.tests.fieldassist;
 
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+
 import org.eclipse.jface.fieldassist.ControlDecoration;
 import org.eclipse.jface.fieldassist.FieldDecorationRegistry;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Text;
+import org.junit.Test;
 
 public class ControlDecorationTests extends AbstractFieldAssistTestCase {
 
 	private Text anotherControl;
 
+	@Test
 	public void testDecorationIsVisible() {
 		AbstractFieldAssistWindow window = getFieldAssistWindow();
 		window.open();
@@ -57,6 +62,7 @@ public class ControlDecorationTests extends AbstractFieldAssistTestCase {
 
 	}
 
+	@Test
 	public void testHoverVisibility() {
 		AbstractFieldAssistWindow window = getFieldAssistWindow();
 		window.open();
@@ -78,6 +84,7 @@ public class ControlDecorationTests extends AbstractFieldAssistTestCase {
 		assertTwoShellsUp();
 	}
 
+	@Test
 	public void XXXtestBug418420() {
 		AbstractFieldAssistWindow window = getFieldAssistWindow();
 		window.open();

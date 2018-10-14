@@ -13,6 +13,10 @@
  ******************************************************************************/
 package org.eclipse.jface.tests.fieldassist;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+
 import org.eclipse.jface.bindings.keys.KeyStroke;
 import org.eclipse.jface.fieldassist.ContentProposalAdapter;
 import org.eclipse.jface.fieldassist.ControlDecoration;
@@ -22,6 +26,7 @@ import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Shell;
+import org.junit.Test;
 
 /**
  * This class contains test cases appropriate for generic field assist
@@ -36,6 +41,7 @@ public abstract class FieldAssistTestCase extends AbstractFieldAssistTestCase {
 	static final char ACTIVATE_CHAR = 'i';
 	static final char EXTRA_CHAR = 'b';
 
+	@Test
 	public void testAutoactivateNoDelay() {
 		AbstractFieldAssistWindow window = getFieldAssistWindow();
 		window.setPropagateKeys(false);
@@ -48,6 +54,7 @@ public abstract class FieldAssistTestCase extends AbstractFieldAssistTestCase {
 		assertTwoShellsUp();
 	}
 
+	@Test
 	public void testAutoactivateWithDelay() {
 		AbstractFieldAssistWindow window = getFieldAssistWindow();
 		window.setPropagateKeys(false);
@@ -60,6 +67,7 @@ public abstract class FieldAssistTestCase extends AbstractFieldAssistTestCase {
 		assertTwoShellsUp();
 	}
 
+	@Test
 	public void testExplicitActivate() {
 		AbstractFieldAssistWindow window = getFieldAssistWindow();
 		window.setPropagateKeys(false);
@@ -70,6 +78,7 @@ public abstract class FieldAssistTestCase extends AbstractFieldAssistTestCase {
 		assertTwoShellsUp();
 	}
 
+	@Test
 	public void testPopupDeactivates() {
 		AbstractFieldAssistWindow window = getFieldAssistWindow();
 		window.setPropagateKeys(false);
@@ -85,6 +94,7 @@ public abstract class FieldAssistTestCase extends AbstractFieldAssistTestCase {
 		assertOneShellUp();
 	}
 
+	@Test
 	public void testPropagateKeysOff() {
 		AbstractFieldAssistWindow window = getFieldAssistWindow();
 		window.setPropagateKeys(false);
@@ -98,6 +108,7 @@ public abstract class FieldAssistTestCase extends AbstractFieldAssistTestCase {
 		assertEquals("1.0", SAMPLE_CONTENT + new String(new char [] {ACTIVATE_CHAR}), getControlContent());
 	}
 
+	@Test
 	public void testPropagateKeysOn() {
 		AbstractFieldAssistWindow window = getFieldAssistWindow();
 		window.setPropagateKeys(true);
@@ -111,6 +122,7 @@ public abstract class FieldAssistTestCase extends AbstractFieldAssistTestCase {
 		assertEquals("1.0", SAMPLE_CONTENT + new String(new char [] {ACTIVATE_CHAR, EXTRA_CHAR}), getControlContent());
 	}
 
+	@Test
 	public void testBug262022() {
 		AbstractFieldAssistWindow window = getFieldAssistWindow();
 		window.setPropagateKeys(false);
@@ -131,6 +143,7 @@ public abstract class FieldAssistTestCase extends AbstractFieldAssistTestCase {
 		spinEventLoop();
 	}
 
+	@Test
 	public void testBug279953() {
 		AbstractFieldAssistWindow window = getFieldAssistWindow();
 		window.setPropagateKeys(false);
@@ -145,6 +158,7 @@ public abstract class FieldAssistTestCase extends AbstractFieldAssistTestCase {
 		assertOneShellUp();
 	}
 
+	@Test
 	public void testDecorationIsVisible() {
 		AbstractFieldAssistWindow window = getFieldAssistWindow();
 		window.setPropagateKeys(false);
@@ -180,6 +194,7 @@ public abstract class FieldAssistTestCase extends AbstractFieldAssistTestCase {
 		assertTrue("1.8", decoration.isVisible());
 	}
 
+	@Test
 	public void testPopupFocus() {
 		AbstractFieldAssistWindow window = getFieldAssistWindow();
 		window.setPropagateKeys(false);
@@ -204,6 +219,7 @@ public abstract class FieldAssistTestCase extends AbstractFieldAssistTestCase {
 		assertFalse("1.2", window.getContentProposalAdapter().hasProposalPopupFocus());
 	}
 
+	@Test
 	public void testPopupIsOpen() {
 		AbstractFieldAssistWindow window = getFieldAssistWindow();
 		window.setPropagateKeys(false);
@@ -229,6 +245,7 @@ public abstract class FieldAssistTestCase extends AbstractFieldAssistTestCase {
 	 * supposed to overlap the control (using the insertion cursor to track
 	 * position).
 	 */
+	@Test
 	public void testBug256651ReplaceMode() {
 		AbstractFieldAssistWindow window = getFieldAssistWindow();
 		window.setPropagateKeys(false);
@@ -257,6 +274,7 @@ public abstract class FieldAssistTestCase extends AbstractFieldAssistTestCase {
 	 * supposed to overlap the control (using the insertion cursor to track
 	 * position).
 	 */
+	@Test
 	public void testDefaultPopupPositioningReplaceMode() {
 		AbstractFieldAssistWindow window = getFieldAssistWindow();
 		window.setPropagateKeys(false);

@@ -14,16 +14,20 @@
  ******************************************************************************/
 package org.eclipse.jface.tests.fieldassist;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+
 import org.eclipse.jface.bindings.keys.KeyStroke;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
+import org.junit.After;
+import org.junit.Before;
 
-import junit.framework.TestCase;
-
-public abstract class AbstractFieldAssistTestCase extends TestCase {
+public abstract class AbstractFieldAssistTestCase {
 
 	/**
 	 * The window that is being tested.
@@ -40,9 +44,8 @@ public abstract class AbstractFieldAssistTestCase extends TestCase {
 	 */
 	private int originalShellCount;
 
-	@Override
-	final protected void setUp() throws Exception {
-		super.setUp();
+	@Before
+	public final void setUp() throws Exception {
 		Display display = getDisplay();
 		anotherShell = new Shell(display);
 		new Text(anotherShell, SWT.SINGLE);
@@ -53,15 +56,13 @@ public abstract class AbstractFieldAssistTestCase extends TestCase {
 		assertNotNull(window);
 	}
 
-	@Override
-	final protected void tearDown() throws Exception {
+	@After
+	public final void tearDown() throws Exception {
 		if (window != null) {
 			spinEventLoop();
 		}
 		closeFieldAssistWindow();
 		anotherShell.close();
-
-		super.tearDown();
 	}
 
 	protected Display getDisplay() {
