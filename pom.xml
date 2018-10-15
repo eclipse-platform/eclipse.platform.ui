@@ -55,6 +55,7 @@
   <modules>
     <module>./bundles/org.eclipse.e4.tools</module>
     <module>./bundles/org.eclipse.e4.tools.services</module>
+    <module>./bundles/org.eclipse.e4.tools.compat</module>
     <module>./bundles/org.eclipse.e4.tools.emf.editor3x</module>
     <module>./bundles/org.eclipse.e4.tools.emf.ui</module>
     <module>./bundles/org.eclipse.e4.tools.jdt.templates</module>
