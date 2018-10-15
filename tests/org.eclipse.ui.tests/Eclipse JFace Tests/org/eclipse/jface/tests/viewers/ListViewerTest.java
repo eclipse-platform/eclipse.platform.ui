@@ -25,6 +25,7 @@ import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerFilter;
+import org.eclipse.swt.graphics.Device;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.List;
 import org.eclipse.ui.tests.harness.util.DisplayHelper;
@@ -137,18 +138,24 @@ public class ListViewerTest extends StructuredViewerTest {
 		//Scroll...
 		fViewer.reveal(model.getChildAt(lastIndex));
 		List list = (List) fViewer.getControl();
-		int topIndex = list.getTopIndex();
 
-		assertNotEquals("Top item should not be the first item.", 0, topIndex);
-		fViewer.refresh();
-		processEvents();
-		assertEquals("Top index was not preserved after refresh.", topIndex, list.getTopIndex());
+		try {
+			Device.DEBUG = true;
+			int topIndex = list.getTopIndex();
+			assertNotEquals("Top item should not be the first item.", 0, topIndex);
+			fViewer.refresh();
+			processEvents();
+			assertEquals("Top index was not preserved after refresh.", topIndex, list.getTopIndex());
 
-		//Assert that when the previous top index after refresh is invalid no exceptions are thrown.
-		model.deleteChildren();
+			// Assert that when the previous top index after refresh is invalid no
+			// exceptions are thrown.
+			model.deleteChildren();
 
-		fViewer.refresh();
-		assertEquals(0, list.getTopIndex());
+			fViewer.refresh();
+			assertEquals(0, list.getTopIndex());
+		} finally {
+			Device.DEBUG = false;
+		}
 	}
 
     public void testSelectionRevealBug177619() throws Exception {
