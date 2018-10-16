@@ -2161,7 +2161,7 @@ public class ContentProposalAdapter {
 	 * Reloads the proposals from the content provider and fills them into the
 	 * proposal pop-up, if the pop-up is currently open.
 	 *
-	 * @since 4.10
+	 * @since 3.14
 	 */
 	public void refresh() {
 		if (isProposalPopupOpen()) {
