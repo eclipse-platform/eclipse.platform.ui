@@ -21,6 +21,7 @@ import org.eclipse.jface.fieldassist.FieldDecorationRegistry;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Text;
+import org.junit.Ignore;
 import org.junit.Test;
 
 public class ControlDecorationTests extends AbstractFieldAssistTestCase {
@@ -84,8 +85,10 @@ public class ControlDecorationTests extends AbstractFieldAssistTestCase {
 		assertTwoShellsUp();
 	}
 
+	// focus related tests
 	@Test
-	public void XXXtestBug418420() {
+	@Ignore("Disabled see Bug 418420 and bug 275393")
+	public void testBug418420() {
 		AbstractFieldAssistWindow window = getFieldAssistWindow();
 		window.open();
 		ControlDecoration decoration = new ControlDecoration(window.getFieldAssistControl(), SWT.RIGHT);
@@ -93,8 +96,6 @@ public class ControlDecorationTests extends AbstractFieldAssistTestCase {
 		    .getFieldDecoration(FieldDecorationRegistry.DEC_INFORMATION).getImage());
 		decoration.setDescriptionText("foo");
 		decoration.setShowOnlyOnFocus(true);
-		// focus related tests.  Comment out for now.
-		// see 418420 and bug 275393
 		anotherControl.forceFocus();
 		decoration.showHoverText("Show me");
 		assertOneShellUp();
