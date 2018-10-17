@@ -32,6 +32,7 @@ import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.internal.text.InformationControlReplacer;
 import org.eclipse.jface.internal.text.InternalAccessor;
 import org.eclipse.jface.util.Geometry;
+import org.eclipse.jface.util.Util;
 
 import org.eclipse.jface.text.ITextViewerExtension8.EnrichMode;
 
@@ -1077,41 +1078,7 @@ abstract public class AbstractInformationControlManager {
 			center= Geometry.centerPoint(area);
 		else
 			center= Geometry.centerPoint(Geometry.getExtrudedEdge(area, 0, anchor.getSWTFlag()));
-		return getClosestMonitor(fSubjectControl.getDisplay(), Geometry.createRectangle(center, new Point(0, 0)));
-	}
-
-	/**
-	 * Copied from org.eclipse.jface.window.Window. Returns the monitor whose client area contains
-	 * the given point. If no monitor contains the point, returns the monitor that is closest to the
-	 * point. If this is ever made public, it should be moved into a separate utility class.
-	 *
-	 * @param display the display to search for monitors
-	 * @param rectangle the rectangle to find the closest monitor for (display coordinates)
-	 * @return the monitor closest to the given point
-	 * @since 3.3
-	 */
-	private Monitor getClosestMonitor(Display display, Rectangle rectangle) {
-		int closest = Integer.MAX_VALUE;
-
-		Point toFind= Geometry.centerPoint(rectangle);
-		Monitor[] monitors = display.getMonitors();
-		Monitor result = monitors[0];
-
-		for (Monitor current : monitors) {
-			Rectangle clientArea = current.getClientArea();
-
-			if (clientArea.contains(toFind)) {
-				return current;
-			}
-
-			int distance = Geometry.distanceSquared(Geometry.centerPoint(clientArea), toFind);
-			if (distance < closest) {
-				closest = distance;
-				result = current;
-			}
-		}
-
-		return result;
+		return Util.getClosestMonitor(fSubjectControl.getDisplay(), center);
 	}
 
 	/**
@@ -1232,7 +1199,7 @@ abstract public class AbstractInformationControlManager {
 	 * @since 3.4
 	 */
 	void cropToClosestMonitor(Rectangle bounds) {
-		Rectangle monitorBounds= getClosestMonitor(fSubjectControl.getDisplay(), bounds).getClientArea();
+		Rectangle monitorBounds= Util.getClosestMonitor(fSubjectControl.getDisplay(), Geometry.centerPoint(bounds)).getClientArea();
 		bounds.intersect(monitorBounds);
 	}
 
