@@ -20,6 +20,7 @@ import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.util.Geometry;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
+import org.eclipse.jface.util.Util;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ShellAdapter;
 import org.eclipse.swt.events.ShellEvent;
@@ -898,41 +899,6 @@ public abstract class Window implements IShellProvider {
 		returnCode = code;
 	}
 
-	/**
-	 * Returns the monitor whose client area contains the given point. If no
-	 * monitor contains the point, returns the monitor that is closest to the
-	 * point. If this is ever made public, it should be moved into a separate
-	 * utility class.
-	 *
-	 * @param toSearch
-	 *            point to find (display coordinates)
-	 * @param toFind
-	 *            point to find (display coordinates)
-	 * @return the monitor closest to the given point
-	 */
-	private static Monitor getClosestMonitor(Display toSearch, Point toFind) {
-		int closest = Integer.MAX_VALUE;
-
-		Monitor[] monitors = toSearch.getMonitors();
-		Monitor result = monitors[0];
-
-		for (Monitor current : monitors) {
-			Rectangle clientArea = current.getClientArea();
-
-			if (clientArea.contains(toFind)) {
-				return current;
-			}
-
-			int distance = Geometry.distanceSquared(Geometry
-					.centerPoint(clientArea), toFind);
-			if (distance < closest) {
-				closest = distance;
-				result = current;
-			}
-		}
-
-		return result;
-	}
 
 	/**
 	 * Given the desired position of the window, this method returns an adjusted
@@ -952,7 +918,7 @@ public abstract class Window implements IShellProvider {
 		Rectangle result = new Rectangle(preferredSize.x, preferredSize.y,
 				preferredSize.width, preferredSize.height);
 
-		Monitor mon = getClosestMonitor(getShell().getDisplay(), Geometry
+		Monitor mon = Util.getClosestMonitor(getShell().getDisplay(), Geometry
 				.centerPoint(result));
 
 		Rectangle bounds = mon.getClientArea();
