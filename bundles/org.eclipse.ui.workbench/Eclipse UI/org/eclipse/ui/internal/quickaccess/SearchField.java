@@ -61,7 +61,6 @@ import org.eclipse.jface.bindings.TriggerSequence;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.jface.layout.GridLayoutFactory;
-import org.eclipse.jface.util.Geometry;
 import org.eclipse.jface.util.Util;
 import org.eclipse.jface.window.Window;
 import org.eclipse.osgi.util.NLS;
@@ -469,38 +468,12 @@ public class SearchField {
 	/**
 	 * This method was copy/pasted from JFace.
 	 */
-	private static Monitor getClosestMonitor(Display toSearch, Point toFind) {
-		int closest = Integer.MAX_VALUE;
-
-		Monitor[] monitors = toSearch.getMonitors();
-		Monitor result = monitors[0];
-
-		for (Monitor currentMonitor : monitors) {
-			Rectangle clientArea = currentMonitor.getClientArea();
-
-			if (clientArea.contains(toFind)) {
-				return currentMonitor;
-			}
-
-			int distance = Geometry.distanceSquared(Geometry.centerPoint(clientArea), toFind);
-			if (distance < closest) {
-				closest = distance;
-				result = currentMonitor;
-			}
-		}
-
-		return result;
-	}
-
-	/**
-	 * This method was copy/pasted from JFace.
-	 */
 	private Rectangle getConstrainedShellBounds(Display display, Rectangle preferredSize) {
 		Rectangle result = new Rectangle(preferredSize.x, preferredSize.y, preferredSize.width,
 				preferredSize.height);
 
 		Point topLeft = new Point(preferredSize.x, preferredSize.y);
-		Monitor mon = getClosestMonitor(display, topLeft);
+		Monitor mon = Util.getClosestMonitor(display, topLeft);
 		Rectangle bounds = mon.getClientArea();
 
 		if (result.height > bounds.height) {
