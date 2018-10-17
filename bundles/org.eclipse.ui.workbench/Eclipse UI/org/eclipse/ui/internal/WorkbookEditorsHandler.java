@@ -20,8 +20,6 @@ import java.util.ArrayList;
 import java.util.List;
 import org.eclipse.core.commands.Command;
 import org.eclipse.core.commands.ParameterizedCommand;
-import org.eclipse.core.runtime.Adapters;
-import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.e4.ui.model.application.ui.basic.MPart;
@@ -37,10 +35,7 @@ import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.swt.custom.CTabItem;
 import org.eclipse.swt.custom.StyleRange;
 import org.eclipse.swt.graphics.Font;
-import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorReference;
-import org.eclipse.ui.IPathEditorInput;
-import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.commands.ICommandService;
 import org.eclipse.ui.themes.ITheme;
@@ -175,21 +170,9 @@ public class WorkbookEditorsHandler extends FilteredTableBaseHandler {
 		StringBuilder str = new StringBuilder(super.getWorkbenchPartReferenceText(ref));
 		if (ref instanceof EditorReference) {
 			str.append(" - "); //$NON-NLS-1$
-			str.append(getEditorInputPath((EditorReference) ref));
+			str.append(ref.getTitleToolTip());
 		}
 		return str.toString();
-	}
-
-	/** Return the editor input path relative to the workspace root */
-	private String getEditorInputPath(EditorReference editorReference) {
-		try {
-			IEditorInput input = editorReference.getEditorInput();
-			return Adapters.adapt(input, IPathEditorInput.class).getPath().makeRelativeTo(Platform.getLocation())
-					.toOSString();
-		} catch (PartInitException e) {
-			WorkbenchPlugin.log(getClass(), "getWorkbenchPartReferenceText", e); //$NON-NLS-1$
-			return ""; //$NON-NLS-1$
-		}
 	}
 
 	/** True if the given model represents the active editor */
