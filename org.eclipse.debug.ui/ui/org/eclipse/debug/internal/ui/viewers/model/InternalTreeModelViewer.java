@@ -1424,7 +1424,7 @@ public class InternalTreeModelViewer extends TreeViewer implements IInternalTree
     @Override
 	public Display getDisplay() {
         Control control = getControl();
-        if (control != null) {
+		if (control != null && !control.isDisposed()) {
             return  control.getDisplay();
         }
         return null;

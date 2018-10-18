@@ -18,6 +18,7 @@ import org.eclipse.debug.internal.ui.viewers.model.provisional.IElementMementoRe
 import org.eclipse.debug.internal.ui.viewers.model.provisional.ITreeModelViewer;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.ModelDelta;
 import org.eclipse.jface.viewers.TreePath;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IMemento;
 
 /**
@@ -45,23 +46,20 @@ class ElementMementoRequest extends MementoUpdate implements IElementMementoRequ
 		fDelta = delta;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.core.runtime.IProgressMonitor#done()
-	 */
 	@Override
 	public void done() {
-
 		ITreeModelViewer viewer = getContentProvider().getViewer();
-		if (viewer == null)
-		 {
-			return;  // disposed
+		if (viewer == null) {
+			return; // disposed
 		}
-		if (viewer.getDisplay().getThread() == Thread.currentThread()) {
-		    doComplete();
-		} else {
-			viewer.getDisplay().asyncExec(() -> doComplete());
+		Display display = viewer.getDisplay();
+		if (display != null) {
+			if (display.getThread() == Thread.currentThread()) {
+				doComplete();
+			} else {
+				display.asyncExec(this::doComplete);
+			}
 		}
-
 	}
 
 	private void doComplete() {
