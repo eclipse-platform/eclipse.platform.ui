@@ -60,8 +60,8 @@ public class SnippetSideEffectRunOnce {
 			Display display = Display.getDefault();
 			Shell shell = new Shell(display);
 
-			Label label = new Label(shell, SWT.NONE);
-			label.setLayoutData(new GridData(SWT.BEGINNING, SWT.CENTER, false, false));
+			Label label = new Label(shell, SWT.WRAP);
+			label.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 			label.setText("Loading JSON...");
 
 			IObservableValue<String> loadJsonFromRemote = loadJsonFromRemote();
