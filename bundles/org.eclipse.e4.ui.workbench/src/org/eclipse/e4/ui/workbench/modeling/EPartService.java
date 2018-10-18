@@ -163,12 +163,12 @@ public interface EPartService {
 	/**
 	 * Creates a new part of the given id.
 	 *
-	 * @param id
-	 *            the identifier of the part, must not be <code>null</code>
-	 * @return a new part of the given id, or <code>null</code> if no part descriptors can be found
-	 *         that match the specified id
+	 * @param partDescriptorId the identifier of the Part Descriptor, must not be
+	 *                         <code>null</code>
+	 * @return a new part of the given id, or <code>null</code> if no part
+	 *         descriptors can be found that match the specified partDescriptorId
 	 */
-	MPart createPart(String id);
+	MPart createPart(String partDescriptorId);
 
 	/**
 	 * Creates a new placeholder for a part of the given id.
