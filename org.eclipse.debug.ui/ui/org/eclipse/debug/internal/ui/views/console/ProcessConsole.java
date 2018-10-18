@@ -101,7 +101,7 @@ public class ProcessConsole extends IOConsole implements IConsole, IDebugEventSe
 
     private IConsoleColorProvider fColorProvider;
 
-	private InputStream fInput;
+	private volatile InputStream fInput;
 
     private FileOutputStream fFileOutputStream;
 
@@ -729,8 +729,12 @@ public class ProcessConsole extends IOConsole implements IConsole, IDebugEventSe
             try {
                 byte[] b = new byte[1024];
                 int read = 0;
-                while (fInput != null && read >= 0) {
-                    read = fInput.read(b);
+				while (read >= 0) {
+					InputStream input = fInput;
+					if (input == null) {
+						break;
+					}
+					read = input.read(b);
                     if (read > 0) {
                         String s;
                         if (encoding != null) {
