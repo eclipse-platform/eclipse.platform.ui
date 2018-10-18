@@ -192,8 +192,7 @@ public class RegistryWriter implements IRegistryWriter {
 		if (homeLocation != null) {
 			File homeLoc = new File(homeLocation);
 			if (homeLoc.exists() && homeLoc.isDirectory()) {
-				try {
-					DirectoryStream<java.nio.file.Path> stream = Files.newDirectoryStream(homeLoc.toPath(), "*.exe"); //$NON-NLS-1$
+				try (DirectoryStream<java.nio.file.Path> stream = Files.newDirectoryStream(homeLoc.toPath(), "*.exe")) { //$NON-NLS-1$
 					for (java.nio.file.Path path : stream) {
 						fetchedPath = path.toString();
 						stream.close();
