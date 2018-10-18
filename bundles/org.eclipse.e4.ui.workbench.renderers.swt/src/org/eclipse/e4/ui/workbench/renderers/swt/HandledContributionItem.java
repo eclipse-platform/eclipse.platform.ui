@@ -24,12 +24,14 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import javax.inject.Inject;
+import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.commands.IStateListener;
 import org.eclipse.core.commands.ParameterizedCommand;
 import org.eclipse.core.commands.State;
 import org.eclipse.core.commands.common.NotDefinedException;
 import org.eclipse.e4.core.commands.ECommandService;
 import org.eclipse.e4.core.commands.EHandlerService;
+import org.eclipse.e4.core.commands.internal.HandlerServiceImpl;
 import org.eclipse.e4.core.commands.internal.ICommandHelpService;
 import org.eclipse.e4.core.contexts.EclipseContextFactory;
 import org.eclipse.e4.core.contexts.IContextFunction;
@@ -434,6 +436,12 @@ public class HandledContributionItem extends AbstractContributionItem {
 		EHandlerService service = lclContext.get(EHandlerService.class);
 		final IEclipseContext staticContext = getStaticContext(trigger);
 		service.executeHandler(cmd, staticContext);
+		Object object = staticContext.get(HandlerServiceImpl.HANDLER_EXCEPTION);
+		if (object instanceof ExecutionException) {
+			if (logger != null) {
+				logger.error((Throwable) object, "Command '" + cmd.getId() + "' failed"); //$NON-NLS-1$ //$NON-NLS-2$
+			}
+		}
 	}
 
 	@Override

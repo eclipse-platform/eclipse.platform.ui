@@ -26,6 +26,7 @@ import org.eclipse.e4.core.commands.internal.HandlerServiceImpl.ExecutionContext
 import org.eclipse.e4.core.contexts.ContextInjectionFactory;
 import org.eclipse.e4.core.contexts.EclipseContextFactory;
 import org.eclipse.e4.core.contexts.IEclipseContext;
+import org.eclipse.e4.core.di.InjectionException;
 import org.eclipse.e4.core.di.annotations.CanExecute;
 import org.eclipse.e4.core.di.annotations.Execute;
 
@@ -160,6 +161,13 @@ public class HandlerServiceHandler extends AbstractHandler {
 						new NotHandledException(getClass().getName()));
 			}
 			return result;
+		} catch (InjectionException e) {
+			if (e.getCause() instanceof ExecutionException) {
+				ExecutionException executionException = (ExecutionException) e.getCause();
+				throw executionException;
+			}
+			String message = "Error executing '" + commandId + "': " + e.getMessage(); //$NON-NLS-1$ //$NON-NLS-2$
+			throw new ExecutionException(message, e);
 		} finally {
 			if (localStaticContext != null) {
 				localStaticContext.dispose();
