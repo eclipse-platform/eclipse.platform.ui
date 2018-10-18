@@ -35,7 +35,7 @@ public class UriSchemeExtensionReaderUnitTest {
 		abcHandler = new UriSchemeHandlerSpy();
 		configElementForAbc = new ConfigurationElementMock("abc", "abc Scheme", abcHandler);
 
-		extensionReader = UriSchemeExtensionReader.getInstance();
+		extensionReader = new UriSchemeExtensionReader();
 
 		setExtensionsInReader(configElementForAbc);
 	}
@@ -84,7 +84,7 @@ public class UriSchemeExtensionReaderUnitTest {
 	}
 
 	private void setExtensionsInReader(IConfigurationElement... element) throws Exception {
-		UriSchemeExtensionReader.getInstance().configurationElements = element;
+		extensionReader.configurationElements = element;
 	}
 
 	private final class ConfigurationElementMock implements IConfigurationElement {

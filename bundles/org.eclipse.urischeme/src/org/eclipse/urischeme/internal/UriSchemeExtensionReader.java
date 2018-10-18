@@ -51,19 +51,6 @@ public class UriSchemeExtensionReader implements IUriSchemeExtensionReader {
 
 	IConfigurationElement[] configurationElements = null;
 
-	private static UriSchemeExtensionReader INSTANCE = new UriSchemeExtensionReader();
-
-	/**
-	 *
-	 * @return The singleton instance of this implementation
-	 */
-	public static UriSchemeExtensionReader getInstance() {
-		return INSTANCE;
-	}
-
-	private UriSchemeExtensionReader() {
-	}
-
 	@Override
 	public Collection<IScheme> getSchemes() {
 		IConfigurationElement[] elements = getOrReadConfigurationElements();

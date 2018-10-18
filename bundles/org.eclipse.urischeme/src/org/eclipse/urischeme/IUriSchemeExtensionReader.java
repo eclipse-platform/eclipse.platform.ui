@@ -22,9 +22,13 @@ import org.eclipse.urischeme.internal.UriSchemeExtensionReader;
 public interface IUriSchemeExtensionReader {
 
 	/**
-	 * The instance of IUriSchemeExtensionReader
+	 * @return an instance to read out URI scheme handlers as registered in
+	 *         extension point
+	 *         <code> org.eclipse.core.runtime.uriSchemeHandlers</code>
 	 */
-	IUriSchemeExtensionReader INSTANCE = UriSchemeExtensionReader.getInstance();
+	static IUriSchemeExtensionReader newInstance() {
+		return new UriSchemeExtensionReader();
+	}
 
 	/**
 	 *

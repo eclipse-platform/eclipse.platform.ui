@@ -29,7 +29,7 @@ import org.eclipse.urischeme.IUriSchemeProcessor;
 public class UriSchemeProcessor implements IUriSchemeProcessor {
 
 	private Map<String, IUriSchemeHandler> createdHandlers = new HashMap<>();
-	IUriSchemeExtensionReader reader = UriSchemeExtensionReader.getInstance();
+	IUriSchemeExtensionReader reader = IUriSchemeExtensionReader.newInstance();
 
 	/**
 	 * Call the handler for a given uri scheme. If multiple handlers for the same
