@@ -208,8 +208,15 @@ public class CheckMissingNaturesListener implements IResourceChangeListener, IPr
 		}
 		Pattern pattern = Pattern.compile(".*<" + IModelObjectConstants.NATURE + ">\\s*(" + natureId.replace(".", "\\.") + ")\\s*</" + IModelObjectConstants.NATURE + ">.*", //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$
 				Pattern.DOTALL);
-		try (InputStream input = file.getContents(); ByteArrayOutputStream output = new ByteArrayOutputStream();) {
-			FileUtil.transferStreams(input, output, file.getLocation().toString(), new NullProgressMonitor());
+		try (
+			InputStream input = file.getContents();
+			ByteArrayOutputStream output = new ByteArrayOutputStream();
+		) {
+			IPath path = file.getLocation();
+			if (path == null) {
+				path = file.getFullPath();
+			}
+			FileUtil.transferStreams(input, output, path.toString(), new NullProgressMonitor());
 			String content = output.toString();
 			Matcher matcher = pattern.matcher(content);
 			if (matcher.matches() && matcher.groupCount() > 0) {
