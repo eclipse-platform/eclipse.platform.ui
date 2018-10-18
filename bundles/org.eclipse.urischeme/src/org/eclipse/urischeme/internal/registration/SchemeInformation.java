@@ -18,22 +18,21 @@ import org.eclipse.urischeme.ISchemeInformation;
  */
 public class SchemeInformation implements ISchemeInformation {
 
-	private String scheme;
-	private String schemeDescription;
+	private String name;
+	private String description;
 	private boolean handled;
 	private String handlerInstanceLocation;
 
 	@SuppressWarnings("javadoc")
-	public SchemeInformation(String schemeName, String schemeDescription, String handlerLocation) {
+	public SchemeInformation(String schemeName, String schemeDescription) {
 		super();
-		this.scheme = schemeName;
-		this.schemeDescription = schemeDescription;
-		setHandlerLocation(handlerLocation);
+		this.name = schemeName;
+		this.description = schemeDescription;
 	}
 
 	@Override
-	public String getScheme() {
-		return scheme;
+	public String getName() {
+		return name;
 	}
 
 	@Override
@@ -46,18 +45,23 @@ public class SchemeInformation implements ISchemeInformation {
 		return handlerInstanceLocation;
 	}
 
-	@Override
+	/**
+	 * Sets the handled value to true if scheme is handled by current Eclipse
+	 * installation and false otherwise
+	 *
+	 * @param handled
+	 */
 	public void setHandled(boolean handled) {
 		this.handled = handled;
 	}
 
-	@Override
+	@SuppressWarnings("javadoc")
 	public void setHandlerLocation(String handlerInstanceLocation) {
 		this.handlerInstanceLocation = handlerInstanceLocation;
 	}
 
 	@Override
 	public String getDescription() {
-		return schemeDescription;
+		return description;
 	}
 }

@@ -9,6 +9,7 @@ import org.eclipse.core.runtime.IExtensionRegistry;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.RegistryFactory;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.urischeme.IScheme;
 import org.eclipse.urischeme.IUriSchemeExtensionReader;
 import org.eclipse.urischeme.IUriSchemeHandler;
 
@@ -54,13 +55,13 @@ public class UriSchemeExtensionReader implements IUriSchemeExtensionReader {
 	}
 
 	@Override
-	public Collection<Scheme> getSchemes() {
+	public Collection<IScheme> getSchemes() {
 		IConfigurationElement[] elements = getOrReadConfigurationElements();
-		Collection<Scheme> schemes = new ArrayList<>();
+		Collection<IScheme> schemes = new ArrayList<>();
 		for (IConfigurationElement element : elements) {
 			String schemeName = element.getAttribute(EXT_POINT_ATTRIBUTE_URI_SCHEME);
 			String schemeDescription = element.getAttribute(EXT_POINT_ATTRIBUTE_URI_SCHEME_DESCRIPTION);
-			Scheme scheme = new Scheme(schemeName, schemeDescription);
+			IScheme scheme = new Scheme(schemeName, schemeDescription);
 			schemes.add(scheme);
 		}
 		return schemes;
@@ -96,4 +97,26 @@ public class UriSchemeExtensionReader implements IUriSchemeExtensionReader {
 				"Registered class has wrong type: " + executableExtension.getClass())); //$NON-NLS-1$
 	}
 
+	private static class Scheme implements IScheme {
+
+		private String uriScheme;
+		private String uriSchemeDescription;
+
+		public Scheme(String uriScheme, String uriSchemeDescription) {
+			super();
+			this.uriScheme = uriScheme;
+			this.uriSchemeDescription = uriSchemeDescription;
+		}
+
+		@Override
+		public String getName() {
+			return uriScheme;
+		}
+
+		@Override
+		public String getDescription() {
+			return uriSchemeDescription;
+		}
+
+	}
 }

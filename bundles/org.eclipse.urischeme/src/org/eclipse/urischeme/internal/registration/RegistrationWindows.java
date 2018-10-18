@@ -15,8 +15,8 @@ import java.util.Collection;
 import java.util.List;
 
 import org.eclipse.urischeme.IOperatingSystemRegistration;
+import org.eclipse.urischeme.IScheme;
 import org.eclipse.urischeme.ISchemeInformation;
-import org.eclipse.urischeme.IUriSchemeExtensionReader.Scheme;
 /**
  * Windows OS specific handling of schemes
  *
@@ -46,13 +46,13 @@ public class RegistrationWindows implements IOperatingSystemRegistration {
 	}
 
 	@Override
-	public void handleSchemes(Collection<ISchemeInformation> toAdd, Collection<ISchemeInformation> toRemove)
+	public void handleSchemes(Collection<IScheme> toAdd, Collection<IScheme> toRemove)
 			throws Exception {
-		for (ISchemeInformation scheme : toAdd) {
-			registryWriter.addScheme(scheme.getScheme());
+		for (IScheme scheme : toAdd) {
+			registryWriter.addScheme(scheme.getName());
 		}
-		for (ISchemeInformation scheme : toRemove) {
-			registryWriter.removeScheme(scheme.getScheme());
+		for (IScheme scheme : toRemove) {
+			registryWriter.removeScheme(scheme.getName());
 		}
 	}
 
@@ -67,15 +67,15 @@ public class RegistrationWindows implements IOperatingSystemRegistration {
 	 * @throws Exception
 	 */
 	@Override
-	public List<ISchemeInformation> getSchemesInformation(Collection<Scheme> schemes) throws Exception {
+	public List<ISchemeInformation> getSchemesInformation(Collection<IScheme> schemes) throws Exception {
 		String launcher = getEclipseLauncher();
 
 		List<ISchemeInformation> schemeInformations = new ArrayList<>();
 
-		for (Scheme scheme : schemes) {
-			SchemeInformation schemeInfo = new SchemeInformation(scheme.getUriScheme(),
-					scheme.getUriSchemeDescription(), null);
-			String path = registryWriter.getRegisteredHandlerPath(schemeInfo.getScheme());
+		for (IScheme scheme : schemes) {
+			SchemeInformation schemeInfo = new SchemeInformation(scheme.getName(),
+					scheme.getDescription());
+			String path = registryWriter.getRegisteredHandlerPath(schemeInfo.getName());
 			if (path == null) {
 				path = ""; //$NON-NLS-1$
 			}

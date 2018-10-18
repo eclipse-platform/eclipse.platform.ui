@@ -27,8 +27,8 @@ import java.util.List;
 import java.util.Scanner;
 
 import org.eclipse.urischeme.IOperatingSystemRegistration;
+import org.eclipse.urischeme.IScheme;
 import org.eclipse.urischeme.ISchemeInformation;
-import org.eclipse.urischeme.IUriSchemeExtensionReader.Scheme;
 import org.hamcrest.core.IsNot;
 import org.hamcrest.core.StringContains;
 import org.junit.AfterClass;
@@ -42,9 +42,9 @@ public class TestUnitRegistrationMacOsX {
 	private static final String OTHER_APP_PLIST_PATH = "/Users/myuser/Applications/OtherApp.app/Contents/Info.plist";
 	private static final String OTHER_APP_BUNDLE_PATH = "/Users/myuser/Applications/OtherApp.app";
 
-	private static final Scheme ADT_SCHEME = new Scheme("adt", "");
-	private static final ISchemeInformation OTHER_SCHEME_INFO = new SchemeInformation("other", "", null);
-	private static final ISchemeInformation ADT_SCHEME_INFO = new SchemeInformation("adt", "", null);
+	private static final IScheme ADT_SCHEME = new Scheme("adt", "");
+	private static final ISchemeInformation OTHER_SCHEME_INFO = new SchemeInformation("other", "");
+	private static final ISchemeInformation ADT_SCHEME_INFO = new SchemeInformation("adt", "");
 
 	private IOperatingSystemRegistration registration;
 	private FileProviderMock fileProvider;
@@ -144,7 +144,7 @@ public class TestUnitRegistrationMacOsX {
 		List<ISchemeInformation> infos = registration.getSchemesInformation(Arrays.asList(ADT_SCHEME));
 
 		assertEquals(1, infos.size());
-		assertEquals("adt", infos.get(0).getScheme());
+		assertEquals("adt", infos.get(0).getName());
 		assertTrue(infos.get(0).isHandled());
 	}
 
@@ -157,7 +157,7 @@ public class TestUnitRegistrationMacOsX {
 		List<ISchemeInformation> infos = registration.getSchemesInformation(Arrays.asList(ADT_SCHEME));
 
 		assertEquals(1, infos.size());
-		assertEquals("adt", infos.get(0).getScheme());
+		assertEquals("adt", infos.get(0).getName());
 		assertFalse(infos.get(0).isHandled());
 		assertEquals(OTHER_APP_BUNDLE_PATH, infos.get(0).getHandlerInstanceLocation());
 	}
@@ -172,7 +172,7 @@ public class TestUnitRegistrationMacOsX {
 		List<ISchemeInformation> infos = registration.getSchemesInformation(Arrays.asList(ADT_SCHEME));
 
 		assertEquals(1, infos.size());
-		assertEquals("adt", infos.get(0).getScheme());
+		assertEquals("adt", infos.get(0).getName());
 		assertFalse(infos.get(0).isHandled());
 		assertEquals(OTHER_APP_BUNDLE_PATH, infos.get(0).getHandlerInstanceLocation());
 	}

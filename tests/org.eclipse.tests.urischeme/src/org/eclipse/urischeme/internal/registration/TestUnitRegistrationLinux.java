@@ -23,8 +23,8 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import org.eclipse.urischeme.IOperatingSystemRegistration;
+import org.eclipse.urischeme.IScheme;
 import org.eclipse.urischeme.ISchemeInformation;
-import org.eclipse.urischeme.IUriSchemeExtensionReader.Scheme;
 import org.hamcrest.core.IsNot;
 import org.hamcrest.core.StringContains;
 import org.junit.AfterClass;
@@ -45,10 +45,10 @@ public class TestUnitRegistrationLinux {
 	private static final String OWN_DESKTOP_FILE = "_home_myuser_Eclipse_.desktop";
 	private static final String PATH_OWN_DESKTOP_FILE = "~/.local/share/applications/" + OWN_DESKTOP_FILE;
 
-	private static final Scheme ADT_SCHEME = new Scheme("adt", "");
+	private static final IScheme ADT_SCHEME = new Scheme("adt", "");
 
-	private static final ISchemeInformation OTHER_SCHEME_INFO = new SchemeInformation("other", "", null);
-	private static final ISchemeInformation ADT_SCHEME_INFO = new SchemeInformation("adt", "", null);
+	private static final ISchemeInformation OTHER_SCHEME_INFO = new SchemeInformation("other", "");
+	private static final ISchemeInformation ADT_SCHEME_INFO = new SchemeInformation("adt", "");
 
 	private static String originalEclipseHomeLocation;
 	private static String originalEclipseLauncher;
@@ -166,7 +166,7 @@ public class TestUnitRegistrationLinux {
 		List<ISchemeInformation> registeredSchemes = registration.getSchemesInformation(Arrays.asList(ADT_SCHEME));
 
 		assertEquals(1, registeredSchemes.size());
-		assertEquals("adt", registeredSchemes.get(0).getScheme());
+		assertEquals("adt", registeredSchemes.get(0).getName());
 		assertTrue("Scheme should be handled", registeredSchemes.get(0).isHandled());
 	}
 
@@ -182,7 +182,7 @@ public class TestUnitRegistrationLinux {
 		List<ISchemeInformation> infos = registration.getSchemesInformation(Arrays.asList(ADT_SCHEME));
 
 		assertEquals(1, infos.size());
-		assertEquals("adt", infos.get(0).getScheme());
+		assertEquals("adt", infos.get(0).getName());
 		assertFalse(infos.get(0).isHandled());
 		assertEquals(OTHER_APP_EXECUTABLE_PATH, infos.get(0).getHandlerInstanceLocation());
 	}
@@ -203,7 +203,7 @@ public class TestUnitRegistrationLinux {
 		List<ISchemeInformation> infos = registration.getSchemesInformation(Arrays.asList(ADT_SCHEME));
 
 		assertEquals(1, infos.size());
-		assertEquals("adt", infos.get(0).getScheme());
+		assertEquals("adt", infos.get(0).getName());
 		assertFalse(infos.get(0).isHandled());
 		assertEquals(OTHER_APP_EXECUTABLE_PATH, infos.get(0).getHandlerInstanceLocation());
 	}
@@ -220,7 +220,7 @@ public class TestUnitRegistrationLinux {
 		List<ISchemeInformation> infos = registration.getSchemesInformation(Arrays.asList(ADT_SCHEME));
 
 		assertEquals(1, infos.size());
-		assertEquals("adt", infos.get(0).getScheme());
+		assertEquals("adt", infos.get(0).getName());
 		assertFalse(infos.get(0).isHandled());
 		assertEquals("", infos.get(0).getHandlerInstanceLocation());
 	}
@@ -236,7 +236,7 @@ public class TestUnitRegistrationLinux {
 		List<ISchemeInformation> infos = registration.getSchemesInformation(Arrays.asList(ADT_SCHEME));
 
 		assertEquals(1, infos.size());
-		assertEquals("adt", infos.get(0).getScheme());
+		assertEquals("adt", infos.get(0).getName());
 		assertFalse(infos.get(0).isHandled());
 		assertEquals("", infos.get(0).getHandlerInstanceLocation());
 	}
@@ -252,7 +252,7 @@ public class TestUnitRegistrationLinux {
 		List<ISchemeInformation> infos = registration.getSchemesInformation(Arrays.asList(ADT_SCHEME));
 
 		assertEquals(1, infos.size());
-		assertEquals("adt", infos.get(0).getScheme());
+		assertEquals("adt", infos.get(0).getName());
 		assertFalse(infos.get(0).isHandled());
 		assertEquals("", infos.get(0).getHandlerInstanceLocation());
 	}
@@ -268,7 +268,7 @@ public class TestUnitRegistrationLinux {
 		List<ISchemeInformation> infos = registration.getSchemesInformation(Arrays.asList(ADT_SCHEME));
 
 		assertEquals(1, infos.size());
-		assertEquals("adt", infos.get(0).getScheme());
+		assertEquals("adt", infos.get(0).getName());
 		assertFalse(infos.get(0).isHandled());
 		assertEquals("", infos.get(0).getHandlerInstanceLocation());
 	}

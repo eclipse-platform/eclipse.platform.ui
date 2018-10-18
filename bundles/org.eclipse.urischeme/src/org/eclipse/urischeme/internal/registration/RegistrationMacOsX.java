@@ -20,8 +20,8 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.eclipse.urischeme.IOperatingSystemRegistration;
+import org.eclipse.urischeme.IScheme;
 import org.eclipse.urischeme.ISchemeInformation;
-import org.eclipse.urischeme.IUriSchemeExtensionReader.Scheme;
 
 @SuppressWarnings("javadoc")
 public class RegistrationMacOsX implements IOperatingSystemRegistration {
@@ -45,7 +45,7 @@ public class RegistrationMacOsX implements IOperatingSystemRegistration {
 	}
 
 	@Override
-	public void handleSchemes(Collection<ISchemeInformation> toAdd, Collection<ISchemeInformation> toRemove)
+	public void handleSchemes(Collection<IScheme> toAdd, Collection<IScheme> toRemove)
 			throws Exception {
 		String pathToEclipseApp = getPathToEclipseApp();
 
@@ -55,19 +55,19 @@ public class RegistrationMacOsX implements IOperatingSystemRegistration {
 	}
 
 	@Override
-	public List<ISchemeInformation> getSchemesInformation(Collection<Scheme> schemes) throws Exception {
+	public List<ISchemeInformation> getSchemesInformation(Collection<IScheme> schemes) throws Exception {
 		List<ISchemeInformation> returnList = new ArrayList<>();
 
 		String lsRegisterOutput = processExecutor.execute(LSREGISTER, DUMP);
 
 		String[] lsRegisterEntries = lsRegisterOutput.split("-{80}\n"); //$NON-NLS-1$
 
-		for (Scheme scheme : schemes) {
+		for (IScheme scheme : schemes) {
 
-			SchemeInformation schemeInfo = new SchemeInformation(scheme.getUriScheme(),
-					scheme.getUriSchemeDescription(), null);
+			SchemeInformation schemeInfo = new SchemeInformation(scheme.getName(),
+					scheme.getDescription());
 
-			String location = determineHandlerLocation(lsRegisterEntries, scheme.getUriScheme());
+			String location = determineHandlerLocation(lsRegisterEntries, scheme.getName());
 			if (location != "" && getEclipseLauncher().startsWith(location)) { //$NON-NLS-1$
 				schemeInfo.setHandled(true);
 			}
@@ -114,18 +114,18 @@ public class RegistrationMacOsX implements IOperatingSystemRegistration {
 		processExecutor.execute(LSREGISTER, RECURSIVE, pathToEclipseApp);
 	}
 
-	private void changePlistFile(Collection<ISchemeInformation> toAdd, Collection<ISchemeInformation> toRemove,
+	private void changePlistFile(Collection<IScheme> toAdd, Collection<IScheme> toRemove,
 			String pathToEclipseApp) throws IOException {
 		String plistPath = pathToEclipseApp + PLIST_PATH_SUFFIX;
 
 		PlistFileWriter writer = getPlistFileWriter(plistPath);
 
-		for (ISchemeInformation scheme : toAdd) {
-			writer.addScheme(scheme.getScheme(), scheme.getDescription());
+		for (IScheme scheme : toAdd) {
+			writer.addScheme(scheme.getName(), scheme.getDescription());
 		}
 
-		for (ISchemeInformation scheme : toRemove) {
-			writer.removeScheme(scheme.getScheme());
+		for (IScheme scheme : toRemove) {
+			writer.removeScheme(scheme.getName());
 		}
 
 		writer.writeTo(fileProvider.newWriter(plistPath));

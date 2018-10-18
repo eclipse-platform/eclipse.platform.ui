@@ -17,8 +17,8 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import org.eclipse.urischeme.IOperatingSystemRegistration;
+import org.eclipse.urischeme.IScheme;
 import org.eclipse.urischeme.ISchemeInformation;
-import org.eclipse.urischeme.IUriSchemeExtensionReader.Scheme;
 
 @SuppressWarnings("javadoc")
 public class RegistrationLinux implements IOperatingSystemRegistration {
@@ -46,7 +46,7 @@ public class RegistrationLinux implements IOperatingSystemRegistration {
 	}
 
 	@Override
-	public void handleSchemes(Collection<ISchemeInformation> toAdd, Collection<ISchemeInformation> toRemove)
+	public void handleSchemes(Collection<IScheme> toAdd, Collection<IScheme> toRemove)
 			throws Exception {
 		String desktopFileName = getDesktopFileName();
 
@@ -56,14 +56,14 @@ public class RegistrationLinux implements IOperatingSystemRegistration {
 	}
 
 	@Override
-	public List<ISchemeInformation> getSchemesInformation(Collection<Scheme> schemes) throws Exception {
+	public List<ISchemeInformation> getSchemesInformation(Collection<IScheme> schemes) throws Exception {
 		List<ISchemeInformation> returnList = new ArrayList<>();
 
-		for (Scheme scheme : schemes) {
-			SchemeInformation schemeInfo = new SchemeInformation(scheme.getUriScheme(),
-					scheme.getUriSchemeDescription(), null);
+		for (IScheme scheme : schemes) {
+			SchemeInformation schemeInfo = new SchemeInformation(scheme.getName(),
+					scheme.getDescription());
 
-			String location = determineHandlerLocation(scheme.getUriScheme());
+			String location = determineHandlerLocation(scheme.getName());
 			if (location.equals(getEclipseLauncher())) {
 				schemeInfo.setHandled(true);
 			}
@@ -81,17 +81,17 @@ public class RegistrationLinux implements IOperatingSystemRegistration {
 		return ""; //$NON-NLS-1$
 	}
 
-	private void changeDesktopFile(Iterable<ISchemeInformation> toAdd, Iterable<ISchemeInformation> toRemove,
+	private void changeDesktopFile(Iterable<IScheme> toAdd, Iterable<IScheme> toRemove,
 			String desktopFilePath) throws IOException {
 
 		List<String> lines = readFileOrGetInitialContent(desktopFilePath);
 
 		DesktopFileWriter writer = new DesktopFileWriter(lines);
-		for (ISchemeInformation add : toAdd) {
-			writer.addScheme(add.getScheme());
+		for (IScheme scheme : toAdd) {
+			writer.addScheme(scheme.getName());
 		}
-		for (ISchemeInformation remove : toRemove) {
-			writer.removeScheme(remove.getScheme());
+		for (IScheme scheme : toRemove) {
+			writer.removeScheme(scheme.getName());
 		}
 
 		fileProvider.write(desktopFilePath, writer.getResult());
@@ -105,13 +105,13 @@ public class RegistrationLinux implements IOperatingSystemRegistration {
 		}
 	}
 
-	private void registerSchemesWithXdgMime(Collection<ISchemeInformation> schemes, String desktopFilePath)
+	private void registerSchemesWithXdgMime(Collection<IScheme> schemes, String desktopFilePath)
 			throws Exception {
 		if (schemes.isEmpty()) {
 			return;
 		}
 		String scheme = schemes.stream(). //
-				map(s -> s.getScheme()). //
+				map(s -> s.getName()). //
 				collect(Collectors.joining(" " + X_SCHEME_HANDLER_PREFIX, X_SCHEME_HANDLER_PREFIX, "")); //$NON-NLS-1$ //$NON-NLS-2$
 		processExecutor.execute(XDG_MIME, DEFAULT, desktopFilePath, scheme);
 	}

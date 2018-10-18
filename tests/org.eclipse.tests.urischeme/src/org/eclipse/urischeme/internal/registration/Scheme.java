@@ -8,22 +8,33 @@
  * Contributors:
  *     SAP SE - initial version
  *******************************************************************************/
-package org.eclipse.urischeme;
+package org.eclipse.urischeme.internal.registration;
+
+import org.eclipse.urischeme.IScheme;
 
 /**
- * The basic information of an URI scheme with regards to the handler.
+ * Implementation of {@link IScheme} for testing purpose.
  *
  */
-public interface ISchemeInformation extends IScheme {
+public class Scheme implements IScheme {
 
-	/**
-	 * @return true if the scheme is handled by the running Eclipse installation;
-	 *         false otherwise
-	 */
-	boolean isHandled();
+	private String name;
+	private String desription;
 
-	/**
-	 * @return the path of the application
-	 */
-	String getHandlerInstanceLocation();
+	public Scheme(String name, String desription) {
+		this.name = name;
+		this.desription = desription;
+
+	}
+
+	@Override
+	public String getName() {
+		return name;
+	}
+
+	@Override
+	public String getDescription() {
+		return desription;
+	}
+
 }

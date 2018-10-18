@@ -20,7 +20,7 @@ import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IContributor;
 import org.eclipse.core.runtime.IExtension;
 import org.eclipse.core.runtime.InvalidRegistryObjectException;
-import org.eclipse.urischeme.IUriSchemeExtensionReader.Scheme;
+import org.eclipse.urischeme.IScheme;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -73,14 +73,14 @@ public class UriSchemeExtensionReaderUnitTest {
 		ConfigurationElementMock element2 = new ConfigurationElementMock("xyz", "xyz Scheme", new Object());
 		setExtensionsInReader(element1, element2);
 
-		Collection<Scheme> schemes = extensionReader.getSchemes();
+		Collection<IScheme> schemes = extensionReader.getSchemes();
 		assertEquals(2, schemes.size());
 
-		Scheme[] schemesArray = schemes.toArray(new Scheme[0]);
-		assertEquals("abc", schemesArray[0].getUriScheme());
-		assertEquals("abc Scheme", schemesArray[0].getUriSchemeDescription());
-		assertEquals("xyz", schemesArray[1].getUriScheme());
-		assertEquals("xyz Scheme", schemesArray[1].getUriSchemeDescription());
+		IScheme[] schemesArray = schemes.toArray(new IScheme[0]);
+		assertEquals("abc", schemesArray[0].getName());
+		assertEquals("abc Scheme", schemesArray[0].getDescription());
+		assertEquals("xyz", schemesArray[1].getName());
+		assertEquals("xyz Scheme", schemesArray[1].getDescription());
 	}
 
 	private void setExtensionsInReader(IConfigurationElement... element) throws Exception {

@@ -17,8 +17,8 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
+import org.eclipse.urischeme.IScheme;
 import org.eclipse.urischeme.ISchemeInformation;
-import org.eclipse.urischeme.IUriSchemeExtensionReader.Scheme;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -28,10 +28,10 @@ public class TestUnitRegistrationWindows {
 
 	private static final String PATH_TO_OTHER_APPLICATION_EXE = "/path/to/otherApplication.exe";
 	private static final String PATH_TO_ECLIPSE_EXE = "/path/to/Eclipse.exe";
-	private static final Scheme OTHER_SCHEME = new Scheme("other", "");
-	private static final Scheme ADT_SCHEME = new Scheme("adt", "");
-	private static final ISchemeInformation OTHER_SCHEME_INFO = new SchemeInformation("other", "", null);
-	private static final ISchemeInformation ADT_SCHEME_INFO = new SchemeInformation("adt", "", null);
+	private static final IScheme OTHER_SCHEME = new Scheme("other", "");
+	private static final IScheme ADT_SCHEME = new Scheme("adt", "");
+	private static final ISchemeInformation OTHER_SCHEME_INFO = new SchemeInformation("other", "");
+	private static final ISchemeInformation ADT_SCHEME_INFO = new SchemeInformation("adt", "");
 
 	RegistryWriterMock registryWriter;
 	private static String originalEclipseLauncher;
@@ -59,8 +59,8 @@ public class TestUnitRegistrationWindows {
 		registrationWindows.handleSchemes(Arrays.asList(OTHER_SCHEME_INFO, ADT_SCHEME_INFO), Collections.emptyList());
 
 		assertEquals("Too many schemes added", 2, registryWriter.addedSchemes.size());
-		assertTrue("Scheme not added", registryWriter.addedSchemes.contains(OTHER_SCHEME_INFO.getScheme()));
-		assertTrue("Scheme not added", registryWriter.addedSchemes.contains(ADT_SCHEME_INFO.getScheme()));
+		assertTrue("Scheme not added", registryWriter.addedSchemes.contains(OTHER_SCHEME_INFO.getName()));
+		assertTrue("Scheme not added", registryWriter.addedSchemes.contains(ADT_SCHEME_INFO.getName()));
 
 		assertEquals("Too many schemes removed", 0, registryWriter.removedSchemes.size());
 	}
@@ -70,10 +70,10 @@ public class TestUnitRegistrationWindows {
 		registrationWindows.handleSchemes(Arrays.asList(OTHER_SCHEME_INFO), Arrays.asList(OTHER_SCHEME_INFO));
 
 		assertEquals("Too many schemes added", 1, registryWriter.addedSchemes.size());
-		assertTrue("Scheme not added", registryWriter.addedSchemes.contains(OTHER_SCHEME_INFO.getScheme()));
+		assertTrue("Scheme not added", registryWriter.addedSchemes.contains(OTHER_SCHEME_INFO.getName()));
 
 		assertEquals("Too many schemes removed", 1, registryWriter.removedSchemes.size());
-		assertTrue("Scheme not removed", registryWriter.removedSchemes.contains(OTHER_SCHEME_INFO.getScheme()));
+		assertTrue("Scheme not removed", registryWriter.removedSchemes.contains(OTHER_SCHEME_INFO.getName()));
 	}
 
 	@Test
@@ -82,12 +82,12 @@ public class TestUnitRegistrationWindows {
 				Arrays.asList(OTHER_SCHEME_INFO, ADT_SCHEME_INFO), Arrays.asList(ADT_SCHEME_INFO, OTHER_SCHEME_INFO));
 
 		assertEquals("Too many schemes added", 2, registryWriter.addedSchemes.size());
-		assertTrue("Scheme not added", registryWriter.addedSchemes.contains(OTHER_SCHEME_INFO.getScheme()));
-		assertTrue("Scheme not added", registryWriter.addedSchemes.contains(ADT_SCHEME_INFO.getScheme()));
+		assertTrue("Scheme not added", registryWriter.addedSchemes.contains(OTHER_SCHEME_INFO.getName()));
+		assertTrue("Scheme not added", registryWriter.addedSchemes.contains(ADT_SCHEME_INFO.getName()));
 
 		assertEquals("Too many schemes removed", 2, registryWriter.removedSchemes.size());
-		assertTrue("Scheme not removed", registryWriter.removedSchemes.contains(OTHER_SCHEME_INFO.getScheme()));
-		assertTrue("Scheme not removed", registryWriter.removedSchemes.contains(ADT_SCHEME_INFO.getScheme()));
+		assertTrue("Scheme not removed", registryWriter.removedSchemes.contains(OTHER_SCHEME_INFO.getName()));
+		assertTrue("Scheme not removed", registryWriter.removedSchemes.contains(ADT_SCHEME_INFO.getName()));
 	}
 
 	@Test
@@ -102,7 +102,7 @@ public class TestUnitRegistrationWindows {
 
 	@Test
 	public void returnsRegisteredSchemeInformationForThisEclipse() throws Exception {
-		registryWriter.schemeToHandlerPath.put(ADT_SCHEME.getUriScheme(), PATH_TO_ECLIPSE_EXE);
+		registryWriter.schemeToHandlerPath.put(ADT_SCHEME.getName(), PATH_TO_ECLIPSE_EXE);
 
 		List<ISchemeInformation> schemeInformation = registrationWindows
 				.getSchemesInformation(Arrays.asList(ADT_SCHEME));
@@ -113,7 +113,7 @@ public class TestUnitRegistrationWindows {
 
 	@Test
 	public void returnsRegisteredSchemeInformationForOtherApplication() throws Exception {
-		registryWriter.schemeToHandlerPath.put(ADT_SCHEME.getUriScheme(), PATH_TO_OTHER_APPLICATION_EXE);
+		registryWriter.schemeToHandlerPath.put(ADT_SCHEME.getName(), PATH_TO_OTHER_APPLICATION_EXE);
 
 		List<ISchemeInformation> schemeInformation = registrationWindows
 				.getSchemesInformation(Arrays.asList(ADT_SCHEME));
@@ -122,10 +122,10 @@ public class TestUnitRegistrationWindows {
 		assertSchemeInformation(schemeInformation.get(0), ADT_SCHEME, PATH_TO_OTHER_APPLICATION_EXE, false);
 	}
 
-	private void assertSchemeInformation(ISchemeInformation schemeInformation, Scheme scheme, String handlerlocation,
+	private void assertSchemeInformation(ISchemeInformation schemeInformation, IScheme scheme, String handlerlocation,
 			boolean isHandled) {
-		assertEquals("Scheme not set correctly", scheme.getUriScheme(), schemeInformation.getScheme());
-		assertEquals("Scheme description not set correctly", scheme.getUriSchemeDescription(),
+		assertEquals("Scheme not set correctly", scheme.getName(), schemeInformation.getName());
+		assertEquals("Scheme description not set correctly", scheme.getDescription(),
 				schemeInformation.getDescription());
 		assertEquals("Handler location not set correctly", handlerlocation,
 				schemeInformation.getHandlerInstanceLocation());

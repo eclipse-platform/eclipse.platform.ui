@@ -11,19 +11,18 @@
 package org.eclipse.urischeme;
 
 /**
- * The basic information of an URI scheme with regards to the handler.
+ * The basic information of an URI scheme like name and description.
  *
  */
-public interface ISchemeInformation extends IScheme {
+public interface IScheme {
 
 	/**
-	 * @return true if the scheme is handled by the running Eclipse installation;
-	 *         false otherwise
+	 * @return the name of the scheme
 	 */
-	boolean isHandled();
+	String getName();
 
 	/**
-	 * @return the path of the application
+	 * @return the description of the scheme
 	 */
-	String getHandlerInstanceLocation();
+	String getDescription();
 }

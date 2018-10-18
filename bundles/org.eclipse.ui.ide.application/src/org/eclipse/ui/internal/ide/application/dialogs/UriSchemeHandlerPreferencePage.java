@@ -44,9 +44,9 @@ import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
 import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
 import org.eclipse.ui.statushandlers.StatusManager;
 import org.eclipse.urischeme.IOperatingSystemRegistration;
+import org.eclipse.urischeme.IScheme;
 import org.eclipse.urischeme.ISchemeInformation;
 import org.eclipse.urischeme.IUriSchemeExtensionReader;
-import org.eclipse.urischeme.IUriSchemeExtensionReader.Scheme;
 
 /**
  * This page contributes to URL handler for URISchemes in preference page of
@@ -149,7 +149,7 @@ public class UriSchemeHandlerPreferencePage extends PreferencePage implements IW
 	 */
 	private Collection<UiSchemeInformation> retrieveSchemeInformationList() throws Exception {
 		Collection<UiSchemeInformation> returnList = new ArrayList<>();
-		Collection<Scheme> schemes = IUriSchemeExtensionReader.INSTANCE.getSchemes();
+		Collection<IScheme> schemes = IUriSchemeExtensionReader.INSTANCE.getSchemes();
 		if (operatingSystemRegistration != null) {
 			for (ISchemeInformation info : operatingSystemRegistration.getSchemesInformation(schemes)) {
 				returnList.add(new UiSchemeInformation(info.isHandled(), info));
@@ -177,8 +177,8 @@ public class UriSchemeHandlerPreferencePage extends PreferencePage implements IW
 			return true;
 		}
 
-		List<ISchemeInformation> toAdd = new ArrayList<>();
-		List<ISchemeInformation> toRemove = new ArrayList<>();
+		List<IScheme> toAdd = new ArrayList<>();
+		List<IScheme> toRemove = new ArrayList<>();
 		for (UiSchemeInformation info : schemeInformationList) {
 			if (info.checked && !info.information.isHandled()) {
 				toAdd.add(info.information);
@@ -251,7 +251,7 @@ public class UriSchemeHandlerPreferencePage extends PreferencePage implements IW
 							IDEWorkbenchMessages.UriHandlerPreferencePage_Warning_OtherApp,
 							NLS.bind(IDEWorkbenchMessages.UriHandlerPreferencePage_Warning_OtherApp_Description,
 									schemeInformation.information.getHandlerInstanceLocation(),
-									schemeInformation.information.getScheme()));
+									schemeInformation.information.getName()));
 					return;
 				}
 				schemeInformation.checked = tableItem.getChecked();
@@ -280,7 +280,7 @@ public class UriSchemeHandlerPreferencePage extends PreferencePage implements IW
 				UiSchemeInformation schemeInfo = (UiSchemeInformation) element;
 				switch (columnIndex) {
 				case 0:
-					return schemeInfo.information.getScheme();
+					return schemeInfo.information.getName();
 				case 1:
 					return schemeInfo.information.getDescription();
 				default:

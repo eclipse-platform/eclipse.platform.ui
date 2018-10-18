@@ -22,6 +22,7 @@ import java.util.Map;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.urischeme.IScheme;
 import org.eclipse.urischeme.IUriSchemeExtensionReader;
 import org.eclipse.urischeme.IUriSchemeHandler;
 import org.junit.Before;
@@ -80,7 +81,7 @@ public class UriSchemeProcessorUnitTest {
 		public Map<String, Integer> readCount = new HashMap<>();
 
 		@Override
-		public Collection<Scheme> getSchemes() {
+		public Collection<IScheme> getSchemes() {
 			return null;
 		}
 
