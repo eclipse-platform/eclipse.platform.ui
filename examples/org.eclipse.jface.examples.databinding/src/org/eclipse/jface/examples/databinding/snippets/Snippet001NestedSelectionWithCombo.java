@@ -37,6 +37,7 @@ import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.ComboViewer;
 import org.eclipse.jface.viewers.ListViewer;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.List;
@@ -182,8 +183,13 @@ public class Snippet001NestedSelectionWithCombo {
 			Realm realm = DisplayRealm.getRealm(shell.getDisplay());
 
 			List peopleList = new List(shell, SWT.BORDER);
+			peopleList.setLayoutData(new GridData(SWT.FILL, SWT.END, true, false));
+
 			Text name = new Text(shell, SWT.BORDER);
+			name.setLayoutData(new GridData(SWT.FILL, SWT.END, true, false));
+
 			Combo city = new Combo(shell, SWT.BORDER | SWT.READ_ONLY);
+			city.setLayoutData(new GridData(SWT.FILL, SWT.END, true, false));
 
 			ListViewer peopleListViewer = new ListViewer(peopleList);
 			IObservableMap attributeMap = BeanProperties.value(Person.class, "name").observeDetail(
@@ -216,6 +222,7 @@ public class Snippet001NestedSelectionWithCombo {
 					.observeDetail(selectedPerson));
 
 			GridLayoutFactory.swtDefaults().applyTo(shell);
+
 			// Open and return the Shell
 			shell.pack();
 			shell.open();
