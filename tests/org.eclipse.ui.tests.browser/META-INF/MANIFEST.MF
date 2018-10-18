@@ -5,7 +5,6 @@ Bundle-SymbolicName: org.eclipse.ui.tests.browser;singleton:=true
 Bundle-Version: 3.2.100
 Bundle-Activator: org.eclipse.ui.tests.browser.internal.WebBrowserTestsPlugin
 Bundle-Vendor: %Plugin.providerName
-Bundle-Localization: plugin
 Export-Package: org.eclipse.ui.tests.browser.internal
 Require-Bundle: org.eclipse.core.runtime,
  org.junit,

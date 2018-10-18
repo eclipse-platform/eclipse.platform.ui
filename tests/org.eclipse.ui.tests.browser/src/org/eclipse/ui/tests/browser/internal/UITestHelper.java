@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2017 IBM Corporation and others.
+ * Copyright (c) 2004, 2018 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -111,10 +111,8 @@ public class UITestHelper {
 		dialog = new PropertyDialogWrapper(getShell(), manager, new StructuredSelection(element));
 		dialog.create();
 		dialog.getShell().setText(title);
-		for (Iterator<IPreferenceNode> iterator = manager.getElements(PreferenceManager.PRE_ORDER).iterator();
-		     iterator.hasNext();) {
-			IPreferenceNode node = iterator.next();
-			if ( node.getId().equals(id) ) {
+		for (IPreferenceNode node : manager.getElements(PreferenceManager.PRE_ORDER)) {
+			if (node.getId().equals(id)) {
 				dialog.showPage(node);
 				break;
 			}
@@ -145,18 +143,18 @@ public class UITestHelper {
 	 */
 	private static void verifyCompositeText(Composite composite) {
 		Control children[] = composite.getChildren();
-		for (int i = 0; i < children.length; i++) {
+		for (Control element : children) {
 			try {
 				//verify the text if the child is a button
-				verifyButtonText((Button) children[i]);
+				verifyButtonText((Button) element);
 			} catch (ClassCastException exNotButton) {
 				try {
 					//child is not a button, maybe a label
-					verifyLabelText((Label) children[i]);
+					verifyLabelText((Label) element);
 				} catch (ClassCastException exNotLabel) {
 					try {
 						//child is not a label, make a recursive call if it is a composite
-						verifyCompositeText((Composite) children[i]);
+						verifyCompositeText((Composite) element);
 					} catch (ClassCastException exNotComposite) {
 						//the child is not a button, label, or composite - ignore it.
 					}
