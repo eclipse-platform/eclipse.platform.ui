@@ -241,7 +241,7 @@ public class TestUnitDesktopFileWriter {
 		DesktopFileWriter writer = getWriterFor(fileContent);
 
 		String expected = String.join(LINE_SEPARATOR, fileContent);
-		assertThat(new String(writer.getResult()), new IsEqual<String>(expected));
+		assertThat(new String(writer.getResult()), new IsEqual<>(expected));
 	}
 
 	@Test
@@ -315,7 +315,7 @@ public class TestUnitDesktopFileWriter {
 	}
 
 	private Matcher<String> not(Matcher<String> not) {
-		return new IsNot<String>(not);
+		return new IsNot<>(not);
 	}
 
 	private DesktopFileWriter getWriterFor(List<String> fileContent) {

@@ -7,9 +7,9 @@ import java.util.Map;
 
 public class RegistryWriterMock implements IRegistryWriter {
 
-	List<String> addedSchemes = new ArrayList<String>();
-	List<String> removedSchemes = new ArrayList<String>();
-	Map<String, String> schemeToHandlerPath = new HashMap<String, String>();
+	List<String> addedSchemes = new ArrayList<>();
+	List<String> removedSchemes = new ArrayList<>();
+	Map<String, String> schemeToHandlerPath = new HashMap<>();
 
 	@Override
 	public void addScheme(String scheme) throws IllegalArgumentException {

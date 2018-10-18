@@ -13,4 +13,4 @@ public class UriSchemeHandlerSpy implements IUriSchemeHandler {
 		public void handle(String uri) {
 			uris.add(uri);
 		}
-	};
+}
