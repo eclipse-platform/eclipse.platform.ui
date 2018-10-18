@@ -16,12 +16,17 @@ package org.eclipse.debug.internal.ui.sourcelookup;
 
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.PlatformObject;
+import org.eclipse.debug.internal.ui.DebugUIPlugin;
+import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
 import org.eclipse.debug.internal.ui.views.launch.DebugElementAdapterFactory;
 import org.eclipse.debug.ui.DebugUITools;
+import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.debug.ui.contexts.DebugContextEvent;
 import org.eclipse.debug.ui.contexts.IDebugContextListener;
 import org.eclipse.debug.ui.contexts.IDebugContextService;
 import org.eclipse.debug.ui.sourcelookup.ISourceDisplay;
+import org.eclipse.jface.dialogs.MessageDialogWithToggle;
+import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.ui.IWorkbenchPage;
@@ -52,8 +57,44 @@ public class SourceLookupService implements IDebugContextListener, ISourceDispla
 	@Override
 	public synchronized void debugContextChanged(DebugContextEvent event) {
 		if ((event.getFlags() & DebugContextEvent.ACTIVATED) > 0) {
-			displaySource(event.getContext(), event.getDebugContextProvider().getPart(), false);
+			if (isDebugViewActive() || canActivateDebugView()) {
+				displaySource(event.getContext(), event.getDebugContextProvider().getPart(), false);
+			}
 		}
+	}
+
+	private boolean isDebugViewActive() {
+		if (isDisposed()) {
+			return false;
+		}
+		IWorkbenchPage activePage = fWindow.getActivePage();
+		if (activePage != null) {
+			return activePage.findView(IDebugUIConstants.ID_DEBUG_VIEW) != null;
+		}
+		return false;
+	}
+
+	private boolean canActivateDebugView() {
+		if (isDisposed()) {
+			return false;
+		}
+		IPreferenceStore preferenceStore = DebugUIPlugin.getDefault().getPreferenceStore();
+		String[] switchPreferences = {
+				IInternalDebugUIConstants.PREF_SWITCH_TO_PERSPECTIVE,
+				IInternalDebugUIConstants.PREF_SWITCH_PERSPECTIVE_ON_SUSPEND,
+		};
+		for (String switchPreference : switchPreferences) {
+			String preferenceValue = preferenceStore.getString(switchPreference);
+			if (!MessageDialogWithToggle.NEVER.equals(preferenceValue)) {
+				return true;
+			}
+		}
+		boolean canActivateDebugView = preferenceStore.getBoolean(IInternalDebugUIConstants.PREF_ACTIVATE_DEBUG_VIEW);
+		return canActivateDebugView;
+	}
+
+	private boolean isDisposed() {
+		return fWindow == null;
 	}
 
 	/**
@@ -65,7 +106,9 @@ public class SourceLookupService implements IDebugContextListener, ISourceDispla
 	 * @param force
 	 */
 	protected synchronized void displaySource(ISelection selection, IWorkbenchPart part, boolean force) {
-	    if (fWindow == null) return; // disposed
+		if (isDisposed()) {
+			return;
+		}
 
 		if (selection instanceof IStructuredSelection) {
 			IStructuredSelection structuredSelection = (IStructuredSelection)selection;
@@ -82,9 +125,6 @@ public class SourceLookupService implements IDebugContextListener, ISourceDispla
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.contexts.ISourceDisplayAdapter#displaySource(java.lang.Object, org.eclipse.ui.IWorkbenchPage, boolean)
-	 */
 	@Override
 	public void displaySource(Object context, IWorkbenchPage page, boolean forceSourceLookup) {
 		if (context instanceof IAdaptable) {

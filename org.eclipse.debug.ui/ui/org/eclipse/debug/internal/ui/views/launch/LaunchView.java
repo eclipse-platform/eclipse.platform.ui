@@ -474,9 +474,7 @@ public class LaunchView extends AbstractDebugView
 	private ISelectionChangedListener fTreeViewerSelectionChangedListener = new ISelectionChangedListener() {
 	    @Override
 		public void selectionChanged(SelectionChangedEvent event) {
-			if (isActive()) {
-				fTreeViewerDebugContextProvider.activate(event.getSelection());
-			}
+			fTreeViewerDebugContextProvider.activate(event.getSelection());
 	    }
 	};
 
