@@ -269,6 +269,11 @@ public class IOConsoleInputStream extends InputStream {
 	public int available() throws IOException {
 		if (closed && eofSent) {
 			throw new IOException("Input Stream Closed"); //$NON-NLS-1$
+		} else if (size == 0) {
+			if (!eofSent) {
+				eofSent = true;
+				return -1;
+			}
 		}
 		return size;
 	}
