@@ -2578,11 +2578,10 @@ public class WorkbenchPage implements IWorkbenchPage {
 			for (ViewReference reference : viewReferences) {
 				MPart model = reference.getModel();
 				// The part may be linked in either directly or via a
-				// placeholder. In the latter case we can look directly
+				// placeholder. In the latter case we can look
 				// at the part's curSharedRef since we're only considering
 				// parts visible in the current perspective
-				if (parts.contains(model) && model.isToBeRendered()
-						&& (model.getCurSharedRef() == null || model.getCurSharedRef().isToBeRendered())) {
+				if (parts.contains(model) && !shouldNotRenderPart(model)) {
 					// only rendered placeholders are valid view references
 					visibleReferences.add(reference);
 				}
@@ -2590,6 +2589,28 @@ public class WorkbenchPage implements IWorkbenchPage {
 			return visibleReferences.toArray(new IViewReference[visibleReferences.size()]);
 		}
 		return new IViewReference[0];
+	}
+
+	/**
+	 * @return {@code true} if the part should not be rendered or it has a current
+	 *         shared reference that is not to be rendered <b>or</b> if a
+	 *         placeholder for the part (in the current perspective) exists and is
+	 *         not to be rendered. {@code false} otherwise, i.e. if the placeholders
+	 *         of the part are to be rendered.
+	 */
+	private boolean shouldNotRenderPart(MPart part) {
+		if (!part.isToBeRendered()) {
+			return true;
+		}
+		MPlaceholder curSharedRef = part.getCurSharedRef();
+		if (curSharedRef != null && !curSharedRef.isToBeRendered()) {
+			return true;
+		}
+		MPlaceholder mPlaceholder = modelService.findPlaceholderFor(window, part);
+		if (mPlaceholder != null && !mPlaceholder.isToBeRendered()) {
+			return true;
+		}
+		return false;
 	}
 
 	/**

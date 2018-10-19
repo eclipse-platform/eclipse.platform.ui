@@ -69,5 +69,6 @@ public class InternalTestSuite extends TestSuite {
         addTest(new TestSuite(WorkbenchSiteProgressServiceModelTagsTest.class));
 		addTest(new TestSuite(WorkbenchPageTest.class));
 		addTest(new TestSuite(SaveablesListTest.class));
+		addTest(new TestSuite(Bug540297WorkbenchPageFindViewTest.class));
     }
 }

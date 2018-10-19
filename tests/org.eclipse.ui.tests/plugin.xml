@@ -99,6 +99,14 @@
             class="org.eclipse.ui.tests.propertysheet.PropertySheetPerspectiveFactory3"
             id="org.eclipse.ui.tests.propertysheet.PropertySheetPerspectiveFactory3"
             name="Second UI Test Perspective for hidden Properties view instance"/>
+      <perspective
+            class="org.eclipse.ui.tests.internal.Bug540297WorkbenchPageFindViewTest$MyPerspective"
+            id="org.eclipse.ui.tests.internal.Bug540297WorkbenchPageFindViewTest.MyPerspective1"
+            name="org.eclipse.ui.tests.internal.Bug540297WorkbenchPageFindViewTest.MyPerspective1"/>
+      <perspective
+            class="org.eclipse.ui.tests.internal.Bug540297WorkbenchPageFindViewTest$MyPerspective"
+            id="org.eclipse.ui.tests.internal.Bug540297WorkbenchPageFindViewTest.MyPerspective2"
+            name="org.eclipse.ui.tests.internal.Bug540297WorkbenchPageFindViewTest.MyPerspective2"/>
    </extension>
    
    <extension
@@ -542,6 +550,12 @@
             icon="icons/view.gif"
             class="org.eclipse.ui.tests.api.MockViewPart"
             id="org.eclipse.ui.tests.api.MockViewPartVisibleByDefault">
+      </view>
+      <view
+            name="org.eclipse.ui.tests.internal.Bug540297WorkbenchPageFindViewTest.MyViewPart"
+            icon="icons/view.gif"
+            class="org.eclipse.ui.tests.internal.Bug540297WorkbenchPageFindViewTest$MyViewPart"
+            id="org.eclipse.ui.tests.internal.Bug540297WorkbenchPageFindViewTest.MyViewPart">
       </view>
    </extension>
    <extension
