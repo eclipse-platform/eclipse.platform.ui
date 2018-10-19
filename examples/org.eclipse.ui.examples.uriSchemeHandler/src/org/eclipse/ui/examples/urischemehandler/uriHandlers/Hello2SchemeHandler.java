@@ -22,14 +22,14 @@ import org.eclipse.urischeme.IUriSchemeHandler;
  * URI scheme handler implementation of the <code>hello</code> URI scheme
  *
  */
-public class HelloSchemeHandler implements IUriSchemeHandler {
+public class Hello2SchemeHandler implements IUriSchemeHandler {
 
 	@Override
 	public void handle(String uri) {
 		IWorkbenchWindow window = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
 		MessageDialog.openInformation(
 				window.getShell(),
-				"Handler for 'hello' URI scheme", //$NON-NLS-1$
+				"Handler for 'hello2' URI scheme", //$NON-NLS-1$
 				"Hello, Eclipse world!\nReceived URL: " + uri); //$NON-NLS-1$
 	}
 }
