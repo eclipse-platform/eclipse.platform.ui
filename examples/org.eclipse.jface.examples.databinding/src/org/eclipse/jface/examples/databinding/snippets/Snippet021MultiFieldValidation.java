@@ -209,11 +209,11 @@ public class Snippet021MultiFieldValidation extends WizardPage {
 
 	private void bindEvensAndOddsGroup(DataBindingContext dbc) {
 		IObservableValue<String> targetField1 = WidgetProperties.text(SWT.Modify).observe(field1Target);
-		final IObservableValue<Integer> middleField1 = new WritableValue<>(null, Integer.TYPE);
+		final IObservableValue<Integer> middleField1 = new WritableValue<>(Integer.valueOf(0), Integer.TYPE);
 		dbc.bindValue(targetField1, middleField1);
 
 		IObservableValue<String> targetField2 = WidgetProperties.text(SWT.Modify).observe(field2Target);
-		final IObservableValue<Integer> middleField2 = new WritableValue<>(null, Integer.TYPE);
+		final IObservableValue<Integer> middleField2 = new WritableValue<>(Integer.valueOf(0), Integer.TYPE);
 		dbc.bindValue(targetField2, middleField2);
 
 		MultiValidator validator = new MultiValidator() {
@@ -241,7 +241,7 @@ public class Snippet021MultiFieldValidation extends WizardPage {
 
 	private void bindSumAndAddendsGroup(DataBindingContext dbc) {
 		IObservableValue targetSum = WidgetProperties.text(SWT.Modify).observe(sumTarget);
-		final IObservableValue middleSum = new WritableValue(null, Integer.TYPE);
+		final IObservableValue middleSum = new WritableValue(Integer.valueOf(0), Integer.TYPE);
 		dbc.bindValue(targetSum, middleSum);
 
 		final IObservableList targetAddends = new WritableList(new ArrayList(),
