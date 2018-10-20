@@ -36,7 +36,8 @@ import org.eclipse.jface.databinding.swt.WidgetProperties;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.layout.RowLayout;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Display;
@@ -141,9 +142,11 @@ public class Snippet002UpdateComboRetainSelection {
         public Shell createShell() {
             // Build a UI
             Shell shell = new Shell(Display.getCurrent());
-            shell.setLayout(new RowLayout(SWT.VERTICAL));
+			shell.setLayout(new GridLayout(1, false));
 
             Combo combo = new Combo(shell, SWT.BORDER | SWT.READ_ONLY);
+			combo.setLayoutData(new GridData(SWT.FILL, SWT.END, true, false));
+
             Button reset = new Button(shell, SWT.NULL);
             reset.setText("reset collection");
             reset.addSelectionListener(new SelectionAdapter() {
