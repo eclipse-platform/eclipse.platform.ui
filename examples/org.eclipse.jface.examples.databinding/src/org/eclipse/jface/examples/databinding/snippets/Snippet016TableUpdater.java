@@ -24,6 +24,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Table;
+import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
 
 /**
@@ -69,7 +70,10 @@ public class Snippet016TableUpdater {
 
 	protected static Shell createShell(final Display display) {
 		Shell shell = new Shell();
-		Table t = new Table(shell, SWT.VIRTUAL);
+		Table t = new Table(shell, SWT.BORDER | SWT.FULL_SELECTION | SWT.VIRTUAL);
+		t.setHeaderVisible(true);
+		createColumn(t, "Values");
+		t.setLinesVisible(true);
 		final WritableList list = new WritableList();
 		new TableUpdater(t, list) {
 
@@ -86,6 +90,12 @@ public class Snippet016TableUpdater {
 			}
 		});
 		return shell;
+	}
+
+	private static void createColumn(Table t, String string) {
+		final TableColumn column = new TableColumn(t, SWT.NONE);
+		column.setWidth(100);
+		column.setText(string);
 	}
 
 }
