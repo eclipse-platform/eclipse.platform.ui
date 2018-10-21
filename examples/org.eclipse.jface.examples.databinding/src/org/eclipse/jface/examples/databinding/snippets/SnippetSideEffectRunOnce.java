@@ -60,7 +60,7 @@ public class SnippetSideEffectRunOnce {
 			Display display = Display.getDefault();
 			Shell shell = new Shell(display);
 
-			Label label = new Label(shell, SWT.WRAP);
+			Label label = new Label(shell, SWT.CENTER);
 			label.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 			label.setText("Loading JSON...");
 
@@ -72,6 +72,7 @@ public class SnippetSideEffectRunOnce {
 			// Open and return the Shell
 			shell.pack();
 			shell.open();
+			shell.setSize(400, 100);
 
 			return shell;
 		}
@@ -86,11 +87,11 @@ public class SnippetSideEffectRunOnce {
 	public static IObservableValue<String> loadJsonFromRemote() {
 		IObservableValue<String> json = new WritableValue<>();
 
-		Job loadJsonJob = Job.create("Loading JSON from remote", monitor -> {
+		Job loadJsonJob = Job.create("Loading JSON from remote...", monitor -> {
 
 			// mimic a delay of a real json call
 			try {
-				TimeUnit.SECONDS.sleep(2);
+				TimeUnit.SECONDS.sleep(3);
 			} catch (InterruptedException e) {
 			}
 			json.getRealm().asyncExec(() -> {
