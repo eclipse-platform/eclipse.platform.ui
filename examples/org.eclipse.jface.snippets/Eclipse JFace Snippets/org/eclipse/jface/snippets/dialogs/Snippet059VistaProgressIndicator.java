@@ -20,6 +20,7 @@ import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 
 /**
@@ -35,6 +36,8 @@ public class Snippet059VistaProgressIndicator {
 		Shell shell = new Shell(display);
 		shell.setLayout(new GridLayout());
 		shell.setSize(300, 100);
+
+		new Label(shell, SWT.CENTER).setText("Show Vista Progress Indicator");
 
 		ProgressIndicator indicator = new ProgressIndicator(shell,
 				SWT.HORIZONTAL);
