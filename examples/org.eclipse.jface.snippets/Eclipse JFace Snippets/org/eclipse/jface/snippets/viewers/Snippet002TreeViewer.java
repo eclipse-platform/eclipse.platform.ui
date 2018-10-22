@@ -21,9 +21,12 @@ import java.util.List;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.TreeViewer;
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.swt.widgets.Tree;
+import org.eclipse.swt.widgets.TreeColumn;
 
 /**
  * A simple TreeViewer to demonstrate usage
@@ -86,7 +89,15 @@ public class Snippet002TreeViewer {
 		final TreeViewer v = new TreeViewer(shell);
 		v.setLabelProvider(new LabelProvider());
 		v.setContentProvider(new MyContentProvider());
+		createColumn(v.getTree(), "Values");
 		v.setInput(createModel());
+	}
+
+	public void createColumn(Tree tr, String text) {
+		TreeColumn column = new TreeColumn(tr, SWT.NONE);
+		column.setWidth(100);
+		column.setText(text);
+		tr.setHeaderVisible(true);
 	}
 
 	private MyModel createModel() {
