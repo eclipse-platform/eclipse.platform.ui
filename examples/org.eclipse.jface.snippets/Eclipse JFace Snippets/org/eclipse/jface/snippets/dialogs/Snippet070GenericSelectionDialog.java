@@ -16,6 +16,7 @@ package org.eclipse.jface.snippets.dialogs;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.eclipse.jface.dialogs.AbstractSelectionDialog;
 import org.eclipse.jface.dialogs.Dialog;
@@ -35,6 +36,7 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 
 /**
@@ -44,7 +46,7 @@ import org.eclipse.swt.widgets.Shell;
 public class Snippet070GenericSelectionDialog {
 
 	public Snippet070GenericSelectionDialog(final Shell shell) {
-
+		Label text = new Label(shell, SWT.CENTER);
 		List<Model> models = getSampleModelElements();
 
 		GenericSelectionDialog genericSelectionDialog = new GenericSelectionDialog(shell, models, models.get(0),
@@ -53,6 +55,10 @@ public class Snippet070GenericSelectionDialog {
 		int open = genericSelectionDialog.open();
 		if (Dialog.OK == open) {
 			Collection<Model> result = genericSelectionDialog.getResult();
+			text.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
+			text.setText(result.stream().map(Object::toString)
+					.collect(Collectors.joining(",\r\n")));
+			text.redraw();
 			System.out.println("Selected model elements: " + result);
 		}
 	}
