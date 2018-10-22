@@ -17,10 +17,14 @@ import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.ImageRegistry;
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.FillLayout;
+import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 
 /**
@@ -62,6 +66,14 @@ public class Snippet012DialogWithImageButtons {
 				}
 
 				return b;
+			}
+
+			@Override
+			protected Control createContents(Composite parent) {
+				Label label = new Label(parent, SWT.CENTER);
+				label.setText("Dialog with Image Buttons");
+				label.setLayoutData(new GridData(SWT.FILL, SWT.NONE, true, false));
+				return super.createContents(parent);
 			}
 		};
 		dia.open();
