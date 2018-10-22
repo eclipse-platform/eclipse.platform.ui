@@ -13,6 +13,7 @@
  *******************************************************************************/
 package org.eclipse.e4.ui.internal.workbench;
 
+import java.util.List;
 import org.eclipse.e4.core.contexts.ContextFunction;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.ui.model.application.MApplication;
@@ -49,7 +50,8 @@ public class ActivePartLookupFunction extends ContextFunction {
 		MUIElement parent = part.getCurSharedRef() != null ? part.getCurSharedRef().getParent() : part.getParent();
 		if (parent == null)
 			return part;
-		if (parent.getTags().contains(IPresentationEngine.MINIMIZED)
+		List<String> parentTags = parent.getTags();
+		if (parentTags.contains(IPresentationEngine.MINIMIZED) && !parentTags.contains(IPresentationEngine.ACTIVE)
 				&& !part.getTags().contains(IPresentationEngine.ACTIVE)) {
 			return null;
 		}
