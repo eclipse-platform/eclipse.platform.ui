@@ -64,6 +64,9 @@ public class TextSelectionNavigationLocation extends NavigationLocation {
 
 		if (initialize) {
 
+			if (part == null || part.getSelectionProvider() == null) {
+				return;
+			}
 			ISelection s= part.getSelectionProvider().getSelection();
 			if(s == null || s.isEmpty())
 				return;
