@@ -37,7 +37,7 @@ public class Snippet059VistaProgressIndicator {
 		shell.setLayout(new GridLayout());
 		shell.setSize(300, 100);
 
-		new Label(shell, SWT.CENTER).setText("Show Vista Progress Indicator");
+		new Label(shell, SWT.CENTER).setText("Snippet059VistaProgressIndicator");
 
 		ProgressIndicator indicator = new ProgressIndicator(shell,
 				SWT.HORIZONTAL);
