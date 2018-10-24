@@ -16,9 +16,13 @@ package org.eclipse.jface.viewers;
 import java.util.Iterator;
 import java.util.List;
 
+import org.eclipse.jdt.annotation.NonNullByDefault;
+import org.eclipse.jdt.annotation.Nullable;
+
 /**
  * A selection containing elements.
  */
+@NonNullByDefault
 public interface IStructuredSelection extends ISelection {
     /**
      * Returns the first element in this selection, or <code>null</code>
@@ -26,14 +30,14 @@ public interface IStructuredSelection extends ISelection {
      *
      * @return an element, or <code>null</code> if none
      */
-    public Object getFirstElement();
+	public @Nullable Object getFirstElement();
 
     /**
      * Returns an iterator over the elements of this selection.
      *
      * @return an iterator over the selected elements
      */
-    public Iterator iterator();
+	public Iterator iterator();
 
     /**
      * Returns the number of elements selected in this selection.
@@ -47,12 +51,12 @@ public interface IStructuredSelection extends ISelection {
      *
      * @return the selected elements as an array
      */
-    public Object[] toArray();
+	public Object[] toArray();
 
     /**
      * Returns the elements in this selection as a <code>List</code>.
      *
      * @return the selected elements as a list
      */
-    public List toList();
+	public List toList();
 }
