@@ -14,10 +14,13 @@
 package org.eclipse.ui.dialogs;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
 import org.eclipse.jface.viewers.CheckboxTreeViewer;
 import org.eclipse.jface.viewers.ITreeViewerListener;
 import org.eclipse.jface.viewers.TreeExpansionEvent;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Item;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeItem;
@@ -92,6 +95,34 @@ public class ContainerCheckedTreeViewer extends CheckboxTreeViewer {
         }
     }
 
+	/**
+	 * Update elements after a checkstate change. This is identical to
+	 * {@link #doCheckStateChanged(Object)}, but unifies the parent update of many
+	 * checked siblings into a single update (instead of repeatedly updating the
+	 * same parent) for performance reasons.
+	 *
+	 * @param elements tree elements
+	 */
+    private void doCheckStateChanged(Object[] elements) {
+    	HashSet<TreeItem> parents = new HashSet<>();
+		for (Object element : elements) {
+			Widget item = findItem(element);
+			if (item instanceof TreeItem) {
+				TreeItem treeItem = (TreeItem) item;
+				treeItem.setGrayed(false);
+				updateChildrenItems(treeItem);
+				TreeItem parentItem = treeItem.getParentItem();
+				// avoid updating the same parents repeatedly for big lists of siblings
+				if (parentItem != null) {
+					parents.add(parentItem);
+				}
+			}
+		}
+		for (TreeItem parent : parents) {
+			updateParentItems(parent);
+		}
+    }
+
     /**
      * The item has expanded. Updates the checked state of its children.
      */
@@ -128,12 +159,36 @@ public class ContainerCheckedTreeViewer extends CheckboxTreeViewer {
             boolean containsUnchecked = false;
             for (Item element : children) {
                 TreeItem curr = (TreeItem) element;
-                containsChecked |= curr.getChecked();
-                containsUnchecked |= (!curr.getChecked() || curr.getGrayed());
+                boolean currChecked = curr.getChecked();
+				containsChecked |= currChecked;
+				// avoid fetching the grayed state, if we already found at least one grayed item
+				if (!containsUnchecked) {
+					containsUnchecked = !currChecked || curr.getGrayed();
+				}
+				// return as soon as both flags are set
+				if (containsChecked && containsUnchecked) {
+					break;
+				}
             }
-            item.setChecked(containsChecked);
-            item.setGrayed(containsChecked && containsUnchecked);
-            updateParentItems(item.getParentItem());
+
+            // avoid accessing the widget, if there are no updates
+            boolean updated = false;
+            boolean checked = item.getChecked();
+            if (checked != containsChecked) {
+            	item.setChecked(containsChecked);
+            	updated = true;
+            }
+            boolean grayed = item.getGrayed();
+            boolean newGrayed = containsChecked && containsUnchecked;
+            if (grayed != newGrayed) {
+            	item.setGrayed(newGrayed);
+            	updated = true;
+            }
+
+            // if this item did not change, no further parent will change
+            if (updated) {
+            	updateParentItems(item.getParentItem());
+            }
         }
     }
 
@@ -150,9 +205,27 @@ public class ContainerCheckedTreeViewer extends CheckboxTreeViewer {
 
     @Override
 	public void setCheckedElements(Object[] elements) {
+		Object[] oldCheckedElements = getCheckedElements();
         super.setCheckedElements(elements);
-        for (Object element : elements) {
-            doCheckStateChanged(element);
+
+
+        Control tree = getControl();
+        try {
+			tree.setRedraw(false);
+			if (oldCheckedElements.length > 0) {
+				// calculate intersection of previously and newly checked elements to avoid
+				// no-op updates
+				HashSet<Object> changedElements = new HashSet<>(Arrays.asList(elements));
+				for (Object element : oldCheckedElements) {
+					changedElements.remove(element);
+				}
+				doCheckStateChanged(changedElements.toArray());
+			} else {
+				doCheckStateChanged(elements);
+			}
+        }
+        finally {
+        	tree.setRedraw(true);
         }
     }
 
