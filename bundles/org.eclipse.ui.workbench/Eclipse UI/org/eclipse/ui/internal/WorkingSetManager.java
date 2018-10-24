@@ -108,12 +108,7 @@ public class WorkingSetManager extends AbstractWorkingSetManager implements
 				restoreWorkingSetState(memento);
 				restoreMruList(memento);
 				reader.close();
-			} catch (IOException e) {
-				handleInternalError(
-						e,
-						WorkbenchMessages.ProblemRestoringWorkingSetState_title,
-						WorkbenchMessages.ProblemRestoringWorkingSetState_message);
-			} catch (WorkbenchException e) {
+			} catch (IOException | WorkbenchException e) {
 				handleInternalError(
 						e,
 						WorkbenchMessages.ProblemRestoringWorkingSetState_title,
