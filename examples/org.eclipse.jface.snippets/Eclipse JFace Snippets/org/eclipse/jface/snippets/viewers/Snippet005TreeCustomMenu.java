@@ -27,9 +27,12 @@ import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.swt.widgets.Tree;
+import org.eclipse.swt.widgets.TreeColumn;
 
 /**
  * Customized context menu based on TreeItem-Selection
@@ -104,6 +107,7 @@ public class Snippet005TreeCustomMenu {
 		v.setLabelProvider(new LabelProvider());
 		v.setContentProvider(new MyContentProvider());
 		v.setInput(createModel());
+		createColumn(v.getTree(), "Values");
 
 		final Action a = new Action("") {
 		};
@@ -124,6 +128,13 @@ public class Snippet005TreeCustomMenu {
 			}
 		});
 		v.getControl().setMenu(mgr.createContextMenu(v.getControl()));
+	}
+
+	public void createColumn(Tree tr, String text) {
+		TreeColumn column = new TreeColumn(tr, SWT.NONE);
+		column.setWidth(100);
+		column.setText(text);
+		tr.setHeaderVisible(true);
 	}
 
 	private MyModel createModel() {
