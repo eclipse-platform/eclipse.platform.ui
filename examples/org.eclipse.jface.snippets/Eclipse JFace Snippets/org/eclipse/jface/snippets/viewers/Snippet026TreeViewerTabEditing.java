@@ -58,7 +58,9 @@ public class Snippet026TreeViewerTabEditing {
 		b.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				v.getTree().getColumn(1).dispose();
+				if (v.getTree().getColumnCount() > 1) {
+					v.getTree().getColumn(1).dispose();
+				}
 			}
 
 		});
