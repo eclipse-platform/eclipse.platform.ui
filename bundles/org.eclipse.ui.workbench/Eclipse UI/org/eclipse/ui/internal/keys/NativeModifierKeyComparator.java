@@ -68,11 +68,6 @@ class NativeModifierKeyComparator implements Comparator {
             return rankMacOSX(modifierKey);
         }
 
-        if (Util.isMotif()) {
-            // TODO Do a look-up on window manager.
-            return rankGNOME(modifierKey);
-        }
-
         return UNKNOWN_KEY;
     }
 

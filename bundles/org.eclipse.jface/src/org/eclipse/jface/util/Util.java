@@ -498,6 +498,7 @@ public final class Util {
 	 * Windowing system constant.
 	 * @since 3.5
 	 */
+	@Deprecated
 	public static final String WS_MOTIF = "motif";//$NON-NLS-1$
 
 	/**
@@ -510,12 +511,14 @@ public final class Util {
 	 * Windowing system constant.
 	 * @since 3.5
 	 */
+	@Deprecated
 	public static final String WS_PHOTON = "photon";//$NON-NLS-1$
 
 	/**
 	 * Windowing system constant.
 	 * @since 3.5
 	 */
+	@Deprecated
 	public static final String WS_CARBON = "carbon";//$NON-NLS-1$
 
 	/**
@@ -563,7 +566,7 @@ public final class Util {
 	 */
 	public static boolean isLinux() {
 		final String ws = SWT.getPlatform();
-		return WS_GTK.equals(ws) || WS_MOTIF.equals(ws);
+		return WS_GTK.equals(ws);
 	}
 
 	/**
@@ -581,6 +584,7 @@ public final class Util {
 	 * @return <code>true</code> for motif platforms
 	 * @since 3.5
 	 */
+	@Deprecated
 	public static boolean isMotif() {
 		final String ws = SWT.getPlatform();
 		return WS_MOTIF.equals(ws);
@@ -591,6 +595,7 @@ public final class Util {
 	 * @return <code>true</code> for photon platforms
 	 * @since 3.5
 	 */
+	@Deprecated
 	public static boolean isPhoton() {
 		final String ws = SWT.getPlatform();
 		return WS_PHOTON.equals(ws);
@@ -601,6 +606,7 @@ public final class Util {
 	 * @return <code>true</code> for carbon platforms
 	 * @since 3.5
 	 */
+	@Deprecated
 	public static boolean isCarbon() {
 		final String ws = SWT.getPlatform();
 		return WS_CARBON.equals(ws);

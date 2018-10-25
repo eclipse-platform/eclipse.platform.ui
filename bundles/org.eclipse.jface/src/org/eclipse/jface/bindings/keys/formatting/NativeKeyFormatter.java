@@ -152,7 +152,7 @@ public final class NativeKeyFormatter extends AbstractKeyFormatter {
 				sortedKeys[index++] = lookup.getShift();
 			}
 
-		} else if (Util.isGtk() || Util.isMotif()) {
+		} else if (Util.isGtk()) {
 			if ((modifierKeys & lookup.getShift()) != 0) {
 				sortedKeys[index++] = lookup.getShift();
 			}
