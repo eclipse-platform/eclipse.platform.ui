@@ -83,6 +83,7 @@ public class Snippet009CellEditors {
 		MyModel[] model = createModel();
 		v.setInput(model);
 		v.getTable().setLinesVisible(true);
+		v.getTable().setHeaderVisible(true);
 	}
 
 	private MyModel[] createModel() {
