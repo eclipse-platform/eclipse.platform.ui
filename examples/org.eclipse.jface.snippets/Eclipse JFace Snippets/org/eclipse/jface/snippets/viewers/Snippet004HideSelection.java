@@ -30,6 +30,8 @@ import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.swt.widgets.Table;
+import org.eclipse.swt.widgets.TableColumn;
 
 /**
  * Snippet that hides the selection when nothing is selected.
@@ -56,6 +58,7 @@ public class Snippet004HideSelection {
 		v.setLabelProvider(new LabelProvider());
 		v.setContentProvider(ArrayContentProvider.getInstance());
 		v.setInput(createModel());
+		createColumn(v.getTable(), "Values");
 		v.getTable().setLinesVisible(true);
 		v.getTable().addMouseListener(new MouseAdapter() {
 
@@ -67,6 +70,13 @@ public class Snippet004HideSelection {
 			}
 
 		});
+	}
+
+	public void createColumn(Table tb, String text) {
+		TableColumn column = new TableColumn(tb, SWT.NONE);
+		column.setWidth(100);
+		column.setText(text);
+		tb.setHeaderVisible(true);
 	}
 
 	private List<MyModel> createModel() {
