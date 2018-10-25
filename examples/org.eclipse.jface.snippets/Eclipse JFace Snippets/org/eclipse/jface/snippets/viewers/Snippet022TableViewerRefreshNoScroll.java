@@ -64,11 +64,13 @@ public class Snippet022TableViewerRefreshNoScroll {
 
 		TableColumn column = new TableColumn(v.getTable(), SWT.NONE);
 		column.setWidth(200);
+		column.setText("Column 0");
 
 		v.setLabelProvider(new LabelProvider());
 		v.setContentProvider(ArrayContentProvider.getInstance());
 		v.setInput(createModel(100));
 		v.getTable().setLinesVisible(true);
+		v.getTable().setHeaderVisible(true);
 		v.getTable().setLayoutData(
 				new GridData(SWT.FILL, SWT.FILL, true, true, 2, 1));
 
