@@ -75,6 +75,7 @@ public class Snippet025TabEditing {
 
 		viewer.setInput(createModel());
 		viewer.getTable().setLinesVisible(true);
+		viewer.getTable().setHeaderVisible(true);
 	}
 
 	private void createColumnFor(TableViewer viewer, String label, int width) {
