@@ -26,6 +26,8 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.swt.widgets.Table;
+import org.eclipse.swt.widgets.TableColumn;
 
 /**
  * A simple TableViewer to demonstrate the usage of a standard content provider
@@ -53,8 +55,16 @@ public class Snippet029VirtualTableViewer {
 		v.setLabelProvider(new LabelProvider());
 		v.setContentProvider(ArrayContentProvider.getInstance());
 		v.setUseHashlookup(true);
+		createColumn(v.getTable(), "Column 1");
 		v.setInput(createModel());
 		v.getTable().setLinesVisible(true);
+	}
+
+	public void createColumn(Table tb, String text) {
+		TableColumn column = new TableColumn(tb, SWT.NONE);
+		column.setWidth(100);
+		column.setText(text);
+		tb.setHeaderVisible(true);
 	}
 
 	private List<MyModel> createModel() {
