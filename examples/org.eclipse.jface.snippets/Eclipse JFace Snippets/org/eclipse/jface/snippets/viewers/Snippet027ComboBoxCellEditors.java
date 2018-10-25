@@ -62,6 +62,7 @@ public class Snippet027ComboBoxCellEditors {
 
 		TableColumn column = new TableColumn(table, SWT.NONE);
 		column.setWidth(200);
+		column.setText("Column 1");
 		TableViewerColumn viewerColumn = new TableViewerColumn(v, column);
 		viewerColumn.setLabelProvider(new ColumnLabelProvider());
 		viewerColumn.setEditingSupport(new EditingSupport(v) {
@@ -94,6 +95,7 @@ public class Snippet027ComboBoxCellEditors {
 
 		v.setInput(createModel());
 		v.getTable().setLinesVisible(true);
+		v.getTable().setHeaderVisible(true);
 	}
 
 	private List<MyModel> createModel() {
