@@ -124,6 +124,7 @@ public class Snippet034CellEditorPerRow {
 
 		TableViewerColumn column = new TableViewerColumn(v, SWT.NONE);
 		column.getColumn().setWidth(200);
+		column.getColumn().setText("Column 1");
 		column.setLabelProvider(new ColumnLabelProvider() {
 
 			@Override
@@ -136,6 +137,7 @@ public class Snippet034CellEditorPerRow {
 		column.setEditingSupport(new MyEditingSupport(v));
 		v.setContentProvider(ArrayContentProvider.getInstance());
 		v.setInput(createModel());
+		v.getTable().setHeaderVisible(true);
 	}
 
 	private List<MyModel> createModel() {
