@@ -109,6 +109,7 @@ public class Snippet044TableViewerKeyboardEditing {
 
 		TableViewerColumn viewerColumn = new TableViewerColumn(v, SWT.NONE);
 		viewerColumn.getColumn().setWidth(200);
+		viewerColumn.getColumn().setText("Column 0");
 
 		viewerColumn.setLabelProvider(new MyColumnLabelProvider(v.getTable(), 0));
 		viewerColumn.setEditingSupport(new MyEditingSupport(v, "1"));
