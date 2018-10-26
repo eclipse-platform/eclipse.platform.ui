@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 IBM Corporation and others.
+ * Copyright (c) 2000, 2018 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -41,8 +41,6 @@ public class WidgetMethodHandler extends AbstractHandler implements
 	 * The parameters to pass to the method this handler invokes. This handler
 	 * always passes no parameters.
 	 */
-	protected static final Class[] NO_PARAMETERS = new Class[0];
-
 	public WidgetMethodHandler() {
 		display = Display.getCurrent();
 		if (display != null) {
@@ -160,13 +158,10 @@ public class WidgetMethodHandler extends AbstractHandler implements
 	protected void swingInvokeLater(Runnable methodRunnable)
 			throws ClassNotFoundException, NoSuchMethodException,
 			IllegalAccessException, InvocationTargetException {
-		final Class swingUtilitiesClass = Class
-				.forName("javax.swing.SwingUtilities"); //$NON-NLS-1$
-		final Method swingUtilitiesInvokeLaterMethod = swingUtilitiesClass
-				.getMethod("invokeLater", //$NON-NLS-1$
-						new Class[] { Runnable.class });
-		swingUtilitiesInvokeLaterMethod.invoke(swingUtilitiesClass,
-				new Object[] { methodRunnable });
+		final Class swingUtilitiesClass = Class.forName("javax.swing.SwingUtilities"); //$NON-NLS-1$
+		final Method swingUtilitiesInvokeLaterMethod = swingUtilitiesClass.getMethod("invokeLater", //$NON-NLS-1$
+				Runnable.class);
+		swingUtilitiesInvokeLaterMethod.invoke(swingUtilitiesClass, methodRunnable);
 	}
 
 	/**
@@ -245,7 +240,7 @@ public class WidgetMethodHandler extends AbstractHandler implements
 		if (focusControl != null) {
 			final Class clazz = focusControl.getClass();
 			try {
-				method = clazz.getMethod(methodName, NO_PARAMETERS);
+				method = clazz.getMethod(methodName);
 			} catch (NoSuchMethodException e) {
 				// Fall through...
 			}
@@ -268,7 +263,7 @@ public class WidgetMethodHandler extends AbstractHandler implements
 					final Class clazz = focusComponent.getClass();
 
 					try {
-						method = clazz.getMethod(methodName, NO_PARAMETERS);
+						method = clazz.getMethod(methodName);
 					} catch (NoSuchMethodException e) {
 						// Do nothing.
 					}

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2015 IBM Corporation and others.
+ * Copyright (c) 2010, 2018 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -181,7 +181,7 @@ AbstractCSSPropertyPaddingHandler {
 			}
 
 			try {
-				Method m = renderer.getClass().getMethod("getPadding", new Class[]{});
+				Method m = renderer.getClass().getMethod("getPadding");
 				Rectangle pad = (Rectangle) m.invoke(renderer);
 
 				// TBD: is there a CTF equivalent ?
@@ -211,10 +211,7 @@ AbstractCSSPropertyPaddingHandler {
 
 				if (top != pad.x || right != pad.y || bottom != pad.width
 						|| left != pad.height) {
-					Method m2 = renderer.getClass().getMethod(
-							"setPadding",
-							new Class[] { int.class, int.class, int.class,
-									int.class });
+					Method m2 = renderer.getClass().getMethod("setPadding", int.class, int.class, int.class, int.class);
 					m2.invoke(renderer, left, right, top, bottom);
 				}
 			} catch (Exception e) {

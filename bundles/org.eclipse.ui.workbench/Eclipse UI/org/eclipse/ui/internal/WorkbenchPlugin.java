@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2016 IBM Corporation and others.
+ * Copyright (c) 2000, 2018 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -1233,22 +1233,17 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
 
 		// look for the 32 bit internal_new shell method
 		try {
-			Method method = Shell.class.getMethod(
-					"internal_new", new Class[] { Display.class, int.class }); //$NON-NLS-1$
+			Method method = Shell.class.getMethod("internal_new", Display.class, int.class); //$NON-NLS-1$
 			// we're on a 32 bit platform so invoke it with splash
 			// handle as an int
-			splashShell = (Shell) method.invoke(null, new Object[] { display,
-					Integer.valueOf(splashHandle) });
+			splashShell = (Shell) method.invoke(null, display, Integer.valueOf(splashHandle));
 		} catch (NoSuchMethodException e) {
 			// look for the 64 bit internal_new shell method
 			try {
-				Method method = Shell.class
-						.getMethod(
-								"internal_new", new Class[] { Display.class, long.class }); //$NON-NLS-1$
+				Method method = Shell.class.getMethod("internal_new", Display.class, long.class); //$NON-NLS-1$
 
 				// we're on a 64 bit platform so invoke it with a long
-				splashShell = (Shell) method.invoke(null, new Object[] {
-						display, Long.valueOf(splashHandle) });
+				splashShell = (Shell) method.invoke(null, display, Long.valueOf(splashHandle));
 			} catch (NoSuchMethodException e2) {
 				// cant find either method - don't do anything.
 			}

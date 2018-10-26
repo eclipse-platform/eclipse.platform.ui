@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2009 IBM Corporation and others.
+ * Copyright (c) 2005, 2018 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -73,6 +73,7 @@ public class ComboScenarios extends ScenariosTestCase {
 		}
 	};
 
+	@Override
 	@Before
 	public void setUp() throws Exception {
 		super.setUp();
@@ -84,6 +85,7 @@ public class ComboScenarios extends ScenariosTestCase {
 		catalog = SampleData.CATALOG_2005; // Lodging source
 	}
 
+	@Override
 	@After
 	public void tearDown() throws Exception {
 		combo.dispose();
@@ -128,11 +130,10 @@ public class ComboScenarios extends ScenariosTestCase {
 				+ feature.substring(0, 1).toUpperCase(Locale.ENGLISH)
 				+ feature.substring(1);
 		try {
-			Method getter = list[0].getClass().getMethod(getterName,
-					new Class[0]);
+			Method getter = list[0].getClass().getMethod(getterName);
 			try {
 				for (int i = 0; i < list.length; i++) {
-					result.add(getter.invoke(list[i], new Object[0]));
+					result.add(getter.invoke(list[i]));
 				}
 			} catch (IllegalArgumentException e) {
 			} catch (IllegalAccessException e) {

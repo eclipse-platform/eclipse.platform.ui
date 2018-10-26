@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2014 IBM Corporation and others.
+ * Copyright (c) 2008, 2018 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -75,7 +75,7 @@ public class JFaceProperty extends SimpleValueProperty {
 		@Override
 		protected void doAddTo(Object model) {
 			try {
-				addPropertyListenerMethod.invoke(model, new Object[] { this });
+				addPropertyListenerMethod.invoke(model, this);
 			} catch (Exception e) {
 				throw new IllegalStateException(e.getMessage());
 			}
@@ -84,8 +84,7 @@ public class JFaceProperty extends SimpleValueProperty {
 		@Override
 		protected void doRemoveFrom(Object model) {
 			try {
-				removePropertyListenerMethod.invoke(model,
-						new Object[] { this });
+				removePropertyListenerMethod.invoke(model, this);
 			} catch (Exception e) {
 				throw new IllegalStateException(e.getMessage());
 			}
@@ -97,27 +96,23 @@ public class JFaceProperty extends SimpleValueProperty {
 	 * @param property
 	 * @param clazz
 	 */
-	public JFaceProperty(String fieldName, String property, Class clazz) {
+	public JFaceProperty(String fieldName, String property, Class<?> clazz) {
 		this.property = property;
 		// Create all the necessary method ahead of time to ensure they are
 		// available
 		try {
 			try {
 				String getterName = getGetterName(fieldName);
-				getterMethod = clazz.getMethod(getterName, new Class[] {});
+				getterMethod = clazz.getMethod(getterName);
 			} catch (NoSuchMethodException e) {
 				String getterName = getBooleanGetterName(fieldName);
-				getterMethod = clazz.getMethod(getterName, new Class[] {});
+				getterMethod = clazz.getMethod(getterName);
 			}
 			returnType = getterMethod.getReturnType();
-			setterMethod = clazz.getMethod(getSetterName(fieldName),
-					new Class[] { returnType });
-			addPropertyListenerMethod = clazz
-					.getMethod(
-							"addPropertyChangeListener", new Class[] { IPropertyChangeListener.class }); //$NON-NLS-1$
-			removePropertyListenerMethod = clazz
-					.getMethod(
-							"removePropertyChangeListener", new Class[] { IPropertyChangeListener.class }); //$NON-NLS-1$
+			setterMethod = clazz.getMethod(getSetterName(fieldName), returnType);
+			addPropertyListenerMethod = clazz.getMethod("addPropertyChangeListener", IPropertyChangeListener.class); //$NON-NLS-1$
+			removePropertyListenerMethod = clazz.getMethod("removePropertyChangeListener", //$NON-NLS-1$
+					IPropertyChangeListener.class);
 		} catch (SecurityException e) {
 			throw new IllegalArgumentException();
 		} catch (NoSuchMethodException e) {
@@ -134,7 +129,7 @@ public class JFaceProperty extends SimpleValueProperty {
 	@Override
 	protected Object doGetValue(Object model) {
 		try {
-			return getterMethod.invoke(model, new Object[] {});
+			return getterMethod.invoke(model);
 		} catch (InvocationTargetException e) {
 			throw new IllegalStateException(e.getMessage());
 		} catch (IllegalAccessException e) {
@@ -145,7 +140,7 @@ public class JFaceProperty extends SimpleValueProperty {
 	@Override
 	protected void doSetValue(Object model, Object value) {
 		try {
-			setterMethod.invoke(model, new Object[] { value });
+			setterMethod.invoke(model);
 		} catch (IllegalAccessException e) {
 			throw new IllegalStateException(e.getMessage());
 		} catch (InvocationTargetException e) {

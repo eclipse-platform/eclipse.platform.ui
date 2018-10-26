@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2015 IBM Corporation and others.
+ * Copyright (c) 2004, 2018 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -15,7 +15,6 @@ package org.eclipse.ui.internal.handlers;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.runtime.IConfigurationElement;
@@ -132,7 +131,7 @@ public class SelectAllHandler extends WidgetMethodHandler {
 				} else if (numParams == 1) {
 					// This is a single-point selection method.
 					final Method textLimitAccessor = focusControl.getClass()
-							.getMethod("getTextLimit", NO_PARAMETERS); //$NON-NLS-1$
+							.getMethod("getTextLimit"); //$NON-NLS-1$
 					final Integer textLimit = (Integer) textLimitAccessor
 							.invoke(focusControl);
 					final Object[] parameters = { new Point(0, textLimit

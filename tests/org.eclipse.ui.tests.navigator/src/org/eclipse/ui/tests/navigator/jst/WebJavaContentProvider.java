@@ -68,15 +68,13 @@ public class WebJavaContentProvider implements IPipelinedTreeContentProvider {
 	private final Map compressedNodes = new HashMap();
 
 	public static Object javaCoreCreateResource(IResource res) throws Exception {
-		Method m = JAVA_CORE_CLASS.getMethod("create",
-				new Class[] { IResource.class });
-		return m.invoke(null, new Object[] { res });
+		Method m = JAVA_CORE_CLASS.getMethod("create", IResource.class);
+		return m.invoke(null, res);
 	}
 
 	public static Object javaCoreCreateProject(IResource res) throws Exception {
-		Method m = JAVA_CORE_CLASS.getMethod("create",
-				new Class[] { IProject.class });
-		return m.invoke(null, new Object[] { res });
+		Method m = JAVA_CORE_CLASS.getMethod("create", IProject.class);
+		return m.invoke(null, res);
 	}
 
 	@Override
@@ -124,22 +122,17 @@ public class WebJavaContentProvider implements IPipelinedTreeContentProvider {
 	public Object getPipelinedParent(Object anObject, Object aSuggestedParent) {
 
 		try {
-			Method m = IJAVA_PROJECT_CLASS.getMethod("getProject",
-					new Class[] {});
+			Method m = IJAVA_PROJECT_CLASS.getMethod("getProject");
 
 			if (IPACKAGE_FRAGMENT_ROOT_CLASS.isInstance(anObject)) {
 				if (IJAVA_PROJECT_CLASS.isInstance(aSuggestedParent)) {
-					return getCompressedNode((IProject) m.invoke(
-							aSuggestedParent, new Object[] {}));
+					return getCompressedNode((IProject) m.invoke(aSuggestedParent));
 				} else if (aSuggestedParent instanceof IProject) {
 					return getCompressedNode(((IProject) aSuggestedParent));
 				}
 			} else if (INTERNAL_CONTAINER_CLASS.isInstance(anObject)) {
 				if (IJAVA_PROJECT_CLASS.isInstance(aSuggestedParent)) {
-					return getCompressedNode(
-							(IProject) m.invoke(aSuggestedParent,
-									new Object[] {}))
-							.getCompressedJavaLibraries();
+					return getCompressedNode((IProject) m.invoke(aSuggestedParent)).getCompressedJavaLibraries();
 				} else if (aSuggestedParent instanceof IProject) {
 					return getCompressedNode(((IProject) aSuggestedParent))
 							.getCompressedJavaLibraries();

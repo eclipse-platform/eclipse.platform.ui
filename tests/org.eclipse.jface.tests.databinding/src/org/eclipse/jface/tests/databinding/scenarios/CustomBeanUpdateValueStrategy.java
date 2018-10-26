@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2007 IBM Corporation and others.
+ * Copyright (c) 2005, 2018 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -57,10 +57,8 @@ public class CustomBeanUpdateValueStrategy extends UpdateValueStrategy {
 
 				Method getValidator;
 				try {
-					getValidator = objectClass.getMethod(getValidatorMethodName,
-							new Class[] { Class.class });
-					beforeSetValidator= (IValidator) getValidator.invoke(property
-								.getObject(), new Object[0]);
+					getValidator = objectClass.getMethod(getValidatorMethodName, Class.class);
+					beforeSetValidator = (IValidator) getValidator.invoke(property.getObject());
 				} catch (Exception e) {
 					// ignore
 				}

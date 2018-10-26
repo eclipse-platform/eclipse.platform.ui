@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2014 Matthew Hall and others.
+ * Copyright (c) 2008, 2018 Matthew Hall and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -59,7 +59,7 @@ public class BeanPropertyHelper {
 			if (!writeMethod.isAccessible()) {
 				writeMethod.setAccessible(true);
 			}
-			writeMethod.invoke(source, new Object[] { value });
+			writeMethod.invoke(source, value);
 		} catch (InvocationTargetException e) {
 			/*
 			 * InvocationTargetException wraps any exception thrown by the

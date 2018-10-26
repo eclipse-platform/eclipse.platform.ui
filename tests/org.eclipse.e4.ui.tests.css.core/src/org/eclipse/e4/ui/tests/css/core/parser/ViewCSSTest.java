@@ -128,9 +128,6 @@ public class ViewCSSTest {
 		docCss.addStyleSheet(styleSheet);
 		ViewCSSImpl viewCSS = new ViewCSSImpl(docCss);
 
-		Class<?>[] NO_TYPES = new Class<?>[0];
-		Object[] NO_ARGS = new Object[0];
-
 		Field currentCombinedRulesField = ViewCSSImpl.class.getDeclaredField("currentCombinedRules");
 		currentCombinedRulesField.setAccessible(true);
 
@@ -148,12 +145,12 @@ public class ViewCSSTest {
 		assertNotNull(currentCombinedRulesField.get(viewCSS));
 
 		// deeper inspection: check what private method getCombinedRules returns
-		Method getCombinedRulesMethod = ViewCSSImpl.class.getDeclaredMethod("getCombinedRules", NO_TYPES);
+		Method getCombinedRulesMethod = ViewCSSImpl.class.getDeclaredMethod("getCombinedRules");
 		getCombinedRulesMethod.setAccessible(true);
 
-		List<CSSRule> cssRules = (List<CSSRule>) getCombinedRulesMethod.invoke(viewCSS, NO_ARGS);
+		List<CSSRule> cssRules = (List<CSSRule>) getCombinedRulesMethod.invoke(viewCSS);
 		// check caching: a 2nd call retrieves cached list
-		assertSame(cssRules, getCombinedRulesMethod.invoke(viewCSS, NO_ARGS));
+		assertSame(cssRules, getCombinedRulesMethod.invoke(viewCSS));
 
 		// add a new stylesheet => flush cache
 		css = "Shell > * > * { color: blue; }\n" + "Label { color: green; }\n";
@@ -162,7 +159,7 @@ public class ViewCSSTest {
 
 		assertNull(currentCombinedRulesField.get(viewCSS));
 
-		List<CSSRule> cssRules2 = (List<CSSRule>) getCombinedRulesMethod.invoke(viewCSS, NO_ARGS);
+		List<CSSRule> cssRules2 = (List<CSSRule>) getCombinedRulesMethod.invoke(viewCSS);
 		assertNotSame(cssRules, cssRules2);
 		// stylesheet added => more rules
 		assertTrue(cssRules2.size() > cssRules.size());

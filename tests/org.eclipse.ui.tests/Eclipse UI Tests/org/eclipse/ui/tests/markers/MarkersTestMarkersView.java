@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2008 IBM Corporation and others.
+ * Copyright (c) 2007, 2018 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -53,8 +53,7 @@ public class MarkersTestMarkersView extends MarkerSupportView {
 	public IMarker[] getCurrentMarkers() {
 		Method method;
 		try {
-			method = ExtendedMarkersView.class.getDeclaredMethod("getAllMarkers",
-					new Class[0]);
+			method = ExtendedMarkersView.class.getDeclaredMethod("getAllMarkers");
 			method.setAccessible(true);
 		} catch (SecurityException e) {
 			e.printStackTrace();
@@ -64,7 +63,7 @@ public class MarkersTestMarkersView extends MarkerSupportView {
 			return new IMarker[0];
 		}
 		try {
-			return (IMarker[]) method.invoke(this, new Object[0]);
+			return (IMarker[]) method.invoke(this);
 		} catch (IllegalArgumentException e) {
 			e.printStackTrace();
 		} catch (IllegalAccessException e) {

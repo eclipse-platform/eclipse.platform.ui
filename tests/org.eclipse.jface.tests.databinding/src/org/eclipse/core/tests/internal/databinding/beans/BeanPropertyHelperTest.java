@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2014 Matthew Hall and others.
+ * Copyright (c) 2009, 2018 Matthew Hall and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -33,9 +33,7 @@ public class BeanPropertyHelperTest {
 		PropertyDescriptor pd = BeanPropertyHelper.getPropertyDescriptor(
 				Bean.class, "value");
 		assertEquals(Bean.class.getMethod("getValue"), pd.getReadMethod());
-		assertEquals(
-				Bean.class.getMethod("setValue", new Class[] { String.class }),
-				pd.getWriteMethod());
+		assertEquals(Bean.class.getMethod("setValue", String.class), pd.getWriteMethod());
 	}
 
 	@Test
@@ -44,9 +42,7 @@ public class BeanPropertyHelperTest {
 		PropertyDescriptor pd = BeanPropertyHelper.getPropertyDescriptor(
 				IBean.class, "value");
 		assertEquals(IBean.class.getMethod("getValue"), pd.getReadMethod());
-		assertEquals(
-				IBean.class.getMethod("setValue", new Class[] { String.class }),
-				pd.getWriteMethod());
+		assertEquals(IBean.class.getMethod("setValue", String.class), pd.getWriteMethod());
 	}
 
 	@Test
@@ -55,9 +51,7 @@ public class BeanPropertyHelperTest {
 		PropertyDescriptor pd = BeanPropertyHelper.getPropertyDescriptor(
 				IBeanExtension.class, "value");
 		assertEquals(IBean.class.getMethod("getValue"), pd.getReadMethod());
-		assertEquals(
-				IBean.class.getMethod("setValue", new Class[] { String.class }),
-				pd.getWriteMethod());
+		assertEquals(IBean.class.getMethod("setValue", String.class), pd.getWriteMethod());
 	}
 
 }

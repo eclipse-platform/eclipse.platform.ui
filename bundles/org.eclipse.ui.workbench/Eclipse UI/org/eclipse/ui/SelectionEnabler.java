@@ -365,9 +365,8 @@ public final class SelectionEnabler {
 		Class tselClass = getTextSelectionClass();
 		if (tselClass != null && tselClass.isInstance(selection)) {
 			try {
-				Method m = tselClass.getDeclaredMethod(
-						"getLength", new Class[0]); //$NON-NLS-1$
-				Object r = m.invoke(selection, new Object[0]);
+				Method m = tselClass.getDeclaredMethod("getLength"); //$NON-NLS-1$
+				Object r = m.invoke(selection);
 				if (r instanceof Integer) {
 					return isEnabledFor(selection, ((Integer) r).intValue());
 				}

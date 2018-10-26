@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2017 IBM Corporation and others.
+ * Copyright (c) 2005, 2018 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -49,10 +49,8 @@ public class Mocks {
 
 	static {
 		try {
-			getMockInvocationHandlerMethod = Mock.class.getMethod(
-					"getMockInvocationHandler", new Class[0]);
-			equalsMethod = Object.class.getMethod("equals",
-					new Class[] { Object.class });
+			getMockInvocationHandlerMethod = Mock.class.getMethod("getMockInvocationHandler");
+			equalsMethod = Object.class.getMethod("equals", Object.class);
 		} catch (Exception e) {
 			// ignore, will lead to NullPointerExceptions later on
 		}

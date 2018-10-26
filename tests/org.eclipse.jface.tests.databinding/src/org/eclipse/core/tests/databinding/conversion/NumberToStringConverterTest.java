@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2008 IBM Corporation and others.
+ * Copyright (c) 2007, 2018 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -132,7 +132,7 @@ public class NumberToStringConverterTest {
 	{
 		try {
 			icuBigDecimal = Class.forName("com.ibm.icu.math.BigDecimal");
-			icuBigDecimalCtr = icuBigDecimal.getConstructor(new Class[] {BigInteger.class, int.class});
+			icuBigDecimalCtr = icuBigDecimal.getConstructor(BigInteger.class, int.class);
 		}
 		catch(ClassNotFoundException e) {}
 		catch(NoSuchMethodException e) {}
@@ -151,8 +151,8 @@ public class NumberToStringConverterTest {
 	private String formatBigDecimal(BigDecimal javabd) throws Exception {
 		if(icuBigDecimal != null && icuBigDecimalCtr != null) {
 			// ICU Big Decimal constructor available
-			Number icubd = (Number) icuBigDecimalCtr.newInstance(
-					new Object[] { javabd.unscaledValue(), Integer.valueOf(javabd.scale()) });
+			Number icubd = (Number) icuBigDecimalCtr.newInstance(javabd.unscaledValue(),
+					Integer.valueOf(javabd.scale()));
 			return numberFormat.format(icubd);
 		}
 		throw new IllegalArgumentException("ICU not present. Cannot reliably format large BigDecimal values; needed for testing. Java platforms prior to 1.5 fail to format/parse these decimals correctly.");

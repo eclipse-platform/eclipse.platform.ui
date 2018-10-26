@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2017 IBM Corporation and others.
+ * Copyright (c) 2000, 2018 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -149,10 +149,9 @@ public class ActionUtil {
      */
     public static void fireAboutToShow(MenuManager mgr) throws Throwable {
 		Class<?> clazz = mgr.getClass();
-        Method method = clazz.getDeclaredMethod("handleAboutToShow",
-                new Class[0]);
+		Method method = clazz.getDeclaredMethod("handleAboutToShow");
         method.setAccessible(true);
-        method.invoke(mgr, new Object[0]);
+		method.invoke(mgr);
     }
 }
 

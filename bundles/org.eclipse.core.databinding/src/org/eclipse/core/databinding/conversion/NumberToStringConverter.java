@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2015 IBM Corporation and others.
+ * Copyright (c) 2007, 2018 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -57,7 +57,7 @@ public class NumberToStringConverter extends Converter<Object, String> {
 		 */
 		try {
 			icuBigDecimal = Class.forName("com.ibm.icu.math.BigDecimal"); //$NON-NLS-1$
-			icuBigDecimalCtr = icuBigDecimal.getConstructor(new Class[] {BigInteger.class, int.class});
+			icuBigDecimalCtr = icuBigDecimal.getConstructor(BigInteger.class, int.class);
 //			System.out.println("DEBUG: Full ICU4J support state: icuBigDecimal="+(icuBigDecimal != null)+", icuBigDecimalCtr="+(icuBigDecimalCtr != null)); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 		catch(ClassNotFoundException e) {}
@@ -133,7 +133,7 @@ public class NumberToStringConverter extends Converter<Object, String> {
 				// Full ICU4J present. Convert java.math.BigDecimal to ICU BigDecimal to format. Bug #180392.
 				BigDecimal o = (BigDecimal) fromObject;
 				try {
-					fromObject = icuBigDecimalCtr.newInstance(new Object[] {o.unscaledValue(), Integer.valueOf(o.scale())});
+					fromObject = icuBigDecimalCtr.newInstance(o.unscaledValue(), Integer.valueOf(o.scale()));
 				}
 				catch(InstantiationException e) {}
 				catch(InvocationTargetException e) {}

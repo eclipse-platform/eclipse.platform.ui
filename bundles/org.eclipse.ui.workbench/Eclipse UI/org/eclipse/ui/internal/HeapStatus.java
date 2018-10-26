@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2015 IBM Corporation and others.
+ * Copyright (c) 2005, 2018 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -246,8 +246,8 @@ public class HeapStatus extends Composite {
 		long max = Long.MAX_VALUE;
 		try {
 			// Must use reflect to allow compilation against JCL/Foundation
-			Method maxMemMethod = Runtime.class.getMethod("maxMemory", new Class[0]); //$NON-NLS-1$
-			Object o = maxMemMethod.invoke(Runtime.getRuntime(), new Object[0]);
+			Method maxMemMethod = Runtime.class.getMethod("maxMemory"); //$NON-NLS-1$
+			Object o = maxMemMethod.invoke(Runtime.getRuntime());
 			if (o instanceof Long) {
 				max = ((Long) o).longValue();
 			}

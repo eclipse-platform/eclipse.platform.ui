@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2018 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -97,7 +97,7 @@ public class TableViewerTest extends StructuredItemViewerTest {
 		try {
 			method = ColumnViewer.class.getDeclaredMethod("getViewerColumn", new Class[]{int.class});
 			method.setAccessible(true);
-			return (ViewerColumn) method.invoke(viewer, new Object[]{Integer.valueOf(index)});
+			return (ViewerColumn) method.invoke(viewer, Integer.valueOf(index));
 		} catch (Exception e) {
 			throw new RuntimeException(e);
 		}

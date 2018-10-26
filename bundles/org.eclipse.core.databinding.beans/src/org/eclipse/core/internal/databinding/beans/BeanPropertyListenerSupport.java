@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2015 IBM Corporation and others.
+ * Copyright (c) 2005, 2018 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -89,15 +89,11 @@ public class BeanPropertyListenerSupport {
 
 		try {
 			try {
-				method = bean.getClass().getMethod(
-						methodName,
-						new Class[] { String.class,
-								PropertyChangeListener.class });
+				method = bean.getClass().getMethod(methodName, String.class, PropertyChangeListener.class);
 
 				parameters = new Object[] { propertyName, listener };
 			} catch (NoSuchMethodException e) {
-				method = bean.getClass().getMethod(methodName,
-						new Class[] { PropertyChangeListener.class });
+				method = bean.getClass().getMethod(methodName, PropertyChangeListener.class);
 
 				parameters = new Object[] { listener };
 			}

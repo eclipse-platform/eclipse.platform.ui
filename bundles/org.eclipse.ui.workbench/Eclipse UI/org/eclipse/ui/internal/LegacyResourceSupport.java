@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 IBM Corporation and others.
+ * Copyright (c) 2000, 2018 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -18,7 +18,6 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -300,7 +299,7 @@ public final class LegacyResourceSupport {
         return c;
     }
 
-    private static Object getDefaultContributorResourceAdapter() {
+	private static Object getDefaultContributorResourceAdapter() {
         if (defaultContributorResourceAdapter != null) {
             return defaultContributorResourceAdapter;
         }
@@ -311,8 +310,8 @@ public final class LegacyResourceSupport {
 			Class c = LegacyResourceSupport.getDefaultContributorResourceAdapterClass();
 			if (c != null) {
 				try {
-					Method m  = c.getDeclaredMethod("getDefault", new Class[0]);//$NON-NLS-1$
-					defaultContributorResourceAdapter = m.invoke(null, new Object[0]);
+				Method m = c.getDeclaredMethod("getDefault");//$NON-NLS-1$
+				defaultContributorResourceAdapter = m.invoke(null);
 					return defaultContributorResourceAdapter;
 				} catch (SecurityException e) {
 					// shouldn't happen - but play it safe
@@ -425,7 +424,7 @@ public final class LegacyResourceSupport {
 				Method m = getContributorResourceAdapterGetAdaptedResourceMethod();
 				if (m != null) {
 					try {
-						return m.invoke(resourceAdapter, new Object[]{adaptable});
+					return m.invoke(resourceAdapter, adaptable);
 					} catch (IllegalArgumentException e) {
 						// shouldn't happen - but play it safe
 					} catch (IllegalAccessException e) {
@@ -533,7 +532,7 @@ public final class LegacyResourceSupport {
 	         if (m != null) {
 
 				try {
-					Object result  = m.invoke(resourceMappingAdapter, new Object[]{adaptable});
+					Object result = m.invoke(resourceMappingAdapter, adaptable);
 					if (result != null) {
 		           		return result;
 		           	}

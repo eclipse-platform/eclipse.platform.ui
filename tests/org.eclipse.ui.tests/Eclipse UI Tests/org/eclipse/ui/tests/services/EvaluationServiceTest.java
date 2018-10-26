@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2017 IBM Corporation and others.
+ * Copyright (c) 2007, 2018 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -478,8 +478,9 @@ public class EvaluationServiceTest extends UITestCase {
 			hpField.setAccessible(true);
 			Object eclipseContext = hpField.get(hs);
 			assertNotNull(eclipseContext);
-			Method getMethod = eclipseContext.getClass().getDeclaredMethod("get", new Class[] { String.class });
-			activations = (Collection<IHandlerActivation>) getMethod.invoke(eclipseContext, new Object[] { LEGACY_H_ID + CHECK_HANDLER_ID});
+			Method getMethod = eclipseContext.getClass().getDeclaredMethod("get", String.class);
+			activations = (Collection<IHandlerActivation>) getMethod.invoke(eclipseContext,
+					LEGACY_H_ID + CHECK_HANDLER_ID);
 			assertNotNull(activations);
 		} else {
 			fail("Incorrect handler service: " + hsClassName);

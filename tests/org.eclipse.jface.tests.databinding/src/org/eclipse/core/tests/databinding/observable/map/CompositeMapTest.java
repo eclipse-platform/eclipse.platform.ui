@@ -48,7 +48,7 @@ public class CompositeMapTest extends AbstractDefaultRealmTestCase {
 		try {
 			Method method = AbstractObservable.class.getSuperclass().getDeclaredMethod("hasListeners", new Class[0]);
 			method.setAccessible(true);
-			return ((Boolean)method.invoke(o, new Object[0])).booleanValue();
+			return ((Boolean) method.invoke(o)).booleanValue();
 		} catch (Exception e) {
 			throw new RuntimeException(e);
 		}
