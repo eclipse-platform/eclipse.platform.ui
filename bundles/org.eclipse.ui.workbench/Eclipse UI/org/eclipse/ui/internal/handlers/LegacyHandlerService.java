@@ -23,6 +23,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import org.eclipse.core.commands.Command;
@@ -69,7 +70,6 @@ import org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants;
 import org.eclipse.ui.internal.services.EvaluationService;
 import org.eclipse.ui.services.IEvaluationService;
 import org.eclipse.ui.services.ISourceProviderService;
-import org.osgi.service.log.LogService;
 
 /**
  * @since 3.5
@@ -95,7 +95,7 @@ public class LegacyHandlerService implements IHandlerService {
 		@Override
 		public Object compute(IEclipseContext context, String contextKey) {
 
-			HashSet<HandlerActivation> activationSet = new HashSet<>();
+			HashSet<HandlerActivation> activationSet = new LinkedHashSet<>();
 			IEclipseContext current = context;
 			while (current != null) {
 				@SuppressWarnings("unchecked")
@@ -137,9 +137,13 @@ public class LegacyHandlerService implements IHandlerService {
 
 			if (bestActivation != null) {
 				if (bestActivation == conflictBest) {
-					WorkbenchPlugin.log("Conflicting handlers for " + commandId + ": {" //$NON-NLS-1$ //$NON-NLS-2$
+					String fullMessage = "Conflicting handlers: {" //$NON-NLS-1$
+							+ conflictBest + "} vs {" //$NON-NLS-1$
+							+ conflictOther + "} in: " + context; //$NON-NLS-1$
+					String shortMessage = "Conflicting handlers for " + commandId + ": {" //$NON-NLS-1$ //$NON-NLS-2$
 							+ conflictBest.getHandler() + "} vs {" //$NON-NLS-1$
-							+ conflictOther.getHandler() + "}"); //$NON-NLS-1$
+							+ conflictOther.getHandler() + "} in: " + context; //$NON-NLS-1$
+					WorkbenchPlugin.log(shortMessage, new IllegalStateException(fullMessage));
 				}
 				return bestActivation.proxy;
 			}
@@ -385,8 +389,8 @@ public class LegacyHandlerService implements IHandlerService {
 			// If the log shows an IEclipseContext named "Anonymous" this is an
 			// indication that the context is disposed before we try to execute
 			// the command
-			Activator.log(LogService.LOG_ERROR, "IEclipseContext is " + eclipseContext); //$NON-NLS-1$
-			Activator.log(LogService.LOG_ERROR, "EHandlerService is null", //$NON-NLS-1$
+			WorkbenchPlugin.log("IEclipseContext is " + eclipseContext); //$NON-NLS-1$
+			WorkbenchPlugin.log("EHandlerService is null", //$NON-NLS-1$
 					new IllegalStateException("EHandlerService must not be null")); //$NON-NLS-1$
 			throw new ExecutionException("No handler service available"); //$NON-NLS-1$
 		}
