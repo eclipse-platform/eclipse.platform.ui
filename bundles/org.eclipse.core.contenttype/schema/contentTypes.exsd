@@ -255,7 +255,7 @@ a file association extends an existing content type by associating new file name
          <attribute name="name" type="string" use="required">
             <annotation>
                <documentation>
-                  the name of the property. If the property is being overriden and has been originally defined in a different namespace, a fully qualified property name must be used
+                  the name of the property. If the property is being overridden and has been originally defined in a different namespace, a fully qualified property name must be used
                </documentation>
             </annotation>
          </attribute>
