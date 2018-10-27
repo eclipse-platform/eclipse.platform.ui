@@ -161,7 +161,7 @@ specified builder class
             <annotation>
                <documentation>
                   The fully-qualified name of a class that implements &lt;samp&gt;org.eclipse.core.resources.IDynamicReferenceProvider&lt;/samp&gt;.
-                  If supplied, the given class will asked to return a list of other projects that
+                  If supplied, the given class will be asked to return a list of other projects that
                   must be built before this one when the build system is computing the build order.
                </documentation>
                <appInfo>

@@ -14,7 +14,7 @@ a per-project basis using the setDescription method defined on
 configured when added to a project and deconfigured 
 when removed from the project.  For example, the Java nature 
 might install a Java builder and do other project 
-configuration when added to a project
+configuration when added to a project.
 &lt;p&gt;
 The natures extension-point allows nature writers 
 to register their nature implementation under a 
@@ -28,7 +28,7 @@ their meaning and potentially may be presented to users.
 &lt;p&gt;
 Natures can specify relationship constraints with other natures.
 The &quot;one-of-nature&quot; constraint specifies that at most one nature
-belong to a given set can exist on a project at any given time.
+belonging to a given set can exist on a project at any given time.
 This enforces mutual exclusion between natures that are not compatible
 with each other.  The &quot;requires-nature&quot; constraint specifies a
 dependency on another nature.  When a nature is added to a project,
