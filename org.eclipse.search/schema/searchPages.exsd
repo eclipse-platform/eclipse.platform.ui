@@ -209,7 +209,7 @@ definition:
          <meta.section type="apiInfo"/>
       </appInfo>
       <documentation>
-         The contributed class must implement &lt;code&gt;org.eclipse.search.ui.ISearchPage&lt;/code&gt;
+         The contributed class must implement &lt;code&gt;org.eclipse.search.ui.ISearchPage&lt;/code&gt;.
       </documentation>
    </annotation>
 

@@ -45,7 +45,7 @@
    <element name="factory">
       <annotation>
          <documentation>
-            The specification of a annotation model factory. In order to find a factory for a given file the attributes of each factory specification are consulted in the following sequence: contentTypeId, fileNames, extensions. If multiple, equally specific factory specifications are found for a given file it is not specified which factory is used.
+            The specification of an annotation model factory. In order to find a factory for a given file the attributes of each factory specification are consulted in the following sequence: contentTypeId, fileNames, extensions. If multiple, equally specific factory specifications are found for a given file it is not specified which factory is used.
          </documentation>
       </annotation>
       <complexType>

@@ -72,7 +72,8 @@ public interface IFindReplaceTarget {
 	int findAndSelect(int widgetOffset, String findString, boolean searchForward, boolean caseSensitive, boolean wholeWord);
 
 	/**
-	 * Returns the currently selected range of characters as a offset and length in widget coordinates.
+	 * Returns the currently selected range of characters as an offset and length in widget
+	 * coordinates.
 	 *
 	 * @return the currently selected character range in widget coordinates
 	 */
