@@ -161,7 +161,7 @@ Whenever possible, the model extensions of dependent bundles are processed befor
          <attribute name="contextKey" type="string">
             <annotation>
                <documentation>
-                  A optional key under which to store the model element in the context. The value of &quot;id&quot; is used if this value is not specified.
+                  An optional key under which to store the model element in the context. The value of &quot;id&quot; is used if this value is not specified.
                </documentation>
             </annotation>
          </attribute>

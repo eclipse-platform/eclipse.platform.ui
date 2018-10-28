@@ -389,7 +389,7 @@ This attribute is optional if this is defined as a child element of a markerGrou
    <element name="markerField">
       <annotation>
          <documentation>
-            A markerField is the definition of a org.eclipse.ui.views.markers.MarkerField used to define a column
+            A markerField is the definition of an org.eclipse.ui.views.markers.MarkerField used to define a column
          </documentation>
       </annotation>
       <complexType>

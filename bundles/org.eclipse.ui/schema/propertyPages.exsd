@@ -102,7 +102,7 @@ If these filtering mechanisms are inadequate a property page may use the filter 
          <attribute name="objectClass" type="string">
             <annotation>
                <documentation>
-                  a fully qualified name of the class for which the page is registered. This class does not need to implement &lt;tt&gt;IAdaptable&lt;/tt&gt;. Objects that are not an instance of &lt;tt&gt;IAdaptable&lt;/tt&gt; will be wrappered in an &lt;tt&gt;IAdaptable&lt;/tt&gt; before being sent to the property page&apos;s instance (an &lt;tt&gt;org.eclipse.ui.IWorkbenchPropertyPage&lt;/tt&gt;).
+                  a fully qualified name of the class for which the page is registered. This class does not need to implement &lt;tt&gt;IAdaptable&lt;/tt&gt;. Objects that are not an instance of &lt;tt&gt;IAdaptable&lt;/tt&gt; will be wrapped in an &lt;tt&gt;IAdaptable&lt;/tt&gt; before being sent to the property page&apos;s instance (an &lt;tt&gt;org.eclipse.ui.IWorkbenchPropertyPage&lt;/tt&gt;).
 
 &lt;p&gt;Deprecated in Eclipse 3.3. Use the instanceOf or adapt element of the enabledWhen element instead.  If duplicate page definitions were previously used to register the page for multiple objectClass types, these should be combined into one page definition using multiple instanceOf elements combined inside an or element&lt;/p&gt;
                </documentation>
@@ -137,7 +137,7 @@ This flag is used if objectClass adapts to IResource.  Default value is false.
 
 &lt;p&gt;Deprecated in Eclipse 3.3. Use adapt sub element of the enabledWhen element instead&lt;/p&gt;
 
-&lt;strong&gt;NOTE:&lt;/strong&gt; The adaptable attribute will attempt adapt an object to &lt;code&gt;org.eclipse.core.resources.IResource&lt;/code&gt; before referencing the types registered in &lt;code&gt;Platform#getAdaptorManager&lt;/code&gt;. The enabledWhen element has no special case tests for &lt;code&gt;org.eclipse.core.resources.IResource&lt;/code&gt; and uses &lt;code&gt;Platform#getAdaptorManager&lt;/code&gt; to look up adaptable types. These can be registered using the &lt;code&gt;org.eclipse.core.runtime.adaptors&lt;/code&gt; extension point.
+&lt;strong&gt;NOTE:&lt;/strong&gt; The adaptable attribute will attempt to adapt an object to &lt;code&gt;org.eclipse.core.resources.IResource&lt;/code&gt; before referencing the types registered in &lt;code&gt;Platform#getAdaptorManager&lt;/code&gt;. The enabledWhen element has no special case tests for &lt;code&gt;org.eclipse.core.resources.IResource&lt;/code&gt; and uses &lt;code&gt;Platform#getAdaptorManager&lt;/code&gt; to look up adaptable types. These can be registered using the &lt;code&gt;org.eclipse.core.runtime.adaptors&lt;/code&gt; extension point.
                </documentation>
                <appInfo>
                   <meta.attribute deprecated="true"/>
@@ -183,7 +183,7 @@ Since 3.7.
    <element name="filter">
       <annotation>
          <documentation>
-            This element is used to evaluate the attribute state of each object in the current selection. A match only if each object in the selection has the specified attribute state. Each object in the selection must implement, or adapt to, &lt;samp&gt;org.eclipse.ui.IActionFilter&lt;/samp&gt;.
+            This element is used to evaluate the attribute state of each object in the current selection. A match occurs only if each object in the selection has the specified attribute state. Each object in the selection must implement, or adapt to, &lt;samp&gt;org.eclipse.ui.IActionFilter&lt;/samp&gt;.
          </documentation>
       </annotation>
       <complexType>
