@@ -150,6 +150,23 @@ public interface EModelService {
 			List<String> tagsToMatch);
 
 	/**
+	 * This is a convenience method that forwards the parameters on to
+	 * {@link EModelService#findElements(MUIElement, String, Class, List)}, passing
+	 * null as 'tagsToMatch'.
+	 *
+	 * @param searchRoot The element at which to start the search. This element must
+	 *                   be non-null and is included in the search.
+	 * @param id         The id of the element search for, can be null
+	 * @param clazz      The type of element to be searched for. If non-null this
+	 *                   also defines the return type of the List.
+	 * @return The generically typed list of matching elements.
+	 *
+	 * @since 1.8
+	 *
+	 */
+	<T> List<T> findElements(MUIElement searchRoot, String id, Class<T> clazz);
+
+	/**
 	 * Return a list of any elements that match the given search criteria. The
 	 * search is recursive and includes the specified search root. Any of the search
 	 * parameters may be specified as <code>null</code> in which case that field

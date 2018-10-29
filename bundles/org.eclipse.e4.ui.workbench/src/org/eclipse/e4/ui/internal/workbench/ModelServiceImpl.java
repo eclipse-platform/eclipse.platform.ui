@@ -401,6 +401,11 @@ public class ModelServiceImpl implements EModelService {
 	}
 
 	@Override
+	public <T> List<T> findElements(MUIElement searchRoot, String id, Class<T> clazz) {
+		return findElements(searchRoot, clazz, ANYWHERE, null);
+	}
+
+	@Override
 	public <T> List<T> findElements(MUIElement searchRoot, String id, Class<T> clazz,
 			List<String> tagsToMatch, int searchFlags) {
 		ElementMatcher matcher = new ElementMatcher(id, clazz, tagsToMatch);
