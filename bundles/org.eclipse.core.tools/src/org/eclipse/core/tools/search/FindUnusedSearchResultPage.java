@@ -115,14 +115,9 @@ public class FindUnusedSearchResultPage extends AbstractTextSearchViewPage imple
 		}
 	}
 
-	public static final IShowInTargetList SHOW_IN_TARGET_LIST = new IShowInTargetList() {
-		@Override
-		public String[] getShowInTargetIds() {
-			return SHOW_IN_TARGETS;
-		}
-	};
+	static final String[] SHOW_IN_TARGETS = new String[] { JavaUI.ID_PACKAGES, IPageLayout.ID_RES_NAV };
 
-	static final String[] SHOW_IN_TARGETS = new String[] {JavaUI.ID_PACKAGES, IPageLayout.ID_RES_NAV};
+	public static final IShowInTargetList SHOW_IN_TARGET_LIST = () -> SHOW_IN_TARGETS;
 
 	private static final int SORT_BY_NAME = 0;
 	private static final int SORT_BY_PATH = 1;
@@ -189,9 +184,9 @@ public class FindUnusedSearchResultPage extends AbstractTextSearchViewPage imple
 	}
 
 	@Override
-	public Object getAdapter(Class adapter) {
+	public <T> T getAdapter(Class<T> adapter) {
 		if (IShowInTargetList.class.equals(adapter)) {
-			return SHOW_IN_TARGET_LIST;
+			return adapter.cast(SHOW_IN_TARGET_LIST);
 		}
 		return null;
 	}

@@ -26,7 +26,7 @@ public class StackTraceView extends BaseTextView {
 	}
 
 	@Override
-	public Object getAdapter(Class adapter) {
+	public <T> T getAdapter(Class<T> adapter) {
 		return null;
 	}
 

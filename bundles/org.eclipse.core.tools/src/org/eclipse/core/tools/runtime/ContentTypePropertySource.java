@@ -129,9 +129,9 @@ public class ContentTypePropertySource implements IPropertySource, IAdaptable {
 	}
 
 	@Override
-	public Object getAdapter(Class adapter) {
+	public <T> T getAdapter(Class<T> adapter) {
 		if (adapter == IPropertySource.class)
-			return this;
+			return adapter.cast(this);
 		return null;
 	}
 }
