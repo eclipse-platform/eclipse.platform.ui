@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 IBM Corporation and others.
+ * Copyright (c) 2000, 2018 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -137,10 +137,10 @@ public class EclipseTestHarnessApplication implements IApplication {
 			return null;
 		}
 		Class<?> testClass = testObject.getClass();
-		Method method = testClass.getDeclaredMethod("suite", new Class[0]); //$NON-NLS-1$
+		Method method = testClass.getDeclaredMethod("suite"); //$NON-NLS-1$
 		Test suite = null;
 		try {
-			suite = (Test) method.invoke(testClass, new Object[0]);
+			suite = (Test) method.invoke(testClass);
 		} catch (InvocationTargetException e) {
 			if (e.getTargetException() instanceof Error) {
 				throw (Error) e.getTargetException();
