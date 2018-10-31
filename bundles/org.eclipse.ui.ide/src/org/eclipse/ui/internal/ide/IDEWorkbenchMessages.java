@@ -531,12 +531,14 @@ public class IDEWorkbenchMessages extends NLS {
 	public static String UriHandlerPreferencePage_Warning_OtherApp_Description;
 
 	// --- Link Handler Preference Page ---
-	public static String UrlHandlerPreferencePage_Label_Message_Current_Application;
-	public static String UrlHandlerPreferencePage_Label_Message_Other_Application;
-	public static String UrlHandlerPreferencePage_Label_Message_No_Application;
+	public static String UrlHandlerPreferencePage_Handler_Label;
+	public static String UrlHandlerPreferencePage_Handler_Text_No_Application;
 	public static String UrlHandlerPreferencePage_Page_Description;
 	public static String UrlHandlerPreferencePage_ColumnName_SchemeName;
 	public static String UrlHandlerPreferencePage_ColumnName_SchemeDescription;
+	public static String UrlHandlerPreferencePage_ColumnName_Handler;
+	public static String UrlHandlerPreferencePage_Column_Handler_Text_Current_Application;
+	public static String UrlHandlerPreferencePage_Column_Handler_Text_Other_Application;
 	public static String UrlHandlerPreferencePage_Error_Reading_Scheme;
 	public static String UrlHandlerPreferencePage_Error_Writing_Scheme;
 

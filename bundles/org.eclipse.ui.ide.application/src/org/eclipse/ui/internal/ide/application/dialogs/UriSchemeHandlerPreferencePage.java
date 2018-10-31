@@ -18,6 +18,8 @@ import java.util.List;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.layout.GridDataFactory;
+import org.eclipse.jface.layout.GridLayoutFactory;
 import org.eclipse.jface.layout.PixelConverter;
 import org.eclipse.jface.layout.TableColumnLayout;
 import org.eclipse.jface.preference.PreferencePage;
@@ -41,6 +43,7 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
+import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
@@ -58,7 +61,7 @@ import org.eclipse.urischeme.IUriSchemeExtensionReader;
  */
 public class UriSchemeHandlerPreferencePage extends PreferencePage implements IWorkbenchPreferencePage {
 
-	Label handlerLocation;
+	Text handlerLocation;
 	CheckboxTableViewer tableViewer;
 	private String currentLocation = null;
 	IStatusManagerWrapper statusManagerWrapper = new IStatusManagerWrapper() {
@@ -68,6 +71,7 @@ public class UriSchemeHandlerPreferencePage extends PreferencePage implements IW
 
 	IOperatingSystemRegistration operatingSystemRegistration = null;
 	IUriSchemeExtensionReader extensionReader = null;
+	private Composite handlerComposite;
 
 	@SuppressWarnings("javadoc")
 	public UriSchemeHandlerPreferencePage() {
@@ -75,14 +79,34 @@ public class UriSchemeHandlerPreferencePage extends PreferencePage implements IW
 	}
 
 	@Override
+	public void init(IWorkbench workbench) {
+		if (operatingSystemRegistration == null) {
+			operatingSystemRegistration = IOperatingSystemRegistration.getInstance();
+		}
+		if (extensionReader == null) {
+			extensionReader = IUriSchemeExtensionReader.newInstance();
+		}
+		if (operatingSystemRegistration != null) {
+			currentLocation = operatingSystemRegistration.getEclipseLauncher();
+		}
+	}
+
+	@Override
 	protected Control createContents(Composite parent) {
 		noDefaultAndApplyButton();
 		addFiller(parent, 2);
 		createTableViewerForSchemes(parent);
-		GridData gridData = new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1);
-		handlerLocation = new Label(parent, SWT.FILL);
-		handlerLocation.setLayoutData(gridData);
+		createHandlerLocationControls(parent);
 		return parent;
+	}
+
+	private void addFiller(Composite composite, int horizontalSpan) {
+		PixelConverter pixelConverter = new PixelConverter(composite);
+		Label filler = new Label(composite, SWT.LEFT);
+		GridData gd = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
+		gd.horizontalSpan = horizontalSpan;
+		gd.heightHint = pixelConverter.convertHeightInCharsToPixels(1) / 2;
+		filler.setLayoutData(gd);
 	}
 
 	private void createTableViewerForSchemes(Composite parent) {
@@ -107,8 +131,12 @@ public class UriSchemeHandlerPreferencePage extends PreferencePage implements IW
 		TableColumn descriptionColumn = new TableColumn(schemeTable, SWT.NONE, 1);
 		descriptionColumn.setText(IDEWorkbenchMessages.UrlHandlerPreferencePage_ColumnName_SchemeDescription);
 
+		TableColumn appColumn = new TableColumn(schemeTable, SWT.NONE, 2);
+		appColumn.setText(IDEWorkbenchMessages.UrlHandlerPreferencePage_ColumnName_Handler);
+
 		tableColumnlayout.setColumnData(nameColumn, new ColumnWeightData(20));
-		tableColumnlayout.setColumnData(descriptionColumn, new ColumnWeightData(80));
+		tableColumnlayout.setColumnData(descriptionColumn, new ColumnWeightData(60));
+		tableColumnlayout.setColumnData(appColumn, new ColumnWeightData(20));
 
 		tableViewer = new CheckboxTableViewer(schemeTable);
 		tableViewer.setContentProvider(ArrayContentProvider.getInstance());
@@ -134,13 +162,17 @@ public class UriSchemeHandlerPreferencePage extends PreferencePage implements IW
 		}
 	}
 
-	private void addFiller(Composite composite, int horizontalSpan) {
-		PixelConverter pixelConverter = new PixelConverter(composite);
-		Label filler = new Label(composite, SWT.LEFT);
-		GridData gd = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
-		gd.horizontalSpan = horizontalSpan;
-		gd.heightHint = pixelConverter.convertHeightInCharsToPixels(1) / 2;
-		filler.setLayoutData(gd);
+	private void createHandlerLocationControls(Composite parent) {
+		handlerComposite = new Composite(parent, SWT.NONE);
+		GridLayoutFactory.fillDefaults().numColumns(2).applyTo(handlerComposite);
+		GridDataFactory.fillDefaults().grab(true, false).applyTo(handlerComposite);
+
+		new Label(handlerComposite, SWT.NONE).setText(IDEWorkbenchMessages.UrlHandlerPreferencePage_Handler_Label);
+
+		handlerLocation = new Text(handlerComposite, SWT.READ_ONLY | SWT.BORDER);
+		handlerLocation.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
+
+		handlerComposite.setVisible(false); // set visible on table selection
 	}
 
 	/**
@@ -154,25 +186,11 @@ public class UriSchemeHandlerPreferencePage extends PreferencePage implements IW
 		Collection<UiSchemeInformation> returnList = new ArrayList<>();
 		Collection<IScheme> schemes = extensionReader.getSchemes();
 		if (operatingSystemRegistration != null) {
-			for (ISchemeInformation info : operatingSystemRegistration
-					.getSchemesInformation(schemes)) {
+			for (ISchemeInformation info : operatingSystemRegistration.getSchemesInformation(schemes)) {
 				returnList.add(new UiSchemeInformation(info.isHandled(), info));
 			}
 		}
 		return returnList;
-	}
-
-	@Override
-	public void init(IWorkbench workbench) {
-		if (operatingSystemRegistration == null) {
-			operatingSystemRegistration = IOperatingSystemRegistration.getInstance();
-		}
-		if (extensionReader == null) {
-			extensionReader = IUriSchemeExtensionReader.newInstance();
-		}
-		if (operatingSystemRegistration != null) {
-			currentLocation = operatingSystemRegistration.getEclipseLauncher();
-		}
 	}
 
 	/*
@@ -240,25 +258,22 @@ public class UriSchemeHandlerPreferencePage extends PreferencePage implements IW
 			Object firstElement = selection != null ? selection.getFirstElement() : null;
 			if (firstElement != null && firstElement instanceof UiSchemeInformation) {
 				setSchemeDetails((UiSchemeInformation) firstElement);
+				handlerComposite.setVisible(true);
 			}
 		}
 
 		private void setSchemeDetails(UiSchemeInformation schemeInfo) {
 			if (schemeInfo.checked) {
-				handlerLocation.setText(
-						NLS.bind(IDEWorkbenchMessages.UrlHandlerPreferencePage_Label_Message_Current_Application,
-								currentLocation));
+				handlerLocation.setText(currentLocation);
 
 			} else if (schemeIsHandledByOther(schemeInfo.information)) {
-				handlerLocation
-						.setText(NLS.bind(IDEWorkbenchMessages.UrlHandlerPreferencePage_Label_Message_Other_Application,
-								schemeInfo.information.getHandlerInstanceLocation()));
+				handlerLocation.setText(schemeInfo.information.getHandlerInstanceLocation());
 			} else {
 				// checkbox not checked and:
 				// - no other handler handles it
 				// - or this eclipse handled it before (checkbox was unchecked but not yet
 				// applied)
-				handlerLocation.setText(IDEWorkbenchMessages.UrlHandlerPreferencePage_Label_Message_No_Application);
+				handlerLocation.setText(IDEWorkbenchMessages.UrlHandlerPreferencePage_Handler_Text_No_Application);
 			}
 		}
 
@@ -283,6 +298,7 @@ public class UriSchemeHandlerPreferencePage extends PreferencePage implements IW
 			}
 			schemeInformation.checked = event.getChecked();
 			setSchemeDetails(schemeInformation);
+			tableViewer.update(schemeInformation, null);
 		}
 	}
 
@@ -309,6 +325,15 @@ public class UriSchemeHandlerPreferencePage extends PreferencePage implements IW
 					return schemeInfo.information.getName();
 				case 1:
 					return schemeInfo.information.getDescription();
+				case 2:
+					String text = ""; //$NON-NLS-1$
+					if (schemeInfo.checked) {
+						text = IDEWorkbenchMessages.UrlHandlerPreferencePage_Column_Handler_Text_Current_Application;
+
+					} else if (schemeIsHandledByOther(schemeInfo.information)) {
+						text = IDEWorkbenchMessages.UrlHandlerPreferencePage_Column_Handler_Text_Other_Application;
+					}
+					return text;
 				default:
 					throw new IllegalArgumentException("Unknown column"); //$NON-NLS-1$
 				}

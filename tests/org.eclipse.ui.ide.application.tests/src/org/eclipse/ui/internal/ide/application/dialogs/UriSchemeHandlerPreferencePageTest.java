@@ -27,6 +27,7 @@ import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.TableItem;
+import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
 import org.eclipse.ui.internal.ide.application.dialogs.UriSchemeHandlerPreferencePage.IMessageDialogWrapper;
 import org.eclipse.ui.internal.ide.application.dialogs.UriSchemeHandlerPreferencePage.IStatusManagerWrapper;
@@ -41,16 +42,9 @@ import org.junit.Before;
 import org.junit.Test;
 
 public class UriSchemeHandlerPreferencePageTest {
+	private static final String NO_APPLICATION = IDEWorkbenchMessages.UrlHandlerPreferencePage_Handler_Text_No_Application;
 	private static final String THIS_ECLIPSE_HANDLER_LOCATION = "/this/eclipse";
 	private static final String OTHER_ECLIPSE_HANDLER_LOCATION = "/other/Eclipse";
-
-	private static final String NO_APPLICATION_HANDLER_TEXT = IDEWorkbenchMessages.UrlHandlerPreferencePage_Label_Message_No_Application;
-	private static final String THIS_APPLICATION_HANDLER_TEXT = NLS.bind(
-			IDEWorkbenchMessages.UrlHandlerPreferencePage_Label_Message_Current_Application,
-			THIS_ECLIPSE_HANDLER_LOCATION);
-	private static final String OTHER_APPLICATION_HANDLER_TEXT = NLS.bind(
-			IDEWorkbenchMessages.UrlHandlerPreferencePage_Label_Message_Other_Application,
-			OTHER_ECLIPSE_HANDLER_LOCATION);
 
 	private IScheme noAppScheme = new SchemeStub("hello", "helloScheme");
 	private ISchemeInformation noAppSchemeInfo = new SchemeInformationStub(noAppScheme, false, null);
@@ -70,22 +64,31 @@ public class UriSchemeHandlerPreferencePageTest {
 		this.page = createStandalonePreferencePage();
 	}
 
+	@SuppressWarnings("cast")
+	@Test
+	public void handlerControlIsText() {
+		this.page.createContents(this.page.getShell());
+
+		assertTrue(this.page.handlerLocation instanceof Text);
+		assertEquals(SWT.READ_ONLY, this.page.handlerLocation.getStyle() & SWT.READ_ONLY);
+	}
+
 	@Test
 	public void schemesShown() throws Exception {
 		this.page.createContents(this.page.getShell());
 
-		assertScheme(page.tableViewer.getTable().getItems()[0], false, noAppSchemeInfo);
-		assertScheme(page.tableViewer.getTable().getItems()[1], true, thisAppSchemeInfo);
-		assertScheme(page.tableViewer.getTable().getItems()[2], false, otherAppSchemeInfo);
+		assertScheme(getTableItem(0), false, noAppSchemeInfo);
+		assertScheme(getTableItem(1), true, thisAppSchemeInfo);
+		assertScheme(getTableItem(2), false, otherAppSchemeInfo);
 	}
 
 	@Test
 	public void handlerTextShown() throws Exception {
 		this.page.createContents(this.page.getShell());
 
-		assertHandlerTextForSelection(page, 0, NO_APPLICATION_HANDLER_TEXT);
-		assertHandlerTextForSelection(page, 1, THIS_APPLICATION_HANDLER_TEXT);
-		assertHandlerTextForSelection(page, 2, OTHER_APPLICATION_HANDLER_TEXT);
+		assertHandlerTextForSelection(page, 0, NO_APPLICATION);
+		assertHandlerTextForSelection(page, 1, THIS_ECLIPSE_HANDLER_LOCATION);
+		assertHandlerTextForSelection(page, 2, OTHER_ECLIPSE_HANDLER_LOCATION);
 	}
 
 	@Test
@@ -94,7 +97,7 @@ public class UriSchemeHandlerPreferencePageTest {
 
 		clickTableViewerCheckbox(0, true);
 
-		assertScheme(page.tableViewer.getTable().getItems()[0], true, noAppSchemeInfo);
+		assertScheme(getTableItem(0), true, noAppSchemeInfo);
 	}
 
 	@Test
@@ -103,7 +106,7 @@ public class UriSchemeHandlerPreferencePageTest {
 
 		clickTableViewerCheckbox(1, false);
 
-		assertScheme(page.tableViewer.getTable().getItems()[1], false, thisAppSchemeInfo);
+		assertScheme(getTableItem(1), false, thisAppSchemeInfo);
 	}
 
 	@Test
@@ -120,7 +123,7 @@ public class UriSchemeHandlerPreferencePageTest {
 				OTHER_ECLIPSE_HANDLER_LOCATION, "hello2");
 		assertEquals(expected, spy.message);
 
-		assertScheme(page.tableViewer.getTable().getItems()[2], false, otherAppSchemeInfo);
+		assertScheme(getTableItem(2), false, otherAppSchemeInfo);
 	}
 
 	@Test
@@ -213,11 +216,20 @@ public class UriSchemeHandlerPreferencePageTest {
 		assertEquals(checked, tableItem.getChecked());
 		assertEquals(information.getName(), tableItem.getText(0));
 		assertEquals(information.getDescription(), tableItem.getText(1));
+		if (checked) {
+			assertEquals(IDEWorkbenchMessages.UrlHandlerPreferencePage_Column_Handler_Text_Current_Application,
+					tableItem.getText(2));
+		} else if (!information.isHandled() && information.getHandlerInstanceLocation() != null) {
+			assertEquals(IDEWorkbenchMessages.UrlHandlerPreferencePage_Column_Handler_Text_Other_Application,
+					tableItem.getText(2));
+		} else {
+			assertEquals("", tableItem.getText(2));
+		}
+
 	}
 
 	private void assertHandlerTextForSelection(UriSchemeHandlerPreferencePage page, int selection, String text) {
-		Object uriSchemeInformation = page.tableViewer.getTable().getItems()[selection].getData();
-		page.tableViewer.setSelection(new StructuredSelection(uriSchemeInformation));
+		page.tableViewer.setSelection(new StructuredSelection(getTableItem(selection).getData()));
 		assertEquals(text, page.handlerLocation.getText());
 	}
 
@@ -227,6 +239,10 @@ public class UriSchemeHandlerPreferencePageTest {
 		assertEquals(IStatus.ERROR, spy.handledStatus.getSeverity());
 		assertEquals(expectedMessage, spy.handledStatus.getMessage());
 		assertEquals(StatusManager.BLOCK | StatusManager.LOG, spy.style);
+	}
+
+	private TableItem getTableItem(int item) {
+		return page.tableViewer.getTable().getItems()[item];
 	}
 
 	private UriSchemeHandlerPreferencePage createStandalonePreferencePage() {
