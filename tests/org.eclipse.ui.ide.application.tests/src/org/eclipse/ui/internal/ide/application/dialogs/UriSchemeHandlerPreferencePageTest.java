@@ -216,8 +216,8 @@ public class UriSchemeHandlerPreferencePageTest {
 	}
 
 	private void assertHandlerTextForSelection(UriSchemeHandlerPreferencePage page, int selection, String text) {
-		page.tableViewer
-				.setSelection(new StructuredSelection(page.tableViewer.getTable().getItems()[selection].getData()));
+		Object uriSchemeInformation = page.tableViewer.getTable().getItems()[selection].getData();
+		page.tableViewer.setSelection(new StructuredSelection(uriSchemeInformation));
 		assertEquals(text, page.handlerLocation.getText());
 	}
 
@@ -389,6 +389,7 @@ public class UriSchemeHandlerPreferencePageTest {
 		}
 
 	}
+
 	private class IOExceptionWithoutStackTrace extends IOException {
 
 		private static final long serialVersionUID = 1L;
