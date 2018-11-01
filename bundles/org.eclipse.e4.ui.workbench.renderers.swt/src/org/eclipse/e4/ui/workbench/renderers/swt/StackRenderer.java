@@ -947,7 +947,7 @@ public class StackRenderer extends LazyStackRenderer implements IPreferenceChang
 		if (win == null)
 			return null;
 
-		List<MPlaceholder> refs = modelService.findElements(win, null, MPlaceholder.class, null);
+		List<MPlaceholder> refs = modelService.findElements(win, null, MPlaceholder.class);
 		if (refs != null) {
 			for (MPlaceholder ref : refs) {
 				if (ref.getRef() != part)

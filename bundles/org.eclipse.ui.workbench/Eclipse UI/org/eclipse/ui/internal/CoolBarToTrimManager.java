@@ -350,7 +350,7 @@ public class CoolBarToTrimManager extends ContributionManager implements ICoolBa
 
 	@Override
 	public IContributionItem find(String id) {
-		List<MToolBar> toolbars = modelService.findElements(window, id, MToolBar.class, null);
+		List<MToolBar> toolbars = modelService.findElements(window, id, MToolBar.class);
 		if (toolbars.isEmpty()) {
 			return null;
 		}
@@ -445,7 +445,7 @@ public class CoolBarToTrimManager extends ContributionManager implements ICoolBa
 	}
 
 	private MToolBar getToolBar(String id) {
-		List<MToolBar> toolbars = modelService.findElements(window, id, MToolBar.class, null);
+		List<MToolBar> toolbars = modelService.findElements(window, id, MToolBar.class);
 		if (toolbars.size() == 1) {
 			return toolbars.get(0);
 		}

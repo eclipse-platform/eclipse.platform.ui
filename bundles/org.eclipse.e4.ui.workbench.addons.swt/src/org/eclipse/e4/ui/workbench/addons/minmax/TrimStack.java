@@ -738,8 +738,7 @@ public class TrimStack {
 
 	private MUIElement findElement() {
 		MUIElement result;
-		List<MPerspectiveStack> ps = modelService.findElements(window, null,
-				MPerspectiveStack.class, null);
+		List<MPerspectiveStack> ps = modelService.findElements(window, null, MPerspectiveStack.class);
 		if (ps.isEmpty()) {
 			String toolControlId = toolControl.getElementId();
 			int index = toolControlId.indexOf('(');

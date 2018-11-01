@@ -1658,14 +1658,13 @@ public class WorkbenchPage implements IWorkbenchPage {
 			if (saveParts) {
 				List<IWorkbenchPart> partsToSave = new ArrayList<>();
 				// retrieve all parts under the specified perspective
-				List<MPart> parts = modelService.findElements(persp, null, MPart.class, null);
+				List<MPart> parts = modelService.findElements(persp, null, MPart.class);
 				if (!parts.isEmpty()) {
 					// filter out any parts that are visible in any other
 					// perspectives
 					for (MPerspective perspective : getPerspectiveStack().getChildren()) {
 						if (perspective != persp) {
-							parts.removeAll(modelService.findElements(perspective, null,
-									MPart.class, null));
+							parts.removeAll(modelService.findElements(perspective, null, MPart.class));
 						}
 					}
 
@@ -2174,7 +2173,7 @@ public class WorkbenchPage implements IWorkbenchPage {
 		if (area != null && area.isVisible() && area.isToBeRendered()) {
 			// we have a shared area, try iterating over its editors first
 			List<MPart> editors = modelService
-					.findElements(area, CompatibilityEditor.MODEL_ELEMENT_ID, MPart.class, null);
+					.findElements(area, CompatibilityEditor.MODEL_ELEMENT_ID, MPart.class);
 			for (Iterator<MPart> it = candidates.iterator(); it.hasNext();) {
 				MPart model = it.next();
 				if (!editors.contains(model)) {
@@ -2805,7 +2804,7 @@ public class WorkbenchPage implements IWorkbenchPage {
 	 * at different times (see Bug 454056 for details).
 	 */
 	private void configureExistingWindows() {
-		List<MArea> elements = modelService.findElements(window, null, MArea.class, null);
+		List<MArea> elements = modelService.findElements(window, null, MArea.class);
 		for (MArea area : elements) {
 			Object widget = area.getWidget();
 			if (widget instanceof Control) {
@@ -5024,8 +5023,7 @@ public class WorkbenchPage implements IWorkbenchPage {
 		MPerspective selectedElement = getPerspectiveStack().getSelectedElement();
 		// technically shouldn't be null here
 		if (selectedElement != null) {
-			Collection<MPart> parts = modelService.findElements(selectedElement, null, MPart.class,
-					null);
+			Collection<MPart> parts = modelService.findElements(selectedElement, null, MPart.class);
 			List<MPart> visibleParts = new ArrayList<>(parts.size());
 			for (MPart part : parts) {
 				if (isVisible(selectedElement, part)) {

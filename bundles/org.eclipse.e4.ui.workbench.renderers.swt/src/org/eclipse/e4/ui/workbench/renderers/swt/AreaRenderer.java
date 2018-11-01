@@ -135,8 +135,7 @@ public class AreaRenderer extends SWTPartRenderer {
 		ctf.setHighlightEnabled(false);
 
 		// Find the stack in the area that used to have the min/max state
-		List<MPartStack> stacks = modelService.findElements(areaModel, null,
-				MPartStack.class, null);
+		List<MPartStack> stacks = modelService.findElements(areaModel, null, MPartStack.class);
 		MPartStack curStack = null;
 		for (MPartStack stack : stacks) {
 			if (stack.isToBeRendered()
@@ -191,8 +190,7 @@ public class AreaRenderer extends SWTPartRenderer {
 
 			// OK now copy over the min/max state of the area stack to the
 			// remaining part stack
-			List<MPartStack> stacks = modelService.findElements(areaModel,
-					null, MPartStack.class, null);
+			List<MPartStack> stacks = modelService.findElements(areaModel, null, MPartStack.class);
 			for (MPartStack stack : stacks) {
 				if (stack.isToBeRendered()
 						&& stack.getWidget() instanceof CTabFolder) {

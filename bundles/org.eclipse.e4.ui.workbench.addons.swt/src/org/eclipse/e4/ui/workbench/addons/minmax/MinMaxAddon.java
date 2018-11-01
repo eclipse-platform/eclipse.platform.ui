@@ -464,7 +464,7 @@ public class MinMaxAddon {
 
 	private String getWinCache(MWindow win, MPerspective perspective) {
 		StringBuilder winStrBuilder = new StringBuilder();
-		List<MPartStack> stackList = modelService.findElements(win, null, MPartStack.class, null);
+		List<MPartStack> stackList = modelService.findElements(win, null, MPartStack.class);
 		for (MPartStack stack : stackList) {
 			winStrBuilder.append(getStackTrimLoc(stack, perspective));
 		}

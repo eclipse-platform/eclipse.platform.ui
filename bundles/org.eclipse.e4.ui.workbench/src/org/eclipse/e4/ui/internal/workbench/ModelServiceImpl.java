@@ -248,7 +248,7 @@ public class ModelServiceImpl implements EModelService {
 					}
 				} else if ((searchFlags & IN_SHARED_AREA) != 0) {
 					// Only recurse through the shared areas
-					List<MArea> areas = findElements(searchContainer, null, MArea.class, null);
+					List<MArea> areas = findElements(searchContainer, null, MArea.class);
 					for (MArea area : areas) {
 						findElementsRecursive(area, clazz, matcher, elements, searchFlags);
 					}
@@ -434,7 +434,7 @@ public class ModelServiceImpl implements EModelService {
 			return null;
 		}
 
-		List<MUIElement> elements = findElements(searchRoot, id, MUIElement.class, null);
+		List<MUIElement> elements = findElements(searchRoot, id, MUIElement.class);
 		if (elements.size() > 0) {
 			return elements.get(0);
 		}

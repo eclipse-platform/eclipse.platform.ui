@@ -129,8 +129,7 @@ public class ElementReferenceRenderer extends SWTPartRenderer {
 						// Reparent the context(s) (if any)
 						IEclipseContext newParentContext = modelService
 								.getContainingContext(aPH);
-						List<MContext> allContexts = modelService.findElements(
-								refElement, null, MContext.class, null);
+						List<MContext> allContexts = modelService.findElements(refElement, null, MContext.class);
 						for (MContext ctxtElement : allContexts) {
 							IEclipseContext theContext = ctxtElement
 									.getContext();
@@ -166,7 +165,7 @@ public class ElementReferenceRenderer extends SWTPartRenderer {
 					IEclipseContext newParentContext = modelService
 							.getContainingContext(currentRef);
 					List<MContext> allContexts = modelService.findElements(
-							refElement, null, MContext.class, null);
+							refElement, null, MContext.class);
 					for (MContext ctxtElement : allContexts) {
 						IEclipseContext theContext = ctxtElement.getContext();
 						// this may be null if it hasn't been rendered yet

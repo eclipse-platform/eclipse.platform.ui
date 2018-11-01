@@ -48,7 +48,7 @@ public class LockToolBarHandler extends AbstractHandler {
 			if (coolBarManager != null) {
 				// lock is the opposite of the original value before toggle
 				boolean lock = !HandlerUtil.toggleCommandState(event.getCommand());
-				final List<MToolBar> children = modelService.findElements(winModel, null, MToolBar.class, null);
+				final List<MToolBar> children = modelService.findElements(winModel, null, MToolBar.class);
 				for (MToolBar el : children) {
 					if (!el.getTags().contains(TOOLBAR_SEPARATOR)) {
 						if (lock) {

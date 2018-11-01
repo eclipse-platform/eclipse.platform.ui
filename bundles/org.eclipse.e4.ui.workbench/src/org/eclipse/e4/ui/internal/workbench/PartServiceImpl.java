@@ -585,7 +585,7 @@ public class PartServiceImpl implements EPartService {
 
 	@Override
 	public boolean isPartOrPlaceholderInPerspective(String elementId, MPerspective perspective) {
-		List<MPart> findElements = modelService.findElements(perspective, elementId, MPart.class, null);
+		List<MPart> findElements = modelService.findElements(perspective, elementId, MPart.class);
 		if (!findElements.isEmpty()) {
 			MPart part = findElements.get(0);
 
@@ -894,7 +894,7 @@ public class PartServiceImpl implements EPartService {
 					parent = parent.getParent();
 				}
 
-				List<MPlaceholder> phs = modelService.findElements(parent, descId, MPlaceholder.class, null);
+				List<MPlaceholder> phs = modelService.findElements(parent, descId, MPlaceholder.class);
 				if (phs.size() == 1) {
 					MPlaceholder ph = phs.get(0);
 					sharedPart.setCloseable(ph.isCloseable());
@@ -988,7 +988,7 @@ public class PartServiceImpl implements EPartService {
 						activeStack.getChildren().add(providedPart);
 					} else {
 						// Find the first visible stack in the area
-						List<MPartStack> sharedStacks = modelService.findElements(area, null, MPartStack.class, null);
+						List<MPartStack> sharedStacks = modelService.findElements(area, null, MPartStack.class);
 						if (sharedStacks.size() > 0) {
 							for (MPartStack stack : sharedStacks) {
 								if (stack.isToBeRendered()) {

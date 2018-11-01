@@ -496,8 +496,7 @@ public class PerspectiveSwitcher {
 	}
 
 	MPerspectiveStack getPerspectiveStack() {
-		List<MPerspectiveStack> psList = modelService.findElements(window, null,
-				MPerspectiveStack.class, null);
+		List<MPerspectiveStack> psList = modelService.findElements(window, null, MPerspectiveStack.class);
 		if (psList.size() > 0)
 			return psList.get(0);
 		return null;

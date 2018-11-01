@@ -64,7 +64,7 @@ public class SplitHandler extends AbstractHandler {
 			MStackElement stackSelElement = stack.getSelectedElement();
 			MPart taggedEditor = editorPart;
 			if (stackSelElement instanceof MCompositePart) {
-				List<MPart> innerElements = modelService.findElements(stackSelElement, null, MPart.class, null);
+				List<MPart> innerElements = modelService.findElements(stackSelElement, null, MPart.class);
 				taggedEditor = innerElements.get(1); // '0' is the composite part
 			}
 

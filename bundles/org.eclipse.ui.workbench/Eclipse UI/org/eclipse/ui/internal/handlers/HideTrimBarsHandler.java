@@ -61,7 +61,7 @@ public class HideTrimBarsHandler extends AbstractHandler {
 
 	private void disableCodeFocus(MTrimmedWindow window, EModelService modelService) {
 
-		List<MTrimBar> tcList = modelService.findElements(window, null, MTrimBar.class, null);
+		List<MTrimBar> tcList = modelService.findElements(window, null, MTrimBar.class);
 		for (MTrimBar tc : tcList) {
 			boolean visible = true;
 			String initialTrimVisibility = tc.getPersistedState().get(INITIAL_TRIM_VISIBILIY);
@@ -74,7 +74,7 @@ public class HideTrimBarsHandler extends AbstractHandler {
 	}
 
 	private void enableCodeFocus(MTrimmedWindow window, EModelService modelService) {
-		List<MTrimBar> tcList = modelService.findElements(window, null, MTrimBar.class, null);
+		List<MTrimBar> tcList = modelService.findElements(window, null, MTrimBar.class);
 		for (MTrimBar tc : tcList) {
 			// remember the visibility state in case some trimbars are already
 			// not visible
