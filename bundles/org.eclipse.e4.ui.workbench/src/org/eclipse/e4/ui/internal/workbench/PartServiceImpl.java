@@ -840,8 +840,8 @@ public class PartServiceImpl implements EPartService {
 	}
 
 	@Override
-	public MPart createPart(String id) {
-		MPartDescriptor descriptor = modelService.getPartDescriptor(id);
+	public MPart createPart(String partDescriptorId) {
+		MPartDescriptor descriptor = modelService.getPartDescriptor(partDescriptorId);
 		return modelService.createPart(descriptor);
 	}
 
@@ -988,8 +988,7 @@ public class PartServiceImpl implements EPartService {
 						activeStack.getChildren().add(providedPart);
 					} else {
 						// Find the first visible stack in the area
-						List<MPartStack> sharedStacks = modelService.findElements(area, null,
-								MPartStack.class, null);
+						List<MPartStack> sharedStacks = modelService.findElements(area, null, MPartStack.class, null);
 						if (sharedStacks.size() > 0) {
 							for (MPartStack stack : sharedStacks) {
 								if (stack.isToBeRendered()) {
