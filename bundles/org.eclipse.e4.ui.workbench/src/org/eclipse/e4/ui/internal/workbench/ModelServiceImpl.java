@@ -394,15 +394,14 @@ public class ModelServiceImpl implements EModelService {
 	}
 
 	@Override
-	public <T> List<T> findElements(MUIElement searchRoot, String id, Class<T> clazz,
-			List<String> tagsToMatch) {
+	public <T> List<T> findElements(MUIElement searchRoot, String id, Class<T> clazz, List<String> tagsToMatch) {
 		ElementMatcher matcher = new ElementMatcher(id, clazz, tagsToMatch);
 		return findElements(searchRoot, clazz, ANYWHERE, matcher);
 	}
 
 	@Override
 	public <T> List<T> findElements(MUIElement searchRoot, String id, Class<T> clazz) {
-		return findElements(searchRoot, clazz, ANYWHERE, null);
+		return findElements(searchRoot, id, clazz, null);
 	}
 
 	@Override
