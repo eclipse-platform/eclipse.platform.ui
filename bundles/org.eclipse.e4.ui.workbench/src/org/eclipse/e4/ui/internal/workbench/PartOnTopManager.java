@@ -132,7 +132,7 @@ public class PartOnTopManager {
 
 	private void handleNewAndOldSelectedElementsOfElementContainer(Object oldValue, Object newValue) {
 		if (newValue instanceof MElementContainer) {
-			List<MPart> newParts = modelService.findElements((MElementContainer<?>) newValue, null, MPart.class, null);
+			List<MPart> newParts = modelService.findElements((MElementContainer<?>) newValue, null, MPart.class);
 			if (oldValue instanceof MElementContainer) {
 				List<MPart> oldParts = modelService.findElements((MElementContainer<?>) oldValue, null, MPart.class,
 						null);

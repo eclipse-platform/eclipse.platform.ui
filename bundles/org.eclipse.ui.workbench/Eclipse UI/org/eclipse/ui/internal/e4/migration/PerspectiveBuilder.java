@@ -252,7 +252,7 @@ public class PerspectiveBuilder {
 	}
 
 	private void hideEmptyStacks() {
-		for (MPartStack stack : modelService.findElements(perspective, null, MPartStack.class, null)) {
+		for (MPartStack stack : modelService.findElements(perspective, null, MPartStack.class)) {
 			if (ID_EDITOR_AREA.equals(stack.getElementId()) || ID_EDITOR_AREA.equals(stack.getParent().getElementId())) {
 				continue;
 			}
@@ -294,7 +294,7 @@ public class PerspectiveBuilder {
 	}
 
 	private void hideUrenderableSashes() {
-		for (MPartSashContainer sash : modelService.findElements(perspective, null, MPartSashContainer.class, null)) {
+		for (MPartSashContainer sash : modelService.findElements(perspective, null, MPartSashContainer.class)) {
 			hideUnrenderableSash(sash);
 		}
 	}

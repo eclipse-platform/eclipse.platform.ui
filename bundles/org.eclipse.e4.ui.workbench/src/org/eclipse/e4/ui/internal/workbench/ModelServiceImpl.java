@@ -538,7 +538,7 @@ public class ModelServiceImpl implements EModelService {
 		// the model processor classes
 		EPlaceholderResolver resolver = appContext.get(EPlaceholderResolver.class);
 		// Re-resolve any placeholder references
-		List<MPlaceholder> phList = findElements(element, null, MPlaceholder.class, null);
+		List<MPlaceholder> phList = findElements(element, null, MPlaceholder.class);
 		List<MPlaceholder> nullRefList = new ArrayList<>();
 		for (MPlaceholder ph : phList) {
 			if (resolveAlways) {
@@ -980,7 +980,7 @@ public class ModelServiceImpl implements EModelService {
 
 	@Override
 	public MPerspective getActivePerspective(MWindow window) {
-		List<MPerspectiveStack> pStacks = findElements(window, null, MPerspectiveStack.class, null);
+		List<MPerspectiveStack> pStacks = findElements(window, null, MPerspectiveStack.class);
 		if (pStacks.size() == 1) {
 			MPerspective perspective = pStacks.get(0).getSelectedElement();
 			return perspective;
@@ -1108,7 +1108,7 @@ public class ModelServiceImpl implements EModelService {
 		if (perspective != null) {
 			persps.add(perspective);
 		} else {
-			persps = findElements(window, null, MPerspective.class, null);
+			persps = findElements(window, null, MPerspective.class);
 		}
 
 		for (MPerspective persp : persps) {

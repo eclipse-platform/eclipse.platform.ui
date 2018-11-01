@@ -164,8 +164,7 @@ public class ModeledPageLayout implements IPageLayout {
 
 			window.getSharedElements().add(sharedArea);
 		} else {
-			List<MPartStack> stacks = modelService.findElements(sharedArea, null, MPartStack.class,
-					null);
+			List<MPartStack> stacks = modelService.findElements(sharedArea, null, MPartStack.class);
 			if (!stacks.isEmpty()) {
 				editorStack = stacks.get(0);
 			}

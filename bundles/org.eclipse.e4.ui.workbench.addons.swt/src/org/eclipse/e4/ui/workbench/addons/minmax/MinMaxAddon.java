@@ -309,8 +309,7 @@ public class MinMaxAddon {
 		if (winShell == null) {
 			return;
 		}
-		List<MToolControl> tcList = modelService.findElements(window, null, MToolControl.class,
-				null);
+		List<MToolControl> tcList = modelService.findElements(window, null, MToolControl.class);
 
 		final MPerspective curPersp = ps.getSelectedElement();
 		if (curPersp != null) {
@@ -428,8 +427,7 @@ public class MinMaxAddon {
 			return;
 		}
 
-		List<MToolControl> trimStacks = modelService.findElements(perspWin, null,
-				MToolControl.class, null);
+		List<MToolControl> trimStacks = modelService.findElements(perspWin, null, MToolControl.class);
 		for (MToolControl trimStack : trimStacks) {
 			// Only care about MToolControls that are TrimStacks
 			if (TrimStack.CONTRIBUTION_URI.equals(trimStack.getContributionURI())) {
@@ -585,8 +583,7 @@ public class MinMaxAddon {
 			if (element.getWidget() instanceof CTabFolder) {
 				return (CTabFolder) element.getWidget();
 			}
-			List<MPartStack> stacks = modelService.findElements(element, null, MPartStack.class,
-					null);
+			List<MPartStack> stacks = modelService.findElements(element, null, MPartStack.class);
 			for (MPartStack stack : stacks) {
 				if (stack.getWidget() instanceof CTabFolder) {
 					return (CTabFolder) stack.getWidget();
@@ -737,8 +734,7 @@ public class MinMaxAddon {
 				// special case for windows with no perspectives (eg bug 372614:
 				// intro part with no perspectives). We know we're outside
 				// of the perspective stack, so find it top-down
-				List<MPerspectiveStack> pStacks = modelService.findElements(win, null,
-						MPerspectiveStack.class, null);
+				List<MPerspectiveStack> pStacks = modelService.findElements(win, null, MPerspectiveStack.class);
 				perspStack = (pStacks.size() > 0) ? pStacks.get(0) : null;
 			} else {
 				perspStack = persp.getParent();
@@ -959,8 +955,7 @@ public class MinMaxAddon {
 		// Find the Perspective Stack
 		int loc = modelService.getElementLocation(element);
 		if ((loc & EModelService.OUTSIDE_PERSPECTIVE) != 0) {
-			List<MPerspectiveStack> psList = modelService.findElements(win, null,
-					MPerspectiveStack.class, null);
+			List<MPerspectiveStack> psList = modelService.findElements(win, null, MPerspectiveStack.class);
 			if (psList.size() == 1) {
 				MPerspectiveStack perspStack = psList.get(0);
 				if (element != perspStack && perspStack != null

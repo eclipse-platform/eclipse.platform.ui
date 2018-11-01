@@ -390,7 +390,7 @@ public class CoolBarToTrimManager extends ContributionManager implements ICoolBa
 	public IContributionItem[] getItems() {
 		ArrayList<IContributionItem> items = new ArrayList<>();
 
-		List<MToolBar> toolBars = modelService.findElements(window, null, MToolBar.class, null);
+		List<MToolBar> toolBars = modelService.findElements(window, null, MToolBar.class);
 		for (final MToolBar tb : toolBars) {
 			if (tb.getTransientData().get(OBJECT) != null) {
 				items.add((IContributionItem) tb.getTransientData().get(OBJECT));

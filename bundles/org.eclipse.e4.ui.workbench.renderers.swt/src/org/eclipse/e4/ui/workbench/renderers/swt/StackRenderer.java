@@ -206,8 +206,7 @@ public class StackRenderer extends LazyStackRenderer implements IPreferenceChang
 			}
 		} else if (part.getCurSharedRef() != null) {
 			MWindow topWin = modelService.getTopLevelWindowFor(part);
-			List<MPlaceholder> partRefs = modelService.findElements(topWin, part.getElementId(), MPlaceholder.class,
-					null);
+			List<MPlaceholder> partRefs = modelService.findElements(topWin, part.getElementId(), MPlaceholder.class);
 			for (MPlaceholder ref : partRefs) {
 				CTabItem item = findItemForPart(ref, null);
 				if (item != null) {

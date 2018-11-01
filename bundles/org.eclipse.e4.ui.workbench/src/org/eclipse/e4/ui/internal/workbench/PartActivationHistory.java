@@ -267,8 +267,7 @@ class PartActivationHistory {
 			}
 
 			// no sibling candidate, find another part in the area to activate
-			candidate = findActivationCandidate(
-					modelService.findElements(area, null, MPart.class, null), part);
+			candidate = findActivationCandidate(modelService.findElements(area, null, MPart.class), part);
 			if (candidate != null) {
 				return candidate;
 			}
@@ -290,8 +289,7 @@ class PartActivationHistory {
 		if (full) {
 			generalActivationHistory.remove(part);
 		} else {
-			for (MPlaceholder placeholder : modelService.findElements(window, null,
-					MPlaceholder.class, null)) {
+			for (MPlaceholder placeholder : modelService.findElements(window, null, MPlaceholder.class)) {
 				// if there is at least one placeholder around, we should keep this
 				if (placeholder.getRef() == part && placeholder.isToBeRendered()) {
 					return;

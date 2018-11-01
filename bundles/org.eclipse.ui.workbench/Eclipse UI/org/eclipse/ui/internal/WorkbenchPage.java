@@ -880,7 +880,7 @@ public class WorkbenchPage implements IWorkbenchPage {
 
 		if (element instanceof MArea) {
 			// If it's an MArea in this window install the DND handling
-			if (modelService.findElements(window, null, MArea.class, null).contains(element)) {
+			if (modelService.findElements(window, null, MArea.class).contains(element)) {
 				if (newValue instanceof Control) {
 					installAreaDropSupport((Control) newValue);
 				}
@@ -1103,8 +1103,8 @@ public class WorkbenchPage implements IWorkbenchPage {
 	private List<EditorReference> getOrderedEditorReferences() {
 
 		List<EditorReference> editorRefs = new ArrayList<>();
-		List<MPart> visibleEditors = modelService.findElements(window,
-				CompatibilityEditor.MODEL_ELEMENT_ID, MPart.class, null);
+		List<MPart> visibleEditors = modelService.findElements(window, CompatibilityEditor.MODEL_ELEMENT_ID,
+				MPart.class);
 		for (MPart editor : visibleEditors) {
 			if (editor.isToBeRendered()) {
 				EditorReference ref = getEditorReference(editor);
@@ -2119,8 +2119,7 @@ public class WorkbenchPage implements IWorkbenchPage {
 		}
 		if (area != null && area.isVisible() && area.isToBeRendered()) {
 			// we have a shared area, try iterating over its editors first
-			List<MPart> editors = modelService.findElements(area,
-					CompatibilityEditor.MODEL_ELEMENT_ID, MPart.class, null);
+			List<MPart> editors = modelService.findElements(area, CompatibilityEditor.MODEL_ELEMENT_ID, MPart.class);
 			for (MPart model : editors) {
 				Object object = model.getObject();
 				if (object instanceof CompatibilityEditor) {
@@ -2996,7 +2995,7 @@ public class WorkbenchPage implements IWorkbenchPage {
 		if (perspective == null) {
 			return Collections.emptyList();
 		}
-		return modelService.findElements(perspective, null, MPartStack.class, null);
+		return modelService.findElements(perspective, null, MPartStack.class);
 	}
 
 	private EventHandler selectionHandler = event -> {
@@ -4197,7 +4196,7 @@ public class WorkbenchPage implements IWorkbenchPage {
 	private void handleNullRefPlaceHolders(MUIElement element, MWindow refWin) {
 		List<MPlaceholder> nullRefList = ((ModelServiceImpl) modelService).getNullRefPlaceHolders(element, refWin);
 
-		List<MPart> partList = modelService.findElements(element, null, MPart.class, null);
+		List<MPart> partList = modelService.findElements(element, null, MPart.class);
 		for (MPart part : partList) {
 			if (CompatibilityPart.COMPATIBILITY_VIEW_URI.equals(part.getContributionURI())
 					&& part.getIconURI() == null) {
@@ -4283,8 +4282,7 @@ public class WorkbenchPage implements IWorkbenchPage {
 		if (_perspectiveStack != null) {
 			return _perspectiveStack;
 		}
-		List<MPerspectiveStack> theStack = modelService.findElements(window, null,
-				MPerspectiveStack.class, null);
+		List<MPerspectiveStack> theStack = modelService.findElements(window, null, MPerspectiveStack.class);
 		if (theStack.size() > 0) {
 			_perspectiveStack = theStack.get(0);
 			return _perspectiveStack;
@@ -4539,8 +4537,7 @@ public class WorkbenchPage implements IWorkbenchPage {
 
 	@Override
 	public IPerspectiveDescriptor[] getOpenPerspectives() {
-		MPerspectiveStack perspectiveStack = modelService.findElements(window, null,
-				MPerspectiveStack.class, null).get(0);
+		MPerspectiveStack perspectiveStack = modelService.findElements(window, null, MPerspectiveStack.class).get(0);
 		IPerspectiveRegistry registry = PlatformUI.getWorkbench().getPerspectiveRegistry();
 
 		ArrayList<IPerspectiveDescriptor> tmp = new ArrayList<>(

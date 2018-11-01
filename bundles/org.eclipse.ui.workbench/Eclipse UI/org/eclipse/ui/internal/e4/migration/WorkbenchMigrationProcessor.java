@@ -169,8 +169,8 @@ public class WorkbenchMigrationProcessor {
 		for (IStickyViewDescriptor stickyView : stickyViews) {
 			removeStickyViewFromPerspectives(stickyView, window);
 		}
-		for (MPartStack stickyFolder : modelService.findElements(application,
-				StickyViewDescriptor.STICKY_FOLDER_RIGHT, MPartStack.class, null)) {
+		for (MPartStack stickyFolder : modelService.findElements(application, StickyViewDescriptor.STICKY_FOLDER_RIGHT,
+				MPartStack.class)) {
 			fillStickyFolder(stickyViews, stickyFolder);
 		}
 	}

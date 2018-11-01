@@ -753,8 +753,7 @@ public class TrimStack {
 
 			MPerspective persp = null;
 			if (perspId != null) {
-				List<MPerspective> perspectives = modelService.findElements(ps.get(0), perspId, MPerspective.class,
-						null);
+				List<MPerspective> perspectives = modelService.findElements(ps.get(0), perspId, MPerspective.class);
 				if (perspectives != null && !perspectives.isEmpty()) {
 					persp = perspectives.get(0);
 				}

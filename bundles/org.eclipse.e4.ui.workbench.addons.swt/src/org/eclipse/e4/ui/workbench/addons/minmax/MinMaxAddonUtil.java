@@ -252,8 +252,7 @@ public class MinMaxAddonUtil {
 			if (placeholder.getRef().getTags().contains(MIN_MAXIMIZEABLE_CHILDREN_AREA_TAG)) {
 				foundRelevantArea = true;
 			}
-			List<MPartStack> partStacks = modelService.findElements(placeholder, null, MPartStack.class,
-					null);
+			List<MPartStack> partStacks = modelService.findElements(placeholder, null, MPartStack.class);
 			for (MPartStack partStack : partStacks) {
 				if (partStack == element) {
 					continue;

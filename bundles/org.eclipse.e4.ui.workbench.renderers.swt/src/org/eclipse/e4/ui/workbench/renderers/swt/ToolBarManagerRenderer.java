@@ -330,7 +330,7 @@ public class ToolBarManagerRenderer extends SWTPartRenderer {
 	@Inject
 	@Optional
 	private void subscribeTopicAppStartup(@UIEventTopic(UIEvents.UILifeCycle.APP_STARTUP_COMPLETE) Event event) {
-		List<MToolBar> toolBars = modelService.findElements(application, null, MToolBar.class, null);
+		List<MToolBar> toolBars = modelService.findElements(application, null, MToolBar.class);
 		for (MToolBar mToolBar : toolBars) {
 			if (mToolBar.getTags().contains(IPresentationEngine.HIDDEN_EXPLICITLY)) {
 				mToolBar.setVisible(false);
