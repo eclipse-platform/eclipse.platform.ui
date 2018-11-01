@@ -479,7 +479,7 @@ public class ModelServiceImpl implements EModelService {
 		MUIElement clone = (MUIElement) EcoreUtil.copy(eObj);
 
 		// null out all the references
-		List<MPlaceholder> phList = findElements(clone, null, MPlaceholder.class, null);
+		List<MPlaceholder> phList = findElements(clone, null, MPlaceholder.class);
 		for (MPlaceholder ph : phList) {
 			// Skip placeholders in the sharedArea
 			int location = getElementLocation(ph);

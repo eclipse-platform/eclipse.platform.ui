@@ -429,8 +429,7 @@ public class PerspectiveBuilder {
 			psc.setContainerData(Integer.toString(5000));
 			stack.setContainerData(Integer.toString(2500));
 			psc.getChildren().add(stack);
-			List<MPartSashContainer> list = modelService.findElements(perspective, null, MPartSashContainer.class,
-					null);
+			List<MPartSashContainer> list = modelService.findElements(perspective, null, MPartSashContainer.class);
 			if (list == null || list.isEmpty()) {
 				perspective.getChildren().add(psc);
 			} else {

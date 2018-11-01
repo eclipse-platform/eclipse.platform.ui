@@ -99,7 +99,7 @@ public class SplitHost {
 	}
 
 	void callingAllParts(Class<? extends Annotation> clz) {
-		List<MPart> parts = ms.findElements(myPart, null, MPart.class, null);
+		List<MPart> parts = ms.findElements(myPart, null, MPart.class);
 		for (MPart part : parts) {
 			if (part == myPart) {
 				continue;

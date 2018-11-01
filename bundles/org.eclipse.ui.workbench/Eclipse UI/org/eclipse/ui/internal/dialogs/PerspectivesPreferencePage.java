@@ -425,7 +425,7 @@ public class PerspectivesPreferencePage extends PreferencePage implements
 		MApplication application = ((Workbench) workbench).getApplication();
 		EModelService modelService = application.getContext().get(EModelService.class);
 
-		if (modelService.findElements(application, desc.getId(), MPerspective.class, null)
+		if (modelService.findElements(application, desc.getId(), MPerspective.class)
 				.isEmpty())
 			return true;
 

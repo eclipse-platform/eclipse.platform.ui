@@ -1735,8 +1735,8 @@ public class WorkbenchPage implements IWorkbenchPage {
 		if (persp != null) {
 			persp.getTags().add("PerspClosing"); //$NON-NLS-1$
 			try {
-				MPerspectiveStack perspectiveStack = modelService.findElements(window, null,
-						MPerspectiveStack.class, null).get(0);
+				MPerspectiveStack perspectiveStack = modelService.findElements(window, null, MPerspectiveStack.class)
+						.get(0);
 				if (perspectiveStack.getChildren().size() == 1) {
 					closeAllPerspectives(saveParts, closePage);
 				} else {
@@ -1787,7 +1787,7 @@ public class WorkbenchPage implements IWorkbenchPage {
 				// no save, no confirm, force
 				hidePart(part, false, true, true);
 			}
-			MPerspectiveStack perspectiveStack = modelService.findElements(window, null, MPerspectiveStack.class, null)
+			MPerspectiveStack perspectiveStack = modelService.findElements(window, null, MPerspectiveStack.class)
 					.get(0);
 			MPerspective current = perspectiveStack.getSelectedElement();
 			for (Object perspective : perspectiveStack.getChildren().toArray()) {

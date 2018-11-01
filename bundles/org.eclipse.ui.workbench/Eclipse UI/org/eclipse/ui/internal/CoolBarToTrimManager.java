@@ -199,7 +199,7 @@ public class CoolBarToTrimManager extends ContributionManager implements ICoolBa
 			separator.setToBeRendered(false);
 			separator.setElementId(item.getId());
 
-			List<MToolBar> toolbars = modelService.findElements(window, item.getId(), MToolBar.class, null);
+			List<MToolBar> toolbars = modelService.findElements(window, item.getId(), MToolBar.class);
 			MToolBar toolBar = toolbars.isEmpty() ? null : toolbars.get(0);
 			boolean tbFound = toolBar != null;
 			if (!tbFound) {
@@ -284,7 +284,7 @@ public class CoolBarToTrimManager extends ContributionManager implements ICoolBa
 
 	@Override
 	public void appendToGroup(String groupName, IContributionItem item) {
-		List<MToolBar> toolBars = modelService.findElements(window, groupName, MToolBar.class, null);
+		List<MToolBar> toolBars = modelService.findElements(window, groupName, MToolBar.class);
 		if (toolBars.size() == 1) {
 			MToolBar el = toolBars.get(0);
 			MTrimBar trimBar = getTrim(el);

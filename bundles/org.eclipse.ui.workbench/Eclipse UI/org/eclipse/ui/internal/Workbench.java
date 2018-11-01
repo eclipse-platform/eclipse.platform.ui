@@ -1315,7 +1315,7 @@ public final class Workbench extends EventManager implements IWorkbench,
 		// the trim elements that need to be removed are stored in the trimBar.
 		setSearchContribution(appCopy, false);
 		EModelService modelService = context.get(EModelService.class);
-		List<MWindow> windows = modelService.findElements(appCopy, null, MWindow.class, null);
+		List<MWindow> windows = modelService.findElements(appCopy, null, MWindow.class);
 		for (MWindow window : windows) {
 			if (window instanceof MTrimmedWindow) {
 				MTrimmedWindow trimmedWindow = (MTrimmedWindow) window;
@@ -1332,7 +1332,7 @@ public final class Workbench extends EventManager implements IWorkbench,
 		appCopy.getToolBarContributions().clear();
 		appCopy.getTrimContributions().clear();
 
-		List<MPart> parts = modelService.findElements(appCopy, null, MPart.class, null);
+		List<MPart> parts = modelService.findElements(appCopy, null, MPart.class);
 		for (MPart part : parts) {
 			for (MMenu menu : part.getMenus()) {
 				menu.getChildren().clear();

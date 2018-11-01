@@ -334,7 +334,7 @@ public class WBWRenderer extends SWTPartRenderer {
 	 */
 	private boolean closeDetachedWindow(MWindow window) {
 		EPartService partService = window.getContext().get(EPartService.class);
-		List<MPart> parts = modelService.findElements(window, null, MPart.class, null);
+		List<MPart> parts = modelService.findElements(window, null, MPart.class);
 		// this saves one part at a time, not ideal but better than not saving
 		// at all
 		for (MPart part : parts) {
@@ -640,7 +640,7 @@ public class WBWRenderer extends SWTPartRenderer {
 		} else if (parent != null) {
 			window.setToBeRendered(false);
 			// this is a detached window, check for parts
-			if (modelService.findElements(window, null, MPart.class, null)
+			if (modelService.findElements(window, null, MPart.class)
 					.isEmpty()) {
 				// if no parts, remove it
 				if (parent instanceof MWindow) {
