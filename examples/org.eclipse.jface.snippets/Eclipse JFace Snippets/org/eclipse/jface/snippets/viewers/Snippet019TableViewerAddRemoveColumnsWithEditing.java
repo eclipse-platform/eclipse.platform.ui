@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2014 Tom Schindl and others.
+ * Copyright (c) 2006, 2018 Tom Schindl and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -42,7 +42,7 @@ import org.eclipse.swt.widgets.Shell;
  * @author Tom Schindl <tom.schindl@bestsolution.at>
  * @since 3.2
  */
-public class Snippet019TableViewerAddRemoveColumnsWithEditingNewAPI {
+public class Snippet019TableViewerAddRemoveColumnsWithEditing {
 
 	public class Person {
 		public String givenname;
@@ -171,7 +171,7 @@ public class Snippet019TableViewerAddRemoveColumnsWithEditingNewAPI {
 
 	private TableViewerColumn column;
 
-	public Snippet019TableViewerAddRemoveColumnsWithEditingNewAPI(Shell shell) {
+	public Snippet019TableViewerAddRemoveColumnsWithEditing(Shell shell) {
 		final TableViewer v = new TableViewer(shell, SWT.BORDER
 				| SWT.FULL_SELECTION);
 
@@ -305,7 +305,7 @@ public class Snippet019TableViewerAddRemoveColumnsWithEditingNewAPI {
 
 		Shell shell = new Shell(display);
 		shell.setLayout(new FillLayout());
-		new Snippet019TableViewerAddRemoveColumnsWithEditingNewAPI(shell);
+		new Snippet019TableViewerAddRemoveColumnsWithEditing(shell);
 		shell.open();
 
 		while (!shell.isDisposed()) {
