@@ -19,6 +19,9 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.List;
 import org.eclipse.e4.core.contexts.ContextInjectionFactory;
 import org.eclipse.e4.core.contexts.IEclipseContext;
@@ -29,6 +32,7 @@ import org.eclipse.e4.ui.internal.workbench.swt.E4Application;
 import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.commands.MCommand;
 import org.eclipse.e4.ui.model.application.commands.MHandler;
+import org.eclipse.e4.ui.model.application.ui.basic.MBasicFactory;
 import org.eclipse.e4.ui.model.application.ui.basic.MWindow;
 import org.eclipse.e4.ui.model.application.ui.basic.MWindowElement;
 import org.eclipse.e4.ui.model.application.ui.menu.MMenu;
@@ -48,7 +52,6 @@ import org.osgi.util.tracker.ServiceTracker;
 
 public class ResourceHandlerTest {
 	private ServiceTracker locationTracker;
-
 
 	private MApplication application;
 
@@ -152,10 +155,9 @@ public class ResourceHandlerTest {
 	@Test
 	public void testXPathModelProcessor() {
 		/**
-		 * We will now test the various ways an element can be contributed to
-		 * multiple parents. ModelFragments.e4xmi has been configured to add 2
-		 * menus to the Main Menu. These menus will receive our test
-		 * contributions.
+		 * We will now test the various ways an element can be contributed to multiple
+		 * parents. ModelFragments.e4xmi has been configured to add 2 menus to the Main
+		 * Menu. These menus will receive our test contributions.
 		 */
 		MMenu mainMenu = application.getChildren().get(0).getMainMenu();
 		assertNotNull(mainMenu);
@@ -185,4 +187,46 @@ public class ResourceHandlerTest {
 		return null;
 	}
 
+	@Test
+	public void testDynamicElementsDoNotGetPersisted() throws IOException {
+		URI uri = URI.createPlatformPluginURI("org.eclipse.e4.ui.tests/xmi/modelprocessor/base.e4xmi", true);
+
+		ResourceHandler handler = createHandler(uri);
+		Resource resource = handler.loadMostRecentModel();
+		MApplication application = (MApplication) resource.getContents().get(0);
+		assertNotNull(application);
+		assertEquals(2, application.getChildren().size());
+
+		MWindow dynamicWindow = MBasicFactory.INSTANCE.createWindow();
+		dynamicWindow.setLabel("Dynamically generated window");
+		application.getChildren().add(dynamicWindow);
+
+		Path changedOutput = Files.createTempFile(null, null);
+		changedOutput.toFile().deleteOnExit();
+		URI changedUri = URI.createFileURI(changedOutput.toString());
+		resource.setURI(changedUri);
+		handler.save();
+
+		// make sure changed model contains one more child element
+		ResourceHandler verifyHandler = createHandler(changedUri);
+		Resource verifyResource = verifyHandler.loadMostRecentModel();
+		MApplication changedApplication = (MApplication) verifyResource.getContents().get(0);
+		assertEquals(3, changedApplication.getChildren().size());
+
+		// set dynamic flag on window
+		dynamicWindow.getTransientData().put(IWorkbench.PERSIST_STATE, false);
+
+		Path unchangedOutput = Files.createTempFile(null, null);
+		unchangedOutput.toFile().deleteOnExit();
+		URI unchangedUri = URI.createFileURI(unchangedOutput.toString());
+		resource.setURI(unchangedUri);
+		handler.save();
+
+		// make sure unchanged model contains same amount of child elements as original
+		// model
+		verifyHandler = createHandler(unchangedUri);
+		verifyResource = verifyHandler.loadMostRecentModel();
+		MApplication unchangedApplication = (MApplication) verifyResource.getContents().get(0);
+		assertEquals(2, unchangedApplication.getChildren().size());
+	}
 }

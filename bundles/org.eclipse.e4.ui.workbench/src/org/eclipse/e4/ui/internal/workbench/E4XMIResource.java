@@ -31,6 +31,7 @@ import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EcoreFactory;
 import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.emf.ecore.xmi.XMLHelper;
+import org.eclipse.emf.ecore.xmi.XMLSave;
 import org.eclipse.emf.ecore.xmi.impl.XMIHelperImpl;
 import org.eclipse.emf.ecore.xmi.impl.XMIResourceImpl;
 
@@ -196,5 +197,15 @@ public class E4XMIResource extends XMIResourceImpl {
 			}
 
 		};
+	}
+
+	/*
+	 * Create custom XML save to allow filtering of volatile UI elements.
+	 *
+	 * @generated NOT
+	 */
+	@Override
+	protected XMLSave createXMLSave() {
+		return new E4XMISave(createXMLHelper());
 	}
 }
