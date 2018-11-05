@@ -20,9 +20,12 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.CancellationException;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Function;
 import java.util.stream.Collectors;
+
+import org.osgi.framework.Bundle;
 
 import org.eclipse.swt.graphics.Rectangle;
 
@@ -151,9 +154,19 @@ public class CodeMiningManager implements Runnable {
 	}
 
 	private static void logCodeMiningProviderException(Throwable e) {
+		if (e != null && (e instanceof CancellationException || (e.getCause() != null && e.getCause() instanceof CancellationException))) {
+			return;
+		}
 		String PLUGIN_ID= "org.eclipse.jface.text"; //$NON-NLS-1$
-		ILog log= Platform.getLog(Platform.getBundle(PLUGIN_ID));
-		log.log(new Status(IStatus.ERROR, PLUGIN_ID, IStatus.OK, e.getMessage(), e));
+		Bundle plugin= Platform.getBundle(PLUGIN_ID);
+		if (plugin != null) {
+			// In OSGi context, uses Platform Text log
+			ILog log= Platform.getLog(plugin);
+			log.log(new Status(IStatus.ERROR, PLUGIN_ID, IStatus.OK, e.getMessage(), e));
+		} else {
+			// In java main context, print stack trace
+			System.err.println("Error while code mining process: " + e.getMessage()); //$NON-NLS-1$
+		}
 	}
 
 	/**
