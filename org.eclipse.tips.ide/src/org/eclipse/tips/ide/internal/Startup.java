@@ -13,6 +13,9 @@
  *******************************************************************************/
 package org.eclipse.tips.ide.internal;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -57,6 +60,7 @@ public class Startup implements IStartup {
 	}
 
 	public static void loadProviders() {
+		Set<String> disabledProviders = new HashSet<>(TipsPreferences.getDisabledProviderIds());
 		IConfigurationElement[] elements = Platform.getExtensionRegistry()
 				.getConfigurationElementsFor("org.eclipse.tips.core.tips"); //$NON-NLS-1$
 		for (IConfigurationElement element : elements) {
@@ -64,7 +68,11 @@ public class Startup implements IStartup {
 				try {
 					TipProvider provider = (TipProvider) element.createExecutableExtension("class"); //$NON-NLS-1$
 					provider.setExpression(getExpression(element));
-					IDETipManager.getInstance().register(provider);
+					String providerId = provider.getID();
+					boolean isDisabled = disabledProviders.contains(providerId);
+					if (!isDisabled) {
+						IDETipManager.getInstance().register(provider);
+					}
 				} catch (CoreException e) {
 					log(e);
 				}

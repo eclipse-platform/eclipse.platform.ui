@@ -16,6 +16,7 @@ package org.eclipse.tips.ide.internal;
 import java.io.File;
 import java.io.FilenameFilter;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
@@ -26,7 +27,10 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.preferences.AbstractPreferenceInitializer;
 import org.eclipse.core.runtime.preferences.ConfigurationScope;
+import org.eclipse.core.runtime.preferences.DefaultScope;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
+import org.eclipse.core.runtime.preferences.IPreferencesService;
+import org.eclipse.core.runtime.preferences.IScopeContext;
 import org.eclipse.jface.preference.PreferenceStore;
 import org.eclipse.tips.core.internal.TipManager;
 import org.osgi.framework.Bundle;
@@ -52,13 +56,20 @@ public class TipsPreferences extends AbstractPreferenceInitializer {
 	 */
 	public static final String PREF_SERVE_READ_TIPS = "serve_read_tips"; //$NON-NLS-1$
 
+	/**
+	 * Preference store key to indicate providers which are disabled. I.e. no tips
+	 * are shown from these providers. The providers are indicated by their
+	 * identifiers, the identifiers are strings separated by commas.
+	 */
+	public static final String PREF_DISABLED_PROVIDERS = "disabled_providers"; //$NON-NLS-1$
+
 	public TipsPreferences() {
 	}
 
 	@Override
 	public void initializeDefaultPreferences() {
 		IEclipsePreferences node = getPreferences();
-		node.putInt(PREF_STARTUP_BEHAVIOR, TipManager.START_DIALOG);
+		node.putInt(PREF_STARTUP_BEHAVIOR, TipManager.START_BACKGROUND);
 		node.putBoolean(PREF_SERVE_READ_TIPS, false);
 		try {
 			node.flush();
@@ -227,5 +238,19 @@ public class TipsPreferences extends AbstractPreferenceInitializer {
 	 */
 	public static boolean isConsoleLog() {
 		return !System.getProperty("org.eclipse.tips.consolelog", FALSE).equals(FALSE); //$NON-NLS-1$
+	}
+
+	/**
+	 * @return A list of tip provider identifiers, which are disabled with a
+	 *         preference on the configuration scope.
+	 */
+	public static List<String> getDisabledProviderIds() {
+		IScopeContext[] scopes = { ConfigurationScope.INSTANCE, DefaultScope.INSTANCE };
+		IPreferencesService preferencesService = Platform.getPreferencesService();
+		String defaultValue = "";
+		String disabledProviderIdsPreference = preferencesService.getString(Constants.BUNDLE_ID,
+				PREF_DISABLED_PROVIDERS, defaultValue, scopes);
+		String[] disabledProviderIds = disabledProviderIdsPreference.split(",");
+		return Arrays.asList(disabledProviderIds);
 	}
 }
