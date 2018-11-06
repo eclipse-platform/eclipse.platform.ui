@@ -24,7 +24,6 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.LabelProviderChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
-import org.eclipse.jface.viewers.TableTreeViewer;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerComparator;
@@ -412,9 +411,6 @@ public abstract class StructuredViewerTest extends ViewerTestCase {
     }
 
     public void testLabelProvider() {
-        // BUG: non-polymorphic behaviour
-        // if (fViewer instanceof TableViewer || fViewer instanceof TableTreeViewer)
-        // 	return;
         fViewer.setLabelProvider(getTestLabelProvider());
         TestElement first = fRootElement.getFirstChild();
         String newLabel = providedString(first);
@@ -429,9 +425,6 @@ public abstract class StructuredViewerTest extends ViewerTestCase {
     }
 
     public void testLabelProviderStateChange() {
-        // BUG: non-polymorphic behaviour
-        // if (fViewer instanceof TableViewer || fViewer instanceof TableTreeViewer)
-        // 	return;
         TestLabelProvider provider = new TestLabelProvider();
         fViewer.setLabelProvider(provider);
         provider.setSuffix("added suffix");
@@ -461,8 +454,7 @@ public abstract class StructuredViewerTest extends ViewerTestCase {
     }
 
     public void testRenameWithLabelProvider() {
-        if (fViewer instanceof TableViewer
-                || fViewer instanceof TableTreeViewer) {
+		if (fViewer instanceof TableViewer) {
 			return;
 		}
         fViewer.setLabelProvider(new TestLabelProvider());

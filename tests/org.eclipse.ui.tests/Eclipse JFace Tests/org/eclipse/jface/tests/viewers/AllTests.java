@@ -22,7 +22,7 @@ import org.junit.runners.Suite;
 		LazySortedCollectionTest.class, TreeViewerTest.class, VirtualTreeViewerTest.class, SimpleTreeViewerTest.class,
 		SimpleTableViewerTest.class, SimpleVirtualLazyTreeViewerTest.class, VirtualLazyTreeViewerTest.class,
 		TableViewerTest.class, TreeViewerColumnTest.class, VirtualTableViewerTest.class,
-		VirtualLazyTableViewerTest.class, TableTreeViewerTest.class, TableColorProviderTest.class,
+		VirtualLazyTableViewerTest.class, TableColorProviderTest.class,
 		TableFontProviderTest.class, ListViewerTest.class, CheckboxTableViewerTest.class,
 		CheckboxTableViewerTest.DeprecatedConstructor.class, CheckboxTableViewerTest.FactoryMethod.class,
 		CheckboxTreeViewerTest.class, ComboViewerTest.class, CComboViewerTest.class, TreeViewerComparatorTest.class,
