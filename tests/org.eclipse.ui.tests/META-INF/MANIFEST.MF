@@ -45,6 +45,7 @@ Require-Bundle: org.eclipse.core.resources,
  org.hamcrest.core;bundle-version="1.3.0",
  org.hamcrest.library;bundle-version="1.3.0",
  org.mockito;bundle-version="2.13.0"
+Import-Package: javax.annotation
 Eclipse-AutoStart: true
 Export-Package: org.eclipse.ui.tests.api,
  org.eclipse.ui.tests.menus
