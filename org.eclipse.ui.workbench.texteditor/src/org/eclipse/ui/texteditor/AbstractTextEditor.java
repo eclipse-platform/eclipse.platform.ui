@@ -4707,8 +4707,9 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 			title= EditorMessages.Editor_error_activated_outofsync_title;
 			msg= NLSUtility.format(EditorMessages.Editor_error_activated_outofsync_message, inputName);
 
-			if (MessageDialog.openQuestion(shell, title, msg)) {
-
+			if (MessageDialog.open(MessageDialog.QUESTION, shell, title, msg, SWT.NONE,
+					new String[] { EditorMessages.Editor_error_replace_button_label,
+							EditorMessages.Editor_error_dontreplace_button_label }) == 0) {
 
 				try {
 					if (provider instanceof IDocumentProviderExtension) {

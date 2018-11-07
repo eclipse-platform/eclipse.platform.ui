@@ -52,6 +52,8 @@ final class EditorMessages extends NLS {
 	public static String Editor_error_save_outofsync_message;
 	public static String Editor_error_activated_outofsync_title;
 	public static String Editor_error_activated_outofsync_message;
+	public static String Editor_error_replace_button_label;
+	public static String Editor_error_dontreplace_button_label;
 	public static String Editor_error_activated_deleted_save_title;
 	public static String Editor_error_activated_deleted_save_message;
 	public static String Editor_error_activated_deleted_save_button_save;
