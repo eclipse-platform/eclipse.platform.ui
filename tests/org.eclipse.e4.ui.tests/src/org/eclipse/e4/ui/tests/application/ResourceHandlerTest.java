@@ -25,6 +25,7 @@ import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.ui.internal.workbench.E4Workbench;
 import org.eclipse.e4.ui.internal.workbench.E4XMIResource;
 import org.eclipse.e4.ui.internal.workbench.ResourceHandler;
+import org.eclipse.e4.ui.internal.workbench.swt.E4Application;
 import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.commands.MCommand;
 import org.eclipse.e4.ui.model.application.commands.MHandler;
@@ -37,6 +38,7 @@ import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.osgi.service.datalocation.Location;
+import org.junit.Before;
 import org.junit.Test;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.Filter;
@@ -44,13 +46,17 @@ import org.osgi.framework.FrameworkUtil;
 import org.osgi.framework.InvalidSyntaxException;
 import org.osgi.util.tracker.ServiceTracker;
 
-public class ResourceHandlerTest extends HeadlessStartupTest {
+public class ResourceHandlerTest {
 	private ServiceTracker locationTracker;
+
+
+	private MApplication application;
+
+	private Resource resource;
 
 	public Location getInstanceLocation() {
 		if (locationTracker == null) {
-			BundleContext context = FrameworkUtil.getBundle(
-					ResourceHandlerTest.class).getBundleContext();
+			BundleContext context = FrameworkUtil.getBundle(ResourceHandlerTest.class).getBundleContext();
 			Filter filter = null;
 			try {
 				filter = context.createFilter(Location.INSTANCE_FILTER);
@@ -65,27 +71,36 @@ public class ResourceHandlerTest extends HeadlessStartupTest {
 	}
 
 	private ResourceHandler createHandler(URI uri) {
-		IEclipseContext localContext = applicationContext.createChild();
+		IEclipseContext appContext = E4Application.createDefaultContext();
+		IEclipseContext localContext = appContext.createChild();
 		localContext.set(E4Workbench.INSTANCE_LOCATION, getInstanceLocation());
 		localContext.set(IWorkbench.PERSIST_STATE, Boolean.TRUE);
 		localContext.set(IWorkbench.CLEAR_PERSISTED_STATE, Boolean.TRUE);
 
 		localContext.set(E4Workbench.INITIAL_WORKBENCH_MODEL_URI, uri);
 
-		return ContextInjectionFactory
-				.make(ResourceHandler.class, localContext);
+		return ContextInjectionFactory.make(ResourceHandler.class, localContext);
+
+	}
+
+	@Before
+	public void setup() {
+		URI uri = URI.createPlatformPluginURI("org.eclipse.e4.ui.tests/xmi/modelprocessor/base.e4xmi", true);
+
+		ResourceHandler handler = createHandler(uri);
+		resource = handler.loadMostRecentModel();
+		application = (MApplication) resource.getContents().get(0);
 
 	}
 
 	@Test
-	public void testModelProcessor() {
-		URI uri = URI.createPlatformPluginURI(
-				"org.eclipse.e4.ui.tests/xmi/modelprocessor/base.e4xmi", true);
-
-		ResourceHandler handler = createHandler(uri);
-		Resource resource = handler.loadMostRecentModel();
-		MApplication application = (MApplication) resource.getContents().get(0);
+	public void testProcessedApplicationModelNotNull() {
 		assertNotNull(application);
+	}
+
+	@Test
+	public void testModelProcessor() {
+
 		assertEquals(2, application.getChildren().size());
 		MWindow mWindow2 = application.getChildren().get(1);
 		assertEquals("fragment.contributedWindow", mWindow2.getElementId());
@@ -115,9 +130,6 @@ public class ResourceHandlerTest extends HeadlessStartupTest {
 		List<MCommand> commands = application.getCommands();
 		MCommand expected = commands.get(0);
 
-		// TODO Assert below fails because the commands contain 726 elements but the
-		// handlers only 8 and the order of commands and handlers differs too.
-		// assertSame(expected, handlers.get(0).getCommand());
 		long count = handlers.stream().filter(x -> x.getCommand() == expected).count();
 		assertEquals(1, count);
 
@@ -139,13 +151,6 @@ public class ResourceHandlerTest extends HeadlessStartupTest {
 
 	@Test
 	public void testXPathModelProcessor() {
-
-		URI uri = URI.createPlatformPluginURI("org.eclipse.e4.ui.tests/xmi/modelprocessor/base.e4xmi", true);
-		ResourceHandler handler = createHandler(uri);
-		Resource resource = handler.loadMostRecentModel();
-		MApplication application = (MApplication) resource.getContents().get(0);
-		assertNotNull(application);
-
 		/**
 		 * We will now test the various ways an element can be contributed to
 		 * multiple parents. ModelFragments.e4xmi has been configured to add 2
