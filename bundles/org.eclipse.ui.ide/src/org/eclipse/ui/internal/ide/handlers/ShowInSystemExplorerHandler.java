@@ -31,7 +31,6 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.e4.core.services.statusreporter.StatusReporter;
 import org.eclipse.jface.util.Util;
-import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
@@ -140,13 +139,12 @@ public class ShowInSystemExplorerHandler extends AbstractHandler {
 	}
 
 	private IResource getSelectionResource(ExecutionEvent event) {
-		ISelection selection = HandlerUtil.getCurrentSelection(event);
-		if ((selection == null) || (selection.isEmpty())
-				|| (!(selection instanceof IStructuredSelection))) {
+		IStructuredSelection selection = HandlerUtil.getCurrentStructuredSelection(event);
+		if ((selection == null) || (selection.isEmpty())) {
 			return null;
 		}
 
-		Object selectedObject = ((IStructuredSelection) selection)
+		Object selectedObject = selection
 				.getFirstElement();
 		IResource item = Adapters.adapt(selectedObject, IResource.class);
 		return item;
