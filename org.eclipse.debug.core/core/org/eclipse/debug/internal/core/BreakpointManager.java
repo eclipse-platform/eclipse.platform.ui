@@ -1421,22 +1421,24 @@ public class BreakpointManager implements IBreakpointManager, IResourceChangeLis
 	}
 
 	@Override
-	public synchronized void enableTriggerPoints(IBreakpoint[] triggerPoints, boolean enable) {
+	public void enableTriggerPoints(IBreakpoint[] triggerPoints, boolean enable) {
 		IBreakpoint[] triggerPointArray = triggerPoints;
 		if (triggerPoints == null) {
 			if (enable) {
-				triggerPointArray = fTriggerPointDisabledList.toArray(new IBreakpoint[0]);
+				synchronized (fTriggerPointDisabledList) {
+					triggerPointArray = fTriggerPointDisabledList.toArray(new IBreakpoint[0]);
+				}
 			} else {
 				triggerPointArray = getTriggerPoints();
-				fTriggerPointDisabledList.clear();
 			}
 		}
+		List<IBreakpoint> toDisable = new ArrayList<>();
 		for (IBreakpoint iBreakpoint : triggerPointArray) {
 			try {
 				IMarker m = iBreakpoint.getMarker();
 				if (m != null && m.exists()) {
 					if (!enable && iBreakpoint.isEnabled()) {
-						fTriggerPointDisabledList.add(iBreakpoint);
+						toDisable.add(iBreakpoint);
 					}
 					iBreakpoint.setEnabled(enable);
 				}
@@ -1444,8 +1446,11 @@ public class BreakpointManager implements IBreakpointManager, IResourceChangeLis
 				// ignore
 			}
 		}
-		if (enable) {
+		synchronized (fTriggerPointDisabledList) {
 			fTriggerPointDisabledList.clear();
+			if (!enable) {
+				fTriggerPointDisabledList.addAll(toDisable);
+			}
 		}
 	}
 
