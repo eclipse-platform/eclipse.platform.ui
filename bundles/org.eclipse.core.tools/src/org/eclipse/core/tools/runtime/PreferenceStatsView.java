@@ -15,8 +15,10 @@ package org.eclipse.core.tools.runtime;
 
 import java.util.*;
 import org.eclipse.core.internal.preferences.EclipsePreferences;
-import org.eclipse.core.runtime.*;
-import org.eclipse.core.runtime.preferences.*;
+import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.QualifiedName;
+import org.eclipse.core.runtime.preferences.IEclipsePreferences;
+import org.eclipse.core.runtime.preferences.IPreferenceNodeVisitor;
 import org.eclipse.core.tools.*;
 import org.eclipse.jface.action.*;
 import org.eclipse.jface.text.*;
@@ -76,7 +78,7 @@ public class PreferenceStatsView extends SpyView {
 			reset();
 		}
 
-		void reset() {
+		private void reset() {
 			nodeCount = 0;
 			kvCount = 0;
 			emptyNodes = 0;
@@ -84,7 +86,7 @@ public class PreferenceStatsView extends SpyView {
 			nonEmptyNodes = new TreeSet<>();
 		}
 
-		int basicSizeof(IEclipsePreferences node) {
+		private int basicSizeof(IEclipsePreferences node) {
 			if (node instanceof EclipsePreferences)
 				return basicSizeof((EclipsePreferences) node);
 
@@ -105,77 +107,11 @@ public class PreferenceStatsView extends SpyView {
 			return count;
 		}
 
-		int calculateOldSize() {
-			int count = 0;
-			IPluginRegistry registry = Platform.getPluginRegistry();
-			if (registry == null)
-				return count;
-			IPluginDescriptor[] descriptors = registry.getPluginDescriptors();
-			if (descriptors == null)
-				return count;
-			for (IPluginDescriptor desc : descriptors) {
-				//				if (desc.isPluginActivated())
-				count += calculateOldSizeFor(desc.getUniqueIdentifier());
-			}
-			return count;
-		}
-
-		int calculateOldSizeFor(String pluginID) {
-			int count = 0;
-			// 12 for the object header + 4 for each field
-			count += 12;
-
-			// dirty boolean
-			count += 4;
-
-			// listener list
-			// TODO
-			count += 4;
-
-			// Properties properties
-			count += 4;
-			IEclipsePreferences node = InstanceScope.INSTANCE.getNode(pluginID);
-			if (node != null) {
-				// add the key/value pairs
-				// TODO rough estimate
-				try {
-					String[] keys = node.keys();
-					for (String key : keys) {
-						count += sizeof(key);
-						String value = node.get(key, null);
-						count += sizeof(value);
-					}
-				} catch (BackingStoreException e) {
-					e.printStackTrace();
-				}
-			}
-
-			// Properties defaults
-			count += 4;
-			node = DefaultScope.INSTANCE.getNode(pluginID);
-			if (node != null) {
-				// add the key/value pairs
-				// TODO rough estimate
-				try {
-					String[] keys = node.keys();
-					for (String key : keys) {
-						count += sizeof(key);
-						String value = node.get(key, null);
-						count += sizeof(value);
-					}
-				} catch (BackingStoreException e) {
-					e.printStackTrace();
-				}
-			}
-
-			return count;
-		}
-
 		/*
 		 * 12 for the object header
 		 * 4 for each slot
 		 */
-		int basicSizeof(EclipsePreferences node) {
+		private int basicSizeof(EclipsePreferences node) {
 			int count = 12;
 
 			// name
@@ -230,7 +166,7 @@ public class PreferenceStatsView extends SpyView {
 			return count;
 		}
 
-		int basicSizeof(Map map) {
+		private int basicSizeof(Map map) {
 			if (map == null)
 				return 0;
 
@@ -249,7 +185,7 @@ public class PreferenceStatsView extends SpyView {
 		 * All sizeof tests should go through this central method to weed out
 		 * duplicates.
 		 */
-		int sizeof(Object object) {
+		private int sizeof(Object object) {
 			if (object == null)//|| DeepSize.ignore(object))
 				return 0;
 			if (object instanceof String)
@@ -270,7 +206,7 @@ public class PreferenceStatsView extends SpyView {
 			return 0;
 		}
 
-		void visitTree() throws BackingStoreException {
+		private void visitTree() throws BackingStoreException {
 			// count the number of nodes in the preferences tree
 			reset();
 			IPreferenceNodeVisitor visitor = node -> {
@@ -293,7 +229,6 @@ public class PreferenceStatsView extends SpyView {
 
 		void updateTextView() {
 			final StringBuilder buffer = new StringBuilder();
-			buffer.append("Size of Eclipse 2.1 preference objects: " + prettyPrint(calculateOldSize()) + "\n"); //$NON-NLS-1$ //$NON-NLS-2$
 			buffer.append("Total node count: " + prettyPrint(nodeCount) + "\n"); //$NON-NLS-1$ //$NON-NLS-2$
 			buffer.append("Nodes without keys: " + prettyPrint(emptyNodes) + "\n"); //$NON-NLS-1$ //$NON-NLS-2$
 			buffer.append("Key/value pairs: " + prettyPrint(kvCount) + "\n"); //$NON-NLS-1$ //$NON-NLS-2$
