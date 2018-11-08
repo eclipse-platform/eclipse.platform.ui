@@ -46,7 +46,7 @@ public class LocalHistoryBrowserView extends ViewPart {
 	Action refreshAction;
 	Action doubleClickAction;
 
-	class NameSorter extends ViewerSorter {
+	class NameSorter extends ViewerComparator {
 		// empty impl
 	}
 
@@ -229,7 +229,7 @@ public class LocalHistoryBrowserView extends ViewPart {
 		viewer.setContentProvider(new ViewContentProvider());
 		viewer.setLabelProvider(new ViewLabelProvider());
 		viewer.setInput(getViewSite());
-		viewer.setSorter(new NameSorter());
+		viewer.setComparator(new NameSorter());
 		makeActions();
 		hookContextMenu();
 		hookDoubleClickAction();

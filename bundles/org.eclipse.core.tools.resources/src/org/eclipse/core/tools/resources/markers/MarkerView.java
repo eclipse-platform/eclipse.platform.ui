@@ -34,6 +34,7 @@ import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.*;
 import org.eclipse.ui.actions.SelectionProviderAction;
 import org.eclipse.ui.actions.WorkspaceModifyOperation;
+import org.eclipse.ui.ide.IDE.SharedImages;
 import org.eclipse.ui.part.EditorPart;
 import org.eclipse.ui.part.ViewPart;
 import org.eclipse.ui.progress.IProgressService;
@@ -283,7 +284,7 @@ public class MarkerView extends ViewPart implements ISelectionListener, IResourc
 				}
 			}
 			if (newInput != null)
-				setTitle("MarkerView" + (currentResource == null ? "" : " " + currentResource.getFullPath().toString()));
+				setPartName("MarkerView" + (currentResource == null ? "" : " " + currentResource.getFullPath().toString()));
 		}
 
 		protected void findResourceMarkers(IResource resource) {
@@ -370,7 +371,7 @@ public class MarkerView extends ViewPart implements ISelectionListener, IResourc
 				try {
 					IMarker marker = (IMarker) obj;
 					if (marker.isSubtypeOf(IMarker.BOOKMARK)) {
-						imageKey = ISharedImages.IMG_OBJS_BKMRK_TSK;
+						imageKey = SharedImages.IMG_OBJS_BKMRK_TSK;
 					} else if (marker.isSubtypeOf(IMarker.PROBLEM)) {
 						imageKey = ISharedImages.IMG_OBJS_ERROR_TSK;
 						int severity = marker.getAttribute(IMarker.SEVERITY, IMarker.SEVERITY_WARNING);
@@ -388,7 +389,7 @@ public class MarkerView extends ViewPart implements ISelectionListener, IResourc
 								break;
 						}
 					} else if (marker.isSubtypeOf(IMarker.TASK))
-						imageKey = ISharedImages.IMG_OBJS_TASK_TSK;
+						imageKey = SharedImages.IMG_OBJS_TASK_TSK;
 				} catch (CoreException e) {
 					CoreResourcesToolsPlugin.logProblem(e);
 				}
@@ -588,10 +589,10 @@ public class MarkerView extends ViewPart implements ISelectionListener, IResourc
 	 * @see org.eclipse.core.runtime.IAdaptable#getAdapter(Class)
 	 */
 	@Override
-	public Object getAdapter(@SuppressWarnings("rawtypes") Class adapter) {
+	public <T> T getAdapter(Class<T> adapter) {
 		if (adapter == IPropertySheetPage.class) {
 			propertyPage = new MarkerViewPropertySheetPage(this);
-			return propertyPage;
+			return adapter.cast(propertyPage);
 		}
 		return super.getAdapter(adapter);
 	}
