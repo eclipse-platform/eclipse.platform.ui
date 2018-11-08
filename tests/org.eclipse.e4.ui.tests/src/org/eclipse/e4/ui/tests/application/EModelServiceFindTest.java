@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2015 IBM Corporation and others.
+ * Copyright (c) 2009, 2018 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -10,7 +10,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
- *     Lars Vogel <Lars.Vogel@gmail.com> - Bug 433228
+ *     Lars Vogel <Lars.Vogel@vogella.com> - Ongoing maitenance
  ******************************************************************************/
 package org.eclipse.e4.ui.tests.application;
 
@@ -57,11 +57,9 @@ public class EModelServiceFindTest {
 
 	MApplication app = null;
 
-
 	@Before
 	public void setUp() throws Exception {
 		applicationContext = E4Application.createDefaultContext();
-
 	}
 
 	@After
@@ -138,13 +136,13 @@ public class EModelServiceFindTest {
 		EModelService modelService = application.getContext().get(EModelService.class);
 		assertNotNull(modelService);
 
-		List<MUIElement> elements1 = modelService.findElements(application, "singleValidId", null, null);
+		List<MUIElement> elements1 = modelService.findElements(application, "singleValidId", null);
 		assertEquals(elements1.size(), 1);
 
-		List<MUIElement> elements2 = modelService.findElements(application, "twoValidIds", null, null);
+		List<MUIElement> elements2 = modelService.findElements(application, "twoValidIds", null);
 		assertEquals(elements2.size(), 2);
 
-		List<MUIElement> elements3 = modelService.findElements(application, "invalidId", null, null);
+		List<MUIElement> elements3 = modelService.findElements(application, "invalidId", null);
 		assertEquals(elements3.size(), 0);
 
 		List<MUIElement> elements4 = modelService.findElements(application, "menuItem1Id", null, null,
@@ -163,13 +161,13 @@ public class EModelServiceFindTest {
 		EModelService modelService = application.getContext().get(EModelService.class);
 		assertNotNull(modelService);
 
-		List<MPart> parts = modelService.findElements(application, null, MPart.class, null);
+		List<MPart> parts = modelService.findElements(application, null, MPart.class);
 		assertEquals(parts.size(), 3);
 
-		List<MPartStack> stacks = modelService.findElements(application, null, MPartStack.class, null);
+		List<MPartStack> stacks = modelService.findElements(application, null, MPartStack.class);
 		assertEquals(stacks.size(), 1);
 
-		List<MDirtyable> dirtyableElements = modelService.findElements(application, null, MDirtyable.class, null);
+		List<MDirtyable> dirtyableElements = modelService.findElements(application, null, MDirtyable.class);
 		assertEquals(dirtyableElements.size(), 3);
 
 		List<MMenuElement> menuElements = modelService.findElements(application, null, MMenuElement.class, null,
@@ -186,7 +184,7 @@ public class EModelServiceFindTest {
 		assertEquals(15, uiElements.size());
 
 		// Should match 0 since String is not an MUIElement
-		List<String> strings = modelService.findElements(application, null, String.class, null);
+		List<String> strings = modelService.findElements(application, null, String.class);
 		assertEquals(strings.size(), 0);
 	}
 
@@ -248,11 +246,11 @@ public class EModelServiceFindTest {
 		assertEquals(idAndTag.size(), 1);
 
 		List<MPartSashContainer> idAndTypeAndTags = modelService.findElements(application, "twoValidIds",
-				MPartSashContainer.class, null);
+				MPartSashContainer.class);
 		assertEquals(idAndTypeAndTags.size(), 1);
 
 		List<MPartSashContainer> badIdAndTypeAndTags = modelService.findElements(application, "invalidId",
-				MPartSashContainer.class, null);
+				MPartSashContainer.class);
 		assertEquals(badIdAndTypeAndTags.size(), 0);
 	}
 
@@ -270,7 +268,7 @@ public class EModelServiceFindTest {
 		}
 
 		try {
-			modelService.findElements(null, null, null, null);
+			modelService.findElements(null, null, null);
 			fail("An exception should have prevented a null parameter to findElements(*)");
 		} catch (IllegalArgumentException e) {
 			// expected
@@ -439,7 +437,7 @@ public class EModelServiceFindTest {
 
 
 
-		List<MPart> elements = modelService.findElements(window, null, MPart.class, null);
+		List<MPart> elements = modelService.findElements(window, null, MPart.class);
 		assertNotNull(elements);
 		assertEquals(1, elements.size());
 		assertEquals(part, elements.get(0));
