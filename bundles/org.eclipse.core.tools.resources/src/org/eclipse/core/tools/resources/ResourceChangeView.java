@@ -1,5 +1,5 @@
 /**********************************************************************
- * Copyright (c) 2002, 2015 Geoff Longman and others.
+ * Copyright (c) 2002, 2018 Geoff Longman and others.
  *
  *   This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -43,7 +43,7 @@ public class ResourceChangeView extends SpyView implements IResourceChangeListen
 		private IResource resource;
 
 		public DeltaNode() {
-			children = new ArrayList<DeltaNode>();
+			children = new ArrayList<>();
 		}
 
 		public DeltaNode(IResourceDelta delta) {
@@ -351,7 +351,7 @@ public class ResourceChangeView extends SpyView implements IResourceChangeListen
 		}
 	}
 
-	protected Set<Action> eventActions = new HashSet<Action>();
+	protected Set<Action> eventActions = new HashSet<>();
 	private Action PHANTOMS;
 	private Action POST_BUILD;
 

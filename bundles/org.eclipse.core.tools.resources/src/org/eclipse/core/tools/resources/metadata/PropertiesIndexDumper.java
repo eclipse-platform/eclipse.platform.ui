@@ -33,7 +33,7 @@ public class PropertiesIndexDumper extends AbstractDumper {
 		contents.append("entries: ");
 		contents.append(entryCount);
 		contents.append('\n');
-		List<String> qualifierIndex = new ArrayList<String>();
+		List<String> qualifierIndex = new ArrayList<>();
 		for (int i = 0; i < entryCount; i++) {
 			contents.append("Key: ");
 			contents.append(source.readUTF());

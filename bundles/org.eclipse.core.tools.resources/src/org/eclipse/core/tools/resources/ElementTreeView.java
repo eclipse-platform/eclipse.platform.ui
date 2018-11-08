@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2015 IBM Corporation and others.
+ * Copyright (c) 2002, 2018 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -81,7 +81,7 @@ public class ElementTreeView extends SpyView implements IResourceChangeListener 
 		List<Counter> sortedList;
 		int stringMemory;
 
-		final Map<String, Counter> strings = new HashMap<String, Counter>();
+		final Map<String, Counter> strings = new HashMap<>();
 		int syncInfoCount;
 		int syncInfoMemory;
 		int teamPrivateCount;
@@ -115,7 +115,7 @@ public class ElementTreeView extends SpyView implements IResourceChangeListener 
 		}
 
 		void analyzeStrings() {
-			sortedList = new ArrayList<Counter>(strings.values());
+			sortedList = new ArrayList<>(strings.values());
 			Collections.sort(sortedList);
 		}
 
@@ -323,7 +323,7 @@ public class ElementTreeView extends SpyView implements IResourceChangeListener 
 		 * objects, in decreasing order by the integer value.
 		 */
 		private List<Map.Entry<Object, Integer>> sortEntrySet(Set<Map.Entry<Object, Integer>> set) {
-			List<Map.Entry<Object, Integer>> result = new ArrayList<Map.Entry<Object, Integer>>();
+			List<Map.Entry<Object, Integer>> result = new ArrayList<>();
 			result.addAll(set);
 			Collections.sort(result, new Comparator<Map.Entry<Object, Integer>>() {
 				@Override
@@ -355,7 +355,6 @@ public class ElementTreeView extends SpyView implements IResourceChangeListener 
 			buffer.append("\tSync info: " + prettyPrint(syncInfoMemory) + "\n");
 			buffer.append("\tSession properties: " + prettyPrint(sessionSize) + "\n");
 			//breakdown of session property size by class
-			@SuppressWarnings("unchecked")
 			List<Map.Entry<Object, Integer>> sortedEntries = sortEntrySet(sessionPropertyMemory.getSizes().entrySet());
 			for (Map.Entry<Object, Integer> entry : sortedEntries) {
 				buffer.append("\t\t" + entry.getKey() + ": " + prettyPrint(entry.getValue().intValue()) + "\n");

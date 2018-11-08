@@ -1,5 +1,5 @@
 /**********************************************************************
- * Copyright (c) 2003, 2015 Geoff Longman and others.
+ * Copyright (c) 2003, 2018 Geoff Longman and others.
  *
  *   This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -52,7 +52,7 @@ public class MarkerExtensionModel {
 	static public String RESOURCES_TASK = IMarker.TASK;
 	static public String RESOURCES_BOOKMARK = IMarker.BOOKMARK;
 	static public String RESOURCES_TEXT = IMarker.TEXT;
-	Map<String, MarkerInfo> markerMap = new HashMap<String, MarkerInfo>();
+	Map<String, MarkerInfo> markerMap = new HashMap<>();
 
 	/**
 	 * Constructor for MarkerExtensionHandler.
@@ -97,8 +97,8 @@ public class MarkerExtensionModel {
 				IExtension extension = extensions[i];
 				String identifier = extension.getUniqueIdentifier();
 				boolean persistent = false;
-				ArrayList<String> supersList = new ArrayList<String>();
-				ArrayList<String> attributes = new ArrayList<String>();
+				ArrayList<String> supersList = new ArrayList<>();
+				ArrayList<String> attributes = new ArrayList<>();
 				IConfigurationElement[] configElements = extension.getConfigurationElements();
 				for (int j = 0; j < configElements.length; ++j) {
 					IConfigurationElement elt = configElements[j];

@@ -39,7 +39,7 @@ class SyncInfoDumpingStrategy_3 implements IStringDumpingStrategy {
 	@Override
 	public String dumpStringContents(DataInputStream dataInput) throws IOException, DumpException {
 		StringBuilder contents = new StringBuilder();
-		List<String> readPartners = new ArrayList<String>();
+		List<String> readPartners = new ArrayList<>();
 		String resourceName;
 		while (dataInput.available() > 0) {
 			resourceName = dataInput.readUTF();

@@ -1,5 +1,5 @@
 /**********************************************************************
- * Copyright (c) 2003, 2015 Geoff Longman and others.
+ * Copyright (c) 2003, 2018 Geoff Longman and others.
  *
  *   This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -73,7 +73,7 @@ public class MarkerView extends ViewPart implements ISelectionListener, IResourc
 	protected MarkerViewPropertySheetPage propertyPage;
 
 	class SelectionProvider implements ISelectionProvider {
-		private List<ISelectionChangedListener> listeners = new ArrayList<ISelectionChangedListener>();
+		private List<ISelectionChangedListener> listeners = new ArrayList<>();
 		private ISelection selection;
 
 		@Override

@@ -48,7 +48,7 @@ public class MarkersDumpingStrategy_3 implements IStringDumpingStrategy {
 	@Override
 	public String dumpStringContents(DataInputStream dataInput) throws IOException, DumpException {
 		StringBuilder contents = new StringBuilder();
-		List<String> markerTypes = new ArrayList<String>();
+		List<String> markerTypes = new ArrayList<>();
 		while (dataInput.available() > 0) {
 			String resourceName = dataInput.readUTF();
 			contents.append("Resource: "); //$NON-NLS-1$

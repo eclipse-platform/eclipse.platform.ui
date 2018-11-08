@@ -1,5 +1,5 @@
 /**********************************************************************
- * Copyright (c) 2003, 2015 Geoff Longman and others.
+ * Copyright (c) 2003, 2018 Geoff Longman and others.
  *
  *   This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -45,14 +45,14 @@ public class ReadOnlyMarkerPropertySource implements IPropertySource {
 
 	@Override
 	public IPropertyDescriptor[] getPropertyDescriptors() {
-		ArrayList<PropertyDescriptor> descriptors = new ArrayList<PropertyDescriptor>();
+		ArrayList<PropertyDescriptor> descriptors = new ArrayList<>();
 		findPropertyDescriptors(descriptors);
 		return descriptors.toArray(new IPropertyDescriptor[descriptors.size()]);
 	}
 
 	private void findPropertyDescriptors(ArrayList<PropertyDescriptor> descriptorList) {
 		try {
-			Set<String> attributesWithoutDescriptors = new HashSet<String>(marker.getAttributes().keySet());
+			Set<String> attributesWithoutDescriptors = new HashSet<>(marker.getAttributes().keySet());
 			findDeclaredPropertyDescriptorsFor(info, descriptorList, attributesWithoutDescriptors);
 			if (!attributesWithoutDescriptors.isEmpty()) {
 				// we have extra, undeclared attributes.
