@@ -421,6 +421,7 @@ public class IDEWorkbenchMessages extends NLS {
 	public static String WizardDataTransfer_existsQuestion;
 	public static String WizardDataTransfer_overwriteNameAndPathQuestion;
 	public static String WizardDataTransfer_exceptionMessage;
+	public static String WizardDataTransfer_overwrite_button_label;
 	public static String WizardTransferPage_selectTypes;
 	public static String WizardTransferPage_selectAll;
 	public static String WizardTransferPage_deselectAll;

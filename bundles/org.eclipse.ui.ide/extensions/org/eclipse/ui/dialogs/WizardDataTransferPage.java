@@ -295,8 +295,7 @@ public abstract class WizardDataTransferPage extends WizardPage implements Liste
         MessageDialog dialog = new MessageDialog(getContainer().getShell(),
                 IDEWorkbenchMessages.Question,
                 (Image) null, message, MessageDialog.NONE, 0,
-                IDialogConstants.YES_LABEL,
-                IDialogConstants.NO_LABEL) {
+				IDEWorkbenchMessages.WizardDataTransfer_overwrite_button_label, IDialogConstants.CANCEL_LABEL) { // $NON-NLS-1$
         	@Override
 			protected int getShellStyle() {
         		return super.getShellStyle() | SWT.SHEET;
