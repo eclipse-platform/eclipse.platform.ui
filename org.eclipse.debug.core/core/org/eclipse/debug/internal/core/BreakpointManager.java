@@ -80,14 +80,14 @@ public class BreakpointManager implements IBreakpointManager, IResourceChangeLis
 	/**
 	 * A collection of breakpoints registered with this manager.
 	 */
-	private Vector<IBreakpoint> fBreakpoints = null;
+	private Vector<IBreakpoint> fBreakpoints;
 
 	/**
 	 * Map of breakpoint import participants.
 	 * Map has the form:
 	 * <pre>Map(String - marker_id, List of {@link IBreakpointImportParticipant})</pre>
 	 */
-	private HashMap<String, ArrayList<BreakpointImportParticipantDelegate>> fImportParticipants = null;
+	private HashMap<String, ArrayList<BreakpointImportParticipantDelegate>> fImportParticipants;
 
 	/**
 	 * A system default import participant that performs legacy comparison support
@@ -95,7 +95,7 @@ public class BreakpointManager implements IBreakpointManager, IResourceChangeLis
 	 *
 	 * @since 3.5
 	 */
-	private IBreakpointImportParticipant fDefaultParticipant = null;
+	private IBreakpointImportParticipant fDefaultParticipant;
 
 	/**
 	 * A collection of breakpoint markers that have received a POST_CHANGE notification
@@ -103,20 +103,20 @@ public class BreakpointManager implements IBreakpointManager, IResourceChangeLis
 	 * to tell if a marker has been created & changed since the breakpoint has been
 	 * registered (see bug 138473).
 	 */
-	private Set<IMarker> fPostChangMarkersChanged = new HashSet<>();
+	private final Set<IMarker> fPostChangMarkersChanged = new HashSet<>();
 
 	/**
 	 * A collection of breakpoint markers that have received a POST_BUILD notification
 	 * of being added.
 	 */
-	private Set<IMarker> fPostBuildMarkersAdded = new HashSet<>();
+	private final Set<IMarker> fPostBuildMarkersAdded = new HashSet<>();
 
 	/**
 	 * Collection of breakpoints being added currently. Used to
 	 * suppress change notification of "REGISTERED" attribute when
 	 * being added.
 	 */
-	private List<IBreakpoint> fSuppressChange = new ArrayList<>();
+	private final List<IBreakpoint> fSuppressChange = new ArrayList<>();
 
 	/**
 	 * A table of breakpoint extension points, keyed by
@@ -124,19 +124,19 @@ public class BreakpointManager implements IBreakpointManager, IResourceChangeLis
 	 * key: a marker type
 	 * value: the breakpoint extension which corresponds to that marker type
 	 */
-	private HashMap<String, IConfigurationElement> fBreakpointExtensions;
+	private final HashMap<String, IConfigurationElement> fBreakpointExtensions;
 
 	/**
 	 * Collection of markers that associates markers to breakpoints
 	 * key: a marker
 	 * value: the breakpoint which contains that marker
 	 */
-	private HashMap<IMarker, IBreakpoint> fMarkersToBreakpoints;
+	private final HashMap<IMarker, IBreakpoint> fMarkersToBreakpoints;
 
 	/**
 	 * Collection of breakpoint listeners.
 	 */
-	private ListenerList<IBreakpointListener> fBreakpointListeners= new ListenerList<>();
+	private final ListenerList<IBreakpointListener> fBreakpointListeners = new ListenerList<>();
 
 	/**
 	 * Collection of (plural) breakpoint listeners.
@@ -153,18 +153,18 @@ public class BreakpointManager implements IBreakpointManager, IResourceChangeLis
 	 * Collection of breakpoint manager listeners which are
 	 * notified when this manager's state changes.
 	 */
-	private ListenerList<IBreakpointManagerListener> fBreakpointManagerListeners= new ListenerList<>();
+	private final ListenerList<IBreakpointManagerListener> fBreakpointManagerListeners = new ListenerList<>();
 
 	/**
 	 * Breakpoint which acts a the triggering point in a workspace.
 	 */
-	private Set<IBreakpoint> fTriggerPointBreakpointList = new LinkedHashSet<>();
+	private final Set<IBreakpoint> fTriggerPointBreakpointList = new LinkedHashSet<>();
 
 	/**
 	 * Trigger points disabled by system after the first trigger point is
 	 * enabled in a workspace.
 	 */
-	private Set<IBreakpoint> fTriggerPointDisabledList = new LinkedHashSet<>();
+	private final Set<IBreakpoint> fTriggerPointDisabledList = new LinkedHashSet<>();
 
 
 	/**
@@ -906,7 +906,7 @@ public class BreakpointManager implements IBreakpointManager, IResourceChangeLis
 					}
 				}
 			} catch (CoreException e) {
-				e.printStackTrace();
+				// ignore
 			}
 			return null;
 		}
@@ -1394,7 +1394,7 @@ public class BreakpointManager implements IBreakpointManager, IResourceChangeLis
 
 	@Override
 	public void removeAllTriggerPoints() throws CoreException {
-		IBreakpoint[] triggerPointBreakpointList = fTriggerPointBreakpointList.toArray(new IBreakpoint[0]);
+		IBreakpoint[] triggerPointBreakpointList = getTriggerPoints();
 		for (IBreakpoint iBreakpoint : triggerPointBreakpointList) {
 			if (iBreakpoint instanceof ITriggerPoint) {
 				((ITriggerPoint) iBreakpoint).setTriggerPoint(false);
@@ -1414,7 +1414,7 @@ public class BreakpointManager implements IBreakpointManager, IResourceChangeLis
 					return true;
 				}
 			} catch (CoreException e) {
-				e.printStackTrace();
+				// ignore
 			}
 		}
 		return false;
@@ -1422,18 +1422,16 @@ public class BreakpointManager implements IBreakpointManager, IResourceChangeLis
 
 	@Override
 	public synchronized void enableTriggerPoints(IBreakpoint[] triggerPoints, boolean enable) {
-		IBreakpoint[] triggerPointList = triggerPoints;
+		IBreakpoint[] triggerPointArray = triggerPoints;
 		if (triggerPoints == null) {
 			if (enable) {
-				triggerPointList = fTriggerPointDisabledList.toArray(new IBreakpoint[0]);
+				triggerPointArray = fTriggerPointDisabledList.toArray(new IBreakpoint[0]);
 			} else {
-				triggerPointList = fTriggerPointBreakpointList.toArray(new IBreakpoint[0]);
-				if (!fTriggerPointDisabledList.isEmpty()) {
-					fTriggerPointDisabledList = new LinkedHashSet<>();
-				}
+				triggerPointArray = getTriggerPoints();
+				fTriggerPointDisabledList.clear();
 			}
 		}
-		for (IBreakpoint iBreakpoint : triggerPointList) {
+		for (IBreakpoint iBreakpoint : triggerPointArray) {
 			try {
 				IMarker m = iBreakpoint.getMarker();
 				if (m != null && m.exists()) {
@@ -1443,11 +1441,11 @@ public class BreakpointManager implements IBreakpointManager, IResourceChangeLis
 					iBreakpoint.setEnabled(enable);
 				}
 			} catch (CoreException e) {
-				e.printStackTrace();
+				// ignore
 			}
 		}
 		if (enable) {
-			fTriggerPointDisabledList = new LinkedHashSet<>();
+			fTriggerPointDisabledList.clear();
 		}
 	}
 
