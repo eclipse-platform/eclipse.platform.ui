@@ -14,6 +14,10 @@
 
 package org.eclipse.e4.ui.tests.application;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertSame;
+
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.stream.Collectors;
@@ -23,7 +27,6 @@ import org.eclipse.e4.ui.model.application.MApplicationFactory;
 import org.eclipse.e4.ui.model.application.ui.basic.MBasicFactory;
 import org.eclipse.e4.ui.model.application.ui.basic.MTrimmedWindow;
 import org.eclipse.emf.ecore.EObject;
-import org.junit.Assert;
 import org.junit.Test;
 
 /**
@@ -44,28 +47,28 @@ public class E4ResourceTest {
 		String aId = r.getID((EObject) a);
 		String wId = r.getID((EObject) w);
 
-		Assert.assertNotNull(aId);
-		Assert.assertNotNull(wId);
-		assertEquals(r.getIDToEObjectMap(), r.getEObjectToIDMap());
+		assertNotNull(aId);
+		assertNotNull(wId);
+		assertThatMapsAreEquals(r.getIDToEObjectMap(), r.getEObjectToIDMap());
 
 		a.getChildren().remove(w);
-		assertEquals(r.getIDToEObjectMap(), r.getEObjectToIDMap());
+		assertThatMapsAreEquals(r.getIDToEObjectMap(), r.getEObjectToIDMap());
 
 		a.getChildren().add(w);
-		assertEquals(r.getIDToEObjectMap(), r.getEObjectToIDMap());
+		assertThatMapsAreEquals(r.getIDToEObjectMap(), r.getEObjectToIDMap());
 
 		a.getChildren().remove(w);
-		assertEquals(r.getIDToEObjectMap(), r.getEObjectToIDMap());
+		assertThatMapsAreEquals(r.getIDToEObjectMap(), r.getEObjectToIDMap());
 	}
 
-	private void assertEquals(Map<String, EObject> idToObject, Map<EObject, String> objectToId) {
-		Assert.assertEquals(idToObject.size(), objectToId.size());
+	private void assertThatMapsAreEquals(Map<String, EObject> idToObject, Map<EObject, String> objectToId) {
+		assertEquals(idToObject.size(), objectToId.size());
 		Map<String, EObject> checkMap = objectToId.entrySet().stream()
 				.collect(Collectors.toMap(e -> e.getValue(), e -> e.getKey()));
 
 		for (Entry<String, EObject> e : idToObject.entrySet()) {
 			EObject eObject = checkMap.get(e.getKey());
-			Assert.assertSame(e.getValue(), eObject);
+			assertSame(e.getValue(), eObject);
 		}
 	}
 }
