@@ -13,7 +13,8 @@
  *******************************************************************************/
 package org.eclipse.core.tools.runtime;
 
-import java.util.*;
+import java.util.HashSet;
+import java.util.Set;
 import org.eclipse.core.tools.Messages;
 import org.eclipse.osgi.service.resolver.BundleDescription;
 import org.eclipse.osgi.util.NLS;
@@ -29,8 +30,8 @@ import org.eclipse.osgi.util.NLS;
 public class PluginDependencyGraphNode {
 
 	private BundleDescription descriptor = null;
-	private Set children = new HashSet();
-	private Set ancestors = new HashSet();
+	private Set<PluginDependencyGraphNode> children = new HashSet<>();
+	private Set<PluginDependencyGraphNode> ancestors = new HashSet<>();
 
 	/**
 	 * Constructor for this class. Each node is associated with a plug-in so
@@ -79,8 +80,7 @@ public class PluginDependencyGraphNode {
 			writeln(buffer, 1, Messages.depend_noParentPlugins);
 		} else {
 			writeln(buffer, 1, Messages.depend_requiredBy);
-			for (Iterator i = ancestors.iterator(); i.hasNext();) {
-				PluginDependencyGraphNode ancestor = (PluginDependencyGraphNode) i.next();
+			for (PluginDependencyGraphNode ancestor : ancestors) {
 				writeln(buffer, 2, ancestor.getId());
 			}
 		}
@@ -90,8 +90,7 @@ public class PluginDependencyGraphNode {
 			writeln(buffer, 1, Messages.depend_noChildrenPlugins);
 		} else {
 			writeln(buffer, 1, Messages.depend_requires);
-			for (Iterator i = children.iterator(); i.hasNext();) {
-				PluginDependencyGraphNode child = (PluginDependencyGraphNode) i.next();
+			for (PluginDependencyGraphNode child : children) {
 				writeln(buffer, 2, child.getId());
 			}
 		}

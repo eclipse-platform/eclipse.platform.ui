@@ -61,14 +61,14 @@ public class DeepSize {
 	public static final int ARRAY_HEADER_SIZE = 12;
 
 	public static final int HEADER_SIZE = 8;
-	static final HashSet ignoreSet = new HashSet();
+	static final HashSet<ObjectWrapper> ignoreSet = new HashSet<>();
 	public static final int OBJECT_HEADER_SIZE = HEADER_SIZE;
 	public static final int POINTER_SIZE = 4;
 	int byteSize;
-	final Map counts = new HashMap();
+	final Map<Class<?>, Integer> counts = new HashMap<>();
 
-	Set ignoreTypeNames = null;
-	final Map sizes = new HashMap();
+	Set<String> ignoreTypeNames = null;
+	final Map<Object, Integer> sizes = new HashMap<>();
 
 	/**
 	 * Adds an object to the ignore set. Returns true if the object
@@ -82,7 +82,7 @@ public class DeepSize {
 		ignoreSet.clear();
 	}
 
-	private void count(Class c, int size) {
+	private void count(Class<?> c, int size) {
 		Object accumulatedSizes = sizes.get(c);
 		int existingSize = (accumulatedSizes == null) ? 0 : ((Integer) accumulatedSizes).intValue();
 		sizes.put(c, Integer.valueOf(existingSize + size));
@@ -96,12 +96,12 @@ public class DeepSize {
 		byteSize += sizeOf(o);
 	}
 
-	public Map getCounts() {
+	public Map<Class<?>, Integer> getCounts() {
 		return counts;
 	}
 
-	Set getDefaultIgnoreTypeNames() {
-		Set ignored = new HashSet();
+	Set<String> getDefaultIgnoreTypeNames() {
+		Set<String> ignored = new HashSet<>();
 		String[] ignore = {"org.eclipse.core.runtime.Plugin", "java.lang.ClassLoader", "org.eclipse.team.internal.ccvs.core.CVSTeamProvider", "org.eclipse.core.internal.events.BuilderPersistentInfo", "org.eclipse.core.internal.resources.Workspace", "org.eclipse.core.internal.events.EventStats", "java.net.URL"}; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-6$
 		for (String element : ignore) {
 			ignored.add(element);
@@ -122,7 +122,7 @@ public class DeepSize {
 		return byteSize;
 	}
 
-	public Map getSizes() {
+	public Map<Object, Integer> getSizes() {
 		return sizes;
 	}
 
@@ -135,20 +135,15 @@ public class DeepSize {
 	 */
 	public void printSizeReport() {
 		System.out.println("*** Begin DeepSize report ***"); //$NON-NLS-1$
-		for (Iterator it = sizes.keySet().iterator(); it.hasNext();) {
-			Class clazz = (Class) it.next();
-			int size = ((Integer) sizes.get(clazz)).intValue();
-			System.out.println('\t' + clazz.getName() + " size: " + size); //$NON-NLS-1$
+		for (Object clazz : sizes.keySet()) {
+			int size = sizes.get(clazz).intValue();
+			System.out.println('\t' + clazz.getClass().getName() + " size: " + size); //$NON-NLS-1$
 			System.out.println("Total size of all objects: " + getSize()); //$NON-NLS-1$
 		}
 		System.out.println("*** End DeepSize report ***"); //$NON-NLS-1$
 	}
 
-	void setIgnoreTypeNames(Set ignore) {
-		ignoreTypeNames = ignore;
-	}
-
-	private boolean shouldIgnoreType(Class clazz) {
+	private boolean shouldIgnoreType(Class<?> clazz) {
 		if (ignoreTypeNames == null) {
 			ignoreTypeNames = getDefaultIgnoreTypeNames();
 		}
@@ -165,16 +160,16 @@ public class DeepSize {
 			return 0;
 		if (ignore(o))
 			return 0;
-		Class clazz = o.getClass();
+		Class<?> clazz = o.getClass();
 		if (shouldIgnoreType(clazz))
 			return 0;
 		return clazz.isArray() ? sizeOfArray(clazz, o) : sizeOfObject(clazz, o);
 	}
 
-	private int sizeOfArray(Class type, Object array) {
+	private int sizeOfArray(Class<?> type, Object array) {
 
 		int size = ARRAY_HEADER_SIZE;
-		Class componentType = type.getComponentType();
+		Class<?> componentType = type.getComponentType();
 		if (componentType.isPrimitive()) {
 
 			if (componentType == char.class) {
@@ -211,17 +206,17 @@ public class DeepSize {
 
 	}
 
-	private int sizeOfObject(Class type, Object o) {
+	private int sizeOfObject(Class<?> type, Object o) {
 
 		int internalSize = 0; // size of referenced objects
 		int shallowSize = OBJECT_HEADER_SIZE;
-		Class clazz = type;
+		Class<?> clazz = type;
 		while (clazz != null) {
 			Field[] fields = clazz.getDeclaredFields();
 			for (Field field : fields) {
 				Field f = field;
 				if (!isStaticField(f)) {
-					Class fieldType = f.getType();
+					Class<?> fieldType = f.getType();
 					if (fieldType.isPrimitive()) {
 						shallowSize += sizeOfPrimitiveField(fieldType);
 					} else {
@@ -237,7 +232,7 @@ public class DeepSize {
 
 	}
 
-	private int sizeOfPrimitiveField(Class type) {
+	private int sizeOfPrimitiveField(Class<?> type) {
 		if (type == long.class || type == double.class)
 			return 8;
 		return 4;

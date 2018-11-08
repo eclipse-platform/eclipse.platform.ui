@@ -13,7 +13,8 @@
  *******************************************************************************/
 package org.eclipse.core.tools.metadata;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileFilter;
 import java.util.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.equinox.app.IApplication;
@@ -69,7 +70,7 @@ public class DumpTool implements IApplication {
 		DumperFactory factory = DumperFactory.getInstance();
 		String[] registeredFileNames = factory.getRegisteredFileNames();
 		this.fileFilter = new MetadataFileFilter(registeredFileNames);
-		this.directoryFilter = new DirectoryFilter();
+		this.directoryFilter = pathname -> pathname.isDirectory();
 		System.out.println("DumpTool started...");
 		System.out.println("Analyzing: "+fileName);
 
@@ -115,12 +116,12 @@ public class DumpTool implements IApplication {
 	}
 
 	private String[] extractFiles(String directory) {
-		List fileNames = new ArrayList();
+		List<String> fileNames = new ArrayList<>();
 		extractInfo(new File(directory), fileNames, new NullProgressMonitor());
 
 		String[] result = new String[fileNames.size()];
 		if (fileNames.size()>0){
-			result = (String[])fileNames.toArray(new String[fileNames.size()]);
+			result = fileNames.toArray(new String[fileNames.size()]);
 		}
 		return result;
 	}
@@ -137,7 +138,7 @@ public class DumpTool implements IApplication {
 	 * @return true if the provided dir (or at least one of its sub dirs)
 	 * contains files with one of the registered types, false otherwise
 	 */
-	void extractInfo(File dir, List fileList, IProgressMonitor monitor) {
+	void extractInfo(File dir, List<String> fileList, IProgressMonitor monitor) {
 
 		if (monitor.isCanceled())
 			return;
@@ -162,21 +163,6 @@ public class DumpTool implements IApplication {
 			}
 		} finally {
 			monitor.done();
-		}
-	}
-
-	/**
-	 * Filters directories entries.
-	 *
-	 * @see java.io.FileFilter
-	 */
-	private class DirectoryFilter implements FileFilter {
-		/**
-		 * @see java.io.FileFilter#accept(java.io.File)
-		 */
-		@Override
-		public boolean accept(File file) {
-			return file.isDirectory();
 		}
 	}
 

@@ -64,7 +64,7 @@ public class EclipsePreferencesView extends ViewPart {
 
 		@Override
 		public Object[] getChildren(Object parent) {
-			ArrayList result = new ArrayList();
+			ArrayList<Object> result = new ArrayList<>();
 			if (parent instanceof IEclipsePreferences) {
 				IEclipsePreferences node = (IEclipsePreferences) parent;
 				try {
@@ -126,7 +126,7 @@ public class EclipsePreferencesView extends ViewPart {
 		viewer = new TreeViewer(parent, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL);
 		viewer.setContentProvider(new ViewContentProvider());
 		viewer.setLabelProvider(new ViewLabelProvider());
-		viewer.setSorter(new ViewerSorter());
+		viewer.setComparator(new ViewerComparator());
 		viewer.setInput(getViewSite());
 		getViewSite().setSelectionProvider(viewer);
 		IActionBars bars = getViewSite().getActionBars();

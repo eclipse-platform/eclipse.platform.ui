@@ -20,7 +20,7 @@ import org.eclipse.core.runtime.IAdaptable;
  * Represents a node (possibly containing children) in a tree content
  * provider model. Every node has a name and optionally a value.
  */
-public class TreeContentProviderNode implements Comparable, IAdaptable {
+public class TreeContentProviderNode implements Comparable<TreeContentProviderNode>, IAdaptable {
 
 	/**
 	 * A list containing this node's children.
@@ -80,7 +80,7 @@ public class TreeContentProviderNode implements Comparable, IAdaptable {
 	public void addChild(Object child) {
 		// lazilly instantiates the children's list
 		if (this.children == null) {
-			this.children = new ArrayList();
+			this.children = new ArrayList<>();
 		}
 		this.children.add(child);
 		if (child instanceof TreeContentProviderNode) {
@@ -162,9 +162,8 @@ public class TreeContentProviderNode implements Comparable, IAdaptable {
 	 * @see java.lang.Comparable#compareTo(java.lang.Object)
 	 */
 	@Override
-	public int compareTo(Object other) {
-		TreeContentProviderNode otherNode = (TreeContentProviderNode) other;
-		return this.name.compareTo(otherNode.name);
+	public int compareTo(TreeContentProviderNode other) {
+		return this.name.compareTo(other.name);
 	}
 
 	/**
@@ -180,7 +179,7 @@ public class TreeContentProviderNode implements Comparable, IAdaptable {
 			return;
 		if (children == null)
 			return;
-		for (Iterator childrenIter = children.iterator(); childrenIter.hasNext();) {
+		for (Iterator<Object> childrenIter = children.iterator(); childrenIter.hasNext();) {
 			Object child = childrenIter.next();
 			// child nodes don't need to be TreeContentProviderNodes
 			if (child instanceof TreeContentProviderNode)
@@ -207,7 +206,7 @@ public class TreeContentProviderNode implements Comparable, IAdaptable {
 			return this;
 		if (children == null || children.isEmpty())
 			return null;
-		for (Iterator i = children.iterator(); i.hasNext();) {
+		for (Iterator<Object> i = children.iterator(); i.hasNext();) {
 			TreeContentProviderNode found = ((TreeContentProviderNode) i.next()).findNode(obj);
 			if (found != null)
 				return found;

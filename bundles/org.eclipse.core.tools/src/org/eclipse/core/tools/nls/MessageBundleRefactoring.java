@@ -81,12 +81,14 @@ public class MessageBundleRefactoring extends Refactoring {
 		try {
 			ITextFileBufferManager manager = FileBuffers.getTextFileBufferManager();
 			try {
-				manager.connect(fPropertiesFile.getFullPath(), null);
-				manager.connect(fAccessorClass.getCompilationUnit().getCorrespondingResource().getFullPath(), null);
+				manager.connect(fPropertiesFile.getFullPath(), LocationKind.NORMALIZE, null);
+				manager.connect(fAccessorClass.getCompilationUnit().getCorrespondingResource().getFullPath(),
+						LocationKind.NORMALIZE, null);
 				fChange.addAll(new PropertyFileConverter().convertFile(fAccessorClass, fPropertiesFile));
 			} finally {
-				manager.disconnect(fPropertiesFile.getFullPath(), null);
-				manager.disconnect(fAccessorClass.getCompilationUnit().getCorrespondingResource().getFullPath(), null);
+				manager.disconnect(fPropertiesFile.getFullPath(), LocationKind.NORMALIZE, null);
+				manager.disconnect(fAccessorClass.getCompilationUnit().getCorrespondingResource().getFullPath(),
+						LocationKind.NORMALIZE, null);
 			}
 		} catch (IOException e) {
 			throw new CoreException(new Status(IStatus.ERROR, CoreToolsPlugin.PI_TOOLS, IStatus.ERROR, e.getMessage(), e));

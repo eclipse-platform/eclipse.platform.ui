@@ -69,7 +69,7 @@ public class RemoveUnusedMessages extends Refactoring {
 
 		// Search for references
 		IField[] fields = accessorClass.getFields();
-		ArrayList toDelete = new ArrayList();
+		ArrayList<String> toDelete = new ArrayList<>();
 		// 10 units of work for modifying the properties file and AST
 		monitor.beginTask("Searching for references.", fields.length + 10);
 		try {
@@ -123,7 +123,7 @@ public class RemoveUnusedMessages extends Refactoring {
 		return result;
 	}
 
-	private void processAST(final CompilationUnit root, final ASTRewrite rewriter, final List toDelete) {
+	private void processAST(final CompilationUnit root, final ASTRewrite rewriter, final List<String> toDelete) {
 		ASTVisitor visitor = new ASTVisitor() {
 			@Override
 			public boolean visit(VariableDeclarationFragment node) {
@@ -137,16 +137,18 @@ public class RemoveUnusedMessages extends Refactoring {
 		root.accept(visitor);
 	}
 
-	private void processPropertiesFile(List list) throws CoreException {
+	private void processPropertiesFile(List<String> list) throws CoreException {
 		try {
 			ITextFileBufferManager manager = FileBuffers.getTextFileBufferManager();
 			try {
-				manager.connect(propertiesFile.getFullPath(), null);
-				manager.connect(accessorClass.getCompilationUnit().getCorrespondingResource().getFullPath(), null);
+				manager.connect(propertiesFile.getFullPath(), LocationKind.NORMALIZE, null);
+				manager.connect(accessorClass.getCompilationUnit().getCorrespondingResource().getFullPath(),
+						LocationKind.NORMALIZE, null);
 				change.add(new PropertyFileConverter().trim(propertiesFile, list));
 			} finally {
-				manager.disconnect(propertiesFile.getFullPath(), null);
-				manager.disconnect(accessorClass.getCompilationUnit().getCorrespondingResource().getFullPath(), null);
+				manager.disconnect(propertiesFile.getFullPath(), LocationKind.NORMALIZE, null);
+				manager.disconnect(accessorClass.getCompilationUnit().getCorrespondingResource().getFullPath(),
+						LocationKind.NORMALIZE, null);
 			}
 		} catch (IOException e) {
 			throw new CoreException(new Status(IStatus.ERROR, CoreToolsPlugin.PI_TOOLS, IStatus.ERROR, e.getMessage(), e));

@@ -15,8 +15,8 @@ package org.eclipse.core.tools;
 
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.ui.IActionBars;
+import org.eclipse.ui.IWorkbenchCommandConstants;
 import org.eclipse.ui.actions.ActionFactory;
-import org.eclipse.ui.texteditor.IWorkbenchActionDefinitionIds;
 
 /**
  * Generic "clear contents" action. Sets action's text, tool tip text and icon.
@@ -41,7 +41,7 @@ public class ClearTextAction extends GlobalAction {
 		// the delete key is not captured by the workbench
 		// then we need to provide an action definition id
 		// so clients can register this action in their key binding services
-		this.setActionDefinitionId(IWorkbenchActionDefinitionIds.DELETE);
+		this.setActionDefinitionId(IWorkbenchCommandConstants.EDIT_DELETE);
 		this.setImageDescriptor(CoreToolsPlugin.createImageDescriptor("clear.gif")); //$NON-NLS-1$
 	}
 

@@ -28,7 +28,7 @@ import org.eclipse.ltk.core.refactoring.Change;
  */
 public class PropertyFileConverter {
 
-	private static final HashSet keywords = new HashSet();
+	private static final HashSet<String> keywords = new HashSet<>();
 
 	static {
 		keywords.add("abstract"); //$NON-NLS-1$
@@ -120,7 +120,7 @@ public class PropertyFileConverter {
 	/*
 	 * Remove the properties in the specified list from the file.
 	 */
-	public Change trim(IFile propertiesFile, List toDelete) throws IOException, CoreException {
+	public Change trim(IFile propertiesFile, List<String> toDelete) throws IOException, CoreException {
 		if (toDelete == null || toDelete.isEmpty())
 			return null;
 		BufferedReader reader = new BufferedReader(new InputStreamReader(propertiesFile.getContents()));

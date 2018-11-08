@@ -19,9 +19,9 @@ import java.util.Comparator;
 import org.eclipse.core.runtime.PerformanceStats;
 import org.eclipse.core.tools.ISorter;
 import org.eclipse.jface.viewers.Viewer;
-import org.eclipse.jface.viewers.ViewerSorter;
+import org.eclipse.jface.viewers.ViewerComparator;
 
-public class EventsSorter extends ViewerSorter implements ISorter {
+public class EventsSorter extends ViewerComparator implements ISorter {
 	protected boolean reversed = false;
 	protected int columnNumber;
 
@@ -65,9 +65,6 @@ public class EventsSorter extends ViewerSorter implements ISorter {
 		reversed = newReversed;
 	}
 
-	/*
-	 * Overrides method from ViewerSorter
-	 */
 	@Override
 	public void sort(final Viewer viewer, Object[] elements) {
 		Comparator comparator = new Comparator() {

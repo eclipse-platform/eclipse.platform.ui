@@ -71,7 +71,7 @@ public abstract class TableWithTotalView extends ViewPart implements ISelectionP
 				// If so, set flatness and get a new sorter
 				if (oldSorter == null || !threeState || column != oldSorter.getColumnNumber()) {
 					flat = column != 0; // default for column 0 is NOT flat
-					viewer.setSorter(getSorter(column));
+					viewer.setComparator(getSorter(column));
 				} else {
 					// Not changing sorters so we have to cycle through states for the columns
 					// Three state sort for column 0.  !flat/!reverse -> flat/!reverse -> flat/reverse
@@ -161,7 +161,7 @@ public abstract class TableWithTotalView extends ViewPart implements ISelectionP
 
 	protected abstract ITableLabelProvider getLabelProvider();
 
-	protected abstract ViewerSorter getSorter(int column);
+	protected abstract ViewerComparator getSorter(int column);
 
 	protected abstract String getStatusLineMessage(Object element);
 
@@ -180,7 +180,7 @@ public abstract class TableWithTotalView extends ViewPart implements ISelectionP
 		viewer = new TableViewer(tableTree);
 		viewer.setContentProvider(getContentProvider());
 		viewer.setLabelProvider(getLabelProvider());
-		viewer.setSorter(getSorter(0));
+		viewer.setComparator(getSorter(0));
 		viewer.addSelectionChangedListener(getTableListener());
 
 		createCommonActions();
@@ -203,7 +203,7 @@ public abstract class TableWithTotalView extends ViewPart implements ISelectionP
 				result += "\n\n"; //$NON-NLS-1$
 
 				ITableLabelProvider labelProvider = (ITableLabelProvider) viewer.getLabelProvider();
-				for (Iterator iterator = selection.iterator(); iterator.hasNext();) {
+				for (Iterator<?> iterator = selection.iterator(); iterator.hasNext();) {
 					Object selectedItem = iterator.next();
 					for (int i = 0; i < columnHeaders.length; i++)
 						result += labelProvider.getColumnText(selectedItem, i) + ","; //$NON-NLS-1$

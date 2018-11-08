@@ -42,9 +42,6 @@ public class TreeSelectionProviderDecorator implements ISelectionProvider {
 		this.selectionProvider = selectionProvider;
 	}
 
-	/**
-	 * @see org.eclipse.jface.viewers.ISelectionProvider#addSelectionChangedListener(org.eclipse.jface.viewers.ISelectionChangedListener)
-	 */
 	@Override
 	public void addSelectionChangedListener(ISelectionChangedListener listener) {
 		selectionProvider.addSelectionChangedListener(listener);
@@ -59,7 +56,6 @@ public class TreeSelectionProviderDecorator implements ISelectionProvider {
 	 *
 	 * @return the current selection, ordered in the same sequence they appear in
 	 * the tree
-	 * @see org.eclipse.jface.viewers.ISelectionProvider#getSelection()
 	 */
 	@Override
 	public ISelection getSelection() {
@@ -87,16 +83,13 @@ public class TreeSelectionProviderDecorator implements ISelectionProvider {
 
 		// uses a visitor to traverse the whole tree
 		// when a visited node is the selected list, it is moved to the ordered list
-		anyNode.getRoot().accept(new ITreeNodeVisitor() {
-			@Override
-			public boolean visit(TreeContentProviderNode node) {
-				int elementIndex = selectedElements.indexOf(node);
+		anyNode.getRoot().accept(node -> {
+			int elementIndex = selectedElements.indexOf(node);
 
-				if (selectedElements.contains(node))
-					orderedElements.add(selectedElements.remove(elementIndex));
+			if (selectedElements.contains(node))
+				orderedElements.add(selectedElements.remove(elementIndex));
 
-				return true;
-			}
+			return true;
 		});
 
 		// any remaining elements in the list (probably they are not tree nodes)
@@ -112,7 +105,7 @@ public class TreeSelectionProviderDecorator implements ISelectionProvider {
 	 * @return the first element that is a tree node or null, if none is found.
 	 */
 	private TreeContentProviderNode findNodeElement(List elements) {
-		for (Iterator iter = elements.iterator(); iter.hasNext();) {
+		for (Iterator<?> iter = elements.iterator(); iter.hasNext();) {
 			Object element = iter.next();
 			if (element instanceof TreeContentProviderNode)
 				return (TreeContentProviderNode) element;
@@ -121,17 +114,11 @@ public class TreeSelectionProviderDecorator implements ISelectionProvider {
 		return null;
 	}
 
-	/**
-	 * @see org.eclipse.jface.viewers.ISelectionProvider#removeSelectionChangedListener(org.eclipse.jface.viewers.ISelectionChangedListener)
-	 */
 	@Override
 	public void removeSelectionChangedListener(ISelectionChangedListener listener) {
 		selectionProvider.removeSelectionChangedListener(listener);
 	}
 
-	/**
-	 * @see org.eclipse.jface.viewers.ISelectionProvider#setSelection(org.eclipse.jface.viewers.ISelection)
-	 */
 	@Override
 	public void setSelection(ISelection selection) {
 		selectionProvider.setSelection(selection);

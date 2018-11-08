@@ -42,7 +42,7 @@ public class ContentTypeView extends SpyView implements IAdaptable {
 			return true;
 		}
 
-		private TreeContentProviderNode addContentType(IContentType type, Set visited) {
+		private TreeContentProviderNode addContentType(IContentType type, Set<ContentTypePropertySource> visited) {
 			ContentTypePropertySource wrapped = new ContentTypePropertySource(type);
 			if (!visited.add(wrapped))
 				return getNodeFor(wrapped);
@@ -64,7 +64,7 @@ public class ContentTypeView extends SpyView implements IAdaptable {
 		@Override
 		protected void rebuild(Viewer viewer, Object input) {
 			IContentType[] allTypes = ContentTypeManager.getInstance().getAllContentTypes();
-			Set visited = new HashSet(allTypes.length);
+			Set<ContentTypePropertySource> visited = new HashSet<>(allTypes.length);
 			for (IContentType allType : allTypes)
 				addContentType(allType, visited);
 		}

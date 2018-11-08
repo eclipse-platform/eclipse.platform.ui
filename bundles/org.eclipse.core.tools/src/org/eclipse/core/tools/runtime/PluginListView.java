@@ -37,26 +37,17 @@ public class PluginListView extends SpyView implements IStructuredContentProvide
 	 * Class which provides the text labels for the view.
 	 */
 	class PluginListLabelProvider extends LabelProvider implements ITableLabelProvider {
-		/**
-		 * @see ITableLabelProvider#getColumnImage(Object, int)
-		 */
 		@Override
 		public Image getColumnImage(Object arg0, int arg1) {
 			return null;
 		}
 
-		/**
-		 * @see ITableLabelProvider#getColumnText(Object, int)
-		 */
 		@Override
 		public String getColumnText(Object element, int columnIndex) {
 			return element == null ? Messages.depend_badPluginId : ((BundleDescription) element).getSymbolicName();
 		}
 	}
 
-	/**
-	 * @see IStructuredContentProvider#getElements(Object)
-	 */
 	@Override
 	public Object[] getElements(Object arg0) {
 		if (bundles == null) {
@@ -64,15 +55,12 @@ public class PluginListView extends SpyView implements IStructuredContentProvide
 			// we have to use a comparator here because plug-in
 			// descriptors cannot be compared against each other
 			// in a tree set.
-			Comparator comparator = new Comparator() {
-				@Override
-				public int compare(Object obj1, Object obj2) {
-					String id1 = ((BundleDescription) obj1).getSymbolicName();
-					String id2 = ((BundleDescription) obj2).getSymbolicName();
-					return id1.compareTo(id2);
-				}
+			Comparator<BundleDescription> comparator = (obj1, obj2) -> {
+				String id1 = obj1.getSymbolicName();
+				String id2 = obj2.getSymbolicName();
+				return id1.compareTo(id2);
 			};
-			Set set = new TreeSet(comparator);
+			Set<BundleDescription> set = new TreeSet<>(comparator);
 			BundleContext context = CoreToolsPlugin.getDefault().getContext();
 			Bundle[] allBundles = context.getBundles();
 			State state = Platform.getPlatformAdmin().getState(false);
@@ -83,25 +71,16 @@ public class PluginListView extends SpyView implements IStructuredContentProvide
 		return bundles;
 	}
 
-	/**
-	 * @see IContentProvider#dispose()
-	 */
 	@Override
 	public void dispose() {
 		bundles = null;
 	}
 
-	/**
-	 * @see IContentProvider#inputChanged(Viewer, Object, Object)
-	 */
 	@Override
 	public void inputChanged(Viewer arg0, Object arg1, Object arg2) {
 		// do nothing
 	}
 
-	/**
-	 * @see org.eclipse.ui.IWorkbenchPart#createPartControl(Composite)
-	 */
 	@Override
 	public void createPartControl(Composite parent) {
 		// Create viewer.

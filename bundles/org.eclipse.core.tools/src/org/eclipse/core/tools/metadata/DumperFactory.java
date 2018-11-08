@@ -14,7 +14,6 @@
 package org.eclipse.core.tools.metadata;
 
 import java.io.File;
-import java.util.Enumeration;
 import java.util.Properties;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.tools.CoreToolsPlugin;
@@ -112,8 +111,7 @@ public class DumperFactory {
 
 	private String getListOfDumperClass(Properties cfg) {
 		StringBuilder buf = new StringBuilder("\r\nList of files who have a dumper class");
-		for (Enumeration e = cfg.keys(); e.hasMoreElements();) {
-			String element = (String) e.nextElement();
+		for (String element : cfg.stringPropertyNames()) {
 			buf.append("\r\n");
 			buf.append(element);
 		}

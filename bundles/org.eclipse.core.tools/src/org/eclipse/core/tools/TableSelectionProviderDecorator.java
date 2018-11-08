@@ -39,9 +39,6 @@ public class TableSelectionProviderDecorator implements ISelectionProvider {
 		this.selectionProvider = selectionProvider;
 	}
 
-	/**
-	 * @see org.eclipse.jface.viewers.ISelectionProvider#addSelectionChangedListener(org.eclipse.jface.viewers.ISelectionChangedListener)
-	 */
 	@Override
 	public void addSelectionChangedListener(ISelectionChangedListener listener) {
 		selectionProvider.addSelectionChangedListener(listener);
@@ -71,7 +68,7 @@ public class TableSelectionProviderDecorator implements ISelectionProvider {
 		StringBuilder copyText = new StringBuilder();
 		copyText.append(headerPluginStats());
 		copyText.append('\n');
-		for (Iterator selectionIter = structuredSelection.iterator(); selectionIter.hasNext();) {
+		for (Iterator<?> selectionIter = structuredSelection.iterator(); selectionIter.hasNext();) {
 			Object obj = selectionIter.next();
 			if (obj instanceof PerformanceStats) {
 				copyText.append(prettyPluginStats((PerformanceStats) obj));

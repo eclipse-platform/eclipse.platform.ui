@@ -25,9 +25,6 @@ import org.eclipse.jface.viewers.IStructuredSelection;
  */
 public class CopyStructuredSelectionAction extends AbstractCopySelectionAction {
 
-	/**
-	 * @see org.eclipse.core.tools.AbstractCopySelectionAction#AbstractCopySelectionAction(ISelectionProvider)
-	 */
 	public CopyStructuredSelectionAction(ISelectionProvider selectionProvider) {
 		super(selectionProvider);
 	}
@@ -40,14 +37,13 @@ public class CopyStructuredSelectionAction extends AbstractCopySelectionAction {
 	 *
 	 * @return a string containing the currently selected elements separated by
 	 * line terminators
-	 * @see org.eclipse.core.tools.AbstractCopySelectionAction#getContents()
 	 */
 	@Override
 	public String getContents() {
 		// retrieves the selected contents from the selection provider
 		IStructuredSelection selection = (IStructuredSelection) selectionProvider.getSelection();
 		StringBuilder content = new StringBuilder();
-		for (Iterator selectionIter = selection.iterator(); selectionIter.hasNext();) {
+		for (Iterator<?> selectionIter = selection.iterator(); selectionIter.hasNext();) {
 			content.append(selectionIter.next());
 			content.append('\n');
 		}

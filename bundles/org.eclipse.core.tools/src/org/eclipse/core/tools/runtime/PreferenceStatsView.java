@@ -52,7 +52,7 @@ public class PreferenceStatsView extends SpyView {
 		// size of the tree
 		int treeSize;
 		// list of node with key/value pairs
-		Set nonEmptyNodes;
+		Set<String> nonEmptyNodes;
 
 		// root node
 		IEclipsePreferences rootNode = Platform.getPreferencesService().getRootNode();
@@ -81,7 +81,7 @@ public class PreferenceStatsView extends SpyView {
 			kvCount = 0;
 			emptyNodes = 0;
 			treeSize = 0;
-			nonEmptyNodes = new TreeSet();
+			nonEmptyNodes = new TreeSet<>();
 		}
 
 		int basicSizeof(IEclipsePreferences node) {
@@ -273,23 +273,20 @@ public class PreferenceStatsView extends SpyView {
 		void visitTree() throws BackingStoreException {
 			// count the number of nodes in the preferences tree
 			reset();
-			IPreferenceNodeVisitor visitor = new IPreferenceNodeVisitor() {
-				@Override
-				public boolean visit(IEclipsePreferences node) {
-					try {
-						treeSize += sizeof(node);
-						nodeCount++;
-						int keys = node.keys().length;
-						kvCount += keys;
-						if (keys == 0)
-							emptyNodes++;
-						else
-							nonEmptyNodes.add(node.absolutePath() + " (" + keys + ")"); //$NON-NLS-1$//$NON-NLS-2$
-					} catch (BackingStoreException e) {
-						e.printStackTrace();
-					}
-					return true;
+			IPreferenceNodeVisitor visitor = node -> {
+				try {
+					treeSize += sizeof(node);
+					nodeCount++;
+					int keys = node.keys().length;
+					kvCount += keys;
+					if (keys == 0)
+						emptyNodes++;
+					else
+						nonEmptyNodes.add(node.absolutePath() + " (" + keys + ")"); //$NON-NLS-1$//$NON-NLS-2$
+				} catch (BackingStoreException e) {
+					e.printStackTrace();
 				}
+				return true;
 			};
 			rootNode.accept(visitor);
 		}
@@ -302,18 +299,15 @@ public class PreferenceStatsView extends SpyView {
 			buffer.append("Key/value pairs: " + prettyPrint(kvCount) + "\n"); //$NON-NLS-1$ //$NON-NLS-2$
 			buffer.append("Total size of tree: " + prettyPrint(treeSize) + "\n"); //$NON-NLS-1$ //$NON-NLS-2$
 			buffer.append("Nodes with key/value pairs:\n"); //$NON-NLS-1$
-			for (Iterator i = nonEmptyNodes.iterator(); i.hasNext();)
-				buffer.append("\t" + i.next() + "\n"); //$NON-NLS-1$//$NON-NLS-2$
+			for (String string : nonEmptyNodes)
+				buffer.append("\t" + string + "\n"); //$NON-NLS-1$//$NON-NLS-2$
 
 			//post changes to UI thread
-			viewer.getControl().getDisplay().asyncExec(new Runnable() {
-				@Override
-				public void run() {
-					if (!viewer.getControl().isDisposed()) {
-						IDocument doc = viewer.getDocument();
-						doc.set(buffer.toString());
-						viewer.setDocument(doc);
-					}
+			viewer.getControl().getDisplay().asyncExec(() -> {
+				if (!viewer.getControl().isDisposed()) {
+					IDocument doc = viewer.getDocument();
+					doc.set(buffer.toString());
+					viewer.setDocument(doc);
 				}
 			});
 		}
@@ -354,9 +348,6 @@ public class PreferenceStatsView extends SpyView {
 		}
 	}
 
-	/**
-	 * @see org.eclipse.ui.IWorkbenchPart#createPartControl(org.eclipse.swt.widgets.Composite)
-	 */
 	@Override
 	public void createPartControl(Composite parent) {
 
@@ -406,9 +397,6 @@ public class PreferenceStatsView extends SpyView {
 			updateAction.run();
 	}
 
-	/**
-	 * @see org.eclipse.ui.IWorkbenchPart#dispose()
-	 */
 	@Override
 	public void dispose() {
 		super.dispose();

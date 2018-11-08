@@ -28,12 +28,9 @@ import org.eclipse.ui.IPageLayout;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.part.IShowInTargetList;
 
-/**
- *
- */
 public class FindUnusedSearchResultPage extends AbstractTextSearchViewPage implements ISearchResultPage, IAdaptable {
 
-	public class DecoratorIgnoringViewerSorter extends ViewerSorter {
+	public class DecoratorIgnoringViewerSorter extends ViewerComparator {
 
 		private Collator collator;
 
@@ -50,11 +47,11 @@ public class FindUnusedSearchResultPage extends AbstractTextSearchViewPage imple
 				name1 = "";//$NON-NLS-1$
 			if (name2 == null)
 				name2 = "";//$NON-NLS-1$
-			return getCollator().compare(name1, name2);
+			return getComparator().compare(name1, name2);
 		}
 
 		@Override
-		public final Collator getCollator() {
+		public final Collator getComparator() {
 			if (collator == null) {
 				collator = Collator.getInstance();
 			}
@@ -134,38 +131,26 @@ public class FindUnusedSearchResultPage extends AbstractTextSearchViewPage imple
 		super(AbstractTextSearchViewPage.FLAG_LAYOUT_FLAT);
 	}
 
-	/*
-	 * @see org.eclipse.search.ui.text.AbstractTextSearchViewPage#clear()
-	 */
 	@Override
 	protected void clear() {
 		if (contentProvider != null)
 			contentProvider.clear();
 	}
 
-	/*
-	 * @see org.eclipse.search.ui.text.AbstractTextSearchViewPage#configureTableViewer(org.eclipse.jface.viewers.TableViewer)
-	 */
 	@Override
 	protected void configureTableViewer(TableViewer aViewer) {
 		this.viewer = aViewer;
 		contentProvider = new TableContentProvider();
 		aViewer.setContentProvider(contentProvider);
 		setSortOrder(SORT_BY_PATH);
-		aViewer.setSorter(new DecoratorIgnoringViewerSorter());
+		aViewer.setComparator(new DecoratorIgnoringViewerSorter());
 	}
 
-	/*
-	 * @see org.eclipse.search.ui.text.AbstractTextSearchViewPage#configureTreeViewer(org.eclipse.jface.viewers.TreeViewer)
-	 */
 	@Override
 	protected void configureTreeViewer(TreeViewer aViewer) {
 		throw new IllegalStateException("Doesn't support tree mode.");
 	}
 
-	/*
-	 * @see org.eclipse.search.ui.text.AbstractTextSearchViewPage#elementsChanged(java.lang.Object[])
-	 */
 	@Override
 	protected void elementsChanged(Object[] objects) {
 		if (contentProvider != null)
