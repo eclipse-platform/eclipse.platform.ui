@@ -778,6 +778,17 @@
          </parameter>
       </key>
       <key
+            locale="fr"
+            commandId="org.eclipse.ui.window.splitEditor"
+            contextId="org.eclipse.ui.contexts.window"
+            sequence="M1+È"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration">
+         <parameter
+               id="Splitter.isHorizontal"
+               value="false">
+         </parameter>
+      </key>
+      <key
             platform="carbon"
             commandId=""
             contextId="org.eclipse.ui.contexts.window"
