@@ -24,6 +24,13 @@ import org.eclipse.core.commands.ParameterizedCommand;
  * @noimplement
  */
 public interface ECommandService {
+	/**
+	 * Allows to create an instance of an existing command based on the id parameter
+	 *
+	 * @param id         - Command to create
+	 * @param parameters - Map of the parameters of the command or null
+	 * @return ParameterizedCommand - created command or null
+	 */
 	public ParameterizedCommand createCommand(String id, Map<String, ?> parameters);
 
 	/**
