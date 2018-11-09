@@ -96,6 +96,10 @@ public class CodeMiningManager implements Runnable {
 	 * @param codeMiningProviders the codemining providers.
 	 */
 	public void setCodeMiningProviders(ICodeMiningProvider[] codeMiningProviders) {
+		cancel();
+		if (fCodeMiningProviders != null) {
+			fCodeMiningProviders.stream().forEach(ICodeMiningProvider::dispose);
+		}
 		fCodeMiningProviders= Arrays.asList(codeMiningProviders);
 	}
 

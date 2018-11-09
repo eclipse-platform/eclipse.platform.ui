@@ -1267,11 +1267,6 @@ public class SourceViewer extends TextViewer implements ISourceViewer, ISourceVi
 
     @Override
 	public void setCodeMiningProviders(ICodeMiningProvider[] codeMiningProviders) {
-		if (fCodeMiningProviders != null) {
-			for (ICodeMiningProvider contentMiningProvider : fCodeMiningProviders) {
-				contentMiningProvider.dispose();
-			}
-		}
 		boolean enable= codeMiningProviders != null && codeMiningProviders.length > 0;
 		fCodeMiningProviders= codeMiningProviders;
 		if (enable) {
@@ -1299,7 +1294,9 @@ public class SourceViewer extends TextViewer implements ISourceViewer, ISourceVi
 				fInlinedAnnotationSupport= new InlinedAnnotationSupport();
 				fInlinedAnnotationSupport.install(this, fAnnotationPainter);
 			}
-			fCodeMiningManager= new CodeMiningManager(this, fInlinedAnnotationSupport, fCodeMiningProviders);
+			if (fCodeMiningManager == null) {
+				fCodeMiningManager= new CodeMiningManager(this, fInlinedAnnotationSupport, fCodeMiningProviders);
+			}
 			// now trigger an update
 			updateCodeMinings();
 		}
