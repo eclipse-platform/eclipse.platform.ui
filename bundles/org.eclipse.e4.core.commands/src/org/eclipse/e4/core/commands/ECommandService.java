@@ -34,6 +34,16 @@ public interface ECommandService {
 	public ParameterizedCommand createCommand(String id, Map<String, ?> parameters);
 
 	/**
+	 * Allows to create an instance of an existing command based on the id parameter
+	 * which does not require parameters Delegates to createCommand(String,Map)
+	 * passing in null as Map parameter
+	 *
+	 * @param id - Command to create
+	 * @return ParameterizedCommand - created command or null
+	 */
+	public ParameterizedCommand createCommand(String id);
+
+	/**
 	 * @param id
 	 * @param name
 	 * @param description

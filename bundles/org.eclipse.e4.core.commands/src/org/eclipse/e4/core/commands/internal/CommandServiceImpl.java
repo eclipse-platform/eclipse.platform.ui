@@ -46,6 +46,11 @@ public class CommandServiceImpl implements ECommandService {
 	}
 
 	@Override
+	public ParameterizedCommand createCommand(String id) {
+		return createCommand(id, null);
+	}
+
+	@Override
 	public Category defineCategory(String id, String name, String description) {
 		Category cat = commandManager.getCategory(id);
 		if (!cat.isDefined()) {
@@ -85,4 +90,5 @@ public class CommandServiceImpl implements ECommandService {
 	public Command getCommand(String commandId) {
 		return commandManager.getCommand(commandId);
 	}
+
 }
