@@ -20,17 +20,19 @@ import org.eclipse.e4.ui.model.application.MApplicationElement;
 import org.eclipse.e4.ui.workbench.modeling.EModelService;
 import org.eclipse.emf.common.notify.Notifier;
 import org.junit.Before;
+import org.junit.Rule;
 
-public abstract class HeadlessApplicationElementTest extends
-		HeadlessStartupTest {
+public abstract class HeadlessApplicationElementTest {
 
 	protected MApplicationElement applicationElement;
 	protected EModelService ems;
 
+	@Rule
+	public HeadlessApplicationRule rule = new HeadlessApplicationRule();
+
 	@Before
-	@Override
 	public void setUp() throws Exception {
-		super.setUp();
+		IEclipseContext applicationContext = rule.getApplicationContext();
 		applicationElement = createApplicationElement(applicationContext);
 		ems = applicationContext.get(EModelService.class);
 
@@ -40,6 +42,5 @@ public abstract class HeadlessApplicationElementTest extends
 		applicationContext.set(UIEventPublisher.class, ep);
 	}
 
-	protected abstract MApplicationElement createApplicationElement(
-			IEclipseContext appContext) throws Exception;
+	protected abstract MApplicationElement createApplicationElement(IEclipseContext appContext) throws Exception;
 }

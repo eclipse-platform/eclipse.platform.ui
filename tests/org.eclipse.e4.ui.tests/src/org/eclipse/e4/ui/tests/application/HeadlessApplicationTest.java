@@ -53,8 +53,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-public abstract class HeadlessApplicationTest extends
-		HeadlessApplicationElementTest {
+public abstract class HeadlessApplicationTest extends HeadlessApplicationElementTest {
 
 	protected MApplication application;
 
@@ -62,6 +61,7 @@ public abstract class HeadlessApplicationTest extends
 
 	@Before
 	@Override
+
 	public void setUp() throws Exception {
 		super.setUp();
 
@@ -77,13 +77,11 @@ public abstract class HeadlessApplicationTest extends
 	}
 
 	@After
-	@Override
 	public void tearDown() throws Exception {
 		for (MWindow window : application.getChildren()) {
 			renderer.removeGui(window);
 		}
 
-		super.tearDown();
 	}
 
 	protected boolean needsActiveChildEventHandling() {
@@ -234,12 +232,11 @@ public abstract class HeadlessApplicationTest extends
 
 	protected abstract String getURI();
 
-	protected IPresentationEngine createPresentationEngine(
-			String renderingEngineURI) throws Exception {
-		IContributionFactory contributionFactory = applicationContext
+	protected IPresentationEngine createPresentationEngine(String renderingEngineURI) throws Exception {
+		IContributionFactory contributionFactory = rule.getApplicationContext()
 				.get(IContributionFactory.class);
 		Object newEngine = contributionFactory.create(renderingEngineURI,
-				applicationContext);
+				rule.getApplicationContext());
 		return (IPresentationEngine) newEngine;
 	}
 

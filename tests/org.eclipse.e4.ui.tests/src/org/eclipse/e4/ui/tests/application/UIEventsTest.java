@@ -218,7 +218,7 @@ public class UIEventsTest extends HeadlessApplicationElementTest {
 
 	@Test
 	public void testAllTopics() {
-		IEventBroker eventBroker = applicationContext.get(IEventBroker.class);
+		IEventBroker eventBroker = rule.getApplicationContext().get(IEventBroker.class);
 
 		// Create a tester for each topic
 		AppElementTester appTester = new AppElementTester(eventBroker);
@@ -243,9 +243,9 @@ public class UIEventsTest extends HeadlessApplicationElementTest {
 
 		// Create the test harness and hook up the event publisher
 		MTestHarness allData = MTestFactory.eINSTANCE.createTestHarness();
-		final UIEventPublisher ep = new UIEventPublisher(applicationContext);
+		final UIEventPublisher ep = new UIEventPublisher(rule.getApplicationContext());
 		((Notifier) allData).eAdapters().add(ep);
-		applicationContext.set(UIEventPublisher.class, ep);
+		rule.getApplicationContext().set(UIEventPublisher.class, ep);
 
 		// AppElement
 		reset(allTesters);
@@ -341,9 +341,9 @@ public class UIEventsTest extends HeadlessApplicationElementTest {
 	@Test
 	public void testBrokerCleanup() {
 		final String testTopic = "test/374534";
-		IEventBroker appEB = applicationContext.get(IEventBroker.class);
+		IEventBroker appEB = rule.getApplicationContext().get(IEventBroker.class);
 
-		IEclipseContext childContext = applicationContext.createChild();
+		IEclipseContext childContext = rule.getApplicationContext().createChild();
 		IEventBroker childEB = childContext.get(IEventBroker.class);
 		assertFalse("child context has same IEventBroker", appEB == childEB);
 

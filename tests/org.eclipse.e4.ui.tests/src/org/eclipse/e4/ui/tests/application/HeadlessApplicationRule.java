@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2015 IBM Corporation and others.
+ * Copyright (c) 2018 vogella GmbH and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -9,7 +9,7 @@
  * SPDX-License-Identifier: EPL-2.0
  *
  * Contributors:
- *     IBM Corporation - initial API and implementation
+ *     Lars Vogel <Lars.Vogel@vogella.com> - initial API and implementation
  ******************************************************************************/
 
 package org.eclipse.e4.ui.tests.application;
@@ -19,22 +19,44 @@ import org.eclipse.e4.core.contexts.ContextInjectionFactory;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.ui.internal.workbench.swt.E4Application;
 import org.eclipse.e4.ui.services.ContextServiceAddon;
-import org.junit.After;
-import org.junit.Before;
+import org.junit.rules.TestRule;
+import org.junit.runner.Description;
+import org.junit.runners.model.Statement;
 
-public abstract class HeadlessStartupTest {
 
-	protected IEclipseContext applicationContext;
+public class HeadlessApplicationRule implements TestRule {
+	private IEclipseContext applicationContext;
 
-	@Before
-	public void setUp() throws Exception {
-		applicationContext = createApplicationContext();
+	/**
+	 * @return the applicationContext
+	 */
+	public IEclipseContext getApplicationContext() {
+		return applicationContext;
 	}
 
-	@After
-	public void tearDown() throws Exception {
-		applicationContext.dispose();
-	}
+	@Override
+    public Statement apply(Statement base, Description description) {
+        return new MyStatement(base);
+    }
+
+    public class MyStatement extends Statement {
+        private final Statement base;
+
+        public MyStatement(Statement base) {
+            this.base = base;
+        }
+
+        @Override
+        public void evaluate() throws Throwable {
+			applicationContext = createApplicationContext();
+            try {
+                base.evaluate();
+            } finally {
+				applicationContext.dispose();
+            }
+        }
+    }
+
 
 	protected IEclipseContext createApplicationContext() {
 		final IEclipseContext appContext = E4Application.createDefaultContext();

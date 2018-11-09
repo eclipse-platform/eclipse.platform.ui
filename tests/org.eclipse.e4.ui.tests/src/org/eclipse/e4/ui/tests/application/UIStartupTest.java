@@ -156,11 +156,10 @@ public abstract class UIStartupTest extends HeadlessApplicationTest {
 		return ((MContext) nonContainer).getContext();
 	}
 
-	@Override
 	protected IEclipseContext createApplicationContext() {
 		final IEclipseContext[] contexts = new IEclipseContext[1];
 		Realm.runWithDefault(DisplayRealm.getRealm(display), () -> {
-			contexts[0] = UIStartupTest.super.createApplicationContext();
+			contexts[0] = rule.getApplicationContext();
 			contexts[0].set(IResourceUtilities.class.getName(), new ResourceUtility());
 			contexts[0].set(IStylingEngine.class, new IStylingEngine() {
 				@Override

@@ -48,7 +48,7 @@ public class UIEventTypesTest extends HeadlessApplicationElementTest {
 	@Override
 	public void setUp() throws Exception {
 		super.setUp();
-		IEventBroker appEB = applicationContext.get(IEventBroker.class);
+		IEventBroker appEB = rule.getApplicationContext().get(IEventBroker.class);
 
 		eventCount = 0;
 		appEB.subscribe(UIEvents.ApplicationElement.TOPIC_TAGS, event -> {
