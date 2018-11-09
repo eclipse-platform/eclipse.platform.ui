@@ -8,3 +8,4 @@ Bundle-Vendor: Eclipse.org
 Fragment-Host: org.eclipse.ui.ide.application
 Require-Bundle: org.junit
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Automatic-Module-Name: org.eclipse.ui.ide.application.tests
