@@ -713,6 +713,7 @@ public class BasicAliasTest extends ResourceTest {
 			} catch (CoreException e) {
 				//failure expected here because it is out of sync
 			}
+			waitForRefresh();
 
 			//ensure aliases are gone (bug 144458)
 			final IResource[] aliases = aliasManager.computeAliases(folder, ((Folder) folder).getStore());
