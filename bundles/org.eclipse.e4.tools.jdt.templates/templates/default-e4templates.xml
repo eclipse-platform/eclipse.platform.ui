@@ -2,7 +2,7 @@
 
 <!--
 /*******************************************************************************
- * Copyright (c) 2010, 2015 IBM Corporation and others.
+ * Copyright (c) 2010, 2018 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -40,8 +40,12 @@ ESelectionService selectionService;
 ${imp:import(org.eclipse.e4.ui.workbench.modeling.ESelectionService)}
 </template>
 
-<template name="Inject -  Subscribe to event topic via method" description="Event Handler Method" id="org.eclipse.e4.tools.jdt.templates.eventhandler" context="e4-members" enabled="true" autoinsert="false">@EventHandler("some/event/topic")
-void subscribeTopic(String string) {
+<template name="Inject -  Subscribe to event topic via method" description="Event Handler Method" id="org.eclipse.e4.tools.jdt.templates.eventhandler" context="e4-members" enabled="true" autoinsert="false"> @Inject
+    @Optional
+    private void subscribeApplicationCompleted
+            (@UIEventTopic(UIEvents.UILifeCycle.APP_STARTUP_COMPLETE)
+            final MApplication application,
+            final IWorkbench workbench) {
 	${cursor}
 }</template>
 
