@@ -57,7 +57,8 @@ import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
 /**
- * @since 3.5
+ * Checks that plugin.xml of specified bundles is valid and referred classes can
+ * be accessed
  *
  */
 public class PluginWalkerTest {
