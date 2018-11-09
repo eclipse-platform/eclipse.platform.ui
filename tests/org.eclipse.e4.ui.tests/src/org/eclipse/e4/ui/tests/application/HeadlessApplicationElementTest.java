@@ -17,6 +17,7 @@ package org.eclipse.e4.ui.tests.application;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.ui.internal.workbench.UIEventPublisher;
 import org.eclipse.e4.ui.model.application.MApplicationElement;
+import org.eclipse.e4.ui.tests.utilities.HeadlessApplicationRule;
 import org.eclipse.e4.ui.workbench.modeling.EModelService;
 import org.eclipse.emf.common.notify.Notifier;
 import org.junit.Before;
