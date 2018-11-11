@@ -65,6 +65,8 @@ import org.eclipse.ui.handlers.IHandlerService;
 import org.eclipse.ui.ide.IDEActionFactory;
 import org.eclipse.ui.ide.IIDEActionConstants;
 import org.eclipse.ui.internal.IPreferenceConstants;
+import org.eclipse.ui.internal.IWorkbenchGraphicConstants;
+import org.eclipse.ui.internal.WorkbenchImages;
 import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.handlers.IActionCommandMappingService;
@@ -710,7 +712,8 @@ public final class WorkbenchActionBuilder extends ActionBarAdvisor {
 
 		// 'Open Perspective' menu entry
 		String openText = IDEWorkbenchMessages.Workbench_openPerspective;
-		MenuManager changePerspMenuMgr = new MenuManager(openText, "openPerspective"); //$NON-NLS-1$
+		MenuManager changePerspMenuMgr = new MenuManager(openText,
+				WorkbenchImages.getImageDescriptor(IWorkbenchGraphicConstants.IMG_ETOOL_NEW_PAGE), "openPerspective"); //$NON-NLS-1$
 		IContributionItem changePerspMenuItem = ContributionItemFactory.PERSPECTIVES_SHORTLIST.create(getWindow());
 		changePerspMenuMgr.add(changePerspMenuItem);
 		menu.add(changePerspMenuMgr);
