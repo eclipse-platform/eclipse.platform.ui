@@ -32,6 +32,7 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.ViewerComparator;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.TreeItem;
 import org.eclipse.ui.internal.navigator.NavigatorPlugin;
 import org.eclipse.ui.internal.navigator.sorters.CommonSorterDescriptor.WrappedViewerComparator;
@@ -374,6 +375,7 @@ public class SorterTest extends NavigatorTestBase {
 
 		TreeItem addedParent;
 
+		spinEventQueueToUpdateUi(Display.getCurrent());
 		addedParent = items[_projectInd].getItem(3);
 		assertEquals("BlueParent", addedParent.getText());
 		addedParent = items[_projectInd].getItem(2);
@@ -417,6 +419,14 @@ public class SorterTest extends NavigatorTestBase {
 		// p2/file6.txt (don't use _p2Ind because of sorter)
 		TreeItem file1 = items[2].getItem(0);
 		assertEquals("file6.txt", file1.getText());
+	}
+
+	private static void spinEventQueueToUpdateUi(Display display) {
+		// Ensure that the splash screen is rendered
+		int safetyCounter = 0;
+		while (display.readAndDispatch() && safetyCounter++ < 100) {
+			// process until the queue is empty or until we hit the safetyCounter limit
+		}
 	}
 
 
