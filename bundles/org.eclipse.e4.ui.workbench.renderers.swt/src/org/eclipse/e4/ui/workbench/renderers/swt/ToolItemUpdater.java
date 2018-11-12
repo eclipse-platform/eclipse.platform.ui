@@ -24,7 +24,7 @@ import org.eclipse.swt.widgets.Display;
 public class ToolItemUpdater implements Runnable {
 
 	private static int DELAY = 100;
-	private long count = 0;
+	private long timestampOfEarliestQueuedUpdate = 0;
 	private List<AbstractContributionItem> itemsToCheck = new ArrayList<>();
 	private final List<AbstractContributionItem> orphanedToolItems = new ArrayList<>();
 	private final Set<AbstractContributionItem> itemsToUpdateLater = new LinkedHashSet<>();
@@ -52,9 +52,11 @@ public class ToolItemUpdater implements Runnable {
 			if (ci.getModel() != null && ci.getModel().getParent() != null) {
 				if (selector.select(ci.getModel())) {
 					itemsToUpdateLater.add(ci);
-					count++;
-					if (count > 100) {
-						// runnable was not called the last 100 trigger times, do it now.
+					if (timestampOfEarliestQueuedUpdate == 0) {
+						timestampOfEarliestQueuedUpdate = System.nanoTime();
+					}
+					if (System.nanoTime() - timestampOfEarliestQueuedUpdate > DELAY * 1_000_000) {
+						// runnable was not called within the last DELAY milliseconds, do it now.
 						// For scenario: a plugin is forcing that updateContributionItems is called
 						// again and again in less than given DELAY frequency. TimerExec would then
 						// never be executed.
@@ -78,7 +80,7 @@ public class ToolItemUpdater implements Runnable {
 
 	@Override
 	public void run() {
-		count = 0;
+		timestampOfEarliestQueuedUpdate = 0;
 		AbstractContributionItem[] copy = itemsToUpdateLater.toArray(new AbstractContributionItem[] {});
 		itemsToUpdateLater.clear();
 		for (AbstractContributionItem it : copy) {
