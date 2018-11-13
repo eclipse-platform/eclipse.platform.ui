@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2014, 2017 TwelveTone LLC and others.
+ * Copyright (c) 2014, 2018 TwelveTone LLC and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -46,12 +46,10 @@ import org.eclipse.swt.widgets.Table;
  * selectable items, and action buttons for modifying the list.
  * </p>
  *
- * @author Steven Spungin
- *
  */
 public abstract class AbstractPickList extends Composite {
 
-	public static enum PickListFeatures {
+	public enum PickListFeatures {
 		NO_ORDER, NO_PICKER, NO_GROUP
 	}
 
@@ -65,7 +63,6 @@ public abstract class AbstractPickList extends Composite {
 	protected final Button tiRemove;
 	protected final Button tiUp;
 	protected final Button tiDown;
-	// private final AutoCompleteField autoCompleteField;
 
 	@Deprecated
 	public AbstractPickList(Composite parent, int style, List<PickListFeatures> listFeatures, Messages messages,
@@ -116,21 +113,6 @@ public abstract class AbstractPickList extends Composite {
 		gdpicker.minimumWidth = 180;
 		gdpicker.grabExcessHorizontalSpace = true;
 		control.setLayoutData(gdpicker);
-
-		// ComboContentAdapter controlContentAdapter = new ComboContentAdapter()
-		// {
-		// @Override
-		// public void setControlContents(Control control, String text1, int
-		// cursorPosition) {
-		// super.setControlContents(control, text1, cursorPosition);
-		// Object valueInModel = proposals.get(text1);
-		// if (valueInModel != null) {
-		// getPicker().setSelection(new StructuredSelection(valueInModel));
-		// }
-		// }
-		// };
-		// autoCompleteField = new AutoCompleteField(control,
-		// controlContentAdapter, new String[0]);
 
 		toolBar = new Composite(comp, SWT.NONE);
 		layout = new GridLayout(5, true);
@@ -238,7 +220,7 @@ public abstract class AbstractPickList extends Composite {
 	protected void addPressed() {
 	}
 
-	abstract protected int getItemCount();
+	protected abstract int getItemCount();
 
 	public TableViewer getList() {
 		return viewer;
@@ -247,9 +229,6 @@ public abstract class AbstractPickList extends Composite {
 	public void setInput(Object input) {
 		getPicker().setInput(input);
 
-		// proposals = toProposals(input);
-		// final Set<String> keySet = proposals.keySet();
-		// autoCompleteField.setProposals(keySet.toArray(new String[keySet.size()]));
 	}
 
 	public IStructuredSelection getSelection() {
