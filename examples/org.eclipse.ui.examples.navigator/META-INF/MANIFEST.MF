@@ -16,3 +16,4 @@ Require-Bundle: org.eclipse.core.resources,
 Bundle-Activator: org.eclipse.ui.internal.examples.navigator.Activator
 Automatic-Module-Name: org.eclipse.ui.examples.navigator
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Bundle-Vendor: %Plugin.providerName
