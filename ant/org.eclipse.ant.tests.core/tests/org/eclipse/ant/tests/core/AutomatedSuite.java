@@ -13,9 +13,7 @@
  *******************************************************************************/
 package org.eclipse.ant.tests.core;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
-
+import org.eclipse.ant.tests.core.tests.AntSecurityManagerTest;
 import org.eclipse.ant.tests.core.tests.FrameworkTests;
 import org.eclipse.ant.tests.core.tests.OptionTests;
 import org.eclipse.ant.tests.core.tests.ProjectTests;
@@ -23,6 +21,9 @@ import org.eclipse.ant.tests.core.tests.PropertyTests;
 import org.eclipse.ant.tests.core.tests.TargetTests;
 import org.eclipse.ant.tests.core.tests.TaskTests;
 import org.eclipse.ant.tests.core.tests.TypeTests;
+
+import junit.framework.Test;
+import junit.framework.TestSuite;
 
 /**
  * Test the Eclipse Ant Core.
@@ -55,5 +56,6 @@ public class AutomatedSuite extends TestSuite {
 		addTest(new TestSuite(TaskTests.class));
 		addTest(new TestSuite(TypeTests.class));
 		addTest(new TestSuite(PropertyTests.class));
+		addTest(new TestSuite(AntSecurityManagerTest.class));
 	}
 }

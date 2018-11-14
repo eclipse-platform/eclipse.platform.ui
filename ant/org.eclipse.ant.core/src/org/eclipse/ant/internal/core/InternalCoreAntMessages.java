@@ -31,6 +31,8 @@ public class InternalCoreAntMessages extends NLS {
 	public static String AntRunner_Build_Failed__3;
 	public static String AntRunner_Already_in_progess;
 
+	public static String AntSecurityManager_0;
+
 	static {
 		// load message values from bundle file
 		NLS.initializeMessages(BUNDLE_NAME, InternalCoreAntMessages.class);

@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- *
+ * 
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -18,6 +18,12 @@ import java.net.InetAddress;
 import java.net.SocketPermission;
 import java.security.Permission;
 import java.util.PropertyPermission;
+
+import org.eclipse.ant.core.AntCorePlugin;
+import org.eclipse.ant.core.AntSecurityException;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.Status;
 
 /**
  * A security manager that always throws an <code>AntSecurityException</code> if the calling thread attempts to cause the Java Virtual Machine to
@@ -52,7 +58,8 @@ public class AntSecurityManager extends SecurityManager {
 	@Override
 	public void checkExit(int status) {
 		// no exit allowed from the restricted thread...System.exit is being called
-		// by some ant task...disallow the exit
+		// by some ant task...do not want Eclipse to exit if
+		// in the same VM.
 		if (Thread.currentThread() == fRestrictedThread) {
 			throw new AntSecurityException();
 		}
@@ -436,12 +443,20 @@ public class AntSecurityManager extends SecurityManager {
 	 * @deprecated
 	 */
 	@Deprecated
-	@Override
+	// @Override Super class method has been removed in JDK 10
 	public boolean getInCheck() {
-		if (fSecurityManager != null) {
-			return fSecurityManager.getInCheck();
+		try {
+			SecurityManager.class.getDeclaredMethod("getInCheck", (Class[]) null); //$NON-NLS-1$
+			if (fSecurityManager != null) {
+				return fSecurityManager.getInCheck();
+			}
+			return super.getInCheck();
 		}
-		return super.getInCheck();
+		catch (NoSuchMethodException | SecurityException e) {
+			Platform.getLog(AntCorePlugin.getPlugin().getBundle()).log(new Status(IStatus.WARNING, "org.eclipse.ant.launching", //$NON-NLS-1$
+					RemoteAntMessages.getString("AntSecurityManager.getInCheck"))); //$NON-NLS-1$
+			return false;
+		}
 	}
 
 	/*
