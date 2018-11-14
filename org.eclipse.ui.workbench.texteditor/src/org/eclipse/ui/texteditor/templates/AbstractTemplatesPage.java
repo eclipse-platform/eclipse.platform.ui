@@ -272,7 +272,7 @@ public abstract class AbstractTemplatesPage extends Page implements ITemplatesPa
 			if ((object1 instanceof TemplateContextType)
 					&& (object2 instanceof TemplateContextType)) {
 				return Collator.getInstance().compare(((TemplateContextType) object1).getName(),
-						((TemplateContextType) object1).getName());
+						((TemplateContextType) object2).getName());
 			}
 			return super.compare(viewer, object1, object2);
 		}
