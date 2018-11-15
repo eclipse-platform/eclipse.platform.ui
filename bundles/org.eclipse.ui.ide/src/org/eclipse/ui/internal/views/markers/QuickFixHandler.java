@@ -117,9 +117,7 @@ public class QuickFixHandler extends MarkerViewHandler {
 			} else {
 				service.runInUI(context, resolutionsRunnable, null);
 			}
-		} catch (InvocationTargetException exception) {
-			throw new ExecutionException(exception.getLocalizedMessage(), exception);
-		} catch (InterruptedException exception) {
+		} catch (InvocationTargetException | InterruptedException exception) {
 			throw new ExecutionException(exception.getLocalizedMessage(), exception);
 		}
 
