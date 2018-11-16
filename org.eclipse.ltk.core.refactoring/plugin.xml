@@ -45,5 +45,8 @@
       <contribution
             class="org.eclipse.ltk.internal.core.refactoring.resource.DeleteResourcesRefactoringContribution"
             id="org.eclipse.ltk.core.refactoring.delete.resources"/>
+      <contribution
+            class="org.eclipse.ltk.internal.core.refactoring.resource.MoveRenameResourceRefactoringContribution"
+            id="org.eclipse.ltk.core.refactoring.moverename.resource"/>
    </extension>        
 </plugin>

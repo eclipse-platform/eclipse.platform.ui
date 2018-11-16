@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2013 IBM Corporation and others.
+ * Copyright (c) 2008, 2019 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Sergey Prigogin <eclipse.sprigogin@gmail.com> - [refactoring] Provide a way to implement refactorings that depend on resources that have to be explicitly released - https://bugs.eclipse.org/347599
@@ -15,10 +15,6 @@
 package org.eclipse.ltk.core.refactoring.tests.resource;
 
 import java.io.IOException;
-
-import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
 
 import org.eclipse.core.filesystem.EFS;
 
@@ -45,9 +41,14 @@ import org.eclipse.ltk.core.refactoring.RefactoringCore;
 import org.eclipse.ltk.core.refactoring.RefactoringDescriptor;
 import org.eclipse.ltk.core.refactoring.RefactoringStatus;
 import org.eclipse.ltk.core.refactoring.resource.DeleteResourcesDescriptor;
+import org.eclipse.ltk.core.refactoring.resource.MoveRenameResourceDescriptor;
 import org.eclipse.ltk.core.refactoring.resource.MoveResourceChange;
 import org.eclipse.ltk.core.refactoring.resource.MoveResourcesDescriptor;
 import org.eclipse.ltk.core.refactoring.tests.util.SimpleTestProject;
+
+import junit.framework.Test;
+import junit.framework.TestCase;
+import junit.framework.TestSuite;
 
 public class ResourceRefactoringTests extends TestCase {
 
@@ -210,10 +211,91 @@ public class ResourceRefactoringTests extends TestCase {
 		assertTrue(content2.equals(fProject.getContent(file2)));
 	}
 
+	public void testMoveRenameRefactoring1() throws Exception {
+
+		String content= "hello";
+
+		IFolder testFolder= fProject.createFolder("test");
+		IFile file= fProject.createFile(testFolder, "myFile.txt", content);
+
+		IFolder destination= fProject.createFolder("dest");
+
+		RefactoringContribution contribution= RefactoringCore.getRefactoringContribution(MoveRenameResourceDescriptor.ID);
+		MoveRenameResourceDescriptor descriptor= (MoveRenameResourceDescriptor) contribution.createDescriptor();
+
+		descriptor.setResourcePath(file.getFullPath());
+		descriptor.setNewName("myFile2.txt");
+		descriptor.setDestination(destination);
+
+		Change undoChange= perform(descriptor);
+
+		assertMoveRename(file, destination, "myFile2.txt", content);
+
+		perform(undoChange);
+
+		assertMove(file, file.getParent(), content);
+	}
+
+	public void testMoveRenameRefactoring2() throws Exception {
+
+		String content= "hello";
+
+		IFolder testFolder= fProject.createFolder("test");
+		fProject.createFile(testFolder, "myFile.txt", content);
+
+		IFolder destination= fProject.createFolder("dest");
+
+		RefactoringContribution contribution= RefactoringCore.getRefactoringContribution(MoveRenameResourceDescriptor.ID);
+		MoveRenameResourceDescriptor descriptor= (MoveRenameResourceDescriptor) contribution.createDescriptor();
+
+		descriptor.setResourcePath(testFolder.getFullPath());
+		descriptor.setNewName("test2");
+		descriptor.setDestination(destination);
+
+		Change undoChange= perform(descriptor);
+
+		IFolder movedResource= (IFolder) assertMoveRename(testFolder, destination, "test2", null);
+		assertTrue(movedResource.getFile("myFile.txt").exists());
+
+		perform(undoChange);
+
+		assertMove(testFolder, testFolder.getParent(), null);
+		assertTrue(testFolder.getFile("myFile.txt").exists());
+	}
+
+	public void testMoveRenameRefactoring3() throws Exception {
+		// move with overwrite
+
+		String content1= "hello";
+		String content2= "world";
+
+		IFolder testFolder= fProject.createFolder("test");
+		IFile file1= fProject.createFile(testFolder, "myFile.txt", content1);
+
+		IFolder destination= fProject.createFolder("dest");
+		IFile file2= fProject.createFile(destination, "myFile2.txt", content2);
+
+		RefactoringContribution contribution= RefactoringCore.getRefactoringContribution(MoveRenameResourceDescriptor.ID);
+		MoveRenameResourceDescriptor descriptor= (MoveRenameResourceDescriptor) contribution.createDescriptor();
+
+		descriptor.setResourcePath(file1.getFullPath());
+		descriptor.setNewName("myFile2.txt");
+		descriptor.setDestination(destination);
+
+		Change undoChange= perform(descriptor);
+
+		assertMoveRename(file1, destination, "myFile2.txt", content1);
+
+		perform(undoChange);
+
+		assertMove(file1, file1.getParent(), content1);
+		assertTrue(content2.equals(fProject.getContent(file2)));
+	}
+
 	public void testDeleteRefactoring1_bug343584() throws Exception {
 		IFolder testFolder= fProject.createFolder("test");
 		fProject.createFile(testFolder, "myFile.txt", "hello");
-		
+
 		IProject testProject2= ResourcesPlugin.getWorkspace().getRoot().getProject(SimpleTestProject.TEST_PROJECT_NAME + "2");
 		try {
 			testProject2.create(null);
@@ -238,7 +320,7 @@ public class ResourceRefactoringTests extends TestCase {
 		IPath location= fProject.getProject().getLocation();
 		IFolder testFolder= fProject.createFolder("test");
 		fProject.createFile(testFolder, "myFile.txt", "hello");
-		
+
 		IWorkspace workspace= ResourcesPlugin.getWorkspace();
 		String p2Name= "p2";
 		IProjectDescription p2Description= workspace.newProjectDescription(p2Name);
@@ -247,28 +329,28 @@ public class ResourceRefactoringTests extends TestCase {
 		p2.create(p2Description, null);
 		p2.open(null);
 		IPath p2Location= p2.getLocation();
-		
+
 		RefactoringContribution contribution= RefactoringCore.getRefactoringContribution(DeleteResourcesDescriptor.ID);
 		DeleteResourcesDescriptor descriptor= (DeleteResourcesDescriptor) contribution.createDescriptor();
-		
+
 		descriptor.setDeleteContents(true);
 		descriptor.setResources(new IResource[] { fProject.getProject(), p2 });
-		
+
 		perform(descriptor);
-		
+
 		assertFalse(fProject.getProject().exists());
 		assertFalse(p2.exists());
-		
+
 		assertFalse(location.toFile().exists());
 		assertFalse(p2Location.toFile().exists());
 	}
-	
+
 	public void testDeleteRefactoring3_bug343584() throws Exception {
 		IPath location= fProject.getProject().getLocation();
 		IFolder testFolder= fProject.createFolder("test");
 		IFile file= fProject.createFile(testFolder, "myFile.txt", "hello");
 		IPath fileLocation= file.getLocation();
-		
+
 		IWorkspace workspace= ResourcesPlugin.getWorkspace();
 		String p2Name= "p2";
 		IProjectDescription p2Description= workspace.newProjectDescription(p2Name);
@@ -277,29 +359,29 @@ public class ResourceRefactoringTests extends TestCase {
 		p2.create(p2Description, null);
 		p2.open(null);
 		IPath p2Location= p2.getLocation();
-		
+
 		try {
 			RefactoringContribution contribution= RefactoringCore.getRefactoringContribution(DeleteResourcesDescriptor.ID);
 			DeleteResourcesDescriptor descriptor= (DeleteResourcesDescriptor) contribution.createDescriptor();
-			
+
 			descriptor.setDeleteContents(false);
 			descriptor.setResources(new IResource[] { fProject.getProject(), p2 });
-			
+
 			perform(descriptor);
-			
+
 			assertFalse(fProject.getProject().exists());
 			assertFalse(p2.exists());
-			
+
 			assertTrue(location.toFile().exists());
 			assertTrue(fileLocation.toFile().exists());
 			assertTrue(p2Location.toFile().exists());
-			
+
 		} finally {
 			EFS.getLocalFileSystem().getStore(location).delete(EFS.NONE, null);
 			EFS.getLocalFileSystem().getStore(p2Location).delete(EFS.NONE, null);
 		}
 	}
-	
+
 	private Change perform(Change change) throws CoreException {
 		PerformChangeOperation op= new PerformChangeOperation(change);
 		op.run(null);
@@ -337,5 +419,16 @@ public class ResourceRefactoringTests extends TestCase {
 		return res;
 	}
 
+	private IResource assertMoveRename(IResource source, IContainer destination, String newName, String content) throws CoreException, IOException {
+		IResource res= destination.findMember(newName);
+
+		assertTrue(res != null);
+		assertTrue(res.getType() == source.getType());
+
+		if (res instanceof IFile) {
+			assertTrue(content.equals(fProject.getContent((IFile) res)));
+		}
+		return res;
+	}
 
 }
