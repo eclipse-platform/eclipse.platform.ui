@@ -929,6 +929,7 @@ public class ModelServiceImpl implements EModelService {
 		}
 
 		// Remove any minimized stacks for this perspective
+		String perspectiveSuffix = "(" + persp.getElementId() + ")"; //$NON-NLS-1$ //$NON-NLS-2$
 		List<MTrimBar> bars = findElements(window, null, MTrimBar.class, null);
 		List<MToolControl> toRemove = new ArrayList<>();
 		for (MTrimBar bar : bars) {
@@ -937,7 +938,7 @@ public class ModelServiceImpl implements EModelService {
 					continue;
 				}
 				String id = barKid.getElementId();
-				if (id != null && id.contains(persp.getElementId())) {
+				if (id != null && id.contains(perspectiveSuffix)) {
 					toRemove.add((MToolControl) barKid);
 				}
 			}
