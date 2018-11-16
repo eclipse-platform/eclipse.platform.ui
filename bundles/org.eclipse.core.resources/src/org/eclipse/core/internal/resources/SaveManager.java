@@ -23,6 +23,9 @@ package org.eclipse.core.internal.resources;
 import java.io.*;
 import java.io.File;
 import java.net.URI;
+import java.nio.charset.Charset;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.*;
 import java.util.zip.*;
 import org.eclipse.core.filesystem.EFS;
@@ -1592,11 +1595,44 @@ public class SaveManager implements IElementInfoFlattener, IManager, IStringPool
 					int valueInMemory = Integer.parseInt(masterTable.getProperty(ROOT_SEQUENCE_NUMBER_KEY));
 					// new master table must provide greater or equal sequence number for root
 					// throw exception if new value is lower than previous one - we cannot allow to desynchronize master table on disk
-					String message = "Cannot set lower sequence number for root (previous: " + valueInFile + ", new: " + valueInMemory + "). Location: " + target.getAbsolutePath(); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-					Assert.isLegal(valueInMemory >= valueInFile, message);
+					if (valueInMemory < valueInFile) {
+						String message = getBadSequenceNumberErrorMessage(target, valueInFile, valueInMemory, masterTable, previousMasterTable);
+						Assert.isLegal(false, message);
+					}
 				}
 			}
 		}
+	}
+
+	private static String getBadSequenceNumberErrorMessage(java.io.File target, int valueInFile, int valueInMemory, MasterTable currentMasterTable, MasterTable previousMasterTable) {
+		StringBuilder messageBuffer = new StringBuilder();
+		messageBuffer.append("Cannot set lower sequence number for root (previous: "); //$NON-NLS-1$
+		messageBuffer.append(valueInFile);
+		messageBuffer.append(", new: "); //$NON-NLS-1$
+		messageBuffer.append(valueInMemory);
+		messageBuffer.append("). Location: "); //$NON-NLS-1$
+		messageBuffer.append(target.getAbsolutePath());
+		try {
+			messageBuffer.append("Timestamps and tree sequence numbers from file:"); //$NON-NLS-1$
+			java.nio.file.Path targetPath = Paths.get(target.getAbsolutePath());
+			List<String> masterTableFileContents = Files.readAllLines(targetPath, Charset.defaultCharset());
+			for (String line : masterTableFileContents) {
+				if (line != null) {
+					boolean isPropertiesTimestamp = line.startsWith("#"); //$NON-NLS-1$
+					boolean isTreeProperty = line.startsWith(ROOT_SEQUENCE_NUMBER_KEY);
+					if (isPropertiesTimestamp || isTreeProperty) {
+						messageBuffer.append(System.lineSeparator());
+						messageBuffer.append(line);
+					}
+				}
+			}
+		} catch (IOException e) {
+			ILog log = ResourcesPlugin.getPlugin().getLog();
+			String errorMessage = "Error occurred while reading master table file"; //$NON-NLS-1$
+			IStatus errorStatus = new Status(IStatus.ERROR, ResourcesPlugin.PI_RESOURCES, errorMessage, e);
+			log.log(errorStatus);
+		}
+		return messageBuffer.toString();
 	}
 
 	/**
