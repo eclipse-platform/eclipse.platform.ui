@@ -26,7 +26,6 @@ import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.util.IPropertyChangeListener;
-import org.eclipse.jface.util.Util;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Color;
@@ -131,15 +130,11 @@ public class HeapStatus extends Composite {
 			disabledGcImage = new Image(display, gcImage, SWT.IMAGE_DISABLE);
 		}
 
-		if (Util.isGtk()) {
-			usedMemCol = display.getSystemColor(SWT.COLOR_TITLE_INACTIVE_FOREGROUND);
-		} else {
-			usedMemCol = display.getSystemColor(SWT.COLOR_WIDGET_NORMAL_SHADOW);
-		}
+		usedMemCol = new Color(display, 160, 160, 160); // gray
 		lowMemCol = new Color(display, 255, 70, 70);  // medium red
 		freeMemCol = new Color(display, 255, 190, 125);  // light orange
+		sepCol = topLeftCol = armCol = usedMemCol;
 		bgCol = display.getSystemColor(SWT.COLOR_WIDGET_BACKGROUND);
-		sepCol = topLeftCol = armCol = display.getSystemColor(SWT.COLOR_WIDGET_NORMAL_SHADOW);
 		bottomRightCol = display.getSystemColor(SWT.COLOR_WIDGET_HIGHLIGHT_SHADOW);
 		markCol = textCol = display.getSystemColor(SWT.COLOR_WIDGET_FOREGROUND);
 
@@ -271,6 +266,9 @@ public class HeapStatus extends Composite {
 			disabledGcImage.dispose();
 		}
 
+		if (usedMemCol != null) {
+			usedMemCol.dispose();
+		}
         if (lowMemCol != null) {
 			lowMemCol.dispose();
 		}
