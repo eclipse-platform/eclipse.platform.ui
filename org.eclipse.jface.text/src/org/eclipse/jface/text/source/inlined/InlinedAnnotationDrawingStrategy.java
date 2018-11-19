@@ -163,7 +163,13 @@ class InlinedAnnotationDrawingStrategy implements IDrawingStrategy {
 			annotation.draw(gc, textWidget, offset, length, color, x, y);
 			int width= annotation.getWidth();
 			if (width != 0) {
-				if (!isEndOfLine) {
+				if (isEndOfLine) {
+					if (!gc.getClipping().contains(x, y)) {
+						// The draw of mining is not inside the gc clipping, redraw the area which contains the mining to draw.
+						Rectangle client= textWidget.getClientArea();
+						textWidget.redraw(x, y, client.width, bounds.height, false);
+					}
+				} else {
 					// Get size of the character where GlyphMetrics width is added
 					Point charBounds= gc.stringExtent(s);
 					int charWidth= charBounds.x;
