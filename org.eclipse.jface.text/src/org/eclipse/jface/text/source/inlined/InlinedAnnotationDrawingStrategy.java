@@ -147,15 +147,13 @@ class InlinedAnnotationDrawingStrategy implements IDrawingStrategy {
 			return;
 		}
 		if (gc != null) {
+			String s= textWidget.getText(offset, offset);
+			boolean isEndOfLine= ("\r".equals(s) || "\n".equals(s)); //$NON-NLS-1$ //$NON-NLS-2$
+
 			// Compute the location of the annotation
 			Rectangle bounds= textWidget.getTextBounds(offset, offset);
-			int x= bounds.x;
+			int x= bounds.x + (isEndOfLine ? bounds.width * 2 : 0);
 			int y= bounds.y;
-
-			// Get size of the character where GlyphMetrics width is added
-			String s= textWidget.getText(offset, offset);
-			Point charBounds= gc.stringExtent(s);
-			int charWidth= charBounds.x;
 
 			// When line text has line header annotation, there is a space on the top, adjust the y by using char height
 			y+= bounds.height - textWidget.getLineHeight();
@@ -165,25 +163,29 @@ class InlinedAnnotationDrawingStrategy implements IDrawingStrategy {
 			annotation.draw(gc, textWidget, offset, length, color, x, y);
 			int width= annotation.getWidth();
 			if (width != 0) {
-				// FIXME: remove this code when we need not redraw the character (see https://bugs.eclipse.org/bugs/show_bug.cgi?id=531769)
-				// START TO REMOVE
-				annotation.setRedrawnCharacterWidth(charWidth);
-				// END TO REMOVE
+				if (!isEndOfLine) {
+					// Get size of the character where GlyphMetrics width is added
+					Point charBounds= gc.stringExtent(s);
+					int charWidth= charBounds.x;
 
-				// Annotation takes place, add GlyphMetrics width to the style
-				StyleRange newStyle= updateStyle(annotation, style);
-				if (newStyle != null) {
-					textWidget.setStyleRange(newStyle);
-					return;
-				}
+					// FIXME: remove this code when we need not redraw the character (see https://bugs.eclipse.org/bugs/show_bug.cgi?id=531769)
+					// START TO REMOVE
+					annotation.setRedrawnCharacterWidth(charWidth);
+					// END TO REMOVE
 
-				// FIXME: remove this code when we need not redraw the character (see https://bugs.eclipse.org/bugs/show_bug.cgi?id=531769)
-				// START TO REMOVE
-				// The inline annotation replaces one character by taking a place width
-				// GlyphMetrics
-				// Here we need to redraw this first character (if it's not a line delimiter) because GlyphMetrics clip this
-				// character.
-				if (!("\r".equals(s) || "\n".equals(s))) { //$NON-NLS-1$ //$NON-NLS-2$
+					// Annotation takes place, add GlyphMetrics width to the style
+					StyleRange newStyle= updateStyle(annotation, style);
+					if (newStyle != null) {
+						textWidget.setStyleRange(newStyle);
+						return;
+					}
+
+					// FIXME: remove this code when we need not redraw the character (see https://bugs.eclipse.org/bugs/show_bug.cgi?id=531769)
+					// START TO REMOVE
+					// The inline annotation replaces one character by taking a place width
+					// GlyphMetrics
+					// Here we need to redraw this first character because GlyphMetrics clip this
+					// character.
 					int charX= x + bounds.width - charWidth;
 					int charY= y;
 					if (style != null) {
@@ -220,7 +222,7 @@ class InlinedAnnotationDrawingStrategy implements IDrawingStrategy {
 	 */
 	static StyleRange updateStyle(LineContentAnnotation annotation, StyleRange style) {
 		int width= annotation.getWidth();
-		if (width == 0) {
+		if (width == 0 || annotation.getRedrawnCharacterWidth() == 0) {
 			return null;
 		}
 		int fullWidth= width + annotation.getRedrawnCharacterWidth();
