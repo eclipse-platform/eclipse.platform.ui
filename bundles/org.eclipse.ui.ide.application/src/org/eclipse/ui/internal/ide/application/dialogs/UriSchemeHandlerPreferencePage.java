@@ -46,6 +46,8 @@ import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
+import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.internal.IWorkbenchHelpContextIds;
 import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
 import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
 import org.eclipse.ui.statushandlers.StatusManager;
@@ -93,6 +95,9 @@ public class UriSchemeHandlerPreferencePage extends PreferencePage implements IW
 
 	@Override
 	protected Control createContents(Composite parent) {
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(parent,
+				IWorkbenchHelpContextIds.LINK_HANDLERS_PREFERENCE_PAGE);
+
 		noDefaultAndApplyButton();
 		addFiller(parent, 2);
 		createTableViewerForSchemes(parent);

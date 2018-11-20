@@ -276,6 +276,8 @@ public interface IWorkbenchHelpContextIds {
 	String KEYS_PREFERENCE_PAGE = PREFIX
 			+ "keys_preference_page_context"; //$NON-NLS-1$
 
+	String LINK_HANDLERS_PREFERENCE_PAGE = PREFIX + "link_handlers_page_context"; //$NON-NLS-1$
+
 	String WORKBENCH_EDITOR_PREFERENCE_PAGE = PREFIX
 			+ "workbench_editor_preference_page_context"; //$NON-NLS-1$
 
