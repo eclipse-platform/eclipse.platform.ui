@@ -20,12 +20,14 @@ import java.nio.file.Files;
 import java.nio.file.attribute.FileTime;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicBoolean;
 import org.eclipse.core.filesystem.*;
 import org.eclipse.core.internal.resources.Resource;
 import org.eclipse.core.internal.utils.FileUtil;
 import org.eclipse.core.internal.utils.UniversalUniqueIdentifier;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.core.tests.harness.CoreTest;
 import org.eclipse.core.tests.harness.FileSystemHelper;
@@ -714,9 +716,46 @@ public abstract class ResourceTest extends CoreTest {
 		return path.toFile().exists();
 	}
 
-	private boolean existsInWorkspace(IResource resource, boolean phantom) {
-		IResource target = getWorkspace().getRoot().findMember(resource.getFullPath(), phantom);
-		return target != null && target.getType() == resource.getType();
+	boolean existsInWorkspace(IResource resource, boolean phantom) {
+		class CheckIfResourceExistsJob extends Job {
+
+			private final AtomicBoolean resourceExists = new AtomicBoolean(false);
+
+			public CheckIfResourceExistsJob() {
+				super("Test " + ResourceTest.this.getName() + " checking whether resource exists: " + resource);
+			}
+
+			@Override
+			protected IStatus run(IProgressMonitor monitor) {
+				if (monitor.isCanceled()) {
+					return Status.CANCEL_STATUS;
+				}
+
+				IResource target = getWorkspace().getRoot().findMember(resource.getFullPath(), phantom);
+				boolean existsInWorkspace = target != null && target.getType() == resource.getType();
+				resourceExists.set(existsInWorkspace);
+
+				return Status.OK_STATUS;
+			}
+
+			boolean resourceExists() {
+				return resourceExists.get();
+			}
+		}
+
+		IWorkspace workspace = getWorkspace();
+		ISchedulingRule modifyWorkspaceRule = workspace.getRuleFactory().modifyRule(workspace.getRoot());
+
+		CheckIfResourceExistsJob checkIfResourceExistsJob = new CheckIfResourceExistsJob();
+		checkIfResourceExistsJob.setRule(modifyWorkspaceRule);
+		checkIfResourceExistsJob.schedule();
+		try {
+			checkIfResourceExistsJob.join(30_000, getMonitor());
+		} catch (Exception e) {
+			fail("Joining job to check whether resource exists in workspace failed with exception", e);
+		}
+
+		return checkIfResourceExistsJob.resourceExists();
 	}
 
 	/**

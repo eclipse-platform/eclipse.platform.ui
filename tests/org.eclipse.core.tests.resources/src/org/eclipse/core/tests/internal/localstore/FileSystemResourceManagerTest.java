@@ -465,17 +465,22 @@ public class FileSystemResourceManagerTest extends LocalStoreTest implements ICo
 
 	protected void write(final IFile file, final InputStream contents, final boolean force, IProgressMonitor monitor) throws CoreException {
 		assertNotNull("file cannot be null", file);
-		IWorkspaceRunnable operation = pm -> {
-			int flags = force ? IResource.FORCE : IResource.NONE;
-			IFileStore store = ((Resource) file).getStore();
-			assertNotNull("file store cannot be null", store);
-			IFileInfo info = store.fetchInfo();
-			assertNotNull("file info cannot be null for file " + file, info);
-			FileSystemResourceManager localManager = getLocalManager();
-			assertNotNull("file system resource manager cannot be null", localManager);
-			localManager.write(file, contents, info, flags, false, null);
-		};
-		getWorkspace().run(operation, null);
+		class WriteFileContents implements IWorkspaceRunnable {
+			@Override
+			public void run(IProgressMonitor jobMonitor) throws CoreException {
+				int flags = force ? IResource.FORCE : IResource.NONE;
+				IFileStore store = ((Resource) file).getStore();
+				assertNotNull("file store cannot be null", store);
+				IFileInfo info = store.fetchInfo();
+				assertNotNull("file info cannot be null for file " + file, info);
+				FileSystemResourceManager localManager = getLocalManager();
+				assertNotNull("file system resource manager cannot be null", localManager);
+				localManager.write(file, contents, info, flags, false, jobMonitor);
+			}
+		}
+		IWorkspace workspace = getWorkspace();
+		assertNotNull("workspace cannot be null", workspace);
+		workspace.run(new WriteFileContents(), null);
 	}
 
 	protected void write(final IFolder folder, final boolean force, IProgressMonitor monitor) throws CoreException {

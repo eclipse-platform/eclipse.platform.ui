@@ -21,6 +21,7 @@ import junit.framework.Test;
 import junit.framework.TestSuite;
 import org.eclipse.core.internal.preferences.EclipsePreferences;
 import org.eclipse.core.internal.resources.CharsetDeltaJob;
+import org.eclipse.core.internal.resources.CharsetManager;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.content.*;
@@ -565,10 +566,11 @@ public class CharsetTest extends ResourceTest {
 			}
 			//wait for all resource deltas
 			try {
-				Thread.sleep(5000);
+				Thread.sleep(500);
 			} catch (InterruptedException e) {
 				fail("3.0.1", e);
 			}
+			waitForCharsetManagerJob();
 			assertExistsInWorkspace("3.1", regularPrefs);
 			assertExistsInWorkspace("3.2", derivedPrefs);
 			assertTrue("3.3", derivedPrefs.isDerived());
@@ -582,10 +584,11 @@ public class CharsetTest extends ResourceTest {
 			}
 			//wait for all resource deltas
 			try {
-				Thread.sleep(5000);
+				Thread.sleep(500);
 			} catch (InterruptedException e) {
 				fail("4.0.1", e);
 			}
+			waitForCharsetManagerJob();
 			assertExistsInWorkspace("4.1", regularPrefs);
 			assertDoesNotExistInWorkspace("4.2", derivedPrefs);
 
@@ -601,6 +604,7 @@ public class CharsetTest extends ResourceTest {
 			} catch (CoreException e) {
 				fail("5.0", e);
 			}
+			waitForCharsetManagerJob();
 			assertTrue("5.1", backgroundVerifier.waitForEvent(10000));
 			assertTrue("5.2 " + backgroundVerifier.getMessage(), backgroundVerifier.isDeltaValid());
 			assertExistsInWorkspace("5.3", regularPrefs);
@@ -1579,4 +1583,13 @@ public class CharsetTest extends ResourceTest {
 	private String getOtherCharset(String referenceCharset) {
 		return "MIK".equals(referenceCharset) ? "UTF-8" : "MIK";
 	}
+
+	private void waitForCharsetManagerJob() {
+		try {
+			Job.getJobManager().join(CharsetManager.class, null);
+		} catch (Exception e) {
+			fail("Exception occurred while waiting on jobs from " + CharsetManager.class, e);
+		}
+	}
+
 }

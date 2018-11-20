@@ -49,6 +49,11 @@ public class CharsetManager implements IManager {
 			setPriority(Job.INTERACTIVE);
 		}
 
+		@Override
+		public boolean belongsTo(Object family) {
+			return CharsetManager.class == family;
+		}
+
 		public void addChanges(Map<IProject, Boolean> newChanges) {
 			if (newChanges.isEmpty())
 				return;
