@@ -108,34 +108,6 @@ public class ThemeEngine implements IThemeEngine {
 			modDir.mkdirs();
 		}
 
-		//Check for old css files
-		File oldModDir= new File(
-				System.getProperty("user.home") + File.separator + ".e4css" + File.separator); //$NON-NLS-1$ //$NON-NLS-2$
-		if (oldModDir.exists()) {
-			File done = new File(oldModDir, ".processed");
-			if (!done.exists()) {
-				// copy over files into config area
-				try {
-					done.createNewFile();
-					File[] oldModifiedFiles = oldModDir.listFiles();
-					if (oldModifiedFiles == null) {
-						throw new IOException(
-								"Content from directory '" + oldModDir.getAbsolutePath() + "' can not be listed."); //$NON-NLS-1$ //$NON-NLS-2$
-					}
-					for (File oldModifiedFile : oldModifiedFiles) {
-						if (oldModifiedFile.getName().contains(".css")) {
-							copyFile(oldModifiedFile.getPath(), path
-									+ File.separator
-									+ oldModifiedFile.getName());
-						}
-					}
-				} catch (IOException e1) {
-					/* ignore */
-				}
-			}
-		}
-
-
 		File[] modifiedFiles = modDir.listFiles();
 		String currentOS = Platform.getOS();
 		String currentWS = Platform.getWS();
