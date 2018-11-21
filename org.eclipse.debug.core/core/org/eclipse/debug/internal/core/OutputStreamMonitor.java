@@ -17,10 +17,13 @@ package org.eclipse.debug.internal.core;
 import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.eclipse.core.runtime.ISafeRunnable;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.ListenerList;
 import org.eclipse.core.runtime.SafeRunner;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.IStreamListener;
 import org.eclipse.debug.core.model.IFlushableStreamMonitor;
@@ -33,6 +36,19 @@ import org.eclipse.debug.core.model.IFlushableStreamMonitor;
  * and input stream.
  */
 public class OutputStreamMonitor implements IFlushableStreamMonitor {
+
+	/**
+	 * VM property which indicates maximum wait time (in milliseconds) for
+	 * reading to finish, when calling {@link #getContents()}.
+	 */
+	private static final String MAX_WAIT_TIME_FOR_STREAM_READING_PROPERTY = "org.eclipse.debug.core.msMaxWaitTimeForStreamMonitorReading"; //$NON-NLS-1$
+
+	/**
+	 * Wait max n milliseconds for the thread to finish reading when calling
+	 * {@link #getContents()}.
+	 */
+	private static final long MAX_WAIT_TIME_FOR_STREAM_READING = maxWaitTimeForStreamReading();
+
 	/**
 	 * The stream being monitored (connected system out or err).
 	 */
@@ -70,9 +86,17 @@ public class OutputStreamMonitor implements IFlushableStreamMonitor {
 	 */
 	private boolean fKilled= false;
 
-    private long lastSleep;
+	/**
+	 * Last time we've read something from the stream
+	 */
+	private long lastSleep;
 
 	private String fEncoding;
+
+	/**
+	 * Indicates whether the monitor is done reading from the stream.
+	 */
+	private final AtomicBoolean fReadingDone;
 
 	/**
 	 * Creates an output stream monitor on the
@@ -85,6 +109,7 @@ public class OutputStreamMonitor implements IFlushableStreamMonitor {
         fStream = new BufferedInputStream(stream, 8192);
         fEncoding = encoding;
 		fContents= new StringBuilder();
+		fReadingDone = new AtomicBoolean(false);
 	}
 
 	/* (non-Javadoc)
@@ -126,7 +151,20 @@ public class OutputStreamMonitor implements IFlushableStreamMonitor {
 	 */
 	@Override
 	public synchronized String getContents() {
+		boolean doneReading = waitForReadingToFinish(MAX_WAIT_TIME_FOR_STREAM_READING);
+		if (!doneReading) {
+			logWarning("OutputStreamMonitor::startMonitoring() was unable to start reading stream after " + MAX_WAIT_TIME_FOR_STREAM_READING + " ms."); //$NON-NLS-1$ //$NON-NLS-2$
+		}
 		return fContents.toString();
+	}
+
+	private void read() {
+		fReadingDone.set(false);
+		try {
+			readInternal();
+		} finally {
+			fReadingDone.set(true);
+		}
 	}
 
 	/**
@@ -137,7 +175,7 @@ public class OutputStreamMonitor implements IFlushableStreamMonitor {
 	 * to implement <code>Runnable</code> without publicly
 	 * exposing a <code>run</code> method.
 	 */
-	private void read() {
+	private void readInternal() {
         lastSleep = System.currentTimeMillis();
         long currentTime = lastSleep;
 		byte[] bytes= new byte[BUFFER_SIZE];
@@ -242,6 +280,53 @@ public class OutputStreamMonitor implements IFlushableStreamMonitor {
 
 	private ContentNotifier getNotifier() {
 		return new ContentNotifier();
+	}
+
+	/**
+	 * Blocking call to make sure the stream reading thread is done (and so
+	 * {@link #readInternal()} was called).
+	 *
+	 * @param timeout max time to wait for reading the entire stream
+	 *
+	 * @return {@code true} if the stream reading is done
+	 */
+	protected boolean waitForReadingToFinish(long timeout) {
+		final long start = System.currentTimeMillis();
+		while (!fReadingDone.get() && System.currentTimeMillis() - start < timeout) {
+			try {
+				Thread.sleep(10);
+			} catch (InterruptedException e) {
+				Thread.currentThread().interrupt();
+				break;
+			}
+		}
+		return fReadingDone.get();
+	}
+
+	private static long maxWaitTimeForStreamReading() {
+		long maxTime = 10_000;
+		String systemPropertyValue = System.getProperty(MAX_WAIT_TIME_FOR_STREAM_READING_PROPERTY);
+		if (systemPropertyValue != null) {
+			try {
+				maxTime = Long.parseLong(systemPropertyValue);
+			} catch (NumberFormatException e) {
+				logError("Failed to read default value for max stream monitor read time: " + MAX_WAIT_TIME_FOR_STREAM_READING_PROPERTY, e); //$NON-NLS-1$
+			}
+		}
+		return maxTime;
+	}
+
+	private static void logWarning(String warningMessage) {
+		log(IStatus.WARNING, warningMessage, null);
+	}
+
+	private static void logError(String errorMessage, Exception e) {
+		log(IStatus.ERROR, errorMessage, e);
+	}
+
+	private static void log(int statusCode, String errorMessage, Exception e) {
+		IStatus errorStatus = new Status(statusCode, DebugPlugin.getUniqueIdentifier(), errorMessage, e);
+		DebugPlugin.log(errorStatus);
 	}
 
 	class ContentNotifier implements ISafeRunnable {
