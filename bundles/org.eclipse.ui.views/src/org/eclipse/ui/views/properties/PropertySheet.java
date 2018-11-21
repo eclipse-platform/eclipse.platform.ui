@@ -417,31 +417,32 @@ public class PropertySheet extends PageBookView
 			}
 			return;
 		}
+
+		IContributedContentsView view = Adapters.adapt(part, IContributedContentsView.class);
+		IWorkbenchPart source = null;
+		if (view != null) {
+			source = view.getContributingPart();
+		}
+		if (source == null) {
+			source = part;
+		}
+
 		if (wasHidden) {
 			IWorkbenchPartSite site = getSite();
 			IWorkbenchPage page = site.getPage();
 			IViewPart[] stack = page.getViewStack(this);
 			if (stack != null) {
 				for (IViewPart vPart : stack) {
-					if (vPart == part) {
-						// don't react on activation of parts from same stack,
-						// see bug 485154.
+					if (vPart == source) {
+						// don't react on activation of (contributing) parts from same stack,
+						// see bug 485154 and 530131.
 						return;
 					}
 				}
 			}
 		}
 
-		IContributedContentsView view = Adapters.adapt(part, IContributedContentsView.class);
-        IWorkbenchPart source = null;
-        if (view != null) {
-			source = view.getContributingPart();
-		}
-        if (source != null) {
-			super.partActivated(source);
-		} else {
-			super.partActivated(part);
-		}
+		super.partActivated(source);
 
         if(isImportant(part)) {
         	currentPart = part;
