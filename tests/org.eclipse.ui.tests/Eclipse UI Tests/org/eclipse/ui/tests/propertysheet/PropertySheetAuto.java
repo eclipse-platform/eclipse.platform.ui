@@ -420,7 +420,13 @@ public class PropertySheetAuto extends UITestCase {
 
 			PropertySheetPage currentPage = (PropertySheetPage) propView.getCurrentPage();
 			PropertySheetEntry propEntry = (PropertySheetEntry) currentPage.getControl().getData();
-			assertArrayEquals(structuredSelection.toArray(), propEntry.getValues());
+			Object[] values = propEntry.getValues();
+			if (values.length == 1 && !(values[0] instanceof PropertySheetAuto.Car)) {
+				// When the selection is empty, the part is set as selection on the
+				// propertiesview
+				values = new Object[0];
+			}
+			assertArrayEquals(structuredSelection.toArray(), values);
 		}
 	}
 
@@ -473,7 +479,13 @@ public class PropertySheetAuto extends UITestCase {
 
 			PropertySheetPage currentPage = (PropertySheetPage) propView.getCurrentPage();
 			PropertySheetEntry propEntry = (PropertySheetEntry) currentPage.getControl().getData();
-			assertArrayEquals(structuredSelection.toArray(), propEntry.getValues());
+			Object[] values = propEntry.getValues();
+			if (values.length == 1 && !(values[0] instanceof PropertySheetAuto.Car)) {
+				// When the selection is empty, the part is set as selection on the
+				// propertiesview
+				values = new Object[0];
+			}
+			assertArrayEquals(structuredSelection.toArray(), values);
 		}
 	}
 
@@ -548,7 +560,13 @@ public class PropertySheetAuto extends UITestCase {
 			assertEquals(structuredSelection, propView.getShowInContext().getSelection());
 			PropertySheetPage currentPage = (PropertySheetPage) propView.getCurrentPage();
 			PropertySheetEntry propEntry = (PropertySheetEntry) currentPage.getControl().getData();
-			assertArrayEquals(structuredSelection.toArray(), propEntry.getValues());
+			Object[] values = propEntry.getValues();
+			if (values.length == 1 && !(values[0] instanceof PropertySheetAuto.Car)) {
+				// When the selection is empty, the part is set as selection on the
+				// propertiesview
+				values = new Object[0];
+			}
+			assertArrayEquals(structuredSelection.toArray(), values);
 		}
 	}
 

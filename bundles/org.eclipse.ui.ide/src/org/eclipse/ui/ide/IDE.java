@@ -1808,6 +1808,7 @@ public final class IDE {
 		manager.registerAdapters(paFactory, IFolder.class);
 		manager.registerAdapters(paFactory, IFile.class);
 		manager.registerAdapters(paFactory, IMarker.class);
+		manager.registerAdapters(paFactory, IEditorPart.class);
 	}
 
 	private static boolean isIgnoredStatus(IStatus status,

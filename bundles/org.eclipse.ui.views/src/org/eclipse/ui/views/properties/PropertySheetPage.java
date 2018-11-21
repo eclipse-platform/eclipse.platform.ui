@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 IBM Corporation and others.
+ * Copyright (c) 2000, 2019 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -12,10 +12,12 @@
  *     IBM Corporation - initial API and implementation
  *     Gunnar Wagenknecht - fix for bug 21756 [PropertiesView] property view sorting
  *     Simon Scholz <simon.scholz@vogella.com> - Bug 460405
+ *     Rolf Theunissen <rolf.theunissen@gmail.com> - Bug 23862
  *******************************************************************************/
 
 package org.eclipse.ui.views.properties;
 
+import org.eclipse.core.runtime.Adapters;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.help.IContext;
 import org.eclipse.jface.action.Action;
@@ -48,7 +50,6 @@ import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.ui.IActionBars;
-import org.eclipse.ui.IPartListener;
 import org.eclipse.ui.ISaveablePart;
 import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.IWorkbenchPart;
@@ -56,6 +57,7 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.help.IWorkbenchHelpSystem;
 import org.eclipse.ui.internal.views.properties.PropertiesMessages;
 import org.eclipse.ui.part.CellEditorActionHandler;
+import org.eclipse.ui.part.IContributedContentsView;
 import org.eclipse.ui.part.Page;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.Bundle;
@@ -119,44 +121,6 @@ public class PropertySheetPage extends Page implements IPropertySheetPage, IAdap
 	private Clipboard clipboard;
 
 	private IWorkbenchPart sourcePart;
-
-	/**
-	 * Part listener which cleans up this page when the source part is closed.
-	 * This is hooked only when there is a source part.
-	 *
-	 * @since 3.2
-	 */
-	private class PartListener implements IPartListener {
-		@Override
-		public void partActivated(IWorkbenchPart part) {
-		}
-
-		@Override
-		public void partBroughtToTop(IWorkbenchPart part) {
-		}
-
-		@Override
-		public void partClosed(IWorkbenchPart part) {
-			if (sourcePart == part) {
-				if (sourcePart != null)
-					sourcePart.getSite().getPage().removePartListener(partListener);
-				sourcePart = null;
-				if (viewer != null && !viewer.getControl().isDisposed()) {
-					viewer.setInput(new Object[0]);
-				}
-			}
-		}
-
-		@Override
-		public void partDeactivated(IWorkbenchPart part) {
-		}
-
-		@Override
-		public void partOpened(IWorkbenchPart part) {
-		}
-	}
-
-	private PartListener partListener = new PartListener();
 
 	private Action columnsAction;
 
@@ -277,11 +241,7 @@ public class PropertySheetPage extends Page implements IPropertySheetPage, IAdap
 	@Override
 	public void dispose() {
 		super.dispose();
-		if (sourcePart != null) {
-			sourcePart.getSite().getPage().removePartListener(partListener);
-			sourcePart = null;
-			partListener = null;
-		}
+		sourcePart = null;
 		if (rootEntry != null) {
 			rootEntry.dispose();
 			rootEntry = null;
@@ -545,19 +505,20 @@ public class PropertySheetPage extends Page implements IPropertySheetPage, IAdap
 			return;
 		}
 
-		if (sourcePart != null) {
-			sourcePart.getSite().getPage().removePartListener(partListener);
-			sourcePart = null;
-		}
-
+		sourcePart = part;
 		// change the viewer input since the workbench selection has changed.
-		if (selection instanceof IStructuredSelection) {
-			sourcePart = part;
+		if (selection instanceof IStructuredSelection && !selection.isEmpty()) {
 			viewer.setInput(((IStructuredSelection) selection).toArray());
-		}
-
-		if (sourcePart != null) {
-			sourcePart.getSite().getPage().addPartListener(partListener);
+		} else {
+			// Many people expect to see the properties for the current part, for instance,
+			// the properties for the file in the current editor. Therefore set the part as
+			// input, such that adaptors can be used to provide the properties for the part.
+			IContributedContentsView view = Adapters.adapt(part, IContributedContentsView.class);
+			IWorkbenchPart source = null;
+			if (view != null) {
+				source = view.getContributingPart();
+			}
+			viewer.setInput(new Object[] { source != null ? source : part });
 		}
 	}
 

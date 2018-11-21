@@ -15,14 +15,11 @@
  *     Craig Foote (Footeware.ca) - https://bugs.eclipse.org/325743
  *     Simon Scholz <simon.scholz@vogella.com> - Bug 460405
  *     Cornel Izbasa <cizbasa@info.uvt.ro> - Bug 417447
+ *     Rolf Theunissen <rolf.theunissen@gmail.com> - Bug 23862
  *******************************************************************************/
 package org.eclipse.ui.views.properties;
 
 import java.util.HashSet;
-
-import org.eclipse.osgi.util.NLS;
-
-import org.eclipse.swt.widgets.Composite;
 
 import org.eclipse.core.runtime.Adapters;
 import org.eclipse.core.runtime.IAdaptable;
@@ -31,8 +28,8 @@ import org.eclipse.core.runtime.IExtension;
 import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.IExtensionRegistry;
 import org.eclipse.core.runtime.IRegistryEventListener;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.RegistryFactory;
-
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IToolBarManager;
@@ -40,7 +37,9 @@ import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.viewers.ISelection;
-
+import org.eclipse.jface.viewers.ISelectionProvider;
+import org.eclipse.osgi.util.NLS;
+import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.ISaveablePart;
@@ -66,6 +65,7 @@ import org.eclipse.ui.part.IPage;
 import org.eclipse.ui.part.IPageBookViewPage;
 import org.eclipse.ui.part.IShowInSource;
 import org.eclipse.ui.part.IShowInTarget;
+import org.eclipse.ui.part.MessagePage;
 import org.eclipse.ui.part.PageBook;
 import org.eclipse.ui.part.PageBookView;
 import org.eclipse.ui.part.ShowInContext;
@@ -120,6 +120,11 @@ public class PropertySheet extends PageBookView
 	private static final String EXT_POINT = "org.eclipse.ui.propertiesView"; //$NON-NLS-1$
 
 	/**
+	 * Message to show on the default page.
+	 */
+	private String defaultText = PropertiesMessages.PropertyViewer_noProperties;
+
+	/**
 	 * The initial selection when the property sheet opens
 	 */
 	private ISelection bootstrapSelection;
@@ -145,7 +150,7 @@ public class PropertySheet extends PageBookView
 	private HashSet<String> ignoredViews;
 
 	/** the view was hidden */
-	private boolean wasHidden;
+	private boolean wasHidden = true;
 
 	/**
 	 * the selection update which was made during the view was hidden need to be
@@ -211,18 +216,17 @@ public class PropertySheet extends PageBookView
 
 	@Override
 	protected IPage createDefaultPage(PageBook book) {
-		IPageBookViewPage page = (IPageBookViewPage) Adapters.adapt(this, IPropertySheetPage.class);
-		if(page == null) {
-			page = new PropertySheetPage();
-		}
+		MessagePage page = new MessagePage();
 		initPage(page);
 		page.createControl(book);
+		page.setMessage(defaultText);
 		return page;
 	}
 
 	/**
-	 * The <code>PropertySheet</code> implementation of this <code>IWorkbenchPart</code>
-	 * method creates a <code>PageBook</code> control with its default page showing.
+	 * The <code>PropertySheet</code> implementation of this
+	 * <code>IWorkbenchPart</code> method creates a <code>PageBook</code> control
+	 * with its default page showing.
 	 */
 	@Override
 	public void createPartControl(Composite parent) {
@@ -292,8 +296,40 @@ public class PropertySheet extends PageBookView
 			return new PageRec(part, page);
 		}
 
-		// Use the default page
+		// IContributedContentsView without contributed view, show default page
+		IContributedContentsView view = Adapters.adapt(part, IContributedContentsView.class);
+		if (view != null && view.getContributingPart() == null) {
+			return null;
+		}
+
+		// Only if a part is a selection provider, it could have properties for the
+		// default PropertySheetPage. Every part gets its own PropertySheetPage
+		ISelectionProvider provider = part.getSite().getSelectionProvider();
+		if (provider != null) {
+			IPage dPage = createPropertySheetPage(getPageBook());
+			return new PageRec(part, dPage);
+		}
+
+		// No properties to be shown, use the default page
 		return null;
+	}
+
+	/**
+	 * TODO some documentation
+	 *
+	 * @since 3.10
+	 */
+	protected IPage createPropertySheetPage(PageBook book) {
+		// First consult platform adaptors for backward compatibility and testing code.
+		IPropertySheetPage page = Platform.getAdapterManager().getAdapter(this, IPropertySheetPage.class);
+		if (page == null) {
+			page = new PropertySheetPage();
+		}
+		if (page instanceof IPageBookViewPage) {
+			initPage((IPageBookViewPage) page);
+		}
+		page.createControl(book);
+		return page;
 	}
 
 	@Override
@@ -396,7 +432,8 @@ public class PropertySheet extends PageBookView
 	@Override
 	protected void partVisible(IWorkbenchPart part) {
 		super.partVisible(part);
-		if (wasHidden && part == this) {
+		if (part == this) {
+			wasHidden = false;
 			if (selectionUpdatePending) {
 				showSelectionAndDescription();
 			}
@@ -420,7 +457,7 @@ public class PropertySheet extends PageBookView
 	 */
 	@Override
 	public void partActivated(IWorkbenchPart part) {
-		if (wasHidden && part == this) {
+		if (part == this) {
 			wasHidden = false;
 			super.partActivated(part);
 			if (selectionUpdatePending) {
@@ -437,6 +474,10 @@ public class PropertySheet extends PageBookView
 		if (source == null) {
 			source = part;
 		}
+
+//		if (!isImportant(source)) {
+//			return;
+//		}
 
 		if (wasHidden) {
 			IWorkbenchPartSite site = getSite();
@@ -455,20 +496,17 @@ public class PropertySheet extends PageBookView
 
 		super.partActivated(source);
 
-		if(isImportant(part)) {
-			currentPart = part;
-			// reset the selection (to allow selectionChanged() accept part change for empty selections)
+		if (currentPart == null && bootstrapSelection != null) {
+			// When the view is first opened, pass the selection to the page
+			currentSelection = bootstrapSelection;
+			bootstrapSelection = null;
+			selectionUpdatePending = true;
+		} else {
+			// reset the selection (to allow selectionChanged() accept part change for empty
+			// selections)
 			currentSelection = null;
 		}
-
-		// When the view is first opened, pass the selection to the page
-		if (bootstrapSelection != null) {
-			IPropertySheetPage page = (IPropertySheetPage) getCurrentPage();
-			if (page != null) {
-				page.selectionChanged(part, bootstrapSelection);
-			}
-			bootstrapSelection = null;
-		}
+		currentPart = part;
 	}
 
 	@Override
@@ -488,16 +526,14 @@ public class PropertySheet extends PageBookView
 
 		// we ignore null selection, or if we are pinned, or our own selection
 		// or same selection
-		if (sel == null || !isImportant(part) || (!needsUpdate && sel.equals(currentSelection))) {
+		if (sel == null || isPinned() || (!needsUpdate && sel.equals(currentSelection))) {
 			return;
 		}
 
-		currentPart = part;
 		currentSelection = sel;
 		needsUpdate = false;
 
-		boolean visible = getSite() != null && getSite().getPage().isPartVisible(this);
-		if (!visible) {
+		if (wasHidden) {
 			selectionUpdatePending = true;
 			return;
 		}
@@ -521,9 +557,9 @@ public class PropertySheet extends PageBookView
 		if (currentPart == null || currentSelection == null) {
 			return;
 		}
-		IPropertySheetPage page = (IPropertySheetPage) getCurrentPage();
-		if (page != null) {
-			page.selectionChanged(currentPart, currentSelection);
+		IPage page = getCurrentPage();
+		if (page instanceof ISelectionListener) {
+			((ISelectionListener) page).selectionChanged(currentPart, currentSelection);
 		}
 		updateContentDescription();
 	}

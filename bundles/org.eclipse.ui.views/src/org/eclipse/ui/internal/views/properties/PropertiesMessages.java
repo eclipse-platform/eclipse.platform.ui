@@ -58,6 +58,8 @@ public class PropertiesMessages extends NLS {
 	public static String Pin_toolTip;
 
 	/** */
+	public static String PropertyViewer_noProperties;
+	/** */
 	public static String PropertyViewer_property;
 	/** */
 	public static String PropertyViewer_value;
