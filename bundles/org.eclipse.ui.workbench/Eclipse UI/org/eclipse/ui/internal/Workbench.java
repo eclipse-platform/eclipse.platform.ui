@@ -302,7 +302,7 @@ public final class Workbench extends EventManager implements IWorkbench,
 		StartupProgressBundleListener(IProgressMonitor progressMonitor, Display display) {
 			displayForStartupListener = display;
 			subMonitor = SubMonitor.convert(progressMonitor);
-			subMonitor.setTaskName(WorkbenchMessages.Startup_Loading_Workbench);
+			subMonitor.setTaskName(NLS.bind(WorkbenchMessages.Startup_Loading, Platform.getProduct().getName()));
 		}
 
 		@Override
