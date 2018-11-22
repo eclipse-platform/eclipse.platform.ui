@@ -11,12 +11,12 @@
       </uriSchemeHandler>
       <uriSchemeHandler
             class="org.eclipse.ui.examples.urischemehandler.uriHandlers.Hello1SchemeHandler"
-            uriSchemeDescription="The Hello World demo protocol"
+            uriSchemeDescription="The Hello1 World demo protocol"
             uriScheme="hello1">
       </uriSchemeHandler>
       <uriSchemeHandler
             class="org.eclipse.ui.examples.urischemehandler.uriHandlers.Hello2SchemeHandler"
-            uriSchemeDescription="The Hello World demo protocol"
+            uriSchemeDescription="The Hello2 World demo protocol"
             uriScheme="hello2">
       </uriSchemeHandler>
    </extension>
