@@ -2116,6 +2116,10 @@ public class ModelEditor implements IGotoObject {
 		return null;
 	}
 
+	public void refreshViewer() {
+		viewer.refresh(true);
+	}
+
 	@Inject
 	@Optional
 	public void refreshOnSave(@UIEventTopic(UIEvents.Dirtyable.TOPIC_DIRTY) org.osgi.service.event.Event event,
