@@ -806,4 +806,14 @@ public class ResourceDeltaVerifier extends Assert implements IResourceChangeList
 		internalVerifyDelta(delta);
 		fState = DELTA_VERIFIED;
 	}
+
+	/**
+	 * Appends additional information to the current validation error message.
+	 * 
+	 * @param message
+	 *            the additional information to append
+	 */
+	protected void appendToMessage(String message) {
+		fMessage.append(message);
+	}
 }

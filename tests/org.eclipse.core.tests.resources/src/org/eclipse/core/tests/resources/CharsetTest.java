@@ -17,6 +17,7 @@ package org.eclipse.core.tests.resources;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
+import java.util.Arrays;
 import junit.framework.Test;
 import junit.framework.TestSuite;
 import org.eclipse.core.internal.preferences.EclipsePreferences;
@@ -1157,7 +1158,20 @@ public class CharsetTest extends ResourceTest {
 	 * when we make encoding changes to containers (folders, projects, root).
 	 */
 	public void testDeltasContainer() {
-		CharsetVerifier verifier = new CharsetVerifier(CharsetVerifier.IGNORE_BACKGROUND_THREAD);
+		class CharsetVerifierWithExtraInfo extends CharsetVerifier {
+			CharsetVerifierWithExtraInfo() {
+				super(CharsetVerifier.IGNORE_BACKGROUND_THREAD);
+			}
+
+			@Override
+			public void verifyDelta(IResourceDelta delta) {
+				appendToMessage("Delta verification triggered:");
+				appendToMessage(Arrays.toString(Thread.currentThread().getStackTrace()));
+				super.verifyDelta(delta);
+			}
+		}
+
+		CharsetVerifier verifier = new CharsetVerifierWithExtraInfo();
 		IProject project = getWorkspace().getRoot().getProject(getUniqueString());
 		getWorkspace().addResourceChangeListener(verifier, IResourceChangeEvent.POST_CHANGE);
 		try {
