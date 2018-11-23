@@ -88,8 +88,8 @@ public class DebugTargetProxy extends EventHandlerModelProxy {
                 try {
                     ILaunchManager manager = DebugPlugin.getDefault().getLaunchManager();
                     ILaunch launch = target.getLaunch();
-                    int launchIndex = indexOf(manager.getLaunches(), target.getLaunch());
-                    int targetIndex = indexOf(target.getLaunch().getChildren(), target);
+                    int launchIndex = getLaunchIndex(launch);
+                    int targetIndex = getTargetIndex(target);
                     delta = new ModelDelta(manager, IModelDelta.NO_CHANGE);
                     ModelDelta node = delta.addNode(launch, launchIndex, IModelDelta.NO_CHANGE, target.getLaunch().getChildren().length);
                     node = node.addNode(target, targetIndex, IModelDelta.EXPAND | IModelDelta.SELECT, target.getThreads().length);
@@ -108,10 +108,6 @@ public class DebugTargetProxy extends EventHandlerModelProxy {
         if (target != null) {
             try {
                 IThread[] threads = target.getThreads();
-                ILaunchManager manager = DebugPlugin.getDefault().getLaunchManager();
-                ILaunch launch = target.getLaunch();
-                int launchIndex = indexOf(manager.getLaunches(), target.getLaunch());
-                int targetIndex = indexOf(target.getLaunch().getChildren(), target);
                 IThread chosen = null;
                 int threadIndex = -1;
                 // select the first thread with a breakpoint, or the first suspended thread
@@ -140,11 +136,16 @@ public class DebugTargetProxy extends EventHandlerModelProxy {
                 if (chosen != null) {
                     IStackFrame frame = chosen.getTopStackFrame();
                     if (frame != null) {
+                        ILaunchManager manager = DebugPlugin.getDefault().getLaunchManager();
+                        ILaunch launch = target.getLaunch();
+                        int launchIndex = getLaunchIndex(launch);
+                        int targetIndex = getTargetIndex(target);
+                        int stackFrameIndex = getStackFrameIndex(frame);
                         ModelDelta delta = new ModelDelta(manager, IModelDelta.NO_CHANGE);
                         ModelDelta node = delta.addNode(launch, launchIndex, IModelDelta.NO_CHANGE, target.getLaunch().getChildren().length);
                         node = node.addNode(target, targetIndex, IModelDelta.NO_CHANGE, threads.length);
                         node = node.addNode(chosen, threadIndex, IModelDelta.NO_CHANGE | IModelDelta.EXPAND, chosen.getStackFrames().length);
-                        node = node.addNode(frame, 0, IModelDelta.NO_CHANGE | IModelDelta.SELECT, 0);
+                        node = node.addNode(frame, stackFrameIndex, IModelDelta.NO_CHANGE | IModelDelta.SELECT, 0);
                         return delta;
                     }
                 }
@@ -154,4 +155,41 @@ public class DebugTargetProxy extends EventHandlerModelProxy {
         return null;
     }
 
+	/**
+	 * Computes the index of a launch at top level in the {@code Debug View} tree.
+	 *
+	 * @param launch The launch for which to compute the index.
+	 *
+	 * @return The index of the specified launch at top level in the
+	 *         {@code Debug View}.
+	 */
+	protected int getLaunchIndex(ILaunch launch) {
+		ILaunchManager manager = DebugPlugin.getDefault().getLaunchManager();
+		return indexOf(manager.getLaunches(), launch);
+	}
+
+	/**
+	 * Computes the index of a debug target in its parent launch. The debug target
+	 * index corresponds to the index in {@code Debug View} tree.
+	 *
+	 * @param target The debug target for which to compute the index.
+	 *
+	 * @return The index of the specified debug target in its launch.
+	 */
+	protected int getTargetIndex(IDebugTarget target) {
+		return indexOf(target.getLaunch().getChildren(), target);
+	}
+
+	/**
+	 * Computes the index of a stack frame in the thread suspended at that stack
+	 * frame. The stack frame index corresponds to the index in {@code Debug View}
+	 * tree.
+	 *
+	 * @param stackFrame The stack frame for which to compute the index.
+	 *
+	 * @return The index of the specified stack frame in its parent thread.
+	 */
+	protected int getStackFrameIndex(IStackFrame stackFrame) {
+		return 0;
+	}
 }
