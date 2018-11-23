@@ -28,6 +28,9 @@ import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.dnd.Clipboard;
+import org.eclipse.swt.dnd.TextTransfer;
+import org.eclipse.swt.dnd.Transfer;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -36,6 +39,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
+import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.PropertyPage;
 import org.eclipse.ui.ide.undo.UpdateMarkersOperation;
@@ -56,8 +60,10 @@ public class MarkersPropertyPage extends PropertyPage {
 
 	private Text descriptionText;
 	private IMarker marker;
+
 	Combo priorityCombo;
 	Button completedCheckbox;
+	Button copyButton;
 
 	/**
 	 * Create a new instance of the receiver.
@@ -76,7 +82,8 @@ public class MarkersPropertyPage extends PropertyPage {
 		if (element != null) {
 			marker = element;
 			resource = marker.getResource();
-		} else if (resource == null) {
+		}
+		if (resource == null) {
 			resource = ResourcesPlugin.getWorkspace().getRoot();
 		}
 
@@ -93,17 +100,16 @@ public class MarkersPropertyPage extends PropertyPage {
 		composite.setLayoutData(gridData);
 
 		initializeDialogUnits(composite);
-		createDescriptionArea(composite);
-		if (element != null) {
-			createSeperator(composite);
-			createCreationTimeArea(composite);
-		}
 		createAttributesArea(composite);
+		createResourceNameArea(composite);
 		if (resource != null) {
-			createSeperator(composite);
 			createResourceArea(composite);
 		}
-
+		if (element != null) {
+			createCreationTimeArea(composite);
+		}
+		createSeparator(composite);
+		createDescriptionArea(composite);
 		Dialog.applyDialogFont(composite);
 		return composite;
 	}
@@ -111,7 +117,7 @@ public class MarkersPropertyPage extends PropertyPage {
 	/**
 	 * Creates a separator.
 	 */
-	protected void createSeperator(Composite parent) {
+	protected void createSeparator(Composite parent) {
 		Label seperator = new Label(parent, SWT.NULL);
 		GridData gridData = new GridData(GridData.FILL_HORIZONTAL);
 		gridData.horizontalSpan = 2;
@@ -126,27 +132,62 @@ public class MarkersPropertyPage extends PropertyPage {
 	private void createCreationTimeArea(Composite parent) {
 		Label label = new Label(parent, SWT.NONE);
 		label.setText(MarkerMessages.propertiesDialog_creationTime_text);
-		Text creationTime = new Text(parent, SWT.SINGLE | SWT.READ_ONLY);
+		Text creationTime = createReadOnlyText(parent);
 		creationTime.setText(Util.getCreationTime(marker));
+	}
+
+	private static Text createReadOnlyText(Composite parent) {
+		Text text = new Text(parent, SWT.SINGLE | SWT.READ_ONLY);
+		text.setBackground(text.getDisplay().getSystemColor(SWT.COLOR_WIDGET_BACKGROUND));
+		GridData gridData = new GridData(GridData.FILL_HORIZONTAL);
+		text.setLayoutData(gridData);
+		return text;
 	}
 
 	/**
 	 * Creates the area for the Description field.
 	 */
 	private void createDescriptionArea(Composite parent) {
-		Label label = new Label(parent, SWT.NONE);
+		Composite composite = new Composite(parent, SWT.NONE);
+		GridData cGridData = new GridData(SWT.FILL, SWT.FILL, true, true);
+		cGridData.horizontalSpan = 2;
+		composite.setLayoutData(cGridData);
+		GridLayout layout = new GridLayout(1, false);
+		layout.marginHeight = layout.marginWidth = 0;
+		composite.setLayout(layout);
+
+		Label label = new Label(composite, SWT.NONE);
 		label.setText(MarkerMessages.propertiesDialog_description_text);
-		GridData labelGridData= new GridData(SWT.LEFT, SWT.TOP, false, false);
+		GridData labelGridData = new GridData(SWT.LEFT, SWT.TOP, false, false);
 		label.setLayoutData(labelGridData);
-		descriptionText = new Text(parent, (SWT.MULTI|SWT.WRAP|SWT.V_SCROLL|SWT.BORDER));
-		labelGridData.verticalIndent= -descriptionText.computeTrim(0, 0, 0, 0).y;
-		GridData gridData = new GridData(GridData.FILL_HORIZONTAL);
-		gridData.widthHint = convertHorizontalDLUsToPixels(250);
-		gridData.heightHint = convertHeightInCharsToPixels(3);
+
+		Composite textContainer = new Composite(composite, SWT.NONE);
+		layout = new GridLayout();
+		layout.numColumns = 2;
+		layout.marginHeight = layout.marginWidth = 0;
+		textContainer.setLayout(layout);
+		textContainer.setLayoutData(new GridData(GridData.FILL_BOTH));
+		descriptionText = new Text(textContainer, SWT.MULTI | SWT.WRAP | SWT.V_SCROLL | SWT.H_SCROLL | SWT.BORDER);
+		GridData gridData = new GridData(GridData.FILL_BOTH);
+		gridData.widthHint = gridData.heightHint = 0;
+		gridData.grabExcessHorizontalSpace = true;
 		descriptionText.setLayoutData(gridData);
 		descriptionText.setText(Util.getProperty(IMarker.MESSAGE, marker));
-		descriptionText.selectAll();
 		descriptionText.setEditable(Util.isEditable(marker));
+
+		copyButton = new Button(textContainer, SWT.PUSH);
+		copyButton.setImage(PlatformUI.getWorkbench().getSharedImages().getImage(ISharedImages.IMG_TOOL_COPY));
+		copyButton.setLayoutData(new GridData(GridData.FILL_VERTICAL));
+		((GridData) copyButton.getLayoutData()).verticalAlignment = SWT.BOTTOM;
+		copyButton.addListener(SWT.Selection, event -> {
+			Clipboard clipboard = new Clipboard(event.display);
+			try {
+				clipboard.setContents(new Object[] { descriptionText.getText() },
+						new Transfer[] { TextTransfer.getInstance() });
+			} finally {
+				clipboard.dispose();
+			}
+		});
 	}
 
 	/**
@@ -176,8 +217,6 @@ public class MarkersPropertyPage extends PropertyPage {
 	 * @param parent
 	 */
 	private void createTaskAttributes(Composite parent) {
-		createSeperator(parent);
-
 		Label label = new Label(parent, SWT.NONE);
 		label.setText(MarkerMessages.propertiesDialog_priority);
 
@@ -222,8 +261,6 @@ public class MarkersPropertyPage extends PropertyPage {
 	 * @param parent
 	 */
 	private void createProblemAttributes(Composite parent) {
-		createSeperator(parent);
-
 		new Label(parent, SWT.NONE).setText(MarkerMessages.propertiesDialog_severityLabel);
 
 		Composite composite = new Composite(parent, SWT.NONE);
@@ -237,7 +274,7 @@ public class MarkersPropertyPage extends PropertyPage {
 
 		severityImage.setImage(Util.getImage(marker.getAttribute(IMarker.SEVERITY, -1)));
 
-		Text severityLabel = new Text(composite, SWT.SINGLE | SWT.READ_ONLY);
+		Text severityLabel = createReadOnlyText(composite);
 		int severity = marker.getAttribute(IMarker.SEVERITY, -1);
 		if (severity == IMarker.SEVERITY_ERROR) {
 			severityLabel.setText(MarkerMessages.propertiesDialog_errorLabel);
@@ -254,25 +291,11 @@ public class MarkersPropertyPage extends PropertyPage {
 	 * Creates the area for the Resource field.
 	 */
 	private void createResourceArea(Composite parent) {
-		Label resourceLabel = new Label(parent, SWT.NONE);
-		resourceLabel.setText(MarkerMessages.propertiesDialog_resource_text);
-		Text resourceText = new Text(parent, SWT.SINGLE | SWT.WRAP | SWT.READ_ONLY | SWT.BORDER);
-		GridData gridData = new GridData(GridData.FILL_HORIZONTAL);
-		resourceText.setLayoutData(gridData);
-		resourceText.setText(Util.getResourceName(marker));
-
-		Label folderLabel = new Label(parent, SWT.NONE);
-		folderLabel.setText(MarkerMessages.propertiesDialog_folder_text);
-		Text folderText = new Text(parent, SWT.SINGLE | SWT.WRAP | SWT.READ_ONLY | SWT.BORDER);
-		gridData = new GridData(GridData.FILL_HORIZONTAL);
-		folderText.setLayoutData(gridData);
-		folderText.setText(Util.getContainerName(marker));
+		createResourcePathArea(parent);
 
 		Label locationLabel = new Label(parent, SWT.NONE);
 		locationLabel.setText(MarkerMessages.propertiesDialog_location_text);
-		Text locationText = new Text(parent, SWT.SINGLE | SWT.WRAP | SWT.READ_ONLY | SWT.BORDER);
-		gridData = new GridData(GridData.FILL_HORIZONTAL);
-		locationText.setLayoutData(gridData);
+		Text locationText = createReadOnlyText(parent);
 
 		String line = Util.getProperty(IMarker.LINE_NUMBER, marker);
 		if (line.length() == 0) {
@@ -285,6 +308,29 @@ public class MarkersPropertyPage extends PropertyPage {
 		} else {
 			locationText.setText(NLS.bind(MarkerMessages.label_lineNumber, line));
 		}
+	}
+
+	/**
+	 * Creates the area for resource path
+	 */
+	private void createResourcePathArea(Composite parent) {
+		String containerName = Util.getContainerName(marker);
+		if (!containerName.isEmpty()) {
+			Label folderLabel = new Label(parent, SWT.NONE);
+			folderLabel.setText(MarkerMessages.propertiesDialog_folder_text);
+			Text folderText = createReadOnlyText(parent);
+			folderText.setText(Util.getContainerName(marker));
+		}
+	}
+
+	/**
+	 * Creates the area for resource name
+	 */
+	private void createResourceNameArea(Composite parent) {
+		Label resourceLabel = new Label(parent, SWT.NONE);
+		resourceLabel.setText(MarkerMessages.propertiesDialog_resource_text);
+		Text resourceText = createReadOnlyText(parent);
+		resourceText.setText(Util.getResourceName(marker));
 	}
 
 	@Override
@@ -339,10 +385,9 @@ public class MarkersPropertyPage extends PropertyPage {
 					.getOperationHistory().execute(op, new NullProgressMonitor(),
 							WorkspaceUndoUtil.getUIInfoAdapter(getShell()));
 		} catch (ExecutionException e) {
-			if (e.getCause() instanceof CoreException) {
-				StatusManager.getManager().handle(
-						((CoreException) e.getCause()).getStatus(),
-						StatusManager.SHOW);
+			Throwable cause = e.getCause();
+			if (cause instanceof CoreException) {
+				StatusManager.getManager().handle(((CoreException) cause).getStatus(), StatusManager.SHOW);
 			} else {
 				StatusManager.getManager().handle(StatusUtil.newError(e));
 			}
