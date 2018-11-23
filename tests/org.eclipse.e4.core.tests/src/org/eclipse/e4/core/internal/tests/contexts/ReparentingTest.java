@@ -344,6 +344,40 @@ public class ReparentingTest {
 		assertEquals(Integer.valueOf(2), b.sample);
 	}
 
+	@Test
+	public void testContextFunctionSwitchParent_2() {
+		IEclipseContext superParent = EclipseContextFactory.create("root");
+
+		IEclipseContext parent = superParent.createChild("parent-1");
+		final IEclipseContext child = parent.createChild("child-1");
+		child.set("x", Integer.valueOf(3));
+		child.set("y", Integer.valueOf(3));
+
+		superParent.set("sum", new ContextFunction() {
+			@Override
+			public Object compute(IEclipseContext context, String contextKey) {
+				if (context != child) {
+					throw new IllegalStateException("Invalid context state");
+				}
+				return (Integer) context.get("x") + (Integer) context.get("y");
+			}
+		});
+
+		Bug541498 bug = ContextInjectionFactory.make(Bug541498.class, child);
+		assertEquals(Integer.valueOf(6), bug.value);
+
+		IEclipseContext newParent = superParent.createChild("parent-2");
+		child.setParent(newParent);
+
+		assertEquals(Integer.valueOf(6), bug.value);
+	}
+
+	public static class Bug541498 {
+		@Inject
+		@Named("sum")
+		Integer value;
+	}
+
 	public static class Bug468048 {
 		@Inject
 		@Named("sample")

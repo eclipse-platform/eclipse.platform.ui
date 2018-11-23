@@ -510,7 +510,7 @@ public class EclipseContext implements IEclipseContext {
 			if (localValues.containsKey(name))
 				continue; // it is a local value
 			Object oldValue = get(name);
-			Object newValue = (newParent != null) ? newParent.get(name) : null;
+			Object newValue = (newParent != null) ? newParent.internalGet(this, name, false) : null;
 			if (oldValue != newValue)
 				invalidate(name, ContextChangeEvent.ADDED, oldValue, newValue, scheduled);
 		}
