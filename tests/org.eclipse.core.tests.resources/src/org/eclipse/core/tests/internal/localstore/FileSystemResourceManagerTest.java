@@ -463,28 +463,51 @@ public class FileSystemResourceManagerTest extends LocalStoreTest implements ICo
 		assertEquals("2.3", lastModified, ((Resource) project).getResourceInfo(false, false).getLocalSyncInfo());
 	}
 
-	protected void write(final IFile file, final InputStream contents, final boolean force, IProgressMonitor monitor) throws CoreException {
-		assertNotNull("file cannot be null", file);
-		class WriteFileContents implements IWorkspaceRunnable {
-			@Override
-			public void run(IProgressMonitor jobMonitor) throws CoreException {
-				int flags = force ? IResource.FORCE : IResource.NONE;
-				IFileStore store = ((Resource) file).getStore();
-				assertNotNull("file store cannot be null", store);
-				IFileInfo info = store.fetchInfo();
-				assertNotNull("file info cannot be null for file " + file, info);
-				FileSystemResourceManager localManager = getLocalManager();
-				assertNotNull("file system resource manager cannot be null", localManager);
-				localManager.write(file, contents, info, flags, false, jobMonitor);
-			}
+	protected void write(final IFile file, final InputStream contents, final boolean force, IProgressMonitor monitor)
+			throws CoreException {
+		try {
+			IWorkspace workspace = getWorkspace();
+			assertNotNull("workspace cannot be null", workspace);
+			workspace.run(new WriteFileContents(file, contents, force, getLocalManager()), null);
+		} catch (Throwable t) {
+			// Bug 541493: we see unlikely stack traces reported by JUnit here, log the
+			// exceptions in case JUnit filters stack frames
+			String errorMessage = "exception occured during write of file: " + file;
+			IStatus errorStatus = new Status(IStatus.ERROR, ResourcesPlugin.PI_RESOURCES, errorMessage, t);
+			ResourcesPlugin.getPlugin().getLog().log(errorStatus);
+			throw t;
 		}
-		IWorkspace workspace = getWorkspace();
-		assertNotNull("workspace cannot be null", workspace);
-		workspace.run(new WriteFileContents(), null);
 	}
 
 	protected void write(final IFolder folder, final boolean force, IProgressMonitor monitor) throws CoreException {
 		IWorkspaceRunnable operation = pm -> getLocalManager().write(folder, force, null);
 		getWorkspace().run(operation, null);
+	}
+
+	static class WriteFileContents implements IWorkspaceRunnable {
+		private final IFile file;
+		private final InputStream contents;
+		private final boolean force;
+		private final FileSystemResourceManager localManager;
+
+		WriteFileContents(IFile file, InputStream contents, boolean force, FileSystemResourceManager localManager) {
+			this.file = file;
+			assertNotNull("file cannot be null", file);
+			this.contents = contents;
+			assertNotNull("contents cannot be null", contents);
+			this.force = force;
+			this.localManager = localManager;
+			assertNotNull("file system resource manager cannot be null", localManager);
+		}
+
+		@Override
+		public void run(IProgressMonitor jobMonitor) throws CoreException {
+			int flags = force ? IResource.FORCE : IResource.NONE;
+			IFileStore store = ((Resource) file).getStore();
+			assertNotNull("file store cannot be null", store);
+			IFileInfo info = store.fetchInfo();
+			assertNotNull("file info cannot be null for file " + file, info);
+			localManager.write(file, contents, info, flags, false, jobMonitor);
+		}
 	}
 }
