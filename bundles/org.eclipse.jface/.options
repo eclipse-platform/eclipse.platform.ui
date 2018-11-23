@@ -1,7 +1,7 @@
 # Debugging options for the org.eclipse.jface plugin.
 
 # Turn on debugging for the org.eclipse.jface plugin.
-org.eclipse.jface/debug=true
+org.eclipse.jface/debug=false
 
 # Colorize bidi-processed fields and add tooltips/messages that show the configured handlingType for text widgets
 org.eclipse.jface/debug/bidiUtils=false

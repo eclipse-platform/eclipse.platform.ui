@@ -1,4 +1,4 @@
-org.eclipse.ui.forms/debug=true
-org.eclipse.ui.forms/debug/text=true
-org.eclipse.ui.forms/debug/focus=true
-org.eclipse.ui.forms/debug/textsize=true
+org.eclipse.ui.forms/debug=false
+org.eclipse.ui.forms/debug/text=false
+org.eclipse.ui.forms/debug/focus=false
+org.eclipse.ui.forms/debug/textsize=false
