@@ -373,16 +373,27 @@ public class WorkspaceTest extends ResourceTest {
 	}
 
 	public void testDanglingReferences() throws Throwable {
-		IProject p2 = getWorkspace().getRoot().getProject("p2");
-		p2.create(new NullProgressMonitor());
-		IProject p1 = getWorkspace().getRoot().getProject("p1");
-		IProjectDescription description = getWorkspace().newProjectDescription("p1");
-		description.setReferencedProjects(new IProject[] { p2 });
-		p1.create(description, new NullProgressMonitor());
-		p1.open(new NullProgressMonitor());
-		assertFalse(getWorkspace().getDanglingReferences().containsKey(p1));
-		p2.delete(true, new NullProgressMonitor());
-		assertArrayEquals(new IProject[] { p2 }, getWorkspace().getDanglingReferences().get(p1));
+		IProject p1 = null;
+		IProject p2 = null;
+		try {
+			p2 = getWorkspace().getRoot().getProject("p2");
+			p2.create(new NullProgressMonitor());
+			p1 = getWorkspace().getRoot().getProject("p1");
+			IProjectDescription description = getWorkspace().newProjectDescription("p1");
+			description.setReferencedProjects(new IProject[] { p2 });
+			p1.create(description, new NullProgressMonitor());
+			p1.open(new NullProgressMonitor());
+			assertFalse(getWorkspace().getDanglingReferences().containsKey(p1));
+			p2.delete(true, new NullProgressMonitor());
+			assertArrayEquals(new IProject[] { p2 }, getWorkspace().getDanglingReferences().get(p1));
+		} finally {
+			if (p1 != null && p1.exists()) {
+				p1.delete(true, new NullProgressMonitor());
+			}
+			if (p2 != null && p2.exists()) {
+				p2.delete(true, new NullProgressMonitor());
+			}
+		}
 	}
 
 	public void testSetContents() throws Throwable {
