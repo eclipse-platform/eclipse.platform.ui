@@ -481,9 +481,10 @@ public class SmartImportRootWizardPage extends WizardPage {
 		Link showDetectorsLink = new Link(parent, SWT.NONE);
 		showDetectorsLink.setText(DataTransferMessages.SmartImportWizardPage_showAvailableDetectors);
 		GridData gridData = new GridData();
-        gridData.horizontalAlignment = GridData.FILL;
-        gridData.grabExcessHorizontalSpace = true;
-        showDetectorsLink.setLayoutData(gridData);
+		gridData.horizontalAlignment = GridData.FILL;
+		gridData.grabExcessHorizontalSpace = true;
+		gridData.horizontalSpan = 4;
+		showDetectorsLink.setLayoutData(gridData);
 		showDetectorsLink.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
