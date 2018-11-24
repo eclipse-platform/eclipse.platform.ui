@@ -82,10 +82,5 @@ public class TestUnitControlFactory extends AbstractFactoryTest {
 		public static TestFactory newTest() {
 			return new TestFactory(SWT.NONE);
 		}
-
-		@Override
-		protected void applyProperties(Label control) {
-
-		}
 	}
 }

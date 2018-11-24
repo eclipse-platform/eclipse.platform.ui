@@ -13,7 +13,6 @@
 ******************************************************************************/
 package org.eclipse.jface.widgets;
 
-import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
@@ -55,10 +54,6 @@ import org.eclipse.swt.widgets.Label;
  */
 public class LabelFactory extends ControlFactory<LabelFactory, Label> {
 
-	private String text;
-	private Image image;
-	private int alignment = SWT.NONE;
-
 	private LabelFactory(int style) {
 		super(LabelFactory.class, (Composite parent) -> new Label(parent, style));
 	}
@@ -81,7 +76,7 @@ public class LabelFactory extends ControlFactory<LabelFactory, Label> {
 	 * @return this
 	 */
 	public LabelFactory text(String text) {
-		this.text = text;
+		addProperty(l -> l.setText(text));
 		return this;
 	}
 
@@ -92,7 +87,7 @@ public class LabelFactory extends ControlFactory<LabelFactory, Label> {
 	 * @return this
 	 */
 	public LabelFactory image(Image image) {
-		this.image = image;
+		addProperty(l -> l.setImage(image));
 		return this;
 	}
 
@@ -103,22 +98,7 @@ public class LabelFactory extends ControlFactory<LabelFactory, Label> {
 	 * @return this
 	 */
 	public LabelFactory align(int alignment) {
-		this.alignment = alignment;
+		addProperty(l -> l.setAlignment(alignment));
 		return this;
-	}
-
-	@Override
-	protected void applyProperties(Label label) {
-		applyProperties(label);
-
-		if (this.alignment != SWT.NONE) {
-			label.setAlignment(this.alignment);
-		}
-		if (this.text != null) {
-			label.setText(this.text);
-		}
-		if (this.image != null) {
-			label.setImage(this.image);
-		}
 	}
 }

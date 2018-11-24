@@ -14,6 +14,8 @@
 ******************************************************************************/
 package org.eclipse.jface.widgets;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
@@ -28,15 +30,12 @@ import org.eclipse.swt.widgets.Control;
  * @param <F>
  * @param <C>
  */
-public abstract class ControlFactory<F extends ControlFactory<?,?>, C extends Control> {
+public abstract class ControlFactory<F extends ControlFactory<?, ?>, C extends Control> {
 	private Class<F> factoryClass;
 
-	private String tooltipText;
-	private Boolean enabled;
-
-	private Supplier<Object> layoutDataSupplier;
-
 	private Function<Composite, C> controlCreator;
+
+	private List<Property<C>> properties = new ArrayList<>();
 
 	/**
 	 * @param factoryClass
@@ -54,7 +53,7 @@ public abstract class ControlFactory<F extends ControlFactory<?,?>, C extends Co
 	 * @return this
 	 */
 	public F tooltip(String tooltipText) {
-		this.tooltipText = tooltipText;
+		addProperty(c -> c.setToolTipText(tooltipText));
 		return factoryClass.cast(this);
 	}
 
@@ -65,7 +64,7 @@ public abstract class ControlFactory<F extends ControlFactory<?,?>, C extends Co
 	 * @return this
 	 */
 	public F enabled(boolean enabled) {
-		this.enabled = Boolean.valueOf(enabled);
+		addProperty(c -> c.setEnabled(enabled));
 		return factoryClass.cast(this);
 	}
 
@@ -93,7 +92,7 @@ public abstract class ControlFactory<F extends ControlFactory<?,?>, C extends Co
 	 * @return this
 	 */
 	public F layoutData(Supplier<Object> layoutDataSupplier) {
-		this.layoutDataSupplier = layoutDataSupplier;
+		addProperty(c -> c.setLayoutData(layoutDataSupplier.get()));
 		return factoryClass.cast(this);
 	}
 
@@ -103,25 +102,26 @@ public abstract class ControlFactory<F extends ControlFactory<?,?>, C extends Co
 	 */
 	public final C create(Composite parent) {
 		C control = controlCreator.apply(parent);
-		applyProperties(control);
+		properties.forEach(p -> p.apply(control));
 		return control;
 	}
 
 	/**
-	 * Applies all the properties for the control which have been set by the
-	 * caller.<br>
+	 * Adds a property like image, text, enabled, listeners, ... to the control.
 	 *
-	 * @param control
+	 * <br/>
+	 * Example:
+	 *
+	 * <pre>
+	 * public LabelFactory text(String text) {
+	 * 	addProperty(l -> l.setText(text));
+	 * 	return this;
+	 * }
+	 * </pre>
+	 *
+	 * @param property usually a lambda
 	 */
-	protected void applyProperties(C control) {
-		if (this.enabled != null) {
-			control.setEnabled(this.enabled.booleanValue());
-		}
-		if (this.tooltipText != null) {
-			control.setToolTipText(this.tooltipText);
-		}
-		if (this.layoutDataSupplier != null) {
-			control.setLayoutData(this.layoutDataSupplier.get());
-		}
+	protected final void addProperty(Property<C> property) {
+		this.properties.add(property);
 	}
 }
