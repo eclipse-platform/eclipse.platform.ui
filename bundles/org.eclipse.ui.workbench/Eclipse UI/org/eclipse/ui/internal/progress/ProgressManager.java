@@ -335,12 +335,11 @@ public class ProgressManager extends ProgressProvider implements IProgressServic
 
 		setUpImages();
 
+		uiRefreshThrottler = new Throttler(Display.getDefault(), Duration.ofMillis(100), this::notifyListeners);
 		changeListener = createChangeListener();
 
 		Job.getJobManager().setProgressProvider(this);
 		Job.getJobManager().addJobChangeListener(this.changeListener);
-
-		uiRefreshThrottler = new Throttler(Display.getDefault(), Duration.ofMillis(100), this::notifyListeners);
 	}
 
 	/* Visible for testing */ public void notifyListeners() {
