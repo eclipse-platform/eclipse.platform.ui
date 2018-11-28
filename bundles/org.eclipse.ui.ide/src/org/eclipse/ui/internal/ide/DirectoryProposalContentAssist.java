@@ -74,9 +74,10 @@ public class DirectoryProposalContentAssist {
 		 */
 		@Override
 		public IContentProposal[] getProposals(String contents, int position) {
+			if (position == 0) {
+				return new IContentProposal[0];
+			}
 			String substring = contents.substring(0, position);
-			// only match fileName as the folder part will be equal anyway and this makes
-			// substring matching easier
 			Pattern pattern = Pattern.compile(substring,
 					Pattern.LITERAL | Pattern.CASE_INSENSITIVE | Pattern.UNICODE_CASE);
 			return proposals.stream()
@@ -233,8 +234,14 @@ public class DirectoryProposalContentAssist {
 			}
 		});
 
-		directoryCombo.addModifyListener(
-				e -> updateProposals(directoryCombo.getText().substring(0, directoryCombo.getCaretPosition()), true));
+		directoryCombo.addVerifyListener(e -> {
+			boolean openProposalPopup = true;
+			if (e.text.length() > 1) {
+				openProposalPopup = false;
+			}
+			updateProposals(directoryCombo.getText().substring(0, directoryCombo.getCaretPosition()),
+					openProposalPopup);
+		});
 
 		directoryCombo.addKeyListener(KeyListener.keyPressedAdapter(e -> {
 			if (e.keyCode == SWT.ESC) {
