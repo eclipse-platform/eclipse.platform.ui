@@ -25,7 +25,7 @@
       <plugin>
         <groupId>org.eclipse.jetty</groupId>
         <artifactId>jetty-jspc-maven-plugin</artifactId>
-        <version>9.0.7.v20131107</version>
+        <version>9.4.14.v20181114</version>
         <executions>
           <execution>
             <id>jspc</id>
@@ -33,9 +33,13 @@
               <goal>jspc</goal>
             </goals>
             <configuration>
-              <packageRoot>org.eclipse.help.internal.webapp.jsp</packageRoot>
+              <jspc>
+                <package>org.eclipse.help.internal.webapp.jsp</package>
+              </jspc>
               <webAppSourceDirectory>${basedir}</webAppSourceDirectory>
               <useProvidedScope>true</useProvidedScope>
+              <sourceVersion>1.8</sourceVersion>
+              <targetVersion>1.8</targetVersion>
             </configuration>
           </execution>
         </executions>
