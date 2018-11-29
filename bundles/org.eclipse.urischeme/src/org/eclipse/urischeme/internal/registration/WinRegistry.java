@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.urischeme.internal.registration;
 
-
 import java.io.UnsupportedEncodingException;
 import java.lang.reflect.AccessibleObject;
 import java.lang.reflect.Method;
@@ -21,8 +20,8 @@ import org.eclipse.core.runtime.Path;
 
 /**
  * Wraps Windows Registry to read and write values. Can only be used for Keys
- * below HKEY_CURRENT_USER. The Windows Registry code has been tested in JAVA
- * 8,Java 9 and Java 10 versions
+ * below HKEY_CURRENT_USER. The Windows Registry code has been tested in Java 8,
+ * 9, 10 and 11
  *
  */
 public class WinRegistry implements IWinRegistry {
@@ -41,22 +40,29 @@ public class WinRegistry implements IWinRegistry {
 	static {
 		// method handles are cached for performance reasons
 		try {
-			Method method_setAccessible = AccessibleObject.class.getDeclaredMethod("setAccessible", boolean.class); //$NON-NLS-1$
 			Class<?> prefClass = Preferences.userRoot().getClass();
 			METHOD_stringToByteArray = prefClass.getDeclaredMethod("stringToByteArray", String.class); //$NON-NLS-1$
-			method_setAccessible.invoke(METHOD_stringToByteArray, true);
 			METHOD_toJavaValueString = prefClass.getDeclaredMethod("toJavaValueString", byte[].class); //$NON-NLS-1$
-			method_setAccessible.invoke(METHOD_toJavaValueString, true);
 			METHOD_openKey = prefClass.getDeclaredMethod("openKey", byte[].class, int.class, int.class); //$NON-NLS-1$
-			method_setAccessible.invoke(METHOD_openKey, true);
-			METHOD_closeKey = prefClass.getDeclaredMethod("closeKey", int.class); //$NON-NLS-1$
-			method_setAccessible.invoke(METHOD_closeKey, true);
-			METHOD_WinRegQueryValueEx = prefClass.getDeclaredMethod("WindowsRegQueryValueEx", int.class, byte[].class); //$NON-NLS-1$
-			method_setAccessible.invoke(METHOD_WinRegQueryValueEx, true);
-			METHOD_WinRegSetValueEx1 = prefClass.getDeclaredMethod("WindowsRegSetValueEx1", int.class, byte[].class, byte[].class); //$NON-NLS-1$
-			method_setAccessible.invoke(METHOD_WinRegSetValueEx1, true);
-			METHOD_WinRegDeleteKey = prefClass.getDeclaredMethod("WindowsRegDeleteKey", int.class, byte[].class); //$NON-NLS-1$
-			method_setAccessible.invoke(METHOD_WinRegDeleteKey, true);
+			Class<?> parameterType = int.class;
+			try {
+				// up to java 10 the "hkey" parameter of the close key method is of type int
+				METHOD_closeKey = prefClass.getDeclaredMethod("closeKey", parameterType); //$NON-NLS-1$
+			} catch (NoSuchMethodException e1) {
+				// starting with java 11 the "hkey" parameter is of type long
+				parameterType = long.class;
+				METHOD_closeKey = prefClass.getDeclaredMethod("closeKey", parameterType); //$NON-NLS-1$
+			}
+			METHOD_WinRegQueryValueEx = prefClass.getDeclaredMethod("WindowsRegQueryValueEx", parameterType, //$NON-NLS-1$
+					byte[].class);
+			METHOD_WinRegSetValueEx1 = prefClass.getDeclaredMethod("WindowsRegSetValueEx1", parameterType, byte[].class, //$NON-NLS-1$
+					byte[].class);
+			METHOD_WinRegDeleteKey = prefClass.getDeclaredMethod("WindowsRegDeleteKey", parameterType, byte[].class); //$NON-NLS-1$
+
+			AccessibleObject[] allMethods = new AccessibleObject[] { METHOD_stringToByteArray, METHOD_toJavaValueString,
+					METHOD_openKey, METHOD_closeKey, METHOD_WinRegQueryValueEx, METHOD_WinRegSetValueEx1,
+					METHOD_WinRegDeleteKey };
+			AccessibleObject.setAccessible(allMethods, true);
 		} catch (Exception e) {
 			throw new IllegalStateException(e.getMessage(), e);
 		}
@@ -67,8 +73,9 @@ public class WinRegistry implements IWinRegistry {
 		final Preferences user = Preferences.userRoot();
 		final Preferences systemRoot = Preferences.systemRoot();
 		try {
-			Integer handle = (Integer) METHOD_openKey.invoke(user, toByteArray(key), KEY_SET, KEY_SET);
-			int result = (Integer) METHOD_WinRegSetValueEx1.invoke(null, handle, toByteArray(attribute), toByteArray(value));
+			Object handle = METHOD_openKey.invoke(user, toByteArray(key), KEY_SET, KEY_SET);
+			int result = (Integer) METHOD_WinRegSetValueEx1.invoke(null, handle, toByteArray(attribute),
+					toByteArray(value));
 			METHOD_closeKey.invoke(systemRoot, handle);
 			if (result != 0) {
 				throw new WinRegistryException("Unable to write to registry. Key = " + key + attribute + //$NON-NLS-1$
@@ -85,7 +92,7 @@ public class WinRegistry implements IWinRegistry {
 		final Preferences user = Preferences.userRoot();
 		final Preferences systemRoot = Preferences.systemRoot();
 		try {
-			Integer handle = (Integer) METHOD_openKey.invoke(user, toByteArray(key), KEY_READ, KEY_READ);
+			Object handle = METHOD_openKey.invoke(user, toByteArray(key), KEY_READ, KEY_READ);
 			byte[] valb = (byte[]) METHOD_WinRegQueryValueEx.invoke(null, handle, toByteArray(attribute));
 			String vals = (valb != null ? toString(valb) : null);
 			METHOD_closeKey.invoke(systemRoot, handle);
@@ -102,7 +109,7 @@ public class WinRegistry implements IWinRegistry {
 		try {
 			String parent = keyPath.removeLastSegments(1).toOSString();
 			String child = keyPath.lastSegment();
-			Integer parentHandle = (Integer) METHOD_openKey.invoke(userRoot, toByteArray(parent), KEY_DELETE, KEY_DELETE);
+			Object parentHandle = METHOD_openKey.invoke(userRoot, toByteArray(parent), KEY_DELETE, KEY_DELETE);
 			int result = (Integer) METHOD_WinRegDeleteKey.invoke(null, parentHandle, toByteArray(child));
 			METHOD_closeKey.invoke(userRoot, parentHandle);
 			if (result != 0) {

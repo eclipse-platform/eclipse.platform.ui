@@ -59,7 +59,6 @@ public class RegistryWriter implements IRegistryWriter {
 		String launcher = System.getProperty("eclipse.launcher"); //$NON-NLS-1$
 		String homeLocation = System.getProperty("eclipse.home.location"); //$NON-NLS-1$
 
-		Assert.isNotNull(launcher, "launcher must not be null"); //$NON-NLS-1$
 		Assert.isNotNull(homeLocation, "home location must not be null"); //$NON-NLS-1$
 
 		this.winRegistry = winRegistry;
