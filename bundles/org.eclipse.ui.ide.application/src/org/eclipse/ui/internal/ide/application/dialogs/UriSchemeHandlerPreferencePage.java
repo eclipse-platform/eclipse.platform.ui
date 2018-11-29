@@ -95,9 +95,11 @@ public class UriSchemeHandlerPreferencePage extends PreferencePage implements IW
 
 	@Override
 	protected Control createContents(Composite parent) {
-		PlatformUI.getWorkbench().getHelpSystem().setHelp(parent,
-				IWorkbenchHelpContextIds.LINK_HANDLERS_PREFERENCE_PAGE);
-
+		if (PlatformUI.isWorkbenchRunning()) {
+			// enabled plain JUnit tests
+			PlatformUI.getWorkbench().getHelpSystem().setHelp(parent,
+					IWorkbenchHelpContextIds.LINK_HANDLERS_PREFERENCE_PAGE);
+		}
 		noDefaultAndApplyButton();
 		addFiller(parent, 2);
 		createTableViewerForSchemes(parent);
