@@ -25,6 +25,7 @@ import org.eclipse.core.runtime.Path;
  *
  */
 public class WinRegistry implements IWinRegistry {
+	private static final Preferences USER_ROOT = Preferences.userRoot();
 	private static final int KEY_READ = 1;
 	private static final int KEY_SET = 2;
 	private static final int KEY_DELETE = 0x10000;
@@ -40,7 +41,7 @@ public class WinRegistry implements IWinRegistry {
 	static {
 		// method handles are cached for performance reasons
 		try {
-			Class<?> prefClass = Preferences.userRoot().getClass();
+			Class<?> prefClass = USER_ROOT.getClass();
 			METHOD_stringToByteArray = prefClass.getDeclaredMethod("stringToByteArray", String.class); //$NON-NLS-1$
 			METHOD_toJavaValueString = prefClass.getDeclaredMethod("toJavaValueString", byte[].class); //$NON-NLS-1$
 			METHOD_openKey = prefClass.getDeclaredMethod("openKey", byte[].class, int.class, int.class); //$NON-NLS-1$
@@ -70,13 +71,11 @@ public class WinRegistry implements IWinRegistry {
 
 	@Override
 	public void setValueForKey(String key, String attribute, String value) throws WinRegistryException {
-		final Preferences user = Preferences.userRoot();
-		final Preferences systemRoot = Preferences.systemRoot();
 		try {
-			Object handle = METHOD_openKey.invoke(user, toByteArray(key), KEY_SET, KEY_SET);
+			Object handle = METHOD_openKey.invoke(USER_ROOT, toByteArray(key), KEY_SET, KEY_SET);
 			int result = (Integer) METHOD_WinRegSetValueEx1.invoke(null, handle, toByteArray(attribute),
 					toByteArray(value));
-			METHOD_closeKey.invoke(systemRoot, handle);
+			METHOD_closeKey.invoke(USER_ROOT, handle);
 			if (result != 0) {
 				throw new WinRegistryException("Unable to write to registry. Key = " + key + attribute + //$NON-NLS-1$
 						", value: " + value); //$NON-NLS-1$
@@ -89,13 +88,11 @@ public class WinRegistry implements IWinRegistry {
 
 	@Override
 	public String getValueForKey(String key, String attribute) throws WinRegistryException {
-		final Preferences user = Preferences.userRoot();
-		final Preferences systemRoot = Preferences.systemRoot();
 		try {
-			Object handle = METHOD_openKey.invoke(user, toByteArray(key), KEY_READ, KEY_READ);
+			Object handle = METHOD_openKey.invoke(USER_ROOT, toByteArray(key), KEY_READ, KEY_READ);
 			byte[] valb = (byte[]) METHOD_WinRegQueryValueEx.invoke(null, handle, toByteArray(attribute));
+			METHOD_closeKey.invoke(USER_ROOT, handle);
 			String vals = (valb != null ? toString(valb) : null);
-			METHOD_closeKey.invoke(systemRoot, handle);
 			return vals;
 		} catch (Exception e) {
 			throw new WinRegistryException(e.getMessage(), e);
@@ -104,14 +101,13 @@ public class WinRegistry implements IWinRegistry {
 
 	@Override
 	public void deleteKey(String key) throws WinRegistryException {
-		final Preferences userRoot = Preferences.userRoot();
-		IPath keyPath = new Path(key);
 		try {
+			IPath keyPath = new Path(key);
 			String parent = keyPath.removeLastSegments(1).toOSString();
 			String child = keyPath.lastSegment();
-			Object parentHandle = METHOD_openKey.invoke(userRoot, toByteArray(parent), KEY_DELETE, KEY_DELETE);
+			Object parentHandle = METHOD_openKey.invoke(USER_ROOT, toByteArray(parent), KEY_DELETE, KEY_DELETE);
 			int result = (Integer) METHOD_WinRegDeleteKey.invoke(null, parentHandle, toByteArray(child));
-			METHOD_closeKey.invoke(userRoot, parentHandle);
+			METHOD_closeKey.invoke(USER_ROOT, parentHandle);
 			if (result != 0) {
 				throw new WinRegistryException("Unable to delete key = " + keyPath); //$NON-NLS-1$
 			}
