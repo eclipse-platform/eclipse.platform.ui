@@ -485,7 +485,7 @@ public class PlatformConfiguration implements IPlatformConfiguration, IConfigura
 		// on next access
 		ISiteEntry[] sites = getConfiguredSites();
 		for (int i = 0; i < sites.length; i++) {
-			if (sites[i].isUpdateable()) {
+			if (sites[i].isUpdateable() && sites[i].getSitePolicy().getType() != ISitePolicy.MANAGED_ONLY) {
 				// reset site entry
 				((SiteEntry) sites[i]).refresh();
 			}
@@ -783,7 +783,9 @@ public class PlatformConfiguration implements IPlatformConfiguration, IConfigura
 		long result = 0;
 		ISiteEntry[] sites = config.getSites();
 		for (int i = 0; i < sites.length; i++) {
-			result = Math.max(result, sites[i].getFeaturesChangeStamp());
+			if (sites[i].getSitePolicy().getType() != ISitePolicy.MANAGED_ONLY) {
+				result = Math.max(result, sites[i].getFeaturesChangeStamp());
+			}
 		}
 		featuresChangeStamp = result;
 		featuresChangeStampIsValid = true;
@@ -797,7 +799,9 @@ public class PlatformConfiguration implements IPlatformConfiguration, IConfigura
 		long result = 0;
 		ISiteEntry[] sites = config.getSites();
 		for (int i = 0; i < sites.length; i++) {
-			result = Math.max(result, sites[i].getPluginsChangeStamp());
+			if (sites[i].getSitePolicy().getType() != ISitePolicy.MANAGED_ONLY) {
+				result = Math.max(result, sites[i].getPluginsChangeStamp());
+			}
 		}
 		pluginsChangeStamp = result;
 		pluginsChangeStampIsValid = true;
@@ -997,7 +1001,7 @@ public class PlatformConfiguration implements IPlatformConfiguration, IConfigura
 		long lastChange = config.getDate().getTime();
 		SiteEntry[] sites = config.getSites();
 		for (int s = 0; s < sites.length; s++) {
-			if (sites[s].isUpdateable()) {
+			if (sites[s].isUpdateable() && sites[s].getSitePolicy().getType() != ISitePolicy.MANAGED_ONLY) {
 				long siteTimestamp = sites[s].getChangeStamp();
 				if (siteTimestamp > lastChange)
 					sites[s].loadFromDisk(lastChange);
