@@ -75,15 +75,16 @@ public class DirectoryProposalContentAssist {
 		@Override
 		public IContentProposal[] getProposals(String contents, int position) {
 			if (position == 0) {
-				return new IContentProposal[0];
+				return null;
 			}
 			String substring = contents.substring(0, position);
 			Pattern pattern = Pattern.compile(substring,
 					Pattern.LITERAL | Pattern.CASE_INSENSITIVE | Pattern.UNICODE_CASE);
-			return proposals.stream()
+			IContentProposal[] filteredProposals = proposals.stream()
 					.filter(proposal -> proposal.length() >= substring.length() && pattern.matcher(proposal).find())
 					.map(ContentProposal::new)
 					.toArray(IContentProposal[]::new);
+			return filteredProposals.length == 0 ? null : filteredProposals;
 		}
 
 		/**
