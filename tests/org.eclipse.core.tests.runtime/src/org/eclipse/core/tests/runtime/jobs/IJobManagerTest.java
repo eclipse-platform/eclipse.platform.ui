@@ -223,7 +223,7 @@ public class IJobManagerTest extends AbstractJobManagerTest {
 		IProgressMonitor cancelledMonitor = SubMonitor.convert(null);
 		cancelledMonitor.setCanceled(true);
 
-		// Create a job that will hold the lock until the semaphore is signalled
+		// Create a job that will hold the lock until the semaphore is signaled
 		Job job = Job.create("", monitor -> {
 			mainThreadSemaphore.release();
 			try {
