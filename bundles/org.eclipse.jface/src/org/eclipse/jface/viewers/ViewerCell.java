@@ -285,8 +285,10 @@ public class ViewerCell {
 				modifier = -1;
 			} else if ((directionMask & RIGHT) == RIGHT) {
 				modifier = 1;
+			} else {
+				return row.getCellAtVisualIndex(columnIndex);
 			}
-
+                          
 			columnIndex += modifier;
 
 			if (columnIndex >= 0 && columnIndex < row.getColumnCount()) {
