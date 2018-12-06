@@ -18,6 +18,7 @@ package org.eclipse.core.tests.resources;
 import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
+import java.util.LinkedList;
 import junit.framework.Test;
 import junit.framework.TestSuite;
 import org.eclipse.core.internal.preferences.EclipsePreferences;
@@ -509,8 +510,8 @@ public class CharsetTest extends ResourceTest {
 
 	public void testBug207510() {
 		IWorkspace workspace = getWorkspace();
-		CharsetVerifier verifier = new CharsetVerifier(CharsetVerifier.IGNORE_BACKGROUND_THREAD);
-		CharsetVerifier backgroundVerifier = new CharsetVerifier(CharsetVerifier.IGNORE_CREATION_THREAD);
+		CharsetVerifier verifier = new CharsetVerifierWithExtraInfo(CharsetVerifier.IGNORE_BACKGROUND_THREAD);
+		CharsetVerifier backgroundVerifier = new CharsetVerifierWithExtraInfo(CharsetVerifier.IGNORE_CREATION_THREAD);
 		IProject project1 = workspace.getRoot().getProject("project1");
 		try {
 			workspace.addResourceChangeListener(verifier, IResourceChangeEvent.POST_CHANGE);
@@ -1158,20 +1159,7 @@ public class CharsetTest extends ResourceTest {
 	 * when we make encoding changes to containers (folders, projects, root).
 	 */
 	public void testDeltasContainer() {
-		class CharsetVerifierWithExtraInfo extends CharsetVerifier {
-			CharsetVerifierWithExtraInfo() {
-				super(CharsetVerifier.IGNORE_BACKGROUND_THREAD);
-			}
-
-			@Override
-			public void verifyDelta(IResourceDelta delta) {
-				appendToMessage("Delta verification triggered:");
-				appendToMessage(Arrays.toString(Thread.currentThread().getStackTrace()));
-				super.verifyDelta(delta);
-			}
-		}
-
-		CharsetVerifier verifier = new CharsetVerifierWithExtraInfo();
+		CharsetVerifier verifier = new CharsetVerifierWithExtraInfo(CharsetVerifier.IGNORE_BACKGROUND_THREAD);
 		IProject project = getWorkspace().getRoot().getProject(getUniqueString());
 		getWorkspace().addResourceChangeListener(verifier, IResourceChangeEvent.POST_CHANGE);
 		try {
@@ -1606,4 +1594,29 @@ public class CharsetTest extends ResourceTest {
 		}
 	}
 
+	private class CharsetVerifierWithExtraInfo extends CharsetVerifier {
+		CharsetVerifierWithExtraInfo(int flags) {
+			super(flags);
+		}
+
+		@Override
+		public void verifyDelta(IResourceDelta delta) {
+			appendToMessage("Delta verification triggered:");
+			appendToMessage(Arrays.toString(Thread.currentThread().getStackTrace()));
+			LinkedList<IResourceDelta> queue = new LinkedList<>();
+			queue.add(delta);
+			while (!queue.isEmpty()) {
+				IResourceDelta current = queue.removeFirst();
+				if (current != null) {
+					appendToMessage(
+							"delta child: " + current + ", with flags: " + convertChangeFlags(current.getFlags()));
+					IResourceDelta[] children = current.getAffectedChildren();
+					if (children != null) {
+						queue.addAll(Arrays.asList(children));
+					}
+				}
+			}
+			super.verifyDelta(delta);
+		}
+	}
 }
