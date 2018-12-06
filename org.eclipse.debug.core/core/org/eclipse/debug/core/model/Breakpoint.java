@@ -216,7 +216,7 @@ public abstract class Breakpoint extends PlatformObject implements IBreakpoint, 
 				}
 			};
 
-		workspace.run(runnable, getMarkerRule(), 0, null);
+		workspace.run(runnable, getMarkerRule(), IWorkspace.AVOID_UPDATE, null);
 	}
 
 	/**
@@ -239,7 +239,7 @@ public abstract class Breakpoint extends PlatformObject implements IBreakpoint, 
 				}
 			};
 
-		workspace.run(runnable, getMarkerRule(), 0, null);
+		workspace.run(runnable, getMarkerRule(), IWorkspace.AVOID_UPDATE, null);
 	}
 
 	/**
@@ -262,7 +262,7 @@ public abstract class Breakpoint extends PlatformObject implements IBreakpoint, 
 				}
 			};
 
-		workspace.run(runnable, getMarkerRule(), 0, null);
+		workspace.run(runnable, getMarkerRule(), IWorkspace.AVOID_UPDATE, null);
 	}
 
 	/**
@@ -387,7 +387,7 @@ public abstract class Breakpoint extends PlatformObject implements IBreakpoint, 
 	 */
     protected void run(ISchedulingRule rule, IWorkspaceRunnable wr) throws DebugException {
     	try {
-    		ResourcesPlugin.getWorkspace().run(wr, rule, 0, null);
+    		ResourcesPlugin.getWorkspace().run(wr, rule, IWorkspace.AVOID_UPDATE, null);
     	} catch (CoreException e) {
     		throw new DebugException(e.getStatus());
     	}
