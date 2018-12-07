@@ -130,8 +130,7 @@ public class E4Workbench implements IWorkbench {
 		Hashtable<String, Object> properties = new Hashtable<>();
 		properties.put("id", getId()); //$NON-NLS-1$
 
-		osgiRegistration = Activator.getDefault().getContext()
-				.registerService(IWorkbench.class.getName(), this, properties);
+		osgiRegistration = Activator.getDefault().getContext().registerService(IWorkbench.class, this, properties);
 
 		ContextInjectionFactory.make(PartOnTopManager.class, appContext);
 	}
