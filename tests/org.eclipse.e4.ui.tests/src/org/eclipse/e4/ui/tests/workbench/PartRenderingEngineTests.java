@@ -201,18 +201,17 @@ public class PartRenderingEngineTests {
 	}
 
 	@Test
-	public void testCreateViewBug298415() {
-		final MWindow window = createWindowWithOneView("Part Name");
+	public void ensureRemovalOfWindowDoesNotResultInExceptionBug298415() {
 		MApplication application = ems.createModelElement(MApplication.class);
-		application.getChildren().add(window);
 		application.setContext(appContext);
+		MWindow window = createWindowWithOneView("Part Name");
+		application.getChildren().add(window);
 		appContext.set(MApplication.class, application);
 
 		wb = new E4Workbench(application, appContext);
 		wb.createAndRunUI(window);
 
-		MPartSashContainer container = (MPartSashContainer) window
-				.getChildren().get(0);
+		MPartSashContainer container = (MPartSashContainer) window.getChildren().get(0);
 		MPartStack stack = (MPartStack) container.getChildren().get(0);
 		MPart part = (MPart) stack.getChildren().get(0);
 
@@ -220,9 +219,7 @@ public class PartRenderingEngineTests {
 		renderer.removeGui(part);
 		renderer.removeGui(window);
 
-		while (Display.getCurrent().readAndDispatch()) {
-			// spin the event loop
-		}
+		spinEventLoop();
 	}
 
 	@Test
