@@ -33,8 +33,7 @@ public class ModelAssemblerProcessingOrderPostProcessor {
 
 	@Execute
 	public void run(EModelService eModelService, MApplication application) throws Exception {
-		List<MPart> elements = eModelService.findElements(application, null, MPart.class,
-				null);
+		List<MPart> elements = eModelService.findElements(application, null, MPart.class);
 		for (MPart element : elements) {
 			if (((EObject) element).eContainer() instanceof MModelFragments)
 				throw new Exception(element.getElementId() + " is not contained in the application model. " + element);

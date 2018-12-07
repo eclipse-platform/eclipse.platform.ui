@@ -106,8 +106,7 @@ public class PartRenderingEngineTests {
 	public void setUp() throws Exception {
 		logged = false;
 		appContext = E4Application.createDefaultContext();
-		appContext.set(IWorkbench.PRESENTATION_URI_ARG,
-				PartRenderingEngine.engineURI);
+		appContext.set(IWorkbench.PRESENTATION_URI_ARG, PartRenderingEngine.engineURI);
 
 		final Display d = Display.getDefault();
 		appContext.set(Realm.class, DisplayRealm.getRealm(d));
@@ -123,16 +122,14 @@ public class PartRenderingEngineTests {
 			}
 		});
 
-		LogReaderService logReaderService = appContext
-				.get(LogReaderService.class);
+		LogReaderService logReaderService = appContext.get(LogReaderService.class);
 		logReaderService.addLogListener(listener);
 		ems = appContext.get(EModelService.class);
 	}
 
 	@After
 	public void tearDown() throws Exception {
-		LogReaderService logReaderService = appContext
-				.get(LogReaderService.class);
+		LogReaderService logReaderService = appContext.get(LogReaderService.class);
 		logReaderService.removeLogListener(listener);
 		if (wb != null) {
 			wb.close();

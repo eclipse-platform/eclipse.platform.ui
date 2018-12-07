@@ -413,8 +413,7 @@ public class HeadlessContextPresentationEngine implements IPresentationEngine {
 				IEclipseContext newParentContext = modelService
 						.getContainingContext(other);
 				if (newParentContext != null) {
-					List<MContext> contextElements = modelService.findElements(
-							ref, null, MContext.class, null);
+					List<MContext> contextElements = modelService.findElements(ref, null, MContext.class);
 					for (MContext contextElement : contextElements) {
 						IEclipseContext context = contextElement.getContext();
 						// this is currently pointing at the placeholder's

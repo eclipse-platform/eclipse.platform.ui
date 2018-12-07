@@ -2441,7 +2441,7 @@ public class EPartServiceTest extends UITest {
 		sharedPart.setCurSharedRef(placeholder);
 		partService.showPart(sharedPart, PartState.ACTIVATE);
 
-		List<MPlaceholder> placeholders = modelService.findElements(perspective, null, MPlaceholder.class, null);
+		List<MPlaceholder> placeholders = modelService.findElements(perspective, null, MPlaceholder.class);
 		assertEquals(1, placeholders.size());
 		assertEquals(placeholder, placeholders.get(0));
 	}
@@ -2806,40 +2806,40 @@ public class EPartServiceTest extends UITest {
 		EPartService partService = window.getContext().get(EPartService.class);
 		partService.showPart(part, PartState.ACTIVATE);
 
-		List<MPart> partsA = modelService.findElements(perspectiveA, part.getElementId(), MPart.class, null);
+		List<MPart> partsA = modelService.findElements(perspectiveA, part.getElementId(), MPart.class);
 		assertEquals(1, partsA.size());
 		assertEquals(part, partsA.get(0));
 
 		List<MPlaceholder> placeholdersA = modelService.findElements(perspectiveA, part.getElementId(),
-				MPlaceholder.class, null);
+				MPlaceholder.class);
 		assertEquals(1, placeholdersA.size());
 		assertEquals(part.getCurSharedRef(), placeholdersA.get(0));
 		assertEquals(part, placeholdersA.get(0).getRef());
 
-		List<MPart> partsB = modelService.findElements(perspectiveB, part.getElementId(), MPart.class, null);
+		List<MPart> partsB = modelService.findElements(perspectiveB, part.getElementId(), MPart.class);
 		assertEquals(0, partsB.size());
 
 		List<MPlaceholder> placeholdersB = modelService.findElements(perspectiveB, part.getElementId(),
-				MPlaceholder.class, null);
+				MPlaceholder.class);
 		assertEquals(0, placeholdersB.size());
 
 		perspectiveStack.setSelectedElement(perspectiveB);
 		perspectiveB.getContext().activate();
 		partService.showPart(part, PartState.ACTIVATE);
 
-		partsA = modelService.findElements(perspectiveA, part.getElementId(), MPart.class, null);
+		partsA = modelService.findElements(perspectiveA, part.getElementId(), MPart.class);
 		assertEquals(1, partsA.size());
 		assertEquals(part, partsA.get(0));
 
-		placeholdersA = modelService.findElements(perspectiveA, part.getElementId(), MPlaceholder.class, null);
+		placeholdersA = modelService.findElements(perspectiveA, part.getElementId(), MPlaceholder.class);
 		assertEquals(1, placeholdersA.size());
 		assertEquals(part, placeholdersA.get(0).getRef());
 
-		partsB = modelService.findElements(perspectiveB, part.getElementId(), MPart.class, null);
+		partsB = modelService.findElements(perspectiveB, part.getElementId(), MPart.class);
 		assertEquals(1, partsB.size());
 		assertEquals(part, partsB.get(0));
 
-		placeholdersB = modelService.findElements(perspectiveB, part.getElementId(), MPlaceholder.class, null);
+		placeholdersB = modelService.findElements(perspectiveB, part.getElementId(), MPlaceholder.class);
 		assertEquals(1, placeholdersB.size());
 		assertEquals(part.getCurSharedRef(), placeholdersB.get(0));
 	}
@@ -2876,40 +2876,39 @@ public class EPartServiceTest extends UITest {
 		EPartService partService = window.getContext().get(EPartService.class);
 		partService.showPart(part, PartState.ACTIVATE);
 
-		List<MPart> partsA = modelService.findElements(perspectiveA, part.getElementId(), MPart.class, null);
+		List<MPart> partsA = modelService.findElements(perspectiveA, part.getElementId(), MPart.class);
 		assertEquals(1, partsA.size());
 		assertEquals(part, partsA.get(0));
 
-		List<MPlaceholder> placeholdersA = modelService.findElements(perspectiveA, part.getElementId(),
-				MPlaceholder.class, null);
+		List<MPlaceholder> placeholdersA = modelService.findElements(perspectiveA, part.getElementId(),MPlaceholder.class);
 		assertEquals(1, placeholdersA.size());
 		assertEquals(part.getCurSharedRef(), placeholdersA.get(0));
 		assertEquals(part, placeholdersA.get(0).getRef());
 
-		List<MPart> partsB = modelService.findElements(perspectiveB, part.getElementId(), MPart.class, null);
+		List<MPart> partsB = modelService.findElements(perspectiveB, part.getElementId(), MPart.class);
 		assertEquals(0, partsB.size());
 
 		List<MPlaceholder> placeholdersB = modelService.findElements(perspectiveB, part.getElementId(),
-				MPlaceholder.class, null);
+				MPlaceholder.class);
 		assertEquals(0, placeholdersB.size());
 
 		perspectiveStack.setSelectedElement(perspectiveB);
 		perspectiveB.getContext().activate();
 		partService.showPart(part, PartState.ACTIVATE);
 
-		partsA = modelService.findElements(perspectiveA, part.getElementId(), MPart.class, null);
+		partsA = modelService.findElements(perspectiveA, part.getElementId(), MPart.class);
 		assertEquals(1, partsA.size());
 		assertEquals(part, partsA.get(0));
 
-		placeholdersA = modelService.findElements(perspectiveA, part.getElementId(), MPlaceholder.class, null);
+		placeholdersA = modelService.findElements(perspectiveA, part.getElementId(), MPlaceholder.class);
 		assertEquals(1, placeholdersA.size());
 		assertEquals(part, placeholdersA.get(0).getRef());
 
-		partsB = modelService.findElements(perspectiveB, part.getElementId(), MPart.class, null);
+		partsB = modelService.findElements(perspectiveB, part.getElementId(), MPart.class);
 		assertEquals(1, partsB.size());
 		assertEquals(part, partsB.get(0));
 
-		placeholdersB = modelService.findElements(perspectiveB, part.getElementId(), MPlaceholder.class, null);
+		placeholdersB = modelService.findElements(perspectiveB, part.getElementId(), MPlaceholder.class);
 		assertEquals(1, placeholdersB.size());
 		assertEquals(part.getCurSharedRef(), placeholdersB.get(0));
 	}
@@ -2941,12 +2940,12 @@ public class EPartServiceTest extends UITest {
 		part.setCurSharedRef(placeholder);
 		partService.showPart(part, PartState.ACTIVATE);
 
-		List<MPart> parts = modelService.findElements(perspective, part.getElementId(), MPart.class, null);
+		List<MPart> parts = modelService.findElements(perspective, part.getElementId(), MPart.class);
 		assertEquals(1, parts.size());
 		assertEquals(part, parts.get(0));
 
 		List<MPlaceholder> placeholders = modelService.findElements(perspective, part.getElementId(),
-				MPlaceholder.class, null);
+				MPlaceholder.class);
 		assertEquals(1, placeholders.size());
 		assertEquals(placeholder, placeholders.get(0));
 		assertEquals(part.getCurSharedRef(), placeholders.get(0));

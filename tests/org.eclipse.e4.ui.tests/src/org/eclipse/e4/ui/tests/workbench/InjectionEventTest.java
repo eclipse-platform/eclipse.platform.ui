@@ -72,8 +72,7 @@ public class InjectionEventTest {
 
 		@Inject
 		@Optional
-		public void receivedEvent2(
-				@UIEventTopic("e4/test/event2") String string2) {
+		public void receivedEvent2(@UIEventTopic("e4/test/event2") String string2) {
 			if (!valid)
 				testFailed = true;
 			counter2++;
@@ -81,8 +80,7 @@ public class InjectionEventTest {
 		}
 
 		@Inject
-		public void receivedOptionalEvent(MyBinding myBinding,
-				@Optional @EventTopic("e4/test/event3") String string3) {
+		public void receivedOptionalEvent(MyBinding myBinding, @Optional @EventTopic("e4/test/event3") String string3) {
 			if (!valid)
 				testFailed = true;
 			counter3++;
@@ -260,8 +258,7 @@ public class InjectionEventTest {
 
 	private void wrapSetup() {
 		IEclipseContext context = EclipseContextFactory.create();
-		InjectTarget target = ContextInjectionFactory.make(InjectTarget.class,
-				context);
+		InjectTarget target = ContextInjectionFactory.make(InjectTarget.class, context);
 		// send event
 		helper.sendEvent("e4/test/event1", "event1data");
 		assertEquals(1, target.counter1);
