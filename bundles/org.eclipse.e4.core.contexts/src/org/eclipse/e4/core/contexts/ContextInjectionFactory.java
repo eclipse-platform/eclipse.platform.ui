@@ -58,7 +58,7 @@ import org.eclipse.e4.core.internal.contexts.EclipseContext;
  */
 public final class ContextInjectionFactory {
 
-	final private static IInjector injector = InjectorFactory.getDefault();
+	private static final IInjector injector = InjectorFactory.getDefault();
 
 	private ContextInjectionFactory() {
 		// prevents instantiations
@@ -72,7 +72,7 @@ public final class ContextInjectionFactory {
 	 * @param context The context to obtain injected values from
 	 * @throws InjectionException if an exception occurred while performing this operation
 	 */
-	static public void inject(Object object, IEclipseContext context) throws InjectionException {
+	public static void inject(Object object, IEclipseContext context) throws InjectionException {
 		PrimaryObjectSupplier supplier = ContextObjectSupplier.getObjectSupplier(context, injector);
 		injector.inject(object, supplier);
 	}
@@ -98,7 +98,7 @@ public final class ContextInjectionFactory {
 	 * @see #inject(Object, IEclipseContext)
 	 * @since 1.7
 	 */
-	static public void inject(Object object, IEclipseContext context, IEclipseContext staticContext)
+	public static void inject(Object object, IEclipseContext context, IEclipseContext staticContext)
 			throws InjectionException {
 		PrimaryObjectSupplier supplier = ContextObjectSupplier.getObjectSupplier(context, injector);
 		PrimaryObjectSupplier tempSupplier = ContextObjectSupplier.getObjectSupplier(staticContext, injector);
@@ -117,7 +117,8 @@ public final class ContextInjectionFactory {
 	 * @return the return value of the method call, might be <code>null</code>
 	 * @throws InjectionException if an exception occurred while performing this operation
 	 */
-	static public Object invoke(Object object, Class<? extends Annotation> qualifier, IEclipseContext context) throws InjectionException {
+	public static Object invoke(Object object, Class<? extends Annotation> qualifier, IEclipseContext context)
+			throws InjectionException {
 		PrimaryObjectSupplier supplier = ContextObjectSupplier.getObjectSupplier(context, injector);
 		return injector.invoke(object, qualifier, supplier);
 	}
@@ -134,7 +135,8 @@ public final class ContextInjectionFactory {
 	 * @return the return value of the method call, might be <code>null</code>
 	 * @throws InjectionException if an exception occurred while performing this operation
 	 */
-	static public Object invoke(Object object, Class<? extends Annotation> qualifier, IEclipseContext context, Object defaultValue) throws InjectionException {
+	public static Object invoke(Object object, Class<? extends Annotation> qualifier, IEclipseContext context,
+			Object defaultValue) throws InjectionException {
 		PrimaryObjectSupplier supplier = ContextObjectSupplier.getObjectSupplier(context, injector);
 		return injector.invoke(object, qualifier, defaultValue, supplier);
 	}
@@ -158,7 +160,8 @@ public final class ContextInjectionFactory {
 	 * @return the return value of the method call, might be <code>null</code>
 	 * @throws InjectionException if an exception occurred while performing this operation
 	 */
-	static public Object invoke(Object object, Class<? extends Annotation> qualifier, IEclipseContext context, IEclipseContext localContext, Object defaultValue) throws InjectionException {
+	public static Object invoke(Object object, Class<? extends Annotation> qualifier, IEclipseContext context,
+			IEclipseContext localContext, Object defaultValue) throws InjectionException {
 		PrimaryObjectSupplier supplier = ContextObjectSupplier.getObjectSupplier(context, injector);
 		PrimaryObjectSupplier tempSupplier = ContextObjectSupplier.getObjectSupplier(localContext, injector);
 		return injector.invoke(object, qualifier, defaultValue, supplier, tempSupplier);
@@ -171,7 +174,7 @@ public final class ContextInjectionFactory {
 	 * @param context The context previously injected into the object
 	 * @throws InjectionException if an exception occurred while performing this operation
 	 */
-	static public void uninject(Object object, IEclipseContext context) throws InjectionException {
+	public static void uninject(Object object, IEclipseContext context) throws InjectionException {
 		((EclipseContext) context).removeListenersTo(object);
 	}
 
@@ -188,7 +191,7 @@ public final class ContextInjectionFactory {
 	 * @see Scope
 	 * @see Singleton
 	 */
-	static public <T> T make(Class<T> clazz, IEclipseContext context) throws InjectionException {
+	public static <T> T make(Class<T> clazz, IEclipseContext context) throws InjectionException {
 		PrimaryObjectSupplier supplier = ContextObjectSupplier.getObjectSupplier(context, injector);
 		return injector.make(clazz, supplier);
 	}
@@ -211,7 +214,8 @@ public final class ContextInjectionFactory {
 	 * @throws InjectionException if an exception occurred while performing this operation
 	 * @see #make(Class, IEclipseContext)
 	 */
-	static public <T> T make(Class<T> clazz, IEclipseContext context, IEclipseContext staticContext) throws InjectionException {
+	public static <T> T make(Class<T> clazz, IEclipseContext context, IEclipseContext staticContext)
+			throws InjectionException {
 		PrimaryObjectSupplier supplier = ContextObjectSupplier.getObjectSupplier(context, injector);
 		PrimaryObjectSupplier tempSupplier = ContextObjectSupplier.getObjectSupplier(staticContext, injector);
 		return injector.make(clazz, supplier, tempSupplier);
@@ -224,7 +228,7 @@ public final class ContextInjectionFactory {
 	 * @param context the context to be used as a data source by the injector
 	 * @since 1.2
 	 */
-	static public void setDefault(IEclipseContext context) {
+	public static void setDefault(IEclipseContext context) {
 		PrimaryObjectSupplier supplier = ContextObjectSupplier.getObjectSupplier(context, injector);
 		injector.setDefaultSupplier(supplier);
 	}
