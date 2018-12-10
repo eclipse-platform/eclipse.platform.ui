@@ -131,6 +131,18 @@ public interface EModelService {
 	<T extends MApplicationElement> T createModelElement(Class<T> elementType);
 
 	/**
+	 * Removes a visual model element from the application model by calling
+	 * {@link MUIElement#setToBeRendered(boolean)} with false and by removing the
+	 * model element from its parent.
+	 *
+	 * @param element - model
+	 * @since 1.9
+	 */
+	void deleteModelElement(MUIElement element);
+
+
+
+	/**
 	 * This is a convenience method that constructs a new Selector based on
 	 * {@link ElementMatcher} and forwards the call on to the base API
 	 * {@link EModelService#findElements(MApplicationElement, Class, int, Selector)}.

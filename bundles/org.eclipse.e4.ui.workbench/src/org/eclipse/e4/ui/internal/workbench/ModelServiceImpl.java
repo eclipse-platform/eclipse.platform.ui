@@ -21,6 +21,7 @@ import java.util.Collection;
 import java.util.Dictionary;
 import java.util.Hashtable;
 import java.util.List;
+import java.util.Objects;
 import javax.annotation.PreDestroy;
 import javax.inject.Inject;
 import org.eclipse.core.runtime.Assert;
@@ -70,6 +71,7 @@ import org.eclipse.e4.ui.workbench.modeling.EPlaceholderResolver;
 import org.eclipse.e4.ui.workbench.modeling.ElementMatcher;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.util.EcoreUtil;
+import org.eclipse.jdt.annotation.NonNull;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.FrameworkUtil;
@@ -156,6 +158,16 @@ public class ModelServiceImpl implements EModelService {
 
 		throw new IllegalArgumentException(
 				"Unsupported model object type: " + elementType.getCanonicalName()); //$NON-NLS-1$
+	}
+
+	@Override
+	public void deleteModelElement(@NonNull MUIElement element) {
+		Objects.nonNull(element);
+		element.setToBeRendered(false);
+		if (element.getParent() != null) {
+			element.getParent().getChildren().remove(element);
+		}
+
 	}
 
 	private <T> void findElementsRecursive(MApplicationElement searchRoot, Class<T> clazz,
@@ -1205,4 +1217,5 @@ public class ModelServiceImpl implements EModelService {
 			logger.warn(message);
 		}
 	}
+
 }
