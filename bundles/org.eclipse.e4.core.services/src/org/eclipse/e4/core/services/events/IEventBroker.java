@@ -19,10 +19,11 @@ import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.osgi.service.event.EventHandler;
 
 /**
- * To obtain an instance of the event broker service from the {@link IEclipseContext} context, use
+ * To obtain an instance of the event broker service from the
+ * {@link IEclipseContext} context, use
  *
  * <pre>
- * (IEventBroker) context.get(IEventBroker.class.getName())
+ * context.get(IEventBroker.class)
  * </pre>
  *
  * @noimplement This interface is not intended to be implemented by clients.
