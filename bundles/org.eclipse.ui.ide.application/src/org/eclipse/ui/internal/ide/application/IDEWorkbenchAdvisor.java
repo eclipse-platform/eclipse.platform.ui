@@ -129,12 +129,6 @@ public class IDEWorkbenchAdvisor extends WorkbenchAdvisor {
 	 */
 	private IDEWorkbenchActivityHelper activityHelper = null;
 
-	/**
-	 * Helper for managing work that is performed when the system is otherwise
-	 * idle.
-	 */
-	private IDEIdleHelper idleHelper;
-
 	private Listener settingsChangeListener;
 
 	/**
@@ -210,9 +204,6 @@ public class IDEWorkbenchAdvisor extends WorkbenchAdvisor {
 
 		// initialize the activity helper
 		activityHelper = IDEWorkbenchActivityHelper.getInstance();
-
-		// initialize idle handler
-		idleHelper = new IDEIdleHelper(configurer);
 
 		// initialize the workspace undo monitor
 		workspaceUndoMonitor = WorkspaceUndoMonitor.getInstance();
@@ -315,10 +306,7 @@ public class IDEWorkbenchAdvisor extends WorkbenchAdvisor {
 			activityHelper.shutdown();
 			activityHelper = null;
 		}
-		if (idleHelper != null) {
-			idleHelper.shutdown();
-			idleHelper = null;
-		}
+
 		if (workspaceUndoMonitor != null) {
 			workspaceUndoMonitor.shutdown();
 			workspaceUndoMonitor = null;
