@@ -23,6 +23,7 @@ import org.eclipse.e4.ui.model.application.ui.SideValue;
 import org.eclipse.e4.ui.model.application.ui.basic.MTrimBar;
 import org.eclipse.e4.ui.model.application.ui.basic.MTrimElement;
 import org.eclipse.e4.ui.model.application.ui.basic.MTrimmedWindow;
+import org.eclipse.e4.ui.workbench.IPresentationEngine;
 import org.eclipse.e4.ui.workbench.renderers.swt.TrimBarLayout;
 import org.eclipse.e4.ui.workbench.renderers.swt.TrimmedPartLayout;
 import org.eclipse.swt.SWT;
@@ -57,7 +58,20 @@ public class TrimDropAgent extends DropAgent {
 		// are we over a 'side' ?
 		side = getDropSide(info);
 
-		return side != null;
+		if (side != null) {
+			MTrimElement trimElement = (MTrimElement) dragElement;
+			// Check if we can move the trim element outside of its trim bar
+			if (trimElement.getTags().contains(IPresentationEngine.NO_DETACH)) {
+				MTrimmedWindow window = (MTrimmedWindow) dndManager.getDragWindow();
+				MTrimBar sideTrimBar = dndManager.getModelService().getTrim(window, side);
+
+				return (MUIElement) dragElement.getParent() == sideTrimBar;
+			}
+
+			return true;
+		}
+
+		return false;
 	}
 
 	private SideValue getDropSide(DnDInfo info) {
