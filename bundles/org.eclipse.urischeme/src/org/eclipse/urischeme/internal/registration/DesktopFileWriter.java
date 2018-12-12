@@ -170,15 +170,18 @@ public class DesktopFileWriter {
 	 *
 	 * @param eclipseExecutableLocation the location of the eclipse executable in
 	 *                                  the file system, spaces will be escaped
+	 * @param productName               the name of the product as defined in the
+	 *                                  branding
 	 *
 	 * @return The minimal file content as list (one entry = one file line)
 	 */
-	public static List<String> getMinimalDesktopFileContent(String eclipseExecutableLocation) {
+	public static List<String> getMinimalDesktopFileContent(String eclipseExecutableLocation, String productName) {
 		String executable = escapeSpaces(eclipseExecutableLocation);
 		return Arrays.asList(//
-				"[Desktop Entry]", // //$NON-NLS-1$
-				"Exec=" + executable, // //$NON-NLS-1$
-				"NoDisplay=true", // //$NON-NLS-1$
+				"[Desktop Entry]", //$NON-NLS-1$
+				"Name=" + productName, //$NON-NLS-1$
+				"Exec=" + executable, //$NON-NLS-1$
+				"NoDisplay=true", //$NON-NLS-1$
 				"Type=Application" //$NON-NLS-1$
 		);
 	}

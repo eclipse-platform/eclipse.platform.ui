@@ -34,6 +34,7 @@ import org.junit.Test;
 
 public class TestUnitRegistrationLinux {
 
+	private static final String PRODUCT_NAME = "myProduct";
 	private static final String USER_HOME = "user.home";
 	private static final String ECLIPSE_LAUNCHER = "eclipse.launcher";
 	private static final String ECLIPSE_HOME_LOCATION = "eclipse.home.location";
@@ -68,7 +69,7 @@ public class TestUnitRegistrationLinux {
 		System.setProperty(ECLIPSE_LAUNCHER, "/home/myuser/Eclipse/Eclipse");
 		System.setProperty(USER_HOME, "~");
 
-		registration = new RegistrationLinux(fileProvider, processStub);
+		registration = new RegistrationLinux(fileProvider, processStub, PRODUCT_NAME);
 	}
 
 	@BeforeClass
@@ -134,9 +135,11 @@ public class TestUnitRegistrationLinux {
 
 		assertEquals(PATH_OWN_DESKTOP_FILE, fileProvider.writePath);
 
+		assertAppNameInFileIs(PRODUCT_NAME);
+
 		assertMimeTypeInFileIs("x-scheme-handler/adt;");
 
-		assertExecInFileIs("/home/myuser/Eclipse/Eclipse %u"); // TODO
+		assertExecInFileIs("/home/myuser/Eclipse/Eclipse %u");
 
 		assertXdgMimeCalledFor("x-scheme-handler/adt");
 	}
@@ -284,6 +287,10 @@ public class TestUnitRegistrationLinux {
 	private void assertFilePathIs(String filePath) {
 		assertEquals(filePath, fileProvider.recordedReadPaths.get(0));
 		assertEquals(filePath, fileProvider.writePath);
+	}
+
+	private void assertAppNameInFileIs(String name) {
+		assertThat(new String(fileProvider.writtenBytes), new StringContains("Name=" + name));
 	}
 
 	private void assertMimeTypeInFileIs(String mimeType) {

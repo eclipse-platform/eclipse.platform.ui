@@ -16,6 +16,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.urischeme.IOperatingSystemRegistration;
 import org.eclipse.urischeme.IScheme;
 import org.eclipse.urischeme.ISchemeInformation;
@@ -35,14 +36,16 @@ public class RegistrationLinux implements IOperatingSystemRegistration {
 
 	private IFileProvider fileProvider;
 	private IProcessExecutor processExecutor;
+	private String productName;
 
 	public RegistrationLinux() {
-		this(new FileProvider(), new ProcessExecutor());
+		this(new FileProvider(), new ProcessExecutor(), Platform.getProduct().getName());
 	}
 
-	public RegistrationLinux(IFileProvider fileProvider, IProcessExecutor processExecutor) {
+	public RegistrationLinux(IFileProvider fileProvider, IProcessExecutor processExecutor, String productName) {
 		this.fileProvider = fileProvider;
 		this.processExecutor = processExecutor;
+		this.productName = productName;
 	}
 
 	@Override
@@ -101,7 +104,7 @@ public class RegistrationLinux implements IOperatingSystemRegistration {
 		try {
 			return fileProvider.readAllLines(desktopFilePath);
 		} catch (IOException e) {
-			return DesktopFileWriter.getMinimalDesktopFileContent(getEclipseLauncher());
+			return DesktopFileWriter.getMinimalDesktopFileContent(getEclipseLauncher(), productName);
 		}
 	}
 

@@ -246,9 +246,11 @@ public class TestUnitDesktopFileWriter {
 
 	@Test
 	public void returnsMinimalDesktopFile() {
-		List<String> actual = DesktopFileWriter.getMinimalDesktopFileContent("/home/myuser/Eclipse/eclipse/eclipse");
+		List<String> actual = DesktopFileWriter.getMinimalDesktopFileContent("/home/myuser/Eclipse/eclipse/eclipse",
+				"MyProduct");
 		List<String> expected = Arrays.asList(//
 				"[Desktop Entry]", //
+				"Name=MyProduct", //
 				"Exec=/home/myuser/Eclipse/eclipse/eclipse", //
 				"NoDisplay=true", //
 				"Type=Application");
@@ -258,9 +260,10 @@ public class TestUnitDesktopFileWriter {
 	@Test
 	public void returnsMinimalDesktopFileWithSpaceEscapedInLocation() {
 		List<String> actual = DesktopFileWriter
-				.getMinimalDesktopFileContent("/home/myuser/Eclipse/eclipse (copy)/eclipse");
+				.getMinimalDesktopFileContent("/home/myuser/Eclipse/eclipse (copy)/eclipse", "MyProduct");
 		List<String> expected = Arrays.asList(//
 				"[Desktop Entry]", //
+				"Name=MyProduct", //
 				"Exec=/home/myuser/Eclipse/eclipse\\ (copy)/eclipse", //
 				"NoDisplay=true", //
 				"Type=Application");
@@ -270,9 +273,10 @@ public class TestUnitDesktopFileWriter {
 	@Test
 	public void returnsMinimalDesktopFileWithMultipleSpacesEscapedInLocation() {
 		List<String> actual = DesktopFileWriter
-				.getMinimalDesktopFileContent("/home/myuser/Eclipse/eclipse   (copy)/eclipse");
+				.getMinimalDesktopFileContent("/home/myuser/Eclipse/eclipse   (copy)/eclipse", "MyProduct");
 		List<String> expected = Arrays.asList(//
 				"[Desktop Entry]", //
+				"Name=MyProduct", //
 				"Exec=/home/myuser/Eclipse/eclipse\\ \\ \\ (copy)/eclipse", //
 				"NoDisplay=true", //
 				"Type=Application");
