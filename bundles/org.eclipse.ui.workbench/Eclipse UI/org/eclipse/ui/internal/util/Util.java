@@ -714,7 +714,7 @@ public final class Util {
 			return EMPTY_STRING_ARRAY;
 		}
 
-		if (src.length()==0) {
+		if (src.isEmpty()) {
 			return new String[] { ZERO_LENGTH_STRING };
 		}
 
