@@ -265,7 +265,7 @@ public class MenuPopulationTest extends MenuTestCase {
 		} else if (ici instanceof HandledContributionItem) {
 			final MHandledItem model = ((HandledContributionItem)ici).getModel();
 			String iconString = model.getIconURI();
-			assertTrue(iconString, iconString==null || iconString.length()==0);
+			assertTrue(iconString, iconString == null || iconString.isEmpty());
 		}
 
 		manager.dispose();
