@@ -24,8 +24,11 @@ import java.io.IOException;
 
 import javax.imageio.ImageIO;
 
+/**
+ * @since 0.15
+ */
 public class AwtScreenshot {
-	
+
 	public static void main(String[] args) {
 		try {
 			System.setProperty("java.awt.headless", "false");
@@ -34,7 +37,7 @@ public class AwtScreenshot {
 			BufferedImage image= robot.createScreenCapture(rect);
 			File file= new File(args[0]);
 			ImageIO.write(image, "png", file);
-		
+
 			System.out.println("AWT screenshot saved to: " + file.getAbsolutePath());
 		} catch (HeadlessException|AWTException|IOException e) {
 			e.printStackTrace();
