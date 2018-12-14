@@ -80,8 +80,7 @@ public class StatusUtil {
 	 * @param exception
 	 * @return {@link IStatus}
 	 */
-	public static IStatus newStatus(int severity, String message,
-			Throwable exception) {
+	public static IStatus newStatus(int severity, String message, Throwable exception) {
 
 		String statusMessage = message;
 		if (message == null || message.trim().length() == 0) {
@@ -98,6 +97,18 @@ public class StatusUtil {
 				statusMessage, exception);
 	}
 
+	/**
+	 * This method must not be called outside the workbench.
+	 *
+	 * Utility method for creating error status messages delegating to
+	 * <code>StatusUtil{@link #newStatus(int, String, Throwable)}</code>.
+	 *
+	 * @param exception
+	 * @return {@link IStatus}
+	 */
+	public static IStatus newError(Throwable exception) {
+		return newStatus(IStatus.ERROR, exception.getLocalizedMessage(), exception);
+	}
 
 	/**
 	 * This method must not be called outside the workbench.
@@ -125,6 +136,5 @@ public class StatusUtil {
 		flatStatusCollection.toArray(stati);
 		return newStatus(stati, message, exception);
 	}
-
 
 }

@@ -19,7 +19,6 @@ import java.util.Collection;
 import java.util.Map;
 
 import org.eclipse.core.resources.IMarker;
-import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.wizard.IWizardPage;
@@ -86,15 +85,8 @@ class QuickFixWizard extends Wizard {
 
 		try {
 			getContainer().run(false, true, finishRunnable);
-		} catch (InvocationTargetException e) {
-			StatusManager.getManager().handle(
-					StatusUtil.newStatus(IStatus.ERROR,
-							e.getLocalizedMessage(), e));
-			return false;
-		} catch (InterruptedException e) {
-			StatusManager.getManager().handle(
-					StatusUtil.newStatus(IStatus.ERROR,
-							e.getLocalizedMessage(), e));
+		} catch (InvocationTargetException | InterruptedException e) {
+			StatusManager.getManager().handle(StatusUtil.newError(e));
 			return false;
 		}
 

@@ -75,8 +75,7 @@ public abstract class MarkerViewHandler extends AbstractHandler {
 						StatusManager.SHOW);
 
 			} else {
-				StatusManager.getManager().handle(
-						StatusUtil.newStatus(IStatus.ERROR, title, e));
+				StatusManager.getManager().handle(StatusUtil.newError(e));
 			}
 		}
 	}

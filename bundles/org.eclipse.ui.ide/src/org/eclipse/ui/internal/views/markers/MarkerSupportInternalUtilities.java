@@ -420,16 +420,11 @@ public class MarkerSupportInternalUtilities {
 			}
 
 			if (status == null)
-				StatusManager.getManager().handle(
-						StatusUtil.newStatus(IStatus.ERROR,
-								exception.getLocalizedMessage(), exception),
-						handlingMethod);
+				StatusManager.getManager().handle(StatusUtil.newError(exception), handlingMethod);
 			else
 				StatusManager.getManager().handle(status, handlingMethod);
 			return;
 		}
-		StatusManager.getManager().handle(StatusUtil.newStatus(IStatus.ERROR,
-				exception.getLocalizedMessage(), exception),
-				handlingMethod);
+		StatusManager.getManager().handle(StatusUtil.newError(exception), handlingMethod);
 	}
 }

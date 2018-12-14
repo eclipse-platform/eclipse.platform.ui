@@ -32,7 +32,6 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.IStatus;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPreferenceConstants;
@@ -519,8 +518,7 @@ class MarkerFieldFilterGroup {
 			} catch (InstantiationException | IllegalArgumentException | IllegalAccessException
 					| InvocationTargetException | NoSuchMethodException
 					| SecurityException e) {
-				StatusManager.getManager().handle(StatusUtil.newStatus(IStatus.ERROR, e.getLocalizedMessage(), e),
-						StatusManager.SHOW);
+				StatusManager.getManager().handle(StatusUtil.newError(e), StatusManager.SHOW);
 				return false;
 			}
 		}

@@ -24,7 +24,6 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.Adapters;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.osgi.util.NLS;
@@ -345,9 +344,7 @@ public class MarkersPropertyPage extends PropertyPage {
 						((CoreException) e.getCause()).getStatus(),
 						StatusManager.SHOW);
 			} else {
-				StatusManager.getManager().handle(
-						StatusUtil.newStatus(IStatus.ERROR, e
-								.getLocalizedMessage(), e));
+				StatusManager.getManager().handle(StatusUtil.newError(e));
 			}
 		}
 

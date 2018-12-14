@@ -1059,9 +1059,7 @@ public class WizardProjectsImportPage extends WizardDataTransferPage {
 			try {
 				directoriesVisited.add(directory.getCanonicalPath());
 			} catch (IOException exception) {
-				StatusManager.getManager().handle(
-						StatusUtil.newStatus(IStatus.ERROR, exception
-								.getLocalizedMessage(), exception));
+				StatusManager.getManager().handle(StatusUtil.newError(exception));
 			}
 		}
 
@@ -1091,9 +1089,7 @@ public class WizardProjectsImportPage extends WizardDataTransferPage {
 						continue;
 					}
 				} catch (IOException exception) {
-					StatusManager.getManager().handle(
-							StatusUtil.newStatus(IStatus.ERROR, exception
-									.getLocalizedMessage(), exception));
+					StatusManager.getManager().handle(StatusUtil.newError(exception));
 
 				}
 				collectProjectFilesFromDirectory(files, dir,

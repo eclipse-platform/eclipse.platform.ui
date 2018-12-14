@@ -59,9 +59,7 @@ public class MarkCompletedHandler extends MarkerViewHandler {
 				execute(op, MarkerMessages.markCompletedAction_title, subMonitor.split(80), null);
 			});
 		} catch (InvocationTargetException e) {
-			StatusManager.getManager().handle(
-					StatusUtil.newStatus(IStatus.ERROR,
-							e.getLocalizedMessage(), e), StatusManager.LOG);
+			StatusManager.getManager().handle(StatusUtil.newError(e), StatusManager.LOG);
 		} catch (InterruptedException e) {
 			StatusManager.getManager().handle(
 					StatusUtil.newStatus(IStatus.WARNING, e

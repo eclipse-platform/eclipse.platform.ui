@@ -599,8 +599,8 @@ public class IDEApplication implements IApplication, IExecutableExtension {
 
             props.store(output, null);
         } catch (IOException e) {
-            IDEWorkbenchPlugin.log("Could not write version file", //$NON-NLS-1$
-                    StatusUtil.newStatus(IStatus.ERROR, e.getMessage(), e));
+			IDEWorkbenchPlugin.log("Could not write version file", //$NON-NLS-1$
+					StatusUtil.newError(e));
         } finally {
             try {
                 if (output != null) {

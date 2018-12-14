@@ -18,7 +18,6 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.Iterator;
 
 import org.eclipse.core.resources.ResourcesPlugin;
-import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
@@ -260,10 +259,8 @@ public class CachedMarkerBuilder {
 				SortingJob job = new SortingJob(CachedMarkerBuilder.this);
 				job.run(monitor);
 			});
-		} catch (InvocationTargetException e) {
-			StatusManager.getManager().handle(StatusUtil.newStatus(IStatus.ERROR, e.getLocalizedMessage(), e));
-		} catch (InterruptedException e) {
-			StatusManager.getManager().handle(StatusUtil.newStatus(IStatus.ERROR, e.getLocalizedMessage(), e));
+		} catch (InvocationTargetException | InterruptedException e) {
+			StatusManager.getManager().handle(StatusUtil.newError(e));
 		}
 	}
 
