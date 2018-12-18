@@ -312,6 +312,8 @@ public class AboutFeaturesPage extends ProductInfoPage {
 			table.setSelection(sel);
 			table.showSelection();
 		}
+
+		addCopySupport(table);
 	}
 
 	private void disposeImages() {

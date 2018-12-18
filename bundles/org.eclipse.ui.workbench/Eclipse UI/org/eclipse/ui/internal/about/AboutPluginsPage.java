@@ -421,6 +421,8 @@ public class AboutPluginsPage extends ProductInfoPage {
 				vendorInfo.setInput(bundleData);
 			}
 		}, parent.getDisplay());
+
+		addCopySupport(vendorInfo.getTable());
 	}
 
 	/**
