@@ -17,6 +17,7 @@ package org.eclipse.debug.internal.core;
 import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.eclipse.core.runtime.ISafeRunnable;
 import org.eclipse.core.runtime.ListenerList;
@@ -74,6 +75,8 @@ public class OutputStreamMonitor implements IFlushableStreamMonitor {
 
 	private String fEncoding;
 
+	private final AtomicBoolean fDone;
+
 	/**
 	 * Creates an output stream monitor on the
 	 * given stream (connected to system out or err).
@@ -85,6 +88,7 @@ public class OutputStreamMonitor implements IFlushableStreamMonitor {
         fStream = new BufferedInputStream(stream, 8192);
         fEncoding = encoding;
 		fContents= new StringBuilder();
+		fDone = new AtomicBoolean(false);
 	}
 
 	/* (non-Javadoc)
@@ -129,6 +133,13 @@ public class OutputStreamMonitor implements IFlushableStreamMonitor {
 		return fContents.toString();
 	}
 
+	private void read() {
+		try {
+			internalRead();
+		} finally {
+			fDone.set(true);
+		}
+	}
 	/**
 	 * Continually reads from the stream.
 	 * <p>
@@ -137,7 +148,7 @@ public class OutputStreamMonitor implements IFlushableStreamMonitor {
 	 * to implement <code>Runnable</code> without publicly
 	 * exposing a <code>run</code> method.
 	 */
-	private void read() {
+	private void internalRead() {
         lastSleep = System.currentTimeMillis();
         long currentTime = lastSleep;
 		byte[] bytes= new byte[BUFFER_SIZE];
@@ -209,6 +220,7 @@ public class OutputStreamMonitor implements IFlushableStreamMonitor {
 	 */
 	protected void startMonitoring() {
 		if (fThread == null) {
+			fDone.set(false);
 			fThread = new Thread((Runnable) () -> read(), DebugCoreMessages.OutputStreamMonitor_label);
             fThread.setDaemon(true);
             fThread.setPriority(Thread.MIN_PRIORITY);
@@ -242,6 +254,14 @@ public class OutputStreamMonitor implements IFlushableStreamMonitor {
 
 	private ContentNotifier getNotifier() {
 		return new ContentNotifier();
+	}
+
+	/**
+	 * @return {@code true} if reading the underlying stream is done.
+	 *         {@code false} if reading the stream has not started or is not done.
+	 */
+	public boolean isReadingDone() {
+		return fDone.get();
 	}
 
 	class ContentNotifier implements ISafeRunnable {
