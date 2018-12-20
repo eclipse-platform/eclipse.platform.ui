@@ -52,8 +52,10 @@ import org.eclipse.ui.internal.navigator.framelist.TreeFrame;
 import org.eclipse.ui.internal.navigator.resources.ResourceToItemsMapper;
 import org.eclipse.ui.internal.navigator.resources.plugin.WorkbenchNavigatorMessages;
 import org.eclipse.ui.internal.navigator.resources.plugin.WorkbenchNavigatorPlugin;
+import org.eclipse.ui.internal.views.helpers.EmptyWorkspaceHelper;
 import org.eclipse.ui.model.IWorkbenchAdapter;
 import org.eclipse.ui.navigator.CommonNavigator;
+import org.eclipse.ui.navigator.CommonViewer;
 import org.eclipse.ui.navigator.INavigatorContentService;
 
 
@@ -101,7 +103,7 @@ public final class ProjectExplorer extends CommonNavigator {
 	private String workingSetLabel;
 
 	private List<UserFilter> userFilters;
-
+	private EmptyWorkspaceHelper emptyWorkspaceHelper;
 
 	@Override
 	public void init(IViewSite site, IMemento memento) throws PartInitException {
@@ -137,7 +139,10 @@ public final class ProjectExplorer extends CommonNavigator {
 
 	@Override
 	public void createPartControl(Composite aParent) {
-		super.createPartControl(aParent);
+		emptyWorkspaceHelper = new EmptyWorkspaceHelper();
+		Composite displayAreas = emptyWorkspaceHelper.getComposite(aParent);
+
+		super.createPartControl(displayAreas);
 		getCommonViewer().setMapper(new ResourceToItemsMapper(getCommonViewer()));
 		getCommonViewer().setData(NavigatorPlugin.RESOURCE_REGEXP_FILTER_DATA, this.userFilters);
 		if (this.userFilters.stream().anyMatch(UserFilter::isEnabled)) {
@@ -308,6 +313,13 @@ public final class ProjectExplorer extends CommonNavigator {
 			}
 		}
 		super.handleDoubleClick(anEvent);
+	}
+
+	@Override
+	protected CommonViewer createCommonViewer(Composite aParent) {
+		CommonViewer viewer = super.createCommonViewer(aParent);
+		emptyWorkspaceHelper.setNonEmptyControl(viewer.getControl());
+		return viewer;
 	}
 
 }

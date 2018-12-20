@@ -85,6 +85,7 @@ import org.eclipse.ui.handlers.CollapseAllHandler;
 import org.eclipse.ui.handlers.IHandlerService;
 import org.eclipse.ui.ide.ResourceUtil;
 import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
+import org.eclipse.ui.internal.views.helpers.EmptyWorkspaceHelper;
 import org.eclipse.ui.internal.views.navigator.ResourceNavigatorMessages;
 import org.eclipse.ui.model.WorkbenchContentProvider;
 import org.eclipse.ui.model.WorkbenchLabelProvider;
@@ -163,6 +164,8 @@ public class ResourceNavigator extends ViewPart implements ISetSelectionTarget,
      * True iff we've already scheduled an asynchronous call to linkToEditor
      */
     private boolean linkScheduled = false;
+
+	private EmptyWorkspaceHelper emptyWorkspaceHelper;
 
     // Persistance tags.
     private static final String TAG_SORTER = "sorter"; //$NON-NLS-1$
@@ -289,8 +292,13 @@ public class ResourceNavigator extends ViewPart implements ISetSelectionTarget,
 
     @Override
 	public void createPartControl(Composite parent) {
-        TreeViewer viewer = createViewer(parent);
+		emptyWorkspaceHelper = new EmptyWorkspaceHelper();
+		Composite displayArea = emptyWorkspaceHelper.getComposite(parent);
+
+		TreeViewer viewer = createViewer(displayArea);
         this.viewer = viewer;
+
+		emptyWorkspaceHelper.setNonEmptyControl(viewer.getControl());
 
         if (memento != null) {
             restoreFilters();

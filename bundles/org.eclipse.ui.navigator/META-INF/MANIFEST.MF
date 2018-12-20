@@ -13,7 +13,7 @@ Export-Package: org.eclipse.ui.internal.navigator;x-friends:="org.eclipse.ui.nav
  org.eclipse.ui.internal.navigator.filters;x-friends:="org.eclipse.ui.navigator.ide,org.eclipse.ui.navigator.resources,org.eclipse.ui.tests.navigator",
  org.eclipse.ui.internal.navigator.framelist;x-friends:="org.eclipse.ui.navigator.ide,org.eclipse.ui.navigator.resources,org.eclipse.ui.tests.navigator",
  org.eclipse.ui.internal.navigator.sorters;x-internal:=true,
- org.eclipse.ui.internal.navigator.wizards;x-internal:=true,
+ org.eclipse.ui.internal.navigator.wizards;x-friends:="org.eclipse.ui.navigator.resources,org.eclipse.ui.ide",
  org.eclipse.ui.navigator
 Require-Bundle: org.eclipse.core.runtime;bundle-version="[3.6.0,4.0.0)",
  org.eclipse.ui;bundle-version="[3.6.0,4.0.0)",
