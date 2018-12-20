@@ -987,7 +987,6 @@ public class VariablesView extends AbstractDebugView implements IDebugContextLis
 		super.updateObjects();
 		if (fTreeHasFocus) {
 			setGlobalActions();
-			getViewSite().getActionBars().updateActionBars();
 		}
 	}
 
