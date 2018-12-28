@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2015 IBM Corporation and others.
+ * Copyright (c) 2005, 2018 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -287,7 +287,7 @@ public abstract class PreferencePersistence extends RegistryPersistence {
 			IParameter parameter = null;
 			try {
 				final IParameter[] commandParameters = command.getParameters();
-				if (parameters != null) {
+				if (commandParameters != null) {
 					for (final IParameter currentParameter : commandParameters) {
 						if (Util.equals(currentParameter.getId(), id)) {
 							parameter = currentParameter;
