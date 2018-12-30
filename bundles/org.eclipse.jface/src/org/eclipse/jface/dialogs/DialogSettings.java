@@ -13,6 +13,7 @@
  *     Marc R. Hoffmann <hoffmann@mountainminds.com> - Bug 284265 [JFace]
  *                  DialogSettings.save() silently ignores IOException
  *     Ruediger Herrmann <ruediger.herrmann@gmx.de> - bug 92518
+ *     Björn Michael <b.michael@gmx.de> - bug 543082 [JFace]
  *******************************************************************************/
 package org.eclipse.jface.dialogs;
 
@@ -29,7 +30,7 @@ import java.io.Writer;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -109,9 +110,9 @@ public class DialogSettings implements IDialogSettings {
      */
     public DialogSettings(String sectionName) {
         name = sectionName;
-        items = new HashMap<>();
-        arrayItems = new HashMap<>();
-        sections = new HashMap<>();
+		items = new LinkedHashMap<>();
+		arrayItems = new LinkedHashMap<>();
+		sections = new LinkedHashMap<>();
     }
 
     @Override
@@ -380,7 +381,7 @@ public class DialogSettings implements IDialogSettings {
     }
 
     private void save(XMLWriter out) throws IOException {
-    	HashMap<String, String> attributes = new HashMap<>(2);
+		Map<String, String> attributes = new LinkedHashMap<>(2);
     	attributes.put(TAG_NAME, name == null ? "" : name); //$NON-NLS-1$
         out.startTag(TAG_SECTION, attributes);
         attributes.clear();
@@ -447,7 +448,7 @@ public class DialogSettings implements IDialogSettings {
     		writeln(XML_VERSION);
     	}
 
-    	private  void writeln(String text) throws IOException {
+		private void writeln(String text) throws IOException {
     		write(text);
     		newLine();
     	}
@@ -469,17 +470,17 @@ public class DialogSettings implements IDialogSettings {
     	}
 
     	/**
-    	 * write the tag to the stream and format it by itending it and add new line after the tag
+    	 * Write the tag to the stream and format it by indenting it and add new line after the tag
     	 * @param name the name of the tag
     	 * @param parameters map of parameters
     	 * @param close should the tag be ended automatically (=> empty tag)
     	 * @throws IOException
     	 */
-    	public void printTag(String name, HashMap<String, String> parameters, boolean close) throws IOException {
+    	public void printTag(String name, Map<String, String> parameters, boolean close) throws IOException {
     		printTag(name, parameters, true, true, close);
     	}
 
-    	private void printTag(String name, HashMap<String, String> parameters, boolean shouldTab, boolean newLine, boolean close) throws IOException {
+		private void printTag(String name, Map<String, String> parameters, boolean shouldTab, boolean newLine, boolean close) throws IOException {
     		StringBuilder sb = new StringBuilder();
     		sb.append('<');
     		sb.append(name);
@@ -508,17 +509,17 @@ public class DialogSettings implements IDialogSettings {
     	}
 
     	/**
-    	 * start the tag
+    	 * Start the tag
     	 * @param name the name of the tag
     	 * @param parameters map of parameters
     	 * @throws IOException
     	 */
-    	public void startTag(String name, HashMap<String, String> parameters) throws IOException {
+		public void startTag(String name, Map<String, String> parameters) throws IOException {
     		startTag(name, parameters, true);
     		tab++;
     	}
 
-    	private void startTag(String name, HashMap<String, String> parameters, boolean newLine) throws IOException {
+		private void startTag(String name, Map<String, String> parameters, boolean newLine) throws IOException {
     		printTag(name, parameters, true, newLine, false);
     	}
 
