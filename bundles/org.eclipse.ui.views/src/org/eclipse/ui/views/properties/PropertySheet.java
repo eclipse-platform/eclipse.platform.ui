@@ -344,12 +344,15 @@ public class PropertySheet extends PageBookView
 
 	@Override
 	public void saveState(IMemento memento) {
-		// close all but the primary/parent property sheet
-		String secondaryId = getViewSite().getSecondaryId();
+		// close all but the primary/parent property sheet on shutdown
+		IViewSite viewSite = getViewSite();
+		String secondaryId = viewSite.getSecondaryId();
 		if (null == secondaryId) {
 			super.saveState(memento);
 		} else {
-			getViewSite().getPage().hideView(this);
+			if (viewSite.getWorkbenchWindow().isClosing()) {
+				viewSite.getPage().hideView(this);
+			}
 		}
 	}
 
