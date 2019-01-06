@@ -14,3 +14,4 @@ Needs a touch for build failure in I20180428-1500
 Needs a touch for I20180801-0550 comparator error
 Needs a touch for felix.scr qualifier update
 Bug 539668 - Build failure in I20180930-1800
+Bug 543193 - IBuild I20190105-1800 failed due to unresolved project dependencies.
