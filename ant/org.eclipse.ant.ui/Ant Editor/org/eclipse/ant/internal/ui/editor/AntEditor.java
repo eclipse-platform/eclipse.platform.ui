@@ -110,6 +110,7 @@ import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PartInitException;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.editors.text.TextEditor;
 import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.part.IShowInTargetList;
@@ -503,6 +504,8 @@ public class AntEditor extends TextEditor implements IReconcilingParticipant, IP
 	private boolean fStickyOccurrenceAnnotations;
 
 	private AntModel fAntModel;
+
+	private boolean disposed;
 
 	/**
 	 * Default no-argument constructor
@@ -1045,6 +1048,7 @@ public class AntEditor extends TextEditor implements IReconcilingParticipant, IP
 	 */
 	@Override
 	public void dispose() {
+		disposed = true;
 		if (fEditorSelectionChangedListener != null) {
 			fEditorSelectionChangedListener.uninstall(getSelectionProvider());
 			fEditorSelectionChangedListener = null;
@@ -1072,11 +1076,10 @@ public class AntEditor extends TextEditor implements IReconcilingParticipant, IP
 		super.dispose();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.ISaveablePart#doSave(org.eclipse.core.runtime.IProgressMonitor)
-	 */
+	public boolean isDisposed() {
+		return disposed;
+	}
+
 	@Override
 	public void doSave(IProgressMonitor monitor) {
 		super.doSave(monitor);
@@ -1141,10 +1144,9 @@ public class AntEditor extends TextEditor implements IReconcilingParticipant, IP
 	}
 
 	private void postImageChange(final AntElementNode node) {
-		Shell shell = getSite().getShell();
-		if (shell != null && !shell.isDisposed()) {
-			shell.getDisplay().asyncExec(() -> {
-				if (getSite().getShell() == null || getSite().getShell().isDisposed()) {
+		if (!isDisposed()) {
+			PlatformUI.getWorkbench().getDisplay().asyncExec(() -> {
+				if (isDisposed()) {
 					return;
 				}
 				Image titleImage = getTitleImage();
@@ -1223,10 +1225,9 @@ public class AntEditor extends TextEditor implements IReconcilingParticipant, IP
 			}
 		}
 
-		Shell shell = getSite().getShell();
-		if (shell != null && !shell.isDisposed()) {
-			shell.getDisplay().asyncExec(() -> {
-				if (getSite().getShell() == null || getSite().getShell().isDisposed()) {
+		if (!isDisposed()) {
+			PlatformUI.getWorkbench().getDisplay().asyncExec(() -> {
+				if (isDisposed()) {
 					return;
 				}
 				synchronize(true);
