@@ -35,6 +35,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
+@SuppressWarnings("restriction")
 public class BindingCreateTest {
 	private static final String DEFAULT_SCHEME_ID = "org.eclipse.ui.defaultAcceleratorConfiguration";
 	private static final String ID_WINDOW = "org.eclipse.ui.contexts.window";
@@ -51,13 +52,13 @@ public class BindingCreateTest {
 	public void setUp() {
 		IEclipseContext globalContext = TestUtil.getGlobalContext();
 		workbenchContext = globalContext.createChild("workbenchContext");
-		ContextInjectionFactory.make(CommandServiceAddon.class,
-				workbenchContext);
+		ContextInjectionFactory.make(CommandServiceAddon.class, workbenchContext);
 		ContextInjectionFactory.make(ContextServiceAddon.class, workbenchContext);
 		ContextInjectionFactory.make(BindingServiceAddon.class, workbenchContext);
 
 		setupTestVars();
 	}
+
 
 	public void setupTestVars() {
 		ECommandService cs = workbenchContext.get(ECommandService.class);

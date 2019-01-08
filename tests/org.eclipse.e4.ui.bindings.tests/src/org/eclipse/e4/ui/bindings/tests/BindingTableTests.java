@@ -42,6 +42,7 @@ import org.eclipse.jface.bindings.keys.KeySequence;
 import org.junit.Before;
 import org.junit.Test;
 
+@SuppressWarnings("restriction")
 public class BindingTableTests {
 	private static final String ID_DIALOG = "org.eclipse.ui.contexts.dialog";
 	private static final String ID_DIALOG_AND_WINDOW = "org.eclipse.ui.contexts.dialogAndWindow";
@@ -131,14 +132,11 @@ public class BindingTableTests {
 		assertNotNull(about);
 		Binding match = table.getPerfectMatch(aboutSeq);
 		assertEquals(about, match);
-		assertEquals(aboutSeq, table.getBestSequenceFor(
-				about.getParameterizedCommand()).getTriggerSequence());
+		assertEquals(aboutSeq, table.getBestSequenceFor(about.getParameterizedCommand()).getTriggerSequence());
 
-		Collection<Binding> sequences = table.getSequencesFor(about
-				.getParameterizedCommand());
+		Collection<Binding> sequences = table.getSequencesFor(about.getParameterizedCommand());
 		assertEquals(1, sequences.size());
-		assertEquals(aboutSeq, ((ArrayList<Binding>) sequences).get(0)
-				.getTriggerSequence());
+		assertEquals(aboutSeq, ((ArrayList<Binding>) sequences).get(0).getTriggerSequence());
 
 		Collection<Binding> partialMatches = table.getPartialMatches(prefix);
 		assertEquals(1, partialMatches.size());
@@ -164,8 +162,7 @@ public class BindingTableTests {
 		BindingTable table = loadTable(ID_WINDOW);
 		Binding paste = getTestBinding(PASTE_ID);
 
-		Binding match = table.getBestSequenceFor(paste
-				.getParameterizedCommand());
+		Binding match = table.getBestSequenceFor(paste.getParameterizedCommand());
 		assertEquals(paste, match);
 	}
 
@@ -174,8 +171,7 @@ public class BindingTableTests {
 		BindingTable table = loadTable(ID_WINDOW);
 		Binding paste = getTestBinding(PASTE_ID);
 
-		Collection<Binding> sequences = table.getSequencesFor(paste
-				.getParameterizedCommand());
+		Collection<Binding> sequences = table.getSequencesFor(paste.getParameterizedCommand());
 		assertEquals(2, sequences.size());
 
 		KeySequence second = KeySequence.getInstance("SHIFT+INSERT");
@@ -195,29 +191,25 @@ public class BindingTableTests {
 
 	@Test
 	public void testContextSet() {
-		BindingTableManager manager = ContextInjectionFactory
-				.make(BindingTableManager.class, workbenchContext);
+		BindingTableManager manager = ContextInjectionFactory.make(BindingTableManager.class, workbenchContext);
 		ArrayList<Context> window = new ArrayList<>();
 		Context winContext = contextManager.getContext(ID_WINDOW);
 		Context dawContext = contextManager.getContext(ID_DIALOG_AND_WINDOW);
 		window.add(winContext);
 		window.add(dawContext);
 		ContextSet windowSet = manager.createContextSet(window);
-		assertContextSet(windowSet, new String[] { ID_DIALOG_AND_WINDOW,
-				ID_WINDOW });
+		assertContextSet(windowSet, new String[] { ID_DIALOG_AND_WINDOW, ID_WINDOW });
 
 		ArrayList<Context> text = new ArrayList<>(window);
 		Context textContext = contextManager.getContext(ID_TEXT);
 		text.add(textContext);
 		ContextSet textSet = manager.createContextSet(text);
-		assertContextSet(textSet, new String[] { ID_DIALOG_AND_WINDOW,
-				ID_WINDOW, ID_TEXT });
+		assertContextSet(textSet, new String[] { ID_DIALOG_AND_WINDOW, ID_WINDOW, ID_TEXT });
 	}
 
 	@Test
 	public void testContextSetSibling() {
-		BindingTableManager manager = ContextInjectionFactory
-				.make(BindingTableManager.class, workbenchContext);
+		BindingTableManager manager = ContextInjectionFactory.make(BindingTableManager.class, workbenchContext);
 		ArrayList<Context> all = new ArrayList<>();
 		for (int i = 0; i < CONTEXTS.length; i += 3) {
 			Context context = contextManager.getContext(CONTEXTS[i]);
@@ -229,8 +221,7 @@ public class BindingTableTests {
 
 	@Test
 	public void testSingleParentChainPerfectMatch() {
-		BindingTableManager manager = ContextInjectionFactory
-				.make(BindingTableManager.class, workbenchContext);
+		BindingTableManager manager = ContextInjectionFactory.make(BindingTableManager.class, workbenchContext);
 
 		manager.addTable(loadTable(ID_DIALOG_AND_WINDOW));
 		manager.addTable(loadTable(ID_WINDOW));
@@ -253,8 +244,7 @@ public class BindingTableTests {
 		Binding showTooltip = getTestBinding(SHOW_TOOLTIP_ID);
 		assertNotNull(showTooltip);
 
-		Binding match = manager.getPerfectMatch(windowSet, rename
-				.getTriggerSequence());
+		Binding match = manager.getPerfectMatch(windowSet, rename.getTriggerSequence());
 		assertEquals(rename, match);
 
 		match = manager.getPerfectMatch(textSet, rename.getTriggerSequence());
@@ -272,16 +262,14 @@ public class BindingTableTests {
 		Binding correctIndent = getTestBinding(CORR_INDENT_ID);
 		Binding indentLine = getTestBinding(INDENT_LINE_ID);
 
-		assertEquals(correctIndent.getTriggerSequence(), indentLine
-				.getTriggerSequence());
+		assertEquals(correctIndent.getTriggerSequence(), indentLine.getTriggerSequence());
 		ArrayList<Context> all = new ArrayList<>();
 		for (int i = 0; i < CONTEXTS.length; i += 3) {
 			Context context = contextManager.getContext(CONTEXTS[i]);
 			all.add(context);
 		}
 		ContextSet set = manager.createContextSet(all);
-		Binding match = manager.getPerfectMatch(set, correctIndent
-				.getTriggerSequence());
+		Binding match = manager.getPerfectMatch(set, correctIndent.getTriggerSequence());
 		assertEquals(indentLine, match);
 	}
 
@@ -291,8 +279,7 @@ public class BindingTableTests {
 
 		Binding correctIndent = getTestBinding(CORR_INDENT_ID);
 		Binding indentLine = getTestBinding(INDENT_LINE_ID);
-		assertEquals(correctIndent.getTriggerSequence(), indentLine
-				.getTriggerSequence());
+		assertEquals(correctIndent.getTriggerSequence(), indentLine.getTriggerSequence());
 
 		ContextSet javaSet = createJavaSet(manager);
 
@@ -305,12 +292,10 @@ public class BindingTableTests {
 		}
 		ContextSet jsSet = manager.createContextSet(jsList);
 
-		Binding match = manager.getPerfectMatch(javaSet, correctIndent
-				.getTriggerSequence());
+		Binding match = manager.getPerfectMatch(javaSet, correctIndent.getTriggerSequence());
 		assertEquals(correctIndent, match);
 
-		match = manager.getPerfectMatch(jsSet, correctIndent
-				.getTriggerSequence());
+		match = manager.getPerfectMatch(jsSet, correctIndent.getTriggerSequence());
 		assertEquals(indentLine, match);
 	}
 
@@ -326,8 +311,7 @@ public class BindingTableTests {
 		window.add(dawContext);
 		ContextSet windowSet = manager.createContextSet(window);
 
-		Binding match = manager.getBestSequenceFor(windowSet, paste
-				.getParameterizedCommand());
+		Binding match = manager.getBestSequenceFor(windowSet, paste.getParameterizedCommand());
 		assertEquals(paste, match);
 	}
 
@@ -338,8 +322,7 @@ public class BindingTableTests {
 
 		ContextSet javaSet = createJavaSet(manager);
 
-		Binding match = manager.getBestSequenceFor(javaSet, paste
-				.getParameterizedCommand());
+		Binding match = manager.getBestSequenceFor(javaSet, paste.getParameterizedCommand());
 		assertEquals(paste, match);
 	}
 
@@ -350,8 +333,7 @@ public class BindingTableTests {
 
 		ContextSet javaSet = createJavaSet(manager);
 
-		Collection<Binding> sequences = manager.getSequencesFor(javaSet, paste
-				.getParameterizedCommand());
+		Collection<Binding> sequences = manager.getSequencesFor(javaSet, paste.getParameterizedCommand());
 		assertEquals(3, sequences.size());
 
 		KeySequence second = KeySequence.getInstance("SHIFT+INSERT");
@@ -368,18 +350,15 @@ public class BindingTableTests {
 		Binding about = getTestBinding(ABOUT_ID);
 		Binding paste = getTestBinding(PASTE_ID);
 		ContextSet javaSet = createJavaSet(manager);
-		Binding pasteCtrl5 = manager.getPerfectMatch(javaSet, KeySequence
-				.getInstance("CTRL+5 V"));
-		assertEquals(paste.getParameterizedCommand(), pasteCtrl5
-				.getParameterizedCommand());
+		Binding pasteCtrl5 = manager.getPerfectMatch(javaSet, KeySequence.getInstance("CTRL+5 V"));
+		assertEquals(paste.getParameterizedCommand(), pasteCtrl5.getParameterizedCommand());
 
 		KeySequence ctrl5 = KeySequence.getInstance("CTRL+5");
 		KeySequence ctrl8 = KeySequence.getInstance("CTRL+8");
 		assertTrue(manager.isPartialMatch(javaSet, ctrl5));
 		assertFalse(manager.isPartialMatch(javaSet, ctrl8));
 
-		Collection<Binding> partialMatches = manager.getPartialMatches(javaSet,
-				ctrl5);
+		Collection<Binding> partialMatches = manager.getPartialMatches(javaSet, ctrl5);
 		assertEquals(2, partialMatches.size());
 		Iterator<Binding> it = partialMatches.iterator();
 		assertEquals(pasteCtrl5, it.next());
@@ -415,8 +394,7 @@ public class BindingTableTests {
 	}
 
 	private BindingTableManager createManager() throws Exception {
-		BindingTableManager manager = ContextInjectionFactory
-				.make(BindingTableManager.class, workbenchContext);
+		BindingTableManager manager = ContextInjectionFactory.make(BindingTableManager.class, workbenchContext);
 
 		for (int i = 0; i < CONTEXTS.length; i += 3) {
 			manager.addTable(loadTable(CONTEXTS[i]));

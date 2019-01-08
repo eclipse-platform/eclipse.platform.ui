@@ -54,6 +54,7 @@ import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 
+@SuppressWarnings("restriction")
 public class KeyDispatcherTest {
 	private static final String ID_DIALOG = "org.eclipse.ui.contexts.dialog";
 	private static final String ID_DIALOG_AND_WINDOW = "org.eclipse.ui.contexts.dialogAndWindow";
@@ -99,12 +100,10 @@ public class KeyDispatcherTest {
 		cs.defineCommand(TEST_ID1, "ID1", null, category, null);
 		cs.defineCommand(TEST_ID2, "ID2", null, category, null);
 		ParameterizedCommand cmd = cs.createCommand(TEST_ID1, null);
-		EHandlerService hs = workbenchContext
-				.get(EHandlerService.class);
+		EHandlerService hs = workbenchContext.get(EHandlerService.class);
 		handler = new CallHandler();
 		hs.activateHandler(TEST_ID1, handler);
-		EBindingService bs = workbenchContext
-				.get(EBindingService.class);
+		EBindingService bs = workbenchContext.get(EBindingService.class);
 		TriggerSequence seq = bs.createSequence("CTRL+A");
 		Binding db = createDefaultBinding(bs, seq, cmd);
 		bs.activateBinding(db);
@@ -146,8 +145,7 @@ public class KeyDispatcherTest {
 			c.define(CONTEXTS[i + 1], null, CONTEXTS[i + 2]);
 		}
 
-		EContextService cs = context
-				.get(EContextService.class);
+		EContextService cs = context.get(EContextService.class);
 		cs.activateContext(ID_DIALOG_AND_WINDOW);
 		cs.activateContext(ID_WINDOW);
 	}
@@ -283,8 +281,7 @@ public class KeyDispatcherTest {
 
 	@Test
 	public void testSendKeyStroke() {
-		KeyBindingDispatcher dispatcher = ContextInjectionFactory
-				.make(KeyBindingDispatcher.class, workbenchContext);
+		KeyBindingDispatcher dispatcher = ContextInjectionFactory.make(KeyBindingDispatcher.class, workbenchContext);
 		final Listener listener = dispatcher.getKeyDownFilter();
 		display.addFilter(SWT.KeyDown, listener);
 		display.addFilter(SWT.Traverse, listener);
