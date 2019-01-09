@@ -14,6 +14,7 @@
  *******************************************************************************/
 package org.eclipse.e4.ui.workbench.renderers.swt;
 
+import java.util.ArrayList;
 import java.util.List;
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
@@ -22,6 +23,8 @@ import org.eclipse.e4.core.services.events.IEventBroker;
 import org.eclipse.e4.ui.internal.workbench.swt.AbstractPartRenderer;
 import org.eclipse.e4.ui.model.application.ui.MUIElement;
 import org.eclipse.e4.ui.model.application.ui.advanced.MArea;
+import org.eclipse.e4.ui.model.application.ui.basic.MPartSashContainer;
+import org.eclipse.e4.ui.model.application.ui.basic.MPartSashContainerElement;
 import org.eclipse.e4.ui.model.application.ui.basic.MPartStack;
 import org.eclipse.e4.ui.workbench.IPresentationEngine;
 import org.eclipse.e4.ui.workbench.UIEvents;
@@ -124,7 +127,7 @@ public class AreaRenderer extends SWTPartRenderer {
 		return areaComp;
 	}
 
-	private void ensureCTF(MArea areaModel) {
+	private void ensureCTF(MArea areaModel, List<MPartStack> stacks) {
 		if (areaModel.getWidget() instanceof CTabFolder)
 			return;
 
@@ -135,7 +138,6 @@ public class AreaRenderer extends SWTPartRenderer {
 		ctf.setHighlightEnabled(false);
 
 		// Find the stack in the area that used to have the min/max state
-		List<MPartStack> stacks = modelService.findElements(areaModel, null, MPartStack.class);
 		MPartStack curStack = null;
 		for (MPartStack stack : stacks) {
 			if (stack.isToBeRendered()
@@ -180,7 +182,7 @@ public class AreaRenderer extends SWTPartRenderer {
 		ctf.requestLayout();
 	}
 
-	private void ensureComposite(MArea areaModel) {
+	private void ensureComposite(MArea areaModel, List<MPartStack> stacks) {
 		if (areaModel.getWidget() instanceof CTabFolder) {
 			CTabFolder ctf = (CTabFolder) areaModel.getWidget();
 			CTabItem cti = ctf.getItem(0);
@@ -190,7 +192,6 @@ public class AreaRenderer extends SWTPartRenderer {
 
 			// OK now copy over the min/max state of the area stack to the
 			// remaining part stack
-			List<MPartStack> stacks = modelService.findElements(areaModel, null, MPartStack.class);
 			for (MPartStack stack : stacks) {
 				if (stack.isToBeRendered()
 						&& stack.getWidget() instanceof CTabFolder) {
@@ -212,8 +213,7 @@ public class AreaRenderer extends SWTPartRenderer {
 	}
 
 	private void synchCTFState(MArea areaModel) {
-		List<MPartStack> stacks = modelService.findElements(areaModel, null,
-				MPartStack.class, null);
+		List<MPartStack> stacks = findDirectStacks(areaModel);
 		int count = 0;
 		for (MPartStack stack : stacks) {
 			if (stack.isToBeRendered())
@@ -222,9 +222,21 @@ public class AreaRenderer extends SWTPartRenderer {
 
 		// If there's more than one stack visible we use a CTF
 		if (count > 1)
-			ensureCTF(areaModel);
+			ensureCTF(areaModel, stacks);
 		else
-			ensureComposite(areaModel);
+			ensureComposite(areaModel, stacks);
+	}
+
+	private List<MPartStack> findDirectStacks(MPartSashContainer root) {
+		List<MPartStack> result = new ArrayList<>();
+		for (MPartSashContainerElement e : root.getChildren()) {
+			if (e instanceof MPartStack) {
+				result.add((MPartStack) e);
+			} else if (e instanceof MPartSashContainer) {
+				result.addAll(findDirectStacks((MPartSashContainer) e));
+			}
+		}
+		return result;
 	}
 
 	@Override
