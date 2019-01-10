@@ -15,8 +15,6 @@ package org.eclipse.e4.core.internal.contexts;
 
 public interface IEclipseContextDebugger {
 
-	String SERVICE_NAME = IEclipseContextDebugger.class.getName();
-
 	public enum EventType {
 		CONSTRUCTED, DISPOSED, LISTENER_ADDED, ACTIVATED, DEACTIVATED
 	}
