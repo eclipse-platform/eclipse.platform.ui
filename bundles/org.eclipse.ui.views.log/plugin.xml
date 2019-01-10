@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.2"?><!--
+     Copyright (c) 2005, 2008 IBM Corporation and others.
+
+     This program and the accompanying materials
+     are made available under the terms of the Eclipse Public License 2.0
+     which accompanies this distribution, and is available at
+     https://www.eclipse.org/legal/epl-2.0/
+
+     SPDX-License-Identifier: EPL-2.0
+
+     Contributors:
+         IBM Corporation - initial API and implementation
+ -->
+
+<plugin>
+   <extension
+         point="org.eclipse.ui.views">
+      <view
+            name="%views.errorLog.name"
+            icon="$nl$/icons/eview16/error_log.png"
+            category="org.eclipse.ui"
+            class="org.eclipse.ui.internal.views.log.LogView"
+            id="org.eclipse.pde.runtime.LogView">
+      </view>
+   </extension>
+   <extension
+         point="org.eclipse.ui.perspectiveExtensions">
+      <perspectiveExtension
+            targetID="org.eclipse.ui.resourcePerspective">
+         <viewShortcut
+               id="org.eclipse.pde.runtime.LogView">
+         </viewShortcut>
+      </perspectiveExtension>
+      <perspectiveExtension
+            targetID="org.eclipse.pde.ui.PDEPerspective">
+         <viewShortcut
+               id="org.eclipse.pde.runtime.LogView">
+         </viewShortcut>
+      </perspectiveExtension>
+      <perspectiveExtension
+            targetID="org.eclipse.debug.ui.DebugPerspective">
+         <view
+               relative="org.eclipse.ui.console.ConsoleView"
+               visible="false"
+               id="org.eclipse.pde.runtime.LogView"
+               relationship="stack">
+         </view>
+         <viewShortcut
+               id="org.eclipse.pde.runtime.LogView">
+         </viewShortcut>
+      </perspectiveExtension>
+   </extension>
+   <extension
+         point="org.eclipse.ui.bindings">
+      <key
+            commandId="org.eclipse.ui.views.showView"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
+            sequence="M2+M3+Q L">
+         <parameter
+               id="org.eclipse.ui.views.showView.viewId"
+               value="org.eclipse.pde.runtime.LogView">
+         </parameter>
+      </key>
+      <key
+            platform="carbon"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
+            sequence="M2+M3+Q L">
+      </key>
+      <key
+            platform="carbon"
+            commandId="org.eclipse.ui.views.showView"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
+            sequence="M1+M3+Q L">
+         <parameter
+               id="org.eclipse.ui.views.showView.viewId"
+               value="org.eclipse.pde.runtime.LogView">
+         </parameter>
+      </key>
+   </extension>
+   <extension
+         point="org.eclipse.core.contenttype.contentTypes">
+       <content-type
+            base-type="org.eclipse.core.runtime.text"
+            file-extensions="log"
+            id="log"
+            name="%content-type.name.log"
+            priority="high">
+      </content-type>
+   </extension>
+</plugin>

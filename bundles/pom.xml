@@ -51,6 +51,7 @@
     <module>org.eclipse.ui.browser</module>
     <module>org.eclipse.ui.forms</module>
     <module>org.eclipse.ui.views</module>
+    <module>org.eclipse.ui.views.log</module>
     <module>org.eclipse.ui.views.properties.tabbed</module>
     <module>org.eclipse.ui.workbench</module>
     <module>org.eclipse.ui.monitoring</module>
