@@ -78,10 +78,6 @@ public class WorkbenchSupportFactory extends AbstractServiceFactory {
 		}
 
 		if (ISelectionService.class.equals(serviceInterface)) {
-			if (parent instanceof WindowSelectionService && window != null
-					&& window.getActivePage() != null) {
-				return new SlaveSelectionService(window.getActivePage());
-			}
 			return new SlaveSelectionService((ISelectionService) parent);
 		}
 
