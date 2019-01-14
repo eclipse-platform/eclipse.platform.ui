@@ -207,7 +207,7 @@ public class WorkingSetFilterActionGroup extends ActionGroup {
      */
 	private void firePropertyChange(IWorkingSet newWorkingSet, IWorkingSet oldWorkingSet) {
 		// Update viewer
-        if (workingSetUpdater != null) {
+		if (workingSetUpdater != null && newWorkingSet != oldWorkingSet) {
             workingSetUpdater.propertyChange(new PropertyChangeEvent(this,
                     WorkingSetFilterActionGroup.CHANGE_WORKING_SET,
                     oldWorkingSet, newWorkingSet));
