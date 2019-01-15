@@ -585,31 +585,21 @@ public class IDEApplication implements IApplication, IExecutableExtension {
 			return;
 		}
 
-        OutputStream output = null;
-        try {
-            output = new FileOutputStream(versionFile);
-            Properties props = new Properties();
+		Properties props = new Properties();
 
-            // write new property
-            props.setProperty(WORKSPACE_CHECK_REFERENCE_BUNDLE_NAME, WORKSPACE_CHECK_REFERENCE_BUNDLE_VERSION.toString());
+		// write new property
+		props.setProperty(WORKSPACE_CHECK_REFERENCE_BUNDLE_NAME, WORKSPACE_CHECK_REFERENCE_BUNDLE_VERSION.toString());
 
-            // write legacy property with an incremented version,
-            // so that pre-4.4 IDEs will also warn about the workspace
-            props.setProperty(WORKSPACE_CHECK_REFERENCE_BUNDLE_NAME_LEGACY, WORKSPACE_CHECK_LEGACY_VERSION_INCREMENTED);
+		// write legacy property with an incremented version,
+		// so that pre-4.4 IDEs will also warn about the workspace
+		props.setProperty(WORKSPACE_CHECK_REFERENCE_BUNDLE_NAME_LEGACY, WORKSPACE_CHECK_LEGACY_VERSION_INCREMENTED);
 
-            props.store(output, null);
-        } catch (IOException e) {
+		try (OutputStream output = new FileOutputStream(versionFile)) {
+			props.store(output, null);
+		} catch (IOException e) {
 			IDEWorkbenchPlugin.log("Could not write version file", //$NON-NLS-1$
 					StatusUtil.newError(e));
-        } finally {
-            try {
-                if (output != null) {
-					output.close();
-				}
-            } catch (IOException e) {
-                // do nothing
-            }
-        }
+		}
     }
 
     /**
