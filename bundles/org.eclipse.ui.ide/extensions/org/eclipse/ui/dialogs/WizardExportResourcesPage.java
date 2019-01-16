@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2016 IBM Corporation and others.
+ * Copyright (c) 2000, 2019 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -583,16 +583,13 @@ public abstract class WizardExportResourcesPage extends WizardDataTransferPage {
      */
     protected void setupBasedOnInitialSelections() {
 
-		for (Object object : IDE.computeSelectedResources(this.initialResourceSelection)) {
-			if (object instanceof IResource) {
-				IResource currentResource = (IResource) object;
-				if (currentResource.getType() == IResource.FILE) {
-					this.resourceGroup.initialCheckListItem(currentResource);
-				} else {
-					this.resourceGroup.initialCheckTreeItem(currentResource);
-				}
+		for (IResource currentResource : IDE.computeSelectedResources(this.initialResourceSelection)) {
+			if (currentResource.getType() == IResource.FILE) {
+				this.resourceGroup.initialCheckListItem(currentResource);
+			} else {
+				this.resourceGroup.initialCheckTreeItem(currentResource);
 			}
-        }
+		}
     }
 
     /**

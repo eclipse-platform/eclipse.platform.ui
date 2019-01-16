@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2017 IBM Corporation and others.
+ * Copyright (c) 2003, 2019 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -1618,23 +1618,22 @@ public final class IDE {
 	 * @return list of resources (element type: <code>IResource</code>),
 	 *         possibly empty
 	 */
-	public static List computeSelectedResources(
-			IStructuredSelection originalSelection) {
-		List resources = null;
-		for (Iterator e = originalSelection.iterator(); e.hasNext();) {
+	public static List<IResource> computeSelectedResources(IStructuredSelection originalSelection) {
+		List<IResource> resources = null;
+		for (Iterator<?> e = originalSelection.iterator(); e.hasNext();) {
 			Object next = e.next();
-			Object resource = Adapters.adapt(next, IResource.class);
+			IResource resource = Adapters.adapt(next, IResource.class);
 			if (resource != null) {
 				if (resources == null) {
 					// lazy init to avoid creating empty lists
 					// assume selection contains mostly resources most times
-					resources = new ArrayList(originalSelection.size());
+					resources = new ArrayList<>(originalSelection.size());
 				}
 				resources.add(resource);
 			}
 		}
 		if (resources == null) {
-			return Collections.EMPTY_LIST;
+			return Collections.emptyList();
 		}
 		return resources;
 
