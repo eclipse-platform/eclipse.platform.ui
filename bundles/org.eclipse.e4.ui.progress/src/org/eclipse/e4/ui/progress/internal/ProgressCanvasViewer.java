@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2017 IBM Corporation and others.
+ * Copyright (c) 2004, 2018 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -13,7 +13,7 @@
  *******************************************************************************/
 package org.eclipse.e4.ui.progress.internal;
 
-import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import org.eclipse.core.runtime.Assert;
@@ -41,8 +41,6 @@ public class ProgressCanvasViewer extends AbstractProgressViewer {
     Canvas canvas;
 
     Object[] displayedItems = new Object[0];
-
-    private static final List<Object> EMPTY_LIST = new ArrayList<>();
 
     /**
      * Font metrics to use for determining pixel sizes.
@@ -109,7 +107,7 @@ public class ProgressCanvasViewer extends AbstractProgressViewer {
     @Override
 	protected List<Object> getSelectionFromWidget() {
         //No selection on a Canvas
-        return EMPTY_LIST;
+		return Collections.emptyList();
     }
 
     @Override
@@ -196,11 +194,11 @@ public class ProgressCanvasViewer extends AbstractProgressViewer {
 
         GC gc = new GC(canvas);
         FontMetrics fm = gc.getFontMetrics();
-        int charWidth = fm.getAverageCharWidth();
+		int charWidth = (int) fm.getAverageCharacterWidth();
         int charHeight = fm.getHeight();
         int maxWidth = display.getBounds().width / 2;
         int maxHeight = display.getBounds().height / 6;
-        int fontWidth = charWidth * maxCharacterWidth;
+		int fontWidth = charWidth * maxCharacterWidth;
         int fontHeight = charHeight * numShowItems;
         if (maxWidth < fontWidth) {
 			fontWidth = maxWidth;
