@@ -140,7 +140,7 @@ public class JFaceProperty extends SimpleValueProperty {
 	@Override
 	protected void doSetValue(Object model, Object value) {
 		try {
-			setterMethod.invoke(model);
+			setterMethod.invoke(model, value);
 		} catch (IllegalAccessException e) {
 			throw new IllegalStateException(e.getMessage());
 		} catch (InvocationTargetException e) {
