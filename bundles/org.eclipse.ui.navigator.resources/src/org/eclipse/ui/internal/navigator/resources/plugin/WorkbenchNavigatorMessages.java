@@ -74,6 +74,8 @@ public class WorkbenchNavigatorMessages extends NLS {
 
 	public static String SelectProjectForFolderAction_SelectProject;
 
+	public static String NestedProjectLabelProvider_nestedProjectLabel;
+
 	public static String workingSet_others;
 
 

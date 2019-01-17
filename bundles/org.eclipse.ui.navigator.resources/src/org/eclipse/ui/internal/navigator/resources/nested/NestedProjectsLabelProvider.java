@@ -38,6 +38,8 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.osgi.util.NLS;
+import org.eclipse.ui.internal.navigator.resources.plugin.WorkbenchNavigatorMessages;
 import org.eclipse.ui.internal.navigator.resources.plugin.WorkbenchNavigatorPlugin;
 import org.eclipse.ui.internal.navigator.resources.workbench.ResourceExtensionLabelProvider;
 import org.eclipse.ui.navigator.ICommonContentExtensionSite;
@@ -66,7 +68,11 @@ public class NestedProjectsLabelProvider extends ResourceExtensionLabelProvider 
 					for (IMarkerDelta markerDelta : markerDeltas) {
 						if (markerManager.isSubtype(markerDelta.getType(), IMarker.PROBLEM)) {
 							if (severities != null && !severities.isDone()) {
-								severities.cancel(true);
+								try {
+									severities.cancel(true);
+								} catch (CancellationException ex) {
+									// expected exception
+								}
 								severities = null;
 								return false;
 							}
@@ -237,7 +243,8 @@ public class NestedProjectsLabelProvider extends ResourceExtensionLabelProvider 
 		IProject project = (IProject)element;
 		IPath location = project.getLocation();
 		if (location != null && !location.lastSegment().equals(project.getName())) {
-			return input + " (in " + location.lastSegment() + ")"; //$NON-NLS-1$ //$NON-NLS-2$
+			return NLS.bind(WorkbenchNavigatorMessages.NestedProjectLabelProvider_nestedProjectLabel, input,
+					location.lastSegment());
 		}
 		return input;
 	}
