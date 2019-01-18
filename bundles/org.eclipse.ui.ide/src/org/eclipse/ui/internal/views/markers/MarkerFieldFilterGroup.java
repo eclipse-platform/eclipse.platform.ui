@@ -12,6 +12,7 @@
  *     IBM Corporation - initial API and implementation
  *     Broadcom Corp. - James Blackburn -  Fix for Bug 305529 -
  *     					[Markers] NPE in MarkerFieldEditor if MarkerFieldConfiguration scope is unset
+ *     Kit Lo (IBM) - Bug 542713 - Empty entries in Show menu after switching UI language to German
  *******************************************************************************/
 
 package org.eclipse.ui.internal.views.markers;
@@ -221,7 +222,7 @@ class MarkerFieldFilterGroup {
 			if (element == null) {
 				id = USER + String.valueOf(System.currentTimeMillis());
 			} else {
-				id = element.getAttribute(MarkerSupportInternalUtilities.ATTRIBUTE_NAME);
+				id = element.getAttribute(MarkerSupportInternalUtilities.ATTRIBUTE_ID);
 			}
 		}
 		return id;
