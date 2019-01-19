@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2016 IBM Corporation and others.
+ * Copyright (c) 2005, 2019 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -53,7 +53,7 @@ public class ViewReference extends WorkbenchPartReference implements IViewRefere
 		}
 	}
 
-	void persist() {
+	public void persist() {
 		IViewPart view = getView(false);
 		if (view != null) {
 			XMLMemento root = XMLMemento.createWriteRoot("view"); //$NON-NLS-1$

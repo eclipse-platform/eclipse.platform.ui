@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2015 Oakland Software Incorporated and others.
+ * Copyright (c) 2008, 2019 Oakland Software Incorporated and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -100,7 +100,7 @@ public class WorkingSetTest extends NavigatorTestBase {
 				agWorkingSet);
 		l.propertyChange(event);
 
-		DisplayHelper.runEventLoop(Display.getCurrent(), 100);
+		// DisplayHelper.runEventLoop(Display.getCurrent(), 100);
 
 		// DisplayHelper.sleep(Display.getCurrent(), 10000000);
 
@@ -293,7 +293,7 @@ public class WorkingSetTest extends NavigatorTestBase {
 				ws2);
 		l.propertyChange(event);
 
-		DisplayHelper.runEventLoop(Display.getCurrent(), 100);
+		// DisplayHelper.runEventLoop(Display.getCurrent(), 100);
 
 		TreeItem[] items = _viewer.getTree().getItems();
 		assertTrue(items[0].getData().equals(_p2));
@@ -301,7 +301,7 @@ public class WorkingSetTest extends NavigatorTestBase {
 		l = provider.getFilterChangeListener();
 		event = new PropertyChangeEvent(this, WorkingSetFilterActionGroup.CHANGE_WORKING_SET, null, ws1);
 		l.propertyChange(event);
-		DisplayHelper.runEventLoop(Display.getCurrent(), 100);
+		// DisplayHelper.runEventLoop(Display.getCurrent(), 100);
 		items = _viewer.getTree().getItems();
 		assertTrue(items[0].getData().equals(_p1));
 
@@ -313,7 +313,7 @@ public class WorkingSetTest extends NavigatorTestBase {
 		l = provider.getFilterChangeListener();
 		event = new PropertyChangeEvent(this, WorkingSetFilterActionGroup.CHANGE_WORKING_SET, null, ws2);
 		l.propertyChange(event);
-		DisplayHelper.runEventLoop(Display.getCurrent(), 100);
+		// DisplayHelper.runEventLoop(Display.getCurrent(), 100);
 		items = _viewer.getTree().getItems();
 		assertTrue(items[0].getData().equals(_p2));
 

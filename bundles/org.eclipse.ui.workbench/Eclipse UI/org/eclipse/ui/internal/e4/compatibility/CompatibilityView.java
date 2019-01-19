@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2016 IBM Corporation and others.
+ * Copyright (c) 2009, 2019 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -11,6 +11,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 503387
+ *     Vladimir Piskarev <pisv@1c.ru> - Bug 543609
  ******************************************************************************/
 
 package org.eclipse.ui.internal.e4.compatibility;
@@ -21,6 +22,7 @@ import javax.inject.Inject;
 import org.eclipse.e4.core.contexts.ContextFunction;
 import org.eclipse.e4.core.contexts.IContextFunction;
 import org.eclipse.e4.core.contexts.IEclipseContext;
+import org.eclipse.e4.ui.di.PersistState;
 import org.eclipse.e4.ui.internal.workbench.ContributionsAnalyzer;
 import org.eclipse.e4.ui.internal.workbench.OpaqueElementUtil;
 import org.eclipse.e4.ui.internal.workbench.swt.AbstractPartRenderer;
@@ -50,6 +52,7 @@ import org.eclipse.ui.internal.IMenuServiceWorkaround;
 import org.eclipse.ui.internal.PartSite;
 import org.eclipse.ui.internal.ViewActionBuilder;
 import org.eclipse.ui.internal.ViewReference;
+import org.eclipse.ui.internal.Workbench;
 import org.eclipse.ui.internal.WorkbenchPartReference;
 import org.eclipse.ui.internal.registry.ViewDescriptor;
 import org.eclipse.ui.internal.testing.ContributionInfoMessages;
@@ -212,6 +215,18 @@ public class CompatibilityView extends CompatibilityPart {
 		}
 
 		return true;
+	}
+
+	@Override
+	@PersistState
+	void persistState() {
+		super.persistState();
+
+		// call ViewReference.persist() whenever E4 asks to persist state
+		// except for when the workbench closes since it has already been called
+		if (!Workbench.getInstance().isClosing()) {
+			reference.persist();
+		}
 	}
 
 	public static void clearOpaqueMenuItems(MenuManagerRenderer renderer, MMenu menu) {

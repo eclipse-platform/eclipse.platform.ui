@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 IBM Corporation and others.
+ * Copyright (c) 2000, 2019 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -15,6 +15,7 @@
 package org.eclipse.ui.tests.api;
 
 import org.eclipse.ui.tests.api.workbenchpart.ArbitraryPropertyTest;
+import org.eclipse.ui.tests.api.workbenchpart.Bug543609Test;
 import org.eclipse.ui.tests.api.workbenchpart.DependencyInjectionViewTest;
 import org.eclipse.ui.tests.api.workbenchpart.LifecycleViewTest;
 import org.eclipse.ui.tests.api.workbenchpart.OverriddenTitleTest;
@@ -74,7 +75,8 @@ import org.junit.runners.Suite;
      LifecycleViewTest.class,
 	 DependencyInjectionViewTest.class,
 	 Bug407422Test.class,
-	 MultipleWindowsTest.class
+	 MultipleWindowsTest.class,
+	 Bug543609Test.class
 })
 public class ApiTestSuite {
 
