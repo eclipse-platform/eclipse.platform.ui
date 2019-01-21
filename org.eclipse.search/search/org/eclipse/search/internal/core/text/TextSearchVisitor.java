@@ -333,7 +333,11 @@ public class TextSearchVisitor {
 		if (jobCount > MAX_JOBS_COUNT) {
 			jobCount= MAX_JOBS_COUNT;
 		}
-		final JobGroup jobGroup= new TextSearchJobGroup("Text Search", maxThreads, jobCount); //$NON-NLS-1$
+
+		// Seed count over 1 can cause endless waits, see bug 543629 comment 2
+		// TODO use seed = jobCount after the bug 543660 in JobGroup is fixed
+		final int seed = 1;
+		final JobGroup jobGroup = new TextSearchJobGroup("Text Search", maxThreads, seed); //$NON-NLS-1$
 		long startTime= TRACING ? System.currentTimeMillis() : 0;
 
 		Job monitorUpdateJob= new Job(SearchMessages.TextSearchVisitor_progress_updating_job) {
