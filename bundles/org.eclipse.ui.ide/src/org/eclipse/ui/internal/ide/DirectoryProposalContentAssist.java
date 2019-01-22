@@ -164,12 +164,8 @@ public class DirectoryProposalContentAssist {
 		public DirectoryProposalAutoCompleteField(Control control, IControlContentAdapter controlContentAdapter) {
 			proposalProvider = new FileNameSubstringMatchContentProposalProvider();
 			KeyStroke triggeringKeyStroke = safeKeyStroke("Ctrl+Space"); //$NON-NLS-1$
-			String backspace = "\b"; //$NON-NLS-1$
-			String delete = "\u007F"; //$NON-NLS-1$
-			char[] autoactivationChars = ("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789" + backspace //$NON-NLS-1$
-					+ delete).toCharArray();
 			adapter = new OpenableContentProposalAdapter(control, controlContentAdapter, proposalProvider,
-					triggeringKeyStroke, autoactivationChars);
+					triggeringKeyStroke, null);
 			adapter.setPropagateKeys(true);
 			adapter.setProposalAcceptanceStyle(ContentProposalAdapter.PROPOSAL_REPLACE);
 		}
@@ -221,7 +217,10 @@ public class DirectoryProposalContentAssist {
 		directoryCombo = combo;
 		autoCompleteField = new DirectoryProposalAutoCompleteField(directoryCombo, new ComboContentAdapter());
 
-		getContentProposalAdapter().addContentProposalListener(e -> updateProposals(directoryCombo.getText(), false));
+		getContentProposalAdapter().addContentProposalListener(e -> {
+			popupActivated = false;
+			updateProposals(directoryCombo.getText(), popupActivated);
+		});
 		getContentProposalAdapter().addContentProposalListener(new IContentProposalListener2() {
 
 			@Override
@@ -235,22 +234,15 @@ public class DirectoryProposalContentAssist {
 			}
 		});
 
-		directoryCombo.addVerifyListener(e -> {
-			boolean openProposalPopup = true;
-			if (e.text.length() > 1) {
-				openProposalPopup = false;
-			}
-			updateProposals(directoryCombo.getText().substring(0, directoryCombo.getCaretPosition()),
-					openProposalPopup);
+		directoryCombo.addModifyListener(e -> {
+			updateProposals(directoryCombo.getText().substring(0, directoryCombo.getCaretPosition()), false);
 		});
 
-		directoryCombo.addKeyListener(KeyListener.keyPressedAdapter(e -> {
+		// use key release because otherwise the caret position is not yet updated
+		directoryCombo.addKeyListener(KeyListener.keyReleasedAdapter(e -> {
 			if (e.keyCode == SWT.ESC) {
 				popupActivated = false;
 			}
-		}));
-		// use key release because otherwise the caret position is not yet updated
-		directoryCombo.addKeyListener(KeyListener.keyReleasedAdapter(e -> {
 			if (isTraverse(e)) {
 				int caretPosition = directoryCombo.getCaretPosition();
 				updateProposals(directoryCombo.getText().substring(0, caretPosition), popupActivated);
@@ -258,8 +250,9 @@ public class DirectoryProposalContentAssist {
 		}));
 
 		directoryCombo.addMouseListener(MouseListener.mouseUpAdapter(e -> {
+			popupActivated = false;
 			int caretPosition = ((Combo) e.getSource()).getCaretPosition();
-			updateProposals(directoryCombo.getText().substring(0, caretPosition), false);
+			updateProposals(directoryCombo.getText().substring(0, caretPosition), popupActivated);
 		}));
 	}
 
