@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2017 IBM Corporation and others.
+ *  Copyright (c) 2000, 2019 IBM Corporation and others.
  *
  *  This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License 2.0
@@ -1151,7 +1151,7 @@ public class VariablesView extends AbstractDebugView implements IDebugContextLis
 	public void refreshDetailPaneContents() {
 		if (isDetailPaneVisible()) {
 			String currentPaneID = getCurrentPaneID();
-			if (currentPaneID != null) {
+			if (currentPaneID != null && !fSashForm.isDisposed()) {
 				fLastSashWeights = fSashForm.getWeights();
 			}
 			fDetailPane.display(getCurrentSelection());
