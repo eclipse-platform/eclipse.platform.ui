@@ -40,7 +40,7 @@ public class ContentTypeManager extends ContentTypeMatcher implements IContentTy
 	private static IRegistryChangeListener runtimeExtensionListener = new ContentTypeRegistryChangeListener();
 	private static IRegistryChangeListener contentExtensionListener = new ContentTypeRegistryChangeListener();
 
-	private static ContentTypeManager instance;
+	private static volatile ContentTypeManager instance;
 
 	public static final int BLOCK_SIZE = 0x400;
 	public static final String CONTENT_TYPE_PREF_NODE = IContentConstants.RUNTIME_NAME + IPath.SEPARATOR + "content-types"; //$NON-NLS-1$
@@ -57,14 +57,6 @@ public class ContentTypeManager extends ContentTypeMatcher implements IContentTy
 	 */
 	protected final ListenerList<IContentTypeChangeListener> contentTypeListeners = new ListenerList<>();
 
-	/**
-	 * Creates and initializes the platform's content type manager. A reference to the
-	 * content type manager can later be obtained by calling <code>getInstance()</code>.
-	 */
-	// TODO we can remove this sometime, it is no longer needed
-	public static void startup() {
-		getInstance();
-	}
 
 	public static void addRegistryChangeListener(IExtensionRegistry registry) {
 		if (registry == null)
@@ -93,13 +85,20 @@ public class ContentTypeManager extends ContentTypeMatcher implements IContentTy
 	}
 
 	/**
-	 * Obtains this platform's content type manager.
+	 * Obtains this platform's content type manager. Lazyly creates and initializes
+	 * the platform's content type manager.
+	 *
 	 *
 	 * @return the content type manager
 	 */
 	public static ContentTypeManager getInstance() {
-		if (instance == null)
-			instance = new ContentTypeManager();
+		if (instance == null) {
+			synchronized (ContentTypeManager.class) {
+				if (instance == null) {
+					instance = new ContentTypeManager();
+				}
+			}
+		}
 		return instance;
 	}
 
