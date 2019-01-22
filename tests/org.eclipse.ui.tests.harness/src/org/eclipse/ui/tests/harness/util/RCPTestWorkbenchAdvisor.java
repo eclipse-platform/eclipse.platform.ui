@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2017 IBM Corporation and others.
+ * Copyright (c) 2004, 2019 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -117,12 +117,6 @@ public class RCPTestWorkbenchAdvisor extends WorkbenchAdvisor {
 		// Bug 107369: RCP test suite hangs on GTK
 		if (idleBeforeExit != -1 && --idleBeforeExit <= 0)
 			PlatformUI.getWorkbench().close();
-
-		// bug 73184: On the mac the parent eventLoopIdle will put the display
-		// to sleep
-		// until there are events (e.g., mouse jiggled).
-// if (!Util.isCarbon)
-// super.eventLoopIdle(display);
 
 		if (idleBeforeExit == -1)
 			return;
