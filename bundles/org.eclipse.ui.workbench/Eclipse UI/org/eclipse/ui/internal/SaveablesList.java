@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2017 IBM Corporation and others.
+ * Copyright (c) 2006, 2019 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -19,6 +19,7 @@ package org.eclipse.ui.internal;
 import static org.eclipse.swt.events.SelectionListener.widgetSelectedAdapter;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -35,6 +36,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.ListenerList;
 import org.eclipse.core.runtime.SubMonitor;
+import org.eclipse.e4.ui.workbench.modeling.ISaveHandler.Save;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.dialogs.MessageDialogWithToggle;
@@ -468,6 +470,27 @@ public class SaveablesList implements ISaveablesLifecycleListener {
 	 * @param partsToClose
 	 * @param save
 	 * @param window
+	 * @param saveOptions
+	 * @return the post close info to be passed to postClose
+	 */
+	public Object preCloseParts(List<IWorkbenchPart> partsToClose, boolean save, final IWorkbenchWindow window,
+			Map<Saveable, Save> saveOptions) {
+		if (saveOptions == null || saveOptions.size() == 0) {
+			preCloseParts(partsToClose, save, window);
+		}
+		Collection<Save> saveValues = saveOptions.values();
+		for (Save decision : saveValues) {
+			if (decision == Save.CANCEL) {
+				return false;
+			}
+		}
+		return preCloseParts(partsToClose, false, save, window, window, saveOptions);
+	}
+
+	/**
+	 * @param partsToClose
+	 * @param save
+	 * @param window
 	 * @return the post close info to be passed to postClose
 	 */
 	public Object preCloseParts(List<IWorkbenchPart> partsToClose, boolean save,
@@ -482,6 +505,11 @@ public class SaveablesList implements ISaveablesLifecycleListener {
 
 	public Object preCloseParts(List<IWorkbenchPart> partsToClose, boolean addNonPartSources, boolean save,
 			IShellProvider shellProvider, final IWorkbenchWindow window) {
+		return preCloseParts(partsToClose, addNonPartSources, save, shellProvider, window, null);
+	}
+
+	private Object preCloseParts(List<IWorkbenchPart> partsToClose, boolean addNonPartSources, boolean save,
+			IShellProvider shellProvider, final IWorkbenchWindow window, Map<Saveable, Save> saveOptions) {
 		// reference count (how many occurrences of a model will go away?)
 		PostCloseInfo postCloseInfo = new PostCloseInfo();
 		for (IWorkbenchPart part : partsToClose) {
@@ -493,12 +521,30 @@ public class SaveablesList implements ISaveablesLifecycleListener {
 					continue;
 				}
 			}
+			Saveable[] saveables = getSaveables(part);
 			if (save && saveable instanceof ISaveablePart2) {
 				ISaveablePart2 saveablePart2 = (ISaveablePart2) saveable;
 				// TODO show saveablePart2 before prompting, see
 				// EditorManager.saveAll
-				int response = SaveableHelper.savePart(saveablePart2, window,
-						true);
+				boolean confirm = true;
+				int response = -2;
+				if (saveOptions != null) {
+					for (Saveable saveableKey : saveables) {
+						Save saveVal = saveOptions.get(saveableKey);
+						if (saveVal == Save.NO) {
+							confirm = true;
+							break;
+						} else if (saveVal == Save.CANCEL) {
+							response = ISaveablePart2.CANCEL;
+							break;
+						} else {
+							confirm = false;
+						}
+					}
+				}
+				if (response == -2) {
+					response = SaveableHelper.savePart(saveablePart2, window, confirm);
+				}
 				if (response == ISaveablePart2.CANCEL) {
 					// user canceled
 					return null;
@@ -507,13 +553,13 @@ public class SaveablesList implements ISaveablesLifecycleListener {
 					// DEFAULT
 					continue;
 				}
+
 			}
-			for (Saveable saveableModel : getSaveables(part)) {
+			for (Saveable saveableModel : saveables) {
 				incrementRefCount(postCloseInfo.modelsDecrementing, saveableModel);
 			}
 		}
-		fillModelsClosing(postCloseInfo.modelsClosing,
-				postCloseInfo.modelsDecrementing);
+		fillModelsClosing(postCloseInfo.modelsClosing, postCloseInfo.modelsDecrementing);
 		if (addNonPartSources) {
 			for (ISaveablesSource nonPartSource : getNonPartSources()) {
 				Saveable[] saveables = nonPartSource.getSaveables();
@@ -526,12 +572,26 @@ public class SaveablesList implements ISaveablesLifecycleListener {
 		}
 		if (save) {
 			boolean canceled = promptForSavingIfNecessary(shellProvider, window,
-					postCloseInfo.modelsClosing, postCloseInfo.modelsDecrementing, true);
+					postCloseInfo.modelsClosing, postCloseInfo.modelsDecrementing, true, saveOptions);
 			if (canceled) {
 				return null;
 			}
 		}
 		return postCloseInfo;
+	}
+
+	public Map<IWorkbenchPart, List<Saveable>> getSaveables(List<IWorkbenchPart> parts) {
+		Map<IWorkbenchPart, List<Saveable>> saveablesMap = null;
+		if (parts != null && parts.size() > 0) {
+			saveablesMap = new HashMap<>();
+			for (IWorkbenchPart part : parts) {
+				Saveable[] saveables = getSaveables(part);
+				if (saveables != null && saveables.length > 0) {
+					saveablesMap.put(part, Arrays.asList(saveables));
+				}
+			}
+		}
+		return saveablesMap;
 	}
 
 	/**
@@ -543,12 +603,13 @@ public class SaveablesList implements ISaveablesLifecycleListener {
 	private boolean promptForSavingIfNecessary(final IWorkbenchWindow window,
 			Set<Saveable> modelsClosing, Map<Saveable, Integer> modelsDecrementing, boolean canCancel) {
 		return promptForSavingIfNecessary(window, window, modelsClosing, modelsDecrementing,
-				canCancel);
+				canCancel, null);
 	}
 
 	private boolean promptForSavingIfNecessary(IShellProvider shellProvider,
  IWorkbenchWindow window,
-			Set<Saveable> modelsClosing, Map<Saveable, Integer> modelsDecrementing, boolean canCancel) {
+			Set<Saveable> modelsClosing, Map<Saveable, Integer> modelsDecrementing, boolean canCancel,
+			Map<Saveable, Save> saveOptionMap) {
 		List<Saveable> modelsToOptionallySave = new ArrayList<>();
 		for (Saveable modelDecrementing : modelsDecrementing.keySet()) {
 			if (modelDecrementing.isDirty() && !modelsClosing.contains(modelDecrementing)) {
@@ -557,7 +618,7 @@ public class SaveablesList implements ISaveablesLifecycleListener {
 		}
 
 		boolean shouldCancel = modelsToOptionallySave.isEmpty() ? false : promptForSaving(
-				modelsToOptionallySave, shellProvider, window, canCancel, true);
+				modelsToOptionallySave, shellProvider, window, canCancel, true, saveOptionMap);
 
 		if (shouldCancel) {
 			return true;
@@ -570,7 +631,7 @@ public class SaveablesList implements ISaveablesLifecycleListener {
 			}
 		}
 		return modelsToSave.isEmpty() ? false : promptForSaving(modelsToSave, shellProvider,
-				window, canCancel, false);
+				window, canCancel, false, saveOptionMap);
 	}
 
 	/**
@@ -586,6 +647,23 @@ public class SaveablesList implements ISaveablesLifecycleListener {
 		}
 	}
 
+	private boolean promptForSaving(List<Saveable> modelsToSave, final IShellProvider shellProvider,
+			IRunnableContext runnableContext, final boolean canCancel, boolean stillOpenElsewhere,
+			Map<Saveable, Save> saveOptionMap) {
+		List<Saveable> tobeSaved = new ArrayList<>();
+		if (saveOptionMap == null || saveOptionMap.size() == 0) {
+			return promptForSaving(modelsToSave, shellProvider, runnableContext, canCancel, stillOpenElsewhere);
+		}
+		if (modelsToSave.size() > 0) {
+			for (Saveable saveable : modelsToSave) {
+				Save option = saveOptionMap.get(saveable);
+				if (option != null && option == Save.YES) {
+					tobeSaved.add(saveable);
+				}
+			}
+		}
+		return saveModels(tobeSaved, shellProvider, runnableContext);
+	}
 	/**
 	 * Prompt the user to save the given saveables.
 	 * @param modelsToSave the saveables to be saved

@@ -76,7 +76,8 @@ import org.junit.runners.Suite;
 	 DependencyInjectionViewTest.class,
 	 Bug407422Test.class,
 	 MultipleWindowsTest.class,
-	 Bug543609Test.class
+	 Bug543609Test.class,
+	 SaveablesListTest.class
 })
 public class ApiTestSuite {
 
