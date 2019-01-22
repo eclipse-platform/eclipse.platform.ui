@@ -2989,7 +2989,7 @@ STATUS_LINE_ID, model);
 			}
 			return null;
 		}
-	};
+	}
 
 	MenuManager menuManager = new MenuManager("MenuBar", ActionSet.MAIN_MENU); //$NON-NLS-1$
 
