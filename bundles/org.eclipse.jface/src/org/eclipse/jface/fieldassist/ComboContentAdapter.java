@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2015 IBM Corporation and others.
+ * Copyright (c) 2005, 2019 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -13,7 +13,6 @@
  *******************************************************************************/
 package org.eclipse.jface.fieldassist;
 
-import org.eclipse.jface.util.Util;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
@@ -29,16 +28,6 @@ import org.eclipse.swt.widgets.Control;
  */
 public class ComboContentAdapter implements IControlContentAdapter,
 		IControlContentAdapter2 {
-
-	/*
-	 * Set to <code>true</code> if we should compute the text
-	 * vertical bounds rather than just use the field size.
-	 * Workaround for https://bugs.eclipse.org/bugs/show_bug.cgi?id=164748
-	 * The corresponding SWT bug is
-	 * https://bugs.eclipse.org/bugs/show_bug.cgi?id=44072
-	 */
-	private static final boolean COMPUTE_TEXT_USING_CLIENTAREA = !Util.isCarbon();
-
 
 	@Override
 	public String getControlContents(Control control) {
@@ -85,14 +74,10 @@ public class ComboContentAdapter implements IControlContentAdapter,
 		String contents = combo.getText();
 		GC gc = new GC(combo);
 		gc.setFont(combo.getFont());
-		Point extent = gc.textExtent(contents.substring(0, Math.min(position,
-				contents.length())));
+		Point extent = gc.textExtent(contents.substring(0, Math.min(position, contents.length())));
 		gc.dispose();
-		if (COMPUTE_TEXT_USING_CLIENTAREA) {
-			return new Rectangle(combo.getClientArea().x + extent.x, combo
-				.getClientArea().y, 1, combo.getClientArea().height);
-		}
-		return new Rectangle(extent.x, 0, 1, combo.getSize().y);
+		return new Rectangle(combo.getClientArea().x + extent.x, combo.getClientArea().y, 1,
+				combo.getClientArea().height);
 	}
 
 	@Override
