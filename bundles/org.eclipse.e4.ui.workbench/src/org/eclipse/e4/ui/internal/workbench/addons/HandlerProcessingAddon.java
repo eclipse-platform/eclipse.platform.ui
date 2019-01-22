@@ -45,8 +45,7 @@ public class HandlerProcessingAddon {
 	 */
 	@PostConstruct
 	public void postConstruct(MApplication application, EModelService modelService) {
-		List<MHandlerContainer> findElements = modelService.findElements(application, null,
-				MHandlerContainer.class, null);
+		List<MHandlerContainer> findElements = modelService.findElements(application, null, MHandlerContainer.class);
 		for (MHandlerContainer mHandlerContainer : findElements) {
 			if (mHandlerContainer instanceof MContext) {
 				MContext mContext = (MContext) mHandlerContainer;
