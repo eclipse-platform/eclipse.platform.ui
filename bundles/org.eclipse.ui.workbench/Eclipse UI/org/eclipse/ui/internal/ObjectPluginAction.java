@@ -18,11 +18,13 @@ import org.eclipse.core.runtime.ISafeRunnable;
 import org.eclipse.core.runtime.SafeRunner;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.ui.IActionDelegate;
+import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IObjectActionDelegate;
 import org.eclipse.ui.IPartListener2;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchPartReference;
+import org.eclipse.ui.part.MultiPageEditorPart;
 
 /**
  * An object action extension in a popup menu.
@@ -52,12 +54,27 @@ public class ObjectPluginAction extends PluginAction implements IPartListener2 {
 
 	@Override
 	public void partClosed(IWorkbenchPartReference partRef) {
-		if (activePart != null && partRef.getPart(false) == activePart) {
-			selectionChanged(StructuredSelection.EMPTY);
-			stopPartListening();
-			disposeDelegate();
-			activePart = null;
+		IWorkbenchPart part = partRef.getPart(false);
+		// FIX 543745
+		if (part instanceof MultiPageEditorPart && activePart instanceof IEditorPart) {
+			MultiPageEditorPart mulitPageEditorPart = (MultiPageEditorPart) part;
+			IEditorPart[] editorsForActivePart = mulitPageEditorPart
+					.findEditors(((IEditorPart) activePart).getEditorInput());
+			if (editorsForActivePart != null && editorsForActivePart.length > 0) {
+				clearActivePart();
+				return;
+			}
 		}
+		if (activePart != null && part == activePart) {
+			clearActivePart();
+		}
+	}
+
+	private void clearActivePart() {
+		selectionChanged(StructuredSelection.EMPTY);
+		stopPartListening();
+		disposeDelegate();
+		activePart = null;
 	}
 
 	@Override
