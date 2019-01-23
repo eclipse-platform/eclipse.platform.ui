@@ -48,7 +48,7 @@ Developer resources:
 
 Information regarding source code management, builds, coding standards, and more.
 
-- <https://projects.eclipse.org/projects/eclipse.platform.ui/developer>
+- <https://projects.eclipse.org/projects/eclipse.platform/developer>
 
 Contributor License Agreement:
 ------------------------------
@@ -77,15 +77,15 @@ Contact:
 
 Contact the project developers via the project's "dev" list.
 
-- <https://dev.eclipse.org/mailman/listinfo/platform-ui-dev>
+- <https://accounts.eclipse.org/mailing-list/platform-dev>
 
 
 License
 -------
 
-[Eclipse Public License (EPL) v1.0][4]
+[Eclipse Public License (EPL) 2.0][4]
 
 [1]: http://wiki.eclipse.org/Platform_UI
 [2]: https://wiki.eclipse.org/Platform_UI/How_to_Contribute
 [3]: http://download.eclipse.org/tools/orbit/downloads/
-[3]: http://wiki.eclipse.org/EPL
+[4]: https://www.eclipse.org/legal/epl-2.0/
