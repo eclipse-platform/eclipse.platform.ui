@@ -30,8 +30,8 @@ Please install them from the [Orbit Download page][3]
 
 Currently the following versions are required:
 
-- org.hamcrest;bundle-version="1.1.0",
-- org.mockito;bundle-version="1.8.4",
+- org.hamcrest;bundle-version="1.3.0",
+- org.mockito;bundle-version="2.13",
 
 
 
