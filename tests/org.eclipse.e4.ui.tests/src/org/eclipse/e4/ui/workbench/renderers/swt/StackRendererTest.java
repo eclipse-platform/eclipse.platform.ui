@@ -83,8 +83,8 @@ public class StackRendererTest {
 						executedMethodsListener));
 
 		wb.createAndRunUI(window);
-		while (Display.getDefault().readAndDispatch())
-			;
+		while (Display.getDefault().readAndDispatch()) {
+		}
 	}
 
 	@After

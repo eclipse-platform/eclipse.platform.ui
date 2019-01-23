@@ -506,8 +506,8 @@ public class PartRenderingEngineTests {
 
 		service.showPart("part2", EPartService.PartState.CREATE);
 
-		while (Display.getDefault().readAndDispatch())
-			;
+		while (Display.getDefault().readAndDispatch()) {
+		}
 	}
 
 	@Test

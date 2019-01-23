@@ -95,8 +95,8 @@ public class SashRendererTest {
 
 		partStackB.setToBeRendered(false);
 
-		while (Display.getDefault().readAndDispatch())
-			;
+		while (Display.getDefault().readAndDispatch()) {
+		}
 
 		assertEquals("50", partStackA.getContainerData());
 	}

@@ -44,8 +44,8 @@ public abstract class UIStartupTest extends HeadlessApplicationTest {
 	public void setUp() throws Exception {
 		display = Display.getDefault();
 		super.setUp();
-		while (display.readAndDispatch())
-			;
+		while (display.readAndDispatch()) {
+		}
 	}
 
 	@After
