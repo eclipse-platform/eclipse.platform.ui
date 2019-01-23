@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2014 IBM Corporation and others.
+ * Copyright (c) 2000, 2019 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -14,8 +14,6 @@
  *******************************************************************************/
 package org.eclipse.ui.tests.decorators;
 
-import junit.framework.TestSuite;
-
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -28,19 +26,17 @@ import org.eclipse.ui.internal.decorators.LightweightDecoratorManager;
 import org.eclipse.ui.tests.harness.util.UITestCase;
 import org.eclipse.ui.tests.menus.ObjectContributionClasses;
 
+import junit.framework.TestSuite;
+
 public class DecoratorAdaptableTests extends UITestCase {
 
 	public static TestSuite suite() {
-		TestSuite ts = new TestSuite();
-		ts.addTest(new DecoratorAdaptableTests("testAdaptables"));
-		ts.addTest(new DecoratorAdaptableTests("testNonAdaptableContributions"));
-		ts.addTest(new DecoratorAdaptableTests("testContributorResourceAdapter"));
-		return ts;
+		return new TestSuite(DecoratorAdaptableTests.class);
 	}
 
-    public DecoratorAdaptableTests(String testName) {
-        super(testName);
-    }
+	public DecoratorAdaptableTests(String testName) {
+		super(testName);
+	}
 
     private DecoratorManager getDecoratorManager() {
         return WorkbenchPlugin.getDefault().getDecoratorManager();
@@ -59,7 +55,7 @@ public class DecoratorAdaptableTests extends UITestCase {
             String text = getDecorationTextFor(object);
             boolean allMatchesFound = true;
             for (String suffix : expectedSuffixes) {
-                if (text.indexOf(suffix) == -1) {
+				if (!text.contains(suffix)) {
                     allMatchesFound = false;
                 }
             }
