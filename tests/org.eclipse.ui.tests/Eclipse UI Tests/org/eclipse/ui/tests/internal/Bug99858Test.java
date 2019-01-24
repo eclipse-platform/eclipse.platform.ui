@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2017 IBM Corporation and others.
+ * Copyright (c) 2000, 2017, 2019 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -11,6 +11,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Jeanderson Candido <http://jeandersonbc.github.io> - Bug 433603
+ *     Tim Neumann <tim.neumann@advantest.com> - Bug 485167
  *******************************************************************************/
 package org.eclipse.ui.tests.internal;
 
@@ -36,7 +37,6 @@ import org.eclipse.ui.internal.operations.AdvancedValidationUserApprover;
 import org.eclipse.ui.views.navigator.ResourceNavigator;
 
 import junit.framework.TestCase;
-import junit.framework.TestSuite;
 
 /**
  * bug 99858 [IDE] Error upon deleting a project. Tests that our delete code no
@@ -47,10 +47,6 @@ import junit.framework.TestSuite;
 public class Bug99858Test extends TestCase {
 
 	private static final String NAVIGATOR_VIEW = "org.eclipse.ui.views.ResourceNavigator";
-
-	public static TestSuite suite() {
-		return new TestSuite(Bug99858Test.class);
-	}
 
 	public Bug99858Test() {
 		super();

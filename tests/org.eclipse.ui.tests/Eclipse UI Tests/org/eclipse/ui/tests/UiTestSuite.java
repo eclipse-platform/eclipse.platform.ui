@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2016, 2017 IBM Corporation and others.
+ * Copyright (c) 2000, 2016, 2017, 2019 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -13,6 +13,7 @@
  *     Red Hat Inc. - Bug 474132
  *     Patrik Suzzi <psuzzi@gmail.com> - Bug 504029
  *     Lucas Bullen (Red Hat Inc.) - Bugs 519525, 520250, and 520251
+ *     Tim Neumann <tim.neumann@advantest.com> - Bug 485167
  *******************************************************************************/
 package org.eclipse.ui.tests;
 
@@ -31,6 +32,7 @@ import org.eclipse.ui.tests.encoding.EncodingTestSuite;
 import org.eclipse.ui.tests.fieldassist.FieldAssistTestSuite;
 import org.eclipse.ui.tests.filteredtree.FilteredTreeTests;
 import org.eclipse.ui.tests.filteredtree.PatternFilterTest;
+import org.eclipse.ui.tests.internal.InternalTestSuite;
 import org.eclipse.ui.tests.keys.KeysTestSuite;
 import org.eclipse.ui.tests.menus.MenusTestSuite;
 import org.eclipse.ui.tests.multipageeditor.MultiPageEditorTestSuite;
@@ -79,12 +81,12 @@ import org.junit.runners.Suite;
 	MenusTestSuite.class,
 	QuickAccessTestSuite.class,
 	FilteredResourcesSelectionDialogTestSuite.class,
-	DirectoryProposalContentAssistTestSuite.class
+	DirectoryProposalContentAssistTestSuite.class,
+	InternalTestSuite.class
 })
 public class UiTestSuite {
 
 	// Not enabled tests:
-	// InternalTestSuite.class,
 	// ZoomTestSuite.class,
 	// DynamicPluginsTestSuite.class,
 	// CommandsTestSuite.class,

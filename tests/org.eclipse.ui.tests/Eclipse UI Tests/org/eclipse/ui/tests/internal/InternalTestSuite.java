@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2016 IBM Corporation and others.
+ * Copyright (c) 2000, 2016, 2019 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -10,10 +10,10 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Tim Neumann <tim.neumann@advantest.com> - Bug 485167
  *******************************************************************************/
 package org.eclipse.ui.tests.internal;
 
-import org.eclipse.ui.tests.markers.Bug75909Test;
 import org.eclipse.ui.tests.markers.DeclarativeFilterActivityTest;
 import org.eclipse.ui.tests.markers.DeclarativeFilterDeclarationTest;
 import org.eclipse.ui.tests.markers.MarkerSortUtilTest;
@@ -21,54 +21,37 @@ import org.eclipse.ui.tests.markers.MarkerSupportRegistryTests;
 import org.eclipse.ui.tests.markers.MarkerTesterTest;
 import org.eclipse.ui.tests.markers.MarkerViewTests;
 import org.eclipse.ui.tests.markers.MarkerViewUtilTest;
-import org.eclipse.ui.tests.markers.ResourceMappingMarkersTest;
+import org.junit.runner.RunWith;
+import org.junit.runners.Suite;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
-
-/**
- * Test all areas of the UI Implementation.
- */
-public class InternalTestSuite extends TestSuite {
-
-    /**
-     * Returns the suite.  This is required to
-     * use the JUnit Launcher.
-     */
-    public static Test suite() {
-        return new InternalTestSuite();
-    }
-
-    /**
-     * Construct the test suite.
-     */
-    public InternalTestSuite() {
-        addTest(new TestSuite(AnimationEngineTest.class));
-        addTest(new TestSuite(EditorActionBarsTest.class));
-        addTest(new TestSuite(ActionSetExpressionTest.class));
-        addTest(new TestSuite(PopupMenuExpressionTest.class));
-        addTest(new TestSuite(Bug41931Test.class));
-        addTest(Bug75909Test.suite());
-        addTest(new TestSuite(Bug78470Test.class));
-        addTest(new TestSuite(DeclarativeFilterActivityTest.class));
-        addTest(new TestSuite(DeclarativeFilterDeclarationTest.class));
-        addTest(new TestSuite(ResourceMappingMarkersTest.class));
-        addTest(new TestSuite(MarkerSupportRegistryTests.class));
-        addTest(new TestSuite(MarkerSortUtilTest.class));
-        addTest(new TestSuite(MarkerViewTests.class));
-		addTest(new TestSuite(MarkerViewUtilTest.class));
-        addTest(Bug99858Test.suite());
-        addTest(new TestSuite(WorkbenchWindowSubordinateSourcesTests.class));
-        addTest(new TestSuite(ReopenMenuTest.class));
-        addTest(new TestSuite(UtilTest.class));
-		addTest(new TestSuite(MarkerTesterTest.class));
-		addTest(new TestSuite(TextHandlerTest.class));
-        addTest(new TestSuite(PerspectiveSwitcherTest.class));
-        addTest(new TestSuite(StickyViewManagerTest.class));
-        addTest(new TestSuite(FileEditorMappingTest.class));
-        addTest(new TestSuite(WorkbenchSiteProgressServiceModelTagsTest.class));
-		addTest(new TestSuite(WorkbenchPageTest.class));
-		addTest(new TestSuite(SaveablesListTest.class));
-		addTest(new TestSuite(Bug540297WorkbenchPageFindViewTest.class));
-    }
-}
+@RunWith(Suite.class)
+@Suite.SuiteClasses({
+	AnimationEngineTest.class,
+//	EditorActionBarsTest.class,
+	ActionSetExpressionTest.class,
+	PopupMenuExpressionTest.class,
+//	Bug41931Test.class,
+//	Bug75909Test.class,
+	Bug78470Test.class,
+	DeclarativeFilterActivityTest.class,
+	DeclarativeFilterDeclarationTest.class,
+//	ResourceMappingMarkersTest.class,
+	MarkerSupportRegistryTests.class,
+	MarkerSortUtilTest.class,
+	MarkerViewTests.class,
+	MarkerViewUtilTest.class,
+	Bug99858Test.class,
+	WorkbenchWindowSubordinateSourcesTests.class,
+	ReopenMenuTest.class,
+	UtilTest.class,
+	MarkerTesterTest.class,
+	TextHandlerTest.class,
+	PerspectiveSwitcherTest.class,
+//	StickyViewManagerTest.class,
+//	FileEditorMappingTest.class,
+	WorkbenchSiteProgressServiceModelTagsTest.class,
+//	WorkbenchPageTest.class,
+	SaveablesListTest.class,
+	Bug540297WorkbenchPageFindViewTest.class
+})
+public class InternalTestSuite {}

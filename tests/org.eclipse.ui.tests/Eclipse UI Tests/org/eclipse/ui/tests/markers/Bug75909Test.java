@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2017 IBM Corporation and others.
+ * Copyright (c) 2005, 2017, 2019 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -10,6 +10,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Tim Neumann <tim.neumann@advantest.com> - Bug 485167
  *******************************************************************************/
 package org.eclipse.ui.tests.markers;
 
@@ -30,7 +31,6 @@ import org.eclipse.ui.views.markers.internal.MarkerType;
 import org.eclipse.ui.views.markers.internal.ProblemFilter;
 
 import junit.framework.TestCase;
-import junit.framework.TestSuite;
 
 /**
  * Testing for https://bugs.eclipse.org/bugs/show_bug.cgi?id=75909 .
@@ -55,10 +55,6 @@ public class Bug75909Test extends TestCase {
 	private static final String MISSING_MARKER_ID = "org.eclipse.jdt.core.problem";
 
 	private static final String OLD_DIALOG_SETTINGS_XML = "old_dialog_settings.xml";
-
-	public static TestSuite suite() {
-		return new TestSuite(Bug75909Test.class);
-	}
 
 	/**
 	 * MarkerFilter.resetState() should make all of the available
