@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2017 IBM Corporation and others.
+ * Copyright (c) 2000, 2017, 2019 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -10,6 +10,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Tim Neumann <tim.neumann@advantest.com> - Bug 543570
  *******************************************************************************/
 package org.eclipse.ui.internal.ide.registry;
 
@@ -38,6 +39,8 @@ public class MarkerHelpRegistryReader extends IDERegistryReader {
     private static final String TAG_ATTRIBUTE = "attribute";//$NON-NLS-1$
 
     private static final String ATT_TYPE = "markerType";//$NON-NLS-1$
+
+	private static final String ATT_MATCH_CHILDREN = "matchChildren";//$NON-NLS-1$
 
     private static final String ATT_NAME = "name";//$NON-NLS-1$
 
@@ -87,8 +90,9 @@ public class MarkerHelpRegistryReader extends IDERegistryReader {
      * Processes a help configuration element.
      */
     private void readHelpElement(IConfigurationElement element) {
-        // read type
+		// read type and match children flag
         String type = element.getAttribute(ATT_TYPE);
+		boolean matchChildren = Boolean.parseBoolean(element.getAttribute(ATT_MATCH_CHILDREN));
 
         // read attributes and values
 		currentAttributeNames = new ArrayList<>();
@@ -100,7 +104,7 @@ public class MarkerHelpRegistryReader extends IDERegistryReader {
                 .toArray(new String[currentAttributeValues.size()]);
 
         // add query to the registry
-        MarkerQuery query = new MarkerQuery(type, attributeNames);
+		MarkerQuery query = new MarkerQuery(type, attributeNames, matchChildren);
         MarkerQueryResult result = new MarkerQueryResult(attributeValues);
         markerHelpRegistry.addHelpQuery(query, result, element);
     }

@@ -64,6 +64,15 @@
                </documentation>
             </annotation>
          </attribute>
+         <attribute name="matchChildren" type="boolean">
+            <annotation>
+               <documentation>
+                  whether the help context also applies to children of the given markerType.
+&lt;p&gt; If omitted false is assumed. &lt;/p&gt;
+&lt;p&gt;&lt;em&gt;Since: 3.14&lt;/em&gt;&lt;/p&gt;
+               </documentation>
+            </annotation>
+         </attribute>
       </complexType>
    </element>
 

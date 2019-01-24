@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 IBM Corporation and others.
+ * Copyright (c) 2000, 2015, 2019 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -10,6 +10,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Tim Neumann <tim.neumann@advantest.com> - Bug 543570
  *******************************************************************************/
 package org.eclipse.ui.internal.ide.registry;
 
@@ -38,29 +39,50 @@ public class MarkerQuery {
     private String[] attributes;
 
     /**
-     * Cached hash code value
-     */
+	 * Whether this query also targets all children of {@link #type}.
+	 */
+	private boolean matchTypeChildren;
+
+	/**
+	 * Cached hash code value
+	 */
     private int hashCode;
 
     /**
-     * Creates a new marker query with the given type
-     * and attributes.
-     * <p>
-     * The type may be <code>null</code>. The attributes may
-     * be empty, but not <code>null</code>.
-     * </p>
-     *
-     * @param markerType the targetted marker type
-     * @param markerAttributes the targetted marker attributes
-     */
+	 * Creates a new marker query with the given type and attributes, only matching
+	 * the exact marker type.
+	 * <p>
+	 * The type may be <code>null</code>. The attributes may be empty, but not
+	 * <code>null</code>.
+	 * </p>
+	 *
+	 * @param markerType       the targetted marker type
+	 * @param markerAttributes the targetted marker attributes
+	 */
     public MarkerQuery(String markerType, String[] markerAttributes) {
-        if (markerAttributes == null) {
-            throw new IllegalArgumentException();
-        }
+		this(markerType, markerAttributes, false);
+	}
 
-        type = markerType;
-        attributes = markerAttributes;
-        computeHashCode();
+	/**
+	 * Creates a new marker query with the given type and attributes.
+	 * <p>
+	 * The type may be <code>null</code>. The attributes may be empty, but not
+	 * <code>null</code>.
+	 * </p>
+	 *
+	 * @param markerType        the targetted marker type
+	 * @param markerAttributes  the targetted marker attributes
+	 * @param matchTypeChildren whether to also target children of the markerType
+	 */
+	public MarkerQuery(String markerType, String[] markerAttributes, boolean matchTypeChildren) {
+		if (markerAttributes == null) {
+			throw new IllegalArgumentException();
+		}
+
+		type = markerType;
+		attributes = markerAttributes;
+		this.matchTypeChildren = matchTypeChildren;
+		computeHashCode();
     }
 
     /**
@@ -77,8 +99,16 @@ public class MarkerQuery {
     public MarkerQueryResult performQuery(IMarker marker) {
         // Check type
         try {
-            if (type != null && !type.equals(marker.getType())) {
-				return null;
+			if (type != null) {
+				if (matchTypeChildren) {
+					if(!marker.isSubtypeOf(type)) {
+						return null;
+					}
+				} else {
+					if(!type.equals(marker.getType())) {
+						return null;
+					}
+				}
 			}
         } catch (CoreException e) {
         	Policy.handle(e);
@@ -119,6 +149,10 @@ public class MarkerQuery {
 			return false;
 		}
 
+        if (matchTypeChildren != mq.matchTypeChildren) {
+			return false;
+        }
+
         if (attributes.length != mq.attributes.length) {
 			return false;
 		}
@@ -146,6 +180,8 @@ public class MarkerQuery {
         if (type != null) {
 			hashCode = hashCode * 37 + type.hashCode();
 		}
+
+		hashCode = hashCode * 37 + (matchTypeChildren ? 1 : 2);
 
         for (String attribute : attributes) {
             hashCode = hashCode * 37 + attribute.hashCode();

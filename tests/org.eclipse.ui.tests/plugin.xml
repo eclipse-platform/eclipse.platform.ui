@@ -4544,5 +4544,30 @@
 			</activeWhen>
 		</handler>
 	</extension>
+ <extension
+       point="org.eclipse.ui.ide.markerHelp">
+    <markerHelp
+          helpContextId="org.eclipse.ui.tests.context.markerHelp"
+          markerType="org.eclipse.ui.tests.testmarker"
+          matchChildren="true">
+    </markerHelp>
+    <markerHelp
+          helpContextId="org.eclipse.ui.tests.context.markerHelp"
+          markerType="org.eclipse.ui.tests.testmarker2"
+          matchChildren="false">
+    </markerHelp>
+    <markerHelp
+          helpContextId="org.eclipse.ui.tests.context.markerHelp"
+          markerType="org.eclipse.ui.tests.testmarker_child">
+    </markerHelp>
+ </extension>
+ <extension
+       id="testmarker_child"
+       name="Test Marker"
+       point="org.eclipse.core.resources.markers">
+    <super
+          type="org.eclipse.ui.tests.testmarker">
+    </super>
+ </extension>
 
 </plugin>
