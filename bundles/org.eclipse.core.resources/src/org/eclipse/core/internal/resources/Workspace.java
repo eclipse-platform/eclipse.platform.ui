@@ -676,7 +676,7 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 			if (desc == null)
 				continue;
 			//obtain both static and dynamic project references
-			IProject[] refs = desc.getAllReferences(false);
+			IProject[] refs = desc.getAllReferences(project, false);
 			allAccessibleProjects.add(project);
 			for (IProject ref : refs) {
 				// ignore self references and references to projects that are not accessible
@@ -1636,8 +1636,8 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 		for (IProject project : projects) {
 			if (!project.isAccessible()) {
 				continue;
-                        }
-			IProject[] refs = ((Project)project).internalGetDescription().getReferencedProjects(false);
+			}
+			IProject[] refs = ((Project) project).internalGetDescription().getReferencedProjects(false);
 			List<IProject> dangling = new ArrayList<>(refs.length);
 			for (IProject ref : refs) {
 				if (!ref.exists()) {

@@ -32,6 +32,7 @@ public class AllTests extends TestCase {
 		suite.addTest(WorkspaceConcurrencyTest.suite());
 		suite.addTest(WorkspacePreferencesTest.suite());
 		suite.addTest(ProjectReferencesTest.suite());
+		suite.addTest(ProjectDynamicReferencesTest.suite());
 		suite.addTest(ProjectBuildConfigsTest.suite());
 		return suite;
 	}

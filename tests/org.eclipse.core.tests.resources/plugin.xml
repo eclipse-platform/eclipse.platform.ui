@@ -629,4 +629,14 @@
        </run>
     </builder>
  </extension>
+ <extension
+       id="dynamicProjectReferenceBuilder"
+       name="Dynamic Project Reference Builder"
+       point="org.eclipse.core.resources.builders">
+    <builder>
+       <dynamicReference
+             class="org.eclipse.core.tests.internal.resources.ProjectDynamicReferencesTest$DynamicReferenceProvider">
+       </dynamicReference>
+    </builder>
+ </extension>
 </plugin>

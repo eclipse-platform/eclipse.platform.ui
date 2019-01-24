@@ -205,9 +205,9 @@ public class ProjectDescription extends ModelObject implements IProjectDescripti
 	 * Returns the union of the description's static and dynamic project references,
 	 * with duplicates omitted. The calculation is optimized by caching the result
 	 * Call the configuration based implementation.
-	 * @see #getAllBuildConfigReferences(String, boolean)
+	 * @see #getAllBuildConfigReferences(IProject, String, boolean)
 	 */
-	public IProject[] getAllReferences(boolean makeCopy) {
+	public IProject[] getAllReferences(IProject project, boolean makeCopy) {
 		int dirtyCount;
 		IProject[] projRefs;
 
@@ -221,12 +221,12 @@ public class ProjectDescription extends ModelObject implements IProjectDescripti
 		while (projRefs == null) {
 			IBuildConfiguration[] refs;
 			if (hasBuildConfig(activeConfiguration))
-				refs = getAllBuildConfigReferences(activeConfiguration, false);
+				refs = getAllBuildConfigReferences(project, activeConfiguration, false);
 			else if (configNames.length > 0)
-				refs = getAllBuildConfigReferences(configNames[0], false);
+				refs = getAllBuildConfigReferences(project, configNames[0], false);
 			else
 				// No build configuration => fall-back to default
-				refs = getAllBuildConfigReferences(IBuildConfiguration.DEFAULT_CONFIG_NAME, false);
+				refs = getAllBuildConfigReferences(project, IBuildConfiguration.DEFAULT_CONFIG_NAME, false);
 			Collection<IProject> l = getProjectsFromBuildConfigRefs(refs);
 
 			synchronized (cachedRefsMutex) {
@@ -254,14 +254,13 @@ public class ProjectDescription extends ModelObject implements IProjectDescripti
 	 * be resolved using {@link BuildConfiguration#getBuildConfig()} before use.
 	 * Returns an empty array if the given configName does not exist in the description.
 	 */
-	public IBuildConfiguration[] getAllBuildConfigReferences(String configName, boolean makeCopy) {
+	public IBuildConfiguration[] getAllBuildConfigReferences(IProject project, String configName, boolean makeCopy) {
 		if (!hasBuildConfig(configName))
 			return EMPTY_BUILD_CONFIG_REFERENCE_ARRAY;
 		IBuildConfiguration[] refs = cachedConfigRefs.get(configName);
 		if (refs == null) {
 			Set<IBuildConfiguration> references = new LinkedHashSet<>();
 			IBuildConfiguration[] dynamicBuildConfigs = dynamicConfigRefs.containsKey(configName) ? dynamicConfigRefs.get(configName) : EMPTY_BUILD_CONFIG_REFERENCE_ARRAY;
-			IProject project = ResourcesPlugin.getWorkspace().getRoot().getProject(getName());
 			Collection<BuildConfiguration> dynamic;
 			try {
 				IBuildConfiguration buildConfig = project.getBuildConfig(configName);
