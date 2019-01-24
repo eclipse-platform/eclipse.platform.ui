@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2018 Keith Seitz and others.
+ * Copyright (c) 2000, 2019 Keith Seitz and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -13,15 +13,22 @@
  *     IBM Corporation - integration and code cleanup
  *     Jan Opacki (jan.opacki@gmail.com) bug 307139
  *     Axel Richard (Obeo) - Bug 41353 - Launch configurations prototypes
+ *     Jens Reimann (jreimann@redhat.com) - add copy & paste support
  *******************************************************************************/
 package org.eclipse.debug.ui;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.TreeMap;
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
@@ -38,6 +45,9 @@ import org.eclipse.debug.internal.ui.MultipleInputDialog;
 import org.eclipse.debug.internal.ui.SWTFactory;
 import org.eclipse.debug.internal.ui.launchConfigurations.EnvironmentVariable;
 import org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationsMessages;
+import org.eclipse.jface.bindings.keys.KeyStroke;
+import org.eclipse.jface.bindings.keys.ParseException;
+import org.eclipse.jface.bindings.keys.SWTKeySupport;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.layout.PixelConverter;
@@ -60,6 +70,11 @@ import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerComparator;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.dnd.Clipboard;
+import org.eclipse.swt.dnd.TextTransfer;
+import org.eclipse.swt.dnd.Transfer;
+import org.eclipse.swt.events.KeyAdapter;
+import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Font;
@@ -102,9 +117,20 @@ public class EnvironmentTab extends AbstractLaunchConfigurationTab {
 	protected Button envAddButton;
 	protected Button envEditButton;
 	protected Button envRemoveButton;
+	/**
+	 * @since 3.14
+	 */
+	protected Button envCopyButton;
+	/**
+	 * @since 3.14
+	 */
+	protected Button envPasteButton;
 	protected Button appendEnvironment;
 	protected Button replaceEnvironment;
 	protected Button envSelectButton;
+
+	private KeyStroke copyKeyStroke;
+	private KeyStroke pasteKeyStroke;
 
 	/**
 	 * Content provider for the environment table
@@ -197,6 +223,15 @@ public class EnvironmentTab extends AbstractLaunchConfigurationTab {
 	public EnvironmentTab() {
 		super();
 		setHelpContextId(IDebugHelpContextIds.LAUNCH_CONFIGURATION_DIALOG_ENVIRONMENT_TAB);
+
+		try {
+			this.copyKeyStroke = KeyStroke.getInstance("M1+C"); //$NON-NLS-1$
+		} catch (ParseException e) {
+		}
+		try {
+			this.pasteKeyStroke = KeyStroke.getInstance("M1+V"); //$NON-NLS-1$
+		} catch (ParseException e) {
+		}
 	}
 
 	@Override
@@ -287,6 +322,20 @@ public class EnvironmentTab extends AbstractLaunchConfigurationTab {
 		tableColumnLayout.setColumnData(tc1, new ColumnWeightData(1, pixelConverter.convertWidthInCharsToPixels(20)));
 		tableColumnLayout.setColumnData(tc2, new ColumnWeightData(2, pixelConverter.convertWidthInCharsToPixels(20)));
 		tableComposite.setLayout(tableColumnLayout);
+
+		environmentTable.getTable().addKeyListener(new KeyAdapter() {
+
+			@Override
+			public void keyReleased(KeyEvent e) {
+				KeyStroke current = computeKeyStroke(e);
+				if (current.equals(copyKeyStroke)) {
+					handleEnvCopyButtonSelected();
+				} else if (current.equals(pasteKeyStroke)) {
+					handleEnvPasteButtonSelected();
+				}
+			}
+
+		});
 	}
 
 	/**
@@ -297,6 +346,7 @@ public class EnvironmentTab extends AbstractLaunchConfigurationTab {
 		int size = event.getStructuredSelection().size();
 		envEditButton.setEnabled(size == 1);
 		envRemoveButton.setEnabled(size > 0);
+		envCopyButton.setEnabled(size > 0);
 	}
 
 	/**
@@ -338,6 +388,22 @@ public class EnvironmentTab extends AbstractLaunchConfigurationTab {
 			}
 		});
 		envRemoveButton.setEnabled(false);
+		envCopyButton = createPushButton(buttonComposite, LaunchConfigurationsMessages.EnvironmentTab_Copy, null);
+		envCopyButton.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent event) {
+				handleEnvCopyButtonSelected();
+			}
+		});
+		envCopyButton.setEnabled(false);
+		envPasteButton = createPushButton(buttonComposite, LaunchConfigurationsMessages.EnvironmentTab_Paste, null);
+		envPasteButton.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent event) {
+				handleEnvPasteButtonSelected();
+			}
+		});
+		envPasteButton.setEnabled(true);
 	}
 
 	/**
@@ -388,8 +454,56 @@ public class EnvironmentTab extends AbstractLaunchConfigurationTab {
 	}
 
 	/**
-	 * Displays a dialog that allows user to select native environment variables
-	 * to add to the table.
+	 * Attempts to add the given variables. Returns the number of variables added
+	 * (as when the user answers not to overwrite an existing variable).
+	 *
+	 * @param variables the variables to add
+	 * @return the number of variables added
+	 * @since 3.14
+	 */
+	protected int addVariables(List<EnvironmentVariable> variables) {
+		if (variables.isEmpty()) {
+			return 0;
+		}
+
+		List<EnvironmentVariable> remove = new LinkedList<>();
+		List<EnvironmentVariable> conflicting = new LinkedList<>();
+		Map<String, String> requested = variables.stream()
+				.collect(Collectors.toMap(EnvironmentVariable::getName, EnvironmentVariable::getValue));
+
+		for (TableItem item : environmentTable.getTable().getItems()) {
+			EnvironmentVariable existingVariable = (EnvironmentVariable) item.getData();
+			String name = existingVariable.getName();
+			String currentValue = requested.get(name);
+			if (currentValue != null) {
+				remove.add(existingVariable);
+				if (!currentValue.equals(existingVariable.getValue())) {
+					conflicting.add(existingVariable);
+				}
+			}
+		}
+
+		if (!conflicting.isEmpty()) {
+			String names = conflicting.stream().map(EnvironmentVariable::getName).collect(Collectors.joining(", ")); //$NON-NLS-1$
+			boolean overWrite = MessageDialog.openQuestion(getShell(),
+					LaunchConfigurationsMessages.EnvironmentTab_Paste_Overwrite_Title,
+					MessageFormat.format(LaunchConfigurationsMessages.EnvironmentTab_Paste_Overwrite_Message,
+							new Object[] { names })); //
+			if (!overWrite) {
+				return 0;
+			}
+		}
+
+		remove.forEach(environmentTable::remove);
+		variables.forEach(environmentTable::add);
+		updateLaunchConfigurationDialog();
+
+		return variables.size();
+	}
+
+	/**
+	 * Displays a dialog that allows user to select native environment variables to
+	 * add to the table.
 	 */
 	private void handleEnvSelectButtonSelected() {
 		//get Environment Variables from the OS
@@ -485,6 +599,68 @@ public class EnvironmentTab extends AbstractLaunchConfigurationTab {
 	}
 
 	/**
+	 * Copy the currently selected table entries to the clipboard.
+	 */
+	private void handleEnvCopyButtonSelected() {
+		Iterable<?> iterable = () -> environmentTable.getStructuredSelection().iterator();
+		String data = StreamSupport.stream(iterable.spliterator(), false).filter(o -> o instanceof EnvironmentVariable)
+				.map(EnvironmentVariable.class::cast).map(var -> String.format("%s=%s", var.getName(), var.getValue())) //$NON-NLS-1$
+				.collect(Collectors.joining(System.lineSeparator()));
+
+		Clipboard clipboard = new Clipboard(getShell().getDisplay());
+		try {
+			clipboard.setContents(new Object[] { data }, new Transfer[] { TextTransfer.getInstance() });
+		} finally {
+			clipboard.dispose();
+		}
+	}
+
+	/**
+	 * Extract the content from the clipboard and add the new content.
+	 */
+	private void handleEnvPasteButtonSelected() {
+		Clipboard clipboard = new Clipboard(getShell().getDisplay());
+		try {
+			List<EnvironmentVariable> variables = convertEnvironmentVariablesFromData(
+					clipboard.getContents(TextTransfer.getInstance()));
+			addVariables(variables);
+			updateAppendReplace();
+		} finally {
+			clipboard.dispose();
+		}
+	}
+
+	/**
+	 * Convert the clipboard data to a list of {@link EnvironmentVariable}s. <br>
+	 * Only entries containing an equals sign ({@code =} will be considered.
+	 *
+	 * @param data The clipboard data. May be {@code null}, which will result in an
+	 *             empty list.
+	 * @return The resulting and valid {@link EnvironmentVariable}s in an
+	 *         unmodifiable list.
+	 */
+	private static List<EnvironmentVariable> convertEnvironmentVariablesFromData(Object data) {
+		if (!(data instanceof String)) {
+			return Collections.emptyList();
+		}
+
+		String entries[] = ((String) data).split("\\R"); //$NON-NLS-1$
+		List<EnvironmentVariable> result = new ArrayList<>(entries.length);
+		for (String entry : entries) {
+			int idx = entry.indexOf('=');
+			if (idx < 1) {
+				continue;
+			}
+			// the name is trimmed ...
+			String name = entry.substring(0, idx).trim();
+			// .. but the value is *not* trimmed
+			String value = entry.substring(idx + 1);
+			result.add(new EnvironmentVariable(name, value));
+		}
+		return Collections.unmodifiableList(result);
+	}
+
+	/**
 	 * Updates the environment table for the given launch configuration
 	 * @param configuration the configuration to use as input for the backing table
 	 */
@@ -507,7 +683,7 @@ public class EnvironmentTab extends AbstractLaunchConfigurationTab {
 		}
 		if (append) {
 			appendEnvironment.setSelection(true);
-	        replaceEnvironment.setSelection(false);
+			replaceEnvironment.setSelection(false);
 		} else {
 			replaceEnvironment.setSelection(true);
 			appendEnvironment.setSelection(false);
@@ -595,6 +771,11 @@ public class EnvironmentTab extends AbstractLaunchConfigurationTab {
 		super.initializeAttributes();
 		getAttributesLabelsForPrototype().put(ILaunchManager.ATTR_APPEND_ENVIRONMENT_VARIABLES, LaunchConfigurationsMessages.EnvironmentTab_AttributeLabel_AppendEnvironmentVariables);
 		getAttributesLabelsForPrototype().put(ILaunchManager.ATTR_ENVIRONMENT_VARIABLES, LaunchConfigurationsMessages.EnvironmentTab_AttributeLabel_EnvironmentVariables);
+	}
+
+	private KeyStroke computeKeyStroke(KeyEvent e) {
+		int accelerator = SWTKeySupport.convertEventToUnmodifiedAccelerator(e);
+		return SWTKeySupport.convertAcceleratorToKeyStroke(accelerator);
 	}
 
 	/**

@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2018 IBM Corporation and others.
+ *  Copyright (c) 2000, 2019 IBM Corporation and others.
  *
  *  This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License 2.0
@@ -12,6 +12,7 @@
  *  IBM - Initial API and implementation
  *  Ian Pun & Lucas Bullen (Red Hat Inc.) - Bug 518652
  *  Axel Richard (Obeo) - Bug 41353 - Launch configurations prototypes
+ *  Jens Reimann (jreimann@redhat.com) - add copy & paste support
  *******************************************************************************/
 package org.eclipse.debug.internal.ui.launchConfigurations;
 
@@ -188,6 +189,10 @@ public class LaunchConfigurationsMessages extends NLS {
 	public static String EnvironmentTab_20;
 	public static String EnvironmentTab_AttributeLabel_AppendEnvironmentVariables;
 	public static String EnvironmentTab_AttributeLabel_EnvironmentVariables;
+	public static String EnvironmentTab_Copy;
+	public static String EnvironmentTab_Paste;
+	public static String EnvironmentTab_Paste_Overwrite_Title;
+	public static String EnvironmentTab_Paste_Overwrite_Message;
 
 	public static String PrototypeTab_Prototype_1;
 	public static String PrototypeTab_Label_2;
