@@ -46,7 +46,10 @@ public class MessagePage extends Page {
 	public void createControl(Composite parent) {
         // Message in default page of Outline should have margins
         pgComp = new Composite(parent, SWT.NULL);
-        pgComp.setLayout(new FillLayout());
+        FillLayout layout = new FillLayout();
+        layout.marginHeight = 5;
+        layout.marginWidth = 5;
+        pgComp.setLayout(layout);
 
         msgLabel = new Label(pgComp, SWT.LEFT | SWT.TOP | SWT.WRAP);
         msgLabel.setText(message);
