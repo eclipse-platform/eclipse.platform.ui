@@ -360,13 +360,13 @@ public class ProcessConsole extends IOConsole implements IConsole, IDebugEventSe
         }
     }
 
-    /**
-     * @see org.eclipse.debug.ui.console.IConsole#getStream(java.lang.String)
-     */
     @Override
 	public IOConsoleOutputStream getStream(String streamIdentifier) {
+		if (streamIdentifier == null) {
+			return null;
+		}
 		for (StreamListener listener : fStreamListeners) {
-            if (listener.fStreamId.equals(streamIdentifier)) {
+			if (streamIdentifier.equals(listener.fStreamId)) {
                 return listener.fStream;
             }
         }
@@ -388,11 +388,11 @@ public class ProcessConsole extends IOConsole implements IConsole, IDebugEventSe
 	protected void dispose() {
         super.dispose();
         fColorProvider.disconnect();
-        closeStreams();
-        disposeStreams();
         DebugPlugin.getDefault().removeDebugEventListener(this);
         DebugUIPlugin.getDefault().getPreferenceStore().removePropertyChangeListener(this);
         JFaceResources.getFontRegistry().removeListener(this);
+		closeStreams();
+		disposeStreams();
     }
 
     /**
