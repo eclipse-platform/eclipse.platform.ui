@@ -115,7 +115,8 @@ public class ProjectDynamicReferencesTest extends ResourceTest {
 		assertEquals("Project2 must not have referenced projects", EMPTY_PROJECTS, project2.getReferencedProjects());
 	}
 
-	public void testBug543776() throws CoreException {
+	// Temporarily disabled, see bug 543776 comment 7
+	public void XXXtestBug543776() throws CoreException {
 		IFile projectFile = project0.getFile(IProjectDescription.DESCRIPTION_FILE_NAME);
 		String projectDescription = readStringInFileSystem(projectFile);
 		projectDescription = projectDescription.replace(PROJECT_0_NAME, "anotherName");

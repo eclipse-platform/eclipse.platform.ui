@@ -470,7 +470,7 @@ public class Project extends Container implements IProject {
 		//if the project is currently in the middle of being created, the description might not be available yet
 		if (description == null)
 			checkAccessible(NULL_FLAG);
-		return description.getAllReferences(this, true);
+		return description.getAllReferences(true);
 	}
 
 	@Override
@@ -499,7 +499,7 @@ public class Project extends Container implements IProject {
 			ProjectDescription description = project.internalGetDescription();
 			if (description == null)
 				continue;
-			IProject[] references = description.getAllReferences(this, false);
+			IProject[] references = description.getAllReferences(false);
 			for (IProject reference : references)
 				if (reference.equals(this)) {
 					result.add(project);
@@ -792,7 +792,7 @@ public class Project extends Container implements IProject {
 	 */
 	public IBuildConfiguration[] internalGetReferencedBuildConfigs(String configName, boolean includeMissing) {
 		ProjectDescription description = internalGetDescription();
-		IBuildConfiguration[] refs = description.getAllBuildConfigReferences(this, configName, false);
+		IBuildConfiguration[] refs = description.getAllBuildConfigReferences(configName, false);
 		Collection<IBuildConfiguration> configs = new LinkedHashSet<>(refs.length);
 		for (IBuildConfiguration ref : refs) {
 			try {
@@ -890,8 +890,8 @@ public class Project extends Container implements IProject {
 		// get the children via the workspace since we know that this
 		// resource exists (it is local).
 		IResource[] children = getChildren(IResource.NONE);
-		for (IResource element : children)
-			if (!element.isLocal(depth))
+		for (int i = 0; i < children.length; i++)
+			if (!children[i].isLocal(depth))
 				return false;
 		return true;
 	}
