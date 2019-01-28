@@ -470,7 +470,7 @@ public class Project extends Container implements IProject {
 		//if the project is currently in the middle of being created, the description might not be available yet
 		if (description == null)
 			checkAccessible(NULL_FLAG);
-		return description.getAllReferences(true);
+		return description.getAllReferences(this, true);
 	}
 
 	@Override
@@ -499,7 +499,7 @@ public class Project extends Container implements IProject {
 			ProjectDescription description = project.internalGetDescription();
 			if (description == null)
 				continue;
-			IProject[] references = description.getAllReferences(false);
+			IProject[] references = description.getAllReferences(project, false);
 			for (IProject reference : references)
 				if (reference.equals(this)) {
 					result.add(project);
@@ -792,7 +792,7 @@ public class Project extends Container implements IProject {
 	 */
 	public IBuildConfiguration[] internalGetReferencedBuildConfigs(String configName, boolean includeMissing) {
 		ProjectDescription description = internalGetDescription();
-		IBuildConfiguration[] refs = description.getAllBuildConfigReferences(configName, false);
+		IBuildConfiguration[] refs = description.getAllBuildConfigReferences(this, configName, false);
 		Collection<IBuildConfiguration> configs = new LinkedHashSet<>(refs.length);
 		for (IBuildConfiguration ref : refs) {
 			try {

@@ -676,7 +676,7 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 			if (desc == null)
 				continue;
 			//obtain both static and dynamic project references
-			IProject[] refs = desc.getAllReferences(false);
+			IProject[] refs = desc.getAllReferences(project, false);
 			allAccessibleProjects.add(project);
 			for (IProject ref : refs) {
 				// ignore self references and references to projects that are not accessible
