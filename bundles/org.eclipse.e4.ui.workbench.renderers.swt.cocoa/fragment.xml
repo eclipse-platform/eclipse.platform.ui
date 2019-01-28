@@ -11,5 +11,15 @@
             class="org.eclipse.e4.ui.workbench.renderers.swt.cocoa.CocoaUIProcessor">
       </processor>
    </extension>
+   <extension
+         id="CocoaDarkThemeProcessor"
+         name="Cocoa Dark Theme Processor"
+         point="org.eclipse.e4.workbench.model">
+      <processor
+      		apply="always"
+            beforefragment="false"
+            class="org.eclipse.e4.ui.swt.internal.cocoa.CocoaDarkThemeProcessor">
+      </processor>
+   </extension>
    
 </fragment>
