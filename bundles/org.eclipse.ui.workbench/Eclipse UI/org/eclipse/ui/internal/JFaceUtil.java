@@ -36,7 +36,7 @@ import org.eclipse.ui.statushandlers.StatusManager;
 final class JFaceUtil {
 
 	private JFaceUtil() {
-		// prevents intantiation
+		// prevents instantiation
 	}
 
 	/**
