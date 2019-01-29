@@ -815,5 +815,6 @@ public class ResourceDeltaVerifier extends Assert implements IResourceChangeList
 	 */
 	protected void appendToMessage(String message) {
 		fMessage.append(message);
+		fMessage.append(System.lineSeparator());
 	}
 }

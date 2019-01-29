@@ -17,10 +17,10 @@ package org.eclipse.core.tests.resources;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
-import java.util.Arrays;
-import java.util.LinkedList;
+import java.util.*;
 import junit.framework.Test;
 import junit.framework.TestSuite;
+import org.eclipse.core.internal.events.NotificationManager;
 import org.eclipse.core.internal.preferences.EclipsePreferences;
 import org.eclipse.core.internal.resources.CharsetDeltaJob;
 import org.eclipse.core.internal.resources.CharsetManager;
@@ -76,13 +76,20 @@ public class CharsetTest extends ResourceTest {
 			return (mask & flags) == mask;
 		}
 
-		@Override
-		public synchronized void resourceChanged(IResourceChangeEvent e) {
+		boolean ignoreEvent() {
 			// to make testing easier, we allow events from the main or other thread to be ignored
 			if (isSet(IGNORE_BACKGROUND_THREAD) && Thread.currentThread() != creationThread) {
-				return;
+				return true;
 			}
 			if (isSet(IGNORE_CREATION_THREAD) && Thread.currentThread() == creationThread) {
+				return true;
+			}
+			return false;
+		}
+
+		@Override
+		public synchronized void resourceChanged(IResourceChangeEvent e) {
+			if (ignoreEvent()) {
 				return;
 			}
 			super.resourceChanged(e);
@@ -511,7 +518,7 @@ public class CharsetTest extends ResourceTest {
 	public void testBug207510() {
 		IWorkspace workspace = getWorkspace();
 		CharsetVerifier verifier = new CharsetVerifierWithExtraInfo(CharsetVerifier.IGNORE_BACKGROUND_THREAD);
-		CharsetVerifier backgroundVerifier = new CharsetVerifierWithExtraInfo(CharsetVerifier.IGNORE_CREATION_THREAD);
+		MultipleDeltasCharsetVerifier backgroundVerifier = new MultipleDeltasCharsetVerifier(CharsetVerifier.IGNORE_CREATION_THREAD);
 		IProject project1 = workspace.getRoot().getProject("project1");
 		try {
 			workspace.addResourceChangeListener(verifier, IResourceChangeEvent.POST_CHANGE);
@@ -607,8 +614,8 @@ public class CharsetTest extends ResourceTest {
 				fail("5.0", e);
 			}
 			waitForCharsetManagerJob();
-			assertTrue("5.1", backgroundVerifier.waitForEvent(10000));
-			assertTrue("5.2 " + backgroundVerifier.getMessage(), backgroundVerifier.isDeltaValid());
+			assertTrue("5.1", backgroundVerifier.waitForAllDeltas(10000, 15000));
+			backgroundVerifier.assertExpectedDeltasWereReceived("5.2");
 			assertExistsInWorkspace("5.3", regularPrefs);
 			assertExistsInWorkspace("5.4", derivedPrefs);
 			assertDoesNotExistInWorkspace("5.5", source);
@@ -627,9 +634,9 @@ public class CharsetTest extends ResourceTest {
 			backgroundVerifier.addExpectedChange(derivedPrefs, IResourceDelta.REMOVED, 0);
 			setDerivedEncodingStoredSeparately("6.0", project1, false);
 			assertTrue("6.1.1", verifier.waitForEvent(10000));
-			assertTrue("6.1.2", backgroundVerifier.waitForEvent(10000));
+			assertTrue("6.1.2", backgroundVerifier.waitForFirstDelta(10000));
 			assertTrue("6.2.1 " + verifier.getMessage(), verifier.isDeltaValid());
-			assertTrue("6.2.2 " + backgroundVerifier.getMessage(), backgroundVerifier.isDeltaValid());
+			backgroundVerifier.assertExpectedDeltasWereReceived("6.2.2");
 			assertExistsInWorkspace("6.3", regularPrefs);
 			assertDoesNotExistInWorkspace("6.4", derivedPrefs);
 
@@ -640,9 +647,9 @@ public class CharsetTest extends ResourceTest {
 			backgroundVerifier.addExpectedChange(derivedPrefs, IResourceDelta.ADDED, 0);
 			setDerivedEncodingStoredSeparately("7.0", project1, true);
 			assertTrue("7.1.1", verifier.waitForEvent(10000));
-			assertTrue("7.1.2", backgroundVerifier.waitForEvent(10000));
+			assertTrue("7.1.2", backgroundVerifier.waitForFirstDelta(10000));
 			assertTrue("7.2.1 " + verifier.getMessage(), verifier.isDeltaValid());
-			assertTrue("7.2.2 " + backgroundVerifier.getMessage(), backgroundVerifier.isDeltaValid());
+			backgroundVerifier.assertExpectedDeltasWereReceived("7.2.2");
 			assertExistsInWorkspace("7.3", regularPrefs);
 			assertExistsInWorkspace("7.4", derivedPrefs);
 			assertTrue("7.5", isDerivedEncodingStoredSeparately(project1));
@@ -777,7 +784,7 @@ public class CharsetTest extends ResourceTest {
 			//			assertTrue("11.7", derivedPrefs.isDerived());
 		} finally {
 			workspace.removeResourceChangeListener(verifier);
-			workspace.removeResourceChangeListener(backgroundVerifier);
+			backgroundVerifier.removeResourceChangeListeners();
 			try {
 				clearAllEncodings(project1);
 			} catch (CoreException e) {
@@ -1159,7 +1166,7 @@ public class CharsetTest extends ResourceTest {
 	 * when we make encoding changes to containers (folders, projects, root).
 	 */
 	public void testDeltasContainer() {
-		CharsetVerifier verifier = new CharsetVerifierWithExtraInfo(CharsetVerifier.IGNORE_BACKGROUND_THREAD);
+		MultipleDeltasCharsetVerifier verifier = new MultipleDeltasCharsetVerifier(CharsetVerifier.IGNORE_BACKGROUND_THREAD);
 		IProject project = getWorkspace().getRoot().getProject(getUniqueString());
 		getWorkspace().addResourceChangeListener(verifier, IResourceChangeEvent.POST_CHANGE);
 		try {
@@ -1175,7 +1182,7 @@ public class CharsetTest extends ResourceTest {
 			} catch (CoreException e) {
 				fail("1.0", e);
 			}
-			assertTrue("1.1." + verifier.getMessage(), verifier.isDeltaValid());
+			verifier.assertExpectedDeltasWereReceived("1.1.");
 
 			// folder with children
 			IFolder folder2 = folder1.getFolder("folder2");
@@ -1191,7 +1198,7 @@ public class CharsetTest extends ResourceTest {
 			} catch (CoreException e) {
 				fail("2.0", e);
 			}
-			assertTrue("2.1." + verifier.getMessage(), verifier.isDeltaValid());
+			verifier.assertExpectedDeltasWereReceived("2.1.");
 
 			// folder w. children, some with non-inherited values
 			try {
@@ -1209,7 +1216,7 @@ public class CharsetTest extends ResourceTest {
 			} catch (CoreException e) {
 				fail("3.1", e);
 			}
-			assertTrue("3.2." + verifier.getMessage(), verifier.isDeltaValid());
+			verifier.assertExpectedDeltasWereReceived("3.2.");
 
 			// change from non-default to another non-default
 			verifier.reset();
@@ -1221,7 +1228,7 @@ public class CharsetTest extends ResourceTest {
 			} catch (CoreException e) {
 				fail("4.1", e);
 			}
-			assertTrue("4.2." + verifier.getMessage(), verifier.isDeltaValid());
+			verifier.assertExpectedDeltasWereReceived("4.2.");
 
 			// change to default (clear it)
 			verifier.reset();
@@ -1233,7 +1240,7 @@ public class CharsetTest extends ResourceTest {
 			} catch (CoreException e) {
 				fail("5.0", e);
 			}
-			assertTrue("5.1." + verifier.getMessage(), verifier.isDeltaValid());
+			verifier.assertExpectedDeltasWereReceived("5.1.");
 
 			// change to default (equal to it but it doesn't inherit)
 			verifier.reset();
@@ -1245,7 +1252,7 @@ public class CharsetTest extends ResourceTest {
 			} catch (CoreException e) {
 				fail("6.0", e);
 			}
-			assertTrue("6.1." + verifier.getMessage(), verifier.isDeltaValid());
+			verifier.assertExpectedDeltasWereReceived("6.1.");
 
 			// clear all the encoding info before we start working with the project
 			try {
@@ -1261,7 +1268,7 @@ public class CharsetTest extends ResourceTest {
 			} catch (CoreException e) {
 				fail("7.1", e);
 			}
-			assertTrue("7.2." + verifier.getMessage(), verifier.isDeltaValid());
+			verifier.assertExpectedDeltasWereReceived("7.2.");
 
 			// clear all the encoding info before we start working with the root
 			try {
@@ -1276,9 +1283,9 @@ public class CharsetTest extends ResourceTest {
 			} catch (CoreException e) {
 				fail("8.1", e);
 			}
-			assertTrue("8.2." + verifier.getMessage(), verifier.isDeltaValid());
+			verifier.assertExpectedDeltasWereReceived("8.2.");
 		} finally {
-			getWorkspace().removeResourceChangeListener(verifier);
+			verifier.removeResourceChangeListeners();
 			try {
 				clearAllEncodings(project);
 			} catch (CoreException e) {
@@ -1294,7 +1301,8 @@ public class CharsetTest extends ResourceTest {
 	 */
 	public void testDeltasFile() {
 		IWorkspace workspace = getWorkspace();
-		CharsetVerifier verifier = new CharsetVerifier(CharsetVerifier.IGNORE_BACKGROUND_THREAD);
+		MultipleDeltasCharsetVerifier verifier = new MultipleDeltasCharsetVerifier(
+				CharsetVerifier.IGNORE_BACKGROUND_THREAD);
 		workspace.addResourceChangeListener(verifier, IResourceChangeEvent.POST_CHANGE);
 		final IProject project = workspace.getRoot().getProject("MyProject");
 		try {
@@ -1312,7 +1320,7 @@ public class CharsetTest extends ResourceTest {
 			} catch (CoreException e) {
 				fail("1.0.0", e);
 			}
-			assertTrue("1.0.1" + verifier.getMessage(), verifier.isDeltaValid());
+			verifier.assertExpectedDeltasWereReceived("1.0.1");
 
 			// change to default (clear it)
 			verifier.reset();
@@ -1324,7 +1332,7 @@ public class CharsetTest extends ResourceTest {
 			} catch (CoreException e) {
 				fail("1.1.0", e);
 			}
-			assertTrue("1.1.1" + verifier.getMessage(), verifier.isDeltaValid());
+			verifier.assertExpectedDeltasWereReceived("1.1.1");
 
 			// change to default (equal to it but it doesn't inherit)
 			verifier.reset();
@@ -1336,7 +1344,7 @@ public class CharsetTest extends ResourceTest {
 			} catch (CoreException e) {
 				fail("1.2.0", e);
 			}
-			assertTrue("1.2.1" + verifier.getMessage(), verifier.isDeltaValid());
+			verifier.assertExpectedDeltasWereReceived("1.2.1");
 
 			// change from non-default to another non-default
 			try {
@@ -1355,7 +1363,7 @@ public class CharsetTest extends ResourceTest {
 			} catch (CoreException e) {
 				fail("1.3.1", e);
 			}
-			assertTrue("1.3.2" + verifier.getMessage(), verifier.isDeltaValid());
+			verifier.assertExpectedDeltasWereReceived("1.3.2");
 
 			// multiple files (same operation)
 			verifier.reset();
@@ -1372,9 +1380,9 @@ public class CharsetTest extends ResourceTest {
 			} catch (CoreException e) {
 				fail("1.4.0", e);
 			}
-			assertTrue("1.4.1" + verifier.getMessage(), verifier.isDeltaValid());
+			verifier.assertExpectedDeltasWereReceived("1.4.1");
 		} finally {
-			getWorkspace().removeResourceChangeListener(verifier);
+			verifier.removeResourceChangeListeners();
 			try {
 				clearAllEncodings(project);
 			} catch (CoreException e) {
@@ -1586,11 +1594,19 @@ public class CharsetTest extends ResourceTest {
 		return "MIK".equals(referenceCharset) ? "UTF-8" : "MIK";
 	}
 
-	private void waitForCharsetManagerJob() {
+	static void waitForCharsetManagerJob() {
+		waitForJobFamily(CharsetManager.class);
+	}
+
+	static void waitForNotificationManagerJob() {
+		waitForJobFamily(NotificationManager.class);
+	}
+
+	private static void waitForJobFamily(Object family) {
 		try {
-			Job.getJobManager().join(CharsetManager.class, null);
+			Job.getJobManager().join(family, null);
 		} catch (Exception e) {
-			fail("Exception occurred while waiting on jobs from " + CharsetManager.class, e);
+			fail("Exception occurred while waiting on jobs from family: " + family, e);
 		}
 	}
 
@@ -1617,6 +1633,130 @@ public class CharsetTest extends ResourceTest {
 				}
 			}
 			super.verifyDelta(delta);
+		}
+	}
+
+	/**
+	 * Verifies expected changes either as a single received delta, or as multiple
+	 * deltas each containing exactly 1 expected change. If multiple deltas are
+	 * received, those are verified in order of the added expected changes.
+	 *
+	 * This verifier succeeds if either all expected changes are received in a
+	 * single delta, or if each expected change is received in a delta of its own.
+	 */
+	private class MultipleDeltasCharsetVerifier extends org.junit.Assert implements IResourceChangeListener {
+
+		private final int flags;
+		private final CharsetVerifier singleDeltaVerifier;
+		private final List<CharsetVerifier> deltaVerifiers;
+		private int expectedDeltasCount;
+		private int verifiedDeltasCount;
+
+		MultipleDeltasCharsetVerifier(int flags) {
+			this.flags = flags;
+			singleDeltaVerifier = new CharsetVerifierWithExtraInfo(flags);
+			deltaVerifiers = new ArrayList<>();
+			expectedDeltasCount = 0;
+			verifiedDeltasCount = 0;
+		}
+
+		@Override
+		public void resourceChanged(IResourceChangeEvent event) {
+			if (!singleDeltaVerifier.ignoreEvent()) {
+				singleDeltaVerifier.resourceChanged(event);
+				if (verifiedDeltasCount < deltaVerifiers.size()) {
+					CharsetVerifier deltaVerifier = deltaVerifiers.get(verifiedDeltasCount);
+					deltaVerifier.resourceChanged(event);
+					verifiedDeltasCount++;
+				}
+			}
+		}
+
+		/**
+		 * @param firstDeltaTimeout
+		 *            the maximal time to wait in milliseconds until the first delta is
+		 *            received
+		 * @param lastDeltaTimeout
+		 *            the maximal time to wait in milliseconds until the last delta is
+		 *            received
+		 * @return true if waiting was successful, false otherwise (i.e. false if
+		 *         timeout occurred)
+		 */
+		boolean waitForAllDeltas(long firstDeltaTimeout, long lastDeltaTimeout) {
+			boolean firstDeltaReceived = waitForFirstDelta(firstDeltaTimeout);
+			long waitingStart = System.currentTimeMillis();
+			if (firstDeltaReceived) {
+				boolean isSingleDelta = singleDeltaVerifier.isDeltaValid();
+				if (isSingleDelta) {
+					return true;
+				}
+			}
+			if (expectedDeltasCount > 0) {
+				CharsetVerifier deltaVerifier = deltaVerifiers.get(deltaVerifiers.size() - 1);
+				long waitedSoFar = System.currentTimeMillis() - waitingStart;
+				long waitTimeout = lastDeltaTimeout - waitedSoFar;
+				return deltaVerifier.waitForEvent(waitTimeout);
+			}
+			return true;
+		}
+
+		boolean waitForFirstDelta(long timeout) {
+			return singleDeltaVerifier.waitForEvent(timeout);
+		}
+
+		void reset() {
+			singleDeltaVerifier.reset();
+			for (CharsetVerifier deltaVerifier : deltaVerifiers) {
+				deltaVerifier.reset();
+			}
+			deltaVerifiers.clear();
+		}
+
+		void assertExpectedDeltasWereReceived(String message) {
+			waitForNotificationManagerJob();
+			if (expectedDeltasCount > 0 && verifiedDeltasCount == 0) {
+				fail(message + ", expected " + expectedDeltasCount + " deltas but received no deltas");
+			}
+			if (verifiedDeltasCount > 0 && expectedDeltasCount == 0) {
+				fail(message + ", expected no deltas but received " + verifiedDeltasCount + " deltas");
+			}
+			if (!singleDeltaVerifier.isDeltaValid()) {
+				if (verifiedDeltasCount == 1) {
+					fail(message + ", " + singleDeltaVerifier.getMessage());
+				} else {
+					boolean validDeltas = true;
+					StringBuilder failMessage = new StringBuilder(message);
+					for (int i = 0; i < expectedDeltasCount; i++) {
+						CharsetVerifier deltaVerifier = deltaVerifiers.get(i);
+						boolean isValidDelta = deltaVerifier.isDeltaValid();
+						validDeltas &= isValidDelta;
+						failMessage.append(System.lineSeparator());
+						failMessage.append("listing verification result for expected change with index " + i);
+						failMessage.append(System.lineSeparator());
+						failMessage.append("verifier.isValidDelta(): " + isValidDelta);
+						failMessage.append(System.lineSeparator());
+						failMessage.append(deltaVerifier.getMessage());
+					}
+					assertTrue(failMessage.toString(), validDeltas);
+				}
+			}
+		}
+
+		void addExpectedChange(IResource resource, int status, int changeFlags) {
+			addExpectedChange(new IResource[] { resource }, status, changeFlags);
+		}
+
+		void addExpectedChange(IResource[] resources, int status, int changeFlags) {
+			singleDeltaVerifier.addExpectedChange(resources, status, changeFlags);
+			CharsetVerifier deltaVerifier = new CharsetVerifierWithExtraInfo(flags);
+			deltaVerifier.addExpectedChange(resources, status, changeFlags);
+			deltaVerifiers.add(deltaVerifier);
+			expectedDeltasCount++;
+		}
+
+		void removeResourceChangeListeners() {
+			IWorkspace workspace = getWorkspace();
+			workspace.removeResourceChangeListener(this);
 		}
 	}
 }

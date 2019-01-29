@@ -47,6 +47,11 @@ public class NotificationManager implements IManager, ILifecycleListener {
 			}
 			return Status.OK_STATUS;
 		}
+
+		@Override
+		public boolean belongsTo(Object family) {
+			return NotificationManager.class == family;
+		}
 	}
 
 	private static final long NOTIFICATION_DELAY = 1500;
