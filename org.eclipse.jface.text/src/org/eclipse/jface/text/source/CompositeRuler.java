@@ -587,7 +587,7 @@ public class CompositeRuler implements IVerticalRuler, IVerticalRulerExtension, 
 		}
 
 		if (parent instanceof Composite && !parent.isDisposed())
-			((Composite) parent).layout(true);
+			((Composite) parent).layout(true, true);
 	}
 
 	@Override
