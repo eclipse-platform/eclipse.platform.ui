@@ -18,6 +18,8 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.jface.action.IContributionItem;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.SubContributionItem;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.widgets.Event;
 import org.eclipse.ui.IPageLayout;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
@@ -142,13 +144,13 @@ public class TextSelectionActionExpressionTest extends UITestCase {
     }
 
     /**
-     * Select an object and fire about to show.
-     */
+	 * Select an object and simulate show.
+	 */
     private void selectAndUpdateMenu(ExtendedTextEditor editor, String str,
             MenuManager mgr) throws Throwable {
         editor.setText(str);
         fPage.saveEditor(editor, false);
-        ActionUtil.fireAboutToShow(mgr);
+		mgr.getMenu().notifyListeners(SWT.Show, new Event());
     }
 
     /**

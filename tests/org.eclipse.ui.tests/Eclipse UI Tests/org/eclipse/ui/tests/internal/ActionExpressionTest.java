@@ -14,11 +14,12 @@
 package org.eclipse.ui.tests.internal;
 
 import org.eclipse.jface.action.MenuManager;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.widgets.Event;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.tests.api.ListElement;
 import org.eclipse.ui.tests.api.ListView;
-import org.eclipse.ui.tests.harness.util.ActionUtil;
 import org.eclipse.ui.tests.harness.util.UITestCase;
 
 /**
@@ -226,12 +227,12 @@ public abstract class ActionExpressionTest extends UITestCase {
     }
 
     /**
-     * Select an object and fire about to show.
-     */
+	 * Select an object and simulate show.
+	 */
     protected void selectAndUpdateMenu(ListView view, ListElement element,
             MenuManager mgr) throws Throwable {
         view.selectElement(element);
-        ActionUtil.fireAboutToShow(mgr);
+		mgr.getMenu().notifyListeners(SWT.Show, new Event());
     }
 
     /**

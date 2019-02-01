@@ -14,6 +14,8 @@
 package org.eclipse.ui.tests.api;
 
 import org.eclipse.jface.action.MenuManager;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.widgets.Event;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.tests.harness.util.ActionUtil;
@@ -83,7 +85,7 @@ public class IActionFilterTest extends UITestCase {
 
         // Open menu.  Verify that action filter is called.
         MenuManager menuMgr = view.getMenuManager();
-        ActionUtil.fireAboutToShow(menuMgr);
+		menuMgr.getMenu().notifyListeners(SWT.Show, new Event());
         assertTrue(filter.getCalled());
     }
 
@@ -123,7 +125,7 @@ public class IActionFilterTest extends UITestCase {
 
         // Select red, verify popup.
         view.selectElement(red);
-        ActionUtil.fireAboutToShow(menuMgr);
+		menuMgr.getMenu().notifyListeners(SWT.Show, new Event());
         assertTrue(filter.getCalled());
         assertNotNull(ActionUtil.getActionWithLabel(menuMgr, "redAction_v1"));
         assertNull(ActionUtil.getActionWithLabel(menuMgr, "blueAction_v1"));
@@ -135,7 +137,7 @@ public class IActionFilterTest extends UITestCase {
         // Select blue, verify popup.
         filter.clearCalled();
         view.selectElement(blue);
-        ActionUtil.fireAboutToShow(menuMgr);
+		menuMgr.getMenu().notifyListeners(SWT.Show, new Event());
         assertTrue(filter.getCalled());
         assertNull(ActionUtil.getActionWithLabel(menuMgr, "redAction_v1"));
         assertNotNull(ActionUtil.getActionWithLabel(menuMgr, "blueAction_v1"));
@@ -147,7 +149,7 @@ public class IActionFilterTest extends UITestCase {
         // Select green, verify popup.
         filter.clearCalled();
         view.selectElement(green);
-        ActionUtil.fireAboutToShow(menuMgr);
+		menuMgr.getMenu().notifyListeners(SWT.Show, new Event());
         assertTrue(filter.getCalled());
         assertNull(ActionUtil.getActionWithLabel(menuMgr, "redAction_v1"));
         assertNull(ActionUtil.getActionWithLabel(menuMgr, "blueAction_v1"));
@@ -159,7 +161,7 @@ public class IActionFilterTest extends UITestCase {
         // Select redTrue, verify popup.
         filter.clearCalled();
         view.selectElement(redTrue);
-        ActionUtil.fireAboutToShow(menuMgr);
+		menuMgr.getMenu().notifyListeners(SWT.Show, new Event());
         assertTrue(filter.getCalled());
         assertNotNull(ActionUtil.getActionWithLabel(menuMgr, "redAction_v1"));
         assertNull(ActionUtil.getActionWithLabel(menuMgr, "blueAction_v1"));
@@ -172,7 +174,7 @@ public class IActionFilterTest extends UITestCase {
         // Select nothing, verify popup.
         filter.clearCalled();
         view.selectElement(null);
-        ActionUtil.fireAboutToShow(menuMgr);
+		menuMgr.getMenu().notifyListeners(SWT.Show, new Event());
         assertTrue(!filter.getCalled());
         assertNull(ActionUtil.getActionWithLabel(menuMgr, "redAction_v1"));
         assertNull(ActionUtil.getActionWithLabel(menuMgr, "blueAction_v1"));

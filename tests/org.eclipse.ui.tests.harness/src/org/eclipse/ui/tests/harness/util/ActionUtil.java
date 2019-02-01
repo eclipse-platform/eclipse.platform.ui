@@ -14,13 +14,10 @@
  *******************************************************************************/
 package org.eclipse.ui.tests.harness.util;
 
-import java.lang.reflect.Method;
-
 import org.eclipse.jface.action.ActionContributionItem;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IContributionItem;
 import org.eclipse.jface.action.IMenuManager;
-import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.SubContributionItem;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.internal.WorkbenchWindow;
@@ -139,19 +136,5 @@ public class ActionUtil {
         return null;
     }
 
-    /**
-     * Fire the "handleAboutToShow" method in a menu manager.
-     * This triggers the same behavior as when a user opens a menu.
-     * The menu to be populated with actions and those
-     * actions to be enacted in SWT widgets.
-     *
-     * @param mgr the menu manager to open
-     */
-    public static void fireAboutToShow(MenuManager mgr) throws Throwable {
-		Class<?> clazz = mgr.getClass();
-		Method method = clazz.getDeclaredMethod("handleAboutToShow");
-        method.setAccessible(true);
-		method.invoke(mgr);
-    }
 }
 
