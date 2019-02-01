@@ -88,6 +88,9 @@ public class ResourceExtensionLabelProvider extends WorkbenchLabelProvider imple
 		try {
 			for (IMarker marker : resource.findMarkers(IMarker.PROBLEM, true, IResource.DEPTH_INFINITE)) {
 				problemSeverity = Math.max(problemSeverity, marker.getAttribute(IMarker.SEVERITY, -1));
+				if (problemSeverity >= IMarker.SEVERITY_ERROR) {
+					return problemSeverity;
+				}
 			}
 		} catch (CoreException e) {
 			// Mute error to prevent pop-up in case of concurrent modification
