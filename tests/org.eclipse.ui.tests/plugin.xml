@@ -4569,5 +4569,17 @@
           type="org.eclipse.ui.tests.testmarker">
     </super>
  </extension>
+ <extension
+       id="testmarker3"
+       name="Test Marker 3"
+       point="org.eclipse.core.resources.markers">
+ </extension>
+ <extension
+       point="org.eclipse.ui.ide.markerHelp">
+    <markerHelp
+          helpContextProvider="org.eclipse.ui.tests.markers.TestMarkerHelpContextProvider"
+          markerType="org.eclipse.ui.tests.testmarker3">
+    </markerHelp>
+ </extension>
 
 </plugin>

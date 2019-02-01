@@ -17,6 +17,7 @@ package org.eclipse.ui.tests.internal;
 import org.eclipse.ui.tests.markers.DeclarativeFilterActivityTest;
 import org.eclipse.ui.tests.markers.DeclarativeFilterDeclarationTest;
 import org.eclipse.ui.tests.markers.MarkerHelpRegistryReaderTest;
+import org.eclipse.ui.tests.markers.MarkerHelpRegistryTest;
 import org.eclipse.ui.tests.markers.MarkerQueryTest;
 import org.eclipse.ui.tests.markers.MarkerSortUtilTest;
 import org.eclipse.ui.tests.markers.MarkerSupportRegistryTests;
@@ -42,6 +43,7 @@ import org.junit.runners.Suite;
 	MarkerSortUtilTest.class,
 	MarkerViewTests.class,
 	MarkerViewUtilTest.class,
+	MarkerHelpRegistryTest.class,
 	MarkerHelpRegistryReaderTest.class,
 	MarkerQueryTest.class,
 	Bug99858Test.class,

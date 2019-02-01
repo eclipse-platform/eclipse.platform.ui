@@ -33,6 +33,7 @@ import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.ui.IMarkerHelpContextProvider;
 import org.eclipse.ui.IMarkerHelpRegistry;
 import org.eclipse.ui.IMarkerResolution;
 import org.eclipse.ui.IMarkerResolutionGenerator;
@@ -67,6 +68,11 @@ public class MarkerHelpRegistry implements IMarkerHelpRegistry {
 	 * Help context id attribute in configuration element
 	 */
 	private static final String ATT_HELP = "helpContextId"; //$NON-NLS-1$
+
+	/**
+	 * Help context provider attribute name in configuration element
+	 */
+	private static final String ATT_PROVIDER = "helpContextProvider"; //$NON-NLS-1$
 
 	/**
 	 * Resolution class attribute name in configuration element
@@ -120,8 +126,24 @@ public class MarkerHelpRegistry implements IMarkerHelpRegistry {
 					Iterator<IConfigurationElement> elements = resultsTable.get(result).iterator();
 					while (elements.hasNext()) {
 						IConfigurationElement element = elements.next();
-						// We have a match so return the help context id
-						return element.getAttribute(ATT_HELP);
+						// We have a match so check whether the element has a helpContextProvider
+						String helpContextProvider = element.getAttribute(ATT_PROVIDER);
+						if (helpContextProvider == null) {
+							// It does not have a helpContextProvider. Return the static helpContextId.
+							return element.getAttribute(ATT_HELP);
+						}
+						try {
+							// It has a helpContextProvider. Use it to get a help context id
+							IMarkerHelpContextProvider provider = (IMarkerHelpContextProvider) element
+									.createExecutableExtension(ATT_PROVIDER);
+							String res;
+							if (provider.hasHelpContextForMarker(marker)
+									&& (res = provider.getHelpContextForMarker(marker)) != null)
+								return res;
+						} catch (CoreException e) {
+							Policy.handle(e);
+						}
+
 					}
 				}
 			}

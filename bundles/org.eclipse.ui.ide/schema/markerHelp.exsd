@@ -57,11 +57,23 @@
                </appinfo>
             </annotation>
          </attribute>
-         <attribute name="helpContextId" type="string" use="required">
+         <attribute name="helpContextId" type="string">
             <annotation>
                <documentation>
                   the unique id of the help context.
+This is only used, if helpContextProvider is not set.
                </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="helpContextProvider" type="string">
+            <annotation>
+               <documentation>
+                  the name of the class implementing &lt;code&gt;IMarkerHelpContextProvider&lt;/code&gt;.
+If this is specified helpContextId is ignored.
+               </documentation>
+               <appInfo>
+                  <meta.attribute kind="java" basedOn="org.eclipse.ui.IMarkerHelpContextProvider"/>
+               </appInfo>
             </annotation>
          </attribute>
          <attribute name="matchChildren" type="boolean">
