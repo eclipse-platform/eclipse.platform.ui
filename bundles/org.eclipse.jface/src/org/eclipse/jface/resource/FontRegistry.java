@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 IBM Corporation and others.
+ * Copyright (c) 2000, 2019 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -10,6 +10,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Red Hat Inc. - bug 544026
  *******************************************************************************/
 package org.eclipse.jface.resource;
 
@@ -552,13 +553,19 @@ public class FontRegistry extends ResourceRegistry {
      * Returns the default font record.
      */
     private FontRecord defaultFontRecord() {
+        FontRecord record = stringToFontRecord.get(JFaceResources.DEFAULT_FONT);
+        if (record != null) {
+            return record;
+        }
 
-        FontRecord record = stringToFontRecord
-                .get(JFaceResources.DEFAULT_FONT);
+        FontData[] fontData = stringToFontData.get(JFaceResources.DEFAULT_FONT);
+        if (fontData != null) {
+            record = createFont(JFaceResources.DEFAULT_FONT, fontData);
+        }
+
         if (record == null) {
             Font defaultFont = calculateDefaultFont();
-            record = createFont(JFaceResources.DEFAULT_FONT, defaultFont
-                    .getFontData());
+            record = createFont(JFaceResources.DEFAULT_FONT, defaultFont.getFontData());
             defaultFont.dispose();
             stringToFontRecord.put(JFaceResources.DEFAULT_FONT, record);
         }

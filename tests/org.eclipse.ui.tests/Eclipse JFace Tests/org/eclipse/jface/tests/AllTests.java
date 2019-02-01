@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2017 IBM Corporation and others.
+ * Copyright (c) 2000, 2019 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -23,7 +23,8 @@ import org.junit.runners.Suite;
 		org.eclipse.jface.tests.layout.AllTests.class, org.eclipse.jface.tests.preferences.AllTests.class,
 		org.eclipse.jface.tests.wizards.WizardTestSuite.class,
 		org.eclipse.jface.tests.labelProviders.DecoratingLabelProviderTests.class,
-		org.eclipse.jface.tests.fieldassist.FieldAssistTestSuite.class, org.eclipse.jface.tests.window.AllTests.class })
+		org.eclipse.jface.tests.fieldassist.FieldAssistTestSuite.class, org.eclipse.jface.tests.window.AllTests.class,
+		org.eclipse.jface.tests.resources.AllTests.class })
 public class AllTests {
 
 	public static void main(String[] args) {
