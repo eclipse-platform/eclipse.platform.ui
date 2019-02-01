@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<contexts>
+   <context id="markerHelpProblem1" title="Marker Help for Problem 1">
+      <description>This is custom context help for the problem with the code 1.</description>
+      <topic label="Topic"/>
+   </context>
+   <context id="markerHelpProblem2" title="Marker Help for Problem 2">
+      <description>This is custom context help for the problem with the code 2.</description>
+      <topic label="Topic"/>
+   </context>
+   <context id="markerHelpProblem3" title="Marker Help for Problem 3">
+      <description>This is custom context help for the problem with the code 3.</description>
+      <topic label="Topic"/>
+   </context>
+   <context id="markerHelpProblem4" title="Marker Help for Problem 4">
+      <description>This is custom context help for the problem with the code 4.</description>
+      <topic label="Topic"/>
+   </context>
+</contexts>

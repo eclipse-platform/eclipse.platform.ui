@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+    <extension
+         id="custom_marker"
+         point="org.eclipse.core.resources.markers">
+      <super
+            type="org.eclipse.core.resources.problemmarker">
+      </super>
+      <persistent
+            value="true">
+      </persistent>
+   </extension>
+   <extension
+         point="org.eclipse.ui.ide.markerHelp">
+      <markerHelp
+            helpContextProvider="org.eclipse.ui.examples.markerHelp.ExampleHelpContextProvider"
+            markerType="org.eclipse.ui.examples.markerHelp.custom_marker">
+      </markerHelp>
+   </extension>
+   <extension
+         point="org.eclipse.ui.commands">
+      <command
+            categoryId="org.eclipse.ui.category.project"
+            description="Adds example markers for Bug 543466"
+            id="org.eclipse.ui.examples.markerHelp.addMarkers"
+            name="Add Example Markers">
+      </command>
+   </extension>
+   <extension
+         point="org.eclipse.ui.handlers">
+      <handler
+            class="org.eclipse.ui.examples.markerHelp.AddMarkers"
+            commandId="org.eclipse.ui.examples.markerHelp.addMarkers">
+      </handler>
+   </extension>
+   <extension
+         point="org.eclipse.help.contexts">
+      <contexts
+            file="context_help.xml">
+      </contexts>
+   </extension>
+</plugin>
