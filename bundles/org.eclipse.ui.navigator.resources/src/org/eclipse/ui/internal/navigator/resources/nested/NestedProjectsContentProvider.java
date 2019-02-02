@@ -56,6 +56,7 @@ public class NestedProjectsContentProvider implements ITreeContentProvider, IRes
 
 	@Override
 	public void dispose() {
+		NestedProjectsLabelProvider.viewersToUpdate.remove(this.viewer);
 		try {
 			HandlerUtil.updateRadioState(this.projectPresetionCommand, Boolean.FALSE.toString());
 		} catch (ExecutionException ex) {
@@ -67,6 +68,7 @@ public class NestedProjectsContentProvider implements ITreeContentProvider, IRes
 	@Override
 	public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
 		this.viewer = (CommonViewer)viewer;
+		NestedProjectsLabelProvider.viewersToUpdate.add(this.viewer);
 	}
 
 	@Override
