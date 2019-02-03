@@ -201,12 +201,12 @@ public class FindReplaceDialogTest {
 				fail("this test does not work on GTK unless the runtime workbench has focus. Screenshot: " + takeScreenshot());
 		}
 		
-		assertTrue(findField.isFocusControl());
-		
 		if (Util.isMac())
 			/* On the Mac, checkboxes only take focus if "Full Keyboard Access" is enabled in the System Preferences.
 			 * Let's not assume that someone pressed Ctrl+F7 on every test machine... */
 			return;
+
+		assertTrue(findField.isFocusControl());
 
 		Button wrapSearchBox= (Button)fFindReplaceDialog.get("fWrapCheckBox");
 		wrapSearchBox.setFocus();
