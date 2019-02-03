@@ -20,6 +20,8 @@ import org.eclipse.jface.action.IContributionItem;
 import org.eclipse.jface.action.IContributionManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.Shell;
 
@@ -83,6 +85,7 @@ public class MenuManagerTest extends JFaceActionTest {
         assertEquals("File", menuBar.getItems()[0].getText());
 
         Menu fileMenu = menuBar.getItems()[0].getMenu();
+		fileMenu.notifyListeners(SWT.Show, new Event());
         assertEquals(1, fileMenu.getItems().length);
     }
 

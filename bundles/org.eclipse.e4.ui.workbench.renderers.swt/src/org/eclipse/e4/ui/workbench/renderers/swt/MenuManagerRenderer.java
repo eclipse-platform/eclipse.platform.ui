@@ -30,7 +30,6 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -76,7 +75,6 @@ import org.eclipse.jface.action.ContributionItem;
 import org.eclipse.jface.action.GroupMarker;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IContributionItem;
-import org.eclipse.jface.action.IContributionManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.action.SubContributionItem;
@@ -106,8 +104,6 @@ public class MenuManagerRenderer extends SWTPartRenderer {
 
 	private Map<MMenuElement, ContributionRecord> modelContributionToRecord = new HashMap<>();
 	private Map<MMenuElement, ArrayList<ContributionRecord>> sharedElementToRecord = new HashMap<>();
-
-	private Collection<IContributionManager> mgrToUpdate = new LinkedHashSet<>();
 
 	@Inject
 	private Logger logger;
@@ -174,7 +170,7 @@ public class MenuManagerRenderer extends SWTPartRenderer {
 				manager.setVisible(visible);
 				if (manager.getParent() != null) {
 					manager.getParent().markDirty();
-					scheduleManagerUpdate(manager.getParent());
+					manager.getParent().update(false);
 				}
 				if (menuModel.getParent() == null) {
 					if (menuModel instanceof MPopupMenu) {
@@ -200,7 +196,7 @@ public class MenuManagerRenderer extends SWTPartRenderer {
 				item.setVisible(itemModel.isVisible());
 				if (item.getParent() != null) {
 					item.getParent().markDirty();
-					scheduleManagerUpdate(item.getParent());
+					item.getParent().update(false);
 				}
 			}
 		}
@@ -555,7 +551,7 @@ public class MenuManagerRenderer extends SWTPartRenderer {
 				@Override
 				public boolean changed(IEclipseContext context) {
 					record.updateVisibility(parentContext.getActiveLeaf());
-					scheduleManagerUpdate(manager);
+					manager.update(false);
 					return true;
 				}
 			});
@@ -649,7 +645,7 @@ public class MenuManagerRenderer extends SWTPartRenderer {
 				modelProcessSwitch(parentManager, (MMenuElement) childME);
 			}
 		}
-		scheduleManagerUpdate(parentManager);
+		parentManager.update(false);
 	}
 
 	private void addToManager(MenuManager parentManager, MMenuElement model, IContributionItem menuManager) {
@@ -1016,6 +1012,7 @@ public class MenuManagerRenderer extends SWTPartRenderer {
 					}
 					if (modelChildren.size() > dest) {
 						if (modelChildren.get(dest) != childModel) {
+							// TODO, two updates? can move be used?
 							modelChildren.remove(childModel);
 							modelChildren.add(dest, childModel);
 						}
@@ -1214,31 +1211,4 @@ public class MenuManagerRenderer extends SWTPartRenderer {
 		clearModelToManager(menu, mm);
 	}
 
-	private void scheduleManagerUpdate(IContributionManager mgr) {
-		// Bug 467000: Avoid repeatedly updating menu managers
-		// This workaround is opt-in for 4.5
-		boolean workaroundEnabled = Boolean.getBoolean("eclipse.workaround.bug467000"); //$NON-NLS-1$
-		if (!workaroundEnabled) {
-			mgr.update(false);
-			return;
-		}
-		synchronized (mgrToUpdate) {
-			if (this.mgrToUpdate.isEmpty()) {
-				Display display = context.get(Display.class);
-				if (display != null && !display.isDisposed()) {
-					display.timerExec(100, () -> {
-						Collection<IContributionManager> toUpdate = new LinkedHashSet<>();
-						synchronized (mgrToUpdate) {
-							toUpdate.addAll(mgrToUpdate);
-							mgrToUpdate.clear();
-						}
-						for (IContributionManager mgr1 : toUpdate) {
-							mgr1.update(false);
-						}
-					});
-				}
-				this.mgrToUpdate.add(mgr);
-			}
-		}
-	}
 }
