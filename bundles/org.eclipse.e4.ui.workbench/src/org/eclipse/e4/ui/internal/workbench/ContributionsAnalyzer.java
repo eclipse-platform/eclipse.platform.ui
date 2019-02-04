@@ -305,6 +305,10 @@ public final class ContributionsAnalyzer {
 			imperativeExpressionObject = newImperativeExpression;
 		}
 
+		if (imperativeExpressionObject == null) {
+			return false;
+		}
+
 		Object result = null;
 
 		if (exp.isTracking()) {
