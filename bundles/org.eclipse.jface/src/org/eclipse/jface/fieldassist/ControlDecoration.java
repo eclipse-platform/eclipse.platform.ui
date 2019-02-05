@@ -622,8 +622,8 @@ public class ControlDecoration {
 
 		// Listener for painting the decoration
 		paintListener = event -> {
-			Control control = (Control) event.widget;
 			if (shouldShowDecoration()) {
+				Control control = (Control) event.widget;
 				Rectangle rect = getDecorationRectangle(control);
 				event.gc.drawImage(getImage(), rect.x, rect.y);
 			}
