@@ -23,7 +23,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.eclipse.core.commands.ExecutionException;
-import org.eclipse.core.commands.util.Tracing;
+import org.eclipse.core.commands.internal.util.Tracing;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;

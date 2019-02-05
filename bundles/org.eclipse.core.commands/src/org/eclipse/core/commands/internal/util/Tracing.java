@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2015 IBM Corporation and others.
+ * Copyright (c) 2005, 2019 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -12,7 +12,7 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 
-package org.eclipse.core.commands.util;
+package org.eclipse.core.commands.internal.util;
 
 /**
  * <p>
@@ -22,11 +22,6 @@ package org.eclipse.core.commands.util;
  * Clients must not extend or instantiate this class.
  * </p>
  *
- * @since 3.2 Marked for deletion via Bug 143992
- *
- * @deprecated
- * @noreference This class is not intended to be referenced by clients.
- * @noinstantiate This class is not intended to be instantiated by clients.
  */
 public final class Tracing {
 

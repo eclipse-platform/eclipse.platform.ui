@@ -19,7 +19,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import org.eclipse.core.commands.common.HandleObjectManager;
-import org.eclipse.core.commands.util.Tracing;
+import org.eclipse.core.commands.internal.util.Tracing;
 import org.eclipse.core.internal.commands.util.Util;
 
 /**

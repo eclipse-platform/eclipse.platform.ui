@@ -19,7 +19,7 @@ import java.io.StringWriter;
 import java.util.Arrays;
 
 import org.eclipse.core.commands.common.NotDefinedException;
-import org.eclipse.core.commands.util.Tracing;
+import org.eclipse.core.commands.internal.util.Tracing;
 import org.eclipse.core.internal.commands.util.Util;
 import org.eclipse.core.runtime.ISafeRunnable;
 import org.eclipse.core.runtime.ListenerList;
