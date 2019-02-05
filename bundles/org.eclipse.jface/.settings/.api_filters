@@ -12,7 +12,7 @@
         <filter comment="Bug 540482: Delete org.eclipse.jface.dialogs.ImageAndMessageArea as announced for after June 2018" id="305324134">
             <message_arguments>
                 <message_argument value="org.eclipse.jface.dialogs.ImageAndMessageArea"/>
-                <message_argument value="org.eclipse.jface_3.15.0"/>
+                <message_argument value="org.eclipse.jface_3.15.100"/>
             </message_arguments>
         </filter>
     </resource>
