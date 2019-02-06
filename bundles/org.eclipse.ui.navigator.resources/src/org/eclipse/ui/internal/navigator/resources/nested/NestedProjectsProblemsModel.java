@@ -17,7 +17,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.CancellationException;
@@ -40,17 +40,18 @@ import org.eclipse.ui.internal.navigator.resources.plugin.WorkbenchNavigatorPlug
  * problems on resource and all children, including from nested projects).
  */
 public class NestedProjectsProblemsModel {
+
 	private boolean neverRan = true;
-	private final Set<IResource> dirty = new HashSet<>();
+	private final Set<IResource> dirty = new LinkedHashSet<>();
 	private final Map<IResource, Integer> cache = new HashMap<>();
-	private final Set<IResource> modifiedSeveritySinceLastRun = new HashSet<>();
+	private final Set<IResource> modifiedSeveritySinceLastRun = new LinkedHashSet<>();
 
 	public void refreshModel() {
 		modifiedSeveritySinceLastRun.clear();
-		Set<IResource> localDirty = null;
-		synchronized (this.dirty) {
-			localDirty = new HashSet<>(dirty);
-			this.dirty.removeAll(localDirty);
+		Set<IResource> localDirty;
+		synchronized (dirty) {
+			localDirty = new LinkedHashSet<>(dirty);
+			dirty.clear();
 		}
 		removeFromCache(localDirty);
 		modifiedSeveritySinceLastRun.addAll(localDirty);
@@ -84,7 +85,7 @@ public class NestedProjectsProblemsModel {
 	 * @param toRemove
 	 */
 	private void removeFromCache(Set<IResource> toRemove) {
-		Set<IContainer> dirtyLeafContainers = new HashSet<>();
+		Set<IContainer> dirtyLeafContainers = new LinkedHashSet<>();
 		for (IResource resource : toRemove) {
 			final IContainer currentContainer = resource instanceof IContainer ? (IContainer) resource
 					: resource.getParent();
@@ -134,7 +135,7 @@ public class NestedProjectsProblemsModel {
 		if (!container.isAccessible()) {
 			return -1;
 		}
-		Set<IResource> children = new HashSet<>();
+		Set<IResource> children = new LinkedHashSet<>();
 		try {
 			children.addAll(Arrays.asList(container.members()));
 		} catch (CoreException ex) {
@@ -152,7 +153,6 @@ public class NestedProjectsProblemsModel {
 				}
 			}
 		}
-		;
 		return severity;
 	}
 
@@ -176,9 +176,9 @@ public class NestedProjectsProblemsModel {
 		return resource.getParent();
 	}
 
-	public void markDirty(Set<IResource> dirty) {
+	public void markDirty(IResource resource) {
 		synchronized (dirty) {
-			this.dirty.addAll(dirty);
+			dirty.add(resource);
 		}
 	}
 
@@ -195,7 +195,7 @@ public class NestedProjectsProblemsModel {
 	 *         descendants, return <code>-1</code>
 	 */
 	public Integer getMaxSeverityIncludingNestedProjects(IResource resource) {
-		return cache.getOrDefault(resource, -1).intValue();
+		return cache.getOrDefault(resource, -1);
 	}
 
 	public boolean isDirty() {

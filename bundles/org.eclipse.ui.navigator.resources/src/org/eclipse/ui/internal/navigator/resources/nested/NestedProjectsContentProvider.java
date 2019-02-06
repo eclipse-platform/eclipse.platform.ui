@@ -135,7 +135,7 @@ public class NestedProjectsContentProvider implements ITreeContentProvider, IRes
 					return;
 				}
 				for (IContainer parent : parentsToRefresh) {
-					NestedProjectsContentProvider.this.viewer.refresh(parent);
+					viewer.refresh(parent);
 				}
 			});
 		}

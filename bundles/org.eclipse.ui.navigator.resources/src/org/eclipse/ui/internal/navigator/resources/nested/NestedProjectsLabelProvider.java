@@ -14,12 +14,10 @@
 package org.eclipse.ui.internal.navigator.resources.nested;
 
 import java.util.Collections;
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
 
 import org.eclipse.core.internal.resources.MarkerManager;
 import org.eclipse.core.internal.resources.Workspace;
@@ -46,13 +44,13 @@ public class NestedProjectsLabelProvider extends ResourceExtensionLabelProvider 
 	private IResourceChangeListener refreshSeveritiesOnProblemMarkerChange;
 	private NestedProjectsProblemsModel model;
 	private CompletableFuture<NestedProjectsProblemsModel> refreshModelJob;
-	static final Set<StructuredViewer> viewersToUpdate = Collections.synchronizedSet(new HashSet<>());
+	static final Set<StructuredViewer> viewersToUpdate = Collections.synchronizedSet(new LinkedHashSet<>());
 
 	@Override
 	public void init(ICommonContentExtensionSite aConfig) {
 		super.init(aConfig);
-		this.model = new NestedProjectsProblemsModel();
-		this.refreshModelJob = refreshSeverities();
+		model = new NestedProjectsProblemsModel();
+		refreshModelJob = refreshSeverities();
 		refreshSeveritiesOnProblemMarkerChange = event -> {
 			if (event.getDelta() == null) {
 				return;
@@ -65,7 +63,7 @@ public class NestedProjectsLabelProvider extends ResourceExtensionLabelProvider 
 						if (markerManager.isSubtype(markerDelta.getType(), IMarker.PROBLEM)) {
 							IResource resource = markerDelta.getResource();
 							if (resource != null) {
-								model.markDirty(Collections.singleton(markerDelta.getResource()));
+								model.markDirty(resource);
 							}
 						}
 					}
@@ -76,10 +74,14 @@ public class NestedProjectsLabelProvider extends ResourceExtensionLabelProvider 
 						new Status(IStatus.ERROR, WorkbenchNavigatorPlugin.PLUGIN_ID, e.getMessage(), e));
 			}
 			if (model.isDirty()) {
-				this.refreshModelJob = refreshSeverities();
-				this.refreshModelJob.thenAccept(model -> {
+				refreshModelJob = refreshSeverities();
+				refreshModelJob.thenAccept(model -> {
 					Object[] toUpdate = model.getResourcesWithModifiedSeverity().toArray();
-					for (StructuredViewer viewer : viewersToUpdate) {
+					StructuredViewer[] viewers;
+					synchronized (viewersToUpdate) {
+						viewers = viewersToUpdate.toArray(new StructuredViewer[0]);
+					}
+					for (StructuredViewer viewer : viewers) {
 						viewer.update(toUpdate, new String[] {});
 					}
 				});
@@ -124,13 +126,14 @@ public class NestedProjectsLabelProvider extends ResourceExtensionLabelProvider 
 			// problem
 			try {
 				// keep a snapshot to avoid the value to suddenly turn null
-				final CompletableFuture<NestedProjectsProblemsModel> problemsModelSnapshot = this.refreshModelJob;
+				final CompletableFuture<NestedProjectsProblemsModel> problemsModelSnapshot = refreshModelJob;
 				if (problemsModelSnapshot != null) {
 					problemSeverity = Math.max(problemSeverity,
 							problemsModelSnapshot.get(50, TimeUnit.MILLISECONDS)
 									.getMaxSeverityIncludingNestedProjects(resource));
 				}
-			} catch (InterruptedException | ExecutionException | TimeoutException e) {
+			} catch (Exception e) {
+				// NestedProjectsProblemsModel.refreshModel() can throw runtime exception
 				WorkbenchNavigatorPlugin.log(e.getMessage(),
 						new Status(IStatus.ERROR, WorkbenchNavigatorPlugin.PLUGIN_ID, e.getMessage(), e));
 			}
