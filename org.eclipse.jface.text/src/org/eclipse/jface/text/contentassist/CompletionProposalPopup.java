@@ -639,9 +639,9 @@ class CompletionProposalPopup implements IContentAssistListener {
 			fProposalTable.setLayoutData(data);
 			fProposalShell.setSize(size);
 		} else {
-			int height= fProposalTable.getItemHeight() * 15;
-			// use golden ratio as default aspect ratio
-			final double aspectRatio= (1 + Math.sqrt(5)) / 2;
+			int height= fProposalTable.getItemHeight() * 10;
+			// use 2 x ratio as default aspect ratio instead of (1 + Math.sqrt(5)) / 2
+			double aspectRatio= 2;
 			int width= (int) (height * aspectRatio);
 
 			// Make sure our bounds still fit to the screen
