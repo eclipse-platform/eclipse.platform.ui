@@ -23,6 +23,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
+import org.eclipse.jface.util.Util;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.actions.WorkspaceModifyOperation;
@@ -86,6 +87,11 @@ public class TestBug105491 extends TestCase {
 	public void testBug() throws CoreException {
 		if (Thread.interrupted()) {
 			fail("Thread was interrupted at start of test");
+		}
+
+		if (Util.isWindows()) {
+			// unstable on Windows with 2 cores, see bug 543693
+			return;
 		}
 		workspace.run((IWorkspaceRunnable) monitor -> {
 			ProgressMonitorDialog dialog = new ProgressMonitorDialog(new Shell());
