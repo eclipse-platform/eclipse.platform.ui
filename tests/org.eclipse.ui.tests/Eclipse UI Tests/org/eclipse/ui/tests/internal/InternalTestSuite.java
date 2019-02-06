@@ -45,7 +45,8 @@ import org.junit.runners.Suite;
 	MarkerHelpRegistryReaderTest.class,
 	MarkerQueryTest.class,
 	Bug99858Test.class,
-	WorkbenchWindowSubordinateSourcesTests.class,
+// Disabled due 544032, see also 485167
+//	WorkbenchWindowSubordinateSourcesTests.class,
 	ReopenMenuTest.class,
 	UtilTest.class,
 	MarkerTesterTest.class,
