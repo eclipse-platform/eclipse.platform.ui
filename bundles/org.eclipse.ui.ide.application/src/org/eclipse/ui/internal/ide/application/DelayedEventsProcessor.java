@@ -16,6 +16,7 @@
 
 package org.eclipse.ui.internal.ide.application;
 
+import java.io.File;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.net.URI;
@@ -26,6 +27,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Display;
@@ -40,6 +42,7 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
 import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
+import org.eclipse.ui.internal.wizards.datatransfer.SmartImportWizard;
 import org.eclipse.urischeme.IUriSchemeProcessor;
 
 /**
@@ -50,6 +53,7 @@ import org.eclipse.urischeme.IUriSchemeProcessor;
  *
  * @since 3.3
  */
+@SuppressWarnings("restriction")
 public class DelayedEventsProcessor implements Listener {
 
 	private ArrayList<String> filesToOpen = new ArrayList<>(1);
@@ -172,11 +176,18 @@ public class DelayedEventsProcessor implements Listener {
 				IWorkbenchWindow window = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
 				if (window == null)
 					return;
+				// System.err.println(System.currentTimeMillis());
 				FileLocationDetails details = FileLocationDetails.resolve(initialPath);
-				if (details == null || details.fileInfo.isDirectory() || !details.fileInfo.exists()) {
+				if (details == null || !details.fileInfo.exists()) {
 					String msg = NLS.bind(IDEWorkbenchMessages.OpenDelayedFileAction_message_fileNotFound, initialPath);
 					MessageDialog.open(MessageDialog.ERROR, window.getShell(),
 							IDEWorkbenchMessages.OpenDelayedFileAction_title, msg, SWT.SHEET);
+				} else if (details.fileInfo.isDirectory()) {
+					SmartImportWizard wizard = new SmartImportWizard();
+					wizard.setInitialImportSource(new File(details.fileStore.toURI()));
+					WizardDialog dialog = new WizardDialog(window.getShell(), wizard);
+					dialog.setBlockOnOpen(false);
+					dialog.open();
 				} else {
 					IWorkbenchPage page = window.getActivePage();
 					if (page == null) {
