@@ -17,7 +17,9 @@ import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 import org.eclipse.core.internal.resources.MarkerManager;
 import org.eclipse.core.internal.resources.Workspace;
@@ -132,8 +134,12 @@ public class NestedProjectsLabelProvider extends ResourceExtensionLabelProvider 
 							problemsModelSnapshot.get(50, TimeUnit.MILLISECONDS)
 									.getMaxSeverityIncludingNestedProjects(resource));
 				}
-			} catch (Exception e) {
-				// NestedProjectsProblemsModel.refreshModel() can throw runtime exception
+			} catch (InterruptedException | ExecutionException e) {
+				WorkbenchNavigatorPlugin.log(e.getMessage(),
+						new Status(IStatus.ERROR, WorkbenchNavigatorPlugin.PLUGIN_ID, e.getMessage(), e));
+			} catch (TimeoutException e) {
+				// ignore
+			} catch (RuntimeException e) {
 				WorkbenchNavigatorPlugin.log(e.getMessage(),
 						new Status(IStatus.ERROR, WorkbenchNavigatorPlugin.PLUGIN_ID, e.getMessage(), e));
 			}
