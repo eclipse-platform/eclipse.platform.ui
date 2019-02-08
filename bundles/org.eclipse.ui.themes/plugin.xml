@@ -21,16 +21,18 @@
         os="win32">
     </theme>
     <theme
+        basestylesheeturi="css/e4-dark_mac1013.css"
+        id="org.eclipse.e4.ui.css.theme.e4_dark"
+        label="%theme.dark"
+        os="macosx"
+        os_version="10.11,10.12,10.13">
+    </theme>
+    <theme
         basestylesheeturi="css/e4-dark_mac.css"
         id="org.eclipse.e4.ui.css.theme.e4_dark"
         label="%theme.dark"
-        os="macosx">
-    </theme>
-    <theme
-        basestylesheeturi="css/e4-dark_mac1013.css"
-        id="org.eclipse.e4.ui.css.theme.e4_dark_mac1013"
-        label="%theme.dark.mac1013"
-        os="macosx">
+        os="macosx"
+        os_version="10.14">
     </theme>
       <theme
             basestylesheeturi="css/e4_default_gtk.css"

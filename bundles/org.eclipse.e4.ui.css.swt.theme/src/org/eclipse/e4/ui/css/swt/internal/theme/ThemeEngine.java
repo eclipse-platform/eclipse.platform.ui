@@ -85,6 +85,8 @@ public class ThemeEngine implements IThemeEngine {
 
 	public static final String THEME_PLUGIN_ID = "org.eclipse.e4.ui.css.swt.theme";
 
+	public static final String E4_DARK_THEME_ID = "org.eclipse.e4.ui.css.theme.e4_dark";
+
 	public ThemeEngine(Display display) {
 		this.display = display;
 
@@ -115,21 +117,27 @@ public class ThemeEngine implements IThemeEngine {
 			for (IConfigurationElement ce : e.getConfigurationElements()) {
 				if (ce.getName().equals("theme")) {
 					try {
+						String id = ce.getAttribute("id");
+						String os = ce.getAttribute("os");
 						String version = ce.getAttribute("os_version");
+
 						if (version == null) {
 							version ="";
+						} else {
+							// For e4 dark theme on Mac, register the theme with matching OS version only
+							if (E4_DARK_THEME_ID.equals(id) && Platform.OS_MACOSX.equals(currentOS) && os != null
+									&& os.equals(currentOS)) {
+								if (!isOsVersionMatch(version)) {
+									continue;
+								} else {
+									version = "";
+								}
+							}
 						}
-						String originalCSSFile;
-						String basestylesheeturi = originalCSSFile = ce.getAttribute("basestylesheeturi");
-						if (!basestylesheeturi.startsWith("platform:/plugin/")) {
-							basestylesheeturi = "platform:/plugin/"
-									+ ce.getContributor().getName() + "/"
-									+ basestylesheeturi;
-						}
-						final String themeBaseId = ce.getAttribute("id") + version;
+
+						final String themeBaseId = id + version;
 						String themeId = themeBaseId;
 						String label = ce.getAttribute("label");
-						String os = ce.getAttribute("os");
 						String ws = ce.getAttribute("ws");
 						if ((os != null && !os.equals(currentOS)) || (ws != null && !ws.equals(currentWS))) {
 							if (!themesToVarients.containsKey(themeBaseId)) {
@@ -138,6 +146,12 @@ public class ThemeEngine implements IThemeEngine {
 							themeId = getVarientThemeId(themeBaseId, os, ws);
 							themesToVarients.get(themeBaseId).add(themeId);
 							label = getVarientThemeLabel(label, os, ws);
+						}
+						String originalCSSFile;
+						String basestylesheeturi = originalCSSFile = ce.getAttribute("basestylesheeturi");
+						if (!basestylesheeturi.startsWith("platform:/plugin/")) {
+							basestylesheeturi = "platform:/plugin/" + ce.getContributor().getName() + "/"
+									+ basestylesheeturi;
 						}
 						registerTheme(themeId, label, basestylesheeturi, version);
 
@@ -253,6 +267,25 @@ public class ThemeEngine implements IThemeEngine {
 			label += "]";
 		}
 		return label;
+	}
+
+	private boolean isOsVersionMatch(String osVersionList) {
+		boolean found = false;
+		String osVersion = System.getProperty("os.version");
+		if (osVersion != null) {
+			if (osVersionList != null) {
+				String[] osVersions = osVersionList.split(","); //$NON-NLS-1$
+				for (String osVersionFromTheme : osVersions) {
+					if (osVersionFromTheme != null) {
+						if (osVersion.contains(osVersionFromTheme)) {
+							found = true;
+							break;
+						}
+					}
+				}
+			}
+		}
+		return found;
 	}
 
 	@Override
