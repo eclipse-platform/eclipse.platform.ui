@@ -101,28 +101,28 @@ public class UriSchemeHandlerPreferencePage extends PreferencePage implements IW
 					IWorkbenchHelpContextIds.LINK_HANDLERS_PREFERENCE_PAGE);
 		}
 		noDefaultAndApplyButton();
-		addFiller(parent, 2);
+		addFiller(parent);
 		createTableViewerForSchemes(parent);
 		createHandlerLocationControls(parent);
 		return parent;
 	}
 
-	private void addFiller(Composite composite, int horizontalSpan) {
+	private void addFiller(Composite composite) {
 		PixelConverter pixelConverter = new PixelConverter(composite);
 		Label filler = new Label(composite, SWT.LEFT);
 		GridData gd = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
-		gd.horizontalSpan = horizontalSpan;
+		gd.horizontalSpan = 2;
 		gd.heightHint = pixelConverter.convertHeightInCharsToPixels(1) / 2;
 		filler.setLayoutData(gd);
 	}
 
 	private void createTableViewerForSchemes(Composite parent) {
-		Composite editorComposite = new Composite(parent, SWT.NONE);
-		GridData gridData = new GridData(SWT.FILL, SWT.TOP, true, false);
+		Composite tableComposite = new Composite(parent, SWT.NONE);
+		GridData gridData = new GridData(SWT.FILL, SWT.FILL, true, true);
 		gridData.horizontalSpan = 2;
 		gridData.horizontalIndent = 0;
-		editorComposite.setLayoutData(gridData);
-		Table schemeTable = new Table(editorComposite,
+		tableComposite.setLayoutData(gridData);
+		Table schemeTable = new Table(tableComposite,
 				SWT.H_SCROLL | SWT.V_SCROLL | SWT.SINGLE | SWT.BORDER | SWT.FULL_SELECTION | SWT.CHECK);
 		schemeTable.setHeaderVisible(true);
 		schemeTable.setLinesVisible(true);
@@ -130,7 +130,7 @@ public class UriSchemeHandlerPreferencePage extends PreferencePage implements IW
 
 		// Table columns, Scheme name and Scheme Descriptions
 		TableColumnLayout tableColumnlayout = new TableColumnLayout();
-		editorComposite.setLayout(tableColumnlayout);
+		tableComposite.setLayout(tableColumnlayout);
 
 		TableColumn nameColumn = new TableColumn(schemeTable, SWT.NONE, 0);
 		nameColumn.setText(IDEWorkbenchMessages.UrlHandlerPreferencePage_ColumnName_SchemeName);
