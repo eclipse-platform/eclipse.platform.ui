@@ -80,6 +80,8 @@ public class ResourceNavigatorMessages extends NLS {
 	public static String CopyToClipboardProblemDialog_message;
 
 	public static String EmptyWorkspaceHelper_createGeneralProject;
+	public static String EmptyWorkspaceHelper_createProject;
+	public static String EmptyWorkspaceHelper_importProjects;
 	public static String EmptyWorkspaceHelper_noProjectsAvailable;
 	public static String EmptyWorkspaceHelper_noProjectsAvailableCreateOne;
 

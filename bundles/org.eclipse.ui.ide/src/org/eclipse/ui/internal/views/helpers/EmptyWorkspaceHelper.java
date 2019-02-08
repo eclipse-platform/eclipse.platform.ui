@@ -21,6 +21,7 @@ import org.eclipse.core.resources.IResourceChangeEvent;
 import org.eclipse.core.resources.IResourceChangeListener;
 import org.eclipse.core.resources.IResourceDelta;
 import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.jface.layout.GridLayoutFactory;
@@ -33,8 +34,6 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StackLayout;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Composite;
@@ -52,8 +51,12 @@ import org.eclipse.ui.forms.events.HyperlinkAdapter;
 import org.eclipse.ui.forms.events.HyperlinkEvent;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.Hyperlink;
+import org.eclipse.ui.handlers.IHandlerService;
+import org.eclipse.ui.internal.IWorkbenchGraphicConstants;
+import org.eclipse.ui.internal.WorkbenchImages;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.dialogs.WorkbenchWizardElement;
+import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
 import org.eclipse.ui.internal.navigator.wizards.WizardShortcutAction;
 import org.eclipse.ui.internal.views.navigator.ResourceNavigatorMessages;
 import org.eclipse.ui.wizards.IWizardDescriptor;
@@ -96,6 +99,7 @@ public final class EmptyWorkspaceHelper {
 	private Composite displayArea;
 	private ArrayList<IAction> projectWizardActions;
 	private IAction newProjectAction;
+	private IAction importAction;
 
 	/**
 	 * This method should be called at the point in time when the view's controls
@@ -143,6 +147,7 @@ public final class EmptyWorkspaceHelper {
 		displayArea = null;
 		projectWizardActions = null;
 		newProjectAction = null;
+		importAction = null;
 	}
 
 	private void registerListeners() {
@@ -157,9 +162,19 @@ public final class EmptyWorkspaceHelper {
 		if (newProjectAction == null) {
 			newProjectAction = new NewProjectAction();
 		}
+		if (importAction == null) {
+			importAction = new ImportAction();
+		}
 		if (projectWizardActions == null) {
 			projectWizardActions = new ArrayList<>();
 			readProjectWizardActions();
+		}
+
+		String newProjectWizardText;
+		if (projectWizardActions.isEmpty()) {
+			newProjectWizardText = ResourceNavigatorMessages.EmptyWorkspaceHelper_createProject;
+		} else {
+			newProjectWizardText = ResourceNavigatorMessages.EmptyWorkspaceHelper_createGeneralProject;
 		}
 
 		emptyArea = new Composite(displayAreas, SWT.NONE);
@@ -171,38 +186,26 @@ public final class EmptyWorkspaceHelper {
 		Link messageLabel = new Link(infoArea, SWT.WRAP);
 
 		Composite optionsArea = null;
-		if (!projectWizardActions.isEmpty()) {
-			messageLabel.setText(ResourceNavigatorMessages.EmptyWorkspaceHelper_noProjectsAvailable);
-			GridDataFactory.swtDefaults().align(SWT.FILL, SWT.FILL).grab(true, false).applyTo(messageLabel);
+		messageLabel.setText(ResourceNavigatorMessages.EmptyWorkspaceHelper_noProjectsAvailable);
+		GridDataFactory.swtDefaults().align(SWT.FILL, SWT.FILL).grab(true, false).applyTo(messageLabel);
 
-			optionsArea = new Composite(infoArea, SWT.NONE);
-			GridLayoutFactory.swtDefaults().numColumns(2).applyTo(optionsArea);
-			GridDataFactory.swtDefaults().indent(5, 0).grab(true, true).applyTo(optionsArea);
+		optionsArea = new Composite(infoArea, SWT.NONE);
+		GridLayoutFactory.swtDefaults().numColumns(2).applyTo(optionsArea);
+		GridDataFactory.swtDefaults().indent(5, 0).grab(true, true).applyTo(optionsArea);
 
-			final FormToolkit toolkit = new FormToolkit(emptyArea.getDisplay());
-			emptyArea.addDisposeListener(e -> toolkit.dispose());
-			final Color linkColor = JFaceColors.getHyperlinkText(emptyArea.getDisplay());
+		final FormToolkit toolkit = new FormToolkit(emptyArea.getDisplay());
+		emptyArea.addDisposeListener(e -> toolkit.dispose());
+		final Color linkColor = JFaceColors.getHyperlinkText(emptyArea.getDisplay());
 
-			for (IAction action : projectWizardActions) {
-				createOption(optionsArea, toolkit, linkColor, action, action.getImageDescriptor().createImage(),
-						action.getDescription());
-			}
-
-			createOption(optionsArea, toolkit, linkColor, newProjectAction,
-					newProjectAction.getImageDescriptor().createImage(),
-					ResourceNavigatorMessages.EmptyWorkspaceHelper_createGeneralProject);
-		} else {
-			messageLabel.setText(ResourceNavigatorMessages.EmptyWorkspaceHelper_noProjectsAvailableCreateOne);
-			GridDataFactory.swtDefaults().align(SWT.FILL, SWT.FILL).grab(true, false).applyTo(messageLabel);
-
-			messageLabel.addSelectionListener(new SelectionAdapter() {
-				@Override
-				public void widgetSelected(SelectionEvent e) {
-					newProjectAction.run();
-				}
-			});
-
+		for (IAction action : projectWizardActions) {
+			createOption(optionsArea, toolkit, linkColor, action, action.getImageDescriptor().createImage(),
+					action.getDescription());
 		}
+		createOption(optionsArea, toolkit, linkColor, newProjectAction,
+				newProjectAction.getImageDescriptor().createImage(), newProjectWizardText);
+		createOption(optionsArea, toolkit, linkColor, importAction,
+				WorkbenchImages.getImageDescriptor(IWorkbenchGraphicConstants.IMG_ETOOL_IMPORT_WIZ).createImage(),
+				ResourceNavigatorMessages.EmptyWorkspaceHelper_importProjects);
 	}
 
 	private void recreateEmptyArea() {
@@ -308,9 +311,8 @@ public final class EmptyWorkspaceHelper {
 					int kind = affectedChildResourceDelta.getKind();
 					if (resource instanceof IProject
 							&& (kind == IResourceDelta.ADDED || kind == IResourceDelta.REMOVED)) {
-						PlatformUI.getWorkbench().getDisplay()
-								.asyncExec(() -> PlatformUI.getWorkbench().getDisplay().timerExec(200,
-										switchTopControlRunnable));
+						PlatformUI.getWorkbench().getDisplay().asyncExec(
+								() -> PlatformUI.getWorkbench().getDisplay().timerExec(200, switchTopControlRunnable));
 						return;
 					}
 				}
@@ -353,6 +355,19 @@ public final class EmptyWorkspaceHelper {
 			dispose(this);
 		}
 
+	}
+
+	private static class ImportAction extends Action {
+		@Override
+		public void run() {
+			IHandlerService handlerService = PlatformUI.getWorkbench().getActiveWorkbenchWindow()
+					.getService(IHandlerService.class);
+			try {
+				handlerService.executeCommand("org.eclipse.ui.file.import", null); //$NON-NLS-1$
+			} catch (Exception ex) {
+				IDEWorkbenchPlugin.log(this.getClass(), "run", ex); //$NON-NLS-1$
+			}
+		}
 	}
 
 }
