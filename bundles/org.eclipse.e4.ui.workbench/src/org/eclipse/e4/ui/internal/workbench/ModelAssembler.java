@@ -249,9 +249,8 @@ public class ModelAssembler {
 		int severity = validationResult.getSeverity();
 		if (severity == Diagnostic.ERROR) {
 			logger.error(
-					"Fragment from \"" + "uri.toString()" + "\" of \"" //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-							+ contributorName + "\" could not be validated and was not merged \"{0}\"", //$NON-NLS-1$
-					fragment.toString());
+					"Fragment from \"{0}\" of \"{1}\" could not be validated and was not merged: " //$NON-NLS-1$
+							+ fragment.toString(), contributorURI, contributorName);
 		}
 
 		List<MApplicationElement> merged = processModelFragment(fragment, contributorURI, checkExist);
