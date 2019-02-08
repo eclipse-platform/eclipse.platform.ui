@@ -15,7 +15,6 @@
 package org.eclipse.e4.ui.css.core.util.impl.resources;
 
 import java.io.InputStream;
-import java.io.Reader;
 import java.util.ArrayList;
 import java.util.List;
 import org.eclipse.e4.ui.css.core.util.resources.IResourceLocator;
@@ -106,29 +105,5 @@ public class ResourcesLocatorManager implements IResourcesLocatorManager {
 		return null;
 	}
 
-	@Override
-	public Reader getReader(String uri) throws Exception {
-		if (StringUtils.isEmpty(uri)) {
-			return null;
-		}
-		if (uriResolvers == null) {
-			return null;
-		}
-		// Loop for IResourceLocator registered and return the Reader from
-		// the uri resolved
-		// as soon as an IResourceLocator return an uri resolved which is not
-		// null.
-		for (IResourceLocator resolver : uriResolvers) {
-			String s = resolver.resolve(uri);
-			if (s != null) {
-				Reader reader = resolver.getReader(uri);
-				if (reader  != null) {
-					return reader;
-				}
-			}
-		}
-
-		return null;
-	}
 
 }

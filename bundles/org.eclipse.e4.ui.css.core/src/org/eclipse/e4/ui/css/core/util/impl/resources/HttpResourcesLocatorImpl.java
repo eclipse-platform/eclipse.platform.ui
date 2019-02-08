@@ -15,7 +15,6 @@ package org.eclipse.e4.ui.css.core.util.impl.resources;
 
 import java.io.File;
 import java.io.InputStream;
-import java.io.Reader;
 import java.net.URL;
 import org.eclipse.e4.ui.css.core.util.resources.IResourceLocator;
 
@@ -38,10 +37,5 @@ public class HttpResourcesLocatorImpl implements IResourceLocator {
 		return url.openStream();
 	}
 
-	@Override
-	public Reader getReader(String uri) throws Exception {
-		// TODO
-		return null;// new FileReader(new File(uri));
-	}
 
 }
