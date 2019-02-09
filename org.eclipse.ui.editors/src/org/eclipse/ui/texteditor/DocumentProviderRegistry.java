@@ -25,10 +25,12 @@ import java.util.StringTokenizer;
 
 import org.osgi.framework.Bundle;
 
+import org.eclipse.core.runtime.Adapters;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.ILog;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
@@ -36,6 +38,7 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.core.resources.IFile;
 
 import org.eclipse.ui.IEditorInput;
+import org.eclipse.ui.IPathEditorInput;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.editors.text.NLSUtility;
 
@@ -312,8 +315,17 @@ public class DocumentProviderRegistry {
 		IDocumentProvider provider= null;
 
 		IFile file= editorInput.getAdapter(IFile.class);
-		if (file != null)
+		if (file != null) {
 			provider= getDocumentProvider(file.getFileExtension());
+		} else {
+			IPathEditorInput pathInput= Adapters.adapt(editorInput, IPathEditorInput.class);
+			if (pathInput != null) {
+				IPath path= pathInput.getPath();
+				if (path != null) {
+					provider= getDocumentProvider(path.getFileExtension());
+				}
+			}
+		}
 
 		if (provider == null) {
 			Set<IConfigurationElement> set= findInputTypeMapping(editorInput.getClass());

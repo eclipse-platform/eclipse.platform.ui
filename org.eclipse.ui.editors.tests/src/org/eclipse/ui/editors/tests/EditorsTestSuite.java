@@ -26,6 +26,7 @@ import org.junit.runners.Suite.SuiteClasses;
 @RunWith(Suite.class)
 @SuiteClasses({
 		ChainedPreferenceStoreTest.class,
+		DocumentProviderRegistryTest.class,
 		EncodingChangeTests.class,
 		GotoLineTest.class,
 		SegmentedModeTest.class,
