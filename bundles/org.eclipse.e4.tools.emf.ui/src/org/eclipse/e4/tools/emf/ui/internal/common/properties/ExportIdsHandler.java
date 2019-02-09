@@ -81,13 +81,14 @@ public class ExportIdsHandler {
 
 	static class ExportIdDialog extends TitleAreaDialog {
 		private Messages messages;
-		private IObservableList list;
+		private IObservableList<?> list;
 		private IResourcePool pool;
 		private JavaClass clazz;
 		private CheckboxTableViewer viewer;
 		private Text textClassName;
 
-		public ExportIdDialog(Shell parentShell, Messages messages, IObservableList list, IResourcePool pool, IProject project) {
+		public ExportIdDialog(Shell parentShell, Messages messages, IObservableList<?> list, IResourcePool pool,
+				IProject project) {
 			super(parentShell);
 			this.messages = messages;
 			this.list = list;

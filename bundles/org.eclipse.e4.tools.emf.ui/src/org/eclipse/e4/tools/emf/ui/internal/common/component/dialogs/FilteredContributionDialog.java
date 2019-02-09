@@ -123,7 +123,7 @@ public abstract class FilteredContributionDialog extends SaveDialogBoundsSetting
 	protected boolean includeNonBundles;
 	private Label lblStatus;
 	private Button btnIncludeNoneBundle;
-	private WritableList viewerList;
+	private WritableList<ContributionData> viewerList;
 	protected BundleImageCache imageCache;
 	protected Job currentSearchThread;
 	private ContributionResultHandlerImpl currentResultHandler;
@@ -179,9 +179,9 @@ public abstract class FilteredContributionDialog extends SaveDialogBoundsSetting
 
 	private class ContributionResultHandlerImpl implements ContributionResultHandler {
 		private boolean cancled = false;
-		private final IObservableList list;
+		private final IObservableList<ContributionData> list;
 
-		public ContributionResultHandlerImpl(IObservableList list) {
+		public ContributionResultHandlerImpl(IObservableList<ContributionData> list) {
 			this.list = list;
 		}
 
@@ -793,7 +793,7 @@ public abstract class FilteredContributionDialog extends SaveDialogBoundsSetting
 
 	protected void rebuildViewer() {
 
-		viewerList = new WritableList();
+		viewerList = new WritableList<>();
 
 		final TableViewer oldViewer = viewer;
 		viewer = new TableViewer(compOptions, SWT.FULL_SELECTION | SWT.BORDER);
@@ -803,7 +803,7 @@ public abstract class FilteredContributionDialog extends SaveDialogBoundsSetting
 		}
 		final GridData gd = new GridData(GridData.FILL_BOTH);
 		viewer.getControl().setLayoutData(gd);
-		viewer.setContentProvider(new ObservableListContentProvider());
+		viewer.setContentProvider(new ObservableListContentProvider<>());
 		viewer.setLabelProvider(new StyledCellLabelProvider() {
 			@Override
 			public void update(ViewerCell cell) {

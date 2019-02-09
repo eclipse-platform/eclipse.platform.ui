@@ -26,6 +26,7 @@ import javax.inject.Inject;
 
 import org.eclipse.core.databinding.observable.list.IObservableList;
 import org.eclipse.core.databinding.observable.value.WritableValue;
+import org.eclipse.core.databinding.property.value.IValueProperty;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.e4.core.di.annotations.Optional;
@@ -65,12 +66,15 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 
-public abstract class AbstractComponentEditor {
+/**
+ * @param <M> type of the master object
+ */
+public abstract class AbstractComponentEditor<M> {
 	private static final String GREY_SUFFIX = "Grey"; //$NON-NLS-1$
 
 	private static final String CSS_CLASS_KEY = "org.eclipse.e4.ui.css.CssClassName"; //$NON-NLS-1$
 
-	private final WritableValue master = new WritableValue();
+	private final WritableValue<M> master = new WritableValue<>();
 
 	public static final int SEARCH_IMAGE = 0;
 	public static final int TABLE_ADD_IMAGE = 1;
@@ -112,7 +116,7 @@ public abstract class AbstractComponentEditor {
 		return editor;
 	}
 
-	public WritableValue getMaster() {
+	public WritableValue<M> getMaster() {
 		return master;
 	}
 
@@ -330,7 +334,7 @@ public abstract class AbstractComponentEditor {
 
 	protected abstract Composite doGetEditor(Composite parent, Object object);
 
-	public abstract IObservableList getChildList(Object element);
+	public abstract IObservableList<?> getChildList(Object element);
 
 	public FeaturePath[] getLabelProperties() {
 		return new FeaturePath[] {};
@@ -433,8 +437,8 @@ public abstract class AbstractComponentEditor {
 		return contentContainer;
 	}
 
-	protected void createContributedEditorTabs(CTabFolder folder, EMFDataBindingContext context, WritableValue master,
-			Class<?> clazz) {
+	protected void createContributedEditorTabs(CTabFolder folder, EMFDataBindingContext context,
+			WritableValue<M> master, Class<? super M> clazz) {
 		final List<AbstractElementEditorContribution> contributionList = editor.getTabContributionsForClass(clazz);
 
 		for (final AbstractElementEditorContribution eec : contributionList) {
@@ -465,8 +469,11 @@ public abstract class AbstractComponentEditor {
 		}
 		if (getEditor().isAutoCreateElementId()) {
 			generator = new IdGenerator();
-			generator.bind(getMaster(), EMFEditProperties.value(getEditingDomain(), attSource),
-					EMFEditProperties.value(getEditingDomain(), attId), control);
+			@SuppressWarnings("unchecked")
+			IValueProperty<M, String> addSourceProp = EMFEditProperties.value(getEditingDomain(), attSource);
+			@SuppressWarnings("unchecked")
+			IValueProperty<M, String> attIdProp = EMFEditProperties.value(getEditingDomain(), attId);
+			generator.bind(getMaster(), addSourceProp, attIdProp, control);
 		}
 	}
 

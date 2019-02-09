@@ -50,7 +50,7 @@ import org.eclipse.swt.custom.CTabItem;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
 
-public class VCommandEditor extends AbstractComponentEditor {
+public class VCommandEditor extends AbstractComponentEditor<MApplication> {
 	private Composite composite;
 	private EMFDataBindingContext context;
 	private TableViewer viewer;
@@ -109,13 +109,14 @@ public class VCommandEditor extends AbstractComponentEditor {
 			context = new EMFDataBindingContext();
 			composite = createForm(parent, context, getMaster());
 		}
-		final VirtualEntry<?> o = (VirtualEntry<?>) object;
+		@SuppressWarnings("unchecked")
+		final VirtualEntry<MApplication, ?> o = (VirtualEntry<MApplication, ?>) object;
 		viewer.setInput(o.getList());
 		getMaster().setValue(o.getOriginalParent());
 		return composite;
 	}
 
-	private Composite createForm(Composite parent, EMFDataBindingContext context, WritableValue master) {
+	private Composite createForm(Composite parent, EMFDataBindingContext context, WritableValue<MApplication> master) {
 		final CTabFolder folder = new CTabFolder(parent, SWT.BOTTOM);
 
 		final CTabItem item = new CTabItem(folder, SWT.NONE);
@@ -174,7 +175,7 @@ public class VCommandEditor extends AbstractComponentEditor {
 	}
 
 	@Override
-	public IObservableList getChildList(Object element) {
+	public IObservableList<?> getChildList(Object element) {
 		return null;
 	}
 

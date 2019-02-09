@@ -38,12 +38,14 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 
 public class UIViewer {
-	public TreeViewer createViewer(Composite parent, EStructuralFeature feature, final IObservableValue master, IResourcePool resourcePool, final Messages messages) {
+	public TreeViewer createViewer(Composite parent, EStructuralFeature feature, final IObservableValue<?> master,
+			IResourcePool resourcePool, final Messages messages) {
 		final TreeViewer viewer = new TreeViewer(parent);
 		viewer.setContentProvider(new WidgetContentProvider());
 		viewer.setLabelProvider(new WidgetLabelProvider(resourcePool));
 		IEMFValueProperty property = EMFProperties.value(feature);
-		IObservableValue value = property.observeDetail(master);
+		@SuppressWarnings("unchecked")
+		IObservableValue<?> value = property.observeDetail(master);
 		value.addValueChangeListener(event -> {
 			if (event.diff.getNewValue() != null) {
 				viewer.setInput(Collections.singleton(event.diff.getNewValue()));

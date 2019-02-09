@@ -56,6 +56,7 @@ public abstract class AbstractElementEditorContribution {
 	 * @param editingDomain
 	 * @param project
 	 */
-	public abstract void createContributedEditorTab(Composite parent, EMFDataBindingContext context, WritableValue master, EditingDomain editingDomain, IProject project);
+	public abstract void createContributedEditorTab(Composite parent, EMFDataBindingContext context,
+			WritableValue<?> master, EditingDomain editingDomain, IProject project);
 
 }

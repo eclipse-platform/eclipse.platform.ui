@@ -24,6 +24,7 @@ import java.util.Map.Entry;
 import org.eclipse.core.databinding.observable.list.IObservableList;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.e4.tools.emf.ui.internal.E4Properties;
 import org.eclipse.e4.ui.internal.workbench.E4XMIResource;
 import org.eclipse.e4.ui.internal.workbench.E4XMIResourceFactory;
 import org.eclipse.emf.common.command.BasicCommandStack;
@@ -32,7 +33,6 @@ import org.eclipse.emf.common.command.CommandStackListener;
 import org.eclipse.emf.common.command.CompoundCommand;
 import org.eclipse.emf.common.util.TreeIterator;
 import org.eclipse.emf.common.util.URI;
-import org.eclipse.emf.databinding.edit.EMFEditProperties;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
@@ -50,7 +50,7 @@ public class XMIModelResource implements IModelResource {
 	private final Resource resource;
 	private final List<ModelListener> listeners = new ArrayList<>();
 
-	private IObservableList list;
+	private IObservableList<EObject> list;
 
 	public XMIModelResource(URI uri) {
 		final ComposedAdapterFactory adapterFactory = new ComposedAdapterFactory(
@@ -74,12 +74,12 @@ public class XMIModelResource implements IModelResource {
 	}
 
 	@Override
-	public IObservableList getRoot() {
+	public IObservableList<EObject> getRoot() {
 		if (list != null) {
 			return list;
 		}
 
-		list = EMFEditProperties.resource(getEditingDomain()).observe(resource);
+		list = E4Properties.resource(getEditingDomain()).observe(resource);
 
 		return list;
 	}
@@ -97,7 +97,7 @@ public class XMIModelResource implements IModelResource {
 			idMap.put(o, resource.getID(o));
 		}
 
-		resource = (E4XMIResource) ((EObject) list.get(0)).eResource();
+		resource = (E4XMIResource) list.get(0).eResource();
 
 		final Command cmdRemove = new RemoveCommand(getEditingDomain(), resource.getContents(), list.get(0));
 		final Command cmdAdd = new AddCommand(getEditingDomain(), resource.getContents(), eObject);

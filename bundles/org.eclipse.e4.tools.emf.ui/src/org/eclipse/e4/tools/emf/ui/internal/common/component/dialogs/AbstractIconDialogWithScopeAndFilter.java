@@ -273,7 +273,9 @@ public abstract class AbstractIconDialogWithScopeAndFilter extends FilteredContr
 
 		clearImages();
 
-		callback = new IconMatchCallback((IObservableList) getViewer().getInput());
+		@SuppressWarnings("unchecked")
+		IObservableList<Entry> fileList = (IObservableList<Entry>) getViewer().getInput();
+		callback = new IconMatchCallback(fileList);
 		final Filter filter = new Filter(project, getFilterTextBox().getText());
 		filter.setSearchScope(getSearchScopes());
 		filter.setBundles(getFilterBundles());
@@ -317,9 +319,9 @@ public abstract class AbstractIconDialogWithScopeAndFilter extends FilteredContr
 
 	private class IconMatchCallback {
 		private volatile boolean cancel;
-		private final IObservableList list;
+		private final IObservableList<Entry> list;
 
-		private IconMatchCallback(IObservableList list) {
+		private IconMatchCallback(IObservableList<Entry> list) {
 			this.list = list;
 		}
 

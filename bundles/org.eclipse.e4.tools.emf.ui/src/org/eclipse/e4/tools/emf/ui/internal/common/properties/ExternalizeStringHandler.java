@@ -58,13 +58,14 @@ public class ExternalizeStringHandler {
 
 	static class ExtractionDialog extends TitleAreaDialog {
 		private Messages messages;
-		private IObservableList list;
+		private IObservableList<? extends EObject> list;
 		private IResourcePool pool;
 		private IProject project;
 		private CheckboxTableViewer viewer;
 		private IModelResource resource;
 
-		public ExtractionDialog(Shell parentShell, Messages messages, IModelResource resource, IObservableList list, IResourcePool pool, IProject project) {
+		public ExtractionDialog(Shell parentShell, Messages messages, IModelResource resource,
+				IObservableList<? extends EObject> list, IResourcePool pool, IProject project) {
 			super(parentShell);
 			this.messages = messages;
 			this.list = list;

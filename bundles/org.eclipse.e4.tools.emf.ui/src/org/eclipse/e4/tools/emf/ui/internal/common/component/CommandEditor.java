@@ -27,6 +27,7 @@ import org.eclipse.core.databinding.observable.list.IObservableList;
 import org.eclipse.core.databinding.observable.value.IObservableValue;
 import org.eclipse.e4.tools.emf.ui.common.Util;
 import org.eclipse.e4.tools.emf.ui.common.component.AbstractComponentEditor;
+import org.eclipse.e4.tools.emf.ui.internal.E4Properties;
 import org.eclipse.e4.tools.emf.ui.internal.ResourceProvider;
 import org.eclipse.e4.tools.emf.ui.internal.common.AbstractPickList.PickListFeatures;
 import org.eclipse.e4.tools.emf.ui.internal.common.E4PickList;
@@ -40,13 +41,11 @@ import org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl;
 import org.eclipse.emf.common.command.Command;
 import org.eclipse.emf.databinding.EMFDataBindingContext;
 import org.eclipse.emf.databinding.FeaturePath;
-import org.eclipse.emf.databinding.edit.EMFEditProperties;
-import org.eclipse.emf.databinding.edit.IEMFEditListProperty;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.edit.command.AddCommand;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.databinding.swt.IWidgetValueProperty;
-import org.eclipse.jface.databinding.swt.WidgetProperties;
+import org.eclipse.jface.databinding.swt.typed.WidgetProperties;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CTabFolder;
@@ -62,16 +61,13 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 
-public class CommandEditor extends AbstractComponentEditor {
+public class CommandEditor extends AbstractComponentEditor<MCommand> {
 
 	private Composite composite;
 	private EMFDataBindingContext context;
 	private StackLayout stackLayout;
 	private final List<Action> actions = new ArrayList<>();
 	private MessageFormat newCommandParameterName;
-
-	private final IEMFEditListProperty COMMAND__PARAMETERS = EMFEditProperties.list(getEditingDomain(),
-			CommandsPackageImpl.Literals.COMMAND__PARAMETERS);
 
 	@Inject
 	public CommandEditor() {
@@ -135,13 +131,13 @@ public class CommandEditor extends AbstractComponentEditor {
 			}
 		}
 
-		getMaster().setValue(object);
+		getMaster().setValue((MCommand) object);
 		enableIdGenerator(CommandsPackageImpl.Literals.COMMAND__COMMAND_NAME,
 				ApplicationPackageImpl.Literals.APPLICATION_ELEMENT__ELEMENT_ID, null);
 		return composite;
 	}
 
-	private Composite createForm(Composite parent, EMFDataBindingContext context, IObservableValue master,
+	private Composite createForm(Composite parent, EMFDataBindingContext context, IObservableValue<MCommand> master,
 			boolean isImport) {
 		final CTabFolder folder = new CTabFolder(parent, SWT.BOTTOM);
 
@@ -151,7 +147,7 @@ public class CommandEditor extends AbstractComponentEditor {
 		parent = createScrollableContainer(folder);
 		item.setControl(parent.getParent());
 
-		final IWidgetValueProperty textProp = WidgetProperties.text(SWT.Modify);
+		final IWidgetValueProperty<Text, String> textProp = WidgetProperties.text(SWT.Modify);
 
 		if (getEditor().isShowXMIId() || getEditor().isLiveModel()) {
 			ControlFactory.createXMIId(parent, this);
@@ -164,13 +160,12 @@ public class CommandEditor extends AbstractComponentEditor {
 		}
 
 		ControlFactory.createTextField(parent, Messages.ModelTooling_Common_Id,
-				Messages.ModelTooling_CommandId_tooltip, master, context, textProp, EMFEditProperties.value(
-						getEditingDomain(), ApplicationPackageImpl.Literals.APPLICATION_ELEMENT__ELEMENT_ID),
-				Messages.ModelTooling_Empty_Warning);
+				Messages.ModelTooling_CommandId_tooltip, master, context, textProp,
+				E4Properties.elementId(getEditingDomain()), Messages.ModelTooling_Empty_Warning);
 		ControlFactory.createTextField(parent, Messages.CommandEditor_Name, master, context, textProp,
-				EMFEditProperties.value(getEditingDomain(), CommandsPackageImpl.Literals.COMMAND__COMMAND_NAME));
+				E4Properties.commandName(getEditingDomain()));
 		ControlFactory.createTextField(parent, Messages.CommandEditor_LabelDescription, master, context, textProp,
-				EMFEditProperties.value(getEditingDomain(), CommandsPackageImpl.Literals.COMMAND__DESCRIPTION));
+				E4Properties.commandDescription(getEditingDomain()));
 
 		// ------------------------------------------------------------
 		{
@@ -183,19 +178,16 @@ public class CommandEditor extends AbstractComponentEditor {
 			final GridData gd = new GridData(GridData.FILL_HORIZONTAL);
 			t.setLayoutData(gd);
 			t.setEditable(false);
-			context.bindValue(
-					textProp.observeDelayed(200, t),
-					EMFEditProperties.value(
-							getEditingDomain(),
-							FeaturePath.fromList(CommandsPackageImpl.Literals.COMMAND__CATEGORY,
-									ApplicationPackageImpl.Literals.APPLICATION_ELEMENT__ELEMENT_ID)).observeDetail(getMaster()));
+			// TODO: Verify that this works
+			context.bindValue(textProp.observeDelayed(200, t), E4Properties.category()
+					.value(E4Properties.elementId(getEditingDomain())).observeDetail(getMaster()));
 
 			Button b = ControlFactory.createFindButton(parent, resourcePool);
 			b.addSelectionListener(new SelectionAdapter() {
 				@Override
 				public void widgetSelected(SelectionEvent e) {
 					final CommandCategorySelectionDialog dialog = new CommandCategorySelectionDialog(b.getShell(),
-							getEditor().getModelProvider(), (MCommand) getMaster().getValue(), Messages);
+							getEditor().getModelProvider(), getMaster().getValue(), Messages);
 					dialog.open();
 				}
 			});
@@ -221,9 +213,7 @@ public class CommandEditor extends AbstractComponentEditor {
 
 			final TableViewer viewer = pickList.getList();
 
-			final IEMFEditListProperty mProp = EMFEditProperties.list(getEditingDomain(),
-					CommandsPackageImpl.Literals.COMMAND__PARAMETERS);
-			viewer.setInput(mProp.observeDetail(getMaster()));
+			viewer.setInput(E4Properties.commandParameters(getEditingDomain()).observeDetail(getMaster()));
 		}
 
 		item = new CTabItem(folder, SWT.NONE);
@@ -245,8 +235,8 @@ public class CommandEditor extends AbstractComponentEditor {
 	}
 
 	@Override
-	public IObservableList getChildList(Object element) {
-		return COMMAND__PARAMETERS.observe(element);
+	public IObservableList<?> getChildList(Object element) {
+		return E4Properties.commandParameters(getEditingDomain()).observe((MCommand) element);
 	}
 
 	@Override

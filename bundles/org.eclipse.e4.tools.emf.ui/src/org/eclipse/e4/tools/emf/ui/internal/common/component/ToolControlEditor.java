@@ -26,22 +26,21 @@ import org.eclipse.e4.core.di.annotations.Optional;
 import org.eclipse.e4.tools.emf.ui.common.IContributionClassCreator;
 import org.eclipse.e4.tools.emf.ui.common.Util;
 import org.eclipse.e4.tools.emf.ui.common.component.AbstractComponentEditor;
+import org.eclipse.e4.tools.emf.ui.internal.E4Properties;
 import org.eclipse.e4.tools.emf.ui.internal.ResourceProvider;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.ControlFactory.TextPasteHandler;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.dialogs.ContributionClassDialog;
 import org.eclipse.e4.tools.emf.ui.internal.common.objectdata.ObjectViewer;
 import org.eclipse.e4.tools.emf.ui.internal.common.uistructure.UIViewer;
-import org.eclipse.e4.ui.model.application.MContribution;
 import org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl;
 import org.eclipse.e4.ui.model.application.ui.impl.UiPackageImpl;
 import org.eclipse.e4.ui.model.application.ui.menu.MToolControl;
 import org.eclipse.e4.ui.model.application.ui.menu.impl.MenuPackageImpl;
 import org.eclipse.emf.databinding.EMFDataBindingContext;
 import org.eclipse.emf.databinding.FeaturePath;
-import org.eclipse.emf.databinding.edit.EMFEditProperties;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.jface.databinding.swt.IWidgetValueProperty;
-import org.eclipse.jface.databinding.swt.WidgetProperties;
+import org.eclipse.jface.databinding.swt.typed.WidgetProperties;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CTabFolder;
@@ -59,7 +58,7 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Link;
 import org.eclipse.swt.widgets.Text;
 
-public class ToolControlEditor extends AbstractComponentEditor {
+public class ToolControlEditor extends AbstractComponentEditor<MToolControl> {
 	private EMFDataBindingContext context;
 	private Composite composite;
 	private StackLayout stackLayout;
@@ -126,11 +125,12 @@ public class ToolControlEditor extends AbstractComponentEditor {
 			}
 		}
 
-		getMaster().setValue(object);
+		getMaster().setValue((MToolControl) object);
 		return composite;
 	}
 
-	private Composite createForm(Composite parent, EMFDataBindingContext context, WritableValue master, boolean isImport) {
+	private Composite createForm(Composite parent, EMFDataBindingContext context, WritableValue<MToolControl> master,
+			boolean isImport) {
 		final CTabFolder folder = new CTabFolder(parent, SWT.BOTTOM);
 
 		CTabItem item = new CTabItem(folder, SWT.NONE);
@@ -143,7 +143,7 @@ public class ToolControlEditor extends AbstractComponentEditor {
 			ControlFactory.createXMIId(parent, this);
 		}
 
-		final IWidgetValueProperty textProp = WidgetProperties.text(SWT.Modify);
+		final IWidgetValueProperty<Text, String> textProp = WidgetProperties.text(SWT.Modify);
 
 		if (isImport) {
 			ControlFactory.createFindImport(parent, Messages, this, context);
@@ -152,11 +152,9 @@ public class ToolControlEditor extends AbstractComponentEditor {
 		}
 
 		ControlFactory.createTextField(parent, Messages.ModelTooling_Common_Id, master, context, textProp,
-				EMFEditProperties
-				.value(getEditingDomain(), ApplicationPackageImpl.Literals.APPLICATION_ELEMENT__ELEMENT_ID));
+				E4Properties.elementId(getEditingDomain()));
 		ControlFactory.createTextField(parent, Messages.ModelTooling_UIElement_AccessibilityPhrase, getMaster(),
-				context, textProp,
-				EMFEditProperties.value(getEditingDomain(), UiPackageImpl.Literals.UI_ELEMENT__ACCESSIBILITY_PHRASE));
+				context, textProp, E4Properties.accessibilityPhrase(getEditingDomain()));
 
 		// ------------------------------------------------------------
 		{
@@ -169,8 +167,7 @@ public class ToolControlEditor extends AbstractComponentEditor {
 				lnk.addSelectionListener(new SelectionAdapter() {
 					@Override
 					public void widgetSelected(SelectionEvent e) {
-						c.createOpen((MContribution) getMaster().getValue(), getEditingDomain(), project,
-								lnk.getShell());
+						c.createOpen(getMaster().getValue(), getEditingDomain(), project, lnk.getShell());
 					}
 				});
 			} else {
@@ -184,15 +181,14 @@ public class ToolControlEditor extends AbstractComponentEditor {
 			t.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 			context.bindValue(
 					textProp.observeDelayed(200, t),
-					EMFEditProperties.value(getEditingDomain(),
-							ApplicationPackageImpl.Literals.CONTRIBUTION__CONTRIBUTION_URI).observeDetail(master));
+					E4Properties.contributionURI(getEditingDomain()).observeDetail(master));
 
 			Button b = ControlFactory.createFindButton(parent, resourcePool);
 			b.addSelectionListener(new SelectionAdapter() {
 				@Override
 				public void widgetSelected(SelectionEvent e) {
 					final ContributionClassDialog dialog = new ContributionClassDialog(b.getShell(), eclipseContext,
-							getEditingDomain(), (MContribution) getMaster().getValue(),
+							getEditingDomain(), getMaster().getValue(),
 							ApplicationPackageImpl.Literals.CONTRIBUTION__CONTRIBUTION_URI, Messages);
 					dialog.open();
 				}
@@ -200,12 +196,9 @@ public class ToolControlEditor extends AbstractComponentEditor {
 		}
 
 		ControlFactory.createCheckBox(parent, Messages.ModelTooling_UIElement_ToBeRendered, getMaster(), context,
-				WidgetProperties.selection(),
-				EMFEditProperties.value(getEditingDomain(), UiPackageImpl.Literals.UI_ELEMENT__TO_BE_RENDERED));
+				WidgetProperties.buttonSelection(), E4Properties.toBeRendered(getEditingDomain()));
 		ControlFactory.createCheckBox(parent, Messages.ModelTooling_UIElement_Visible, getMaster(), context,
-				WidgetProperties.selection(),
-				EMFEditProperties.value(getEditingDomain(), UiPackageImpl.Literals.UI_ELEMENT__VISIBLE));
-
+				WidgetProperties.buttonSelection(), E4Properties.visible(getEditingDomain()));
 		ControlFactory.createMapProperties(parent, Messages, this, Messages.ModelTooling_Contribution_PersistedState,
 				ApplicationPackageImpl.Literals.APPLICATION_ELEMENT__PERSISTED_STATE, VERTICAL_LIST_WIDGET_INDENT);
 
@@ -260,7 +253,7 @@ public class ToolControlEditor extends AbstractComponentEditor {
 	}
 
 	@Override
-	public IObservableList getChildList(Object element) {
+	public IObservableList<?> getChildList(Object element) {
 		// TODO Auto-generated method stub
 		return null;
 	}

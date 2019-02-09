@@ -54,15 +54,17 @@ public class E4StringPickList extends AbstractPickList {
 
 	private Text text;
 	private Button tiReplace;
-	private AbstractComponentEditor editor;
+	private AbstractComponentEditor<?> editor;
 	private EStructuralFeature feature;
 
 	@Deprecated
-	public E4StringPickList(Composite parent, int flags, List<PickListFeatures> list, Messages messages, AbstractComponentEditor editor, EStructuralFeature feature) {
+	public E4StringPickList(Composite parent, int flags, List<PickListFeatures> list, Messages messages,
+			AbstractComponentEditor<?> editor, EStructuralFeature feature) {
 		this(parent, flags, list, editor, feature);
 	}
 
-	public E4StringPickList(Composite parent, int flags, List<PickListFeatures> list, AbstractComponentEditor editor,
+	public E4StringPickList(Composite parent, int flags, List<PickListFeatures> list,
+			AbstractComponentEditor<?> editor,
 			EStructuralFeature feature) {
 		super(parent, flags, Arrays.asList(PickListFeatures.NO_PICKER), editor);
 
@@ -94,7 +96,7 @@ public class E4StringPickList extends AbstractPickList {
 			}
 		});
 
-		getList().setContentProvider(new ObservableListContentProvider());
+		getList().setContentProvider(new ObservableListContentProvider<>());
 
 		text.addModifyListener(e -> updateUiState());
 
@@ -193,7 +195,7 @@ public class E4StringPickList extends AbstractPickList {
 		if (viewer.getContentProvider() == null || viewer.getInput() == null) {
 			return 0;
 		}
-		return ((ObservableListContentProvider) viewer.getContentProvider()).getElements(viewer.getInput()).length;
+		return ((ObservableListContentProvider<?>) viewer.getContentProvider()).getElements(viewer.getInput()).length;
 	}
 
 	protected Button getReplaceWidget() {

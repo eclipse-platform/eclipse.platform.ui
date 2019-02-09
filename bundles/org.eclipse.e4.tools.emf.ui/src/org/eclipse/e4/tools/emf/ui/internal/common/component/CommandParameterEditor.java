@@ -20,17 +20,16 @@ import org.eclipse.core.databinding.observable.list.IObservableList;
 import org.eclipse.core.databinding.observable.value.WritableValue;
 import org.eclipse.e4.tools.emf.ui.common.Util;
 import org.eclipse.e4.tools.emf.ui.common.component.AbstractComponentEditor;
+import org.eclipse.e4.tools.emf.ui.internal.E4Properties;
 import org.eclipse.e4.tools.emf.ui.internal.ResourceProvider;
 import org.eclipse.e4.ui.model.application.commands.MCommandParameter;
 import org.eclipse.e4.ui.model.application.commands.impl.CommandsPackageImpl;
 import org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl;
 import org.eclipse.emf.databinding.EMFDataBindingContext;
 import org.eclipse.emf.databinding.FeaturePath;
-import org.eclipse.emf.databinding.edit.EMFEditProperties;
-import org.eclipse.emf.databinding.edit.IEMFEditValueProperty;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.jface.databinding.swt.IWidgetValueProperty;
-import org.eclipse.jface.databinding.swt.WidgetProperties;
+import org.eclipse.jface.databinding.swt.typed.WidgetProperties;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.custom.CTabItem;
@@ -41,8 +40,9 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Text;
 
-public class CommandParameterEditor extends AbstractComponentEditor {
+public class CommandParameterEditor extends AbstractComponentEditor<MCommandParameter> {
 	private Composite composite;
 	private EMFDataBindingContext context;
 
@@ -114,11 +114,12 @@ public class CommandParameterEditor extends AbstractComponentEditor {
 			}
 		}
 
-		getMaster().setValue(object);
+		getMaster().setValue((MCommandParameter) object);
 		return composite;
 	}
 
-	private Composite createForm(Composite parent, EMFDataBindingContext context, WritableValue master, boolean isImport) {
+	private Composite createForm(Composite parent, EMFDataBindingContext context,
+			WritableValue<MCommandParameter> master, boolean isImport) {
 		final CTabFolder folder = new CTabFolder(parent, SWT.BOTTOM);
 
 		CTabItem item = new CTabItem(folder, SWT.NONE);
@@ -127,7 +128,7 @@ public class CommandParameterEditor extends AbstractComponentEditor {
 		parent = createScrollableContainer(folder);
 		item.setControl(parent.getParent());
 
-		final IWidgetValueProperty textProp = WidgetProperties.text(SWT.Modify);
+		final IWidgetValueProperty<Text, String> textProp = WidgetProperties.text(SWT.Modify);
 
 		if (getEditor().isShowXMIId() || getEditor().isLiveModel()) {
 			ControlFactory.createXMIId(parent, this);
@@ -140,12 +141,9 @@ public class CommandParameterEditor extends AbstractComponentEditor {
 		}
 
 		ControlFactory.createTextField(parent, Messages.ModelTooling_Common_Id, master, context, textProp,
-				EMFEditProperties
-				.value(getEditingDomain(), ApplicationPackageImpl.Literals.APPLICATION_ELEMENT__ELEMENT_ID),
-				Messages.ModelTooling_Empty_Warning);
+				E4Properties.elementId(getEditingDomain()), Messages.ModelTooling_Empty_Warning);
 		ControlFactory.createTextField(parent, Messages.CommandParameterEditor_Name, master, context, textProp,
-				EMFEditProperties.value(getEditingDomain(), CommandsPackageImpl.Literals.COMMAND_PARAMETER__NAME),
-				Messages.ModelTooling_Empty_Warning);
+				E4Properties.commandParameterName(getEditingDomain()), Messages.ModelTooling_Empty_Warning);
 
 		{
 			final Label l = new Label(parent, SWT.NONE);
@@ -155,11 +153,10 @@ public class CommandParameterEditor extends AbstractComponentEditor {
 			final Button checkbox = new Button(parent, SWT.CHECK);
 			checkbox.setLayoutData(new GridData(GridData.BEGINNING, GridData.BEGINNING, false, false, 2, 1));
 
-			final IEMFEditValueProperty mprop = EMFEditProperties.value(getEditingDomain(),
-					CommandsPackageImpl.Literals.COMMAND_PARAMETER__OPTIONAL);
-			final IWidgetValueProperty uiProp = WidgetProperties.selection();
+			final IWidgetValueProperty<Button, Boolean> uiProp = WidgetProperties.buttonSelection();
 
-			context.bindValue(uiProp.observe(checkbox), mprop.observeDetail(master));
+			context.bindValue(uiProp.observe(checkbox),
+					E4Properties.optional(getEditingDomain()).observeDetail(master));
 		}
 
 		item = new CTabItem(folder, SWT.NONE);
@@ -181,7 +178,7 @@ public class CommandParameterEditor extends AbstractComponentEditor {
 	}
 
 	@Override
-	public IObservableList getChildList(Object element) {
+	public IObservableList<?> getChildList(Object element) {
 		return null;
 	}
 

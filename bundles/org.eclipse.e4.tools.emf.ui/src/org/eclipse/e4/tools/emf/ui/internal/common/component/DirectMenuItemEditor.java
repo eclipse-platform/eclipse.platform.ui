@@ -21,15 +21,15 @@ import org.eclipse.core.databinding.observable.list.IObservableList;
 import org.eclipse.core.databinding.observable.list.WritableList;
 import org.eclipse.core.databinding.observable.value.WritableValue;
 import org.eclipse.e4.core.contexts.IEclipseContext;
+import org.eclipse.e4.tools.emf.ui.internal.E4Properties;
 import org.eclipse.e4.tools.emf.ui.internal.ResourceProvider;
 import org.eclipse.e4.tools.emf.ui.internal.common.objectdata.ObjectViewer;
 import org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl;
-import org.eclipse.e4.ui.model.application.ui.impl.UiPackageImpl;
+import org.eclipse.e4.ui.model.application.ui.MExpression;
+import org.eclipse.e4.ui.model.application.ui.MUIElement;
 import org.eclipse.e4.ui.model.application.ui.menu.MDirectMenuItem;
 import org.eclipse.e4.ui.model.application.ui.menu.impl.MenuPackageImpl;
 import org.eclipse.emf.databinding.EMFDataBindingContext;
-import org.eclipse.emf.databinding.EMFProperties;
-import org.eclipse.emf.databinding.IEMFValueProperty;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CTabFolder;
@@ -39,10 +39,7 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 
-public class DirectMenuItemEditor extends MenuItemEditor {
-	private final IEMFValueProperty UI_ELEMENT__VISIBLE_WHEN = EMFProperties
-			.value(UiPackageImpl.Literals.UI_ELEMENT__VISIBLE_WHEN);
-
+public class DirectMenuItemEditor extends MenuItemEditor<MDirectMenuItem> {
 	@Inject
 	IEclipseContext eclipseContext;
 
@@ -57,7 +54,8 @@ public class DirectMenuItemEditor extends MenuItemEditor {
 	}
 
 	@Override
-	protected CTabFolder createForm(Composite parent, EMFDataBindingContext context, WritableValue master,
+	protected CTabFolder createForm(Composite parent, EMFDataBindingContext context,
+			WritableValue<MDirectMenuItem> master,
 			boolean isImport) {
 		if (!isImport) {
 			final CTabFolder folder = super.createForm(parent, context, master, isImport);
@@ -92,7 +90,8 @@ public class DirectMenuItemEditor extends MenuItemEditor {
 	}
 
 	@Override
-	protected void createFormSubTypeForm(Composite parent, EMFDataBindingContext context, WritableValue master) {
+	protected void createFormSubTypeForm(Composite parent, EMFDataBindingContext context,
+			WritableValue<MDirectMenuItem> master) {
 
 		ControlFactory.createClassURIField(parent, Messages, this, Messages.DirectMenuItemEditor_ClassURI,
 				ApplicationPackageImpl.Literals.CONTRIBUTION__CONTRIBUTION_URI,
@@ -102,14 +101,15 @@ public class DirectMenuItemEditor extends MenuItemEditor {
 	}
 
 	@Override
-	public IObservableList getChildList(Object element) {
-		final WritableList list = new WritableList();
+	public IObservableList<?> getChildList(Object element) {
+		final WritableList<MExpression> list = new WritableList<>();
+		MUIElement uiElement = (MUIElement) element;
 
-		if (((MDirectMenuItem) element).getVisibleWhen() != null) {
-			list.add(0, ((MDirectMenuItem) element).getVisibleWhen());
+		if (uiElement.getVisibleWhen() != null) {
+			list.add(0, uiElement.getVisibleWhen());
 		}
 
-		UI_ELEMENT__VISIBLE_WHEN.observe(element).addValueChangeListener(event -> {
+		E4Properties.visibleWhen().observe(uiElement).addValueChangeListener(event -> {
 			if (event.diff.getOldValue() != null) {
 				list.remove(event.diff.getOldValue());
 			}

@@ -20,7 +20,7 @@ import org.eclipse.e4.ui.model.application.commands.MCommand;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.resource.Resource;
 
-public class CommandToStringConverter extends Converter {
+public class CommandToStringConverter extends Converter<MCommand, String> {
 	private final Messages Messages;
 
 	public CommandToStringConverter(Messages Messages) {
@@ -29,8 +29,7 @@ public class CommandToStringConverter extends Converter {
 	}
 
 	@Override
-	public Object convert(Object fromObject) {
-		final MCommand cmd = (MCommand) fromObject;
+	public String convert(MCommand cmd) {
 		String elementId = null;
 		if (cmd != null && cmd.getElementId() != null && cmd.getElementId().trim().length() > 0) {
 			elementId = cmd.getElementId();

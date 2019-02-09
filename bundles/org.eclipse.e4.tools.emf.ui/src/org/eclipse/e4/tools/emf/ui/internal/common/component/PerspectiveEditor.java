@@ -24,20 +24,19 @@ import javax.inject.Inject;
 import org.eclipse.core.databinding.observable.list.IObservableList;
 import org.eclipse.core.databinding.observable.list.WritableList;
 import org.eclipse.core.databinding.observable.value.WritableValue;
-import org.eclipse.core.databinding.property.list.IListProperty;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.di.annotations.Optional;
 import org.eclipse.e4.tools.emf.ui.common.ImageTooltip;
 import org.eclipse.e4.tools.emf.ui.common.Util;
 import org.eclipse.e4.tools.emf.ui.common.component.AbstractComponentEditor;
+import org.eclipse.e4.tools.emf.ui.internal.E4Properties;
 import org.eclipse.e4.tools.emf.ui.internal.ResourceProvider;
 import org.eclipse.e4.tools.emf.ui.internal.common.ModelEditor;
 import org.eclipse.e4.tools.emf.ui.internal.common.VirtualEntry;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.ControlFactory.TextPasteHandler;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.dialogs.PerspectiveIconDialogEditor;
 import org.eclipse.e4.tools.emf.ui.internal.common.uistructure.UIViewer;
-import org.eclipse.e4.ui.model.application.commands.impl.CommandsPackageImpl;
 import org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl;
 import org.eclipse.e4.ui.model.application.ui.MUILabel;
 import org.eclipse.e4.ui.model.application.ui.advanced.MPerspective;
@@ -46,16 +45,14 @@ import org.eclipse.e4.ui.model.application.ui.basic.impl.BasicPackageImpl;
 import org.eclipse.e4.ui.model.application.ui.impl.UiPackageImpl;
 import org.eclipse.emf.common.command.Command;
 import org.eclipse.emf.databinding.EMFDataBindingContext;
-import org.eclipse.emf.databinding.EMFProperties;
 import org.eclipse.emf.databinding.FeaturePath;
-import org.eclipse.emf.databinding.edit.EMFEditProperties;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.emf.edit.command.AddCommand;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.databinding.swt.IWidgetValueProperty;
-import org.eclipse.jface.databinding.swt.WidgetProperties;
+import org.eclipse.jface.databinding.swt.typed.WidgetProperties;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CTabFolder;
@@ -72,16 +69,9 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 
-public class PerspectiveEditor extends AbstractComponentEditor {
+public class PerspectiveEditor extends AbstractComponentEditor<MPerspective> {
 	private Composite composite;
 	private EMFDataBindingContext context;
-
-	private final IListProperty ELEMENT_CONTAINER__CHILDREN = EMFProperties
-			.list(UiPackageImpl.Literals.ELEMENT_CONTAINER__CHILDREN);
-	private final IListProperty PERSPECTIVE__WINDOWS = EMFProperties
-			.list(AdvancedPackageImpl.Literals.PERSPECTIVE__WINDOWS);
-	private final IListProperty HANDLER_CONTAINER__HANDLERS = EMFProperties
-			.list(CommandsPackageImpl.Literals.HANDLER_CONTAINER__HANDLERS);
 	private StackLayout stackLayout;
 	private final List<Action> actions = new ArrayList<>();
 
@@ -190,14 +180,14 @@ public class PerspectiveEditor extends AbstractComponentEditor {
 			}
 		}
 
-		getMaster().setValue(object);
+		getMaster().setValue((MPerspective) object);
 		enableIdGenerator(UiPackageImpl.Literals.UI_LABEL__LABEL,
 				ApplicationPackageImpl.Literals.APPLICATION_ELEMENT__ELEMENT_ID, null);
 		return composite;
 	}
 
-	private Composite createForm(Composite parent, final EMFDataBindingContext context, WritableValue master,
-			boolean isImport) {
+	private Composite createForm(Composite parent, final EMFDataBindingContext context,
+			WritableValue<MPerspective> master, boolean isImport) {
 		final CTabFolder folder = new CTabFolder(parent, SWT.BOTTOM);
 
 		CTabItem item = new CTabItem(folder, SWT.NONE);
@@ -210,7 +200,7 @@ public class PerspectiveEditor extends AbstractComponentEditor {
 			ControlFactory.createXMIId(parent, this);
 		}
 
-		final IWidgetValueProperty textProp = WidgetProperties.text(SWT.Modify);
+		final IWidgetValueProperty<Text, String> textProp = WidgetProperties.text(SWT.Modify);
 
 		if (isImport) {
 			ControlFactory.createFindImport(parent, Messages, this, context);
@@ -219,18 +209,14 @@ public class PerspectiveEditor extends AbstractComponentEditor {
 		}
 
 		ControlFactory.createTextField(parent, Messages.ModelTooling_Common_Id, master, context, textProp,
-				EMFEditProperties
-				.value(getEditingDomain(), ApplicationPackageImpl.Literals.APPLICATION_ELEMENT__ELEMENT_ID));
+				E4Properties.elementId(getEditingDomain()));
 		ControlFactory.createTextField(parent, Messages.ModelTooling_UIElement_AccessibilityPhrase, getMaster(),
-				context, textProp,
-				EMFEditProperties.value(getEditingDomain(), UiPackageImpl.Literals.UI_ELEMENT__ACCESSIBILITY_PHRASE));
+				context, textProp, E4Properties.accessibilityPhrase(getEditingDomain()));
 		ControlFactory.createSelectedElement(parent, this, context, Messages.PerspectiveEditor_SelectedElement);
 		ControlFactory.createTranslatedTextField(parent, Messages.PerspectiveEditor_LabelLabel, getMaster(), context,
-				textProp, EMFEditProperties.value(getEditingDomain(), UiPackageImpl.Literals.UI_LABEL__LABEL),
-				resourcePool, project);
+				textProp, E4Properties.label(getEditingDomain()), resourcePool, project);
 		ControlFactory.createTranslatedTextField(parent, Messages.PerspectiveEditor_Tooltip, getMaster(), context,
-				textProp, EMFEditProperties.value(getEditingDomain(), UiPackageImpl.Literals.UI_LABEL__TOOLTIP),
-				resourcePool, project);
+				textProp, E4Properties.tooltip(getEditingDomain()), resourcePool, project);
 
 		// ------------------------------------------------------------
 		{
@@ -243,8 +229,7 @@ public class PerspectiveEditor extends AbstractComponentEditor {
 			t.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 			context.bindValue(
 					textProp.observeDelayed(200, t),
-					EMFEditProperties.value(getEditingDomain(), UiPackageImpl.Literals.UI_LABEL__ICON_URI).observeDetail(
-							master));
+					E4Properties.iconUri(getEditingDomain()).observeDetail(master));
 
 			new ImageTooltip(t, Messages, this);
 
@@ -253,18 +238,16 @@ public class PerspectiveEditor extends AbstractComponentEditor {
 				@Override
 				public void widgetSelected(SelectionEvent e) {
 					final PerspectiveIconDialogEditor dialog = new PerspectiveIconDialogEditor(b.getShell(),
-							eclipseContext, project, getEditingDomain(), (MPerspective) getMaster().getValue(), Messages);
+							eclipseContext, project, getEditingDomain(), getMaster().getValue(), Messages);
 					dialog.open();
 				}
 			});
 		}
 
 		ControlFactory.createCheckBox(parent, Messages.ModelTooling_UIElement_ToBeRendered, getMaster(), context,
-				WidgetProperties.selection(),
-				EMFEditProperties.value(getEditingDomain(), UiPackageImpl.Literals.UI_ELEMENT__TO_BE_RENDERED));
+				WidgetProperties.buttonSelection(), E4Properties.toBeRendered(getEditingDomain()));
 		ControlFactory.createCheckBox(parent, Messages.ModelTooling_UIElement_Visible, getMaster(), context,
-				WidgetProperties.selection(),
-				EMFEditProperties.value(getEditingDomain(), UiPackageImpl.Literals.UI_ELEMENT__VISIBLE));
+				WidgetProperties.buttonSelection(), E4Properties.visible(getEditingDomain()));
 
 		final Composite comp0 = ControlFactory.createMapProperties(parent, Messages, this,
 				Messages.ModelTooling_Context_Properties, UiPackageImpl.Literals.CONTEXT__PROPERTIES,
@@ -312,35 +295,16 @@ public class PerspectiveEditor extends AbstractComponentEditor {
 	}
 
 	@Override
-	public IObservableList getChildList(Object element) {
-		final WritableList list = new WritableList();
+	public IObservableList<?> getChildList(Object element) {
+		final WritableList<VirtualEntry<MPerspective, ?>> list = new WritableList<>();
+		MPerspective perspective = (MPerspective) element;
 
-		list.add(new VirtualEntry<Object>(ModelEditor.VIRTUAL_HANDLER, HANDLER_CONTAINER__HANDLERS,
-				element, Messages.WindowEditor_Handlers) {
-
-			@Override
-			protected boolean accepted(Object o) {
-				return true;
-			}
-		});
-
-		list.add(new VirtualEntry<Object>(ModelEditor.VIRTUAL_PERSPECTIVE_WINDOWS, PERSPECTIVE__WINDOWS, element,
-				Messages.WindowEditor_Windows) {
-
-			@Override
-			protected boolean accepted(Object o) {
-				return true;
-			}
-		});
-
-		list.add(new VirtualEntry<Object>(ModelEditor.VIRTUAL_PERSPECTIVE_CONTROLS, ELEMENT_CONTAINER__CHILDREN,
-				element, Messages.PerspectiveEditor_Controls) {
-
-			@Override
-			protected boolean accepted(Object o) {
-				return true;
-			}
-		});
+		list.add(new VirtualEntry<>(ModelEditor.VIRTUAL_HANDLER, E4Properties.handlers(), perspective,
+				Messages.WindowEditor_Handlers));
+		list.add(new VirtualEntry<>(ModelEditor.VIRTUAL_PERSPECTIVE_WINDOWS, E4Properties.perspectiveWindows(), perspective,
+				Messages.WindowEditor_Windows));
+		list.add(new VirtualEntry<>(ModelEditor.VIRTUAL_PERSPECTIVE_CONTROLS, E4Properties.children(), perspective,
+				Messages.PerspectiveEditor_Controls));
 
 		return list;
 	}

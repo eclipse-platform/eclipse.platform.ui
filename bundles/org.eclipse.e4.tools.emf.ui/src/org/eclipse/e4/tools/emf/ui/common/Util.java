@@ -400,7 +400,7 @@ public class Util {
 	public static final void addDecoration(Control control, Binding binding) {
 		final ControlDecoration dec = new ControlDecoration(control, SWT.BOTTOM);
 		binding.getValidationStatus().addValueChangeListener(event -> {
-			final IStatus s = (IStatus) event.getObservableValue().getValue();
+			final IStatus s = event.getObservableValue().getValue();
 			if (s.isOK()) {
 				dec.setDescriptionText(null);
 				dec.setImage(null);

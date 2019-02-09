@@ -16,6 +16,7 @@ package org.eclipse.e4.tools.emf.ui.internal.common;
 
 import java.util.ArrayList;
 import java.util.List;
+
 import org.eclipse.e4.tools.emf.ui.common.IModelResource;
 import org.eclipse.e4.tools.emf.ui.internal.common.xml.EMFDocumentResourceMediator;
 import org.eclipse.e4.ui.internal.workbench.E4XMIResource;
@@ -48,9 +49,9 @@ public class TreeViewerEx extends TreeViewer {
 			public void documentChanged(DocumentEvent event) {
 				try {
 					// restore Nodes from XmiIds
-					E4XMIResource xmiResource = (E4XMIResource) ((EObject) modelProvider.getRoot().get(0)).eResource();
+					E4XMIResource xmiResource = (E4XMIResource) modelProvider.getRoot().get(0).eResource();
 					ArrayList<Object> newElements = new ArrayList<>();
-					ObservableListTreeContentProvider provider = (ObservableListTreeContentProvider) getContentProvider();
+					ObservableListTreeContentProvider<?> provider = (ObservableListTreeContentProvider<?>) getContentProvider();
 					Object[] children = new Object[] { modelProvider.getRoot().get(0) };
 					for (String id : elementsIds) {
 						EObject eObject = xmiResource.getEObject(id);
@@ -90,7 +91,7 @@ public class TreeViewerEx extends TreeViewer {
 					// Stash XmiIds
 					Object[] elements = getExpandedElements();
 					List<?> selected = ((IStructuredSelection) getSelection()).toList();
-					E4XMIResource xmiResource = (E4XMIResource) ((EObject) modelProvider.getRoot().get(0)).eResource();
+					E4XMIResource xmiResource = (E4XMIResource) modelProvider.getRoot().get(0).eResource();
 					elementsIds = new ArrayList<>();
 					selectedIds = new ArrayList<>();
 					for (Object obj : elements) {
@@ -112,7 +113,8 @@ public class TreeViewerEx extends TreeViewer {
 
 	// This will ensure the provider has created the tree node (so we can reveal
 	// it).
-	static public Object getFirstMatchingItem(EObject target, ObservableListTreeContentProvider provider, Object[] items) {
+	static public Object getFirstMatchingItem(EObject target, ObservableListTreeContentProvider<?> provider,
+			Object[] items) {
 		for (int i = 0; i < items.length; i++) {
 			if (items[i] == target) {
 				return items[i];

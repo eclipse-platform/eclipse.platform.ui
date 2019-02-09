@@ -25,10 +25,10 @@ import javax.inject.Inject;
 
 import org.eclipse.core.databinding.observable.list.IObservableList;
 import org.eclipse.core.databinding.observable.list.WritableList;
-import org.eclipse.core.databinding.property.list.IListProperty;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.e4.core.di.annotations.Optional;
 import org.eclipse.e4.tools.emf.ui.common.component.AbstractComponentEditor;
+import org.eclipse.e4.tools.emf.ui.internal.E4Properties;
 import org.eclipse.e4.tools.emf.ui.internal.ResourceProvider;
 import org.eclipse.e4.tools.emf.ui.internal.common.ComponentLabelProvider;
 import org.eclipse.e4.tools.emf.ui.internal.common.ModelEditor;
@@ -40,7 +40,6 @@ import org.eclipse.e4.ui.model.application.commands.MHandler;
 import org.eclipse.e4.ui.model.application.commands.MKeyBinding;
 import org.eclipse.e4.ui.model.application.commands.impl.CommandsFactoryImpl;
 import org.eclipse.e4.ui.model.application.commands.impl.CommandsPackageImpl;
-import org.eclipse.e4.ui.model.application.descriptor.basic.impl.BasicPackageImpl;
 import org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl;
 import org.eclipse.e4.ui.model.application.ui.impl.UiPackageImpl;
 import org.eclipse.e4.ui.model.application.ui.menu.ItemType;
@@ -49,15 +48,13 @@ import org.eclipse.e4.ui.model.application.ui.menu.MToolBar;
 import org.eclipse.e4.ui.model.application.ui.menu.impl.MenuPackageImpl;
 import org.eclipse.emf.common.command.CompoundCommand;
 import org.eclipse.emf.databinding.EMFDataBindingContext;
-import org.eclipse.emf.databinding.EMFProperties;
 import org.eclipse.emf.databinding.FeaturePath;
-import org.eclipse.emf.databinding.edit.EMFEditProperties;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.emf.edit.command.AddCommand;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.databinding.swt.IWidgetValueProperty;
-import org.eclipse.jface.databinding.swt.WidgetProperties;
+import org.eclipse.jface.databinding.swt.typed.WidgetProperties;
 import org.eclipse.jface.resource.FontDescriptor;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.ArrayContentProvider;
@@ -83,38 +80,10 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 
-public class ApplicationEditor extends AbstractComponentEditor {
+public class ApplicationEditor extends AbstractComponentEditor<MApplication> {
 
 	private Composite composite;
 	private EMFDataBindingContext context;
-
-	private final IListProperty HANDLER_CONTAINER__HANDLERS = EMFProperties
-			.list(CommandsPackageImpl.Literals.HANDLER_CONTAINER__HANDLERS);
-	private final IListProperty BINDING_CONTAINER__BINDINGS = EMFProperties
-			.list(CommandsPackageImpl.Literals.BINDING_TABLE_CONTAINER__BINDING_TABLES);
-	private final IListProperty APPLICATION__COMMANDS = EMFProperties
-			.list(ApplicationPackageImpl.Literals.APPLICATION__COMMANDS);
-	// private IListProperty APPLICATION__DIALOGS =
-	// EMFProperties.list(ApplicationPackageImpl.Literals.APPLICATION__DIALOGS);
-	private final IListProperty PART_DESCRIPTOR_CONTAINER__DESCRIPTORS = EMFProperties
-			.list(BasicPackageImpl.Literals.PART_DESCRIPTOR_CONTAINER__DESCRIPTORS);
-	private final IListProperty ELEMENT_CONTAINER__CHILDREN = EMFProperties
-			.list(UiPackageImpl.Literals.ELEMENT_CONTAINER__CHILDREN);
-	private final IListProperty APPLICATION__ADDONS = EMFProperties
-			.list(ApplicationPackageImpl.Literals.APPLICATION__ADDONS);
-	private final IListProperty MENU_CONTRIBUTIONS = EMFProperties
-			.list(MenuPackageImpl.Literals.MENU_CONTRIBUTIONS__MENU_CONTRIBUTIONS);
-	private final IListProperty TOOLBAR_CONTRIBUTIONS = EMFProperties
-			.list(MenuPackageImpl.Literals.TOOL_BAR_CONTRIBUTIONS__TOOL_BAR_CONTRIBUTIONS);
-	private final IListProperty TRIM_CONTRIBUTIONS = EMFProperties
-			.list(MenuPackageImpl.Literals.TRIM_CONTRIBUTIONS__TRIM_CONTRIBUTIONS);
-	private final IListProperty APPLICATION__SNIPPETS = EMFProperties
-			.list(UiPackageImpl.Literals.SNIPPET_CONTAINER__SNIPPETS);
-	private final IListProperty APPLICATION__CATEGORIES = EMFProperties
-			.list(ApplicationPackageImpl.Literals.APPLICATION__CATEGORIES);
-
-	private final IListProperty BINDING_TABLE_CONTAINER__ROOT_CONTEXT = EMFProperties
-			.list(CommandsPackageImpl.Literals.BINDING_TABLE_CONTAINER__ROOT_CONTEXT);
 
 	@Inject
 	@Optional
@@ -143,8 +112,7 @@ public class ApplicationEditor extends AbstractComponentEditor {
 	}
 
 	void doCreateCommandWizard() {
-		final WizardDialog dialog = new WizardDialog(composite.getShell(), new CommandWizard((MApplication) getMaster()
-				.getValue()));
+		final WizardDialog dialog = new WizardDialog(composite.getShell(), new CommandWizard(getMaster().getValue()));
 		dialog.open();
 	}
 
@@ -169,7 +137,7 @@ public class ApplicationEditor extends AbstractComponentEditor {
 			context = new EMFDataBindingContext();
 			composite = createForm(parent, context);
 		}
-		getMaster().setValue(object);
+		getMaster().setValue((MApplication) object);
 
 		return composite;
 	}
@@ -183,25 +151,22 @@ public class ApplicationEditor extends AbstractComponentEditor {
 		parent = createScrollableContainer(folder);
 		item.setControl(parent.getParent());
 
-		final IWidgetValueProperty textProp = WidgetProperties.text(SWT.Modify);
+		final IWidgetValueProperty<Text, String> textProp = WidgetProperties.text(SWT.Modify);
 
 		if (getEditor().isShowXMIId() || getEditor().isLiveModel()) {
 			ControlFactory.createXMIId(parent, this);
 		}
 
 		ControlFactory.createTextField(parent, Messages.ModelTooling_Common_Id, getMaster(), context, textProp,
-				EMFEditProperties
-				.value(getEditingDomain(), ApplicationPackageImpl.Literals.APPLICATION_ELEMENT__ELEMENT_ID));
+				E4Properties.elementId(getEditingDomain()));
 
 		ControlFactory.createBindingContextWiget(parent, Messages, this, Messages.ApplicationEditor_BindingContexts);
 		ControlFactory.createMapProperties(parent, Messages, this, Messages.ModelTooling_Context_Properties,
 				UiPackageImpl.Literals.CONTEXT__PROPERTIES, VERTICAL_LIST_WIDGET_INDENT);
 		ControlFactory.createCheckBox(parent, Messages.ModelTooling_UIElement_ToBeRendered, getMaster(), context,
-				WidgetProperties.selection(),
-				EMFEditProperties.value(getEditingDomain(), UiPackageImpl.Literals.UI_ELEMENT__TO_BE_RENDERED));
+				WidgetProperties.buttonSelection(), E4Properties.toBeRendered(getEditingDomain()));
 		ControlFactory.createCheckBox(parent, Messages.ModelTooling_UIElement_Visible, getMaster(), context,
-				WidgetProperties.selection(),
-				EMFEditProperties.value(getEditingDomain(), UiPackageImpl.Literals.UI_ELEMENT__VISIBLE));
+				WidgetProperties.buttonSelection(), E4Properties.visible(getEditingDomain()));
 
 		item = new CTabItem(folder, SWT.NONE);
 		item.setText(Messages.ModelTooling_Common_TabSupplementary);
@@ -210,8 +175,7 @@ public class ApplicationEditor extends AbstractComponentEditor {
 		item.setControl(parent.getParent());
 
 		ControlFactory.createTextField(parent, Messages.ModelTooling_UIElement_AccessibilityPhrase, getMaster(),
-				context, textProp,
-				EMFEditProperties.value(getEditingDomain(), UiPackageImpl.Literals.UI_ELEMENT__ACCESSIBILITY_PHRASE));
+				context, textProp, E4Properties.accessibilityPhrase(getEditingDomain()));
 		ControlFactory.createStringListWidget(parent, Messages, this, Messages.ModelTooling_Context_Variables,
 				UiPackageImpl.Literals.CONTEXT__VARIABLES, VERTICAL_LIST_WIDGET_INDENT);
 		ControlFactory.createStringListWidget(parent, Messages, this, Messages.AddonsEditor_Tags,
@@ -244,118 +208,34 @@ public class ApplicationEditor extends AbstractComponentEditor {
 	}
 
 	@Override
-	public IObservableList getChildList(final Object element) {
-		final WritableList list = new WritableList();
-		list.add(new VirtualEntry<Object>(ModelEditor.VIRTUAL_ADDONS, APPLICATION__ADDONS, element,
-				Messages.ApplicationEditor_Addons) {
+	public IObservableList<?> getChildList(final Object element) {
+		final WritableList<VirtualEntry<MApplication, ?>> list = new WritableList<>();
 
-			@Override
-			protected boolean accepted(Object o) {
-				return true;
-			}
-
-		});
-
-		list.add(new VirtualEntry<Object>(ModelEditor.VIRTUAL_ROOT_CONTEXTS, BINDING_TABLE_CONTAINER__ROOT_CONTEXT,
-				element, Messages.ApplicationEditor_RootContexts) {
-
-			@Override
-			protected boolean accepted(Object o) {
-				return true;
-			}
-
-		});
-
-		list.add(new VirtualEntry<Object>(ModelEditor.VIRTUAL_BINDING_TABLE, BINDING_CONTAINER__BINDINGS, element,
-				Messages.ApplicationEditor_BindingTables) {
-
-			@Override
-			protected boolean accepted(Object o) {
-				return true;
-			}
-
-		});
-
-		list.add(new VirtualEntry<Object>(ModelEditor.VIRTUAL_HANDLER, HANDLER_CONTAINER__HANDLERS, element,
-				Messages.ApplicationEditor_Handlers) {
-
-			@Override
-			protected boolean accepted(Object o) {
-				return true;
-			}
-
-		});
-
-		list.add(new VirtualEntry<Object>(ModelEditor.VIRTUAL_COMMAND, APPLICATION__COMMANDS, element,
-				Messages.ApplicationEditor_Commands) {
-
-			@Override
-			protected boolean accepted(Object o) {
-				return true;
-			}
-		});
-
-		list.add(new VirtualEntry<Object>(ModelEditor.VIRTUAL_CATEGORIES, APPLICATION__CATEGORIES, element,
-				Messages.ApplicationEditor_Categories) {
-
-			@Override
-			protected boolean accepted(Object o) {
-				return true;
-			}
-		});
-
-		list.add(new VirtualEntry<Object>(ModelEditor.VIRTUAL_APPLICATION_WINDOWS, ELEMENT_CONTAINER__CHILDREN,
-				element, Messages.ApplicationEditor_Windows) {
-
-			@Override
-			protected boolean accepted(Object o) {
-				return true;
-			}
-
-		});
-
-		list.add(new VirtualEntry<Object>(ModelEditor.VIRTUAL_PART_DESCRIPTORS, PART_DESCRIPTOR_CONTAINER__DESCRIPTORS,
-				element, Messages.ApplicationEditor_PartDescriptors) {
-
-			@Override
-			protected boolean accepted(Object o) {
-				return true;
-			}
-
-		});
-
-		list.add(new VirtualEntry<Object>(ModelEditor.VIRTUAL_MENU_CONTRIBUTIONS, MENU_CONTRIBUTIONS, element,
-				Messages.ApplicationEditor_MenuContributions) {
-			@Override
-			protected boolean accepted(Object o) {
-				return true;
-			}
-		});
-
-		list.add(new VirtualEntry<Object>(ModelEditor.VIRTUAL_TOOLBAR_CONTRIBUTIONS, TOOLBAR_CONTRIBUTIONS, element,
-				Messages.ApplicationEditor_ToolBarContributions) {
-			@Override
-			protected boolean accepted(Object o) {
-				return true;
-			}
-		});
-
-		list.add(new VirtualEntry<Object>(ModelEditor.VIRTUAL_TRIM_CONTRIBUTIONS, TRIM_CONTRIBUTIONS, element,
-				Messages.ApplicationEditor_TrimContributions) {
-			@Override
-			protected boolean accepted(Object o) {
-				return true;
-			}
-		});
-		list.add(new VirtualEntry<Object>(ModelEditor.VIRTUAL_SNIPPETS, APPLICATION__SNIPPETS, element,
-				Messages.ApplicationEditor_Snippets) {
-			@Override
-			protected boolean accepted(Object o) {
-				return true;
-			}
-		});
-		//
-		// MApplication application = (MApplication) element;
+		MApplication application = (MApplication) element;
+		list.add(new VirtualEntry<>(ModelEditor.VIRTUAL_ADDONS, E4Properties.addons(), application,
+				Messages.ApplicationEditor_Addons));
+		list.add(new VirtualEntry<>(ModelEditor.VIRTUAL_ROOT_CONTEXTS, E4Properties.rootContext(), application,
+				Messages.ApplicationEditor_RootContexts));
+		list.add(new VirtualEntry<>(ModelEditor.VIRTUAL_BINDING_TABLE, E4Properties.bindingTables(), application,
+				Messages.ApplicationEditor_BindingTables));
+		list.add(new VirtualEntry<>(ModelEditor.VIRTUAL_HANDLER, E4Properties.handlers(), application,
+				Messages.ApplicationEditor_Handlers));
+		list.add(new VirtualEntry<>(ModelEditor.VIRTUAL_COMMAND, E4Properties.applicationCommands(), application,
+				Messages.ApplicationEditor_Commands));
+		list.add(new VirtualEntry<>(ModelEditor.VIRTUAL_CATEGORIES, E4Properties.categories(), application,
+				Messages.ApplicationEditor_Categories));
+		list.add(new VirtualEntry<>(ModelEditor.VIRTUAL_APPLICATION_WINDOWS, E4Properties.children(), application,
+				Messages.ApplicationEditor_Windows));
+		list.add(new VirtualEntry<>(ModelEditor.VIRTUAL_PART_DESCRIPTORS, E4Properties.descriptors(), application,
+				Messages.ApplicationEditor_PartDescriptors));
+		list.add(new VirtualEntry<>(ModelEditor.VIRTUAL_MENU_CONTRIBUTIONS, E4Properties.menuContributions(),
+				application, Messages.ApplicationEditor_MenuContributions));
+		list.add(new VirtualEntry<>(ModelEditor.VIRTUAL_TOOLBAR_CONTRIBUTIONS, E4Properties.toolBarContributions(),
+				application, Messages.ApplicationEditor_ToolBarContributions));
+		list.add(new VirtualEntry<>(ModelEditor.VIRTUAL_TRIM_CONTRIBUTIONS, E4Properties.trimContributions(),
+				application, Messages.ApplicationEditor_TrimContributions));
+		list.add(new VirtualEntry<>(ModelEditor.VIRTUAL_SNIPPETS, E4Properties.snippets(), application,
+				Messages.ApplicationEditor_Snippets));
 		// if (application.getRootContext() != null) {
 		// list.add(0, application.getRootContext());
 		// }
@@ -766,7 +646,7 @@ public class ApplicationEditor extends AbstractComponentEditor {
 
 			String label = ""; //$NON-NLS-1$
 			Image img = null;
-			AbstractComponentEditor elementEditor = getEditor().getEditor(o.eClass());
+			AbstractComponentEditor<?> elementEditor = getEditor().getEditor(o.eClass());
 			if (elementEditor != null) {
 				label = elementEditor.getDetailLabel(o);
 				label = label == null ? elementEditor.getLabel(o) : label;

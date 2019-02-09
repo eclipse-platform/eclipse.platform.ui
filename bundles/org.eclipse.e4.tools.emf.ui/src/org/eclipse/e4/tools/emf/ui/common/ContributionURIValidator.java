@@ -20,7 +20,7 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.e4.tools.emf.ui.internal.Messages;
 import org.eclipse.emf.common.util.URI;
 
-public class ContributionURIValidator implements IValidator {
+public class ContributionURIValidator implements IValidator<Object> {
 
 	@Override
 	public IStatus validate(Object value) {

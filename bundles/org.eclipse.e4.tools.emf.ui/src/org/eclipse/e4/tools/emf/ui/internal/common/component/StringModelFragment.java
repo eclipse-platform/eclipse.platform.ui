@@ -27,7 +27,6 @@ import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 
 import org.eclipse.core.databinding.observable.list.IObservableList;
-import org.eclipse.core.databinding.property.list.IListProperty;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.emf.xpath.EcoreXPathContextFactory;
 import org.eclipse.e4.emf.xpath.XPathContext;
@@ -36,6 +35,7 @@ import org.eclipse.e4.tools.emf.ui.common.IEditorFeature.FeatureClass;
 import org.eclipse.e4.tools.emf.ui.common.Util;
 import org.eclipse.e4.tools.emf.ui.common.Util.InternalPackage;
 import org.eclipse.e4.tools.emf.ui.common.component.AbstractComponentEditor;
+import org.eclipse.e4.tools.emf.ui.internal.E4Properties;
 import org.eclipse.e4.tools.emf.ui.internal.ResourceProvider;
 import org.eclipse.e4.tools.emf.ui.internal.common.AbstractPickList.PickListFeatures;
 import org.eclipse.e4.tools.emf.ui.internal.common.E4PickList;
@@ -48,6 +48,7 @@ import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.MApplicationElement;
 import org.eclipse.e4.ui.model.application.impl.ApplicationElementImpl;
 import org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl;
+import org.eclipse.e4.ui.model.fragment.MModelFragment;
 import org.eclipse.e4.ui.model.fragment.MStringModelFragment;
 import org.eclipse.e4.ui.model.fragment.impl.FragmentPackageImpl;
 import org.eclipse.e4.ui.model.fragment.impl.StringModelFragmentImpl;
@@ -55,10 +56,7 @@ import org.eclipse.e4.ui.model.internal.ModelUtils;
 import org.eclipse.emf.common.command.Command;
 import org.eclipse.emf.common.util.TreeIterator;
 import org.eclipse.emf.databinding.EMFDataBindingContext;
-import org.eclipse.emf.databinding.EMFProperties;
 import org.eclipse.emf.databinding.FeaturePath;
-import org.eclipse.emf.databinding.IEMFListProperty;
-import org.eclipse.emf.databinding.edit.EMFEditProperties;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EClassifier;
 import org.eclipse.emf.ecore.EObject;
@@ -71,7 +69,7 @@ import org.eclipse.jface.action.Action;
 import org.eclipse.jface.bindings.keys.KeyStroke;
 import org.eclipse.jface.bindings.keys.ParseException;
 import org.eclipse.jface.databinding.swt.IWidgetValueProperty;
-import org.eclipse.jface.databinding.swt.WidgetProperties;
+import org.eclipse.jface.databinding.swt.typed.WidgetProperties;
 import org.eclipse.jface.fieldassist.ContentProposal;
 import org.eclipse.jface.fieldassist.ContentProposalAdapter;
 import org.eclipse.jface.fieldassist.ControlDecoration;
@@ -96,16 +94,13 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 
-public class StringModelFragment extends AbstractComponentEditor {
+public class StringModelFragment extends AbstractComponentEditor<MStringModelFragment> {
 	private Composite composite;
 	private EMFDataBindingContext context;
 
 	// The selected Container is the class that match the ID.
 	// It can be get from the FindParentReferenceDialog or computed from the ID.
 	private EClass selectedContainer;
-
-	private final IListProperty MODEL_FRAGMENT__ELEMENTS = EMFProperties
-			.list(FragmentPackageImpl.Literals.MODEL_FRAGMENT__ELEMENTS);
 
 	// This is the list of available 'add child' actions depending on selected
 	// values
@@ -177,7 +172,7 @@ public class StringModelFragment extends AbstractComponentEditor {
 			composite = createForm(parent);
 		}
 		selectedContainer = null;
-		getMaster().setValue(object);
+		getMaster().setValue((MStringModelFragment) object);
 		updateChildrenChoice();
 		getEditor().setHeaderTitle(getLabel(null));
 		return composite;
@@ -285,7 +280,7 @@ public class StringModelFragment extends AbstractComponentEditor {
 			ControlFactory.createXMIId(parent, this);
 		}
 
-		final IWidgetValueProperty textProp = WidgetProperties.text(SWT.Modify);
+		final IWidgetValueProperty<Text, String> textProp = WidgetProperties.text(SWT.Modify);
 		{
 			final Label l = new Label(parent, SWT.NONE);
 			l.setText(Messages.StringModelFragment_ParentId);
@@ -308,10 +303,7 @@ public class StringModelFragment extends AbstractComponentEditor {
 			gd = new GridData(GridData.FILL_HORIZONTAL);
 			t.setLayoutData(gd);
 			context.bindValue(textProp.observeDelayed(200, t),
-					EMFEditProperties
-					.value(getEditingDomain(),
-							FragmentPackageImpl.Literals.STRING_MODEL_FRAGMENT__PARENT_ELEMENT_ID)
-					.observeDetail(getMaster()));
+					E4Properties.parentElementId(getEditingDomain()).observeDetail(getMaster()));
 
 			// Add a modify listener to control the change of the ID -> Must
 			// force the computation of selectedContainer.
@@ -322,7 +314,7 @@ public class StringModelFragment extends AbstractComponentEditor {
 				@Override
 				public void widgetSelected(SelectionEvent e) {
 					final FindParentReferenceElementDialog dialog = new FindParentReferenceElementDialog(b.getShell(),
-							StringModelFragment.this, (MStringModelFragment) getMaster().getValue(), Messages,
+							StringModelFragment.this, getMaster().getValue(), Messages,
 							getSelectedContainer());
 					dialog.open();
 					selectedContainer = dialog.getSelectedContainer();
@@ -352,9 +344,7 @@ public class StringModelFragment extends AbstractComponentEditor {
 			gd = new GridData(GridData.FILL_HORIZONTAL);
 			featureText.setLayoutData(gd);
 			context.bindValue(textProp.observeDelayed(200, featureText),
-					EMFEditProperties
-					.value(getEditingDomain(), FragmentPackageImpl.Literals.STRING_MODEL_FRAGMENT__FEATURENAME)
-					.observeDetail(getMaster()));
+					E4Properties.featureName(getEditingDomain()).observeDetail(getMaster()));
 
 			// create the decoration for the text component
 			final ControlDecoration deco = new ControlDecoration(featureText, SWT.TOP | SWT.LEFT);
@@ -397,7 +387,7 @@ public class StringModelFragment extends AbstractComponentEditor {
 				@Override
 				public void widgetSelected(SelectionEvent e) {
 					final FeatureSelectionDialog dialog = new FeatureSelectionDialog(b.getShell(),
-							getEditingDomain(), (MStringModelFragment) getMaster().getValue(), Messages,
+							getEditingDomain(), getMaster().getValue(), Messages,
 							getSelectedContainer());
 					dialog.open();
 				}
@@ -406,8 +396,7 @@ public class StringModelFragment extends AbstractComponentEditor {
 		}
 
 		ControlFactory.createTextField(parent, Messages.StringModelFragment_PositionInList, getMaster(), context,
-				textProp, EMFEditProperties.value(getEditingDomain(),
-						FragmentPackageImpl.Literals.STRING_MODEL_FRAGMENT__POSITION_IN_LIST));
+				textProp, E4Properties.positionInList(getEditingDomain()));
 
 		// ------------------------------------------------------------
 		{
@@ -535,8 +524,7 @@ public class StringModelFragment extends AbstractComponentEditor {
 
 		// pickList.getList().refresh();
 
-		final IEMFListProperty prop = EMFProperties.list(FragmentPackageImpl.Literals.MODEL_FRAGMENT__ELEMENTS);
-		pickList.getList().setInput(prop.observeDetail(getMaster()));
+		pickList.getList().setInput(E4Properties.elements().observeDetail(getMaster()));
 
 		// Update the possible actions
 		actions.clear();
@@ -551,8 +539,8 @@ public class StringModelFragment extends AbstractComponentEditor {
 	}
 
 	@Override
-	public IObservableList getChildList(Object element) {
-		return MODEL_FRAGMENT__ELEMENTS.observe(element);
+	public IObservableList<?> getChildList(Object element) {
+		return E4Properties.elements().observe((MModelFragment) element);
 	}
 
 	protected void handleAdd(EClass eClass, boolean separator) {

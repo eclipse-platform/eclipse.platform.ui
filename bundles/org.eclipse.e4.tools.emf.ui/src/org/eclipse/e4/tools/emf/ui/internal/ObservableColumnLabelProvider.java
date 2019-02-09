@@ -14,6 +14,7 @@
 package org.eclipse.e4.tools.emf.ui.internal;
 
 import java.util.Set;
+
 import org.eclipse.core.databinding.observable.map.IMapChangeListener;
 import org.eclipse.core.databinding.observable.map.IObservableMap;
 import org.eclipse.core.databinding.observable.map.MapChangeEvent;
@@ -25,12 +26,12 @@ import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.Image;
 
 public class ObservableColumnLabelProvider<M> extends CellLabelProvider {
-	private IObservableMap[] attributeMaps;
+	private IObservableMap<M, ?>[] attributeMaps;
 
-	private IMapChangeListener mapChangeListener = new IMapChangeListener() {
+	private IMapChangeListener<M, Object> mapChangeListener = new IMapChangeListener<M, Object>() {
 		@Override
-		public void handleMapChange(MapChangeEvent event) {
-			Set<?> affectedElements = event.diff.getChangedKeys();
+		public void handleMapChange(MapChangeEvent<? extends M, ?> event) {
+			Set<? extends M> affectedElements = event.diff.getChangedKeys();
 			LabelProviderChangedEvent newEvent = new LabelProviderChangedEvent(ObservableColumnLabelProvider.this, affectedElements.toArray());
 			fireLabelProviderChanged(newEvent);
 		}
@@ -41,7 +42,8 @@ public class ObservableColumnLabelProvider<M> extends CellLabelProvider {
 	 *
 	 * @param attributeMap
 	 */
-	public ObservableColumnLabelProvider(IObservableMap attributeMap) {
+	@SuppressWarnings("unchecked")
+	public ObservableColumnLabelProvider(IObservableMap<?, ?> attributeMap) {
 		this(new IObservableMap[] { attributeMap });
 	}
 
@@ -52,7 +54,8 @@ public class ObservableColumnLabelProvider<M> extends CellLabelProvider {
 	 *
 	 * @param attributeMaps
 	 */
-	protected ObservableColumnLabelProvider(IObservableMap[] attributeMaps) {
+	@SuppressWarnings("unchecked")
+	protected ObservableColumnLabelProvider(IObservableMap<M, ?>[] attributeMaps) {
 		System.arraycopy(attributeMaps, 0, this.attributeMaps = new IObservableMap[attributeMaps.length], 0, attributeMaps.length);
 		for (int i = 0; i < attributeMaps.length; i++) {
 			attributeMaps[i].addMapChangeListener(mapChangeListener);

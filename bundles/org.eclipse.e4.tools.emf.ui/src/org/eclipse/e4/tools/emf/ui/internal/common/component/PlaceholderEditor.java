@@ -25,6 +25,7 @@ import org.eclipse.e4.core.di.annotations.Optional;
 import org.eclipse.e4.tools.emf.ui.common.IModelResource;
 import org.eclipse.e4.tools.emf.ui.common.Util;
 import org.eclipse.e4.tools.emf.ui.common.component.AbstractComponentEditor;
+import org.eclipse.e4.tools.emf.ui.internal.E4Properties;
 import org.eclipse.e4.tools.emf.ui.internal.ResourceProvider;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.ControlFactory.TextPasteHandler;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.dialogs.SharedElementsDialog;
@@ -40,10 +41,9 @@ import org.eclipse.e4.ui.workbench.UIEvents;
 import org.eclipse.e4.ui.workbench.UIEvents.EventTags;
 import org.eclipse.emf.databinding.EMFDataBindingContext;
 import org.eclipse.emf.databinding.FeaturePath;
-import org.eclipse.emf.databinding.edit.EMFEditProperties;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.jface.databinding.swt.IWidgetValueProperty;
-import org.eclipse.jface.databinding.swt.WidgetProperties;
+import org.eclipse.jface.databinding.swt.typed.WidgetProperties;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CTabFolder;
@@ -60,7 +60,7 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 
-public class PlaceholderEditor extends AbstractComponentEditor {
+public class PlaceholderEditor extends AbstractComponentEditor<MPlaceholder> {
 	private Composite composite;
 	private EMFDataBindingContext context;
 	private StackLayout stackLayout;
@@ -153,11 +153,12 @@ public class PlaceholderEditor extends AbstractComponentEditor {
 			}
 		}
 
-		getMaster().setValue(object);
+		getMaster().setValue((MPlaceholder) object);
 		return composite;
 	}
 
-	private Composite createForm(Composite parent, final EMFDataBindingContext context, WritableValue master, boolean isImport) {
+	private Composite createForm(Composite parent, final EMFDataBindingContext context,
+			WritableValue<MPlaceholder> master, boolean isImport) {
 		final CTabFolder folder = new CTabFolder(parent, SWT.BOTTOM);
 
 		CTabItem item = new CTabItem(folder, SWT.NONE);
@@ -170,7 +171,7 @@ public class PlaceholderEditor extends AbstractComponentEditor {
 			ControlFactory.createXMIId(parent, this);
 		}
 
-		final IWidgetValueProperty textProp = WidgetProperties.text(SWT.Modify);
+		final IWidgetValueProperty<Text, String> textProp = WidgetProperties.text(SWT.Modify);
 
 		if (isImport) {
 			ControlFactory.createFindImport(parent, Messages, this, context);
@@ -178,9 +179,12 @@ public class PlaceholderEditor extends AbstractComponentEditor {
 			return folder;
 		}
 
-		ControlFactory.createTextField(parent, Messages.ModelTooling_Common_Id, master, context, textProp, EMFEditProperties.value(getEditingDomain(), ApplicationPackageImpl.Literals.APPLICATION_ELEMENT__ELEMENT_ID));
-		ControlFactory.createTextField(parent, Messages.ModelTooling_UIElement_AccessibilityPhrase, getMaster(), context, textProp, EMFEditProperties.value(getEditingDomain(), UiPackageImpl.Literals.UI_ELEMENT__ACCESSIBILITY_PHRASE));
-		ControlFactory.createTextField(parent, Messages.PlaceholderEditor_ContainerData, master, context, textProp, EMFEditProperties.value(getEditingDomain(), UiPackageImpl.Literals.UI_ELEMENT__CONTAINER_DATA));
+		ControlFactory.createTextField(parent, Messages.ModelTooling_Common_Id, master, context, textProp,
+				E4Properties.elementId(getEditingDomain()));
+		ControlFactory.createTextField(parent, Messages.ModelTooling_UIElement_AccessibilityPhrase, getMaster(),
+				context, textProp, E4Properties.accessibilityPhrase(getEditingDomain()));
+		ControlFactory.createTextField(parent, Messages.PlaceholderEditor_ContainerData, master, context, textProp,
+				E4Properties.containerData(getEditingDomain()));
 		// ------------------------------------------------------------
 		{
 			final Label l = new Label(parent, SWT.NONE);
@@ -193,19 +197,18 @@ public class PlaceholderEditor extends AbstractComponentEditor {
 			final GridData gd = new GridData(GridData.FILL_HORIZONTAL);
 			t.setLayoutData(gd);
 
-			final UpdateValueStrategy t2m = new UpdateValueStrategy();
-			t2m.setConverter(new Converter(String.class, MUIElement.class) {
-
+			final UpdateValueStrategy<String, MUIElement> t2m = new UpdateValueStrategy<>();
+			t2m.setConverter(new Converter<String, MUIElement>(String.class, MUIElement.class) {
 				@Override
-				public Object convert(Object fromObject) {
+				public MUIElement convert(String fromObject) {
 					return null;
 				}
 			});
-			final UpdateValueStrategy m2t = new UpdateValueStrategy();
-			m2t.setConverter(new Converter(MUIElement.class, String.class) {
+			final UpdateValueStrategy<MUIElement, String> m2t = new UpdateValueStrategy<>();
+			m2t.setConverter(new Converter<MUIElement, String>(MUIElement.class, String.class) {
 
 				@Override
-				public Object convert(Object fromObject) {
+				public String convert(MUIElement fromObject) {
 					if (fromObject != null) {
 						final EObject o = (EObject) fromObject;
 						if (o instanceof MUILabel) {
@@ -216,31 +219,32 @@ public class PlaceholderEditor extends AbstractComponentEditor {
 							}
 						}
 
-						return o.eClass().getName() + " - " + ((MUIElement) fromObject).getElementId(); //$NON-NLS-1$
+						return o.eClass().getName() + " - " + fromObject.getElementId(); //$NON-NLS-1$
 					}
 					return null;
 				}
 			});
 
-			context.bindValue(textProp.observe(t),
-					EMFEditProperties.value(getEditingDomain(), AdvancedPackageImpl.Literals.PLACEHOLDER__REF)
-					.observeDetail(getMaster()),
+			context.bindValue(textProp.observe(t), E4Properties.ref(getEditingDomain()).observeDetail(getMaster()),
 					t2m, m2t);
 
 			Button b = ControlFactory.createFindButton(parent, resourcePool);
 			b.addSelectionListener(new SelectionAdapter() {
 				@Override
 				public void widgetSelected(SelectionEvent e) {
-					final SharedElementsDialog dialog = new SharedElementsDialog(b.getShell(), getEditor(), (MPlaceholder) getMaster().getValue(), resource, Messages);
+					final SharedElementsDialog dialog = new SharedElementsDialog(b.getShell(), getEditor(),
+							getMaster().getValue(), resource, Messages);
 					dialog.open();
 				}
 			});
 		}
 
-		ControlFactory.createCheckBox(parent, Messages.PlaceholderEditor_Closeable, getMaster(), context, WidgetProperties.selection(), EMFEditProperties.value(getEditingDomain(), AdvancedPackageImpl.Literals.PLACEHOLDER__CLOSEABLE));
-
-		ControlFactory.createCheckBox(parent, Messages.ModelTooling_UIElement_ToBeRendered, getMaster(), context, WidgetProperties.selection(), EMFEditProperties.value(getEditingDomain(), UiPackageImpl.Literals.UI_ELEMENT__TO_BE_RENDERED));
-		ControlFactory.createCheckBox(parent, Messages.ModelTooling_UIElement_Visible, getMaster(), context, WidgetProperties.selection(), EMFEditProperties.value(getEditingDomain(), UiPackageImpl.Literals.UI_ELEMENT__VISIBLE));
+		ControlFactory.createCheckBox(parent, Messages.PlaceholderEditor_Closeable, getMaster(), context,
+				WidgetProperties.buttonSelection(), E4Properties.placeholderClosable(getEditingDomain()));
+		ControlFactory.createCheckBox(parent, Messages.ModelTooling_UIElement_ToBeRendered, getMaster(), context,
+				WidgetProperties.buttonSelection(), E4Properties.toBeRendered(getEditingDomain()));
+		ControlFactory.createCheckBox(parent, Messages.ModelTooling_UIElement_Visible, getMaster(), context,
+				WidgetProperties.buttonSelection(), E4Properties.visible(getEditingDomain()));
 
 		item = new CTabItem(folder, SWT.NONE);
 		item.setText(Messages.ModelTooling_Common_TabSupplementary);
@@ -275,7 +279,7 @@ public class PlaceholderEditor extends AbstractComponentEditor {
 	}
 
 	@Override
-	public IObservableList getChildList(Object element) {
+	public IObservableList<?> getChildList(Object element) {
 		return null;
 	}
 

@@ -26,6 +26,8 @@ import org.eclipse.core.databinding.UpdateValueStrategy;
 import org.eclipse.core.databinding.observable.list.IObservableList;
 import org.eclipse.core.databinding.observable.map.IObservableMap;
 import org.eclipse.core.databinding.observable.value.IObservableValue;
+import org.eclipse.core.databinding.property.list.IListProperty;
+import org.eclipse.core.databinding.property.value.IValueProperty;
 import org.eclipse.core.databinding.validation.IValidator;
 import org.eclipse.core.databinding.validation.ValidationStatus;
 import org.eclipse.core.resources.IProject;
@@ -36,6 +38,7 @@ import org.eclipse.e4.tools.emf.ui.common.ContributionURIValidator;
 import org.eclipse.e4.tools.emf.ui.common.IContributionClassCreator;
 import org.eclipse.e4.tools.emf.ui.common.Util;
 import org.eclipse.e4.tools.emf.ui.common.component.AbstractComponentEditor;
+import org.eclipse.e4.tools.emf.ui.internal.E4Properties;
 import org.eclipse.e4.tools.emf.ui.internal.Messages;
 import org.eclipse.e4.tools.emf.ui.internal.ResourceProvider;
 import org.eclipse.e4.tools.emf.ui.internal.common.AbstractPickList.PickListFeatures;
@@ -51,19 +54,19 @@ import org.eclipse.e4.ui.dialogs.filteredtree.PatternFilter;
 import org.eclipse.e4.ui.internal.workbench.E4XMIResource;
 import org.eclipse.e4.ui.model.application.MApplicationElement;
 import org.eclipse.e4.ui.model.application.MContribution;
+import org.eclipse.e4.ui.model.application.commands.MBindings;
 import org.eclipse.e4.ui.model.application.commands.impl.CommandsPackageImpl;
 import org.eclipse.e4.ui.model.application.impl.ApplicationFactoryImpl;
 import org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl;
+import org.eclipse.e4.ui.model.application.ui.MElementContainer;
+import org.eclipse.e4.ui.model.application.ui.MUIElement;
 import org.eclipse.e4.ui.model.application.ui.MUILabel;
 import org.eclipse.e4.ui.model.application.ui.impl.UiPackageImpl;
 import org.eclipse.emf.common.command.Command;
 import org.eclipse.emf.common.util.BasicEMap;
 import org.eclipse.emf.databinding.EMFDataBindingContext;
 import org.eclipse.emf.databinding.EMFProperties;
-import org.eclipse.emf.databinding.IEMFListProperty;
 import org.eclipse.emf.databinding.edit.EMFEditProperties;
-import org.eclipse.emf.databinding.edit.IEMFEditListProperty;
-import org.eclipse.emf.databinding.edit.IEMFEditValueProperty;
 import org.eclipse.emf.ecore.EAttribute;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EStructuralFeature;
@@ -72,11 +75,11 @@ import org.eclipse.emf.edit.command.AddCommand;
 import org.eclipse.emf.edit.command.RemoveCommand;
 import org.eclipse.emf.edit.command.SetCommand;
 import org.eclipse.jface.databinding.swt.IWidgetValueProperty;
-import org.eclipse.jface.databinding.swt.WidgetProperties;
+import org.eclipse.jface.databinding.swt.typed.WidgetProperties;
 import org.eclipse.jface.databinding.viewers.IViewerValueProperty;
 import org.eclipse.jface.databinding.viewers.ObservableListContentProvider;
 import org.eclipse.jface.databinding.viewers.ObservableMapLabelProvider;
-import org.eclipse.jface.databinding.viewers.ViewerProperties;
+import org.eclipse.jface.databinding.viewers.typed.ViewerProperties;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.fieldassist.ControlDecoration;
@@ -160,7 +163,7 @@ public class ControlFactory {
 		}
 	}
 
-	public static void createXMIId(Composite parent, AbstractComponentEditor editor) {
+	public static <M> void createXMIId(Composite parent, AbstractComponentEditor<M> editor) {
 		final Label l = new Label(parent, SWT.NONE);
 		l.setText("XMI:ID"); //$NON-NLS-1$
 		l.setLayoutData(new GridData());
@@ -174,7 +177,7 @@ public class ControlFactory {
 		TextPasteHandler.createFor(t);
 
 		editor.getMaster().addValueChangeListener(event -> {
-			final Object val = event.diff.getNewValue();
+			final M val = event.diff.getNewValue();
 			if (val != null && val instanceof EObject && !t.isDisposed()) {
 				final Resource res = ((EObject) val).eResource();
 				if (res instanceof E4XMIResource) {
@@ -188,12 +191,12 @@ public class ControlFactory {
 	}
 
 	public static Composite createMapProperties(Composite parent, final Messages Messages,
-			final AbstractComponentEditor editor, String label, final EStructuralFeature feature, int vIndent) {
+			final AbstractComponentEditor<?> editor, String label, final EStructuralFeature feature, int vIndent) {
 		return createMapProperties(parent, Messages, editor, label, null, feature, vIndent);
 	}
 
 	public static Composite createMapProperties(Composite parent, final Messages messages,
-			final AbstractComponentEditor editor, String label, String tooltip, final EStructuralFeature feature,
+			final AbstractComponentEditor<?> editor, String label, String tooltip, final EStructuralFeature feature,
 			int vIndent) {
 
 		final E4PickList pickList = new E4PickList(parent, SWT.NONE, Arrays.asList(PickListFeatures.NO_PICKER),
@@ -260,8 +263,7 @@ public class ControlFactory {
 
 		final TableViewer tableviewer = pickList.getList();
 		tableviewer.getTable().setHeaderVisible(true);
-		final ObservableListContentProvider cp = new ObservableListContentProvider();
-		tableviewer.setContentProvider(cp);
+		tableviewer.setContentProvider(new ObservableListContentProvider<>());
 
 		final GridData gd = new GridData(SWT.FILL, SWT.FILL, true, true);
 		gd.verticalIndent = vIndent;
@@ -357,26 +359,30 @@ public class ControlFactory {
 			}
 		});
 
-		final IEMFEditListProperty prop = EMFEditProperties.list(editor.getEditingDomain(), feature);
-		final IObservableList observableList = prop.observeDetail(editor.getMaster());
+		@SuppressWarnings("unchecked")
+		final IListProperty<Object, Object> prop = EMFEditProperties.list(editor.getEditingDomain(), feature);
+		final IObservableList<Object> observableList = prop.observeDetail(editor.getMaster());
 		tableviewer.setInput(observableList);
 		observableList.addListChangeListener(event -> tableviewer.getTable().getColumn(0).pack());
 
 		return pickList;
 	}
 
-	public static void createTextField(Composite parent, String label, IObservableValue master,
-			EMFDataBindingContext context, IWidgetValueProperty textProp, IEMFEditValueProperty modelProp) {
+	public static <M> void createTextField(Composite parent, String label, IObservableValue<M> master,
+			EMFDataBindingContext context, IWidgetValueProperty<Text, String> textProp,
+			IValueProperty<? super M, String> modelProp) {
 		createTextField(parent, label, null, master, context, textProp, modelProp, null);
 	}
 
-	public static void createTextField(Composite parent, String label, String tooltip, IObservableValue master,
-			EMFDataBindingContext context, IWidgetValueProperty textProp, IEMFEditValueProperty modelProp) {
+	public static <M> void createTextField(Composite parent, String label, String tooltip, IObservableValue<M> master,
+			EMFDataBindingContext context, IWidgetValueProperty<Text, String> textProp,
+			IValueProperty<? super M, String> modelProp) {
 		createTextField(parent, label, tooltip, master, context, textProp, modelProp, null);
 	}
 
-	public static void createTextField(Composite parent, String label, IObservableValue master,
-			EMFDataBindingContext context, IWidgetValueProperty textProp, IEMFEditValueProperty modelProp,
+	public static <M> void createTextField(Composite parent, String label, IObservableValue<M> master,
+			EMFDataBindingContext context, IWidgetValueProperty<Text, String> textProp,
+			IValueProperty<? super M, String> modelProp,
 			final String warningText) {
 		createTextField(parent, label, null, master, context, textProp, modelProp, warningText);
 	}
@@ -393,8 +399,9 @@ public class ControlFactory {
 	 *            Non null warningText means that a warning with this non-null text
 	 *            will be shown when the field is left empty
 	 */
-	public static void createTextField(Composite parent, String label, String tooltip, IObservableValue master,
-			EMFDataBindingContext context, IWidgetValueProperty textProp, IEMFEditValueProperty modelProp,
+	public static <M> void createTextField(Composite parent, String label, String tooltip, IObservableValue<M> master,
+			EMFDataBindingContext context, IWidgetValueProperty<Text, String> textProp,
+			IValueProperty<? super M, String> modelProp,
 			final String warningText) {
 		createTextField(parent, label, tooltip, master, context, textProp, modelProp, warningText,
 				FieldDecorationRegistry.DEC_WARNING);
@@ -418,8 +425,9 @@ public class ControlFactory {
 	 *            FieldDecorationRegistry.DEC_INFORMATION
 	 *
 	 */
-	public static void createTextField(Composite parent, String label, String tooltip, IObservableValue master,
-			EMFDataBindingContext context, IWidgetValueProperty textProp, IEMFEditValueProperty modelProp,
+	public static <M> void createTextField(Composite parent, String label, String tooltip, IObservableValue<M> master,
+			EMFDataBindingContext context, IWidgetValueProperty<Text, String> textProp,
+			IValueProperty<? super M, String> modelProp,
 			final String decorationText, final String decorationType) {
 		final Label l = new Label(parent, SWT.NONE);
 		l.setText(label);
@@ -439,7 +447,7 @@ public class ControlFactory {
 			final FieldDecoration fieldDecoration = FieldDecorationRegistry.getDefault().getFieldDecoration(
 					decorationType);
 			controlDecoration.setImage(fieldDecoration.getImage());
-			final IValidator iv = value -> {
+			final IValidator<Object> iv = value -> {
 				if (value == null) {
 					controlDecoration.show();
 					return ValidationStatus.warning(decorationText);
@@ -458,22 +466,24 @@ public class ControlFactory {
 				controlDecoration.hide();
 				return Status.OK_STATUS;
 			};
-			final UpdateValueStrategy acv = new UpdateValueStrategy().setAfterConvertValidator(iv);
+			final UpdateValueStrategy<String, String> acv = new UpdateValueStrategy<String, String>().setAfterConvertValidator(iv);
 			context.bindValue(textProp.observeDelayed(200, t), modelProp.observeDetail(master), acv, acv);
 		} else {
 			context.bindValue(textProp.observeDelayed(200, t), modelProp.observeDetail(master));
 		}
 	}
 
-	public static void createTranslatedTextField(Composite parent, String label, IObservableValue master,
-			EMFDataBindingContext context, IWidgetValueProperty textProp, IEMFEditValueProperty modelProp,
+	public static <M> void createTranslatedTextField(Composite parent, String label, IObservableValue<M> master,
+			EMFDataBindingContext context, IWidgetValueProperty<? super Text, String> textProp,
+			IValueProperty<? super M, String> modelProp,
 			IResourcePool resourcePool, IProject project) {
 		createTranslatedTextField(parent, label, null, master, context, textProp, modelProp, resourcePool, project);
 	}
 
-	public static void createTranslatedTextField(Composite parent, String label, String tooltip,
-			IObservableValue master, EMFDataBindingContext context, IWidgetValueProperty textProp,
-			IEMFEditValueProperty modelProp, IResourcePool resourcePool, IProject project) {
+	public static <M> void createTranslatedTextField(Composite parent, String label, String tooltip,
+			IObservableValue<M> master, EMFDataBindingContext context,
+			IWidgetValueProperty<? super Text, String> textProp,
+			IValueProperty<? super M, String> modelProp, IResourcePool resourcePool, IProject project) {
 		final Label l = new Label(parent, SWT.NONE);
 		l.setText(label);
 		if (tooltip != null) {
@@ -518,8 +528,8 @@ public class ControlFactory {
 
 
 	public static void createFindImport(Composite parent, final Messages Messages,
-			final AbstractComponentEditor editor, EMFDataBindingContext context) {
-		final IWidgetValueProperty textProp = WidgetProperties.text(SWT.Modify);
+			final AbstractComponentEditor<? extends MApplicationElement> editor, EMFDataBindingContext context) {
+		final IWidgetValueProperty<Text, String> textProp = WidgetProperties.text(SWT.Modify);
 
 		final Label l = new Label(parent, SWT.NONE);
 		l.setText(Messages.ModelTooling_Common_RefId);
@@ -533,8 +543,7 @@ public class ControlFactory {
 
 		context.bindValue(
 				textProp.observeDelayed(200, t),
-				EMFEditProperties.value(editor.getEditingDomain(),
-						ApplicationPackageImpl.Literals.APPLICATION_ELEMENT__ELEMENT_ID).observeDetail(editor.getMaster()));
+				E4Properties.elementId(editor.getEditingDomain()).observeDetail(editor.getMaster()));
 
 		Button b = ControlFactory.createFindButton(parent, editor.resourcePool);
 		b.addSelectionListener(new SelectionAdapter() {
@@ -547,8 +556,9 @@ public class ControlFactory {
 		});
 	}
 
-	public static void createSelectedElement(Composite parent, final AbstractComponentEditor editor,
-			final EMFDataBindingContext context, String label) {
+	public static <E extends MUIElement, M extends MElementContainer<E>> void createSelectedElement(
+			Composite parent, final AbstractComponentEditor<M> editor, final EMFDataBindingContext context,
+			String label) {
 		final Label l = new Label(parent, SWT.NONE);
 		l.setText(label);
 		l.setLayoutData(new GridData());
@@ -557,31 +567,27 @@ public class ControlFactory {
 		final GridData gd = new GridData(GridData.FILL_HORIZONTAL);
 		gd.horizontalSpan = 2;
 		viewer.getControl().setLayoutData(gd);
-		final IEMFEditListProperty listProp = EMFEditProperties.list(editor.getEditingDomain(),
-				UiPackageImpl.Literals.ELEMENT_CONTAINER__CHILDREN);
-		final IEMFEditValueProperty labelProp = EMFEditProperties.value(editor.getEditingDomain(),
-				UiPackageImpl.Literals.UI_LABEL__LABEL);
-		final IEMFEditValueProperty idProp = EMFEditProperties.value(editor.getEditingDomain(),
-				ApplicationPackageImpl.Literals.APPLICATION_ELEMENT__ELEMENT_ID);
-
-		final IViewerValueProperty vProp = ViewerProperties.singleSelection();
+		final IViewerValueProperty<ComboViewer, E> vProp = ViewerProperties.singleSelection();
 
 		final Binding[] binding = new Binding[1];
-		final IObservableValue uiObs = vProp.observe(viewer);
-		final IObservableValue mObs = EMFEditProperties.value(editor.getEditingDomain(),
-				UiPackageImpl.Literals.ELEMENT_CONTAINER__SELECTED_ELEMENT).observeDetail(editor.getMaster());
+		final IObservableValue<E> uiObs = vProp.observe(viewer);
+		final IObservableValue<E> mObs = E4Properties.<E>selectedElement(editor.getEditingDomain())
+				.observeDetail(editor.getMaster());
 		editor.getMaster().addValueChangeListener(event -> {
 			if (binding[0] != null) {
 				binding[0].dispose();
 			}
-
 		});
 
-		final IObservableList list = listProp.observeDetail(editor.getMaster());
-		final ObservableListContentProvider cp = new ObservableListContentProvider();
+		final IObservableList<E> list = E4Properties.<E>children(editor.getEditingDomain())
+				.observeDetail(editor.getMaster());
+		final ObservableListContentProvider<E> cp = new ObservableListContentProvider<>();
 		viewer.setContentProvider(cp);
-		final IObservableMap[] attributeMaps = { labelProp.observeDetail(cp.getKnownElements()),
-				idProp.observeDetail(cp.getKnownElements()) };
+		@SuppressWarnings({ "unchecked", "rawtypes" })
+		final IObservableMap<?, ?>[] attributeMaps = {
+				// Cast, because MUILabel is not part of E's type
+				((IValueProperty) E4Properties.label(editor.getEditingDomain())).observeDetail(cp.getKnownElements()),
+				E4Properties.elementId(editor.getEditingDomain()).observeDetail(cp.getKnownElements()) };
 		viewer.setLabelProvider(new ObservableMapLabelProvider(attributeMaps) {
 			@Override
 			public String getText(Object element) {
@@ -612,12 +618,12 @@ public class ControlFactory {
 	}
 
 	public static void createBindingContextWiget(Composite parent, final Messages Messages,
-			final AbstractComponentEditor editor, String label) {
+			final AbstractComponentEditor<? extends MBindings> editor, String label) {
 		createBindingContextWiget(parent, Messages, editor, label, null);
 	}
 
 	public static void createBindingContextWiget(Composite parent, final Messages Messages,
-			final AbstractComponentEditor editor, String label, String tooltip) {
+			final AbstractComponentEditor<? extends MBindings> editor, String label, String tooltip) {
 		{
 			final E4PickList pickList = new E4PickList(parent, SWT.NONE, Arrays.asList(PickListFeatures.NO_ORDER,
 					PickListFeatures.NO_PICKER), editor, CommandsPackageImpl.Literals.BINDINGS__BINDING_CONTEXTS) {
@@ -637,19 +643,19 @@ public class ControlFactory {
 			pickList.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 3, 1));
 
 			pickList.setText(label);
-			pickList.getList().setInput(
-					EMFProperties.list(CommandsPackageImpl.Literals.BINDINGS__BINDING_CONTEXTS).observeDetail(
-							editor.getMaster()));
+			pickList.getList().setInput(E4Properties.contexts().observeDetail(editor.getMaster()));
 		}
 	}
 
 	public static Composite createStringListWidget(Composite parent, Messages Messages,
-			final AbstractComponentEditor editor, String label, final EStructuralFeature feature, int vIndent) {
+			final AbstractComponentEditor<? extends MApplicationElement> editor, String label,
+			final EStructuralFeature feature, int vIndent) {
 		return createStringListWidget(parent, Messages, editor, label, null, feature, vIndent);
 	}
 
 	public static Composite createStringListWidget(Composite parent, Messages Messages,
-			final AbstractComponentEditor editor, String label, String tooltip, final EStructuralFeature feature,
+			final AbstractComponentEditor<? extends MApplicationElement> editor, String label, String tooltip,
+			final EStructuralFeature feature,
 			int vIndent) {
 
 		final E4StringPickList pickList = new E4StringPickList(parent, SWT.NONE, null, editor, feature) {
@@ -682,7 +688,8 @@ public class ControlFactory {
 		final GridData gd = (GridData) viewer.getTable().getLayoutData();
 		gd.heightHint = 150;
 
-		final IEMFListProperty prop = EMFProperties.list(feature);
+		@SuppressWarnings("unchecked")
+		final IListProperty<Object, Object> prop = EMFProperties.list(feature);
 		viewer.setInput(prop.observeDetail(editor.getMaster()));
 
 		viewer.addSelectionChangedListener(event -> {
@@ -694,14 +701,15 @@ public class ControlFactory {
 		return pickList;
 	}
 
-	private static void handleAddText(AbstractComponentEditor editor, EStructuralFeature feature, Text tagText) {
+	private static void handleAddText(AbstractComponentEditor<? extends MApplicationElement> editor,
+			EStructuralFeature feature, Text tagText) {
 		if (tagText.getText().trim().length() > 0) {
 			final String[] tags = tagText.getText().split(";"); //$NON-NLS-1$
 			for (int i = 0; i < tags.length; i++) {
 				tags[i] = tags[i].trim();
 			}
 
-			final MApplicationElement appEl = (MApplicationElement) editor.getMaster().getValue();
+			final MApplicationElement appEl = editor.getMaster().getValue();
 			final Command cmd = AddCommand.create(editor.getEditingDomain(), appEl, feature, Arrays.asList(tags));
 			if (cmd.canExecute()) {
 				editor.getEditingDomain().getCommandStack().execute(cmd);
@@ -712,8 +720,8 @@ public class ControlFactory {
 
 	// This method is left in for reference purposes
 	@SuppressWarnings("unused")
-	private static void handleReplaceText(AbstractComponentEditor editor, EStructuralFeature feature, Text tagText,
-			TableViewer viewer) {
+	private static void handleReplaceText(AbstractComponentEditor<? extends MApplicationElement> editor,
+			EStructuralFeature feature, Text tagText, TableViewer viewer) {
 		if (tagText.getText().trim().length() > 0) {
 			if (!viewer.getSelection().isEmpty()) {
 				final String[] tags = tagText.getText().split(";"); //$NON-NLS-1$
@@ -721,7 +729,7 @@ public class ControlFactory {
 					tags[i] = tags[i].trim();
 				}
 
-				final MApplicationElement appEl = (MApplicationElement) editor.getMaster().getValue();
+				final MApplicationElement appEl = editor.getMaster().getValue();
 				final EObject el = (EObject) editor.getMaster().getValue();
 				final List<?> ids = ((IStructuredSelection) viewer.getSelection()).toList();
 				final Object curVal = ((IStructuredSelection) viewer.getSelection()).getFirstElement();
@@ -742,13 +750,15 @@ public class ControlFactory {
 		}
 	}
 
-	public static void createCheckBox(Composite parent, String label, IObservableValue master,
-			EMFDataBindingContext context, IWidgetValueProperty selectionProp, IEMFEditValueProperty modelProp) {
+	public static <M> void createCheckBox(Composite parent, String label, IObservableValue<M> master,
+			EMFDataBindingContext context, IWidgetValueProperty<Button, Boolean> selectionProp,
+			IValueProperty<? super M, Boolean> modelProp) {
 		createCheckBox(parent, label, null, master, context, selectionProp, modelProp);
 	}
 
-	public static void createCheckBox(Composite parent, String label, String tooltip, IObservableValue master,
-			EMFDataBindingContext context, IWidgetValueProperty selectionProp, IEMFEditValueProperty modelProp) {
+	public static <M> void createCheckBox(Composite parent, String label, String tooltip, IObservableValue<M> master,
+			EMFDataBindingContext context, IWidgetValueProperty<Button, Boolean> selectionProp,
+			IValueProperty<? super M, Boolean> modelProp) {
 		final Label l = new Label(parent, SWT.NONE);
 		l.setText(label);
 		if (tooltip != null) {
@@ -844,11 +854,12 @@ public class ControlFactory {
 	 *            MPartDescriptorEditor)
 	 */
 	public static void createClassURIField(Composite parent, final Messages Messages,
-			final AbstractComponentEditor editor, String title, final EAttribute feature, IContributionClassCreator c,
+			final AbstractComponentEditor<?> editor, String title, final EAttribute feature,
+			IContributionClassCreator c,
 			IProject project,
 			EMFDataBindingContext context, IEclipseContext eclipseContext, SelectionAdapter adapter) {
 		final Link lnk;
-		final IWidgetValueProperty textProp = WidgetProperties.text(SWT.Modify);
+		final IWidgetValueProperty<Text, String> textProp = WidgetProperties.text(SWT.Modify);
 
 		if (project != null && c != null) {
 			lnk = new Link(parent, SWT.NONE);
@@ -870,12 +881,12 @@ public class ControlFactory {
 				lnk.setToolTipText(((Text) e.getSource()).getText());
 			}
 		});
+		@SuppressWarnings("unchecked")
 		final Binding binding = context.bindValue(textProp.observeDelayed(200, t),
-				EMFEditProperties
-				.value(editor.getEditingDomain(), feature)
+				((IValueProperty<Object, Object>) EMFEditProperties.value(editor.getEditingDomain(), feature))
 				.observeDetail(editor.getMaster()),
-				new UpdateValueStrategy().setAfterConvertValidator(new ContributionURIValidator()),
-				new UpdateValueStrategy());
+				new UpdateValueStrategy<>().setAfterConvertValidator(new ContributionURIValidator()),
+				new UpdateValueStrategy<>());
 		Util.addDecoration(t, binding);
 
 		Button b = ControlFactory.createFindButton(parent, editor.resourcePool);
@@ -891,8 +902,9 @@ public class ControlFactory {
 	}
 
 	public static void createClassURIField(Composite parent, final Messages Messages,
-			final AbstractComponentEditor editor, String title, final EAttribute feature, IContributionClassCreator c,
-			IProject project, EMFDataBindingContext context, IEclipseContext eclipseContext) {
+			final AbstractComponentEditor<?> editor, String title, final EAttribute feature,
+			IContributionClassCreator c, IProject project, EMFDataBindingContext context,
+			IEclipseContext eclipseContext) {
 		createClassURIField(parent, Messages, editor, title, feature, c, project, context, eclipseContext,
 				new SelectionAdapter() {
 			@Override

@@ -20,8 +20,8 @@ import java.util.regex.Pattern;
 
 import org.eclipse.core.databinding.observable.value.IObservableValue;
 import org.eclipse.core.databinding.observable.value.IValueChangeListener;
+import org.eclipse.core.databinding.property.value.IValueProperty;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.tabs.empty.E;
-import org.eclipse.emf.databinding.edit.IEMFEditValueProperty;
 import org.eclipse.swt.events.FocusAdapter;
 import org.eclipse.swt.widgets.Control;
 
@@ -33,11 +33,11 @@ import org.eclipse.swt.widgets.Control;
  */
 public class IdGenerator {
 
-	private IValueChangeListener listener;
-	private IObservableValue observableValue;
+	private IValueChangeListener<String> listener;
+	private IObservableValue<String> observableValue;
 	protected boolean ignore;
-	private IValueChangeListener listener2;
-	private IObservableValue observableValue2;
+	private IValueChangeListener<String> listener2;
+	private IObservableValue<String> observableValue2;
 	static Pattern patternId = Pattern.compile("^(.*\\.)\\d+$"); //$NON-NLS-1$
 
 	/**
@@ -50,8 +50,8 @@ public class IdGenerator {
 	 * @param control
 	 *            Optional control.
 	 */
-	public void bind(final IObservableValue master, final IEMFEditValueProperty ebpLabel,
-			final IEMFEditValueProperty evpId, Control control) {
+	public <T> void bind(final IObservableValue<T> master, final IValueProperty<T, String> ebpLabel,
+			final IValueProperty<T, String> evpId, Control control) {
 
 		// RULES
 		// Only start generating if the label is initially empty and the id ends
@@ -60,12 +60,12 @@ public class IdGenerator {
 		// If the id is manually changed, stop generating
 		// If the control loses focus, stop generating
 
-		final String origLabel = (String) ebpLabel.getValue(master.getValue());
+		final String origLabel = ebpLabel.getValue(master.getValue());
 		if (E.notEmpty(origLabel)) {
 			stopGenerating();
 			return;
 		}
-		String origId = (String) evpId.getValue(master.getValue());
+		String origId = evpId.getValue(master.getValue());
 		if (origId == null) {
 			origId = "id.0"; //$NON-NLS-1$
 		}
@@ -96,7 +96,7 @@ public class IdGenerator {
 
 		observableValue = ebpLabel.observe(master.getValue());
 		observableValue.addValueChangeListener(listener = event -> {
-			String labelValue = (String) ebpLabel.getValue(master.getValue());
+			String labelValue = ebpLabel.getValue(master.getValue());
 			if (labelValue == null) {
 				labelValue = ""; //$NON-NLS-1$
 			}

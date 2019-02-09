@@ -92,7 +92,7 @@ public class CommandCategorySelectionDialog extends SaveDialogBoundsSettingsDial
 		viewer.addDoubleClickListener(event -> okPressed());
 
 		final List<EObject> categories = new ArrayList<>();
-		final TreeIterator<EObject> it = EcoreUtil.getAllContents((EObject) resource.getRoot().get(0), true);
+		final TreeIterator<EObject> it = EcoreUtil.getAllContents(resource.getRoot().get(0), true);
 		while (it.hasNext()) {
 			final EObject o = it.next();
 			if (o.eClass() == CommandsPackageImpl.Literals.CATEGORY) {

@@ -35,7 +35,6 @@ import javax.inject.Inject;
 import javax.inject.Named;
 
 import org.eclipse.core.databinding.ObservablesManager;
-import org.eclipse.core.databinding.observable.IObservable;
 import org.eclipse.core.databinding.observable.list.IObservableList;
 import org.eclipse.core.databinding.observable.list.WritableList;
 import org.eclipse.core.databinding.observable.map.IObservableMap;
@@ -285,13 +284,13 @@ public class ModelEditor implements IGotoObject {
 	 * AbstractComponentEditor instance This map is filled on the fly when getting
 	 * editors
 	 */
-	private final Map<String, AbstractComponentEditor> editors = new HashMap<>();
+	private final Map<String, AbstractComponentEditor<?>> editors = new HashMap<>();
 
 	/**
 	 * A map with key = eClass name or virtual key, value is a class of
 	 * AbstractComponentEditor. This map is filled on init by registerEditor
 	 */
-	private final Map<String, Class<? extends AbstractComponentEditor>> editorsClasses = new HashMap<>();
+	private final Map<String, Class<? extends AbstractComponentEditor<?>>> editorsClasses = new HashMap<>();
 
 	private final Map<Class<?>, List<AbstractElementEditorContribution>> tabContributions = new HashMap<>();
 	private final List<FeaturePath> labelFeaturePaths = new ArrayList<>();
@@ -353,7 +352,7 @@ public class ModelEditor implements IGotoObject {
 
 	private EMFDocumentResourceMediator emfDocumentProvider;
 
-	private AbstractComponentEditor currentEditor;
+	private AbstractComponentEditor<?> currentEditor;
 
 	private Listener keyListener;
 
@@ -590,7 +589,7 @@ public class ModelEditor implements IGotoObject {
 				final IStructuredSelection s = (IStructuredSelection) event.getSelection();
 				if (s.getFirstElement() instanceof EObject) {
 					final EObject obj = (EObject) s.getFirstElement();
-					final AbstractComponentEditor editor1 = getEditor(obj.eClass());
+					final AbstractComponentEditor<?> editor1 = getEditor(obj.eClass());
 					if (editor1 != null) {
 						currentEditor = editor1;
 						headerContainer.setText(editor1.getLabel(obj));
@@ -601,8 +600,8 @@ public class ModelEditor implements IGotoObject {
 						});
 					}
 				} else {
-					final VirtualEntry<?> entry = (VirtualEntry<?>) s.getFirstElement();
-					final AbstractComponentEditor editor2 = getEditor(entry.getId());
+					final VirtualEntry<?, ?> entry = (VirtualEntry<?, ?>) s.getFirstElement();
+					final AbstractComponentEditor<?> editor2 = getEditor(entry.getId());
 					if (editor2 != null) {
 						currentEditor = editor2;
 						headerContainer.setText(editor2.getLabel(entry));
@@ -630,8 +629,8 @@ public class ModelEditor implements IGotoObject {
 			boolean addSeparator = false;
 			if (!s.isEmpty() && noSelected == 1) {
 				List<Action> actions;
-				if (s.getFirstElement() instanceof VirtualEntry<?>) {
-					actions = getEditor(((VirtualEntry<?>) s.getFirstElement()).getId())
+				if (s.getFirstElement() instanceof VirtualEntry) {
+					actions = getEditor(((VirtualEntry<?, ?>) s.getFirstElement()).getId())
 							.getActions(s.getFirstElement());
 					if (actions.size() > 0) {
 						final MenuManager addMenu1 = new MenuManager(messages.ModelEditor_AddChild);
@@ -642,7 +641,7 @@ public class ModelEditor implements IGotoObject {
 						manager.add(addMenu1);
 					}
 
-					actions = getEditor(((VirtualEntry<?>) s.getFirstElement()).getId())
+					actions = getEditor(((VirtualEntry<?, ?>) s.getFirstElement()).getId())
 							.getActionsImport(s.getFirstElement());
 					if (actions.size() > 0) {
 						final MenuManager menu1 = new MenuManager(messages.ModelEditor_Import3x);
@@ -660,7 +659,7 @@ public class ModelEditor implements IGotoObject {
 				} else {
 
 					final EObject o = (EObject) s.getFirstElement();
-					final AbstractComponentEditor editor = getEditor(o.eClass());
+					final AbstractComponentEditor<?> editor = getEditor(o.eClass());
 
 					// Build Add Child menu
 					if (editor != null) {
@@ -720,14 +719,15 @@ public class ModelEditor implements IGotoObject {
 							final ArrayList<MApplicationElement> maes = new ArrayList<>();
 							for (final Object objSelect : listOfSelections) {
 								EObject container = null;
-								if (objSelect instanceof VirtualEntry<?>) {
+								if (objSelect instanceof VirtualEntry) {
 
-									final VirtualEntry<?> ve = (VirtualEntry<?>) objSelect;
-									container = (EObject) ve.getOriginalParent();
-									final IObservableList list = ve.getList();
-									final Iterator<?> iterator = list.iterator();
+									@SuppressWarnings("unchecked")
+									final VirtualEntry<EObject, MApplicationElement> ve = (VirtualEntry<EObject, MApplicationElement>) objSelect;
+									container = ve.getOriginalParent();
+									final IObservableList<MApplicationElement> list = ve.getList();
+									final Iterator<MApplicationElement> iterator = list.iterator();
 									while (iterator.hasNext()) {
-										maes.add((MApplicationElement) iterator.next());
+										maes.add(iterator.next());
 									}
 
 								} else {
@@ -1047,17 +1047,17 @@ public class ModelEditor implements IGotoObject {
 				.setStyle(SWT.ITALIC);
 		viewer.setLabelProvider(new DelegatingStyledCellLabelProvider(
 				new ComponentLabelProvider(this, messages, italicFontDescriptor)));
-		final ObservableListTreeContentProvider contentProvider = new ObservableListTreeContentProvider(
-				new ObservableFactoryImpl(), new TreeStructureAdvisor() {
+		final ObservableListTreeContentProvider<Object> contentProvider = new ObservableListTreeContentProvider<>(
+				new ObservableFactoryImpl(), new TreeStructureAdvisor<Object>() {
 				});
 		viewer.setContentProvider(contentProvider);
 
-		final WritableSet clearedSet = new WritableSet();
+		final WritableSet<EObject> clearedSet = new WritableSet<>();
 
 		contentProvider.getKnownElements().addSetChangeListener(event -> {
 			for (final Object o1 : event.diff.getAdditions()) {
 				if (o1 instanceof EObject) {
-					clearedSet.add(o1);
+					clearedSet.add((EObject) o1);
 				}
 			}
 
@@ -1069,7 +1069,8 @@ public class ModelEditor implements IGotoObject {
 		});
 
 		for (final FeaturePath p : labelFeaturePaths) {
-			final IObservableMap map = EMFProperties.value(p).observeDetail(clearedSet);
+			@SuppressWarnings("unchecked")
+			final IObservableMap<EObject, Object> map = EMFProperties.value(p).observeDetail(clearedSet);
 			map.addMapChangeListener(event -> viewer.update(event.diff.getChangedKeys().toArray(), null));
 		}
 
@@ -1118,7 +1119,7 @@ public class ModelEditor implements IGotoObject {
 			}
 
 			final IContributionFactory fact = context.get(IContributionFactory.class);
-			final AbstractComponentEditor editor = (AbstractComponentEditor) fact
+			final AbstractComponentEditor<?> editor = (AbstractComponentEditor<?>) fact
 					.create("bundleclass://" + el.getContributor().getName() + "/" + el.getAttribute("class"), context); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 			registerEditor(el.getAttribute("id"), editor); //$NON-NLS-1$
 		}
@@ -1168,7 +1169,7 @@ public class ModelEditor implements IGotoObject {
 				final IEditorDescriptor desc = (IEditorDescriptor) el.createExecutableExtension("descriptorClass"); //$NON-NLS-1$
 				final EClass eClass = desc.getEClass();
 				final IContributionFactory fact = context.get(IContributionFactory.class);
-				final AbstractComponentEditor editor = (AbstractComponentEditor) fact.create(
+				final AbstractComponentEditor<?> editor = (AbstractComponentEditor<?>) fact.create(
 						"bundleclass://" + el.getContributor().getName() + "/" + desc.getEditorClass().getName(), //$NON-NLS-1$ //$NON-NLS-2$
 						context);
 				registerEditor(eClass, editor);
@@ -1341,7 +1342,7 @@ public class ModelEditor implements IGotoObject {
 		}
 	}
 
-	private void registerEditor(EClass eClass, Class<? extends AbstractComponentEditor> clazz) {
+	private void registerEditor(EClass eClass, Class<? extends AbstractComponentEditor<?>> clazz) {
 		registerEditor(eClass.getInstanceClassName(), clazz);
 	}
 
@@ -1351,7 +1352,7 @@ public class ModelEditor implements IGotoObject {
 	 * @param ley
 	 * @param clazz
 	 */
-	private void registerEditor(String key, Class<? extends AbstractComponentEditor> clazz) {
+	private void registerEditor(String key, Class<? extends AbstractComponentEditor<?>> clazz) {
 		editorsClasses.put(key, clazz);
 	}
 
@@ -1361,7 +1362,7 @@ public class ModelEditor implements IGotoObject {
 	 * @param instanceClassName
 	 * @param clazz
 	 */
-	private void registerEditor(String key, AbstractComponentEditor editor) {
+	private void registerEditor(String key, AbstractComponentEditor<?> editor) {
 		editors.put(key, editor);
 	}
 
@@ -1372,8 +1373,8 @@ public class ModelEditor implements IGotoObject {
 	 * @param eClass the eClass to get editor for
 	 * @return the {@link AbstractComponentEditor} found (never null).
 	 */
-	public AbstractComponentEditor getEditor(EClass eClass) {
-		AbstractComponentEditor editor = getEditor(eClass.getInstanceClassName(), false);
+	public AbstractComponentEditor<?> getEditor(EClass eClass) {
+		AbstractComponentEditor<?> editor = getEditor(eClass.getInstanceClassName(), false);
 
 		if (editor == null) {
 			// May be can try to use the ancestor editor if not found or the default editor
@@ -1397,7 +1398,7 @@ public class ModelEditor implements IGotoObject {
 
 	}
 
-	public AbstractComponentEditor getEditor(String key) {
+	public AbstractComponentEditor<?> getEditor(String key) {
 		return getEditor(key, true);
 	}
 
@@ -1410,14 +1411,14 @@ public class ModelEditor implements IGotoObject {
 	 * @return the {@link AbstractComponentEditor} if exists. Never null if
 	 *         createDefaultIfNull is true
 	 */
-	private AbstractComponentEditor getEditor(String key, boolean createDefaultIfNull) {
-		AbstractComponentEditor editor = editors.get(key);
+	private AbstractComponentEditor<?> getEditor(String key, boolean createDefaultIfNull) {
+		AbstractComponentEditor<?> editor = editors.get(key);
 
 		if (editor == null) {
 
 			// Editor not yet created in the map... must create instance using registered
 			// class
-			Class<? extends AbstractComponentEditor> cz = editorsClasses.get(key);
+			Class<? extends AbstractComponentEditor<?>> cz = editorsClasses.get(key);
 			if (cz != null) {
 				editor = ContextInjectionFactory.make(cz, context);
 				editors.put(key, editor);
@@ -1431,7 +1432,7 @@ public class ModelEditor implements IGotoObject {
 		return editor;
 	}
 
-	private void manageFeatureMap(AbstractComponentEditor editor) {
+	private void manageFeatureMap(AbstractComponentEditor<?> editor) {
 		for (final FeaturePath p : editor.getLabelProperties()) {
 			boolean found = false;
 			for (final FeaturePath tmp : labelFeaturePaths) {
@@ -1448,7 +1449,7 @@ public class ModelEditor implements IGotoObject {
 
 	}
 
-	public void registerEditor(EClass eClass, AbstractComponentEditor editor) {
+	public void registerEditor(EClass eClass, AbstractComponentEditor<?> editor) {
 		editors.put(eClass.getInstanceClassName(), editor);
 		manageFeatureMap(editor);
 	}
@@ -1569,10 +1570,10 @@ public class ModelEditor implements IGotoObject {
 
 			EStructuralFeature feature = null;
 			EObject container = null;
-			if (parent instanceof VirtualEntry<?>) {
-				final VirtualEntry<?> v = (VirtualEntry<?>) parent;
+			if (parent instanceof VirtualEntry) {
+				final VirtualEntry<EObject, ?> v = (VirtualEntry<EObject, ?>) parent;
 				feature = ((IEMFProperty) v.getProperty()).getStructuralFeature();
-				container = (EObject) v.getOriginalParent();
+				container = v.getOriginalParent();
 			} else if (parent instanceof EObject) {
 				container = (EObject) parent;
 				if (container instanceof MElementContainer<?>) {
@@ -1760,18 +1761,20 @@ public class ModelEditor implements IGotoObject {
 		}
 	}
 
-	public class ObservableFactoryImpl implements IObservableFactory {
+	public class ObservableFactoryImpl implements IObservableFactory<Object, IObservableList<Object>> {
 
+		@SuppressWarnings("unchecked")
 		@Override
-		public IObservable createObservable(Object target) {
+		public IObservableList<Object> createObservable(Object target) {
 			if (target instanceof IObservableList) {
-				return new WritableList((List<?>) target, Object.class);
-			} else if (target instanceof VirtualEntry<?>) {
-				return ((VirtualEntry<?>) target).getList();
+				return new WritableList<>((List<Object>) target, Object.class);
+			} else if (target instanceof VirtualEntry) {
+				return ((VirtualEntry<?, Object>) target).getList();
 			} else {
-				final AbstractComponentEditor editor = getEditor(((EObject) target).eClass());
+				final AbstractComponentEditor<EObject> editor = (AbstractComponentEditor<EObject>) getEditor(
+						((EObject) target).eClass());
 				if (editor != null) {
-					return editor.getChildList(target);
+					return (IObservableList<Object>) editor.getChildList(target);
 				}
 			}
 
@@ -1831,12 +1834,13 @@ public class ModelEditor implements IGotoObject {
 				if (getCurrentTarget() instanceof MElementContainer<?>) {
 					feature = UiPackageImpl.Literals.ELEMENT_CONTAINER__CHILDREN;
 					parent = (EObject) getCurrentTarget();
-				} else if (getCurrentTarget() instanceof VirtualEntry<?>) {
-					final VirtualEntry<?> entry = (VirtualEntry<?>) getCurrentTarget();
-					final IListProperty prop = entry.getProperty();
+				} else if (getCurrentTarget() instanceof VirtualEntry) {
+
+					final VirtualEntry<EObject, ?> entry = (VirtualEntry<EObject, ?>) getCurrentTarget();
+					final IListProperty<?, ?> prop = entry.getProperty();
 					if (prop instanceof IEMFProperty) {
 						feature = ((IEMFProperty) prop).getStructuralFeature();
-						parent = (EObject) entry.getOriginalParent();
+						parent = entry.getOriginalParent();
 
 					}
 				} else if (getCurrentTarget() instanceof EObject) {
@@ -1870,9 +1874,9 @@ public class ModelEditor implements IGotoObject {
 				if (item != null) {
 					final TreeItem parentItem = item.getParentItem();
 					if (parentItem != null) {
-						if (parentItem.getData() instanceof VirtualEntry<?>) {
-							final VirtualEntry<?> vE = (VirtualEntry<?>) parentItem.getData();
-							parent = (EObject) vE.getOriginalParent();
+						if (parentItem.getData() instanceof VirtualEntry) {
+							final VirtualEntry<EObject, ?> vE = (VirtualEntry<EObject, ?>) parentItem.getData();
+							parent = vE.getOriginalParent();
 							feature = ((IEMFProperty) vE.getProperty()).getStructuralFeature();
 						} else if (parentItem.getData() instanceof MElementContainer<?>) {
 							parent = (EObject) parentItem.getData();
@@ -2018,13 +2022,13 @@ public class ModelEditor implements IGotoObject {
 						UiPackageImpl.Literals.ELEMENT_CONTAINER__CHILDREN.getEGenericType());
 				return classifier.isInstance(instance);
 			}
-		} else if (target instanceof VirtualEntry<?>) {
+		} else if (target instanceof VirtualEntry) {
 			@SuppressWarnings("unchecked")
-			final VirtualEntry<Object> vTarget = (VirtualEntry<Object>) target;
+			final VirtualEntry<EObject, ?> vTarget = (VirtualEntry<EObject, ?>) target;
 			if (isIndex || !vTarget.getList().contains(instance)) {
 				if (vTarget.getProperty() instanceof IEMFProperty) {
 					final EStructuralFeature feature = ((IEMFProperty) vTarget.getProperty()).getStructuralFeature();
-					final EObject parent = (EObject) vTarget.getOriginalParent();
+					final EObject parent = vTarget.getOriginalParent();
 					final EClassifier classifier = ModelUtils.getTypeArgument(parent.eClass(),
 							feature.getEGenericType());
 					return classifier.isInstance(instance);
@@ -2065,8 +2069,8 @@ public class ModelEditor implements IGotoObject {
 			switch (targetHint) {
 			case TAB_FORM:
 				// make sure tree node has been instantiated
-				final ObservableListTreeContentProvider provider = (ObservableListTreeContentProvider) viewer
-				.getContentProvider();
+				final ObservableListTreeContentProvider<?> provider = (ObservableListTreeContentProvider<?>) viewer
+						.getContentProvider();
 				getFirstMatchingItem(object, provider, provider.getChildren(viewer.getInput()));
 
 				viewer.reveal(object);
@@ -2099,7 +2103,7 @@ public class ModelEditor implements IGotoObject {
 
 	// This will ensure the provider has created the tree node (so we can reveal
 	// it).
-	private Object getFirstMatchingItem(EObject target, ObservableListTreeContentProvider provider, Object[] items) {
+	private Object getFirstMatchingItem(EObject target, ObservableListTreeContentProvider<?> provider, Object[] items) {
 		for (int i = 0; i < items.length; i++) {
 			if (items[i] == target) {
 				return items[i];

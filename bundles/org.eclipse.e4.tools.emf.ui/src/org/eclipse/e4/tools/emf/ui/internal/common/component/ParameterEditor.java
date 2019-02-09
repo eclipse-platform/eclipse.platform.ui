@@ -23,18 +23,16 @@ import org.eclipse.e4.core.contexts.EclipseContextFactory;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.tools.emf.ui.common.Util;
 import org.eclipse.e4.tools.emf.ui.common.component.AbstractComponentEditor;
+import org.eclipse.e4.tools.emf.ui.internal.E4Properties;
 import org.eclipse.e4.tools.emf.ui.internal.ResourceProvider;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.ControlFactory.TextPasteHandler;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.dialogs.ParameterIdSelectionDialog;
 import org.eclipse.e4.ui.model.application.commands.MParameter;
-import org.eclipse.e4.ui.model.application.commands.impl.CommandsPackageImpl;
 import org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl;
 import org.eclipse.emf.databinding.EMFDataBindingContext;
-import org.eclipse.emf.databinding.edit.EMFEditProperties;
-import org.eclipse.emf.databinding.edit.IEMFEditValueProperty;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.jface.databinding.swt.IWidgetValueProperty;
-import org.eclipse.jface.databinding.swt.WidgetProperties;
+import org.eclipse.jface.databinding.swt.typed.WidgetProperties;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.custom.CTabItem;
@@ -49,7 +47,7 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 
-public class ParameterEditor extends AbstractComponentEditor {
+public class ParameterEditor extends AbstractComponentEditor<MParameter> {
 	private Composite composite;
 	private EMFDataBindingContext context;
 
@@ -118,11 +116,12 @@ public class ParameterEditor extends AbstractComponentEditor {
 			}
 		}
 
-		getMaster().setValue(object);
+		getMaster().setValue((MParameter) object);
 		return composite;
 	}
 
-	private Composite createForm(Composite parent, EMFDataBindingContext context, WritableValue master, boolean isImport) {
+	private Composite createForm(Composite parent, EMFDataBindingContext context, WritableValue<MParameter> master,
+			boolean isImport) {
 		final CTabFolder folder = new CTabFolder(parent, SWT.BOTTOM);
 
 		CTabItem item = new CTabItem(folder, SWT.NONE);
@@ -135,7 +134,7 @@ public class ParameterEditor extends AbstractComponentEditor {
 			ControlFactory.createXMIId(parent, this);
 		}
 
-		final IWidgetValueProperty textProp = WidgetProperties.text(SWT.Modify);
+		final IWidgetValueProperty<Text, String> textProp = WidgetProperties.text(SWT.Modify);
 
 		if (isImport) {
 			ControlFactory.createFindImport(parent, Messages, this, context);
@@ -143,9 +142,11 @@ public class ParameterEditor extends AbstractComponentEditor {
 			return folder;
 		}
 
-		ControlFactory.createTextField(parent, Messages.ModelTooling_Common_Id, master, context, textProp, EMFEditProperties.value(getEditingDomain(), ApplicationPackageImpl.Literals.APPLICATION_ELEMENT__ELEMENT_ID));
+		ControlFactory.createTextField(parent, Messages.ModelTooling_Common_Id, master, context, textProp,
+				E4Properties.elementId(getEditingDomain()));
 		createParameterNameRow(parent, textProp);
-		ControlFactory.createTextField(parent, Messages.ParameterEditor_Value, master, context, textProp, EMFEditProperties.value(getEditingDomain(), CommandsPackageImpl.Literals.PARAMETER__VALUE));
+		ControlFactory.createTextField(parent, Messages.ParameterEditor_Value, master, context, textProp,
+				E4Properties.parameterValue(getEditingDomain()));
 
 		item = new CTabItem(folder, SWT.NONE);
 		item.setText(Messages.ModelTooling_Common_TabSupplementary);
@@ -164,11 +165,11 @@ public class ParameterEditor extends AbstractComponentEditor {
 	}
 
 	@Override
-	public IObservableList getChildList(Object element) {
+	public IObservableList<?> getChildList(Object element) {
 		return null;
 	}
 
-	private void createParameterNameRow(Composite parent, IWidgetValueProperty textProp) {
+	private void createParameterNameRow(Composite parent, IWidgetValueProperty<Text, String> textProp) {
 		{
 			final Label commandParameterIdLabel = new Label(parent, SWT.NONE);
 			commandParameterIdLabel.setText(Messages.ParameterEditor_Command_Parameter_ID);
@@ -178,8 +179,8 @@ public class ParameterEditor extends AbstractComponentEditor {
 			final GridData gd = new GridData(GridData.FILL_HORIZONTAL);
 			commandParameterIdValue.setLayoutData(gd);
 			TextPasteHandler.createFor(commandParameterIdValue);
-			final IEMFEditValueProperty modelProp = EMFEditProperties.value(getEditingDomain(), CommandsPackageImpl.Literals.PARAMETER__NAME);
-			context.bindValue(textProp.observeDelayed(200, commandParameterIdValue), modelProp.observeDetail(getMaster()));
+			context.bindValue(textProp.observeDelayed(200, commandParameterIdValue),
+					E4Properties.parameterName(getEditingDomain()).observeDetail(getMaster()));
 		}
 
 		Button b = ControlFactory.createFindButton(parent, resourcePool);
@@ -189,13 +190,13 @@ public class ParameterEditor extends AbstractComponentEditor {
 	private final class ChooseParameterButtonSelectionListener extends SelectionAdapter {
 		@Override
 		public void widgetSelected(SelectionEvent e) {
-			final WritableValue master = getMaster();
-			if (master == null || !(master.getValue() instanceof MParameter)) {
+			final WritableValue<MParameter> master = getMaster();
+			if (master == null || master.getValue() == null) {
 				return;
 			}
 
 			final IEclipseContext staticContext = EclipseContextFactory.create("ParameterIdSelectionDialog static context"); //$NON-NLS-1$
-			staticContext.set(MParameter.class, (MParameter) master.getValue());
+			staticContext.set(MParameter.class, master.getValue());
 			final ParameterIdSelectionDialog dialog = ContextInjectionFactory.make(ParameterIdSelectionDialog.class, eclipseContext, staticContext);
 			dialog.open();
 		}

@@ -28,13 +28,13 @@ import org.eclipse.core.databinding.observable.list.IObservableList;
 import org.eclipse.core.databinding.observable.list.ListDiffVisitor;
 import org.eclipse.core.databinding.observable.list.WritableList;
 import org.eclipse.core.databinding.observable.value.WritableValue;
-import org.eclipse.core.databinding.property.list.IListProperty;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.di.annotations.Optional;
 import org.eclipse.e4.tools.emf.ui.common.ImageTooltip;
 import org.eclipse.e4.tools.emf.ui.common.Util;
 import org.eclipse.e4.tools.emf.ui.common.component.AbstractComponentEditor;
+import org.eclipse.e4.tools.emf.ui.internal.E4Properties;
 import org.eclipse.e4.tools.emf.ui.internal.ResourceProvider;
 import org.eclipse.e4.tools.emf.ui.internal.common.E4PickList;
 import org.eclipse.e4.tools.emf.ui.internal.common.E4PickList.Struct;
@@ -44,6 +44,7 @@ import org.eclipse.e4.tools.emf.ui.internal.common.component.MenuItemEditor.EObj
 import org.eclipse.e4.tools.emf.ui.internal.common.component.dialogs.MenuIconDialogEditor;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.virtual.VMenuEditor;
 import org.eclipse.e4.tools.emf.ui.internal.common.uistructure.UIViewer;
+import org.eclipse.e4.ui.model.application.MApplicationElement;
 import org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl;
 import org.eclipse.e4.ui.model.application.ui.MExpression;
 import org.eclipse.e4.ui.model.application.ui.MUIElement;
@@ -56,11 +57,7 @@ import org.eclipse.e4.ui.model.application.ui.menu.MMenuElement;
 import org.eclipse.e4.ui.model.application.ui.menu.impl.MenuPackageImpl;
 import org.eclipse.emf.common.command.Command;
 import org.eclipse.emf.databinding.EMFDataBindingContext;
-import org.eclipse.emf.databinding.EMFProperties;
 import org.eclipse.emf.databinding.FeaturePath;
-import org.eclipse.emf.databinding.IEMFListProperty;
-import org.eclipse.emf.databinding.IEMFValueProperty;
-import org.eclipse.emf.databinding.edit.EMFEditProperties;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.util.EcoreUtil;
@@ -68,8 +65,8 @@ import org.eclipse.emf.edit.command.AddCommand;
 import org.eclipse.emf.edit.command.SetCommand;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.databinding.swt.IWidgetValueProperty;
-import org.eclipse.jface.databinding.swt.WidgetProperties;
-import org.eclipse.jface.databinding.viewers.ViewerProperties;
+import org.eclipse.jface.databinding.swt.typed.WidgetProperties;
+import org.eclipse.jface.databinding.viewers.typed.ViewerProperties;
 import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.ComboViewer;
 import org.eclipse.jface.viewers.LabelProvider;
@@ -90,15 +87,9 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 
-public class MenuEditor extends AbstractComponentEditor {
-
+public class MenuEditor extends AbstractComponentEditor<MMenu> {
 	private Composite composite;
 	private EMFDataBindingContext context;
-
-	private final IListProperty ELEMENT_CONTAINER__CHILDREN = EMFProperties
-			.list(UiPackageImpl.Literals.ELEMENT_CONTAINER__CHILDREN);
-	private final IEMFValueProperty UI_ELEMENT__VISIBLE_WHEN = EMFProperties
-			.value(UiPackageImpl.Literals.UI_ELEMENT__VISIBLE_WHEN);
 	private StackLayout stackLayout;
 	private final List<Action> actions = new ArrayList<>();
 
@@ -156,7 +147,7 @@ public class MenuEditor extends AbstractComponentEditor {
 				createImageDescriptor(ResourceProvider.IMG_CoreExpression)) {
 			@Override
 			public void run() {
-				final MUIElement e = (MUIElement) getMaster().getValue();
+				final MUIElement e = getMaster().getValue();
 				final Command cmd = SetCommand.create(getEditingDomain(), e,
 						UiPackageImpl.Literals.UI_ELEMENT__VISIBLE_WHEN, MUiFactory.INSTANCE.createCoreExpression());
 				if (cmd.canExecute()) {
@@ -205,13 +196,13 @@ public class MenuEditor extends AbstractComponentEditor {
 			composite.layout(true, true);
 		}
 
-		getMaster().setValue(object);
+		getMaster().setValue((MMenu) object);
 		enableIdGenerator(UiPackageImpl.Literals.UI_LABEL__LABEL,
 				ApplicationPackageImpl.Literals.APPLICATION_ELEMENT__ELEMENT_ID, null);
 		return composite;
 	}
 
-	protected Composite createForm(Composite parent, EMFDataBindingContext context, WritableValue master,
+	protected Composite createForm(Composite parent, EMFDataBindingContext context, WritableValue<MMenu> master,
 			boolean rootMenu, boolean isImport) {
 		final CTabFolder folder = new CTabFolder(parent, SWT.BOTTOM);
 
@@ -225,7 +216,7 @@ public class MenuEditor extends AbstractComponentEditor {
 			ControlFactory.createXMIId(parent, this);
 		}
 
-		final IWidgetValueProperty textProp = WidgetProperties.text(SWT.Modify);
+		final IWidgetValueProperty<Text, String> textProp = WidgetProperties.text(SWT.Modify);
 
 		if (isImport) {
 			ControlFactory.createFindImport(parent, Messages, this, context);
@@ -234,18 +225,16 @@ public class MenuEditor extends AbstractComponentEditor {
 		}
 
 		ControlFactory.createTextField(parent, Messages.ModelTooling_Common_Id, master, context, textProp,
-				EMFEditProperties
-				.value(getEditingDomain(), ApplicationPackageImpl.Literals.APPLICATION_ELEMENT__ELEMENT_ID));
+				E4Properties.elementId(getEditingDomain()));
 
 		// ------------------------------------------------------------
 		if (!rootMenu) {
 			ControlFactory.createTranslatedTextField(parent, Messages.MenuEditor_LabelLabel, master, context, textProp,
-					EMFEditProperties.value(getEditingDomain(), UiPackageImpl.Literals.UI_LABEL__LABEL), resourcePool,
-					project);
+					E4Properties.label(getEditingDomain()), resourcePool, project);
 		}
 
 		ControlFactory.createTextField(parent, Messages.MenuEditor_Mnemonics, master, context, textProp,
-				EMFEditProperties.value(getEditingDomain(), MenuPackageImpl.Literals.MENU_ELEMENT__MNEMONICS));
+				E4Properties.mnemonics(getEditingDomain()));
 
 		{
 			final E4PickList pickList = new E4PickList(parent, SWT.NONE, null, this,
@@ -264,17 +253,14 @@ public class MenuEditor extends AbstractComponentEditor {
 							MenuPackageImpl.Literals.DYNAMIC_MENU_CONTRIBUTION, false) });
 			pickList.setSelection(new StructuredSelection(defaultStruct));
 
-			final IEMFListProperty prop = EMFEditProperties.list(getEditingDomain(),
-					UiPackageImpl.Literals.ELEMENT_CONTAINER__CHILDREN);
-			pickList.getList().setInput(prop.observeDetail(master));
+			pickList.getList().setInput(E4Properties.<MMenuElement>children(getEditingDomain()).observeDetail(master));
 
 		}
 
 		// ------------------------------------------------------------
 		if (!rootMenu) {
 			ControlFactory.createTranslatedTextField(parent, Messages.MenuEditor_Tooltip, master, context, textProp,
-					EMFEditProperties.value(getEditingDomain(), UiPackageImpl.Literals.UI_LABEL__TOOLTIP), resourcePool,
-					project);
+					E4Properties.tooltip(getEditingDomain()), resourcePool, project);
 		}
 
 		// ------------------------------------------------------------
@@ -288,8 +274,7 @@ public class MenuEditor extends AbstractComponentEditor {
 			t.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 			context.bindValue(
 					textProp.observeDelayed(200, t),
-					EMFEditProperties.value(getEditingDomain(), UiPackageImpl.Literals.UI_LABEL__ICON_URI).observeDetail(
-							master));
+					E4Properties.iconUri(getEditingDomain()).observeDetail(master));
 
 			new ImageTooltip(t, Messages, this);
 
@@ -298,7 +283,7 @@ public class MenuEditor extends AbstractComponentEditor {
 				@Override
 				public void widgetSelected(SelectionEvent e) {
 					final MenuIconDialogEditor dialog = new MenuIconDialogEditor(b.getShell(), eclipseContext, project,
-							getEditingDomain(), (MMenu) getMaster().getValue(), Messages);
+							getEditingDomain(), getMaster().getValue(), Messages);
 					dialog.open();
 				}
 			});
@@ -331,17 +316,15 @@ public class MenuEditor extends AbstractComponentEditor {
 					UiPackageImpl.Literals.UI_ELEMENT__VISIBLE_WHEN));
 			combo.setInput(list);
 			context.bindValue(ViewerProperties.singleSelection().observe(combo),
-					EMFEditProperties.value(getEditingDomain(), UiPackageImpl.Literals.UI_ELEMENT__VISIBLE_WHEN)
-					.observeDetail(getMaster()), new UpdateValueStrategy().setConverter(new EClass2EObject(Messages)),
-					new UpdateValueStrategy().setConverter(new EObject2EClass(Messages)));
+					E4Properties.visibleWhen(getEditingDomain()).observeDetail(getMaster()),
+					UpdateValueStrategy.create(new EClass2EObject<>(Messages)),
+					UpdateValueStrategy.create(new EObject2EClass<>(Messages)));
 		}
 
 		ControlFactory.createCheckBox(parent, Messages.ModelTooling_UIElement_ToBeRendered, getMaster(), context,
-				WidgetProperties.selection(),
-				EMFEditProperties.value(getEditingDomain(), UiPackageImpl.Literals.UI_ELEMENT__TO_BE_RENDERED));
+				WidgetProperties.selection(), E4Properties.toBeRendered(getEditingDomain()));
 		ControlFactory.createCheckBox(parent, Messages.ModelTooling_UIElement_Visible, getMaster(), context,
-				WidgetProperties.selection(),
-				EMFEditProperties.value(getEditingDomain(), UiPackageImpl.Literals.UI_ELEMENT__VISIBLE));
+				WidgetProperties.selection(), E4Properties.visible(getEditingDomain()));
 
 		item = new CTabItem(folder, SWT.NONE);
 		item.setText(Messages.ModelTooling_Common_TabSupplementary);
@@ -350,8 +333,7 @@ public class MenuEditor extends AbstractComponentEditor {
 		item.setControl(parent.getParent());
 
 		ControlFactory.createTextField(parent, Messages.ModelTooling_UIElement_AccessibilityPhrase, getMaster(),
-				context, textProp,
-				EMFEditProperties.value(getEditingDomain(), UiPackageImpl.Literals.UI_ELEMENT__ACCESSIBILITY_PHRASE));
+				context, textProp, E4Properties.accessibilityPhrase(getEditingDomain()));
 		ControlFactory.createStringListWidget(parent, Messages, this, Messages.CategoryEditor_Tags,
 				ApplicationPackageImpl.Literals.APPLICATION_ELEMENT__TAGS, VERTICAL_LIST_WIDGET_INDENT);
 		ControlFactory.createMapProperties(parent, Messages, this, Messages.ModelTooling_Contribution_PersistedState,
@@ -382,14 +364,15 @@ public class MenuEditor extends AbstractComponentEditor {
 	}
 
 	@Override
-	public IObservableList getChildList(Object element) {
-		final WritableList list = new WritableList();
+	public IObservableList<?> getChildList(Object element) {
+		final WritableList<MApplicationElement> list = new WritableList<>();
+		MMenu menu = (MMenu) element;
 
-		if (((MUIElement) element).getVisibleWhen() != null) {
-			list.add(0, ((MUIElement) element).getVisibleWhen());
+		if (menu.getVisibleWhen() != null) {
+			list.add(0, menu.getVisibleWhen());
 		}
 
-		UI_ELEMENT__VISIBLE_WHEN.observe(element).addValueChangeListener(event -> {
+		E4Properties.visibleWhen().observe(menu).addValueChangeListener(event -> {
 			if (event.diff.getOldValue() != null) {
 				list.remove(event.diff.getOldValue());
 			}
@@ -399,16 +382,16 @@ public class MenuEditor extends AbstractComponentEditor {
 			}
 		});
 
-		final IObservableList l = ELEMENT_CONTAINER__CHILDREN.observe(element);
-		l.addListChangeListener(event -> event.diff.accept(new ListDiffVisitor() {
+		final IObservableList<MMenuElement> l = E4Properties.<MMenuElement>children().observe(menu);
+		l.addListChangeListener(event -> event.diff.accept(new ListDiffVisitor<MMenuElement>() {
 
 			@Override
-			public void handleRemove(int index, Object element) {
+			public void handleRemove(int index, MMenuElement element) {
 				list.remove(element);
 			}
 
 			@Override
-			public void handleMove(int oldIndex, int newIndex, Object element) {
+			public void handleMove(int oldIndex, int newIndex, MMenuElement element) {
 				if (list.get(0) instanceof MExpression) {
 					oldIndex += 1;
 					newIndex += 1;
@@ -417,7 +400,7 @@ public class MenuEditor extends AbstractComponentEditor {
 			}
 
 			@Override
-			public void handleAdd(int index, Object element) {
+			public void handleAdd(int index, MMenuElement element) {
 				list.add(element);
 			}
 		}));

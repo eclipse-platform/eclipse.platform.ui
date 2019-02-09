@@ -75,11 +75,11 @@ public class FindParentReferenceElementDialog extends TitleAreaDialog {
 	private static final String XPATH_URI = "xpath:/"; //$NON-NLS-1$
 
 	private final MStringModelFragment fragment;
-	private final AbstractComponentEditor editor;
+	private final AbstractComponentEditor<?> editor;
 	private TableViewer viewer;
 	private final Messages Messages;
 	private ModelResultHandlerImpl currentResultHandler;
-	private WritableList list;
+	private WritableList<Object> list;
 	private ComboViewer eClassViewer;
 	private Text searchText;
 	private EClass selectedContainer;
@@ -88,7 +88,7 @@ public class FindParentReferenceElementDialog extends TitleAreaDialog {
 	/** Remember of classes that can be used for a fragment definition. */
 	private static List<EClass> extendableClasses = null;
 
-	public FindParentReferenceElementDialog(Shell parentShell, AbstractComponentEditor editor,
+	public FindParentReferenceElementDialog(Shell parentShell, AbstractComponentEditor<?> editor,
 			MStringModelFragment fragment, Messages Messages, EClass previousSelection) {
 		super(parentShell);
 		this.fragment = fragment;
@@ -199,7 +199,7 @@ public class FindParentReferenceElementDialog extends TitleAreaDialog {
 			@Override
 			public void update(ViewerCell cell) {
 				final EObject o = (EObject) cell.getElement();
-				final AbstractComponentEditor editor = FindParentReferenceElementDialog.this.editor.getEditor()
+				final AbstractComponentEditor<?> editor = FindParentReferenceElementDialog.this.editor.getEditor()
 						.getEditor(o.eClass());
 				cell.setImage(editor.getImage(o));
 
@@ -221,10 +221,10 @@ public class FindParentReferenceElementDialog extends TitleAreaDialog {
 				cell.setText(styledString.getString());
 			}
 		});
-		viewer.setContentProvider(new ObservableListContentProvider());
+		viewer.setContentProvider(new ObservableListContentProvider<>());
 		viewer.addDoubleClickListener(event -> okPressed());
 
-		list = new WritableList();
+		list = new WritableList<>();
 		viewer.setInput(list);
 
 		searchText.addModifyListener(e -> updateSearch());

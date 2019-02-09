@@ -25,12 +25,12 @@ import javax.inject.Inject;
 
 import org.eclipse.core.databinding.observable.list.IObservableList;
 import org.eclipse.core.databinding.observable.value.WritableValue;
-import org.eclipse.core.databinding.property.list.IListProperty;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.e4.core.di.annotations.Optional;
 import org.eclipse.e4.tools.emf.ui.common.IModelResource;
 import org.eclipse.e4.tools.emf.ui.common.Util;
 import org.eclipse.e4.tools.emf.ui.common.component.AbstractComponentEditor;
+import org.eclipse.e4.tools.emf.ui.internal.E4Properties;
 import org.eclipse.e4.tools.emf.ui.internal.ResourceProvider;
 import org.eclipse.e4.tools.emf.ui.internal.common.E4PickList;
 import org.eclipse.e4.tools.emf.ui.internal.common.E4PickList.Struct;
@@ -45,17 +45,14 @@ import org.eclipse.e4.ui.model.application.ui.menu.impl.MenuPackageImpl;
 import org.eclipse.e4.ui.workbench.modeling.EModelService;
 import org.eclipse.emf.common.command.Command;
 import org.eclipse.emf.databinding.EMFDataBindingContext;
-import org.eclipse.emf.databinding.EMFProperties;
 import org.eclipse.emf.databinding.FeaturePath;
-import org.eclipse.emf.databinding.IEMFListProperty;
-import org.eclipse.emf.databinding.edit.EMFEditProperties;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.emf.edit.command.AddCommand;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.databinding.swt.IWidgetValueProperty;
-import org.eclipse.jface.databinding.swt.WidgetProperties;
+import org.eclipse.jface.databinding.swt.typed.WidgetProperties;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.TreeViewer;
@@ -74,12 +71,9 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 
-public class ToolBarContributionEditor extends AbstractComponentEditor {
+public class ToolBarContributionEditor extends AbstractComponentEditor<MToolBarContribution> {
 	private Composite composite;
 	private EMFDataBindingContext context;
-
-	private final IListProperty ELEMENT_CONTAINER__CHILDREN = EMFProperties
-			.list(UiPackageImpl.Literals.ELEMENT_CONTAINER__CHILDREN);
 	private StackLayout stackLayout;
 	private final List<Action> actions = new ArrayList<>();
 
@@ -179,11 +173,12 @@ public class ToolBarContributionEditor extends AbstractComponentEditor {
 			}
 		}
 
-		getMaster().setValue(object);
+		getMaster().setValue((MToolBarContribution) object);
 		return composite;
 	}
 
-	private Composite createForm(Composite parent, EMFDataBindingContext context, WritableValue master, boolean isImport) {
+	private Composite createForm(Composite parent, EMFDataBindingContext context,
+			WritableValue<MToolBarContribution> master, boolean isImport) {
 		final CTabFolder folder = new CTabFolder(parent, SWT.BOTTOM);
 
 		CTabItem item = new CTabItem(folder, SWT.NONE);
@@ -196,7 +191,7 @@ public class ToolBarContributionEditor extends AbstractComponentEditor {
 			ControlFactory.createXMIId(parent, this);
 		}
 
-		final IWidgetValueProperty textProp = WidgetProperties.text(SWT.Modify);
+		final IWidgetValueProperty<Text, String> textProp = WidgetProperties.text(SWT.Modify);
 
 		if (isImport) {
 			ControlFactory.createFindImport(parent, Messages, this, context);
@@ -205,11 +200,9 @@ public class ToolBarContributionEditor extends AbstractComponentEditor {
 		}
 
 		ControlFactory.createTextField(parent, Messages.ModelTooling_Common_Id, master, context, textProp,
-				EMFEditProperties
-				.value(getEditingDomain(), ApplicationPackageImpl.Literals.APPLICATION_ELEMENT__ELEMENT_ID));
+				E4Properties.elementId(getEditingDomain()));
 		ControlFactory.createTextField(parent, Messages.ModelTooling_UIElement_AccessibilityPhrase, getMaster(),
-				context, textProp,
-				EMFEditProperties.value(getEditingDomain(), UiPackageImpl.Literals.UI_ELEMENT__ACCESSIBILITY_PHRASE));
+				context, textProp, E4Properties.accessibilityPhrase(getEditingDomain()));
 
 		{
 			final Label l = new Label(parent, SWT.NONE);
@@ -222,15 +215,14 @@ public class ToolBarContributionEditor extends AbstractComponentEditor {
 			final GridData gd = new GridData(GridData.FILL_HORIZONTAL);
 			t.setLayoutData(gd);
 			context.bindValue(textProp.observeDelayed(200, t),
-					EMFEditProperties.value(getEditingDomain(), MenuPackageImpl.Literals.TOOL_BAR_CONTRIBUTION__PARENT_ID)
-					.observeDetail(getMaster()));
+					E4Properties.toolBarParentId(getEditingDomain()).observeDetail(getMaster()));
 
 			Button b = ControlFactory.createFindButton(parent, resourcePool);
 			b.addSelectionListener(new SelectionAdapter() {
 				@Override
 				public void widgetSelected(SelectionEvent e) {
 					final ToolBarIdDialog dialog = new ToolBarIdDialog(t.getShell(), resource,
-							(MToolBarContribution) getMaster().getValue(), getEditingDomain(), modelService, Messages);
+							getMaster().getValue(), getEditingDomain(), modelService, Messages);
 					dialog.open();
 				}
 			});
@@ -238,8 +230,7 @@ public class ToolBarContributionEditor extends AbstractComponentEditor {
 
 		ControlFactory.createTextField(parent, Messages.ToolBarContributionEditor_Position,
 				Messages.ToolBarContributionEditor_PositionTooltip, master, context, textProp,
-				EMFEditProperties.value(getEditingDomain(),
-						MenuPackageImpl.Literals.TOOL_BAR_CONTRIBUTION__POSITION_IN_PARENT));
+				E4Properties.toolBarPositionInParent(getEditingDomain()));
 
 		// ------------------------------------------------------------
 		{
@@ -267,9 +258,7 @@ public class ToolBarContributionEditor extends AbstractComponentEditor {
 			pickList.setText(Messages.ToolBarEditor_ToolbarItems);
 			final TableViewer viewer = pickList.getList();
 
-			final IEMFListProperty prop = EMFEditProperties.list(getEditingDomain(),
-					UiPackageImpl.Literals.ELEMENT_CONTAINER__CHILDREN);
-			viewer.setInput(prop.observeDetail(master));
+			viewer.setInput(E4Properties.<MToolBarElement>children(getEditingDomain()).observeDetail(master));
 
 			final Struct defaultStruct = new Struct(Messages.ToolBarEditor_HandledToolItem,
 					MenuPackageImpl.Literals.HANDLED_TOOL_ITEM, false);
@@ -281,11 +270,9 @@ public class ToolBarContributionEditor extends AbstractComponentEditor {
 		}
 
 		ControlFactory.createCheckBox(parent, Messages.ModelTooling_UIElement_ToBeRendered, getMaster(), context,
-				WidgetProperties.selection(),
-				EMFEditProperties.value(getEditingDomain(), UiPackageImpl.Literals.UI_ELEMENT__TO_BE_RENDERED));
+				WidgetProperties.buttonSelection(), E4Properties.toBeRendered(getEditingDomain()));
 		ControlFactory.createCheckBox(parent, Messages.ModelTooling_UIElement_Visible, getMaster(), context,
-				WidgetProperties.selection(),
-				EMFEditProperties.value(getEditingDomain(), UiPackageImpl.Literals.UI_ELEMENT__VISIBLE));
+				WidgetProperties.buttonSelection(), E4Properties.visible(getEditingDomain()));
 
 		item = new CTabItem(folder, SWT.NONE);
 		item.setText(Messages.ModelTooling_Common_TabSupplementary);
@@ -323,8 +310,8 @@ public class ToolBarContributionEditor extends AbstractComponentEditor {
 	}
 
 	@Override
-	public IObservableList getChildList(Object element) {
-		return ELEMENT_CONTAINER__CHILDREN.observe(element);
+	public IObservableList<?> getChildList(Object element) {
+		return E4Properties.<MToolBarElement>children().observe((MToolBarContribution) element);
 	}
 
 	@Override

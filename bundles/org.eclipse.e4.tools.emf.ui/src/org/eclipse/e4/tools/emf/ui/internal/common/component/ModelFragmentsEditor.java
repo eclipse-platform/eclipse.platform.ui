@@ -22,11 +22,11 @@ import javax.inject.Inject;
 
 import org.eclipse.core.databinding.observable.list.IObservableList;
 import org.eclipse.core.databinding.observable.list.WritableList;
-import org.eclipse.core.databinding.property.list.IListProperty;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.tools.emf.ui.common.IEditorFeature.FeatureClass;
 import org.eclipse.e4.tools.emf.ui.common.Util;
 import org.eclipse.e4.tools.emf.ui.common.component.AbstractComponentEditor;
+import org.eclipse.e4.tools.emf.ui.internal.E4Properties;
 import org.eclipse.e4.tools.emf.ui.internal.ResourceProvider;
 import org.eclipse.e4.tools.emf.ui.internal.common.AbstractPickList;
 import org.eclipse.e4.tools.emf.ui.internal.common.AbstractPickList.PickListFeatures;
@@ -39,8 +39,6 @@ import org.eclipse.e4.ui.model.fragment.MModelFragment;
 import org.eclipse.e4.ui.model.fragment.MModelFragments;
 import org.eclipse.e4.ui.model.fragment.impl.FragmentPackageImpl;
 import org.eclipse.emf.common.command.Command;
-import org.eclipse.emf.databinding.EMFProperties;
-import org.eclipse.emf.databinding.IEMFListProperty;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EClassifier;
 import org.eclipse.emf.ecore.EObject;
@@ -59,13 +57,7 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
 
-public class ModelFragmentsEditor extends AbstractComponentEditor {
-
-	private final IListProperty MODEL_FRAGMENTS__FRAGMENTS = EMFProperties
-			.list(FragmentPackageImpl.Literals.MODEL_FRAGMENTS__FRAGMENTS);
-	private final IListProperty MODEL_FRAGMENTS__IMPORTS = EMFProperties
-			.list(FragmentPackageImpl.Literals.MODEL_FRAGMENTS__IMPORTS);
-
+public class ModelFragmentsEditor extends AbstractComponentEditor<MModelFragments> {
 	private Composite composite;
 
 	@Inject
@@ -96,7 +88,7 @@ public class ModelFragmentsEditor extends AbstractComponentEditor {
 		if (composite == null) {
 			composite = createForm(parent);
 		}
-		getMaster().setValue(object);
+		getMaster().setValue((MModelFragments) object);
 		return composite;
 	}
 
@@ -144,9 +136,7 @@ public class ModelFragmentsEditor extends AbstractComponentEditor {
 			};
 			pickList.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 3, 1));
 			final TableViewer viewer = pickList.getList();
-
-			final IEMFListProperty prop = EMFProperties.list(FragmentPackageImpl.Literals.MODEL_FRAGMENTS__FRAGMENTS);
-			viewer.setInput(prop.observeDetail(getMaster()));
+			viewer.setInput(E4Properties.fragments().observeDetail(getMaster()));
 		}
 
 	}
@@ -218,8 +208,7 @@ public class ModelFragmentsEditor extends AbstractComponentEditor {
 			pickList.setSelection(new StructuredSelection(list.get(0)));
 		}
 
-		final IEMFListProperty prop = EMFProperties.list(FragmentPackageImpl.Literals.MODEL_FRAGMENTS__IMPORTS);
-		viewer.setInput(prop.observeDetail(getMaster()));
+		viewer.setInput(E4Properties.imports().observeDetail(getMaster()));
 	}
 
 	public void addClasses(EPackage ePackage, List<FeatureClass> list) {
@@ -240,22 +229,14 @@ public class ModelFragmentsEditor extends AbstractComponentEditor {
 	}
 
 	@Override
-	public IObservableList getChildList(Object element) {
-		final WritableList list = new WritableList();
-		list.add(new VirtualEntry<Object>(ModelEditor.VIRTUAL_MODEL_IMPORTS, MODEL_FRAGMENTS__IMPORTS, element,
-				Messages.ModelFragmentsEditor_Imports) {
-			@Override
-			protected boolean accepted(Object o) {
-				return true;
-			}
-		});
-		list.add(new VirtualEntry<Object>(ModelEditor.VIRTUAL_MODEL_FRAGEMENTS, MODEL_FRAGMENTS__FRAGMENTS, element,
-				Messages.ModelFragmentsEditor_ModelFragments) {
-			@Override
-			protected boolean accepted(Object o) {
-				return true;
-			}
-		});
+	public IObservableList<?> getChildList(Object element) {
+		MModelFragments fragments = (MModelFragments) element;
+
+		final WritableList<VirtualEntry<MModelFragments, ?>> list = new WritableList<>();
+		list.add(new VirtualEntry<>(ModelEditor.VIRTUAL_MODEL_IMPORTS, E4Properties.imports(), fragments,
+				Messages.ModelFragmentsEditor_Imports));
+		list.add(new VirtualEntry<>(ModelEditor.VIRTUAL_MODEL_FRAGEMENTS, E4Properties.fragments(), fragments,
+				Messages.ModelFragmentsEditor_ModelFragments));
 
 		return list;
 	}

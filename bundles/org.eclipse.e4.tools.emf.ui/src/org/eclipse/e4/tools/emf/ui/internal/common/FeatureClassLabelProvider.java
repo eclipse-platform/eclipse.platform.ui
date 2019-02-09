@@ -36,7 +36,7 @@ public class FeatureClassLabelProvider extends LabelProvider {
 	public String getText(Object element) {
 		final FeatureClass eFeatureClass = (FeatureClass) element;
 		final EClass eclass = eFeatureClass.eClass;
-		final AbstractComponentEditor elementEditor = editor.getEditor(eclass);
+		final AbstractComponentEditor<?> elementEditor = editor.getEditor(eclass);
 		if (elementEditor != null) {
 			return elementEditor.getLabel(null);
 		}

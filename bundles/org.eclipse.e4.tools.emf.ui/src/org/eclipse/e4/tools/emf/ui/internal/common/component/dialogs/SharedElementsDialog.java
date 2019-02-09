@@ -195,7 +195,7 @@ public class SharedElementsDialog extends SaveDialogBoundsSettingsDialog {
 		}
 
 		private String getTypename(EObject o) {
-			final AbstractComponentEditor editor = SharedElementsDialog.this.editor.getEditor(o.eClass());
+			final AbstractComponentEditor<?> editor = SharedElementsDialog.this.editor.getEditor(o.eClass());
 			if (editor != null) {
 				return editor.getLabel(o);
 			}
@@ -204,8 +204,8 @@ public class SharedElementsDialog extends SaveDialogBoundsSettingsDialog {
 
 		@Override
 		public Image getImage(Object element) {
-			final AbstractComponentEditor editor = SharedElementsDialog.this.editor.getEditor(((EObject) element)
-					.eClass());
+			final AbstractComponentEditor<?> editor = SharedElementsDialog.this.editor
+					.getEditor(((EObject) element).eClass());
 			if (editor != null) {
 				return editor.getImage(element);
 			}

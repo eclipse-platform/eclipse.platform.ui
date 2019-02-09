@@ -10,12 +10,12 @@ import org.eclipse.emf.ecore.resource.Resource;
 
 public class ModelResultHandlerImpl implements ModelResultHandler {
 	private boolean canceled = false;
-	private final IObservableList list;
+	private final IObservableList<Object> list;
 	private final Filter filter;
-	private final AbstractComponentEditor editor;
+	private final AbstractComponentEditor<?> editor;
 	private final Resource resource;
 
-	public ModelResultHandlerImpl(IObservableList list, Filter filter, AbstractComponentEditor editor,
+	public ModelResultHandlerImpl(IObservableList<Object> list, Filter filter, AbstractComponentEditor<?> editor,
 			Resource resource) {
 		this.list = list;
 		this.filter = filter;

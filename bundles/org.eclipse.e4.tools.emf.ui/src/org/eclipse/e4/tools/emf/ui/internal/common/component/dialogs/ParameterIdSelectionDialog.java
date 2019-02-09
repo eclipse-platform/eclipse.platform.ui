@@ -127,7 +127,7 @@ public class ParameterIdSelectionDialog extends AbstractIdDialog<MParameter, MCo
 	 * @return all found MCommandParameters or an empty {@link List}, never a {@code null} value.
 	 */
 	protected List<MCommandParameter> getParametersOfParentNodesCommand() {
-		TreeIterator<EObject> it = EcoreUtil.getAllContents((EObject) resource.getRoot().get(0), true);
+		TreeIterator<EObject> it = EcoreUtil.getAllContents(resource.getRoot().get(0), true);
 		while (it.hasNext()) {
 			EObject containerObjectWithCommand = it.next();
 			if (containerObjectWithCommand != null && canSupplyParameters(containerObjectWithCommand)) {

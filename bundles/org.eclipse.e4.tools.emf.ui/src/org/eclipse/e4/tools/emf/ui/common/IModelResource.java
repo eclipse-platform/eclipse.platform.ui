@@ -19,7 +19,7 @@ import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.edit.domain.EditingDomain;
 
 public interface IModelResource {
-	public IObservableList getRoot();
+	public IObservableList<EObject> getRoot();
 
 	public boolean isSaveable();
 

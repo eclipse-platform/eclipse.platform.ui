@@ -136,7 +136,7 @@ public class FindContributionDialog extends TitleAreaDialog {
 		viewer = new TableViewer(container, SWT.FULL_SELECTION | SWT.BORDER);
 		GridData gd = new GridData(GridData.FILL_BOTH);
 		viewer.getControl().setLayoutData(gd);
-		viewer.setContentProvider(new ObservableListContentProvider());
+		viewer.setContentProvider(new ObservableListContentProvider<>());
 		viewer.setLabelProvider(new StyledCellLabelProvider() {
 			@Override
 			public void update(ViewerCell cell) {
@@ -191,7 +191,7 @@ public class FindContributionDialog extends TitleAreaDialog {
 		});
 		viewer.addDoubleClickListener(event -> okPressed());
 
-		final WritableList list = new WritableList();
+		final WritableList<ContributionData> list = new WritableList<>();
 		viewer.setInput(list);
 
 		final ClassContributionCollector collector = getCollector();
@@ -393,9 +393,9 @@ public class FindContributionDialog extends TitleAreaDialog {
 
 	private static class ContributionResultHandlerImpl implements ContributionResultHandler {
 		private boolean cancled = false;
-		private IObservableList list;
+		private IObservableList<ContributionData> list;
 
-		public ContributionResultHandlerImpl(IObservableList list) {
+		public ContributionResultHandlerImpl(IObservableList<ContributionData> list) {
 			this.list = list;
 		}
 

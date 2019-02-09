@@ -32,6 +32,7 @@ import org.eclipse.e4.tools.emf.ui.internal.common.VirtualEntry;
 import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.ui.menu.MMenuFactory;
 import org.eclipse.e4.ui.model.application.ui.menu.MTrimContribution;
+import org.eclipse.e4.ui.model.application.ui.menu.MTrimContributions;
 import org.eclipse.e4.ui.model.application.ui.menu.impl.MenuPackageImpl;
 import org.eclipse.emf.common.command.Command;
 import org.eclipse.emf.databinding.EMFDataBindingContext;
@@ -44,7 +45,7 @@ import org.eclipse.swt.custom.CTabItem;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
 
-public class VTrimContributionsEditor extends AbstractComponentEditor {
+public class VTrimContributionsEditor extends AbstractComponentEditor<MTrimContributions> {
 	private Composite composite;
 	private EMFDataBindingContext context;
 	private TableViewer viewer;
@@ -87,13 +88,15 @@ public class VTrimContributionsEditor extends AbstractComponentEditor {
 			context = new EMFDataBindingContext();
 			composite = createForm(parent, context, getMaster());
 		}
-		final VirtualEntry<?> o = (VirtualEntry<?>) object;
+		@SuppressWarnings("unchecked")
+		final VirtualEntry<MTrimContributions, ?> o = (VirtualEntry<MTrimContributions, ?>) object;
 		viewer.setInput(o.getList());
 		getMaster().setValue(o.getOriginalParent());
 		return composite;
 	}
 
-	private Composite createForm(Composite parent, EMFDataBindingContext context, WritableValue master) {
+	private Composite createForm(Composite parent, EMFDataBindingContext context,
+			WritableValue<MTrimContributions> master) {
 		final CTabFolder folder = new CTabFolder(parent, SWT.BOTTOM);
 
 		final CTabItem item = new CTabItem(folder, SWT.NONE);
@@ -126,7 +129,7 @@ public class VTrimContributionsEditor extends AbstractComponentEditor {
 	}
 
 	@Override
-	public IObservableList getChildList(Object element) {
+	public IObservableList<?> getChildList(Object element) {
 		return null;
 	}
 

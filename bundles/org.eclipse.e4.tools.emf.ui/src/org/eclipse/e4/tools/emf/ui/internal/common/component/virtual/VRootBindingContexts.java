@@ -31,6 +31,7 @@ import org.eclipse.e4.tools.emf.ui.internal.common.E4PickList;
 import org.eclipse.e4.tools.emf.ui.internal.common.VirtualEntry;
 import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.commands.MBindingContext;
+import org.eclipse.e4.ui.model.application.commands.MBindingTableContainer;
 import org.eclipse.e4.ui.model.application.commands.MCommandsFactory;
 import org.eclipse.e4.ui.model.application.commands.impl.CommandsPackageImpl;
 import org.eclipse.emf.common.command.Command;
@@ -44,7 +45,7 @@ import org.eclipse.swt.custom.CTabItem;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
 
-public class VRootBindingContexts extends AbstractComponentEditor {
+public class VRootBindingContexts extends AbstractComponentEditor<MBindingTableContainer> {
 	private Composite composite;
 	private TableViewer viewer;
 	private EMFDataBindingContext context;
@@ -87,13 +88,15 @@ public class VRootBindingContexts extends AbstractComponentEditor {
 			context = new EMFDataBindingContext();
 			composite = createForm(parent, context, getMaster());
 		}
-		final VirtualEntry<?> o = (VirtualEntry<?>) object;
+		@SuppressWarnings("unchecked")
+		final VirtualEntry<MBindingTableContainer, ?> o = (VirtualEntry<MBindingTableContainer, ?>) object;
 		viewer.setInput(o.getList());
 		getMaster().setValue(o.getOriginalParent());
 		return composite;
 	}
 
-	private Composite createForm(Composite parent, EMFDataBindingContext context, WritableValue master) {
+	private Composite createForm(Composite parent, EMFDataBindingContext context,
+			WritableValue<MBindingTableContainer> master) {
 		final CTabFolder folder = new CTabFolder(parent, SWT.BOTTOM);
 
 		final CTabItem item = new CTabItem(folder, SWT.NONE);
@@ -138,7 +141,7 @@ public class VRootBindingContexts extends AbstractComponentEditor {
 	}
 
 	@Override
-	public IObservableList getChildList(Object element) {
+	public IObservableList<?> getChildList(Object element) {
 		return null;
 	}
 

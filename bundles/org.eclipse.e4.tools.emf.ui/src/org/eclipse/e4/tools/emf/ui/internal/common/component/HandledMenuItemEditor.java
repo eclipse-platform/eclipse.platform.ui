@@ -21,23 +21,16 @@ import org.eclipse.core.databinding.observable.list.WritableList;
 import org.eclipse.core.databinding.observable.value.WritableValue;
 import org.eclipse.e4.tools.emf.ui.common.CommandToStringConverter;
 import org.eclipse.e4.tools.emf.ui.common.IModelResource;
+import org.eclipse.e4.tools.emf.ui.internal.E4Properties;
 import org.eclipse.e4.tools.emf.ui.internal.ResourceProvider;
 import org.eclipse.e4.tools.emf.ui.internal.common.ModelEditor;
 import org.eclipse.e4.tools.emf.ui.internal.common.VirtualEntry;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.ControlFactory.TextPasteHandler;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.dialogs.HandledMenuItemCommandSelectionDialog;
-import org.eclipse.e4.ui.model.application.commands.MParameter;
-import org.eclipse.e4.ui.model.application.ui.impl.UiPackageImpl;
-import org.eclipse.e4.ui.model.application.ui.menu.MHandledItem;
 import org.eclipse.e4.ui.model.application.ui.menu.MHandledMenuItem;
-import org.eclipse.e4.ui.model.application.ui.menu.impl.MenuPackageImpl;
 import org.eclipse.emf.databinding.EMFDataBindingContext;
-import org.eclipse.emf.databinding.EMFProperties;
-import org.eclipse.emf.databinding.IEMFValueProperty;
-import org.eclipse.emf.databinding.edit.EMFEditProperties;
-import org.eclipse.emf.databinding.edit.IEMFEditListProperty;
 import org.eclipse.jface.databinding.swt.IWidgetValueProperty;
-import org.eclipse.jface.databinding.swt.WidgetProperties;
+import org.eclipse.jface.databinding.swt.typed.WidgetProperties;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -48,13 +41,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 
-public class HandledMenuItemEditor extends MenuItemEditor {
-
-	private final IEMFEditListProperty HANDLED_ITEM__PARAMETERS = EMFEditProperties.list(getEditingDomain(),
-			MenuPackageImpl.Literals.HANDLED_ITEM__PARAMETERS);
-	private final IEMFValueProperty UI_ELEMENT__VISIBLE_WHEN = EMFProperties
-			.value(UiPackageImpl.Literals.UI_ELEMENT__VISIBLE_WHEN);
-
+public class HandledMenuItemEditor extends MenuItemEditor<MHandledMenuItem> {
 	@Inject
 	private IModelResource resource;
 
@@ -79,8 +66,9 @@ public class HandledMenuItemEditor extends MenuItemEditor {
 	}
 
 	@Override
-	protected void createFormSubTypeForm(Composite parent, EMFDataBindingContext context, final WritableValue master) {
-		final IWidgetValueProperty textProp = WidgetProperties.text(SWT.Modify);
+	protected void createFormSubTypeForm(Composite parent, EMFDataBindingContext context,
+			final WritableValue<MHandledMenuItem> master) {
+		final IWidgetValueProperty<Text, String> textProp = WidgetProperties.text(SWT.Modify);
 
 		// ------------------------------------------------------------
 		{
@@ -93,16 +81,15 @@ public class HandledMenuItemEditor extends MenuItemEditor {
 			t.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 			t.setEditable(false);
 			context.bindValue(textProp.observeDelayed(200, t),
-					EMFEditProperties.value(getEditingDomain(), MenuPackageImpl.Literals.HANDLED_ITEM__COMMAND)
-					.observeDetail(master), new UpdateValueStrategy(), new UpdateValueStrategy()
-					.setConverter(new CommandToStringConverter(Messages)));
+					E4Properties.itemCommand(getEditingDomain()).observeDetail(master),
+					new UpdateValueStrategy<>(), UpdateValueStrategy.create(new CommandToStringConverter(Messages)));
 
 			Button b = ControlFactory.createFindButton(parent, resourcePool);
 			b.addSelectionListener(new SelectionAdapter() {
 				@Override
 				public void widgetSelected(SelectionEvent e) {
 					final HandledMenuItemCommandSelectionDialog dialog = new HandledMenuItemCommandSelectionDialog(b
-							.getShell(), (MHandledItem) getMaster().getValue(), resource, Messages);
+							.getShell(), getMaster().getValue(), resource, Messages);
 					dialog.open();
 				}
 			});
@@ -110,14 +97,15 @@ public class HandledMenuItemEditor extends MenuItemEditor {
 	}
 
 	@Override
-	public IObservableList getChildList(Object element) {
-		final WritableList list = new WritableList();
+	public IObservableList<?> getChildList(Object element) {
+		final WritableList<Object> list = new WritableList<>();
+		MHandledMenuItem item = (MHandledMenuItem) element;
 
-		if (((MHandledMenuItem) element).getVisibleWhen() != null) {
+		if (item.getVisibleWhen() != null) {
 			list.add(0, ((MHandledMenuItem) element).getVisibleWhen());
 		}
 
-		UI_ELEMENT__VISIBLE_WHEN.observe(element).addValueChangeListener(event -> {
+		E4Properties.visibleWhen().observe(item).addValueChangeListener(event -> {
 			if (event.diff.getOldValue() != null) {
 				list.remove(event.diff.getOldValue());
 			}
@@ -127,13 +115,8 @@ public class HandledMenuItemEditor extends MenuItemEditor {
 			}
 		});
 
-		list.add(new VirtualEntry<MParameter>(ModelEditor.VIRTUAL_PARAMETERS, HANDLED_ITEM__PARAMETERS, element,
-				Messages.HandledMenuItemEditor_Parameters) {
-			@Override
-			protected boolean accepted(MParameter o) {
-				return true;
-			}
-		});
+		list.add(new VirtualEntry<>(ModelEditor.VIRTUAL_PARAMETERS, E4Properties.itemParameters(), item,
+				Messages.HandledMenuItemEditor_Parameters));
 
 		return list;
 	}

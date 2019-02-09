@@ -26,6 +26,7 @@ import org.eclipse.core.databinding.observable.list.IObservableList;
 import org.eclipse.core.databinding.observable.value.WritableValue;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.tools.emf.ui.common.component.AbstractComponentEditor;
+import org.eclipse.e4.tools.emf.ui.internal.E4Properties;
 import org.eclipse.e4.tools.emf.ui.internal.ResourceProvider;
 import org.eclipse.e4.tools.emf.ui.internal.common.AbstractPickList;
 import org.eclipse.e4.tools.emf.ui.internal.common.AbstractPickList.PickListFeatures;
@@ -40,8 +41,6 @@ import org.eclipse.e4.ui.model.application.ui.basic.MWindow;
 import org.eclipse.e4.ui.model.application.ui.basic.impl.BasicPackageImpl;
 import org.eclipse.emf.common.command.Command;
 import org.eclipse.emf.databinding.EMFDataBindingContext;
-import org.eclipse.emf.databinding.edit.EMFEditProperties;
-import org.eclipse.emf.databinding.edit.IEMFEditListProperty;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.util.EcoreUtil;
@@ -57,7 +56,7 @@ import org.eclipse.swt.custom.CTabItem;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
 
-public class VWindowSharedElementsEditor extends AbstractComponentEditor {
+public class VWindowSharedElementsEditor extends AbstractComponentEditor<MWindow> {
 	private Composite composite;
 	private EMFDataBindingContext context;
 	private StructuredViewer viewer;
@@ -146,13 +145,14 @@ public class VWindowSharedElementsEditor extends AbstractComponentEditor {
 			context = new EMFDataBindingContext();
 			composite = createForm(parent, context, getMaster());
 		}
-		final VirtualEntry<?> o = (VirtualEntry<?>) object;
+		@SuppressWarnings("unchecked")
+		final VirtualEntry<MWindow, ?> o = (VirtualEntry<MWindow, ?>) object;
 		viewer.setInput(o.getList());
 		getMaster().setValue(o.getOriginalParent());
 		return composite;
 	}
 
-	private Composite createForm(Composite parent, EMFDataBindingContext context, WritableValue master) {
+	private Composite createForm(Composite parent, EMFDataBindingContext context, WritableValue<MWindow> master) {
 		final CTabFolder folder = new CTabFolder(parent, SWT.BOTTOM);
 
 		final CTabItem item = new CTabItem(folder, SWT.NONE);
@@ -178,9 +178,7 @@ public class VWindowSharedElementsEditor extends AbstractComponentEditor {
 			};
 			pickList.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 3, 1));
 			viewer = pickList.getList();
-
-			final IEMFEditListProperty prop = EMFEditProperties.list(getEditingDomain(), BasicPackageImpl.Literals.WINDOW__SHARED_ELEMENTS);
-			viewer.setInput(prop.observeDetail(getMaster()));
+			viewer.setInput(E4Properties.sharedElements(getEditingDomain()).observeDetail(getMaster()));
 
 			pickList.setLabelProvider(new EClassLabelProvider(getEditor()));
 			pickList.setInput(
@@ -195,7 +193,7 @@ public class VWindowSharedElementsEditor extends AbstractComponentEditor {
 	}
 
 	@Override
-	public IObservableList getChildList(Object element) {
+	public IObservableList<?> getChildList(Object element) {
 		return null;
 	}
 

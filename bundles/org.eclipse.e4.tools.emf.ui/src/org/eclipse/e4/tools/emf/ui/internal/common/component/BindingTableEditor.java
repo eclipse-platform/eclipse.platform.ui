@@ -24,9 +24,9 @@ import javax.inject.Inject;
 
 import org.eclipse.core.databinding.observable.list.IObservableList;
 import org.eclipse.core.databinding.observable.value.IObservableValue;
-import org.eclipse.core.databinding.property.list.IListProperty;
 import org.eclipse.e4.tools.emf.ui.common.Util;
 import org.eclipse.e4.tools.emf.ui.common.component.AbstractComponentEditor;
+import org.eclipse.e4.tools.emf.ui.internal.E4Properties;
 import org.eclipse.e4.tools.emf.ui.internal.ResourceProvider;
 import org.eclipse.e4.tools.emf.ui.internal.common.AbstractPickList.PickListFeatures;
 import org.eclipse.e4.tools.emf.ui.internal.common.E4PickList;
@@ -38,16 +38,13 @@ import org.eclipse.e4.ui.model.application.commands.impl.CommandsPackageImpl;
 import org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl;
 import org.eclipse.emf.common.command.Command;
 import org.eclipse.emf.databinding.EMFDataBindingContext;
-import org.eclipse.emf.databinding.EMFProperties;
 import org.eclipse.emf.databinding.FeaturePath;
-import org.eclipse.emf.databinding.IEMFListProperty;
-import org.eclipse.emf.databinding.edit.EMFEditProperties;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.edit.command.AddCommand;
 import org.eclipse.emf.edit.command.SetCommand;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.databinding.swt.IWidgetValueProperty;
-import org.eclipse.jface.databinding.swt.WidgetProperties;
+import org.eclipse.jface.databinding.swt.typed.WidgetProperties;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
@@ -64,13 +61,10 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 
-public class BindingTableEditor extends AbstractComponentEditor {
+public class BindingTableEditor extends AbstractComponentEditor<MBindingTable> {
 
 	private Composite composite;
 	private EMFDataBindingContext context;
-
-	private final IListProperty BINDING_TABLE__BINDINGS = EMFProperties
-			.list(CommandsPackageImpl.Literals.BINDING_TABLE__BINDINGS);
 	private StackLayout stackLayout;
 	private final List<Action> actions = new ArrayList<>();
 
@@ -134,11 +128,12 @@ public class BindingTableEditor extends AbstractComponentEditor {
 			}
 		}
 
-		getMaster().setValue(object);
+		getMaster().setValue((MBindingTable) object);
 		return composite;
 	}
 
-	private Composite createForm(Composite parent, EMFDataBindingContext context, IObservableValue master,
+	private Composite createForm(Composite parent, EMFDataBindingContext context,
+			IObservableValue<MBindingTable> master,
 			boolean isImport) {
 		final CTabFolder folder = new CTabFolder(parent, SWT.BOTTOM);
 
@@ -148,7 +143,7 @@ public class BindingTableEditor extends AbstractComponentEditor {
 		parent = createScrollableContainer(folder);
 		item.setControl(parent.getParent());
 
-		final IWidgetValueProperty textProp = WidgetProperties.text(SWT.Modify);
+		final IWidgetValueProperty<Text, String> textProp = WidgetProperties.text(SWT.Modify);
 
 		if (getEditor().isShowXMIId() || getEditor().isLiveModel()) {
 			ControlFactory.createXMIId(parent, this);
@@ -169,10 +164,8 @@ public class BindingTableEditor extends AbstractComponentEditor {
 			final GridData gd = new GridData(GridData.FILL_HORIZONTAL);
 			gd.horizontalSpan = 2;
 			t.setLayoutData(gd);
-			context.bindValue(
-					textProp.observeDelayed(200, t),
-					EMFEditProperties.value(getEditingDomain(),
-							ApplicationPackageImpl.Literals.APPLICATION_ELEMENT__ELEMENT_ID).observeDetail(getMaster()));
+			context.bindValue(textProp.observeDelayed(200, t),
+					E4Properties.elementId(getEditingDomain()).observeDetail(getMaster()));
 		}
 
 		{
@@ -183,12 +176,16 @@ public class BindingTableEditor extends AbstractComponentEditor {
 			final Text t = new Text(parent, SWT.BORDER);
 			t.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 			t.setEditable(false);
-			context.bindValue(
-					textProp.observeDelayed(200, t),
-					EMFEditProperties.value(
-							getEditingDomain(),
-							FeaturePath.fromList(CommandsPackageImpl.Literals.BINDING_TABLE__BINDING_CONTEXT,
-									ApplicationPackageImpl.Literals.APPLICATION_ELEMENT__ELEMENT_ID)).observeDetail(getMaster()));
+
+			//			@SuppressWarnings("unchecked")
+			//			IValueProperty<MBindingTable, String> elemId = EMFEditProperties.value(getEditingDomain(),
+			//					FeaturePath.fromList(CommandsPackageImpl.Literals.BINDING_TABLE__BINDING_CONTEXT,
+			//							ApplicationPackageImpl.Literals.APPLICATION_ELEMENT__ELEMENT_ID));
+			//			context.bindValue(textProp.observeDelayed(200, t), elemId.observeDetail(getMaster()));
+
+			// TODO: Verify that this works
+			context.bindValue(textProp.observeDelayed(200, t), E4Properties.bindingContext()
+					.value(E4Properties.elementId(getEditingDomain())).observeDetail(getMaster()));
 
 			Button b = ControlFactory.createFindButton(parent, resourcePool);
 			b.addSelectionListener(new SelectionAdapter() {
@@ -225,8 +222,7 @@ public class BindingTableEditor extends AbstractComponentEditor {
 
 			final TableViewer viewer = pickList.getList();
 
-			final IEMFListProperty prop = EMFProperties.list(CommandsPackageImpl.Literals.BINDING_TABLE__BINDINGS);
-			viewer.setInput(prop.observeDetail(getMaster()));
+			viewer.setInput(E4Properties.bindings().observeDetail(getMaster()));
 		}
 
 		item = new CTabItem(folder, SWT.NONE);
@@ -248,8 +244,8 @@ public class BindingTableEditor extends AbstractComponentEditor {
 	}
 
 	@Override
-	public IObservableList getChildList(Object element) {
-		return BINDING_TABLE__BINDINGS.observe(element);
+	public IObservableList<?> getChildList(Object element) {
+		return E4Properties.bindings().observe((MBindingTable) element);
 	}
 
 	@Override

@@ -6,7 +6,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Composite;
 
-public class DefaultEditor extends AbstractComponentEditor {
+public class DefaultEditor extends AbstractComponentEditor<Void> {
 
 	@Override
 	public Image getImage(Object element) {
@@ -35,7 +35,7 @@ public class DefaultEditor extends AbstractComponentEditor {
 	}
 
 	@Override
-	public IObservableList getChildList(Object element) {
+	public IObservableList<?> getChildList(Object element) {
 		// TODO Auto-generated method stub
 		return null;
 	}

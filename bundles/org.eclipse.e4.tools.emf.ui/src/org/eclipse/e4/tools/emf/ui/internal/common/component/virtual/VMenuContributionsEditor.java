@@ -31,6 +31,7 @@ import org.eclipse.e4.tools.emf.ui.internal.common.E4PickList;
 import org.eclipse.e4.tools.emf.ui.internal.common.VirtualEntry;
 import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.ui.menu.MMenuContribution;
+import org.eclipse.e4.ui.model.application.ui.menu.MMenuContributions;
 import org.eclipse.e4.ui.model.application.ui.menu.MMenuFactory;
 import org.eclipse.e4.ui.model.application.ui.menu.impl.MenuPackageImpl;
 import org.eclipse.emf.common.command.Command;
@@ -44,7 +45,7 @@ import org.eclipse.swt.custom.CTabItem;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
 
-public class VMenuContributionsEditor extends AbstractComponentEditor {
+public class VMenuContributionsEditor extends AbstractComponentEditor<MMenuContributions> {
 	private Composite composite;
 	private EMFDataBindingContext context;
 	private TableViewer viewer;
@@ -88,13 +89,15 @@ public class VMenuContributionsEditor extends AbstractComponentEditor {
 			context = new EMFDataBindingContext();
 			composite = createForm(parent, context, getMaster());
 		}
-		final VirtualEntry<?> o = (VirtualEntry<?>) object;
+		@SuppressWarnings("unchecked")
+		final VirtualEntry<MMenuContributions, ?> o = (VirtualEntry<MMenuContributions, ?>) object;
 		viewer.setInput(o.getList());
 		getMaster().setValue(o.getOriginalParent());
 		return composite;
 	}
 
-	private Composite createForm(Composite parent, EMFDataBindingContext context, WritableValue master) {
+	private Composite createForm(Composite parent, EMFDataBindingContext context,
+			WritableValue<MMenuContributions> master) {
 		final CTabFolder folder = new CTabFolder(parent, SWT.BOTTOM);
 
 		final CTabItem item = new CTabItem(folder, SWT.NONE);
@@ -128,7 +131,7 @@ public class VMenuContributionsEditor extends AbstractComponentEditor {
 	}
 
 	@Override
-	public IObservableList getChildList(Object element) {
+	public IObservableList<?> getChildList(Object element) {
 		return null;
 	}
 

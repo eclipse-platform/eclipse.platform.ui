@@ -157,7 +157,7 @@ public abstract class AbstractIconDialogWithHardcodedScope extends SaveDialogBou
 		viewer = new TableViewer(container, SWT.FULL_SELECTION | SWT.BORDER);
 		GridData gd = new GridData(GridData.FILL_BOTH);
 		viewer.getControl().setLayoutData(gd);
-		viewer.setContentProvider(new ObservableListContentProvider());
+		viewer.setContentProvider(new ObservableListContentProvider<>());
 		viewer.setLabelProvider(new StyledCellLabelProvider() {
 			@Override
 			public void update(ViewerCell cell) {
@@ -186,7 +186,7 @@ public abstract class AbstractIconDialogWithHardcodedScope extends SaveDialogBou
 			}
 		});
 
-		final WritableList list = new WritableList();
+		final WritableList<IFile> list = new WritableList<>();
 		viewer.setInput(list);
 		viewer.addDoubleClickListener(event -> okPressed());
 
@@ -279,9 +279,9 @@ public abstract class AbstractIconDialogWithHardcodedScope extends SaveDialogBou
 
 	private class IconMatchCallback {
 		private volatile boolean cancel;
-		private IObservableList list;
+		private IObservableList<IFile> list;
 
-		private IconMatchCallback(IObservableList list) {
+		private IconMatchCallback(IObservableList<IFile> list) {
 			this.list = list;
 		}
 

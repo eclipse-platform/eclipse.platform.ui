@@ -33,17 +33,17 @@ public class ModelImportWizard extends Wizard {
 
 	private final MApplication application;
 
-	private final AbstractComponentEditor editor;
+	private final AbstractComponentEditor<?> editor;
 
 	private final String hint;
 
-	public ModelImportWizard(Class<? extends MApplicationElement> applicationElement, AbstractComponentEditor editor,
-		IResourcePool resourcePool) {
+	public ModelImportWizard(Class<? extends MApplicationElement> applicationElement, AbstractComponentEditor<?> editor,
+			IResourcePool resourcePool) {
 		this(applicationElement, editor, "", resourcePool); //$NON-NLS-1$
 	}
 
-	public ModelImportWizard(Class<? extends MApplicationElement> applicationElement, AbstractComponentEditor editor,
-		String hint, IResourcePool resourcePool) {
+	public ModelImportWizard(Class<? extends MApplicationElement> applicationElement, AbstractComponentEditor<?> editor,
+			String hint, IResourcePool resourcePool) {
 		this.applicationElement = applicationElement;
 		this.editor = editor;
 		this.hint = hint;
@@ -124,7 +124,7 @@ public class ModelImportWizard extends Wizard {
 		return RegistryUtil.getModelElements(type, getHint(), application, page1.getConfigurationElements());
 	}
 
-	public AbstractComponentEditor getEditor() {
+	public AbstractComponentEditor<?> getEditor() {
 		return editor;
 	}
 

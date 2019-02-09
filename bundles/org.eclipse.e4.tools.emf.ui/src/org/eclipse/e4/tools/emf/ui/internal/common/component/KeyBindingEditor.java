@@ -34,6 +34,7 @@ import org.eclipse.e4.tools.emf.ui.common.IModelResource;
 import org.eclipse.e4.tools.emf.ui.common.Plugin;
 import org.eclipse.e4.tools.emf.ui.common.Util;
 import org.eclipse.e4.tools.emf.ui.common.component.AbstractComponentEditor;
+import org.eclipse.e4.tools.emf.ui.internal.E4Properties;
 import org.eclipse.e4.tools.emf.ui.internal.ResourceProvider;
 import org.eclipse.e4.tools.emf.ui.internal.common.AbstractPickList.PickListFeatures;
 import org.eclipse.e4.tools.emf.ui.internal.common.E4PickList;
@@ -49,14 +50,12 @@ import org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl;
 import org.eclipse.emf.common.command.Command;
 import org.eclipse.emf.databinding.EMFDataBindingContext;
 import org.eclipse.emf.databinding.FeaturePath;
-import org.eclipse.emf.databinding.edit.EMFEditProperties;
-import org.eclipse.emf.databinding.edit.IEMFEditListProperty;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.edit.command.AddCommand;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.bindings.keys.KeySequence;
 import org.eclipse.jface.databinding.swt.IWidgetValueProperty;
-import org.eclipse.jface.databinding.swt.WidgetProperties;
+import org.eclipse.jface.databinding.swt.typed.WidgetProperties;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CTabFolder;
@@ -72,14 +71,11 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 
-public class KeyBindingEditor extends AbstractComponentEditor {
-
+public class KeyBindingEditor extends AbstractComponentEditor<MKeyBinding> {
 	private Composite composite;
 	private EMFDataBindingContext context;
 	private StackLayout stackLayout;
 	private final List<Action> actions = new ArrayList<>();
-
-	private final IEMFEditListProperty KEY_BINDING__PARAMETERS = EMFEditProperties.list(getEditingDomain(), CommandsPackageImpl.Literals.KEY_BINDING__PARAMETERS);
 
 	@Inject
 	private IModelResource resource;
@@ -143,11 +139,12 @@ public class KeyBindingEditor extends AbstractComponentEditor {
 			}
 		}
 
-		getMaster().setValue(object);
+		getMaster().setValue((MKeyBinding) object);
 		return composite;
 	}
 
-	private Composite createForm(Composite parent, EMFDataBindingContext context, IObservableValue master, boolean isImport) {
+	private Composite createForm(Composite parent, EMFDataBindingContext context, IObservableValue<MKeyBinding> master,
+			boolean isImport) {
 		final CTabFolder folder = new CTabFolder(parent, SWT.BOTTOM);
 
 		CTabItem item = new CTabItem(folder, SWT.NONE);
@@ -160,7 +157,7 @@ public class KeyBindingEditor extends AbstractComponentEditor {
 			ControlFactory.createXMIId(parent, this);
 		}
 
-		final IWidgetValueProperty textProp = WidgetProperties.text(SWT.Modify);
+		final IWidgetValueProperty<Text, String> textProp = WidgetProperties.text(SWT.Modify);
 
 		if (isImport) {
 			ControlFactory.createFindImport(parent, Messages, this, context);
@@ -168,7 +165,8 @@ public class KeyBindingEditor extends AbstractComponentEditor {
 			return folder;
 		}
 
-		ControlFactory.createTextField(parent, Messages.ModelTooling_Common_Id, master, context, textProp, EMFEditProperties.value(getEditingDomain(), ApplicationPackageImpl.Literals.APPLICATION_ELEMENT__ELEMENT_ID));
+		ControlFactory.createTextField(parent, Messages.ModelTooling_Common_Id, master, context, textProp,
+				E4Properties.elementId(getEditingDomain()));
 
 		// ------------------------------------------------------------
 		{
@@ -181,7 +179,10 @@ public class KeyBindingEditor extends AbstractComponentEditor {
 			final GridData gd = new GridData(GridData.FILL_HORIZONTAL);
 			gd.horizontalSpan = 2;
 			t.setLayoutData(gd);
-			final Binding binding = context.bindValue(textProp.observeDelayed(200, t), EMFEditProperties.value(getEditingDomain(), CommandsPackageImpl.Literals.KEY_SEQUENCE__KEY_SEQUENCE).observeDetail(getMaster()), new UpdateValueStrategy().setBeforeSetValidator(new BindingValidator()), new UpdateValueStrategy());
+			final Binding binding = context.bindValue(textProp.observeDelayed(200, t),
+					E4Properties.keySequence(getEditingDomain()).observeDetail(getMaster()),
+					new UpdateValueStrategy<String, String>().setBeforeSetValidator(new BindingValidator()),
+					new UpdateValueStrategy<>());
 			Util.addDecoration(t, binding);
 		}
 
@@ -195,13 +196,17 @@ public class KeyBindingEditor extends AbstractComponentEditor {
 			TextPasteHandler.createFor(t);
 			t.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 			t.setEditable(false);
-			context.bindValue(textProp.observeDelayed(200, t), EMFEditProperties.value(getEditingDomain(), CommandsPackageImpl.Literals.KEY_BINDING__COMMAND).observeDetail(getMaster()), new UpdateValueStrategy(), new UpdateValueStrategy().setConverter(new CommandToStringConverter(Messages)));
+			context.bindValue(textProp.observeDelayed(200, t),
+					E4Properties.keyBindingCommand(getEditingDomain()).observeDetail(getMaster()),
+					new UpdateValueStrategy<>(),
+					UpdateValueStrategy.create(new CommandToStringConverter(Messages)));
 
 			Button b = ControlFactory.createFindButton(parent, resourcePool);
 			b.addSelectionListener(new SelectionAdapter() {
 				@Override
 				public void widgetSelected(SelectionEvent e) {
-					final KeyBindingCommandSelectionDialog dialog = new KeyBindingCommandSelectionDialog(b.getShell(), (MKeyBinding) getMaster().getValue(), resource, Messages);
+					final KeyBindingCommandSelectionDialog dialog = new KeyBindingCommandSelectionDialog(b.getShell(),
+							getMaster().getValue(), resource, Messages);
 					dialog.open();
 				}
 			});
@@ -225,7 +230,7 @@ public class KeyBindingEditor extends AbstractComponentEditor {
 
 			final TableViewer viewer = pickList.getList();
 
-			viewer.setInput(KEY_BINDING__PARAMETERS.observeDetail(getMaster()));
+			viewer.setInput(E4Properties.keyBindingParameters(getEditingDomain()).observeDetail(getMaster()));
 		}
 		//
 
@@ -246,8 +251,8 @@ public class KeyBindingEditor extends AbstractComponentEditor {
 	}
 
 	@Override
-	public IObservableList getChildList(Object element) {
-		return KEY_BINDING__PARAMETERS.observe(element);
+	public IObservableList<?> getChildList(Object element) {
+		return E4Properties.keyBindingParameters(getEditingDomain()).observe((MKeyBinding) element);
 	}
 
 	@Override
@@ -264,21 +269,21 @@ public class KeyBindingEditor extends AbstractComponentEditor {
 		return new FeaturePath[] { FeaturePath.fromList(CommandsPackageImpl.Literals.KEY_SEQUENCE__KEY_SEQUENCE) };
 	}
 
-	class BindingValidator implements IValidator {
+	class BindingValidator implements IValidator<String> {
 
 		@Override
-		public IStatus validate(Object value) {
+		public IStatus validate(String value) {
 			final int statusCode = getEditor().isLiveModel() ? IStatus.ERROR : IStatus.WARNING;
-			if (value != null && value.toString().trim().length() > 0) {
+			if (value != null && value.trim().length() > 0) {
 				try {
-					final KeySequence keySequence = KeySequence.getInstance(value.toString());
+					final KeySequence keySequence = KeySequence.getInstance(value);
 					if (!keySequence.isComplete()) {
 						return new Status(statusCode, Plugin.ID, Messages.KeyBindingEditor_SequenceNotComplete);
 					}
 					if (keySequence.isEmpty()) {
 						return new Status(statusCode, Plugin.ID, Messages.KeyBindingEditor_SequenceEmpty);
 					}
-					if (!value.toString().toUpperCase().equals(value.toString())) {
+					if (!value.toUpperCase().equals(value)) {
 						return new Status(IStatus.ERROR, Plugin.ID, Messages.KeyBindingEditor_SequenceLowercase);
 					}
 
@@ -293,7 +298,7 @@ public class KeyBindingEditor extends AbstractComponentEditor {
 	}
 
 	protected void handleAddParameter() {
-		final MKeyBinding item = (MKeyBinding) getMaster().getValue();
+		final MKeyBinding item = getMaster().getValue();
 		final MParameter param = MCommandsFactory.INSTANCE.createParameter();
 		setElementId(param);
 

@@ -90,7 +90,7 @@ public class ComponentLabelProvider extends BaseLabelProvider implements IStyled
 		if (element instanceof EObject) {
 
 			final EObject o = (EObject) element;
-			final AbstractComponentEditor elementEditor = editor.getEditor(o.eClass());
+			final AbstractComponentEditor<?> elementEditor = editor.getEditor(o.eClass());
 			if (elementEditor != null) {
 				String label = elementEditor.getLabel(o);
 				final String detailText = elementEditor.getDetailLabel(o);
@@ -126,7 +126,7 @@ public class ComponentLabelProvider extends BaseLabelProvider implements IStyled
 	public Image getImage(Object element) {
 		if (element instanceof EObject) {
 			final EObject o = (EObject) element;
-			final AbstractComponentEditor elementEditor = editor.getEditor(o.eClass());
+			final AbstractComponentEditor<?> elementEditor = editor.getEditor(o.eClass());
 			if (elementEditor != null) {
 				return elementEditor.getImage(element);
 			}
@@ -136,7 +136,7 @@ public class ComponentLabelProvider extends BaseLabelProvider implements IStyled
 
 	@Override
 	public Font getFont(Object element) {
-		if(element instanceof VirtualEntry<?>) {
+		if (element instanceof VirtualEntry) {
 			return resourceManager.createFont(italicFontDescriptor);
 		}
 		return null;

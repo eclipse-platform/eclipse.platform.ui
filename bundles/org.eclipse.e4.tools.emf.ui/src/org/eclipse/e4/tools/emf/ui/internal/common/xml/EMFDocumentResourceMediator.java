@@ -80,7 +80,7 @@ public class EMFDocumentResourceMediator {
 	public void updateFromEMF() {
 		try {
 			updateFromEMF = true;
-			document.set(toXMI((EObject) modelResource.getRoot().get(0)));
+			document.set(toXMI(modelResource.getRoot().get(0)));
 		} finally {
 			updateFromEMF = false;
 		}
@@ -112,7 +112,7 @@ public class EMFDocumentResourceMediator {
 		if (object == null) {
 			return null;
 		}
-		final E4XMIResource root = (E4XMIResource) ((EObject) modelResource.getRoot().get(0)).eResource();
+		final E4XMIResource root = (E4XMIResource) modelResource.getRoot().get(0).eResource();
 		final String xmiId = root.getID(object);
 
 		final FindReplaceDocumentAdapter find = new FindReplaceDocumentAdapter(document);

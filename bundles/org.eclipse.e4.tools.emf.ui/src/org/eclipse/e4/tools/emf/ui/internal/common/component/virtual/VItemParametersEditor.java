@@ -24,6 +24,7 @@ import javax.inject.Inject;
 import org.eclipse.core.databinding.observable.list.IObservableList;
 import org.eclipse.core.databinding.observable.value.WritableValue;
 import org.eclipse.e4.tools.emf.ui.common.component.AbstractComponentEditor;
+import org.eclipse.e4.tools.emf.ui.internal.E4Properties;
 import org.eclipse.e4.tools.emf.ui.internal.ResourceProvider;
 import org.eclipse.e4.tools.emf.ui.internal.common.AbstractPickList;
 import org.eclipse.e4.tools.emf.ui.internal.common.AbstractPickList.PickListFeatures;
@@ -35,8 +36,6 @@ import org.eclipse.e4.ui.model.application.ui.menu.MHandledItem;
 import org.eclipse.e4.ui.model.application.ui.menu.impl.MenuPackageImpl;
 import org.eclipse.emf.common.command.Command;
 import org.eclipse.emf.databinding.EMFDataBindingContext;
-import org.eclipse.emf.databinding.EMFProperties;
-import org.eclipse.emf.databinding.IEMFListProperty;
 import org.eclipse.emf.edit.command.AddCommand;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.viewers.TableViewer;
@@ -46,14 +45,11 @@ import org.eclipse.swt.custom.CTabItem;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
 
-public class VItemParametersEditor extends AbstractComponentEditor {
+public class VItemParametersEditor extends AbstractComponentEditor<MHandledItem> {
 	private Composite composite;
 	private EMFDataBindingContext context;
 	private TableViewer viewer;
 	private final List<Action> actions = new ArrayList<>();
-
-	private final IEMFListProperty HANDLED_ITEM__PARAMETERS = EMFProperties
-			.list(MenuPackageImpl.Literals.HANDLED_ITEM__PARAMETERS);
 
 	@Inject
 	public VItemParametersEditor() {
@@ -93,13 +89,14 @@ public class VItemParametersEditor extends AbstractComponentEditor {
 			context = new EMFDataBindingContext();
 			composite = createForm(parent, context, getMaster());
 		}
-		final VirtualEntry<?> o = (VirtualEntry<?>) object;
+		@SuppressWarnings("unchecked")
+		final VirtualEntry<MHandledItem, ?> o = (VirtualEntry<MHandledItem, ?>) object;
 		viewer.setInput(o.getList());
 		getMaster().setValue(o.getOriginalParent());
 		return composite;
 	}
 
-	private Composite createForm(Composite parent, EMFDataBindingContext context, WritableValue master) {
+	private Composite createForm(Composite parent, EMFDataBindingContext context, WritableValue<MHandledItem> master) {
 		final CTabFolder folder = new CTabFolder(parent, SWT.BOTTOM);
 
 		final CTabItem item = new CTabItem(folder, SWT.NONE);
@@ -135,8 +132,8 @@ public class VItemParametersEditor extends AbstractComponentEditor {
 	}
 
 	@Override
-	public IObservableList getChildList(Object element) {
-		return HANDLED_ITEM__PARAMETERS.observe(element);
+	public IObservableList<?> getChildList(Object element) {
+		return E4Properties.itemParameters().observe((MHandledItem) element);
 	}
 
 	protected void handleAdd() {

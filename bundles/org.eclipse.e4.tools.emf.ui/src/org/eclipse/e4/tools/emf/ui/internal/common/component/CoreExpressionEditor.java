@@ -18,16 +18,15 @@ import javax.inject.Inject;
 import org.eclipse.core.databinding.observable.list.IObservableList;
 import org.eclipse.core.databinding.observable.value.WritableValue;
 import org.eclipse.e4.tools.emf.ui.common.component.AbstractComponentEditor;
+import org.eclipse.e4.tools.emf.ui.internal.E4Properties;
 import org.eclipse.e4.tools.emf.ui.internal.ResourceProvider;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.ControlFactory.TextPasteHandler;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.dialogs.ExpressionIdDialog;
 import org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl;
 import org.eclipse.e4.ui.model.application.ui.MCoreExpression;
-import org.eclipse.e4.ui.model.application.ui.impl.UiPackageImpl;
 import org.eclipse.emf.databinding.EMFDataBindingContext;
-import org.eclipse.emf.databinding.edit.EMFEditProperties;
 import org.eclipse.jface.databinding.swt.IWidgetValueProperty;
-import org.eclipse.jface.databinding.swt.WidgetProperties;
+import org.eclipse.jface.databinding.swt.typed.WidgetProperties;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.custom.CTabItem;
@@ -41,7 +40,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 
-public class CoreExpressionEditor extends AbstractComponentEditor {
+public class CoreExpressionEditor extends AbstractComponentEditor<MCoreExpression> {
 	private Composite composite;
 	private EMFDataBindingContext context;
 
@@ -82,11 +81,12 @@ public class CoreExpressionEditor extends AbstractComponentEditor {
 			composite.setLayout(new FillLayout());
 			createForm(composite, context, getMaster());
 		}
-		getMaster().setValue(object);
+		getMaster().setValue((MCoreExpression) object);
 		return composite;
 	}
 
-	private Composite createForm(Composite parent, EMFDataBindingContext context, WritableValue master) {
+	private Composite createForm(Composite parent, EMFDataBindingContext context,
+			WritableValue<MCoreExpression> master) {
 		final CTabFolder folder = new CTabFolder(parent, SWT.BOTTOM);
 
 		CTabItem item = new CTabItem(folder, SWT.NONE);
@@ -99,7 +99,7 @@ public class CoreExpressionEditor extends AbstractComponentEditor {
 			ControlFactory.createXMIId(parent, this);
 		}
 
-		final IWidgetValueProperty textProp = WidgetProperties.text(SWT.Modify);
+		final IWidgetValueProperty<Text, String> textProp = WidgetProperties.text(SWT.Modify);
 
 		{
 			final Label l = new Label(parent, SWT.NONE);
@@ -111,8 +111,7 @@ public class CoreExpressionEditor extends AbstractComponentEditor {
 			final GridData gd = new GridData(GridData.FILL_HORIZONTAL);
 			t.setLayoutData(gd);
 			context.bindValue(textProp.observeDelayed(200, t),
-					EMFEditProperties.value(getEditingDomain(), UiPackageImpl.Literals.CORE_EXPRESSION__CORE_EXPRESSION_ID)
-					.observeDetail(getMaster()));
+					E4Properties.coreExpressionId(getEditingDomain()).observeDetail(getMaster()));
 
 			if (getEditor().getExtensionLookup() == null) {
 				gd.horizontalSpan = 2;
@@ -122,7 +121,7 @@ public class CoreExpressionEditor extends AbstractComponentEditor {
 					@Override
 					public void widgetSelected(SelectionEvent e) {
 						final ExpressionIdDialog dialog = new ExpressionIdDialog(t.getShell(), getEditor()
-								.getExtensionLookup(), (MCoreExpression) getMaster().getValue(), getEditingDomain(),
+								.getExtensionLookup(), getMaster().getValue(), getEditingDomain(),
 								getEditor().isLiveModel(), Messages);
 						dialog.open();
 					}
@@ -149,7 +148,7 @@ public class CoreExpressionEditor extends AbstractComponentEditor {
 	}
 
 	@Override
-	public IObservableList getChildList(Object element) {
+	public IObservableList<?> getChildList(Object element) {
 		return null;
 	}
 

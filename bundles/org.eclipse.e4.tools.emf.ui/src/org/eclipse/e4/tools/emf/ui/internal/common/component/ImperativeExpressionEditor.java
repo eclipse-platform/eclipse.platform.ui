@@ -32,7 +32,7 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
 
-public class ImperativeExpressionEditor extends AbstractComponentEditor {
+public class ImperativeExpressionEditor extends AbstractComponentEditor<MImperativeExpression> {
 	private Composite composite;
 	private EMFDataBindingContext context;
 
@@ -80,12 +80,13 @@ public class ImperativeExpressionEditor extends AbstractComponentEditor {
 			composite.setLayout(new FillLayout());
 			createForm(composite, context, getMaster());
 		}
-		getMaster().setValue(object);
+		getMaster().setValue((MImperativeExpression) object);
 
 		return composite;
 	}
 
-	private Composite createForm(Composite parent, EMFDataBindingContext context, WritableValue master) {
+	private Composite createForm(Composite parent, EMFDataBindingContext context,
+			WritableValue<MImperativeExpression> master) {
 		final CTabFolder folder = new CTabFolder(parent, SWT.BOTTOM);
 
 		CTabItem item = new CTabItem(folder, SWT.NONE);
@@ -122,7 +123,7 @@ public class ImperativeExpressionEditor extends AbstractComponentEditor {
 	}
 
 	@Override
-	public IObservableList getChildList(Object element) {
+	public IObservableList<?> getChildList(Object element) {
 		return null;
 	}
 

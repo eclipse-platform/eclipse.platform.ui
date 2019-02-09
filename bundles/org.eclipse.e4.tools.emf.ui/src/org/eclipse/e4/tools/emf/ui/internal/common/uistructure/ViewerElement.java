@@ -42,7 +42,7 @@ import org.eclipse.swt.widgets.Composite;
 public class ViewerElement {
 
 	private StructuredViewer viewer;
-	private final AbstractComponentEditor editor;
+	private final AbstractComponentEditor<?> editor;
 	private ComboViewer dropDown;
 	private Button addButton;
 	private final Composite parent;
@@ -58,7 +58,7 @@ public class ViewerElement {
 	 * @param editor
 	 */
 	@Inject
-	public ViewerElement(Composite parent, AbstractComponentEditor editor) {
+	public ViewerElement(Composite parent, AbstractComponentEditor<?> editor) {
 		this.parent = parent;
 		this.editor = editor;
 		createControl();
@@ -182,7 +182,8 @@ public class ViewerElement {
 	 * @param editor
 	 * @return a new {@link ViewerElement}
 	 */
-	public static ViewerElement create(IEclipseContext parentContext, Composite parent, AbstractComponentEditor editor) {
+	public static ViewerElement create(IEclipseContext parentContext, Composite parent,
+			AbstractComponentEditor<?> editor) {
 		final IEclipseContext mycontext = parentContext.createChild();
 		mycontext.set(Composite.class, parent);
 		mycontext.set(AbstractComponentEditor.class, editor);

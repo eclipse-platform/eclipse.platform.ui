@@ -23,26 +23,30 @@ import org.eclipse.core.databinding.observable.list.ListDiff;
 import org.eclipse.core.databinding.observable.list.WritableList;
 import org.eclipse.core.databinding.property.list.IListProperty;
 
-public abstract class VirtualEntry<M> {
+/**
+ * @param <P> type of the parent object
+ * @param <E> type of the child elements of the parent
+ */
+public class VirtualEntry<P, E> {
 	private String id;
-	private Object originalParent;
+	private P originalParent;
 	private String label;
-	private IObservableList list;
-	private IListProperty property;
+	private IObservableList<E> list;
+	private IListProperty<? super P, E> property;
 
-	public VirtualEntry(String id, IListProperty property, Object originalParent, String label) {
+	public VirtualEntry(String id, IListProperty<? super P, E> property, P originalParent, String label) {
 		this.id = id;
 		this.originalParent = originalParent;
 		this.label = label;
 		this.property = property;
-		this.list = new WritableList();
-		final IObservableList origList = property.observe(originalParent);
+		this.list = new WritableList<>();
+		final IObservableList<E> origList = property.observe(originalParent);
 		list.addAll(cleanedList(origList));
 
-		final IListChangeListener listener = event -> {
+		final IListChangeListener<E> listener = event -> {
 			if (!VirtualEntry.this.list.isDisposed()) {
-				List<Object> clean = cleanedList(event.getObservableList());
-				ListDiff diff = Diffs.computeListDiff(VirtualEntry.this.list, clean);
+				List<E> clean = cleanedList(event.getObservableList());
+				ListDiff<E> diff = Diffs.computeListDiff(VirtualEntry.this.list, clean);
 				diff.applyTo(VirtualEntry.this.list);
 			}
 		};
@@ -50,16 +54,15 @@ public abstract class VirtualEntry<M> {
 		origList.addListChangeListener(listener);
 	}
 
-	public IListProperty getProperty() {
+	public IListProperty<? super P, E> getProperty() {
 		return property;
 	}
 
-	@SuppressWarnings("unchecked")
-	private List<Object> cleanedList(IObservableList list) {
-		List<Object> l = new ArrayList<>(list.size());
+	private List<E> cleanedList(IObservableList<? extends E> list) {
+		List<E> l = new ArrayList<>(list.size());
 
-		for (Object o : list) {
-			if (accepted((M) o)) {
+		for (E o : list) {
+			if (accepted(o)) {
 				l.add(o);
 			}
 		}
@@ -67,13 +70,18 @@ public abstract class VirtualEntry<M> {
 		return l;
 	}
 
-	protected abstract boolean accepted(M o);
+	/**
+	 * Can be overridden to filter the child elements.
+	 */
+	protected boolean accepted(E o) {
+		return true;
+	}
 
-	public IObservableList getList() {
+	public IObservableList<E> getList() {
 		return list;
 	}
 
-	public Object getOriginalParent() {
+	public P getOriginalParent() {
 		return originalParent;
 	}
 

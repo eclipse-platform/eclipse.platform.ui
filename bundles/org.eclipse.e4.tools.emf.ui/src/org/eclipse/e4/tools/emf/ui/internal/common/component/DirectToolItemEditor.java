@@ -20,15 +20,13 @@ import javax.inject.Inject;
 import org.eclipse.core.databinding.observable.list.IObservableList;
 import org.eclipse.core.databinding.observable.value.WritableValue;
 import org.eclipse.e4.core.contexts.IEclipseContext;
+import org.eclipse.e4.tools.emf.ui.internal.E4Properties;
 import org.eclipse.e4.tools.emf.ui.internal.ResourceProvider;
 import org.eclipse.e4.tools.emf.ui.internal.common.objectdata.ObjectViewer;
 import org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl;
-import org.eclipse.e4.ui.model.application.ui.impl.UiPackageImpl;
 import org.eclipse.e4.ui.model.application.ui.menu.MDirectToolItem;
 import org.eclipse.e4.ui.model.application.ui.menu.impl.MenuPackageImpl;
 import org.eclipse.emf.databinding.EMFDataBindingContext;
-import org.eclipse.emf.databinding.EMFProperties;
-import org.eclipse.emf.databinding.IEMFValueProperty;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CTabFolder;
@@ -38,10 +36,7 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 
-public class DirectToolItemEditor extends ToolItemEditor {
-	private final IEMFValueProperty UI_ELEMENT__VISIBLE_WHEN = EMFProperties
-			.value(UiPackageImpl.Literals.UI_ELEMENT__VISIBLE_WHEN);
-
+public class DirectToolItemEditor extends ToolItemEditor<MDirectToolItem> {
 	@Inject
 	IEclipseContext eclipseContext;
 
@@ -56,7 +51,8 @@ public class DirectToolItemEditor extends ToolItemEditor {
 	}
 
 	@Override
-	protected void createSubTypeFormElements(Composite parent, EMFDataBindingContext context, WritableValue master) {
+	protected void createSubTypeFormElements(Composite parent, EMFDataBindingContext context,
+			WritableValue<MDirectToolItem> master) {
 
 		ControlFactory.createClassURIField(parent, Messages, this, Messages.DirectMenuItemEditor_ClassURI,
 				ApplicationPackageImpl.Literals.CONTRIBUTION__CONTRIBUTION_URI,
@@ -66,7 +62,8 @@ public class DirectToolItemEditor extends ToolItemEditor {
 	}
 
 	@Override
-	protected CTabFolder createForm(Composite parent, EMFDataBindingContext context, WritableValue master,
+	protected CTabFolder createForm(Composite parent, EMFDataBindingContext context,
+			WritableValue<MDirectToolItem> master,
 			boolean isImport) {
 		if (!isImport) {
 			final CTabFolder folder = super.createForm(parent, context, master, isImport);
@@ -100,16 +97,16 @@ public class DirectToolItemEditor extends ToolItemEditor {
 		return Messages.DirectToolItemEditor_Description;
 	}
 
-	@SuppressWarnings("unchecked")
 	@Override
-	public IObservableList getChildList(Object element) {
-		final IObservableList list = super.getChildList(element);
+	public IObservableList<Object> getChildList(Object element) {
+		final IObservableList<Object> list = super.getChildList(element);
+		MDirectToolItem toolElement = (MDirectToolItem) element;
 
-		if (((MDirectToolItem) element).getVisibleWhen() != null) {
-			list.add(0, ((MDirectToolItem) element).getVisibleWhen());
+		if (toolElement.getVisibleWhen() != null) {
+			list.add(0, toolElement.getVisibleWhen());
 		}
 
-		UI_ELEMENT__VISIBLE_WHEN.observe(element).addValueChangeListener(event -> {
+		E4Properties.visibleWhen().observe(toolElement).addValueChangeListener(event -> {
 			if (event.diff.getOldValue() != null) {
 				list.remove(event.diff.getOldValue());
 			}

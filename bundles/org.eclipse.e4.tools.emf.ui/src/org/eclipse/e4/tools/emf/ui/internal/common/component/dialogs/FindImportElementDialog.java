@@ -51,11 +51,12 @@ import org.osgi.framework.ServiceReference;
 
 public class FindImportElementDialog extends SaveDialogBoundsSettingsDialog {
 	private final EObject element;
-	private final AbstractComponentEditor editor;
+	private final AbstractComponentEditor<?> editor;
 	private TableViewer viewer;
 	private final Messages Messages;
 
-	public FindImportElementDialog(Shell parentShell, AbstractComponentEditor editor, EObject element, Messages Messages) {
+	public FindImportElementDialog(Shell parentShell, AbstractComponentEditor<?> editor, EObject element,
+			Messages Messages) {
 		super(parentShell);
 		this.element = element;
 		this.editor = editor;
@@ -112,10 +113,10 @@ public class FindImportElementDialog extends SaveDialogBoundsSettingsDialog {
 				cell.setText(styledString.getString());
 			}
 		});
-		viewer.setContentProvider(new ObservableListContentProvider());
+		viewer.setContentProvider(new ObservableListContentProvider<>());
 		viewer.addDoubleClickListener(event -> okPressed());
 
-		final WritableList list = new WritableList();
+		final WritableList<Object> list = new WritableList<>();
 		viewer.setInput(list);
 
 		final ClassContributionCollector collector = getCollector();

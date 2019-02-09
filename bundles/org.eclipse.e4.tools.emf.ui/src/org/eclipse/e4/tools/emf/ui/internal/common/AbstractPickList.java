@@ -66,12 +66,12 @@ public abstract class AbstractPickList extends Composite {
 
 	@Deprecated
 	public AbstractPickList(Composite parent, int style, List<PickListFeatures> listFeatures, Messages messages,
-			AbstractComponentEditor componentEditor) {
+			AbstractComponentEditor<?> componentEditor) {
 		this(parent, style, listFeatures, componentEditor);
 	}
 
 	public AbstractPickList(Composite parent, int style, List<PickListFeatures> listFeatures,
-			AbstractComponentEditor componentEditor) {
+			AbstractComponentEditor<?> componentEditor) {
 
 		super(parent, style);
 

@@ -25,7 +25,6 @@ import javax.inject.Inject;
 import org.eclipse.core.databinding.UpdateValueStrategy;
 import org.eclipse.core.databinding.conversion.Converter;
 import org.eclipse.core.databinding.observable.list.IObservableList;
-import org.eclipse.core.databinding.observable.value.IObservableValue;
 import org.eclipse.core.databinding.observable.value.WritableValue;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.e4.core.contexts.IEclipseContext;
@@ -33,6 +32,7 @@ import org.eclipse.e4.core.di.annotations.Optional;
 import org.eclipse.e4.tools.emf.ui.common.ImageTooltip;
 import org.eclipse.e4.tools.emf.ui.common.Util;
 import org.eclipse.e4.tools.emf.ui.common.component.AbstractComponentEditor;
+import org.eclipse.e4.tools.emf.ui.internal.E4Properties;
 import org.eclipse.e4.tools.emf.ui.internal.Messages;
 import org.eclipse.e4.tools.emf.ui.internal.ResourceProvider;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.ControlFactory.TextPasteHandler;
@@ -45,19 +45,17 @@ import org.eclipse.e4.ui.model.application.ui.MUiFactory;
 import org.eclipse.e4.ui.model.application.ui.impl.UiPackageImpl;
 import org.eclipse.e4.ui.model.application.ui.menu.ItemType;
 import org.eclipse.e4.ui.model.application.ui.menu.MMenuItem;
-import org.eclipse.e4.ui.model.application.ui.menu.impl.MenuPackageImpl;
 import org.eclipse.emf.common.command.Command;
 import org.eclipse.emf.databinding.EMFDataBindingContext;
 import org.eclipse.emf.databinding.FeaturePath;
-import org.eclipse.emf.databinding.edit.EMFEditProperties;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.emf.edit.command.SetCommand;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.databinding.swt.IWidgetValueProperty;
-import org.eclipse.jface.databinding.swt.WidgetProperties;
-import org.eclipse.jface.databinding.viewers.ViewerProperties;
+import org.eclipse.jface.databinding.swt.typed.WidgetProperties;
+import org.eclipse.jface.databinding.viewers.typed.ViewerProperties;
 import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.ComboViewer;
 import org.eclipse.jface.viewers.LabelProvider;
@@ -77,7 +75,7 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 
-public abstract class MenuItemEditor extends AbstractComponentEditor {
+public abstract class MenuItemEditor<M extends MMenuItem> extends AbstractComponentEditor<M> {
 
 	private Composite composite;
 	private EMFDataBindingContext context;
@@ -103,7 +101,7 @@ public abstract class MenuItemEditor extends AbstractComponentEditor {
 				createImageDescriptor(ResourceProvider.IMG_CoreExpression)) {
 			@Override
 			public void run() {
-				final MUIElement e = (MUIElement) getMaster().getValue();
+				final MUIElement e = getMaster().getValue();
 				final Command cmd = SetCommand.create(getEditingDomain(), e,
 						UiPackageImpl.Literals.UI_ELEMENT__VISIBLE_WHEN, MUiFactory.INSTANCE.createCoreExpression());
 				if (cmd.canExecute()) {
@@ -118,6 +116,7 @@ public abstract class MenuItemEditor extends AbstractComponentEditor {
 		return getImage(element, ResourceProvider.IMG_MenuItem);
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public Composite doGetEditor(Composite parent, Object object) {
 		if (composite == null) {
@@ -147,14 +146,14 @@ public abstract class MenuItemEditor extends AbstractComponentEditor {
 			}
 		}
 
-		getMaster().setValue(object);
+		getMaster().setValue((M) object);
 		enableIdGenerator(UiPackageImpl.Literals.UI_LABEL__LABEL,
 				ApplicationPackageImpl.Literals.APPLICATION_ELEMENT__ELEMENT_ID, null);
 
 		return composite;
 	}
 
-	protected CTabFolder createForm(Composite parent, EMFDataBindingContext context, WritableValue master,
+	protected CTabFolder createForm(Composite parent, EMFDataBindingContext context, WritableValue<M> master,
 			boolean isImport) {
 		final CTabFolder folder = new CTabFolder(parent, SWT.BOTTOM);
 
@@ -164,9 +163,9 @@ public abstract class MenuItemEditor extends AbstractComponentEditor {
 		parent = createScrollableContainer(folder);
 		item.setControl(parent.getParent());
 
-		final IWidgetValueProperty textProp = WidgetProperties.text(SWT.Modify);
-		final IWidgetValueProperty checkProp = WidgetProperties.selection();
-		final IWidgetValueProperty enabled = WidgetProperties.enabled();
+		final IWidgetValueProperty<Text, String> textProp = WidgetProperties.text(SWT.Modify);
+		final IWidgetValueProperty<Button, Boolean> checkProp = WidgetProperties.buttonSelection();
+		final IWidgetValueProperty<Button, Boolean> enabled = WidgetProperties.enabled();
 
 		if (getEditor().isShowXMIId() || getEditor().isLiveModel()) {
 			ControlFactory.createXMIId(parent, this);
@@ -179,8 +178,7 @@ public abstract class MenuItemEditor extends AbstractComponentEditor {
 		}
 
 		ControlFactory.createTextField(parent, Messages.ModelTooling_Common_Id, master, context, textProp,
-				EMFEditProperties
-				.value(getEditingDomain(), ApplicationPackageImpl.Literals.APPLICATION_ELEMENT__ELEMENT_ID));
+				E4Properties.elementId(getEditingDomain()));
 
 		if (this.getClass() != MenuItemEditor.class) {
 			// ------------------------------------------------------------
@@ -195,19 +193,17 @@ public abstract class MenuItemEditor extends AbstractComponentEditor {
 				final GridData gd = new GridData();
 				gd.horizontalSpan = 2;
 				viewer.getControl().setLayoutData(gd);
-				final IObservableValue itemTypeObs = EMFEditProperties.value(getEditingDomain(),
-						MenuPackageImpl.Literals.ITEM__TYPE).observeDetail(master);
-				context.bindValue(ViewerProperties.singleSelection().observe(viewer), itemTypeObs);
+				context.bindValue(ViewerProperties.singleSelection().observe(viewer),
+						E4Properties.type(getEditingDomain()).observeDetail(master));
 			}
 		}
 
 		ControlFactory.createTranslatedTextField(parent, Messages.MenuItemEditor_Label, master, context, textProp,
-				EMFEditProperties.value(getEditingDomain(), UiPackageImpl.Literals.UI_LABEL__LABEL), resourcePool, project);
+				E4Properties.label(getEditingDomain()), resourcePool, project);
 		ControlFactory.createTextField(parent, Messages.MenuItemEditor_Mnemonics, getMaster(), context, textProp,
-				EMFEditProperties.value(getEditingDomain(), MenuPackageImpl.Literals.MENU_ELEMENT__MNEMONICS));
+				E4Properties.mnemonics(getEditingDomain()));
 		ControlFactory.createTranslatedTextField(parent, Messages.MenuItemEditor_Tooltip, master, context, textProp,
-				EMFEditProperties.value(getEditingDomain(), UiPackageImpl.Literals.UI_LABEL__TOOLTIP), resourcePool,
-				project);
+				E4Properties.tooltip(getEditingDomain()), resourcePool, project);
 
 		// ------------------------------------------------------------
 		{
@@ -220,8 +216,7 @@ public abstract class MenuItemEditor extends AbstractComponentEditor {
 			t.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 			context.bindValue(
 					textProp.observeDelayed(200, t),
-					EMFEditProperties.value(getEditingDomain(), UiPackageImpl.Literals.UI_LABEL__ICON_URI).observeDetail(
-							master));
+					E4Properties.iconUri(getEditingDomain()).observeDetail(master));
 
 			new ImageTooltip(t, Messages, this);
 
@@ -230,7 +225,7 @@ public abstract class MenuItemEditor extends AbstractComponentEditor {
 				@Override
 				public void widgetSelected(SelectionEvent e) {
 					final MenuItemIconDialogEditor dialog = new MenuItemIconDialogEditor(b.getShell(), eclipseContext,
-							project, getEditingDomain(), (MMenuItem) getMaster().getValue(), Messages);
+							project, getEditingDomain(), getMaster().getValue(), Messages);
 					dialog.open();
 				}
 			});
@@ -243,10 +238,8 @@ public abstract class MenuItemEditor extends AbstractComponentEditor {
 
 			final Button b = new Button(parent, SWT.CHECK);
 			b.setLayoutData(new GridData(GridData.BEGINNING, GridData.CENTER, false, false, 2, 1));
-			context.bindValue(
-					checkProp.observe(b),
-					EMFEditProperties.value(getEditingDomain(), MenuPackageImpl.Literals.ITEM__ENABLED).observeDetail(
-							getMaster()));
+			context.bindValue(checkProp.observe(b),
+					E4Properties.enabled(getEditingDomain()).observeDetail(getMaster()));
 		}
 
 		{
@@ -258,30 +251,28 @@ public abstract class MenuItemEditor extends AbstractComponentEditor {
 			b.setLayoutData(new GridData(GridData.BEGINNING, GridData.CENTER, false, false, 2, 1));
 			context.bindValue(
 					checkProp.observe(b),
-					EMFEditProperties.value(getEditingDomain(), MenuPackageImpl.Literals.ITEM__SELECTED).observeDetail(
-							getMaster()));
+					E4Properties.selected(getEditingDomain()).observeDetail(getMaster()));
 
-			final UpdateValueStrategy t2m = new UpdateValueStrategy();
-			t2m.setConverter(new Converter(boolean.class, ItemType.class) {
+			final UpdateValueStrategy<Boolean, ItemType> t2m = new UpdateValueStrategy<>();
+			t2m.setConverter(new Converter<Boolean, ItemType>(boolean.class, ItemType.class) {
 
 				@Override
-				public Object convert(Object fromObject) {
+				public ItemType convert(Boolean fromObject) {
 					return null;
 				}
 			});
-			final UpdateValueStrategy m2t = new UpdateValueStrategy();
-			m2t.setConverter(new Converter(ItemType.class, boolean.class) {
+			final UpdateValueStrategy<ItemType, Boolean> m2t = new UpdateValueStrategy<>();
+			m2t.setConverter(new Converter<ItemType, Boolean>(ItemType.class, boolean.class) {
 
 				@Override
-				public Object convert(Object fromObject) {
+				public Boolean convert(ItemType fromObject) {
 					return fromObject == ItemType.CHECK || fromObject == ItemType.RADIO;
 				}
 			});
 
 			context.bindValue(
 					enabled.observe(b),
-					EMFEditProperties.value(getEditingDomain(), MenuPackageImpl.Literals.ITEM__TYPE).observeDetail(
-							getMaster()), t2m, m2t);
+					E4Properties.type(getEditingDomain()).observeDetail(getMaster()), t2m, m2t);
 
 		}
 
@@ -312,19 +303,17 @@ public abstract class MenuItemEditor extends AbstractComponentEditor {
 					UiPackageImpl.Literals.UI_ELEMENT__VISIBLE_WHEN));
 			combo.setInput(list);
 			context.bindValue(ViewerProperties.singleSelection().observe(combo),
-					EMFEditProperties.value(getEditingDomain(), UiPackageImpl.Literals.UI_ELEMENT__VISIBLE_WHEN)
-					.observeDetail(getMaster()), new UpdateValueStrategy().setConverter(new EClass2EObject(Messages)),
-					new UpdateValueStrategy().setConverter(new EObject2EClass(Messages)));
+					E4Properties.visibleWhen(getEditingDomain()).observeDetail(getMaster()),
+					UpdateValueStrategy.create(new EClass2EObject<>(Messages)),
+					UpdateValueStrategy.create(new EObject2EClass<>(Messages)));
 		}
 
 		createFormSubTypeForm(parent, context, master);
 
 		ControlFactory.createCheckBox(parent, Messages.ModelTooling_UIElement_ToBeRendered, getMaster(), context,
-				WidgetProperties.selection(),
-				EMFEditProperties.value(getEditingDomain(), UiPackageImpl.Literals.UI_ELEMENT__TO_BE_RENDERED));
+				WidgetProperties.selection(), E4Properties.toBeRendered(getEditingDomain()));
 		ControlFactory.createCheckBox(parent, Messages.ModelTooling_UIElement_Visible, getMaster(), context,
-				WidgetProperties.selection(),
-				EMFEditProperties.value(getEditingDomain(), UiPackageImpl.Literals.UI_ELEMENT__VISIBLE));
+				WidgetProperties.selection(), E4Properties.visible(getEditingDomain()));
 
 		item = new CTabItem(folder, SWT.NONE);
 		item.setText(Messages.ModelTooling_Common_TabSupplementary);
@@ -333,9 +322,7 @@ public abstract class MenuItemEditor extends AbstractComponentEditor {
 		item.setControl(parent.getParent());
 
 		ControlFactory.createTextField(parent, Messages.ModelTooling_UIElement_AccessibilityPhrase, getMaster(),
-				context, textProp,
-				EMFEditProperties.value(getEditingDomain(), UiPackageImpl.Literals.UI_ELEMENT__ACCESSIBILITY_PHRASE));
-
+				context, textProp, E4Properties.accessibilityPhrase(getEditingDomain()));
 		ControlFactory.createStringListWidget(parent, Messages, this, Messages.CategoryEditor_Tags,
 				ApplicationPackageImpl.Literals.APPLICATION_ELEMENT__TAGS, VERTICAL_LIST_WIDGET_INDENT);
 		ControlFactory.createMapProperties(parent, Messages, this, Messages.ModelTooling_Contribution_PersistedState,
@@ -352,7 +339,8 @@ public abstract class MenuItemEditor extends AbstractComponentEditor {
 		return folder;
 	}
 
-	protected abstract void createFormSubTypeForm(Composite parent, EMFDataBindingContext context, WritableValue master);
+	protected abstract void createFormSubTypeForm(Composite parent, EMFDataBindingContext context,
+			WritableValue<M> master);
 
 	private void createUITreeInspection(CTabFolder folder) {
 		final CTabItem item = new CTabItem(folder, SWT.NONE);
@@ -368,7 +356,7 @@ public abstract class MenuItemEditor extends AbstractComponentEditor {
 	}
 
 	@Override
-	public IObservableList getChildList(Object element) {
+	public IObservableList<?> getChildList(Object element) {
 		return null;
 	}
 
@@ -393,7 +381,7 @@ public abstract class MenuItemEditor extends AbstractComponentEditor {
 		return l;
 	}
 
-	static class EObject2EClass extends Converter {
+	static class EObject2EClass<T> extends Converter<T, Object> {
 		Messages Messages;
 
 		public EObject2EClass(Messages Messages) {
@@ -402,7 +390,7 @@ public abstract class MenuItemEditor extends AbstractComponentEditor {
 		}
 
 		@Override
-		public Object convert(Object fromObject) {
+		public Object convert(T fromObject) {
 			if (fromObject == null) {
 				return Messages.MenuItemEditor_NoExpression;
 			}
@@ -410,7 +398,7 @@ public abstract class MenuItemEditor extends AbstractComponentEditor {
 		}
 	}
 
-	static class EClass2EObject extends Converter {
+	static class EClass2EObject<T> extends Converter<Object, T> {
 		Messages Messages;
 
 		public EClass2EObject(Messages Messages) {
@@ -418,12 +406,13 @@ public abstract class MenuItemEditor extends AbstractComponentEditor {
 			this.Messages = Messages;
 		}
 
+		@SuppressWarnings("unchecked")
 		@Override
-		public Object convert(Object fromObject) {
+		public T convert(Object fromObject) {
 			if (fromObject == null || fromObject.toString().equals(Messages.MenuItemEditor_NoExpression)) {
 				return null;
 			}
-			return EcoreUtil.create((EClass) fromObject);
+			return (T) EcoreUtil.create((EClass) fromObject);
 		}
 	}
 }

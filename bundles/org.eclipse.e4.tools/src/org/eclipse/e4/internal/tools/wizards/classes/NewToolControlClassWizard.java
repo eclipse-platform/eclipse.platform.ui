@@ -16,14 +16,14 @@ package org.eclipse.e4.internal.tools.wizards.classes;
 import java.util.Set;
 
 import org.eclipse.core.databinding.DataBindingContext;
-import org.eclipse.core.databinding.beans.BeanProperties;
+import org.eclipse.core.databinding.beans.typed.BeanProperties;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.e4.internal.tools.Messages;
 import org.eclipse.e4.internal.tools.wizards.classes.AbstractNewClassPage.JavaClass;
 import org.eclipse.e4.internal.tools.wizards.classes.templates.ToolControlTemplate;
 import org.eclipse.jdt.core.IPackageFragmentRoot;
 import org.eclipse.jface.databinding.swt.IWidgetValueProperty;
-import org.eclipse.jface.databinding.swt.WidgetProperties;
+import org.eclipse.jface.databinding.swt.typed.WidgetProperties;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Button;
@@ -61,10 +61,9 @@ public class NewToolControlClassWizard extends AbstractNewClassWizard {
 				return new ToolControlClass(root);
 			}
 
-			@SuppressWarnings("unchecked")
 			@Override
 			protected void createFields(Composite parent, DataBindingContext dbc) {
-				final IWidgetValueProperty textProp = WidgetProperties.text(SWT.Modify);
+				final IWidgetValueProperty<Text, String> textProp = WidgetProperties.text(SWT.Modify);
 				{
 					Label l = new Label(parent, SWT.NONE);
 					l.setText(Messages.NewToolControlClassWizard_CreateGUIMethod);

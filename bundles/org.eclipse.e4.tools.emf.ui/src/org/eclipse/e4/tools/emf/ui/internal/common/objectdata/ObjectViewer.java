@@ -4,6 +4,7 @@ import java.util.Collection;
 import java.util.Collections;
 
 import org.eclipse.core.databinding.observable.value.IObservableValue;
+import org.eclipse.core.databinding.property.value.IValueProperty;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtensionPoint;
@@ -17,7 +18,6 @@ import org.eclipse.e4.tools.services.IResourcePool;
 import org.eclipse.e4.ui.model.application.MApplicationElement;
 import org.eclipse.e4.ui.model.internal.ModelUtils;
 import org.eclipse.emf.databinding.EMFProperties;
-import org.eclipse.emf.databinding.IEMFValueProperty;
 import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.MenuManager;
@@ -40,14 +40,15 @@ import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Label;
 
 public class ObjectViewer {
-	public TreeViewer createViewer(Composite parent, EStructuralFeature feature, final IObservableValue master,
+	public TreeViewer createViewer(Composite parent, EStructuralFeature feature, final IObservableValue<?> master,
 			IResourcePool resourcePool, final Messages messages) {
 		final TreeViewer viewer = new TreeViewer(parent);
 		viewer.setContentProvider(new ContentProviderImpl());
 		viewer.setLabelProvider(new LabelProviderImpl(resourcePool));
 		viewer.setComparator(new ViewerComparatorImpl());
-		final IEMFValueProperty property = EMFProperties.value(feature);
-		final IObservableValue value = property.observeDetail(master);
+		@SuppressWarnings("unchecked")
+		final IValueProperty<Object, Object> property = EMFProperties.value(feature);
+		final IObservableValue<Object> value = property.observeDetail(master);
 		value.addValueChangeListener(event -> {
 			if (event.diff.getNewValue() != null) {
 				viewer.setInput(Collections.singleton(new JavaObject(event.diff.getNewValue())));

@@ -30,6 +30,7 @@ import org.eclipse.e4.tools.emf.ui.internal.common.AbstractPickList.PickListFeat
 import org.eclipse.e4.tools.emf.ui.internal.common.E4PickList;
 import org.eclipse.e4.tools.emf.ui.internal.common.VirtualEntry;
 import org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl;
+import org.eclipse.e4.ui.model.fragment.MModelFragments;
 import org.eclipse.e4.ui.model.fragment.impl.FragmentPackageImpl;
 import org.eclipse.e4.ui.model.fragment.impl.ModelFragmentsImpl;
 import org.eclipse.emf.common.command.Command;
@@ -49,7 +50,7 @@ import org.eclipse.swt.custom.CTabItem;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
 
-public class VModelImportsEditor extends AbstractComponentEditor {
+public class VModelImportsEditor extends AbstractComponentEditor<MModelFragments> {
 	private Composite composite;
 	private EMFDataBindingContext context;
 
@@ -83,13 +84,15 @@ public class VModelImportsEditor extends AbstractComponentEditor {
 			context = new EMFDataBindingContext();
 			composite = createForm(parent, context, getMaster());
 		}
-		final VirtualEntry<?> o = (VirtualEntry<?>) object;
+		@SuppressWarnings("unchecked")
+		final VirtualEntry<MModelFragments, ?> o = (VirtualEntry<MModelFragments, ?>) object;
 		viewer.setInput(o.getList());
 		getMaster().setValue(o.getOriginalParent());
 		return composite;
 	}
 
-	private Composite createForm(Composite parent, EMFDataBindingContext context, WritableValue master) {
+	private Composite createForm(Composite parent, EMFDataBindingContext context,
+			WritableValue<MModelFragments> master) {
 		final CTabFolder folder = new CTabFolder(parent, SWT.BOTTOM);
 		composite = folder;
 
@@ -161,7 +164,7 @@ public class VModelImportsEditor extends AbstractComponentEditor {
 	}
 
 	@Override
-	public IObservableList getChildList(Object element) {
+	public IObservableList<?> getChildList(Object element) {
 		return null;
 	}
 

@@ -7,6 +7,7 @@ package org.eclipse.e4.tools.emf.ui.internal.common.component;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.core.databinding.UpdateValueStrategy;
 import org.eclipse.core.databinding.conversion.Converter;
 import org.eclipse.core.databinding.conversion.IConverter;
 import org.eclipse.core.databinding.observable.value.IObservableValue;
@@ -41,6 +42,7 @@ import org.eclipse.emf.edit.command.SetCommand;
  * </ul>
  */
 public class UnsettableUpdateValueStrategy extends EMFUpdateValueStrategy {
+	@SuppressWarnings("rawtypes")
 	@Override
 	protected IConverter createConverter(Object fromType, Object toType) {
 		if (fromType == String.class) {
@@ -105,10 +107,15 @@ public class UnsettableUpdateValueStrategy extends EMFUpdateValueStrategy {
 	 * org.eclipse.core.databinding.UpdateValueStrategy#doSet(org.eclipse.core
 	 * .databinding.observable.value.IObservableValue, java.lang.Object)
 	 */
+	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Override
 	protected IStatus doSet(IObservableValue observableValue, Object value) {
 		// TODO Auto-generated method stub
 		return super.doSet(observableValue, value);
 	}
 
+	@SuppressWarnings("unchecked")
+	public static <S, D> UpdateValueStrategy<S, D> create() {
+		return new UnsettableUpdateValueStrategy();
+	}
 }

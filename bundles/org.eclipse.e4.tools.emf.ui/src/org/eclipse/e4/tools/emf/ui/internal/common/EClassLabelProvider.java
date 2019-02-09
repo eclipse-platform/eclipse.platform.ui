@@ -34,7 +34,7 @@ public class EClassLabelProvider extends LabelProvider {
 	@Override
 	public String getText(Object element) {
 		final EClass eclass = (EClass) element;
-		final AbstractComponentEditor elementEditor = editor.getEditor(eclass);
+		final AbstractComponentEditor<?> elementEditor = editor.getEditor(eclass);
 		if (elementEditor != null) {
 			return elementEditor.getLabel(element);
 		}
