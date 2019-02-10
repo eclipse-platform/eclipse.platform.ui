@@ -17,6 +17,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
+import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 
 import org.eclipse.core.runtime.CoreException;
@@ -232,9 +233,6 @@ public class FileCharSequenceProvider {
 	}
 
 	private final class FileCharSequence implements CharSequence {
-
-		private static final String CHARSET_UTF_8= "UTF-8"; //$NON-NLS-1$
-
 		private Reader fReader;
 		private int fReaderPos;
 
@@ -277,7 +275,7 @@ public class FileCharSequenceProvider {
 			boolean ok= false;
 			InputStream contents= fFile.getContents();
 			try {
-				if (CHARSET_UTF_8.equals(charset)) {
+				if (StandardCharsets.UTF_8.name().equals(charset)) {
 					/*
 					 * This is a workaround for a corresponding bug in Java readers and writer,
 					 * see http://developer.java.sun.com/developer/bugParade/bugs/4508058.html

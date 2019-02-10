@@ -18,6 +18,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
+import java.nio.charset.StandardCharsets;
 
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
@@ -416,7 +417,7 @@ public class LastSaveReferenceProvider implements IQuickDiffReferenceProvider, I
 	 * 			- byte order mark is not valid for UTF-8
 	 */
 	private static boolean isUTF8BOM(String encoding, IStorage storage) throws CoreException {
-		if (storage instanceof IFile && "UTF-8".equals(encoding)) { //$NON-NLS-1$
+		if (storage instanceof IFile && StandardCharsets.UTF_8.name().equals(encoding)) { //$NON-NLS-1$
 			IFile file= (IFile) storage;
 			IContentDescription description= file.getContentDescription();
 			if (description != null) {

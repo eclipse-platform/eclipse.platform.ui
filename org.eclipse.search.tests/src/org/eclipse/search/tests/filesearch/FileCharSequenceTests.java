@@ -16,6 +16,7 @@ package org.eclipse.search.tests.filesearch;
 import static org.junit.Assert.assertFalse;
 
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 
 import org.junit.After;
 import org.junit.Assert;
@@ -53,8 +54,7 @@ public class FileCharSequenceTests {
 		for (int i= 0; i < 500; i++) {
 			buf.append(TEST_CONTENT);
 		}
-		String encoding= "ISO-8859-1";
-		testForEncoding(buf, encoding);
+		testForEncoding(buf, StandardCharsets.ISO_8859_1.name());
 	}
 
 	@Test
@@ -63,8 +63,7 @@ public class FileCharSequenceTests {
 		for (int i= 0; i < 2000; i++) {
 			buf.append(TEST_CONTENT);
 		}
-		String encoding= "UTF-8";
-		testForEncoding(buf, encoding);
+		testForEncoding(buf, StandardCharsets.UTF_8.name());
 	}
 
 	@Test
@@ -73,8 +72,7 @@ public class FileCharSequenceTests {
 		for (int i= 0; i < FileCharSequenceProvider.BUFFER_SIZE * 2; i++) {
 			buf.append(TEST_CONTENT);
 		}
-		String encoding= "UTF-16";
-		testForEncoding(buf, encoding);
+		testForEncoding(buf, StandardCharsets.UTF_16.name());
 	}
 
 	private void testForEncoding(CharSequence buf, String encoding) throws CoreException, IOException {

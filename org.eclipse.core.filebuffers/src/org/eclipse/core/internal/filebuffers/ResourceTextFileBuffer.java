@@ -27,6 +27,7 @@ import java.nio.charset.Charset;
 import java.nio.charset.CharsetEncoder;
 import java.nio.charset.CodingErrorAction;
 import java.nio.charset.IllegalCharsetNameException;
+import java.nio.charset.StandardCharsets;
 import java.nio.charset.UnmappableCharacterException;
 import java.nio.charset.UnsupportedCharsetException;
 
@@ -97,20 +98,6 @@ public class ResourceTextFileBuffer extends ResourceFileBuffer implements ITextF
 	 * Constant for representing the error status. This is considered a value object.
 	 */
 	static final private IStatus STATUS_ERROR= new Status(IStatus.ERROR, FileBuffersPlugin.PLUGIN_ID, IStatus.OK, FileBuffersMessages.FileBuffer_status_error, null);
-	/**
-	 * Constant denoting UTF-8 encoding.
-	 */
-	private static final String CHARSET_UTF_8= "UTF-8"; //$NON-NLS-1$
-	/**
-	 * Constant denoting UTF-16 encoding.
-	 * @since 3.4
-	 */
-	private static final String CHARSET_UTF_16= "UTF-16"; //$NON-NLS-1$
-	/**
-	 * Constant denoting UTF-16LE encoding.
-	 * @since 3.4
-	 */
-	private static final String CHARSET_UTF_16LE= "UTF-16LE"; //$NON-NLS-1$
 
 	/**
 	 * Constant denoting an empty set of properties
@@ -311,8 +298,8 @@ public class ResourceTextFileBuffer extends ResourceFileBuffer implements ITextF
 
 		String encoding= computeEncoding();
 
-		if (fBOM == IContentDescription.BOM_UTF_16LE && CHARSET_UTF_16.equals(encoding))
-			encoding= CHARSET_UTF_16LE;
+		if (fBOM == IContentDescription.BOM_UTF_16LE && StandardCharsets.UTF_16.name().equals(encoding))
+			encoding= StandardCharsets.UTF_16LE.name();
 
 		Charset charset;
 		try {
@@ -355,10 +342,10 @@ public class ResourceTextFileBuffer extends ResourceFileBuffer implements ITextF
 		 * This is a workaround for a corresponding bug in Java readers and writer,
 		 * see http://developer.java.sun.com/developer/bugParade/bugs/4508058.html
 		 */
-		if (fBOM == IContentDescription.BOM_UTF_8 && CHARSET_UTF_8.equals(encoding))
+		if (fBOM == IContentDescription.BOM_UTF_8 && StandardCharsets.UTF_8.name().equals(encoding))
 			stream= new SequenceInputStream(new ByteArrayInputStream(IContentDescription.BOM_UTF_8), stream);
 
-		if (fBOM == IContentDescription.BOM_UTF_16LE && CHARSET_UTF_16LE.equals(encoding))
+		if (fBOM == IContentDescription.BOM_UTF_16LE && StandardCharsets.UTF_16LE.name().equals(encoding))
 			stream= new SequenceInputStream(new ByteArrayInputStream(IContentDescription.BOM_UTF_16LE), stream);
 
 		if (fFile.exists()) {
@@ -513,7 +500,7 @@ public class ResourceTextFileBuffer extends ResourceFileBuffer implements ITextF
 			 * This is a workaround for a corresponding bug in Java readers and writer,
 			 * see http://developer.java.sun.com/developer/bugParade/bugs/4508058.html
 			 */
-			if (fBOM != null && CHARSET_UTF_8.equals(encoding)) {
+			if (fBOM != null && StandardCharsets.UTF_8.name().equals(encoding)) {
 				int n= 0;
 				do {
 					int bytes= contentStream.read(new byte[IContentDescription.BOM_UTF_8.length]);

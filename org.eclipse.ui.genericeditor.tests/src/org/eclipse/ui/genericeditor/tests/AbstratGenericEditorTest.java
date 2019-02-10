@@ -14,6 +14,7 @@
 package org.eclipse.ui.genericeditor.tests;
 
 import java.io.ByteArrayInputStream;
+import java.nio.charset.StandardCharsets;
 
 import org.junit.After;
 import org.junit.Before;
@@ -58,7 +59,7 @@ public class AbstratGenericEditorTest {
 		project = ResourcesPlugin.getWorkspace().getRoot().getProject(getClass().getName() + System.currentTimeMillis());
 		project.create(null);
 		project.open(null);
-		project.setDefaultCharset("UTF-8", null);
+		project.setDefaultCharset(StandardCharsets.UTF_8.name(), null);
 		createAndOpenFile();
 	 }
 
@@ -75,8 +76,8 @@ public class AbstratGenericEditorTest {
 	 */
 	protected void createAndOpenFile(String name, String contents) throws Exception {
 		this.file = project.getFile(name);
-		this.file.create(new ByteArrayInputStream(contents.getBytes("UTF-8")), true, null);
-		this.file.setCharset("UTF-8", null);
+		this.file.create(new ByteArrayInputStream(contents.getBytes(StandardCharsets.UTF_8)), true, null);
+		this.file.setCharset(StandardCharsets.UTF_8.name(), null);
 		this.editor = (ExtensionBasedTextEditor) PlatformUI.getWorkbench().getActiveWorkbenchWindow()
 				.getActivePage().openEditor(new FileEditorInput(this.file), "org.eclipse.ui.genericeditor.GenericEditor");
 	}

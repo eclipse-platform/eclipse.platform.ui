@@ -25,6 +25,7 @@ import java.nio.charset.Charset;
 import java.nio.charset.CharsetEncoder;
 import java.nio.charset.CodingErrorAction;
 import java.nio.charset.IllegalCharsetNameException;
+import java.nio.charset.StandardCharsets;
 import java.nio.charset.UnmappableCharacterException;
 import java.nio.charset.UnsupportedCharsetException;
 
@@ -94,22 +95,6 @@ public class FileDocumentProvider extends StorageDocumentProvider {
 	 * @since 2.1
 	 */
 	private static final QualifiedName ENCODING_KEY = new QualifiedName(EditorsUI.PLUGIN_ID, "encoding"); //$NON-NLS-1$
-	/**
-	 * Constant denoting UTF-8 encoding.
-	 * @since 3.0
-	 */
-	private static final String CHARSET_UTF_8= "UTF-8"; //$NON-NLS-1$
-	/**
-	 * Constant denoting UTF-16 encoding.
-	 * @since 3.4
-	 */
-	private static final String CHARSET_UTF_16= "UTF-16"; //$NON-NLS-1$
-	/**
-	 * Constant denoting UTF-16LE encoding.
-	 * @since 3.4
-	 */
-	private static final String CHARSET_UTF_16LE= "UTF-16LE"; //$NON-NLS-1$
-
 
 	/**
 	 * The runnable context for that provider.
@@ -396,7 +381,7 @@ public class FileDocumentProvider extends StorageDocumentProvider {
 			try (InputStream contentStream= file.getContents(false)) {
 				FileInfo info= (FileInfo)getElementInfo(editorInput);
 				boolean removeBOM= false;
-				if (CHARSET_UTF_8.equals(encoding)) {
+				if (StandardCharsets.UTF_8.name().equals(encoding)) {
 					if (info != null)
 						removeBOM= info.fBOM != null;
 					else
@@ -549,8 +534,8 @@ public class FileDocumentProvider extends StorageDocumentProvider {
 			IFile file= input.getFile();
 			encoding= getCharsetForNewFile(file, document, info);
 
-			if (info != null && info.fBOM == IContentDescription.BOM_UTF_16LE && CHARSET_UTF_16.equals(encoding))
-				encoding= CHARSET_UTF_16LE;
+			if (info != null && info.fBOM == IContentDescription.BOM_UTF_16LE && StandardCharsets.UTF_16.name().equals(encoding))
+				encoding= StandardCharsets.UTF_16LE.name();
 
 			Charset charset;
 			try {
@@ -593,10 +578,10 @@ public class FileDocumentProvider extends StorageDocumentProvider {
 			 * This is a workaround for a corresponding bug in Java readers and writer,
 			 * see http://developer.java.sun.com/developer/bugParade/bugs/4508058.html
 			 */
-			if (info != null && info.fBOM == IContentDescription.BOM_UTF_8 && CHARSET_UTF_8.equals(encoding))
+			if (info != null && info.fBOM == IContentDescription.BOM_UTF_8 && StandardCharsets.UTF_8.name().equals(encoding))
 				stream= new SequenceInputStream(new ByteArrayInputStream(IContentDescription.BOM_UTF_8), stream);
 
-			if (info != null && info.fBOM == IContentDescription.BOM_UTF_16LE && CHARSET_UTF_16LE.equals(encoding))
+			if (info != null && info.fBOM == IContentDescription.BOM_UTF_16LE && StandardCharsets.UTF_16LE.name().equals(encoding))
 				stream= new SequenceInputStream(new ByteArrayInputStream(IContentDescription.BOM_UTF_16LE), stream);
 
 			if (file.exists()) {

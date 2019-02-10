@@ -29,6 +29,7 @@ import java.nio.charset.Charset;
 import java.nio.charset.CharsetEncoder;
 import java.nio.charset.CodingErrorAction;
 import java.nio.charset.IllegalCharsetNameException;
+import java.nio.charset.StandardCharsets;
 import java.nio.charset.UnmappableCharacterException;
 import java.nio.charset.UnsupportedCharsetException;
 
@@ -93,10 +94,6 @@ public class FileStoreTextFileBuffer extends FileStoreFileBuffer implements ITex
 	 * Constant for representing the error status. This is considered a value object.
 	 */
 	private static final IStatus STATUS_ERROR= new Status(IStatus.ERROR, FileBuffersPlugin.PLUGIN_ID, IStatus.OK, FileBuffersMessages.FileBuffer_status_error, null);
-	/**
-	 * Constant denoting UTF-8 encoding.
-	 */
-	private static final String CHARSET_UTF_8= "UTF-8"; //$NON-NLS-1$
 
 	/**
 	 * Constant denoting an empty set of properties
@@ -297,7 +294,6 @@ public class FileStoreTextFileBuffer extends FileStoreFileBuffer implements ITex
 					return desc.getContentType();
 				return null;
 			}
-			
 		} catch (IOException x) {
 			throw new CoreException(new Status(IStatus.ERROR, FileBuffersPlugin.PLUGIN_ID, IStatus.OK, NLSUtility.format(FileBuffersMessages.FileBuffer_error_queryContentDescription, fFileStore.toString()), x));
 		}
@@ -427,7 +423,7 @@ public class FileStoreTextFileBuffer extends FileStoreFileBuffer implements ITex
 			 * This is a workaround for a corresponding bug in Java readers and writer,
 			 * see http://developer.java.sun.com/developer/bugParade/bugs/4508058.html
 			 */
-			if (fHasBOM && CHARSET_UTF_8.equals(encoding))
+			if (fHasBOM && StandardCharsets.UTF_8.name().equals(encoding))
 				stream= new SequenceInputStream(new ByteArrayInputStream(IContentDescription.BOM_UTF_8), stream);
 
 
@@ -451,7 +447,7 @@ public class FileStoreTextFileBuffer extends FileStoreFileBuffer implements ITex
 				 * This is a workaround for a corresponding bug in Java readers and writer,
 				 * see http://developer.java.sun.com/developer/bugParade/bugs/4508058.html
 				 */
-				if (fHasBOM && CHARSET_UTF_8.equals(encoding))
+				if (fHasBOM && StandardCharsets.UTF_8.name().equals(encoding))
 					out.write(IContentDescription.BOM_UTF_8);
 
 				out.write(bytes, 0, bytesLength);
@@ -524,7 +520,7 @@ public class FileStoreTextFileBuffer extends FileStoreFileBuffer implements ITex
 			 * This is a workaround for a corresponding bug in Java readers and writer,
 			 * see http://developer.java.sun.com/developer/bugParade/bugs/4508058.html
 			 */
-			if (hasBOM && CHARSET_UTF_8.equals(encoding)) {
+			if (hasBOM && StandardCharsets.UTF_8.name().equals(encoding)) {
 				int n= 0;
 				do {
 					int bytes= contentStream.read(new byte[IContentDescription.BOM_UTF_8.length]);

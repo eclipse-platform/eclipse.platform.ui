@@ -18,6 +18,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.nio.charset.Charset;
 import java.nio.charset.CharsetEncoder;
 import java.nio.charset.IllegalCharsetNameException;
+import java.nio.charset.StandardCharsets;
 import java.nio.charset.UnsupportedCharsetException;
 import java.util.Iterator;
 import java.util.List;
@@ -1679,7 +1680,7 @@ public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 		int returnCode= errorDialog.open();
 
 		if (returnCode == saveAsUTF8ButtonId) {
-			((IStorageDocumentProvider)documentProvider).setEncoding(getEditorInput(), "UTF-8"); //$NON-NLS-1$
+			((IStorageDocumentProvider) documentProvider).setEncoding(getEditorInput(), StandardCharsets.UTF_8.name());
 			IProgressMonitor monitor= getProgressMonitor();
 			try {
 				doSave(monitor);
