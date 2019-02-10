@@ -276,7 +276,7 @@ public final class EmptyWorkspaceHelper {
 	};
 
 	private boolean switchTopControl() {
-		if (control.isDisposed() || emptyArea.isDisposed()) {
+		if (control == null || control.isDisposed() || emptyArea == null || emptyArea.isDisposed()) {
 			return false;
 		}
 		Control oldTop = layout.topControl;
