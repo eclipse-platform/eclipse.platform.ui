@@ -118,6 +118,10 @@ public class DebugWindowContextService implements IDebugContextService, IPartLis
 		if (index >= 0) {
 			fProvidersByPartId.remove( getCombinedPartId(provider.getPart()) );
 			fProviders.remove(index);
+			if (fWindow != null && fWindow.isClosing()) {
+				provider.removeDebugContextListener(this);
+				return;
+			}
 			IDebugContextProvider activeProvider = getActiveProvider();
 			if (index == 0) {
     			if (activeProvider != null) {
