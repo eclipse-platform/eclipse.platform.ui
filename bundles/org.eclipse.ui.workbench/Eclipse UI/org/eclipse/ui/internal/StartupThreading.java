@@ -14,6 +14,7 @@
 
 package org.eclipse.ui.internal;
 
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.WorkbenchException;
 import org.eclipse.ui.internal.misc.StatusUtil;
@@ -24,9 +25,9 @@ import org.eclipse.ui.internal.misc.StatusUtil;
  */
 public final class StartupThreading {
 
-	static Workbench workbench;
+	private static Display display;
 
-	public static abstract class StartupRunnable implements Runnable {
+	public abstract static class StartupRunnable implements Runnable {
 		private Throwable throwable;
 
 		@Override
@@ -45,13 +46,12 @@ public final class StartupThreading {
 		}
 	}
 
-	static void setWorkbench(Workbench wb) {
-		workbench = wb;
+	static void setDisplay(Display display) {
+		StartupThreading.display = display;
 	}
 
-	public static void runWithWorkbenchExceptions(StartupRunnable r)
-			throws WorkbenchException {
-		workbench.getDisplay().syncExec(r);
+	public static void runWithWorkbenchExceptions(StartupRunnable r) throws WorkbenchException {
+		display.syncExec(r);
 		Throwable throwable = r.getThrowable();
 		if (throwable != null) {
 			if (throwable instanceof Error) {
@@ -67,9 +67,8 @@ public final class StartupThreading {
 		}
 	}
 
-	public static void runWithPartInitExceptions(StartupRunnable r)
-			throws PartInitException {
-		workbench.getDisplay().syncExec(r);
+	public static void runWithPartInitExceptions(StartupRunnable r) throws PartInitException {
+		display.syncExec(r);
 		Throwable throwable = r.getThrowable();
 		if (throwable != null) {
 			if (throwable instanceof Error) {
@@ -86,16 +85,15 @@ public final class StartupThreading {
 	}
 
 	public static void runWithThrowable(StartupRunnable r) throws Throwable {
-		workbench.getDisplay().syncExec(r);
+		display.syncExec(r);
 		Throwable throwable = r.getThrowable();
 		if (throwable != null) {
 			throw throwable;
 		}
 	}
 
-	public static void runWithoutExceptions(StartupRunnable r)
-			throws RuntimeException {
-		workbench.getDisplay().syncExec(r);
+	public static void runWithoutExceptions(StartupRunnable r) throws RuntimeException {
+		display.syncExec(r);
 		Throwable throwable = r.getThrowable();
 		if (throwable != null) {
 			if (throwable instanceof Error) {

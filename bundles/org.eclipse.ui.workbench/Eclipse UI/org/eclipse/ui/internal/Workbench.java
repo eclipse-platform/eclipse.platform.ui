@@ -465,13 +465,15 @@ public final class Workbench extends EventManager implements IWorkbench,
 		e4Context = appContext;
 
 		this.id = createId();
-		StartupThreading.setWorkbench(this);
+
 		if (instance != null && instance.isRunning()) {
 			throw new IllegalStateException(WorkbenchMessages.Workbench_CreatingWorkbenchTwice);
 		}
 
 
 		Workbench.instance = this;
+
+		StartupThreading.setDisplay(display);
 		eventBroker = e4Context.get(IEventBroker.class);
 		registry = e4Context.get(IExtensionRegistry.class);
 
