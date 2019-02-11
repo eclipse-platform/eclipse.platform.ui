@@ -2458,7 +2458,7 @@ public final class Workbench extends EventManager implements IWorkbench,
 			// assume we are loading a tenth of the installed plug-ins.
 			// (The Eclipse SDK loads 7 of 86 plug-ins at startup as of
 			// 2005-5-20)
-			runStartupWithProgress(() -> doOpenFirstTimeWindow());
+			runStartupWithProgress(this::doOpenFirstTimeWindow);
 		}
 	}
 
