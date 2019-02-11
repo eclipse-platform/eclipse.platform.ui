@@ -595,27 +595,33 @@ public final class Workbench extends EventManager implements IWorkbench,
 				Workbench workbench = new Workbench(display, advisor, e4Workbench
 						.getApplication(), e4Workbench.getContext());
 
-				// prime the splash nice and early
-				workbench.createSplashWrapper();
-
-				// Bug 539376, 427393, 455162: show the splash screen after
-				// the image is loaded. See IDEApplication#checkInstanceLocation
-				// where the splash shell got hidden to avoid empty shell
-				AbstractSplashHandler handler = getSplash();
-				if (handler != null) {
-					Shell splashShell = handler.getSplash();
-					if (splashShell != null && !splashShell.isDisposed()) {
-						splashShell.setVisible(true);
-						splashShell.forceActive();
-					}
-				}
-				spinEventQueueToUpdateSplash(display);
-
+				// listener for updating the splash screen
 				SynchronousBundleListener bundleListener = null;
-				if (handler != null && showProgress) {
-					IProgressMonitor progressMonitor = SubMonitor.convert(handler.getBundleProgressMonitor());
-					bundleListener = new Workbench.StartupProgressBundleListener(progressMonitor, display);
-					WorkbenchPlugin.getDefault().addBundleListener(bundleListener);
+				createSplash = WorkbenchPlugin.isSplashHandleSpecified();
+				if (createSplash) {
+
+					// prime the splash nice and early
+					workbench.createSplashWrapper();
+
+					// Bug 539376, 427393, 455162: show the splash screen after
+					// the image is loaded. See IDEApplication#checkInstanceLocation
+					// where the splash shell got hidden to avoid empty shell
+					AbstractSplashHandler handler = getSplash();
+					if (handler != null) {
+						Shell splashShell = handler.getSplash();
+						if (splashShell != null && !splashShell.isDisposed()) {
+							splashShell.setVisible(true);
+							splashShell.forceActive();
+						}
+					}
+					spinEventQueueToUpdateSplash(display);
+
+					if (handler != null && showProgress) {
+						IProgressMonitor progressMonitor = SubMonitor.convert(handler.getBundleProgressMonitor());
+						bundleListener = new Workbench.StartupProgressBundleListener(progressMonitor, display);
+						WorkbenchPlugin.getDefault().addBundleListener(bundleListener);
+					}
+
 				}
 
 				setSearchContribution(appModel, true);
@@ -776,18 +782,13 @@ public final class Workbench extends EventManager implements IWorkbench,
 	 * @since 3.3
 	 */
 	private void createSplashWrapper() {
-		final Display display = getDisplay();
-		String splashLoc = System.getProperty("org.eclipse.equinox.launcher.splash.location"); //$NON-NLS-1$
-		final Image background = loadSplashScreenImage(display, splashLoc);
 
 		SafeRunnable run = new SafeRunnable() {
-
+			Image background = null;
 			@Override
 			public void run() throws Exception {
-				if (!WorkbenchPlugin.isSplashHandleSpecified()) {
-					createSplash = false;
-					return;
-				}
+				String splashLoc = System.getProperty("org.eclipse.equinox.launcher.splash.location"); //$NON-NLS-1$
+				background = loadSplashScreenImage(display, splashLoc);
 
 				// create the splash
 				getSplash();
@@ -2443,8 +2444,8 @@ public final class Workbench extends EventManager implements IWorkbench,
 	 * Opens the initial workbench window.
 	 */
 	/* package */void openFirstTimeWindow() {
-		final boolean showProgress = PrefUtil.getAPIPreferenceStore().getBoolean(
-				IWorkbenchPreferenceConstants.SHOW_PROGRESS_ON_STARTUP);
+		final boolean showProgress = PrefUtil.getAPIPreferenceStore()
+				.getBoolean(IWorkbenchPreferenceConstants.SHOW_PROGRESS_ON_STARTUP);
 
 		if (!showProgress) {
 			doOpenFirstTimeWindow();
