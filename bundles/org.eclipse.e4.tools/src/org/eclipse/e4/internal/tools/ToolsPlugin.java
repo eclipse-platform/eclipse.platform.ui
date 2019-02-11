@@ -1,7 +1,5 @@
 package org.eclipse.e4.internal.tools;
 
-import java.net.URL;
-
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.emf.common.util.ResourceLocator;
@@ -35,45 +33,6 @@ public class ToolsPlugin extends AbstractUIPlugin {
 	 */
 	public static ToolsPlugin getDefault() {
 		return plugin;
-	}
-
-	public ResourceLocator getResourceLocator() {
-		if (resourceLocator == null) {
-			resourceLocator = new ResourceLocator() {
-
-				@Override
-				public String getString(String key, Object[] substitutions,
-					boolean translate) {
-					return null;
-				}
-
-				@Override
-				public String getString(String key, Object[] substitutions) {
-					return null;
-				}
-
-				@Override
-				public String getString(String key, boolean translate) {
-					return null;
-				}
-
-				@Override
-				public String getString(String key) {
-					return null;
-				}
-
-				@Override
-				public Object getImage(String key) {
-					return null;
-				}
-
-				@Override
-				public URL getBaseURL() {
-					return null;
-				}
-			};
-		}
-		return resourceLocator;
 	}
 
 	public static void log(IStatus status, int nesting, boolean appendLogger) {
