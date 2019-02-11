@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2014 Andrea Guarinoni and others.
+ * Copyright (c) 2010, 2019 Andrea Guarinoni and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -181,3 +181,26 @@ CTabFolder.MArea .MPartStack,CTabFolder.MArea .MPartStack.active {
 StatusLine, ImageBasedFrame{
     color: #BDBAB7;
 }
+
+Button,
+/* the following are required due to Bug 419482: */
+Composite > Button,
+TabFolder > Composite > Button,
+TabFolder > Composite > * > Button,
+DocCommentOwnerComposite > Group > Button,
+TabFolder > Composite > ScrolledComposite > Button,
+Shell > Composite > Composite > Button,
+Composite > Composite > Composite > Group > Button,
+Shell > Composite > Composite > Composite > Button,
+ScrolledComposite > Composite > Composite > Composite > Button,
+Shell > Composite > Composite > Composite > Composite > Composite > Button,
+Shell[style~='SWT.RADIO'][style~='SWT.CASCADE'][style~='SWT.SHADOW_ETCHED_IN'][style~='SWT.SHADOW_ETCHED_OUT'][style~='SWT.RESIZE'][style~='SWT.MENU'][style~='SWT.FULL_SELECTION'][style~='SWT.DATE'] > Composite > Button,
+Shell[style~='SWT.RADIO'][style~='SWT.CASCADE'][style~='SWT.SHADOW_ETCHED_IN'][style~='SWT.SHADOW_ETCHED_OUT'][style~='SWT.RESIZE'][style~='SWT.MENU'][style~='SWT.FULL_SELECTION'][style~='SWT.DATE'] > Composite > * > Button,
+Form > LayoutComposite > LayoutComposite > Button,
+.MPart Button,
+.MPartStack.active .MPart Button,
+.MPart LayoutComposite > * > LayoutComposite > Section > LayoutComposite > Button,
+.MPartStack.active .MPart LayoutComposite > * > LayoutComposite > Section > LayoutComposite > Button {
+    background-color: unset;
+}
+
