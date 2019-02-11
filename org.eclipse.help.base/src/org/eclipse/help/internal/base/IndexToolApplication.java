@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2016 IBM Corporation and others.
+ * Copyright (c) 2000, 2019 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -31,9 +31,6 @@ import org.eclipse.osgi.util.NLS;
  */
 public class IndexToolApplication implements IApplication {
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.equinox.app.IApplication#start(org.eclipse.equinox.app.IApplicationContext)
-	 */
 	@Override
 	public synchronized Object start(IApplicationContext context) throws Exception {
 		try {
@@ -61,9 +58,6 @@ public class IndexToolApplication implements IApplication {
 		return EXIT_OK;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.equinox.app.IApplication#stop()
-	 */
 	@Override
 	public synchronized void stop() {
 	}

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2016 IBM Corporation and others.
+ * Copyright (c) 2006, 2019 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -41,9 +41,6 @@ public class DynamicXHTMLFilter implements IFilter {
 	private static final String ERROR_PAGE_PREFIX = "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\">\n<html>\n<head>\n<meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\">\n</head>\n<body>"; //$NON-NLS-1$
 	private static final String ERROR_PAGE_SUFFIX = "</body>\n</html>"; //$NON-NLS-1$
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.help.internal.webapp.servlet.IFilter#filter(javax.servlet.http.HttpServletRequest, java.io.OutputStream)
-	 */
 	@Override
 	public OutputStream filter(final HttpServletRequest req, final OutputStream out) {
 		final String uri = req.getRequestURI();

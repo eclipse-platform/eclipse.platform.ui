@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2015 IBM Corporation and others.
+ * Copyright (c) 2006, 2019 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -104,11 +104,6 @@ public class RemoteContextProvider extends AbstractContextProvider {
 		return null;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.help.AbstractContextProvider#getPlugins()
-	 */
 	@Override
 	public String[] getPlugins() {
 		// this is a global provider

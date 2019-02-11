@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2016 IBM Corporation and others.
+ * Copyright (c) 2000, 2019 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -255,9 +255,6 @@ public class SearchManager {
 		private Set<SearchHit> allHits = new HashSet<>();
 		private String wordsSearched = null;
 
-		/* (non-Javadoc)
-		 * @see org.eclipse.help.internal.search.ISearchHitCollector#addHits(java.util.List, java.lang.String)
-		 */
 		@Override
 		public void addHits(List<SearchHit> hits, String wordsSearched) {
 			if (wordsSearched != null) {

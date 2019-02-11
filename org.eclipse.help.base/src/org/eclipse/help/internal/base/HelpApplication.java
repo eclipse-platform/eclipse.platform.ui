@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2016 IBM Corporation and others.
+ * Copyright (c) 2000, 2019 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -45,9 +45,6 @@ public class HelpApplication implements IApplication, IExecutableExtension {
 	private FileLock lock;
 	private RandomAccessFile raf;
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.equinox.app.IApplication#start(org.eclipse.equinox.app.IApplicationContext)
-	 */
 	@Override
 	public synchronized Object start(IApplicationContext context) throws Exception {
 		if (status == STATE_RESTARTING) {
@@ -86,9 +83,6 @@ public class HelpApplication implements IApplication, IExecutableExtension {
 		return EXIT_OK;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.equinox.app.IApplication#stop()
-	 */
 	@Override
 	public void stop() {
 		stopHelp();
@@ -117,9 +111,6 @@ public class HelpApplication implements IApplication, IExecutableExtension {
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.core.runtime.IExecutableExtension#setInitializationData(org.eclipse.core.runtime.IConfigurationElement, java.lang.String, java.lang.Object)
-	 */
 	@Override
 	public void setInitializationData(IConfigurationElement configElement, String propertyName, Object data) {
 		String value = (String)((Map<?, ?>)data).get("mode"); //$NON-NLS-1$

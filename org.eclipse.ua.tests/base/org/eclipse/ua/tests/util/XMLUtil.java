@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2017 IBM Corporation and others.
+ * Copyright (c) 2006, 2019 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -96,9 +96,6 @@ public class XMLUtil extends Assert {
 			buf.append('>');
 		}
 
-		/* (non-Javadoc)
-		 * @see org.xml.sax.helpers.DefaultHandler#endElement(java.lang.String, java.lang.String, java.lang.String)
-		 */
 		@Override
 		public void endElement(String uri, String localName, String qName) throws SAXException {
 			buf.append('<');
@@ -107,9 +104,6 @@ public class XMLUtil extends Assert {
 			buf.append('>');
 		}
 
-		/* (non-Javadoc)
-		 * @see org.xml.sax.helpers.DefaultHandler#characters(char[], int, int)
-		 */
 		@Override
 		public void characters(char[] ch, int start, int length) throws SAXException {
 			buf.append(ch, start, length);

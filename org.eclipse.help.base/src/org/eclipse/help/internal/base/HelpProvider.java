@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011, 2015 IBM Corporation and others.
+ * Copyright (c) 2011, 2019 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -28,9 +28,6 @@ import org.eclipse.help.internal.protocols.HelpURLStreamHandler;
  */
 public class HelpProvider implements IHelpProvider {
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.help.internal.HelpPlugin.IHelpProvider#getHelpContent(java.lang.String, java.lang.String)
-	 */
 	@Override
 	public InputStream getHelpContent(String href, String locale) {
 		try {

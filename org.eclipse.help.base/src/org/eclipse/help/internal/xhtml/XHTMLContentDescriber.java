@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2016 IBM Corporation and others.
+ * Copyright (c) 2006, 2019 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -31,9 +31,6 @@ public class XHTMLContentDescriber implements IContentDescriber {
 
 	public static final int BUFFER_SIZE = 4096;
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.core.runtime.content.IContentDescriber#describe(java.io.InputStream, org.eclipse.core.runtime.content.IContentDescription)
-	 */
 	@Override
 	public int describe(InputStream contents, IContentDescription description) throws IOException {
 		try (Reader reader = new ASCIIReader(contents, BUFFER_SIZE)) {
@@ -47,9 +44,6 @@ public class XHTMLContentDescriber implements IContentDescriber {
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.core.runtime.content.IContentDescriber#getSupportedOptions()
-	 */
 	@Override
 	public QualifiedName[] getSupportedOptions() {
 		return new QualifiedName[0];

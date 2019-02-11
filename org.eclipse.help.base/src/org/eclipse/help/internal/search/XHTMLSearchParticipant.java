@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2015 IBM Corporation and others.
+ * Copyright (c) 2005, 2019 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -36,16 +36,10 @@ public class XHTMLSearchParticipant extends SearchParticipantXML {
 	private String summary;
 	private boolean hasDescriptionMetaTag = false;
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.help.search.XMLSearchParticipant#handleEndElement(java.lang.String, org.eclipse.help.search.XMLSearchParticipant.IParsedXMLContent)
-	 */
 	@Override
 	protected void handleEndElement(String name, IParsedXMLContent data) {
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.help.search.XMLSearchParticipant#handleStartElement(java.lang.String, org.xml.sax.Attributes, org.eclipse.help.search.XMLSearchParticipant.IParsedXMLContent)
-	 */
 	@Override
 	protected void handleStartElement(String name, Attributes attributes, IParsedXMLContent data) {
 	    title = null;
@@ -76,9 +70,6 @@ public class XHTMLSearchParticipant extends SearchParticipantXML {
 		hasDescriptionMetaTag = false;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.help.search.XMLSearchParticipant#handleText(java.lang.String, org.eclipse.help.search.XMLSearchParticipant.IParsedXMLContent)
-	 */
 	@Override
 	protected void handleText(String text, IParsedXMLContent data) {
 		String stackPath = getElementStackPath();
@@ -105,9 +96,6 @@ public class XHTMLSearchParticipant extends SearchParticipantXML {
 		return tag.equals("script"); //$NON-NLS-1$
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.help.search.XMLSearchParticipant#preprocess(java.io.InputStream, java.lang.String, java.lang.String)
-	 */
 	@Override
 	protected InputStream preprocess(InputStream in, String name, String locale) {
 		try {

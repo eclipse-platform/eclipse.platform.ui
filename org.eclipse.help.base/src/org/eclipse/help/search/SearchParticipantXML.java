@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2015 IBM Corporation and others.
+ * Copyright (c) 2010, 2019 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -172,42 +172,21 @@ public abstract class SearchParticipantXML extends SearchParticipant {
 				stack.pop();
 		}
 
-		/*
-		 * (non-Javadoc)
-		 *
-		 * @see org.xml.sax.helpers.DefaultHandler#startDocument()
-		 */
 		@Override
 		public void startDocument() throws SAXException {
 			SearchParticipantXML.this.handleStartDocument(data);
 		}
 
-		/*
-		 * (non-Javadoc)
-		 *
-		 * @see org.xml.sax.helpers.DefaultHandler#endDocument()
-		 */
 		@Override
 		public void endDocument() throws SAXException {
 			SearchParticipantXML.this.handleEndDocument(data);
 		}
 
-		/*
-		 * (non-Javadoc)
-		 *
-		 * @see org.xml.sax.helpers.DefaultHandler#processingInstruction(java.lang.String,
-		 *      java.lang.String)
-		 */
 		@Override
 		public void processingInstruction(String target, String pidata) throws SAXException {
 			handleProcessingInstruction(target, data);
 		}
 
-		/*
-		 * (non-Javadoc)
-		 *
-		 * @see org.xml.sax.helpers.DefaultHandler#characters(char[], int, int)
-		 */
 		@Override
 		public void characters(char[] characters, int start, int length) throws SAXException {
 			if (length == 0)

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2015 IBM Corporation and others.
+ * Copyright (c) 2010, 2019 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -35,9 +35,6 @@ public class CriteriaDefinitionFileProvider extends AbstractCriteriaDefinitionPr
 	public static final String ELEMENT_NAME_CRITERIA = "criteriaDefinition"; //$NON-NLS-1$
 	public static final String ATTRIBUTE_NAME_FILE = "file"; //$NON-NLS-1$
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.help.AbstractCriteriaDefinitionProvider#getCriteriaDefinitionContributions(java.lang.String)
-	 */
 	@Override
 	public ICriteriaDefinitionContribution[] getCriteriaDefinitionContributions(String locale) {
 		List<ICriteriaDefinitionContribution> contributions = new ArrayList<>();

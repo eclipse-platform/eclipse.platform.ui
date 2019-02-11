@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2016 IBM Corporation and others.
+ * Copyright (c) 2006, 2019 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -115,11 +115,6 @@ public class HelpContentPreferencePage extends PreferencePage implements
 	public boolean performOk() {
 
 		IEclipsePreferences prefs = InstanceScope.INSTANCE.getNode(HelpBasePlugin.PLUGIN_ID);
-		/*
-		 * (non-Javadoc)
-		 *
-		 * @see org.eclipse.jface.preference.PreferencePage#performOk()
-		 */
 		prefs.putBoolean(IHelpBaseConstants.P_KEY_REMOTE_HELP_ON, !(searchLocalHelpOnly.getSelection()));
 		prefs.putBoolean(IHelpBaseConstants.P_KEY_REMOTE_HELP_PREFERRED, searchLocalHelpLast.getSelection());
 

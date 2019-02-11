@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 IBM Corporation and others.
+ * Copyright (c) 2000, 2019 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -150,9 +150,6 @@ public class HelpPlugin extends Plugin {
 		this.helpProvider = helpProvider;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.core.runtime.Plugin#start(org.osgi.framework.BundleContext)
-	 */
 	@Override
 	public void start(BundleContext context) throws Exception {
 		super.start(context);
@@ -184,9 +181,6 @@ public class HelpPlugin extends Plugin {
 		return getDefault().configurationDirectory;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.core.runtime.Plugin#stop(org.osgi.framework.BundleContext)
-	 */
 	@Override
 	public void stop(BundleContext context) throws Exception {
 		plugin = null;

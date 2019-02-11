@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2015 IBM Corporation and others.
+ * Copyright (c) 2006, 2019 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -13,9 +13,6 @@
  *******************************************************************************/
 package org.eclipse.ua.tests.intro.performance;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
-
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.test.performance.Dimension;
 import org.eclipse.test.performance.PerformanceTestCase;
@@ -27,6 +24,9 @@ import org.eclipse.ui.intro.IIntroManager;
 import org.eclipse.ui.intro.IIntroPart;
 import org.eclipse.ui.intro.config.CustomizableIntroPart;
 
+import junit.framework.Test;
+import junit.framework.TestSuite;
+
 public class OpenIntroTest extends PerformanceTestCase {
 
 	/*
@@ -36,9 +36,6 @@ public class OpenIntroTest extends PerformanceTestCase {
 		return new TestSuite(OpenIntroTest.class);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.test.performance.PerformanceTestCase#setUp()
-	 */
 	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
@@ -48,9 +45,6 @@ public class OpenIntroTest extends PerformanceTestCase {
         ExtensionPointManager.getInst().setExtensionFilter(UserAssistanceTestPlugin.getPluginId());
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.test.performance.PerformanceTestCase#tearDown()
-	 */
 	@Override
 	protected void tearDown() throws Exception {
 		super.tearDown();

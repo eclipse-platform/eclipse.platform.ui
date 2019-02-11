@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2016 IBM Corporation and others.
+ * Copyright (c) 2006, 2019 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -202,9 +202,6 @@ public class HelpData {
 		private boolean inTocOrder;
 		private boolean inHidden;
 
-		/* (non-Javadoc)
-		 * @see org.xml.sax.helpers.DefaultHandler#startElement(java.lang.String, java.lang.String, java.lang.String, org.xml.sax.Attributes)
-		 */
 		@Override
 		public void startElement(String uri, String localName, String name, Attributes attributes) throws SAXException {
 			if (ELEMENT_TOC_ORDER.equals(name)) {
@@ -238,9 +235,6 @@ public class HelpData {
 			}
 		}
 
-		/* (non-Javadoc)
-		 * @see org.xml.sax.helpers.DefaultHandler#endElement(java.lang.String, java.lang.String, java.lang.String)
-		 */
 		@Override
 		public void endElement(String uri, String localName, String name) throws SAXException {
 			if (ELEMENT_TOC_ORDER.equals(name)) {

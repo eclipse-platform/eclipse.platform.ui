@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 IBM Corporation and others.
+ * Copyright (c) 2000, 2019 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -97,11 +97,6 @@ public final class WebSearch implements ISearchEngine {
 			return 1;
 		}
 
-		/*
-		 * (non-Javadoc)
-		 *
-		 * @see org.eclipse.help.internal.search.federated.ISearchEngineResult#getCategory()
-		 */
 		@Override
 		public IHelpResource getCategory() {
 			return null;
@@ -118,14 +113,6 @@ public final class WebSearch implements ISearchEngine {
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.help.internal.search.federated.ISearchEngine#run(java.lang.String,
-	 *      org.eclipse.help.internal.search.ISearchScope,
-	 *      org.eclipse.help.internal.search.federated.ISearchEngineResultCollector,
-	 *      org.eclipse.core.runtime.IProgressMonitor)
-	 */
 	@Override
 	public void run(String query, ISearchScope scope,
 			ISearchEngineResultCollector collector, IProgressMonitor monitor)
