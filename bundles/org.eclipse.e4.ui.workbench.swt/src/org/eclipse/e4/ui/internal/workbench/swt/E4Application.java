@@ -490,8 +490,7 @@ public class E4Application implements IApplication {
 
 		IExtensionRegistry registry = RegistryFactory.getRegistry();
 		ExceptionHandler exceptionHandler = new ExceptionHandler();
-		ReflectionContributionFactory contributionFactory = new ReflectionContributionFactory(registry);
-		serviceContext.set(IContributionFactory.class, contributionFactory);
+		serviceContext.set(IContributionFactory.class, new ReflectionContributionFactory());
 		serviceContext.set(IExceptionHandler.class, exceptionHandler);
 		serviceContext.set(IExtensionRegistry.class, registry);
 

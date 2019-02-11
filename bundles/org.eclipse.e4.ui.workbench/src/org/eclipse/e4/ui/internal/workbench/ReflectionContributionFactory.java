@@ -15,12 +15,7 @@
 
 package org.eclipse.e4.ui.internal.workbench;
 
-import java.util.HashMap;
 import java.util.Map;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IConfigurationElement;
-import org.eclipse.core.runtime.IExtensionRegistry;
-import org.eclipse.core.runtime.InvalidRegistryObjectException;
 import org.eclipse.e4.core.contexts.ContextInjectionFactory;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.di.InjectionException;
@@ -35,19 +30,7 @@ import org.osgi.service.log.LogService;
  */
 public class ReflectionContributionFactory implements IContributionFactory {
 
-	private IExtensionRegistry registry;
 	private Map<String, Object> languages;
-
-	/**
-	 * Create a reflection factory.
-	 *
-	 * @param registry
-	 *            to read languages.
-	 */
-	public ReflectionContributionFactory(IExtensionRegistry registry) {
-		this.registry = registry;
-		processLanguages();
-	}
 
 	@Override
 	public Object create(String uriString, IEclipseContext context, IEclipseContext staticContext) {
@@ -128,20 +111,6 @@ public class ReflectionContributionFactory implements IContributionFactory {
 			}
 		}
 		return contribution;
-	}
-
-	protected void processLanguages() {
-		languages = new HashMap<>();
-		String extId = "org.eclipse.e4.languages"; //$NON-NLS-1$
-		IConfigurationElement[] languageElements = registry.getConfigurationElementsFor(extId);
-		for (IConfigurationElement languageElement : languageElements) {
-			try {
-				languages.put(languageElement.getAttribute("name"), //$NON-NLS-1$
-						languageElement.createExecutableExtension("contributionFactory")); //$NON-NLS-1$
-			} catch (InvalidRegistryObjectException | CoreException e) {
-				Activator.log(LogService.LOG_ERROR, e.getMessage(), e);
-			}
-		}
 	}
 
 	protected Bundle getBundle(URI platformURI) {
