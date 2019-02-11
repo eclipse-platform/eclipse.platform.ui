@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2018 Remain Software
+ * Copyright (c) 2018, 2019 Remain Software and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -47,7 +47,7 @@ public class TipSourceProvider extends AbstractSourceProvider {
 	@Override
 	public Map<?, ?> getCurrentState() {
 		Map<Object, Object> currentState = new HashMap<>();
-		currentState.put(Constants.SOURCE_UNREAD_TIPS, new Boolean(fNewTips));
+		currentState.put(Constants.SOURCE_UNREAD_TIPS, Boolean.valueOf(fNewTips));
 		return currentState;
 	}
 
