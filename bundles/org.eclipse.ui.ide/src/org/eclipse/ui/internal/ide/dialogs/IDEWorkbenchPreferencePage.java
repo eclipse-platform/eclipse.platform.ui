@@ -31,14 +31,12 @@ import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
  *Note: want IDE settings to appear in main Workbench preference page (via subclassing),
  *   however the superclass, WorkbenchPreferencePage, is internal
  */
-public class IDEWorkbenchPreferencePage extends WorkbenchPreferencePage
-        implements IWorkbenchPreferencePage {
+public class IDEWorkbenchPreferencePage extends WorkbenchPreferencePage implements IWorkbenchPreferencePage {
 
     @Override
 	protected Control createContents(Composite parent) {
 
-    	PlatformUI.getWorkbench().getHelpSystem().setHelp(parent,
-				IWorkbenchHelpContextIds.WORKBENCH_PREFERENCE_PAGE);
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(parent, IWorkbenchHelpContextIds.WORKBENCH_PREFERENCE_PAGE);
 
         Composite composite = createComposite(parent);
 
