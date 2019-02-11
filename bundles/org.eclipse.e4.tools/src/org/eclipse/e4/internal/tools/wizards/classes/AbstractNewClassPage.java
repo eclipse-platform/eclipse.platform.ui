@@ -205,11 +205,6 @@ public abstract class AbstractNewClassPage extends WizardPage {
 		getDialogSettings().put(SETTING_PACKAGE, packageName);
 	}
 
-	/**
-	 * {@inheritDoc}
-	 *
-	 * @see org.eclipse.jface.wizard.WizardPage#getDialogSettings()
-	 */
 	@Override
 	protected IDialogSettings getDialogSettings() {
 		final IDialogSettings mainSettings = ToolsPlugin.getDefault().getDialogSettings();
@@ -495,11 +490,6 @@ public abstract class AbstractNewClassPage extends WizardPage {
 			this.observedClass = observedClass;
 		}
 
-		/**
-		 * {@inheritDoc}
-		 *
-		 * @see org.eclipse.core.databinding.validation.MultiValidator#validate()
-		 */
 		@Override
 		protected IStatus validate() {
 			final String classPackage = observedPackage.getValue();

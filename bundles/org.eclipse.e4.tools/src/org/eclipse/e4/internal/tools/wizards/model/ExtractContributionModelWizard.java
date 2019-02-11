@@ -70,11 +70,6 @@ public class ExtractContributionModelWizard extends BaseApplicationModelWizard {
 		super.adjustFragmentDependencies(file);
 	}
 
-	/**
-	 * {@inheritDoc}
-	 *
-	 * @see org.eclipse.e4.internal.tools.wizards.model.BaseApplicationModelWizard#handleFileExist()
-	 */
 	@Override
 	protected boolean handleFileExist() {
 		return MessageDialog.openQuestion(getShell(), Messages.BaseApplicationModelWizard_FileExists,
@@ -83,11 +78,6 @@ public class ExtractContributionModelWizard extends BaseApplicationModelWizard {
 
 	}
 
-	/**
-	 * {@inheritDoc}
-	 *
-	 * @see org.eclipse.e4.internal.tools.wizards.model.BaseApplicationModelWizard#mergeWithExistingFile(org.eclipse.emf.ecore.resource.Resource)
-	 */
 	@Override
 	protected void mergeWithExistingFile(Resource resource, EObject rootObject) {
 

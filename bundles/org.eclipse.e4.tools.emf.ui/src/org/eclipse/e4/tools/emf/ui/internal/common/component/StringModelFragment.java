@@ -471,12 +471,6 @@ public class StringModelFragment extends AbstractComponentEditor {
 			this.text = t;
 		}
 
-		/**
-		 * {@inheritDoc}
-		 *
-		 * @see org.eclipse.jface.fieldassist.IContentProposalProvider#getProposals(java.lang.String,
-		 *      int)
-		 */
 		@Override
 		public IContentProposal[] getProposals(String cont, int position) {
 			List<String[]> contents = new ArrayList<>();
