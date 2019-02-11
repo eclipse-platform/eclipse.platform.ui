@@ -54,7 +54,7 @@ public abstract class ControlFactory<F extends ControlFactory<?, ?>, C extends C
 	 */
 	public F tooltip(String tooltipText) {
 		addProperty(c -> c.setToolTipText(tooltipText));
-		return factoryClass.cast(this);
+		return cast(this);
 	}
 
 	/**
@@ -65,7 +65,7 @@ public abstract class ControlFactory<F extends ControlFactory<?, ?>, C extends C
 	 */
 	public F enabled(boolean enabled) {
 		addProperty(c -> c.setEnabled(enabled));
-		return factoryClass.cast(this);
+		return cast(this);
 	}
 
 	/**
@@ -93,7 +93,18 @@ public abstract class ControlFactory<F extends ControlFactory<?, ?>, C extends C
 	 */
 	public F layoutData(Supplier<Object> layoutDataSupplier) {
 		addProperty(c -> c.setLayoutData(layoutDataSupplier.get()));
-		return factoryClass.cast(this);
+		return cast(this);
+	}
+
+	/**
+	 * Casts to the concrete instance of factory class. Needs to be called by
+	 * abstract factory classes.
+	 *
+	 * @param factory extending ControlFactory, usually "this"
+	 * @return casted factory
+	 */
+	protected final F cast(ControlFactory<F, C> factory) {
+		return factoryClass.cast(factory);
 	}
 
 	/**

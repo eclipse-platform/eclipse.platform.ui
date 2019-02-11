@@ -17,6 +17,7 @@ package org.eclipse.jface.widgets;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Spinner;
 import org.eclipse.swt.widgets.Text;
 
 /**
@@ -86,6 +87,24 @@ public final class WidgetFactory {
 	 */
 	public static LabelFactory label(int style) {
 		return LabelFactory.newLabel(style);
+	}
+
+	/**
+	 * @param style SWT style applicable for Composite. Refer to
+	 *              {@link Composite#Composite(Composite, int)} for supported styles.
+	 * @return CompositeFactory
+	 */
+	public static CompositeFactory composite(int style) {
+		return CompositeFactory.newComposite(style);
+	}
+
+	/**
+	 * @param style SWT style applicable for Spinner. Refer to
+	 *              {@link Spinner#Spinner(Composite, int)} for supported styles.
+	 * @return SpinnerFactory
+	 */
+	public static SpinnerFactory spinner(int style) {
+		return SpinnerFactory.newSpinner(style);
 	}
 
 }
