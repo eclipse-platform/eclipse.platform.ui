@@ -592,8 +592,7 @@ public final class Workbench extends EventManager implements IWorkbench,
 					migrationProcessor = rune3WorkbenchMigration(context);
 				}
 				// create the workbench instance
-				Workbench workbench = new Workbench(display, advisor, e4Workbench
-						.getApplication(), e4Workbench.getContext());
+				Workbench workbench = new Workbench(display, advisor, appModel, context);
 
 				// listener for updating the splash screen
 				SynchronousBundleListener bundleListener = null;
