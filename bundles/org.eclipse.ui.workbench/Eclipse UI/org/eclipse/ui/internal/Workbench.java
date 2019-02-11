@@ -474,7 +474,7 @@ public final class Workbench extends EventManager implements IWorkbench,
 		eventBroker = e4Context.get(IEventBroker.class);
 		registry = e4Context.get(IExtensionRegistry.class);
 
-		appContext.set(getClass().getName(), this);
+		appContext.set(Workbench.class, this);
 		appContext.set(IWorkbench.class, this);
 		appContext.set(IEventLoopAdvisor.class, new IEventLoopAdvisor() {
 			@Override
