@@ -51,7 +51,7 @@ import org.eclipse.ui.texteditor.TextEditorAction;
  * 
  * @since 2.0
  * @deprecated As of 3.1, encoding needs to be changed via properties dialog. This class is planned
- *             for removal after March 2021.
+ *             for removal after March 2021 (see bug#544309 for details).
  * @noreference This class is not intended to be referenced by clients.
  */
 @Deprecated
