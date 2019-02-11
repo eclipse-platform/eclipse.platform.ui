@@ -13,6 +13,7 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.cheatsheets.registry;
 
+
 import java.lang.reflect.Constructor;
 
 import org.eclipse.core.runtime.IAdaptable;

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2017 IBM Corporation and others.
+ * Copyright (c) 2005, 2019 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -63,7 +63,7 @@ public class TaskEditorManager {
 			}
 			try {
 				if (extClass != null) {
-					Constructor<?> c = extClass.getConstructor(new Class[0]);
+					Constructor<?> c = extClass.getConstructor();
 					editorInstance = (TaskEditor) c.newInstance();
 				}
 			} catch (Exception e) {

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2017 IBM Corporation and others.
+ * Copyright (c) 2004, 2019 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -203,7 +203,7 @@ public class CheatSheetModelSerializer {
 						Class<?>[] params = method.getParameterTypes();
 						if (params.length == 2 && params[0].isAssignableFrom(c) && params[1].equals(String.class)) {
 							try {
-								buf.append(method.invoke(null, new Object[] {obj, indent + "   "}));
+								buf.append(method.invoke(null, obj, indent + "   "));
 							}
 							catch(Exception e) {
 								buf.append(indent + "   " + e + ", cause: " + e.getCause());
@@ -254,7 +254,7 @@ public class CheatSheetModelSerializer {
 						Class<?>[] params = method.getParameterTypes();
 						if (params.length == 2 && params[0].isAssignableFrom(c) && params[1].equals(String.class)) {
 							try {
-								buf.append(method.invoke(null, new Object[] {obj, indent + "   "}));
+								buf.append(method.invoke(null, obj, indent + "   "));
 							}
 							catch(Exception e) {
 								buf.append(indent + "   " + e + ", cause: " + e.getCause());

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011, 2018 Google, Inc.
+ * Copyright (c) 2011, 2019 Google, Inc. and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -389,17 +389,17 @@ public class ResourceManager extends SWTResourceManager {
 			Class<?> BundleClass = Class.forName("org.osgi.framework.Bundle"); //$NON-NLS-1$
 			Class<?> BundleContextClass = Class.forName("org.osgi.framework.BundleContext"); //$NON-NLS-1$
 			if (BundleContextClass.isAssignableFrom(plugin.getClass())) {
-				Method getBundleMethod = BundleContextClass.getMethod("getBundle", new Class[0]); //$NON-NLS-1$
-				Object bundle = getBundleMethod.invoke(plugin, new Object[0]);
+				Method getBundleMethod = BundleContextClass.getMethod("getBundle"); //$NON-NLS-1$
+				Object bundle = getBundleMethod.invoke(plugin);
 				//
 				Class<?> PathClass = Class.forName("org.eclipse.core.runtime.Path"); //$NON-NLS-1$
-				Constructor<?> pathConstructor = PathClass.getConstructor(new Class[] { String.class });
-				Object path = pathConstructor.newInstance(new Object[] { name });
+				Constructor<?> pathConstructor = PathClass.getConstructor(String.class);
+				Object path = pathConstructor.newInstance(name);
 				//
 				Class<?> IPathClass = Class.forName("org.eclipse.core.runtime.IPath"); //$NON-NLS-1$
 				Class<?> PlatformClass = Class.forName("org.eclipse.core.runtime.Platform"); //$NON-NLS-1$
-				Method findMethod = PlatformClass.getMethod("find", new Class[] { BundleClass, IPathClass }); //$NON-NLS-1$
-				return (URL) findMethod.invoke(null, new Object[] { bundle, path });
+				Method findMethod = PlatformClass.getMethod("find", BundleClass, IPathClass); //$NON-NLS-1$
+				return (URL) findMethod.invoke(null, bundle, path);
 			}
 		} catch (Throwable e) {
 			// Ignore any exceptions
@@ -410,12 +410,12 @@ public class ResourceManager extends SWTResourceManager {
 			if (PluginClass.isAssignableFrom(plugin.getClass())) {
 				//
 				Class<?> PathClass = Class.forName("org.eclipse.core.runtime.Path"); //$NON-NLS-1$
-				Constructor<?> pathConstructor = PathClass.getConstructor(new Class[] { String.class });
-				Object path = pathConstructor.newInstance(new Object[] { name });
+				Constructor<?> pathConstructor = PathClass.getConstructor(String.class);
+				Object path = pathConstructor.newInstance(name);
 				//
 				Class<?> IPathClass = Class.forName("org.eclipse.core.runtime.IPath"); //$NON-NLS-1$
-				Method findMethod = PluginClass.getMethod("find", new Class[] { IPathClass }); //$NON-NLS-1$
-				return (URL) findMethod.invoke(plugin, new Object[] { path });
+				Method findMethod = PluginClass.getMethod("find", IPathClass); //$NON-NLS-1$
+				return (URL) findMethod.invoke(plugin, path);
 			}
 		}
 		return null;

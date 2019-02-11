@@ -181,18 +181,16 @@ public class ChildLinkInsertion {
 	}
 
 	private void checkEncoding(String input, String expectedEncoding) {
-		ByteArrayOutputStream output = new ByteArrayOutputStream();
-		TestableReplacementStream filteredOutput = new TestableReplacementStream(output, null, "../");
-		try {
+		try (ByteArrayOutputStream output = new ByteArrayOutputStream();
+				TestableReplacementStream filteredOutput = new TestableReplacementStream(output, null, "../")) {
 			filteredOutput.write(input.getBytes());
-			filteredOutput.close();
+			if (expectedEncoding == null) {
+				assertNull(filteredOutput.getCharset());
+			} else {
+				assertEquals(expectedEncoding, filteredOutput.getCharset());
+			}
 		} catch (IOException e) {
 			fail("IO Exception");
-		}
-		if (expectedEncoding == null) {
-			assertNull(filteredOutput.getCharset());
-		} else {
-			assertEquals(expectedEncoding, filteredOutput.getCharset());
 		}
 	}
 
