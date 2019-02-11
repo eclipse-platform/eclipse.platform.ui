@@ -75,4 +75,19 @@ public interface IContextFunction {
 	 */
 	Object compute(IEclipseContext context, String contextKey);
 
+	/**
+	 * Recursively looks up the root {@link IEclipseContext} in the context
+	 * hierarchy.
+	 *
+	 * @param context {@link IEclipseContext} to get the parent
+	 *                {@link IEclipseContext} from
+	 * @return the root {@link IEclipseContext} in the context hierarchy
+	 */
+	static IEclipseContext getRootContext(IEclipseContext context) {
+		if (context.getParent() == null) {
+			return context;
+		}
+
+		return getRootContext(context.getParent());
+	}
 }
