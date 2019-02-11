@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2015 Angelo Zerr and others.
+ * Copyright (c) 2008, 2019 Angelo Zerr and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -1062,6 +1062,9 @@ public abstract class AbstractCSSEngine implements CSSEngine {
 
 	@Override
 	public Object convert(CSSValue value, Object toType, Object context) throws Exception {
+		if ("unset".equals(value.getCssText())) {
+			return null;
+		}
 		Object key = keyFactory.createKey(value);
 		Object newValue = getResource(toType, key);
 

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2013, 2015 IBM Corporation and others.
+ * Copyright (c) 2013, 2019 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -16,6 +16,7 @@ package org.eclipse.e4.ui.tests.css.swt;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 import static org.mockito.Mockito.doReturn;
@@ -25,7 +26,9 @@ import org.eclipse.e4.ui.css.core.engine.CSSEngine;
 import org.eclipse.e4.ui.internal.css.swt.CSSActivator;
 import org.eclipse.e4.ui.internal.css.swt.definition.IColorAndFontProvider;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.RGB;
+import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.internal.themes.ColorDefinition;
@@ -112,6 +115,29 @@ public class ColorDefinitionTest extends CSSSWTTestCase {
 
 		//then
 		assertEquals(new RGB(255, 0, 0), label.getBackground().getRGB());
+
+		engine.dispose();
+		shell.dispose();
+	}
+
+	@Test
+	public void testUnset() {
+		CSSEngine engine = createEngine("Button {background-color: unset;}", display);
+
+		Shell shell = new Shell(display, SWT.SHELL_TRIM);
+		Button button = new Button(shell, SWT.NONE);
+		Color red = display.getSystemColor(SWT.COLOR_RED);
+		button.setBackground(red);
+
+		// when
+		engine.applyStyles(button, true);
+
+		// then
+
+		/*
+		 * button still returns a non-null background (inherited or default background)
+		 */
+		assertNotEquals(red.getRGB(), button.getBackground().getRGB());
 
 		engine.dispose();
 		shell.dispose();
