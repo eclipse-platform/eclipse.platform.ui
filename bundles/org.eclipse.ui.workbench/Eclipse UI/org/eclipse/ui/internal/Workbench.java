@@ -44,6 +44,7 @@ import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.UUID;
 import org.eclipse.core.commands.Command;
@@ -459,17 +460,18 @@ public final class Workbench extends EventManager implements IWorkbench,
 	 */
 	private Workbench(Display display, final WorkbenchAdvisor advisor, MApplication app, IEclipseContext appContext) {
 		super();
+		this.advisor = Objects.requireNonNull(advisor);
+		this.display = Objects.requireNonNull(display);
+		application = app;
+		e4Context = appContext;
+
 		this.id = createId();
 		StartupThreading.setWorkbench(this);
 		if (instance != null && instance.isRunning()) {
 			throw new IllegalStateException(WorkbenchMessages.Workbench_CreatingWorkbenchTwice);
 		}
-		Assert.isNotNull(display);
-		Assert.isNotNull(advisor);
-		this.advisor = advisor;
-		this.display = display;
-		application = app;
-		e4Context = appContext;
+
+
 		Workbench.instance = this;
 		eventBroker = e4Context.get(IEventBroker.class);
 		registry = e4Context.get(IExtensionRegistry.class);
