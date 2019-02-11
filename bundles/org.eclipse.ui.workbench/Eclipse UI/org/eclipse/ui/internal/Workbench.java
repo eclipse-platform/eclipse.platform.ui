@@ -1589,10 +1589,6 @@ public final class Workbench extends EventManager implements IWorkbench,
 		// Set up the JFace preference store
 		JFaceUtil.initializeJFacePreferences();
 
-		// create workbench window manager
-		// windowManager = new WindowManager();
-		// TODO compat: I've removed the window manager, now what
-
 		// TODO Correctly order service initialization
 		// there needs to be some serious consideration given to
 		// the services, and hooking them up in the correct order
@@ -2385,7 +2381,6 @@ public final class Workbench extends EventManager implements IWorkbench,
 				handlerService[0]);
 		initializeCommandResolver();
 
-		// addWindowListener(windowListener);
 		bindingManager.addBindingManagerListener(bindingManagerListener);
 
 		serviceLocator.registerService(ISelectionConversionService.class,
