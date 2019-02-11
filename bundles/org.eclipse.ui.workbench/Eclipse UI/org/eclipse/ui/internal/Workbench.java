@@ -778,7 +778,7 @@ public final class Workbench extends EventManager implements IWorkbench,
 	private void createSplashWrapper() {
 		final Display display = getDisplay();
 		String splashLoc = System.getProperty("org.eclipse.equinox.launcher.splash.location"); //$NON-NLS-1$
-		final Image background = loadImage(splashLoc);
+		final Image background = loadSplashScreenImage(display, splashLoc);
 
 		SafeRunnable run = new SafeRunnable() {
 
@@ -875,7 +875,7 @@ public final class Workbench extends EventManager implements IWorkbench,
 	 * @return the image or <code>null</code>
 	 * @since 3.3
 	 */
-	private Image loadImage(String splashLoc) {
+	private static Image loadSplashScreenImage(Display display, String splashLoc) {
 		Image background = null;
 		if (splashLoc != null) {
 			try (InputStream input = new BufferedInputStream(new FileInputStream(splashLoc)) ){
