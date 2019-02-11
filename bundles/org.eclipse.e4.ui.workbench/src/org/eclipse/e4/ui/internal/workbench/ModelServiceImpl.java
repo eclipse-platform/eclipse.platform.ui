@@ -71,7 +71,6 @@ import org.eclipse.e4.ui.workbench.modeling.EPlaceholderResolver;
 import org.eclipse.e4.ui.workbench.modeling.ElementMatcher;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.util.EcoreUtil;
-import org.eclipse.jdt.annotation.NonNull;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.FrameworkUtil;
@@ -161,7 +160,7 @@ public class ModelServiceImpl implements EModelService {
 	}
 
 	@Override
-	public void deleteModelElement(@NonNull MUIElement element) {
+	public void deleteModelElement(MUIElement element) {
 		Objects.nonNull(element);
 		element.setToBeRendered(false);
 		if (element.getParent() != null) {
