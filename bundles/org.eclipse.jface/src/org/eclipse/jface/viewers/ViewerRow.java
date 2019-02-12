@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2015 IBM Corporation and others.
+ * Copyright (c) 2006, 2019 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -169,8 +169,8 @@ public abstract class ViewerRow implements Cloneable {
 	 * Get the ViewerCell at point.
 	 *
 	 * @param point
-	 * @return @return {@link ViewerCell} or <code>null</code> if the point is
-	 *         not in the bounds of a cell
+	 * @return {@link ViewerCell} or <code>null</code> if the point is not in the
+	 *         bounds of a cell
 	 */
 	public ViewerCell getCell(Point point) {
 		int index = getColumnIndex(point);
