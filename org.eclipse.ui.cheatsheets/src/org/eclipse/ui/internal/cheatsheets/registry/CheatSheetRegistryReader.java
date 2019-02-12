@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2017 IBM Corporation and others.
+ * Copyright (c) 2002, 2019 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -279,8 +279,8 @@ public class CheatSheetRegistryReader extends RegistryReader implements IRegistr
 	 */
 	public CheatSheetElement findCheatSheet(String id) {
 		Object[] cheatsheetsList = getCheatSheets().getChildren();
-		for (int nX = 0; nX < cheatsheetsList.length; nX++) {
-			CheatSheetCollectionElement collection = (CheatSheetCollectionElement) cheatsheetsList[nX];
+		for (Object element2 : cheatsheetsList) {
+			CheatSheetCollectionElement collection = (CheatSheetCollectionElement) element2;
 			CheatSheetElement element = collection.findCheatSheet(id, true);
 			if (element != null)
 				return element;
@@ -370,8 +370,8 @@ public class CheatSheetRegistryReader extends RegistryReader implements IRegistr
 		// Traverse down into parent category.
 		if (categoryPath != null) {
 			nestedCategoryIds.put(category.getId(), category);
-			for (int i = 0; i < categoryPath.length; i++) {
-				CheatSheetCollectionElement tempElement = getChildWithID(parent, categoryPath[i]);
+			for (String element : categoryPath) {
+				CheatSheetCollectionElement tempElement = getChildWithID(parent, element);
 				if (tempElement == null) {
 					// The parent category is invalid.  By returning here the
 					// category will be dropped and any cheatsheet within the category
@@ -549,8 +549,8 @@ public class CheatSheetRegistryReader extends RegistryReader implements IRegistr
 	 */
 	private void pruneEmptyCategories(CheatSheetCollectionElement parent) {
 		Object[] children = parent.getChildren();
-		for (int nX = 0; nX < children.length; nX++) {
-			CheatSheetCollectionElement child = (CheatSheetCollectionElement) children[nX];
+		for (Object element : children) {
+			CheatSheetCollectionElement child = (CheatSheetCollectionElement) element;
 			pruneEmptyCategories(child);
 		}
 	}

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2015 IBM Corporation and others.
+ * Copyright (c) 2002, 2019 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -16,7 +16,6 @@ package org.eclipse.ui.internal.cheatsheets.views;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Hashtable;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -55,10 +54,9 @@ public class CheatSheetManager implements ICheatSheetManager {
 
 	public void fireEvent(int eventType) {
 		// Send an event to every listener
-		for (Iterator<CheatSheetListener> iterator = listeners.iterator(); iterator.hasNext();) {
+		for (CheatSheetListener listener : listeners) {
 		    ICheatSheetEvent event = new CheatSheetEvent(eventType, cheatsheetID, this);
-			CheatSheetListener listener = iterator.next();
-		    listener.cheatSheetEvent(event);
+			listener.cheatSheetEvent(event);
 		}
 	}
 

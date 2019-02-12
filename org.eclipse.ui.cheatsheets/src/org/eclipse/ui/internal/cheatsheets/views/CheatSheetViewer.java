@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2002, 2018 IBM Corporation and others.
+ *  Copyright (c) 2002, 2019 IBM Corporation and others.
  *
  *  This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License 2.0
@@ -174,8 +174,7 @@ public class CheatSheetViewer implements ICheatSheetViewer, IMenuContributor {
 		if(isStarted)
 			initManager();
 
-		for (Iterator<ViewItem> iter = viewItemList.iterator(); iter.hasNext();) {
-			ViewItem item = iter.next();
+		for (ViewItem item : viewItemList) {
 			if (item instanceof CoreItem) {
 				CoreItem c = (CoreItem) item;
 				ArrayList<SubItemCompositeHolder> l = c.getListOfSubItemCompositeHolders();
@@ -538,15 +537,13 @@ public class CheatSheetViewer implements ICheatSheetViewer, IMenuContributor {
 	}
 
 	private void clearBackgrounds() {
-		for (Iterator<ViewItem> iter = viewItemList.iterator(); iter.hasNext();) {
-			ViewItem item = iter.next();
+		for (ViewItem item : viewItemList) {
 			item.setOriginalColor();
 		}
 	}
 
 	private void clearIcons() {
-		for (Iterator<ViewItem> iter = viewItemList.iterator(); iter.hasNext();) {
-			ViewItem item = iter.next();
+		for (ViewItem item : viewItemList) {
 			item.setOriginalColor();
 			if (item.isCompleted() || item.isExpanded() || item.isSkipped())
 					item.setIncomplete();

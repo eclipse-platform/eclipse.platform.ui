@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2017 IBM Corporation and others.
+ * Copyright (c) 2005, 2019 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -87,9 +87,8 @@ public class TaskDependencies {
 	 * @param status An object used to add error status
 	 */
 	public void resolveDependencies(IStatusContainer status) {
-		for (Iterator<Dependency> dependencyIterator = dependencies.iterator(); dependencyIterator.hasNext();) {
-			Dependency dep = dependencyIterator.next();
-			 AbstractTask sourceTask = dep.getSourceTask();
+		for (Dependency dep : dependencies) {
+			AbstractTask sourceTask = dep.getSourceTask();
 			 AbstractTask requiredTask = getTask(dep.requiredTaskId);
 			 if (requiredTask == null) {
 					String message = NLS.bind(Messages.ERROR_PARSING_INVALID_ID, (new Object[] {dep.getRequiredTaskId()}));
@@ -115,8 +114,7 @@ public class TaskDependencies {
 	private void checkForCircularities (IStatusContainer status) {
 		Set<ICompositeCheatSheetTask> tasks = new HashSet<>();
 		// Combine steps 1 + 2
-		for (Iterator<AbstractTask> idIterator = taskIdMap.values().iterator(); idIterator.hasNext();) {
-			AbstractTask nextTask = idIterator.next();
+		for (AbstractTask nextTask : taskIdMap.values()) {
 			if (nextTask.getRequiredTasks().length > 0) {
 				tasks.add(nextTask);
 			}
@@ -153,9 +151,9 @@ public class TaskDependencies {
 			while (!cycle.contains(cycleStartTask)) {
 				cycle.add(cycleStartTask);
 				ICompositeCheatSheetTask[] requiredTasks = cycleStartTask.getRequiredTasks();
-				for (int i = 0; i < requiredTasks.length; i++) {
-					if (tasks.contains(requiredTasks[i])) {
-						cycleStartTask=requiredTasks[i];
+				for (ICompositeCheatSheetTask requiredTask : requiredTasks) {
+					if (tasks.contains(requiredTask)) {
+						cycleStartTask = requiredTask;
 					}
 				}
 			}
@@ -165,8 +163,7 @@ public class TaskDependencies {
 			String thisTask = null;
 			String lastTask = null;
 			String firstTask = null;
-			for (Iterator<ICompositeCheatSheetTask> cycleIterator = cycle.iterator(); cycleIterator.hasNext();) {
-				ICompositeCheatSheetTask task = cycleIterator.next();
+			for (ICompositeCheatSheetTask task : cycle) {
 				if (task == cycleStartTask) {
 					cycleStarted = true;
 					firstTask = task.getName();

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2015 IBM Corporation and others.
+ * Copyright (c) 2002, 2019 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -15,9 +15,14 @@ package org.eclipse.ui.internal.cheatsheets.actions;
 
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.swt.events.*;
-import org.eclipse.swt.widgets.*;
-import org.eclipse.ui.*;
+import org.eclipse.swt.events.MenuAdapter;
+import org.eclipse.swt.events.MenuEvent;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Menu;
+import org.eclipse.swt.widgets.MenuItem;
+import org.eclipse.ui.IPropertyListener;
+import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.IWorkbenchWindowPulldownDelegate2;
 import org.eclipse.ui.internal.cheatsheets.CheatSheetPlugin;
 
 /**
@@ -88,8 +93,8 @@ public class CheatSheetMenuAction implements IWorkbenchWindowPulldownDelegate2, 
 				if (fRecreateMenu) {
 					Menu m = (Menu)e.widget;
 					MenuItem[] items = m.getItems();
-					for (int i=0; i < items.length; i++) {
-						items[i].dispose();
+					for (MenuItem item : items) {
+						item.dispose();
 					}
 					fillMenu(m);
 					fRecreateMenu= false;

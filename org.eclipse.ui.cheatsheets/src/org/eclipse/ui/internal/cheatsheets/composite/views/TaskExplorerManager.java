@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2017 IBM Corporation and others.
+ * Copyright (c) 2005, 2019 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -115,10 +115,10 @@ private static TaskExplorerManager instance;
 		if (images == null) {
 			images = new HashMap<>();
 			String[] ids = CheatSheetRegistryReader.getInstance().getExplorerIds();
-			for (int i = 0; i < ids.length; i++) {
-				ImageDescriptor descriptor = getImageDescriptor(ids[i]);
+			for (String id : ids) {
+				ImageDescriptor descriptor = getImageDescriptor(id);
 				if (descriptor != null) {
-					images.put(ids[i], descriptor.createImage());
+					images.put(id, descriptor.createImage());
 				}
 			}
 		}

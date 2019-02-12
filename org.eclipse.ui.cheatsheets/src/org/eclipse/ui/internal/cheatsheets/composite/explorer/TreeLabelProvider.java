@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2015 IBM Corporation and others.
+ * Copyright (c) 2005, 2019 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -17,7 +17,6 @@ package org.eclipse.ui.internal.cheatsheets.composite.explorer;
 import java.io.IOException;
 import java.net.URL;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
 
 import org.eclipse.core.runtime.FileLocator;
@@ -55,8 +54,7 @@ public class TreeLabelProvider extends LabelProvider {
 		}
 
 		void dispose() {
-			for (Iterator<Image> iter = images.values().iterator(); iter.hasNext();) {
-				Image nextImage = iter.next();
+			for (Image nextImage : images.values()) {
 				nextImage.dispose();
 			}
 		}
@@ -203,9 +201,8 @@ public class TreeLabelProvider extends LabelProvider {
 	@Override
 	public void dispose() {
 		if (imageMap != null) {
-			for (Iterator<ImageSet> iter = imageMap.values().iterator(); iter.hasNext();) {
-				ImageSet nextImages = iter.next();
-			    nextImages.dispose();
+			for (ImageSet nextImages : imageMap.values()) {
+				nextImages.dispose();
 			}
 			imageMap = null;
 		}

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2015 IBM Corporation and others.
+ * Copyright (c) 2005, 2019 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -47,8 +47,7 @@ public class CheatsheetSearchParticipant extends SearchParticipantXML {
 				.getConfigurationElementsFor(
 						ICheatSheetResource.CHEAT_SHEET_PLUGIN_ID + '.'
 						+ CheatSheetRegistryReader.CHEAT_SHEET_CONTENT);
-		for (int i = 0; i < elements.length; i++) {
-			IConfigurationElement element = elements[i];
+		for (IConfigurationElement element : elements) {
 			if (!element.getName().equals(CheatSheetRegistryReader.TAG_CHEATSHEET))
 				continue;
 			String fileName = element.getAttribute(CheatSheetRegistryReader.ATT_CONTENTFILE);
@@ -75,8 +74,7 @@ public class CheatsheetSearchParticipant extends SearchParticipantXML {
 						ICheatSheetResource.CHEAT_SHEET_PLUGIN_ID + '.'
 						+ CheatSheetRegistryReader.CHEAT_SHEET_CONTENT);
 		HashSet<String> set = new HashSet<>();
-		for (int i = 0; i < elements.length; i++) {
-			IConfigurationElement element = elements[i];
+		for (IConfigurationElement element : elements) {
 			if (element.getName().equals(CheatSheetRegistryReader.TAG_CHEATSHEET)) {
 			    set.add(element.getContributor().getName());
 			}

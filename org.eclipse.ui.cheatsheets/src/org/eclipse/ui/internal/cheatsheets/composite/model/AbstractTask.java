@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2015 IBM Corporation and others.
+ * Copyright (c) 2005, 2019 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -140,9 +140,8 @@ public abstract class AbstractTask implements ICompositeCheatSheetTask {
 	public boolean requiredTasksCompleted() {
 		boolean startable = true;
 		ICompositeCheatSheetTask[] requiredTasks = getRequiredTasks();
-		for (int i = 0; i < requiredTasks.length; i++) {
-			if (requiredTasks[i].getState() != COMPLETED &&
-				requiredTasks[i].getState() != SKIPPED	) {
+		for (ICompositeCheatSheetTask requiredTask : requiredTasks) {
+			if (requiredTask.getState() != COMPLETED && requiredTask.getState() != SKIPPED) {
 				startable = false;
 			}
 		}

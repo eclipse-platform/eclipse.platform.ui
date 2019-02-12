@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2015 IBM Corporation and others.
+ * Copyright (c) 2002, 2019 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -14,7 +14,6 @@
 package org.eclipse.ui.internal.cheatsheets.data;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 
 import org.eclipse.ui.internal.cheatsheets.views.CheatSheetManager;
 
@@ -77,8 +76,8 @@ public class ConditionalSubItem extends AbstractSubItem implements ISubItemItem 
 	public void setSelectedSubItem(CheatSheetManager csm) {
 		String conditionValue = csm.getVariableData(condition);
 
-		for (Iterator<AbstractSubItem> iter = subItems.iterator(); iter.hasNext();) {
-			SubItem subItem = (SubItem) iter.next();
+		for (AbstractSubItem abstractSubItem : subItems) {
+			SubItem subItem = (SubItem) abstractSubItem;
 			if(subItem.getWhen() != null && subItem.getWhen().equals(conditionValue)) {
 				selectedSubItem = subItem;
 				break;

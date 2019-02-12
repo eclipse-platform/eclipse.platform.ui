@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2002, 2018 IBM Corporation and others.
+ *  Copyright (c) 2002, 2019 IBM Corporation and others.
  *
  *  This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License 2.0
@@ -449,9 +449,9 @@ public class CheatSheetCategoryBasedSelectionDialog extends TrayDialog //extends
 				.getArray(STORE_EXPANDED_CATEGORIES_ID);
 		List<CheatSheetCollectionElement> categoriesToExpand = new ArrayList<>(expandedCategoryPaths.length);
 
-		for (int i = 0; i < expandedCategoryPaths.length; i++) {
+		for (String expandedCategoryPath : expandedCategoryPaths) {
 			CheatSheetCollectionElement category = cheatsheetCategories
-					.findChildCollection(new Path(expandedCategoryPaths[i]));
+					.findChildCollection(new Path(expandedCategoryPath));
 			if (category != null) // ie.- it still exists
 				categoriesToExpand.add(category);
 		}

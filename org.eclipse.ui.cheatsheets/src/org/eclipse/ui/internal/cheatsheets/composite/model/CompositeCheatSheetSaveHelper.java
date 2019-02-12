@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2015 IBM Corporation and others.
+ * Copyright (c) 2005, 2019 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -14,7 +14,6 @@
 package org.eclipse.ui.internal.cheatsheets.composite.model;
 
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
 
 import org.eclipse.core.runtime.IStatus;
@@ -69,10 +68,10 @@ public class CompositeCheatSheetSaveHelper {
 	private Map<String, IMemento> createTaskMap(XMLMemento readMemento) {
 		Map<String, IMemento> map = new HashMap<>();
 		IMemento[] tasks = readMemento.getChildren(ICompositeCheatsheetTags.TASK);
-		for (int i = 0; i < tasks.length; i++) {
-			String taskId = tasks[i].getString(ICompositeCheatsheetTags.TASK_ID);
+		for (IMemento task : tasks) {
+			String taskId = task.getString(ICompositeCheatsheetTags.TASK_ID);
 			if (taskId != null) {
-			    map.put(taskId, tasks[i]);
+				map.put(taskId, task);
 			}
 		}
 		return map;
@@ -88,8 +87,8 @@ public class CompositeCheatSheetSaveHelper {
 			}
 		}
 		if (task instanceof TaskGroup) {
-			for (int i = 0; i < children.length; i++) {
-				loadTaskState(taskMap, (AbstractTask) children[i]);
+			for (ICompositeCheatSheetTask element : children) {
+				loadTaskState(taskMap, (AbstractTask) element);
 			}
 			((TaskGroup)task).checkState();
 		}
@@ -100,8 +99,7 @@ public class CompositeCheatSheetSaveHelper {
 			return;
 		}
 		IMemento[] children = readMemento.getChildren(ICompositeCheatsheetTags.CHEAT_SHEET_MANAGER);
-		for (int i = 0; i < children.length; i++) {
-			IMemento childMemento = children[i];
+		for (IMemento childMemento : children) {
 			String key = childMemento.getString(ICompositeCheatsheetTags.KEY);
 			String value = childMemento.getString(ICompositeCheatsheetTags.VALUE);
 			manager.setData(key, value);
@@ -113,8 +111,7 @@ public class CompositeCheatSheetSaveHelper {
 			return;
 		}
 		IMemento[] children = readMemento.getChildren(ICompositeCheatsheetTags.LAYOUT_DATA);
-		for (int i = 0; i < children.length; i++) {
-			IMemento childMemento = children[i];
+		for (IMemento childMemento : children) {
 			String key = childMemento.getString(ICompositeCheatsheetTags.KEY);
 			String value = childMemento.getString(ICompositeCheatsheetTags.VALUE);
 			layoutData.put(key, value);
@@ -150,8 +147,7 @@ public class CompositeCheatSheetSaveHelper {
 	}
 
 	private void saveMap(XMLMemento writeMemento, Map<String, String> data, String tag) {
-		for (Iterator<String> iter = data.keySet().iterator(); iter.hasNext();) {
-			String key = iter.next();
+		for (String key : data.keySet()) {
 			String value = data.get(key);
 			IMemento childMemento = writeMemento.createChild(tag);
 			childMemento.putString(ICompositeCheatsheetTags.KEY, key);

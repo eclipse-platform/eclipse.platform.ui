@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2015 IBM Corporation and others.
+ * Copyright (c) 2002, 2019 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -14,7 +14,6 @@
 package org.eclipse.ui.internal.cheatsheets.data;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 
 import org.eclipse.ui.internal.cheatsheets.views.CheatSheetManager;
 
@@ -94,8 +93,7 @@ public class PerformWhen implements IExecutableItem  {
 	public void setSelectedExecutable(CheatSheetManager csm) {
 		String conditionValue = csm.getVariableData(condition);
 
-		for (Iterator<AbstractExecutable> iter = executables.iterator(); iter.hasNext();) {
-			AbstractExecutable executable = iter.next();
+		for (AbstractExecutable executable : executables) {
 			if(executable.getWhen() != null && executable.getWhen().equals(conditionValue)) {
 				selectedExecutable = executable;
 				break;

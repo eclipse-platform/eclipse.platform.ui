@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2018 IBM Corporation and others.
+ * Copyright (c) 2005, 2019 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -228,8 +228,7 @@ public class CompositeCheatSheetPage extends Page implements ISelectionChangedLi
 	private void setExplorerVisible(String id) {
 		Control [] excontrols = explorerContainer.getChildren();
 		TaskExplorer explorer=null;
-		for (int i=0; i<excontrols.length; i++) {
-			Control excontrol = excontrols[i];
+		for (Control excontrol : excontrols) {
 			explorer = (TaskExplorer)excontrol.getData(ICompositeCheatsheetTags.EXPLORER);
 			if (explorer.getId().equals(id)) {
 				explorerContainer.showPage(excontrol);
@@ -251,8 +250,7 @@ public class CompositeCheatSheetPage extends Page implements ISelectionChangedLi
 	private TaskExplorer getTaskExplorer(String id) {
 		Control [] excontrols = explorerContainer.getChildren();
 		TaskExplorer explorer=null;
-		for (int i=0; i<excontrols.length; i++) {
-			Control excontrol = excontrols[i];
+		for (Control excontrol : excontrols) {
 			Object data = excontrol.getData(ICompositeCheatsheetTags.EXPLORER);
 			if (data instanceof TaskExplorer) {
 			    explorer = (TaskExplorer)data;
@@ -546,8 +544,7 @@ public class CompositeCheatSheetPage extends Page implements ISelectionChangedLi
         Menu subMenu = new Menu(menu);
         menuItem.setMenu(subMenu);
 
-        for (int i = 0; i < explorerIds.length; i++) {
-        	final String id = explorerIds[i];
+		for (final String id : explorerIds) {
         	TaskExplorerNode node = CheatSheetRegistryReader.getInstance().findTaskExplorer(id);
         	boolean isCurrentExplorer = id.equals(currentExplorer.getId());
         	int style = isCurrentExplorer ? SWT.RADIO: SWT.PUSH;

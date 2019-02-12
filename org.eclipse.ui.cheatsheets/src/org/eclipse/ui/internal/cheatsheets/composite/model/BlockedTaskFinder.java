@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2017 IBM Corporation and others.
+ * Copyright (c) 2006, 2019 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -15,7 +15,6 @@
 package org.eclipse.ui.internal.cheatsheets.composite.model;
 
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.Set;
 
 import org.eclipse.ui.internal.provisional.cheatsheets.ICompositeCheatSheetTask;
@@ -49,8 +48,7 @@ public class BlockedTaskFinder {
 	}
 
 	private void visitChangedTasks() {
-		for (Iterator<ICompositeCheatSheetTask> iter = stateChangedTasks.iterator(); iter.hasNext();) {
-			final ICompositeCheatSheetTask nextTask = iter.next();
+		for (ICompositeCheatSheetTask nextTask : stateChangedTasks) {
 			if (nextTask.getState() != ICompositeCheatSheetTask.IN_PROGRESS) {
 			    findUnstartedChildren(nextTask);
 			}
@@ -63,8 +61,7 @@ public class BlockedTaskFinder {
 	 */
 	private void findUnstartedChildren(ICompositeCheatSheetTask task) {
 		ICompositeCheatSheetTask[] children = task.getSubtasks();
-		for (int i = 0; i < children.length; i++) {
-			ICompositeCheatSheetTask nextChild = children[i];
+		for (ICompositeCheatSheetTask nextChild : children) {
 			// Ignore if this task has been seen before
 			if ((!stateChangedTasks.contains(nextChild)) && !impactedTasks.contains(nextChild)) {
 			    if (nextChild.getState() == ICompositeCheatSheetTask.NOT_STARTED) {
@@ -76,11 +73,10 @@ public class BlockedTaskFinder {
 	}
 
 	private void findSuccesors() {
-		for (Iterator<ICompositeCheatSheetTask> iter = stateChangedTasks.iterator(); iter.hasNext();) {
-			final AbstractTask nextTask = (AbstractTask)iter.next();
+		for (ICompositeCheatSheetTask iCompositeCheatSheetTask : stateChangedTasks) {
+			final AbstractTask nextTask = (AbstractTask) iCompositeCheatSheetTask;
 			ICompositeCheatSheetTask[] successors = nextTask.getSuccessorTasks();
-			for (int i = 0; i < successors.length; i++) {
-				ICompositeCheatSheetTask nextSuccessor = successors[i];
+			for (ICompositeCheatSheetTask nextSuccessor : successors) {
 				if (nextSuccessor.getState() == ICompositeCheatSheetTask.NOT_STARTED) {
 					impactedTasks.add(nextSuccessor);
 				}

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2015 IBM Corporation and others.
+ * Copyright (c) 2006, 2019 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -40,8 +40,7 @@ public class CheatSheetParameterValues implements IParameterValues {
 			CheatSheetCollectionElement cheatSheetCollection) {
 
 		Object[] cheatsheets = cheatSheetCollection.getCheatSheets();
-		for (int i = 0; i < cheatsheets.length; i++) {
-			Object cheatsheet = cheatsheets[i];
+		for (Object cheatsheet : cheatsheets) {
 			if (cheatsheet instanceof CheatSheetElement) {
 				CheatSheetElement element = (CheatSheetElement) cheatsheet;
 				values.put(element.getLabel(null), element.getID());
@@ -49,8 +48,7 @@ public class CheatSheetParameterValues implements IParameterValues {
 		}
 
 		Object[] children = cheatSheetCollection.getChildren();
-		for (int i = 0; i < children.length; i++) {
-			Object child = children[i];
+		for (Object child : children) {
 			if (child instanceof CheatSheetCollectionElement) {
 				populateValues(values, (CheatSheetCollectionElement) child);
 			}

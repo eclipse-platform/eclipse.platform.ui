@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2017 IBM Corporation and others.
+ * Copyright (c) 2002, 2019 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -14,7 +14,6 @@
 package org.eclipse.ui.internal.cheatsheets.data;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 
 import org.eclipse.ui.cheatsheets.AbstractItemExtensionElement;
 
@@ -159,11 +158,9 @@ public class Item extends Intro implements IExecutableItem, IPerformWhenItem, IS
 
 	private boolean hasDynamicSubItems() {
 		if( subItems != null) {
-			for (Iterator<AbstractSubItem> iter = subItems.iterator(); iter.hasNext();) {
-				AbstractSubItem subItem = iter.next();
-				if( subItem instanceof RepeatedSubItem ||
-					subItem instanceof ConditionalSubItem ||
-					subItem instanceof SubItem && ((SubItem)subItem).getPerformWhen() != null ) {
+			for (AbstractSubItem subItem : subItems) {
+				if (subItem instanceof RepeatedSubItem || subItem instanceof ConditionalSubItem
+						|| subItem instanceof SubItem && ((SubItem) subItem).getPerformWhen() != null) {
 					return true;
 				}
 			}

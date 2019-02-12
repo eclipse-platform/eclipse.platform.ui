@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2002, 2017 IBM Corporation and others.
+ *  Copyright (c) 2002, 2019 IBM Corporation and others.
  *
  *  This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License 2.0
@@ -14,7 +14,6 @@
 package org.eclipse.ui.internal.cheatsheets.views;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.core.runtime.IStatus;
@@ -105,8 +104,7 @@ public class ErrorPage extends Page {
 	private void showStatus(IStatus status) {
 		StatusSorter sorter = new StatusSorter(status);
 		List<IStatus> sorted = sorter.getSortedStatus();
-		for (Iterator<IStatus> iter = sorted.iterator(); iter.hasNext();) {
-			IStatus nextStatus = iter.next();
+		for (IStatus nextStatus : sorted) {
 			Label imageLabel = toolkit.createLabel(form.getBody(), ""); //$NON-NLS-1$
 			imageLabel.setImage(getImage(nextStatus.getSeverity()));
 			Label messageLabel = toolkit.createLabel(form.getBody(), nextStatus.getMessage(), SWT.WRAP);

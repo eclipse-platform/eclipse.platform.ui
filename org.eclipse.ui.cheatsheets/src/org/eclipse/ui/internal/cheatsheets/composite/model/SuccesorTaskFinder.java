@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2015 IBM Corporation and others.
+ * Copyright (c) 2005, 2019 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -60,9 +60,9 @@ public class SuccesorTaskFinder {
 		List<ICompositeCheatSheetTask> result = new ArrayList<>();
 		if (isStartable(currentTask)) {
 			ICompositeCheatSheetTask[] subtasks = currentTask.getSubtasks();
-			for (int i = 0; i < subtasks.length; i++) {
-				if (isStartable(subtasks[i])) {
-					result.add(subtasks[i]);
+			for (ICompositeCheatSheetTask subtask : subtasks) {
+				if (isStartable(subtask)) {
+					result.add(subtask);
 				}
 			}
 		}
@@ -122,8 +122,8 @@ public class SuccesorTaskFinder {
 		}
 
 		ICompositeCheatSheetTask[] subtasks = task.getSubtasks();
-		for (int i = 0; i < subtasks.length; i++) {
-			searchRunnableChildren(subtasks[i]);
+		for (ICompositeCheatSheetTask subtask : subtasks) {
+			searchRunnableChildren(subtask);
 		}
 
 	}

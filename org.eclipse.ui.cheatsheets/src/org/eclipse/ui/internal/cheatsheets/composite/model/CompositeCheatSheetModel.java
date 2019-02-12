@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2017 IBM Corporation and others.
+ * Copyright (c) 2005, 2019 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -17,7 +17,6 @@ package org.eclipse.ui.internal.cheatsheets.composite.model;
 import java.net.URL;
 import java.util.HashSet;
 import java.util.Hashtable;
-import java.util.Iterator;
 import java.util.Map;
 import java.util.Observable;
 import java.util.Set;
@@ -118,13 +117,13 @@ public class CompositeCheatSheetModel extends Observable implements ICompositeCh
 	public void sendTaskChangeEvents() {
 		Set<ICompositeCheatSheetTask> blockedStateChanged = new BlockedTaskFinder()
 				.findBlockedTaskChanges(stateChangedSet);
-		for (Iterator<ICompositeCheatSheetTask> iter = stateChangedSet.iterator(); iter.hasNext();) {
+		for (ICompositeCheatSheetTask iCompositeCheatSheetTask : stateChangedSet) {
 			setChanged();
-			notifyObservers(iter.next());
+			notifyObservers(iCompositeCheatSheetTask);
 		}
-		for (Iterator<ICompositeCheatSheetTask> iter = blockedStateChanged.iterator(); iter.hasNext();) {
+		for (ICompositeCheatSheetTask iCompositeCheatSheetTask : blockedStateChanged) {
 			setChanged();
-			notifyObservers(iter.next());
+			notifyObservers(iCompositeCheatSheetTask);
 		}
 		stateChangedSet.clear();
 	}
@@ -159,8 +158,8 @@ public class CompositeCheatSheetModel extends Observable implements ICompositeCh
 		} else if (task instanceof TaskGroup) {
 			TaskGroup group = (TaskGroup)task;
 		    ICompositeCheatSheetTask[] subtasks = group.getSubtasks();
-		    for (int i = 0; i < subtasks.length; i++) {
-			    resetTask(subtasks[i]);
+			for (ICompositeCheatSheetTask subtask : subtasks) {
+				resetTask(subtask);
 		    }
 		   group.setStateNoNotify(ICompositeCheatSheetTask.NOT_STARTED);
 		}
@@ -184,8 +183,8 @@ public class CompositeCheatSheetModel extends Observable implements ICompositeCh
 	 * @param restartTasks An array of the tasks to be restarted
 	 */
 	public void resetTasks(ICompositeCheatSheetTask[] restartTasks) {
-		for (int i = 0; i < restartTasks.length; i++) {
-			resetTask(restartTasks[i]);
+		for (ICompositeCheatSheetTask restartTask : restartTasks) {
+			resetTask(restartTask);
 		}
 		sendTaskChangeEvents();
 	}

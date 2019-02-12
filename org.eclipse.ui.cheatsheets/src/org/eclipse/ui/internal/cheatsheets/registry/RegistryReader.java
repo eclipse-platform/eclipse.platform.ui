@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2017 IBM Corporation and others.
+ * Copyright (c) 2002, 2019 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -163,8 +163,8 @@ public abstract class RegistryReader {
 		if (point != null) {
 			IExtension[] extensions = point.getExtensions();
 			extensions = orderExtensions(extensions);
-			for (int i = 0; i < extensions.length; i++)
-				readExtension(extensions[i]);
+			for (IExtension extension : extensions)
+				readExtension(extension);
 		}
 	}
 }

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2015 IBM Corporation and others.
+ * Copyright (c) 2006, 2019 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -30,8 +30,8 @@ public class TaskChoiceCompletionStrategy implements TaskGroup.CompletionStrateg
 		boolean noChildrenStarted = true;
 		boolean atLeastOneChildCompleted = false;
 		ICompositeCheatSheetTask[] children = taskGroup.getSubtasks();
-		for (int i = 0; i < children.length; i++) {
-			switch(children[i].getState()) {
+		for (ICompositeCheatSheetTask element : children) {
+			switch (element.getState()) {
 			   case ICompositeCheatSheetTask.NOT_STARTED:
 				   break;
 			   case ICompositeCheatSheetTask.IN_PROGRESS:

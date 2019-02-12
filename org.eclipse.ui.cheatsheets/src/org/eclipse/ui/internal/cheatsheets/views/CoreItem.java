@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2017 IBM Corporation and others.
+ * Copyright (c) 2002, 2019 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -300,8 +300,7 @@ public class CoreItem extends ViewItem {
 		}
 		if(buttonComposite != null) {
 			Control[] controls = buttonComposite.getChildren();
-			for (int i = 0; i < controls.length; i++) {
-				Control control = controls[i];
+			for (Control control : controls) {
 				if(control instanceof ImageHyperlink) {
 					String toolTipText = control.getToolTipText();
 					if( toolTipText != null &&
@@ -347,8 +346,7 @@ public class CoreItem extends ViewItem {
 		boolean refreshRequired = false;
 		if(buttonComposite != null) {
 			Control[] children = buttonComposite.getChildren();
-			for (int i = 0; i < children.length; i++) {
-				Control control = children[i];
+			for (Control control : children) {
 				control.dispose();
 			}
 

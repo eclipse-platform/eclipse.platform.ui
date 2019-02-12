@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2017 IBM Corporation and others.
+ * Copyright (c) 2002, 2019 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -18,7 +18,6 @@ import java.io.InputStream;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Hashtable;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
@@ -286,9 +285,9 @@ public class CheatSheetSaveHelper {
 		if (list == null) {
 			return;
 		}
-		for (Iterator<String> iter = list.iterator(); iter.hasNext();) {
+		for (String string : list) {
 			IMemento childMemento = memento.createChild(key);
-			childMemento.putString(IParserTags.ITEM, iter.next());
+			childMemento.putString(IParserTags.ITEM, string);
 		}
 	}
 
@@ -297,9 +296,8 @@ public class CheatSheetSaveHelper {
 		if (map == null) {
 			return;
 		}
-		for (Iterator<String> iter = map.keySet().iterator(); iter.hasNext();) {
+		for (String itemKey : map.keySet()) {
 			IMemento childMemento = memento.createChild(mapName);
-			String itemKey = iter.next();
 			childMemento.putString(IParserTags.MANAGERDATAKEY,(itemKey));
 			childMemento.putString(IParserTags.MANAGERDATAVALUE, map.get(itemKey));
 		}
@@ -309,9 +307,8 @@ public class CheatSheetSaveHelper {
 	private void getMapFromMemento(IMemento memento, Properties properties, String mapName) {
 		IMemento[] children = memento.getChildren(mapName);
 		Map<String, String> map = new Hashtable<>();
-		for (int i = 0; i < children.length; i++) {
-			map.put(children[i].getString(IParserTags.MANAGERDATAKEY),
-					children[i].getString(IParserTags.MANAGERDATAVALUE));
+		for (IMemento element : children) {
+			map.put(element.getString(IParserTags.MANAGERDATAKEY), element.getString(IParserTags.MANAGERDATAVALUE));
 		}
 		properties.put(mapName, map);
 	}
@@ -319,8 +316,8 @@ public class CheatSheetSaveHelper {
 	private void getListOfStringsFromMemento(IMemento memento, Properties properties, String key) {
 		IMemento[] children = memento.getChildren(key);
 		List<String> list = new ArrayList<>();
-		for (int i = 0; i < children.length; i++) {
-			list.add(children[i].getString(IParserTags.ITEM));
+		for (IMemento element : children) {
+			list.add(element.getString(IParserTags.ITEM));
 		}
 		properties.put(key, list);
 	}

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2015 IBM Corporation and others.
+ * Copyright (c) 2006, 2019 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -48,9 +48,9 @@ public class TaskGroupParseStrategy implements ITaskParseStrategy {
 			ICompositeCheatSheetTask[] children  = parentTask.getSubtasks();
 			AbstractTask previous = null;
 			AbstractTask next = null;
-			for (int i = 0; i < children.length; i++) {
+			for (ICompositeCheatSheetTask element : children) {
 				previous = next;
-				next = (AbstractTask)children[i];
+				next = (AbstractTask) element;
 				if (previous != null) {
 					next.addRequiredTask(previous);
 				}

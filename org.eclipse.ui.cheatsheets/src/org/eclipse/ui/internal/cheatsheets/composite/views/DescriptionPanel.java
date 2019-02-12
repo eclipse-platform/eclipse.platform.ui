@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2017 IBM Corporation and others.
+ * Copyright (c) 2005, 2019 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -207,8 +207,8 @@ public class DescriptionPanel {
 		buf.append("</p>");	 //$NON-NLS-1$// Add the list of blocking tasks
 
 		ICompositeCheatSheetTask[] requiredTasks = task.getRequiredTasks();
-		for (int i = 0; i < requiredTasks.length; i++) {
-			warnOfIncompleteTask(buf, requiredTasks[i]);
+		for (ICompositeCheatSheetTask requiredTask : requiredTasks) {
+			warnOfIncompleteTask(buf, requiredTask);
 		}
 		buf.append("<p>"); //$NON-NLS-1$
 		buf.append("</p>");	 //$NON-NLS-1$
@@ -246,8 +246,7 @@ public class DescriptionPanel {
 	private void showSuccesorTaskLinks(ICompositeCheatSheetTask task, StringBuilder buf) {
 		// Add the links to the next tasks
 		ICompositeCheatSheetTask[] successorTasks = new SuccesorTaskFinder(task).getRecommendedSuccessors();
-		for (int i = 0; i < successorTasks.length; i++) {
-			ICompositeCheatSheetTask successor = successorTasks[i];
+		for (ICompositeCheatSheetTask successor : successorTasks) {
 			String message = NLS.bind(Messages.COMPOSITE_PAGE_GOTO_TASK, (new Object[]
 			     {MarkupParser.escapeText(successor.getName())}));
 			addHyperlink(buf, CompositeCheatSheetPage.GOTO_TASK_TAG + successor.getId(), GOTO_IMAGE, message);

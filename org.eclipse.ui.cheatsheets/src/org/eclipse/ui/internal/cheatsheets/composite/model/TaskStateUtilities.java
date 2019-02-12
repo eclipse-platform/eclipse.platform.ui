@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2015 IBM Corporation and others.
+ * Copyright (c) 2006, 2019 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -154,10 +154,10 @@ public class TaskStateUtilities {
 
 		// Add all dependents that are started or in progress but not skipped
 		ICompositeCheatSheetTask[] successors = ((AbstractTask)task).getSuccessorTasks();
-		for (int i = 0; i < successors.length; i++) {
-			int state = successors[i].getState();
+		for (ICompositeCheatSheetTask successor : successors) {
+			int state = successor.getState();
 			if (state == ICompositeCheatSheetTask.COMPLETED || state == ICompositeCheatSheetTask.IN_PROGRESS) {
-			    addRestartableTasks(restartables, successors[i], visited);
+				addRestartableTasks(restartables, successor, visited);
 			}
 		}
 	}

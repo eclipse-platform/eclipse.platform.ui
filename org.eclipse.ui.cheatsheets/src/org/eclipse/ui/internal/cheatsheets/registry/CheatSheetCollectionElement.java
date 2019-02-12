@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2017 IBM Corporation and others.
+ * Copyright (c) 2002, 2019 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -14,7 +14,6 @@
 package org.eclipse.ui.internal.cheatsheets.registry;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.core.runtime.IAdaptable;
@@ -73,8 +72,8 @@ public class CheatSheetCollectionElement extends WorkbenchAdapter implements IPl
 	public CheatSheetCollectionElement findChildCollection(IPath searchPath) {
 		Object[] children = getChildren();
 		String searchString = searchPath.segment(0);
-		for (int i = 0; i < children.length; ++i) {
-			CheatSheetCollectionElement currentCategory = (CheatSheetCollectionElement) children[i];
+		for (Object element : children) {
+			CheatSheetCollectionElement currentCategory = (CheatSheetCollectionElement) element;
 			if (currentCategory.getLabel(null).equals(searchString)) {
 				if (searchPath.segmentCount() == 1)
 					return currentCategory;
@@ -92,15 +91,14 @@ public class CheatSheetCollectionElement extends WorkbenchAdapter implements IPl
 	 */
 	public CheatSheetElement findCheatSheet(String searchId, boolean recursive) {
 		Object[] cheatsheets = getCheatSheets();
-		for (int i = 0; i < cheatsheets.length; ++i) {
-			CheatSheetElement currentCheatSheet = (CheatSheetElement) cheatsheets[i];
+		for (Object cheatsheet : cheatsheets) {
+			CheatSheetElement currentCheatSheet = (CheatSheetElement) cheatsheet;
 			if (currentCheatSheet.getID().equals(searchId))
 				return currentCheatSheet;
 		}
 		if (!recursive)
 			return null;
-		for (Iterator<CheatSheetCollectionElement> iterator = childCollections.iterator(); iterator.hasNext();) {
-			CheatSheetCollectionElement child = iterator.next();
+		for (CheatSheetCollectionElement child : childCollections) {
 			CheatSheetElement result = child.findCheatSheet(searchId, true);
 			if (result != null)
 				return result;
