@@ -314,9 +314,6 @@ public class CoreItem extends ViewItem {
 		return null;
 	}
 
-	/**
-	 * @see org.eclipse.ui.internal.cheatsheets.ViewItem#handleButtons()
-	 */
 	@Override
 	/*package*/ void handleButtons() {
 		if(item.isDynamic()) {

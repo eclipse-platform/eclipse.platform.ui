@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 IBM Corporation and others.
+ * Copyright (c) 2000, 2019 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -35,9 +35,6 @@ public abstract class AdaptableHelpResource
 		this.element = element;
 	}
 
-	/**
-	 * @see org.eclipse.core.runtime.IAdaptable#getAdapter(java.lang.Class)
-	 */
 	@Override
 	@SuppressWarnings("unchecked")
 	public <T> T getAdapter(Class<T> adapter) {
@@ -95,17 +92,11 @@ public abstract class AdaptableHelpResource
 	 */
 	public abstract ITopic getTopic(String href);
 
-	/**
-	 * @see org.eclipse.help.IHelpResource#getHref()
-	 */
 	@Override
 	public String getHref() {
 		return element.getHref();
 	}
 
-	/**
-	 * @see org.eclipse.help.IHelpResource#getLabel()
-	 */
 	@Override
 	public String getLabel() {
 		return element.getLabel();

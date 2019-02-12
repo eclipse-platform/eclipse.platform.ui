@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2015 IBM Corporation and others.
+ * Copyright (c) 2003, 2019 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -110,9 +110,6 @@ public class CheatSheetView extends ViewPart {
 		CheatSheetStopWatch.printTotalTime("CheatSheetView.createPartControl", "Time in CheatSheetView.createPartControl(): "); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
-	/**
-	 * @see org.eclipse.ui.IWorkbenchPart#dispose()
-	 */
 	@Override
 	public void dispose() {
 		super.dispose();

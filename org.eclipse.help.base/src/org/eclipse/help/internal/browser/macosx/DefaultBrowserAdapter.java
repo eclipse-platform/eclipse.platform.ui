@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 IBM Corporation and others.
+ * Copyright (c) 2000, 2019 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -28,16 +28,10 @@ public class DefaultBrowserAdapter implements IBrowser {
 		return fgInstance;
 	}
 
-	/**
-	 * @see org.eclipse.help.browser.IBrowser#close()
-	 */
 	@Override
 	public void close() {
 	}
 
-	/**
-	 * @see org.eclipse.help.browser.IBrowser#displayURL(String)
-	 */
 	@Override
 	public void displayURL(String url) {
 		/*
@@ -52,40 +46,25 @@ public class DefaultBrowserAdapter implements IBrowser {
 		}
 	}
 
-	/**
-	 * @see org.eclipse.help.browser.IBrowser#isCloseSupported()
-	 */
 	@Override
 	public boolean isCloseSupported() {
 		return false;
 	}
 
-	/**
-	 * @see org.eclipse.help.browser.IBrowser#isSetLocationSupported()
-	 */
 	@Override
 	public boolean isSetLocationSupported() {
 		return false;
 	}
 
-	/**
-	 * @see org.eclipse.help.browser.IBrowser#isSetSizeSupported()
-	 */
 	@Override
 	public boolean isSetSizeSupported() {
 		return false;
 	}
 
-	/**
-	 * @see org.eclipse.help.browser.IBrowser#setLocation(int, int)
-	 */
 	@Override
 	public void setLocation(int x, int y) {
 	}
 
-	/**
-	 * @see org.eclipse.help.browser.IBrowser#setSize(int, int)
-	 */
 	@Override
 	public void setSize(int width, int height) {
 	}

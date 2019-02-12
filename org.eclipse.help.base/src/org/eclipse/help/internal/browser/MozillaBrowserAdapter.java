@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2016 IBM Corporation and others.
+ * Copyright (c) 2000, 2019 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -63,16 +63,10 @@ public class MozillaBrowserAdapter implements IBrowser {
 		this.executableName = executableName;
 	}
 
-	/*
-	 * @see IBrowser#close()
-	 */
 	@Override
 	public void close() {
 	}
 
-	/*
-	 * @see IBrowser#displayURL(String)
-	 */
 	@Override
 	public void displayURL(String url) {
 		if (lastBrowserThread != null)
@@ -86,33 +80,21 @@ public class MozillaBrowserAdapter implements IBrowser {
 		setSizePending = false;
 	}
 
-	/*
-	 * @see IBrowser#isCloseSupported()
-	 */
 	@Override
 	public boolean isCloseSupported() {
 		return false;
 	}
 
-	/*
-	 * @see IBrowser#isSetLocationSupported()
-	 */
 	@Override
 	public boolean isSetLocationSupported() {
 		return true;
 	}
 
-	/*
-	 * @see IBrowser#isSetSizeSupported()
-	 */
 	@Override
 	public boolean isSetSizeSupported() {
 		return true;
 	}
 
-	/*
-	 * @see IBrowser#setLocation(int, int)
-	 */
 	@Override
 	public void setLocation(int x, int y) {
 		this.x = x;
@@ -120,9 +102,6 @@ public class MozillaBrowserAdapter implements IBrowser {
 		setLocationPending = true;
 	}
 
-	/*
-	 * @see IBrowser#setSize(int, int)
-	 */
 	@Override
 	public void setSize(int width, int height) {
 		this.width = width;

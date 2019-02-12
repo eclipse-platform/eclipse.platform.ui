@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2015 IBM Corporation and others.
+ * Copyright (c) 2002, 2019 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -17,7 +17,8 @@ package org.eclipse.ui.internal.cheatsheets.views;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.ui.internal.cheatsheets.*;
+import org.eclipse.ui.internal.cheatsheets.CheatSheetPlugin;
+import org.eclipse.ui.internal.cheatsheets.Messages;
 
 /**
  * Action used to enable / disable method filter properties
@@ -42,9 +43,6 @@ public class CheatSheetExpandRestoreAction extends Action {
 		setCollapsed(initValue);
 	}
 
-	/*
-	 * @see Action#actionPerformed
-	 */
 	@Override
 	public void run() {
 		viewer.toggleExpandRestore();

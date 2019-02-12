@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 IBM Corporation and others.
+ * Copyright (c) 2000, 2019 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -22,11 +22,6 @@ import java.util.Comparator;
 public class WorkingSetComparator implements Comparator<WorkingSet> {
 	private Collator fCollator = Collator.getInstance();
 
-	/**
-	 * Implements Comparator.
-	 *
-	 * @see Comparator#compare(Object, Object)
-	 */
 	@Override
 	public int compare(WorkingSet o1,WorkingSet o2) {
 		String name1 = null;

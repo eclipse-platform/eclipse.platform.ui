@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 IBM Corporation and others.
+ * Copyright (c) 2000, 2019 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -21,9 +21,6 @@ public class DefaultBrowserFactory implements IBrowserFactory {
 		super();
 	}
 
-	/*
-	 * @see IBrowserFactory#isAvailable()
-	 */
 	@Override
 	public boolean isAvailable() {
 		return System.getProperty("os.name").equals("Mac OS X"); //$NON-NLS-1$ //$NON-NLS-2$
@@ -33,9 +30,6 @@ public class DefaultBrowserFactory implements IBrowserFactory {
 		 */
 	}
 
-	/*
-	 * @see IBrowserFactory#createBrowser()
-	 */
 	@Override
 	public IBrowser createBrowser() {
 		return DefaultBrowserAdapter.getInstance();

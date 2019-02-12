@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 IBM Corporation and others.
+ * Copyright (c) 2000, 2019 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -31,9 +31,6 @@ public class AdaptableToc extends AdaptableHelpResource {
 		super(element);
 	}
 
-	/**
-	 * @see org.eclipse.core.runtime.IAdaptable#getAdapter(java.lang.Class)
-	 */
 	@Override
 	@SuppressWarnings("unchecked")
 	public <T> T getAdapter(Class<T> adapter) {
@@ -55,9 +52,6 @@ public class AdaptableToc extends AdaptableHelpResource {
 		return children;
 	}
 
-	/**
-	 * @see org.eclipse.help.IToc#getTopic(java.lang.String)
-	 */
 	@Override
 	public ITopic getTopic(String href) {
 		if(null != href && href.equals(((IToc) element).getTopic(null).getHref())){
@@ -66,9 +60,6 @@ public class AdaptableToc extends AdaptableHelpResource {
 		return ((IToc) element).getTopic(href);
 	}
 
-	/**
-	 * @see org.eclipse.help.IToc#getTopics()
-	 */
 	public ITopic[] getTopics() {
 		return ((IToc) element).getTopics();
 	}

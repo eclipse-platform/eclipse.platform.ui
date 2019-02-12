@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 IBM Corporation and others.
+ * Copyright (c) 2000, 2019 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -22,30 +22,18 @@ import org.eclipse.help.internal.base.*;
 import org.eclipse.osgi.service.environment.*;
 import org.eclipse.osgi.util.NLS;
 
-/**
- *
- */
 public class CustomBrowser implements IBrowser {
 	public static final String CUSTOM_BROWSER_PATH_KEY = "custom_browser_path"; //$NON-NLS-1$
 
-	/**
-	 * @see org.eclipse.help.browser.IBrowser#close()
-	 */
 	@Override
 	public void close() {
 	}
 
-	/**
-	 * @see org.eclipse.help.browser.IBrowser#isCloseSupported()
-	 */
 	@Override
 	public boolean isCloseSupported() {
 		return false;
 	}
 
-	/**
-	 * @see org.eclipse.help.browser.IBrowser#displayURL(java.lang.String)
-	 */
 	@Override
 	public void displayURL(String url) throws Exception {
 		String path =  Platform.getPreferencesService().getString
@@ -73,32 +61,20 @@ public class CustomBrowser implements IBrowser {
 		}
 	}
 
-	/**
-	 * @see org.eclipse.help.browser.IBrowser#isSetLocationSupported()
-	 */
 	@Override
 	public boolean isSetLocationSupported() {
 		return false;
 	}
 
-	/**
-	 * @see org.eclipse.help.browser.IBrowser#isSetSizeSupported()
-	 */
 	@Override
 	public boolean isSetSizeSupported() {
 		return false;
 	}
 
-	/**
-	 * @see org.eclipse.help.browser.IBrowser#setLocation(int, int)
-	 */
 	@Override
 	public void setLocation(int x, int y) {
 	}
 
-	/**
-	 * @see org.eclipse.help.browser.IBrowser#setSize(int, int)
-	 */
 	@Override
 	public void setSize(int width, int height) {
 	}

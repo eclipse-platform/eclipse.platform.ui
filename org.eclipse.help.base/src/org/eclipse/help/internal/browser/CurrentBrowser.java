@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 IBM Corporation and others.
+ * Copyright (c) 2000, 2019 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -37,23 +37,17 @@ public class CurrentBrowser implements IBrowser {
 		this.browserAdapterId = browserAdapterId;
 		this.external = externalBrowser;
 	}
-	/**
-	 * @see org.eclipse.help.browser.IBrowser#close()
-	 */
+
 	@Override
 	public void close() {
 		browserAdapter.close();
 	}
-	/**
-	 * @see org.eclipse.help.browser.IBrowser#isCloseSupported()
-	 */
+
 	@Override
 	public boolean isCloseSupported() {
 		return browserAdapter.isCloseSupported();
 	}
-	/**
-	 * @see org.eclipse.help.browser.IBrowser#displayURL(java.lang.String)
-	 */
+
 	@Override
 	public void displayURL(String url) throws Exception {
 		checkDefaultAdapter();
@@ -72,9 +66,7 @@ public class CurrentBrowser implements IBrowser {
 		}
 		browserAdapter.displayURL(url);
 	}
-	/**
-	 * @see org.eclipse.help.browser.IBrowser#isSetLocationSupported()
-	 */
+
 	@Override
 	public boolean isSetLocationSupported() {
 		checkDefaultAdapter();
@@ -84,9 +76,7 @@ public class CurrentBrowser implements IBrowser {
 		return browserAdapter.isSetLocationSupported()
 				|| newBrowserAdapter.isSetLocationSupported();
 	}
-	/**
-	 * @see org.eclipse.help.browser.IBrowser#isSetSizeSupported()
-	 */
+
 	@Override
 	public boolean isSetSizeSupported() {
 		checkDefaultAdapter();
@@ -96,9 +86,7 @@ public class CurrentBrowser implements IBrowser {
 		return browserAdapter.isSetSizeSupported()
 				|| newBrowserAdapter.isSetSizeSupported();
 	}
-	/**
-	 * @see org.eclipse.help.browser.IBrowser#setLocation(int, int)
-	 */
+
 	@Override
 	public void setLocation(int x, int y) {
 		checkDefaultAdapter();
@@ -107,9 +95,7 @@ public class CurrentBrowser implements IBrowser {
 		this.x = x;
 		this.y = y;
 	}
-	/**
-	 * @see org.eclipse.help.browser.IBrowser#setSize(int, int)
-	 */
+
 	@Override
 	public void setSize(int width, int height) {
 		checkDefaultAdapter();

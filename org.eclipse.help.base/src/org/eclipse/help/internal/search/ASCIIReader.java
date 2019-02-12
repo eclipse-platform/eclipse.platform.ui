@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 IBM Corporation and others.
+ * Copyright (c) 2000, 2019 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -34,9 +34,6 @@ public class ASCIIReader extends Reader {
 		buf = new byte[bufSize];
 	}
 
-	/**
-	 * @see java.io.Reader#read(char[], int, int)
-	 */
 	@Override
 	public int read(char[] cbuf, int off, int len) throws IOException {
 		int n = stream.read(buf, 0, Math.min(bufSize, len));
@@ -46,9 +43,6 @@ public class ASCIIReader extends Reader {
 		return n;
 	}
 
-	/**
-	 * @see java.io.Reader#close()
-	 */
 	@Override
 	public void close() throws IOException {
 		stream.close();
