@@ -37,8 +37,8 @@ import org.eclipse.debug.internal.ui.viewers.provisional.IAsynchronousContentAda
 import org.eclipse.debug.internal.ui.viewers.provisional.IAsynchronousLabelAdapter;
 import org.eclipse.debug.internal.ui.viewers.provisional.IChildrenRequestMonitor;
 import org.eclipse.debug.internal.ui.viewers.provisional.ILabelRequestMonitor;
+import org.eclipse.jface.viewers.ViewerComparator;
 import org.eclipse.jface.viewers.ViewerFilter;
-import org.eclipse.jface.viewers.ViewerSorter;
 
 /**
  * Model for an asynchronous viewer
@@ -549,9 +549,9 @@ public abstract class AsynchronousModel {
 	protected void setChildren(final ModelNode parentNode, List<Object> kids) {
         final Object[] children = filter(parentNode.getElement(), kids.toArray());
         final AsynchronousViewer viewer = getViewer();
-        ViewerSorter sorter = viewer.getSorter();
-        if (sorter != null) {
-        	sorter.sort(viewer, children);
+		ViewerComparator comparator = viewer.getComparator();
+        if (comparator != null) {
+        	comparator.sort(viewer, children);
         }
 
         ModelNode[] prevKids = null;

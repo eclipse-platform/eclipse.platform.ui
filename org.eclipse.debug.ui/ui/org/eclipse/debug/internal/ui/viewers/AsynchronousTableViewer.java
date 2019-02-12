@@ -30,7 +30,7 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.OpenEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.Viewer;
-import org.eclipse.jface.viewers.ViewerSorter;
+import org.eclipse.jface.viewers.ViewerComparator;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.TableEditor;
 import org.eclipse.swt.events.MouseAdapter;
@@ -389,8 +389,8 @@ public class AsynchronousTableViewer extends AsynchronousViewer implements Liste
     }
 
     protected int indexForElement(Object element) {
-        ViewerSorter sorter = getSorter();
-        if (sorter == null) {
+		ViewerComparator comparator = getComparator();
+        if (comparator == null) {
 			return fTable.getItemCount();
 		}
         int count = fTable.getItemCount();
@@ -398,7 +398,7 @@ public class AsynchronousTableViewer extends AsynchronousViewer implements Liste
         while (min <= max) {
             int mid = (min + max) / 2;
             Object data = fTable.getItem(mid).getData();
-            int compare = sorter.compare(this, data, element);
+            int compare = comparator.compare(this, data, element);
             if (compare == 0) {
                 // find first item > element
                 while (compare == 0) {
@@ -407,7 +407,7 @@ public class AsynchronousTableViewer extends AsynchronousViewer implements Liste
                         break;
                     }
                     data = fTable.getItem(mid).getData();
-                    compare = sorter.compare(this, data, element);
+                    compare = comparator.compare(this, data, element);
                 }
                 return mid;
             }
