@@ -18,8 +18,6 @@ import java.io.ByteArrayInputStream;
 import org.junit.Assert;
 import org.junit.Test;
 
-import org.eclipse.swt.widgets.Display;
-
 import org.eclipse.core.runtime.NullProgressMonitor;
 
 import org.eclipse.core.resources.IFile;
@@ -36,6 +34,7 @@ import org.eclipse.ui.genericeditor.tests.contributions.ReconcilerStrategyFirst;
 import org.eclipse.ui.genericeditor.tests.contributions.ReconcilerStrategySecond;
 import org.eclipse.ui.internal.genericeditor.ExtensionBasedTextEditor;
 import org.eclipse.ui.part.FileEditorInput;
+import org.eclipse.ui.tests.harness.util.UITestCase;
 
 import org.eclipse.ui.texteditor.IDocumentProvider;
 
@@ -98,27 +97,24 @@ public class ReconcilerTest extends AbstratGenericEditorTest {
 						return false;
 					}
 			}
-		}.waitForCondition(Display.getDefault().getActiveShell().getDisplay(), 2000);
+		}.waitForCondition(window.getShell().getDisplay(), 2000);
 		Assert.assertTrue("file was not affected by reconciler", doc.get().contains(expectedText));
 	}
 
 	@Override
 	public void tearDown() throws Exception {
-		if (secondEditor != null)
-		{
+		if (secondEditor != null) {
 			secondEditor.close(false);
 			secondEditor = null;
-			while(Display.getDefault().readAndDispatch()) {}
+			UITestCase.processEvents();
 		}
-		if (secondFile != null)
-		{
+		if (secondFile != null) {
 			secondFile.delete(true, new NullProgressMonitor());
 			secondFile = null;
 		}
-		super.tearDown();
-		if (secondProject != null)
-		{
+		if (secondProject != null) {
 			secondProject.delete(true, new NullProgressMonitor());
 		}
+		super.tearDown();
 	}
 }

@@ -19,8 +19,6 @@ import java.nio.charset.StandardCharsets;
 import org.junit.After;
 import org.junit.Before;
 
-import org.eclipse.swt.widgets.Display;
-
 import org.eclipse.core.runtime.NullProgressMonitor;
 
 import org.eclipse.core.resources.IFile;
@@ -31,10 +29,12 @@ import org.eclipse.text.tests.Accessor;
 
 import org.eclipse.jface.text.source.SourceViewer;
 
+import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.genericeditor.ExtensionBasedTextEditor;
 import org.eclipse.ui.intro.IIntroPart;
 import org.eclipse.ui.part.FileEditorInput;
+import org.eclipse.ui.tests.harness.util.UITestCase;
 
 import org.eclipse.ui.texteditor.AbstractTextEditor;
 
@@ -48,7 +48,8 @@ public class AbstratGenericEditorTest {
 	protected IProject project;
 	protected IFile file;
 	protected ExtensionBasedTextEditor editor;
-
+	protected IWorkbenchWindow window;
+	
 	/**
 	 * Closes intro, create {@link #project}, create {@link #file} and open {@link #editor}
 	 * @throws Exception ex
@@ -60,6 +61,9 @@ public class AbstratGenericEditorTest {
 		project.create(null);
 		project.open(null);
 		project.setDefaultCharset(StandardCharsets.UTF_8.name(), null);
+		UITestCase.waitForJobs(100, 5000);
+		window= PlatformUI.getWorkbench().getActiveWorkbenchWindow();
+		UITestCase.forceActive(window.getShell());
 		createAndOpenFile();
 	 }
 
@@ -80,6 +84,7 @@ public class AbstratGenericEditorTest {
 		this.file.setCharset(StandardCharsets.UTF_8.name(), null);
 		this.editor = (ExtensionBasedTextEditor) PlatformUI.getWorkbench().getActiveWorkbenchWindow()
 				.getActivePage().openEditor(new FileEditorInput(this.file), "org.eclipse.ui.genericeditor.GenericEditor");
+		UITestCase.processEvents();
 	}
 
 	/**
@@ -92,7 +97,7 @@ public class AbstratGenericEditorTest {
 			editor.close(false);
 			editor = null;
 		}
-		while(Display.getDefault().readAndDispatch()) {}
+		UITestCase.processEvents();
 		if (file != null) {
 			file.delete(true, new NullProgressMonitor());
 			file = null;
@@ -116,6 +121,7 @@ public class AbstratGenericEditorTest {
 		IIntroPart intro = PlatformUI.getWorkbench().getIntroManager().getIntro();
 		if (intro != null) {
 			PlatformUI.getWorkbench().getIntroManager().closeIntro(intro);
+			UITestCase.processEvents();
 		}
 	}
 	
@@ -123,7 +129,7 @@ public class AbstratGenericEditorTest {
 		long timeout = milliseconds; //ms
 		long start = System.currentTimeMillis();
 		while (start + timeout > System.currentTimeMillis()) {
-			Display.getDefault().readAndDispatch();
+			UITestCase.processEvents();
 		}
 	}
 
