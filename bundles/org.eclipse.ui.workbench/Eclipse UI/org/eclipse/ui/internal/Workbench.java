@@ -459,7 +459,6 @@ public final class Workbench extends EventManager implements IWorkbench,
 	 * @since 3.0
 	 */
 	private Workbench(Display display, final WorkbenchAdvisor advisor, MApplication app, IEclipseContext appContext) {
-		super();
 		this.advisor = Objects.requireNonNull(advisor);
 		this.display = Objects.requireNonNull(display);
 		application = app;
