@@ -1968,7 +1968,6 @@ public final class Workbench extends EventManager implements IWorkbench,
 			application.getDescriptors().add(descriptor);
 		}
 
-		WorkbenchPlugin.getDefault().getViewRegistry();
 	}
 
 	/**
