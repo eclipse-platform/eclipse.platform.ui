@@ -288,7 +288,7 @@ public abstract class UITestCase extends TestCase {
 	 *            non null
 	 * @return true if the given shell is active for the current display
 	 */
-	protected boolean forceActive(Shell shell) {
+	public static boolean forceActive(Shell shell) {
 		Display display = PlatformUI.getWorkbench().getDisplay();
 		Shell[] shells = display.getShells();
 		for (Shell s : shells) {
