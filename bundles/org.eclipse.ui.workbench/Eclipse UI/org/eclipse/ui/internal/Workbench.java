@@ -2678,19 +2678,20 @@ public final class Workbench extends EventManager implements IWorkbench,
 	 * page.
 	 */
 	private void startPlugins() {
-		// bug 55901: don't use getConfigElements directly, for pre-3.0
-		// compat, make sure to allow both missing class
-		// attribute and a missing startup element
-		IExtensionPoint point = registry.getExtensionPoint(PlatformUI.PLUGIN_ID,
-				IWorkbenchRegistryConstants.PL_STARTUP);
 
-		IExtension[] extensions = point.getExtensions();
-		if (extensions.length == 0) {
-			return;
-		}
 		Job job = new Job("Executing the early startup extensions") { //$NON-NLS-1$
 			@Override
 			protected IStatus run(IProgressMonitor monitor) {
+				// bug 55901: don't use getConfigElements directly, for pre-3.0
+				// compat, make sure to allow both missing class
+				// attribute and a missing startup element
+				IExtensionPoint point = registry.getExtensionPoint(PlatformUI.PLUGIN_ID,
+						IWorkbenchRegistryConstants.PL_STARTUP);
+
+				IExtension[] extensions = point.getExtensions();
+				if (extensions.length == 0) {
+					return Status.OK_STATUS;
+				}
 				HashSet<String> disabledPlugins = new HashSet<>(Arrays.asList(getDisabledEarlyActivatedPlugins()));
 				SubMonitor subMonitor = SubMonitor.convert(monitor, WorkbenchMessages.Workbench_startingPlugins,
 						extensions.length);
