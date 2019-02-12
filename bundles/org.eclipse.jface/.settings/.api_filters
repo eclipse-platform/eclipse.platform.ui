@@ -1,78 +1,10 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <component id="org.eclipse.jface" version="2">
-    <resource path="META-INF/MANIFEST.MF">
-        <filter comment="Deletion of TableTreeViewer was planned -&gt; No major version increase" id="923795461">
-            <message_arguments>
-                <message_argument value="3.15.0"/>
-                <message_argument value="3.14.100"/>
-            </message_arguments>
-        </filter>
-    </resource>
     <resource path="META-INF/MANIFEST.MF" type="org.eclipse.jface.dialogs.ImageAndMessageArea">
         <filter comment="Bug 540482: Delete org.eclipse.jface.dialogs.ImageAndMessageArea as announced for after June 2018" id="305324134">
             <message_arguments>
                 <message_argument value="org.eclipse.jface.dialogs.ImageAndMessageArea"/>
                 <message_argument value="org.eclipse.jface_3.15.100"/>
-            </message_arguments>
-        </filter>
-    </resource>
-    <resource path="META-INF/MANIFEST.MF" type="org.eclipse.jface.viewers.TableTreeViewer">
-        <filter comment="Deletion of TableTreeViewer was planned -&gt; No major version increase" id="305324134">
-            <message_arguments>
-                <message_argument value="org.eclipse.jface.viewers.TableTreeViewer"/>
-                <message_argument value="org.eclipse.jface_3.15.0"/>
-            </message_arguments>
-        </filter>
-    </resource>
-    <resource path="src/org/eclipse/jface/dialogs/PopupDialog.java" type="org.eclipse.jface.dialogs.PopupDialog">
-        <filter comment="Marked for deletion, see &#9; * @noreference Planned for deletion see https://bugs.eclipse.org/bugs/show_bug.cgi?id=531913" id="338944126">
-            <message_arguments>
-                <message_argument value="org.eclipse.jface.dialogs.PopupDialog"/>
-                <message_argument value="getPersistBounds()"/>
-            </message_arguments>
-        </filter>
-        <filter comment="Marked for deletion see &#9; * @noreference Planned for deletion see  https://bugs.eclipse.org/bugs/show_bug.cgi?id=531913" id="338948223">
-            <message_arguments>
-                <message_argument value="org.eclipse.jface.dialogs.PopupDialog"/>
-                <message_argument value="PopupDialog(Shell, int, boolean, boolean, boolean, boolean, String, String)"/>
-            </message_arguments>
-        </filter>
-    </resource>
-    <resource path="src/org/eclipse/jface/util/Assert.java" type="org.eclipse.jface.util.Assert">
-        <filter comment="Planned for deletion. See Bug 528191" id="338944126">
-            <message_arguments>
-                <message_argument value="org.eclipse.jface.util.Assert"/>
-                <message_argument value="isLegal(boolean)"/>
-            </message_arguments>
-        </filter>
-        <filter comment="Planned for deletion. See Bug 528191" id="338944126">
-            <message_arguments>
-                <message_argument value="org.eclipse.jface.util.Assert"/>
-                <message_argument value="isLegal(boolean, String)"/>
-            </message_arguments>
-        </filter>
-        <filter comment="Planned for deletion. See Bug 528191" id="338944126">
-            <message_arguments>
-                <message_argument value="org.eclipse.jface.util.Assert"/>
-                <message_argument value="isNotNull(Object)"/>
-            </message_arguments>
-        </filter>
-        <filter comment="Planned for deletion. See Bug 528191" id="338944126">
-            <message_arguments>
-                <message_argument value="org.eclipse.jface.util.Assert"/>
-                <message_argument value="isNotNull(Object, String)"/>
-            </message_arguments>
-        </filter>
-        <filter comment="Planned for deletion. See Bug 528191" id="338944126">
-            <message_arguments>
-                <message_argument value="org.eclipse.jface.util.Assert"/>
-                <message_argument value="isTrue(boolean)"/>
-            </message_arguments>
-        </filter>
-        <filter comment="Planned for deletion. See Bug 528191" id="338944126">
-            <message_arguments>
-                <message_argument value="org.eclipse.jface.util.Assert"/>
-                <message_argument value="isTrue(boolean, String)"/>
             </message_arguments>
         </filter>
     </resource>

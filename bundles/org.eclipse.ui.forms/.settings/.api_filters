@@ -8,13 +8,4 @@
             </message_arguments>
         </filter>
     </resource>
-    <resource path="src/org/eclipse/ui/forms/editor/FormEditor.java" type="org.eclipse.ui.forms.editor.FormEditor">
-        <filter id="642777099">
-            <message_arguments>
-                <message_argument value="MultiPageEditorPart"/>
-                <message_argument value="FormEditor"/>
-                <message_argument value="getActiveEditor()"/>
-            </message_arguments>
-        </filter>
-    </resource>
 </component>
