@@ -45,7 +45,6 @@ public class AutomatedTests extends TestCase {
 		// Moved to the top: bug 124867
 		//suite.addTest(org.eclipse.core.tests.internal.runtime.AllTests.suite());
 
-		suite.addTest(org.eclipse.core.tests.internal.registry.AllTests.suite());
 		return suite;
 	}
 }

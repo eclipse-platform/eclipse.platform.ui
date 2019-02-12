@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<?eclipse version="3.0"?>
-<plugin>
-  
-  	<extension point="testC1.xptC1" id="ext1">
-	</extension>
-
-</plugin>

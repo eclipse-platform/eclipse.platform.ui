@@ -1,3 +1,0 @@
-Bundle-SymbolicName: bundle01;singleton=true
-Bundle-Version: 1.0.0
-
