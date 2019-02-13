@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Dictionary;
 import java.util.Hashtable;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Objects;
 import javax.annotation.PreDestroy;
@@ -170,7 +171,7 @@ public class ModelServiceImpl implements EModelService {
 	}
 
 	private <T> void findElementsRecursive(MApplicationElement searchRoot, Class<T> clazz,
-			Selector matcher, List<T> elements, int searchFlags) {
+			Selector matcher, LinkedHashSet<T> elements, int searchFlags) {
 		Assert.isLegal(searchRoot != null);
 		if (searchFlags == 0) {
 			return;
@@ -179,11 +180,9 @@ public class ModelServiceImpl implements EModelService {
 		// are *we* a match ?
 		boolean classMatch = clazz == null ? true : clazz.isInstance(searchRoot);
 		if (classMatch && matcher.select(searchRoot)) {
-			if (!elements.contains(searchRoot)) {
-				@SuppressWarnings("unchecked")
-				T element = (T) searchRoot;
-				elements.add(element);
-			}
+			@SuppressWarnings("unchecked")
+			T element = (T) searchRoot;
+			elements.add(element);
 		}
 		if (searchRoot instanceof MApplication && (searchFlags == ANYWHERE)) {
 			MApplication app = (MApplication) searchRoot;
@@ -425,15 +424,16 @@ public class ModelServiceImpl implements EModelService {
 	@Override
 	public <T> List<T> findElements(MApplicationElement searchRoot, Class<T> clazz,
 			int searchFlags, Selector matcher) {
-		List<T> elements = new ArrayList<>();
+		LinkedHashSet<T> elements = new LinkedHashSet<>();
 		findElementsRecursive(searchRoot, clazz, matcher, elements, searchFlags);
-		return elements;
+		ArrayList<T> elementsList = new ArrayList<>(elements);
+		return elementsList;
 	}
 
-	private <T> List<T> findPerspectiveElements(MUIElement searchRoot, String id,
+	private <T> Iterable<T> findPerspectiveElements(MUIElement searchRoot, String id,
 			Class<T> clazz,
 			List<String> tagsToMatch) {
-		List<T> elements = new ArrayList<>();
+		LinkedHashSet<T> elements = new LinkedHashSet<>();
 		ElementMatcher matcher = new ElementMatcher(id, clazz, tagsToMatch);
 		findElementsRecursive(searchRoot, clazz, matcher, elements, PRESENTATION);
 		return elements;
@@ -658,7 +658,7 @@ public class ModelServiceImpl implements EModelService {
 
 	@Override
 	public MPlaceholder findPlaceholderFor(MWindow window, MUIElement element) {
-		List<MPlaceholder> phList = findPerspectiveElements(window, null, MPlaceholder.class, null);
+		Iterable<MPlaceholder> phList = findPerspectiveElements(window, null, MPlaceholder.class, null);
 		List<MPlaceholder> elementRefs = new ArrayList<>();
 		for (MPlaceholder ph : phList) {
 			if (ph.getRef() == element) {
