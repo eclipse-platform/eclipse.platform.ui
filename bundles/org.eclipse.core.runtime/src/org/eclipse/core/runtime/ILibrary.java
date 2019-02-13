@@ -34,7 +34,7 @@ import org.osgi.framework.Constants;
  * about the classpath of a plug-in.  Having retrieved the header, the {@link ManifestElement}
  * helper class can be used to parse the value and discover the individual
  * class path entries.  The various header attributes are defined in {@link Constants}.
- * <p>For example,
+ * <p>For example,</p>
  * <pre>
  *     String header = bundle.getHeaders().get(Constants.BUNDLE_CLASSPATH);
  *     ManifestElement[] elements = ManifestElement.parseHeader(
@@ -44,7 +44,7 @@ import org.osgi.framework.Constants;
  *     elements[0].getValue();   // the jar/dir containing the code
  *     ...
  * </pre>
- * </p><p>
+ * <p>
  * Note that this new structure does not include information on
  * which packages are exported or present in the listed classpath entries. This
  * information is no longer relevant.

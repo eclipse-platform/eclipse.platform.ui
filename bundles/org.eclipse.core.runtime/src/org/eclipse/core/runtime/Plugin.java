@@ -26,87 +26,100 @@ import org.osgi.framework.*;
 import org.osgi.util.tracker.ServiceTracker;
 
 /**
- * The abstract superclass of all plug-in runtime class
- * implementations. A plug-in subclasses this class and overrides
- * the appropriate life cycle methods in order to react to the life cycle
- * requests automatically issued by the platform.
- * For compatibility reasons, the methods called for those life cycle events
- * vary, please see the "Constructors and life cycle methods" section below.
+ * The abstract superclass of all plug-in runtime class implementations. A
+ * plug-in subclasses this class and overrides the appropriate life cycle
+ * methods in order to react to the life cycle requests automatically issued by
+ * the platform. For compatibility reasons, the methods called for those life
+ * cycle events vary, please see the "Constructors and life cycle methods"
+ * section below.
  *
  * <p>
- * Conceptually, the plug-in runtime class represents the entire plug-in
- * rather than an implementation of any one particular extension the
- * plug-in declares. A plug-in is not required to explicitly
- * specify a plug-in runtime class; if none is specified, the plug-in
- * will be given a default plug-in runtime object that ignores all life
- * cycle requests (it still provides access to the corresponding
- * plug-in descriptor).
+ * Conceptually, the plug-in runtime class represents the entire plug-in rather
+ * than an implementation of any one particular extension the plug-in declares.
+ * A plug-in is not required to explicitly specify a plug-in runtime class; if
+ * none is specified, the plug-in will be given a default plug-in runtime object
+ * that ignores all life cycle requests (it still provides access to the
+ * corresponding plug-in descriptor).
  * </p>
  * <p>
- * In the case of more complex plug-ins, it may be desirable
- * to define a concrete subclass of <code>Plugin</code>.
- * However, just subclassing <code>Plugin</code> is not
- * sufficient. The name of the class must be explicitly configured
- * in the plug-in's manifest (<code>plugin.xml</code>) file
- * with the class attribute of the <code>&ltplugin&gt</code> element markup.
+ * In the case of more complex plug-ins, it may be desirable to define a
+ * concrete subclass of <code>Plugin</code>. However, just subclassing
+ * <code>Plugin</code> is not sufficient. The name of the class must be
+ * explicitly configured in the plug-in's manifest (<code>plugin.xml</code>)
+ * file with the class attribute of the <code>&lt;plugin&gt;</code> element
+ * markup.
  * </p>
  * <p>
- * Instances of plug-in runtime classes are automatically created
- * by the platform in the course of plug-in activation. For compatibility reasons,
- * the constructor used to create plug-in instances varies, please see the "Constructors
- * and life cycle methods" section below.
- * </p><p>
- * The concept of bundles underlies plug-ins. However it is safe to regard plug-ins
- * and bundles as synonyms.
+ * Instances of plug-in runtime classes are automatically created by the
+ * platform in the course of plug-in activation. For compatibility reasons, the
+ * constructor used to create plug-in instances varies, please see the
+ * "Constructors and life cycle methods" section below.
+ * </p>
+ * <p>
+ * The concept of bundles underlies plug-ins. However it is safe to regard
+ * plug-ins and bundles as synonyms.
  * </p>
  * <p>
  * <b>Clients must never explicitly instantiate a plug-in runtime class</b>.
  * </p>
  * <p>
- * A typical implementation pattern for plug-in runtime classes is to
- * provide a static convenience method to gain access to a plug-in's
- * runtime object. This way, code in other parts of the plug-in
- * implementation without direct access to the plug-in runtime object
- * can easily obtain a reference to it, and thence to any plug-in-wide
- * resources recorded on it. An example for Eclipse 3.0 follows:
+ * A typical implementation pattern for plug-in runtime classes is to provide a
+ * static convenience method to gain access to a plug-in's runtime object. This
+ * way, code in other parts of the plug-in implementation without direct access
+ * to the plug-in runtime object can easily obtain a reference to it, and thence
+ * to any plug-in-wide resources recorded on it. An example for Eclipse 3.0
+ * follows:
+ * </p>
+ *
  * <pre>
- *     package myplugin;
- *     public class MyPluginClass extends Plugin {
- *         private static MyPluginClass instance;
+ * package myplugin;
  *
- *         public static MyPluginClass getInstance() { return instance; }
+ * public class MyPluginClass extends Plugin {
+ * 	private static MyPluginClass instance;
  *
- *         public void MyPluginClass() {
- *             super();
- *             instance = this;
- *             // ... other initialization
- *         }
- *         // ... other methods
- *     }
+ * 	public static MyPluginClass getInstance() {
+ * 		return instance;
+ * 	}
+ *
+ * 	public void MyPluginClass() {
+ * 		super();
+ * 		instance = this;
+ * 		// ... other initialization
+ * 	}
+ * 	// ... other methods
+ * }
  * </pre>
- * In the above example, a call to <code>MyPluginClass.getInstance()</code>
- * will always return an initialized instance of <code>MyPluginClass</code>.
+ * <p>
+ * In the above example, a call to <code>MyPluginClass.getInstance()</code> will
+ * always return an initialized instance of <code>MyPluginClass</code>.
  * </p>
  * <p>
  * <b>Constructors and life cycle methods</b>
- * </p><p>
- * If the plugin.xml of a plug-in indicates &lt;?eclipse version="3.0"?&gt; and its prerequisite
- * list includes <code>org.eclipse.core.runtime</code>, the default constructor of the plug-in
- * class is used and {@link #start(BundleContext)} and {@link #stop(BundleContext)} are
- * called as life cycle methods.
- * </p><p>
+ * </p>
+ * <p>
+ * If the plugin.xml of a plug-in indicates &lt;?eclipse version="3.0"?&gt; and
+ * its prerequisite list includes <code>org.eclipse.core.runtime</code>, the
+ * default constructor of the plug-in class is used and
+ * {@link #start(BundleContext)} and {@link #stop(BundleContext)} are called as
+ * life cycle methods.
+ * </p>
+ * <p>
  * The {@link #Plugin(IPluginDescriptor)} constructor was called only for
  * plug-ins which explicitly require the org.eclipse.core.runtime.compatibility
  * plug-in. It is not called anymore as Eclipse 4.6 removed this plug-in.
  *
- * </p><p>
- * If the plugin.xml of your plug-in does <b>not</b> indicate &lt;?eclipse version="3.0"?&gt; it is therefore
- * not a 3.0 plug-in. Consequently the {@link #Plugin(IPluginDescriptor)} is used and {@link #startup()} and
+ * </p>
+ * <p>
+ * If the plugin.xml of your plug-in does <b>not</b> indicate &lt;?eclipse
+ * version="3.0"?&gt; it is therefore not a 3.0 plug-in. Consequently the
+ * {@link #Plugin(IPluginDescriptor)} is used and {@link #startup()} and
  * {@link #shutdown()} are called as life cycle methods.
- * </p><p>
- * Since Eclipse 3.0 APIs of the Plugin class can be called only when the Plugin is in an active state, i.e.,
- * after it was started up and before it is shutdown. In particular, it means that Plugin APIs should not
- * be called from overrides of {@link #Plugin()}.
+ * </p>
+ * <p>
+ * Since Eclipse 3.0 APIs of the Plugin class can be called only when the Plugin
+ * is in an active state, i.e., after it was started up and before it is
+ * shutdown. In particular, it means that Plugin APIs should not be called from
+ * overrides of {@link #Plugin()}.
  * </p>
  */
 public abstract class Plugin implements BundleActivator {
@@ -203,6 +216,8 @@ public abstract class Plugin implements BundleActivator {
 	 *
 	 * The <code>MyPlugin(IPluginDescriptor descriptor)</code> constructor was called only for plug-ins
 	 * which explicitly require the org.eclipse.core.runtime.compatibility plug-in. It is not called anymore.
+	 * 
+	 * @param descriptor Due to org.eclipse.core.runtime.compatibility plug-in removal it is ignored.
 	 *
 	 * @deprecated
 	 */
@@ -252,6 +267,8 @@ public abstract class Plugin implements BundleActivator {
 	 * The <code>getDescriptor()</code> method was only be called by plug-ins
 	 * which explicitly require the org.eclipse.core.runtime.compatibility
 	 * plug-in. It is not called anymore.
+	 * 
+	 * @return Always null.
 	 *
 	 * @deprecated
 	 */
@@ -582,6 +599,8 @@ public abstract class Plugin implements BundleActivator {
 	 * The <code>shutdown()</code> method was called only for plug-ins which
 	 * explicitly required the org.eclipse.core.runtime.compatibility plug-in.
 	 * It is not called anymore.
+	 * 
+	 * @throws CoreException Never thrown as method as no longer called.
 	 *
 	 * @deprecated
 	 */
@@ -604,6 +623,8 @@ public abstract class Plugin implements BundleActivator {
 	 * The <code>startup()</code> method was called only for plug-ins which
 	 * explicitly required the org.eclipse.core.runtime.compatibility plug-in.
 	 * It is not called anymore.
+	 * 
+	 * @throws CoreException Never thrown as method as no longer called.
 	 *
 	 * @deprecated
 	 */

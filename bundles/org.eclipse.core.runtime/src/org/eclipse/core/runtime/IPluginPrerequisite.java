@@ -30,7 +30,7 @@ import org.osgi.framework.Constants;
  * about the prerequisites of a plug-in.  Having retrieved the header, the {@link ManifestElement}
  * helper class can be used to parse the value and discover the individual
  * prerequisite plug-ins.  The various header attributes are defined in {@link Constants}.
- * <p>For example,
+ * <p>For example,</p>
  * <pre>    String header = bundle.getHeaders().get(Constants.REQUIRE_BUNDLE);
  *     ManifestElement[] elements = ManifestElement.parseHeader(
  *         Constants.REQUIRE_BUNDLE, header);
@@ -40,7 +40,7 @@ import org.osgi.framework.Constants;
  *     elements[0].getAttribute(Constants.BUNDLE_VERSION_ATTRIBUTE);   // the prerequisite plug-in version
  *     ...
  * </pre>
- * </p><p>
+ * <p>
  * See {@link IPluginDescriptor} for information on the relationship between plug-in
  * descriptors and bundles.
  * </p><p>

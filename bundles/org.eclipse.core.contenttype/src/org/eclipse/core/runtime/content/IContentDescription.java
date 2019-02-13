@@ -22,12 +22,12 @@ import org.eclipse.core.runtime.QualifiedName;
  * <p>
  * A content description object will always include the content type for the
  * examined contents, and may also include information on:
+ * </p>
  * <ol>
  * <li>charset;</li>
  * <li>byte order mark;</li>
  * <li>other custom properties provided by third-party plug-ins.</li>
  * </ol>
- * </p>
  * <p>
  * <cite>Content describers</cite> provided by plug-ins will fill in most of the
  * properties in a content description object, except for the content type,

@@ -49,7 +49,7 @@ import org.xml.sax.SAXException;
  * If the "element" name part is "*", e.g. <code>{namespace}*</code>,
  * it denotes a wildcard match. If the "element" namespace part is empty,
  * e.g. <code>{}name</code>, only these documents with the root element
- * that belong to the unnamed namespace <code><elem xmlns=""></code>
+ * that belong to the unnamed namespace <code>xmlns=""</code>
  * will be detected.
  * </p>
  * <p>

@@ -16,13 +16,14 @@ package org.eclipse.core.runtime.jobs;
 /**
  * Scheduling rules are used by jobs to indicate when they need exclusive access
  * to a resource.  Scheduling rules can also be applied synchronously to a thread
- * using <tt>IJobManager.beginRule(ISchedulingRule)</tt> and
- * <tt>IJobManager.endRule(ISchedulingRule)</tt>.  The job manager guarantees that
+ * using <code>IJobManager.beginRule(ISchedulingRule)</code> and
+ * <code>IJobManager.endRule(ISchedulingRule)</code>.  The job manager guarantees that
  * no two jobs with conflicting scheduling rules will run concurrently.
  * Multiple rules can be applied to a given thread only if the outer rule explicitly
  * allows the nesting as specified by the <code>contains</code> method.
  * <p>
  * Clients may implement this interface.
+ * </p>
  *
  * @see Job#getRule()
  * @see Job#setRule(ISchedulingRule)

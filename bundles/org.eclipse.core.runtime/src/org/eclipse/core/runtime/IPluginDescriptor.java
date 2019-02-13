@@ -20,9 +20,9 @@ import java.util.*;
 /**
  * This interface was only support by plug-ins which explicitly require the
  * org.eclipse.core.runtime.compatibility plug-in.
- * </p>
  * <p>
  * It is not used anymore as Eclipse 4.6 removed this plug-in.
+ * </p>
  *
  * @deprecated
  *

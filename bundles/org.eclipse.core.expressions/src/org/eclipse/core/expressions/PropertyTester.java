@@ -27,6 +27,7 @@ import org.eclipse.core.runtime.Platform;
  * <p>
  * A property tester implements the property tests enumerated in the property
  * tester extension point. For the following property test extension
+ * </p>
  * <pre>
  *   &lt;propertyTester
  *     	 namespace="org.eclipse.jdt.core"
@@ -56,7 +57,6 @@ import org.eclipse.core.runtime.Platform;
  *   &lt;instanceof value="org.eclipse.core.IPackageFragment"/&gt;
  *   &lt;test property="org.eclipse.jdt.core.isDefaultPackage"/&gt;
  * </pre>
- * </p>
  * <p>
  * There is no guarantee that the same instance of a property tester is used
  * to handle &lt;test property="..."/&gt; requests. So property testers

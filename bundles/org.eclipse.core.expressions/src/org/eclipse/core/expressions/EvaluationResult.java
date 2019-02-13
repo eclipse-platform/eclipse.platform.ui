@@ -27,19 +27,17 @@ import org.eclipse.core.runtime.Assert;
  * </code>, <code>or</code> and <code>not</code>. The operation are
  * defined as follows:
  * </p>
- * <p>
- * The and operation:
- * </p>
- * <table border="1" cellpadding="5">
+ * <table border="1" style="text-align: center;">
+ *   <caption>The AND operation:</caption>
  *   <colgroup>
- *     <col width="120">
- *     <col width="120">
- *     <col width="120">
- *     <col width="120">
+ *     <col style="width:120;">
+ *     <col style="width:120;">
+ *     <col style="width:120;">
+ *     <col style="width:120;">
  *   </colgroup>
  *   <tbody>
  *     <tr>
- *       <td><em>AND</em></td>
+ *       <td style="font-style: italic;">AND</td>
  *       <td>FALSE</td>
  *       <td>TRUE</td>
  *       <td>NOT_LOADED</td>
@@ -64,19 +62,18 @@ import org.eclipse.core.runtime.Assert;
  *     </tr>
  *   </tbody>
  * </table>
- * <p>
- * The or operation:
- * </p>
- * <table border="1" cellpadding="5">
+ * <br>
+ * <table border="1" style="text-align: center;">
+ *   <caption>The OR operation:</caption>
  *   <colgroup>
- *     <col width="120">
- *     <col width="120">
- *     <col width="120">
- *     <col width="120">
+ *     <col style="width:120;">
+ *     <col style="width:120;">
+ *     <col style="width:120;">
+ *     <col style="width:120;">
  *   </colgroup>
  *   <tbody>
  *     <tr>
- *       <td><em>OR</em></td>
+ *       <td style="font-style: italic;">OR</td>
  *       <td>FALSE</td>
  *       <td>TRUE</td>
  *       <td>NOT_LOADED</td>
@@ -101,19 +98,18 @@ import org.eclipse.core.runtime.Assert;
  *     </tr>
  *   </tbody>
  * </table>
- * <p>
- * The not operation:
- * </p>
- * <table border="1" cellpadding="5">
+ * <br>
+ * <table border="1" style="text-align: center;">
+ *   <caption>The NOT operation:</caption>
  *   <colgroup>
- *     <col width="120">
- *     <col width="120">
- *     <col width="120">
- *     <col width="120">
+ *     <col style="width:120;">
+ *     <col style="width:120;">
+ *     <col style="width:120;">
+ *     <col style="width:120;">
  *   </colgroup>
  *   <tbody>
  *     <tr>
- *       <td><em>NOT<em></td>
+ *       <td style="font-style: italic;">NOT</td>
  *       <td>FALSE</td>
  *       <td>TRUE</td>
  *       <td>NOT_LOADED</td>

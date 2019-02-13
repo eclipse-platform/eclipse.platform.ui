@@ -21,13 +21,13 @@ package org.eclipse.core.runtime.jobs;
  * equals the number of successful releases.
  * </p><p>
  * Locks are capable of detecting and recovering from programming errors that cause
- * circular waiting deadlocks. When a deadlock between two or more <tt>ILock</tt>
+ * circular waiting deadlocks. When a deadlock between two or more <code>ILock</code>
  * instances is detected, detailed debugging information is printed to the log file.  The
  * locks will then automatically recover from the deadlock by employing a release
  * and wait strategy. One thread will lose control of the locks it owns, thus breaking
  * the deadlock and  allowing other threads to proceed.  Once that thread's locks are
  * all available, it will be given exclusive access to all its locks and allowed to proceed.
- * A thread can only lose locks while it is waiting on an <tt>acquire()</tt> call.
+ * A thread can only lose locks while it is waiting on an <code>acquire()</code> call.
  *
  * </p><p>
  * Successive acquire attempts by different threads are queued and serviced on
@@ -35,6 +35,7 @@ package org.eclipse.core.runtime.jobs;
  * </p><p>
  * It is very important that acquired locks eventually get released.  Calls to release
  * should be done in a finally block to ensure they execute.  For example:
+ * </p>
  * <pre>
  * try {
  * 	lock.acquire();
@@ -43,7 +44,8 @@ package org.eclipse.core.runtime.jobs;
  * 	lock.release();
  * }
  * </pre>
- * Note: although <tt>lock.acquire</tt> should never fail, it is good practice to place
+ * <p>
+ * Note: although <code>lock.acquire</code> should never fail, it is good practice to place
  * it inside the try block anyway.  Releasing without acquiring is far less catastrophic
  * than acquiring without releasing.
  * </p>

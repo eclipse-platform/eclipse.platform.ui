@@ -252,6 +252,7 @@ public class Preferences {
 	 * Listener for property changes.
 	 * <p>
 	 * Usage:
+	 * </p>
 	 * <pre>
 	 * Preferences.IPropertyChangeListener listener =
 	 *   new Preferences.IPropertyChangeListener() {
@@ -263,7 +264,6 @@ public class Preferences {
 	 * ...
 	 * emitter.removePropertyChangeListener(listener);
 	 * </pre>
-	 * </p>
 	 * <p>
 	 * <em>Note:</em> Depending on the means in which the property
 	 * values changed, the old and new values for the property can
