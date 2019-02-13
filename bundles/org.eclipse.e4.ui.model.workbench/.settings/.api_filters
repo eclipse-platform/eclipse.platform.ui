@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<component id="org.eclipse.e4.ui.model.workbench" version="2">
+    <resource path="src/org/eclipse/e4/ui/model/application/descriptor/basic/MPartDescriptor.java" type="org.eclipse.e4.ui.model.application.descriptor.basic.MPartDescriptor">
+        <filter id="406052990">
+            <message_arguments>
+                <message_argument value="org.eclipse.e4.ui.model.application.descriptor.basic.MPartDescriptor"/>
+                <message_argument value="isDirtyable()"/>
+            </message_arguments>
+        </filter>
+        <filter id="406052990">
+            <message_arguments>
+                <message_argument value="org.eclipse.e4.ui.model.application.descriptor.basic.MPartDescriptor"/>
+                <message_argument value="setDirtyable(boolean)"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/e4/ui/model/application/ui/MInput.java" type="org.eclipse.e4.ui.model.application.ui.MInput">
+        <filter id="406052990">
+            <message_arguments>
+                <message_argument value="org.eclipse.e4.ui.model.application.ui.MInput"/>
+                <message_argument value="getInputURI()"/>
+            </message_arguments>
+        </filter>
+        <filter id="406052990">
+            <message_arguments>
+                <message_argument value="org.eclipse.e4.ui.model.application.ui.MInput"/>
+                <message_argument value="setInputURI(String)"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/e4/ui/model/application/ui/SideValue.java" type="org.eclipse.e4.ui.model.application.ui.SideValue">
+        <filter id="371236918">
+            <message_arguments>
+                <message_argument value="org.eclipse.e4.ui.model.application.ui.SideValue"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/e4/ui/model/application/ui/basic/MBasicFactory.java" type="org.eclipse.e4.ui.model.application.ui.basic.MBasicFactory">
+        <filter id="406052990">
+            <message_arguments>
+                <message_argument value="org.eclipse.e4.ui.model.application.ui.basic.MBasicFactory"/>
+                <message_argument value="createDialog()"/>
+            </message_arguments>
+        </filter>
+        <filter id="406052990">
+            <message_arguments>
+                <message_argument value="org.eclipse.e4.ui.model.application.ui.basic.MBasicFactory"/>
+                <message_argument value="createInputPart()"/>
+            </message_arguments>
+        </filter>
+        <filter id="406052990">
+            <message_arguments>
+                <message_argument value="org.eclipse.e4.ui.model.application.ui.basic.MBasicFactory"/>
+                <message_argument value="createWizardDialog()"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/e4/ui/model/application/ui/basic/MInputPart.java" type="org.eclipse.e4.ui.model.application.ui.basic.MInputPart">
+        <filter id="403853384">
+            <message_arguments>
+                <message_argument value="org.eclipse.e4.ui.model.application.ui.basic.MInputPart"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/e4/ui/model/application/ui/menu/ItemType.java" type="org.eclipse.e4.ui.model.application.ui.menu.ItemType">
+        <filter id="371236918">
+            <message_arguments>
+                <message_argument value="org.eclipse.e4.ui.model.application.ui.menu.ItemType"/>
+            </message_arguments>
+        </filter>
+    </resource>
+</component>
