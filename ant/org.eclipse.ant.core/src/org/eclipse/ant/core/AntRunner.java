@@ -39,8 +39,7 @@ import org.eclipse.osgi.util.NLS;
 
 /**
  * Entry point for running Ant builds inside Eclipse (within the same JRE). Clients may instantiate this class; it is not intended to be subclassed.
- * <p/>
- * <div class="TableSubHeadingColor"> <b>Usage note:</b><br/>
+ * <div class="TableSubHeadingColor"> <b>Usage note:</b><br>
  * Clients may use the <code>addBuildListener</code>, <code>addBuildLogger</code> and <code>setInputHandler</code> methods to configure classes that
  * will be invoked during the build. When using these methods, it is necessary to package the classes in a jar that is not on the client plugin's
  * classpath. The jar must be added to the Ant classpath. One way to add the jar to the Ant classpath is to use the
@@ -308,7 +307,8 @@ public class AntRunner implements IApplication {
 	 */
 	public void run(IProgressMonitor monitor) throws CoreException {
 		if (buildRunning) {
-			IStatus status = new Status(IStatus.ERROR, AntCorePlugin.PI_ANTCORE, AntCorePlugin.ERROR_RUNNING_BUILD, NLS.bind(InternalCoreAntMessages.AntRunner_Already_in_progess, new String[] { buildFileLocation }), null);
+			IStatus status = new Status(IStatus.ERROR, AntCorePlugin.PI_ANTCORE, AntCorePlugin.ERROR_RUNNING_BUILD, NLS.bind(InternalCoreAntMessages.AntRunner_Already_in_progess, new String[] {
+					buildFileLocation }), null);
 			throw new CoreException(status);
 		}
 		buildRunning = true;

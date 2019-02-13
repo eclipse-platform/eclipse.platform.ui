@@ -1484,6 +1484,7 @@ public class AntCorePreferences implements IPropertyChangeListener {
 	 * Sets the user defined custom tasks. To commit the changes, updatePluginPreferences must be called.
 	 * 
 	 * @param tasks
+	 *            The custom tasks.
 	 */
 	public void setCustomTasks(Task[] tasks) {
 		oldCustomTasks = customTasks;
