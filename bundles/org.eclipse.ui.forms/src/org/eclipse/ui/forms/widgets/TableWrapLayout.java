@@ -13,9 +13,9 @@
  *******************************************************************************/
 package org.eclipse.ui.forms.widgets;
 
+import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.Hashtable;
-import java.util.Vector;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Point;
@@ -96,7 +96,7 @@ public final class TableWrapLayout extends Layout implements ILayoutExtension {
 
 	private boolean initialLayout = true;
 
-	private Vector<TableWrapData[]> grid;
+	private ArrayList<TableWrapData[]> grid;
 
 	private Hashtable<Control, RowSpan> rowspans;
 
@@ -168,7 +168,7 @@ public final class TableWrapLayout extends Layout implements ILayoutExtension {
 		}
 		if (grid == null || changed) {
 			changed = true;
-			grid = new Vector<>();
+			grid = new ArrayList<>();
 			createGrid(parent);
 		}
 		if (minColumnWidths == null)
@@ -201,7 +201,7 @@ public final class TableWrapLayout extends Layout implements ILayoutExtension {
 		}
 		if (grid == null || changed) {
 			changed = true;
-			grid = new Vector<>();
+			grid = new ArrayList<>();
 			createGrid(parent);
 		}
 		if (maxColumnWidths == null)
@@ -238,7 +238,7 @@ public final class TableWrapLayout extends Layout implements ILayoutExtension {
 		}
 		if (grid == null || changed) {
 			changed = true;
-			grid = new Vector<>();
+			grid = new ArrayList<>();
 			createGrid(parent);
 		}
 		resetColumnWidths();
@@ -288,7 +288,7 @@ public final class TableWrapLayout extends Layout implements ILayoutExtension {
 		for (int i = 0; i < grid.size(); i++) {
 			int rowHeight = rowHeights[i];
 			int x = leftMargin+clientArea.x;
-			TableWrapData[] row = grid.elementAt(i);
+			TableWrapData[] row = grid.get(i);
 			for (int j = 0; j < numColumns; j++) {
 				TableWrapData td = row[j];
 				if (td.isItemData) {
@@ -307,7 +307,7 @@ public final class TableWrapLayout extends Layout implements ILayoutExtension {
 			boolean changed) {
 		int[] rowHeights = new int[grid.size()];
 		for (int i = 0; i < grid.size(); i++) {
-			TableWrapData[] row = grid.elementAt(i);
+			TableWrapData[] row = grid.get(i);
 			rowHeights[i] = 0;
 			for (int j = 0; j < numColumns; j++) {
 				TableWrapData td = row[j];
@@ -439,15 +439,15 @@ public final class TableWrapLayout extends Layout implements ILayoutExtension {
 		int row, column, rowFill, columnFill;
 		Control[] children;
 		TableWrapData spacerSpec;
-		Vector<Integer> growingCols = new Vector<>();
-		Vector<Integer> growingRows = new Vector<>();
+		ArrayList<Integer> growingCols = new ArrayList<>();
+		ArrayList<Integer> growingRows = new ArrayList<>();
 		rowspans = new Hashtable<>();
 		//
 		children = composite.getChildren();
 		if (children.length == 0)
 			return;
 		//
-		grid.addElement(createEmptyRow());
+		grid.add(createEmptyRow());
 		row = 0;
 		column = 0;
 		// Loop through the children and place their associated layout specs in
@@ -457,13 +457,13 @@ public final class TableWrapLayout extends Layout implements ILayoutExtension {
 			// Find the first available spot in the grid.
 			Control child = children[i];
 			TableWrapData spec = (TableWrapData) child.getLayoutData();
-			while (grid.elementAt(row)[column] != null) {
+			while (grid.get(row)[column] != null) {
 				column = column + 1;
 				if (column >= numColumns) {
 					row = row + 1;
 					column = 0;
 					if (row >= grid.size()) {
-						grid.addElement(createEmptyRow());
+						grid.add(createEmptyRow());
 					}
 				}
 			}
@@ -471,7 +471,7 @@ public final class TableWrapLayout extends Layout implements ILayoutExtension {
 			// not, go to the
 			// next row.
 			if (column + spec.colspan - 1 >= numColumns) {
-				grid.addElement(createEmptyRow());
+				grid.add(createEmptyRow());
 				row = row + 1;
 				column = 0;
 			}
@@ -482,14 +482,14 @@ public final class TableWrapLayout extends Layout implements ILayoutExtension {
 			}
 			for (int j = 2; j <= spec.rowspan; j++) {
 				if (row + j > grid.size()) {
-					grid.addElement(createEmptyRow());
+					grid.add(createEmptyRow());
 				}
 			}
 			// Store the layout spec. Also cache the childIndex. NOTE: That we
 			// assume the children of a
 			// composite are maintained in the order in which they are created
 			// and added to the composite.
-			grid.elementAt(row)[column] = spec;
+			grid.get(row)[column] = spec;
 			spec.childIndex = i;
 			if (spec.grabHorizontal) {
 				updateGrowingColumns(growingCols, spec, column);
@@ -506,14 +506,14 @@ public final class TableWrapLayout extends Layout implements ILayoutExtension {
 				for (int c = 0; c < spec.colspan; c++) {
 					spacerSpec = new TableWrapData();
 					spacerSpec.isItemData = false;
-					grid.elementAt(row + r)[column + c] = spacerSpec;
+					grid.get(row + r)[column + c] = spacerSpec;
 				}
 			}
 			for (int c = 1; c <= columnFill; c++) {
 				for (int r = 0; r < spec.rowspan; r++) {
 					spacerSpec = new TableWrapData();
 					spacerSpec.isItemData = false;
-					grid.elementAt(row + r)[column + c] = spacerSpec;
+					grid.get(row + r)[column + c] = spacerSpec;
 				}
 			}
 			column = column + spec.colspan - 1;
@@ -522,12 +522,12 @@ public final class TableWrapLayout extends Layout implements ILayoutExtension {
 		for (int k = column + 1; k < numColumns; k++) {
 			spacerSpec = new TableWrapData();
 			spacerSpec.isItemData = false;
-			grid.elementAt(row)[k] = spacerSpec;
+			grid.get(row)[k] = spacerSpec;
 		}
 		for (int k = row + 1; k < grid.size(); k++) {
 			spacerSpec = new TableWrapData();
 			spacerSpec.isItemData = false;
-			grid.elementAt(k)[column] = spacerSpec;
+			grid.get(k)[column] = spacerSpec;
 		}
 		growingColumns = new int[growingCols.size()];
 		for (int i = 0; i < growingCols.size(); i++) {
@@ -539,7 +539,7 @@ public final class TableWrapLayout extends Layout implements ILayoutExtension {
 		}
 	}
 
-	private void updateGrowingColumns(Vector<Integer> growingColumns,
+	private void updateGrowingColumns(ArrayList<Integer> growingColumns,
 			TableWrapData spec, int column) {
 		int affectedColumn = column + spec.colspan - 1;
 		for (int i = 0; i < growingColumns.size(); i++) {
@@ -550,7 +550,7 @@ public final class TableWrapLayout extends Layout implements ILayoutExtension {
 		growingColumns.add(Integer.valueOf(affectedColumn));
 	}
 
-	private void updateGrowingRows(Vector<Integer> growingRows, TableWrapData spec,
+	private void updateGrowingRows(ArrayList<Integer> growingRows, TableWrapData spec,
 			int row) {
 		int affectedRow = row + spec.rowspan - 1;
 		for (int i = 0; i < growingRows.size(); i++) {
@@ -592,7 +592,7 @@ public final class TableWrapLayout extends Layout implements ILayoutExtension {
 		}
 		if (grid == null || changed) {
 			changed = true;
-			grid = new Vector<>();
+			grid = new ArrayList<>();
 			createGrid(parent);
 		}
 		resetColumnWidths();
@@ -643,7 +643,7 @@ public final class TableWrapLayout extends Layout implements ILayoutExtension {
 		int innerHeight = 0;
 		// compute widths
 		for (int i = 0; i < grid.size(); i++) {
-			TableWrapData[] row = grid.elementAt(i);
+			TableWrapData[] row = grid.get(i);
 			// assign widths, calculate heights
 			int rowHeight = 0;
 			for (int j = 0; j < numColumns; j++) {
@@ -760,7 +760,7 @@ public final class TableWrapLayout extends Layout implements ILayoutExtension {
 		boolean secondPassNeeded=false;
 		int widestColumnWidth = 0;
 		for (int i = 0; i < grid.size(); i++) {
-			TableWrapData[] row = grid.elementAt(i);
+			TableWrapData[] row = grid.get(i);
 			for (int j = 0; j < numColumns; j++) {
 				TableWrapData td = row[j];
 				if (td.isItemData == false)
@@ -794,7 +794,7 @@ public final class TableWrapLayout extends Layout implements ILayoutExtension {
 
 		// Second pass for controls with multi-column horizontal span
 		for (int i = 0; i < grid.size(); i++) {
-			TableWrapData[] row = grid.elementAt(i);
+			TableWrapData[] row = grid.get(i);
 			for (int j = 0; j < numColumns; j++) {
 				TableWrapData td = row[j];
 				if (td.isItemData == false || td.colspan==1)
