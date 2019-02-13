@@ -45,13 +45,7 @@ import org.osgi.util.tracker.ServiceTracker;
  */
 public final class InternalPlatform {
 
-	private static final String[] ARCH_LIST = {Platform.ARCH_PA_RISC, //
-			Platform.ARCH_PPC, //
-			Platform.ARCH_SPARC, //
-			Platform.ARCH_X86, //
-			Platform.ARCH_AMD64, //
-			Platform.ARCH_IA64, //
-			Platform.ARCH_IA64_32};
+	private static final String[] ARCH_LIST = { Platform.ARCH_X86 };
 
 	// debug support:  set in loadOptions()
 	public static boolean DEBUG = false;
@@ -65,7 +59,7 @@ public final class InternalPlatform {
 	//XXX This is not synchronized
 	private Map<Bundle,Log> logs = new HashMap<>(5);
 
-	private static final String[] OS_LIST = {Platform.OS_AIX, Platform.OS_HPUX, Platform.OS_LINUX, Platform.OS_MACOSX, Platform.OS_QNX, Platform.OS_SOLARIS, Platform.OS_WIN32};
+	private static final String[] OS_LIST = { Platform.OS_LINUX, Platform.OS_MACOSX, Platform.OS_WIN32 };
 	private String password = ""; //$NON-NLS-1$
 	private static final String PASSWORD = "-password"; //$NON-NLS-1$
 
@@ -90,7 +84,7 @@ public final class InternalPlatform {
 
 	private static final InternalPlatform singleton = new InternalPlatform();
 
-	private static final String[] WS_LIST = {Platform.WS_CARBON, Platform.WS_COCOA, Platform.WS_GTK, Platform.WS_MOTIF, Platform.WS_PHOTON, Platform.WS_WIN32, Platform.WS_WPF};
+	private static final String[] WS_LIST = { Platform.WS_COCOA, Platform.WS_GTK, Platform.WS_WIN32, Platform.WS_WPF };
 	private Path cachedInstanceLocation; // Cache the path of the instance location
 	private ServiceTracker<Location,Location> configurationLocation = null;
 	private BundleContext context;
