@@ -82,6 +82,7 @@ public interface IContextFunction {
 	 * @param context {@link IEclipseContext} to get the parent
 	 *                {@link IEclipseContext} from
 	 * @return the root {@link IEclipseContext} in the context hierarchy
+	 * @since 1.8
 	 */
 	static IEclipseContext getRootContext(IEclipseContext context) {
 		if (context.getParent() == null) {
