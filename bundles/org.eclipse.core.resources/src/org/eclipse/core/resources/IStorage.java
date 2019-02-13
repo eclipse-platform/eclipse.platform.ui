@@ -24,9 +24,9 @@ import org.eclipse.core.runtime.*;
  * <p>
  * Storage objects implement the <code>IAdaptable</code> interface;
  * extensions are managed by the platform's adapter manager.
+ * </p>
  * <p>
  * Clients may implement this interface.
- * </p>
  * </p>
  */
 public interface IStorage extends IAdaptable {

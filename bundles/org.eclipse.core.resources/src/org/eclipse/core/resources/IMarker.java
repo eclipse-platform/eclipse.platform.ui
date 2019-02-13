@@ -27,19 +27,22 @@ import org.eclipse.core.runtime.IAdaptable;
  * their state may change underneath the handle with no warning to the holder
  * of the handle.
  * </p>
+ * <p>
  * The Resources plug-in provides a general framework for
  * defining and manipulating markers and provides several standard marker types.
  * </p>
  * <p>
- * Each marker has:<ul>
+ * Each marker has:</p><ul>
  * <li> a type string, specifying its type (e.g.
  *		<code>"org.eclipse.core.resources.taskmarker"</code>), </li>
  * <li> an identifier which is unique (relative to a particular resource)</li>
  * </ul>
+ * <p>
  * Specific types of markers may carry additional information.
  * </p>
  * <p>
  * The resources plug-in defines five standard types:
+ * </p>
  * <ul>
  * <li><code>org.eclipse.core.resources.marker</code></li>
  * <li><code>org.eclipse.core.resources.taskmarker</code></li>
@@ -47,6 +50,7 @@ import org.eclipse.core.runtime.IAdaptable;
  * <li><code>org.eclipse.core.resources.bookmark</code></li>
  * <li><code>org.eclipse.core.resources.textmarker</code></li>
  * </ul>
+ * <p>
  * The plug-in also provides an extension point (
  * <code>org.eclipse.core.resources.markers</code>) into which other
  * plug-ins can install marker type declaration extensions.
@@ -56,13 +60,13 @@ import org.eclipse.core.runtime.IAdaptable;
  * New markers are defined in the <code>plugin.xml</code> file of the
  * declaring plug-in.  A valid declaration contains elements as defined by
  * the extension point DTD:
+ * </p>
  * <ul>
  * <li><i>type</i> - the unique name of the marker type</li>
  * <li><i>super</i> - the list of marker types of which this marker is to be considered a sub-type</li>
  * <li><i>attributes</i> - the list of standard attributes which may be present on this type of marker</li>
  * <li><i>persistent</i> - whether markers of this type should be persisted by the platform</li>
- * </li>
- * </p>
+ * </ul>
  * <p>All markers declared as <code>persistent</code> are saved when the
  * workspace is saved, except those explicitly set as transient (the
  * <code>TRANSIENT</code> attribute is set as <code>true</code>). A plug-in
@@ -298,7 +302,8 @@ public interface IMarker extends IAdaptable {
 	 * @param object the other object
 	 * @return an indication of whether the objects are equal
 	 */
-	@Override boolean equals(Object object);
+	@Override
+	boolean equals(Object object);
 
 	/**
 	 * Returns whether this marker exists in the workspace.  A marker

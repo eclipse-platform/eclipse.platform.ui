@@ -46,7 +46,7 @@ import org.eclipse.core.runtime.jobs.ISchedulingRule;
  * of a workspace job. Other threads can be modifying the workspace concurrently
  * with a workspace job.  To obtain exclusive access to a portion of the workspace,
  * set the scheduling rule on the job to be a resource scheduling rule.  The
- * interface <tt>IResourceRuleFactory</tt> is used to create a  scheduling rule
+ * interface {@link IResourceRuleFactory} is used to create a  scheduling rule
  * for a particular workspace modification operation.
  * </p>
  * @see ICoreRunnable

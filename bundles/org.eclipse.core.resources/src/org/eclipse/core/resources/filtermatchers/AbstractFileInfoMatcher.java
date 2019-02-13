@@ -22,7 +22,7 @@ import org.eclipse.core.runtime.CoreException;
 
 /**
  * The abstract base class for all file info matchers. Instances
- * of this class are provided using the <tt>org.eclipse.core.resources.filterMatchers</tt>
+ * of this class are provided using the <code>org.eclipse.core.resources.filterMatchers</code>
  * extension point.
  *
  * @since 3.6

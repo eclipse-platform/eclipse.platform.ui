@@ -173,7 +173,8 @@ public interface IWorkspace extends IAdaptable {
 	 * @see #removeSaveParticipant(Plugin)
 	 * @deprecated Use {@link #addSaveParticipant(String, ISaveParticipant)} instead
 	 */
-	@Deprecated ISavedState addSaveParticipant(Plugin plugin, ISaveParticipant participant) throws CoreException;
+	@Deprecated
+	ISavedState addSaveParticipant(Plugin plugin, ISaveParticipant participant) throws CoreException;
 
 	/**
 	 * Registers the given plug-in's workspace save participant, and returns an
@@ -341,7 +342,8 @@ public interface IWorkspace extends IAdaptable {
 	 * which produces a more usable result when there are cycles in project
 	 * reference graph.
 	 */
-	@Deprecated IProject[][] computePrerequisiteOrder(IProject[] projects);
+	@Deprecated
+	IProject[][] computePrerequisiteOrder(IProject[] projects);
 
 	/**
 	 * Data structure for holding the multi-part outcome of
@@ -1039,7 +1041,8 @@ public interface IWorkspace extends IAdaptable {
 	 * @see #addSaveParticipant(Plugin, ISaveParticipant)
 	 * @deprecated Use {@link #removeSaveParticipant(String)} instead
 	 */
-	@Deprecated void removeSaveParticipant(Plugin plugin);
+	@Deprecated
+	void removeSaveParticipant(Plugin plugin);
 
 	/**
 	 * Removes the workspace save participant for the given plug-in from this
@@ -1136,7 +1139,7 @@ public interface IWorkspace extends IAdaptable {
 	 * @exception CoreException if the operation failed.
 	 * @exception OperationCanceledException if the operation is canceled.
 	 * Cancelation can occur even if no progress monitor is provided.
-	 * 
+	 *
 	 * @see #run(ICoreRunnable, ISchedulingRule, int, IProgressMonitor)
 	 * @since 3.11
 	 */
@@ -1145,6 +1148,16 @@ public interface IWorkspace extends IAdaptable {
 	/**
 	 * Identical to {@link #run(ICoreRunnable, ISchedulingRule, int, IProgressMonitor)}.
 	 * New code should use that method.
+	 *
+	 * @param action the action to perform
+	 * @param rule the scheduling rule to use when running this operation, or
+	 * <code>null</code> if there are no scheduling restrictions for this
+	 * operation.
+	 * @param flags bit-wise or of flag constants (only AVOID_UPDATE is relevant
+	 * here)
+	 * @param monitor a progress monitor, or <code>null</code> if progress
+	 * reporting is not desired.
+	 * @exception CoreException if the operation failed.
 	 * @since 3.0
 	 */
 	void run(IWorkspaceRunnable action, ISchedulingRule rule, int flags, IProgressMonitor monitor) throws CoreException;
@@ -1152,6 +1165,11 @@ public interface IWorkspace extends IAdaptable {
 	/**
 	 * Identical to {@link #run(ICoreRunnable, IProgressMonitor)}.
 	 * New code should use that method.
+	 *
+	 * @param action the action to perform
+	 * @param monitor a progress monitor, or <code>null</code> if progress
+	 * reporting is not desired
+	 * @exception CoreException if the operation failed.
 	 */
 	void run(IWorkspaceRunnable action, IProgressMonitor monitor) throws CoreException;
 

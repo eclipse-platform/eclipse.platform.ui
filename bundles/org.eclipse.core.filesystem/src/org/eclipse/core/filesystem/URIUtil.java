@@ -21,7 +21,7 @@ import org.eclipse.core.runtime.*;
 /**
  * This class provides utility methods for comparing, inspecting, and manipulating
  * URIs.  More specifically, this class is useful for dealing with URIs that represent 
- * file systems represented by the <tt>org.eclipse.core.filesystem.filesystems</tt> 
+ * file systems represented by the <code>org.eclipse.core.filesystem.filesystems</code> 
  * extension point. For such URIs the file system implementation can be consulted 
  * to interpret the URI in a way that is not possible at a generic level.
  * 

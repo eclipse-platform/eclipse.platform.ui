@@ -19,6 +19,7 @@ import org.eclipse.core.runtime.CoreException;
  * This interface is implemented by objects that visit resource trees.
  * <p>
  * Usage:
+ * </p>
  * <pre>
  * class Visitor implements IResourceVisitor {
  *    public boolean visit(IResource res) {
@@ -29,7 +30,6 @@ import org.eclipse.core.runtime.CoreException;
  * IResource root = ...;
  * root.accept(new Visitor());
  * </pre>
- * </p>
  * <p>
  * Clients may implement this interface.
  * </p>

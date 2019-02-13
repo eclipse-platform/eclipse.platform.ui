@@ -35,6 +35,7 @@ import org.eclipse.core.runtime.jobs.ISchedulingRule;
  * </p>
  * <p>
  * Features of resources:
+ * </p>
  * <ul>
  * <li><code>IResource</code> objects are <i>handles</i> to state maintained
  *		by a workspace.  That is, resource objects do not actually contain data
@@ -43,7 +44,7 @@ import org.eclipse.core.runtime.jobs.ISchedulingRule;
  *		but must keep in mind that some methods and operations require that an actual
  *		resource be available.</li>
  * <li>Resources have two different kinds of properties as detailed below.  All
- *		properties are keyed by qualified names.</li>
+ *		properties are keyed by qualified names.
  * <ul>
  * <li>Session properties: Session properties live for the lifetime of one execution of
  *		the workspace.  They are not stored on disk.  They can carry arbitrary
@@ -62,7 +63,6 @@ import org.eclipse.core.runtime.jobs.ISchedulingRule;
  * <li><i>Phantom</i> resources represent incoming additions or outgoing deletions
  *		which have yet to be reconciled with a synchronization partner. </li>
  * </ul>
- * </p>
  * <p>
  * Resources implement the {@link IAdaptable} interface;
  * extensions are managed by the platform's adapter manager.
@@ -1142,7 +1142,8 @@ public interface IResource extends IAdaptable, ISchedulingRule {
 	 * @see #getFullPath()
 	 * @see #getWorkspace()
 	 */
-	@Override boolean equals(Object other);
+	@Override
+	boolean equals(Object other);
 
 	/**
 	 * Returns whether this resource exists in the workspace.
@@ -1891,7 +1892,8 @@ public interface IResource extends IAdaptable, ISchedulingRule {
 	 * @deprecated This API is no longer in use.  Note that this API is unrelated
 	 * to whether the resource is in the local file system versus some other file system.
 	 */
-	@Deprecated boolean isLocal(int depth);
+	@Deprecated
+	boolean isLocal(int depth);
 
 	/**
 	 * Returns whether this resource is a phantom resource.
@@ -1926,7 +1928,8 @@ public interface IResource extends IAdaptable, ISchedulingRule {
 	 *		<code>false</code> otherwise
 	 * @deprecated use {@link #getResourceAttributes()}
 	 */
-	@Deprecated boolean isReadOnly();
+	@Deprecated
+	boolean isReadOnly();
 
 	/**
 	 * Returns whether this resource and its descendents to the given depth
@@ -2464,7 +2467,8 @@ public interface IResource extends IAdaptable, ISchedulingRule {
 	 * @deprecated Replaced by {@link #setDerived(boolean, IProgressMonitor)} which
 	 * is a workspace operation and reports changes in resource deltas.
 	 */
-	@Deprecated void setDerived(boolean isDerived) throws CoreException;
+	@Deprecated
+	void setDerived(boolean isDerived) throws CoreException;
 
 	/**
 	 * Sets whether this resource subtree is marked as derived.
@@ -2585,7 +2589,8 @@ public interface IResource extends IAdaptable, ISchedulingRule {
 	 * @deprecated This API is no longer in use.  Note that this API is unrelated
 	 * to whether the resource is in the local file system versus some other file system.
 	 */
-	@Deprecated void setLocal(boolean flag, int depth, IProgressMonitor monitor) throws CoreException;
+	@Deprecated
+	void setLocal(boolean flag, int depth, IProgressMonitor monitor) throws CoreException;
 
 	/**
 	 * Sets the local time stamp on disk for this resource.  The time must be represented
@@ -2649,7 +2654,8 @@ public interface IResource extends IAdaptable, ISchedulingRule {
 	 *		<code>false</code> to unset
 	 * @deprecated use <tt>IResource#setResourceAttributes(ResourceAttributes)</tt>
 	 */
-	@Deprecated void setReadOnly(boolean readOnly);
+	@Deprecated
+	void setReadOnly(boolean readOnly);
 
 	/**
 	 * Sets this resource with the given extended attributes. This sets the

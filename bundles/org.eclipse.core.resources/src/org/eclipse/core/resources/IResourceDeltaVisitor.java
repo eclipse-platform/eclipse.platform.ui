@@ -19,6 +19,7 @@ import org.eclipse.core.runtime.CoreException;
  * An objects that visits resource deltas.
  * <p>
  * Usage:
+ * </p>
  * <pre>
  * class Visitor implements IResourceDeltaVisitor {
  *     public boolean visit(IResourceDelta delta) {
@@ -39,7 +40,6 @@ import org.eclipse.core.runtime.CoreException;
  * IResourceDelta rootDelta = ...;
  * rootDelta.accept(new Visitor());
  * </pre>
- * </p>
  * <p>
  * Clients may implement this interface.
  * </p>

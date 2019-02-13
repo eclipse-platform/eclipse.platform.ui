@@ -25,6 +25,7 @@ import org.eclipse.core.runtime.content.IContentTypeMatcher;
  * into buildable, reusable units.
  * <p>
  * Features of projects include:
+ * </p>
  * <ul>
  * <li>A project collects together a set of files and folders.</li>
  * <li>A project's location controls where the project's resources are
@@ -37,7 +38,6 @@ import org.eclipse.core.runtime.content.IContentTypeMatcher;
  * <li>A project can carry references to other project build configurations.</li>
  * <li>A project can have one or more project natures.</li>
  * </ul>
- * </p>
  * <p>
  * Projects implement the <code>IAdaptable</code> interface;
  * extensions are managed by the platform's adapter manager.
@@ -574,7 +574,8 @@ public interface IProject extends IContainer, IAdaptable {
 	 * @return a local file system path
 	 * @deprecated Use <code>IProject.getWorkingLocation(plugin.getUniqueIdentifier())</code>.
 	 */
-	@Deprecated IPath getPluginWorkingLocation(IPluginDescriptor plugin);
+	@Deprecated
+	IPath getPluginWorkingLocation(IPluginDescriptor plugin);
 
 	/**
 	 * Returns the location in the local file system of the project-specific

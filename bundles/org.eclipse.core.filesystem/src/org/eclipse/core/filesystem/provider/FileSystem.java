@@ -20,7 +20,7 @@ import org.eclipse.core.runtime.*;
 
 /**
  * The common superclass for all file system implementations.  Instances
- * of this class are provided using the <tt>org.eclipse.core.filesystem.filesystems</tt>
+ * of this class are provided using the <code>org.eclipse.core.filesystem.filesystems</code>
  * extension point.
  * <p>
  * On creation, the <code>setInitializationData</code> method is called with

@@ -23,6 +23,7 @@ import org.eclipse.core.runtime.CoreException;
  * information about the resource being visited.
  * <p>
  * Usage:
+ * </p>
  * <pre>
  * class Visitor implements IResourceProxyVisitor {
  * 	public boolean visit (IResourceProxy proxy) {
@@ -32,7 +33,6 @@ import org.eclipse.core.runtime.CoreException;
  * }
  * ResourcesPlugin.getWorkspace().getRoot().accept(new Visitor(), IResource.NONE);
  * </pre>
- * </p>
  * <p>
  * Clients may implement this interface.
  * </p>
