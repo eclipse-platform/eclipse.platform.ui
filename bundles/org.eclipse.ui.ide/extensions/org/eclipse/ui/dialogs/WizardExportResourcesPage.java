@@ -19,7 +19,6 @@ import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Vector;
 
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IProject;
@@ -330,13 +329,13 @@ public abstract class WizardExportResourcesPage extends WizardDataTransferPage {
      *   <code>IResource</code>)
      */
     protected List extractNonLocalResources(List originalList) {
-        Vector result = new Vector(originalList.size());
+		ArrayList result = new ArrayList(originalList.size());
         Iterator resourcesEnum = originalList.iterator();
 
         while (resourcesEnum.hasNext()) {
             IResource currentResource = (IResource) resourcesEnum.next();
             if (!currentResource.isLocal(IResource.DEPTH_ZERO)) {
-				result.addElement(currentResource);
+				result.add(currentResource);
 			}
         }
 
