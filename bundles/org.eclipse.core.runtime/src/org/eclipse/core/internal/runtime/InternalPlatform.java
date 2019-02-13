@@ -35,7 +35,6 @@ import org.eclipse.osgi.container.ModuleContainer;
 import org.eclipse.osgi.framework.log.FrameworkLog;
 import org.eclipse.osgi.service.datalocation.Location;
 import org.eclipse.osgi.service.debug.DebugOptions;
-import org.eclipse.osgi.service.debug.DebugOptionsListener;
 import org.eclipse.osgi.service.environment.EnvironmentInfo;
 import org.eclipse.osgi.service.resolver.PlatformAdmin;
 import org.osgi.framework.*;
@@ -94,6 +93,7 @@ public final class InternalPlatform {
 	private Path cachedInstanceLocation; // Cache the path of the instance location
 	private ServiceTracker<Location,Location> configurationLocation = null;
 	private BundleContext context;
+	private FrameworkWiring fwkWiring;
 
 	private Map<IBundleGroupProvider,ServiceRegistration<IBundleGroupProvider>> groupProviders = new HashMap<>(3);
 	private ServiceTracker<Location,Location> installLocation = null;
@@ -108,7 +108,6 @@ public final class InternalPlatform {
 	private ServiceTracker<EnvironmentInfo,EnvironmentInfo> environmentTracker = null;
 	private ServiceTracker<FrameworkLog,FrameworkLog> logTracker = null;
 	private ServiceTracker<PlatformAdmin, PlatformAdmin> platformTracker = null;
-	private ServiceTracker<DebugOptionsListener, DebugOptionsListener> debugOptionsListenerTracker = null;
 	private ServiceTracker<DebugOptions,DebugOptions> debugTracker = null;
 	private ServiceTracker<IContentTypeManager,IContentTypeManager> contentTracker = null;
 	private ServiceTracker<IPreferencesService,IPreferencesService> preferencesTracker = null;
@@ -228,15 +227,9 @@ public final class InternalPlatform {
 	}
 
 	public Bundle[] getBundles(String symbolicName, String versionRange) {
-		ModuleContainer container = getModuleContainer();
-		if (container == null)
-			return null;
-
-		FrameworkWiring wiring = container.getFrameworkWiring();
-
 		Map<String, String> directives = Collections.singletonMap(Namespace.REQUIREMENT_FILTER_DIRECTIVE,
 				getRequirementFilter(symbolicName, null));
-		Collection<BundleCapability> matchingBundleCapabilities = wiring.findProviders(ModuleContainer
+		Collection<BundleCapability> matchingBundleCapabilities = fwkWiring.findProviders(ModuleContainer
 				.createRequirement(IdentityNamespace.IDENTITY_NAMESPACE, directives, Collections.emptyMap()));
 
 		if (matchingBundleCapabilities.isEmpty()) {
@@ -255,7 +248,7 @@ public final class InternalPlatform {
 		VersionRange range = versionRange == null ? null : new VersionRange(versionRange);
 		StringBuilder filter = new StringBuilder();
 		if (range != null) {
-			filter.append("(&");
+			filter.append("(&"); //$NON-NLS-1$
 		}
 		filter.append('(').append(IdentityNamespace.IDENTITY_NAMESPACE).append('=').append(symbolicName).append(')');
 
@@ -411,19 +404,6 @@ public final class InternalPlatform {
 
 	public PlatformAdmin getPlatformAdmin() {
 		return platformTracker == null ? null : platformTracker.getService();
-	}
-
-	private ModuleContainer getModuleContainer() {
-		if (debugOptionsListenerTracker == null)
-			return null;
-
-		// is there a better way to retrieve the ModuleContainer?
-		for (Object service : debugOptionsListenerTracker.getServices()) {
-			if (service instanceof ModuleContainer) {
-				return (ModuleContainer) service;
-			}
-		}
-		return null;
 	}
 
 	//TODO I guess it is now time to get rid of that
@@ -721,6 +701,7 @@ public final class InternalPlatform {
 	 */
 	public void start(BundleContext runtimeContext) {
 		this.context = runtimeContext;
+		this.fwkWiring = runtimeContext.getBundle(Constants.SYSTEM_BUNDLE_LOCATION).adapt(FrameworkWiring.class);
 		openOSGiTrackers();
 		splashEnded = false;
 		processCommandLine(getEnvironmentInfoService().getNonFrameworkArgs());
@@ -799,11 +780,6 @@ public final class InternalPlatform {
 		}
 
 		if (context != null) {
-			debugOptionsListenerTracker = new ServiceTracker<>(context, DebugOptionsListener.class, null);
-			debugOptionsListenerTracker.open();
-		}
-
-		if (context != null) {
 			contentTracker = new ServiceTracker<>(context, IContentTypeManager.class, null);
 			contentTracker.open();
 		}
@@ -873,10 +849,6 @@ public final class InternalPlatform {
 		if (platformTracker != null) {
 			platformTracker.close();
 			platformTracker = null;
-		}
-		if (debugOptionsListenerTracker != null) {
-			debugOptionsListenerTracker.close();
-			debugOptionsListenerTracker = null;
 		}
 		if (logTracker != null) {
 			logTracker.close();
