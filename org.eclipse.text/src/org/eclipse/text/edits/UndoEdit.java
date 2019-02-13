@@ -27,7 +27,8 @@ import org.eclipse.jface.text.IDocument;
  * <p>
  * Clients can't add additional children to an undo edit nor can they
  * add an undo edit as a child to another edit. Doing so results in
- * both cases in a <code>MalformedTreeException<code>.
+ * both cases in a <code>MalformedTreeException</code>.
+ * </p>
  *
  * @since 3.0
  * @noinstantiate This class is not intended to be instantiated by clients.

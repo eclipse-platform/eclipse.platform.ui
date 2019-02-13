@@ -52,7 +52,7 @@ import org.eclipse.jface.text.TextUtilities;
  * <p>
  * The classes representing individual text edits (formerly text commands)
  * were promoted from inner types to their own classes in order to support
- * reassignment to a different undo manager.<p>
+ * reassignment to a different undo manager.</p>
  * <p>
  * This class is not intended to be subclassed.
  * </p>

@@ -33,10 +33,11 @@ import org.eclipse.jface.text.IDocument;
  * In order to provide backward compatibility for clients of <code>IDocumentSetupParticipant</code>, extension
  * interfaces are used to provide a means of evolution. The following extension interfaces
  * exist:
+ * </p>
  * <ul>
  * <li> {@link IDocumentSetupParticipantExtension} since version 3.4 introducing the
  *      concept of rewrite sessions. .</li>
- * </ul></p>
+ * </ul>
  *
  * @since 3.0
  * @see org.eclipse.jface.text.IDocumentExtension3

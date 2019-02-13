@@ -25,9 +25,11 @@ import org.eclipse.search.ui.ISearchQuery;
 
 
 /**
- * Abstract base class for text search query providers supplied via the <code>org.eclipse.search.textSearchQueryProvider</code>
- * extension point. The plug-in preference <code>org.eclipse.search.textSearchQueryProvider<code> defines the preferred
- * query provider. It is intended that only products choose a preferred query provider.
+ * Abstract base class for text search query providers supplied via the
+ * <code>org.eclipse.search.textSearchQueryProvider</code> extension point. The
+ * plug-in preference <code>org.eclipse.search.textSearchQueryProvider</code>
+ * defines the preferred query provider. It is intended that only products
+ * choose a preferred query provider.
  *
  * @since 3.2
  */

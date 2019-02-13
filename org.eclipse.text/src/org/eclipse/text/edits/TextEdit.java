@@ -39,11 +39,13 @@ import org.eclipse.jface.text.Region;
  * </p>
  * <p>
  * An edit tree is well formed in the following sense:
+ * </p>
  * <ul>
  *   <li>a parent edit covers all its children</li>
  *   <li>children don't overlap</li>
  *   <li>an edit with length 0 can't have any children</li>
  * </ul>
+ * <p>
  * Any manipulation of the tree that violates one of the above requirements results
  * in a <code>MalformedTreeException</code>.
  * </p>
@@ -51,6 +53,7 @@ import org.eclipse.jface.text.Region;
  * Insert edits are represented by an edit of length 0. If more than one insert
  * edit exists at the same offset then the edits are executed in the order in which
  * they have been added to a parent. The following code example:
+ * </p>
  * <pre>
  *    IDocument document= new Document("org");
  * 	  MultiTextEdit edit= new MultiTextEdit();
@@ -58,6 +61,7 @@ import org.eclipse.jface.text.Region;
  *    edit.addChild(new InsertEdit(0, "eclipse."));
  *    edit.apply(document);
  * </pre>
+ * <p>
  * therefore results in string: "www.eclipse.org".
  * </p>
  * <p>
