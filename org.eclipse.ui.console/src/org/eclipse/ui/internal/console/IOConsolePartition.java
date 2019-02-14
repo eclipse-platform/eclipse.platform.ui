@@ -71,8 +71,9 @@ public class IOConsolePartition implements ITypedRegion {
 
 	/**
 	 * Inserts a string into this partition.
-	 * @param s The string to insert
-	 * @param offset the offset in the partition
+	 * 
+	 * @param s            The string to insert
+	 * @param insertOffset the offset in the partition
 	 */
 	public void insert(String s, int insertOffset) {
 		if (insertOffset < 0) {

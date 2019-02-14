@@ -23,9 +23,6 @@ import org.eclipse.jface.text.DefaultPositionUpdater;
  */
 public class HyperlinkUpdater extends DefaultPositionUpdater {
 
-	/**
-	 * @param category
-	 */
 	public HyperlinkUpdater() {
 		super(ConsoleHyperlinkPosition.HYPER_LINK_CATEGORY);
 	}
