@@ -207,7 +207,7 @@ public final class HyperlinkDetectorDescriptor {
 		String value= fElement.getAttribute(ACTIVATE_PLUG_IN_ATTRIBUTE);
 		if (value == null)
 			return true;
-		return Boolean.valueOf(value).booleanValue();
+		return Boolean.parseBoolean(value);
 	}
 
 	@Override

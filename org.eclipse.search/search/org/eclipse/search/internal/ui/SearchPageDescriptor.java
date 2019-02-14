@@ -157,7 +157,7 @@ class SearchPageDescriptor implements IPluginContribution, Comparable<SearchPage
 	 * to be shown in the dialog.
 	 */
 	public boolean showScopeSection() {
-		return Boolean.valueOf(fElement.getAttribute(SHOW_SCOPE_SECTION_ATTRIBUTE)).booleanValue();
+		return Boolean.parseBoolean(fElement.getAttribute(SHOW_SCOPE_SECTION_ATTRIBUTE));
 	}
 
 	/**
@@ -169,7 +169,7 @@ class SearchPageDescriptor implements IPluginContribution, Comparable<SearchPage
 	 */
 	public boolean isInitiallyEnabled() {
 		String strVal= fElement.getAttribute(ENABLED_ATTRIBUTE);
-		return strVal == null || Boolean.valueOf(strVal).booleanValue();
+		return strVal == null || Boolean.parseBoolean(strVal);
 	}
 
 	/**
@@ -181,7 +181,7 @@ class SearchPageDescriptor implements IPluginContribution, Comparable<SearchPage
 	 * @return Returns if the page can handle searches in enclosing projects
 	 */
 	public boolean canSearchInProjects() {
-		return Boolean.valueOf(fElement.getAttribute(CAN_SEARCH_ENCLOSING_PROJECTS)).booleanValue();
+		return Boolean.parseBoolean(fElement.getAttribute(CAN_SEARCH_ENCLOSING_PROJECTS));
 	}
 
 	/**

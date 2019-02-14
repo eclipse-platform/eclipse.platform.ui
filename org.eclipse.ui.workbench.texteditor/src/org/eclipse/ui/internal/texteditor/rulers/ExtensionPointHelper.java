@@ -75,7 +75,7 @@ public final class ExtensionPointHelper {
 			return dflt;
 
 		try {
-			return Boolean.valueOf(value).booleanValue();
+			return Boolean.parseBoolean(value);
 		} catch (NumberFormatException x) {
 			fail(MessageFormat.format(RulerColumnMessages.ExtensionPointHelper_invalid_number_attribute_msg, new Object[] {fName, attribute}));
 			return dflt;
