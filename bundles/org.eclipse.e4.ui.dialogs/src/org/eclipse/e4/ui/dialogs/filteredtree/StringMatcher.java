@@ -14,7 +14,7 @@
  *******************************************************************************/
 package org.eclipse.e4.ui.dialogs.filteredtree;
 
-import java.util.Vector;
+import java.util.ArrayList;
 
 /**
  * Based on org.eclipse.ui.internal.misc.StringMatcher.
@@ -309,7 +309,7 @@ public class StringMatcher {
 			}
 		}
 
-		Vector<String> temp = new Vector<>();
+		ArrayList<String> temp = new ArrayList<>();
 
 		int pos = 0;
 		StringBuilder buf = new StringBuilder();
@@ -334,7 +334,7 @@ public class StringMatcher {
 			case '*':
 				if (buf.length() > 0) {
 					/* new segment */
-					temp.addElement(buf.toString());
+					temp.add(buf.toString());
 					fBound += buf.length();
 					buf.setLength(0);
 				}
@@ -350,12 +350,10 @@ public class StringMatcher {
 
 		/* add last buffer to segment list */
 		if (buf.length() > 0) {
-			temp.addElement(buf.toString());
+			temp.add(buf.toString());
 			fBound += buf.length();
 		}
-
-		fSegments = new String[temp.size()];
-		temp.copyInto(fSegments);
+		fSegments = temp.toArray(new String[temp.size()]);
 	}
 
 	/**

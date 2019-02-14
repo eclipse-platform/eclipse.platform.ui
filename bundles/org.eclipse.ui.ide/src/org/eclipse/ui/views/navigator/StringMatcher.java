@@ -13,7 +13,7 @@
  *******************************************************************************/
 package org.eclipse.ui.views.navigator;
 
-import java.util.Vector;
+import java.util.ArrayList;
 
 /**
  * A string pattern matcher, supporting ?*? and ??? wildcards.
@@ -285,7 +285,7 @@ import java.util.Vector;
             }
         }
 
-		Vector<String> temp = new Vector<>();
+		ArrayList<String> temp = new ArrayList<>();
 
         int pos = 0;
         StringBuilder buf = new StringBuilder();
@@ -310,7 +310,7 @@ import java.util.Vector;
             case '*':
                 if (buf.length() > 0) {
                     /* new segment */
-                    temp.addElement(buf.toString());
+					temp.add(buf.toString());
                     fBound += buf.length();
                     buf.setLength(0);
                 }
@@ -326,12 +326,11 @@ import java.util.Vector;
 
         /* add last buffer to segment list */
         if (buf.length() > 0) {
-            temp.addElement(buf.toString());
+			temp.add(buf.toString());
             fBound += buf.length();
         }
 
-        fSegments = new String[temp.size()];
-        temp.copyInto(fSegments);
+		fSegments = temp.toArray(new String[temp.size()]);
     }
 
     /**

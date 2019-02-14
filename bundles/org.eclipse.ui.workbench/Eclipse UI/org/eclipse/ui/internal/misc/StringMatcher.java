@@ -18,7 +18,6 @@ package org.eclipse.ui.internal.misc;
 import com.ibm.icu.text.BreakIterator;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Vector;
 
 /**
  * A string pattern matcher, supporting "*" and "?" wildcards.
@@ -67,7 +66,7 @@ public class StringMatcher {
 				}
 			}
 
-			Vector<String> temp = new Vector<>();
+			ArrayList<String> temp = new ArrayList<>();
 
 			int pos = 0;
 			StringBuilder buf = new StringBuilder();
@@ -92,7 +91,7 @@ public class StringMatcher {
 				case '*':
 					if (buf.length() > 0) {
 						/* new segment */
-						temp.addElement(buf.toString());
+						temp.add(buf.toString());
 						this.bound += buf.length();
 						buf.setLength(0);
 					}
@@ -108,12 +107,10 @@ public class StringMatcher {
 
 			/* add last buffer to segment list */
 			if (buf.length() > 0) {
-				temp.addElement(buf.toString());
+				temp.add(buf.toString());
 				this.bound += buf.length();
 			}
-
-			this.fragments = new String[temp.size()];
-			temp.copyInto(this.fragments);
+			this.fragments = temp.toArray(new String[temp.size()]);
 		}
 
 		boolean match(String text, int start, int end) {
