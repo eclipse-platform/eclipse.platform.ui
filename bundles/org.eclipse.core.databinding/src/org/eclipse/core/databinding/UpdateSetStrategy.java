@@ -29,23 +29,21 @@ import org.eclipse.core.runtime.Status;
  * <li>Automatic processing</li>
  * </ul>
  * <p>
- * Conversion:<br/>
+ * Conversion:<br>
  * When elements are added they can be {@link #convert(Object) converted} to the
  * destination element type.
  * </p>
  * <p>
- * Automatic processing:<br/>
+ * Automatic processing:<br>
  * The processing to perform when the source observable changes. This behavior
  * is configured via policies provided on construction of the strategy (e.g.
  * {@link #POLICY_NEVER}, {@link #POLICY_ON_REQUEST}, {@link #POLICY_UPDATE}).
  * </p>
  *
- * @param <S>
- *            the type of the elements on the source side (i.e. the model side
+ * @param <S> the type of the elements on the source side (i.e. the model side
  *            if this is a model-to-target update and the target side if this is
  *            a target-to-model update)
- * @param <D>
- *            the type of the elements on the destination side (i.e. the target
+ * @param <D> the type of the elements on the destination side (i.e. the target
  *            side if this is a model-to-target update and the model side if
  *            this is a target-to-model update)
  * @see DataBindingContext#bindSet(IObservableSet, IObservableSet,

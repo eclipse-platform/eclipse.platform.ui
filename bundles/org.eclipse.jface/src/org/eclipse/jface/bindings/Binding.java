@@ -32,7 +32,7 @@ import org.eclipse.jface.util.Util;
  * these conditions change infrequently (e.g., locale, scheme), while some will
  * tend to change quite frequently (e.g., context). This allows the bindings to
  * be tailored to particular situations. For example, a set of bindings may be
- * appropriate only inside a text editor.  Or, perhaps, a set of bindings might
+ * appropriate only inside a text editor. Or, perhaps, a set of bindings might
  * be appropriate only for a given locale, such as bindings that coexist with
  * the Input Method Editor (IME) on Chinese locales.
  * </p>
@@ -50,19 +50,25 @@ import org.eclipse.jface.util.Util;
  * <p>
  * For example, imagine you have a key binding that looks like this:
  * </p>
- * <code><pre>
+ *
+ * <pre>
+ * <code>
  * KeyBinding(command, scheme, context, &quot;Ctrl+Shift+F&quot;)
- * </pre></code>
+ * </code>
+ * </pre>
  * <p>
  * On GTK+, the "Ctrl+Shift+F" interferes with some native behaviour. To change
- * the binding, we first unbind the "Ctrl+Shift+F" key sequence by
- * assigning it a null command on the gtk platform.  We then create a new binding
- * that maps the command to the "Esc Ctrl+F" key sequence.
+ * the binding, we first unbind the "Ctrl+Shift+F" key sequence by assigning it
+ * a null command on the gtk platform. We then create a new binding that maps
+ * the command to the "Esc Ctrl+F" key sequence.
  * </p>
- * <code><pre>
+ * 
+ * <pre>
+ * <code>
  *     KeyBinding("Ctrl+Shift+F",null,scheme,context,null,gtk,null,SYSTEM)
  *     KeyBinding("Esc Ctrl+F",parameterizedCommand,scheme,context,null,gtk,SYSTEM)
- * </pre></code>
+ * </code>
+ * </pre>
  * <p>
  * Bindings are intended to be immutable objects.
  * </p>

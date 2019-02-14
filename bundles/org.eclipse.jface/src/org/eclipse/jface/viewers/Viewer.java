@@ -31,21 +31,14 @@ import org.eclipse.swt.widgets.Item;
  * </p>
  * <p>
  * Implementing a concrete viewer typically involves the following steps:
+ * </p>
  * <ul>
- * <li>
- * create SWT controls for viewer (in constructor) (optional)
- * </li>
- * <li>
- * initialize SWT controls from input (inputChanged)
- * </li>
- * <li>
- * define viewer-specific update methods
- * </li>
- * <li>
- * support selections (<code>setSelection</code>, <code>getSelection</code>)
+ * <li>create SWT controls for viewer (in constructor) (optional)</li>
+ * <li>initialize SWT controls from input (inputChanged)</li>
+ * <li>define viewer-specific update methods</li>
+ * <li>support selections (<code>setSelection</code>, <code>getSelection</code>)
  * </li>
  * </ul>
- * </p>
  */
 public abstract class Viewer implements IInputSelectionProvider {
 

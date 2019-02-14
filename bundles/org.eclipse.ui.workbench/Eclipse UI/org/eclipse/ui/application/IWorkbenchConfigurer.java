@@ -219,13 +219,13 @@ public interface IWorkbenchConfigurer {
     void openFirstTimeWindow();
 
     /**
-	 * Returns <code>true</code> if the workbench should exit when the last
-	 * window is closed, <code>false</code> if the window should just be
-	 * closed, leaving the workbench (and its event loop) running.
+	 * Returns <code>true</code> if the workbench should exit when the last window
+	 * is closed, <code>false</code> if the window should just be closed, leaving
+	 * the workbench (and its event loop) running.
 	 * <p>
-	 * If <code>true</code>, the last window's state is saved before closing,
-	 * so that it will be restored in the next session. This applies only if
-	 * {@link #getSaveAndRestore() returns <code>true</code>}).
+	 * If <code>true</code>, the last window's state is saved before closing, so
+	 * that it will be restored in the next session. This applies only if
+	 * {@link #getSaveAndRestore() getSaveAndRestore()}) returns <code>true</code>.
 	 * </p>
 	 * <p>
 	 * If <code>false</code>, the window is simply closed, losing its state.
@@ -239,9 +239,8 @@ public interface IWorkbenchConfigurer {
 	 * The initial value is <code>true</code>.
 	 * </p>
 	 *
-	 * @return <code>true</code> if the workbench will exit when the last
-	 *         window is closed, <code>false</code> if the window should just
-	 *         be closed
+	 * @return <code>true</code> if the workbench will exit when the last window is
+	 *         closed, <code>false</code> if the window should just be closed
 	 * @since 3.1
 	 */
     boolean getExitOnLastWindowClose();

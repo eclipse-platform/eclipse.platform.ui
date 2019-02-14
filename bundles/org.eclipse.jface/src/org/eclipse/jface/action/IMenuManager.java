@@ -15,17 +15,18 @@ package org.eclipse.jface.action;
 
 /**
  * The <code>IMenuManager</code> interface provides protocol for managing
- * contributions to a menu bar and its sub menus.
- * An <code>IMenuManager</code> is also an <code>IContributionItem</code>,
- * allowing sub-menus to be nested in parent menus.
+ * contributions to a menu bar and its sub menus. An <code>IMenuManager</code>
+ * is also an <code>IContributionItem</code>, allowing sub-menus to be nested in
+ * parent menus.
  * <p>
- * This interface is internal to the framework; it should not be implemented outside
- * the framework.
+ * This interface is internal to the framework; it should not be implemented
+ * outside the framework.
  * </p>
  * <p>
  * This package provides a concrete menu manager implementation,
- * {@link MenuManager <code>MenuManager</code>}.
+ * {@link MenuManager MenuManager}.
  * </p>
+ * 
  * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface IMenuManager extends IContributionManager, IContributionItem {

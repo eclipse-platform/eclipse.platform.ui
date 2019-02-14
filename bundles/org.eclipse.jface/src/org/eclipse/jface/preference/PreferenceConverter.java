@@ -26,24 +26,27 @@ import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Display;
 
 /**
- * A utility class for dealing with preferences whose values are
- * common SWT objects (color, points, rectangles, and font data).
- * The static methods on this class handle the conversion between
- * the SWT objects and their string representations.
+ * A utility class for dealing with preferences whose values are common SWT
+ * objects (color, points, rectangles, and font data). The static methods on
+ * this class handle the conversion between the SWT objects and their string
+ * representations.
  * <p>
  * Usage:
+ * </p>
+ * 
  * <pre>
  * IPreferenceStore store = ...;
  * PreferenceConverter.setValue(store, "bg", new RGB(127,127,127));
  * ...
  * RBG bgColor = PreferenceConverter.getValue(store, "bg");
  * </pre>
- * </p>
  * <p>
- * This class contains static methods and fields only and cannot
- * be instantiated.
+ * This class contains static methods and fields only and cannot be
+ * instantiated.
  * </p>
- * Note: touching this class has the side effect of creating a display (static initializer).
+ * Note: touching this class has the side effect of creating a display (static
+ * initializer).
+ * 
  * @noinstantiate This class is not intended to be instantiated by clients.
  */
 public class PreferenceConverter {

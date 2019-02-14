@@ -17,6 +17,7 @@ import org.eclipse.swt.events.PaintEvent;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Composite;
+
 /**
  * A custom selectable control that can be used to control areas that can be
  * expanded or collapsed. The control control can be toggled between selected
@@ -24,9 +25,9 @@ import org.eclipse.swt.widgets.Composite;
  * has focus.
  * <p>
  * The control is rendered as box with a '+' or '-' sign, depending on the
- * expansion state. Focus indication is rendered around the box when the
- * control has keyboard focus.
- * <p>
+ * expansion state. Focus indication is rendered around the box when the control
+ * has keyboard focus.
+ * </p>
  * <dl>
  * <dt><b>Styles:</b></dt>
  * <dd>None</dd>

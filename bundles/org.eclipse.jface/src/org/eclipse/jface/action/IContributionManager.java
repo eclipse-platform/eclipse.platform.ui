@@ -14,27 +14,27 @@
 package org.eclipse.jface.action;
 
 /**
- * A contribution manager organizes contributions to such UI components
- * as menus, toolbars and status lines.
+ * A contribution manager organizes contributions to such UI components as
+ * menus, toolbars and status lines.
  * <p>
- * A contribution manager keeps track of a list of contribution
- * items. Each contribution item may has an optional identifier, which can be used
- * to retrieve items from a manager, and for positioning items relative to
- * each other. The list of contribution items can be subdivided into named groups
+ * A contribution manager keeps track of a list of contribution items. Each
+ * contribution item may has an optional identifier, which can be used to
+ * retrieve items from a manager, and for positioning items relative to each
+ * other. The list of contribution items can be subdivided into named groups
  * using special contribution items that serve as group markers.
  * </p>
  * <p>
- * The <code>IContributionManager</code> interface provides general
- * protocol for adding, removing, and retrieving contribution items.
- * It also provides convenience methods that make it convenient
- * to contribute actions. This interface should be implemented
- * by all objects that wish to manage contributions.
+ * The <code>IContributionManager</code> interface provides general protocol for
+ * adding, removing, and retrieving contribution items. It also provides
+ * convenience methods that make it convenient to contribute actions. This
+ * interface should be implemented by all objects that wish to manage
+ * contributions.
  * </p>
  * <p>
- * There are several implementions of this interface in this package,
- * including ones for menus ({@link MenuManager <code>MenuManager</code>}),
- * tool bars ({@link ToolBarManager <code>ToolBarManager</code>}),
- * and status lines ({@link StatusLineManager <code>StatusLineManager</code>}).
+ * There are several implementions of this interface in this package, including
+ * ones for menus ({@link MenuManager MenuManager}), tool bars
+ * ({@link ToolBarManager ToolBarManager}), and status lines
+ * ({@link StatusLineManager StatusLineManager}).
  * </p>
  */
 public interface IContributionManager {

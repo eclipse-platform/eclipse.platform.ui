@@ -27,6 +27,7 @@ import org.eclipse.swt.widgets.Listener;
 import org.eclipse.ui.forms.events.HyperlinkAdapter;
 import org.eclipse.ui.forms.events.HyperlinkEvent;
 import org.eclipse.ui.internal.forms.Messages;
+
 /**
  * A custom selectable control that can be used to control areas that can be
  * expanded or collapsed.
@@ -34,7 +35,7 @@ import org.eclipse.ui.internal.forms.Messages;
  * This is an abstract class. Subclasses are responsible for rendering the
  * control using decoration and hover decoration color. Control should be
  * rendered based on the current expansion state.
- * <p>
+ * </p>
  * <dl>
  * <dt><b>Styles:</b></dt>
  * <dd>None</dd>

@@ -27,30 +27,23 @@ import org.eclipse.swt.widgets.Control;
  * A content viewer is a model-based adapter on a widget which accesses its
  * model by means of a content provider and a label provider.
  * <p>
- * A viewer's model consists of elements, represented by objects.
- * A viewer defines and implements generic infrastructure for handling model
- * input, updates, and selections in terms of elements.
- * Input is obtained by querying an <code>IContentProvider</code> which returns
- * elements. The elements themselves are not displayed directly.  They are
- * mapped to labels, containing text and/or an image, using the viewer's
- * <code>ILabelProvider</code>.
+ * A viewer's model consists of elements, represented by objects. A viewer
+ * defines and implements generic infrastructure for handling model input,
+ * updates, and selections in terms of elements. Input is obtained by querying
+ * an <code>IContentProvider</code> which returns elements. The elements
+ * themselves are not displayed directly. They are mapped to labels, containing
+ * text and/or an image, using the viewer's <code>ILabelProvider</code>.
  * </p>
  * <p>
- * Implementing a concrete content viewer typically involves the following steps:
- * <ul>
- * <li>
- * create SWT controls for viewer (in constructor) (optional)
- * </li>
- * <li>
- * initialize SWT controls from input (inputChanged)
- * </li>
- * <li>
- * define viewer-specific update methods
- * </li>
- * <li>
- * support selections (<code>setSelection</code>, <code>getSelection</code>)
- * </ul>
+ * Implementing a concrete content viewer typically involves the following
+ * steps:
  * </p>
+ * <ul>
+ * <li>create SWT controls for viewer (in constructor) (optional)</li>
+ * <li>initialize SWT controls from input (inputChanged)</li>
+ * <li>define viewer-specific update methods</li>
+ * <li>support selections (<code>setSelection</code>, <code>getSelection</code>)
+ * </ul>
  */
 public abstract class ContentViewer extends Viewer {
 

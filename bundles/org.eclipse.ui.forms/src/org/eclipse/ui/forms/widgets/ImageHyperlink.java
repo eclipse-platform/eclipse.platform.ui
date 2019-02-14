@@ -31,10 +31,11 @@ import org.eclipse.swt.widgets.Event;
  * When image is taller than the text, additional style can be provided to
  * control vertical alignment (supported values are SWT.TOP, SWT.BOTTOM and
  * SWT.CENTER).
+ * </p>
  * <p>
  * The class does not need to be subclassed but it is allowed to do so if some
  * aspect of the image hyperlink needs to be modified.
- * <p>
+ * </p>
  * <dl>
  * <dt><b>Styles:</b></dt>
  * <dd>SWT.WRAP, SWT.BOTTOM, SWT.TOP, SWT.MIDDLE, SWT.LEFT, SWT.RIGHT</dd>

@@ -17,15 +17,16 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.swt.graphics.Image;
 
 /**
- * The <code>IStatusLineManager</code> interface provides protocol
- * for displaying messages on a status line, for monitoring progress,
- * and for managing contributions to the status line.
+ * The <code>IStatusLineManager</code> interface provides protocol for
+ * displaying messages on a status line, for monitoring progress, and for
+ * managing contributions to the status line.
  * <p>
- * <b>Note:</b> An error message overrides the current message until
- * the error message is cleared.
- * </p><p>
+ * <b>Note:</b> An error message overrides the current message until the error
+ * message is cleared.
+ * </p>
+ * <p>
  * This package also provides a concrete status line manager implementation,
- * {@link StatusLineManager <code>StatusLineManager</code>}.
+ * {@link StatusLineManager StatusLineManager}.
  * </p>
  */
 public interface IStatusLineManager extends IContributionManager {

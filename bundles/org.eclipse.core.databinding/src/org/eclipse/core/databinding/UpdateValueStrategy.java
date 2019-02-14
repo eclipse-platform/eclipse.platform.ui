@@ -66,6 +66,7 @@ import org.eclipse.core.runtime.Status;
  * </ul>
  * <p>
  * The update phases are:
+ * </p>
  * <ol>
  * <li>Validate after get - {@link #validateAfterGet(Object)}</li>
  * <li>Conversion - {@link #convert(Object)}</li>
@@ -73,9 +74,8 @@ import org.eclipse.core.runtime.Status;
  * <li>Validate before set - {@link #validateBeforeSet(Object)}</li>
  * <li>Value set - {@link #doSet(IObservableValue, Object)}</li>
  * </ol>
- * </p>
  * <p>
- * Validation:<br/>
+ * Validation:<br>
  * {@link IValidator Validators} validate the value at multiple phases in the
  * update process. Statuses returned from validators are aggregated into a
  * <code>MultiStatus</code> until a status of <code>ERROR</code> or
@@ -84,25 +84,23 @@ import org.eclipse.core.runtime.Status;
  * {@link Binding#getValidationStatus() binding validation status}.
  * </p>
  * <p>
- * Conversion:<br/>
+ * Conversion:<br>
  * A {@link IConverter converter} will convert the value from the type of the
  * source observable into the type of the destination. The strategy has the
  * ability to default converters for common scenarios.
  * </p>
  * <p>
- * Automatic processing:<br/>
+ * Automatic processing:<br>
  * The processing to perform when the source observable changes. This behavior
  * is configured via policies provided on construction of the strategy (e.g.
  * {@link #POLICY_NEVER}, {@link #POLICY_CONVERT}, {@link #POLICY_ON_REQUEST},
  * {@link #POLICY_UPDATE}).
  * </p>
  *
- * @param <S>
- *            the type of the value on the source side (i.e. the model side if
+ * @param <S> the type of the value on the source side (i.e. the model side if
  *            this is a model-to-target update and the target side if this is a
  *            target-to-model update)
- * @param <D>
- *            the type of the value on the destination side (i.e. the target
+ * @param <D> the type of the value on the destination side (i.e. the target
  *            side if this is a model-to-target update and the model side if
  *            this is a target-to-model update)
  * @see DataBindingContext#bindValue(IObservableValue, IObservableValue,

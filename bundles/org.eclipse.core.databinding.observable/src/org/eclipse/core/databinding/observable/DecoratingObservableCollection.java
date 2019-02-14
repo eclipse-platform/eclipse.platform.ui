@@ -21,7 +21,7 @@ import java.util.Iterator;
 /**
  * An observable collection which decorates another observable collection
  *
- * @param <E>
+ * @param <E> type of the elements in the collection
  *
  * @since 1.2
  */

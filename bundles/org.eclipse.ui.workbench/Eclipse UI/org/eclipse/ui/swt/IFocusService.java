@@ -29,7 +29,6 @@ import org.eclipse.swt.widgets.Control;
  * specific text controls outside of the normal workbench part lifecycle, like a
  * control contributed to the trim. For example:
  * </p>
- * <p>
  *
  * <pre>
  * &lt;handler
@@ -43,16 +42,16 @@ import org.eclipse.swt.widgets.Control;
  * &lt;/handler&gt;
  * </pre>
  *
- * </p>
  * <p>
  * This service can be acquired from your service locator:
+ * </p>
+ * 
  * <pre>
- * 	IFocusService service = (IFocusService) getSite().getService(IFocusService.class);
+ * IFocusService service = (IFocusService) getSite().getService(IFocusService.class);
  * </pre>
  * <ul>
  * <li>This service is available globally.</li>
  * </ul>
- * </p>
  *
  * @noimplement This interface is not intended to be implemented by clients.
  *

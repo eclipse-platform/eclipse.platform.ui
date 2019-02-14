@@ -84,7 +84,7 @@ import org.eclipse.core.runtime.Assert;
  * 		beanValue.getValue(), Date.class);
  * dbc.bindValue(new DateAndTimeObservableValue(dateObservable, timeObservable), beanValue);
  *
- * <pre>
+ * </pre>
  *
  * @since 1.2
  */

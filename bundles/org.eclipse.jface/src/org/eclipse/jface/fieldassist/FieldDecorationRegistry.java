@@ -27,7 +27,6 @@ import org.eclipse.swt.graphics.Image;
  * decorations within an application. Unlike resource registries, the
  * FieldDecorationRegistry does not perform any lifecycle management of the
  * decorations.
- * </p>
  * <p>
  * Clients may specify images for the decorations in several different ways.
  * Images may be described by their image id in a specified

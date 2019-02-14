@@ -23,21 +23,24 @@ import org.eclipse.swt.widgets.Control;
  * GridData. This offers several benefits over creating GridData normal way:
  *
  * <ul>
- * <li>The same factory can be used many times to create several GridData instances</li>
- * <li>The setters on GridDataFactory all return "this", allowing them to be chained</li>
- * <li>GridDataFactory uses vector setters (it accepts Points), making it easy to
- *     set X and Y values together</li>
+ * <li>The same factory can be used many times to create several GridData
+ * instances</li>
+ * <li>The setters on GridDataFactory all return "this", allowing them to be
+ * chained</li>
+ * <li>GridDataFactory uses vector setters (it accepts Points), making it easy
+ * to set X and Y values together</li>
  * </ul>
  *
  * <p>
- * GridDataFactory instances are created using one of the static methods on this class.
+ * GridDataFactory instances are created using one of the static methods on this
+ * class.
  * </p>
  *
  * <p>
  * Example usage:
  * </p>
- * <code><pre>
- *
+ * <pre>
+ * <code>
  * ////////////////////////////////////////////////////////////
  * // Example 1: Typical grid data for a non-wrapping label
  *
@@ -105,8 +108,8 @@ import org.eclipse.swt.widgets.Control;
  *
  *     // Generates GridData equivalent to example 4
  *     GridDataFactory.generate(button, 1, 1);
- *
- * </pre></code>
+ * </code>
+ * </pre>
  *
  * @since 3.2
  */

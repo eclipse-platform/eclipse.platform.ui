@@ -2389,8 +2389,8 @@ public abstract class FilteredItemsSelectionDialog extends SelectionStatusDialog
 		 * Matches an item against filter conditions.
 		 *
 		 * @param item
-		 * @return <code>true<code> if item matches against filter conditions, <code>false</code>
-		 *         otherwise
+		 * @return <code>true</code> if item matches against filter conditions,
+		 *         <code>false</code> otherwise
 		 */
 		public abstract boolean matchItem(Object item);
 

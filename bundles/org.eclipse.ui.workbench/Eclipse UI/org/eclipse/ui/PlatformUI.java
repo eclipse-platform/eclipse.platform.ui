@@ -32,7 +32,6 @@ import org.eclipse.ui.testing.TestableObject;
  * <li>creation of the workbench.</li>
  * <li>access to the workbench.</li>
  * </ul>
- * <p>
  *
  * @see IWorkbench
  */

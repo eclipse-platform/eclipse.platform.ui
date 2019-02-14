@@ -22,7 +22,6 @@ import org.eclipse.ui.services.IServiceLocator;
  * ContributionManagers. In {@link #createContributionItems(IServiceLocator, IContributionRoot)}
  * you fill in the additions List with {@link IContributionItem} to be inserted at this
  * factory's location. For example:
- * <p>
  *
  * <pre>
  * AbstractContributionFactory contributions = new AbstractContributionFactory(
@@ -50,8 +49,6 @@ import org.eclipse.ui.services.IServiceLocator;
  * 		IMenuService.class);
  * service.addContributionFactory(contributions);
  * </pre>
- *
- * </p>
  *
  * <p>
  * Clients who are providing factories via the <code>org.eclipse.ui.menus</code>

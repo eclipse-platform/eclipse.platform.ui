@@ -35,7 +35,6 @@ import org.eclipse.core.databinding.observable.set.IObservableSet;
  *              implement this interface. Note that direct implementers of this
  *              interface outside of the framework will be broken in future
  *              releases when methods are added to this interface.
- *              </p>
  *
  * @since 1.0
  */

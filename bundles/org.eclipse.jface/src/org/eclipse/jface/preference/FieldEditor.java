@@ -13,10 +13,10 @@
  *******************************************************************************/
 package org.eclipse.jface.preference;
 
+import org.eclipse.core.runtime.Assert;
 import org.eclipse.jface.dialogs.DialogPage;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.resource.JFaceResources;
-import org.eclipse.core.runtime.Assert;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.swt.SWT;
@@ -32,33 +32,32 @@ import org.eclipse.swt.widgets.Label;
 /**
  * Abstract base class for all field editors.
  * <p>
- * A field editor presents the value of a preference to the end
- * user. The value is loaded from a preference store; if
- * modified by the end user, the value is validated and eventually
- * stored back to the preference store. A field editor reports
- * an event when the value, or the validity of the value, changes.
+ * A field editor presents the value of a preference to the end user. The value
+ * is loaded from a preference store; if modified by the end user, the value is
+ * validated and eventually stored back to the preference store. A field editor
+ * reports an event when the value, or the validity of the value, changes.
  * </p>
  * <p>
- * Field editors should be used in conjunction with a field
- * editor preference page (<code>FieldEditorPreferencePage</code>)
- * which coordinates everything and provides the message line
- * which display messages emanating from the editor.
+ * Field editors should be used in conjunction with a field editor preference
+ * page (<code>FieldEditorPreferencePage</code>) which coordinates everything
+ * and provides the message line which display messages emanating from the
+ * editor.
  * </p>
  * <p>
- * This package contains ready-to-use field editors for various
- * types of preferences:
+ * This package contains ready-to-use field editors for various types of
+ * preferences:
+ * </p>
  * <ul>
- *   <li><code>BooleanFieldEditor</code> - booleans</li>
- *   <li><code>IntegerFieldEditor</code> - integers</li>
- *   <li><code>StringFieldEditor</code> - text strings</li>
- *   <li><code>RadioGroupFieldEditor</code> - enumerations</li>
- *   <li><code>ColorFieldEditor</code> - RGB colors</li>
- *   <li><code>FontFieldEditor</code> - fonts</li>
- *   <li><code>DirectoryFieldEditor</code> - directories</li>
- *   <li><code>FileFieldEditor</code> - files</li>
- *   <li><code>PathEditor</code> - paths</li>
+ * <li><code>BooleanFieldEditor</code> - booleans</li>
+ * <li><code>IntegerFieldEditor</code> - integers</li>
+ * <li><code>StringFieldEditor</code> - text strings</li>
+ * <li><code>RadioGroupFieldEditor</code> - enumerations</li>
+ * <li><code>ColorFieldEditor</code> - RGB colors</li>
+ * <li><code>FontFieldEditor</code> - fonts</li>
+ * <li><code>DirectoryFieldEditor</code> - directories</li>
+ * <li><code>FileFieldEditor</code> - files</li>
+ * <li><code>PathEditor</code> - paths</li>
  * </ul>
- * </p>
  */
 public abstract class FieldEditor {
 
@@ -564,22 +563,23 @@ public abstract class FieldEditor {
     }
 
     /**
-     * Sets the name of the preference this field editor operates on.
-     * <p>
-     * The ability to change this allows the same field editor object
-     * to be reused for different preferences.
-     * </p>
-     * <p>
-     * For example: <p>
-     * <pre>
-     * 	...
-     *  editor.setPreferenceName("font");
-     * 	editor.load();
-     * </pre>
-     * </p>
-     *
-     * @param name the name of the preference
-     */
+	 * Sets the name of the preference this field editor operates on.
+	 * <p>
+	 * The ability to change this allows the same field editor object to be reused
+	 * for different preferences.
+	 * </p>
+	 * <p>
+	 * For example:
+	 * </p>
+	 * 
+	 * <pre>
+	 * 	...
+	 *  editor.setPreferenceName("font");
+	 * 	editor.load();
+	 * </pre>
+	 *
+	 * @param name the name of the preference
+	 */
     public void setPreferenceName(String name) {
         preferenceName = name;
     }

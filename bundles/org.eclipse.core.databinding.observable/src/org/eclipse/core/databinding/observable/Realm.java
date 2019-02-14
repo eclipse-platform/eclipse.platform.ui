@@ -125,10 +125,9 @@ public abstract class Realm {
 	Queue workQueue = new Queue();
 
 	/**
-	 * Runs the given runnable. If an exception occurs within the runnable, it
-	 * is logged and not re-thrown. If the runnable implements
-	 * {@link ISafeRunnable}, the exception is passed to its
-	 * <code>handleException<code> method.
+	 * Runs the given runnable. If an exception occurs within the runnable, it is
+	 * logged and not re-thrown. If the runnable implements {@link ISafeRunnable},
+	 * the exception is passed to its <code>handleException</code> method.
 	 *
 	 * @param runnable
 	 */

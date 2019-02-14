@@ -35,7 +35,7 @@ import org.eclipse.ui.internal.forms.widgets.FormUtil;
  * for all the hyperlinks that belong to it.
  * <p>
  * Hyperlink can be extended.
- * <p>
+ * </p>
  * <dl>
  * <dt><b>Styles:</b></dt>
  * <dd>SWT.WRAP</dd>

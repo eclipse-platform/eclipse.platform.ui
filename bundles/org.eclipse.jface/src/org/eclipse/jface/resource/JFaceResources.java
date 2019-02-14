@@ -43,13 +43,14 @@ import org.osgi.framework.FrameworkUtil;
  * </p>
  * <p>
  * The following global state is also maintained by this class:
+ * </p>
  * <ul>
  * <li>a font registry</li>
  * <li>a color registry</li>
  * <li>an image registry</li>
  * <li>a resource bundle</li>
  * </ul>
- * </p>
+ * 
  * @noinstantiate This class is not intended to be instantiated by clients.
  * @noextend This class is not intended to be subclassed by clients.
  */

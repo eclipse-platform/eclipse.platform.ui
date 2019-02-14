@@ -56,14 +56,14 @@ import org.eclipse.ui.internal.ide.dialogs.IDEResourceInfoUtils;
  * the selected resources and all of their descendants.
  * <p>
  * This class may be instantiated; it may also subclass to extend:
+ * </p>
  * <ul>
  * <li>getSelectedResources - A list containing 0 or more resources to be
  * refreshed</li>
  * <li>updateSelection - controls when this action is enabled</li>
- * <li>refreshResource - can be extended to refresh model objects related to
- * the resource</li>
- * <ul>
- * </p>
+ * <li>refreshResource - can be extended to refresh model objects related to the
+ * resource</li>
+ * </ul>
  */
 public class RefreshAction extends WorkspaceAction {
 

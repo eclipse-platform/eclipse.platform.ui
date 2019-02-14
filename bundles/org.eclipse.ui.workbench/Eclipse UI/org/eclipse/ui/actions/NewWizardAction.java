@@ -141,16 +141,15 @@ public class NewWizardAction extends Action implements
 	/**
 	 * <p>
 	 * Sets the title of the wizard window
-	 * <p>
-	 *
-	 * <p>
-	 * If the title of the wizard window is <code>null</code>, the default
-	 * wizard window title will be used.
 	 * </p>
 	 *
-	 * @param windowTitle
-	 *            The title of the wizard window, otherwise <code>null</code>
-	 *            (default wizard window title).
+	 * <p>
+	 * If the title of the wizard window is <code>null</code>, the default wizard
+	 * window title will be used.
+	 * </p>
+	 *
+	 * @param windowTitle The title of the wizard window, otherwise
+	 *                    <code>null</code> (default wizard window title).
 	 *
 	 * @since 3.6
 	 */

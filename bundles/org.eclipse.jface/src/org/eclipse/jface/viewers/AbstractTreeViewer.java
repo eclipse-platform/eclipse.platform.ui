@@ -66,7 +66,7 @@ import org.eclipse.swt.widgets.Widget;
  * <p>
  * <strong> This class is not intended to be subclassed outside of the JFace
  * viewers framework.</strong>
- * <p>
+ * </p>
  *
  * @see TreeViewer
  */
@@ -1591,15 +1591,13 @@ public abstract class AbstractTreeViewer extends ColumnViewer {
 	 * Recursively collapses the subtree rooted at the given widget to the given
 	 * level.
 	 * <p>
-	 * </p>
 	 * Note that the default implementation of this method does not call
 	 * <code>setRedraw</code>.
+	 * </p>
 	 *
-	 * @param widget
-	 *            the widget
-	 * @param level
-	 *            non-negative level, or <code>ALL_LEVELS</code> to collapse
-	 *            all levels of the tree
+	 * @param widget the widget
+	 * @param level  non-negative level, or <code>ALL_LEVELS</code> to collapse all
+	 *               levels of the tree
 	 */
 	protected void internalCollapseToLevel(Widget widget, int level) {
 		if (level == ALL_LEVELS || level > 0) {
@@ -1784,15 +1782,13 @@ public abstract class AbstractTreeViewer extends ColumnViewer {
 	 * Recursively expands the subtree rooted at the given widget to the given
 	 * level.
 	 * <p>
-	 * </p>
 	 * Note that the default implementation of this method does not call
 	 * <code>setRedraw</code>.
+	 * </p>
 	 *
-	 * @param widget
-	 *            the widget
-	 * @param level
-	 *            non-negative level, or <code>ALL_LEVELS</code> to collapse
-	 *            all levels of the tree
+	 * @param widget the widget
+	 * @param level  non-negative level, or <code>ALL_LEVELS</code> to collapse all
+	 *               levels of the tree
 	 */
 	protected void internalExpandToLevel(Widget widget, int level) {
 		if (level == ALL_LEVELS || level > 0) {

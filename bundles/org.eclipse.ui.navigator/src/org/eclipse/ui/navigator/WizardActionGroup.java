@@ -44,18 +44,17 @@ import org.eclipse.ui.wizards.IWizardRegistry;
  *
  * Populates context menus with shortcut actions for defined wizards. Wizards
  * may be defined by any of the following extension points:
- * <p>
  * <ul>
  * <li><b>org.eclipse.ui.newWizards</b></li>
  * <li><b>org.eclipse.ui.importWizards</b></li>
  * <li><b>org.eclipse.ui.exportWizards</b></li>
  * </ul>
- * </p>
  * <p>
  * Here are the required steps for using this feature correctly:
+ * </p>
  * <ol>
- * <li>Declare all new/import/export wizards from the extension points above,
- * or locate the existing wizards that you intend to reuse.</li>
+ * <li>Declare all new/import/export wizards from the extension points above, or
+ * locate the existing wizards that you intend to reuse.</li>
  * <li>Declare <b>org.eclipse.ui.navigator.navigatorContent/commonWizard</b>
  * elements to identify which wizards should be associated with what items in
  * your viewer or navigator.</li>
@@ -67,7 +66,6 @@ import org.eclipse.ui.wizards.IWizardRegistry;
  * to list out the available wizard shortcuts via
  * {@link WizardActionGroup#fillContextMenu(IMenuManager)}.</li>
  * </ol>
- * </p>
  *
  * @see PlatformUI#getWorkbench()
  * @see IWorkbench#getNewWizardRegistry()

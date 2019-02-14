@@ -176,18 +176,16 @@ public class ObservableTracker {
 	/**
 	 * If the argument is <code>true</code>, causes subsequent calls to
 	 * {@link #getterCalled(IObservable)} and
-	 * {@link #observableCreated(IObservable)} to be ignored on the current
-	 * thread. When the flag is set to <code>false</code>, calls to
+	 * {@link #observableCreated(IObservable)} to be ignored on the current thread.
+	 * When the flag is set to <code>false</code>, calls to
 	 * {@link #getterCalled(IObservable)} and
-	 * {@link #observableCreated(IObservable)} will resume gathering
-	 * observables. Nested calls to this method are stacked.
+	 * {@link #observableCreated(IObservable)} will resume gathering observables.
+	 * Nested calls to this method are stacked.
 	 *
-	 * @param ignore
-	 *            the new ignore state
+	 * @param ignore the new ignore state
 	 *
-	 * @exception IllegalStateException
-	 *                if
-	 *                <code>ignore<code> is false and the ignore count is already zero.
+	 * @exception IllegalStateException if <code>ignore</code> is false and the
+	 *                                  ignore count is already zero.
 	 *
 	 * @see #getterCalled(IObservable)
 	 * @see #observableCreated(IObservable)

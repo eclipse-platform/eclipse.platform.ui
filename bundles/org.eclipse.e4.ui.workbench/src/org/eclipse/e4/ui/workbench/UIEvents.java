@@ -95,7 +95,8 @@ public class UIEvents {
 	public static final String ALL_ELEMENT_ID = "ALL"; //$NON-NLS-1$
 
 	/**
-	 * E4 UI Event Types. Add appropriate utility is<Test> method below if new types added
+	 * E4 UI Event Types. Add appropriate utility is &lt;Test&gt; method below if
+	 * new types added
 	 */
 	public interface EventTypes {
 		/**

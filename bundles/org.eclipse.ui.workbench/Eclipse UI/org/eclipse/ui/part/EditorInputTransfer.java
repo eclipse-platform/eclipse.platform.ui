@@ -21,7 +21,6 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.StringReader;
 import java.io.StringWriter;
-
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.swt.dnd.ByteArrayTransfer;
 import org.eclipse.swt.dnd.TransferData;
@@ -62,7 +61,6 @@ import org.eclipse.ui.XMLMemento;
  * Below is an example of how to set the data for dragging a single editor
  * input using a <code>EditorInputTransfer</code>.
  * </p>
- * <p>
  * <pre>
  * public void dragSetData(DragSourceEvent event) {
  * 		if (EditorInputTransfer.getInstance().isSupportedType(event.dataType)) {
@@ -74,7 +72,6 @@ import org.eclipse.ui.XMLMemento;
  * 		}
  * }
  * </pre>
- * </p>
  *
  * @see org.eclipse.jface.viewers.StructuredViewer
  * @see org.eclipse.swt.dnd.DropTarget

@@ -50,9 +50,9 @@ import org.eclipse.ui.internal.WorkbenchPlugin;
  * <p>
  * Within the workbench there are many views which track the active part. If a
  * part is activated these views display some properties for the active part. A
- * simple example is the <code>Outline View</code>, which displays the
- * outline for the active editor. To avoid loss of context when part activation
- * changes, these views may implement a multi-page approach. A separate page is
+ * simple example is the <code>Outline View</code>, which displays the outline
+ * for the active editor. To avoid loss of context when part activation changes,
+ * these views may implement a multi-page approach. A separate page is
  * maintained within the view for each source view. If a part is activated the
  * associated page for the part is brought to top. If a part is closed the
  * associated page is disposed. <code>PageBookView</code> is a base
@@ -63,9 +63,9 @@ import org.eclipse.ui.internal.WorkbenchPlugin;
  * their pages. This site is supplied during the page's initialization. The page
  * may supply a selection provider for this site. <code>PageBookView</code>s
  * deal with these selection providers in a similar way to a workbench page's
- * <code>SelectionService</code>. When a page is made visible, if its site
- * has a selection provider, then changes in the selection are listened for and
- * the current selection is obtained and fired as a selection change event.
+ * <code>SelectionService</code>. When a page is made visible, if its site has a
+ * selection provider, then changes in the selection are listened for and the
+ * current selection is obtained and fired as a selection change event.
  * Selection changes are no longer listened for when a page is made invisible.
  * </p>
  * <p>
@@ -75,35 +75,35 @@ import org.eclipse.ui.internal.WorkbenchPlugin;
  * <p>
  * When a <code>PageBookView</code> is created the following methods are
  * invoked. Subclasses must implement these.
+ * </p>
  * <ul>
- * <li><code>createDefaultPage</code> - called to create a default page for
- * the view. This page is displayed when the active part in the workbench does
- * not have a page.</li>
+ * <li><code>createDefaultPage</code> - called to create a default page for the
+ * view. This page is displayed when the active part in the workbench does not
+ * have a page.</li>
  * <li><code>getBootstrapPart</code> - called to determine the active part in
  * the workbench. A page will be created for this part</li>
  * </ul>
- * </p>
  * <p>
  * When a part is activated the base implementation does not know if a page
  * should be created for the part. Therefore, it delegates creation to the
  * subclass.
+ * </p>
  * <ul>
  * <li><code>isImportant</code> - called when a workbench part is activated.
  * Subclasses return whether a page should be created for the new part.</li>
- * <li><code>doCreatePage</code> - called to create a page for a particular
- * part in the workbench. This is only invoked when <code>isImportant</code>
- * returns </code>true</code>.</li>
+ * <li><code>doCreatePage</code> - called to create a page for a particular part
+ * in the workbench. This is only invoked when <code>isImportant</code> returns
+ * <code>true</code>.</li>
  * </ul>
- * </p>
  * <p>
  * When a part is closed the base implementation will destroy the page
  * associated with the particular part. The page was created by a subclass, so
  * the subclass must also destroy it. Subclasses must implement these.
+ * </p>
  * <ul>
  * <li><code>doDestroyPage</code> - called to destroy a page for a particular
  * part in the workbench.</li>
  * </ul>
- * </p>
  */
 public abstract class PageBookView extends ViewPart implements IPartListener {
 	/**

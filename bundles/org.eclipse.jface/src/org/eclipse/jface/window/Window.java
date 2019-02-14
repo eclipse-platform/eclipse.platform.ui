@@ -42,15 +42,16 @@ import org.eclipse.swt.widgets.Shell;
  * until it is told to open.
  * <p>
  * Creating a window involves the following steps:
+ * </p>
  * <ul>
- * <li>creating an instance of a concrete subclass of <code>Window</code>
- * </li>
+ * <li>creating an instance of a concrete subclass of <code>Window</code></li>
  * <li>creating the window's shell and widget tree by calling
  * <code>create</code> (optional)</li>
  * <li>assigning the window to a window manager using
  * <code>WindowManager.add</code> (optional)</li>
  * <li>opening the window by calling <code>open</code></li>
  * </ul>
+ * <p>
  * Opening the window will create its shell and widget tree if they have not
  * already been created. When the window is closed, the shell and widget tree
  * are disposed of and are no longer referenced, and the window is automatically
@@ -59,30 +60,30 @@ import org.eclipse.swt.widgets.Shell;
  * <p>
  * The JFace window framework (this package) consists of this class,
  * <code>Window</code>, the abstract base of all windows, and one concrete
- * window classes (<code>ApplicationWindow</code>) which may also be
- * subclassed. Clients may define additional window subclasses as required.
+ * window classes (<code>ApplicationWindow</code>) which may also be subclassed.
+ * Clients may define additional window subclasses as required.
  * </p>
  * <p>
- * The <code>Window</code> class provides methods that subclasses may
- * override to configure the window, including:
+ * The <code>Window</code> class provides methods that subclasses may override
+ * to configure the window, including:
+ * </p>
  * <ul>
  * <li><code>close</code>- extend to free other SWT resources</li>
  * <li><code>configureShell</code>- extend or reimplement to set shell
  * properties before window opens</li>
  * <li><code>createContents</code>- extend or reimplement to create controls
  * before window opens</li>
- * <li><code>getInitialSize</code>- reimplement to give the initial size for
- * the shell</li>
- * <li><code>getInitialLocation</code>- reimplement to give the initial
- * location for the shell</li>
+ * <li><code>getInitialSize</code>- reimplement to give the initial size for the
+ * shell</li>
+ * <li><code>getInitialLocation</code>- reimplement to give the initial location
+ * for the shell</li>
  * <li><code>getShellListener</code>- extend or reimplement to receive shell
  * events</li>
  * <li><code>handleFontChange</code>- reimplement to respond to font changes
  * </li>
- * <li><code>handleShellCloseEvent</code>- extend or reimplement to handle
- * shell closings</li>
+ * <li><code>handleShellCloseEvent</code>- extend or reimplement to handle shell
+ * closings</li>
  * </ul>
- * </p>
  */
 public abstract class Window implements IShellProvider {
 

@@ -26,28 +26,30 @@ import org.eclipse.swt.widgets.Composite;
  * The required attributes of property descriptors (id and display name) are
  * passed to the constructor; the optional attributes can be configured using
  * the various set methods (all have reasonable default values):
+ * </p>
  * <ul>
- *   <li><code>setDescription</code></li>
- *   <li><code>setCategory</code></li>
- *   <li><code>setLabelProvider</code></li>
- *   <li><code>setHelpContexts</code></li>
+ * <li><code>setDescription</code></li>
+ * <li><code>setCategory</code></li>
+ * <li><code>setLabelProvider</code></li>
+ * <li><code>setHelpContexts</code></li>
  * </ul>
+ * <p>
  * Subclasses should reimplement <code>getPropertyEditor</code> to provide a
  * cell editor for changing the value; otherwise the property will be
  * effectively read only.
  * </p>
  * <p>
- * There are several concrete subclasses provided in this package that cover
- * the most common cases:
- * <ul>
- *   <li><code>TextPropertyDescriptor</code> - edits with a
- *      <code>TextCellEditor</code></li>
- *   <li><code>ComboBoxPropertyDescriptor - edits with a
- *      <code>ComboBoxCellEditor</code></code></li>
- *   <li><code>ColorPropertyDescriptor - edits with a
- *      <code>ColorCellEditor</code></code></li>
- * </ul>
+ * There are several concrete subclasses provided in this package that cover the
+ * most common cases:
  * </p>
+ * <ul>
+ * <li><code>TextPropertyDescriptor</code> - edits with a
+ * <code>TextCellEditor</code></li>
+ * <li><code>ComboBoxPropertyDescriptor</code> - edits with a
+ * <code>ComboBoxCellEditor</code></li>
+ * <li><code>ColorPropertyDescriptor</code> - edits with a
+ * <code>ColorCellEditor</code></li>
+ * </ul>
  */
 public class PropertyDescriptor implements IPropertyDescriptor {
 

@@ -41,10 +41,8 @@ import org.eclipse.swt.widgets.Shell;
  * </p>
  * <p>
  * Typical usage is:
- *
+ * </p>
  * <pre>
- *
- *
  *    try {
  *       IRunnableWithProgress op = ...;
  *       new ProgressMonitorDialog(activeShell).run(true, true, op);
@@ -53,11 +51,8 @@ import org.eclipse.swt.widgets.Shell;
  *    } catch (InterruptedException e) {
  *       // handle cancelation
  *    }
- *
- *
  * </pre>
  *
- * </p>
  * <p>
  * Note that the ProgressMonitorDialog is not intended to be used with multiple
  * runnables - this dialog should be discarded after completion of one

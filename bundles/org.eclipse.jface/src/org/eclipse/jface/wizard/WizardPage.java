@@ -13,42 +13,44 @@
  *******************************************************************************/
 package org.eclipse.jface.wizard;
 
+import org.eclipse.core.runtime.Assert;
 import org.eclipse.jface.dialogs.DialogPage;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.core.runtime.Assert;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Shell;
 
 /**
  * An abstract base implementation of a wizard page.
  * <p>
- * Subclasses must implement the <code>createControl</code> method
- * to create the specific controls for the wizard page.
+ * Subclasses must implement the <code>createControl</code> method to create the
+ * specific controls for the wizard page.
  * </p>
  * <p>
  * Subclasses may call the following methods to configure the wizard page:
- * <ul>
- *  <li><code>setDescription</code></li>
- *  <li><code>setErrorMessage</code></li>
- *  <li><code>setImageDescriptor</code></li>
- *  <li><code>setMessage</code></li>
- *  <li><code>setPageComplete</code></li>
- *  <li><code>setPreviousPage</code></li>
- *  <li><code>setTitle</code></li>
- * </ul>
  * </p>
+ * <ul>
+ * <li><code>setDescription</code></li>
+ * <li><code>setErrorMessage</code></li>
+ * <li><code>setImageDescriptor</code></li>
+ * <li><code>setMessage</code></li>
+ * <li><code>setPageComplete</code></li>
+ * <li><code>setPreviousPage</code></li>
+ * <li><code>setTitle</code></li>
+ * </ul>
  * <p>
  * Subclasses may override these methods if required:
- * <ul>
- *  <li><code>performHelp</code> - may be reimplemented to display help for the page</li>
- * <li><code>canFlipToNextPage</code> - may be extended or reimplemented</li>
- *  <li><code>isPageComplete</code> - may be extended </li>
- *  <li><code>setDescription</code> - may be extended </li>
- *  <li><code>setTitle</code> - may be extended </li>
- *  <li><code>dispose</code> - may be extended to dispose additional allocated SWT resources</li>
- * </ul>
  * </p>
+ * <ul>
+ * <li><code>performHelp</code> - may be reimplemented to display help for the
+ * page</li>
+ * <li><code>canFlipToNextPage</code> - may be extended or reimplemented</li>
+ * <li><code>isPageComplete</code> - may be extended</li>
+ * <li><code>setDescription</code> - may be extended</li>
+ * <li><code>setTitle</code> - may be extended</li>
+ * <li><code>dispose</code> - may be extended to dispose additional allocated
+ * SWT resources</li>
+ * </ul>
  * <p>
  * Note that clients are free to implement <code>IWizardPage</code> from scratch
  * instead of subclassing <code>WizardPage</code>. Correct implementations of

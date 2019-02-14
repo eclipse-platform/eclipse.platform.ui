@@ -20,21 +20,20 @@ import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.ToolBar;
 
 /**
- * A contribution item represents a contribution to a shared UI resource such as a
- * menu or tool bar. More generally, contribution items are managed by a contribution
- * manager.
- * For instance, in a tool bar a contribution item is a tool bar button or a separator.
- * In a menu bar a contribution item is a menu, and in a menu a contribution item
- * is a menu item or separator.
+ * A contribution item represents a contribution to a shared UI resource such as
+ * a menu or tool bar. More generally, contribution items are managed by a
+ * contribution manager. For instance, in a tool bar a contribution item is a
+ * tool bar button or a separator. In a menu bar a contribution item is a menu,
+ * and in a menu a contribution item is a menu item or separator.
  * <p>
- * A contribution item can realize itself in different SWT widgets, using the different
- * <code>fill</code> methods.  The same type of contribution item can be used with a
- * <code>MenuBarManager</code>, <code>ToolBarManager</code>, <code>CoolBarManager</code>,
- * </code>or a <code>StatusLineManager</code>.
+ * A contribution item can realize itself in different SWT widgets, using the
+ * different <code>fill</code> methods. The same type of contribution item can
+ * be used with a <code>MenuBarManager</code>, <code>ToolBarManager</code>,
+ * <code>CoolBarManager</code>, or a <code>StatusLineManager</code>.
  * </p>
  * <p>
- * This interface is internal to the framework; it should not be implemented outside
- * the framework.
+ * This interface is internal to the framework; it should not be implemented
+ * outside the framework.
  * </p>
  *
  * @see IContributionManager

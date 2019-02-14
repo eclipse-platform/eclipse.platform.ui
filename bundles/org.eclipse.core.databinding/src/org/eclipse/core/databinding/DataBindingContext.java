@@ -35,6 +35,7 @@ import org.eclipse.core.runtime.IStatus;
  * bindings, or more generally, its validation status providers.
  * <p>
  * A DataBindingContext provides the following abilities:
+ * </p>
  * <ul>
  * <li>Ability to create bindings between {@link IObservableValue observable
  * values}.</li>
@@ -44,7 +45,6 @@ import org.eclipse.core.runtime.IStatus;
  * <li>Access to the list of validation status providers (this includes all
  * bindings).</li>
  * </ul>
- * </p>
  * <p>
  * Multiple contexts can be used at any point in time. One strategy for the
  * management of contexts is the aggregation of validation statuses. For example

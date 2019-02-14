@@ -187,29 +187,33 @@ public class Geometry {
     }
 
     /**
-     * <p>Returns a new difference Rectangle whose x, y, width, and height are equal to the difference of the corresponding
-     * attributes from the given rectangles</p>
-     *
-     * <p></p>
-     * <b>Example: Compute the margins for a given Composite, and apply those same margins to a new GridLayout</b>
-     *
-     * <code><pre>
-     *      // Compute the client area, in the coordinate system of the input composite's parent
-     *      Rectangle clientArea = Display.getCurrent().map(inputComposite,
-     *      	inputComposite.getParent(), inputComposite.getClientArea());
-     *
-     *      // Compute the margins for a given Composite by subtracting the client area from the composite's bounds
-     *      Rectangle margins = Geometry.subtract(inputComposite.getBounds(), clientArea);
-     *
-     *      // Now apply these margins to a new GridLayout
-     *      GridLayout layout = GridLayoutFactory.fillDefaults().margins(margins).create();
-     * </pre></code>
-     *
-     * @param rect1 first rectangle
-     * @param rect2 rectangle to subtract
-     * @return the difference between the two rectangles (computed as rect1 - rect2)
-     * @since 3.3
-     */
+	 * <p>
+	 * Returns a new difference Rectangle whose x, y, width, and height are equal to
+	 * the difference of the corresponding attributes from the given rectangles
+	 * </p>
+	 *
+	 * <b>Example: Compute the margins for a given Composite, and apply those same
+	 * margins to a new GridLayout</b>
+	 *
+	 * <pre>
+	 * <code>
+	 *      // Compute the client area, in the coordinate system of the input composite's parent
+	 *      Rectangle clientArea = Display.getCurrent().map(inputComposite,
+	 *      	inputComposite.getParent(), inputComposite.getClientArea());
+	 *
+	 *      // Compute the margins for a given Composite by subtracting the client area from the composite's bounds
+	 *      Rectangle margins = Geometry.subtract(inputComposite.getBounds(), clientArea);
+	 *
+	 *      // Now apply these margins to a new GridLayout
+	 *      GridLayout layout = GridLayoutFactory.fillDefaults().margins(margins).create();
+	 * </code>
+	 * </pre>
+	 *
+	 * @param rect1 first rectangle
+	 * @param rect2 rectangle to subtract
+	 * @return the difference between the two rectangles (computed as rect1 - rect2)
+	 * @since 3.3
+	 */
     public static Rectangle subtract(Rectangle rect1, Rectangle rect2) {
     	return new Rectangle(rect1.x - rect2.x, rect1.y - rect2.y, rect1.width - rect2.width, rect1.height - rect2.height);
     }

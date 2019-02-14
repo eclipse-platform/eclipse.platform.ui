@@ -17,18 +17,17 @@ import org.eclipse.swt.graphics.Image;
 
 /**
  * A label provider implementation which, by default, uses an element's
- * <code>toString</code> value for its text and <code>null</code> for its
- * image.
+ * <code>toString</code> value for its text and <code>null</code> for its image.
  * <p>
  * This class may be used as is, or subclassed to provide richer labels.
  * Subclasses may override any of the following methods:
+ * </p>
  * <ul>
  * <li><code>isLabelProperty</code></li>
  * <li><code>getImage</code></li>
  * <li><code>getText</code></li>
  * <li><code>dispose</code></li>
  * </ul>
- * </p>
  */
 public class LabelProvider extends BaseLabelProvider implements ILabelProvider {
 

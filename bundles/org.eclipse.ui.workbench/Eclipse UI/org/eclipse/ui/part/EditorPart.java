@@ -27,48 +27,54 @@ import org.eclipse.ui.PartInitException;
 /**
  * Abstract base implementation of all workbench editors.
  * <p>
- * This class should be subclassed by clients wishing to define new editors.
- * The name of the subclass should be given as the <code>"class"</code>
- * attribute in a <code>editor</code> extension contributed to the workbench's
- * view extension point (named <code>"org.eclipse.ui.editors"</code>).
- * For example, the plug-in's XML markup might contain:
+ * This class should be subclassed by clients wishing to define new editors. The
+ * name of the subclass should be given as the <code>"class"</code> attribute in
+ * a <code>editor</code> extension contributed to the workbench's view extension
+ * point (named <code>"org.eclipse.ui.editors"</code>). For example, the
+ * plug-in's XML markup might contain:
+ * </p>
+ *
  * <pre>
- * &LT;extension point="org.eclipse.ui.editors"&GT;
- *      &LT;editor id="com.example.myplugin.ed"
+ * &lt;extension point="org.eclipse.ui.editors"&gt;
+ *      &lt;editor id="com.example.myplugin.ed"
  *         name="My Editor"
  *         icon="./images/cedit.gif"
  * 		   extensions="foo"
  * 		   class="com.example.myplugin.MyFooEditor"
  * 		   contributorClass="com.example.myplugin.MyFooEditorContributor"
- *      /&GT;
- * &LT;/extension&GT;
+ *      /&gt;
+ * &lt;/extension&gt;
  * </pre>
+ * <p>
  * where <code>com.example.myplugin.MyEditor</code> is the name of the
  * <code>EditorPart</code> subclass.
  * </p>
  * <p>
  * Subclasses must implement the following methods:
- * <ul>
- *   <li><code>IEditorPart.init</code> - to initialize editor when assigned its site</li>
- *   <li><code>IWorkbenchPart.createPartControl</code> - to create the editor's controls </li>
- *   <li><code>IWorkbenchPart.setFocus</code> - to accept focus</li>
- *   <li><code>IEditorPart.isDirty</code> - to decide whether a significant change has
- *       occurred</li>
- *   <li><code>IEditorPart.doSave</code> - to save contents of editor</li>
- *   <li><code>IEditorPart.doSaveAs</code> - to save contents of editor</li>
- *   <li><code>IEditorPart.isSaveAsAllowed</code> - to control Save As</li>
- * </ul>
  * </p>
+ * <ul>
+ * <li><code>IEditorPart.init</code> - to initialize editor when assigned its
+ * site</li>
+ * <li><code>IWorkbenchPart.createPartControl</code> - to create the editor's
+ * controls</li>
+ * <li><code>IWorkbenchPart.setFocus</code> - to accept focus</li>
+ * <li><code>IEditorPart.isDirty</code> - to decide whether a significant change
+ * has occurred</li>
+ * <li><code>IEditorPart.doSave</code> - to save contents of editor</li>
+ * <li><code>IEditorPart.doSaveAs</code> - to save contents of editor</li>
+ * <li><code>IEditorPart.isSaveAsAllowed</code> - to control Save As</li>
+ * </ul>
  * <p>
  * Subclasses may extend or reimplement the following methods as required:
- * <ul>
- *   <li><code>IExecutableExtension.setInitializationData</code> - extend to provide additional
- *       initialization when editor extension is instantiated</li>
- *   <li><code>IWorkbenchPart.dispose</code> - extend to provide additional cleanup</li>
- *   <li><code>IAdaptable.getAdapter</code> - reimplement to make the editor
- *       adaptable</li>
- * </ul>
  * </p>
+ * <ul>
+ * <li><code>IExecutableExtension.setInitializationData</code> - extend to
+ * provide additional initialization when editor extension is instantiated</li>
+ * <li><code>IWorkbenchPart.dispose</code> - extend to provide additional
+ * cleanup</li>
+ * <li><code>IAdaptable.getAdapter</code> - reimplement to make the editor
+ * adaptable</li>
+ * </ul>
  */
 public abstract class EditorPart extends WorkbenchPart implements IEditorPart {
 

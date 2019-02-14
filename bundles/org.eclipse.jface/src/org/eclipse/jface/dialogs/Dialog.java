@@ -954,10 +954,10 @@ public abstract class Dialog extends Window {
 	}
 
 	/**
-	 * Set the layout data of the button to a GridData with appropriate heights
-	 * and widths.
+	 * Set the layout data of the button to a GridData with appropriate heights and
+	 * widths.
 	 *
-	 * @param button
+	 * @param button The button which layout data is to be set.
 	 */
 	protected void setButtonLayoutData(Button button) {
 		GridData data = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
@@ -968,10 +968,10 @@ public abstract class Dialog extends Window {
 	}
 
 	/**
-	 * Set the layout data of the button to a FormData with appropriate heights
-	 * and widths.
+	 * Set the layout data of the button to a FormData with appropriate heights and
+	 * widths.
 	 *
-	 * @param button
+	 * @param button The button which layout data is to be set.
 	 */
 	protected void setButtonLayoutFormData(Button button) {
 		FormData data = new FormData();

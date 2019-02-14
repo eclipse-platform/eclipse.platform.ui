@@ -283,12 +283,13 @@ public interface IWorkbenchPage extends IPartService, ISelectionService {
 	/**
 	 * Closes all of the editors belonging to this workbench page.
 	 * <p>
-	 * If the page has open editors with unsaved content and <code>save</code>
-	 * is <code>true</code>, the user will be given the opportunity to save
-	 * them.
+	 * If the page has open editors with unsaved content and <code>save</code> is
+	 * <code>true</code>, the user will be given the opportunity to save them.
 	 * </p>
 	 *
-	 * @param save
+	 * @param save <code>true</code> to save the editor contents if required
+	 *             (recommended), and <code>false</code> to discard any unsaved
+	 *             changes
 	 *
 	 * @return <code>true</code> if all editors were successfully closed, and
 	 *         <code>false</code> if at least one is still open
@@ -611,26 +612,27 @@ public interface IWorkbenchPage extends IPartService, ISelectionService {
 	/**
 	 * Opens an editor on the given input.
 	 * <p>
-	 * If this page already has an editor open on the target input that editor
-	 * is brought to the front; otherwise, a new editor is opened. Two editor
-	 * inputs are considered the same if they equal. See
-	 * <code>Object.equals(Object)<code>
+	 * If this page already has an editor open on the target input that editor is
+	 * brought to the front; otherwise, a new editor is opened. Two editor inputs
+	 * are considered the same if they equal. See <code>Object.equals(Object)</code>
 	 * and <code>IEditorInput</code>. If <code>activate == true</code> the editor
 	 * will be activated.
-	 * </p><p>
+	 * </p>
+	 * <p>
 	 * The editor type is determined by mapping <code>editorId</code> to an editor
-	 * extension registered with the workbench.  An editor id is passed rather than
+	 * extension registered with the workbench. An editor id is passed rather than
 	 * an editor object to prevent the accidental creation of more than one editor
 	 * for the same input. It also guarantees a consistent lifecycle for editors,
 	 * regardless of whether they are created by the user or restored from saved
 	 * data.
 	 * </p>
 	 *
-	 * @param input the editor input
+	 * @param input    the editor input
 	 * @param editorId the id of the editor extension to use
 	 * @param activate if <code>true</code> the editor will be activated
 	 * @return an open editor, or <code>null</code> if an external editor was opened
-	 * @exception PartInitException if the editor could not be created or initialized
+	 * @exception PartInitException if the editor could not be created or
+	 *                              initialized
 	 */
 	IEditorPart openEditor(IEditorInput input, String editorId,
 			boolean activate) throws PartInitException;
@@ -638,28 +640,30 @@ public interface IWorkbenchPage extends IPartService, ISelectionService {
 	/**
 	 * Opens an editor on the given input.
 	 * <p>
-	 * If this page already has an editor open that matches the given input
-	 * and/or editor id (as specified by the matchFlags argument), that editor
-	 * is brought to the front; otherwise, a new editor is opened. Two editor
-	 * inputs are considered the same if they equal. See
-	 * <code>Object.equals(Object)<code>
-	 * and <code>IEditorInput</code>. If <code>activate == true</code> the editor
-	 * will be activated.
-	 * </p><p>
+	 * If this page already has an editor open that matches the given input and/or
+	 * editor id (as specified by the matchFlags argument), that editor is brought
+	 * to the front; otherwise, a new editor is opened. Two editor inputs are
+	 * considered the same if they equal. See <code>Object.equals(Object)</code> and
+	 * <code>IEditorInput</code>. If <code>activate == true</code> the editor will
+	 * be activated.
+	 * </p>
+	 * <p>
 	 * The editor type is determined by mapping <code>editorId</code> to an editor
-	 * extension registered with the workbench.  An editor id is passed rather than
+	 * extension registered with the workbench. An editor id is passed rather than
 	 * an editor object to prevent the accidental creation of more than one editor
 	 * for the same input. It also guarantees a consistent lifecycle for editors,
 	 * regardless of whether they are created by the user or restored from saved
 	 * data.
 	 * </p>
 	 *
-	 * @param input the editor input
-	 * @param editorId the id of the editor extension to use
-	 * @param activate if <code>true</code> the editor will be activated
-	 * @param matchFlags a bit mask consisting of zero or more of the MATCH_* constants OR-ed together
+	 * @param input      the editor input
+	 * @param editorId   the id of the editor extension to use
+	 * @param activate   if <code>true</code> the editor will be activated
+	 * @param matchFlags a bit mask consisting of zero or more of the MATCH_*
+	 *                   constants OR-ed together
 	 * @return an open editor, or <code>null</code> if an external editor was opened
-	 * @exception PartInitException if the editor could not be created or initialized
+	 * @exception PartInitException if the editor could not be created or
+	 *                              initialized
 	 *
 	 * @see #MATCH_NONE
 	 * @see #MATCH_INPUT

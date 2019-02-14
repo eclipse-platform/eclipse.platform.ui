@@ -23,32 +23,32 @@ import org.eclipse.swt.widgets.Composite;
  * sources (<code>IPropertySource</code>).
  * <p>
  * A property descriptor carries the following information:
- * <ul>
- *   <li>property id (required)</li>
- *   <li>display name (required)</li>
- *   <li>brief description of the property (optional)</li>
- *   <li>category for grouping related properties (optional)</li>
- *   <li>label provider used to display the property value (optional)</li>
- *   <li>cell editor for changing the property value (optional)</li>
- *   <li>help context id (optional)</li>
- * </ul>
  * </p>
+ * <ul>
+ * <li>property id (required)</li>
+ * <li>display name (required)</li>
+ * <li>brief description of the property (optional)</li>
+ * <li>category for grouping related properties (optional)</li>
+ * <li>label provider used to display the property value (optional)</li>
+ * <li>cell editor for changing the property value (optional)</li>
+ * <li>help context id (optional)</li>
+ * </ul>
  * <p>
  * Clients may implement this interface to provide specialized property
- * descriptors; however, there are standard implementations declared in
- * this package that take care of the most common cases:
- * <ul>
- *   <li><code>PropertyDescriptor - read-only property</li>
- *   <li><code>TextPropertyDescriptor</code> - edits with a
- *      <code>TextCellEditor</code></li>
- *   <li><code>CheckboxPropertyDescriptor - edits with a
- *      <code>CheckboxCellEditor</code></code></li>
- *   <li><code>ComboBoxPropertyDescriptor - edits with a
- *      <code>ComboBoxCellEditor</code></code></li>
- *   <li><code>ColorPropertyDescriptor - edits with a
- *      <code>ColorCellEditor</code></code></li>
- * </ul>
+ * descriptors; however, there are standard implementations declared in this
+ * package that take care of the most common cases:
  * </p>
+ * <ul>
+ * <li><code>PropertyDescriptor</code> - read-only property</li>
+ * <li><code>TextPropertyDescriptor</code> - edits with a
+ * <code>TextCellEditor</code></li>
+ * <li><code>CheckboxPropertyDescriptor</code> - edits with a
+ * <code>CheckboxCellEditor</code></li>
+ * <li><code>ComboBoxPropertyDescriptor</code> - edits with a
+ * <code>ComboBoxCellEditor</code></li>
+ * <li><code>ColorPropertyDescriptor</code> - edits with a
+ * <code>ColorCellEditor</code></li>
+ * </ul>
  *
  * @see IPropertySource#getPropertyDescriptors
  */

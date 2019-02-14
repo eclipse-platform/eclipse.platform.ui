@@ -219,30 +219,29 @@ public interface EPartService {
 
 	/**
 	 * Shows the given part.
-	 * <p>
 	 * <ul>
-	 * <li>If there cannot be multiple parts of this type and a part already exists, the already
-	 * existing part will be shown and returned.</li>
-	 * <li>If multiple parts of this type is allowed, then the provided part will be shown and
-	 * returned</li>
+	 * <li>If there cannot be multiple parts of this type and a part already exists,
+	 * the already existing part will be shown and returned.</li>
+	 * <li>If multiple parts of this type is allowed, then the provided part will be
+	 * shown and returned</li>
 	 * </ul>
-	 * </p>
 	 * <p>
 	 * The behavior of this method is dictated by the supplied state.
-	 * <ul>
-	 * <li>If <code>ACTIVATE</code> is supplied, then the part is made visible and granted focus.</li>
-	 * <li>If <code>VISIBLE</code> is supplied, then the part will be made visible and possibly be
-	 * granted focus depending on where it is relative to the active part. If it is in the same
-	 * stack as the currently active part, then it will be granted focus.</li>
-	 * <li>If <code>CREATE</code> is supplied, then the part will be instantiated though its
-	 * contents may not necessarily be visible to the end user. visible to the end user.</li>
-	 * </ul>
 	 * </p>
+	 * <ul>
+	 * <li>If <code>ACTIVATE</code> is supplied, then the part is made visible and
+	 * granted focus.</li>
+	 * <li>If <code>VISIBLE</code> is supplied, then the part will be made visible
+	 * and possibly be granted focus depending on where it is relative to the active
+	 * part. If it is in the same stack as the currently active part, then it will
+	 * be granted focus.</li>
+	 * <li>If <code>CREATE</code> is supplied, then the part will be instantiated
+	 * though its contents may not necessarily be visible to the end user. visible
+	 * to the end user.</li>
+	 * </ul>
 	 *
-	 * @param part
-	 *            the part to show
-	 * @param partState
-	 *            the desired state of the shown part to be in
+	 * @param part      the part to show
+	 * @param partState the desired state of the shown part to be in
 	 * @return the shown part
 	 */
 	MPart showPart(MPart part, PartState partState);

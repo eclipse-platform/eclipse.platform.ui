@@ -31,7 +31,7 @@ import org.eclipse.ui.internal.forms.Messages;
  * <p>
  * Since forms with wrapped text typically don't have a preferred size, it is
  * important to set the initial dialog size upon creation:
- * <p>
+ * </p>
  *
  * <pre>
  * MyFormDialog dialog = new MyFormDialog(shell);
@@ -42,7 +42,7 @@ import org.eclipse.ui.internal.forms.Messages;
  *
  * <p>
  * Otherwise, the dialog may open very wide.
- * <p>
+ * </p>
  *
  * @since 3.3
  */

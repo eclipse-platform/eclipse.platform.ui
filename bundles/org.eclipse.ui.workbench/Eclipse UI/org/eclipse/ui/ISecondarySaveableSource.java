@@ -23,18 +23,20 @@ import org.eclipse.core.runtime.IAdaptable;
  * In case the same {@link ISaveablePart} object is created originally by a
  * "primary" part and shown or edited by multiple parts, the "primary" part
  * might want be the only UI element showing the "dirty" state in the UI.
+ * </p>
  * <p>
  * This interface allows "primary" parts define the default behavior for all
  * "secondary" parts; and allows "secondary" parts to override this and decide
  * how they should behave and how they should be represented in the UI.
- * <p>
+ * </p>
+ * <ul>
  * <li>Parts implementing this interface directly are considered to be
- * "secondary" parts and define only their own behavior.
+ * "secondary" parts and define only their own behavior.</li>
  * <li>Parts can also provide an adapter to this interface via
  * {@link IAdaptable#getAdapter(Class)}. If such part is not implementing this
  * interface directly, it can considered as primary "source" part, and can
- * define a default behavior for all secondary parts.
- * <p>
+ * define a default behavior for all secondary parts.</li>
+ * </ul>
  * Per default, dirty state of "secondary" parts is ignored by the framework.
  *
  * @since 3.109

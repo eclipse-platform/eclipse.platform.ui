@@ -27,16 +27,16 @@ import org.eclipse.swt.widgets.Composite;
  * extension contributed to the workbench's installation pages extension point
  * (named <code>"org.eclipse.ui.installationPages"</code>). For example, the
  * plug-in's XML markup might contain:
+ * </p>
  *
  * <pre>
- * &LT;extension point="org.eclipse.ui.installationPages"&GT;
- *      &LT;page id="com.example.myplugin.installInfo"
+ * &lt;extension point="org.eclipse.ui.installationPages"&gt;
+ *      &lt;page id="com.example.myplugin.installInfo"
  *         name="Example Details"
- *         class="com.example.myplugin.MyInstallationPage" /&GT;
- * &LT;/extension&GT;
+ *         class="com.example.myplugin.MyInstallationPage" /&gt;
+ * &lt;/extension&gt;
  * </pre>
  *
- * </p>
  *
  * @since 3.5
  */

@@ -27,41 +27,44 @@ import org.eclipse.ui.internal.util.Util;
 /**
  * Abstract base implementation of all workbench views.
  * <p>
- * This class should be subclassed by clients wishing to define new views.
- * The name of the subclass should be given as the <code>"class"</code>
- * attribute in a <code>view</code> extension contributed to the workbench's
- * view extension point (named <code>"org.eclipse.ui.views"</code>).
- * For example, the plug-in's XML markup might contain:
+ * This class should be subclassed by clients wishing to define new views. The
+ * name of the subclass should be given as the <code>"class"</code> attribute in
+ * a <code>view</code> extension contributed to the workbench's view extension
+ * point (named <code>"org.eclipse.ui.views"</code>). For example, the plug-in's
+ * XML markup might contain:
+ * </p>
+ *
  * <pre>
- * &LT;extension point="org.eclipse.ui.views"&GT;
- *      &LT;view id="com.example.myplugin.view"
+ * &lt;extension point="org.eclipse.ui.views"&gt;
+ *      &lt;view id="com.example.myplugin.view"
  *         name="My View"
  *         class="com.example.myplugin.MyView"
  *         icon="images/eview.gif"
- *      /&GT;
- * &LT;/extension&GT;
+ *      /&gt;
+ * &lt;/extension&gt;
  * </pre>
+ * <p>
  * where <code>com.example.myplugin.MyView</code> is the name of the
  * <code>ViewPart</code> subclass.
  * </p>
  * <p>
  * Subclasses must implement the following methods:
- * <ul>
- *   <li><code>createPartControl</code> - to create the view's controls </li>
- *   <li><code>setFocus</code> - to accept focus</li>
- * </ul>
  * </p>
+ * <ul>
+ * <li><code>createPartControl</code> - to create the view's controls</li>
+ * <li><code>setFocus</code> - to accept focus</li>
+ * </ul>
  * <p>
  * Subclasses may extend or reimplement the following methods as required:
- * <ul>
- *   <li><code>setInitializationData</code> - extend to provide additional
- *       initialization when view extension is instantiated</li>
- *   <li><code>init(IWorkbenchPartSite)</code> - extend to provide additional
- *       initialization when view is assigned its site</li>
- *   <li><code>dispose</code> - extend to provide additional cleanup</li>
- *   <li><code>getAdapter</code> - reimplement to make their view adaptable</li>
- * </ul>
  * </p>
+ * <ul>
+ * <li><code>setInitializationData</code> - extend to provide additional
+ * initialization when view extension is instantiated</li>
+ * <li><code>init(IWorkbenchPartSite)</code> - extend to provide additional
+ * initialization when view is assigned its site</li>
+ * <li><code>dispose</code> - extend to provide additional cleanup</li>
+ * <li><code>getAdapter</code> - reimplement to make their view adaptable</li>
+ * </ul>
  */
 public abstract class ViewPart extends WorkbenchPart implements IViewPart {
 

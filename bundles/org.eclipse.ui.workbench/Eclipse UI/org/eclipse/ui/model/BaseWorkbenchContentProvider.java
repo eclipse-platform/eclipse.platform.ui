@@ -46,8 +46,6 @@ public class BaseWorkbenchContentProvider implements ITreeContentProvider {
      * Returns the implementation of IWorkbenchAdapter for the given
      * object.  Returns null if the adapter is not defined or the
      * object is not adaptable.
-     * <p>
-     * </p>
      *
      * @param element the element
      * @return the corresponding workbench adapter object

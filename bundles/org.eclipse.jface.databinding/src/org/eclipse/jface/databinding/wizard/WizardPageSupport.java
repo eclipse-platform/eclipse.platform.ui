@@ -30,13 +30,13 @@ import org.eclipse.jface.wizard.WizardPage;
  * <p>
  * The completion state of the wizard page will only be set to <code>true</code>
  * if <i>all</i> of the following conditions are met:
+ * </p>
  * <ul>
  * <li>The validation result from the data binding context has none of the
  * severities {@link IStatus#ERROR} or {@link IStatus#CANCEL}.</li>
  * <li>None of the validation status observables of the data binding context is
  * stale.</li>
  * </ul>
- * </p>
  *
  * @noextend This class is not intended to be subclassed by clients.
  *
