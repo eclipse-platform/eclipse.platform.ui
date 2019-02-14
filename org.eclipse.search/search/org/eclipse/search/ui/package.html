@@ -27,7 +27,6 @@ dialog properties.
 Search result view, since 3.0</h3>
 <p>The search view that shows the search results has been redesigned for 3.0. It is recommended
 to use and to switch to the new API:
-<p>
 <p>On 'OK', an implementation of a search dialog page creates a <i>search query</i>, represented by an instances of type <tt>ISearchQuery</tt>. The query
 can be run using API on <tt>NewSearchUI</tt> and will create a <code>ISearchResult</code> as result.
 <tt>ISearchResultListener</tt> can be added to search results and report changes as <tt>SearchResultEvent</tt>.
@@ -40,7 +39,6 @@ visualize the matches contained in the result set.
 Search result view, before 3.0</h3>
 
 <p>For compatibility to searches written prior to 3.0, the following APIs still exist and are functional. The old search result view is called 'classic search view' in the UI.
-<p>
 <p>Before 3.0, the search result view was fully implemented by the search plugin. All search results had to be marked with <i>search markers</i> (<tt>org.eclipse.core.resources.IMarker</tt>, registered under 'org.eclipse.search.searchmarker')
 
 <p>The search dialog page (type <tt>ISearchResultView</tt>) could access the single search result view using <tt>SearchUI.getSearchResultView()</tt>. It showed all matches as elements of type <tt>ISearchResultViewEntry</tt>.

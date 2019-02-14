@@ -29,12 +29,12 @@ import org.eclipse.jface.text.IRegion;
  * In order to provide backward compatibility for clients of <code>ICharacterPairMatcher</code>,
  * extension interfaces are used to provide a means of evolution. The following extension interface
  * exists:
+ * </p>
  * <ul>
  * <li>{@link org.eclipse.jface.text.source.ICharacterPairMatcherExtension} since version 3.8
  * introducing the concept of matching peer character and enclosing peer characters for a given
  * selection.</li>
  * </ul>
- * </p>
  * <p>
  * Clients may implement this interface and its extension interface or use the default
  * implementation provided by <code>DefaultCharacterPairMatcher</code>.

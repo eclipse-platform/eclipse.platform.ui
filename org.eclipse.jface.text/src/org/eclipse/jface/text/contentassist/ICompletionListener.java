@@ -17,23 +17,24 @@ package org.eclipse.jface.text.contentassist;
 /**
  * A completion listener is informed before the content assistant computes completion proposals.
  * <p>
- * In order to provide backward compatibility for clients of <code>ICompletionListener</code>, extension
- * interfaces are used to provide a means of evolution. The following extension interfaces exist:
- * <ul>
- *   <li>{@link org.eclipse.jface.text.contentassist.ICompletionListenerExtension} since version 3.4 introducing
- *		the following functions:
- *		<ul>
- *			<li>additional notification about restarting the current code assist session</li>
- *		</ul>
- *   </li>
- *   <li>{@link org.eclipse.jface.text.contentassist.ICompletionListenerExtension2} since version 3.8 introducing
- *		the following functions:
- *		<ul>
- *			<li>additional notification after applying a proposal</li>
- *		</ul>
- *   </li>
- * </ul>
+ * In order to provide backward compatibility for clients of <code>ICompletionListener</code>,
+ * extension interfaces are used to provide a means of evolution. The following extension interfaces
+ * exist:
  * </p>
+ * <ul>
+ * <li>{@link org.eclipse.jface.text.contentassist.ICompletionListenerExtension} since version 3.4
+ * introducing the following functions:
+ * <ul>
+ * <li>additional notification about restarting the current code assist session</li>
+ * </ul>
+ * </li>
+ * <li>{@link org.eclipse.jface.text.contentassist.ICompletionListenerExtension2} since version 3.8
+ * introducing the following functions:
+ * <ul>
+ * <li>additional notification after applying a proposal</li>
+ * </ul>
+ * </li>
+ * </ul>
  *
  * <p>
  * Clients may implement this interface.

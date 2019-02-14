@@ -28,35 +28,34 @@ import org.eclipse.jface.text.ITextViewer;
  * <li>management of text viewer add-ons
  * <li>explicit configuration
  * </ul>
- * It is assumed that range indication and visual annotations are shown inside
- * the same presentation area. There are no assumptions about whether this area
- * is different from the viewer's text widget.
+ * It is assumed that range indication and visual annotations are shown inside the same presentation
+ * area. There are no assumptions about whether this area is different from the viewer's text
+ * widget.
  * <p>
- * As the visibility of visual annotations can dynamically be changed, it is
- * assumed that the annotation presentation area can dynamically be hidden if it
- * is different from the text widget.
+ * As the visibility of visual annotations can dynamically be changed, it is assumed that the
+ * annotation presentation area can dynamically be hidden if it is different from the text widget.
  * <p>
- * In order to provide backward compatibility for clients of
- * <code>ISourceViewer</code>, extension interfaces are used as a means of
- * evolution. The following extension interfaces exist:
+ * In order to provide backward compatibility for clients of <code>ISourceViewer</code>, extension
+ * interfaces are used as a means of evolution. The following extension interfaces exist:
+ * </p>
  * <ul>
- * <li>{@link org.eclipse.jface.text.source.ISourceViewerExtension} since version 2.1
- * introducing the concept of an annotation overview.</li>
- * <li>{@link org.eclipse.jface.text.source.ISourceViewerExtension2} since version 3.0
- * allowing source viewers to roll back a previously performed configuration and
- * allows access to the viewer's visual annotation model.</li>
- * <li>{@link org.eclipse.jface.text.source.ISourceViewerExtension3} since version 3.2
- * introducing the concept of a quick assist assistant and providing access
- * to the quick assist invocation context as well as the current annotation hover.</li>
- * <li>{@link org.eclipse.jface.text.source.ISourceViewerExtension4} since version 3.4
- * introducing API to access a minimal set of content assistant APIs.</li>
- * <li>{@link org.eclipse.jface.text.source.ISourceViewerExtension5} since version 3.13
- * introducing API to access minimal set of code mining APIs.</li>
- * </ul></p>
+ * <li>{@link org.eclipse.jface.text.source.ISourceViewerExtension} since version 2.1 introducing
+ * the concept of an annotation overview.</li>
+ * <li>{@link org.eclipse.jface.text.source.ISourceViewerExtension2} since version 3.0 allowing
+ * source viewers to roll back a previously performed configuration and allows access to the
+ * viewer's visual annotation model.</li>
+ * <li>{@link org.eclipse.jface.text.source.ISourceViewerExtension3} since version 3.2 introducing
+ * the concept of a quick assist assistant and providing access to the quick assist invocation
+ * context as well as the current annotation hover.</li>
+ * <li>{@link org.eclipse.jface.text.source.ISourceViewerExtension4} since version 3.4 introducing
+ * API to access a minimal set of content assistant APIs.</li>
+ * <li>{@link org.eclipse.jface.text.source.ISourceViewerExtension5} since version 3.13 introducing
+ * API to access minimal set of code mining APIs.</li>
+ * </ul>
  * <p>
- * Clients may implement this interface and its extension interfaces or use the
- * default implementation provided by
- * {@link org.eclipse.jface.text.source.SourceViewer}.</p>
+ * Clients may implement this interface and its extension interfaces or use the default
+ * implementation provided by {@link org.eclipse.jface.text.source.SourceViewer}.
+ * </p>
  *
  * @see org.eclipse.jface.text.source.ISourceViewerExtension
  * @see org.eclipse.jface.text.source.ISourceViewerExtension2

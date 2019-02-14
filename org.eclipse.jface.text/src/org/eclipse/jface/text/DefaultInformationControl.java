@@ -35,9 +35,10 @@ import org.eclipse.jface.util.Geometry;
 /**
  * Default implementation of {@link org.eclipse.jface.text.IInformationControl}.
  * <p>
- * Displays textual information in a {@link org.eclipse.swt.custom.StyledText}
- * widget. Before displaying, the information set to this information control is
- * processed by an <code>IInformationPresenter</code>.
+ * Displays textual information in a {@link org.eclipse.swt.custom.StyledText} widget. Before
+ * displaying, the information set to this information control is processed by an
+ * <code>IInformationPresenter</code>.
+ * </p>
  *
  * @since 2.0
  */

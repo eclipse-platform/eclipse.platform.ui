@@ -17,33 +17,31 @@ import org.eclipse.jface.text.ITextViewer;
 
 
 /**
- * An <code>IReconciler</code> defines and maintains a model of the content
- * of the text  viewer's document in the presence of changes applied to this
- * document. An <code>IReconciler</code> is a {@link org.eclipse.jface.text.ITextViewer} add-on.
+ * An <code>IReconciler</code> defines and maintains a model of the content of the text viewer's
+ * document in the presence of changes applied to this document. An <code>IReconciler</code> is a
+ * {@link org.eclipse.jface.text.ITextViewer} add-on.
  * <p>
- * Reconcilers are assumed to be asynchronous, i.e. they allow a certain
- * temporal window of inconsistency between the document and the model of
- * the content of this document.
+ * Reconcilers are assumed to be asynchronous, i.e. they allow a certain temporal window of
+ * inconsistency between the document and the model of the content of this document.
  * </p>
  * <p>
- * Reconcilers have a list of {@link org.eclipse.jface.text.reconciler.IReconcilingStrategy}
- * objects each of which is registered for a  particular document content type.
- * The reconciler uses the strategy objects to react on the changes applied
- * to the text viewer's document.
- *</p>
+ * Reconcilers have a list of {@link org.eclipse.jface.text.reconciler.IReconcilingStrategy} objects
+ * each of which is registered for a particular document content type. The reconciler uses the
+ * strategy objects to react on the changes applied to the text viewer's document.
+ * </p>
  * <p>
  * In order to provide backward compatibility for clients of <code>IReconciler</code>, extension
  * interfaces are used to provide a means of evolution. The following extension interfaces exist:
+ * </p>
  * <ul>
  * <li>{@link org.eclipse.jface.text.reconciler.IReconcilerExtension} since version 3.0 introducing
- *		the ability to be aware of documents with multiple partitionings.</li>
+ * the ability to be aware of documents with multiple partitionings.</li>
  * </ul>
- * </p>
  * <p>
  * The interface can be implemented by clients. By default, clients use
  * {@link org.eclipse.jface.text.reconciler.MonoReconciler} or
- * {@link org.eclipse.jface.text.reconciler.Reconciler} as the standard
- * implementers of this interface.
+ * {@link org.eclipse.jface.text.reconciler.Reconciler} as the standard implementers of this
+ * interface.
  * </p>
  *
  * @see ITextViewer

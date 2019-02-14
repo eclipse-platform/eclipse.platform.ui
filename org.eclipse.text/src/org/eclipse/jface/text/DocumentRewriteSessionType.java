@@ -18,13 +18,13 @@ package org.eclipse.jface.text;
  * A document rewrite session type.
  * <p>
  * Allowed values are:
+ * </p>
  * <ul>
  * 	<li>{@link DocumentRewriteSessionType#UNRESTRICTED}</li>
  * 	<li>{@link DocumentRewriteSessionType#UNRESTRICTED_SMALL} (since 3.3)</li>
  * 	<li>{@link DocumentRewriteSessionType#SEQUENTIAL}</li>
  * 	<li>{@link DocumentRewriteSessionType#STRICTLY_SEQUENTIAL}</li>
  * </ul>
- * </p>
  *
  * @see org.eclipse.jface.text.IDocument
  * @see org.eclipse.jface.text.IDocumentExtension4

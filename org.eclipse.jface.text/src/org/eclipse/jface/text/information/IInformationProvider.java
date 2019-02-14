@@ -20,15 +20,16 @@ import org.eclipse.jface.text.ITextViewer;
 /**
  * Provides information related to the content of a text viewer.
  * <p>
- * In order to provide backward compatibility for clients of <code>IInformationProvider</code>, extension
- * interfaces are used to provide a means of evolution. The following extension interfaces exist:
- * <ul>
- * <li>{@link IInformationProviderExtension} since version 2.1 introducing
- *		the ability to provide the element for a given subject</li>
- * <li>{@link IInformationProviderExtension2} since version 3.0 introducing
- *		the ability to provide its own information control creator</li>
- * </ul>
+ * In order to provide backward compatibility for clients of <code>IInformationProvider</code>,
+ * extension interfaces are used to provide a means of evolution. The following extension interfaces
+ * exist:
  * </p>
+ * <ul>
+ * <li>{@link IInformationProviderExtension} since version 2.1 introducing the ability to provide
+ * the element for a given subject</li>
+ * <li>{@link IInformationProviderExtension2} since version 3.0 introducing the ability to provide
+ * its own information control creator</li>
+ * </ul>
  * <p>
  * Clients may implement this interface.
  * </p>

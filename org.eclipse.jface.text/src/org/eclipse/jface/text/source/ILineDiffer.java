@@ -18,26 +18,25 @@ import org.eclipse.jface.text.BadLocationException;
 
 /**
  * Protocol that allows direct access to line information. Usually, implementations will also
- * implement <code>IAnnotationModel</code>, which only allows <code>Iterator</code> based access
- * to annotations.
+ * implement <code>IAnnotationModel</code>, which only allows <code>Iterator</code> based access to
+ * annotations.
  * <p>
- * <code>ILineDiffer</code> also allows to revert any lines to their original
- * contents as defined by the quick diff reference used by the receiver.
+ * <code>ILineDiffer</code> also allows to revert any lines to their original contents as defined by
+ * the quick diff reference used by the receiver.
  * </p>
  * <p>
  * This interface may be implemented by clients.
  * </p>
  * <p>
  * In order to provide backward compatibility for clients of <code>ILineDiffer</code>, extension
- * interfaces are used to provide a means of evolution. The following extension interface
- * exists:
- * <ul>
- * <li> {@link ILineDifferExtension} (since version 3.1): introducing the concept
- *      suspending and resuming an <code>ILineDiffer</code>.</li>
- * <li> {@link ILineDifferExtension2} (since version 3.3): allowing to query the suspension state
- * of an <code>ILineDiffer</code>.</li>
- * </ul>
+ * interfaces are used to provide a means of evolution. The following extension interface exists:
  * </p>
+ * <ul>
+ * <li>{@link ILineDifferExtension} (since version 3.1): introducing the concept suspending and
+ * resuming an <code>ILineDiffer</code>.</li>
+ * <li>{@link ILineDifferExtension2} (since version 3.3): allowing to query the suspension state of
+ * an <code>ILineDiffer</code>.</li>
+ * </ul>
  *
  * @since 3.0
  */

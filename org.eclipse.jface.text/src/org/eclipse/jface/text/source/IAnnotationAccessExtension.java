@@ -18,15 +18,19 @@ import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Canvas;
 
 /**
- * Extension interface for {@link org.eclipse.jface.text.source.IAnnotationAccess}.<p>
- * This interface replaces the methods of <code>IAnnotationAccess</code>.<p>
+ * Extension interface for {@link org.eclipse.jface.text.source.IAnnotationAccess}.
+ * <p>
+ * This interface replaces the methods of <code>IAnnotationAccess</code>.
+ * </p>
+ * <p>
  * This interface provides
+ * </p>
  * <ul>
- * <li> a label for the annotation type of a given annotation</li>
- * <li> the paint layer of a given annotation</li>
- * <li> means to paint a given annotation</li>
- * <li> information about the type hierarchy of the annotation type of a given annotation</li>
- * <ul>.
+ * <li>a label for the annotation type of a given annotation</li>
+ * <li>the paint layer of a given annotation</li>
+ * <li>means to paint a given annotation</li>
+ * <li>information about the type hierarchy of the annotation type of a given annotation</li>
+ * </ul>
  *
  * @see org.eclipse.jface.text.source.IAnnotationAccess
  * @since 3.0

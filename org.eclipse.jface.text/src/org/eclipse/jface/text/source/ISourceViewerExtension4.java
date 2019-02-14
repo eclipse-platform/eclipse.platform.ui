@@ -19,7 +19,7 @@ import org.eclipse.jface.text.contentassist.IContentAssistant;
 /**
  * Extension interface for {@link org.eclipse.jface.text.source.ISourceViewer}.
  * <p>
- * It introduces API to access a minimal set of content assistant APIs.</li>
+ * It introduces API to access a minimal set of content assistant APIs.
  * </p>
  *
  * @see IContentAssistant

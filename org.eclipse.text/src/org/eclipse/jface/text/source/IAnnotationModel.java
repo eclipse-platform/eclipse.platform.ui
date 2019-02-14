@@ -29,6 +29,7 @@ import org.eclipse.jface.text.Position;
  * In order to provide backward compatibility for clients of <code>IAnnotationModel</code>, extension
  * interfaces are used to provide a means of evolution. The following extension interfaces
  * exist:
+ * </p>
  * <ul>
  * <li> {@link org.eclipse.jface.text.source.IAnnotationModelExtension} since version 3.0 introducing the concept
  *      of model piggybacking annotation models, modification time stamps, and enhanced manipulation methods.
@@ -37,7 +38,6 @@ import org.eclipse.jface.text.Position;
  * 		annotations within a given region.
  * </li>
  * </ul>
- * </p>
  *
  * Clients may implement this interface or use the default implementation provided
  * by <code>AnnotationModel</code>.

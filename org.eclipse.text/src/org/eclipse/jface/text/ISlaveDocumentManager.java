@@ -28,11 +28,11 @@ package org.eclipse.jface.text;
 * In order to provided backward compatibility for clients of <code>ISlaveDocumentManager</code>, extension
  * interfaces are used to provide a means of evolution. The following extension interfaces
  * exist:
+ * </p>
  * <ul>
  * <li> {@link org.eclipse.jface.text.ISlaveDocumentManagerExtension} since version 3.0 extending the protocol
  *      with an access to all managed slave document for a given master document. </li>
  * </ul>
- * </p>
  *
  * @see org.eclipse.jface.text.IDocument
  * @since 2.1

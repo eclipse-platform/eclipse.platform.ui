@@ -65,19 +65,19 @@ package org.eclipse.jface.text;
  * <p>
  * <code>IDocument</code> throws <code>BadLocationException</code> if the parameters of
  * queries or manipulation requests are not inside the bounds of the document. The purpose
- * of this style of exception handling is
+ * of this style of exception handling is</p>
  * <ul>
  * <li> prepare document for multi-thread access
  * <li> allow clients to implement backtracking recovery methods
  * <li> prevent clients from up-front contract checking when dealing with documents.
- * </ul></p>
+ * </ul>
  * <p>
  * A document support for searching has deprecated since version 3.0. The recommended way
  * for searching is to use a {@link org.eclipse.jface.text.FindReplaceDocumentAdapter}.</p>
  * <p>
  * In order to provide backward compatibility for clients of <code>IDocument</code>, extension
  * interfaces are used to provide a means of evolution. The following extension interfaces
- * exist:
+ * exist:</p>
  * <ul>
  * <li> {@link org.eclipse.jface.text.IDocumentExtension} since version 2.0 introducing the concept
  *      of post notification replaces in order to allow document listeners to manipulate the document
@@ -91,7 +91,7 @@ package org.eclipse.jface.text;
  *      concept of rewrite sessions. A rewrite session is a sequence of document replace operations
  *      that form a semantic unit. It also introduces a modification stamp and the ability to
  *      set the initial line delimiter and to query the default line delimiter.</li>
- * </ul></p>
+ * </ul>
  * <p>
  * Clients may implement this interface and its extension interfaces or use the default
  * implementation provided by <code>AbstractDocument</code> and <code>Document</code>.</p>

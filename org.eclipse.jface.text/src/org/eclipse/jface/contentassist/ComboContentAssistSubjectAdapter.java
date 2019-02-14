@@ -36,18 +36,18 @@ import org.eclipse.jface.text.IDocument;
 
 
 /**
- * Adapts a {@link org.eclipse.swt.widgets.Combo} to a {@link org.eclipse.jface.contentassist.IContentAssistSubjectControl}.
+ * Adapts a {@link org.eclipse.swt.widgets.Combo} to a
+ * {@link org.eclipse.jface.contentassist.IContentAssistSubjectControl}.
  *
  * <p>
- *	Known issues:
- *  <ul>
- *		<li>https://bugs.eclipse.org/bugs/show_bug.cgi?id=50121
- *		= &gt; Combo doesn't get Arrow_up/Down keys on GTK</li>
+ * Known issues:
+ * </p>
+ * <ul>
+ * <li>https://bugs.eclipse.org/bugs/show_bug.cgi?id=50121 = &gt; Combo doesn't get Arrow_up/Down
+ * keys on GTK</li>
  *
- *		<li>https://bugs.eclipse.org/bugs/show_bug.cgi?id=50123
- *		= &gt; Combo broken on MacOS X</li>
- *  </ul>
- *	</p>
+ * <li>https://bugs.eclipse.org/bugs/show_bug.cgi?id=50123 = &gt; Combo broken on MacOS X</li>
+ * </ul>
  *
  * @since 3.0
  * @deprecated As of 3.2, replaced by Platform UI's field assist support

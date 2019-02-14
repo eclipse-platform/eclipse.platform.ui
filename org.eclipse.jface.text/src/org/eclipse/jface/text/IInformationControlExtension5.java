@@ -21,8 +21,7 @@ import org.eclipse.jface.resource.JFaceResources;
 
 
 /**
- * Extension interface for {@link org.eclipse.jface.text.IInformationControl}.
- * Adds API
+ * Extension interface for {@link org.eclipse.jface.text.IInformationControl}. Adds API
  * <ul>
  * <li>to test the visibility of the control,</li>
  * <li>to test whether another control is a child of the information control,</li>
@@ -32,19 +31,18 @@ import org.eclipse.jface.resource.JFaceResources;
  *
  * <p>
  * <b>Important:</b> Enriching this information control only works properly if
- * {@link IInformationControl#isFocusControl()} is implemented like this (<code>fShell</code>
- * is the control's shell):
+ * {@link IInformationControl#isFocusControl()} is implemented like this (<code>fShell</code> is the
+ * control's shell):
+ * </p>
  *
  * <pre>
  * return fShell.getDisplay().getActiveShell() == fShell
  * </pre>
- * Likewise,
- * {@link IInformationControl#addFocusListener(org.eclipse.swt.events.FocusListener)}
- * should install listeners for {@link SWT#Activate} and {@link SWT#Deactivate}
- * on the shell and forward events to the focus listeners. Clients are
- * encouraged to subclass {@link AbstractInformationControl}, which does this
- * for free.
- * </p>
+ * 
+ * Likewise, {@link IInformationControl#addFocusListener(org.eclipse.swt.events.FocusListener)}
+ * should install listeners for {@link SWT#Activate} and {@link SWT#Deactivate} on the shell and
+ * forward events to the focus listeners. Clients are encouraged to subclass
+ * {@link AbstractInformationControl}, which does this for free.
  *
  * @see org.eclipse.jface.text.IInformationControl
  * @since 3.4

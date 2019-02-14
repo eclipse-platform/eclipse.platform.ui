@@ -14,20 +14,20 @@
 package org.eclipse.jface.text;
 
 /**
- * An undo manager is connected to at most one
- * {@link org.eclipse.jface.text.ITextViewer}.
+ * An undo manager is connected to at most one {@link org.eclipse.jface.text.ITextViewer}.
  * <p>
- * It monitors the text viewer and keeps a history of the changes applied to the
- * viewer. The undo manager groups those changes into user interactions which on
- * an undo request are rolled back in one atomic change.</p>
+ * It monitors the text viewer and keeps a history of the changes applied to the viewer. The undo
+ * manager groups those changes into user interactions which on an undo request are rolled back in
+ * one atomic change.
+ * </p>
  * <p>
- * In order to provide backward compatibility for clients of
- * <code>IUndoManager</code>, extension interfaces are used as a means of
- * evolution. The following extension interfaces exist:
+ * In order to provide backward compatibility for clients of <code>IUndoManager</code>, extension
+ * interfaces are used as a means of evolution. The following extension interfaces exist:
+ * </p>
  * <ul>
- * <li>{@link org.eclipse.jface.text.IUndoManagerExtension} since version 3.1
- * introducing access to the undo context.</li>
- * </ul></p>
+ * <li>{@link org.eclipse.jface.text.IUndoManagerExtension} since version 3.1 introducing access to
+ * the undo context.</li>
+ * </ul>
  * <p>
  * Clients may implement this interface or use the standard implementation
  * <code>TextViewerUndoManager</code>.

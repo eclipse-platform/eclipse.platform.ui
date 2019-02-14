@@ -16,31 +16,31 @@ package org.eclipse.jface.text;
 
 
 /**
- * A painter is responsible for creating, managing, updating, and removing
- * visual decorations on an <code>ITextViewer</code>'s text widget. Examples
- * are the highlighting of the caret line, the print margin, or the highlighting
- * of matching peer characters such as pairs of brackets.</p>
+ * A painter is responsible for creating, managing, updating, and removing visual decorations on an
+ * <code>ITextViewer</code>'s text widget. Examples are the highlighting of the caret line, the
+ * print margin, or the highlighting of matching peer characters such as pairs of brackets.
  * <p>
- * Clients may implement this interface.</p>
+ * Clients may implement this interface.
+ * </p>
  * <p>
- * Painters should be registered with a
- * {@link org.eclipse.jface.text.PaintManager}. The paint manager tracks
- * several classes of events issued by an <code>ITextViewer</code> and reacts
- * by appropriately invoking the registered painters.
+ * Painters should be registered with a {@link org.eclipse.jface.text.PaintManager}. The paint
+ * manager tracks several classes of events issued by an <code>ITextViewer</code> and reacts by
+ * appropriately invoking the registered painters.
+ * </p>
  * <p>
- * Painters are either active or inactive. Usually, painters are initially
- * inactive and are activated by the first call to their <code>paint</code>
- * method. Painters can be deactivated by calling <code>deactivate</code>.
- * Inactive painter can be reactivated by calling <code>paint</code>.
+ * Painters are either active or inactive. Usually, painters are initially inactive and are
+ * activated by the first call to their <code>paint</code> method. Painters can be deactivated by
+ * calling <code>deactivate</code>. Inactive painter can be reactivated by calling
+ * <code>paint</code>.
+ * </p>
  * <p>
- * Painters usually have to manage state information. E.g., a painter painting a
- * caret line highlight must redraw the previous and the actual caret line in
- * the advent of a change of the caret position. This state information must be
- * adapted to changes of the viewer's content. In order to support this common
- * scenario, the <code>PaintManager</code> gives a painter access to a
- * {@link org.eclipse.jface.text.IPaintPositionManager}. The painter can use
- * this updater to manage its state information.
- * <p>
+ * Painters usually have to manage state information. E.g., a painter painting a caret line
+ * highlight must redraw the previous and the actual caret line in the advent of a change of the
+ * caret position. This state information must be adapted to changes of the viewer's content. In
+ * order to support this common scenario, the <code>PaintManager</code> gives a painter access to a
+ * {@link org.eclipse.jface.text.IPaintPositionManager}. The painter can use this updater to manage
+ * its state information.
+ * </p>
  *
  * @see org.eclipse.jface.text.PaintManager
  * @see org.eclipse.jface.text.IPaintPositionManager

@@ -17,25 +17,28 @@ import org.eclipse.jface.text.ITextViewer;
 
 
 /**
- * An information presenter shows information available at the text viewer's
- * current document position. An <code>IInformationPresenter</code> is a
- * {@link org.eclipse.jface.text.ITextViewer} add-on.
+ * An information presenter shows information available at the text viewer's current document
+ * position. An <code>IInformationPresenter</code> is a {@link org.eclipse.jface.text.ITextViewer}
+ * add-on.
  * <p>
- * An information presenters has a list of  {@link org.eclipse.jface.text.information.IInformationProvider} objects
- * each of which is registered for a  particular document content type.
- * The presenter uses the strategy objects to retrieve the information to present.
+ * An information presenters has a list of
+ * {@link org.eclipse.jface.text.information.IInformationProvider} objects each of which is
+ * registered for a particular document content type. The presenter uses the strategy objects to
+ * retrieve the information to present.
  * </p>
  * <p>
- * In order to provide backward compatibility for clients of <code>IInformationPresenter</code>, extension
- * interfaces are used to provide a means of evolution. The following extension interfaces exist:
+ * In order to provide backward compatibility for clients of <code>IInformationPresenter</code>,
+ * extension interfaces are used to provide a means of evolution. The following extension interfaces
+ * exist:
+ * </p>
  * <ul>
- * <li>{@link IInformationPresenterExtension} since version 3.0 introducing
- *		the ability to handle documents with multiple partitions</li>
+ * <li>{@link IInformationPresenterExtension} since version 3.0 introducing the ability to handle
+ * documents with multiple partitions</li>
  * </ul>
- * </p>
  * <p>
  * The interface can be implemented by clients. By default, clients use
- * {@link org.eclipse.jface.text.information.InformationPresenter} as the standard implementer of this interface.
+ * {@link org.eclipse.jface.text.information.InformationPresenter} as the standard implementer of
+ * this interface.
  * </p>
  *
  * @see org.eclipse.jface.text.information.IInformationPresenterExtension

@@ -23,6 +23,7 @@ import org.eclipse.swt.widgets.Control;
  * overview ruler.
  * <p>
  * This interfaces embodies three contracts:
+ * </p>
  * <ul>
  * <li>The overview ruler retrieves the annotations it presents from an annotation model.
  * <li>The ruler is a visual component which must be integrated in a hierarchy of SWT controls.
@@ -30,15 +31,14 @@ import org.eclipse.swt.widgets.Control;
  * the mapping between coordinates of the ruler's control and line numbers based on the connected
  * text viewer's document (<code>IVerticalRulerInfo</code>).
  * </ul>
- * </p>
  * <p>
  * In order to provide backward compatibility for clients of <code>IOverviewRuler</code>, extension
  * interfaces are used as a means of evolution. The following extension interfaces exist:
- * <ul>
- * <li>{@link org.eclipse.jface.text.source.IOverviewRulerExtension} since version 3.8
- * allowing the ruler to set whether to use saturated colors.</li>
- * </ul>
  * </p>
+ * <ul>
+ * <li>{@link org.eclipse.jface.text.source.IOverviewRulerExtension} since version 3.8 allowing the
+ * ruler to set whether to use saturated colors.</li>
+ * </ul>
  * <p>
  * Clients may implement this interface or use the default implementation provided by
  * <code>OverviewRuler</code>.

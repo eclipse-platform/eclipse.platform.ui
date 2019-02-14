@@ -14,25 +14,25 @@
 package org.eclipse.jface.text;
 
 /**
- * Computes the information to be shown in a hover popup which appears on top of
- * the text viewer's text widget when a hover event occurs. If the text hover
- * does not provide information no hover popup is shown. Any implementer of this
- * interface must be capable of operating in a non-UI thread.
+ * Computes the information to be shown in a hover popup which appears on top of the text viewer's
+ * text widget when a hover event occurs. If the text hover does not provide information no hover
+ * popup is shown. Any implementer of this interface must be capable of operating in a non-UI
+ * thread.
  * <p>
  *
- * In order to provide backward compatibility for clients of
- * <code>ITextHover</code>, extension interfaces are used as a means of
- * evolution. The following extension interfaces exist:
+ * In order to provide backward compatibility for clients of <code>ITextHover</code>, extension
+ * interfaces are used as a means of evolution. The following extension interfaces exist:
+ * </p>
  * <ul>
- * <li>{@link org.eclipse.jface.text.ITextHoverExtension} since version 3.0
- *     allowing a text hover to provide a creator for the hover control. This allows
- *     for sophisticated hovers in a way that information computed by the hover can
- *     be displayed in the best possible form.</li>
- * <li>{@link org.eclipse.jface.text.ITextHoverExtension2} since version 3.4
- *     allowing a text hover to return hover-specific information objects.</li>
- * </ul></p>
+ * <li>{@link org.eclipse.jface.text.ITextHoverExtension} since version 3.0 allowing a text hover to
+ * provide a creator for the hover control. This allows for sophisticated hovers in a way that
+ * information computed by the hover can be displayed in the best possible form.</li>
+ * <li>{@link org.eclipse.jface.text.ITextHoverExtension2} since version 3.4 allowing a text hover
+ * to return hover-specific information objects.</li>
+ * </ul>
  * <p>
- * Clients may implement this interface.</p>
+ * Clients may implement this interface.
+ * </p>
  *
  * @see org.eclipse.jface.text.ITextHoverExtension
  * @see org.eclipse.jface.text.ITextHoverExtension2

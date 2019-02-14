@@ -19,7 +19,7 @@ import org.eclipse.jface.text.codemining.ICodeMiningProvider;
 /**
  * Extension interface for {@link org.eclipse.jface.text.source.ISourceViewer}.
  * <p>
- * It introduces API to access a minimal set of code mining APIs.</li>
+ * It introduces API to access a minimal set of code mining APIs.
  * </p>
  *
  * @see ICodeMining

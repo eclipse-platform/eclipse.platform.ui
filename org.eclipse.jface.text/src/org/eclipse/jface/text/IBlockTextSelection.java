@@ -20,14 +20,14 @@ package org.eclipse.jface.text;
  * character ranges covered by a column selection is influenced by the used font and tabulator
  * width. Using column selections with proportional fonts may render unexpected results.
  *
- * <h5><a name="virtual">Virtual Spaces</a></h5>
- * The {@linkplain #getStartColumn() start column} and {@linkplain #getEndColumn() end column} may
- * refer to &quot;virtual offsets&quot; in the white space beyond the end of the line. Such an
- * offset can be realized by inserting a space for each missing character.
+ * <h5>Virtual Spaces</h5> The {@linkplain #getStartColumn() start column} and
+ * {@linkplain #getEndColumn() end column} may refer to &quot;virtual offsets&quot; in the white
+ * space beyond the end of the line. Such an offset can be realized by inserting a space for each
+ * missing character.
  * <p>
- * The {@linkplain ITextSelection#getOffset() offset} and
- * {@linkplain ITextSelection#getLength() length} of an {@link IBlockTextSelection} refer to the
- * smallest non-virtual range that comprises the entire rectangular selection.
+ * The {@linkplain ITextSelection#getOffset() offset} and {@linkplain ITextSelection#getLength()
+ * length} of an {@link IBlockTextSelection} refer to the smallest non-virtual range that comprises
+ * the entire rectangular selection.
  * </p>
  * <p>
  * Clients may implement this interface or use the default implementation provided by

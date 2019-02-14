@@ -19,20 +19,18 @@ import org.eclipse.jface.text.source.SourceViewerConfiguration;
 
 
 /**
- * A hyperlink detector tries to find a hyperlink at
- * a given location in a given text viewer.
+ * A hyperlink detector tries to find a hyperlink at a given location in a given text viewer.
  * <p>
- * In order to provide backward compatibility for clients of <code>IHyperlinkDetector</code>, extension
- * interfaces are used to provide a means of evolution. The following extension interfaces exist:
+ * In order to provide backward compatibility for clients of <code>IHyperlinkDetector</code>,
+ * extension interfaces are used to provide a means of evolution. The following extension interfaces
+ * exist:
+ * </p>
  * <ul>
- * <li>{@link IHyperlinkDetectorExtension} since version 3.3,
- * 		adds the ability to dispose a hyperlink detector
- * </li>
- * <li>{@link IHyperlinkDetectorExtension2} since version 3.3,
- * 		adds the ability to specify the state mask of the modifier
- *      keys that need to be pressed for this hyperlink detector
- * </li>
- * </ul></p>
+ * <li>{@link IHyperlinkDetectorExtension} since version 3.3, adds the ability to dispose a
+ * hyperlink detector</li>
+ * <li>{@link IHyperlinkDetectorExtension2} since version 3.3, adds the ability to specify the state
+ * mask of the modifier keys that need to be pressed for this hyperlink detector</li>
+ * </ul>
  * <p>
  * Clients may implement this interface.
  * </p>

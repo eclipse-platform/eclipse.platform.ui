@@ -18,33 +18,32 @@ import org.eclipse.jface.text.IRegion;
 
 
 /**
- * A reconciling strategy is used by an reconciler to reconcile a model
- * based on text of a particular content type. It provides methods for
- * incremental as well as non-incremental reconciling.
+ * A reconciling strategy is used by an reconciler to reconcile a model based on text of a
+ * particular content type. It provides methods for incremental as well as non-incremental
+ * reconciling.
  * <p>
- * If a reconcile strategy consists of several steps between which
- * model transformation is desired the each step should implement
- * {@link org.eclipse.jface.text.reconciler.IReconcileStep}.
+ * If a reconcile strategy consists of several steps between which model transformation is desired
+ * the each step should implement {@link org.eclipse.jface.text.reconciler.IReconcileStep}.
  * </p>
  * <p>
- * In order to provide backward compatibility for clients of <code>IReconcilingStrategy</code>, extension
- * interfaces are used to provide a means of evolution. The following extension interfaces exist:
+ * In order to provide backward compatibility for clients of <code>IReconcilingStrategy</code>,
+ * extension interfaces are used to provide a means of evolution. The following extension interfaces
+ * exist:
+ * </p>
  * <ul>
- * <li>{@link org.eclipse.jface.text.reconciler.IReconcilingStrategyExtension} since version 2.0 introducing
- *		the following functions:
- *			<ul>
- *				<li>usage of a progress monitor</li>
- *				<li>initial reconciling step: if a reconciler runs as periodic activity in the background, this
- *					methods offers the reconciler a chance for initializing its strategies and achieving a
- *					reconciled state before the periodic activity starts.</li>
- *			</ul>
+ * <li>{@link org.eclipse.jface.text.reconciler.IReconcilingStrategyExtension} since version 2.0
+ * introducing the following functions:
+ * <ul>
+ * <li>usage of a progress monitor</li>
+ * <li>initial reconciling step: if a reconciler runs as periodic activity in the background, this
+ * methods offers the reconciler a chance for initializing its strategies and achieving a reconciled
+ * state before the periodic activity starts.</li>
+ * </ul>
  * </li>
  * </ul>
- * </p>
  * <p>
- * This interface must be implemented by clients. Implementers should be
- * registered with a reconciler in order get involved in the reconciling
- * process.
+ * This interface must be implemented by clients. Implementers should be registered with a
+ * reconciler in order get involved in the reconciling process.
  * </p>
  */
 public interface IReconcilingStrategy {

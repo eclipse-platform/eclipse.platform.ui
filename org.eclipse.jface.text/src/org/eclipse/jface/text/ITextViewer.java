@@ -21,85 +21,78 @@ import org.eclipse.jface.viewers.ISelectionProvider;
 
 
 /**
- * A text viewer connects a text widget with an
- * {@link org.eclipse.jface.text.IDocument}. The document is used as the
- * widget's text model.
+ * A text viewer connects a text widget with an {@link org.eclipse.jface.text.IDocument}. The
+ * document is used as the widget's text model.
  * <p>
  * It supports the following kinds of listeners:
+ * </p>
  * <ul>
  * <li>view port listeners to inform about changes of the viewer's view port</li>
- * <li>text listeners to inform about changes of the document and the
- * subsequent viewer change</li>
- * <li>text input listeners to inform about changes of the viewer's input
- * document.</li>
+ * <li>text listeners to inform about changes of the document and the subsequent viewer change</li>
+ * <li>text input listeners to inform about changes of the viewer's input document.</li>
  * </ul>
- * A text viewer supports a set of configuration options and plug-ins defining
- * its behavior:
+ * A text viewer supports a set of configuration options and plug-ins defining its behavior:
  * <ul>
  * <li>undo manager</li>
  * <li>double click behavior</li>
  * <li>auto indentation</li>
  * <li>text hover</li>
  * </ul>
- * Installed plug-ins are not automatically activated. Plug-ins must be
- * activated with the <code>activatePlugins</code> call. Most plug-ins can be
- * defined per content type. Content types are derived from a partitioning of
- * the text viewer's input document. In case of documents that support multiple
- * partitionings, the implementer is responsible for determining the
- * partitioning to use.
  * <p>
- * A text viewer also provides the concept of event consumption. Events handled
- * by the viewer can be filtered and processed by a dynamic event consumer. With
- * {@link org.eclipse.jface.text.ITextViewerExtension}, this mechanism has been
- * replaced with the support for
- * {@link org.eclipse.swt.custom.VerifyKeyListener}.
+ * Installed plug-ins are not automatically activated. Plug-ins must be activated with the
+ * <code>activatePlugins</code> call. Most plug-ins can be defined per content type. Content types
+ * are derived from a partitioning of the text viewer's input document. In case of documents that
+ * support multiple partitionings, the implementer is responsible for determining the partitioning
+ * to use.
+ * </p>
  * <p>
- * A text viewer provides several text editing functions, some of them are
- * configurable, through a text operation target interface. It also supports a
- * presentation mode in which it only shows a specified section of its document.
- * By calling <code>setVisibleRegion</code> clients define which section is
- * visible. Clients can get access to this section by calling
- * <code>getVisibleRegion</code>. The viewer's presentation mode does not
- * affect any client of the viewer other than text listeners. With
- * {@link org.eclipse.jface.text.ITextViewerExtension5} the visible region
- * support has been reworked. With that extension interface, text viewers are
- * allowed to show fractions of their input document. I.e. a widget selection of
- * two visually neighboring characters is no longer guaranteed to be two
- * neighboring characters in the viewer's input document. Thus, viewers
- * implementing {@link org.eclipse.jface.text.ITextViewerExtension5} are
- * potentially forced to change the fractions of the input document that are
- * shown when clients ask for the visible region.
+ * A text viewer also provides the concept of event consumption. Events handled by the viewer can be
+ * filtered and processed by a dynamic event consumer. With
+ * {@link org.eclipse.jface.text.ITextViewerExtension}, this mechanism has been replaced with the
+ * support for {@link org.eclipse.swt.custom.VerifyKeyListener}.
+ * </p>
+ * <p>
+ * A text viewer provides several text editing functions, some of them are configurable, through a
+ * text operation target interface. It also supports a presentation mode in which it only shows a
+ * specified section of its document. By calling <code>setVisibleRegion</code> clients define which
+ * section is visible. Clients can get access to this section by calling
+ * <code>getVisibleRegion</code>. The viewer's presentation mode does not affect any client of the
+ * viewer other than text listeners. With {@link org.eclipse.jface.text.ITextViewerExtension5} the
+ * visible region support has been reworked. With that extension interface, text viewers are allowed
+ * to show fractions of their input document. I.e. a widget selection of two visually neighboring
+ * characters is no longer guaranteed to be two neighboring characters in the viewer's input
+ * document. Thus, viewers implementing {@link org.eclipse.jface.text.ITextViewerExtension5} are
+ * potentially forced to change the fractions of the input document that are shown when clients ask
+ * for the visible region.
+ * </p>
  * <p>
  *
- * In order to provide backward compatibility for clients of
- * <code>ITextViewer</code>, extension interfaces are used as a means of
- * evolution. The following extension interfaces exist:
+ * In order to provide backward compatibility for clients of <code>ITextViewer</code>, extension
+ * interfaces are used as a means of evolution. The following extension interfaces exist:
+ * </p>
  * <ul>
- * <li>{@link org.eclipse.jface.text.ITextViewerExtension} since version 2.0
- * replacing the event consumer mechanism and introducing the concept of rewrite
- * targets and means to manage the viewer's redraw behavior</li>
- * <li>{@link org.eclipse.jface.text.ITextViewerExtension2}since version 2.1
- * adding a way to invalidate a viewer's presentation and setters for hovers.
- * </li>
- * <li>{@link org.eclipse.jface.text.ITextViewerExtension3} since version 2.1
- * which itself was replaced by
- * {@link org.eclipse.jface.text.ITextViewerExtension5} in version 3.0</li>
- * <li>{@link org.eclipse.jface.text.ITextViewerExtension4} since version 3.0
- * introducing focus handling for widget token keepers and the concept of text
- * presentation listeners.</li>
- * <li>{@link org.eclipse.jface.text.ITextViewerExtension5} since version 3.0
- * extending the visible region concept with explicit handling and conversion
- * of widget and model coordinates.</li>
- * <li>{@link org.eclipse.jface.text.ITextViewerExtension6} since version 3.1
- * extending the text viewer with the ability to detect hyperlinks and access the undo manager.</li>
- * <li>{@link org.eclipse.jface.text.ITextViewerExtension7} since version 3.3
- * extending the text viewer with the ability to install tabs to spaces conversion.</li>
- * <li>{@link org.eclipse.jface.text.ITextViewerExtension8} since version 3.4
- * extending the text viewer with the ability to print and rich hover support.</li>
- * </ul></p>
+ * <li>{@link org.eclipse.jface.text.ITextViewerExtension} since version 2.0 replacing the event
+ * consumer mechanism and introducing the concept of rewrite targets and means to manage the
+ * viewer's redraw behavior</li>
+ * <li>{@link org.eclipse.jface.text.ITextViewerExtension2}since version 2.1 adding a way to
+ * invalidate a viewer's presentation and setters for hovers.</li>
+ * <li>{@link org.eclipse.jface.text.ITextViewerExtension3} since version 2.1 which itself was
+ * replaced by {@link org.eclipse.jface.text.ITextViewerExtension5} in version 3.0</li>
+ * <li>{@link org.eclipse.jface.text.ITextViewerExtension4} since version 3.0 introducing focus
+ * handling for widget token keepers and the concept of text presentation listeners.</li>
+ * <li>{@link org.eclipse.jface.text.ITextViewerExtension5} since version 3.0 extending the visible
+ * region concept with explicit handling and conversion of widget and model coordinates.</li>
+ * <li>{@link org.eclipse.jface.text.ITextViewerExtension6} since version 3.1 extending the text
+ * viewer with the ability to detect hyperlinks and access the undo manager.</li>
+ * <li>{@link org.eclipse.jface.text.ITextViewerExtension7} since version 3.3 extending the text
+ * viewer with the ability to install tabs to spaces conversion.</li>
+ * <li>{@link org.eclipse.jface.text.ITextViewerExtension8} since version 3.4 extending the text
+ * viewer with the ability to print and rich hover support.</li>
+ * </ul>
  * <p>
- * Clients may implement this interface and its extension interfaces or use the
- * standard implementation {@link org.eclipse.jface.text.TextViewer}.</p>
+ * Clients may implement this interface and its extension interfaces or use the standard
+ * implementation {@link org.eclipse.jface.text.TextViewer}.
+ * </p>
  *
  * @see org.eclipse.jface.text.ITextViewerExtension
  * @see org.eclipse.jface.text.ITextViewerExtension2

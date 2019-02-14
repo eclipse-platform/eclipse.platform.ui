@@ -25,6 +25,7 @@ package org.eclipse.jface.text;
  * In order to provided backward compatibility for clients of <code>IDocumentPartitioningListener</code>, extension
  * interfaces are used to provide a means of evolution. The following extension interfaces
  * exist:
+ * </p>
  * <ul>
  * <li> {@link org.eclipse.jface.text.IDocumentPartitioningListenerExtension} since version 2.0 replacing the original
  *      notification mechanism.</li>
@@ -32,7 +33,6 @@ package org.eclipse.jface.text;
  *      notification mechanisms. Thus, implementers up-to-date with version 3.0 do not have to implement
  *      {@link org.eclipse.jface.text.IDocumentPartitioningListenerExtension}.</li>
  * </ul>
- * </p>
  * @see org.eclipse.jface.text.IDocumentPartitioningListenerExtension
  * @see org.eclipse.jface.text.IDocumentPartitioningListenerExtension2
  * @see org.eclipse.jface.text.IDocument

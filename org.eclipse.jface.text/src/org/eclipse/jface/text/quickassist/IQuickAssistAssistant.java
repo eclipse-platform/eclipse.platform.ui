@@ -25,31 +25,30 @@ import org.eclipse.jface.text.source.ISourceViewerExtension3;
 
 
 /**
- * An <code>IQuickAssistAssistant</code> provides support for quick fixes and quick
- * assists.
- * The quick assist assistant is a {@link ISourceViewer} add-on. Its
- * purpose is to propose, display, and insert quick assists and quick fixes
- * available at the current source viewer's quick assist invocation context.
+ * An <code>IQuickAssistAssistant</code> provides support for quick fixes and quick assists. The
+ * quick assist assistant is a {@link ISourceViewer} add-on. Its purpose is to propose, display, and
+ * insert quick assists and quick fixes available at the current source viewer's quick assist
+ * invocation context.
  * <p>
- * The quick assist assistant can be configured with a {@link IQuickAssistProcessor}
- * which provides the possible quick assist and quick fix completions.
+ * The quick assist assistant can be configured with a {@link IQuickAssistProcessor} which provides
+ * the possible quick assist and quick fix completions.
  * </p>
- * In order to provide backward compatibility for clients of
- * <code>IQuickAssistAssistant</code>, extension interfaces are used to
- * provide a means of evolution. The following extension interfaces exist:
+ * <p>
+ * In order to provide backward compatibility for clients of <code>IQuickAssistAssistant</code>,
+ * extension interfaces are used to provide a means of evolution. The following extension interfaces
+ * exist:
+ * </p>
  * <ul>
- * <li>{@link IQuickAssistAssistantExtension} since version 3.4 introducing the
- * following function:
+ * <li>{@link IQuickAssistAssistantExtension} since version 3.4 introducing the following function:
  * <ul>
- * 	<li>allows to get a handler for the given command identifier</li>
- * 	<li>allows to enable support for colored labels in the proposal popup</li>
+ * <li>allows to get a handler for the given command identifier</li>
+ * <li>allows to enable support for colored labels in the proposal popup</li>
  * </ul>
  * </li>
- * </p>
+ * </ul>
  * <p>
- * The interface can be implemented by clients. By default, clients use
- * {@link QuickAssistAssistant} as the standard
- * implementer of this interface.
+ * The interface can be implemented by clients. By default, clients use {@link QuickAssistAssistant}
+ * as the standard implementer of this interface.
  * </p>
  *
  * @see ISourceViewer
