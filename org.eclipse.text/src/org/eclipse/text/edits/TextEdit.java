@@ -144,7 +144,7 @@ public abstract class TextEdit {
 
 	/**
 	 * Create a new text edit. Parent is initialized to <code>
-	 * null<code> and the edit doesn't have any children.
+	 * null</code> and the edit doesn't have any children.
 	 *
 	 * @param offset the edit's offset
 	 * @param length the edit's length
@@ -213,7 +213,7 @@ public abstract class TextEdit {
 	 * calculation:
 	 * <pre>
 	 *   getOffset() + getLength() - 1;
-	 * <pre>
+	 * </pre>
 	 *
 	 * @return the inclusive end position
 	 */
@@ -265,7 +265,7 @@ public abstract class TextEdit {
 	 * decide if a edit of length zero can cover another edit.
 	 *
 	 * @param other the other edit
-	 * @return <code>true<code> if the edit covers the other edit;
+	 * @return <code>true</code> if the edit covers the other edit;
 	 *  otherwise <code>false</code> is returned.
 	 */
 	public boolean covers(TextEdit other) {
@@ -598,10 +598,10 @@ public abstract class TextEdit {
 	 * object to fulfill this requirement.
 	 * <p>
 	 * Implementers of this method should use the copy constructor <code>
-	 * Edit#Edit(Edit source) to initialize the edit part of the copy.
+	 * Edit#Edit</code>(Edit source) to initialize the edit part of the copy.
 	 * Implementors aren't responsible to actually copy the children or
 	 * to set the right parent.
-	 * <p>
+	 * </p>
 	 * This method <b>should not be called</b> from outside the framework.
 	 * Please use <code>copy</code> to create a copy of a edit tree.
 	 *
@@ -648,6 +648,7 @@ public abstract class TextEdit {
 	 * This method must be implemented in all concrete text edits.
 	 * <p>
 	 * General template for implementation on each concrete TextEdit class:
+	 * </p>
 	 * <pre>
 	 * <code>
 	 * boolean visitChildren= visitor.visit(this);
@@ -658,7 +659,6 @@ public abstract class TextEdit {
 	 * </pre>
 	 * Note that the caller (<code>accept</code>) takes care of invoking
 	 * <code>visitor.preVisit(this)</code> and <code>visitor.postVisit(this)</code>.
-	 * </p>
 	 *
 	 * @param visitor the visitor object
 	 */
@@ -695,7 +695,7 @@ public abstract class TextEdit {
 	 *
 	 * @param document the document to be manipulated
 	 * @param style flags controlling the execution of the edit tree. Valid
-	 *  flags are: <code>CREATE_UNDO</code> and </code>UPDATE_REGIONS</code>.
+	 *  flags are: <code>CREATE_UNDO</code> and <code>UPDATE_REGIONS</code>.
 	 * @return a undo edit, if <code>CREATE_UNDO</code> is specified. Otherwise
 	 *  <code>null</code> is returned.
 	 *

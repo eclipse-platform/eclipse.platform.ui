@@ -213,8 +213,9 @@ public class TextSelectionNavigationLocation extends NavigationLocation {
 	/**
 	 * Merges the given location into this one.
 	 *
-	 * @param location the location to merge into this one
-	 * @return <code>true<code> if merging was successful
+	 * @param location
+	 *            the location to merge into this one
+	 * @return <code>true</code> if merging was successful
 	 */
 	@Override
 	public boolean mergeInto(INavigationLocation location) {

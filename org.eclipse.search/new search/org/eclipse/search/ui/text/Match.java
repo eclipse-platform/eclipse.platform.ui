@@ -158,8 +158,8 @@ public class Match {
 	/**
 	 * Returns whether this match is filtered or not.
 	 *
-	 * @return <code>true<code> if the match is filtered;
-	 *  otherwise <code>false</code>
+	 * @return <code>true</code> if the match is filtered; otherwise
+	 *         <code>false</code>
 	 *
 	 * @since 3.1
 	 */
