@@ -25,34 +25,40 @@ import org.eclipse.e4.core.internal.contexts.ContextObjectSupplier;
 import org.eclipse.e4.core.internal.contexts.EclipseContext;
 
 /**
- * An injection factory is used to inject data and services from a context into a domain object. The
- * injection will try to find fields and methods in the user objects that correspond to the names of
- * the services present in the context. Subsequent changes to the context after injection will cause
- * the affected items to be re-injected into the object. Thus the object will remain synchronized
- * with the context once it has been injected.
+ * An injection factory is used to inject data and services from a context into
+ * a domain object. The injection will try to find fields and methods in the
+ * user objects that correspond to the names of the services present in the
+ * context. Subsequent changes to the context after injection will cause the
+ * affected items to be re-injected into the object. Thus the object will remain
+ * synchronized with the context once it has been injected.
  * <p>
- * If annotations are supported by the runtime, matching of methods and fields to be injected is
- * also performed using the annotations defined in packages javax.inject and
- * org.eclipse.e4.core.di.annotations.
+ * If annotations are supported by the runtime, matching of methods and fields
+ * to be injected is also performed using the annotations defined in packages
+ * javax.inject and org.eclipse.e4.core.di.annotations.
  * </p>
  * <p>
- * The injection of values is generally done as a number of calls. User objects that want to
- * finalize the injected data (for instance, to perform calculations based on multiple injected
- * values) can place such calculations in a method with the <tt>javax.annotation.PostConstruct</tt> annotation.
+ * The injection of values is generally done as a number of calls. User objects
+ * that want to finalize the injected data (for instance, to perform
+ * calculations based on multiple injected values) can place such calculations
+ * in a method with the <code>javax.annotation.PostConstruct</code> annotation.
  * </p>
  * <p>
- * When injecting values, all fields are injected prior to injection of methods. When values are
- * removed from the context or the context is disposed, injection of null values occurs in the
- * reverse order: methods and then fields. As a result, injection methods can safely make use of
- * injected field values. The order in which methods are injected is undefined, so
- * injection methods should not rely on other injection methods having been run already. Methods
- * and field on superclasses are injected before methods in fields on the subclasses.
+ * When injecting values, all fields are injected prior to injection of methods.
+ * When values are removed from the context or the context is disposed,
+ * injection of null values occurs in the reverse order: methods and then
+ * fields. As a result, injection methods can safely make use of injected field
+ * values. The order in which methods are injected is undefined, so injection
+ * methods should not rely on other injection methods having been run already.
+ * Methods and field on superclasses are injected before methods in fields on
+ * the subclasses.
  * </p>
  * <p>
- * When a context is disposed, the injection factory will attempt to notify all injected objects by
- * calling methods with the <tt>javax.annotation.PreDestroy</tt> annotation.
+ * When a context is disposed, the injection factory will attempt to notify all
+ * injected objects by calling methods with the
+ * <code>javax.annotation.PreDestroy</code> annotation.
  *
  * This class is not intended to be extended by clients.
+ *
  * @noinstantiate This class is not intended to be instantiated by clients.
  * @since 1.3
  */

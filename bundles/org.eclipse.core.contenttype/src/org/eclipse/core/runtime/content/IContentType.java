@@ -46,7 +46,7 @@ public interface IContentType extends IContentTypeSettings {
 	int FILE_EXTENSION_SPEC = 0b1000;
 	/**
 	 * File spec type constant, indicating a file name pattern specification.
-	 * <code>?</code> represents any single character, <code>*<code> represent any
+	 * <code>?</code> represents any single character, <code>*</code> represent any
 	 * string.
 	 *
 	 * @since 3.7

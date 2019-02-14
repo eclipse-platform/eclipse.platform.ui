@@ -24,31 +24,33 @@ import java.lang.annotation.Target;
 import javax.inject.Qualifier;
 
 /**
- * This annotation can be applied to methods, fields, and parameters to
- * mark them as optional for the dependency injection. Typically, if the injector is
- * unable to find a value to inject, then injection will fail. However if a value cannot be found
- * and if this annotation is specified, then:
+ * This annotation can be applied to methods, fields, and parameters to mark
+ * them as optional for the dependency injection. Typically, if the injector is
+ * unable to find a value to inject, then injection will fail. However if a
+ * value cannot be found and if this annotation is specified, then:
  * <ul>
- * <li> for parameters:  a <code>null</code> value will be injected; </li>
- * <li> for methods: the method calls will be skipped; </li>
- * <li> for fields: the values will not be injected. </li>
+ * <li>for parameters: a <code>null</code> value will be injected;</li>
+ * <li>for methods: the method calls will be skipped;</li>
+ * <li>for fields: the values will not be injected.</li>
  * </ul>
  *
  * <p>
  * Note that {@code null} is as an acceptable value and is not the same as a
- * value not being found. For example, the {@code IEclipseContext}-based supplier distinguishes
- * between a value being set to null (i.e., {@code context.set(SOMEKEY, null)})
- * and the value not found (i.e., {@code context.remove(SOMEKEY)}).
+ * value not being found. For example, the {@code IEclipseContext}-based
+ * supplier distinguishes between a value being set to null (i.e.,
+ * {@code context.set(SOMEKEY, null)}) and the value not found (i.e.,
+ * {@code context.remove(SOMEKEY)}).
  * </p>
  *
- * <p>Example usage:
+ * Example usage:
+ * 
  * <pre>
  *   public class Car {
  *     &#064;Inject &#064;Optional void setOverdrive(OverdriveMode mode);
  *     ...
  *   }
- *  </pre>
- *  </p>
+ * </pre>
+ * 
  * @since 1.3
  */
 @Qualifier
