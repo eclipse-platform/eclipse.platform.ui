@@ -35,7 +35,7 @@ public class WorkingSetFactory implements IElementFactory {
         String aggregateString = memento
 				.getString(AbstractWorkingSet.TAG_AGGREGATE);
 		boolean isAggregate = aggregateString != null
-				&& Boolean.valueOf(aggregateString).booleanValue();
+				&& Boolean.parseBoolean(aggregateString);
 
 		if (workingSetName == null) {
 			return null;

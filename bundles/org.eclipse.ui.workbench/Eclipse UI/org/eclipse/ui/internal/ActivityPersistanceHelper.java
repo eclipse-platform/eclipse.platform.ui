@@ -82,7 +82,7 @@ final class ActivityPersistanceHelper {
                 IWorkbenchActivitySupport support = PlatformUI.getWorkbench().getActivitySupport();
                 IActivityManager activityManager = support.getActivityManager();
 
-                boolean enabled = Boolean.valueOf(event.getNewValue().toString()).booleanValue();
+                boolean enabled = Boolean.parseBoolean(event.getNewValue().toString());
                 // if we're turning an activity off we'll need to create its dependency tree to ensuure that all dependencies are also disabled.
 				Set<String> set = new HashSet<>(activityManager.getEnabledActivityIds());
                 if (enabled == false) {

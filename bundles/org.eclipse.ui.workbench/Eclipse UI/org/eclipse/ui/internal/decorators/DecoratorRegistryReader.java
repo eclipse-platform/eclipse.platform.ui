@@ -77,7 +77,7 @@ public class DecoratorRegistryReader extends RegistryReader {
         boolean noClass = element.getAttribute(DecoratorDefinition.ATT_CLASS) == null;
 
         //Lightweight or Full? It is lightweight if it is declared lightweight or if there is no class
-        if (Boolean.valueOf(element.getAttribute(IWorkbenchRegistryConstants.ATT_LIGHTWEIGHT)).booleanValue() || noClass) {
+        if (Boolean.parseBoolean(element.getAttribute(IWorkbenchRegistryConstants.ATT_LIGHTWEIGHT)) || noClass) {
 
             String iconPath = element.getAttribute(LightweightDecoratorDefinition.ATT_ICON);
 

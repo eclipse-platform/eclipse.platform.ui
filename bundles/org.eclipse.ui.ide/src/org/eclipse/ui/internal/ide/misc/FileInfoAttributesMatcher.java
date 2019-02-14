@@ -188,14 +188,14 @@ public class FileInfoAttributesMatcher extends AbstractFileInfoMatcher {
 		if (index == -1)
 			return result;
 
-		result.caseSensitive = Boolean.valueOf(argument.substring(0, index)).booleanValue();
+		result.caseSensitive = Boolean.parseBoolean(argument.substring(0, index));
 		argument = argument.substring(index + 1);
 
 		index = argument.indexOf(DELIMITER);
 		if (index == -1)
 			return result;
 
-		result.regularExpression = Boolean.valueOf(argument.substring(0, index)).booleanValue();
+		result.regularExpression = Boolean.parseBoolean(argument.substring(0, index));
 		result.pattern = argument.substring(index + 1);
 
 		return result;
@@ -322,7 +322,7 @@ public class FileInfoAttributesMatcher extends AbstractFileInfoMatcher {
 				}
 			}
 			if (type.equals(Boolean.class)) {
-				boolean parameter = Boolean.valueOf(argument.pattern).booleanValue();
+				boolean parameter = Boolean.parseBoolean(argument.pattern);
 				if (argument.key.equals(KEY_IS_READONLY)) {
 					IFileInfo info = fetchInfo(parent, fileInfo);
 					if (!info.exists())

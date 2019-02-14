@@ -62,7 +62,7 @@ public class DescriptionFieldFilter extends CompatibilityFieldFilter {
 		String setting = memento.getString(ProblemFilter.TAG_CONTAINS);
 
 		if (setting != null) {
-			containsModifier = Boolean.valueOf(setting).booleanValue() ? MarkerSupportConstants.CONTAINS_KEY
+			containsModifier = Boolean.parseBoolean(setting) ? MarkerSupportConstants.CONTAINS_KEY
 					: MarkerSupportConstants.DOES_NOT_CONTAIN_KEY;
 
 		}

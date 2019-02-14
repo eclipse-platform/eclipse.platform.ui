@@ -53,7 +53,7 @@ public class RegistryTriggerPoint extends AbstractTriggerPoint {
 
     @Override
 	public boolean getBooleanHint(String key) {
-        return Boolean.valueOf(getStringHint(key)).booleanValue();
+        return Boolean.parseBoolean(getStringHint(key));
     }
 
     /**

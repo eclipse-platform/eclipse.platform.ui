@@ -300,6 +300,6 @@ public class Theme extends EventManager implements ITheme {
 			return false;
 		}
 
-        return Boolean.valueOf(getString(key)).booleanValue();
+        return Boolean.parseBoolean(getString(key));
     }
 }

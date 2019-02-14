@@ -332,7 +332,7 @@ public class ModifyWorkingSetDelegate extends
 	public void setInitializationData(IConfigurationElement config,
 			String propertyName, Object data) {
 		if (data instanceof String) {
-			add = Boolean.valueOf((String) data).booleanValue();
+			add = Boolean.parseBoolean((String) data);
 		}
 	}
 

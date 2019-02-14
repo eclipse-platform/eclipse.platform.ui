@@ -383,7 +383,7 @@ public class MenuHelper {
 
 	public static boolean isSeparatorVisible(IConfigurationElement element) {
 		String val = element.getAttribute(IWorkbenchRegistryConstants.ATT_VISIBLE);
-		return Boolean.valueOf(val).booleanValue();
+		return Boolean.parseBoolean(val);
 	}
 
 	public static String getClassSpec(IConfigurationElement element) {

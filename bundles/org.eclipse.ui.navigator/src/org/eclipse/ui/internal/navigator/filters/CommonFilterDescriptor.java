@@ -107,7 +107,7 @@ public class CommonFilterDescriptor implements ICommonFilterDescriptor,
 		String attr = element.getAttribute(ATT_VISIBLE_IN_UI);
 		if (attr == null)
 			return true;
-		return Boolean.valueOf(attr).booleanValue();
+		return Boolean.parseBoolean(attr);
 	}
 
 	/**

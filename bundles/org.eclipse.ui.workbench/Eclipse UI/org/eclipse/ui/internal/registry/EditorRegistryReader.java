@@ -145,7 +145,7 @@ public class EditorRegistryReader extends RegistryReader {
         // Is this the default editor?
         String def = element.getAttribute(IWorkbenchRegistryConstants.ATT_DEFAULT);
         if (def != null) {
-			defaultEditor = Boolean.valueOf(def).booleanValue();
+			defaultEditor = Boolean.parseBoolean(def);
 		}
 
         // Add the editor to the manager.

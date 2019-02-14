@@ -401,7 +401,7 @@ class MarkerFieldFilterGroup {
 
 		String enabledString = memento.getString(TAG_ENABLED);
 		if (enabledString != null && enabledString.length() > 0) {
-			enabled = Boolean.valueOf(enabledString).booleanValue();
+			enabled = Boolean.parseBoolean(enabledString);
 		}
 
 		Integer resourceSetting = memento.getInteger(MarkerFilter.TAG_ON_RESOURCE);
@@ -443,7 +443,7 @@ class MarkerFieldFilterGroup {
 	void loadSettings(IMemento memento) {
 		String stringValue = memento.getString(TAG_ENABLED);
 		if (stringValue != null && stringValue.length() > 0){
-			enabled = Boolean.valueOf(stringValue).booleanValue();
+			enabled = Boolean.parseBoolean(stringValue);
 		}
 		scope = memento.getInteger(TAG_SCOPE).intValue();
 

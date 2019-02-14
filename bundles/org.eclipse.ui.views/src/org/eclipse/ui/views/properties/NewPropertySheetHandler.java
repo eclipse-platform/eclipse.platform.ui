@@ -42,7 +42,7 @@ public class NewPropertySheetHandler extends AbstractHandler {
 	/**
 	 * Whether new PVs are pinned when newly opened
 	 */
-	private static final boolean PIN_NEW_PROPERTY_VIEW = Boolean.valueOf(System.getProperty("org.eclipse.ui.views.properties.pinNewPV", Boolean.FALSE.toString())).booleanValue(); //$NON-NLS-1$
+	private static final boolean PIN_NEW_PROPERTY_VIEW = Boolean.parseBoolean(System.getProperty("org.eclipse.ui.views.properties.pinNewPV", Boolean.FALSE.toString())); //$NON-NLS-1$
 
 	/**
 	 * First tries to find a suitable instance to reuse for the given context,

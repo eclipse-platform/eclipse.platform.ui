@@ -179,7 +179,7 @@ public class WorkbenchBrowserSupport extends AbstractWorkbenchBrowserSupport {
 				for (IConfigurationElement element : elements) {
 					if (element.getName().equals(IWorkbenchRegistryConstants.TAG_SUPPORT)) {
 						String def = element.getAttribute(IWorkbenchRegistryConstants.ATT_DEFAULT);
-						if (def != null && Boolean.valueOf(def).booleanValue()) {
+						if (def != null && Boolean.parseBoolean(def)) {
 							if (defaultElement == null) {
 								defaultElement = element;
 							}

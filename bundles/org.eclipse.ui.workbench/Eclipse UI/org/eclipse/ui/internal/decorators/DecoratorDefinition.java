@@ -67,7 +67,7 @@ public abstract class DecoratorDefinition implements IPluginContribution {
         this.id = identifier;
         this.definingElement = element;
 
-        this.enabled = this.defaultEnabled = Boolean.valueOf(element.getAttribute(ATT_ENABLED)).booleanValue();
+        this.enabled = this.defaultEnabled = Boolean.parseBoolean(element.getAttribute(ATT_ENABLED));
     }
 
     /**
@@ -155,7 +155,7 @@ public abstract class DecoratorDefinition implements IPluginContribution {
 			crashDisable();
 			return false;
 		}
-    	return Boolean.valueOf(definingElement.getAttribute(ATT_ADAPTABLE)).booleanValue();
+    	return Boolean.parseBoolean(definingElement.getAttribute(ATT_ADAPTABLE));
     }
 
     /**

@@ -258,7 +258,7 @@ public final class NavigatorViewerDescriptor implements
 		if (propValue == null) {
 			return false;
 		}
-		return Boolean.valueOf(propValue).booleanValue();
+		return Boolean.parseBoolean(propValue);
 	}
 
 

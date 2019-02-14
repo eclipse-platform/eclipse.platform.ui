@@ -293,7 +293,7 @@ public class WorkbenchWizardElement extends WorkbenchAdapter implements
 	public String [] getTags() {
 
         String flag = configurationElement.getAttribute(IWorkbenchRegistryConstants.ATT_PROJECT);
-        if (Boolean.valueOf(flag).booleanValue()) {
+        if (Boolean.parseBoolean(flag)) {
         	return PROJECT_TAGS;
         }
 
@@ -317,7 +317,7 @@ public class WorkbenchWizardElement extends WorkbenchAdapter implements
 
 	@Override
 	public boolean canFinishEarly() {
-		return Boolean.valueOf(configurationElement.getAttribute(IWorkbenchRegistryConstants.ATT_CAN_FINISH_EARLY)).booleanValue();
+		return Boolean.parseBoolean(configurationElement.getAttribute(IWorkbenchRegistryConstants.ATT_CAN_FINISH_EARLY));
 	}
 
 	@Override
@@ -327,7 +327,7 @@ public class WorkbenchWizardElement extends WorkbenchAdapter implements
 		if (hasPagesString == null) {
 			return true;
 		}
-		return Boolean.valueOf(hasPagesString).booleanValue();
+		return Boolean.parseBoolean(hasPagesString);
 	}
 
 	public String[] getKeywordLabels() {

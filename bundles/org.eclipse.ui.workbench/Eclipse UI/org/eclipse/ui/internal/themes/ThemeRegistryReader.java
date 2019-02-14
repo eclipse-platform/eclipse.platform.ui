@@ -153,7 +153,7 @@ public class ThemeRegistryReader extends RegistryReader {
         boolean isEditable = true;
         String isEditableString = element.getAttribute(IWorkbenchRegistryConstants.ATT_IS_EDITABLE);
         if (isEditableString != null) {
-            isEditable = Boolean.valueOf(isEditableString).booleanValue();
+            isEditable = Boolean.parseBoolean(isEditableString);
         }
 
         IConfigurationElement[] descriptions = element
@@ -343,7 +343,7 @@ public class ThemeRegistryReader extends RegistryReader {
         boolean isEditable = true;
         String isEditableString = element.getAttribute(IWorkbenchRegistryConstants.ATT_IS_EDITABLE);
         if (isEditableString != null) {
-            isEditable = Boolean.valueOf(isEditableString).booleanValue();
+            isEditable = Boolean.parseBoolean(isEditableString);
         }
 
         String description = null;

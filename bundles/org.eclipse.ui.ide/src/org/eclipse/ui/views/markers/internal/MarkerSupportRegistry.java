@@ -555,7 +555,7 @@ public class MarkerSupportRegistry implements IExtensionChangeHandler {
 		filter.createContributionFrom(element);
 
 		String enabledValue = element.getAttribute(ENABLED);
-		filter.setEnabled(enabledValue == null || Boolean.valueOf(enabledValue).booleanValue());
+		filter.setEnabled(enabledValue == null || Boolean.parseBoolean(enabledValue));
 
 		int scopeValue = getScopeValue(element);
 		if (scopeValue >= 0) {

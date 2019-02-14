@@ -166,7 +166,7 @@ public class DialogSettings implements IDialogSettings {
 
     @Override
 	public boolean getBoolean(String key) {
-        return Boolean.valueOf(items.get(key)).booleanValue();
+        return Boolean.parseBoolean(items.get(key));
     }
 
     @Override

@@ -525,7 +525,7 @@ public class MarkerFilter implements Cloneable {
 		resetState();
 		String setting = settings.get(TAG_ENABLED);
 		if (setting != null) {
-			enabled = Boolean.valueOf(setting).booleanValue();
+			enabled = Boolean.parseBoolean(setting);
 		}
 
 		setting = settings.get(TAG_ON_RESOURCE);
@@ -625,7 +625,7 @@ public class MarkerFilter implements Cloneable {
 		String setting = memento.getString(TAG_ENABLED);
 
 		if (setting != null) {
-			enabled = Boolean.valueOf(setting).booleanValue();
+			enabled = Boolean.parseBoolean(setting);
 		}
 
 		Integer resourceSetting = memento.getInteger(TAG_ON_RESOURCE);

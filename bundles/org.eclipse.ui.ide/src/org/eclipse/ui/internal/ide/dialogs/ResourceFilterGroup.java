@@ -2825,7 +2825,7 @@ class MultiMatcherCustomFilterArgumentUI implements ICustomFilterArgumentUI {
 				if (argument.pattern.length() == 0)
 					argumentsBoolean.select(0);
 				else
-					argumentsBoolean.select(Boolean.valueOf(argument.pattern).booleanValue() ? 0:1);
+					argumentsBoolean.select(Boolean.parseBoolean(argument.pattern) ? 0:1);
 			}
 		}
 		intiantiatedKeyOperatorType = selectedKeyOperatorType;

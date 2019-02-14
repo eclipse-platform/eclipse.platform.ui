@@ -59,7 +59,7 @@ public class CompletionFieldFilter extends CompatibilityFieldFilter {
 		String setting = memento.getString(TAG_DONE);
 
 		if (setting != null) {
-			completion = Boolean.valueOf(setting).booleanValue() ? COMPLETED : NOT_COMPLETED;
+			completion = Boolean.parseBoolean(setting) ? COMPLETED : NOT_COMPLETED;
 		}
 
 	}

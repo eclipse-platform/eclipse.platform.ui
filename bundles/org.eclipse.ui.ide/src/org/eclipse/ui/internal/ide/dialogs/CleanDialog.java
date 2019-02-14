@@ -328,14 +328,14 @@ public class CleanDialog extends MessageDialog {
             buildNowButton = new Button(parent, SWT.CHECK);
             buildNowButton.setText(IDEWorkbenchMessages.CleanDialog_buildNowButton);
             String buildNow = settings.get(BUILD_NOW);
-            buildNowButton.setSelection(buildNow == null || Boolean.valueOf(buildNow).booleanValue());
+            buildNowButton.setSelection(buildNow == null || Boolean.parseBoolean(buildNow));
 			buildNowButton.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING));
             buildNowButton.addSelectionListener(updateEnablement);
 
             globalBuildButton = new Button(parent, SWT.RADIO);
             globalBuildButton.setText(IDEWorkbenchMessages.CleanDialog_globalBuildButton);
             String buildAll = settings.get(BUILD_ALL);
-            globalBuildButton.setSelection(buildAll == null || Boolean.valueOf(buildAll).booleanValue());
+            globalBuildButton.setSelection(buildAll == null || Boolean.parseBoolean(buildAll));
             GridData data = new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING);
             data.horizontalIndent = 10;
             globalBuildButton.setLayoutData(data);

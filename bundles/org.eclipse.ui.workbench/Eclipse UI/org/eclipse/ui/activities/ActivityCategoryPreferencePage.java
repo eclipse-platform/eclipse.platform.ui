@@ -535,7 +535,7 @@ public final class ActivityCategoryPreferencePage extends PreferencePage impleme
             String propertyName, Object data) {
         if (data instanceof Hashtable) {
 			Hashtable<?, ?> table = (Hashtable<?, ?>) data;
-            allowAdvanced = Boolean.valueOf((String) table.remove(ALLOW_ADVANCED)).booleanValue();
+            allowAdvanced = Boolean.parseBoolean((String) table.remove(ALLOW_ADVANCED));
             strings.putAll(table);
         }
     }

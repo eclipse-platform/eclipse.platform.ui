@@ -68,14 +68,14 @@ public class WWinPluginAction extends PluginAction implements
         // If config specifies a retarget action, create it now
         String retarget = actionElement
                 .getAttribute(IWorkbenchRegistryConstants.ATT_RETARGET);
-        if (retarget != null && Boolean.valueOf(retarget).booleanValue()) {
+        if (retarget != null && Boolean.parseBoolean(retarget)) {
             // create a retarget action
             String allowLabelUpdate = actionElement
                     .getAttribute(IWorkbenchRegistryConstants.ATT_ALLOW_LABEL_UPDATE);
             String label = actionElement
                     .getAttribute(IWorkbenchRegistryConstants.ATT_LABEL);
 
-            if (allowLabelUpdate != null && Boolean.valueOf(allowLabelUpdate).booleanValue()) {
+            if (allowLabelUpdate != null && Boolean.parseBoolean(allowLabelUpdate)) {
 				retargetAction = new LabelRetargetAction(id, label, style);
 			} else {
 				retargetAction = new RetargetAction(id, label, style);
