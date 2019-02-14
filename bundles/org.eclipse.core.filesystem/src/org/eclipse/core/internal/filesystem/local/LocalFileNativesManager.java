@@ -38,7 +38,7 @@ public class LocalFileNativesManager {
 	private static boolean USING_NATIVES;
 
 	static {
-		boolean nativesAllowed = Boolean.valueOf(System.getProperty("eclipse.filesystem.useNatives", "true")).booleanValue(); //$NON-NLS-1$ //$NON-NLS-2$
+		boolean nativesAllowed = Boolean.parseBoolean(System.getProperty("eclipse.filesystem.useNatives", "true")); //$NON-NLS-1$ //$NON-NLS-2$
 		if (nativesAllowed && UnixFileNatives.isUsingNatives()) {
 			HANDLER = new UnixFileHandler();
 			USING_NATIVES = true;

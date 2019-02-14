@@ -22,7 +22,7 @@ import org.eclipse.core.filesystem.provider.FileInfo;
  */
 public class StructStat {
 
-	private static final boolean USE_MILLISECOND_RESOLUTION = Boolean.valueOf(System.getProperty("eclipse.filesystem.useNatives.modificationTimestampMillisecondsResolution", "true")).booleanValue(); //$NON-NLS-1$ //$NON-NLS-2$
+	private static final boolean USE_MILLISECOND_RESOLUTION = Boolean.parseBoolean(System.getProperty("eclipse.filesystem.useNatives.modificationTimestampMillisecondsResolution", "true")); //$NON-NLS-1$ //$NON-NLS-2$
 
 	public int st_mode;
 	public long st_size;

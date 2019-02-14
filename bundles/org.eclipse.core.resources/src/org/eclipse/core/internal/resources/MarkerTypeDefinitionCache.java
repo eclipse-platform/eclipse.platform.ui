@@ -45,13 +45,13 @@ public class MarkerTypeDefinitionCache {
 				if (elementName.equalsIgnoreCase("persistent")) { //$NON-NLS-1$
 					String bool = element.getAttribute("value"); //$NON-NLS-1$
 					if (bool != null)
-						this.isPersistent = Boolean.valueOf(bool).booleanValue();
+						this.isPersistent = Boolean.parseBoolean(bool);
 				}
 				// XXX: legacy code for support of <transient> tag. remove later.
 				if (elementName.equalsIgnoreCase("transient")) { //$NON-NLS-1$
 					String bool = element.getAttribute("value"); //$NON-NLS-1$
 					if (bool != null)
-						this.isPersistent = !Boolean.valueOf(bool).booleanValue();
+						this.isPersistent = !Boolean.parseBoolean(bool);
 				}
 			}
 		}
