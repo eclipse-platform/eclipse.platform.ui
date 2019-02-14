@@ -68,10 +68,12 @@ import org.xml.sax.InputSource;
  * If the index is created for a fragment, the manifest must point at the
  * referenced fragment plug-in, while the destination should be the fragment
  * itself.
+ * </p>
  * <p>
  * Starting from the provided destination directory, index for each locale will
  * be placed in a directory with the following path:
- * <p>
+ * </p>
+ *
  * <pre>
  *                  destination/nl/country/
  *
@@ -83,9 +85,9 @@ import org.xml.sax.InputSource;
  * The relative directory specified in the <code>index</code> element of the
  * <code>org.eclipse.help.toc</code> extention will be created in each of the
  * locale-specific paths (one per locale).
- * <p>
- * An instance of <code>HelpIndexBuilder</code> can be cached and used
- * multiple times for different manifest and destination values.
+ * </p>
+ * An instance of <code>HelpIndexBuilder</code> can be cached and used multiple
+ * times for different manifest and destination values.
  *
  * @since 3.1
  */
@@ -769,7 +771,7 @@ public class HelpIndexBuilder {
 				IStatus.OK, message, t);
 		throw new CoreException(status);
 	}
-	
+
 	private File[] listFiles(File file) throws CoreException {
 		File[] fileList = file.listFiles();
 		if(fileList == null) {

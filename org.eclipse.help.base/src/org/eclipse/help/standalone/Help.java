@@ -148,9 +148,11 @@ public class Help {
 	 * Controls standalone help system from command line.
 	 *
 	 * @param args
-	 *            array of String containing options Options are:
+	 *            array of String containing options. <br>
+	 *            Options are:
 	 *            <code>-command start | shutdown | (displayHelp [href]) [-eclipsehome eclipseInstallPath] [-host helpServerHost] [-port helpServerPort] [-dir rtl] [platform options] [-vmargs JavaVMarguments]</code>
-	 *            where
+	 *            <br>
+	 *            where:
 	 *            <ul>
 	 *            <li><code>href</code> is the URL of the help resource to
 	 *            display,</li>
@@ -166,9 +168,9 @@ public class Help {
 	 *            application server plugin preferences.</li>
 	 *            <li><code>-dir rtl</code> sets right-to-left rendering
 	 *            direction of help UI in the browser.
-	 *            <li><code>platform options</code> are other options that
-	 *            are supported by Eclipse Executable.</li>
-	 *            <ul>
+	 *            <li><code>platform options</code> are other options that are
+	 *            supported by Eclipse Executable.</li>
+	 *            </ul>
 	 */
 	public static void main(String[] args) {
 		StandaloneHelp.main(args);

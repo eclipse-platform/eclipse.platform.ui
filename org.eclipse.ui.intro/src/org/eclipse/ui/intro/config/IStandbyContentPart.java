@@ -24,7 +24,6 @@ import org.eclipse.ui.intro.IIntroPart;
  * An Intro standby part. It is a UI component that represents some standby
  * content. Standby parts can be contributed to the Eclipse intro using the
  * following extension point:
- * <p>
  * <pre>
  *         &lt;extension point=&quot;org.eclipse.ui.intro.configExtension&quot;&gt;
  *        	&lt;standbyPart
@@ -35,7 +34,6 @@ import org.eclipse.ui.intro.IIntroPart;
  *         &lt;/extension&gt;
  * </pre>
  *
- * </p>
  * Standby content parts have a life cycle that starts with a call to init,
  * shortly after part construction, followed by a call to createPartControl.
  * During these two calls, the part is responsible for creating its content and

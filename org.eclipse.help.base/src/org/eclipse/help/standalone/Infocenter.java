@@ -73,13 +73,16 @@ public class Infocenter {
 	public void shutdown() throws Exception {
 		infocenter.shutdown();
 	}
+
 	/**
 	 * Controls start up and shut down of infocenter from command line.
 	 *
 	 * @param args
-	 *            array of String containing options Options are:
+	 *            array of String containing options.<br>
+	 *            Options are:<br>
 	 *            <code>-command start | shutdown [-eclipsehome eclipseInstallPath] [-host helpServerHost] [-port helpServerPort] [-dir rtl] [-noexec] [platform options] [-vmargs JavaVMarguments]</code>
-	 *            where
+	 *            <br>
+	 *            where:
 	 *            <ul>
 	 *            <li><code>eclipseInstallPath</code> specifies Eclipse
 	 *            installation directory; it must be provided, when current
@@ -95,9 +98,9 @@ public class Infocenter {
 	 *            direction of help UI in the browser.
 	 *            <li><code>-noexec</code> option indicates that Eclipse
 	 *            executable should not be used.</li>
-	 *            <li><code>platform options</code> are other options that
-	 *            are supported by Eclipse Executable.</li>
-	 *            <ul>
+	 *            <li><code>platform options</code> are other options that are
+	 *            supported by Eclipse Executable.</li>
+	 *            </ul>
 	 */
 	public static void main(String[] args) {
 		StandaloneInfocenter.main(args);
