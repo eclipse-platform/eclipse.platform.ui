@@ -118,7 +118,7 @@ public abstract class MarkerField {
 
 	/**
 	 * @return The image to be displayed in the column header for this field or
-	 *         <code>null<code>.
+	 *         <code>null</code>.
 	 */
 	public Image getColumnHeaderImage() {
 		String path = configurationElement

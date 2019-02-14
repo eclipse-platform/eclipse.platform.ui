@@ -20,6 +20,8 @@ import java.util.EventListener;
  * Listener for property changes.
  * <p>
  * Usage:
+ * </p>
+ * 
  * <pre>
  * IPropertyChangeListener listener =
  *   new IPropertyChangeListener() {
@@ -31,7 +33,6 @@ import java.util.EventListener;
  * ...
  * emitter.removePropertyChangeListener(listener);
  * </pre>
- * </p>
  */
 @FunctionalInterface
 public interface IPropertyChangeListener extends EventListener {

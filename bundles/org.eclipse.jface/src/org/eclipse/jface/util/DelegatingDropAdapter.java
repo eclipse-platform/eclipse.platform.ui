@@ -24,32 +24,35 @@ import org.eclipse.swt.dnd.Transfer;
 import org.eclipse.swt.dnd.TransferData;
 
 /**
- * A <code>DelegatingDropAdapter</code> is a <code>DropTargetListener</code> that
- * maintains and delegates to a set of {@link TransferDropTargetListener}s. Each
- * <code>TransferDropTargetListener</code> can then be implemented as if it were
- * the DropTarget's only <code>DropTargetListener</code>.
+ * A <code>DelegatingDropAdapter</code> is a <code>DropTargetListener</code>
+ * that maintains and delegates to a set of {@link TransferDropTargetListener}s.
+ * Each <code>TransferDropTargetListener</code> can then be implemented as if it
+ * were the DropTarget's only <code>DropTargetListener</code>.
  * <p>
- * On <code>dragEnter</code>, <code>dragOperationChanged</code>, <code>dragOver</code>
- * and <code>drop</code>, a <i>current</i> listener is obtained from the set of all
- * <code>TransferDropTargetListeners</code>. The current listener is the first listener
- * to return <code>true</code> for
- * {@link TransferDropTargetListener#isEnabled(DropTargetEvent)}.
- * The current listener is forwarded all <code>DropTargetEvents</code> until some other
+ * On <code>dragEnter</code>, <code>dragOperationChanged</code>,
+ * <code>dragOver</code> and <code>drop</code>, a <i>current</i> listener is
+ * obtained from the set of all <code>TransferDropTargetListeners</code>. The
+ * current listener is the first listener to return <code>true</code> for
+ * {@link TransferDropTargetListener#isEnabled(DropTargetEvent)}. The current
+ * listener is forwarded all <code>DropTargetEvents</code> until some other
  * listener becomes the current listener, or the drop terminates.
  * </p>
  * <p>
  * After adding all <code>TransferDropTargetListeners</code> to the
- * <code>DelegatingDropAdapter</code> the combined set of <code>Transfers</code> should
- * be set in the SWT <code>DropTarget</code>. <code>#getTransfers()</code> provides the
- * set of <code>Transfer</code> types of all <code>TransferDropTargetListeners</code>.
+ * <code>DelegatingDropAdapter</code> the combined set of <code>Transfers</code>
+ * should be set in the SWT <code>DropTarget</code>.
+ * <code>#getTransfers()</code> provides the set of <code>Transfer</code> types
+ * of all <code>TransferDropTargetListeners</code>.
  * </p>
  * <p>
- * The following example snippet shows a <code>DelegatingDropAdapter</code> with two
- * <code>TransferDropTargetListeners</code>. One supports dropping resources and
- * demonstrates how a listener can be disabled in the isEnabled method.
- * The other listener supports text transfer.
+ * The following example snippet shows a <code>DelegatingDropAdapter</code> with
+ * two <code>TransferDropTargetListeners</code>. One supports dropping resources
+ * and demonstrates how a listener can be disabled in the isEnabled method. The
+ * other listener supports text transfer.
  * </p>
- * <code><pre>
+ * 
+ * <pre>
+ * <code>
  *		final TreeViewer viewer = new TreeViewer(shell, SWT.NONE);
  * 		DelegatingDropAdapter dropAdapter = new DelegatingDropAdapter();
  *		dropAdapter.addDropTargetListener(new TransferDropTargetListener() {
@@ -98,7 +101,9 @@ import org.eclipse.swt.dnd.TransferData;
  *			public void dropAccept(DropTargetEvent event) {}
  *		});
  *		viewer.addDropSupport(DND.DROP_COPY | DND.DROP_MOVE, dropAdapter.getTransfers(), dropAdapter);
- * </pre></code>
+ * </code>
+ * </pre>
+ * 
  * @since 3.0
  */
 public class DelegatingDropAdapter implements DropTargetListener {

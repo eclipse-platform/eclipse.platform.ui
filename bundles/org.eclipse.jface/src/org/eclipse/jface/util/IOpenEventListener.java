@@ -16,11 +16,13 @@ package org.eclipse.jface.util;
 import org.eclipse.swt.events.SelectionEvent;
 
 /**
- * Listener for open events which are generated on selection
- * of default selection depending on the user preferences.
+ * Listener for open events which are generated on selection of default
+ * selection depending on the user preferences.
  *
  * <p>
  * Usage:
+ * </p>
+ * 
  * <pre>
  *	OpenStrategy handler = new OpenStrategy(control);
  *	handler.addOpenListener(new IOpenEventListener() {
@@ -29,7 +31,6 @@ import org.eclipse.swt.events.SelectionEvent;
  *		}
  *	});
  * </pre>
- * </p>
  *
  * @see OpenStrategy
  */

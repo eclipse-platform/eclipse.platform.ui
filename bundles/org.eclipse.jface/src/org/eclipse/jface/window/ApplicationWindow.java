@@ -48,28 +48,28 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.ToolBar;
 
 /**
- * An application window is a high-level "main window", with built-in
- * support for an optional menu bar with standard menus, an optional toolbar,
- * and an optional status line.
+ * An application window is a high-level "main window", with built-in support
+ * for an optional menu bar with standard menus, an optional toolbar, and an
+ * optional status line.
  * <p>
  * Creating an application window involves the following steps:
+ * </p>
  * <ul>
- *   <li>creating an instance of <code>ApplicationWindow</code>
- *   </li>
- *   <li>assigning the window to a window manager (optional)
- *   </li>
- *   <li>opening the window by calling <code>open</code>
- *   </li>
+ * <li>creating an instance of <code>ApplicationWindow</code></li>
+ * <li>assigning the window to a window manager (optional)</li>
+ * <li>opening the window by calling <code>open</code></li>
  * </ul>
- * Only on the last step, when the window is told to open, are
- * the window's shell and widget tree created. When the window is
- * closed, the shell and widget tree are disposed of and are no longer
- * referenced, and the window is automatically removed from its window
- * manager. Like all windows, an application window may be reopened.
+ * <p>
+ * Only on the last step, when the window is told to open, are the window's
+ * shell and widget tree created. When the window is closed, the shell and
+ * widget tree are disposed of and are no longer referenced, and the window is
+ * automatically removed from its window manager. Like all windows, an
+ * application window may be reopened.
  * </p>
  * <p>
  * An application window is also a suitable context in which to perform
- * long-running operations (that is, it implements <code>IRunnableContext</code>).
+ * long-running operations (that is, it implements
+ * <code>IRunnableContext</code>).
  * </p>
  */
 public class ApplicationWindow extends Window implements IRunnableContext {

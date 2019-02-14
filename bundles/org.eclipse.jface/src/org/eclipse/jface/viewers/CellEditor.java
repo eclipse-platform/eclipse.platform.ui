@@ -32,6 +32,7 @@ import org.eclipse.swt.widgets.Display;
  * <p>
  * Subclasses implement particular kinds of cell editors. This package contains
  * various specialized cell editors:
+ * </p>
  * <ul>
  * <li><code>TextCellEditor</code> - for simple text strings</li>
  * <li><code>ColorCellEditor</code> - for colors</li>
@@ -40,7 +41,6 @@ import org.eclipse.swt.widgets.Display;
  * <li><code>CheckboxCellEditor</code> - boolean valued checkbox</li>
  * <li><code>DialogCellEditor</code> - value from arbitrary dialog</li>
  * </ul>
- * </p>
  */
 public abstract class CellEditor {
 

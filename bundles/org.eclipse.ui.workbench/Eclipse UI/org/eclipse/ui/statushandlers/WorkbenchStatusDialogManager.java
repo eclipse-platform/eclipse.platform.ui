@@ -117,11 +117,10 @@ public class WorkbenchStatusDialogManager {
 	/**
 	 * Creates workbench status dialog.
 	 *
-	 * @param parentShell
-	 *            the parent shell for the dialog. It may be null.
-	 * @param dialogTitle
-	 *            the title of the dialog. If null, than default will be used.
-	 * @deprecated As of 3.4 the <code>parentShell<code> is ignored
+	 * @param parentShell the parent shell for the dialog. It may be null.
+	 * @param dialogTitle the title of the dialog. If null, than default will be
+	 *                    used.
+	 * @deprecated As of 3.4 the <code>parentShell</code> is ignored
 	 * @see #WorkbenchStatusDialogManager(String)
 	 */
 	@Deprecated

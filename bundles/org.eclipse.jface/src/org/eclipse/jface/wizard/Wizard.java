@@ -36,6 +36,7 @@ import org.eclipse.swt.widgets.Shell;
  * <code>Wizard</code> to implement a particular wizard.
  * <p>
  * Subclasses may call the following methods to configure the wizard:
+ * </p>
  * <ul>
  * <li><code>addPage</code></li>
  * <li><code>setHelpAvailable</code></li>
@@ -45,9 +46,9 @@ import org.eclipse.swt.widgets.Shell;
  * <li><code>setTitleBarColor</code></li>
  * <li><code>setWindowTitle</code></li>
  * </ul>
- * </p>
  * <p>
  * Subclasses may override these methods if required:
+ * </p>
  * <ul>
  * <li>reimplement <code>createPageControls</code></li>
  * <li>reimplement <code>performCancel</code></li>
@@ -55,7 +56,6 @@ import org.eclipse.swt.widgets.Shell;
  * <li>reimplement <code>performFinish</code></li>
  * <li>extend <code>dispose</code></li>
  * </ul>
- * </p>
  * <p>
  * Note that clients are free to implement <code>IWizard</code> from scratch
  * instead of subclassing <code>Wizard</code>. Correct implementations of

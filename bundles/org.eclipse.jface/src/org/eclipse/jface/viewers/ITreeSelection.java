@@ -20,8 +20,10 @@ package org.eclipse.jface.viewers;
  * use the standard implementation of this interface, {@link TreeSelection}.
  * <code>TreeSelection</code> adds API for getting the {@link IElementComparer}
  * of a selection (if available). This is important for clients who want to
- * create a slightly modified tree selection based on an existing tree selection.
- * The recommended coding pattern in this case is as follows:
+ * create a slightly modified tree selection based on an existing tree
+ * selection. The recommended coding pattern in this case is as follows:
+ * </p>
+ * 
  * <pre>
  * ITreeSelection selection = (ITreeSelection)treeViewer.getSelection();
  * TreePath[] paths = selection.getPaths();
@@ -32,8 +34,8 @@ package org.eclipse.jface.viewers;
  * TreePath[] modifiedPaths = ... // modify as required
  * TreeSelection modifiedSelection = new TreeSelection(modifiedPaths, comparer);
  * </pre>
+ * 
  * See bugs 135818 and 133375 for details.
- * </p>
  *
  * @since 3.2
  *

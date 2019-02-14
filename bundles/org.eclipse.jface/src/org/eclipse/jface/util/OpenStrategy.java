@@ -34,6 +34,8 @@ import org.eclipse.swt.widgets.Widget;
  * Implementation of single-click and double-click strategies.
  * <p>
  * Usage:
+ * </p>
+ * 
  * <pre>
  *	OpenStrategy handler = new OpenStrategy(control);
  *	handler.addOpenListener(new IOpenEventListener() {
@@ -42,7 +44,6 @@ import org.eclipse.swt.widgets.Widget;
  *		}
  *	});
  * </pre>
- * </p>
  */
 public class OpenStrategy {
     /**

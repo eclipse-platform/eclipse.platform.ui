@@ -24,34 +24,38 @@ import org.eclipse.swt.dnd.Transfer;
 import org.eclipse.swt.dnd.TransferData;
 
 /**
- * A <code>DelegatingDragAdapter</code> is a <code>DragSourceListener</code> that
- * maintains and delegates to a set of {@link TransferDragSourceListener}s. Each
- * TransferDragSourceListener can then be implemented as if it were the
+ * A <code>DelegatingDragAdapter</code> is a <code>DragSourceListener</code>
+ * that maintains and delegates to a set of {@link TransferDragSourceListener}s.
+ * Each TransferDragSourceListener can then be implemented as if it were the
  * <code>DragSource's</code> only DragSourceListener.
  * <p>
- * When a drag is started, a subset of all <code>TransferDragSourceListeners</code>
- * is generated and stored in a list of <i>active</i> listeners. This subset is
- * calculated by forwarding {@link DragSourceListener#dragStart(DragSourceEvent)} to
- * every listener, and checking if the {@link DragSourceEvent#doit doit} field is left
- * set to <code>true</code>.
+ * When a drag is started, a subset of all
+ * <code>TransferDragSourceListeners</code> is generated and stored in a list of
+ * <i>active</i> listeners. This subset is calculated by forwarding
+ * {@link DragSourceListener#dragStart(DragSourceEvent)} to every listener, and
+ * checking if the {@link DragSourceEvent#doit doit} field is left set to
+ * <code>true</code>.
  * </p>
- * The <code>DragSource</code>'s set of supported Transfer types ({@link
- * DragSource#setTransfer(Transfer[])}) is updated to reflect the Transfer types
- * corresponding to the active listener subset.
+ * The <code>DragSource</code>'s set of supported Transfer types
+ * ({@link DragSource#setTransfer(Transfer[])}) is updated to reflect the
+ * Transfer types corresponding to the active listener subset.
  * <p>
  * If and when {@link #dragSetData(DragSourceEvent)} is called, a single
- * <code>TransferDragSourceListener</code> is chosen, and only it is allowed to set the
- * drag data. The chosen listener is the first listener in the subset of active listeners
- * whose Transfer supports ({@link Transfer#isSupportedType(TransferData)}) the
- * <code>dataType</code> in the <code>DragSourceEvent</code>.
+ * <code>TransferDragSourceListener</code> is chosen, and only it is allowed to
+ * set the drag data. The chosen listener is the first listener in the subset of
+ * active listeners whose Transfer supports
+ * ({@link Transfer#isSupportedType(TransferData)}) the <code>dataType</code> in
+ * the <code>DragSourceEvent</code>.
  * </p>
  * <p>
- * The following example snippet shows a <code>DelegatingDragAdapter</code> with two
- * <code>TransferDragSourceListeners</code>. One implements drag of text strings,
- * the other supports file transfer and demonstrates how a listener can be disabled using
- * the dragStart method.
+ * The following example snippet shows a <code>DelegatingDragAdapter</code> with
+ * two <code>TransferDragSourceListeners</code>. One implements drag of text
+ * strings, the other supports file transfer and demonstrates how a listener can
+ * be disabled using the dragStart method.
  * </p>
- * <code><pre>
+ * 
+ * <pre>
+ * <code>
  *		final TreeViewer viewer = new TreeViewer(shell, SWT.NONE);
  *
  *		DelegatingDragAdapter dragAdapter = new DelegatingDragAdapter();
@@ -87,7 +91,9 @@ import org.eclipse.swt.dnd.TransferData;
  *			}
  *		});
  *		viewer.addDragSupport(DND.DROP_COPY | DND.DROP_MOVE, dragAdapter.getTransfers(), dragAdapter);
- * </pre></code>
+ * </code>
+ * </pre>
+ * 
  * @since 3.0
  */
 public class DelegatingDragAdapter implements DragSourceListener {

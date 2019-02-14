@@ -23,27 +23,29 @@ import org.eclipse.ui.IActionBars;
 /**
  * Abstract base superclass for pages in a pagebook view.
  * <p>
- * This class should be subclassed by clients wishing to define new types
- * of pages for multi-page views.
+ * This class should be subclassed by clients wishing to define new types of
+ * pages for multi-page views.
  * </p>
  * <p>
  * Subclasses must implement the following methods:
- * <ul>
- *   <li><code>createControl</code> - to create the page's control</li>
- *   <li><code>getControl</code> - to retrieve the page's control</li>
- * </ul>
  * </p>
+ * <ul>
+ * <li><code>createControl</code> - to create the page's control</li>
+ * <li><code>getControl</code> - to retrieve the page's control</li>
+ * </ul>
  * <p>
  * Subclasses may extend or reimplement the following methods as required:
- * <ul>
- *   <li><code>dispose</code> - extend to provide additional cleanup</li>
- *   <li><code>setFocus</code> - reimplement to accept focus</li>
- *   <li><code>setActionBars</code> - reimplement to make contributions</li>
- *   <li><code>makeContributions</code> - this method exists to support previous versions</li>
- *   <li><code>setActionBars</code> - this method exists to support previous versions</li>
- *   <li><code>init</code> - extend to provide additional setup</li>
- * </ul>
  * </p>
+ * <ul>
+ * <li><code>dispose</code> - extend to provide additional cleanup</li>
+ * <li><code>setFocus</code> - reimplement to accept focus</li>
+ * <li><code>setActionBars</code> - reimplement to make contributions</li>
+ * <li><code>makeContributions</code> - this method exists to support previous
+ * versions</li>
+ * <li><code>setActionBars</code> - this method exists to support previous
+ * versions</li>
+ * <li><code>init</code> - extend to provide additional setup</li>
+ * </ul>
  *
  * @see PageBookView
  */

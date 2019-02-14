@@ -28,13 +28,13 @@ import org.eclipse.swt.widgets.TreeItem;
  * This adapter class provides generic drag-and-drop support for a viewer.
  * <p>
  * Subclasses must implement the following methods:
+ * </p>
  * <ul>
- *   <li><code>validateDrop</code> - identifies valid drop targets in viewer</li>
- *   <li><code>performDrop</code> - carries out a drop into a viewer</li>
+ * <li><code>validateDrop</code> - identifies valid drop targets in viewer</li>
+ * <li><code>performDrop</code> - carries out a drop into a viewer</li>
  * </ul>
  * The <code>setFeedbackEnabled</code> method can be called to turn on and off
  * visual insertion feedback (on by default).
- * </p>
  */
 public abstract class ViewerDropAdapter extends DropTargetAdapter {
 
