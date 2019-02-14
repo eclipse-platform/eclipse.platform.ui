@@ -14,19 +14,23 @@
 package org.eclipse.core.variables;
 
 /**
- * A variable with a value that can be set and retrieved. The context in which
- * a value variable is referenced does not affect the value of the variable.
- * A value variable can be contributed by an extension or created programmatically.
- * A contributor may optionally specify an initial value for a variable, or
- * provide a delegate that will initialize the variable with a value.
+ * A variable with a value that can be set and retrieved. The context in which a
+ * value variable is referenced does not affect the value of the variable. A
+ * value variable can be contributed by an extension or created
+ * programmatically. A contributor may optionally specify an initial value for a
+ * variable, or provide a delegate that will initialize the variable with a
+ * value.
  * <p>
- * Since 3.3, a variable can be specified as a "read only" preventing users from changing
- * the value after it has been initialized.  Furthermore, a read only variable that is
- * contributed by an extension will always load the value from the extension.
+ * Since 3.3, a variable can be specified as a "read only" preventing users from
+ * changing the value after it has been initialized. Furthermore, a read only
+ * variable that is contributed by an extension will always load the value from
+ * the extension.
  * </p>
  * <p>
  * Example of a value variable contribution with an initial value, the specified
  * variable is created with the initial value "/usr/local/foo".
+ * </p>
+ *
  * <pre>
  *  &lt;extension point="org.eclipse.core.variables.valueVariables"&gt;
  *   &lt;variable
@@ -35,11 +39,12 @@ package org.eclipse.core.variables;
  *   &lt;/variable&gt;
  *  &lt;/extension&gt;
  * </pre>
- * </p>
  * <p>
  * Example of a value variable contribution with an initializer class, the class
  * "com.example.FooLocator" will be used to initialize the value the first time
  * it's requested.
+ * </p>
+ *
  * <pre>
  *  &lt;extension point="org.eclipse.core.variables.valueVariables"&gt;
  *   &lt;variable
@@ -48,7 +53,7 @@ package org.eclipse.core.variables;
  *   &lt;/variable&gt;
  *  &lt;/extension&gt;
  * </pre>
- * </p>
+ *
  * @since 3.0
  * @noimplement This interface is not intended to be implemented by clients.
  */

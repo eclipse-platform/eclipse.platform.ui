@@ -19,16 +19,18 @@ import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.swt.graphics.Image;
 
 /**
- * A debug model presentation is responsible for providing labels, images,
- * and editors associated with debug elements in a specific debug model.
- * Extensions of type <code>org.eclipse.debug.ui.debugModelPresentations</code> implement
+ * A debug model presentation is responsible for providing labels, images, and
+ * editors associated with debug elements in a specific debug model. Extensions
+ * of type <code>org.eclipse.debug.ui.debugModelPresentations</code> implement
  * this interface. Generally, a debug model implementation will also provide a
- * debug model presentation extension to render and display its elements. A debug
- * model presentation is registered for a specific debug model, and is responsible
- * for the presentation elements defined/implemented by that model.
+ * debug model presentation extension to render and display its elements. A
+ * debug model presentation is registered for a specific debug model, and is
+ * responsible for the presentation elements defined/implemented by that model.
  * <p>
  * A debug model presentation extension is defined in <code>plugin.xml</code>.
  * Following is an example definition of a debug model presentation extension.
+ * </p>
+ *
  * <pre>
  * &lt;extension point="org.eclipse.debug.ui.debugModelPresentations"&gt;
  *   &lt;debugModelPresentation
@@ -38,48 +40,53 @@ import org.eclipse.swt.graphics.Image;
  *   &lt;/debugModelPresentation&gt;
  * &lt;/extension&gt;
  * </pre>
+ *
  * The attributes are specified as follows:
  * <ul>
- * <li><code>id</code> specifies the identifier of the debug model this presentation
- *    is responsible for. Corresponds to the model identifier returned from a debug
- *	element - see <code>IDebugElement.getModelIndentifier</code></li>
+ * <li><code>id</code> specifies the identifier of the debug model this
+ * presentation is responsible for. Corresponds to the model identifier returned
+ * from a debug element - see
+ * <code>IDebugElement.getModelIndentifier</code></li>
  * <li><code>class</code> specifies the fully qualified name of the Java class
- *   that implements this interface.</li>
- * <li><code>detailsViewerConfiguration</code> optionally specifies the fully qualified name of the Java class
- *   that is an instance of <code>org.eclipse.jface.text.source.SourceViewerConfiguration</code>.
- *   When specified, the source viewer configuration will be used in the "details" area of the
- *   variables and expressions view when displaying the details of an element from the
- *   debug model associated with this debug model presentation. When unspecified,
- *   a default configuration is used.</li>
+ * that implements this interface.</li>
+ * <li><code>detailsViewerConfiguration</code> optionally specifies the fully
+ * qualified name of the Java class that is an instance of
+ * <code>org.eclipse.jface.text.source.SourceViewerConfiguration</code>. When
+ * specified, the source viewer configuration will be used in the "details" area
+ * of the variables and expressions view when displaying the details of an
+ * element from the debug model associated with this debug model presentation.
+ * When unspecified, a default configuration is used.</li>
  * </ul>
- * </p>
  * <p>
- * To allow for an extensible configuration, this interface defines
- * a <code>setAttribute</code> method. The debug UI plug-in defines
- * one presentation attribute:
+ * To allow for an extensible configuration, this interface defines a
+ * <code>setAttribute</code> method. The debug UI plug-in defines one
+ * presentation attribute:
  * <ul>
- *  <li><code>DISPLAY_VARIABLE_TYPE_NAMES</code> - This is a boolean attribute
- *     indicating whether variable elements should be rendered with the declared
- *     type of a variable. For example, a Java debug model presentation would render
- *     an integer as <code>"int x = 3"</code> when true, and <code>"x = 3"</code>
- *     when false.</li>
+ * <li><code>DISPLAY_VARIABLE_TYPE_NAMES</code> - This is a boolean attribute
+ * indicating whether variable elements should be rendered with the declared
+ * type of a variable. For example, a Java debug model presentation would render
+ * an integer as <code>"int x = 3"</code> when true, and <code>"x = 3"</code>
+ * when false.</li>
  * </ul>
- * </p>
+ *
  * <p>
- * Clients may define new presentation attributes. For example, a client may wish
- * to define a "hexadecimal" property to display numeric values in hexadecimal. Implementations
- * should honor the presentation attributes defined by this interface where possible,
- * but do not need to honor presentation attributes defined by other clients.
- * To access the debug model presentation for a debug view, clients should use
+ * Clients may define new presentation attributes. For example, a client may
+ * wish to define a "hexadecimal" property to display numeric values in
+ * hexadecimal. Implementations should honor the presentation attributes defined
+ * by this interface where possible, but do not need to honor presentation
+ * attributes defined by other clients. To access the debug model presentation
+ * for a debug view, clients should use
  * <code>IDebugView#getPresentation(String)</code>.
  * </p>
  * <p>
- * Since 3.1, debug model presentations may optionally implement <code>IColorProvider</code>
- * and <code>IFontProvider</code> to override default fonts and colors for debug elements.
+ * Since 3.1, debug model presentations may optionally implement
+ * <code>IColorProvider</code> and <code>IFontProvider</code> to override
+ * default fonts and colors for debug elements.
  * </p>
  * <p>
  * Clients may implement this interface.
  * </p>
+ *
  * @see org.eclipse.debug.core.model.IDebugElement
  * @see org.eclipse.jface.viewers.ILabelProvider
  * @see org.eclipse.debug.ui.IDebugView

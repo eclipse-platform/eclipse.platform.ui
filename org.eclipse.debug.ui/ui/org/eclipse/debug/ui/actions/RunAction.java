@@ -22,7 +22,6 @@ import org.eclipse.debug.ui.IDebugUIConstants;
  * Action to launch the last launch configuration that was successfully
  * launched, in run mode. If no configurations have been launched, the launch
  * configuration dialog is opened.
- * </p>
  * <p>
  * This class may be instantiated.
  * </p>

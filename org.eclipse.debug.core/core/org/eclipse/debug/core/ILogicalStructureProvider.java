@@ -16,10 +16,12 @@ package org.eclipse.debug.core;
 import org.eclipse.debug.core.model.IValue;
 
 /**
- * Provides logical structure types applicable to a raw implementation value from
- * a debug model. Associated with a logical structure provider extension.
+ * Provides logical structure types applicable to a raw implementation value
+ * from a debug model. Associated with a logical structure provider extension.
  * <p>
  * The following is an example of a logical structure provider extension:
+ * </p>
+ * 
  * <pre>
  *  &lt;extension point=&quot;org.eclipse.debug.core.logicalStructureProviders&quot;&gt;
  *   &lt;logicalStructureProvider
@@ -28,15 +30,17 @@ import org.eclipse.debug.core.model.IValue;
  *   &lt;/logicalStructureProvider&gt;
  * &lt;/extension&gt;
  * </pre>
- * </p>
- * In the example above, the specified logical structure provider will be consulted for
- * alternative logical structures for values from the <code>com.example.debug.model</code>
- * debug model as they are displayed in the variables view.
+ * <p>
+ * In the example above, the specified logical structure provider will be
+ * consulted for alternative logical structures for values from the
+ * <code>com.example.debug.model</code> debug model as they are displayed in the
+ * variables view.
  * </p>
  * <p>
  * Clients contributing logical structure providers must implement this
  * interface.
  * </p>
+ * 
  * @since 3.1
  * @see org.eclipse.debug.core.ILogicalStructureType
  */

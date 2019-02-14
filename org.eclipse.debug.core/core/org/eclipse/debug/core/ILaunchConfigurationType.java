@@ -24,13 +24,13 @@ import org.eclipse.debug.core.model.ILaunchConfigurationDelegate;
 import org.eclipse.debug.core.sourcelookup.ISourcePathComputer;
 
 /**
- * Describes and creates instances of a specific type of
- * launch configuration. Launch configuration types are
- * defined by extensions.
+ * Describes and creates instances of a specific type of launch configuration.
+ * Launch configuration types are defined by extensions.
  * <p>
  * A launch configuration type extension is defined in <code>plugin.xml</code>.
- * Following is an example definition of a launch configuration
- * type extension.
+ * Following is an example definition of a launch configuration type extension.
+ * </p>
+ *
  * <pre>
  * &lt;extension point="org.eclipse.debug.core.launchConfigurationTypes"&gt;
  *   &lt;launchConfigurationType
@@ -43,42 +43,48 @@ import org.eclipse.debug.core.sourcelookup.ISourcePathComputer;
  *   &lt;/launchConfigurationType&gt;
  * &lt;/extension&gt;
  * </pre>
+ *
  * The attributes are specified as follows:
  * <ul>
- * <li><code>id</code> specifies a unique identifier for this launch configuration
- *  type.</li>
- * <li><code>delegate</code> specifies the fully qualified name of the java class
- *   that implements <code>ILaunchConfigurationDelegate</code>. Launch configuration
- *   instances of this type will delegate to instances of this class
- *   to perform launching.</li>
+ * <li><code>id</code> specifies a unique identifier for this launch
+ * configuration type.</li>
+ * <li><code>delegate</code> specifies the fully qualified name of the java
+ * class that implements <code>ILaunchConfigurationDelegate</code>. Launch
+ * configuration instances of this type will delegate to instances of this class
+ * to perform launching.</li>
  * <li><code>modes</code> specifies a comma separated list of the modes this
- *    type of launch configuration supports - <code>"run"</code> and/or <code>"debug"</code>.</li>
- * <li><code>name</code> specifies a human readable name for this type
- *    of launch configuration.</li>
+ * type of launch configuration supports - <code>"run"</code> and/or
+ * <code>"debug"</code>.</li>
+ * <li><code>name</code> specifies a human readable name for this type of launch
+ * configuration.</li>
  * <li><code>category</code> is an optional attribute that specifies a category
  * for this launch configuration type. Categories are client defined. This
  * attribute was added in the 2.1 release.</li>
- * <li><code>sourceLocatorId</code> an optional unique identifier of a sourceLocator extension that
- * is used to create the source locator for sessions launched using launch configurations
- * of this type. This attribute was added in the 3.0 release.</li>
- * <li><code>sourcePathComputerId</code> an optional unique identifier of a sourcePathComputer extension
- * that is used to compute a default source lookup path for launch configurations of this type.
- * This attribute was added in the 3.0 release.</li>
+ * <li><code>sourceLocatorId</code> an optional unique identifier of a
+ * sourceLocator extension that is used to create the source locator for
+ * sessions launched using launch configurations of this type. This attribute
+ * was added in the 3.0 release.</li>
+ * <li><code>sourcePathComputerId</code> an optional unique identifier of a
+ * sourcePathComputer extension that is used to compute a default source lookup
+ * path for launch configurations of this type. This attribute was added in the
+ * 3.0 release.</li>
  * </ul>
- * </p>
+ *
  * <p>
- * The <code>category</code> attribute has been added in release 2.1, such that other
- * tools may re-use the launch configuration framework for purposes other than
- * the standard running and debugging of programs under development. Such that
- * clients may access arbitrary attributes specified in launch configuration type
- * extension definitions, the method <code>getAttribute</code> has also been
- * added. Launch configurations that are to be recognized as standard run/debug
- * launch configurations should not specify the <code>category</code> attribute.
+ * The <code>category</code> attribute has been added in release 2.1, such that
+ * other tools may re-use the launch configuration framework for purposes other
+ * than the standard running and debugging of programs under development. Such
+ * that clients may access arbitrary attributes specified in launch
+ * configuration type extension definitions, the method
+ * <code>getAttribute</code> has also been added. Launch configurations that are
+ * to be recognized as standard run/debug launch configurations should not
+ * specify the <code>category</code> attribute.
  * </p>
  * <p>
  * Clients that define a launch configuration delegate extension implement the
  * <code>ILaunchConfigurationDelegate</code> interface.
  * </p>
+ *
  * @see ILaunchConfiguration
  * @since 2.0
  * @noimplement This interface is not intended to be implemented by clients.

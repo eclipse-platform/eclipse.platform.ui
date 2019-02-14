@@ -522,7 +522,7 @@ public abstract class TextConsole extends AbstractConsole {
 	 * Called by this console's pattern matcher when matching is complete.
 	 * <p>
 	 * Clients should not call this method.
-	 * <p>
+	 * </p>
 	 */
 	public void matcherFinished() {
 		fMatcherFinished = true;

@@ -16,6 +16,7 @@ package org.eclipse.debug.core.model;
  *
  * <p>
  * The following is an example of a step filter extension:
+ * </p>
  *
  * <pre>
  *  &lt;extension point=&quot;org.eclipse.debug.core.stepFilters&quot;&gt;
@@ -25,10 +26,10 @@ package org.eclipse.debug.core.model;
  *   &lt;/stepFilters&gt;
  * &lt;/extension&gt;
  * </pre>
- *
- * </p>
+ * <p>
  * In the example above, the specified step filter will be used for the
- * <code>com.example.debug.model</code> debug model. </p>
+ * <code>com.example.debug.model</code> debug model.
+ * </p>
  *
  * <p>
  * Clients contributing step filters must implement this interface.

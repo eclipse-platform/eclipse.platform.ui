@@ -19,44 +19,46 @@ import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 
 /**
- * A launch configuration tab group is used to edit/view attributes
- * of a specific type of launch configuration. Launch
- * configurations are presented in a dialog, with a tab folder.
- * Each tab manipulates one or more attributes of a launch
- * configuration. The tab group controls which tabs are
- * displayed for a specific type of launch configuration,
- * and provides a mechanism for overriding configuration
- * initialization performed by tabs.
+ * A launch configuration tab group is used to edit/view attributes of a
+ * specific type of launch configuration. Launch configurations are presented in
+ * a dialog, with a tab folder. Each tab manipulates one or more attributes of a
+ * launch configuration. The tab group controls which tabs are displayed for a
+ * specific type of launch configuration, and provides a mechanism for
+ * overriding configuration initialization performed by tabs.
  * <p>
  * A tab group has the following lifecycle methods:
+ * </p>
  * <ul>
- * <li><code>createTabs(ILaunchConfigurationDialog, String)</code> -
- *  this is the first method called on a tab group after it is instantiated.</li>
- * <li><code>initializeFrom(ILaunchConfiguration)</code> - called when a
- *  launch configuration is selected to be displayed.</li>
+ * <li><code>createTabs(ILaunchConfigurationDialog, String)</code> - this is the
+ * first method called on a tab group after it is instantiated.</li>
+ * <li><code>initializeFrom(ILaunchConfiguration)</code> - called when a launch
+ * configuration is selected to be displayed.</li>
  * <li><code>performApply(ILaunchConfigurationWorkingCopy)</code> - called when
- *  a tab group's values are to be written to a launch configuration.</li>
- * <li><code>dispose()</code> - the last method called on a tab group, when it is
- *  to perform any required cleanup. Note that a tab can be disposed before its control
- *  has been created.</li>
+ * a tab group's values are to be written to a launch configuration.</li>
+ * <li><code>dispose()</code> - the last method called on a tab group, when it
+ * is to perform any required cleanup. Note that a tab can be disposed before
+ * its control has been created.</li>
  * </ul>
- * The method <code>setDefaults(ILaunchConfigurationWorkingCopy)</code>
- * can be called before a tab's controls are created.
+ * <p>
+ * The method <code>setDefaults(ILaunchConfigurationWorkingCopy)</code> can be
+ * called before a tab's controls are created.
  * </p>
  * <p>
  * The launch tab framework was originally designed to handle inter tab
- * communication by applying attributes from the active tab to a launch configuration
- * being edited, when a tab is exited, and by initializing a tab when activated.
- * In 3.0, the addition of the methods <code>activated</code> and <code>deactivated</code>
- * allow tabs to determine the appropriate course of action. The default implementation
- * in <code>AbstractLaunchConfigurationTab</code> is to call the old methods
- * (<code>initializeFrom</code> and <code>performApply</code>). Tabs should override
- * the new methods as required.
+ * communication by applying attributes from the active tab to a launch
+ * configuration being edited, when a tab is exited, and by initializing a tab
+ * when activated. In 3.0, the addition of the methods <code>activated</code>
+ * and <code>deactivated</code> allow tabs to determine the appropriate course
+ * of action. The default implementation in
+ * <code>AbstractLaunchConfigurationTab</code> is to call the old methods
+ * (<code>initializeFrom</code> and <code>performApply</code>). Tabs should
+ * override the new methods as required.
  * </p>
  * <p>
  * A launch configuration group extension is defined in <code>plugin.xml</code>.
- * Following is an example definition of a launch configuration
- * group extension.
+ * Following is an example definition of a launch configuration group extension.
+ * </p>
+ *
  * <pre>
  * &lt;extension point="org.eclipse.debug.ui.launchConfigurationTabGroups"&gt;
  *   &lt;launchConfigurationTabGroup
@@ -66,20 +68,21 @@ import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
  *   &lt;/launchConfigurationTabGroup&gt;
  * &lt;/extension&gt;
  * </pre>
+ *
  * The attributes are specified as follows:
  * <ul>
- * <li><code>id</code> specifies a unique identifier for this launch configuration
- *  tab group.</li>
- * <li><code>type</code> specifies launch configuration type that this tab
- *  group is applicable to (corresponds to the id of a launch configuration type
- *  extension).</li>
- * <li><code>class</code> specifies a fully qualified name of a Java class
- *  that implements <code>ILaunchConfigurationTabGroup</code>.</li>
+ * <li><code>id</code> specifies a unique identifier for this launch
+ * configuration tab group.</li>
+ * <li><code>type</code> specifies launch configuration type that this tab group
+ * is applicable to (corresponds to the id of a launch configuration type
+ * extension).</li>
+ * <li><code>class</code> specifies a fully qualified name of a Java class that
+ * implements <code>ILaunchConfigurationTabGroup</code>.</li>
  * </ul>
- * </p>
  * <p>
  * This interface is intended to be implemented by clients.
  * </p>
+ *
  * @see org.eclipse.debug.core.ILaunchConfigurationType
  * @see org.eclipse.debug.core.ILaunchConfiguration
  * @see org.eclipse.debug.ui.ILaunchConfigurationTab

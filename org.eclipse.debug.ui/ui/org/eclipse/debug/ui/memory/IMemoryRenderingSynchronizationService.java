@@ -66,10 +66,10 @@ public interface IMemoryRenderingSynchronizationService {
     void setSynchronizationProvider(IMemoryRendering rendering);
 
     /**
-     * Returns the rendering currently providing synchronization information for
-     * this synchronization service, or <code>null</code if none.
-     *
-     * @return rendering providing synchronization information or <code>null</code>
-     */
+	 * Returns the rendering currently providing synchronization information for
+	 * this synchronization service, or <code>null</code> if none.
+	 *
+	 * @return rendering providing synchronization information or <code>null</code>
+	 */
     IMemoryRendering getSynchronizationProvider();
 }

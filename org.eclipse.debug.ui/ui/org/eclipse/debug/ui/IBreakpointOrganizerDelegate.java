@@ -19,16 +19,18 @@ import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.jface.util.IPropertyChangeListener;
 
 /**
- * A breakpoint organizer is used to categorize breakpoints and provides
- * change notification when categorization has changed. Categories are represented
- * as arbitrary adaptable objects. For example, projects could be used to
- * categorize breakpoints. Images and labels for categories are generated
- * via workbench adapters.
+ * A breakpoint organizer is used to categorize breakpoints and provides change
+ * notification when categorization has changed. Categories are represented as
+ * arbitrary adaptable objects. For example, projects could be used to
+ * categorize breakpoints. Images and labels for categories are generated via
+ * workbench adapters.
  * <p>
  * Organizers may optionally support breakpoint recategorization.
  * </p>
  * <p>
  * Following is example plug-in XML for contributing a breakpoint organizer.
+ * </p>
+ * 
  * <pre>
  * &lt;extension point="org.eclipse.debug.ui.breakpointOrganizers"&gt;
  * 	&lt;breakpointOrganizer
@@ -38,6 +40,7 @@ import org.eclipse.jface.util.IPropertyChangeListener;
  *      icon="icons/full/obj16/example_org.png"/&gt;
  * &lt;/extension&gt;
  * </pre>
+ * 
  * The attributes are specified as follows:
  * <ul>
  * <li><code>class</code> Fully qualified name of a Java class that implements
@@ -48,11 +51,11 @@ import org.eclipse.jface.util.IPropertyChangeListener;
  * <li><code>icon</code> Optional path to an icon which can be shown for this
  * organizer</li>
  * </ul>
- * </p>
  * <p>
- * Clients contributing a breakpoint organizer are intended to implement
- * this interface.
+ * Clients contributing a breakpoint organizer are intended to implement this
+ * interface.
  * </p>
+ * 
  * @since 3.1
  */
 public interface IBreakpointOrganizerDelegate {

@@ -20,9 +20,11 @@ import org.eclipse.debug.core.DebugPlugin;
  * containers that should be considered) for a launch configuration.
  * <p>
  * A source path computer is contributed in plug-in XML via the
- * <code>sourcePathComputers</code> extension point, that provides a delegate
- * to compute the path specific to a launch configuration. Following
- * is an example contribution.
+ * <code>sourcePathComputers</code> extension point, that provides a delegate to
+ * compute the path specific to a launch configuration. Following is an example
+ * contribution.
+ * </p>
+ * 
  * <pre>
  * &lt;extension point=&quot;org.eclipse.debug.core.sourcePathComputers&quot;&gt;
  *    	&lt;sourcePathComputer
@@ -31,18 +33,18 @@ import org.eclipse.debug.core.DebugPlugin;
  *    	&lt;/sourcePathComputer&gt;
  * &lt;/extension&gt;
  * </pre>
- * </p>
  * <p>
- * A source path computer can be associated with a launch configuration type
- * via the <code>sourcePathComputerId</code> attribute of a launch configuration
- * type extension. As well, a launch configuration can specify its own
- * source path computer to use via the <code>ATTR_SOURCE_PATH_COMPUTER_ID</code>
+ * A source path computer can be associated with a launch configuration type via
+ * the <code>sourcePathComputerId</code> attribute of a launch configuration
+ * type extension. As well, a launch configuration can specify its own source
+ * path computer to use via the <code>ATTR_SOURCE_PATH_COMPUTER_ID</code>
  * attribute.
  * </p>
  * <p>
  * Clients contributing a source path computer provide an implementation of
  * {@link org.eclipse.debug.core.sourcelookup.ISourcePathComputerDelegate}.
  * </p>
+ * 
  * @since 3.0
  * @noimplement This interface is not intended to be implemented by clients.
  * @noextend This interface is not intended to be extended by clients.

@@ -17,34 +17,33 @@ package org.eclipse.debug.ui;
 import org.eclipse.ui.IEditorInput;
 
 /**
- * A source presentation is used to resolve an editor in
- * which to display a debug model element, breakpoint, or
- * source element. By default, a debug model presentation
- * (which implements this interface) is used to resolve
- * editors when performing source lookup. However, a source
- * locator may override default editor resolution by implementing
- * this interface.
+ * A source presentation is used to resolve an editor in which to display a
+ * debug model element, breakpoint, or source element. By default, a debug model
+ * presentation (which implements this interface) is used to resolve editors
+ * when performing source lookup. However, a source locator may override default
+ * editor resolution by implementing this interface.
  * <p>
- * Source lookup consists of the following steps:<ol>
- * <li>Locating a source element - the source locator associated
- *  with a launch is queried for the source element associated
- *  with a stack frame.</li>
- * <li>Resolving an editor in which to display a source element -
- *  by default, the debug model presentation associated with the
- *  debug model being debugged is queried for an editor input
- *  and editor id in which to display a source element. However,
- *  clients may override editor resolution by specifying a source
- *  locator that is an instance of <code>ISourcePresentation</code>.
- *  When a source presentation is specified as a source locator,
- *  the source presentation is used to resolve an editor, rather
- *  than the default debug model presentation.</li>
- * </ol>
+ * Source lookup consists of the following steps:
  * </p>
+ * <ol>
+ * <li>Locating a source element - the source locator associated with a launch
+ * is queried for the source element associated with a stack frame.</li>
+ * <li>Resolving an editor in which to display a source element - by default,
+ * the debug model presentation associated with the debug model being debugged
+ * is queried for an editor input and editor id in which to display a source
+ * element. However, clients may override editor resolution by specifying a
+ * source locator that is an instance of <code>ISourcePresentation</code>. When
+ * a source presentation is specified as a source locator, the source
+ * presentation is used to resolve an editor, rather than the default debug
+ * model presentation.</li>
+ * </ol>
+ *
  * <p>
  * Clients may implement this interface as part of an
  * {@link org.eclipse.debug.ui.IDebugModelPresentation} or as an optional
  * extension to an {@link org.eclipse.debug.core.model.ISourceLocator}.
  * </p>
+ * 
  * @since 2.0
  */
 public interface ISourcePresentation {

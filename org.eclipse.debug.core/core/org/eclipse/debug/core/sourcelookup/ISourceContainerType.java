@@ -16,14 +16,17 @@ package org.eclipse.debug.core.sourcelookup;
 
 
 /**
- * A source container type represents a kind of container of source code.
- * For example, a source container type may be a project or a directory. A specific
- * project or directory is represented by an instance of a source container type,
- * which is called a source container (<code>ISourceContainer</code>).
+ * A source container type represents a kind of container of source code. For
+ * example, a source container type may be a project or a directory. A specific
+ * project or directory is represented by an instance of a source container
+ * type, which is called a source container (<code>ISourceContainer</code>).
  * <p>
- * A source container type is contributed via the <code>sourceContainerTypes</code>
- * extension point, providing a delegate to the work specific to the contributed
- * type. Following is an example contribution.
+ * A source container type is contributed via the
+ * <code>sourceContainerTypes</code> extension point, providing a delegate to
+ * the work specific to the contributed type. Following is an example
+ * contribution.
+ * </p>
+ * 
  * <pre>
  * &lt;extension point=&quot;org.eclipse.debug.core.sourceContainerTypes&quot;&gt;
  * 	&lt;sourceContainerType
@@ -34,11 +37,11 @@ package org.eclipse.debug.core.sourcelookup;
  * 	&lt;/sourceContainerType&gt;
  * &lt;/extension&gt;
  * </pre>
- * </p>
  * <p>
  * Clients contributing a source container type implement
  * {@link org.eclipse.debug.core.sourcelookup.ISourceContainerTypeDelegate}.
  * </p>
+ * 
  * @see org.eclipse.debug.core.sourcelookup.ISourceContainer
  * @see org.eclipse.debug.core.sourcelookup.ISourceContainerTypeDelegate
  * @since 3.0

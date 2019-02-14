@@ -29,6 +29,7 @@ import org.eclipse.ui.texteditor.ITextEditor;
  * Following is example plug-in XML used to contribute this action to an editor.
  * Note that the label attribute of this action is not displayed in the editor.
  * Instead, the label of the created action is displayed.
+ * </p>
  *
  * <pre>
  * &lt;extension point="org.eclipse.ui.editorActions"&gt;
@@ -44,11 +45,11 @@ import org.eclipse.ui.texteditor.ITextEditor;
  *    &lt;/editorContribution&gt;
  * &lt;/extension&gt;
  * </pre>
- * </p>
  * <p>
  * This action can also be contributed to a vertical ruler context menu via the
  * <code>popupMenus</code> extension point, by referencing the ruler's context
  * menu identifier in the <code>targetID</code> attribute.
+ * </p>
  *
  * <pre>
  * &lt;extension point="org.eclipse.ui.popupMenus"&gt;
@@ -63,7 +64,6 @@ import org.eclipse.ui.texteditor.ITextEditor;
  *       &lt;/action&gt;
  *   &lt;/viewerContribution&gt;
  * </pre>
- * </p>
  * <p>
  * Clients may refer to this class as an action delegate in plug-in XML.
  * </p>

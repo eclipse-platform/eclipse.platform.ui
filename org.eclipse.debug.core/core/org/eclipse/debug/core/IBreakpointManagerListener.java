@@ -40,7 +40,7 @@ public interface IBreakpointManagerListener {
 	 * Notifies the listener that the breakpoint manager's trigger point has
 	 * changed.
 	 *
-	 * @param triggerBreakpoint new trigger breakpoint or <code>null<code>
+	 * @param triggerBreakpoint new trigger breakpoint or <code>null</code>
 	 * @since 3.11
 	 */
 	default void breakpointManagerTriggerPointChanged(IBreakpoint triggerBreakpoint) {

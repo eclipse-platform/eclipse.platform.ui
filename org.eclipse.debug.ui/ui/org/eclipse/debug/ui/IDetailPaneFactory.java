@@ -20,8 +20,11 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 /**
  * A detail pane factory creates one or more types of detail panes.
  * <p>
- * Detail pane factories are contributed via the <code>org.eclipse.debug.ui.detailPaneFactories</code>
- * extension point. Following is an example of a detail pane factory extension:
+ * Detail pane factories are contributed via the
+ * <code>org.eclipse.debug.ui.detailPaneFactories</code> extension point.
+ * Following is an example of a detail pane factory extension:
+ * </p>
+ * 
  * <pre>
  * &lt;extension point="org.eclipse.debug.ui.detailPaneFactories"&gt;
  *     &lt;detailFactories
@@ -30,10 +33,10 @@ import org.eclipse.jface.viewers.IStructuredSelection;
  *     &lt;/detailFactories&gt;
  * &lt;/extension&gt;
  * </pre>
- * </p>
- * <p>
- * <p>
- * Clients contributing a detail pane factory are intended to implement this interface.
+ * 
+ * Clients contributing a detail pane factory are intended to implement this
+ * interface.
+ * 
  * @see IDetailPane
  * @since 3.3
  *

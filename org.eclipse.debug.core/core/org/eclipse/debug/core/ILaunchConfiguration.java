@@ -29,35 +29,33 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 
 /**
- * A launch configuration describes how to launch an application.
- * Each launch configuration is an instance of a type of launch
- * configuration as described by a launch configuration type
- * extension. Each launch configuration has a launch configuration
- * delegate which performs the actual launching of a
+ * A launch configuration describes how to launch an application. Each launch
+ * configuration is an instance of a type of launch configuration as described
+ * by a launch configuration type extension. Each launch configuration has a
+ * launch configuration delegate which performs the actual launching of a
  * configuration.
  * <p>
- * A launch configuration may be shared in a repository via
- * standard VCM mechanisms, or may be stored locally, essentially
- * making the launch configuration private for a single user.
- * Thus, a launch configuration may stored as a file in the
- * workspace (shared), or as a file in the debug plug-in's state
- * location.
- * </p>
- * A launch configuration is a handle to its underlying storage.
- * Methods annotated as "handle-only" do not require a configuration
- * to exist. Methods that require an underlying configuration to exist
- * throw a <code>CoreException</code> when an underlying configuration
- * is missing.
+ * A launch configuration may be shared in a repository via standard VCM
+ * mechanisms, or may be stored locally, essentially making the launch
+ * configuration private for a single user. Thus, a launch configuration may
+ * stored as a file in the workspace (shared), or as a file in the debug
+ * plug-in's state location.
  * </p>
  * <p>
- * A launch configuration is modified by obtaining a working copy
- * of a launch configuration, modifying the working copy, and then
- * saving the working copy.
+ * A launch configuration is a handle to its underlying storage. Methods
+ * annotated as "handle-only" do not require a configuration to exist. Methods
+ * that require an underlying configuration to exist throw a
+ * <code>CoreException</code> when an underlying configuration is missing.
+ * </p>
+ * <p>
+ * A launch configuration is modified by obtaining a working copy of a launch
+ * configuration, modifying the working copy, and then saving the working copy.
  * </p>
  * <p>
  * Clients that define a launch configuration delegate extension implement the
  * <code>ILaunchConfigurationDelegate</code> interface.
  * </p>
+ * 
  * @see ILaunchConfigurationType
  * @see org.eclipse.debug.core.model.ILaunchConfigurationDelegate
  * @see ILaunchConfigurationWorkingCopy

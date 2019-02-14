@@ -37,7 +37,6 @@ import org.eclipse.ui.texteditor.ITextEditor;
  *       &lt;/action&gt;
  *   &lt;/viewerContribution&gt;
  * </pre>
- * </p>
  * <p>
  * Clients may refer to this class as an action delegate in plug-in XML.
  * </p>

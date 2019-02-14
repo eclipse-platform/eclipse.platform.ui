@@ -16,11 +16,14 @@ package org.eclipse.core.variables;
 import org.eclipse.core.runtime.CoreException;
 
 /**
- * A dynamic variable is a variable whose value is computed dynamically
- * by a resolver at the time a string substitution is performed. A dynamic
- * variable is contributed by an extension.
+ * A dynamic variable is a variable whose value is computed dynamically by a
+ * resolver at the time a string substitution is performed. A dynamic variable
+ * is contributed by an extension.
  * <p>
- * The following is a definition of a dynamic variable that resolves to the name of the selected resource:
+ * The following is a definition of a dynamic variable that resolves to the name
+ * of the selected resource:
+ * </p>
+ * 
  * <pre>
  *  &lt;extension point="org.eclipse.core.variables.dynamicVariables"&gt;
  *    &lt;variable
@@ -31,11 +34,11 @@ import org.eclipse.core.runtime.CoreException;
  *    &lt;/variable&gt;
  *  &lt;/extension&gt;
  * </pre>
- * </p>
  * <p>
  * Clients contributing a dynamic variable provide an implementation of
  * {@link org.eclipse.core.variables.IDynamicVariableResolver}.
  * </p>
+ * 
  * @since 3.0
  * @noimplement This interface is not intended to be implemented by clients.
  */

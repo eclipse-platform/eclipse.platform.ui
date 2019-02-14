@@ -21,14 +21,16 @@ import org.eclipse.ui.IWorkbenchPart;
 
 /**
  * A toggle breakpoints target factory creates one or more toggle breakpoint
- * targets.  The toggle breakpoints targets are used by toggle breakpoint actions
- * to create breakpoints appropriate for the active editor, debug session, project,
- * or selection.
+ * targets. The toggle breakpoints targets are used by toggle breakpoint actions
+ * to create breakpoints appropriate for the active editor, debug session,
+ * project, or selection.
  *
  * <p>
  * Toggle breakpoints target factories are contributed via the
- * <code>org.eclipse.debug.ui.toggleBreakpointsTargetFactories</code>
- * extension point. Following is an example of a detail pane factory extension:
+ * <code>org.eclipse.debug.ui.toggleBreakpointsTargetFactories</code> extension
+ * point. Following is an example of a detail pane factory extension:
+ * </p>
+ *
  * <pre>
  * &lt;extension point="org.eclipse.debug.ui.toggleBreakpointsTargetFactories"&gt;
  *    &lt;toggleTargetFactory
@@ -54,11 +56,10 @@ import org.eclipse.ui.IWorkbenchPart;
  *    &lt;/toggleTargetFactory&gt;
  * &lt;/extension&gt;
  * </pre>
- * </p>
- * <p>
- * <p>
+ *
  * Clients contributing a toggle breakpoints target factory are intended to
  * implement this interface.
+ *
  *
  * @see IToggleBreakpointsTarget
  * @see IToggleBreakpointsTargetExtension

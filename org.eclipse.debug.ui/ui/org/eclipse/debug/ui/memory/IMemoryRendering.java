@@ -25,6 +25,8 @@ import org.eclipse.swt.widgets.Control;
  * via the <code>memoryRenderings</code> extension point.
  * <p>
  * Following is an example definition of a memory renderings extension.
+ * </p>
+ *
  * <pre>
  * &lt;extension point="org.eclipse.debug.ui.memoryRenderings"&gt;
  *   &lt;memoryRenderingType
@@ -34,38 +36,41 @@ import org.eclipse.swt.widgets.Control;
  *   &lt;/memoryRenderingType&gt;
  * &lt;/extension&gt;
  * </pre>
+ *
  * The attributes are specified as follows:
  * <ul>
- * <li><code>id</code> specifies a unique identifier for a type of memory rendering</li>
- * <li><code>name</code> specifies a human readable label for a rendering type</li>
+ * <li><code>id</code> specifies a unique identifier for a type of memory
+ * rendering</li>
+ * <li><code>name</code> specifies a human readable label for a rendering
+ * type</li>
  * <li><code>class</code> specifies the fully qualified name of the Java class
- *   that implements <code>IMemoryRenderingTypeDelegate</code>. Renderings are created
- *   via this factory.</li>
+ * that implements <code>IMemoryRenderingTypeDelegate</code>. Renderings are
+ * created via this factory.</li>
  * </ul>
- * </p>
  * <p>
- * A rendering provides an image and label. To support dynamic labels and images, property
- * change notification is used with the following property constants defined in
- * <code>IBasicPropertyConstants</code>:
+ * A rendering provides an image and label. To support dynamic labels and
+ * images, property change notification is used with the following property
+ * constants defined in <code>IBasicPropertyConstants</code>:
+ * </p>
  * <ul>
  * <li><code>P_TEXT</code> - indicates a label change</li>
  * <li><code>P_IMAGE</code> - indicates a image change</li>
  * </ul>
- * </p>
  * <p>
  * Renderings needing to synchronize with other renderings are intended to use
- * property change notifications via its synchronization service. For example, when a
- * rendering becomes visible, it can register for property change events with its rendering
- * site's synchronization service, and when it becomes hidden it can unregister. When a
- * rendering is activated, it should set itself as the synchrnoization provider in its
- * rendering site and fire property change events to communicate information to
- * interested listeners.
+ * property change notifications via its synchronization service. For example,
+ * when a rendering becomes visible, it can register for property change events
+ * with its rendering site's synchronization service, and when it becomes hidden
+ * it can unregister. When a rendering is activated, it should set itself as the
+ * synchrnoization provider in its rendering site and fire property change
+ * events to communicate information to interested listeners.
  * </p>
  * <p>
- * Clients contributing a memory rendering type are intended to implement this interface
- * and <code>IMemoryRenderingTypeDelegate</code>. The factory will be used to create instances
- * of <code>IMemoryRendering</code>.
+ * Clients contributing a memory rendering type are intended to implement this
+ * interface and <code>IMemoryRenderingTypeDelegate</code>. The factory will be
+ * used to create instances of <code>IMemoryRendering</code>.
  * </p>
+ *
  * @since 3.1
  */
 public interface IMemoryRendering extends IAdaptable{

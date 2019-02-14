@@ -18,22 +18,21 @@ import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.ui.IEditorPart;
 
 /**
- * A launch shortcut is capable of launching a selection
- * or active editor in the workbench. The delegate is responsible for
- * interpreting the selection or active editor (if it applies), and launching
- * an application. This may require creating a new launch configuration
- * with default values, or re-using an existing launch configuration.
+ * A launch shortcut is capable of launching a selection or active editor in the
+ * workbench. The delegate is responsible for interpreting the selection or
+ * active editor (if it applies), and launching an application. This may require
+ * creating a new launch configuration with default values, or re-using an
+ * existing launch configuration.
  * <p>
- * A launch shortcut is defined as an extension
- * of type <code>org.eclipse.debug.ui.launchShortcuts</code>.
- * A shortcut specifies the perspectives in which is should be available
- * from the "Run/Debug" cascade menus.
+ * A launch shortcut is defined as an extension of type
+ * <code>org.eclipse.debug.ui.launchShortcuts</code>. A shortcut specifies the
+ * perspectives in which is should be available from the "Run/Debug" cascade
+ * menus.
  * </p>
  * <p>
- * A launch shortcut extension is defined in <code>plugin.xml</code>.
- * Following is an example definition of a launch shortcut extension.
+ * A launch shortcut extension is defined in <code>plugin.xml</code>. Following
+ * is an example definition of a launch shortcut extension.
  * </p>
- * <br>
  * <pre>
  * &lt;extension point="org.eclipse.debug.ui.launchShortcuts"&gt;
  *    &lt;shortcut
@@ -78,50 +77,61 @@ import org.eclipse.ui.IEditorPart;
  *    &lt;/shortcut&gt;
  * &lt;/extension&gt;
  * </pre>
- * <br>
  * <p>
  * The attributes are specified as follows:
+ * </p>
  * <ul>
- * <li><code>id</code> specifies a unique identifier for this launch shortcut.</li>
- * <li><code>modes</code> specifies a comma separated list of modes this shortcut
- *  supports.</li>
- * <li><code>class</code> specifies a fully qualified name of a Java class
- *  that implements <code>ILaunchShortcut</code>.</li>
+ * <li><code>id</code> specifies a unique identifier for this launch
+ * shortcut.</li>
+ * <li><code>modes</code> specifies a comma separated list of modes this
+ * shortcut supports.</li>
+ * <li><code>class</code> specifies a fully qualified name of a Java class that
+ * implements <code>ILaunchShortcut</code>.</li>
  * <li><code>label</code> specifies a label used to render this shortcut.</li>
  * <li><code>icon</code> specifies a plug-in relative path to an icon used to
- * 	render this shortcut.</li>
- * <li><code>category</code> specifies the launch configuration type category this shortcut is applicable for.
- * When unspecified, the category is <code>null</code> (default).</li>
- * <li><code>path</code> an optional menu path used to group launch shortcuts in menus.
- * Launch shortcuts are grouped alphabetically based on the <code>path</code> attribute,
- * and then sorted alphabetically within groups based on the <code>label</code> attribute.
- * When unspecified, a shortcut appears in the last group. This attribute was added in the 3.0.1 release.</li>
+ * render this shortcut.</li>
+ * <li><code>category</code> specifies the launch configuration type category
+ * this shortcut is applicable for. When unspecified, the category is
+ * <code>null</code> (default).</li>
+ * <li><code>path</code> an optional menu path used to group launch shortcuts in
+ * menus. Launch shortcuts are grouped alphabetically based on the
+ * <code>path</code> attribute, and then sorted alphabetically within groups
+ * based on the <code>label</code> attribute. When unspecified, a shortcut
+ * appears in the last group. This attribute was added in the 3.0.1
+ * release.</li>
  * <li><code>helpContextId</code> optional attribute specifying the help context
  * identifier to associate with the launch shortcut action in a menu.</li>
- * <li><code>description</code> Provides a human readable description of what the shortcut does (or will do)
- * if the user selects it. A Description provided in this field will apply as the default description for all
- * of the modes listed in the modes attribute.</li>
+ * <li><code>description</code> Provides a human readable description of what
+ * the shortcut does (or will do) if the user selects it. A Description provided
+ * in this field will apply as the default description for all of the modes
+ * listed in the modes attribute.</li>
  * <li><code>perspective</code> has been <b>deprecated</b> in the 3.1 release.
- * The top level Run/Debug/Profile cascade menus now support contextual (selection sensitive)
- * launching, and clients should provide a <code>contextualLaunch</code> element instead.</li>
- * <li><code>contextualLaunch</code> holds all descriptions for adding shortcuts to the selection sensitive
- * Run/Debug/Profile cascade menus. Only objects that provide an <code>org.eclipse.debug.ui.actions.ILaunchable</code>
- * adapter are considered for the cascade menus. The <code>org.eclipse.debug.ui.actions.ILaunchable</code>
- * interface is simply used to tag objects that support contextual launching.</li>
- * <li><code>contextLabel</code> zero or more context menu labels. For
- * shortcuts that pass their filter tests, the specified label will appear
- * in the "Run ->" context menu and be bound to a launch action of the
- * specified mode (e.g. run,debug,profile).</li>
- * <li><code>configurationType</code> allows more that one associated launch configuration type to be
- * specified for this launch shortcut. That way consumers of launch shortcut information can know what kinds
- * of launch configurations your short is associated with/creates</li>
- * <li><code>description</code> allows a mode specific description(s) to be provided for this launch shortcut.</li>
+ * The top level Run/Debug/Profile cascade menus now support contextual
+ * (selection sensitive) launching, and clients should provide a
+ * <code>contextualLaunch</code> element instead.</li>
+ * <li><code>contextualLaunch</code> holds all descriptions for adding shortcuts
+ * to the selection sensitive Run/Debug/Profile cascade menus. Only objects that
+ * provide an <code>org.eclipse.debug.ui.actions.ILaunchable</code> adapter are
+ * considered for the cascade menus. The
+ * <code>org.eclipse.debug.ui.actions.ILaunchable</code> interface is simply
+ * used to tag objects that support contextual launching.</li>
+ * <li><code>contextLabel</code> zero or more context menu labels. For shortcuts
+ * that pass their filter tests, the specified label will appear in the "Run ->"
+ * context menu and be bound to a launch action of the specified mode (e.g.
+ * run,debug,profile).</li>
+ * <li><code>configurationType</code> allows more that one associated launch
+ * configuration type to be specified for this launch shortcut. That way
+ * consumers of launch shortcut information can know what kinds of launch
+ * configurations your short is associated with/creates</li>
+ * <li><code>description</code> allows a mode specific description(s) to be
+ * provided for this launch shortcut.</li>
  * </ul>
- * </p>
  * <p>
  * <br>
- * Clients contributing a launch shortcut are intended to implement this interface.
+ * Clients contributing a launch shortcut are intended to implement this
+ * interface.
  * </p>
+ * 
  * @since 2.0
  */
 public interface ILaunchShortcut {

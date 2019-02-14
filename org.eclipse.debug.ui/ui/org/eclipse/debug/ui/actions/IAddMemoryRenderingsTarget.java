@@ -21,24 +21,29 @@ import org.eclipse.ui.IWorkbenchPart;
 
 /**
  * Adapter for the platform's retargettable "add memory rendering" action.
- * Clients implementing this adapter are expected to add the necessary memory blocks
- * and renderings when the adapter is invoked.
+ * Clients implementing this adapter are expected to add the necessary memory
+ * blocks and renderings when the adapter is invoked.
  * <p>
  * Typically, to add a memory rendering, client needs to do the following:
+ * </p>
  * <ol>
  * <li>Create a new memory block</li>
- * <li>Add the new memory block to the Memory Block Manager. (<code>IMemoryBlockManager</code>)</li>
- * <li>Create the new rendering from <code>IMemoryRenderingTypeDelegate</code></li>
- * <li>Bring the required memory view to the top. (<code>IMemoryRenderingSite</code>)</li>
+ * <li>Add the new memory block to the Memory Block Manager.
+ * (<code>IMemoryBlockManager</code>)</li>
+ * <li>Create the new rendering from
+ * <code>IMemoryRenderingTypeDelegate</code></li>
+ * <li>Bring the required memory view to the top.
+ * (<code>IMemoryRenderingSite</code>)</li>
  * <li>Find the container from the memory view to host the new memory rendering.
- *    (<code>IMemoryRenderingContainer</code>)</li>
- * <li>Initialize the new rendering with the appropriate memory block and container.</li>
+ * (<code>IMemoryRenderingContainer</code>)</li>
+ * <li>Initialize the new rendering with the appropriate memory block and
+ * container.</li>
  * <li>Add the new rendering to the container.</li>
  * </ol>
- * </p>
  * <p>
  * Clients may implement this interface.
  * </p>
+ * 
  * @since 3.2
  * @see AddMemoryRenderingActionDelegate
  */

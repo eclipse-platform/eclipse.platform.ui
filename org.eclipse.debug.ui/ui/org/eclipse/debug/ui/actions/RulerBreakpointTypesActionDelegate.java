@@ -42,16 +42,19 @@ import org.eclipse.ui.texteditor.ITextEditor;
 import org.eclipse.ui.texteditor.ITextEditorExtension;
 
 /**
- * Breakpoint ruler pop-up action that creates a sub-menu to select the currently
- * active breakpoint type.   This action delegate can be contributed to an editor
- * with the <code>editorActions</code> extension point.  The breakpoint types are
- * calculated based on the toggle breakpoint target factories contributed through
- * the <code>toggleBreakpointsTargetFactories</code> extension point.
+ * Breakpoint ruler pop-up action that creates a sub-menu to select the
+ * currently active breakpoint type. This action delegate can be contributed to
+ * an editor with the <code>editorActions</code> extension point. The breakpoint
+ * types are calculated based on the toggle breakpoint target factories
+ * contributed through the <code>toggleBreakpointsTargetFactories</code>
+ * extension point.
  * <p>
- * Following is example plug-in XML used to contribute this action to an editor's
- * vertical ruler context menu.  It uses the <code>popupMenus</code> extension
- * point, by referencing the ruler's context menu identifier in the
+ * Following is example plug-in XML used to contribute this action to an
+ * editor's vertical ruler context menu. It uses the <code>popupMenus</code>
+ * extension point, by referencing the ruler's context menu identifier in the
  * <code>targetID</code> attribute.
+ * </p>
+ * 
  * <pre>
  * &lt;extension point="org.eclipse.ui.popupMenus"&gt;
  *   &lt;viewerContribution
@@ -65,11 +68,11 @@ import org.eclipse.ui.texteditor.ITextEditorExtension;
  *       &lt;/action&gt;
  *   &lt;/viewerContribution&gt;
  * </pre>
- * </p>
  * <p>
- * Clients may refer to this class as an action delegate in plug-in XML. This class
- * is not intended to be subclassed.
+ * Clients may refer to this class as an action delegate in plug-in XML. This
+ * class is not intended to be subclassed.
  * </p>
+ * 
  * @see IToggleBreakpointsTargetManager
  * @see IToggleBreakpointsTargetFactory
  * @noextend This class is not intended to be subclassed by clients.

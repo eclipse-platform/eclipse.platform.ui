@@ -14,13 +14,15 @@
 package org.eclipse.debug.core;
 
 /**
- * A launch mode. The debug platform contributes launch modes
- * for run, debug, and profile. Clients may contribute additional launch
- * modes in plug-in XML via the <code>launchModes</code> extension point.
+ * A launch mode. The debug platform contributes launch modes for run, debug,
+ * and profile. Clients may contribute additional launch modes in plug-in XML
+ * via the <code>launchModes</code> extension point.
  * <p>
- * Following is an example launch mode contribution for profiling. A launch
- * mode has an unique identifier specified by the <code>mode</code> attribute
- * and a human readable label specified by the <code>label</code> attribute.
+ * Following is an example launch mode contribution for profiling. A launch mode
+ * has an unique identifier specified by the <code>mode</code> attribute and a
+ * human readable label specified by the <code>label</code> attribute.
+ * </p>
+ * 
  * <pre>
  *  &lt;extension point=&quot;org.eclipse.debug.core.launchModes&quot;&gt;
  *   &lt;launchMode
@@ -29,7 +31,7 @@ package org.eclipse.debug.core;
  *   &lt;/launchMode&gt;
  *  &lt;/extension&gt;
  * </pre>
- * </p>
+ * 
  * @since 3.0
  * @noimplement This interface is not intended to be implemented by clients.
  * @noextend This interface is not intended to be extended by clients.

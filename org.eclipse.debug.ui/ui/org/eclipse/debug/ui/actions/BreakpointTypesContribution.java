@@ -37,14 +37,17 @@ import org.eclipse.ui.menus.IWorkbenchContribution;
 import org.eclipse.ui.services.IServiceLocator;
 
 /**
- * Breakpoint ruler pop-up action that creates a sub-menu to select the currently
- * active breakpoint type. This menu contribution can be added to an editor
- * with the <code>org.eclipse.ui.menus</code> extension point.  The breakpoint
- * types are calculated based on the toggle breakpoint target factories
- * contributed through the <code>toggleBreakpointsTargetFactories</code> extension point.
+ * Breakpoint ruler pop-up action that creates a sub-menu to select the
+ * currently active breakpoint type. This menu contribution can be added to an
+ * editor with the <code>org.eclipse.ui.menus</code> extension point. The
+ * breakpoint types are calculated based on the toggle breakpoint target
+ * factories contributed through the
+ * <code>toggleBreakpointsTargetFactories</code> extension point.
  * <p>
- * Following is example plug-in XML used to contribute this action to an editor's
- * vertical ruler context menu.
+ * Following is example plug-in XML used to contribute this action to an
+ * editor's vertical ruler context menu.
+ * </p>
+ * 
  * <pre>
  * &lt;extension point="org.eclipse.ui.menus"&gt;
  *   &lt;menuContribution
@@ -60,11 +63,12 @@ import org.eclipse.ui.services.IServiceLocator;
  *       &lt;/menu&gt;
  *   &lt;/menuContribution&gt;
  * </pre>
- * </p>
+ *
  * <p>
- * Clients may refer to this class in plug-in XML. This class
- * is not intended to be sub-classed.
+ * Clients may refer to this class in plug-in XML. This class is not intended to
+ * be sub-classed.
  * </p>
+ *
  * @since 3.8
  * @noextend This class is not intended to be sub-classed by clients.
  */

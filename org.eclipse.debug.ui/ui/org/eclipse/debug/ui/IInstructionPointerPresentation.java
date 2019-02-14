@@ -19,42 +19,49 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.ui.IEditorPart;
 
 /**
- * A debug model presentation may implement this interface to override
- * standard annotations used to display instruction pointers for stack frames.
+ * A debug model presentation may implement this interface to override standard
+ * annotations used to display instruction pointers for stack frames.
  * <p>
  * A client has several options when overriding default instruction pointer
- * annotations, and the debug platform uses the following prioritized order
- * when computing an annotation for a stack frame.
+ * annotations, and the debug platform uses the following prioritized order when
+ * computing an annotation for a stack frame.
+ * </p>
  * <ol>
- * <li>Specify the annotation object to use. This is done by returning a non-<code>null</code>
- *  value from <code>getInstructionPointerAnnotation(..)</code>.</li>
- * <li>Specify an <code>annotationType</code> extension to use.
- *  This is done by returning a non-<code>null</code> value from
- *  <code>getInstructionPointerAnnotationType(..)</code>. When specified, the annotation
- *  type controls the image displayed via its associated
- *  <code>markerAnnotationSpecification</code>.</li>
- * <li>Specify the image to use. This is done by returning a non-<code>null</code>
- *  value from <code>getInstructionPointerImage(..)</code>.</li>
+ * <li>Specify the annotation object to use. This is done by returning a
+ * non-<code>null</code> value from
+ * <code>getInstructionPointerAnnotation(..)</code>.</li>
+ * <li>Specify an <code>annotationType</code> extension to use. This is done by
+ * returning a non-<code>null</code> value from
+ * <code>getInstructionPointerAnnotationType(..)</code>. When specified, the
+ * annotation type controls the image displayed via its associated
+ * <code>markerAnnotationSpecification</code>.</li>
+ * <li>Specify the image to use. This is done by returning a
+ * non-<code>null</code> value from
+ * <code>getInstructionPointerImage(..)</code>.</li>
  * </ol>
- * Additionally, when specifying an annotation type or image the text
- * for the instruction pointer may be specified by returning a non-<code>null</code>
+ * <p>
+ * Additionally, when specifying an annotation type or image the text for the
+ * instruction pointer may be specified by returning a non-<code>null</code>
  * value from <code>getInstructionPointerText(..)</code>.
  * </p>
  * <p>
  * These methods are called when the debugger has opened an editor to display
- * source for the given stack frame. The image will be positioned based on stack frame
- * line number and character ranges.
+ * source for the given stack frame. The image will be positioned based on stack
+ * frame line number and character ranges.
  * </p>
  * <p>
  * By default, the debug platform uses different annotations for top stack
  * frames and non-top stack frames in a thread. The default platform annotations
- * are contributed as <code>annotationType</code> extensions with
- * the identifiers <code>IDebugUIConstants.ANNOTATION_INSTRUCTION_POINTER_CURRENT</code>
- * and <code>IDebugUIConstants.ANNOTAION_INSTRUCTION_POINTER_SECONDARY</code>.
+ * are contributed as <code>annotationType</code> extensions with the
+ * identifiers
+ * <code>IDebugUIConstants.ANNOTATION_INSTRUCTION_POINTER_CURRENT</code> and
+ * <code>IDebugUIConstants.ANNOTAION_INSTRUCTION_POINTER_SECONDARY</code>.
  * </p>
  * <p>
- * Clients implementing a debug model presentation may also implement this interface.
+ * Clients implementing a debug model presentation may also implement this
+ * interface.
  * </p>
+ *
  * @since 3.2
  */
 public interface IInstructionPointerPresentation extends IDebugModelPresentation {

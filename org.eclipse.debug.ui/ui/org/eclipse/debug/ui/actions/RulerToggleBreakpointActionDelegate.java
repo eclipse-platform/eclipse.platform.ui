@@ -13,27 +13,26 @@
  *******************************************************************************/
 package org.eclipse.debug.ui.actions;
 
-import org.eclipse.swt.widgets.Event;
-
 import org.eclipse.jface.action.IAction;
-
 import org.eclipse.jface.text.source.IVerticalRulerInfo;
-
+import org.eclipse.swt.widgets.Event;
 import org.eclipse.ui.IActionDelegate2;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.texteditor.AbstractRulerActionDelegate;
 import org.eclipse.ui.texteditor.ITextEditor;
 
 /**
- * Toggles a breakpoint when ruler is double-clicked. This action delegate can be
- * contributed to an editor with the <code>editorActions</code> extension point.
- * This action is as a factory that creates another action that performs the
- * actual breakpoint toggling. The created action acts on the editor's
+ * Toggles a breakpoint when ruler is double-clicked. This action delegate can
+ * be contributed to an editor with the <code>editorActions</code> extension
+ * point. This action is as a factory that creates another action that performs
+ * the actual breakpoint toggling. The created action acts on the editor's
  * <code>IToggleBreakpointsTagret</code> to toggle breakpoints.
  * <p>
  * Following is example plug-in XML used to contribute this action to an editor.
  * Note that the label attribute of this action is not displayed in the editor.
  * Instead, the label of the created action is displayed.
+ * </p>
+ *
  * <pre>
  * &lt;extension point="org.eclipse.ui.editorActions"&gt;
  *    &lt;editorContribution
@@ -48,11 +47,12 @@ import org.eclipse.ui.texteditor.ITextEditor;
  *    &lt;/editorContribution&gt;
  * &lt;/extension&gt;
  * </pre>
- * </p>
  * <p>
  * This action can also be contributed to a vertical ruler context menu via the
  * <code>popupMenus</code> extension point, by referencing the ruler's context
  * menu identifier in the <code>targetID</code> attribute.
+ * </p>
+ *
  * <pre>
  * &lt;extension point="org.eclipse.ui.popupMenus"&gt;
  *   &lt;viewerContribution
@@ -66,10 +66,10 @@ import org.eclipse.ui.texteditor.ITextEditor;
  *       &lt;/action&gt;
  *   &lt;/viewerContribution&gt;
  * </pre>
- * </p>
  * <p>
  * Clients may refer to this class as an action delegate in plug-in XML.
  * </p>
+ *
  * @since 3.1
  * @noextend This class is not intended to be subclassed by clients.
  * @noinstantiate This class is not intended to be instantiated by clients.

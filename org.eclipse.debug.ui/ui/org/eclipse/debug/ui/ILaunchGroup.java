@@ -16,13 +16,14 @@ package org.eclipse.debug.ui;
 import org.eclipse.jface.resource.ImageDescriptor;
 
 /**
- * A launch group identifies a group of launch configurations by a launch
- * mode and category. The launch configuration dialog can be opened on
- * a launch group, and a launch history is maintained for each group.
- * A launch group is defined in plug-in XML via the <code>launchGroups</code>
- * extension point.
+ * A launch group identifies a group of launch configurations by a launch mode
+ * and category. The launch configuration dialog can be opened on a launch
+ * group, and a launch history is maintained for each group. A launch group is
+ * defined in plug-in XML via the <code>launchGroups</code> extension point.
  * <p>
  * Following is an example of a launch group contribution:
+ * </p>
+ *
  * <pre>
  * 	&lt;extension point="org.eclipse.debug.ui.launchGroups"&gt;
  * 		&lt;launchGroup
@@ -33,16 +34,16 @@ import org.eclipse.jface.resource.ImageDescriptor;
  * 		&lt;/launchGroup&gt;
  * 	&lt;/extension&gt;
  * </pre>
- * </p>
  * <p>
  * The debug platform defines constants for the identifiers of the launch groups
  * provided by the debug platform:
+ * </p>
  * <ul>
  * <li>IDebugUIConstants.ID_DEBUG_LAUNCH_GROUP</li>
  * <li>IDebugUIConstants.ID_RUN_LAUNCH_GROUP</li>
  * <li>IDebugUIConstants.ID_PROFILE_LAUNCH_GROUP</li>
  * </ul>
- * </p>
+ *
  * @since 3.0
  * @noimplement This interface is not intended to be implemented by clients.
  * @noextend This interface is not intended to be extended by clients.

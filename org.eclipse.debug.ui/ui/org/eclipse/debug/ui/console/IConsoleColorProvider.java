@@ -27,8 +27,9 @@ import org.eclipse.swt.graphics.Color;
  * <code>IProcess. ATTR_PROCESS_TYPE</code>.
  * <p>
  * A console color provider extension is defined in <code>plugin.xml</code>.
- * Following is an example definition of a console color
- * provider extension.
+ * Following is an example definition of a console color provider extension.
+ * </p>
+ * 
  * <pre>
  * &lt;extension point="org.eclipse.debug.ui.consoleColorProviders"&gt;
  *   &lt;consoleColorProvider
@@ -38,19 +39,21 @@ import org.eclipse.swt.graphics.Color;
  *   &lt;/consoleColorProvider&gt;
  * &lt;/extension&gt;
  * </pre>
+ * 
  * The attributes are specified as follows:
  * <ul>
- * <li><code>id</code> specifies a unique identifier for this color provider.</li>
- * <li><code>class</code> specifies a fully qualified name of a Java class
- *  that implements <code>IConsoleColorProvider</code>.</li>
+ * <li><code>id</code> specifies a unique identifier for this color
+ * provider.</li>
+ * <li><code>class</code> specifies a fully qualified name of a Java class that
+ * implements <code>IConsoleColorProvider</code>.</li>
  * <li><code>processType</code> specifies the identifier of the process type
  * this content provider is associated with (which corresponds to the
  * <code>ATTR_PROCESS_TYPE</code> attribute on a process).</li>
  * </ul>
- * </p>
  * <p>
  * Clients may implement this interface.
  * </p>
+ * 
  * @since 2.1
  */
 

@@ -332,8 +332,9 @@ public interface IBreakpointManager {
 	 * Revisit all the trigger points to activate/deactivate trigger points.
 	 *
 	 * @param triggerPoints list of trigger points to be deactivated or
-	 *            <code>null<code> to deactivate all trigger points
-	 * @param enable enable if <code>true</code> or disable if <code>false</code>
+	 *            <code>null</code> to deactivate all trigger points
+	 * @param enable enable if <code>true</code> or disable if
+	 *            <code>false</code>
 	 * @since 3.11
 	 */
 	void enableTriggerPoints(IBreakpoint[] triggerPoints, boolean enable);

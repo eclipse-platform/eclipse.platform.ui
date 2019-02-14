@@ -19,13 +19,15 @@ import org.eclipse.swt.widgets.Shell;
 
 
 /**
- * Creates and edits source containers for a source lookup director.
- * Contributed via a source container presentation extension for
- * a specific type of source container.
+ * Creates and edits source containers for a source lookup director. Contributed
+ * via a source container presentation extension for a specific type of source
+ * container.
  * <p>
- * Following is an example source container presentation definition
- * that contributes a source container browser via the
- * <code>browserClass</code> attribute.
+ * Following is an example source container presentation definition that
+ * contributes a source container browser via the <code>browserClass</code>
+ * attribute.
+ * </p>
+ * 
  * <pre>
  * &lt;extension point=&quot;org.eclipse.debug.ui.sourceContainerPresentations&quot;&gt;
  *    &lt;sourceContainerPresentation
@@ -36,7 +38,7 @@ import org.eclipse.swt.widgets.Shell;
  *    &lt;/sourceContainerPresentation&gt;
  * &lt;/extension&gt;
  * </pre>
- * </p>
+ * 
  * @since 3.0
  */
 public interface ISourceContainerBrowser {

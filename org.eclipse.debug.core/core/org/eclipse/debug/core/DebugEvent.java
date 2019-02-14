@@ -19,124 +19,136 @@ import java.util.EventObject;
 import org.eclipse.debug.internal.core.DebugCoreMessages;
 
 /**
- * A debug event describes an event in a program being debugged or
- * in a running process. Debug models and process implementations
- * are required to generate debug events as specified by this class.
+ * A debug event describes an event in a program being debugged or in a running
+ * process. Debug models and process implementations are required to generate
+ * debug events as specified by this class.
  * <p>
- * The following list defines the events generated for each debug
- * model element.
- * The <code>getSource()</code> method of a debug event
- * returns the element associated with the event.
- * Creation events are guaranteed to occur in a top
- * down order - that is, parents are created before children.
- * Termination events are guaranteed to occur in a bottom up order -
- * that is, children before parents. However, termination events are not guaranteed
- * for all  elements that are created. That is, terminate events can be coalesced - a
- * terminate event for a parent signals that all children have been terminated.
+ * The following list defines the events generated for each debug model element.
+ * The <code>getSource()</code> method of a debug event returns the element
+ * associated with the event. Creation events are guaranteed to occur in a top
+ * down order - that is, parents are created before children. Termination events
+ * are guaranteed to occur in a bottom up order - that is, children before
+ * parents. However, termination events are not guaranteed for all elements that
+ * are created. That is, terminate events can be coalesced - a terminate event
+ * for a parent signals that all children have been terminated.
  * </p>
  * <p>
  * A debug model may define model specific events by specifying a debug event
- * kind of <code>MODEL_SPECIFIC</code>. A model specific event is identified by the
- * event source (i.e. by the debug model that generated the event). The detail of
- * a model specific event is client defined. Note that model specific events are
- * not understood by the debug platform, and are thus ignored.
+ * kind of <code>MODEL_SPECIFIC</code>. A model specific event is identified by
+ * the event source (i.e. by the debug model that generated the event). The
+ * detail of a model specific event is client defined. Note that model specific
+ * events are not understood by the debug platform, and are thus ignored.
  * </p>
  * <p>
- * The generic <code>CHANGE</code> event can be fired at any time by any element.
- * Generally, a client of a debug model, such as as a UI, can get sufficient
- * information to update by listening/responding to the other event kinds. However,
- * if a debug model needs to inform clients of a change that is not specified
- * by create/terminate/suspend/resume, the <code>CHANGE</code> event may be used.
- * For example, generally, the only way a thread or any of its children can change
- * state between a suspend and resume operation, is if the thread or owning debug
- * target is terminated. However, if a debug model supports some other operation
- * that would allow a debug element to change state while suspended, the debug model
- * would fire a change event for that element. The valid detail codes for a
- * change event are:<ul>
- * <li><code>STATE</code> - indicates the state of an element has changed, but its
- *  children are not affected. A client would use a state change event to update
- *  a label of the affected element, but would not update any children.</li>
- * <li><code>CONTENT</code> - indicates that a debug element's value or contents have
- *  changed in some way. For example, when the value of a variable is changed
- *  explicitly, the variable should fire a content change event.</li>
- * </ul>
+ * The generic <code>CHANGE</code> event can be fired at any time by any
+ * element. Generally, a client of a debug model, such as as a UI, can get
+ * sufficient information to update by listening/responding to the other event
+ * kinds. However, if a debug model needs to inform clients of a change that is
+ * not specified by create/terminate/suspend/resume, the <code>CHANGE</code>
+ * event may be used. For example, generally, the only way a thread or any of
+ * its children can change state between a suspend and resume operation, is if
+ * the thread or owning debug target is terminated. However, if a debug model
+ * supports some other operation that would allow a debug element to change
+ * state while suspended, the debug model would fire a change event for that
+ * element. The valid detail codes for a change event are:
  * </p>
  * <ul>
+ * <li><code>STATE</code> - indicates the state of an element has changed, but
+ * its children are not affected. A client would use a state change event to
+ * update a label of the affected element, but would not update any
+ * children.</li>
+ * <li><code>CONTENT</code> - indicates that a debug element's value or contents
+ * have changed in some way. For example, when the value of a variable is
+ * changed explicitly, the variable should fire a content change event.</li>
+ * </ul>
+ *
+ * <ul>
  * <li><code>IProcess</code>
- *	<ul>
- *	<li><code>CREATE</code> - a process has been created and is executing.</li>
- *	<li><code>TERMINATE</code> - a process has terminated.</li>
- *  </ul>
+ * <ul>
+ * <li><code>CREATE</code> - a process has been created and is executing.</li>
+ * <li><code>TERMINATE</code> - a process has terminated.</li>
+ * </ul>
  * <li><code>IDebugTarget</code>
- *	<ul>
- *	<li><code>CREATE</code> - a debug target has been created and is ready
- *		to begin a debug session.</li>
- *	<li><code>TERMINATE</code> - a debug target has terminated and the debug
- *		session has ended.</li>
- *  <li><code>SUSPEND</code> - a debug target has suspended. Event detail provides
- *		the reason for the suspension:<ul>
- *		<li><code>STEP_END</code> - a request to step has completed</li>
- *		<li><code>BREAKPOINT</code> - a breakpoint has been hit</li>
- *		<li><code>CLIENT_REQUEST</code> - a client request has caused the target to suspend
- * 			(i.e. an explicit call to <code>suspend()</code>)</li>
- * 		<li><code>UNSPECIFIED</code> - the reason for the suspend is not specified</li>
- *		</ul>
- *	</li>
- *  <li><code>RESUME</code> - a debug target has resumed. Event detail provides
- *		the reason for the resume:<ul>
- *		<li><code>STEP_INTO</code> - a target is being resumed because of a request to step into</li>
- * 		<li><code>STEP_OVER</code> - a target is being resumed because of a request to step over</li>
- * 		<li><code>STEP_RETURN</code> - a target is being resumed because of a request to step return</li>
- *		<li><code>CLIENT_REQUEST</code> - a client request has caused the target to be resumed
- * 			(i.e. an explicit call to <code>resume()</code>)</li>
- * 		<li><code>UNSPECIFIED</code> - The reason for the resume is not specified</li>
- *		</ul>
- *	</li>
- *	</ul>
+ * <ul>
+ * <li><code>CREATE</code> - a debug target has been created and is ready to
+ * begin a debug session.</li>
+ * <li><code>TERMINATE</code> - a debug target has terminated and the debug
+ * session has ended.</li>
+ * <li><code>SUSPEND</code> - a debug target has suspended. Event detail
+ * provides the reason for the suspension:
+ * <ul>
+ * <li><code>STEP_END</code> - a request to step has completed</li>
+ * <li><code>BREAKPOINT</code> - a breakpoint has been hit</li>
+ * <li><code>CLIENT_REQUEST</code> - a client request has caused the target to
+ * suspend (i.e. an explicit call to <code>suspend()</code>)</li>
+ * <li><code>UNSPECIFIED</code> - the reason for the suspend is not
+ * specified</li>
+ * </ul>
+ * </li>
+ * <li><code>RESUME</code> - a debug target has resumed. Event detail provides
+ * the reason for the resume:
+ * <ul>
+ * <li><code>STEP_INTO</code> - a target is being resumed because of a request
+ * to step into</li>
+ * <li><code>STEP_OVER</code> - a target is being resumed because of a request
+ * to step over</li>
+ * <li><code>STEP_RETURN</code> - a target is being resumed because of a request
+ * to step return</li>
+ * <li><code>CLIENT_REQUEST</code> - a client request has caused the target to
+ * be resumed (i.e. an explicit call to <code>resume()</code>)</li>
+ * <li><code>UNSPECIFIED</code> - The reason for the resume is not
+ * specified</li>
+ * </ul>
+ * </li>
+ * </ul>
  * </li>
  * <li><code>IThread</code>
- *	<ul>
- *	<li><code>CREATE</code> - a thread has been created in a debug target.</li>
- *	<li><code>TERMINATE</code> - a thread has terminated.</li>
- *	<li><code>SUSPEND</code> - a thread has suspended execution. Event detail provides
- *		the reason for the suspension:<ul>
- *		<li><code>STEP_END</code> - a request to step has completed</li>
- *		<li><code>BREAKPOINT</code> - a breakpoint has been hit</li>
- *		<li><code>CLIENT_REQUEST</code> - a client request has caused the thread to suspend
- * 			(i.e. an explicit call to <code>suspend()</code>)</li>
- * 		<li><code>EVALUATION</code> - an expression evaluation has ended that may
- * 			have had side effects in the debug target.</li>
- * 		<li><code>EVALUATION_IMPLICIT</code> - an expression evaluation has ended that
- * 			had no side effects in the debug target.</li>
- * 		<li><code>UNSPECIFIED</code> - the reason for the suspend is not specified</li>
- *		</ul>
- *	</li>
- *	<li><code>RESUME</code> - a thread has resumed execution. Event detail provides
- *		the reason for the resume:<ul>
- *		<li><code>STEP_INTO</code> - a thread is being resumed because of a request to step into</li>
- * 		<li><code>STEP_OVER</code> - a thread is being resumed because of a request to step over</li>
- * 		<li><code>STEP_RETURN</code> - a thread is being resumed because of a request to step return</li>
- *		<li><code>CLIENT_REQUEST</code> - a client request has caused the thread to be resumed
- * 			(i.e. an explicit call to <code>resume()</code>)</li>
- * 		<li><code>EVALUATION</code> - an expression evaluation has started that may
- * 			have side effects in the debug target.</li>
- * 		<li><code>EVALUATION_IMPLICIT</code> - an expression evaluation has started that
- * 			will have no side effects in the debug target.</li>
- * 		<li><code>UNSPECIFIED</code> - The reason for the resume is not specified</li>
- *		</ul>
- *	</li>
- *    </ul>
+ * <ul>
+ * <li><code>CREATE</code> - a thread has been created in a debug target.</li>
+ * <li><code>TERMINATE</code> - a thread has terminated.</li>
+ * <li><code>SUSPEND</code> - a thread has suspended execution. Event detail
+ * provides the reason for the suspension:
+ * <ul>
+ * <li><code>STEP_END</code> - a request to step has completed</li>
+ * <li><code>BREAKPOINT</code> - a breakpoint has been hit</li>
+ * <li><code>CLIENT_REQUEST</code> - a client request has caused the thread to
+ * suspend (i.e. an explicit call to <code>suspend()</code>)</li>
+ * <li><code>EVALUATION</code> - an expression evaluation has ended that may
+ * have had side effects in the debug target.</li>
+ * <li><code>EVALUATION_IMPLICIT</code> - an expression evaluation has ended
+ * that had no side effects in the debug target.</li>
+ * <li><code>UNSPECIFIED</code> - the reason for the suspend is not
+ * specified</li>
+ * </ul>
  * </li>
- * <li><code>IStackFrame</code> - no events are specified for stack frames.
- *	When a thread is suspended, it has stack frames. When a thread resumes,
- *	stack frames are unavailable.
+ * <li><code>RESUME</code> - a thread has resumed execution. Event detail
+ * provides the reason for the resume:
+ * <ul>
+ * <li><code>STEP_INTO</code> - a thread is being resumed because of a request
+ * to step into</li>
+ * <li><code>STEP_OVER</code> - a thread is being resumed because of a request
+ * to step over</li>
+ * <li><code>STEP_RETURN</code> - a thread is being resumed because of a request
+ * to step return</li>
+ * <li><code>CLIENT_REQUEST</code> - a client request has caused the thread to
+ * be resumed (i.e. an explicit call to <code>resume()</code>)</li>
+ * <li><code>EVALUATION</code> - an expression evaluation has started that may
+ * have side effects in the debug target.</li>
+ * <li><code>EVALUATION_IMPLICIT</code> - an expression evaluation has started
+ * that will have no side effects in the debug target.</li>
+ * <li><code>UNSPECIFIED</code> - The reason for the resume is not
+ * specified</li>
+ * </ul>
  * </li>
- * <li><code>IVariable</code> - no events are specified for variables.
- *	When a thread is suspended, stack frames have variables. When a thread resumes,
- *	variables are unavailable.
+ * </ul>
  * </li>
- * <li><code>IValue</code> - no events are specified for values.
- * </li>
+ * <li><code>IStackFrame</code> - no events are specified for stack frames. When
+ * a thread is suspended, it has stack frames. When a thread resumes, stack
+ * frames are unavailable.</li>
+ * <li><code>IVariable</code> - no events are specified for variables. When a
+ * thread is suspended, stack frames have variables. When a thread resumes,
+ * variables are unavailable.</li>
+ * <li><code>IValue</code> - no events are specified for values.</li>
  * </ul>
  *
  */
