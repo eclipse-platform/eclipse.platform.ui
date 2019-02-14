@@ -22,8 +22,6 @@ import org.eclipse.swt.graphics.Image;
  */
 public class ProgressLabelProvider extends LabelProvider {
 
-    Image image;
-
     @Override
 	public Image getImage(Object element) {
         return ((JobTreeElement) element).getDisplayImage();
