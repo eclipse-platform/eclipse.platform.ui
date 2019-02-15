@@ -13,6 +13,7 @@ package org.eclipse.jface.suites;
 import org.eclipse.jface.widgets.TestUnitButtonFactory;
 import org.eclipse.jface.widgets.TestUnitCompositeFactory;
 import org.eclipse.jface.widgets.TestUnitControlFactory;
+import org.eclipse.jface.widgets.TestUnitItemFactory;
 import org.eclipse.jface.widgets.TestUnitLabelFactory;
 import org.eclipse.jface.widgets.TestUnitSpinnerFactory;
 import org.eclipse.jface.widgets.TestUnitTableFactory;
@@ -29,7 +30,8 @@ import org.junit.runners.Suite.SuiteClasses;
 		TestUnitCompositeFactory.class, //
 		TestUnitSpinnerFactory.class, //
 		TestUnitTextFactory.class, //
-		TestUnitTableFactory.class,//
+		TestUnitTableFactory.class, //
+		TestUnitItemFactory.class,//
 })
 public class AllUnitTests {
 

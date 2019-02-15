@@ -6,18 +6,16 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Layout;
 
 /**
- * Abstract factory for composites. Factories for controls that inherit from
+ * Abstract factory for composites. Factories for widgets that inherit from
  * Composite should extend this factory to handle the properties of Composite
  * itself, like layout.
  *
  * @param <F>
  * @param <C>
  *
- * @since 3.4
- *
  */
 public abstract class AbstractCompositeFactory<F extends AbstractCompositeFactory<?, ?>, C extends Composite>
-		extends ControlFactory<F, C> {
+		extends AbstractControlFactory<F, C> {
 
 	/**
 	 * @param factoryClass

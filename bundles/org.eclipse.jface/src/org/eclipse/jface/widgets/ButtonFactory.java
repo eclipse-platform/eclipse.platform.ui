@@ -67,7 +67,7 @@ import org.eclipse.swt.widgets.Composite;
  * ButtonFactory.
  * <p>
  */
-public final class ButtonFactory extends ControlFactory<ButtonFactory, Button> {
+public final class ButtonFactory extends AbstractControlFactory<ButtonFactory, Button> {
 
 	private ButtonFactory(int style) {
 		super(ButtonFactory.class, (Composite parent) -> new Button(parent, style));

@@ -29,8 +29,6 @@ import org.eclipse.swt.widgets.Spinner;
  * chained</li>
  * </ul>
  *
- * @since 3.4
- *
  */
 public class SpinnerFactory extends AbstractCompositeFactory<SpinnerFactory, Spinner> {
 

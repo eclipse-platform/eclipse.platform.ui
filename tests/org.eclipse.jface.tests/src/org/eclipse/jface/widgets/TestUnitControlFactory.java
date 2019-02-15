@@ -16,7 +16,6 @@ package org.eclipse.jface.widgets;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotSame;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
@@ -49,7 +48,7 @@ public class TestUnitControlFactory extends AbstractFactoryTest {
 		Label label1 = testFactory.create(shell);
 		Label label2 = testFactory.create(shell);
 
-		assertNotEquals(label1, label2);
+		assertNotSame(label1, label2);
 		assertEquals(label1, shell.getChildren()[0]);
 		assertEquals(label2, shell.getChildren()[1]);
 	}
@@ -82,7 +81,7 @@ public class TestUnitControlFactory extends AbstractFactoryTest {
 		assertNotSame(label.getLayoutData(), label2.getLayoutData());
 	}
 
-	static class TestFactory extends ControlFactory<TestFactory, Label> {
+	static class TestFactory extends AbstractControlFactory<TestFactory, Label> {
 
 		protected TestFactory(int style) {
 			super(TestFactory.class, parent -> new Label(parent, style));

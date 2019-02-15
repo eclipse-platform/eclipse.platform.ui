@@ -22,8 +22,6 @@ import org.eclipse.swt.widgets.Composite;
  * chained</li>
  * </ul>
  *
- * @since 3.4
- *
  */
 public class CompositeFactory extends AbstractCompositeFactory<CompositeFactory, Composite> {
 

@@ -13,22 +13,22 @@
 ******************************************************************************/
 package org.eclipse.jface.widgets;
 
-import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Widget;
 
 /**
  * Class which implement this interface can apply a property (like a text,
- * enabled, image, ...) to the given control.
+ * enabled, image, ...) to the given widget.
  *
  * @param <T>
  *
  */
 @FunctionalInterface
-public interface Property<T extends Control> {
+public interface Property<T extends Widget> {
 
 	/**
-	 * Called when the control is created and the property should be applied.
-	 * 
-	 * @param control
+	 * Called when the widget is created and the property should be applied.
+	 *
+	 * @param widget
 	 */
-	void apply(T control);
+	void apply(T widget);
 }
