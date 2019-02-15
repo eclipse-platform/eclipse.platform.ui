@@ -30,6 +30,7 @@ import org.eclipse.ltk.core.refactoring.history.IRefactoringHistoryService;
  * </p>
  * <p>
  * Refactoring descriptors contain the following information:
+ * </p>
  * <ul>
  * <li>a short description string, which provides a human-readable text
  * designed to be displayed in the user interface to represent the refactoring
@@ -53,7 +54,6 @@ import org.eclipse.ltk.core.refactoring.history.IRefactoringHistoryService;
  * associated with a single project, or the refactoring descriptor has been read
  * from a file which cannot be associated with a project. </li>
  * </ul>
- * </p>
  * <p>
  * Refactoring descriptors are identified by their refactoring id
  * {@link #getID()} and their time stamps {@link #getTimeStamp()} and are

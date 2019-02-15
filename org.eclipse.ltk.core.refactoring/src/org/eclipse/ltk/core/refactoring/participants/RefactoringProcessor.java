@@ -30,6 +30,7 @@ import org.eclipse.ltk.core.refactoring.RefactoringStatus;
  * as well.
  * <p>
  * A refactoring processor is responsible for:
+ * </p>
  * <ul>
  *   <li>refactoring the actual element. For example if a rename Java method
  *       refactoring is executed its associated processor provides the
@@ -41,7 +42,6 @@ import org.eclipse.ltk.core.refactoring.RefactoringStatus;
  *       For example a Java method rename processor is responsible to load
  *       all participants that want to participate in a Java method rename.</li>
  * </ul>
- * </p>
  * <p>
  * A refactoring processor can not assume that all resources are saved before
  * any methods are called on it. Therefore a processor must be able to deal with

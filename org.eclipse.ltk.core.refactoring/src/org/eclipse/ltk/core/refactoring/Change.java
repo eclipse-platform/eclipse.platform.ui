@@ -27,7 +27,7 @@ import org.eclipse.core.runtime.Platform;
  * subclassed by clients wishing to provide new changes.
  * <p>
  * Changes are best executed by using a {@link PerformChangeOperation}. If clients
- * execute a change directly then the following life cycle has to be honored:
+ * execute a change directly then the following life cycle has to be honored:</p>
  * <ul>
  *   <li>After a single change or a tree of changes has been created, the
  *       method <code>initializeValidationData</code> has to be called.</li>
@@ -75,7 +75,6 @@ import org.eclipse.core.runtime.Platform;
  *     change.dispose();
  *   }
  * </pre>
- * </p>
  * <p>
  * It is important that implementors of this abstract class provide an adequate
  * implementation of <code>isValid</code> and that they provide an undo change

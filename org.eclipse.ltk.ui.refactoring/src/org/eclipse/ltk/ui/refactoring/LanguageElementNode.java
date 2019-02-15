@@ -54,7 +54,7 @@ public abstract class LanguageElementNode extends InternalLanguageElementNode {
 	}
 
 	/**
-	 * Adds the given <code>ChildNode<code> to this <code>LanguageElementNode</code>
+	 * Adds the given <code>ChildNode</code> to this <code>LanguageElementNode</code>
 	 *
 	 * @param child the child to add
 	 */

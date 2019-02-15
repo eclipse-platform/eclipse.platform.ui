@@ -29,7 +29,7 @@ import org.eclipse.ltk.internal.core.refactoring.history.RefactoringContribution
  * <code>org.eclipse.ltk.core.refactoring.refactoringContributions</code> to
  * participate in the refactoring services. Refactoring contributions are
  * stateless objects. They are instantiated on demand by the refactoring
- * framework in the following cases:
+ * framework in the following cases:</p>
  * <ul>
  * <li> When a refactoring script is executed, the refactoring framework
  * retrieves a corresponding refactoring contribution for each refactoring
@@ -49,7 +49,7 @@ import org.eclipse.ltk.internal.core.refactoring.history.RefactoringContribution
  * key-value representation of the state of the language-specific refactoring
  * descriptor. </li>
  * </ul>
- * </p>
+ * <p>
  * Refactorings for which a refactoring contribution has been registered should
  * also create a {@link RefactoringDescriptor} during change generation. Their
  * {@link Refactoring#createChange(org.eclipse.core.runtime.IProgressMonitor)} should
@@ -62,6 +62,7 @@ import org.eclipse.ltk.internal.core.refactoring.history.RefactoringContribution
  * customizable refactoring descriptors may reimplement the method
  * {@link #createDescriptor()}.
  * </p>
+ * <p>
  * Note: Clients which extend this class are required to reimplement the method
  * {@link #retrieveArgumentMap(RefactoringDescriptor)} in subclasses to capture
  * the state of a language-specific refactoring descriptor in a neutral

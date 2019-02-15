@@ -40,11 +40,11 @@ import org.eclipse.ltk.internal.ui.refactoring.TextEditGroupNode;
  * preview tree.
  * <p>
  * This class should be subclassed by clients wishing to provide language
- * aware substructures for special <code>TextEditBasedChange<code>s. The preview
- * infrastructure accesses to preview node for a <code>TextEditBasedChange<code>
+ * aware substructures for special <code>TextEditBasedChange</code>s. The preview
+ * infrastructure accesses to preview node for a <code>TextEditBasedChange</code>
  * by asking the change for an adapter of type <code>TextEditChangeNode</code>.
  * If no adapter is returned, this default implementation will be used to present
- * <code>TextEditBasedChange<code> in the preview tree.
+ * <code>TextEditBasedChange</code> in the preview tree.
  * </p>
  * @since 3.2
  */
@@ -100,7 +100,7 @@ public class TextEditChangeNode extends InternalTextEditChangeNode {
 	 * Returns the <code>TextEditBasedChange</code> this node is
 	 * associated with.
 	 *
-	 * @return the <code>TextEditBasedChange<code>
+	 * @return the <code>TextEditBasedChange</code>
 	 */
 	@Override
 	public final TextEditBasedChange getTextEditBasedChange() {

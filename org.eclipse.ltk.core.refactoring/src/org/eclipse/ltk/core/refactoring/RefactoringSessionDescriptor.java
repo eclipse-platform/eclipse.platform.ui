@@ -24,6 +24,7 @@ import org.eclipse.core.runtime.Assert;
  * </p>
  * <p>
  * Refactoring session descriptors contain the following information:
+ * </p>
  * <ul>
  * <li> an optional comment string, which provides a full human-readable
  * description of the refactoring session. Comments are automatically generated
@@ -38,7 +39,6 @@ import org.eclipse.core.runtime.Assert;
  * version their refactoring descriptors are required to implement this in their
  * specific subclasses of {@link RefactoringDescriptor}. </li>
  * </ul>
- * </p>
  * <p>
  * Refactoring session descriptors are potentially heavy weight objects which
  * should not be held on to. Use refactoring descriptor proxies
