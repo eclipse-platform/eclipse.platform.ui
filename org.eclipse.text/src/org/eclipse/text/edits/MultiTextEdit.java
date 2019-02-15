@@ -52,7 +52,7 @@ public class MultiTextEdit extends TextEdit {
 	}
 
 	/**
-	 * Creates a new </code>MultiTextEdit</code> for the given
+	 * Creates a new <code>MultiTextEdit</code> for the given
 	 * range. Adding a child to this edit which isn't covered
 	 * by the given range will result in an exception.
 	 *
