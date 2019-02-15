@@ -85,11 +85,12 @@ public abstract class Action extends AbstractAction {
 	}
 
 	/**
-	 * Maps a standard keyboard key name to an SWT key code. Key names are
-	 * converted to upper case before comparison. If the key name is a single
-	 * letter, for example "S", its character code is returned.
+	 * Maps a standard keyboard key name to an SWT key code. Key names are converted
+	 * to upper case before comparison. If the key name is a single letter, for
+	 * example "S", its character code is returned.
 	 * <p>
 	 * The following key names are known (case is ignored):
+	 * </p>
 	 * <ul>
 	 * <li><code>"BACKSPACE"</code></li>
 	 * <li><code>"TAB"</code></li>
@@ -107,10 +108,8 @@ public abstract class Action extends AbstractAction {
 	 * <li><code>"INSERT"</code></li>
 	 * <li><code>"F1"</code>, <code>"F2"</code> through <code>"F12"</code></li>
 	 * </ul>
-	 * </p>
 	 *
-	 * @param token
-	 *            the key name
+	 * @param token the key name
 	 * @return the SWT key code, <code>-1</code> if no match was found
 	 * @see org.eclipse.swt.SWT
 	 */

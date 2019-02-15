@@ -87,19 +87,18 @@ public abstract class ComputedValue<T> extends AbstractObservableValue<T> {
 
 	/**
 	 * Factory method to create {@link ComputedValue} objects in an easy manner.
-	 * <br/>
-	 * <br/>
+	 * <br>
+	 * <br>
 	 * Example observing the size of an {@link IObservableList}:
 	 *
 	 * <pre>
 	 * IObservableValue&lt;Integer&gt; listSizeObservable = ComputedValue.create(() -> observableList.size());
 	 * </pre>
 	 *
-	 * @param supplier
-	 *            {@link Supplier}, whose {@link Supplier#get()} method is a
-	 *            TrackedGetter. See
-	 *            {@link ObservableTracker#getterCalled(IObservable)} for
-	 *            details.
+	 * @param supplier {@link Supplier}, whose {@link Supplier#get()} method is a
+	 *                 TrackedGetter. See
+	 *                 {@link ObservableTracker#getterCalled(IObservable)} for
+	 *                 details.
 	 * @return {@link ComputedValue} whose value is computed using the given
 	 *         {@link Supplier}.
 	 * @since 1.6

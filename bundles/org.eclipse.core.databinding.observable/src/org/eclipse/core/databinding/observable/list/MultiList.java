@@ -51,9 +51,8 @@ public class MultiList<E> extends AbstractObservableList<E> {
 	 * Constructs a MultiList in the default realm, and backed by the given
 	 * observable lists.
 	 *
-	 * @param lists
-	 *            the array of observable lists backing this MultiList.
-	 * @deprecated use MultiList(List<IObservableList<E>>) instead
+	 * @param lists the array of observable lists backing this MultiList.
+	 * @deprecated use {@link #MultiList(List)} instead
 	 */
 	@Deprecated
 	public MultiList(IObservableList<E>[] lists) {
@@ -73,14 +72,12 @@ public class MultiList<E> extends AbstractObservableList<E> {
 	}
 
 	/**
-	 * Constructs a MultiList in the default realm backed by the given
-	 * observable lists.
+	 * Constructs a MultiList in the default realm backed by the given observable
+	 * lists.
 	 *
-	 * @param lists
-	 *            the array of observable lists backing this MultiList.
-	 * @param elementType
-	 *            element type of the constructed list.
-	 * @deprecated use MultiList(List<IObservableList<E>>, Object) instead
+	 * @param lists       the array of observable lists backing this MultiList.
+	 * @param elementType element type of the constructed list.
+	 * @deprecated use {@link #MultiList(List, Object)} instead
 	 */
 	@Deprecated
 	public MultiList(IObservableList<E>[] lists, Object elementType) {
@@ -115,17 +112,13 @@ public class MultiList<E> extends AbstractObservableList<E> {
 	}
 
 	/**
-	 * Constructs a MultiList belonging to the given realm, and backed by the
-	 * given observable lists.
+	 * Constructs a MultiList belonging to the given realm, and backed by the given
+	 * observable lists.
 	 *
-	 * @param realm
-	 *            the observable's realm
-	 * @param lists
-	 *            the array of observable lists backing this MultiList
-	 * @param elementType
-	 *            element type of the constructed list.
-	 * @deprecated use MultiList(realm, List<IObservableList<E>>, Object)
-	 *             instead
+	 * @param realm       the observable's realm
+	 * @param lists       the array of observable lists backing this MultiList
+	 * @param elementType element type of the constructed list.
+	 * @deprecated use {@link #MultiList(Realm, List, Object)} instead
 	 */
 	@Deprecated
 	public MultiList(Realm realm, IObservableList<E>[] lists, Object elementType) {

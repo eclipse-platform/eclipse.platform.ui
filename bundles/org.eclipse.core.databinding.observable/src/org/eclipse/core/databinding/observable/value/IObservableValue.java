@@ -41,7 +41,7 @@ public interface IObservableValue<T> extends IObservable {
 	 * The value type of this observable value, or <code>null</code> if this
 	 * observable value is untyped.
 	 *
-	 * @return the value type, or <code>null</null>
+	 * @return the value type, or <code>null</code>
 	 */
 	public Object getValueType();
 

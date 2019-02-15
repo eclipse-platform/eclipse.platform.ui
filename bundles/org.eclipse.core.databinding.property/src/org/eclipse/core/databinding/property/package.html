@@ -10,9 +10,9 @@ Interfaces and classes for representing and observing properties of objects.
 <h2>
 Package Specification</h2>
 <p>
-This package and its subpackages provide the <tt>IProperty</tt>,
-<tt>IValueProperty</tt>, <tt>IListProperty</tt>, <tt>ISetProperty</tt> and
-<tt>IMapProperty</tt> interfaces, along with classes
+This package and its subpackages provide the <code>IProperty</code>,
+<code>IValueProperty</code>, <code>IListProperty</code>, <code>ISetProperty</code> and
+<code>IMapProperty</code> interfaces, along with classes
 which serve as base implementations of each interface.    
 <p>
 Properties are intended to serve as a convenient path to creating observables
@@ -23,8 +23,8 @@ API are:
 observables correctly can be tricky, so the properties API tries to ease this
 burden by providing all the observable implementations.  Property implementers
 only need to extend one of the provided base classes
-(<tt>SimpleValueProperty</tt>, <tt>SimpleListProperty</tt>,
-<tt>SimpleSetProperty</tt> or <tt>SimpleMapProperty</tt>) and implement a
+(<code>SimpleValueProperty</code>, <code>SimpleListProperty</code>,
+<code>SimpleSetProperty</code> or <code>SimpleMapProperty</code>) and implement a
 handful of abstract methods which the observables use to function.
 <li>Simplify observation of nested properties.  Traditionally observing a
 nested property required creating an observable for the first property, then
@@ -34,8 +34,8 @@ nested property and to observe that property on a particular source object.
 </ul>
 <p>
 A set of delegating properties are also provided
-(<tt>DelegatingValueProperty</tt>, <tt>DelegatingListProperty</tt>,
-<tt>DelegatingSetProperty</tt> and <tt>DelegatingMapProperty</tt>) which
+(<code>DelegatingValueProperty</code>, <code>DelegatingListProperty</code>,
+<code>DelegatingSetProperty</code> and <code>DelegatingMapProperty</code>) which
 may be used to implement properties where the property behavior depends on the
 type of source object.
 </body>

@@ -14,29 +14,29 @@ Package Specification</h2>
 This package provides classes that can be used to synchronize state between pairs of
 observable objects with optional data type conversion and validation.
 <p>
-A <tt>DataBindingContext</tt> is used to manage a list of <tt>Bindings</tt>
+A <code>DataBindingContext</code> is used to manage a list of <code>Bindings</code>
 with their validation results.
 </p>
 <p>
-Concrete subclasses of <tt>Binding</tt> synchronize state between two observables,
+Concrete subclasses of <code>Binding</code> synchronize state between two observables,
 called the target observable and the model observable.  Usually, the binding will
 first copy the current state of the model observable to the target observable and
 from then on track changes on both sides, reacting to changes on one side by
 performing the corresponding change on the other side.
 </p>
 <p>
-For each binding, two <tt>UpdateValueStrategy</tt> or <tt>UpdateListStrategy</tt> objects (one
+For each binding, two <code>UpdateValueStrategy</code> or <code>UpdateListStrategy</code> objects (one
 for each direction) is used to control how the binding should synchronize, and can be used to
 specify data type converters and validators.  
 </p>
 <p>
-<tt>AggregateValidationStatus</tt> allows clients to aggregate the current validation
+<code>AggregateValidationStatus</code> allows clients to aggregate the current validation
 statuses of a list of bindings, typically obtained from a data binding context.  
 </p>
 <p>
 For advanced validation, conversion, or similar requirements that affect the way
-state is copied from one side to the other, subclasses of <tt>UpdateValueStrategy</tt>
-or <tt>UpdateListStrategy</tt> can be created.  
+state is copied from one side to the other, subclasses of <code>UpdateValueStrategy</code>
+or <code>UpdateListStrategy</code> can be created.  
 </p>
 </body>
 </html>

@@ -1192,10 +1192,10 @@ public abstract class StructuredViewer extends ContentViewer implements IPostSel
 
 	/**
 	 * The <code>StructuredViewer</code> implementation of this
-	 * <code>ContentViewer</code> method calls <code>update</code> if the
-	 * event specifies that the label of a given element has changed, otherwise
-	 * it calls super. Subclasses may reimplement or extend.
-	 * </p>
+	 * <code>ContentViewer</code> method calls <code>update</code> if the event
+	 * specifies that the label of a given element has changed, otherwise it calls
+	 * super. Subclasses may reimplement or extend.
+	 *
 	 * @param event the event that generated this update
 	 */
 	@Override
@@ -1385,26 +1385,25 @@ public abstract class StructuredViewer extends ContentViewer implements IPostSel
 	}
 
 	/**
-	 * Attempts to preserves the current selection across a run of the given
-	 * code. This method should not preserve the selection if
-	 * {link #getPreserveSelection()} returns false.
+	 * Attempts to preserves the current selection across a run of the given code.
+	 * This method should not preserve the selection if {link
+	 * #getPreserveSelection()} returns false.
 	 * <p>
 	 * The default implementation of this method:
+	 * </p>
 	 * <ul>
 	 * <li>discovers the old selection (via <code>getSelection</code>)</li>
 	 * <li>runs the given runnable</li>
 	 * <li>attempts to restore the old selection (using
 	 * <code>setSelectionToWidget</code></li>
 	 * <li>rediscovers the resulting selection (via <code>getSelection</code>)</li>
-	 * <li>calls <code>handleInvalidSelection</code> if the resulting selection
-	 * is different from the old selection</li>
+	 * <li>calls <code>handleInvalidSelection</code> if the resulting selection is
+	 * different from the old selection</li>
 	 * </ul>
-	 * </p>
 	 *
-	 * @param updateCode
-	 *            the code to run
+	 * @param updateCode the code to run
 	 *
-	 * see #getPreserveSelection()
+	 *                   see #getPreserveSelection()
 	 */
 	protected void preservingSelection(Runnable updateCode) {
 		preservingSelection(updateCode, false);
