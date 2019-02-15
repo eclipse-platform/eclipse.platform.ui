@@ -22,6 +22,13 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 
 /**
+ * <p>
+ * <strong>EXPERIMENTAL</strong>. This class has been added as part of a work in
+ * progress. There is no guarantee that this API will work or that it will
+ * remain the same. Feel free to use it and give feedback via
+ * https://bugs.eclipse.org/bugs/buglist.cgi?component=UI&product=Platform, but
+ * be aware that it might change.
+ * </p>
  *
  * This class provides a convenient shorthand for creating and initializing
  * {@link Button}. This offers several benefits over creating Button normal way:
