@@ -16,6 +16,7 @@ import org.eclipse.jface.widgets.TestUnitControlFactory;
 import org.eclipse.jface.widgets.TestUnitItemFactory;
 import org.eclipse.jface.widgets.TestUnitLabelFactory;
 import org.eclipse.jface.widgets.TestUnitSpinnerFactory;
+import org.eclipse.jface.widgets.TestUnitTableColumnFactory;
 import org.eclipse.jface.widgets.TestUnitTableFactory;
 import org.eclipse.jface.widgets.TestUnitTextFactory;
 import org.junit.runner.RunWith;
@@ -31,7 +32,8 @@ import org.junit.runners.Suite.SuiteClasses;
 		TestUnitSpinnerFactory.class, //
 		TestUnitTextFactory.class, //
 		TestUnitTableFactory.class, //
-		TestUnitItemFactory.class,//
+		TestUnitItemFactory.class, //
+		TestUnitTableColumnFactory.class, //
 })
 public class AllUnitTests {
 

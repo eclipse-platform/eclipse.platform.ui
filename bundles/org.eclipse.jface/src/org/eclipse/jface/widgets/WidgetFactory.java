@@ -19,6 +19,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Spinner;
 import org.eclipse.swt.widgets.Table;
+import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.Text;
 
 /**
@@ -122,5 +123,15 @@ public final class WidgetFactory {
 	 */
 	public static TableFactory table(int style) {
 		return TableFactory.newTable(style);
+	}
+
+	/**
+	 * @param style SWT style applicable for TableColumn. Refer to
+	 *              {@link TableColumn#TableColumn(Table, int)} for supported
+	 *              styles.
+	 * @return TableColumnFactory
+	 */
+	public static TableColumnFactory tableColumn(int style) {
+		return TableColumnFactory.newTableColumn(style);
 	}
 }
