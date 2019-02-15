@@ -10,15 +10,18 @@
  *
  * Contributors:
  *     SAP SE - initial version
+ *     Simon Scholz <simon.scholz@vogella.com> - Bug 544471
  ******************************************************************************/
 package org.eclipse.jface.widgets;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotEquals;
+import static org.junit.Assert.assertNotSame;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
+import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Label;
@@ -51,13 +54,23 @@ public class TestUnitControlFactory extends AbstractFactoryTest {
 
 	@Test
 	public void createsControlWithProperties() {
-		GridData gridData = new GridData();
-		Label label = TestFactory.newTest().tooltip("toolTip").enabled(false).layoutData(gridData)
+		Label label = TestFactory.newTest().tooltip("toolTip").enabled(false).layoutData(() -> new GridData())
 				.create(shell);
 
 		assertFalse(label.getEnabled());
 		assertEquals("toolTip", label.getToolTipText());
-		assertEquals(gridData, label.getLayoutData());
+		assertTrue(label.getLayoutData() instanceof GridData);
+	}
+
+	@Test
+	public void testUniqueLayoutData() {
+		GridDataFactory gridDataFactory = GridDataFactory.fillDefaults().grab(true, false);
+		TestFactory factory = TestFactory.newTest().layoutData(gridDataFactory::create);
+
+		Label label = factory.create(shell);
+		Label label2 = factory.create(shell);
+
+		assertNotSame(label.getLayoutData(), label2.getLayoutData());
 	}
 
 	static class TestFactory extends ControlFactory<TestFactory, Label> {

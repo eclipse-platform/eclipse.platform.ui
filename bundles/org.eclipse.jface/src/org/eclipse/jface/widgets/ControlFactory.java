@@ -10,10 +10,12 @@
 *
 * Contributors:
 *     SAP SE - initial version
+*     Simon Scholz <simon.scholz@vogella.com> - Bug 544471
 ******************************************************************************/
 package org.eclipse.jface.widgets;
 
 import java.util.function.Function;
+import java.util.function.Supplier;
 
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
@@ -32,7 +34,7 @@ public abstract class ControlFactory<F extends ControlFactory<?,?>, C extends Co
 	private String tooltipText;
 	private Boolean enabled;
 
-	private Object layoutData;
+	private Supplier<Object> layoutDataSupplier;
 
 	private Function<Composite, C> controlCreator;
 
@@ -68,13 +70,30 @@ public abstract class ControlFactory<F extends ControlFactory<?,?>, C extends Co
 	}
 
 	/**
-	 * Sets the layoutData.
+	 * Sets a {@link Supplier}, which should always create a new instance of the
+	 * layoutData in order to make this factory reusable, because each and every
+	 * control needs its own unique layoutData.
 	 *
-	 * @param layoutData
+	 * <p>
+	 * <pre>
+	 * GridDataFactory gridDataFactory = GridDataFactory.fillDefaults().grab(true, false);
+	 * ButtonFactory.newButton(SWT.PUSH).layoutData(gridDataFactory::create);
+	 * </pre>
+	 * </p>
+	 *
+	 * or without GridDataFactory:
+	 *
+	 * <p>
+	 * <pre>
+	 * ButtonFactory.newButton(SWT.PUSH).layoutData(() -> new GridData());
+	 * </pre>
+	 * </p>
+	 *
+	 * @param layoutDataSupplier {@link Supplier} creating a new layout data instance
 	 * @return this
 	 */
-	public F layoutData(Object layoutData) {
-		this.layoutData = layoutData;
+	public F layoutData(Supplier<Object> layoutDataSupplier) {
+		this.layoutDataSupplier = layoutDataSupplier;
 		return factoryClass.cast(this);
 	}
 
@@ -101,8 +120,8 @@ public abstract class ControlFactory<F extends ControlFactory<?,?>, C extends Co
 		if (this.tooltipText != null) {
 			control.setToolTipText(this.tooltipText);
 		}
-		if (this.layoutData != null) {
-			control.setLayoutData(this.layoutData);
+		if (this.layoutDataSupplier != null) {
+			control.setLayoutData(this.layoutDataSupplier.get());
 		}
 	}
 }
