@@ -40,7 +40,7 @@ import org.eclipse.ui.internal.texteditor.TextEditorPlugin;
  * that can be used to obtain the currently set value from an
  * <code>IPreferenceStore</code>.
  * </p>
- * <h3>The following annotation preferences are covered:</h4>
+ * <h3>The following annotation preferences are covered:</h3>
  * <h4>Display Preferences controlling how and where annotations are shown</h4>
  * <ul>
  * <li>as text background highlighting (and respective preference key),</li>
@@ -48,11 +48,11 @@ import org.eclipse.ui.internal.texteditor.TextEditorPlugin;
  * <li>on the overview ruler (and respective preference key),</li>
  * <li>on the overview ruler header,</li>
  * <li>on the vertical ruler (and respective preference key),</li>
- * </li>
  * </ul>
  * <h4>Additional Display Preferences</h4>
  * <ul>
- * <li>the base color for annotations of this type (and respective preference key),
+ * <li>the base color for annotations of this type (and respective preference
+ * key),
  * <li>the style of text decorations that are drawn (and respective preference
  * key),</li>
  * <li>the annotation image provider,</li>

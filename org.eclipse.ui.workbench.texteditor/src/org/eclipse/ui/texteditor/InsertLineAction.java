@@ -25,25 +25,30 @@ import org.eclipse.jface.text.Position;
 import org.eclipse.jface.text.source.ISourceViewer;
 
 /**
- * This action implements smart return.
- * Instead of breaking the line where we are, we do the following:
- * <p><b>Smart Enter</b>
- * <ul>
- * <li> if the caret is on a line containing any non-whitespace, a line is inserted below the
- * current one and the caret moved to it,</li>
- * <li> if the caret is on a whitespace-only line, a line is inserted below the current line,
- * but the caret stays in its position.</li>
- * </ul>
+ * This action implements smart return. Instead of breaking the line where we
+ * are, we do the following:
+ * <p>
+ * <b>Smart Enter</b>
  * </p>
- * <p><b>Smart Enter Inverse</b>
  * <ul>
- * <li> if the caret is on a line containing any non-whitespace, we insert a line above the
- * current one and move the caret to it (i.e. it stays at the same offset in the widget),</li>
- * <li> if the caret is on a whitespace-only line, a line is inserted above the current line,
- * but the caret stays in its logical position (i.e., it gets shifted one line down in the
- * document, but keeps its position relative to the content following the caret).</li>
+ * <li>if the caret is on a line containing any non-whitespace, a line is
+ * inserted below the current one and the caret moved to it,</li>
+ * <li>if the caret is on a whitespace-only line, a line is inserted below the
+ * current line, but the caret stays in its position.</li>
  * </ul>
+ * <p>
+ * <b>Smart Enter Inverse</b>
  * </p>
+ * <ul>
+ * <li>if the caret is on a line containing any non-whitespace, we insert a line
+ * above the current one and move the caret to it (i.e. it stays at the same
+ * offset in the widget),</li>
+ * <li>if the caret is on a whitespace-only line, a line is inserted above the
+ * current line, but the caret stays in its logical position (i.e., it gets
+ * shifted one line down in the document, but keeps its position relative to the
+ * content following the caret).</li>
+ * </ul>
+ *
  * @since 3.0
  */
 public class InsertLineAction extends TextEditorAction {

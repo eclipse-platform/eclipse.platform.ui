@@ -40,14 +40,15 @@ import org.eclipse.ui.ide.dialogs.ResourceEncodingFieldEditor;
 import org.eclipse.ui.editors.text.IEncodingSupport;
 
 /**
- * Action for changing the encoding of the editor's
- * input element.
+ * Action for changing the encoding of the editor's input element.
  * <p>
- * The following keys, prepended by the given option prefix,
- * are used for retrieving resources from the given bundle:
+ * The following keys, prepended by the given option prefix, are used for retrieving resources from
+ * the given bundle:
+ * </p>
  * <ul>
- *   <li><code>"dialog.title"</code> - the input dialog's title</li>
+ * <li><code>"dialog.title"</code> - the input dialog's title</li>
  * </ul>
+ * <p>
  * This class may be instantiated but is not intended to be subclassed.
  * </p>
  *

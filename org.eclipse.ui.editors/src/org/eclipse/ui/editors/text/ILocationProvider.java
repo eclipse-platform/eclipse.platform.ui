@@ -17,17 +17,16 @@ import org.eclipse.core.runtime.IPath;
 
 
 /**
- * This class gets the location for a given
- * object.
+ * This class gets the location for a given object.
  * <p>
- * In order to provided backward compatibility for clients of
- * <code>ILocationProvider</code>, extension interfaces are used to provide a means
- * of evolution. The following extension interfaces exist:
- * <ul>
- * <li>{@link org.eclipse.ui.editors.text.ILocationProviderExtension} since version 3.3
- * 		allowing to get the location as <code>URI</code>.</li>
- * </ul>
+ * In order to provided backward compatibility for clients of <code>ILocationProvider</code>,
+ * extension interfaces are used to provide a means of evolution. The following extension interfaces
+ * exist:
  * </p>
+ * <ul>
+ * <li>{@link org.eclipse.ui.editors.text.ILocationProviderExtension} since version 3.3 allowing to
+ * get the location as <code>URI</code>.</li>
+ * </ul>
  *
  * @see org.eclipse.ui.editors.text.ILocationProviderExtension
  * @since 3.0

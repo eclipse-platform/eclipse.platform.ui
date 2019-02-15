@@ -35,21 +35,26 @@ import org.eclipse.ui.part.EditorActionBarContributor;
 
 
 /**
- * Manages the installation and removal of global actions for
- * the same type of editors.
+ * Manages the installation and removal of global actions for the same type of
+ * editors.
  * <p>
- * If instantiated and used as-is, this contributor connects to all of the workbench defined
- * global editor actions the corresponding actions of the current editor. It also adds addition
- * actions for searching and navigation (go to line) as well as a set of status fields.</p>
+ * If instantiated and used as-is, this contributor connects to all of the
+ * workbench defined global editor actions the corresponding actions of the
+ * current editor. It also adds addition actions for searching and navigation
+ * (go to line) as well as a set of status fields.
+ * </p>
  * <p>
  * Subclasses may override the following methods:
- * <ul>
- *   <li><code>contributeToMenu</code> - extend to contribute to menu</li>
- *   <li><code>contributeToToolBar</code> - reimplement to contribute to tool bar</li>
- *   <li><code>contributeToStatusLine</code> - reimplement to contribute to status line</li>
- *   <li><code>setActiveEditor</code> - extend to react to editor changes</li>
- * </ul>
  * </p>
+ * <ul>
+ * <li><code>contributeToMenu</code> - extend to contribute to menu</li>
+ * <li><code>contributeToToolBar</code> - reimplement to contribute to tool
+ * bar</li>
+ * <li><code>contributeToStatusLine</code> - reimplement to contribute to status
+ * line</li>
+ * <li><code>setActiveEditor</code> - extend to react to editor changes</li>
+ * </ul>
+ * 
  * @see org.eclipse.ui.texteditor.ITextEditorActionConstants
  */
 public class BasicTextEditorActionContributor extends EditorActionBarContributor {

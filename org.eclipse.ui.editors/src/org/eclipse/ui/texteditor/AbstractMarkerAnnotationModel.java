@@ -51,25 +51,25 @@ import org.eclipse.ui.editors.text.EditorsUI;
 
 
 /**
- * Abstract  implementation of a marker-based annotation model.
+ * Abstract implementation of a marker-based annotation model.
  * <p>
- * Markers are provided by an underlying source (a subclass responsibility).
- * Markers whose textual range gets deleted during text editing are removed
- * from the model on save. The {@link #updateMarkers(IDocument)} method can be used
- * to force the model to update the source's markers with any changes to their
- * locations due to edits. Clients can register a {@link org.eclipse.ui.texteditor.IMarkerUpdater}
- * objects in order to define the process of marker updating. Registration can be done
- * using the <code>"org.eclipse.ui.markerUpdaters"</code> extension point.
+ * Markers are provided by an underlying source (a subclass responsibility). Markers whose textual
+ * range gets deleted during text editing are removed from the model on save. The
+ * {@link #updateMarkers(IDocument)} method can be used to force the model to update the source's
+ * markers with any changes to their locations due to edits. Clients can register a
+ * {@link org.eclipse.ui.texteditor.IMarkerUpdater} objects in order to define the process of marker
+ * updating. Registration can be done using the <code>"org.eclipse.ui.markerUpdaters"</code>
+ * extension point.
  * </p>
  * <p>
  * Subclasses must implement the following methods:
- * <ul>
- *   <li><code>retrieveMarkers</code></li>
- *   <li><code>isAcceptable</code></li>
- *   <li><code>deleteMarkers</code></li>
- *   <li><code>listenToMarkerChanges</code></li>
- * </ul>
  * </p>
+ * <ul>
+ * <li><code>retrieveMarkers</code></li>
+ * <li><code>isAcceptable</code></li>
+ * <li><code>deleteMarkers</code></li>
+ * <li><code>listenToMarkerChanges</code></li>
+ * </ul>
  */
 public abstract class AbstractMarkerAnnotationModel extends AnnotationModel implements IPersistableAnnotationModel {
 

@@ -35,12 +35,13 @@ import org.eclipse.ui.texteditor.IAbstractTextEditorHelpContextIds;
 
 
 /**
- * The Templates view.hosts {@link ITemplatesPage}s that shows the templates for the currently
- * active editor part.
+ * The Templates view.hosts {@link ITemplatesPage}s that shows the templates for
+ * the currently active editor part.
  * <p>
- * When this view notices an editor being activated, it uses the Eclipse adapter mechanism to get
- * its {@link ITemplatesPage}. Hence, editors that want to provide a templates page need to provide
- * such an adapter:
+ * When this view notices an editor being activated, it uses the Eclipse adapter
+ * mechanism to get its {@link ITemplatesPage}. Hence, editors that want to
+ * provide a templates page need to provide such an adapter:
+ * </p>
  *
  * <pre>
  * Object getAdapter() {
@@ -53,11 +54,14 @@ import org.eclipse.ui.texteditor.IAbstractTextEditorHelpContextIds;
  *	}
  *	...
  * }
- * </pre></p>
+ * </pre>
  * <p>
- * <strong>Note:</strong> This plug-in does not contribute this view. Clients that want to
- * use this view must check whether it is available and if not, contribute this view via
- * extension point using the specified view Id {@link #ID}:
+ * <strong>Note:</strong> This plug-in does not contribute this view. Clients
+ * that want to use this view must check whether it is available and if not,
+ * contribute this view via extension point using the specified view Id
+ * {@link #ID}:
+ * </p>
+ *
  * <pre>
  * &lt;extension
  *       point="org.eclipse.ui.views"&gt;
@@ -70,16 +74,18 @@ import org.eclipse.ui.texteditor.IAbstractTextEditorHelpContextIds;
  *    &lt;/view&gt;
  * &lt/extension>
  * </pre>
+ *
  * The <code>templates.png</code> icon can be copied from this plug-in.
- * </p>
- * If the editor supports a templates page, the editor instantiates and configures the page, and
- * returns it. This page is then added to this Templates view and immediately made the current page
- * (the Templates view needs not to be visible). If the
- * editor does not support a templates page, the Templates view shows a special default page which
- * makes it clear to the user that no templates are available. When the Templates view notices
- * a different editor being activated, it flips to the editor's corresponding templates page. When
- * the templates view notices an editor being closed, it may destroy the editor's corresponding
- * templates page.
+ * <p>
+ * If the editor supports a templates page, the editor instantiates and
+ * configures the page, and returns it. This page is then added to this
+ * Templates view and immediately made the current page (the Templates view
+ * needs not to be visible). If the editor does not support a templates page,
+ * the Templates view shows a special default page which makes it clear to the
+ * user that no templates are available. When the Templates view notices a
+ * different editor being activated, it flips to the editor's corresponding
+ * templates page. When the templates view notices an editor being closed, it
+ * may destroy the editor's corresponding templates page.
  * </p>
  * <p>
  * This class is not intended to be instantiated or subclassed by clients.

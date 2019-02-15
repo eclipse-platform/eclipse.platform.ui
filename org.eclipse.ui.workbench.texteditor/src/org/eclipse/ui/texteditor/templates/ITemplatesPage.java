@@ -17,19 +17,22 @@ import org.eclipse.ui.part.IPageBookViewPage;
 
 
 /**
- * Interface for a templates page. This interface defines the minimum requirement for a page within
- * the {@link TemplatesView}.
+ * Interface for a templates page. This interface defines the minimum
+ * requirement for a page within the {@link TemplatesView}.
  * <p>
- * In order to provided backward compatibility for clients of <code>ITemplatesPage</code>, extension
- * interfaces are used to provide a means of evolution. The following extension interfaces exist:
- * <ul>
- * <li>{@link org.eclipse.ui.texteditor.templates.ITemplatesPageExtension} since version 3.6
- * introducing access to the currently selected items and the template store of the page.</li>
- * </ul>
+ * In order to provided backward compatibility for clients of
+ * <code>ITemplatesPage</code>, extension interfaces are used to provide a means
+ * of evolution. The following extension interfaces exist:
  * </p>
+ * <ul>
+ * <li>{@link org.eclipse.ui.texteditor.templates.ITemplatesPageExtension} since
+ * version 3.6 introducing access to the currently selected items and the
+ * template store of the page.</li>
+ * </ul>
  * <p>
  * Clients can either implement this interface directly or subclass the
  * {@link AbstractTemplatesPage}.
+ * </p>
  *
  * @see org.eclipse.ui.texteditor.templates.ITemplatesPageExtension
  * @see TemplatesView

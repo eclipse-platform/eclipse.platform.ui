@@ -47,20 +47,21 @@ import org.eclipse.ui.ide.undo.CreateMarkersOperation;
 
 
 /**
- * Action for creating a marker of a specified type for the editor's
- * input element based on the editor's selection. If required, the
- * action asks the user to provide a marker label. The action is initially
- * associated with a text editor via the constructor, but that can be
- * subsequently changed using <code>setEditor</code>.
+ * Action for creating a marker of a specified type for the editor's input element based on the
+ * editor's selection. If required, the action asks the user to provide a marker label. The action
+ * is initially associated with a text editor via the constructor, but that can be subsequently
+ * changed using <code>setEditor</code>.
  * <p>
- * The following keys, prepended by the given option prefix,
- * are used for retrieving resources from the given bundle:
+ * The following keys, prepended by the given option prefix, are used for retrieving resources from
+ * the given bundle:
+ * </p>
  * <ul>
- *   <li><code>"dialog.title"</code> - the input dialog's title</li>
- *   <li><code>"dialog.message"</code> - the input dialog's message</li>
- *   <li><code>"error.dialog.title"</code> - the error dialog's title</li>
- *   <li><code>"error.dialog.message"</code> - the error dialog's message</li>
+ * <li><code>"dialog.title"</code> - the input dialog's title</li>
+ * <li><code>"dialog.message"</code> - the input dialog's message</li>
+ * <li><code>"error.dialog.title"</code> - the error dialog's title</li>
+ * <li><code>"error.dialog.message"</code> - the error dialog's message</li>
  * </ul>
+ * <p>
  * This class may be instantiated but is not intended to be subclassed.
  * </p>
  *

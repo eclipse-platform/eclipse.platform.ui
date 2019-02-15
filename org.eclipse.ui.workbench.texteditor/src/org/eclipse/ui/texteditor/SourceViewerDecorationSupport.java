@@ -68,16 +68,17 @@ import org.eclipse.jface.text.source.MatchingCharacterPainter;
  * <p>
  * <code>SourceViewerDecorationSupport</code> can draw the following
  * decorations:
+ * </p>
  * <ul>
  * <li>matching character highlighting,</li>
  * <li>current line highlighting,</li>
  * <li>print margin, and</li>
  * <li>annotations.</li>
  * </ul>
+ * <p>
  * Annotations are managed for the overview ruler and also drawn onto the text
- * widget by an
- * {@link org.eclipse.jface.text.source.AnnotationPainter AnnotationPainter}
- * instance.
+ * widget by an {@link org.eclipse.jface.text.source.AnnotationPainter
+ * AnnotationPainter} instance.
  * </p>
  * <p>
  * Subclasses may add decorations but should adhere to the lifecyle described

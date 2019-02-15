@@ -40,19 +40,22 @@ import org.eclipse.ui.internal.texteditor.TextEditorPlugin;
 
 
 /**
- * Action for jumping to a particular line in the editor's text viewer. The user is requested to
- * enter the line number into an input dialog. The action is initially associated with a text editor
- * via the constructor, but that can be subsequently changed using <code>setEditor</code>.
+ * Action for jumping to a particular line in the editor's text viewer. The user
+ * is requested to enter the line number into an input dialog. The action is
+ * initially associated with a text editor via the constructor, but that can be
+ * subsequently changed using <code>setEditor</code>.
  * <p>
- * The following keys, prepended by the given option prefix, are used for retrieving resources from
- * the given bundle:
+ * The following keys, prepended by the given option prefix, are used for
+ * retrieving resources from the given bundle:
+ * </p>
  * <ul>
- * <li><code>"dialog.invalid_range"</code> - to indicate an invalid line number</li>
- * <li><code>"dialog.invalid_input"</code> - to indicate an invalid line number format</li>
+ * <li><code>"dialog.invalid_range"</code> - to indicate an invalid line
+ * number</li>
+ * <li><code>"dialog.invalid_input"</code> - to indicate an invalid line number
+ * format</li>
  * <li><code>"dialog.title"</code> - the input dialog's title</li>
  * <li><code>"dialog.message"</code> - the input dialog's message</li>
  * </ul>
- * </p>
  * <p>
  * This class may be instantiated; it is not intended to be subclassed.
  * </p>

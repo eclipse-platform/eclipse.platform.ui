@@ -16,19 +16,20 @@ package org.eclipse.text.edits;
 /**
  * A visitor for text edits.
  * <p>
- * For each different concrete text edit type <it>T</it> there is a method:
+ * For each different concrete text edit type <i>T</i> there is a method:
+ * </p>
  * <ul>
- *   <li><code>public boolean visit(<it>T</it> node)</code> - Visits the given edit to
+ *   <li><code>public boolean visit(<i>T</i> node)</code> - Visits the given edit to
  *   perform some arbitrary operation. If <code>true </code> is returned, the given edit's
  *   child edits will be visited next; however, if <code>false</code> is returned, the
  *   given edit's child edits will not be visited. The default implementation provided by
- *   this class calls a generic method <code>visitNode(<it>TextEdit</it> node)</code>.
+ *   this class calls a generic method <code>visitNode(<i>TextEdit</i> node)</code>.
  *   Subclasses may reimplement these method as needed.</li>
  * </ul>
- * </p>
  * <p>
  * In addition, there are methods for visiting text edits in the
  * abstract, regardless of node type:
+ * </p>
  * <ul>
  *   <li><code>public void preVisit(TextEdit edit)</code> - Visits
  *   the given edit to perform some arbitrary operation.
@@ -44,7 +45,6 @@ package org.eclipse.text.edits;
  *   The default implementation of this method does nothing.
  *   Subclasses may reimplement this method as needed.</li>
  * </ul>
- * </p>
  * <p>
  * For edits with children, the child nodes are visited in increasing order.
  * </p>
