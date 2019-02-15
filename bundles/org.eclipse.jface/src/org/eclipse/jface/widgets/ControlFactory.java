@@ -19,6 +19,7 @@ import java.util.List;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
+import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 
@@ -93,6 +94,18 @@ public abstract class ControlFactory<F extends ControlFactory<?, ?>, C extends C
 	 */
 	public F layoutData(Supplier<Object> layoutDataSupplier) {
 		addProperty(c -> c.setLayoutData(layoutDataSupplier.get()));
+		return cast(this);
+	}
+
+	/**
+	 * Sets the font.
+	 * 
+	 * @param font
+	 *
+	 * @return this
+	 */
+	public F font(Font font) {
+		addProperty(c -> c.setFont(font));
 		return cast(this);
 	}
 

@@ -23,6 +23,8 @@ import static org.junit.Assert.assertTrue;
 
 import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.graphics.Font;
+import org.eclipse.swt.graphics.FontData;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Label;
 import org.junit.Test;
@@ -54,12 +56,19 @@ public class TestUnitControlFactory extends AbstractFactoryTest {
 
 	@Test
 	public void createsControlWithProperties() {
-		Label label = TestFactory.newTest().tooltip("toolTip").enabled(false).layoutData(() -> new GridData())
+		Font font = new Font(null, new FontData());
+
+		Label label = TestFactory.newTest() //
+				.tooltip("toolTip") //
+				.enabled(false) //
+				.layoutData(GridData::new) //
+				.font(font) //
 				.create(shell);
 
 		assertFalse(label.getEnabled());
 		assertEquals("toolTip", label.getToolTipText());
 		assertTrue(label.getLayoutData() instanceof GridData);
+		assertEquals(font, label.getFont());
 	}
 
 	@Test
