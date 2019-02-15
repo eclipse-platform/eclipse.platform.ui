@@ -43,14 +43,16 @@ import org.eclipse.debug.core.DebugException;
 public interface IValue extends IDebugElement {
 
 	/**
-	 * Returns a description of the type of data this value contains
-	 * or references.
+	 * Returns a description of the type of data this value contains or
+	 * references.
 	 *
 	 * @return the name of this value's reference type
-	 * @exception DebugException if this method fails.  Reasons include:
-	 * <ul><li>Failure communicating with the VM.  The DebugException's
-	 * status code contains the underlying exception responsible for
-	 * the failure.</li>
+	 * @exception DebugException if this method fails. Reasons include:
+	 *                <ul>
+	 *                <li>Failure communicating with the VM. The
+	 *                DebugException's status code contains the underlying
+	 *                exception responsible for the failure.</li>
+	 *                </ul>
 	 */
 	String getReferenceTypeName() throws DebugException;
 
@@ -58,24 +60,29 @@ public interface IValue extends IDebugElement {
 	 * Returns this value as a <code>String</code>.
 	 *
 	 * @return a String representation of this value
-	 * @exception DebugException if this method fails.  Reasons include:
-	 * <ul><li>Failure communicating with the VM.  The DebugException's
-	 * status code contains the underlying exception responsible for
-	 * the failure.</li>
+	 * @exception DebugException if this method fails. Reasons include:
+	 *                <ul>
+	 *                <li>Failure communicating with the VM. The
+	 *                DebugException's status code contains the underlying
+	 *                exception responsible for the failure.</li>
+	 *                </ul>
 	 */
 	String getValueString() throws DebugException;
 
 	/**
 	 * Returns whether this value is currently allocated.
 	 * <p>
-	 * For example, if this value represents
-	 * an object that has been garbage collected, <code>false</code> is returned.
+	 * For example, if this value represents an object that has been garbage
+	 * collected, <code>false</code> is returned.
 	 * </p>
+	 * 
 	 * @return whether this value is currently allocated
-	 * @exception DebugException if this method fails.  Reasons include:
-	 * <ul><li>Failure communicating with the VM.  The DebugException's
-	 * status code contains the underlying exception responsible for
-	 * the failure.</li>
+	 * @exception DebugException if this method fails. Reasons include:
+	 *                <ul>
+	 *                <li>Failure communicating with the VM. The
+	 *                DebugException's status code contains the underlying
+	 *                exception responsible for the failure.</li>
+	 *                </ul>
 	 */
 	boolean isAllocated() throws DebugException;
 	/**

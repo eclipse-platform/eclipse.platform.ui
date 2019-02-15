@@ -31,10 +31,12 @@ public interface IRegister extends IVariable {
 	 * Returns the register group this register is contained in.
 	 *
 	 * @return the register group this register is contained in
-	 * @exception DebugException if this method fails.  Reasons include:
-	 * <ul><li>Failure communicating with the debug target.  The DebugException's
-	 * status code contains the underlying exception responsible for
-	 * the failure.</li>
+	 * @exception DebugException if this method fails. Reasons include:
+	 *                <ul>
+	 *                <li>Failure communicating with the debug target. The
+	 *                DebugException's status code contains the underlying
+	 *                exception responsible for the failure.</li>
+	 *                </ul>
 	 */
 	IRegisterGroup getRegisterGroup() throws DebugException;
 

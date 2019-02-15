@@ -355,13 +355,14 @@ public class DebugUITools {
 	}
 
     /**
-     * Returns the currently active context for the given workbench part. Returns <code>null</code>
-     * if there is no current debug context.</p>
-     *
-     * @param site the part's site where to look up the active context
-     * @return the currently active debug context in the given part, or <code>null</code>
-     * @since 3.7
-     */
+	 * Returns the currently active context for the given workbench part. Returns
+	 * <code>null</code> if there is no current debug context.
+	 *
+	 * @param site the part's site where to look up the active context
+	 * @return the currently active debug context in the given part, or
+	 *         <code>null</code>
+	 * @since 3.7
+	 */
     public static IAdaptable getPartDebugContext(IWorkbenchPartSite site) {
         IDebugContextService service = DebugUITools.getDebugContextManager().getContextService(site.getWorkbenchWindow());
         String id = null;
@@ -718,22 +719,26 @@ public class DebugUITools {
 	 * Saves all dirty editors and builds the workspace according to current
 	 * preference settings, and returns whether a launch should proceed.
 	 * <p>
-	 * The following preferences affect whether dirty editors are saved,
-	 * and/or if the user is prompted to save dirty editors:<ul>
+	 * The following preferences affect whether dirty editors are saved, and/or if
+	 * the user is prompted to save dirty editors:
+	 * </p>
+	 * <ul>
 	 * <li>PREF_NEVER_SAVE_DIRTY_EDITORS_BEFORE_LAUNCH</li>
 	 * <li>PREF_PROMPT_SAVE_DIRTY_EDITORS_BEFORE_LAUNCH</li>
 	 * <li>PREF_AUTOSAVE_DIRTY_EDITORS_BEFORE_LAUNCH</li>
 	 * </ul>
 	 * The following preference affects whether a build is performed before
-	 * launching (if required):<ul>
+	 * launching (if required):
+	 * <ul>
 	 * <li>PREF_BUILD_BEFORE_LAUNCH</li>
 	 * </ul>
-	 * </p>
 	 *
 	 * @return whether a launch should proceed
 	 * @since 2.0
-	 * @deprecated Saving has been moved to the launch delegate <code>LaunchConfigurationDelegate</code> to allow for scoped saving
-	 * of resources that are only involved in the current launch, no longer the entire workspace
+	 * @deprecated Saving has been moved to the launch delegate
+	 *             <code>LaunchConfigurationDelegate</code> to allow for scoped
+	 *             saving of resources that are only involved in the current launch,
+	 *             no longer the entire workspace
 	 */
 	@Deprecated
 	public static boolean saveAndBuildBeforeLaunch() {
@@ -741,21 +746,25 @@ public class DebugUITools {
 	}
 
 	/**
-	 * Saves all dirty editors according to current
-	 * preference settings, and returns whether a launch should proceed.
+	 * Saves all dirty editors according to current preference settings, and returns
+	 * whether a launch should proceed.
 	 * <p>
-	 * The following preferences affect whether dirty editors are saved,
-	 * and/or if the user is prompted to save dirty editors:<ul>
+	 * The following preferences affect whether dirty editors are saved, and/or if
+	 * the user is prompted to save dirty editors:
+	 * </p>
+	 * <ul>
 	 * <li>PREF_NEVER_SAVE_DIRTY_EDITORS_BEFORE_LAUNCH</li>
 	 * <li>PREF_PROMPT_SAVE_DIRTY_EDITORS_BEFORE_LAUNCH</li>
 	 * <li>PREF_AUTOSAVE_DIRTY_EDITORS_BEFORE_LAUNCH</li>
 	 * </ul>
-	 * </p>
+	 *
 	 *
 	 * @return whether a launch should proceed
 	 * @since 2.1
-	 * @deprecated Saving has been moved to the launch delegate <code>LaunchConfigurationDelegate</code> to allow for scoped saving
-	 * of resources that are only involved in the current launch, no longer the entire workspace
+	 * @deprecated Saving has been moved to the launch delegate
+	 *             <code>LaunchConfigurationDelegate</code> to allow for scoped
+	 *             saving of resources that are only involved in the current launch,
+	 *             no longer the entire workspace
 	 */
 	@Deprecated
 	public static boolean saveBeforeLaunch() {
@@ -1006,14 +1015,16 @@ public class DebugUITools {
 	 * object.
 	 * <p>
 	 * The following preference affects whether a build is performed before
-	 * launching (if required):<ul>
+	 * launching (if required):
+	 * </p>
+	 * <ul>
 	 * <li>PREF_BUILD_BEFORE_LAUNCH</li>
 	 * </ul>
-	 * </p>
+	 *
 	 *
 	 * @param configuration the configuration to launch
-	 * @param mode the mode to launch in
-	 * @param monitor progress monitor
+	 * @param mode          the mode to launch in
+	 * @param monitor       progress monitor
 	 * @return the resulting launch object
 	 * @throws CoreException if building or launching fails
 	 * @since 2.1

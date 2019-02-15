@@ -55,7 +55,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
  * Clients that define a launch configuration delegate extension implement the
  * <code>ILaunchConfigurationDelegate</code> interface.
  * </p>
- * 
+ *
  * @see ILaunchConfigurationType
  * @see org.eclipse.debug.core.model.ILaunchConfigurationDelegate
  * @see ILaunchConfigurationWorkingCopy
@@ -510,25 +510,34 @@ public interface ILaunchConfiguration extends IAdaptable {
 	boolean isWorkingCopy();
 
 	/**
-	 * Launches this configuration in the specified mode by delegating to
-	 * this configuration's launch configuration delegate, and returns the
-	 * resulting launch.
+	 * Launches this configuration in the specified mode by delegating to this
+	 * configuration's launch configuration delegate, and returns the resulting
+	 * launch.
 	 * <p>
-	 * Equivalent to calling <code>launch(String, IProgressMontitor, boolean)</code>
-	 * with a <code>build</code> flag of <code>false</code>.
+	 * Equivalent to calling
+	 * <code>launch(String, IProgressMontitor, boolean)</code> with a
+	 * <code>build</code> flag of <code>false</code>.
 	 * </p>
+	 * 
 	 * @param mode the mode in which to launch, one of the mode constants
-	 *  defined by <code>ILaunchManager</code> - <code>RUN_MODE</code> or <code>DEBUG_MODE</code>.
-	 * @param monitor progress monitor, or <code>null</code>. A cancelable progress monitor is provided by the Job
-	 *  framework. It should be noted that the setCanceled(boolean) method should never be called on the provided
-	 *  monitor or the monitor passed to any delegates from this method; due to a limitation in the progress monitor
-	 *  framework using the setCanceled method can cause entire workspace batch jobs to be canceled, as the canceled flag
-	 *  is propagated up the top-level parent monitor. The provided monitor is not guaranteed to have been started.
+	 *            defined by <code>ILaunchManager</code> - <code>RUN_MODE</code>
+	 *            or <code>DEBUG_MODE</code>.
+	 * @param monitor progress monitor, or <code>null</code>. A cancelable
+	 *            progress monitor is provided by the Job framework. It should
+	 *            be noted that the setCanceled(boolean) method should never be
+	 *            called on the provided monitor or the monitor passed to any
+	 *            delegates from this method; due to a limitation in the
+	 *            progress monitor framework using the setCanceled method can
+	 *            cause entire workspace batch jobs to be canceled, as the
+	 *            canceled flag is propagated up the top-level parent monitor.
+	 *            The provided monitor is not guaranteed to have been started.
 	 * @return the resulting launch
-	 * @exception CoreException if this method fails. Reasons include:<ul>
-	 * <li>unable to instantiate the underlying launch configuration delegate</li>
-	 * <li>the launch fails (in the delegate)</code>
-	 * </ul>
+	 * @exception CoreException if this method fails. Reasons include:
+	 *                <ul>
+	 *                <li>unable to instantiate the underlying launch
+	 *                configuration delegate</li>
+	 *                <li>the launch fails (in the delegate)</li>
+	 *                </ul>
 	 */
 	ILaunch launch(String mode, IProgressMonitor monitor) throws CoreException;
 

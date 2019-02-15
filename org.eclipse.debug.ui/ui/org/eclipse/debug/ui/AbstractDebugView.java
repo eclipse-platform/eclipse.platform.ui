@@ -733,8 +733,9 @@ public abstract class AbstractDebugView extends PageBookView implements IDebugVi
 	/**
 	 * Handles key events in viewer. Invokes
 	 * <ol>
-	 * <li><code>REMOVE_ACTION</code> when the delete
-	 * key is pressed</li>
+	 * <li><code>REMOVE_ACTION</code> when the delete key is pressed</li>
+	 * </ol>
+	 * 
 	 * @param event the {@link KeyEvent}
 	 */
 	protected void handleKeyPressed(KeyEvent event) {

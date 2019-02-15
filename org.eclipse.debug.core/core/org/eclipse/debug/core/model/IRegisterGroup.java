@@ -34,10 +34,12 @@ public interface IRegisterGroup extends IDebugElement {
 	 * Returns the name of this register group.
 	 *
 	 * @return this register group's name
-	 * @exception DebugException if this method fails.  Reasons include:
-	 * <ul><li>Failure communicating with the debug target.  The DebugException's
-	 * status code contains the underlying exception responsible for
-	 * the failure.</li>
+	 * @exception DebugException if this method fails. Reasons include:
+	 *                <ul>
+	 *                <li>Failure communicating with the debug target. The
+	 *                DebugException's status code contains the underlying
+	 *                exception responsible for the failure.</li>
+	 *                </ul>
 	 */
 	String getName() throws DebugException;
 
@@ -45,10 +47,12 @@ public interface IRegisterGroup extends IDebugElement {
 	 * Returns the registers in this register group.
 	 *
 	 * @return the registers in this register group
-	 * @exception DebugException if this method fails.  Reasons include:
-	 * <ul><li>Failure communicating with the debug target.  The DebugException's
-	 * status code contains the underlying exception responsible for
-	 * the failure.</li>
+	 * @exception DebugException if this method fails. Reasons include:
+	 *                <ul>
+	 *                <li>Failure communicating with the debug target. The
+	 *                DebugException's status code contains the underlying
+	 *                exception responsible for the failure.</li>
+	 *                </ul>
 	 */
 	IRegister[] getRegisters() throws DebugException;
 
@@ -56,10 +60,12 @@ public interface IRegisterGroup extends IDebugElement {
 	 * Returns whether this register group currently contains any registers.
 	 *
 	 * @return whether this register group currently contains any registers
-	 * @exception DebugException if this method fails.  Reasons include:
-	 * <ul><li>Failure communicating with the debug target.  The DebugException's
-	 * status code contains the underlying exception responsible for
-	 * the failure.</li>
+	 * @exception DebugException if this method fails. Reasons include:
+	 *                <ul>
+	 *                <li>Failure communicating with the debug target. The
+	 *                DebugException's status code contains the underlying
+	 *                exception responsible for the failure.</li>
+	 *                </ul>
 	 */
 	boolean hasRegisters() throws DebugException;
 

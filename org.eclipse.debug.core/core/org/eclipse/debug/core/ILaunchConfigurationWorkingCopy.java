@@ -297,12 +297,14 @@ public interface ILaunchConfigurationWorkingCopy extends ILaunchConfiguration, I
 
 	/**
 	 * Removes the specified attribute from the this configuration and returns
-	 * the previous value associated with the specified attribute name, or <tt>null</tt>
-     * if there was no mapping for the attribute. Note that for int's and booleans,
-     * corresponding Integer and Boolean objects are returned.
+	 * the previous value associated with the specified attribute name, or
+	 * <code>null</code> if there was no mapping for the attribute. Note that
+	 * for int's and booleans, corresponding Integer and Boolean objects are
+	 * returned.
 	 * <p>
 	 * This method allows non-object attributes to be removed.
 	 * </p>
+	 * 
 	 * @param attributeName the name of the attribute to remove
 	 * @return previous value of the attribute or <code>null</code>
 	 *
@@ -322,13 +324,13 @@ public interface ILaunchConfigurationWorkingCopy extends ILaunchConfiguration, I
 	/**
 	 * Copies all attributes from the given prototype to this working.
 	 * Overwrites any existing attributes with the same key.
-	 * 
+	 *
 	 * @param prototype configuration prototype
 	 * @exception CoreException if unable to retrieve attributes from the prototype
 	 * @since 3.12
 	 */
 	void copyAttributes(ILaunchConfiguration prototype) throws CoreException;
-	
+
 	/**
 	 * Sets the prototype that this configuration is based on, possibly <code>null</code>,
 	 * and optionally copies attributes from the prototype to this working copy.

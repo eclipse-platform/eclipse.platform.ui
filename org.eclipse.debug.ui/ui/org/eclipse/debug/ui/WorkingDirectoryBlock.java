@@ -126,7 +126,9 @@ public abstract class WorkingDirectoryBlock extends AbstractLaunchConfigurationT
 	/**
 	 * Creates a new WorkingDirectoryBlock for setting a working directory.
 	 *
-	 * @param workingDirectoryAttribteName the name of the launch configuration attribute to set the working directory's location, cannot be <tt>null</tt>
+	 * @param workingDirectoryAttribteName the name of the launch configuration
+	 *                                     attribute to set the working directory's
+	 *                                     location, cannot be <code>null</code>
 	 */
 	protected WorkingDirectoryBlock(String workingDirectoryAttribteName) {
 		this(workingDirectoryAttribteName, null);
@@ -135,8 +137,11 @@ public abstract class WorkingDirectoryBlock extends AbstractLaunchConfigurationT
 	/**
 	 * Creates a new WorkingDirectoryBlock for setting a working directory.
 	 *
-	 * @param workingDirectoryAttribteName the name of the launch configuration attribute to set the working directory's location, cannot be <tt>null</tt>
-	 * @param helpContextId the help context id to use to hook onto the help system
+	 * @param workingDirectoryAttribteName the name of the launch configuration
+	 *                                     attribute to set the working directory's
+	 *                                     location, cannot be <code>null</code>
+	 * @param helpContextId                the help context id to use to hook onto
+	 *                                     the help system
 	 */
 	protected WorkingDirectoryBlock(String workingDirectoryAttribteName,
 			String helpContextId) {
@@ -313,9 +318,12 @@ public abstract class WorkingDirectoryBlock extends AbstractLaunchConfigurationT
 	 * Returns the project associated with the specified launch configuration or
 	 * <code>null</code> if none.
 	 *
-	 * @param configuration the launch configuration that has been set to this working directory block
-	 * @return the project specified by the launch configuration, or <tt>null</tt> if nothing has been set
-	 * @throws CoreException if an error occurred while retrieving the project from the launch configuration
+	 * @param configuration the launch configuration that has been set to this
+	 *                      working directory block
+	 * @return the project specified by the launch configuration, or
+	 *         <code>null</code> if nothing has been set
+	 * @throws CoreException if an error occurred while retrieving the project from
+	 *                       the launch configuration
 	 */
 	protected abstract IProject getProject(ILaunchConfiguration configuration) throws CoreException;
 

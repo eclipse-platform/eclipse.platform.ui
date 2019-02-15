@@ -323,7 +323,7 @@ public interface IBreakpointManager {
 	 * Returns whether a workspace has active TriggerPoints
 	 *
 	 * @return return <code>true</code> if a breakpoint has active triggers and
-	 *         cannot suspend and return <code>false> otherwise.
+	 *         cannot suspend and return <code>false</code> otherwise.
 	 * @since 3.11
 	 */
 	boolean hasActiveTriggerPoints();

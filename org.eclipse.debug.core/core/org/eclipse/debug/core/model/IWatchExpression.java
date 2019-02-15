@@ -42,23 +42,24 @@ public interface IWatchExpression extends IErrorReportingExpression {
 	 * generally be asynchronous to avoid blocking the calling thread.
 	 */
 	void evaluate();
+	
 	/**
 	 * Sets the context for this watch expression, or <code>null</code> if none.
 	 * If the given context is valid for this expression, this expression may
-	 * update its value. When the value update is complete, a debug change event is
-	 * fired. When <code>null</code> is specified as a context, this expression
-	 * may choose to retain its previous value.
+	 * update its value. When the value update is complete, a debug change event
+	 * is fired. When <code>null</code> is specified as a context, this
+	 * expression may choose to retain its previous value.
 	 * <p>
 	 * The context is usually one of (but not limited to):
+	 * </p>
 	 * <ul>
 	 * <li>a debug target (<code>IDebugTarget</code>)</li>
 	 * <li>a thread (<code>IThread</code>)</li>
 	 * <li>a stack frame (<code>IStackFrame</code>)</li>
 	 * </ul>
-	 * </p>
 	 *
 	 * @param context context in which to update this expression's value, or
-	 * 	<code>null</code> if none
+	 *            <code>null</code> if none
 	 */
 	void setExpressionContext(IDebugElement context);
 	/**

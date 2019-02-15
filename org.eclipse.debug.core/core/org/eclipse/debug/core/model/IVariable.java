@@ -47,34 +47,41 @@ public interface IVariable extends IDebugElement, IValueModification {
 	 * Returns the value of this variable.
 	 *
 	 * @return this variable's value
-	 * @exception DebugException if this method fails.  Reasons include:
-	 * <ul><li>Failure communicating with the VM.  The DebugException's
-	 * status code contains the underlying exception responsible for
-	 * the failure.</li>
+	 * @exception DebugException if this method fails. Reasons include:
+	 *                <ul>
+	 *                <li>Failure communicating with the VM. The
+	 *                DebugException's status code contains the underlying
+	 *                exception responsible for the failure.</li>
+	 *                </ul>
 	 */
 	IValue getValue() throws DebugException;
+
 	/**
-	 * Returns the name of this variable. Name format is debug model
-	 * specific, and should be specified by a debug model.
+	 * Returns the name of this variable. Name format is debug model specific,
+	 * and should be specified by a debug model.
 	 *
 	 * @return this variable's name
-	 * @exception DebugException if this method fails.  Reasons include:
-	 * <ul><li>Failure communicating with the VM.  The DebugException's
-	 * status code contains the underlying exception responsible for
-	 * the failure.</li>
+	 * @exception DebugException if this method fails. Reasons include:
+	 *                <ul>
+	 *                <li>Failure communicating with the VM. The
+	 *                DebugException's status code contains the underlying
+	 *                exception responsible for the failure.</li>
+	 *                </ul>
 	 */
 	String getName() throws DebugException;
+	
 	/**
-	 * Returns a description of the type of data this variable is
-	 * declared to reference. Note that the declared type of a
-	 * variable and the concrete type of its value are not necessarily
-	 * the same.
+	 * Returns a description of the type of data this variable is declared to
+	 * reference. Note that the declared type of a variable and the concrete
+	 * type of its value are not necessarily the same.
 	 *
 	 * @return the declared type of this variable
-	 * @exception DebugException if this method fails.  Reasons include:
-	 * <ul><li>Failure communicating with the VM.  The DebugException's
-	 * status code contains the underlying exception responsible for
-	 * the failure.</li>
+	 * @exception DebugException if this method fails. Reasons include:
+	 *                <ul>
+	 *                <li>Failure communicating with the VM. The
+	 *                DebugException's status code contains the underlying
+	 *                exception responsible for the failure.</li>
+	 *                </ul>
 	 */
 	String getReferenceTypeName() throws DebugException;
 

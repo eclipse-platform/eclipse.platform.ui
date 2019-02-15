@@ -77,26 +77,32 @@ public interface IThread extends IDebugElement, ISuspendResume, IStep, ITerminat
 	 * the failure.</li>
 	 */
 	int getPriority() throws DebugException;
+
 	/**
-	 * Returns the top stack frame or <code>null</code> if there is
-	 * currently no top stack frame.
+	 * Returns the top stack frame or <code>null</code> if there is currently no
+	 * top stack frame.
 	 *
 	 * @return the top stack frame, or <code>null</code> if none
-	 * @exception DebugException if this method fails.  Reasons include:
-	 * <ul><li>Failure communicating with the VM.  The DebugException's
-	 * status code contains the underlying exception responsible for
-	 * the failure.</li>
+	 * @exception DebugException if this method fails. Reasons include:
+	 *                <ul>
+	 *                <li>Failure communicating with the VM. The
+	 *                DebugException's status code contains the underlying
+	 *                exception responsible for the failure.</li>
+	 *                </ul>
 	 */
 	IStackFrame getTopStackFrame() throws DebugException;
+	
 	/**
-	 * Returns the name of this thread. Name format is debug model
-	 * specific, and should be specified by a debug model.
+	 * Returns the name of this thread. Name format is debug model specific, and
+	 * should be specified by a debug model.
 	 *
 	 * @return this thread's name
-	 * @exception DebugException if this method fails.  Reasons include:
-	 * <ul><li>Failure communicating with the VM.  The DebugException's
-	 * status code contains the underlying exception responsible for
-	 * the failure.</li>
+	 * @exception DebugException if this method fails. Reasons include:
+	 *                <ul>
+	 *                <li>Failure communicating with the VM. The
+	 *                DebugException's status code contains the underlying
+	 *                exception responsible for the failure.</li>
+	 *                </ul>
 	 */
 	String getName() throws DebugException;
 
