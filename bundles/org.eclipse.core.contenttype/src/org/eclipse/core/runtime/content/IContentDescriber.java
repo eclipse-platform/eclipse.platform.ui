@@ -65,24 +65,24 @@ public interface IContentDescriber {
 	int VALID = 2;
 
 	/**
-	 * Tries to fill a description for the given contents. Returns
-	 * an <code>int</code> indicating whether the given stream of
-	 * bytes represents a valid sample for its corresponding content type.
-	 * If no content description is provided, this method should perform
-	 * content type validation.
+	 * Tries to fill a description for the given contents. Returns an
+	 * <code>int</code> indicating whether the given stream of bytes represents a
+	 * valid sample for its corresponding content type. If no content description is
+	 * provided, this method should perform content type validation.
 	 * <p>
-	 * The input stream must be kept open, and any IOExceptions while
-	 * reading the stream should flow to the caller.
+	 * The input stream must be kept open, and any IOExceptions while reading the
+	 * stream should flow to the caller.
 	 * </p>
 	 *
-	 * @param contents the contents to be examined
+	 * @param contents    the contents to be examined
 	 * @param description a description to be filled in, or <code>null</code> if
-	 * only content type validation is to be performed
-	 * @return one of the following:<ul>
-	 * <li><code>VALID</code></li>,
-	 * <li><code>INVALID</code></li>,
-	 * <li><code>INDETERMINATE</code></li>
-	 * </ul>
+	 *                    only content type validation is to be performed
+	 * @return one of the following:
+	 *         <ul>
+	 *         <li><code>VALID</code></li>
+	 *         <li><code>INVALID</code></li>
+	 *         <li><code>INDETERMINATE</code></li>
+	 *         </ul>
 	 * @throws IOException if an I/O error occurs
 	 * @see IContentDescription
 	 * @see #VALID

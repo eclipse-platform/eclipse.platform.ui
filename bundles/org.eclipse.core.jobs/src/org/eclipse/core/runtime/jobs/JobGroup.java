@@ -134,16 +134,21 @@ public class JobGroup extends InternalJobGroup {
 	/**
 	 * Returns the state of the job group. Result will be one of:
 	 * <ul>
-	 * <li><code>JobGroup.NONE</code> - when the jobs belonging to the group are not yet scheduled to run.</li>
-	 * <li><code>JobGroup.ACTIVE</code> - when the jobs belonging to the group are running or scheduled to run.</li>
-	 * <li><code>JobGroup.CANCELING</code> - when the jobs belonging to the group are being canceled.</li>
+	 * <li><code>JobGroup.NONE</code> - when the jobs belonging to the group are not
+	 * yet scheduled to run.</li>
+	 * <li><code>JobGroup.ACTIVE</code> - when the jobs belonging to the group are
+	 * running or scheduled to run.</li>
+	 * <li><code>JobGroup.CANCELING</code> - when the jobs belonging to the group
+	 * are being canceled.</li>
 	 * </ul>
 	 * <p>
-	 * Note that job group state is inherently volatile, and in most cases clients cannot rely
-	 * on the result of this method being valid by the time the result is obtained. For example,
-	 * if <tt>getState</tt> returns <tt>ACTIVE</tt>, the job group may have actually completed
-	 * by the time the <tt>getState</tt> method returns. All that clients can infer from invoking
-	 * this method is that the job group was recently in the returned state.
+	 * Note that job group state is inherently volatile, and in most cases clients
+	 * cannot rely on the result of this method being valid by the time the result
+	 * is obtained. For example, if <code>getState</code> returns
+	 * <code>ACTIVE</code>, the job group may have actually completed by the time
+	 * the <code>getState</code> method returns. All that clients can infer from
+	 * invoking this method is that the job group was recently in the returned
+	 * state.
 	 *
 	 * @return the job group state
 	 */

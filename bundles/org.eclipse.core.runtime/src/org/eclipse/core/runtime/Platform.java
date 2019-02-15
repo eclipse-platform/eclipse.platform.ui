@@ -914,23 +914,28 @@ public final class Platform {
 	}
 
 	/**
-	 * Returns a URL for the given path in the given bundle.  Returns <code>null</code> if the URL
-	 * could not be computed or created.
+	 * Returns a URL for the given path in the given bundle. Returns
+	 * <code>null</code> if the URL could not be computed or created.
 	 * <p>
 	 * find looks for this path in given bundle and any attached fragments.
-	 * <code>null</code> is returned if no such entry is found.  Note that
-	 * there is no specific order to the fragments.
-	 * </p><p>
-	 * The following arguments may also be used
+	 * <code>null</code> is returned if no such entry is found. Note that there is
+	 * no specific order to the fragments.
+	 * </p>
+	 * <p>
+	 * The following arguments may also be used:
+	 * </p>
+	 *
 	 * <pre>
 	 *     $nl$ - for language specific information
 	 *     $os$ - for operating system specific information
 	 *     $ws$ - for windowing system specific information
 	 * </pre>
-	 * </p><p>
-	 * A path of $nl$/about.properties in an environment with a default
-	 * locale of en_CA will return a URL corresponding to the first place
-	 * about.properties is found according to the following order:
+	 * <p>
+	 * A path of $nl$/about.properties in an environment with a default locale of
+	 * en_CA will return a URL corresponding to the first place about.properties is
+	 * found according to the following order:
+	 * </p>
+	 *
 	 * <pre>
 	 *     plugin root/nl/en/CA/about.properties
 	 *     fragment1 root/nl/en/CA/about.properties
@@ -945,21 +950,21 @@ public final class Platform {
 	 *     fragment2 root/about.properties
 	 *     ...
 	 * </pre>
-	 * </p><p>
-	 * The current environment variable values can be overridden using
-	 * the override map argument.
+	 * <p>
+	 * The current environment variable values can be overridden using the override
+	 * map argument.
 	 * </p>
 	 *
-	 * @param bundle the bundle in which to search
-	 * @param path file path relative to plug-in installation location
-	 * @param override map of override substitution arguments to be used for
-	 * any $arg$ path elements. The map keys correspond to the substitution
-	 * arguments (eg. "$nl$" or "$os$"). The resulting
-	 * values must be of type java.lang.String. If the map is <code>null</code>,
-	 * or does not contain the required substitution argument, the default
-	 * is used.
-	 * @return a URL for the given path or <code>null</code>.  The actual form
-	 * of the returned URL is not specified.
+	 * @param bundle   the bundle in which to search
+	 * @param path     file path relative to plug-in installation location
+	 * @param override map of override substitution arguments to be used for any
+	 *                 $arg$ path elements. The map keys correspond to the
+	 *                 substitution arguments (eg. "$nl$" or "$os$"). The resulting
+	 *                 values must be of type java.lang.String. If the map is
+	 *                 <code>null</code>, or does not contain the required
+	 *                 substitution argument, the default is used.
+	 * @return a URL for the given path or <code>null</code>. The actual form of the
+	 *         returned URL is not specified.
 	 * @see #resolve(URL)
 	 * @see #asLocalURL(URL)
 	 * @since 3.0
@@ -1069,34 +1074,32 @@ public final class Platform {
 	}
 
 	/**
-	 * Returns a resource string corresponding to the given argument
-	 * value and resource bundle in the given runtime bundle.
-	 * If the argument value specifies a resource key, the string
-	 * is looked up in the given resource bundle. If the argument does not
-	 * specify a valid key, the argument itself is returned as the
-	 * resource string. The key lookup is performed against the
-	 * specified resource bundle. If a resource string
-	 * corresponding to the key is not found in the resource bundle
-	 * the key value, or any default text following the key in the
-	 * argument value is returned as the resource string.
-	 * A key is identified as a string beginning with the "%" character.
-	 * Note that the "%" character is stripped off prior to lookup
-	 * in the resource bundle.
+	 * Returns a resource string corresponding to the given argument value and
+	 * resource bundle in the given runtime bundle. If the argument value specifies
+	 * a resource key, the string is looked up in the given resource bundle. If the
+	 * argument does not specify a valid key, the argument itself is returned as the
+	 * resource string. The key lookup is performed against the specified resource
+	 * bundle. If a resource string corresponding to the key is not found in the
+	 * resource bundle the key value, or any default text following the key in the
+	 * argument value is returned as the resource string. A key is identified as a
+	 * string beginning with the "%" character. Note that the "%" character is
+	 * stripped off prior to lookup in the resource bundle.
 	 * <p>
-	 * For example, assume resource bundle plugin.properties contains
-	 * name = Project Name
-	 * <pre>
-	 *     getResourceString("Hello World") returns "Hello World"</li>
-	 *     getResourceString("%name") returns "Project Name"</li>
-	 *     getResourceString("%name Hello World") returns "Project Name"</li>
-	 *     getResourceString("%abcd Hello World") returns "Hello World"</li>
-	 *     getResourceString("%abcd") returns "%abcd"</li>
-	 *     getResourceString("%%name") returns "%name"</li>
-	 * </pre>
+	 * For example, assume resource bundle plugin.properties contains name = Project
+	 * Name
 	 * </p>
 	 *
-	 * @param bundle the bundle whose resource bundle is being queried
-	 * @param value the value
+	 * <pre>
+	 *     getResourceString("Hello World") returns "Hello World"
+	 *     getResourceString("%name") returns "Project Name"
+	 *     getResourceString("%name Hello World") returns "Project Name"
+	 *     getResourceString("%abcd Hello World") returns "Hello World"
+	 *     getResourceString("%abcd") returns "%abcd"
+	 *     getResourceString("%%name") returns "%name"
+	 * </pre>
+	 *
+	 * @param bundle         the bundle whose resource bundle is being queried
+	 * @param value          the value
 	 * @param resourceBundle the resource bundle to query
 	 * @return the resource string
 	 * @see #getResourceBundle(Bundle)
@@ -1367,8 +1370,8 @@ public final class Platform {
 
 	/**
 	 * Returns an array of attached fragment bundles for the specified bundle. If
-	 * the specified bundle is a fragment then <tt>null</tt> is returned. If no
-	 * fragments are attached to the specified bundle then <tt>null</tt> is
+	 * the specified bundle is a fragment then <code>null</code> is returned. If no
+	 * fragments are attached to the specified bundle then <code>null</code> is
 	 * returned.
 	 * <p>
 	 * Clients are also able to acquire the
@@ -1377,8 +1380,8 @@ public final class Platform {
 	 * </p>
 	 *
 	 * @param bundle the bundle to get the attached fragment bundles for.
-	 * @return an array of fragment bundles or <tt>null</tt> if the bundle does not
-	 *         have any attached fragment bundles.
+	 * @return an array of fragment bundles or <code>null</code> if the bundle does
+	 *         not have any attached fragment bundles.
 	 * @since 3.0
 	 */
 	public static Bundle[] getFragments(Bundle bundle) {
@@ -1400,7 +1403,7 @@ public final class Platform {
 	 *
 	 * @param symbolicName the symbolic name of the bundle to be returned.
 	 * @return the bundle that has the specified symbolic name with the highest
-	 *         version, or <tt>null</tt> if no bundle is found.
+	 *         version, or <code>null</code> if no bundle is found.
 	 * @since 3.0
 	 */
 	public static Bundle getBundle(String symbolicName) {
@@ -1409,8 +1412,8 @@ public final class Platform {
 
 	/**
 	 * Returns all bundles with the specified symbolic name. If no resolved bundles
-	 * with the specified symbolic name can be found, <tt>null</tt> is returned. If
-	 * the version argument is not null then only the Bundles that have the
+	 * with the specified symbolic name can be found, <code>null</code> is returned.
+	 * If the version argument is not null then only the Bundles that have the
 	 * specified symbolic name and a version greater than or equal to the specified
 	 * version are returned. The returned bundles are ordered in descending bundle
 	 * version order.
@@ -1424,9 +1427,10 @@ public final class Platform {
 	 *
 	 * @param symbolicName the symbolic name of the bundles that are to be returned.
 	 * @param version      the version that the return bundle versions must match,
-	 *                     or <tt>null</tt> if no version matching is to be done.
+	 *                     or <code>null</code> if no version matching is to be
+	 *                     done.
 	 * @return the array of Bundles with the specified name that match the specified
-	 *         version and match rule, or <tt>null</tt> if no bundles are found.
+	 *         version and match rule, or <code>null</code> if no bundles are found.
 	 */
 	public static Bundle[] getBundles(String symbolicName, String version) {
 		return InternalPlatform.getDefault().getBundles(symbolicName, version);
@@ -1434,8 +1438,9 @@ public final class Platform {
 
 	/**
 	 * Returns an array of host bundles that the specified fragment bundle is
-	 * attached to or <tt>null</tt> if the specified bundle is not attached to a
-	 * host. If the bundle is not a fragment bundle then <tt>null</tt> is returned.
+	 * attached to or <code>null</code> if the specified bundle is not attached to a
+	 * host. If the bundle is not a fragment bundle then <code>null</code> is
+	 * returned.
 	 * <p>
 	 * Clients are also able to acquire the
 	 * {@link org.osgi.service.packageadmin.PackageAdmin} service and query it for

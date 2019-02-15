@@ -62,13 +62,13 @@ public interface IJobManager {
 	/**
 	 * Begins applying this rule in the calling thread.  If the rule conflicts with another
 	 * rule currently running in another thread, this method blocks until there are
-	 * no conflicting rules.  Calls to <tt>beginRule</tt> must eventually be followed
-	 * by a matching call to <tt>endRule</tt> in the same thread and with the identical
+	 * no conflicting rules.  Calls to <code>beginRule</code> must eventually be followed
+	 * by a matching call to <code>endRule</code> in the same thread and with the identical
 	 * rule instance.
 	 * <p>
-	 * Rules can be nested only if the rule for the inner <tt>beginRule</tt>
-	 * is contained within the rule for the outer <tt>beginRule</tt>.  Rule containment
-	 * is tested with the API method <tt>ISchedulingRule.contains</tt>.  Also, begin/end
+	 * Rules can be nested only if the rule for the inner <code>beginRule</code>
+	 * is contained within the rule for the outer <code>beginRule</code>.  Rule containment
+	 * is tested with the API method <code>ISchedulingRule.contains</code>.  Also, begin/end
 	 * pairs must be strictly nested.  Only the rule that has most recently begun
 	 * can be ended at any given time.
 	 * <p>
@@ -79,7 +79,7 @@ public interface IJobManager {
 	 * If this method is called from within a job that has a scheduling rule, the
 	 * given rule must also be contained within the rule for the running job.
 	 * <p>
-	 * Note that <tt>endRule</tt> must be called even if <tt>beginRule</tt> fails.
+	 * Note that <code>endRule</code> must be called even if <code>beginRule</code> fails.
 	 * The recommended usage is:
 	 * <pre>
 	 * final ISchedulingRule rule = ...;
@@ -169,12 +169,12 @@ public interface IJobManager {
 	Job currentJob();
 
 	/**
-	 * Ends the application of a rule to the calling thread.  Calls to <tt>endRule</tt>
-	 * must be preceded by a matching call to <tt>beginRule</tt> in the same thread
+	 * Ends the application of a rule to the calling thread.  Calls to <code>endRule</code>
+	 * must be preceded by a matching call to <code>beginRule</code> in the same thread
 	 * with an identical rule instance.
 	 * <p>
-	 * Rules can be nested only if the rule for the inner <tt>beginRule</tt>
-	 * is contained within the rule for the outer <tt>beginRule</tt>.  Also, begin/end
+	 * Rules can be nested only if the rule for the inner <code>beginRule</code>
+	 * is contained within the rule for the outer <code>beginRule</code>.  Also, begin/end
 	 * pairs must be strictly nested.  Only the rule that has most recently begun
 	 * can be ended at any given time.
 	 *

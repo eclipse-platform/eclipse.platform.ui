@@ -153,18 +153,19 @@ public interface IContentTypeManager extends IContentTypeMatcher {
 	}
 
 	/**
-	 * Content type identifier constant for platform's primary
-	 * text-based content type: <code>org.eclipse.core.runtime.text</code>.
+	 * Content type identifier constant for platform's primary text-based content
+	 * type: <code>org.eclipse.core.runtime.text</code>.
 	 * <p>
 	 * All text-based content types ought to be sub types of the content type
-	 * identified by this string. This provides a simple way for detecting
-	 * whether a content type is text-based:
+	 * identified by this string. This provides a simple way for detecting whether a
+	 * content type is text-based:
+	 * </p>
+	 * 
 	 * <pre>
 	 * IContentType text = Platform.getContentTypeManager().getContentType(IContentTypeManager.CT_TEXT);
 	 * IContentType someType = ...;
 	 * boolean isTextBased = someType.isKindOf(text);
 	 * </pre>
-	 * </p>
 	 */
 	String CT_TEXT = "org.eclipse.core.runtime.text"; //$NON-NLS-1$
 
