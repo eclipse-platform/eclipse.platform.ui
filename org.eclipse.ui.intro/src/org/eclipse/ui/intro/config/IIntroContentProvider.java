@@ -24,7 +24,7 @@ import org.eclipse.ui.forms.widgets.FormToolkit;
  * its contents dynamically at runtime. And so, the site can be informed of a
  * need to redraw its content through a call to its reflow(..) method.
  * <p>
- * The life cycle of an IIntroContentProvider is as follows:
+ * The life cycle of an IIntroContentProvider is as follows:</p>
  * <ul>
  * <li>a content provider is defined in the Intro content markup file (ie:
  * introContent.xml file) as follows:
@@ -60,7 +60,7 @@ import org.eclipse.ui.forms.widgets.FormToolkit;
  * refresh is needed, then reflow() should be called on the contentProviderSite
  * when the appropriate event happens.
  * <li>finally, when the intro view is closed, dispose will be called on the
- * content provider to give it a chance to dispose of any resources.</li>
+ * content provider to give it a chance to dispose of any resources.</li></ul>
  *
  * @since 3.0.1
  */

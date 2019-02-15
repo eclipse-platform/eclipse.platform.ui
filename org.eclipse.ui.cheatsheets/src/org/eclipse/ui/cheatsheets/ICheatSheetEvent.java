@@ -13,17 +13,15 @@
  *******************************************************************************/
 package org.eclipse.ui.cheatsheets;
 
-import org.eclipse.ui.cheatsheets.ICheatSheetManager;
-
 /**
  * Event in the life cycle of a cheat sheet.
  * <p>
- * Events over the life time of a running cheat sheet
- * follow this pattern:
+ * Events over the life time of a running cheat sheet follow this pattern:
+ * </p>
+ * 
  * <pre>
  * opened { started | restored } { restarted | completed }* closed
  * </pre>
- * </p>
  *
  * @see CheatSheetListener
  * @since 3.0

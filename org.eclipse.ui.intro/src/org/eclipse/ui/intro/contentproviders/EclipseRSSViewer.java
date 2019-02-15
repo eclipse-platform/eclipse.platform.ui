@@ -63,32 +63,28 @@ import org.xml.sax.helpers.DefaultHandler;
  * A content provider which allows a news reader to be included in dynamic intro content.
  * <p>
  * The id for the contentProvider tag must consist of the following attributes. Each of these attributes must be separated by '##'.
- * <ul>
- * <TABLE CELLPADDING=6 FRAME=BOX>
+ * <table style="border: 1px solid;">
  *
  * <THEAD>
  * <TR> <TH>Attribute</TH>     <TH>Description</TH>                         </TR>
  * </THEAD>
  *
  * <TBODY>
- * <TR> <TD>url</TD>           <TD>RSS news feed url</TD>                   </TR>
- * <TR> <TD>welcome_items</TD> <TD>Number of news feed to be displayed</TD> </TR>
- * <TR> <TD>no_news_url</TD>   <TD>Alternative url for news feed</TD>       </TR>
- * <TR> <TD>no_news_text</TD>  <TD>Text for the alternative url</TD>        </TR>
+ * <TR> <TD style="padding-left: 15px;">url</TD>           <TD style="padding-left: 15px;">RSS news feed url</TD>                   </TR>
+ * <TR> <TD style="padding-left: 15px;">welcome_items</TD> <TD style="padding-left: 15px;">Number of news feed to be displayed</TD> </TR>
+ * <TR> <TD style="padding-left: 15px;">no_news_url</TD>   <TD style="padding-left: 15px;">Alternative url for news feed</TD>       </TR>
+ * <TR> <TD style="padding-left: 15px;">no_news_text</TD>  <TD style="padding-left: 15px;">Text for the alternative url</TD>        </TR>
  * </TBODY>
  *
- * </TABLE>
- * </ul>
+ * </table>
  * For example:
- * <p>
- * &lt;contentProvider <br>
- * <ul>
- * id=&quot;url=http://www.eclipse.org/home/eclipsenews.rss##welcome_items=5##no_news_url=http://www.eclipse.org/community/##no_news_text=Welcome to the Eclipse Community Page&quot; <br>
- * pluginId=&quot;org.eclipse.ui.intro&quot; <br>
- * class=&quot;org.eclipse.ui.intro.contentproviders.EclipseRSSViewer&quot;&gt; <br>
- * </ul>
+ * <pre><code>
+ * &lt;contentProvider
+ * id=&quot;url=http://www.eclipse.org/home/eclipsenews.rss##welcome_items=5##no_news_url=http://www.eclipse.org/community/##no_news_text=Welcome to the Eclipse Community Page&quot;
+ * pluginId=&quot;org.eclipse.ui.intro&quot;
+ * class=&quot;org.eclipse.ui.intro.contentproviders.EclipseRSSViewer&quot;&gt;
  * &lt;/contentProvider&gt;
- * </p>
+ * </code></pre>
  *
  * @since 3.4
  */
