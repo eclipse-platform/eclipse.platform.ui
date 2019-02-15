@@ -409,12 +409,12 @@ public abstract class Job extends InternalJob implements IAdaptable {
 	 * <li><code>Job.NONE</code> - in all other cases.</li>
 	 * </ul>
 	 * <p>
-	 * Note that job state is inherently volatile, and in most cases clients
-	 * cannot rely on the result of this method being valid by the time the
-	 * result is obtained.  For example, if <tt>getState</tt> returns
-	 * <tt>RUNNING</tt>,  the job may have actually completed by the
-	 * time the <tt>getState</tt> method returns.  All clients can infer from
-	 * invoking this method is that  the job was recently in the returned state.
+	 * Note that job state is inherently volatile, and in most cases clients cannot
+	 * rely on the result of this method being valid by the time the result is
+	 * obtained. For example, if <code>getState</code> returns <code>RUNNING</code>,
+	 * the job may have actually completed by the time the <code>getState</code>
+	 * method returns. All clients can infer from invoking this method is that the
+	 * job was recently in the returned state.
 	 *
 	 * @return the job state
 	 */
@@ -435,10 +435,10 @@ public abstract class Job extends InternalJob implements IAdaptable {
 	}
 
 	/**
-	 * Returns the job group this job belongs to, or <code>null</code> if this
-	 * job does not belongs to any group.
+	 * Returns the job group this job belongs to, or <code>null</code> if this job
+	 * does not belongs to any group.
 	 *
-	 * @return the job group this job belongs to, or <code>null</null>.
+	 * @return the job group this job belongs to, or <code>null</code>.
 	 * @see JobGroup
 	 * @see #setJobGroup(JobGroup)
 	 * @since 3.7
@@ -493,24 +493,26 @@ public abstract class Job extends InternalJob implements IAdaptable {
 	}
 
 	/**
-	 * Waits until this job is finished.  This method will block the calling thread until the
-	 * job has finished executing, or until this thread has been interrupted.  If the job
-	 * has not been scheduled, this method returns immediately.  A job must not
-	 * be joined from within the scope of its run method.
+	 * Waits until this job is finished. This method will block the calling thread
+	 * until the job has finished executing, or until this thread has been
+	 * interrupted. If the job has not been scheduled, this method returns
+	 * immediately. A job must not be joined from within the scope of its run
+	 * method.
 	 * <p>
 	 * If this method is called on a job that reschedules itself from within the
-	 * <tt>run</tt> method, the join will return at the end of the first execution.
-	 * In other words, join will return the first time this job exits the
-	 * {@link #RUNNING} state, or as soon as this job enters the {@link #NONE} state.
+	 * <code>run</code> method, the join will return at the end of the first
+	 * execution. In other words, join will return the first time this job exits the
+	 * {@link #RUNNING} state, or as soon as this job enters the {@link #NONE}
+	 * state.
 	 * </p>
 	 * <p>
-	 * If this method is called while the job manager is suspended, this job
-	 * will only be joined if it is already running; if this job is waiting or sleeping,
+	 * If this method is called while the job manager is suspended, this job will
+	 * only be joined if it is already running; if this job is waiting or sleeping,
 	 * this method returns immediately.
 	 * </p>
 	 * <p>
-	 * Note that there is a deadlock risk when using join.  If the calling thread owns
-	 * a lock or object monitor that the joined thread is waiting for, deadlock
+	 * Note that there is a deadlock risk when using join. If the calling thread
+	 * owns a lock or object monitor that the joined thread is waiting for, deadlock
 	 * will occur.
 	 * </p>
 	 * <p>
@@ -520,20 +522,21 @@ public abstract class Job extends InternalJob implements IAdaptable {
 	 * issues a join on another Job B belonging to its own job group, A waits
 	 * indefinitely for its join to finish, but B never gets to run. To avoid that
 	 * an IllegalStateException is thrown when a job tries to join another job
-	 * belonging to the same job group. Joining another job belonging to the
-	 * same group is allowed when the job group does not enforce throttling
+	 * belonging to the same job group. Joining another job belonging to the same
+	 * group is allowed when the job group does not enforce throttling
 	 * (JobGroup#getMaxThreads is zero).
 	 * </p>
 	 * <p>
 	 * Calling this method is equivalent to calling <code>join(0, null)</code> and
-	 * it is recommended to use the other join method with timeout and progress monitor
-	 * as that will provide more control over the join operation.
+	 * it is recommended to use the other join method with timeout and progress
+	 * monitor as that will provide more control over the join operation.
 	 * </p>
 	 *
-	 * @exception InterruptedException if this thread is interrupted while waiting
-	 * @exception IllegalStateException when a job tries to join on itself or join on
-	 * another job belonging to the same job group and the group is configured with
-	 * non zero maximum threads allowed.
+	 * @exception InterruptedException  if this thread is interrupted while waiting
+	 * @exception IllegalStateException when a job tries to join on itself or join
+	 *                                  on another job belonging to the same job
+	 *                                  group and the group is configured with non
+	 *                                  zero maximum threads allowed.
 	 * @see #setJobGroup(JobGroup)
 	 * @see #join(long, IProgressMonitor)
 	 * @see ILock
@@ -545,58 +548,64 @@ public abstract class Job extends InternalJob implements IAdaptable {
 	}
 
 	/**
-	 * Waits until either the job is finished or the given timeout has expired.
-	 * This method will block the calling thread until the job has finished executing,
-	 * or the given timeout is expired, or the given progress monitor is canceled by the user
-	 * or the calling thread is interrupted. If the job has not been scheduled,
-	 * this method returns immediately. A job must not be joined from within the scope of
-	 * its run method.
+	 * Waits until either the job is finished or the given timeout has expired. This
+	 * method will block the calling thread until the job has finished executing, or
+	 * the given timeout is expired, or the given progress monitor is canceled by
+	 * the user or the calling thread is interrupted. If the job has not been
+	 * scheduled, this method returns immediately. A job must not be joined from
+	 * within the scope of its run method.
 	 * <p>
 	 * If this method is called on a job that reschedules itself from within the
-	 * <tt>run</tt> method, the join will return at the end of the first execution.
-	 * In other words, join will return the first time this job exits the
-	 * {@link #RUNNING} state, or as soon as this job enters the {@link #NONE} state.
+	 * <code>run</code> method, the join will return at the end of the first
+	 * execution. In other words, join will return the first time this job exits the
+	 * {@link #RUNNING} state, or as soon as this job enters the {@link #NONE}
+	 * state.
 	 * </p>
 	 * <p>
-	 * If this method is called while the job manager is suspended, this job
-	 * will only be joined if it is already running; if this job is waiting or sleeping,
+	 * If this method is called while the job manager is suspended, this job will
+	 * only be joined if it is already running; if this job is waiting or sleeping,
 	 * this method returns immediately.
 	 * </p>
 	 * <p>
-	 * Note that there is a deadlock risk when using join. If the calling thread owns
-	 * a lock or object monitor that the joined thread is waiting for and the timeout
-	 * is set zero (i.e no timeout), deadlock will occur.
+	 * Note that there is a deadlock risk when using join. If the calling thread
+	 * owns a lock or object monitor that the joined thread is waiting for and the
+	 * timeout is set zero (i.e no timeout), deadlock will occur.
 	 * </p>
 	 * <p>
 	 * Joining on another job belonging to the same group is not allowed if the
 	 * timeout is set to zero and the group enforces throttling due to the potential
-	 * for deadlock. For example, when the maximum threads allowed is set to 1 and
-	 * a currently running Job A issues a join with no timeout on another Job B
+	 * for deadlock. For example, when the maximum threads allowed is set to 1 and a
+	 * currently running Job A issues a join with no timeout on another Job B
 	 * belonging to its own job group, A waits indefinitely for its join to finish,
-	 * but B never gets to run. To avoid that an IllegalStateException is thrown when
-	 * a job tries to join (with no timeout) another job belonging to the same job group.
-	 * Joining another job belonging to the same group is allowed when either the job group
-	 * does not enforce throttling (JobGroup#getMaxThreads is zero) or a non zero timeout
-	 * value is provided.
+	 * but B never gets to run. To avoid that an IllegalStateException is thrown
+	 * when a job tries to join (with no timeout) another job belonging to the same
+	 * job group. Joining another job belonging to the same group is allowed when
+	 * either the job group does not enforce throttling (JobGroup#getMaxThreads is
+	 * zero) or a non zero timeout value is provided.
 	 * </p>
 	 * <p>
-	 * Throws an <code>OperationCanceledException</code> when the given progress monitor
-	 * is canceled. Canceling the monitor does not cancel the job and, if required,
-	 * the job may be canceled explicitly using the {@link #cancel()} method.
+	 * Throws an <code>OperationCanceledException</code> when the given progress
+	 * monitor is canceled. Canceling the monitor does not cancel the job and, if
+	 * required, the job may be canceled explicitly using the {@link #cancel()}
+	 * method.
 	 * </p>
 	 *
-	 * @param timeoutMillis the maximum amount of time to wait for the join to complete,
-	 * or <code>zero</code> for no timeout.
-	 * @param monitor the progress monitor that can be used to cancel the join operation,
-	 * or <code>null</code> if cancellation is not required. No progress is reported
-	 * on this monitor.
+	 * @param timeoutMillis the maximum amount of time to wait for the join to
+	 *                      complete, or <code>zero</code> for no timeout.
+	 * @param monitor       the progress monitor that can be used to cancel the join
+	 *                      operation, or <code>null</code> if cancellation is not
+	 *                      required. No progress is reported on this monitor.
 	 * @return <code>true</code> when the job completes, or <code>false</code> when
-	 * the operation is not completed within the given time.
-	 * @exception InterruptedException if this thread is interrupted while waiting
-	 * @exception IllegalStateException when a job tries to join on itself or join with
-	 * no timeout on another job belonging to the same job group and the group is configured
-	 * with non-zero maximum threads allowed.
-	 * @exception OperationCanceledException if the progress monitor is canceled while waiting
+	 *         the operation is not completed within the given time.
+	 * @exception InterruptedException       if this thread is interrupted while
+	 *                                       waiting
+	 * @exception IllegalStateException      when a job tries to join on itself or
+	 *                                       join with no timeout on another job
+	 *                                       belonging to the same job group and the
+	 *                                       group is configured with non-zero
+	 *                                       maximum threads allowed.
+	 * @exception OperationCanceledException if the progress monitor is canceled
+	 *                                       while waiting
 	 * @see #setJobGroup(JobGroup)
 	 * @see #cancel()
 	 * @see ILock
@@ -662,21 +671,24 @@ public abstract class Job extends InternalJob implements IAdaptable {
 	}
 
 	/**
-	 * Schedules this job to be run after a specified delay.  The job is put in the
+	 * Schedules this job to be run after a specified delay. The job is put in the
 	 * {@link #SLEEPING} state until the specified delay has elapsed, after which
-	 * the job is added to a queue of {@link #WAITING} jobs. Once the job arrives
-	 * at the beginning of the queue, it will be run at the first available opportunity.
-	 * </p><p>
+	 * the job is added to a queue of {@link #WAITING} jobs. Once the job arrives at
+	 * the beginning of the queue, it will be run at the first available
+	 * opportunity.
+	 * <p>
 	 * Jobs of equal priority and <code>delay</code> with conflicting scheduling
 	 * rules are guaranteed to run in the order they are scheduled. No guarantees
 	 * are made about the relative execution order of jobs with unrelated or
 	 * <code>null</code> scheduling rules, or different priorities.
+	 * </p>
 	 * <p>
 	 * If this job is currently running, it will be rescheduled with the specified
-	 * delay as soon as it finishes.  If this method is called multiple times
-	 * while the job is running, the job will still only be rescheduled once,
-	 * with the most recent delay value that was provided.
-	 * </p><p>
+	 * delay as soon as it finishes. If this method is called multiple times while
+	 * the job is running, the job will still only be rescheduled once, with the
+	 * most recent delay value that was provided.
+	 * </p>
+	 * <p>
 	 * Scheduling a job that is waiting or sleeping has no effect.
 	 * </p>
 	 *
@@ -717,21 +729,21 @@ public abstract class Job extends InternalJob implements IAdaptable {
 	}
 
 	/**
-	 * Associates this job with a progress group.  Progress feedback
-	 * on this job's next execution will be displayed together with other
-	 * jobs in that group. The provided monitor must be a monitor
-	 * created by the method <tt>IJobManager.createProgressGroup</tt>
-	 * and must have at least <code>ticks</code> units of available work.
+	 * Associates this job with a progress group. Progress feedback on this job's
+	 * next execution will be displayed together with other jobs in that group. The
+	 * provided monitor must be a monitor created by the method
+	 * <code>IJobManager.createProgressGroup</code> and must have at least
+	 * <code>ticks</code> units of available work.
 	 * <p>
-	 * The progress group must be set before the job is scheduled.
-	 * The group will be used only for a single invocation of the job's
-	 * <tt>run</tt> method, after which any association of this job to the
-	 * group will be lost.
+	 * The progress group must be set before the job is scheduled. The group will be
+	 * used only for a single invocation of the job's <code>run</code> method, after
+	 * which any association of this job to the group will be lost.
+	 * </p>
 	 *
 	 * @see IJobManager#createProgressGroup()
 	 * @param group The progress group to use for this job
-	 * @param ticks the number of work ticks allocated from the
-	 *    parent monitor, or {@link IProgressMonitor#UNKNOWN}
+	 * @param ticks the number of work ticks allocated from the parent monitor, or
+	 *              {@link IProgressMonitor#UNKNOWN}
 	 */
 	@Override
 	public final void setProgressGroup(IProgressMonitor group, int ticks) {
@@ -936,22 +948,27 @@ public abstract class Job extends InternalJob implements IAdaptable {
 	 * Temporarily puts this <code>Job</code> back into {@link #WAITING} state and
 	 * relinquishes the job's scheduling rule so that any {@link #WAITING} jobs that
 	 * conflict with this job's scheduling rule have an opportunity to start. This
-	 * method will wait until the rule this job held prior to invoking this method is
-	 * re-acquired. This method has no effect and returns <tt>null</tt> if there are no
-	 * {@link #WAITING} jobs that conflict with this job's scheduling rule. <p>Note:
-	 * If this job has acquired any other locks, implicit or explicit, they will
-	 * <i>not</i> be  released. This may increase the risk of deadlock, so this method
-	 * should only be used when it is known that the environment is safe. <p> This
-	 * method must be invoked by this job's <code>Thread</code>, and only when it is
-	 * {@link #RUNNING} state.
+	 * method will wait until the rule this job held prior to invoking this method
+	 * is re-acquired. This method has no effect and returns <code>null</code> if
+	 * there are no {@link #WAITING} jobs that conflict with this job's scheduling
+	 * rule.
 	 * <p>
-	 * @param monitor a progress monitor, or <tt>null</tt> if progress
-	 * reporting is not desired. Cancellation attempts will be ignored.
-	 * @return The Job that was {@link #WAITING}, and blocked by this <code>Job</code>
-	 * (at the time this method was  invoked) that was unblocked and allowed a chance
-	 * to run, or <tt>null</tt> if no jobs were unblocked. Note: it is not guaranteed
-	 * that this <code>Job</code> resume immediately if other conflicting jobs are
-	 * also waiting after the unblocked job ends.
+	 * Note: If this job has acquired any other locks, implicit or explicit, they
+	 * will <i>not</i> be released. This may increase the risk of deadlock, so this
+	 * method should only be used when it is known that the environment is safe.
+	 * <p>
+	 * This method must be invoked by this job's <code>Thread</code>, and only when
+	 * it is {@link #RUNNING} state.
+	 * <p>
+	 *
+	 * @param monitor a progress monitor, or <code>null</code> if progress reporting
+	 *                is not desired. Cancellation attempts will be ignored.
+	 * @return The Job that was {@link #WAITING}, and blocked by this
+	 *         <code>Job</code> (at the time this method was invoked) that was
+	 *         unblocked and allowed a chance to run, or <code>null</code> if no
+	 *         jobs were unblocked. Note: it is not guaranteed that this
+	 *         <code>Job</code> resume immediately if other conflicting jobs are
+	 *         also waiting after the unblocked job ends.
 	 *
 	 * @since org.eclipse.core.jobs 3.5
 	 * @see Job#getRule()

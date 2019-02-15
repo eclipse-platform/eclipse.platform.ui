@@ -193,7 +193,6 @@ public abstract class Plugin implements BundleActivator {
 	 * The resultant instance is not managed by the runtime and
 	 * so should be remembered by the client (typically using a Singleton pattern).
 	 * <b>Clients must never explicitly call this method.</b>
-	 * </p>
 	 * <p>
 	 * Note: The class loader typically has monitors acquired during invocation of this method.  It is
 	 * strongly recommended that this method avoid synchronized blocks or other thread locking mechanisms,
@@ -216,7 +215,7 @@ public abstract class Plugin implements BundleActivator {
 	 *
 	 * The <code>MyPlugin(IPluginDescriptor descriptor)</code> constructor was called only for plug-ins
 	 * which explicitly require the org.eclipse.core.runtime.compatibility plug-in. It is not called anymore.
-	 * 
+	 *
 	 * @param descriptor Due to org.eclipse.core.runtime.compatibility plug-in removal it is ignored.
 	 *
 	 * @deprecated
@@ -267,7 +266,7 @@ public abstract class Plugin implements BundleActivator {
 	 * The <code>getDescriptor()</code> method was only be called by plug-ins
 	 * which explicitly require the org.eclipse.core.runtime.compatibility
 	 * plug-in. It is not called anymore.
-	 * 
+	 *
 	 * @return Always null.
 	 *
 	 * @deprecated
@@ -327,8 +326,7 @@ public abstract class Plugin implements BundleActivator {
 	 * After settings in the preference store are changed (for example, with
 	 * <code>Preferences.setValue</code> or <code>setToDefault</code>),
 	 * <code>savePluginPreferences</code> should be called to store the changed
-	 * values back to disk. Otherwise the changes will be lost on plug-in
-	 * shutdown.
+	 * values back to disk. Otherwise the changes will be lost on plug-in shutdown.
 	 * </p>
 	 *
 	 * @return the preference store
@@ -336,15 +334,19 @@ public abstract class Plugin implements BundleActivator {
 	 * @see Preferences#setValue(String, String)
 	 * @see Preferences#setToDefault(String)
 	 * @since 2.0
-	 * @deprecated Replaced by {@link IEclipsePreferences}. Preferences are now stored according
-	 * to scopes in the {@link IPreferencesService}. The return value of this method corresponds to
-	 * a combination of the {@link InstanceScope} and the {@link DefaultScope}. To set preferences
-	 * for your plug-in, use <tt>InstanceScope.INSTANCE.getNode(&lt;yourPluginId&gt;)</tt>.  To set default
-	 * preferences for your plug-in, use <tt>DefaultScope.INSTANCE.getNode(&lt;yourPluginId&gt;)</tt>.
-	 * To lookup an integer preference value for your plug-in, use
-	 * <tt>Platform.getPreferencesService().getInt(&lt;yourPluginId&gt;, &lt;preferenceKey&gt;, &lt;defaultValue&gt;, null)</tt>.
-	 * Similar methods exist on {@link IPreferencesService} for obtaining other kinds
-	 * of preference values (strings, booleans, etc).
+	 * @deprecated Replaced by {@link IEclipsePreferences}. Preferences are now
+	 *             stored according to scopes in the {@link IPreferencesService}.
+	 *             The return value of this method corresponds to a combination of
+	 *             the {@link InstanceScope} and the {@link DefaultScope}. To set
+	 *             preferences for your plug-in, use
+	 *             <code>InstanceScope.INSTANCE.getNode(&lt;yourPluginId&gt;)</code>.
+	 *             To set default preferences for your plug-in, use
+	 *             <code>DefaultScope.INSTANCE.getNode(&lt;yourPluginId&gt;)</code>.
+	 *             To lookup an integer preference value for your plug-in, use
+	 *             <code>Platform.getPreferencesService().getInt(&lt;yourPluginId&gt;, &lt;preferenceKey&gt;, &lt;defaultValue&gt;, null)</code>.
+	 *             Similar methods exist on {@link IPreferencesService} for
+	 *             obtaining other kinds of preference values (strings, booleans,
+	 *             etc).
 	 */
 	@Deprecated
 	public final Preferences getPluginPreferences() {
@@ -599,7 +601,7 @@ public abstract class Plugin implements BundleActivator {
 	 * The <code>shutdown()</code> method was called only for plug-ins which
 	 * explicitly required the org.eclipse.core.runtime.compatibility plug-in.
 	 * It is not called anymore.
-	 * 
+	 *
 	 * @throws CoreException Never thrown as method as no longer called.
 	 *
 	 * @deprecated
@@ -623,7 +625,7 @@ public abstract class Plugin implements BundleActivator {
 	 * The <code>startup()</code> method was called only for plug-ins which
 	 * explicitly required the org.eclipse.core.runtime.compatibility plug-in.
 	 * It is not called anymore.
-	 * 
+	 *
 	 * @throws CoreException Never thrown as method as no longer called.
 	 *
 	 * @deprecated
