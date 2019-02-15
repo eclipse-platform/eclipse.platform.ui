@@ -62,7 +62,7 @@ public class ProgressIndicator extends Composite {
      * @since 3.4
      */
     public ProgressIndicator(Composite parent, int style) {
-    	super(parent, SWT.NULL);
+		super(parent, SWT.NONE);
 
     	 // Enforce horizontal only if vertical isn't set
         if ((style & SWT.VERTICAL) == 0)
