@@ -29,24 +29,24 @@ import org.eclipse.ui.internal.WorkbenchImages;
 import org.eclipse.ui.internal.WorkbenchMessages;
 
 /**
- * Implements a simple web style navigation metaphor for a <code>TreeViewer</code>.
- * Home, back, and "drill into" functions are supported for the viewer,
+ * Implements a simple web style navigation metaphor for a
+ * <code>TreeViewer</code>. Home, back, and "drill into" functions are supported
+ * for the viewer,
  * <p>
- * To use the <code>DrillDownAdapter</code> ..
+ * To use the <code>DrillDownAdapter</code>:
  * </p>
- * <ul>
- * <li>Create an instance of <code>TreeViewer</code>. </li>
- * <li>Create a <code>DrillDownAdapter</code> for the viewer. </li>
- * <li>Create a container for your viewer with a toolbar or a popup menu.
- *		Add actions for "goBack", "goHome", and "goInto" to either one by calling
- *		</code>addNavigationActions</code> with the popup menu or toolbar.</li>
+ * <ol>
+ * <li>Create an instance of <code>TreeViewer</code>.</li>
+ * <li>Create a <code>DrillDownAdapter</code> for the viewer.</li>
+ * <li>Create a container for your viewer with a toolbar or a popup menu. Add
+ * actions for "goBack", "goHome", and "goInto" to either one by calling
+ * <code>addNavigationActions</code> with the popup menu or toolbar.</li>
  * </ol>
  * <p>
  * If the input for the underlying viewer is changed by something other than the
- * adapter the <code>reset</code> method should be called.  This will clear
- * the drill stack and update the navigation buttons to reflect the new
- * state of the underlying viewer.
- * </p>
+ * adapter the <code>reset</code> method should be called. This will clear the
+ * drill stack and update the navigation buttons to reflect the new state of the
+ * underlying viewer.
  * </p>
  */
 public class DrillDownAdapter implements ISelectionChangedListener {

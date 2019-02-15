@@ -26,22 +26,26 @@ import org.eclipse.ui.internal.wizards.newresource.ResourceMessages;
 /**
  * Standard workbench wizard that create a new folder resource in the workspace.
  * <p>
- * This class may be instantiated and used without further configuration;
- * this class is not intended to be subclassed.
+ * This class may be instantiated and used without further configuration; this
+ * class is not intended to be subclassed.
  * </p>
  * <p>
  * Example:
+ * </p>
+ * 
  * <pre>
  * IWorkbenchWizard wizard = new BasicNewFolderResourceWizard();
  * wizard.init(workbench, selection);
  * WizardDialog dialog = new WizardDialog(shell, wizard);
  * dialog.open();
  * </pre>
+ * <p>
  * During the call to <code>open</code>, the wizard dialog is presented to the
  * user. When the user hits Finish, a folder resource at the user-specified
  * workspace path is created, the dialog closes, and the call to
  * <code>open</code> returns.
  * </p>
+ * 
  * @noextend This class is not intended to be subclassed by clients.
  */
 public class BasicNewFolderResourceWizard extends BasicNewResourceWizard {

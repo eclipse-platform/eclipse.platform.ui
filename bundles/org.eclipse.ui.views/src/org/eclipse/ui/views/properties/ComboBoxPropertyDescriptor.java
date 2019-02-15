@@ -20,25 +20,27 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 
 /**
- * Descriptor for a property that has a value which should be edited
- * with a combo box cell editor.  This class provides a default
+ * Descriptor for a property that has a value which should be edited with a
+ * combo box cell editor. This class provides a default
  * <code>ILabelProvider</code> that will render the label of the given
  * descriptor as the <code>String</code> found in the labels array at the
  * currently selected index.
  * <p>
- * The value of the property is a 0-based <code>Integer</code> index into
- * the labels array.
+ * The value of the property is a 0-based <code>Integer</code> index into the
+ * labels array.
  * </p>
  * <p>
  * This class may be instantiated; it is not intended to be subclassed.
  * </p>
  * <p>
  * Example:
+ * </p>
+ * 
  * <pre>
- * String[] values = {"Top left", "Top right", "Bottom left", "Bottom right"};
+ * String[] values = { "Top left", "Top right", "Bottom left", "Bottom right" };
  * IPropertyDescriptor pd = new ComboBoxPropertyDescriptor("origin", "Origin", values);
  * </pre>
- * </p>
+ * 
  * @noextend This class is not intended to be subclassed by clients.
  */
 public class ComboBoxPropertyDescriptor extends PropertyDescriptor {

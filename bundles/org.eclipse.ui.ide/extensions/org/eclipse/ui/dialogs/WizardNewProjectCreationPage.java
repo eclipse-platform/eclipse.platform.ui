@@ -52,12 +52,13 @@ import org.eclipse.ui.internal.ide.dialogs.ProjectContentsLocationArea.IErrorMes
  * </p>
  * <p>
  * Example usage:
+ * </p>
+ * 
  * <pre>
  * mainPage = new WizardNewProjectCreationPage("basicNewProjectPage");
  * mainPage.setTitle("Project");
  * mainPage.setDescription("Create a new project resource.");
  * </pre>
- * </p>
  */
 public class WizardNewProjectCreationPage extends WizardPage {
 

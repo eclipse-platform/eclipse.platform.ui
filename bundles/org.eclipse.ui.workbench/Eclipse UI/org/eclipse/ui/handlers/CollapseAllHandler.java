@@ -16,28 +16,26 @@ package org.eclipse.ui.handlers;
 
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
-
 import org.eclipse.core.runtime.Assert;
-
 import org.eclipse.jface.viewers.AbstractTreeViewer;
-
 import org.eclipse.ui.IWorkbenchCommandConstants;
 
 /**
  * Collapse a tree viewer.
  * <p>
  * It can be used in a part's createPartControl(Composite) method:
+ * </p>
  *
  * <pre>
- * IHandlerService handlerService = (IHandlerService) getSite().getService(
- * 		IHandlerService.class);
+ * IHandlerService handlerService = (IHandlerService) getSite().getService(IHandlerService.class);
  * collapseHandler = new CollapseAllHandler(myViewer);
  * handlerService.activateHandler(CollapseAllHandler.COMMAND_ID, collapseHandler);
  * </pre>
  *
- * The part should dispose the handler in its own dispose() method. The part
- * can provide its own collapse all handler if desired, or if it needs to
- * delegate to multiple tree viewers.
+ * <p>
+ * The part should dispose the handler in its own dispose() method. The part can
+ * provide its own collapse all handler if desired, or if it needs to delegate
+ * to multiple tree viewers.
  * </p>
  * <p>
  * <b>Note</b>: This class can be instantiated. It should not be subclasses.

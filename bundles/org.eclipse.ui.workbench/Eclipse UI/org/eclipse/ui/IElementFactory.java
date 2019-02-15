@@ -20,14 +20,15 @@ import org.eclipse.core.runtime.IAdaptable;
  * <p>
  * Clients should implement this interface and include the name of their class
  * in an extension to the platform extension point named
- * <code>"org.eclipse.ui.elementFactories"</code>.
- * For example, the plug-in's XML markup might contain:
- * <pre>
- * &LT;extension point="org.eclipse.ui.elementFactories"&GT;
- *    &LT;factory id="com.example.myplugin.MyFactory" class="com.example.myplugin.MyFactory" /&GT;
- * &LT;/extension&GT;
- * </pre>
+ * <code>"org.eclipse.ui.elementFactories"</code>. For example, the plug-in's
+ * XML markup might contain:
  * </p>
+ *
+ * <pre>
+ * &lt;extension point="org.eclipse.ui.elementFactories"&gt;
+ *    &lt;factory id="com.example.myplugin.MyFactory" class="com.example.myplugin.MyFactory" /&gt;
+ * &lt;/extension&gt;
+ * </pre>
  *
  * @see IPersistableElement
  * @see IMemento

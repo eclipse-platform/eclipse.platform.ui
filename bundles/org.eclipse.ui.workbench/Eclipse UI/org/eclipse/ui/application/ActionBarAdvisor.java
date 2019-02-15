@@ -34,19 +34,20 @@ import org.eclipse.ui.internal.handlers.IActionCommandMappingService;
 /**
  * Public base class for configuring the action bars of a workbench window.
  * <p>
- * An application should declare a subclass of <code>ActionBarAdvisor</code>
- * and override methods to configure a window's action bars to suit the needs of the
+ * An application should declare a subclass of <code>ActionBarAdvisor</code> and
+ * override methods to configure a window's action bars to suit the needs of the
  * particular application.
  * </p>
  * <p>
  * The following advisor methods are called at strategic points in the
- * workbench's lifecycle (all occur within the dynamic scope of the call
- * to {@link PlatformUI#createAndRunWorkbench PlatformUI.createAndRunWorkbench}):
- * <ul>
- * <li><code>fillActionBars</code> - called after <code>WorkbenchWindowAdvisor.preWindowOpen</code>
- * to configure a window's action bars</li>
- * </ul>
+ * workbench's lifecycle (all occur within the dynamic scope of the call to
+ * {@link PlatformUI#createAndRunWorkbench PlatformUI.createAndRunWorkbench}):
  * </p>
+ * <ul>
+ * <li><code>fillActionBars</code> - called after
+ * <code>WorkbenchWindowAdvisor.preWindowOpen</code> to configure a window's
+ * action bars</li>
+ * </ul>
  *
  * @see WorkbenchWindowAdvisor#createActionBarAdvisor(IActionBarConfigurer)
  *

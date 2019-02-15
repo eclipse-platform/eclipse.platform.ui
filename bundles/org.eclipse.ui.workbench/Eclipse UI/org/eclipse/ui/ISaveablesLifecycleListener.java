@@ -19,6 +19,7 @@ package org.eclipse.ui;
  *
  * <p>
  * This service can be acquired from a part's service locator:
+ * </p>
  *
  * <pre>
  * ISaveablesLifecycleListener listener = (ISaveablesLifecycleListener) getSite()
@@ -36,7 +37,6 @@ package org.eclipse.ui;
  * <ul>
  * <li>This service is available globally.</li>
  * </ul>
- * </p>
  *
  * @since 3.2
  */

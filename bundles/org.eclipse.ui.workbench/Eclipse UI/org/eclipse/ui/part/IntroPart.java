@@ -40,25 +40,24 @@ import org.eclipse.ui.plugin.AbstractUIPlugin;
  * Abstract base implementation of an intro part.
  * <p>
  * Subclasses must implement the following methods:
+ * </p>
  * <ul>
- * <li><code>createPartControl</code>- to create the intro part's controls
- * </li>
+ * <li><code>createPartControl</code>- to create the intro part's controls</li>
  * <li><code>setFocus</code>- to accept focus</li>
  * <li><code>standbyStateChanged</code>- to change the standby mode</li>
  * </ul>
- * </p>
  * <p>
  * Subclasses may extend or reimplement the following methods as required:
+ * </p>
  * <ul>
  * <li><code>setInitializationData</code>- extend to provide additional
  * initialization when the intro extension is instantiated</li>
  * <li><code>init(IIntroSite, IMemento)</code>- extend to provide additional
  * initialization when intro is assigned its site</li>
  * <li><code>dispose</code>- extend to provide additional cleanup</li>
- * <li><code>getAdapter</code>- reimplement to make their intro adaptable
- * </li>
+ * <li><code>getAdapter</code>- reimplement to make their intro adaptable</li>
  * </ul>
- * </p>
+ *
  * @since 3.0
  */
 public abstract class IntroPart extends EventManager implements IIntroPart,

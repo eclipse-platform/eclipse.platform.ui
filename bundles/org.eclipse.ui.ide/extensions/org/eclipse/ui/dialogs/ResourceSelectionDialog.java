@@ -45,14 +45,15 @@ import org.eclipse.ui.views.navigator.ResourceComparator;
  * </p>
  * <p>
  * Example:
- * <pre>
- * 	ResourceSelectionDialog dialog =
- *		new ResourceSelectionDialog(getShell(), rootResource, msg);
- *	dialog.setInitialSelections(selectedResources);
- *	dialog.open();
- *	return dialog.getResult();
- * </pre>
  * </p>
+ * 
+ * <pre>
+ * ResourceSelectionDialog dialog = new ResourceSelectionDialog(getShell(), rootResource, msg);
+ * dialog.setInitialSelections(selectedResources);
+ * dialog.open();
+ * return dialog.getResult();
+ * </pre>
+ * 
  * @noextend This class is not intended to be subclassed by clients.
  */
 public class ResourceSelectionDialog extends SelectionDialog {

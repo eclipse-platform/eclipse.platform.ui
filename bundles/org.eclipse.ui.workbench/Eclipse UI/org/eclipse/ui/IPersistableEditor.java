@@ -23,13 +23,13 @@ package org.eclipse.ui;
  * <p>
  * If a memento is available, restoreState(*) will be inserted into the editor
  * startup.
+ * </p>
  * <ol>
  * <li><code>editor.init(site, input)</code></li>
  * <li><code>editor.restoreState(memento)</code></li>
  * <li><code>editor.createPartControl(parent)</code></li>
  * <li>...</li>
  * </ol>
- * </p>
  * <p>
  * On workbench shutdown, the editor state will be persisted when the editor
  * references are saved.

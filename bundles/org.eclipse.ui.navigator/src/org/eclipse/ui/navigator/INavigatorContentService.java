@@ -35,7 +35,8 @@ import org.eclipse.ui.ISaveablesSource;
  * particular <i>viewerId</i>.
  *
  * <p>
- * Clients can get the instance of this associated with the {@link CommonNavigator} using
+ * Clients can get the instance of this associated with the
+ * {@link CommonNavigator} using
  * {@link CommonNavigator#getNavigatorContentService()}.
  * </p>
  *
@@ -43,32 +44,33 @@ import org.eclipse.ui.ISaveablesSource;
  * Clients may contribute logical extensions using
  * <b>org.eclipse.ui.navigator.navigatorContent</b>. Each extension has three
  * states which determine whether the extension is used by the content service:
+ * </p>
  * <ul>
- * <li><a name="visible"><i>visible</i>: If a content extension id matches a
- * <b>viewerContentBinding</b> for the <i>viewerId</i> of this content
- * service, then the extension is <i>visible</i>. Visible extensions may only
- * be configured through <b>viewerContentBinding</b>s. </li>
+ * <li><i>visible</i>: If a content extension id matches a
+ * <b>viewerContentBinding</b> for the <i>viewerId</i> of this content service,
+ * then the extension is <i>visible</i>. Visible extensions may only be
+ * configured through <b>viewerContentBinding</b>s.</li>
  *
- * <li><a name="active"><i>active</i>: The active state may be set to a default
- * using the <i>activeByDefault</i> attribute of <b>navigatorContent</b>. Users
- * may toggle the <i>active</i> state through the "Filters and Customization"
- * dialog. Clients may also configure the active extensions using
+ * <li><i>active</i>: The active state may be set to a default using the
+ * <i>activeByDefault</i> attribute of <b>navigatorContent</b>. Users may toggle
+ * the <i>active</i> state through the "Filters and Customization" dialog.
+ * Clients may also configure the active extensions using
  * {@link INavigatorActivationService#activateExtensions(String[], boolean)} or
  * {@link INavigatorActivationService#deactivateExtensions(String[], boolean)}
- * from the {@link #getActivationService() Activation Service} </li>
+ * from the {@link #getActivationService() Activation Service}</li>
  *
- * <li><a name="enabled"><i>enabled</i>: An extension is <i>enabled</i> for an element if the
+ * <li><i>enabled</i>: An extension is <i>enabled</i> for an element if the
  * extension contributed that element or if the element is described in the
  * <i>triggerPoints</i> element of the <b>navigatorContent</b> extension. The
- * findXXX() methods search for <i>enabled</i> extensions. </li>
+ * findXXX() methods search for <i>enabled</i> extensions.</li>
  * </ul>
- * </p>
  * <p>
  * A new instance of the content service should be created for each viewer.
  * Clients should use {@link #createCommonContentProvider()} and
  * {@link #createCommonLabelProvider()} for the viewer. Each content service
  * tracks the viewer it is attached to. Clients may create the content service
- * with a viewer using ({@link NavigatorContentServiceFactory#createContentService(String)}).
+ * with a viewer using
+ * ({@link NavigatorContentServiceFactory#createContentService(String)}).
  * Alternatively, when the content provider is created and set on a viewer,
  * {@link IContentProvider#inputChanged(org.eclipse.jface.viewers.Viewer, Object, Object)}
  * will be called and the content provider will update the viewer used by its

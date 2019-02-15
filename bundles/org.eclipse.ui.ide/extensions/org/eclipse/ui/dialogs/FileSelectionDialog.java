@@ -47,21 +47,21 @@ import org.eclipse.ui.model.WorkbenchViewerComparator;
  * </p>
  * <p>
  * Example:
- * 
+ * </p>
+ *
  * <pre>
  * FileSelectionDialog dialog = new FileSelectionDialog(getShell(), rootElement, msg);
  * dialog.setInitialSelections(selectedResources);
  * dialog.open();
  * return dialog.getResult();
  * </pre>
- * </p>
- * 
+ *
  * @deprecated Use org.eclipse.swt.widgets.FileDialog,
  * @noextend This class is not intended to be subclassed by clients.
  * @noreference This class is not intended to be referenced by clients.
  *
- *           Planned to be removed, see
- *           https://bugs.eclipse.org/bugs/show_bug.cgi?id=448275
+ *              Planned to be removed, see
+ *              https://bugs.eclipse.org/bugs/show_bug.cgi?id=448275
  *
  *
  */

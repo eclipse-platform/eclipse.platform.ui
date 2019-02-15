@@ -20,15 +20,16 @@ import org.w3c.dom.DOMException;
  * form that can be persisted in the file system.
  * <p>
  * Mementos were designed with the following requirements in mind:
+ * </p>
  * <ol>
- * <li>Certain objects need to be saved and restored across platform sessions.</li>
+ * <li>Certain objects need to be saved and restored across platform
+ * sessions.</li>
  * <li>When an object is restored, an appropriate class for an object might not
  * be available. It must be possible to skip an object in this case.</li>
  * <li>When an object is restored, the appropriate class for the object may be
  * different from the one when the object was originally saved. If so, the new
  * class should still be able to read the old form of the data.</li>
  * </ol>
- * </p>
  * <p>
  * Mementos meet these requirements by providing support for storing a mapping
  * of arbitrary string keys to primitive values, and by allowing mementos to

@@ -31,7 +31,6 @@ import org.eclipse.ui.internal.util.Util;
  * <li>LOW</li>
  * <li>LEGACY</li>
  * </ol>
- * </p>
  * <p>
  * This class is not intended to be extended by clients.
  * </p>

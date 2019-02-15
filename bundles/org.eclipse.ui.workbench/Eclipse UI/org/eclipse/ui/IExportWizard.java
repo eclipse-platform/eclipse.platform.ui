@@ -18,21 +18,22 @@ package org.eclipse.ui;
  * <p>
  * Clients should implement this interface and include the name of their class
  * in a wizard contributed to the workbench's export wizard extension point
- * (named <code>"org.eclipse.ui.exportWizards"</code>).
- * For example, the plug-in's XML markup might contain:
+ * (named <code>"org.eclipse.ui.exportWizards"</code>). For example, the
+ * plug-in's XML markup might contain:
+ * </p>
+ *
  * <pre>
- * &LT;extension point="org.eclipse.ui.exportWizards"&GT;
- *   &LT;wizard
+ * &lt;extension point="org.eclipse.ui.exportWizards"&gt;
+ *   &lt;wizard
  *       id="com.example.myplugin.blob"
  *       name="Blob File"
  *       class="com.example.myplugin.BlobFileExporter"
- *       icon="icons/export_blob_wiz.gif"&GT;
- *     &LT;description&GT;Export resources to a BLOB file&LT;/description&GT;
- *     &LT;selection class="org.eclipse.core.resources.IResource" /&GT;
- *   &LT;/wizard&GT;
- * &LT;/extension&GT;
+ *       icon="icons/export_blob_wiz.gif"&gt;
+ *     &lt;description&gt;Export resources to a BLOB file&lt;/description&gt;
+ *     &lt;selection class="org.eclipse.core.resources.IResource" /&gt;
+ *   &lt;/wizard&gt;
+ * &lt;/extension&gt;
  * </pre>
- * </p>
  *
  * @see org.eclipse.jface.wizard.IWizard
  */

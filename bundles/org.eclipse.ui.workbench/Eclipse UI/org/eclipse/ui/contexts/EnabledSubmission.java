@@ -18,7 +18,7 @@ import org.eclipse.ui.IWorkbenchPartSite;
 import org.eclipse.ui.internal.util.Util;
 
 /**
- * </p>
+ * <p>
  * An instance of this class represents a request to enabled a context. An
  * enabled submission specifies a list of conditions under which it would be
  * appropriate for a particular context to be enabled. These conditions include
@@ -39,8 +39,7 @@ import org.eclipse.ui.internal.util.Util;
  *
  * @since 3.0
  * @see IWorkbenchContextSupport
- * @deprecated Please use <code>IContextService.activateContext</code>
- *             instead.
+ * @deprecated Please use <code>IContextService.activateContext</code> instead.
  * @see org.eclipse.ui.contexts.IContextService
  */
 @Deprecated

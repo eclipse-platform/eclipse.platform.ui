@@ -88,6 +88,7 @@ import org.eclipse.ui.statushandlers.StatusManager;
  * </p>
  * <p>
  * Example:
+ * </p>
  *
  * <pre>
  * IWorkbenchWizard wizard = new BasicNewProjectResourceWizard();
@@ -95,12 +96,13 @@ import org.eclipse.ui.statushandlers.StatusManager;
  * WizardDialog dialog = new WizardDialog(shell, wizard);
  * dialog.open();
  * </pre>
- *
- * During the call to <code>open</code>, the wizard dialog is presented to
- * the user. When the user hits Finish, a project resource with the
- * user-specified name is created, the dialog closes, and the call to
- * <code>open</code> returns.
+ * <p>
+ * During the call to <code>open</code>, the wizard dialog is presented to the
+ * user. When the user hits Finish, a project resource with the user-specified
+ * name is created, the dialog closes, and the call to <code>open</code>
+ * returns.
  * </p>
+ * 
  * @noextend This class is not intended to be subclassed by clients.
  */
 public class BasicNewProjectResourceWizard extends BasicNewResourceWizard

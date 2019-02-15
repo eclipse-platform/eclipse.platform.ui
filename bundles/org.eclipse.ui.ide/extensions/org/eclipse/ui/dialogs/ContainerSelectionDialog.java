@@ -34,20 +34,23 @@ import org.eclipse.ui.internal.ide.IIDEHelpContextIds;
 import org.eclipse.ui.internal.ide.misc.ContainerSelectionGroup;
 
 /**
- * A standard selection dialog which solicits a container resource from the user.
- * The <code>getResult</code> method returns the selected container resource.
+ * A standard selection dialog which solicits a container resource from the
+ * user. The <code>getResult</code> method returns the selected container
+ * resource.
  * <p>
  * This class may be instantiated; it is not intended to be subclassed.
  * </p>
  * <p>
  * Example:
- * <pre>
- * ContainerSelectionDialog dialog =
- *    new ContainerSelectionDialog(getShell(), initialSelection, allowNewContainerName(), msg);
- *	dialog.open();
- *	Object[] result = dialog.getResult();
- * </pre>
  * </p>
+ * 
+ * <pre>
+ * ContainerSelectionDialog dialog = new ContainerSelectionDialog(getShell(), initialSelection, allowNewContainerName(),
+ * 		msg);
+ * dialog.open();
+ * Object[] result = dialog.getResult();
+ * </pre>
+ * 
  * @noextend This class is not intended to be subclassed by clients.
  */
 public class ContainerSelectionDialog extends SelectionDialog {

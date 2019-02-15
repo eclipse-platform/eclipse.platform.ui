@@ -18,17 +18,19 @@ import org.eclipse.jface.viewers.TextCellEditor;
 import org.eclipse.swt.widgets.Composite;
 
 /**
- * Descriptor for a property that has a value which should be edited with a
- * text cell editor.
+ * Descriptor for a property that has a value which should be edited with a text
+ * cell editor.
  * <p>
  * This class may be instantiated; it is not intended to be subclassed.
  * </p>
  * <p>
  * Example:
+ * </p>
+ * 
  * <pre>
  * IPropertyDescriptor pd = new TextPropertyDescriptor("surname", "Last Name");
  * </pre>
- * </p>
+ * 
  * @noextend This class is not intended to be subclassed by clients.
  */
 public class TextPropertyDescriptor extends PropertyDescriptor {

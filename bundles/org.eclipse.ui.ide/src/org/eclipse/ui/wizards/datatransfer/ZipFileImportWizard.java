@@ -40,7 +40,8 @@ import org.eclipse.ui.plugin.AbstractUIPlugin;
  * </p>
  * <p>
  * Example:
- *
+ * </p>
+ * 
  * <pre>
  * IWizard wizard = new ZipFileImportWizard();
  * wizard.init(workbench, selection);
@@ -48,11 +49,12 @@ import org.eclipse.ui.plugin.AbstractUIPlugin;
  * dialog.open();
  * </pre>
  *
- * During the call to <code>open</code>, the wizard dialog is presented to
- * the user. When the user hits Finish, the user-selected zip file is imported
- * into the workspace, the dialog closes, and the call to <code>open</code>
- * returns.
+ * <p>
+ * During the call to <code>open</code>, the wizard dialog is presented to the
+ * user. When the user hits Finish, the user-selected zip file is imported into
+ * the workspace, the dialog closes, and the call to <code>open</code> returns.
  * </p>
+ *
  * @noextend This class is not intended to be subclassed by clients.
  */
 public class ZipFileImportWizard extends Wizard implements IImportWizard {

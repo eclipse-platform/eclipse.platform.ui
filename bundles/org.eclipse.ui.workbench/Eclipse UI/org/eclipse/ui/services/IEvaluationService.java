@@ -22,8 +22,7 @@ import org.eclipse.ui.ISources;
 /**
  * Evaluate a core expression against the workbench application context and
  * report updates using a Boolean property. Clients supply an
- * <code>IPropertyChangeListener</code> that will be notified as changes
- * occur.
+ * <code>IPropertyChangeListener</code> that will be notified as changes occur.
  * <p>
  * This can be used to implement core expressions in client extension points
  * similar to the &lt;enabledWhen&gt; of
@@ -35,9 +34,9 @@ import org.eclipse.ui.ISources;
  * change events.
  * </p>
  * <p>
- * Adding the evaluation listener will fire one change with oldValue=<code>null</code>
- * and newValue=&quot;evaluated expression&quot;. Remove the
- * <code>IEvaluationReference</code> will fire one change with
+ * Adding the evaluation listener will fire one change with
+ * oldValue=<code>null</code> and newValue=&quot;evaluated expression&quot;.
+ * Remove the <code>IEvaluationReference</code> will fire one change with
  * oldValue=&quot;last evaluated value&quot; and newValue=<code>null</code>.
  * </p>
  * <p>
@@ -50,18 +49,20 @@ import org.eclipse.ui.ISources;
  * caused by the outer most recalculations.
  * </p>
  * <p>
- * Variable sources can be provided to this service using the <code>org.eclipse.ui.services</code>
- * Extension Point.  This makes the available to &lt;with/&gt; expressions.
+ * Variable sources can be provided to this service using the
+ * <code>org.eclipse.ui.services</code> Extension Point. This makes the
+ * available to &lt;with/&gt; expressions.
  * </p>
  * <p>
  * This service can be acquired from your service locator:
+ * </p>
+ * 
  * <pre>
- * 	IEvaluationService service = (IEvaluationService) getSite().getService(IEvaluationService.class);
+ * IEvaluationService service = (IEvaluationService) getSite().getService(IEvaluationService.class);
  * </pre>
  * <ul>
  * <li>This service is available globally.</li>
  * </ul>
- * </p>
  *
  * @since 3.4
  * @noextend This interface is not intended to be extended by clients.

@@ -25,6 +25,7 @@ import org.eclipse.ui.part.EditorPart;
  * <p>
  * IMPORTANT: As of 3.2, implementers of <code>ISaveablesSource</code> must
  * satisfy the following conditions:
+ * </p>
  * <ul>
  * <li>If ISaveablesSource is implemented by an IWorkbenchPart:
  * <ul>
@@ -37,16 +38,17 @@ import org.eclipse.ui.part.EditorPart;
  * <li>the part must not implement {@link ISaveablePart2}</li>
  * </ul>
  * </li>
- * <li>If ISaveablesSource is implemented by a non-part (possible as of 3.2.1 and 3.3):
+ * <li>If ISaveablesSource is implemented by a non-part (possible as of 3.2.1
+ * and 3.3):
  * <ul>
  * <li>the Workbench's {@link ISaveablesLifecycleListener} (obtained from the
  * Workbench by calling
- * <code>workbench.getService(ISaveablesLifecycleListener.class)</code>) must
- * be notified of any change to the result of {@link #getSaveables()} </li>
- * <li>getActiveSaveables() should be implemented to return an empty array
- * </li>
+ * <code>workbench.getService(ISaveablesLifecycleListener.class)</code>) must be
+ * notified of any change to the result of {@link #getSaveables()}</li>
+ * <li>getActiveSaveables() should be implemented to return an empty array</li>
  * </ul>
  * </ul>
+ * <p>
  * If any of these conditions are not met, it is undefined whether the Workbench
  * will prompt to save dirty Saveables when closing parts or the Workbench.
  * </p>

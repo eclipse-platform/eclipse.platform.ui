@@ -72,10 +72,11 @@ import org.eclipse.ui.part.ShowInContext;
  * This standard view has id <code>"org.eclipse.ui.views.PropertySheet"</code>.
  * </p>
  * <p>
- * Note that property <it>sheets</it> and property sheet pages are not the
- * same thing as property <it>dialogs</it> and their property pages (the property
- * pages extension point is for contributing property pages to property dialogs).
- * Within the property sheet view, all pages are <code>IPropertySheetPage</code>s.
+ * Note that property <i>sheets</i> and property sheet pages are not the same
+ * thing as property <i>dialogs</i> and their property pages (the property pages
+ * extension point is for contributing property pages to property dialogs).
+ * Within the property sheet view, all pages are
+ * <code>IPropertySheetPage</code>s.
  * </p>
  * <p>
  * Property sheet pages are discovered by the property sheet view automatically
@@ -92,9 +93,9 @@ import org.eclipse.ui.part.ShowInContext;
  * sheet page of their own.
  * </p>
  * <p>
- * The workbench will automatically instantiate this class when a Property
- * Sheet view is needed for a workbench window. This class is not intended
- * to be instantiated or subclassed by clients.
+ * The workbench will automatically instantiate this class when a Property Sheet
+ * view is needed for a workbench window. This class is not intended to be
+ * instantiated or subclassed by clients.
  * </p>
  *
  * @see IPropertySheetPage

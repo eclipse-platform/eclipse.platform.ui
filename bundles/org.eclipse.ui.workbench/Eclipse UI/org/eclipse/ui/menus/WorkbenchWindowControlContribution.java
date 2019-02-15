@@ -22,20 +22,18 @@ import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.internal.menus.InternalControlContribution;
 
 /**
- * Abstract base class from which all controls contributions to
- * the workbench through the 'org.eclipse.ui.menus' extension
- * point must derive.
+ * Abstract base class from which all controls contributions to the workbench
+ * through the 'org.eclipse.ui.menus' extension point must derive.
  * <p>
- * The extends the {@link ControlContribution} by adding accessor
- * methods that provide extra state information about the placement
- * of the control:
- * <ul>
- * <li>getWorkbenchWindow() - indicates which workbench window this control
- * is being hosted by</li>
- * <li>getCurSide() - indicates which side of the workbench window the
- * control is being displayed on</li>
- * </ul>
+ * The extends the {@link ControlContribution} by adding accessor methods that
+ * provide extra state information about the placement of the control:
  * </p>
+ * <ul>
+ * <li>getWorkbenchWindow() - indicates which workbench window this control is
+ * being hosted by</li>
+ * <li>getCurSide() - indicates which side of the workbench window the control
+ * is being displayed on</li>
+ * </ul>
  *
  * @since 3.3
  *

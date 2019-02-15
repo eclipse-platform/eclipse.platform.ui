@@ -108,7 +108,6 @@ public interface IEditorInput extends IAdaptable {
 	 * differentiate between two input with the same name. For instance,
 	 * MyClass.java in folder X and MyClass.java in folder Y. The format of the
 	 * text varies between input types.
-	 * </p>
 	 *
 	 * @return the tool tip text; never <code>null</code>.
 	 */

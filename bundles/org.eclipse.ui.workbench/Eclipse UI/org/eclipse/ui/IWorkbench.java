@@ -40,8 +40,8 @@ import org.eclipse.ui.wizards.IWizardRegistry;
 /**
  * A workbench is the root object for the Eclipse Platform user interface.
  * <p>
- * A <b>workbench</b> has one or more main windows which present to the end
- * user information based on some underlying model, typically on resources in an
+ * A <b>workbench</b> has one or more main windows which present to the end user
+ * information based on some underlying model, typically on resources in an
  * underlying workspace. A workbench usually starts with a single open window,
  * and automatically closes when its last window closes.
  * </p>
@@ -61,7 +61,7 @@ import org.eclipse.ui.wizards.IWizardRegistry;
  * The platform creates a workbench when the workbench plug-in is activated;
  * since this happens at most once during the life of the running platform,
  * there is only one workbench instance. Due to its singular nature, it is
- * commonly referred to as <it>the</it> workbench.
+ * commonly referred to as <i>the</i> workbench.
  * </p>
  * <p>
  * The workbench supports a few {@link IServiceLocator services} by default. If

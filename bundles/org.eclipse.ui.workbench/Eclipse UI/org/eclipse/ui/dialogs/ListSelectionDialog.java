@@ -19,7 +19,6 @@ import static org.eclipse.swt.events.SelectionListener.widgetSelectedAdapter;
 
 import java.util.ArrayList;
 import java.util.Iterator;
-
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.viewers.CheckboxTableViewer;
@@ -38,28 +37,25 @@ import org.eclipse.ui.internal.IWorkbenchHelpContextIds;
 import org.eclipse.ui.internal.WorkbenchMessages;
 
 /**
- * A standard dialog which solicits a list of selections from the user.
- * This class is configured with an arbitrary data model represented by content
- * and label provider objects. The <code>getResult</code> method returns the
+ * A standard dialog which solicits a list of selections from the user. This
+ * class is configured with an arbitrary data model represented by content and
+ * label provider objects. The <code>getResult</code> method returns the
  * selected elements.
  * <p>
  * This class may be instantiated; it is not intended to be subclassed.
  * </p>
  * <p>
  * Example:
- * <pre>
- * ListSelectionDialog dlg =
- *   new ListSelectionDialog(
- *       getShell(),
- *       input,
- *       new BaseWorkbenchContentProvider(),
- *		 new WorkbenchLabelProvider(),
- *		 "Select the resources to save:");
- *	dlg.setInitialSelections(dirtyEditors);
- *	dlg.setTitle("Save Resources");
- *	dlg.open();
- * </pre>
  * </p>
+ * 
+ * <pre>
+ * ListSelectionDialog dlg = new ListSelectionDialog(getShell(), input, new BaseWorkbenchContentProvider(),
+ * 		new WorkbenchLabelProvider(), "Select the resources to save:");
+ * dlg.setInitialSelections(dirtyEditors);
+ * dlg.setTitle("Save Resources");
+ * dlg.open();
+ * </pre>
+ * 
  * @noextend This class is not intended to be subclassed by clients.
  */
 public class ListSelectionDialog extends SelectionDialog {

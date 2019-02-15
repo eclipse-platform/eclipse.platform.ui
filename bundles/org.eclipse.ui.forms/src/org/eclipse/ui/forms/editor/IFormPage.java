@@ -15,25 +15,25 @@ package org.eclipse.ui.forms.editor;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.forms.IManagedForm;
+
 /**
- * Interface that all GUI pages need to implement in order
- * to be added to FormEditor part. The interface makes
- * several assumptions:
+ * Interface that all GUI pages need to implement in order to be added to
+ * FormEditor part. The interface makes several assumptions:
  * <ul>
  * <li>The form page has a managed form</li>
  * <li>The form page has a unique id</li>
- * <li>The form page can be GUI but can also wrap a complete
- * editor class (in that case, it should return <code>true</code>
- * from <code>isEditor()</code> method).</li>
- * <li>The form page is lazy i.e. understands that
- * its part control will be created at the last possible
- * moment.</li>.
+ * <li>The form page can be GUI but can also wrap a complete editor class (in
+ * that case, it should return <code>true</code> from <code>isEditor()</code>
+ * method).</li>
+ * <li>The form page is lazy i.e. understands that its part control will be
+ * created at the last possible moment.</li>
  * </ul>
- * <p>Existing editors can be wrapped by implementing
- * this interface. In this case, 'isEditor' should return <code>true</code>.
- * A common editor to wrap in <code>TextEditor</code> that is
- * often added to show the raw source code of the file open into
- * the multi-page editor.
+ * <p>
+ * Existing editors can be wrapped by implementing this interface. In this case,
+ * 'isEditor' should return <code>true</code>. A common editor to wrap in
+ * <code>TextEditor</code> that is often added to show the raw source code of
+ * the file open into the multi-page editor.
+ * </p>
  *
  * @since 3.0
  */

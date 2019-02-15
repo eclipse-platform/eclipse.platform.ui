@@ -22,17 +22,17 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.ToolBar;
 
 /**
- * Class <code>DrillDownComposite</code> implements a simple web
- * style navigation metaphor.  Home, back, and "drill into" buttons are
- * added to a tree viewer for easier navigation.
+ * Class <code>DrillDownComposite</code> implements a simple web style
+ * navigation metaphor. Home, back, and "drill into" buttons are added to a tree
+ * viewer for easier navigation.
  * <p>
  * To use the DrillDownComposite..
  * </p>
- * <ul>
+ * <ol>
  * <li>Create an instance of <code>DrillDownComposite</code>.</li>
- * <li>Create a tree viewer.  </li>
- * <li>Pass the second tree viewer into the composite by
- *   calling <code>setChildTree</code>.</li>
+ * <li>Create a tree viewer.</li>
+ * <li>Pass the second tree viewer into the composite by calling
+ * <code>setChildTree</code>.</li>
  * </ol>
  */
 public class DrillDownComposite extends Composite {

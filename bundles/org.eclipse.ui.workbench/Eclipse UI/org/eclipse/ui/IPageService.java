@@ -14,17 +14,19 @@
 package org.eclipse.ui;
 
 /**
- * A page service tracks the page and perspective lifecycle events
- * within a workbench window.
+ * A page service tracks the page and perspective lifecycle events within a
+ * workbench window.
  * <p>
  * This service can be acquired from your service locator:
+ * </p>
+ * 
  * <pre>
- * 	IPageService service = (IPageService) getSite().getService(IPageService.class);
+ * IPageService service = (IPageService) getSite().getService(IPageService.class);
  * </pre>
  * <ul>
- * <li>This service is not available globally, only from the workbench window level down.</li>
+ * <li>This service is not available globally, only from the workbench window
+ * level down.</li>
  * </ul>
- * </p>
  *
  * @see IWorkbenchWindow
  * @see IPageListener

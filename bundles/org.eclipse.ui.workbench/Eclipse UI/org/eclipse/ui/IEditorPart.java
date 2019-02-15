@@ -15,34 +15,35 @@
 package org.eclipse.ui;
 
 /**
- * An editor is a visual component within a workbench page. It is
- * typically used to edit or browse a document or input object. The input
- * is identified using an <code>IEditorInput</code>.  Modifications made
- * in an editor part follow an open-save-close lifecycle model (in contrast
- * to a view part, where modifications are saved to the workbench
- * immediately).
+ * An editor is a visual component within a workbench page. It is typically used
+ * to edit or browse a document or input object. The input is identified using
+ * an <code>IEditorInput</code>. Modifications made in an editor part follow an
+ * open-save-close lifecycle model (in contrast to a view part, where
+ * modifications are saved to the workbench immediately).
  * <p>
- * An editor is document or input-centric.  Each editor has an input, and only
- * one editor can exist for each editor input within a page.  This policy has
+ * An editor is document or input-centric. Each editor has an input, and only
+ * one editor can exist for each editor input within a page. This policy has
  * been designed to simplify part management.
- * </p><p>
+ * </p>
+ * <p>
  * An editor should be used in place of a view whenever more than one instance
  * of a document type can exist.
- * </p><p>
- * This interface may be implemented directly.  For convenience, a base
+ * </p>
+ * <p>
+ * This interface may be implemented directly. For convenience, a base
  * implementation is defined in <code>EditorPart</code>.
  * </p>
  * <p>
  * An editor part is added to the workbench in two stages:
- * <ol>
- * 	<li>An editor extension is contributed to the workbench registry. This
- *    extension defines the extension id, extension class, and the file
- *    extensions which are supported by the editor.</li>
- *  <li>An editor part based upon the extension is created and added to the
- *    workbench when the user opens a file with one of the supported file
- *    extensions (or some other suitable form of editor input).</li>
- * </ol>
  * </p>
+ * <ol>
+ * <li>An editor extension is contributed to the workbench registry. This
+ * extension defines the extension id, extension class, and the file extensions
+ * which are supported by the editor.</li>
+ * <li>An editor part based upon the extension is created and added to the
+ * workbench when the user opens a file with one of the supported file
+ * extensions (or some other suitable form of editor input).</li>
+ * </ol>
  * <p>
  * All editor parts implement the <code>IAdaptable</code> interface; extensions
  * are managed by the platform's adapter manager.

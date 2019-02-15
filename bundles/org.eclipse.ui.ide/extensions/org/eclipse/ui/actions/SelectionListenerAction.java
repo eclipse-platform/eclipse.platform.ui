@@ -37,10 +37,10 @@ import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
  * monitor selection changes that could affect the availability of the action.
  * <p>
  * Subclasses must implement the following <code>IAction</code> method:
+ * </p>
  * <ul>
  * <li><code>run</code> - to do the action's work</li>
  * </ul>
- * </p>
  * <p>
  * Subclasses may extend the <code>updateSelection</code> method to update the
  * action determine its availability based on the current selection.
@@ -49,13 +49,13 @@ import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
  * The object instantiating the subclass is responsible for registering the
  * instance with a selection provider. Alternatively, the object can notify the
  * subclass instance directly of a selection change using the methods:
+ * </p>
  * <ul>
  * <li><code>selectionChanged(IStructuredSelection)</code> - passing the
  * selection</li>
  * <li><code>selectionChanged(ISelectionChangedEvent)</code> - passing the
  * selection change event</li>
  * </ul>
- * </p>
  */
 public abstract class SelectionListenerAction extends BaseSelectionListenerAction {
 

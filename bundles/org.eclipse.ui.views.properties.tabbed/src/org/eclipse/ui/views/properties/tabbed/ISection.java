@@ -21,6 +21,7 @@ import org.eclipse.ui.IWorkbenchPart;
  * Represents a section of properties for a given input.
  * <p>
  * The lifecycle of an ISection is as follows:
+ * </p>
  * <ul>
  * <li><code>ISection.createControls()</code></li>
  * <li><code>ISection.setInput()</code></li>
@@ -29,7 +30,6 @@ import org.eclipse.ui.IWorkbenchPart;
  * <li><code>ISection.aboutToBeHidden()</code></li>
  * <li><code>ISection.dispose()</code></li>
  * </ul>
- * </p>
  * <p>
  * Implementors of this class should be aware that a section instance might be
  * reused for different input objects (as long as they are valid section
@@ -40,14 +40,15 @@ import org.eclipse.ui.IWorkbenchPart;
  * <p>
  * When an input change event occurs, such as a tab selection or a workbench
  * selection change, an ISection is sent:
+ * </p>
  * <ul>
  * <li><code>ISection.setInput()</code></li>
  * <li><code>ISection.refresh()</code></li>
  * </ul>
- * </p>
  * <p>
  * When an part activation event occurs, such as the contributor part activation
  * event, an ISection is sent:
+ * </p>
  * <ul>
  * <li><code>ISection.setInput()</code></li>
  * <li><code>ISection.aboutToBeShown()</code></li>
@@ -55,6 +56,7 @@ import org.eclipse.ui.IWorkbenchPart;
  * <li><code>ISection.setInput()</code></li>
  * <li><code>ISection.refresh()</code></li>
  * </ul>
+ * <p>
  * This is because both a tab selection event and an input selection event have
  * occurred.
  * </p>
@@ -62,6 +64,7 @@ import org.eclipse.ui.IWorkbenchPart;
  * This interface should not be extended or implemented. New section instances
  * should be created using <code>AbstractPropertySection</code>.
  * </p>
+ *
  * @see org.eclipse.ui.views.properties.tabbed.TabbedPropertySheetPage
  *
  * @author Anthony Hunter

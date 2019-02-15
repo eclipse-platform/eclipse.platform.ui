@@ -16,16 +16,16 @@ package org.eclipse.ui;
 import org.eclipse.jface.resource.ImageDescriptor;
 
 /**
- * Description of an editor in the workbench editor registry. The
- * editor descriptor contains the information needed to create editor instances.
+ * Description of an editor in the workbench editor registry. The editor
+ * descriptor contains the information needed to create editor instances.
  * <p>
  * An editor descriptor typically represents one of three types of editors:
- * <ul>
- *   <li>a file editor extension for a specific file extension.</li>
- *   <li>a file editor added by the user (via the workbench preference page)</li>
- *   <li>a general editor extension which works on objects other than files.</li>
- * </ul>
  * </p>
+ * <ul>
+ * <li>a file editor extension for a specific file extension.</li>
+ * <li>a file editor added by the user (via the workbench preference page)</li>
+ * <li>a general editor extension which works on objects other than files.</li>
+ * </ul>
  * <p>
  * This interface is not intended to be implemented or extended by clients.
  * </p>

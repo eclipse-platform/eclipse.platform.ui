@@ -20,13 +20,12 @@ import org.eclipse.jface.resource.ImageDescriptor;
  * Registry of editors known to the workbench.
  * <p>
  * An editor can be created in one of two ways:
- * <ul>
- *   <li>An editor can be defined by an extension to the workbench.</li>
- *   <li>The user manually associates an editor with a given resource extension
- *      type. This will override any default workbench or platform association.
- *      </li>
- * </ul>
  * </p>
+ * <ul>
+ * <li>An editor can be defined by an extension to the workbench.</li>
+ * <li>The user manually associates an editor with a given resource extension
+ * type. This will override any default workbench or platform association.</li>
+ * </ul>
  * <p>
  * The registry does not keep track of editors that are "implicitly" determined.
  * For example a bitmap (<code>.bmp</code>) file will typically not have a

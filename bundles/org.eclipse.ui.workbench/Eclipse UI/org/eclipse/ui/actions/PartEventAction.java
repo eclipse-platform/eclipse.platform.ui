@@ -20,28 +20,28 @@ import org.eclipse.ui.IWorkbenchPart;
 /**
  * The abstract superclass for actions that listen to part activation and
  * open/close events. This implementation tracks the active part (see
- * <code>getActivePart</code>) and provides a convenient place to monitor
- * part lifecycle events that could affect the availability of the action.
+ * <code>getActivePart</code>) and provides a convenient place to monitor part
+ * lifecycle events that could affect the availability of the action.
  * <p>
  * Subclasses must implement the following <code>IAction</code> method:
- * <ul>
- *   <li><code>run</code> - to do the action's work</li>
- * </ul>
  * </p>
+ * <ul>
+ * <li><code>run</code> - to do the action's work</li>
+ * </ul>
  * <p>
  * Subclasses may extend any of the <code>IPartListener</code> methods if the
  * action availablity needs to be recalculated:
- * <ul>
- *   <li><code>partActivated</code></li>
- *   <li><code>partDeactivated</code></li>
- *   <li><code>partOpened</code></li>
- *   <li><code>partClosed</code></li>
- *   <li><code>partBroughtToTop</code></li>
- * </ul>
  * </p>
+ * <ul>
+ * <li><code>partActivated</code></li>
+ * <li><code>partDeactivated</code></li>
+ * <li><code>partOpened</code></li>
+ * <li><code>partClosed</code></li>
+ * <li><code>partBroughtToTop</code></li>
+ * </ul>
  * <p>
- * Although this method implements the <code>IPartListener</code> interface,
- * it does NOT register itself.
+ * Although this method implements the <code>IPartListener</code> interface, it
+ * does NOT register itself.
  * </p>
  */
 public abstract class PartEventAction extends Action implements IPartListener {

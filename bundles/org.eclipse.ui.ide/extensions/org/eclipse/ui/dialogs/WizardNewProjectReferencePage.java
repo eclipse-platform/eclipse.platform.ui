@@ -35,20 +35,19 @@ import org.eclipse.ui.model.WorkbenchContentProvider;
 import org.eclipse.ui.model.WorkbenchLabelProvider;
 
 /**
- * Standard project reference page for a wizard that creates a
- * project resource.
+ * Standard project reference page for a wizard that creates a project resource.
  * <p>
- * This page may be used by clients as-is; it may be also be
- * subclassed to suit.
+ * This page may be used by clients as-is; it may be also be subclassed to suit.
  * </p>
  * <p>
  * Example usage:
+ * </p>
+ * 
  * <pre>
  * referencePage = new WizardNewProjectReferencePage("basicReferenceProjectPage");
  * referencePage.setTitle("Project");
  * referencePage.setDescription("Select referenced projects.");
  * </pre>
- * </p>
  */
 public class WizardNewProjectReferencePage extends WizardPage {
     // widgets

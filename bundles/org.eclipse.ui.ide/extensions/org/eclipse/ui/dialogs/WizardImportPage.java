@@ -40,22 +40,22 @@ import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
  * </p>
  * <p>
  * Subclasses must implement
+ * </p>
  * <ul>
  * <li><code>createSourceGroup</code></li>
  * </ul>
- * </p>
  * <p>
  * Subclasses may override
+ * </p>
  * <ul>
  * <li><code>allowNewContainerName</code></li>
  * </ul>
- * </p>
  * <p>
  * Subclasses may extend
+ * </p>
  * <ul>
  * <li><code>handleEvent</code></li>
  * </ul>
- * </p>
  *
  * @deprecated use WizardResourceImportPage
  * @noreference This class is not intended to be referenced by clients.

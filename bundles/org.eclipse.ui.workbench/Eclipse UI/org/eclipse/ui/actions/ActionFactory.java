@@ -42,17 +42,16 @@ import org.eclipse.ui.internal.intro.IntroMessages;
  * <p>
  * Most of the functionality of this class is provided by static methods and
  * fields. Example usage:
+ * </p>
  *
  * <pre>
  * MenuManager menu = ...;
- * ActionFactory.IWorkbenchAction closeEditorAction
- *    = ActionFactory.CLOSE.create(window);
+ * ActionFactory.IWorkbenchAction closeEditorAction = ActionFactory.CLOSE.create(window);
  * menu.add(closeEditorAction);
  * </pre>
- * </p>
  * <p>
- * Clients may declare other classes that provide additional application-specific
- * action factories.
+ * Clients may declare other classes that provide additional
+ * application-specific action factories.
  * </p>
  *
  * @since 3.0

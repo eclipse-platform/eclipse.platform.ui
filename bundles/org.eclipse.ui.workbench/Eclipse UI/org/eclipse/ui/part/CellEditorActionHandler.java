@@ -15,7 +15,6 @@ package org.eclipse.ui.part;
 
 import java.util.HashMap;
 import java.util.Iterator;
-
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IAction;
@@ -33,20 +32,23 @@ import org.eclipse.ui.internal.IWorkbenchHelpContextIds;
 import org.eclipse.ui.internal.WorkbenchMessages;
 
 /**
- * Handles the redirection of the global actions Cut, Copy, Paste,
- * Delete, Select All, Find, Undo and Redo to either the current
- * inline cell editor or the part's supplied action handler.
+ * Handles the redirection of the global actions Cut, Copy, Paste, Delete,
+ * Select All, Find, Undo and Redo to either the current inline cell editor or
+ * the part's supplied action handler.
  * <p>
  * This class may be instantiated; it is not intended to be subclassed.
- * </p><p>
+ * </p>
+ * <p>
  * Example usage:
+ * </p>
+ * 
  * <pre>
  * actionHandler = new CellEditorActionHandler(this.getViewSite().getActionBars());
  * actionHandler.addCellEditor(textCellEditor1);
  * actionHandler.addCellEditor(textCellEditor2);
  * actionHandler.setSelectAllAction(selectAllAction);
  * </pre>
- * </p>
+ * 
  * @noextend This class is not intended to be subclassed by clients.
  */
 public class CellEditorActionHandler {

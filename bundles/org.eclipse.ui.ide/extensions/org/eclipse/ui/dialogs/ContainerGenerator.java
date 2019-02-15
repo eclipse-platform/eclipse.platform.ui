@@ -31,25 +31,27 @@ import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
 import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
 
 /**
- * For creating folder resources that currently do not exist,
- * along a given workspace path.
+ * For creating folder resources that currently do not exist, along a given
+ * workspace path.
  * <p>
  * This class may be instantiated; it is not intended to be subclassed.
  * </p>
  * <p>
  * Example usage:
+ * </p>
+ * 
  * <pre>
  * ContainerGenerator gen = new ContainerGenerator(new Path("/A/B"));
  * IContainer res = null;
  * try {
- *   res = gen.getContainer(monitor); // creates project A and folder B if required
+ * 	res = gen.getContainer(monitor); // creates project A and folder B if required
  * } catch (CoreException e) {
- *   // handle failure
+ * 	// handle failure
  * } catch (OperationCanceledException e) {
- *   // handle cancelation
+ * 	// handle cancelation
  * }
  * </pre>
- * </p>
+ * 
  * @noextend This class is not intended to be subclassed by clients.
  */
 public class ContainerGenerator {

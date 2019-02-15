@@ -32,22 +32,25 @@ import org.eclipse.ui.internal.wizards.datatransfer.WizardFileSystemResourceImpo
  * Standard workbench wizard for importing resources from the local file system
  * into the workspace.
  * <p>
- * This class may be instantiated and used without further configuration;
- * this class is not intended to be subclassed.
+ * This class may be instantiated and used without further configuration; this
+ * class is not intended to be subclassed.
  * </p>
  * <p>
  * Example:
+ * </p>
+ * 
  * <pre>
  * IWizard wizard = new FileSystemImportWizard();
  * wizard.init(workbench, selection);
  * WizardDialog dialog = new WizardDialog(shell, wizard);
  * dialog.open();
  * </pre>
+ * <p>
  * During the call to <code>open</code>, the wizard dialog is presented to the
- * user. When the user hits Finish, the user-selected files are imported
- * into the workspace, the dialog closes, and the call to <code>open</code>
- * returns.
+ * user. When the user hits Finish, the user-selected files are imported into
+ * the workspace, the dialog closes, and the call to <code>open</code> returns.
  * </p>
+ * 
  * @noextend This class is not intended to be subclassed by clients.
  */
 public class FileSystemImportWizard extends Wizard implements IImportWizard {

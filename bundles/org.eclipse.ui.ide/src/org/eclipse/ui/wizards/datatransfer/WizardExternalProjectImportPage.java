@@ -52,19 +52,20 @@ import org.eclipse.ui.internal.ide.IIDEHelpContextIds;
 import org.eclipse.ui.internal.wizards.datatransfer.DataTransferMessages;
 
 /**
- * Standard main page for a wizard that creates a project resource from
- * whose location already contains a project.
+ * Standard main page for a wizard that creates a project resource from whose
+ * location already contains a project.
  * <p>
  * This page may be used by clients as-is; it may be also be subclassed to suit.
  * </p>
  * <p>
  * Example usage:
+ * </p>
+ * 
  * <pre>
  * mainPage = new WizardExternalProjectImportPage("basicNewProjectPage");
  * mainPage.setTitle("Project");
  * mainPage.setDescription("Create a new project resource.");
  * </pre>
- * </p>
  */
 public class WizardExternalProjectImportPage extends WizardPage {
 

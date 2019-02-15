@@ -35,32 +35,32 @@ import org.eclipse.ui.intro.IIntroManager;
  * window being created (one per window), and is used to configure the window.
  * </p>
  * <p>
- * An application should declare a subclass of <code>WorkbenchWindowAdvisor</code>
- * and override methods to configure workbench windows to suit the needs of the
- * particular application.
+ * An application should declare a subclass of
+ * <code>WorkbenchWindowAdvisor</code> and override methods to configure
+ * workbench windows to suit the needs of the particular application.
  * </p>
  * <p>
- * The following advisor methods are called at strategic points in the
- * workbench window's lifecycle (as with the workbench advisor, all occur
- * within the dynamic scope of the call to
- * {@link PlatformUI#createAndRunWorkbench PlatformUI.createAndRunWorkbench}):
+ * The following advisor methods are called at strategic points in the workbench
+ * window's lifecycle (as with the workbench advisor, all occur within the
+ * dynamic scope of the call to {@link PlatformUI#createAndRunWorkbench
+ * PlatformUI.createAndRunWorkbench}):
+ * </p>
  * <ul>
- * <li><code>preWindowOpen</code> - called as the window is being opened;
- *  use to configure aspects of the window other than actions bars</li>
+ * <li><code>preWindowOpen</code> - called as the window is being opened; use to
+ * configure aspects of the window other than actions bars</li>
  * <li><code>postWindowRestore</code> - called after the window has been
  * recreated from a previously saved state; use to adjust the restored
  * window</li>
- * <li><code>postWindowCreate</code> -  called after the window has been created,
- * either from an initial state or from a restored state;  used to adjust the
+ * <li><code>postWindowCreate</code> - called after the window has been created,
+ * either from an initial state or from a restored state; used to adjust the
  * window</li>
- * <li><code>openIntro</code> - called immediately before the window is opened in
- * order to create the introduction component, if any.</li>
- * <li><code>postWindowOpen</code> - called after the window has been
- * opened; use to hook window listeners, etc.</li>
- * <li><code>preWindowShellClose</code> - called when the window's shell
- * is closed by the user; use to pre-screen window closings</li>
+ * <li><code>openIntro</code> - called immediately before the window is opened
+ * in order to create the introduction component, if any.</li>
+ * <li><code>postWindowOpen</code> - called after the window has been opened;
+ * use to hook window listeners, etc.</li>
+ * <li><code>preWindowShellClose</code> - called when the window's shell is
+ * closed by the user; use to pre-screen window closings</li>
  * </ul>
- * </p>
  *
  * @since 3.1
  */

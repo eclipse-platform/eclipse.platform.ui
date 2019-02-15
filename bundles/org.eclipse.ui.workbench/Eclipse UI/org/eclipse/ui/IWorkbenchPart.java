@@ -18,72 +18,75 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Composite;
 
 /**
- * A workbench part is a visual component within a workbench page.  There
- * are two subtypes: view and editor, as defined by <code>IViewPart</code> and
+ * A workbench part is a visual component within a workbench page. There are two
+ * subtypes: view and editor, as defined by <code>IViewPart</code> and
  * <code>IEditorPart</code>.
  * <p>
  * A view is typically used to navigate a hierarchy of information (like the
  * workspace), open an editor, or display properties for the active editor.
  * Modifications made in a view are saved immediately.
- * </p><p>
- * An editor is typically used to edit or browse a document or input object.
- * The input is identified using an <code>IEditorInput</code>.  Modifications made
- * in an editor part follow an open-save-close lifecycle model.
- * </p><p>
- * This interface may be implemented directly.  For convenience, a base
- * implementation is defined in <code>WorkbenchPart</code>.
- * </p><p>
- * The lifecycle of a workbench part is as follows:
- * <ul>
- * 	<li>When a part extension is created:
- *    <ul>
- *		<li>instantiate the part</li>
- *		<li>create a part site</li>
- *		<li>call <code>part.init(site)</code></li>
- * 	  </ul>
- *  <li>When a part becomes visible in the workbench:
- * 	  <ul>
- *		<li>add part to presentation by calling
- *        <code>part.createPartControl(parent)</code> to create actual widgets</li>
- *		<li>fire <code>partOpened</code> event to all listeners</li>
- *	  </ul>
- *   </li>
- *  <li>When a part is activated or gets focus:
- *    <ul>
- *		<li>call <code>part.setFocus()</code></li>
- *		<li>fire <code>partActivated</code> event to all listeners</li>
- *	  </ul>
- *   </li>
- *  <li>When a part is closed:
- *    <ul>
- *		<li>if save is needed, do save; if it fails or is canceled return</li>
- *		<li>if part is active, deactivate part</li>
- *		<li>fire <code>partClosed</code> event to all listeners</li>
- *		<li>remove part from presentation; part controls are disposed as part
- *         of the SWT widget tree
- *		<li>call <code>part.dispose()</code></li>
- *	  </ul>
- *   </li>
- * </ul>
  * </p>
+ * <p>
+ * An editor is typically used to edit or browse a document or input object. The
+ * input is identified using an <code>IEditorInput</code>. Modifications made in
+ * an editor part follow an open-save-close lifecycle model.
+ * </p>
+ * <p>
+ * This interface may be implemented directly. For convenience, a base
+ * implementation is defined in <code>WorkbenchPart</code>.
+ * </p>
+ * <p>
+ * The lifecycle of a workbench part is as follows:
+ * </p>
+ * <ul>
+ * <li>When a part extension is created:
+ * <ul>
+ * <li>instantiate the part</li>
+ * <li>create a part site</li>
+ * <li>call <code>part.init(site)</code></li>
+ * </ul>
+ * <li>When a part becomes visible in the workbench:
+ * <ul>
+ * <li>add part to presentation by calling
+ * <code>part.createPartControl(parent)</code> to create actual widgets</li>
+ * <li>fire <code>partOpened</code> event to all listeners</li>
+ * </ul>
+ * </li>
+ * <li>When a part is activated or gets focus:
+ * <ul>
+ * <li>call <code>part.setFocus()</code></li>
+ * <li>fire <code>partActivated</code> event to all listeners</li>
+ * </ul>
+ * </li>
+ * <li>When a part is closed:
+ * <ul>
+ * <li>if save is needed, do save; if it fails or is canceled return</li>
+ * <li>if part is active, deactivate part</li>
+ * <li>fire <code>partClosed</code> event to all listeners</li>
+ * <li>remove part from presentation; part controls are disposed as part of the
+ * SWT widget tree
+ * <li>call <code>part.dispose()</code></li>
+ * </ul>
+ * </li>
+ * </ul>
  * <p>
  * After <code>createPartControl</code> has been called, the implementor may
- * safely reference the controls created.  When the part is closed
- * these controls will be disposed as part of an SWT composite.  This
- * occurs before the <code>IWorkbenchPart.dispose</code> method is called.
- * If there is a need to free SWT resources the part should define a dispose
- * listener for its own control and free those resources from the dispose
- * listener.  If the part invokes any method on the disposed SWT controls
- * after this point an <code>SWTError</code> will be thrown.
+ * safely reference the controls created. When the part is closed these controls
+ * will be disposed as part of an SWT composite. This occurs before the
+ * <code>IWorkbenchPart.dispose</code> method is called. If there is a need to
+ * free SWT resources the part should define a dispose listener for its own
+ * control and free those resources from the dispose listener. If the part
+ * invokes any method on the disposed SWT controls after this point an
+ * <code>SWTError</code> will be thrown.
  * </p>
  * <p>
- * The last method called on <code>IWorkbenchPart</code> is <code>dispose</code>.
- * This signals the end of the part lifecycle.
+ * The last method called on <code>IWorkbenchPart</code> is
+ * <code>dispose</code>. This signals the end of the part lifecycle.
  * </p>
  * <p>
- * An important point to note about this lifecycle is that following
- * a call to init, createPartControl may never be called. Thus in the dispose
- * method, implementors must not assume controls were created.
+ * An important point to note about this lifecycle is that following a call to
+ * init, createPartControl may never be called. Thus in the dispose method,
+ * implementors must not assume controls were created.
  * </p>
  * <p>
  * Workbench parts implement the <code>IAdaptable</code> interface; extensions

@@ -50,19 +50,19 @@ import org.osgi.framework.BundleContext;
  *
  * <p>
  * Acceptable styles (can be combined with logical OR)
+ * </p>
  * <ul>
- * <li>NONE - a style indicating that the status should not be acted on. This
- * is used by objects such as log listeners that do not want to report a status
+ * <li>NONE - a style indicating that the status should not be acted on. This is
+ * used by objects such as log listeners that do not want to report a status
  * twice</li>
  * <li>LOG - a style indicating that the status should be logged only</li>
  * <li>SHOW - a style indicating that handlers should show a problem to an user
  * without blocking the calling method while awaiting user response. This is
  * generally done using a non modal {@link Dialog}</li>
- * <li>BLOCK - a style indicating that the handling should block the UI
- * until the user has responded. This is generally done using a modal
- * window such as a {@link Dialog}</li>
+ * <li>BLOCK - a style indicating that the handling should block the UI until
+ * the user has responded. This is generally done using a modal window such as a
+ * {@link Dialog}</li>
  * </ul>
- * </p>
  *
  * <p>
  * Handlers are intended to be accessed via the status manager. The
@@ -399,8 +399,9 @@ public class StatusManager {
 	 * This interface allows for listening to status handling framework changes.
 	 * Currently it is possible to be notified when:
 	 * <ul>
-	 * 	<li>all statuses has been handled</li>.
+	 * <li>all statuses has been handled</li>
 	 * </ul>
+	 * 
 	 * @since 3.5
 	 *
 	 */

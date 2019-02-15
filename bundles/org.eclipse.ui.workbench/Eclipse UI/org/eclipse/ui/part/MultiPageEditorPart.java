@@ -71,6 +71,7 @@ import org.eclipse.ui.services.IServiceLocator;
  * contain an editor or an arbitrary SWT control.
  * <p>
  * Subclasses must implement the following methods:
+ * </p>
  * <ul>
  * <li><code>createPages</code> - to create the required pages by calling one of
  * the <code>addPage</code> methods</li>
@@ -79,7 +80,6 @@ import org.eclipse.ui.services.IServiceLocator;
  * <li><code>IEditorPart.isSaveAsAllowed</code> - to enable Save As</li>
  * <li><code>IEditorPart.gotoMarker</code> - to scroll to a marker</li>
  * </ul>
- * </p>
  * <p>
  * Multi-page editors have a single action bar contributor, which manages
  * contributions for all the pages. The contributor must be a subclass of

@@ -60,22 +60,22 @@ import org.eclipse.ui.model.WorkbenchViewerComparator;
  * </p>
  * <p>
  * Subclasses must implement
- * <ul>
- *   <li><code>createSourceGroup</code></li>
- * </ul>
  * </p>
+ * <ul>
+ * <li><code>createSourceGroup</code></li>
+ * </ul>
  * <p>
  * Subclasses may override
- * <ul>
- *   <li><code>allowNewContainerName</code></li>
- * </ul>
  * </p>
+ * <ul>
+ * <li><code>allowNewContainerName</code></li>
+ * </ul>
  * <p>
  * Subclasses may extend
- * <ul>
- *   <li><code>handleEvent</code></li>
- * </ul>
  * </p>
+ * <ul>
+ * <li><code>handleEvent</code></li>
+ * </ul>
  */
 public abstract class WizardResourceImportPage extends WizardDataTransferPage {
     private IResource currentResourceSelection;

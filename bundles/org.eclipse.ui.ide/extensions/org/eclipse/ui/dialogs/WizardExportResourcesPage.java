@@ -56,24 +56,24 @@ import org.eclipse.ui.model.WorkbenchLabelProvider;
  * </p>
  * <p>
  * Subclasses must implement
- * <ul>
- *   <li><code>createDestinationGroup</code></li>
- * </ul>
  * </p>
+ * <ul>
+ * <li><code>createDestinationGroup</code></li>
+ * </ul>
  * <p>
  * Subclasses may override
- * <ul>
- *   <li><code>allowNewContainerName</code></li>
- * </ul>
  * </p>
+ * <ul>
+ * <li><code>allowNewContainerName</code></li>
+ * </ul>
  * <p>
  * Subclasses may extend
- * <ul>
- *   <li><code>handleEvent</code></li>
- *   <li><code>internalSaveWidgetValues</code></li>
- *   <li><code>updateWidgetEnablements</code></li>
- * </ul>
  * </p>
+ * <ul>
+ * <li><code>handleEvent</code></li>
+ * <li><code>internalSaveWidgetValues</code></li>
+ * <li><code>updateWidgetEnablements</code></li>
+ * </ul>
  */
 public abstract class WizardExportResourcesPage extends WizardDataTransferPage {
     private IStructuredSelection initialResourceSelection;

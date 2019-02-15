@@ -23,24 +23,28 @@ import org.eclipse.ui.internal.wizards.datatransfer.DataTransferMessages;
 import org.eclipse.ui.internal.wizards.datatransfer.WizardProjectsImportPage;
 
 /**
- * Standard workbench wizard for importing projects defined
- * outside of the currently defined projects into Eclipse.
+ * Standard workbench wizard for importing projects defined outside of the
+ * currently defined projects into Eclipse.
  * <p>
- * This class may be instantiated and used without further configuration;
- * this class is not intended to be subclassed.
+ * This class may be instantiated and used without further configuration; this
+ * class is not intended to be subclassed.
  * </p>
  * <p>
  * Example:
+ * </p>
+ * 
  * <pre>
  * IWizard wizard = new ExternalProjectImportWizard();
  * wizard.init(workbench, selection);
  * WizardDialog dialog = new WizardDialog(shell, wizard);
  * dialog.open();
  * </pre>
+ * <p>
  * During the call to <code>open</code>, the wizard dialog is presented to the
  * user. When the user hits Finish, a project is created with the location
  * specified by the user.
  * </p>
+ * 
  * @noextend This class is not intended to be subclassed by clients.
  */
 

@@ -24,13 +24,14 @@ import org.eclipse.jface.viewers.ISelection;
  * </p>
  * <p>
  * This service can be acquired from your service locator:
- * <pre>
- * 	ISelectionService service = (ISelectionService) getSite().getService(ISelectionService.class);
- * </pre>
- * <ul>
- * <li>This service is not available globally, only from the workbench window level down.</li>
- * </ul>
  * </p>
+ *
+ * <pre>
+ * ISelectionService service = (ISelectionService) getSite().getService(ISelectionService.class);
+ * </pre>
+ *
+ * This service is not available globally, only from the workbench window level
+ * down.
  *
  * @see org.eclipse.ui.ISelectionListener
  * @see org.eclipse.ui.INullSelectionListener

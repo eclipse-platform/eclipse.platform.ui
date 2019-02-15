@@ -42,9 +42,10 @@ import org.eclipse.ui.part.PageBookView;
  * <p>
  * This standard view has id <code>"org.eclipse.ui.views.ContentOutline"</code>.
  * </p>
- * When a <b>content outline view</b> notices an editor being activated, it
- * asks the editor whether it has a <b>content outline page</b> to include
- * in the outline view. This is done using <code>getAdapter</code>:
+ * When a <b>content outline view</b> notices an editor being activated, it asks
+ * the editor whether it has a <b>content outline page</b> to include in the
+ * outline view. This is done using <code>getAdapter</code>:
+ * 
  * <pre>
  * IEditorPart editor = ...;
  * IContentOutlinePage outlinePage = (IContentOutlinePage) editor.getAdapter(IContentOutlinePage.class);
@@ -52,24 +53,26 @@ import org.eclipse.ui.part.PageBookView;
  *    // editor wishes to contribute outlinePage to content outline view
  * }
  * </pre>
- * If the editor supports a content outline page, the editor instantiates
- * and configures the page, and returns it. This page is then added to the
- * content outline view (a pagebook which presents one page at a time) and
- * immediately made the current page (the content outline view need not be
- * visible). If the editor does not support a content outline page, the content
- * outline view shows a special default page which makes it clear to the user
- * that the content outline view is disengaged. A content outline page is free
- * to report selection events; the content outline view forwards these events
- * along to interested parties. When the content outline view notices a
- * different editor being activated, it flips to the editor's corresponding
- * content outline page. When the content outline view notices an editor being
- * closed, it destroys the editor's corresponding content outline page.
+ * <p>
+ * If the editor supports a content outline page, the editor instantiates and
+ * configures the page, and returns it. This page is then added to the content
+ * outline view (a pagebook which presents one page at a time) and immediately
+ * made the current page (the content outline view need not be visible). If the
+ * editor does not support a content outline page, the content outline view
+ * shows a special default page which makes it clear to the user that the
+ * content outline view is disengaged. A content outline page is free to report
+ * selection events; the content outline view forwards these events along to
+ * interested parties. When the content outline view notices a different editor
+ * being activated, it flips to the editor's corresponding content outline page.
+ * When the content outline view notices an editor being closed, it destroys the
+ * editor's corresponding content outline page.
  * </p>
  * <p>
  * The workbench will automatically instantiate this class when a Content
- * Outline view is needed for a workbench window. This class was not intended
- * to be instantiated or subclassed by clients.
+ * Outline view is needed for a workbench window. This class was not intended to
+ * be instantiated or subclassed by clients.
  * </p>
+ * 
  * @noinstantiate This class is not intended to be instantiated by clients.
  * @noextend This class is not intended to be subclassed by clients.
  */

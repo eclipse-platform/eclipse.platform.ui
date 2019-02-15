@@ -28,12 +28,12 @@ import org.eclipse.jface.util.IPropertyChangeListener;
  * <p>
  * The number of views and editors within a page is restricted to simplify part
  * management for the user. In particular:
+ * </p>
  * <ul>
  * <li>Unless a view explicitly allows for multiple instances in its plug-in
  * declaration there will be only one instance in a given workbench page.</li>
  * <li>Only one editor can exist for each editor input within a page.</li>
  * </ul>
- * </p>
  * <p>
  * This interface is not intended to be implemented by clients.
  * </p>
@@ -580,31 +580,29 @@ public interface IWorkbenchPage extends IPartService, ISelectionService {
 	/**
 	 * Opens an editor on the given input.
 	 * <p>
-	 * If this page already has an editor open on the target input that editor
-	 * is activated; otherwise, a new editor is opened. Two editor inputs,
-	 * input1 and input2, are considered the same if
+	 * If this page already has an editor open on the target input that editor is
+	 * activated; otherwise, a new editor is opened. Two editor inputs, input1 and
+	 * input2, are considered the same if
+	 * </p>
 	 *
 	 * <pre>
 	 * input1.equals(input2) == true
-	 * </pre>.
-	 * </p>
+	 * </pre>
 	 * <p>
-	 * The editor type is determined by mapping <code>editorId</code> to an
-	 * editor extension registered with the workbench. An editor id is passed
-	 * rather than an editor object to prevent the accidental creation of more
-	 * than one editor for the same input. It also guarantees a consistent
-	 * lifecycle for editors, regardless of whether they are created by the user
-	 * or restored from saved data.
+	 * The editor type is determined by mapping <code>editorId</code> to an editor
+	 * extension registered with the workbench. An editor id is passed rather than
+	 * an editor object to prevent the accidental creation of more than one editor
+	 * for the same input. It also guarantees a consistent lifecycle for editors,
+	 * regardless of whether they are created by the user or restored from saved
+	 * data.
 	 * </p>
 	 *
-	 * @param input
-	 *            the editor input
-	 * @param editorId
-	 *            the id of the editor extension to use
-	 * @return an open and active editor, or <code>null</code> if an external
-	 *         editor was opened
-	 * @exception PartInitException
-	 *                if the editor could not be created or initialized
+	 * @param input    the editor input
+	 * @param editorId the id of the editor extension to use
+	 * @return an open and active editor, or <code>null</code> if an external editor
+	 *         was opened
+	 * @exception PartInitException if the editor could not be created or
+	 *                              initialized
 	 */
 	IEditorPart openEditor(IEditorInput input, String editorId)
 			throws PartInitException;
@@ -1058,9 +1056,11 @@ public interface IWorkbenchPage extends IPartService, ISelectionService {
 	 * aggregate either become empty or non-empty.
 	 * </p>
 	 * <p>
-	 * Example: <br/>
-	 * Here we have pseudocode showing how some workingset utilizing component could
-	 * react to changes in aggregate working sets. <br/>
+	 * Example pseudocode showing how some workingset utilizing component could
+	 * react to changes in aggregate working sets:
+	 * </p>
+	 *
+	 * <pre>
 	 * <code>
 	 * private IWorkingSet myWorkingSet;
 	 *
@@ -1087,7 +1087,7 @@ public interface IWorkbenchPage extends IPartService, ISelectionService {
 	 * 		}
 	 * }
 	 * </code>
-	 * </p>
+	 * </pre>
 	 *
 	 * @return the aggregate working set for this page, this implements
 	 *         {@link IAggregateWorkingSet}
@@ -1221,31 +1221,28 @@ public interface IWorkbenchPage extends IPartService, ISelectionService {
 			final int matchFlags) throws MultiPartInitException;
 
 	/**
-	 * Opens editors for the given inputs. Only the editor constructed for the
-	 * given index will be activated.
+	 * Opens editors for the given inputs. Only the editor constructed for the given
+	 * index will be activated.
 	 * <p>
 	 * There are effectively two different ways to use this method based on what
-	 * information the supplied mementos contain @see
-	 * org.eclipse.ui.IWorkbenchPage
+	 * information the supplied mementos contain @see org.eclipse.ui.IWorkbenchPage
 	 * #getEditorState(org.eclipse.ui.IEditorReference []):
+	 * </p>
 	 * <ol>
-	 * <li>
-	 * If the mementos contain the 'input' information then only the memento
-	 * itself is required since it can be used to re-create the editor input and
-	 * its editorID. If all the mementos are of this type then the inputs and
-	 * editorIDs arrays may be null.</li>
-	 * <li>
-	 * If the supplied memento only contains the editor state then both the
+	 * <li>If the mementos contain the 'input' information then only the memento
+	 * itself is required since it can be used to re-create the editor input and its
+	 * editorID. If all the mementos are of this type then the inputs and editorIDs
+	 * arrays may be null.</li>
+	 * <li>If the supplied memento only contains the editor state then both the
 	 * input and editorID must be non-null.</li>
 	 * </ol>
-	 * </p>
 	 * <p>
-	 * The editor type is determined by mapping <code>editorIDs</code> to an
-	 * editor extension registered with the workbench. An editor id is passed
-	 * rather than an editor object to prevent the accidental creation of more
-	 * than one editor for the same input. It also guarantees a consistent
-	 * lifecycle for editors, regardless of whether they are created by the user
-	 * or restored from saved data.
+	 * The editor type is determined by mapping <code>editorIDs</code> to an editor
+	 * extension registered with the workbench. An editor id is passed rather than
+	 * an editor object to prevent the accidental creation of more than one editor
+	 * for the same input. It also guarantees a consistent lifecycle for editors,
+	 * regardless of whether they are created by the user or restored from saved
+	 * data.
 	 * </p>
 	 * <p>
 	 * The length of the input array and editor ID arrays must be the same. The
@@ -1253,32 +1250,28 @@ public interface IWorkbenchPage extends IPartService, ISelectionService {
 	 * </p>
 	 * <p>
 	 * The mementos array mat be null but if not must match the input array in
-	 * length. Entries in the mementos array may also be null if no state is
-	 * desired for that particular editor.
+	 * length. Entries in the mementos array may also be null if no state is desired
+	 * for that particular editor.
 	 * </p>
 	 *
-	 * @param inputs
-	 *            the editor inputs
-	 * @param editorIDs
-	 *            the IDs of the editor extensions to use, in the order of
-	 *            inputs
-	 * @param mementos
-	 *            the mementos representing the state to open the editor with.
-	 *            If the supplied memento contains the input's state as well as
-	 *            the editor's state then the corresponding entries in the
-	 *            'inputs' and 'ids' arrays may be <code>null</code> (they will
-	 *            be created from the supplied memento).
+	 * @param inputs        the editor inputs
+	 * @param editorIDs     the IDs of the editor extensions to use, in the order of
+	 *                      inputs
+	 * @param mementos      the mementos representing the state to open the editor
+	 *                      with. If the supplied memento contains the input's state
+	 *                      as well as the editor's state then the corresponding
+	 *                      entries in the 'inputs' and 'ids' arrays may be
+	 *                      <code>null</code> (they will be created from the
+	 *                      supplied memento).
 	 *
-	 * @param matchFlags
-	 *            a bit mask consisting of zero or more of the MATCH_* constants
-	 *            OR-ed together
-	 * @param activateIndex
-	 *            the index of the editor to make active or -1 if no activation
-	 *            is desired.
+	 * @param matchFlags    a bit mask consisting of zero or more of the MATCH_*
+	 *                      constants OR-ed together
+	 * @param activateIndex the index of the editor to make active or -1 if no
+	 *                      activation is desired.
 	 * @return references to the editors constructed for the inputs. The editors
 	 *         corresponding to those reference might not be materialized.
-	 * @exception MultiPartInitException
-	 *                if at least one editor could not be created or initialized
+	 * @exception MultiPartInitException if at least one editor could not be created
+	 *                                   or initialized
 	 * @see #MATCH_NONE
 	 * @see #MATCH_INPUT
 	 * @see #MATCH_ID

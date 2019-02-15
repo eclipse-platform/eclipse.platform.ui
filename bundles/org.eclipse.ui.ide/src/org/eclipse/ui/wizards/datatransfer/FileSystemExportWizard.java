@@ -32,25 +32,29 @@ import org.eclipse.ui.internal.wizards.datatransfer.DataTransferMessages;
 import org.eclipse.ui.internal.wizards.datatransfer.WizardFileSystemResourceExportPage1;
 
 /**
- * Standard workbench wizard for exporting resources from the workspace
- * to the local file system.
+ * Standard workbench wizard for exporting resources from the workspace to the
+ * local file system.
  * <p>
- * This class may be instantiated and used without further configuration;
- * this class is not intended to be subclassed.
+ * This class may be instantiated and used without further configuration; this
+ * class is not intended to be subclassed.
  * </p>
  * <p>
  * Example:
+ * </p>
+ *
  * <pre>
  * IWizard wizard = new FileSystemExportWizard();
  * wizard.init(workbench, selection);
  * WizardDialog dialog = new WizardDialog(shell, wizard);
  * dialog.open();
  * </pre>
+ * <p>
  * During the call to <code>open</code>, the wizard dialog is presented to the
- * user. When the user hits Finish, the user-selected workspace resources
- * are exported to the user-specified location in the local file system,
- * the dialog closes, and the call to <code>open</code> returns.
+ * user. When the user hits Finish, the user-selected workspace resources are
+ * exported to the user-specified location in the local file system, the dialog
+ * closes, and the call to <code>open</code> returns.
  * </p>
+ *
  * @noextend This class is not intended to be subclassed by clients.
  */
 public class FileSystemExportWizard extends Wizard implements IExportWizard {

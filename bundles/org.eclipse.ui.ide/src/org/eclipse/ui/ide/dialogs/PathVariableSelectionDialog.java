@@ -40,22 +40,21 @@ import org.eclipse.ui.internal.ide.dialogs.IDEResourceInfoUtils;
 import org.eclipse.ui.internal.ide.dialogs.PathVariablesGroup;
 
 /**
- * A selection dialog which shows the path variables defined in the
- * workspace.
- * The <code>getResult</code> method returns the name(s) of the
- * selected path variable(s).
+ * A selection dialog which shows the path variables defined in the workspace.
+ * The <code>getResult</code> method returns the name(s) of the selected path
+ * variable(s).
  * <p>
  * This class may be instantiated; it is not intended to be subclassed.
  * </p>
  * <p>
  * Example:
- * <pre>
- *  PathVariableSelectionDialog dialog =
- *    new PathVariableSelectionDialog(getShell(), IResource.FOLDER);
- *	dialog.open();
- *	String[] result = (String[]) dialog.getResult();
- * </pre>
  * </p>
+ * 
+ * <pre>
+ * PathVariableSelectionDialog dialog = new PathVariableSelectionDialog(getShell(), IResource.FOLDER);
+ * dialog.open();
+ * String[] result = (String[]) dialog.getResult();
+ * </pre>
  *
  * @since 3.1
  */

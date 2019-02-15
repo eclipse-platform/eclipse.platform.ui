@@ -86,10 +86,10 @@ import org.eclipse.ui.plugin.AbstractUIPlugin;
  * </p>
  * <p>
  * Subclasses may extend
+ * </p>
  * <ul>
  * <li><code>handleEvent</code></li>
  * </ul>
- * </p>
  */
 public class WizardNewFolderMainPage extends WizardPage implements Listener {
 	private static final int SIZING_CONTAINER_GROUP_HEIGHT = 250;

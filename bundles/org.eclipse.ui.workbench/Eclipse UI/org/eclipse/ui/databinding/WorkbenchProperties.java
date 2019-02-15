@@ -39,13 +39,11 @@ import org.eclipse.ui.IWorkbenchPart;
  *
  * <p>
  * Examples:
+ * </p>
  *
  * <pre>
- * WorkbenchProperties.singleSelection().observe(
- * 		getSite().getService(ISelectionService.class))
+ * WorkbenchProperties.singleSelection().observe(getSite().getService(ISelectionService.class))
  * </pre>
- *
- * </p>
  *
  * @since 3.5
  */

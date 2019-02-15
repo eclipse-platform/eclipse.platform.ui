@@ -18,7 +18,6 @@ import static org.eclipse.swt.events.SelectionListener.widgetSelectedAdapter;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
@@ -27,36 +26,35 @@ import org.eclipse.swt.widgets.TabFolder;
 /**
  * Abstract superclass of all multi-page workbench editors.
  * <p>
- * This class should be subclassed by clients wishing to define new
- * multi-page editor.
+ * This class should be subclassed by clients wishing to define new multi-page
+ * editor.
  * </p>
  * <p>
  * Subclasses must implement the following methods:
- * <ul>
- *   <li><code>createPartControl</code> - to create the view's controls </li>
- *   <li><code>setFocus</code> - to accept focus</li>
- *   <li><code>isDirty</code> - to decide whether a significant change has
- *       occurred</li>
- *   <li><code>doSave</code> - to save contents of editor</li>
- *   <li><code>doSaveAs</code> - to save contents of editor</li>
- * </ul>
  * </p>
+ * <ul>
+ * <li><code>createPartControl</code> - to create the view's controls</li>
+ * <li><code>setFocus</code> - to accept focus</li>
+ * <li><code>isDirty</code> - to decide whether a significant change has
+ * occurred</li>
+ * <li><code>doSave</code> - to save contents of editor</li>
+ * <li><code>doSaveAs</code> - to save contents of editor</li>
+ * </ul>
  * <p>
  * Subclasses may extend or reimplement the following methods as required:
- * <ul>
- *   <li><code>setInitializationData</code> - extend to provide additional
- *       initialization when editor extension is instantiated</li>
- *   <li><code>init(IEditorSite,IEditorInput)</code> - extend to provide
- *       additional initialization when editor is assigned its site</li>
- *   <li><code>isSaveOnCloseNeeded</code> - override to control saving</li>
- *   <li><code>isSaveAsAllowed</code> - override to control saving</li>
- *   <li><code>gotoMarker</code> - reimplement to make selections based on
- *       markers</li>
- *   <li><code>dispose</code> - extend to provide additional cleanup</li>
- *   <li><code>getAdapter</code> - reimplement to make their editor
- *       adaptable</li>
- * </ul>
  * </p>
+ * <ul>
+ * <li><code>setInitializationData</code> - extend to provide additional
+ * initialization when editor extension is instantiated</li>
+ * <li><code>init(IEditorSite,IEditorInput)</code> - extend to provide
+ * additional initialization when editor is assigned its site</li>
+ * <li><code>isSaveOnCloseNeeded</code> - override to control saving</li>
+ * <li><code>isSaveAsAllowed</code> - override to control saving</li>
+ * <li><code>gotoMarker</code> - reimplement to make selections based on
+ * markers</li>
+ * <li><code>dispose</code> - extend to provide additional cleanup</li>
+ * <li><code>getAdapter</code> - reimplement to make their editor adaptable</li>
+ * </ul>
  *
  * @deprecated Use the class <code>MultiPageEditorPart</code> instead
  */

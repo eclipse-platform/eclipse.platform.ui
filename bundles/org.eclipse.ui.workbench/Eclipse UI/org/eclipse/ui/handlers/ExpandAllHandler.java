@@ -25,14 +25,15 @@ import org.eclipse.ui.IWorkbenchCommandConstants;
  * Expand a tree viewer.
  * <p>
  * It can be used in a part's createPartControl(Composite) method:
+ * </p>
  *
  * <pre>
- * IHandlerService handlerService = (IHandlerService) getSite().getService(
- * 		IHandlerService.class);
+ * IHandlerService handlerService = (IHandlerService) getSite().getService(IHandlerService.class);
  * expandHandler = new ExpandAllHandler(myViewer);
  * handlerService.activateHandler(ExpandAllHandler.COMMAND_ID, expandHandler);
  * </pre>
  *
+ * <p>
  * The part should dispose the handler in its own dispose() method. The part can
  * provide its own expand all handler if desired, or if it needs to delegate to
  * multiple tree viewers.

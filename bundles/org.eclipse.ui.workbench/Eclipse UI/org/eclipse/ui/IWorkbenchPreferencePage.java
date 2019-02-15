@@ -20,16 +20,17 @@ import org.eclipse.jface.preference.IPreferencePage;
  * <p>
  * Clients should implement this interface and include the name of their class
  * in an extension contributed to the workbench's preference extension point
- * (named <code>"org.eclipse.ui.preferencePages"</code>).
- * For example, the plug-in's XML markup might contain:
- * <pre>
- * &LT;extension point="org.eclipse.ui.preferencePages"&GT;
- *      &LT;page id="com.example.myplugin.prefs"
- *         name="Knobs"
- *         class="com.example.myplugin.MyPreferencePage" /&GT;
- * &LT;/extension&GT;
- * </pre>
+ * (named <code>"org.eclipse.ui.preferencePages"</code>). For example, the
+ * plug-in's XML markup might contain:
  * </p>
+ *
+ * <pre>
+ * &lt;extension point="org.eclipse.ui.preferencePages"&gt;
+ *      &lt;page id="com.example.myplugin.prefs"
+ *         name="Knobs"
+ *         class="com.example.myplugin.MyPreferencePage" /&gt;
+ * &lt;/extension&gt;
+ * </pre>
  */
 public interface IWorkbenchPreferencePage extends IPreferencePage {
     /**

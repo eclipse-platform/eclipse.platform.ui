@@ -14,32 +14,30 @@
 package org.eclipse.ui.themes;
 
 import java.util.Hashtable;
-
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExecutableExtension;
 import org.eclipse.swt.graphics.RGB;
 
 /**
- * A resuable <code>IColorFactory</code> that may be used to blend two colors.
+ * A reusable <code>IColorFactory</code> that may be used to blend two colors.
  * The colors to blend are specified as per method number two in
  * {@link org.eclipse.core.runtime.IExecutableExtension}.
  * <p>
  * Example usage:
- * <br/>
+ * </p>
+ *
+ * <pre>
  * <code>
- * &lt;colorDefinition
- *     label="Red/Blue Blend"
- *     id="example.redblueblend"&gt;
- *     &lt;colorFactory
- * 				plugin="org.eclipse.ui"
- * 				class="org.eclipse.ui.themes.RGBBlendColorFactory"&gt;
+ * &lt;colorDefinition label="Red/Blue Blend" id="example.redblueblend"&gt;
+ *     &lt;colorFactory plugin="org.eclipse.ui"
+ * 		class="org.eclipse.ui.themes.RGBBlendColorFactory"&gt;
  *      	&lt;parameter name="color1" value="255,0,0" /&gt;
- *  		&lt;parameter name="color2" value="COLOR_BLUE" /&gt;
+ *  	&lt;parameter name="color2" value="COLOR_BLUE" /&gt;
  *     &lt;/colorFactory&gt;
  * &lt;/colorDefinition&gt;
  * </code>
- * </p>
+ * </pre>
  *
  * <p>
  * The color values may be specified as RGB triples or as SWT constants.

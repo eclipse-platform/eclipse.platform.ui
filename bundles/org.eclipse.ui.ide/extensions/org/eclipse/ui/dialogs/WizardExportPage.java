@@ -60,24 +60,24 @@ import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
  * </p>
  * <p>
  * Subclasses must implement
+ * </p>
  * <ul>
  * <li><code>createDestinationGroup</code></li>
  * </ul>
- * </p>
  * <p>
  * Subclasses may override
+ * </p>
  * <ul>
  * <li><code>allowNewContainerName</code></li>
  * </ul>
- * </p>
  * <p>
  * Subclasses may extend
+ * </p>
  * <ul>
  * <li><code>handleEvent</code></li>
  * <li><code>internalSaveWidgetValues</code></li>
  * <li><code>updateWidgetEnablements</code></li>
  * </ul>
- * </p>
  *
  * @deprecated use WizardExportResourcePage
  *

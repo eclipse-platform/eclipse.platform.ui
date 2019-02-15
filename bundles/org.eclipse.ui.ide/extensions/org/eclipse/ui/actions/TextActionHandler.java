@@ -35,20 +35,23 @@ import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
 import org.eclipse.ui.internal.ide.IIDEHelpContextIds;
 
 /**
- * Handles the redirection of the global Cut, Copy, Paste, and
- * Select All actions to either the current inline text control
- * or the part's supplied action handler.
+ * Handles the redirection of the global Cut, Copy, Paste, and Select All
+ * actions to either the current inline text control or the part's supplied
+ * action handler.
  * <p>
  * This class may be instantiated; it is not intended to be subclassed.
- * </p><p>
+ * </p>
+ * <p>
  * Example usage:
+ * </p>
+ * 
  * <pre>
  * textActionHandler = new TextActionHandler(this.getViewSite().getActionBars());
- * textActionHandler.addText((Text)textCellEditor1.getControl());
- * textActionHandler.addText((Text)textCellEditor2.getControl());
+ * textActionHandler.addText((Text) textCellEditor1.getControl());
+ * textActionHandler.addText((Text) textCellEditor2.getControl());
  * textActionHandler.setSelectAllAction(selectAllAction);
  * </pre>
- * </p>
+ * 
  * @noextend This class is not intended to be subclassed by clients.
  */
 public class TextActionHandler {

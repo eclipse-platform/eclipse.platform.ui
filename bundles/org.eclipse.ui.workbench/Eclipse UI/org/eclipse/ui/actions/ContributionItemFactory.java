@@ -35,16 +35,15 @@ import org.eclipse.ui.menus.CommandContributionItemParameter;
 /**
  * Access to standard contribution items provided by the workbench.
  * <p>
- * Most of the functionality of this class is provided by
- * static methods and fields.
- * Example usage:
+ * Most of the functionality of this class is provided by static methods and
+ * fields. Example usage:
+ * </p>
+ *
  * <pre>
  * MenuManager menu = ...;
- * IContributionItem reEdit
- * 	  = ContributionItemFactory.REOPEN_EDITORS.create(window);
+ * IContributionItem reEdit = ContributionItemFactory.REOPEN_EDITORS.create(window);
  * menu.add(reEdit);
  * </pre>
- * </p>
  * <p>
  * Clients may declare subclasses that provide additional application-specific
  * contribution item factories.

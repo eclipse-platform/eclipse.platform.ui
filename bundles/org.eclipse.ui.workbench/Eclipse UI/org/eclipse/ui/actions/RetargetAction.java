@@ -32,7 +32,6 @@ import org.eclipse.ui.internal.PartSite;
  * is determined from the enable and check state of the handler.  If the
  * active part does not provide an action handler then this action is
  * disabled.
- * </p>
  * <p>
  * <b>Note:</b> instances of this class add themselves as listeners to their
  * action handler. It is important for the creator of a retarget action to call

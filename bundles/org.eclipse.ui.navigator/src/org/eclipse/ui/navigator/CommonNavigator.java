@@ -86,11 +86,10 @@ import org.eclipse.ui.part.ViewPart;
  * Clients that wish to define their own custom extensible navigator view using
  * CommonNavigator need to specify an instance of the
  * <b>org.eclipse.ui.views</b> extension point:
+ * </p>
  *
  * <pre>
- *
- *          &lt;extension
- *          		point=&quot;org.eclipse.ui.views&quot;&gt;
+ *          &lt;extension point=&quot;org.eclipse.ui.views&quot;&gt;
  *          	&lt;view
  *          		name=&quot;My Custom View&quot;
  *          		icon=&quot;relative/path/to/icon.gif&quot;
@@ -99,10 +98,8 @@ import org.eclipse.ui.part.ViewPart;
  *          		id=&quot;org.acme.MyCustomNavigatorID&quot;&gt;
  *          	&lt;/view&gt;
  *          &lt;/extension&gt;
- *
  * </pre>
  *
- * </p>
  *
  * <p>
  * CommonNavigator gets its initial input (during initialization) from the

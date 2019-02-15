@@ -29,24 +29,26 @@ import org.eclipse.swt.widgets.Event;
  * monitor selection changes that could affect the availability of the action.
  * <p>
  * Subclasses must implement the following <code>IAction</code> method:
+ * </p>
  * <ul>
- *   <li><code>run</code> - to do the action's work</li>
+ * <li><code>run</code> - to do the action's work</li>
  * </ul>
+ * <p>
+ * Subclasses may extend the <code>updateSelection</code> method to update the
+ * action determine its availability based on the current selection.
  * </p>
  * <p>
- * Subclasses may extend the <code>updateSelection</code> method to update
- * the action determine its availability based on the current selection.
+ * The object instantiating the subclass is responsible for registering the
+ * instance with a selection provider. Alternatively, the object can notify the
+ * subclass instance directly of a selection change using the methods:
  * </p>
- * <p>
- * The object instantiating the subclass is responsible for registering
- * the instance with a selection provider. Alternatively, the object can
- * notify the subclass instance directly of a selection change using the
- * methods:
  * <ul>
- *   <li><code>selectionChanged(IStructuredSelection)</code> - passing the selection</li>
- *   <li><code>selectionChanged(ISelectionChangedEvent)</code> - passing the selection change event</li>
+ * <li><code>selectionChanged(IStructuredSelection)</code> - passing the
+ * selection</li>
+ * <li><code>selectionChanged(ISelectionChangedEvent)</code> - passing the
+ * selection change event</li>
  * </ul>
- * </p>
+ *
  * @since 3.0
  */
 public abstract class BaseSelectionListenerAction extends Action implements

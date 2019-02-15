@@ -22,23 +22,23 @@ import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
 
 /**
- * The abstract superclass for actions that listen to selection changes
- * from a particular selection provider. This implementation splits the current
+ * The abstract superclass for actions that listen to selection changes from a
+ * particular selection provider. This implementation splits the current
  * selection along structured/unstructured lines, providing a convenient place
  * to monitor selection changes that require adjusting action state.
  * <p>
  * Subclasses must implement the following <code>IAction</code> method:
- * <ul>
- *   <li><code>run</code> - to do the action's work</li>
- * </ul>
  * </p>
+ * <ul>
+ * <li><code>run</code> - to do the action's work</li>
+ * </ul>
  * <p>
  * Subclasses may reimplement either of the following methods:
- * <ul>
- *   <li><code>selectionChanged(IStructuredSelection)</code></li>
- *   <li><code>selectionChanged(ISelection)</code></li>
- * </ul>
  * </p>
+ * <ul>
+ * <li><code>selectionChanged(IStructuredSelection)</code></li>
+ * <li><code>selectionChanged(ISelection)</code></li>
+ * </ul>
  */
 public abstract class SelectionProviderAction extends Action implements
         ISelectionChangedListener {

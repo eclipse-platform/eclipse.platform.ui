@@ -18,26 +18,29 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+
 /**
- * ScrolledFormText is a control that is capable of scrolling an instance of
- * the FormText class. It should be created in a parent that will allow it to
- * use all the available area (for example, a shell, a view or an editor). The
- * form text can be created by the class itself, or set from outside. In the
- * later case, the form text instance must be a direct child of the
- * ScrolledFormText instance.
+ * ScrolledFormText is a control that is capable of scrolling an instance of the
+ * FormText class. It should be created in a parent that will allow it to use
+ * all the available area (for example, a shell, a view or an editor). The form
+ * text can be created by the class itself, or set from outside. In the later
+ * case, the form text instance must be a direct child of the ScrolledFormText
+ * instance.
  * <p>
  * The class assumes that text to be rendered contains formatting tags. In case
  * of a string, it will enclose the text in 'form' root element if missing from
  * the text as a convinience. For example:
+ * </p>
  *
  * <pre>
- *  ftext.setText(&quot;&lt;p&gt;Some text here&lt;/&gt;&quot;);
+ * ftext.setText(&quot;&lt;p&gt;Some text here&lt;/&gt;&quot;);
  * </pre>
  *
+ * <p>
  * will not cause an error. The same behavior does not exist for content from
  * the input stream, however - it must be well formed in that case.
  * </p>
-
+ * 
  * @since 3.0
  * @see FormText
  */

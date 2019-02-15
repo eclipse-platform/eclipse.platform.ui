@@ -53,15 +53,16 @@ import org.eclipse.ui.progress.IProgressConstants2;
  * to cancel the operation are passed along to the core.
  * <p>
  * Subclasses must implement the following methods:
+ * </p>
  * <ul>
  * <li><code>invokeOperation</code> - to perform the operation on one of the
  * selected resources</li>
  * <li><code>getOperationMessage</code> - to furnish a title for the progress
  * dialog</li>
  * </ul>
- * </p>
  * <p>
  * Subclasses may override the following methods:
+ * </p>
  * <ul>
  * <li><code>shouldPerformResourcePruning</code> - reimplement to turn off</li>
  * <li><code>updateSelection</code> - extend to refine enablement criteria</li>
@@ -69,9 +70,8 @@ import org.eclipse.ui.progress.IProgressConstants2;
  * problems dialog</li>
  * <li><code>getProblemsMessage</code> - reimplement to furnish a message for
  * the problems dialog</li>
- * <li><code>run</code> - extend to </li>
+ * <li><code>run</code> - extend to</li>
  * </ul>
- * </p>
  */
 public abstract class WorkspaceAction extends SelectionListenerAction {
 	/**

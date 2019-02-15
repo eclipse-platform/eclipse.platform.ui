@@ -37,46 +37,47 @@ import org.eclipse.ui.internal.navigator.NavigatorContentService;
  * <b>org.eclipse.ui.navigator.navigatorContent/navigatorContent</b> extension;
  * whenever every element in the drag set matches the <b>possibleChildren</b>
  * expression of an extension, it is eligible to handle the drop operation. This
- * initial set is further culled using the <b>possibleDropTargets</b>
- * expression of the <b>commonDropAdapter</b> using the current drop target.
+ * initial set is further culled using the <b>possibleDropTargets</b> expression
+ * of the <b>commonDropAdapter</b> using the current drop target.
  * </p>
  * <p>
  * If drag operations originate outside of Eclipse, then the set of eligible
  * drop adapters is determined based on the drop target (using the
  * <b>possibleDropTargets</b> expression). Each assistant can then indicate
- * whether {@link #isSupportedType(TransferData) the incoming type is supported}.
+ * whether {@link #isSupportedType(TransferData) the incoming type is
+ * supported}.
  * <p>
  * Whenever a match is found, the assistant will be given an opportunity to
  * first {@link #validateDrop(Object, int, TransferData)}, and then if the
  * assistant returns true, the assist must
- * {@link #handleDrop(CommonDropAdapter, DropTargetEvent, Object)}. If
- * multiple assistants match the drop target, then the potential assistants are
- * ordered based on priority and their override relationships and given an
- * opportunity to validate the drop operation in turn. The first one to validate
- * will have the opportunty to carry out the drop.
+ * {@link #handleDrop(CommonDropAdapter, DropTargetEvent, Object)}. If multiple
+ * assistants match the drop target, then the potential assistants are ordered
+ * based on priority and their override relationships and given an opportunity
+ * to validate the drop operation in turn. The first one to validate will have
+ * the opportunty to carry out the drop.
  * </p>
  *
  * <p>
  * Clients may handle DND operations that begin and end in the current viewer by
  * overriding the following methods:
+ * </p>
  * <ul>
  * <li>{@link #validateDrop(Object, int, TransferData)}: Indicate whether this
  * assistant can handle a drop onto the current viewer.</li>
  * <li>{@link #handleDrop(CommonDropAdapter, DropTargetEvent, Object)}: Handle
  * the drop operation onto the current viewer.</li>
  * </ul>
- * </p>
  * <p>
  * If a user originates a drag operation to another viewer that cannot handle
  * one of the available drag transfer types, drop assistants may handle the drop
  * operation for the target viewer. Clients must override :
+ * </p>
  * <ul>
  * <li>{@link #validatePluginTransferDrop(IStructuredSelection, Object)}:
  * Indicate whether this assistant can handle the drop onto another viewer.
  * <li>{@link #handlePluginTransferDrop(IStructuredSelection, Object)}: Handle
  * the drop operation onto the other viewer.</li>
  * </ul>
- * </p>
  * <p>
  * Clients may subclass this.
  * </p>

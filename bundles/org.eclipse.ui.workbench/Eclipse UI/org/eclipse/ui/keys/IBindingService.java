@@ -33,13 +33,14 @@ import org.eclipse.ui.services.IDisposable;
  * </p>
  * <p>
  * This service can be acquired from your service locator:
+ * </p>
+ * 
  * <pre>
- * 	IBindingService service = (IBindingService) getSite().getService(IBindingService.class);
+ * IBindingService service = (IBindingService) getSite().getService(IBindingService.class);
  * </pre>
  * <ul>
  * <li>This service is available globally.</li>
  * </ul>
- * </p>
  *
  * @noimplement This interface is not intended to be implemented by clients.
  * @noextend This interface is not intended to be extended by clients.

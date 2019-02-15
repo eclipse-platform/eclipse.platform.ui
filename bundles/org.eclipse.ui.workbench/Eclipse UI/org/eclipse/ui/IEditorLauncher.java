@@ -16,32 +16,34 @@ package org.eclipse.ui;
 import org.eclipse.core.runtime.IPath;
 
 /**
- * An editor launcher is used to launch external editors on a
- * file in the local file system.
+ * An editor launcher is used to launch external editors on a file in the local
+ * file system.
  * <p>
  * Clients should implement this interface to define a new type of editor
- * launcher.  Each new launcher must be registered as an editor in the
- * workbench's editor extension point
- * (named <code>"org.eclipse.ui.editors"</code>).
+ * launcher. Each new launcher must be registered as an editor in the
+ * workbench's editor extension point (named
+ * <code>"org.eclipse.ui.editors"</code>).
  *
  * For example, the plug-in's XML markup might contain:
+ * </p>
+ *
  * <pre>
- * &LT;extension point = "org.eclipse.ui.editors"&GT;
- *   &LT;editor
+ * &lt;extension point = "org.eclipse.ui.editors"&gt;
+ *   &lt;editor
  *       id="org.eclipse.ui.SwingEditorLauncher"
  *       name="Swing Editor"
  *       extensions="xml"
  *       launcher="org.eclipse.ui.examples.swingeditor.SwingEditorLauncher"
- *       icon="icons/xml.gif"&GT;
- *   &LT;/editor&GT;
- * &LT;/extension&GT;
+ *       icon="icons/xml.gif"&gt;
+ *   &lt;/editor&gt;
+ * &lt;/extension&gt;
  * </pre>
- * </p><p>
+ * <p>
  * In this example a launcher has been registered for use with <code>xml</code>
- * files.  Once registered, the launcher will appear in the <code>Open With</code>
- * menu for an <code>xml</code> file.  If the item is invoked the workbench will
- * create an instance of the launcher class and call <code>open</code> on it,
- * passing the input file.
+ * files. Once registered, the launcher will appear in the
+ * <code>Open With</code> menu for an <code>xml</code> file. If the item is
+ * invoked the workbench will create an instance of the launcher class and call
+ * <code>open</code> on it, passing the input file.
  * </p>
  */
 public interface IEditorLauncher {

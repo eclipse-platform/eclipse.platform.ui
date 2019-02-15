@@ -33,18 +33,17 @@ import org.eclipse.ui.internal.ide.actions.RetargetActionWithDefault;
 import org.eclipse.ui.internal.ide.actions.ToggleAutoBuildAction;
 
 /**
- * Access to standard actions provided by the IDE workbench (including
- * those of the generic workbench).
+ * Access to standard actions provided by the IDE workbench (including those of
+ * the generic workbench).
  * <p>
- * The functionality of this class is provided by static fields.
- * Example usage:
+ * The functionality of this class is provided by static fields. Example usage:
+ * </p>
+ *
  * <pre>
  * MenuManager menu = ...;
- * ActionFactory.IWorkbenchAction closeProjectAction
- * 	  = IDEActionFactory.CLOSE_PROJECT.create(window);
+ * ActionFactory.IWorkbenchAction closeProjectAction = IDEActionFactory.CLOSE_PROJECT.create(window);
  * menu.add(closeProjectAction);
  * </pre>
- * </p>
  *
  * @since 3.0
  */

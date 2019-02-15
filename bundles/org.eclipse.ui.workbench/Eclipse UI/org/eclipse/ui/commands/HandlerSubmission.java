@@ -18,7 +18,7 @@ import org.eclipse.ui.IWorkbenchPartSite;
 import org.eclipse.ui.internal.util.Util;
 
 /**
- * </p>
+ * <p>
  * An instance of this class represents a request to handle a command. A handler
  * submission specifies a list of conditions under which it would be appropriate
  * for a particular command to have a particular handler. These conditions
@@ -39,8 +39,7 @@ import org.eclipse.ui.internal.util.Util;
  *
  * @since 3.0
  * @see org.eclipse.ui.commands.IWorkbenchCommandSupport
- * @deprecated Please use <code>IHandlerService.activateHandler</code>
- *             instead.
+ * @deprecated Please use <code>IHandlerService.activateHandler</code> instead.
  * @see org.eclipse.ui.handlers.IHandlerService
  */
 @Deprecated

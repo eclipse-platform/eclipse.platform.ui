@@ -21,6 +21,7 @@ import org.eclipse.ui.IWorkbenchPartSite;
  * that change the state in a IWorkbenchPartSite while they are being run.
  * <p>
  * This service can be acquired from your service locator (IWorkbenchPartSite):
+ * </p>
  *
  * <pre>
  * <code>
@@ -31,7 +32,6 @@ import org.eclipse.ui.IWorkbenchPartSite;
  * <ul>
  * <li>This service is not available globally, only at the part site level.</li>
  * </ul>
- * </p>
  * <p>
  * WorkbenchParts may access an instance of IWorkbenchSiteProgressService by
  * calling

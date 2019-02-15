@@ -27,13 +27,14 @@ import org.eclipse.ui.services.IServiceWithSources;
  * </p>
  * <p>
  * This service can be acquired from your service locator:
+ * </p>
+ * 
  * <pre>
- * 	IContextService service = (IContextService) getSite().getService(IContextService.class);
+ * IContextService service = (IContextService) getSite().getService(IContextService.class);
  * </pre>
  * <ul>
  * <li>This service is available globally.</li>
  * </ul>
- * </p>
  *
  * @since 3.1
  * @noextend This interface is not intended to be extended by clients.

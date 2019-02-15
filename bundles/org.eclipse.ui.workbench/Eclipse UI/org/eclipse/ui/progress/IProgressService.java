@@ -14,7 +14,6 @@
 package org.eclipse.ui.progress;
 
 import java.lang.reflect.InvocationTargetException;
-
 import org.eclipse.core.runtime.jobs.IJobManager;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.core.runtime.jobs.Job;
@@ -34,13 +33,14 @@ import org.eclipse.swt.widgets.Shell;
  * </p>
  * <p>
  * This service can be acquired from your service locator:
+ * </p>
+ * 
  * <pre>
- * 	IProgressService service = (IProgressService) getSite().getService(IProgressService.class);
+ * IProgressService service = (IProgressService) getSite().getService(IProgressService.class);
  * </pre>
  * <ul>
  * <li>This service is available globally.</li>
  * </ul>
- * </p>
  * <p>
  * <strong>NOTE</strong> The progress service must be referenced at least once
  * before it will become the progress provider for the {@link IJobManager} in

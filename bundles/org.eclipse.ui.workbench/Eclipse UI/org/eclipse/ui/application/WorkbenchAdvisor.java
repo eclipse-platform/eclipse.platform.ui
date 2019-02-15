@@ -48,6 +48,7 @@ import org.eclipse.ui.statushandlers.WorkbenchErrorHandler;
  * <p>
  * Example of creating and running a workbench (in an
  * <code>IPlatformRunnable</code>):
+ * </p>
  *
  * <pre>
  * <code>
@@ -65,16 +66,16 @@ import org.eclipse.ui.statushandlers.WorkbenchErrorHandler;
  * </code>
  * </pre>
  *
- * </p>
  * <p>
- * An application should declare a subclass of <code>WorkbenchAdvisor</code>
- * and override methods to configure the workbench to suit the needs of the
+ * An application should declare a subclass of <code>WorkbenchAdvisor</code> and
+ * override methods to configure the workbench to suit the needs of the
  * particular application.
  * </p>
  * <p>
  * The following advisor methods are called at strategic points in the
  * workbench's lifecycle (all occur within the dynamic scope of the call to
  * {@link PlatformUI#createAndRunWorkbench PlatformUI.createAndRunWorkbench}):
+ * </p>
  * <ul>
  * <li><code>initialize</code> - called first; before any windows; use to
  * register things</li>
@@ -83,37 +84,36 @@ import org.eclipse.ui.statushandlers.WorkbenchErrorHandler;
  * restore</li>
  * <li><code>postStartup</code> - called third; after first window is opened;
  * use to reenable things temporarily disabled in previous step</li>
- * <li><code>postRestore</code> - called after the workbench and its windows
- * has been recreated from a previously saved state; use to adjust the restored
+ * <li><code>postRestore</code> - called after the workbench and its windows has
+ * been recreated from a previously saved state; use to adjust the restored
  * workbench</li>
- * <li><code>preWindowOpen</code> - called as each window is being opened;
- * use to configure aspects of the window other than actions bars </li>
- * <li><code>fillActionBars</code> - called after <code>preWindowOpen</code>
- * to configure a window's action bars</li>
- * <li><code>postWindowRestore</code> - called after a window has been
- * recreated from a previously saved state; use to adjust the restored window</li>
- * <li><code>postWindowCreate</code> - called after a window has been
- * created, either from an initial state or from a restored state; used to
- * adjust the window</li>
- * <li><code>openIntro</code> - called immediately before a window is opened
- * in order to create the introduction component, if any.</li>
- * <li><code>postWindowOpen</code> - called after a window has been opened;
- * use to hook window listeners, etc.</li>
- * <li><code>preWindowShellClose</code> - called when a window's shell is
- * closed by the user; use to pre-screen window closings</li>
+ * <li><code>preWindowOpen</code> - called as each window is being opened; use
+ * to configure aspects of the window other than actions bars</li>
+ * <li><code>fillActionBars</code> - called after <code>preWindowOpen</code> to
+ * configure a window's action bars</li>
+ * <li><code>postWindowRestore</code> - called after a window has been recreated
+ * from a previously saved state; use to adjust the restored window</li>
+ * <li><code>postWindowCreate</code> - called after a window has been created,
+ * either from an initial state or from a restored state; used to adjust the
+ * window</li>
+ * <li><code>openIntro</code> - called immediately before a window is opened in
+ * order to create the introduction component, if any.</li>
+ * <li><code>postWindowOpen</code> - called after a window has been opened; use
+ * to hook window listeners, etc.</li>
+ * <li><code>preWindowShellClose</code> - called when a window's shell is closed
+ * by the user; use to pre-screen window closings</li>
  * <li><code>eventLoopException</code> - called to handle the case where the
  * event loop has crashed; use to inform the user that things are not well</li>
  * <li><code>eventLoopIdle</code> - called when there are currently no more
  * events to be processed; use to perform other work or to yield until new
  * events enter the queue</li>
- * <li><code>preShutdown</code> - called immediately prior to workbench
- * shutdown before any windows have been closed; allows the advisor to veto the
+ * <li><code>preShutdown</code> - called immediately prior to workbench shutdown
+ * before any windows have been closed; allows the advisor to veto the
  * shutdown</li>
- * <li><code>postShutdown</code> - called last; after event loop has
- * terminated and all windows have been closed; use to deregister things
- * registered during initialize</li>
+ * <li><code>postShutdown</code> - called last; after event loop has terminated
+ * and all windows have been closed; use to deregister things registered during
+ * initialize</li>
  * </ul>
- * </p>
  *
  * @since 3.0
  */

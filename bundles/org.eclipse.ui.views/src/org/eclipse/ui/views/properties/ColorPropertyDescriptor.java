@@ -18,17 +18,19 @@ import org.eclipse.jface.viewers.ColorCellEditor;
 import org.eclipse.swt.widgets.Composite;
 
 /**
- * Descriptor for a property that has a color value which should be edited
- * with a color cell editor.
+ * Descriptor for a property that has a color value which should be edited with
+ * a color cell editor.
  * <p>
  * This class may be instantiated; it is not intended to be subclassed.
  * </p>
  * <p>
  * Example:
+ * </p>
+ * 
  * <pre>
  * IPropertyDescriptor pd = new ColorPropertyDescriptor("fg", "Foreground Color");
  * </pre>
- * </p>
+ * 
  * @noextend This class is not intended to be subclassed by clients.
  */
 public class ColorPropertyDescriptor extends PropertyDescriptor {
