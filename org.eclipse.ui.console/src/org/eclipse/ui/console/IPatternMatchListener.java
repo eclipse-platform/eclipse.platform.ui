@@ -14,14 +14,15 @@
 package org.eclipse.ui.console;
 
 /**
- * A pattern match listener is registered with a <code>TextConsole</code>,
- * and is notified when its pattern has been matched to contents in
- * that console. A pattern match listener can be registered with a console
- * programmatically or via the <code>consolePatternMatchListeners</code> extension
- * point.
+ * A pattern match listener is registered with a <code>TextConsole</code>, and
+ * is notified when its pattern has been matched to contents in that console. A
+ * pattern match listener can be registered with a console programmatically or
+ * via the <code>consolePatternMatchListeners</code> extension point.
  * <p>
  * Following is an example console pattern match listener extension definition.
- * </pre>
+ * </p>
+ *
+ * <pre>
  * &lt;extension point="org.eclipse.ui.console.consolePatternMatchListeners"&gt;
  *   &lt;consolePatternMatchListener
  *      id="com.example.ConsolePatternMatcher"
@@ -30,28 +31,31 @@ package org.eclipse.ui.console;
  *   &lt;/consolePatternMatchListener&gt;
  * &lt;/extension&gt;
  * </pre>
+ *
  * Attributes are specified as follows:
  * <ul>
  * <li><code>id</code> - a unique identifier for the pattern match listener</li>
  * <li><code>regex</code> - regular expression to match</li>
  * <li><code>class</code> - fully qualified name of the Java class implementing
- *  <code>org.eclipse.ui.console.IPatternMatchListenerDelegate</code></li>
+ * <code>org.eclipse.ui.console.IPatternMatchListenerDelegate</code></li>
  * </ul>
- * </p>
  * <p>
- * Optionally a <code>qualifier</code> attribute may be specified to improve performance
- * of regular expression matching. A qualifier specifies a simple regular expression used to
- * qualify lines for the search. Lines that do not contain the qualifier are not considered.
+ * Optionally a <code>qualifier</code> attribute may be specified to improve
+ * performance of regular expression matching. A qualifier specifies a simple
+ * regular expression used to qualify lines for the search. Lines that do not
+ * contain the qualifier are not considered.
  * </p>
  * <p>
  * Optionally an <code>enablement</code> expression may be provided to specify
  * which console(s) a pattern matcher should be contributed to.
  * </p>
  * <p>
- * Clients may implement this interface directly if registering a pattern match listener with
- * a text console programmatically. Clients contributing a pattern match listener via an
- * extension implement <code>IPatternMatchListenerDelegate</code> instead.
+ * Clients may implement this interface directly if registering a pattern match
+ * listener with a text console programmatically. Clients contributing a pattern
+ * match listener via an extension implement
+ * <code>IPatternMatchListenerDelegate</code> instead.
  * </p>
+ *
  * @see org.eclipse.ui.console.TextConsole
  * @since 3.1
  */

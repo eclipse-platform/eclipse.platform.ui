@@ -18,15 +18,18 @@ import org.eclipse.ui.part.IPageBookViewPage;
 
 /**
  * A console page participant is notified of page lifecycle events such as
- * creation, activation, deactivation and disposal. A page participant can
- * also provide adapters for a page. Participants are contributed via the
+ * creation, activation, deactivation and disposal. A page participant can also
+ * provide adapters for a page. Participants are contributed via the
  * <code>org.eclispe.ui.console.consolePageParticipants</code> extension point.
  * <p>
- * Participant behavior is implementation dependent. For example, a page participant
- * could add actions to a console's toolbar by accessing a its page's action bars.
+ * Participant behavior is implementation dependent. For example, a page
+ * participant could add actions to a console's toolbar by accessing a its
+ * page's action bars.
  * </p>
  * <p>
  * Following is an example extension definition.
+ * </p>
+ * 
  * <pre>
  * &lt;extension point=&quot;org.eclipse.ui.console.consolePageParticipants&quot;&gt;
  *   &lt;consolePageParticipant
@@ -35,7 +38,7 @@ import org.eclipse.ui.part.IPageBookViewPage;
  *   &lt;/consolePageParticipant&gt;
  * &lt;/extension&gt;
  * </pre>
- * </p>
+ * 
  * The example page participant is contributed to all console pages. An optional
  * <code>enablement</code> attribute may be specified to control which consoles
  * a page participant is applicable to.
@@ -43,6 +46,7 @@ import org.eclipse.ui.part.IPageBookViewPage;
  * Clients contributing console page participant extensions are intended to
  * implement this interface.
  * </p>
+ * 
  * @since 3.1
  */
 public interface IConsolePageParticipant extends IAdaptable {

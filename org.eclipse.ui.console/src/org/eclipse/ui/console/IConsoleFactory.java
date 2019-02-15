@@ -14,13 +14,16 @@
 package org.eclipse.ui.console;
 
 /**
- * A console factory extension is responsible for opening a console in the console view.
- * Extensions appear on a menu in the console view, and their <code>openConsole</code>
- * method is called when the action is invoked. Implementations may choose to open a new
- * console or activate an existing console. The extension point used to contribute a
- * console factory is <code>org.eclipse.ui.console.consoleFactories</code>.
+ * A console factory extension is responsible for opening a console in the
+ * console view. Extensions appear on a menu in the console view, and their
+ * <code>openConsole</code> method is called when the action is invoked.
+ * Implementations may choose to open a new console or activate an existing
+ * console. The extension point used to contribute a console factory is
+ * <code>org.eclipse.ui.console.consoleFactories</code>.
  * <p>
  * Following is an example console factory extension.
+ * </p>
+ * 
  * <pre>
  * &lt;extension point="org.eclipse.ui.console.consoleFactories"&gt;
  *   &lt;consoleFactory
@@ -30,15 +33,17 @@ package org.eclipse.ui.console;
  *   &lt;/consoleFactory&gt;
  * &lt;/extension&gt;
  * </pre>
- * An action appears in the console view's 'Open Console' drop-down menu with the
- * corresponding <code>label</code> and optional <code>icon</code>. When the action
- * is invoked, the specified <code>class</code> is instantiated and called to
- * open a console, via the method <code>openConsole()</code>.
+ * <p>
+ * An action appears in the console view's 'Open Console' drop-down menu with
+ * the corresponding <code>label</code> and optional <code>icon</code>. When the
+ * action is invoked, the specified <code>class</code> is instantiated and
+ * called to open a console, via the method <code>openConsole()</code>.
  * </p>
  * <p>
- * Clients providing console factory extensions are intended to implement
- * this interface.
+ * Clients providing console factory extensions are intended to implement this
+ * interface.
  * </p>
+ * 
  * @since 3.1
  */
 public interface IConsoleFactory {
