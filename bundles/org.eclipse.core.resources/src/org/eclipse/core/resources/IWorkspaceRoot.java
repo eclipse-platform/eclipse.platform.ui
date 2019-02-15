@@ -43,13 +43,13 @@ public interface IWorkspaceRoot extends IContainer, IAdaptable {
 	 * itself.
 	 * <p>
 	 * This is a convenience method, fully equivalent to:
+	 * </p>
 	 * <pre>
 	 *   delete(
 	 *     (deleteContent ? IResource.ALWAYS_DELETE_PROJECT_CONTENT : IResource.NEVER_DELETE_PROJECT_CONTENT )
 	 *        | (force ? FORCE : IResource.NONE),
 	 *     monitor);
 	 * </pre>
-	 * </p>
 	 * <p>
 	 * This method changes resources; these changes will be reported
 	 * in a subsequent resource change event.
@@ -115,7 +115,8 @@ public interface IWorkspaceRoot extends IContainer, IAdaptable {
 	 * @since 2.1
 	 * @deprecated use {@link #findContainersForLocationURI(URI)} instead
 	 */
-	@Deprecated IContainer[] findContainersForLocation(IPath location);
+	@Deprecated
+	IContainer[] findContainersForLocation(IPath location);
 
 	/**
 	 * Returns the handles to all the resources (workspace root, project,
@@ -216,7 +217,8 @@ public interface IWorkspaceRoot extends IContainer, IAdaptable {
 	 * @since 2.1
 	 * @deprecated use {@link #findFilesForLocationURI(URI)} instead
 	 */
-	@Deprecated IFile[] findFilesForLocation(IPath location);
+	@Deprecated
+	IFile[] findFilesForLocation(IPath location);
 
 	/**
 	 * Returns the handles of all files that are mapped to the given URI.
@@ -386,7 +388,7 @@ public interface IWorkspaceRoot extends IContainer, IAdaptable {
 	/**
 	 * Returns the collection of projects which exist under this root.
 	 * The projects can be open or closed.
-	 * </p><p>
+	 * <p>
 	 * If the {@link #INCLUDE_HIDDEN} flag is specified in the member flags, hidden
 	 * projects will be included along with the others. If the {@link #INCLUDE_HIDDEN} flag
 	 * is not specified (recommended), the result will omit any hidden projects.

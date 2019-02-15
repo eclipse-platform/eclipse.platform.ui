@@ -311,12 +311,13 @@ public interface IResource extends IAdaptable, ISchedulingRule {
 	 * supply a bit mask with no bits set.
 	 * <p>
 	 * Example usage:
-	 * <code>
-	 * <pre>
-	 *    delete(IResource.NONE, null)
-	 * </pre>
-	 * </code>
 	 * </p>
+	 *
+	 * <pre>
+	 * <code>
+	 *    delete(IResource.NONE, null)
+	 * </code>
+	 * </pre>
 	 *
 	 * @since 2.0
 	 */
@@ -511,10 +512,10 @@ public interface IResource extends IAdaptable, ISchedulingRule {
 	 * </p>
 	 * <p>
 	 * This is a convenience method, fully equivalent to:
+	 * </p>
 	 * <pre>
 	 *   accept(visitor, depth, includePhantoms ? IContainer.INCLUDE_PHANTOMS : IResource.NONE);
 	 * </pre>
-	 * </p>
 	 *
 	 * @param visitor the visitor
 	 * @param depth the depth to which members of this resource should be
@@ -637,10 +638,10 @@ public interface IResource extends IAdaptable, ISchedulingRule {
 	 * Makes a copy of this resource at the given path.
 	 * <p>
 	 * This is a convenience method, fully equivalent to:
+	 * </p>
 	 * <pre>
 	 *   copy(destination, (force ? FORCE : IResource.NONE), monitor);
 	 * </pre>
-	 * </p>
 	 * <p>
 	 * This operation changes resources; these changes will be reported
 	 * in a subsequent resource change event that will include
@@ -696,10 +697,10 @@ public interface IResource extends IAdaptable, ISchedulingRule {
 	 * <p>
 	 * Calling this method with a one segment absolute destination path is
 	 * equivalent to calling:
+	 * </p>
 	 * <pre>
 	 *   copy(workspace.newProjectDescription(folder.getName()),updateFlags,monitor);
 	 * </pre>
-	 * </p>
 	 * <p> When a resource is copied, its persistent properties are copied with it.
 	 * Session properties and markers are not copied.
 	 * </p>
@@ -813,10 +814,10 @@ public interface IResource extends IAdaptable, ISchedulingRule {
 	 * Makes a copy of this project using the given project description.
 	 * <p>
 	 * This is a convenience method, fully equivalent to:
+	 * </p>
 	 * <pre>
 	 *   copy(description, (force ? FORCE : IResource.NONE), monitor);
 	 * </pre>
-	 * </p>
 	 * <p>
 	 * This operation changes resources; these changes will be reported
 	 * in a subsequent resource change event that will include
@@ -964,10 +965,10 @@ public interface IResource extends IAdaptable, ISchedulingRule {
 	 * Deletes this resource from the workspace.
 	 * <p>
 	 * This is a convenience method, fully equivalent to:
+	 * </p>
 	 * <pre>
 	 *   delete(force ? FORCE : IResource.NONE, monitor);
 	 * </pre>
-	 * </p>
 	 * <p>
 	 * This method changes resources; these changes will be reported
 	 * in a subsequent resource change event.
@@ -1418,6 +1419,7 @@ public interface IResource extends IAdaptable, ISchedulingRule {
 	 * </p>
 	 * <p>
 	 * The following things affect a resource's modification stamp:
+	 * </p>
 	 * <ul>
 	 * <li>creating a non-project resource (changes from {@link #NULL_STAMP})</li>
 	 * <li>changing the contents of a file</li>
@@ -1441,7 +1443,6 @@ public interface IResource extends IAdaptable, ISchedulingRule {
 	 * <li>saving the workspace</li>
 	 * <li>shutting down and re-opening a workspace</li>
 	 * </ul>
-	 * </p>
 	 *
 	 * @return the modification stamp, or {@link #NULL_STAMP} if this resource either does
 	 *    not exist or exists as a closed project
@@ -1626,28 +1627,29 @@ public interface IResource extends IAdaptable, ISchedulingRule {
 	 * Gets this resource's extended attributes from the file system,
 	 * or <code>null</code> if the attributes could not be obtained.
 	 * <p>
-	 * Reasons for a <code>null</code> return value include:
+	 * Reasons for a <code>null</code> return value include:</p>
 	 * <ul>
 	 * <li> This resource does not exist.</li>
 	 * <li> This resource is not local.</li>
 	 * <li> This resource is a project that is not open.</li>
 	 * </ul>
-	 * </p><p>
+	 * <p>
 	 * Attributes that are not supported by the underlying file system
 	 * will have a value of <code>false</code>.
 	 * </p><p>
-	 * Sample usage: <br>
-	 * <br>
+	 * Sample usage:
+	 * </p>
+	 * <pre>
 	 * <code>
-	 *  IResource resource; <br>
-	 *  ... <br>
-	 *  ResourceAttributes attributes = resource.getResourceAttributes(); <br>
+	 *  IResource resource;
+	 *  ...
+	 *  ResourceAttributes attributes = resource.getResourceAttributes();
 	 *  if (attributes != null) {
-	 *     attributes.setExecutable(true); <br>
-	 *     resource.setResourceAttributes(attributes); <br>
+	 *     attributes.setExecutable(true);
+	 *     resource.setResourceAttributes(attributes);
 	 *  }
 	 * </code>
-	 * </p>
+	 * </pre>
 	 *
 	 * @return the extended attributes from the file system, or
 	 * <code>null</code> if they could not be obtained
@@ -1695,14 +1697,12 @@ public interface IResource extends IAdaptable, ISchedulingRule {
 	/**
 	 * Returns the type of this resource.
 	 * The returned value will be one of {@link #FILE}, {@link #FOLDER}, {@link #PROJECT}, {@link #ROOT}.
-	 * <p>
 	 * <ul>
 	 * <li> All resources of type {@link #FILE} implement {@link IFile}.</li>
 	 * <li> All resources of type {@link #FOLDER} implement {@link IFolder}.</li>
 	 * <li> All resources of type {@link #PROJECT} implement {@link IProject}.</li>
 	 * <li> All resources of type {@link #ROOT} implement {@link IWorkspaceRoot}.</li>
 	 * </ul>
-	 * </p>
 	 * <p>
 	 * This is a resource handle operation; the resource need not exist in the workspace.
 	 * </p>
@@ -1936,7 +1936,7 @@ public interface IResource extends IAdaptable, ISchedulingRule {
 	 * are considered to be in sync with the local file system.
 	 * <p>
 	 * A resource is considered to be in sync if all of the following
-	 * conditions are true:
+	 * conditions are true:</p>
 	 * <ul>
 	 * <li>The resource exists in both the workspace and the file system.</li>
 	 * <li>The timestamp in the file system has not changed since the
@@ -1944,6 +1944,7 @@ public interface IResource extends IAdaptable, ISchedulingRule {
 	 * <li>The resource in the workspace is of the same type as the corresponding
 	 * file in the file system (they are either both files or both folders).</li>
 	 * </ul>
+	 * <p>
 	 *  A resource is also considered to be in sync if it is missing from both
 	 * the workspace and the file system.  In all other cases the resource is
 	 * considered to be out of sync.
@@ -2004,10 +2005,10 @@ public interface IResource extends IAdaptable, ISchedulingRule {
 	 * Moves this resource so that it is located at the given path.
 	 * <p>
 	 * This is a convenience method, fully equivalent to:
+	 * </p>
 	 * <pre>
 	 *   move(destination, force ? FORCE : IResource.NONE, monitor);
 	 * </pre>
-	 * </p>
 	 * <p>
 	 * This method changes resources; these changes will be reported
 	 * in a subsequent resource change event that will include
@@ -2069,12 +2070,12 @@ public interface IResource extends IAdaptable, ISchedulingRule {
 	 * <p>
 	 * Calling this method with a one segment absolute destination path is
 	 * equivalent to calling:
+	 * </p>
 	 * <pre>
 	 IProjectDescription description = getDescription();
 	 description.setName(path.lastSegment());
 	 move(description, updateFlags, monitor);
 	 * </pre>
-	 * </p>
 	 * <p> When a resource moves, its session and persistent properties move with
 	 * it. Likewise for all other attributes of the resource including markers.
 	 * </p>
@@ -2187,10 +2188,10 @@ public interface IResource extends IAdaptable, ISchedulingRule {
 	 * description.
 	 * <p>
 	 * This is a convenience method, fully equivalent to:
+	 * </p>
 	 * <pre>
 	 *   move(description, (keepHistory ? KEEP_HISTORY : IResource.NONE) | (force ? FORCE : IResource.NONE), monitor);
 	 * </pre>
-	 * </p>
 	 * <p>
 	 * This operation changes resources; these changes will be reported
 	 * in a subsequent resource change event that will include
@@ -2652,7 +2653,7 @@ public interface IResource extends IAdaptable, ISchedulingRule {
 	 *
 	 * @param readOnly <code>true</code> to set it to read-only,
 	 *		<code>false</code> to unset
-	 * @deprecated use <tt>IResource#setResourceAttributes(ResourceAttributes)</tt>
+	 * @deprecated use <code>IResource#setResourceAttributes(ResourceAttributes)</code>
 	 */
 	@Deprecated
 	void setReadOnly(boolean readOnly);

@@ -56,7 +56,7 @@ public interface IFilterMatcherDescriptor {
 
 	/**
 	 * Returns the argument type expected by this filter. The result will be one of the
-	 * <tt>ARGUMENT_TYPE_*</tt> constants declared on this class.
+	 * <code>ARGUMENT_TYPE_*</code> constants declared on this class.
 	 * @return The argument type of this filter extension
 	 */
 	String getArgumentType();

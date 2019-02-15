@@ -272,7 +272,6 @@ public class EFS {
 	/**
 	 * Attribute constant (value 1 &lt;&lt;5) indicating that a
 	 * file is a symbolic link.
-	 * </p>
 	 * <p>
 	 * If this attribute is <code>true</code> for a given {@link IFileInfo}
 	 * instance, a String value may be associated with the attribute
@@ -309,7 +308,6 @@ public class EFS {
 	/**
 	 * Attribute constant (value 1 &lt;&lt;6) for a string attribute indicating the
 	 * target file name of a symbolic link.
-	 * </p>
 	 * <p>
 	 * Note that setting the link target attribute does not cause a symbolic
 	 * link to be created, or changed to link to a different file.  Rather, this

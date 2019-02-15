@@ -38,7 +38,7 @@ public interface ICommand {
 	 *		value type : <code>String</code>), or <code>null</code>
 	 * @see #setArguments(Map)
 	 */
-	Map<String,String> getArguments();
+	Map<String, String> getArguments();
 
 	/**
 	 * Returns the name of the builder to run for this command, or
@@ -55,7 +55,7 @@ public interface ICommand {
 	 * By default, build commands respond to all kinds of builds.
 	 * </p>
 	 *
-	 * @param kind One of the <tt>*_BUILD</code> constants defined
+	 * @param kind One of the <code>*_BUILD</code> constants defined
 	 * on <code>IncrementalProjectBuilder</code>
 	 * @return <code>true</code> if this build command responds to the specified
 	 * kind of build, and <code>false</code> otherwise.
@@ -97,7 +97,7 @@ public interface ICommand {
 	 *   both be of type <code>String</code>), or <code>null</code>
 	 * @see #getArguments()
 	 */
-	void setArguments(Map<String,String> args);
+	void setArguments(Map<String, String> args);
 
 	/**
 	 * Sets the name of the builder to run for this command.
@@ -137,7 +137,7 @@ public interface ICommand {
 	 * </li>
 	 * </ul>
 	 *
-	 * @param kind One of the <tt>*_BUILD</code> constants defined
+	 * @param kind One of the <code>*_BUILD</code> constants defined
 	 * 		on <code>IncrementalProjectBuilder</code>
 	 * @param value <code>true</code> if this build command responds to the
 	 * 		specified kind of build, and <code>false</code> otherwise.

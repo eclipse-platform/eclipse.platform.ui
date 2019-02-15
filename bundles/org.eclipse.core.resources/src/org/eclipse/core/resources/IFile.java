@@ -49,7 +49,8 @@ public interface IFile extends IResource, IEncodedStorage, IAdaptable {
 	 * @see IFile#getEncoding()
 	 * @deprecated see getEncoding for details
 	 */
-	@Deprecated int ENCODING_UNKNOWN = 0;
+	@Deprecated
+	int ENCODING_UNKNOWN = 0;
 	/**
 	 * Character encoding constant (value 1) which identifies
 	 * files that are encoded with the US-ASCII character encoding scheme.
@@ -57,7 +58,8 @@ public interface IFile extends IResource, IEncodedStorage, IAdaptable {
 	 * @see IFile#getEncoding()
 	 * @deprecated see getEncoding for details
 	 */
-	@Deprecated int ENCODING_US_ASCII = 1;
+	@Deprecated
+	int ENCODING_US_ASCII = 1;
 	/**
 	 * Character encoding constant (value 2) which identifies
 	 * files that are encoded with the ISO-8859-1 character encoding scheme,
@@ -66,7 +68,8 @@ public interface IFile extends IResource, IEncodedStorage, IAdaptable {
 	 * @see IFile#getEncoding()
 	 * @deprecated see getEncoding for details
 	 */
-	@Deprecated int ENCODING_ISO_8859_1 = 2;
+	@Deprecated
+	int ENCODING_ISO_8859_1 = 2;
 	/**
 	 * Character encoding constant (value 3) which identifies
 	 * files that are encoded with the UTF-8 character encoding scheme.
@@ -74,7 +77,8 @@ public interface IFile extends IResource, IEncodedStorage, IAdaptable {
 	 * @see IFile#getEncoding()
 	 * @deprecated see getEncoding for details
 	 */
-	@Deprecated int ENCODING_UTF_8 = 3;
+	@Deprecated
+	int ENCODING_UTF_8 = 3;
 	/**
 	 * Character encoding constant (value 4) which identifies
 	 * files that are encoded with the UTF-16BE character encoding scheme.
@@ -82,7 +86,8 @@ public interface IFile extends IResource, IEncodedStorage, IAdaptable {
 	 * @see IFile#getEncoding()
 	 * @deprecated see getEncoding for details
 	 */
-	@Deprecated int ENCODING_UTF_16BE = 4;
+	@Deprecated
+	int ENCODING_UTF_16BE = 4;
 	/**
 	 * Character encoding constant (value 5) which identifies
 	 * files that are encoded with the UTF-16LE character encoding scheme.
@@ -90,7 +95,8 @@ public interface IFile extends IResource, IEncodedStorage, IAdaptable {
 	 * @see IFile#getEncoding()
 	 * @deprecated see getEncoding for details
 	 */
-	@Deprecated int ENCODING_UTF_16LE = 5;
+	@Deprecated
+	int ENCODING_UTF_16LE = 5;
 	/**
 	 * Character encoding constant (value 6) which identifies
 	 * files that are encoded with the UTF-16 character encoding scheme.
@@ -98,16 +104,17 @@ public interface IFile extends IResource, IEncodedStorage, IAdaptable {
 	 * @see IFile#getEncoding()
 	 * @deprecated see getEncoding for details
 	 */
-	@Deprecated int ENCODING_UTF_16 = 6;
+	@Deprecated
+	int ENCODING_UTF_16 = 6;
 
 	/**
 	 * Appends the entire contents of the given stream to this file.
 	 * <p>
 	 * This is a convenience method, fully equivalent to:
+	 * </p>
 	 * <pre>
 	 *   appendContents(source, (keepHistory ? KEEP_HISTORY : IResource.NONE) | (force ? FORCE : IResource.NONE), monitor);
 	 * </pre>
-	 * </p>
 	 * <p>
 	 * This method changes resources; these changes will be reported
 	 * in a subsequent resource change event, including an indication
@@ -221,10 +228,10 @@ public interface IFile extends IResource, IEncodedStorage, IAdaptable {
 	 * Creates a new file resource as a member of this handle's parent resource.
 	 * <p>
 	 * This is a convenience method, fully equivalent to:
+	 * </p>
 	 * <pre>
 	 *   create(source, (force ? FORCE : IResource.NONE), monitor);
 	 * </pre>
-	 * </p>
 	 * <p>
 	 * This method changes resources; these changes will be reported
 	 * in a subsequent resource change event, including an indication
@@ -511,10 +518,10 @@ public interface IFile extends IResource, IEncodedStorage, IAdaptable {
 	 * Deletes this file from the workspace.
 	 * <p>
 	 * This is a convenience method, fully equivalent to:
+	 * </p>
 	 * <pre>
 	 *   delete((keepHistory ? KEEP_HISTORY : IResource.NONE) | (force ? FORCE : IResource.NONE), monitor);
 	 * </pre>
-	 * </p>
 	 * <p>
 	 * This method changes resources; these changes will be reported
 	 * in a subsequent resource change event, including an indication
@@ -551,11 +558,11 @@ public interface IFile extends IResource, IEncodedStorage, IAdaptable {
 	 * file into characters.
 	 * <p>
 	 * This refinement of the corresponding {@link IEncodedStorage} method
-	 * is a convenience method, fully equivalent to:
+	 * is a convenience method, fully equivalent to:</p>
 	 * <pre>
 	 *   getCharset(true);
 	 * </pre>
-	 * </p><p>
+	 * <p>
 	 * <b>Note 1</b>:  this method does not check whether the result is a supported
 	 * charset name. Callers should be prepared to handle
 	 * <code>UnsupportedEncodingException</code> where this charset is used.
@@ -579,7 +586,8 @@ public interface IFile extends IResource, IEncodedStorage, IAdaptable {
 	 * @see IContainer#getDefaultCharset()
 	 * @since 3.0
 	 */
-	@Override String getCharset() throws CoreException;
+	@Override
+	String getCharset() throws CoreException;
 
 	/**
 	 * Returns the name of a charset to be used when decoding the contents of this
@@ -590,7 +598,7 @@ public interface IFile extends IResource, IEncodedStorage, IAdaptable {
 	 * exists, or <code>null</code> otherwise.
 	 * </p><p>
 	 * If checkImplicit is <code>true</code>, this method uses the following
-	 * algorithm to determine the charset to be returned:
+	 * algorithm to determine the charset to be returned:</p>
 	 * <ol>
 	 * <li>the charset defined by calling #setCharset, if any, and this file
 	 * exists, or</li>
@@ -599,7 +607,7 @@ public interface IFile extends IResource, IEncodedStorage, IAdaptable {
 	 * <li>the default encoding for this file's parent (as defined by
 	 * <code>IContainer#getDefaultCharset</code>).</li>
 	 * </ol>
-	 * </p><p>
+	 * <p>
 	 * <b>Note 1</b>:  this method does not check whether the result is a supported
 	 * charset name. Callers should be prepared to handle
 	 * <code>UnsupportedEncodingException</code> where this charset is used.
@@ -628,7 +636,7 @@ public interface IFile extends IResource, IEncodedStorage, IAdaptable {
 	 * Returns the name of a charset to be used to encode the given contents
 	 * when saving to this file. This file does not have to exist. The character stream is <em>not</em> automatically closed.
 	 * <p>
-	 * This method uses the following algorithm to determine the charset to be returned:
+	 * This method uses the following algorithm to determine the charset to be returned:</p>
 	 * <ol>
 	 * <li>if this file exists, the charset returned by IFile#getCharset(false), if one is defined, or</li>
 	 * <li>the charset automatically discovered based on the file name and the given contents,
@@ -636,7 +644,7 @@ public interface IFile extends IResource, IEncodedStorage, IAdaptable {
 	 * <li>the default encoding for the parent resource (as defined by
 	 * <code>IContainer#getDefaultCharset</code>).</li>
 	 * </ol>
-	 * </p><p>
+	 * <p>
 	 * <b>Note</b>:  this method does not check whether the result is a supported
 	 * charset name. Callers should be prepared to handle
 	 * <code>UnsupportedEncodingException</code> where this charset is used.
@@ -693,10 +701,10 @@ public interface IFile extends IResource, IEncodedStorage, IAdaptable {
 	 * <p>
 	 * This refinement of the corresponding {@link IStorage} method
 	 * is a convenience method returning an open input stream.  It's equivalent to:
+	 * </p>
 	 * <pre>
 	 *   getContents(RefreshManager#PREF_LIGHTWEIGHT_AUTO_REFRESH);
 	 * </pre>
-	 * </p>
 	 * <p>
 	 * If lightweight auto-refresh is not enabled this method will throw a CoreException
 	 * when opening out-of-sync resources.
@@ -719,7 +727,8 @@ public interface IFile extends IResource, IEncodedStorage, IAdaptable {
 	 *       {@link ResourcesPlugin#PREF_LIGHTWEIGHT_AUTO_REFRESH} is disabled).</li>
 	 * </ul>
 	 */
-	@Override InputStream getContents() throws CoreException;
+	@Override
+	InputStream getContents() throws CoreException;
 
 	/**
 	 * This refinement of the corresponding <code>IStorage</code> method
@@ -772,7 +781,8 @@ public interface IFile extends IResource, IEncodedStorage, IAdaptable {
 	 * </ul>
 	 * @deprecated use {@link #getCharset} instead
 	 */
-	@Deprecated int getEncoding() throws CoreException;
+	@Deprecated
+	int getEncoding() throws CoreException;
 
 	/**
 	 * Returns the full path of this file.
@@ -784,7 +794,8 @@ public interface IFile extends IResource, IEncodedStorage, IAdaptable {
 	 * @see IResource#getFullPath()
 	 * @see IStorage#getFullPath()
 	 */
-	@Override IPath getFullPath();
+	@Override
+	IPath getFullPath();
 
 	/**
 	 * Returns a list of past states of this file known to this workspace.
@@ -813,7 +824,8 @@ public interface IFile extends IResource, IEncodedStorage, IAdaptable {
 	 * @see IResource#getName()
 	 * @see IStorage#getName()
 	 */
-	@Override String getName();
+	@Override
+	String getName();
 
 	/**
 	 * Returns whether this file is read-only.
@@ -824,16 +836,17 @@ public interface IFile extends IResource, IEncodedStorage, IAdaptable {
 	 * @see IStorage#isReadOnly()
 	 */
 	@SuppressWarnings("deprecation")
-	@Override boolean isReadOnly();
+	@Override
+	boolean isReadOnly();
 
 	/**
 	 * Moves this resource to be at the given location.
 	 * <p>
 	 * This is a convenience method, fully equivalent to:
+	 * </p>
 	 * <pre>
 	 *   move(destination, (keepHistory ? KEEP_HISTORY : IResource.NONE) | (force ? FORCE : IResource.NONE), monitor);
 	 * </pre>
-	 * </p>
 	 * <p>
 	 * This method changes resources; these changes will be reported
 	 * in a subsequent resource change event, including an indication
@@ -891,7 +904,8 @@ public interface IFile extends IResource, IEncodedStorage, IAdaptable {
 	 * @deprecated Replaced by {@link #setCharset(String, IProgressMonitor)} which
 	 * 	is a workspace operation and reports changes in resource deltas.
 	 */
-	@Deprecated void setCharset(String newCharset) throws CoreException;
+	@Deprecated
+	void setCharset(String newCharset) throws CoreException;
 
 	/**
 	 * Sets the charset for this file. Passing a value of <code>null</code>
@@ -928,10 +942,10 @@ public interface IFile extends IResource, IEncodedStorage, IAdaptable {
 	 * Sets the contents of this file to the bytes in the given input stream.
 	 * <p>
 	 * This is a convenience method, fully equivalent to:
+	 * </p>
 	 * <pre>
 	 *   setContents(source, (keepHistory ? KEEP_HISTORY : IResource.NONE) | (force ? FORCE : IResource.NONE), monitor);
 	 * </pre>
-	 * </p>
 	 * <p>
 	 * This method changes resources; these changes will be reported
 	 * in a subsequent resource change event, including an indication
@@ -970,10 +984,10 @@ public interface IFile extends IResource, IEncodedStorage, IAdaptable {
 	 * Sets the contents of this file to the bytes in the given file state.
 	 * <p>
 	 * This is a convenience method, fully equivalent to:
+	 * </p>
 	 * <pre>
 	 *   setContents(source, (keepHistory ? KEEP_HISTORY : IResource.NONE) | (force ? FORCE : IResource.NONE), monitor);
 	 * </pre>
-	 * </p>
 	 * <p>
 	 * This method changes resources; these changes will be reported
 	 * in a subsequent resource change event, including an indication

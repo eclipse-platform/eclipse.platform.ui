@@ -76,7 +76,6 @@ public interface IPathVariableManager {
 	 * Sets the path variable with the given name to be the specified value.
 	 * Depending on the value given and if the variable is currently defined
 	 * or not, there are several possible outcomes for this operation:
-	 * <p>
 	 * <ul>
 	 * <li>A new variable will be created, if there is no variable defined with
 	 * the given name, and the given value is not <code>null</code>.
@@ -106,13 +105,13 @@ public interface IPathVariableManager {
 	 * </ul>
 	 * @deprecated use {@link #setURIValue(String, URI)} instead.
 	 */
-	@Deprecated void setValue(String name, IPath value) throws CoreException;
+	@Deprecated
+	void setValue(String name, IPath value) throws CoreException;
 
 	/**
 	 * Sets the path variable with the given name to be the specified value.
 	 * Depending on the value given and if the variable is currently defined
 	 * or not, there are several possible outcomes for this operation:
-	 * <p>
 	 * <ul>
 	 * <li>A new variable will be created, if there is no variable defined with
 	 * the given name, and the given value is not <code>null</code>.
@@ -153,7 +152,8 @@ public interface IPathVariableManager {
 	 *    variable defined with the given name
 	 * @deprecated use {@link #getURIValue(String)} instead.
 	 */
-	@Deprecated IPath getValue(String name);
+	@Deprecated
+	IPath getValue(String name);
 
 	/**
 	 * Returns the value of the path variable with the given name. If there is
@@ -245,13 +245,14 @@ public interface IPathVariableManager {
 	 * <p>TEMP/foo  => c:/temp/foo</p>
 	 * <p>BACKUP  => /tmp/backup</p>
 	 * <p>BACKUP/bar.txt  => /tmp/backup/bar.txt</p>
-	 * <p>SOMEPATH/foo => SOMEPATH/foo</p></p>
+	 * <p>SOMEPATH/foo => SOMEPATH/foo</p>
 	 *
 	 * @param path the path to be resolved
 	 * @return the resolved path or <code>null</code>
 	 * @deprecated use {@link #resolveURI(URI)} instead.
 	 */
-	@Deprecated IPath resolvePath(IPath path);
+	@Deprecated
+	IPath resolvePath(IPath path);
 
 	/**
 	 * Returns <code>true</code> if the given variable is defined and

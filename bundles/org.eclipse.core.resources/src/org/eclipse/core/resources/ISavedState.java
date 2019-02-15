@@ -62,9 +62,9 @@ public interface ISavedState {
 	 * method is run, the delta is forgotten. Subsequent calls to this method
 	 * will have no effect.
 	 * <p>
-	 * No notification is received in the following cases:
+	 * No notification is received in the following cases:</p>
 	 * <ul>
-	 * <li>if a saved state was never recorded ({@link ISaveContext#needDelta()}</code>
+	 * <li>if a saved state was never recorded ({@link ISaveContext#needDelta()}
 	 * 		was not called) </li>
 	 * <li>a saved state has since been forgotten (using {@link IWorkspace#forgetSavedTree(String)}) </li>
 	 * <li>a saved state has been deemed too old or has become invalid</li>

@@ -89,7 +89,7 @@ public interface ISaveParticipant extends EventListener {
 	 * snapshots and project saves: the participant must absolutely guarantee that any
 	 * important user data it has gathered will not be irrecoverably lost
 	 * in the event of a crash. The only difference is in the space-time
-	 * tradeoffs that the participant should make.
+	 * tradeoffs that the participant should make.</p>
 	 * <ul>
 	 * <li>Full saves: the participant is
 	 * encouraged to save additional non-essential information that will aid
@@ -116,11 +116,10 @@ public interface ISaveParticipant extends EventListener {
 	 * that information is non-essential; in the unlikely event of a crash,
 	 * the image should be rebuilt either from scratch or from the last saved
 	 * state.
-	 * </p>
 	 * <p>
 	 * The following snippet shows how a plug-in participant would write
 	 * its important state to a file whose name is based on the save
-	 * number for this save operation.
+	 * number for this save operation.</p>
 	 * <pre>
 	 *     Plugin plugin = ...; // known
 	 *     int saveNumber = context.getSaveNumber();
@@ -131,6 +130,7 @@ public interface ISaveParticipant extends EventListener {
 	 *     context.needSaveNumber();
 	 *     context.needDelta(); // optional
 	 * </pre>
+	 * <p>
 	 * When the plug-in is reactivated in a subsequent workspace session,
 	 * it needs to re-register to participate in workspace saves. When it
 	 * does so, it is handed back key information about what state it had last
@@ -139,6 +139,7 @@ public interface ISaveParticipant extends EventListener {
 	 * information is still available.
 	 * The following snippet shows what a participant plug-in would
 	 * need to do if and when it is reactivated:
+	 * </p>
 	 * <pre>
 	 *     IWorkspace ws = ...; // known
 	 *     Plugin plugin = ...; // known
@@ -165,7 +166,6 @@ public interface ISaveParticipant extends EventListener {
 	 *         ss.processResourceChangeEvents(listener);
 	 *     }
 	 * </pre>
-	 * </p>
 	 *
 	 * @param context the save context object
 	 * @exception CoreException if this method fails

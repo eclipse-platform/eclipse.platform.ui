@@ -103,12 +103,12 @@ public interface IWorkspace extends IAdaptable {
 	 * no effect if an identical listener is already registered.
 	 * <p>
 	 * This method is equivalent to:
+	 * </p>
 	 *
 	 * <pre>
 	 * addResourceChangeListener(listener, IResourceChangeEvent.PRE_CLOSE | IResourceChangeEvent.PRE_DELETE | IResourceChangeEvent.POST_CHANGE);
 	 * </pre>
 	 *
-	 * </p>
 	 *
 	 * @param listener the listener
 	 * @see IResourceChangeListener
@@ -442,12 +442,12 @@ public interface IWorkspace extends IAdaptable {
 	 * the corresponding originals.
 	 * <p>
 	 * This is a convenience method, fully equivalent to:
+	 * </p>
 	 *
 	 * <pre>
 	 * copy(resources, destination, (force ? IResource.FORCE : IResource.NONE), monitor);
 	 * </pre>
 	 *
-	 * </p>
 	 * <p>
 	 * This method changes resources; these changes will be reported in a
 	 * subsequent resource change event that will include an indication that the
@@ -484,6 +484,7 @@ public interface IWorkspace extends IAdaptable {
 	 * This method can be expressed as a series of calls to
 	 * <code>IResource.copy(IPath,int,IProgressMonitor)</code>, with "best
 	 * effort" semantics:
+	 * </p>
 	 * <ul>
 	 * <li>Resources are copied in the order specified, using the given update
 	 * flags.</li>
@@ -497,7 +498,6 @@ public interface IWorkspace extends IAdaptable {
 	 * <li>This method also fails if one or more of the individual resource
 	 * copy steps fails.</li>
 	 * </ul>
-	 * </p>
 	 * <p>
 	 * After successful completion, corresponding new resources will now exist
 	 * as members of the resource at the given path.
@@ -560,12 +560,12 @@ public interface IWorkspace extends IAdaptable {
 	 * Deletes the given resources.
 	 * <p>
 	 * This is a convenience method, fully equivalent to:
+	 * </p>
 	 *
 	 * <pre>
 	 * delete(resources, IResource.KEEP_HISTORY | (force ? IResource.FORCE : IResource.NONE), monitor);
 	 * </pre>
 	 *
-	 * </p>
 	 * <p>
 	 * This method changes resources; these changes will be reported in a
 	 * subsequent resource change event.
@@ -600,6 +600,7 @@ public interface IWorkspace extends IAdaptable {
 	 * </p>
 	 * <p>
 	 * The semantics of multiple deletion are:
+	 * </p>
 	 * <ul>
 	 * <li>Resources are deleted in the order presented, using the given update
 	 * flags.</li>
@@ -612,7 +613,6 @@ public interface IWorkspace extends IAdaptable {
 	 * deletions fails; that is, if at least one of the resources in the list
 	 * still exists at the end of this method.</li>
 	 * </ul>
-	 * </p>
 	 * <p>
 	 * This method changes resources; these changes will be reported in a
 	 * subsequent resource change event.
@@ -805,7 +805,7 @@ public interface IWorkspace extends IAdaptable {
 	 * <li>The project description file does not exist.</li>
 	 * <li>The file cannot be opened or read.</li>
 	 * <li>The file cannot be parsed as a legal project description.</li>
-	 * </li>
+	 * </ul>
 	 * @see #newProjectDescription(String)
 	 * @see IProject#getDescription()
 	 * @since 2.0
@@ -829,7 +829,7 @@ public interface IWorkspace extends IAdaptable {
 	 * <ul>
 	 * <li>The stream could not be read.</li>
 	 * <li>The stream does not contain a legal project description.</li>
-	 * </li>
+	 * </ul>
 	 * @see #newProjectDescription(String)
 	 * @see IProject#getDescription()
 	 * @see IWorkspace#loadProjectDescription(IPath)
@@ -843,12 +843,12 @@ public interface IWorkspace extends IAdaptable {
 	 * same.
 	 * <p>
 	 * This is a convenience method, fully equivalent to:
+	 * </p>
 	 *
 	 * <pre>
 	 * move(resources, destination, IResource.KEEP_HISTORY | (force ? IResource.FORCE : IResource.NONE), monitor);
 	 * </pre>
 	 *
-	 * </p>
 	 * <p>
 	 * This method changes resources; these changes will be reported in a
 	 * subsequent resource change event that will include an indication that the
@@ -887,6 +887,7 @@ public interface IWorkspace extends IAdaptable {
 	 * <p>
 	 * This method can be expressed as a series of calls to
 	 * <code>IResource.move</code>, with "best effort" semantics:
+	 * </p>
 	 * <ul>
 	 * <li>Resources are moved in the order specified.</li>
 	 * <li>Duplicate resources are only moved once.</li>
@@ -903,7 +904,6 @@ public interface IWorkspace extends IAdaptable {
 	 * <li>History is kept for moved files. When projects are moved, no history
 	 * is kept</li>
 	 * </ul>
-	 * </p>
 	 * <p>
 	 * After successful completion, the resources and descendents will no longer
 	 * exist; but corresponding new resources will now exist as members of the
@@ -998,13 +998,13 @@ public interface IWorkspace extends IAdaptable {
 	 * projects.
 	 * <p>
 	 * The project description is initialized to:
+	 * </p>
 	 * <ul>
 	 * <li>the given project name</li>
 	 * <li>no references to other projects</li>
 	 * <li>an empty build spec</li>
 	 * <li>an empty comment</li>
 	 * </ul>
-	 * </p>
 	 * <p>
 	 * The returned value is writeable.
 	 * </p>
@@ -1126,12 +1126,12 @@ public interface IWorkspace extends IAdaptable {
 	 * Runs the given action as an atomic workspace operation.
 	 * <p>
 	 * This is a convenience method, fully equivalent to:
+	 * </p>
 	 *
 	 * <pre>
 	 * workspace.run(action, workspace.getRoot(), IWorkspace.AVOID_UPDATE, monitor);
 	 * </pre>
 	 *
-	 * </p>
 	 *
 	 * @param action the action to perform
 	 * @param monitor a progress monitor, or <code>null</code> if progress
@@ -1202,7 +1202,7 @@ public interface IWorkspace extends IAdaptable {
 	 * themselves and their persistent properties, are written to disk
 	 * immediately; other data are kept in volatile memory and only written to
 	 * disk periodically; and other data are maintained in memory and never
-	 * written out. The following table summarizes what gets saved when:
+	 * written out. The following table summarizes what gets saved when:</p>
 	 * <ul>
 	 * <li>creating or deleting resource - immediately</li>
 	 * <li>setting contents of file - immediately</li>
@@ -1214,6 +1214,7 @@ public interface IWorkspace extends IAdaptable {
 	 * <li>shape of the workspace resource tree -<code>save</code></li>
 	 * <li>list of active plug-ins - never</li>
 	 * </ul>
+	 * <p>
 	 * Resource-based plug-in also have data with varying degrees of importance.
 	 * Each plug-in gets to decide the policy for protecting its data, either
 	 * immediately, never, or at <code>save</code> time. For the latter, the
@@ -1311,17 +1312,18 @@ public interface IWorkspace extends IAdaptable {
 	 * </li>
 	 * <li>The workspace save operation returns.</li>
 	 * </ul>
-	 * <li>If it failed:
-	 * <ul>
+	 * <li>If it failed:</li>
+	 * <li><ul>
 	 * <li>The workspace previous state is restored.</li>
 	 * <li>In prerequisite-before-dependent order, each registered workspace
 	 * save participant is sent <code>rollback(context)</code>, passing in
 	 * its own context object.
-	 * <ul>
+	 * </li>
+	 * <li><ul>
 	 * <li>Plug-in may perform clean up by deleting newly-created but obsolete
 	 * state file in its plug-in state area.</li>
 	 * <li>Plug-in resumes its normal activities.</li>
-	 * </ul>
+	 * </ul></li><li>
 	 * If <code>rollback</code> fails (throws an exception), the problem is
 	 * logged and the participant is marked as unstable. (The state number in
 	 * the save table is rolled back anyway.)</li>
@@ -1329,7 +1331,6 @@ public interface IWorkspace extends IAdaptable {
 	 * </ul>
 	 * </li>
 	 * </ul>
-	 * </p>
 	 * <p>
 	 * After a full save, the platform can be shutdown. This will cause the
 	 * Resources plug-in and all the other plug-ins to shutdown, without
@@ -1411,7 +1412,6 @@ public interface IWorkspace extends IAdaptable {
 	 * "core" (i.e., head-less) clients can use it. Similarly, it is located
 	 * outside the VCM component for the convenience of clients that must also
 	 * operate in configurations without VCM.)
-	 * </p>
 	 * <p>
 	 * A client (such as an editor) should perform a <code>validateEdit</code>
 	 * on a file whenever it finds itself in the following position: (a) the
@@ -1530,16 +1530,15 @@ public interface IWorkspace extends IAdaptable {
 	 * </ul>
 	 * <p>
 	 * This method also checks that the given resource can legally become a
-	 * linked resource. This includes the following restrictions:
+	 * linked resource. This includes the following restrictions:</p>
 	 * <ul>
 	 * <li>must have a project as its immediate parent</li>
 	 * <li>project natures and the team hook may disallow linked resources on
 	 * projects they are associated with</li>
 	 * <li>the global workspace preference to disable linking,
 	 * <code>ResourcesPlugin.PREF_DISABLE_LINKING</code> must not be set to
-	 * &quot;true&quot;</li>.
+	 * &quot;true&quot;</li>
 	 * </ul>
-	 * </p>
 	 * <p>
 	 * This method will return a status with severity <code>IStatus.ERROR</code>
 	 * if the location does not obey the above rules. Also, this method will
@@ -1581,9 +1580,8 @@ public interface IWorkspace extends IAdaptable {
 	 * projects they are associated with</li>
 	 * <li>the global workspace preference to disable linking,
 	 * <code>ResourcesPlugin.PREF_DISABLE_LINKING</code> must not be set to
-	 * &quot;true&quot;</li>.
+	 * &quot;true&quot;</li>
 	 * </ul>
-	 * </p>
 	 * <p>
 	 * This method will return a status with severity <code>IStatus.ERROR</code>
 	 * if the location does not obey the above rules. Also, this method will
@@ -1642,6 +1640,7 @@ public interface IWorkspace extends IAdaptable {
 	 * constraints are satisfied within the given set.
 	 * <p>
 	 * The following conditions apply to validation of a set of natures:
+	 * </p>
 	 * <ul>
 	 * <li>all natures in the set exist in the plug-in registry
 	 * <li>all prerequisites of each nature are present in the set
@@ -1650,7 +1649,6 @@ public interface IWorkspace extends IAdaptable {
 	 * inclusion in the same group.
 	 * <li>there are no two natures in the set with the same id
 	 * </ul>
-	 * </p>
 	 * <p>
 	 * An empty nature set is always valid.
 	 * </p>
@@ -1669,6 +1667,7 @@ public interface IWorkspace extends IAdaptable {
 	 * In addition to the restrictions for paths in general (see
 	 * <code>IPath.isValidPath</code>), a resource path should also obey the
 	 * following rules:
+	 * </p>
 	 * <ul>
 	 * <li>a resource path should be an absolute path with no device id
 	 * <li>its segments should be valid names according to
@@ -1680,7 +1679,6 @@ public interface IWorkspace extends IAdaptable {
 	 * <li>the second through penultimate segments should be valid folder names
 	 * <li>the last segment should be a valid name of the given type
 	 * </ul>
-	 * </p>
 	 * <p>
 	 * Note: this method does not consider whether a resource at the specified
 	 * path exists.
@@ -1720,7 +1718,6 @@ public interface IWorkspace extends IAdaptable {
 	 * <li>must not be the same as or a child of the location of any existing
 	 * linked resource in the given project</li>
 	 * </ul>
-	 * </p>
 	 * <p>
 	 * Note: this method does not consider whether files or directories exist in
 	 * the file system at the specified path.
@@ -1751,7 +1748,6 @@ public interface IWorkspace extends IAdaptable {
 	 * <li>must not be the same as or a child of the location of any existing
 	 * linked resource in the given project</li>
 	 * </ul>
-	 * </p>
 	 * <p>
 	 * Note: this method does not consider whether files or directories exist in
 	 * the file system at the specified path.

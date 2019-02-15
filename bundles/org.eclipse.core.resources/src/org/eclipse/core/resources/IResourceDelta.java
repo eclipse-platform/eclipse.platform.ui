@@ -229,10 +229,11 @@ public interface IResourceDelta extends IAdaptable {
 	 * resource delta. If the visitor returns <code>true</code>,
 	 * the resource delta's children are also visited.
 	 * <p>
-	 * This is a convenience method, fully equivalent to:
+	 * This is a convenience method, fully equivalent to:</p>
 	 * <pre>
 	 *   accept(visitor, includePhantoms ? INCLUDE_PHANTOMS : IResource.NONE);
 	 * </pre>
+	 * <p>
 	 * Although the visitor will be invoked for this resource delta, it will not be
 	 * invoked for any team-private member resources.
 	 * </p>
@@ -312,10 +313,11 @@ public interface IResourceDelta extends IAdaptable {
 	 * which were added, removed, or changed. Returns an empty
 	 * array if there are no affected children.
 	 * <p>
-	 * This is a convenience method, fully equivalent to:
+	 * This is a convenience method, fully equivalent to:</p>
 	 * <pre>
 	 *   getAffectedChildren(ADDED | REMOVED | CHANGED, IResource.NONE);
 	 * </pre>
+	 * <p>
 	 * Team-private member resources are <b>not</b> included in the result; neither are
 	 * phantom resources.
 	 * </p>
@@ -334,10 +336,11 @@ public interface IResourceDelta extends IAdaptable {
 	 * by the bitwise or of <code>IResourceDelta</code> kind constants.
 	 * Returns an empty array if there are no affected children.
 	 * <p>
-	 * This is a convenience method, fully equivalent to:
+	 * This is a convenience method, fully equivalent to:</p>
 	 * <pre>
 	 *   getAffectedChildren(kindMask, IResource.NONE);
 	 * </pre>
+	 * <p>
 	 * Team-private member resources are <b>not</b> included in the result.
 	 * </p>
 	 *
@@ -444,7 +447,7 @@ public interface IResourceDelta extends IAdaptable {
 	 * <li><code>COPIED_FROM</code> - Change constant (bit mask) indicating that the resource was copied from another location.
 	 * The location in the "before" state can be retrieved using <code>getMovedFromPath()</code>.</li>
 	 * </ul>
-	 *
+	 * <p>
 	 * A simple move operation would result in the following delta information.
 	 * If a resource is moved from A to B (with no other changes to A or B),
 	 * then A will have kind <code>REMOVED</code>, with flag <code>MOVED_TO</code>,

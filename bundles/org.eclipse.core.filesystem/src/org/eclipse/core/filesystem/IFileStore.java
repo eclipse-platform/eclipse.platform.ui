@@ -227,7 +227,6 @@ public interface IFileStore extends IAdaptable {
 	 *       result = result.getChild(path.segment(i));
 	 *    return result;
 	 * </pre>
-	 * </p>
 	 * <p>
 	 * This is a handle-only method; a child is provided regardless
 	 * of whether this store or the child store exists, or whether this store
@@ -267,7 +266,6 @@ public interface IFileStore extends IAdaptable {
 	 * this store.  This is a handle-only method; a child is provided regardless
 	 * of whether this store or the child store exists, or whether this store
 	 * represents a directory or not.
-	 * </p>
 	 * 
 	 * @param name The name of the child store to return
 	 * @return A child file store.
@@ -308,7 +306,7 @@ public interface IFileStore extends IAdaptable {
 	/**
 	 * Returns whether this store is a parent of the provided store.  This
 	 * is equivalent to, but typically more efficient than, the following:
-	 * <code>
+	 * <pre><code>
 	 * while (true) {
 	 * 	other = other.getParent();
 	 * 	if (other == null)
@@ -316,7 +314,7 @@ public interface IFileStore extends IAdaptable {
 	 * 	if (this.equals(other))
 	 * 		return true;
 	 * }
-	 * </code>
+	 * </code></pre>
 	 * <p>
 	 * This is a handle only method; this test works regardless of whether
 	 * this store or the parameter store exists.

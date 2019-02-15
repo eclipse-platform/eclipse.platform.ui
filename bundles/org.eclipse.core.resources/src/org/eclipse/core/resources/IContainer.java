@@ -230,11 +230,11 @@ public interface IContainer extends IResource, IAdaptable {
 	/**
 	 * Returns the default charset for resources in this container.
 	 * <p>
-	 * This is a convenience method, fully equivalent to:
+	 * This is a convenience method, fully equivalent to:</p>
 	 * <pre>
 	 *   getDefaultCharset(true);
 	 * </pre>
-	 * </p><p>
+	 * <p>
 	 * Note that  this method does not check whether the result is a supported
 	 * charset name. Callers should be prepared to handle
 	 * <code>UnsupportedEncodingException</code> where this charset is used.
@@ -256,7 +256,7 @@ public interface IContainer extends IResource, IAdaptable {
 	 * container exists, or <code>null</code> otherwise.
 	 * </p><p>
 	 * If checkImplicit is <code>true</code>, this method uses the following
-	 * algorithm to determine the charset to be returned:
+	 * algorithm to determine the charset to be returned:</p>
 	 * <ol>
 	 * <li>the one explicitly set by calling #setDefaultCharset
 	 * (with a non-null argument) on this container, if any, and this container
@@ -265,7 +265,7 @@ public interface IContainer extends IResource, IAdaptable {
 	 * workspace root), or</li>
 	 * <li>the charset returned by ResourcesPlugin#getEncoding.</li>
 	 * </ol>
-	 *  </p><p>
+	 *  <p>
 	 * Note that  this method does not check whether the result is a supported
 	 * charset name. Callers should be prepared to handle
 	 * <code>UnsupportedEncodingException</code> where this charset is used.
@@ -352,11 +352,11 @@ public interface IContainer extends IResource, IAdaptable {
 	 * in this resource, in no particular order.
 	 * <p>
 	 * This is a convenience method, fully equivalent to:
+	 * </p>
 	 * <pre>
 	 *   members(includePhantoms ? INCLUDE_PHANTOMS : IResource.NONE);
 	 * </pre>
 	 * Team-private member resources are <b>not</b> included in the result.
-	 * </p>
 	 *
 	 * @param includePhantoms <code>true</code> if phantom resources are
 	 *   of interest; <code>false</code> if phantom resources are not of
@@ -472,7 +472,8 @@ public interface IContainer extends IResource, IAdaptable {
 	 * @deprecated Replaced by {@link #setDefaultCharset(String, IProgressMonitor)} which
 	 * 	is a workspace operation and reports changes in resource deltas.
 	 */
-	@Deprecated void setDefaultCharset(String charset) throws CoreException;
+	@Deprecated
+	void setDefaultCharset(String charset) throws CoreException;
 
 	/**
 	 * Sets the default charset for this container. Passing a value of <code>null</code>
@@ -555,6 +556,7 @@ public interface IContainer extends IResource, IAdaptable {
 	 * @exception CoreException if this resource's filters could not be retrieved. Reasons include:
 	 * <ul>
 	 * <li> This resource is not a folder.</li>
+	 * </ul>
 	 *
 	 * @see #createFilter(int, FileInfoMatcherDescription, int, IProgressMonitor)
 	 * @see IResourceFilterDescription#delete(int, IProgressMonitor)

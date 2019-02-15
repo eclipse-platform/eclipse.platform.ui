@@ -282,13 +282,14 @@ public interface IProject extends IContainer, IAdaptable {
 	 * <p>
 	 * If the project content area does not contain a project description file,
 	 * an initial project description file is written in the project content area
-	 * with the following information:
+	 * with the following information:</p>
 	 * <ul>
 	 * <li>no references to other projects</li>
 	 * <li>no natures</li>
 	 * <li>an empty build spec</li>
 	 * <li>an empty comment</li>
 	 * </ul>
+	 * <p>
 	 * If there is an existing project description file, it is not overwritten.
 	 * </p>
 	 * <p>
@@ -386,13 +387,13 @@ public interface IProject extends IContainer, IAdaptable {
 	 * No action is taken if this project does not exist.
 	 * <p>
 	 * This is a convenience method, fully equivalent to:
+	 * </p>
 	 * <pre>
 	 *   delete(
 	 *     (deleteContent ? IResource.ALWAYS_DELETE_PROJECT_CONTENT : IResource.NEVER_DELETE_PROJECT_CONTENT )
 	 *        | (force ? FORCE : IResource.NONE),
 	 *     monitor);
 	 * </pre>
-	 * </p>
 	 * <p>
 	 * This method is long-running; progress and cancellation are provided
 	 * by the given progress monitor.
@@ -702,8 +703,8 @@ public interface IProject extends IContainer, IAdaptable {
 	/**
 	 * Returns true if the project nature specified by the given
 	 * nature extension id is enabled for this project, and false otherwise.
-	 * <p>
-	 * <ul>Reasons for a nature not to be enabled include:
+	 * <p>Reasons for a nature not to be enabled include:</p>
+	 * <ul>
 	 * <li> The nature is not available in the install.</li>
 	 * <li> The nature has not been added to this project.</li>
 	 * <li> The nature has a prerequisite that is not enabled
@@ -713,7 +714,6 @@ public interface IProject extends IContainer, IAdaptable {
 	 * 	to that set.</li>
 	 * <li> The prerequisites for the nature form a cycle.</li>
 	 * </ul>
-	 * </p>
 	 * @param natureId the nature extension identifier
 	 * @return <code>true</code> if the given nature is enabled for this project
 	 * @exception CoreException if this method fails. Reasons include:
@@ -768,10 +768,10 @@ public interface IProject extends IContainer, IAdaptable {
 	 * the given description.
 	 * <p>
 	 * This is a convenience method, fully equivalent to:
+	 * </p>
 	 * <pre>
 	 *   move(description, (force ? FORCE : IResource.NONE), monitor);
 	 * </pre>
-	 * </p>
 	 * <p>
 	 * This method changes resources; these changes will be reported
 	 * in a subsequent resource change event that will include
@@ -818,20 +818,21 @@ public interface IProject extends IContainer, IAdaptable {
 	 * <p>
 	 * When a project is opened for the first time, initial information about the
 	 * project's existing resources can be obtained in the following ways:
+	 * </p>
 	 * <ul>
 	 * <li>If a {@link #loadSnapshot(int, URI, IProgressMonitor)} call has been made
 	 * before the open, resources are restored from that file (a file written by
 	 * {@link #saveSnapshot(int, URI, IProgressMonitor)}). When the snapshot includes
 	 * resource tree information and can be loaded without error, no refresh is initiated,
-	 * so the project's resource tree will match what the snapshot provides.
+	 * so the project's resource tree will match what the snapshot provides.</li>
 	 * <li>Otherwise, when the {@link IResource#BACKGROUND_REFRESH} flag is specified,
 	 * resources on disk will be added to the project in the background after
 	 * this method returns. Child resources of the project may not be available
-	 * until this background refresh completes.
+	 * until this background refresh completes.</li>
 	 * <li>Otherwise, resource information is obtained with a refresh operation in the
-	 * foreground, before this method returns.
+	 * foreground, before this method returns.</li>
 	 * </ul>
-	 * </p>
+	 * <p>
 	 * This method changes resources; these changes will be reported
 	 * in a subsequent resource change event that includes
 	 * an indication that the project has been opened and its resources
@@ -917,10 +918,10 @@ public interface IProject extends IContainer, IAdaptable {
 	 * description. This project should exist and be open.
 	 * <p>
 	 * This is a convenience method, fully equivalent to:
+	 * </p>
 	 * <pre>
 	 *   setDescription(description, KEEP_HISTORY, monitor);
 	 * </pre>
-	 * </p>
 	 * <p>
 	 * This method requires the {@link IWorkspaceRoot} scheduling rule.
 	 * </p>

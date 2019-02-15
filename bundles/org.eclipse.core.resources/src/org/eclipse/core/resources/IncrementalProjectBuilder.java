@@ -155,7 +155,6 @@ public abstract class IncrementalProjectBuilder extends InternalBuilder implemen
 	 * were created by previous invocations of the builder. The platform will
 	 * take care of discarding the builder's last built state (there is no need
 	 * to call <code>forgetLastBuiltState</code>).
-	 * </p>
 	 * <p>
 	 * This method is called as a result of invocations of
 	 * <code>IWorkspace.build</code> or <code>IProject.build</code> where
@@ -363,9 +362,10 @@ public abstract class IncrementalProjectBuilder extends InternalBuilder implemen
 	 * Subclasses are free to extend this method to pick up initialization
 	 * parameters from the plug-in plug-in manifest (<code>plugin.xml</code>)
 	 * file, but should be sure to invoke this method on their superclass.
-	 * <p>
+	 * </p><p>
 	 * For example, the following method looks for a boolean-valued parameter
 	 * named "trace":
+	 * </p>
 	 *
 	 * <pre>
 	 * public void setInitializationData(IConfigurationElement cfig, String propertyName, Object data) throws CoreException {
@@ -377,7 +377,6 @@ public abstract class IncrementalProjectBuilder extends InternalBuilder implemen
 	 * 	}
 	 * }
 	 * </pre>
-	 * </p>
 	 * @throws CoreException if fails.
 	 */
 	@Override
@@ -411,6 +410,7 @@ public abstract class IncrementalProjectBuilder extends InternalBuilder implemen
 	 * rule to be modified.
 	 * <p>
 	 * <strong>Notes:</strong>
+	 * </p>
 	 * <ul>
 	 * <li>
 	 * The rule may be <i>relaxed</i> and in some cases let the builder be scheduled in
@@ -429,7 +429,6 @@ public abstract class IncrementalProjectBuilder extends InternalBuilder implemen
 	 * concurrently with the build.
 	 * </li>
 	 * </ul>
-	 * </p>
 	 * <p>
 	 * Subclasses may override this method.
 	 * </p>

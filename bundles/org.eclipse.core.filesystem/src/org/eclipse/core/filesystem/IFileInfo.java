@@ -126,7 +126,6 @@ public interface IFileInfo extends Comparable<IFileInfo>, Cloneable {
 	 * Sets the value of the specified attribute for this file info.  The attribute
 	 * must be one of the <code>EFS#ATTRIBUTE_*</code> constants.  
 	 * Note that not all attributes are applicable in a given file system.
-	 * </p>
 	 * <p>
 	 * Users must call {@link IFileStore#putInfo(IFileInfo, int, IProgressMonitor)}
 	 * before changes made to this info take effect in an underlying file.

@@ -40,10 +40,10 @@ public interface IFolder extends IContainer, IAdaptable {
 	 * Creates a new folder resource as a member of this handle's parent resource.
 	 * <p>
 	 * This is a convenience method, fully equivalent to:
+	 * </p>
 	 * <pre>
 	 *   create((force ? FORCE : IResource.NONE), local, monitor);
 	 * </pre>
-	 * </p>
 	 * <p>
 	 * This method changes resources; these changes will be reported
 	 * in a subsequent resource change event, including an indication
@@ -344,10 +344,10 @@ public interface IFolder extends IContainer, IAdaptable {
 	 * Deletes this resource from the workspace.
 	 * <p>
 	 * This is a convenience method, fully equivalent to:
+	 * </p>
 	 * <pre>
 	 *   delete((keepHistory ? KEEP_HISTORY : IResource.NONE) | (force ? FORCE : IResource.NONE), monitor);
 	 * </pre>
-	 * </p>
 	 * <p>
 	 * This method changes resources; these changes will be reported
 	 * in a subsequent resource change event, including an indication
@@ -416,10 +416,10 @@ public interface IFolder extends IContainer, IAdaptable {
 	 * Moves this resource so that it is located at the given path.
 	 * <p>
 	 * This is a convenience method, fully equivalent to:
+	 * </p>
 	 * <pre>
 	 *   move(destination, (keepHistory ? KEEP_HISTORY : IResource.NONE) | (force ? FORCE : IResource.NONE), monitor);
 	 * </pre>
-	 * </p>
 	 * <p>
 	 * This method changes resources; these changes will be reported
 	 * in a subsequent resource change event, including an indication
