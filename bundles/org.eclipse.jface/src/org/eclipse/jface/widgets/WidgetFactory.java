@@ -18,9 +18,17 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Spinner;
+import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.Text;
 
 /**
+ * <p>
+ * <strong>EXPERIMENTAL</strong>. This class has been added as part of a work in
+ * progress. There is no guarantee that this API will work or that it will
+ * remain the same. Feel free to use it and give feedback via
+ * https://bugs.eclipse.org/bugs/buglist.cgi?component=UI&product=Platform, but
+ * be aware that it might change.
+ * </p>
  *
  * This class provides a convenient shorthand for creating and initializing
  * factories for SWT widgets. This offers several benefits over creating SWT
@@ -107,4 +115,12 @@ public final class WidgetFactory {
 		return SpinnerFactory.newSpinner(style);
 	}
 
+	/**
+	 * @param style SWT style applicable for Table. Refer to
+	 *              {@link Table#Table(Composite, int)} for supported styles.
+	 * @return TableFactory
+	 */
+	public static TableFactory table(int style) {
+		return TableFactory.newTable(style);
+	}
 }
