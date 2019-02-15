@@ -279,11 +279,11 @@ import org.osgi.util.tracker.ServiceTracker;
 public final class Workbench extends EventManager implements IWorkbench,
 		org.eclipse.e4.ui.workbench.IWorkbench {
 
-	public static String WORKBENCH_AUTO_SAVE_JOB = "Workbench Auto-Save Job"; //$NON-NLS-1$
+	public static final String WORKBENCH_AUTO_SAVE_JOB = "Workbench Auto-Save Job"; //$NON-NLS-1$
 
 	private static final String WORKBENCH_AUTO_SAVE_BACKGROUND_JOB = "Workbench Auto-Save Background Job"; //$NON-NLS-1$
 
-	public static String MEMENTO_KEY = "memento"; //$NON-NLS-1$
+	public static final String MEMENTO_KEY = "memento"; //$NON-NLS-1$
 
 	public static final String EDITOR_TAG = "Editor"; //$NON-NLS-1$
 
@@ -2445,8 +2445,7 @@ public final class Workbench extends EventManager implements IWorkbench,
 	 * Opens the initial workbench window.
 	 */
 	/* package */void openFirstTimeWindow() {
-		final boolean showProgress = PrefUtil.getAPIPreferenceStore()
-				.getBoolean(IWorkbenchPreferenceConstants.SHOW_PROGRESS_ON_STARTUP);
+		boolean showProgress = PrefUtil.getAPIPreferenceStore().getBoolean(IWorkbenchPreferenceConstants.SHOW_PROGRESS_ON_STARTUP);
 
 		if (!showProgress) {
 			doOpenFirstTimeWindow();
