@@ -27,10 +27,10 @@ public class TestUnitButtonFactory extends AbstractFactoryTest {
 
 	@Test
 	public void createsButton() {
-		Button button = ButtonFactory.newButton(SWT.BORDER).create(shell);
+		Button button = ButtonFactory.newButton(SWT.PUSH).create(shell);
 
 		assertEquals(shell, button.getParent());
-		assertEquals(SWT.BORDER, button.getStyle() & SWT.BORDER);
+		assertEquals(SWT.PUSH, button.getStyle() & SWT.PUSH);
 	}
 
 	@Test

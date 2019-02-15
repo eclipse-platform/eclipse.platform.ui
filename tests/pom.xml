@@ -34,6 +34,7 @@
     <module>org.eclipse.ui.tests.browser</module>
     -->
     <module>org.eclipse.e4.emf.xpath.test</module>
+    <module>org.eclipse.jface.tests</module>
     <module>org.eclipse.jface.tests.databinding</module>
     <module>org.eclipse.jface.tests.databinding.conformance</module>
     <module>org.eclipse.ui.monitoring.tests</module>
