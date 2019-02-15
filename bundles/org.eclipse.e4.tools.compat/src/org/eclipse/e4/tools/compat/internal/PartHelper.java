@@ -16,6 +16,7 @@ package org.eclipse.e4.tools.compat.internal;
 import java.lang.reflect.Method;
 
 import org.eclipse.core.runtime.ListenerList;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.e4.core.contexts.ContextInjectionFactory;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.tools.services.IClipboardService;
@@ -43,7 +44,7 @@ public class PartHelper {
 		if (parentContext.get(ORG_ECLIPSE_E4_UI_WORKBENCH_I_PRESENTATION_ENGINE) != null) {
 			// Hack to get the MPart-Context
 			try {
-				final Class<?> clazz = Util.getBundle("org.eclipse.e4.ui.model.workbench").loadClass( //$NON-NLS-1$
+				final Class<?> clazz = Platform.getBundle("org.eclipse.e4.ui.model.workbench").loadClass( //$NON-NLS-1$
 						"org.eclipse.e4.ui.model.application.ui.basic.MPart"); //$NON-NLS-1$
 				final Object instance = site.getService(clazz);
 				final Method m = clazz.getMethod("getContext", new Class[0]); //$NON-NLS-1$
