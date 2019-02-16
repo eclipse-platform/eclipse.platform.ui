@@ -210,7 +210,7 @@ public abstract class RootScopePage extends PreferencePage implements
 	 * Tests whether the search engine has been selected to participate in the
 	 * search.
 	 *
-	 * @return <code>true</code> if the search engine is enabled, </code>false</code>
+	 * @return <code>true</code> if the search engine is enabled, <code>false</code>
 	 *         otherwise.
 	 */
 

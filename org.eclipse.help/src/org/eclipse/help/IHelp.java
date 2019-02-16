@@ -157,21 +157,21 @@ public interface IHelp {
 	public void displayHelp(String toc);
 
 	/**
-	 * This method is an extension to the <a
-	 * href="#displayHelp(java.lang.String)">displayHelp(String toc) </a>
+	 * This method is an extension to the
+	 * <a href="#displayHelp(java.lang.String)">displayHelp(String toc) </a>
 	 * method, providing the ability to open the specified help topic.
 	 * <p>
-	 * <code>selectedTopic</code> should be a valid help topic url contained
-	 * in the specified <code>toc</code> and have the following format:
+	 * <code>selectedTopic</code> should be a valid help topic url contained in
+	 * the specified <code>toc</code> and have the following format:
 	 * <em>/pluginID/path_to_document</em><br>
 	 * where
+	 * </p>
 	 * <dl>
-	 * <dt><em>pluginID</em> is the unique identifier of the plugin
-	 * containing the help topic,</dt>
+	 * <dt><em>pluginID</em> is the unique identifier of the plugin containing
+	 * the help topic,</dt>
 	 * <dt><em>path_to_document</em> is the help topic path, relative to the
 	 * plugin directory</dt>
 	 * </dl>
-	 * </p>
 	 *
 	 * @param toc
 	 *            the URL of the toc

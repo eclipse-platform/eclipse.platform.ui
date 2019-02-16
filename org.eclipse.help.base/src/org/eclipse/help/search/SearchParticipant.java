@@ -104,23 +104,26 @@ public abstract class SearchParticipant {
 			ISearchDocument doc);
 
 	/**
-	 * Returns all the documents that this participant knows about. This method is only used for
-	 * participants that handle documents outside of the help system's TOC.
+	 * Returns all the documents that this participant knows about. This method
+	 * is only used for participants that handle documents outside of the help
+	 * system's TOC.
 	 *
 	 * @param locale
 	 *            the index locale
 	 *
-	 * @return a set<String> of hrefs for documents managed by this participant.
+	 * @return a Set of String of hrefs for documents managed by this
+	 *         participant.
 	 */
 	public Set<String> getAllDocuments(String locale) {
 		return EMPTY_SET;
 	}
 
 	/**
-	 * Returns a set of identifiers of plug-ins that contribute indexable documents. This method is
-	 * only used for participants that handle documents outside of the help system's TOC.
+	 * Returns a set of identifiers of plug-ins that contribute indexable
+	 * documents. This method is only used for participants that handle
+	 * documents outside of the help system's TOC.
 	 *
-	 * @return a set<String> of contributing plug-in ids
+	 * @return a Set of String of contributing plug-in ids
 	 */
 
 	public Set<String> getContributingPlugins() {
