@@ -2032,7 +2032,9 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	 * </p>
 	 *
 	 * <p>
-	 * The following preferences can be used for fine-grained configuration when enabled.
+	 * The following preferences can be used for fine-grained configuration when
+	 * enabled.
+	 * </p>
 	 * <ul>
 	 * <li>{@link #PREFERENCE_SHOW_LEADING_SPACES}</li>
 	 * <li>{@link #PREFERENCE_SHOW_ENCLOSED_SPACES}</li>
@@ -2047,7 +2049,6 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	 * <li>{@link #PREFERENCE_SHOW_LINE_FEED}</li>
 	 * <li>{@link #PREFERENCE_WHITESPACE_CHARACTER_ALPHA_VALUE}</li>
 	 * </ul>
-	 * </p>
 	 *
 	 * @since 3.3
 	 */
@@ -3276,18 +3277,19 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 
 	/**
 	 * The <code>AbstractTextEditor</code> implementation of this
-	 * <code>IWorkbenchPart</code> method creates the vertical ruler and
-	 * source viewer.
+	 * <code>IWorkbenchPart</code> method creates the vertical ruler and source
+	 * viewer.
 	 * <p>
 	 * Subclasses may extend this method. Besides extending this method, the
-	 * behavior of <code>createPartControl</code> may be customized by
-	 * calling, extending or replacing the following methods: <br>
+	 * behavior of <code>createPartControl</code> may be customized by calling,
+	 * extending or replacing the following methods: <br>
 	 * Subclasses may supply customized implementations for some members using
 	 * the following methods before <code>createPartControl</code> is invoked:
+	 * </p>
 	 * <ul>
-	 * <li>
-	 * {@linkplain #setSourceViewerConfiguration(SourceViewerConfiguration) setSourceViewerConfiguration}
-	 * to supply a custom source viewer configuration,</li>
+	 * <li>{@linkplain #setSourceViewerConfiguration(SourceViewerConfiguration)
+	 * setSourceViewerConfiguration} to supply a custom source viewer
+	 * configuration,</li>
 	 * <li>{@linkplain #setRangeIndicator(Annotation) setRangeIndicator} to
 	 * provide a range indicator,</li>
 	 * <li>{@linkplain #setHelpContextId(String) setHelpContextId} to provide a
@@ -3303,29 +3305,29 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	 * <ul>
 	 * <li>{@linkplain #createVerticalRuler() createVerticalRuler} to supply a
 	 * custom vertical ruler,</li>
-	 * <li>{@linkplain #createSourceViewer(Composite, IVerticalRuler, int) createSourceViewer}
-	 * to supply a custom source viewer,</li>
-	 * <li>{@linkplain #getSelectionProvider() getSelectionProvider} to supply
-	 * a custom selection provider.</li>
+	 * <li>{@linkplain #createSourceViewer(Composite, IVerticalRuler, int)
+	 * createSourceViewer} to supply a custom source viewer,</li>
+	 * <li>{@linkplain #getSelectionProvider() getSelectionProvider} to supply a
+	 * custom selection provider.</li>
 	 * </ul>
 	 * <br>
 	 * Subclasses may extend the following methods called from within
 	 * <code>createPartControl</code>:
 	 * <ul>
-	 * <li>
-	 * {@linkplain #initializeViewerColors(ISourceViewer) initializeViewerColors}
-	 * to customize the viewer color scheme (may also be replaced),</li>
-	 * <li>
-	 * {@linkplain #initializeDragAndDrop(ISourceViewer) initializeDragAndDrop}
-	 * to customize drag and drop (may also be replaced),</li>
+	 * <li>{@linkplain #initializeViewerColors(ISourceViewer)
+	 * initializeViewerColors} to customize the viewer color scheme (may also be
+	 * replaced),</li>
+	 * <li>{@linkplain #initializeDragAndDrop(ISourceViewer)
+	 * initializeDragAndDrop} to customize drag and drop (may also be
+	 * replaced),</li>
 	 * <li>{@linkplain #createNavigationActions() createNavigationActions} to
 	 * add navigation actions,</li>
 	 * <li>{@linkplain #createActions() createActions} to add text editor
 	 * actions.</li>
 	 * </ul>
-	 * </p>
 	 *
-	 * @param parent the parent composite
+	 * @param parent
+	 *            the parent composite
 	 */
 	@Override
 	public void createPartControl(Composite parent) {

@@ -87,24 +87,22 @@ public final class EditorsUI {
 	}
 
 	/**
-	 * Removes all preference which are handled by this plug-in's
-	 * general preference pages from the given store and prevents
-	 * setting the default values in the future.
+	 * Removes all preference which are handled by this plug-in's general preference pages from the
+	 * given store and prevents setting the default values in the future.
 	 * <p>
-	 * To access the
-	 * general preference from another plug-in use a
+	 * To access the general preference from another plug-in use a
 	 * {@link org.eclipse.ui.texteditor.ChainedPreferenceStore}:
+	 * </p>
+	 * 
 	 * <pre>
-	 *		List stores= new ArrayList(3);
-	 *		stores.add(YourPlugin.getDefault().getPreferenceStore());
-	 *		stores.add(EditorsUI.getPreferenceStore());
-	 *		combinedStore= new ChainedPreferenceStore((IPreferenceStore[]) stores.toArray(new IPreferenceStore[stores.size()]));
+	 * List stores= new ArrayList(3);
+	 * stores.add(YourPlugin.getDefault().getPreferenceStore());
+	 * stores.add(EditorsUI.getPreferenceStore());
+	 * combinedStore= new ChainedPreferenceStore((IPreferenceStore[]) stores.toArray(new IPreferenceStore[stores.size()]));
 	 *
 	 * </pre>
-	 * </p>
 	 * <p>
-	 * Note: In order to work this method must be called before
-	 * the store's default values are set.
+	 * Note: In order to work this method must be called before the store's default values are set.
 	 * </p>
 	 *
 	 * @param store the preference store to mark
@@ -114,24 +112,22 @@ public final class EditorsUI {
 	}
 
 	/**
-	 * Removes all preference which are handled by this plug-in's
-	 * Quick Diff preference page from the given store and prevents
-	 * setting the default values in the future.
+	 * Removes all preference which are handled by this plug-in's Quick Diff preference page from
+	 * the given store and prevents setting the default values in the future.
 	 * <p>
-	 * To access the
-	 * general preference from another plug-in use a
+	 * To access the general preference from another plug-in use a
 	 * {@link org.eclipse.ui.texteditor.ChainedPreferenceStore}:
+	 * </p>
+	 * 
 	 * <pre>
-	 *		List stores= new ArrayList(3);
-	 *		stores.add(YourPlugin.getDefault().getPreferenceStore());
-	 *		stores.add(EditorsUI.getPreferenceStore());
-	 *		combinedStore= new ChainedPreferenceStore((IPreferenceStore[]) stores.toArray(new IPreferenceStore[stores.size()]));
+	 * List stores= new ArrayList(3);
+	 * stores.add(YourPlugin.getDefault().getPreferenceStore());
+	 * stores.add(EditorsUI.getPreferenceStore());
+	 * combinedStore= new ChainedPreferenceStore((IPreferenceStore[]) stores.toArray(new IPreferenceStore[stores.size()]));
 	 *
 	 * </pre>
-	 * </p>
 	 * <p>
-	 * Note: In order to work this method must be called before
-	 * the store's default values are set.
+	 * Note: In order to work this method must be called before the store's default values are set.
 	 * </p>
 	 *
 	 * @param store the preference store to mark

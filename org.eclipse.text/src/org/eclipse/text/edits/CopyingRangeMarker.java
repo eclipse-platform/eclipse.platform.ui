@@ -28,7 +28,7 @@ public final class CopyingRangeMarker extends TextEdit {
 	private String fText;
 
 	/**
-	 * Creates a new <tt>CopyRangeMarker</tt> for the given
+	 * Creates a new <code>CopyRangeMarker</code> for the given
 	 * offset and length.
 	 *
 	 * @param offset the marker's offset

@@ -29,50 +29,54 @@ import org.eclipse.ui.IWorkbenchActionConstants;
 public interface IContextMenuConstants {
 
 	/**
-	 * Pop-up menu: name of group for goto actions (value <code>"group.open"</code>).
+	 * Pop-up menu: name of group for goto actions (value
+	 * <code>"group.open"</code>).
 	 * <p>
 	 * Examples for open actions are:
-	 * <ul>
-	 *  <li>Go Into</li>
-	 *  <li>Go To</li>
-	 * </ul>
 	 * </p>
+	 * <ul>
+	 * <li>Go Into</li>
+	 * <li>Go To</li>
+	 * </ul>
 	 */
 	public static final String GROUP_GOTO=		"group.goto"; //$NON-NLS-1$
 
 	/**
-	 * Pop-up menu: name of group for open actions (value <code>"group.open"</code>).
+	 * Pop-up menu: name of group for open actions (value
+	 * <code>"group.open"</code>).
 	 * <p>
 	 * Examples for open actions are:
-	 * <ul>
-	 *  <li>Open To</li>
-	 *  <li>Open With</li>
-	 * </ul>
 	 * </p>
+	 * <ul>
+	 * <li>Open To</li>
+	 * <li>Open With</li>
+	 * </ul>
 	 */
 	public static final String GROUP_OPEN=		"group.open"; //$NON-NLS-1$
 
 	/**
-	 * Pop-up menu: name of group for show actions (value <code>"group.show"</code>).
+	 * Pop-up menu: name of group for show actions (value
+	 * <code>"group.show"</code>).
 	 * <p>
 	 * Examples for show actions are:
-	 * <ul>
-	 *  <li>Show in Navigator</li>
-	 *  <li>Show in Type Hierarchy</li>
-	 * </ul>
 	 * </p>
+	 * <ul>
+	 * <li>Show in Navigator</li>
+	 * <li>Show in Type Hierarchy</li>
+	 * </ul>
 	 */
 	public static final String GROUP_SHOW= "group.show"; //$NON-NLS-1$
 
 	/**
-	 * Pop-up menu: name of group for new actions (value <code>"group.new"</code>).
+	 * Pop-up menu: name of group for new actions (value
+	 * <code>"group.new"</code>).
 	 * <p>
 	 * Examples for new actions are:
-	 * <ul>
-	 *  <li>Create new class</li>
-	 *  <li>Create new interface</li>
-	 * </ul>
 	 * </p>
+	 * <ul>
+	 * <li>Create new class</li>
+	 * <li>Create new interface</li>
+	 * </ul>
 	 */
 	public static final String GROUP_NEW= "group.new"; //$NON-NLS-1$
 

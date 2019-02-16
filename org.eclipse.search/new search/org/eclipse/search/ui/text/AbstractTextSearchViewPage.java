@@ -1417,21 +1417,27 @@ public abstract class AbstractTextSearchViewPage extends Page implements ISearch
 	}
 
 	/**
-	 * Sets the maximal number of top level elements to be shown in a viewer.
-	 * If <code>null</code> is set, the view page does not support to limit the elements and will not provide
-	 * UI to configure it. If a non-null value is set, configuration UI will be provided. The limit value must be a positive
-	 * number or <code>-1</code> to not limit top level element.
-	 * If enabled, the element limit has to be enforced by the content provider that is implemented by the client. The view
-	 * page just manages the value and configuration.
+	 * Sets the maximal number of top level elements to be shown in a viewer. If
+	 * <code>null</code> is set, the view page does not support to limit the
+	 * elements and will not provide UI to configure it. If a non-null value is
+	 * set, configuration UI will be provided. The limit value must be a
+	 * positive number or <code>-1</code> to not limit top level element. If
+	 * enabled, the element limit has to be enforced by the content provider
+	 * that is implemented by the client. The view page just manages the value
+	 * and configuration.
 	 *
-	 * @param limit the element limit. Valid values are:
-	 * <dl>
-	 *   <li><code>null</code> to not limit and not provide configuration UI</li>
-	 *   <li><code>-1</code> to not limit and provide configuration UI</li>
-	 *   <li><code>positive integer</code> to limit by the given value and provide configuration UI</li>
-	 *  </dl>
+	 * @param limit
+	 *            the element limit. Valid values are:
+	 *            <ul>
+	 *            <li><code>null</code> to not limit and not provide
+	 *            configuration UI</li>
+	 *            <li><code>-1</code> to not limit and provide configuration
+	 *            UI</li>
+	 *            <li><code>positive integer</code> to limit by the given value
+	 *            and provide configuration UI</li>
+	 *            </ul>
 	 *
-	 *  @since 3.3
+	 * @since 3.3
 	 */
 	public void setElementLimit(Integer limit) {
 		fElementLimit= limit;
@@ -1446,18 +1452,22 @@ public abstract class AbstractTextSearchViewPage extends Page implements ISearch
 
 	/**
 	 * Gets the maximal number of top level elements to be shown in a viewer.
-	 * <code>null</code> means the view page does not limit the elements and will not provide
-	 * UI to configure it. If a non-null value is set, configuration UI will be provided. The limit value must be a positive
+	 * <code>null</code> means the view page does not limit the elements and
+	 * will not provide UI to configure it. If a non-null value is set,
+	 * configuration UI will be provided. The limit value must be a positive
 	 * number or <code>-1</code> to not limit top level element.
 	 *
 	 * @return returns the element limit. Valid values are:
-	 * <dl>
-	 *   <li><code>null</code> to not limit and not provide configuration UI (default value)</li>
-	 *   <li><code>-1</code> to not limit and provide configuration UI</li>
-	 *   <li><code>positive integer</code> to limit by the given value and provide configuration UI</li>
-	 *  </dl>
+	 *         <ul>
+	 *         <li><code>null</code> to not limit and not provide configuration
+	 *         UI (default value)</li>
+	 *         <li><code>-1</code> to not limit and provide configuration
+	 *         UI</li>
+	 *         <li><code>positive integer</code> to limit by the given value and
+	 *         provide configuration UI</li>
+	 *         </ul>
 	 *
-	 *  @since 3.3
+	 * @since 3.3
 	 */
 	public Integer getElementLimit() {
 		return fElementLimit;
