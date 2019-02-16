@@ -79,10 +79,10 @@ public interface IDocumentPartitionerExtension2 {
 	 * <p>
 	 * If <code>preferOpenPartitions</code> is <code>true</code>,
 	 * precedence is given to an open partition ending at <code>offset</code>
-	 * over a delimited partition starting at <code>offset</code>.
+	 * over a delimited partition starting at <code>offset</code>.</p>
 	 * <p>
 	 * This method replaces {@link IDocumentPartitioner#getPartition(int)}and
-	 * behaves like it when <preferOpenPartitions</code> is <code>false
+	 * behaves like it when <code>preferOpenPartitions</code> is <code>false
 	 * </code>, i.e. precedence is always given to the partition that does not
 	 * end at <code>offset</code>.
 	 * </p>

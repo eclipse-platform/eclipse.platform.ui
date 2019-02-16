@@ -214,16 +214,18 @@ public interface IContentAssistSubjectControl {
 	void addKeyListener(KeyListener keyListener);
 
 	/**
-	 * Removes the listener from the collection of listeners who will be
-	 * notified when keys are pressed and released on the system keyboard.
+	 * Removes the listener from the collection of listeners who will be notified when keys are
+	 * pressed and released on the system keyboard.
 	 *
 	 * @param keyListener the listener which should be notified
-	 * @exception IllegalArgumentException if the listener is null</li>
+	 * @exception IllegalArgumentException if the listener is null
 	 * @throws org.eclipse.swt.SWTException in these cases:
-	 *			<ul>
-	 *				<li>{@link org.eclipse.swt.SWT#ERROR_WIDGET_DISPOSED} - if the receiver has been disposed</li>
-	 *				<li>{@link org.eclipse.swt.SWT#ERROR_THREAD_INVALID_ACCESS} - if not called from the thread that created the receiver</li>
-	 *			</ul>
+	 *             <ul>
+	 *             <li>{@link org.eclipse.swt.SWT#ERROR_WIDGET_DISPOSED} - if the receiver has been
+	 *             disposed</li>
+	 *             <li>{@link org.eclipse.swt.SWT#ERROR_THREAD_INVALID_ACCESS} - if not called from
+	 *             the thread that created the receiver</li>
+	 *             </ul>
 	 * @see KeyListener
 	 * @see #addKeyListener(KeyListener)
 	 */
@@ -243,11 +245,13 @@ public interface IContentAssistSubjectControl {
 	 * <p>
 	 *
 	 * @param selectionListener the listener
-	 * @exception org.eclipse.swt.SWTException <ul>
-	 *			<ul>
-	 *				<li>{@link org.eclipse.swt.SWT#ERROR_WIDGET_DISPOSED} - if the receiver has been disposed</li>
-	 *				<li>{@link org.eclipse.swt.SWT#ERROR_THREAD_INVALID_ACCESS} - if not called from the thread that created the receiver</li>
-	 *			</ul>
+	 * @exception org.eclipse.swt.SWTException
+	 *                <ul>
+	 *                <li>{@link org.eclipse.swt.SWT#ERROR_WIDGET_DISPOSED} - if the receiver has
+	 *                been disposed</li>
+	 *                <li>{@link org.eclipse.swt.SWT#ERROR_THREAD_INVALID_ACCESS} - if not called
+	 *                from the thread that created the receiver</li>
+	 *                </ul>
 	 * @exception IllegalArgumentException if listener is <code>null</code>
 	 */
 	void removeSelectionListener(SelectionListener selectionListener);

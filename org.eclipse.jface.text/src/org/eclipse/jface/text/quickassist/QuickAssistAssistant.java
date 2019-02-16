@@ -160,9 +160,8 @@ public class QuickAssistAssistant implements IQuickAssistAssistant, IQuickAssist
 	}
 
 	/**
-	 * Tells this assistant to open the proposal popup with the size
-	 * contained in the given dialog settings and to store the control's last valid size in the
-	 * given dialog settings.
+	 * Tells this assistant to open the proposal popup with the size contained in the given dialog
+	 * settings and to store the control's last valid size in the given dialog settings.
 	 * <p>
 	 * Note: This API is only valid if the information control implements
 	 * {@link org.eclipse.jface.text.IInformationControlExtension3}. Not following this restriction
@@ -170,11 +169,11 @@ public class QuickAssistAssistant implements IQuickAssistAssistant, IQuickAssist
 	 * </p>
 	 * <p>
 	 * The constants used to store the values are:
+	 * </p>
 	 * <ul>
 	 * <li>{@link ContentAssistant#STORE_SIZE_X}</li>
 	 * <li>{@link ContentAssistant#STORE_SIZE_Y}</li>
 	 * </ul>
-	 * </p>
 	 *
 	 * @param dialogSettings the dialog settings
 	 * @since 3.7

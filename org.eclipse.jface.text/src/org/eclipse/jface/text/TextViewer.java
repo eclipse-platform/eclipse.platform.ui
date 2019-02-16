@@ -1654,12 +1654,13 @@ public class TextViewer extends Viewer implements
 	}
 
 	/**
-	 * Create a new text viewer with the given SWT style bits.
-	 * The viewer is ready to use but does not have any plug-in installed.
+	 * Create a new text viewer with the given SWT style bits. The viewer is ready to use but does
+	 * not have any plug-in installed.
 	 *
 	 * @param parent the parent of the viewer's control
-	 * @param styles the SWT style bits for the viewer's control,
-	 * 			<em>if <code>SWT.WRAP</code> is set then a custom document adapter needs to be provided, see {@link #createDocumentAdapter()}
+	 * @param styles the SWT style bits for the viewer's control, if <code>SWT.WRAP</code> is set
+	 *            then a custom document adapter needs to be provided, see
+	 *            {@link #createDocumentAdapter()}
 	 */
 	public TextViewer(Composite parent, int styles) {
 		createControl(parent, styles);

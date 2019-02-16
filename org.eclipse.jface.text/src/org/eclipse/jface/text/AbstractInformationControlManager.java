@@ -548,13 +548,13 @@ abstract public class AbstractInformationControlManager {
 	 * </p>
 	 * <p>
 	 * The constants used to store the values are:
+	 * </p>
 	 * <ul>
 	 * <li>{@link AbstractInformationControlManager#STORE_LOCATION_X}</li>
 	 * <li>{@link AbstractInformationControlManager#STORE_LOCATION_Y}</li>
 	 * <li>{@link AbstractInformationControlManager#STORE_SIZE_WIDTH}</li>
 	 * <li>{@link AbstractInformationControlManager#STORE_SIZE_HEIGHT}</li>
 	 * </ul>
-	 * </p>
 	 *
 	 * @param dialogSettings the dialog settings
 	 * @param restoreLocation <code>true</code> iff the location is must be (re-)stored

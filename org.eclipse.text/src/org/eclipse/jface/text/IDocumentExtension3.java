@@ -69,6 +69,7 @@ public interface IDocumentExtension3 {
 	 * <code>false</code>, precedence is given to the partition that does not
 	 * end at <code>offset</code>.
 	 * </p>
+	 * <p>
 	 * This is only supported if the connected <code>IDocumentPartitioner</code>
 	 * supports it, i.e. implements <code>IDocumentPartitionerExtension2</code>.
 	 * Otherwise, <code>preferOpenPartitions</code> is ignored.
@@ -95,6 +96,7 @@ public interface IDocumentExtension3 {
 	 * <code>false</code>, precedence is given to the partition that does not
 	 * end at <code>offset</code>.
 	 * </p>
+	 * <p>
 	 * This is only supported if the connected <code>IDocumentPartitioner</code>
 	 * supports it, i.e. implements <code>IDocumentPartitionerExtension2</code>.
 	 * Otherwise, <code>preferOpenPartitions</code> is ignored.
@@ -120,6 +122,7 @@ public interface IDocumentExtension3 {
 	 * partition) is included between two closed partitions. If it is
 	 * <code>false</code>, no zero-length partitions are included.
 	 * </p>
+	 * <p>
 	 * This is only supported if the connected <code>IDocumentPartitioner</code>
 	 * supports it, i.e. implements <code>IDocumentPartitionerExtension2</code>.
 	 * Otherwise, <code>includeZeroLengthPartitions</code> is ignored.

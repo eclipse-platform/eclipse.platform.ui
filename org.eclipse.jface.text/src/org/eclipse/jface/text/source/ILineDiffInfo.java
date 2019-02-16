@@ -70,7 +70,7 @@ public interface ILineDiffInfo {
 	 * Returns the original text of this changed region
 	 *
 	 * @return the original text of this changed region, including any deleted lines. The returned
-	 * value and its elements may not be <code>null/code>, it may however be of zero length
+	 *         value and its elements may not be <code>null</code>, it may however be of zero length
 	 */
 	String[] getOriginalText();
 }

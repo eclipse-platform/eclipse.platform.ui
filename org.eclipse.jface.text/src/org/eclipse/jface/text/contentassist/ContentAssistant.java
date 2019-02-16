@@ -1076,7 +1076,7 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 	 * enabled, without further configuration steps, this content assistant is activated after a 500
 	 * milliseconds delay. It uses the default partitioning.
 	 *
-	 * @param asynchronous <true> if this content assistant should present the proposals
+	 * @param asynchronous <code>true</code> if this content assistant should present the proposals
 	 *            asynchronously, <code>false</code> otherwise
 	 * @since 3.12
 	 */
@@ -2309,13 +2309,13 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 	 * </p>
 	 * <p>
 	 * The constants used to store the values are:
+	 * </p>
 	 * <ul>
 	 * <li>{@link ContentAssistant#STORE_SIZE_X}</li>
 	 * <li>{@link ContentAssistant#STORE_SIZE_Y}</li>
 	 * <li>{@link ContentAssistant#STORE_CONTEXT_SELECTOR_POPUP_SIZE_X}</li>
 	 * <li>{@link ContentAssistant#STORE_CONTEXT_SELECTOR_POPUP_SIZE_Y}</li>
 	 * </ul>
-	 * </p>
 	 *
 	 * @param dialogSettings the dialog settings
 	 * @since 3.0

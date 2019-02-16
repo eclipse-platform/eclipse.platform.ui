@@ -54,9 +54,11 @@ public interface IContentFormatterExtension {
 	 * <p>
 	 * The formatter may safely assume that it is the only subject that modifies the document at
 	 * this point in time. This method is fully reentrant, but not thread-safe.
+	 * </p>
 	 * <p>
 	 * The formatting process performed by <code>format(IDocument, IFormattingContext)</code>
 	 * happens as follows:
+	 * </p>
 	 * <ul>
 	 * <li>In a first pass the content formatter formats the range of the document to be formatted
 	 * by using the master formatting strategy. This happens regardless of the content type of the
@@ -65,6 +67,7 @@ public interface IContentFormatterExtension {
 	 * formatting strategies. For each partition contained in the range to be formatted, the content
 	 * formatter determines its content type and formats the partition with the correct formatting
 	 * strategy.</li>
+	 * </ul>
 	 *
 	 * @param document the document to be formatted
 	 * @param context the formatting context to pass to the formatting strategies. This argument
