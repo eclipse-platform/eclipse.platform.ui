@@ -216,6 +216,7 @@ public class IOConsoleTests extends AbstractDebugTest {
 		final IOConsoleTestUtil c = getTestUtil("Test input");
 		final List<String> expectedInput = new ArrayList<>();
 
+		c.insertAndVerify("RR").backspace(3).verifyContent("").verifyPartitions();
 		c.insertAndVerify("remove").select(0, c.getContentLength()).verifyPartitions();
 		c.insertTypingAndVerify("abc").insertAndVerify("123").verifyContent("abc123");
 		c.moveCaret(-3).insertAndVerify("foo").insertTypingAndVerify("bar").verifyContentByOffset("123", c.getCaretOffset());

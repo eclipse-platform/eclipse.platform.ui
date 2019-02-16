@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2018 IBM Corporation and others.
+ * Copyright (c) 2000, 2019 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -10,11 +10,14 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Paul Pazderski - Bug 547064: use binary search for getPartition
  *******************************************************************************/
 package org.eclipse.ui.internal.console;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 
@@ -45,12 +48,22 @@ import org.eclipse.ui.progress.WorkbenchJob;
  *
  */
 public class IOConsolePartitioner implements IConsoleDocumentPartitioner, IDocumentPartitionerExtension {
-	private PendingPartition consoleClosedPartition;
-	private IDocument document;
-	private ArrayList<IOConsolePartition> partitions;
+
 	/**
-	 * Blocks of data that have not yet been appended to the document.
+	 * Comparator to sort or search {@link IRegion}s by {@link IRegion#getOffset()}.
 	 */
+	private static final Comparator<IRegion> CMP_REGION_BY_OFFSET = Comparator.comparing(IRegion::getOffset);
+
+	private PendingPartition consoleClosedPartition;
+	/** The connected {@link IDocument} this partitioner manages. */
+	private IDocument document;
+	/**
+	 * List of all partitions. Must always be sorted ascending by
+	 * {@link IRegion#getOffset()} and not contain <code>null</code> or 0-length
+	 * elements.
+	 */
+	private ArrayList<IOConsolePartition> partitions;
+	/** Blocks of data that have not yet been appended to the document. */
 	private ArrayList<PendingPartition> pendingPartitions;
 	/**
 	 * A list of PendingPartitions to be appended by the updateJob
@@ -73,22 +86,21 @@ public class IOConsolePartitioner implements IConsoleDocumentPartitioner, IDocum
 	 */
 	private boolean updateInProgress;
 	/**
-	 * A list of partitions containing input from the console, that have
-	 * not been appended to the input stream yet.
+	 * A list of partitions containing input from the console, that have not been
+	 * appended to the input stream yet. No guarantees on element order.
 	 */
 	private ArrayList<IOConsolePartition> inputPartitions;
 	/**
 	 * offset used by updateJob
 	 */
 	private int firstOffset;
-	/**
-	 * An array of legal line delimiters
-	 */
+	/** An array of legal line delimiters. */
 	private String[] lld;
 	private int highWaterMark = -1;
 	private int lowWaterMark = -1;
 	private boolean connected = false;
 
+	/** The partitioned {@link IOConsole}. */
 	private IOConsole console;
 
 	private TrimJob trimJob = new TrimJob();
@@ -108,6 +120,11 @@ public class IOConsolePartitioner implements IConsoleDocumentPartitioner, IDocum
 		trimJob.setRule(console.getSchedulingRule());
 	}
 
+	/**
+	 * Get partitioned document or <code>null</code> if none connected.
+	 *
+	 * @return partitioned document
+	 */
 	public IDocument getDocument() {
 		return document;
 	}
@@ -186,75 +203,46 @@ public class IOConsolePartitioner implements IConsoleDocumentPartitioner, IDocum
 
 	@Override
 	public ITypedRegion[] computePartitioning(int offset, int length) {
-		int rangeEnd = offset + length;
-		int left= 0;
-		int right= partitions.size() - 1;
-		int mid= 0;
-		IOConsolePartition position= null;
+		return computeIOPartitioning(offset, length);
+	}
 
-		if (left == right) {
-			return new IOConsolePartition[]{partitions.get(0)};
-		}
-		while (left < right) {
+	/**
+	 * Same as {@link #computePartitioning(int, int)} but with more specific return
+	 * type.
+	 *
+	 * @param offset the offset of the range of interest
+	 * @param length the length of the range of interest
+	 * @return the partitioning of the requested range (never <code>null</code>)
+	 */
+	private IOConsolePartition[] computeIOPartitioning(int offset, int length) {
+		final List<IOConsolePartition> result = new ArrayList<>();
+		synchronized (partitions) {
+			int index = findPartitionCandidate(offset);
+			if (index < 0) { // requested range starts before any known partition offset
+				index = 0; // so we start collecting at first known partition
+			}
 
-			mid= (left + right) / 2;
-
-			position= partitions.get(mid);
-			if (rangeEnd < position.getOffset()) {
-				if (left == mid) {
-					right= left;
-				} else {
-					right= mid -1;
+			final int end = offset + length;
+			for (; index < partitions.size(); index++) {
+				final IOConsolePartition partition = partitions.get(index);
+				if (partition.getOffset() >= end) {
+					break;
 				}
-			} else if (offset > (position.getOffset() + position.getLength() - 1)) {
-				if (right == mid) {
-					left= right;
-				} else {
-					left= mid  +1;
-				}
-			} else {
-				left= right= mid;
+				result.add(partition);
 			}
 		}
-
-
-		List<IOConsolePartition> list = new ArrayList<>();
-		int index = left - 1;
-		if (index >= 0) {
-			position= partitions.get(index);
-			while (index >= 0 && (position.getOffset() + position.getLength()) > offset) {
-				index--;
-				if (index >= 0) {
-					position= partitions.get(index);
-				}
-			}
-		}
-		index++;
-		position= partitions.get(index);
-		while (index < partitions.size() && (position.getOffset() < rangeEnd)) {
-			list.add(position);
-			index++;
-			if (index < partitions.size()) {
-				position= partitions.get(index);
-			}
-		}
-
-		return list.toArray(new IOConsolePartition[list.size()]);
+		return result.toArray(new IOConsolePartition[0]);
 	}
 
 	@Override
 	public ITypedRegion getPartition(int offset) {
-		for (int i = 0; i < partitions.size(); i++) {
-			ITypedRegion partition = partitions.get(i);
-			int start = partition.getOffset();
-			int end = start + partition.getLength();
-			if (offset >= start && offset < end) {
-				return partition;
-			}
+		final ITypedRegion partition = getIOPartition(offset);
+		if (partition != null) {
+			return partition;
 		}
 
-		if (lastPartition == null)  {
-			synchronized(partitions) {
+		if (lastPartition == null) {
+			synchronized (partitions) {
 				lastPartition = new IOConsolePartition(inputStream, ""); //$NON-NLS-1$
 				lastPartition.setOffset(offset);
 				partitions.add(lastPartition);
@@ -262,6 +250,54 @@ public class IOConsolePartitioner implements IConsoleDocumentPartitioner, IDocum
 			}
 		}
 		return lastPartition;
+	}
+
+	/**
+	 * Like {@link #getPartition(int)} but returns <code>null</code> for
+	 * unpartitioned or invalid offsets.
+	 *
+	 * @param offset the offset for which to determine the partition
+	 * @return the partition containing this offset or <code>null</code> if offset
+	 *         is not partitioned
+	 */
+	private IOConsolePartition getIOPartition(int offset) {
+		synchronized (partitions) {
+			final int index = findPartitionCandidate(offset);
+			if (index >= 0) {
+				final IOConsolePartition partition = partitions.get(index);
+				if (partition.getOffset() + partition.getLength() > offset) {
+					return partition;
+				}
+			}
+			return null;
+		}
+	}
+
+	/**
+	 * Search {@link #partitions} for the partition which is most likely containing
+	 * the requested offset.
+	 * <p>
+	 * This (index + 1) can be used to insert a new partition with this offset. The
+	 * resulting {@link #partitions} list is guaranteed to still be sorted. (as long
+	 * as you do proper synchronization and consider concurrency problems)
+	 * </p>
+	 *
+	 * @param offset the offset for which to determine the partition candidate
+	 * @return index of partition element with partition offset closest to requested
+	 *         offset or <code>-1</code> if requested offset is lower than offset of
+	 *         any known partition
+	 */
+	private int findPartitionCandidate(int offset) {
+		final Region target = new Region(offset, 0);
+		final int index = Collections.binarySearch(partitions, target, CMP_REGION_BY_OFFSET);
+		if (index >= 0) {
+			// found partition whose offset equals the requested offset
+			return index;
+		}
+		// no exact offset match. Adjust index to point at partition which is closest to
+		// requested offset but whose offset is still lower than requested offset.
+		// Results in -1 if all known offsets are greater.
+		return (-index) - 2;
 	}
 
 	/**
@@ -636,7 +672,7 @@ public class IOConsolePartitioner implements IConsoleDocumentPartitioner, IDocum
 		if (!connected) {
 			return new StyleRange[0];
 		}
-		IOConsolePartition[] computedPartitions = (IOConsolePartition[])computePartitioning(offset, length);
+		IOConsolePartition[] computedPartitions = computeIOPartitioning(offset, length);
 		StyleRange[] styles = new StyleRange[computedPartitions.length];
 		for (int i = 0; i < computedPartitions.length; i++) {
 			int rangeStart = Math.max(computedPartitions[i].getOffset(), offset);
