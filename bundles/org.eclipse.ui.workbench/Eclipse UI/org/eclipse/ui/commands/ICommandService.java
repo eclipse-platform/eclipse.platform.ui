@@ -36,14 +36,14 @@ import org.eclipse.ui.services.IDisposable;
  * <p>
  * This service can be acquired from your service locator:
  * </p>
- * 
+ *
  * <pre>
  * ICommandService service = (ICommandService) getSite().getService(ICommandService.class);
  * </pre>
  * <ul>
  * <li>This service is available globally.</li>
  * </ul>
- * 
+ *
  * @noimplement This interface is not intended to be implemented by clients.
  * @noextend This interface is not intended to be extended by clients.
  *
@@ -352,30 +352,27 @@ public interface ICommandService extends IDisposable {
 	void unregisterElement(IElementReference elementReference);
 
 	/**
-	 * Refresh any elements registered against the command with the given id.
-	 * It allows the active handler the opportunity to provide user feedback. If
-	 * the command is parameterized, some of the parameters can be specified to
-	 * help narrow down which elements to refresh.
+	 * Refresh any elements registered against the command with the given id. It
+	 * allows the active handler the opportunity to provide user feedback. If the
+	 * command is parameterized, some of the parameters can be specified to help
+	 * narrow down which elements to refresh.
 	 * <p>
-	 * The service locator used in registering the element can also be used to
-	 * scope the search. For example: if you wanted all elements for your
-	 * command but only within the part's workbench window, you could use:
+	 * The service locator used in registering the element can also be used to scope
+	 * the search. For example: if you wanted all elements for your command but only
+	 * within the part's workbench window, you could use:
+	 * </p>
 	 *
 	 * <pre>
 	 * Map filter = new HashMap();
-	 * filter.put(IServiceScopes.WINDOW_SCOPE, getSite().getPage()
-	 * 		.getWorkbenchWindow());
+	 * filter.put(IServiceScopes.WINDOW_SCOPE, getSite().getPage().getWorkbenchWindow());
 	 * commandService.refreshElements(commandId, filter);
 	 * </pre>
 	 *
-	 * </p>
 	 *
-	 * @param commandId
-	 *            The command id to refresh if it has registered eleemnts.
-	 * @param filter
-	 *            key-value pairs that can narrow down the callbacks to return.
-	 *            The parameters are <b>AND</b>ed together. This may be
-	 *            <code>null</code>.
+	 * @param commandId The command id to refresh if it has registered eleemnts.
+	 * @param filter    key-value pairs that can narrow down the callbacks to
+	 *                  return. The parameters are <b>AND</b>ed together. This may
+	 *                  be <code>null</code>.
 	 * @since 3.3
 	 */
 	void refreshElements(String commandId, Map filter);

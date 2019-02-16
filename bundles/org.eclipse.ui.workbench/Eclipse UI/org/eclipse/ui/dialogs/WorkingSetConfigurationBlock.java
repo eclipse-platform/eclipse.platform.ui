@@ -136,14 +136,13 @@ public class WorkingSetConfigurationBlock {
 
 	/**
 	 * Create a new instance of this working set block using default labels.
-	 * <br/>
-	 * <br/>
-	 * Note: Consider using the vararg version of this contructor.
 	 *
-	 * @param workingSetIds
-	 *            working set ids from which the user can choose
-	 * @param settings
-	 *            to store/load the selection history
+	 * <p>
+	 * Note: Consider using the vararg version of this contructor.
+	 * </p>
+	 *
+	 * @param workingSetIds working set ids from which the user can choose
+	 * @param settings      to store/load the selection history
 	 */
 	public WorkingSetConfigurationBlock(String[] workingSetIds, IDialogSettings settings) {
 		this(settings, workingSetIds);
@@ -151,23 +150,20 @@ public class WorkingSetConfigurationBlock {
 
 	/**
 	 * Create a new instance of this working set block using custom labels.
-	 * <br/>
-	 * <br/>
-	 * Note: Consider using the vararg version of this contructor.
 	 *
-	 * @param workingSetIds
-	 *            working set ids from which the user can choose
-	 * @param settings
-	 *            to store/load the selection history
-	 * @param enableButtonLabel
-	 *            the label to use for the checkable enablement button. May be
-	 *            <code>null</code> to use the default value.
-	 * @param comboLabel
-	 *            the label to use for the recent working set combo. May be
-	 *            <code>null</code> to use the default value.
-	 * @param selectLabel
-	 *            the label to use for the select button. May be
-	 *            <code>null</code> to use the default value.
+	 * <p>
+	 * Note: Consider using the vararg version of this contructor.
+	 * </p>
+	 *
+	 * @param workingSetIds     working set ids from which the user can choose
+	 * @param settings          to store/load the selection history
+	 * @param enableButtonLabel the label to use for the checkable enablement
+	 *                          button. May be <code>null</code> to use the default
+	 *                          value.
+	 * @param comboLabel        the label to use for the recent working set combo.
+	 *                          May be <code>null</code> to use the default value.
+	 * @param selectLabel       the label to use for the select button. May be
+	 *                          <code>null</code> to use the default value.
 	 */
 	public WorkingSetConfigurationBlock(String[] workingSetIds, IDialogSettings settings, String enableButtonLabel, String comboLabel, String selectLabel) {
 		this(settings, enableButtonLabel, null, comboLabel, selectLabel, workingSetIds);
@@ -314,7 +310,7 @@ public class WorkingSetConfigurationBlock {
 	}
 
 	/**
-	 * Add this block to the <code>parent</parent>
+	 * Add this block to the <code>parent</code>
 	 *
 	 * @param parent the parent to add the block to
 	 */

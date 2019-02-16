@@ -121,20 +121,20 @@ public final class NavigatorActionService extends ActionGroup implements IMement
 	}
 
 	/**
-	 * Prepares the menu for object contributions, if the option is set in the extension. The option
-	 * is controlled by the &lgt;popupMenu /&gt; element's 'allowPlatformContributions' attribute.
-	 * Clients may choose to ignore this setting by supplying a value of <b>true</b> for the
+	 * Prepares the menu for object contributions, if the option is set in the
+	 * extension. The option is controlled by the <code>&lt;popupMenu /&gt;</code>
+	 * element's 'allowPlatformContributions' attribute. Clients may choose to
+	 * ignore this setting by supplying a value of <b>true</b> for the
 	 * <code>force</code> attribute.
 	 *
-	 * @param menu
-	 *            The context menu of the IViewPart
-	 * @param aSelectionProvider
-	 *            The selection provider that will supplement actions with a valid, current
-	 *            selection.
-	 * @param force
-	 *            A value of 'true' forces the menu to be registered for object/view contributions.
-	 *            Otherwise, the option from the extension point will be respected. See
-	 *            <b>org.eclipse.ui.navigator.viewer/viewer</b> for more information.
+	 * @param menu               The context menu of the IViewPart
+	 * @param aSelectionProvider The selection provider that will supplement actions
+	 *                           with a valid, current selection.
+	 * @param force              A value of 'true' forces the menu to be registered
+	 *                           for object/view contributions. Otherwise, the
+	 *                           option from the extension point will be respected.
+	 *                           See <b>org.eclipse.ui.navigator.viewer/viewer</b>
+	 *                           for more information.
 	 */
 	public void prepareMenuForPlatformContributions(MenuManager menu, ISelectionProvider aSelectionProvider, boolean force) {
 		Assert.isTrue(!disposed);

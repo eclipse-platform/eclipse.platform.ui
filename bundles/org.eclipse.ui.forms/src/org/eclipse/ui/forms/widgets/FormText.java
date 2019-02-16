@@ -519,13 +519,11 @@ public class FormText extends Canvas {
 	}
 
 	/**
-	 * If paragraphs are separated, spacing will be added between them.
-	 * Otherwise, new paragraphs will simply start on a new line with no
-	 * spacing.
+	 * If paragraphs are separated, spacing will be added between them. Otherwise,
+	 * new paragraphs will simply start on a new line with no spacing.
 	 *
-	 * @param value
-	 *            <samp>true </samp> if paragraphs are separated, </samp> false
-	 *            </samp> otherwise.
+	 * @param value <code>true</code> if paragraphs are separated, <code>false
+	 *              </code> otherwise.
 	 */
 	public void setParagraphsSeparated(boolean value) {
 		paragraphsSeparated = value;
@@ -848,23 +846,23 @@ public class FormText extends Canvas {
 	}
 
 	/**
-	 * Controls whether whitespace inside paragraph and list items is
-	 * normalized. Note that the new value will not affect the current text in
-	 * the control, only subsequent calls to <code>setText</code> or
-	 * <code>setContents</code>.
+	 * Controls whether whitespace inside paragraph and list items is normalized.
+	 * Note that the new value will not affect the current text in the control, only
+	 * subsequent calls to <code>setText</code> or <code>setContents</code>.
 	 * <p>
 	 * If normalized:
+	 * </p>
 	 * <ul>
 	 * <li>all white space characters will be condensed into at most one when
 	 * between words.</li>
-	 * <li>new line characters will be ignored and replaced with one white
-	 * space character</li>
-	 * <li>white space characters after the opening tags and before the closing
-	 * tags will be trimmed</li>
+	 * <li>new line characters will be ignored and replaced with one white space
+	 * character</li>
+	 * <li>white space characters after the opening tags and before the closing tags
+	 * will be trimmed</li>
+	 * </ul>
 	 *
-	 * @param value
-	 *            <code>true</code> if whitespace is normalized,
-	 *            <code>false</code> otherwise.
+	 * @param value <code>true</code> if whitespace is normalized,
+	 *              <code>false</code> otherwise.
 	 */
 	public void setWhitespaceNormalized(boolean value) {
 		model.setWhitespaceNormalized(value);

@@ -59,7 +59,7 @@ public class FormColors {
 	/**
 	 * Key for the section title bar background.
 	 *
-	 * @deprecated use <code>IFormColors.TB_BG
+	 * @deprecated use <code>IFormColors.TB_BG</code>
 	 */
 	@Deprecated
 	public static final String TB_BG = IFormColors.TB_BG;

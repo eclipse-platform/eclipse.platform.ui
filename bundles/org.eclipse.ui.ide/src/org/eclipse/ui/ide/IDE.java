@@ -95,12 +95,14 @@ import org.eclipse.ui.part.FileEditorInput;
  */
 public final class IDE {
 	/**
-	 * The persistent property key used on IFile resources to contain the
-	 * preferred editor ID to use.
+	 * The persistent property key used on IFile resources to contain the preferred
+	 * editor ID to use.
 	 * <p>
 	 * Example of retrieving the persisted editor id:
+	 * </p>
 	 *
-	 * <pre><code>
+	 * <pre>
+	 * <code>
 	 *  IFile file = ...
 	 *  IEditorDescriptor editorDesc = null;
 	 *  try {
@@ -111,22 +113,24 @@ public final class IDE {
 	 *  } catch (CoreException e) {
 	 *  	// handle problem accessing persistent property here
 	 *  }
-	 * </code></pre>
+	 * </code>
+	 * </pre>
 	 *
-	 * </p>
 	 * <p>
 	 * Example of persisting the editor id:
+	 * </p>
 	 *
-	 * <pre><code>
+	 * <pre>
+	 * <code>
 	 *  IFile file = ...
 	 *  try {
 	 *  	file.setPersistentProperty(EDITOR_KEY, editorDesc.getId());
 	 *  } catch (CoreException e) {
 	 *  	// handle problem setting persistent property here
 	 *  }
-	 * </code></pre>
+	 * </code>
+	 * </pre>
 	 *
-	 * </p>
 	 */
 	public static final QualifiedName EDITOR_KEY = new QualifiedName(
 			"org.eclipse.ui.internal.registry.ResourceEditorRegistry", "EditorProperty");//$NON-NLS-2$//$NON-NLS-1$
@@ -690,7 +694,6 @@ public final class IDE {
 	 * <li>The workbench editor registry is consulted to determine if the
 	 * default text editor is available.</li>
 	 * </ol>
-	 * </p>
 	 *
 	 * @param file
 	 *            the file
@@ -729,7 +732,6 @@ public final class IDE {
 	 * <li>The workbench editor registry is consulted to determine if the
 	 * default text editor is available.</li>
 	 * </ol>
-	 * </p>
 	 *
 	 * @param file
 	 *            the file
@@ -756,47 +758,43 @@ public final class IDE {
 	}
 
 	/**
-	 * Returns an editor descriptor appropriate for opening the given file
-	 * resource.
+	 * Returns an editor descriptor appropriate for opening the given file resource.
 	 * <p>
-	 * The editor descriptor is determined using a multi-step process. This
-	 * method will attempt to resolve the editor based on content-type bindings
-	 * as well as traditional name/extension bindings if
-	 * <code>determineContentType</code>is <code>true</code>.
+	 * The editor descriptor is determined using a multi-step process. This method
+	 * will attempt to resolve the editor based on content-type bindings as well as
+	 * traditional name/extension bindings if <code>determineContentType</code>is
+	 * <code>true</code>.
 	 * </p>
 	 * <ol>
-	 * <li>The <code>IResource</code> is consulted for a persistent property
-	 * named <code>IDE.EDITOR_KEY</code> containing the preferred editor id to
-	 * be used.</li>
+	 * <li>The <code>IResource</code> is consulted for a persistent property named
+	 * <code>IDE.EDITOR_KEY</code> containing the preferred editor id to be
+	 * used.</li>
 	 * <li>The workbench editor registry is consulted to determine if an editor
-	 * extension has been registered for the file type. If so, an instance of
-	 * the editor extension is opened on the file. See
+	 * extension has been registered for the file type. If so, an instance of the
+	 * editor extension is opened on the file. See
 	 * <code>IEditorRegistry.getDefaultEditor(String)</code>.</li>
 	 * <li>The preferred {@link IUnassociatedEditorStrategy} is consulted.</li>
-	 * <li>The {@link SystemEditorOrTextEditorStrategy} is consulted, whose
-	 * behavior is
+	 * <li>The {@link SystemEditorOrTextEditorStrategy} is consulted, whose behavior
+	 * is
 	 * <ol>
-	 * <li>The operating system is consulted to determine if an in-place
-	 * component editor is available (e.g. OLE editor on Win32 platforms).</li>
-	 * <li>The operating system is consulted to determine if an external editor
-	 * is available.</li>
-	 * <li>The workbench editor registry is consulted to determine if the
-	 * default text editor is available.</li></li>
+	 * <li>The operating system is consulted to determine if an in-place component
+	 * editor is available (e.g. OLE editor on Win32 platforms).</li>
+	 * <li>The operating system is consulted to determine if an external editor is
+	 * available.</li>
+	 * <li>The workbench editor registry is consulted to determine if the default
+	 * text editor is available.</li>
 	 * </ol>
+	 * </li>
 	 * </ol>
-	 * </p>
 	 *
-	 * @param file
-	 *            the file
-	 * @param determineContentType
-	 *            query the content type system for the content type of the file
-	 * @param allowInteractive
-	 *            whether we allow user interactions
+	 * @param file                 the file
+	 * @param determineContentType query the content type system for the content
+	 *                             type of the file
+	 * @param allowInteractive     whether we allow user interactions
 	 * @return an editor descriptor, appropriate for opening the file
-	 * @throws PartInitException
-	 *             if no editor can be found
-	 * @throws OperationCanceledException
-	 *             in case descriptor lookup was canceled by the user
+	 * @throws PartInitException          if no editor can be found
+	 * @throws OperationCanceledException in case descriptor lookup was canceled by
+	 *                                    the user
 	 * @since 3.12
 	 */
 	public static IEditorDescriptor getEditorDescriptor(IFile file, boolean determineContentType, boolean allowInteractive)
@@ -1001,7 +999,6 @@ public final class IDE {
 	 * <li>The workbench editor registry is consulted to determine if the
 	 * default text editor is available.</li>
 	 * </ol>
-	 * </p>
 	 *
 	 * @param name
 	 *            the file name
@@ -1039,7 +1036,6 @@ public final class IDE {
 	 * <li>The workbench editor registry is consulted to determine if the
 	 * default text editor is available.</li>
 	 * </ol>
-	 * </p>
 	 *
 	 * @param name
 	 *            the file name
@@ -1073,44 +1069,40 @@ public final class IDE {
 	}
 
 	/**
-	 * Returns an editor descriptor appropriate for opening a file resource with
-	 * the given name.
+	 * Returns an editor descriptor appropriate for opening a file resource with the
+	 * given name.
 	 * <p>
-	 * The editor descriptor is determined using a multi-step process. This
-	 * method will attempt to infer the content type of the file if
+	 * The editor descriptor is determined using a multi-step process. This method
+	 * will attempt to infer the content type of the file if
 	 * <code>inferContentType</code> is <code>true</code>.
 	 * </p>
 	 * <ol>
 	 * <li>The workbench editor registry is consulted to determine if an editor
-	 * extension has been registered for the file type. If so, an instance of
-	 * the editor extension is opened on the file. See
+	 * extension has been registered for the file type. If so, an instance of the
+	 * editor extension is opened on the file. See
 	 * <code>IEditorRegistry.getDefaultEditor(String)</code>.</li>
 	 * <li>The preferred {@link IUnassociatedEditorStrategy} is consulted.</li>
-	 * <li>The {@link SystemEditorOrTextEditorStrategy} is consulted, whose
-	 * behavior is
+	 * <li>The {@link SystemEditorOrTextEditorStrategy} is consulted, whose behavior
+	 * is
 	 * <ol>
-	 * <li>The operating system is consulted to determine if an in-place
-	 * component editor is available (e.g. OLE editor on Win32 platforms).</li>
-	 * <li>The operating system is consulted to determine if an external editor
-	 * is available.</li>
-	 * <li>The workbench editor registry is consulted to determine if the
-	 * default text editor is available.</li></li>
+	 * <li>The operating system is consulted to determine if an in-place component
+	 * editor is available (e.g. OLE editor on Win32 platforms).</li>
+	 * <li>The operating system is consulted to determine if an external editor is
+	 * available.</li>
+	 * <li>The workbench editor registry is consulted to determine if the default
+	 * text editor is available.</li>
 	 * </ol>
+	 * </li>
 	 * </ol>
-	 * </p>
 	 *
-	 * @param name
-	 *            the file name
-	 * @param inferContentType
-	 *            attempt to infer the content type from the file name if this
-	 *            is <code>true</code>
-	 * @param allowInteractive
-	 *            whether we allow user interactions.
+	 * @param name             the file name
+	 * @param inferContentType attempt to infer the content type from the file name
+	 *                         if this is <code>true</code>
+	 * @param allowInteractive whether we allow user interactions.
 	 * @return an editor descriptor, appropriate for opening the file
-	 * @throws PartInitException
-	 *             if no editor can be found
-	 * @throws OperationCanceledException
-	 *             in case descriptor lookup was canceled by the user
+	 * @throws PartInitException          if no editor can be found
+	 * @throws OperationCanceledException in case descriptor lookup was canceled by
+	 *                                    the user
 	 * @since 3.12
 	 */
 	public static IEditorDescriptor getEditorDescriptor(String name, boolean inferContentType, boolean allowInteractive)

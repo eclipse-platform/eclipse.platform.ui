@@ -41,11 +41,11 @@ public interface ICommonMenuConstants {
 	 * <code>"group.goto"</code>).
 	 * <p>
 	 * Examples for open actions are:
+	 * </p>
 	 * <ul>
 	 * <li>Go Into</li>
 	 * <li>Go To</li>
 	 * </ul>
-	 * </p>
 	 */
 	String GROUP_GOTO = "group.goto"; //$NON-NLS-1$
 
@@ -54,24 +54,23 @@ public interface ICommonMenuConstants {
 	 * <code>"group.show"</code>).
 	 * <p>
 	 * Examples for show actions are:
+	 * </p>
 	 * <ul>
 	 * <li>Show in Navigator</li>
 	 * <li>Show in Type Hierarchy</li>
 	 * </ul>
-	 * </p>
 	 */
 	String GROUP_SHOW = "group.show"; //$NON-NLS-1$
 
 	/**
-	 * Pop-up menu: name of group for new actions (value
-	 * <code>"group.new"</code>).
+	 * Pop-up menu: name of group for new actions (value <code>"group.new"</code>).
 	 * <p>
 	 * Examples for new actions are:
+	 * </p>
 	 * <ul>
 	 * <li>Create new class</li>
 	 * <li>Create new interface</li>
 	 * </ul>
-	 * </p>
 	 */
 	String GROUP_NEW = "group.new"; //$NON-NLS-1$
 
@@ -80,11 +79,11 @@ public interface ICommonMenuConstants {
 	 * <code>"group.open"</code>).
 	 * <p>
 	 * Examples for open actions are:
+	 * </p>
 	 * <ul>
 	 * <li>Open To</li>
 	 * <li>Open With</li>
 	 * </ul>
-	 * </p>
 	 *
 	 * @see #GROUP_OPEN_WITH
 	 */
@@ -95,10 +94,10 @@ public interface ICommonMenuConstants {
 	 * <code>"group.openWith"</code>).
 	 * <p>
 	 * Examples for open actions are:
+	 * </p>
 	 * <ul>
 	 * <li>Open With</li>
 	 * </ul>
-	 * </p>
 	 */
 	String GROUP_OPEN_WITH = "group.openWith"; //$NON-NLS-1$
 
@@ -107,11 +106,11 @@ public interface ICommonMenuConstants {
 	 * <code>"group.port"</code>).
 	 * <p>
 	 * Examples for open actions are:
+	 * </p>
 	 * <ul>
 	 * <li>Import</li>
 	 * <li>Export</li>
 	 * </ul>
-	 * </p>
 	 */
 	String GROUP_PORT = "group.port";//$NON-NLS-1$
 

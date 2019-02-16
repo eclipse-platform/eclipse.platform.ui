@@ -76,11 +76,11 @@ public interface IFileEditorMapping {
     ImageDescriptor getImageDescriptor();
 
     /**
-     * Returns the label to use for this mapping.
-     * Labels have the form "<it>name</it>.<it>extension</it>".
-     *
-     * @return the label to use for this mapping
-     */
+	 * Returns the label to use for this mapping. Labels have the form
+	 * "<i>name.extension</i>".
+	 *
+	 * @return the label to use for this mapping
+	 */
     String getLabel();
 
     /**

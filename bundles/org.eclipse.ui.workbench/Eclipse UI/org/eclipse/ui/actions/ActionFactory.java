@@ -764,12 +764,13 @@ public abstract class ActionFactory {
     };
 
 	/**
-	 * Workbench action (id: "nextEditor", commandId: "org.eclipse.ui.window.nextEditor"): Next
-	 * editor. This action maintains its enablement state.
+	 * Workbench action (id: "nextEditor", commandId:
+	 * "org.eclipse.ui.window.nextEditor"): Next editor. This action maintains its
+	 * enablement state.
 	 * <p>
-	 * <code>NEXT_EDITOR</code> and <code>PREVIOUS_EDITOR</code> form a cycle action pair. For a
-	 * given window, use {@link ActionFactory#linkCycleActionPair
-	 * ActionFactory.linkCycleActionPair</code>} to connect the two.
+	 * <code>NEXT_EDITOR</code> and <code>PREVIOUS_EDITOR</code> form a cycle action
+	 * pair. For a given window, use {@link ActionFactory#linkCycleActionPair
+	 * ActionFactory.linkCycleActionPair} to connect the two.
 	 * </p>
 	 */
     public static final ActionFactory NEXT_EDITOR = new ActionFactory(
@@ -795,12 +796,13 @@ public abstract class ActionFactory {
     };
 
 	/**
-	 * Workbench action (id: "nextPart", commandId: "org.eclipse.ui.window.nextView"): Next part.
-	 * This action maintains its enablement state.
+	 * Workbench action (id: "nextPart", commandId:
+	 * "org.eclipse.ui.window.nextView"): Next part. This action maintains its
+	 * enablement state.
 	 * <p>
-	 * <code>NEXT_PART</code> and <code>PREVIOUS_PART</code> form a cycle action pair. For a given
-	 * window, use {@link ActionFactory#linkCycleActionPair
-	 * ActionFactory.linkCycleActionPair</code>} to connect the two.
+	 * <code>NEXT_PART</code> and <code>PREVIOUS_PART</code> form a cycle action
+	 * pair. For a given window, use {@link ActionFactory#linkCycleActionPair
+	 * ActionFactory.linkCycleActionPair} to connect the two.
 	 * </p>
 	 */
     public static final ActionFactory NEXT_PART = new ActionFactory("nextPart", //$NON-NLS-1$
@@ -824,12 +826,14 @@ public abstract class ActionFactory {
     };
 
 	/**
-	 * Workbench action (id: "nextPerspective", commandId: "org.eclipse.ui.window.nextPerspective"):
-	 * Next perspective. This action maintains its enablement state.
+	 * Workbench action (id: "nextPerspective", commandId:
+	 * "org.eclipse.ui.window.nextPerspective"): Next perspective. This action
+	 * maintains its enablement state.
 	 * <p>
-	 * <code>NEXT_PERSPECTIVE</code> and <code>PREVIOUS_PERSPECTIVE</code> form a cycle action pair.
-	 * For a given window, use {@link ActionFactory#linkCycleActionPair
-	 * ActionFactory.linkCycleActionPair</code>} to connect the two.
+	 * <code>NEXT_PERSPECTIVE</code> and <code>PREVIOUS_PERSPECTIVE</code> form a
+	 * cycle action pair. For a given window, use
+	 * {@link ActionFactory#linkCycleActionPair ActionFactory.linkCycleActionPair}
+	 * to connect the two.
 	 * </p>
 	 */
     public static final ActionFactory NEXT_PERSPECTIVE = new ActionFactory(
@@ -942,12 +946,13 @@ public abstract class ActionFactory {
     };
 
 	/**
-	 * Workbench action (id: "previousEditor", commandId: "org.eclipse.ui.window.previousEditor"):
-	 * Previous editor. This action maintains its enablement state.
+	 * Workbench action (id: "previousEditor", commandId:
+	 * "org.eclipse.ui.window.previousEditor"): Previous editor. This action
+	 * maintains its enablement state.
 	 * <p>
-	 * <code>NEXT_EDITOR</code> and <code>PREVIOUS_EDITOR</code> form a cycle action pair. For a
-	 * given window, use {@link ActionFactory#linkCycleActionPair
-	 * ActionFactory.linkCycleActionPair</code>} to connect the two.
+	 * <code>NEXT_EDITOR</code> and <code>PREVIOUS_EDITOR</code> form a cycle action
+	 * pair. For a given window, use {@link ActionFactory#linkCycleActionPair
+	 * ActionFactory.linkCycleActionPair} to connect the two.
 	 * </p>
 	 */
     public static final ActionFactory PREVIOUS_EDITOR = new ActionFactory(
@@ -972,12 +977,13 @@ public abstract class ActionFactory {
     };
 
 	/**
-	 * Workbench action (id: "previousPart", commandId: "org.eclipse.ui.window.previousView"):
-	 * Previous part. This action maintains its enablement state.
+	 * Workbench action (id: "previousPart", commandId:
+	 * "org.eclipse.ui.window.previousView"): Previous part. This action maintains
+	 * its enablement state.
 	 * <p>
-	 * <code>NEXT_PART</code> and <code>PREVIOUS_PART</code> form a cycle action pair. For a given
-	 * window, use {@link ActionFactory#linkCycleActionPair
-	 * ActionFactory.linkCycleActionPair</code>} to connect the two.
+	 * <code>NEXT_PART</code> and <code>PREVIOUS_PART</code> form a cycle action
+	 * pair. For a given window, use {@link ActionFactory#linkCycleActionPair
+	 * ActionFactory.linkCycleActionPair} to connect the two.
 	 * </p>
 	 */
     public static final ActionFactory PREVIOUS_PART = new ActionFactory(
@@ -1001,12 +1007,14 @@ public abstract class ActionFactory {
     };
 
 	/**
-	 * Workbench action (id: "previousPerspective", commandId: "org.eclipse.ui.window.previousPerspective"):
-	 * Previous perspective. This action maintains its enablement state.
+	 * Workbench action (id: "previousPerspective", commandId:
+	 * "org.eclipse.ui.window.previousPerspective"): Previous perspective. This
+	 * action maintains its enablement state.
 	 * <p>
-	 * <code>NEXT_PERSPECTIVE</code> and <code>PREVIOUS_PERSPECTIVE</code> form a cycle action pair.
-	 * For a given window, use {@link ActionFactory#linkCycleActionPair
-	 * ActionFactory.linkCycleActionPair</code>} to connect the two.
+	 * <code>NEXT_PERSPECTIVE</code> and <code>PREVIOUS_PERSPECTIVE</code> form a
+	 * cycle action pair. For a given window, use
+	 * {@link ActionFactory#linkCycleActionPair ActionFactory.linkCycleActionPair}
+	 * to connect the two.
 	 * </p>
 	 */
     public static final ActionFactory PREVIOUS_PERSPECTIVE = new ActionFactory(
@@ -1623,25 +1631,20 @@ public abstract class ActionFactory {
 	};
 
     /**
-	 * Establishes bi-direction connections between the forward and backward
-	 * actions of a cycle pair.
+	 * Establishes bi-direction connections between the forward and backward actions
+	 * of a cycle pair.
 	 * <p>
 	 * Example usage:
+	 * </p>
 	 *
 	 * <pre>
-	 * ActionFactory.IWorkbenchAction nextEditorAction = ActionFactory.NEXT_EDITOR
-	 * 		.create(window);
-	 * ActionFactory.IWorkbenchAction previousEditorAction = ActionFactory.PREVIOUS_EDITOR
-	 * 		.create(window);
+	 * ActionFactory.IWorkbenchAction nextEditorAction = ActionFactory.NEXT_EDITOR.create(window);
+	 * ActionFactory.IWorkbenchAction previousEditorAction = ActionFactory.PREVIOUS_EDITOR.create(window);
 	 * ActionFactory.linkCycleActionPair(nextEditorAction, previousEditorAction);
 	 * </pre>
 	 *
-	 * </p>
-	 *
-	 * @param next
-	 *            the action that moves forward
-	 * @param previous
-	 *            the action that moves backward
+	 * @param next     the action that moves forward
+	 * @param previous the action that moves backward
 	 */
     public static void linkCycleActionPair(IWorkbenchAction next,
             IWorkbenchAction previous) {

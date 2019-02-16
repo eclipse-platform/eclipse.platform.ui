@@ -40,16 +40,17 @@ public interface IElementFactory {
 	 * memento.
 	 * <p>
 	 * If the result is not null, it should be persistable; that is,
+	 * </p>
+	 * 
 	 * <pre>
 	 * result.getAdapter(org.eclipse.ui.IPersistableElement.class)
 	 * </pre>
+	 * <p>
 	 * should not return <code>null</code>.
 	 * </p>
 	 *
-	 * @param memento
-	 *            a memento containing the state for the object
-	 * @return an object, or <code>null</code> if the element could not be
-	 *         created
+	 * @param memento a memento containing the state for the object
+	 * @return an object, or <code>null</code> if the element could not be created
 	 */
     IAdaptable createElement(IMemento memento);
 }

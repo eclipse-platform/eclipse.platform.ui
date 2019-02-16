@@ -56,7 +56,7 @@ import org.eclipse.ui.ISources;
  * <p>
  * This service can be acquired from your service locator:
  * </p>
- * 
+ *
  * <pre>
  * IEvaluationService service = (IEvaluationService) getSite().getService(IEvaluationService.class);
  * </pre>
@@ -169,25 +169,23 @@ public interface IEvaluationService extends IServiceWithSources {
 	IEvaluationContext getCurrentState();
 
 	/**
-	 * Request that this service re-evaluate all registered core expressions
-	 * that contain a property tester for the given property name. This will
-	 * fire a {@link #PROP_NOTIFYING} property change event to service
-	 * listeners.
+	 * Request that this service re-evaluate all registered core expressions that
+	 * contain a property tester for the given property name. This will fire a
+	 * {@link #PROP_NOTIFYING} property change event to service listeners.
 	 * <p>
 	 * Notes:
+	 * </p>
 	 * <ul>
 	 * <li>the property must be able to return the new value before this
 	 * re-evaluation is requested</li>
 	 * <li>limit calls to this method to avoid unnecessary churn</li>
-	 * <li>A re-evaluation that does not change the value of an expression will
-	 * not fire a property change event</li>
+	 * <li>A re-evaluation that does not change the value of an expression will not
+	 * fire a property change event</li>
 	 * </ul>
-	 * </p>
 	 *
-	 * @param propertyName
-	 *            The fully qualified property name, like
-	 *            <code>org.eclipse.core.resources.name</code>. Must not be
-	 *            <code>null</code>.
+	 * @param propertyName The fully qualified property name, like
+	 *                     <code>org.eclipse.core.resources.name</code>. Must not be
+	 *                     <code>null</code>.
 	 * @since 3.4
 	 */
 	void requestEvaluation(String propertyName);

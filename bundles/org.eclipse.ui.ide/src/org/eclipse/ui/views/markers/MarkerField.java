@@ -105,12 +105,14 @@ public abstract class MarkerField {
 	 * @param item1
 	 * @param item2
 	 * @return Either:
-	 *         <li>a negative number if the value of item1 is less than the
-	 *         value of item2 for this field.
-	 *         <li><code>0</code> if the value of item1 and the value of
-	 *         item2 are equal for this field.
-	 *         <li>a positive number if the value of item1 is greater than the
-	 *         value of item2 for this field.
+	 *         <ul>
+	 *         <li>a negative number if the value of item1 is less than the value of
+	 *         item2 for this field.</li>
+	 *         <li><code>0</code> if the value of item1 and the value of item2 are
+	 *         equal for this field.</li>
+	 *         <li>a positive number if the value of item1 is greater than the value
+	 *         of item2 for this field.</li>
+	 *         </ul>
 	 */
 	public int compare(MarkerItem item1, MarkerItem item2) {
 		return getValue(item1).compareTo(getValue(item2));

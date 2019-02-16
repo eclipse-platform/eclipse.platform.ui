@@ -130,28 +130,26 @@ public class WorkbenchStatusDialogManager {
 
 	/**
 	 * <p>
-	 * Adds a new {@link StatusAdapter} to the status adapters list in the
-	 * dialog.
+	 * Adds a new {@link StatusAdapter} to the status adapters list in the dialog.
 	 * </p>
 	 * <p>
 	 * If the dialog is already visible, the status adapter will be shown
-	 * immediately. Otherwise, the dialog with the added status adapter will
-	 * show up, if all conditions below are false.
+	 * immediately. Otherwise, the dialog with the added status adapter will show
+	 * up, if all conditions below are false.
+	 * </p>
 	 * <ul>
 	 * <li>the status adapter has
-	 * {@link IProgressConstants#NO_IMMEDIATE_ERROR_PROMPT_PROPERTY} set to true</li>
+	 * {@link IProgressConstants#NO_IMMEDIATE_ERROR_PROMPT_PROPERTY} set to
+	 * true</li>
 	 * </ul>
-	 * </p>
 	 * <p>
-	 * All not shown status adapters will be displayed as soon as the dialog
-	 * shows up.
+	 * All not shown status adapters will be displayed as soon as the dialog shows
+	 * up.
 	 * </p>
 	 *
-	 * @param modal
-	 *            <code>true</code> if the dialog should be modal,
-	 *            <code>false</code> otherwise
-	 * @param statusAdapter
-	 *            the status adapter
+	 * @param modal         <code>true</code> if the dialog should be modal,
+	 *                      <code>false</code> otherwise
+	 * @param statusAdapter the status adapter
 	 */
 	public void addStatusAdapter(final StatusAdapter statusAdapter,
 			final boolean modal) {

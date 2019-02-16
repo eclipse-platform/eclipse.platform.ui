@@ -276,15 +276,17 @@ public class StatusManager {
 
 	/**
 	 * Handles given CoreException. This method has been introduced to prevent
-	 * anti-pattern: <br/><code>
+	 * anti-pattern:
+	 * 
+	 * <pre>
+	 * <code>
 	 * StatusManager.getManager().handle(coreException.getStatus());
-	 * </code><br/>
+	 * </code>
+	 * </pre>
 	 * that does not print the stack trace to the log.
 	 *
-	 * @param coreException
-	 *            a CoreException to be handled.
-	 * @param pluginId
-	 *            the unique identifier of the relevant plug-in
+	 * @param coreException a CoreException to be handled.
+	 * @param pluginId      the unique identifier of the relevant plug-in
 	 * @see StatusManager#handle(IStatus)
 	 * @since 3.4
 	 *
@@ -401,7 +403,7 @@ public class StatusManager {
 	 * <ul>
 	 * <li>all statuses has been handled</li>
 	 * </ul>
-	 * 
+	 *
 	 * @since 3.5
 	 *
 	 */

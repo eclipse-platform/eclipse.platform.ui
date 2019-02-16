@@ -358,40 +358,34 @@ public interface IWorkbench extends IAdaptable, IServiceLocator {
 
 	/**
 	 * Shows the specified perspective to the user. The caller should use this
-	 * method when the perspective to be shown is not dependent on the page's
-	 * input. That is, the perspective can open in any page depending on user
-	 * preferences.
+	 * method when the perspective to be shown is not dependent on the page's input.
+	 * That is, the perspective can open in any page depending on user preferences.
 	 * <p>
 	 * The perspective may be shown in the specified window, in another existing
-	 * window, or in a new window depending on user preferences. The exact
-	 * policy is controlled by the workbench to ensure consistency to the user.
-	 * The policy is subject to change. The current policy is as follows:
+	 * window, or in a new window depending on user preferences. The exact policy is
+	 * controlled by the workbench to ensure consistency to the user. The policy is
+	 * subject to change. The current policy is as follows:
+	 * </p>
 	 * <ul>
 	 * <li>If the specified window has the requested perspective open, then the
 	 * window is given focus and the perspective is shown. The page's input is
 	 * ignored.</li>
-	 * <li>If another window that has the workspace root as input and the
-	 * requested perspective open and active, then the window is given focus.
-	 * </li>
-	 * <li>Otherwise the requested perspective is opened and shown in the
-	 * specified window or in a new window depending on the current user
-	 * preference for opening perspectives, and that window is given focus.
-	 * </li>
+	 * <li>If another window that has the workspace root as input and the requested
+	 * perspective open and active, then the window is given focus.</li>
+	 * <li>Otherwise the requested perspective is opened and shown in the specified
+	 * window or in a new window depending on the current user preference for
+	 * opening perspectives, and that window is given focus.</li>
 	 * </ul>
-	 * </p>
 	 * <p>
-	 * The workbench also defines a number of menu items to activate or open
-	 * each registered perspective. A complete list of these perspectives is
-	 * available from the perspective registry found on <code>IWorkbench</code>.
+	 * The workbench also defines a number of menu items to activate or open each
+	 * registered perspective. A complete list of these perspectives is available
+	 * from the perspective registry found on <code>IWorkbench</code>.
 	 * </p>
 	 *
-	 * @param perspectiveId
-	 *            the perspective ID to show
-	 * @param window
-	 *            the workbench window of the action calling this method.
+	 * @param perspectiveId the perspective ID to show
+	 * @param window        the workbench window of the action calling this method.
 	 * @return the workbench page that the perspective was shown
-	 * @exception WorkbenchException
-	 *                if the perspective could not be shown
+	 * @exception WorkbenchException if the perspective could not be shown
 	 *
 	 * @since 2.0
 	 */
@@ -401,43 +395,39 @@ public interface IWorkbench extends IAdaptable, IServiceLocator {
 	/**
 	 * Shows the specified perspective to the user. The caller should use this
 	 * method when the perspective to be shown is dependent on the page's input.
-	 * That is, the perspective can only open in any page with the specified
-	 * input.
+	 * That is, the perspective can only open in any page with the specified input.
 	 * <p>
 	 * The perspective may be shown in the specified window, in another existing
-	 * window, or in a new window depending on user preferences. The exact
-	 * policy is controlled by the workbench to ensure consistency to the user.
-	 * The policy is subject to change. The current policy is as follows:
-	 * <ul>
-	 * <li>If the specified window has the requested perspective open and the
-	 * same requested input, then the window is given focus and the perspective
-	 * is shown.</li>
-	 * <li>If another window has the requested input and the requested
-	 * perspective open and active, then that window is given focus.</li>
-	 * <li>If the specified window has the same requested input but not the
-	 * requested perspective, then the window is given focus and the perspective
-	 * is opened and shown on condition that the user preference is not to open
-	 * perspectives in a new window.</li>
-	 * <li>Otherwise the requested perspective is opened and shown in a new
-	 * window, and the window is given focus.</li>
-	 * </ul>
+	 * window, or in a new window depending on user preferences. The exact policy is
+	 * controlled by the workbench to ensure consistency to the user. The policy is
+	 * subject to change. The current policy is as follows:
 	 * </p>
+	 * <ul>
+	 * <li>If the specified window has the requested perspective open and the same
+	 * requested input, then the window is given focus and the perspective is
+	 * shown.</li>
+	 * <li>If another window has the requested input and the requested perspective
+	 * open and active, then that window is given focus.</li>
+	 * <li>If the specified window has the same requested input but not the
+	 * requested perspective, then the window is given focus and the perspective is
+	 * opened and shown on condition that the user preference is not to open
+	 * perspectives in a new window.</li>
+	 * <li>Otherwise the requested perspective is opened and shown in a new window,
+	 * and the window is given focus.</li>
+	 * </ul>
 	 * <p>
-	 * The workbench also defines a number of menu items to activate or open
-	 * each registered perspective. A complete list of these perspectives is
-	 * available from the perspective registry found on <code>IWorkbench</code>.
+	 * The workbench also defines a number of menu items to activate or open each
+	 * registered perspective. A complete list of these perspectives is available
+	 * from the perspective registry found on <code>IWorkbench</code>.
 	 * </p>
 	 *
-	 * @param perspectiveId
-	 *            the perspective ID to show
-	 * @param window
-	 *            the workbench window of the action calling this method.
-	 * @param input
-	 *            the page input, or <code>null</code> if there is no current
-	 *            input. This is used to seed the input for the page's views
+	 * @param perspectiveId the perspective ID to show
+	 * @param window        the workbench window of the action calling this method.
+	 * @param input         the page input, or <code>null</code> if there is no
+	 *                      current input. This is used to seed the input for the
+	 *                      page's views
 	 * @return the workbench page that the perspective was shown
-	 * @exception WorkbenchException
-	 *                if the perspective could not be shown
+	 * @exception WorkbenchException if the perspective could not be shown
 	 *
 	 * @since 2.0
 	 */

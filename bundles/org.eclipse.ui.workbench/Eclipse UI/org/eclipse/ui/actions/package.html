@@ -18,10 +18,10 @@ for selection oriented actions which enable or disable based upon selection
 in a part or viewer. These should be used by ISV's to define actions for
 menus, toolbars, and context menus.
 <p>Action which leads to resource modification should take advantage of
-the <tt>WorkspaceModifyOperation</tt> classes.&nbsp; These classes are
+the <code>WorkspaceModifyOperation</code> classes. These classes are
 used to defer events which typically occur as a result of workspace changes
 (such as the firing of resource deltas, performance of autobuilds, etc.)
-until the outermost operation has successfully completed.&nbsp; This deferral
+until the outermost operation has successfully completed. This deferral
 leads to an optimized, faster execution of resource modification because
 fewer deltas and autobuilds are performed.
 </body>

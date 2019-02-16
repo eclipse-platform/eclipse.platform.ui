@@ -334,7 +334,6 @@ public class PropertyDescriptor implements IPropertyDescriptor {
      *
      * NOTE: Help support system API's changed since 2.0 and arrays
      * of contexts are no longer supported.
-     * </p>
      * <p>
      * Thus the only valid parameter type for this method
      * is a <code>String</code> representing a context id.

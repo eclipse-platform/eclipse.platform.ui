@@ -153,16 +153,16 @@ public class CommonViewer extends TreeViewer {
 
 	/**
 	 * <p>
-	 * Adds DND support to the Navigator. Uses hooks into the extensible
-	 * framework for DND.
+	 * Adds DND support to the Navigator. Uses hooks into the extensible framework
+	 * for DND.
 	 * </p>
 	 * <p>
 	 * By default, the following Transfer types are supported:
+	 * </p>
 	 * <ul>
 	 * <li>LocalSelectionTransfer.getInstance(),
 	 * <li>PluginTransfer.getInstance()
 	 * </ul>
-	 * </p>
 	 *
 	 * @see CommonDragAdapter
 	 * @see CommonDropAdapter

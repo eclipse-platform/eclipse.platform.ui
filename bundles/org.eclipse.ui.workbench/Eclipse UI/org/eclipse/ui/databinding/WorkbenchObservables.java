@@ -95,18 +95,17 @@ public class WorkbenchObservables {
 	 * <p>
 	 * This method can be used by view or editor implementers to tie into the
 	 * selection service, for example as follows:
+	 * </p>
 	 *
 	 * <pre>
 	 * IObservableValue&lt;IResource&gt; selection = WorkbenchObservables.observeAdaptedSingleSelection(getSite(),
 	 * 		IResource.class);
 	 * </pre>
 	 *
-	 * </p>
 	 *
-	 * @param locator
-	 *            a service locator with an available {@link ISelectionService}
-	 * @param targetType
-	 *            the target type
+	 * @param locator    a service locator with an available
+	 *                   {@link ISelectionService}
+	 * @param targetType the target type
 	 * @return an observable value whose value type is the given target type
 	 */
 	public static <T> IObservableValue<T> observeAdaptedSingleSelection(IServiceLocator locator, Class<T> targetType) {
