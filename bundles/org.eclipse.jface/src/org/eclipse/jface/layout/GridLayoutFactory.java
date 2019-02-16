@@ -242,26 +242,29 @@ public final class GridLayoutFactory {
     }
 
     /**
-	 * Sets the margins for layouts created with this factory. The margins
-	 * specify the number of pixels of horizontal and vertical margin that will
-	 * be placed along the left, right, top, and bottom edges of the layout.
-	 * Note that these margins will be added to the ones specified by
-	 * {@link #margins(int, int)}.
+	 * Sets the margins for layouts created with this factory. The margins specify
+	 * the number of pixels of horizontal and vertical margin that will be placed
+	 * along the left, right, top, and bottom edges of the layout. Note that these
+	 * margins will be added to the ones specified by {@link #margins(int, int)}.
 	 *
-     * <code><pre>
-     *     // Construct a GridLayout whose left, right, top, and bottom
-     *     // margin sizes are 10, 5, 0, and 15 respectively
-     *
-     *     Rectangle margins = Geometry.createDiffRectangle(10,5,0,15);
-     *     GridLayoutFactory.fillDefaults().extendedMargins(margins).applyTo(composite1);
-     * </pre></code>
+	 * <pre>
+	 * <code>
+	 *     // Construct a GridLayout whose left, right, top, and bottom
+	 *     // margin sizes are 10, 5, 0, and 15 respectively
+	 *
+	 *     Rectangle margins = Geometry.createDiffRectangle(10,5,0,15);
+	 *     GridLayoutFactory.fillDefaults().extendedMargins(margins).applyTo(composite1);
+	 * </code>
+	 * </pre>
 	 *
 	 * @param differenceRect rectangle which, when added to the client area of the
-	 *        layout, returns the outer area of the layout. The x and y values of
-	 *        the rectangle correspond to the position of the bounds of the
-	 *        layout with respect to the client area. They should be negative.
-	 *        The width and height correspond to the relative size of the bounds
-	 *        of the layout with respect to the client area, and should be positive.
+	 *                       layout, returns the outer area of the layout. The x and
+	 *                       y values of the rectangle correspond to the position of
+	 *                       the bounds of the layout with respect to the client
+	 *                       area. They should be negative. The width and height
+	 *                       correspond to the relative size of the bounds of the
+	 *                       layout with respect to the client area, and should be
+	 *                       positive.
 	 * @return this
 	 * @see #spacing(Point)
 	 * @see #spacing(int, int)

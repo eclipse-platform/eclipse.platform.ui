@@ -206,7 +206,6 @@ public interface EPartService {
 	 * <li>If <code>CREATE</code> is supplied, then the part will be instantiated though its
 	 * contents may not necessarily be visible to the end user. visible to the end user.</li>
 	 * </ul>
-	 * </p>
 	 *
 	 * @param id
 	 *            the identifier of the part, must not be <code>null</code>
@@ -356,15 +355,14 @@ public interface EPartService {
 	void switchPerspective(MPerspective perspective);
 
 	/**
-	 * Switch to the specified perspective. It will be selected and brought to
-	 * top (if necessary). It may not necessarily be granted focus if there is
-	 * another active window present.
+	 * Switch to the specified perspective. It will be selected and brought to top
+	 * (if necessary). It may not necessarily be granted focus if there is another
+	 * active window present.
 	 *
-	 * @param perspectiveId
-	 *            the perspective to switch to, must not be <code>null</code>
-	 *            and it must identify a perspective that's being managed by
-	 *            this service
-	 * @return an java.util.Optional<MPerspective> containing the perspective,
+	 * @param perspectiveId the perspective to switch to, must not be
+	 *                      <code>null</code> and it must identify a perspective
+	 *                      that's being managed by this service
+	 * @return an java.util.Optional&lt;MPerspective&gt; containing the perspective,
 	 *         which has been switched to or an empty Optional.
 	 *
 	 * @since 1.4

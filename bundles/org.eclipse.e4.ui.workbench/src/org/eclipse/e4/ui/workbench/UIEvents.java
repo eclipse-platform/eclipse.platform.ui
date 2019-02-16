@@ -73,6 +73,7 @@ public class UIEvents {
 	 * Event sent when a enabled update is requested for tool-items.
 	 * <p>
 	 * As a value you may pass in to the {@link IEventBroker#DATA}:
+	 * </p>
 	 * <ul>
 	 * <li>the special value {@link #ALL_ELEMENT_ID} to request changes of all
 	 * applicable elements (the default)</li>
@@ -80,7 +81,6 @@ public class UIEvents {
 	 * check</li>
 	 * <li>instance of {@link Selector}</li>
 	 * </ul>
-	 * </p>
 	 *
 	 * @since 1.1
 	 */
@@ -664,7 +664,7 @@ public class UIEvents {
 		/**
 		 * @deprecated
 		 * @noreference This field is not intended to be referenced by clients.
-		 * @see <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id= 530887">Bug
+		 * @see <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=530887">Bug
 		 *      530887</a>
 		 */
 		@Deprecated
@@ -686,7 +686,7 @@ public class UIEvents {
 		/**
 		 * @deprecated
 		 * @noreference This field is not intended to be referenced by clients.
-		 * @see <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id= 530887">Bug
+		 * @see <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=530887">Bug
 		 *      530887</a>
 		 */
 		String DIRTYABLE = "dirtyable"; //$NON-NLS-1$
@@ -733,7 +733,7 @@ public class UIEvents {
 		 * @since 1.1
 		 * @deprecated
 		 * @noreference This field is not intended to be referenced by clients.
-		 * @see <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id= 531054">Bug
+		 * @see <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=531054">Bug
 		 *      531054 </a>
 		 */
 		String TOPIC_DIALOGS = "org/eclipse/e4/ui/model/application/Application/dialogs/*"; //$NON-NLS-1$
@@ -746,7 +746,7 @@ public class UIEvents {
 		 * @since 1.1
 		 * @deprecated
 		 * @noreference This field is not intended to be referenced by clients.
-		 * @see <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id= 531054">Bug
+		 * @see <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=531054">Bug
 		 *      531054 </a>
 		 */
 		@Deprecated

@@ -238,23 +238,21 @@ public class ModalContext {
 	 * Checks with the given progress monitor and throws
 	 * <code>InterruptedException</code> if it has been canceled.
 	 * <p>
-	 * Code in a long-running operation should call this method regularly so
-	 * that a request to cancel will be honored.
+	 * Code in a long-running operation should call this method regularly so that a
+	 * request to cancel will be honored.
 	 * </p>
 	 * <p>
 	 * Convenience for:
+	 * </p>
 	 *
 	 * <pre>
 	 * if (monitor.isCanceled())
 	 * 	throw new InterruptedException();
 	 * </pre>
 	 *
-	 * </p>
 	 *
-	 * @param monitor
-	 *            the progress monitor
-	 * @exception InterruptedException
-	 *                if canceling the operation has been requested
+	 * @param monitor the progress monitor
+	 * @exception InterruptedException if canceling the operation has been requested
 	 * @see IProgressMonitor#isCanceled()
 	 */
 	public static void checkCanceled(IProgressMonitor monitor) throws InterruptedException {

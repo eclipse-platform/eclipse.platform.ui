@@ -241,24 +241,23 @@ public class StringConverter {
     }
 
     /**
-     * Converts the given value into an SWT font data object.
-     * This method fails if the value does not represent font data.
-     * <p>
-     * A valid font data representation is a string of the form
-     * <code><it>fontname</it>-<it>style</it>-<it>height</it></code> where
-     * <code><it>fontname</it></code> is the name of a font,
-     * <code><it>style</it></code> is a font style (one of
-     * <code>"regular"</code>, <code>"bold"</code>,
-     * <code>"italic"</code>, or <code>"bold italic"</code>)
-     * and <code><it>height</it></code> is an integer representing the
-     * font height. Example: <code>Times New Roman-bold-36</code>.
-     * </p>
-     *
-     * @param value the value to be converted
-     * @return the value as font data
-     * @exception DataFormatException if the given value does not represent
-     *	font data
-     */
+	 * Converts the given value into an SWT font data object. This method fails if
+	 * the value does not represent font data.
+	 * <p>
+	 * A valid font data representation is a string of the form
+	 * <code><i>fontname</i>-<i>style</i>-<i>height</i></code> where
+	 * <code><i>fontname</i></code> is the name of a font, <code><i>style</i></code>
+	 * is a font style (one of <code>"regular"</code>, <code>"bold"</code>,
+	 * <code>"italic"</code>, or <code>"bold italic"</code>) and
+	 * <code><i>height</i></code> is an integer representing the font height.
+	 * Example: <code>Times New Roman-bold-36</code>.
+	 * </p>
+	 *
+	 * @param value the value to be converted
+	 * @return the value as font data
+	 * @exception DataFormatException if the given value does not represent font
+	 *                                data
+	 */
     public static FontData asFontData(String value) throws DataFormatException {
         if (value == null) {
 			throw new DataFormatException(
@@ -427,20 +426,18 @@ public class StringConverter {
     }
 
     /**
-     * Converts the given value into an SWT point.
-     * This method fails if the value does not represent a point.
-     * <p>
-     * A valid point representation is a string of the form
-     * <code><it>x</it>,<it>y</it></code> where
-     * <code><it>x</it></code> and <code><it>y</it></code>
-     * are valid ints.
-     * </p>
-     *
-     * @param value the value to be converted
-     * @return the value as a point
-     * @exception DataFormatException if the given value does not represent
-     *	a point
-     */
+	 * Converts the given value into an SWT point. This method fails if the value
+	 * does not represent a point.
+	 * <p>
+	 * A valid point representation is a string of the form
+	 * <code><i>x</i>,<i>y</i></code> where <code><i>x</i></code> and
+	 * <code><i>y</i></code> are valid ints.
+	 * </p>
+	 *
+	 * @param value the value to be converted
+	 * @return the value as a point
+	 * @exception DataFormatException if the given value does not represent a point
+	 */
     public static Point asPoint(String value) throws DataFormatException {
         if (value == null) {
 			throw new DataFormatException(
@@ -477,21 +474,20 @@ public class StringConverter {
     }
 
     /**
-     * Converts the given value into an SWT rectangle.
-     * This method fails if the value does not represent a rectangle.
-     * <p>
-     * A valid rectangle representation is a string of the form
-     * <code><it>x</it>,<it>y</it>,<it>width</it>,<it>height</it></code>
-     * where <code><it>x</it></code>, <code><it>y</it></code>,
-     * <code><it>width</it></code>, and <code><it>height</it></code>
-     * are valid ints.
-     * </p>
-     *
-     * @param value the value to be converted
-     * @return the value as a rectangle
-     * @exception DataFormatException if the given value does not represent
-     *	a rectangle
-     */
+	 * Converts the given value into an SWT rectangle. This method fails if the
+	 * value does not represent a rectangle.
+	 * <p>
+	 * A valid rectangle representation is a string of the form
+	 * <code><i>x</i>,<i>y</i>,<i>width</i>,<i>height</i></code> where
+	 * <code><i>x</i></code>, <code><i>y</i></code>, <code><i>width</i></code>, and
+	 * <code><i>height</i></code> are valid ints.
+	 * </p>
+	 *
+	 * @param value the value to be converted
+	 * @return the value as a rectangle
+	 * @exception DataFormatException if the given value does not represent a
+	 *                                rectangle
+	 */
     public static Rectangle asRectangle(String value)
             throws DataFormatException {
         if (value == null) {
@@ -533,21 +529,20 @@ public class StringConverter {
     }
 
     /**
-     * Converts the given value into an SWT RGB color value.
-     * This method fails if the value does not represent an RGB
-     * color value.
-     * <p>
-     * A valid RGB color value representation is a string of the form
-     * <code><it>red</it>,<it>green</it></code>,<it>blue</it></code> where
-     * <code><it>red</it></code>, <it>green</it></code>, and
-     * <code><it>blue</it></code> are valid ints.
-     * </p>
-     *
-     * @param value the value to be converted
-     * @return the value as an RGB color value
-     * @exception DataFormatException if the given value does not represent
-     *	an RGB color value
-     */
+	 * Converts the given value into an SWT RGB color value. This method fails if
+	 * the value does not represent an RGB color value.
+	 * <p>
+	 * A valid RGB color value representation is a string of the form
+	 * <code><i>red</i>,<i>green</i>,<i>blue</i></code> where
+	 * <code><i>red</i>,<i>green</i></code> and <code><i>blue</i></code> are valid
+	 * ints.
+	 * </p>
+	 *
+	 * @param value the value to be converted
+	 * @return the value as an RGB color value
+	 * @exception DataFormatException if the given value does not represent an RGB
+	 *                                color value
+	 */
     public static RGB asRGB(String value) throws DataFormatException {
         if (value == null) {
 			throw new DataFormatException("Null doesn't represent a valid RGB"); //$NON-NLS-1$
@@ -744,17 +739,16 @@ public class StringConverter {
     }
 
     /**
-     * Converts the given SWT point object to a string.
-     * <p>
-     * The string representation of a point has the form
-     * <code><it>x</it>,<it>y</it></code> where
-     * <code><it>x</it></code> and <code><it>y</it></code>
-     * are string representations of integers.
-     * </p>
-     *
-     * @param value the point object
-     * @return the string representing the given point
-     */
+	 * Converts the given SWT point object to a string.
+	 * <p>
+	 * The string representation of a point has the form
+	 * <code><i>x</i>,<i>y</i></code> where <code><i>x</i></code> and
+	 * <code><i>y</i></code> are string representations of integers.
+	 * </p>
+	 *
+	 * @param value the point object
+	 * @return the string representing the given point
+	 */
     public static String asString(Point value) {
         Assert.isNotNull(value);
         StringBuilder buffer = new StringBuilder();
@@ -765,18 +759,17 @@ public class StringConverter {
     }
 
     /**
-     * Converts the given SWT rectangle object to a string.
-     * <p>
-     * The string representation of a rectangle has the form
-     * <code><it>x</it>,<it>y</it>,<it>width</it>,<it>height</it></code>
-     * where <code><it>x</it></code>, <code><it>y</it></code>,
-     * <code><it>width</it></code>, and <code><it>height</it></code>
-     * are string representations of integers.
-     * </p>
-     *
-     * @param value the rectangle object
-     * @return the string representing the given rectangle
-     */
+	 * Converts the given SWT rectangle object to a string.
+	 * <p>
+	 * The string representation of a rectangle has the form
+	 * <code><i>x</i>,<i>y</i>,<i>width</i>,<i>height</i></code> where
+	 * <code><i>x</i></code>, <code><i>y</i></code>, <code><i>width</i></code>, and
+	 * <code><i>height</i></code> are string representations of integers.
+	 * </p>
+	 *
+	 * @param value the rectangle object
+	 * @return the string representing the given rectangle
+	 */
     public static String asString(Rectangle value) {
         Assert.isNotNull(value);
         StringBuilder buffer = new StringBuilder();
@@ -791,17 +784,17 @@ public class StringConverter {
     }
 
     /**
-     * Converts the given SWT RGB color value object to a string.
-     * <p>
-     * The string representation of an RGB color value has the form
-     * <code><it>red</it>,<it>green</it></code>,<it>blue</it></code> where
-     * <code><it>red</it></code>, <it>green</it></code>, and
-     * <code><it>blue</it></code> are string representations of integers.
-     * </p>
-     *
-     * @param value the RGB color value object
-     * @return the string representing the given RGB color value
-     */
+	 * Converts the given SWT RGB color value object to a string.
+	 * <p>
+	 * The string representation of an RGB color value has the form
+	 * <code><i>red</i>,<i>green</i>,<i>blue</i></code> where
+	 * <code><i>red</i>,<i>green</i></code> and <code><i>blue</i></code> are string
+	 * representations of integers.
+	 * </p>
+	 *
+	 * @param value the RGB color value object
+	 * @return the string representing the given RGB color value
+	 */
     public static String asString(RGB value) {
         Assert.isNotNull(value);
         StringBuilder buffer = new StringBuilder();

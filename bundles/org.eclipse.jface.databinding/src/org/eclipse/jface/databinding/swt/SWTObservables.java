@@ -385,7 +385,7 @@ public class SWTObservables {
 	 * <ul>
 	 * <li>org.eclipse.swt.widgets.Text</li>
 	 * <li>org.eclipse.swt.widgets.ToolTip</li>
-	 * <ul>
+	 * </ul>
 	 *
 	 * @param widget
 	 * @return an observable observing the message attribute of the provided

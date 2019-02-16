@@ -844,7 +844,6 @@ public class DecoratedField {
 	 * that have different decoration widths will all align. This also allows
 	 * client dialogs to align non-decorated fields with decorated fields by
 	 * consulting the maximum decoration width.
-	 * </p>
 	 * <p>
 	 * Clients may wish to set this value to <code>false</code> in cases where
 	 * space usage is more important than alignment of fields. This value must

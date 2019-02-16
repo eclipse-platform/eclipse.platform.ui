@@ -455,20 +455,18 @@ public abstract class ContributionManager implements IContributionManager {
 	/**
 	 * Replaces the item of the given identifier with another contribution item.
 	 * This can be used, for example, to replace large contribution items with
-	 * placeholders to avoid memory leaks. If the identifier cannot be found in
-	 * the current list of items, then this does nothing. If multiple
-	 * occurrences are found, then the replacement items is put in the first
-	 * position and the other positions are removed.
+	 * placeholders to avoid memory leaks. If the identifier cannot be found in the
+	 * current list of items, then this does nothing. If multiple occurrences are
+	 * found, then the replacement items is put in the first position and the other
+	 * positions are removed.
 	 *
-	 * @param identifier
-	 *            The identifier to look for in the list of contributions;
-	 *            should not be <code>null</code>.
-	 * @param replacementItem
-	 *            The contribution item to replace the old item; must not be
-	 *            <code>null</code>. Use
-	 *            {@link org.eclipse.jface.action.ContributionManager#remove(java.lang.String) remove}
-	 *            if that is what you want to do.
-	 * @return <code>true</code> if the given identifier can be; <code>
+	 * @param identifier      The identifier to look for in the list of
+	 *                        contributions; should not be <code>null</code>.
+	 * @param replacementItem The contribution item to replace the old item; must
+	 *                        not be <code>null</code>. Use
+	 *                        {@link org.eclipse.jface.action.ContributionManager#remove(java.lang.String)
+	 *                        remove} if that is what you want to do.
+	 * @return <code>true</code> if the given identifier can be;
 	 * @since 3.0
 	 */
 	public boolean replaceItem(final String identifier,

@@ -353,21 +353,19 @@ public class FieldDecorationRegistry {
 
 	/**
 	 * Unregisters the field decoration with the specified id. No lifecycle
-	 * management is performed on the decoration's image. This message has no
-	 * effect if no field decoration with the specified id was previously
-	 * registered.
-	 * </p>
+	 * management is performed on the decoration's image. This message has no effect
+	 * if no field decoration with the specified id was previously registered.
 	 * <p>
 	 * This method need not be called if the registered decoration's image is
 	 * managed in an image registry. In that case, leaving the decoration in the
 	 * registry will do no harm since the image will remain valid and will be
-	 * properly disposed when the application is shut down. This method should
-	 * be used in cases where the caller intends to dispose of the image
-	 * referred to by the decoration, or otherwise determines that the
-	 * decoration should no longer be used.
+	 * properly disposed when the application is shut down. This method should be
+	 * used in cases where the caller intends to dispose of the image referred to by
+	 * the decoration, or otherwise determines that the decoration should no longer
+	 * be used.
+	 * </p>
 	 *
-	 * @param id
-	 *            the String id of the decoration to be unregistered.
+	 * @param id the String id of the decoration to be unregistered.
 	 */
 	public void unregisterFieldDecoration(String id) {
 		decorations.remove(id);
