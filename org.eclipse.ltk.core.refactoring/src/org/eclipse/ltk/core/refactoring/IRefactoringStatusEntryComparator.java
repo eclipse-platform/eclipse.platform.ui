@@ -30,19 +30,19 @@ public interface IRefactoringStatusEntryComparator {
 	 * integer, zero, or a positive integer as the first status entry is less
 	 * than, equal to, or greater than the second.
 	 * <p>
-	 * The implementor must ensure that <tt>sgn(compare(x, y)) ==
-	 * -sgn(compare(y, x))</tt>
-	 * for all <tt>x</tt> and <tt>y</tt>.
+	 * The implementor must ensure that <code>sgn(compare(x, y)) ==
+	 * -sgn(compare(y, x))</code>
+	 * for all <code>x</code> and <code>y</code>.
 	 * </p>
 	 * <p>
 	 * The implementor must ensure that the relation is transitive:
-	 * <tt>((compare(x, y)&gt;0) &amp;&amp; (compare(y, z)&gt;0))</tt> implies
-	 * <tt>compare(x, z)&gt;0</tt>.
+	 * <code>((compare(x, y)&gt;0) &amp;&amp; (compare(y, z)&gt;0))</code> implies
+	 * <code>compare(x, z)&gt;0</code>.
 	 * </p>
 	 * <p>
-	 * Furthermore, the implementer must ensure that <tt>compare(x, y)==0</tt>
-	 * implies that <tt>sgn(compare(x, z))==sgn(compare(y, z))</tt> for all
-	 * <tt>z</tt>.
+	 * Furthermore, the implementer must ensure that <code>compare(x, y)==0</code>
+	 * implies that <code>sgn(compare(x, z))==sgn(compare(y, z))</code> for all
+	 * <code>z</code>.
 	 * </p>
 	 *
 	 * @param entry1 the first refactoring status entry to be compared.

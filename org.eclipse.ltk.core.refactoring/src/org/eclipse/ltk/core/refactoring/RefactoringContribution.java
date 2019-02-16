@@ -182,13 +182,13 @@ public abstract class RefactoringContribution {
 	 * <p>
 	 * The returned argument map (element type: &lt;String, String&gt;) must
 	 * satisfy the following conditions:
+	 * </p>
 	 * <ul>
 	 * <li>The keys of the arguments are required to be non-empty strings which
 	 * must not contain spaces. </li>
-	 * <li>The values must be non-empty</li>
-	 * strings
+	 * <li>The values must be non-empty
+	 * strings</li>
 	 * </ul>
-	 * </p>
 	 * <p>
 	 * Note: Subclasses must extend this method to provide more specific
 	 * implementation in order to let the refactoring framework retrieve the

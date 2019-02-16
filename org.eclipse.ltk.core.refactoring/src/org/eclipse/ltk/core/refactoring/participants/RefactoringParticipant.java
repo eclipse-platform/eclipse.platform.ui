@@ -145,11 +145,11 @@ public abstract class RefactoringParticipant extends PlatformObject {
 	 * <p>
 	 * Clients should use the passed {@link CheckConditionsContext} to validate the changes
 	 * they generate. If the generated changes include workspace resource modifications,
-	 * clients should call ...
+	 * clients should call ...</p>
 	 *
 	 * <pre> (ResourceChangeChecker) context.getChecker(ResourceChangeChecker.class);
 	 * IResourceChangeDescriptionFactory deltaFactory= checker.getDeltaFactory();</pre>
-	 *
+	 * <p>
 	 * ... and use the delta factory to describe all resource modifications in advance.
 	 * </p>
 	 * <p>

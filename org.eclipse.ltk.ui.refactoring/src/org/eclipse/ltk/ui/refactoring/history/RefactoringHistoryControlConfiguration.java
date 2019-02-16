@@ -95,10 +95,10 @@ public class RefactoringHistoryControlConfiguration {
 	 * Returns the message format pattern to use for days.
 	 * <p>
 	 * Arguments:
+	 * </p>
 	 * <ul>
 	 * <li> {0}: formatted date </li>
 	 * </ul>
-	 * </p>
 	 *
 	 * @return the day pattern
 	 */
@@ -119,10 +119,10 @@ public class RefactoringHistoryControlConfiguration {
 	 * Returns the message format pattern to use for last month.
 	 * <p>
 	 * Arguments:
+	 * </p>
 	 * <ul>
 	 * <li> {0}: month name </li>
 	 * </ul>
-	 * </p>
 	 *
 	 * @return the last month pattern
 	 */
@@ -134,10 +134,10 @@ public class RefactoringHistoryControlConfiguration {
 	 * Returns the message format pattern to use for last week.
 	 * <p>
 	 * Arguments:
+	 * </p>
 	 * <ul>
 	 * <li> {0}: week number </li>
 	 * </ul>
-	 * </p>
 	 *
 	 * @return the last week pattern
 	 */
@@ -149,10 +149,10 @@ public class RefactoringHistoryControlConfiguration {
 	 * Returns the message format pattern to use for months.
 	 * <p>
 	 * Arguments:
+	 * </p>
 	 * <ul>
 	 * <li> {0}: month name </li>
 	 * </ul>
-	 * </p>
 	 *
 	 * @return the month pattern
 	 */
@@ -174,10 +174,10 @@ public class RefactoringHistoryControlConfiguration {
 	 * project are displayed.
 	 * <p>
 	 * Arguments:
+	 * </p>
 	 * <ul>
 	 * <li> {0}: name of project </li>
 	 * </ul>
-	 * </p>
 	 *
 	 * @return the project pattern
 	 */
@@ -189,11 +189,11 @@ public class RefactoringHistoryControlConfiguration {
 	 * Returns the message format pattern to use for refactorings.
 	 * <p>
 	 * Arguments:
+	 * </p>
 	 * <ul>
 	 * <li> {0}: formatted date </li>
 	 * <li> {0}: description of refactoring</li>
 	 * </ul>
-	 * </p>
 	 *
 	 * @return the refactoring pattern
 	 */
@@ -205,10 +205,10 @@ public class RefactoringHistoryControlConfiguration {
 	 * Returns the message format pattern to use for this month.
 	 * <p>
 	 * Arguments:
+	 * </p>
 	 * <ul>
 	 * <li> {0}: month name </li>
 	 * </ul>
-	 * </p>
 	 *
 	 * @return the this month pattern
 	 */
@@ -220,10 +220,10 @@ public class RefactoringHistoryControlConfiguration {
 	 * Returns the message format pattern to use for this week.
 	 * <p>
 	 * Arguments:
+	 * </p>
 	 * <ul>
 	 * <li> {0}: week number </li>
 	 * </ul>
-	 * </p>
 	 *
 	 * @return the this week pattern
 	 */
@@ -235,10 +235,10 @@ public class RefactoringHistoryControlConfiguration {
 	 * Returns the message format pattern to use for today.
 	 * <p>
 	 * Arguments:
+	 * </p>
 	 * <ul>
 	 * <li> {0}: formatted date </li>
 	 * </ul>
-	 * </p>
 	 *
 	 * @return the today pattern
 	 */
@@ -250,10 +250,10 @@ public class RefactoringHistoryControlConfiguration {
 	 * Returns the message format pattern to use for weeks.
 	 * <p>
 	 * Arguments:
+	 * </p>
 	 * <ul>
 	 * <li> {0}: week number </li>
 	 * </ul>
-	 * </p>
 	 *
 	 * @return the week pattern
 	 */
@@ -275,10 +275,10 @@ public class RefactoringHistoryControlConfiguration {
 	 * Returns the message format pattern to use for years.
 	 * <p>
 	 * Arguments:
+	 * </p>
 	 * <ul>
 	 * <li> {0}: year number </li>
 	 * </ul>
-	 * </p>
 	 *
 	 * @return the year pattern
 	 */
@@ -290,10 +290,10 @@ public class RefactoringHistoryControlConfiguration {
 	 * Returns the message format pattern to use for yesterday.
 	 * <p>
 	 * Arguments:
+	 * </p>
 	 * <ul>
 	 * <li> {0}: formatted date </li>
 	 * </ul>
-	 * </p>
 	 *
 	 * @return the yesterday pattern
 	 */

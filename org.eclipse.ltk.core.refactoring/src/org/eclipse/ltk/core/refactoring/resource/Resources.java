@@ -80,7 +80,7 @@ public class Resources {
 	/**
 	 * Makes the given resource committable. Committable means that it is
 	 * writeable and that its content hasn't changed by calling
-	 * <code>validateEdit</code> for the given resource on <tt>IWorkspace</tt>.
+	 * <code>validateEdit</code> for the given resource on <code>IWorkspace</code>.
 	 *
 	 * @param resource the resource to be checked
 	 * @param context the context passed to <code>validateEdit</code>
@@ -96,7 +96,7 @@ public class Resources {
 	 * Makes the given resources committable. Committable means that all
 	 * resources are writeable and that the content of the resources hasn't
 	 * changed by calling <code>validateEdit</code> for a given file on
-	 * <tt>IWorkspace</tt>.
+	 * <code>IWorkspace</code>.
 	 *
 	 * @param resources the resources to be checked
 	 * @param context the context passed to <code>validateEdit</code>
