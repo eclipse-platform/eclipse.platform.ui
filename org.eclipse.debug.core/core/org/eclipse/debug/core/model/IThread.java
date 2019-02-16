@@ -67,14 +67,16 @@ public interface IThread extends IDebugElement, ISuspendResume, IStep, ITerminat
 	boolean hasStackFrames() throws DebugException;
 
 	/**
-	 * Returns the priority of this thread. The meaning of this
-	 * number is operating-system dependent.
+	 * Returns the priority of this thread. The meaning of this number is
+	 * operating-system dependent.
 	 *
 	 * @return thread priority
-	 * @exception DebugException if this method fails.  Reasons include:
-	 * <ul><li>Failure communicating with the VM.  The DebugException's
-	 * status code contains the underlying exception responsible for
-	 * the failure.</li>
+	 * @exception DebugException if this method fails. Reasons include:
+	 *                <ul>
+	 *                <li>Failure communicating with the VM. The
+	 *                DebugException's status code contains the underlying
+	 *                exception responsible for the failure.</li>
+	 *                </ul>
 	 */
 	int getPriority() throws DebugException;
 
@@ -91,7 +93,7 @@ public interface IThread extends IDebugElement, ISuspendResume, IStep, ITerminat
 	 *                </ul>
 	 */
 	IStackFrame getTopStackFrame() throws DebugException;
-	
+
 	/**
 	 * Returns the name of this thread. Name format is debug model specific, and
 	 * should be specified by a debug model.

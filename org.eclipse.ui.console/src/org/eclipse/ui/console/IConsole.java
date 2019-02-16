@@ -61,17 +61,17 @@ public interface IConsole {
 	IPageBookViewPage createPage(IConsoleView view);
 
 	/**
-	 * Adds a listener for changes to properties of this console.
-	 * Has no effect if an identical listener is already registered.
+	 * Adds a listener for changes to properties of this console. Has no effect if
+	 * an identical listener is already registered.
 	 * <p>
 	 * The changes supported by the console view are as follows:
-	 * <ul>
-	 *   <li><code>IBasicPropertyConstants.P_TEXT</code> - indicates the name
-	 *      of a console has changed</li>
-	 * 	 <li><code>IBasicPropertyConstants.P_IMAGE</code> - indicates the image
-	 *      of a console has changed</li>
-	 * </ul>
 	 * </p>
+	 * <ul>
+	 * <li><code>IBasicPropertyConstants.P_TEXT</code> - indicates the name of a
+	 * console has changed</li>
+	 * <li><code>IBasicPropertyConstants.P_IMAGE</code> - indicates the image of a
+	 * console has changed</li>
+	 * </ul>
 	 * <p>
 	 * Consoles may define additional properties as required.
 	 * </p>
