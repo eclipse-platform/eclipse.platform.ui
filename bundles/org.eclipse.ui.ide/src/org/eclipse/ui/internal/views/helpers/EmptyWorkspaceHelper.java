@@ -170,13 +170,6 @@ public final class EmptyWorkspaceHelper {
 			readProjectWizardActions();
 		}
 
-		String newProjectWizardText;
-		if (projectWizardActions.isEmpty()) {
-			newProjectWizardText = ResourceNavigatorMessages.EmptyWorkspaceHelper_createProject;
-		} else {
-			newProjectWizardText = ResourceNavigatorMessages.EmptyWorkspaceHelper_createGeneralProject;
-		}
-
 		emptyArea = new Composite(displayAreas, SWT.NONE);
 		emptyArea.setBackgroundMode(SWT.INHERIT_FORCE);
 		GridLayoutFactory.fillDefaults().applyTo(emptyArea);
@@ -202,7 +195,8 @@ public final class EmptyWorkspaceHelper {
 					action.getDescription());
 		}
 		createOption(optionsArea, toolkit, linkColor, newProjectAction,
-				newProjectAction.getImageDescriptor().createImage(), newProjectWizardText);
+				newProjectAction.getImageDescriptor().createImage(),
+				ResourceNavigatorMessages.EmptyWorkspaceHelper_createProject);
 		createOption(optionsArea, toolkit, linkColor, importAction,
 				WorkbenchImages.getImageDescriptor(IWorkbenchGraphicConstants.IMG_ETOOL_IMPORT_WIZ).createImage(),
 				ResourceNavigatorMessages.EmptyWorkspaceHelper_importProjects);
