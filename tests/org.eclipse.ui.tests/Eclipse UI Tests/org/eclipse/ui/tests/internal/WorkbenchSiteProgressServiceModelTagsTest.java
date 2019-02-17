@@ -59,8 +59,7 @@ public class WorkbenchSiteProgressServiceModelTagsTest extends UITestCase {
         super.doSetUp();
         window = openTestWindow();
         page = window.getActivePage();
-        String viewId = "org.eclipse.ui.tests.workbenchpart.EmptyView";
-        view = (EmptyView) page.showView(viewId);
+		view = (EmptyView) page.showView(EmptyView.ID);
 
         assertTrue(page.getActivePart().getSite() instanceof PartSite);
         site = (PartSite) page.getActivePart().getSite();

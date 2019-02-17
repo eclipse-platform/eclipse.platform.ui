@@ -23,20 +23,17 @@ import org.junit.runners.Suite;
  */
 @RunWith(Suite.class)
 @Suite.SuiteClasses({
-		DynamicToolbarTest.class })
-		/*
-		 * TODO: MenusTestSuite was previously disabled in UiTestSuite and these
-		 * commented-out tests must be validated and fixed up
-		 */
-		// ObjectContributionTest.class,
-		// MenuVisibilityTest.class,
-		// MenuBaseTests.class,
-		// MenuPopulationTest.class,
-		// DynamicMenuTest.class,
-		// Bug231304Test.class,
-		// ShowViewMenuTest.class,
-		// Bug264804Test.class,
-		// MenuHelperTest.class,
-		// Bug410426Test.class,
+		DynamicToolbarTest.class,
+		ObjectContributionTest.class,
+		MenuVisibilityTest.class,
+		MenuBaseTests.class,
+		MenuPopulationTest.class,
+		DynamicMenuTest.class,
+		Bug231304Test.class,
+		ShowViewMenuTest.class,
+		Bug264804Test.class,
+		MenuHelperTest.class,
+		Bug410426Test.class,
+})
 public class MenusTestSuite {
 }

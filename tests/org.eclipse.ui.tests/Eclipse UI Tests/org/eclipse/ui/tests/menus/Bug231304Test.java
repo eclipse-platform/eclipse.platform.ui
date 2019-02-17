@@ -53,7 +53,7 @@ public class Bug231304Test extends UITestCase {
 			ToolItem[] toolItems = toolBar.getItems();
 			assertEquals(1, toolItems.length);
 			String keys = KeySequence.getInstance("M2+M3+1").format();
-			assertEquals("Testing Tooltip (" + keys + ")", toolItems[0]
+			assertEquals("My Test Tooltip Command (" + keys + ")", toolItems[0]
 					.getToolTipText());
 
 		} finally {

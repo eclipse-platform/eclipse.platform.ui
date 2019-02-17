@@ -48,6 +48,7 @@ import org.eclipse.ui.menus.CommandContributionItemParameter;
 import org.eclipse.ui.menus.IContributionRoot;
 import org.eclipse.ui.menus.IMenuService;
 import org.eclipse.ui.services.IServiceLocator;
+import org.eclipse.ui.tests.api.workbenchpart.EmptyView;
 import org.eclipse.ui.tests.api.workbenchpart.MenuContributionHarness;
 import org.eclipse.ui.views.markers.internal.MarkerSupportRegistry;
 
@@ -128,8 +129,8 @@ public class MenuPopulationTest extends MenuTestCase {
 		}
 	}
 
-
-	public void testMenuServiceContribution() {
+	// @Ignore("See Bugs 411765 and 452203")
+	public void XXXtestMenuServiceContribution() {
 		IMenuService ms = PlatformUI.getWorkbench().getService(IMenuService.class);
 		AbstractContributionFactory factory = new AbstractContributionFactory("menu:org.eclipse.ui.main.menu?after=file", "205747") {
 			@Override
@@ -362,7 +363,8 @@ public class MenuPopulationTest extends MenuTestCase {
 		}
 	}
 
-	public void testDynamicFactoryAddition() throws Exception {
+	// @Ignore("See Bugs 411765 and 452203")
+	public void XXXtestDynamicFactoryAddition() throws Exception {
 		MyFactory factory = new MyFactory();
 
 		MenuManager manager = new MenuManager(null);
@@ -383,7 +385,8 @@ public class MenuPopulationTest extends MenuTestCase {
 		}
 	}
 
-	public void testDynamicFactoryRemove() throws Exception {
+	// @Ignore("See Bugs 411765 and 452203")
+	public void XXXtestDynamicFactoryRemove() throws Exception {
 		MyFactory factory = new MyFactory();
 		MenuManager manager = new MenuManager(null);
 		try {
@@ -405,7 +408,8 @@ public class MenuPopulationTest extends MenuTestCase {
 		}
 	}
 
-	public void testFactoryScopePopulation() throws Exception {
+	// @Ignore("See Bugs 411765 and 452203")
+	public void XXXtestFactoryScopePopulation() throws Exception {
 		AbstractContributionFactory factory = new AbstractContributionFactory(
 				"menu:the.population.menu?after=additions",
 				"org.eclipse.ui.tests") {
@@ -606,14 +610,15 @@ public class MenuPopulationTest extends MenuTestCase {
 		super.doTearDown();
 	}
 
-		public void testPrivatePopup()throws Exception {
+	// @Ignore("See Bug 544515")
+	public void XXXtestPrivatePopup() throws Exception {
 
 			PopupMenuExtender popupMenuExtender = null;
 			MenuManager manager = null;
 			Menu contextMenu = null;
 			try {
 
-				window.getActivePage().showView("org.eclipse.ui.tests.workbenchpart.EmptyView");
+			window.getActivePage().showView(EmptyView.ID);
 
 				processEventsUntil(new Condition() {
 

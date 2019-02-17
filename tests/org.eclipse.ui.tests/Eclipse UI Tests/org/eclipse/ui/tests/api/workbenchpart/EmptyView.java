@@ -21,6 +21,8 @@ import org.eclipse.ui.part.ViewPart;
  */
 public class EmptyView extends ViewPart {
 
+	public static String ID = "org.eclipse.ui.tests.workbenchpart.EmptyView";
+
     /**
      *
      */
