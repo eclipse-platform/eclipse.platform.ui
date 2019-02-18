@@ -138,17 +138,12 @@ public class LogicalStructureCache {
 				synchronized (fKnownValues) {
 					fKnownValues.put(value, result);
 				}
-				synchronized (fPendingValues) {
-					fPendingValues.remove(value);
-					fPendingValues.notifyAll();
-				}
 				return result;
-			} catch (CoreException e) {
+			} finally {
 				synchronized (fPendingValues) {
 					fPendingValues.remove(value);
 					fPendingValues.notifyAll();
 				}
-				throw e;
 			}
 		}
 
