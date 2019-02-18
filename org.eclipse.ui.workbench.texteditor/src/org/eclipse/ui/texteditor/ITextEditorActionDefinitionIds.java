@@ -456,35 +456,42 @@ public interface ITextEditorActionDefinitionIds extends IWorkbenchActionDefiniti
 	String GOTO_PREVIOUS_ANNOTATION= "org.eclipse.ui.edit.text.gotoPreviousAnnotation"; //$NON-NLS-1$
 
 	/**
-	 * Action definition ID of the edit -> content assist proposal action
+	 * Action definition ID of the edit -&gt; content assist proposal action
 	 * Value: <code>"org.eclipse.ui.edit.text.contentAssist.proposals"</code>).
 	 * <p>
 	 * Note: Since 3.2 the command is defined in <code>org.eclipse.ui</code> and
-	 * its ID can also be accessed using {@link org.eclipse.ui.fieldassist.ContentAssistCommandAdapter#CONTENT_PROPOSAL_COMMAND}.
+	 * its ID can also be accessed using
+	 * {@link org.eclipse.ui.fieldassist.ContentAssistCommandAdapter#CONTENT_PROPOSAL_COMMAND}.
 	 * </p>
+	 *
 	 * @since 2.1
 	 */
 	String CONTENT_ASSIST_PROPOSALS= "org.eclipse.ui.edit.text.contentAssist.proposals"; //$NON-NLS-1$
 
 	/**
-	 * Action definition ID of the edit -> content assist context information action
-	 * Value: <code>"org.eclipse.ui.edit.text.contentAssist.contextInformation"</code>).
+	 * Action definition ID of the edit -&gt; content assist context information
+	 * action Value:
+	 * <code>"org.eclipse.ui.edit.text.contentAssist.contextInformation"</code>).
+	 *
 	 * @since 2.1
 	 */
 	String CONTENT_ASSIST_CONTEXT_INFORMATION= "org.eclipse.ui.edit.text.contentAssist.contextInformation"; //$NON-NLS-1$
 
 	/**
-	 * Action definition ID of the edit -> quick assist proposal action
+	 * Action definition ID of the edit -&gt; quick assist proposal action
 	 * <p>
-	 * Note: The constant contains 'jdt' for historical and compatibility reasons.
+	 * Note: The constant contains 'jdt' for historical and compatibility
+	 * reasons.
 	 * </p>
-	 * (value <code>"org.eclipse.jdt.ui.edit.text.java.correction.assist.proposals"</code>).
+	 * (value
+	 * <code>"org.eclipse.jdt.ui.edit.text.java.correction.assist.proposals"</code>).
+	 * 
 	 * @since 3.2
 	 */
 	String QUICK_ASSIST= "org.eclipse.jdt.ui.edit.text.java.correction.assist.proposals"; //$NON-NLS-1$
 
 	/**
-	 * Action definition ID of the edit -> smart insert mode action
+	 * Action definition ID of the edit -&gt; smart insert mode action
 	 * Value: <code>"org.eclipse.ui.edit.text.toggleInsertMode"</code>).
 	 * @since 3.0
 	 */
@@ -526,8 +533,9 @@ public interface ITextEditorActionDefinitionIds extends IWorkbenchActionDefiniti
 	String LINENUMBER_TOGGLE= "org.eclipse.ui.editors.lineNumberToggle"; //$NON-NLS-1$
 
 	/**
-	 * Action definition ID of the edit -> text complete action
-	 * Value: <code>"org.eclipse.ui.edit.text.hippieCompletion"</code>).
+	 * Action definition ID of the edit -&gt; text complete action Value:
+	 * <code>"org.eclipse.ui.edit.text.hippieCompletion"</code>).
+	 *
 	 * @since 3.1
 	 */
 	String HIPPIE_COMPLETION= "org.eclipse.ui.edit.text.hippieCompletion"; //$NON-NLS-1$

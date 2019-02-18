@@ -67,7 +67,8 @@ public interface ICharacterPairMatcherExtension {
 	 *
 	 * <p>
 	 * Clients can use this method to handle characters which may have special meaning in some
-	 * situations. E.g. in Java, '<' is used as an angular bracket and as well as less-than operator.
+	 * situations. E.g. in Java, '&lt;' is used as an angular bracket and as well as less-than
+	 * operator.
 	 * </p>
 	 *
 	 * @param ch the character

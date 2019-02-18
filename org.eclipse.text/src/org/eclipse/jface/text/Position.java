@@ -49,7 +49,7 @@ public class Position {
 	/**
 	 * Creates a new position with the given offset and length 0.
 	 *
-	 * @param offset the position offset, must be >= 0
+	 * @param offset the position offset, must be &gt;= 0
 	 */
 	public Position(int offset) {
 		this(offset, 0);
@@ -58,8 +58,8 @@ public class Position {
 	/**
 	 * Creates a new position with the given offset and length.
 	 *
-	 * @param offset the position offset, must be >= 0
-	 * @param length the position length, must be >= 0
+	 * @param offset the position offset, must be &gt;= 0
+	 * @param length the position length, must be &gt;= 0
 	 */
 	public Position(int offset, int length) {
 		Assert.isTrue(offset >= 0);

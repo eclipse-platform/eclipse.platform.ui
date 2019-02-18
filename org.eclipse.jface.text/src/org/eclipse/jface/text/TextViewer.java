@@ -1558,7 +1558,8 @@ public class TextViewer extends Viewer implements
 	protected Map<String, List<IAutoEditStrategy>> fAutoIndentStrategies;
 	/** The text viewer's text hovers */
 	protected Map<TextHoverKey, ITextHover> fTextHovers;
-	/** All registered view port listeners> */
+
+	/** All registered view port listeners */
 	protected List<IViewportListener> fViewportListeners;
 	/** The last visible vertical position of the top line */
 	protected int fLastTopPixel;
@@ -3224,14 +3225,13 @@ public class TextViewer extends Viewer implements
 	}
 
 	/**
-	 * Returns the region covered by the given start and end offset.
-	 * The result is relative to the upper left corner of the widget
-	 * client area.
+	 * Returns the region covered by the given start and end offset. The result is relative to the
+	 * upper left corner of the widget client area.
 	 *
-	 * @param start offset relative to the start of this viewer's view port
-	 * 	0 <= offset <= getCharCount()
- 	 * @param end offset relative to the start of this viewer's view port
-	 * 	0 <= offset <= getCharCount()
+	 * @param start offset relative to the start of this viewer's view port 0 &lt;= offset &lt;=
+	 *            getCharCount()
+	 * @param end offset relative to the start of this viewer's view port 0 &lt;= offset &lt;=
+	 *            getCharCount()
 	 * @return the region covered by start and end offset
 	 */
 	final protected IRegion getExtent(int start, int end) {

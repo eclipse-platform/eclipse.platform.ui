@@ -28,15 +28,15 @@ import org.eclipse.swt.graphics.Font;
 public class TextAttribute {
 
 	/**
-	 * Text attribute for strikethrough style.
-	 * (value <code>1 << 29</code>).
+	 * Text attribute for strikethrough style. (value <code>1 &lt;&lt; 29</code>).
+	 *
 	 * @since 3.1
 	 */
 	public static final int STRIKETHROUGH= 1 << 29;
 
 	/**
-	 * Text attribute for underline style.
-	 * (value <code>1 << 30</code>)
+	 * Text attribute for underline style. (value <code>1 &lt;&lt; 30</code>)
+	 * 
 	 * @since 3.1
 	 */
 	public static final int UNDERLINE= 1 << 30;

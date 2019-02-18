@@ -101,15 +101,16 @@ public class LineChangeHover implements IAnnotationHover, IAnnotationHoverExtens
 	}
 
 	/**
-	 * Takes a list of <code>ILineDiffInfo</code>s and computes a hover of at most <code>maxLines</code>.
-	 * Added lines are prefixed with a <code>'+'</code>, changed lines with <code>'>'</code> and
-	 * deleted lines with <code>'-'</code>.
-	 * <p>Deleted and added lines can even each other out, so that a number of deleted lines get
+	 * Takes a list of <code>ILineDiffInfo</code>s and computes a hover of at most
+	 * <code>maxLines</code>. Added lines are prefixed with a <code>'+'</code>, changed lines with
+	 * <code>'&gt;'</code> and deleted lines with <code>'-'</code>.
+	 * <p>
+	 * Deleted and added lines can even each other out, so that a number of deleted lines get
 	 * displayed where - in the current document - the added lines are.
 	 *
 	 * @param diffInfos a <code>List</code> of <code>ILineDiffInfo</code>
 	 * @param maxLines the maximum number of lines. Note that adding up all annotations might give
-	 * more than that due to deleted lines.
+	 *            more than that due to deleted lines.
 	 * @return a <code>String</code> suitable for hover display
 	 */
 	protected String decorateText(List<? extends ILineDiffInfo> diffInfos, int maxLines) {
