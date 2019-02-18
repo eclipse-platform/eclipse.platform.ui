@@ -61,21 +61,25 @@ public abstract class ResourceAction extends Action {
 	 * Creates a new action that configures itself from the given resource
 	 * bundle.
 	 * <p>
-	 * The following keys, prepended by the given option prefix,
-	 * are used for retrieving resources from the given bundle:
-	 * <ul>
-	 *   <li><code>"label"</code> - <code>setText</code></li>
-	 *   <li><code>"tooltip"</code> - <code>setToolTipText</code></li>
-	 *   <li><code>"image"</code> - <code>setImageDescriptor</code></li>
-	 *   <li><code>"description"</code> - <code>setDescription</code></li>
-	 * </ul>
+	 * The following keys, prepended by the given option prefix, are used for
+	 * retrieving resources from the given bundle:
 	 * </p>
+	 * <ul>
+	 * <li><code>"label"</code> - <code>setText</code></li>
+	 * <li><code>"tooltip"</code> - <code>setToolTipText</code></li>
+	 * <li><code>"image"</code> - <code>setImageDescriptor</code></li>
+	 * <li><code>"description"</code> - <code>setDescription</code></li>
+	 * </ul>
 	 *
-	 * @param bundle the resource bundle
-	 * @param prefix a prefix to be prepended to the various resource keys, or
-	 *   <code>null</code> if none
- 	 * @param	style one of <code>IAction.AS_PUSH_BUTTON</code>, <code>IAction.AS_CHECK_BOX</code>,
- 	 *			and <code>IAction.AS_RADIO_BUTTON</code>.
+	 * @param bundle
+	 *            the resource bundle
+	 * @param prefix
+	 *            a prefix to be prepended to the various resource keys, or
+	 *            <code>null</code> if none
+	 * @param style
+	 *            one of <code>IAction.AS_PUSH_BUTTON</code>,
+	 *            <code>IAction.AS_CHECK_BOX</code>, and
+	 *            <code>IAction.AS_RADIO_BUTTON</code>.
 	 *
 	 * @see ResourceAction#ResourceAction(ResourceBundle, String)
 	 * @see org.eclipse.jface.action.IAction#AS_CHECK_BOX
@@ -93,19 +97,21 @@ public abstract class ResourceAction extends Action {
 	 * Creates a new action that configures itself from the given resource
 	 * bundle.
 	 * <p>
-	 * The following keys, prepended by the given option prefix,
-	 * are used for retrieving resources from the given bundle:
-	 * <ul>
-	 *   <li><code>"label"</code> - <code>setText</code></li>
-	 *   <li><code>"tooltip"</code> - <code>setToolTipText</code></li>
-	 *   <li><code>"image"</code> - <code>setImageDescriptor</code></li>
-	 *   <li><code>"description"</code> - <code>setDescription</code></li>
-	 * </ul>
+	 * The following keys, prepended by the given option prefix, are used for
+	 * retrieving resources from the given bundle:
 	 * </p>
+	 * <ul>
+	 * <li><code>"label"</code> - <code>setText</code></li>
+	 * <li><code>"tooltip"</code> - <code>setToolTipText</code></li>
+	 * <li><code>"image"</code> - <code>setImageDescriptor</code></li>
+	 * <li><code>"description"</code> - <code>setDescription</code></li>
+	 * </ul>
 	 *
-	 * @param bundle the resource bundle
-	 * @param prefix a prefix to be prepended to the various resource keys, or
-	 *   <code>null</code> if none
+	 * @param bundle
+	 *            the resource bundle
+	 * @param prefix
+	 *            a prefix to be prepended to the various resource keys, or
+	 *            <code>null</code> if none
 	 */
 	public ResourceAction(ResourceBundle bundle, String prefix) {
 		super();

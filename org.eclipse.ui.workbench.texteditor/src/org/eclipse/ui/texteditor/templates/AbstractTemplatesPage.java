@@ -552,13 +552,18 @@ public abstract class AbstractTemplatesPage extends Page implements ITemplatesPa
 
 	/**
 	 * Creates and opens a dialog to edit the given template.
-	 * <p
-	 * Subclasses may override this method to provide a custom dialog.</p>
+	 * <p>
+	 * Subclasses may override this method to provide a custom dialog.
+	 * </p>
 	 *
-	 * @param template the template being edited
-	 * @param edit <code>true</code> if the dialog allows editing
-	 * @param isNameModifiable <code>true</code> if the template name may be modified
-	 * @return the created or modified template, or <code>null</code> if the editing failed
+	 * @param template
+	 *            the template being edited
+	 * @param edit
+	 *            <code>true</code> if the dialog allows editing
+	 * @param isNameModifiable
+	 *            <code>true</code> if the template name may be modified
+	 * @return the created or modified template, or <code>null</code> if the
+	 *         editing failed
 	 */
 	protected Template editTemplate(Template template, boolean edit, boolean isNameModifiable) {
 		EditTemplateDialog dialog= new EditTemplateDialog(getShell(), template, edit, isNameModifiable, getContextTypeRegistry());

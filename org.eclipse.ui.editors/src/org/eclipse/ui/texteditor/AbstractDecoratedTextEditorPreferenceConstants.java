@@ -426,6 +426,7 @@ public class AbstractDecoratedTextEditorPreferenceConstants {
 	 * 
 	 * <p>
 	 * The following preferences can be used for fine-grained configuration when enabled.
+	 * </p>
 	 * <ul>
 	 * <li>{@link #EDITOR_SHOW_LEADING_SPACES}</li>
 	 * <li>{@link #EDITOR_SHOW_ENCLOSED_SPACES}</li>
@@ -440,7 +441,6 @@ public class AbstractDecoratedTextEditorPreferenceConstants {
 	 * <li>{@link #EDITOR_SHOW_LINE_FEED}</li>
 	 * <li>{@link #EDITOR_WHITESPACE_CHARACTER_ALPHA_VALUE}</li>
 	 * </ul>
-	 * </p>
 	 * 
 	 * @since 3.3
 	 */

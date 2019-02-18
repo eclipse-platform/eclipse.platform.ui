@@ -11,11 +11,11 @@ Provides a framework for connecting document regions
 with annotations and for displaying those.
 <h2>
 Package Specification</h2>
-<p><tt>IAnnotationModels</tt> manage <tt>Annotations</tt>. 
-  When an annotation model is connected to an <tt>IDocument</tt>, 
+<p><code>IAnnotationModels</code> manage <code>Annotations</code>. 
+  When an annotation model is connected to an <code>IDocument</code>, 
   any change to the document is reflected in the position of the managed annotations. 
-  Implementers of <tt>IAnnotationModelListener</tt> 
-  registered with an <tt>IAnnotationModel</tt> 
+  Implementers of <code>IAnnotationModelListener</code> 
+  registered with an <code>IAnnotationModel</code> 
   object get informed about changes of the model in respect to annotations.</p>
 
 
@@ -23,12 +23,12 @@ Package Specification</h2>
 <!-- Below is the package documentation for org.eclipse.jface.text.source from the org.eclipse.jface.text plug-in -->
 <!-- ============================================================================================================ -->
 
-<p><tt>ISourceViewer</tt> defines the concept of a document based, editable
-viewer supporting visual annotations. <tt>ISourceViewer</tt> supports document-specific
+<p><code>ISourceViewer</code> defines the concept of a document based, editable
+viewer supporting visual annotations. <code>ISourceViewer</code> supports document-specific
 and viewer-specific annotations attached to the viewer's input document.
-An <tt>ISourceViewer</tt> uses an <tt>IAnnotationModel</tt> to manage annotations
-and to inform implementers of <tt>IAnnotationModelListener</tt> about changes
-in respect to annotations. An <tt>IVerticalRuler</tt> represents an <tt>IAnnotationModel</tt>
+An <code>ISourceViewer</code> uses an <code>IAnnotationModel</code> to manage annotations
+and to inform implementers of <code>IAnnotationModelListener</code> about changes
+in respect to annotations. An <code>IVerticalRuler</code> represents an <code>IAnnotationModel</code>
 access adapter for an SWT widget capapble of display annotations.&nbsp;
 This package also provides default implementations for all defined interfaces.
 <br></p>

@@ -68,30 +68,35 @@ public interface IContributedRulerColumn extends IVerticalRulerColumn {
 
 	/**
 	 * Hook method called after a column has been instantiated, but before it is
-	 * added to a {@link org.eclipse.jface.text.source.CompositeRuler} and before
-	 * {@linkplain org.eclipse.jface.text.source.IVerticalRulerColumn#createControl(org.eclipse.jface.text.source.CompositeRuler, org.eclipse.swt.widgets.Composite) createControl}
-	 * is called.
+	 * added to a {@link org.eclipse.jface.text.source.CompositeRuler} and
+	 * before
+	 * {@linkplain org.eclipse.jface.text.source.IVerticalRulerColumn#createControl(org.eclipse.jface.text.source.CompositeRuler, org.eclipse.swt.widgets.Composite)
+	 * createControl} is called.
 	 * <p>
 	 * This happens when
+	 * </p>
 	 * <ul>
 	 * <li>the column is set visible by the user or programmatically</li>
-	 * <li>the editor is created, if this ruler targets the editor and is enabled by default</li>
-	 * <li>the editor input changes and the column now targets the new editor contents.</li>
-	 * </ul></p>
+	 * <li>the editor is created, if this ruler targets the editor and is
+	 * enabled by default</li>
+	 * <li>the editor input changes and the column now targets the new editor
+	 * contents.</li>
+	 * </ul>
 	 */
 	void columnCreated();
 
 	/**
-	 * Hook method called after a column has been removed from the {@link org.eclipse.jface.text.source.CompositeRuler}.
+	 * Hook method called after a column has been removed from the
+	 * {@link org.eclipse.jface.text.source.CompositeRuler}.
 	 * <p>
 	 * This happens when
+	 * </p>
 	 * <ul>
 	 * <li>the column is hidden by the user or programmatically</li>
 	 * <li>the editor is closed</li>
 	 * <li>the editor input changes and the column no longer targets the editor
 	 * contents.</li>
 	 * </ul>
-	 * </p>
 	 * <p>
 	 * The column will not be used after this method has been called. A new
 	 * column will be instantiated if the same column type should be shown for
