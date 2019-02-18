@@ -83,7 +83,6 @@ public interface ICheatSheetViewer {
 	 * <code>org.eclipse.ui.cheatsheets.cheatSheetContent</code>
 	 * extension point. The viewer shows an error message if there
 	 * is no cheat sheet with the given id.
-	 * </p>
 	 * <p>
 	 * The execution states of open cheat sheets are maintained
 	 * and persisted globally using the cheat sheet id as the key.

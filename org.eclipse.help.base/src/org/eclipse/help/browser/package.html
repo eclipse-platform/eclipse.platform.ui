@@ -16,26 +16,26 @@ Base Help System, requires web browser to display help document.&nbsp; Since
 availability of web browsers differ from system to system, it is possible
 to configure browser adapters in addition to ones provided with the base.&nbsp;
 The browser (or browser adapter) can be configured by
-providing extension for <tt>org.eclipse.help.base.browser</tt> extension point.&nbsp;
+providing extension for <code>org.eclipse.help.base.browser</code> extension point.&nbsp;
 If more than one browser is available on a user system, the default browser
 can be designated in Help preference page.
 <p>In general terms, implementing a web browser involves:
 <ul>
 <li>
-Implementing standalone UI element having the <tt>IBrowser</tt> API, and
+Implementing standalone UI element having the <code>IBrowser</code> API, and
 capable of displaying HTML documents given a URL.</li>
 
 <li>
 Providing a factory for managing of browsers on a particular system, by
-implementing <tt>IBrowserFactory</tt> interface.</li>
+implementing <code>IBrowserFactory</code> interface.</li>
 
 <li>
-Declaring an extension of the <tt>org.eclipse.help.base.browser</tt> extension
+Declaring an extension of the <code>org.eclipse.help.base.browser</code> extension
 point that mentions the name of that factory class.</li>
 </ul>
 Note that browser factory will be created on every system.&nbsp; If the
 factory is not capable of creating a browser on some system configurations,
-due to missing prerequisites e.t.c., its <tt>isAvailable()</tt> method
+due to missing prerequisites e.t.c., its <code>isAvailable()</code> method
 should be returning false on these systems.
 
 </body>
