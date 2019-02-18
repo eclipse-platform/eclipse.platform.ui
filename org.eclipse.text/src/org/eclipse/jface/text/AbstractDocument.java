@@ -1588,8 +1588,8 @@ public abstract class AbstractDocument implements IDocument, IDocumentExtension,
 	 * Returns all positions of the given category that are inside the given region.
 	 *
 	 * @param category the position category
-	 * @param offset the start position of the region, must be >= 0
-	 * @param length the length of the region, must be >= 0
+	 * @param offset the start position of the region, must be &gt;= 0
+	 * @param length the length of the region, must be &gt;= 0
 	 * @param canStartBefore if <code>true</code> then positions are included
 	 *            which start before the region if they end at or after the regions start
 	 * @param canEndAfter if <code>true</code> then positions are included

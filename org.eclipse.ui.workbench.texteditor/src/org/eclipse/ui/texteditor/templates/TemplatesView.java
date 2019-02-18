@@ -72,7 +72,7 @@ import org.eclipse.ui.texteditor.IAbstractTextEditorHelpContextIds;
  *          class="org.eclipse.ui.texteditor.templates.TemplatesView"
  *          id="org.eclipse.ui.texteditor.TemplatesView"&gt;
  *    &lt;/view&gt;
- * &lt/extension>
+ * &lt;/extension&gt;
  * </pre>
  *
  * The <code>templates.png</code> icon can be copied from this plug-in.

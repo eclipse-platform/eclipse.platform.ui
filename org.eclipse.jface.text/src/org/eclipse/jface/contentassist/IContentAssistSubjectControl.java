@@ -69,19 +69,21 @@ public interface IContentAssistSubjectControl {
 	int getCaretOffset();
 
 	/**
-	 * Returns the x, y location of the upper left corner of the character
-	 * bounding box at the specified offset in the text. The point is relative
-	 * to the upper left corner of the widget client area.
+	 * Returns the x, y location of the upper left corner of the character bounding box at the
+	 * specified offset in the text. The point is relative to the upper left corner of the widget
+	 * client area.
 	 *
-	 * @param offset widget offset relative to the start of the content 0
-	 *           <= offset <= getCharCount()
-	 * @return x, y location of the upper left corner of the character bounding
-	 *         box at the specified offset in the text
+	 * @param offset widget offset relative to the start of the content 0 &lt;= offset &gt;=
+	 *            getCharCount()
+	 * @return x, y location of the upper left corner of the character bounding box at the specified
+	 *         offset in the text
 	 * @throws org.eclipse.swt.SWTException in these cases:
-	 *			<ul>
-	 *				<li>{@link org.eclipse.swt.SWT#ERROR_WIDGET_DISPOSED} - if the receiver has been disposed</li>
-	 *				<li>{@link org.eclipse.swt.SWT#ERROR_THREAD_INVALID_ACCESS} - if not called from the thread that created the receiver</li>
-	 *			</ul>
+	 *             <ul>
+	 *             <li>{@link org.eclipse.swt.SWT#ERROR_WIDGET_DISPOSED} - if the receiver has been
+	 *             disposed</li>
+	 *             <li>{@link org.eclipse.swt.SWT#ERROR_THREAD_INVALID_ACCESS} - if not called from
+	 *             the thread that created the receiver</li>
+	 *             </ul>
 	 * @exception IllegalArgumentException when the offset is outside the valid range
 	 */
 	Point getLocationAtOffset(int offset);
