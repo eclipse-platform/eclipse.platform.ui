@@ -315,7 +315,7 @@ public interface IWorkbenchPreferenceConstants {
 	/**
 	 * A named preference for the text of the Help Contents action.
 	 *
-	 * String-valued. If not specified, <code>"&Help Contents"</code> is used.
+	 * String-valued. If not specified, <code>"&amp;Help Contents"</code> is used.
 	 * <p>
 	 * The default value for this preference is: <code>null</code>
 	 * </p>
@@ -327,7 +327,7 @@ public interface IWorkbenchPreferenceConstants {
 	/**
 	 * A named preference for the text of the Help Search action.
 	 *
-	 * String-valued. If not specified, <code>"S&earch"</code> is used.
+	 * String-valued. If not specified, <code>"S&amp;earch"</code> is used.
 	 * <p>
 	 * The default value for this preference is: <code>null</code>
 	 * </p>
@@ -339,7 +339,7 @@ public interface IWorkbenchPreferenceConstants {
 	/**
 	 * A named preference for the text of the Dynamic Help action.
 	 *
-	 * String-valued. If not specified, <code>"&Dynamic Help"</code> is used.
+	 * String-valued. If not specified, <code>"&amp;Dynamic Help"</code> is used.
 	 * <p>
 	 * The default value for this preference is: <code>null</code>
 	 * </p>

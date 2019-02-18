@@ -59,8 +59,8 @@ public class WorkbenchTriggerPointAdvisor implements ITriggerPointAdvisor,
 	public static String PROCEED_SINGLE = "proceedSingle"; //$NON-NLS-1$
 
 	/**
-	 * The string to be used to label the "don't ask" button.
-	 * Ie: "&Always enable activities and don't ask me again"
+	 * The string to be used to label the "don't ask" button. Ie: "&amp;Always
+	 * enable activities and don't ask me again"
 	 */
 	public static String DONT_ASK = "dontAsk"; //$NON-NLS-1$
 

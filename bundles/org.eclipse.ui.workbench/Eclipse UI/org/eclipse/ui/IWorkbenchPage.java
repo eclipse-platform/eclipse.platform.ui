@@ -880,13 +880,11 @@ public interface IWorkbenchPage extends IPartService, ISelectionService {
 	int getEditorReuseThreshold();
 
 	/**
-	 * Set the number of open editors before reusing editors. If < 0 the user
+	 * Set the number of open editors before reusing editors. If &lt; 0 the user
 	 * preference settings will be used.
 	 *
-	 * @param openEditors
-	 *            the threshold
-	 * @deprecated use IPageLayout.setEditorReuseThreshold(int openEditors)
-	 *             instead.
+	 * @param openEditors the threshold
+	 * @deprecated use IPageLayout.setEditorReuseThreshold(int openEditors) instead.
 	 */
 	@Deprecated
 	void setEditorReuseThreshold(int openEditors);

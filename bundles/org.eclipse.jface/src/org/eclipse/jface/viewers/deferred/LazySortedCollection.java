@@ -863,12 +863,12 @@ public class LazySortedCollection {
     }
 
     /**
-     * Retains the n smallest items in the collection, removing the rest. When
-     * this method returns, the size of the collection will be n. Note that
-     * this is a no-op if n > the current size of the collection.
-     *
-     * @param n number of items to retain
-     */
+	 * Retains the n smallest items in the collection, removing the rest. When this
+	 * method returns, the size of the collection will be n. Note that this is a
+	 * no-op if n &gt; the current size of the collection.
+	 *
+	 * @param n number of items to retain
+	 */
     public final void retainFirst(int n) {
         try {
             retainFirst(n, new FastProgressReporter());

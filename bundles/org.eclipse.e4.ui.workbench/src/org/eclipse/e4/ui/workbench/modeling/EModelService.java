@@ -189,7 +189,7 @@ public interface EModelService {
 	 * is null then the returned list is untyped.
 	 * </p>
 	 *
-	 * @param             <T> The generic type of the returned list
+	 * @param <T>         The generic type of the returned list
 	 * @param searchRoot  The element at which to start the search. This element
 	 *                    must be non-null and is included in the search.
 	 * @param clazz       The type of element to be searched for. If non-null this
@@ -197,21 +197,21 @@ public interface EModelService {
 	 * @param searchFlags A bitwise combination of the following constants:
 	 *                    <ul>
 	 *                    <li><b>OUTSIDE_PERSPECTIVE</b> Include the elements in the
-	 *                    window's model that are not in a perspective</;i>
+	 *                    window's model that are not in a perspective</li>
 	 *                    <li><b>IN_ANY_PERSPECTIVE</b> Include the elements in all
-	 *                    perspectives</;i>
+	 *                    perspectives</li>
 	 *                    <li><b>IN_ACTIVE_PERSPECTIVE</b> Include the elements in
-	 *                    the currently active perspective only</;i>
+	 *                    the currently active perspective only</li>
 	 *                    <li><b>IN_MAIN_MENU</b> Include elements in an MWindow's
-	 *                    main menu</;i>
+	 *                    main menu</li>
 	 *                    <li><b>IN_PART</b> Include MMenu and MToolbar elements
-	 *                    owned by parts</;i>
+	 *                    owned by parts</li>
 	 *                    <li><b>IN_ACTIVE_PERSPECTIVE</b> Include the elements in
-	 *                    the currently active perspective only</;i>
+	 *                    the currently active perspective only</li>
 	 *                    <li><b>IN_SHARED_AREA</b> Include the elements in the
-	 *                    shared area</;i>
+	 *                    shared area</li>
 	 *                    <li><b>IN_TRIM</b> Include the elements in the window's
-	 *                    trim</;i>
+	 *                    trim</li>
 	 *                    </ul>
 	 *                    Note that you may omit both perspective flags but still
 	 *                    define <b>IN_SHARED_AREA</b>; the flags

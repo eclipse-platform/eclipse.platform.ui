@@ -415,19 +415,23 @@ public class Geometry {
     }
 
     /**
-     * Extrudes the given edge inward by the given distance. That is, if one side of the rectangle
-     * was sliced off with a given thickness, this returns the rectangle that forms the slice. Note
-     * that the returned rectangle will be inside the given rectangle if size > 0.
-     *
-     * @param toExtrude the rectangle to extrude. The resulting rectangle will share three sides
-     * with this rectangle.
-     * @param size distance to extrude. A negative size will extrude outwards (that is, the resulting
-     * rectangle will overlap the original iff this is positive).
-     * @param orientation the side to extrude.  One of SWT.LEFT, SWT.RIGHT, SWT.TOP, or SWT.BOTTOM. The
-     * resulting rectangle will always share this side with the original rectangle.
-     * @return a rectangle formed by extruding the given side of the rectangle by the given distance.
-     * @since 3.0
-     */
+	 * Extrudes the given edge inward by the given distance. That is, if one side of
+	 * the rectangle was sliced off with a given thickness, this returns the
+	 * rectangle that forms the slice. Note that the returned rectangle will be
+	 * inside the given rectangle if size &gt; 0.
+	 *
+	 * @param toExtrude   the rectangle to extrude. The resulting rectangle will
+	 *                    share three sides with this rectangle.
+	 * @param size        distance to extrude. A negative size will extrude outwards
+	 *                    (that is, the resulting rectangle will overlap the
+	 *                    original iff this is positive).
+	 * @param orientation the side to extrude. One of SWT.LEFT, SWT.RIGHT, SWT.TOP,
+	 *                    or SWT.BOTTOM. The resulting rectangle will always share
+	 *                    this side with the original rectangle.
+	 * @return a rectangle formed by extruding the given side of the rectangle by
+	 *         the given distance.
+	 * @since 3.0
+	 */
     public static Rectangle getExtrudedEdge(Rectangle toExtrude, int size,
             int orientation) {
         Rectangle bounds = new Rectangle(toExtrude.x, toExtrude.y,
@@ -780,15 +784,16 @@ public class Geometry {
     }
 
     /**
-     * Returns a new rectangle with the given position and dimensions, expressed
-     * as points.
-     *
-     * @param position the (x,y) position of the rectangle
-     * @param size the size of the new rectangle, where (x,y) -> (width, height)
-     * @return a new Rectangle with the given position and size
-     *
-     * @since 3.0
-     */
+	 * Returns a new rectangle with the given position and dimensions, expressed as
+	 * points.
+	 *
+	 * @param position the (x,y) position of the rectangle
+	 * @param size     the size of the new rectangle, where (x,y) -&gt; (width,
+	 *                 height)
+	 * @return a new Rectangle with the given position and size
+	 *
+	 * @since 3.0
+	 */
     public static Rectangle createRectangle(Point position, Point size) {
         return new Rectangle(position.x, position.y, size.x, size.y);
     }

@@ -727,11 +727,10 @@ public final class LegacyActionTools {
 
 	/**
 	 * Convenience method for removing any mnemonics from the given string. For
-	 * example, <code>removeMnemonics("&Open")</code> will return
+	 * example, <code>removeMnemonics("&amp;Open")</code> will return
 	 * <code>"Open"</code>.
 	 *
-	 * @param text
-	 *            the text
+	 * @param text the text
 	 * @return the text sans mnemonics
 	 */
 	public static String removeMnemonics(final String text) {
@@ -775,11 +774,10 @@ public final class LegacyActionTools {
 
 	/**
 	 * Convenience method for escaping all mnemonics in the given string. For
-	 * example, <code>escapeMnemonics("a & b & c")</code> will return
-	 * <code>"a && b && c"</code>.
+	 * example, <code>escapeMnemonics("a &amp; b &amp; c")</code> will return
+	 * <code>"a &amp;&amp; b &amp;&amp; c"</code>.
 	 *
-	 * @param text
-	 *            the text
+	 * @param text the text
 	 * @return the text with mnemonics escaped
 	 * @since 3.6
 	 */

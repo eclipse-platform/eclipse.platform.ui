@@ -75,7 +75,7 @@ public interface IWorkbench {
 	public static final String MODEL_RESOURCE_HANDLER = "modelResourceHandler"; //$NON-NLS-1$
 	/**
 	 * The argument for whether the workbench should save and restore its state <br>
-	 * <<br>
+	 * <br>
 	 * Value is: <code>persistState</code>
 	 */
 	public static final String PERSIST_STATE = "persistState"; //$NON-NLS-1$
@@ -107,12 +107,12 @@ public interface IWorkbench {
 	public static final String APPLICATION_CONTEXT_KEY = "applicationContext"; //$NON-NLS-1$
 
 	/**
-	 * This named context parameter is used to specify whether a {@link MPart}
-	 * or a {@link MPlaceholder} are shown on top, which means the contents of
-	 * it can be seen by the user in the UI.
+	 * This named context parameter is used to specify whether a {@link MPart} or a
+	 * {@link MPlaceholder} are shown on top, which means the contents of it can be
+	 * seen by the user in the UI.
 	 * <p>
-	 * This means clients can obtain the state of being on top by asking the
-	 * part's context for the {@link IWorkbench#ON_TOP} key.
+	 * This means clients can obtain the state of being on top by asking the part's
+	 * context for the {@link IWorkbench#ON_TOP} key.
 	 * </p>
 	 * <p>
 	 * Note that also objects created with a parts' context can obtain this
@@ -123,7 +123,7 @@ public interface IWorkbench {
 	 * &#64;Inject
 	 * &#64;Optional
 	 * private void onTop(&#64;Named(IWorkbench.ON_TOP) Boolean onTop) {
-	 * 	if (onTop != null && onTop.booleanValue()) {
+	 * 	if (onTop != null &amp;&amp; onTop.booleanValue()) {
 	 * 		// ... do something when element is on top
 	 * 	}
 	 * }

@@ -112,7 +112,7 @@ public interface ISizeProvider {
 	 * <pre>
 	 * <code>
 	 *        {
-	 *              if (width && preferredResult != INFINITE) {
+	 *              if (width &amp;&amp; preferredResult != INFINITE) {
 	 *                  int result = preferredResult - ((preferredResult + 50) % 100) + 50;
 	 *                  result = Math.max(100, Math.min(result, availableParallel - (availableParallel % 100)));
 	 *
@@ -126,7 +126,7 @@ public interface ISizeProvider {
 	 * In this case, getSizeFlags(boolean width) must return (width ? SWT.FILL |
 	 * SWT.MIN: 0)</li>
 	 * <li>To maintain a minimum area of 100000 pixels: <code>
-	 *     {return availablePerpendicular < 100 ? 1000 : 100000 / availablePerpendicular;}
+	 *     {return availablePerpendicular &lt; 100 ? 1000 : 100000 / availablePerpendicular;}
 	 *     </code> getSizeFlags(boolean width) must return SWT.WRAP | SWT.MIN;</li>
 	 * </ul>
 	 *
@@ -146,7 +146,7 @@ public interface ISizeProvider {
 	 *                               will only contain meaningful information if the
 	 *                               part returns the SWT.WRAP flag from
 	 *                               getSizeFlags(width)
-	 * @param preferredResult        preferred size of the control (pixels, <=
+	 * @param preferredResult        preferred size of the control (pixels, &lt;=
 	 *                               availableParallel). Set to INFINITE if unknown
 	 *                               or unbounded.
 	 * @return returns the preferred size of the control (pixels). This is a width

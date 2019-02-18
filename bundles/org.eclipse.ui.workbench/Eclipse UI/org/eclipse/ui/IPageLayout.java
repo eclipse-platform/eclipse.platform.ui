@@ -52,7 +52,7 @@ package org.eclipse.ui;
  * <p>
  * Example of populating a layout with standard workbench views:
  * </p>
- * 
+ *
  * <pre>
  * IPageLayout layout = ...
  * // Get the editor area.
@@ -73,7 +73,7 @@ package org.eclipse.ui;
  * // Bottom right: Task List view
  * layout.addView(IPageLayout.ID_TASK_LIST, IPageLayout.BOTTOM, 0.66f, editorArea);
  * </pre>
- * 
+ *
  * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface IPageLayout {
@@ -238,25 +238,26 @@ public interface IPageLayout {
 	void addFastView(String viewId, float ratio);
 
     /**
-     * Adds a new wizard shortcut to the page layout.
-     * These are typically shown in the UI to allow rapid navigation to appropriate new wizards.
-     * For example, in the Eclipse IDE, these appear as items under the File > New menu.
-     * The id must name a new wizard extension contributed to the
-     * workbench's new wizards extension point (named <code>"org.eclipse.ui.newWizards"</code>).
-     *
-     * @param id the wizard id
-     */
+	 * Adds a new wizard shortcut to the page layout. These are typically shown in
+	 * the UI to allow rapid navigation to appropriate new wizards. For example, in
+	 * the Eclipse IDE, these appear as items under the File &gt; New menu. The id
+	 * must name a new wizard extension contributed to the workbench's new wizards
+	 * extension point (named <code>"org.eclipse.ui.newWizards"</code>).
+	 *
+	 * @param id the wizard id
+	 */
 	void addNewWizardShortcut(String id);
 
     /**
-     * Adds a perspective shortcut to the page layout.
-     * These are typically shown in the UI to allow rapid navigation to appropriate new wizards.
-     * For example, in the Eclipse IDE, these appear as items under the Window > Open Perspective menu.
-     * The id must name a perspective extension contributed to the
-     * workbench's perspectives extension point (named <code>"org.eclipse.ui.perspectives"</code>).
-     *
-     * @param id the perspective id
-     */
+	 * Adds a perspective shortcut to the page layout. These are typically shown in
+	 * the UI to allow rapid navigation to appropriate new wizards. For example, in
+	 * the Eclipse IDE, these appear as items under the Window &gt; Open Perspective
+	 * menu. The id must name a perspective extension contributed to the workbench's
+	 * perspectives extension point (named
+	 * <code>"org.eclipse.ui.perspectives"</code>).
+	 *
+	 * @param id the perspective id
+	 */
 	void addPerspectiveShortcut(String id);
 
     /**
@@ -301,14 +302,14 @@ public interface IPageLayout {
 	void addShowInPart(String id);
 
     /**
-     * Adds a show view shortcut to the page layout.
-     * These are typically shown in the UI to allow rapid navigation to appropriate views.
-     * For example, in the Eclipse IDE, these appear as items under the Window > Show View menu.
-     * The id must name a view contributed to the workbench's views extension point
-     * (named <code>"org.eclipse.ui.views"</code>).
-     *
-     * @param id the view id
-     */
+	 * Adds a show view shortcut to the page layout. These are typically shown in
+	 * the UI to allow rapid navigation to appropriate views. For example, in the
+	 * Eclipse IDE, these appear as items under the Window &gt; Show View menu. The
+	 * id must name a view contributed to the workbench's views extension point
+	 * (named <code>"org.eclipse.ui.views"</code>).
+	 *
+	 * @param id the view id
+	 */
 	void addShowViewShortcut(String id);
 
     /**
@@ -424,13 +425,13 @@ public interface IPageLayout {
 	int getEditorReuseThreshold();
 
     /**
-     * Sets the number of open editors before reusing editors.
-     * If < 0 the user preference settings will be used.
-     *
-     * @param openEditors the number of open editors
-     *
-     * @deprecated this method has no effect, as of Eclipse 2.1
-     */
+	 * Sets the number of open editors before reusing editors. If &lt; 0 the user
+	 * preference settings will be used.
+	 *
+	 * @param openEditors the number of open editors
+	 *
+	 * @deprecated this method has no effect, as of Eclipse 2.1
+	 */
     @Deprecated
 	void setEditorReuseThreshold(int openEditors);
 

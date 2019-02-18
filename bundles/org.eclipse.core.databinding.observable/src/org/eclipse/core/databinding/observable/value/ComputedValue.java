@@ -92,7 +92,7 @@ public abstract class ComputedValue<T> extends AbstractObservableValue<T> {
 	 * Example observing the size of an {@link IObservableList}:
 	 *
 	 * <pre>
-	 * IObservableValue&lt;Integer&gt; listSizeObservable = ComputedValue.create(() -> observableList.size());
+	 * IObservableValue&lt;Integer&gt; listSizeObservable = ComputedValue.create(() -&gt; observableList.size());
 	 * </pre>
 	 *
 	 * @param supplier {@link Supplier}, whose {@link Supplier#get()} method is a

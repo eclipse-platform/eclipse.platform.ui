@@ -96,7 +96,7 @@ public class ColumnViewerEditorActivationEvent extends EventObject {
 	public int stateMask;
 
 	/**
-	 * Cancel the event (=> editor is not activated)
+	 * Cancel the event (=&gt; editor is not activated)
 	 */
 	public boolean cancel = false;
 

@@ -62,22 +62,21 @@ public class ControlDecorationUpdater {
 	}
 
 	/**
-	 * Returns an image to display in a ControlDecoration which is appropriate
-	 * for the given status. The default implementation of this method returns
-	 * an image according to <code>status.getSeverity()</code>:
+	 * Returns an image to display in a ControlDecoration which is appropriate for
+	 * the given status. The default implementation of this method returns an image
+	 * according to <code>status.getSeverity()</code>:
 	 * <ul>
-	 * <li>IStatus.OK => No image
-	 * <li>IStatus.INFO => FieldDecorationRegistry.DEC_INFORMATION
-	 * <li>IStatus.WARNING => FieldDecorationRegistry.DEC_WARNING
-	 * <li>IStatus.ERROR => FieldDecorationRegistry.DEC_ERROR
-	 * <li>IStatus.CANCEL => FieldDecorationRegistry.DEC_ERROR
-	 * <li>Other => No image
+	 * <li>IStatus.OK =&gt; No image
+	 * <li>IStatus.INFO =&gt; FieldDecorationRegistry.DEC_INFORMATION
+	 * <li>IStatus.WARNING =&gt; FieldDecorationRegistry.DEC_WARNING
+	 * <li>IStatus.ERROR =&gt; FieldDecorationRegistry.DEC_ERROR
+	 * <li>IStatus.CANCEL =&gt; FieldDecorationRegistry.DEC_ERROR
+	 * <li>Other =&gt; No image
 	 * </ul>
 	 *
-	 * @param status
-	 *            the status object.
-	 * @return an image to display in a ControlDecoration which is appropriate
-	 *         for the given status.
+	 * @param status the status object.
+	 * @return an image to display in a ControlDecoration which is appropriate for
+	 *         the given status.
 	 */
 	protected Image getImage(IStatus status) {
 		if (status == null)

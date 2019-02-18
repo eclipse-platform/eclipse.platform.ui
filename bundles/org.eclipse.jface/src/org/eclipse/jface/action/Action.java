@@ -182,11 +182,10 @@ public abstract class Action extends AbstractAction {
 
 	/**
 	 * Convenience method for removing any mnemonics from the given string. For
-	 * example, <code>removeMnemonics("&Open")</code> will return
+	 * example, <code>removeMnemonics("&amp;Open")</code> will return
 	 * <code>"Open"</code>.
 	 *
-	 * @param text
-	 *            the text
+	 * @param text the text
 	 * @return the text sans mnemonics
 	 *
 	 * @since 3.0

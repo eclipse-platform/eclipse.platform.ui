@@ -53,7 +53,8 @@ public final class ActivitiesPreferencePage extends PreferencePage implements
     public static final String ACTIVITY_NAME = "activityName"; //$NON-NLS-1$
 
 	/**
-	 * The label to be used for the prompt button. Ie: "&Prompt when enabling capabilities".
+	 * The label to be used for the prompt button. Ie: "&amp;Prompt when enabling
+	 * capabilities".
 	 */
     public static final String ACTIVITY_PROMPT_BUTTON = "activityPromptButton"; //$NON-NLS-1$
 

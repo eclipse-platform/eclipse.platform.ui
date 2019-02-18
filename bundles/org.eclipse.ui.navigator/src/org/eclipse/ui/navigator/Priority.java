@@ -135,8 +135,8 @@ public final class Priority {
 			LOWEST_PRIORITY_LITERAL);
 
 	/**
-	 * The ordered array of possible enumeration values (0=> Highest,
-	 * length-1=>Lowest)
+	 * The ordered array of possible enumeration values (0=&gt; Highest,
+	 * length-1=&gt;Lowest)
 	 */
 	public static final Priority[] ENUM_ARRAY = new Priority[] { HIGHEST,
 			HIGHER, HIGH, NORMAL, LOW, LOWER, LOWEST };

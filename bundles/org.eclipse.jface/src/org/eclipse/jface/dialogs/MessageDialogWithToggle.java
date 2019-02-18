@@ -127,43 +127,35 @@ public class MessageDialogWithToggle extends MessageDialog {
 	 * Convenience method to open a simple dialog as specified by the
 	 * <code>kind</code> flag, with a "don't show again' toggle.
 	 *
-	 * This method accepts a LinkedHashMap<String, Integer> to set custom button
-	 * labels (String) and custom button IDs (Integer) as return codes for those
-	 * buttons.
+	 * This method accepts a LinkedHashMap&lt;String, Integer&gt; to set custom
+	 * button labels (String) and custom button IDs (Integer) as return codes for
+	 * those buttons.
 	 *
 	 * Use this method if you need to override the default labels and IDs.
 	 *
-	 * @param kind
-	 *            the kind of dialog to open, one of {@link #ERROR},
-	 *            {@link #INFORMATION}, {@link #QUESTION}, {@link #WARNING},
-	 *            {@link #CONFIRM}, or {#QUESTION_WITH_CANCEL}.
-	 * @param parent
-	 *            the parent shell of the dialog, or <code>null</code> if none
-	 * @param title
-	 *            the dialog's title, or <code>null</code> if none
-	 * @param message
-	 *            the message
-	 * @param toggleMessage
-	 *            the message for the toggle control, or <code>null</code> for
-	 *            the default message
-	 * @param toggleState
-	 *            the initial state for the toggle
-	 * @param store
-	 *            the IPreference store in which the user's preference should be
-	 *            persisted; <code>null</code> if you don't want it persisted
-	 *            automatically.
-	 * @param key
-	 *            the key to use when persisting the user's preference;
-	 *            <code>null</code> if you don't want it persisted.
-	 * @param style
-	 *            {@link SWT#NONE} for a default dialog, or {@link SWT#SHEET}
-	 *            for a dialog with sheet behavior
-	 * @param buttonLabelToIdMap
-	 *            map with button labels and ids to define custom labels and
-	 *            their corresponding ids
-	 * @return the dialog, after being closed by the user, which the client can
-	 *         only call <code>getReturnCode()</code> or
-	 *         <code>getToggleState()</code>
+	 * @param kind               the kind of dialog to open, one of {@link #ERROR},
+	 *                           {@link #INFORMATION}, {@link #QUESTION},
+	 *                           {@link #WARNING}, {@link #CONFIRM}, or
+	 *                           {#QUESTION_WITH_CANCEL}.
+	 * @param parent             the parent shell of the dialog, or
+	 *                           <code>null</code> if none
+	 * @param title              the dialog's title, or <code>null</code> if none
+	 * @param message            the message
+	 * @param toggleMessage      the message for the toggle control, or
+	 *                           <code>null</code> for the default message
+	 * @param toggleState        the initial state for the toggle
+	 * @param store              the IPreference store in which the user's
+	 *                           preference should be persisted; <code>null</code>
+	 *                           if you don't want it persisted automatically.
+	 * @param key                the key to use when persisting the user's
+	 *                           preference; <code>null</code> if you don't want it
+	 *                           persisted.
+	 * @param style              {@link SWT#NONE} for a default dialog, or
+	 *                           {@link SWT#SHEET} for a dialog with sheet behavior
+	 * @param buttonLabelToIdMap map with button labels and ids to define custom
+	 *                           labels and their corresponding ids
+	 * @return the dialog, after being closed by the user, which the client can only
+	 *         call <code>getReturnCode()</code> or <code>getToggleState()</code>
 	 * @since 3.13
 	 */
 	public static MessageDialogWithToggle open(int kind, Shell parent, String title, String message,
@@ -460,48 +452,41 @@ public class MessageDialogWithToggle extends MessageDialog {
     }
 
 	/**
-	 * Creates a message dialog with a toggle. See the superclass constructor
-	 * for info on the other parameters.
+	 * Creates a message dialog with a toggle. See the superclass constructor for
+	 * info on the other parameters.
 	 *
-	 * This constructor accepts a LinkedHashMap<String, Integer> to set custom
-	 * button labels (String) and custom button IDs (Integer) as return codes
-	 * for those buttons.
+	 * This constructor accepts a LinkedHashMap&lt;String, Integer&gt; to set custom
+	 * button labels (String) and custom button IDs (Integer) as return codes for
+	 * those buttons.
 	 *
 	 * Use this constructor if you need to override the default labels and IDs.
 	 *
-	 * @param parentShell
-	 *            the parent shell
-	 * @param dialogTitle
-	 *            the dialog title, or <code>null</code> if none
-	 * @param image
-	 *            the dialog title image, or <code>null</code> if none
-	 * @param message
-	 *            the dialog message
-	 * @param dialogImageType
-	 *            one of the following values:
-	 *            <ul>
-	 *            <li><code>MessageDialog.NONE</code> for a dialog with no
-	 *            image</li>
-	 *            <li><code>MessageDialog.ERROR</code> for a dialog with an
-	 *            error image</li>
-	 *            <li><code>MessageDialog.INFORMATION</code> for a dialog with
-	 *            an information image</li>
-	 *            <li><code>MessageDialog.QUESTION </code> for a dialog with a
-	 *            question image</li>
-	 *            <li><code>MessageDialog.WARNING</code> for a dialog with a
-	 *            warning image</li>
-	 *            </ul>
-	 * @param buttonLabelToIdMap
-	 *            map with button labels and IDs to define custom labels and
-	 *            their corresponding IDs
-	 * @param defaultIndex
-	 *            the index of the default button in the button label and ID map
-	 *            related to the insertion order of the elements
-	 * @param toggleMessage
-	 *            the message for the toggle control, or <code>null</code> for
-	 *            the default message
-	 * @param toggleState
-	 *            the initial state for the toggle
+	 * @param parentShell        the parent shell
+	 * @param dialogTitle        the dialog title, or <code>null</code> if none
+	 * @param image              the dialog title image, or <code>null</code> if
+	 *                           none
+	 * @param message            the dialog message
+	 * @param dialogImageType    one of the following values:
+	 *                           <ul>
+	 *                           <li><code>MessageDialog.NONE</code> for a dialog
+	 *                           with no image</li>
+	 *                           <li><code>MessageDialog.ERROR</code> for a dialog
+	 *                           with an error image</li>
+	 *                           <li><code>MessageDialog.INFORMATION</code> for a
+	 *                           dialog with an information image</li>
+	 *                           <li><code>MessageDialog.QUESTION </code> for a
+	 *                           dialog with a question image</li>
+	 *                           <li><code>MessageDialog.WARNING</code> for a dialog
+	 *                           with a warning image</li>
+	 *                           </ul>
+	 * @param buttonLabelToIdMap map with button labels and IDs to define custom
+	 *                           labels and their corresponding IDs
+	 * @param defaultIndex       the index of the default button in the button label
+	 *                           and ID map related to the insertion order of the
+	 *                           elements
+	 * @param toggleMessage      the message for the toggle control, or
+	 *                           <code>null</code> for the default message
+	 * @param toggleState        the initial state for the toggle
 	 * @since 3.13
 	 */
 	public MessageDialogWithToggle(Shell parentShell, String dialogTitle, Image image, String message,
