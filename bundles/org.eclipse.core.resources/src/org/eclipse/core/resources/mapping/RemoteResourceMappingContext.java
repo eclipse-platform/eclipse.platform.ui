@@ -83,7 +83,6 @@ public abstract class RemoteResourceMappingContext extends ResourceMappingContex
 	 * the base members cannot be computed, in which case clients should call
 	 * {@link #fetchMembers(IContainer, IProgressMonitor)} which returns the
 	 * combined members for the base and remote.
-	 * </p>
 	 * <p>
 	 * This method may be long running as a server may need to be contacted to
 	 * obtain the members of the base resource.
@@ -175,7 +174,6 @@ public abstract class RemoteResourceMappingContext extends ResourceMappingContex
 	 * the remote members cannot be computed, in which case clients should call
 	 * {@link #fetchMembers(IContainer, IProgressMonitor)} which returns the
 	 * combined members for the base and remote.
-	 * </p>
 	 * <p>
 	 * This method may be long running as a server may need to be contacted to
 	 * obtain the members of the remote resource.
