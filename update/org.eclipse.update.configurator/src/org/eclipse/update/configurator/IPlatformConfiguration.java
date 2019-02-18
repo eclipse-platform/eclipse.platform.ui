@@ -136,7 +136,7 @@ public interface IPlatformConfiguration {
 
 		/**
 		 * Returns an indication whether the site represents an install site
-		 * that has been linked via a native installer (using the links/<linkfile>
+		 * that has been linked via a native installer (using the links/linkfile
 		 * mechanism)
 		 * 
 		 * @return <code>true</code> if the site is linked, <code>false</code> otherwise
