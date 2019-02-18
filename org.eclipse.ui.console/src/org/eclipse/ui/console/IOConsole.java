@@ -227,16 +227,16 @@ public class IOConsole extends TextConsole {
 	}
 
 	/**
-	 * Sets the text buffer size for this console. The high water mark indicates
-	 * the maximum number of characters stored in the buffer. The low water mark
+	 * Sets the text buffer size for this console. The high water mark indicates the
+	 * maximum number of characters stored in the buffer. The low water mark
 	 * indicates the number of characters remaining in the buffer when the high
 	 * water mark is exceeded.
 	 *
-	 * @param low the number of characters remaining in the buffer when the high
-	 *  water mark is exceeded (if -1 the console does not limit output)
-	 * @param high the maximum number of characters this console will cache in
-	 *  its text buffer (if -1 the console does not limit output)
-	 * @exception IllegalArgumentException if low >= high & low != -1
+	 * @param low  the number of characters remaining in the buffer when the high
+	 *             water mark is exceeded (if -1 the console does not limit output)
+	 * @param high the maximum number of characters this console will cache in its
+	 *             text buffer (if -1 the console does not limit output)
+	 * @exception IllegalArgumentException if low &gt;= high &amp; low != -1
 	 */
 	public void setWaterMarks(int low, int high) {
 		if (low >= 0) {

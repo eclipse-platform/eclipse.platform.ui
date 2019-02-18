@@ -26,7 +26,8 @@ import org.eclipse.ui.IActionDelegate2;
 import org.eclipse.ui.IWorkbenchWindow;
 
 /**
- * This is the super class of the Run & Debug actions which appears in the desktop menu and toolbar.
+ * This is the super class of the Run &amp; Debug actions which appears in the
+ * desktop menu and toolbar.
  */
 public abstract class ExecutionAction implements IActionDelegate2 {
 

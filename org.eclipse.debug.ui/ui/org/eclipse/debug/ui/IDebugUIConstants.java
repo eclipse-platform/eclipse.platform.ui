@@ -184,7 +184,8 @@ public interface IDebugUIConstants {
 	String PREF_REUSE_EDITOR = PLUGIN_ID + ".reuse_editor"; //$NON-NLS-1$
 
 	/**
-	 * Integer preference that specifies the length of the Run & Debug launch history lists.
+	 * Integer preference that specifies the length of the Run &amp; Debug launch
+	 * history lists.
 	 *
 	 * @since 2.0
 	 */
@@ -473,13 +474,15 @@ public interface IDebugUIConstants {
 	String IMG_OBJS_BREAKPOINT_GROUP_DISABLED = "IMG_OBJS_BREAKPOINT_GROUP_DISABLED"; //$NON-NLS-1$
 
 	/**
-	 * Enabled watchpoint image identifier (access & modification).
+	 * Enabled watchpoint image identifier (access &amp; modification).
+	 *
 	 * @since 3.0
 	 */
 	String IMG_OBJS_WATCHPOINT= "IMG_OBJS_WATCHPOINT"; //$NON-NLS-1$
 
 	/**
-	 * Disabled watchpoint image identifier (access & modification).
+	 * Disabled watchpoint image identifier (access &amp; modification).
+	 *
 	 * @since 3.0
 	 */
 	String IMG_OBJS_WATCHPOINT_DISABLED= "IMG_OBJS_WATCHPOINT_DISABLED"; //$NON-NLS-1$

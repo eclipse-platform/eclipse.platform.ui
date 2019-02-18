@@ -33,6 +33,7 @@ import org.eclipse.ui.IEditorPart;
  * A launch shortcut extension is defined in <code>plugin.xml</code>. Following
  * is an example definition of a launch shortcut extension.
  * </p>
+ * 
  * <pre>
  * &lt;extension point="org.eclipse.debug.ui.launchShortcuts"&gt;
  *    &lt;shortcut
@@ -116,9 +117,9 @@ import org.eclipse.ui.IEditorPart;
  * <code>org.eclipse.debug.ui.actions.ILaunchable</code> interface is simply
  * used to tag objects that support contextual launching.</li>
  * <li><code>contextLabel</code> zero or more context menu labels. For shortcuts
- * that pass their filter tests, the specified label will appear in the "Run ->"
- * context menu and be bound to a launch action of the specified mode (e.g.
- * run,debug,profile).</li>
+ * that pass their filter tests, the specified label will appear in the "Run
+ * -&gt;" context menu and be bound to a launch action of the specified mode
+ * (e.g. run,debug,profile).</li>
  * <li><code>configurationType</code> allows more that one associated launch
  * configuration type to be specified for this launch shortcut. That way
  * consumers of launch shortcut information can know what kinds of launch
@@ -131,7 +132,7 @@ import org.eclipse.ui.IEditorPart;
  * Clients contributing a launch shortcut are intended to implement this
  * interface.
  * </p>
- * 
+ *
  * @since 2.0
  */
 public interface ILaunchShortcut {
