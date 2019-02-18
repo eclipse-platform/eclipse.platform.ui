@@ -14,20 +14,20 @@ Package Specification</h2>
 This package provides classes that can be used to guide a dialog user through choosing
 appropriate content for fields in a dialog or wizard.
 <p>
-A <tt>ContentProposalAdapter</tt> can be attached to an arbitrary control to provide 
+A <code>ContentProposalAdapter</code> can be attached to an arbitrary control to provide 
 a popup showing content proposals.  These proposals appear when the defined
-assist keystroke is invoked.  The <tt>ContentProposalAdapter</tt> manages the creation, 
+assist keystroke is invoked.  The <code>ContentProposalAdapter</code> manages the creation, 
 hiding, and showing of the proposal popup, as well as the proper handling of key events
-between the adapted control and its popup.  Implementors of <tt>IControlContentAdapter</tt>
+between the adapted control and its popup.  Implementors of <code>IControlContentAdapter</code>
 allow the adapter to set and retrieve the contents of the supplied control.
 </p>
 <p>
-An <tt>AutoCompleteField</tt> configures a <tt>ContentProposalAdapter</tt> in a manner
+An <code>AutoCompleteField</code> configures a <code>ContentProposalAdapter</code> in a manner
 that supports automatic field completion popups that filter based on the control's
 contents.
 </p>
 <p>
-<tt>ControlDecoration</tt> can be used to decorate an arbitrary control with 
+<code>ControlDecoration</code> can be used to decorate an arbitrary control with 
 an image that communicates information about the control's content.  Decorations can be
 used to show additional information about a field, such as its status, or a cue
 that shows availability of content proposals.  Decorations are defined in pre-defined
@@ -37,7 +37,7 @@ space allocated to render the control decoration.  Decorations can optionally sh
 descriptive text when the user hovers over them.  
 </p>
 <p>
-<tt>DecoratedField</tt> can also be used to decorate a control.  The main difference
+<code>DecoratedField</code> can also be used to decorate a control.  The main difference
 is that decorated fields reserve space for multiple decorations in particular
 locations around the control.  To do this, the field manages the creation of the 
 field's control, using a specialized layout to ensure there is adequate space 

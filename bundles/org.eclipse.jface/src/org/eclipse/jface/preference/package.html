@@ -10,19 +10,19 @@
 Provides a framework for preferences.
 <h2>
 Package Specification</h2>
-A <b>preference manager</b> (class <tt>PreferenceManager</tt>) maintains
+A <b>preference manager</b> (class <code>PreferenceManager</code>) maintains
 a tree of <b>preference nodes</b>. Preferences are presented to the end
 user in a <b>preference dialog</b> consisting of <b>preference pages</b>.
 A preference page consists of multiple preference fields, which can be
 displayed and modified though <b>field editors</b>. The framework contains
-an abstract base class for preference dialogs (<tt>PreferenceDialog</tt>),
-and an abstract preference page class (<tt>FieldEditorPreferencePage</tt>)
+an abstract base class for preference dialogs (<code>PreferenceDialog</code>),
+and an abstract preference page class (<code>FieldEditorPreferencePage</code>)
 for hosting these field editors.
 <p>The individual preference values are maintained in a <b>preference store</b>
-(<tt>IPreferenceStore</tt>). Each preference has a current value and a
+(<code>IPreferenceStore</code>). Each preference has a current value and a
 default value use to (re-)initialize it. The framework provides a concrete
-preference store implementation (<tt>PreferenceStore</tt>) based on an
-internal <tt>java.util.Properties</tt> object, with support for persisting
+preference store implementation (<code>PreferenceStore</code>) based on an
+internal <code>java.util.Properties</code> object, with support for persisting
 the non-default preference values to files or streams.
 <p>A field editor presents the value of a single preference to the end
 user. The value is loaded from the preference store; if modified by the
@@ -32,36 +32,35 @@ store.
 preferences:
 <ul>
 <li>
-<tt>BooleanFieldEditor</tt> - booleans</li>
+<code>BooleanFieldEditor</code> - booleans</li>
 
 <li>
-<tt>IntegerFieldEditor</tt> - integers</li>
+<code>IntegerFieldEditor</code> - integers</li>
 
 <li>
-<tt>StringFieldEditor</tt> - text strings</li>
+<code>StringFieldEditor</code> - text strings</li>
 
 <li>
-<tt>RadioGroupFieldEditor</tt> - enumerations</li>
+<code>RadioGroupFieldEditor</code> - enumerations</li>
 
 <li>
-<tt>ColorFieldEditor</tt> - RGB colors</li>
+<code>ColorFieldEditor</code> - RGB colors</li>
 
 <li>
-<tt>FontFieldEditor</tt> - fonts</li>
+<code>FontFieldEditor</code> - fonts</li>
 
 <li>
-<tt>DirectoryFieldEditor</tt> - directories</li>
+<code>DirectoryFieldEditor</code> - directories</li>
 
 <li>
-<tt>FileFieldEditor</tt> - files</li>
+<code>FileFieldEditor</code> - files</li>
 
 <li>
-<tt>PathEditor</tt> - paths</li>
+<code>PathEditor</code> - paths</li>
 </ul>
-All field editors are subclasses of the abstract base class <tt>FieldEditor</tt>;
+All field editors are subclasses of the abstract base class <code>FieldEditor</code>;
 the framework allows new kinds of field editors to be defined by subclassing
 this class or one of its subclasses.
 <p>Note: None of the classes in this package maintain global state.
-<br>&nbsp;
 </body>
 </html>
