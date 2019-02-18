@@ -238,14 +238,14 @@ public interface IPathVariableManager {
 	 * <li>BACKUP = /tmp/backup</li>
 	 * </ul>
 	 * <p>The following paths would be resolved as:
-	 * <p>c:/bin => c:/bin</p>
-	 * <p>c:TEMP => c:TEMP</p>
-	 * <p>/TEMP => /TEMP</p>
-	 * <p>TEMP  => c:/temp</p>
-	 * <p>TEMP/foo  => c:/temp/foo</p>
-	 * <p>BACKUP  => /tmp/backup</p>
-	 * <p>BACKUP/bar.txt  => /tmp/backup/bar.txt</p>
-	 * <p>SOMEPATH/foo => SOMEPATH/foo</p>
+	 * <p>c:/bin =&gt; c:/bin</p>
+	 * <p>c:TEMP =&gt; c:TEMP</p>
+	 * <p>/TEMP =&gt; /TEMP</p>
+	 * <p>TEMP  =&gt; c:/temp</p>
+	 * <p>TEMP/foo  =&gt; c:/temp/foo</p>
+	 * <p>BACKUP  =&gt; /tmp/backup</p>
+	 * <p>BACKUP/bar.txt  =&gt; /tmp/backup/bar.txt</p>
+	 * <p>SOMEPATH/foo =&gt; SOMEPATH/foo</p>
 	 *
 	 * @param path the path to be resolved
 	 * @return the resolved path or <code>null</code>

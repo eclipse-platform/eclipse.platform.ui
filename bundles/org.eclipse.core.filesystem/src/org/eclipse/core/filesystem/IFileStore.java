@@ -223,7 +223,7 @@ public interface IFileStore extends IAdaptable {
 	 * path is treated as relative to this store.  This is equivalent to
 	 * <pre>
 	 *    IFileStore result = this;
-	 *    for (int i = 0; i < path.segmentCount(); i++) {
+	 *    for (int i = 0; i &lt; path.segmentCount(); i++) {
 	 *       result = result.getChild(path.segment(i));
 	 *    return result;
 	 * </pre>
