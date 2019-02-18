@@ -30,7 +30,7 @@ A typical usage looks as follows:</p>
 <p>The above expression tests, if the object under inspection (in most
 cases the element selected in the user interface) is of instance
 "org.eclipse.jdt.core.IJavaElement".</p>
-<p><a name="test_expression0"><i><u>Test expression</u></i></a></p>
+<p><i><u>Test expression</u></i></p>
 <p>Besides instance of checks the new expression language defines an
 extensible &lt;test&gt; element to support property testing. The
 &lt;test&gt; element is comparable to the &lt;filter&gt; element used in
@@ -89,7 +89,7 @@ meaning:</p>
 </ul>
 <p>The concrete implementation for the above property tester looks like
 this:</p>
-<blockquote><pre><font size="-1">public class ResourcePropertyTester extends PropertyTester {
+<blockquote><pre style="font-size: small">public class ResourcePropertyTester extends PropertyTester {
   private static final String PROPERTY_MATCHES_PATTERN= "matchesPattern"; //$NON-NLS-1$
 
 
@@ -107,7 +107,7 @@ this:</p>
     Assert.isTrue(false);
     return false;
   }
-</font>}</pre></blockquote>
+}</pre></blockquote>
 <p>The string value provided by the value attribute is converted into a
 Java object using the following rules:</p>
 <ul>
@@ -237,7 +237,7 @@ the following include element:
 <blockquote><pre>
 &lt;include schemaLocation="schema://org.eclipse.core.expressions/schema/expressionLanguage.exsd"/&gt;
 </pre></blockquote>
-<p><a name="converting"><u><i>Converting XML elements into expressions</i></u></a></p>
+<p><u><i>Converting XML elements into expressions</i></u></p>
 <p>XML elements can be converted into corresponding expression objects using the class ExpressionConverter.
 If only expression tags from the common expression language are used, then the standard expression converter can be used.
 The following example converts the configuration element representing an enablement element into an expression:</p>
