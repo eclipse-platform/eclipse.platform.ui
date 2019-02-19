@@ -162,18 +162,27 @@ public interface IWorkbenchWindowConfigurer {
 
     /**
 	 * No longer used by the platform
-	 * 
+	 *
 	 * @return <code>true</code> for fast view bars, and <code>false</code> for no
 	 *         fast view bars
+	 * @noreference This method is not intended to be referenced by clients.
+	 *
+	 *              This method is planned to be deleted, see
+	 *              https://bugs.eclipse.org/bugs/show_bug.cgi?id=485835
 	 * @deprecated discontinued support for fast views
 	 */
     @Deprecated boolean getShowFastViewBars();
 
     /**
 	 * No longer used by the platform
-	 * 
+	 *
 	 * @param enable <code>true</code> for fast view bars, and <code>false</code>
 	 *               for no fast view bars
+	 * @noreference This method is not intended to be referenced by clients.
+	 *
+	 *              This method is planned to be deleted, see
+	 *              https://bugs.eclipse.org/bugs/show_bug.cgi?id=485835
+	 *
 	 * @deprecated discontinued support for fast views
 	 */
     @Deprecated void setShowFastViewBars(boolean enable);
@@ -307,6 +316,11 @@ public interface IWorkbenchWindowConfigurer {
 	 * </p>
 	 *
 	 * @return the menu bar, suitable for setting in the shell
+	 *         extended by clients.
+	 * @noreference This method is not intended to be referenced by clients.
+	 *
+	 *              This method is planned to be deleted, see (
+	 *              https://bugs.eclipse.org/bugs/show_bug.cgi?id=485835
 	 * @deprecated This method is no longer used. Applications now define workbench
 	 *             window contents in their application model.
 	 */
@@ -317,6 +331,10 @@ public interface IWorkbenchWindowConfigurer {
 	 *
 	 * @param parent the parent composite
 	 * @return the cool bar control, suitable for laying out in the parent
+	 * @noreference This method is not intended to be referenced by clients.
+	 *
+	 *              This method is planned to be deleted, see
+	 *              https://bugs.eclipse.org/bugs/show_bug.cgi?id=485835
 	 * @deprecated This method is no longer used. Applications now define workbench
 	 *             window contents in their application model.
 	 */
@@ -327,6 +345,10 @@ public interface IWorkbenchWindowConfigurer {
 	 *
 	 * @param parent the parent composite
 	 * @return the status line control, suitable for laying out in the parent
+	 * @noreference This method is not intended to be referenced by clients.
+	 *
+	 *              This method is planned to be deleted, see
+	 *              https://bugs.eclipse.org/bugs/show_bug.cgi?id=485835
 	 * @deprecated This method is no longer used. Applications now define workbench
 	 *             window contents in their application model.
 	 */
@@ -337,6 +359,11 @@ public interface IWorkbenchWindowConfigurer {
 	 *
 	 * @param parent the parent composite
 	 * @return the page composite, suitable for laying out in the parent
+	 *
+	 * @noreference This method is not intended to be referenced by clients.
+	 *
+	 *              This method is planned to be deleted, see
+	 *              https://bugs.eclipse.org/bugs/show_bug.cgi?id=485835
 	 * @deprecated This method is no longer used. Applications now define workbench
 	 *             window contents in their application model.
 	 */

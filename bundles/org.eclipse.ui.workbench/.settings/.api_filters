@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<component id="org.eclipse.ui.workbench" version="2">
+    <resource path="Eclipse UI/org/eclipse/ui/application/IWorkbenchWindowConfigurer.java" type="org.eclipse.ui.application.IWorkbenchWindowConfigurer">
+        <filter id="406052990">
+            <message_arguments>
+                <message_argument value="org.eclipse.ui.application.IWorkbenchWindowConfigurer"/>
+                <message_argument value="createCoolBarControl(Composite)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Planned deletion" id="406052990">
+            <message_arguments>
+                <message_argument value="org.eclipse.ui.application.IWorkbenchWindowConfigurer"/>
+                <message_argument value="createMenuBar()"/>
+            </message_arguments>
+        </filter>
+        <filter id="406052990">
+            <message_arguments>
+                <message_argument value="org.eclipse.ui.application.IWorkbenchWindowConfigurer"/>
+                <message_argument value="createPageComposite(Composite)"/>
+            </message_arguments>
+        </filter>
+        <filter id="406052990">
+            <message_arguments>
+                <message_argument value="org.eclipse.ui.application.IWorkbenchWindowConfigurer"/>
+                <message_argument value="createStatusLineControl(Composite)"/>
+            </message_arguments>
+        </filter>
+        <filter id="406052990">
+            <message_arguments>
+                <message_argument value="org.eclipse.ui.application.IWorkbenchWindowConfigurer"/>
+                <message_argument value="getShowFastViewBars()"/>
+            </message_arguments>
+        </filter>
+        <filter id="406052990">
+            <message_arguments>
+                <message_argument value="org.eclipse.ui.application.IWorkbenchWindowConfigurer"/>
+                <message_argument value="setShowFastViewBars(boolean)"/>
+            </message_arguments>
+        </filter>
+    </resource>
+</component>
