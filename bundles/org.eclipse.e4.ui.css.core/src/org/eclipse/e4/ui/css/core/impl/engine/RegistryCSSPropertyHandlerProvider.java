@@ -49,9 +49,6 @@ public class RegistryCSSPropertyHandlerProvider extends AbstractCSSPropertyHandl
 
 	private static final String PROPERTY_HANDLERS_EXTPOINT = "org.eclipse.e4.ui.css.core.propertyHandler";
 
-	/* the handlers extension point was originally in .swt */
-	private static final String DEPRECATED_PROPERTY_HANDLERS_EXTPOINT = "org.eclipse.e4.ui.css.swt.property.handler";
-
 	private IExtensionRegistry registry;
 	private boolean hasDeprecatedProperties = false; // mild optimization for getCSSProperties()
 
@@ -59,10 +56,6 @@ public class RegistryCSSPropertyHandlerProvider extends AbstractCSSPropertyHandl
 
 	public RegistryCSSPropertyHandlerProvider(IExtensionRegistry registry) {
 		this.registry = registry;
-		if (configure(DEPRECATED_PROPERTY_HANDLERS_EXTPOINT)) {
-			System.err.println("Extension point " + DEPRECATED_PROPERTY_HANDLERS_EXTPOINT
-					+ " is deprecated; use " + PROPERTY_HANDLERS_EXTPOINT);
-		}
 		configure(PROPERTY_HANDLERS_EXTPOINT);
 	}
 
