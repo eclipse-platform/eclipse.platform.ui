@@ -161,24 +161,21 @@ public interface IWorkbenchWindowConfigurer {
     void setShowPerspectiveBar(boolean show);
 
     /**
-     * Returns whether the underlying workbench window has fast view bars.
-     * <p>
-     * The initial value is <code>false</code>.
-     * </p>
-     *
-     * @return <code>true</code> for fast view bars, and
-     * <code>false</code> for no fast view bars
-     * @deprecated discontinued support for fast views
-     */
+	 * No longer used by the platform
+	 * 
+	 * @return <code>true</code> for fast view bars, and <code>false</code> for no
+	 *         fast view bars
+	 * @deprecated discontinued support for fast views
+	 */
     @Deprecated boolean getShowFastViewBars();
 
     /**
-     * Sets whether the underlying workbench window has fast view bars.
-     *
-     * @param enable <code>true</code> for fast view bars, and
-     * <code>false</code> for no fast view bars
-     * @deprecated discontinued support for fast views
-     */
+	 * No longer used by the platform
+	 * 
+	 * @param enable <code>true</code> for fast view bars, and <code>false</code>
+	 *               for no fast view bars
+	 * @deprecated discontinued support for fast views
+	 */
     @Deprecated void setShowFastViewBars(boolean enable);
 
     /**
@@ -305,80 +302,43 @@ public interface IWorkbenchWindowConfigurer {
             DropTargetListener dropTargetListener);
 
     /**
-	 * Creates the menu bar for the window's shell.
-	 * <p>
-	 * This should only be called if the advisor is defining custom window
-	 * contents in <code>createWindowContents</code>, and may only be called
-	 * once. The caller must set it in the shell using
-	 * <code>Shell.setMenuBar(Menu)</code> but must not make add, remove or
-	 * change items in the result. The menu bar is populated by the window's
-	 * menu manager. The application can add to the menu manager in the
-	 * advisor's <code>fillActionBars</code> method instead.
+	 * No longer used by the platform
+	 *
 	 * </p>
 	 *
 	 * @return the menu bar, suitable for setting in the shell
-	 * @deprecated This method is no longer used. Applications now define
-	 *             workbench window contents in their application model.
+	 * @deprecated This method is no longer used. Applications now define workbench
+	 *             window contents in their application model.
 	 */
 	@Deprecated Menu createMenuBar();
 
     /**
-	 * Creates the cool bar control.
-	 * <p>
-	 * This should only be called if the advisor is defining custom window
-	 * contents in <code>createWindowContents</code>, and may only be called
-	 * once. The caller must lay out the cool bar appropriately within the
-	 * parent, but must not add, remove or change items in the result (hence the
-	 * return type of <code>Control</code>). The cool bar is populated by the
-	 * window's cool bar manager. The application can add to the cool bar
-	 * manager in the advisor's <code>fillActionBars</code> method instead.
-	 * </p>
+	 * No longer used by the platform
 	 *
-	 * @param parent
-	 *            the parent composite
+	 * @param parent the parent composite
 	 * @return the cool bar control, suitable for laying out in the parent
-	 * @deprecated This method is no longer used. Applications now define
-	 *             workbench window contents in their application model.
+	 * @deprecated This method is no longer used. Applications now define workbench
+	 *             window contents in their application model.
 	 */
 	@Deprecated Control createCoolBarControl(Composite parent);
 
     /**
-	 * Creates the status line control.
-	 * <p>
-	 * This should only be called if the advisor is defining custom window
-	 * contents in <code>createWindowContents</code>, and may only be called
-	 * once. The caller must lay out the status line appropriately within the
-	 * parent, but must not add, remove or change items in the result (hence the
-	 * return type of <code>Control</code>). The status line is populated by the
-	 * window's status line manager. The application can add to the status line
-	 * manager in the advisor's <code>fillActionBars</code> method instead.
-	 * </p>
+	 * No longer used by the platform
 	 *
-	 * @param parent
-	 *            the parent composite
+	 * @param parent the parent composite
 	 * @return the status line control, suitable for laying out in the parent
-	 * @deprecated This method is no longer used. Applications now define
-	 *             workbench window contents in their application model.
+	 * @deprecated This method is no longer used. Applications now define workbench
+	 *             window contents in their application model.
 	 */
 	@Deprecated Control createStatusLineControl(Composite parent);
 
     /**
-	 * Creates the page composite, in which the window's pages, and their views
-	 * and editors, appear.
-	 * <p>
-	 * This should only be called if the advisor is defining custom window
-	 * contents in <code>createWindowContents</code>, and may only be called
-	 * once. The caller must lay out the page composite appropriately within the
-	 * parent, but must not add, remove or change items in the result (hence the
-	 * return type of <code>Control</code>). The page composite is populated by
-	 * the workbench.
-	 * </p>
+	 * No longer used by the platform
 	 *
-	 * @param parent
-	 *            the parent composite
+	 * @param parent the parent composite
 	 * @return the page composite, suitable for laying out in the parent
-	 * @deprecated This method is no longer used. Applications now define
-	 *             workbench window contents in their application model.
+	 * @deprecated This method is no longer used. Applications now define workbench
+	 *             window contents in their application model.
 	 */
 	@Deprecated Control createPageComposite(Composite parent);
 
