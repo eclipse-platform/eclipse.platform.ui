@@ -17,25 +17,31 @@ import org.eclipse.osgi.util.ManifestElement;
 import org.osgi.framework.Constants;
 
 /**
- * A runtime library declared in a plug-in.  Libraries contribute elements to the search path.
- * These contributions are specified as a path to a directory or Jar file.  This path is always
- * considered to be relative to the containing plug-in.
+ * A runtime library declared in a plug-in. Libraries contribute elements to the
+ * search path. These contributions are specified as a path to a directory or
+ * Jar file. This path is always considered to be relative to the containing
+ * plug-in.
  * <p>
- * Libraries are typed.  The type is used to determine to which search path the library's
- * contribution should be added.  The valid types are: <code>CODE</code> and
- * <code>RESOURCE</code>.
+ * Libraries are typed. The type is used to determine to which search path the
+ * library's contribution should be added. The valid types are:
+ * <code>CODE</code> and <code>RESOURCE</code>.
  * </p>
  *
  * @see IPluginDescriptor#getRuntimeLibraries()
- * @deprecated
- * In Eclipse 3.0 the plug-in classpath representation was changed.  Clients of
- * <code>ILibrary</code> are directed to the headers associated with the relevant bundle.
- * In particular, the <code>Bundle-Classpath</code> header contains all available information
- * about the classpath of a plug-in.  Having retrieved the header, the {@link ManifestElement}
- * helper class can be used to parse the value and discover the individual
- * class path entries.  The various header attributes are defined in {@link Constants}.
- * <p>For example,</p>
- * <pre>
+ * @deprecated In Eclipse 3.0 the plug-in classpath representation was changed.
+ *             Clients of <code>ILibrary</code> are directed to the headers
+ *             associated with the relevant bundle. In particular, the
+ *             <code>Bundle-Classpath</code> header contains all available
+ *             information about the classpath of a plug-in. Having retrieved
+ *             the header, the {@link ManifestElement} helper class can be used
+ *             to parse the value and discover the individual class path
+ *             entries. The various header attributes are defined in
+ *             {@link Constants}.
+ *             <p>
+ *             For example,
+ *             </p>
+ *
+ *             <pre>
  *     String header = bundle.getHeaders().get(Constants.BUNDLE_CLASSPATH);
  *     ManifestElement[] elements = ManifestElement.parseHeader(
  *         Constants.BUNDLE_CLASSPATH, header);
@@ -43,20 +49,27 @@ import org.osgi.framework.Constants;
  *         return;
  *     elements[0].getValue();   // the jar/dir containing the code
  *     ...
- * </pre>
- * <p>
- * Note that this new structure does not include information on
- * which packages are exported or present in the listed classpath entries. This
- * information is no longer relevant.
- * </p><p>
- * See {@link IPluginDescriptor} for information on the relationship between plug-in
- * descriptors and bundles.
- * </p><p>
- * This interface must only be used by plug-ins
- * which explicitly require the org.eclipse.core.runtime.compatibility plug-in.
- * </p>
- *
+ *             </pre>
+ *             <p>
+ *             Note that this new structure does not include information on
+ *             which packages are exported or present in the listed classpath
+ *             entries. This information is no longer relevant.
+ *             </p>
+ *             <p>
+ *             See {@link IPluginDescriptor} for information on the relationship
+ *             between plug-in descriptors and bundles.
+ *             </p>
+ *             <p>
+ *             This interface must only be used by plug-ins which explicitly
+ *             require the org.eclipse.core.runtime.compatibility plug-in.
+ *             </p>
+ * @noextend This interface is not intended to be extended by clients.
+ * @noreference This interface is not intended to be referenced by clients.
  * @noimplement This interface is not intended to be implemented by clients.
+ *
+ *              This interface is planned to be deleted, see
+ *              https://bugs.eclipse.org/bugs/show_bug.cgi?id=544339
+ *
  */
 @Deprecated
 public interface ILibrary {

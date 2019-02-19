@@ -47,8 +47,14 @@ import org.osgi.framework.Constants;
  * This interface must only be used by plug-ins
  * which explicitly require the org.eclipse.core.runtime.compatibility plug-in.
  * </p>
- *
+ * 
+ * @noextend This interface is not intended to be extended by clients.
+ * @noreference This interface is not intended to be referenced by clients.
  * @noimplement This interface is not intended to be implemented by clients.
+ *
+ *              This interface is planned to be deleted, see
+ *              https://bugs.eclipse.org/bugs/show_bug.cgi?id=544339
+ *
  */
 @Deprecated
 public interface IPluginPrerequisite {

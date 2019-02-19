@@ -17,7 +17,13 @@ package org.eclipse.core.runtime;
  * As the org.eclipse.core.runtime.compatibility plug-in has been removed in
  * Eclipse 4.6 this interface is not supported anymore.
  *
+ * @noextend This interface is not intended to be extended by clients.
+ * @noreference This interface is not intended to be referenced by clients.
  * @noimplement This interface is not intended to be implemented by clients.
+ *
+ *              This interface is planned to be deleted, see
+ *              https://bugs.eclipse.org/bugs/show_bug.cgi?id=544339
+ *
  */
 @Deprecated
 public interface IPluginRegistry {
