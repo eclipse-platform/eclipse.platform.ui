@@ -26,8 +26,10 @@ import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.jface.layout.GridLayoutFactory;
 import org.eclipse.jface.preference.JFacePreferences;
+import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.JFaceColors;
 import org.eclipse.jface.resource.JFaceResources;
+import org.eclipse.jface.resource.LocalResourceManager;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.swt.SWT;
@@ -35,7 +37,6 @@ import org.eclipse.swt.custom.StackLayout;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.graphics.Color;
-import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
@@ -100,6 +101,7 @@ public final class EmptyWorkspaceHelper {
 	private ArrayList<IAction> projectWizardActions;
 	private IAction newProjectAction;
 	private IAction importAction;
+	private LocalResourceManager resourceManager;
 
 	/**
 	 * This method should be called at the point in time when the view's controls
@@ -171,6 +173,8 @@ public final class EmptyWorkspaceHelper {
 		}
 
 		emptyArea = new Composite(displayAreas, SWT.NONE);
+		resourceManager = new LocalResourceManager(JFaceResources.getResources(), emptyArea);
+
 		emptyArea.setBackgroundMode(SWT.INHERIT_FORCE);
 		GridLayoutFactory.fillDefaults().applyTo(emptyArea);
 		Composite infoArea = new Composite(emptyArea, SWT.NONE);
@@ -191,26 +195,28 @@ public final class EmptyWorkspaceHelper {
 		final Color linkColor = JFaceColors.getHyperlinkText(emptyArea.getDisplay());
 
 		for (IAction action : projectWizardActions) {
-			createOption(optionsArea, toolkit, linkColor, action, action.getImageDescriptor().createImage(),
-					action.getDescription());
+			createOption(optionsArea, toolkit, linkColor, action, action.getImageDescriptor(), action.getDescription());
 		}
-		createOption(optionsArea, toolkit, linkColor, newProjectAction,
-				newProjectAction.getImageDescriptor().createImage(),
+		createOption(optionsArea, toolkit, linkColor, newProjectAction, newProjectAction.getImageDescriptor(),
 				ResourceNavigatorMessages.EmptyWorkspaceHelper_createProject);
 		createOption(optionsArea, toolkit, linkColor, importAction,
-				WorkbenchImages.getImageDescriptor(IWorkbenchGraphicConstants.IMG_ETOOL_IMPORT_WIZ).createImage(),
+				WorkbenchImages.getImageDescriptor(IWorkbenchGraphicConstants.IMG_ETOOL_IMPORT_WIZ),
 				ResourceNavigatorMessages.EmptyWorkspaceHelper_importProjects);
 	}
 
 	private void recreateEmptyArea() {
+		disposeEmptyArea();
+
+		// re-read the project wizards and re-create the empty area
+		createEmptyArea(displayArea);
+	}
+
+	private void disposeEmptyArea() {
 		if (emptyArea != null) {
 			// throw away already existing empty area
 			emptyArea.dispose();
 			emptyArea = null;
 		}
-		// re-read the project wizards and re-create the empty area
-		createEmptyArea(displayArea);
-		switchTopControlRunnable.run();
 	}
 
 	private void readProjectWizardActions() {
@@ -238,9 +244,9 @@ public final class EmptyWorkspaceHelper {
 	}
 
 	private void createOption(Composite optionsArea, final FormToolkit toolkit, final Color linkColor, IAction action,
-			Image image, String text) {
+			ImageDescriptor imageDesc, String text) {
 		Label addLabel = new Label(optionsArea, SWT.NONE);
-		addLabel.setImage(image);
+		addLabel.setImage(resourceManager.createImage(imageDesc));
 		Hyperlink addLink = toolkit.createHyperlink(optionsArea, text, SWT.WRAP);
 		addLink.setForeground(linkColor);
 		addLink.addHyperlinkListener(new HyperlinkAdapter() {
@@ -270,14 +276,18 @@ public final class EmptyWorkspaceHelper {
 	};
 
 	private boolean switchTopControl() {
-		if (control == null || control.isDisposed() || emptyArea == null || emptyArea.isDisposed()) {
+		if (control == null || control.isDisposed()) {
 			return false;
 		}
 		Control oldTop = layout.topControl;
 		IProject[] projs = ResourcesPlugin.getWorkspace().getRoot().getProjects();
 		if (projs.length > 0) {
 			layout.topControl = control;
+			disposeEmptyArea();
 		} else {
+			if (emptyArea == null || emptyArea.isDisposed()) {
+				recreateEmptyArea();
+			}
 			layout.topControl = emptyArea;
 		}
 		return oldTop != layout.topControl;
@@ -321,7 +331,10 @@ public final class EmptyWorkspaceHelper {
 		@Override
 		public void perspectiveActivated(IWorkbenchPage page, IPerspectiveDescriptor perspective) {
 			readProjectWizardActions();
-			recreateEmptyArea();
+			if (emptyArea != null) {
+				recreateEmptyArea();
+				switchTopControlRunnable.run();
+			}
 		}
 
 		/**
@@ -339,8 +352,9 @@ public final class EmptyWorkspaceHelper {
 		 */
 		@Override
 		public void propertyChange(PropertyChangeEvent event) {
-			if (JFacePreferences.HYPERLINK_COLOR.equals(event.getProperty())) {
+			if (emptyArea != null && JFacePreferences.HYPERLINK_COLOR.equals(event.getProperty())) {
 				recreateEmptyArea();
+				switchTopControlRunnable.run();
 			}
 		}
 
