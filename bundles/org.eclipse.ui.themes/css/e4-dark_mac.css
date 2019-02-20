@@ -202,6 +202,5 @@ Form > LayoutComposite > LayoutComposite > Button,
 .MPart LayoutComposite > * > LayoutComposite > Section > LayoutComposite > Button,
 .MPartStack.active .MPart LayoutComposite > * > LayoutComposite > Section > LayoutComposite > Button {
     background-color: unset;
-    color: unset;
 }
 
