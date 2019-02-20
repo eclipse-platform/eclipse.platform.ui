@@ -72,9 +72,13 @@ public abstract class ControlFactory<F extends ControlFactory<?, ?>, C extends C
 	/**
 	 * Sets a {@link Supplier}, which should always create a new instance of the
 	 * layoutData in order to make this factory reusable, because each and every
-	 * control needs its own unique layoutData.
+	 * control needs its own unique layoutData.<br />
+	 * {@link #layoutData(Object)} is sufficient if only one control should be
+	 * created with this factory.
 	 *
 	 * <p>
+	 * Example:
+	 *
 	 * <pre>
 	 * GridDataFactory gridDataFactory = GridDataFactory.fillDefaults().grab(true, false);
 	 * ButtonFactory.newButton(SWT.PUSH).layoutData(gridDataFactory::create);
@@ -84,12 +88,14 @@ public abstract class ControlFactory<F extends ControlFactory<?, ?>, C extends C
 	 * or without GridDataFactory:
 	 *
 	 * <p>
+	 *
 	 * <pre>
 	 * ButtonFactory.newButton(SWT.PUSH).layoutData(() -> new GridData());
 	 * </pre>
 	 * </p>
 	 *
-	 * @param layoutDataSupplier {@link Supplier} creating a new layout data instance
+	 * @param layoutDataSupplier {@link Supplier} creating a new layout data
+	 *                           instance
 	 * @return this
 	 */
 	public F layoutData(Supplier<Object> layoutDataSupplier) {
@@ -99,14 +105,18 @@ public abstract class ControlFactory<F extends ControlFactory<?, ?>, C extends C
 
 	/**
 	 * Sets a layout object, which is used for the setLayout method of the control.
-	 *
+	 * This method can be used if only one control should be created with this
+	 * factory.<br />
+	 * Use {@link #layoutData(Supplier)} if several controls with the same instance
+	 * of factory should be created. LayoutData should be unique and they should not
+	 * be shared among controls.
 	 * <p>
+	 * Example:
 	 *
 	 * <pre>
 	 * GridData gd = new GridData(GridData.FILL_BOTH);
 	 * ButtonFactory.newButton(SWT.PUSH).layoutData(gd);
 	 * </pre>
-	 * </p>
 	 * </p>
 	 *
 	 * @param layoutData
