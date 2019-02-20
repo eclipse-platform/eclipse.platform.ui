@@ -322,7 +322,7 @@ public class StackRenderer extends LazyStackRenderer implements IPreferenceChang
 	@Inject
 	@Optional
 	void subscribeTopicUILabelChanged(@UIEventTopic(UIEvents.UILabel.TOPIC_ALL) Event event) {
-		MUIElement element = (MUIElement) event.getProperty(UIEvents.EventTags.ELEMENT);
+		Object element = event.getProperty(UIEvents.EventTags.ELEMENT);
 		if (!(element instanceof MPart))
 			return;
 
@@ -332,7 +332,7 @@ public class StackRenderer extends LazyStackRenderer implements IPreferenceChang
 		Object newValue = event.getProperty(UIEvents.EventTags.NEW_VALUE);
 
 		// is this a direct child of the stack?
-		if (element.getParent() != null && element.getParent().getRenderer() == StackRenderer.this) {
+		if (part.getParent() != null && part.getParent().getRenderer() == StackRenderer.this) {
 			CTabItem cti = findItemForPart(part);
 			if (cti != null) {
 				updateTab(cti, part, attName, newValue);
