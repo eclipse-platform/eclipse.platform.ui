@@ -38,8 +38,9 @@ import org.eclipse.e4.ui.model.application.ui.menu.MToolControl;
  */
 public interface IWorkbench {
 	/**
-	 * The argument for whether the persisted state should be cleared on startup <br>
+	 * The argument for whether the persisted state should be cleared on startup
 	 * <br>
+	 *
 	 * Value is: <code>clearPersistedState</code>
 	 */
 	public static final String CLEAR_PERSISTED_STATE = "clearPersistedState"; //$NON-NLS-1$
@@ -75,6 +76,9 @@ public interface IWorkbench {
 	public static final String MODEL_RESOURCE_HANDLER = "modelResourceHandler"; //$NON-NLS-1$
 	/**
 	 * The argument for whether the workbench should save and restore its state <br>
+	 *
+	 * Individual model elements can add it to their persistedState with the value
+	 * of "false" to declare that they should not be persisted. <br>
 	 * <br>
 	 * Value is: <code>persistState</code>
 	 */

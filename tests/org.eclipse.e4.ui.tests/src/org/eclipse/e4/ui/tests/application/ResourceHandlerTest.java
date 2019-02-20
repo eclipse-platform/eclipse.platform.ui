@@ -214,7 +214,7 @@ public class ResourceHandlerTest {
 		assertEquals(3, changedApplication.getChildren().size());
 
 		// set dynamic flag on window
-		dynamicWindow.getTransientData().put(IWorkbench.PERSIST_STATE, false);
+		dynamicWindow.getPersistedState().put(IWorkbench.PERSIST_STATE, "false");
 
 		Path unchangedOutput = Files.createTempFile(null, null);
 		unchangedOutput.toFile().deleteOnExit();

@@ -46,9 +46,11 @@ public class E4XMISave extends XMISaveImpl {
 	@Override
 	protected void saveElement(InternalEObject o, EStructuralFeature f) {
 		if (o instanceof MApplicationElement) {
-			Object persistedState = ((MApplicationElement) o).getTransientData().get(IWorkbench.PERSIST_STATE);
-			if (Boolean.FALSE.equals(persistedState))
+			MApplicationElement appElement = (MApplicationElement) o;
+			String persists = appElement.getPersistedState().get(IWorkbench.PERSIST_STATE);
+			if (persists != null && !Boolean.parseBoolean(persists)) {
 				return;
+			}
 		}
 
 		super.saveElement(o, f);
