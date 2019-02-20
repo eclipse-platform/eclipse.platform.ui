@@ -57,14 +57,17 @@ import org.eclipse.swt.widgets.Text;
  * <p>
  *
  * <pre>
- * ButtonFactory buttonFactory = WidgetFactory.button(SWT.PUSH).onSelect(event -> buttonClicked(event));
+ * GridDataFactory gridDataFactory = GridDataFactory.swtDefaults();
+ * ButtonFactory buttonFactory = WidgetFactory.button(SWT.PUSH).onSelect(event -> buttonClicked(event))
+ * 		.layout(gridDataFactory::create);
  * buttonFactory.text("Button 1").create(parent);
  * buttonFactory.text("Button 2").create(parent);
  * buttonFactory.text("Button 3").create(parent);
  * </pre>
  * <p>
  * The above example creates three buttons using the same instance of
- * ButtonFactory.
+ * ButtonFactory. Note the layout method. A Supplier is used to create unique
+ * GridData for every single button.
  * <p>
  */
 public final class WidgetFactory {
