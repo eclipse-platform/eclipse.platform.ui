@@ -60,7 +60,7 @@ public class TestUnitControlFactory extends AbstractFactoryTest {
 		Label label = TestFactory.newTest() //
 				.tooltip("toolTip") //
 				.enabled(false) //
-				.layoutData(GridData::new) //
+				.layoutData(new GridData(GridData.FILL_BOTH)) //
 				.font(font) //
 				.create(shell);
 
