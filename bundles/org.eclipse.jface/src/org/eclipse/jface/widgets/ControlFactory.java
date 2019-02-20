@@ -98,8 +98,28 @@ public abstract class ControlFactory<F extends ControlFactory<?, ?>, C extends C
 	}
 
 	/**
+	 * Sets a layout object, which is used for the setLayout method of the control.
+	 *
+	 * <p>
+	 *
+	 * <pre>
+	 * GridData gd = new GridData(GridData.FILL_BOTH);
+	 * ButtonFactory.newButton(SWT.PUSH).layoutData(gd);
+	 * </pre>
+	 * </p>
+	 * </p>
+	 *
+	 * @param layoutData
+	 * @return this
+	 */
+	public F layoutData(Object layoutData) {
+		addProperty(c -> c.setLayoutData(layoutData));
+		return cast(this);
+	}
+
+	/**
 	 * Sets the font.
-	 * 
+	 *
 	 * @param font
 	 *
 	 * @return this
