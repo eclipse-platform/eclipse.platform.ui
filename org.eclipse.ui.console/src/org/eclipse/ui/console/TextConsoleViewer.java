@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2018 IBM Corporation and others.
+ * Copyright (c) 2000, 2019 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -10,6 +10,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Paul Pazderski  - Bug 550620: reimplementation of style override (to fix existing and future problems with link styling)
  *******************************************************************************/
 
 package org.eclipse.ui.console;
@@ -377,11 +378,9 @@ public class TextConsoleViewer extends SourceViewer implements LineStyleListener
 			int offset = event.lineOffset;
 			int length = event.lineText.length();
 
-			StyleRange[] partitionerStyles = ((IConsoleDocumentPartitioner) document.getDocumentPartitioner()).getStyleRanges(event.lineOffset, event.lineText.length());
+			StyleRange[] partitionerStyles = ((IConsoleDocumentPartitioner) document.getDocumentPartitioner()).getStyleRanges(offset, length);
 			if (partitionerStyles != null) {
 				Collections.addAll(ranges, partitionerStyles);
-			} else {
-				ranges.add(new StyleRange(offset, length, null, null));
 			}
 
 			try {
@@ -393,7 +392,7 @@ public class TextConsoleViewer extends SourceViewer implements LineStyleListener
 						Position position = overlap[i];
 						StyleRange linkRange = new StyleRange(position.offset, position.length, color, null);
 						linkRange.underline = true;
-						override(ranges, linkRange);
+						overrideStyleRange(ranges, linkRange);
 					}
 				}
 			} catch (BadPositionCategoryException e) {
@@ -405,52 +404,92 @@ public class TextConsoleViewer extends SourceViewer implements LineStyleListener
 		}
 	}
 
-	private void override(List<StyleRange> ranges, StyleRange newRange) {
-		if (ranges.isEmpty()) {
-			ranges.add(newRange);
-			return;
-		}
+	/**
+	 * Apply new style range to list of existing style ranges. If the new style
+	 * range overlaps with any of the existing style ranges the new style overrides
+	 * the existing one in the affected range by splitting/adjusting the existing
+	 * ones.
+	 *
+	 * @param ranges   list of existing style ranges (will contain the new style
+	 *                 range when finished)
+	 * @param newRange new style range which should be combined with the existing
+	 *                 ranges
+	 */
+	private static void overrideStyleRange(List<StyleRange> ranges, StyleRange newRange) {
+		final int overrideStart = newRange.start;
+		final int overrideEnd = overrideStart + newRange.length;
+		int insertIndex = ranges.size();
+		for (int i = ranges.size() - 1; i >= 0; i--) {
+			final StyleRange existingRange = ranges.get(i);
+			final int existingStart = existingRange.start;
+			final int existingEnd = existingStart + existingRange.length;
 
-		int start = newRange.start;
-		int end = start + newRange.length;
-		for (int i = 0; i < ranges.size(); i++) {
-			StyleRange existingRange = ranges.get(i);
-			int rEnd = existingRange.start + existingRange.length;
-			if (end <= existingRange.start || start >= rEnd) {
-				continue;
+			// Find first position to insert where offset of new range is smaller then all
+			// offsets before. This way the list is still sorted by offset after insert if
+			// it was sorted before and it will not fail if list was not sorted.
+			if (overrideStart <= existingStart) {
+				insertIndex = i;
 			}
 
-			if (start < existingRange.start && end > existingRange.start) {
-				start = existingRange.start;
-			}
-
-			if (start >= existingRange.start && end <= rEnd) {
-				existingRange.length = start - existingRange.start;
-				ranges.add(++i, newRange);
-				if (end != rEnd) {
-					ranges.add(++i, new StyleRange(end, rEnd - end - 1, existingRange.foreground, existingRange.background));
+			// adjust the existing range if required
+			if (overrideStart <= existingStart) { // new range starts before or with existing
+				if (overrideEnd < existingStart) {
+					// new range lies before existing range. No overlapping.
+					// new range: ++++_________
+					// existing : ________=====
+					// . result : ++++____=====
+					// nothing to do
+				} else if (overrideEnd < existingEnd) {
+					// new range overlaps start of existing.
+					// new range: ++++++++_____
+					// existing : _____========
+					// . result : ++++++++=====
+					final int overlap = overrideEnd - existingStart;
+					existingRange.start += overlap;
+					existingRange.length -= overlap;
+				} else {
+					// new range completely overlaps existing.
+					// new range: ___++++++++++
+					// existing : ___======____
+					// . result : ___++++++++++
+					ranges.remove(i);
 				}
-				return;
-			} else if (start >= existingRange.start && start < rEnd) {
-				existingRange.length = start - existingRange.start;
-				ranges.add(++i, newRange);
-			} else if (end >= rEnd) {
-				ranges.remove(i);
-			} else {
-				ranges.add(++i, new StyleRange(end + 1, rEnd - end + 1, existingRange.foreground, existingRange.background));
+			} else { // new range starts inside or after existing
+				if (existingEnd < overrideStart) {
+					// new range lies after existing range. No overlapping.
+					// new range: _________++++
+					// existing : =====________
+					// . result : =====____++++
+					// nothing to do
+				} else if (overrideEnd >= existingEnd) {
+					// new range overlaps end of existing.
+					// new range: _____++++++++
+					// existing : ========_____
+					// . result : =====++++++++
+					existingRange.length -= existingEnd - overrideStart;
+				} else {
+					// new range lies inside existing range but not overrides all of it
+					// (and does not touch first or last offset of existing)
+					// new range: ____+++++____
+					// existing : =============
+					// . result : ====+++++====
+					final StyleRange clonedRange = (StyleRange) existingRange.clone();
+					existingRange.length = overrideStart - existingStart;
+					clonedRange.start = overrideEnd;
+					clonedRange.length = existingEnd - overrideEnd;
+					ranges.add(i + 1, clonedRange);
+				}
 			}
 		}
+		ranges.add(insertIndex, newRange);
 	}
 
 	/**
 	 * Binary search for the positions overlapping the given range
 	 *
-	 * @param offset
-	 *            the offset of the range
-	 * @param length
-	 *            the length of the range
-	 * @param positions
-	 *            the positions to search
+	 * @param offset    the offset of the range
+	 * @param length    the length of the range
+	 * @param positions the positions to search
 	 * @return the positions overlapping the given range, or <code>null</code>
 	 */
 	private Position[] findPosition(int offset, int length, Position[] positions) {
@@ -635,8 +674,7 @@ public class TextConsoleViewer extends SourceViewer implements LineStyleListener
 	 * Returns the hyperlink at the specified offset, or <code>null</code> if
 	 * none.
 	 *
-	 * @param offset
-	 *            offset at which a hyperlink has been requested
+	 * @param offset offset at which a hyperlink has been requested
 	 * @return hyperlink at the specified offset, or <code>null</code> if none
 	 */
 	public IHyperlink getHyperlink(int offset) {

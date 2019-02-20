@@ -376,10 +376,10 @@ public abstract class TextConsole extends AbstractConsole {
 	}
 
 	/**
-	 * Returns the hyperlink at the given offset of <code>null</code> if none.
+	 * Returns the hyperlink at the given offset or <code>null</code> if none.
 	 *
 	 * @param offset offset for which a hyperlink is requested
-	 * @return the hyperlink at the given offset of <code>null</code> if none
+	 * @return the hyperlink at the given offset or <code>null</code> if none
 	 */
 	public IHyperlink getHyperlink(int offset) {
 		try {
@@ -399,7 +399,8 @@ public abstract class TextConsole extends AbstractConsole {
 	/**
 	 * Binary search for the position at a given offset.
 	 *
-	 * @param offset the offset whose position should be found
+	 * @param offset    the offset whose position should be found
+	 * @param positions the positions list to search in
 	 * @return the position containing the offset, or <code>null</code>
 	 */
 	private Position findPosition(int offset, Position[] positions) {
