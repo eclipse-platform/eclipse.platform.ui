@@ -14,7 +14,6 @@
 
 package org.eclipse.e4.ui.internal.workbench;
 
-import java.util.Map;
 import org.eclipse.e4.ui.model.application.MApplicationElement;
 import org.eclipse.e4.ui.workbench.IWorkbench;
 import org.eclipse.emf.ecore.EStructuralFeature;
@@ -27,14 +26,6 @@ import org.eclipse.emf.ecore.xmi.impl.XMISaveImpl;
  * not be persisted without changing the underlying model.
  */
 public class E4XMISave extends XMISaveImpl {
-
-	public E4XMISave(Map<?, ?> options, XMLHelper helper, String encoding, String xmlVersion) {
-		super(options, helper, encoding, xmlVersion);
-	}
-
-	public E4XMISave(Map<?, ?> options, XMLHelper helper, String encoding) {
-		super(options, helper, encoding);
-	}
 
 	public E4XMISave(XMLHelper helper) {
 		super(helper);
