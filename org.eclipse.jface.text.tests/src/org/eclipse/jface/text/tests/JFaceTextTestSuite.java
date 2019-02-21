@@ -53,6 +53,7 @@ import org.eclipse.jface.text.tests.templates.persistence.TemplatePersistenceDat
 		WordRuleTest.class,
 
 		TemplatePersistenceDataTest.class,
+		CodeMiningTest.class
 })
 public class JFaceTextTestSuite {
 	// see @SuiteClasses
