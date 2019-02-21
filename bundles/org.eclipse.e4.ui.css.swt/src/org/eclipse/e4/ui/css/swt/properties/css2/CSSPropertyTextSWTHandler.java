@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2014 Angelo Zerr and others.
+ * Copyright (c) 2008, 2019 Angelo Zerr and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -64,7 +64,7 @@ public class CSSPropertyTextSWTHandler extends AbstractCSSPropertyTextHandler {
 		if (value.getCssValueType() == CSSValue.CSS_PRIMITIVE_VALUE) {
 			Color newColor = (Color) engine.convert(value, Color.class, widget
 					.getDisplay());
-			if (newColor == null || newColor.isDisposed()) {
+			if (newColor != null && newColor.isDisposed()) {
 				return;
 			}
 
