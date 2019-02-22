@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2018 IBM Corporation and others.
+ * Copyright (c) 2004, 2019 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -13,30 +13,26 @@
  *******************************************************************************/
 package org.eclipse.core.tests.harness;
 
+import static java.util.Arrays.asList;
+
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import org.eclipse.core.runtime.FileLocator;
+import org.eclipse.core.runtime.Platform;
 import org.junit.Assert;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.BundleException;
+import org.osgi.framework.Constants;
 import org.osgi.framework.FrameworkEvent;
 import org.osgi.framework.FrameworkListener;
-import org.osgi.framework.ServiceReference;
-import org.osgi.service.packageadmin.PackageAdmin;
+import org.osgi.framework.wiring.FrameworkWiring;
 
 public class BundleTestingHelper {
 
 	public static Bundle[] getBundles(BundleContext context, String symbolicName, String version) {
-		ServiceReference<PackageAdmin> packageAdminReference = context.getServiceReference(PackageAdmin.class);
-		if (packageAdminReference == null) {
-			throw new IllegalStateException("No package admin service found");
-		}
-		PackageAdmin packageAdmin = context.getService(packageAdminReference);
-		Bundle[] result = packageAdmin.getBundles(symbolicName, version);
-		context.ungetService(packageAdminReference);
-		return result;
+		return Platform.getBundles(symbolicName, version);
 	}
 
 	/**
@@ -57,25 +53,19 @@ public class BundleTestingHelper {
 	}
 
 	/**
-	 * Do PackageAdmin.refreshPackages() in a synchronous way.  After installing
+	 * Do FrameworkWiring.refreshPackages() in a synchronous way. After installing
 	 * all the requested bundles we need to do a refresh and want to ensure that
 	 * everything is done before returning.
-	 * @param bundles
-	 * TODO remove this since all we wanted was to resolve bundles, what is done by #resolveBundles in this class
+	 *
+	 * @param bundles TODO remove this since all we wanted was to resolve bundles,
+	 *                what is done by #resolveBundles in this class
 	 */
 	//copied from EclipseStarter
 	public static void refreshPackages(BundleContext context, Bundle[] bundles) {
 		if (bundles.length == 0) {
 			return;
 		}
-		ServiceReference<PackageAdmin> packageAdminRef = context.getServiceReference(PackageAdmin.class);
-		PackageAdmin packageAdmin = null;
-		if (packageAdminRef != null) {
-			packageAdmin = context.getService(packageAdminRef);
-			if (packageAdmin == null) {
-				return;
-			}
-		}
+		FrameworkWiring wiring = context.getBundle(Constants.SYSTEM_BUNDLE_LOCATION).adapt(FrameworkWiring.class);
 		// TODO this is such a hack it is silly.  There are still cases for race conditions etc
 		// but this should allow for some progress...
 		// (patch from John A.)
@@ -88,8 +78,7 @@ public class BundleTestingHelper {
 				}
 			}
 		};
-		context.addFrameworkListener(listener);
-		packageAdmin.refreshPackages(bundles);
+		wiring.refreshBundles(asList(bundles), listener);
 		synchronized (flag) {
 			while (!flag[0]) {
 				try {
@@ -99,21 +88,11 @@ public class BundleTestingHelper {
 				}
 			}
 		}
-		context.removeFrameworkListener(listener);
-		context.ungetService(packageAdminRef);
 	}
 
 	public static boolean  resolveBundles(BundleContext context, Bundle[] bundles) {
-		ServiceReference<PackageAdmin> packageAdminRef = context.getServiceReference(PackageAdmin.class);
-		PackageAdmin packageAdmin = null;
-		if (packageAdminRef != null) {
-			packageAdmin = context.getService(packageAdminRef);
-			if (packageAdmin == null) {
-				return false;
-			}
-		}
-		boolean result = packageAdmin.resolveBundles(bundles);
-		context.ungetService(packageAdminRef);
+		FrameworkWiring wiring = context.getBundle(Constants.SYSTEM_BUNDLE_LOCATION).adapt(FrameworkWiring.class);
+		boolean result = wiring.resolveBundles(asList(bundles));
 		return result;
 	}
 
