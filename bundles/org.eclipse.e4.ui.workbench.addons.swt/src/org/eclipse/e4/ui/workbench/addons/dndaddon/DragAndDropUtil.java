@@ -55,8 +55,32 @@ class DragAndDropUtil {
 	 */
 	public static Control findControl(Display displayToSearch, Point locationToFind) {
 		Shell[] shells = displayToSearch.getShells();
-
+		fixShellOrder(displayToSearch, shells);
 		return findControl(shells, locationToFind);
+	}
+
+	/**
+	 * Finds the active shell and moves it to the end of the given array, so that
+	 * findControl() will find the controls from the active shell first.
+	 */
+	private static void fixShellOrder(Display display, Shell[] shells) {
+		if (shells.length <= 1) {
+			return;
+		}
+		Shell activeShell = display.getActiveShell();
+		int lastIndex = shells.length - 1;
+		if (activeShell == null || shells[lastIndex] == activeShell) {
+			return;
+		}
+		// Find the index of the active shell and exchange last one with active
+		for (int i = 0; i < shells.length; i++) {
+			if (shells[i] == activeShell) {
+				Shell toMove = shells[lastIndex];
+				shells[i] = toMove;
+				shells[lastIndex] = activeShell;
+				break;
+			}
+		}
 	}
 
 	/**
@@ -73,7 +97,7 @@ class DragAndDropUtil {
 	 * @return the most specific Control that overlaps the given point, or null
 	 *         if none
 	 */
-	public static Control findControl(Control[] toSearch, Point locationToFind) {
+	private static Control findControl(Control[] toSearch, Point locationToFind) {
 		for (int idx = toSearch.length - 1; idx >= 0; idx--) {
 			Control next = toSearch[idx];
 
@@ -111,7 +135,7 @@ class DragAndDropUtil {
 	 *            location (in display coordinates)
 	 * @return the control at the given location
 	 */
-	public static Control findControl(Composite toSearch, Point locationToFind) {
+	private static Control findControl(Composite toSearch, Point locationToFind) {
 		Control[] children = toSearch.getChildren();
 
 		return findControl(children, locationToFind);
