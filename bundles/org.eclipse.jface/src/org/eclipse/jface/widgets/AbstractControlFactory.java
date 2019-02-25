@@ -14,7 +14,6 @@
 ******************************************************************************/
 package org.eclipse.jface.widgets;
 
-import java.util.function.Function;
 import java.util.function.Supplier;
 
 import org.eclipse.swt.graphics.Font;
@@ -36,7 +35,7 @@ public abstract class AbstractControlFactory<F extends AbstractControlFactory<?,
 	 * @param factoryClass
 	 * @param controlCreator
 	 */
-	protected AbstractControlFactory(Class<F> factoryClass, Function<Composite, C> controlCreator) {
+	protected AbstractControlFactory(Class<F> factoryClass, WidgetSupplier<C, Composite> controlCreator) {
 		super(factoryClass, controlCreator);
 	}
 

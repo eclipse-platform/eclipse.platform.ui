@@ -15,7 +15,6 @@ package org.eclipse.jface.widgets;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.function.Function;
 
 import org.eclipse.swt.widgets.Widget;
 
@@ -31,7 +30,7 @@ import org.eclipse.swt.widgets.Widget;
 public abstract class AbstractWidgetFactory<F extends AbstractWidgetFactory<?, ?, ?>, W extends Widget, P extends Widget> {
 	private Class<F> factoryClass;
 
-	private Function<P, W> widgetCreator;
+	private WidgetSupplier<W, P> widgetCreator;
 
 	private List<Property<W>> properties = new ArrayList<>();
 
@@ -39,7 +38,7 @@ public abstract class AbstractWidgetFactory<F extends AbstractWidgetFactory<?, ?
 	 * @param factoryClass
 	 * @param widgetCreator
 	 */
-	protected AbstractWidgetFactory(Class<F> factoryClass, Function<P, W> widgetCreator) {
+	protected AbstractWidgetFactory(Class<F> factoryClass, WidgetSupplier<W, P> widgetCreator) {
 		this.factoryClass = factoryClass;
 		this.widgetCreator = widgetCreator;
 	}
@@ -60,7 +59,7 @@ public abstract class AbstractWidgetFactory<F extends AbstractWidgetFactory<?, ?
 	 * @return this
 	 */
 	public final W create(P parent) {
-		W widget = widgetCreator.apply(parent);
+		W widget = widgetCreator.create(parent);
 		properties.forEach(p -> p.apply(widget));
 		return widget;
 	}

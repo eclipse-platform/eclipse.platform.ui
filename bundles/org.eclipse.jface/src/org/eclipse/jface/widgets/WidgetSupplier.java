@@ -1,5 +1,5 @@
 /*******************************************************************************
-* Copyright (c) 2018 SAP SE and others.
+* Copyright (c) 2019 SAP SE and others.
 *
 * This program and the accompanying materials
 * are made available under the terms of the Eclipse Public License 2.0
@@ -16,25 +16,25 @@ package org.eclipse.jface.widgets;
 import org.eclipse.swt.widgets.Widget;
 
 /**
- * Represents a property for widgets, like text, enabled state, image, ...
+ * Represents a supplier for widgets.
  *
- * Used to apply the property to the given widget in the {@link #apply(Widget)}
- * methods.
+ * Used to create a Widget (e.g. Button) in a given parent Widget (e.g.
+ * Composite)
  *
  * <p>
  * This is a <a href="package-summary.html">functional interface</a> whose
- * functional method is {@link #apply(Widget)}.
+ * functional method is {@link #create(Widget)}.
  * </p>
  *
- * @param <T> the type of the widget the property is used for
+ * @param <W> the type of the widget to be created
+ * @param <P> the type of the parent the widget should be created in
  */
 @FunctionalInterface
-public interface Property<T extends Widget> {
+public interface WidgetSupplier<W extends Widget, P extends Widget> {
 
 	/**
-	 * Called when the widget is created and the property should be applied.
-	 *
-	 * @param widget
+	 * @param parent widget
+	 * @return the created widget
 	 */
-	void apply(T widget);
+	W create(P parent);
 }

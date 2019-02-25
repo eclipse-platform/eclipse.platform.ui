@@ -1,7 +1,5 @@
 package org.eclipse.jface.widgets;
 
-import java.util.function.Function;
-
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Layout;
 
@@ -21,7 +19,7 @@ public abstract class AbstractCompositeFactory<F extends AbstractCompositeFactor
 	 * @param factoryClass
 	 * @param controlCreator
 	 */
-	protected AbstractCompositeFactory(Class<F> factoryClass, Function<Composite, C> controlCreator) {
+	protected AbstractCompositeFactory(Class<F> factoryClass, WidgetSupplier<C, Composite> controlCreator) {
 		super(factoryClass, controlCreator);
 	}
 
