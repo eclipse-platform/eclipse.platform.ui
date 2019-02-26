@@ -35,13 +35,24 @@ public class TextHandlerTest extends UITestCase {
 		IWorkbenchWindow window = openTestWindow();
 		TextControlView view = (TextControlView) window.getActivePage()
 				.showView(TextControlView.ID);
-
+		view.editableText.setFocus();
 		Clipboard clipboard = new Clipboard(window.getWorkbench().getDisplay());
 		try {
+			clipboard.clearContents();
+			processEvents();
+			view.updateEnabledState();
+			processEvents();
+
+			assertFalse(view.getCopyAction().isEnabled());
+			assertFalse(view.getCutAction().isEnabled());
+			assertFalse(view.getPasteAction().isEnabled());
+			assertFalse(view.getSelectAllAction().isEnabled());
+
 			clipboard.setContents(new Object[] { "http://www.google.ca" },
 					new Transfer[] { URLTransfer.getInstance() });
 			processEvents();
 			view.updateEnabledState();
+			processEvents();
 
 			assertFalse(view.getCopyAction().isEnabled());
 			assertFalse(view.getCutAction().isEnabled());
@@ -51,6 +62,8 @@ public class TextHandlerTest extends UITestCase {
 			view.editableText.setText("Hello");
 			processEvents();
 			view.updateEnabledState();
+			processEvents();
+
 			assertFalse(view.getCopyAction().isEnabled());
 			assertFalse(view.getCutAction().isEnabled());
 			assertFalse(view.getPasteAction().isEnabled());
@@ -59,6 +72,8 @@ public class TextHandlerTest extends UITestCase {
 			view.editableText.setSelection(0, 3);
 			processEvents();
 			view.updateEnabledState();
+			processEvents();
+
 			assertTrue(view.getCopyAction().isEnabled());
 			assertTrue(view.getCutAction().isEnabled());
 			assertFalse(view.getPasteAction().isEnabled());
@@ -68,6 +83,7 @@ public class TextHandlerTest extends UITestCase {
 					new Transfer[] { TextTransfer.getInstance() });
 			processEvents();
 			view.updateEnabledState();
+			processEvents();
 
 			assertTrue(view.getCopyAction().isEnabled());
 			assertTrue(view.getCutAction().isEnabled());
@@ -94,6 +110,7 @@ public class TextHandlerTest extends UITestCase {
 			view.nonEditableText.setFocus();
 			processEvents();
 			view.updateEnabledState();
+			processEvents();
 
 			assertFalse(view.getCopyAction().isEnabled());
 			assertFalse(view.getCutAction().isEnabled());
@@ -103,6 +120,8 @@ public class TextHandlerTest extends UITestCase {
 			view.nonEditableText.setText("Hello");
 			processEvents();
 			view.updateEnabledState();
+			processEvents();
+
 			assertFalse(view.getCopyAction().isEnabled());
 			assertFalse(view.getCutAction().isEnabled());
 			assertFalse(view.getPasteAction().isEnabled());
@@ -111,6 +130,8 @@ public class TextHandlerTest extends UITestCase {
 			view.nonEditableText.setSelection(0, 3);
 			processEvents();
 			view.updateEnabledState();
+			processEvents();
+
 			assertTrue(view.getCopyAction().isEnabled());
 			assertFalse(view.getCutAction().isEnabled());
 			assertFalse(view.getPasteAction().isEnabled());
@@ -120,6 +141,7 @@ public class TextHandlerTest extends UITestCase {
 					new Transfer[] { TextTransfer.getInstance() });
 			processEvents();
 			view.updateEnabledState();
+			processEvents();
 
 			assertTrue(view.getCopyAction().isEnabled());
 			assertFalse(view.getCutAction().isEnabled());
