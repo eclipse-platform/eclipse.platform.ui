@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2018 IBM Corporation and others.
+ * Copyright (c) 2000, 2019 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -240,6 +240,7 @@ public class ConsoleDocumentAdapter implements IDocumentAdapter, IDocumentListen
 
 	@Override
 	public synchronized void setText(String text) {
+		document.set(text == null ? "" : text); //$NON-NLS-1$
 		TextChangedEvent changeEvent = new TextChangedEvent(this);
 		for (TextChangeListener listener : textChangeListeners) {
 			listener.textSet(changeEvent);

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2017 IBM Corporation and others.
+ * Copyright (c) 2009, 2019 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -16,6 +16,7 @@
 package org.eclipse.debug.tests;
 
 import org.eclipse.debug.tests.breakpoint.BreakpointOrderingTests;
+import org.eclipse.debug.tests.console.ConsoleDocumentAdapterTests;
 import org.eclipse.debug.tests.console.ConsoleManagerTests;
 import org.eclipse.debug.tests.console.ConsoleTests;
 import org.eclipse.debug.tests.launching.AcceleratorSubstitutionTests;
@@ -107,6 +108,7 @@ public class AutomatedSuite extends TestSuite {
 		addTest(new TestSuite(StepFiltersTests.class));
 
 		// Console view
+		addTest(new TestSuite(ConsoleDocumentAdapterTests.class));
 		addTest(new TestSuite(ConsoleManagerTests.class));
 		addTest(new TestSuite(ConsoleTests.class));
 
