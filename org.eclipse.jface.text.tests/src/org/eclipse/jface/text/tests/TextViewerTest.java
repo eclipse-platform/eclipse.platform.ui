@@ -120,7 +120,7 @@ public class TextViewerTest {
 		Event ctrlEndEvent = new Event();
 		ctrlEndEvent.widget = viewer.getTextWidget();
 		ctrlEndEvent.keyCode = SWT.END;
-		ctrlEndEvent.stateMask = SWT.CONTROL;
+		ctrlEndEvent.stateMask = SWT.MOD1;
 		ctrlEndEvent.type = SWT.KeyDown;
 		ctrlEndEvent.doit = true;
 		viewer.getTextWidget().getDisplay().post(ctrlEndEvent);
@@ -130,7 +130,7 @@ public class TextViewerTest {
 		Event ctrlHomeEvent = new Event();
 		ctrlHomeEvent.widget = viewer.getTextWidget();
 		ctrlHomeEvent.keyCode = SWT.HOME;
-		ctrlHomeEvent.stateMask = SWT.CONTROL;
+		ctrlHomeEvent.stateMask = SWT.MOD1;
 		ctrlHomeEvent.type = SWT.KeyDown;
 		ctrlHomeEvent.doit = true;
 		viewer.getTextWidget().getDisplay().post(ctrlHomeEvent);
