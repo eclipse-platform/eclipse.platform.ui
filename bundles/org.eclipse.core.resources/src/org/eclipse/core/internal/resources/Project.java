@@ -420,14 +420,6 @@ public class Project extends Container implements IProject {
 	}
 
 	@Override
-	@Deprecated
-	public IPath getPluginWorkingLocation(IPluginDescriptor plugin) {
-		if (plugin == null)
-			return null;
-		return getWorkingLocation(plugin.getUniqueIdentifier());
-	}
-
-	@Override
 	public IProject getProject() {
 		return this;
 	}
