@@ -12,6 +12,7 @@
  *   Sopot Cela, Mickael Istria (Red Hat Inc.) - initial implementation
  *   Lucas Bullen (Red Hat Inc.) - Bug 508829 custom reconciler support
  *   Angelo Zerr <angelo.zerr@gmail.com> - Bug 538111 - [generic editor] Extension point for ICharacterPairMatcher
+ *   Bin Zou <zoubin1011@gmail.com> - Bug 544867 - [Generic Editor] ExtensionBasedTextEditor does not allow its subclasses to setKeyBindingScopes
  *******************************************************************************/
 package org.eclipse.ui.internal.genericeditor;
 
@@ -57,9 +58,12 @@ public class ExtensionBasedTextEditor extends TextEditor {
 		setSourceViewerConfiguration(configuration);
 	}
 
+	/**
+	 * Initializes the key binding scopes of this generic code editor.
+	 */
 	@Override
-	protected void setKeyBindingScopes(String[] scopes) {
-		super.setKeyBindingScopes(new String[] { CONTEXT_ID });
+	protected void initializeKeyBindingScopes() {
+		setKeyBindingScopes(new String[] { CONTEXT_ID });
 	}
 
 	@Override
