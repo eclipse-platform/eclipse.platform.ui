@@ -195,7 +195,11 @@ public final class EmptyWorkspaceHelper {
 		final Color linkColor = JFaceColors.getHyperlinkText(emptyArea.getDisplay());
 
 		for (IAction action : projectWizardActions) {
-			createOption(optionsArea, toolkit, linkColor, action, action.getImageDescriptor(), action.getDescription());
+			String description = action.getDescription();
+			if (description == null || description.isEmpty()) {
+				description = action.getText();
+			}
+			createOption(optionsArea, toolkit, linkColor, action, action.getImageDescriptor(), description);
 		}
 		createOption(optionsArea, toolkit, linkColor, newProjectAction, newProjectAction.getImageDescriptor(),
 				ResourceNavigatorMessages.EmptyWorkspaceHelper_createProject);
