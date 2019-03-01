@@ -310,6 +310,9 @@ public class DefaultDetailPane extends AbstractDetailPane implements IDetailPane
 								}
 								int topIndex = -1;
 								StyledText styledText = fSourceViewer.getTextWidget();
+								if (styledText == null) { // fSourceViewer is disposed
+									return Status.OK_STATUS;
+								}
 								Point selection = null;
 								// keep scrolling state in details pane in case
 								// of longer string over multiple lines
