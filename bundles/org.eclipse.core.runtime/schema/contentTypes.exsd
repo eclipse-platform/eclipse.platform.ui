@@ -9,7 +9,7 @@
                &lt;p&gt;
 &lt;b&gt;WARNING: This extension point is DEPRECATED.&lt;/b&gt;&lt;br&gt;
 Do not use this extension point, it will be removed in future versions of this product.
-Instead, use the extension point &lt;a href=&quot;org.eclipse.core.contenttype.contentTypes.html&quot;&gt;org.eclipse.core.contenttype.contentTypes&lt;/a&gt;
+Instead, use the extension point &lt;a href=&quot;org_eclipse_core_contenttype_contentTypes.html&quot;&gt;org.eclipse.core.contenttype.contentTypes&lt;/a&gt;
 &lt;/p&gt;
 The content types extension point allows plug-ins to contribute to the platform content type catalog. There are two forms of contributions: &lt;cite&gt;content types&lt;/cite&gt; and &lt;cite&gt;file associations&lt;/cite&gt;.
 &lt;ul&gt;
@@ -357,7 +357,7 @@ Also, the org.eclipse.core.runtime plug-in provides ready-to-use implementations
          <meta.section type="copyright"/>
       </appinfo>
       <documentation>
-         Copyright (c) 2004, 2008 IBM Corporation and others.&lt;br&gt;
+         Copyright (c) 2004, 2019 IBM Corporation and others.&lt;br&gt;
 
 This program and the accompanying materials are made 
 available under the terms of the Eclipse Public License 2.0 which 
