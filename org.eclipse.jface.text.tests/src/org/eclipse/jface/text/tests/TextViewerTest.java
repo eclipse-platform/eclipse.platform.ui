@@ -25,7 +25,10 @@ import org.junit.Test;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.FillLayout;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
 
 import org.eclipse.jface.text.Document;
@@ -117,23 +120,29 @@ public class TextViewerTest {
 	}
 
 	public static void ctrlEnd(ITextViewer viewer) {
-		Event ctrlEndEvent = new Event();
-		ctrlEndEvent.widget = viewer.getTextWidget();
-		ctrlEndEvent.keyCode = SWT.END;
-		ctrlEndEvent.stateMask = SWT.MOD1;
-		ctrlEndEvent.type = SWT.KeyDown;
-		ctrlEndEvent.doit = true;
-		viewer.getTextWidget().getDisplay().post(ctrlEndEvent);
+		postKeyEvent(viewer.getTextWidget(), SWT.END, SWT.CTRL, SWT.KeyDown);
 	}
 
 	public static void ctrlHome(ITextViewer viewer) {
-		Event ctrlHomeEvent = new Event();
-		ctrlHomeEvent.widget = viewer.getTextWidget();
-		ctrlHomeEvent.keyCode = SWT.HOME;
-		ctrlHomeEvent.stateMask = SWT.MOD1;
-		ctrlHomeEvent.type = SWT.KeyDown;
-		ctrlHomeEvent.doit = true;
-		viewer.getTextWidget().getDisplay().post(ctrlHomeEvent);
+		postKeyEvent(viewer.getTextWidget(), SWT.HOME, SWT.CTRL, SWT.KeyDown);
+	}
+
+	private static void postKeyEvent(Control widget, int keyCode, int stateMask, int type) {
+		Display display= widget.getDisplay();
+		widget.setFocus();
+		DisplayHelper.driveEventQueue(display);
+		Event event = new Event();
+		event.widget = widget;
+		event.keyCode = keyCode;
+		event.stateMask = stateMask;
+		event.type = type;
+		event.doit = true;
+		// display.post(event) seem not always work, see bug 541415
+		Listener[] listeners= widget.getListeners(type);
+		for (Listener listener : listeners) {
+			listener.handleEvent(event);
+		}
+		DisplayHelper.driveEventQueue(display);
 	}
 
 

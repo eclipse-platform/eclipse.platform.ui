@@ -121,7 +121,7 @@ public abstract class DisplayHelper {
 	 * @return if <code>display.readAndDispatch</code> returned
 	 *         <code>true</code> at least once
 	 */
-	private static boolean driveEventQueue(Display display) {
+	public static boolean driveEventQueue(Display display) {
 		boolean events= false;
 		while (display.readAndDispatch()) {
 			events= true;
