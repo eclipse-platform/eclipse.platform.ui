@@ -17,6 +17,7 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
 
+import org.eclipse.jface.text.tests.contentassist.AsyncContentAssistTest;
 import org.eclipse.jface.text.tests.reconciler.AbstractReconcilerTest;
 import org.eclipse.jface.text.tests.rules.DefaultPartitionerTest;
 import org.eclipse.jface.text.tests.rules.DefaultPartitionerZeroLengthTest;
@@ -43,6 +44,7 @@ import org.eclipse.jface.text.tests.templates.persistence.TemplatePersistenceDat
 		TextViewerUndoManagerTest.class,
 		DefaultPairMatcherTest.class,
 		DefaultPairMatcherTest2.class,
+		AsyncContentAssistTest.class,
 
 		AbstractReconcilerTest.class,
 

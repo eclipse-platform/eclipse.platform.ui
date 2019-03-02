@@ -7,6 +7,7 @@ Bundle-Vendor: %Plugin.providerName
 Bundle-Localization: plugin
 Export-Package: 
  org.eclipse.jface.text.tests,
+ org.eclipse.jface.text.tests.contentassist,
  org.eclipse.jface.text.tests.reconciler,
  org.eclipse.jface.text.tests.rules,
  org.eclipse.jface.text.tests.source,

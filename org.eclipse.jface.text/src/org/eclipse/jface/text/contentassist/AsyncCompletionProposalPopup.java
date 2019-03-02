@@ -15,10 +15,8 @@ package org.eclipse.jface.text.contentassist;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
@@ -26,6 +24,7 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Consumer;
 
 import org.eclipse.osgi.util.NLS;
@@ -346,18 +345,25 @@ class AsyncCompletionProposalPopup extends CompletionProposalPopup {
 		List<CompletableFuture<List<ICompletionProposal>>> futures = new ArrayList<>(processors.size());
 		for (IContentAssistProcessor processor : processors) {
 			futures.add(CompletableFuture.supplyAsync(() -> {
-				final Collection<List<ICompletionProposal>> result= new LinkedList<>();
+				AtomicReference<List<ICompletionProposal>> result= new AtomicReference<>();
 				SafeRunner.run(new ISafeRunnable() {
 					@Override
 					public void run() throws Exception {
 						ICompletionProposal[] proposals= processor.computeCompletionProposals(fViewer, invocationOffset);
 						if (proposals == null) {
-							result.add(Collections.emptyList());
+							result.set(Collections.emptyList());
+						} else {
+							result.set(Arrays.asList(proposals));
 						}
-						result.add(Arrays.asList(proposals));
 					}
 				});
-				return result.iterator().next();
+				List<ICompletionProposal> proposals= result.get();
+				if (proposals == null) { // an error occurred during computeCompletionProposal,
+					// possible improvement: give user feedback by returning an error "proposal" shown
+					// in completion popup and providing details
+					return Collections.emptyList();
+				}
+				return proposals;
 			}));
 		}
 		return futures;
