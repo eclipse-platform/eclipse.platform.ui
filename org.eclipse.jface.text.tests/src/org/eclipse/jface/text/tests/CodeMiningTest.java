@@ -27,6 +27,8 @@ import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 
+import org.eclipse.jface.util.Util;
+
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.Document;
 import org.eclipse.jface.text.IDocument;
@@ -108,6 +110,10 @@ public class CodeMiningTest {
 
 	@Test
 	public void testCodeMiningCtrlHome() throws BadLocationException {
+		if(Util.isMac()) {
+			// See bug 541415. For whatever reason, this shortcut doesn't work on Mac
+			return;
+		}
 		DelayedEchoCodeMiningProvider.DELAY = 500;
 		fViewer.getDocument().set(TextViewerTest.generate5000Lines());
 		Assert.assertTrue(new DisplayHelper() {
@@ -148,6 +154,10 @@ public class CodeMiningTest {
 
 	@Test
 	public void testCodeMiningCtrlEnd() throws BadLocationException {
+		if(Util.isMac()) {
+			// See bug 541415. For whatever reason, this shortcut doesn't work on Mac
+			return;
+		}
 		fViewer.getDocument().set(TextViewerTest.generate5000Lines());
 		Assert.assertTrue(new DisplayHelper() {
 			@Override

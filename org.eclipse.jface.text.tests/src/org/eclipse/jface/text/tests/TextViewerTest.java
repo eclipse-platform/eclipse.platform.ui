@@ -31,6 +31,8 @@ import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
 
+import org.eclipse.jface.util.Util;
+
 import org.eclipse.jface.text.Document;
 import org.eclipse.jface.text.ITextViewer;
 import org.eclipse.jface.text.TextViewer;
@@ -70,6 +72,10 @@ public class TextViewerTest {
 
 	@Test
 	public void testCtrlHomeViewportListener() {
+		if(Util.isMac()) {
+			// See bug 541415. For whatever reason, this shortcut doesn't work on Mac
+			return;
+		}
 		Shell shell= new Shell();
 		try {
 			shell.setLayout(new FillLayout());
@@ -96,6 +102,10 @@ public class TextViewerTest {
 
 	@Test
 	public void testCtrlEndViewportListener() {
+		if(Util.isMac()) {
+			// See bug 541415. For whatever reason, this shortcut doesn't work on Mac
+			return;
+		}
 		Shell shell= new Shell();
 		try {
 			shell.setLayout(new FillLayout());
