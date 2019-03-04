@@ -373,6 +373,13 @@ If omitted and the action appears in the toolbar, the Workbench will use a place
                </restriction>
             </simpleType>
          </attribute>
+         <attribute name="initialEnabled" type="boolean">
+            <annotation>
+               <documentation>
+                  The initial enablement state of this action until the plugin is loaded and the delegate can provide its real enablement state. Is overwritten by enablesFor or enablement tag if specified. Defaults to true if omitted.
+               </documentation>
+            </annotation>
+         </attribute>
       </complexType>
    </element>
 
@@ -577,7 +584,7 @@ extensions are also added automatically to the window.
          <meta.section type="copyright"/>
       </appInfo>
       <documentation>
-         Copyright (c) 2000, 2011 IBM Corporation and others.&lt;br&gt;
+         Copyright (c) 2000, 2019 IBM Corporation and others.&lt;br&gt;
 
 This program and the accompanying materials are made
 available under the terms of the Eclipse Public License 2.0 which accompanies

@@ -94,6 +94,13 @@ public abstract class PluginAction extends Action
 
 		pluginId = configElement.getContributor().getName();
 
+		// read initialEnabled attribute
+		String initialEnabledAttr = configElement.getAttribute(IWorkbenchRegistryConstants.ATT_INITIAL_ENABLED);
+		if (initialEnabledAttr != null) {
+			boolean initialEnabled = Boolean.parseBoolean(initialEnabledAttr);
+			setEnabled(initialEnabled);
+		}
+
 		// Read enablement declaration.
 		if (configElement.getAttribute(IWorkbenchRegistryConstants.ATT_ENABLES_FOR) != null) {
 			enabler = new SelectionEnabler(configElement);
