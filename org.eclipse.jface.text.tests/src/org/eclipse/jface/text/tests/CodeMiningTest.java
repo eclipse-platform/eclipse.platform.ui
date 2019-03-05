@@ -17,6 +17,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import org.junit.After;
 import org.junit.Assert;
+import org.junit.Assume;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -110,10 +111,7 @@ public class CodeMiningTest {
 
 	@Test
 	public void testCodeMiningCtrlHome() throws BadLocationException {
-		if(Util.isMac()) {
-			// See bug 541415. For whatever reason, this shortcut doesn't work on Mac
-			return;
-		}
+		Assume.assumeFalse("See bug 541415. For whatever reason, this shortcut doesn't work on Mac", Util.isMac());
 		DelayedEchoCodeMiningProvider.DELAY = 500;
 		fViewer.getDocument().set(TextViewerTest.generate5000Lines());
 		Assert.assertTrue(new DisplayHelper() {
@@ -154,10 +152,7 @@ public class CodeMiningTest {
 
 	@Test
 	public void testCodeMiningCtrlEnd() throws BadLocationException {
-		if(Util.isMac()) {
-			// See bug 541415. For whatever reason, this shortcut doesn't work on Mac
-			return;
-		}
+		Assume.assumeFalse("See bug 541415. For whatever reason, this shortcut doesn't work on Mac", Util.isMac());
 		fViewer.getDocument().set(TextViewerTest.generate5000Lines());
 		Assert.assertTrue(new DisplayHelper() {
 			@Override

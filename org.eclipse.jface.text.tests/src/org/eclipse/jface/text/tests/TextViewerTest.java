@@ -20,6 +20,7 @@ import static org.junit.Assert.assertTrue;
 
 import java.util.concurrent.atomic.AtomicBoolean;
 
+import org.junit.Assume;
 import org.junit.Rule;
 import org.junit.Test;
 
@@ -72,10 +73,7 @@ public class TextViewerTest {
 
 	@Test
 	public void testCtrlHomeViewportListener() {
-		if(Util.isMac()) {
-			// See bug 541415. For whatever reason, this shortcut doesn't work on Mac
-			return;
-		}
+		Assume.assumeFalse("See bug 541415. For whatever reason, this shortcut doesn't work on Mac", Util.isMac());
 		Shell shell= new Shell();
 		try {
 			shell.setLayout(new FillLayout());
@@ -102,10 +100,7 @@ public class TextViewerTest {
 
 	@Test
 	public void testCtrlEndViewportListener() {
-		if(Util.isMac()) {
-			// See bug 541415. For whatever reason, this shortcut doesn't work on Mac
-			return;
-		}
+		Assume.assumeFalse("See bug 541415. For whatever reason, this shortcut doesn't work on Mac", Util.isMac());
 		Shell shell= new Shell();
 		try {
 			shell.setLayout(new FillLayout());
