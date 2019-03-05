@@ -1262,6 +1262,12 @@
             id="org.eclipse.ui.activeContextInfo"
             name="%activeContextInfo.name">
       </command>
+      <command
+            categoryId="org.eclipse.ui.category.window"
+            description="%command.showKeysToggle.description"
+            id="org.eclipse.ui.toggleShowKeys"
+            name="%command.showKeysToggle.name">
+      </command>
    </extension>
    
    <extension
@@ -1801,6 +1807,24 @@
       		name="org.eclipse.ui.workbench.ACTIVE_TAB_HIGHLIGHT" value="false">
 		 </data>
       </theme>
+      <colorDefinition
+            categoryId="org.eclipse.ui.workbenchMisc"
+            id="org.eclipse.ui.showkeys.foregroundColor"
+            label="%Color.showKeysForeground"
+            value="COLOR_WHITE">
+         <description>
+            %Color.showKeysForegroundDesc
+         </description>
+      </colorDefinition>
+      <colorDefinition
+            categoryId="org.eclipse.ui.workbenchMisc"
+            id="org.eclipse.ui.showkeys.backgroundColor"
+            label="%Color.showKeysBackground"
+            value="66,66,66">
+         <description>
+            %Color.showKeysBackgroundDesc
+         </description>
+      </colorDefinition>
    </extension>
    <extension
          point="org.eclipse.core.runtime.preferences">

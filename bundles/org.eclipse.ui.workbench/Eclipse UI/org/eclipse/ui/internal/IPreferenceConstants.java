@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2018 IBM Corporation and others.
+ * Copyright (c) 2000, 2019 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -16,6 +16,7 @@
  *     		Implemented workbench auto-save to correctly restore state in case of crash.
  *     Denis Zygann <d.zygann@web.de> - Bug 330453
  *     Axel Richard <axel.richard@obeo.fr> - Bug 486644
+ *     Christian Georgi (SAP SE) - Bug 540440
  *******************************************************************************/
 
 package org.eclipse.ui.internal;
@@ -283,5 +284,25 @@ public interface IPreferenceConstants {
 	 * @since 3.8
 	 */
 	String SAVE_AUTOMATICALLY_INTERVAL = "SAVE_AUTOMATICALLY_INTERVAL"; //$NON-NLS-1$
+
+	/**
+	 * Preference for whether pressed command keys are to be visualized
+	 * <p>
+	 * The boolean default value for this preference is: <code>false</code>.
+	 * </p>
+	 *
+	 * @since 3.115
+	 */
+	String SHOW_KEYS_ENABLED = "showCommandKeys"; //$NON-NLS-1$
+
+	/**
+	 * Preference for the time (in ms) after the command keys UI is to be closed
+	 * <p>
+	 * The integer default value for this preference is: <code>3000</code>.
+	 * </p>
+	 *
+	 * @since 3.115
+	 */
+	String SHOW_KEYS_TIME_TO_CLOSE = "showCommandKeys_timeToClose"; //$NON-NLS-1$
 
 }

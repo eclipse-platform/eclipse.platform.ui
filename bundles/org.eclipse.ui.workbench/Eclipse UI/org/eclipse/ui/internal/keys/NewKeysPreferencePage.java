@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2018 IBM Corporation and others.
+ * Copyright (c) 2005, 2019 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -15,6 +15,7 @@
  *     		Bug 226342 - [KeyBindings] Keys preference page conflict table is hard to read
  *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 440810, 491393
  *     Cornel Izbasa <cizbasa@info.uvt.ro> - Bug 442215
+ *     Christian Georgi (SAP SE) - Bug 540440
  *******************************************************************************/
 
 package org.eclipse.ui.internal.keys;
@@ -39,6 +40,8 @@ import org.eclipse.jface.bindings.keys.KeyStroke;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.layout.GridLayoutFactory;
+import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.jface.resource.DeviceResourceException;
 import org.eclipse.jface.resource.ImageDescriptor;
@@ -66,6 +69,7 @@ import org.eclipse.swt.events.FocusEvent;
 import org.eclipse.swt.events.FocusListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.FontMetrics;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Image;
@@ -90,6 +94,7 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.commands.ICommandImageService;
 import org.eclipse.ui.commands.ICommandService;
 import org.eclipse.ui.dialogs.FilteredTree;
+import org.eclipse.ui.internal.IPreferenceConstants;
 import org.eclipse.ui.internal.IWorkbenchHelpContextIds;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.keys.model.BindingElement;
@@ -102,6 +107,8 @@ import org.eclipse.ui.internal.keys.model.KeyController;
 import org.eclipse.ui.internal.keys.model.ModelElement;
 import org.eclipse.ui.internal.keys.model.SchemeElement;
 import org.eclipse.ui.internal.keys.model.SchemeModel;
+import org.eclipse.ui.internal.keys.show.ShowKeysToggleHandler;
+import org.eclipse.ui.internal.keys.show.ShowKeysUI;
 import org.eclipse.ui.internal.misc.Policy;
 import org.eclipse.ui.internal.util.Util;
 import org.eclipse.ui.keys.IBindingService;
@@ -184,9 +191,13 @@ public class NewKeysPreferencePage extends PreferencePage implements IWorkbenchP
 
 	private TableViewer conflictViewer;
 
+	private Button fShowCommandKey;
+
 	private ICommandImageService commandImageService;
 
 	private ICommandService commandService;
+
+	private IWorkbench fWorkbench;
 
 	/**
 	 * A FilteredTree that provides a combo which is used to organize and display
@@ -467,6 +478,7 @@ public class NewKeysPreferencePage extends PreferencePage implements IWorkbenchP
 		createTree(page);
 		createTreeControls(page);
 		createDataControls(page);
+		createShowKeysControls(page);
 
 		fill();
 
@@ -1037,8 +1049,25 @@ public class NewKeysPreferencePage extends PreferencePage implements IWorkbenchP
 		keyController.addPropertyChangeListener(listener);
 	}
 
+	private void createShowKeysControls(Composite parent) {
+		ShowKeysUI showKeysUI = new ShowKeysUI(fWorkbench, getPreferenceStore());
+
+		final Composite controls = new Composite(parent, SWT.NONE);
+		GridLayoutFactory.fillDefaults().numColumns(1).applyTo(controls);
+		fShowCommandKey = new Button(controls, SWT.CHECK);
+		fShowCommandKey.setText(NewKeysPreferenceMessages.ShowCommandKeys_Text);
+		fShowCommandKey.setSelection(getPreferenceStore().getBoolean(IPreferenceConstants.SHOW_KEYS_ENABLED));
+		fShowCommandKey.addSelectionListener(SelectionListener.widgetSelectedAdapter((e) -> {
+			// show a preview of the shortcut popup
+			if (fShowCommandKey.getSelection()) {
+				showKeysUI.openForPreview(ShowKeysToggleHandler.COMMAND_ID, null);
+			}
+		}));
+	}
+
 	@Override
 	public void init(IWorkbench workbench) {
+		fWorkbench = workbench;
 		keyController = new KeyController();
 		keyController.init(workbench);
 
@@ -1071,8 +1100,15 @@ public class NewKeysPreferencePage extends PreferencePage implements IWorkbenchP
 	@Override
 	public boolean performOk() {
 		keyController.saveBindings(fBindingService);
+		getPreferenceStore().setValue(IPreferenceConstants.SHOW_KEYS_ENABLED, fShowCommandKey.getSelection());
+
 		saveState(getDialogSettings());
 		return super.performOk();
+	}
+
+	@Override
+	protected IPreferenceStore doGetPreferenceStore() {
+		return WorkbenchPlugin.getDefault().getPreferenceStore();
 	}
 
 	/**
@@ -1123,6 +1159,9 @@ public class NewKeysPreferencePage extends PreferencePage implements IWorkbenchP
 				Tracing.printTrace(TRACING_COMPONENT, "performDefaults:model in " + elapsedTime + "ms"); //$NON-NLS-1$ //$NON-NLS-2$
 
 			}
+
+			fShowCommandKey
+					.setSelection(getPreferenceStore().getDefaultBoolean(IPreferenceConstants.SHOW_KEYS_ENABLED));
 		}
 
 		super.performDefaults();

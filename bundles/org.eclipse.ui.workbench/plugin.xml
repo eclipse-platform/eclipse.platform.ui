@@ -47,4 +47,19 @@
          id="org.eclipse.ui.themes.CssTheme"
          label="%Other.defined.by.css.label"/>
    </extension>
+   <extension
+         point="org.eclipse.ui.handlers">
+      <handler
+            class="org.eclipse.ui.internal.keys.show.ShowKeysToggleHandler"
+            commandId="org.eclipse.ui.toggleShowKeys">
+         <enabledWhen>
+            <with
+                  variable="activeWorkbenchWindow">
+               <instanceof
+                     value="org.eclipse.ui.IWorkbenchWindow">
+               </instanceof>
+            </with>
+         </enabledWhen>
+      </handler>
+   </extension>
 </plugin>

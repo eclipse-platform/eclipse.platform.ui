@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2018 IBM Corporation and others.
+ * Copyright (c) 2000, 2019 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -18,6 +18,7 @@
  *     Axel Richard <axel.richard@obeo.fr> - Bug 486644
  *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 146205
  *     Patrik Suzzi <psuzzi@itemis.com> - Bug 529885
+ *     Christian Georgi (SAP SE) - Bug 540440
  *******************************************************************************/
 package org.eclipse.ui.internal;
 
@@ -118,6 +119,10 @@ public class WorkbenchPreferenceInitializer extends AbstractPreferenceInitialize
 
 		// Progress view
 		node.putInt(IPreferenceConstants.MAX_PROGRESS_ENTRIES, 20);
+
+		// Visualized command keys
+		node.putBoolean(IPreferenceConstants.SHOW_KEYS_ENABLED, false);
+		node.putInt(IPreferenceConstants.SHOW_KEYS_TIME_TO_CLOSE, 3000);
 
 		IEclipsePreferences rootNode = (IEclipsePreferences) Platform.getPreferencesService().getRootNode()
 				.node(InstanceScope.SCOPE);

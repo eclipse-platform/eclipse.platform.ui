@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2018 IBM Corporation and others.
+ * Copyright (c) 2000, 2019 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -20,6 +20,7 @@
  *     Mickael Istria (Red Hat Inc.) - Bug 469918
  *     Patrik Suzzi <psuzzi@gmail.com> - Bug 487297
  *     Daniel Kruegler <daniel.kruegler@gmail.com> - Bug 520926
+ *     Christian Georgi (SAP SE) - Bug 540440
  *******************************************************************************/
 
 package org.eclipse.ui.internal;
@@ -214,6 +215,7 @@ import org.eclipse.ui.internal.help.WorkbenchHelpSystem;
 import org.eclipse.ui.internal.intro.IIntroRegistry;
 import org.eclipse.ui.internal.intro.IntroDescriptor;
 import org.eclipse.ui.internal.keys.BindingService;
+import org.eclipse.ui.internal.keys.show.ShowKeysListener;
 import org.eclipse.ui.internal.menus.FocusControlSourceProvider;
 import org.eclipse.ui.internal.menus.WorkbenchMenuService;
 import org.eclipse.ui.internal.misc.Policy;
@@ -1686,6 +1688,14 @@ public final class Workbench extends EventManager implements IWorkbench, org.ecl
 			@Override
 			public void runWithException() {
 				((GrabFocus) Tweaklets.get(GrabFocus.KEY)).init(getDisplay());
+			}
+		});
+
+		// hook shortcut visualizer
+		StartupThreading.runWithoutExceptions(new StartupRunnable() {
+			@Override
+			public void runWithException() {
+				new ShowKeysListener(Workbench.this, PrefUtil.getInternalPreferenceStore());
 			}
 		});
 
