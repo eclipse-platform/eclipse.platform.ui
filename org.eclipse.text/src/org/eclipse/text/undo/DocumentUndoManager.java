@@ -141,12 +141,13 @@ public class DocumentUndoManager implements IDocumentUndoManager {
 		 */
 		protected void undoTextChange() {
 			try {
-				if (fDocumentUndoManager.fDocument instanceof IDocumentExtension4)
+				if (fDocumentUndoManager.fDocument instanceof IDocumentExtension4) {
 					((IDocumentExtension4) fDocumentUndoManager.fDocument).replace(fStart, fText
 							.length(), fPreservedText, fUndoModificationStamp);
-				else
+				} else {
 					fDocumentUndoManager.fDocument.replace(fStart, fText.length(),
 							fPreservedText);
+				}
 			} catch (BadLocationException x) {
 			}
 		}
@@ -268,10 +269,11 @@ public class DocumentUndoManager implements IDocumentUndoManager {
 		 */
 		protected void redoTextChange() {
 			try {
-				if (fDocumentUndoManager.fDocument instanceof IDocumentExtension4)
+				if (fDocumentUndoManager.fDocument instanceof IDocumentExtension4) {
 					((IDocumentExtension4) fDocumentUndoManager.fDocument).replace(fStart, fEnd - fStart, fText, fRedoModificationStamp);
-				else
+				} else {
 					fDocumentUndoManager.fDocument.replace(fStart, fEnd - fStart, fText);
+				}
 			} catch (BadLocationException x) {
 			}
 		}
@@ -314,8 +316,9 @@ public class DocumentUndoManager implements IDocumentUndoManager {
 		 * @return a new, uncommitted text change or a compound text change
 		 */
 		protected UndoableTextChange createCurrent() {
-			if (fDocumentUndoManager.fFoldingIntoCompoundChange)
+			if (fDocumentUndoManager.fFoldingIntoCompoundChange) {
 				return new UndoableCompoundTextChange(fDocumentUndoManager);
+			}
 			return new UndoableTextChange(fDocumentUndoManager);
 		}
 
@@ -453,7 +456,7 @@ public class DocumentUndoManager implements IDocumentUndoManager {
 				UndoableTextChange c;
 
 				c= fChanges.get(0);
-				fDocumentUndoManager.fireDocumentUndo(c.fStart, c.fPreservedText, c.fText, uiInfo, DocumentUndoEvent.ABOUT_TO_UNDO, true);
+				fDocumentUndoManager.fireDocumentUndo(c.fStart, c.fPreservedText, c.fText, uiInfo, DocumentUndoEvent.ABOUT_TO_UNDO, size > 1);
 
 				for (int i= size - 1; i >= 0; --i) {
 					c= fChanges.get(i);
@@ -461,7 +464,7 @@ public class DocumentUndoManager implements IDocumentUndoManager {
 				}
 				fDocumentUndoManager.resetProcessChangeState();
 				fDocumentUndoManager.fireDocumentUndo(c.fStart, c.fPreservedText, c.fText, uiInfo,
-						DocumentUndoEvent.UNDONE, true);
+						DocumentUndoEvent.UNDONE, size > 1);
 			}
 			return Status.OK_STATUS;
 		}
@@ -474,14 +477,14 @@ public class DocumentUndoManager implements IDocumentUndoManager {
 
 				UndoableTextChange c;
 				c= fChanges.get(size - 1);
-				fDocumentUndoManager.fireDocumentUndo(c.fStart, c.fText, c.fPreservedText, uiInfo, DocumentUndoEvent.ABOUT_TO_REDO, true);
+				fDocumentUndoManager.fireDocumentUndo(c.fStart, c.fText, c.fPreservedText, uiInfo, DocumentUndoEvent.ABOUT_TO_REDO, size > 1);
 
 				for (int i= 0; i <= size - 1; ++i) {
 					c= fChanges.get(i);
 					c.redoTextChange();
 				}
 				fDocumentUndoManager.resetProcessChangeState();
-				fDocumentUndoManager.fireDocumentUndo(c.fStart, c.fText, c.fPreservedText, uiInfo, DocumentUndoEvent.REDONE, true);
+				fDocumentUndoManager.fireDocumentUndo(c.fStart, c.fText, c.fPreservedText, uiInfo, DocumentUndoEvent.REDONE, size > 1);
 			}
 
 			return Status.OK_STATUS;
@@ -509,8 +512,9 @@ public class DocumentUndoManager implements IDocumentUndoManager {
 		@Override
 		protected UndoableTextChange createCurrent() {
 
-			if (!fDocumentUndoManager.fFoldingIntoCompoundChange)
+			if (!fDocumentUndoManager.fFoldingIntoCompoundChange) {
 				return new UndoableTextChange(fDocumentUndoManager);
+			}
 
 			reinitialize();
 			return this;
@@ -519,8 +523,9 @@ public class DocumentUndoManager implements IDocumentUndoManager {
 		@Override
 		protected void commit() {
 			// if there is pending data, update the text change
-			if (fStart > -1)
+			if (fStart > -1) {
 				updateTextChange();
+			}
 			fDocumentUndoManager.fCurrent= createCurrent();
 			fDocumentUndoManager.resetProcessChangeState();
 		}
@@ -532,22 +537,24 @@ public class DocumentUndoManager implements IDocumentUndoManager {
 
 		@Override
 		protected long getUndoModificationStamp() {
-			if (fStart > -1)
+			if (fStart > -1) {
 				return super.getUndoModificationStamp();
-			else if (fChanges.size() > 0)
+			} else if (fChanges.size() > 0) {
 				return fChanges.get(0)
 						.getUndoModificationStamp();
+			}
 
 			return fUndoModificationStamp;
 		}
 
 		@Override
 		protected long getRedoModificationStamp() {
-			if (fStart > -1)
+			if (fStart > -1) {
 				return super.getRedoModificationStamp();
-			else if (fChanges.size() > 0)
+			} else if (fChanges.size() > 0) {
 				return fChanges.get(fChanges.size() - 1)
 						.getRedoModificationStamp();
+			}
 
 			return fRedoModificationStamp;
 		}
@@ -581,8 +588,9 @@ public class DocumentUndoManager implements IDocumentUndoManager {
 			// top operation but changes state.
 			IUndoableOperation op= fHistory.getUndoOperation(fUndoContext);
 			boolean wasValid= false;
-			if (op != null)
+			if (op != null) {
 				wasValid= op.canUndo();
+			}
 			// Process the change, providing the before and after timestamps
 			processChange(event.getOffset(), event.getOffset()
 					+ event.getLength(), event.getText(), fReplacedText,
@@ -598,8 +606,9 @@ public class DocumentUndoManager implements IDocumentUndoManager {
 				// created, then we should
 				// notify the history that the current operation changed if its
 				// validity has changed.
-				if (wasValid != fCurrent.isValid())
+				if (wasValid != fCurrent.isValid()) {
 					fHistory.operationChanged(op);
+				}
 			} else {
 				// if the change created a new fCurrent that we did not yet add
 				// to the
@@ -781,8 +790,9 @@ public class DocumentUndoManager implements IDocumentUndoManager {
 		// single document change.
 		if (fLastAddedTextEdit != fCurrent) {
 			fCurrent.pretendCommit();
-			if (fCurrent.isValid())
+			if (fCurrent.isValid()) {
 				addToOperationHistory(fCurrent);
+			}
 		}
 		fCurrent.commit();
 	}
@@ -810,14 +820,16 @@ public class DocumentUndoManager implements IDocumentUndoManager {
 	 */
 	@Override
 	public void redo() throws ExecutionException {
-		if (isConnected() && redoable())
+		if (isConnected() && redoable()) {
 			OperationHistoryFactory.getOperationHistory().redo(getUndoContext(), null, null);
+		}
 	}
 
 	@Override
 	public void undo() throws ExecutionException {
-		if (undoable())
+		if (undoable()) {
 			OperationHistoryFactory.getOperationHistory().undo(fUndoContext, null, null);
+		}
 	}
 
 	@Override
@@ -825,8 +837,9 @@ public class DocumentUndoManager implements IDocumentUndoManager {
 		if (!isConnected()) {
 			initialize();
 		}
-		if (!fConnected.contains(client))
+		if (!fConnected.contains(client)) {
 			fConnected.add(client);
+		}
 	}
 
 	@Override
@@ -924,8 +937,9 @@ public class DocumentUndoManager implements IDocumentUndoManager {
 	 * Initializes the undo history.
 	 */
 	private void initializeUndoHistory() {
-		if (fHistory != null && fUndoContext != null)
+		if (fHistory != null && fUndoContext != null) {
 			fHistory.dispose(fUndoContext, true, true, false);
+		}
 
 	}
 
@@ -939,8 +953,9 @@ public class DocumentUndoManager implements IDocumentUndoManager {
 	 */
 	private boolean isWhitespaceText(String text) {
 
-		if (text == null || text.length() == 0)
+		if (text == null || text.length() == 0) {
 			return false;
+		}
 
 		String[] delimiters= fDocument.getLegalLineDelimiters();
 		int index= TextUtilities.startsWith(delimiters, text);
@@ -949,8 +964,9 @@ public class DocumentUndoManager implements IDocumentUndoManager {
 			int length= text.length();
 			for (int i= delimiters[index].length(); i < length; i++) {
 				c= text.charAt(i);
-				if (c != ' ' && c != '\t')
+				if (c != ' ' && c != '\t') {
 					return false;
+				}
 			}
 			return true;
 		}
@@ -983,16 +999,21 @@ public class DocumentUndoManager implements IDocumentUndoManager {
 			final long afterChangeModificationStamp) {
 
 		if (insertedText == null)
+		 {
 			insertedText= ""; //$NON-NLS-1$
+		}
 
 		if (replacedText == null)
+		 {
 			replacedText= ""; //$NON-NLS-1$
+		}
 
 		int length= insertedText.length();
 		int diff= modelEnd - modelStart;
 
-		if (fCurrent.fUndoModificationStamp == IDocumentExtension4.UNKNOWN_MODIFICATION_STAMP)
+		if (fCurrent.fUndoModificationStamp == IDocumentExtension4.UNKNOWN_MODIFICATION_STAMP) {
 			fCurrent.fUndoModificationStamp= beforeChangeModificationStamp;
+		}
 
 		// normalize
 		if (diff < 0) {
@@ -1009,26 +1030,31 @@ public class DocumentUndoManager implements IDocumentUndoManager {
 						|| (modelStart != fCurrent.fStart
 								+ fTextBuffer.length())) {
 					fCurrent.fRedoModificationStamp= beforeChangeModificationStamp;
-					if (fCurrent.attemptCommit())
+					if (fCurrent.attemptCommit()) {
 						fCurrent.fUndoModificationStamp= beforeChangeModificationStamp;
+					}
 
 					fInserting= true;
 				}
-				if (fCurrent.fStart < 0)
+				if (fCurrent.fStart < 0) {
 					fCurrent.fStart= fCurrent.fEnd= modelStart;
-				if (length > 0)
+				}
+				if (length > 0) {
 					fTextBuffer.append(insertedText);
+				}
 			} else if (length > 0) {
 				// by pasting or model manipulation
 				fCurrent.fRedoModificationStamp= beforeChangeModificationStamp;
-				if (fCurrent.attemptCommit())
+				if (fCurrent.attemptCommit()) {
 					fCurrent.fUndoModificationStamp= beforeChangeModificationStamp;
+				}
 
 				fCurrent.fStart= fCurrent.fEnd= modelStart;
 				fTextBuffer.append(insertedText);
 				fCurrent.fRedoModificationStamp= afterChangeModificationStamp;
-				if (fCurrent.attemptCommit())
+				if (fCurrent.attemptCommit()) {
 					fCurrent.fUndoModificationStamp= afterChangeModificationStamp;
+				}
 
 			}
 		} else {
@@ -1068,8 +1094,9 @@ public class DocumentUndoManager implements IDocumentUndoManager {
 						// either DEL or backspace for the first time
 
 						fCurrent.fRedoModificationStamp= beforeChangeModificationStamp;
-						if (fCurrent.attemptCommit())
+						if (fCurrent.attemptCommit()) {
 							fCurrent.fUndoModificationStamp= beforeChangeModificationStamp;
+						}
 
 						// as we can not decide whether it was DEL or backspace
 						// we initialize for backspace
@@ -1083,8 +1110,9 @@ public class DocumentUndoManager implements IDocumentUndoManager {
 				} else if (length > 0) {
 					// whereby selection is not empty
 					fCurrent.fRedoModificationStamp= beforeChangeModificationStamp;
-					if (fCurrent.attemptCommit())
+					if (fCurrent.attemptCommit()) {
 						fCurrent.fUndoModificationStamp= beforeChangeModificationStamp;
+					}
 
 					fCurrent.fStart= modelStart;
 					fCurrent.fEnd= modelEnd;
@@ -1104,14 +1132,16 @@ public class DocumentUndoManager implements IDocumentUndoManager {
 								|| (modelStart != fCurrent.fStart
 										+ fTextBuffer.length())) {
 							fCurrent.fRedoModificationStamp= beforeChangeModificationStamp;
-							if (fCurrent.attemptCommit())
+							if (fCurrent.attemptCommit()) {
 								fCurrent.fUndoModificationStamp= beforeChangeModificationStamp;
+							}
 
 							fOverwriting= true;
 						}
 
-						if (fCurrent.fStart < 0)
+						if (fCurrent.fStart < 0) {
 							fCurrent.fStart= modelStart;
+						}
 
 						fCurrent.fEnd= modelEnd;
 						fTextBuffer.append(insertedText);
@@ -1122,8 +1152,9 @@ public class DocumentUndoManager implements IDocumentUndoManager {
 				}
 				// because of typing or pasting whereby selection is not empty
 				fCurrent.fRedoModificationStamp= beforeChangeModificationStamp;
-				if (fCurrent.attemptCommit())
+				if (fCurrent.attemptCommit()) {
 					fCurrent.fUndoModificationStamp= beforeChangeModificationStamp;
+				}
 
 				fCurrent.fStart= modelStart;
 				fCurrent.fEnd= modelEnd;
@@ -1183,8 +1214,9 @@ public class DocumentUndoManager implements IDocumentUndoManager {
 	 * 			clients, <code>false</code> if it is not
 	 */
 	boolean isConnected() {
-		if (fConnected == null)
+		if (fConnected == null) {
 			return false;
+		}
 		return !fConnected.isEmpty();
 	}
 
@@ -1209,8 +1241,9 @@ public class DocumentUndoManager implements IDocumentUndoManager {
 		}
 
 		IUndoableOperation op= OperationHistoryFactory.getOperationHistory().getUndoOperation(getUndoContext());
-		if (op != null && !(op instanceof UndoableTextChange))
+		if (op != null && !(op instanceof UndoableTextChange)) {
 			return;
+		}
 
 		// Record the transfer itself as an undoable change.
 		// If the transfer results from some open operation, recording this change will
@@ -1222,8 +1255,9 @@ public class DocumentUndoManager implements IDocumentUndoManager {
 		cmd.fText= cmd.fPreservedText= ""; //$NON-NLS-1$
 		if (fDocument instanceof IDocumentExtension4) {
 			cmd.fRedoModificationStamp= ((IDocumentExtension4)fDocument).getModificationStamp();
-			if (op != null)
+			if (op != null) {
 				cmd.fUndoModificationStamp= ((UndoableTextChange)op).fRedoModificationStamp;
+			}
 		}
 		addToOperationHistory(cmd);
 	}
