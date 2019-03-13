@@ -40,12 +40,14 @@ public abstract class ViewerTestCase extends TestCase {
 	public TestModel fModel;
 
 	protected boolean disableTestsBug347491 = false;
+	protected boolean eventLoopAdjustmentBug531048 = false;
 	private ILogger oldLogger;
 	private ISafeRunnableRunner oldRunner;
 
 	public ViewerTestCase(String name) {
 		super(name);
 		disableTestsBug347491 = Util.isCocoa();
+		eventLoopAdjustmentBug531048 = Util.isGtk();
 	}
 
 	protected void assertSelectionEquals(String message, TestElement expected) {
