@@ -16,6 +16,9 @@ package org.eclipse.core.internal.expressions;
 import org.eclipse.core.expressions.IPropertyTester;
 
 import org.eclipse.core.runtime.Assert;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 
 public class Property {
 
@@ -57,8 +60,13 @@ public class Property {
 		}
 	}
 
-	public boolean test(Object receiver, Object[] args, Object expectedValue) {
-		return fTester.test(receiver, fName, args, expectedValue);
+	public boolean test(Object receiver, Object[] args, Object expectedValue) throws CoreException {
+		try {
+			return fTester.test(receiver, fName, args, expectedValue);
+		} catch (Exception e) {
+			String message = "Error evaluating " + this; //$NON-NLS-1$
+			throw new CoreException(new Status(IStatus.ERROR, ExpressionPlugin.getPluginId(), message, e));
+		}
 	}
 
 	@Override
