@@ -23,6 +23,8 @@ import org.eclipse.core.resources.IWorkspaceDescription;
 import org.eclipse.core.resources.IncrementalProjectBuilder;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.preferences.DefaultScope;
+import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eclipse.jface.preference.FieldEditor;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.IntegerFieldEditor;
@@ -316,7 +318,7 @@ public class BuildOrderPreferencePage extends PreferencePage implements
 
 		Font font = composite.getFont();
 
-		//Create an intermeditate composite to keep the buttons in the same column
+		// Create an intermediate composite to keep the buttons in the same column
 		this.buttonComposite = new Composite(composite, SWT.RIGHT);
 		GridLayout layout = new GridLayout();
 		layout.marginWidth = 0;
@@ -408,9 +410,9 @@ public class BuildOrderPreferencePage extends PreferencePage implements
 			protected void doLoadDefault() {
 				Text text = getTextControl();
 				if (text != null) {
-					int value = ResourcesPlugin.getPlugin()
-							.getPluginPreferences().getDefaultInt(
-									ResourcesPlugin.PREF_MAX_BUILD_ITERATIONS);
+					IEclipsePreferences def = DefaultScope.INSTANCE.getNode(ResourcesPlugin.PI_RESOURCES);
+					int defaultValue = 10; // org.eclipse.core.internal.resources.PreferenceInitializer.PREF_MAX_BUILD_ITERATIONS_DEFAULT
+					int value = def.getInt(ResourcesPlugin.PREF_MAX_BUILD_ITERATIONS, defaultValue);
 					text.setText(Integer.toString(value));
 				}
 				valueChanged();
@@ -563,12 +565,11 @@ public class BuildOrderPreferencePage extends PreferencePage implements
 		maxItersField.loadDefault();
 
 		// core holds onto this preference.
-		boolean autoBuild = ResourcesPlugin.getPlugin().getPluginPreferences()
-				.getDefaultBoolean(ResourcesPlugin.PREF_AUTO_BUILDING);
+		IEclipsePreferences def = DefaultScope.INSTANCE.getNode(ResourcesPlugin.PI_RESOURCES);
+		boolean autoBuild = def.getBoolean(ResourcesPlugin.PREF_AUTO_BUILDING, true);
 		autoBuildButton.setSelection(autoBuild);
 
-		int simultaneousBuilds = ResourcesPlugin.getPlugin().getPluginPreferences()
-				.getDefaultInt(ResourcesPlugin.PREF_MAX_CONCURRENT_BUILDS);
+		int simultaneousBuilds = def.getInt(ResourcesPlugin.PREF_MAX_CONCURRENT_BUILDS, 1);
 		maxSimultaneousBuilds.setStringValue(Integer.toString(simultaneousBuilds));
 
 		IPreferenceStore store = getIDEPreferenceStore();
@@ -577,8 +578,8 @@ public class BuildOrderPreferencePage extends PreferencePage implements
 	}
 
 	/**
-	 * OK has been pressed. If the defualt button is pressed then reset the build order to false;
-	 * otherwise set it to the contents of the list.
+	 * OK has been pressed. If the default button is pressed then reset the build
+	 * order to false; otherwise set it to the contents of the list.
 	 */
 	@Override
 	public boolean performOk() {
@@ -659,7 +660,8 @@ public class BuildOrderPreferencePage extends PreferencePage implements
 	}
 
 	/**
-	 * Set the widgets that select build order to be enabled or diabled.
+	 * Set the widgets that select build order to be enabled or disabled.
+	 *
 	 * @param value boolean
 	 */
 	private void setBuildOrderWidgetsEnablement(boolean value) {
@@ -706,7 +708,7 @@ public class BuildOrderPreferencePage extends PreferencePage implements
 
 		// @issue we should drop our preference constant and let clients use
 		// core'zs pref. ours is not up-to-date anyway if someone changes this
-		// interval directly thru core api.
+		// interval directly through core api.
 		maxSimultaneousBuilds.setPreferenceStore(getIDEPreferenceStore());
 		maxSimultaneousBuilds.setPage(this);
 		maxSimultaneousBuilds
