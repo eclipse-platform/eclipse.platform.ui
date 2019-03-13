@@ -22,10 +22,10 @@ import org.eclipse.e4.core.commands.ExpressionContext;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.contexts.RunAndTrack;
 import org.eclipse.e4.ui.internal.workbench.Activator;
-import org.eclipse.e4.ui.internal.workbench.Policy;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.ui.services.IEvaluationReference;
+import org.osgi.service.log.LogService;
 
 /**
  * @since 3.3
@@ -73,9 +73,8 @@ public class EvaluationReference extends RunAndTrack implements IEvaluationRefer
 			try {
 				cache = expression.evaluate(context) != EvaluationResult.FALSE;
 			} catch (CoreException e) {
-				if (Policy.DEBUG_CMDS) {
-					Activator.trace(Policy.DEBUG_CMDS_FLAG, "Failed to calculate active", e); //$NON-NLS-1$
-				}
+				Activator.log(LogService.LOG_ERROR, "Failed to evaluate: " + expression, e); //$NON-NLS-1$
+				return false;
 			}
 		}
 		return cache;
