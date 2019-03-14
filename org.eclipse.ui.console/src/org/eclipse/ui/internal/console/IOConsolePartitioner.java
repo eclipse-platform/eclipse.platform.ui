@@ -13,6 +13,7 @@
  *     Paul Pazderski  - Contributions for:
  *                          Bug 547064: use binary search for getPartition
  *                          Bug 548356: fixed user input handling
+ *                          Bug 550618: getStyleRanges produced invalid overlapping styles
  *******************************************************************************/
 package org.eclipse.ui.internal.console;
 
@@ -772,11 +773,23 @@ public class IOConsolePartitioner implements IConsoleDocumentPartitioner, IDocum
 		if (!connected) {
 			return new StyleRange[0];
 		}
-		IOConsolePartition[] computedPartitions = computeIOPartitioning(offset, length);
-		StyleRange[] styles = new StyleRange[computedPartitions.length];
+		final IOConsolePartition[] computedPartitions = computeIOPartitioning(offset, length);
+		final StyleRange[] styles = new StyleRange[computedPartitions.length];
 		for (int i = 0; i < computedPartitions.length; i++) {
-			int rangeStart = Math.max(computedPartitions[i].getOffset(), offset);
+			int rangeStart = computedPartitions[i].getOffset();
 			int rangeLength = computedPartitions[i].getLength();
+
+			// snap partitions to requested range
+			final int underflow = offset - rangeStart;
+			if (underflow > 0) {
+				rangeStart += underflow;
+				rangeLength -= underflow;
+			}
+			final int overflow = (rangeStart + rangeLength) - (offset + length);
+			if (overflow > 0) {
+				rangeLength -= overflow;
+			}
+
 			styles[i] = computedPartitions[i].getStyleRange(rangeStart, rangeLength);
 		}
 		return styles;

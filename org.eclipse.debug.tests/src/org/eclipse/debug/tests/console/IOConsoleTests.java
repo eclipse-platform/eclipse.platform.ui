@@ -18,6 +18,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Random;
@@ -31,6 +32,7 @@ import org.eclipse.debug.tests.AbstractDebugTest;
 import org.eclipse.debug.tests.TestUtil;
 import org.eclipse.debug.tests.TestsPlugin;
 import org.eclipse.jface.util.PropertyChangeEvent;
+import org.eclipse.swt.custom.StyleRange;
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IWorkbenchPage;
@@ -39,6 +41,7 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.console.ConsolePlugin;
 import org.eclipse.ui.console.IConsole;
 import org.eclipse.ui.console.IConsoleConstants;
+import org.eclipse.ui.console.IConsoleDocumentPartitioner;
 import org.eclipse.ui.console.IConsoleManager;
 import org.eclipse.ui.console.IOConsole;
 import org.eclipse.ui.console.IOConsoleOutputStream;
@@ -414,5 +417,93 @@ public class IOConsoleTests extends AbstractDebugTest {
 
 		closeConsole(c);
 		assertEquals("Test triggered errors in IOConsole.", 0, loggedErrors.get());
+	}
+
+	/**
+	 * Tests for the {@link IConsoleDocumentPartitioner} interface.
+	 */
+	public void testIConsoleDocumentPartitioner() throws Exception {
+		final IOConsoleTestUtil c = getTestUtil("Test IConsoleDocumentPartitioner");
+		try (IOConsoleOutputStream otherOut = c.getConsole().newOutputStream()) {
+			StyleRange[] styles = c.getPartitioner().getStyleRanges(0, 1);
+			assertEquals("Got fake styles.", 0, (styles == null ? 0 : styles.length));
+
+			c.insertAndVerify("#\n");
+			c.insertTyping("L");
+			c.writeFast("orem ipsum dolor sit amet, consetetur sadipscing elitr,\n");
+			c.writeFast("sed diam nonumy eirmod tempor invidunt ut labore et dolore\n", otherOut);
+			c.writeFast("magna aliquyam erat, sed diam voluptua. At vero eos et accusam\n");
+			c.writeFast("et justo duo dolores et ea rebum. Stet clita kasd gubergren,\n", otherOut);
+			c.write("no sea takimata sanctus est Lorem ipsum dolor sit amet.\n");
+			final int loremEnd = c.getContentLength();
+			c.moveCaretToEnd().insertTypingAndVerify("--").writeAndVerify("ooo");
+			c.setCaretLineRelative(1).insertTypingAndVerify("-");
+			c.verifyContentByLine("---ooo", -1);
+
+
+			styles = c.getPartitioner().getStyleRanges(0, c.getContentLength());
+			checkOverlapping(styles);
+			assertNotNull("Partitioner provided no styles.", styles);
+			assertTrue("Expected more styles.", styles.length >= 3);
+
+			styles = c.getPartitioner().getStyleRanges(5, 20);
+			checkOverlapping(styles);
+			assertNotNull("Partitioner provided no styles.", styles);
+			assertEquals("Number of styles:", 1, styles.length);
+
+			styles = c.getPartitioner().getStyleRanges(loremEnd + 1, 1);
+			checkOverlapping(styles);
+			assertNotNull("Partitioner provided no styles.", styles);
+			assertEquals("Number of styles:", 1, styles.length);
+
+			styles = c.getPartitioner().getStyleRanges(loremEnd, c.getContentLength() - loremEnd);
+			checkOverlapping(styles);
+			assertNotNull("Partitioner provided no styles.", styles);
+			assertEquals("Number of styles:", 2, styles.length);
+
+			styles = c.getPartitioner().getStyleRanges(loremEnd - 3, 5);
+			checkOverlapping(styles);
+			assertNotNull("Partitioner provided no styles.", styles);
+			assertEquals("Number of styles:", 2, styles.length);
+
+			styles = c.getPartitioner().getStyleRanges(loremEnd - 3, 8);
+			checkOverlapping(styles);
+			assertNotNull("Partitioner provided no styles.", styles);
+			assertEquals("Number of styles:", 3, styles.length);
+
+
+			assertTrue("Offset should be read-only.", c.getPartitioner().isReadOnly(0));
+			assertTrue("Offset should be read-only.", c.getPartitioner().isReadOnly(1));
+			assertFalse("Offset should be writable.", c.getPartitioner().isReadOnly(2));
+			for (int i = 3; i < loremEnd; i++) {
+				assertTrue("Offset should be read-only.", c.getPartitioner().isReadOnly(i));
+			}
+			assertFalse("Offset should be writable.", c.getPartitioner().isReadOnly(loremEnd + 0));
+			assertFalse("Offset should be writable.", c.getPartitioner().isReadOnly(loremEnd + 1));
+			assertFalse("Offset should be writable.", c.getPartitioner().isReadOnly(loremEnd + 2));
+			assertTrue("Offset should be read-only.", c.getPartitioner().isReadOnly(loremEnd + 3));
+			assertTrue("Offset should be read-only.", c.getPartitioner().isReadOnly(loremEnd + 4));
+			assertTrue("Offset should be read-only.", c.getPartitioner().isReadOnly(loremEnd + 5));
+		}
+		c.verifyPartitions();
+		closeConsole(c, "#");
+		assertEquals("Test triggered errors in IOConsole.", 0, loggedErrors.get());
+	}
+
+	/**
+	 * Check if there is any offset which received two styles.
+	 *
+	 * @param styles the styles to check
+	 */
+	private void checkOverlapping(StyleRange[] styles) {
+		if (styles == null || styles.length <= 1) {
+			return;
+		}
+		Arrays.sort(styles, (a, b) -> Integer.compare(a.start, b.start));
+		int lastEnd = Integer.MIN_VALUE;
+		for (StyleRange s : styles) {
+			assertTrue("Styles overlap.", lastEnd <= s.start);
+			lastEnd = s.start + s.length;
+		}
 	}
 }
