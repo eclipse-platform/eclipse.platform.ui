@@ -13,7 +13,7 @@
  *******************************************************************************/
 package org.eclipse.help;
 
-import java.io.*;
+import java.io.InputStream;
 import java.util.Locale;
 
 /**
@@ -41,7 +41,7 @@ public interface IHelpContentProducer {
 	 *            path of the resource in a plug-in.
 	 *            <p>
 	 *            An href has a format <em>path/to/resource</em> or
-	 *            <em>path/to/resource?parameter=value1&parameter2=value2...</em>
+	 *            <em>path/to/resource?parameter=value1&amp;parameter2=value2...</em>
 	 *            For example, <em>references/myclass.html</em> may be passed.
 	 *            </p>
 	 * @param locale

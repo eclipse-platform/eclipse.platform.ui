@@ -36,7 +36,7 @@ public interface IContext2 extends IContext {
 	 * markers are used to allow the UI to distinguish between bold markup and
 	 * bold tags that are intended to remain part of the original text.
 	 *
-	 * @return String with <@#$b>and </@#$b> to mark bold range (as
+	 * @return String with &lt;@#$b&gt;and &lt;/@#$b&gt; to mark bold range (as
 	 *         IContext.getText() used to in 2.x)
 	 */
 	public String getStyledText();

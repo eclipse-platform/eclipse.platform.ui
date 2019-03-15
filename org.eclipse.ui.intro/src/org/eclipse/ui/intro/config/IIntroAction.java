@@ -22,7 +22,7 @@ import org.eclipse.ui.intro.IIntroSite;
  * An Intro action. Classes that implement this interface can be used as valid
  * value for the "class" parameter for the following intro url:
  * <p>
- * http://org.eclipse.ui.intro/runAction?pluginId=x.y.z&class=x.y.z.someClass
+ * http://org.eclipse.ui.intro/runAction?pluginId=x.y.z&amp;class=x.y.z.someClass
  * </p>
  *
  * @since 3.0
