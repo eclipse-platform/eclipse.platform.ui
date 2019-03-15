@@ -19,6 +19,6 @@
   </parent>
   <groupId>org.eclipse.core</groupId>
   <artifactId>org.eclipse.core.resources</artifactId>
-  <version>3.13.300-SNAPSHOT</version>
+  <version>3.13.400-SNAPSHOT</version>
   <packaging>eclipse-plugin</packaging>
 </project>

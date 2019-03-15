@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2016 IBM Corporation and others.
+ *  Copyright (c) 2000, 2019 IBM Corporation and others.
  *
  *  This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License 2.0
@@ -302,7 +302,7 @@ public final class ResourcesPlugin extends Plugin {
 	 * asynchronously refreshed, when discovered to be out-of-sync by the workspace.
 	 * <p>
 	 * This preference suppresses out-of-sync CoreException for some read methods, including:
-	 * {@link IFile#getContents()} & {@link IFile#getContentDescription()}.
+	 * {@link IFile#getContents()} &amp; {@link IFile#getContentDescription()}.
 	 * </p>
 	 * <p>
 	 * In the future the workspace may enable other lightweight auto-refresh mechanisms when this
