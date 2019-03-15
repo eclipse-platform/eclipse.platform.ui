@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2016 IBM Corporation and others.
+ * Copyright (c) 2010, 2019 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -53,7 +53,6 @@ import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.Filter;
 import org.osgi.framework.InvalidSyntaxException;
-import org.osgi.service.packageadmin.PackageAdmin;
 import org.osgi.util.tracker.ServiceTracker;
 
 /**
@@ -63,7 +62,6 @@ public class WorkbenchSWTActivator implements BundleActivator, DebugOptionsListe
 	public static final String PI_RENDERERS = "org.eclipse.e4.ui.workbench.swt"; //$NON-NLS-1$
 
 	private BundleContext context;
-	private ServiceTracker<?, PackageAdmin> pkgAdminTracker;
 	private ServiceTracker<?, Location> locationTracker;
 	private static WorkbenchSWTActivator activator;
 	private DebugTrace trace;
@@ -97,10 +95,6 @@ public class WorkbenchSWTActivator implements BundleActivator, DebugOptionsListe
 	@Override
 	public void stop(BundleContext context) throws Exception {
 		saveDialogSettings();
-		if (pkgAdminTracker != null) {
-			pkgAdminTracker.close();
-			pkgAdminTracker = null;
-		}
 	}
 
 	public Bundle getBundle() {
@@ -108,20 +102,6 @@ public class WorkbenchSWTActivator implements BundleActivator, DebugOptionsListe
 			return null;
 		}
 		return context.getBundle();
-	}
-
-	/**
-	 * @return the PackageAdmin service from this bundle
-	 */
-	public PackageAdmin getBundleAdmin() {
-		if (pkgAdminTracker == null) {
-			if (context == null) {
-				return null;
-			}
-			pkgAdminTracker = new ServiceTracker<>(context, PackageAdmin.class, null);
-			pkgAdminTracker.open();
-		}
-		return pkgAdminTracker.getService();
 	}
 
 	/**

@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2010, 2016 IBM Corporation and others.
+ *  Copyright (c) 2010, 2019 IBM Corporation and others.
  *
  *  This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License 2.0
@@ -14,11 +14,9 @@
 package org.eclipse.e4.ui.internal.css.swt;
 
 import org.eclipse.e4.ui.internal.css.swt.definition.IColorAndFontProvider;
-import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
 import org.osgi.service.log.LogService;
-import org.osgi.service.packageadmin.PackageAdmin;
 import org.osgi.util.tracker.ServiceTracker;
 
 public class CSSActivator implements BundleActivator {
@@ -26,43 +24,11 @@ public class CSSActivator implements BundleActivator {
 	private static CSSActivator activator;
 
 	private BundleContext context;
-	private ServiceTracker<PackageAdmin, PackageAdmin> pkgAdminTracker;
 	private ServiceTracker<LogService, LogService> logTracker;
 	private ServiceTracker<IColorAndFontProvider, IColorAndFontProvider> colorAndFontProviderTracker;
 
 	public static CSSActivator getDefault() {
 		return activator;
-	}
-
-	public PackageAdmin getBundleAdmin() {
-		if (pkgAdminTracker == null) {
-			if (context == null) {
-				return null;
-			}
-			pkgAdminTracker = new ServiceTracker<PackageAdmin, PackageAdmin>(
-					context, PackageAdmin.class.getName(), null);
-			pkgAdminTracker.open();
-		}
-		return pkgAdminTracker.getService();
-	}
-
-	/**
-	 * @param bundleName
-	 *            the bundle id
-	 * @return A bundle if found, or <code>null</code>
-	 */
-	public Bundle getBundleForName(String bundleName) {
-		Bundle[] bundles = getBundleAdmin().getBundles(bundleName, null);
-		if (bundles == null) {
-			return null;
-		}
-		// Return the first bundle that is not installed or uninstalled
-		for (Bundle bundle : bundles) {
-			if ((bundle.getState() & (Bundle.INSTALLED | Bundle.UNINSTALLED)) == 0) {
-				return bundle;
-			}
-		}
-		return null;
 	}
 
 	@Override
@@ -73,10 +39,6 @@ public class CSSActivator implements BundleActivator {
 
 	@Override
 	public void stop(BundleContext context) throws Exception {
-		if (pkgAdminTracker != null) {
-			pkgAdminTracker.close();
-			pkgAdminTracker = null;
-		}
 		if (logTracker != null) {
 			logTracker.close();
 			logTracker = null;

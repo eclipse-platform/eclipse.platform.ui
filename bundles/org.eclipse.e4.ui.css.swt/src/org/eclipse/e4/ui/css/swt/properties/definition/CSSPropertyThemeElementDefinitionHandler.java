@@ -20,11 +20,11 @@ import java.net.URL;
 import java.util.Map;
 import java.util.ResourceBundle;
 import java.util.WeakHashMap;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.e4.ui.css.core.dom.properties.ICSSPropertyHandler;
 import org.eclipse.e4.ui.css.core.engine.CSSEngine;
 import org.eclipse.e4.ui.css.swt.dom.definition.ThemeDefinitionElement;
 import org.eclipse.e4.ui.css.swt.helpers.URI;
-import org.eclipse.e4.ui.internal.css.swt.CSSActivator;
 import org.eclipse.e4.ui.internal.css.swt.definition.IThemeElementDefinitionOverridable;
 import org.eclipse.osgi.service.localization.BundleLocalization;
 import org.osgi.framework.Bundle;
@@ -99,7 +99,7 @@ public class CSSPropertyThemeElementDefinitionHandler implements ICSSPropertyHan
 	}
 
 	private Bundle getBundle(URI uri) throws BundleException {
-		Bundle bundle = CSSActivator.getDefault().getBundleForName(uri.lastSegment());
+		Bundle bundle = Platform.getBundle(uri.lastSegment());
 		if (bundle != null && (bundle.getState() & Bundle.ACTIVE) == 0) {
 			bundle.start(); // Bundle is lazy init
 		}

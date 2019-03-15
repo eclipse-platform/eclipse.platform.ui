@@ -14,6 +14,7 @@
 package org.eclipse.e4.ui.css.swt.properties.custom;
 
 import java.lang.reflect.Constructor;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.e4.ui.css.core.engine.CSSEngine;
 import org.eclipse.e4.ui.css.swt.helpers.URI;
 import org.eclipse.e4.ui.css.swt.properties.AbstractCSSPropertySWTHandler;
@@ -49,7 +50,7 @@ public class CSSPropertyTabRendererSWTHandler extends AbstractCSSPropertySWTHand
 					rendURL = rendURL.replace("platform:/plugin/", "bundleclass://"); //$NON-NLS-1$ //$NON-NLS-2$
 				}
 				URI uri = URI.createURI(rendURL);
-				Bundle bundle = CSSActivator.getDefault().getBundleForName(uri.authority());
+				Bundle bundle = Platform.getBundle(uri.authority());
 				if (bundle == null) {
 					CSSActivator.getDefault().log(LogService.LOG_ERROR, "Failed to get bundle for: " + rendURL); //$NON-NLS-1$
 				} else {

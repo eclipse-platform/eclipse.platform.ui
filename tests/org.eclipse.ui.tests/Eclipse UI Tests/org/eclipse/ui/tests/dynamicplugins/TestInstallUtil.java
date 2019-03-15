@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2017 IBM Corporation and others.
+ * Copyright (c) 2004, 2019 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -13,13 +13,15 @@
  *******************************************************************************/
 package org.eclipse.ui.tests.dynamicplugins;
 
+import static java.util.Arrays.asList;
+
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.BundleException;
+import org.osgi.framework.Constants;
 import org.osgi.framework.FrameworkEvent;
 import org.osgi.framework.FrameworkListener;
-import org.osgi.framework.ServiceReference;
-import org.osgi.service.packageadmin.PackageAdmin;
+import org.osgi.framework.wiring.FrameworkWiring;
 
 import junit.framework.TestCase;
 
@@ -35,9 +37,9 @@ public class TestInstallUtil extends TestCase {
         Bundle target = context.installBundle(pluginLocation);
         int state = target.getState();
         if (state != Bundle.INSTALLED) {
-			throw new IllegalStateException("Bundle " + target
+            throw new IllegalStateException("Bundle " + target
                     + " is in a wrong state: " + state);
-		}
+        }
         refreshPackages(new Bundle[] { target });
         return target;
     }
@@ -48,27 +50,20 @@ public class TestInstallUtil extends TestCase {
     }
 
     public static void refreshPackages(Bundle[] bundles) {
-		ServiceReference<PackageAdmin> packageAdminRef = context
-				.getServiceReference(PackageAdmin.class);
-        PackageAdmin packageAdmin = null;
-        if (packageAdminRef != null) {
-            packageAdmin = context.getService(packageAdminRef);
-            if (packageAdmin == null) {
-				return;
-			}
-        }
+        FrameworkWiring wiring = context.getBundle(Constants.SYSTEM_BUNDLE_LOCATION).adapt(FrameworkWiring.class);
 
         final boolean[] flag = new boolean[] { false };
-		FrameworkListener listener = event -> {
-			if (event.getType() == FrameworkEvent.PACKAGES_REFRESHED) {
-				synchronized (flag) {
-					flag[0] = true;
-					flag.notifyAll();
-				}
-			}
-		};
-        context.addFrameworkListener(listener);
-        packageAdmin.refreshPackages(bundles);
+        FrameworkListener listener = event -> {
+            if (event.getType() == FrameworkEvent.PACKAGES_REFRESHED) {
+                synchronized (flag) {
+                    flag[0] = true;
+                    flag.notifyAll();
+                }
+            }
+        };
+
+        wiring.refreshBundles(asList(bundles), listener);
+
         synchronized (flag) {
             while (!flag[0]) {
                 try {
@@ -77,7 +72,5 @@ public class TestInstallUtil extends TestCase {
                 }
             }
         }
-        context.removeFrameworkListener(listener);
-        context.ungetService(packageAdminRef);
     }
 }

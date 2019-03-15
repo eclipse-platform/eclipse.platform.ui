@@ -29,8 +29,8 @@ import org.osgi.service.packageadmin.PackageAdmin;
 import org.osgi.util.tracker.ServiceTracker;
 
 /**
- * Basic IWorkingSetElementAdapter implementation that allows plugins to decribe
- * simple declarative element adapters.
+ * Basic IWorkingSetElementAdapter implementation that allows plugins to
+ * describe simple declarative element adapters.
  * <p>
  * The executable extension format for this class is as follows:<br>
  * </p>
