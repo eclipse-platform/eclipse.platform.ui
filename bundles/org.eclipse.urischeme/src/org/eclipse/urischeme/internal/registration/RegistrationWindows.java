@@ -90,4 +90,17 @@ public class RegistrationWindows implements IOperatingSystemRegistration {
 	public String getEclipseLauncher() {
 		return System.getProperty("eclipse.launcher");//$NON-NLS-1$
 	}
+
+	/**
+	 * Only one application can handle a specific uri scheme on Windows. This
+	 * information is stored centrally in the registry. Registering an uri scheme
+	 * that is already handled by another application simply overwrites the
+	 * registration of the other application in the registry.
+	 *
+	 * @return always <code>true</code>
+	 */
+	@Override
+	public boolean canOverwriteOtherApplicationsRegistration() {
+		return true;
+	}
 }

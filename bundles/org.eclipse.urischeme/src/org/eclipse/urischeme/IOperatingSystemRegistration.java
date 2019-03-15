@@ -67,4 +67,17 @@ public interface IOperatingSystemRegistration {
 	 */
 	String getEclipseLauncher();
 
+	/**
+	 *
+	 * This method returns if the current operating system allows to register an uri
+	 * scheme that this already handled by another application.
+	 *
+	 * If the operating system does store this information in de-central way the
+	 * implementation should return false.
+	 *
+	 * @return <code>true</code> if registering of other application's uri scheme is
+	 *         supported - <code>false</code> otherwise.
+	 */
+	boolean canOverwriteOtherApplicationsRegistration();
+
 }

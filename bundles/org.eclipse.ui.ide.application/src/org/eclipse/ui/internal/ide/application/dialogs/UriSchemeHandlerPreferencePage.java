@@ -10,7 +10,10 @@
 *******************************************************************************/
 package org.eclipse.ui.internal.ide.application.dialogs;
 
+import static org.eclipse.ui.internal.ide.IDEWorkbenchMessages.UriHandlerPreferencePage_Confirm_Handle;
 import static org.eclipse.ui.internal.ide.IDEWorkbenchMessages.UriHandlerPreferencePage_Warning_OtherApp;
+import static org.eclipse.ui.internal.ide.IDEWorkbenchMessages.UriHandlerPreferencePage_Warning_OtherApp_Confirmation;
+import static org.eclipse.ui.internal.ide.IDEWorkbenchMessages.UriHandlerPreferencePage_Warning_OtherApp_Confirmation_Description;
 import static org.eclipse.ui.internal.ide.IDEWorkbenchMessages.UriHandlerPreferencePage_Warning_OtherApp_Description;
 import static org.eclipse.ui.internal.ide.IDEWorkbenchMessages.UrlHandlerPreferencePage_ColumnName_Handler;
 import static org.eclipse.ui.internal.ide.IDEWorkbenchMessages.UrlHandlerPreferencePage_ColumnName_SchemeDescription;
@@ -30,6 +33,7 @@ import java.util.List;
 
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.jface.layout.GridLayoutFactory;
@@ -295,21 +299,30 @@ public class UriSchemeHandlerPreferencePage extends PreferencePage implements IW
 
 		private void handleCheckbox(CheckStateChangedEvent event) {
 			UiSchemeInformation schemeInformation = (UiSchemeInformation) event.getElement();
-
 			if (event.getChecked() && schemeIsHandledByOther(schemeInformation.information)) {
-				// macOS: As lsregister always registers all plist files we cannot set a handler
-				// for a scheme that is already handled by another application.
-				// For Windows and Linux this might work - needs to be tested.
-				// As we think this is a edge case we start with a restrictive implementation.
-				schemeInformation.checked = false;
-				tableViewer.setChecked(schemeInformation, schemeInformation.checked);
+				if (operatingSystemRegistration.canOverwriteOtherApplicationsRegistration()) {
+					boolean answer = messageDialogWrapper.openQuestion(getShell(),
+							UriHandlerPreferencePage_Warning_OtherApp_Confirmation,
+							NLS.bind(UriHandlerPreferencePage_Warning_OtherApp_Confirmation_Description,
+							schemeInformation.information.getHandlerInstanceLocation(),
+							schemeInformation.information.getName()));
+					if (answer == false) {
+						schemeInformation.checked = false;
+						tableViewer.setChecked(schemeInformation, schemeInformation.checked);
+						return;
+					}
+				} else {
+					schemeInformation.checked = false;
+					tableViewer.setChecked(schemeInformation, schemeInformation.checked);
 
-				messageDialogWrapper.openWarning(getShell(), UriHandlerPreferencePage_Warning_OtherApp,
-						NLS.bind(UriHandlerPreferencePage_Warning_OtherApp_Description,
-								schemeInformation.information.getHandlerInstanceLocation(),
-								schemeInformation.information.getName()));
+					messageDialogWrapper.openWarning(getShell(), UriHandlerPreferencePage_Warning_OtherApp,
+							NLS.bind(UriHandlerPreferencePage_Warning_OtherApp_Description,
+									schemeInformation.information.getHandlerInstanceLocation(),
+									schemeInformation.information.getName()));
 
-				return;
+					return;
+				}
+
 			}
 			schemeInformation.checked = event.getChecked();
 			setSchemeDetails(schemeInformation);
@@ -381,6 +394,16 @@ public class UriSchemeHandlerPreferencePage extends PreferencePage implements IW
 	interface IMessageDialogWrapper {
 		default void openWarning(Shell shell, String title, String message) {
 			MessageDialog.openWarning(shell, title, message);
+		}
+
+		default boolean openQuestion(Shell parent, String title, String message) {
+			MessageDialog dlg = new MessageDialog(parent, title, null, message, MessageDialog.CONFIRM,
+					0, UriHandlerPreferencePage_Confirm_Handle, IDialogConstants.CANCEL_LABEL);
+			dlg.open();
+			if (dlg.getReturnCode() != IDialogConstants.OK_ID) {
+				return false;
+			}
+			return true;
 		}
 	}
 }

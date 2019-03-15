@@ -151,4 +151,18 @@ public class RegistrationLinux implements IOperatingSystemRegistration {
 		String homeLocationProperty = System.getProperty("eclipse.home.location"); //$NON-NLS-1$
 		return homeLocationProperty.replaceAll("file:(.*)", "$1"); //$NON-NLS-1$ //$NON-NLS-2$
 	}
+
+	/**
+	 * Only one application can handle a specific uri scheme on Linux. This
+	 * information is stored de-centrally in the .desktop file and registered in a
+	 * central database. Registering an uri scheme that is already handled by
+	 * another application would also include changing the other application's
+	 * .desktop file - which can have unknown side effects.
+	 *
+	 * @return always <code>false</code>
+	 */
+	@Override
+	public boolean canOverwriteOtherApplicationsRegistration() {
+		return false;
+	}
 }
