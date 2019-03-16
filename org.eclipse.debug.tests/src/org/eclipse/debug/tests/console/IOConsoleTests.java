@@ -14,7 +14,9 @@
 package org.eclipse.debug.tests.console;
 
 import java.io.BufferedReader;
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
@@ -263,6 +265,22 @@ public class IOConsoleTests extends AbstractDebugTest {
 		expectedInput.add("456");
 
 		closeConsole(c, expectedInput.toArray(new String[0]));
+	}
+
+	/**
+	 * Test {@link IOConsole} with file as input source.
+	 */
+	public void testInputFile() throws Exception {
+		final IOConsoleTestUtil c = getTestUtil("Test input file");
+		// open default output stream to match usual behavior where two output
+		// streams are open and to prevent premature console closing
+		c.getDefaultOutputStream();
+		try (InputStream in = new ByteArrayInputStream(new byte[0])) {
+			c.getConsole().getInputStream().close();
+			c.getConsole().setInputStream(in);
+		}
+		closeConsole(c);
+		assertEquals("Test triggered errors in IOConsole.", 0, loggedErrors.get());
 	}
 
 	/**

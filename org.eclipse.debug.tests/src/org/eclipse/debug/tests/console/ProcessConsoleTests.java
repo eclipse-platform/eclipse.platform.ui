@@ -13,9 +13,11 @@
  *******************************************************************************/
 package org.eclipse.debug.tests.console;
 
+import java.io.File;
 import java.nio.charset.StandardCharsets;
 import java.util.Collections;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.eclipse.core.runtime.ILogListener;
@@ -24,13 +26,24 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunch;
+import org.eclipse.debug.core.ILaunchConfiguration;
+import org.eclipse.debug.core.ILaunchConfigurationType;
+import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.debug.core.Launch;
 import org.eclipse.debug.core.model.IProcess;
+import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.tests.AbstractDebugTest;
 import org.eclipse.debug.tests.TestUtil;
+import org.eclipse.debug.tests.launching.LaunchConfigurationTests;
+import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.debug.ui.console.ConsoleColorProvider;
+import org.eclipse.jface.util.IPropertyChangeListener;
+import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.ui.console.ConsolePlugin;
+import org.eclipse.ui.console.IConsole;
+import org.eclipse.ui.console.IConsoleConstants;
+import org.eclipse.ui.console.IConsoleManager;
 
 /**
  * Tests the ProcessConsole.
@@ -164,6 +177,74 @@ public class ProcessConsoleTests extends AbstractDebugTest {
 			}
 		} finally {
 			mockProcess.destroy();
+		}
+	}
+
+	/**
+	 * Test console finished notification with standard process console.
+	 */
+	public void testProcessTerminationNotification() throws Exception {
+		TestUtil.log(IStatus.INFO, getName(), "Process terminates after Console is initialized.");
+		processTerminationTest(null, false);
+		TestUtil.log(IStatus.INFO, getName(), "Process terminates before Console is initialized.");
+		processTerminationTest(null, true);
+	}
+
+	/**
+	 * Test console finished notification if process standard input is feed from
+	 * file.
+	 */
+	public void testProcessTerminationNotificationWithInputFile() throws Exception {
+		File inFile = DebugUIPlugin.getDefault().getStateLocation().addTrailingSeparator().append("testStdin.txt").toFile();
+		boolean fileCreated = inFile.createNewFile();
+		assertTrue("Failed to prepare input file.", fileCreated);
+		try {
+			ILaunchConfigurationType launchType = DebugPlugin.getDefault().getLaunchManager().getLaunchConfigurationType(LaunchConfigurationTests.ID_TEST_LAUNCH_TYPE);
+			ILaunchConfigurationWorkingCopy launchConfiguration = launchType.newInstance(null, "testProcessTerminationNotificationWithInputFromFile");
+			launchConfiguration.setAttribute(IDebugUIConstants.ATTR_CAPTURE_STDIN_FILE, inFile.getAbsolutePath());
+			TestUtil.log(IStatus.INFO, getName(), "Process terminates after Console is initialized.");
+			processTerminationTest(launchConfiguration, false);
+			TestUtil.log(IStatus.INFO, getName(), "Process terminates before Console is initialized.");
+			processTerminationTest(launchConfiguration, true);
+		} finally {
+			inFile.delete();
+		}
+	}
+
+	/**
+	 * The shared code to test console finished notification.
+	 *
+	 * @param launchConfig <code>null</code> or configured with stdin file.
+	 * @param terminateBeforeConsoleInitialization if <code>true</code> the
+	 *            tested process is terminated before the ProcessConsole can
+	 *            perform its initialization. If <code>false</code> the process
+	 *            is guaranteed to run until the ProcessConsole was initialized.
+	 */
+	public void processTerminationTest(ILaunchConfiguration launchConfig, boolean terminateBeforeConsoleInitialization) throws Exception {
+		final AtomicBoolean terminationSignaled = new AtomicBoolean(false);
+		final Process mockProcess = new MockProcess(null, null, terminateBeforeConsoleInitialization ? 0 : -1);
+		final IProcess process = DebugPlugin.newProcess(new Launch(launchConfig, ILaunchManager.RUN_MODE, null), mockProcess, "testProcessTerminationNotification");
+		@SuppressWarnings("restriction")
+		final org.eclipse.debug.internal.ui.views.console.ProcessConsole console = new org.eclipse.debug.internal.ui.views.console.ProcessConsole(process, new ConsoleColorProvider());
+		console.addPropertyChangeListener(new IPropertyChangeListener() {
+			@Override
+			public void propertyChange(PropertyChangeEvent event) {
+				if (event.getSource() == console && IConsoleConstants.P_CONSOLE_OUTPUT_COMPLETE.equals(event.getProperty())) {
+					terminationSignaled.set(true);
+				}
+			}
+		});
+		final IConsoleManager consoleManager = ConsolePlugin.getDefault().getConsoleManager();
+		try {
+			consoleManager.addConsoles(new IConsole[] { console });
+			if (mockProcess.isAlive()) {
+				mockProcess.destroy();
+			}
+			TestUtil.waitForJobs(getName(), 50, 10000);
+			assertTrue("No console complete notification received.", terminationSignaled.get());
+		} finally {
+			consoleManager.removeConsoles(new IConsole[] { console });
+			TestUtil.waitForJobs(getName(), 0, 10000);
 		}
 	}
 }

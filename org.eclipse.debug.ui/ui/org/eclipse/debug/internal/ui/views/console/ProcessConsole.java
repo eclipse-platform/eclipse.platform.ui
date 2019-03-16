@@ -11,6 +11,7 @@
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *     Paul Pazderski  - Bug 545769: fixed rare UTF-8 character corruption bug
+ *     Paul Pazderski  - Bug 552015: console finished signaled to late if input is connected to file
  *******************************************************************************/
 package org.eclipse.debug.internal.ui.views.console;
 
@@ -104,6 +105,16 @@ public class ProcessConsole extends IOConsole implements IConsole, IDebugEventSe
 
 	private IConsoleColorProvider fColorProvider;
 
+	/**
+	 * The input stream which can supply user input in console to the system process
+	 * stdin.
+	 */
+	private IOConsoleInputStream fUserInput;
+	/**
+	 * The stream connected to the system processe's stdin. May be the
+	 * <i>fUserInput</i> stream to supply user input or a FileInputStream to supply
+	 * input from a file.
+	 */
 	private volatile InputStream fInput;
 
 	private FileOutputStream fFileOutputStream;
@@ -114,14 +125,18 @@ public class ProcessConsole extends IOConsole implements IConsole, IDebugEventSe
 	private boolean fStreamsClosed = false;
 
 	/**
-	 * Proxy to a console document
+	 * Create process console with default encoding.
+	 *
+	 * @param process	   the process to associate with this console
+	 * @param colorProvider the colour provider for this console
 	 */
 	public ProcessConsole(IProcess process, IConsoleColorProvider colorProvider) {
 		this(process, colorProvider, null);
 	}
 
 	/**
-	 * Constructor
+	 * Create process console.
+	 *
 	 * @param process the process to associate with this console
 	 * @param colorProvider the colour provider for this console
 	 * @param encoding the desired encoding for this console
@@ -129,6 +144,7 @@ public class ProcessConsole extends IOConsole implements IConsole, IDebugEventSe
 	public ProcessConsole(IProcess process, IConsoleColorProvider colorProvider, String encoding) {
 		super(IInternalDebugCoreConstants.EMPTY_STRING, IDebugUIConstants.ID_PROCESS_CONSOLE_TYPE, null, encoding, true);
 		fProcess = process;
+		fUserInput = getInputStream();
 
 		ILaunchConfiguration configuration = process.getLaunch().getLaunchConfiguration();
 		String file = null;
@@ -420,6 +436,12 @@ public class ProcessConsole extends IOConsole implements IConsole, IDebugEventSe
 		try {
 			fInput.close();
 		} catch (IOException e) {
+		}
+		if (fInput != fUserInput) {
+			try {
+				fUserInput.close();
+			} catch (IOException e) {
+			}
 		}
 		fStreamsClosed  = true;
 	}

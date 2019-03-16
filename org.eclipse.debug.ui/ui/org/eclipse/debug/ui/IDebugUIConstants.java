@@ -966,9 +966,8 @@ public interface IDebugUIConstants {
 	String ATTR_CAPTURE_IN_CONSOLE = PLUGIN_ID + ".ATTR_CONSOLE_OUTPUT_ON"; //$NON-NLS-1$
 
 	/**
-	 * Launch configuration boolean attribute specifying whether input for the
-	 * launched process will be captured from file. Default value is
-	 * <code>null</code>.
+	 * Launch configuration attribute to specifying a file whose content is supplied
+	 * to the launched process input stream. Default value is <code>null</code>.
 	 *
 	 * @since 3.11
 	 */
