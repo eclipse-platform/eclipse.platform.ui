@@ -183,9 +183,21 @@ public class IOConsoleTests extends AbstractDebugTest {
 	 */
 	public void testConsoleClear() throws Exception {
 		final IOConsoleTestUtil c = getTestUtil("Test clear");
+
+		c.writeAndVerify("Hello World!");
+		c.getDocument().replace(0, c.getContentLength(), "");
+		c.waitForScheduledJobs();
+		c.verifyContent("").verifyPartitions();
+
 		c.writeAndVerify("New console content.");
 		c.clear();
-		closeConsole(c);
+		assertEquals("Unexpected partition type.", IOConsoleTestUtil.inputPartitionType(), c.getPartitioner().getContentType(0));
+
+		c.insertAndVerify("wrong").write("out").verifyContent("wrongout").verifyPartitions(2);
+		c.clear().insertTypingAndVerify("i").write("ooo").verifyContent("iooo").verifyPartitions();
+		c.enter().clear();
+
+		closeConsole(c, "i");
 	}
 
 	/**
@@ -265,6 +277,53 @@ public class IOConsoleTests extends AbstractDebugTest {
 		c.enter().clear();
 		expectedInput.add("+more inputinput");
 
+		// inserted input is shorter than existing input partition
+		c.writeAndVerify("foo");
+		c.insertTyping("><--input-partition--").setCaretOffset(4);
+		c.writeAndVerify("bar");
+		c.insertTypingAndVerify("short");
+		c.verifyContent("foo>short<--input-partition--bar").verifyPartitions(3);
+		c.enter().clear();
+		expectedInput.add(">short<--input-partition--");
+
+		// inserted input is longer than existing input partition
+		c.writeAndVerify("Hello");
+		c.insertTyping("><").moveCaret(-1);
+		c.writeAndVerify("World");
+		c.insertTypingAndVerify("user input");
+		c.verifyContent("Hello>user input<World").verifyPartitions(3);
+		c.enter().clear();
+		expectedInput.add(">user input<");
+
+		// replace and remove input
+		c.writeAndVerify("oooo");
+		c.insertTyping("input");
+		c.writeAndVerify("output");
+		c.verifyContent("ooooinputoutput").verifyPartitions(3);
+		c.select(4, 5).insertAndVerify("iiii");
+		c.verifyContent("ooooiiiioutput").verifyPartitions(3);
+		c.select(4, 4).backspace();
+		c.verifyContent("oooooutput").verifyPartitions(2);
+		c.enter().clear();
+		expectedInput.add("");
+
+		// insert alternating into distinct input partitions
+		c.insertTypingAndVerify("ac").writeAndVerify("ooo");
+		c.setCaretOffset(1).insertTypingAndVerify("b");
+		c.moveCaretToEnd().insertTypingAndVerify("123");
+		c.verifyContent("abcooo123").verifyPartitions(3);
+		c.enter().clear();
+		expectedInput.add("abc123");
+
+		// insert alternating into distinct input partitions
+		c.insertTypingAndVerify("abc").writeAndVerify("ooo");
+		c.moveCaretToEnd().insertTypingAndVerify("13").writeAndVerify("OOO");
+		c.moveCaret(-1).insertTyping("2");
+		c.moveCaretToStart().insertTyping("ABC");
+		c.verifyContent("ABCabcooo123OOO").verifyPartitions(4);
+		c.enter().clear();
+		expectedInput.add("ABCabc123");
+
 		closeConsole(c, expectedInput.toArray(new String[0]));
 	}
 
@@ -329,5 +388,31 @@ public class IOConsoleTests extends AbstractDebugTest {
 			assertTrue("Document not trimmed.", c.getDocument().getNumberOfLines() < 15);
 		}
 		closeConsole(c);
+	}
+
+	/**
+	 * Some extra tests for IOConsolePartitioner.
+	 */
+	public void testIOPartitioner() throws Exception {
+		final IOConsoleTestUtil c = getTestUtil("Test partitioner");
+
+		c.writeAndVerify("output");
+		c.getDocument().replace(2, 1, ":::");
+		c.verifyPartitions();
+
+		c.clear().insertAndVerify("input").enter();
+		c.getDocument().replace(3, 0, "()");
+		c.verifyInputPartitions(0, c.getContentLength());
+
+		c.clear().writeAndVerify("><");
+		c.getDocument().replace(1, 0, "a\nb\r\nc");
+		c.verifyContent(">a\nb\r\nc<").verifyPartitions();
+
+		c.clear().writeAndVerify(")");
+		c.getDocument().replace(0, 0, "(");
+		c.verifyContent("()").verifyPartitions();
+
+		closeConsole(c);
+		assertEquals("Test triggered errors in IOConsole.", 0, loggedErrors.get());
 	}
 }

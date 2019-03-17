@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2013 IBM Corporation and others.
+ * Copyright (c) 2004, 2019 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -10,6 +10,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Paul Pazderski  - Bug 548356: Removed error prone handling of input content from input partition.
  *******************************************************************************/
 package org.eclipse.ui.internal.console;
 
@@ -26,73 +27,83 @@ import org.eclipse.ui.console.IOConsoleOutputStream;
  * @since 3.1
  */
 public class IOConsolePartition implements ITypedRegion {
+	/** Type for input partitions. */
 	public static final String OUTPUT_PARTITION_TYPE = ConsolePlugin.getUniqueIdentifier() + ".io_console_output_partition_type"; //$NON-NLS-1$
+	/** Type for output partitions. */
 	public static final String INPUT_PARTITION_TYPE = ConsolePlugin.getUniqueIdentifier() + ".io_console_input_partition_type"; //$NON-NLS-1$
 
-	/**
-	 * The data contained by this partition.
-	 */
-	private StringBuffer buffer;
-	private String type;
 	private int offset;
+	private int length;
+	private String type;
+
 	/**
-	 * Output partitions are all read only.
-	 * Input partitions are read only once they have been appended to the console's input stream.
+	 * Output partitions are all read only. Input partitions are read only once they
+	 * have been appended to the console's input stream.
 	 */
 	private boolean readOnly;
 
 	/**
-	 * Only one of inputStream or outputStream will be null depending on the partitions type.
+	 * Only one of inputStream or outputStream will be <code>null</code> depending
+	 * on the partitions type.
 	 */
 	private IOConsoleOutputStream outputStream;
 	private IOConsoleInputStream inputStream;
-	private int length;
 
 	/**
-	 * Creates a new partition to contain output to console.
+	 * Partition of console output.
+	 *
+	 * @param offset       offset where this partition starts
+	 * @param outputStream source stream for this partition
 	 */
-	public IOConsolePartition(IOConsoleOutputStream outputStream, int length) {
+	public IOConsolePartition(int offset, IOConsoleOutputStream outputStream) {
 		this.outputStream = outputStream;
-		this.length = length;
+		this.offset = offset;
 		this.type = OUTPUT_PARTITION_TYPE;
 		this.readOnly = true;
 	}
 
 	/**
-	 * Creates a new partition to contain input from a console
+	 * Partition of console input.
+	 *
+	 * @param offset      offset where this partition starts
+	 * @param inputStream source stream for this partition
 	 */
-	public IOConsolePartition(IOConsoleInputStream inputStream, String text) {
+	public IOConsolePartition(int offset, IOConsoleInputStream inputStream) {
 		this.inputStream = inputStream;
-		buffer = new StringBuffer(text);
-		length = text.length();
+		this.offset = offset;
 		this.type = INPUT_PARTITION_TYPE;
 		this.readOnly = false;
 	}
 
 	/**
-	 * Inserts a string into this partition.
-	 * 
-	 * @param s            The string to insert
-	 * @param insertOffset the offset in the partition
+	 * Partition of console output.
+	 *
+	 * @param outputStream source stream for this partition
+	 * @param length       length of the partition
+	 * @deprecated use {@link #IOConsolePartition(int, IOConsoleOutputStream)} and
+	 *             {@link #setLength(int)} instead
 	 */
-	public void insert(String s, int insertOffset) {
-		if (insertOffset < 0) {
-			insertOffset = 0;
-		} else if (insertOffset > buffer.length()) {
-			insertOffset = buffer.length();
-		}
-		buffer.insert(insertOffset, s);
-		length += s.length();
+	@Deprecated
+	public IOConsolePartition(IOConsoleOutputStream outputStream, int length) {
+		this(0, outputStream);
+		setLength(length);
 	}
 
 	/**
-	 * Deletes data from this partition.
-	 * @param delOffset
-	 * @param delLength
+	 * Partition of console input.
+	 *
+	 * @param inputStream source stream for this partition
+	 * @param text        text of the input partition
+	 * @deprecated use {@link #IOConsolePartition(int, IOConsoleInputStream)} and
+	 *             {@link #setLength(int)} instead. Also note: input partitions do
+	 *             not explicitly store the partitioned input anymore. Instead
+	 *             request the input from the partitioned document using input
+	 *             partition's offset and length.
 	 */
-	public void delete(int delOffset, int delLength) {
-		buffer.delete(delOffset, delOffset+delLength);
-		length -= delLength;
+	@Deprecated
+	public IOConsolePartition(IOConsoleInputStream inputStream, String text) {
+		this(0, inputStream);
+		setLength(text == null ? 0 : text.length());
 	}
 
 	@Override
@@ -122,32 +133,28 @@ public class IOConsolePartition implements ITypedRegion {
 	/**
 	 * Sets this partition's length.
 	 *
-	 * @param length
+	 * @param length new length of partition
 	 */
 	public void setLength(int length) {
 		this.length = length;
 	}
 
 	/**
-	 * Returns the data contained in this partition.
-	 * @return The data contained in this partition.
-	 */
-	public String getString() {
-		return buffer.toString();
-	}
-
-	/**
-	 * Returns a StyleRange object which may be used for setting the style
-	 * of this partition in a viewer.
+	 * Returns a StyleRange object which may be used for setting the style of this
+	 * partition in a viewer.
+	 *
+	 * @param rangeOffset offset for the style range
+	 * @param rangeLength length of style range
+	 * @return style range for this partition
 	 */
 	public StyleRange getStyleRange(int rangeOffset, int rangeLength) {
 		return new StyleRange(rangeOffset, rangeLength, getColor(), null, getFontStyle());
 	}
 
 	/**
-	 *  Returns the font of the input stream if the type of the partition
-	 * is <code>INPUT_PARTITION_TYPE</code>, otherwise it returns the output
-	 * stream font
+	 * Returns the font of the input stream if the type of the partition is
+	 * <code>INPUT_PARTITION_TYPE</code>, otherwise it returns the output stream
+	 * font
 	 *
 	 * @return the font of one of the backing streams
 	 */
@@ -159,9 +166,9 @@ public class IOConsolePartition implements ITypedRegion {
 	}
 
 	/**
-	 * Returns the colour of the input stream if the type of the partition
-	 * is <code>INPUT_PARTITION_TYPE</code>, otherwise it returns the output
-	 * stream colour
+	 * Returns the colour of the input stream if the type of the partition is
+	 * <code>INPUT_PARTITION_TYPE</code>, otherwise it returns the output stream
+	 * colour
 	 *
 	 * @return the colour of one of the backing streams
 	 */
@@ -192,18 +199,55 @@ public class IOConsolePartition implements ITypedRegion {
 	}
 
 	/**
-	 * Clears the contents of the buffer
+	 * Returns the underlying output stream.
+	 * <p>
+	 * Always <code>null</code> for input partitions.
+	 * </p>
+	 *
+	 * @return the underlying output stream
+	 * @deprecated use {@link #getOutputStream()} instead
 	 */
-	public void clearBuffer() {
-		buffer.setLength(0);
+	@Deprecated
+	IOConsoleOutputStream getStream() {
+		return outputStream;
 	}
 
 	/**
-	 * Returns the underlying output stream
+	 * Returns the underlying output stream.
+	 * <p>
+	 * Always <code>null</code> for input partitions.
+	 * </p>
 	 *
 	 * @return the underlying output stream
 	 */
-	IOConsoleOutputStream getStream() {
+	IOConsoleOutputStream getOutputStream() {
 		return outputStream;
+	}
+
+	/**
+	 * Returns the underlying input stream.
+	 * <p>
+	 * Always <code>null</code> for output partitions.
+	 * </p>
+	 *
+	 * @return the underlying input stream
+	 */
+	IOConsoleInputStream getInputStream() {
+		return inputStream;
+	}
+
+	@Override
+	public String toString() {
+		final StringBuilder sb = new StringBuilder(40);
+		sb.append(INPUT_PARTITION_TYPE.equals(type) ? "[Input" : "[Output"); //$NON-NLS-1$ //$NON-NLS-2$
+		if (!readOnly) {
+			sb.append("+"); //$NON-NLS-1$
+		}
+		sb.append("]"); //$NON-NLS-1$
+		sb.append(" Offset: "); //$NON-NLS-1$
+		sb.append(offset);
+		sb.append(" Length: "); //$NON-NLS-1$
+		sb.append(length);
+		return sb.toString();
 	}
 }

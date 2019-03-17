@@ -345,6 +345,17 @@ public final class IOConsoleTestUtil {
 	}
 
 	/**
+	 * Set caret to offset relative to start of current line.
+	 *
+	 * @param offset relative offset to line start
+	 * @return this {@link IOConsoleTestUtil} to chain methods
+	 */
+	public IOConsoleTestUtil setCaretLineRelative(int offset) {
+		moveCaretToLineStart().moveCaret(offset);
+		return this;
+	}
+
+	/**
 	 * Move caret by given amount forth or back.
 	 *
 	 * @param amount steps to set caret forth (positive value) or back (negative
