@@ -118,20 +118,20 @@ public class MenuBaseTests extends MenuTestCase {
 		Shell shell = window.getShell();
 
 		// Test the initial menu creation
-		final Menu menuBar = manager.createContextMenu(shell);
+		final Menu contextMenu = manager.createContextMenu(shell);
 		Event e = new Event();
 		e.type = SWT.Show;
-		e.widget = menuBar;
-		menuBar.notifyListeners(SWT.Show, e);
+		e.widget = contextMenu;
+		contextMenu.notifyListeners(SWT.Show, e);
 
-		MenuItem[] menuItems = menuBar.getItems();
+		MenuItem[] menuItems = contextMenu.getItems();
 
 		// NOTE: Uncomment to print the info needed to update the 'expected'
 		// arrays
-		IContributionItem[] items = manager.getItems();
-		printIds(items);
-		printClasses(items);
-		printMenuItemLabels(menuItems);
+//		IContributionItem[] items = manager.getItems();
+//		printIds(items);
+//		printClasses(items);
+//		printMenuItemLabels(menuItems);
 
 		// Correct number of items?
 		assertEquals("createMenuBar: Bad count", expectedMenuItemLabels.length, menuItems.length);
@@ -139,17 +139,27 @@ public class MenuBaseTests extends MenuTestCase {
 		int diffIndex = checkMenuItemLabels(menuItems, expectedMenuItemLabels);
 		assertTrue("createMenuBar: Index mismatch at index " + diffIndex , diffIndex == ALL_OK);
 
-		// Test the update mechanism
+		// Test the update mechanism (While visible)
+		manager.update(true);
+		menuItems = manager.getMenu().getItems();
 
-		// KLUDGE!! Test commented out until bug 170353 is fixed...
-//		manager.update(true);
-//		menuItems = manager.getMenu().getItems();
-//
-//		// Correct number of items?
-//		assertTrue("manager.update(true): Bad count", menuItems.length == expectedMenuItemLabels.length);
-//
-//		diffIndex = checkMenuItemLabels(menuItems, expectedMenuItemLabels);
-//		assertTrue("manager.update(true): Index mismatch at index " + diffIndex , diffIndex == ALL_OK);
+		// Correct number of items?
+		assertTrue("manager.update(true): Bad count", menuItems.length == expectedMenuItemLabels.length);
+
+		diffIndex = checkMenuItemLabels(menuItems, expectedMenuItemLabels);
+		assertTrue("manager.update(true): Index mismatch at index " + diffIndex , diffIndex == ALL_OK);
+
+		// Test second appearance
+		contextMenu.notifyListeners(SWT.Hide, new Event());
+		contextMenu.notifyListeners(SWT.Show, new Event());
+
+		menuItems = manager.getMenu().getItems();
+
+		// Correct number of items?
+		assertTrue("manager.update(true): Bad count", menuItems.length == expectedMenuItemLabels.length);
+
+		diffIndex = checkMenuItemLabels(menuItems, expectedMenuItemLabels);
+		assertTrue("manager.update(true): Index mismatch at index " + diffIndex, diffIndex == ALL_OK);
 
 		menuService.releaseContributions(manager);
 		manager.dispose();
