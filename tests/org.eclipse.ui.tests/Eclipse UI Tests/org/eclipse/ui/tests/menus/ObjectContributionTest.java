@@ -176,8 +176,9 @@ public final class ObjectContributionTest extends UITestCase {
 	 *
 	 * @since 3.1
 	 */
-	// This test fails locally, but passes in Gerrit, See Bug 366541
-	public final void XXXtestAdaptables() throws PartInitException {
+	// This test fails (locally) if 'org.eclipse.ui.examples.adapterservice' is part
+	// of the launch configuration, see Bug 366541
+	public final void testAdaptables() throws PartInitException {
 		assertPopupMenus("1", new String[] { "ICommon.1" },
 				new StructuredSelection(
 						new Object[] { new ObjectContributionClasses.A() }),
