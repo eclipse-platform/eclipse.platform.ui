@@ -110,7 +110,7 @@ public abstract class AbstractButton implements Comparable<AbstractButton> {
     /**
      * Determines whether this button should be true if the button should be added
      * to particular toolbar
-     * @param toolbarName
+     * @param toolbarName Name of the toolbar.
      * @return true
      */
     public boolean isAddedToToolbar(String toolbarName) {

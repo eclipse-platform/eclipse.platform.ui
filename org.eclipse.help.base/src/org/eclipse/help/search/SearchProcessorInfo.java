@@ -40,6 +40,7 @@ public class SearchProcessorInfo {
 	 *
 	 * @see #getQuery()
 	 * @param query
+	 *            the new search query string
 	 */
 	public void setQuery(String query) {
 		this.query = query;
@@ -62,6 +63,8 @@ public class SearchProcessorInfo {
 	 *
 	 * @see #getAlternateTerms()
 	 * @param alternateTerms
+	 *            new alternate search terms, or <code>null</code> for no
+	 *            alternate terms.
 	 */
 	public void setAlternateTerms(String[] alternateTerms) {
 		this.alternateTerms = alternateTerms;

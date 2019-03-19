@@ -60,10 +60,12 @@ public abstract class AbstractHelpScope {
 	public abstract String getName(Locale locale);
 
 	/**
-     * In the default implementation of this method an IndexSee element is in scope
-     * if it's target is in scope. May be overridden to exclude more IndexSee elements
-     * from the scope
+	 * In the default implementation of this method an IndexSee element is in
+	 * scope if it's target is in scope. May be overridden to exclude more
+	 * IndexSee elements from the scope
+	 *
 	 * @param see
+	 *            the {@link IIndexSee} to check
 	 * @return true if the target is in scope
 	 */
 	public boolean inScope(IIndexSee see) {

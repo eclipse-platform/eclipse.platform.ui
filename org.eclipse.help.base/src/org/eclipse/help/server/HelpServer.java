@@ -26,19 +26,23 @@ public abstract class HelpServer {
 
 	/**
 	 * Start a server application to host the Eclipse help system. The server is
-	 * responsible for initializing the servlets, jsp files and other resources
-	 * for the help system as defined by the extension points <code>org.eclipse.equinox.http.registry.resources</code>
-	 * and <code>org.eclipse.equinox.http.registry.servlets</code> for the httpcontextId
+	 * responsible for initializing the servlets, jsp files and other resources for
+	 * the help system as defined by the extension points
+	 * <code>org.eclipse.equinox.http.registry.resources</code> and
+	 * <code>org.eclipse.equinox.http.registry.servlets</code> for the httpcontextId
 	 * <code>org.eclipse.help.webapp.help</code>
+	 *
 	 * @param webappName The name of this web application
-	 * @throws Exception
+	 * @throws Exception If anything prevented starting the server.
 	 */
 	public abstract void start(String webappName) throws Exception;
 
 	/**
-	 * Stop a server application. If an application of this name has not been started do nothing
+	 * Stop a server application. If an application of this name has not been
+	 * started do nothing
+	 * 
 	 * @param webappName the name of a running web application
-	 * @throws CoreException
+	 * @throws CoreException If there was any error during stopping.
 	 */
     public abstract void stop(String webappName) throws CoreException ;
 
