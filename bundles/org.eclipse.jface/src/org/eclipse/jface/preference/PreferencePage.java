@@ -458,26 +458,28 @@ public abstract class PreferencePage extends DialogPage implements
     }
 
     /**
-     * The preference page implementation of an <code>IPreferencePage</code>
-     * method performs special processing when this page's Cancel button has
-     * been pressed.
-     * <p>
-     * This is a framework hook method for subclasses to do special things when
-     * the Cancel button has been pressed. The default implementation of this
-     * framework method does nothing and returns <code>true</code>.
-     * </p>
-     * <p>
-     * Note that UI guidelines on different platforms disagree on whether Cancel
-     * should revert changes that have been applied with the Apply button.
-     * <a href="http://msdn.microsoft.com/en-us/library/windows/desktop/aa511266.aspx#commitButtons">Windows</a>
-     * wants applied changes to persist on Cancel, whereas
-     * <a href="http://developer.apple.com/library/mac/#documentation/UserExperience/Conceptual/AppleHIGuidelines/Windows/Windows.html#//apple_ref/doc/uid/20000961-TPXREF58">Mac</a> and
-     * <a href="https://developer.gnome.org/hig/stable/dialogs.html.en#instant-and-explicit-apply">GTK</a>
-     * consider Apply a preview that should not be saved on Cancel. Eclipse applications
-     * typically adhere to the Windows guidelines and just override {@link #performOk()} and save preferences there.
-     * </p>
-     * @see IPreferencePage#performCancel()
-     */
+	 * The preference page implementation of an <code>IPreferencePage</code> method
+	 * performs special processing when this page's Cancel button has been pressed.
+	 * <p>
+	 * This is a framework hook method for subclasses to do special things when the
+	 * Cancel button has been pressed. The default implementation of this framework
+	 * method does nothing and returns <code>true</code>.
+	 * </p>
+	 * <p>
+	 * Note that UI guidelines on different platforms disagree on whether Cancel
+	 * should revert changes that have been applied with the Apply button. <a href=
+	 * "https://docs.microsoft.com/en-us/windows/desktop/uxguide/text-ui#commit-button-labels">Windows</a>
+	 * wants applied changes to persist on Cancel, whereas <a href=
+	 * "https://web.archive.org/web/20110604173215if_/http://developer.apple.com/library/mac/documentation/UserExperience/Conceptual/AppleHIGuidelines/OSXHIGuidelines.pdf#//apple_ref/doc/uid/20000961-BACGCCAJ">Mac</a>
+	 * and <a href=
+	 * "https://developer.gnome.org/hig/stable/dialogs.html.en#instant-and-explicit-apply">GTK</a>
+	 * consider Apply a preview that should not be saved on Cancel. Eclipse
+	 * applications typically adhere to the Windows guidelines and just override
+	 * {@link #performOk()} and save preferences there.
+	 * </p>
+	 *
+	 * @see IPreferencePage#performCancel()
+	 */
     @Override
 	public boolean performCancel() {
         return true;
