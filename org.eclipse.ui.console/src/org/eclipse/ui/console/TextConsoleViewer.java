@@ -602,10 +602,10 @@ public class TextConsoleViewer extends SourceViewer implements LineStyleListener
 	}
 
 	/**
-	 * The cursor has just be moved to the given offset, the mouse has hovered
-	 * over the given offset. Update link rendering.
+	 * The cursor has just be moved to the given offset, the mouse has hovered over
+	 * the given offset. Update link rendering.
 	 *
-	 * @param offset
+	 * @param offset The offset cursor has been moved to.
 	 */
 	protected void updateLinks(int offset) {
 		if (offset >= 0) {

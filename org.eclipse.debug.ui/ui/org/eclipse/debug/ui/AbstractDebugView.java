@@ -571,7 +571,8 @@ public abstract class AbstractDebugView extends PageBookView implements IDebugVi
 	/**
 	 * @see IDebugView#getContextMenuManager()
 	 *
-	 * @deprecated @see AbstractDebugView.getContextMenuManagers()
+	 * @deprecated
+	 * @see AbstractDebugView.getContextMenuManagers()
 	 */
 	@Deprecated
 	@Override
@@ -735,7 +736,7 @@ public abstract class AbstractDebugView extends PageBookView implements IDebugVi
 	 * <ol>
 	 * <li><code>REMOVE_ACTION</code> when the delete key is pressed</li>
 	 * </ol>
-	 * 
+	 *
 	 * @param event the {@link KeyEvent}
 	 */
 	protected void handleKeyPressed(KeyEvent event) {
