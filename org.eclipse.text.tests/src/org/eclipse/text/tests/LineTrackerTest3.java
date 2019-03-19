@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2019 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -543,5 +543,64 @@ public class LineTrackerTest3 extends AbstractLineTrackerTest {
 			fail();
 		} catch (BadLocationException e) {
 		}
+	}
+
+	/**
+	 * Test for Bug 545565. Some ListLineTracker methods yield wrong results after tracker content
+	 * was set to <code>null</code>.
+	 * 
+	 * @throws BadLocationException if test failed
+	 */
+	@Test
+	public void testBug545565_setNull() throws BadLocationException {
+		int initialContentLength= fText.getLength();
+		set(null);
+		assertEquals("Tracker not empty.", 1, fTracker.getNumberOfLines());
+		assertEquals("Tracker not empty.", 0, fTracker.getLineLength(0));
+		try {
+			fTracker.getLineInformationOfOffset(5);
+			fail("No exception for bad location.");
+		} catch (BadLocationException e) {
+			// expected
+		}
+		try {
+			fTracker.getLineInformationOfOffset(initialContentLength);
+			fail("No exception for bad location.");
+		} catch (BadLocationException e) {
+			// expected
+		}
+		try {
+			fTracker.getLineNumberOfOffset(5);
+			fail("No exception for bad location.");
+		} catch (BadLocationException e) {
+			// expected
+		}
+		try {
+			fTracker.getLineNumberOfOffset(initialContentLength);
+			fail("No exception for bad location.");
+		} catch (BadLocationException e) {
+			// expected
+		}
+		try {
+			fTracker.getNumberOfLines(5, 3);
+			fail("No exception for bad location.");
+		} catch (BadLocationException e) {
+			// expected
+		}
+	}
+
+	/**
+	 * Check if ListLineTracker and TreeLineTracker return same result for same input in context of
+	 * Bug 545565.
+	 * 
+	 * @throws BadLocationException if test fails
+	 */
+	@Test
+	public void testBug545565_compareTrackerResult() throws BadLocationException {
+		set(null);
+		int lineFromListTracker= fTracker.getLineNumberOfOffset(0);
+		replace(0, 0, null);
+		int lineFromTreeTracker= fTracker.getLineNumberOfOffset(0);
+		assertEquals("Trackers returned different lines for same offset.", lineFromTreeTracker, lineFromListTracker);
 	}
 }
