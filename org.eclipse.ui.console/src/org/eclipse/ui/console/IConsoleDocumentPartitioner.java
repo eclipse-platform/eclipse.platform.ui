@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2019 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -21,12 +21,24 @@ import org.eclipse.swt.custom.StyleRange;
  * A document partitioner for a text console.
  * <p>
  * In addition to regular partitioner duties, a console document partitioner
- * dictates which regions in its document are read-only and provides style ranges.
+ * dictates which regions in its document are read-only and provides style
+ * ranges.
  * </p>
  * <p>
  * Clients may implement this interface.
  * </p>
+ * <p>
+ * In order to provided backward compatibility for clients of
+ * <code>IConsoleDocumentPartitioner</code>, extension interfaces are used to
+ * provide a means of evolution. The following extension interfaces exist:
+ * <ul>
+ * <li>{@link org.eclipse.ui.console.IConsoleDocumentPartitionerExtension} since
+ * version 3.9 adding more possibilities to query read-only regions.</li>
+ * </ul>
+ * </p>
+ *
  * @see org.eclipse.ui.console.TextConsole
+ * @see org.eclipse.ui.console.IConsoleDocumentPartitionerExtension
  * @since 3.1
  */
 public interface IConsoleDocumentPartitioner extends IDocumentPartitioner {

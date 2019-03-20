@@ -42,6 +42,7 @@ import org.eclipse.ui.console.ConsolePlugin;
 import org.eclipse.ui.console.IConsole;
 import org.eclipse.ui.console.IConsoleConstants;
 import org.eclipse.ui.console.IConsoleDocumentPartitioner;
+import org.eclipse.ui.console.IConsoleDocumentPartitionerExtension;
 import org.eclipse.ui.console.IConsoleManager;
 import org.eclipse.ui.console.IOConsole;
 import org.eclipse.ui.console.IOConsoleOutputStream;
@@ -484,6 +485,56 @@ public class IOConsoleTests extends AbstractDebugTest {
 			assertTrue("Offset should be read-only.", c.getPartitioner().isReadOnly(loremEnd + 3));
 			assertTrue("Offset should be read-only.", c.getPartitioner().isReadOnly(loremEnd + 4));
 			assertTrue("Offset should be read-only.", c.getPartitioner().isReadOnly(loremEnd + 5));
+
+			if (c.getPartitioner() instanceof IConsoleDocumentPartitionerExtension) {
+				final IConsoleDocumentPartitionerExtension extension = (IConsoleDocumentPartitionerExtension) c.getPartitioner();
+				assertFalse("Writable parts not recognized.", extension.isReadOnly(0, c.getContentLength()));
+				assertTrue("Read-only parts not recognized.", extension.containsReadOnly(0, c.getContentLength()));
+				assertFalse("Writable parts not recognized.", extension.isReadOnly(0, 3));
+				assertTrue("Read-only parts not recognized.", extension.containsReadOnly(0, 3));
+				assertFalse("Area should be writable.", extension.isReadOnly(loremEnd, 3));
+				assertFalse("Area should be writable.", extension.containsReadOnly(loremEnd, 3));
+				assertTrue("Area should be read-only.", extension.isReadOnly(6, 105));
+				assertTrue("Area should be read-only.", extension.containsReadOnly(8, 111));
+
+				assertTrue("Read-only parts not found.", extension.computeReadOnlyPartitions().length > 0);
+				assertTrue("Writable parts not found.", extension.computeWritablePartitions().length > 0);
+				assertTrue("Read-only parts not found.", extension.computeReadOnlyPartitions(loremEnd - 5, 7).length > 0);
+				assertTrue("Writable parts not found.", extension.computeWritablePartitions(loremEnd - 5, 7).length > 0);
+				assertTrue("Area should be read-only.", extension.computeReadOnlyPartitions(5, 100).length > 0);
+				assertEquals("Area should be read-only.", 0, extension.computeWritablePartitions(5, 100).length);
+				assertEquals("Area should be writable.", 0, extension.computeReadOnlyPartitions(loremEnd, 2).length);
+				assertTrue("Area should be writable.", extension.computeWritablePartitions(loremEnd, 2).length > 0);
+
+				assertEquals("Got wrong offset.", 0, extension.getNextOffsetByState(0, false));
+				assertEquals("Got wrong offset.", 2, extension.getNextOffsetByState(0, true));
+				assertEquals("Got wrong offset.", 0, extension.getPreviousOffsetByState(0, false));
+				assertEquals("Got wrong offset.", -1, extension.getPreviousOffsetByState(0, true));
+				assertEquals("Got wrong offset.", 1, extension.getNextOffsetByState(1, false));
+				assertEquals("Got wrong offset.", 2, extension.getNextOffsetByState(1, true));
+				assertEquals("Got wrong offset.", 1, extension.getPreviousOffsetByState(1, false));
+				assertEquals("Got wrong offset.", -1, extension.getPreviousOffsetByState(1, true));
+				assertEquals("Got wrong offset.", 3, extension.getNextOffsetByState(2, false));
+				assertEquals("Got wrong offset.", 2, extension.getNextOffsetByState(2, true));
+				assertEquals("Got wrong offset.", 1, extension.getPreviousOffsetByState(2, false));
+				assertEquals("Got wrong offset.", 2, extension.getPreviousOffsetByState(2, true));
+				for (int i = 3; i < loremEnd; i++) {
+					assertEquals("Got wrong offset.", i, extension.getNextOffsetByState(i, false));
+					assertEquals("Got wrong offset.", loremEnd, extension.getNextOffsetByState(i, true));
+					assertEquals("Got wrong offset.", i, extension.getPreviousOffsetByState(i, false));
+					assertEquals("Got wrong offset.", 2, extension.getPreviousOffsetByState(i, true));
+				}
+				assertEquals("Got wrong offset.", loremEnd + 3, extension.getNextOffsetByState(loremEnd, false));
+				assertEquals("Got wrong offset.", loremEnd, extension.getNextOffsetByState(loremEnd, true));
+				assertEquals("Got wrong offset.", loremEnd - 1, extension.getPreviousOffsetByState(loremEnd, false));
+				assertEquals("Got wrong offset.", loremEnd, extension.getPreviousOffsetByState(loremEnd, true));
+				assertEquals("Got wrong offset.", loremEnd + 3, extension.getNextOffsetByState(loremEnd + 2, false));
+				assertEquals("Got wrong offset.", loremEnd + 2, extension.getNextOffsetByState(loremEnd + 2, true));
+				assertEquals("Got wrong offset.", loremEnd - 1, extension.getPreviousOffsetByState(loremEnd + 2, false));
+				assertEquals("Got wrong offset.", loremEnd + 2, extension.getPreviousOffsetByState(loremEnd + 2, true));
+			} else {
+				TestUtil.log(IStatus.INFO, TestsPlugin.PLUGIN_ID, "IOConsole partitioner does not implement " + IConsoleDocumentPartitionerExtension.class.getName() + ". Skip those tests.");
+			}
 		}
 		c.verifyPartitions();
 		closeConsole(c, "#");

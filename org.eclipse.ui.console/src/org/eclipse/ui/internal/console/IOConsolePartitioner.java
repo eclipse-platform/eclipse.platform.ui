@@ -14,6 +14,7 @@
  *                          Bug 547064: use binary search for getPartition
  *                          Bug 548356: fixed user input handling
  *                          Bug 550618: getStyleRanges produced invalid overlapping styles
+ *                          Bug 550621: Implementation of IConsoleDocumentPartitionerExtension
  *******************************************************************************/
 package org.eclipse.ui.internal.console;
 
@@ -42,6 +43,7 @@ import org.eclipse.swt.custom.StyleRange;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.console.ConsolePlugin;
 import org.eclipse.ui.console.IConsoleDocumentPartitioner;
+import org.eclipse.ui.console.IConsoleDocumentPartitionerExtension;
 import org.eclipse.ui.console.IOConsole;
 import org.eclipse.ui.console.IOConsoleInputStream;
 import org.eclipse.ui.console.IOConsoleOutputStream;
@@ -53,7 +55,8 @@ import org.eclipse.ui.progress.WorkbenchJob;
  *
  * @since 3.1
  */
-public class IOConsolePartitioner implements IConsoleDocumentPartitioner, IDocumentPartitionerExtension {
+public class IOConsolePartitioner
+		implements IConsoleDocumentPartitioner, IConsoleDocumentPartitionerExtension, IDocumentPartitionerExtension {
 	/**
 	 * If true validate partitioning after changes and do other additional
 	 * assertions. Useful for developing/debugging.
@@ -221,6 +224,21 @@ public class IOConsolePartitioner implements IConsoleDocumentPartitioner, IDocum
 	 * @return the partitioning of the requested range (never <code>null</code>)
 	 */
 	private IOConsolePartition[] computeIOPartitioning(int offset, int length) {
+		return computePartitioning(offset, length, true, true);
+	}
+
+	/**
+	 * Get partitioning for a given range with possibility to filter partitions by
+	 * their read-only property.
+	 *
+	 * @param offset          the offset of the range of interest
+	 * @param length          the length of the range of interest
+	 * @param includeWritable if false writable partitions are skipped
+	 * @param includeReadOnly if false read-only partitions are skipped
+	 * @return the partitioning of the requested range (never <code>null</code>)
+	 */
+	private IOConsolePartition[] computePartitioning(int offset, int length, boolean includeWritable,
+			boolean includeReadOnly) {
 		final List<IOConsolePartition> result = new ArrayList<>();
 		synchronized (partitions) {
 			int index = findPartitionCandidate(offset);
@@ -234,7 +252,9 @@ public class IOConsolePartitioner implements IConsoleDocumentPartitioner, IDocum
 				if (partition.getOffset() >= end) {
 					break;
 				}
-				result.add(partition);
+				if ((includeWritable && !partition.isReadOnly()) || (includeReadOnly && partition.isReadOnly())) {
+					result.add(partition);
+				}
 			}
 		}
 		return result.toArray(new IOConsolePartition[0]);
@@ -793,6 +813,84 @@ public class IOConsolePartitioner implements IConsoleDocumentPartitioner, IDocum
 			styles[i] = computedPartitions[i].getStyleRange(rangeStart, rangeLength);
 		}
 		return styles;
+	}
+
+	@Override
+	public ITypedRegion[] computeReadOnlyPartitions() {
+		if (document == null) {
+			return new IOConsolePartition[0];
+		}
+		return computeReadOnlyPartitions(0, document.getLength());
+	}
+
+	@Override
+	public ITypedRegion[] computeReadOnlyPartitions(int offset, int length) {
+		return computePartitioning(offset, length, false, true);
+	}
+
+	@Override
+	public ITypedRegion[] computeWritablePartitions() {
+		if (document == null) {
+			return new IOConsolePartition[0];
+		}
+		return computeWritablePartitions(0, document.getLength());
+	}
+
+	@Override
+	public ITypedRegion[] computeWritablePartitions(int offset, int length) {
+		return computePartitioning(offset, length, true, false);
+	}
+
+	@Override
+	public boolean isReadOnly(int offset, int length) {
+		final ITypedRegion[] readOnlyRegions = computeReadOnlyPartitions(offset, length);
+		int o = offset;
+		int end = offset + length;
+		for (ITypedRegion readOnlyRegion : readOnlyRegions) {
+			if (o < readOnlyRegion.getOffset()) {
+				return false;
+			}
+			o += readOnlyRegion.getLength();
+			if (o >= end) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	@Override
+	public boolean containsReadOnly(int offset, int length) {
+		return computeReadOnlyPartitions(offset, length).length > 0;
+	}
+
+	@Override
+	public int getPreviousOffsetByState(int offset, boolean searchWritable) {
+		if (partitions != null) {
+			int partitionIndex = findPartitionCandidate(offset);
+			for (; partitionIndex >= 0; partitionIndex--) {
+				final IOConsolePartition partition = partitions.get(partitionIndex);
+				if (partition.isReadOnly() != searchWritable) {
+					return Math.min(partition.getOffset() + partition.getLength() - 1, offset);
+				}
+			}
+		}
+		return -1;
+	}
+
+	@Override
+	public int getNextOffsetByState(int offset, boolean searchWritable) {
+		if (partitions != null) {
+			int partitionIndex = findPartitionCandidate(offset);
+			if (partitionIndex >= 0) {
+				for (; partitionIndex < partitions.size(); partitionIndex++) {
+					final IOConsolePartition partition = partitions.get(partitionIndex);
+					if (partition.isReadOnly() != searchWritable) {
+						return Math.max(partition.getOffset(), offset);
+					}
+				}
+			}
+		}
+		return document != null ? document.getLength() : 0;
 	}
 
 	/**
