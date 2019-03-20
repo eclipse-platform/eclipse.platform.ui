@@ -22,11 +22,6 @@ public class ExternalToolsPreferenceInitializer extends AbstractPreferenceInitia
 		super();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.core.runtime.preferences.AbstractPreferenceInitializer#initializeDefaultPreferences()
-	 */
 	@Override
 	public void initializeDefaultPreferences() {
 		IPreferenceStore prefs = ExternalToolsPlugin.getDefault().getPreferenceStore();

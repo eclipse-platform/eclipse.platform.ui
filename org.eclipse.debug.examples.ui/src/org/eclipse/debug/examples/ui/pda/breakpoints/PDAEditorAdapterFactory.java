@@ -15,14 +15,10 @@
 package org.eclipse.debug.examples.ui.pda.breakpoints;
 
 import org.eclipse.core.resources.IResource;
-
 import org.eclipse.core.runtime.IAdapterFactory;
-
 import org.eclipse.debug.examples.ui.pda.editor.PDAEditor;
-
 import org.eclipse.debug.ui.actions.IRunToLineTarget;
 import org.eclipse.debug.ui.actions.IToggleBreakpointsTarget;
-
 import org.eclipse.ui.texteditor.ITextEditor;
 
 
@@ -30,9 +26,6 @@ import org.eclipse.ui.texteditor.ITextEditor;
  * Creates a toggle breakpoint adapter
  */
 public class PDAEditorAdapterFactory implements IAdapterFactory {
-	/* (non-Javadoc)
-	 * @see org.eclipse.core.runtime.IAdapterFactory#getAdapter(java.lang.Object, java.lang.Class)
-	 */
 	@SuppressWarnings("unchecked")
 	@Override
 	public <T> T getAdapter(Object adaptableObject, Class<T> adapterType) {
@@ -57,9 +50,7 @@ public class PDAEditorAdapterFactory implements IAdapterFactory {
 		}
 		return null;
 	}
-	/* (non-Javadoc)
-	 * @see org.eclipse.core.runtime.IAdapterFactory#getAdapterList()
-	 */
+
 	@Override
 	public Class<?>[] getAdapterList() {
 		return new Class[]{IToggleBreakpointsTarget.class};

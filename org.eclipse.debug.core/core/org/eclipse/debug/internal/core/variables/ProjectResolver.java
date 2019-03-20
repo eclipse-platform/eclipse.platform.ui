@@ -24,9 +24,7 @@ import org.eclipse.core.resources.IResource;
  * @since 3.5
  */
 public class ProjectResolver extends ResourceResolver {
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.stringsubstitution.ResourceResolver#translateSelectedResource(org.eclipse.core.resources.IResource)
-	 */
+
 	@Override
 	protected IResource translateSelectedResource(IResource resource) {
 		return resource.getProject();

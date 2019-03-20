@@ -77,9 +77,6 @@ public class ClearOutputAction extends Action {
 		fViewer = viewer;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.action.IAction#run()
-	 */
 	@Override
 	public void run() {
 		BusyIndicator.showWhile(ConsolePlugin.getStandardDisplay(), () -> {

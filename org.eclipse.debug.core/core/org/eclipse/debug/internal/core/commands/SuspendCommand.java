@@ -40,9 +40,6 @@ public class SuspendCommand extends ForEachCommand implements ISuspendHandler {
 		return ((ISuspendResume)target).canSuspend();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.core.commands.AbstractDebugCommand#getEnabledStateJobFamily(org.eclipse.debug.core.commands.IDebugCommandRequest)
-	 */
 	@Override
 	protected Object getEnabledStateJobFamily(IDebugCommandRequest request) {
 		return ISuspendHandler.class;

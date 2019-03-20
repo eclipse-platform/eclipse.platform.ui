@@ -29,9 +29,6 @@ import org.eclipse.debug.core.ILaunchManager;
  */
 public class ClearPreferredDelegatesHandler extends AbstractHandler {
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.core.commands.IHandler#execute(org.eclipse.core.commands.ExecutionEvent)
-	 */
 	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException {
 		ILaunchManager lm = DebugPlugin.getDefault().getLaunchManager();

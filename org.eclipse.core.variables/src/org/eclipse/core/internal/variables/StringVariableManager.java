@@ -323,9 +323,6 @@ public class StringVariableManager implements IStringVariableManager, IPreferenc
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.core.stringsubstitution.IStringVariableManager#getVariables()
-	 */
 	@Override
 	public synchronized IStringVariable[] getVariables() {
 		initialize();
@@ -335,51 +332,33 @@ public class StringVariableManager implements IStringVariableManager, IPreferenc
 		return list.toArray(new IStringVariable[list.size()]);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.core.stringsubstitution.IStringVariableManager#getValueVariables()
-	 */
 	@Override
 	public synchronized IValueVariable[] getValueVariables() {
 		initialize();
 		return fValueVariables.values().toArray(new IValueVariable[fValueVariables.size()]);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.core.stringsubstitution.IStringVariableManager#getDynamicVariables()
-	 */
 	@Override
 	public synchronized IDynamicVariable[] getDynamicVariables() {
 		initialize();
 		return fDynamicVariables.values().toArray(new IDynamicVariable[fDynamicVariables.size()]);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.core.stringsubstitution.IStringVariableManager#performStringSubstitution(java.lang.String)
-	 */
 	@Override
 	public String performStringSubstitution(String expression) throws CoreException {
 		return performStringSubstitution(expression, true);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.core.stringsubstitution.IStringVariableManager#newValueVariable(java.lang.String, java.lang.String)
-	 */
 	@Override
 	public IValueVariable newValueVariable(String name, String description) {
 		return newValueVariable(name, description, false, null);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.core.variables.IStringVariableManager#newValueVariable(java.lang.String, java.lang.String, boolean, java.lang.String)
-	 */
 	@Override
 	public IValueVariable newValueVariable(String name, String description, boolean readOnly, String value) {
 		return new ValueVariable(name, description, readOnly, value);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.core.stringsubstitution.IStringVariableManager#addVariables(org.eclipse.debug.internal.core.stringsubstitution.IValueVariable[])
-	 */
 	@Override
 	public synchronized void addVariables(IValueVariable[] variables) throws CoreException {
 		initialize();
@@ -403,9 +382,6 @@ public class StringVariableManager implements IStringVariableManager, IPreferenc
 		throw new CoreException(status);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.core.stringsubstitution.IStringVariableManager#removeVariables(org.eclipse.debug.internal.core.stringsubstitution.IValueVariable[])
-	 */
 	@Override
 	public synchronized void removeVariables(IValueVariable[] variables) {
 		initialize();
@@ -421,18 +397,12 @@ public class StringVariableManager implements IStringVariableManager, IPreferenc
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.core.stringsubstitution.IStringVariableManager#getDynamicVariable(java.lang.String)
-	 */
 	@Override
 	public synchronized IDynamicVariable getDynamicVariable(String name) {
 		initialize();
 		return fDynamicVariables.get(name);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.core.stringsubstitution.IStringVariableManager#getValueVariable(java.lang.String)
-	 */
 	@Override
 	public synchronized IValueVariable getValueVariable(String name) {
 		initialize();
@@ -440,17 +410,11 @@ public class StringVariableManager implements IStringVariableManager, IPreferenc
 	}
 
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.core.stringsubstitution.IStringVariableManager#addValueVariableListener(org.eclipse.debug.internal.core.stringsubstitution.IValueVariableListener)
-	 */
 	@Override
 	public void addValueVariableListener(IValueVariableListener listener) {
 		fListeners.add(listener);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.core.stringsubstitution.IStringVariableManager#removeValueVariableListener(org.eclipse.debug.internal.core.stringsubstitution.IValueVariableListener)
-	 */
 	@Override
 	public void removeValueVariableListener(IValueVariableListener listener) {
 		fListeners.remove(listener);
@@ -571,9 +535,6 @@ public class StringVariableManager implements IStringVariableManager, IPreferenc
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.core.stringsubstitution.IStringVariableManager#generateVariableExpression(java.lang.String, java.lang.String)
-	 */
 	@Override
 	public String generateVariableExpression(String varName, String arg) {
 		StringBuilder buffer = new StringBuilder();
@@ -587,25 +548,16 @@ public class StringVariableManager implements IStringVariableManager, IPreferenc
 		return buffer.toString();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.core.stringsubstitution.IStringVariableManager#performStringSubstitution(java.lang.String, boolean)
-	 */
 	@Override
 	public String performStringSubstitution(String expression,	boolean reportUndefinedVariables) throws CoreException {
 		return new StringSubstitutionEngine().performStringSubstitution(expression, reportUndefinedVariables, true, this);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.core.variables.IStringVariableManager#validateStringVariables(java.lang.String)
-	 */
 	@Override
 	public void validateStringVariables(String expression) throws CoreException {
 		new StringSubstitutionEngine().validateStringVariables(expression, this);
 	}
 
-    /* (non-Javadoc)
-     * @see org.eclipse.core.variables.IStringVariableManager#getContributingPluginId(org.eclipse.core.variables.IStringVariable)
-     */
     @Override
 	public String getContributingPluginId(IStringVariable variable) {
         if (variable instanceof StringVariable) {
@@ -614,9 +566,6 @@ public class StringVariableManager implements IStringVariableManager, IPreferenc
         return null;
     }
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.core.runtime.preferences.IEclipsePreferences.IPreferenceChangeListener#preferenceChange(org.eclipse.core.runtime.preferences.IEclipsePreferences.PreferenceChangeEvent)
-	 */
 	@Override
 	public void preferenceChange(PreferenceChangeEvent event) {
 		if (PREF_VALUE_VARIABLES.equals(event.getKey())) {

@@ -128,9 +128,7 @@ class BuilderLabelProvider extends LabelProvider {
 			}
 			return debugModelPresentation.getImage(element);
 		}
-			/* (non-Javadoc)
-		 * @see org.eclipse.jface.viewers.IBaseLabelProvider#dispose()
-		 */
+
 	@Override
 		public void dispose() {
 			builderImage.dispose();

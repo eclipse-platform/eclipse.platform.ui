@@ -46,17 +46,11 @@ public class DefaultSourceContainer extends CompositeSourceContainer {
 	public DefaultSourceContainer() {
 	}
 
-	/* (non-Javadoc)
-	 * @see java.lang.Object#equals(java.lang.Object)
-	 */
 	@Override
 	public boolean equals(Object obj) {
 		return obj instanceof DefaultSourceContainer;
 	}
 
-	/* (non-Javadoc)
-	 * @see java.lang.Object#hashCode()
-	 */
 	@Override
 	public int hashCode() {
 		return getClass().hashCode();
@@ -77,9 +71,6 @@ public class DefaultSourceContainer extends CompositeSourceContainer {
 		return null;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.core.sourcelookup.ISourceContainer#getType()
-	 */
 	@Override
 	public ISourceContainerType getType() {
 		return getSourceContainerType(TYPE_ID);
@@ -100,17 +91,11 @@ public class DefaultSourceContainer extends CompositeSourceContainer {
 		return null;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.core.sourcelookup.ISourceContainer#getName()
-	 */
 	@Override
 	public String getName() {
 		return SourceLookupMessages.DefaultSourceContainer_0;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.core.sourcelookup.containers.CompositeSourceContainer#createSourceContainers()
-	 */
 	@Override
 	protected ISourceContainer[] createSourceContainers() throws CoreException {
 		ISourcePathComputer sourcePathComputer = getSourcePathComputer();

@@ -39,9 +39,6 @@ import org.eclipse.ui.texteditor.ITextEditor;
  */
 public class PDARunToLineAdapter implements IRunToLineTarget {
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.ui.actions.IRunToLineTarget#runToLine(org.eclipse.ui.IWorkbenchPart, org.eclipse.jface.viewers.ISelection, org.eclipse.debug.core.model.ISuspendResume)
-	 */
 	@Override
 	public void runToLine(IWorkbenchPart part, ISelection selection, ISuspendResume target) throws CoreException {
 		IEditorPart editorPart = (IEditorPart)part;
@@ -65,9 +62,6 @@ public class PDARunToLineAdapter implements IRunToLineTarget {
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.ui.actions.IRunToLineTarget#canRunToLine(org.eclipse.ui.IWorkbenchPart, org.eclipse.jface.viewers.ISelection, org.eclipse.debug.core.model.ISuspendResume)
-	 */
 	@Override
 	public boolean canRunToLine(IWorkbenchPart part, ISelection selection, ISuspendResume target) {
 		//#ifdef ex7

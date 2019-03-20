@@ -646,9 +646,6 @@ public class DebugPlugin extends Plugin {
 		fEventListeners.remove(listener);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.osgi.framework.BundleActivator#stop(org.osgi.framework.BundleContext)
-	 */
 	@Override
 	public void stop(BundleContext context) throws Exception {
 		try {

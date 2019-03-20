@@ -576,9 +576,6 @@ public class IOConsolePartitioner implements IConsoleDocumentPartitioner, IDocum
 			truncateOffset = offset;
 		}
 
-		/* (non-Javadoc)
-		 * @see org.eclipse.ui.progress.UIJob#runInUIThread(org.eclipse.core.runtime.IProgressMonitor)
-		 */
 		@Override
 		public IStatus runInUIThread(IProgressMonitor monitor) {
 			if (document == null) {

@@ -67,9 +67,6 @@ public final class ExternalToolBuilder extends IncrementalProjectBuilder {
 	private static IProject buildProject= null;
     private static IResourceDelta buildDelta= null;
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.core.internal.events.InternalBuilder#build(int, java.util.Map, org.eclipse.core.runtime.IProgressMonitor)
-	 */
 	@Override
 	protected IProject[] build(int kind, Map<String, String> args, IProgressMonitor monitor) throws CoreException {
 		if (ExternalToolsCore.getDefault().getBundle().getState() != Bundle.ACTIVE) {

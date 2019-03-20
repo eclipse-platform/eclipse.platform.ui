@@ -16,7 +16,6 @@ package org.eclipse.debug.core.model;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.PlatformObject;
 import org.eclipse.core.runtime.Status;
-
 import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.DebugPlugin;
@@ -44,28 +43,16 @@ public abstract class DebugElement extends PlatformObject implements IDebugEleme
         fTarget = target;
     }
 
-    /* (non-Javadoc)
-     *
-     * Debug target implementation should override this method.
-     *
-     * @see org.eclipse.debug.core.model.IDebugElement#getDebugTarget()
-     */
     @Override
 	public IDebugTarget getDebugTarget() {
         return fTarget;
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.debug.core.model.IDebugElement#getLaunch()
-     */
     @Override
 	public ILaunch getLaunch() {
         return getDebugTarget().getLaunch();
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.core.runtime.IAdaptable#getAdapter(java.lang.Class)
-     */
 	@SuppressWarnings("unchecked")
 	@Override
 	public <T> T getAdapter(Class<T> adapter) {

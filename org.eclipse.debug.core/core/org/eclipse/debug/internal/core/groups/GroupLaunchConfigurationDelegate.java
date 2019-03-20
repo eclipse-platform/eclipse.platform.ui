@@ -257,25 +257,11 @@ public class GroupLaunchConfigurationDelegate extends LaunchConfigurationDelegat
 		return true;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * org.eclipse.debug.core.model.LaunchConfigurationDelegate#buildProjects(
-	 * org.eclipse.core.resources.IProject[],
-	 * org.eclipse.core.runtime.IProgressMonitor)
-	 */
 	@Override
 	protected void buildProjects(IProject[] projects, IProgressMonitor monitor) throws CoreException {
 		// do nothing, project can be rebuild for each launch individually
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * org.eclipse.debug.core.model.LaunchConfigurationDelegate#buildForLaunch(
-	 * org.eclipse.debug.core.ILaunchConfiguration, java.lang.String,
-	 * org.eclipse.core.runtime.IProgressMonitor)
-	 */
 	@Override
 	public boolean buildForLaunch(ILaunchConfiguration configuration, String mode, IProgressMonitor monitor) throws CoreException {
 		// not build for this one

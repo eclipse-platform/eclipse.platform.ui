@@ -40,9 +40,6 @@ public class TerminateCommand extends ForEachCommand implements ITerminateHandle
 		return ((ITerminate)target).canTerminate();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.core.commands.AbstractDebugCommand#getEnabledStateJobFamily(org.eclipse.debug.core.commands.IDebugCommandRequest)
-	 */
 	@Override
 	protected Object getEnabledStateJobFamily(IDebugCommandRequest request) {
 		return ITerminateHandler.class;

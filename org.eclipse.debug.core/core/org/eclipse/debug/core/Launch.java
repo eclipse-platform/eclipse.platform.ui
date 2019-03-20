@@ -575,9 +575,6 @@ public class Launch extends PlatformObject implements ILaunch, IDisconnect, ILau
         return hasChildren();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.core.ILaunchListener#launchRemoved(org.eclipse.debug.core.ILaunch)
-	 */
 	@Override
 	public void launchRemoved(ILaunch launch) {
 		if (this.equals(launch)) {
@@ -596,26 +593,17 @@ public class Launch extends PlatformObject implements ILaunch, IDisconnect, ILau
 		return DebugPlugin.getDefault().getLaunchManager();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.core.ILaunchListener#launchAdded(org.eclipse.debug.core.ILaunch)
-	 */
 	@Override
 	public void launchAdded(ILaunch launch) {
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.core.ILaunchListener#launchChanged(org.eclipse.debug.core.ILaunch)
-	 */
 	@Override
 	public void launchChanged(ILaunch launch) {
 	}
 
-	/* (non-Javadoc)
-	 *
-	 * If the launch configuration this launch is associated with is
-	 * moved, update the underlying handle to the new location.
-	 *
-	 * @see org.eclipse.debug.core.ILaunchConfigurationListener#launchConfigurationAdded(org.eclipse.debug.core.ILaunchConfiguration)
+	/*
+	 * If the launch configuration this launch is associated with is moved,
+	 * update the underlying handle to the new location.
 	 */
 	@Override
 	public void launchConfigurationAdded(ILaunchConfiguration configuration) {
@@ -626,18 +614,12 @@ public class Launch extends PlatformObject implements ILaunch, IDisconnect, ILau
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.core.ILaunchConfigurationListener#launchConfigurationChanged(org.eclipse.debug.core.ILaunchConfiguration)
-	 */
 	@Override
 	public void launchConfigurationChanged(ILaunchConfiguration configuration) {}
 
-	/* (non-Javadoc)
-	 *
+	/*
 	 * Update the launch configuration associated with this launch if the
 	 * underlying configuration is deleted.
-	 *
-	 * @see org.eclipse.debug.core.ILaunchConfigurationListener#launchConfigurationRemoved(org.eclipse.debug.core.ILaunchConfiguration)
 	 */
 	@Override
 	public void launchConfigurationRemoved(ILaunchConfiguration configuration) {
@@ -649,9 +631,6 @@ public class Launch extends PlatformObject implements ILaunch, IDisconnect, ILau
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.core.IDebugEventSetListener#handleDebugEvents(org.eclipse.debug.core.DebugEvent[])
-	 */
 	@Override
 	public void handleDebugEvents(DebugEvent[] events) {
 		for (int i = 0; i < events.length; i++) {
@@ -673,9 +652,6 @@ public class Launch extends PlatformObject implements ILaunch, IDisconnect, ILau
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.core.runtime.PlatformObject#getAdapter(java.lang.Class)
-	 */
 	@SuppressWarnings("unchecked")
 	@Override
 	public <T> T getAdapter(Class<T> adapter) {

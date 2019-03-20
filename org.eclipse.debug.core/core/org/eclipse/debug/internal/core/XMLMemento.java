@@ -154,18 +154,18 @@ public final class XMLMemento {
         this.element = element;
     }
 
-    /* (non-Javadoc)
-     * Method declared in XMLMemento.
-     */
+	/*
+	 * Method declared in XMLMemento.
+	 */
     public XMLMemento createChild(String type) {
         Element child = factory.createElement(type);
         element.appendChild(child);
         return new XMLMemento(factory, child);
     }
 
-    /* (non-Javadoc)
-     * Method declared in XMLMemento.
-     */
+	/*
+	 * Method declared in XMLMemento.
+	 */
     public XMLMemento createChild(String type, String id) {
         Element child = factory.createElement(type);
         child.setAttribute(IMementoConstants.TAG_ID, id == null ? "" : id); //$NON-NLS-1$
@@ -173,9 +173,9 @@ public final class XMLMemento {
         return new XMLMemento(factory, child);
     }
 
-    /* (non-Javadoc)
-     * Method declared in XMLMemento.
-     */
+	/*
+	 * Method declared in XMLMemento.
+	 */
     public XMLMemento copyChild(XMLMemento child) {
         Element childElement = child.element;
         Element newElement = (Element) factory.importNode(childElement, true);
@@ -183,9 +183,9 @@ public final class XMLMemento {
         return new XMLMemento(factory, newElement);
     }
 
-    /* (non-Javadoc)
-     * Method declared in XMLMemento.
-     */
+	/*
+	 * Method declared in XMLMemento.
+	 */
     public XMLMemento getChild(String type) {
 
         // Get the nodes.
@@ -210,9 +210,9 @@ public final class XMLMemento {
         return null;
     }
 
-    /* (non-Javadoc)
-     * Method declared in XMLMemento.
-     */
+	/*
+	 * Method declared in XMLMemento.
+	 */
     public XMLMemento[] getChildren(String type) {
 
         // Get the nodes.
@@ -243,9 +243,9 @@ public final class XMLMemento {
         return results;
     }
 
-    /* (non-Javadoc)
-     * Method declared in XMLMemento.
-     */
+	/*
+	 * Method declared in XMLMemento.
+	 */
     public Float getFloat(String key) {
         Attr attr = element.getAttributeNode(key);
         if (attr == null) {
@@ -265,16 +265,16 @@ public final class XMLMemento {
 		return element.getNodeName();
 	}
 
-    /* (non-Javadoc)
-     * Method declared in XMLMemento.
-     */
+	/*
+	 * Method declared in XMLMemento.
+	 */
     public String getID() {
         return element.getAttribute(IMementoConstants.TAG_ID);
     }
 
-    /* (non-Javadoc)
-     * Method declared in XMLMemento.
-     */
+	/*
+	 * Method declared in XMLMemento.
+	 */
     public Integer getInteger(String key) {
         Attr attr = element.getAttributeNode(key);
         if (attr == null) {
@@ -291,9 +291,9 @@ public final class XMLMemento {
         }
     }
 
-    /* (non-Javadoc)
-     * Method declared in XMLMemento.
-     */
+	/*
+	 * Method declared in XMLMemento.
+	 */
     public String getString(String key) {
         Attr attr = element.getAttributeNode(key);
         if (attr == null) {
@@ -310,9 +310,9 @@ public final class XMLMemento {
         return Boolean.valueOf(attr.getValue());
 	}
 
-    /* (non-Javadoc)
-     * Method declared in XMLMemento.
-     */
+	/*
+	 * Method declared in XMLMemento.
+	 */
     public String getTextData() {
         Text textNode = getTextNode();
         if (textNode != null) {
@@ -386,32 +386,32 @@ public final class XMLMemento {
         }
     }
 
-    /* (non-Javadoc)
-     * Method declared in XMLMemento.
-     */
+	/*
+	 * Method declared in XMLMemento.
+	 */
     public void putFloat(String key, float f) {
         element.setAttribute(key, String.valueOf(f));
     }
 
-    /* (non-Javadoc)
-     * Method declared in XMLMemento.
-     */
+	/*
+	 * Method declared in XMLMemento.
+	 */
     public void putInteger(String key, int n) {
         element.setAttribute(key, String.valueOf(n));
     }
 
-    /* (non-Javadoc)
-     * Method declared in XMLMemento.
-     */
+	/*
+	 * Method declared in XMLMemento.
+	 */
     public void putMemento(XMLMemento memento) {
     	// Do not copy the element's top level text node (this would overwrite the existing text).
     	// Text nodes of children are copied.
         putElement(memento.element, false);
     }
 
-    /* (non-Javadoc)
-     * Method declared in XMLMemento.
-     */
+	/*
+	 * Method declared in XMLMemento.
+	 */
     public void putString(String key, String value) {
         if (value == null) {
 			return;
@@ -428,9 +428,9 @@ public final class XMLMemento {
 		element.setAttribute(key, value ? "true" : "false"); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
-    /* (non-Javadoc)
-     * Method declared in XMLMemento.
-     */
+	/*
+	 * Method declared in XMLMemento.
+	 */
     public void putTextData(String data) {
         Text textNode = getTextNode();
         if (textNode == null) {

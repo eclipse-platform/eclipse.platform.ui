@@ -97,9 +97,6 @@ public class TextViewerGotoLineAction extends TextViewerAction {
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.action.IAction#run()
-	 */
 	@Override
 	public void run() {
 		try {

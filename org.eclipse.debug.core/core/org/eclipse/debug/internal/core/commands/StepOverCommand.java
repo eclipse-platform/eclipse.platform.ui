@@ -31,17 +31,11 @@ public class StepOverCommand extends StepCommand implements IStepOverHandler {
 		((IStep)target).stepOver();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.core.commands.StepCommand#isSteppable(java.lang.Object)
-	 */
 	@Override
 	protected boolean isSteppable(Object target) {
 		return ((IStep)target).canStepOver();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.core.commands.AbstractDebugCommand#getEnabledStateJobFamily(org.eclipse.debug.core.commands.IDebugCommandRequest)
-	 */
 	@Override
 	protected Object getEnabledStateJobFamily(IDebugCommandRequest request) {
 		return IStepOverHandler.class;

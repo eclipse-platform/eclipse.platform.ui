@@ -322,12 +322,11 @@ public abstract class AbstractSourceLookupDirector implements ISourceLookupDirec
 		}
 	}
 
-	/* (non-Javadoc)
-	 *
+	/*
 	 * Updates source containers in response to changes in underlying launch
 	 * configuration. Only responds to changes in non-working copies.
-	 *
-	 * @see org.eclipse.debug.core.ILaunchConfigurationListener#launchConfigurationChanged(org.eclipse.debug.core.ILaunchConfiguration)
+	 * @see org.eclipse.debug.core.ILaunchConfigurationListener#
+	 * launchConfigurationChanged(org.eclipse.debug.core.ILaunchConfiguration)
 	 */
 	@Override
 	public void launchConfigurationChanged(ILaunchConfiguration configuration) {
@@ -457,9 +456,9 @@ public abstract class AbstractSourceLookupDirector implements ISourceLookupDirec
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.core.model.ISourceLocator#getSourceElement(org.eclipse.debug.core.model.IStackFrame)
-	 * Would be better to accept Object so this can be used for breakpoints and other objects.
+	/*
+	 * Would be better to accept Object so this can be used for breakpoints and
+	 * other objects.
 	 */
 	@Override
 	public Object getSourceElement(IStackFrame stackFrame) {

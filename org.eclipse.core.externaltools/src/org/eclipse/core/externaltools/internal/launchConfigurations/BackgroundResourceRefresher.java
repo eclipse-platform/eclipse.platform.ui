@@ -58,9 +58,6 @@ public class BackgroundResourceRefresher implements IDebugEventSetListener  {
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.core.IDebugEventSetListener#handleDebugEvents(org.eclipse.debug.core.DebugEvent[])
-	 */
 	@Override
 	public void handleDebugEvents(DebugEvent[] events) {
 		for (int i = 0; i < events.length; i++) {

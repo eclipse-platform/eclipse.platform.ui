@@ -40,9 +40,6 @@ public class EditCommandDialog extends Dialog {
 		fCommand= command;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.dialogs.Dialog#createDialogArea(org.eclipse.swt.widgets.Composite)
-	 */
 	@Override
 	protected Control createDialogArea(Composite parent) {
 
@@ -69,9 +66,6 @@ public class EditCommandDialog extends Dialog {
 		return composite;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.dialogs.Dialog#okPressed()
-	 */
 	@Override
 	protected void okPressed() {
 		fCommand.setBuilding(IncrementalProjectBuilder.FULL_BUILD, fFullButton.getSelection());

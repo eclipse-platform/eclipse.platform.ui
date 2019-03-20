@@ -33,17 +33,11 @@ public class ConsolePageParticipantExtension implements IPluginContribution {
 		fConfig = config;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IPluginContribution#getLocalId()
-	 */
 	@Override
 	public String getLocalId() {
 		return fConfig.getAttribute("id"); //$NON-NLS-1$
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IPluginContribution#getPluginId()
-	 */
 	@Override
 	public String getPluginId() {
 		return fConfig.getContributor().getName();

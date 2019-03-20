@@ -168,10 +168,6 @@ public class CommonTab extends AbstractLaunchConfigurationTab {
 		setHelpContextId(IDebugHelpContextIds.LAUNCH_CONFIGURATION_DIALOG_COMMON_TAB);
 	}
 
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#createControl(org.eclipse.swt.widgets.Composite)
-	 */
 	@Override
 	public void createControl(Composite parent) {
 		Composite comp = new Composite(parent, SWT.NONE);
@@ -543,11 +539,6 @@ public class CommonTab extends AbstractLaunchConfigurationTab {
 	    fDefaultEncodingButton.addSelectionListener(listener);
 	    fEncodingCombo.addSelectionListener(listener);
 	    fEncodingCombo.addKeyListener(new KeyAdapter() {
-			/*
-			 * (non-Javadoc)
-			 *
-			 * @see org.eclipse.swt.events.KeyListener#keyReleased(org.eclipse.swt.events.KeyEvent)
-			 */
 			@Override
 			public void keyReleased(KeyEvent e) {
 				scheduleUpdateJob();
@@ -691,9 +682,6 @@ public class CommonTab extends AbstractLaunchConfigurationTab {
 		return (IContainer) getWorkspaceRoot().findMember(containerPath);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#initializeFrom(org.eclipse.debug.core.ILaunchConfiguration)
-	 */
 	@Override
 	public void initializeFrom(ILaunchConfiguration configuration) {
 		boolean isShared = !configuration.isLocal();
@@ -929,9 +917,6 @@ public class CommonTab extends AbstractLaunchConfigurationTab {
 		return ResourcesPlugin.getWorkspace().getRoot();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#isValid(org.eclipse.debug.core.ILaunchConfiguration)
-	 */
 	@Override
 	public boolean isValid(ILaunchConfiguration config) {
 		setMessage(null);
@@ -1006,18 +991,12 @@ public class CommonTab extends AbstractLaunchConfigurationTab {
 		return true;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#setDefaults(org.eclipse.debug.core.ILaunchConfigurationWorkingCopy)
-	 */
 	@Override
 	public void setDefaults(ILaunchConfigurationWorkingCopy config) {
 		config.setContainer(null);
 		setAttribute(IDebugUIConstants.ATTR_LAUNCH_IN_BACKGROUND, config, true, true);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#performApply(org.eclipse.debug.core.ILaunchConfigurationWorkingCopy)
-	 */
 	@Override
 	public void performApply(ILaunchConfigurationWorkingCopy configuration) {
 		updateConfigFromLocalShared(configuration);
@@ -1060,17 +1039,12 @@ public class CommonTab extends AbstractLaunchConfigurationTab {
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#getName()
-	 */
 	@Override
 	public String getName() {
 		return LaunchConfigurationsMessages.CommonTab__Common_15;
 	}
 
 	/**
-	 * @see org.eclipse.debug.ui.AbstractLaunchConfigurationTab#getId()
-	 *
 	 * @since 3.3
 	 */
 	@Override
@@ -1078,31 +1052,19 @@ public class CommonTab extends AbstractLaunchConfigurationTab {
 		return "org.eclipse.debug.ui.commonTab"; //$NON-NLS-1$
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#canSave()
-	 */
 	@Override
 	public boolean canSave() {
 		return validateLocalShared();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#getImage()
-	 */
 	@Override
 	public Image getImage() {
 		return DebugUITools.getImage(IInternalDebugUIConstants.IMG_OBJS_COMMON_TAB);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#activated(org.eclipse.debug.core.ILaunchConfigurationWorkingCopy)
-	 */
 	@Override
 	public void activated(ILaunchConfigurationWorkingCopy workingCopy) {}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#deactivated(org.eclipse.debug.core.ILaunchConfigurationWorkingCopy)
-	 */
 	@Override
 	public void deactivated(ILaunchConfigurationWorkingCopy workingCopy) {}
 

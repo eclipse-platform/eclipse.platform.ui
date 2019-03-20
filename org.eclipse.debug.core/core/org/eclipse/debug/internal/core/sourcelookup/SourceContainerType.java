@@ -47,16 +47,11 @@ public class SourceContainerType implements ISourceContainerType {
 		fElement = element;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.core.sourcelookup.ISourceContainerType#createSourceContainer(java.lang.String)
-	 */
 	@Override
 	public ISourceContainer createSourceContainer(String memento) throws CoreException {
 		return getDelegate().createSourceContainer(memento);
 	}
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.core.sourcelookup.ISourceContainerType#getMemento(org.eclipse.debug.internal.core.sourcelookup.ISourceContainer)
-	 */
+
 	@Override
 	public String getMemento(ISourceContainer container) throws CoreException {
 		if (this.equals(container.getType())) {
@@ -65,16 +60,12 @@ public class SourceContainerType implements ISourceContainerType {
 		IStatus status = new Status(IStatus.ERROR, DebugPlugin.getUniqueIdentifier(), DebugPlugin.ERROR, SourceLookupMessages.SourceContainerType_0, null);
 		throw new CoreException(status);
 	}
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.core.sourcelookup.ISourceContainerType#getName()
-	 */
+
 	@Override
 	public String getName() {
 		return fElement.getAttribute(IConfigurationElementConstants.NAME);
 	}
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.core.sourcelookup.ISourceContainerType#getId()
-	 */
+
 	@Override
 	public String getId() {
 		return fElement.getAttribute(IConfigurationElementConstants.ID);
@@ -91,9 +82,7 @@ public class SourceContainerType implements ISourceContainerType {
 		}
 		return fDelegate;
 	}
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.core.sourcelookup.ISourceContainerType#getDescription()
-	 */
+
 	@Override
 	public String getDescription() {
 		return fElement.getAttribute(IConfigurationElementConstants.DESCRIPTION);

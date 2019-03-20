@@ -63,9 +63,6 @@ public class ArchiveSourceContainer extends AbstractSourceContainer {
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.core.sourcelookup.ISourceContainer#getName()
-	 */
 	@Override
 	public String getName() {
 		return fFile.getName();
@@ -80,34 +77,22 @@ public class ArchiveSourceContainer extends AbstractSourceContainer {
 		return fFile;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.core.sourcelookup.ISourceContainer#getType()
-	 */
 	@Override
 	public ISourceContainerType getType() {
 		return getSourceContainerType(TYPE_ID);
 	}
 
-	/* (non-Javadoc)
-	 * @see java.lang.Object#equals(java.lang.Object)
-	 */
 	@Override
 	public boolean equals(Object obj) {
 		return obj instanceof ArchiveSourceContainer &&
 			((ArchiveSourceContainer)obj).getName().equals(getName());
 	}
 
-	/* (non-Javadoc)
-	 * @see java.lang.Object#hashCode()
-	 */
 	@Override
 	public int hashCode() {
 		return getName().hashCode();
 	}
 
-    /* (non-Javadoc)
-     * @see org.eclipse.debug.core.sourcelookup.ISourceContainer#findSourceElements(java.lang.String)
-     */
     @Override
 	public Object[] findSourceElements(String name) throws CoreException {
         ExternalArchiveSourceContainer container = getDelegateContainer();
@@ -126,9 +111,6 @@ public class ArchiveSourceContainer extends AbstractSourceContainer {
     private ExternalArchiveSourceContainer getDelegateContainer() {
         return fDelegateContainer;
     }
-    /* (non-Javadoc)
-     * @see org.eclipse.debug.core.sourcelookup.ISourceContainer#init(org.eclipse.debug.core.sourcelookup.ISourceLookupDirector)
-     */
     @Override
 	public void init(ISourceLookupDirector director) {
         super.init(director);
@@ -136,9 +118,6 @@ public class ArchiveSourceContainer extends AbstractSourceContainer {
             fDelegateContainer.init(director);
         }
     }
-    /* (non-Javadoc)
-     * @see org.eclipse.debug.core.sourcelookup.ISourceContainer#dispose()
-     */
     @Override
 	public void dispose() {
         super.dispose();

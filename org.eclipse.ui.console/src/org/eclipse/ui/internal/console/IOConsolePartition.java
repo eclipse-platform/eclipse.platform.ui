@@ -95,28 +95,16 @@ public class IOConsolePartition implements ITypedRegion {
 		length -= delLength;
 	}
 
-	/*
-	 *  (non-Javadoc)
-	 * @see org.eclipse.jface.text.ITypedRegion#getType()
-	 */
 	@Override
 	public String getType() {
 		return type;
 	}
 
-	/*
-	 *  (non-Javadoc)
-	 * @see org.eclipse.jface.text.IRegion#getLength()
-	 */
 	@Override
 	public int getLength() {
 		return length;
 	}
 
-	/*
-	 *  (non-Javadoc)
-	 * @see org.eclipse.jface.text.IRegion#getOffset()
-	 */
 	@Override
 	public int getOffset() {
 		return offset;

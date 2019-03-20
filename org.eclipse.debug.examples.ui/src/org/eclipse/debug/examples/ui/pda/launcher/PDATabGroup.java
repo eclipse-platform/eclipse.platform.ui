@@ -24,9 +24,6 @@ import org.eclipse.debug.ui.sourcelookup.SourceLookupTab;
  * Tab group for a PDA application
  */
 public class PDATabGroup extends AbstractLaunchConfigurationTabGroup {
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.ui.ILaunchConfigurationTabGroup#createTabs(org.eclipse.debug.ui.ILaunchConfigurationDialog, java.lang.String)
-	 */
 	@Override
 	public void createTabs(ILaunchConfigurationDialog dialog, String mode) {
 		//#ifdef ex1

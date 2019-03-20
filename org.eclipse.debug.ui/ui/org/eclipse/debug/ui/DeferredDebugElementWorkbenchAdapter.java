@@ -41,25 +41,16 @@ public abstract class DeferredDebugElementWorkbenchAdapter extends DebugElementW
 	 */
     protected static final Object[] EMPTY = new Object[0];
 
-	/* (non-Javadoc)
-     * @see org.eclipse.ui.progress.IDeferredWorkbenchAdapter#isContainer()
-     */
     @Override
 	public boolean isContainer() {
         return true;
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.ui.progress.IDeferredWorkbenchAdapter#getRule(java.lang.Object)
-     */
     @Override
 	public ISchedulingRule getRule(Object object) {
         return null;
     }
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.progress.IDeferredWorkbenchAdapter#fetchDeferredChildren(java.lang.Object, org.eclipse.ui.progress.IElementCollector, org.eclipse.core.runtime.IProgressMonitor)
-	 */
 	@Override
 	public void fetchDeferredChildren(Object object, IElementCollector collector, IProgressMonitor monitor) {
 		if (monitor.isCanceled()) {

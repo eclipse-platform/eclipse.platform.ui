@@ -45,9 +45,6 @@ public class SourcePathComputer implements ISourcePathComputer {
 		fElement = element;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.core.sourcelookup.ISourcePathComputer#getId()
-	 */
 	@Override
 	public String getId() {
 		return fElement.getAttribute(IConfigurationElementConstants.ID);
@@ -65,9 +62,6 @@ public class SourcePathComputer implements ISourcePathComputer {
 		return fDelegate;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.core.sourcelookup.ISourcePathComputerDelegate#computeSourceContainers(org.eclipse.debug.core.ILaunchConfiguration, org.eclipse.core.runtime.IProgressMonitor)
-	 */
 	@Override
 	public ISourceContainer[] computeSourceContainers(ILaunchConfiguration configuration, IProgressMonitor monitor) {
 		try {

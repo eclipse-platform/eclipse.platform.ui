@@ -34,9 +34,6 @@ public class TempoSliderDetailPane implements IDetailPane {
 	private Slider fSlider;
 	private TempoControl fControl;
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.ui.IDetailPane#createControl(org.eclipse.swt.widgets.Composite)
-	 */
 	@Override
 	public Control createControl(Composite parent) {
 		fSlider = new Slider(parent, SWT.HORIZONTAL);
@@ -54,9 +51,6 @@ public class TempoSliderDetailPane implements IDetailPane {
 		return fSlider;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.ui.IDetailPane#display(org.eclipse.jface.viewers.IStructuredSelection)
-	 */
 	@Override
 	public void display(IStructuredSelection selection) {
 		fControl = null;
@@ -70,47 +64,29 @@ public class TempoSliderDetailPane implements IDetailPane {
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.ui.IDetailPane#dispose()
-	 */
 	@Override
 	public void dispose() {
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.ui.IDetailPane#getDescription()
-	 */
 	@Override
 	public String getDescription() {
 		return "Tempo (beats per minute)"; //$NON-NLS-1$
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.ui.IDetailPane#getID()
-	 */
 	@Override
 	public String getID() {
 		return ControlDetailPaneFactory.ID_TEMPO_SLIDER;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.ui.IDetailPane#getName()
-	 */
 	@Override
 	public String getName() {
 		return "Tempo Slider (BPM)"; //$NON-NLS-1$
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.ui.IDetailPane#init(org.eclipse.ui.IWorkbenchPartSite)
-	 */
 	@Override
 	public void init(IWorkbenchPartSite partSite) {
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.ui.IDetailPane#setFocus()
-	 */
 	@Override
 	public boolean setFocus() {
 		fSlider.setFocus();

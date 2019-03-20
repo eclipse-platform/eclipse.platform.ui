@@ -199,9 +199,6 @@ public class StringVariableSelectionDialog extends ElementListSelectionDialog {
 		super.setListElements(filtered.toArray());
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.dialogs.Dialog#createContents(org.eclipse.swt.widgets.Composite)
-	 */
 	@Override
 	protected Control createContents(Composite parent) {
 		Control ctrl = super.createContents(parent);
@@ -209,9 +206,6 @@ public class StringVariableSelectionDialog extends ElementListSelectionDialog {
 		return ctrl;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.dialogs.Dialog#createDialogArea(org.eclipse.swt.widgets.Composite)
-	 */
 	@Override
 	protected Control createDialogArea(Composite parent) {
 		Control control = super.createDialogArea(parent);
@@ -376,9 +370,6 @@ public class StringVariableSelectionDialog extends ElementListSelectionDialog {
 		fDescriptionText.setText(text);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.dialogs.Dialog#okPressed()
-	 */
 	@Override
 	protected void okPressed() {
 		fArgumentValue = fArgumentText.getText().trim();
@@ -394,9 +385,6 @@ public class StringVariableSelectionDialog extends ElementListSelectionDialog {
 		return IDebugUIConstants.PLUGIN_ID + ".STRING_VARIABLE_SELECTION_DIALOG_SECTION"; //$NON-NLS-1$
 	}
 
-	 /* (non-Javadoc)
-     * @see org.eclipse.jface.dialogs.Dialog#getDialogBoundsSettings()
-     */
     @Override
 	protected IDialogSettings getDialogBoundsSettings() {
     	 IDialogSettings settings = DebugUIPlugin.getDefault().getDialogSettings();

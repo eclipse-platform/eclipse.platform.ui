@@ -138,10 +138,6 @@ public abstract class DebugPopup extends PopupDialog {
     	return fPersisted;
     }
 
-    /*
-     * (non-Javadoc)
-     * @see org.eclipse.jface.dialogs.PopupDialog#createDialogArea(org.eclipse.swt.widgets.Composite)
-     */
     @Override
 	protected abstract Control createDialogArea(Composite parent);
 
@@ -173,20 +169,12 @@ public abstract class DebugPopup extends PopupDialog {
         return point;
     }
 
-    /*
-     * (non-Javadoc)
-     * @see org.eclipse.jface.dialogs.PopupDialog#getDialogSettings()
-     */
     @Override
 	protected IDialogSettings getDialogSettings() {
         IDialogSettings settings = DebugUIPlugin.getDefault().getDialogSettings();
         return settings;
     }
 
-
-    /* (non-Javadoc)
-     * @see org.eclipse.jface.dialogs.PopupDialog#open()
-     */
     @Override
 	public int open() {
         IWorkbench workbench = PlatformUI.getWorkbench();
@@ -213,9 +201,6 @@ public abstract class DebugPopup extends PopupDialog {
         return super.open();
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.jface.dialogs.PopupDialog#close()
-     */
     @Override
 	public boolean close() {
         if (fActivation != null) {

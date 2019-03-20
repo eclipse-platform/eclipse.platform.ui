@@ -44,13 +44,14 @@ public class TextViewerAction extends Action implements IUpdate {
 		update();
 	}
 
-	/* (non-Javadoc)
+	/*
 	 * @see org.eclipse.ui.texteditor.IUpdate#update()
 	 *
-	 * Updates the enabled state of the action.
-	 * Fires a property change if the enabled state changes.
+	 * Updates the enabled state of the action. Fires a property change if the
+	 * enabled state changes.
 	 *
-	 * @see org.eclipse.jface.action.Action#firePropertyChange(String, Object, Object)
+	 * @see org.eclipse.jface.action.Action#firePropertyChange(String, Object,
+	 * Object)
 	 */
 	@Override
 	public void update() {

@@ -108,25 +108,16 @@ public class StreamsProxy implements IStreamsProxy, IStreamsProxy2 {
 		fInputMonitor.close();
 	}
 
-	/**
-	 * @see IStreamsProxy#getErrorStreamMonitor()
-	 */
 	@Override
 	public IStreamMonitor getErrorStreamMonitor() {
 		return fErrorMonitor;
 	}
 
-	/**
-	 * @see IStreamsProxy#getOutputStreamMonitor()
-	 */
 	@Override
 	public IStreamMonitor getOutputStreamMonitor() {
 		return fOutputMonitor;
 	}
 
-	/**
-	 * @see IStreamsProxy#write(String)
-	 */
 	@Override
 	public void write(String input) throws IOException {
 		if (!isClosed(false)) {
@@ -136,9 +127,6 @@ public class StreamsProxy implements IStreamsProxy, IStreamsProxy2 {
 		}
 	}
 
-    /* (non-Javadoc)
-     * @see org.eclipse.debug.core.model.IStreamsProxy2#closeInputStream()
-     */
     @Override
 	public void closeInputStream() throws IOException {
         if (!isClosed(false)) {

@@ -31,9 +31,6 @@ public class PDADebugTargetProxy extends DebugTargetProxy {
 		super(target);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.viewers.update.DebugTargetProxy#createEventHandlers()
-	 */
 	@Override
 	protected DebugEventHandler[] createEventHandlers() {
 		return new DebugEventHandler[] { new DebugTargetEventHandler(this), new PDAThreadEventHandler(this) };

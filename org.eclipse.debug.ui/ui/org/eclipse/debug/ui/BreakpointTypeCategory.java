@@ -64,9 +64,6 @@ public class BreakpointTypeCategory extends PlatformObject implements IBreakpoin
 		return fName;
 	}
 
-	/* (non-Javadoc)
-	 * @see java.lang.Object#equals(java.lang.Object)
-	 */
 	@Override
 	public boolean equals(Object object) {
 		if (object instanceof BreakpointTypeCategory) {
@@ -76,41 +73,26 @@ public class BreakpointTypeCategory extends PlatformObject implements IBreakpoin
 		return false;
 	}
 
-	/* (non-Javadoc)
-	 * @see java.lang.Object#hashCode()
-	 */
 	@Override
 	public int hashCode() {
 		return getName().hashCode();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.model.IWorkbenchAdapter#getChildren(java.lang.Object)
-	 */
 	@Override
 	public Object[] getChildren(Object o) {
 		return null;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.model.IWorkbenchAdapter#getImageDescriptor(java.lang.Object)
-	 */
 	@Override
 	public ImageDescriptor getImageDescriptor(Object object) {
 		return fImageDescriptor;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.model.IWorkbenchAdapter#getLabel(java.lang.Object)
-	 */
 	@Override
 	public String getLabel(Object o) {
 		return getName();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.model.IWorkbenchAdapter#getParent(java.lang.Object)
-	 */
 	@Override
 	public Object getParent(Object o) {
 		return null;

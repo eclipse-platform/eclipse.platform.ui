@@ -192,16 +192,15 @@ public abstract class LaunchConfigurationDelegate implements ILaunchConfiguratio
 		}
 	}
 
-	/* (non-Javadoc)
-	 *
-	 * If launching in run mode, and the configuration supports debug mode, check
-	 * if there are any breakpoints in the workspace, and ask the user if they'd
-	 * rather launch in debug mode.
-	 * <p>
-	 * Since 3.2, this check also performs saving of resources before launching.
-	 * </p>
-	 *
-	 * @see org.eclipse.debug.core.model.ILaunchConfigurationDelegate2#preLaunchCheck(org.eclipse.debug.core.ILaunchConfiguration, java.lang.String, org.eclipse.core.runtime.IProgressMonitor)
+	/*
+	 * If launching in run mode, and the configuration supports debug mode,
+	 * check if there are any breakpoints in the workspace, and ask the user if
+	 * they'd rather launch in debug mode. <p> Since 3.2, this check also
+	 * performs saving of resources before launching. </p>
+	 * @see
+	 * org.eclipse.debug.core.model.ILaunchConfigurationDelegate2#preLaunchCheck
+	 * (org.eclipse.debug.core.ILaunchConfiguration, java.lang.String,
+	 * org.eclipse.core.runtime.IProgressMonitor)
 	 */
 	@Override
 	public boolean preLaunchCheck(ILaunchConfiguration configuration, String mode, IProgressMonitor monitor) throws CoreException {

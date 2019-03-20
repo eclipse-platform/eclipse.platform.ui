@@ -225,17 +225,11 @@ public final class ExternalToolsPlugin extends AbstractUIPlugin implements
 		return display;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.plugin.AbstractUIPlugin#createImageRegistry()
-	 */
 	@Override
 	protected ImageRegistry createImageRegistry() {
 		return ExternalToolsImages.initializeImageRegistry();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.osgi.framework.BundleActivator#stop(org.osgi.framework.BundleContext)
-	 */
 	@Override
 	public void stop(BundleContext context) throws Exception {
 		try {
@@ -262,9 +256,6 @@ public final class ExternalToolsPlugin extends AbstractUIPlugin implements
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.core.ILaunchListener#launchAdded(org.eclipse.debug.core.ILaunch)
-	 */
 	@Override
 	public void launchAdded(ILaunch launch) {
 		ILaunchConfiguration launchConfiguration = launch.getLaunchConfiguration();
@@ -284,16 +275,10 @@ public final class ExternalToolsPlugin extends AbstractUIPlugin implements
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.core.ILaunchListener#launchChanged(org.eclipse.debug.core.ILaunch)
-	 */
 	@Override
 	public void launchChanged(ILaunch launch) {
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.core.ILaunchListener#launchRemoved(org.eclipse.debug.core.ILaunch)
-	 */
 	@Override
 	public void launchRemoved(ILaunch launch) {
 	}

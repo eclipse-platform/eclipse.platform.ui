@@ -32,9 +32,6 @@ import org.w3c.dom.Node;
  */
 public class ProjectSourceContainerType extends AbstractSourceContainerTypeDelegate {
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.core.sourcelookup.ISourceContainerType#getMemento(org.eclipse.debug.internal.core.sourcelookup.ISourceContainer)
-	 */
 	@Override
 	public String getMemento(ISourceContainer container) throws CoreException {
 		ProjectSourceContainer project = (ProjectSourceContainer) container;
@@ -50,9 +47,6 @@ public class ProjectSourceContainerType extends AbstractSourceContainerTypeDeleg
 		return serializeDocument(document);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.core.sourcelookup.ISourceContainerType#createSourceContainer(java.lang.String)
-	 */
 	@Override
 	public ISourceContainer createSourceContainer(String memento) throws CoreException {
 		Node node = parseDocument(memento);

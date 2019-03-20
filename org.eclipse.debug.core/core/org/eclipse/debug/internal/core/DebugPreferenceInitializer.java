@@ -23,9 +23,6 @@ import org.eclipse.debug.core.DebugPlugin;
  */
 public class DebugPreferenceInitializer extends AbstractPreferenceInitializer {
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.core.runtime.preferences.AbstractPreferenceInitializer#initializeDefaultPreferences()
-	 */
 	@Override
 	public void initializeDefaultPreferences() {
 		// Step filter preferences

@@ -30,9 +30,6 @@ import org.eclipse.jface.viewers.TreePath;
  */
 public class MidiEventLabelProvider extends ElementLabelProvider {
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.model.elements.ElementLabelProvider#getLabel(org.eclipse.jface.viewers.TreePath, org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationContext, java.lang.String)
-	 */
 	@Override
 	protected String getLabel(TreePath elementPath, IPresentationContext presentationContext, String columnId) throws CoreException {
 		MidiEvent event = (MidiEvent) elementPath.getLastSegment();
@@ -62,11 +59,6 @@ public class MidiEventLabelProvider extends ElementLabelProvider {
 		return ""; //$NON-NLS-1$
 	}
 
-
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.model.elements.ElementLabelProvider#getChecked(org.eclipse.jface.viewers.TreePath, org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationContext)
-	 */
 	@Override
 	public boolean getChecked(TreePath path, IPresentationContext presentationContext) throws CoreException {
 		Boolean result = MidiEventModelProxy.gChecked.get(path);

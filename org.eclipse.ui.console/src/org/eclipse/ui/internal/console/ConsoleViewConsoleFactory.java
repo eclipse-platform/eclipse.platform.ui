@@ -25,11 +25,6 @@ public class ConsoleViewConsoleFactory implements IConsoleFactory {
 
 	int counter = 1;
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.ui.console.IConsoleFactory#openConsole()
-	 */
 	@Override
 	public void openConsole() {
 		IWorkbenchWindow window = PlatformUI.getWorkbench().getActiveWorkbenchWindow();

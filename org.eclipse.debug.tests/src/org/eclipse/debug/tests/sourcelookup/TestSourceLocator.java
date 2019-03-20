@@ -21,9 +21,6 @@ import org.eclipse.debug.core.model.IStackFrame;
  */
 public class TestSourceLocator implements ISourceLocator {
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.core.model.ISourceLocator#getSourceElement(org.eclipse.debug.core.model.IStackFrame)
-	 */
 	@Override
 	public Object getSourceElement(IStackFrame stackFrame) {
 		return stackFrame.getModelIdentifier() + System.currentTimeMillis();

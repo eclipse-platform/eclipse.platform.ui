@@ -23,12 +23,6 @@ import org.eclipse.debug.ui.ILaunchConfigurationTab;
  */
 public class SampleLaunchTabGroup extends AbstractLaunchConfigurationTabGroup {
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * org.eclipse.debug.ui.ILaunchConfigurationTabGroup#createTabs(org.eclipse
-	 * .debug.ui.ILaunchConfigurationDialog, java.lang.String)
-	 */
 	@Override
 	public void createTabs(ILaunchConfigurationDialog dialog, String mode) {
 		ILaunchConfigurationTab[] tabs = new ILaunchConfigurationTab[1];

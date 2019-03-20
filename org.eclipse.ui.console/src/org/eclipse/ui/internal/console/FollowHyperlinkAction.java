@@ -37,18 +37,11 @@ public class FollowHyperlinkAction extends Action {
 		this.viewer = consoleViewer;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.action.IAction#isEnabled()
-	 */
 	@Override
 	public boolean isEnabled() {
 		return viewer.getHyperlink() != null;
 	}
 
-	/*
-	 *  (non-Javadoc)
-	 * @see org.eclipse.jface.action.IAction#run()
-	 */
 	@Override
 	public void run() {
 		IHyperlink link = viewer.getHyperlink();

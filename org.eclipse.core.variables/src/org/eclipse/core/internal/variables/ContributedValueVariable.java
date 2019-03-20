@@ -55,9 +55,6 @@ public class ContributedValueVariable extends StringVariable implements IValueVa
 		fReadOnly = readOnly;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.core.variables.IValueVariable#setValue(java.lang.String)
-	 */
 	@Override
 	public void setValue(String value) {
 		if (!isReadOnly() || !isInitialized()){
@@ -67,9 +64,6 @@ public class ContributedValueVariable extends StringVariable implements IValueVa
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.core.variables.IValueVariable#getValue()
-	 */
 	@Override
 	public String getValue() {
 		if (!isInitialized()) {
@@ -130,17 +124,11 @@ public class ContributedValueVariable extends StringVariable implements IValueVa
 		fInitialized = initialized;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.core.variables.IValueVariable#isReadOnly()
-	 */
 	@Override
 	public boolean isReadOnly() {
 		return fReadOnly;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.core.variables.IValueVariable#isContributed()
-	 */
 	@Override
 	public boolean isContributed() {
 		return getConfigurationElement() != null;

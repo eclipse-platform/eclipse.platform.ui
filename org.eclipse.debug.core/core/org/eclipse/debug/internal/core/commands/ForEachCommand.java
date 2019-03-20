@@ -26,9 +26,6 @@ import org.eclipse.debug.core.commands.IEnabledStateRequest;
  */
 public abstract class ForEachCommand extends AbstractDebugCommand {
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.core.commands.DebugCommand#doExecute(java.lang.Object[], org.eclipse.core.runtime.IProgressMonitor, org.eclipse.debug.core.IRequest)
-	 */
 	@Override
 	protected void doExecute(Object[] targets, IProgressMonitor monitor, IRequest request) throws CoreException {
 		for (int i = 0; i < targets.length; i++) {
@@ -39,9 +36,6 @@ public abstract class ForEachCommand extends AbstractDebugCommand {
 
 	protected abstract void execute(Object target) throws CoreException;
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.core.commands.DebugCommand#isExecutable(java.lang.Object[], org.eclipse.core.runtime.IProgressMonitor, org.eclipse.debug.core.commands.IEnabledStateRequest)
-	 */
 	@Override
 	protected boolean isExecutable(Object[] targets, IProgressMonitor monitor, IEnabledStateRequest request) throws CoreException {
 		for (int i = 0; i < targets.length; i++) {

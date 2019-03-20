@@ -52,9 +52,6 @@ public class PDAMainTab extends AbstractLaunchConfigurationTab {
 	private Text fProgramText;
 	private Button fProgramButton;
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#createControl(org.eclipse.swt.widgets.Composite)
-	 */
 	@Override
 	public void createControl(Composite parent) {
 		Font font = parent.getFont();
@@ -109,15 +106,11 @@ public class PDAMainTab extends AbstractLaunchConfigurationTab {
 		}
 
 	}
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#setDefaults(org.eclipse.debug.core.ILaunchConfigurationWorkingCopy)
-	 */
+
 	@Override
 	public void setDefaults(ILaunchConfigurationWorkingCopy configuration) {
 	}
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#initializeFrom(org.eclipse.debug.core.ILaunchConfiguration)
-	 */
+
 	@Override
 	public void initializeFrom(ILaunchConfiguration configuration) {
 		//#ifdef ex1
@@ -138,9 +131,7 @@ public class PDAMainTab extends AbstractLaunchConfigurationTab {
 		}
 		//#endif
 	}
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#performApply(org.eclipse.debug.core.ILaunchConfigurationWorkingCopy)
-	 */
+
 	@Override
 	public void performApply(ILaunchConfigurationWorkingCopy configuration) {
 		String program = fProgramText.getText().trim();
@@ -166,17 +157,11 @@ public class PDAMainTab extends AbstractLaunchConfigurationTab {
 		configuration.setMappedResources(resources);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#getName()
-	 */
 	@Override
 	public String getName() {
 		return "Main"; //$NON-NLS-1$
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#isValid(org.eclipse.debug.core.ILaunchConfiguration)
-	 */
 	@Override
 	public boolean isValid(ILaunchConfiguration launchConfig) {
 		setErrorMessage(null);
@@ -205,9 +190,6 @@ public class PDAMainTab extends AbstractLaunchConfigurationTab {
 		return true;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#getImage()
-	 */
 	@Override
 	public Image getImage() {
 		return DebugUIPlugin.getDefault().getImageRegistry().get(DebugUIPlugin.IMG_OBJ_PDA);

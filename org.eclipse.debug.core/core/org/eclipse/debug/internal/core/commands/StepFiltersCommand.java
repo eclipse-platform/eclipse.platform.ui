@@ -66,9 +66,6 @@ public class StepFiltersCommand extends ForEachCommand implements IStepFiltersHa
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.core.commands.ForEachCommand#execute(java.lang.Object)
-	 */
 	@Override
 	protected void execute(Object target) throws CoreException {
 		if (target == null) {
@@ -81,9 +78,6 @@ public class StepFiltersCommand extends ForEachCommand implements IStepFiltersHa
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.core.commands.ForEachCommand#isExecutable(java.lang.Object)
-	 */
 	@Override
 	protected boolean isExecutable(Object target) {
 		IStepFilters[] filters = (IStepFilters[]) target;
@@ -96,9 +90,6 @@ public class StepFiltersCommand extends ForEachCommand implements IStepFiltersHa
 		return true;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.core.commands.AbstractDebugCommand#getEnabledStateJobFamily(org.eclipse.debug.core.commands.IDebugCommandRequest)
-	 */
 	@Override
 	protected Object getEnabledStateJobFamily(IDebugCommandRequest request) {
 		return IStepFiltersHandler.class;

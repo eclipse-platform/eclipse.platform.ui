@@ -51,9 +51,6 @@ public class SequencerControlsModelProxy extends EventHandlerModelProxy {
 		fLaunch = launch;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.viewers.provisional.AbstractModelProxy#installed(org.eclipse.jface.viewers.Viewer)
-	 */
 	@Override
 	public void installed(Viewer viewer) {
 		super.installed(viewer);
@@ -69,18 +66,12 @@ public class SequencerControlsModelProxy extends EventHandlerModelProxy {
 		return fLaunch;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.viewers.update.EventHandlerModelProxy#createEventHandlers()
-	 */
 	@Override
 	protected DebugEventHandler[] createEventHandlers() {
 		fHandler = new ControlEventHandler(this);
 		return new DebugEventHandler[]{fHandler};
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.viewers.update.EventHandlerModelProxy#containsEvent(org.eclipse.debug.core.DebugEvent)
-	 */
 	@Override
 	protected boolean containsEvent(DebugEvent event) {
 		if (event.getSource() instanceof SequencerControl) {

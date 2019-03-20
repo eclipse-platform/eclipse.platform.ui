@@ -88,10 +88,6 @@ public class IOConsoleInputStream extends InputStream {
 		this.console = console;
 	}
 
-	/*
-	 *  (non-Javadoc)
-	 * @see java.io.InputStream#read(byte[], int, int)
-	 */
 	@Override
 	public synchronized int read(byte[] b, int off, int len) throws IOException {
 		waitForData();
@@ -114,19 +110,11 @@ public class IOConsoleInputStream extends InputStream {
 		return toCopy;
 	}
 
-	/*
-	 *  (non-Javadoc)
-	 * @see java.io.InputStream#read(byte[])
-	 */
 	@Override
 	public int read(byte[] b) throws IOException {
 		return read(b, 0, b.length);
 	}
 
-	/*
-	 *  (non-Javadoc)
-	 * @see java.io.InputStream#read()
-	 */
 	@Override
 	public synchronized int read() throws IOException {
 		waitForData();
@@ -262,9 +250,6 @@ public class IOConsoleInputStream extends InputStream {
 		return color;
 	}
 
-	/* (non-Javadoc)
-	 * @see java.io.InputStream#available()
-	 */
 	@Override
 	public int available() throws IOException {
 		if (closed && eofSent) {
@@ -278,9 +263,6 @@ public class IOConsoleInputStream extends InputStream {
 		return size;
 	}
 
-	/* (non-Javadoc)
-	 * @see java.io.InputStream#close()
-	 */
 	@Override
 	public synchronized void close() throws IOException {
 		if(closed) {

@@ -50,9 +50,6 @@ public class ProgramMainTab extends ExternalToolsMainTab {
 	}
 
 
-   	/* (non-Javadoc)
-	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#createControl(org.eclipse.swt.widgets.Composite)
-	 */
 	@Override
 	public void createControl(Composite parent) {
 		super.createControl(parent);

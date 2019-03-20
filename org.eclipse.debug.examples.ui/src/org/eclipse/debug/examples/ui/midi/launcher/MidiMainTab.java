@@ -57,9 +57,6 @@ public class MidiMainTab extends AbstractLaunchConfigurationTab {
 	private Button fHandled;
 	private Button fUnhandled;
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#createControl(org.eclipse.swt.widgets.Composite)
-	 */
 	@Override
 	public void createControl(Composite parent) {
 		Font font = parent.getFont();
@@ -150,15 +147,11 @@ public class MidiMainTab extends AbstractLaunchConfigurationTab {
 		}
 
 	}
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#setDefaults(org.eclipse.debug.core.ILaunchConfigurationWorkingCopy)
-	 */
+
 	@Override
 	public void setDefaults(ILaunchConfigurationWorkingCopy configuration) {
 	}
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#initializeFrom(org.eclipse.debug.core.ILaunchConfiguration)
-	 */
+
 	@Override
 	public void initializeFrom(ILaunchConfiguration configuration) {
 		try {
@@ -181,9 +174,7 @@ public class MidiMainTab extends AbstractLaunchConfigurationTab {
 			setErrorMessage(e.getMessage());
 		}
 	}
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#performApply(org.eclipse.debug.core.ILaunchConfigurationWorkingCopy)
-	 */
+
 	@Override
 	public void performApply(ILaunchConfigurationWorkingCopy configuration) {
 		String file = fFileText.getText().trim();
@@ -213,17 +204,11 @@ public class MidiMainTab extends AbstractLaunchConfigurationTab {
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#getName()
-	 */
 	@Override
 	public String getName() {
 		return "Main"; //$NON-NLS-1$
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#isValid(org.eclipse.debug.core.ILaunchConfiguration)
-	 */
 	@Override
 	public boolean isValid(ILaunchConfiguration launchConfig) {
 		setErrorMessage(null);
@@ -241,9 +226,6 @@ public class MidiMainTab extends AbstractLaunchConfigurationTab {
 		return true;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#getImage()
-	 */
 	@Override
 	public Image getImage() {
 		return DebugUIPlugin.getDefault().getImageRegistry().get(DebugUIPlugin.IMG_OBJ_MIDI);

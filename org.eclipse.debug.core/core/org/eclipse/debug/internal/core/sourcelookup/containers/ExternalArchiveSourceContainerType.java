@@ -29,9 +29,6 @@ import org.w3c.dom.Node;
  */
 public class ExternalArchiveSourceContainerType extends AbstractSourceContainerTypeDelegate {
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.core.sourcelookup.ISourceContainerTypeDelegate#createSourceContainer(java.lang.String)
-	 */
 	@Override
 	public ISourceContainer createSourceContainer(String memento) throws CoreException {
 		Node node = parseDocument(memento);
@@ -51,9 +48,7 @@ public class ExternalArchiveSourceContainerType extends AbstractSourceContainerT
 		abort(SourceLookupMessages.ExternalArchiveSourceContainerType_12, null);
 		return null;
 	}
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.core.sourcelookup.ISourceContainerTypeDelegate#getMemento(org.eclipse.debug.internal.core.sourcelookup.ISourceContainer)
-	 */
+
 	@Override
 	public String getMemento(ISourceContainer container) throws CoreException {
 		ExternalArchiveSourceContainer archive = (ExternalArchiveSourceContainer) container;

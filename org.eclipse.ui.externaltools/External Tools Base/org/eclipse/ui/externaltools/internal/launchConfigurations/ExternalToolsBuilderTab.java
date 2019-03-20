@@ -101,9 +101,6 @@ public class ExternalToolsBuilderTab extends AbstractLaunchConfigurationTab {
     }
 
 	protected SelectionListener selectionListener= new SelectionAdapter() {
-		/* (non-Javadoc)
-		 * @see org.eclipse.swt.events.SelectionListener#widgetSelected(org.eclipse.swt.events.SelectionEvent)
-		 */
 		@Override
 		public void widgetSelected(SelectionEvent e) {
 			boolean enabled= !fCreateBuildScheduleComponent || autoBuildButton.getSelection() || manualBuild.getSelection();
@@ -312,9 +309,6 @@ public class ExternalToolsBuilderTab extends AbstractLaunchConfigurationTab {
 		return button;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#setDefaults(org.eclipse.debug.core.ILaunchConfigurationWorkingCopy)
-	 */
 	@Override
 	public void setDefaults(ILaunchConfigurationWorkingCopy configuration) {
 		StringBuffer buffer= new StringBuffer(IExternalToolConstants.BUILD_TYPE_FULL);
@@ -326,9 +320,6 @@ public class ExternalToolsBuilderTab extends AbstractLaunchConfigurationTab {
 		configuration.setAttribute(IExternalToolConstants.ATTR_TRIGGERS_CONFIGURED, true);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#initializeFrom(org.eclipse.debug.core.ILaunchConfiguration)
-	 */
 	@Override
 	public void initializeFrom(ILaunchConfiguration configuration) {
 		fConfiguration= configuration;
@@ -416,9 +407,6 @@ public class ExternalToolsBuilderTab extends AbstractLaunchConfigurationTab {
         fAppend.setEnabled(haveOutputFile);
     }
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#performApply(org.eclipse.debug.core.ILaunchConfigurationWorkingCopy)
-	 */
 	@Override
 	public void performApply(ILaunchConfigurationWorkingCopy configuration) {
         if (fCreateBuildScheduleComponent) {
@@ -473,25 +461,16 @@ public class ExternalToolsBuilderTab extends AbstractLaunchConfigurationTab {
         }
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#getName()
-	 */
 	@Override
 	public String getName() {
 		return ExternalToolsLaunchConfigurationMessages.ExternalToolsBuilderTab_Build_Options_9;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#getImage()
-	 */
 	@Override
 	public Image getImage() {
 		return PlatformUI.getWorkbench().getSharedImages().getImage(IDE.SharedImages.IMG_OBJ_PROJECT);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#isValid(org.eclipse.debug.core.ILaunchConfiguration)
-	 */
 	@Override
 	public boolean isValid(ILaunchConfiguration launchConfig) {
 		setErrorMessage(null);
@@ -510,9 +489,7 @@ public class ExternalToolsBuilderTab extends AbstractLaunchConfigurationTab {
 
 		return validateRedirectFile();
 	}
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#canSave()
-	 */
+
 	@Override
 	public boolean canSave() {
 		return isValid(null);
@@ -537,17 +514,12 @@ public class ExternalToolsBuilderTab extends AbstractLaunchConfigurationTab {
 		workingSet = wizard.getSelection();
 		updateLaunchConfigurationDialog();
 	}
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#activated(org.eclipse.debug.core.ILaunchConfigurationWorkingCopy)
-	 */
+
 	@Override
 	public void activated(ILaunchConfigurationWorkingCopy workingCopy) {
 		// do nothing on activation
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#deactivated(org.eclipse.debug.core.ILaunchConfigurationWorkingCopy)
-	 */
 	@Override
 	public void deactivated(ILaunchConfigurationWorkingCopy workingCopy) {
 		// do nothing on deactivation

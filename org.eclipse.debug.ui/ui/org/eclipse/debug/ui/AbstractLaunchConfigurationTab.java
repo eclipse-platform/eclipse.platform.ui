@@ -124,10 +124,6 @@ public abstract class AbstractLaunchConfigurationTab implements ILaunchConfigura
 	protected void initializeAttributes() {
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.debug.core.IPrototypeAttributesLabelProvider#getLabel(java.lang.String)
-	 */
 	@Override
 	public String getAttributeLabel(String attribute) {
 		String label = fAttributesLabelsForPrototype.get(attribute);

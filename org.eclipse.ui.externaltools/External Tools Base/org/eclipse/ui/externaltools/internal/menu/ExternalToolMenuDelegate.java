@@ -32,9 +32,6 @@ public class ExternalToolMenuDelegate extends AbstractLaunchToolbarAction {
 		super(IExternalToolConstants.ID_EXTERNAL_TOOLS_LAUNCH_GROUP);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.ui.actions.AbstractLaunchToolbarAction#getOpenDialogAction()
-	 */
 	@Override
 	protected IAction getOpenDialogAction() {
 		IAction action= new OpenExternalToolsConfigurations();

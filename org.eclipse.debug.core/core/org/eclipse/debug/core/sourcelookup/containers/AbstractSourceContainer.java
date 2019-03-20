@@ -63,10 +63,8 @@ public abstract class AbstractSourceContainer extends PlatformObject implements 
 		throw new CoreException(status);
 	}
 
-	/* (non-Javadoc)
-	 *
+	/*
 	 * By default, do nothing. Subclasses should override as required.
-	 *
 	 * @see org.eclipse.debug.core.sourcelookup.ISourceContainer#dispose()
 	 */
 	@Override
@@ -74,25 +72,16 @@ public abstract class AbstractSourceContainer extends PlatformObject implements 
 		fDirector = null;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.core.sourcelookup.ISourceContainer#getSourceContainers()
-	 */
 	@Override
 	public ISourceContainer[] getSourceContainers() throws CoreException {
 		return new ISourceContainer[0];
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.core.sourcelookup.ISourceContainer#isComposite()
-	 */
 	@Override
 	public boolean isComposite() {
 		return false;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.core.sourcelookup.ISourceContainer#init(org.eclipse.debug.core.sourcelookup.ISourceLookupDirector)
-	 */
 	@Override
 	public void init(ISourceLookupDirector director) {
 		fDirector = director;

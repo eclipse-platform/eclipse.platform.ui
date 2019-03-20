@@ -14,7 +14,6 @@
 package org.eclipse.debug.internal.core;
 
 import org.eclipse.core.runtime.Platform;
-
 import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.DebugPlugin;
@@ -72,15 +71,7 @@ public class WatchExpression implements IWatchExpression {
 			return;
 		}
 
-		IWatchExpressionListener listener= new IWatchExpressionListener() {
-			/* (non-Javadoc)
-			 * @see org.eclipse.debug.core.model.IWatchExpressionListener#watchEvaluationFinished(org.eclipse.debug.core.model.IWatchExpressionResult)
-			 */
-			@Override
-			public void watchEvaluationFinished(IWatchExpressionResult result) {
-				setResult(result);
-			}
-		};
+		IWatchExpressionListener listener = result -> setResult(result);
 		setPending(true);
 		IWatchExpressionDelegate delegate= DebugPlugin.getDefault().getExpressionManager().newWatchExpressionDelegate(context.getModelIdentifier());
 		if (delegate != null) {
@@ -112,9 +103,6 @@ public class WatchExpression implements IWatchExpression {
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.core.model.IWatchExpression#setExpressionContext(org.eclipse.debug.core.model.IDebugElement)
-	 */
 	@Override
 	public void setExpressionContext(IDebugElement context) {
 		synchronized (this) {
@@ -300,17 +288,11 @@ public class WatchExpression implements IWatchExpression {
 		fireEvent(new DebugEvent(this, DebugEvent.CHANGE, DebugEvent.STATE));
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.core.model.IErrorReportingExpression#hasErrors()
-	 */
 	@Override
 	public boolean hasErrors() {
 		return fResult != null && fResult.hasErrors();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.core.model.IErrorReportingExpression#getErrorMessages()
-	 */
 	@Override
 	public String[] getErrorMessages() {
 		if (fResult == null) {

@@ -74,24 +74,15 @@ public class LaunchMode implements ILaunchMode {
 		throw new CoreException(new Status(IStatus.ERROR, DebugPlugin.getUniqueIdentifier(), DebugPlugin.ERROR, MessageFormat.format(DebugCoreMessages.LaunchMode_1, new Object[] { attrName }), null));
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.core.ILaunchMode#getIdentifier()
-	 */
 	@Override
 	public String getIdentifier() {
 		return fConfigurationElement.getAttribute(IConfigurationElementConstants.MODE);
 	}
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.core.ILaunchMode#getLabel()
-	 */
 	@Override
 	public String getLabel() {
 		return fConfigurationElement.getAttribute(IConfigurationElementConstants.LABEL);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.core.ILaunchMode#getLaunchAsLabel()
-	 */
 	@Override
 	public String getLaunchAsLabel() {
 		String label = fConfigurationElement.getAttribute(IConfigurationElementConstants.LAUNCH_AS_LABEL);

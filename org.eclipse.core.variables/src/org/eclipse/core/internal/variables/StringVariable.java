@@ -50,17 +50,11 @@ public abstract class StringVariable implements IStringVariable {
 		fConfigurationElement = configurationElement;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.core.stringsubstitution.IStringVariable#getName()
-	 */
 	@Override
 	public String getName() {
 		return fName;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.core.stringsubstitution.IStringVariable#getDescription()
-	 */
 	@Override
 	public String getDescription() {
 		return fDescription;

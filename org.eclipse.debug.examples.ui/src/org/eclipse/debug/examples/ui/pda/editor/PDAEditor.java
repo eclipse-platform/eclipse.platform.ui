@@ -36,9 +36,6 @@ public class PDAEditor extends AbstractDecoratedTextEditor {
 		setEditorContextMenuId("pda.editor.editorMenu"); //$NON-NLS-1$
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.ui.texteditor.AbstractTextEditor#createActions()
-     */
     @Override
 	protected void createActions() {
         super.createActions();

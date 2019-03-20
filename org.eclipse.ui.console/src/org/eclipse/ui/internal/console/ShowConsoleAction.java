@@ -25,9 +25,6 @@ public class ShowConsoleAction extends Action {
 	private IConsole fConsole;
 	private IConsoleView fView;
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.action.IAction#run()
-	 */
 	@Override
 	public void run() {
 		showConsole(fConsole, fView);

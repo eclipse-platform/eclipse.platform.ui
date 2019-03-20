@@ -150,9 +150,6 @@ public abstract class WorkingDirectoryBlock extends AbstractLaunchConfigurationT
 		this.helpContextId = helpContextId;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#createControl(org.eclipse.swt.widgets.Composite)
-	 */
 	@Override
 	public final void createControl(Composite parent) {
 		Font font = parent.getFont();
@@ -327,9 +324,6 @@ public abstract class WorkingDirectoryBlock extends AbstractLaunchConfigurationT
 	 */
 	protected abstract IProject getProject(ILaunchConfiguration configuration) throws CoreException;
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#isValid(org.eclipse.debug.core.ILaunchConfiguration)
-	 */
 	@Override
 	public boolean isValid(ILaunchConfiguration config) {
 		setErrorMessage(null);
@@ -374,9 +368,6 @@ public abstract class WorkingDirectoryBlock extends AbstractLaunchConfigurationT
 		config.setAttribute(workingDirectoryAttribteName, (String)null);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#initializeFrom(org.eclipse.debug.core.ILaunchConfiguration)
-	 */
 	@Override
 	public void initializeFrom(ILaunchConfiguration configuration) {
 		setLaunchConfiguration(configuration);
@@ -392,9 +383,6 @@ public abstract class WorkingDirectoryBlock extends AbstractLaunchConfigurationT
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#performApply(org.eclipse.debug.core.ILaunchConfigurationWorkingCopy)
-	 */
 	@Override
 	public void performApply(ILaunchConfigurationWorkingCopy configuration) {
 		if(fUseDefaultDirButton.getSelection()) {
@@ -405,9 +393,6 @@ public abstract class WorkingDirectoryBlock extends AbstractLaunchConfigurationT
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#getName()
-	 */
 	@Override
 	public String getName() {
 		return DebugUIMessages.WorkingDirectoryBlock_Working_Directory_8;

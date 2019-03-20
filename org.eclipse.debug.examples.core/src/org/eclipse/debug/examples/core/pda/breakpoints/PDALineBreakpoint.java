@@ -170,11 +170,8 @@ public class PDALineBreakpoint extends LineBreakpoint implements IPDAEventListen
     	}
     }
 
-	/* (non-Javadoc)
-	 *
+	/*
 	 * Subclasses should override to handle their breakpoint specific event.
-	 *
-	 * @see org.eclipse.debug.examples.core.pda.model.IPDAEventListener#handleEvent(java.lang.String)
 	 */
 	@Override
 	public void handleEvent(PDAEvent event) {

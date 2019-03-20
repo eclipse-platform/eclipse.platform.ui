@@ -26,9 +26,6 @@ public class DebugCommandRequest extends Request implements IDebugCommandRequest
 		fElements = elements;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.core.commands.IDebugCommandRequest#getElements()
-	 */
 	@Override
 	public Object[] getElements() {
 		return fElements;

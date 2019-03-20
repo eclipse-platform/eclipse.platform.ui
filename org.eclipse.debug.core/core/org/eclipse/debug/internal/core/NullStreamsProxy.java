@@ -29,32 +29,20 @@ public class NullStreamsProxy implements IStreamsProxy2 {
         errorStreamMonitor = new NullStreamMonitor(process.getErrorStream());
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.debug.core.model.IStreamsProxy2#closeInputStream()
-     */
     @Override
 	public void closeInputStream() throws IOException {
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.debug.core.model.IStreamsProxy#getErrorStreamMonitor()
-     */
     @Override
 	public IStreamMonitor getErrorStreamMonitor() {
         return errorStreamMonitor;
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.debug.core.model.IStreamsProxy#getOutputStreamMonitor()
-     */
     @Override
 	public IStreamMonitor getOutputStreamMonitor() {
         return outputStreamMonitor;
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.debug.core.model.IStreamsProxy#write(java.lang.String)
-     */
     @Override
 	public void write(String input) throws IOException {
     }
@@ -82,24 +70,15 @@ public class NullStreamsProxy implements IStreamsProxy2 {
 
         }
 
-        /* (non-Javadoc)
-         * @see org.eclipse.debug.core.model.IStreamMonitor#addListener(org.eclipse.debug.core.IStreamListener)
-         */
         @Override
 		public void addListener(IStreamListener listener) {
         }
 
-        /* (non-Javadoc)
-         * @see org.eclipse.debug.core.model.IStreamMonitor#getContents()
-         */
         @Override
 		public String getContents() {
             return ""; //$NON-NLS-1$
         }
 
-        /* (non-Javadoc)
-         * @see org.eclipse.debug.core.model.IStreamMonitor#removeListener(org.eclipse.debug.core.IStreamListener)
-         */
         @Override
 		public void removeListener(IStreamListener listener) {
         }

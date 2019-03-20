@@ -85,33 +85,21 @@ public class LogicalStructureType implements ILogicalStructureType {
 		throw new CoreException(new Status(IStatus.ERROR, DebugPlugin.getUniqueIdentifier(), DebugPlugin.ERROR, MessageFormat.format(DebugCoreMessages.LogicalStructureType_1, new Object[] { attrName }), null));
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.core.ILogicalStructureType#getDescription()
-	 */
 	@Override
 	public String getDescription() {
 		return fConfigurationElement.getAttribute(IConfigurationElementConstants.DESCRIPTION);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.core.ILogicalStructureType#getId()
-	 */
 	@Override
 	public String getId() {
 		return fConfigurationElement.getAttribute(IConfigurationElementConstants.ID);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.core.ILogicalStructureType#getLogicalStructure(org.eclipse.debug.core.model.IValue)
-	 */
 	@Override
 	public IValue getLogicalStructure(IValue value) throws CoreException {
 		return getDelegate().getLogicalStructure(value);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.core.ILogicalStructureType#providesLogicalStructure(org.eclipse.debug.core.model.IValue)
-	 */
 	@Override
 	public boolean providesLogicalStructure(IValue value) {
 		if (value.getModelIdentifier().equals(fModelId)) {
@@ -135,9 +123,6 @@ public class LogicalStructureType implements ILogicalStructureType {
 		return fDelegate;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.core.model.ILogicalStructureTypeDelegate2#getDescription(org.eclipse.debug.core.model.IValue)
-	 */
 	@Override
 	public String getDescription(IValue value) {
 		ILogicalStructureTypeDelegate delegate = getDelegate();

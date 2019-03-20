@@ -198,13 +198,6 @@ public class ProgramLaunchDelegate extends LaunchConfigurationDelegate {
 		return buf.toString();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see
-	 * org.eclipse.debug.core.model.LaunchConfigurationDelegate#getBuildOrder
-	 * (org.eclipse.debug.core.ILaunchConfiguration, java.lang.String)
-	 */
 	@Override
 	protected IProject[] getBuildOrder(ILaunchConfiguration configuration,
 			String mode) throws CoreException {
@@ -221,13 +214,6 @@ public class ProgramLaunchDelegate extends LaunchConfigurationDelegate {
 		return computeBuildOrder(projects);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.debug.core.model.LaunchConfigurationDelegate#saveBeforeLaunch
-	 * (org.eclipse.debug.core.ILaunchConfiguration, java.lang.String,
-	 * org.eclipse.core.runtime.IProgressMonitor)
-	 */
 	@Override
 	protected boolean saveBeforeLaunch(ILaunchConfiguration configuration,
 			String mode, IProgressMonitor monitor) throws CoreException {

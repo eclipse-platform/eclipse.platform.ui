@@ -26,9 +26,6 @@ import org.eclipse.debug.core.DebugPlugin;
  */
 public class SystemPropertyResolver implements IDynamicVariableResolver {
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.core.variables.IDynamicVariableResolver#resolveValue(org.eclipse.core.variables.IDynamicVariable, java.lang.String)
-	 */
 	@Override
 	public String resolveValue(IDynamicVariable variable, String argument) throws CoreException {
 		if (argument == null) {

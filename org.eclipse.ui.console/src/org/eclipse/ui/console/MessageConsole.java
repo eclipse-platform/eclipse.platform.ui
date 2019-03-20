@@ -130,9 +130,6 @@ public class MessageConsole extends IOConsole {
 		return new MessageConsoleStream(this, this.getCharset());
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.console.IConsole#createPage(org.eclipse.ui.console.IConsoleView)
-	 */
 	@Override
 	public IPageBookViewPage createPage(IConsoleView view) {
 		IOConsolePage page = (IOConsolePage) super.createPage(view);
@@ -140,9 +137,6 @@ public class MessageConsole extends IOConsole {
 		return page;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.console.IOConsole#getInputStream()
-	 */
 	@Override
 	public IOConsoleInputStream getInputStream() {
 		throw new UnsupportedOperationException("Message Console does not support user input"); //$NON-NLS-1$

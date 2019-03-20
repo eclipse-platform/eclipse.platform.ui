@@ -29,49 +29,31 @@ public class PatternMatchListener implements IPatternMatchListener {
 		fDelegate = fExtension.createDelegate();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.console.IPatternMatchListener#getPattern()
-	 */
 	@Override
 	public String getPattern() {
 		return fExtension.getPattern();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.console.IPatternMatchListener#getCompilerFlags()
-	 */
 	@Override
 	public int getCompilerFlags() {
 		return fExtension.getCompilerFlags();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.console.IPatternMatchListener#matchFound(org.eclipse.ui.console.PatternMatchEvent)
-	 */
 	@Override
 	public void matchFound(PatternMatchEvent event) {
 		fDelegate.matchFound(event);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.console.IPatternMatchListenerDelegate#connect(org.eclipse.ui.console.TextConsole)
-	 */
 	@Override
 	public void connect(TextConsole console) {
 		fDelegate.connect(console);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.console.IPatternMatchListener#disconnect()
-	 */
 	@Override
 	public void disconnect() {
 		fDelegate.disconnect();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.console.IPatternMatchListener#getQuickPattern()
-	 */
 	@Override
 	public String getLineQualifier() {
 		return fExtension.getQuickPattern();

@@ -102,12 +102,6 @@ public class MemoryViewSamplePlugin extends AbstractUIPlugin {
 		return resourceBundle;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * org.eclipse.ui.plugin.AbstractUIPlugin#initializeImageRegistry(org.eclipse
-	 * .jface.resource.ImageRegistry)
-	 */
 	@Override
 	protected void initializeImageRegistry(ImageRegistry reg) {
 		declareImage(IMG_OBJ_HEX_TREE, PATH_OBJECT + "hex_tree.gif"); //$NON-NLS-1$

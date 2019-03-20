@@ -35,9 +35,6 @@ import org.eclipse.ui.IEditorPart;
  */
 public class PDALaunchShortcut implements ILaunchShortcut {
 
-    /* (non-Javadoc)
-     * @see org.eclipse.debug.ui.ILaunchShortcut#launch(org.eclipse.jface.viewers.ISelection, java.lang.String)
-     */
     @Override
 	public void launch(ISelection selection, String mode) {
         // must be a structured selection with one file selected
@@ -72,9 +69,6 @@ public class PDALaunchShortcut implements ILaunchShortcut {
         }
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.debug.ui.ILaunchShortcut#launch(org.eclipse.ui.IEditorPart, java.lang.String)
-     */
     @Override
 	public void launch(IEditorPart editor, String mode) {
     }

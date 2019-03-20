@@ -63,9 +63,6 @@ public class PDAToggleWatchpointsTarget extends PDABreakpointAdapter {
         return false;
     }
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.ui.actions.IToggleBreakpointsTarget#toggleWatchpoints(org.eclipse.ui.IWorkbenchPart, org.eclipse.jface.viewers.ISelection)
-	 */
 	@Override
 	public void toggleWatchpoints(IWorkbenchPart part, ISelection selection) throws CoreException {
 	    String[] variableAndFunctionName = getVariableAndFunctionName(part, selection);
@@ -149,9 +146,6 @@ public class PDAToggleWatchpointsTarget extends PDABreakpointAdapter {
 		return lineNum;
 	}
 
-    /* (non-Javadoc)
-     * @see org.eclipse.debug.ui.actions.IToggleBreakpointsTargetExtension#toggleBreakpoints(org.eclipse.ui.IWorkbenchPart, org.eclipse.jface.viewers.ISelection)
-     */
     @Override
 	public void toggleBreakpoints(IWorkbenchPart part, ISelection selection) throws CoreException {
         if (canToggleWatchpoints(part, selection)) {
@@ -161,9 +155,6 @@ public class PDAToggleWatchpointsTarget extends PDABreakpointAdapter {
         }
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.debug.ui.actions.IToggleBreakpointsTargetExtension#canToggleBreakpoints(org.eclipse.ui.IWorkbenchPart, org.eclipse.jface.viewers.ISelection)
-     */
     @Override
 	public boolean canToggleBreakpoints(IWorkbenchPart part, ISelection selection) {
         return canToggleLineBreakpoints(part, selection) || canToggleWatchpoints(part, selection);

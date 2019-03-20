@@ -54,9 +54,6 @@ public class LocalFileStorage extends PlatformObject implements IStorage {
 		setFile(file);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.core.resources.IStorage#getContents()
-	 */
 	@Override
 	public InputStream getContents() throws CoreException {
 		try {
@@ -66,9 +63,6 @@ public class LocalFileStorage extends PlatformObject implements IStorage {
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.core.resources.IStorage#getFullPath()
-	 */
 	@Override
 	public IPath getFullPath() {
 		try {
@@ -79,17 +73,11 @@ public class LocalFileStorage extends PlatformObject implements IStorage {
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.core.resources.IStorage#getName()
-	 */
 	@Override
 	public String getName() {
 		return getFile().getName();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.core.resources.IStorage#isReadOnly()
-	 */
 	@Override
 	public boolean isReadOnly() {
 		return true;
@@ -113,18 +101,12 @@ public class LocalFileStorage extends PlatformObject implements IStorage {
 		return fFile;
 	}
 
-	/* (non-Javadoc)
-	 * @see java.lang.Object#equals(java.lang.Object)
-	 */
 	@Override
 	public boolean equals(Object object) {
 		return object instanceof LocalFileStorage &&
 			 getFile().equals(((LocalFileStorage)object).getFile());
 	}
 
-	/* (non-Javadoc)
-	 * @see java.lang.Object#hashCode()
-	 */
 	@Override
 	public int hashCode() {
 		return getFile().hashCode();

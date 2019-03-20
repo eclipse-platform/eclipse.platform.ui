@@ -35,9 +35,6 @@ public class ResumeCommand extends SuspendCommand implements IResumeHandler {
 		return ((ISuspendResume)target).canResume();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.core.commands.SuspendCommand#getEnabledStateJobFamily(org.eclipse.debug.core.commands.IDebugCommandRequest)
-	 */
 	@Override
 	protected Object getEnabledStateJobFamily(IDebugCommandRequest request) {
 		return IResumeHandler.class;

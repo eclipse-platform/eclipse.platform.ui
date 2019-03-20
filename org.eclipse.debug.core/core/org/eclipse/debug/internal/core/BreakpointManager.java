@@ -176,9 +176,6 @@ public class BreakpointManager implements IBreakpointManager, IResourceChangeLis
 
 		private PostChangeVisitor fVisitor = new PostChangeVisitor();
 
-		/* (non-Javadoc)
-		 * @see org.eclipse.core.resources.IResourceChangeListener#resourceChanged(org.eclipse.core.resources.IResourceChangeEvent)
-		 */
 		@Override
 		public void resourceChanged(IResourceChangeEvent event) {
 			IResourceDelta delta= event.getDelta();
@@ -229,9 +226,6 @@ public class BreakpointManager implements IBreakpointManager, IResourceChangeLis
 
 	class PostChangeVisitor implements IResourceDeltaVisitor {
 
-		/* (non-Javadoc)
-		 * @see org.eclipse.core.resources.IResourceDeltaVisitor#visit(org.eclipse.core.resources.IResourceDelta)
-		 */
 		@Override
 		public boolean visit(IResourceDelta delta) throws CoreException {
 			if (delta == null) {
@@ -419,9 +413,6 @@ public class BreakpointManager implements IBreakpointManager, IResourceChangeLis
 		return fMarkersToBreakpoints.get(marker);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.core.IBreakpointManager#getBreakpoints()
-	 */
 	@Override
 	public IBreakpoint[] getBreakpoints() {
 		IBreakpoint[] temp = new IBreakpoint[0];
@@ -460,9 +451,6 @@ public class BreakpointManager implements IBreakpointManager, IResourceChangeLis
 		return fBreakpoints;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.core.IBreakpointManager#getBreakpoints(java.lang.String)
-	 */
 	@Override
 	public IBreakpoint[] getBreakpoints(String modelIdentifier) {
 		Vector<IBreakpoint> allBreakpoints = getBreakpoints0();
@@ -1112,18 +1100,12 @@ public class BreakpointManager implements IBreakpointManager, IResourceChangeLis
 		private IMarkerDelta[] fDeltas;
 		private IBreakpoint[] fNotifierBreakpoints;
 
-		/**
-		 * @see org.eclipse.core.runtime.ISafeRunnable#handleException(java.lang.Throwable)
-		 */
 		@Override
 		public void handleException(Throwable exception) {
 			IStatus status = new Status(IStatus.ERROR, DebugPlugin.getUniqueIdentifier(), DebugPlugin.INTERNAL_ERROR, "An exception occurred during breakpoint change notification.", exception);  //$NON-NLS-1$
 			DebugPlugin.log(status);
 		}
 
-		/**
-		 * @see org.eclipse.core.runtime.ISafeRunnable#run()
-		 */
 		@Override
 		public void run() throws Exception {
 			switch (fType) {
@@ -1162,17 +1144,11 @@ public class BreakpointManager implements IBreakpointManager, IResourceChangeLis
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.core.IBreakpointManager#isEnabled()
-	 */
 	@Override
 	public boolean isEnabled() {
 		return Platform.getPreferencesService().getBoolean(DebugPlugin.getUniqueIdentifier(), IInternalDebugCoreConstants.PREF_BREAKPOINT_MANAGER_ENABLED_STATE, true, null);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.core.IBreakpointManager#setEnabled(boolean)
-	 */
 	@Override
 	public void setEnabled(final boolean enabled) {
         if (isEnabled() != enabled) {
@@ -1182,17 +1158,11 @@ public class BreakpointManager implements IBreakpointManager, IResourceChangeLis
         }
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.core.IBreakpointManager#addBreakpointManagerListener(org.eclipse.debug.core.IBreakpointManagerListener)
-	 */
 	@Override
 	public void addBreakpointManagerListener(IBreakpointManagerListener listener) {
 		fBreakpointManagerListeners.add(listener);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.core.IBreakpointManager#removeBreakpointManagerListener(org.eclipse.debug.core.IBreakpointManagerListener)
-	 */
 	@Override
 	public void removeBreakpointManagerListener(IBreakpointManagerListener listener) {
 		fBreakpointManagerListeners.remove(listener);
@@ -1207,18 +1177,12 @@ public class BreakpointManager implements IBreakpointManager, IResourceChangeLis
 		private IBreakpointManagerListener fListener;
 		private boolean fManagerEnabled;
 
-		/**
-		 * @see org.eclipse.core.runtime.ISafeRunnable#handleException(java.lang.Throwable)
-		 */
 		@Override
 		public void handleException(Throwable exception) {
 			IStatus status = new Status(IStatus.ERROR, DebugPlugin.getUniqueIdentifier(), DebugPlugin.INTERNAL_ERROR, "An exception occurred during breakpoint change notification.", exception);  //$NON-NLS-1$
 			DebugPlugin.log(status);
 		}
 
-		/**
-		 * @see org.eclipse.core.runtime.ISafeRunnable#run()
-		 */
 		@Override
 		public void run() throws Exception {
 			fListener.breakpointManagerEnablementChanged(fManagerEnabled);
@@ -1248,18 +1212,12 @@ public class BreakpointManager implements IBreakpointManager, IResourceChangeLis
 		private IBreakpointManagerListener fListener;
 		private IBreakpoint fManagerTriggerPoint;
 
-		/**
-		 * @see org.eclipse.core.runtime.ISafeRunnable#handleException(java.lang.Throwable)
-		 */
 		@Override
 		public void handleException(Throwable exception) {
 			IStatus status = new Status(IStatus.ERROR, DebugPlugin.getUniqueIdentifier(), DebugPlugin.INTERNAL_ERROR, "An exception occurred during breakpoint change notification.", exception); //$NON-NLS-1$
 			DebugPlugin.log(status);
 		}
 
-		/**
-		 * @see org.eclipse.core.runtime.ISafeRunnable#run()
-		 */
 		@Override
 		public void run() throws Exception {
 			fListener.breakpointManagerTriggerPointChanged(fManagerTriggerPoint);
@@ -1290,9 +1248,6 @@ public class BreakpointManager implements IBreakpointManager, IResourceChangeLis
 			setSystem(true);
 		}
 
-		/* (non-Javadoc)
-		 * @see org.eclipse.core.runtime.jobs.Job#run(org.eclipse.core.runtime.IProgressMonitor)
-		 */
 		@Override
 		protected IStatus run(IProgressMonitor monitor) {
 			try {
@@ -1304,9 +1259,6 @@ public class BreakpointManager implements IBreakpointManager, IResourceChangeLis
 		}
 	}
 
-    /* (non-Javadoc)
-     * @see org.eclipse.debug.core.IBreakpointManager#getTypeName(org.eclipse.debug.core.model.IBreakpoint)
-     */
     @Override
 	public String getTypeName(IBreakpoint breakpoint) {
         String typeName= null;
@@ -1323,9 +1275,6 @@ public class BreakpointManager implements IBreakpointManager, IResourceChangeLis
         return typeName;
     }
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.core.IBreakpointManager#getImportParticipants(java.lang.String)
-	 */
 	@Override
 	public IBreakpointImportParticipant[] getImportParticipants(String markertype) throws CoreException {
 		initializeImportParticipants();

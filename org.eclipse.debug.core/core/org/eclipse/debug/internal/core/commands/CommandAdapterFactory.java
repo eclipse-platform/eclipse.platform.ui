@@ -14,7 +14,6 @@
 package org.eclipse.debug.internal.core.commands;
 
 import org.eclipse.core.runtime.IAdapterFactory;
-
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.commands.IDisconnectHandler;
 import org.eclipse.debug.core.commands.IDropToFrameHandler;
@@ -52,9 +51,6 @@ public class CommandAdapterFactory implements IAdapterFactory {
 	private static IResumeHandler fgResumeCommand = new ResumeCommand();
 	private static IStepFiltersHandler fgStepFiltersCommand = new StepFiltersCommand();
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.core.runtime.IAdapterFactory#getAdapter(java.lang.Object, java.lang.Class)
-	 */
 	@SuppressWarnings("unchecked")
 	@Override
 	public <T> T getAdapter(Object adaptableObject, Class<T> adapterType) {
@@ -109,9 +105,6 @@ public class CommandAdapterFactory implements IAdapterFactory {
 		return null;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.core.runtime.IAdapterFactory#getAdapterList()
-	 */
 	@Override
 	public Class<?>[] getAdapterList() {
 		return new Class[]{

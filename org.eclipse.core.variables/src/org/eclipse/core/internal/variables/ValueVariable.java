@@ -45,9 +45,6 @@ public class ValueVariable extends StringVariable implements IValueVariable {
 		fValue = value;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.core.variables.IValueVariable#setValue(java.lang.String)
-	 */
 	@Override
 	public void setValue(String value) {
 		if (!isReadOnly()){
@@ -56,25 +53,16 @@ public class ValueVariable extends StringVariable implements IValueVariable {
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.core.variables.IValueVariable#getValue()
-	 */
 	@Override
 	public String getValue() {
 		return fValue;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.core.variables.IValueVariable#isReadOnly()
-	 */
 	@Override
 	public boolean isReadOnly() {
 		return fReadOnly;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.core.variables.IValueVariable#isContributed()
-	 */
 	@Override
 	public boolean isContributed() {
 		return false;

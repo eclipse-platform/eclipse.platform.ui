@@ -24,9 +24,6 @@ import org.eclipse.debug.ui.ILaunchConfigurationTab;
  * @since 1.0
  */
 public class MidiTabGroup extends AbstractLaunchConfigurationTabGroup {
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.ui.ILaunchConfigurationTabGroup#createTabs(org.eclipse.debug.ui.ILaunchConfigurationDialog, java.lang.String)
-	 */
 	@Override
 	public void createTabs(ILaunchConfigurationDialog dialog, String mode) {
 		setTabs(new ILaunchConfigurationTab[] {

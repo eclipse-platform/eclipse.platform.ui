@@ -39,16 +39,10 @@ import org.eclipse.ui.part.FileEditorInput;
  * Renders PDA debug elements
  */
 public class PDAModelPresentation extends LabelProvider implements IDebugModelPresentation {
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.ui.IDebugModelPresentation#setAttribute(java.lang.String, java.lang.Object)
-	 */
 	@Override
 	public void setAttribute(String attribute, Object value) {
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.viewers.ILabelProvider#getText(java.lang.Object)
-	 */
 	@Override
 	public String getText(Object element) {
 		if (element instanceof PDADebugTarget) {
@@ -162,9 +156,6 @@ public class PDAModelPresentation extends LabelProvider implements IDebugModelPr
 	    return label;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.ui.IDebugModelPresentation#computeDetail(org.eclipse.debug.core.model.IValue, org.eclipse.debug.ui.IValueDetailListener)
-	 */
 	@Override
 	public void computeDetail(IValue value, IValueDetailListener listener) {
 		String detail = ""; //$NON-NLS-1$
@@ -174,9 +165,7 @@ public class PDAModelPresentation extends LabelProvider implements IDebugModelPr
 		}
 		listener.detailComputed(value, detail);
 	}
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.ui.ISourcePresentation#getEditorInput(java.lang.Object)
-	 */
+
 	@Override
 	public IEditorInput getEditorInput(Object element) {
 		if (element instanceof IFile) {
@@ -187,9 +176,7 @@ public class PDAModelPresentation extends LabelProvider implements IDebugModelPr
 		}
 		return null;
 	}
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.ui.ISourcePresentation#getEditorId(org.eclipse.ui.IEditorInput, java.lang.Object)
-	 */
+
 	@Override
 	public String getEditorId(IEditorInput input, Object element) {
 		if (element instanceof IFile || element instanceof ILineBreakpoint) {

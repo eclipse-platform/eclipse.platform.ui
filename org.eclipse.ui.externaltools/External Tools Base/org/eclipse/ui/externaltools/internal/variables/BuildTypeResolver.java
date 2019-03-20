@@ -20,9 +20,6 @@ import org.eclipse.core.variables.IDynamicVariableResolver;
 
 public class BuildTypeResolver implements IDynamicVariableResolver {
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.core.variables.IDynamicVariableResolver#resolveValue(org.eclipse.core.variables.IDynamicVariable, java.lang.String)
-	 */
 	@Override
 	public String resolveValue(IDynamicVariable variable, String argument) {
 			return ExternalToolBuilder.getBuildType();

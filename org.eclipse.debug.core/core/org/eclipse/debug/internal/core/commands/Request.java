@@ -25,40 +25,25 @@ public class Request implements IRequest {
 	private IStatus fStatus;
 	private boolean fCanceled = false;
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.core.IRequest#done()
-	 */
 	@Override
 	public void done() {
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.core.IRequest#getStatus()
-	 */
 	@Override
 	public IStatus getStatus() {
 		return fStatus;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.core.IRequest#setStatus(org.eclipse.core.runtime.IStatus)
-	 */
 	@Override
 	public void setStatus(IStatus status) {
 		fStatus = status;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.core.IRequest#cancel()
-	 */
 	@Override
 	public synchronized void cancel() {
 		fCanceled = true;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.core.IRequest#isCanceled()
-	 */
 	@Override
 	public synchronized boolean isCanceled() {
 		return fCanceled;

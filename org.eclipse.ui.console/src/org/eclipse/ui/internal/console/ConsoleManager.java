@@ -427,8 +427,10 @@ public class ConsoleManager implements IConsoleManager {
 		return list.toArray(new PatternMatchListener[0]);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.console.IConsoleManager#getPageParticipants(org.eclipse.ui.console.IConsole)
+	/*
+	 * @see
+	 * org.eclipse.ui.console.IConsoleManager#getPageParticipants(org.eclipse.ui.
+	 * console.IConsole)
 	 */
 	public IConsolePageParticipant[] getPageParticipants(IConsole console) {
 		if(fPageParticipants == null) {
@@ -455,7 +457,7 @@ public class ConsoleManager implements IConsoleManager {
 		return list.toArray(new IConsolePageParticipant[0]);
 	}
 
-	/* (non-Javadoc)
+	/*
 	 * @see org.eclipse.ui.console.IConsoleManager#getConsoleFactories()
 	 */
 	public ConsoleFactoryExtension[] getConsoleFactoryExtensions() {

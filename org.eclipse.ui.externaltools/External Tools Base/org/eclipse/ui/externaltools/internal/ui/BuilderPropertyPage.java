@@ -922,9 +922,6 @@ public final class BuilderPropertyPage extends PropertyPage implements ICheckSta
 		builderTable.setSelection(newSelection);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.preference.IPreferencePage#performOk()
-	 */
 	@Override
 	public boolean performOk() {
 		if (!userHasMadeChanges) {

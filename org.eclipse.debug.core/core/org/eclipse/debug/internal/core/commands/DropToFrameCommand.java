@@ -30,25 +30,16 @@ public class DropToFrameCommand extends StepCommand implements IDropToFrameHandl
 		return getAdapter(element, IDropToFrame.class);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.core.commands.StepCommand#isSteppable(java.lang.Object)
-	 */
 	@Override
 	protected boolean isSteppable(Object target) throws CoreException {
 		return ((IDropToFrame)target).canDropToFrame();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.core.commands.StepCommand#step(java.lang.Object)
-	 */
 	@Override
 	protected void step(Object target) throws CoreException {
 		((IDropToFrame)target).dropToFrame();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.core.commands.AbstractDebugCommand#getEnabledStateJobFamily(org.eclipse.debug.core.commands.IDebugCommandRequest)
-	 */
 	@Override
 	protected Object getEnabledStateJobFamily(IDebugCommandRequest request) {
 		return IDropToFrameHandler.class;

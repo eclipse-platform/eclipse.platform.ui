@@ -30,25 +30,16 @@ public class DisconnectCommand extends ForEachCommand implements IDisconnectHand
 		return getAdapter(element, IDisconnect.class);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.core.commands.ForEachCommand#execute(java.lang.Object)
-	 */
 	@Override
 	protected void execute(Object target) throws CoreException {
 		((IDisconnect)target).disconnect();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.core.commands.ForEachCommand#isExecutable(java.lang.Object)
-	 */
 	@Override
 	protected boolean isExecutable(Object target) {
 		return ((IDisconnect)target).canDisconnect();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.core.commands.AbstractDebugCommand#getEnabledStateJobFamily(org.eclipse.debug.core.commands.IDebugCommandRequest)
-	 */
 	@Override
 	protected Object getEnabledStateJobFamily(IDebugCommandRequest request) {
 		return IDisconnectHandler.class;

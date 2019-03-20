@@ -30,9 +30,6 @@ import org.w3c.dom.Node;
  */
 public class DirectorySourceContainerType extends AbstractSourceContainerTypeDelegate {
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.core.sourcelookup.ISourceContainerType#createSourceContainer(java.lang.String)
-	 */
 	@Override
 	public ISourceContainer createSourceContainer(String memento) throws CoreException {
 		Node node = parseDocument(memento);
@@ -53,9 +50,6 @@ public class DirectorySourceContainerType extends AbstractSourceContainerTypeDel
 		return null;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.core.sourcelookup.ISourceContainerType#getMemento(org.eclipse.debug.internal.core.sourcelookup.ISourceContainer)
-	 */
 	@Override
 	public String getMemento(ISourceContainer container) throws CoreException {
 		DirectorySourceContainer folder = (DirectorySourceContainer) container;

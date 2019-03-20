@@ -55,17 +55,11 @@ public class ControlEventHandler extends DebugEventHandler {
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.viewers.update.DebugEventHandler#handlesEvent(org.eclipse.debug.core.DebugEvent)
-	 */
 	@Override
 	protected boolean handlesEvent(DebugEvent event) {
 		return true;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.viewers.update.DebugEventHandler#dispose()
-	 */
 	@Override
 	public synchronized void dispose() {
 		super.dispose();
@@ -74,18 +68,12 @@ public class ControlEventHandler extends DebugEventHandler {
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.viewers.update.DebugEventHandler#refreshRoot(org.eclipse.debug.core.DebugEvent)
-	 */
 	@Override
 	protected void refreshRoot(DebugEvent event) {
 		ModelDelta delta = new ModelDelta(fLaunch, IModelDelta.CONTENT);
 		fireDelta(delta);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.viewers.update.DebugEventHandler#handleResume(org.eclipse.debug.core.DebugEvent)
-	 */
 	@Override
 	protected void handleResume(DebugEvent event) {
 		super.handleResume(event);
@@ -107,9 +95,6 @@ public class ControlEventHandler extends DebugEventHandler {
 		}, 0, 100);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.viewers.update.DebugEventHandler#handleSuspend(org.eclipse.debug.core.DebugEvent)
-	 */
 	@Override
 	protected void handleSuspend(DebugEvent event) {
 		super.handleSuspend(event);
