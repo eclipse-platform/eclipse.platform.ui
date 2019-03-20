@@ -25,17 +25,11 @@ import org.eclipse.jface.action.Separator;
  */
 public class RegistersView extends VariablesView {
 
-	/**
-	 * @see org.eclipse.debug.ui.AbstractDebugView#getHelpContextId()
-	 */
 	@Override
 	protected String getHelpContextId() {
 		return IDebugHelpContextIds.REGISTERS_VIEW;
 	}
 
-	/**
-	 * @see org.eclipse.debug.ui.AbstractDebugView#configureToolBar(org.eclipse.jface.action.IToolBarManager)
-	 */
 	@Override
 	protected void configureToolBar(IToolBarManager tbm) {
 		super.configureToolBar(tbm);
@@ -43,25 +37,16 @@ public class RegistersView extends VariablesView {
 		tbm.add(new Separator(IDebugUIConstants.REGISTER_GROUP));
 	}
 
-	/**
-	 * @see org.eclipse.debug.internal.ui.views.variables.VariablesView#getDetailPanePreferenceKey()
-	 */
 	@Override
 	protected String getDetailPanePreferenceKey() {
 		return IDebugPreferenceConstants.REGISTERS_DETAIL_PANE_ORIENTATION;
 	}
 
-	/**
-	 * @see org.eclipse.debug.internal.ui.views.variables.VariablesView#getToggleActionLabel()
-	 */
 	@Override
 	protected String getToggleActionLabel() {
 		return RegistersViewMessages.RegistersView_0;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.views.variables.VariablesView#getPresentationContextId()
-	 */
 	@Override
 	protected String getPresentationContextId() {
 		return IDebugUIConstants.ID_REGISTER_VIEW;

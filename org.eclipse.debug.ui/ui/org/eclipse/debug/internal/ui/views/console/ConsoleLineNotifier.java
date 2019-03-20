@@ -46,9 +46,6 @@ public class ConsoleLineNotifier implements IPatternMatchListener, IPropertyChan
 	 */
 	private ProcessConsole fConsole = null;
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.console.IPatternMatchListenerDelegate#connect(org.eclipse.ui.console.TextConsole)
-	 */
 	@Override
 	public void connect(TextConsole console) {
 	    if (console instanceof ProcessConsole) {
@@ -64,9 +61,6 @@ public class ConsoleLineNotifier implements IPatternMatchListener, IPropertyChan
 	    }
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.console.IPatternMatchListener#disconnect()
-	 */
 	@Override
 	public synchronized void disconnect() {
         try {
@@ -111,9 +105,6 @@ public class ConsoleLineNotifier implements IPatternMatchListener, IPropertyChan
 		}
 	}
 
-    /* (non-Javadoc)
-     * @see org.eclipse.ui.console.IPatternMatchListener#matchFound(org.eclipse.ui.console.PatternMatchEvent)
-     */
     @Override
 	public void matchFound(PatternMatchEvent event) {
         try  {
@@ -134,9 +125,6 @@ public class ConsoleLineNotifier implements IPatternMatchListener, IPropertyChan
         }
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.jface.util.IPropertyChangeListener#propertyChange(org.eclipse.jface.util.PropertyChangeEvent)
-     */
     @Override
 	public void propertyChange(PropertyChangeEvent event) {
         if(event.getProperty().equals(IConsoleConstants.P_CONSOLE_OUTPUT_COMPLETE)) {
@@ -145,25 +133,16 @@ public class ConsoleLineNotifier implements IPatternMatchListener, IPropertyChan
         }
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.ui.console.IPatternMatchListener#getPattern()
-     */
     @Override
 	public String getPattern() {
         return ".*\\r(\\n?)|.*\\n"; //$NON-NLS-1$
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.ui.console.IPatternMatchListener#getCompilerFlags()
-     */
     @Override
 	public int getCompilerFlags() {
         return 0;
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.ui.console.IPatternMatchListener#getLineQualifier()
-     */
     @Override
 	public String getLineQualifier() {
         return "\\n|\\r"; //$NON-NLS-1$

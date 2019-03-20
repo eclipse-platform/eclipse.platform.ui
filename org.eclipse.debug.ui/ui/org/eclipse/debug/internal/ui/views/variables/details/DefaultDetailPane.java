@@ -190,9 +190,6 @@ public class DefaultDetailPane extends AbstractDetailPane implements IDetailPane
 			fModel = model;
 		}
 
-		/* (non-Javadoc)
-		 * @see org.eclipse.core.runtime.jobs.Job#run(org.eclipse.core.runtime.IProgressMonitor)
-		 */
 		@Override
 		protected IStatus run(IProgressMonitor monitor) {
 			fMonitor = monitor;
@@ -262,9 +259,6 @@ public class DefaultDetailPane extends AbstractDetailPane implements IDetailPane
 			return Status.OK_STATUS;
 		}
 
-		/* (non-Javadoc)
-		 * @see org.eclipse.core.runtime.jobs.Job#canceling()
-		 */
 		@Override
 		protected void canceling() {
 			super.canceling();
@@ -273,9 +267,6 @@ public class DefaultDetailPane extends AbstractDetailPane implements IDetailPane
 			}
 		}
 
-		/* (non-Javadoc)
-		 * @see org.eclipse.debug.ui.IValueDetailListener#detailComputed(org.eclipse.debug.core.model.IValue, java.lang.String)
-		 */
 		@Override
 		public void detailComputed(IValue value, final String result) {
 			synchronized (this) {
@@ -438,9 +429,6 @@ public class DefaultDetailPane extends AbstractDetailPane implements IDetailPane
 	private IPropertyChangeListener fPreferenceStorePropertyChangeListener;
 	private WhitespaceCharacterPainter fWhiteSpacePainter;
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.ui.IDetailPane#createControl(org.eclipse.swt.widgets.Composite)
-	 */
 	@Override
 	public Control createControl(Composite parent) {
 
@@ -732,9 +720,6 @@ public class DefaultDetailPane extends AbstractDetailPane implements IDetailPane
 
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.ui.IDetailPane#display(org.eclipse.jface.viewers.IStructuredSelection)
-	 */
 	@Override
 	public void display(IStructuredSelection selection) {
 
@@ -776,9 +761,6 @@ public class DefaultDetailPane extends AbstractDetailPane implements IDetailPane
 
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.ui.IDetailPane#setFocus()
-	 */
 	@Override
 	public boolean setFocus(){
 		if (fSourceViewer != null){
@@ -788,9 +770,6 @@ public class DefaultDetailPane extends AbstractDetailPane implements IDetailPane
 		return false;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.views.variables.details.AbstractDetailPane#dispose()
-	 */
 	@Override
 	public void dispose(){
 		if (fDetailJob != null) {
@@ -829,33 +808,21 @@ public class DefaultDetailPane extends AbstractDetailPane implements IDetailPane
 		super.dispose();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.ui.IDetailPane#getDescription()
-	 */
 	@Override
 	public String getDescription() {
 		return DESCRIPTION;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.ui.IDetailPane#getID()
-	 */
 	@Override
 	public String getID() {
 		return ID;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.ui.IDetailPane#getName()
-	 */
 	@Override
 	public String getName() {
 		return NAME;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.core.runtime.IAdaptable#getAdapter(java.lang.Class)
-	 */
 	@SuppressWarnings("unchecked")
 	@Override
 	public <T> T getAdapter(Class<T> required) {
@@ -1085,9 +1052,6 @@ public class DefaultDetailPane extends AbstractDetailPane implements IDetailPane
 		return null;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.util.IPropertyChangeListener#propertyChange(org.eclipse.jface.util.PropertyChangeEvent)
-	 */
 	@Override
 	public void propertyChange(PropertyChangeEvent event) {
 		String propertyName= event.getProperty();
@@ -1121,17 +1085,11 @@ public class DefaultDetailPane extends AbstractDetailPane implements IDetailPane
 			fTarget = target;
 		}
 
-		/* (non-Javadoc)
-		 * @see org.eclipse.jface.text.IFindReplaceTarget#canPerformFind()
-		 */
 		@Override
 		public boolean canPerformFind() {
 			return fTarget.canPerformFind();
 		}
 
-		/* (non-Javadoc)
-		 * @see org.eclipse.jface.text.IFindReplaceTarget#findAndSelect(int, java.lang.String, boolean, boolean, boolean)
-		 */
 		@Override
 		public int findAndSelect(int widgetOffset, String findString, boolean searchForward, boolean caseSensitive, boolean wholeWord) {
 			int position = fTarget.findAndSelect(widgetOffset, findString, searchForward, caseSensitive, wholeWord);
@@ -1145,42 +1103,27 @@ public class DefaultDetailPane extends AbstractDetailPane implements IDetailPane
 			return position;
 		}
 
-		/* (non-Javadoc)
-		 * @see org.eclipse.jface.text.IFindReplaceTarget#getSelection()
-		 */
 		@Override
 		public Point getSelection() {
 			return fTarget.getSelection();
 		}
 
-		/* (non-Javadoc)
-		 * @see org.eclipse.jface.text.IFindReplaceTarget#getSelectionText()
-		 */
 		@Override
 		public String getSelectionText() {
 			return fTarget.getSelectionText();
 		}
 
-		/* (non-Javadoc)
-		 * @see org.eclipse.jface.text.IFindReplaceTarget#isEditable()
-		 */
 		@Override
 		public boolean isEditable() {
 			return fTarget.isEditable();
 		}
 
-		/* (non-Javadoc)
-		 * @see org.eclipse.jface.text.IFindReplaceTarget#replaceSelection(java.lang.String)
-		 */
 		@Override
 		public void replaceSelection(String text) {
 			fTarget.replaceSelection(text);
 		}
 	}
 
-	/*
-	 * @see org.eclipse.debug.ui.IDetailPane2#getSelectionProvider()
-	 */
 	@Override
 	public ISelectionProvider getSelectionProvider() {
 		return fSourceViewer.getSelectionProvider();

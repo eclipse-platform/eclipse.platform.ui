@@ -73,12 +73,6 @@ public class SwitchMemoryBlockAction extends Action implements IViewActionDelega
 			setSystem(true);
 		}
 
-		/*
-		 * (non-Javadoc)
-		 * @see
-		 * org.eclipse.ui.progress.UIJob#runInUIThread(org.eclipse.core.runtime
-		 * .IProgressMonitor)
-		 */
 		@Override
 		public IStatus runInUIThread(IProgressMonitor monitor) {
 			if (fAction != null) {
@@ -148,10 +142,6 @@ public class SwitchMemoryBlockAction extends Action implements IViewActionDelega
 	class SwitchToAction extends Action {
 		private IMemoryBlock fMemoryblock;
 
-		/*
-		 * (non-Javadoc)
-		 * @see org.eclipse.jface.action.IAction#run()
-		 */
 		@Override
 		public void run() {
 			if (fView == null) {
@@ -219,22 +209,13 @@ public class SwitchMemoryBlockAction extends Action implements IViewActionDelega
 	class MenuCreator implements IMenuCreator {
 		Menu dropdown;
 
-		/*
-		 * (non-Javadoc)
-		 * @see org.eclipse.jface.action.IMenuCreator#dispose()
-		 */
 		@Override
 		public void dispose() {
-			if (dropdown != null)
+			if (dropdown != null) {
 				dropdown.dispose();
+			}
 		}
 
-		/*
-		 * (non-Javadoc)
-		 * @see
-		 * org.eclipse.jface.action.IMenuCreator#getMenu(org.eclipse.swt.widgets
-		 * .Control)
-		 */
 		@Override
 		public Menu getMenu(Control parent) {
 			if (dropdown != null) {
@@ -270,12 +251,6 @@ public class SwitchMemoryBlockAction extends Action implements IViewActionDelega
 			return dropdown;
 		}
 
-		/*
-		 * (non-Javadoc)
-		 * @see
-		 * org.eclipse.jface.action.IMenuCreator#getMenu(org.eclipse.swt.widgets
-		 * .Menu)
-		 */
 		@Override
 		public Menu getMenu(Menu parent) {
 			return null;
@@ -283,10 +258,6 @@ public class SwitchMemoryBlockAction extends Action implements IViewActionDelega
 
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.ui.IViewActionDelegate#init(org.eclipse.ui.IViewPart)
-	 */
 	@Override
 	public void init(IViewPart view) {
 		fView = view;
@@ -312,19 +283,11 @@ public class SwitchMemoryBlockAction extends Action implements IViewActionDelega
 		return null;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.ui.IActionDelegate#run(org.eclipse.jface.action.IAction)
-	 */
 	@Override
 	public void run(IAction action) {
 		switchToNext();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.jface.action.Action#run()
-	 */
 	@Override
 	public void run() {
 		switchToNext();
@@ -366,21 +329,10 @@ public class SwitchMemoryBlockAction extends Action implements IViewActionDelega
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * org.eclipse.ui.IActionDelegate#selectionChanged(org.eclipse.jface.action
-	 * .IAction, org.eclipse.jface.viewers.ISelection)
-	 */
 	@Override
 	public void selectionChanged(IAction action, ISelection selection) {
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * org.eclipse.ui.IActionDelegate2#init(org.eclipse.jface.action.IAction)
-	 */
 	@Override
 	public void init(IAction action) {
 		fAction = action;
@@ -389,10 +341,6 @@ public class SwitchMemoryBlockAction extends Action implements IViewActionDelega
 		action.setMenuCreator(fMenuCreator);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.ui.IActionDelegate2#dispose()
-	 */
 	@Override
 	public void dispose() {
 		fAction = null;
@@ -403,12 +351,6 @@ public class SwitchMemoryBlockAction extends Action implements IViewActionDelega
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * org.eclipse.ui.IActionDelegate2#runWithEvent(org.eclipse.jface.action
-	 * .IAction, org.eclipse.swt.widgets.Event)
-	 */
 	@Override
 	public void runWithEvent(IAction action, Event event) {
 		switchToNext();

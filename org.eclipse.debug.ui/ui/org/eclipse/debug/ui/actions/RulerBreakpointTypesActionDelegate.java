@@ -121,9 +121,6 @@ public class RulerBreakpointTypesActionDelegate implements IEditorActionDelegate
         // Do nothing, this is a pull-down menu.
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.ui.IEditorActionDelegate#setActiveEditor(org.eclipse.jface.action.IAction, org.eclipse.ui.IEditorPart)
-     */
     @Override
 	public void setActiveEditor(IAction callerAction, IEditorPart targetEditor) {
         // Clean up old editor data.

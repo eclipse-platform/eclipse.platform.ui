@@ -123,8 +123,9 @@ public class SignedIntegerRendering extends AbstractIntegerRendering {
 					fMax = fMax.subtract(BigInteger.valueOf(1));
 				}
 
-				if (i.compareTo(fMax) > 0 || i.compareTo(fMin) < 0)
+				if (i.compareTo(fMax) > 0 || i.compareTo(fMin) < 0) {
 					throw new NumberFormatException();
+				}
 
 				bytes = RenderingsUtil.convertSignedBigIntToByteArray(i, endianess, colSize);
 				return bytes;
@@ -136,9 +137,6 @@ public class SignedIntegerRendering extends AbstractIntegerRendering {
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see com.ibm.debug.extended.ui.AbstractMemoryRenderer#getString(java.lang.String, java.math.BigInteger, byte[])
-	 */
 	@Override
 	public String getString(String dataType, BigInteger address, MemoryByte[] data) {
 
@@ -168,8 +166,9 @@ public class SignedIntegerRendering extends AbstractIntegerRendering {
 		// if the user has not set an endianess to the rendering
 		// take default endianess from bytes
 		int endianess = getDisplayEndianess();
-		if (endianess == RenderingsUtil.ENDIANESS_UNKNOWN)
+		if (endianess == RenderingsUtil.ENDIANESS_UNKNOWN) {
 			endianess = getBytesEndianess(data);
+		}
 
 		byte[] byteArray = new byte[data.length];
 		for (int i=0; i<byteArray.length;i ++)
@@ -190,9 +189,6 @@ public class SignedIntegerRendering extends AbstractIntegerRendering {
 		return convertToString(byteArray, columnSize, endianess);
 	}
 
-	/* (non-Javadoc)
-	 * @see com.ibm.debug.extended.ui.AbstractMemoryRenderer#getBytes(java.lang.String, java.math.BigInteger, java.lang.String)
-	 */
 	@Override
 	public byte[] getBytes(String dataType, BigInteger address, MemoryByte[] currentValues, String data) {
 
@@ -201,15 +197,17 @@ public class SignedIntegerRendering extends AbstractIntegerRendering {
 		// if the user has not set an endianess to the rendering
 		// take default
 		int endianess = getDisplayEndianess();
-		if (endianess == RenderingsUtil.ENDIANESS_UNKNOWN)
+		if (endianess == RenderingsUtil.ENDIANESS_UNKNOWN) {
 			endianess = getBytesEndianess(currentValues);
+		}
 
 		// if endianess is unknown, do not try to render new data to bytes
 		if (endianess == RenderingsUtil.ENDIANESS_UNKNOWN)
 		{
 			byte[] retBytes = new byte[currentValues.length];
-			for (int i=0 ;i<currentValues.length; i++)
+			for (int i=0 ;i<currentValues.length; i++) {
 				retBytes[i] = currentValues[i].getValue();
+			}
 			return retBytes;
 		}
 

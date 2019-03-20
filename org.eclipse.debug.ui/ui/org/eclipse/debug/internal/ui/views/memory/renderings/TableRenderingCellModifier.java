@@ -41,24 +41,21 @@ public class TableRenderingCellModifier implements ICellModifier {
         fRendering = rendering;
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see org.eclipse.jface.viewers.ICellModifier#canModify(java.lang.Object,
-     *      java.lang.String)
-     */
     @Override
 	public boolean canModify(Object element, String property) {
         boolean canModify = true;
         try {
-            if (!(element instanceof TableRenderingLine))
-                return false;
+            if (!(element instanceof TableRenderingLine)) {
+				return false;
+			}
 
-            if (!editActionInvoked)
-                return false;
+            if (!editActionInvoked) {
+				return false;
+			}
 
-            if (fRendering == null)
-                return false;
+            if (fRendering == null) {
+				return false;
+			}
 
             if (fRendering.getMemoryBlock().supportsValueModification() == false) {
                 return false;
@@ -97,28 +94,25 @@ public class TableRenderingCellModifier implements ICellModifier {
      */
     private int getAddressableSize() {
         int addressableSize = fRendering.getAddressableSize();
-        if (addressableSize < 1)
-            addressableSize = 1;
+        if (addressableSize < 1) {
+			addressableSize = 1;
+		}
         return addressableSize;
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see org.eclipse.jface.viewers.ICellModifier#getValue(java.lang.Object,
-     *      java.lang.String)
-     */
     @Override
 	public Object getValue(Object element, String property) {
         // give back the value of the column
 
-        if (!(element instanceof TableRenderingLine))
-            return null;
+        if (!(element instanceof TableRenderingLine)) {
+			return null;
+		}
 
         TableRenderingLine line = (TableRenderingLine) element;
         try {
-            if (TableRenderingLine.P_ADDRESS.equals(property))
-                return line.getAddress();
+            if (TableRenderingLine.P_ADDRESS.equals(property)) {
+				return line.getAddress();
+			}
 
             int offset = Integer.valueOf(property, 16).intValue() * getAddressableSize();
             int end = offset + fRendering.getBytesPerColumn();
@@ -142,12 +136,6 @@ public class TableRenderingCellModifier implements ICellModifier {
         }
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see org.eclipse.jface.viewers.ICellModifier#modify(java.lang.Object,
-     *      java.lang.String, java.lang.Object)
-     */
     @Override
 	public void modify(Object element, String property, Object value) {
         TableRenderingLine line = null;
@@ -158,8 +146,9 @@ public class TableRenderingCellModifier implements ICellModifier {
         }
 
         // validate data
-        if (!(value instanceof String))
-            return;
+        if (!(value instanceof String)) {
+			return;
+		}
 
         try {
             // calculate offset to update
@@ -189,11 +178,13 @@ public class TableRenderingCellModifier implements ICellModifier {
 
                 bytes = fRendering.getBytes(fRendering.getRenderingId(), address, oldArray, (String) value);
 
-                if (bytes == null)
-                    return;
+                if (bytes == null) {
+					return;
+				}
 
-                if (bytes.length == 0)
-                    return;
+                if (bytes.length == 0) {
+					return;
+				}
 
                 if (bytes.length <= oldArray.length) {
                     boolean changed = false;
@@ -204,18 +195,20 @@ public class TableRenderingCellModifier implements ICellModifier {
                             break;
                         }
                     }
-                    if (!changed)
-                        return;
+                    if (!changed) {
+						return;
+					}
                 }
             } else {
                 // return if value has not changed
                 return;
             }
 
-            if (memoryBlk instanceof IMemoryBlockExtension)
-                ((IMemoryBlockExtension) memoryBlk).setValue(offset, bytes);
-            else
-                memoryBlk.setValue(offset.longValue(), bytes);
+            if (memoryBlk instanceof IMemoryBlockExtension) {
+				((IMemoryBlockExtension) memoryBlk).setValue(offset, bytes);
+			} else {
+				memoryBlk.setValue(offset.longValue(), bytes);
+			}
         } catch (DebugException e) {
             MemoryViewUtil.openError(DebugUIMessages.MemoryViewCellModifier_failure_title, DebugUIMessages.MemoryViewCellModifier_failed, e);
         } catch (NumberFormatException e) {
@@ -236,7 +229,9 @@ public class TableRenderingCellModifier implements ICellModifier {
         }
 
         if (memoryAddr == null)
-            memoryAddr = new BigInteger("0"); //$NON-NLS-1$
+		 {
+			memoryAddr = new BigInteger("0"); //$NON-NLS-1$
+		}
 
         return lineAddr.subtract(memoryAddr).add(BigInteger.valueOf(lineOffset));
     }

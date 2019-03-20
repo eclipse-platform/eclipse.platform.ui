@@ -73,9 +73,6 @@ class DebugViewModeAction extends Action {
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.action.IAction#run()
-	 */
 	@Override
 	public void run() {
 		fLaunchView.setViewMode(fMode, fParent);

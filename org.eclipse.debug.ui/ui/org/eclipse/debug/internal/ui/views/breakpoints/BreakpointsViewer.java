@@ -338,9 +338,6 @@ public class BreakpointsViewer extends CheckboxTreeViewer {
     	return true;
     }
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.viewers.Viewer#refresh()
-	 */
 	@Override
 	public void refresh() {
 		super.refresh();

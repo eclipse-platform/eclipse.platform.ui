@@ -97,65 +97,41 @@ public class BreakpointOrganizerExtension implements IBreakpointOrganizer, IBrea
 		return fDelegate;
 	}
 
-    /* (non-Javadoc)
-     * @see org.eclipse.debug.ui.IBreakpointOrganizerDelegate#getCategories(org.eclipse.debug.core.model.IBreakpoint)
-     */
     @Override
 	public IAdaptable[] getCategories(IBreakpoint breakpoint) {
         return getOrganizer().getCategories(breakpoint);
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.debug.ui.IBreakpointOrganizerDelegate#addPropertyChangeListener(org.eclipse.jface.util.IPropertyChangeListener)
-     */
     @Override
 	public void addPropertyChangeListener(IPropertyChangeListener listener) {
         getOrganizer().addPropertyChangeListener(listener);
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.debug.ui.IBreakpointOrganizerDelegate#removePropertyChangeListener(org.eclipse.jface.util.IPropertyChangeListener)
-     */
     @Override
 	public void removePropertyChangeListener(IPropertyChangeListener listener) {
         getOrganizer().removePropertyChangeListener(listener);
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.debug.ui.IBreakpointOrganizerDelegate#addBreakpoint(org.eclipse.debug.core.model.IBreakpoint, org.eclipse.core.runtime.IAdaptable)
-     */
     @Override
 	public void addBreakpoint(IBreakpoint breakpoint, IAdaptable category) {
         getOrganizer().addBreakpoint(breakpoint, category);
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.debug.ui.IBreakpointOrganizerDelegate#removeBreakpoint(org.eclipse.debug.core.model.IBreakpoint, org.eclipse.core.runtime.IAdaptable)
-     */
     @Override
 	public void removeBreakpoint(IBreakpoint breakpoint, IAdaptable category) {
         getOrganizer().removeBreakpoint(breakpoint, category);
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.debug.ui.IBreakpointOrganizerDelegate#canAdd(org.eclipse.debug.core.model.IBreakpoint, org.eclipse.core.runtime.IAdaptable)
-     */
     @Override
 	public boolean canAdd(IBreakpoint breakpoint, IAdaptable category) {
         return getOrganizer().canAdd(breakpoint, category);
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.debug.ui.IBreakpointOrganizerDelegate#canRemove(org.eclipse.debug.core.model.IBreakpoint, org.eclipse.core.runtime.IAdaptable)
-     */
     @Override
 	public boolean canRemove(IBreakpoint breakpoint, IAdaptable category) {
         return getOrganizer().canRemove(breakpoint, category);
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.debug.ui.IBreakpointOrganizerDelegate#dispose()
-     */
     @Override
 	public void dispose() {
     	// don't instantiate the delegate if it has not been used
@@ -164,9 +140,6 @@ public class BreakpointOrganizerExtension implements IBreakpointOrganizer, IBrea
     	}
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.debug.internal.ui.views.breakpoints.IBreakpointOrganizer#getOthersLabel()
-     */
     @Override
 	public String getOthersLabel() {
         String attribute = fElement.getAttribute(ATTR_OTHERS_LABEL);
@@ -176,17 +149,11 @@ public class BreakpointOrganizerExtension implements IBreakpointOrganizer, IBrea
         return attribute;
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.debug.ui.IBreakpointOrganizerDelegate#getCategories()
-     */
     @Override
 	public IAdaptable[] getCategories() {
         return getOrganizer().getCategories();
     }
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.ui.IBreakpointOrganizerDelegateExtension#addBreakpoints(org.eclipse.debug.core.model.IBreakpoint[], org.eclipse.core.runtime.IAdaptable)
-	 */
 	@Override
 	public void addBreakpoints(IBreakpoint[] breakpoints, IAdaptable category) {
 		IBreakpointOrganizerDelegate organizer = getOrganizer();
@@ -199,9 +166,6 @@ public class BreakpointOrganizerExtension implements IBreakpointOrganizer, IBrea
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.ui.IBreakpointOrganizerDelegateExtension#removeBreakpoints(org.eclipse.debug.core.model.IBreakpoint[], org.eclipse.core.runtime.IAdaptable)
-	 */
 	@Override
 	public void removeBreakpoints(IBreakpoint[] breakpoints, IAdaptable category) {
 		IBreakpointOrganizerDelegate organizer = getOrganizer();

@@ -58,18 +58,12 @@ public class ConsoleTerminateAction extends Action implements IUpdate {
 		update();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.texteditor.IUpdate#update()
-	 */
 	@Override
 	public void update() {
 		IProcess process = fConsole.getProcess();
 		setEnabled(process.canTerminate());
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.action.IAction#run()
-	 */
 	@Override
 	public void run() {
 		IProcess process = fConsole.getProcess();

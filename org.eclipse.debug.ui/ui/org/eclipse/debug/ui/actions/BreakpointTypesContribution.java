@@ -112,9 +112,6 @@ public class BreakpointTypesContribution extends CompoundContributionItem implem
     	}
     };
 
-    /* (non-Javadoc)
-     * @see org.eclipse.ui.actions.CompoundContributionItem#getContributionItems()
-     */
     @Override
 	protected IContributionItem[] getContributionItems() {
         IWorkbenchPart part = null;
@@ -160,9 +157,6 @@ public class BreakpointTypesContribution extends CompoundContributionItem implem
         return items;
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.ui.menus.IWorkbenchContribution#initialize(org.eclipse.ui.services.IServiceLocator)
-     */
     @Override
 	public void initialize(IServiceLocator serviceLocator) {
         fServiceLocator = serviceLocator;

@@ -907,23 +907,14 @@ public class ViewContextService implements IDebugContextListener, IPerspectiveLi
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IPerspectiveListener3#perspectiveOpened(org.eclipse.ui.IWorkbenchPage, org.eclipse.ui.IPerspectiveDescriptor)
-	 */
 	@Override
 	public void perspectiveOpened(IWorkbenchPage page, IPerspectiveDescriptor perspective) {
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IPerspectiveListener3#perspectiveClosed(org.eclipse.ui.IWorkbenchPage, org.eclipse.ui.IPerspectiveDescriptor)
-	 */
 	@Override
 	public void perspectiveClosed(IWorkbenchPage page, IPerspectiveDescriptor perspective) {
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IPerspectiveListener3#perspectiveDeactivated(org.eclipse.ui.IWorkbenchPage, org.eclipse.ui.IPerspectiveDescriptor)
-	 */
 	@Override
 	public void perspectiveDeactivated(IWorkbenchPage page, IPerspectiveDescriptor perspective) {
 	}
@@ -943,16 +934,10 @@ public class ViewContextService implements IDebugContextListener, IPerspectiveLi
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IPerspectiveListener3#perspectiveSavedAs(org.eclipse.ui.IWorkbenchPage, org.eclipse.ui.IPerspectiveDescriptor, org.eclipse.ui.IPerspectiveDescriptor)
-	 */
 	@Override
 	public void perspectiveSavedAs(IWorkbenchPage page, IPerspectiveDescriptor oldPerspective, IPerspectiveDescriptor newPerspective) {
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IPerspectiveListener2#perspectiveChanged(org.eclipse.ui.IWorkbenchPage, org.eclipse.ui.IPerspectiveDescriptor, org.eclipse.ui.IWorkbenchPartReference, java.lang.String)
-	 */
 	@Override
 	public void perspectiveChanged(IWorkbenchPage page, IPerspectiveDescriptor perspective, IWorkbenchPartReference partRef, String changeId) {
 		if (!fIgnoreChanges && page.getWorkbenchWindow().equals(fWindow)) {
@@ -973,9 +958,6 @@ public class ViewContextService implements IDebugContextListener, IPerspectiveLi
         }
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IPerspectiveListener#perspectiveActivated(org.eclipse.ui.IWorkbenchPage, org.eclipse.ui.IPerspectiveDescriptor)
-	 */
 	@Override
 	public void perspectiveActivated(IWorkbenchPage page, IPerspectiveDescriptor perspective) {
 		if (page.getWorkbenchWindow().equals(fWindow)) {
@@ -987,9 +969,6 @@ public class ViewContextService implements IDebugContextListener, IPerspectiveLi
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IPerspectiveListener#perspectiveChanged(org.eclipse.ui.IWorkbenchPage, org.eclipse.ui.IPerspectiveDescriptor, java.lang.String)
-	 */
 	@Override
 	public void perspectiveChanged(IWorkbenchPage page, IPerspectiveDescriptor perspective, String changeId) {
 	}
@@ -1064,9 +1043,6 @@ public class ViewContextService implements IDebugContextListener, IPerspectiveLi
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.core.commands.contexts.IContextManagerListener#contextManagerChanged(org.eclipse.core.commands.contexts.ContextManagerEvent)
-	 */
 	@Override
 	public void contextManagerChanged(ContextManagerEvent event) {
 		if (event.isActiveContextsChanged() && getActivePerspective() != null) {
@@ -1187,9 +1163,6 @@ public class ViewContextService implements IDebugContextListener, IPerspectiveLi
 		}
     }
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IPerspectiveListener4#perspectivePreDeactivate(org.eclipse.ui.IWorkbenchPage, org.eclipse.ui.IPerspectiveDescriptor)
-	 */
 	@Override
 	public void perspectivePreDeactivate(IWorkbenchPage page, IPerspectiveDescriptor perspective) {
 		if (page.getWorkbenchWindow().equals(fWindow)) {

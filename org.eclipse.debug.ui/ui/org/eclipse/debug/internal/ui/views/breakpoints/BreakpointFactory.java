@@ -27,9 +27,6 @@ import org.eclipse.ui.PlatformUI;
  */
 public class BreakpointFactory implements IElementFactory {
 
-    /* (non-Javadoc)
-     * @see org.eclipse.ui.IElementFactory#createElement(org.eclipse.ui.IMemento)
-     */
     @Override
 	public IAdaptable createElement(IMemento memento) {
         String longString = memento.getString(BreakpointPersistableElementAdapter.TAG_MARKER_ID);

@@ -23,12 +23,6 @@ import org.eclipse.debug.ui.IDebugUIConstants;
  */
 public class ToggleSplitPaneAction extends ToggleViewPaneAction {
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * org.eclipse.debug.internal.ui.views.memory.ToggleViewPaneAction#getPaneId
-	 * ()
-	 */
 	@Override
 	public String getPaneId() {
 		return IDebugUIConstants.ID_RENDERING_VIEW_PANE_2;

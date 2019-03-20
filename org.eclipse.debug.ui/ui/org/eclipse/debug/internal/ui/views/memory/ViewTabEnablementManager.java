@@ -27,12 +27,6 @@ import org.eclipse.swt.events.SelectionListener;
  */
 public class ViewTabEnablementManager implements SelectionListener {
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * org.eclipse.swt.events.SelectionListener#widgetSelected(org.eclipse.swt
-	 * .events.SelectionEvent)
-	 */
 	@Override
 	public void widgetSelected(SelectionEvent e) {
 		if (e.getSource() instanceof CTabFolder) {
@@ -40,12 +34,6 @@ public class ViewTabEnablementManager implements SelectionListener {
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * org.eclipse.swt.events.SelectionListener#widgetDefaultSelected(org.eclipse
-	 * .swt.events.SelectionEvent)
-	 */
 	@Override
 	public void widgetDefaultSelected(SelectionEvent e) {
 

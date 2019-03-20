@@ -28,10 +28,6 @@ public class LinkRenderingPanesAction implements IViewActionDelegate {
 	IMemoryRenderingSite fRenderingSite;
 	private MemoryViewSynchronizationService fMemSyncService;
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.ui.IViewActionDelegate#init(org.eclipse.ui.IViewPart)
-	 */
 	@Override
 	public void init(IViewPart view) {
 
@@ -40,20 +36,18 @@ public class LinkRenderingPanesAction implements IViewActionDelegate {
 
 			IMemoryRenderingSynchronizationService syncService = fRenderingSite.getSynchronizationService();
 
-			if (syncService instanceof MemoryViewSynchronizationService)
+			if (syncService instanceof MemoryViewSynchronizationService) {
 				fMemSyncService = (MemoryViewSynchronizationService) syncService;
+			}
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.ui.IActionDelegate#run(org.eclipse.jface.action.IAction)
-	 */
 	@Override
 	public void run(IAction action) {
 
-		if (fMemSyncService == null)
+		if (fMemSyncService == null) {
 			return;
+		}
 
 		fMemSyncService.setEnabled(!fMemSyncService.isEnabled());
 		updateActionState(action);
@@ -64,21 +58,17 @@ public class LinkRenderingPanesAction implements IViewActionDelegate {
 	 */
 	private void updateActionState(IAction action) {
 
-		if (fMemSyncService == null)
+		if (fMemSyncService == null) {
 			return;
+		}
 
-		if (fMemSyncService.isEnabled())
+		if (fMemSyncService.isEnabled()) {
 			action.setChecked(true);
-		else
+		} else {
 			action.setChecked(false);
+		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * org.eclipse.ui.IActionDelegate#selectionChanged(org.eclipse.jface.action
-	 * .IAction, org.eclipse.jface.viewers.ISelection)
-	 */
 	@Override
 	public void selectionChanged(IAction action, ISelection selection) {
 		updateActionState(action);

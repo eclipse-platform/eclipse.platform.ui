@@ -45,9 +45,6 @@ public class SelectLogicalStructureAction extends Action {
 		fType= type;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.action.IAction#run()
-	 */
 	@Override
 	public void run() {
 		valueChanged();

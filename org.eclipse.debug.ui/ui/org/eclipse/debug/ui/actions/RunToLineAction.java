@@ -106,18 +106,11 @@ public class RunToLineAction extends Action implements IUpdate {
 		initializeListeners();
 	}
 
-	/*
-	 *  (non-Javadoc)
-	 * @see org.eclipse.jface.action.IAction#run()
-	 */
 	@Override
 	public void run() {
 		doIt();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.action.Action#runWithEvent(org.eclipse.swt.widgets.Event)
-	 */
 	@Override
 	public void runWithEvent(Event event) {
 		if (event.widget instanceof MenuItem) {
@@ -166,11 +159,6 @@ public class RunToLineAction extends Action implements IUpdate {
 
 	}
 
-
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.texteditor.IUpdate#update()
-	 */
 	@Override
 	public void update() {
 		Runnable r = () -> setEnabled(isTargetEnabled());

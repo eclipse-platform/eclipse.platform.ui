@@ -65,9 +65,6 @@ public class RunToLineHandler implements IDebugEventSetListener, IBreakpointMana
         fBreakpoint = breakpoint;
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.debug.core.IDebugEventSetListener#handleDebugEvents(org.eclipse.debug.core.DebugEvent[])
-     */
     @Override
 	public void handleDebugEvents(DebugEvent[] events) {
         for (int i = 0; i < events.length; i++) {
@@ -92,9 +89,6 @@ public class RunToLineHandler implements IDebugEventSetListener, IBreakpointMana
 
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.debug.core.IBreakpointManagerListener#breakpointManagerEnablementChanged(boolean)
-     */
     @Override
 	public void breakpointManagerEnablementChanged(boolean enabled) {
         // if the user changes the breakpoint manager enablement, don't restore it
@@ -125,9 +119,6 @@ public class RunToLineHandler implements IDebugEventSetListener, IBreakpointMana
         }
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.core.resources.IWorkspaceRunnable#run(org.eclipse.core.runtime.IProgressMonitor)
-     */
     @Override
 	public void run(IProgressMonitor monitor) throws CoreException {
         getDebugPlugin().addDebugEventListener(this);

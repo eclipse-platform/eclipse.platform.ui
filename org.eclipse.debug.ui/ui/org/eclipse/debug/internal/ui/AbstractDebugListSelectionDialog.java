@@ -45,9 +45,6 @@ public abstract class AbstractDebugListSelectionDialog extends AbstractDebugSele
 		setShellStyle(getShellStyle() | SWT.RESIZE);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.AbstractDebugSelectionDialog#createViewer(org.eclipse.swt.widgets.Composite)
-	 */
 	@Override
 	protected StructuredViewer createViewer(Composite parent){
 		//by default return a table viewer
@@ -58,9 +55,6 @@ public abstract class AbstractDebugListSelectionDialog extends AbstractDebugSele
 		return fListViewer;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.launchConfigurations.AbstractDebugSelectionDialog#addViewerListeners(org.eclipse.jface.viewers.StructuredViewer)
-	 */
 	@Override
 	protected void addViewerListeners(StructuredViewer viewer) {
 		viewer.addSelectionChangedListener(new ISelectionChangedListener(){
@@ -79,9 +73,6 @@ public abstract class AbstractDebugListSelectionDialog extends AbstractDebugSele
 		});
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.AbstractDebugSelectionDialog#isValid()
-	 */
 	@Override
 	protected boolean isValid() {
 		if(fListViewer != null) {
@@ -93,9 +84,6 @@ public abstract class AbstractDebugListSelectionDialog extends AbstractDebugSele
 		return false;
 	}
 
-    /* (non-Javadoc)
-     * @see org.eclipse.jface.dialogs.Dialog#okPressed()
-     */
     @Override
 	protected void okPressed() {
 		ISelection selection = fViewer.getSelection();

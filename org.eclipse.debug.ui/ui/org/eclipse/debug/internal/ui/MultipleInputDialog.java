@@ -65,9 +65,6 @@ public class MultipleInputDialog extends Dialog {
 		setShellStyle(getShellStyle() | SWT.RESIZE);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.window.Window#configureShell(org.eclipse.swt.widgets.Shell)
-	 */
 	@Override
 	protected void configureShell(Shell shell) {
 		super.configureShell(shell);
@@ -77,9 +74,6 @@ public class MultipleInputDialog extends Dialog {
 
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.dialogs.Dialog#createButtonBar(org.eclipse.swt.widgets.Composite)
-	 */
 	@Override
 	protected Control createButtonBar(Composite parent) {
 		Control bar = super.createButtonBar(parent);
@@ -87,9 +81,6 @@ public class MultipleInputDialog extends Dialog {
 		return bar;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.dialogs.Dialog#createDialogArea(org.eclipse.swt.widgets.Composite)
-	 */
 	@Override
 	protected Control createDialogArea(Composite parent) {
 		Composite container = (Composite)super.createDialogArea(parent);
@@ -368,9 +359,6 @@ public class MultipleInputDialog extends Dialog {
 		controlList.add(text);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.dialogs.Dialog#okPressed()
-	 */
 	@Override
 	protected void okPressed() {
 		for (Text control : controlList) {
@@ -380,10 +368,6 @@ public class MultipleInputDialog extends Dialog {
 		super.okPressed();
 	}
 
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.window.Window#open()
-	 */
 	@Override
 	public int open() {
 		applyDialogFont(panel);

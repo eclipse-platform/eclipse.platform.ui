@@ -38,9 +38,6 @@ public abstract class ShowWhenContentChangesAction extends Action implements IPr
 		update();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.util.IPropertyChangeListener#propertyChange(org.eclipse.jface.util.PropertyChangeEvent)
-	 */
 	@Override
 	public void propertyChange(PropertyChangeEvent event) {
 	    String property = event.getProperty();
@@ -62,16 +59,10 @@ public abstract class ShowWhenContentChangesAction extends Action implements IPr
          }
 	}
 
-	/**
-	 * @return
-	 */
 	private IPreferenceStore getPreferenceStore() {
 		return DebugUIPlugin.getDefault().getPreferenceStore();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.action.Action#run()
-	 */
 	@Override
 	public void run() {
 		IPreferenceStore store = getPreferenceStore();

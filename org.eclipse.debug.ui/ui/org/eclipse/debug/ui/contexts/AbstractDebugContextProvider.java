@@ -47,25 +47,16 @@ public abstract class AbstractDebugContextProvider implements IDebugContextProvi
 		fPart = part;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.contexts.provisional.IDebugContextProvider#addDebugContextEventListener(org.eclipse.debug.internal.ui.contexts.provisional.IDebugContextEventListener)
-	 */
 	@Override
 	public void addDebugContextListener(IDebugContextListener listener) {
 		fListeners.add(listener);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.contexts.provisional.IDebugContextProvider#getPart()
-	 */
 	@Override
 	public IWorkbenchPart getPart() {
 		return fPart;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.contexts.provisional.IDebugContextProvider#removeDebugContextEventListener(org.eclipse.debug.internal.ui.contexts.provisional.IDebugContextEventListener)
-	 */
 	@Override
 	public void removeDebugContextListener(IDebugContextListener listener) {
 		fListeners.remove(listener);

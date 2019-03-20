@@ -61,7 +61,9 @@ public class CopyTableRenderingToClipboardAction extends Action
 	}
 
 	protected String concatenateTableAsString(TableItem[] itemList) {
-		if (itemList.length == 0) return null;
+		if (itemList.length == 0) {
+			return null;
+		}
 
 		StringBuffer tableContents = new StringBuffer();
 
@@ -77,8 +79,9 @@ public class CopyTableRenderingToClipboardAction extends Action
 		tableContents.append(COLUMN_SEPERATOR);
 
 		int charsPerByte = fRendering.getNumCharsPerByte();
-		if (charsPerByte < 0)
+		if (charsPerByte < 0) {
 			charsPerByte = 4;
+		}
 
 		//get the column headers and line them up properly
 		for (int k=0; k < numColumns; k++) {
@@ -106,13 +109,14 @@ public class CopyTableRenderingToClipboardAction extends Action
 						} catch (DebugException e) {
 							numBytes = 0;
 						}
-					}
-					else
+					} else {
 						numBytes = descriptor.getAddressSize();
+					}
 
 					// check address size
-					if (numBytes <= 0)
+					if (numBytes <= 0) {
 						numBytes = 4;
+					}
 				}
 				else
 				{
@@ -158,22 +162,22 @@ public class CopyTableRenderingToClipboardAction extends Action
 		return tableContents.toString();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.action.IAction#run()
-	 */
 	@Override
 	public void run() {
 
-		if (fRendering == null)
+		if (fRendering == null) {
 			return;
+		}
 
-		if (! (fViewer.getControl() instanceof Table))
+		if (! (fViewer.getControl() instanceof Table)) {
 			return;
+		}
 
 		Table table = (Table)fViewer.getControl();
 
-		if (table == null)
+		if (table == null) {
 			return;
+		}
 		Clipboard clip= null;
 		try {
 			clip = new Clipboard(table.getDisplay());

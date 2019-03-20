@@ -59,8 +59,9 @@ public class MemoryViewTab implements IMemoryViewTab, IPropertyChangeListener, L
 		// as the new rendering should be in focus and have control
 		// after it's created
 
-		if (container.getMemoryRenderingSite().getSynchronizationService() != null)
+		if (container.getMemoryRenderingSite().getSynchronizationService() != null) {
 			container.getMemoryRenderingSite().getSynchronizationService().setSynchronizationProvider(rendering);
+		}
 		Control control = createViewTab();
 
 		control.addListener(SWT.Activate, this);
@@ -116,15 +117,12 @@ public class MemoryViewTab implements IMemoryViewTab, IPropertyChangeListener, L
 		return fRendering.getImage();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.views.memory.IMemoryViewTab#dispose()
-	 */
 	@Override
 	public void dispose() {
 
-		if (fIsDisposed)
+		if (fIsDisposed) {
 			return;
+		}
 
 		fIsDisposed = true;
 
@@ -146,70 +144,38 @@ public class MemoryViewTab implements IMemoryViewTab, IPropertyChangeListener, L
 		return fIsDisposed;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * org.eclipse.debug.internal.ui.views.memory.IMemoryViewTab#isEnabled()
-	 */
 	@Override
 	public boolean isEnabled() {
 		return fEnabled;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * org.eclipse.debug.internal.ui.views.memory.IMemoryViewTab#setEnabled(
-	 * boolean)
-	 */
 	@Override
 	public void setEnabled(boolean enabled) {
 		fEnabled = enabled;
 
-		if (fEnabled)
+		if (fEnabled) {
 			fRendering.becomesVisible();
-		else
+		} else {
 			fRendering.becomesHidden();
+		}
 
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * org.eclipse.debug.internal.ui.views.memory.IMemoryViewTab#setTabLabel
-	 * (java.lang.String)
-	 */
 	@Override
 	public void setTabLabel(String label) {
 		fTabItem.setText(label);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * org.eclipse.debug.internal.ui.views.memory.IMemoryViewTab#getTabLabel()
-	 */
 	@Override
 	public String getTabLabel() {
 		return fTabItem.getText();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * org.eclipse.debug.internal.ui.views.memory.IMemoryViewTab#getRendering()
-	 */
 	@Override
 	public IMemoryRendering getRendering() {
 		return fRendering;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * org.eclipse.jface.util.IPropertyChangeListener#propertyChange(org.eclipse
-	 * .jface.util.PropertyChangeEvent)
-	 */
 	@Override
 	public void propertyChange(final PropertyChangeEvent event) {
 
@@ -220,8 +186,9 @@ public class MemoryViewTab implements IMemoryViewTab, IPropertyChangeListener, L
 
 			@Override
 			public IStatus runInUIThread(IProgressMonitor monitor) {
-				if (isDisposed())
+				if (isDisposed()) {
 					return Status.OK_STATUS;
+				}
 
 				if (event.getSource() == fRendering) {
 					if (event.getProperty().equals(IBasicPropertyConstants.P_TEXT)) {
@@ -255,12 +222,6 @@ public class MemoryViewTab implements IMemoryViewTab, IPropertyChangeListener, L
 		return this;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * org.eclipse.swt.widgets.Listener#handleEvent(org.eclipse.swt.widgets.
-	 * Event)
-	 */
 	@Override
 	public void handleEvent(Event event) {
 		if (event.type == SWT.Activate) {

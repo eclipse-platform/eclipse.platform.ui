@@ -123,37 +123,21 @@ public class BreakpointsView extends VariablesView implements IBreakpointManager
 		super.dispose();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.views.variables.VariablesView#getDetailPanePreferenceKey()
-	 */
 	@Override
 	protected String getDetailPanePreferenceKey() {
 		return IDebugPreferenceConstants.BREAKPOINTS_DETAIL_PANE_ORIENTATION;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.views.variables.VariablesView#getHelpContextId()
-	 */
 	@Override
 	protected String getHelpContextId() {
 		return IDebugHelpContextIds.BREAKPOINT_VIEW;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.views.variables.VariablesView#getViewerStyle()
-	 */
 	@Override
 	protected int getViewerStyle() {
 		return SWT.MULTI | SWT.V_SCROLL | SWT.H_SCROLL | SWT.VIRTUAL | SWT.FULL_SELECTION | SWT.CHECK;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.views.variables.VariablesView#createViewer(org.eclipse.swt.widgets.Composite)
-	 */
 	@Override
 	public Viewer createViewer(Composite parent) {
 		TreeModelViewer viewer = (TreeModelViewer) super.createViewer(parent);
@@ -167,10 +151,6 @@ public class BreakpointsView extends VariablesView implements IBreakpointManager
         return viewer;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.views.variables.VariablesView#getModelPresentation()
-	 */
 	@Override
 	protected IDebugModelPresentation getModelPresentation() {
 		if (fModelPresentation == null) {
@@ -199,10 +179,6 @@ public class BreakpointsView extends VariablesView implements IBreakpointManager
 		return (TreeModelViewer) getViewer();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.views.variables.VariablesView#configureToolBar(org.eclipse.jface.action.IToolBarManager)
-	 */
 	@Override
 	protected void configureToolBar(IToolBarManager tbm) {
 		tbm.add(new Separator(IDebugUIConstants.BREAKPOINT_GROUP));
@@ -212,10 +188,6 @@ public class BreakpointsView extends VariablesView implements IBreakpointManager
 		tbm.add(new Separator(IDebugUIConstants.RENDER_GROUP));
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.views.variables.VariablesView#fillContextMenu(org.eclipse.jface.action.IMenuManager)
-	 */
 	@Override
 	protected void fillContextMenu(IMenuManager menu) {
 		updateObjects();
@@ -239,10 +211,6 @@ public class BreakpointsView extends VariablesView implements IBreakpointManager
 		menu.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.views.variables.VariablesView#createActions()
-	 */
 	@Override
 	protected void createActions() {
 		IAction action = new OpenBreakpointMarkerAction(getViewer());
@@ -280,31 +248,16 @@ public class BreakpointsView extends VariablesView implements IBreakpointManager
 		setGlobalAction(FIND_ACTION, new VirtualFindAction(getVariablesViewer()));
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @seeorg.eclipse.debug.internal.ui.views.variables.VariablesView#getToggleActionLabel()
-	 */
 	@Override
 	protected String getToggleActionLabel() {
 		return DebugUIViewsMessages.BreakpointsView_12;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.debug.internal.ui.views.variables.VariablesView#getPresentationContextId()
-	 */
 	@Override
 	protected String getPresentationContextId() {
 		return IDebugUIConstants.ID_BREAKPOINT_VIEW;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.debug.internal.ui.views.variables.VariablesView#contextActivated(org.eclipse.jface.viewers.ISelection)
-	 */
 	@Override
 	protected void contextActivated(ISelection selection) {
 		if (!isAvailable() || !isVisible()) {
@@ -324,11 +277,6 @@ public class BreakpointsView extends VariablesView implements IBreakpointManager
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.debug.internal.ui.views.variables.VariablesView#setViewerInput(java.lang.Object)
-	 */
 	@Override
 	protected void setViewerInput(Object context) {
 		Object current = getViewer().getInput();
@@ -350,10 +298,6 @@ public class BreakpointsView extends VariablesView implements IBreakpointManager
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.views.variables.VariablesView#viewerInputUpdateComplete(org.eclipse.debug.internal.ui.viewers.model.provisional.IViewerInputUpdate)
-	 */
 	@Override
 	protected void viewerInputUpdateComplete(IViewerInputUpdate update) {
 		// handles non-standard debug model
@@ -439,10 +383,6 @@ public class BreakpointsView extends VariablesView implements IBreakpointManager
         viewer.addDragSupport(ops, new Transfer[] {LocalSelectionTransfer.getTransfer()}, new BreakpointsDragAdapter(viewer, this));
     }
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.views.variables.VariablesView#saveViewerState(org.eclipse.ui.IMemento)
-	 */
 	@Override
 	public void saveViewerState(IMemento memento) {
 		StringBuffer buffer = new StringBuffer();
@@ -528,9 +468,6 @@ public class BreakpointsView extends VariablesView implements IBreakpointManager
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.core.IBreakpointManagerListener#breakpointManagerEnablementChanged(boolean)
-	 */
 	@Override
 	public void breakpointManagerEnablementChanged(boolean enabled) {
 		DebugUIPlugin.getStandardDisplay().asyncExec(() -> {

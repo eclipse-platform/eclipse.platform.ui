@@ -64,17 +64,11 @@ public class ExpressionView extends VariablesView {
     private PasteWatchExpressionsAction fPasteAction;
     private EditWatchExpressinInPlaceAction fEditInPlaceAction;
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.views.variables.VariablesView#getHelpContextId()
-	 */
 	@Override
 	protected String getHelpContextId() {
 		return IDebugHelpContextIds.EXPRESSION_VIEW;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.views.variables.VariablesView#configureToolBar(org.eclipse.jface.action.IToolBarManager)
-	 */
 	@Override
 	protected void configureToolBar(IToolBarManager tbm) {
 		super.configureToolBar(tbm);
@@ -82,9 +76,6 @@ public class ExpressionView extends VariablesView {
 		tbm.add(new Separator(IDebugUIConstants.EXPRESSION_GROUP));
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.views.variables.VariablesView#fillContextMenu(org.eclipse.jface.action.IMenuManager)
-	 */
 	@Override
 	protected void fillContextMenu(IMenuManager menu) {
 		menu.add(new Separator(IDebugUIConstants.EMPTY_EXPRESSION_GROUP));
@@ -107,9 +98,6 @@ public class ExpressionView extends VariablesView {
 		menu.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.views.variables.VariablesView#contextActivated(org.eclipse.jface.viewers.ISelection)
-	 */
 	@Override
 	protected void contextActivated(ISelection selection) {
 		if (!isAvailable() || !isVisible()) {
@@ -125,9 +113,6 @@ public class ExpressionView extends VariablesView {
         }
 	}
 
-    /* (non-Javadoc)
-     * @see org.eclipse.debug.internal.ui.views.variables.VariablesView#viewerInputUpdateComplete(IViewerInputUpdate)
-     */
 	@Override
 	protected void viewerInputUpdateComplete(IViewerInputUpdate update) {
         IStatus status = update.getStatus();
@@ -139,42 +124,27 @@ public class ExpressionView extends VariablesView {
         updateAction(FIND_ACTION);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.views.variables.VariablesView#getDetailPanePreferenceKey()
-	 */
 	@Override
 	protected String getDetailPanePreferenceKey() {
 		return IDebugPreferenceConstants.EXPRESSIONS_DETAIL_PANE_ORIENTATION;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.views.variables.VariablesView#getToggleActionLabel()
-	 */
 	@Override
 	protected String getToggleActionLabel() {
 		return VariablesViewMessages.ExpressionView_4;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.views.variables.VariablesView#getPresentationContextId()
-	 */
 	@Override
 	protected String getPresentationContextId() {
 		return IDebugUIConstants.ID_EXPRESSION_VIEW;
 	}
 
-    /* (non-Javadoc)
-     * @see org.eclipse.debug.internal.ui.views.variables.VariablesView#initDragAndDrop(org.eclipse.debug.internal.ui.viewers.model.provisional.TreeModelViewer)
-     */
     @Override
 	protected void initDragAndDrop(TreeModelViewer viewer) {
         viewer.addDragSupport(DND.DROP_MOVE, new Transfer[] {LocalSelectionTransfer.getTransfer()}, new SelectionDragAdapter(viewer));
         viewer.addDropSupport(DND.DROP_MOVE|DND.DROP_COPY, new Transfer[] {LocalSelectionTransfer.getTransfer(), TextTransfer.getInstance()}, new ExpressionDropAdapter(getSite(), viewer));
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.debug.internal.ui.views.variables.VariablesView#createActions()
-     */
     @Override
 	protected void createActions() {
     	super.createActions();

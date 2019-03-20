@@ -78,18 +78,11 @@ public class ToggleBreakpointAction extends Action implements IUpdate {
 		DebugUITools.getToggleBreakpointsTargetManager().addChangedListener(fListener);
 	}
 
-	/*
-	 *  (non-Javadoc)
-	 * @see org.eclipse.jface.action.IAction#run()
-	 */
 	@Override
 	public void run() {
 		doIt(null);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.action.Action#runWithEvent(org.eclipse.swt.widgets.Event)
-	 */
 	@Override
 	public void runWithEvent(Event event) {
 		doIt(event);

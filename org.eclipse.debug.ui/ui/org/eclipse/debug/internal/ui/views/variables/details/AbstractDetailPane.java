@@ -50,18 +50,12 @@ public abstract class AbstractDetailPane implements IDetailPane {
 	 */
 	private List<String> fSelectionActions = new ArrayList<>();
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.ui.IDetailPane#init(org.eclipse.ui.IWorkbenchPartSite)
-	 */
 	@Override
 	public void init(IWorkbenchPartSite workbench) {
 		fWorkbenchPartSite = workbench;
 
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.ui.IDetailPane#dispose()
-	 */
 	@Override
 	public void dispose() {
 		fActionMap.clear();

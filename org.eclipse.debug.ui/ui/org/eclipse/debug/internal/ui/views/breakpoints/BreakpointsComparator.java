@@ -34,9 +34,6 @@ import org.eclipse.jface.viewers.ViewerComparator;
  * @since 3.3
  */
 public class BreakpointsComparator extends ViewerComparator {
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.viewers.ViewerComparator#isSorterProperty(java.lang.Object, java.lang.String)
-	 */
 	@Override
 	public boolean isSorterProperty(Object element,String propertyId) {
 		return propertyId.equals(IBasicPropertyConstants.P_TEXT);

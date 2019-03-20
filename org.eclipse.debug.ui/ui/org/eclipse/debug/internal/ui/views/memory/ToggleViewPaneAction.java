@@ -32,10 +32,6 @@ abstract public class ToggleViewPaneAction extends Action implements IViewAction
 	MemoryView fView;
 	IAction fAction;
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.ui.IViewActionDelegate#init(org.eclipse.ui.IViewPart)
-	 */
 	@Override
 	public void init(IViewPart view) {
 		if (view instanceof MemoryView) {
@@ -43,45 +39,39 @@ abstract public class ToggleViewPaneAction extends Action implements IViewAction
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.ui.IActionDelegate#run(org.eclipse.jface.action.IAction)
-	 */
 	@Override
 	public void run(IAction action) {
 
-		if (fView == null)
+		if (fView == null) {
 			return;
+		}
 
 		fView.showViewPane(!fView.isViewPaneVisible(getPaneId()), getPaneId());
 
-		if (fView.isViewPaneVisible(getPaneId()))
+		if (fView.isViewPaneVisible(getPaneId())) {
 			action.setChecked(true);
-		else
+		} else {
 			action.setChecked(false);
+		}
 
 	}
 
 	@Override
 	public void run() {
-		if (fView == null)
+		if (fView == null) {
 			return;
+		}
 
 		fView.showViewPane(!fView.isViewPaneVisible(getPaneId()), getPaneId());
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * org.eclipse.ui.IActionDelegate#selectionChanged(org.eclipse.jface.action
-	 * .IAction, org.eclipse.jface.viewers.ISelection)
-	 */
 	@Override
 	public void selectionChanged(IAction action, ISelection selection) {
-		if (fView.isViewPaneVisible(getPaneId()))
+		if (fView.isViewPaneVisible(getPaneId())) {
 			action.setChecked(true);
-		else
+		} else {
 			action.setChecked(false);
+		}
 	}
 
 	@Override
@@ -103,10 +93,11 @@ abstract public class ToggleViewPaneAction extends Action implements IViewAction
 	@Override
 	public void propertyChange(PropertyChangeEvent event) {
 		if (fView != null && fAction != null) {
-			if (fView.isViewPaneVisible(getPaneId()))
+			if (fView.isViewPaneVisible(getPaneId())) {
 				fAction.setChecked(true);
-			else
+			} else {
 				fAction.setChecked(false);
+			}
 		}
 	}
 

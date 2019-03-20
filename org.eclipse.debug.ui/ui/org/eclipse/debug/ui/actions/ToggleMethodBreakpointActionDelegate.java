@@ -31,9 +31,7 @@ import org.eclipse.ui.IWorkbenchPart;
  * @noinstantiate This class is not intended to be instantiated by clients.
  */
 public class ToggleMethodBreakpointActionDelegate extends ToggleBreakpointObjectActionDelegate {
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.actions.ToggleBreakpointObjectActionDelegate#performAction(org.eclipse.debug.internal.ui.actions.IToggleBreakpointsTarget, org.eclipse.ui.IWorkbenchPart, org.eclipse.jface.viewers.ISelection)
-	 */
+
 	@Override
 	protected void performAction(IToggleBreakpointsTarget target, IWorkbenchPart part, ISelection selection) throws CoreException {
 		target.toggleMethodBreakpoints(part, selection);

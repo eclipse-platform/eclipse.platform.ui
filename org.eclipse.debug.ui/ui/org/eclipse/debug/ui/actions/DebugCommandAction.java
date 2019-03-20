@@ -244,10 +244,6 @@ public abstract class DebugCommandAction extends Action implements IDebugContext
         return getDebugContextService().getActiveContext();
     }
 
-    /*
-     * (non-Javadoc)
-     * @see org.eclipse.jface.action.Action#run()
-     */
     @Override
 	public void run() {
         synchronized (this) {
@@ -268,10 +264,6 @@ public abstract class DebugCommandAction extends Action implements IDebugContext
         }
     }
 
-    /*
-     * (non-Javadoc)
-     * @see org.eclipse.jface.action.Action#runWithEvent(org.eclipse.swt.widgets.Event)
-     */
     @Override
 	public void runWithEvent(Event event) {
         run();
@@ -308,45 +300,21 @@ public abstract class DebugCommandAction extends Action implements IDebugContext
      */
     public abstract String getHelpContextId();
 
-    /*
-     * (non-Javadoc)
-     * @see org.eclipse.jface.action.Action#getId()
-     */
     @Override
 	public abstract String getId();
 
-    /*
-     * (non-Javadoc)
-     * @see org.eclipse.jface.action.Action#getText()
-     */
     @Override
 	public abstract String getText();
 
-    /*
-     * (non-Javadoc)
-     * @see org.eclipse.jface.action.Action#getToolTipText()
-     */
     @Override
 	public abstract String getToolTipText();
 
-    /*
-     * (non-Javadoc)
-     * @see org.eclipse.jface.action.Action#getDisabledImageDescriptor()
-     */
     @Override
 	public abstract ImageDescriptor getDisabledImageDescriptor();
 
-    /*
-     * (non-Javadoc)
-     * @see org.eclipse.jface.action.Action#getHoverImageDescriptor()
-     */
     @Override
 	public abstract ImageDescriptor getHoverImageDescriptor();
 
-    /*
-     * (non-Javadoc)
-     * @see org.eclipse.jface.action.Action#getImageDescriptor()
-     */
     @Override
 	public abstract ImageDescriptor getImageDescriptor();
 

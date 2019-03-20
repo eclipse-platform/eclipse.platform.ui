@@ -34,9 +34,6 @@ public class ReformatAction extends Action {
 		fRendering = rendering;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.action.IAction#run()
-	 */
 	@Override
 	public void run() {
 		fRendering.resizeColumnsToPreferredSize();

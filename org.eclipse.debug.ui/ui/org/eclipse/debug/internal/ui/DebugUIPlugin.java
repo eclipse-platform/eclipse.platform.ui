@@ -421,9 +421,6 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener, 
 		return DebugPluginImages.initializeImageRegistry();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.osgi.framework.BundleActivator#stop(org.osgi.framework.BundleContext)
-	 */
 	@Override
 	public void stop(BundleContext context) throws Exception {
 		try {
@@ -500,9 +497,6 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener, 
 		return fSaveParticipants.remove(participant);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.plugin.AbstractUIPlugin#start(org.osgi.framework.BundleContext)
-	 */
 	@Override
 	public void start(BundleContext context) throws Exception {
 		super.start(context);
@@ -588,9 +582,6 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener, 
 				});
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.osgi.service.debug.DebugOptionsListener#optionsChanged(org.eclipse.osgi.service.debug.DebugOptions)
-	 */
 	@Override
 	public void optionsChanged(DebugOptions options) {
 		fgDebugTrace = options.newDebugTrace(getUniqueIdentifier());

@@ -46,10 +46,6 @@ public class ResetToBaseAddressAction extends Action {
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(this, IDebugUIConstants.PLUGIN_ID + ".ResetBaseAddressContextAction_context"); //$NON-NLS-1$
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.jface.action.IAction#run()
-	 */
 	@SuppressWarnings("deprecation")
 	@Override
 	public void run() {

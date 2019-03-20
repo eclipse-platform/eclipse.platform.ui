@@ -39,19 +39,11 @@ public class ResetMemoryBlockAction implements IViewActionDelegate {
 	private IViewPart fView;
 	private ArrayList<Object> fSelectedMB = new ArrayList<>();
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.ui.IViewActionDelegate#init(org.eclipse.ui.IViewPart)
-	 */
 	@Override
 	public void init(IViewPart view) {
 		fView = view;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.ui.IActionDelegate#run(org.eclipse.jface.action.IAction)
-	 */
 	@Override
 	public void run(IAction action) {
 		if (fSelectedMB.isEmpty()) {
@@ -78,12 +70,6 @@ public class ResetMemoryBlockAction implements IViewActionDelegate {
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * org.eclipse.ui.IActionDelegate#selectionChanged(org.eclipse.jface.action
-	 * .IAction, org.eclipse.jface.viewers.ISelection)
-	 */
 	@Override
 	public void selectionChanged(IAction action, ISelection selection) {
 		action.setEnabled(!selection.isEmpty());
@@ -92,10 +78,12 @@ public class ResetMemoryBlockAction implements IViewActionDelegate {
 			Object[] objs = strucSel.toArray();
 			fSelectedMB.clear();
 			for (int i = 0; i < objs.length; i++) {
-				if (objs[i] instanceof IMemoryBlock)
+				if (objs[i] instanceof IMemoryBlock) {
 					fSelectedMB.add(objs[i]);
-				if (objs[i] instanceof IMemoryRendering)
+				}
+				if (objs[i] instanceof IMemoryRendering) {
 					fSelectedMB.add(((IMemoryRendering) objs[i]).getMemoryBlock());
+				}
 			}
 		}
 	}

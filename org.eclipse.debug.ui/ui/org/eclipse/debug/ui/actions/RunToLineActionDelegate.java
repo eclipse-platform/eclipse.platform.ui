@@ -86,9 +86,6 @@ public class RunToLineActionDelegate implements IEditorActionDelegate, IActionDe
 
 	}
 
-	/*(non-Javadoc)
-	 * @see org.eclipse.ui.IActionDelegate2#dispose()
-	 */
 	@Override
 	public void dispose() {
 		DebugUITools.getDebugContextManager().getContextService(fActivePart.getSite().getWorkbenchWindow()).removeDebugContextListener(fContextListener);
@@ -96,9 +93,7 @@ public class RunToLineActionDelegate implements IEditorActionDelegate, IActionDe
 		fPartTarget = null;
 
 	}
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IActionDelegate#run(org.eclipse.jface.action.IAction)
-	 */
+
 	@Override
 	public void run(IAction action) {
 		if (fPartTarget != null && fTargetElement != null) {
@@ -109,18 +104,13 @@ public class RunToLineActionDelegate implements IEditorActionDelegate, IActionDe
 			}
 		}
 	}
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IActionDelegate#selectionChanged(org.eclipse.jface.action.IAction, org.eclipse.jface.viewers.ISelection)
-	 */
+
 	@Override
 	public void selectionChanged(IAction action, ISelection selection) {
 		this.fAction = action;
 		update();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.texteditor.IUpdate#update()
-	 */
 	public void update() {
 		if (fAction == null) {
 			return;
@@ -143,9 +133,6 @@ public class RunToLineActionDelegate implements IEditorActionDelegate, IActionDe
 		DebugUIPlugin.getStandardDisplay().asyncExec(r);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IActionDelegate2#init(org.eclipse.jface.action.IAction)
-	 */
 	@Override
 	public void init(IAction action) {
 		this.fAction = action;
@@ -155,25 +142,18 @@ public class RunToLineActionDelegate implements IEditorActionDelegate, IActionDe
 			action.setDisabledImageDescriptor(DebugUITools.getImageDescriptor(IInternalDebugUIConstants.IMG_DLCL_RUN_TO_LINE));
 		}
 	}
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IActionDelegate2#runWithEvent(org.eclipse.jface.action.IAction, org.eclipse.swt.widgets.Event)
-	 */
+
 	@Override
 	public void runWithEvent(IAction action, Event event) {
 		run(action);
 	}
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IEditorActionDelegate#setActiveEditor(org.eclipse.jface.action.IAction, org.eclipse.ui.IEditorPart)
-	 */
+
 	@Override
 	public void setActiveEditor(IAction action, IEditorPart targetEditor) {
 		init(action);
 		bindTo(targetEditor);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IViewActionDelegate#init(org.eclipse.ui.IViewPart)
-	 */
 	@Override
 	public void init(IViewPart view) {
 		bindTo(view);

@@ -31,9 +31,6 @@ public class HexRendering extends AbstractAsyncTableRendering {
 		super(renderingId);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.views.memory.AbstractTableRendering#getString(java.lang.String, java.math.BigInteger, org.eclipse.debug.core.model.MemoryByte[], java.lang.String)
-	 */
 	@Override
 	public String getString(String dataType, BigInteger address,
 			MemoryByte[] data) {
@@ -57,9 +54,6 @@ public class HexRendering extends AbstractAsyncTableRendering {
 		return strBuffer.toString().toUpperCase();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.views.memory.AbstractTableRendering#getBytes(java.lang.String, java.math.BigInteger, org.eclipse.debug.core.model.MemoryByte[], java.lang.String)
-	 */
 	@Override
 	public byte[] getBytes(String dataType, BigInteger address,
 			MemoryByte[] currentValues, String data) {

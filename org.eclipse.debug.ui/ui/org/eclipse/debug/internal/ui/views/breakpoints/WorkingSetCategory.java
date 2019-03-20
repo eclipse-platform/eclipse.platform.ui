@@ -40,25 +40,16 @@ public class WorkingSetCategory extends PlatformObject implements IWorkbenchAdap
         fWorkingSet = workingSet;
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.ui.model.IWorkbenchAdapter#getChildren(java.lang.Object)
-     */
     @Override
 	public Object[] getChildren(Object o) {
         return null;
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.ui.model.IWorkbenchAdapter#getImageDescriptor(java.lang.Object)
-     */
     @Override
 	public ImageDescriptor getImageDescriptor(Object object) {
         return fWorkingSet.getImageDescriptor();
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.ui.model.IWorkbenchAdapter#getLabel(java.lang.Object)
-     */
     @Override
 	public String getLabel(Object o) {
         StringBuffer name = new StringBuffer(fWorkingSet.getName());
@@ -68,9 +59,6 @@ public class WorkingSetCategory extends PlatformObject implements IWorkbenchAdap
         return name.toString();
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.ui.model.IWorkbenchAdapter#getParent(java.lang.Object)
-     */
     @Override
 	public Object getParent(Object o) {
         return null;
@@ -85,9 +73,6 @@ public class WorkingSetCategory extends PlatformObject implements IWorkbenchAdap
         return fWorkingSet;
     }
 
-    /* (non-Javadoc)
-     * @see java.lang.Object#equals(java.lang.Object)
-     */
     @Override
 	public boolean equals(Object obj) {
         if (obj instanceof WorkingSetCategory) {
@@ -97,33 +82,21 @@ public class WorkingSetCategory extends PlatformObject implements IWorkbenchAdap
         return false;
     }
 
-    /* (non-Javadoc)
-     * @see java.lang.Object#hashCode()
-     */
     @Override
 	public int hashCode() {
         return fWorkingSet.hashCode();
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.ui.model.IWorkbenchAdapter2#getForeground(java.lang.Object)
-     */
     @Override
 	public RGB getForeground(Object element) {
         return null;
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.ui.model.IWorkbenchAdapter2#getBackground(java.lang.Object)
-     */
     @Override
 	public RGB getBackground(Object element) {
         return null;
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.ui.model.IWorkbenchAdapter2#getFont(java.lang.Object)
-     */
     @Override
 	public FontData getFont(Object element) {
         if (isDefault()) {

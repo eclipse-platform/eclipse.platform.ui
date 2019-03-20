@@ -61,41 +61,26 @@ public class CommonSourceNotFoundEditorInput extends PlatformObject implements I
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IEditorInput#exists()
-	 */
 	@Override
 	public boolean exists() {
 		return false;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IEditorInput#getImageDescriptor()
-	 */
 	@Override
 	public ImageDescriptor getImageDescriptor() {
 		return DebugUITools.getDefaultImageDescriptor(fArtifact);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IEditorInput#getName()
-	 */
 	@Override
 	public String getName() {
 		return fLabel;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IEditorInput#getPersistable()
-	 */
 	@Override
 	public IPersistableElement getPersistable() {
 		return null;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IEditorInput#getToolTipText()
-	 */
 	@Override
 	public String getToolTipText() {
 		return MessageFormat.format(SourceLookupUIMessages.addSourceLocation_editorMessage, new Object[] { fLabel });

@@ -60,18 +60,13 @@ public class AsyncTableRenderingCellModifier implements ICellModifier {
 		job.schedule();
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see org.eclipse.jface.viewers.ICellModifier#canModify(java.lang.Object,
-     *      java.lang.String)
-     */
     @Override
 	public boolean canModify(Object element, String property) {
         boolean canModify = true;
         try {
-            if (!(element instanceof MemorySegment))
-                return false;
+            if (!(element instanceof MemorySegment)) {
+				return false;
+			}
 
             if (!isValueModificationSupported()) {
                 return false;
@@ -116,29 +111,26 @@ public class AsyncTableRenderingCellModifier implements ICellModifier {
      */
     private int getAddressableSize() {
         int addressableSize = fRendering.getAddressableSize();
-        if (addressableSize < 1)
-            addressableSize = 1;
+        if (addressableSize < 1) {
+			addressableSize = 1;
+		}
         return addressableSize;
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see org.eclipse.jface.viewers.ICellModifier#getValue(java.lang.Object,
-     *      java.lang.String)
-     */
     @Override
 	public Object getValue(Object element, String property) {
 
         // give back the value of the column
 
-        if (!(element instanceof MemorySegment))
-            return null;
+        if (!(element instanceof MemorySegment)) {
+			return null;
+		}
 
         MemorySegment line = (MemorySegment) element;
         try {
-            if (TableRenderingLine.P_ADDRESS.equals(property))
-                return line.getAddress();
+            if (TableRenderingLine.P_ADDRESS.equals(property)) {
+				return line.getAddress();
+			}
 
             int offsetToLineBuffer = Integer.valueOf(property, 16).intValue() * getAddressableSize();
             MemoryByte[] memory = line.getBytes(offsetToLineBuffer, fRendering.getBytesPerColumn());
@@ -160,27 +152,23 @@ public class AsyncTableRenderingCellModifier implements ICellModifier {
         }
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see org.eclipse.jface.viewers.ICellModifier#modify(java.lang.Object,
-     *      java.lang.String, java.lang.Object)
-     */
     @Override
 	public void modify(Object element, final String property, final Object value) {
 
         MemorySegment segment = null;
         if (element instanceof TableItem) {
         	Object data = ((TableItem)element).getData();
-        	if (data != null && data instanceof MemorySegment)
-        		segment = (MemorySegment)data;
+        	if (data != null && data instanceof MemorySegment) {
+				segment = (MemorySegment)data;
+			}
 
         } else if (element instanceof MemorySegment){
         	segment = (MemorySegment) element;
         }
 
-        if (segment == null)
-        	return;
+        if (segment == null) {
+			return;
+		}
 
         final MemorySegment line = segment;
 
@@ -226,11 +214,13 @@ public class AsyncTableRenderingCellModifier implements ICellModifier {
 		          if (!oldValue.equals(value)) {
 		                bytes = fRendering.getBytes(fRendering.getRenderingId(), address, oldArray, (String) value);
 
-		                if (bytes == null)
-		                    return Status.OK_STATUS;
+		                if (bytes == null) {
+							return Status.OK_STATUS;
+						}
 
-		                if (bytes.length == 0)
-		                	 return Status.OK_STATUS;
+		                if (bytes.length == 0) {
+							return Status.OK_STATUS;
+						}
 
 		                if (bytes.length <= oldArray.length) {
 		                    boolean changed = false;
@@ -241,8 +231,9 @@ public class AsyncTableRenderingCellModifier implements ICellModifier {
 		                            break;
 		                        }
 		                    }
-		                    if (!changed)
-		                    	 return Status.OK_STATUS;
+		                    if (!changed) {
+								return Status.OK_STATUS;
+							}
 		                }
 		            } else {
 		                // return if value has not changed
@@ -251,10 +242,11 @@ public class AsyncTableRenderingCellModifier implements ICellModifier {
 
 		            final byte[] newByteValues = bytes;
 
-		            if (memoryBlk instanceof IMemoryBlockExtension)
-		                ((IMemoryBlockExtension) memoryBlk).setValue(offsetFromMBBase, newByteValues);
-		            else
-		                memoryBlk.setValue(offsetFromMBBase.longValue(), newByteValues);
+		            if (memoryBlk instanceof IMemoryBlockExtension) {
+						((IMemoryBlockExtension) memoryBlk).setValue(offsetFromMBBase, newByteValues);
+					} else {
+						memoryBlk.setValue(offsetFromMBBase.longValue(), newByteValues);
+					}
 		        } catch (DebugException e) {
 		            MemoryViewUtil.openError(DebugUIMessages.MemoryViewCellModifier_failure_title, DebugUIMessages.MemoryViewCellModifier_failed, e);
 		        } catch (NumberFormatException e) {
@@ -278,7 +270,9 @@ public class AsyncTableRenderingCellModifier implements ICellModifier {
         }
 
         if (memoryAddr == null)
-            memoryAddr = new BigInteger("0"); //$NON-NLS-1$
+		 {
+			memoryAddr = new BigInteger("0"); //$NON-NLS-1$
+		}
 
         return lineAddress.subtract(memoryAddr).add(BigInteger.valueOf(lineOffset));
     }

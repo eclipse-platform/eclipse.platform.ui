@@ -65,9 +65,6 @@ public class SourceLookupDialog extends TitleAreaDialog {
 		fDirector = director;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.dialogs.Dialog#createDialogArea(org.eclipse.swt.widgets.Composite)
-	 */
 	@Override
 	protected Control createDialogArea(Composite parent) {
 		// create a composite with standard margins and spacing
@@ -102,9 +99,6 @@ public class SourceLookupDialog extends TitleAreaDialog {
 		return composite;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.dialogs.Dialog#okPressed()
-	 */
 	@Override
 	protected void okPressed() {
 		ILaunchConfiguration config = fDirector.getLaunchConfiguration();
@@ -120,28 +114,18 @@ public class SourceLookupDialog extends TitleAreaDialog {
 		super.okPressed();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.window.Window#configureShell(org.eclipse.swt.widgets.Shell)
-	 */
 	@Override
 	protected void configureShell(Shell shell) {
 		super.configureShell(shell);
 		shell.setText(SourceLookupUIMessages.manageSourceDialog_title);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.window.Window#close()
-	 */
 	@Override
 	public boolean close() {
 		fPanel.dispose();
 		return super.close();
 	}
 
-    /* (non-Javadoc)
-     * @see org.eclipse.jface.dialogs.Dialog#getDialogBoundsSettings()
-     * @since 3.2
-     */
     @Override
 	protected IDialogSettings getDialogBoundsSettings() {
     	 IDialogSettings settings = DebugUIPlugin.getDefault().getDialogSettings();

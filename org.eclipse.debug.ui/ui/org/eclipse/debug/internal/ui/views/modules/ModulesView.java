@@ -40,17 +40,11 @@ import org.eclipse.ui.PlatformUI;
  */
 public class ModulesView extends VariablesView {
 
-	/**
-	 * @see org.eclipse.debug.ui.AbstractDebugView#getHelpContextId()
-	 */
 	@Override
 	protected String getHelpContextId() {
 		return IDebugHelpContextIds.MODULES_VIEW;
 	}
 
-	/**
-	 * @see org.eclipse.debug.ui.AbstractDebugView#configureToolBar(org.eclipse.jface.action.IToolBarManager)
-	 */
 	@Override
 	protected void configureToolBar(IToolBarManager tbm) {
         tbm.add(new Separator(this.getClass().getName()));
@@ -59,9 +53,6 @@ public class ModulesView extends VariablesView {
         tbm.add( new Separator( IDebugUIConstants.MODULES_GROUP ) );
 	}
 
-	   /* (non-Javadoc)
-     * @see org.eclipse.debug.ui.AbstractDebugView#fillContextMenu(org.eclipse.jface.action.IMenuManager)
-     */
     @Override
 	protected void fillContextMenu( IMenuManager menu ) {
         menu.add( new Separator( IDebugUIConstants.EMPTY_MODULES_GROUP ) );
@@ -77,17 +68,11 @@ public class ModulesView extends VariablesView {
         menu.add( new Separator( IWorkbenchActionConstants.MB_ADDITIONS ) );
     }
 
-	/**
-	 * @see org.eclipse.debug.internal.ui.views.variables.VariablesView#getDetailPanePreferenceKey()
-	 */
 	@Override
 	protected String getDetailPanePreferenceKey() {
 		return IDebugPreferenceConstants.MODULES_DETAIL_PANE_ORIENTATION;
 	}
 
-	/**
-	 * @see org.eclipse.debug.internal.ui.views.variables.VariablesView#getToggleActionLabel()
-	 */
 	@Override
 	protected String getToggleActionLabel() {
 
@@ -108,9 +93,6 @@ public class ModulesView extends VariablesView {
 		return ModulesViewMessages.ModulesView_0;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.views.variables.VariablesView#getPresentationContextId()
-	 */
 	@Override
 	protected String getPresentationContextId() {
 		return IDebugUIConstants.ID_MODULE_VIEW;
@@ -151,13 +133,15 @@ public class ModulesView extends VariablesView {
 		String viewName = getViewName(context);
 
 		// only update label if the name has changed
-		if (!getPartName().equals(viewName))
+		if (!getPartName().equals(viewName)) {
 			setPartName(viewName);
+		}
 
 		// only update image if the image has changed
 		Image image = getViewImage(context);
-		if (!getTitleImage().equals(image))
+		if (!getTitleImage().equals(image)) {
 			setTitleImage(image);
+		}
 	}
 
 	/**
@@ -170,8 +154,9 @@ public class ModulesView extends VariablesView {
 				ILabelProvider provider = adaptable
 						.getAdapter(ILabelProvider.class);
 				String label = provider.getText(this);
-				if (label != null)
+				if (label != null) {
 					return label;
+				}
 			}
 		}
 		return ModulesViewMessages.ModulesView_2;
@@ -185,8 +170,9 @@ public class ModulesView extends VariablesView {
 				ILabelProvider provider = adaptable
 						.getAdapter(ILabelProvider.class);
 				Image image = provider.getImage(this);
-				if (image != null)
+				if (image != null) {
 					return image;
+				}
 			}
 		}
 		return DebugPluginImages.getImage(IInternalDebugUIConstants.IMG_CVIEW_MODULES_VIEW);

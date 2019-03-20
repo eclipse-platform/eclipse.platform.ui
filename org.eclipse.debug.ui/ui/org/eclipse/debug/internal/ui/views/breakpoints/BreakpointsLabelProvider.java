@@ -41,9 +41,6 @@ public class BreakpointsLabelProvider extends LabelProvider implements IFontProv
         fPresentation = DebugUITools.newDebugModelPresentation();
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.jface.viewers.IBaseLabelProvider#dispose()
-     */
     @Override
 	public void dispose() {
         fWorkbenchLabelProvider.dispose();
@@ -51,9 +48,6 @@ public class BreakpointsLabelProvider extends LabelProvider implements IFontProv
         super.dispose();
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.jface.viewers.ILabelProvider#getImage(java.lang.Object)
-     */
     @Override
 	public Image getImage(Object element) {
         if (element instanceof IBreakpoint) {
@@ -82,9 +76,6 @@ public class BreakpointsLabelProvider extends LabelProvider implements IFontProv
         return 0;
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.jface.viewers.ILabelProvider#getText(java.lang.Object)
-     */
     @Override
 	public String getText(Object element) {
         if (element instanceof IBreakpoint) {
@@ -93,9 +84,6 @@ public class BreakpointsLabelProvider extends LabelProvider implements IFontProv
         return fWorkbenchLabelProvider.getText(element);
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.jface.viewers.IFontProvider#getFont(java.lang.Object)
-     */
     @Override
 	public Font getFont(Object element) {
         if (element instanceof IBreakpoint) {

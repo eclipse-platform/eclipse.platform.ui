@@ -146,9 +146,6 @@ public class DebugElementAdapterFactory implements IAdapterFactory {
     private static IViewerInputProvider fgDefaultViewerInputProvider = new DefaultViewerInputProvider();
     private static IViewerInputProvider fgStackFrameViewerInputProvider = new StackFrameViewerInputProvider();
 
-    /* (non-Javadoc)
-     * @see org.eclipse.core.runtime.IAdapterFactory#getAdapter(java.lang.Object, java.lang.Class)
-     */
 	@SuppressWarnings("unchecked")
 	@Override
 	public <T> T getAdapter(Object adaptableObject, Class<T> adapterType) {
@@ -325,9 +322,6 @@ public class DebugElementAdapterFactory implements IAdapterFactory {
         return null;
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.core.runtime.IAdapterFactory#getAdapterList()
-     */
     @Override
 	public Class<?>[] getAdapterList() {
         return new Class[] {

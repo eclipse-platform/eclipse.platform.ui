@@ -21,12 +21,6 @@ package org.eclipse.debug.internal.ui.views.memory;
  */
 public class ToggleMemoryMonitorsAction extends ToggleViewPaneAction {
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * org.eclipse.debug.internal.ui.views.memory.ToggleViewPaneAction#getPaneId
-	 * ()
-	 */
 	@Override
 	public String getPaneId() {
 		return MemoryBlocksTreeViewPane.PANE_ID;

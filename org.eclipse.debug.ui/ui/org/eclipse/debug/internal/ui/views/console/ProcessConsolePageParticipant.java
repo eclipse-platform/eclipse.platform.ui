@@ -93,9 +93,6 @@ public class ProcessConsolePageParticipant implements IConsolePageParticipant, I
 
 	}
 
-    /* (non-Javadoc)
-     * @see org.eclipse.ui.console.IConsolePageParticipant#init(IPageBookViewPage, IConsole)
-     */
     @Override
 	public void init(IPageBookViewPage page, IConsole console) {
         fPage = page;
@@ -120,9 +117,6 @@ public class ProcessConsolePageParticipant implements IConsolePageParticipant, I
         fEOFHandler = new EOFHandler();
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.ui.console.IConsolePageParticipant#dispose()
-     */
     @Override
 	public void dispose() {
         DebugUITools.getDebugContextManager().getContextService(fPage.getSite().getWorkbenchWindow()).removeDebugContextListener(this);
@@ -161,9 +155,6 @@ public class ProcessConsolePageParticipant implements IConsolePageParticipant, I
 		mgr.appendToGroup(IConsoleConstants.OUTPUT_GROUP, fStdErr);
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.core.runtime.IAdaptable#getAdapter(java.lang.Class)
-     */
 	@SuppressWarnings("unchecked")
 	@Override
 	public <T> T getAdapter(Class<T> required) {
@@ -184,9 +175,6 @@ public class ProcessConsolePageParticipant implements IConsolePageParticipant, I
         return null;
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.ui.part.IShowInSource#getShowInContext()
-     */
     @Override
 	public ShowInContext getShowInContext() {
         IProcess process = getProcess();
@@ -209,17 +197,11 @@ public class ProcessConsolePageParticipant implements IConsolePageParticipant, I
         return new ShowInContext(null, selection);
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.ui.part.IShowInTargetList#getShowInTargetIds()
-     */
     @Override
 	public String[] getShowInTargetIds() {
         return new String[] {IDebugUIConstants.ID_DEBUG_VIEW};
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.debug.core.IDebugEventSetListener#handleDebugEvents(org.eclipse.debug.core.DebugEvent[])
-     */
     @Override
 	public void handleDebugEvents(DebugEvent[] events) {
         for (int i = 0; i < events.length; i++) {
@@ -240,9 +222,6 @@ public class ProcessConsolePageParticipant implements IConsolePageParticipant, I
         return fConsole != null ? fConsole.getProcess() : null;
     }
 
-	/* (non-Javadoc)
-     * @see org.eclipse.ui.console.IConsolePageParticipant#activated()
-     */
     @Override
 	public void activated() {
         // add EOF submissions
@@ -255,9 +234,6 @@ public class ProcessConsolePageParticipant implements IConsolePageParticipant, I
         }
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.ui.console.IConsolePageParticipant#deactivated()
-     */
     @Override
 	public void deactivated() {
         // remove EOF submissions
@@ -270,9 +246,6 @@ public class ProcessConsolePageParticipant implements IConsolePageParticipant, I
 		fActivatedHandler = null;
     }
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.contexts.provisional.IDebugContextListener#contextEvent(org.eclipse.debug.internal.ui.contexts.provisional.DebugContextEvent)
-	 */
 	@Override
 	public void debugContextChanged(DebugContextEvent event) {
 		if ((event.getFlags() & DebugContextEvent.ACTIVATED) > 0) {

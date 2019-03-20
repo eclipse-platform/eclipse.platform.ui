@@ -621,12 +621,6 @@ public class ProcessConsole extends IOConsole implements IConsole, IDebugEventSe
             streamAppended(null, monitor);
         }
 
-        /*
-         * (non-Javadoc)
-         *
-         * @see org.eclipse.debug.core.IStreamListener#streamAppended(java.lang.String,
-         *      org.eclipse.debug.core.model.IStreamMonitor)
-         */
         @Override
 		public void streamAppended(String text, IStreamMonitor monitor) {
             String encoding = getEncoding();
@@ -752,11 +746,6 @@ public class ProcessConsole extends IOConsole implements IConsole, IDebugEventSe
         }
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see org.eclipse.ui.console.IConsole#getImageDescriptor()
-     */
     @Override
 	public ImageDescriptor getImageDescriptor() {
         if (super.getImageDescriptor() == null) {
@@ -901,9 +890,6 @@ public class ProcessConsole extends IOConsole implements IConsole, IDebugEventSe
         }
     }
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.console.AbstractConsole#getHelpContextId()
-	 */
 	@Override
 	public String getHelpContextId() {
 		return IDebugHelpContextIds.PROCESS_CONSOLE;

@@ -61,9 +61,6 @@ public abstract class AbstractDebugCheckboxSelectionDialog extends AbstractDebug
 		return (CheckboxTableViewer) fViewer;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.launchConfigurations.AbstractDebugSelectionDialog#initializeControls()
-	 */
 	@Override
 	protected void initializeControls() {
 		List<?> selectedElements = getInitialElementSelections();
@@ -74,9 +71,6 @@ public abstract class AbstractDebugCheckboxSelectionDialog extends AbstractDebug
 		super.initializeControls();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.launchConfigurations.AbstractDebugSelectionDialog#createViewer(org.eclipse.swt.widgets.Composite)
-	 */
 	@Override
 	protected StructuredViewer createViewer(Composite parent){
 		//by default return a checkbox table viewer
@@ -88,9 +82,6 @@ public abstract class AbstractDebugCheckboxSelectionDialog extends AbstractDebug
 		return new CheckboxTableViewer(table);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.launchConfigurations.AbstractDebugSelectionDialog#addViewerListeners(org.eclipse.jface.viewers.StructuredViewer)
-	 */
 	@Override
 	protected void addViewerListeners(StructuredViewer viewer) {
 		getCheckBoxTableViewer().addCheckStateListener(new DefaultCheckboxListener());
@@ -108,17 +99,11 @@ public abstract class AbstractDebugCheckboxSelectionDialog extends AbstractDebug
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.AbstractDebugSelectionDialog#isValid()
-	 */
 	@Override
 	protected boolean isValid() {
 		return getCheckBoxTableViewer().getCheckedElements().length > 0;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.dialogs.Dialog#okPressed()
-	 */
 	@Override
 	protected void okPressed() {
 		Object[] elements =  getCheckBoxTableViewer().getCheckedElements();
@@ -126,9 +111,6 @@ public abstract class AbstractDebugCheckboxSelectionDialog extends AbstractDebug
 		super.okPressed();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.launchConfigurations.AbstractDebugSelectionDialog#addCustomFooterControls(org.eclipse.swt.widgets.Composite)
-	 */
 	@Override
 	protected void addCustomFooterControls(Composite parent) {
 		if (fShowSelectButtons){

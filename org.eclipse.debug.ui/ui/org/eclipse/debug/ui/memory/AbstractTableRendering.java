@@ -264,11 +264,6 @@ public abstract class AbstractTableRendering extends AbstractBaseTableRendering 
 			updateActionLabel();
 		}
 
-		/*
-		 * (non-Javadoc)
-		 *
-		 * @see org.eclipse.jface.action.IAction#run()
-		 */
 		@Override
 		public void run() {
 			fIsShowAddressColumn = !fIsShowAddressColumn;
@@ -276,9 +271,6 @@ public abstract class AbstractTableRendering extends AbstractBaseTableRendering 
 			updateActionLabel();
 		}
 
-		/**
-		 *
-		 */
 		private void updateActionLabel() {
 			if (fIsShowAddressColumn) {
 				setText(DebugUIMessages.ShowAddressColumnAction_0);
@@ -332,9 +324,6 @@ public abstract class AbstractTableRendering extends AbstractBaseTableRendering 
 		super(renderingId);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.util.IPropertyChangeListener#propertyChange(org.eclipse.jface.util.PropertyChangeEvent)
-	 */
 	@Override
 	public void propertyChange(PropertyChangeEvent event) {
 		// if memory view table font has changed
@@ -721,9 +710,6 @@ public abstract class AbstractTableRendering extends AbstractBaseTableRendering 
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.ui.memory.IMemoryRendering#createControl(org.eclipse.swt.widgets.Composite)
-	 */
 	@Override
 	public Control createControl(Composite parent) {
 
@@ -1645,9 +1631,6 @@ public abstract class AbstractTableRendering extends AbstractBaseTableRendering 
 		return fIsShowingErrorPage;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.ui.memory.IMemoryRendering#getControl()
-	 */
 	@Override
 	public Control getControl() {
 		return fPageBook;
@@ -2361,9 +2344,6 @@ public abstract class AbstractTableRendering extends AbstractBaseTableRendering 
 		return fTableViewer;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.ui.memory.IMemoryRendering#dispose()
-	 */
 	@Override
 	public void dispose() {
 		try {
@@ -2433,8 +2413,9 @@ public abstract class AbstractTableRendering extends AbstractBaseTableRendering 
 		return bytesPerLine/columnSize;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.ui.IMemoryViewTab#setFont(org.eclipse.swt.graphics.Font)
+	/*
+	 * @see
+	 * org.eclipse.debug.ui.IMemoryViewTab#setFont(org.eclipse.swt.graphics.Font)
 	 */
 	private void setFont(Font font)
 	{
@@ -3168,9 +3149,6 @@ public abstract class AbstractTableRendering extends AbstractBaseTableRendering 
 		fTableViewer.getCellModifier().modify(tableItem, (String)property, newValue);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.ui.memory.IMemoryRendering#becomesHidden()
-	 */
 	@Override
 	public void becomesHidden() {
 
@@ -3195,9 +3173,6 @@ public abstract class AbstractTableRendering extends AbstractBaseTableRendering 
 
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.ui.memory.IMemoryRendering#becomesVisible()
-	 */
 	@Override
 	public void becomesVisible() {
 
@@ -3386,9 +3361,6 @@ public abstract class AbstractTableRendering extends AbstractBaseTableRendering 
 		return table.getItemHeight();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.core.runtime.IAdaptable#getAdapter(java.lang.Class)
-	 */
 	@SuppressWarnings("unchecked")
 	@Override
 	public <T> T getAdapter(Class<T> adapter) {
@@ -3760,10 +3732,6 @@ public abstract class AbstractTableRendering extends AbstractBaseTableRendering 
 		return fToolTipLabel;
 	}
 
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.ui.memory.IResettableMemoryRendering#resetRendering()
-	 */
 	@Override
 	public void resetRendering() throws DebugException {
 		resetToBaseAddress();

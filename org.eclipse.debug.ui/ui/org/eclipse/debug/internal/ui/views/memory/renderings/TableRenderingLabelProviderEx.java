@@ -47,11 +47,6 @@ public class TableRenderingLabelProviderEx extends TableRenderingLabelProvider i
 		fFontProvider = rendering.getAdapter(IFontProvider.class);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.jface.viewers.IBaseLabelProvider#dispose()
-	 */
 	@Override
 	public void dispose() {
 		if (fFontProvider != null) {
@@ -67,65 +62,57 @@ public class TableRenderingLabelProviderEx extends TableRenderingLabelProvider i
 		super.dispose();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.viewers.ITableColorProvider#getBackground(java.lang.Object, int)
-	 */
 	@Override
 	public Color getBackground(Object element, int columnIndex) {
 		if (fColorProvider != null && columnIndex > 0) {
 			MemoryRenderingElement renderingElement = getMemoryRenderingElement(element, columnIndex);
 			if (renderingElement != null) {
 				Color color = fColorProvider.getBackground(renderingElement);
-				if (color != null)
+				if (color != null) {
 					return color;
+				}
 			}
 		}
 		return super.getBackground(element);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.viewers.ITableColorProvider#getForeground(java.lang.Object, int)
-	 */
 	@Override
 	public Color getForeground(Object element, int columnIndex) {
 		if (fColorProvider != null && columnIndex > 0) {
 			MemoryRenderingElement renderingElement = getMemoryRenderingElement(element, columnIndex);
 			if (renderingElement != null) {
 				Color color = fColorProvider.getForeground(renderingElement);
-				if (color != null)
+				if (color != null) {
 					return color;
+				}
 			}
 		}
 		return super.getForeground(element);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.viewers.ITableLabelProvider#getColumnImage(java.lang.Object, int)
-	 */
 	@Override
 	public Image getColumnImage(Object element, int columnIndex) {
 		if (fLabelProvider != null && columnIndex > 0) {
 			MemoryRenderingElement renderingElement = getMemoryRenderingElement(element, columnIndex);
 			if (renderingElement != null) {
 				Image image = fLabelProvider.getImage(renderingElement);
-				if (image != null)
+				if (image != null) {
 					return image;
+				}
 			}
 		}
 		return super.getColumnImage(element, columnIndex);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.viewers.ITableFontProvider#getFont(java.lang.Object, int)
-	 */
 	@Override
 	public Font getFont(Object element, int columnIndex) {
 		if (fFontProvider != null && columnIndex > 0) {
 			MemoryRenderingElement renderingElement = getMemoryRenderingElement(element, columnIndex);
 			if (renderingElement != null) {
 				Font font = fFontProvider.getFont(renderingElement);
-				if (font != null)
+				if (font != null) {
 					return font;
+				}
 			}
 		}
 		return null;

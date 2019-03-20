@@ -28,10 +28,6 @@ public class RemoveRenderingContextAction implements IViewActionDelegate {
 
 	private IMemoryRenderingSite fMemoryView;
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.ui.IViewActionDelegate#init(org.eclipse.ui.IViewPart)
-	 */
 	@Override
 	public void init(IViewPart view) {
 		if (view instanceof IMemoryRenderingSite) {
@@ -39,14 +35,11 @@ public class RemoveRenderingContextAction implements IViewActionDelegate {
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.ui.IActionDelegate#run(org.eclipse.jface.action.IAction)
-	 */
 	@Override
 	public void run(IAction action) {
-		if (fMemoryView == null)
+		if (fMemoryView == null) {
 			return;
+		}
 
 		IMemoryRenderingContainer container = getRenderingContainer(action);
 		if (container != null) {
@@ -55,20 +48,15 @@ public class RemoveRenderingContextAction implements IViewActionDelegate {
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * org.eclipse.ui.IActionDelegate#selectionChanged(org.eclipse.jface.action
-	 * .IAction, org.eclipse.jface.viewers.ISelection)
-	 */
 	@Override
 	public void selectionChanged(IAction action, ISelection selection) {
 		IMemoryRenderingContainer container = getRenderingContainer(action);
 		if (container instanceof RenderingViewPane) {
-			if (!((RenderingViewPane) container).canRemoveRendering())
+			if (!((RenderingViewPane) container).canRemoveRendering()) {
 				action.setEnabled(false);
-			else
+			} else {
 				action.setEnabled(true);
+			}
 		}
 	}
 

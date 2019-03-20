@@ -30,18 +30,12 @@ import org.eclipse.ui.actions.ActionDelegate;
 
 public class TableRenderingPrefAction extends ActionDelegate implements IViewActionDelegate {
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IActionDelegate#run(org.eclipse.jface.action.IAction)
-	 */
 	@Override
 	public void run(IAction action) {
 		IPreferencePage page = new TableRenderingPreferencePage(DebugUIMessages.TableRenderingPrefAction_0);
 		showPreferencePage("org.eclipse.debug.ui.tableRenderingPreferencepage", page);	 //$NON-NLS-1$
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IViewActionDelegate#init(org.eclipse.ui.IViewPart)
-	 */
 	@Override
 	public void init(IViewPart view) {
 	}

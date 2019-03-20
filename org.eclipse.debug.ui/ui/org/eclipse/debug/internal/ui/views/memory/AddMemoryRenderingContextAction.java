@@ -24,10 +24,6 @@ public class AddMemoryRenderingContextAction implements IViewActionDelegate {
 
 	private IMemoryRenderingSite fMemoryView;
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.ui.IViewActionDelegate#init(org.eclipse.ui.IViewPart)
-	 */
 	@Override
 	public void init(IViewPart view) {
 
@@ -36,15 +32,12 @@ public class AddMemoryRenderingContextAction implements IViewActionDelegate {
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.ui.IActionDelegate#run(org.eclipse.jface.action.IAction)
-	 */
 	@Override
 	public void run(IAction action) {
 
-		if (fMemoryView == null)
+		if (fMemoryView == null) {
 			return;
+		}
 
 		IMemoryRenderingContainer container = getRenderingContainer(action);
 		if (container != null) {
@@ -73,20 +66,15 @@ public class AddMemoryRenderingContextAction implements IViewActionDelegate {
 		return selectedPane;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * org.eclipse.ui.IActionDelegate#selectionChanged(org.eclipse.jface.action
-	 * .IAction, org.eclipse.jface.viewers.ISelection)
-	 */
 	@Override
 	public void selectionChanged(IAction action, ISelection selection) {
 		IMemoryRenderingContainer container = getRenderingContainer(action);
 		if (container instanceof RenderingViewPane) {
-			if (!((RenderingViewPane) container).canAddRendering())
+			if (!((RenderingViewPane) container).canAddRendering()) {
 				action.setEnabled(false);
-			else
+			} else {
 				action.setEnabled(true);
+			}
 		}
 	}
 

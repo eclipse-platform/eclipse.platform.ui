@@ -72,8 +72,9 @@ public class PrintTableRenderingAction extends Action
 		int lineNum = 1;
 
 		int charsPerByte = fRendering.getNumCharsPerByte();
-		if (charsPerByte < 0)
+		if (charsPerByte < 0) {
 			charsPerByte = 4;
+		}
 
 		// return line number after column labels are printed
 		lineNum = printColumnLabels(printGC, lineNum);
@@ -112,8 +113,9 @@ public class PrintTableRenderingAction extends Action
 		TableColumn columns[] = ((Table)fViewer.getControl()).getColumns();
 
 		int charsPerByte = fRendering.getNumCharsPerByte();
-		if (charsPerByte < 0)
+		if (charsPerByte < 0) {
 			charsPerByte = 4;
+		}
 
 		int addressSizeInBytes = 0;
 		TableRenderingContentDescriptor descriptor = fRendering.getAdapter(TableRenderingContentDescriptor.class);
@@ -129,8 +131,9 @@ public class PrintTableRenderingAction extends Action
 					addressSizeInBytes = 0;
 				}
 
-				if (addressSizeInBytes <= 0)
+				if (addressSizeInBytes <= 0) {
 					addressSizeInBytes = 4;
+				}
 			}
 			else
 			{
@@ -171,14 +174,12 @@ public class PrintTableRenderingAction extends Action
 		return lineNum;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.action.IAction#run()
-	 */
 	@Override
 	public void run() {
 
-		if (!(fViewer.getControl() instanceof Table))
+		if (!(fViewer.getControl() instanceof Table)) {
 			return;
+		}
 
 		PrintDialog printDialog = new PrintDialog(DebugUIPlugin.getShell());
 		PrinterData printerData = printDialog.open();	// pop up a system print dialog

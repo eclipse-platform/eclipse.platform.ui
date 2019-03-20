@@ -155,9 +155,6 @@ public abstract class AbstractDebugSelectionDialog extends SelectionDialog {
     	return fViewer;
     }
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.dialogs.Dialog#createContents(org.eclipse.swt.widgets.Composite)
-	 */
 	@Override
 	protected Control createContents(Composite parent) {
 		Composite comp = (Composite) super.createContents(parent);
@@ -165,9 +162,6 @@ public abstract class AbstractDebugSelectionDialog extends SelectionDialog {
 		return comp;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.dialogs.Dialog#createDialogArea(org.eclipse.swt.widgets.Composite)
-	 */
 	@Override
 	protected Control createDialogArea(Composite parent) {
 		initializeDialogUnits(parent);
@@ -206,9 +200,6 @@ public abstract class AbstractDebugSelectionDialog extends SelectionDialog {
 	 */
 	abstract protected String getViewerLabel();
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.dialogs.SelectionDialog#getDialogBoundsSettings()
-	 */
 	@Override
 	protected IDialogSettings getDialogBoundsSettings() {
 		IDialogSettings settings = DebugUIPlugin.getDefault().getDialogSettings();

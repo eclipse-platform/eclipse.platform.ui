@@ -88,9 +88,6 @@ public class TableRenderingContentProvider extends BasicDebugViewContentProvider
 		fViewer = viewer;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.viewers.IContentProvider#inputChanged(org.eclipse.jface.viewers.Viewer, java.lang.Object, java.lang.Object)
-	 */
 	@Override
 	public void inputChanged(Viewer v, Object oldInput, Object newInput) {
 		try {
@@ -117,9 +114,6 @@ public class TableRenderingContentProvider extends BasicDebugViewContentProvider
 		super.dispose();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.viewers.IStructuredContentProvider#getElements(java.lang.Object)
-	 */
 	@Override
 	public Object[] getElements(Object parent) {
 
@@ -635,9 +629,6 @@ public class TableRenderingContentProvider extends BasicDebugViewContentProvider
 		return memoryBuffer;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.ui.internal.views.BasicDebugViewContentProvider#doHandleDebugEvent(org.eclipse.debug.core.DebugEvent)
-	 */
 	@Override
 	protected void doHandleDebugEvent(DebugEvent event) {
 

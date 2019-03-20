@@ -65,17 +65,11 @@ public class IndexedVariablePartition extends PlatformObject implements IVariabl
 		fValuePartition = new IndexedValuePartition(value, offset, length);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.core.model.IVariable#getValue()
-	 */
 	@Override
 	public IValue getValue() {
 		return fValuePartition;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.core.model.IVariable#getName()
-	 */
 	@Override
 	public String getName() {
 		if (fName == null) {
@@ -90,9 +84,6 @@ public class IndexedVariablePartition extends PlatformObject implements IVariabl
 		return fName;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.core.model.IVariable#getReferenceTypeName()
-	 */
 	@Override
 	public String getReferenceTypeName() throws DebugException {
 		if (fOriginalVariable instanceof IVariable) {
@@ -102,81 +93,51 @@ public class IndexedVariablePartition extends PlatformObject implements IVariabl
 		return IInternalDebugCoreConstants.EMPTY_STRING;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.core.model.IVariable#hasValueChanged()
-	 */
 	@Override
 	public boolean hasValueChanged() {
 		return false;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.core.model.IDebugElement#getModelIdentifier()
-	 */
 	@Override
 	public String getModelIdentifier() {
 		return fOriginalValue.getModelIdentifier();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.core.model.IDebugElement#getDebugTarget()
-	 */
 	@Override
 	public IDebugTarget getDebugTarget() {
 		return fOriginalValue.getDebugTarget();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.core.model.IDebugElement#getLaunch()
-	 */
 	@Override
 	public ILaunch getLaunch() {
 		return fOriginalValue.getLaunch();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.core.model.IValueModification#setValue(java.lang.String)
-	 */
 	@Override
 	public void setValue(String expression) throws DebugException {
 		throw new DebugException(new Status(IStatus.ERROR, IDebugUIConstants.PLUGIN_ID, IDebugUIConstants.INTERNAL_ERROR, "Value modification not supported for indexed partitions.", null));  //$NON-NLS-1$
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.core.model.IValueModification#setValue(org.eclipse.debug.core.model.IValue)
-	 */
 	@Override
 	public void setValue(IValue value) throws DebugException {
 		throw new DebugException(new Status(IStatus.ERROR, IDebugUIConstants.PLUGIN_ID, IDebugUIConstants.INTERNAL_ERROR, "Value modification not supported for indexed partitions.", null));  //$NON-NLS-1$
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.core.model.IValueModification#supportsValueModification()
-	 */
 	@Override
 	public boolean supportsValueModification() {
 		return false;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.core.model.IValueModification#verifyValue(java.lang.String)
-	 */
 	@Override
 	public boolean verifyValue(String expression) {
 		return false;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.core.model.IValueModification#verifyValue(org.eclipse.debug.core.model.IValue)
-	 */
 	@Override
 	public boolean verifyValue(IValue value) {
 		return false;
 	}
 
-	/* (non-Javadoc)
-	 * @see java.lang.Object#equals(java.lang.Object)
-	 */
 	@Override
 	public boolean equals(Object obj) {
 		if (obj instanceof IndexedVariablePartition) {
@@ -187,9 +148,6 @@ public class IndexedVariablePartition extends PlatformObject implements IVariabl
 		return false;
 	}
 
-	/* (non-Javadoc)
-	 * @see java.lang.Object#hashCode()
-	 */
 	@Override
 	public int hashCode() {
 		return fOriginalVariable.hashCode() + fOffset;

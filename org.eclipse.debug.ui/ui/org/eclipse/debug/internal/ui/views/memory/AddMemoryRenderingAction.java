@@ -35,13 +35,10 @@ public class AddMemoryRenderingAction extends AddMemoryBlockAction {
 		fContainer = container;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.jface.action.IAction#run()
-	 */
 	@Override
 	public void run() {
-		if (fContainer instanceof RenderingViewPane)
+		if (fContainer instanceof RenderingViewPane) {
 			((RenderingViewPane) fContainer).showCreateRenderingTab();
+		}
 	}
 }

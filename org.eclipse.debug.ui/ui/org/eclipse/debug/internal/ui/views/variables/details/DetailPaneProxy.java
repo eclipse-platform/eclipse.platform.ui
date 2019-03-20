@@ -290,9 +290,6 @@ public class DetailPaneProxy implements ISaveablePart {
 		fParentContainer.getParentComposite().layout();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.ISaveablePart#doSave(org.eclipse.core.runtime.IProgressMonitor)
-	 */
 	@Override
 	public void doSave(IProgressMonitor monitor) {
 		ISaveablePart saveable = getSaveable();
@@ -301,9 +298,6 @@ public class DetailPaneProxy implements ISaveablePart {
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.ISaveablePart#doSaveAs()
-	 */
 	@Override
 	public void doSaveAs() {
 		ISaveablePart saveable = getSaveable();
@@ -312,9 +306,6 @@ public class DetailPaneProxy implements ISaveablePart {
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.ISaveablePart#isDirty()
-	 */
 	@Override
 	public boolean isDirty() {
 		ISaveablePart saveable = getSaveable();
@@ -324,9 +315,6 @@ public class DetailPaneProxy implements ISaveablePart {
 		return false;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.ISaveablePart#isSaveAsAllowed()
-	 */
 	@Override
 	public boolean isSaveAsAllowed() {
 		ISaveablePart saveable = getSaveable();
@@ -336,9 +324,6 @@ public class DetailPaneProxy implements ISaveablePart {
 		return false;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.ISaveablePart#isSaveOnCloseNeeded()
-	 */
 	@Override
 	public boolean isSaveOnCloseNeeded() {
 		ISaveablePart saveable = getSaveable();

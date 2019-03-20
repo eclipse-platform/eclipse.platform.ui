@@ -44,9 +44,6 @@ public class WorkingSetBreakpointOrganizer extends AbstractBreakpointOrganizerDe
         fWorkingSetManager.addPropertyChangeListener(this);
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.debug.ui.IBreakpointOrganizerDelegate#getCategories(org.eclipse.debug.core.model.IBreakpoint)
-     */
     @Override
 	public IAdaptable[] getCategories(IBreakpoint breakpoint) {
 		List<IAdaptable> result = new ArrayList<>();
@@ -77,9 +74,6 @@ public class WorkingSetBreakpointOrganizer extends AbstractBreakpointOrganizerDe
         return result.toArray(new IAdaptable[result.size()]);
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.debug.ui.IBreakpointOrganizerDelegate#dispose()
-     */
     @Override
 	public void dispose() {
         fWorkingSetManager.removePropertyChangeListener(this);
@@ -87,9 +81,6 @@ public class WorkingSetBreakpointOrganizer extends AbstractBreakpointOrganizerDe
         super.dispose();
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.jface.util.IPropertyChangeListener#propertyChange(org.eclipse.jface.util.PropertyChangeEvent)
-     */
     @Override
 	public void propertyChange(PropertyChangeEvent event) {
         IWorkingSet set = null;

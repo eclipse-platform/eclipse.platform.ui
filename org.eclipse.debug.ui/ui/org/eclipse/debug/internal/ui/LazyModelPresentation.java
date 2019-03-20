@@ -84,9 +84,6 @@ public class LazyModelPresentation implements IDebugModelPresentation, IDebugEdi
 	private DelegatingModelPresentation fOwner = null;
 
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.ui.IDebugEditorPresentation#removeAnntations(org.eclipse.ui.IEditorPart, org.eclipse.debug.core.model.IThread)
-	 */
 	@Override
 	public void removeAnnotations(IEditorPart editorPart, IThread thread) {
 		IDebugModelPresentation presentation = getPresentation();
@@ -95,9 +92,6 @@ public class LazyModelPresentation implements IDebugModelPresentation, IDebugEdi
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.ui.IDebugEditorPresentation#addAnnotations(org.eclipse.ui.IEditorPart, org.eclipse.debug.core.model.IStackFrame)
-	 */
 	@Override
 	public boolean addAnnotations(IEditorPart editorPart, IStackFrame frame) {
 		IDebugModelPresentation presentation = getPresentation();
@@ -400,9 +394,6 @@ public class LazyModelPresentation implements IDebugModelPresentation, IDebugEdi
 		return fAttributes;
 	}
 
-    /* (non-Javadoc)
-     * @see org.eclipse.jface.viewers.IColorProvider#getForeground(java.lang.Object)
-     */
     @Override
 	public Color getForeground(Object element) {
         IDebugModelPresentation presentation = getPresentation();
@@ -413,9 +404,6 @@ public class LazyModelPresentation implements IDebugModelPresentation, IDebugEdi
         return null;
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.jface.viewers.IColorProvider#getBackground(java.lang.Object)
-     */
     @Override
 	public Color getBackground(Object element) {
         IDebugModelPresentation presentation = getPresentation();
@@ -426,9 +414,6 @@ public class LazyModelPresentation implements IDebugModelPresentation, IDebugEdi
         return null;
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.jface.viewers.IFontProvider#getFont(java.lang.Object)
-     */
     @Override
 	public Font getFont(Object element) {
         IDebugModelPresentation presentation = getPresentation();
@@ -439,9 +424,6 @@ public class LazyModelPresentation implements IDebugModelPresentation, IDebugEdi
         return null;
     }
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.ui.IInstructionPointerPresentation#getInstructionPointerAnnotation(org.eclipse.ui.IEditorPart, org.eclipse.debug.core.model.IStackFrame)
-	 */
 	@Override
 	public Annotation getInstructionPointerAnnotation(IEditorPart editorPart, IStackFrame frame) {
 		IDebugModelPresentation presentation = getPresentation();
@@ -452,9 +434,6 @@ public class LazyModelPresentation implements IDebugModelPresentation, IDebugEdi
 		return null;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.ui.IInstructionPointerPresentation#getMarkerAnnotationSpecificationId(org.eclipse.ui.IEditorPart, org.eclipse.debug.core.model.IStackFrame)
-	 */
 	@Override
 	public String getInstructionPointerAnnotationType(IEditorPart editorPart, IStackFrame frame) {
 		IDebugModelPresentation presentation = getPresentation();
@@ -465,9 +444,6 @@ public class LazyModelPresentation implements IDebugModelPresentation, IDebugEdi
 		return null;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.ui.IInstructionPointerPresentation#getInstructionPointerImage(org.eclipse.ui.IEditorPart, org.eclipse.debug.core.model.IStackFrame)
-	 */
 	@Override
 	public Image getInstructionPointerImage(IEditorPart editorPart, IStackFrame frame) {
 		IDebugModelPresentation presentation = getPresentation();
@@ -478,9 +454,6 @@ public class LazyModelPresentation implements IDebugModelPresentation, IDebugEdi
 		return null;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.ui.IInstructionPointerPresentation#getInstructionPointerText(org.eclipse.ui.IEditorPart, org.eclipse.debug.core.model.IStackFrame)
-	 */
 	@Override
 	public String getInstructionPointerText(IEditorPart editorPart, IStackFrame frame) {
 		IDebugModelPresentation presentation = getPresentation();
@@ -491,9 +464,6 @@ public class LazyModelPresentation implements IDebugModelPresentation, IDebugEdi
 		return null;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.ui.IDebugModelPresentationExtension#requiresUIThread(java.lang.Object)
-	 */
 	@Override
 	public boolean requiresUIThread(Object element) {
 		if (!DebugPluginImages.isInitialized()) {

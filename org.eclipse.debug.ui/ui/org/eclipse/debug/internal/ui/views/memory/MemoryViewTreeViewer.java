@@ -39,10 +39,8 @@ public class MemoryViewTreeViewer extends TreeModelViewer {
 	}
 
 	/*
-	 * Need to have a customized content provider to define a special update
-	 * policy for the Memory View (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.viewers.model.InternalTreeModelViewer#
-	 * createContentProvider()
+	 * Need to have a customized content provider to define a special update policy
+	 * for the Memory View
 	 */
 	@Override
 	protected ITreeModelContentProvider createContentProvider() {

@@ -46,10 +46,6 @@ public class ElementComparator implements Comparator<Object> {
 		}
 	}
 
-
-	/* (non-Javadoc)
-	 * @see java.util.Comparator#compare(java.lang.Object, java.lang.Object)
-	 */
 	@Override
 	public int compare(Object arg0, Object arg1) {
         IBreakpoint bp0 = (IBreakpoint)DebugPlugin.getAdapter(arg0, IBreakpoint.class);

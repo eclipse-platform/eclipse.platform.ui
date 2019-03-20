@@ -304,9 +304,6 @@ public class InstructionPointerManager{
 		@Override
 		public void partBroughtToTop(IWorkbenchPartReference partRef) {}
 
-		/* (non-Javadoc)
-		 * @see org.eclipse.ui.IPartListener2#partClosed(org.eclipse.ui.IWorkbenchPartReference)
-		 */
 		@Override
 		public void partClosed(IWorkbenchPartReference partRef) {
 			IWorkbenchPart part = partRef.getPart(false);
@@ -316,9 +313,6 @@ public class InstructionPointerManager{
 
 		}
 
-		/* (non-Javadoc)
-		 * @see org.eclipse.ui.IPartListener2#partInputChanged(org.eclipse.ui.IWorkbenchPartReference)
-		 */
 		@Override
 		public void partInputChanged(IWorkbenchPartReference partRef) {
 			IWorkbenchPart part = partRef.getPart(false);
@@ -338,9 +332,6 @@ public class InstructionPointerManager{
 		@Override
 		public void pageOpened(IWorkbenchPage page) {}
 
-		/* (non-Javadoc)
-		 * @see org.eclipse.ui.IPageListener#pageClosed(org.eclipse.ui.IWorkbenchPage)
-		 */
 		@Override
 		public void pageClosed(IWorkbenchPage page) {
 			page.removePartListener(getPartListener());

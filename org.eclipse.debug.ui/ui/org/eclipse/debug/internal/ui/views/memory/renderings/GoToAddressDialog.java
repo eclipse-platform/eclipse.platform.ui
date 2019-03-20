@@ -51,12 +51,6 @@ public class GoToAddressDialog extends TrayDialog implements ModifyListener {
 		setShellStyle(getShellStyle() | SWT.RESIZE);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * org.eclipse.jface.dialogs.Dialog#createDialogArea(org.eclipse.swt.widgets
-	 * .Composite)
-	 */
 	@Override
 	protected Control createDialogArea(Composite parent) {
 		Composite comp = (Composite) super.createDialogArea(parent);
@@ -95,12 +89,6 @@ public class GoToAddressDialog extends TrayDialog implements ModifyListener {
 		return comp;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * org.eclipse.jface.window.Window#configureShell(org.eclipse.swt.widgets
-	 * .Shell)
-	 */
 	@Override
 	protected void configureShell(Shell newShell) {
 		super.configureShell(newShell);
@@ -112,10 +100,6 @@ public class GoToAddressDialog extends TrayDialog implements ModifyListener {
 		return expression;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.jface.dialogs.Dialog#okPressed()
-	 */
 	@Override
 	protected void okPressed() {
 
@@ -129,12 +113,6 @@ public class GoToAddressDialog extends TrayDialog implements ModifyListener {
 		super.okPressed();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * org.eclipse.swt.events.ModifyListener#modifyText(org.eclipse.swt.events
-	 * .ModifyEvent)
-	 */
 	@Override
 	public void modifyText(ModifyEvent e) {
 
@@ -148,12 +126,6 @@ public class GoToAddressDialog extends TrayDialog implements ModifyListener {
 
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * org.eclipse.jface.dialogs.Dialog#createButtonBar(org.eclipse.swt.widgets
-	 * .Composite)
-	 */
 	@Override
 	protected Control createButtonBar(Composite parent) {
 

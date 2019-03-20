@@ -100,9 +100,6 @@ public abstract class AbstractMemoryRendering extends PlatformObject implements 
 		fRenderingId = renderingId;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.ui.memory.IMemoryRendering#init(org.eclipse.debug.ui.memory.IMemoryRenderingSite, org.eclipse.debug.core.model.IMemoryBlock)
-	 */
 	@Override
 	public void init(IMemoryRenderingContainer container, IMemoryBlock block) {
 		fContainer = container;
@@ -111,9 +108,6 @@ public abstract class AbstractMemoryRendering extends PlatformObject implements 
 		fLabelDecorator = fMemoryBlock.getAdapter(ILabelDecorator.class);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.ui.memory.IMemoryRendering#dispose()
-	 */
 	@Override
 	public void dispose()
 	{
@@ -137,9 +131,6 @@ public abstract class AbstractMemoryRendering extends PlatformObject implements 
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.ui.memory.IMemoryRendering#activated()
-	 */
 	@Override
 	public void activated() {
 		if (fContainer.getMemoryRenderingSite().getSynchronizationService() != null) {
@@ -147,9 +138,6 @@ public abstract class AbstractMemoryRendering extends PlatformObject implements 
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.ui.memory.IMemoryRendering#deactivated()
-	 */
 	@Override
 	public void deactivated() {
 		// do nothing when deactivated
@@ -159,9 +147,6 @@ public abstract class AbstractMemoryRendering extends PlatformObject implements 
 		// up synchronization on Linux GTK.
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.ui.memory.IMemoryRendering#becomesVisible()
-	 */
 	@Override
 	public void becomesVisible() {
 		fVisible = true;
@@ -173,9 +158,6 @@ public abstract class AbstractMemoryRendering extends PlatformObject implements 
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.ui.memory.IMemoryRendering#becomesHidden()
-	 */
 	@Override
 	public void becomesHidden() {
 		fVisible = false;
@@ -186,26 +168,17 @@ public abstract class AbstractMemoryRendering extends PlatformObject implements 
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.ui.memory.IMemoryRendering#getMemoryBlock()
-	 */
 	@Override
 	public IMemoryBlock getMemoryBlock() {
 		return fMemoryBlock;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.ui.memory.IMemoryRendering#getRenderingId()
-	 */
 	@Override
 	public String getRenderingId()
 	{
 		return fRenderingId;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.ui.memory.IMemoryRendering#addPropertyChangeListener(org.eclipse.jface.util.IPropertyChangeListener)
-	 */
 	@Override
 	public void addPropertyChangeListener(IPropertyChangeListener listener) {
 
@@ -216,9 +189,6 @@ public abstract class AbstractMemoryRendering extends PlatformObject implements 
 		fPropertyListeners.add(listener);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.ui.memory.IMemoryRendering#removePropertyChangeListener(org.eclipse.jface.util.IPropertyChangeListener)
-	 */
 	@Override
 	public void removePropertyChangeListener(IPropertyChangeListener listener) {
 
@@ -228,9 +198,6 @@ public abstract class AbstractMemoryRendering extends PlatformObject implements 
 		fPropertyListeners.remove(listener);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.ui.memory.IMemoryRendering#getImage()
-	 */
 	@Override
 	public Image getImage() {
 		return decorateImage(null);
@@ -250,9 +217,6 @@ public abstract class AbstractMemoryRendering extends PlatformObject implements 
 		return image;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.ui.memory.IMemoryRendering#getLabel()
-	 */
 	@Override
 	public  String getLabel()
 	{

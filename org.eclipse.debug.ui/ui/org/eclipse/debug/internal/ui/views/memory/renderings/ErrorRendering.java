@@ -48,9 +48,6 @@ public class ErrorRendering extends AbstractMemoryRendering {
 		fException = exception;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.ui.memory.IMemoryRendering#createControl(org.eclipse.swt.widgets.Composite)
-	 */
 	@Override
 	public Control createControl(Composite parent) {
 		fTextViewer = new TextViewer(parent, SWT.READ_ONLY);
@@ -81,9 +78,6 @@ public class ErrorRendering extends AbstractMemoryRendering {
 		return "Unknown"; //$NON-NLS-1$
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.memory.AbstractMemoryRendering#getControl()
-	 */
 	@Override
 	public Control getControl() {
 		return fTextViewer.getControl();

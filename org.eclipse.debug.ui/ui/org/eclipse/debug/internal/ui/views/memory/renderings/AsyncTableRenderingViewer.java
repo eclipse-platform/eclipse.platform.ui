@@ -898,11 +898,10 @@ public class AsyncTableRenderingViewer extends AsyncVirtualContentTableViewer {
 		return fTableCursor;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.viewers.ContentViewer#getLabelProvider()
-	 * Implemented minimum to work with PrintTableRendering action.
-	 * This is not a real table labe provider, only goes to the table
-	 * to get the text at the specified row and column.
+	/*
+	 * Implemented minimum to work with PrintTableRendering action. This is not a
+	 * real table labe provider, only goes to the table to get the text at the
+	 * specified row and column.
 	 */
 	@Override
 	public IBaseLabelProvider getLabelProvider() {
@@ -1016,9 +1015,6 @@ public class AsyncTableRenderingViewer extends AsyncVirtualContentTableViewer {
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.viewers.model.provisional.viewers.AsynchronousViewer#getModel()
-	 */
 	@Override
 	public AsynchronousModel getModel() {
 		return super.getModel();

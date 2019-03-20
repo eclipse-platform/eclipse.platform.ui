@@ -31,9 +31,6 @@ public abstract class AbstractMemoryRenderingBindingsProvider implements IMemory
 	// list of binding listeners
 	private ListenerList<IMemoryRenderingBindingsListener> fListeners;
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.ui.memory.IMemoryRenderingBindingsProvider#addListener(org.eclipse.debug.ui.memory.IMemoryRenderingBindingsListener)
-	 */
 	@Override
 	public void addListener(IMemoryRenderingBindingsListener listener) {
 		if (fListeners == null) {
@@ -41,9 +38,7 @@ public abstract class AbstractMemoryRenderingBindingsProvider implements IMemory
 		}
 		fListeners.add(listener);
 	}
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.ui.memory.IMemoryRenderingBindingsProvider#removeListener(org.eclipse.debug.ui.memory.IMemoryRenderingBindingsListener)
-	 */
+
 	@Override
 	public void removeListener(IMemoryRenderingBindingsListener listener) {
 		if (fListeners != null) {

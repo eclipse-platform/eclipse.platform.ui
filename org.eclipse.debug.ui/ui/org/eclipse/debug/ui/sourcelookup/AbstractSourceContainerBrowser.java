@@ -26,37 +26,29 @@ import org.eclipse.swt.widgets.Shell;
  * @since 3.0
  */
 public class AbstractSourceContainerBrowser implements ISourceContainerBrowser {
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.sourcelookup.ISourceContainerBrowser#addSourceContainers(org.eclipse.swt.widgets.Shell, org.eclipse.debug.core.sourcelookup.ISourceLookupDirector)
-	 */
+
 	@Override
 	public ISourceContainer[] addSourceContainers(Shell shell, ISourceLookupDirector director) {
 		return new ISourceContainer[0];
 	}
-	/* (non-Javadoc)
-	 *
+
+	/*
 	 * Generally, a source container browser can add source containers. Subclasses
 	 * should override as required.
-	 *
-	 * @see org.eclipse.debug.internal.ui.sourcelookup.ISourceContainerBrowser#canAddSourceContainers(org.eclipse.debug.core.sourcelookup.ISourceLookupDirector)
 	 */
 	@Override
 	public boolean canAddSourceContainers(ISourceLookupDirector director) {
 		return true;
 	}
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.sourcelookup.ISourceContainerBrowser#editSourceContainers(org.eclipse.swt.widgets.Shell, org.eclipse.debug.core.sourcelookup.ISourceLookupDirector, org.eclipse.debug.core.sourcelookup.ISourceContainer[])
-	 */
+
 	@Override
 	public ISourceContainer[] editSourceContainers(Shell shell, ISourceLookupDirector director, ISourceContainer[] containers) {
 		return new ISourceContainer[0];
 	}
-	/* (non-Javadoc)
-	 *
-	 * Not all source containers can be edited. Subclasses should override
-	 * as required.
-	 *
-	 * @see org.eclipse.debug.internal.ui.sourcelookup.ISourceContainerBrowser#canEditSourceContainers(org.eclipse.debug.core.sourcelookup.ISourceLookupDirector, org.eclipse.debug.core.sourcelookup.ISourceContainer[])
+
+	/*
+	 * Not all source containers can be edited. Subclasses should override as
+	 * required.
 	 */
 	@Override
 	public boolean canEditSourceContainers(ISourceLookupDirector director, ISourceContainer[] containers) {

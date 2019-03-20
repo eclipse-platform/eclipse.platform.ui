@@ -27,9 +27,6 @@ import org.eclipse.debug.ui.AbstractBreakpointOrganizerDelegate;
  */
 public class FileBreakpointOrganizer extends AbstractBreakpointOrganizerDelegate {
 
-    /* (non-Javadoc)
-     * @see org.eclipse.debug.ui.IBreakpointOrganizerDelegate#getCategories(org.eclipse.debug.core.model.IBreakpoint)
-     */
     @Override
 	public IAdaptable[] getCategories(IBreakpoint breakpoint) {
         IMarker marker = breakpoint.getMarker();

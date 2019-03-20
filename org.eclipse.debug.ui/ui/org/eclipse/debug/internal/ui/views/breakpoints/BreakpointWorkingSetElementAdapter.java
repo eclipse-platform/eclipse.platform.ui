@@ -31,9 +31,6 @@ import org.eclipse.ui.IWorkingSetElementAdapter;
  */
 public class BreakpointWorkingSetElementAdapter implements IWorkingSetElementAdapter {
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IWorkingSetElementAdapter#adaptElements(org.eclipse.ui.IWorkingSet, org.eclipse.core.runtime.IAdaptable[])
-	 */
 	@Override
 	public IAdaptable[] adaptElements(IWorkingSet ws, IAdaptable[] elements) {
 		for (int i = 0; i < elements.length; i++) {
@@ -56,9 +53,6 @@ public class BreakpointWorkingSetElementAdapter implements IWorkingSetElementAda
 		return breakpoints.toArray(new IAdaptable[breakpoints.size()]);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IWorkingSetElementAdapter#dispose()
-	 */
 	@Override
 	public void dispose() {
 	}

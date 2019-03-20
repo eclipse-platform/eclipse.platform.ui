@@ -44,18 +44,12 @@ abstract public class AbstractTableRenderingLabelProvider extends LabelProvider 
 		fRendering = rendering;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.viewers.IBaseLabelProvider#dispose()
-	 */
 	@Override
 	public void dispose() {
 		fRendering = null;
 		super.dispose();
 	}
 
-	/**
-	 * @see ITableLabelProvider#getColumnImage(Object, int)
-	 */
 	@Override
 	public Image getColumnImage(Object element, int columnIndex) {
 
@@ -80,9 +74,6 @@ abstract public class AbstractTableRenderingLabelProvider extends LabelProvider 
 	}
 
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.viewers.ITableLabelProvider#getColumnText(java.lang.Object, int)
-	 */
 	@Override
 	public String getColumnText(Object element, int columnIndex) {
 		String columnLabel = null;

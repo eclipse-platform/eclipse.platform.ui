@@ -103,10 +103,6 @@ public class MemoryBlocksTreeViewPane implements ISelectionListener, ISelectionC
 			setEnabled(true);
 		}
 
-		/*
-		 * (non-Javadoc)
-		 * @see org.eclipse.jface.action.IAction#run()
-		 */
 		@Override
 		public void run() {
 			ISelection selected = fTreeViewer.getSelection();
@@ -137,10 +133,6 @@ public class MemoryBlocksTreeViewPane implements ISelectionListener, ISelectionC
 			PlatformUI.getWorkbench().getHelpSystem().setHelp(this, IDebugUIConstants.PLUGIN_ID + ".RemoveAllMemoryBlocksAction_context"); //$NON-NLS-1$
 		}
 
-		/*
-		 * (non-Javadoc)
-		 * @see org.eclipse.jface.action.IAction#run()
-		 */
 		@Override
 		public void run() {
 
@@ -165,7 +157,6 @@ public class MemoryBlocksTreeViewPane implements ISelectionListener, ISelectionC
 		}
 
 		/*
-		 * (non-Javadoc)
 		 * @see org.eclipse.jface.viewers.IContentProvider#dispose()
 		 */
 		public void dispose() {
@@ -174,11 +165,6 @@ public class MemoryBlocksTreeViewPane implements ISelectionListener, ISelectionC
 			DebugPlugin.getDefault().removeDebugEventListener(this);
 		}
 
-		/*
-		 * (non-Javadoc)
-		 * @see org.eclipse.debug.internal.core.memory.IMemoryBlockListener#
-		 * MemoryBlockAdded(org.eclipse.debug.core.model.IMemoryBlock)
-		 */
 		@Override
 		public void memoryBlocksAdded(final IMemoryBlock[] memory) {
 			// if the content provider is disposed, do not handle event
@@ -188,11 +174,6 @@ public class MemoryBlocksTreeViewPane implements ISelectionListener, ISelectionC
 			updateActionsEnablement();
 		}
 
-		/*
-		 * (non-Javadoc)
-		 * @see org.eclipse.debug.internal.core.memory.IMemoryBlockListener#
-		 * MemoryBlockRemoved(org.eclipse.debug.core.model.IMemoryBlock)
-		 */
 		@Override
 		public void memoryBlocksRemoved(final IMemoryBlock[] memory) {
 			if (fDisposed) {
@@ -202,7 +183,6 @@ public class MemoryBlocksTreeViewPane implements ISelectionListener, ISelectionC
 		}
 
 		/*
-		 * (non-Javadoc)
 		 * @see
 		 * org.eclipse.debug.internal.ui.views.memory.BasicDebugViewContentProvider
 		 * #doHandleDebugEvent(org.eclipse.debug.core.DebugEvent)
@@ -277,13 +257,6 @@ public class MemoryBlocksTreeViewPane implements ISelectionListener, ISelectionC
 			}
 		}
 
-		/*
-		 * (non-Javadoc)
-		 * @see
-		 * org.eclipse.debug.internal.ui.contexts.provisional.IDebugContextListener
-		 * #contextEvent(org.eclipse.debug.internal.ui.contexts.provisional.
-		 * DebugContextEvent)
-		 */
 		@Override
 		public void debugContextChanged(DebugContextEvent event) {
 			if ((event.getFlags() & DebugContextEvent.ACTIVATED) > 0) {
@@ -387,11 +360,6 @@ public class MemoryBlocksTreeViewPane implements ISelectionListener, ISelectionC
 		fPresentationContext.dispose();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.ui.ISelectionListener#selectionChanged(org.eclipse.ui.
-	 * IWorkbenchPart, org.eclipse.jface.viewers.ISelection)
-	 */
 	@Override
 	public void selectionChanged(IWorkbenchPart part, ISelection selection) {
 
@@ -427,11 +395,6 @@ public class MemoryBlocksTreeViewPane implements ISelectionListener, ISelectionC
 		return fPaneId;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * org.eclipse.debug.internal.ui.views.memory.IMemoryViewPane#getActions()
-	 */
 	@Override
 	public IAction[] getActions() {
 
@@ -454,11 +417,6 @@ public class MemoryBlocksTreeViewPane implements ISelectionListener, ISelectionC
 				fRemoveAllMemoryBlocksAction };
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.views.memory.IMemoryViewPane#
-	 * addSelectionListener(org.eclipse.jface.viewers.ISelectionChangedListener)
-	 */
 	@Override
 	public void addSelectionListener(ISelectionChangedListener listener) {
 		if (fSelectionProvider == null) {
@@ -468,12 +426,6 @@ public class MemoryBlocksTreeViewPane implements ISelectionListener, ISelectionC
 		fSelectionProvider.addSelectionChangedListener(listener);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.views.memory.IMemoryViewPane#
-	 * removeSelctionListener
-	 * (org.eclipse.jface.viewers.ISelectionChangedListener)
-	 */
 	@Override
 	public void removeSelctionListener(ISelectionChangedListener listener) {
 		if (fSelectionProvider == null) {
@@ -483,44 +435,22 @@ public class MemoryBlocksTreeViewPane implements ISelectionListener, ISelectionC
 		fSelectionProvider.removeSelectionChangedListener(listener);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.views.memory.IMemoryViewPane#
-	 * getSelectionProvider()
-	 */
 	@Override
 	public ISelectionProvider getSelectionProvider() {
 		return fSelectionProvider;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * org.eclipse.debug.internal.ui.views.memory.IMemoryViewPane#restoreViewPane
-	 * ()
-	 */
 	@Override
 	public void restoreViewPane() {
 		updateRetrieval();
 		updateActionsEnablement();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * org.eclipse.debug.internal.ui.views.memory.IMemoryViewPane#getControl()
-	 */
 	@Override
 	public Control getControl() {
 		return fTreeViewer.getControl();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * org.eclipse.debug.internal.ui.views.memory.IMemoryViewPane#setVisible
-	 * (boolean)
-	 */
 	@Override
 	public void setVisible(boolean visible) {
 		if (fVisible != visible) {
@@ -533,11 +463,6 @@ public class MemoryBlocksTreeViewPane implements ISelectionListener, ISelectionC
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * org.eclipse.debug.internal.ui.views.memory.IMemoryViewPane#isVisible()
-	 */
 	@Override
 	public boolean isVisible() {
 		return fVisible;

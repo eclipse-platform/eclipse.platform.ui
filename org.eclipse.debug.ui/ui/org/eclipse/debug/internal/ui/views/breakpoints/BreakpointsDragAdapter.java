@@ -55,17 +55,11 @@ public class BreakpointsDragAdapter extends DragSourceAdapter implements Transfe
         fView = view;
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.jface.util.TransferDragSourceListener#getTransfer()
-     */
     @Override
 	public Transfer getTransfer() {
         return LocalSelectionTransfer.getTransfer();
     }
 
-    /* non Java-doc
-     * @see org.eclipse.swt.dnd.DragSourceListener#dragStart
-     */
     @Override
 	public void dragStart(DragSourceEvent event) {
         ISelection selection = fViewer.getSelection();

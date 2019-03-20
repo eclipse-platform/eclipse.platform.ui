@@ -115,10 +115,6 @@ public class AddMemoryBlockAction extends Action implements IDebugContextListene
 		DebugPlugin.getDefault().addDebugEventListener(this);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.jface.action.IAction#run()
-	 */
 	@Override
 	public void run() {
 		boolean exit = false;
@@ -278,12 +274,6 @@ public class AddMemoryBlockAction extends Action implements IDebugContextListene
 		return exit;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * org.eclipse.debug.core.IDebugEventSetListener#handleDebugEvents(org.eclipse
-	 * .debug.core.DebugEvent[])
-	 */
 	@Override
 	public void handleDebugEvents(DebugEvent[] events) {
 		for (int i = 0; i < events.length; i++) {
@@ -403,13 +393,6 @@ public class AddMemoryBlockAction extends Action implements IDebugContextListene
 		job.schedule();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * org.eclipse.debug.internal.ui.contexts.provisional.IDebugContextListener
-	 * #contextEvent
-	 * (org.eclipse.debug.internal.ui.contexts.provisional.DebugContextEvent)
-	 */
 	@Override
 	public void debugContextChanged(DebugContextEvent event) {
 		if ((event.getFlags() & DebugContextEvent.ACTIVATED) > 0) {

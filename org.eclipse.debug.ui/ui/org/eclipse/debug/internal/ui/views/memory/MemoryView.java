@@ -129,60 +129,42 @@ public class MemoryView extends ViewPart implements IMemoryRenderingSite2 {
 
 		IStructuredSelection fSelections = new StructuredSelection();
 
-		/*
-		 * (non-Javadoc)
-		 * @see
-		 * org.eclipse.jface.viewers.ISelectionProvider#addSelectionChangedListener
-		 * (org.eclipse.jface.viewers.ISelectionChangedListener)
-		 */
 		@Override
 		public void addSelectionChangedListener(ISelectionChangedListener listener) {
-			if (!fListeners.contains(listener))
+			if (!fListeners.contains(listener)) {
 				fListeners.add(listener);
+			}
 
 		}
 
-		/*
-		 * (non-Javadoc)
-		 * @see org.eclipse.jface.viewers.ISelectionProvider#getSelection()
-		 */
 		@Override
 		public ISelection getSelection() {
 			return fSelections;
 		}
 
-		/*
-		 * (non-Javadoc)
-		 * @see org.eclipse.jface.viewers.ISelectionProvider#
-		 * removeSelectionChangedListener
-		 * (org.eclipse.jface.viewers.ISelectionChangedListener)
-		 */
 		@Override
 		public void removeSelectionChangedListener(ISelectionChangedListener listener) {
-			if (fListeners.contains(listener))
+			if (fListeners.contains(listener)) {
 				fListeners.remove(listener);
+			}
 
 		}
 
-		/*
-		 * (non-Javadoc)
-		 * @see
-		 * org.eclipse.jface.viewers.ISelectionProvider#setSelection(org.eclipse
-		 * .jface.viewers.ISelection)
-		 */
 		@Override
 		public void setSelection(ISelection selection) {
 			if (selection instanceof IStructuredSelection) {
 				boolean fireChanged = false;
 
 				// only fire change event if the selection has really changed
-				if (fSelections.getFirstElement() != ((IStructuredSelection) selection).getFirstElement())
+				if (fSelections.getFirstElement() != ((IStructuredSelection) selection).getFirstElement()) {
 					fireChanged = true;
+				}
 
 				fSelections = (IStructuredSelection) selection;
 
-				if (fireChanged)
+				if (fireChanged) {
 					fireChanged();
+				}
 			}
 		}
 
@@ -193,12 +175,6 @@ public class MemoryView extends ViewPart implements IMemoryRenderingSite2 {
 			}
 		}
 
-		/*
-		 * (non-Javadoc)
-		 * @see
-		 * org.eclipse.jface.viewers.ISelectionChangedListener#selectionChanged
-		 * (org.eclipse.jface.viewers.SelectionChangedEvent)
-		 */
 		@Override
 		public void selectionChanged(SelectionChangedEvent event) {
 			ISelection viewPaneSelection = event.getSelection();
@@ -223,47 +199,22 @@ public class MemoryView extends ViewPart implements IMemoryRenderingSite2 {
 			fView = view;
 		}
 
-		/*
-		 * (non-Javadoc)
-		 * @see org.eclipse.ui.IPartListener2#partActivated(org.eclipse.ui.
-		 * IWorkbenchPartReference)
-		 */
 		@Override
 		public void partActivated(IWorkbenchPartReference ref) {
 		}
 
-		/*
-		 * (non-Javadoc)
-		 * @see org.eclipse.ui.IPartListener2#partBroughtToTop(org.eclipse.ui.
-		 * IWorkbenchPartReference)
-		 */
 		@Override
 		public void partBroughtToTop(IWorkbenchPartReference ref) {
 		}
 
-		/*
-		 * (non-Javadoc)
-		 * @see org.eclipse.ui.IPartListener2#partClosed(org.eclipse.ui.
-		 * IWorkbenchPartReference)
-		 */
 		@Override
 		public void partClosed(IWorkbenchPartReference ref) {
 		}
 
-		/*
-		 * (non-Javadoc)
-		 * @see org.eclipse.ui.IPartListener2#partDeactivated(org.eclipse.ui.
-		 * IWorkbenchPartReference)
-		 */
 		@Override
 		public void partDeactivated(IWorkbenchPartReference ref) {
 		}
 
-		/*
-		 * (non-Javadoc)
-		 * @see org.eclipse.ui.IPartListener2#partHidden(org.eclipse.ui.
-		 * IWorkbenchPartReference)
-		 */
 		@Override
 		public void partHidden(IWorkbenchPartReference ref) {
 
@@ -274,11 +225,6 @@ public class MemoryView extends ViewPart implements IMemoryRenderingSite2 {
 			}
 		}
 
-		/*
-		 * (non-Javadoc)
-		 * @see org.eclipse.ui.IPartListener2#partVisible(org.eclipse.ui.
-		 * IWorkbenchPartReference)
-		 */
 		@Override
 		public void partVisible(IWorkbenchPartReference ref) {
 			IWorkbenchPart part = ref.getPart(false);
@@ -287,14 +233,8 @@ public class MemoryView extends ViewPart implements IMemoryRenderingSite2 {
 				setVisible(true);
 				restoreView();
 			}
-
 		}
 
-		/*
-		 * (non-Javadoc)
-		 * @see org.eclipse.ui.IPartListener2#partInputChanged(org.eclipse.ui.
-		 * IWorkbenchPartReference)
-		 */
 		@Override
 		public void partInputChanged(IWorkbenchPartReference ref) {
 		}
@@ -310,8 +250,9 @@ public class MemoryView extends ViewPart implements IMemoryRenderingSite2 {
 
 		fViewCnt++;
 		String secondaryId = site.getSecondaryId();
-		if (secondaryId != null)
+		if (secondaryId != null) {
 			MemoryViewIdRegistry.registerView(secondaryId);
+		}
 
 		// only do this the first time
 		// not sure if there is a bug in the UI... if the view is
@@ -332,12 +273,6 @@ public class MemoryView extends ViewPart implements IMemoryRenderingSite2 {
 		fSyncService = new MemoryViewSynchronizationService();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * org.eclipse.ui.part.WorkbenchPart#createPartControl(org.eclipse.swt.widgets
-	 * .Composite)
-	 */
 	@Override
 	public void createPartControl(Composite parent) {
 		fSashForm = new SashForm(parent, SWT.HORIZONTAL);
@@ -428,8 +363,9 @@ public class MemoryView extends ViewPart implements IMemoryRenderingSite2 {
 					IMemoryRenderingContainer container = getContainer(fActivePaneId);
 					if (container != null) {
 						if (container instanceof RenderingViewPane) {
-							if (!((RenderingViewPane) container).canRemoveRendering())
+							if (!((RenderingViewPane) container).canRemoveRendering()) {
 								return null;
+							}
 						}
 						IMemoryRendering activeRendering = container.getActiveRendering();
 						if (activeRendering != null) {
@@ -451,8 +387,9 @@ public class MemoryView extends ViewPart implements IMemoryRenderingSite2 {
 
 					if (container != null && container instanceof RenderingViewPane) {
 						RenderingViewPane pane = (RenderingViewPane) container;
-						if (pane.canAddRendering())
+						if (pane.canAddRendering()) {
 							pane.showCreateRenderingTab();
+						}
 					}
 					return null;
 				}
@@ -479,8 +416,9 @@ public class MemoryView extends ViewPart implements IMemoryRenderingSite2 {
 		viewerViewForm.setContent(viewerControl);
 
 		ISelection selection = fMemBlkViewer.getSelectionProvider().getSelection();
-		if (selection != null)
+		if (selection != null) {
 			fSelectionProvider.setSelection(selection);
+		}
 
 		ToolBarManager viewerToolBarMgr = new ToolBarManager(SWT.FLAT);
 		IAction[] actions = fMemBlkViewer.getActions();
@@ -512,8 +450,9 @@ public class MemoryView extends ViewPart implements IMemoryRenderingSite2 {
 
 			@Override
 			public void handleEvent(Event event) {
-				if (fActivePaneId.equals(id))
+				if (fActivePaneId.equals(id)) {
 					viewPane.removeSelctionListener(fSelectionProvider);
+				}
 			}
 		};
 		return deactivateListener;
@@ -558,14 +497,11 @@ public class MemoryView extends ViewPart implements IMemoryRenderingSite2 {
 
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.ui.part.WorkbenchPart#setFocus()
-	 */
 	@Override
 	public void setFocus() {
-		if (fActivePaneId == null)
+		if (fActivePaneId == null) {
 			fActivePaneId = fMemBlkViewer.getId();
+		}
 
 		IMemoryViewPane pane = getViewPane(fActivePaneId);
 		pane.getControl().setFocus();
@@ -587,19 +523,23 @@ public class MemoryView extends ViewPart implements IMemoryRenderingSite2 {
 
 		IViewSite viewSite = getViewSite();
 		String secondaryId = viewSite.getSecondaryId();
-		if (secondaryId != null)
+		if (secondaryId != null) {
 			MemoryViewIdRegistry.deregisterView(secondaryId);
+		}
 
 		fSyncService.shutdown();
 
-		if (fAddHandler != null)
+		if (fAddHandler != null) {
 			fAddHandler.dispose();
+		}
 
-		if (fToggleMonitorsHandler != null)
+		if (fToggleMonitorsHandler != null) {
 			fToggleMonitorsHandler.dispose();
+		}
 
-		if (fNextMemoryBlockHandler != null)
+		if (fNextMemoryBlockHandler != null) {
 			fNextMemoryBlockHandler.dispose();
+		}
 
 		super.dispose();
 	}
@@ -611,11 +551,12 @@ public class MemoryView extends ViewPart implements IMemoryRenderingSite2 {
 			// if currently visible, take view pane's visibility into account
 			// else force view pane to be visible if it is listed in
 			// "visible view panes" array list.
-			if (fVisible)
+			if (fVisible) {
 				viewPanes[i].setVisible(visible && viewPanes[i].isVisible());
-			else {
-				if (isViewPaneVisible(viewPanes[i].getId()))
+			} else {
+				if (isViewPaneVisible(viewPanes[i].getId())) {
 					viewPanes[i].setVisible(visible);
+				}
 			}
 		}
 
@@ -623,7 +564,6 @@ public class MemoryView extends ViewPart implements IMemoryRenderingSite2 {
 	}
 
 	/*
-	 * (non-Javadoc)
 	 * @see
 	 * org.eclipse.debug.internal.ui.views.memory.IMultipaneMemoryView#getViewPane
 	 * (java.lang.String)
@@ -633,7 +573,6 @@ public class MemoryView extends ViewPart implements IMemoryRenderingSite2 {
 	}
 
 	/*
-	 * (non-Javadoc)
 	 * @see
 	 * org.eclipse.debug.internal.ui.views.memory.IMultipaneMemoryView#getViewPanes
 	 * ()
@@ -663,7 +602,6 @@ public class MemoryView extends ViewPart implements IMemoryRenderingSite2 {
 	}
 
 	/*
-	 * (non-Javadoc)
 	 * @see
 	 * org.eclipse.debug.internal.ui.views.memory.IMultipaneMemoryView#showViewPane
 	 * (boolean, java.lang.String)
@@ -679,8 +617,9 @@ public class MemoryView extends ViewPart implements IMemoryRenderingSite2 {
 				if (children[i] == viewPaneControl) {
 					children[i].setVisible(show);
 					IMemoryViewPane viewPane = fViewPanes.get(paneId);
-					if (viewPane != null)
+					if (viewPane != null) {
 						viewPane.setVisible(show);
+					}
 				}
 			}
 			fSashForm.layout();
@@ -690,7 +629,6 @@ public class MemoryView extends ViewPart implements IMemoryRenderingSite2 {
 	}
 
 	/*
-	 * (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.views.memory.IMultipaneMemoryView#
 	 * isViewPaneVisible(java.lang.String)
 	 */
@@ -744,8 +682,9 @@ public class MemoryView extends ViewPart implements IMemoryRenderingSite2 {
 		while (enumeration.hasMoreElements()) {
 			String paneId = enumeration.nextElement();
 			boolean visible = false;
-			if (fVisibleViewPanes.contains(paneId))
+			if (fVisibleViewPanes.contains(paneId)) {
 				visible = true;
+			}
 
 			Control control = fViewPaneControls.get(paneId);
 			control.setVisible(visible);
@@ -791,48 +730,32 @@ public class MemoryView extends ViewPart implements IMemoryRenderingSite2 {
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * org.eclipse.debug.ui.memory.IMemoryRenderingSite#getSynchronizationService
-	 * ()
-	 */
 	@Override
 	public IMemoryRenderingSynchronizationService getSynchronizationService() {
 		return fSyncService;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * org.eclipse.debug.ui.memory.IMemoryRenderingSite#getMemoryRenderingContainers
-	 * ()
-	 */
 	@Override
 	public IMemoryRenderingContainer[] getMemoryRenderingContainers() {
 		Enumeration<IMemoryViewPane> enumeration = fViewPanes.elements();
 		ArrayList<Object> containers = new ArrayList<>();
 		while (enumeration.hasMoreElements()) {
 			Object obj = enumeration.nextElement();
-			if (obj instanceof IMemoryRenderingContainer)
+			if (obj instanceof IMemoryRenderingContainer) {
 				containers.add(obj);
+			}
 		}
 
 		return containers.toArray(new IMemoryRenderingContainer[containers.size()]);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * org.eclipse.debug.ui.memory.IMemoryRenderingSite#getContainer(java.lang
-	 * .String)
-	 */
 	@Override
 	public IMemoryRenderingContainer getContainer(String id) {
 		Object viewPane = fViewPanes.get(id);
 
-		if (viewPane instanceof IMemoryRenderingContainer)
+		if (viewPane instanceof IMemoryRenderingContainer) {
 			return (IMemoryRenderingContainer) viewPane;
+		}
 
 		return null;
 	}
@@ -850,7 +773,9 @@ public class MemoryView extends ViewPart implements IMemoryRenderingSite2 {
 		String viewId = vs.getSecondaryId();
 
 		if (viewId != null)
+		 {
 			return VISIBILITY_PREF + "." + viewId; //$NON-NLS-1$
+		}
 
 		return VISIBILITY_PREF;
 	}
@@ -860,7 +785,9 @@ public class MemoryView extends ViewPart implements IMemoryRenderingSite2 {
 		String viewId = vs.getSecondaryId();
 
 		if (viewId != null)
+		 {
 			return VIEW_PANE_ORIENTATION_PREF + "." + viewId; //$NON-NLS-1$
+		}
 
 		return VIEW_PANE_ORIENTATION_PREF;
 	}
@@ -883,10 +810,11 @@ public class MemoryView extends ViewPart implements IMemoryRenderingSite2 {
 
 	public void setViewPanesOrientation(int orientation) {
 		fViewOrientation = orientation;
-		if (fViewOrientation == VERTICAL_VIEW_ORIENTATION)
+		if (fViewOrientation == VERTICAL_VIEW_ORIENTATION) {
 			fSashForm.setOrientation(SWT.VERTICAL);
-		else
+		} else {
 			fSashForm.setOrientation(SWT.HORIZONTAL);
+		}
 
 		saveOrientation();
 		updateOrientationActions();

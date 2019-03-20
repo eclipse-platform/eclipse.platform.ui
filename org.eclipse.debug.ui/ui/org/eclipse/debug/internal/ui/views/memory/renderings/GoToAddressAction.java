@@ -60,9 +60,6 @@ public class GoToAddressAction extends Action
 
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(this, IDebugUIConstants.PLUGIN_ID + ".GoToAddressAction_context"); //$NON-NLS-1$
 	}
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.action.IAction#run()
-	 */
 	@Override
 	public void run()
 	{
@@ -175,8 +172,9 @@ public class GoToAddressAction extends Action
 	{
 		Object elem = DebugUITools.getPartDebugContext(fContainer.getMemoryRenderingSite().getSite());
 
-		if (!(elem instanceof IDebugElement))
+		if (!(elem instanceof IDebugElement)) {
 			return;
+		}
 
 		try {
 			if (retrieval != null)

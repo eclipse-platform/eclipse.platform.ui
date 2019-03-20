@@ -59,20 +59,15 @@ public class MonitorMemoryBlockDialog extends TrayDialog implements ModifyListen
 	public MonitorMemoryBlockDialog(Shell parentShell, IMemoryBlockRetrieval memRetrieval, String prefillExp, String prefillLength) {
 		super(parentShell);
 
-		if (memRetrieval instanceof IMemoryBlockRetrievalExtension)
+		if (memRetrieval instanceof IMemoryBlockRetrievalExtension) {
 			needLength = false;
+		}
 
 		fPrefillExp = prefillExp;
 		fPrefillLength = prefillLength;
 		setShellStyle(getShellStyle() | SWT.RESIZE);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * org.eclipse.jface.dialogs.Dialog#createDialogArea(org.eclipse.swt.widgets
-	 * .Composite)
-	 */
 	@Override
 	protected Control createDialogArea(Composite parent) {
 		Composite comp = (Composite) super.createDialogArea(parent);
@@ -95,12 +90,6 @@ public class MonitorMemoryBlockDialog extends TrayDialog implements ModifyListen
 		return comp;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * org.eclipse.jface.window.Window#configureShell(org.eclipse.swt.widgets
-	 * .Shell)
-	 */
 	@Override
 	protected void configureShell(Shell newShell) {
 		super.configureShell(newShell);
@@ -122,10 +111,6 @@ public class MonitorMemoryBlockDialog extends TrayDialog implements ModifyListen
 		return length;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.jface.dialogs.Dialog#okPressed()
-	 */
 	@Override
 	protected void okPressed() {
 
@@ -134,18 +119,13 @@ public class MonitorMemoryBlockDialog extends TrayDialog implements ModifyListen
 		// add to HISTORY list
 		MemoryViewUtil.addHistory(expression);
 
-		if (needLength)
+		if (needLength) {
 			length = lengthInput.getText();
+		}
 
 		super.okPressed();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * org.eclipse.swt.events.ModifyListener#modifyText(org.eclipse.swt.events
-	 * .ModifyEvent)
-	 */
 	@Override
 	public void modifyText(ModifyEvent e) {
 		updateOKButtonState();
@@ -164,22 +144,17 @@ public class MonitorMemoryBlockDialog extends TrayDialog implements ModifyListen
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * org.eclipse.jface.dialogs.Dialog#createButtonBar(org.eclipse.swt.widgets
-	 * .Composite)
-	 */
 	@Override
 	protected Control createButtonBar(Composite parent) {
 
 		Control ret = super.createButtonBar(parent);
 
-		if (needLength)
+		if (needLength) {
 			updateOKButtonState();
-		else
+		} else {
 			// always enable the OK button if we only need the expression
 			getButton(IDialogConstants.OK_ID).setEnabled(true);
+		}
 
 		return ret;
 	}

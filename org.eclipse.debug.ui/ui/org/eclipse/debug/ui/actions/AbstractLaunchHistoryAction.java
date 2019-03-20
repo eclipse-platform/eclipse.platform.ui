@@ -294,9 +294,6 @@ public abstract class AbstractLaunchHistoryAction implements IActionDelegate2, I
 		return fMenu;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IWorkbenchWindowPulldownDelegate2#getMenu(org.eclipse.swt.widgets.Menu)
-	 */
 	@Override
 	public Menu getMenu(Menu parent) {
 		setMenu(new Menu(parent));

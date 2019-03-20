@@ -32,9 +32,6 @@ public class BreakpointTypeOrganizer extends AbstractBreakpointOrganizerDelegate
 
 	private Map<String, IAdaptable[]> fTypes = new HashMap<>();
 
-    /* (non-Javadoc)
-     * @see org.eclipse.debug.ui.IBreakpointOrganizerDelegate#getCategories(org.eclipse.debug.core.model.IBreakpoint)
-     */
     @Override
 	public IAdaptable[] getCategories(IBreakpoint breakpoint) {
         IBreakpointTypeCategory category = breakpoint.getAdapter(IBreakpointTypeCategory.class);
@@ -53,9 +50,6 @@ public class BreakpointTypeOrganizer extends AbstractBreakpointOrganizerDelegate
     	return null;
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.debug.ui.IBreakpointOrganizerDelegate#dispose()
-     */
     @Override
 	public void dispose() {
     	fTypes.clear();

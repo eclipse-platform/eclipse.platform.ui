@@ -68,9 +68,6 @@ public class DelegatingModelPresentation implements IDebugModelPresentation, IDe
 	 */
 	private HashMap<String, IDebugModelPresentation> fLabelProviders = new HashMap<>(5);
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.ui.IDebugEditorPresentation#removeAnnotations(org.eclipse.ui.IEditorPart, org.eclipse.debug.core.model.IThread)
-	 */
 	@Override
 	public void removeAnnotations(IEditorPart editorPart, IThread thread) {
 		IDebugModelPresentation presentation = getConfiguredPresentation(thread);
@@ -79,9 +76,6 @@ public class DelegatingModelPresentation implements IDebugModelPresentation, IDe
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.ui.IDebugEditorPresentation#addAnnotations(org.eclipse.ui.IEditorPart, org.eclipse.debug.core.model.IStackFrame)
-	 */
 	@Override
 	public boolean addAnnotations(IEditorPart editorPart, IStackFrame frame) {
 		IDebugModelPresentation presentation = getConfiguredPresentation(frame);
@@ -138,9 +132,6 @@ public class DelegatingModelPresentation implements IDebugModelPresentation, IDe
 		}
 	}
 
-	/**
-	 * @see IDebugModelPresentation#getImage(Object)
-	 */
 	@Override
 	public Image getImage(Object item) {
 		// Attempt to delegate
@@ -155,9 +146,6 @@ public class DelegatingModelPresentation implements IDebugModelPresentation, IDe
 		return getDefaultImage(item);
 	}
 
-	/**
-     * @see IDebugModelPresentation#getText(Object)
-     */
     @Override
 	public String getText(Object item) {
     	IDebugModelPresentation lp= getConfiguredPresentation(item);
@@ -167,9 +155,6 @@ public class DelegatingModelPresentation implements IDebugModelPresentation, IDe
     	return getDefaultText(item);
     }
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.ui.ISourcePresentation#getEditorInput(java.lang.Object)
-	 */
 	@Override
 	public IEditorInput getEditorInput(Object item) {
 		IDebugModelPresentation lp= getConfiguredPresentation(item);
@@ -179,9 +164,6 @@ public class DelegatingModelPresentation implements IDebugModelPresentation, IDe
 		return null;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.ui.ISourcePresentation#getEditorId(org.eclipse.ui.IEditorInput, java.lang.Object)
-	 */
 	@Override
 	public String getEditorId(IEditorInput input, Object objectInput) {
 		IDebugModelPresentation lp= getConfiguredPresentation(objectInput);
@@ -206,9 +188,6 @@ public class DelegatingModelPresentation implements IDebugModelPresentation, IDe
 		return DebugUIPlugin.getDefaultLabelProvider().getImage(element);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.ui.IDebugModelPresentation#computeDetail(org.eclipse.debug.core.model.IValue, org.eclipse.debug.ui.IValueDetailListener)
-	 */
 	@Override
 	public void computeDetail(IValue value, IValueDetailListener listener) {
 		IDebugModelPresentation lp= getConfiguredPresentation(value);
@@ -281,9 +260,6 @@ public class DelegatingModelPresentation implements IDebugModelPresentation, IDe
 		return getLabelProviders().get(id);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.ui.IDebugModelPresentation#setAttribute(java.lang.String, java.lang.Object)
-	 */
 	@Override
 	public void setAttribute(String id, Object value) {
 		if (value == null) {
@@ -343,9 +319,6 @@ public class DelegatingModelPresentation implements IDebugModelPresentation, IDe
 		return fLabelProviders;
 	}
 
-    /* (non-Javadoc)
-     * @see org.eclipse.jface.viewers.IColorProvider#getForeground(java.lang.Object)
-     */
     @Override
 	public Color getForeground(Object element) {
         IDebugModelPresentation presentation = getConfiguredPresentation(element);
@@ -356,9 +329,6 @@ public class DelegatingModelPresentation implements IDebugModelPresentation, IDe
         return null;
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.jface.viewers.IColorProvider#getBackground(java.lang.Object)
-     */
     @Override
 	public Color getBackground(Object element) {
         IDebugModelPresentation presentation = getConfiguredPresentation(element);
@@ -369,9 +339,6 @@ public class DelegatingModelPresentation implements IDebugModelPresentation, IDe
         return null;
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.jface.viewers.IFontProvider#getFont(java.lang.Object)
-     */
     @Override
 	public Font getFont(Object element) {
         IDebugModelPresentation presentation = getConfiguredPresentation(element);
@@ -382,9 +349,6 @@ public class DelegatingModelPresentation implements IDebugModelPresentation, IDe
         return null;
     }
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.ui.IInstructionPointerPresentation#getInstructionPointerAnnotation(org.eclipse.ui.IEditorPart, org.eclipse.debug.core.model.IStackFrame)
-	 */
 	@Override
 	public Annotation getInstructionPointerAnnotation(IEditorPart editorPart, IStackFrame frame) {
 		IDebugModelPresentation presentation = getConfiguredPresentation(frame);
@@ -448,9 +412,6 @@ public class DelegatingModelPresentation implements IDebugModelPresentation, IDe
 		return annotation;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.ui.IInstructionPointerPresentation#getMarkerAnnotationSpecificationId(org.eclipse.ui.IEditorPart, org.eclipse.debug.core.model.IStackFrame)
-	 */
 	@Override
 	public String getInstructionPointerAnnotationType(IEditorPart editorPart, IStackFrame frame) {
 		IDebugModelPresentation presentation = getConfiguredPresentation(frame);
@@ -460,9 +421,6 @@ public class DelegatingModelPresentation implements IDebugModelPresentation, IDe
 		return null;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.ui.IInstructionPointerPresentation#getInstructionPointerImage(org.eclipse.ui.IEditorPart, org.eclipse.debug.core.model.IStackFrame)
-	 */
 	@Override
 	public Image getInstructionPointerImage(IEditorPart editorPart, IStackFrame frame) {
 		IDebugModelPresentation presentation = getConfiguredPresentation(frame);
@@ -472,9 +430,6 @@ public class DelegatingModelPresentation implements IDebugModelPresentation, IDe
 		return null;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.ui.IInstructionPointerPresentation#getInstructionPointerText(org.eclipse.ui.IEditorPart, org.eclipse.debug.core.model.IStackFrame)
-	 */
 	@Override
 	public String getInstructionPointerText(IEditorPart editorPart, IStackFrame frame) {
 		IDebugModelPresentation presentation = getConfiguredPresentation(frame);
@@ -484,9 +439,6 @@ public class DelegatingModelPresentation implements IDebugModelPresentation, IDe
 		return null;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.ui.IDebugModelPresentationExtension#requiresUIThread(java.lang.Object)
-	 */
 	@Override
 	public boolean requiresUIThread(Object element) {
 		IDebugModelPresentation presentation = getConfiguredPresentation(element);

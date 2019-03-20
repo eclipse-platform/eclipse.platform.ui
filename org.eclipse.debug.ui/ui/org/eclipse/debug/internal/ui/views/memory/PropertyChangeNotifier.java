@@ -35,21 +35,11 @@ public class PropertyChangeNotifier implements ISafeRunnable {
 		fEvt = evt;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * org.eclipse.core.runtime.ISafeRunnable#handleException(java.lang.Throwable
-	 * )
-	 */
 	@Override
 	public void handleException(Throwable exception) {
 		DebugUIPlugin.log(exception);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.core.runtime.ISafeRunnable#run()
-	 */
 	@Override
 	public void run() throws Exception {
 		fListener.propertyChange(fEvt);

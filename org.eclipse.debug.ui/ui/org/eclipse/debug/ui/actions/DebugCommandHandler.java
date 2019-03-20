@@ -158,9 +158,6 @@ public abstract class DebugCommandHandler extends AbstractHandler {
         PlatformUI.getWorkbench().addWindowListener(fWindowListener);
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.core.commands.AbstractHandler#setEnabled(java.lang.Object)
-     */
     @Override
 	public void setEnabled(Object evaluationContext) {
         // This method is called with the current evaluation context
@@ -179,9 +176,6 @@ public abstract class DebugCommandHandler extends AbstractHandler {
         }
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.core.commands.AbstractHandler#isEnabled()
-     */
     @Override
 	public boolean isEnabled() {
         if (fCurrentEnabledTarget == null) {
@@ -200,9 +194,6 @@ public abstract class DebugCommandHandler extends AbstractHandler {
         return target;
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.core.commands.AbstractHandler#execute(org.eclipse.core.commands.ExecutionEvent)
-     */
     @Override
 	public Object execute(ExecutionEvent event) throws ExecutionException {
         IWorkbenchWindow window = HandlerUtil.getActiveWorkbenchWindow(event);

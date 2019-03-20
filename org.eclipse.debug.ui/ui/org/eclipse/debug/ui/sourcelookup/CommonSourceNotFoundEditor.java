@@ -75,23 +75,14 @@ public class CommonSourceNotFoundEditor extends EditorPart implements IReusableE
 	 */
 	private ILaunchesListener2 fLaunchesListener;
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.part.EditorPart#doSave(org.eclipse.core.runtime.IProgressMonitor)
-	 */
 	@Override
 	public void doSave(IProgressMonitor monitor) {
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.part.EditorPart#doSaveAs()
-	 */
 	@Override
 	public void doSaveAs() {
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.part.EditorPart#init(org.eclipse.ui.IEditorSite, org.eclipse.ui.IEditorInput)
-	 */
 	@Override
 	public void init(IEditorSite site, IEditorInput input) throws PartInitException {
 		setSite(site);
@@ -99,25 +90,16 @@ public class CommonSourceNotFoundEditor extends EditorPart implements IReusableE
 		initialize();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.part.EditorPart#isDirty()
-	 */
 	@Override
 	public boolean isDirty() {
 		return false;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.part.EditorPart#isSaveAsAllowed()
-	 */
 	@Override
 	public boolean isSaveAsAllowed() {
 		return false;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.part.WorkbenchPart#createPartControl(org.eclipse.swt.widgets.Composite)
-	 */
 	@Override
 	public void createPartControl(Composite parent) {
 		GridLayout topLayout = new GridLayout();
@@ -206,9 +188,6 @@ public class CommonSourceNotFoundEditor extends EditorPart implements IReusableE
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.part.WorkbenchPart#setFocus()
-	 */
 	@Override
 	public void setFocus() {
 		if (fText != null) {
@@ -216,9 +195,6 @@ public class CommonSourceNotFoundEditor extends EditorPart implements IReusableE
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.part.EditorPart#setInput(org.eclipse.ui.IEditorInput)
-	 */
 	@Override
 	public void setInput(IEditorInput input) {
 		super.setInput(input);
@@ -256,12 +232,6 @@ public class CommonSourceNotFoundEditor extends EditorPart implements IReusableE
 		});
 	}
 
-
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.ui.IWorkbenchPart#dispose()
-	 */
 	@Override
 	public void dispose() {
 		if (fLaunchesListener != null) {

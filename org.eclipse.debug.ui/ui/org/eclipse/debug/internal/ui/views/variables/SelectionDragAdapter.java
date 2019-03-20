@@ -46,17 +46,11 @@ public class SelectionDragAdapter extends DragSourceAdapter implements TransferD
         fViewer = viewer;
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.jface.util.TransferDragSourceListener#getTransfer()
-     */
     @Override
 	public Transfer getTransfer() {
         return LocalSelectionTransfer.getTransfer();
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.swt.dnd.DragSourceAdapter#dragStart(org.eclipse.swt.dnd.DragSourceEvent)
-     */
     @Override
 	public void dragStart(DragSourceEvent event) {
         ISelection selection = fViewer.getSelection();
@@ -65,9 +59,6 @@ public class SelectionDragAdapter extends DragSourceAdapter implements TransferD
         event.doit = !selection.isEmpty();
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.swt.dnd.DragSourceAdapter#dragSetData(org.eclipse.swt.dnd.DragSourceEvent)
-     */
     @Override
 	public void dragSetData(DragSourceEvent event) {
         // For consistency set the data to the selection even though
@@ -76,9 +67,6 @@ public class SelectionDragAdapter extends DragSourceAdapter implements TransferD
         event.data = LocalSelectionTransfer.getTransfer().getSelection();
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.swt.dnd.DragSourceAdapter#dragFinished(org.eclipse.swt.dnd.DragSourceEvent)
-     */
     @Override
 	public void dragFinished(DragSourceEvent event) {
         LocalSelectionTransfer.getTransfer().setSelection(null);

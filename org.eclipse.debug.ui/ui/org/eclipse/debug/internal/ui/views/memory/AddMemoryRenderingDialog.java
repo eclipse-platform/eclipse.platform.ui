@@ -121,21 +121,11 @@ public class AddMemoryRenderingDialog extends SelectionDialog {
 
 	class MemoryRenderingLabelProvider implements ILabelProvider {
 
-		/*
-		 * (non-Javadoc)
-		 * @see
-		 * org.eclipse.jface.viewers.ILabelProvider#getImage(java.lang.Object)
-		 */
 		@Override
 		public Image getImage(Object element) {
 			return null;
 		}
 
-		/*
-		 * (non-Javadoc)
-		 * @see
-		 * org.eclipse.jface.viewers.ILabelProvider#getText(java.lang.Object)
-		 */
 		@Override
 		public String getText(Object element) {
 			if (element instanceof IMemoryRenderingType) {
@@ -145,41 +135,19 @@ public class AddMemoryRenderingDialog extends SelectionDialog {
 			return element.toString();
 		}
 
-		/*
-		 * (non-Javadoc)
-		 * @see
-		 * org.eclipse.jface.viewers.IBaseLabelProvider#addListener(org.eclipse
-		 * .jface.viewers.ILabelProviderListener)
-		 */
 		@Override
 		public void addListener(ILabelProviderListener listener) {
 		}
 
-		/*
-		 * (non-Javadoc)
-		 * @see org.eclipse.jface.viewers.IBaseLabelProvider#dispose()
-		 */
 		@Override
 		public void dispose() {
 		}
 
-		/*
-		 * (non-Javadoc)
-		 * @see
-		 * org.eclipse.jface.viewers.IBaseLabelProvider#isLabelProperty(java
-		 * .lang.Object, java.lang.String)
-		 */
 		@Override
 		public boolean isLabelProperty(Object element, String property) {
 			return false;
 		}
 
-		/*
-		 * (non-Javadoc)
-		 * @see
-		 * org.eclipse.jface.viewers.IBaseLabelProvider#removeListener(org.eclipse
-		 * .jface.viewers.ILabelProviderListener)
-		 */
 		@Override
 		public void removeListener(ILabelProviderListener listener) {
 		}
@@ -188,42 +156,22 @@ public class AddMemoryRenderingDialog extends SelectionDialog {
 
 	class MemoryRenderingContentProvider implements IStructuredContentProvider {
 
-		/*
-		 * (non-Javadoc)
-		 * @see
-		 * org.eclipse.jface.viewers.IStructuredContentProvider#getElements(
-		 * java.lang.Object)
-		 */
 		@Override
 		public Object[] getElements(Object inputElement) {
 			IMemoryRenderingType[] renderings = DebugUITools.getMemoryRenderingManager().getRenderingTypes((IMemoryBlock) inputElement);
 			return renderings;
 		}
 
-		/*
-		 * (non-Javadoc)
-		 * @see org.eclipse.jface.viewers.IContentProvider#dispose()
-		 */
 		@Override
 		public void dispose() {
 		}
 
-		/*
-		 * (non-Javadoc)
-		 * @see
-		 * org.eclipse.jface.viewers.IContentProvider#inputChanged(org.eclipse
-		 * .jface.viewers.Viewer, java.lang.Object, java.lang.Object)
-		 */
 		@Override
 		public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
 		}
 
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.jface.window.Window#close()
-	 */
 	@Override
 	public boolean close() {
 
@@ -236,22 +184,12 @@ public class AddMemoryRenderingDialog extends SelectionDialog {
 		return super.close();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * org.eclipse.jface.dialogs.Dialog#createButtonsForButtonBar(org.eclipse
-	 * .swt.widgets.Composite)
-	 */
 	@Override
 	protected void createButtonsForButtonBar(Composite parent) {
 		super.createButtonsForButtonBar(parent);
 		getButton(IDialogConstants.OK_ID).setEnabled(false);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.ui.dialogs.SelectionDialog#getResult()
-	 */
 	@Override
 	public Object[] getResult() {
 
@@ -264,10 +202,6 @@ public class AddMemoryRenderingDialog extends SelectionDialog {
 		return new Object[0];
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.jface.dialogs.Dialog#cancelPressed()
-	 */
 	@Override
 	protected void cancelPressed() {
 
@@ -276,10 +210,6 @@ public class AddMemoryRenderingDialog extends SelectionDialog {
 		super.cancelPressed();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.jface.dialogs.Dialog#okPressed()
-	 */
 	@Override
 	protected void okPressed() {
 
@@ -289,12 +219,6 @@ public class AddMemoryRenderingDialog extends SelectionDialog {
 		super.okPressed();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * org.eclipse.jface.dialogs.Dialog#createDialogArea(org.eclipse.swt.widgets
-	 * .Composite)
-	 */
 	@Override
 	protected Control createDialogArea(Composite parent) {
 
@@ -361,8 +285,9 @@ public class AddMemoryRenderingDialog extends SelectionDialog {
 				int idx = memoryBlock.getSelectionIndex();
 
 				// avoid null pointer exception
-				if (fMemoryBlocks == null)
+				if (fMemoryBlocks == null) {
 					return;
+				}
 
 				fSelectedMemoryBlock = fMemoryBlocks[idx];
 
@@ -455,18 +380,19 @@ public class AddMemoryRenderingDialog extends SelectionDialog {
 	private IMemoryBlock getMemoryBlockToSelect(IMemoryBlock lastAdded) {
 		IMemoryBlock currentBlock = null;
 
-		if (lastAdded != null)
+		if (lastAdded != null) {
 			currentBlock = lastAdded;
-		else {
+		} else {
 			// take Memory View's selection if possible
 			ISelectionProvider selectionProvider = fSite.getSite().getSelectionProvider();
 			ISelection selection = null;
 
-			if (selectionProvider != null)
+			if (selectionProvider != null) {
 				selection = selectionProvider.getSelection();
-			else
+			} else {
 				// otherwise, take selection from selection service
 				selection = DebugUIPlugin.getDefault().getWorkbench().getActiveWorkbenchWindow().getSelectionService().getSelection(IDebugUIConstants.ID_MEMORY_VIEW);
+			}
 
 			IMemoryBlock element = getMemoryBlock(selection);
 
@@ -476,16 +402,19 @@ public class AddMemoryRenderingDialog extends SelectionDialog {
 				if (context != null) {
 					IMemoryBlockRetrieval retrieval = MemoryViewUtil.getMemoryBlockRetrieval(context);
 
-					if (retrieval == null)
+					if (retrieval == null) {
 						return currentBlock;
+					}
 
 					IMemoryBlock[] blocks = new IMemoryBlock[0];
 
-					if (retrieval != null)
+					if (retrieval != null) {
 						blocks = MemoryViewUtil.getMemoryBlockManager().getMemoryBlocks(retrieval);
+					}
 
-					if (blocks.length > 0)
+					if (blocks.length > 0) {
 						currentBlock = blocks[0];
+					}
 				}
 			} else {
 				currentBlock = element;
@@ -502,8 +431,9 @@ public class AddMemoryRenderingDialog extends SelectionDialog {
 				try {
 					text = ((IMemoryBlockExtension) memoryBlocks[i]).getExpression();
 
-					if (text == null)
+					if (text == null) {
 						text = DebugUIMessages.AddMemoryRenderingDialog_Unknown;
+					}
 
 					if (((IMemoryBlockExtension) memoryBlocks[i]).getBigBaseAddress() != null) {
 						text += " : 0x"; //$NON-NLS-1$
@@ -520,8 +450,9 @@ public class AddMemoryRenderingDialog extends SelectionDialog {
 
 			// ask decorator to decorate to ensure consistent label
 			ILabelDecorator decorator = fMemoryBlocks[i].getAdapter(ILabelDecorator.class);
-			if (decorator != null)
+			if (decorator != null) {
 				text = decorator.decorateText(text, fMemoryBlocks[i]);
+			}
 
 			labels[i] = text;
 		}
@@ -529,8 +460,9 @@ public class AddMemoryRenderingDialog extends SelectionDialog {
 	}
 
 	private IMemoryBlock getMemoryBlock(ISelection selection) {
-		if (!(selection instanceof IStructuredSelection))
+		if (!(selection instanceof IStructuredSelection)) {
 			return null;
+		}
 
 		// only single selection of debug element is allowed for this action
 		if (selection.isEmpty() || ((IStructuredSelection) selection).size() > 1) {
@@ -539,12 +471,13 @@ public class AddMemoryRenderingDialog extends SelectionDialog {
 
 		Object elem = ((IStructuredSelection) selection).getFirstElement();
 
-		if (elem instanceof IMemoryBlock)
+		if (elem instanceof IMemoryBlock) {
 			return (IMemoryBlock) elem;
-		else if (elem instanceof IMemoryRendering)
+		} else if (elem instanceof IMemoryRendering) {
 			return ((IMemoryRendering) elem).getMemoryBlock();
-		else
+		} else {
 			return null;
+		}
 	}
 
 	public IMemoryBlock getMemoryBlock() {

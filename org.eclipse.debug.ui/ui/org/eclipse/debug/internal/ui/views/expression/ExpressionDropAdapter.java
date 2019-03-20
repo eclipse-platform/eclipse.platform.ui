@@ -80,9 +80,6 @@ public class ExpressionDropAdapter extends ViewerDropAdapter {
         setScrollExpandEnabled(false);
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.jface.viewers.ViewerDropAdapter#dragEnter(org.eclipse.swt.dnd.DropTargetEvent)
-     */
     @Override
 	public void dragEnter(DropTargetEvent event) {
     	fDropType = DROP_TYPE_DEFAULT;
@@ -165,9 +162,6 @@ public class ExpressionDropAdapter extends ViewerDropAdapter {
         return true;
     }
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.viewers.ViewerDropAdapter#dragOver(org.eclipse.swt.dnd.DropTargetEvent)
-	 */
 	@Override
 	public void dragOver(DropTargetEvent event) {
     	super.dragOver(event);
@@ -175,9 +169,6 @@ public class ExpressionDropAdapter extends ViewerDropAdapter {
     	event.feedback |= DND.FEEDBACK_SCROLL;
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.jface.viewers.ViewerDropAdapter#validateDrop(java.lang.Object, int, org.eclipse.swt.dnd.TransferData)
-     */
     @Override
 	public boolean validateDrop(Object target, int operation, TransferData transferType) {
         if (LocalSelectionTransfer.getTransfer().isSupportedType(transferType)) {
@@ -320,9 +311,6 @@ public class ExpressionDropAdapter extends ViewerDropAdapter {
         return false;
     }
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.viewers.ViewerDropAdapter#drop(org.eclipse.swt.dnd.DropTargetEvent)
-	 */
 	@Override
 	public void drop(DropTargetEvent event) {
 	    fCurrentTransferType = event.currentDataType;
@@ -331,9 +319,6 @@ public class ExpressionDropAdapter extends ViewerDropAdapter {
 	    super.drop(event);
 	}
 
-	/* (non-Javadoc)
-     * @see org.eclipse.jface.viewers.ViewerDropAdapter#performDrop(java.lang.Object)
-     */
     @Override
 	public boolean performDrop(Object data) {
         if (LocalSelectionTransfer.getTransfer().isSupportedType(fCurrentTransferType)) {

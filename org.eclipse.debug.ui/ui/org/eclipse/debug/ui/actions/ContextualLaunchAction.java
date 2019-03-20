@@ -105,24 +105,18 @@ public abstract class ContextualLaunchAction implements IObjectActionDelegate, I
 	public void setActivePart(IAction action, IWorkbenchPart targetPart) {
 		// We don't have a need for the active part.
 	}
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.action.IMenuCreator#dispose()
-	 */
+
 	@Override
 	public void dispose() {
 		// nothing to do
 	}
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.action.IMenuCreator#getMenu(org.eclipse.swt.widgets.Control)
-	 */
+
 	@Override
 	public Menu getMenu(Control parent) {
 		// never called
 		return null;
 	}
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.action.IMenuCreator#getMenu(org.eclipse.swt.widgets.Menu)
-	 */
+
 	@Override
 	public Menu getMenu(Menu parent) {
 		//Create the new menu. The menu will get filled when it is about to be shown. see fillMenu(Menu).

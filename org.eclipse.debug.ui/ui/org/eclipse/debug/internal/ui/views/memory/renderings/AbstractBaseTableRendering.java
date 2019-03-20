@@ -142,7 +142,7 @@ public abstract class AbstractBaseTableRendering extends AbstractMemoryRendering
 	 */
 	abstract public int getNumCharsPerByte();
 
-	/* (non-Javadoc)
+	/*
 	 * @see org.eclipse.debug.ui.memory.IResettableMemoryRendering#resetRendering()
 	 */
 	abstract public void resetRendering() throws DebugException;

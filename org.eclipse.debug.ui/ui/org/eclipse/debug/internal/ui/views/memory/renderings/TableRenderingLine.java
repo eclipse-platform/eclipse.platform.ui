@@ -58,8 +58,9 @@ public class TableRenderingLine extends PlatformObject {
 
 	public MemoryByte getByte(int offset)
 	{
-		if (fBytes == null)
+		if (fBytes == null) {
 			return null;
+		}
 
 		if (offset < fBytes.length) {
 			return fBytes[offset];
@@ -101,8 +102,9 @@ public class TableRenderingLine extends PlatformObject {
 					{
 						paddedString = fPaddedString;
 
-						if (paddedString.length() > TableRenderingLine.numCharPerByteForHex)
+						if (paddedString.length() > TableRenderingLine.numCharPerByteForHex) {
 							paddedString = paddedString.substring(0, TableRenderingLine.numCharPerByteForHex);
+						}
 					}
 					buffer.replace(bufferCounter, bufferCounter+TableRenderingLine.numCharPerByteForHex, paddedString);
 				}
@@ -163,12 +165,14 @@ public class TableRenderingLine extends PlatformObject {
 
 	public void markDeltas(TableRenderingLine oldData)
 	{
-		if (oldData == null)
+		if (oldData == null) {
 			return;
+		}
 
 		// if address is not the same, no need to compare
-		if (!oldData.getAddress().equals(this.getAddress()))
+		if (!oldData.getAddress().equals(this.getAddress())) {
 			return;
+		}
 
 		// if the string representation is the same, no need to compare
 		if (oldData.getRawMemoryString().equals(getRawMemoryString()))
@@ -183,8 +187,9 @@ public class TableRenderingLine extends PlatformObject {
 
 		MemoryByte[] oldMemory = oldData.getBytes();
 
-		if (oldMemory.length != fBytes.length)
+		if (oldMemory.length != fBytes.length) {
 			return;
+		}
 
 		for (int i=0; i<fBytes.length; i++)
 		{
@@ -209,18 +214,21 @@ public class TableRenderingLine extends PlatformObject {
 
 	public void copyDeltas(TableRenderingLine oldData)
 	{
-		if (oldData == null)
+		if (oldData == null) {
 			return;
+		}
 
 		// if address is not the same, do not copy
-		if (!oldData.getAddress().equals(this.getAddress()))
+		if (!oldData.getAddress().equals(this.getAddress())) {
 			return;
+		}
 
 		// reuse delta information from old data
 		MemoryByte[] oldMemory = oldData.getBytes();
 
-		if (oldMemory.length != fBytes.length)
+		if (oldMemory.length != fBytes.length) {
 			return;
+		}
 
 		for (int i=0; i<fBytes.length; i++)
 		{
@@ -230,12 +238,14 @@ public class TableRenderingLine extends PlatformObject {
 
 	public boolean isLineChanged(TableRenderingLine oldData)
 	{
-		if (oldData == null)
+		if (oldData == null) {
 			return false;
+		}
 
 		// if address is not the same, no need to compare
-		if (!oldData.getAddress().equals(this.getAddress()))
+		if (!oldData.getAddress().equals(this.getAddress())) {
 			return false;
+		}
 
 		// if the string representation is not the same, this line has changed
 		if (oldData.getRawMemoryString().equals(getRawMemoryString())) {
@@ -257,10 +267,12 @@ public class TableRenderingLine extends PlatformObject {
 
 		for (int i=offset; i<=endOffset; i++)
 		{
-			if (!fBytes[i].isHistoryKnown())
+			if (!fBytes[i].isHistoryKnown()) {
 				allBytesKnown = false;
-			if (fBytes[i].isChanged())
+			}
+			if (fBytes[i].isChanged()) {
 				allBytesUnchanged = false;
+			}
 		}
 
 		if (allBytesKnown && !allBytesUnchanged) {
@@ -274,14 +286,12 @@ public class TableRenderingLine extends PlatformObject {
 		for (int i=0; i<fBytes.length; i++)
 		{
 			// unset the change bit
-			if (fBytes[i].isChanged())
+			if (fBytes[i].isChanged()) {
 				fBytes[i].setChanged(false);
+			}
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see java.lang.Object#toString()
-	 */
 	@Override
 	public String toString()
 	{

@@ -45,18 +45,11 @@ public class ASCIIRendering extends AbstractAsyncTextRendering{
 		super.dispose();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.ui.memory.AbstractMemoryRendering#getNumCharsPerByte()
-	 */
 	@Override
 	public int getNumCharsPerByte() {
 		return numCharsPerByte;
 	}
 
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.ui.memory.AbstractTableRendering#getBytes(java.lang.String, java.math.BigInteger, org.eclipse.debug.core.model.MemoryByte[], java.lang.String)
-	 */
 	@Override
 	public byte[] getBytes(
 		String renderingId,
@@ -79,9 +72,6 @@ public class ASCIIRendering extends AbstractAsyncTextRendering{
 
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.ui.memory.AbstractTableRendering#getString(java.lang.String, java.math.BigInteger, org.eclipse.debug.core.model.MemoryByte[])
-	 */
 	@Override
 	public String getString(
 		String renderingId,
@@ -109,9 +99,6 @@ public class ASCIIRendering extends AbstractAsyncTextRendering{
 		return super.getString(renderingId, address, copy);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.util.IPropertyChangeListener#propertyChange(org.eclipse.jface.util.PropertyChangeEvent)
-	 */
 	@Override
 	public void propertyChange(PropertyChangeEvent event) {
 
@@ -121,9 +108,10 @@ public class ASCIIRendering extends AbstractAsyncTextRendering{
 			String codePage = (String)event.getNewValue();
 			setCodePage(codePage);
 
-			if (isVisible())
+			if (isVisible()) {
 				// just update labels, don't need to reget memory
 				updateLabels();
+			}
 		}
 
 		super.propertyChange(event);

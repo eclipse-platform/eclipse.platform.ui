@@ -38,9 +38,6 @@ public class DebugModelPropertyTester extends PropertyTester {
 	public static final String MODEL_TYPE_PROPERTY = "getModelIdentifier"; //$NON-NLS-1$
 	public static final String IS_TERMINATED_OR_DISCONNECTED_PROPERTY = "isTerminatedOrDisconnected"; //$NON-NLS-1$
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.core.expressions.PropertyTester#test(java.lang.Object, java.lang.String, java.lang.Object[], java.lang.Object)
-	 */
 	@Override
 	public boolean test(Object receiver, String property, Object[] args, Object expectedValue) {
 		if (MODEL_TYPE_PROPERTY.equals(property)){

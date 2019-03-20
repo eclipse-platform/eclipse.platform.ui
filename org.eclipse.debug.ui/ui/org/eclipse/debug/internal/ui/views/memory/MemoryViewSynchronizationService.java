@@ -107,12 +107,6 @@ public class MemoryViewSynchronizationService implements IMemoryRenderingSynchro
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * org.eclipse.debug.ui.IMemoryBlockViewSynchronizer#getSynchronizedProperty
-	 * (org.eclipse.debug.ui.ISynchronizedMemoryBlockView, java.lang.String)
-	 */
 	public Object getSynchronizedProperty(IMemoryBlock memoryBlock, String propertyId) {
 		SynchronizeInfo info = fSynchronizeInfo.get(memoryBlock);
 
@@ -124,12 +118,6 @@ public class MemoryViewSynchronizationService implements IMemoryRenderingSynchro
 		return null;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * org.eclipse.debug.ui.IMemoryBlockListener#MemoryBlockAdded(org.eclipse
-	 * .debug.core.model.IMemoryBlock)
-	 */
 	@Override
 	public void memoryBlocksAdded(IMemoryBlock[] memoryBlocks) {
 		// do nothing when a memory block is added
@@ -138,12 +126,6 @@ public class MemoryViewSynchronizationService implements IMemoryRenderingSynchro
 
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * org.eclipse.debug.ui.IMemoryBlockListener#MemoryBlockRemoved(org.eclipse
-	 * .debug.core.model.IMemoryBlock)
-	 */
 	@Override
 	public void memoryBlocksRemoved(IMemoryBlock[] memoryBlocks) {
 
@@ -193,23 +175,11 @@ public class MemoryViewSynchronizationService implements IMemoryRenderingSynchro
 		MemoryViewUtil.getMemoryBlockManager().removeListener(this);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.debug.ui.memory.IMemoryRenderingSynchronizationService#
-	 * addPropertyChangeListener(org.eclipse.jface.util.IPropertyChangeListener,
-	 * java.lang.String[])
-	 */
 	@Override
 	public void addPropertyChangeListener(IPropertyChangeListener listener, String[] properties) {
 		fPropertyListeners.put(listener, new PropertyListener(listener, properties));
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.debug.ui.memory.IMemoryRenderingSynchronizationService#
-	 * removePropertyChangeListener
-	 * (org.eclipse.jface.util.IPropertyChangeListener)
-	 */
 	@Override
 	public void removePropertyChangeListener(IPropertyChangeListener listener) {
 		if (fPropertyListeners.containsKey(listener)) {
@@ -263,11 +233,6 @@ public class MemoryViewSynchronizationService implements IMemoryRenderingSynchro
 		});
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.debug.ui.memory.IMemoryRenderingSynchronizationService#
-	 * getProperty(org.eclipse.debug.core.model.IMemoryBlock, java.lang.String)
-	 */
 	@Override
 	public Object getProperty(IMemoryBlock block, String property) {
 
@@ -289,12 +254,6 @@ public class MemoryViewSynchronizationService implements IMemoryRenderingSynchro
 		return null;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * org.eclipse.jface.util.IPropertyChangeListener#propertyChange(org.eclipse
-	 * .jface.util.PropertyChangeEvent)
-	 */
 	@Override
 	public void propertyChange(PropertyChangeEvent event) {
 		if (event == null || !(event.getSource() instanceof IMemoryRendering)) {
@@ -404,11 +363,6 @@ public class MemoryViewSynchronizationService implements IMemoryRenderingSynchro
 		return fEnableState == ENABLED;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.debug.ui.memory.IMemoryRenderingSynchronizationService#
-	 * setSynchronizationProvider(org.eclipse.debug.ui.memory.IMemoryRendering)
-	 */
 	@Override
 	public void setSynchronizationProvider(IMemoryRendering rendering) {
 
@@ -424,11 +378,6 @@ public class MemoryViewSynchronizationService implements IMemoryRenderingSynchro
 		fSyncServiceProvider = rendering;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.debug.ui.memory.IMemoryRenderingSynchronizationService#
-	 * getSynchronizationProvider()
-	 */
 	@Override
 	public IMemoryRendering getSynchronizationProvider() {
 		return fSyncServiceProvider;

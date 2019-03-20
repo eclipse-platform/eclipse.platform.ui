@@ -27,11 +27,6 @@ import org.eclipse.ui.texteditor.MarkerAnnotation;
  * @since 3.0
  */
 public class BreakpointImageProvider implements IAnnotationImageProvider {
-
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.texteditor.IAnnotationImageProvider#getManagedImage(org.eclipse.jface.text.source.Annotation)
-	 */
 	@Override
 	public Image getManagedImage(Annotation annotation) {
 		if (annotation instanceof MarkerAnnotation) {
@@ -45,16 +40,10 @@ public class BreakpointImageProvider implements IAnnotationImageProvider {
 		}
 		return null;
 	}
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.texteditor.IAnnotationImageProvider#getImageDescriptorId(org.eclipse.jface.text.source.Annotation)
-	 */
 	@Override
 	public String getImageDescriptorId(Annotation annotation) {
 		return null;
 	}
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.texteditor.IAnnotationImageProvider#getImageDescriptor(java.lang.String)
-	 */
 	@Override
 	public ImageDescriptor getImageDescriptor(String imageDescritporId) {
 		return null;

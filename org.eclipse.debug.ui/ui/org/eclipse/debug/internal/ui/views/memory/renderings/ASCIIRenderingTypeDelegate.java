@@ -23,9 +23,6 @@ import org.eclipse.debug.ui.memory.IMemoryRenderingTypeDelegate;
  */
 public class ASCIIRenderingTypeDelegate implements IMemoryRenderingTypeDelegate {
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.ui.memory.IMemoryRenderingTypeDelegate#createRendering(java.lang.String)
-	 */
 	@Override
 	public IMemoryRendering createRendering(String id) throws CoreException {
 		return new ASCIIRendering(id);

@@ -41,10 +41,6 @@ public class TableRenderingLabelProvider extends AbstractTableRenderingLabelProv
 		fTablePresentation = rendering.getAdapter(IMemoryBlockTablePresentation.class);
 	}
 
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.viewers.IBaseLabelProvider#dispose()
-	 */
 	@Override
 	public void dispose() {
 		if (fTablePresentation != null) {
@@ -54,9 +50,6 @@ public class TableRenderingLabelProvider extends AbstractTableRenderingLabelProv
 		super.dispose();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.viewers.IColorProvider#getForeground(java.lang.Object)
-	 */
 	@Override
 	public Color getForeground(Object element) {
 		if (element instanceof TableRenderingLine)
@@ -71,18 +64,12 @@ public class TableRenderingLabelProvider extends AbstractTableRenderingLabelProv
 		return DebugUIPlugin.getPreferenceColor(IDebugUIConstants.PREF_MEMORY_HISTORY_KNOWN_COLOR);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.viewers.IColorProvider#getBackground(java.lang.Object)
-	 */
 	@Override
 	public Color getBackground(Object element) {
 
 		return null;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.viewers.ITableLabelProvider#getColumnText(java.lang.Object, int)
-	 */
 	@Override
 	public String getColumnText(Object element, int columnIndex) {
 
@@ -98,8 +85,9 @@ public class TableRenderingLabelProvider extends AbstractTableRenderingLabelProv
 				// get address presentation
 				String tempLabel = fTablePresentation.getRowLabel(fRendering.getMemoryBlock(), new BigInteger(address, 16));
 
-				if (tempLabel != null)
+				if (tempLabel != null) {
 					return tempLabel;
+				}
 			}
 			return label;
 		}

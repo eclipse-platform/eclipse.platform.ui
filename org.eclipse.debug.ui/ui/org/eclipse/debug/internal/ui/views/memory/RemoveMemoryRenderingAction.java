@@ -46,10 +46,6 @@ public class RemoveMemoryRenderingAction extends Action {
 		fViewPane = viewPane;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.jface.action.IAction#run()
-	 */
 	@Override
 	public void run() {
 
@@ -65,12 +61,6 @@ public class RemoveMemoryRenderingAction extends Action {
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * com.ibm.debug.defaultrenderings.internal.actions.AbstractMemoryAction
-	 * #getViewTab()
-	 */
 	IMemoryViewTab getViewTab() {
 		if (fViewPane instanceof IMemoryView) {
 			return ((IMemoryView) fViewPane).getTopMemoryTab();

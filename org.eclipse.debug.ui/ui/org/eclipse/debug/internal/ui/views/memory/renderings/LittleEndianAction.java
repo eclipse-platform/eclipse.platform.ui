@@ -29,21 +29,16 @@ public class LittleEndianAction implements IObjectActionDelegate {
 
 	AbstractIntegerRendering fRendering;
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IObjectActionDelegate#setActivePart(org.eclipse.jface.action.IAction, org.eclipse.ui.IWorkbenchPart)
-	 */
 	@Override
 	public void setActivePart(IAction action, IWorkbenchPart targetPart) {
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IActionDelegate#run(org.eclipse.jface.action.IAction)
-	 */
 	@Override
 	public void run(IAction action) {
 
-		if (fRendering == null)
+		if (fRendering == null) {
 			return;
+		}
 
 		if (fRendering.getDisplayEndianess() != RenderingsUtil.LITTLE_ENDIAN){
 			fRendering.setDisplayEndianess(RenderingsUtil.LITTLE_ENDIAN);
@@ -51,19 +46,18 @@ public class LittleEndianAction implements IObjectActionDelegate {
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IActionDelegate#selectionChanged(org.eclipse.jface.action.IAction, org.eclipse.jface.viewers.ISelection)
-	 */
 	@Override
 	public void selectionChanged(IAction action, ISelection selection) {
-		if (selection == null)
+		if (selection == null) {
 			return;
+		}
 
 		if (selection instanceof IStructuredSelection)
 		{
 			Object obj = ((IStructuredSelection)selection).getFirstElement();
-			if (obj == null)
+			if (obj == null) {
 				return;
+			}
 
 			if (obj instanceof AbstractIntegerRendering)
 			{
@@ -96,14 +90,15 @@ public class LittleEndianAction implements IObjectActionDelegate {
 						}
 					}
 				}
-			}
-			else
+			} else {
 				endianess = fRendering.getDisplayEndianess();
+			}
 
-			if (endianess == RenderingsUtil.LITTLE_ENDIAN)
+			if (endianess == RenderingsUtil.LITTLE_ENDIAN) {
 				action.setChecked(true);
-			else
+			} else {
 				action.setChecked(false);
+			}
 		}
 	}
 

@@ -28,18 +28,12 @@ import org.eclipse.ui.model.IWorkbenchAdapter2;
  */
 public class BreakpointContainerWorkbenchAdapter implements IWorkbenchAdapter, IWorkbenchAdapter2{
 
-    /* (non-Javadoc)
-     * @see org.eclipse.ui.model.IWorkbenchAdapter#getChildren(java.lang.Object)
-     */
     @Override
 	public Object[] getChildren(Object o) {
         // not used
         return null;
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.ui.model.IWorkbenchAdapter#getImageDescriptor(java.lang.Object)
-     */
     @Override
 	public ImageDescriptor getImageDescriptor(Object object) {
         if (object instanceof IBreakpointContainer) {
@@ -56,9 +50,6 @@ public class BreakpointContainerWorkbenchAdapter implements IWorkbenchAdapter, I
         return null;
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.ui.model.IWorkbenchAdapter#getLabel(java.lang.Object)
-     */
     @Override
 	public String getLabel(Object object) {
         if (object instanceof IBreakpointContainer) {
@@ -75,17 +66,11 @@ public class BreakpointContainerWorkbenchAdapter implements IWorkbenchAdapter, I
         return IInternalDebugCoreConstants.EMPTY_STRING;
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.ui.model.IWorkbenchAdapter#getParent(java.lang.Object)
-     */
     @Override
 	public Object getParent(Object o) {
         return null;
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.ui.model.IWorkbenchAdapter2#getForeground(java.lang.Object)
-     */
     @Override
 	public RGB getForeground(Object object) {
         if (object instanceof IBreakpointContainer) {
@@ -99,9 +84,6 @@ public class BreakpointContainerWorkbenchAdapter implements IWorkbenchAdapter, I
         return null;
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.ui.model.IWorkbenchAdapter2#getBackground(java.lang.Object)
-     */
     @Override
 	public RGB getBackground(Object object) {
         if (object instanceof IBreakpointContainer) {
@@ -115,9 +97,6 @@ public class BreakpointContainerWorkbenchAdapter implements IWorkbenchAdapter, I
         return null;
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.ui.model.IWorkbenchAdapter2#getFont(java.lang.Object)
-     */
     @Override
 	public FontData getFont(Object object) {
         if (object instanceof IBreakpointContainer) {
