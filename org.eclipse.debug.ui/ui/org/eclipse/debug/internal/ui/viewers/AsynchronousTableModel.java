@@ -32,9 +32,6 @@ public class AsynchronousTableModel extends AsynchronousModel {
 		super(viewer);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.viewers.model.provisional.viewers.AsynchronousModel#add(org.eclipse.debug.internal.ui.viewers.model.provisional.viewers.ModelNode, java.lang.Object)
-	 */
 	@Override
 	protected void add(ModelNode parent, Object element) {}
 

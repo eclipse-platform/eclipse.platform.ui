@@ -30,9 +30,6 @@ import org.eclipse.ui.dialogs.ElementListSelectionDialog;
  * @since 3.0
  */
 public class ResolveDuplicatesHandler implements IStatusHandler {
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.core.IStatusHandler#handleStatus(org.eclipse.core.runtime.IStatus, java.lang.Object)
-	 */
 	@Override
 	public Object handleStatus(IStatus status, Object source) throws CoreException {
 		Object[] args = (Object[])source;

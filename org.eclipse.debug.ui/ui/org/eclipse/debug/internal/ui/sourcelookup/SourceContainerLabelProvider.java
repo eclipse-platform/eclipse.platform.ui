@@ -30,9 +30,6 @@ public class SourceContainerLabelProvider extends LabelProvider {
 
 	private ILabelProvider fLabelProvider = null;
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.viewers.ILabelProvider#getImage(java.lang.Object)
-	 */
 	@Override
 	public Image getImage(Object element) {
 		// first allow workbench adapter to provide image
@@ -55,9 +52,6 @@ public class SourceContainerLabelProvider extends LabelProvider {
 		return super.getImage(element);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.viewers.ILabelProvider#getText(java.lang.Object)
-	 */
 	@Override
 	public String getText(Object element) {
 		// first, allo workbench adapter to provide label
@@ -81,9 +75,6 @@ public class SourceContainerLabelProvider extends LabelProvider {
 		return fLabelProvider;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.viewers.IBaseLabelProvider#dispose()
-	 */
 	@Override
 	public void dispose() {
 		super.dispose();

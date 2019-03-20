@@ -24,9 +24,6 @@ import org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationCont
  */
 public class RegisterGroupMementoProvider extends DebugElementMementoProvider {
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.model.elements.DebugElementMementoProvider#getElementName(java.lang.Object, org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationContext)
-	 */
 	@Override
 	protected String getElementName(Object element, IPresentationContext context) throws CoreException {
 		if (element instanceof IRegisterGroup) {

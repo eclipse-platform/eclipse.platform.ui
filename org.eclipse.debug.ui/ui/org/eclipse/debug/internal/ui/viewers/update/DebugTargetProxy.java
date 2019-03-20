@@ -40,18 +40,12 @@ public class DebugTargetProxy extends EventHandlerModelProxy {
         fDebugTarget = target;
     }
 
-    /* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.viewers.update.EventHandlerModelProxy#dispose()
-	 */
 	@Override
 	public synchronized void dispose() {
 		super.dispose();
 		fDebugTarget = null;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.viewers.update.EventHandlerModelProxy#containsEvent(org.eclipse.debug.core.DebugEvent)
-	 */
 	@Override
 	protected boolean containsEvent(DebugEvent event) {
         Object source = event.getSource();
@@ -65,9 +59,6 @@ public class DebugTargetProxy extends EventHandlerModelProxy {
         return false;
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.debug.internal.ui.viewers.update.EventHandlerModelProxy#createEventHandlers()
-     */
     @Override
 	protected DebugEventHandler[] createEventHandlers() {
         ThreadEventHandler threadEventHandler = new ThreadEventHandler(this);
@@ -75,9 +66,6 @@ public class DebugTargetProxy extends EventHandlerModelProxy {
 				new StackFrameEventHandler(this, threadEventHandler) };
     }
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.viewers.provisional.IModelProxy#installed(org.eclipse.jface.viewers.Viewer)
-	 */
 	@Override
 	public void installed(Viewer viewer) {
 		// select any thread that is already suspended after installation

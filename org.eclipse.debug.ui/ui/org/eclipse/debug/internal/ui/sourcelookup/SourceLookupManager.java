@@ -58,23 +58,14 @@ public class SourceLookupManager implements IWindowListener {
 		return fgDefault;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IWindowListener#windowActivated(org.eclipse.ui.IWorkbenchWindow)
-	 */
 	@Override
 	public void windowActivated(IWorkbenchWindow window) {
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IWindowListener#windowDeactivated(org.eclipse.ui.IWorkbenchWindow)
-	 */
 	@Override
 	public void windowDeactivated(IWorkbenchWindow window) {
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IWindowListener#windowClosed(org.eclipse.ui.IWorkbenchWindow)
-	 */
 	@Override
 	public void windowClosed(IWorkbenchWindow window) {
 		SourceLookupService service = fServices.get(window);
@@ -84,9 +75,6 @@ public class SourceLookupManager implements IWindowListener {
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IWindowListener#windowOpened(org.eclipse.ui.IWorkbenchWindow)
-	 */
 	@Override
 	public void windowOpened(IWorkbenchWindow window) {
 		SourceLookupService service = fServices.get(window);
@@ -96,9 +84,6 @@ public class SourceLookupManager implements IWindowListener {
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.contexts.ISourceDisplayAdapter#displaySource(java.lang.Object, org.eclipse.ui.IWorkbenchPage, boolean)
-	 */
 	public void displaySource(Object context, IWorkbenchPage page, boolean forceSourceLookup) {
 		IWorkbenchWindow window = page.getWorkbenchWindow();
 		SourceLookupService service = fServices.get(window);

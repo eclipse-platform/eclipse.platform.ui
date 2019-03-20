@@ -120,10 +120,6 @@ class ChildrenCountUpdate extends ViewerUpdateMonitor implements IChildrenCountU
 		}
 	}
 
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.viewers.model.provisional.viewers.ViewerUpdateMonitor#performUpdate()
-	 */
 	@Override
 	protected void performUpdate() {
 		int viewCount = fCount;
@@ -160,9 +156,6 @@ class ChildrenCountUpdate extends ViewerUpdateMonitor implements IChildrenCountU
 		return buf.toString();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.viewers.model.ViewerUpdateMonitor#coalesce(org.eclipse.debug.internal.ui.viewers.model.ViewerUpdateMonitor)
-	 */
 	@Override
 	boolean coalesce(ViewerUpdateMonitor request) {
 		if (request instanceof ChildrenCountUpdate) {
@@ -181,9 +174,6 @@ class ChildrenCountUpdate extends ViewerUpdateMonitor implements IChildrenCountU
 		return false;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.viewers.model.ViewerUpdateMonitor#startRequest()
-	 */
 	@Override
 	void startRequest() {
 		if (fBatchedRequests == null) {
@@ -214,17 +204,11 @@ class ChildrenCountUpdate extends ViewerUpdateMonitor implements IChildrenCountU
 	    return false;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.viewers.model.ViewerUpdateMonitor#getPriority()
-	 */
 	@Override
 	int getPriority() {
 		return 2;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.viewers.model.ViewerUpdateMonitor#getSchedulingPath()
-	 */
 	@Override
 	TreePath getSchedulingPath() {
 		TreePath path = getElementPath();

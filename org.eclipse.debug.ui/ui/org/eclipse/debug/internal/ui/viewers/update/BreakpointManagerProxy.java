@@ -98,10 +98,6 @@ public class BreakpointManagerProxy extends AbstractModelProxy {
 		fProvider = bpmProvider;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.viewers.provisional.AbstractModelProxy#installed(org.eclipse.jface.viewers.Viewer)
-	 */
 	@Override
 	public void installed(Viewer viewer) {
 		super.installed(viewer);
@@ -110,10 +106,6 @@ public class BreakpointManagerProxy extends AbstractModelProxy {
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.viewers.provisional.AbstractModelProxy#dispose()
-	 */
 	@Override
 	public void dispose() {
 	    fProvider.unregisterModelProxy(fInput, this);

@@ -131,10 +131,6 @@ public abstract class AsynchronousRequestMonitor extends AbstractRequestMonitor 
         return false;
     }
 
-
-    /* (non-Javadoc)
-     * @see org.eclipse.core.runtime.IProgressMonitor#setCanceled(boolean)
-     */
     @Override
 	public void setCanceled(boolean value) {
         super.setCanceled(value);
@@ -143,9 +139,6 @@ public abstract class AsynchronousRequestMonitor extends AbstractRequestMonitor 
         }
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.core.runtime.IProgressMonitor#done()
-     */
     @Override
 	public final void done() {
     	synchronized (this) {
@@ -164,8 +157,9 @@ public abstract class AsynchronousRequestMonitor extends AbstractRequestMonitor 
     }
 
     protected void scheduleViewerUpdate(long ms) {
-        if(!isCanceled())
-            fViewerUpdateJob.schedule(ms);
+        if(!isCanceled()) {
+			fViewerUpdateJob.schedule(ms);
+		}
     }
 
     /**

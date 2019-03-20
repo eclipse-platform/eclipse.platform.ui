@@ -37,41 +37,26 @@ class LabelResult extends LabelRequestMonitor implements ILabelResult {
 		return super.isDone();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.viewers.ILabelResult#getElement()
-	 */
 	@Override
 	public Object getElement() {
 		return getNode().getElement();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.viewers.ILabelResult#getImages()
-	 */
 	@Override
 	public Image[] getImages() {
 		return getModel().getViewer().getImages(getImageDescriptors());
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.viewers.ILabelResult#getLabels()
-	 */
 	@Override
 	public String[] getLabels() {
 		return super.getLabels();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.viewers.ILabelResult#getTreePath()
-	 */
 	@Override
 	public TreePath getTreePath() {
 		return getNode().getTreePath();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.viewers.ILabelResult#getDepth()
-	 */
 	@Override
 	public int getDepth() {
 		int level = 0;

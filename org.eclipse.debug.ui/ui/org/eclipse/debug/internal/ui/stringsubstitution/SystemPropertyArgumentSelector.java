@@ -27,9 +27,6 @@ import org.eclipse.ui.dialogs.ElementListSelectionDialog;
  */
 public class SystemPropertyArgumentSelector implements IArgumentSelector {
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.stringsubstitution.IArgumentSelector#selectArgument(org.eclipse.core.variables.IStringVariable, org.eclipse.swt.widgets.Shell)
-	 */
 	@Override
 	public String selectArgument(IStringVariable variable, Shell shell) {
 		ElementListSelectionDialog dialog = new ElementListSelectionDialog(shell, new LabelProvider());

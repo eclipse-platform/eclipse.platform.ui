@@ -135,9 +135,6 @@ public class ExpressionManagerContentProvider extends ElementContentProvider {
 
     private static final AddNewExpressionElement ADD_NEW_EXPRESSION_ELEMENT = new AddNewExpressionElement();
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.viewers.model.provisional.elements.ElementContentProvider#getChildCount(java.lang.Object, org.eclipse.debug.internal.ui.viewers.provisional.IPresentationContext)
-	 */
 	@Override
 	protected int getChildCount(Object element, IPresentationContext context, IViewerUpdate monitor) throws CoreException {
 	    // Add the "Add new expression" element only if columns are displayed.
@@ -145,9 +142,6 @@ public class ExpressionManagerContentProvider extends ElementContentProvider {
 		    (context.getColumns() != null ? 1 : 0);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.viewers.model.provisional.elements.ElementContentProvider#getChildren(java.lang.Object, int, int, org.eclipse.debug.internal.ui.viewers.provisional.IPresentationContext)
-	 */
 	@Override
 	protected Object[] getChildren(Object parent, int index, int length, IPresentationContext context, IViewerUpdate monitor) throws CoreException {
 	    if (context.getColumns() != null) {
@@ -181,18 +175,11 @@ public class ExpressionManagerContentProvider extends ElementContentProvider {
         return null;
     }
 
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.viewers.model.provisional.elements.ElementContentProvider#supportsContextId(java.lang.String)
-	 */
 	@Override
 	protected boolean supportsContextId(String id) {
 		return id.equals(IDebugUIConstants.ID_EXPRESSION_VIEW);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.model.elements.ElementContentProvider#hasChildren(java.lang.Object, org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationContext, org.eclipse.debug.internal.ui.viewers.model.provisional.IViewerUpdate)
-	 */
 	@Override
 	protected boolean hasChildren(Object element, IPresentationContext context, IViewerUpdate monitor) throws CoreException {
 	    return true;

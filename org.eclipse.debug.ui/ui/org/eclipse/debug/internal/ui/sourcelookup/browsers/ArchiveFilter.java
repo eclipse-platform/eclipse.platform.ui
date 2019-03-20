@@ -43,9 +43,6 @@ public class ArchiveFilter extends ViewerFilter {
 	 */
 	private List<ISourceContainer> fExisting;
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.viewers.ViewerFilter#select(org.eclipse.jface.viewers.Viewer, java.lang.Object, java.lang.Object)
-	 */
 	@Override
 	public boolean select(Viewer viewer, Object parentElement, Object element) {
 		return fArchives.contains(element) && !fExisting.contains(element);

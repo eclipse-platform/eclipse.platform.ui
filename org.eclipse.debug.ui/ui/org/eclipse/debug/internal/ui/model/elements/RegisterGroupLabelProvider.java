@@ -25,9 +25,6 @@ import org.eclipse.jface.viewers.TreePath;
  */
 public class RegisterGroupLabelProvider extends DebugElementLabelProvider {
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.model.elements.DebugElementLabelProvider#getImageDescriptor(org.eclipse.jface.viewers.TreePath, org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationContext, java.lang.String)
-	 */
 	@Override
 	protected ImageDescriptor getImageDescriptor(TreePath elementPath, IPresentationContext presentationContext, String columnId) throws CoreException {
 		if (columnId == null || IDebugUIConstants.COLUMN_ID_VARIABLE_NAME.equals(columnId)) {
@@ -36,9 +33,6 @@ public class RegisterGroupLabelProvider extends DebugElementLabelProvider {
 		return null;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.model.elements.DebugElementLabelProvider#getLabel(org.eclipse.jface.viewers.TreePath, org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationContext, java.lang.String)
-	 */
 	@Override
 	protected String getLabel(TreePath elementPath, IPresentationContext context, String columnId) throws CoreException {
 		if (columnId == null || IDebugUIConstants.COLUMN_ID_VARIABLE_NAME.equals(columnId)) {

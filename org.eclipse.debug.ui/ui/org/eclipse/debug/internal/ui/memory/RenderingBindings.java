@@ -231,11 +231,6 @@ class RenderingBindings extends AbstractMemoryRenderingBindingsProvider implemen
 		return fExpression;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.debug.ui.memory.IMemoryRenderingBindingsProvider#
-	 * getRenderingTypes(org.eclipse.debug.core.model.IMemoryBlock)
-	 */
 	@Override
 	public IMemoryRenderingType[] getRenderingTypes(IMemoryBlock block) {
 		if (isBound(block)) {
@@ -259,11 +254,6 @@ class RenderingBindings extends AbstractMemoryRenderingBindingsProvider implemen
 		return EMPTY;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.debug.ui.memory.IMemoryRenderingBindingsProvider#
-	 * getDefaultRenderingTypes(org.eclipse.debug.core.model.IMemoryBlock)
-	 */
 	@Override
 	public IMemoryRenderingType[] getDefaultRenderingTypes(IMemoryBlock block) {
 		if (isBound(block)) {
@@ -276,11 +266,6 @@ class RenderingBindings extends AbstractMemoryRenderingBindingsProvider implemen
 		return EMPTY;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.debug.ui.memory.IMemoryRenderingBindingsProvider#
-	 * getPrimaryRenderingType(org.eclipse.debug.core.model.IMemoryBlock)
-	 */
 	@Override
 	public IMemoryRenderingType getPrimaryRenderingType(IMemoryBlock block) {
 		if (isBound(block)) {

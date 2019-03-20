@@ -78,9 +78,6 @@ public class ArchiveSourceContainerBrowser extends AbstractSourceContainerBrowse
 		return jars;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.sourcelookup.ISourceContainerBrowser#createSourceContainers(org.eclipse.swt.widgets.Shell, org.eclipse.debug.internal.core.sourcelookup.ISourceLookupDirector)
-	 */
 	@Override
 	public ISourceContainer[] addSourceContainers(Shell shell, ISourceLookupDirector director) {
 		ViewerFilter filter= new ArchiveFilter(getSelectedJars(director));

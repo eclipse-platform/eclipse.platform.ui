@@ -24,14 +24,11 @@ public abstract class AbstractUpdatePolicy {
 
 	private AsynchronousViewer fViewer = null;
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.ui.viewers.IUpdatePolicy#init(org.eclipse.debug.ui.viewers.update.IPresentation)
-	 */
 	public void init(AsynchronousViewer viewer) {
 		fViewer = viewer;
 	}
 
-	/* (non-Javadoc)
+	/*
 	 * @see org.eclipse.debug.ui.viewers.IUpdatePolicy#dispose()
 	 */
 	public synchronized void dispose() {

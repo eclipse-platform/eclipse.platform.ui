@@ -1014,17 +1014,11 @@ public class BreakpointManagerContentProvider extends ElementContentProvider
         return null;
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.debug.internal.ui.model.elements.ElementContentProvider#supportsContextId(java.lang.String)
-     */
     @Override
 	protected boolean supportsContextId(String id) {
         return id.equals(IDebugUIConstants.ID_BREAKPOINT_VIEW);
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.debug.internal.ui.model.elements.ElementContentProvider#getChildCount(java.lang.Object, org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationContext, org.eclipse.debug.internal.ui.viewers.model.provisional.IViewerUpdate)
-     */
     @Override
 	protected int getChildCount(Object element, IPresentationContext context, IViewerUpdate monitor) throws CoreException {
         Object input = monitor.getViewerInput();
@@ -1038,9 +1032,6 @@ public class BreakpointManagerContentProvider extends ElementContentProvider
         return 0;
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.debug.internal.ui.model.elements.ElementContentProvider#getChildren(java.lang.Object, int, int, org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationContext, org.eclipse.debug.internal.ui.viewers.model.provisional.IViewerUpdate)
-     */
     @Override
 	protected Object[] getChildren(Object parent, int index, int length, IPresentationContext context, IViewerUpdate monitor) throws CoreException {
         Object input = monitor.getViewerInput();
@@ -1056,10 +1047,6 @@ public class BreakpointManagerContentProvider extends ElementContentProvider
         return EMPTY;
     }
 
-    /*
-     * (non-Javadoc)
-     * @see org.eclipse.debug.core.IBreakpointsListener#breakpointsAdded(org.eclipse.debug.core.model.IBreakpoint[])
-     */
     @Override
 	public void breakpointsAdded(final IBreakpoint[] breakpoints) {
         new Job("Breakpoints View Update Job") { //$NON-NLS-1$
@@ -1079,10 +1066,6 @@ public class BreakpointManagerContentProvider extends ElementContentProvider
         }.schedule();
     }
 
-    /*
-     * (non-Javadoc)
-     * @see org.eclipse.debug.core.IBreakpointsListener#breakpointsRemoved(org.eclipse.debug.core.model.IBreakpoint[], org.eclipse.core.resources.IMarkerDelta[])
-     */
     @Override
 	public void breakpointsRemoved(final IBreakpoint[] breakpoints, IMarkerDelta[] deltas) {
         new Job("Breakpoints View Update Job") { //$NON-NLS-1$
@@ -1102,10 +1085,6 @@ public class BreakpointManagerContentProvider extends ElementContentProvider
         }.schedule();
     }
 
-    /*
-     * (non-Javadoc)
-     * @see org.eclipse.debug.core.IBreakpointsListener#breakpointsChanged(org.eclipse.debug.core.model.IBreakpoint[], org.eclipse.core.resources.IMarkerDelta[])
-     */
     @Override
 	public void breakpointsChanged(final IBreakpoint[] breakpoints, IMarkerDelta[] deltas) {
         new Job("Breakpoints View Update Job") { //$NON-NLS-1$

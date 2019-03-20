@@ -79,12 +79,6 @@ abstract public class AbstractAsyncTextRendering extends AbstractAsyncTableRende
 		return fCodePage;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.views.memory.provisional.
-	 * AbstractAsyncTableRendering#getString(java.lang.String,
-	 * java.math.BigInteger, org.eclipse.debug.core.model.MemoryByte[])
-	 */
 	@Override
 	public String getString(String dataType, BigInteger address, MemoryByte[] data) {
 		try {
@@ -123,13 +117,6 @@ abstract public class AbstractAsyncTextRendering extends AbstractAsyncTableRende
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.views.memory.provisional.
-	 * AbstractAsyncTableRendering#getBytes(java.lang.String,
-	 * java.math.BigInteger, org.eclipse.debug.core.model.MemoryByte[],
-	 * java.lang.String)
-	 */
 	@Override
 	public byte[] getBytes(String dataType, BigInteger address, MemoryByte[] currentValues, String data) {
 		try {

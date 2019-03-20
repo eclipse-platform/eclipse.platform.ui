@@ -53,27 +53,18 @@ public class LaunchProxy extends AbstractModelProxy implements ILaunchesListener
 		fLaunch = launch;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.viewers.AbstractModelProxy#init(org.eclipse.debug.internal.ui.viewers.IPresentationContext)
-	 */
 	@Override
 	public void init(IPresentationContext context) {
 		super.init(context);
 		DebugPlugin.getDefault().getLaunchManager().addLaunchListener(this);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.viewers.provisional.AbstractModelProxy#installed(org.eclipse.jface.viewers.Viewer)
-	 */
 	@Override
 	public void installed(Viewer viewer) {
 		// install model proxies for existing children
 		installModelProxies();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.viewers.AbstractModelProxy#dispose()
-	 */
 	@Override
 	public void dispose() {
 		super.dispose();
@@ -82,9 +73,6 @@ public class LaunchProxy extends AbstractModelProxy implements ILaunchesListener
 		fLaunch = null;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.core.ILaunchesListener2#launchesTerminated(org.eclipse.debug.core.ILaunch[])
-	 */
 	@Override
 	public void launchesTerminated(ILaunch[] launches) {
 		for (int i = 0; i < launches.length; i++) {
@@ -95,9 +83,6 @@ public class LaunchProxy extends AbstractModelProxy implements ILaunchesListener
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.core.ILaunchesListener#launchesRemoved(org.eclipse.debug.core.ILaunch[])
-	 */
 	@Override
 	public void launchesRemoved(ILaunch[] launches) {
 		for (int i = 0; i < launches.length; i++) {
@@ -108,16 +93,10 @@ public class LaunchProxy extends AbstractModelProxy implements ILaunchesListener
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.core.ILaunchesListener#launchesAdded(org.eclipse.debug.core.ILaunch[])
-	 */
 	@Override
 	public void launchesAdded(ILaunch[] launches) {
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.core.ILaunchesListener#launchesChanged(org.eclipse.debug.core.ILaunch[])
-	 */
 	@Override
 	public void launchesChanged(ILaunch[] launches) {
 		for (int i = 0; i < launches.length; i++) {

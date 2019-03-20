@@ -108,9 +108,6 @@ public class TreeModelLabelProvider extends ColumnLabelProvider
      * elements that are changed and are about to be updated.
      */
     class CancelPendingUpdatesVisitor implements IModelDeltaVisitor {
-        /* (non-Javadoc)
-         * @see org.eclipse.debug.internal.ui.viewers.provisional.IModelDeltaVisitor#visit(org.eclipse.debug.internal.ui.viewers.provisional.IModelDelta, int)
-         */
         @Override
 		public boolean visit(IModelDelta delta, int depth) {
             if ((delta.getFlags() & IModelDelta.CONTENT) > 0) {
@@ -207,9 +204,6 @@ public class TreeModelLabelProvider extends ColumnLabelProvider
 		return color;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.viewers.BaseLabelProvider#dispose()
-	 */
 	@Override
 	public void dispose() {
         Assert.isTrue(fViewer.getDisplay().getThread() == Thread.currentThread());

@@ -83,18 +83,12 @@ public class ViewManagementPreferencePage extends PreferencePage implements IWor
 		setPreferenceStore(DebugUITools.getPreferenceStore());
 	}
 
-    /* (non-Javadoc)
-     * @see org.eclipse.jface.preference.PreferencePage#createControl(org.eclipse.swt.widgets.Composite)
-     */
     @Override
 	public void createControl(Composite parent) {
 		super.createControl(parent);
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(getControl(), IDebugHelpContextIds.VIEW_MANAGEMENT_PREFERENCE_PAGE);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.preference.PreferencePage#createContents(org.eclipse.swt.widgets.Composite)
-	 */
 	@Override
 	protected Control createContents(Composite parent) {
 		Composite composite= new Composite(parent, SWT.NONE);
@@ -188,9 +182,6 @@ public class ViewManagementPreferencePage extends PreferencePage implements IWor
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.preference.IPreferencePage#performOk()
-	 */
 	@Override
 	public boolean performOk() {
 		Object[] descriptors = fPerspectiveViewer.getCheckedElements();
@@ -218,9 +209,6 @@ public class ViewManagementPreferencePage extends PreferencePage implements IWor
 		return super.performOk();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.preference.PreferencePage#performDefaults()
-	 */
 	@Override
 	protected void performDefaults() {
         checkPerspectives( ViewContextService.getDefaultEnabledPerspectives() );
@@ -230,9 +218,6 @@ public class ViewManagementPreferencePage extends PreferencePage implements IWor
 		super.performDefaults();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IWorkbenchPreferencePage#init(org.eclipse.ui.IWorkbench)
-	 */
 	@Override
 	public void init(IWorkbench workbench) {
 	}
@@ -251,24 +236,15 @@ public class ViewManagementPreferencePage extends PreferencePage implements IWor
 
 	private static class PerspectiveProvider implements IStructuredContentProvider {
 
-		/* (non-Javadoc)
-		 * @see org.eclipse.jface.viewers.IStructuredContentProvider#getElements(java.lang.Object)
-		 */
 		@Override
 		public Object[] getElements(Object inputElement) {
 			return PlatformUI.getWorkbench().getPerspectiveRegistry().getPerspectives();
 		}
 
-		/* (non-Javadoc)
-		 * @see org.eclipse.jface.viewers.IContentProvider#inputChanged(org.eclipse.jface.viewers.Viewer, java.lang.Object, java.lang.Object)
-		 */
 		@Override
 		public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
 		}
 
-        /* (non-Javadoc)
-         * @see org.eclipse.jface.viewers.IContentProvider#dispose()
-         */
         @Override
 		public void dispose() {
         }
@@ -286,9 +262,6 @@ public class ViewManagementPreferencePage extends PreferencePage implements IWor
 	    }
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.dialogs.IDialogPage#dispose()
-	 */
 	@Override
 	public void dispose() {
 		super.dispose();

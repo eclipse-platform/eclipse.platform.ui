@@ -14,7 +14,6 @@
 package org.eclipse.debug.internal.ui.sourcelookup;
 
 import org.eclipse.core.runtime.IAdapterFactory;
-
 import org.eclipse.ui.model.IWorkbenchAdapter;
 
 /**
@@ -23,9 +22,6 @@ import org.eclipse.ui.model.IWorkbenchAdapter;
  * @since 3.0
  */
 public class SourceElementAdapterFactory implements IAdapterFactory {
-	/* (non-Javadoc)
-	 * @see org.eclipse.core.runtime.IAdapterFactory#getAdapter(java.lang.Object, java.lang.Class)
-	 */
 	@SuppressWarnings("unchecked")
 	@Override
 	public <T> T getAdapter(Object adaptableObject, Class<T> adapterType) {
@@ -34,9 +30,6 @@ public class SourceElementAdapterFactory implements IAdapterFactory {
 		}
 		return null;
 	}
-	/* (non-Javadoc)
-	 * @see org.eclipse.core.runtime.IAdapterFactory#getAdapterList()
-	 */
 	@Override
 	public Class<?>[] getAdapterList() {
 		return new Class[] {IWorkbenchAdapter.class};

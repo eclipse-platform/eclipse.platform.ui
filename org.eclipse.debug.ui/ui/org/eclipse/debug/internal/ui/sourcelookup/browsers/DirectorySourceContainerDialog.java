@@ -105,9 +105,6 @@ public class DirectorySourceContainerDialog extends TitleAreaDialog {
 		return fSearchSubfolders;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.dialogs.TitleAreaDialog#createDialogArea(org.eclipse.swt.widgets.Composite)
-	 */
 	@Override
 	protected Control createDialogArea(Composite parent) {
 		Image image = (fNewContainer) ? DebugPluginImages.getImage(IInternalDebugUIConstants.IMG_ADD_SRC_DIR_WIZ) :
@@ -173,9 +170,6 @@ public class DirectorySourceContainerDialog extends TitleAreaDialog {
         return parentComposite;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.window.Window#configureShell(org.eclipse.swt.widgets.Shell)
-	 */
 	@Override
 	protected void configureShell(Shell newShell) {
 		String title = null;
@@ -188,9 +182,6 @@ public class DirectorySourceContainerDialog extends TitleAreaDialog {
 		super.configureShell( newShell );
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.dialogs.TitleAreaDialog#createContents(org.eclipse.swt.widgets.Composite)
-	 */
 	@Override
 	protected Control createContents(Composite parent) {
 		Control c = super.createContents(parent);
@@ -201,9 +192,6 @@ public class DirectorySourceContainerDialog extends TitleAreaDialog {
 		return c;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.dialogs.Dialog#okPressed()
-	 */
 	@Override
 	protected void okPressed() {
 		fDirectory = fDirText.getText().trim();

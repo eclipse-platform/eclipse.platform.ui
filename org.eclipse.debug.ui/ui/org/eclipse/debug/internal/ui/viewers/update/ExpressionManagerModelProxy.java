@@ -35,9 +35,6 @@ import org.eclipse.jface.viewers.Viewer;
  */
 public class ExpressionManagerModelProxy extends AbstractModelProxy implements IExpressionsListener2, IPropertyChangeListener {
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.viewers.update.EventHandlerModelProxy#init(org.eclipse.debug.internal.ui.viewers.IPresentationContext)
-	 */
 	@Override
 	public void init(IPresentationContext context) {
 		super.init(context);
@@ -45,9 +42,6 @@ public class ExpressionManagerModelProxy extends AbstractModelProxy implements I
 		context.addPropertyChangeListener(this);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.viewers.provisional.AbstractModelProxy#installed(org.eclipse.jface.viewers.Viewer)
-	 */
 	@Override
 	public void installed(Viewer viewer) {
 		updateExpressions(getExpressionManager().getExpressions(), IModelDelta.INSTALL);
@@ -60,9 +54,6 @@ public class ExpressionManagerModelProxy extends AbstractModelProxy implements I
 		return DebugPlugin.getDefault().getExpressionManager();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.viewers.update.EventHandlerModelProxy#dispose()
-	 */
 	@Override
 	public synchronized void dispose() {
         getPresentationContext().removePropertyChangeListener(this);
@@ -70,9 +61,6 @@ public class ExpressionManagerModelProxy extends AbstractModelProxy implements I
 		getExpressionManager().removeExpressionListener(this);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.core.IExpressionsListener2#expressionsMoved(org.eclipse.debug.core.model.IExpression[], int)
-	 */
 	@Override
 	public void expressionsMoved(IExpression[] expressions, int index){
 		int count = getElementsCount();
@@ -88,9 +76,6 @@ public class ExpressionManagerModelProxy extends AbstractModelProxy implements I
 		fireModelChanged(delta);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.core.IExpressionsListener2#expressionsInserted(org.eclipse.debug.core.model.IExpression[], int)
-	 */
 	@Override
 	public void expressionsInserted(IExpression[] expressions, int index){
 	    int count = getElementsCount();
@@ -102,9 +87,6 @@ public class ExpressionManagerModelProxy extends AbstractModelProxy implements I
 		fireModelChanged(delta);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.core.IExpressionsListener#expressionsAdded(org.eclipse.debug.core.model.IExpression[])
-	 */
 	@Override
 	public void expressionsAdded(IExpression[] expressions) {
 	    int index = getExpressionManager().getExpressions().length - expressions.length;
@@ -117,17 +99,11 @@ public class ExpressionManagerModelProxy extends AbstractModelProxy implements I
         fireModelChanged(delta);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.core.IExpressionsListener#expressionsRemoved(org.eclipse.debug.core.model.IExpression[])
-	 */
 	@Override
 	public void expressionsRemoved(IExpression[] expressions) {
 		updateExpressions(expressions, IModelDelta.REMOVED | IModelDelta.UNINSTALL);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.core.IExpressionsListener#expressionsChanged(org.eclipse.debug.core.model.IExpression[])
-	 */
 	@Override
 	public void expressionsChanged(IExpression[] expressions) {
 		updateExpressions(expressions, IModelDelta.CONTENT | IModelDelta.STATE);

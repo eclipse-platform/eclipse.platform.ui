@@ -89,9 +89,6 @@ abstract class PromptingResolver implements IDynamicVariableResolver {
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.core.stringsubstitution.IContextVariableResolver#resolveValue(org.eclipse.debug.internal.core.stringsubstitution.IContextVariable, java.lang.String)
-	 */
 	@Override
 	public String resolveValue(IDynamicVariable variable, String argument) throws CoreException {
 		String value = null;

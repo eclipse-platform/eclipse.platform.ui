@@ -257,15 +257,6 @@ class ViewerStateTracker {
 
                 private IElementMementoRequest fRequest;
 
-                /*
-                 * (non-Javadoc)
-                 *
-                 * @see
-                 * org.eclipse.debug.internal.ui.viewers.model.provisional.viewers
-                 * .
-                 * IMementoManager#requestComplete(org.eclipse.debug.internal.ui
-                 * .viewers.model.provisional.IElementMementoRequest)
-                 */
                 @Override
 				public void requestComplete(ElementMementoRequest request) {
                     if (fContentProvider.isDisposed()) {
@@ -325,13 +316,6 @@ class ViewerStateTracker {
                     }
                 }
 
-                /*
-                 * (non-Javadoc)
-                 *
-                 * @see
-                 * org.eclipse.debug.internal.ui.viewers.model.provisional.viewers
-                 * .IMementoManager#processReqeusts()
-                 */
                 @Override
 				public void processReqeusts() {
                     notifyStateUpdate(input, STATE_RESTORE_SEQUENCE_BEGINS, null);
@@ -342,15 +326,6 @@ class ViewerStateTracker {
                     defaultProvider.encodeElements(new IElementMementoRequest[] { fRequest });
                 }
 
-                /*
-                 * (non-Javadoc)
-                 *
-                 * @see
-                 * org.eclipse.debug.internal.ui.viewers.model.provisional.viewers
-                 * .
-                 * IMementoManager#addRequest(org.eclipse.debug.internal.ui.viewers
-                 * .model.provisional.IElementMementoRequest)
-                 */
                 @Override
 				public void addRequest(ElementMementoRequest req) {
                     fRequest = req;
@@ -694,15 +669,6 @@ class ViewerStateTracker {
              */
             private boolean fCanceled = false;
 
-            /*
-             * (non-Javadoc)
-             *
-             * @see
-             * org.eclipse.debug.internal.ui.viewers.model.provisional.viewers
-             * .IMementoManager
-             * #requestComplete(org.eclipse.debug.internal.ui.viewers
-             * .model.provisional.IElementMementoRequest)
-             */
             @Override
 			public void requestComplete(ElementMementoRequest request) {
                 Assert.isTrue( fContentProvider.getViewer().getDisplay().getThread() == Thread.currentThread() );
@@ -756,13 +722,6 @@ class ViewerStateTracker {
                 stateSaveComplete(input, this);
             }
 
-            /*
-             * (non-Javadoc)
-             *
-             * @see
-             * org.eclipse.debug.internal.ui.viewers.model.provisional.viewers
-             * .IMementoManager#processReqeusts()
-             */
             @Override
 			public void processReqeusts() {
                 Assert.isTrue( fContentProvider.getViewer().getDisplay().getThread() == Thread.currentThread() );
@@ -788,15 +747,6 @@ class ViewerStateTracker {
                 }
             }
 
-            /*
-             * (non-Javadoc)
-             *
-             * @see
-             * org.eclipse.debug.internal.ui.viewers.model.provisional.viewers
-             * .IMementoManager
-             * #addRequest(org.eclipse.debug.internal.ui.viewers.
-             * model.provisional.IElementMementoRequest)
-             */
             @Override
 			public void addRequest(ElementMementoRequest request) {
                 Assert.isTrue( fContentProvider.getViewer().getDisplay().getThread() == Thread.currentThread() );
@@ -1076,14 +1026,6 @@ class ViewerStateTracker {
         class CheckState implements IModelDeltaVisitor {
             private boolean complete = true;
 
-            /*
-             * (non-Javadoc)
-             *
-             * @see
-             * org.eclipse.debug.internal.ui.viewers.provisional.IModelDeltaVisitor
-             * #visit(org.eclipse.debug.internal.ui.viewers.provisional.IModelDelta,
-             * int)
-             */
             @Override
 			public boolean visit(IModelDelta delta, int depth) {
                 // Filter out the CONTENT flags from the delta flags, the content

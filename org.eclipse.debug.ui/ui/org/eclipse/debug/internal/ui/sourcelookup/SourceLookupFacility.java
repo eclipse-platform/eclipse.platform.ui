@@ -103,20 +103,12 @@ public class SourceLookupFacility implements IPageListener, IPartListener2, IPro
 			fEntryStack = new ArrayList<>();
 		}
 
-		/*
-		 * (non-Javadoc)
-		 * @see java.util.HashMap#put(java.lang.Object, java.lang.Object)
-		 */
 		@Override
 		public SourceLookupResult put(Object key, SourceLookupResult value) {
 			shuffle(key);
 			return super.put(key, value);
 		}
 
-		/*
-		 * (non-Javadoc)
-		 * @see java.util.HashMap#remove(java.lang.Object)
-		 */
 		@Override
 		public SourceLookupResult remove(Object key) {
 			SourceLookupResult oldResult = super.remove(key);
@@ -253,10 +245,6 @@ public class SourceLookupFacility implements IPageListener, IPartListener2, IPro
 			this.locator = locator;
 		}
 
-		/*
-		 * (non-Javadoc)
-		 * @see java.lang.Object#hashCode()
-		 */
 		@Override
 		public int hashCode() {
 			final int prime = 31;
@@ -267,10 +255,6 @@ public class SourceLookupFacility implements IPageListener, IPartListener2, IPro
 			return result;
 		}
 
-		/*
-		 * (non-Javadoc)
-		 * @see java.lang.Object#equals(java.lang.Object)
-		 */
 		@Override
 		public boolean equals(Object obj) {
 			if (this == obj) {
@@ -585,47 +569,29 @@ public class SourceLookupFacility implements IPageListener, IPartListener2, IPro
 		return false;
 	}
 
-    /* (non-Javadoc)
-     * @see org.eclipse.ui.IPageListener#pageActivated(org.eclipse.ui.IWorkbenchPage)
-     */
     @Override
 	public void pageActivated(IWorkbenchPage page) {
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.ui.IPageListener#pageClosed(org.eclipse.ui.IWorkbenchPage)
-     */
     @Override
 	public void pageClosed(IWorkbenchPage page) {
         fEditorsByPage.remove(page);
         page.removePartListener(this);
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.ui.IPageListener#pageOpened(org.eclipse.ui.IWorkbenchPage)
-     */
     @Override
 	public void pageOpened(IWorkbenchPage page) {
     	page.addPartListener(this);
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.ui.IPartListener2#partActivated(org.eclipse.ui.IWorkbenchPartReference)
-     */
     @Override
 	public void partActivated(IWorkbenchPartReference partRef) {
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.ui.IPartListener2#partBroughtToTop(org.eclipse.ui.IWorkbenchPartReference)
-     */
     @Override
 	public void partBroughtToTop(IWorkbenchPartReference partRef) {
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.ui.IPartListener2#partClosed(org.eclipse.ui.IWorkbenchPartReference)
-     */
     @Override
 	public void partClosed(IWorkbenchPartReference partRef) {
         // clear the cached editor for the page if it has been closed
@@ -637,44 +603,26 @@ public class SourceLookupFacility implements IPageListener, IPartListener2, IPro
 		}
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.ui.IPartListener2#partDeactivated(org.eclipse.ui.IWorkbenchPartReference)
-     */
     @Override
 	public void partDeactivated(IWorkbenchPartReference partRef) {
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.ui.IPartListener2#partOpened(org.eclipse.ui.IWorkbenchPartReference)
-     */
     @Override
 	public void partOpened(IWorkbenchPartReference partRef) {
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.ui.IPartListener2#partHidden(org.eclipse.ui.IWorkbenchPartReference)
-     */
     @Override
 	public void partHidden(IWorkbenchPartReference partRef) {
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.ui.IPartListener2#partVisible(org.eclipse.ui.IWorkbenchPartReference)
-     */
     @Override
 	public void partVisible(IWorkbenchPartReference partRef) {
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.ui.IPartListener2#partInputChanged(org.eclipse.ui.IWorkbenchPartReference)
-     */
     @Override
 	public void partInputChanged(IWorkbenchPartReference partRef) {
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.jface.util.IPropertyChangeListener#propertyChange(org.eclipse.jface.util.PropertyChangeEvent)
-     */
     @Override
 	public void propertyChange(PropertyChangeEvent event) {
         String property = event.getProperty();
@@ -749,11 +697,6 @@ public class SourceLookupFacility implements IPageListener, IPartListener2, IPro
 			// job, in order to avoid blocking nested jobs (bug 339542).
 		}
 
-		/*
-		 * (non-Javadoc)
-		 * @see org.eclipse.core.runtime.jobs.Job#run(org.eclipse.core.runtime.
-		 * IProgressMonitor)
-		 */
 		@Override
 		protected IStatus run(IProgressMonitor monitor) {
 			if (!monitor.isCanceled()) {
@@ -767,10 +710,6 @@ public class SourceLookupFacility implements IPageListener, IPartListener2, IPro
 			return Status.OK_STATUS;
 		}
 
-		/*
-		 * (non-Javadoc)
-		 * @see org.eclipse.core.runtime.jobs.Job#belongsTo(java.lang.Object)
-		 */
 		@Override
 		public boolean belongsTo(Object family) {
 			// source lookup jobs are a family per workbench page
@@ -796,12 +735,6 @@ public class SourceLookupFacility implements IPageListener, IPartListener2, IPro
 			fPage = page;
 		}
 
-		/*
-		 * (non-Javadoc)
-		 * @see
-		 * org.eclipse.ui.progress.UIJob#runInUIThread(org.eclipse.core.runtime
-		 * .IProgressMonitor)
-		 */
 		@Override
 		public IStatus runInUIThread(IProgressMonitor monitor) {
 			if (!monitor.isCanceled() && fResult != null) {
@@ -818,10 +751,6 @@ public class SourceLookupFacility implements IPageListener, IPartListener2, IPro
 			return Status.OK_STATUS;
 		}
 
-		/*
-		 * (non-Javadoc)
-		 * @see org.eclipse.core.runtime.jobs.Job#belongsTo(java.lang.Object)
-		 */
 		@Override
 		public boolean belongsTo(Object family) {
 			// source display jobs are a family per workbench page
@@ -835,7 +764,6 @@ public class SourceLookupFacility implements IPageListener, IPartListener2, IPro
 	}
 
 	/*
-	 * (non-Javadoc)
 	 * @see
 	 * org.eclipse.debug.ui.contexts.ISourceDisplayAdapter#displaySource(java
 	 * .lang.Object, org.eclipse.ui.IWorkbenchPage, boolean)

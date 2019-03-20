@@ -123,9 +123,6 @@ public abstract class ViewerUpdateMonitor extends Request implements IViewerUpda
     	return fElementContentProvider;
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.core.runtime.IProgressMonitor#done()
-     */
     @Override
 	public final void done() {
     	synchronized (this) {
@@ -156,25 +153,16 @@ public abstract class ViewerUpdateMonitor extends Request implements IViewerUpda
 	 */
     protected abstract void performUpdate();
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.viewers.model.provisional.IViewerUpdate#getPresentationContext()
-	 */
 	@Override
 	public IPresentationContext getPresentationContext() {
 		return fContext;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.viewers.model.provisional.IViewerUpdate#getElement()
-	 */
 	@Override
 	public Object getElement() {
 		return fElement;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.viewers.model.provisional.IViewerUpdate#getElementPath()
-	 */
 	@Override
 	public TreePath getElementPath() {
 		return fElementPath;
@@ -217,9 +205,6 @@ public abstract class ViewerUpdateMonitor extends Request implements IViewerUpda
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.viewers.model.provisional.IViewerUpdate#getViewerInput()
-	 */
 	@Override
 	public Object getViewerInput() {
 		return fViewerInput;

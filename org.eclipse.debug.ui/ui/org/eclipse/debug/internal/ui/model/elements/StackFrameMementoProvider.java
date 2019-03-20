@@ -25,9 +25,6 @@ import org.eclipse.debug.ui.IDebugUIConstants;
  */
 public class StackFrameMementoProvider extends DebugElementMementoProvider {
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.model.elements.DebugElementMementoProvider#getElementName(java.lang.Object, org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationContext)
-	 */
 	@Override
 	protected String getElementName(Object element, IPresentationContext context) throws CoreException {
 		if (element instanceof IStackFrame) {

@@ -50,9 +50,6 @@ public class DefaultWatchExpressionModelProxy extends DefaultExpressionModelProx
 		super(expression);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.viewers.provisional.AbstractModelProxy#installed(org.eclipse.jface.viewers.Viewer)
-	 */
 	@Override
 	public void installed(final Viewer viewer) {
 		super.installed(viewer);
@@ -88,9 +85,6 @@ public class DefaultWatchExpressionModelProxy extends DefaultExpressionModelProx
 		job.schedule();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.viewers.update.DefaultExpressionModelProxy#dispose()
-	 */
 	@Override
 	public synchronized void dispose() {
 		super.dispose();
@@ -100,9 +94,6 @@ public class DefaultWatchExpressionModelProxy extends DefaultExpressionModelProx
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.viewers.update.EventHandlerModelProxy#createEventHandlers()
-	 */
 	@Override
 	protected DebugEventHandler[] createEventHandlers() {
 		return new DebugEventHandler[]{new ExpressionEventHandler(this)};
@@ -133,9 +124,6 @@ public class DefaultWatchExpressionModelProxy extends DefaultExpressionModelProx
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.ui.contexts.IDebugContextListener#debugContextChanged(org.eclipse.debug.ui.contexts.DebugContextEvent)
-	 */
 	@Override
 	public void debugContextChanged(DebugContextEvent event) {
 		if ((event.getFlags() & DebugContextEvent.ACTIVATED) > 0) {

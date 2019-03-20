@@ -29,9 +29,6 @@ public class TableRemoveRequestMonitor extends TableAddRequestMonitor {
 		super(parent, elements, model);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.viewers.model.provisional.viewers.AsynchronousRequestMonitor#performUpdate()
-	 */
 	@Override
 	protected void performUpdate() {
 		((AsynchronousTableModel)getModel()).removed(fElements);

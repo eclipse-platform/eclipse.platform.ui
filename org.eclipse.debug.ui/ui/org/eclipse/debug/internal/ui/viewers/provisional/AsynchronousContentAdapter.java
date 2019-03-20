@@ -34,10 +34,6 @@ public abstract class AsynchronousContentAdapter implements IAsynchronousContent
 
 	protected static final Object[] EMPTY = new Object[0];
 
-    /*
-     * (non-Javadoc)
-     * @see org.eclipse.debug.internal.ui.viewers.provisional.IAsynchronousContentAdapter#retrieveChildren(java.lang.Object, org.eclipse.debug.internal.ui.viewers.provisional.IPresentationContext, org.eclipse.debug.internal.ui.viewers.provisional.IChildrenRequestMonitor)
-     */
     @Override
 	public void retrieveChildren(final Object parent, final IPresentationContext context, final IChildrenRequestMonitor result) {
 		Job job = new Job("Retrieving Children") { //$NON-NLS-1$
@@ -66,10 +62,6 @@ public abstract class AsynchronousContentAdapter implements IAsynchronousContent
     }
 
 
-    /*
-     * (non-Javadoc)
-     * @see org.eclipse.debug.internal.ui.viewers.provisional.IAsynchronousContentAdapter#isContainer(java.lang.Object, org.eclipse.debug.internal.ui.viewers.provisional.IPresentationContext, org.eclipse.debug.internal.ui.viewers.provisional.IContainerRequestMonitor)
-     */
     @Override
 	public void isContainer(final Object element, final IPresentationContext context, final IContainerRequestMonitor result) {
 		Job job = new Job("Computing hasChildren") { //$NON-NLS-1$

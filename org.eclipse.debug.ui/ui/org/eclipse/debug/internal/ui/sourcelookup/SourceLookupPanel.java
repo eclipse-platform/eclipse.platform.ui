@@ -301,32 +301,20 @@ public class SourceLookupPanel extends AbstractLaunchConfigurationTab implements
 		return fPathViewer.getEntries();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.ui.AbstractLaunchConfigurationTab#setDirty(boolean)
-	 */
 	@Override
 	public void setDirty(boolean dirty) {
 		super.setDirty(dirty);
 
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#getName()
-	 */
 	@Override
 	public String getName() {
 		return SourceLookupUIMessages.sourceTab_tabTitle;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#setDefaults(org.eclipse.debug.core.ILaunchConfigurationWorkingCopy)
-	 */
 	@Override
 	public void setDefaults(ILaunchConfigurationWorkingCopy configuration) {}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.ui.AbstractLaunchConfigurationTab#updateLaunchConfigurationDialog()
-	 */
 	@Override
 	protected void updateLaunchConfigurationDialog() {
 		if (getLaunchConfigurationDialog() != null) {
@@ -371,9 +359,6 @@ public class SourceLookupPanel extends AbstractLaunchConfigurationTab implements
 	}
 
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#activated(org.eclipse.debug.core.ILaunchConfigurationWorkingCopy)
-	 */
 	@Override
 	public void activated(ILaunchConfigurationWorkingCopy workingCopy) {
 		initializeFrom(workingCopy);
@@ -390,9 +375,6 @@ public class SourceLookupPanel extends AbstractLaunchConfigurationTab implements
 		return fLocator;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#dispose()
-	 */
 	@Override
 	public void dispose() {
 		super.dispose();

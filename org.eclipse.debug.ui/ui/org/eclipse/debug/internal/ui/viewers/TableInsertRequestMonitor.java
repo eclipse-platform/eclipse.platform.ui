@@ -31,9 +31,6 @@ public class TableInsertRequestMonitor extends TableAddRequestMonitor {
 		fIndex = index;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.viewers.model.provisional.viewers.AsynchronousRequestMonitor#performUpdate()
-	 */
 	@Override
 	protected void performUpdate() {
 		((AsynchronousTableModel)getModel()).inserted(fElements, fIndex);

@@ -45,25 +45,16 @@ class MemoryRenderingType implements IMemoryRenderingType {
         fConfigurationElement = element;
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.debug.ui.memory.IMemoryRenderingType#getLabel()
-     */
     @Override
 	public String getLabel() {
         return fConfigurationElement.getAttribute(ATTR_MEM_RENDERING_TYPE_NAME);
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.debug.ui.memory.IMemoryRenderingType#getId()
-     */
     @Override
 	public String getId() {
         return fConfigurationElement.getAttribute(ATTR_MEM_RENDERING_TYPE_ID);
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.debug.ui.memory.IMemoryRenderingType#createRendering()
-     */
     @Override
 	public IMemoryRendering createRendering() throws CoreException {
         if (fDelegate == null) {

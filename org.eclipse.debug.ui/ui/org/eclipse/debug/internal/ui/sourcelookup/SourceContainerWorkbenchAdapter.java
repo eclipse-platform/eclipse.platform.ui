@@ -31,23 +31,14 @@ import org.eclipse.ui.model.IWorkbenchAdapter;
  * @since 3.0
  */
 public class SourceContainerWorkbenchAdapter implements IWorkbenchAdapter {
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.model.IWorkbenchAdapter#getChildren(java.lang.Object)
-	 */
 	@Override
 	public Object[] getChildren(Object o) {
 		return null;
 	}
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.model.IWorkbenchAdapter#getImageDescriptor(java.lang.Object)
-	 */
 	@Override
 	public ImageDescriptor getImageDescriptor(Object object) {
 		return null;
 	}
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.model.IWorkbenchAdapter#getLabel(java.lang.Object)
-	 */
 	@Override
 	public String getLabel(Object o) {
 		if (o instanceof DirectorySourceContainer) {
@@ -71,9 +62,6 @@ public class SourceContainerWorkbenchAdapter implements IWorkbenchAdapter {
 		}
 		return IInternalDebugCoreConstants.EMPTY_STRING;
 	}
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.model.IWorkbenchAdapter#getParent(java.lang.Object)
-	 */
 	@Override
 	public Object getParent(Object o) {
 		return null;

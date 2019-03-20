@@ -64,9 +64,7 @@ import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Item;
-import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeColumn;
 import org.eclipse.swt.widgets.TreeItem;
@@ -163,17 +161,11 @@ public class InternalTreeModelViewer extends TreeViewer implements IInternalTree
 	 * @since 3.2
 	 */
 	class ColumnListener implements ControlListener {
-		/* (non-Javadoc)
-		 * @see org.eclipse.swt.events.ControlListener#controlMoved(org.eclipse.swt.events.ControlEvent)
-		 */
 		@Override
 		public void controlMoved(ControlEvent e) {
 			persistColumnOrder();
 		}
 
-		/* (non-Javadoc)
-		 * @see org.eclipse.swt.events.ControlListener#controlResized(org.eclipse.swt.events.ControlEvent)
-		 */
 		@Override
 		public void controlResized(ControlEvent e) {
 			persistColumnSizes();
@@ -189,9 +181,6 @@ public class InternalTreeModelViewer extends TreeViewer implements IInternalTree
 
 		private ICellModifier fModifier;
 
-		/* (non-Javadoc)
-		 * @see org.eclipse.jface.viewers.ICellModifier#canModify(java.lang.Object, java.lang.String)
-		 */
 		@Override
 		public boolean canModify(Object element, String property) {
 			IElementEditor editor = ViewerAdapterService.getElementEditor(element);
@@ -216,9 +205,6 @@ public class InternalTreeModelViewer extends TreeViewer implements IInternalTree
 			return false;
 		}
 
-		/* (non-Javadoc)
-		 * @see org.eclipse.jface.viewers.ICellModifier#getValue(java.lang.Object, java.lang.String)
-		 */
 		@Override
 		public Object getValue(Object element, String property) {
 			if (fModifier != null) {
@@ -227,9 +213,6 @@ public class InternalTreeModelViewer extends TreeViewer implements IInternalTree
 			return null;
 		}
 
-		/* (non-Javadoc)
-		 * @see org.eclipse.jface.viewers.ICellModifier#modify(java.lang.Object, java.lang.String, java.lang.Object)
-		 */
 		@Override
 		public void modify(Object element, String property, Object value) {
 			if (fModifier != null) {
@@ -312,23 +295,17 @@ public class InternalTreeModelViewer extends TreeViewer implements IInternalTree
 		return new TreeModelLabelProvider(this);
 	}
 
-	/* (non-Javadoc)
-	 *
-	 * Workaround for bug 159461: when an item is cleared it's label is cleared. To avoid
-	 * flashing, restore its label to its previous value.
-	 *
-	 * @see org.eclipse.jface.viewers.TreeViewer#hookControl(org.eclipse.swt.widgets.Control)
+	/*
+	 * Workaround for bug 159461: when an item is cleared it's label is cleared. To
+	 * avoid flashing, restore its label to its previous value.
 	 */
 	@Override
 	protected void hookControl(Control control) {
 		Tree treeControl = (Tree) control;
-		treeControl.addListener(SWT.SetData, new Listener() {
-			@Override
-			public void handleEvent(Event event) {
-				// to avoid flash, reset previous label data
-				TreeItem item = (TreeItem) event.item;
-				preserveItem(item);
-			}
+		treeControl.addListener(SWT.SetData, event -> {
+			// to avoid flash, reset previous label data
+			TreeItem item = (TreeItem) event.item;
+			preserveItem(item);
 		});
 		super.hookControl(control);
 	}
@@ -379,12 +356,10 @@ public class InternalTreeModelViewer extends TreeViewer implements IInternalTree
         }
 	}
 
-    /* (non-Javadoc)
-     * @see org.eclipse.jface.viewers.StructuredViewer#handleInvalidSelection
-     *
-     * Override the default handler for invalid selection to allow model
-     * selection policy to select the new selection.
-     */
+	/*
+	 * Override the default handler for invalid selection to allow model selection
+	 * policy to select the new selection.
+	 */
 	@Override
 	protected void handleInvalidSelection(ISelection selection, ISelection newSelection) {
 	    IModelSelectionPolicy selectionPolicy = ViewerAdapterService.getSelectionPolicy(selection, getPresentationContext());
@@ -406,10 +381,6 @@ public class InternalTreeModelViewer extends TreeViewer implements IInternalTree
 	    super.handleInvalidSelection(selection, newSelection);
 	}
 
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.viewers.ContentViewer#handleDispose(org.eclipse.swt.events.DisposeEvent)
-	 */
 	@Override
 	protected void handleDispose(DisposeEvent event) {
 		if (fColumnPresentation != null) {
@@ -457,11 +428,9 @@ public class InternalTreeModelViewer extends TreeViewer implements IInternalTree
 		}
 	}
 
-	/* (non-Javadoc)
-	 *
-	 * We need tree paths when disposed/unmapped in any order so cache the tree path.
-	 *
-	 * @see org.eclipse.jface.viewers.TreeViewer#mapElement(java.lang.Object, org.eclipse.swt.widgets.Widget)
+	/*
+	 * We need tree paths when disposed/unmapped in any order so cache the tree
+	 * path.
 	 */
 	@Override
 	protected void mapElement(Object element, Widget widget) {
@@ -473,11 +442,8 @@ public class InternalTreeModelViewer extends TreeViewer implements IInternalTree
 		}
 	}
 
-	/* (non-Javadoc)
-	 *
+	/*
 	 * Override because we allow inserting with filters present.
-	 *
-	 * @see org.eclipse.jface.viewers.AbstractTreeViewer#insert(java.lang.Object, java.lang.Object, int)
 	 */
 	@Override
 	public void insert(Object parentElementOrTreePath, Object element, int position) {
@@ -489,11 +455,8 @@ public class InternalTreeModelViewer extends TreeViewer implements IInternalTree
 		}
 	}
 
-	/* (non-Javadoc)
-	 *
+	/*
 	 * Override because we allow inserting with filters present.
-	 *
-	 * @see org.eclipse.jface.viewers.StructuredViewer#hasFilters()
 	 */
 	@Override
 	protected boolean hasFilters() {
@@ -513,9 +476,6 @@ public class InternalTreeModelViewer extends TreeViewer implements IInternalTree
 	    }
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.viewers.AbstractTreeViewer#inputChanged(java.lang.Object, java.lang.Object)
-	 */
 	@Override
 	protected void inputChanged(Object input, Object oldInput) {
 	    fCellModifier.clear();
@@ -1037,11 +997,8 @@ public class InternalTreeModelViewer extends TreeViewer implements IInternalTree
 		return !selectionPolicy.isSticky(current, getPresentationContext());
 	}
 
-	/* (non-Javadoc)
-	 *
+	/*
 	 * Consider selection policy
-	 *
-	 * @see org.eclipse.jface.viewers.StructuredViewer#setSelection(org.eclipse.jface.viewers.ISelection, boolean)
 	 */
 	@Override
 	public void setSelection(ISelection selection, boolean reveal) {
@@ -1051,18 +1008,11 @@ public class InternalTreeModelViewer extends TreeViewer implements IInternalTree
 		super.setSelection(selection, reveal);
 	}
 
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.viewers.model.ITreeModelViewer#setSelection(org.eclipse.jface.viewers.ISelection, boolean, boolean)
-	 */
 	@Override
 	public void setSelection(ISelection selection, boolean reveal, boolean force) {
 		trySelection(selection, reveal, force);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.viewers.model.ITreeModelViewer#trySelection(org.eclipse.jface.viewers.ISelection, boolean, boolean)
-	 */
 	@Override
 	public boolean trySelection(ISelection selection, boolean reveal, boolean force) {
 		if (force || overrideSelection(getSelection(), selection)) {
@@ -1130,9 +1080,6 @@ public class InternalTreeModelViewer extends TreeViewer implements IInternalTree
         }
     }
 
-	/*
-	 * (non-Javadoc) Method declared in AbstractTreeViewer.
-	 */
 	@Override
 	protected void doUpdateItem(final Item item, Object element) {
 		if (!(item instanceof TreeItem)) {
@@ -1213,12 +1160,7 @@ public class InternalTreeModelViewer extends TreeViewer implements IInternalTree
 // 		Expanded nodes in tree viewer flash on refresh
 
 	/*
-	 * (non-Javadoc)
-	 *
 	 * workaround for bug 183463
-	 *
-	 * @see org.eclipse.jface.viewers.AbstractTreeViewer#internalRefreshStruct(org.eclipse.swt.widgets.Widget,
-	 *      java.lang.Object, boolean)
 	 */
 	@Override
 	protected void internalRefreshStruct(Widget widget, Object element,
@@ -1730,10 +1672,6 @@ public class InternalTreeModelViewer extends TreeViewer implements IInternalTree
         ((ITreeModelContentProvider)getContentProvider()).updateModel(delta, ITreeModelContentProvider.ALL_MODEL_DELTA_FLAGS);
     }
 
-    /*
-     * (non-Javadoc)
-     * @see org.eclipse.debug.internal.ui.viewers.model.ITreeModelCheckProvider#setElementChecked(org.eclipse.jface.viewers.TreePath, boolean, boolean)
-     */
 	@Override
 	public void setElementChecked(TreePath path, boolean checked, boolean grayed) {
 	   	 Widget widget = findItem(path);
@@ -1813,10 +1751,6 @@ public class InternalTreeModelViewer extends TreeViewer implements IInternalTree
         return paths;
     }
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.jface.viewers.StructuredViewer#handleSelect(org.eclipse.swt.events.SelectionEvent)
-	 */
 	@Override
 	protected void handleSelect(SelectionEvent event) {
         super.handleSelect(event);
@@ -1865,9 +1799,6 @@ public class InternalTreeModelViewer extends TreeViewer implements IInternalTree
         }
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.viewers.model.ITreeModelContentProviderTarget#clearSelectionQuiet()
-	 */
 	@Override
 	public void clearSelectionQuiet() {
 		getTree().setSelection(new TreeItem[0]);

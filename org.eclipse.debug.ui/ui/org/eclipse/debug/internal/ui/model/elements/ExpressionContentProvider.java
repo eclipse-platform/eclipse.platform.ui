@@ -86,9 +86,6 @@ public class ExpressionContentProvider extends VariableContentProvider {
         }
     }
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.model.elements.ElementContentProvider#update(org.eclipse.debug.internal.ui.viewers.model.provisional.IChildrenCountUpdate[])
-	 */
 	@Override
 	public void update(IChildrenCountUpdate[] updates) {
 		// See if we can delegate to a model specific content provider
@@ -106,9 +103,6 @@ public class ExpressionContentProvider extends VariableContentProvider {
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.model.elements.ElementContentProvider#update(org.eclipse.debug.internal.ui.viewers.model.provisional.IHasChildrenUpdate[])
-	 */
 	@Override
 	public void update(IHasChildrenUpdate[] updates) {
 		// See if we can delegate to a model specific content provider
@@ -126,9 +120,6 @@ public class ExpressionContentProvider extends VariableContentProvider {
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.model.elements.ElementContentProvider#update(org.eclipse.debug.internal.ui.viewers.model.provisional.IChildrenUpdate[])
-	 */
 	@Override
 	public void update(IChildrenUpdate[] updates) {
 		// See if we can delegate to a model specific content provider

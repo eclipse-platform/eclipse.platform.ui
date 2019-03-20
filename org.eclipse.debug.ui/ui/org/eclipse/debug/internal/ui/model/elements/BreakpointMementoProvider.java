@@ -40,16 +40,10 @@ public class BreakpointMementoProvider extends ElementMementoProvider {
 	 */
 	private static final String RESOURCE_PATH = "RESOURCE_PATH"; 	//$NON-NLS-1$
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.model.elements.DebugElementMementoProvider#supportsContextId(java.lang.String)
-	 */
 	protected boolean supportsContextId(String id) {
     	return IDebugUIConstants.ID_BREAKPOINT_VIEW.equals(id);
     }
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.model.elements.ElementMementoProvider#encodeElement(java.lang.Object, org.eclipse.ui.IMemento, org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationContext)
-	 */
 	@Override
 	protected boolean encodeElement(Object element, IMemento memento, IPresentationContext context) throws CoreException {
 		if (element instanceof IBreakpoint) {
@@ -70,9 +64,6 @@ public class BreakpointMementoProvider extends ElementMementoProvider {
 		return false;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.model.elements.ElementMementoProvider#isEqual(java.lang.Object, org.eclipse.ui.IMemento, org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationContext)
-	 */
 	@Override
 	protected boolean isEqual(Object element, IMemento memento, IPresentationContext context) throws CoreException {
 		if (element instanceof IBreakpoint) {

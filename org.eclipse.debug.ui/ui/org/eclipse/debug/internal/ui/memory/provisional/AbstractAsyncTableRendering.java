@@ -222,10 +222,6 @@ public abstract class AbstractAsyncTableRendering extends AbstractBaseTableRende
 			updateActionLabel();
 		}
 
-		/*
-		 * (non-Javadoc)
-		 * @see org.eclipse.jface.action.IAction#run()
-		 */
 		@Override
 		public void run() {
 			fIsShowAddressColumn = !fIsShowAddressColumn;
@@ -237,9 +233,6 @@ public abstract class AbstractAsyncTableRendering extends AbstractBaseTableRende
 			updateActionLabel();
 		}
 
-		/**
-		 *
-		 */
 		private void updateActionLabel() {
 			if (fIsShowAddressColumn) {
 				setText(DebugUIMessages.ShowAddressColumnAction_0);
@@ -351,23 +344,11 @@ public abstract class AbstractAsyncTableRendering extends AbstractBaseTableRende
 			fObject = lock;
 		}
 
-		/*
-		 * (non-Javadoc)
-		 * @see
-		 * org.eclipse.core.runtime.jobs.ISchedulingRule#contains(org.eclipse
-		 * .core.runtime.jobs.ISchedulingRule)
-		 */
 		@Override
 		public boolean contains(ISchedulingRule rule) {
 			return rule == this;
 		}
 
-		/*
-		 * (non-Javadoc)
-		 * @see
-		 * org.eclipse.core.runtime.jobs.ISchedulingRule#isConflicting(org.eclipse
-		 * .core.runtime.jobs.ISchedulingRule)
-		 */
 		@Override
 		public boolean isConflicting(ISchedulingRule rule) {
 			if (rule instanceof SerialByObjectRule) {
@@ -538,11 +519,6 @@ public abstract class AbstractAsyncTableRendering extends AbstractBaseTableRende
 		super(renderingId);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * org.eclipse.debug.ui.memory.IResettableMemoryRendering#resetRendering()
-	 */
 	@Override
 	public void resetRendering() throws DebugException {
 		if (!fIsCreated) {
@@ -968,21 +944,11 @@ public abstract class AbstractAsyncTableRendering extends AbstractBaseTableRende
 		return true;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.debug.ui.memory.IMemoryRendering#getControl()
-	 */
 	@Override
 	public Control getControl() {
 		return fPageBook;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * org.eclipse.jface.util.IPropertyChangeListener#propertyChange(org.eclipse
-	 * .jface.util.PropertyChangeEvent)
-	 */
 	@Override
 	public void propertyChange(PropertyChangeEvent event) {
 		if (!fIsCreated) {
@@ -1777,10 +1743,6 @@ public abstract class AbstractAsyncTableRendering extends AbstractBaseTableRende
 		return null;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.debug.ui.memory.AbstractMemoryRendering#dispose()
-	 */
 	@Override
 	public void dispose() {
 
@@ -1901,10 +1863,6 @@ public abstract class AbstractAsyncTableRendering extends AbstractBaseTableRende
 		return fLabel;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.core.runtime.PlatformObject#getAdapter(java.lang.Class)
-	 */
 	@SuppressWarnings("unchecked")
 	@Override
 	public <T> T getAdapter(Class<T> adapter) {
@@ -2394,10 +2352,6 @@ public abstract class AbstractAsyncTableRendering extends AbstractBaseTableRende
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.debug.ui.memory.IMemoryRendering#becomesHidden()
-	 */
 	@Override
 	public void becomesHidden() {
 		// creates new object for storing potential changes in sync properties
@@ -2409,10 +2363,6 @@ public abstract class AbstractAsyncTableRendering extends AbstractBaseTableRende
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.debug.ui.memory.IMemoryRendering#becomesVisible()
-	 */
 	@Override
 	public void becomesVisible() {
 

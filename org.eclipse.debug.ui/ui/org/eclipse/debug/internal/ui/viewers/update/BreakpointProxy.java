@@ -41,9 +41,6 @@ public class BreakpointProxy extends AbstractModelProxy implements ICheckboxMode
 		fBreakpoint = breakpoint;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.viewers.model.provisional.ICheckboxModelProxy#setChecked(org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationContext, java.lang.Object, org.eclipse.jface.viewers.TreePath, boolean)
-	 */
 	@Override
 	public boolean setChecked(IPresentationContext context, Object viewerInput, TreePath path, boolean checked) {
 		try {

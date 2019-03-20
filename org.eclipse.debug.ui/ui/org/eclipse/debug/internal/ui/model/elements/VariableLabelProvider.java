@@ -33,9 +33,6 @@ import org.eclipse.swt.graphics.RGB;
  */
 public class VariableLabelProvider extends DebugElementLabelProvider {
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.model.elements.DebugElementLabelProvider#getBackground(org.eclipse.jface.viewers.TreePath, org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationContext, java.lang.String)
-	 */
 	@Override
 	protected RGB getBackground(TreePath elementPath, IPresentationContext presentationContext, String columnId) throws CoreException {
 		Object element = elementPath.getLastSegment();
@@ -50,9 +47,6 @@ public class VariableLabelProvider extends DebugElementLabelProvider {
 		return super.getBackground(elementPath, presentationContext, columnId);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.model.elements.DebugElementLabelProvider#getForeground(org.eclipse.jface.viewers.TreePath, org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationContext, java.lang.String)
-	 */
 	@Override
 	protected RGB getForeground(TreePath elementPath, IPresentationContext presentationContext, String columnId) throws CoreException {
 		Object element = elementPath.getLastSegment();
@@ -67,9 +61,6 @@ public class VariableLabelProvider extends DebugElementLabelProvider {
 	    return super.getForeground(elementPath, presentationContext, columnId);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.model.elements.DebugElementLabelProvider#getImageDescriptor(org.eclipse.jface.viewers.TreePath, org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationContext, java.lang.String)
-	 */
 	@Override
 	protected ImageDescriptor getImageDescriptor(TreePath elementPath, IPresentationContext presentationContext, String columnId) throws CoreException {
 		if (columnId == null || IDebugUIConstants.COLUMN_ID_VARIABLE_NAME.equals(columnId)) {
@@ -78,17 +69,11 @@ public class VariableLabelProvider extends DebugElementLabelProvider {
 		return null;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.model.elements.DebugElementLabelProvider#getFontData(org.eclipse.jface.viewers.TreePath, org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationContext, java.lang.String)
-	 */
 	@Override
 	protected FontData getFontData(TreePath elementPath, IPresentationContext presentationContext, String columnId)	throws CoreException {
 		return JFaceResources.getFontDescriptor(IDebugUIConstants.PREF_VARIABLE_TEXT_FONT).getFontData()[0];
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.model.elements.DebugElementLabelProvider#getLabel(org.eclipse.jface.viewers.TreePath, org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationContext, java.lang.String)
-	 */
 	@Override
 	protected String getLabel(TreePath elementPath, IPresentationContext context, String columnId) throws CoreException {
 		if (columnId == null) {

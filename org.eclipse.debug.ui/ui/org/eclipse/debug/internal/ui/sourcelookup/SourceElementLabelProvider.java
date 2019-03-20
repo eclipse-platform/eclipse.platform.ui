@@ -48,9 +48,6 @@ public class SourceElementLabelProvider extends LabelProvider {
 		return getWorkbenchLabelProvider();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.viewers.IBaseLabelProvider#dispose()
-	 */
 	@Override
 	public void dispose() {
 		super.dispose();
@@ -59,17 +56,11 @@ public class SourceElementLabelProvider extends LabelProvider {
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.viewers.ILabelProvider#getImage(java.lang.Object)
-	 */
 	@Override
 	public Image getImage(Object element) {
 		return getLabelProvider(element).getImage(element);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.viewers.ILabelProvider#getText(java.lang.Object)
-	 */
 	@Override
 	public String getText(Object element) {
 		if (element instanceof IResource) {

@@ -147,9 +147,6 @@ public abstract class AsynchronousViewer extends StructuredViewer implements Lis
 		super.setUseHashlookup(enable);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.viewers.StructuredViewer#hookControl(org.eclipse.swt.widgets.Control)
-	 */
 	@Override
 	protected void hookControl(Control control) {
 		super.hookControl(control);
@@ -222,9 +219,6 @@ public abstract class AsynchronousViewer extends StructuredViewer implements Lis
 		return fContext;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.viewers.StructuredViewer#unmapAllElements()
-	 */
 	@Override
 	protected synchronized void unmapAllElements() {
 		super.unmapAllElements();
@@ -234,9 +228,6 @@ public abstract class AsynchronousViewer extends StructuredViewer implements Lis
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.viewers.Viewer#inputChanged(java.lang.Object, java.lang.Object)
-	 */
 	@Override
 	protected synchronized void inputChanged(Object input, Object oldInput) {
 		fPendingSelection = null;
@@ -392,9 +383,6 @@ public abstract class AsynchronousViewer extends StructuredViewer implements Lis
 		fContext = context;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.viewers.StructuredViewer#doFindItem(java.lang.Object)
-	 */
 	@Override
 	protected Widget doFindItem(Object element) {
 		// this viewer maps model nodes to widgets, so the element is a ModelNode
@@ -411,11 +399,6 @@ public abstract class AsynchronousViewer extends StructuredViewer implements Lis
 		return null;
 	}
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see org.eclipse.jface.viewers.StructuredViewer#doFindInputItem(java.lang.Object)
-     */
     @Override
 	protected Widget doFindInputItem(Object element) {
     	if (element instanceof ModelNode) {
@@ -427,16 +410,10 @@ public abstract class AsynchronousViewer extends StructuredViewer implements Lis
         return null;
     }
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.viewers.StructuredViewer#doUpdateItem(org.eclipse.swt.widgets.Widget, java.lang.Object, boolean)
-	 */
 	@Override
 	protected void doUpdateItem(Widget item, Object element, boolean fullMap) {
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.viewers.StructuredViewer#internalRefresh(java.lang.Object)
-	 */
 	@Override
 	protected void internalRefresh(Object element) {
 		// get the nodes in the model
@@ -467,9 +444,6 @@ public abstract class AsynchronousViewer extends StructuredViewer implements Lis
 		updateLabel(node);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.viewers.Viewer#setSelection(org.eclipse.jface.viewers.ISelection, boolean)
-	 */
 	@Override
 	public synchronized void setSelection(ISelection selection, boolean reveal) {
 		setSelection(selection, reveal, false);
@@ -533,9 +507,6 @@ public abstract class AsynchronousViewer extends StructuredViewer implements Lis
 		return !selectionPolicy.isSticky(current, getPresentationContext());
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.viewers.StructuredViewer#getSelection()
-	 */
 	@Override
 	public ISelection getSelection() {
 		Control control = getControl();
@@ -545,9 +516,6 @@ public abstract class AsynchronousViewer extends StructuredViewer implements Lis
 		return fCurrentSelection;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.viewers.StructuredViewer#handleSelect(org.eclipse.swt.events.SelectionEvent)
-	 */
 	@Override
 	protected void handleSelect(SelectionEvent event) {
 		// handle case where an earlier selection listener disposed the control.
@@ -557,9 +525,6 @@ public abstract class AsynchronousViewer extends StructuredViewer implements Lis
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.viewers.StructuredViewer#handlePostSelect(org.eclipse.swt.events.SelectionEvent)
-	 */
 	@Override
 	protected void handlePostSelect(SelectionEvent e) {
 		SelectionChangedEvent event = new SelectionChangedEvent(this, newSelectionFromWidget());
@@ -596,18 +561,12 @@ public abstract class AsynchronousViewer extends StructuredViewer implements Lis
 		return null;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.viewers.StructuredViewer#setSelectionToWidget(org.eclipse.jface.viewers.ISelection, boolean)
-	 */
 	@Override
 	final protected void setSelectionToWidget(ISelection selection, final boolean reveal) {
 		// NOT USED
 		throw new IllegalArgumentException("This method should not be called"); //$NON-NLS-1$
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.viewers.StructuredViewer#setSelectionToWidget(java.util.List, boolean)
-	 */
 	@Override
 	final protected void setSelectionToWidget(List l, boolean reveal) {
 		// NOT USED
@@ -711,9 +670,6 @@ public abstract class AsynchronousViewer extends StructuredViewer implements Lis
 	protected void handlePresentationFailure(IStatusMonitor monitor, IStatus status) {
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.viewers.StructuredViewer#preservingSelection(java.lang.Runnable)
-	 */
 	@Override
 	protected synchronized void preservingSelection(Runnable updateCode) {
 		if (fPendingSelection == null || fPendingSelection.isEmpty()) {
@@ -831,9 +787,6 @@ public abstract class AsynchronousViewer extends StructuredViewer implements Lis
 	 */
 	protected abstract void setFonts(Widget widget, FontData[] font);
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.viewers.StructuredViewer#updateSelection(org.eclipse.jface.viewers.ISelection)
-	 */
 	@Override
 	protected synchronized void updateSelection(ISelection selection) {
 		fCurrentSelection = selection;
@@ -1051,11 +1004,7 @@ public abstract class AsynchronousViewer extends StructuredViewer implements Lis
     }
 
 	/*
-	 * (non-Javadoc)
-	 *
 	 * A virtual item has been exposed in the control, map its data.
-	 *
-	 * @see org.eclipse.swt.widgets.Listener#handleEvent(org.eclipse.swt.widgets.Event)
 	 */
 	@Override
 	public void handleEvent(final Event event) {

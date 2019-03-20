@@ -42,9 +42,6 @@ public class FindElementDialog extends ElementListSelectionDialog {
 		setMultipleSelection(false);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.dialogs.ElementListSelectionDialog#createDialogArea(org.eclipse.swt.widgets.Composite)
-	 */
 	@Override
 	protected Control createDialogArea(Composite parent) {
 		Control comp = super.createDialogArea(parent);

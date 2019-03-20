@@ -24,17 +24,11 @@ import org.eclipse.debug.ui.IDebugUIConstants;
  */
 public class BreakpointManagerInputMementoProvider extends DebugElementMementoProvider {
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.model.elements.DebugElementMementoProvider#getElementName(java.lang.Object, org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationContext)
-	 */
 	@Override
 	protected String getElementName(Object element, IPresentationContext context) throws CoreException {
 		return  "BreakpointInputMemento"; //$NON-NLS-1$
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.model.elements.ElementMementoProvider#isEqual(java.lang.Object, org.eclipse.ui.IMemento, org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationContext)
-	 */
 	@Override
 	protected boolean supportsContextId(String id) {
 		return IDebugUIConstants.ID_BREAKPOINT_VIEW.equals(id);

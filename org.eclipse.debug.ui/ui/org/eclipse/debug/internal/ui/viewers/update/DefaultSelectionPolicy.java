@@ -44,9 +44,6 @@ public class DefaultSelectionPolicy implements IModelSelectionPolicy {
 		fDebugElement = element;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.ui.viewers.IModelSelectionPolicy#contains(org.eclipse.jface.viewers.ISelection, org.eclipse.debug.ui.viewers.IPresentationContext)
-	 */
 	@Override
 	public boolean contains(ISelection selection, IPresentationContext context) {
 		if (IDebugUIConstants.ID_DEBUG_VIEW.equals(context.getId())) {
@@ -62,9 +59,6 @@ public class DefaultSelectionPolicy implements IModelSelectionPolicy {
 		return false;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.ui.viewers.IModelSelectionPolicy#overrides(org.eclipse.jface.viewers.ISelection, org.eclipse.jface.viewers.ISelection, org.eclipse.debug.ui.viewers.IPresentationContext)
-	 */
 	@Override
 	public boolean overrides(ISelection existing, ISelection candidate, IPresentationContext context) {
 		if (IDebugUIConstants.ID_DEBUG_VIEW.equals(context.getId())) {
@@ -92,9 +86,6 @@ public class DefaultSelectionPolicy implements IModelSelectionPolicy {
 		return !isSticky(existing);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.ui.viewers.IModelSelectionPolicy#isSticky(org.eclipse.jface.viewers.ISelection, org.eclipse.debug.ui.viewers.IPresentationContext)
-	 */
 	@Override
 	public boolean isSticky(ISelection selection, IPresentationContext context) {
 		if (IDebugUIConstants.ID_DEBUG_VIEW.equals(context.getId())) {

@@ -48,9 +48,6 @@ class ChildrenRequestMonitor extends AsynchronousRequestMonitor implements IChil
         super(parent, model);
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.debug.ui.viewers.IChildrenRequestMonitor#addChild(java.lang.Object)
-     */
     @Override
 	public void addChild(Object child) {
         synchronized (fChildren) {
@@ -60,9 +57,6 @@ class ChildrenRequestMonitor extends AsynchronousRequestMonitor implements IChil
         scheduleViewerUpdate(250);
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.debug.ui.viewers.IChildrenRequestMonitor#addChildren(java.lang.Object[])
-     */
     @Override
 	public void addChildren(Object[] children) {
         synchronized (fChildren) {
@@ -74,17 +68,11 @@ class ChildrenRequestMonitor extends AsynchronousRequestMonitor implements IChil
         scheduleViewerUpdate(0);
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.debug.ui.viewers.AsynchronousRequestMonitor#contains(org.eclipse.debug.ui.viewers.AsynchronousRequestMonitor)
-     */
     @Override
 	protected boolean contains(AsynchronousRequestMonitor update) {
         return (update instanceof ChildrenRequestMonitor) && contains(update.getNode());
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.debug.ui.viewers.AsynchronousRequestMonitor#performUpdate()
-     */
     @Override
 	protected void performUpdate() {
         synchronized (fChildren) {

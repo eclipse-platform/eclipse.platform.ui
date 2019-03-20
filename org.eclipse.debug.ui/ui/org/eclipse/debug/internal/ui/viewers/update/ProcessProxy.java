@@ -65,9 +65,6 @@ public class ProcessProxy extends EventHandlerModelProxy {
         }
     }
 
-    /* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.viewers.update.EventHandlerModelProxy#dispose()
-	 */
 	@Override
 	public synchronized void dispose() {
 		super.dispose();
@@ -88,9 +85,6 @@ public class ProcessProxy extends EventHandlerModelProxy {
         return new DebugEventHandler[] {fProcessEventHandler};
     }
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.viewers.AbstractModelProxy#installed()
-	 */
 	@Override
 	public void installed(Viewer viewer) {
 		super.installed(viewer);

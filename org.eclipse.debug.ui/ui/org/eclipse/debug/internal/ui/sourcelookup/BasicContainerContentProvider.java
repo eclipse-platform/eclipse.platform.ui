@@ -34,9 +34,6 @@ public class BasicContainerContentProvider implements ITreeContentProvider {
 	public BasicContainerContentProvider() {
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.viewers.ITreeContentProvider#getChildren(java.lang.Object)
-	 */
 	@Override
 	public Object[] getChildren(Object element) {
 		if (element instanceof IWorkspaceRoot) {
@@ -62,9 +59,6 @@ public class BasicContainerContentProvider implements ITreeContentProvider {
 		return getChildren(element);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.viewers.ITreeContentProvider#getParent(java.lang.Object)
-	 */
 	@Override
 	public Object getParent(Object element) {
 		if (element instanceof IResource) {
@@ -73,9 +67,6 @@ public class BasicContainerContentProvider implements ITreeContentProvider {
 		return null;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.viewers.ITreeContentProvider#hasChildren(java.lang.Object)
-	 */
 	@Override
 	public boolean hasChildren(Object element) {
 		return getChildren(element).length > 0;

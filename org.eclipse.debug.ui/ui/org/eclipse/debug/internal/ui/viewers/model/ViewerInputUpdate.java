@@ -93,17 +93,11 @@ public class ViewerInputUpdate extends Request implements IViewerInputUpdate {
     	fViewerInput = viewerInput;
     }
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.viewers.model.provisional.IViewerInputUpdate#getPresentationContext()
-	 */
 	@Override
 	public IPresentationContext getPresentationContext() {
 		return fContext;
 	}
 
-	/* (non-Javadoc)
-     * @see org.eclipse.core.runtime.IProgressMonitor#done()
-     */
     @Override
 	public final void done() {
     	synchronized (this) {
@@ -124,41 +118,26 @@ public class ViewerInputUpdate extends Request implements IViewerInputUpdate {
     	return fDone;
     }
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.viewers.model.provisional.IViewerInputUpdate#getElement()
-	 */
 	@Override
 	public Object getElement() {
 		return fSource;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.viewers.model.provisional.IViewerUpdate#getElementPath()
-	 */
 	@Override
 	public TreePath getElementPath() {
 		return TreePath.EMPTY;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.viewers.model.provisional.IViewerInputUpdate#setViewerInput(java.lang.Object)
-	 */
 	@Override
 	public void setInputElement(Object element) {
 		fInputElement = element;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.viewers.model.provisional.IViewerInputUpdate#getViewerInput()
-	 */
 	@Override
 	public Object getInputElement() {
 		return fInputElement;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.viewers.model.provisional.IViewerUpdate#getViewerInput()
-	 */
 	@Override
 	public Object getViewerInput() {
 		return fViewerInput;

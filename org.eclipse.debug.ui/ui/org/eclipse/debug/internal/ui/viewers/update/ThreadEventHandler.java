@@ -56,9 +56,6 @@ public class ThreadEventHandler extends DebugEventHandler {
 		super(proxy);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.viewers.update.DebugEventHandler#dispose()
-	 */
 	@Override
 	public synchronized void dispose() {
 		fLastTopFrame.clear();

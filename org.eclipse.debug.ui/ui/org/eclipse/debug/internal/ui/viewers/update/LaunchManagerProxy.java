@@ -30,9 +30,6 @@ public class LaunchManagerProxy extends AbstractModelProxy implements ILaunchesL
 
 	private ILaunchManager fLaunchManager;
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.viewers.AbstractModelProxy#init(org.eclipse.debug.internal.ui.viewers.IPresentationContext)
-	 */
 	@Override
 	public synchronized void init(IPresentationContext context) {
 		super.init(context);
@@ -40,9 +37,6 @@ public class LaunchManagerProxy extends AbstractModelProxy implements ILaunchesL
 		fLaunchManager.addLaunchListener(this);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.viewers.provisional.AbstractModelProxy#installed(org.eclipse.jface.viewers.Viewer)
-	 */
 	@Override
 	public void installed(Viewer viewer) {
 		// expand existing launches
@@ -52,9 +46,6 @@ public class LaunchManagerProxy extends AbstractModelProxy implements ILaunchesL
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.viewers.AbstractModelProxy#dispose()
-	 */
 	@Override
 	public synchronized void dispose() {
 		super.dispose();
@@ -64,32 +55,20 @@ public class LaunchManagerProxy extends AbstractModelProxy implements ILaunchesL
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.core.ILaunchesListener2#launchesTerminated(org.eclipse.debug.core.ILaunch[])
-	 */
 	@Override
 	public void launchesTerminated(ILaunch[] launches) {
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.core.ILaunchesListener#launchesRemoved(org.eclipse.debug.core.ILaunch[])
-	 */
 	@Override
 	public void launchesRemoved(ILaunch[] launches) {
 		fireDelta(launches, IModelDelta.REMOVED);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.core.ILaunchesListener#launchesAdded(org.eclipse.debug.core.ILaunch[])
-	 */
 	@Override
 	public void launchesAdded(ILaunch[] launches) {
 		fireDelta(launches, IModelDelta.ADDED | IModelDelta.INSTALL);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.core.ILaunchesListener#launchesChanged(org.eclipse.debug.core.ILaunch[])
-	 */
 	@Override
 	public void launchesChanged(ILaunch[] launches) {
 	}

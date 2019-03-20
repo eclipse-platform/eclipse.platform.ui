@@ -31,17 +31,11 @@ public class TableAddRequestMonitor extends AsynchronousRequestMonitor {
 		fElements = elements;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.viewers.model.provisional.viewers.AsynchronousRequestMonitor#performUpdate()
-	 */
 	@Override
 	protected void performUpdate() {
 		((AsynchronousTableModel)getModel()).added(fElements);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.viewers.model.provisional.viewers.AsynchronousRequestMonitor#contains(org.eclipse.debug.internal.ui.viewers.model.provisional.viewers.AsynchronousRequestMonitor)
-	 */
 	@Override
 	protected boolean contains(AsynchronousRequestMonitor update) {
 		return false;

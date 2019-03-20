@@ -140,9 +140,6 @@ public class FolderSourceContainerDialog extends ElementTreeSelectionDialog {
 		fSearchSubfolders = subfolders;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.dialogs.SelectionStatusDialog#okPressed()
-	 */
 	@Override
 	protected void okPressed() {
 		fSearchSubfolders = fSubfoldersButton.getSelection();

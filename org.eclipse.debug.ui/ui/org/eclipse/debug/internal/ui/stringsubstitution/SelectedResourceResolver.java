@@ -28,9 +28,6 @@ import com.ibm.icu.text.MessageFormat;
  */
 public class SelectedResourceResolver extends ResourceResolver implements IDynamicVariableResolver {
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.core.variables.IDynamicVariableResolver#resolveValue(org.eclipse.core.variables.IDynamicVariable, java.lang.String)
-	 */
 	@Override
 	public String resolveValue(IDynamicVariable variable, String argument) throws CoreException {
 		IResource resource = SelectedResourceManager.getDefault().getSelectedResource();

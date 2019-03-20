@@ -63,11 +63,6 @@ class LabelRequestMonitor extends AsynchronousRequestMonitor implements ILabelRe
 		super(node, model);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.debug.ui.viewers.AsynchronousRequestMonitor#performUpdate()
-	 */
 	@Override
 	protected void performUpdate() {
 		AsynchronousViewer viewer = getModel().getViewer();
@@ -79,61 +74,31 @@ class LabelRequestMonitor extends AsynchronousRequestMonitor implements ILabelRe
         }
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.debug.ui.viewers.AsynchronousRequestMonitor#contains(org.eclipse.debug.ui.viewers.AsynchronousRequestMonitor)
-	 */
 	@Override
 	protected boolean contains(AsynchronousRequestMonitor update) {
 		return update instanceof LabelRequestMonitor && update.getNode() == getNode();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.debug.ui.viewers.ILabelRequestMonitor#setLabel(java.lang.String)
-	 */
 	@Override
 	public void setLabels(String[] text) {
 		fLabels = text;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.debug.ui.viewers.ILabelRequestMonitor#setFontData(org.eclipse.swt.graphics.FontData)
-	 */
 	@Override
 	public void setFontDatas(FontData[] fontData) {
 		fFontDatas = fontData;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.debug.ui.viewers.ILabelRequestMonitor#setImageDescriptor(org.eclipse.jface.resource.ImageDescriptor)
-	 */
 	@Override
 	public void setImageDescriptors(ImageDescriptor[] image) {
 		fImageDescriptors = image;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.debug.ui.viewers.ILabelRequestMonitor#setForeground(org.eclipse.swt.graphics.RGB)
-	 */
 	@Override
 	public void setForegrounds(RGB[] foreground) {
 		fForegrounds = foreground;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.debug.ui.viewers.ILabelRequestMonitor#setBackground(org.eclipse.swt.graphics.RGB)
-	 */
 	@Override
 	public void setBackgrounds(RGB[] background) {
 		fBackgrounds = background;

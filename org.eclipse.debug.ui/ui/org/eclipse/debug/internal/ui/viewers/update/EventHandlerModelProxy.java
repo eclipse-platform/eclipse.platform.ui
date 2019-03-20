@@ -71,11 +71,6 @@ public abstract class EventHandlerModelProxy extends AbstractModelProxy implemen
             fEvent = resume;
         }
 
-        /*
-         * (non-Javadoc)
-         *
-         * @see java.util.TimerTask#run()
-         */
         @Override
 		public void run() {
             synchronized (fPendingSuspends) {
@@ -112,11 +107,6 @@ public abstract class EventHandlerModelProxy extends AbstractModelProxy implemen
         fHandlers = createEventHandlers();
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see org.eclipse.debug.core.IDebugEventSetListener#handleDebugEvents(org.eclipse.debug.core.DebugEvent[])
-     */
     @Override
 	public final void handleDebugEvents(DebugEvent[] events) {
         if (isDisposed()) {

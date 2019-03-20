@@ -38,9 +38,7 @@ import org.xml.sax.helpers.DefaultHandler;
  * @since 3.0
  */
 public class WorkingSetSourceContainerType extends AbstractSourceContainerTypeDelegate {
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.core.sourcelookup.ISourceContainerTypeDelegate#getMemento(org.eclipse.debug.internal.core.sourcelookup.ISourceContainer)
-	 */
+
 	@Override
 	public String getMemento(ISourceContainer container) throws CoreException {
 		WorkingSetSourceContainer workingSet = (WorkingSetSourceContainer) container;
@@ -51,9 +49,6 @@ public class WorkingSetSourceContainerType extends AbstractSourceContainerTypeDe
 		return serializeDocument(doc);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.core.sourcelookup.ISourceContainerType#createSourceContainer(java.lang.String)
-	 */
 	@Override
 	public ISourceContainer createSourceContainer(String memento)throws CoreException {
 		IWorkingSet workingSet = null;

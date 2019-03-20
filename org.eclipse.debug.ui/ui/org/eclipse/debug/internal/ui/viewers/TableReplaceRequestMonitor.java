@@ -33,17 +33,11 @@ public class TableReplaceRequestMonitor extends AsynchronousRequestMonitor {
 		fOriginal = element;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.viewers.model.provisional.viewers.AsynchronousRequestMonitor#performUpdate()
-	 */
 	@Override
 	protected void performUpdate() {
 		((AsynchronousTableModel)getModel()).replaced(fOriginal, fReplacement);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.viewers.model.provisional.viewers.AsynchronousRequestMonitor#contains(org.eclipse.debug.internal.ui.viewers.model.provisional.viewers.AsynchronousRequestMonitor)
-	 */
 	@Override
 	protected boolean contains(AsynchronousRequestMonitor update) {
 		return false;

@@ -52,9 +52,6 @@ public abstract class AbstractModelProxy implements IModelProxy2 {
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.viewers.IModelProxy#addModelChangedListener(org.eclipse.debug.internal.ui.viewers.IModelChangedListener)
-	 */
 	@Override
 	public void addModelChangedListener(IModelChangedListener listener) {
 		synchronized (fListeners) {
@@ -62,9 +59,6 @@ public abstract class AbstractModelProxy implements IModelProxy2 {
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.viewers.IModelProxy#removeModelChangedListener(org.eclipse.debug.internal.ui.viewers.IModelChangedListener)
-	 */
 	@Override
 	public void removeModelChangedListener(IModelChangedListener listener) {
 		synchronized (fListeners) {
@@ -79,7 +73,9 @@ public abstract class AbstractModelProxy implements IModelProxy2 {
 	 */
 	public void fireModelChanged(IModelDelta delta) {
 	    synchronized(this) {
-	        if (!fInstalled || fDisposed) return;
+	        if (!fInstalled || fDisposed) {
+				return;
+			}
 	    }
 
 		final IModelDelta root = getRootDelta(delta);
@@ -116,9 +112,6 @@ public abstract class AbstractModelProxy implements IModelProxy2 {
 		return delta;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.viewers.IModelProxy#dispose()
-	 */
 	@Override
 	public synchronized void dispose() {
 	    if (fInstallJob != null) {
@@ -188,18 +181,12 @@ public abstract class AbstractModelProxy implements IModelProxy2 {
 		return fContext;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.viewers.IModelProxy#init(org.eclipse.debug.internal.ui.viewers.IPresentationContext)
-	 */
 	@Override
 	public void init(IPresentationContext context) {
 	}
 
-	/* (non-Javadoc)
-	 *
+	/*
 	 * Subclasses should override as required.
-	 *
-	 * @see org.eclipse.debug.internal.ui.viewers.provisional.IModelProxy#installed(org.eclipse.jface.viewers.Viewer)
 	 */
 	@Override
 	public void installed(Viewer viewer) {
@@ -223,9 +210,6 @@ public abstract class AbstractModelProxy implements IModelProxy2 {
         return fViewer;
     }
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.viewers.model.provisional.IModelProxy#isDisposed()
-	 */
 	@Override
 	public synchronized boolean isDisposed() {
 		return fDisposed;

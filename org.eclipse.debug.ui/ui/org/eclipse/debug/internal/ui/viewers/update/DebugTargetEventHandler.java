@@ -35,9 +35,6 @@ public class DebugTargetEventHandler extends DebugEventHandler {
 		super(proxy);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.viewers.update.DebugEventHandler#handlesEvent(org.eclipse.debug.core.DebugEvent)
-	 */
 	@Override
 	protected boolean handlesEvent(DebugEvent event) {
 		return event.getSource() instanceof IDebugTarget;

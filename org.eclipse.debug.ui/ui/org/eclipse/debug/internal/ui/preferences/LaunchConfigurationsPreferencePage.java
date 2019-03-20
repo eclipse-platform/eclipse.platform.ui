@@ -88,49 +88,31 @@ public class LaunchConfigurationsPreferencePage extends PreferencePage implement
 			setShellStyle(getShellStyle() | SWT.RESIZE);
 		}
 
-		/* (non-Javadoc)
-		 * @see org.eclipse.debug.internal.ui.launchConfigurations.AbstractDebugSelectionDialog#getDialogSettingsId()
-		 */
 		@Override
 		protected String getDialogSettingsId() {
 			return IDebugUIConstants.PLUGIN_ID + ".MIGRATION_SELECTION_DIALOG"; //$NON-NLS-1$
 		}
 
-		/* (non-Javadoc)
-		 * @see org.eclipse.debug.internal.ui.launchConfigurations.AbstractDebugSelectionDialog#getHelpContextId()
-		 */
 		@Override
 		protected String getHelpContextId() {
 			return IDebugHelpContextIds.SELECT_LAUNCH_CONFIGURATION_MIGRATION_DIALOG;
 		}
 
-		/* (non-Javadoc)
-		 * @see org.eclipse.debug.internal.ui.launchConfigurations.AbstractDebugSelectionDialog#getViewerInput()
-		 */
 		@Override
 		protected Object getViewerInput() {
 			return fInput;
 		}
 
-		/* (non-Javadoc)
-		 * @see org.eclipse.debug.internal.ui.launchConfigurations.AbstractDebugSelectionDialog#getViewerLabel()
-		 */
 		@Override
 		protected String getViewerLabel() {
 			return DebugPreferencesMessages.LaunchingPreferencePage_0;
 		}
 
-		/* (non-Javadoc)
-		 * @see org.eclipse.debug.internal.ui.launchConfigurations.AbstractDebugSelectionDialog#getContentProvider()
-		 */
 		@Override
 		protected IContentProvider getContentProvider() {
 			return new WorkbenchContentProvider();
 		}
 
-		/* (non-Javadoc)
-		 * @see org.eclipse.debug.internal.ui.launchConfigurations.AbstractDebugSelectionDialog#getLabelProvider()
-		 */
 		@Override
 		protected IBaseLabelProvider getLabelProvider() {
 			return DebugUITools.newDebugModelPresentation();
@@ -188,18 +170,12 @@ public class LaunchConfigurationsPreferencePage extends PreferencePage implement
 		setTitle(DebugPreferencesMessages.LaunchConfigurationsPreferencePage_1);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.preference.PreferencePage#createControl(org.eclipse.swt.widgets.Composite)
-	 */
 	@Override
 	public void createControl(Composite parent) {
 		super.createControl(parent);
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(getControl(), IDebugHelpContextIds.LAUNCH_CONFIGURATION_PREFERENCE_PAGE);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.preference.PreferencePage#createContents(org.eclipse.swt.widgets.Composite)
-	 */
 	@Override
 	protected Control createContents(Composite parent) {
 		fFieldEditors = new ArrayList<>();
@@ -338,9 +314,6 @@ public class LaunchConfigurationsPreferencePage extends PreferencePage implement
 		catch (CoreException e) {DebugUIPlugin.log(e);}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IWorkbenchPreferencePage#init(org.eclipse.ui.IWorkbench)
-	 */
 	@Override
 	public void init(IWorkbench workbench) {}
 
@@ -372,9 +345,6 @@ public class LaunchConfigurationsPreferencePage extends PreferencePage implement
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.preference.PreferencePage#performDefaults()
-	 */
 	@Override
 	protected void performDefaults() {
 		fDeleteConfigs.setSelection(Preferences.getDefaultBoolean(DebugPlugin.getUniqueIdentifier(), DebugPlugin.PREF_DELETE_CONFIGS_ON_PROJECT_DELETE, true));
@@ -389,9 +359,6 @@ public class LaunchConfigurationsPreferencePage extends PreferencePage implement
 
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.preference.PreferencePage#performOk()
-	 */
 	@Override
 	public boolean performOk() {
 		//save field editors

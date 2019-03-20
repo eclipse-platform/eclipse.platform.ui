@@ -64,25 +64,16 @@ class LabelUpdate extends Request implements ILabelUpdate, ICheckUpdate {
 		fLabels = new String[fNumColumns];
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.viewers.model.provisional.ILabelUpdate#getColumnIds()
-	 */
 	@Override
 	public String[] getColumnIds() {
 		return fColumnIds;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.viewers.model.provisional.IViewerUpdate#getElementPath()
-	 */
 	@Override
 	public TreePath getElementPath() {
 		return fElementPath;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.viewers.model.provisional.ILabelUpdate#setBackground(org.eclipse.swt.graphics.RGB, int)
-	 */
 	@Override
 	public void setBackground(RGB background, int columnIndex) {
 		if (background == null) {
@@ -94,9 +85,6 @@ class LabelUpdate extends Request implements ILabelUpdate, ICheckUpdate {
 		fBackgrounds[columnIndex] = background;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.viewers.model.provisional.ILabelUpdate#setFontData(org.eclipse.swt.graphics.FontData, int)
-	 */
 	@Override
 	public void setFontData(FontData fontData, int columnIndex) {
 		if (fontData == null) {
@@ -108,9 +96,6 @@ class LabelUpdate extends Request implements ILabelUpdate, ICheckUpdate {
 		fFontDatas[columnIndex] = fontData;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.viewers.model.provisional.ILabelUpdate#setForeground(org.eclipse.swt.graphics.RGB, int)
-	 */
 	@Override
 	public void setForeground(RGB foreground, int columnIndex) {
 		if (foreground == null) {
@@ -122,9 +107,6 @@ class LabelUpdate extends Request implements ILabelUpdate, ICheckUpdate {
 		fForegrounds[columnIndex] = foreground;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.viewers.model.provisional.ILabelUpdate#setImageDescriptor(org.eclipse.jface.resource.ImageDescriptor, int)
-	 */
 	@Override
 	public void setImageDescriptor(ImageDescriptor image, int columnIndex) {
 		if (image == null) {
@@ -136,25 +118,16 @@ class LabelUpdate extends Request implements ILabelUpdate, ICheckUpdate {
 		fImageDescriptors[columnIndex] = image;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.viewers.model.provisional.ILabelUpdate#setLabel(java.lang.String, int)
-	 */
 	@Override
 	public void setLabel(String text, int columnIndex) {
 		fLabels[columnIndex] = text;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.viewers.model.provisional.IViewerUpdate#getPresentationContext()
-	 */
 	@Override
 	public IPresentationContext getPresentationContext() {
 		return fContext;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.core.commands.Request#done()
-	 */
 	@Override
 	public void done() {
 		fProvider.complete(this);
@@ -169,9 +142,6 @@ class LabelUpdate extends Request implements ILabelUpdate, ICheckUpdate {
 		fProvider.updateComplete(this);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.viewers.model.provisional.IViewerUpdate#getElement()
-	 */
 	@Override
 	public Object getElement() {
 		return getElementPath().getLastSegment();
@@ -185,17 +155,11 @@ class LabelUpdate extends Request implements ILabelUpdate, ICheckUpdate {
 		return buf.toString();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.viewers.model.provisional.IViewerUpdate#getViewerInput()
-	 */
 	@Override
 	public Object getViewerInput() {
 		return fViewerInput;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.viewers.model.provisional.ICheckUpdate#setChecked(boolean, boolean)
-	 */
 	@Override
 	public void setChecked(boolean checked, boolean grayed) {
 		fChecked = checked;

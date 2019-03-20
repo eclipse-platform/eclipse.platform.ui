@@ -838,17 +838,11 @@ public class InternalVirtualTreeModelViewer extends Viewer
         setSelection(selection, reveal, false);
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.debug.internal.ui.viewers.model.ITreeModelViewer#setSelection(org.eclipse.jface.viewers.ISelection, boolean, boolean)
-     */
     @Override
 	public void setSelection(ISelection selection, boolean reveal, boolean force) {
         trySelection(selection, reveal, force);
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.debug.internal.ui.viewers.model.ITreeModelViewer#trySelection(org.eclipse.jface.viewers.ISelection, boolean, boolean)
-     */
     @Override
 	public boolean trySelection(ISelection selection, boolean reveal, boolean force) {
     	if (!force && !overrideSelection(getSelection(), selection)) {
@@ -1605,9 +1599,6 @@ public class InternalVirtualTreeModelViewer extends Viewer
         return null;
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.debug.internal.ui.viewers.model.ITreeModelContentProviderTarget#clearSelectionQuiet()
-     */
     @Override
 	public void clearSelectionQuiet() {
     	getTree().setSelection(EMPTY_ITEMS_ARRAY);

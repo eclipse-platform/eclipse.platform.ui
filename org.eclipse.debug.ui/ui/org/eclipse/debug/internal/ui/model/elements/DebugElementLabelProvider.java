@@ -100,9 +100,6 @@ public class DebugElementLabelProvider extends ElementLabelProvider {
 		return null;
 	}
 
-    /* (non-Javadoc)
-     * @see org.eclipse.debug.internal.ui.model.elements.ElementLabelProvider#requiresUIJob(org.eclipse.debug.internal.ui.viewers.model.provisional.ILabelUpdate[])
-     */
     @Override
 	protected boolean requiresUIJob(ILabelUpdate[] updates) {
     	if (updates.length > 0) {

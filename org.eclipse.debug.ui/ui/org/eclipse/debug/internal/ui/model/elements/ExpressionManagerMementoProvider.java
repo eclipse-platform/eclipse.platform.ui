@@ -26,9 +26,6 @@ public class ExpressionManagerMementoProvider extends DebugElementMementoProvide
 
 	private static final String EXP_MGR = "EXP_MGR"; //$NON-NLS-1$
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.model.elements.DebugElementMementoProvider#getElementName(java.lang.Object, org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationContext)
-	 */
 	@Override
 	protected String getElementName(Object element, IPresentationContext context) throws CoreException {
 		if (element instanceof IExpressionManager) {

@@ -45,9 +45,6 @@ class HasChildrenUpdate extends ViewerUpdateMonitor implements IHasChildrenUpdat
 		super(provider, viewerInput, elementPath, element, elementContentProvider, provider.getPresentationContext());
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.viewers.model.provisional.viewers.ViewerUpdateMonitor#performUpdate()
-	 */
 	@Override
 	protected void performUpdate() {
 		TreeModelContentProvider contentProvider = getContentProvider();
@@ -79,9 +76,6 @@ class HasChildrenUpdate extends ViewerUpdateMonitor implements IHasChildrenUpdat
 		return buf.toString();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.viewers.model.ViewerUpdateMonitor#coalesce(org.eclipse.debug.internal.ui.viewers.model.ViewerUpdateMonitor)
-	 */
 	@Override
 	boolean coalesce(ViewerUpdateMonitor request) {
 		if (request instanceof HasChildrenUpdate) {
@@ -100,9 +94,6 @@ class HasChildrenUpdate extends ViewerUpdateMonitor implements IHasChildrenUpdat
 		return false;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.viewers.model.ViewerUpdateMonitor#startRequest()
-	 */
 	@Override
 	void startRequest() {
 		if (fBatchedRequests == null) {
@@ -133,18 +124,11 @@ class HasChildrenUpdate extends ViewerUpdateMonitor implements IHasChildrenUpdat
         return false;
     }
 
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.viewers.model.ViewerUpdateMonitor#getPriority()
-	 */
 	@Override
 	int getPriority() {
 		return 1;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.viewers.model.ViewerUpdateMonitor#getSchedulingPath()
-	 */
 	@Override
 	TreePath getSchedulingPath() {
 		TreePath path = getElementPath();

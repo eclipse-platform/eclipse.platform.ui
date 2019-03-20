@@ -98,9 +98,6 @@ public class PresentationContext implements IPresentationContext {
     	fPart = part;
     }
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.viewers.provisional.IPresentationContext#getColumns()
-	 */
 	@Override
 	public String[] getColumns() {
 		return (String[]) getProperty(IPresentationContext.PROPERTY_COLUMNS);
@@ -137,10 +134,6 @@ public class PresentationContext implements IPresentationContext {
 		setProperty(IPresentationContext.PROPERTY_COLUMNS, ids);
 	}
 
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationContext#dispose()
-	 */
 	@Override
 	public void dispose() {
         fProperties.clear();
@@ -151,33 +144,21 @@ public class PresentationContext implements IPresentationContext {
 		fPart = null;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.viewers.provisional.IPresentationContext#addPropertyChangeListener(org.eclipse.jface.util.IPropertyChangeListener)
-	 */
 	@Override
 	public void addPropertyChangeListener(IPropertyChangeListener listener) {
 		fListeners.add(listener);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.viewers.provisional.IPresentationContext#removePropertyChangeListener(org.eclipse.jface.util.IPropertyChangeListener)
-	 */
 	@Override
 	public void removePropertyChangeListener(IPropertyChangeListener listener) {
 		fListeners.remove(listener);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.viewers.provisional.IPresentationContext#getId()
-	 */
 	@Override
 	public String getId() {
 		return fId;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.viewers.provisional.IPresentationContext#getProperty(java.lang.String)
-	 */
 	@Override
 	public Object getProperty(String property) {
 		synchronized (fProperties) {
@@ -185,9 +166,6 @@ public class PresentationContext implements IPresentationContext {
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.viewers.provisional.IPresentationContext#setProperty(java.lang.String, java.lang.Object)
-	 */
 	@Override
 	public void setProperty(String property, Object value) {
 	    Object oldValue = null;
@@ -287,9 +265,6 @@ public class PresentationContext implements IPresentationContext {
 		return a.equals(b);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationContext#getProperties()
-	 */
 	@Override
 	public String[] getProperties() {
 		synchronized (fProperties) {

@@ -55,17 +55,11 @@ public class SourceLookupResult implements ISourceLookupResult {
         setEditorInput(editorInput);
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.debug.ui.sourcelookup.ISourceLookupResult#getArtifact()
-     */
     @Override
 	public Object getArtifact() {
         return fArtifact;
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.debug.ui.sourcelookup.ISourceLookupResult#getSourceElement()
-     */
     @Override
 	public Object getSourceElement() {
         return fSourceElement;
@@ -82,9 +76,6 @@ public class SourceLookupResult implements ISourceLookupResult {
         fSourceElement = element;
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.debug.ui.sourcelookup.ISourceLookupResult#getEditorId()
-     */
     @Override
 	public String getEditorId() {
         return fEditorId;
@@ -101,9 +92,6 @@ public class SourceLookupResult implements ISourceLookupResult {
         fEditorId = id;
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.debug.ui.sourcelookup.ISourceLookupResult#getEditorInput()
-     */
     @Override
 	public IEditorInput getEditorInput() {
         return fEditorInput;

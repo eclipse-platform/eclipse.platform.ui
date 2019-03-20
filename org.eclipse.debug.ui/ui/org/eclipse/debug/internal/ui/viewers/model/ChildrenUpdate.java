@@ -107,19 +107,11 @@ public class ChildrenUpdate extends ViewerUpdateMonitor implements IChildrenUpda
 
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.debug.ui.viewers.AsynchronousRequestMonitor#performUpdate()
-	 */
 	@Override
 	protected void performUpdate() {
 		performUpdate(false);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.viewers.model.provisional.IChildrenUpdate#setChild(java.lang.Object, int)
-	 */
 	@Override
 	public void setChild(Object child, int index) {
 		if (fElements == null) {
@@ -128,11 +120,9 @@ public class ChildrenUpdate extends ViewerUpdateMonitor implements IChildrenUpda
 		fElements[index - fIndex] = child;
 	}
 
-	/* (non-Javadoc)
-	 *
-	 * This method is public so the test suite has access - it should be default protection.
-	 *
-	 * @see org.eclipse.debug.internal.ui.viewers.model.ViewerUpdateMonitor#coalesce(org.eclipse.debug.internal.ui.viewers.model.ViewerUpdateMonitor)
+	/*
+	 * This method is public so the test suite has access - it should be default
+	 * protection.
 	 */
 	@Override
 	public synchronized boolean coalesce(ViewerUpdateMonitor request) {
@@ -162,27 +152,16 @@ public class ChildrenUpdate extends ViewerUpdateMonitor implements IChildrenUpda
         return getElementPath().equals(path);
     }
 
-
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.viewers.model.provisional.IChildrenUpdate#getLength()
-	 */
 	@Override
 	public int getLength() {
 		return fLength;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.viewers.model.provisional.IChildrenUpdate#getOffset()
-	 */
 	@Override
 	public int getOffset() {
 		return fIndex;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.viewers.model.ViewerUpdateMonitor#startRequest()
-	 */
 	@Override
 	void startRequest() {
 		getElementContentProvider().update(new IChildrenUpdate[]{this});
@@ -201,17 +180,11 @@ public class ChildrenUpdate extends ViewerUpdateMonitor implements IChildrenUpda
 		return buf.toString();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.viewers.model.ViewerUpdateMonitor#getPriority()
-	 */
 	@Override
 	int getPriority() {
 		return 3;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.viewers.model.ViewerUpdateMonitor#getSchedulingPath()
-	 */
 	@Override
 	TreePath getSchedulingPath() {
 		return getElementPath();

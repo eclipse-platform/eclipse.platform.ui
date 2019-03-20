@@ -69,26 +69,17 @@ public abstract class ElementLabelProvider implements IElementLabelProvider {
 			setSystem(true);
 		}
 
-		/* (non-Javadoc)
-		 * @see org.eclipse.core.runtime.jobs.Job#run(org.eclipse.core.runtime.IProgressMonitor)
-		 */
 		@Override
 		protected IStatus run(IProgressMonitor monitor) {
 			fUpdater.run();
 			return Status.OK_STATUS;
 		}
 
-		/* (non-Javadoc)
-		 * @see org.eclipse.debug.internal.ui.viewers.model.provisional.elements.ElementContentProvider.ILabelJob#queue(org.eclipse.debug.internal.ui.viewers.model.provisional.ILabelUpdate)
-		 */
 		@Override
 		public boolean queue(ILabelUpdate[] updates) {
 			return fUpdater.queue(updates);
 		}
 
-		/* (non-Javadoc)
-		 * @see org.eclipse.core.runtime.jobs.Job#shouldRun()
-		 */
 		@Override
 		public boolean shouldRun() {
 			return fUpdater.shouldRun();
@@ -109,26 +100,17 @@ public abstract class ElementLabelProvider implements IElementLabelProvider {
 			setSystem(true);
 		}
 
-		/* (non-Javadoc)
-		 * @see org.eclipse.ui.progress.UIJob#runInUIThread(org.eclipse.core.runtime.IProgressMonitor)
-		 */
 		@Override
 		public IStatus runInUIThread(IProgressMonitor monitor) {
 			fUpdater.run();
 			return Status.OK_STATUS;
 		}
 
-		/* (non-Javadoc)
-		 * @see org.eclipse.debug.internal.ui.viewers.model.provisional.elements.ElementContentProvider.ILabelJob#queue(org.eclipse.debug.internal.ui.viewers.model.provisional.ILabelUpdate)
-		 */
 		@Override
 		public boolean queue(ILabelUpdate[] updates) {
 			return fUpdater.queue(updates);
 		}
 
-		/* (non-Javadoc)
-		 * @see org.eclipse.core.runtime.jobs.Job#shouldRun()
-		 */
 		@Override
 		public boolean shouldRun() {
 			return fUpdater.shouldRun();
@@ -152,9 +134,6 @@ public abstract class ElementLabelProvider implements IElementLabelProvider {
 			}
 		}
 
-		/* (non-Javadoc)
-		 * @see java.lang.Runnable#run()
-		 */
 		@Override
 		public void run() {
 			ILabelUpdate update = getNextUpdate();
@@ -348,9 +327,6 @@ public abstract class ElementLabelProvider implements IElementLabelProvider {
 		return false;
 	}
 
-    /* (non-Javadoc)
-     * @see org.eclipse.debug.internal.ui.viewers.model.provisional.IElementLabelProvider#update(org.eclipse.debug.internal.ui.viewers.model.provisional.ILabelUpdate[])
-     */
     @Override
 	public synchronized void update(ILabelUpdate[] updates) {
 		if (fLabelJob == null) {

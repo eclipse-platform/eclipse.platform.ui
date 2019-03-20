@@ -34,10 +34,6 @@ import org.eclipse.ui.model.IWorkbenchAdapter2;
  * @since 3.6
  */
 public class BreakpointContainerLabelProvider extends DebugElementLabelProvider {
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.model.elements.DebugElementLabelProvider#getImageDescriptor(org.eclipse.jface.viewers.TreePath, org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationContext, java.lang.String)
-	 */
 	@Override
 	protected ImageDescriptor getImageDescriptor(TreePath elementPath, IPresentationContext presentationContext, String columnId) throws CoreException {
 		ImageDescriptor desc = super.getImageDescriptor(elementPath, presentationContext, columnId);
@@ -51,10 +47,6 @@ public class BreakpointContainerLabelProvider extends DebugElementLabelProvider 
         return desc;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.model.elements.ElementLabelProvider#getChecked(org.eclipse.jface.viewers.TreePath, org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationContext)
-	 */
 	@Override
 	public boolean getChecked(TreePath path, IPresentationContext presentationContext) throws CoreException {
 		Object lastSegment = path.getLastSegment();
@@ -62,7 +54,9 @@ public class BreakpointContainerLabelProvider extends DebugElementLabelProvider 
             IBreakpointContainer container = (IBreakpointContainer) lastSegment;
             IBreakpoint[] breakpoints = container.getBreakpoints();
             for (int i = 0; i < breakpoints.length; ++i) {
-            	if (breakpoints[i].isEnabled()) return true;
+            	if (breakpoints[i].isEnabled()) {
+					return true;
+				}
             }
 
             return false;
@@ -71,10 +65,6 @@ public class BreakpointContainerLabelProvider extends DebugElementLabelProvider 
 		return super.getChecked(path, presentationContext);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.model.elements.ElementLabelProvider#getGrayed(org.eclipse.jface.viewers.TreePath, org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationContext)
-	 */
 	@Override
 	public boolean getGrayed(TreePath path, IPresentationContext presentationContext) throws CoreException {
 		Object lastSegment = path.getLastSegment();

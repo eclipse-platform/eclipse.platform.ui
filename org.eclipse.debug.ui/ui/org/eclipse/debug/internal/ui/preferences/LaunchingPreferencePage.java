@@ -61,18 +61,12 @@ public class LaunchingPreferencePage extends FieldEditorPreferencePage implement
 		setPreferenceStore(DebugUIPlugin.getDefault().getPreferenceStore());
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.preference.PreferencePage#createControl(org.eclipse.swt.widgets.Composite)
-	 */
 	@Override
 	public void createControl(Composite parent) {
 		super.createControl(parent);
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(getControl(), IDebugHelpContextIds.LAUNCHING_PREFERENCE_PAGE);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.preference.PreferencePage#createContents(org.eclipse.swt.widgets.Composite)
-	 */
 	@Override
 	protected Control createContents(Composite parent) {
 		Composite comp = SWTFactory.createComposite(parent, 1, 1, GridData.FILL_HORIZONTAL);
@@ -192,15 +186,9 @@ public class LaunchingPreferencePage extends FieldEditorPreferencePage implement
 		fTerminatAndRelaunch.setSelection(value);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IWorkbenchPreferencePage#init(org.eclipse.ui.IWorkbench)
-	 */
 	@Override
 	public void init(IWorkbench workbench) {}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.preference.PreferencePage#performDefaults()
-	 */
 	@Override
 	protected void performDefaults() {
 		boolean value = getPreferenceStore().getDefaultBoolean(IInternalDebugUIConstants.PREF_USE_CONTEXTUAL_LAUNCH);
@@ -216,9 +204,6 @@ public class LaunchingPreferencePage extends FieldEditorPreferencePage implement
 		super.performDefaults();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.preference.PreferencePage#performOk()
-	 */
 	@Override
 	public boolean performOk() {
 		getPreferenceStore().setValue(IInternalDebugUIConstants.PREF_USE_CONTEXTUAL_LAUNCH, fUseContextLaunching.getSelection());
@@ -228,9 +213,6 @@ public class LaunchingPreferencePage extends FieldEditorPreferencePage implement
 		return super.performOk();
 	}
 
-	/**
-	 * @see org.eclipse.jface.preference.FieldEditorPreferencePage#createFieldEditors()
-	 */
 	@Override
 	protected void createFieldEditors() {
 		//do nothing we overload the create contents method

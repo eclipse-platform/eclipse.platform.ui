@@ -171,9 +171,6 @@ public class AsynchronousTableViewer extends AsynchronousViewer implements Liste
         return (Table) getControl();
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.debug.internal.ui.viewers.model.provisional.viewers.AsynchronousViewer#internalRefresh(org.eclipse.debug.internal.ui.viewers.model.provisional.viewers.ModelNode)
-     */
     @Override
 	protected void internalRefresh(ModelNode node) {
         super.internalRefresh(node);
@@ -265,11 +262,6 @@ public class AsynchronousTableViewer extends AsynchronousViewer implements Liste
         job.schedule();
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see org.eclipse.jface.viewers.StructuredViewer#reveal(java.lang.Object)
-     */
     @Override
 	public void reveal(Object element) {
         Assert.isNotNull(element);
@@ -469,17 +461,11 @@ public class AsynchronousTableViewer extends AsynchronousViewer implements Liste
         ((AsynchronousTableModel)getModel()).replace(element, replacement);
     }
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.viewers.model.provisional.viewers.AsynchronousViewer#createModel()
-	 */
 	@Override
 	protected AsynchronousModel createModel() {
 		return new AsynchronousTableModel(this);
 	}
 
-    /* (non-Javadoc)
-     * @see org.eclipse.debug.internal.ui.viewers.model.provisional.viewers.AsynchronousViewer#setItemCount(org.eclipse.swt.widgets.Widget, int)
-     */
     @Override
 	protected void setItemCount(Widget parent, int itemCount) {
 		fTable.setItemCount(itemCount);
@@ -490,17 +476,11 @@ public class AsynchronousTableViewer extends AsynchronousViewer implements Liste
         return Math.min((fTable.getBounds().height / fTable.getItemHeight()) + 2, itemCount - top);
     }
 
-    /* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.viewers.model.provisional.viewers.AsynchronousViewer#createUpdatePolicy()
-	 */
 	@Override
 	public AbstractUpdatePolicy createUpdatePolicy() {
 		return new TableUpdatePolicy();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.viewers.model.provisional.viewers.AsynchronousViewer#getParentWidget(org.eclipse.swt.widgets.Widget)
-	 */
 	@Override
 	protected Widget getParentWidget(Widget widget) {
 		if (widget instanceof TableItem) {
@@ -509,9 +489,6 @@ public class AsynchronousTableViewer extends AsynchronousViewer implements Liste
 		return null;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.viewers.model.provisional.viewers.AsynchronousViewer#getChildWidget(org.eclipse.swt.widgets.Widget, int)
-	 */
 	@Override
 	protected Widget getChildWidget(Widget parent, int index) {
 		if (index < fTable.getItemCount()) {
@@ -520,9 +497,6 @@ public class AsynchronousTableViewer extends AsynchronousViewer implements Liste
 		return null;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.viewers.model.provisional.viewers.AsynchronousViewer#clear(org.eclipse.swt.widgets.Widget)
-	 */
 	@Override
 	protected void clear(Widget item) {
 		if (item instanceof TableItem) {
@@ -533,9 +507,6 @@ public class AsynchronousTableViewer extends AsynchronousViewer implements Liste
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.viewers.AsynchronousViewer#clearChild(org.eclipse.swt.widgets.Widget, int)
-	 */
 	@Override
 	protected void clearChild(Widget parent, int childIndex) {
 		if (parent instanceof Table) {
@@ -543,9 +514,6 @@ public class AsynchronousTableViewer extends AsynchronousViewer implements Liste
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.viewers.AsynchronousViewer#clearChildren(org.eclipse.swt.widgets.Widget)
-	 */
 	@Override
 	protected void clearChildren(Widget item) {
 		if (item instanceof Table) {
@@ -553,9 +521,6 @@ public class AsynchronousTableViewer extends AsynchronousViewer implements Liste
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.viewers.AsynchronousViewer#indexOf(org.eclipse.swt.widgets.Widget, org.eclipse.swt.widgets.Widget)
-	 */
 	@Override
 	protected int indexOf(Widget parent, Widget child) {
 		if (parent instanceof Table) {

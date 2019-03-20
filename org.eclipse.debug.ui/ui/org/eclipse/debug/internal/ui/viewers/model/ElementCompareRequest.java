@@ -60,17 +60,11 @@ public class ElementCompareRequest extends MementoUpdate implements IElementComp
 		fCheckChildrenRealized = checkChildrenRealized;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.viewers.model.provisional.IElementCompareRequest#setEqual(boolean)
-	 */
 	@Override
 	public void setEqual(boolean equal) {
 		fEqual = equal;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.core.runtime.IProgressMonitor#done()
-	 */
 	@Override
 	public void done() {
         ITreeModelViewer viewer = getContentProvider().getViewer();

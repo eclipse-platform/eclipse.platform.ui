@@ -68,25 +68,16 @@ public abstract class AsynchronousModel {
 
 	class EmptyContentAdapter extends AsynchronousContentAdapter {
 
-		/* (non-Javadoc)
-		 * @see org.eclipse.debug.internal.ui.viewers.provisional.AsynchronousContentAdapter#getChildren(java.lang.Object, org.eclipse.debug.internal.ui.viewers.provisional.IPresentationContext)
-		 */
 		@Override
 		protected Object[] getChildren(Object parent, IPresentationContext context) throws CoreException {
 			return EMPTY;
 		}
 
-		/* (non-Javadoc)
-		 * @see org.eclipse.debug.internal.ui.viewers.provisional.AsynchronousContentAdapter#hasChildren(java.lang.Object, org.eclipse.debug.internal.ui.viewers.provisional.IPresentationContext)
-		 */
 		@Override
 		protected boolean hasChildren(Object element, IPresentationContext context) throws CoreException {
 			return false;
 		}
 
-		/* (non-Javadoc)
-		 * @see org.eclipse.debug.internal.ui.viewers.provisional.AsynchronousContentAdapter#supportsPartId(java.lang.String)
-		 */
 		@Override
 		protected boolean supportsPartId(String id) {
 			return true;

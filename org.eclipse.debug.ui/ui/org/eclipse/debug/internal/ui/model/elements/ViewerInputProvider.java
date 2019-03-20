@@ -33,9 +33,6 @@ public abstract class ViewerInputProvider implements IViewerInputProvider {
 
 	protected static final Object[] EMPTY = new Object[0];
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.viewers.model.provisional.IElementContentProvider#updateChildren(java.lang.Object, int, int, org.eclipse.debug.internal.ui.viewers.provisional.IPresentationContext, org.eclipse.debug.internal.ui.viewers.model.provisional.IElementRequestMonitor)
-	 */
 	@Override
 	public void update(final IViewerInputUpdate update) {
 		Job job = new Job("viewer input resolution") { //$NON-NLS-1$

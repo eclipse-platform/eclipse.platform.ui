@@ -50,25 +50,16 @@ abstract class MementoUpdate extends Request implements IViewerUpdate {
 		fViewerInput = viewerInput;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.viewers.model.provisional.IViewerUpdate#getPresentationContext()
-	 */
 	@Override
 	public IPresentationContext getPresentationContext() {
 		return fContext;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.viewers.model.provisional.IViewerUpdate#getElement()
-	 */
 	@Override
 	public Object getElement() {
 		return fElement;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.viewers.model.provisional.IViewerUpdate#getElementPath()
-	 */
 	@Override
 	public TreePath getElementPath() {
 		return fElementPath;
@@ -86,9 +77,6 @@ abstract class MementoUpdate extends Request implements IViewerUpdate {
 		return fProvider.getElement(path);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.viewers.model.provisional.IViewerUpdate#getViewerInput()
-	 */
 	@Override
 	public Object getViewerInput() {
 		return fViewerInput;
