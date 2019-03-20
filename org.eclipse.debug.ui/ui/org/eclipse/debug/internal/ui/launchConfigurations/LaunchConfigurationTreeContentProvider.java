@@ -106,9 +106,6 @@ public class LaunchConfigurationTreeContentProvider implements ITreeContentProvi
 		return EMPTY_ARRAY;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.viewers.ITreeContentProvider#getParent(java.lang.Object)
-	 */
 	@Override
 	public Object getParent(Object element) {
 		if (element instanceof ILaunchConfiguration) {
@@ -131,9 +128,6 @@ public class LaunchConfigurationTreeContentProvider implements ITreeContentProvi
 		return null;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.viewers.ITreeContentProvider#hasChildren(java.lang.Object)
-	 */
 	@Override
 	public boolean hasChildren(Object element) {
 		if (element instanceof ILaunchConfiguration) {

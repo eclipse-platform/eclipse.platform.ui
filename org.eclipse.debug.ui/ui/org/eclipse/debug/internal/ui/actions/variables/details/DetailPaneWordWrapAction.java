@@ -46,9 +46,6 @@ public class DetailPaneWordWrapAction extends Action {
 		setChecked(prefSetting);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.action.IAction#run()
-	 */
 	@Override
 	public void run() {
 		fTextViewer.getTextWidget().setWordWrap(isChecked());

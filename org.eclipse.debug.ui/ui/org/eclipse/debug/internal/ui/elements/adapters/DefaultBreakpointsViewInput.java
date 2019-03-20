@@ -47,10 +47,6 @@ public class DefaultBreakpointsViewInput {
 		return fContext;
 	}
 
-	/*
-     * (non-Javadoc)
-     * @see java.lang.Object#hashCode()
-     */
     @Override
 	public int hashCode() {
         if (getContext() != null) {
@@ -60,17 +56,14 @@ public class DefaultBreakpointsViewInput {
         }
     }
 
-    /*
-     * (non-Javadoc)
-     * @see java.lang.Object#equals(java.lang.Object)
-     */
     @Override
 	public boolean equals(Object arg0) {
         if ( (arg0 != null) && arg0.getClass().equals(this.getClass()) ) {
 
             IPresentationContext context = ((DefaultBreakpointsViewInput) arg0).getContext();
-            if (getContext() != null && context != null)
-                return getContext().equals(context);
+            if (getContext() != null && context != null) {
+				return getContext().equals(context);
+			}
         }
 
         return super.equals(arg0);

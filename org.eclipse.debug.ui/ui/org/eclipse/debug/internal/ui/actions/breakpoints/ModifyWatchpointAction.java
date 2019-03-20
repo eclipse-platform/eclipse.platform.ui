@@ -34,9 +34,6 @@ public abstract class ModifyWatchpointAction implements IObjectActionDelegate, I
 
     private IStructuredSelection fWatchpoints = null;
 
-    /* (non-Javadoc)
-     * @see org.eclipse.ui.IActionDelegate#run(org.eclipse.jface.action.IAction)
-     */
     @Override
 	public void run(IAction action) {
         try {
@@ -62,16 +59,10 @@ public abstract class ModifyWatchpointAction implements IObjectActionDelegate, I
      */
     protected abstract void toggleWatchpoint(IWatchpoint watchpoint, boolean b) throws CoreException;
 
-    /* (non-Javadoc)
-     * @see org.eclipse.ui.IObjectActionDelegate#setActivePart(org.eclipse.jface.action.IAction, org.eclipse.ui.IWorkbenchPart)
-     */
     @Override
 	public void setActivePart(IAction action, IWorkbenchPart targetPart) {
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.ui.IActionDelegate#selectionChanged(org.eclipse.jface.action.IAction, org.eclipse.jface.viewers.ISelection)
-     */
     @Override
 	public void selectionChanged(IAction action, ISelection selection) {
         if (selection instanceof IStructuredSelection) {
@@ -112,24 +103,15 @@ public abstract class ModifyWatchpointAction implements IObjectActionDelegate, I
      */
     protected abstract boolean isEnabled(IWatchpoint watchpoint);
 
-    /* (non-Javadoc)
-     * @see org.eclipse.ui.IActionDelegate2#init(org.eclipse.jface.action.IAction)
-     */
     @Override
 	public void init(IAction action) {
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.ui.IActionDelegate2#dispose()
-     */
     @Override
 	public void dispose() {
         fWatchpoints = null;
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.ui.IActionDelegate2#runWithEvent(org.eclipse.jface.action.IAction, org.eclipse.swt.widgets.Event)
-     */
     @Override
 	public void runWithEvent(IAction action, Event event) {
         run(action);

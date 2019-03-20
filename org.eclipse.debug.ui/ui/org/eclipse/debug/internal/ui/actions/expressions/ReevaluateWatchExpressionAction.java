@@ -82,9 +82,6 @@ public class ReevaluateWatchExpressionAction implements IObjectActionDelegate {
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IActionDelegate#selectionChanged(org.eclipse.jface.action.IAction, org.eclipse.jface.viewers.ISelection)
-	 */
 	@Override
 	public void selectionChanged(IAction action, ISelection selection) {
 		IDebugElement debugElement = getContext();

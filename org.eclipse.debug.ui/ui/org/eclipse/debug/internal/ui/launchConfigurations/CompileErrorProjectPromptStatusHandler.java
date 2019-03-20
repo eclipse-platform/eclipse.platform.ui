@@ -36,9 +36,6 @@ import com.ibm.icu.text.MessageFormat;
 
 public class CompileErrorProjectPromptStatusHandler implements IStatusHandler {
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.core.IStatusHandler#handleStatus(org.eclipse.core.runtime.IStatus, java.lang.Object)
-	 */
 	@Override
 	public Object handleStatus(IStatus status, Object source) throws CoreException {
 		ILaunchConfiguration config = null;

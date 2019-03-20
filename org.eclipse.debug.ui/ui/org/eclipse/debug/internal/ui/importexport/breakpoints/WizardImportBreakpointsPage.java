@@ -78,9 +78,6 @@ public class WizardImportBreakpointsPage extends WizardPage implements Listener 
 		super(pageName, ImportExportMessages.WizardImportBreakpointsPage_0, null);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.swt.widgets.Listener#handleEvent(org.eclipse.swt.widgets.Event)
-	 */
 	@Override
 	public void handleEvent(Event event) {
 		Widget source = event.widget;
@@ -102,9 +99,6 @@ public class WizardImportBreakpointsPage extends WizardPage implements Listener 
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.dialogs.IDialogPage#createControl(org.eclipse.swt.widgets.Composite)
-	 */
 	@Override
 	public void createControl(Composite parent) {
 		initializeDialogUnits(parent);
@@ -117,9 +111,6 @@ public class WizardImportBreakpointsPage extends WizardPage implements Listener 
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(getControl(), IDebugHelpContextIds.IMPORT_BREAKPOINTS_WIZARD_PAGE);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.dialogs.IDialogPage#getImage()
-	 */
 	@Override
 	public Image getImage() {
 		return DebugUITools.getImage(IInternalDebugUIConstants.IMG_WIZBAN_IMPORT_BREAKPOINTS);

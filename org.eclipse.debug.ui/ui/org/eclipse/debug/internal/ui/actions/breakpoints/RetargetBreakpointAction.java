@@ -36,9 +36,6 @@ public abstract class RetargetBreakpointAction extends RetargetAction implements
 
     private IAction fAction;
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.actions.RetargetAction#getAdapterClass()
-	 */
 	@Override
 	protected Class<?> getAdapterClass() {
 		return IToggleBreakpointsTarget.class;

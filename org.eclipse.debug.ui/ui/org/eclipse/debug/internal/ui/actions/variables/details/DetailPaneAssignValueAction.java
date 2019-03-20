@@ -120,9 +120,6 @@ public class DetailPaneAssignValueAction extends Action{
 		setEnabled(enabled);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.action.IAction#run()
-	 */
 	@Override
 	public void run() {
 		IVariable variable = (IVariable) fCurrentSelection.getFirstElement();
@@ -146,9 +143,6 @@ public class DetailPaneAssignValueAction extends Action{
 		assignValue(activeShell, variable, value);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.action.IAction#getActionDefinitionId()
-	 */
 	@Override
 	public String getActionDefinitionId() {
 		return IWorkbenchCommandConstants.FILE_SAVE;

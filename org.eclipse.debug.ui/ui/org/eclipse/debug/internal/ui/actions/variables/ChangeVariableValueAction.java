@@ -181,18 +181,12 @@ public class ChangeVariableValueAction extends SelectionProviderAction {
 		setEnabled(false);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.action.Action#run()
-	 */
 	@Override
 	public void run() {
 		Iterator<Object> iterator = getStructuredSelection().iterator();
 		doActionPerformed((IVariable)iterator.next());
 	}
 
-	/**
-	 * @see SelectionProviderAction#selectionChanged(org.eclipse.jface.viewers.IStructuredSelection)
-	 */
 	@Override
 	public void selectionChanged(IStructuredSelection sel) {
 		update(sel);

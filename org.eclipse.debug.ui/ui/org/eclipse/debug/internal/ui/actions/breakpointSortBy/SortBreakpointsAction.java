@@ -47,10 +47,6 @@ public class SortBreakpointsAction extends Action {
 		fView = view;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.jface.action.IAction#run()
-	 */
 	@Override
 	public void run() {
 		if (isChecked()) {

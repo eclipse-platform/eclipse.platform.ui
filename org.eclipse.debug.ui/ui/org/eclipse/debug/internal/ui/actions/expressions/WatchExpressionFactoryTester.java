@@ -32,9 +32,6 @@ public class WatchExpressionFactoryTester extends PropertyTester {
 
 	public static final String CAN_CREATE_WATCH_EXPRESSION_PROPERTY = "canCreateWatchExpression"; //$NON-NLS-1$
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.core.expressions.PropertyTester#test(java.lang.Object, java.lang.String, java.lang.Object[], java.lang.Object)
-	 */
 	@Override
 	public boolean test(Object element, String property, Object[] args, Object expectedValue) {
 		if (CAN_CREATE_WATCH_EXPRESSION_PROPERTY.equals(property)){

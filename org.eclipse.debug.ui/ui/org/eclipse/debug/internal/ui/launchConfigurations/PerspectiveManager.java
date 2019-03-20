@@ -1071,35 +1071,20 @@ public class PerspectiveManager implements ILaunchListener, ISuspendTriggerListe
 		job.schedule();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.ui.contexts.ISuspendTriggerListener#suspended(org.eclipse.debug.core.ILaunch, java.lang.Object)
-	 */
 	@Override
 	public void suspended(ILaunch launch, Object context) {
 		handleBreakpointHit(launch);
 	}
 
-	/**
-	 * @see org.eclipse.core.resources.ISaveParticipant#doneSaving(org.eclipse.core.resources.ISaveContext)
-	 */
 	@Override
 	public void doneSaving(ISaveContext context) {}
 
-	/**
-	 * @see org.eclipse.core.resources.ISaveParticipant#prepareToSave(org.eclipse.core.resources.ISaveContext)
-	 */
 	@Override
 	public void prepareToSave(ISaveContext context) throws CoreException {}
 
-	/**
-	 * @see org.eclipse.core.resources.ISaveParticipant#rollback(org.eclipse.core.resources.ISaveContext)
-	 */
 	@Override
 	public void rollback(ISaveContext context) {}
 
-	/**
-	 * @see org.eclipse.core.resources.ISaveParticipant#saving(org.eclipse.core.resources.ISaveContext)
-	 */
 	@Override
 	public void saving(ISaveContext context) throws CoreException {
 		try {

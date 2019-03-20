@@ -73,17 +73,11 @@ public class LaunchConfigurationTabGroupWrapper implements ILaunchConfigurationT
 			return null;
 		}
 
-		/* (non-Javadoc)
-		 * @see java.util.Iterator#hasNext()
-		 */
 		@Override
 		public boolean hasNext() {
 			return extList.size() > 0 || tabList.size() > 0;
 		}
 
-		/* (non-Javadoc)
-		 * @see java.util.Iterator#next()
-		 */
 		@Override
 		public ILaunchConfigurationTab next() {
 			ILaunchConfigurationTab nextTab = nextExtensionTab();
@@ -105,9 +99,6 @@ public class LaunchConfigurationTabGroupWrapper implements ILaunchConfigurationT
 			return nextTab;
 		}
 
-		/* (non-Javadoc)
-		 * @see java.util.Iterator#remove()
-		 */
 		@Override
 		public void remove() {
 			throw new UnsupportedOperationException();
@@ -135,9 +126,6 @@ public class LaunchConfigurationTabGroupWrapper implements ILaunchConfigurationT
 		fConfig = config;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.ui.ILaunchConfigurationTabGroup#createTabs(org.eclipse.debug.ui.ILaunchConfigurationDialog, java.lang.String)
-	 */
 	@Override
 	public void createTabs(ILaunchConfigurationDialog dialog, String mode) {
 		if(fGroup != null) {
@@ -146,9 +134,6 @@ public class LaunchConfigurationTabGroupWrapper implements ILaunchConfigurationT
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.ui.ILaunchConfigurationTabGroup#dispose()
-	 */
 	@Override
 	public void dispose() {
 		fGroup.dispose();
@@ -165,9 +150,6 @@ public class LaunchConfigurationTabGroupWrapper implements ILaunchConfigurationT
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.ui.ILaunchConfigurationTabGroup#getTabs()
-	 */
 	@Override
 	public ILaunchConfigurationTab[] getTabs() {
 		if(fTabs == null) {
@@ -196,9 +178,6 @@ public class LaunchConfigurationTabGroupWrapper implements ILaunchConfigurationT
 		return fTabs.toArray(new ILaunchConfigurationTab[fTabs.size()]);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.ui.ILaunchConfigurationTabGroup#initializeFrom(org.eclipse.debug.core.ILaunchConfiguration)
-	 */
 	@Override
 	public void initializeFrom(ILaunchConfiguration configuration) {
 		fGroup.initializeFrom(configuration);
@@ -214,9 +193,6 @@ public class LaunchConfigurationTabGroupWrapper implements ILaunchConfigurationT
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.ui.ILaunchConfigurationTabGroup#launched(org.eclipse.debug.core.ILaunch)
-	 */
 	@SuppressWarnings("deprecation")
 	@Override
 	public void launched(ILaunch launch) {
@@ -225,9 +201,6 @@ public class LaunchConfigurationTabGroupWrapper implements ILaunchConfigurationT
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.ui.ILaunchConfigurationTabGroup#performApply(org.eclipse.debug.core.ILaunchConfigurationWorkingCopy)
-	 */
 	@Override
 	public void performApply(ILaunchConfigurationWorkingCopy configuration) {
 		fGroup.performApply(configuration);
@@ -243,9 +216,6 @@ public class LaunchConfigurationTabGroupWrapper implements ILaunchConfigurationT
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.ui.ILaunchConfigurationTabGroup#setDefaults(org.eclipse.debug.core.ILaunchConfigurationWorkingCopy)
-	 */
 	@Override
 	public void setDefaults(ILaunchConfigurationWorkingCopy configuration) {
 		fGroup.setDefaults(configuration);

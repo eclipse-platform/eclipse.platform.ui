@@ -38,56 +38,31 @@ public abstract class DebugCommandActionDelegate implements IWorkbenchWindowActi
 	    fDebugAction = action;
 	}
 
-	/*
-     * (non-Javadoc)
-     * @see org.eclipse.ui.IWorkbenchWindowActionDelegate#dispose()
-	 */
 	@Override
 	public void dispose() {
         fDebugAction.dispose();
 	}
 
-    /*
-     * (non-Javadoc)
-     * @see org.eclipse.ui.IActionDelegate2#init(org.eclipse.jface.action.IAction)
-     */
     @Override
 	public void init(IAction action) {
         fDebugAction.setActionProxy(action);
     }
 
-    /*
-     * (non-Javadoc)
-     * @see org.eclipse.ui.IWorkbenchWindowActionDelegate#init(org.eclipse.ui.IWorkbenchWindow)
-     */
     @Override
 	public void init(IWorkbenchWindow window) {
         fDebugAction.init(window);
 	}
 
-    /*
-     * (non-Javadoc)
-     * @see org.eclipse.ui.IActionDelegate#run(org.eclipse.jface.action.IAction)
-     */
 	@Override
 	public void run(IAction action) {
         fDebugAction.run();
 	}
 
-
-    /*
-     * (non-Javadoc)
-     * @see org.eclipse.ui.IActionDelegate2#runWithEvent(org.eclipse.jface.action.IAction, org.eclipse.swt.widgets.Event)
-     */
 	@Override
 	public void runWithEvent(IAction action, Event event) {
         run(action);
     }
 
-    /*
-     * (non-Javadoc)
-     * @see org.eclipse.ui.IActionDelegate#selectionChanged(org.eclipse.jface.action.IAction, org.eclipse.jface.viewers.ISelection)
-     */
     @Override
 	public void selectionChanged(IAction action, ISelection s) {
 		// do nothing

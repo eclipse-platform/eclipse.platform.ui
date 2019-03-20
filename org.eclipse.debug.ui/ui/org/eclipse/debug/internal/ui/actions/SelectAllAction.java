@@ -29,9 +29,6 @@ public abstract class SelectAllAction extends AbstractRemoveAllActionDelegate {
 
 	private IViewPart fView;
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.actions.selection.AbstractSelectionActionDelegate#init(org.eclipse.ui.IViewPart)
-	 */
 	@Override
 	public void init(IViewPart view) {
 		fView = view;

@@ -74,9 +74,6 @@ public class DetailPaneMaxLengthDialog extends TrayDialog {
 				};
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.dialogs.SelectionDialog#getDialogBoundsSettings()
-	 */
 	@Override
 	protected IDialogSettings getDialogBoundsSettings() {
 		IDialogSettings settings = DebugUIPlugin.getDefault().getDialogSettings();
@@ -87,9 +84,6 @@ public class DetailPaneMaxLengthDialog extends TrayDialog {
 		return section;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.dialogs.Dialog#createContents(org.eclipse.swt.widgets.Composite)
-	 */
 	@Override
 	protected Control createContents(Composite parent) {
 		getShell().setText(VariablesViewMessages.DetailPaneMaxLengthDialog_0);
@@ -98,9 +92,6 @@ public class DetailPaneMaxLengthDialog extends TrayDialog {
 		return contents;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.dialogs.Dialog#createDialogArea(org.eclipse.swt.widgets.Composite)
-	 */
 	@Override
 	protected Control createDialogArea(Composite parent) {
         Composite composite = (Composite) super.createDialogArea(parent);
@@ -129,9 +120,6 @@ public class DetailPaneMaxLengthDialog extends TrayDialog {
         return composite;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.dialogs.Dialog#okPressed()
-	 */
 	@Override
 	protected void okPressed() {
 		String text = getValue();

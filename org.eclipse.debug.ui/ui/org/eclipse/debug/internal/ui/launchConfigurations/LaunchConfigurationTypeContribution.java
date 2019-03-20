@@ -34,17 +34,11 @@ class LaunchConfigurationTypeContribution implements IPluginContribution {
 		this.type= type;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IPluginContribution#getLocalId()
-	 */
 	@Override
 	public String getLocalId() {
 		return type.getIdentifier();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IPluginContribution#getPluginId()
-	 */
 	@Override
 	public String getPluginId() {
 		return type.getPluginIdentifier();

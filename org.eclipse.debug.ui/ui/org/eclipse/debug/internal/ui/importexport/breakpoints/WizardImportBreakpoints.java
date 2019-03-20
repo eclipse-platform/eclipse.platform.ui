@@ -75,9 +75,6 @@ public class WizardImportBreakpoints extends Wizard implements IImportWizard {
 		setDialogSettings(section);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.wizard.IWizard#addPages()
-	 */
 	@Override
 	public void addPages() {
 		super.addPages();
@@ -87,27 +84,18 @@ public class WizardImportBreakpoints extends Wizard implements IImportWizard {
 		addPage(fSelectionPage);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.wizard.IWizard#dispose()
-	 */
 	@Override
 	public void dispose() {
 		super.dispose();
 		fMainPage = null;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.wizard.IWizard#performFinish()
-	 */
 	@Override
 	public boolean performFinish() {
 		List<IMarker> selectedBreakpoints = fSelectionPage.getSelectedMarkers();
 		return fMainPage.finish(selectedBreakpoints);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IWorkbenchWizard#init(org.eclipse.ui.IWorkbench, org.eclipse.jface.viewers.IStructuredSelection)
-	 */
 	@Override
 	public void init(IWorkbench workbench, IStructuredSelection selection) {
 		setWindowTitle(ImportExportMessages.WizardImportBreakpoints_0);

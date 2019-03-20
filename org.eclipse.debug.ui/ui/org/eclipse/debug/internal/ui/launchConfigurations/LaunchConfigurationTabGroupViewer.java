@@ -511,9 +511,6 @@ public class LaunchConfigurationTabGroupViewer {
 		return getConfiguration();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.viewers.Viewer#refresh()
-	 */
 	public void refresh() {
 		if (fInitializingTabs) {
 			return;
@@ -655,9 +652,6 @@ public class LaunchConfigurationTabGroupViewer {
 		fShowCommandLineButton.setEnabled(canLaunch());
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.viewers.Viewer#setInput(java.lang.Object)
-	 */
 	public void setInput(final Object input) {
 		if(DebugUIPlugin.getStandardDisplay().getThread().equals(Thread.currentThread())) {
 			setInput0(input);

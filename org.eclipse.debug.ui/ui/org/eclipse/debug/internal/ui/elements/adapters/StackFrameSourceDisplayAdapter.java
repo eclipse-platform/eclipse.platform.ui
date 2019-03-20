@@ -22,9 +22,6 @@ import org.eclipse.ui.IWorkbenchPage;
  */
 public class StackFrameSourceDisplayAdapter implements ISourceDisplay {
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.ui.contexts.ISourceDisplayAdapter#displaySource(java.lang.Object, org.eclipse.ui.IWorkbenchPage, boolean)
-	 */
 	@Override
 	public synchronized void displaySource(Object context, IWorkbenchPage page, boolean force) {
 		SourceLookupFacility.getDefault().displaySource(context, page, force);

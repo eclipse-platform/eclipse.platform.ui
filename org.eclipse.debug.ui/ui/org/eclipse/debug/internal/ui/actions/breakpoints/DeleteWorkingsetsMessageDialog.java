@@ -62,9 +62,6 @@ public class DeleteWorkingsetsMessageDialog extends MessageDialog {
 		fDeleteWorkingsets = section.getBoolean(DELETE_WORKINGSETS);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.dialogs.MessageDialog#createCustomArea(org.eclipse.swt.widgets.Composite)
-	 */
 	@Override
 	protected Control createCustomArea(Composite parent) {
 		Composite comp = new Composite(parent, SWT.NONE);
@@ -99,9 +96,6 @@ public class DeleteWorkingsetsMessageDialog extends MessageDialog {
 		return comp;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.dialogs.MessageDialog#buttonPressed(int)
-	 */
 	@Override
 	protected void buttonPressed(int buttonId) {
 		if(buttonId == OK) {

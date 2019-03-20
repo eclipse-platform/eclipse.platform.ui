@@ -78,9 +78,6 @@ public class SkipAllBreakpointsAction extends Action implements IWorkbenchWindow
 		updateActionCheckedState();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.action.IAction#run()
-	 */
 	@Override
 	public void run(){
 		IWorkbenchSiteProgressService progressService = null;
@@ -127,26 +124,17 @@ public class SkipAllBreakpointsAction extends Action implements IWorkbenchWindow
 		return DebugPlugin.getDefault().getBreakpointManager();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IWorkbenchWindowActionDelegate#dispose()
-	 */
 	@Override
 	public void dispose() {
 		getBreakpointManager().removeBreakpointManagerListener(this);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IWorkbenchWindowActionDelegate#init(org.eclipse.ui.IWorkbenchWindow)
-	 */
 	@Override
 	public void init(IWorkbenchWindow window) {
 		updateActionCheckedState();
 		getBreakpointManager().addBreakpointManagerListener(this);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IActionDelegate#run(org.eclipse.jface.action.IAction)
-	 */
 	@Override
 	public void run(IAction action) {
 		setChecked(action.isChecked());
@@ -157,17 +145,11 @@ public class SkipAllBreakpointsAction extends Action implements IWorkbenchWindow
 		prefStore.setValue(prefKey, action.isChecked());
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IActionDelegate#selectionChanged(org.eclipse.jface.action.IAction, org.eclipse.jface.viewers.ISelection)
-	 */
 	@Override
 	public void selectionChanged(IAction action, ISelection selection) {
 		fAction = action;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.core.IBreakpointManagerListener#breakpointManagerEnablementChanged(boolean)
-	 */
 	@Override
 	public void breakpointManagerEnablementChanged(boolean enabled) {
 		if (fAction != null) {
@@ -175,18 +157,12 @@ public class SkipAllBreakpointsAction extends Action implements IWorkbenchWindow
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IActionDelegate2#init(org.eclipse.jface.action.IAction)
-	 */
 	@Override
 	public void init(IAction action) {
 		fAction = action;
 		updateActionCheckedState();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IActionDelegate2#runWithEvent(org.eclipse.jface.action.IAction, org.eclipse.swt.widgets.Event)
-	 */
 	@Override
 	public void runWithEvent(IAction action, Event event) {
 		run(action);

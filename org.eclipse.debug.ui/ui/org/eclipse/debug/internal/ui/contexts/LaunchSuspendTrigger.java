@@ -54,9 +54,6 @@ public class LaunchSuspendTrigger implements ISuspendTrigger, IDebugEventSetList
 		fFactory.dispose(this);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.ui.contexts.ISuspendTrigger#addSuspendTriggerListener(org.eclipse.debug.ui.contexts.ISuspendTriggerListener)
-	 */
 	@Override
 	public void addSuspendTriggerListener(ISuspendTriggerListener listener) {
         if (fListeners != null) {
@@ -64,9 +61,6 @@ public class LaunchSuspendTrigger implements ISuspendTrigger, IDebugEventSetList
         }
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.ui.contexts.ISuspendTrigger#removeSuspendTriggerListener(org.eclipse.debug.ui.contexts.ISuspendTriggerListener)
-	 */
 	@Override
 	public void removeSuspendTriggerListener(ISuspendTriggerListener listener) {
         if (fListeners != null) {
@@ -77,9 +71,6 @@ public class LaunchSuspendTrigger implements ISuspendTrigger, IDebugEventSetList
         }
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.core.IDebugEventSetListener#handleDebugEvents(org.eclipse.debug.core.DebugEvent[])
-	 */
 	@Override
 	public void handleDebugEvents(DebugEvent[] events) {
 		// open the debugger if this is a suspend event and the debug view is not yet open

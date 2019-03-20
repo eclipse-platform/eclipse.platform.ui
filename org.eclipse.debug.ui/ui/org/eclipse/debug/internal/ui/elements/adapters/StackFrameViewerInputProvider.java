@@ -28,9 +28,6 @@ import org.eclipse.debug.ui.IDebugUIConstants;
  */
 public class StackFrameViewerInputProvider extends ViewerInputProvider {
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.model.elements.ViewerInputProvider#getViewerInput(java.lang.Object, org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationContext, org.eclipse.debug.internal.ui.viewers.model.provisional.IViewerUpdate)
-	 */
 	@Override
 	protected Object getViewerInput(Object source, IPresentationContext context, IViewerUpdate update) throws CoreException {
 	    if ( IDebugUIConstants.ID_REGISTER_VIEW.equals(context.getId()) ) {
@@ -43,9 +40,6 @@ public class StackFrameViewerInputProvider extends ViewerInputProvider {
 
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.model.elements.ViewerInputProvider#supportsContextId(java.lang.String)
-	 */
 	@Override
 	protected boolean supportsContextId(String id) {
 		return IDebugUIConstants.ID_REGISTER_VIEW.equals(id) ||

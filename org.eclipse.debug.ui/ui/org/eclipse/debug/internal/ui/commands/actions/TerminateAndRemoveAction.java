@@ -138,9 +138,6 @@ public class TerminateAndRemoveAction extends DebugCommandAction {
         }
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.debug.ui.actions.DebugCommandAction#runWithEvent(org.eclipse.swt.widgets.Event)
-     */
     @Override
 	public void runWithEvent(Event event) {
     	if (fCanTerminate) {
@@ -167,9 +164,6 @@ public class TerminateAndRemoveAction extends DebugCommandAction {
     	}
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.debug.ui.actions.DebugCommandAction#init(org.eclipse.ui.IWorkbenchPart)
-     */
     @Override
 	public void init(IWorkbenchPart part) {
     	super.init(part); // TODO: if #getContext() was API, this would not be needed

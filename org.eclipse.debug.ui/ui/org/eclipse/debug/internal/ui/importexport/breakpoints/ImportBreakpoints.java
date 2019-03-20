@@ -50,15 +50,9 @@ public class ImportBreakpoints extends AbstractDebugActionDelegate {
 		wizdialog.open();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.actions.AbstractDebugActionDelegate#doAction(java.lang.Object)
-	 */
 	@Override
 	protected void doAction(Object element) throws DebugException {}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.actions.AbstractDebugActionDelegate#update(org.eclipse.jface.action.IAction, org.eclipse.jface.viewers.ISelection)
-	 */
 	@Override
 	protected void update(IAction action, ISelection s) {
 		super.update(action, s);

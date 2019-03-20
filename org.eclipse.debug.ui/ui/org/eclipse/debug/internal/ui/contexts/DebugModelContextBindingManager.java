@@ -335,9 +335,6 @@ public class DebugModelContextBindingManager implements IDebugContextListener, I
 		return launch;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.core.ILaunchesListener2#launchesTerminated(org.eclipse.debug.core.ILaunch[])
-	 */
 	@Override
 	public void launchesTerminated(ILaunch[] launches) {
 		// disable activated contexts
@@ -367,22 +364,13 @@ public class DebugModelContextBindingManager implements IDebugContextListener, I
 		// TODO: Terminated notification
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.core.ILaunchesListener#launchesRemoved(org.eclipse.debug.core.ILaunch[])
-	 */
 	@Override
 	public void launchesRemoved(ILaunch[] launches) {}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.core.ILaunchesListener#launchesAdded(org.eclipse.debug.core.ILaunch[])
-	 */
 	@Override
 	public void launchesAdded(ILaunch[] launches) {
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.core.ILaunchesListener#launchesChanged(org.eclipse.debug.core.ILaunch[])
-	 */
 	@Override
 	public void launchesChanged(ILaunch[] launches) {
 	}
@@ -458,9 +446,6 @@ public class DebugModelContextBindingManager implements IDebugContextListener, I
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.activities.IActivityManagerListener#activityManagerChanged(org.eclipse.ui.activities.ActivityManagerEvent)
-	 */
 	@Override
 	public void activityManagerChanged(ActivityManagerEvent activityManagerEvent) {
 		if (activityManagerEvent.haveEnabledActivityIdsChanged()) {

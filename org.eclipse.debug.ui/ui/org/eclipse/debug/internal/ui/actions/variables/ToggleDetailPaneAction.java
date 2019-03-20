@@ -78,9 +78,6 @@ public class ToggleDetailPaneAction extends Action {
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.action.IAction#run()
-	 */
 	@Override
 	public void run() {
 		getVariablesView().setDetailPaneOrientation(getOrientation());

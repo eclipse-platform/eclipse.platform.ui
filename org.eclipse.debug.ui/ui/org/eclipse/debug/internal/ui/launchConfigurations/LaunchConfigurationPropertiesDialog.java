@@ -85,18 +85,12 @@ public class LaunchConfigurationPropertiesDialog extends LaunchConfigurationsDia
 		return fLaunchConfiguration;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationsDialog#initializeBounds()
-	 */
 	@Override
 	protected void initializeBounds() {
 		super.initializeBounds();
 		resize();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationsDialog#initializeContent()
-	 */
 	@Override
 	protected void initializeContent() {
 		ILaunchConfiguration launchConfiguration = getLaunchConfiguration();
@@ -111,9 +105,6 @@ public class LaunchConfigurationPropertiesDialog extends LaunchConfigurationsDia
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationsDialog#close()
-	 */
 	@Override
 	public boolean close() {
 	    if (!isSafeToClose()) {
@@ -123,9 +114,6 @@ public class LaunchConfigurationPropertiesDialog extends LaunchConfigurationsDia
 		return super.close();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationsDialog#addContent(org.eclipse.swt.widgets.Composite)
-	 */
 	@Override
 	protected void addContent(Composite dialogComp) {
 		GridData gd;
@@ -162,9 +150,6 @@ public class LaunchConfigurationPropertiesDialog extends LaunchConfigurationsDia
 		return LaunchConfigurationsMessages.LaunchConfigurationPropertiesDialog_Edit_launch_configuration_properties_1;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationsDialog#createButtonsForButtonBar(org.eclipse.swt.widgets.Composite)
-	 */
 	@Override
 	protected void createButtonsForButtonBar(Composite parent) {
 		// create OK and Cancel buttons by default
@@ -172,25 +157,16 @@ public class LaunchConfigurationPropertiesDialog extends LaunchConfigurationsDia
 		createButton(parent, IDialogConstants.CANCEL_ID, IDialogConstants.CANCEL_LABEL, false);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationsDialog#getShellTitle()
-	 */
 	@Override
 	protected String getShellTitle() {
 		return LaunchConfigurationsMessages.LaunchConfigurationPropertiesDialog_Properties_for__0__2;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationsDialog#getHelpContextId()
-	 */
 	@Override
 	protected String getHelpContextId() {
 		return IDebugHelpContextIds.LAUNCH_CONFIGURATION_PROPERTIES_DIALOG;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationsDialog#updateButtons()
-	 */
 	@Override
 	public void updateButtons() {
 		getTabViewer().refresh();
@@ -198,35 +174,23 @@ public class LaunchConfigurationPropertiesDialog extends LaunchConfigurationsDia
 
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.dialogs.Dialog#okPressed()
-	 */
 	@Override
 	protected void okPressed() {
 		getTabViewer().handleApplyPressed();
 		super.okPressed();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationsDialog#open()
-	 */
 	@Override
 	public int open() {
 		setOpenMode(-1);
 		return super.open();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationsDialog#getDialogSettingsSectionName()
-	 */
 	@Override
 	protected String getDialogSettingsSectionName() {
 		return IDebugUIConstants.PLUGIN_ID + ".LAUNCH_CONFIGURATION_PROPERTIES_DIALOG_SECTION"; //$NON-NLS-1$
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.core.ILaunchConfigurationListener#launchConfigurationAdded(org.eclipse.debug.core.ILaunchConfiguration)
-	 */
 	@Override
 	public void launchConfigurationAdded(ILaunchConfiguration configuration) {
 		ILaunchManager manager = DebugPlugin.getDefault().getLaunchManager();
@@ -237,15 +201,9 @@ public class LaunchConfigurationPropertiesDialog extends LaunchConfigurationsDia
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.core.ILaunchConfigurationListener#launchConfigurationChanged(org.eclipse.debug.core.ILaunchConfiguration)
-	 */
 	@Override
 	public void launchConfigurationChanged(ILaunchConfiguration configuration) {}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.core.ILaunchConfigurationListener#launchConfigurationRemoved(org.eclipse.debug.core.ILaunchConfiguration)
-	 */
 	@Override
 	public void launchConfigurationRemoved(ILaunchConfiguration configuration) {}
 }

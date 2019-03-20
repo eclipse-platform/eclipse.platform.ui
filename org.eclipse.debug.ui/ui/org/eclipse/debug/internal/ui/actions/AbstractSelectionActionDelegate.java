@@ -68,19 +68,11 @@ public abstract class AbstractSelectionActionDelegate implements IViewActionDele
 	 */
 	public AbstractSelectionActionDelegate() {}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.ui.IWorkbenchWindowActionDelegate#dispose()
-	 */
 	@Override
 	public void dispose() {
 		fSelection = null;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IActionDelegate#selectionChanged(org.eclipse.jface.action.IAction, org.eclipse.jface.viewers.ISelection)
-	 */
 	@Override
 	public void selectionChanged(IAction action, ISelection s) {
 		if (s instanceof IStructuredSelection) {
@@ -115,11 +107,6 @@ public abstract class AbstractSelectionActionDelegate implements IViewActionDele
 		return IInternalDebugCoreConstants.EMPTY_STRING;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.ui.IViewActionDelegate#init(org.eclipse.ui.IViewPart)
-	 */
 	@Override
 	public void init(IViewPart view) {
 		setView(view);
@@ -210,17 +197,11 @@ public abstract class AbstractSelectionActionDelegate implements IViewActionDele
 		return true;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IActionDelegate2#runWithEvent(org.eclipse.jface.action.IAction, org.eclipse.swt.widgets.Event)
-	 */
 	@Override
 	public void runWithEvent(IAction action, Event event) {
 		run(action);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IActionDelegate2#init(org.eclipse.jface.action.IAction)
-	 */
 	@Override
 	public void init(IAction action) {
 		setAction(action);

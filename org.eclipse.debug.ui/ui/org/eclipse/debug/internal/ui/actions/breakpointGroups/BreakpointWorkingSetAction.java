@@ -28,34 +28,22 @@ public abstract class BreakpointWorkingSetAction extends AbstractBreakpointsView
 
     protected IAction fAction;
 
-    /* (non-Javadoc)
-     * @see org.eclipse.ui.IActionDelegate#selectionChanged(org.eclipse.jface.action.IAction, org.eclipse.jface.viewers.ISelection)
-     */
     @Override
 	public void selectionChanged(IAction action, ISelection selection) {
         update();
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.ui.IViewActionDelegate#init(org.eclipse.ui.IViewPart)
-     */
     @Override
 	public void init(IViewPart view) {
         super.init(view);
         DebugUIPlugin.getDefault().getPreferenceStore().addPropertyChangeListener(this);
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.ui.IActionDelegate2#dispose()
-     */
     @Override
 	public void dispose() {
         DebugUIPlugin.getDefault().getPreferenceStore().removePropertyChangeListener(this);
         super.dispose();
     }
-    /* (non-Javadoc)
-     * @see org.eclipse.ui.IActionDelegate2#init(org.eclipse.jface.action.IAction)
-     */
     @Override
 	public void init(IAction action) {
         fAction = action;
@@ -63,9 +51,6 @@ public abstract class BreakpointWorkingSetAction extends AbstractBreakpointsView
         update();
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.jface.util.IPropertyChangeListener#propertyChange(org.eclipse.jface.util.PropertyChangeEvent)
-     */
     @Override
 	public void propertyChange(PropertyChangeEvent event) {
         if (event.getProperty().equals(IInternalDebugUIConstants.MEMENTO_BREAKPOINT_WORKING_SET_NAME)) {

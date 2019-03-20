@@ -33,17 +33,11 @@ public class UpdateActionsRequest extends DebugCommandRequest implements IEnable
 		fActions = actions;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.actions.provisional.IBooleanRequestMonitor#setResult(boolean)
-	 */
 	@Override
 	public synchronized void setEnabled(boolean result) {
 		fEnabled = result;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.core.runtime.IProgressMonitor#done()
-	 */
 	@Override
 	public synchronized void done() {
 		if (!isCanceled()) {

@@ -96,17 +96,15 @@ public class ChangeVariableValueInputDialog extends TrayDialog {
 		super(parentShell);
 		this.title = dialogTitle;
 		message = dialogMessage;
-		if (initialValue == null)
+		if (initialValue == null) {
 			value = IInternalDebugCoreConstants.EMPTY_STRING;
-		else
+		} else {
 			value = initialValue;
+		}
 		this.validator = validator;
 
 		setShellStyle(getShellStyle() | SWT.RESIZE);
 	}
-	/* (non-Javadoc)
-	 * Method declared on Dialog.
-	 */
 	@Override
 	protected void buttonPressed(int buttonId) {
 		if (buttonId == IDialogConstants.OK_ID) {
@@ -116,18 +114,13 @@ public class ChangeVariableValueInputDialog extends TrayDialog {
 		}
 		super.buttonPressed(buttonId);
 	}
-	/* (non-Javadoc)
-	 * Method declared in Window.
-	 */
 	@Override
 	protected void configureShell(Shell shell) {
 		super.configureShell(shell);
-		if (title != null)
+		if (title != null) {
 			shell.setText(title);
+		}
 	}
-	/* (non-Javadoc)
-	 * Method declared on Dialog.
-	 */
 	@Override
 	protected void createButtonsForButtonBar(Composite parent) {
 		// create OK and Cancel buttons by default
@@ -141,9 +134,6 @@ public class ChangeVariableValueInputDialog extends TrayDialog {
 			text.selectAll();
 		}
 	}
-	/* (non-Javadoc)
-	 * Method declared on Dialog.
-	 */
 	@Override
 	protected Control createDialogArea(Composite parent) {
 		Font font = parent.getFont();
@@ -273,9 +263,6 @@ public class ChangeVariableValueInputDialog extends TrayDialog {
 		return IDebugUIConstants.PLUGIN_ID + ".CHANGE_VARIABLE_VALUE_DIALOG_SECTION"; //$NON-NLS-1$
 	}
 
-	 /* (non-Javadoc)
-     * @see org.eclipse.jface.dialogs.Dialog#getDialogBoundsSettings()
-     */
     @Override
 	protected IDialogSettings getDialogBoundsSettings() {
     	 IDialogSettings settings = DebugUIPlugin.getDefault().getDialogSettings();
@@ -286,9 +273,6 @@ public class ChangeVariableValueInputDialog extends TrayDialog {
          return section;
     }
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.window.Window#handleShellCloseEvent()
-	 */
 	@Override
 	protected void handleShellCloseEvent() {
 		value= null;

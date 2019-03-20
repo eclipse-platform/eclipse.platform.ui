@@ -49,9 +49,6 @@ public class OpenBreakpointMarkerAction extends SelectionProviderAction {
 		setEnabled(false);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.action.IAction#run()
-	 */
 	@Override
 	public void run() {
 		IWorkbenchWindow dwindow= DebugUIPlugin.getActiveWorkbenchWindow();
@@ -85,9 +82,6 @@ public class OpenBreakpointMarkerAction extends SelectionProviderAction {
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.actions.SelectionProviderAction#selectionChanged(org.eclipse.jface.viewers.IStructuredSelection)
-	 */
 	@Override
 	public void selectionChanged(IStructuredSelection sel) {
 		if (sel.size() == 1) {

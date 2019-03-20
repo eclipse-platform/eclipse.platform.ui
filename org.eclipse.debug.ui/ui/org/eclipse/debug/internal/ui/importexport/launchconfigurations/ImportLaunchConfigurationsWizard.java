@@ -41,31 +41,23 @@ public class ImportLaunchConfigurationsWizard extends Wizard implements IImportW
 		DebugUIPlugin plugin = DebugUIPlugin.getDefault();
 		IDialogSettings workbenchSettings = plugin.getDialogSettings();
 		IDialogSettings section = workbenchSettings.getSection(EXPORT_DIALOG_SETTINGS);
-		if (section == null)
+		if (section == null) {
 			section = workbenchSettings.addNewSection(EXPORT_DIALOG_SETTINGS);
+		}
 		setDialogSettings(section);
 		setNeedsProgressMonitor(true);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.wizard.Wizard#performFinish()
-	 */
 	@Override
 	public boolean performFinish() {
 		return ((ImportLaunchConfigurationsWizardPage)getStartingPage()).finish();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.wizard.Wizard#addPages()
-	 */
 	@Override
 	public void addPages() {
 		addPage(new ImportLaunchConfigurationsWizardPage());
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IWorkbenchWizard#init(org.eclipse.ui.IWorkbench, org.eclipse.jface.viewers.IStructuredSelection)
-	 */
 	@Override
 	public void init(IWorkbench workbench, IStructuredSelection selection) {
 		setWindowTitle(WizardMessages.ImportLaunchConfigurationsWizard_0);

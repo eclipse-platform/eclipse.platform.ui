@@ -48,9 +48,6 @@ public class SelectBreakpointWorkingsetDialog extends AbstractDebugCheckboxSelec
 		fWorkingSetList = getBreakpointWorkingSets();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.launchConfigurations.AbstractDebugCheckboxSelectionDialog#addViewerListeners(org.eclipse.jface.viewers.StructuredViewer)
-	 */
 	@Override
 	protected void addViewerListeners(StructuredViewer viewer) {
 		CheckboxTableViewer checkViewer = getCheckBoxTableViewer();
@@ -80,33 +77,21 @@ public class SelectBreakpointWorkingsetDialog extends AbstractDebugCheckboxSelec
 		return list.toArray(new IWorkingSet[list.size()]);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.launchConfigurations.AbstractDebugSelectionDialog#getViewerInput()
-	 */
 	@Override
 	protected Object getViewerInput() {
 		return fWorkingSetList;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.launchConfigurations.AbstractDebugSelectionDialog#getDialogSettingsId()
-	 */
 	@Override
 	protected String getDialogSettingsId() {
 		return SETTINGS_ID;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.launchConfigurations.AbstractDebugSelectionDialog#getHelpContextId()
-	 */
 	@Override
 	protected String getHelpContextId() {
 		return IDebugHelpContextIds.SELECT_DEFAULT_WORKINGSET_DIALOG;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.launchConfigurations.AbstractDebugSelectionDialog#getViewerLabel()
-	 */
 	@Override
 	protected String getViewerLabel() {
 		return BreakpointGroupMessages.SelectBreakpointWorkingsetDialog_0;

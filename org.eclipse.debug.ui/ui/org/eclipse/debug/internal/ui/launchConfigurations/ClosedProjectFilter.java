@@ -39,9 +39,6 @@ public class ClosedProjectFilter extends ViewerFilter {
 		super();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.viewers.ViewerFilter#select(org.eclipse.jface.viewers.Viewer, java.lang.Object, java.lang.Object)
-	 */
 	@Override
 	public boolean select(Viewer viewer, Object parent, Object element) {
 		//always let through types, we only care about configs

@@ -37,9 +37,6 @@ public class CollapseAllAction extends Action implements IUpdate {
 		fViewer = viewer;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.action.IAction#run()
-	 */
 	@Override
 	public void run() {
 		fViewer.collapseAll();

@@ -732,10 +732,11 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 		return fLaunchConfigurationView.getAction(CollapseAllLaunchConfigurationAction.ID_COLLAPSEALL_ACTION);
 	}
 
-	 /* (non-Javadoc)
-     * @see org.eclipse.jface.dialogs.Dialog#getDialogBoundsSettings()
-     * @since 3.2
-     */
+	/*
+	 * @see org.eclipse.jface.dialogs.Dialog#getDialogBoundsSettings()
+	 * 
+	 * @since 3.2
+	 */
     @Override
 	protected IDialogSettings getDialogBoundsSettings() {
     	return getDialogSettings();

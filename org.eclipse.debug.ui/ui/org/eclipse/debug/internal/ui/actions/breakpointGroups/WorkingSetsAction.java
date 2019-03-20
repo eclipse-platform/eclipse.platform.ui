@@ -24,9 +24,6 @@ import org.eclipse.ui.dialogs.IWorkingSetSelectionDialog;
  */
 public class WorkingSetsAction extends AbstractBreakpointsViewAction {
 
-    /* (non-Javadoc)
-     * @see org.eclipse.ui.IActionDelegate#run(org.eclipse.jface.action.IAction)
-     */
     @Override
 	public void run(IAction action) {
         IWorkingSetSelectionDialog selectionDialog = PlatformUI.getWorkbench().getWorkingSetManager().createWorkingSetSelectionDialog(

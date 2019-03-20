@@ -39,16 +39,11 @@ public abstract class ToggleBreakpointObjectActionDelegate implements IObjectAct
 	private IWorkbenchPart fPart;
 	private IStructuredSelection fSelection;
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IObjectActionDelegate#setActivePart(org.eclipse.jface.action.IAction, org.eclipse.ui.IWorkbenchPart)
-	 */
 	@Override
 	public void setActivePart(IAction action, IWorkbenchPart targetPart) {
 		fPart = targetPart;
 	}
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IActionDelegate#run(org.eclipse.jface.action.IAction)
-	 */
+
 	@Override
 	public void run(IAction action) {
 		IToggleBreakpointsTarget target =
@@ -72,9 +67,6 @@ public abstract class ToggleBreakpointObjectActionDelegate implements IObjectAct
 	 */
 	protected abstract void performAction(IToggleBreakpointsTarget target, IWorkbenchPart part, ISelection selection) throws CoreException;
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IActionDelegate#selectionChanged(org.eclipse.jface.action.IAction, org.eclipse.jface.viewers.ISelection)
-	 */
 	@Override
 	public void selectionChanged(IAction action, ISelection selection) {
 		boolean enabled = false;
@@ -91,24 +83,17 @@ public abstract class ToggleBreakpointObjectActionDelegate implements IObjectAct
 		}
 		action.setEnabled(enabled);
 	}
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IActionDelegate2#init(org.eclipse.jface.action.IAction)
-	 */
+
 	@Override
 	public void init(IAction action) {
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IActionDelegate2#dispose()
-	 */
 	@Override
 	public void dispose() {
 		fSelection = null;
 		fPart = null;
 	}
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IActionDelegate2#runWithEvent(org.eclipse.jface.action.IAction, org.eclipse.swt.widgets.Event)
-	 */
+
 	@Override
 	public void runWithEvent(IAction action, Event event) {
 		run(action);

@@ -80,9 +80,6 @@ public class FilterDropDownMenuCreator implements IMenuCreator {
 			item.fill(menu, -1);
 		}
 
-		/* (non-Javadoc)
-		 * @see org.eclipse.jface.action.Action#run()
-		 */
 		@Override
 		public void run() {
 			if(fStore != null) {
@@ -104,17 +101,11 @@ public class FilterDropDownMenuCreator implements IMenuCreator {
 		return DebugUIPlugin.getDefault().getPreferenceStore();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.action.IMenuCreator#dispose()
-	 */
 	@Override
 	public void dispose() {
 		fCreatedMenu = null;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.action.IMenuCreator#getMenu(org.eclipse.swt.widgets.Control)
-	 */
 	@Override
 	public Menu getMenu(Control parent) {
 		if(fCreatedMenu != null) {
@@ -141,9 +132,6 @@ public class FilterDropDownMenuCreator implements IMenuCreator {
 		return fCreatedMenu;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.action.IMenuCreator#getMenu(org.eclipse.swt.widgets.Menu)
-	 */
 	@Override
 	public Menu getMenu(Menu parent) {
 		return fCreatedMenu;

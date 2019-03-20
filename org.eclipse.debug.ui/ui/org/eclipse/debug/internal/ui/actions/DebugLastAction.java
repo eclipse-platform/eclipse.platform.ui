@@ -31,25 +31,16 @@ import org.eclipse.debug.ui.actions.RelaunchLastAction;
  */
 public class DebugLastAction extends RelaunchLastAction {
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.ui.actions.RelaunchLastAction#getMode()
-	 */
 	@Override
 	public String getMode() {
 		return ILaunchManager.DEBUG_MODE;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.actions.RelaunchLastAction#getLaunchGroupId()
-	 */
 	@Override
 	public String getLaunchGroupId() {
 		return IDebugUIConstants.ID_DEBUG_LAUNCH_GROUP;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.ui.actions.RelaunchLastAction#getText()
-	 */
 	@Override
 	protected String getText() {
 		if(LaunchingResourceManager.isContextLaunchEnabled()) {
@@ -60,25 +51,16 @@ public class DebugLastAction extends RelaunchLastAction {
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.ui.actions.RelaunchLastAction#getTooltipText()
-	 */
 	@Override
 	protected String getTooltipText() {
 		return IInternalDebugCoreConstants.EMPTY_STRING;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.actions.RelaunchLastAction#getCommandId()
-	 */
 	@Override
 	protected String getCommandId() {
 		return "org.eclipse.debug.ui.commands.DebugLast"; //$NON-NLS-1$
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.actions.RelaunchLastAction#getDescription()
-	 */
 	@Override
 	protected String getDescription() {
 		if(LaunchingResourceManager.isContextLaunchEnabled()) {

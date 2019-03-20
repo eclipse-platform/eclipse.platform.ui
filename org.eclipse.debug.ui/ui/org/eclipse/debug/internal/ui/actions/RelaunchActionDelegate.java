@@ -28,9 +28,6 @@ import org.eclipse.jface.viewers.StructuredSelection;
 
 public class RelaunchActionDelegate extends AbstractDebugActionDelegate {
 
-	/**
-	 * @see AbstractDebugActionDelegate#doAction(Object)
-	 */
 	@Override
 	protected void doAction(Object object) {
 		ILaunch launch = DebugUIPlugin.getLaunch(object);
@@ -58,18 +55,12 @@ public class RelaunchActionDelegate extends AbstractDebugActionDelegate {
 		DebugUITools.launch(config, mode, isShift);
 	}
 
-	/**
-	 * @see AbstractDebugActionDelegate#isEnabledFor(Object)
-	 */
 	@Override
 	protected boolean isEnabledFor(Object element) {
 		ILaunch launch= DebugUIPlugin.getLaunch(element);
 		return launch != null && launch.getLaunchConfiguration() != null && LaunchConfigurationManager.isVisible(launch.getLaunchConfiguration());
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.actions.AbstractDebugActionDelegate#getTargetSelection(org.eclipse.jface.viewers.IStructuredSelection)
-	 */
 	@Override
 	protected IStructuredSelection getTargetSelection(IStructuredSelection s) {
 		if (s.isEmpty()) {
@@ -88,17 +79,11 @@ public class RelaunchActionDelegate extends AbstractDebugActionDelegate {
 		return new StructuredSelection(dups.toArray());
 	}
 
-	/**
-	 * @see AbstractDebugActionDelegate#getErrorDialogMessage()
-	 */
 	@Override
 	protected String getErrorDialogMessage() {
 		return ActionMessages.RelaunchActionDelegate_Launch_Failed_1;
 	}
 
-	/**
-	 * @see AbstractDebugActionDelegate#getStatusMessage()
-	 */
 	@Override
 	protected String getStatusMessage() {
 		return ActionMessages.RelaunchActionDelegate_An_exception_occurred_while_launching_2;

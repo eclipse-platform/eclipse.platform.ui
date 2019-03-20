@@ -189,9 +189,6 @@ public class GroupLaunchConfigurationTabGroup extends AbstractLaunchConfiguratio
 
 	static class CheckStateProvider implements ICheckStateProvider {
 
-		/* (non-Javadoc)
-		 * @see org.eclipse.jface.viewers.ICheckStateProvider#isChecked(java.lang.Object)
-		 */
 		@Override
 		public boolean isChecked(Object element) {
 			if (element instanceof GroupLaunchElement) {
@@ -200,9 +197,6 @@ public class GroupLaunchConfigurationTabGroup extends AbstractLaunchConfiguratio
 			return false;
 		}
 
-		/* (non-Javadoc)
-		 * @see org.eclipse.jface.viewers.ICheckStateProvider#isGrayed(java.lang.Object)
-		 */
 		@Override
 		public boolean isGrayed(Object element) {
 			return false;
@@ -533,9 +527,6 @@ public class GroupLaunchConfigurationTabGroup extends AbstractLaunchConfiguratio
 			// defaults is empty list
 		}
 
-		/* (non-Javadoc)
-		 * @see org.eclipse.debug.ui.AbstractLaunchConfigurationTab#isValid(org.eclipse.debug.core.ILaunchConfiguration)
-		 */
 		@Override
 		public boolean isValid(ILaunchConfiguration launchConfig) {
 			setMessage(null);

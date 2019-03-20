@@ -41,9 +41,6 @@ public class BreakpointsCollapseAllAction implements IViewActionDelegate, IActio
 
 	private IAction fAction;
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IViewActionDelegate#init(org.eclipse.ui.IViewPart)
-	 */
 	@Override
 	public void init(IViewPart view) {
 		fView = (AbstractDebugView) view;
@@ -54,24 +51,15 @@ public class BreakpointsCollapseAllAction implements IViewActionDelegate, IActio
         }
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IActionDelegate#run(org.eclipse.jface.action.IAction)
-	 */
 	@Override
 	public void run(IAction action) {
 		((TreeViewer) fView.getViewer()).collapseAll();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IActionDelegate#selectionChanged(org.eclipse.jface.action.IAction, org.eclipse.jface.viewers.ISelection)
-	 */
 	@Override
 	public void selectionChanged(IAction action, ISelection selection) {
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IActionDelegate2#dispose()
-	 */
 	@Override
 	public void dispose() {
         ITreeModelViewer viewer = (ITreeModelViewer)fView.getViewer();
@@ -81,18 +69,12 @@ public class BreakpointsCollapseAllAction implements IViewActionDelegate, IActio
         }
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IActionDelegate2#init(org.eclipse.jface.action.IAction)
-	 */
 	@Override
 	public void init(IAction action) {
 		fAction = action;
 		action.setActionDefinitionId(CollapseAllHandler.COMMAND_ID);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IActionDelegate2#runWithEvent(org.eclipse.jface.action.IAction, org.eclipse.swt.widgets.Event)
-	 */
 	@Override
 	public void runWithEvent(IAction action, Event event) {
 		run(action);

@@ -85,9 +85,6 @@ public class ShowTypesAction extends Action {
 		fView = view;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.action.Action#setEnabled(boolean)
-	 */
 	@Override
 	public void setEnabled(boolean enabled) {
 		super.setEnabled(enabled);

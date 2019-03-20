@@ -136,9 +136,6 @@ public final class LaunchConfigurationFilteredTree extends FilteredTree {
 		PlatformUI.getWorkbench().getHelpSystem().displayHelp(id);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.dialogs.FilteredTree#textChanged()
-	 */
 	@Override
 	protected void textChanged() {
 		LaunchConfigurationsDialog dialog = (LaunchConfigurationsDialog)LaunchConfigurationsDialog.getCurrentlyVisibleLaunchConfigurationDialog();
@@ -223,12 +220,9 @@ public final class LaunchConfigurationFilteredTree extends FilteredTree {
 		return (LaunchConfigurationViewer) getViewer();
 	}
 
-	/* (non-Javadoc)
-	 *
-	 * Called after a re-filter due to user typing text. Update the filter count
-	 * in the LCD
-	 *
-	 * @see org.eclipse.ui.dialogs.FilteredTree#updateToolbar(boolean)
+	/*
+	 * Called after a re-filter due to user typing text. Update the filter count in
+	 * the LCD
 	 */
 	@Override
 	protected void updateToolbar(boolean visible) {

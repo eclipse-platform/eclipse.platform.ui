@@ -86,57 +86,36 @@ public class SaveScopeResourcesHandler implements IStatusHandler {
 			setShowSelectAllButtons(true);
 		}
 
-		/* (non-Javadoc)
-		 * @see org.eclipse.debug.internal.ui.launchConfigurations.AbstractDebugSelectionDialog#getContentProvider()
-		 */
 		@Override
 		protected IContentProvider getContentProvider() {
 			return fContentProvider;
 		}
 
-		/* (non-Javadoc)
-		 * @see org.eclipse.debug.internal.ui.launchConfigurations.AbstractDebugSelectionDialog#getLabelProvider()
-		 */
 		@Override
 		protected IBaseLabelProvider getLabelProvider() {
 			return fLabelProvider;
 		}
 
-		/* (non-Javadoc)
-		 * @see org.eclipse.debug.internal.ui.launchConfigurations.AbstractDebugSelectionDialog#getDialogSettingsId()
-		 */
 		@Override
 		protected String getDialogSettingsId() {
 			return SETTINGS_ID;
 		}
 
-		/* (non-Javadoc)
-		 * @see org.eclipse.debug.internal.ui.launchConfigurations.AbstractDebugSelectionDialog#getHelpContextId()
-		 */
 		@Override
 		protected String getHelpContextId() {
 			return IDebugHelpContextIds.SELECT_RESOURCES_TO_SAVE_DIALOG;
 		}
 
-		/* (non-Javadoc)
-		 * @see org.eclipse.debug.internal.ui.launchConfigurations.AbstractDebugSelectionDialog#getViewerInput()
-		 */
 		@Override
 		protected Object getViewerInput() {
 			return fInput;
 		}
 
-		/* (non-Javadoc)
-		 * @see org.eclipse.debug.internal.ui.launchConfigurations.AbstractDebugSelectionDialog#getViewerLabel()
-		 */
 		@Override
 		protected String getViewerLabel() {
 			return LaunchConfigurationsMessages.SaveScopeResourcesHandler_2;
 		}
 
-		/* (non-Javadoc)
-		 * @see org.eclipse.debug.internal.ui.launchConfigurations.AbstractDebugCheckboxSelectionDialog#addCustomFooterControls(org.eclipse.swt.widgets.Composite)
-		 */
 		@Override
 		protected void addCustomFooterControls(Composite parent) {
 			super.addCustomFooterControls(parent);
@@ -150,9 +129,6 @@ public class SaveScopeResourcesHandler implements IStatusHandler {
 			});
 		}
 
-		/* (non-Javadoc)
-		 * @see org.eclipse.debug.internal.ui.launchConfigurations.AbstractDebugCheckboxSelectionDialog#okPressed()
-		 */
 		@Override
 		protected void okPressed() {
 			IPreferenceStore store = DebugUIPlugin.getDefault().getPreferenceStore();
@@ -161,17 +137,11 @@ public class SaveScopeResourcesHandler implements IStatusHandler {
 			super.okPressed();
 		}
 
-		/* (non-Javadoc)
-		 * @see org.eclipse.debug.internal.ui.launchConfigurations.AbstractDebugCheckboxSelectionDialog#addViewerListeners(org.eclipse.jface.viewers.StructuredViewer)
-		 */
 		@Override
 		protected void addViewerListeners(StructuredViewer viewer) {
 			// Override to remove listener that affects the ok button
 		}
 
-		/* (non-Javadoc)
-		 * @see org.eclipse.debug.internal.ui.AbstractDebugCheckboxSelectionDialog#isValid()
-		 */
 		@Override
 		protected boolean isValid() {
 			return true;
@@ -183,11 +153,9 @@ public class SaveScopeResourcesHandler implements IStatusHandler {
 	 */
 	IResource[] fSaves = null;
 
-	/* (non-Javadoc)
-	 *
-	 * Source object is an array - a launch configuration and an array of projects to save resources for.
-	 *
-	 * @see org.eclipse.debug.core.IStatusHandler#handleStatus(org.eclipse.core.runtime.IStatus, java.lang.Object)
+	/*
+	 * Source object is an array - a launch configuration and an array of projects
+	 * to save resources for.
 	 */
 	@Override
 	public Object handleStatus(IStatus status, Object source) throws CoreException {

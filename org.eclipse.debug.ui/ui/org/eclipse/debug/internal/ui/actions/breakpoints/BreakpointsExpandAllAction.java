@@ -43,9 +43,6 @@ public class BreakpointsExpandAllAction implements IViewActionDelegate, IActionD
         fAction = action;
     }
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IViewActionDelegate#init(org.eclipse.ui.IViewPart)
-	 */
 	@Override
 	public void init(IViewPart view) {
 		fView = (BreakpointsView) view;
@@ -61,17 +58,11 @@ public class BreakpointsExpandAllAction implements IViewActionDelegate, IActionD
         run(action);
     }
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IActionDelegate#run(org.eclipse.jface.action.IAction)
-	 */
 	@Override
 	public void run(IAction action) {
 	    fView.expandAllElementsInViewer();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IActionDelegate#selectionChanged(org.eclipse.jface.action.IAction, org.eclipse.jface.viewers.ISelection)
-	 */
 	@Override
 	public void selectionChanged(IAction action, ISelection selection) {
 	}

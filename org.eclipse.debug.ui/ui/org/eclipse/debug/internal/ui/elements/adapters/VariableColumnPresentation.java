@@ -57,17 +57,11 @@ public class VariableColumnPresentation extends AbstractColumnPresentation {
 	private static final String[] INITIAL_COLUMNS = new String[]{IDebugUIConstants.COLUMN_ID_VARIABLE_NAME,
 		IDebugUIConstants.COLUMN_ID_VARIABLE_VALUE};
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.viewers.provisional.IColumnPresentation#getColumns()
-	 */
 	@Override
 	public String[] getAvailableColumns() {
 		return ALL_COLUMNS;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.viewers.provisional.IColumnPresentation#getHeader(java.lang.String)
-	 */
 	@Override
 	public String getHeader(String id) {
 		if (IDebugUIConstants.COLUMN_ID_VARIABLE_TYPE.equals(id)) {
@@ -85,25 +79,16 @@ public class VariableColumnPresentation extends AbstractColumnPresentation {
 		return null;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.viewers.provisional.IColumnPresentation#getId()
-	 */
 	@Override
 	public String getId() {
 		return IDebugUIConstants.COLUMN_PRESENTATION_ID_VARIABLE;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.viewers.provisional.IColumnPresentation#getInitialColumns()
-	 */
 	@Override
 	public String[] getInitialColumns() {
 		return INITIAL_COLUMNS;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.viewers.provisional.IColumnPresentation#isOptional()
-	 */
 	@Override
 	public boolean isOptional() {
 		return true;

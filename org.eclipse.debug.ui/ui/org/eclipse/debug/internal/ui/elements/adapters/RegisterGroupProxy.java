@@ -80,42 +80,28 @@ public class RegisterGroupProxy implements IModelProxyFactory, IColumnPresentati
 		Update(IViewerUpdate update) {
 			fViewerUpdate = update;
 		}
-		/* (non-Javadoc)
-		 * @see org.eclipse.debug.internal.ui.viewers.model.provisional.IViewerUpdate#getElement()
-		 */
+
 		@Override
 		public Object getElement() {
 			return fFrame;
 		}
 
-		/* (non-Javadoc)
-		 * @see org.eclipse.debug.internal.ui.viewers.model.provisional.IViewerUpdate#getElementPath()
-		 */
 		@Override
 		public TreePath getElementPath() {
 			return TreePath.EMPTY;
 		}
 
-		/* (non-Javadoc)
-		 * @see org.eclipse.debug.internal.ui.viewers.model.provisional.IViewerUpdate#getPresentationContext()
-		 */
 		@Override
 		public IPresentationContext getPresentationContext() {
 			return fViewerUpdate.getPresentationContext();
 		}
 
-		/* (non-Javadoc)
-		 * @see org.eclipse.debug.internal.core.commands.Request#done()
-		 */
 		@Override
 		public void done() {
 			fViewerUpdate.setStatus(getStatus());
 			fViewerUpdate.done();
 		}
 
-		/* (non-Javadoc)
-		 * @see org.eclipse.debug.internal.ui.viewers.model.provisional.IViewerUpdate#getViewerInput()
-		 */
 		@Override
 		public Object getViewerInput() {
 			return fFrame;
@@ -132,9 +118,6 @@ public class RegisterGroupProxy implements IModelProxyFactory, IColumnPresentati
 			fUpdate = delegate;
 		}
 
-		/* (non-Javadoc)
-		 * @see org.eclipse.debug.internal.ui.viewers.model.provisional.IChildrenCountUpdate#setChildCount(int)
-		 */
 		@Override
 		public void setChildCount(int numChildren) {
 			fUpdate.setChildCount(numChildren);
@@ -151,9 +134,6 @@ public class RegisterGroupProxy implements IModelProxyFactory, IColumnPresentati
 			fUpdate = delegate;
 		}
 
-		/* (non-Javadoc)
-		 * @see org.eclipse.debug.internal.ui.viewers.model.provisional.IHasChildrenUpdate#setHasChilren(boolean)
-		 */
 		@Override
 		public void setHasChilren(boolean hasChildren) {
 			fUpdate.setHasChilren(hasChildren);
@@ -169,25 +149,17 @@ public class RegisterGroupProxy implements IModelProxyFactory, IColumnPresentati
 			super(delegate);
 			fUpdate = delegate;
 		}
-		/* (non-Javadoc)
-		 * @see org.eclipse.debug.internal.ui.viewers.model.provisional.IChildrenUpdate#getLength()
-		 */
+
 		@Override
 		public int getLength() {
 			return fUpdate.getLength();
 		}
 
-		/* (non-Javadoc)
-		 * @see org.eclipse.debug.internal.ui.viewers.model.provisional.IChildrenUpdate#getOffset()
-		 */
 		@Override
 		public int getOffset() {
 			return fUpdate.getOffset();
 		}
 
-		/* (non-Javadoc)
-		 * @see org.eclipse.debug.internal.ui.viewers.model.provisional.IChildrenUpdate#setChild(java.lang.Object, int)
-		 */
 		@Override
 		public void setChild(Object child, int offset) {
 			fUpdate.setChild(child, offset);
@@ -207,9 +179,7 @@ public class RegisterGroupProxy implements IModelProxyFactory, IColumnPresentati
 			super(request);
 			fUpdate = request;
 		}
-		/* (non-Javadoc)
-		 * @see org.eclipse.debug.internal.ui.viewers.model.provisional.IElementMementoRequest#getMemento()
-		 */
+
 		@Override
 		public IMemento getMemento() {
 			return fUpdate.getMemento();
@@ -232,9 +202,7 @@ public class RegisterGroupProxy implements IModelProxyFactory, IColumnPresentati
 			super(request);
 			fRequest = request;
 		}
-		/* (non-Javadoc)
-		 * @see org.eclipse.debug.internal.ui.viewers.model.provisional.IElementCompareRequest#setEqual(boolean)
-		 */
+
 		@Override
 		public void setEqual(boolean equal) {
 			fRequest.setEqual(equal);
@@ -253,12 +221,9 @@ public class RegisterGroupProxy implements IModelProxyFactory, IColumnPresentati
 		init(frame);
 	}
 
-	/* (non-Javadoc)
-	 *
+	/*
 	 * A register group proxy is equal to other stack frames that have the same
 	 * register groups.
-	 *
-	 * @see java.lang.Object#equals(java.lang.Object)
 	 */
 	@Override
 	public boolean equals(Object obj) {
@@ -268,9 +233,6 @@ public class RegisterGroupProxy implements IModelProxyFactory, IColumnPresentati
 		return false;
 	}
 
-	/* (non-Javadoc)
-	 * @see java.lang.Object#hashCode()
-	 */
 	@Override
 	public int hashCode() {
 		int code = getClass().hashCode();
@@ -298,9 +260,6 @@ public class RegisterGroupProxy implements IModelProxyFactory, IColumnPresentati
 		return fGroups;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.viewers.model.provisional.IModelProxyFactory#createModelProxy(java.lang.Object, org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationContext)
-	 */
 	@Override
 	public IModelProxy createModelProxy(Object element, IPresentationContext context) {
 		IModelProxyFactory factory = ViewerAdapterService.getModelProxyFactory(fFrame);
@@ -310,9 +269,6 @@ public class RegisterGroupProxy implements IModelProxyFactory, IColumnPresentati
 		return null;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.viewers.model.provisional.IColumnPresentationFactory#createColumnPresentation(org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationContext, java.lang.Object)
-	 */
 	@Override
 	public IColumnPresentation createColumnPresentation(IPresentationContext context, Object element) {
 		IColumnPresentationFactory factory = ViewerAdapterService.getColumnPresentationFactory(fFrame);
@@ -322,9 +278,6 @@ public class RegisterGroupProxy implements IModelProxyFactory, IColumnPresentati
 		return null;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.viewers.model.provisional.IColumnPresentationFactory#getColumnPresentationId(org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationContext, java.lang.Object)
-	 */
 	@Override
 	public String getColumnPresentationId(IPresentationContext context, Object element) {
 		IColumnPresentationFactory factory = ViewerAdapterService.getColumnPresentationFactory(fFrame);
@@ -334,9 +287,6 @@ public class RegisterGroupProxy implements IModelProxyFactory, IColumnPresentati
 		return null;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.viewers.model.provisional.IElementContentProvider#update(org.eclipse.debug.internal.ui.viewers.model.provisional.IChildrenCountUpdate[])
-	 */
 	@Override
 	public void update(IChildrenCountUpdate[] updates) {
 		IElementContentProvider provider = ViewerAdapterService.getContentProvider(fFrame);
@@ -351,9 +301,6 @@ public class RegisterGroupProxy implements IModelProxyFactory, IColumnPresentati
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.viewers.model.provisional.IElementContentProvider#update(org.eclipse.debug.internal.ui.viewers.model.provisional.IChildrenUpdate[])
-	 */
 	@Override
 	public void update(IChildrenUpdate[] updates) {
 		IElementContentProvider provider = ViewerAdapterService.getContentProvider(fFrame);
@@ -369,9 +316,6 @@ public class RegisterGroupProxy implements IModelProxyFactory, IColumnPresentati
 
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.viewers.model.provisional.IElementContentProvider#update(org.eclipse.debug.internal.ui.viewers.model.provisional.IHasChildrenUpdate[])
-	 */
 	@Override
 	public void update(IHasChildrenUpdate[] updates) {
 		IElementContentProvider provider = ViewerAdapterService.getContentProvider(fFrame);
@@ -398,9 +342,6 @@ public class RegisterGroupProxy implements IModelProxyFactory, IColumnPresentati
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.viewers.model.provisional.IElementMementoProvider#compareElements(org.eclipse.debug.internal.ui.viewers.model.provisional.IElementCompareRequest[])
-	 */
 	@Override
 	public void compareElements(IElementCompareRequest[] requests) {
 		IElementMementoProvider provider = ViewerAdapterService.getMementoProvider(fFrame);
@@ -428,9 +369,6 @@ public class RegisterGroupProxy implements IModelProxyFactory, IColumnPresentati
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.viewers.model.provisional.IElementMementoProvider#encodeElements(org.eclipse.debug.internal.ui.viewers.model.provisional.IElementMementoRequest[])
-	 */
 	@Override
 	public void encodeElements(IElementMementoRequest[] requests) {
 		IElementMementoProvider provider = ViewerAdapterService.getMementoProvider(fFrame);

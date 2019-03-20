@@ -82,9 +82,6 @@ public class LaunchShortcutExtension implements ILaunchShortcut2, IPluginContrib
 	        fMode = mode;
 	    }
 
-		/* (non-Javadoc)
-		 * @see org.eclipse.core.commands.IHandler#execute(org.eclipse.core.commands.ExecutionEvent)
-		 */
 		@Override
 		public Object execute(ExecutionEvent event) throws ExecutionException {
            LaunchShortcutAction action = new LaunchShortcutAction(fMode, fShortcut);
@@ -468,32 +465,22 @@ public class LaunchShortcutExtension implements ILaunchShortcut2, IPluginContrib
 
 	/*
 	 * Only for debugging
-	 * @see java.lang.Object#toString()
 	 */
 	@Override
 	public String toString() {
 		return getId();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IPluginContribution#getLocalId()
-	 */
 	@Override
 	public String getLocalId() {
 		return getId();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IPluginContribution#getPluginId()
-	 */
 	@Override
 	public String getPluginId() {
 		return fConfig.getContributor().getName();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.ui.ILaunchShortcut2#getLaunchConfigurations(org.eclipse.jface.viewers.ISelection)
-	 */
 	@Override
 	public ILaunchConfiguration[] getLaunchConfigurations(ISelection selection) {
 		ILaunchShortcut delegate = getDelegate();
@@ -503,9 +490,6 @@ public class LaunchShortcutExtension implements ILaunchShortcut2, IPluginContrib
 		return null;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.ui.ILaunchShortcut2#getLaunchConfigurations(org.eclipse.ui.IEditorPart)
-	 */
 	@Override
 	public ILaunchConfiguration[] getLaunchConfigurations(IEditorPart editorpart) {
 		ILaunchShortcut delegate = getDelegate();
@@ -515,9 +499,6 @@ public class LaunchShortcutExtension implements ILaunchShortcut2, IPluginContrib
 		return null;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.ui.ILaunchShortcut2#getLaunchableResource(org.eclipse.jface.viewers.ISelection)
-	 */
 	@Override
 	public IResource getLaunchableResource(ISelection selection) {
 		ILaunchShortcut delegate = getDelegate();
@@ -527,9 +508,6 @@ public class LaunchShortcutExtension implements ILaunchShortcut2, IPluginContrib
 		return null;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.ui.ILaunchShortcut2#getLaunchableResource(org.eclipse.ui.IEditorPart)
-	 */
 	@Override
 	public IResource getLaunchableResource(IEditorPart editorpart) {
 		ILaunchShortcut delegate = getDelegate();

@@ -172,9 +172,6 @@ public class ExpressionInformationControlCreator implements IInformationControlC
 			create();
 		}
 
-		/* (non-Javadoc)
-		 * @see org.eclipse.jface.text.AbstractInformationControl#computeSizeHint()
-		 */
 		@Override
 		public Point computeSizeHint() {
 			IDialogSettings settings = getDialogSettings(false);

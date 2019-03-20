@@ -39,9 +39,6 @@ import org.eclipse.swt.graphics.RGB;
  */
 public class AsynchronousDebugLabelAdapter extends AsynchronousLabelAdapter {
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.ui.viewers.AsynchronousLabelAdapter#computeLabels(java.lang.Object, org.eclipse.debug.ui.viewers.IPresentationContext, org.eclipse.debug.ui.viewers.ILabelRequestMonitor)
-	 */
 	@Override
 	protected void computeLabels(Object element, IPresentationContext context, ILabelRequestMonitor monitor) {
     	DelegatingModelPresentation presentation = DebugElementHelper.getPresentation();
@@ -70,25 +67,16 @@ public class AsynchronousDebugLabelAdapter extends AsynchronousLabelAdapter {
     	super.computeLabels(element, context, monitor);
     }
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.ui.viewers.AsynchronousLabelAdapter#getLabels(java.lang.Object, org.eclipse.debug.ui.viewers.IPresentationContext)
-	 */
 	@Override
 	protected String[] getLabels(Object element, IPresentationContext context) throws CoreException {
 		return new String[] {DebugElementHelper.getLabel(element)};
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.ui.viewers.AsynchronousLabelAdapter#getImageDescriptors(java.lang.Object, org.eclipse.debug.ui.viewers.IPresentationContext)
-	 */
 	@Override
 	protected ImageDescriptor[] getImageDescriptors(Object element, IPresentationContext context) throws CoreException {
 		return new ImageDescriptor[] {DebugElementHelper.getImageDescriptor(element)};
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.ui.viewers.AsynchronousLabelAdapter#getFontDatas(java.lang.Object, org.eclipse.debug.ui.viewers.IPresentationContext)
-	 */
 	@Override
 	protected FontData[] getFontDatas(Object element, IPresentationContext context) throws CoreException {
 		FontData[] datas = new FontData[getNumElements(context)];
@@ -96,9 +84,6 @@ public class AsynchronousDebugLabelAdapter extends AsynchronousLabelAdapter {
 		return datas;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.ui.viewers.AsynchronousLabelAdapter#getForegrounds(java.lang.Object, org.eclipse.debug.ui.viewers.IPresentationContext)
-	 */
 	@Override
 	protected RGB[] getForegrounds(Object element, IPresentationContext context) throws CoreException {
 		RGB[] rgbs = new RGB[getNumElements(context)];
@@ -106,9 +91,6 @@ public class AsynchronousDebugLabelAdapter extends AsynchronousLabelAdapter {
 		return rgbs;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.ui.viewers.AsynchronousLabelAdapter#getBackgrounds(java.lang.Object, org.eclipse.debug.ui.viewers.IPresentationContext)
-	 */
 	@Override
 	protected RGB[] getBackgrounds(Object element, IPresentationContext context) throws CoreException {
 		RGB[] rgbs = new RGB[getNumElements(context)];

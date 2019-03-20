@@ -29,9 +29,6 @@ public class ToggleDefaultGroupAction extends AbstractBreakpointsViewAction {
 
     private IWorkingSet fSelectedSet;
 
-    /* (non-Javadoc)
-     * @see org.eclipse.ui.IActionDelegate#run(org.eclipse.jface.action.IAction)
-     */
     @Override
 	public void run(IAction action) {
         IWorkingSet defaultWorkingSet = BreakpointSetOrganizer.getDefaultWorkingSet();
@@ -42,9 +39,6 @@ public class ToggleDefaultGroupAction extends AbstractBreakpointsViewAction {
         BreakpointSetOrganizer.setDefaultWorkingSet(set);
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.ui.IActionDelegate#selectionChanged(org.eclipse.jface.action.IAction, org.eclipse.jface.viewers.ISelection)
-     */
     @Override
 	public void selectionChanged(IAction action, ISelection sel) {
         fSelectedSet = null;

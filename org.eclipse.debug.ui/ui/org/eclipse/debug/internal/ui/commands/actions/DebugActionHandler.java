@@ -59,9 +59,6 @@ public abstract class DebugActionHandler implements IHandler2 {
 		return null;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.core.commands.IHandler#execute(org.eclipse.core.commands.ExecutionEvent)
-	 */
 	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException {
 		IHandler2 delegate = getDelegate();
@@ -71,9 +68,6 @@ public abstract class DebugActionHandler implements IHandler2 {
 		return null;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.core.commands.IHandler#addHandlerListener(org.eclipse.core.commands.IHandlerListener)
-	 */
 	@Override
 	public void addHandlerListener(IHandlerListener handlerListener) {
 		IHandler2 delegate = getDelegate();
@@ -82,16 +76,10 @@ public abstract class DebugActionHandler implements IHandler2 {
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.core.commands.IHandler#dispose()
-	 */
 	@Override
 	public void dispose() {
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.core.commands.IHandler#isEnabled()
-	 */
 	@Override
 	public boolean isEnabled() {
 		IHandler2 delegate = getDelegate();
@@ -101,9 +89,6 @@ public abstract class DebugActionHandler implements IHandler2 {
 		return false;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.core.commands.IHandler#isHandled()
-	 */
 	@Override
 	public boolean isHandled() {
 		IHandler2 delegate = getDelegate();
@@ -113,9 +98,6 @@ public abstract class DebugActionHandler implements IHandler2 {
 		return false;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.core.commands.IHandler#removeHandlerListener(org.eclipse.core.commands.IHandlerListener)
-	 */
 	@Override
 	public void removeHandlerListener(IHandlerListener handlerListener) {
 		IHandler2 delegate = getDelegate();
@@ -124,9 +106,6 @@ public abstract class DebugActionHandler implements IHandler2 {
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.core.commands.IHandler2#setEnabled(java.lang.Object)
-	 */
 	@Override
 	public void setEnabled(Object evaluationContext) {
 		IHandler2 delegate = getDelegate();

@@ -88,9 +88,6 @@ public abstract class WatchExpressionAction implements IViewActionDelegate {
 		return list.toArray(new IWatchExpression[list.size()]);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IActionDelegate#selectionChanged(org.eclipse.jface.action.IAction, org.eclipse.jface.viewers.ISelection)
-	 */
 	@Override
 	public void selectionChanged(IAction action, ISelection sel) {
 	}

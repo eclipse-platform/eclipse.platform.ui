@@ -143,9 +143,6 @@ public class ImportLaunchConfigurationsWizardPage extends WizardResourceImportPa
 		setMessage(WizardMessages.ImportLaunchConfigurationsWizardPage_5);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.dialogs.IDialogPage#createControl(org.eclipse.swt.widgets.Composite)
-	 */
 	@Override
 	public void createControl(Composite parent) {
 		Composite comp = SWTFactory.createComposite(parent, 1, 1, GridData.FILL_BOTH);
@@ -237,26 +234,16 @@ public class ImportLaunchConfigurationsWizardPage extends WizardResourceImportPa
 		return true;
 	}
 
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.wizard.WizardPage#getImage()
-	 */
 	@Override
 	public Image getImage() {
 		return DebugUITools.getImage(IInternalDebugUIConstants.IMG_WIZBAN_IMPORT_CONFIGS);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.dialogs.WizardResourceImportPage#updateWidgetEnablements()
-	 */
 	@Override
 	protected void updateWidgetEnablements() {
 		setPageComplete(determinePageCompletion());
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.dialogs.WizardResourceImportPage#determinePageCompletion()
-	 */
 	@Override
 	protected boolean determinePageCompletion() {
 		if(fFromDirectory.getText().trim().equals(IInternalDebugCoreConstants.EMPTY_STRING)) {
@@ -272,9 +259,6 @@ public class ImportLaunchConfigurationsWizardPage extends WizardResourceImportPa
 		return true;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.dialogs.WizardResourceImportPage#createSourceGroup(org.eclipse.swt.widgets.Composite)
-	 */
 	@Override
 	protected void createSourceGroup(Composite parent) {}
 
@@ -324,9 +308,6 @@ public class ImportLaunchConfigurationsWizardPage extends WizardResourceImportPa
 		});
     }
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.dialogs.WizardResourceImportPage#getFileProvider()
-	 */
 	@Override
 	protected ITreeContentProvider getFileProvider() {
 		return new WorkbenchContentProvider() {
@@ -341,9 +322,6 @@ public class ImportLaunchConfigurationsWizardPage extends WizardResourceImportPa
         };
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.dialogs.WizardResourceImportPage#getFolderProvider()
-	 */
 	@Override
 	protected ITreeContentProvider getFolderProvider() {
 		return new WorkbenchContentProvider() {

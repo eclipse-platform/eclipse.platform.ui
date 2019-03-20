@@ -104,9 +104,6 @@ public class GroupBreakpointsByDialog extends TrayDialog {
 		setShellStyle(getShellStyle() | SWT.RESIZE);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.dialogs.Dialog#createDialogArea(org.eclipse.swt.widgets.Composite)
-	 */
 	@Override
 	protected Control createDialogArea(Composite parent) {
 		ILabelProvider labelProvider= new BreakpointOrganzierLabelProvider();
@@ -138,9 +135,6 @@ public class GroupBreakpointsByDialog extends TrayDialog {
 		return parentComposite;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.dialogs.Dialog#createContents(org.eclipse.swt.widgets.Composite)
-	 */
 	@Override
 	protected Control createContents(Composite parent) {
 		Control contents = super.createContents(parent);
@@ -539,11 +533,6 @@ public class GroupBreakpointsByDialog extends TrayDialog {
 		}
 	}
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see org.eclipse.jface.window.Window#configureShell(org.eclipse.swt.widgets.Shell)
-     */
     @Override
 	protected void configureShell(Shell shell) {
         super.configureShell(shell);

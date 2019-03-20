@@ -63,17 +63,12 @@ public class RetargetRunToLineAction extends RetargetAction {
 
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IWorkbenchWindowActionDelegate#dispose()
-	 */
 	@Override
 	public void dispose() {
 		DebugUITools.getDebugContextManager().getContextService(fWindow).removeDebugContextListener(fContextListener);
 		super.dispose();
 	}
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IWorkbenchWindowActionDelegate#init(org.eclipse.ui.IWorkbenchWindow)
-	 */
+
 	@Override
 	public void init(IWorkbenchWindow window) {
 		super.init(window);
@@ -89,41 +84,27 @@ public class RetargetRunToLineAction extends RetargetAction {
 	    action.setActionDefinitionId("org.eclipse.debug.ui.commands.RunToLine"); //$NON-NLS-1$
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.actions.RetargetAction#canPerformAction(java.lang.Object, org.eclipse.jface.viewers.ISelection, org.eclipse.ui.IWorkbenchPart)
-	 */
 	@Override
 	protected boolean canPerformAction(Object target, ISelection selection,	IWorkbenchPart part) {
 		return fTargetElement != null &&
 			((IRunToLineTarget)target).canRunToLine(part, selection, fTargetElement);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.actions.RetargetAction#getAdapterClass()
-	 */
 	@Override
 	protected Class<IRunToLineTarget> getAdapterClass() {
 		return IRunToLineTarget.class;
 	}
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.actions.RetargetAction#performAction(java.lang.Object, org.eclipse.jface.viewers.ISelection, org.eclipse.ui.IWorkbenchPart)
-	 */
+
 	@Override
 	protected void performAction(Object target, ISelection selection, IWorkbenchPart part) throws CoreException {
 		((IRunToLineTarget)target).runToLine(part, selection, fTargetElement);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.actions.RetargetAction#getOperationUnavailableMessage()
-	 */
 	@Override
 	protected String getOperationUnavailableMessage() {
 		return ActionMessages.RetargetRunToLineAction_0;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IActionDelegate#selectionChanged(org.eclipse.jface.action.IAction, org.eclipse.jface.viewers.ISelection)
-	 */
 	@Override
 	public void selectionChanged(IAction action, ISelection selection) {
 		if (fTargetElement == null) {

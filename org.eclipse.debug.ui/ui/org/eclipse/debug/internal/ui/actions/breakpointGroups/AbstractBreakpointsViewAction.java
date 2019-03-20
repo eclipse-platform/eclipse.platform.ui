@@ -31,38 +31,23 @@ public abstract class AbstractBreakpointsViewAction implements IViewActionDelega
      */
     protected BreakpointsView fView;
 
-    /* (non-Javadoc)
-     * @see org.eclipse.ui.IViewActionDelegate#init(org.eclipse.ui.IViewPart)
-     */
     @Override
 	public void init(IViewPart view) {
         fView= (BreakpointsView) view;
     }
 
-    /* (non-Javadoc)
-	 * @see org.eclipse.ui.IActionDelegate#selectionChanged(org.eclipse.jface.action.IAction, org.eclipse.jface.viewers.ISelection)
-	 */
 	@Override
 	public void selectionChanged(IAction action, ISelection selection) {
 	}
 
-    /* (non-Javadoc)
-     * @see org.eclipse.ui.IActionDelegate2#dispose()
-     */
     @Override
 	public void dispose() {
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.ui.IActionDelegate2#init(org.eclipse.jface.action.IAction)
-     */
     @Override
 	public void init(IAction action) {
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.ui.IActionDelegate2#runWithEvent(org.eclipse.jface.action.IAction, org.eclipse.swt.widgets.Event)
-     */
     @Override
 	public void runWithEvent(IAction action, Event event) {
         run(action);

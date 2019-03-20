@@ -31,9 +31,6 @@ public class PasteWatchExpressionsAction extends SelectionListenerAction {
 //        PlatformUI.getWorkbench().getHelpSystem().setHelp(this, IDebugHelpContextIds.PASTE_WATCH_EXPRESSIONS_ACTION);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IActionDelegate#run(org.eclipse.jface.action.IAction)
-	 */
 	@Override
 	public void run() {
 		if (fExpressionView.canPaste()) {
@@ -41,9 +38,6 @@ public class PasteWatchExpressionsAction extends SelectionListenerAction {
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.action.Action#isEnabled()
-	 */
 	@Override
 	public boolean isEnabled() {
 		return fExpressionView.canPaste();

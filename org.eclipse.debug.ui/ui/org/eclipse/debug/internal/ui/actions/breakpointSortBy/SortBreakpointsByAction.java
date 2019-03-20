@@ -36,32 +36,20 @@ public class SortBreakpointsByAction extends AbstractBreakpointsViewAction imple
 	public SortBreakpointsByAction() {
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IActionDelegate#run(org.eclipse.jface.action.IAction)
-	 */
 	@Override
 	public void run(IAction action) {
 	}
 
-    /* (non-Javadoc)
-     * @see org.eclipse.jface.action.IMenuCreator#dispose()
-     */
     @Override
 	public void dispose() {
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.jface.action.IMenuCreator#getMenu(org.eclipse.swt.widgets.Control)
-     */
     @Override
 	public Menu getMenu(Control parent) {
         // Never called
         return null;
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.jface.action.IMenuCreator#getMenu(org.eclipse.swt.widgets.Menu)
-     */
     @Override
 	public Menu getMenu(Menu parent) {
 		Menu menu = new Menu(parent);
@@ -96,10 +84,6 @@ public class SortBreakpointsByAction extends AbstractBreakpointsViewAction imple
 
 	}
 
-
-    /* (non-Javadoc)
-	 * @see org.eclipse.ui.IActionDelegate#selectionChanged(org.eclipse.jface.action.IAction, org.eclipse.jface.viewers.ISelection)
-	 */
 	@Override
 	public void selectionChanged(IAction action, ISelection selection) {
 	    if (action != fAction) {

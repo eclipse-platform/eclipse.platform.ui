@@ -49,9 +49,6 @@ import org.eclipse.ui.PlatformUI;
 
 public class RemoveBreakpointAction extends AbstractSelectionActionDelegate {
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IActionDelegate#run(org.eclipse.jface.action.IAction)
-	 */
 	@Override
 	public void run(IAction action) {
 		IStructuredSelection selection = getSelection();
@@ -164,9 +161,6 @@ public class RemoveBreakpointAction extends AbstractSelectionActionDelegate {
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.actions.AbstractSelectionActionDelegate#isEnabledFor(java.lang.Object)
-	 */
 	@Override
 	protected boolean isEnabledFor(Object element) {
 		if (element instanceof IBreakpointContainer) {

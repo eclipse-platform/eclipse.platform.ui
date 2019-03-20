@@ -21,56 +21,35 @@ import org.eclipse.debug.ui.IDebugView;
 
 public class SelectAllExpressionsAction extends SelectAllAction implements IExpressionsListener {
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.actions.selection.AbstractRemoveAllActionDelegate#isEnabled()
-	 */
 	@Override
 	protected boolean isEnabled() {
 		return DebugPlugin.getDefault().getExpressionManager().hasExpressions();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.actions.SelectAllAction#getActionId()
-	 */
 	@Override
 	protected String getActionId() {
 		return IDebugView.SELECT_ALL_ACTION + ".Variables"; //$NON-NLS-1$
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.actions.AbstractRemoveAllActionDelegate#initialize()
-	 */
 	@Override
 	protected void initialize() {
 		DebugPlugin.getDefault().getExpressionManager().addExpressionListener(this);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.core.IExpressionsListener#expressionsAdded(org.eclipse.debug.core.model.IExpression[])
-	 */
 	@Override
 	public void expressionsAdded(IExpression[] expressions) {
 		update();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.core.IExpressionsListener#expressionsRemoved(org.eclipse.debug.core.model.IExpression[])
-	 */
 	@Override
 	public void expressionsRemoved(IExpression[] expressions) {
 		update();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.core.IExpressionsListener#expressionsChanged(org.eclipse.debug.core.model.IExpression[])
-	 */
 	@Override
 	public void expressionsChanged(IExpression[] expressions) {
 	}
 
-    /* (non-Javadoc)
-     * @see org.eclipse.debug.internal.ui.actions.AbstractRemoveAllActionDelegate#dispose()
-     */
     @Override
 	public void dispose() {
         super.dispose();

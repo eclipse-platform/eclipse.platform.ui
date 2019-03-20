@@ -529,12 +529,6 @@ public class ToggleBreakpointsTargetManager implements IToggleBreakpointsTargetM
         return idsForSelection;
     }
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.debug.ui.actions.IToggleBreakpointsTargetManager#
-	 * getEnabledToggleBreakpointsTargetIDs(org.eclipse.ui.IWorkbenchPart,
-	 * org.eclipse.jface.viewers.ISelection)
-	 */
     @Override
 	public Set<String> getEnabledToggleBreakpointsTargetIDs(IWorkbenchPart part, ISelection selection) {
         return getEnabledTargetIDs(getEnabledFactories(part, selection), part, selection);

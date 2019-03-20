@@ -27,9 +27,6 @@ import org.eclipse.swt.widgets.Tree;
 
 public class SelectAllBreakpointsAction extends SelectAllAction implements IBreakpointsListener {
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.actions.selection.AbstractRemoveAllActionDelegate#isEnabled()
-	 */
 	@Override
 	protected boolean isEnabled() {
 		return DebugPlugin.getDefault().getBreakpointManager().hasBreakpoints();
@@ -43,9 +40,6 @@ public class SelectAllBreakpointsAction extends SelectAllAction implements IBrea
 		viewer.setSelection(viewer.getSelection());
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.core.IBreakpointsListener#breakpointsAdded(org.eclipse.debug.core.model.IBreakpoint[])
-	 */
 	@Override
 	public void breakpointsAdded(IBreakpoint[] breakpoints) {
 		if (getAction() != null && !getAction().isEnabled()) {
@@ -53,16 +47,10 @@ public class SelectAllBreakpointsAction extends SelectAllAction implements IBrea
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.core.IBreakpointsListener#breakpointsChanged(org.eclipse.debug.core.model.IBreakpoint[], org.eclipse.core.resources.IMarkerDelta[])
-	 */
 	@Override
 	public void breakpointsChanged(IBreakpoint[] breakpoints, IMarkerDelta[] deltas) {
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.core.IBreakpointsListener#breakpointsRemoved(org.eclipse.debug.core.model.IBreakpoint[], org.eclipse.core.resources.IMarkerDelta[])
-	 */
 	@Override
 	public void breakpointsRemoved(IBreakpoint[] breakpoints, IMarkerDelta[] deltas) {
 		if (getAction() != null) {
@@ -70,26 +58,17 @@ public class SelectAllBreakpointsAction extends SelectAllAction implements IBrea
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.actions.selection.AbstractRemoveAllActionDelegate#initialize()
-	 */
 	@Override
 	protected void initialize() {
 		DebugPlugin.getDefault().getBreakpointManager().addBreakpointListener(this);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.actions.selection.AbstractRemoveAllActionDelegate#dispose()
-	 */
 	@Override
 	public void dispose() {
 		DebugPlugin.getDefault().getBreakpointManager().removeBreakpointListener(this);
 		super.dispose();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.actions.selection.SelectAllAction#getActionId()
-	 */
 	@Override
 	protected String getActionId() {
 		return IDebugView.SELECT_ALL_ACTION;

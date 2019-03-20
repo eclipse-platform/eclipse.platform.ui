@@ -27,9 +27,6 @@ import org.eclipse.ui.IWorkbenchPart;
  */
 public class RetargetToggleBreakpointAction extends RetargetBreakpointAction {
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.actions.RetargetBreakpointAction#performAction(java.lang.Object, org.eclipse.jface.viewers.ISelection, org.eclipse.ui.IWorkbenchPart)
-	 */
 	@Override
 	protected void performAction(Object target, ISelection selection, IWorkbenchPart part) throws CoreException {
 		if (target instanceof IToggleBreakpointsTargetExtension) {
@@ -39,9 +36,7 @@ public class RetargetToggleBreakpointAction extends RetargetBreakpointAction {
 			((IToggleBreakpointsTarget)target).toggleLineBreakpoints(part, selection);
 		}
 	}
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.actions.RetargetBreakpointAction#canPerformAction(java.lang.Object, org.eclipse.jface.viewers.ISelection, org.eclipse.ui.IWorkbenchPart)
-	 */
+
 	@Override
 	protected boolean canPerformAction(Object target, ISelection selection, IWorkbenchPart part) {
 		if (target instanceof IToggleBreakpointsTargetExtension) {
@@ -51,9 +46,7 @@ public class RetargetToggleBreakpointAction extends RetargetBreakpointAction {
 			return ((IToggleBreakpointsTarget)target).canToggleLineBreakpoints(part, selection);
 		}
 	}
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.actions.RetargetAction#getOperationUnavailableMessage()
-	 */
+
 	@Override
 	protected String getOperationUnavailableMessage() {
 		return Messages.RetargetToggleBreakpointAction_0;

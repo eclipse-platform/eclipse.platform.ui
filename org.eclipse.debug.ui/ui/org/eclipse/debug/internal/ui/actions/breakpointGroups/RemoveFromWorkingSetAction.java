@@ -44,9 +44,6 @@ public class RemoveFromWorkingSetAction extends BreakpointSelectionAction {
         super(BreakpointGroupMessages.RemoveFromWorkingSetAction_0, view);
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.jface.action.IAction#run()
-     */
     @Override
 	public void run() {
     	if (fBreakpoints != null) {
@@ -106,9 +103,6 @@ public class RemoveFromWorkingSetAction extends BreakpointSelectionAction {
     	return res.toArray(new BreakpointSetElement[res.size()]);
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.jface.action.Action#isEnabled()
-     */
     @Override
 	public boolean isEnabled() {
     	if(fBreakpoints != null) {
@@ -117,9 +111,6 @@ public class RemoveFromWorkingSetAction extends BreakpointSelectionAction {
     	return false;
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.ui.actions.BaseSelectionListenerAction#updateSelection(org.eclipse.jface.viewers.IStructuredSelection)
-     */
     @Override
 	protected boolean updateSelection(IStructuredSelection selection) {
     	fBreakpoints = getRemovableBreakpoints(selection);

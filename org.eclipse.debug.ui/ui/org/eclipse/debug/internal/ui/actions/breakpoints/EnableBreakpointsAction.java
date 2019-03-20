@@ -78,9 +78,6 @@ public class EnableBreakpointsAction implements IViewActionDelegate, IPartListen
 		return true;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IActionDelegate#run(org.eclipse.jface.action.IAction)
-	 */
 	@Override
 	public void run(IAction action) {
 		IStructuredSelection selection= getSelection();
@@ -140,9 +137,6 @@ public class EnableBreakpointsAction implements IViewActionDelegate, IPartListen
 		return (IStructuredSelection)getView().getViewSite().getSelectionProvider().getSelection();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IActionDelegate#selectionChanged(org.eclipse.jface.action.IAction, org.eclipse.jface.viewers.ISelection)
-	 */
 	@Override
 	public void selectionChanged(IAction action, ISelection selection) {
 		setAction(action);
