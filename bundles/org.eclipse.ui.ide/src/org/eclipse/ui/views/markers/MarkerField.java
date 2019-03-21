@@ -18,6 +18,8 @@ import java.net.URL;
 
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.core.runtime.Platform;
+import org.eclipse.help.HelpSystem;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.JFaceResources;
@@ -32,6 +34,7 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.internal.WorkbenchPlugin;
+import org.eclipse.ui.internal.ide.IDEInternalPreferences;
 import org.eclipse.ui.internal.ide.IDEInternalWorkbenchImages;
 import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
 import org.eclipse.ui.internal.util.BundleUtility;
@@ -48,6 +51,12 @@ public abstract class MarkerField {
 
 	private IConfigurationElement configurationElement;
 	private ResourceManager imageManager;
+	private boolean helpContextAvailabilityCheck;
+
+	public MarkerField() {
+		helpContextAvailabilityCheck = Platform.getPreferencesService().getBoolean(IDEWorkbenchPlugin.IDE_WORKBENCH,
+				IDEInternalPreferences.HELP_CONTEXT_AVAILABILITY_CHECK, true, null); // $NON-NLS-1$
+	}
 
 	/**
 	 * Annotate the image with indicators for whether or not help or quick fix
@@ -67,7 +76,7 @@ public abstract class MarkerField {
 			// one
 			if (marker != null) {
 				String contextId = IDE.getMarkerHelpRegistry().getHelp(marker);
-				if (contextId != null) {
+				if (contextId != null && (!helpContextAvailabilityCheck || HelpSystem.getContext(contextId) != null)) {
 					if (image == null)
 						image = JFaceResources.getImage(Dialog.DLG_IMG_HELP);
 					else {

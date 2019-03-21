@@ -165,4 +165,19 @@ public interface IDEInternalPreferences {
 	 */
 	String INITIAL_DEFAULT_MARKER_GROUPING = "INITIAL_DEFAULT_MARKER_GROUPING"; //$NON-NLS-1$
 
+	/**
+	 * Key for preference whether the problem view does check if a help context is
+	 * really available before annotating a marker icon with the question mark
+	 * symbol.
+	 *
+	 * <p>
+	 * See bug 545615
+	 * </p>
+	 *
+	 * <p>
+	 * The default is true.
+	 * </p>
+	 */
+	String HELP_CONTEXT_AVAILABILITY_CHECK = "helpContextAvailabilityCheck"; //$NON-NLS-1$
+
 }

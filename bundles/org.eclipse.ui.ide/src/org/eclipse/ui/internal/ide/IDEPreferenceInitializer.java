@@ -98,6 +98,10 @@ public class IDEPreferenceInitializer extends AbstractPreferenceInitializer {
 		// by default, don't start hidden problems view to show decoration on
 		// it's icon. See bug 513901
 		node.putBoolean(IDEInternalPreferences.SHOW_PROBLEMS_VIEW_DECORATIONS_ON_STARTUP, false);
+
+		// by default the problem view should check whether help context is really
+		// available.
+		node.putBoolean(IDEInternalPreferences.HELP_CONTEXT_AVAILABILITY_CHECK, true);
 	}
 
 	/**
