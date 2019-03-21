@@ -68,7 +68,7 @@ final class DerivedImageDescriptor extends ImageDescriptor {
         if (arg0 instanceof DerivedImageDescriptor) {
             DerivedImageDescriptor desc = (DerivedImageDescriptor)arg0;
 
-            return desc.original == original && flags == desc.flags;
+			return desc.original.equals(original) && flags == desc.flags;
         }
 
         return false;
