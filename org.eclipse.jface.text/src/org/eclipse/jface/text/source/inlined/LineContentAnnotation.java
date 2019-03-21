@@ -13,9 +13,11 @@
  */
 package org.eclipse.jface.text.source.inlined;
 
+import org.eclipse.swt.custom.StyleRange;
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.GC;
+import org.eclipse.swt.graphics.GlyphMetrics;
 
 import org.eclipse.jface.text.Position;
 import org.eclipse.jface.text.source.ISourceViewer;
@@ -95,6 +97,55 @@ public class LineContentAnnotation extends AbstractInlinedAnnotation {
 	@Override
 	boolean contains(int x, int y) {
 		return (x >= this.fX && x <= this.fX + width && y >= this.fY && y <= this.fY + getTextWidget().getLineHeight());
+	}
+
+	/**
+	 * Returns the style to apply with GlyphMetrics width only if needed.
+	 *
+	 * @param annotation the line content annotation
+	 * @param usePreviousChar whether to attach the metrics to the offset char or previous one
+	 * @param style the current style and null otherwise.
+	 * @return the style to apply with GlyphMetrics width only if needed.
+	 */
+	StyleRange updateStyle(StyleRange style) {
+		boolean usePreviousChar= drawRightToPreviousChar(getPosition().getOffset());
+		if (width == 0 || getRedrawnCharacterWidth() == 0) {
+			return null;
+		}
+		int fullWidth= width + getRedrawnCharacterWidth();
+		if (style == null) {
+			style= new StyleRange();
+			Position position= getPosition();
+			style.start= position.getOffset();
+			if (usePreviousChar) {
+				style.start--;
+			}
+			style.length= 1;
+		}
+		GlyphMetrics metrics= style.metrics;
+		if (!isMarkedDeleted()) {
+			if (metrics == null) {
+				metrics= new GlyphMetrics(0, 0, fullWidth);
+			} else {
+				if (metrics.width == fullWidth) {
+					return null;
+				}
+				/**
+				 * We must create a new GlyphMetrics instance because comparison with similarTo used
+				 * later in StyledText#setStyleRange will compare the same (modified) and won't
+				 * realize an update happened.
+				 */
+				metrics= new GlyphMetrics(0, 0, fullWidth);
+			}
+		} else {
+			metrics= null;
+		}
+		style.metrics= metrics;
+		return style;
+	}
+
+	boolean drawRightToPreviousChar(int offset) {
+		return getTextWidget().getLineAtOffset(offset) == getTextWidget().getLineAtOffset(offset - 1);
 	}
 
 }

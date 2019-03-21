@@ -107,7 +107,7 @@ public class InlinedAnnotationSupport {
 					.forEachRemaining(annotation -> {
 						if (annotation instanceof LineContentAnnotation) {
 							LineContentAnnotation ann= (LineContentAnnotation) annotation;
-							StyleRange style= InlinedAnnotationDrawingStrategy.updateStyle(ann, null);
+							StyleRange style= ann.updateStyle(null);
 							if (style != null) {
 								textPresentation.mergeStyleRange(style);
 							}

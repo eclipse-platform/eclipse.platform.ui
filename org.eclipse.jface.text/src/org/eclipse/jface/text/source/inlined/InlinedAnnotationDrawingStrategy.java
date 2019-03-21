@@ -21,7 +21,6 @@ import org.eclipse.swt.graphics.GlyphMetrics;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 
-import org.eclipse.jface.text.Position;
 import org.eclipse.jface.text.source.Annotation;
 import org.eclipse.jface.text.source.AnnotationPainter.IDrawingStrategy;
 
@@ -41,7 +40,7 @@ class InlinedAnnotationDrawingStrategy implements IDrawingStrategy {
 			// The annotation is not in visible lines, don't draw it.
 			return;
 		}
-		InlinedAnnotationDrawingStrategy.draw((AbstractInlinedAnnotation) annotation, gc, textWidget, offset, length,
+		draw((AbstractInlinedAnnotation) annotation, gc, textWidget, offset, length,
 				color);
 	}
 
@@ -132,6 +131,14 @@ class InlinedAnnotationDrawingStrategy implements IDrawingStrategy {
 	 */
 	private static void draw(LineContentAnnotation annotation, GC gc, StyledText textWidget, int offset, int length,
 			Color color) {
+		if (annotation.drawRightToPreviousChar(offset)) {
+			drawAsRightOfPreviousCharacter(annotation, gc, textWidget, offset, length, color);
+		} else {
+			drawAsLeftOf1stCharacter(annotation, gc, textWidget, offset, length, color);
+		}
+	}
+
+	protected static void drawAsLeftOf1stCharacter(LineContentAnnotation annotation, GC gc, StyledText textWidget, int offset, int length, Color color) {
 		StyleRange style= null;
 		try {
 			style= textWidget.getStyleRangeAtOffset(offset);
@@ -180,7 +187,7 @@ class InlinedAnnotationDrawingStrategy implements IDrawingStrategy {
 					// END TO REMOVE
 
 					// Annotation takes place, add GlyphMetrics width to the style
-					StyleRange newStyle= updateStyle(annotation, style);
+					StyleRange newStyle= annotation.updateStyle(style);
 					if (newStyle != null) {
 						textWidget.setStyleRange(newStyle);
 						return;
@@ -219,45 +226,75 @@ class InlinedAnnotationDrawingStrategy implements IDrawingStrategy {
 		}
 	}
 
-	/**
-	 * Returns the style to apply with GlyphMetrics width only if needed.
-	 *
-	 * @param annotation the line content annotation
-	 * @param style the current style and null otherwise.
-	 * @return the style to apply with GlyphMetrics width only if needed.
-	 */
-	static StyleRange updateStyle(LineContentAnnotation annotation, StyleRange style) {
-		int width= annotation.getWidth();
-		if (width == 0 || annotation.getRedrawnCharacterWidth() == 0) {
-			return null;
+	protected static void drawAsRightOfPreviousCharacter(LineContentAnnotation annotation, GC gc, StyledText textWidget, int offset, int length, Color color) {
+		StyleRange style= null;
+		try {
+			style= textWidget.getStyleRangeAtOffset(offset - 1);
+		} catch (Exception e) {
+			return;
 		}
-		int fullWidth= width + annotation.getRedrawnCharacterWidth();
-		if (style == null) {
-			style= new StyleRange();
-			Position position= annotation.getPosition();
-			style.start= position.getOffset();
-			style.length= 1;
+		if (isDeleted(annotation)) {
+			// When annotation is deleted, update metrics to null to remove extra spaces of the line content annotation.
+			if (style != null && style.metrics != null) {
+				style.metrics= null;
+				textWidget.setStyleRange(style);
+			}
+			return;
 		}
-		GlyphMetrics metrics= style.metrics;
-		if (!annotation.isMarkedDeleted()) {
-			if (metrics == null) {
-				metrics= new GlyphMetrics(0, 0, fullWidth);
-			} else {
-				if (metrics.width == fullWidth) {
-					return null;
+		if (gc != null) {
+			String s= textWidget.getText(offset - 1, offset - 1);
+			int charWidth= gc.stringExtent(s).x;
+			Rectangle charBounds= textWidget.getTextBounds(offset - 1, offset - 1);
+			Rectangle annotationBounds= new Rectangle(charBounds.x + charWidth, charBounds.y, annotation.getWidth(), charBounds.height);
+
+			// When line text has line header annotation, there is a space on the top, adjust the y by using char height
+			annotationBounds.y+= charBounds.height - textWidget.getLineHeight();
+
+			// Draw the line content annotation
+			annotation.setLocation(annotationBounds.x, annotationBounds.y);
+			annotation.draw(gc, textWidget, offset, length, color, annotationBounds.x, annotationBounds.y);
+			int width= annotation.getWidth();
+			if (width != 0) {
+				// FIXME: remove this code when we need not redraw the character (see https://bugs.eclipse.org/bugs/show_bug.cgi?id=531769)
+				// START TO REMOVE
+				annotation.setRedrawnCharacterWidth(charWidth);
+				// END TO REMOVE
+
+				// Annotation takes place, add GlyphMetrics width to the style
+				StyleRange newStyle= annotation.updateStyle(style);
+				if (newStyle != null) {
+					textWidget.setStyleRange(newStyle);
+					return;
 				}
-				/**
-				 * We must create a new GlyphMetrics instance because comparison with similarTo used
-				 * later in StyledText#setStyleRange will compare the same (modified) and won't
-				 * realize an update happened.
-				 */
-				metrics= new GlyphMetrics(0, 0, fullWidth);
+
+				// FIXME: remove this code when we need not redraw the character (see https://bugs.eclipse.org/bugs/show_bug.cgi?id=531769)
+				// START TO REMOVE
+				// The inline annotation replaces one character by taking a place width
+				// GlyphMetrics
+				// Here we need to redraw this first character because GlyphMetrics clip this
+				// character.
+				if (style != null) {
+					if (style.background != null) {
+						gc.setBackground(style.background);
+						gc.fillRectangle(charBounds.x, charBounds.y, charWidth, charBounds.height);
+					}
+					if (style.foreground != null) {
+						gc.setForeground(style.foreground);
+					} else {
+						gc.setForeground(textWidget.getForeground());
+					}
+					gc.setFont(annotation.getFont(style.fontStyle));
+				}
+				gc.drawString(s, charBounds.x, charBounds.y, true);
+				// END TO REMOVE
+			} else if (style != null && style.metrics != null && style.metrics.width != 0) {
+				// line content annotation had an , reset it
+				style.metrics= null;
+				textWidget.setStyleRange(style);
 			}
 		} else {
-			metrics= null;
+			textWidget.redrawRange(offset, length, true);
 		}
-		style.metrics= metrics;
-		return style;
 	}
 
 	/**
