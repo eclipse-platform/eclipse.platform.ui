@@ -72,7 +72,12 @@ public class PerspectiveElement extends QuickAccessElement {
 
 	@Override
 	public String getLabel() {
-		return descriptor.getLabel();
+		String label = descriptor.getLabel();
+		String description = descriptor.getDescription();
+		if (description != null && !description.isEmpty()) {
+			return label + separator + description;
+		}
+		return label;
 	}
 
 	@Override
