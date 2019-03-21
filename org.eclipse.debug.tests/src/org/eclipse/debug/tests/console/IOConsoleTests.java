@@ -201,7 +201,11 @@ public class IOConsoleTests extends AbstractDebugTest {
 		c.clear().insertTypingAndVerify("i").write("ooo").verifyContent("iooo").verifyPartitions();
 		c.enter().clear();
 
-		closeConsole(c, "i");
+		c.insertAndVerify("gnorw").write("tuo").verifyContent("gnorwtuo").verifyPartitions(2);
+		c.clear().insertTypingAndVerify("I").write("O").verifyContent("IO").verifyPartitions();
+		c.insert("\r\n").clear();
+
+		closeConsole(c, "i", "I");
 	}
 
 	/**
@@ -245,8 +249,18 @@ public class IOConsoleTests extends AbstractDebugTest {
 		assertEquals("Expected newline entered inside line does not break this line.", c.getContentLength(), c.getCaretOffset());
 		c.verifyPartitions().verifyContentByOffset("NewLine", pos);
 		c.backspace().insertAndVerify("--").select(0, c.getContentLength()).insertTyping("<~>");
-		c.verifyContentByLine("--<~>", 2).verifyPartitions();
-		c.select(-2, 1).insertAndVerify("-=-").verifyContentByLine("--<-=->", 2).verifyPartitions();
+		c.verifyContentByLine("<~>", 2).verifyPartitions();
+		c.select(-2, 1).insertAndVerify("-=-").verifyContentByLine("<-=->", 2).verifyPartitions();
+
+		// multiline input
+		c.clear().insertTyping("=").insert("foo\n><");
+		expectedInput.add("=foo");
+		c.moveCaretToEnd().moveCaret(-1);
+		c.insert("abc\r\n123\n456");
+		expectedInput.add(">abc<");
+		expectedInput.add("123");
+		c.enter().clear();
+		expectedInput.add("456");
 
 		closeConsole(c, expectedInput.toArray(new String[0]));
 	}
@@ -263,7 +277,7 @@ public class IOConsoleTests extends AbstractDebugTest {
 		c.insertTyping("~~~");
 		c.writeAndVerify("bar");
 		c.insertTyping("input.");
-		c.verifyContent("foo~~~barinput.").verifyPartitions(3);
+		c.verifyContent("foo~~~input.bar").verifyPartitions(3);
 		c.enter().clear();
 		expectedInput.add("~~~input.");
 
@@ -279,7 +293,7 @@ public class IOConsoleTests extends AbstractDebugTest {
 		c.insert("~~p#t").select(c.getContentLength() - 5, 2).insert("in");
 		c.select(c.getContentLength() - 2, 1).insertTyping("u");
 		c.enter().clear();
-		expectedInput.add("+more inputinput");
+		expectedInput.add("input");
 
 		// inserted input is shorter than existing input partition
 		c.writeAndVerify("foo");
@@ -327,6 +341,23 @@ public class IOConsoleTests extends AbstractDebugTest {
 		c.verifyContent("ABCabcooo123OOO").verifyPartitions(4);
 		c.enter().clear();
 		expectedInput.add("ABCabc123");
+
+		// insert at partition borders
+		c.writeAndVerify("###").insertTyping("def").writeAndVerify("###");
+		c.setCaretOffset(6).insertAndVerify("ghi");
+		c.setCaretOffset(3).insertTypingAndVerify("abc");
+		c.moveCaretToLineStart().insertTyping(":");
+		c.enter().clear();
+		expectedInput.add(":abcdefghi");
+
+		// try to overwrite read-only content
+		c.writeAndVerify("o\u00F6O").insertTyping("\u00EFiI").writeAndVerify("\u00D6\u00D8\u00F8");
+		// line content: oöOiïIÖØø
+		c.verifyContent("o\u00F6O" + "\u00EFiI" + "\u00D6\u00D8\u00F8").verifyPartitions(2);
+		c.select(4, 4).backspace();
+		c.verifyContent("o\u00F6O" + "\u00EF" + "\u00D6\u00D8\u00F8").verifyPartitions(2);
+		c.enter().clear();
+		expectedInput.add("\u00EF");
 
 		closeConsole(c, expectedInput.toArray(new String[0]));
 	}

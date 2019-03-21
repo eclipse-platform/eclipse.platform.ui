@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2018 IBM Corporation and others.
+ * Copyright (c) 2000, 2019 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -11,38 +11,57 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     vogella GmbH - Bug 287303 - [patch] Add Word Wrap action to Console View
+ *     Paul Pazderski  - Bug 550621 - improved verification of user input
  *******************************************************************************/
 package org.eclipse.ui.internal.console;
 
-import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.DocumentEvent;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IDocumentListener;
 import org.eclipse.jface.text.IRegion;
+import org.eclipse.jface.text.ITypedRegion;
+import org.eclipse.jface.text.MultiStringMatcher;
+import org.eclipse.jface.text.MultiStringMatcher.Match;
 import org.eclipse.swt.custom.StyledText;
+import org.eclipse.swt.custom.StyledTextContent;
 import org.eclipse.swt.events.VerifyEvent;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.console.ConsolePlugin;
 import org.eclipse.ui.console.IConsoleDocumentPartitioner;
+import org.eclipse.ui.console.IConsoleDocumentPartitionerExtension;
+import org.eclipse.ui.console.IOConsole;
 import org.eclipse.ui.console.IScrollLockStateProvider;
 import org.eclipse.ui.console.TextConsole;
 import org.eclipse.ui.console.TextConsoleViewer;
 
 /**
- * Viewer used to display an IOConsole
+ * Viewer used to display an {@link IOConsole}.
  *
  * @since 3.1
  */
 public class IOConsoleViewer extends TextConsoleViewer {
 	/**
-	 * will always scroll with output if value is true.
+	 * Will always scroll with output if value is true.
 	 */
 	private boolean fAutoScroll = true;
 
-	private boolean fWordWrap = false;
+	/**
+	 * Listener required for auto scroll.
+	 */
+	private IDocumentListener fAutoScrollListener;
 
-	private IDocumentListener fDocumentListener;
+	/**
+	 * Matcher to find line delimiters which are used by current document.
+	 * <code>null</code> if no document is set.
+	 */
+	private MultiStringMatcher lineDelimiterMatcher;
 
+	/**
+	 * Constructs a new viewer in the given parent for the specified console.
+	 *
+	 * @param parent  the containing composite
+	 * @param console the IO console
+	 */
 	public IOConsoleViewer(Composite parent, TextConsole console) {
 		super(parent, console);
 	}
@@ -50,8 +69,8 @@ public class IOConsoleViewer extends TextConsoleViewer {
 	/**
 	 * Constructs a new viewer in the given parent for the specified console.
 	 *
-	 * @param parent the containing composite
-	 * @param console the IO console
+	 * @param parent                  the containing composite
+	 * @param console                 the IO console
 	 * @param scrollLockStateProvider the scroll lock state provider
 	 * @since 3.6
 	 */
@@ -68,78 +87,91 @@ public class IOConsoleViewer extends TextConsoleViewer {
 	}
 
 	public boolean isWordWrap() {
-		return fWordWrap;
+		return getTextWidget().getWordWrap();
 	}
 
 	public void setWordWrap(boolean wordwrap) {
-		fWordWrap = wordwrap;
 		getTextWidget().setWordWrap(wordwrap);
 	}
 
 	@Override
 	protected void handleVerifyEvent(VerifyEvent e) {
-		IDocument doc = getDocument();
-		String[] legalLineDelimiters = doc.getLegalLineDelimiters();
-		String eventString = e.text;
-		try {
-			IConsoleDocumentPartitioner partitioner = (IConsoleDocumentPartitioner) doc.getDocumentPartitioner();
-			if (!partitioner.isReadOnly(e.start)) {
-				boolean isCarriageReturn = false;
-				for (int i = 0; i < legalLineDelimiters.length; i++) {
-					if (e.text.equals(legalLineDelimiters[i])) {
-						isCarriageReturn = true;
-						break;
-					}
+		final IConsoleDocumentPartitioner partitioner = (IConsoleDocumentPartitioner) getDocument()
+				.getDocumentPartitioner();
+		final IConsoleDocumentPartitionerExtension partitionerExt = (IConsoleDocumentPartitionerExtension) partitioner;
+
+		final StyledTextContent content = getTextWidget().getContent();
+		final String eventText = e.text != null ? e.text : ""; //$NON-NLS-1$
+		final Match newlineMatch = lineDelimiterMatcher != null ? lineDelimiterMatcher.indexOf(eventText, 0) : null;
+		final IRegion eventRange = event2ModelRange(e);
+		final int offset = eventRange.getOffset();
+		final int length = eventRange.getLength();
+
+		if (length > 0 && partitionerExt.containsReadOnly(offset, length)) {
+			// If user tries to remove or replace text range containing read-only content we
+			// modify the change to only remove the writable parts.
+			e.doit = false;
+
+			final ITypedRegion[] writableParts = partitionerExt.computeWritablePartitions(offset, length);
+			// process text removes in reveres to not bother with changing offsets
+			for (int i = writableParts.length - 1; i >= 0; i--) {
+				final ITypedRegion writablePart = writableParts[i];
+				int replaceOffset = writablePart.getOffset();
+				int replaceLength = writablePart.getLength();
+
+				// snap partitions to event range
+				final int underflow = offset - writablePart.getOffset();
+				if (underflow > 0) {
+					replaceOffset += underflow;
+					replaceLength -= underflow;
+				}
+				final int overflow = (replaceOffset + replaceLength) - (offset + length);
+				if (overflow > 0) {
+					replaceLength -= overflow;
 				}
 
-				if (!isCarriageReturn) {
-					super.handleVerifyEvent(e);
-					return;
-				}
+				content.replaceTextRange(replaceOffset, replaceLength, ""); //$NON-NLS-1$
 			}
 
-			int length = doc.getLength();
-			if (e.start == length) {
-				super.handleVerifyEvent(e);
+			// now add the users input if any
+			if (eventText.length() > 0) {
+				getTextWidget().replaceTextRange(offset, 0, eventText);
+			}
+		} else if (newlineMatch != null && offset != content.getCharCount()) {
+			// If newline is entered within a line this viewer will not break that line and
+			// instead pretend as if newline was entered at end of document.
+			e.doit = false;
+
+			if (newlineMatch.getOffset() > 0) {
+				// insert text until newline with further verification
+				// and newline plus trailing text without
+				getTextWidget().replaceTextRange(offset, length, eventText.substring(0, newlineMatch.getOffset()));
+				content.replaceTextRange(content.getCharCount(), 0,
+						eventText.substring(newlineMatch.getOffset(), eventText.length()));
 			} else {
-				try {
-					doc.replace(length, 0, eventString);
-					updateWidgetCaretLocation(length);
-				} catch (BadLocationException e1) {
-				}
-				e.doit = false;
+				// inserted text starts with newline
+				content.replaceTextRange(content.getCharCount(), 0, eventText);
 			}
-		} finally {
-			StyledText text = (StyledText) e.widget;
-			text.setCaretOffset(text.getCharCount());
-		}
-	}
 
-	/*
-	 * Update the Text widget location to new location
-	 */
-	private void updateWidgetCaretLocation(int documentCaret) {
-		int widgetCaret = modelOffset2WidgetOffset(documentCaret);
-		if (widgetCaret == -1) {
-			// try to move it to the closest spot
-			IRegion region = getModelCoverage();
-			if (region != null) {
-				if (documentCaret <= region.getOffset()) {
-					widgetCaret = 0;
-				} else if (documentCaret >= region.getOffset() + region.getLength()) {
-					widgetCaret = getVisibleRegion().getLength();
-				}
-			}
-		}
-		if (widgetCaret != -1) {
-			// there is a valid widget caret
-			getTextWidget().setCaretOffset(widgetCaret);
+			getTextWidget().setCaretOffset(content.getCharCount());
 			getTextWidget().showSelection();
+		} else if (partitioner.isReadOnly(offset) && partitioner.isReadOnly(offset - 1)) {
+			// If input is entered in read-only partition add it to the next writable
+			// partition instead
+			e.doit = false;
+
+			final int insertOffset = partitionerExt.getNextOffsetByState(offset, true);
+			content.replaceTextRange(insertOffset, 0, eventText);
+
+			getTextWidget().setCaretOffset(insertOffset + eventText.length());
+			getTextWidget().showSelection();
+		} else {
+			super.handleVerifyEvent(e);
 		}
 	}
 
 	/**
-	 * makes the associated text widget uneditable.
+	 * Makes the associated text widget uneditable.
 	 */
 	public void setReadOnly() {
 		ConsolePlugin.getStandardDisplay().asyncExec(() -> {
@@ -159,21 +191,28 @@ public class IOConsoleViewer extends TextConsoleViewer {
 
 	@Override
 	public void setDocument(IDocument document) {
-		IDocument oldDocument= getDocument();
+		if (getDocument() != null) {
+			getDocument().removeDocumentListener(getAutoScrollListener());
+		}
 
 		super.setDocument(document);
 
-		if (oldDocument != null) {
-			oldDocument.removeDocumentListener(getDocumentListener());
-		}
+		lineDelimiterMatcher = null;
 		if (document != null) {
-			document.addDocumentListener(getDocumentListener());
+			lineDelimiterMatcher = MultiStringMatcher.create(document.getLegalLineDelimiters());
+			document.addDocumentListener(getAutoScrollListener());
 		}
 	}
 
-	private IDocumentListener getDocumentListener() {
-		if (fDocumentListener == null) {
-			fDocumentListener= new IDocumentListener() {
+	/**
+	 * Must create listener dynamically since super constructor may call
+	 * {@link #setDocument(IDocument)} before field initialization.
+	 *
+	 * @return document listener to perform auto scroll
+	 */
+	private IDocumentListener getAutoScrollListener() {
+		if (fAutoScrollListener == null) {
+			fAutoScrollListener = new IDocumentListener() {
 				@Override
 				public void documentAboutToBeChanged(DocumentEvent event) {
 				}
@@ -186,6 +225,6 @@ public class IOConsoleViewer extends TextConsoleViewer {
 				}
 			};
 		}
-		return fDocumentListener;
+		return fAutoScrollListener;
 	}
 }

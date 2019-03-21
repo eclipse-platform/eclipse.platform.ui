@@ -785,7 +785,7 @@ public class IOConsolePartitioner
 	@Override
 	public boolean isReadOnly(int offset) {
 		final IOConsolePartition partition = getIOPartition(offset);
-		return partition != null ? partition.isReadOnly() : false;
+		return partition != null ? partition.isReadOnly() : true;
 	}
 
 	@Override
