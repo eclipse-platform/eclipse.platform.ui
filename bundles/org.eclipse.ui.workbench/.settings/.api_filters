@@ -38,4 +38,12 @@
             </message_arguments>
         </filter>
     </resource>
+    <resource path="Eclipse UI/org/eclipse/ui/plugin/AbstractUIPlugin.java" type="org.eclipse.ui.plugin.AbstractUIPlugin">
+        <filter comment="https://bugs.eclipse.org/bugs/show_bug.cgi?id=475944" id="338722907">
+            <message_arguments>
+                <message_argument value="org.eclipse.ui.plugin.AbstractUIPlugin"/>
+                <message_argument value="AbstractUIPlugin(IPluginDescriptor)"/>
+            </message_arguments>
+        </filter>
+    </resource>
 </component>

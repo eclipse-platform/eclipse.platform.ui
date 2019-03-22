@@ -27,7 +27,6 @@ import java.nio.charset.StandardCharsets;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.IPluginDescriptor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
@@ -163,18 +162,6 @@ public abstract class AbstractUIPlugin extends Plugin {
      * @since 3.0.1
      */
     private BundleListener bundleListener;
-
-    /**
-	 * The {@link #AbstractUIPlugin(IPluginDescriptor)} constructor was called
-	 * only for plug-ins which explicitly require the
-	 * org.eclipse.core.runtime.compatibility plug-in.
-	 *
-	 * It is not called anymore as Eclipse 4.6 removed this plug-in.
-	 */
-    @Deprecated
-	public AbstractUIPlugin(IPluginDescriptor descriptor) {
-        super(descriptor);
-    }
 
     /**
      * Creates an abstract UI plug-in runtime object.
