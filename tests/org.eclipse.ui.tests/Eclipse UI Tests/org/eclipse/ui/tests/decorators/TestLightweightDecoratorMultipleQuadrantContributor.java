@@ -13,7 +13,6 @@
  *******************************************************************************/
 package org.eclipse.ui.tests.decorators;
 
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -26,7 +25,8 @@ import org.eclipse.jface.viewers.IDecoration;
 import org.eclipse.jface.viewers.ILabelProviderListener;
 import org.eclipse.jface.viewers.ILightweightLabelDecorator;
 import org.eclipse.jface.viewers.LabelProviderChangedEvent;
-import org.eclipse.ui.tests.TestPlugin;
+import org.osgi.framework.Bundle;
+import org.osgi.framework.FrameworkUtil;
 
 /**
  * This is a contributor that uses the multi quadrant
@@ -35,7 +35,7 @@ import org.eclipse.ui.tests.TestPlugin;
 
 public class TestLightweightDecoratorMultipleQuadrantContributor implements
         ILightweightLabelDecorator {
-	
+
 	private Set<ILabelProviderListener> listeners = new HashSet<>();
 
     private ImageDescriptor descriptor;
@@ -81,14 +81,9 @@ public class TestLightweightDecoratorMultipleQuadrantContributor implements
     public ImageDescriptor getOverlay(Object element) {
         Assert.isTrue(element instanceof IResource);
         if (descriptor == null) {
-            URL source = TestPlugin.getDefault().getDescriptor()
-                    .getInstallURL();
-            try {
-                descriptor = ImageDescriptor.createFromURL(new URL(source,
-                        "icons/binary_co.gif"));
-            } catch (MalformedURLException exception) {
-                return null;
-            }
+			Bundle bundle = FrameworkUtil.getBundle(BadIndexDecorator.class);
+			URL entry = bundle.getEntry("icons/binary_co.gif");
+			descriptor = ImageDescriptor.createFromURL(entry);
         }
         return descriptor;
 

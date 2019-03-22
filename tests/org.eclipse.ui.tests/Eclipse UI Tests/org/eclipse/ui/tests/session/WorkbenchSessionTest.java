@@ -31,7 +31,10 @@ import org.eclipse.core.tests.session.SetupManager.SetupException;
 import org.eclipse.jface.util.Util;
 import org.eclipse.osgi.service.environment.Constants;
 import org.eclipse.ui.tests.TestPlugin;
+import org.eclipse.ui.tests.decorators.BadIndexDecorator;
 import org.eclipse.ui.tests.harness.util.FileTool;
+import org.osgi.framework.Bundle;
+import org.osgi.framework.FrameworkUtil;
 
 /**
  * Wrapper for workbench session tests.
@@ -149,8 +152,8 @@ public class WorkbenchSessionTest extends SessionTestSuite {
                     "TestPlugin default reference is null");
 		}
 
-        URL fullPathString = plugin.getDescriptor().find(
-				new Path("data/workspaces/" + dataLocation + ".zip"));
+		Bundle bundle = FrameworkUtil.getBundle(BadIndexDecorator.class);
+		URL fullPathString = bundle.getEntry("data/workspaces/" + dataLocation + ".zip");
 
         if (fullPathString == null) {
 			throw new IllegalArgumentException();

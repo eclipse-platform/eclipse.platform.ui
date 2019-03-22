@@ -26,6 +26,7 @@ import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.IWorkbenchWindowActionDelegate;
 import org.eclipse.ui.tests.TestPlugin;
+import org.osgi.framework.FrameworkUtil;
 
 /**
  * @since 3.1
@@ -72,9 +73,9 @@ public class RemoveMarkersAction implements IWorkbenchWindowActionDelegate {
         }
 
         e.printStackTrace();
+		String bundleId = FrameworkUtil.getBundle(RemoveMarkersAction.class).getSymbolicName();
 
-        IStatus status = new Status(IStatus.ERROR, TestPlugin.getDefault()
-                .getDescriptor().getUniqueIdentifier(), 0, msg, e);
+		IStatus status = new Status(IStatus.ERROR, bundleId, 0, msg, e);
 
         TestPlugin.getDefault().getLog().log(status);
 
