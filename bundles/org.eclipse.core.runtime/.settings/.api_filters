@@ -21,6 +21,12 @@
                 <message_argument value="org.eclipse.core.runtime_3.15.200"/>
             </message_arguments>
         </filter>
+        <filter comment="Planned deletion" id="305324134">
+            <message_arguments>
+                <message_argument value="org.eclipse.core.runtime.IPluginDescriptor"/>
+                <message_argument value="org.eclipse.core.runtime_3.15.300"/>
+            </message_arguments>
+        </filter>
     </resource>
     <resource path="src/org/eclipse/core/runtime/ILibrary.java" type="org.eclipse.core.runtime.ILibrary">
         <filter comment="https://bugs.eclipse.org/bugs/show_bug.cgi?id=544339" id="403853384">
