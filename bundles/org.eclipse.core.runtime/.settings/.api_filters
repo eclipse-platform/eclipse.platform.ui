@@ -1,5 +1,27 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <component id="org.eclipse.core.runtime" version="2">
+    <resource path="META-INF/MANIFEST.MF">
+        <filter comment="Bug 475944 - Delete IPluginDescriptor and related API" id="923795461">
+            <message_arguments>
+                <message_argument value="3.15.200"/>
+                <message_argument value="3.15.100"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Planneddeletion" id="923795461">
+            <message_arguments>
+                <message_argument value="3.15.300"/>
+                <message_argument value="3.15.100"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="META-INF/MANIFEST.MF" type="org.eclipse.core.runtime.IPluginDescriptor">
+        <filter comment="Bug 475944 - Delete IPluginDescriptor and related API" id="305324134">
+            <message_arguments>
+                <message_argument value="org.eclipse.core.runtime.IPluginDescriptor"/>
+                <message_argument value="org.eclipse.core.runtime_3.15.200"/>
+            </message_arguments>
+        </filter>
+    </resource>
     <resource path="src/org/eclipse/core/runtime/ILibrary.java" type="org.eclipse.core.runtime.ILibrary">
         <filter comment="https://bugs.eclipse.org/bugs/show_bug.cgi?id=544339" id="403853384">
             <message_arguments>
@@ -40,127 +62,6 @@
             <message_arguments>
                 <message_argument value="org.eclipse.core.runtime.ILibrary"/>
                 <message_argument value="isFullyExported()"/>
-            </message_arguments>
-        </filter>
-    </resource>
-    <resource path="src/org/eclipse/core/runtime/IPluginDescriptor.java" type="org.eclipse.core.runtime.IPluginDescriptor">
-        <filter comment="https://bugs.eclipse.org/bugs/show_bug.cgi?id=544339" id="403853384">
-            <message_arguments>
-                <message_argument value="org.eclipse.core.runtime.IPluginDescriptor"/>
-            </message_arguments>
-        </filter>
-        <filter comment="https://bugs.eclipse.org/bugs/show_bug.cgi?id=544339" id="406052990">
-            <message_arguments>
-                <message_argument value="org.eclipse.core.runtime.IPluginDescriptor"/>
-                <message_argument value="find(IPath)"/>
-            </message_arguments>
-        </filter>
-        <filter comment="https://bugs.eclipse.org/bugs/show_bug.cgi?id=544339" id="406052990">
-            <message_arguments>
-                <message_argument value="org.eclipse.core.runtime.IPluginDescriptor"/>
-                <message_argument value="find(IPath, Map&lt;String,String&gt;)"/>
-            </message_arguments>
-        </filter>
-        <filter comment="https://bugs.eclipse.org/bugs/show_bug.cgi?id=544339" id="406052990">
-            <message_arguments>
-                <message_argument value="org.eclipse.core.runtime.IPluginDescriptor"/>
-                <message_argument value="getExtension(String)"/>
-            </message_arguments>
-        </filter>
-        <filter comment="https://bugs.eclipse.org/bugs/show_bug.cgi?id=544339" id="406052990">
-            <message_arguments>
-                <message_argument value="org.eclipse.core.runtime.IPluginDescriptor"/>
-                <message_argument value="getExtensionPoint(String)"/>
-            </message_arguments>
-        </filter>
-        <filter comment="https://bugs.eclipse.org/bugs/show_bug.cgi?id=544339" id="406052990">
-            <message_arguments>
-                <message_argument value="org.eclipse.core.runtime.IPluginDescriptor"/>
-                <message_argument value="getExtensionPoints()"/>
-            </message_arguments>
-        </filter>
-        <filter comment="https://bugs.eclipse.org/bugs/show_bug.cgi?id=544339" id="406052990">
-            <message_arguments>
-                <message_argument value="org.eclipse.core.runtime.IPluginDescriptor"/>
-                <message_argument value="getExtensions()"/>
-            </message_arguments>
-        </filter>
-        <filter comment="https://bugs.eclipse.org/bugs/show_bug.cgi?id=544339" id="406052990">
-            <message_arguments>
-                <message_argument value="org.eclipse.core.runtime.IPluginDescriptor"/>
-                <message_argument value="getInstallURL()"/>
-            </message_arguments>
-        </filter>
-        <filter comment="https://bugs.eclipse.org/bugs/show_bug.cgi?id=544339" id="406052990">
-            <message_arguments>
-                <message_argument value="org.eclipse.core.runtime.IPluginDescriptor"/>
-                <message_argument value="getLabel()"/>
-            </message_arguments>
-        </filter>
-        <filter comment="https://bugs.eclipse.org/bugs/show_bug.cgi?id=544339" id="406052990">
-            <message_arguments>
-                <message_argument value="org.eclipse.core.runtime.IPluginDescriptor"/>
-                <message_argument value="getPlugin()"/>
-            </message_arguments>
-        </filter>
-        <filter comment="https://bugs.eclipse.org/bugs/show_bug.cgi?id=544339" id="406052990">
-            <message_arguments>
-                <message_argument value="org.eclipse.core.runtime.IPluginDescriptor"/>
-                <message_argument value="getPluginClassLoader()"/>
-            </message_arguments>
-        </filter>
-        <filter comment="https://bugs.eclipse.org/bugs/show_bug.cgi?id=544339" id="406052990">
-            <message_arguments>
-                <message_argument value="org.eclipse.core.runtime.IPluginDescriptor"/>
-                <message_argument value="getPluginPrerequisites()"/>
-            </message_arguments>
-        </filter>
-        <filter comment="https://bugs.eclipse.org/bugs/show_bug.cgi?id=544339" id="406052990">
-            <message_arguments>
-                <message_argument value="org.eclipse.core.runtime.IPluginDescriptor"/>
-                <message_argument value="getProviderName()"/>
-            </message_arguments>
-        </filter>
-        <filter comment="https://bugs.eclipse.org/bugs/show_bug.cgi?id=544339" id="406052990">
-            <message_arguments>
-                <message_argument value="org.eclipse.core.runtime.IPluginDescriptor"/>
-                <message_argument value="getResourceBundle()"/>
-            </message_arguments>
-        </filter>
-        <filter comment="https://bugs.eclipse.org/bugs/show_bug.cgi?id=544339" id="406052990">
-            <message_arguments>
-                <message_argument value="org.eclipse.core.runtime.IPluginDescriptor"/>
-                <message_argument value="getResourceString(String)"/>
-            </message_arguments>
-        </filter>
-        <filter comment="https://bugs.eclipse.org/bugs/show_bug.cgi?id=544339" id="406052990">
-            <message_arguments>
-                <message_argument value="org.eclipse.core.runtime.IPluginDescriptor"/>
-                <message_argument value="getResourceString(String, ResourceBundle)"/>
-            </message_arguments>
-        </filter>
-        <filter comment="https://bugs.eclipse.org/bugs/show_bug.cgi?id=544339" id="406052990">
-            <message_arguments>
-                <message_argument value="org.eclipse.core.runtime.IPluginDescriptor"/>
-                <message_argument value="getRuntimeLibraries()"/>
-            </message_arguments>
-        </filter>
-        <filter comment="https://bugs.eclipse.org/bugs/show_bug.cgi?id=544339" id="406052990">
-            <message_arguments>
-                <message_argument value="org.eclipse.core.runtime.IPluginDescriptor"/>
-                <message_argument value="getUniqueIdentifier()"/>
-            </message_arguments>
-        </filter>
-        <filter comment="https://bugs.eclipse.org/bugs/show_bug.cgi?id=544339" id="406052990">
-            <message_arguments>
-                <message_argument value="org.eclipse.core.runtime.IPluginDescriptor"/>
-                <message_argument value="getVersionIdentifier()"/>
-            </message_arguments>
-        </filter>
-        <filter comment="https://bugs.eclipse.org/bugs/show_bug.cgi?id=544339" id="406052990">
-            <message_arguments>
-                <message_argument value="org.eclipse.core.runtime.IPluginDescriptor"/>
-                <message_argument value="isPluginActivated()"/>
             </message_arguments>
         </filter>
     </resource>
@@ -237,6 +138,30 @@
                 <message_argument value="org.eclipse.core.runtime.IPluginRegistry"/>
             </message_arguments>
         </filter>
+        <filter comment="&#10;Bug 475944 - Delete IPluginDescriptor and related API" id="405901410">
+            <message_arguments>
+                <message_argument value="org.eclipse.core.runtime.IPluginRegistry"/>
+                <message_argument value="getPluginDescriptor(String)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="&#10;Bug 475944 - Delete IPluginDescriptor and related API" id="405901410">
+            <message_arguments>
+                <message_argument value="org.eclipse.core.runtime.IPluginRegistry"/>
+                <message_argument value="getPluginDescriptor(String, PluginVersionIdentifier)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="&#10;Bug 475944 - Delete IPluginDescriptor and related API" id="405901410">
+            <message_arguments>
+                <message_argument value="org.eclipse.core.runtime.IPluginRegistry"/>
+                <message_argument value="getPluginDescriptors()"/>
+            </message_arguments>
+        </filter>
+        <filter comment="&#10;Bug 475944 - Delete IPluginDescriptor and related API" id="405901410">
+            <message_arguments>
+                <message_argument value="org.eclipse.core.runtime.IPluginRegistry"/>
+                <message_argument value="getPluginDescriptors(String)"/>
+            </message_arguments>
+        </filter>
         <filter comment="https://bugs.eclipse.org/bugs/show_bug.cgi?id=544339" id="406052990">
             <message_arguments>
                 <message_argument value="org.eclipse.core.runtime.IPluginRegistry"/>
@@ -307,6 +232,20 @@
             <message_arguments>
                 <message_argument value="org.eclipse.core.runtime.IPluginRegistry"/>
                 <message_argument value="getPluginDescriptors(String)"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/core/runtime/Plugin.java" type="org.eclipse.core.runtime.Plugin">
+        <filter comment="Bug 475944 - Delete IPluginDescriptor and related API" id="338722907">
+            <message_arguments>
+                <message_argument value="org.eclipse.core.runtime.Plugin"/>
+                <message_argument value="Plugin(IPluginDescriptor)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Bug 475944 - Delete IPluginDescriptor and related API" id="338792546">
+            <message_arguments>
+                <message_argument value="org.eclipse.core.runtime.Plugin"/>
+                <message_argument value="getDescriptor()"/>
             </message_arguments>
         </filter>
     </resource>

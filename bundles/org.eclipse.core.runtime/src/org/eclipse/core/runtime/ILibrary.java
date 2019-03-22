@@ -27,7 +27,6 @@ import org.osgi.framework.Constants;
  * <code>CODE</code> and <code>RESOURCE</code>.
  * </p>
  *
- * @see IPluginDescriptor#getRuntimeLibraries()
  * @deprecated In Eclipse 3.0 the plug-in classpath representation was changed.
  *             Clients of <code>ILibrary</code> are directed to the headers
  *             associated with the relevant bundle. In particular, the
@@ -54,10 +53,6 @@ import org.osgi.framework.Constants;
  *             Note that this new structure does not include information on
  *             which packages are exported or present in the listed classpath
  *             entries. This information is no longer relevant.
- *             </p>
- *             <p>
- *             See {@link IPluginDescriptor} for information on the relationship
- *             between plug-in descriptors and bundles.
  *             </p>
  *             <p>
  *             This interface must only be used by plug-ins which explicitly
@@ -110,7 +105,6 @@ public interface ILibrary {
 	 * installation location.
 	 *
 	 * @return the path of the library
-	 * @see IPluginDescriptor#getInstallURL()
 	 * @deprecated
 	 * Given a manifest element corresponding to a classpath entry, the path
 	 * for the entry can be accessed by getting the value of the manifest element.
