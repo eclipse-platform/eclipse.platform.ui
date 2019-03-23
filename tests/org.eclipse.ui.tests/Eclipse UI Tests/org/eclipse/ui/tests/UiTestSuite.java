@@ -34,6 +34,7 @@ import org.eclipse.ui.tests.filteredtree.FilteredTreeTests;
 import org.eclipse.ui.tests.filteredtree.PatternFilterTest;
 import org.eclipse.ui.tests.internal.InternalTestSuite;
 import org.eclipse.ui.tests.keys.KeysTestSuite;
+import org.eclipse.ui.tests.leaks.LeaksTestSuite;
 import org.eclipse.ui.tests.menus.MenusTestSuite;
 import org.eclipse.ui.tests.multipageeditor.MultiPageEditorTestSuite;
 import org.eclipse.ui.tests.navigator.NavigatorTestSuite;
@@ -82,7 +83,8 @@ import org.junit.runners.Suite;
 	QuickAccessTestSuite.class,
 	FilteredResourcesSelectionDialogTestSuite.class,
 	DirectoryProposalContentAssistTestSuite.class,
-	InternalTestSuite.class
+	InternalTestSuite.class,
+	LeaksTestSuite.class,
 })
 public class UiTestSuite {
 
@@ -92,7 +94,6 @@ public class UiTestSuite {
 	// CommandsTestSuite.class,
 	// DragTestSuite.class,
 	// IntroTestSuite.class,
-	// LeakTests.class,
 	// MultiEditorTestSuite.class,
 	// OpenSystemInPlaceEditorTest..class,
 }
