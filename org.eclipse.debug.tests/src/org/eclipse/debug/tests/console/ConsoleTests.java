@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2017, 2018 Andreas Loth and others.
+ * Copyright (c) 2017, 2019 Andreas Loth and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -36,7 +36,6 @@ import org.eclipse.ui.console.IOConsoleOutputStream;
 import org.eclipse.ui.console.MessageConsole;
 
 import junit.framework.TestCase;
-
 
 public class ConsoleTests extends AbstractDebugTest {
 
@@ -189,15 +188,36 @@ public class ConsoleTests extends AbstractDebugTest {
 		}
 	}
 
+	/**
+	 * Tests for IOConsoleInputStream#available().
+	 *
+	 * @throws Exception if test fails
+	 */
 	public void testIOConsoleAvailable() throws Exception {
-
-		final IOConsole console = new IOConsole("", null);
-
+		IOConsole console = new IOConsole("", null);
 		try (InputStream consoleInput = console.getInputStream()) {
 			consoleInput.available();
 			consoleInput.available();
-		} catch (IOException ioe) {
-			TestCase.assertEquals("Input Stream is closed", ioe.getMessage()); //$NON-NLS-1$
+		}
+
+		console = new IOConsole("", null);
+		try (InputStream consoleInput = console.getInputStream()) {
+			consoleInput.available();
+			new Thread(() -> {
+				try {
+					Thread.sleep(100);
+					consoleInput.close();
+				} catch (Exception e) {
+				}
+			}).start();
+			assertEquals("read() did not signal EOF.", -1, consoleInput.read());
+		}
+
+		console = new IOConsole("", null);
+		try (InputStream consoleInput = console.getInputStream()) {
+			consoleInput.close();
+			consoleInput.available();
+			consoleInput.available();
 		}
 	}
 }
