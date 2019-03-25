@@ -137,7 +137,9 @@ public class UserFiltersTab extends CustomizationTab {
 
 		Composite buttonsComposite = new Composite(this, SWT.NONE);
 		buttonsComposite.setLayoutData(new GridData(SWT.DEFAULT, SWT.TOP, false, false));
-		buttonsComposite.setLayout(new GridLayout(1, false));
+		GridLayout layout = new GridLayout(1, false);
+		layout.marginHeight = 0;
+		buttonsComposite.setLayout(layout);
 
 		final Button addButton = new Button(buttonsComposite, SWT.PUSH);
 		addButton.setLayoutData(new GridData(SWT.FILL, SWT.DEFAULT, false, false));
