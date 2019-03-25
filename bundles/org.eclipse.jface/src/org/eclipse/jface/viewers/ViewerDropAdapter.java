@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 IBM Corporation and others.
+ * Copyright (c) 2000, 2019 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -175,10 +175,10 @@ public abstract class ViewerDropAdapter extends DropTargetAdapter {
 		if (bounds == null) {
 			return LOCATION_NONE;
 		}
-		if ((coordinates.y - bounds.y) < 5) {
+		if ((coordinates.y - bounds.y) < getThreshold()) {
 			return LOCATION_BEFORE;
 		}
-		if ((bounds.y + bounds.height - coordinates.y) < 5) {
+		if ((bounds.y + bounds.height - coordinates.y) < getThreshold()) {
 			return LOCATION_AFTER;
         }
 
@@ -186,11 +186,24 @@ public abstract class ViewerDropAdapter extends DropTargetAdapter {
     }
 
     /**
-     * Returns the target item of the given drop event.
-     *
-     * @param event the event
-     * @return The target of the drop, may be <code>null</code>.
-     */
+	 * Get the threshold to determine whether to have before/after feedback or
+	 * select feedback. Threshold shall not be bigger than itemHeight/2.
+	 *
+	 * @return amount of pixels from top/bottom of element that trigger before/after
+	 *         behavior.
+	 * @since 3.15
+	 */
+	protected int getThreshold() {
+		// fixed default threshold provided up to v3.15
+		return 5;
+	}
+
+	/**
+	 * Returns the target item of the given drop event.
+	 *
+	 * @param event the event
+	 * @return The target of the drop, may be <code>null</code>.
+	 */
     protected Object determineTarget(DropTargetEvent event) {
         return event.item == null ? null : event.item.getData();
     }
