@@ -10,11 +10,17 @@
  *******************************************************************************/
 package org.eclipse.urischeme.internal.registration;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.Reader;
 import java.io.Writer;
+import java.net.URL;
+import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.List;
+
+import org.eclipse.osgi.service.datalocation.Location;
 
 /**
  *
@@ -58,4 +64,30 @@ public interface IFileProvider {
 	 */
 	@SuppressWarnings("javadoc")
 	boolean isDirectory(String path);
+
+	/**
+	 * @see Files#newDirectoryStream(Path, String)
+	 */
+	@SuppressWarnings("javadoc")
+	DirectoryStream<Path> newDirectoryStream(String path, String glob) throws IOException;
+
+	/**
+	 * Uses {@link File#File(String)} and {@link File#getPath()} to get the path of
+	 * an URL object that was created using the deprecated {@link File#toURL}.
+	 * <p>
+	 * This is required to normalize file paths retrieved from e.g. a
+	 * {@link Location} URL or system properties like
+	 * <code>eclipse.home.location</code>.
+	 * <p>
+	 * This uses the <code>java.io</code> instead of the <code>java.nio</code> API,
+	 * because <code>java.nio</code> doesn't like paths such as
+	 * <code>/c:/some/dir/</code> which where created by the deprecated
+	 * {@link File#toURL}.
+	 *
+	 * @param url the file URL
+	 * @return the normalized file path according to the operating system file
+	 *         system.
+	 */
+	String getFilePath(URL url);
+
 }

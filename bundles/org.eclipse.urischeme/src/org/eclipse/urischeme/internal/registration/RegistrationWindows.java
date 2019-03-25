@@ -10,10 +10,16 @@
  *******************************************************************************/
 package org.eclipse.urischeme.internal.registration;
 
+import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.nio.file.DirectoryStream;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import org.eclipse.core.runtime.Assert;
 import org.eclipse.urischeme.IOperatingSystemRegistration;
 import org.eclipse.urischeme.IScheme;
 import org.eclipse.urischeme.ISchemeInformation;
@@ -23,13 +29,14 @@ import org.eclipse.urischeme.ISchemeInformation;
  */
 public class RegistrationWindows implements IOperatingSystemRegistration {
 	IRegistryWriter registryWriter;
+	IFileProvider fileProvider;
 
 	/**
 	 * Creates an instance of RegistryWriter. The instance would help in
 	 * reading,writing and removing entries from Windows Registry.
 	 */
 	public RegistrationWindows() {
-		this(new RegistryWriter());
+		this(new RegistryWriter(), new FileProvider());
 	}
 
 	/**
@@ -40,16 +47,18 @@ public class RegistrationWindows implements IOperatingSystemRegistration {
 	 * this class
 	 *
 	 * @param registryWriter the interface for windows registry handling
+	 * @param fileProvider   the interface for the file provider
 	 */
-	public RegistrationWindows(IRegistryWriter registryWriter) {
+	public RegistrationWindows(IRegistryWriter registryWriter, IFileProvider fileProvider) {
 		this.registryWriter = registryWriter;
+		this.fileProvider = fileProvider;
 	}
 
 	@Override
 	public void handleSchemes(Collection<IScheme> toAdd, Collection<IScheme> toRemove)
 			throws Exception {
 		for (IScheme scheme : toAdd) {
-			registryWriter.addScheme(scheme.getName());
+			registryWriter.addScheme(scheme.getName(), getEclipseLauncher());
 		}
 		for (IScheme scheme : toRemove) {
 			registryWriter.removeScheme(scheme.getName());
@@ -88,7 +97,11 @@ public class RegistrationWindows implements IOperatingSystemRegistration {
 
 	@Override
 	public String getEclipseLauncher() {
-		return System.getProperty("eclipse.launcher");//$NON-NLS-1$
+		String launcher = getLauncherFromLauncherProperty();
+		if (launcher != null) {
+			return launcher;
+		}
+		return getLauncherFromHomeLocation();
 	}
 
 	/**
@@ -102,5 +115,52 @@ public class RegistrationWindows implements IOperatingSystemRegistration {
 	@Override
 	public boolean canOverwriteOtherApplicationsRegistration() {
 		return true;
+	}
+
+	private String getLauncherFromLauncherProperty() {
+		String launcher = System.getProperty("eclipse.launcher"); //$NON-NLS-1$
+		if (launcher != null && this.fileProvider.fileExists(launcher) && !fileProvider.isDirectory(launcher)) {
+			return launcher;
+		}
+		return null;
+	}
+
+	/**
+	 * Launcher may be null in runtime workbenches hosted by PDE. Check home
+	 * location for any launcher file as a fallback.
+	 *
+	 * @return returns the launcher
+	 */
+	private String getLauncherFromHomeLocation() {
+		String homeLocation = System.getProperty("eclipse.home.location"); //$NON-NLS-1$
+		Assert.isNotNull(homeLocation, "home location must not be null"); //$NON-NLS-1$
+
+		URL homeLocationUrl;
+		try {
+			// The property was created using the deprecated java.io.File.toURL,
+			// which does not properly escape special characters.
+			// Therefore, we also need to use URL instead of URI to parse it now,
+			// as the URI parser is more strict.
+			homeLocationUrl = new URL(homeLocation);
+		} catch (MalformedURLException e) {
+			return null;
+		}
+		if (!"file".equals(homeLocationUrl.getProtocol())) { //$NON-NLS-1$
+			return null;
+		}
+
+		String directory = fileProvider.getFilePath(homeLocationUrl);
+		if (!fileProvider.fileExists(directory) || !fileProvider.isDirectory(directory)) {
+			return null;
+		}
+
+		try (DirectoryStream<Path> stream = fileProvider.newDirectoryStream(directory, "*.exe")) { //$NON-NLS-1$
+			for (Path path : stream) {
+				return path.toString();
+			}
+		} catch (IOException e) {
+			throw new IllegalStateException(e.getMessage(), e);
+		}
+		return null;
 	}
 }

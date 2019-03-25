@@ -62,7 +62,7 @@ public class TestUnitRegistryWriter {
 
 	@Test
 	public void addsOneScheme() throws Exception {
-		writer.addScheme("adt");
+		writer.addScheme("adt", launcher);
 
 		assertEntry(registryMock.setValues.get(0), "Software\\Classes\\adt", "URL Protocol", "");
 		assertEntry(registryMock.setValues.get(1), "Software\\Classes\\adt", null, "URL:adt");
@@ -74,13 +74,13 @@ public class TestUnitRegistryWriter {
 
 	@Test(expected = IllegalArgumentException.class)
 	public void throwsExceptionOnAddingInvalidScheme() throws Exception {
-		writer.addScheme("%&$");
+		writer.addScheme("%&$", launcher);
 	}
 
 	@Test(expected = WinRegistryException.class)
 	public void throwsIllegalStateExceptionOnAddScheme() throws Exception {
 		registryMock.setValueForKeyException = new WinRegistryException("failed");
-		writer.addScheme("adt");
+		writer.addScheme("adt", launcher);
 	}
 
 	@Test
@@ -126,8 +126,8 @@ public class TestUnitRegistryWriter {
 
 	@Test
 	public void addsTwoSchemes() throws WinRegistryException {
-		writer.addScheme("adt");
-		writer.addScheme("other");
+		writer.addScheme("adt", launcher);
+		writer.addScheme("other", launcher);
 
 		assertEntry(registryMock.setValues.get(0), "Software\\Classes\\adt", "URL Protocol", "");
 		assertEntry(registryMock.setValues.get(1), "Software\\Classes\\adt", null, "URL:adt");

@@ -13,8 +13,13 @@ package org.eclipse.urischeme.internal.registration;
 import java.io.IOException;
 import java.io.Reader;
 import java.io.Writer;
+import java.net.URL;
+import java.nio.file.DirectoryStream;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -23,6 +28,8 @@ public class FileProviderMock implements IFileProvider {
 	Map<String, Object> readAnswers = new HashMap<>();
 	Map<String, Boolean> fileExistsAnswers = new HashMap<>();
 	Map<String, Boolean> isDirectoryAnswers = new HashMap<>();
+	Map<URL, String> urlTosFilePaths = new HashMap<>();
+	Map<String, Map<String, List<String>>> newDirectoryStreamAnswers = new HashMap<>();
 	List<String> recordedReadPaths = new ArrayList<>();
 	String writePath = "not/written";
 
@@ -74,6 +81,26 @@ public class FileProviderMock implements IFileProvider {
 	@Override
 	public boolean isDirectory(String path) {
 		return isDirectoryAnswers.get(path);
+	}
+
+	@Override
+	public String getFilePath(URL url) {
+		return urlTosFilePaths.get(url);
+	}
+
+	@Override
+	public DirectoryStream<Path> newDirectoryStream(String dir, String glob) throws IOException {
+		return new DirectoryStream<Path>() {
+
+			@Override
+			public void close() throws IOException {
+			}
+
+			@Override
+			public Iterator<Path> iterator() {
+				return newDirectoryStreamAnswers.get(dir).get(glob).stream().map(name -> Paths.get(name)).iterator();
+			}
+		};
 	}
 
 }

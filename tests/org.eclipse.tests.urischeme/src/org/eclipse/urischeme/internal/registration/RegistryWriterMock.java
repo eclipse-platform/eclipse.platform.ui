@@ -22,7 +22,7 @@ public class RegistryWriterMock implements IRegistryWriter {
 	Map<String, String> schemeToHandlerPath = new HashMap<>();
 
 	@Override
-	public void addScheme(String scheme) throws IllegalArgumentException {
+	public void addScheme(String scheme, String launcherPath) throws IllegalArgumentException {
 		addedSchemes.add(scheme);
 	}
 
