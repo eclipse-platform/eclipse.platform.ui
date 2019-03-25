@@ -83,8 +83,9 @@
             A core Expression that controls the enabled of the given character pair matcher. The viewer, editor, and editor input are registered in the evaluation context as variable:
 
  * &lt;with variable=&quot;viewer&quot;/&gt; : use it if your expression requires the viewer.
- * &lt;with variable=&quot;editor&quot;/&gt; : use it if your expression requires the editor.
- * &lt;with variable=&quot;editorInput&quot;/&gt; :  use it if your expression requires the editor input.
+ * &lt;with variable=&quot;document&quot;/&gt; : use it if your expression requires the document.
+ * &lt;with variable=&quot;editor&quot;/&gt; : use it if your expression requires the editor (deprecated, not always set).
+ * &lt;with variable=&quot;editorInput&quot;/&gt; :  use it if your expression requires the editor input (deprecated, not always set).
          </documentation>
       </annotation>
       <complexType>

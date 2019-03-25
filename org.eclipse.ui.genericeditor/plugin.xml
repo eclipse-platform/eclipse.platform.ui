@@ -209,4 +209,18 @@
    <extension point="org.eclipse.core.runtime.preferences">
       <initializer class="org.eclipse.ui.internal.genericeditor.preferences.GenericEditorPluginPreferenceInitializer"/>
    </extension>
+   <extension
+         point="org.eclipse.compare.contentViewers">
+      <viewer
+            class="org.eclipse.ui.internal.genericeditor.compare.CompareViewerCreator"
+            id="org.eclipse.ui.genericeditor.compareViewer">
+      </viewer>
+   </extension>
+   <extension
+         point="org.eclipse.compare.contentMergeViewers">
+      <viewer
+            class="org.eclipse.ui.internal.genericeditor.compare.CompareViewerCreator"
+            id="org.eclipse.ui.genericeditor.compareViewer">
+      </viewer>
+   </extension>
 </plugin>

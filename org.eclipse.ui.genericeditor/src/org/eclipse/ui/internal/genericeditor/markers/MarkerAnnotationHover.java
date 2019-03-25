@@ -14,6 +14,7 @@
 package org.eclipse.ui.internal.genericeditor.markers;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import org.eclipse.core.resources.IMarker;
@@ -38,25 +39,23 @@ public class MarkerAnnotationHover implements ITextHoverExtension, ITextHoverExt
 		if (!(annotation instanceof MarkerAnnotation)) {
 			return false;
 		}
-		AnnotationPreference preference= EditorsUI.getAnnotationPreferenceLookup().getAnnotationPreference(annotation);
+		AnnotationPreference preference = EditorsUI.getAnnotationPreferenceLookup().getAnnotationPreference(annotation);
 		if (preference == null) {
 			return false;
 		}
-		String key= preference.getTextPreferenceKey();
+		String key = preference.getTextPreferenceKey();
 		if (key != null) {
 			if (!EditorsUI.getPreferenceStore().getBoolean(key))
 				return false;
 		} else {
-			key= preference.getHighlightPreferenceKey();
+			key = preference.getHighlightPreferenceKey();
 			if (key == null || !EditorsUI.getPreferenceStore().getBoolean(key))
 				return false;
 		}
 		return true;
 	}
 
-
-	@Override
-	public String getHoverInfo(ITextViewer textViewer, IRegion hoverRegion) {
+	@Override public String getHoverInfo(ITextViewer textViewer, IRegion hoverRegion) {
 		Object hoverInfo = getHoverInfo2(textViewer, hoverRegion);
 		if (hoverInfo == null) {
 			return null;
@@ -64,12 +63,11 @@ public class MarkerAnnotationHover implements ITextHoverExtension, ITextHoverExt
 		return hoverInfo.toString();
 	}
 
-	@Override
-	public IRegion getHoverRegion(ITextViewer textViewer, int offset) {
+	@Override public IRegion getHoverRegion(ITextViewer textViewer, int offset) {
 		if (!(textViewer instanceof ISourceViewerExtension2)) {
 			return null;
 		}
-		ISourceViewerExtension2 viewer = (ISourceViewerExtension2)textViewer;
+		ISourceViewerExtension2 viewer = (ISourceViewerExtension2) textViewer;
 		List<MarkerAnnotation> annotations = findMarkerAnnotations(viewer, new Region(offset, 0));
 		if (annotations.isEmpty()) {
 			return null;
@@ -86,12 +84,11 @@ public class MarkerAnnotationHover implements ITextHoverExtension, ITextHoverExt
 		return new Region(highestOffsetStart, Math.max(0, lowestOffsetEnd - highestOffsetStart));
 	}
 
-	@Override
-	public List<IMarker> getHoverInfo2(ITextViewer textViewer, IRegion hoverRegion) {
+	@Override public List<IMarker> getHoverInfo2(ITextViewer textViewer, IRegion hoverRegion) {
 		if (!(textViewer instanceof ISourceViewerExtension2)) {
 			return null;
 		}
-		List<MarkerAnnotation> annotations = findMarkerAnnotations((ISourceViewerExtension2)textViewer, hoverRegion);
+		List<MarkerAnnotation> annotations = findMarkerAnnotations((ISourceViewerExtension2) textViewer, hoverRegion);
 		if (annotations.isEmpty()) {
 			return null;
 		}
@@ -101,23 +98,25 @@ public class MarkerAnnotationHover implements ITextHoverExtension, ITextHoverExt
 		}
 		return markers;
 	}
-	
+
 	private static List<MarkerAnnotation> findMarkerAnnotations(ISourceViewerExtension2 viewer, IRegion region) {
 		List<MarkerAnnotation> res = new ArrayList<>();
 		IAnnotationModel annotationModel = viewer.getVisualAnnotationModel();
+		if (annotationModel == null) {
+			return Collections.emptyList();
+		}
 		annotationModel.getAnnotationIterator().forEachRemaining(annotation -> {
 			if (isIncluded(annotation)) {
 				Position position = annotationModel.getPosition(annotation);
 				if (region.getOffset() >= position.getOffset() && region.getOffset() + region.getLength() <= position.getOffset() + position.getLength()) {
-					res.add((MarkerAnnotation)annotation);
+					res.add((MarkerAnnotation) annotation);
 				}
 			}
 		});
 		return res;
 	}
 
-	@Override
-	public IInformationControlCreator getHoverControlCreator() {
+	@Override public IInformationControlCreator getHoverControlCreator() {
 		return new MarkerHoverControlCreator();
 	}
 

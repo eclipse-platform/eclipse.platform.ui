@@ -29,42 +29,39 @@ public class DefaultFoldingReconciler extends AbstractReconciler {
 		this.foldingStrategy = new IndentFoldingStrategy();
 	}
 
-	@Override
-	public void install(ITextViewer textViewer) {
+	@Override public void install(ITextViewer textViewer) {
 		super.install(textViewer);
-		ProjectionViewer viewer = (ProjectionViewer) textViewer;
-		foldingStrategy.setViewer(viewer);
+		if (textViewer instanceof ProjectionViewer) {
+			ProjectionViewer viewer = (ProjectionViewer) textViewer;
+			foldingStrategy.setViewer(viewer);
+		}
 	}
 
-	@Override
-	public void uninstall() {
+	@Override public void uninstall() {
 		super.uninstall();
-		foldingStrategy.uninstall();
+		if (foldingStrategy != null) {
+			foldingStrategy.uninstall();
+		}
 	}
 
-	@Override
-	protected void process(DirtyRegion dirtyRegion) {
+	@Override protected void process(DirtyRegion dirtyRegion) {
 		foldingStrategy.reconcile(dirtyRegion, null);
 	}
 
-	@Override
-	protected void reconcilerDocumentChanged(IDocument newDocument) {
+	@Override protected void reconcilerDocumentChanged(IDocument newDocument) {
 		foldingStrategy.setDocument(newDocument);
 	}
 
-	@Override
-	public IReconcilingStrategy getReconcilingStrategy(String contentType) {
+	@Override public IReconcilingStrategy getReconcilingStrategy(String contentType) {
 		return foldingStrategy;
 	}
 
-	@Override
-	public void setProgressMonitor(IProgressMonitor monitor) {
+	@Override public void setProgressMonitor(IProgressMonitor monitor) {
 		super.setProgressMonitor(monitor);
 		foldingStrategy.setProgressMonitor(monitor);
 	}
 
-	@Override
-	protected void initialProcess() {
+	@Override protected void initialProcess() {
 		super.initialProcess();
 		foldingStrategy.initialReconcile();
 	}

@@ -46,18 +46,13 @@ import org.eclipse.osgi.util.NLS;
 
 /**
  *
- * This Reconciler Strategy is a default stategy which will be present if no
- * other highlightReconcilers are registered for a given content-type. It splits
- * the text into 'words' (which are defined as anything in-between
- * non-alphanumeric characters) and searches the document highlighting all like
- * words.
+ * This Reconciler Strategy is a default stategy which will be present if no other highlightReconcilers are registered for a given content-type. It splits the text into 'words' (which are defined as
+ * anything in-between non-alphanumeric characters) and searches the document highlighting all like words.
  *
- * E.g. if your file contains "t^he dog in the bog" and you leave your caret at
- * ^ you will get both instances of 'the' highlighted.
+ * E.g. if your file contains "t^he dog in the bog" and you leave your caret at ^ you will get both instances of 'the' highlighted.
  *
  */
-public class DefaultWordHighlightStrategy
-		implements IReconcilingStrategy, IReconcilingStrategyExtension, IPreferenceChangeListener {
+public class DefaultWordHighlightStrategy implements IReconcilingStrategy, IReconcilingStrategyExtension, IPreferenceChangeListener {
 
 	private static final String ANNOTATION_TYPE = "org.eclipse.ui.genericeditor.text"; //$NON-NLS-1$
 
@@ -85,7 +80,10 @@ public class DefaultWordHighlightStrategy
 		}
 
 		String text = document.get();
-		int offset = ((ITextViewerExtension5) sourceViewer).widgetOffset2ModelOffset(textSelection.getOffset());
+		int offset = textSelection.getOffset();
+		if (sourceViewer instanceof ITextViewerExtension5) {
+			offset = ((ITextViewerExtension5) sourceViewer).widgetOffset2ModelOffset(textSelection.getOffset());
+		}
 
 		String word = findCurrentWord(text, offset);
 		if (word == null) {
@@ -97,10 +95,7 @@ public class DefaultWordHighlightStrategy
 		Map<Annotation, Position> annotationMap = new HashMap<>();
 		while (m.find()) {
 			if (m.group().equals(word)) {
-				annotationMap.put(
-						new Annotation(ANNOTATION_TYPE, false,
-								NLS.bind(Messages.DefaultWordHighlightStrategy_OccurrencesOf, word)),
-						new Position(m.start(), m.end() - m.start()));
+				annotationMap.put(new Annotation(ANNOTATION_TYPE, false, NLS.bind(Messages.DefaultWordHighlightStrategy_OccurrencesOf, word)), new Position(m.start(), m.end() - m.start()));
 			}
 		}
 
@@ -154,21 +149,18 @@ public class DefaultWordHighlightStrategy
 		preferences.addPreferenceChangeListener(this);
 		this.enabled = preferences.getBoolean(ToggleHighlight.TOGGLE_HIGHLIGHT_PREFERENCE, true);
 		this.sourceViewer = (ISourceViewer) viewer;
-		((IPostSelectionProvider) sourceViewer.getSelectionProvider())
-				.addPostSelectionChangedListener(editorSelectionChangedListener);
+		((IPostSelectionProvider) sourceViewer.getSelectionProvider()).addPostSelectionChangedListener(editorSelectionChangedListener);
 	}
 
 	public void uninstall() {
 		if (sourceViewer != null) {
-			((IPostSelectionProvider) sourceViewer.getSelectionProvider())
-					.removePostSelectionChangedListener(editorSelectionChangedListener);
+			((IPostSelectionProvider) sourceViewer.getSelectionProvider()).removePostSelectionChangedListener(editorSelectionChangedListener);
 		}
 		IEclipsePreferences preferences = InstanceScope.INSTANCE.getNode(GenericEditorPlugin.BUNDLE_ID);
 		preferences.removePreferenceChangeListener(this);
 	}
 
-	@Override
-	public void preferenceChange(PreferenceChangeEvent event) {
+	@Override public void preferenceChange(PreferenceChangeEvent event) {
 		if (event.getKey().equals(ToggleHighlight.TOGGLE_HIGHLIGHT_PREFERENCE)) {
 			this.enabled = Boolean.parseBoolean(event.getNewValue().toString());
 			if (enabled) {
@@ -179,8 +171,7 @@ public class DefaultWordHighlightStrategy
 		}
 	}
 
-	@Override
-	public void initialReconcile() {
+	@Override public void initialReconcile() {
 		if (sourceViewer != null) {
 			sourceViewer.getTextWidget().getDisplay().asyncExec(() -> {
 				if (sourceViewer != null && sourceViewer.getTextWidget() != null) {
@@ -218,23 +209,19 @@ public class DefaultWordHighlightStrategy
 		return annotationModel;
 	}
 
-	@Override
-	public void setDocument(IDocument document) {
+	@Override public void setDocument(IDocument document) {
 		this.document = document;
 	}
 
-	@Override
-	public void reconcile(DirtyRegion dirtyRegion, IRegion subRegion) {
+	@Override public void reconcile(DirtyRegion dirtyRegion, IRegion subRegion) {
 		// Do nothing
 	}
 
-	@Override
-	public void reconcile(IRegion partition) {
+	@Override public void reconcile(IRegion partition) {
 		// Do nothing
 	}
 
-	@Override
-	public void setProgressMonitor(IProgressMonitor monitor) {
+	@Override public void setProgressMonitor(IProgressMonitor monitor) {
 		// Not used
 	}
 }

@@ -34,8 +34,7 @@ import org.eclipse.ui.texteditor.ChainedPreferenceStore;
 import org.eclipse.ui.texteditor.SourceViewerDecorationSupport;
 
 /**
- * A generic code editor that is aimed at being extended by contributions.
- * Behavior is supposed to be added via extensions, not by inheritance.
+ * A generic code editor that is aimed at being extended by contributions. Behavior is supposed to be added via extensions, not by inheritance.
  *
  * @since 1.0
  */
@@ -61,31 +60,26 @@ public class ExtensionBasedTextEditor extends TextEditor {
 	/**
 	 * Initializes the key binding scopes of this generic code editor.
 	 */
-	@Override
-	protected void initializeKeyBindingScopes() {
+	@Override protected void initializeKeyBindingScopes() {
 		setKeyBindingScopes(new String[] { CONTEXT_ID });
 	}
 
-	@Override
-	protected void doSetInput(IEditorInput input) throws CoreException {
+	@Override protected void doSetInput(IEditorInput input) throws CoreException {
 		super.doSetInput(input);
 		configuration.watchDocument(getDocumentProvider().getDocument(input));
 	}
 
-	@Override
-	protected ISourceViewer createSourceViewer(Composite parent, IVerticalRuler ruler, int styles) {
+	@Override protected ISourceViewer createSourceViewer(Composite parent, IVerticalRuler ruler, int styles) {
 		fAnnotationAccess = getAnnotationAccess();
 		fOverviewRuler = createOverviewRuler(getSharedColors());
 
-		ProjectionViewer viewer = new ProjectionViewer(parent, ruler, getOverviewRuler(), isOverviewRulerVisible(),
-				styles);
+		ProjectionViewer viewer = new ProjectionViewer(parent, ruler, getOverviewRuler(), isOverviewRulerVisible(), styles);
 		SourceViewerDecorationSupport support = getSourceViewerDecorationSupport(viewer);
 		configureCharacterPairMatcher(viewer, support);
 		return viewer;
 	}
 
-	@Override
-	public void createPartControl(Composite parent) {
+	@Override public void createPartControl(Composite parent) {
 		super.createPartControl(parent);
 		ProjectionViewer viewer = (ProjectionViewer) getSourceViewer();
 
@@ -93,29 +87,26 @@ public class ExtensionBasedTextEditor extends TextEditor {
 		viewer.doOperation(ProjectionViewer.TOGGLE);
 	}
 
-	@Override
-	protected void initializeEditor() {
+	@Override protected void initializeEditor() {
 		super.initializeEditor();
-		setPreferenceStore(new ChainedPreferenceStore(new IPreferenceStore[] {
-				GenericEditorPreferenceConstants.getPreferenceStore(), EditorsUI.getPreferenceStore() }));
+		setPreferenceStore(new ChainedPreferenceStore(new IPreferenceStore[] { GenericEditorPreferenceConstants.getPreferenceStore(), EditorsUI.getPreferenceStore() }));
 	}
 
 	/**
-	 * Configure the {@link ICharacterPairMatcher} from the
-	 * "org.eclipse.ui.genericeditor.characterPairMatchers" extension point.
+	 * Configure the {@link ICharacterPairMatcher} from the "org.eclipse.ui.genericeditor.characterPairMatchers" extension point.
 	 * 
-	 * @param viewer  the source viewer.
+	 * @param viewer
+	 *            the source viewer.
 	 * 
-	 * @param support the source viewer decoration support.
+	 * @param support
+	 *            the source viewer decoration support.
 	 */
 	private void configureCharacterPairMatcher(ISourceViewer viewer, SourceViewerDecorationSupport support) {
-		List<ICharacterPairMatcher> matchers = GenericEditorPlugin.getDefault().getCharacterPairMatcherRegistry()
-				.getCharacterPairMatchers(viewer, this, configuration.getContentTypes());
+		List<ICharacterPairMatcher> matchers = GenericEditorPlugin.getDefault().getCharacterPairMatcherRegistry().getCharacterPairMatchers(viewer, this, configuration.getContentTypes(viewer));
 		if (!matchers.isEmpty()) {
 			ICharacterPairMatcher matcher = matchers.get(0);
 			support.setCharacterPairMatcher(matcher);
-			support.setMatchingCharacterPainterPreferenceKeys(MATCHING_BRACKETS, MATCHING_BRACKETS_COLOR,
-					HIGHLIGHT_BRACKET_AT_CARET_LOCATION, ENCLOSING_BRACKETS);
+			support.setMatchingCharacterPainterPreferenceKeys(MATCHING_BRACKETS, MATCHING_BRACKETS_COLOR, HIGHLIGHT_BRACKET_AT_CARET_LOCATION, ENCLOSING_BRACKETS);
 		}
 	}
 }

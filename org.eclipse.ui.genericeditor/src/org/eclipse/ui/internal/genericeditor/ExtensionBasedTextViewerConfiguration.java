@@ -18,6 +18,7 @@
 package org.eclipse.ui.internal.genericeditor;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
@@ -25,6 +26,8 @@ import java.util.Map;
 import java.util.Queue;
 import java.util.Set;
 
+import org.eclipse.core.filebuffers.FileBuffers;
+import org.eclipse.core.filebuffers.ITextFileBuffer;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.content.IContentType;
@@ -45,7 +48,6 @@ import org.eclipse.jface.text.quickassist.QuickAssistAssistant;
 import org.eclipse.jface.text.reconciler.IReconciler;
 import org.eclipse.jface.text.source.ISourceViewer;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.editors.text.TextSourceViewerConfiguration;
 import org.eclipse.ui.internal.editors.text.EditorsPlugin;
 import org.eclipse.ui.internal.genericeditor.folding.DefaultFoldingReconciler;
@@ -55,15 +57,13 @@ import org.eclipse.ui.texteditor.ITextEditor;
 import org.eclipse.ui.texteditor.spelling.SpellingCorrectionProcessor;
 
 /**
- * The configuration of the {@link ExtensionBasedTextEditor}. It registers the
- * proxy composite for hover, completion, syntax highlighting, and then those
- * proxy take care of resolving to the right extensions on-demand.
+ * The configuration of the {@link ExtensionBasedTextEditor}. It registers the proxy composite for hover, completion, syntax highlighting, and then those proxy take care of resolving to the right
+ * extensions on-demand.
  *
  * @since 1.0
  */
 @SuppressWarnings("restriction")
-public final class ExtensionBasedTextViewerConfiguration extends TextSourceViewerConfiguration
-		implements IDocumentPartitioningListener {
+public final class ExtensionBasedTextViewerConfiguration extends TextSourceViewerConfiguration implements IDocumentPartitioningListener {
 
 	private ITextEditor editor;
 	private Set<IContentType> contentTypes;
@@ -74,24 +74,35 @@ public final class ExtensionBasedTextViewerConfiguration extends TextSourceViewe
 
 	/**
 	 *
-	 * @param editor          the editor we're creating.
-	 * @param preferenceStore the preference store.
+	 * @param editor
+	 *            the editor we're creating.
+	 * @param preferenceStore
+	 *            the preference store.
 	 */
 	public ExtensionBasedTextViewerConfiguration(ITextEditor editor, IPreferenceStore preferenceStore) {
 		super(preferenceStore);
 		this.editor = editor;
-		this.editor.addPropertyListener((source, propId) -> {
-			if (propId == IEditorPart.PROP_INPUT) {
-				watchDocument(editor.getDocumentProvider().getDocument(editor.getEditorInput()));
-			}
-		});
 	}
 
-	Set<IContentType> getContentTypes() {
+	Set<IContentType> getContentTypes(ISourceViewer viewer) {
 		if (this.contentTypes == null) {
 			this.contentTypes = new LinkedHashSet<>();
-			Queue<IContentType> types = new LinkedList<>(Arrays
-					.asList(Platform.getContentTypeManager().findContentTypesFor(editor.getEditorInput().getName())));
+			String fileName = null;
+			if (this.editor != null) {
+				fileName = editor.getEditorInput().getName();
+			} else {
+				IDocument document = viewer.getDocument();
+				if (document != null) {
+					ITextFileBuffer buffer = FileBuffers.getTextFileBufferManager().getTextFileBuffer(document);
+					if (buffer != null) {
+						fileName = buffer.getLocation().lastSegment();
+					}
+				}
+			}
+			if (fileName == null) {
+				return Collections.emptySet();
+			}
+			Queue<IContentType> types = new LinkedList<>(Arrays.asList(Platform.getContentTypeManager().findContentTypesFor(fileName)));
 			while (!types.isEmpty()) {
 				IContentType type = types.poll();
 				this.contentTypes.add(type);
@@ -104,10 +115,8 @@ public final class ExtensionBasedTextViewerConfiguration extends TextSourceViewe
 		return this.contentTypes;
 	}
 
-	@Override
-	public ITextHover getTextHover(ISourceViewer sourceViewer, String contentType) {
-		List<ITextHover> hovers = GenericEditorPlugin.getDefault().getHoverRegistry().getAvailableHovers(sourceViewer,
-				editor, getContentTypes());
+	@Override public ITextHover getTextHover(ISourceViewer sourceViewer, String contentType) {
+		List<ITextHover> hovers = GenericEditorPlugin.getDefault().getHoverRegistry().getAvailableHovers(sourceViewer, editor, getContentTypes(sourceViewer));
 		if (hovers == null || hovers.isEmpty()) {
 			return null;
 		} else if (hovers.size() == 1) {
@@ -117,8 +126,7 @@ public final class ExtensionBasedTextViewerConfiguration extends TextSourceViewe
 		}
 	}
 
-	@Override
-	public IContentAssistant getContentAssistant(ISourceViewer sourceViewer) {
+	@Override public IContentAssistant getContentAssistant(ISourceViewer sourceViewer) {
 		ContentAssistProcessorRegistry registry = GenericEditorPlugin.getDefault().getContentAssistProcessorRegistry();
 		contentAssistant = new ContentAssistant(true);
 		contentAssistant.setContextInformationPopupOrientation(ContentAssistant.CONTEXT_INFO_BELOW);
@@ -126,7 +134,7 @@ public final class ExtensionBasedTextViewerConfiguration extends TextSourceViewe
 		contentAssistant.setAutoActivationDelay(0);
 		contentAssistant.enableColoredLabels(true);
 		contentAssistant.enableAutoActivation(true);
-		this.processors = registry.getContentAssistProcessors(sourceViewer, editor, getContentTypes());
+		this.processors = registry.getContentAssistProcessors(sourceViewer, editor, getContentTypes(sourceViewer));
 		if (this.processors.isEmpty()) {
 			this.processors.add(new DefaultContentAssistProcessor());
 		}
@@ -137,19 +145,17 @@ public final class ExtensionBasedTextViewerConfiguration extends TextSourceViewe
 			associateTokenContentTypes(this.document);
 		}
 		contentAssistant.setInformationControlCreator(new AbstractReusableInformationControlCreator() {
-			@Override
-			protected IInformationControl doCreateInformationControl(Shell parent) {
+			@Override protected IInformationControl doCreateInformationControl(Shell parent) {
 				return new DefaultInformationControl(parent);
 			}
 		});
+		watchDocument(sourceViewer.getDocument());
 		return contentAssistant;
 	}
 
-	@Override
-	public IPresentationReconciler getPresentationReconciler(ISourceViewer sourceViewer) {
+	@Override public IPresentationReconciler getPresentationReconciler(ISourceViewer sourceViewer) {
 		PresentationReconcilerRegistry registry = GenericEditorPlugin.getDefault().getPresentationReconcilerRegistry();
-		List<IPresentationReconciler> reconciliers = registry.getPresentationReconcilers(sourceViewer, editor,
-				getContentTypes());
+		List<IPresentationReconciler> reconciliers = registry.getPresentationReconcilers(sourceViewer, editor, getContentTypes(sourceViewer));
 		if (!reconciliers.isEmpty()) {
 			return reconciliers.get(0);
 		}
@@ -163,13 +169,14 @@ public final class ExtensionBasedTextViewerConfiguration extends TextSourceViewe
 		if (this.document != null) {
 			this.document.removeDocumentPartitioningListener(this);
 		}
-		this.document = document;
-		associateTokenContentTypes(document);
-		document.addDocumentPartitioningListener(this);
+		if (document != null) {
+			this.document = document;
+			associateTokenContentTypes(document);
+			document.addDocumentPartitioningListener(this);
+		}
 	}
 
-	@Override
-	public void documentPartitioningChanged(IDocument document) {
+	@Override public void documentPartitioningChanged(IDocument document) {
 		associateTokenContentTypes(document);
 	}
 
@@ -184,33 +191,27 @@ public final class ExtensionBasedTextViewerConfiguration extends TextSourceViewe
 		}
 	}
 
-	@Override
-	public IQuickAssistAssistant getQuickAssistAssistant(ISourceViewer sourceViewer) {
+	@Override public IQuickAssistAssistant getQuickAssistAssistant(ISourceViewer sourceViewer) {
 		QuickAssistAssistant quickAssistAssistant = new QuickAssistAssistant();
-		CompositeQuickAssistProcessor processor = new CompositeQuickAssistProcessor(
-				Arrays.asList(new MarkerResoltionQuickAssistProcessor(), new SpellingCorrectionProcessor()));
+		CompositeQuickAssistProcessor processor = new CompositeQuickAssistProcessor(Arrays.asList(new MarkerResoltionQuickAssistProcessor(), new SpellingCorrectionProcessor()));
 		quickAssistAssistant.setQuickAssistProcessor(processor);
-		quickAssistAssistant.setRestoreCompletionProposalSize(
-				EditorsPlugin.getDefault().getDialogSettingsSection("quick_assist_proposal_size")); //$NON-NLS-1$
-		quickAssistAssistant.setInformationControlCreator(
-				parent -> new DefaultInformationControl(parent, EditorsPlugin.getAdditionalInfoAffordanceString()));
+		quickAssistAssistant.setRestoreCompletionProposalSize(EditorsPlugin.getDefault().getDialogSettingsSection("quick_assist_proposal_size")); //$NON-NLS-1$
+		quickAssistAssistant.setInformationControlCreator(parent -> new DefaultInformationControl(parent, EditorsPlugin.getAdditionalInfoAffordanceString()));
 		return quickAssistAssistant;
 	}
 
-	@Override
-	public IReconciler getReconciler(ISourceViewer sourceViewer) {
+	@Override public IReconciler getReconciler(ISourceViewer sourceViewer) {
 		ReconcilerRegistry registry = GenericEditorPlugin.getDefault().getReconcilerRegistry();
-		List<IReconciler> reconcilers = registry.getReconcilers(sourceViewer, editor, getContentTypes());
+		List<IReconciler> reconcilers = registry.getReconcilers(sourceViewer, editor, getContentTypes(sourceViewer));
 		// Fill with highlight reconcilers
-		List<IReconciler> highlightReconcilers = registry.getHighlightReconcilers(sourceViewer, editor,
-				getContentTypes());
+		List<IReconciler> highlightReconcilers = registry.getHighlightReconcilers(sourceViewer, editor, getContentTypes(sourceViewer));
 		if (!highlightReconcilers.isEmpty()) {
 			reconcilers.addAll(highlightReconcilers);
 		} else {
 			reconcilers.add(new DefaultWordHighlightReconciler());
 		}
 		// Fill with folding reconcilers
-		List<IReconciler> foldingReconcilers = registry.getFoldingReconcilers(sourceViewer, editor, getContentTypes());
+		List<IReconciler> foldingReconcilers = registry.getFoldingReconcilers(sourceViewer, editor, getContentTypes(sourceViewer));
 		if (!foldingReconcilers.isEmpty()) {
 			reconcilers.addAll(foldingReconcilers);
 		} else {
@@ -223,19 +224,16 @@ public final class ExtensionBasedTextViewerConfiguration extends TextSourceViewe
 		return null;
 	}
 
-	@Override
-	public IAutoEditStrategy[] getAutoEditStrategies(ISourceViewer sourceViewer, String contentType) {
+	@Override public IAutoEditStrategy[] getAutoEditStrategies(ISourceViewer sourceViewer, String contentType) {
 		AutoEditStrategyRegistry registry = GenericEditorPlugin.getDefault().getAutoEditStrategyRegistry();
-		List<IAutoEditStrategy> editStrategies = registry.getAutoEditStrategies(sourceViewer, editor,
-				getContentTypes());
+		List<IAutoEditStrategy> editStrategies = registry.getAutoEditStrategies(sourceViewer, editor, getContentTypes(sourceViewer));
 		if (!editStrategies.isEmpty()) {
 			return editStrategies.toArray(new IAutoEditStrategy[editStrategies.size()]);
 		}
 		return super.getAutoEditStrategies(sourceViewer, contentType);
 	}
 
-	@Override
-	protected Map<String, IAdaptable> getHyperlinkDetectorTargets(ISourceViewer sourceViewer) {
+	@Override protected Map<String, IAdaptable> getHyperlinkDetectorTargets(ISourceViewer sourceViewer) {
 		Map<String, IAdaptable> targets = super.getHyperlinkDetectorTargets(sourceViewer);
 		targets.put("org.eclipse.ui.genericeditor.GenericEditor", editor); //$NON-NLS-1$
 		return targets;
