@@ -45,7 +45,7 @@ import org.osgi.util.tracker.ServiceTracker;
  */
 public final class InternalPlatform {
 
-	private static final String[] ARCH_LIST = { Platform.ARCH_X86 };
+	private static final String[] ARCH_LIST = { Platform.ARCH_X86, Platform.ARCH_X86_64 };
 
 	// debug support:  set in loadOptions()
 	public static boolean DEBUG = false;
