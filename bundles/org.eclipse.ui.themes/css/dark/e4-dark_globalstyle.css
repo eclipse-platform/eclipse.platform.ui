@@ -29,7 +29,7 @@
 /* ############################## Global Styles ############################## */
 
 Composite, ScrolledComposite, ExpandableComposite, Canvas, TabFolder, CLabel, Label,
-CoolBar, ToolBar, ToolItem, Sash, Group, Hyperlink, RefactoringLocationControl, ChangeParametersControl, Link, FilteredTree,
+CoolBar, ToolItem, Sash, Group, Hyperlink, RefactoringLocationControl, ChangeParametersControl, Link, FilteredTree,
 ProxyEntriesComposite, NonProxyHostsComposite, DelayedFilterCheckboxTree,
 Splitter, ScrolledPageContent, ViewForm, LaunchConfigurationFilteredTree,
 ContainerSelectionGroup, BrowseCatalogItem, EncodingSettings,
@@ -40,7 +40,6 @@ CompareStructureViewerSwitchingPane, CompareContentViewerSwitchingPane,
 QualifiedNameComponent, RefactoringStatusViewer, ImageHyperlink,
 MessageLine,
 Button /* SWT-BUG: checkbox inner label font color is not accessible */,
-ViewForm > ToolBar, /* SWT-BUG: ToolBar do not inherit rules from ViewForm */
 /*Shell [style~='SWT.DROP_DOWN'] > GradientCanvas,*/ /* ignored */
 /* SWT-BUG dirty workaround [Eclipse Bug 419482]: a generic rule (eg: Composite > *) needed to catch an
    element without a CSS id, a CSS class and a seekable Widget name, cannot be overridden
@@ -51,7 +50,6 @@ TabFolder > Composite > * > * /* [style~='SWT.NO_BACKGROUND'] <- generate E4 non
 DocCommentOwnerComposite > Group > *, /* Group > DocCommentOwnerComposite$... */
 TabFolder > Composite > ScrolledComposite > *, /* ScrolledComposite > ControlListViewer$... */
 Shell > Composite > Composite > *, /* Composite > StatusDialog$MessageLine (SWT-BUG: ignored) */
-Composite > Composite > Composite > ToolBar, /* Window->Preference (top toolbar) */
 Composite > Composite > Composite > Group > *, /* Group > CreateRefactoringScriptWizardPage$... */
 Shell > Composite > Composite > Composite > *, /* Composite > FilteredPreferenceDialog$... */
 ScrolledComposite > Composite > Composite > Composite > *, /* Composite > NewKeysPreferencePage$... */
@@ -61,6 +59,21 @@ Shell[style~='SWT.RADIO'][style~='SWT.CASCADE'][style~='SWT.SHADOW_ETCHED_IN'][s
 Group > StyledText {
     background-color:#515658;
     color:#eeeeee;
+}
+
+/* ############################## Toolbar ############################## */
+/* Toolbar should inherit the colors of its container to avoid drawing artifacts*/
+
+CTabFolder > Composite > *, /* Contains the toolbar entries for the view toolbar */
+Toolbar,
+Composite > Composite > Composite > ToolBar, /* Window->Preference (top toolbar) */
+ViewForm > ToolBar, /* SWT-BUG: ToolBar do not inherit rules from ViewForm */
+ViewerPane > ToolBar,
+DrillDownComposite > ToolBar,
+GradientCanvas > ToolBar,
+FlyoutControlComposite ToolBar
+{
+	background-color:inherit;
 }
 
 Combo, List,
@@ -244,9 +257,7 @@ TextSearchControl {
 }
 
 ViewerPane,
-DrillDownComposite,
-ViewerPane > ToolBar,
-DrillDownComposite > ToolBar {
+DrillDownComposite {
     background-color: #232323;
     color: #CCC;
 }
@@ -287,7 +298,6 @@ CategoryItem {
 }
 GradientCanvas,
 GradientCanvas > Label,
-GradientCanvas > ToolBar,
 GradientCanvas > ImageHyperlink {
     background-color: #3f4447;
     color: #9ac9d8;
@@ -459,7 +469,7 @@ PageSiteComposite > PropertyTable:disabled {
     color: #EEEEEE;
 }
 
-FlyoutControlComposite, FlyoutControlComposite ToolBar, FlyoutControlComposite CLabel {
+FlyoutControlComposite, FlyoutControlComposite CLabel {
     background-color: #3f4447;
     color: #EEEEEE;
 }
