@@ -13,12 +13,18 @@
  *******************************************************************************/
 package org.eclipse.debug.tests.console;
 
+import java.nio.charset.StandardCharsets;
+import java.util.Collections;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.eclipse.core.runtime.ILogListener;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.debug.core.DebugPlugin;
+import org.eclipse.debug.core.ILaunchManager;
+import org.eclipse.debug.core.Launch;
 import org.eclipse.debug.core.model.IProcess;
 import org.eclipse.debug.tests.AbstractDebugTest;
 import org.eclipse.debug.tests.TestUtil;
@@ -65,6 +71,68 @@ public class ProcessConsoleTests extends AbstractDebugTest {
 		assertEquals("Test triggered errors.", 0, loggedErrors.get());
 		Platform.removeLogListener(errorLogListener);
 		super.tearDown();
+	}
+
+	/**
+	 * Test if two byte UTF-8 characters get disrupted on there way from process
+	 * console to the runtime process.
+	 * <p>
+	 * This test starts every two byte character on an even byte offset.
+	 * </p>
+	 */
+	public void testUTF8InputEven() throws Exception {
+		// 5000 characters result in 10000 bytes which should be more than most
+		// common buffer sizes.
+		processConsoleUTF8Input("", 5000);
+	}
+
+	/**
+	 * Test if two byte UTF-8 characters get disrupted on there way from process
+	 * console to the runtime process.
+	 * <p>
+	 * This test starts every two byte character on an odd byte offset.
+	 * </p>
+	 */
+	public void testUTF8InputOdd() throws Exception {
+		// 5000 characters result in 10000 bytes which should be more than most
+		// common buffer sizes.
+		processConsoleUTF8Input("+", 5000);
+	}
+
+	/**
+	 * Shared code for the UTF-8 input tests.
+	 * <p>
+	 * Send some two byte UTF-8 characters through process console user input
+	 * stream to mockup process and check if the input got corrupted on its way.
+	 * </p>
+	 *
+	 * @param prefix an arbitrary prefix inserted before the two byte UTF-8
+	 *            characters. Used to move the other characters to specific
+	 *            offsets e.g. a prefix of one byte will produce an input string
+	 *            where every two byte character starts at an odd offset.
+	 * @param numTwoByteCharacters number of two byte UTF-8 characters to send
+	 *            to process
+	 */
+	public void processConsoleUTF8Input(String prefix, int numTwoByteCharacters) throws Exception {
+		final String input = prefix + String.join("", Collections.nCopies(numTwoByteCharacters, "\u00F8"));
+		final MockProcess mockProcess = new MockProcess(input.getBytes(StandardCharsets.UTF_8).length, testTimeout);
+		try {
+			final IProcess process = DebugPlugin.newProcess(new Launch(null, ILaunchManager.RUN_MODE, null), mockProcess, "testUtf8Input");
+			@SuppressWarnings("restriction")
+			final org.eclipse.debug.internal.ui.views.console.ProcessConsole console = new org.eclipse.debug.internal.ui.views.console.ProcessConsole(process, new ConsoleColorProvider());
+			try {
+				console.initialize();
+				console.getInputStream().appendData(input);
+				mockProcess.waitFor(testTimeout, TimeUnit.MILLISECONDS);
+			} finally {
+				console.destroy();
+			}
+		} finally {
+			mockProcess.destroy();
+		}
+
+		final String receivedInput = new String(mockProcess.getReceivedInput(), StandardCharsets.UTF_8);
+		assertEquals(input, receivedInput);
 	}
 
 	/**

@@ -10,6 +10,7 @@
  *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Paul Pazderski  - Bug 545769: fixed rare UTF-8 character corruption bug
  *******************************************************************************/
 package org.eclipse.debug.internal.ui.views.console;
 
@@ -20,6 +21,8 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -740,23 +743,29 @@ public class ProcessConsole extends IOConsole implements IConsole, IDebugEventSe
 
 		@Override
 		protected IStatus run(IProgressMonitor monitor) {
-            String encoding = getEncoding();
+			if (fInput == null) {
+				return monitor.isCanceled() ? Status.CANCEL_STATUS : Status.OK_STATUS;
+			}
+			Charset encoding = getCharset();
+			readingStream = fInput;
+			InputStreamReader streamReader = (encoding == null ? new InputStreamReader(readingStream)
+					: new InputStreamReader(readingStream, encoding));
             try {
-                byte[] b = new byte[1024];
-                int read = 0;
-				while (read >= 0 && !monitor.isCanceled()) {
-					readingStream = fInput;
-					if (readingStream == null) {
+				char[] cbuf = new char[1024];
+				int charRead = 0;
+				while (charRead >= 0 && !monitor.isCanceled()) {
+					if (fInput == null) {
 						break;
 					}
-					read = readingStream.read(b);
-                    if (read > 0) {
-                        String s;
-                        if (encoding != null) {
-							s = new String(b, 0, read, encoding);
-						} else {
-							s = new String(b, 0, read);
-						}
+					if (fInput != readingStream) {
+						readingStream = fInput;
+						streamReader = (encoding == null ? new InputStreamReader(readingStream)
+								: new InputStreamReader(readingStream, encoding));
+					}
+
+					charRead = streamReader.read(cbuf);
+					if (charRead > 0) {
+						String s = new String(cbuf, 0, charRead);
                         streamsProxy.write(s);
                     }
                 }

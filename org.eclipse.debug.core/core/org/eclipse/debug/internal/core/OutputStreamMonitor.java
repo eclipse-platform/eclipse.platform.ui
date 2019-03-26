@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2018 IBM Corporation and others.
+ * Copyright (c) 2000, 2019 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -10,13 +10,14 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Paul Pazderski  - Bug 545769: fixed rare UTF-8 character corruption bug
  *******************************************************************************/
 package org.eclipse.debug.internal.core;
-
 
 import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.eclipse.core.runtime.ISafeRunnable;
@@ -71,7 +72,7 @@ public class OutputStreamMonitor implements IFlushableStreamMonitor {
 	 */
 	private boolean fKilled= false;
 
-    private long lastSleep;
+	private long lastSleep;
 
 	private String fEncoding;
 
@@ -85,8 +86,8 @@ public class OutputStreamMonitor implements IFlushableStreamMonitor {
 	 * @param encoding stream encoding or <code>null</code> for system default
 	 */
 	public OutputStreamMonitor(InputStream stream, String encoding) {
-        fStream = new BufferedInputStream(stream, 8192);
-        fEncoding = encoding;
+		fStream = new BufferedInputStream(stream, 8192);
+		fEncoding = encoding;
 		fContents= new StringBuilder();
 		fDone = new AtomicBoolean(false);
 	}
@@ -134,6 +135,7 @@ public class OutputStreamMonitor implements IFlushableStreamMonitor {
 			fDone.set(true);
 		}
 	}
+
 	/**
 	 * Continually reads from the stream.
 	 * <p>
@@ -143,55 +145,50 @@ public class OutputStreamMonitor implements IFlushableStreamMonitor {
 	 * exposing a <code>run</code> method.
 	 */
 	private void internalRead() {
-        lastSleep = System.currentTimeMillis();
-        long currentTime = lastSleep;
-		byte[] bytes= new byte[BUFFER_SIZE];
+		lastSleep = System.currentTimeMillis();
+		long currentTime = lastSleep;
+		char[] chars = new char[BUFFER_SIZE];
 		int read = 0;
-		while (read >= 0) {
-			try {
-				if (fKilled) {
-					break;
-				}
-				read= fStream.read(bytes);
-				if (read > 0) {
-					String text;
-					if (fEncoding != null) {
-						text = new String(bytes, 0, read, fEncoding);
-					} else {
-						text = new String(bytes, 0, read);
+		try (InputStreamReader reader = (fEncoding == null ? new InputStreamReader(fStream) : new InputStreamReader(fStream, fEncoding))) {
+			while (read >= 0) {
+				try {
+					if (fKilled) {
+						break;
 					}
-					synchronized (this) {
-						if (isBuffered()) {
-							fContents.append(text);
+					read = reader.read(chars);
+					if (read > 0) {
+						String text = new String(chars, 0, read);
+						synchronized (this) {
+							if (isBuffered()) {
+								fContents.append(text);
+							}
+							fireStreamAppended(text);
 						}
-						fireStreamAppended(text);
+					}
+				} catch (IOException ioe) {
+					if (!fKilled) {
+						DebugPlugin.log(ioe);
+					}
+					return;
+				} catch (NullPointerException e) {
+					// killing the stream monitor while reading can cause an NPE
+					// when reading from the stream
+					if (!fKilled && fThread != null) {
+						DebugPlugin.log(e);
+					}
+					return;
+				}
+
+				currentTime = System.currentTimeMillis();
+				if (currentTime - lastSleep > 1000) {
+					lastSleep = currentTime;
+					try {
+						// just give up CPU to maintain UI responsiveness.
+						Thread.sleep(1);
+					} catch (InterruptedException e) {
 					}
 				}
-			} catch (IOException ioe) {
-				if (!fKilled) {
-					DebugPlugin.log(ioe);
-				}
-				return;
-			} catch (NullPointerException e) {
-				// killing the stream monitor while reading can cause an NPE
-				// when reading from the stream
-				if (!fKilled && fThread != null) {
-					DebugPlugin.log(e);
-				}
-				return;
 			}
-
-            currentTime = System.currentTimeMillis();
-            if (currentTime - lastSleep > 1000) {
-                lastSleep = currentTime;
-                try {
-                    Thread.sleep(1); // just give up CPU to maintain UI responsiveness.
-                } catch (InterruptedException e) {
-                }
-            }
-		}
-		try {
-			fStream.close();
 		} catch (IOException e) {
 			DebugPlugin.log(e);
 		}
@@ -213,31 +210,22 @@ public class OutputStreamMonitor implements IFlushableStreamMonitor {
 		if (fThread == null) {
 			fDone.set(false);
 			fThread = new Thread((Runnable) () -> read(), DebugCoreMessages.OutputStreamMonitor_label);
-            fThread.setDaemon(true);
-            fThread.setPriority(Thread.MIN_PRIORITY);
+			fThread.setDaemon(true);
+			fThread.setPriority(Thread.MIN_PRIORITY);
 			fThread.start();
 		}
 	}
 
-	/**
-	 * @see org.eclipse.debug.core.model.IFlushableStreamMonitor#setBuffered(boolean)
-	 */
 	@Override
 	public synchronized void setBuffered(boolean buffer) {
 		fBuffered = buffer;
 	}
 
-	/**
-	 * @see org.eclipse.debug.core.model.IFlushableStreamMonitor#flushContents()
-	 */
 	@Override
 	public synchronized void flushContents() {
 		fContents.setLength(0);
 	}
 
-	/**
-	 * @see IFlushableStreamMonitor#isBuffered()
-	 */
 	@Override
 	public synchronized boolean isBuffered() {
 		return fBuffered;
@@ -260,17 +248,11 @@ public class OutputStreamMonitor implements IFlushableStreamMonitor {
 		private IStreamListener fListener;
 		private String fText;
 
-		/**
-		 * @see org.eclipse.core.runtime.ISafeRunnable#handleException(java.lang.Throwable)
-		 */
 		@Override
 		public void handleException(Throwable exception) {
 			DebugPlugin.log(exception);
 		}
 
-		/**
-		 * @see org.eclipse.core.runtime.ISafeRunnable#run()
-		 */
 		@Override
 		public void run() throws Exception {
 			fListener.streamAppended(fText, OutputStreamMonitor.this);
