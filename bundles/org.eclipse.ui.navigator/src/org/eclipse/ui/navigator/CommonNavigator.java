@@ -618,12 +618,20 @@ public class CommonNavigator extends ViewPart implements ISetSelectionTarget, IS
 
 	@Override
 	public Saveable[] getSaveables() {
-		return getNavigatorContentService().getSaveablesService().getSaveables();
+		Saveable[] saveables = getNavigatorContentService().getSaveablesService().getSaveables();
+		if (saveables == null) {
+			saveables = new Saveable[0];
+		}
+		return saveables;
 	}
 
 	@Override
 	public Saveable[] getActiveSaveables() {
-		return getNavigatorContentService().getSaveablesService().getActiveSaveables();
+		Saveable[] activeSaveables = getNavigatorContentService().getSaveablesService().getActiveSaveables();
+		if (activeSaveables == null) {
+			activeSaveables = new Saveable[0];
+		}
+		return activeSaveables;
 	}
 
 	/**

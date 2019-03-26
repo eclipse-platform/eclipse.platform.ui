@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2017 IBM Corporation and others.
+ * Copyright (c) 2010, 2019 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -25,9 +25,11 @@ import javax.inject.Named;
 import org.eclipse.core.runtime.ListenerList;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.di.annotations.Optional;
+import org.eclipse.e4.ui.di.UIEventTopic;
 import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.ui.basic.MPart;
 import org.eclipse.e4.ui.services.IServiceConstants;
+import org.eclipse.e4.ui.workbench.UIEvents;
 import org.eclipse.e4.ui.workbench.modeling.ESelectionService;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
@@ -41,6 +43,8 @@ import org.eclipse.ui.ISources;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.internal.E4PartWrapper;
 import org.eclipse.ui.internal.WorkbenchPage;
+import org.eclipse.ui.internal.handlers.AbstractSaveHandler;
+import org.osgi.service.event.Event;
 
 public class SelectionService implements ISelectionChangedListener, ISelectionService {
 
@@ -192,6 +196,28 @@ public class SelectionService implements ISelectionChangedListener, ISelectionSe
 					activePart = (IWorkbenchPart) part.getTransientData().get(E4PartWrapper.E4_WRAPPER_KEY);
 				}
 			}
+		}
+	}
+
+	@Inject
+	@Optional
+	void subscribeTopicDirtyChanged(@UIEventTopic(UIEvents.Dirtyable.TOPIC_DIRTY) Event event) {
+		Object objElement = event.getProperty(UIEvents.EventTags.ELEMENT);
+
+		// Ensure that this event is for a MMenuItem
+		if (!(objElement instanceof MPart)) {
+			return;
+		}
+		MPart part = (MPart) objElement;
+		Object wrapperPart = part.getTransientData().get(E4PartWrapper.E4_WRAPPER_KEY);
+		if (wrapperPart instanceof E4PartWrapper) {
+			E4PartWrapper wrapper = (E4PartWrapper) wrapperPart;
+			try {
+				wrapper.addPropertyListener(AbstractSaveHandler.getDirtyStateTracker());
+			} catch (IllegalArgumentException e) {
+				// do nothing.
+			}
+			wrapper.notifyPartDirtyStatus();
 		}
 	}
 

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2015 IBM Corporation and others.
+ * Copyright (c) 2010, 2019 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -24,6 +24,7 @@ import org.eclipse.ui.IWindowListener;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.internal.E4PartWrapper;
 import org.eclipse.ui.internal.SaveableHelper;
 import org.eclipse.ui.internal.Workbench;
 import org.eclipse.ui.services.IEvaluationService;
@@ -107,6 +108,8 @@ public class DirtyStateTracker implements IPartListener, IWindowListener, IPrope
 	@Override
 	public void propertyChanged(Object source, int propID) {
 		if (SaveableHelper.isSaveable(source) && propID == ISaveablePart.PROP_DIRTY) {
+			update();
+		} else if (source instanceof E4PartWrapper && propID == ISaveablePart.PROP_DIRTY) {
 			update();
 		}
 	}

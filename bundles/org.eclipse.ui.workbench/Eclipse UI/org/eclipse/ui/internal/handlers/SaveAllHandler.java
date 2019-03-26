@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2013, 2015 IBM Corporation and others.
+ * Copyright (c) 2013, 2019 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -17,6 +17,7 @@ import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.expressions.EvaluationResult;
 import org.eclipse.core.expressions.IEvaluationContext;
+import org.eclipse.e4.ui.workbench.modeling.EPartService;
 import org.eclipse.ui.ISaveablesLifecycleListener;
 import org.eclipse.ui.ISaveablesSource;
 import org.eclipse.ui.IWorkbenchPage;
@@ -26,6 +27,7 @@ import org.eclipse.ui.handlers.HandlerUtil;
 import org.eclipse.ui.internal.InternalHandlerUtil;
 import org.eclipse.ui.internal.SaveablesList;
 import org.eclipse.ui.internal.WorkbenchPage;
+import org.eclipse.ui.internal.WorkbenchWindow;
 
 /**
  * Saves all active editors
@@ -49,7 +51,10 @@ public class SaveAllHandler extends AbstractSaveHandler {
 		if (page != null) {
 			((WorkbenchPage) page).saveAllEditors(false, false, true);
 		}
-
+		EPartService partService = getPartService(window);
+		if (partService != null && (partService.getDirtyParts().size() > 0)) {
+			partService.saveAll(false);
+		}
 		return null;
 	}
 
@@ -69,6 +74,11 @@ public class SaveAllHandler extends AbstractSaveHandler {
 		// if at least one dirty part, then we are active
 		if (page.getDirtyParts().length > 0)
 			return EvaluationResult.TRUE;
+
+		EPartService partService = getPartService(window);
+		if (partService != null && (partService.getDirtyParts().size() > 0)) {
+			return EvaluationResult.TRUE;
+		}
 
 		// Since Save All also saves saveables from non-part sources,
 		// look if any such saveables exist and are dirty.
@@ -91,4 +101,15 @@ public class SaveAllHandler extends AbstractSaveHandler {
 		return EvaluationResult.FALSE;
 	}
 
+	private EPartService getPartService(IWorkbenchWindow window) {
+		EPartService partService = null;
+		if (window instanceof WorkbenchWindow) {
+			try {
+				partService = ((WorkbenchWindow) window).getModel().getContext().get(EPartService.class);
+			} catch (Exception e) {
+				// do nothing
+			}
+		}
+		return partService;
+	}
 }

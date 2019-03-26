@@ -20,6 +20,7 @@ import org.eclipse.e4.ui.internal.workbench.Activator;
 import org.eclipse.e4.ui.internal.workbench.Policy;
 import org.eclipse.e4.ui.model.application.ui.basic.MPart;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.ui.IWorkbenchPartConstants;
 import org.eclipse.ui.part.ViewPart;
 
 public class E4PartWrapper extends ViewPart {
@@ -46,6 +47,10 @@ public class E4PartWrapper extends ViewPart {
 
 	@Override
 	public void createPartControl(Composite parent) {
+	}
+
+	public void notifyPartDirtyStatus() {
+		firePropertyChange(IWorkbenchPartConstants.PROP_DIRTY);
 	}
 
 	@Override

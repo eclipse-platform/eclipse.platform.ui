@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2015 IBM Corporation and others.
+ * Copyright (c) 2010, 2019 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -17,9 +17,12 @@ package org.eclipse.ui.internal.handlers;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.expressions.EvaluationResult;
 import org.eclipse.core.expressions.IEvaluationContext;
+import org.eclipse.e4.ui.model.application.ui.basic.MPart;
 import org.eclipse.ui.ISaveablePart;
+import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.internal.InternalHandlerUtil;
+import org.eclipse.ui.internal.SaveableHelper;
 import org.eclipse.ui.internal.WorkbenchPage;
 
 /**
@@ -60,10 +63,22 @@ public class SaveAsHandler extends AbstractSaveHandler {
 		if (page == null)
 			return EvaluationResult.FALSE;
 
+		MPart activeMPart = getActivePart(window);
+
+		IWorkbenchPart activePart = InternalHandlerUtil.getActivePart(context);
+		ISaveablePart part = SaveableHelper.getSaveable(activePart);
+		if (part == null && activeMPart != null && activeMPart.isDirty()) {
+			return EvaluationResult.FALSE;
+		}
+
 		// get saveable part
 		ISaveablePart saveablePart = getSaveablePart(context);
 		if (saveablePart == null)
 			return EvaluationResult.FALSE;
+
+		if (activeMPart != null && activeMPart.isDirty()) {
+			return EvaluationResult.FALSE;
+		}
 
 		// if its availble, return whatever it says
 		return saveablePart.isSaveAsAllowed() ? EvaluationResult.TRUE : EvaluationResult.FALSE;

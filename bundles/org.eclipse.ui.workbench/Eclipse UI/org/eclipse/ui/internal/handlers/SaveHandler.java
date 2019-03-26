@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2013, 2015 IBM Corporation and others.
+ * Copyright (c) 2013, 2019 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -16,6 +16,8 @@ package org.eclipse.ui.internal.handlers;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.expressions.EvaluationResult;
 import org.eclipse.core.expressions.IEvaluationContext;
+import org.eclipse.e4.ui.model.application.ui.basic.MPart;
+import org.eclipse.e4.ui.workbench.modeling.EPartService;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.ISaveablePart;
 import org.eclipse.ui.ISaveablesSource;
@@ -26,6 +28,7 @@ import org.eclipse.ui.handlers.HandlerUtil;
 import org.eclipse.ui.internal.InternalHandlerUtil;
 import org.eclipse.ui.internal.SaveableHelper;
 import org.eclipse.ui.internal.WorkbenchPage;
+import org.eclipse.ui.internal.WorkbenchWindow;
 
 /**
  * <p>
@@ -46,9 +49,30 @@ public class SaveHandler extends AbstractSaveHandler {
 
 		ISaveablePart saveablePart = getSaveablePart(event);
 
+		MPart activeMPart = null;
+		EPartService partService = null;
+		try {
+			IWorkbenchWindow window = HandlerUtil.getActiveWorkbenchWindowChecked(event);
+			partService = ((WorkbenchWindow) window).getModel().getContext().get(EPartService.class);
+			activeMPart = getActivePart(window);
+		} catch (Exception e1) {
+			// do nothing
+		}
+
 		// no saveable
-		if (saveablePart == null)
+		if (saveablePart == null) {
+			if (activeMPart != null && activeMPart.isDirty() && partService != null) {
+				partService.savePart(activeMPart, false);
+			}
 			return null;
+		}
+
+		IWorkbenchPart activePart = HandlerUtil.getActivePart(event);
+		ISaveablePart part = SaveableHelper.getSaveable(activePart);
+		if (part == null && activeMPart != null && activeMPart.isDirty() && partService != null) {
+			partService.savePart(activeMPart, false);
+			return null;
+		}
 
 		// if editor
 		if (saveablePart instanceof IEditorPart) {
@@ -59,7 +83,6 @@ public class SaveHandler extends AbstractSaveHandler {
 		}
 
 		// if view
-		IWorkbenchPart activePart = HandlerUtil.getActivePart(event);
 		WorkbenchPage page = (WorkbenchPage) activePart.getSite().getPage();
 		page.saveSaveable(saveablePart, activePart, false, false);
 
@@ -80,20 +103,33 @@ public class SaveHandler extends AbstractSaveHandler {
 		if (page == null)
 			return EvaluationResult.FALSE;
 
+		MPart activeMPart = getActivePart(window);
+
+		IWorkbenchPart activePart = InternalHandlerUtil.getActivePart(context);
+		ISaveablePart part = SaveableHelper.getSaveable(activePart);
+		if (part == null && activeMPart != null && activeMPart.isDirty()) {
+			return EvaluationResult.TRUE;
+		}
+
 		// get saveable part
 		ISaveablePart saveablePart = getSaveablePart(context);
-		if (saveablePart == null)
+		if (saveablePart == null && activeMPart == null)
 			return EvaluationResult.FALSE;
 
 		if (saveablePart instanceof ISaveablesSource) {
 			ISaveablesSource modelSource = (ISaveablesSource) saveablePart;
 			if (SaveableHelper.needsSave(modelSource))
 				return EvaluationResult.TRUE;
-			return EvaluationResult.FALSE;
+			if (activeMPart == null)
+				return EvaluationResult.FALSE;
 		}
 
-		if (saveablePart.isDirty())
+		if (saveablePart != null && saveablePart.isDirty())
 			return EvaluationResult.TRUE;
+
+		if (activeMPart != null && activeMPart.isDirty()) {
+			return EvaluationResult.TRUE;
+		}
 
 		return EvaluationResult.FALSE;
 	}
