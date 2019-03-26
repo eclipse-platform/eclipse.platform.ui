@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2016 IBM Corporation and others.
+ * Copyright (c) 2004, 2019 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -426,6 +426,7 @@ public class ChooseWorkspaceDialog extends TitleAreaDialog {
 
 		text = new Combo(panel, SWT.BORDER | SWT.LEAD | SWT.DROP_DOWN);
 		new DirectoryProposalContentAssist().apply(text);
+		text.setTextDirection(SWT.AUTO_TEXT_DIRECTION);
         text.setFocus();
         text.setLayoutData(new GridData(400, SWT.DEFAULT));
         text.addModifyListener(e -> {

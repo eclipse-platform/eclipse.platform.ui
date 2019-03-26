@@ -620,6 +620,7 @@ public class ContentProposalAdapter {
 			proposalTable.addListener(SWT.SetData, listener);
 			// set the proposals to force population of the table.
 			setProposals(filterProposals(proposals, filterText));
+			proposalTable.setTextDirection(SWT.AUTO_TEXT_DIRECTION);
 
 			proposalTable.setHeaderVisible(false);
 			proposalTable.addSelectionListener(new SelectionListener() {
