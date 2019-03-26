@@ -376,7 +376,7 @@ public class SearchField {
 	}
 
 	private Text createText(Composite parent) {
-		Text text = new Text(parent, SWT.SEARCH);
+		Text text = new Text(parent, SWT.SEARCH | SWT.ICON_CANCEL);
 		text.setMessage(QuickAccessMessages.QuickAccess_EnterSearch);
 		return text;
 	}
