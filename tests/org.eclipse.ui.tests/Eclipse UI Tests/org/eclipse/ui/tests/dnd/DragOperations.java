@@ -24,8 +24,6 @@ import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchPartReference;
 import org.eclipse.ui.internal.PartPane;
 import org.eclipse.ui.internal.WorkbenchPage;
-import org.eclipse.ui.internal.dnd.DragUtil;
-import org.eclipse.ui.internal.dnd.TestDropLocation;
 import org.junit.Assert;
 
 /**
@@ -46,7 +44,7 @@ public class DragOperations {
      */
     public static void drag(IWorkbenchPart part, TestDropLocation target,
             boolean wholeFolder) {
-        DragUtil.forceDropLocation(target);
+//        DragUtil.forceDropLocation(target);
 
 //        PartSite site = (PartSite) part.getSite();
 //        PartPane pane = site.getPane();
@@ -55,7 +53,7 @@ public class DragOperations {
 //        parent.paneDragStart(wholeFolder ? null : pane, Display.getDefault().getCursorLocation(), false);
 
         Assert.fail("DND needs some updating");
-        DragUtil.forceDropLocation(null);
+//        DragUtil.forceDropLocation(null);
     }
 
     /**

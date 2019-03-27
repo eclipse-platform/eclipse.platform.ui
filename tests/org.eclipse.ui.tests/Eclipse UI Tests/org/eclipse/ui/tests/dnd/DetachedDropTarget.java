@@ -15,7 +15,6 @@ package org.eclipse.ui.tests.dnd;
 
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.ui.internal.dnd.TestDropLocation;
 
 public class DetachedDropTarget implements TestDropLocation {
 

@@ -14,7 +14,6 @@
 package org.eclipse.ui.tests.dnd;
 
 import org.eclipse.ui.IEditorPart;
-import org.eclipse.ui.internal.dnd.TestDropLocation;
 
 /**
  * @since 3.0

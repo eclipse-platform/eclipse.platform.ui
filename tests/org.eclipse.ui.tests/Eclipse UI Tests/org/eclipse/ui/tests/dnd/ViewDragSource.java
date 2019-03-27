@@ -17,8 +17,6 @@ package org.eclipse.ui.tests.dnd;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.internal.WorkbenchPage;
 import org.eclipse.ui.internal.WorkbenchPlugin;
-import org.eclipse.ui.internal.dnd.DragUtil;
-import org.eclipse.ui.internal.dnd.TestDropLocation;
 import org.eclipse.ui.views.IViewDescriptor;
 import org.junit.Assert;
 
@@ -75,7 +73,7 @@ public class ViewDragSource extends TestDragSource {
             page.toggleZoom(page.getReference(part));
         }
 
-        DragUtil.forceDropLocation(target);
+//        DragUtil.forceDropLocation(target);
 //        ViewStack parent = ((ViewStack) (pane.getContainer()));
 //
 //        PartPane presentablePart = wholeFolder ? null : pane;
@@ -83,7 +81,7 @@ public class ViewDragSource extends TestDragSource {
 //                .getCursorLocation(), false);
         Assert.fail("DND needs updated");
 
-        DragUtil.forceDropLocation(null);
+//        DragUtil.forceDropLocation(null);
     }
 
 }

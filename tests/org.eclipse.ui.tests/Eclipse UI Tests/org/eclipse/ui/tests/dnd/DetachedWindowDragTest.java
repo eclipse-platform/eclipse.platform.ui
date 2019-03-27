@@ -14,7 +14,6 @@
 package org.eclipse.ui.tests.dnd;
 
 import org.eclipse.ui.IViewPart;
-import org.eclipse.ui.internal.dnd.TestDropLocation;
 import org.eclipse.ui.tests.autotests.AbstractTestLogger;
 
 

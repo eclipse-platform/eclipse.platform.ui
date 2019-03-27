@@ -22,7 +22,6 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IPageLayout;
-import org.eclipse.ui.internal.dnd.TestDropLocation;
 import org.eclipse.ui.tests.TestPlugin;
 import org.eclipse.ui.tests.autotests.AutoTestSuite;
 
