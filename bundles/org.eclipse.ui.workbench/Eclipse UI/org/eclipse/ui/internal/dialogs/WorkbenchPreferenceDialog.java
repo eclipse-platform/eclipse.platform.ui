@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 IBM Corporation and others.
+ * Copyright (c) 2000, 2019 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -16,9 +16,7 @@ package org.eclipse.ui.internal.dialogs;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.preference.IPreferenceNode;
-import org.eclipse.jface.preference.IPreferencePage;
 import org.eclipse.jface.preference.PreferenceManager;
-import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchWindow;
@@ -26,7 +24,6 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.activities.WorkbenchActivityHelper;
 import org.eclipse.ui.internal.IWorkbenchHelpContextIds;
 import org.eclipse.ui.internal.WorkbenchPlugin;
-import org.eclipse.ui.internal.dnd.SwtUtil;
 
 /**
  * Prefence dialog for the workbench including the ability to load/save
@@ -51,8 +48,6 @@ public class WorkbenchPreferenceDialog extends FilteredPreferenceDialog {
 	 * @since 3.2
 	 */
 	private static final String DIALOG_SETTINGS_SECTION = "WorkbenchPreferenceDialogSettings"; //$NON-NLS-1$
-
-	private String initialPageId;
 
 
 	/**
@@ -100,9 +95,11 @@ public class WorkbenchPreferenceDialog extends FilteredPreferenceDialog {
 			dialog = new WorkbenchPreferenceDialog(parentShell, preferenceManager);
 			if (preferencePageId != null) {
 				dialog.setSelectedNode(preferencePageId);
-				dialog.setInitialPage(preferencePageId);
 			}
 			dialog.create();
+			if (preferencePageId != null) {
+				dialog.getCurrentPage().getControl().setFocus();
+			}
 			PlatformUI.getWorkbench().getHelpSystem().setHelp(
 					dialog.getShell(),
 					IWorkbenchHelpContextIds.PREFERENCE_DIALOG);
@@ -115,7 +112,7 @@ public class WorkbenchPreferenceDialog extends FilteredPreferenceDialog {
 			dialog = instance;
 			if (preferencePageId != null) {
 				dialog.setCurrentPageId(preferencePageId);
-				dialog.setInitialPage(preferencePageId);
+				dialog.getCurrentPage().getControl().setFocus();
 			}
 
 		}
@@ -190,37 +187,6 @@ public class WorkbenchPreferenceDialog extends FilteredPreferenceDialog {
 	@Override
 	protected int getDialogBoundsStrategy() {
 		return DIALOG_PERSISTLOCATION;
-	}
-
-	/**
-	 *
-	 * Overrides to set focus to the specific page if it a specific page was
-	 * requested.
-	 *
-	 * @since 3.5
-	 */
-	@Override
-	public int open() {
-		IPreferencePage selectedPage = getCurrentPage();
-		if ((initialPageId != null) && (selectedPage != null)) {
-			Shell shell = getShell();
-			if ((shell != null) && (!shell.isDisposed())) {
-				shell.open(); // make the dialog visible to properly set the focus
-				Control control = selectedPage.getControl();
-				if (!SwtUtil.isFocusAncestor(control))
-					control.setFocus();
-			}
-		}
-		return super.open();
-	}
-
-	/**
-	 * Remembers the initial page ID
-	 * @param pageId ID of the initial page to display
-	 * @since 3.5
-	 */
-	public void setInitialPage(String pageId) {
-		initialPageId = pageId;
 	}
 
 }
