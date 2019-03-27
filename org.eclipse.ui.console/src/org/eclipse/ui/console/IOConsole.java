@@ -347,4 +347,59 @@ public class IOConsole extends TextConsole {
 		return this.charset;
 	}
 
+	/**
+	 * Check if console currently interprets ASCII control characters.
+	 *
+	 * @return <code>true</code> if console interprets ASCII control characters
+	 * @since 3.9
+	 */
+	public boolean isHandleControlCharacters() {
+		return partitioner.isHandleControlCharacters();
+	}
+
+	/**
+	 * Enable or disable interpretation of ASCII control characters like backspace
+	 * (<code>\b</code>).
+	 *
+	 * @param handleControlCharacters interpret control characters if
+	 *                                <code>true</code>
+	 * @since 3.9
+	 */
+	public void setHandleControlCharacters(boolean handleControlCharacters) {
+		partitioner.setHandleControlCharacters(handleControlCharacters);
+	}
+
+	/**
+	 * Check if carriage returns (<code>\r</code>) in console output are interpreted
+	 * as control characters. They are also not interpreted if general control
+	 * character handling is disabled.
+	 *
+	 * @return if <code>true</code> carriage returns are interpreted as control
+	 *         characters.
+	 * @see #isHandleControlCharacters()
+	 * @since 3.9
+	 */
+	public boolean isCarriageReturnAsControlCharacter() {
+		return partitioner.isCarriageReturnAsControlCharacter();
+	}
+
+	/**
+	 * If control characters in console output are interpreted by this console
+	 * carriage returns (<code>\r</code>) are either ignored (<code>false</code>)
+	 * and usually handled as line break by connected console document or if
+	 * <code>true</code> interpreted with there control character meaning.
+	 * <p>
+	 * Note: this option has no effect if control character interpretation is
+	 * disabled in general.
+	 * </p>
+	 *
+	 * @param carriageReturnAsControlCharacter set <code>false</code> to exclude
+	 *                                         carriage return from control
+	 *                                         character interpretation
+	 * @see #setHandleControlCharacters(boolean)
+	 * @since 3.9
+	 */
+	public void setCarriageReturnAsControlCharacter(boolean carriageReturnAsControlCharacter) {
+		partitioner.setCarriageReturnAsControlCharacter(carriageReturnAsControlCharacter);
+	}
 }

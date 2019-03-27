@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2018 IBM Corporation and others.
+ * Copyright (c) 2000, 2019 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -91,7 +91,31 @@ public interface IDebugPreferenceConstants {
 	 */
 	String CONSOLE_TAB_WIDTH= "Console.console_tab_width"; //$NON-NLS-1$
 
+	/**
+	 * (boolean) If <code>true</code> console will interpret ASCII control
+	 * characters like <code>\b</code> received from stdout or stderr (or any other
+	 * connected output stream).
+	 * <p>
+	 * If <code>false</code> control characters are appended to console like any
+	 * other character. Since they are usually not printable they may be invisible
+	 * or result in some Unicode default representation.
+	 * </p>
+	 */
+	String CONSOLE_INTERPRET_CONTROL_CHARACTERS = "Console.interpret_control_characters"; //$NON-NLS-1$
 
+	/**
+	 * (boolean) Only used if {@link #CONSOLE_INTERPRET_CONTROL_CHARACTERS} is
+	 * <code>true</code>.
+	 * <p>
+	 * If <code>true</code> carriage returns are handled with there usual control
+	 * character interpretation. (move output cursor to begin of line)
+	 * </p>
+	 * <p>
+	 * If <code>false</code> carriage returns are not handled special and may result
+	 * in line breaks since they are usually legal line delimiter.
+	 * </p>
+	 */
+	String CONSOLE_INTERPRET_CR_AS_CONTROL_CHARACTER = "Console.interpret_cr_as_control_characters"; //$NON-NLS-1$
 
 	/**
 	 * The orientation of the detail view in the VariablesView

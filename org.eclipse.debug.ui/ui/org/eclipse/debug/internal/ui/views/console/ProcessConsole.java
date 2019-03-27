@@ -376,6 +376,10 @@ public class ProcessConsole extends IOConsole implements IConsole, IDebugEventSe
 			setFont(JFaceResources.getFont(IDebugUIConstants.PREF_CONSOLE_FONT));
 		} else if (property.equals(IDebugPreferenceConstants.CONSOLE_BAKGROUND_COLOR)) {
 			setBackground(DebugUIPlugin.getPreferenceColor(IDebugPreferenceConstants.CONSOLE_BAKGROUND_COLOR));
+		} else if (property.equals(IDebugPreferenceConstants.CONSOLE_INTERPRET_CONTROL_CHARACTERS)) {
+			setHandleControlCharacters(store.getBoolean(IDebugPreferenceConstants.CONSOLE_INTERPRET_CONTROL_CHARACTERS));
+		} else if (property.equals(IDebugPreferenceConstants.CONSOLE_INTERPRET_CR_AS_CONTROL_CHARACTER)) {
+			setCarriageReturnAsControlCharacter(store.getBoolean(IDebugPreferenceConstants.CONSOLE_INTERPRET_CR_AS_CONTROL_CHARACTER));
 		}
 	}
 
@@ -484,6 +488,9 @@ public class ProcessConsole extends IOConsole implements IConsole, IDebugEventSe
 			int lowWater = store.getInt(IDebugPreferenceConstants.CONSOLE_LOW_WATER_MARK);
 			setWaterMarks(lowWater, highWater);
 		}
+
+		setHandleControlCharacters(store.getBoolean(IDebugPreferenceConstants.CONSOLE_INTERPRET_CONTROL_CHARACTERS));
+		setCarriageReturnAsControlCharacter(store.getBoolean(IDebugPreferenceConstants.CONSOLE_INTERPRET_CR_AS_CONTROL_CHARACTER));
 
 		DebugUIPlugin.getStandardDisplay().asyncExec(() -> {
 			setFont(JFaceResources.getFont(IDebugUIConstants.PREF_CONSOLE_FONT));

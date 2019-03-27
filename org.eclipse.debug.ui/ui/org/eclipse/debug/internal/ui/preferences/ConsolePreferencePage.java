@@ -81,6 +81,9 @@ public class ConsolePreferencePage extends FieldEditorPreferencePage implements 
 	private ConsoleIntegerFieldEditor fTabSizeEditor;
 	private BooleanFieldEditor autoScrollLockEditor;
 
+	private BooleanFieldEditor2 fInterpretControlCharactersEditor;
+	private BooleanFieldEditor2 fInterpretCrAsControlCharacterEditor;
+
 	/**
 	 * Create the console page.
 	 */
@@ -157,6 +160,15 @@ public class ConsolePreferencePage extends FieldEditorPreferencePage implements 
 		addField(syserr);
 		addField(sysin);
 		addField(background);
+
+		fInterpretControlCharactersEditor = new BooleanFieldEditor2(IDebugPreferenceConstants.CONSOLE_INTERPRET_CONTROL_CHARACTERS, DebugPreferencesMessages.ConsolePreferencePage_Interpret_control_characters, SWT.NONE, getFieldEditorParent());
+		fInterpretCrAsControlCharacterEditor = new BooleanFieldEditor2(IDebugPreferenceConstants.CONSOLE_INTERPRET_CR_AS_CONTROL_CHARACTER, DebugPreferencesMessages.ConsolePreferencePage_Interpret_cr_as_control_character, SWT.NONE, getFieldEditorParent());
+
+		fInterpretControlCharactersEditor.getChangeControl(getFieldEditorParent()).addListener(SWT.Selection,
+				event -> updateInterpretCrAsControlCharacterEditor());
+
+		addField(fInterpretControlCharactersEditor);
+		addField(fInterpretCrAsControlCharacterEditor);
 	}
 
 	/**
@@ -186,6 +198,7 @@ public class ConsolePreferencePage extends FieldEditorPreferencePage implements 
 		updateWidthEditor();
 		updateAutoScrollLockEditor();
 		updateBufferSizeEditor();
+		updateInterpretCrAsControlCharacterEditor();
 	}
 
 	/**
@@ -216,6 +229,15 @@ public class ConsolePreferencePage extends FieldEditorPreferencePage implements 
 	}
 
 	/**
+	 * Update enablement of carriage return interpretation based on general control
+	 * character interpretation.
+	 */
+	protected void updateInterpretCrAsControlCharacterEditor() {
+		Button b = fInterpretControlCharactersEditor.getChangeControl(getFieldEditorParent());
+		fInterpretCrAsControlCharacterEditor.getChangeControl(getFieldEditorParent()).setEnabled(b.getSelection());
+	}
+
+	/**
 	 * @see org.eclipse.jface.preference.PreferencePage#performDefaults()
 	 */
 	@Override
@@ -223,6 +245,7 @@ public class ConsolePreferencePage extends FieldEditorPreferencePage implements 
 		super.performDefaults();
 		updateWidthEditor();
 		updateBufferSizeEditor();
+		updateInterpretCrAsControlCharacterEditor();
 	}
 
 	protected boolean canClearErrorMessage() {

@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2018 IBM Corporation and others.
+ *  Copyright (c) 2000, 2019 IBM Corporation and others.
  *
  *  This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License 2.0
@@ -35,6 +35,8 @@ public class DebugPreferencesMessages extends NLS {
 	public static String ConsolePreferencePage_console_width;
 	public static String ConsolePreferencePage_12;
 	public static String ConsolePreferencePage_13;
+	public static String ConsolePreferencePage_Interpret_control_characters;
+	public static String ConsolePreferencePage_Interpret_cr_as_control_character;
 
 	public static String DebugPreferencePage_1;
 	public static String DebugPreferencePage_2;

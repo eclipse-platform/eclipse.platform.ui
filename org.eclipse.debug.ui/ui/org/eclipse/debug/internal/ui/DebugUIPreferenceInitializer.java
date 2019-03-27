@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2004, 2018 IBM Corporation and others.
+ *  Copyright (c) 2004, 2019 IBM Corporation and others.
  *
  *  This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License 2.0
@@ -80,6 +80,8 @@ public class DebugUIPreferenceInitializer extends AbstractPreferenceInitializer 
 		prefs.setDefault(IDebugPreferenceConstants.CONSOLE_LOW_WATER_MARK, 80000);
 		prefs.setDefault(IDebugPreferenceConstants.CONSOLE_HIGH_WATER_MARK, 100000);
 		prefs.setDefault(IDebugPreferenceConstants.CONSOLE_TAB_WIDTH, 8);
+		prefs.setDefault(IDebugPreferenceConstants.CONSOLE_INTERPRET_CONTROL_CHARACTERS, false);
+		prefs.setDefault(IDebugPreferenceConstants.CONSOLE_INTERPRET_CR_AS_CONTROL_CHARACTER, true);
 
 		// console colors
 		setThemeBasedPreferences(prefs, false);

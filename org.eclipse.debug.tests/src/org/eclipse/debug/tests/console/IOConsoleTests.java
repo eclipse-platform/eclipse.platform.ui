@@ -382,6 +382,160 @@ public class IOConsoleTests extends AbstractDebugTest {
 	}
 
 	/**
+	 * Test enabling/disabling control character interpretation.
+	 */
+	public void testControlCharacterSettings() throws Exception {
+		final IOConsoleTestUtil c = getTestUtil("Test options");
+
+		c.getConsole().setHandleControlCharacters(false);
+		c.getConsole().setCarriageReturnAsControlCharacter(false);
+		c.write("\r..");
+		assertEquals("Wrong number of lines.", 2, c.getDocument().getNumberOfLines());
+
+		c.getConsole().setCarriageReturnAsControlCharacter(true);
+		c.write("\r..");
+		assertEquals("Wrong number of lines.", 3, c.getDocument().getNumberOfLines());
+
+		c.getConsole().setHandleControlCharacters(true);
+		c.getConsole().setCarriageReturnAsControlCharacter(false);
+		c.write("\r..");
+		assertEquals("Wrong number of lines.", 4, c.getDocument().getNumberOfLines());
+
+		c.getConsole().setCarriageReturnAsControlCharacter(true);
+		c.write("\r..");
+		assertEquals("Wrong number of lines.", 4, c.getDocument().getNumberOfLines());
+
+		closeConsole(c);
+		assertEquals("Test triggered errors in IOConsole.", 0, loggedErrors.get());
+	}
+
+	/**
+	 * Test handling of <code>\b</code>.
+	 */
+	public void testBackspaceControlCharacter() throws Exception {
+		final IOConsoleTestUtil c = getTestUtil("Test \\b");
+		c.getConsole().setCarriageReturnAsControlCharacter(false);
+		c.getConsole().setHandleControlCharacters(true);
+		try (IOConsoleOutputStream err = c.getConsole().newOutputStream()) {
+			// test simple backspace cases
+			c.write("\b").write("|").verifyContent("|").verifyPartitions();
+			c.writeFast("\b").write("/").verifyContent("/").verifyPartitions();
+			c.writeFast("\b\b\b").write("-\b").verifyContent("-").verifyPartitions();
+			c.writeFast("\b1\b2\b3\b").write("\\").verifyContent("\\").verifyPartitions();
+
+			// test existing output is overwritten independent from stream
+			c.clear();
+			c.writeFast("out").write("err", err).verifyContent("outerr").verifyPartitions(2);
+			c.writeFast("\b\b\b\b\b\b\b\b\b\b\b\b\b");
+			c.writeFast("err", err).write("out").verifyContent("errout").verifyPartitions(2);
+			c.writeFast("\b\b\b\b\b\b\b\b\b\b\b\b\b");
+			c.writeFast("12", err).writeFast("345").write("6789", err).verifyContent("123456789").verifyPartitions(3);
+
+			// test backspace stops at line start
+			c.clear();
+			c.writeFast("First line\n").writeFast("\b\b", err).writeFast("Zecond line");
+			c.writeFast("\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b");
+			c.write("S", err).verifyContentByLine("First line", 0).verifyContentByLine("Second line", 1).verifyPartitions(2);
+
+			// test in combination with input partitions
+			c.clear();
+			c.writeAndVerify("out").insertTyping("input").writeAndVerify("err", err).verifyContent("outinputerr").verifyPartitions(3);
+			c.setCaretOffset(6).backspace().backspace().writeAndVerify("~~~").verifyContentByOffset("~~~", -3).verifyPartitions(3);
+			c.verifyContent("outiuterr~~~");
+			c.writeFast("\b\b\b\b\b\b\b\b\b\b\b\b\b");
+			c.write("output").verifyContent("outiutput~~~").verifyPartitions(3);
+			c.setCaretOffset(4).insertTyping("np").verifyContent("outinputput~~~").verifyPartitions(3);
+			c.write("+++++", err).verifyContent("outinputput+++++").verifyPartitions(3);
+			c.writeFast(String.join("", Collections.nCopies(11, "\b")));
+			c.write("err", err).verifyContent("errinputput+++++").verifyPartitions(3);
+
+			c.clear();
+			c.writeAndVerify("ooooo").insertTyping("iii").write("eeee", err).moveCaretToEnd().insertTyping("i").write("oo");
+			c.verifyContent("oooooiiieeeeioo").verifyPartitions(3);
+			c.writeFast(String.join("", Collections.nCopies(7, "\b")));
+			c.write("xx").verifyContent("ooooxiiixeeeioo").verifyPartitions(3);
+
+			c.clear();
+			c.insert("iiii").writeFast("\b").write("o").verifyContent("iiiio").verifyPartitions(2);
+			c.write("\b\bee", err).verifyContentByOffset("iiiiee", 0).verifyPartitions(2);
+			c.writeFast("\b\b\b\b\b\b\b\b", err).write("o").verifyContent("iiiioe").verifyPartitions(3);
+
+			// test if backspace overruns line breaks introduced by input
+			// (at the moment it should overrun those line breaks)
+			c.clear();
+			c.writeAndVerify("1", err).insertTyping("input").enter().write("2");
+			c.verifyContentByLine("1input", 0).verifyContentByLine("2", 1).verifyPartitions(3);
+			c.writeFast("\b\b\b\b\b\b\b\b\b\b\b\b\b", err);
+			c.write("???").verifyContentByLine("?input", 0).verifyContentByLine("??", 1).verifyPartitions(3);
+			c.writeFast("\b\b").writeFast("\b", err).write("><~");
+			c.verifyContentByLine(">input", 0).verifyContentByLine("<~", 1).verifyPartitions(3);
+
+			// test output cursor moves according to changed input
+			c.clear();
+			c.writeAndVerify("abc", err).insert("<>").write("def").verifyContent("abc<>def").verifyPartitions(3);
+			c.write("\b\b").setCaretOffset(4).insertTypingAndVerify("-=-").verifyContent("abc<-=->def").verifyPartitions(3);
+			c.moveCaret(-1).backspace().verifyContent("abc<-->def").verifyPartitions(3);
+			c.write("e\b\b\b\b", err).insertTyping("++").verifyContent("abc<-++->def").verifyPartitions(3);
+			c.select(0, c.getDocument().getLength()).backspace().write("b").verifyContent("abcdef").verifyPartitions(3);
+
+			// break output line
+			// NOTE: this may not be the desired behavior
+			c.clear();
+			c.writeFast("1.2.").writeFast("\b\b").write("\n");
+			c.verifyContentByLine("1.", 0).verifyContentByLine(".", 1).verifyPartitions();
+			c.writeFast("\b\b\b\b").write("2.");
+			c.verifyContentByLine("1.", 0).verifyContentByLine("2.", 1).verifyPartitions();
+		}
+		closeConsole(c);
+		assertEquals("Test triggered errors in IOConsole.", 0, loggedErrors.get());
+	}
+
+	/**
+	 * Test handling of <code>\r</code>.
+	 */
+	public void testCarriageReturnControlCharacter() throws Exception {
+		final IOConsoleTestUtil c = getTestUtil("Test \\r");
+		c.getConsole().setCarriageReturnAsControlCharacter(true);
+		c.getConsole().setHandleControlCharacters(true);
+		try (IOConsoleOutputStream err = c.getConsole().newOutputStream()) {
+			// test simple carriage return cases
+			c.write("\r");
+			assertEquals("Wrong number of lines.", 1, c.getDocument().getNumberOfLines());
+			c.writeFast("bad", err).write("\rgood").verifyContent("good").verifyPartitions(1);
+			assertEquals("Wrong number of lines.", 1, c.getDocument().getNumberOfLines());
+
+			// test carriage return stops at line start
+			c.clear();
+			c.writeFast("First line\r\n").write("Zecond line", err);
+			c.verifyContentByLine("First line", 0).verifyContentByLine("Zecond line", 1).verifyPartitions(2);
+			assertEquals("Wrong number of lines.", 2, c.getDocument().getNumberOfLines());
+			c.writeFast("\r").write("3.    ").verifyContentByLine("3.     line", 1).verifyPartitions(2);
+			assertEquals("Wrong number of lines.", 2, c.getDocument().getNumberOfLines());
+			c.writeFast("\r\r\r", err).write("Second").verifyContentByLine("Second line", 1).verifyPartitions(2);
+			assertEquals("Wrong number of lines.", 2, c.getDocument().getNumberOfLines());
+
+			// test carriage return with input partitions
+			c.clear();
+			c.insertTypingAndVerify("input").writeFast("out\r").write("err", err);
+			c.verifyContent("inputerr").verifyPartitions(2);
+			c.enter().write("\rout").verifyContentByLine("inputout", 0).verifyPartitions(2);
+			c.write("err", err).verifyContentByLine("err", 1).verifyPartitions(3);
+			c.write("\roooooo").verifyContentByLine("inputooo", 0).verifyContentByLine("ooo", 1).verifyPartitions(2);
+
+			// test in combination with \r\n
+			c.clear();
+			c.write("\r\n");
+			assertEquals("Wrong number of lines.", 2, c.getDocument().getNumberOfLines());
+			c.writeFast("err", err).writeFast("\r\r\r\r\r\r\r\r\n\n").write("out");
+			assertEquals("Wrong number of lines.", 4, c.getDocument().getNumberOfLines());
+			c.verifyContentByLine("out", -1).verifyPartitions();
+			assertTrue("Line breaks did not overwrite text.", !c.getDocument().get().contains("err"));
+		}
+		closeConsole(c);
+		assertEquals("Test triggered errors in IOConsole.", 0, loggedErrors.get());
+	}
+
+	/**
 	 * Test larger number of partitions with pseudo random console content.
 	 */
 	public void testManyPartitions() throws IOException {

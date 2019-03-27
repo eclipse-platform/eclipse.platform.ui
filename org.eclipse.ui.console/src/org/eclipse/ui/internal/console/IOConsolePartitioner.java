@@ -15,6 +15,7 @@
  *                          Bug 548356: fixed user input handling
  *                          Bug 550618: getStyleRanges produced invalid overlapping styles
  *                          Bug 550621: Implementation of IConsoleDocumentPartitionerExtension
+ *                          Bug 76936:  Support interpretation of \b and \r in console output
  *******************************************************************************/
 package org.eclipse.ui.internal.console;
 
@@ -25,6 +26,8 @@ import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -89,6 +92,17 @@ public class IOConsolePartitioner
 	 */
 	private static final Comparator<IRegion> CMP_REGION_BY_OFFSET = Comparator.comparing(IRegion::getOffset);
 
+	/**
+	 * Pattern used to find supported ASCII control characters <b>except</b>
+	 * carriage return.
+	 */
+	private static final String CONTROL_CHARACTERS_PATTERN_STR = "(?:\b+)"; //$NON-NLS-1$
+	/**
+	 * Pattern used to find supported ASCII control characters <b>including</b>
+	 * carriage return.
+	 */
+	private static final String CONTROL_CHARACTERS_WITH_CR_PATTERN_STR = "(?:\b+|\r+(?!\n))"; //$NON-NLS-1$
+
 	/** The connected {@link IDocument} this partitioner manages. */
 	private IDocument document;
 	/**
@@ -130,6 +144,10 @@ public class IOConsolePartitioner
 	 * length trimming is scheduled. Trimming is disabled if value is negative.
 	 */
 	private int highWaterMark = -1;
+	/**
+	 * The low mark for console content trimming. If trim is performed approximate
+	 * this many characters are remain in console.
+	 */
 	private int lowWaterMark = -1;
 
 	/** The partitioned {@link IOConsole}. */
@@ -137,6 +155,21 @@ public class IOConsolePartitioner
 
 	/** Set after console signaled that all streams are closed. */
 	private volatile boolean streamsClosed;
+	/**
+	 * Active pattern to search for supported control characters. If
+	 * <code>null</code> control characters are treated as any other characters.
+	 */
+	private Pattern controlCharacterPattern = null;
+	/**
+	 * Whether <code>\r</code> is interpreted as control characters
+	 * (<code>true</code>) or not in console output. If <code>false</code> they are
+	 * probably handled as newline.
+	 */
+	private boolean carriageReturnAsControlCharacter = true;
+	/**
+	 * Offset where next output is written to console.
+	 */
+	private int outputOffset = 0;
 
 	/**
 	 * Create new partitioner for an {@link IOConsole}.
@@ -421,6 +454,7 @@ public class IOConsolePartitioner
 				synchronized (partitions) {
 					partitions.clear();
 					inputPartitions.clear();
+					outputOffset = 0;
 				}
 				return new Region(0, 0);
 			}
@@ -428,6 +462,12 @@ public class IOConsolePartitioner
 			synchronized (partitions) {
 				switch (updateType) {
 				case INPUT:
+					if (event.getOffset() <= outputOffset) { // move output offset if necessary
+						outputOffset -= Math.min(event.getLength(), outputOffset - event.getOffset());
+						if (event.getText() != null) {
+							outputOffset += event.getText().length();
+						}
+					}
 					return applyUserInput(event);
 
 				// update and trim jobs are triggered by this partitioner and all partitioning
@@ -740,28 +780,325 @@ public class IOConsolePartitioner
 			pendingPartitions.notifyAll();
 		}
 		synchronized (partitions) {
-			final StringBuilder addedContent = new StringBuilder(size);
-			IOConsolePartition lastPartition = getPartitionByIndex(partitions.size() - 1);
-			int nextOffset = document.getLength();
-			for (PendingPartition pendingPartition : pendingCopy) {
-				if (lastPartition == null || lastPartition.getOutputStream() != pendingPartition.stream) {
-					lastPartition = new IOConsolePartition(nextOffset, pendingPartition.stream);
-					partitions.add(lastPartition);
+			if (isHandleControlCharacters()) {
+				applyStreamOutput(pendingCopy, size);
+			} else {
+				// Old implementation of output appending. The control character aware variant
+				// {@link #applyStreamOutput(List, int)} should do exactly the same if control
+				// character processing is disabled but since there is not so much time for
+				// testing in current development cycle the old implementation is used to
+				// process output when control character interpretation is disabled.
+				// TODO remove in next development cycle
+				final StringBuilder addedContent = new StringBuilder(size);
+				IOConsolePartition lastPartition = getPartitionByIndex(partitions.size() - 1);
+				int nextOffset = document.getLength();
+				for (PendingPartition pendingPartition : pendingCopy) {
+					if (lastPartition == null || lastPartition.getOutputStream() != pendingPartition.stream) {
+						lastPartition = new IOConsolePartition(nextOffset, pendingPartition.stream);
+						partitions.add(lastPartition);
+					}
+					final int pendingLength = pendingPartition.text.length();
+					lastPartition.setLength(lastPartition.getLength() + pendingLength);
+					nextOffset += pendingLength;
+					addedContent.append(pendingPartition.text);
 				}
-				final int pendingLength = pendingPartition.text.length();
-				lastPartition.setLength(lastPartition.getLength() + pendingLength);
-				nextOffset += pendingLength;
-				addedContent.append(pendingPartition.text);
+				try {
+					updateType = DocUpdateType.OUTPUT;
+					document.replace(document.getLength(), 0, addedContent.toString());
+					outputOffset += addedContent.length();
+				} catch (BadLocationException e) {
+					log(e);
+				}
+			}
+		}
+		checkFinished();
+		checkBufferSize();
+	}
+
+	/**
+	 * Apply content collected in pending partitions to document and update
+	 * partitioning structure.
+	 * <p>
+	 * This method is also responsible to interpret control characters if enabled
+	 * (see {@link #isHandleControlCharacters()}).
+	 * </p>
+	 *
+	 * @param pendingCopy the pending partitions to process
+	 * @param sizeHint    a hint for expected content length to initialize buffer
+	 *                    size. Does not have to be exact as long as it is not
+	 *                    negative.
+	 */
+	private void applyStreamOutput(List<PendingPartition> pendingCopy, int sizeHint) {
+		// local reference to get consistent parsing without blocking pattern changes
+		final Pattern controlPattern = controlCharacterPattern;
+		// Variables to collect required data to reduce number of document updates. The
+		// partitioning must be updated in smaller iterations as the actual document
+		// content. E.g. pending partitions are distinct on source output stream
+		// resulting in multiple partitions but if all the content is appended to the
+		// document there is only one update required to add the actual content.
+		int nextWriteOffset = outputOffset;
+		final StringBuilder content = new StringBuilder(sizeHint);
+		int replaceLength = 0;
+		// the partition which contains the current output offset
+		IOConsolePartition atOutputPartition = null;
+		// the index of atOutputPartition in the partitions list
+		int atOutputPartitionIndex = -1;
+
+		for (PendingPartition pending : pendingCopy) {
+			// create matcher to find control characters in pending content (if enabled)
+			final Matcher controlCharacterMatcher = controlPattern != null ? controlPattern.matcher(pending.text)
+					: null;
+
+			for (int textOffset = 0; textOffset < pending.text.length();) {
+				// Process pending content in chunks.
+				// Processing is primary split on control characters since there interpretation
+				// is easier if all content changes before are already applied.
+				// Additional processing splits may result while overwriting existing output and
+				// overwrite overlaps partitions.
+				final boolean foundControlCharacter;
+				final int partEnd;
+				if (controlCharacterMatcher != null && controlCharacterMatcher.find()) {
+					if (ASSERT) {
+						// check used pattern. Assert it matches only sequences of same characters.
+						final String match = controlCharacterMatcher.group();
+						Assert.isTrue(match.length() > 0);
+						final char matchedChar = match.charAt(0);
+						for (char c : match.toCharArray()) {
+							Assert.isTrue(c == matchedChar);
+						}
+					}
+					partEnd = controlCharacterMatcher.start();
+					foundControlCharacter = true;
+				} else {
+					partEnd = pending.text.length();
+					foundControlCharacter = false;
+				}
+
+				while (textOffset < partEnd) {
+					// Process content part. This part never contains control characters.
+					// Processing may require multiple iterations if we overwrite existing content
+					// which consists of distinct partitions.
+
+					if (outputOffset >= document.getLength()) {
+						// content is appended to document end (the easy case)
+						if (atOutputPartition == null) {
+							// get the last existing partition to try to expand it
+							atOutputPartitionIndex = partitions.size() - 1;
+							atOutputPartition = getPartitionByIndex(atOutputPartitionIndex);
+							if (ASSERT) {
+								Assert.isTrue(atOutputPartitionIndex == findPartitionCandidate(outputOffset - 1));
+							}
+						}
+						if (atOutputPartition == null || atOutputPartition.getOutputStream() != pending.stream) {
+							// no partitions yet or last partition is incompatible to reuse -> add new one
+							atOutputPartition = new IOConsolePartition(outputOffset, pending.stream);
+							partitions.add(atOutputPartition);
+							atOutputPartitionIndex = partitions.size() - 1;
+						}
+						final int appendedLength = partEnd - textOffset;
+						content.append(pending.text, textOffset, partEnd);
+						atOutputPartition.setLength(atOutputPartition.getLength() + appendedLength);
+						outputOffset += appendedLength;
+						textOffset = partEnd;
+					} else {
+						// content overwrites existing console content (the tricky case)
+						if (atOutputPartition == null) {
+							// find partition where output will overwrite or create one if unpartitioned
+							atOutputPartitionIndex = findPartitionCandidate(outputOffset);
+							atOutputPartition = getPartitionByIndex(atOutputPartitionIndex);
+							if (atOutputPartition == null) {
+								atOutputPartition = new IOConsolePartition(outputOffset, pending.stream);
+								atOutputPartitionIndex++;
+								partitions.add(atOutputPartitionIndex, atOutputPartition);
+							}
+						}
+
+						// we do not overwrite input partitions at the moment so they need to be skipped
+						if (isInputPartition(atOutputPartition)) {
+							outputOffset = atOutputPartition.getOffset() + atOutputPartition.getLength();
+							atOutputPartitionIndex++;
+							atOutputPartition = getPartitionByIndex(atOutputPartitionIndex);
+
+							// apply document changes collected until now
+							applyOutputToDocument(content.toString(), nextWriteOffset, replaceLength);
+							content.setLength(0);
+							replaceLength = 0;
+							nextWriteOffset = outputOffset;
+							continue; // to check if next selected partition is also input or appending now
+						}
+
+						// limit chunks to overwrite only one existing partition at a time
+						final int chunkLength = Math.min(partEnd - textOffset,
+								atOutputPartition.getLength() - (outputOffset - atOutputPartition.getOffset()));
+						Assert.isTrue(chunkLength > 0); // do not remove since it can prevent an infinity loop
+
+						if (atOutputPartition.getOutputStream() != pending.stream) {
+							// new output is from other stream then overwritten output
+
+							// Note: this implementation ignores the possibility to reuse the partition
+							// where the overwrite chunk ends and expand it towards replace begin since this
+							// makes things code much more complex. In some cases this may leads to
+							// consecutive partitions which could be merged to one partition. Merging is not
+							// implemented at the moment.
+
+							// in this part outputPartition is used to partition the new content
+							// and atOutputPartition points to the partition whose content is overwritten
+							// i.e. the new partition grows and the old one must shrink
+							IOConsolePartition outputPartition = null;
+							if (atOutputPartition.getOffset() == outputOffset) {
+								// try to expand the partition before our output offset
+								outputPartition = getPartitionByIndex(atOutputPartitionIndex - 1);
+							} else {
+								// overwrite starts inside existing incompatible partition
+								atOutputPartition = splitPartition(outputOffset);
+								atOutputPartitionIndex++;
+							}
+							if (outputPartition == null || outputPartition.getOutputStream() != pending.stream) {
+								outputPartition = new IOConsolePartition(outputOffset, pending.stream);
+								partitions.add(atOutputPartitionIndex, outputPartition);
+								atOutputPartitionIndex++;
+							}
+
+							// update partitioning of the overwritten chunk
+							outputPartition.setLength(outputPartition.getLength() + chunkLength);
+							atOutputPartition.setOffset(atOutputPartition.getOffset() + chunkLength);
+							atOutputPartition.setLength(atOutputPartition.getLength() - chunkLength);
+
+							if (atOutputPartition.getLength() == 0) {
+								// overwritten partition is now empty and must be be removed
+								partitions.remove(atOutputPartitionIndex);
+								atOutputPartition = getPartitionByIndex(atOutputPartitionIndex);
+							}
+						}
+						content.append(pending.text, textOffset, textOffset + chunkLength);
+						replaceLength += chunkLength;
+						textOffset += chunkLength;
+						outputOffset += chunkLength;
+						if (atOutputPartition != null
+								&& outputOffset == atOutputPartition.getOffset() + atOutputPartition.getLength()) {
+							atOutputPartitionIndex++;
+							atOutputPartition = getPartitionByIndex(atOutputPartitionIndex);
+						}
+					}
+				}
+				// finished processing of regular content before control characters
+				// now interpret control characters if any
+				if (controlCharacterMatcher != null && foundControlCharacter) {
+					// at first update console document since it is easier to interpret control
+					// characters on an up-to-date document and partitioning
+					applyOutputToDocument(content.toString(), nextWriteOffset, replaceLength);
+					content.setLength(0);
+					replaceLength = 0;
+
+					final String controlCharacterMatch = controlCharacterMatcher.group();
+					final char controlCharacter = controlCharacterMatch.charAt(0);
+					switch (controlCharacter) {
+					case '\b':
+						// move virtual output cursor one step back for each \b
+						// but stop at current line start and skip any input partitions
+						final int outputLineStartOffset = findOutputLineStartOffset(outputOffset);
+						int backStepCount = controlCharacterMatch.length();
+						if (partitions.size() == 0) {
+							outputOffset = 0;
+							break;
+						}
+						if (atOutputPartition == null) {
+							atOutputPartitionIndex = partitions.size() - 1;
+							atOutputPartition = getPartitionByIndex(atOutputPartitionIndex);
+						}
+						while (backStepCount > 0 && outputOffset > outputLineStartOffset) {
+							if (atOutputPartition != null && isInputPartition(atOutputPartition)) {
+								do {
+									outputOffset = atOutputPartition.getOffset() - 1;
+									atOutputPartitionIndex--;
+									atOutputPartition = getPartitionByIndex(atOutputPartitionIndex);
+								} while (atOutputPartition != null && isInputPartition(atOutputPartition));
+								backStepCount--;
+							}
+							if (atOutputPartition == null) {
+								outputOffset = 0;
+								break;
+							}
+							final int backSteps = Math.min(outputOffset - atOutputPartition.getOffset(), backStepCount);
+							outputOffset -= backSteps;
+							backStepCount -= backSteps;
+							atOutputPartitionIndex--;
+							atOutputPartition = getPartitionByIndex(atOutputPartitionIndex);
+						}
+						outputOffset = Math.max(outputOffset, outputLineStartOffset);
+						break;
+
+					case '\r':
+						// move virtual output cursor to start of output line
+						outputOffset = findOutputLineStartOffset(outputOffset);
+						atOutputPartitionIndex = -1;
+						atOutputPartition = null;
+						break;
+
+					default:
+						// should never happen as long as the used regex pattern is valid
+						log(IStatus.ERROR, "No implementation to handle control character 0x" //$NON-NLS-1$
+								+ Integer.toHexString(controlCharacter));
+						break;
+					}
+					nextWriteOffset = outputOffset;
+					textOffset = controlCharacterMatcher.end();
+				}
+			}
+		}
+		applyOutputToDocument(content.toString(), nextWriteOffset, replaceLength);
+	}
+
+	/**
+	 * Find offset of line start from given output offset. This method ignores line
+	 * breaks partitioned as input. I.e. it looks at the document as if it only
+	 * consist of the output parts.
+	 *
+	 * @param outOffset offset where output should be written
+	 * @return the start offset of line where output should be written
+	 */
+	private int findOutputLineStartOffset(int outOffset) {
+		int outputLineStartOffset = 0;
+		try {
+			for (int lineIndex = document.getLineOfOffset(outOffset); lineIndex >= 0; lineIndex--) {
+				outputLineStartOffset = document.getLineOffset(lineIndex);
+				final IOConsolePartition lineBreakPartition = getIOPartition(outputLineStartOffset - 1);
+				if (lineBreakPartition == null || !isInputPartition(lineBreakPartition)) {
+					break;
+				}
+			}
+		} catch (BadLocationException e) {
+			log(e);
+			outputLineStartOffset = 0;
+		}
+		if (ASSERT) {
+			Assert.isTrue(outputLineStartOffset <= outOffset);
+		}
+		return outputLineStartOffset;
+	}
+
+	/**
+	 * Apply content from output streams to document. It expects the partitioning
+	 * has or will update partitioning to reflect the change since it prevents this
+	 * partitioner's {@link #documentChanged2(DocumentEvent)} method from changing
+	 * partitioning.
+	 *
+	 * @param content       collected content from output streams
+	 * @param offset        offset where content is inserted
+	 * @param replaceLength length of overwritten old output
+	 */
+	private void applyOutputToDocument(String content, int offset, int replaceLength) {
+		if (content.length() > 0 || replaceLength > 0) {
+			if (ASSERT) {
+				Assert.isTrue(replaceLength <= content.length());
 			}
 			try {
 				updateType = DocUpdateType.OUTPUT;
-				document.replace(document.getLength(), 0, addedContent.toString());
+				document.replace(offset, replaceLength, content);
 			} catch (BadLocationException e) {
 				log(e);
 			}
 		}
-		checkBufferSize();
-		checkFinished();
 	}
 
 	/**
@@ -828,6 +1165,10 @@ public class IOConsolePartitioner
 								p.setOffset(offset);
 								offset += p.getLength();
 							}
+
+							// fix output offset
+							int removedLength = cutOffset;
+							outputOffset = Math.max(outputOffset - removedLength, 0);
 						}
 						if (ASSERT) {
 							checkPartitions();
@@ -946,6 +1287,70 @@ public class IOConsolePartitioner
 			}
 		}
 		return document != null ? document.getLength() : 0;
+	}
+
+	/**
+	 * Check if console currently interprets ASCII control characters.
+	 *
+	 * @return <code>true</code> if console interprets ASCII control characters
+	 * @since 3.9
+	 */
+	public boolean isHandleControlCharacters() {
+		return controlCharacterPattern != null;
+	}
+
+	/**
+	 * Enable or disable interpretation of ASCII control characters like backspace
+	 * (<code>\b</code>).
+	 *
+	 * @param handleControlCharacters interpret control characters if
+	 *                                <code>true</code>
+	 * @since 3.9
+	 */
+	public void setHandleControlCharacters(boolean handleControlCharacters) {
+		if (handleControlCharacters) {
+			controlCharacterPattern = Pattern
+					.compile(carriageReturnAsControlCharacter ? CONTROL_CHARACTERS_WITH_CR_PATTERN_STR
+							: CONTROL_CHARACTERS_PATTERN_STR);
+		} else {
+			controlCharacterPattern = null;
+		}
+	}
+
+	/**
+	 * Check if carriage returns (<code>\r</code>) are interpreted as control
+	 * characters. They are also not interpreted if general control character
+	 * handling is disabled.
+	 *
+	 * @return if <code>true</code> carriage returns are interpreted as control
+	 *         characters.
+	 * @see #isHandleControlCharacters()
+	 * @since 3.9
+	 */
+	public boolean isCarriageReturnAsControlCharacter() {
+		return carriageReturnAsControlCharacter;
+	}
+
+	/**
+	 * If control characters are interpreted by this console carriage returns
+	 * (<code>\r</code>) are either ignored (<code>false</code>) and usually handled
+	 * as line break by connected console document or if <code>true</code>
+	 * interpreted with there control character meaning.
+	 * <p>
+	 * Note: this option has no effect if control character interpretation is
+	 * disabled in general.
+	 * </p>
+	 *
+	 * @param carriageReturnAsControlCharacter set <code>false</code> to exclude
+	 *                                         carriage return from control
+	 *                                         character interpretation
+	 * @see #setHandleControlCharacters(boolean)
+	 * @since 3.9
+	 */
+	public void setCarriageReturnAsControlCharacter(boolean carriageReturnAsControlCharacter) {
+		this.carriageReturnAsControlCharacter = carriageReturnAsControlCharacter;
+		// reset to update control character pattern
+		setHandleControlCharacters(isHandleControlCharacters());
 	}
 
 	/**
