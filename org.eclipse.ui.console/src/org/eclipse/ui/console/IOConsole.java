@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2018 IBM Corporation and others.
+ * Copyright (c) 2000, 2019 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -24,6 +24,7 @@ import java.util.Collections;
 import java.util.List;
 
 import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.jface.text.IDocument;
 import org.eclipse.ui.WorkbenchEncoding;
 import org.eclipse.ui.internal.console.IOConsolePage;
 import org.eclipse.ui.internal.console.IOConsolePartitioner;
@@ -42,7 +43,7 @@ public class IOConsole extends TextConsole {
 	/**
 	 * The document partitioner
 	 */
-	private IOConsolePartitioner partitioner;
+	private final IOConsolePartitioner partitioner;
 
 	/**
 	 * The stream from which user input may be read
@@ -52,12 +53,12 @@ public class IOConsole extends TextConsole {
 	/**
 	 * A collection of open streams connected to this console.
 	 */
-	private List<Closeable> openStreams = Collections.synchronizedList(new ArrayList<>());
+	private final List<Closeable> openStreams = Collections.synchronizedList(new ArrayList<>());
 
 	/**
 	 * The encoding used to for displaying console output.
 	 */
-	private Charset charset;
+	private final Charset charset;
 
 
 	/**
@@ -115,10 +116,11 @@ public class IOConsole extends TextConsole {
 			inputStream = new IOConsoleInputStream(this);
 			openStreams.add(inputStream);
 		}
-
-		if (inputStream instanceof IOConsoleInputStream) {
-			partitioner = new IOConsolePartitioner((IOConsoleInputStream) inputStream, this);
-			partitioner.connect(getDocument());
+		partitioner = new IOConsolePartitioner(this);
+		final IDocument document = getDocument();
+		if (document != null) {
+			partitioner.connect(document);
+			document.setDocumentPartitioner(partitioner);
 		}
 	}
 
@@ -174,6 +176,12 @@ public class IOConsole extends TextConsole {
 
 	/**
 	 * Returns the input stream connected to the keyboard.
+	 * <p>
+	 * Note: It returns the stream connected to keyboard. There is no guarantee to
+	 * get the stream last set with {@link #setInputStream(InputStream)}. The return
+	 * value might be <code>null</code> if the current input stream is not connected
+	 * to the keyboard.
+	 * </p>
 	 *
 	 * @return the input stream connected to the keyboard.
 	 */
@@ -283,9 +291,7 @@ public class IOConsole extends TextConsole {
 
 	@Override
 	public void clearConsole() {
-		if (partitioner != null) {
-			partitioner.clearBuffer();
-		}
+		partitioner.clearBuffer();
 	}
 
 	/**
@@ -293,28 +299,38 @@ public class IOConsole extends TextConsole {
 	 */
 	@Override
 	protected void dispose() {
-		super.dispose();
-		partitioner.disconnect();
-		//make a copy of the open streams and close them all
-		//a copy is needed as close the streams results in a callback that
-		//removes the streams from the openStreams collection (bug 152794)
-		List<Closeable> list = new ArrayList<>(openStreams);
-		for (Closeable closable : list) {
-			try {
-				closable.close();
-			} catch (IOException e) {
-				// e.printStackTrace();
+		// Get lock on ourself before closing. Closing streams check for console finish.
+		// Finish check need lock on (this) console. Since closing also lock on stream
+		// this can deadlock with other threads (double) closing streams at same time
+		// but already own a lock on console. (bug 551902)
+		// Long story short. Before closing IOConsole...Stream get lock from associated
+		// console to prevent deadlocks.
+		synchronized (this) {
+			// make a copy of the open streams and close them all
+			// a copy is needed as close the streams results in a callback that
+			// removes the streams from the openStreams collection (bug 152794)
+			List<Closeable> list = new ArrayList<>(openStreams);
+			for (Closeable closable : list) {
+				try {
+					closable.close();
+				} catch (IOException e) {
+					// e.printStackTrace();
+				}
 			}
+			inputStream = null;
 		}
-		inputStream = null;
+
+		final IDocument document = partitioner.getDocument();
+		document.setDocumentPartitioner(null);
+		partitioner.disconnect();
+
+		super.dispose();
 	}
 
 	/**
-	 * Returns the encoding for this console, or <code>null</code> to indicate
-	 * default encoding.
+	 * Returns the encoding for this console.
 	 *
-	 * @return the encoding set for this console, or <code>null</code> to indicate
-	 * 	default encoding
+	 * @return the encoding set for this console
 	 * @since 3.3
 	 */
 	public String getEncoding() {
@@ -322,11 +338,9 @@ public class IOConsole extends TextConsole {
 	}
 
 	/**
-	 * Returns the Charset for this console, or <code>null</code> to indicate
-	 * default encoding.
+	 * Returns the Charset for this console.
 	 *
-	 * @return the Charset for this console, or <code>null</code> to indicate
-	 *         default encoding
+	 * @return the Charset for this console
 	 * @since 3.7
 	 */
 	public Charset getCharset() {

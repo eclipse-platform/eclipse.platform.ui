@@ -160,7 +160,7 @@ public class IOConsolePartition implements ITypedRegion {
 	 */
 	private int getFontStyle() {
 		if (type.equals(INPUT_PARTITION_TYPE)) {
-			return inputStream.getFontStyle();
+			return inputStream != null ? inputStream.getFontStyle() : 0;
 		}
 		return outputStream.getFontStyle();
 	}
@@ -174,7 +174,7 @@ public class IOConsolePartition implements ITypedRegion {
 	 */
 	public Color getColor() {
 		if (type.equals(INPUT_PARTITION_TYPE)) {
-			return inputStream.getColor();
+			return inputStream != null ? inputStream.getColor() : null;
 		}
 		return outputStream.getColor();
 	}
