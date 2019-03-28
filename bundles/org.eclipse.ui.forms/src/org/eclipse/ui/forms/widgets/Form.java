@@ -282,6 +282,21 @@ public class Form extends Composite {
 	}
 
 	/**
+	 * Sets whether ther text in the title region should be selectable.
+	 * <p>
+	 * Note: If {@link #addTitleDragSupport(int, Transfer[], DragSourceListener)
+	 * drag support} is also enabled, text selection has priority. Dragging still
+	 * works in the non-text parts of the title area.
+	 *
+	 * @param selectable whether the title text should be selectable
+	 *
+	 * @since 3.8
+	 */
+	public void setTitleTextSelectable(boolean selectable) {
+		head.setTextSelectable(selectable);
+	}
+
+	/**
 	 * Sets the image to be rendered to the left of the title. This image will
 	 * be temporarily hidden in two cases:
 	 *

@@ -707,6 +707,19 @@ public class FormHeading extends Canvas {
 		titleRegion.setText(text);
 	}
 
+	/**
+	 * Sets whether ther text in the title region should be selectable.
+	 * <p>
+	 * Note: If {@link #addDragSupport(int, Transfer[], DragSourceListener) drag
+	 * support} is also enabled, text selection has priority. Dragging still works
+	 * in the non-text parts of the title area.
+	 *
+	 * @param selectable whether the title text should be selectable
+	 */
+	public void setTextSelectable(boolean selectable) {
+		titleRegion.setTextSelectable(selectable);
+	}
+
 	@Override
 	public void setFont(Font font) {
 		super.setFont(font);

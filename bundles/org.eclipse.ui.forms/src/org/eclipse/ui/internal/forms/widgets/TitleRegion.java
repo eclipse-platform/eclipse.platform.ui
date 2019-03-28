@@ -24,6 +24,7 @@ import org.eclipse.swt.dnd.DragSourceListener;
 import org.eclipse.swt.dnd.DropTarget;
 import org.eclipse.swt.dnd.DropTargetListener;
 import org.eclipse.swt.dnd.Transfer;
+import org.eclipse.swt.events.FocusListener;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.MouseMoveListener;
 import org.eclipse.swt.events.MouseTrackListener;
@@ -41,6 +42,7 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Layout;
 import org.eclipse.swt.widgets.Menu;
+import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.forms.IFormColors;
 import org.eclipse.ui.forms.widgets.ILayoutExtension;
 import org.eclipse.ui.forms.widgets.SizeCache;
@@ -62,7 +64,9 @@ public class TitleRegion extends Canvas {
 	private static final int ARC_HEIGHT = 20;
 	private Image image;
 	private BusyIndicator busyLabel;
+	private Control currentTitleControl;
 	private Label titleLabel;
+	private Text titleText;
 	private SizeCache titleCache;
 	private int fontHeight = -1;
 	private int fontBaselineHeight = -1;
@@ -149,19 +153,19 @@ public class TitleRegion extends Canvas {
 			}
 			if (menuManager != null) {
 				menuHyperlink.setVisible(!menuManager.isEmpty()
-						&& titleLabel.getVisible());
+						&& currentTitleControl.getVisible());
 				if (menuHyperlink.getVisible())
 					msize = menuHyperlink.computeSize(SWT.DEFAULT, SWT.DEFAULT);
 			}
 			if (flushCache)
 				titleCache.flush();
-			titleCache.setControl(titleLabel);
+			titleCache.setControl(currentTitleControl);
 			int twidth = iwidth == SWT.DEFAULT ? iwidth : iwidth - SPACING * 2;
 			if (bsize != null && twidth != SWT.DEFAULT)
 				twidth -= bsize.x + SPACING;
 			if (msize != null && twidth != SWT.DEFAULT)
 				twidth -= msize.x + SPACING;
-			if (titleLabel.getVisible()) {
+			if (currentTitleControl.getVisible()) {
 				tsize = titleCache.computeSize(twidth, SWT.DEFAULT);
 				if (twidth != SWT.DEFAULT) {
 					// correct for the case when width hint is larger
@@ -203,7 +207,7 @@ public class TitleRegion extends Canvas {
 							bsize.x, bsize.y);
 					xloc += bsize.x + SPACING;
 				}
-				if (titleLabel.getVisible()) {
+				if (currentTitleControl.getVisible()) {
 					int tw = width - HMARGIN * 2 - SPACING * 2;
 					String os = System.getProperty("os.name"); //$NON-NLS-1$
 					if (Constants.OS_LINUX.equalsIgnoreCase(os)) {
@@ -213,7 +217,7 @@ public class TitleRegion extends Canvas {
 						tw -= bsize.x + SPACING;
 					if (msize != null)
 						tw -= msize.x + SPACING;
-					titleLabel.setBounds(xloc,
+					currentTitleControl.setBounds(xloc,
 					// yloc + height / 2 - tsize.y / 2,
 							yloc, tw, tsize.y);
 					// System.out.println("tw="+tw); //$NON-NLS-1$
@@ -243,6 +247,12 @@ public class TitleRegion extends Canvas {
 		super(parent, SWT.NULL);
 		titleLabel = new Label(this, SWT.WRAP);
 		titleLabel.setVisible(false);
+		titleText = new Text(this, SWT.WRAP);
+		titleText.setCursor(getDisplay().getSystemCursor(SWT.CURSOR_IBEAM));
+		titleText.setEditable(false);
+		titleText.addFocusListener(FocusListener.focusLostAdapter(e -> titleText.setSelection(0)));
+		titleText.setVisible(false);
+		currentTitleControl = titleLabel;
 		titleCache = new SizeCache();
 		super.setLayout(new TitleRegionLayout());
 		hookHoverListeners();
@@ -305,6 +315,8 @@ public class TitleRegion extends Canvas {
 		Color color = getHoverBackground();
 		titleLabel.setBackground(color != null ? color
 				: getColor(FormHeading.COLOR_BASE_BG));
+		titleText.setBackground(color != null ? color
+				: getColor(FormHeading.COLOR_BASE_BG));
 		if (busyLabel != null)
 			busyLabel.setBackground(color != null ? color
 					: getColor(FormHeading.COLOR_BASE_BG));
@@ -363,6 +375,7 @@ public class TitleRegion extends Canvas {
 	public void setBackground(Color bg) {
 		super.setBackground(bg);
 		titleLabel.setBackground(bg);
+		titleText.setBackground(bg);
 		if (busyLabel != null)
 			busyLabel.setBackground(bg);
 		if (menuHyperlink != null)
@@ -373,14 +386,17 @@ public class TitleRegion extends Canvas {
 	public void setForeground(Color fg) {
 		super.setForeground(fg);
 		titleLabel.setForeground(fg);
+		titleText.setForeground(fg);
 		if (menuHyperlink != null)
 			menuHyperlink.setForeground(fg);
 	}
 
 	public void setText(String text) {
-		if (text != null)
+		if (text != null) {
 			titleLabel.setText(text);
-		titleLabel.setVisible(text != null);
+			titleText.setText(text);
+		}
+		currentTitleControl.setVisible(text != null);
 		layout();
 		redraw();
 	}
@@ -389,10 +405,34 @@ public class TitleRegion extends Canvas {
 		return titleLabel.getText();
 	}
 
+	/**
+	 * Sets whether ther text in the title region should be selectable.
+	 * <p>
+	 * Note: If {@link #addDragSupport(int, Transfer[], DragSourceListener) drag
+	 * support} is also enabled, text selection has priority. Dragging still works
+	 * in the non-text parts of the title area.
+	 *
+	 * @param selectable whether the title text should be selectable
+	 */
+	public void setTextSelectable(boolean selectable) {
+		if (selectable) {
+			this.titleText.setVisible(currentTitleControl.getVisible());
+			this.titleLabel.setVisible(false);
+			this.currentTitleControl = this.titleText;
+		} else {
+			this.titleLabel.setVisible(currentTitleControl.getVisible());
+			this.titleText.setVisible(false);
+			this.currentTitleControl = this.titleLabel;
+		}
+		layout();
+		redraw();
+	}
+
 	@Override
 	public void setFont(Font font) {
 		super.setFont(font);
 		titleLabel.setFont(font);
+		titleText.setFont(font);
 		fontHeight = -1;
 		fontBaselineHeight = -1;
 		layout();
@@ -491,6 +531,7 @@ public class TitleRegion extends Canvas {
 			Menu menu = menuManager.createContextMenu(this);
 			setMenu(menu);
 			titleLabel.setMenu(menu);
+			titleText.setMenu(menu);
 			if (busyLabel != null)
 				busyLabel.setMenu(menu);
 			createMenuHyperlink();

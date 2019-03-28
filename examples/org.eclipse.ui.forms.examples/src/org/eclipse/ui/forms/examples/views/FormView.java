@@ -16,6 +16,7 @@ import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
@@ -45,6 +46,7 @@ public class FormView extends ViewPart {
 	private ImageHyperlink ih;
 	private Button enableHyperlink;
 	private Button clearHyperlinkImage;
+	private boolean titleTextSelectable;
 	/**
 	 * The constructor.
 	 */
@@ -61,6 +63,7 @@ public class FormView extends ViewPart {
 		form.setText("Hello, Eclipse Forms");
 		TableWrapLayout layout = new TableWrapLayout();
 		form.getBody().setLayout(layout);
+		form.getForm().setTitleTextSelectable(titleTextSelectable);
 
 		Hyperlink link = toolkit.createHyperlink(form.getBody(), "Click here.",
 				SWT.WRAP);
@@ -75,6 +78,13 @@ public class FormView extends ViewPart {
 		TableWrapData td = new TableWrapData();
 		td.colspan = 2;
 		link.setLayoutData(td);
+		Button toggleTitleSelectable = toolkit.createButton(form.getBody(), "Toggle Title Text Selectable", SWT.NONE);
+		toggleTitleSelectable.setText("Toggle Title Text Selectable");
+		toggleTitleSelectable.addSelectionListener(SelectionListener.widgetSelectedAdapter(
+				e -> form.getForm().setTitleTextSelectable(titleTextSelectable = !titleTextSelectable)));
+		td = new TableWrapData(TableWrapData.FILL_GRAB);
+		td.colspan = 2;
+		toggleTitleSelectable.setLayoutData(td);
 		toolkit.createLabel(form.getBody(), "Text field label:");
 		Text text = toolkit.createText(form.getBody(), "");
 		td = new TableWrapData(TableWrapData.FILL_GRAB);
