@@ -758,9 +758,9 @@ public class SearchIndex implements IHelpSearchIndex {
 		}
 		Version luceneVersion = new Version(luceneVersionString);
 		Version indexVersion = new Version(indexVersionString);
-		Version v700 = new Version(7, 0, 0);
-		if (indexVersion.compareTo(v700) < 0) {
-			// index is older than Lucene 7.0.0
+		Version v800 = new Version(8, 0, 0);
+		if (indexVersion.compareTo(v800) < 0) {
+			// index is older than Lucene 8.0.0
 			return false;
 		}
 		if ( luceneVersion.compareTo(indexVersion) >= 0 ) {

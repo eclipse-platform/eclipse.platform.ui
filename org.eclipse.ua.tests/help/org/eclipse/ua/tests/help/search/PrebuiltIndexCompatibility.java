@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011, 2016 IBM Corporation and others.
+ * Copyright (c) 2011, 2019 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -86,7 +86,7 @@ public class PrebuiltIndexCompatibility {
 	/**
 	 * Test index built with Lucene 6.1.0
 	 */
-	@Test(expected = IllegalArgumentException.class)
+	@Test(expected = IndexFormatTooOldException.class)
 	public void test6_1_0_IndexUnReadable() throws Exception {
 		checkReadable("data/help/searchindex/index610");
 	}
@@ -94,9 +94,17 @@ public class PrebuiltIndexCompatibility {
 	/**
 	 * Test index built with Lucene 7.0.0
 	 */
-	@Test
-	public void test7_0_0_IndexReadable() throws Exception {
+	@Test(expected = IndexFormatTooOldException.class)
+	public void test7_0_0_IndexUnReadable() throws Exception {
 		checkReadable("data/help/searchindex/index700");
+	}
+
+	/**
+	 * Test index built with Lucene 8.0.0
+	 */
+	@Test
+	public void test8_0_0_IndexReadable() throws Exception {
+		checkReadable("data/help/searchindex/index800");
 	}
 
 	/**
@@ -138,7 +146,7 @@ public class PrebuiltIndexCompatibility {
 	 */
 	@Test
 	public void test7_0_0Compatible() {
-		checkCompatible("data/help/searchindex/index700", true);
+		checkCompatible("data/help/searchindex/index700", false);
 	}
 
 	@Test
@@ -171,7 +179,12 @@ public class PrebuiltIndexCompatibility {
 
 	@Test
 	public void test7_0_0LuceneCompatible() {
-		checkLuceneCompatible("7.0.0", true);
+		checkLuceneCompatible("7.0.0", false);
+	}
+
+	@Test
+	public void test8_0_0LuceneCompatible() {
+		checkLuceneCompatible("8.0.0", true);
 	}
 
 	@Test
@@ -227,7 +240,7 @@ public class PrebuiltIndexCompatibility {
 			try (Directory luceneDirectory = new NIOFSDirectory(new File(filePath).toPath())) {
 				searcher = new IndexSearcher(DirectoryReader.open(luceneDirectory));
 				TopDocs hits = searcher.search(luceneQuery, 500);
-				assertTrue(hits.totalHits >= 1);
+				assertTrue(hits.totalHits.value >= 1);
 			}
 		} else {
 			fail("Cannot resolve to file protocol");
@@ -263,5 +276,4 @@ public class PrebuiltIndexCompatibility {
 				index);
 		assertEquals(expected, index.isLuceneCompatible(version));
 	}
-
 }
