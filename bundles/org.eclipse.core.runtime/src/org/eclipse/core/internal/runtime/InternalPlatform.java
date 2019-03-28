@@ -228,7 +228,7 @@ public final class InternalPlatform {
 
 	public Bundle[] getBundles(String symbolicName, String versionRange) {
 		Map<String, String> directives = Collections.singletonMap(Namespace.REQUIREMENT_FILTER_DIRECTIVE,
-				getRequirementFilter(symbolicName, null));
+				getRequirementFilter(symbolicName, versionRange));
 		Collection<BundleCapability> matchingBundleCapabilities = fwkWiring.findProviders(ModuleContainer
 				.createRequirement(IdentityNamespace.IDENTITY_NAMESPACE, directives, Collections.emptyMap()));
 
@@ -239,9 +239,10 @@ public final class InternalPlatform {
 		Bundle[] results = matchingBundleCapabilities.stream().map(c -> c.getRevision().getBundle())
 				// Remove all the bundles that are installed or uninstalled
 				.filter(bundle -> (bundle.getState() & (Bundle.INSTALLED | Bundle.UNINSTALLED)) == 0)
+				.sorted((b1, b2) -> b2.getVersion().compareTo(b1.getVersion())) // highest version first
 				.toArray(Bundle[]::new);
 
-		return results;
+		return results.length > 0 ? results : null;
 	}
 
 	private String getRequirementFilter(String symbolicName, String versionRange) {
