@@ -570,9 +570,9 @@ public abstract class AbstractDebugView extends PageBookView implements IDebugVi
 
 	/**
 	 * @see IDebugView#getContextMenuManager()
+	 * @see AbstractDebugView.getContextMenuManagers()
 	 *
 	 * @deprecated
-	 * @see AbstractDebugView.getContextMenuManagers()
 	 */
 	@Deprecated
 	@Override
