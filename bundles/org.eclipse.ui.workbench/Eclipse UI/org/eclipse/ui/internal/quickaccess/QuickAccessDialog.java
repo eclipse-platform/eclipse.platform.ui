@@ -68,16 +68,16 @@ public class QuickAccessDialog extends PopupDialog {
 	private KeyAdapter keyAdapter;
 	private Text filterText;
 	private IWorkbenchWindow window;
-	private LinkedList previousPicksList = new LinkedList();
+	private LinkedList<QuickAccessElement> previousPicksList = new LinkedList<>();
 	private static final String TEXT_ARRAY = "textArray"; //$NON-NLS-1$
 	private static final String TEXT_ENTRIES = "textEntries"; //$NON-NLS-1$
 	private static final String ORDERED_PROVIDERS = "orderedProviders"; //$NON-NLS-1$
 	private static final String ORDERED_ELEMENTS = "orderedElements"; //$NON-NLS-1$
 	static final int MAXIMUM_NUMBER_OF_ELEMENTS = 60;
 	static final int MAXIMUM_NUMBER_OF_TEXT_ENTRIES_PER_ELEMENT = 3;
-	protected Map textMap = new HashMap();
-	protected Map elementMap = new HashMap();
-	protected Map providerMap;
+	protected Map<QuickAccessElement, ArrayList<String>> textMap = new HashMap<>();
+	protected Map<String, QuickAccessElement> elementMap = new HashMap<>();
+	protected Map<String, QuickAccessProvider> providerMap;
 
 	public QuickAccessDialog(final IWorkbenchWindow window, final Command invokingCommand) {
 		super(ProgressManagerUtil.getDefaultParent(), SWT.RESIZE, true, true, // persist
@@ -101,7 +101,7 @@ public class QuickAccessDialog extends PopupDialog {
 							new PerspectiveProvider(), commandProvider, new ActionProvider(),
 							new WizardProvider(), new PreferenceProvider(),
 							new PropertiesProvider() };
-					providerMap = new HashMap();
+					providerMap = new HashMap<>();
 					for (QuickAccessProvider provider : providers) {
 						providerMap.put(provider.getId(), provider);
 					}
@@ -132,7 +132,7 @@ public class QuickAccessDialog extends PopupDialog {
 						/**
 						 * @param element
 						 */
-						void addPreviousPick(String text, Object element) {
+						void addPreviousPick(String text, QuickAccessElement element) {
 							// previousPicksList:
 							// Remove element from previousPicksList so
 							// there are no duplicates
@@ -143,8 +143,8 @@ public class QuickAccessDialog extends PopupDialog {
 							// Add element to front of previousPicksList
 							previousPicksList.remove(element);
 							if (previousPicksList.size() == MAXIMUM_NUMBER_OF_ELEMENTS) {
-								Object removedElement = previousPicksList.removeLast();
-								ArrayList removedList = (ArrayList) textMap
+								QuickAccessElement removedElement = previousPicksList.removeLast();
+								ArrayList<String> removedList = textMap
 										.remove(removedElement);
 								for (int i = 0; i < removedList.size(); i++) {
 									elementMap.remove(removedList.get(i));
@@ -163,9 +163,9 @@ public class QuickAccessDialog extends PopupDialog {
 							// Remove text from elementMap
 							// Add rememberedText to list of strings for
 							// element in textMap
-							ArrayList textList = (ArrayList) textMap.get(element);
+							ArrayList<String> textList = textMap.get(element);
 							if (textList == null) {
-								textList = new ArrayList();
+								textList = new ArrayList<>();
 								textMap.put(element, textList);
 							}
 
@@ -185,7 +185,7 @@ public class QuickAccessDialog extends PopupDialog {
 								// PreviousPicksList
 								Object replacedElement = elementMap.put(text, element);
 								if (replacedElement != null && !replacedElement.equals(element)) {
-									textList = (ArrayList) textMap.get(replacedElement);
+									textList = textMap.get(replacedElement);
 									if (textList != null) {
 										textList.remove(text);
 										if (textList.isEmpty()) {
@@ -199,7 +199,7 @@ public class QuickAccessDialog extends PopupDialog {
 
 						@Override
 						protected QuickAccessElement getPerfectMatch(String filter) {
-							QuickAccessElement perfectMatch = (QuickAccessElement) elementMap
+							QuickAccessElement perfectMatch = elementMap
 									.get(filter);
 							return perfectMatch;
 						}
@@ -207,7 +207,7 @@ public class QuickAccessDialog extends PopupDialog {
 						@Override
 						protected void handleElementSelected(String text, Object selectedElement) {
 							if (selectedElement instanceof QuickAccessElement) {
-								addPreviousPick(text, selectedElement);
+								addPreviousPick(text, (QuickAccessElement) selectedElement);
 								storeDialog(getDialogSettings());
 
 								/*
@@ -353,17 +353,17 @@ public class QuickAccessDialog extends PopupDialog {
 		String[] orderedElements = new String[previousPicksList.size()];
 		String[] orderedProviders = new String[previousPicksList.size()];
 		String[] textEntries = new String[previousPicksList.size()];
-		ArrayList arrayList = new ArrayList();
+		ArrayList<String> arrayList = new ArrayList<>();
 		for (int i = 0; i < orderedElements.length; i++) {
-			QuickAccessElement quickAccessElement = (QuickAccessElement) previousPicksList.get(i);
-			ArrayList elementText = (ArrayList) textMap.get(quickAccessElement);
+			QuickAccessElement quickAccessElement = previousPicksList.get(i);
+			ArrayList<String> elementText = textMap.get(quickAccessElement);
 			Assert.isNotNull(elementText);
 			orderedElements[i] = quickAccessElement.getId();
 			orderedProviders[i] = quickAccessElement.getProvider().getId();
 			arrayList.addAll(elementText);
 			textEntries[i] = elementText.size() + ""; //$NON-NLS-1$
 		}
-		String[] textArray = (String[]) arrayList.toArray(new String[arrayList.size()]);
+		String[] textArray = arrayList.toArray(new String[arrayList.size()]);
 		dialogSettings.put(ORDERED_ELEMENTS, orderedElements);
 		dialogSettings.put(ORDERED_PROVIDERS, orderedProviders);
 		dialogSettings.put(TEXT_ENTRIES, textEntries);
@@ -377,21 +377,21 @@ public class QuickAccessDialog extends PopupDialog {
 			String[] orderedProviders = dialogSettings.getArray(ORDERED_PROVIDERS);
 			String[] textEntries = dialogSettings.getArray(TEXT_ENTRIES);
 			String[] textArray = dialogSettings.getArray(TEXT_ARRAY);
-			elementMap = new HashMap();
-			textMap = new HashMap();
-			previousPicksList = new LinkedList();
+			elementMap = new HashMap<>();
+			textMap = new HashMap<>();
+			previousPicksList = new LinkedList<>();
 			if (orderedElements != null && orderedProviders != null && textEntries != null
 					&& textArray != null) {
 				int arrayIndex = 0;
 				for (int i = 0; i < orderedElements.length; i++) {
-					QuickAccessProvider quickAccessProvider = (QuickAccessProvider) providerMap
+					QuickAccessProvider quickAccessProvider = providerMap
 							.get(orderedProviders[i]);
 					int numTexts = Integer.parseInt(textEntries[i]);
 					if (quickAccessProvider != null) {
 						QuickAccessElement quickAccessElement = quickAccessProvider
 								.getElementForId(orderedElements[i]);
 						if (quickAccessElement != null) {
-							ArrayList arrayList = new ArrayList();
+							ArrayList<String> arrayList = new ArrayList<>();
 							for (int j = arrayIndex; j < arrayIndex + numTexts; j++) {
 								String text = textArray[j];
 								// text length can be zero for old workspaces,
