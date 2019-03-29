@@ -534,7 +534,7 @@ public interface IPlatformConfiguration {
 	 * @see IPlatformConfiguration#getBootstrapPluginIdentifiers()
 	 * @param id plugin identifier. Must match one of the entries returned
 	 * by getBootstrapPluginIdentifiers()
-	 * @param location
+	 * @param location Location of the bootstrap plugin.
 	 * @since 2.0
 	 * @deprecated Do not use this method. Use the osig.bundles system property contains
 	 * the urls of the automatically started bundles.
