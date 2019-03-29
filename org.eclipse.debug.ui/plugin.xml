@@ -3316,4 +3316,16 @@ M4 = Platform-specific fourth key
          </enablement>
       </decorator>
    </extension>
+   <extension
+         point="org.eclipse.ui.quickAccess">
+      <computer
+            class="org.eclipse.debug.internal.ui.quickaccess.RunQuickAccessComputer"
+            name="%RunDropDownAction.label"/>
+      <computer
+            class="org.eclipse.debug.internal.ui.quickaccess.DebugQuickAccessComputer"
+            name="%DebugDropDownAction.label"/>
+      <computer
+            class="org.eclipse.debug.internal.ui.quickaccess.ProfileQuickAccessComputer"
+            name="%ProfileDropDownAction.label"/>
+   </extension>
 </plugin>
