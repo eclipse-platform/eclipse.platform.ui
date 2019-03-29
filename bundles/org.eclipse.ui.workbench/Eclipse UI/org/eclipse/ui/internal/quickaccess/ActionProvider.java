@@ -28,6 +28,8 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.IWorkbenchGraphicConstants;
 import org.eclipse.ui.internal.WorkbenchImages;
 import org.eclipse.ui.internal.WorkbenchWindow;
+import org.eclipse.ui.quickaccess.QuickAccessElement;
+import org.eclipse.ui.quickaccess.QuickAccessProvider;
 
 /**
  * @since 3.3

@@ -34,6 +34,8 @@ import org.eclipse.ui.commands.ICommandService;
 import org.eclipse.ui.handlers.IHandlerService;
 import org.eclipse.ui.internal.IWorkbenchGraphicConstants;
 import org.eclipse.ui.internal.WorkbenchImages;
+import org.eclipse.ui.quickaccess.QuickAccessElement;
+import org.eclipse.ui.quickaccess.QuickAccessProvider;
 
 /**
  * @since 3.3

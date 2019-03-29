@@ -31,6 +31,7 @@ import org.eclipse.ui.internal.keys.BindingService;
 import org.eclipse.ui.internal.menus.CommandMessages;
 import org.eclipse.ui.internal.misc.StatusUtil;
 import org.eclipse.ui.keys.IBindingService;
+import org.eclipse.ui.quickaccess.QuickAccessElement;
 import org.eclipse.ui.statushandlers.StatusManager;
 
 /**

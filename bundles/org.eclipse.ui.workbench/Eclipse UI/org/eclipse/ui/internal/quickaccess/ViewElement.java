@@ -30,6 +30,8 @@ import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.e4.compatibility.CompatibilityPart;
+import org.eclipse.ui.quickaccess.QuickAccessElement;
+import org.eclipse.ui.quickaccess.QuickAccessProvider;
 
 /**
  * @since 3.3

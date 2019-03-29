@@ -29,6 +29,8 @@ import org.eclipse.ui.internal.IWorkbenchGraphicConstants;
 import org.eclipse.ui.internal.WorkbenchImages;
 import org.eclipse.ui.internal.e4.compatibility.CompatibilityEditor;
 import org.eclipse.ui.internal.e4.compatibility.CompatibilityPart;
+import org.eclipse.ui.quickaccess.QuickAccessElement;
+import org.eclipse.ui.quickaccess.QuickAccessProvider;
 import org.eclipse.ui.views.IViewDescriptor;
 import org.eclipse.ui.views.IViewRegistry;
 

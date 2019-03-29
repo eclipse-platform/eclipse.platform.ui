@@ -12,15 +12,16 @@
  *     IBM Corporation - initial API and implementation
  *     Patrik Suzzi <psuzzi@gmail.com> - Bug 500661, 492180
  *******************************************************************************/
-
-package org.eclipse.ui.internal.quickaccess;
+package org.eclipse.ui.quickaccess;
 
 
 import org.eclipse.jface.resource.ImageDescriptor;
 
 /**
- * @since 3.3
+ * A QuickAccessElement describes one of the possible actions to show in Quick
+ * Access.
  *
+ * @since 3.114
  */
 public abstract class QuickAccessElement {
 
@@ -91,11 +92,16 @@ public abstract class QuickAccessElement {
 	/**
 	 * @return Returns the provider.
 	 */
-	public QuickAccessProvider getProvider() {
+	public final QuickAccessProvider getProvider() {
 		return provider;
 	}
 
-	final QuickAccessMatcher getMatcher() {
+	/**
+	 *
+	 * @return the matcher
+	 * @noreference This method is not intended to be referenced by clients.
+	 */
+	public final QuickAccessMatcher getMatcher() {
 		return matcher;
 	}
 }

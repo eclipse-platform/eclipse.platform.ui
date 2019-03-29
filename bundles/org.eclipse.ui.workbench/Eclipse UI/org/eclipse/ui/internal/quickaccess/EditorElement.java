@@ -20,6 +20,7 @@ import org.eclipse.ui.IEditorReference;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.quickaccess.QuickAccessElement;
 
 /**
  * @since 3.3

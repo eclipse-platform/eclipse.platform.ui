@@ -1,10 +1,33 @@
-package org.eclipse.ui.internal.quickaccess;
+/*******************************************************************************
+ * Copyright (c) 2019 Red Hat Inc. and others.
+ *
+ * This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License 2.0
+ * which accompanies this distribution, and is available at
+ * https://www.eclipse.org/legal/epl-2.0/
+ *
+ * SPDX-License-Identifier: EPL-2.0
+ *
+ * Contributors:
+ * - Mickael Istria (Red Hat Inc.) - extract from QuickAccessElement
+ *******************************************************************************/
+
+package org.eclipse.ui.quickaccess;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
+import org.eclipse.ui.internal.quickaccess.CamelUtil;
+import org.eclipse.ui.internal.quickaccess.QuickAccessEntry;
 
-class QuickAccessMatcher {
+/**
+ * QuickAccessMatch contains the logic to check whether a given
+ * {@link QuickAccessElement} matches a input user request.
+ *
+ * @since 3.114
+ * @noreference This class is not intended to be referenced by clients.
+ */
+public final class QuickAccessMatcher {
 
 	private final QuickAccessElement element;
 
@@ -104,6 +127,7 @@ class QuickAccessMatcher {
 	 * @param filter              filter for matching
 	 * @param providerForMatching the provider that will own the entry
 	 * @return a quick access entry or <code>null</code>
+	 * @noreference This method is not intended to be referenced by clients.
 	 */
 	public QuickAccessEntry match(String filter, QuickAccessProvider providerForMatching) {
 		String matchLabel = element.getMatchLabel();

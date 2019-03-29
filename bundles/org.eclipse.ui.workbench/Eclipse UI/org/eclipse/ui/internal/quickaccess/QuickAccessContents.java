@@ -68,6 +68,8 @@ import org.eclipse.ui.internal.IWorkbenchGraphicConstants;
 import org.eclipse.ui.internal.WorkbenchImages;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.keys.IBindingService;
+import org.eclipse.ui.quickaccess.QuickAccessElement;
+import org.eclipse.ui.quickaccess.QuickAccessProvider;
 import org.eclipse.ui.themes.ColorUtil;
 
 

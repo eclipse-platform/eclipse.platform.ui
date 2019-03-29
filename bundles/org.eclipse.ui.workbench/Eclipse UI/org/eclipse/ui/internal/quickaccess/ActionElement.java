@@ -18,6 +18,7 @@ import org.eclipse.jface.action.ActionContributionItem;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.LegacyActionTools;
 import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.ui.quickaccess.QuickAccessElement;
 
 /**
  * @since 3.3

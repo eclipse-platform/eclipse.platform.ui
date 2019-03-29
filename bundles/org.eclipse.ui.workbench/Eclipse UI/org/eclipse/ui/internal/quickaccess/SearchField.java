@@ -98,6 +98,8 @@ import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.keys.IBindingService;
 import org.eclipse.ui.progress.UIJob;
 import org.eclipse.ui.progress.WorkbenchJob;
+import org.eclipse.ui.quickaccess.QuickAccessElement;
+import org.eclipse.ui.quickaccess.QuickAccessProvider;
 import org.eclipse.ui.swt.IFocusService;
 
 

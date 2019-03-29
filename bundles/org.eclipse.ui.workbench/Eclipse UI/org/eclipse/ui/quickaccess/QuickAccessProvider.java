@@ -11,15 +11,15 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-
-package org.eclipse.ui.internal.quickaccess;
+package org.eclipse.ui.quickaccess;
 
 import java.util.Arrays;
 import org.eclipse.jface.resource.ImageDescriptor;
 
 /**
- * @since 3.3
+ * Returns {@link QuickAccessElement}s. It implements a cache by default.
  *
+ * @since 3.114
  */
 public abstract class QuickAccessProvider {
 
@@ -87,6 +87,10 @@ public abstract class QuickAccessProvider {
 		return false;
 	}
 
+	/**
+	 * Resets the cache, so next invocation of {@link #getElements()} and related
+	 * method will retrigger computation of elements.
+	 */
 	public final void reset() {
 		sortedElements = null;
 		doReset();

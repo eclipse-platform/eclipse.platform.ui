@@ -33,6 +33,8 @@ import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.ui.internal.IWorkbenchGraphicConstants;
 import org.eclipse.ui.internal.WorkbenchImages;
 import org.eclipse.ui.internal.WorkbenchPlugin;
+import org.eclipse.ui.quickaccess.QuickAccessElement;
+import org.eclipse.ui.quickaccess.QuickAccessProvider;
 
 /**
  *
@@ -110,7 +112,7 @@ public class QuickAccessEntry {
 	 *            {@link #MATCH_EXCELLENT}, {@link #MATCH_GOOD},
 	 *            {@link #MATCH_PARTIAL}
 	 */
-	QuickAccessEntry(QuickAccessElement element, QuickAccessProvider provider,
+	public QuickAccessEntry(QuickAccessElement element, QuickAccessProvider provider,
 			int[][] elementMatchRegions, int[][] providerMatchRegions, int matchQuality) {
 		this.element = element;
 		this.provider = provider;

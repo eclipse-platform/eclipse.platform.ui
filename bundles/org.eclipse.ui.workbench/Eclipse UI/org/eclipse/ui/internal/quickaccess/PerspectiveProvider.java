@@ -23,6 +23,8 @@ import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.activities.WorkbenchActivityHelper;
 import org.eclipse.ui.internal.WorkbenchImages;
+import org.eclipse.ui.quickaccess.QuickAccessElement;
+import org.eclipse.ui.quickaccess.QuickAccessProvider;
 
 /**
  * @since 3.3

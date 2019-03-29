@@ -18,6 +18,7 @@ import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.actions.NewWizardShortcutAction;
+import org.eclipse.ui.quickaccess.QuickAccessElement;
 import org.eclipse.ui.wizards.IWizardDescriptor;
 
 /**

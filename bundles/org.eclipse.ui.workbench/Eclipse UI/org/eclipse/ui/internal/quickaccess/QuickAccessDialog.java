@@ -53,6 +53,8 @@ import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.WorkbenchWindow;
 import org.eclipse.ui.internal.progress.ProgressManagerUtil;
 import org.eclipse.ui.keys.IBindingService;
+import org.eclipse.ui.quickaccess.QuickAccessElement;
+import org.eclipse.ui.quickaccess.QuickAccessProvider;
 
 /**
  * This is the quick access popup dialog used in 3.x. The new quick access is

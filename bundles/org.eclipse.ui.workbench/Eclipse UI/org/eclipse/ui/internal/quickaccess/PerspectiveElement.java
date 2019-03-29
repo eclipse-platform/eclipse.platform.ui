@@ -26,6 +26,7 @@ import org.eclipse.ui.WorkbenchException;
 import org.eclipse.ui.internal.Workbench;
 import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.WorkbenchPlugin;
+import org.eclipse.ui.quickaccess.QuickAccessElement;
 import org.eclipse.ui.statushandlers.StatusManager;
 
 /**

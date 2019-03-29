@@ -25,6 +25,8 @@ import org.eclipse.ui.activities.WorkbenchActivityHelper;
 import org.eclipse.ui.internal.IWorkbenchGraphicConstants;
 import org.eclipse.ui.internal.WorkbenchImages;
 import org.eclipse.ui.internal.WorkbenchPlugin;
+import org.eclipse.ui.quickaccess.QuickAccessElement;
+import org.eclipse.ui.quickaccess.QuickAccessProvider;
 import org.eclipse.ui.wizards.IWizardCategory;
 import org.eclipse.ui.wizards.IWizardDescriptor;
 

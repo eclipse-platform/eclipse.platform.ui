@@ -21,6 +21,7 @@ import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.dialogs.WorkbenchPreferenceDialog;
 import org.eclipse.ui.internal.preferences.WorkbenchPreferenceExtensionNode;
+import org.eclipse.ui.quickaccess.QuickAccessElement;
 
 /**
  * @since 3.3

@@ -20,6 +20,7 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.dialogs.PropertyDialog;
+import org.eclipse.ui.quickaccess.QuickAccessElement;
 
 /**
  * @since 3.3
