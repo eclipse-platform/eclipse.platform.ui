@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2019 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -66,7 +66,7 @@ public class RefactoringTickProvider {
 	 * Sum of <code>getCheckConditionsTicks</code>, <code>getCreateChangeTicks</code>
 	 * and <code>getInitializeChangeTicks</code>.
 	 *
-	 * @return the number of ticks, >= 0
+	 * @return the number of ticks, &gt;= 0
 	 */
 	public int getAllTicks() {
 		return getCheckAllConditionsTicks() + fValues[CREATE_CHANGE] + fValues[INITIALIZE_CHANGE];
@@ -76,7 +76,7 @@ public class RefactoringTickProvider {
 	 * Sum of <code>getCheckInitialConditionsTicks()</code> and
 	 * <code>getCheckFinalConditionsTicks</code>
 	 *
-	 * @return the number of ticks, >= 0
+	 * @return the number of ticks, &gt;= 0
 	 */
 	public int getCheckAllConditionsTicks() {
 		return fValues[CHECK_INITIAL_CONDITIONS] + fValues[CHECK_FINAL_CONDITIONS];
@@ -86,7 +86,7 @@ public class RefactoringTickProvider {
 	 * Number of ticks reserved in the parent progress monitor of the progress monitor
 	 * passed to <code>Refactoring#checkInitialConditions()</code>.
 	 *
-	 * @return the number of ticks, >= 0
+	 * @return the number of ticks, &gt;= 0
 	 */
 	public int getCheckInitialConditionsTicks() {
 		return fValues[CHECK_INITIAL_CONDITIONS];
@@ -96,7 +96,7 @@ public class RefactoringTickProvider {
 	 * Number of ticks reserved in the parent progress monitor of the progress monitor
 	 * passed to <code>Refactoring#checkFinalConditions()</code>.
 	 *
-	 * @return the number of ticks, >= 0
+	 * @return the number of ticks, &gt;= 0
 	 */
 	public int getCheckFinalConditionsTicks() {
 		return fValues[CHECK_FINAL_CONDITIONS];
@@ -106,7 +106,7 @@ public class RefactoringTickProvider {
 	 * Number of ticks reserved in the parent progress monitor of the progress monitor
 	 * passed to <code>Refactoring#createChange()</code>.
 	 *
-	 * @return the number of ticks, >= 0
+	 * @return the number of ticks, &gt;= 0
 	 */
 	public int getCreateChangeTicks() {
 		return fValues[CREATE_CHANGE];
@@ -117,7 +117,7 @@ public class RefactoringTickProvider {
 	 * passed to <code>{@link Change#initializeValidationData(IProgressMonitor)}</code>
 	 * which is executed on the object returned by <code>Refactoring#createChange()</code>.
 	 *
-	 * @return the number of ticks, >= 0
+	 * @return the number of ticks, &gt;= 0
 	 */
 	public int getInitializeChangeTicks() {
 		return fValues[INITIALIZE_CHANGE];
