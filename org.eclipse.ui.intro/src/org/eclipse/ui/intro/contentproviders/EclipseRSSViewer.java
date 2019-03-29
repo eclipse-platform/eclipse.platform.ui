@@ -129,8 +129,12 @@ public class EclipseRSSViewer implements IIntroContentProvider {
 
 	/**
 	 * Create the html content for this newsreader
+	 *
 	 * @param id
-	 * @param out a writer where the html will be written
+	 *            the unique identifier of the content element. The same content provider class can
+	 *            be reused for several elements and the id can be used to tell them apart.
+	 * @param out
+	 *            a writer where the html will be written
 	 */
 	@Override
 	public void createContent(String id, PrintWriter out) {
