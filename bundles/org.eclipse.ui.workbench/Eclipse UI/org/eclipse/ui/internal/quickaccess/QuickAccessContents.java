@@ -507,7 +507,7 @@ public abstract class QuickAccessContents {
 								entry = null;
 							}
 						} else {
-							QuickAccessEntry possibleMatch = element.match(filter, provider);
+							QuickAccessEntry possibleMatch = element.getMatcher().match(filter, provider);
 							if (possibleMatch != null) {
 								entry = possibleMatch;
 							}
@@ -540,7 +540,7 @@ public abstract class QuickAccessContents {
 		} while ((showAllMatches || countTotal < maxCount) && !done);
 
 		if (!perfectMatchAdded) {
-			QuickAccessEntry entry = perfectMatch.match(filter, providers[0]);
+			QuickAccessEntry entry = perfectMatch.getMatcher().match(filter, providers[0]);
 			if (entryEnabled(providers[0], entry)) {
 				if (entries[0] == null) {
 					entries[0] = new ArrayList<>();

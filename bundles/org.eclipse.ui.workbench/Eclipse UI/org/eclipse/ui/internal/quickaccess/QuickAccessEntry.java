@@ -34,7 +34,12 @@ import org.eclipse.ui.internal.IWorkbenchGraphicConstants;
 import org.eclipse.ui.internal.WorkbenchImages;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 
-class QuickAccessEntry {
+/**
+ *
+ * @since 3.5
+ *
+ */
+public class QuickAccessEntry {
 	boolean firstInCategory;
 	boolean lastInCategory;
 	QuickAccessElement element;

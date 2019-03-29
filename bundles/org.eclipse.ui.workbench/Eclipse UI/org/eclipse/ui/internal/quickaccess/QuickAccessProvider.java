@@ -69,17 +69,35 @@ public abstract class QuickAccessProvider {
 	 *            the ID of an element
 	 * @return the element with the given ID, or null if not found.
 	 */
-	public abstract QuickAccessElement getElementForId(String id);
+	public QuickAccessElement getElementForId(String id) {
+		if (id == null) {
+			return null;
+		}
+		if (sortedElements != null) {
+			for (QuickAccessElement element : sortedElements) {
+				if (id.equals(element.getId())) {
+					return element;
+				}
+			}
+		}
+		return null;
+	}
 
 	public boolean isAlwaysPresent() {
 		return false;
 	}
 
-	public void reset() {
+	public final void reset() {
 		sortedElements = null;
 		doReset();
 	}
 
+	/**
+	 * Additional operations to reset cache.
+	 *
+	 * @noreference This method is not intended to be referenced by clients. Use
+	 *              {@link #reset()} instead.
+	 */
 	protected abstract void doReset();
 
 	/**
