@@ -182,17 +182,23 @@ public class SearchField {
 		hookUpSelectAll();
 
 		final CommandProvider commandProvider = new CommandProvider();
-		QuickAccessProvider[] providers = new QuickAccessProvider[] {
-				new PreviousPicksProvider(previousPicksList),
-				new EditorProvider(), new ViewProvider(application, window),
-				new PerspectiveProvider(), commandProvider, new ActionProvider(),
-				new WizardProvider(), new PreferenceProvider(), new PropertiesProvider() };
+		List<QuickAccessProvider> providers = new ArrayList<>();
+		providers.add(new PreviousPicksProvider(previousPicksList));
+		providers.add(new EditorProvider());
+		providers.add(new ViewProvider(application, window));
+		providers.add(new PerspectiveProvider());
+		providers.add(commandProvider);
+		providers.add(new ActionProvider());
+		providers.add(new WizardProvider());
+		providers.add(new PreferenceProvider());
+		providers.add(new PropertiesProvider());
+		providers.addAll(QuickAccessExtensionManager.getProviders());
 		for (QuickAccessProvider provider : providers) {
 			providerMap.put(provider.getId(), provider);
 		}
 		restoreDialog();
 
-		quickAccessContents = new QuickAccessContents(providers) {
+		quickAccessContents = new QuickAccessContents(providers.toArray(new QuickAccessProvider[providers.size()])) {
 
 			@Override
 			protected void updateFeedback(boolean filterTextEmpty, boolean showAllMatches) {

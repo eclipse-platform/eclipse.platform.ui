@@ -50,6 +50,7 @@
    <extension-point id="internalTweaklets" name="%ExtPoint.tweaklets" schema="schema/internalTweaklets.exsd"/>
    <extension-point id="installationPages" name="%ExtPoint.installationPages" schema="schema/installationPages.exsd"/>
    <extension-point id="propertiesView" name="%ExtPoint.propertiesView" schema="schema/propertiesView.exsd"/>
+   <extension-point id="quickAccess" name="%ExtPoint.quickAccess" schema="schema/quickAccess.exsd"/>
    
    <extension
          point="org.eclipse.ui.contexts">

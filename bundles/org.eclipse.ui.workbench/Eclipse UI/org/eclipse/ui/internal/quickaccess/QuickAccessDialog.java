@@ -19,6 +19,7 @@ package org.eclipse.ui.internal.quickaccess;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 import org.eclipse.core.commands.Command;
 import org.eclipse.core.runtime.Adapters;
@@ -96,18 +97,23 @@ public class QuickAccessDialog extends PopupDialog {
 					final CommandProvider commandProvider = new CommandProvider();
 					commandProvider.setSnapshot(new ExpressionContext(model.getContext()
 							.getActiveLeaf()));
-					QuickAccessProvider[] providers = new QuickAccessProvider[] {
-							new PreviousPicksProvider(previousPicksList),
-							new EditorProvider(),
-							new ViewProvider(model.getContext().get(MApplication.class), model),
-							new PerspectiveProvider(), commandProvider, new ActionProvider(),
-							new WizardProvider(), new PreferenceProvider(),
-							new PropertiesProvider() };
+					List<QuickAccessProvider> providers = new ArrayList<>();
+					providers.add(new PreviousPicksProvider(previousPicksList));
+					providers.add(new EditorProvider());
+					providers.add(new ViewProvider(model.getContext().get(MApplication.class), model));
+					providers.add(new PerspectiveProvider());
+					providers.add(commandProvider);
+					providers.add(new ActionProvider());
+					providers.add(new WizardProvider());
+					providers.add(new PreferenceProvider());
+					providers.add(new PropertiesProvider());
+					providers.addAll(QuickAccessExtensionManager.getProviders());
 					providerMap = new HashMap<>();
 					for (QuickAccessProvider provider : providers) {
 						providerMap.put(provider.getId(), provider);
 					}
-					QuickAccessDialog.this.contents = new QuickAccessContents(providers) {
+					QuickAccessDialog.this.contents = new QuickAccessContents(
+							providers.toArray(new QuickAccessProvider[providers.size()])) {
 						@Override
 						protected void updateFeedback(boolean filterTextEmpty,
 								boolean showAllMatches) {
