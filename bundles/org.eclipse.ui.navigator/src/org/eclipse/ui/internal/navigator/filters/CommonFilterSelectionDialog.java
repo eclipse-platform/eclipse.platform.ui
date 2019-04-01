@@ -120,11 +120,13 @@ public class CommonFilterSelectionDialog extends TrayDialog {
 				CommonNavigatorMessages.CommonFilterSelectionDialog_Available_Filters,
 				commonFiltersTab, FILTER_ICON);
 
-		this.userFiltersTab = new UserFiltersTab(customizationsTabFolder, this.commonViewer);
-		createTabItem(
-				customizationsTabFolder,
-				CommonNavigatorMessages.CommonFilterSelectionDialog_User_Resource_Filters,
-				userFiltersTab, FILTER_ICON);
+		if (contentService.getViewerDescriptor()
+				.isVisibleContentExtension("org.eclipse.ui.navigator.resourceContent")) { //$NON-NLS-1$
+			this.userFiltersTab = new UserFiltersTab(customizationsTabFolder, this.commonViewer);
+			createTabItem(customizationsTabFolder,
+					CommonNavigatorMessages.CommonFilterSelectionDialog_User_Resource_Filters, userFiltersTab,
+					FILTER_ICON);
+		}
 
 		boolean hideExtensionsTab = contentService.getViewerDescriptor()
 				.getBooleanConfigProperty(
