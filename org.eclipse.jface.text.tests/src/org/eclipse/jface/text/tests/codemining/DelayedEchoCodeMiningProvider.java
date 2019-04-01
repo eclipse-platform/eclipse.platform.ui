@@ -11,7 +11,7 @@
  * Contributors:
  * - Mickael Istria (Red Hat Inc.) - initial implementation
  *******************************************************************************/
-package org.eclipse.jface.text.tests;
+package org.eclipse.jface.text.tests.codemining;
 
 import java.util.ArrayList;
 import java.util.List;

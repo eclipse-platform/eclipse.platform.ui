@@ -17,7 +17,7 @@ import org.junit.rules.TestWatcher;
 
 import org.eclipse.test.Screenshots;
 
-final class ScreenshotOnFailureRule extends TestWatcher {
+public final class ScreenshotOnFailureRule extends TestWatcher {
 	@Override
 	protected void failed(Throwable e, org.junit.runner.Description description) {
 		Screenshots.takeScreenshot(description.getTestClass(), description.getMethodName());

@@ -22,8 +22,10 @@ import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.GC;
 
+import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.ITextViewerExtension5;
 import org.eclipse.jface.text.Position;
+import org.eclipse.jface.text.Region;
 import org.eclipse.jface.text.source.Annotation;
 import org.eclipse.jface.text.source.ISourceViewer;
 
@@ -72,11 +74,21 @@ public abstract class AbstractInlinedAnnotation extends Annotation {
 	}
 
 	/**
-	 * Returns the position where the annotation must be drawn.
+	 * Returns the position where the annotation must be drawn. For {@link ITextViewerExtension5}
+	 * (enabling folding with widget/model projection), this position is the <strong>model</strong>
+	 * position.
 	 *
-	 * @return the position where the annotation must be drawn.
+	 * @return the model position where the annotation must be drawn.
 	 */
 	public Position getPosition() {
+		return position;
+	}
+
+	final Position computeWidgetPosition() {
+		if (fViewer instanceof ITextViewerExtension5) {
+			IRegion region= ((ITextViewerExtension5) fViewer).modelRange2WidgetRange(new Region(position.getOffset(), position.getLength()));
+			return new Position(region.getOffset(), region.getLength());
+		}
 		return position;
 	}
 

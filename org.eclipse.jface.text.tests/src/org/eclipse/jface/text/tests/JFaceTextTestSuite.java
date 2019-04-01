@@ -17,6 +17,8 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
 
+import org.eclipse.jface.text.tests.codemining.CodeMiningTest;
+import org.eclipse.jface.text.tests.codemining.CodeMiningProjectionViewerTest;
 import org.eclipse.jface.text.tests.contentassist.AsyncContentAssistTest;
 import org.eclipse.jface.text.tests.reconciler.AbstractReconcilerTest;
 import org.eclipse.jface.text.tests.rules.DefaultPartitionerTest;
@@ -55,7 +57,8 @@ import org.eclipse.jface.text.tests.templates.persistence.TemplatePersistenceDat
 		WordRuleTest.class,
 
 		TemplatePersistenceDataTest.class,
-		CodeMiningTest.class
+		CodeMiningTest.class,
+		CodeMiningProjectionViewerTest.class
 })
 public class JFaceTextTestSuite {
 	// see @SuiteClasses

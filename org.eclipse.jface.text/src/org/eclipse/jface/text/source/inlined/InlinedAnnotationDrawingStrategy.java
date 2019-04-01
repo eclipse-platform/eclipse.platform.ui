@@ -32,7 +32,7 @@ import org.eclipse.jface.text.source.AnnotationPainter.IDrawingStrategy;
 class InlinedAnnotationDrawingStrategy implements IDrawingStrategy {
 
 	@Override
-	public void draw(Annotation annotation, GC gc, StyledText textWidget, int offset, int length, Color color) {
+	public void draw(Annotation annotation, GC gc, StyledText textWidget, int widgetoffset, int length, Color color) {
 		if (!(annotation instanceof AbstractInlinedAnnotation)) {
 			return;
 		}
@@ -40,7 +40,7 @@ class InlinedAnnotationDrawingStrategy implements IDrawingStrategy {
 			// The annotation is not in visible lines, don't draw it.
 			return;
 		}
-		draw((AbstractInlinedAnnotation) annotation, gc, textWidget, offset, length,
+		draw((AbstractInlinedAnnotation) annotation, gc, textWidget, widgetoffset, length,
 				color);
 	}
 
@@ -50,16 +50,16 @@ class InlinedAnnotationDrawingStrategy implements IDrawingStrategy {
 	 * @param annotation the annotation to be drawn
 	 * @param gc the graphics context, <code>null</code> when in clearing mode
 	 * @param textWidget the text widget to draw on
-	 * @param offset the offset of the line
+	 * @param widgetOffset the offset of the line
 	 * @param length the length of the line
 	 * @param color the color of the line
 	 */
-	public static void draw(AbstractInlinedAnnotation annotation, GC gc, StyledText textWidget, int offset, int length,
+	public static void draw(AbstractInlinedAnnotation annotation, GC gc, StyledText textWidget, int widgetOffset, int length,
 			Color color) {
 		if (annotation instanceof LineHeaderAnnotation) {
-			draw((LineHeaderAnnotation) annotation, gc, textWidget, offset, length, color);
+			draw((LineHeaderAnnotation) annotation, gc, textWidget, widgetOffset, length, color);
 		} else {
-			draw((LineContentAnnotation) annotation, gc, textWidget, offset, length, color);
+			draw((LineContentAnnotation) annotation, gc, textWidget, widgetOffset, length, color);
 		}
 	}
 
@@ -125,16 +125,16 @@ class InlinedAnnotationDrawingStrategy implements IDrawingStrategy {
 	 * @param annotation the annotation to be drawn
 	 * @param gc the graphics context, <code>null</code> when in clearing mode
 	 * @param textWidget the text widget to draw on
-	 * @param offset the offset of the line
+	 * @param widgetOffset the offset of the line in the widget (not model)
 	 * @param length the length of the line
 	 * @param color the color of the line
 	 */
-	private static void draw(LineContentAnnotation annotation, GC gc, StyledText textWidget, int offset, int length,
+	private static void draw(LineContentAnnotation annotation, GC gc, StyledText textWidget, int widgetOffset, int length,
 			Color color) {
-		if (annotation.drawRightToPreviousChar(offset)) {
-			drawAsRightOfPreviousCharacter(annotation, gc, textWidget, offset, length, color);
+		if (annotation.drawRightToPreviousChar(widgetOffset)) {
+			drawAsRightOfPreviousCharacter(annotation, gc, textWidget, widgetOffset, length, color);
 		} else {
-			drawAsLeftOf1stCharacter(annotation, gc, textWidget, offset, length, color);
+			drawAsLeftOf1stCharacter(annotation, gc, textWidget, widgetOffset, length, color);
 		}
 	}
 

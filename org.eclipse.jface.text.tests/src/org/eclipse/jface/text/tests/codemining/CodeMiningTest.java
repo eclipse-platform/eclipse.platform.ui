@@ -11,7 +11,7 @@
  * Contributors:
  * - Mickael Istria (Red Hat Inc.) - initial implementation
  *******************************************************************************/
-package org.eclipse.jface.text.tests;
+package org.eclipse.jface.text.tests.codemining;
 
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -41,6 +41,8 @@ import org.eclipse.jface.text.reconciler.MonoReconciler;
 import org.eclipse.jface.text.source.AnnotationModel;
 import org.eclipse.jface.text.source.AnnotationPainter;
 import org.eclipse.jface.text.source.SourceViewer;
+import org.eclipse.jface.text.tests.ScreenshotOnFailureRule;
+import org.eclipse.jface.text.tests.TextViewerTest;
 import org.eclipse.jface.text.tests.util.DisplayHelper;
 
 public class CodeMiningTest {

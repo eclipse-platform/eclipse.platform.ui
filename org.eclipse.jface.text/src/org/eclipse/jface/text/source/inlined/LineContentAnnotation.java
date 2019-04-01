@@ -108,15 +108,15 @@ public class LineContentAnnotation extends AbstractInlinedAnnotation {
 	 * @return the style to apply with GlyphMetrics width only if needed.
 	 */
 	StyleRange updateStyle(StyleRange style) {
-		boolean usePreviousChar= drawRightToPreviousChar(getPosition().getOffset());
+		Position widgetPosition= computeWidgetPosition();
+		boolean usePreviousChar= drawRightToPreviousChar(widgetPosition.getOffset());
 		if (width == 0 || getRedrawnCharacterWidth() == 0) {
 			return null;
 		}
 		int fullWidth= width + getRedrawnCharacterWidth();
 		if (style == null) {
 			style= new StyleRange();
-			Position position= getPosition();
-			style.start= position.getOffset();
+			style.start= widgetPosition.getOffset();
 			if (usePreviousChar) {
 				style.start--;
 			}
@@ -144,8 +144,8 @@ public class LineContentAnnotation extends AbstractInlinedAnnotation {
 		return style;
 	}
 
-	boolean drawRightToPreviousChar(int offset) {
-		return getTextWidget().getLineAtOffset(offset) == getTextWidget().getLineAtOffset(offset - 1);
+	boolean drawRightToPreviousChar(int widgetOffset) {
+		return getTextWidget().getLineAtOffset(widgetOffset) == getTextWidget().getLineAtOffset(widgetOffset - 1);
 	}
 
 }
