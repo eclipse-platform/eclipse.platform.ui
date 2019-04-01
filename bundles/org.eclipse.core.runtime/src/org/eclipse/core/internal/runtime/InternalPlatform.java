@@ -19,7 +19,6 @@ import java.io.*;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.*;
-import java.util.function.Function;
 import org.eclipse.core.internal.preferences.exchange.ILegacyPreferences;
 import org.eclipse.core.internal.preferences.exchange.IProductPreferencesService;
 import org.eclipse.core.internal.preferences.legacy.InitLegacyPreferences;
@@ -284,23 +283,31 @@ public final class InternalPlatform {
 	}
 
 	public Bundle[] getFragments(Bundle bundle) {
-		return getWiredBundles(bundle, (wire) -> wire.getRequirer().getBundle());
-	}
-
-	public Bundle[] getHosts(Bundle bundle) {
-		return getWiredBundles(bundle, (wire) -> wire.getProvider().getBundle());
-	}
-
-	private Bundle[] getWiredBundles(Bundle bundle, Function<BundleWire, Bundle> wireToBundleMapper) {
 		BundleWiring wiring = bundle.adapt(BundleWiring.class);
-		List<BundleWire> hostWires = wiring != null ? wiring.getProvidedWires(HostNamespace.HOST_NAMESPACE)
-				: null;
-
+		if (wiring == null) {
+			return null;
+		}
+		List<BundleWire> hostWires = wiring.getProvidedWires(HostNamespace.HOST_NAMESPACE);
 		if (hostWires == null) {
 			// we don't hold locks while checking the graph, just return if no longer valid
 			return null;
 		}
-		Bundle[] result = hostWires.stream().map(wireToBundleMapper).filter(Objects::nonNull)
+		Bundle[] result = hostWires.stream().map(wire -> wire.getRequirer().getBundle()).filter(Objects::nonNull)
+				.toArray(Bundle[]::new);
+		return result.length > 0 ? result : null;
+	}
+
+	public Bundle[] getHosts(Bundle bundle) {
+		BundleWiring wiring = bundle.adapt(BundleWiring.class);
+		if (wiring == null) {
+			return null;
+		}
+		List<BundleWire> hostWires = wiring.getRequiredWires(HostNamespace.HOST_NAMESPACE);
+		if (hostWires == null) {
+			// we don't hold locks while checking the graph, just return if no longer valid
+			return null;
+		}
+		Bundle[] result = hostWires.stream().map(wire -> wire.getProvider().getBundle()).filter(Objects::nonNull)
 				.toArray(Bundle[]::new);
 		return result.length > 0 ? result : null;
 	}
