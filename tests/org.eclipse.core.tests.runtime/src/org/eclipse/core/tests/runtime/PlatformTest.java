@@ -167,7 +167,8 @@ public class PlatformTest extends RuntimeTest {
 		}
 	}
 
-	public void testGetBundle() throws BundleException {
+	// temporarily disabled - bug#545935
+	public void XXXtestGetBundle() throws BundleException {
 		Bundle bundle = Platform.getBundle(PI_JDT_ANNOTATION);
 		assertNotNull("org.eclipse.jdt.annotation bundle not available", bundle);
 		assertEquals(2, bundle.getVersion().getMajor()); // new 2.x version
@@ -177,7 +178,8 @@ public class PlatformTest extends RuntimeTest {
 		assertNull(PI_JDT_ANNOTATION + " bundle => expect null result", bundle);
 	}
 
-	public void testGetBundles() {
+	// temporarily disabled - bug#545935
+	public void XXXtestGetBundles() {
 		Bundle[] bundles = Platform.getBundles(PI_JDT_ANNOTATION, null);
 		assertNotNull(PI_JDT_ANNOTATION + " bundle not available", bundles);
 		// there may be only one version available, and then it will be the new version
