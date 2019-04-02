@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2017 IBM Corporation and others.
+ * Copyright (c) 2004, 2019 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -13,12 +13,19 @@
  *******************************************************************************/
 package org.eclipse.ui.tests.browser.internal;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+
 import java.net.URL;
 
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.ui.IEditorPart;
+import org.eclipse.ui.IEditorReference;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.browser.IWebBrowser;
 import org.eclipse.ui.browser.IWorkbenchBrowserSupport;
+import org.eclipse.ui.internal.browser.WebBrowserEditorInput;
 import org.eclipse.ui.internal.browser.WebBrowserPreference;
 import org.junit.Test;
 
@@ -37,6 +44,29 @@ public class InternalBrowserEditorTestCase {
 
 		wb.openURL(new URL("http://www.eclipse.org"));
 		runLoopTimer(2);
+
+		wb.close();
+		runLoopTimer(2);
+	}
+
+	@Test
+	public void testBrowserID() throws Exception {
+		shell = WebBrowserTestsPlugin.getInstance().getWorkbench().getActiveWorkbenchWindow().getShell();
+		WebBrowserPreference.setBrowserChoice(WebBrowserPreference.INTERNAL);
+		IWorkbenchBrowserSupport wbs = WebBrowserTestsPlugin.getInstance().getWorkbench().getBrowserSupport();
+		IWebBrowser wb = wbs.createBrowser(IWorkbenchBrowserSupport.AS_EDITOR, "test", "MyBrowser", "A tooltip");
+
+		wb.openURL(new URL("http://www.ibm.com"));
+		runLoopTimer(2);
+
+		IEditorReference[] editorRefs = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage()
+				.getEditorReferences();
+		IEditorReference editor = editorRefs[0];
+		IEditorPart editorPart = editor.getEditor(true);
+
+		WebBrowserEditorInput editorInput = (WebBrowserEditorInput) editor.getEditorInput();
+		assertNotNull(editorInput.getBrowserId());
+		assertEquals(wb.getId(), editorInput.getBrowserId());
 
 		wb.close();
 		runLoopTimer(2);
