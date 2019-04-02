@@ -44,6 +44,7 @@ public class QuickAccessMessages extends NLS {
 	public static String QuickAccessContents_PressKeyToLimitResults;
 	public static String QuickAccessContents_QuickAccess;
 	public static String QuickAccessContents_SearchInHelpLabel;
+	public static String QuickAccessContents_HelpCategory;
 	public static String QuickAccessContents_RestoringPreviousChoicesLabel;
 	static {
 		// initialize resource bundle

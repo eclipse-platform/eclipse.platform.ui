@@ -64,6 +64,8 @@ import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.IWorkbenchPreferenceConstants;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.internal.IWorkbenchGraphicConstants;
+import org.eclipse.ui.internal.WorkbenchImages;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.keys.IBindingService;
 import org.eclipse.ui.themes.ColorUtil;
@@ -164,7 +166,7 @@ public abstract class QuickAccessContents {
 
 	QuickAccessEntry searchHelpEntry = null;
 	QuickAccessProvider searchHelpProvider = null;
-	QuickAccessSearchElement searchHelpElement = null;
+	QuickAccessHelpSearchElement searchHelpElement = null;
 
 	/**
 	 * Instantiate a new {@link QuickAccessEntry} to search the given text in
@@ -177,16 +179,20 @@ public abstract class QuickAccessContents {
 	 */
 	private QuickAccessEntry makeHelpSearchEntry(String text) {
 		if (searchHelpEntry == null) {
-			searchHelpProvider = Stream.of(providers).filter(p -> p instanceof ActionProvider).findFirst().get();
-			searchHelpElement = new QuickAccessSearchElement(searchHelpProvider);
+			searchHelpProvider = new QuickAccessHelpSearchProvider();
+			searchHelpElement = new QuickAccessHelpSearchElement(searchHelpProvider);
 			searchHelpEntry = new QuickAccessEntry(searchHelpElement, searchHelpProvider, new int[][] {},
 					new int[][] {}, QuickAccessEntry.MATCH_PERFECT);
+			searchHelpEntry.firstInCategory = true;
 		}
 		searchHelpElement.searchText = text;
 		return searchHelpEntry;
 	}
 
-	static class QuickAccessSearchElement extends QuickAccessElement {
+	/**
+	 * "Search X in help" element shown at the end of the list.
+	 */
+	static class QuickAccessHelpSearchElement extends QuickAccessElement {
 
 		/** identifier */
 		private static final String SEARCH_IN_HELP_ID = "search.in.help"; //$NON-NLS-1$
@@ -196,7 +202,7 @@ public abstract class QuickAccessContents {
 		/**
 		 * @param provider
 		 */
-		public QuickAccessSearchElement(QuickAccessProvider provider) {
+		public QuickAccessHelpSearchElement(QuickAccessProvider provider) {
 			super(provider);
 		}
 
@@ -217,9 +223,45 @@ public abstract class QuickAccessContents {
 
 		@Override
 		public ImageDescriptor getImageDescriptor() {
+			return WorkbenchImages.getImageDescriptor(IWorkbenchGraphicConstants.IMG_ETOOL_HELP_SEARCH);
+		}
+
+	}
+
+	/**
+	 * Provider for the "Search X in help" element. Only used to have a category
+	 * "Help".
+	 */
+	static class QuickAccessHelpSearchProvider extends QuickAccessProvider {
+		@Override
+		public String getName() {
+			return QuickAccessMessages.QuickAccessContents_HelpCategory;
+		}
+
+		@Override
+		public String getId() {
+			return "search.help"; //$NON-NLS-1$
+		}
+
+		@Override
+		public ImageDescriptor getImageDescriptor() {
 			return null;
 		}
 
+		@Override
+		public QuickAccessElement[] getElements() {
+			return null;
+		}
+
+		@Override
+		public QuickAccessElement getElementForId(String id) {
+			return null;
+		}
+
+		@Override
+		protected void doReset() {
+			// empty
+		}
 	}
 
 	/**
