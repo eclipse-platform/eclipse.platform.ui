@@ -64,7 +64,6 @@ Group > StyledText {
 /* ############################## Toolbar ############################## */
 /* Toolbar should inherit the colors of its container to avoid drawing artifacts*/
 
-CTabFolder > Composite > *, /* Contains the toolbar entries for the view toolbar */
 Toolbar,
 Composite > Composite > Composite > ToolBar, /* Window->Preference (top toolbar) */
 ViewForm > ToolBar, /* SWT-BUG: ToolBar do not inherit rules from ViewForm */
