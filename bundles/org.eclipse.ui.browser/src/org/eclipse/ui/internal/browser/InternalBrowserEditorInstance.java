@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2015 IBM Corporation and others.
+ * Copyright (c) 2005, 2019 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -30,7 +30,7 @@ public class InternalBrowserEditorInstance extends InternalBrowserInstance {
 
 	@Override
 	public void openURL(URL url) throws PartInitException {
-		WebBrowserEditorInput input = new WebBrowserEditorInput(url, style);
+		WebBrowserEditorInput input = new WebBrowserEditorInput(url, style, getId());
 		input.setName(this.name);
 		input.setToolTipText(this.tooltip);
 		WebBrowserEditor editor = (WebBrowserEditor)part;
