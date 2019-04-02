@@ -62,6 +62,7 @@ import org.eclipse.e4.ui.model.application.ui.menu.MToolBarSeparator;
 import org.eclipse.e4.ui.model.application.ui.menu.MToolControl;
 import org.eclipse.e4.ui.model.application.ui.menu.MToolItem;
 import org.eclipse.e4.ui.services.IServiceConstants;
+import org.eclipse.e4.ui.services.IStylingEngine;
 import org.eclipse.e4.ui.workbench.IPresentationEngine;
 import org.eclipse.e4.ui.workbench.Selector;
 import org.eclipse.e4.ui.workbench.UIEvents;
@@ -390,8 +391,16 @@ public class ToolBarManagerRenderer extends SWTPartRenderer {
 			return null;
 		}
 
+		Composite toolbarComposite = (Composite) parent;
+		// Composite which contains toolbar needs to have a separate class to allow the
+		// CSS engine to target it
+		IStylingEngine engine = getContextForParent(element).get(IStylingEngine.class);
+		if (engine != null) {
+			engine.setId(toolbarComposite, "ToolbarComposite");//$NON-NLS-1$
+		}
+
 		final MToolBar toolbarModel = (MToolBar) element;
-		ToolBar newTB = createToolbar(toolbarModel, (Composite) parent);
+		ToolBar newTB = createToolbar(toolbarModel, toolbarComposite);
 		bindWidget(element, newTB);
 		processContribution(toolbarModel, toolbarModel.getElementId());
 
@@ -404,10 +413,12 @@ public class ToolBarManagerRenderer extends SWTPartRenderer {
 
 			setCSSInfo(element, newTB);
 
+
 			boolean vertical = false;
 			MTrimBar bar = (MTrimBar) parentElement;
 			vertical = bar.getSide() == SideValue.LEFT || bar.getSide() == SideValue.RIGHT;
 			IEclipseContext parentContext = getContextForParent(element);
+
 			CSSRenderingUtils cssUtils = parentContext.get(CSSRenderingUtils.class);
 			if (cssUtils != null) {
 				MUIElement modelElement = (MUIElement) newTB.getData(AbstractPartRenderer.OWNING_ME);
