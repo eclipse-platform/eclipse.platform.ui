@@ -29,7 +29,7 @@
 /* ############################## Global Styles ############################## */
 
 Composite, ScrolledComposite, ExpandableComposite, Canvas, TabFolder, CLabel, Label,
-CoolBar, ToolItem, Sash, Group, Hyperlink, RefactoringLocationControl, ChangeParametersControl, Link, FilteredTree,
+CoolBar, Sash, Group, Hyperlink, RefactoringLocationControl, ChangeParametersControl, Link, FilteredTree,
 ProxyEntriesComposite, NonProxyHostsComposite, DelayedFilterCheckboxTree,
 Splitter, ScrolledPageContent, ViewForm, LaunchConfigurationFilteredTree,
 ContainerSelectionGroup, BrowseCatalogItem, EncodingSettings,
@@ -60,7 +60,6 @@ Group > StyledText {
     background-color:#515658;
     color:#eeeeee;
 }
-
 
 CTabFolder > #ToolbarComposite,
 CTabFolder > #ToolbarComposite > *,
@@ -184,11 +183,6 @@ ScrolledFormText,
 FormText {
     background-color: #687174;
     color: #eeeeee;
-}
-
-ToolItem:selected {
-    background-color: #313538;
-    color: #dddddd;
 }
 
 Table,
