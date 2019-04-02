@@ -65,7 +65,7 @@ import org.eclipse.ui.internal.views.properties.PropertiesMessages;
  * The PropertySheetViewer displays the properties of objects. The model for the
  * viewer consists of a hierarchy of <code>IPropertySheetEntry</code>.
  * <p>
- * This viewer also supports the optional catogorization of the first level
+ * This viewer also supports the optional categorization of the first level
  * <code>IPropertySheetEntry</code> s by using instances of
  * <code>PropertySheetCategory</code>.
  *
