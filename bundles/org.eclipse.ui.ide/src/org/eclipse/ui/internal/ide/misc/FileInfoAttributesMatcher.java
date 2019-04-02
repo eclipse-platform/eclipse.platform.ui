@@ -16,7 +16,7 @@
 package org.eclipse.ui.internal.ide.misc;
 
 import java.io.IOException;
-import java.nio.file.FileSystem;
+import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.attribute.BasicFileAttributes;
@@ -209,8 +209,8 @@ public class FileInfoAttributesMatcher extends AbstractFileInfoMatcher {
 	 * return value in milliseconds since epoch(1970-01-01T00:00:00Z)
 	 */
 	private static long getFileCreationTime(String fullPath) {
-		try (FileSystem fs = java.nio.file.FileSystems.getDefault()) {
-			Path fileRef = fs.getPath(fullPath);
+		try {
+			Path fileRef = FileSystems.getDefault().getPath(fullPath);
 			BasicFileAttributes attributes = Files.readAttributes(fileRef, BasicFileAttributes.class);
 			return attributes.creationTime().toMillis();
 		} catch (IOException e) {
