@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2017 Freescale Semiconductor and others.
+ * Copyright (c) 2008, 2019 Freescale Semiconductor and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -30,6 +30,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.TreeMap;
@@ -2382,6 +2383,11 @@ interface ICustomFilterArgumentUI {
 
 class MultiMatcherCustomFilterArgumentUI implements ICustomFilterArgumentUI {
 
+	/**
+	 * This is the minimum year that is accepted by {@link DateTime#setYear}.
+	 */
+	private static final int DateTime_MIN_YEAR = 1752;
+
 	Shell shell;
 	FilterCopy filter;
 	protected Button argumentsCaseSensitive;
@@ -2406,6 +2412,7 @@ class MultiMatcherCustomFilterArgumentUI implements ICustomFilterArgumentUI {
 	protected FilterEditDialog dialog;
 	protected Label dummyLabel1;
 	protected Label dummyLabel2;
+	protected static GregorianCalendar gregorianCalendar = new GregorianCalendar();
 
 	/**
 	 * @param dialog
@@ -2804,7 +2811,7 @@ class MultiMatcherCustomFilterArgumentUI implements ICustomFilterArgumentUI {
 				}
 				argumentsDate.setDay(calendar.get(Calendar.DAY_OF_MONTH));
 				argumentsDate.setMonth(calendar.get(Calendar.MONTH));
-				argumentsDate.setYear(calendar.get(Calendar.YEAR));
+				argumentsDate.setYear(getDateYear(calendar));
 			}
 		}
 		if (selectedKeyOperatorType.equals(Boolean.class)) {
@@ -2922,6 +2929,29 @@ class MultiMatcherCustomFilterArgumentUI implements ICustomFilterArgumentUI {
 		return Long.toString(Long.parseLong(string));
 	}
 
+	private int getDateYear(Calendar calendar) {
+		Date calendarDate = calendar.getTime();
+		int calendarYear = calendar.get(Calendar.YEAR);
+		if (calendarYear >= DateTime_MIN_YEAR) {
+			return calendarYear;
+		}
+		gregorianCalendar.setTime(calendarDate);
+		return gregorianCalendar.get(Calendar.YEAR);
+	}
+
+	private int getCalendarYear() {
+		Calendar calendar = Calendar.getInstance();
+		int calendarYear = calendar.get(Calendar.YEAR);
+		int dateYear = argumentsDate.getYear();
+		if (calendarYear >= DateTime_MIN_YEAR) {
+			return dateYear;
+		}
+
+		gregorianCalendar.setTime(new Date());
+		int currentYear = gregorianCalendar.get(Calendar.YEAR);
+		return dateYear = calendarYear + (dateYear - currentYear);
+	}
+
 	private void storeMultiSelection() {
 		if (intiantiatedKeyOperatorType != null) {
 			String selectedKey = MultiMatcherLocalization.getMultiMatcherKey(multiKey.getText());
@@ -2933,7 +2963,7 @@ class MultiMatcherCustomFilterArgumentUI implements ICustomFilterArgumentUI {
 
 			if (intiantiatedKeyOperatorType.equals(Date.class) && argumentsDate != null) {
 				Calendar calendar = Calendar.getInstance();
-				calendar.set(argumentsDate.getYear(), argumentsDate.getMonth(), argumentsDate.getDay());
+				calendar.set(getCalendarYear(), argumentsDate.getMonth(), argumentsDate.getDay());
 				argument.pattern = Long.toString(calendar.getTimeInMillis());
 			}
 			if (intiantiatedKeyOperatorType.equals(String.class) && arguments != null) {
