@@ -61,12 +61,16 @@ Group > StyledText {
     color:#eeeeee;
 }
 
+/*  commented as otherwise selected toolbar buttons are not always visible*/
+/*  see https://bugs.eclipse.org/bugs/show_bug.cgi?id=539661#c36*/
+/*
 CTabFolder > #ToolbarComposite,
 CTabFolder > #ToolbarComposite > *,
 CTabFolder > #ToolbarComposite > Toolbar > *
 {
 	background-color:inherit;
 }
+*/
 
 /* ############################## Toolbar ############################## */
 /* Toolbar should inherit the colors of its container to avoid drawing artifacts*/
