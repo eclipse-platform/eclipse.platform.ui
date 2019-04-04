@@ -11,6 +11,7 @@
  * Contributors:
  *     Matthew Hall - initial API and implementation (bug 247997)
  *     Matthew Hall - bugs 264307, 264619
+ *     Justin Künzel - NPE
  ******************************************************************************/
 
 package org.eclipse.core.internal.databinding.beans;
@@ -74,8 +75,8 @@ public class AnonymousBeanValueProperty extends DelegatingValueProperty {
 
 	private Object inferValueType(Object masterObservableValueType) {
 		if (masterObservableValueType instanceof Class) {
-			return getClassDelegate((Class) masterObservableValueType)
-					.getValueType();
+			IValueProperty classDelegate = getClassDelegate((Class) masterObservableValueType);
+			return classDelegate != null ? classDelegate.getValueType() : null;
 		}
 		return null;
 	}
