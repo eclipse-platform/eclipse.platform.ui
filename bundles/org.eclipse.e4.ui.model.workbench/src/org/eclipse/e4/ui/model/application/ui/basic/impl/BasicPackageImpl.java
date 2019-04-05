@@ -15,7 +15,6 @@ package org.eclipse.e4.ui.model.application.ui.basic.impl;
 
 import org.eclipse.e4.ui.model.application.commands.impl.CommandsPackageImpl;
 import org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl;
-import org.eclipse.e4.ui.model.application.ui.MInput;
 import org.eclipse.e4.ui.model.application.ui.advanced.impl.AdvancedPackageImpl;
 import org.eclipse.e4.ui.model.application.ui.basic.MBasicFactory;
 import org.eclipse.e4.ui.model.application.ui.basic.MCompositePart;
@@ -38,6 +37,7 @@ import org.eclipse.emf.ecore.EAttribute;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EFactory;
 import org.eclipse.emf.ecore.EGenericType;
+import org.eclipse.emf.ecore.EOperation;
 import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.EReference;
 import org.eclipse.emf.ecore.impl.EPackageImpl;
@@ -49,6 +49,7 @@ import org.eclipse.emf.ecore.impl.EPackageImpl;
  * <ul>
  *   <li>each class,</li>
  *   <li>each feature of each class,</li>
+ *   <li>each operation of each class,</li>
  *   <li>each enum,</li>
  *   <li>and each data type</li>
  * </ul>
@@ -101,105 +102,6 @@ public class BasicPackageImpl extends EPackageImpl {
 	 * @generated
 	 */
 	public static final int PART = 0;
-
-	/**
-	 * The meta object id for the '{@link org.eclipse.e4.ui.model.application.ui.basic.impl.PartStackImpl <em>Part Stack</em>}' class.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see org.eclipse.e4.ui.model.application.ui.basic.impl.PartStackImpl
-	 * @see org.eclipse.e4.ui.model.application.ui.basic.impl.BasicPackageImpl#getPartStack()
-	 * @since 1.0
-	 * @generated
-	 */
-	public static final int PART_STACK = 3;
-
-	/**
-	 * The meta object id for the '{@link org.eclipse.e4.ui.model.application.ui.basic.impl.PartSashContainerImpl <em>Part Sash Container</em>}' class.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see org.eclipse.e4.ui.model.application.ui.basic.impl.PartSashContainerImpl
-	 * @see org.eclipse.e4.ui.model.application.ui.basic.impl.BasicPackageImpl#getPartSashContainer()
-	 * @since 1.0
-	 * @generated
-	 */
-	public static final int PART_SASH_CONTAINER = 4;
-
-	/**
-	 * The meta object id for the '{@link org.eclipse.e4.ui.model.application.ui.basic.impl.WindowImpl <em>Window</em>}' class.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see org.eclipse.e4.ui.model.application.ui.basic.impl.WindowImpl
-	 * @see org.eclipse.e4.ui.model.application.ui.basic.impl.BasicPackageImpl#getWindow()
-	 * @since 1.0
-	 * @generated
-	 */
-	public static final int WINDOW = 5;
-
-	/**
-	 * The meta object id for the '{@link org.eclipse.e4.ui.model.application.ui.basic.impl.TrimmedWindowImpl <em>Trimmed Window</em>}' class.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see org.eclipse.e4.ui.model.application.ui.basic.impl.TrimmedWindowImpl
-	 * @see org.eclipse.e4.ui.model.application.ui.basic.impl.BasicPackageImpl#getTrimmedWindow()
-	 * @since 1.0
-	 * @generated
-	 */
-	public static final int TRIMMED_WINDOW = 6;
-
-	/**
-	 * The meta object id for the '{@link org.eclipse.e4.ui.model.application.ui.basic.MTrimElement <em>Trim Element</em>}' class.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see org.eclipse.e4.ui.model.application.ui.basic.MTrimElement
-	 * @see org.eclipse.e4.ui.model.application.ui.basic.impl.BasicPackageImpl#getTrimElement()
-	 * @since 1.0
-	 * @generated
-	 */
-	public static final int TRIM_ELEMENT = 7;
-
-	/**
-	 * The meta object id for the '{@link org.eclipse.e4.ui.model.application.ui.basic.MPartSashContainerElement <em>Part Sash Container Element</em>}' class.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see org.eclipse.e4.ui.model.application.ui.basic.MPartSashContainerElement
-	 * @see org.eclipse.e4.ui.model.application.ui.basic.impl.BasicPackageImpl#getPartSashContainerElement()
-	 * @since 1.0
-	 * @generated
-	 */
-	public static final int PART_SASH_CONTAINER_ELEMENT = 8;
-
-	/**
-	 * The meta object id for the '{@link org.eclipse.e4.ui.model.application.ui.basic.MWindowElement <em>Window Element</em>}' class.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see org.eclipse.e4.ui.model.application.ui.basic.MWindowElement
-	 * @see org.eclipse.e4.ui.model.application.ui.basic.impl.BasicPackageImpl#getWindowElement()
-	 * @since 1.0
-	 * @generated
-	 */
-	public static final int WINDOW_ELEMENT = 9;
-
-	/**
-	 * The meta object id for the '{@link org.eclipse.e4.ui.model.application.ui.basic.impl.TrimBarImpl <em>Trim Bar</em>}' class.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see org.eclipse.e4.ui.model.application.ui.basic.impl.TrimBarImpl
-	 * @see org.eclipse.e4.ui.model.application.ui.basic.impl.BasicPackageImpl#getTrimBar()
-	 * @since 1.0
-	 * @generated
-	 */
-	public static final int TRIM_BAR = 10;
-
-	/**
-	 * The meta object id for the '{@link org.eclipse.e4.ui.model.application.ui.basic.MStackElement <em>Stack Element</em>}' class.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see org.eclipse.e4.ui.model.application.ui.basic.MStackElement
-	 * @see org.eclipse.e4.ui.model.application.ui.basic.impl.BasicPackageImpl#getStackElement()
-	 * @since 1.0
-	 * @generated
-	 */
-	public static final int STACK_ELEMENT = 11;
 
 	/**
 	 * The feature id for the '<em><b>Element Id</b></em>' attribute.
@@ -570,7 +472,7 @@ public class BasicPackageImpl extends EPackageImpl {
 	 * @generated
 	 * @ordered
 	 */
-	public static final int PART___UPDATE_LOCALIZATION = UiPackageImpl.UI_ELEMENT___UPDATE_LOCALIZATION;
+	public static final int PART___UPDATE_LOCALIZATION = UiPackageImpl.UI_ELEMENT_OPERATION_COUNT + 0;
 
 	/**
 	 * The number of operations of the '<em>Part</em>' class.
@@ -580,7 +482,7 @@ public class BasicPackageImpl extends EPackageImpl {
 	 * @generated
 	 * @ordered
 	 */
-	public static final int PART_OPERATION_COUNT = UiPackageImpl.UI_ELEMENT_OPERATION_COUNT + 0;
+	public static final int PART_OPERATION_COUNT = UiPackageImpl.UI_ELEMENT_OPERATION_COUNT + 1;
 
 	/**
 	 * The meta object id for the '{@link org.eclipse.e4.ui.model.application.ui.basic.impl.CompositePartImpl <em>Composite Part</em>}' class.
@@ -1005,518 +907,429 @@ public class BasicPackageImpl extends EPackageImpl {
 	public static final int COMPOSITE_PART_OPERATION_COUNT = PART_OPERATION_COUNT + 0;
 
 	/**
-	 * The feature id for the '<em><b>Element Id</b></em>' attribute. <!--
-	 * begin-user-doc --> <!-- end-user-doc -->
-	 * 
+	 * The meta object id for the '{@link org.eclipse.e4.ui.model.application.ui.basic.impl.InputPartImpl <em>Input Part</em>}' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see org.eclipse.e4.ui.model.application.ui.basic.impl.InputPartImpl
+	 * @see org.eclipse.e4.ui.model.application.ui.basic.impl.BasicPackageImpl#getInputPart()
 	 * @since 1.0
+	 * @deprecated See {@link MInputPart model documentation} for details.
+	 * @noreference See {@link MInputPart model documentation} for details.
+	 * @generated
+	 */
+	@Deprecated
+	public static final int INPUT_PART = 2;
+
+	/**
+	 * The feature id for the '<em><b>Element Id</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @since 1.0
+	 * @generated
 	 * @ordered
-	 * @generated NOT
-	 * @noreference This field is not intended to be referenced by clients.
-	 * @see <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=509868">Bug
-	 *      509868</a>
 	 */
 	public static final int INPUT_PART__ELEMENT_ID = PART__ELEMENT_ID;
 
 	/**
-	 * The feature id for the '<em><b>Persisted State</b></em>' map. <!--
-	 * begin-user-doc --> <!-- end-user-doc -->
-	 * 
+	 * The feature id for the '<em><b>Persisted State</b></em>' map.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
 	 * @since 1.0
+	 * @generated
 	 * @ordered
-	 * @generated NOT
-	 * @noreference This field is not intended to be referenced by clients.
-	 * @see <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=509868">Bug
-	 *      509868</a>
 	 */
 	public static final int INPUT_PART__PERSISTED_STATE = PART__PERSISTED_STATE;
 
 	/**
-	 * The feature id for the '<em><b>Tags</b></em>' attribute list. <!--
-	 * begin-user-doc --> <!-- end-user-doc -->
-	 * 
+	 * The feature id for the '<em><b>Tags</b></em>' attribute list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
 	 * @since 1.0
+	 * @generated
 	 * @ordered
-	 * @generated NOT
-	 * @noreference This field is not intended to be referenced by clients.
-	 * @see <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=509868">Bug
-	 *      509868</a>
 	 */
 	public static final int INPUT_PART__TAGS = PART__TAGS;
 
 	/**
-	 * The feature id for the '<em><b>Contributor URI</b></em>' attribute. <!--
-	 * begin-user-doc --> <!-- end-user-doc -->
-	 * 
+	 * The feature id for the '<em><b>Contributor URI</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
 	 * @since 1.0
+	 * @generated
 	 * @ordered
-	 * @generated NOT
-	 * @noreference This field is not intended to be referenced by clients.
-	 * @see <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=509868">Bug
-	 *      509868</a>
 	 */
 	public static final int INPUT_PART__CONTRIBUTOR_URI = PART__CONTRIBUTOR_URI;
 
 	/**
-	 * The feature id for the '<em><b>Transient Data</b></em>' map. <!--
-	 * begin-user-doc --> <!-- end-user-doc -->
-	 * 
+	 * The feature id for the '<em><b>Transient Data</b></em>' map.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
 	 * @since 1.0
+	 * @generated
 	 * @ordered
-	 * @generated NOT
-	 * @noreference This field is not intended to be referenced by clients.
-	 * @see <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=509868">Bug
-	 *      509868</a>
 	 */
 	public static final int INPUT_PART__TRANSIENT_DATA = PART__TRANSIENT_DATA;
 
 	/**
-	 * The feature id for the '<em><b>Widget</b></em>' attribute. <!--
-	 * begin-user-doc --> <!-- end-user-doc -->
-	 * 
+	 * The feature id for the '<em><b>Widget</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
 	 * @since 1.0
+	 * @generated
 	 * @ordered
-	 * @generated NOT
-	 * @noreference This field is not intended to be referenced by clients.
-	 * @see <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=509868">Bug
-	 *      509868</a>
 	 */
 	public static final int INPUT_PART__WIDGET = PART__WIDGET;
 
 	/**
-	 * The feature id for the '<em><b>Renderer</b></em>' attribute. <!--
-	 * begin-user-doc --> <!-- end-user-doc -->
-	 * 
+	 * The feature id for the '<em><b>Renderer</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
 	 * @since 1.0
+	 * @generated
 	 * @ordered
-	 * @generated NOT
-	 * @noreference This field is not intended to be referenced by clients.
-	 * @see <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=509868">Bug
-	 *      509868</a>
 	 */
 	public static final int INPUT_PART__RENDERER = PART__RENDERER;
 
 	/**
-	 * The feature id for the '<em><b>To Be Rendered</b></em>' attribute. <!--
-	 * begin-user-doc --> <!-- end-user-doc -->
-	 * 
+	 * The feature id for the '<em><b>To Be Rendered</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
 	 * @since 1.0
+	 * @generated
 	 * @ordered
-	 * @generated NOT
-	 * @noreference This field is not intended to be referenced by clients.
-	 * @see <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=509868">Bug
-	 *      509868</a>
 	 */
 	public static final int INPUT_PART__TO_BE_RENDERED = PART__TO_BE_RENDERED;
 
 	/**
-	 * The feature id for the '<em><b>On Top</b></em>' attribute. <!--
-	 * begin-user-doc --> <!-- end-user-doc -->
-	 * 
+	 * The feature id for the '<em><b>On Top</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
 	 * @since 1.0
+	 * @generated
 	 * @ordered
-	 * @generated NOT
-	 * @noreference This field is not intended to be referenced by clients.
-	 * @see <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=509868">Bug
-	 *      509868</a>
 	 */
 	public static final int INPUT_PART__ON_TOP = PART__ON_TOP;
 
 	/**
-	 * The feature id for the '<em><b>Visible</b></em>' attribute. <!--
-	 * begin-user-doc --> <!-- end-user-doc -->
-	 * 
+	 * The feature id for the '<em><b>Visible</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
 	 * @since 1.0
+	 * @generated
 	 * @ordered
-	 * @generated NOT
-	 * @noreference This field is not intended to be referenced by clients.
-	 * @see <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=509868">Bug
-	 *      509868</a>
 	 */
 	public static final int INPUT_PART__VISIBLE = PART__VISIBLE;
 
 	/**
-	 * The feature id for the '<em><b>Parent</b></em>' container reference. <!--
-	 * begin-user-doc --> <!-- end-user-doc -->
-	 * 
+	 * The feature id for the '<em><b>Parent</b></em>' container reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
 	 * @since 1.0
+	 * @generated
 	 * @ordered
-	 * @generated NOT
-	 * @noreference This field is not intended to be referenced by clients.
-	 * @see <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=509868">Bug
-	 *      509868</a>
 	 */
 	public static final int INPUT_PART__PARENT = PART__PARENT;
 
 	/**
-	 * The feature id for the '<em><b>Container Data</b></em>' attribute. <!--
-	 * begin-user-doc --> <!-- end-user-doc -->
-	 * 
+	 * The feature id for the '<em><b>Container Data</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
 	 * @since 1.0
-	 * @generated NOT
+	 * @generated
 	 * @ordered
-	 * @noreference This field is not intended to be referenced by clients.
-	 * @see <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=509868">Bug
-	 *      509868</a>
 	 */
 	public static final int INPUT_PART__CONTAINER_DATA = PART__CONTAINER_DATA;
 
 	/**
-	 * The feature id for the '<em><b>Cur Shared Ref</b></em>' reference. <!--
-	 * begin-user-doc --> <!-- end-user-doc -->
-	 * 
+	 * The feature id for the '<em><b>Cur Shared Ref</b></em>' reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
 	 * @since 1.0
-	 * @generated NOT
+	 * @generated
 	 * @ordered
-	 * @noreference This field is not intended to be referenced by clients.
-	 * @see <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=509868">Bug
-	 *      509868</a>
 	 */
 	public static final int INPUT_PART__CUR_SHARED_REF = PART__CUR_SHARED_REF;
 
 	/**
 	 * The feature id for the '<em><b>Visible When</b></em>' containment reference.
-	 * <!-- begin-user-doc --> <!-- end-user-doc -->
-	 * 
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
 	 * @since 1.0
-	 * @generated NOT
+	 * @generated
 	 * @ordered
-	 * @noreference This field is not intended to be referenced by clients.
-	 * @see <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=509868">Bug
-	 *      509868</a>
 	 */
 	public static final int INPUT_PART__VISIBLE_WHEN = PART__VISIBLE_WHEN;
 
 	/**
-	 * The feature id for the '<em><b>Accessibility Phrase</b></em>' attribute. <!--
-	 * begin-user-doc --> <!-- end-user-doc -->
-	 * 
+	 * The feature id for the '<em><b>Accessibility Phrase</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
 	 * @since 1.0
-	 * @generated NOT
+	 * @generated
 	 * @ordered
-	 * @noreference This field is not intended to be referenced by clients.
-	 * @see <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=509868">Bug
-	 *      509868</a>
 	 */
 	public static final int INPUT_PART__ACCESSIBILITY_PHRASE = PART__ACCESSIBILITY_PHRASE;
 
 	/**
-	 * The feature id for the '<em><b>Localized Accessibility Phrase</b></em>'
-	 * attribute. <!-- begin-user-doc --> <!-- end-user-doc -->
-	 * 
+	 * The feature id for the '<em><b>Localized Accessibility Phrase</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
 	 * @since 1.0
-	 * @generated NOT
+	 * @generated
 	 * @ordered
-	 * @noreference This field is not intended to be referenced by clients.
-	 * @see <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=509868">Bug
-	 *      509868</a>
 	 */
 	public static final int INPUT_PART__LOCALIZED_ACCESSIBILITY_PHRASE = PART__LOCALIZED_ACCESSIBILITY_PHRASE;
 
 	/**
-	 * The feature id for the '<em><b>Contribution URI</b></em>' attribute. <!--
-	 * begin-user-doc --> <!-- end-user-doc -->
-	 * 
+	 * The feature id for the '<em><b>Contribution URI</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
 	 * @since 1.0
-	 * @generated NOT
+	 * @generated
 	 * @ordered
-	 * @noreference This field is not intended to be referenced by clients.
-	 * @see <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=509868">Bug
-	 *      509868</a>
 	 */
 	public static final int INPUT_PART__CONTRIBUTION_URI = PART__CONTRIBUTION_URI;
 
 	/**
-	 * The feature id for the '<em><b>Object</b></em>' attribute. <!--
-	 * begin-user-doc --> <!-- end-user-doc -->
-	 * 
+	 * The feature id for the '<em><b>Object</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
 	 * @since 1.0
-	 * @generated NOT
+	 * @generated
 	 * @ordered
-	 * @noreference This field is not intended to be referenced by clients.
-	 * @see <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=509868">Bug
-	 *      509868</a>
 	 */
 	public static final int INPUT_PART__OBJECT = PART__OBJECT;
 
 	/**
-	 * The feature id for the '<em><b>Context</b></em>' attribute. <!--
-	 * begin-user-doc --> <!-- end-user-doc -->
-	 * 
+	 * The feature id for the '<em><b>Context</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
 	 * @since 1.0
-	 * @generated NOT
+	 * @generated
 	 * @ordered
-	 * @noreference This field is not intended to be referenced by clients.
-	 * @see <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=509868">Bug
-	 *      509868</a>
 	 */
 	public static final int INPUT_PART__CONTEXT = PART__CONTEXT;
 
 	/**
-	 * The feature id for the '<em><b>Variables</b></em>' attribute list. <!--
-	 * begin-user-doc --> <!-- end-user-doc -->
-	 * 
+	 * The feature id for the '<em><b>Variables</b></em>' attribute list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
 	 * @since 1.0
-	 * @generated NOT
+	 * @generated
 	 * @ordered
-	 * @noreference This field is not intended to be referenced by clients.
-	 * @see <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=509868">Bug
-	 *      509868</a>
 	 */
 	public static final int INPUT_PART__VARIABLES = PART__VARIABLES;
 
 	/**
-	 * The feature id for the '<em><b>Properties</b></em>' map. <!-- begin-user-doc
-	 * --> <!-- end-user-doc -->
-	 * 
+	 * The feature id for the '<em><b>Properties</b></em>' map.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
 	 * @since 1.0
-	 * @generated NOT
+	 * @generated
 	 * @ordered
-	 * @noreference This field is not intended to be referenced by clients.
-	 * @see <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=509868">Bug
-	 *      509868</a>
 	 */
 	public static final int INPUT_PART__PROPERTIES = PART__PROPERTIES;
 
 	/**
-	 * The feature id for the '<em><b>Label</b></em>' attribute. <!-- begin-user-doc
-	 * --> <!-- end-user-doc -->
-	 * 
+	 * The feature id for the '<em><b>Label</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
 	 * @since 1.0
-	 * @generated NOT
+	 * @generated
 	 * @ordered
-	 * @noreference This field is not intended to be referenced by clients.
-	 * @see <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=509868">Bug
-	 *      509868</a>
 	 */
 	public static final int INPUT_PART__LABEL = PART__LABEL;
 
 	/**
-	 * The feature id for the '<em><b>Icon URI</b></em>' attribute. <!--
-	 * begin-user-doc --> <!-- end-user-doc -->
-	 * 
+	 * The feature id for the '<em><b>Icon URI</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
 	 * @since 1.0
-	 * @generated NOT
+	 * @generated
 	 * @ordered
-	 * @noreference This field is not intended to be referenced by clients.
-	 * @see <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=509868">Bug
-	 *      509868</a>
 	 */
 	public static final int INPUT_PART__ICON_URI = PART__ICON_URI;
 
 	/**
-	 * The feature id for the '<em><b>Tooltip</b></em>' attribute. <!--
-	 * begin-user-doc --> <!-- end-user-doc -->
-	 * 
+	 * The feature id for the '<em><b>Tooltip</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
 	 * @since 1.0
-	 * @generated NOT
+	 * @generated
 	 * @ordered
-	 * @noreference This field is not intended to be referenced by clients.
-	 * @see <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=509868">Bug
-	 *      509868</a>
 	 */
 	public static final int INPUT_PART__TOOLTIP = PART__TOOLTIP;
 
 	/**
-	 * The feature id for the '<em><b>Localized Label</b></em>' attribute. <!--
-	 * begin-user-doc --> <!-- end-user-doc -->
-	 * 
+	 * The feature id for the '<em><b>Localized Label</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
 	 * @since 1.0
-	 * @generated NOT
+	 * @generated
 	 * @ordered
-	 * @noreference This field is not intended to be referenced by clients.
-	 * @see <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=509868">Bug
-	 *      509868</a>
 	 */
 	public static final int INPUT_PART__LOCALIZED_LABEL = PART__LOCALIZED_LABEL;
 
 	/**
-	 * The feature id for the '<em><b>Localized Tooltip</b></em>' attribute. <!--
-	 * begin-user-doc --> <!-- end-user-doc -->
-	 * 
+	 * The feature id for the '<em><b>Localized Tooltip</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
 	 * @since 1.0
-	 * @generated NOT
+	 * @generated
 	 * @ordered
-	 * @noreference This field is not intended to be referenced by clients.
-	 * @see <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=509868">Bug
-	 *      509868</a>
 	 */
 	public static final int INPUT_PART__LOCALIZED_TOOLTIP = PART__LOCALIZED_TOOLTIP;
 
 	/**
 	 * The feature id for the '<em><b>Handlers</b></em>' containment reference list.
-	 * <!-- begin-user-doc --> <!-- end-user-doc -->
-	 * 
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
 	 * @since 1.0
-	 * @generated NOT
+	 * @generated
 	 * @ordered
-	 * @noreference This field is not intended to be referenced by clients.
-	 * @see <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=509868">Bug
-	 *      509868</a>
 	 */
 	public static final int INPUT_PART__HANDLERS = PART__HANDLERS;
 
 	/**
-	 * The feature id for the '<em><b>Dirty</b></em>' attribute. <!-- begin-user-doc
-	 * --> <!-- end-user-doc -->
-	 * 
+	 * The feature id for the '<em><b>Dirty</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
 	 * @since 1.0
-	 * @generated NOT
+	 * @generated
 	 * @ordered
-	 * @noreference This field is not intended to be referenced by clients.
-	 * @see <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=509868">Bug
-	 *      509868</a>
 	 */
 	public static final int INPUT_PART__DIRTY = PART__DIRTY;
 
 	/**
 	 * The feature id for the '<em><b>Binding Contexts</b></em>' reference list.
-	 * <!-- begin-user-doc --> <!-- end-user-doc -->
-	 * 
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
 	 * @since 1.0
-	 * @generated NOT
+	 * @generated
 	 * @ordered
-	 * @noreference This field is not intended to be referenced by clients.
-	 * @see <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=509868">Bug
-	 *      509868</a>
 	 */
 	public static final int INPUT_PART__BINDING_CONTEXTS = PART__BINDING_CONTEXTS;
 
 	/**
 	 * The feature id for the '<em><b>Menus</b></em>' containment reference list.
-	 * <!-- begin-user-doc --> <!-- end-user-doc -->
-	 * 
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
 	 * @since 1.0
-	 * @generated NOT
+	 * @generated
 	 * @ordered
-	 * @noreference This field is not intended to be referenced by clients.
-	 * @see <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=509868">Bug
-	 *      509868</a>
 	 */
 	public static final int INPUT_PART__MENUS = PART__MENUS;
 
 	/**
-	 * The feature id for the '<em><b>Toolbar</b></em>' containment reference. <!--
-	 * begin-user-doc --> <!-- end-user-doc -->
-	 * 
+	 * The feature id for the '<em><b>Toolbar</b></em>' containment reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
 	 * @since 1.0
-	 * @generated NOT
+	 * @generated
 	 * @ordered
-	 * @noreference This field is not intended to be referenced by clients.
-	 * @see <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=509868">Bug
-	 *      509868</a>
 	 */
 	public static final int INPUT_PART__TOOLBAR = PART__TOOLBAR;
 
 	/**
-	 * The feature id for the '<em><b>Closeable</b></em>' attribute. <!--
-	 * begin-user-doc --> <!-- end-user-doc -->
-	 * 
+	 * The feature id for the '<em><b>Closeable</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
 	 * @since 1.0
-	 * @generated NOT
+	 * @generated
 	 * @ordered
-	 * @noreference This field is not intended to be referenced by clients.
-	 * @see <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=509868">Bug
-	 *      509868</a>
 	 */
 	public static final int INPUT_PART__CLOSEABLE = PART__CLOSEABLE;
 
 	/**
-	 * The feature id for the '<em><b>Description</b></em>' attribute. <!--
-	 * begin-user-doc --> <!-- end-user-doc -->
-	 * 
+	 * The feature id for the '<em><b>Description</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
 	 * @since 1.0
-	 * @generated NOT
+	 * @generated
 	 * @ordered
-	 * @noreference This field is not intended to be referenced by clients.
-	 * @see <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=509868">Bug
-	 *      509868</a>
 	 */
 	public static final int INPUT_PART__DESCRIPTION = PART__DESCRIPTION;
 
 	/**
 	 * The feature id for the '<em><b>Localized Description</b></em>' attribute.
-	 * <!-- begin-user-doc --> <!-- end-user-doc -->
-	 * 
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
 	 * @since 1.0
-	 * @generated NOT
+	 * @generated
 	 * @ordered
-	 * @noreference This field is not intended to be referenced by clients.
-	 * @see <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=509868">Bug
-	 *      509868</a>
 	 */
 	public static final int INPUT_PART__LOCALIZED_DESCRIPTION = PART__LOCALIZED_DESCRIPTION;
 
 	/**
-	 * The feature id for the '<em><b>Trim Bars</b></em>' containment reference
-	 * list. <!-- begin-user-doc --> <!-- end-user-doc -->
-	 * 
+	 * The feature id for the '<em><b>Trim Bars</b></em>' containment reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
 	 * @since 1.3
-	 *        </p>
-	 * @generated NOT
+	 * </p>
+	 * @generated
 	 * @ordered
-	 * @noreference This field is not intended to be referenced by clients.
-	 * @see <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=509868">Bug
-	 *      509868</a>
 	 */
 	public static final int INPUT_PART__TRIM_BARS = PART__TRIM_BARS;
 
 	/**
-	 * The feature id for the '<em><b>Input URI</b></em>' attribute. <!--
-	 * begin-user-doc --> <!-- end-user-doc -->
-	 * 
+	 * The feature id for the '<em><b>Input URI</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
 	 * @since 1.0
-	 * @deprecated See {@link MInput model documentation} for details.
-	 * @generated NOT
+	 * @deprecated See {@link org.eclipse.e4.ui.model.application.ui.MInput#getInputURI() model documentation} for details.
+	 * @noreference See {@link org.eclipse.e4.ui.model.application.ui.MInput#getInputURI() model documentation} for details.
+	 * @generated
 	 * @ordered
-	 * @noreference This field is not intended to be referenced by clients.
-	 * @see <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=509868">Bug
-	 *      509868</a>
 	 */
 	@Deprecated
 	public static final int INPUT_PART__INPUT_URI = PART_FEATURE_COUNT + 0;
 
 	/**
-	 * The number of structural features of the '<em>Input Part</em>' class. <!--
-	 * begin-user-doc --> <!-- end-user-doc -->
-	 * 
+	 * The number of structural features of the '<em>Input Part</em>' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
 	 * @since 1.0
 	 * @deprecated See {@link MInputPart model documentation} for details.
-	 * @generated NOT
+	 * @noreference See {@link MInputPart model documentation} for details.
+	 * @generated
 	 * @ordered
-	 * @noreference This field is not intended to be referenced by clients.
-	 * @see <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=509868">Bug
-	 *      509868</a>
 	 */
 	@Deprecated
 	public static final int INPUT_PART_FEATURE_COUNT = PART_FEATURE_COUNT + 1;
 
 	/**
-	 * The operation id for the '<em>Update Localization</em>' operation. <!--
-	 * begin-user-doc --> <!-- end-user-doc -->
-	 * 
+	 * The operation id for the '<em>Update Localization</em>' operation.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
 	 * @since 1.1
-	 * @generated NOT
+	 * @generated
 	 * @ordered
-	 * @noreference This field is not intended to be referenced by clients.
-	 * @see <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=509868">Bug
-	 *      509868</a>
 	 */
 	public static final int INPUT_PART___UPDATE_LOCALIZATION = PART___UPDATE_LOCALIZATION;
 
 	/**
-	 * The number of operations of the '<em>Input Part</em>' class. <!--
-	 * begin-user-doc --> <!-- end-user-doc -->
-	 * 
+	 * The number of operations of the '<em>Input Part</em>' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
 	 * @since 1.0
 	 * @deprecated See {@link MInputPart model documentation} for details.
-	 * @generated NOT
+	 * @noreference See {@link MInputPart model documentation} for details.
+	 * @generated
 	 * @ordered
-	 * @noreference This field is not intended to be referenced by clients.
-	 * @see <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=509868">Bug
-	 *      509868</a>
 	 */
 	@Deprecated
 	public static final int INPUT_PART_OPERATION_COUNT = PART_OPERATION_COUNT + 0;
+
+	/**
+	 * The meta object id for the '{@link org.eclipse.e4.ui.model.application.ui.basic.impl.PartStackImpl <em>Part Stack</em>}' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see org.eclipse.e4.ui.model.application.ui.basic.impl.PartStackImpl
+	 * @see org.eclipse.e4.ui.model.application.ui.basic.impl.BasicPackageImpl#getPartStack()
+	 * @since 1.0
+	 * @generated
+	 */
+	public static final int PART_STACK = 3;
 
 	/**
 	 * The feature id for the '<em><b>Element Id</b></em>' attribute.
@@ -1727,6 +1540,17 @@ public class BasicPackageImpl extends EPackageImpl {
 	 * @ordered
 	 */
 	public static final int PART_STACK_OPERATION_COUNT = UiPackageImpl.GENERIC_STACK_OPERATION_COUNT + 0;
+
+	/**
+	 * The meta object id for the '{@link org.eclipse.e4.ui.model.application.ui.basic.impl.PartSashContainerImpl <em>Part Sash Container</em>}' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see org.eclipse.e4.ui.model.application.ui.basic.impl.PartSashContainerImpl
+	 * @see org.eclipse.e4.ui.model.application.ui.basic.impl.BasicPackageImpl#getPartSashContainer()
+	 * @since 1.0
+	 * @generated
+	 */
+	public static final int PART_SASH_CONTAINER = 4;
 
 	/**
 	 * The feature id for the '<em><b>Element Id</b></em>' attribute.
@@ -1947,6 +1771,17 @@ public class BasicPackageImpl extends EPackageImpl {
 	 * @ordered
 	 */
 	public static final int PART_SASH_CONTAINER_OPERATION_COUNT = UiPackageImpl.GENERIC_TILE_OPERATION_COUNT + 0;
+
+	/**
+	 * The meta object id for the '{@link org.eclipse.e4.ui.model.application.ui.basic.impl.WindowImpl <em>Window</em>}' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see org.eclipse.e4.ui.model.application.ui.basic.impl.WindowImpl
+	 * @see org.eclipse.e4.ui.model.application.ui.basic.impl.BasicPackageImpl#getWindow()
+	 * @since 1.0
+	 * @generated
+	 */
+	public static final int WINDOW = 5;
 
 	/**
 	 * The feature id for the '<em><b>Element Id</b></em>' attribute.
@@ -2326,7 +2161,7 @@ public class BasicPackageImpl extends EPackageImpl {
 	 * @generated
 	 * @ordered
 	 */
-	public static final int WINDOW___UPDATE_LOCALIZATION = UiPackageImpl.ELEMENT_CONTAINER___UPDATE_LOCALIZATION;
+	public static final int WINDOW___UPDATE_LOCALIZATION = UiPackageImpl.ELEMENT_CONTAINER_OPERATION_COUNT + 0;
 
 	/**
 	 * The number of operations of the '<em>Window</em>' class.
@@ -2336,7 +2171,18 @@ public class BasicPackageImpl extends EPackageImpl {
 	 * @generated
 	 * @ordered
 	 */
-	public static final int WINDOW_OPERATION_COUNT = UiPackageImpl.ELEMENT_CONTAINER_OPERATION_COUNT + 0;
+	public static final int WINDOW_OPERATION_COUNT = UiPackageImpl.ELEMENT_CONTAINER_OPERATION_COUNT + 1;
+
+	/**
+	 * The meta object id for the '{@link org.eclipse.e4.ui.model.application.ui.basic.impl.TrimmedWindowImpl <em>Trimmed Window</em>}' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see org.eclipse.e4.ui.model.application.ui.basic.impl.TrimmedWindowImpl
+	 * @see org.eclipse.e4.ui.model.application.ui.basic.impl.BasicPackageImpl#getTrimmedWindow()
+	 * @since 1.0
+	 * @generated
+	 */
+	public static final int TRIMMED_WINDOW = 6;
 
 	/**
 	 * The feature id for the '<em><b>Element Id</b></em>' attribute.
@@ -2739,6 +2585,17 @@ public class BasicPackageImpl extends EPackageImpl {
 	public static final int TRIMMED_WINDOW_OPERATION_COUNT = WINDOW_OPERATION_COUNT + 0;
 
 	/**
+	 * The meta object id for the '{@link org.eclipse.e4.ui.model.application.ui.basic.MTrimElement <em>Trim Element</em>}' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see org.eclipse.e4.ui.model.application.ui.basic.MTrimElement
+	 * @see org.eclipse.e4.ui.model.application.ui.basic.impl.BasicPackageImpl#getTrimElement()
+	 * @since 1.0
+	 * @generated
+	 */
+	public static final int TRIM_ELEMENT = 7;
+
+	/**
 	 * The feature id for the '<em><b>Element Id</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -2927,6 +2784,17 @@ public class BasicPackageImpl extends EPackageImpl {
 	 * @ordered
 	 */
 	public static final int TRIM_ELEMENT_OPERATION_COUNT = UiPackageImpl.UI_ELEMENT_OPERATION_COUNT + 0;
+
+	/**
+	 * The meta object id for the '{@link org.eclipse.e4.ui.model.application.ui.basic.MPartSashContainerElement <em>Part Sash Container Element</em>}' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see org.eclipse.e4.ui.model.application.ui.basic.MPartSashContainerElement
+	 * @see org.eclipse.e4.ui.model.application.ui.basic.impl.BasicPackageImpl#getPartSashContainerElement()
+	 * @since 1.0
+	 * @generated
+	 */
+	public static final int PART_SASH_CONTAINER_ELEMENT = 8;
 
 	/**
 	 * The feature id for the '<em><b>Element Id</b></em>' attribute.
@@ -3119,6 +2987,17 @@ public class BasicPackageImpl extends EPackageImpl {
 	public static final int PART_SASH_CONTAINER_ELEMENT_OPERATION_COUNT = UiPackageImpl.UI_ELEMENT_OPERATION_COUNT + 0;
 
 	/**
+	 * The meta object id for the '{@link org.eclipse.e4.ui.model.application.ui.basic.MWindowElement <em>Window Element</em>}' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see org.eclipse.e4.ui.model.application.ui.basic.MWindowElement
+	 * @see org.eclipse.e4.ui.model.application.ui.basic.impl.BasicPackageImpl#getWindowElement()
+	 * @since 1.0
+	 * @generated
+	 */
+	public static final int WINDOW_ELEMENT = 9;
+
+	/**
 	 * The feature id for the '<em><b>Element Id</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -3307,6 +3186,17 @@ public class BasicPackageImpl extends EPackageImpl {
 	 * @ordered
 	 */
 	public static final int WINDOW_ELEMENT_OPERATION_COUNT = UiPackageImpl.UI_ELEMENT_OPERATION_COUNT + 0;
+
+	/**
+	 * The meta object id for the '{@link org.eclipse.e4.ui.model.application.ui.basic.impl.TrimBarImpl <em>Trim Bar</em>}' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see org.eclipse.e4.ui.model.application.ui.basic.impl.TrimBarImpl
+	 * @see org.eclipse.e4.ui.model.application.ui.basic.impl.BasicPackageImpl#getTrimBar()
+	 * @since 1.0
+	 * @generated
+	 */
+	public static final int TRIM_BAR = 10;
 
 	/**
 	 * The feature id for the '<em><b>Element Id</b></em>' attribute.
@@ -3503,6 +3393,7 @@ public class BasicPackageImpl extends EPackageImpl {
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @since 1.0
+	 * @noreference
 	 * @generated
 	 * @ordered
 	 */
@@ -3537,6 +3428,17 @@ public class BasicPackageImpl extends EPackageImpl {
 	 * @ordered
 	 */
 	public static final int TRIM_BAR_OPERATION_COUNT = UiPackageImpl.GENERIC_TRIM_CONTAINER_OPERATION_COUNT + 0;
+
+	/**
+	 * The meta object id for the '{@link org.eclipse.e4.ui.model.application.ui.basic.MStackElement <em>Stack Element</em>}' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see org.eclipse.e4.ui.model.application.ui.basic.MStackElement
+	 * @see org.eclipse.e4.ui.model.application.ui.basic.impl.BasicPackageImpl#getStackElement()
+	 * @since 1.0
+	 * @generated
+	 */
+	public static final int STACK_ELEMENT = 11;
 
 	/**
 	 * The feature id for the '<em><b>Element Id</b></em>' attribute.
@@ -3729,261 +3631,177 @@ public class BasicPackageImpl extends EPackageImpl {
 	public static final int STACK_ELEMENT_OPERATION_COUNT = UiPackageImpl.UI_ELEMENT_OPERATION_COUNT + 0;
 
 	/**
-	 * The meta object id for the
-	 * '{@link org.eclipse.e4.ui.model.application.ui.basic.impl.DialogImpl
-	 * <em>Dialog</em>}' class. <!-- begin-user-doc --> <!-- end-user-doc -->
-	 * 
+	 * The meta object id for the '{@link org.eclipse.e4.ui.model.application.ui.basic.impl.DialogImpl <em>Dialog</em>}' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
 	 * @see org.eclipse.e4.ui.model.application.ui.basic.impl.DialogImpl
 	 * @see org.eclipse.e4.ui.model.application.ui.basic.impl.BasicPackageImpl#getDialog()
 	 * @since 1.1
-	 * @generated NOT
 	 * @deprecated
-	 * @ordered
-	 * @noreference This field is not intended to be referenced by clients.
-	 * @see <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=531054">Bug
-	 *      531054</a>
+	 * @noreference See {@link MDialog model documentation} for details.
+	 * @generated
 	 */
 	@Deprecated
 	public static final int DIALOG = 12;
 
 	/**
-	 * The feature id for the '<em><b>Element Id</b></em>' attribute. <!--
-	 * begin-user-doc --> <!-- end-user-doc -->
-	 * 
+	 * The feature id for the '<em><b>Element Id</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
 	 * @since 1.0
-	 * @generated NOT
-	 * @deprecated
+	 * @generated
 	 * @ordered
-	 * @noreference This field is not intended to be referenced by clients.
-	 * @see <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=531054">Bug
-	 *      531054</a>
 	 */
-	@Deprecated
 	public static final int DIALOG__ELEMENT_ID = WINDOW__ELEMENT_ID;
 
 	/**
-	 * The feature id for the '<em><b>Persisted State</b></em>' map. <!--
-	 * begin-user-doc --> <!-- end-user-doc -->
-	 * 
+	 * The feature id for the '<em><b>Persisted State</b></em>' map.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
 	 * @since 1.0
-	 * @generated NOT
-	 * @deprecated
+	 * @generated
 	 * @ordered
-	 * @noreference This field is not intended to be referenced by clients.
-	 * @see <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=531054">Bug
-	 *      531054</a>
 	 */
-	@Deprecated
 	public static final int DIALOG__PERSISTED_STATE = WINDOW__PERSISTED_STATE;
 
 	/**
-	 * The feature id for the '<em><b>Tags</b></em>' attribute list. <!--
-	 * begin-user-doc --> <!-- end-user-doc -->
-	 * 
+	 * The feature id for the '<em><b>Tags</b></em>' attribute list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
 	 * @since 1.0
-	 * @generated NOT
-	 * @deprecated
+	 * @generated
 	 * @ordered
-	 * @noreference This field is not intended to be referenced by clients.
-	 * @see <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=531054">Bug
-	 *      531054</a>
 	 */
-	@Deprecated
 	public static final int DIALOG__TAGS = WINDOW__TAGS;
 
 	/**
-	 * The feature id for the '<em><b>Contributor URI</b></em>' attribute. <!--
-	 * begin-user-doc --> <!-- end-user-doc -->
-	 * 
+	 * The feature id for the '<em><b>Contributor URI</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
 	 * @since 1.0
-	 * @generated NOT
-	 * @deprecated
+	 * @generated
 	 * @ordered
-	 * @noreference This field is not intended to be referenced by clients.
-	 * @see <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=531054">Bug
-	 *      531054</a>
 	 */
-	@Deprecated
 	public static final int DIALOG__CONTRIBUTOR_URI = WINDOW__CONTRIBUTOR_URI;
 
 	/**
-	 * The feature id for the '<em><b>Transient Data</b></em>' map. <!--
-	 * begin-user-doc --> <!-- end-user-doc -->
-	 * 
+	 * The feature id for the '<em><b>Transient Data</b></em>' map.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
 	 * @since 1.0
-	 * @generated NOT
-	 * @deprecated
+	 * @generated
 	 * @ordered
-	 * @noreference This field is not intended to be referenced by clients.
-	 * @see <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=531054">Bug
-	 *      531054</a>
 	 */
-	@Deprecated
 	public static final int DIALOG__TRANSIENT_DATA = WINDOW__TRANSIENT_DATA;
 
 	/**
-	 * The feature id for the '<em><b>Widget</b></em>' attribute. <!--
-	 * begin-user-doc --> <!-- end-user-doc -->
-	 * 
+	 * The feature id for the '<em><b>Widget</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
 	 * @since 1.0
-	 * @generated NOT
-	 * @deprecated
+	 * @generated
 	 * @ordered
-	 * @noreference This field is not intended to be referenced by clients.
-	 * @see <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=531054">Bug
-	 *      531054</a>
 	 */
-	@Deprecated
 	public static final int DIALOG__WIDGET = WINDOW__WIDGET;
 
 	/**
-	 * The feature id for the '<em><b>Renderer</b></em>' attribute. <!--
-	 * begin-user-doc --> <!-- end-user-doc -->
-	 * 
+	 * The feature id for the '<em><b>Renderer</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
 	 * @since 1.0
-	 * @generated NOT
-	 * @deprecated
+	 * @generated
 	 * @ordered
-	 * @noreference This field is not intended to be referenced by clients.
-	 * @see <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=531054">Bug
-	 *      531054</a>
 	 */
-	@Deprecated
 	public static final int DIALOG__RENDERER = WINDOW__RENDERER;
 
 	/**
-	 * The feature id for the '<em><b>To Be Rendered</b></em>' attribute. <!--
-	 * begin-user-doc --> <!-- end-user-doc -->
-	 * 
+	 * The feature id for the '<em><b>To Be Rendered</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
 	 * @since 1.0
-	 * @generated NOT
-	 * @deprecated
+	 * @generated
 	 * @ordered
-	 * @noreference This field is not intended to be referenced by clients.
-	 * @see <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=531054">Bug
-	 *      531054</a>
 	 */
-	@Deprecated
 	public static final int DIALOG__TO_BE_RENDERED = WINDOW__TO_BE_RENDERED;
 
 	/**
-	 * The feature id for the '<em><b>On Top</b></em>' attribute. <!--
-	 * begin-user-doc --> <!-- end-user-doc -->
-	 * 
+	 * The feature id for the '<em><b>On Top</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
 	 * @since 1.0
-	 * @generated NOT
-	 * @deprecated
+	 * @generated
 	 * @ordered
-	 * @noreference This field is not intended to be referenced by clients.
-	 * @see <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=531054">Bug
-	 *      531054</a>
 	 */
-	@Deprecated
 	public static final int DIALOG__ON_TOP = WINDOW__ON_TOP;
 
 	/**
-	 * The feature id for the '<em><b>Visible</b></em>' attribute. <!--
-	 * begin-user-doc --> <!-- end-user-doc -->
-	 * 
+	 * The feature id for the '<em><b>Visible</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
 	 * @since 1.0
-	 * @generated NOT
-	 * @deprecated
+	 * @generated
 	 * @ordered
-	 * @noreference This field is not intended to be referenced by clients.
-	 * @see <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=531054">Bug
-	 *      531054</a>
 	 */
-	@Deprecated
 	public static final int DIALOG__VISIBLE = WINDOW__VISIBLE;
 
 	/**
-	 * The feature id for the '<em><b>Parent</b></em>' container reference. <!--
-	 * begin-user-doc --> <!-- end-user-doc -->
-	 * 
+	 * The feature id for the '<em><b>Parent</b></em>' container reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
 	 * @since 1.0
-	 * @generated NOT
-	 * @deprecated
+	 * @generated
 	 * @ordered
-	 * @noreference This field is not intended to be referenced by clients.
-	 * @see <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=531054">Bug
-	 *      531054</a>
 	 */
-	@Deprecated
 	public static final int DIALOG__PARENT = WINDOW__PARENT;
 
 	/**
-	 * The feature id for the '<em><b>Container Data</b></em>' attribute. <!--
-	 * begin-user-doc --> <!-- end-user-doc -->
-	 * 
+	 * The feature id for the '<em><b>Container Data</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
 	 * @since 1.0
-	 * @generated NOT
-	 * @deprecated
+	 * @generated
 	 * @ordered
-	 * @noreference This field is not intended to be referenced by clients.
-	 * @see <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=531054">Bug
-	 *      531054</a>
 	 */
-	@Deprecated
 	public static final int DIALOG__CONTAINER_DATA = WINDOW__CONTAINER_DATA;
 
 	/**
-	 * The feature id for the '<em><b>Cur Shared Ref</b></em>' reference. <!--
-	 * begin-user-doc --> <!-- end-user-doc -->
-	 * 
+	 * The feature id for the '<em><b>Cur Shared Ref</b></em>' reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
 	 * @since 1.0
-	 * @generated NOT
-	 * @deprecated
+	 * @generated
 	 * @ordered
-	 * @noreference This field is not intended to be referenced by clients.
-	 * @see <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=531054">Bug
-	 *      531054</a>
 	 */
-	@Deprecated
 	public static final int DIALOG__CUR_SHARED_REF = WINDOW__CUR_SHARED_REF;
 
 	/**
 	 * The feature id for the '<em><b>Visible When</b></em>' containment reference.
-	 * <!-- begin-user-doc --> <!-- end-user-doc -->
-	 * 
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
 	 * @since 1.0
-	 * @generated NOT
-	 * @deprecated
+	 * @generated
 	 * @ordered
-	 * @noreference This field is not intended to be referenced by clients.
-	 * @see <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=531054">Bug
-	 *      531054</a>
 	 */
-	@Deprecated
 	public static final int DIALOG__VISIBLE_WHEN = WINDOW__VISIBLE_WHEN;
 
 	/**
-	 * The feature id for the '<em><b>Accessibility Phrase</b></em>' attribute. <!--
-	 * begin-user-doc --> <!-- end-user-doc -->
-	 * 
+	 * The feature id for the '<em><b>Accessibility Phrase</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
 	 * @since 1.0
-	 * @generated NOT
-	 * @deprecated
+	 * @generated
 	 * @ordered
-	 * @noreference This field is not intended to be referenced by clients.
-	 * @see <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=531054">Bug
-	 *      531054</a>
 	 */
-	@Deprecated
 	public static final int DIALOG__ACCESSIBILITY_PHRASE = WINDOW__ACCESSIBILITY_PHRASE;
 
 	/**
-	 * The feature id for the '<em><b>Localized Accessibility Phrase</b></em>'
-	 * attribute. <!-- begin-user-doc --> <!-- end-user-doc -->
-	 * 
+	 * The feature id for the '<em><b>Localized Accessibility Phrase</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
 	 * @since 1.0
-	 * @generated NOT
-	 * @deprecated
+	 * @generated
 	 * @ordered
-	 * @noreference This field is not intended to be referenced by clients.
-	 * @see <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=531054">Bug
-	 *      531054</a>
 	 */
-	@Deprecated
 	public static final int DIALOG__LOCALIZED_ACCESSIBILITY_PHRASE = WINDOW__LOCALIZED_ACCESSIBILITY_PHRASE;
 
 	/**
@@ -3997,933 +3815,637 @@ public class BasicPackageImpl extends EPackageImpl {
 	public static final int DIALOG__CHILDREN = WINDOW__CHILDREN;
 
 	/**
-	 * The feature id for the '<em><b>Selected Element</b></em>' reference. <!--
-	 * begin-user-doc --> <!-- end-user-doc -->
-	 * 
+	 * The feature id for the '<em><b>Selected Element</b></em>' reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
 	 * @since 1.0
-	 * @generated NOT
-	 * @deprecated
+	 * @generated
 	 * @ordered
-	 * @noreference This field is not intended to be referenced by clients.
-	 * @see <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=531054">Bug
-	 *      531054</a>
 	 */
-	@Deprecated
 	public static final int DIALOG__SELECTED_ELEMENT = WINDOW__SELECTED_ELEMENT;
 
 	/**
-	 * The feature id for the '<em><b>Label</b></em>' attribute. <!-- begin-user-doc
-	 * --> <!-- end-user-doc -->
-	 * 
+	 * The feature id for the '<em><b>Label</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
 	 * @since 1.0
-	 * @generated NOT
-	 * @deprecated
+	 * @generated
 	 * @ordered
-	 * @noreference This field is not intended to be referenced by clients.
-	 * @see <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=531054">Bug
-	 *      531054</a>
 	 */
-	@Deprecated
 	public static final int DIALOG__LABEL = WINDOW__LABEL;
 
 	/**
-	 * The feature id for the '<em><b>Icon URI</b></em>' attribute. <!--
-	 * begin-user-doc --> <!-- end-user-doc -->
-	 * 
+	 * The feature id for the '<em><b>Icon URI</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
 	 * @since 1.0
-	 * @generated NOT
-	 * @deprecated
+	 * @generated
 	 * @ordered
-	 * @noreference This field is not intended to be referenced by clients.
-	 * @see <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=531054">Bug
-	 *      531054</a>
 	 */
-	@Deprecated
 	public static final int DIALOG__ICON_URI = WINDOW__ICON_URI;
 
 	/**
-	 * The feature id for the '<em><b>Tooltip</b></em>' attribute. <!--
-	 * begin-user-doc --> <!-- end-user-doc -->
-	 * 
+	 * The feature id for the '<em><b>Tooltip</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
 	 * @since 1.0
-	 * @generated NOT
-	 * @deprecated
+	 * @generated
 	 * @ordered
-	 * @noreference This field is not intended to be referenced by clients.
-	 * @see <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=531054">Bug
-	 *      531054</a>
 	 */
-	@Deprecated
 	public static final int DIALOG__TOOLTIP = WINDOW__TOOLTIP;
 
 	/**
-	 * The feature id for the '<em><b>Localized Label</b></em>' attribute. <!--
-	 * begin-user-doc --> <!-- end-user-doc -->
-	 * 
+	 * The feature id for the '<em><b>Localized Label</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
 	 * @since 1.0
-	 * @generated NOT
-	 * @deprecated
+	 * @generated
 	 * @ordered
-	 * @noreference This field is not intended to be referenced by clients.
-	 * @see <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=531054">Bug
-	 *      531054</a>
 	 */
-	@Deprecated
 	public static final int DIALOG__LOCALIZED_LABEL = WINDOW__LOCALIZED_LABEL;
 
 	/**
-	 * The feature id for the '<em><b>Localized Tooltip</b></em>' attribute. <!--
-	 * begin-user-doc --> <!-- end-user-doc -->
-	 * 
+	 * The feature id for the '<em><b>Localized Tooltip</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
 	 * @since 1.0
-	 * @generated NOT
-	 * @deprecated
+	 * @generated
 	 * @ordered
-	 * @noreference This field is not intended to be referenced by clients.
-	 * @see <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=531054">Bug
-	 *      531054</a>
 	 */
-	@Deprecated
 	public static final int DIALOG__LOCALIZED_TOOLTIP = WINDOW__LOCALIZED_TOOLTIP;
 
 	/**
-	 * The feature id for the '<em><b>Context</b></em>' attribute. <!--
-	 * begin-user-doc --> <!-- end-user-doc -->
-	 * 
+	 * The feature id for the '<em><b>Context</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
 	 * @since 1.0
-	 * @generated NOT
-	 * @deprecated
+	 * @generated
 	 * @ordered
-	 * @noreference This field is not intended to be referenced by clients.
-	 * @see <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=531054">Bug
-	 *      531054</a>
 	 */
-	@Deprecated
 	public static final int DIALOG__CONTEXT = WINDOW__CONTEXT;
 
 	/**
-	 * The feature id for the '<em><b>Variables</b></em>' attribute list. <!--
-	 * begin-user-doc --> <!-- end-user-doc -->
-	 * 
+	 * The feature id for the '<em><b>Variables</b></em>' attribute list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
 	 * @since 1.0
-	 * @generated NOT
-	 * @deprecated
+	 * @generated
 	 * @ordered
-	 * @noreference This field is not intended to be referenced by clients.
-	 * @see <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=531054">Bug
-	 *      531054</a>
 	 */
-	@Deprecated
 	public static final int DIALOG__VARIABLES = WINDOW__VARIABLES;
 
 	/**
-	 * The feature id for the '<em><b>Properties</b></em>' map. <!-- begin-user-doc
-	 * --> <!-- end-user-doc -->
-	 * 
+	 * The feature id for the '<em><b>Properties</b></em>' map.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
 	 * @since 1.0
-	 * @generated NOT
-	 * @deprecated
+	 * @generated
 	 * @ordered
-	 * @noreference This field is not intended to be referenced by clients.
-	 * @see <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=531054">Bug
-	 *      531054</a>
 	 */
-	@Deprecated
 	public static final int DIALOG__PROPERTIES = WINDOW__PROPERTIES;
 
 	/**
 	 * The feature id for the '<em><b>Handlers</b></em>' containment reference list.
-	 * <!-- begin-user-doc --> <!-- end-user-doc -->
-	 * 
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
 	 * @since 1.0
-	 * @generated NOT
-	 * @deprecated
+	 * @generated
 	 * @ordered
-	 * @noreference This field is not intended to be referenced by clients.
-	 * @see <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=531054">Bug
-	 *      531054</a>
 	 */
-	@Deprecated
 	public static final int DIALOG__HANDLERS = WINDOW__HANDLERS;
 
 	/**
 	 * The feature id for the '<em><b>Binding Contexts</b></em>' reference list.
-	 * <!-- begin-user-doc --> <!-- end-user-doc -->
-	 * 
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
 	 * @since 1.0
-	 * @generated NOT
-	 * @deprecated
+	 * @generated
 	 * @ordered
-	 * @noreference This field is not intended to be referenced by clients.
-	 * @see <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=531054">Bug
-	 *      531054</a>
 	 */
-	@Deprecated
 	public static final int DIALOG__BINDING_CONTEXTS = WINDOW__BINDING_CONTEXTS;
 
 	/**
 	 * The feature id for the '<em><b>Snippets</b></em>' containment reference list.
-	 * <!-- begin-user-doc --> <!-- end-user-doc -->
-	 * 
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
 	 * @since 1.0
-	 * @generated NOT
-	 * @deprecated
+	 * @generated
 	 * @ordered
-	 * @noreference This field is not intended to be referenced by clients.
-	 * @see <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=531054">Bug
-	 *      531054</a>
 	 */
-	@Deprecated
 	public static final int DIALOG__SNIPPETS = WINDOW__SNIPPETS;
 
 	/**
 	 * The feature id for the '<em><b>Main Menu</b></em>' containment reference.
-	 * <!-- begin-user-doc --> <!-- end-user-doc -->
-	 * 
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
 	 * @since 1.0
-	 * @generated NOT
-	 * @deprecated
+	 * @generated
 	 * @ordered
-	 * @noreference This field is not intended to be referenced by clients.
-	 * @see <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=531054">Bug
-	 *      531054</a>
 	 */
-	@Deprecated
 	public static final int DIALOG__MAIN_MENU = WINDOW__MAIN_MENU;
 
 	/**
-	 * The feature id for the '<em><b>X</b></em>' attribute. <!-- begin-user-doc -->
+	 * The feature id for the '<em><b>X</b></em>' attribute.
+	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * 
 	 * @since 1.0
-	 * @generated NOT
-	 * @deprecated
+	 * @generated
 	 * @ordered
-	 * @noreference This field is not intended to be referenced by clients.
-	 * @see <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=531054">Bug
-	 *      531054</a>
 	 */
-	@Deprecated
 	public static final int DIALOG__X = WINDOW__X;
 
 	/**
-	 * The feature id for the '<em><b>Y</b></em>' attribute. <!-- begin-user-doc -->
+	 * The feature id for the '<em><b>Y</b></em>' attribute.
+	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * 
 	 * @since 1.0
-	 * @generated NOT
-	 * @deprecated
+	 * @generated
 	 * @ordered
-	 * @noreference This field is not intended to be referenced by clients.
-	 * @see <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=531054">Bug
-	 *      531054</a>
 	 */
-	@Deprecated
 	public static final int DIALOG__Y = WINDOW__Y;
 
 	/**
-	 * The feature id for the '<em><b>Width</b></em>' attribute. <!-- begin-user-doc
-	 * --> <!-- end-user-doc -->
-	 * 
+	 * The feature id for the '<em><b>Width</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
 	 * @since 1.0
-	 * @generated NOT
-	 * @deprecated
+	 * @generated
 	 * @ordered
-	 * @noreference This field is not intended to be referenced by clients.
-	 * @see <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=531054">Bug
-	 *      531054</a>
 	 */
-	@Deprecated
 	public static final int DIALOG__WIDTH = WINDOW__WIDTH;
 
 	/**
-	 * The feature id for the '<em><b>Height</b></em>' attribute. <!--
-	 * begin-user-doc --> <!-- end-user-doc -->
-	 * 
+	 * The feature id for the '<em><b>Height</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
 	 * @since 1.0
-	 * @generated NOT
-	 * @deprecated
+	 * @generated
 	 * @ordered
-	 * @noreference This field is not intended to be referenced by clients.
-	 * @see <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=531054">Bug
-	 *      531054</a>
 	 */
-	@Deprecated
 	public static final int DIALOG__HEIGHT = WINDOW__HEIGHT;
 
 	/**
 	 * The feature id for the '<em><b>Windows</b></em>' containment reference list.
-	 * <!-- begin-user-doc --> <!-- end-user-doc -->
-	 * 
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
 	 * @since 1.0
-	 * @generated NOT
-	 * @deprecated
+	 * @generated
 	 * @ordered
-	 * @noreference This field is not intended to be referenced by clients.
-	 * @see <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=531054">Bug
-	 *      531054</a>
 	 */
-	@Deprecated
 	public static final int DIALOG__WINDOWS = WINDOW__WINDOWS;
 
 	/**
-	 * The feature id for the '<em><b>Shared Elements</b></em>' containment
-	 * reference list. <!-- begin-user-doc --> <!-- end-user-doc -->
-	 * 
+	 * The feature id for the '<em><b>Shared Elements</b></em>' containment reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
 	 * @since 1.0
-	 * @generated NOT
-	 * @deprecated
+	 * @generated
 	 * @ordered
-	 * @noreference This field is not intended to be referenced by clients.
-	 * @see <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=531054">Bug
-	 *      531054</a>
 	 */
-	@Deprecated
 	public static final int DIALOG__SHARED_ELEMENTS = WINDOW__SHARED_ELEMENTS;
 
 	/**
-	 * The number of structural features of the '<em>Dialog</em>' class. <!--
-	 * begin-user-doc --> <!-- end-user-doc -->
-	 * 
+	 * The number of structural features of the '<em>Dialog</em>' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
 	 * @since 1.1
-	 * @generated NOT
 	 * @deprecated
+	 * @noreference See {@link MDialog model documentation} for details.
+	 * @generated
 	 * @ordered
-	 * @noreference This field is not intended to be referenced by clients.
-	 * @see <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=531054">Bug
-	 *      531054</a>
 	 */
 	@Deprecated
 	public static final int DIALOG_FEATURE_COUNT = WINDOW_FEATURE_COUNT + 0;
 
 	/**
-	 * The operation id for the '<em>Update Localization</em>' operation. <!--
-	 * begin-user-doc --> <!-- end-user-doc -->
-	 * 
+	 * The operation id for the '<em>Update Localization</em>' operation.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
 	 * @since 1.1
-	 * @generated NOT
-	 * @deprecated
+	 * @generated
 	 * @ordered
-	 * @noreference This field is not intended to be referenced by clients.
-	 * @see <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=531054">Bug
-	 *      531054</a>
 	 */
-	@Deprecated
 	public static final int DIALOG___UPDATE_LOCALIZATION = WINDOW___UPDATE_LOCALIZATION;
 
 	/**
-	 * The number of operations of the '<em>Dialog</em>' class. <!-- begin-user-doc
-	 * --> <!-- end-user-doc -->
-	 * 
+	 * The number of operations of the '<em>Dialog</em>' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
 	 * @since 1.1
-	 * @generated NOT
 	 * @deprecated
+	 * @noreference See {@link MDialog model documentation} for details.
+	 * @generated
 	 * @ordered
-	 * @noreference This field is not intended to be referenced by clients.
-	 * @see <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=531054">Bug
-	 *      531054</a>
 	 */
 	@Deprecated
 	public static final int DIALOG_OPERATION_COUNT = WINDOW_OPERATION_COUNT + 0;
 
 	/**
-	 * The meta object id for the
-	 * '{@link org.eclipse.e4.ui.model.application.ui.basic.impl.WizardDialogImpl
-	 * <em>Wizard Dialog</em>}' class. <!-- begin-user-doc --> <!-- end-user-doc -->
-	 * 
+	 * The meta object id for the '{@link org.eclipse.e4.ui.model.application.ui.basic.impl.WizardDialogImpl <em>Wizard Dialog</em>}' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
 	 * @see org.eclipse.e4.ui.model.application.ui.basic.impl.WizardDialogImpl
 	 * @see org.eclipse.e4.ui.model.application.ui.basic.impl.BasicPackageImpl#getWizardDialog()
 	 * @since 1.1
-	 * @generated NOT
 	 * @deprecated
-	 * @noreference This field is not intended to be referenced by clients.
-	 * @see <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=531054">Bug
-	 *      531054</a>
+	 * @noreference See {@link MWizardDialog model documentation} for details.
+	 * @generated
 	 */
 	@Deprecated
 	public static final int WIZARD_DIALOG = 13;
 
 	/**
-	 * The feature id for the '<em><b>Element Id</b></em>' attribute. <!--
-	 * begin-user-doc --> <!-- end-user-doc -->
-	 * 
+	 * The feature id for the '<em><b>Element Id</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
 	 * @since 1.0
-	 * @generated NOT
-	 * @deprecated
+	 * @generated
 	 * @ordered
-	 * @noreference This field is not intended to be referenced by clients.
-	 * @see <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=531054">Bug
-	 *      531054</a>
 	 */
-	@Deprecated
 	public static final int WIZARD_DIALOG__ELEMENT_ID = DIALOG__ELEMENT_ID;
 
 	/**
-	 * The feature id for the '<em><b>Persisted State</b></em>' map. <!--
-	 * begin-user-doc --> <!-- end-user-doc -->
-	 * 
+	 * The feature id for the '<em><b>Persisted State</b></em>' map.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
 	 * @since 1.0
-	 * @generated NOT
-	 * @deprecated
+	 * @generated
 	 * @ordered
-	 * @noreference This field is not intended to be referenced by clients.
-	 * @see <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=531054">Bug
-	 *      531054</a>
 	 */
-	@Deprecated
 	public static final int WIZARD_DIALOG__PERSISTED_STATE = DIALOG__PERSISTED_STATE;
 
 	/**
-	 * The feature id for the '<em><b>Tags</b></em>' attribute list. <!--
-	 * begin-user-doc --> <!-- end-user-doc -->
-	 * 
+	 * The feature id for the '<em><b>Tags</b></em>' attribute list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
 	 * @since 1.0
-	 * @generated NOT
-	 * @deprecated
+	 * @generated
 	 * @ordered
-	 * @noreference This field is not intended to be referenced by clients.
-	 * @see <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=531054">Bug
-	 *      531054</a>
 	 */
-	@Deprecated
 	public static final int WIZARD_DIALOG__TAGS = DIALOG__TAGS;
 
 	/**
-	 * The feature id for the '<em><b>Contributor URI</b></em>' attribute. <!--
-	 * begin-user-doc --> <!-- end-user-doc -->
-	 * 
+	 * The feature id for the '<em><b>Contributor URI</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
 	 * @since 1.0
-	 * @generated NOT
-	 * @deprecated
+	 * @generated
 	 * @ordered
-	 * @noreference This field is not intended to be referenced by clients.
-	 * @see <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=531054">Bug
-	 *      531054</a>
 	 */
-	@Deprecated
 	public static final int WIZARD_DIALOG__CONTRIBUTOR_URI = DIALOG__CONTRIBUTOR_URI;
 
 	/**
-	 * The feature id for the '<em><b>Transient Data</b></em>' map. <!--
-	 * begin-user-doc --> <!-- end-user-doc -->
-	 * 
+	 * The feature id for the '<em><b>Transient Data</b></em>' map.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
 	 * @since 1.0
-	 * @generated NOT
-	 * @deprecated
+	 * @generated
 	 * @ordered
-	 * @noreference This field is not intended to be referenced by clients.
-	 * @see <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=531054">Bug
-	 *      531054</a>
 	 */
-	@Deprecated
 	public static final int WIZARD_DIALOG__TRANSIENT_DATA = DIALOG__TRANSIENT_DATA;
 
 	/**
-	 * The feature id for the '<em><b>Widget</b></em>' attribute. <!--
-	 * begin-user-doc --> <!-- end-user-doc -->
-	 * 
+	 * The feature id for the '<em><b>Widget</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
 	 * @since 1.0
-	 * @generated NOT
-	 * @deprecated
+	 * @generated
 	 * @ordered
-	 * @noreference This field is not intended to be referenced by clients.
-	 * @see <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=531054">Bug
-	 *      531054</a>
 	 */
-	@Deprecated
 	public static final int WIZARD_DIALOG__WIDGET = DIALOG__WIDGET;
 
 	/**
-	 * The feature id for the '<em><b>Renderer</b></em>' attribute. <!--
-	 * begin-user-doc --> <!-- end-user-doc -->
-	 * 
+	 * The feature id for the '<em><b>Renderer</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
 	 * @since 1.0
-	 * @generated NOT
-	 * @deprecated
+	 * @generated
 	 * @ordered
-	 * @noreference This field is not intended to be referenced by clients.
-	 * @see <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=531054">Bug
-	 *      531054</a>
 	 */
-	@Deprecated
 	public static final int WIZARD_DIALOG__RENDERER = DIALOG__RENDERER;
 
 	/**
-	 * The feature id for the '<em><b>To Be Rendered</b></em>' attribute. <!--
-	 * begin-user-doc --> <!-- end-user-doc -->
-	 * 
+	 * The feature id for the '<em><b>To Be Rendered</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
 	 * @since 1.0
-	 * @generated NOT
-	 * @deprecated
+	 * @generated
 	 * @ordered
-	 * @noreference This field is not intended to be referenced by clients.
-	 * @see <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=531054">Bug
-	 *      531054</a>
 	 */
-	@Deprecated
 	public static final int WIZARD_DIALOG__TO_BE_RENDERED = DIALOG__TO_BE_RENDERED;
 
 	/**
-	 * The feature id for the '<em><b>On Top</b></em>' attribute. <!--
-	 * begin-user-doc --> <!-- end-user-doc -->
-	 * 
+	 * The feature id for the '<em><b>On Top</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
 	 * @since 1.0
-	 * @generated NOT
-	 * @deprecated
+	 * @generated
 	 * @ordered
-	 * @noreference This field is not intended to be referenced by clients.
-	 * @see <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=531054">Bug
-	 *      531054</a>
 	 */
-	@Deprecated
 	public static final int WIZARD_DIALOG__ON_TOP = DIALOG__ON_TOP;
 
 	/**
-	 * The feature id for the '<em><b>Visible</b></em>' attribute. <!--
-	 * begin-user-doc --> <!-- end-user-doc -->
-	 * 
+	 * The feature id for the '<em><b>Visible</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
 	 * @since 1.0
-	 * @generated NOT
-	 * @deprecated
+	 * @generated
 	 * @ordered
-	 * @noreference This field is not intended to be referenced by clients.
-	 * @see <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=531054">Bug
-	 *      531054</a>
 	 */
-	@Deprecated
 	public static final int WIZARD_DIALOG__VISIBLE = DIALOG__VISIBLE;
 
 	/**
-	 * The feature id for the '<em><b>Parent</b></em>' container reference. <!--
-	 * begin-user-doc --> <!-- end-user-doc -->
-	 * 
+	 * The feature id for the '<em><b>Parent</b></em>' container reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
 	 * @since 1.0
-	 * @generated NOT
-	 * @deprecated
+	 * @generated
 	 * @ordered
-	 * @noreference This field is not intended to be referenced by clients.
-	 * @see <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=531054">Bug
-	 *      531054</a>
 	 */
-	@Deprecated
 	public static final int WIZARD_DIALOG__PARENT = DIALOG__PARENT;
 
 	/**
-	 * The feature id for the '<em><b>Container Data</b></em>' attribute. <!--
-	 * begin-user-doc --> <!-- end-user-doc -->
-	 * 
+	 * The feature id for the '<em><b>Container Data</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
 	 * @since 1.0
-	 * @generated NOT
-	 * @deprecated
+	 * @generated
 	 * @ordered
-	 * @noreference This field is not intended to be referenced by clients.
-	 * @see <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=531054">Bug
-	 *      531054</a>
 	 */
-	@Deprecated
 	public static final int WIZARD_DIALOG__CONTAINER_DATA = DIALOG__CONTAINER_DATA;
 
 	/**
-	 * The feature id for the '<em><b>Cur Shared Ref</b></em>' reference. <!--
-	 * begin-user-doc --> <!-- end-user-doc -->
-	 * 
+	 * The feature id for the '<em><b>Cur Shared Ref</b></em>' reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
 	 * @since 1.0
-	 * @generated NOT
-	 * @deprecated
+	 * @generated
 	 * @ordered
-	 * @noreference This field is not intended to be referenced by clients.
-	 * @see <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=531054">Bug
-	 *      531054</a>
 	 */
-	@Deprecated
 	public static final int WIZARD_DIALOG__CUR_SHARED_REF = DIALOG__CUR_SHARED_REF;
 
 	/**
 	 * The feature id for the '<em><b>Visible When</b></em>' containment reference.
-	 * <!-- begin-user-doc --> <!-- end-user-doc -->
-	 * 
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
 	 * @since 1.0
-	 * @generated NOT
-	 * @deprecated
+	 * @generated
 	 * @ordered
-	 * @noreference This field is not intended to be referenced by clients.
-	 * @see <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=531054">Bug
-	 *      531054</a>
 	 */
-	@Deprecated
 	public static final int WIZARD_DIALOG__VISIBLE_WHEN = DIALOG__VISIBLE_WHEN;
 
 	/**
-	 * The feature id for the '<em><b>Accessibility Phrase</b></em>' attribute. <!--
-	 * begin-user-doc --> <!-- end-user-doc -->
-	 * 
+	 * The feature id for the '<em><b>Accessibility Phrase</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
 	 * @since 1.0
-	 * @generated NOT
-	 * @deprecated
+	 * @generated
 	 * @ordered
-	 * @noreference This field is not intended to be referenced by clients.
-	 * @see <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=531054">Bug
-	 *      531054</a>
 	 */
-	@Deprecated
 	public static final int WIZARD_DIALOG__ACCESSIBILITY_PHRASE = DIALOG__ACCESSIBILITY_PHRASE;
 
 	/**
-	 * The feature id for the '<em><b>Localized Accessibility Phrase</b></em>'
-	 * attribute. <!-- begin-user-doc --> <!-- end-user-doc -->
-	 * 
+	 * The feature id for the '<em><b>Localized Accessibility Phrase</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
 	 * @since 1.0
-	 * @generated NOT
-	 * @deprecated
+	 * @generated
 	 * @ordered
-	 * @noreference This field is not intended to be referenced by clients.
-	 * @see <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=531054">Bug
-	 *      531054</a>
 	 */
-	@Deprecated
 	public static final int WIZARD_DIALOG__LOCALIZED_ACCESSIBILITY_PHRASE = DIALOG__LOCALIZED_ACCESSIBILITY_PHRASE;
 
 	/**
 	 * The feature id for the '<em><b>Children</b></em>' containment reference list.
-	 * <!-- begin-user-doc --> <!-- end-user-doc -->
-	 * 
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
 	 * @since 1.0
-	 * @generated NOT
-	 * @deprecated
+	 * @generated
 	 * @ordered
-	 * @noreference This field is not intended to be referenced by clients.
-	 * @see <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=531054">Bug
-	 *      531054</a>
 	 */
-	@Deprecated
 	public static final int WIZARD_DIALOG__CHILDREN = DIALOG__CHILDREN;
 
 	/**
-	 * The feature id for the '<em><b>Selected Element</b></em>' reference. <!--
-	 * begin-user-doc --> <!-- end-user-doc -->
-	 * 
+	 * The feature id for the '<em><b>Selected Element</b></em>' reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
 	 * @since 1.0
-	 * @generated NOT
-	 * @deprecated
+	 * @generated
 	 * @ordered
-	 * @noreference This field is not intended to be referenced by clients.
-	 * @see <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=531054">Bug
-	 *      531054</a>
 	 */
-	@Deprecated
 	public static final int WIZARD_DIALOG__SELECTED_ELEMENT = DIALOG__SELECTED_ELEMENT;
 
 	/**
-	 * The feature id for the '<em><b>Label</b></em>' attribute. <!-- begin-user-doc
-	 * --> <!-- end-user-doc -->
-	 * 
+	 * The feature id for the '<em><b>Label</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
 	 * @since 1.0
-	 * @generated NOT
-	 * @deprecated
+	 * @generated
 	 * @ordered
-	 * @noreference This field is not intended to be referenced by clients.
-	 * @see <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=531054">Bug
-	 *      531054</a>
 	 */
-	@Deprecated
 	public static final int WIZARD_DIALOG__LABEL = DIALOG__LABEL;
 
 	/**
-	 * The feature id for the '<em><b>Icon URI</b></em>' attribute. <!--
-	 * begin-user-doc --> <!-- end-user-doc -->
-	 * 
+	 * The feature id for the '<em><b>Icon URI</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
 	 * @since 1.0
-	 * @generated NOT
-	 * @deprecated
+	 * @generated
 	 * @ordered
-	 * @noreference This field is not intended to be referenced by clients.
-	 * @see <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=531054">Bug
-	 *      531054</a>
 	 */
-	@Deprecated
 	public static final int WIZARD_DIALOG__ICON_URI = DIALOG__ICON_URI;
 
 	/**
-	 * The feature id for the '<em><b>Tooltip</b></em>' attribute. <!--
-	 * begin-user-doc --> <!-- end-user-doc -->
-	 * 
+	 * The feature id for the '<em><b>Tooltip</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
 	 * @since 1.0
-	 * @generated NOT
-	 * @deprecated
+	 * @generated
 	 * @ordered
-	 * @noreference This field is not intended to be referenced by clients.
-	 * @see <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=531054">Bug
-	 *      531054</a>
 	 */
-	@Deprecated
 	public static final int WIZARD_DIALOG__TOOLTIP = DIALOG__TOOLTIP;
 
 	/**
-	 * The feature id for the '<em><b>Localized Label</b></em>' attribute. <!--
-	 * begin-user-doc --> <!-- end-user-doc -->
-	 * 
+	 * The feature id for the '<em><b>Localized Label</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
 	 * @since 1.0
-	 * @generated NOT
-	 * @deprecated
+	 * @generated
 	 * @ordered
-	 * @noreference This field is not intended to be referenced by clients.
-	 * @see <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=531054">Bug
-	 *      531054</a>
 	 */
-	@Deprecated
 	public static final int WIZARD_DIALOG__LOCALIZED_LABEL = DIALOG__LOCALIZED_LABEL;
 
 	/**
-	 * The feature id for the '<em><b>Localized Tooltip</b></em>' attribute. <!--
-	 * begin-user-doc --> <!-- end-user-doc -->
-	 * 
+	 * The feature id for the '<em><b>Localized Tooltip</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
 	 * @since 1.0
-	 * @generated NOT
-	 * @deprecated
+	 * @generated
 	 * @ordered
-	 * @noreference This field is not intended to be referenced by clients.
-	 * @see <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=531054">Bug
-	 *      531054</a>
 	 */
-	@Deprecated
 	public static final int WIZARD_DIALOG__LOCALIZED_TOOLTIP = DIALOG__LOCALIZED_TOOLTIP;
 
 	/**
-	 * The feature id for the '<em><b>Context</b></em>' attribute. <!--
-	 * begin-user-doc --> <!-- end-user-doc -->
-	 * 
+	 * The feature id for the '<em><b>Context</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
 	 * @since 1.0
-	 * @generated NOT
-	 * @deprecated
+	 * @generated
 	 * @ordered
-	 * @noreference This field is not intended to be referenced by clients.
-	 * @see <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=531054">Bug
-	 *      531054</a>
 	 */
-	@Deprecated
 	public static final int WIZARD_DIALOG__CONTEXT = DIALOG__CONTEXT;
 
 	/**
-	 * The feature id for the '<em><b>Variables</b></em>' attribute list. <!--
-	 * begin-user-doc --> <!-- end-user-doc -->
-	 * 
+	 * The feature id for the '<em><b>Variables</b></em>' attribute list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
 	 * @since 1.0
-	 * @generated NOT
-	 * @deprecated
+	 * @generated
 	 * @ordered
-	 * @noreference This field is not intended to be referenced by clients.
-	 * @see <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=531054">Bug
-	 *      531054</a>
 	 */
-	@Deprecated
 	public static final int WIZARD_DIALOG__VARIABLES = DIALOG__VARIABLES;
 
 	/**
-	 * The feature id for the '<em><b>Properties</b></em>' map. <!-- begin-user-doc
-	 * --> <!-- end-user-doc -->
-	 * 
+	 * The feature id for the '<em><b>Properties</b></em>' map.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
 	 * @since 1.0
-	 * @generated NOT
-	 * @deprecated
+	 * @generated
 	 * @ordered
-	 * @noreference This field is not intended to be referenced by clients.
-	 * @see <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=531054">Bug
-	 *      531054</a>
 	 */
-	@Deprecated
 	public static final int WIZARD_DIALOG__PROPERTIES = DIALOG__PROPERTIES;
 
 	/**
 	 * The feature id for the '<em><b>Handlers</b></em>' containment reference list.
-	 * <!-- begin-user-doc --> <!-- end-user-doc -->
-	 * 
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
 	 * @since 1.0
-	 * @generated NOT
-	 * @deprecated
+	 * @generated
 	 * @ordered
-	 * @noreference This field is not intended to be referenced by clients.
-	 * @see <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=531054">Bug
-	 *      531054</a>
 	 */
-	@Deprecated
 	public static final int WIZARD_DIALOG__HANDLERS = DIALOG__HANDLERS;
 
 	/**
 	 * The feature id for the '<em><b>Binding Contexts</b></em>' reference list.
-	 * <!-- begin-user-doc --> <!-- end-user-doc -->
-	 * 
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
 	 * @since 1.0
-	 * @generated NOT
-	 * @deprecated
+	 * @generated
 	 * @ordered
-	 * @noreference This field is not intended to be referenced by clients.
-	 * @see <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=531054">Bug
-	 *      531054</a>
 	 */
-	@Deprecated
 	public static final int WIZARD_DIALOG__BINDING_CONTEXTS = DIALOG__BINDING_CONTEXTS;
 
 	/**
 	 * The feature id for the '<em><b>Snippets</b></em>' containment reference list.
-	 * <!-- begin-user-doc --> <!-- end-user-doc -->
-	 * 
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
 	 * @since 1.0
-	 * @generated NOT
-	 * @deprecated
+	 * @generated
 	 * @ordered
-	 * @noreference This field is not intended to be referenced by clients.
-	 * @see <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=531054">Bug
-	 *      531054</a>
 	 */
-	@Deprecated
 	public static final int WIZARD_DIALOG__SNIPPETS = DIALOG__SNIPPETS;
 
 	/**
 	 * The feature id for the '<em><b>Main Menu</b></em>' containment reference.
-	 * <!-- begin-user-doc --> <!-- end-user-doc -->
-	 * 
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
 	 * @since 1.0
-	 * @generated NOT
-	 * @deprecated
+	 * @generated
 	 * @ordered
-	 * @noreference This field is not intended to be referenced by clients.
-	 * @see <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=531054">Bug
-	 *      531054</a>
 	 */
-	@Deprecated
 	public static final int WIZARD_DIALOG__MAIN_MENU = DIALOG__MAIN_MENU;
 
 	/**
-	 * The feature id for the '<em><b>X</b></em>' attribute. <!-- begin-user-doc -->
+	 * The feature id for the '<em><b>X</b></em>' attribute.
+	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * 
 	 * @since 1.0
-	 * @generated NOT
-	 * @deprecated
+	 * @generated
 	 * @ordered
-	 * @noreference This field is not intended to be referenced by clients.
-	 * @see <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=531054">Bug
-	 *      531054</a>
 	 */
-	@Deprecated
 	public static final int WIZARD_DIALOG__X = DIALOG__X;
 
 	/**
-	 * The feature id for the '<em><b>Y</b></em>' attribute. <!-- begin-user-doc -->
+	 * The feature id for the '<em><b>Y</b></em>' attribute.
+	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * 
 	 * @since 1.0
-	 * @generated NOT
-	 * @deprecated
+	 * @generated
 	 * @ordered
-	 * @noreference This field is not intended to be referenced by clients.
-	 * @see <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=531054">Bug
-	 *      531054</a>
 	 */
-	@Deprecated
 	public static final int WIZARD_DIALOG__Y = DIALOG__Y;
 
 	/**
-	 * The feature id for the '<em><b>Width</b></em>' attribute. <!-- begin-user-doc
-	 * --> <!-- end-user-doc -->
-	 * 
+	 * The feature id for the '<em><b>Width</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
 	 * @since 1.0
-	 * @generated NOT
-	 * @deprecated
+	 * @generated
 	 * @ordered
-	 * @noreference This field is not intended to be referenced by clients.
-	 * @see <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=531054">Bug
-	 *      531054</a>
 	 */
-	@Deprecated
 	public static final int WIZARD_DIALOG__WIDTH = DIALOG__WIDTH;
 
 	/**
-	 * The feature id for the '<em><b>Height</b></em>' attribute. <!--
-	 * begin-user-doc --> <!-- end-user-doc -->
-	 * 
+	 * The feature id for the '<em><b>Height</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
 	 * @since 1.0
-	 * @generated NOT
-	 * @deprecated
+	 * @generated
 	 * @ordered
-	 * @noreference This field is not intended to be referenced by clients.
-	 * @see <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=531054">Bug
-	 *      531054</a>
 	 */
-	@Deprecated
 	public static final int WIZARD_DIALOG__HEIGHT = DIALOG__HEIGHT;
 
 	/**
 	 * The feature id for the '<em><b>Windows</b></em>' containment reference list.
-	 * <!-- begin-user-doc --> <!-- end-user-doc -->
-	 * 
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
 	 * @since 1.0
-	 * @generated NOT
-	 * @deprecated
+	 * @generated
 	 * @ordered
-	 * @noreference This field is not intended to be referenced by clients.
-	 * @see <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=531054">Bug
-	 *      531054</a>
 	 */
-	@Deprecated
 	public static final int WIZARD_DIALOG__WINDOWS = DIALOG__WINDOWS;
 
 	/**
-	 * The feature id for the '<em><b>Shared Elements</b></em>' containment
-	 * reference list. <!-- begin-user-doc --> <!-- end-user-doc -->
-	 * 
+	 * The feature id for the '<em><b>Shared Elements</b></em>' containment reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
 	 * @since 1.0
-	 * @generated NOT
-	 * @deprecated
+	 * @generated
 	 * @ordered
-	 * @noreference This field is not intended to be referenced by clients.
-	 * @see <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=531054">Bug
-	 *      531054</a>
 	 */
-	@Deprecated
 	public static final int WIZARD_DIALOG__SHARED_ELEMENTS = DIALOG__SHARED_ELEMENTS;
 
 	/**
-	 * The number of structural features of the '<em>Wizard Dialog</em>' class. <!--
-	 * begin-user-doc --> <!-- end-user-doc -->
-	 * 
+	 * The number of structural features of the '<em>Wizard Dialog</em>' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
 	 * @since 1.1
-	 * @generated NOT
 	 * @deprecated
+	 * @noreference See {@link MWizardDialog model documentation} for details.
+	 * @generated
 	 * @ordered
-	 * @noreference This field is not intended to be referenced by clients.
-	 * @see <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=531054">Bug
-	 *      531054</a>
 	 */
 	@Deprecated
 	public static final int WIZARD_DIALOG_FEATURE_COUNT = DIALOG_FEATURE_COUNT + 0;
 
 	/**
-	 * The operation id for the '<em>Update Localization</em>' operation. <!--
-	 * begin-user-doc --> <!-- end-user-doc -->
-	 * 
+	 * The operation id for the '<em>Update Localization</em>' operation.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
 	 * @since 1.1
-	 * @generated NOT
-	 * @deprecated
+	 * @generated
 	 * @ordered
-	 * @noreference This field is not intended to be referenced by clients.
-	 * @see <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=531054">Bug
-	 *      531054</a>
 	 */
-	@Deprecated
 	public static final int WIZARD_DIALOG___UPDATE_LOCALIZATION = DIALOG___UPDATE_LOCALIZATION;
 
 	/**
-	 * The number of operations of the '<em>Wizard Dialog</em>' class. <!--
-	 * begin-user-doc --> <!-- end-user-doc -->
-	 * 
+	 * The number of operations of the '<em>Wizard Dialog</em>' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
 	 * @since 1.1
-	 * @generated NOT
 	 * @deprecated
+	 * @noreference See {@link MWizardDialog model documentation} for details.
+	 * @generated
 	 * @ordered
-	 * @noreference This field is not intended to be referenced by clients.
-	 * @see <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=531054">Bug
-	 *      531054</a>
 	 */
 	@Deprecated
 	public static final int WIZARD_DIALOG_OPERATION_COUNT = DIALOG_OPERATION_COUNT + 0;
@@ -4945,13 +4467,11 @@ public class BasicPackageImpl extends EPackageImpl {
 	private EClass compositePartEClass = null;
 
 	/**
-	 * <!-- begin-user-doc --> <!-- end-user-doc -->
-	 * 
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
 	 * @since 1.0
 	 * @deprecated See {@link MInputPart model documentation} for details.
-	 * @generated NOT
-	 * @see <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=509868">Bug
-	 *      509868</a>
+	 * @generated
 	 */
 	@Deprecated
 	private EClass inputPartEClass = null;
@@ -5029,25 +4549,21 @@ public class BasicPackageImpl extends EPackageImpl {
 	private EClass stackElementEClass = null;
 
 	/**
-	 * <!-- begin-user-doc --> <!-- end-user-doc -->
-	 * 
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
 	 * @since 1.1
-	 * @generated NOT
 	 * @deprecated
-	 * @see <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=531054">Bug
-	 *      531054</a>
+	 * @generated
 	 */
 	@Deprecated
 	private EClass dialogEClass = null;
 
 	/**
-	 * <!-- begin-user-doc --> <!-- end-user-doc -->
-	 * 
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
 	 * @since 1.1
-	 * @generated NOT
 	 * @deprecated
-	 * @see <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=531054">Bug
-	 *      531054</a>
+	 * @generated
 	 */
 	@Deprecated
 	private EClass wizardDialogEClass = null;
@@ -5209,7 +4725,6 @@ public class BasicPackageImpl extends EPackageImpl {
 		return (EAttribute)partEClass.getEStructuralFeatures().get(3);
 	}
 
-
 	/**
 	 * Returns the meta object for the attribute '{@link org.eclipse.e4.ui.model.application.ui.basic.MPart#getLocalizedDescription <em>Localized Description</em>}'.
 	 * <!-- begin-user-doc -->
@@ -5223,7 +4738,6 @@ public class BasicPackageImpl extends EPackageImpl {
 	public EAttribute getPart_LocalizedDescription() {
 		return (EAttribute)partEClass.getEStructuralFeatures().get(4);
 	}
-
 
 	/**
 	 * Returns the meta object for the containment reference list '{@link org.eclipse.e4.ui.model.application.ui.basic.MPart#getTrimBars <em>Trim Bars</em>}'.
@@ -5240,6 +4754,19 @@ public class BasicPackageImpl extends EPackageImpl {
 		return (EReference)partEClass.getEStructuralFeatures().get(5);
 	}
 
+	/**
+	 * Returns the meta object for the '{@link org.eclipse.e4.ui.model.application.ui.basic.MPart#updateLocalization() <em>Update Localization</em>}' operation.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the '<em>Update Localization</em>' operation.
+	 * @see org.eclipse.e4.ui.model.application.ui.basic.MPart#updateLocalization()
+	 * @since 1.1
+	 * @generated
+	 */
+	public EOperation getPart__UpdateLocalization() {
+		return partEClass.getEOperations().get(0);
+	}
+
 
 	/**
 	 * Returns the meta object for class '{@link org.eclipse.e4.ui.model.application.ui.basic.MCompositePart <em>Composite Part</em>}'.
@@ -5254,20 +4781,16 @@ public class BasicPackageImpl extends EPackageImpl {
 		return compositePartEClass;
 	}
 
-
 	/**
-	 * Returns the meta object for class
-	 * '{@link org.eclipse.e4.ui.model.application.ui.basic.MInputPart <em>Input
-	 * Part</em>}'. <!-- begin-user-doc --> <!-- end-user-doc -->
-	 * 
+	 * Returns the meta object for class '{@link org.eclipse.e4.ui.model.application.ui.basic.MInputPart <em>Input Part</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
 	 * @return the meta object for class '<em>Input Part</em>'.
 	 * @see org.eclipse.e4.ui.model.application.ui.basic.MInputPart
 	 * @since 1.0
 	 * @deprecated See {@link MInputPart model documentation} for details.
-	 * @generated NOT
-	 * @noreference This method is not intended to be referenced by clients.
-	 * @see <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=509868">Bug
-	 *      509868</a>
+	 * @noreference See {@link MInputPart model documentation} for details.
+	 * @generated
 	 */
 	@Deprecated
 	public EClass getInputPart() {
@@ -5411,6 +4934,19 @@ public class BasicPackageImpl extends EPackageImpl {
 		return (EReference)windowEClass.getEStructuralFeatures().get(6);
 	}
 
+	/**
+	 * Returns the meta object for the '{@link org.eclipse.e4.ui.model.application.ui.basic.MWindow#updateLocalization() <em>Update Localization</em>}' operation.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the '<em>Update Localization</em>' operation.
+	 * @see org.eclipse.e4.ui.model.application.ui.basic.MWindow#updateLocalization()
+	 * @since 1.1
+	 * @generated
+	 */
+	public EOperation getWindow__UpdateLocalization() {
+		return windowEClass.getEOperations().get(0);
+	}
+
 
 	/**
 	 * Returns the meta object for class '{@link org.eclipse.e4.ui.model.application.ui.basic.MTrimmedWindow <em>Trimmed Window</em>}'.
@@ -5499,12 +5035,12 @@ public class BasicPackageImpl extends EPackageImpl {
 	 * @see org.eclipse.e4.ui.model.application.ui.basic.MTrimBar#getPendingCleanup()
 	 * @see #getTrimBar()
 	 * @since 1.0
+	 * @noreference
 	 * @generated
 	 */
 	public EReference getTrimBar_PendingCleanup() {
 		return (EReference)trimBarEClass.getEStructuralFeatures().get(0);
 	}
-
 
 	/**
 	 * Returns the meta object for class '{@link org.eclipse.e4.ui.model.application.ui.basic.MStackElement <em>Stack Element</em>}'.
@@ -5519,7 +5055,6 @@ public class BasicPackageImpl extends EPackageImpl {
 		return stackElementEClass;
 	}
 
-
 	/**
 	 * Returns the meta object for class '{@link org.eclipse.e4.ui.model.application.ui.basic.MDialog <em>Dialog</em>}'.
 	 * <!-- begin-user-doc -->
@@ -5527,33 +5062,30 @@ public class BasicPackageImpl extends EPackageImpl {
 	 * @return the meta object for class '<em>Dialog</em>'.
 	 * @see org.eclipse.e4.ui.model.application.ui.basic.MDialog
 	 * @since 1.1
+	 * @deprecated
+	 * @noreference See {@link MDialog model documentation} for details.
 	 * @generated
 	 */
+	@Deprecated
 	public EClass getDialog() {
 		return dialogEClass;
 	}
 
-
 	/**
-	 * Returns the meta object for class
-	 * '{@link org.eclipse.e4.ui.model.application.ui.basic.MWizardDialog <em>Wizard
-	 * Dialog</em>}'. <!-- begin-user-doc --> <!-- end-user-doc -->
-	 * 
+	 * Returns the meta object for class '{@link org.eclipse.e4.ui.model.application.ui.basic.MWizardDialog <em>Wizard Dialog</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
 	 * @return the meta object for class '<em>Wizard Dialog</em>'.
 	 * @see org.eclipse.e4.ui.model.application.ui.basic.MWizardDialog
 	 * @since 1.1
-	 * @generated NOT
 	 * @deprecated
-	 * @ordered
-	 * @noreference This method is not intended to be referenced by clients.
-	 * @see <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=531054">Bug
-	 *      531054</a>
+	 * @noreference See {@link MWizardDialog model documentation} for details.
+	 * @generated
 	 */
 	@Deprecated
 	public EClass getWizardDialog() {
 		return wizardDialogEClass;
 	}
-
 
 	/**
 	 * Returns the factory that creates the instances of the model.
@@ -5592,8 +5124,11 @@ public class BasicPackageImpl extends EPackageImpl {
 		createEAttribute(partEClass, PART__DESCRIPTION);
 		createEAttribute(partEClass, PART__LOCALIZED_DESCRIPTION);
 		createEReference(partEClass, PART__TRIM_BARS);
+		createEOperation(partEClass, PART___UPDATE_LOCALIZATION);
 
 		compositePartEClass = createEClass(COMPOSITE_PART);
+
+		inputPartEClass = createEClass(INPUT_PART);
 
 		partStackEClass = createEClass(PART_STACK);
 
@@ -5607,6 +5142,7 @@ public class BasicPackageImpl extends EPackageImpl {
 		createEAttribute(windowEClass, WINDOW__HEIGHT);
 		createEReference(windowEClass, WINDOW__WINDOWS);
 		createEReference(windowEClass, WINDOW__SHARED_ELEMENTS);
+		createEOperation(windowEClass, WINDOW___UPDATE_LOCALIZATION);
 
 		trimmedWindowEClass = createEClass(TRIMMED_WINDOW);
 		createEReference(trimmedWindowEClass, TRIMMED_WINDOW__TRIM_BARS);
@@ -5677,6 +5213,8 @@ public class BasicPackageImpl extends EPackageImpl {
 		EGenericType g2 = createEGenericType(this.getPartSashContainerElement());
 		g1.getETypeArguments().add(g2);
 		compositePartEClass.getEGenericSuperTypes().add(g1);
+		inputPartEClass.getESuperTypes().add(this.getPart());
+		inputPartEClass.getESuperTypes().add(theUiPackage.getInput());
 		g1 = createEGenericType(theUiPackage.getGenericStack());
 		g2 = createEGenericType(this.getStackElement());
 		g1.getETypeArguments().add(g2);
@@ -5730,7 +5268,11 @@ public class BasicPackageImpl extends EPackageImpl {
 		initEAttribute(getPart_LocalizedDescription(), ecorePackage.getEString(), "localizedDescription", null, 0, 1, MPart.class, IS_TRANSIENT, IS_VOLATILE, !IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
 		initEReference(getPart_TrimBars(), this.getTrimBar(), null, "trimBars", null, 0, -1, MPart.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
 
+		initEOperation(getPart__UpdateLocalization(), null, "updateLocalization", 0, 1, IS_UNIQUE, IS_ORDERED); //$NON-NLS-1$
+
 		initEClass(compositePartEClass, MCompositePart.class, "CompositePart", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS); //$NON-NLS-1$
+
+		initEClass(inputPartEClass, MInputPart.class, "InputPart", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS); //$NON-NLS-1$
 
 		initEClass(partStackEClass, MPartStack.class, "PartStack", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS); //$NON-NLS-1$
 
@@ -5744,6 +5286,8 @@ public class BasicPackageImpl extends EPackageImpl {
 		initEAttribute(getWindow_Height(), ecorePackage.getEInt(), "height", "-1", 0, 1, MWindow.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$ //$NON-NLS-2$
 		initEReference(getWindow_Windows(), this.getWindow(), null, "windows", null, 0, -1, MWindow.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
 		initEReference(getWindow_SharedElements(), theUiPackage.getUIElement(), null, "sharedElements", null, 0, -1, MWindow.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
+
+		initEOperation(getWindow__UpdateLocalization(), null, "updateLocalization", 0, 1, IS_UNIQUE, IS_ORDERED); //$NON-NLS-1$
 
 		initEClass(trimmedWindowEClass, MTrimmedWindow.class, "TrimmedWindow", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS); //$NON-NLS-1$
 		initEReference(getTrimmedWindow_TrimBars(), this.getTrimBar(), null, "trimBars", null, 0, -1, MTrimmedWindow.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
@@ -5770,6 +5314,7 @@ public class BasicPackageImpl extends EPackageImpl {
 	 * <ul>
 	 *   <li>each class,</li>
 	 *   <li>each feature of each class,</li>
+	 *   <li>each operation of each class,</li>
 	 *   <li>each enum,</li>
 	 *   <li>and each data type</li>
 	 * </ul>
@@ -5844,6 +5389,15 @@ public class BasicPackageImpl extends EPackageImpl {
 		public static final EReference PART__TRIM_BARS = eINSTANCE.getPart_TrimBars();
 
 		/**
+		 * The meta object literal for the '<em><b>Update Localization</b></em>' operation.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @since 1.1
+		 * @generated
+		 */
+		public static final EOperation PART___UPDATE_LOCALIZATION = eINSTANCE.getPart__UpdateLocalization();
+
+		/**
 		 * The meta object literal for the '{@link org.eclipse.e4.ui.model.application.ui.basic.impl.CompositePartImpl <em>Composite Part</em>}' class.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
@@ -5855,23 +5409,18 @@ public class BasicPackageImpl extends EPackageImpl {
 		public static final EClass COMPOSITE_PART = eINSTANCE.getCompositePart();
 
 		/**
-		 * The meta object literal for the
-		 * '{@link org.eclipse.e4.ui.model.application.ui.basic.impl.InputPartImpl
-		 * <em>Input Part</em>}' class. <!-- begin-user-doc --> <!-- end-user-doc -->
-		 * 
+		 * The meta object literal for the '{@link org.eclipse.e4.ui.model.application.ui.basic.impl.InputPartImpl <em>Input Part</em>}' class.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
 		 * @see org.eclipse.e4.ui.model.application.ui.basic.impl.InputPartImpl
 		 * @see org.eclipse.e4.ui.model.application.ui.basic.impl.BasicPackageImpl#getInputPart()
 		 * @since 1.0
 		 * @deprecated See {@link MInputPart model documentation} for details.
-		 * @generated NOT
-		 * @noreference This field is not intended to be referenced by clients.
-		 * @see <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=509868">Bug
-		 *      509868</a>
-		 * 
+		 * @noreference See {@link MInputPart model documentation} for details.
+		 * @generated
 		 */
 		@Deprecated
 		public static final EClass INPUT_PART = eINSTANCE.getInputPart();
-
 
 		/**
 		 * The meta object literal for the '{@link org.eclipse.e4.ui.model.application.ui.basic.impl.PartStackImpl <em>Part Stack</em>}' class.
@@ -5970,6 +5519,15 @@ public class BasicPackageImpl extends EPackageImpl {
 		public static final EReference WINDOW__SHARED_ELEMENTS = eINSTANCE.getWindow_SharedElements();
 
 		/**
+		 * The meta object literal for the '<em><b>Update Localization</b></em>' operation.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @since 1.1
+		 * @generated
+		 */
+		public static final EOperation WINDOW___UPDATE_LOCALIZATION = eINSTANCE.getWindow__UpdateLocalization();
+
+		/**
 		 * The meta object literal for the '{@link org.eclipse.e4.ui.model.application.ui.basic.impl.TrimmedWindowImpl <em>Trimmed Window</em>}' class.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
@@ -6038,6 +5596,7 @@ public class BasicPackageImpl extends EPackageImpl {
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
 		 * @since 1.0
+		 * @noreference
 		 * @generated
 		 */
 		public static final EReference TRIM_BAR__PENDING_CLEANUP = eINSTANCE.getTrimBar_PendingCleanup();
@@ -6054,37 +5613,29 @@ public class BasicPackageImpl extends EPackageImpl {
 		public static final EClass STACK_ELEMENT = eINSTANCE.getStackElement();
 
 		/**
-		 * The meta object literal for the
-		 * '{@link org.eclipse.e4.ui.model.application.ui.basic.impl.DialogImpl
-		 * <em>Dialog</em>}' class. <!-- begin-user-doc --> <!-- end-user-doc -->
-		 * 
+		 * The meta object literal for the '{@link org.eclipse.e4.ui.model.application.ui.basic.impl.DialogImpl <em>Dialog</em>}' class.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
 		 * @see org.eclipse.e4.ui.model.application.ui.basic.impl.DialogImpl
 		 * @see org.eclipse.e4.ui.model.application.ui.basic.impl.BasicPackageImpl#getDialog()
 		 * @since 1.1
-		 * @generated NOT
 		 * @deprecated
-		 * @ordered
-		 * @noreference This field is not intended to be referenced by clients.
-		 * @see <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=531054">Bug
-		 *      531054</a>
+		 * @noreference See {@link MDialog model documentation} for details.
+		 * @generated
 		 */
 		@Deprecated
 		public static final EClass DIALOG = eINSTANCE.getDialog();
 
 		/**
-		 * The meta object literal for the
-		 * '{@link org.eclipse.e4.ui.model.application.ui.basic.impl.WizardDialogImpl
-		 * <em>Wizard Dialog</em>}' class. <!-- begin-user-doc --> <!-- end-user-doc -->
-		 * 
+		 * The meta object literal for the '{@link org.eclipse.e4.ui.model.application.ui.basic.impl.WizardDialogImpl <em>Wizard Dialog</em>}' class.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
 		 * @see org.eclipse.e4.ui.model.application.ui.basic.impl.WizardDialogImpl
 		 * @see org.eclipse.e4.ui.model.application.ui.basic.impl.BasicPackageImpl#getWizardDialog()
 		 * @since 1.1
-		 * @generated NOT
 		 * @deprecated
-		 * @ordered
-		 * @noreference This method is not intended to be referenced by clients.
-		 * @see <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=531054">Bug
-		 *      531054</a>
+		 * @noreference See {@link MWizardDialog model documentation} for details.
+		 * @generated
 		 */
 		@Deprecated
 		public static final EClass WIZARD_DIALOG = eINSTANCE.getWizardDialog();

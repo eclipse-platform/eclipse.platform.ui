@@ -136,6 +136,7 @@ public class StringModelFragmentImpl extends ModelFragmentImpl implements MStrin
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public String getFeaturename() {
 		return featurename;
 	}
@@ -145,6 +146,7 @@ public class StringModelFragmentImpl extends ModelFragmentImpl implements MStrin
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public void setFeaturename(String newFeaturename) {
 		String oldFeaturename = featurename;
 		featurename = newFeaturename;
@@ -157,6 +159,7 @@ public class StringModelFragmentImpl extends ModelFragmentImpl implements MStrin
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public String getParentElementId() {
 		return parentElementId;
 	}
@@ -166,6 +169,7 @@ public class StringModelFragmentImpl extends ModelFragmentImpl implements MStrin
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public void setParentElementId(String newParentElementId) {
 		String oldParentElementId = parentElementId;
 		parentElementId = newParentElementId;
@@ -178,6 +182,7 @@ public class StringModelFragmentImpl extends ModelFragmentImpl implements MStrin
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public String getPositionInList() {
 		return positionInList;
 	}
@@ -187,6 +192,7 @@ public class StringModelFragmentImpl extends ModelFragmentImpl implements MStrin
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public void setPositionInList(String newPositionInList) {
 		String oldPositionInList = positionInList;
 		positionInList = newPositionInList;

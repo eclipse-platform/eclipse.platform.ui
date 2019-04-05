@@ -79,6 +79,7 @@ public abstract class GenericTrimContainerImpl<T extends MUIElement> extends Ele
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public SideValue getSide() {
 		return side;
 	}
@@ -88,6 +89,7 @@ public abstract class GenericTrimContainerImpl<T extends MUIElement> extends Ele
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public void setSide(SideValue newSide) {
 		SideValue oldSide = side;
 		side = newSide == null ? SIDE_EDEFAULT : newSide;

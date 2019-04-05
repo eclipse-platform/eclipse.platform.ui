@@ -234,6 +234,7 @@ public class StringToObjectMapImpl extends org.eclipse.emf.ecore.impl.MinimalEOb
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public int getHash() {
 		if (hash == -1) {
 			Object theKey = getKey();
@@ -247,6 +248,7 @@ public class StringToObjectMapImpl extends org.eclipse.emf.ecore.impl.MinimalEOb
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public void setHash(int hash) {
 		this.hash = hash;
 	}
@@ -256,6 +258,7 @@ public class StringToObjectMapImpl extends org.eclipse.emf.ecore.impl.MinimalEOb
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public String getKey() {
 		return getTypedKey();
 	}
@@ -265,6 +268,7 @@ public class StringToObjectMapImpl extends org.eclipse.emf.ecore.impl.MinimalEOb
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public void setKey(String key) {
 		setTypedKey(key);
 	}
@@ -274,6 +278,7 @@ public class StringToObjectMapImpl extends org.eclipse.emf.ecore.impl.MinimalEOb
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public Object getValue() {
 		return getTypedValue();
 	}
@@ -283,6 +288,7 @@ public class StringToObjectMapImpl extends org.eclipse.emf.ecore.impl.MinimalEOb
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public Object setValue(Object value) {
 		Object oldValue = getValue();
 		setTypedValue(value);

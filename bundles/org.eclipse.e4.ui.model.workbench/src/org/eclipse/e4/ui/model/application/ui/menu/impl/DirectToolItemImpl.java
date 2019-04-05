@@ -103,6 +103,7 @@ public class DirectToolItemImpl extends ToolItemImpl implements MDirectToolItem 
 	 * @since 1.0
 	 * @generated
 	 */
+	@Override
 	public String getContributionURI() {
 		return contributionURI;
 	}
@@ -113,6 +114,7 @@ public class DirectToolItemImpl extends ToolItemImpl implements MDirectToolItem 
 	 * @since 1.0
 	 * @generated
 	 */
+	@Override
 	public void setContributionURI(String newContributionURI) {
 		String oldContributionURI = contributionURI;
 		contributionURI = newContributionURI;
@@ -125,6 +127,7 @@ public class DirectToolItemImpl extends ToolItemImpl implements MDirectToolItem 
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public Object getObject() {
 		return object;
 	}
@@ -134,6 +137,7 @@ public class DirectToolItemImpl extends ToolItemImpl implements MDirectToolItem 
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public void setObject(Object newObject) {
 		Object oldObject = object;
 		object = newObject;

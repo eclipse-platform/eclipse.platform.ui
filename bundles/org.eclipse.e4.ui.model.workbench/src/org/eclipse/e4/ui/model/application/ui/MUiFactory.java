@@ -18,7 +18,6 @@ package org.eclipse.e4.ui.model.application.ui;
  * <!-- begin-user-doc -->
  * The <b>Factory</b> for the model.
  * It provides a create method for each non-abstract class of the model.
- * @since 1.0
  * <!-- end-user-doc -->
  * @generated
  */
@@ -42,12 +41,11 @@ public interface MUiFactory {
 	MCoreExpression createCoreExpression();
 
 	/**
-	 * Returns a new object of class '<em>Imperative Expression</em>'. <!--
-	 * begin-user-doc --> <!-- end-user-doc -->
-	 * 
+	 * Returns a new object of class '<em>Imperative Expression</em>'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
 	 * @return a new object of class '<em>Imperative Expression</em>'.
 	 * @generated
-	 * @since 2.0
 	 */
 	MImperativeExpression createImperativeExpression();
 

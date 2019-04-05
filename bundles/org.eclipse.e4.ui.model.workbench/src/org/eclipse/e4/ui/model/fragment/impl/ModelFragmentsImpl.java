@@ -86,6 +86,7 @@ public class ModelFragmentsImpl extends org.eclipse.emf.ecore.impl.MinimalEObjec
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public List<MApplicationElement> getImports() {
 		if (imports == null) {
 			imports = new EObjectContainmentEList<MApplicationElement>(MApplicationElement.class, this, FragmentPackageImpl.MODEL_FRAGMENTS__IMPORTS);
@@ -98,6 +99,7 @@ public class ModelFragmentsImpl extends org.eclipse.emf.ecore.impl.MinimalEObjec
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public List<MModelFragment> getFragments() {
 		if (fragments == null) {
 			fragments = new EObjectContainmentEList<MModelFragment>(MModelFragment.class, this, FragmentPackageImpl.MODEL_FRAGMENTS__FRAGMENTS);

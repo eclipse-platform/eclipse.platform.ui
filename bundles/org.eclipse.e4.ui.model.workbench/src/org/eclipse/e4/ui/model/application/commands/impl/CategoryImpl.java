@@ -126,6 +126,7 @@ public class CategoryImpl extends ApplicationElementImpl implements MCategory {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public String getName() {
 		return name;
 	}
@@ -135,6 +136,7 @@ public class CategoryImpl extends ApplicationElementImpl implements MCategory {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public void setName(String newName) {
 		String oldName = name;
 		name = newName;
@@ -147,6 +149,7 @@ public class CategoryImpl extends ApplicationElementImpl implements MCategory {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public String getDescription() {
 		return description;
 	}
@@ -156,6 +159,7 @@ public class CategoryImpl extends ApplicationElementImpl implements MCategory {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public void setDescription(String newDescription) {
 		String oldDescription = description;
 		description = newDescription;
@@ -166,7 +170,9 @@ public class CategoryImpl extends ApplicationElementImpl implements MCategory {
 	/**
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @generated
 	 */
+	@Override
 	public String getLocalizedName() {
 		return LocalizationHelper.getLocalizedFeature(CommandsPackageImpl.Literals.CATEGORY__NAME, this);
 	}
@@ -174,7 +180,9 @@ public class CategoryImpl extends ApplicationElementImpl implements MCategory {
 	/**
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @generated
 	 */
+	@Override
 	public String getLocalizedDescription() {
 		return LocalizationHelper.getLocalizedFeature(CommandsPackageImpl.Literals.CATEGORY__DESCRIPTION, this);
 	}
@@ -182,7 +190,10 @@ public class CategoryImpl extends ApplicationElementImpl implements MCategory {
 	/**
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.1
+	 * @generated
 	 */
+	@Override
 	public void updateLocalization() {
 		if (eNotificationRequired()) {
 			eNotify(new ENotificationImpl(

@@ -42,7 +42,6 @@ import org.eclipse.e4.ui.model.application.ui.basic.MTrimElement;
  * @generated
  */
 public interface MTrimContribution extends MElementContainer<MTrimElement> {
-
 	/**
 	 * Returns the value of the '<em><b>Parent Id</b></em>' attribute.
 	 * <!-- begin-user-doc -->
@@ -94,4 +93,5 @@ public interface MTrimContribution extends MElementContainer<MTrimElement> {
 	 * @generated
 	 */
 	void setPositionInParent(String value);
+
 } // MTrimContribution

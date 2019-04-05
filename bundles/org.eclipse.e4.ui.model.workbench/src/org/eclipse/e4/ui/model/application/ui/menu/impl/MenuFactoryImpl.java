@@ -13,7 +13,22 @@
  */
 package org.eclipse.e4.ui.model.application.ui.menu.impl;
 
-import org.eclipse.e4.ui.model.application.ui.menu.*;
+import org.eclipse.e4.ui.model.application.ui.menu.ItemType;
+import org.eclipse.e4.ui.model.application.ui.menu.MDirectMenuItem;
+import org.eclipse.e4.ui.model.application.ui.menu.MDirectToolItem;
+import org.eclipse.e4.ui.model.application.ui.menu.MDynamicMenuContribution;
+import org.eclipse.e4.ui.model.application.ui.menu.MHandledMenuItem;
+import org.eclipse.e4.ui.model.application.ui.menu.MHandledToolItem;
+import org.eclipse.e4.ui.model.application.ui.menu.MMenu;
+import org.eclipse.e4.ui.model.application.ui.menu.MMenuContribution;
+import org.eclipse.e4.ui.model.application.ui.menu.MMenuFactory;
+import org.eclipse.e4.ui.model.application.ui.menu.MMenuSeparator;
+import org.eclipse.e4.ui.model.application.ui.menu.MPopupMenu;
+import org.eclipse.e4.ui.model.application.ui.menu.MToolBar;
+import org.eclipse.e4.ui.model.application.ui.menu.MToolBarContribution;
+import org.eclipse.e4.ui.model.application.ui.menu.MToolBarSeparator;
+import org.eclipse.e4.ui.model.application.ui.menu.MToolControl;
+import org.eclipse.e4.ui.model.application.ui.menu.MTrimContribution;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EDataType;
 import org.eclipse.emf.ecore.EObject;
@@ -128,6 +143,7 @@ public class MenuFactoryImpl extends EFactoryImpl implements MMenuFactory {
 	 * @since 1.0
 	 * @generated
 	 */
+	@Override
 	public MMenuSeparator createMenuSeparator() {
 		MenuSeparatorImpl menuSeparator = new MenuSeparatorImpl();
 		return menuSeparator;
@@ -139,6 +155,7 @@ public class MenuFactoryImpl extends EFactoryImpl implements MMenuFactory {
 	 * @since 1.0
 	 * @generated
 	 */
+	@Override
 	public MMenu createMenu() {
 		MenuImpl menu = new MenuImpl();
 		return menu;
@@ -148,8 +165,10 @@ public class MenuFactoryImpl extends EFactoryImpl implements MMenuFactory {
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @since 1.0
+	 * @noreference See {@link MMenuContribution model documentation} for details.
 	 * @generated
 	 */
+	@Override
 	public MMenuContribution createMenuContribution() {
 		MenuContributionImpl menuContribution = new MenuContributionImpl();
 		return menuContribution;
@@ -161,6 +180,7 @@ public class MenuFactoryImpl extends EFactoryImpl implements MMenuFactory {
 	 * @since 1.0
 	 * @generated
 	 */
+	@Override
 	public MPopupMenu createPopupMenu() {
 		PopupMenuImpl popupMenu = new PopupMenuImpl();
 		return popupMenu;
@@ -172,6 +192,7 @@ public class MenuFactoryImpl extends EFactoryImpl implements MMenuFactory {
 	 * @since 1.0
 	 * @generated
 	 */
+	@Override
 	public MDirectMenuItem createDirectMenuItem() {
 		DirectMenuItemImpl directMenuItem = new DirectMenuItemImpl();
 		return directMenuItem;
@@ -183,6 +204,7 @@ public class MenuFactoryImpl extends EFactoryImpl implements MMenuFactory {
 	 * @since 1.0
 	 * @generated
 	 */
+	@Override
 	public MHandledMenuItem createHandledMenuItem() {
 		HandledMenuItemImpl handledMenuItem = new HandledMenuItemImpl();
 		return handledMenuItem;
@@ -194,6 +216,7 @@ public class MenuFactoryImpl extends EFactoryImpl implements MMenuFactory {
 	 * @since 1.0
 	 * @generated
 	 */
+	@Override
 	public MToolBar createToolBar() {
 		ToolBarImpl toolBar = new ToolBarImpl();
 		return toolBar;
@@ -205,6 +228,7 @@ public class MenuFactoryImpl extends EFactoryImpl implements MMenuFactory {
 	 * @since 1.0
 	 * @generated
 	 */
+	@Override
 	public MToolControl createToolControl() {
 		ToolControlImpl toolControl = new ToolControlImpl();
 		return toolControl;
@@ -216,6 +240,7 @@ public class MenuFactoryImpl extends EFactoryImpl implements MMenuFactory {
 	 * @since 1.0
 	 * @generated
 	 */
+	@Override
 	public MHandledToolItem createHandledToolItem() {
 		HandledToolItemImpl handledToolItem = new HandledToolItemImpl();
 		return handledToolItem;
@@ -227,6 +252,7 @@ public class MenuFactoryImpl extends EFactoryImpl implements MMenuFactory {
 	 * @since 1.0
 	 * @generated
 	 */
+	@Override
 	public MDirectToolItem createDirectToolItem() {
 		DirectToolItemImpl directToolItem = new DirectToolItemImpl();
 		return directToolItem;
@@ -238,6 +264,7 @@ public class MenuFactoryImpl extends EFactoryImpl implements MMenuFactory {
 	 * @since 1.0
 	 * @generated
 	 */
+	@Override
 	public MToolBarSeparator createToolBarSeparator() {
 		ToolBarSeparatorImpl toolBarSeparator = new ToolBarSeparatorImpl();
 		return toolBarSeparator;
@@ -247,8 +274,10 @@ public class MenuFactoryImpl extends EFactoryImpl implements MMenuFactory {
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @since 1.0
+	 * @noreference See {@link MToolBarContribution model documentation} for details.
 	 * @generated
 	 */
+	@Override
 	public MToolBarContribution createToolBarContribution() {
 		ToolBarContributionImpl toolBarContribution = new ToolBarContributionImpl();
 		return toolBarContribution;
@@ -258,8 +287,10 @@ public class MenuFactoryImpl extends EFactoryImpl implements MMenuFactory {
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @since 1.0
+	 * @noreference See {@link MTrimContribution model documentation} for details.
 	 * @generated
 	 */
+	@Override
 	public MTrimContribution createTrimContribution() {
 		TrimContributionImpl trimContribution = new TrimContributionImpl();
 		return trimContribution;
@@ -271,6 +302,7 @@ public class MenuFactoryImpl extends EFactoryImpl implements MMenuFactory {
 	 * @since 1.0
 	 * @generated
 	 */
+	@Override
 	public MDynamicMenuContribution createDynamicMenuContribution() {
 		DynamicMenuContributionImpl dynamicMenuContribution = new DynamicMenuContributionImpl();
 		return dynamicMenuContribution;

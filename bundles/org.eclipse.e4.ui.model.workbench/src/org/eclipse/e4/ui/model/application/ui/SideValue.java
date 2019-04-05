@@ -77,10 +77,6 @@ public enum SideValue implements InternalSideValue {
 	/**
 	 * The '<em><b>Top</b></em>' literal value.
 	 * <!-- begin-user-doc -->
-	 * <p>
-	 * If the meaning of '<em><b>Top</b></em>' literal object isn't clear,
-	 * there really should be more of a description here...
-	 * </p>
 	 * <!-- end-user-doc -->
 	 * @see #TOP
 	 * @model name="Top"
@@ -92,10 +88,6 @@ public enum SideValue implements InternalSideValue {
 	/**
 	 * The '<em><b>Bottom</b></em>' literal value.
 	 * <!-- begin-user-doc -->
-	 * <p>
-	 * If the meaning of '<em><b>Bottom</b></em>' literal object isn't clear,
-	 * there really should be more of a description here...
-	 * </p>
 	 * <!-- end-user-doc -->
 	 * @see #BOTTOM
 	 * @model name="Bottom"
@@ -107,10 +99,6 @@ public enum SideValue implements InternalSideValue {
 	/**
 	 * The '<em><b>Left</b></em>' literal value.
 	 * <!-- begin-user-doc -->
-	 * <p>
-	 * If the meaning of '<em><b>Left</b></em>' literal object isn't clear,
-	 * there really should be more of a description here...
-	 * </p>
 	 * <!-- end-user-doc -->
 	 * @see #LEFT
 	 * @model name="Left"
@@ -122,10 +110,6 @@ public enum SideValue implements InternalSideValue {
 	/**
 	 * The '<em><b>Right</b></em>' literal value.
 	 * <!-- begin-user-doc -->
-	 * <p>
-	 * If the meaning of '<em><b>Right</b></em>' literal object isn't clear,
-	 * there really should be more of a description here...
-	 * </p>
 	 * <!-- end-user-doc -->
 	 * @see #RIGHT
 	 * @model name="Right"
@@ -248,6 +232,7 @@ public enum SideValue implements InternalSideValue {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public int getValue() {
 	  return value;
 	}
@@ -257,6 +242,7 @@ public enum SideValue implements InternalSideValue {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public String getName() {
 	  return name;
 	}
@@ -266,6 +252,7 @@ public enum SideValue implements InternalSideValue {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public String getLiteral() {
 	  return literal;
 	}
@@ -280,7 +267,7 @@ public enum SideValue implements InternalSideValue {
 	public String toString() {
 		return literal;
 	}
-
+	
 } //SideValue
 
 /**
@@ -290,5 +277,5 @@ public enum SideValue implements InternalSideValue {
  * @generated
  */
 interface InternalSideValue extends org.eclipse.emf.common.util.Enumerator {
-	// Empty
+	// Empty 
 }

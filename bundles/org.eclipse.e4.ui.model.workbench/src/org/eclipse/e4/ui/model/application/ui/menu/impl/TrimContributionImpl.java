@@ -37,6 +37,7 @@ import org.eclipse.emf.ecore.util.EObjectContainmentWithInverseEList;
  * </ul>
  *
  * @since 1.0
+ * @noreference See {@link MTrimContribution model documentation} for details.
  * @generated
  */
 public class TrimContributionImpl extends ElementContainerImpl<MTrimElement> implements MTrimContribution {
@@ -49,6 +50,7 @@ public class TrimContributionImpl extends ElementContainerImpl<MTrimElement> imp
 	 * @ordered
 	 */
 	protected static final String PARENT_ID_EDEFAULT = null;
+
 	/**
 	 * The cached value of the '{@link #getParentId() <em>Parent Id</em>}' attribute.
 	 * <!-- begin-user-doc -->
@@ -58,6 +60,7 @@ public class TrimContributionImpl extends ElementContainerImpl<MTrimElement> imp
 	 * @ordered
 	 */
 	protected String parentId = PARENT_ID_EDEFAULT;
+
 	/**
 	 * The default value of the '{@link #getPositionInParent() <em>Position In Parent</em>}' attribute.
 	 * <!-- begin-user-doc -->
@@ -67,6 +70,7 @@ public class TrimContributionImpl extends ElementContainerImpl<MTrimElement> imp
 	 * @ordered
 	 */
 	protected static final String POSITION_IN_PARENT_EDEFAULT = null;
+
 	/**
 	 * The cached value of the '{@link #getPositionInParent() <em>Position In Parent</em>}' attribute.
 	 * <!-- begin-user-doc -->
@@ -126,6 +130,7 @@ public class TrimContributionImpl extends ElementContainerImpl<MTrimElement> imp
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public String getParentId() {
 		return parentId;
 	}
@@ -135,6 +140,7 @@ public class TrimContributionImpl extends ElementContainerImpl<MTrimElement> imp
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public void setParentId(String newParentId) {
 		String oldParentId = parentId;
 		parentId = newParentId;
@@ -147,6 +153,7 @@ public class TrimContributionImpl extends ElementContainerImpl<MTrimElement> imp
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public String getPositionInParent() {
 		return positionInParent;
 	}
@@ -156,6 +163,7 @@ public class TrimContributionImpl extends ElementContainerImpl<MTrimElement> imp
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public void setPositionInParent(String newPositionInParent) {
 		String oldPositionInParent = positionInParent;
 		positionInParent = newPositionInParent;

@@ -15,6 +15,8 @@ package org.eclipse.e4.ui.model.application.ui.menu.impl;
 
 import java.lang.reflect.InvocationTargetException;
 import org.eclipse.e4.ui.model.LocalizationHelper;
+import org.eclipse.e4.ui.model.application.ui.MLocalizable;
+import org.eclipse.e4.ui.model.application.ui.MUIElement;
 import org.eclipse.e4.ui.model.application.ui.MUILabel;
 import org.eclipse.e4.ui.model.application.ui.impl.UIElementImpl;
 import org.eclipse.e4.ui.model.application.ui.impl.UiPackageImpl;
@@ -175,6 +177,7 @@ public abstract class MenuElementImpl extends UIElementImpl implements MMenuElem
 	 * @since 1.0
 	 * @generated
 	 */
+	@Override
 	public String getLabel() {
 		return label;
 	}
@@ -185,6 +188,7 @@ public abstract class MenuElementImpl extends UIElementImpl implements MMenuElem
 	 * @since 1.0
 	 * @generated
 	 */
+	@Override
 	public void setLabel(String newLabel) {
 		String oldLabel = label;
 		label = newLabel;
@@ -198,6 +202,7 @@ public abstract class MenuElementImpl extends UIElementImpl implements MMenuElem
 	 * @since 1.0
 	 * @generated
 	 */
+	@Override
 	public String getIconURI() {
 		return iconURI;
 	}
@@ -208,6 +213,7 @@ public abstract class MenuElementImpl extends UIElementImpl implements MMenuElem
 	 * @since 1.0
 	 * @generated
 	 */
+	@Override
 	public void setIconURI(String newIconURI) {
 		String oldIconURI = iconURI;
 		iconURI = newIconURI;
@@ -221,6 +227,7 @@ public abstract class MenuElementImpl extends UIElementImpl implements MMenuElem
 	 * @since 1.0
 	 * @generated
 	 */
+	@Override
 	public String getTooltip() {
 		return tooltip;
 	}
@@ -231,6 +238,7 @@ public abstract class MenuElementImpl extends UIElementImpl implements MMenuElem
 	 * @since 1.0
 	 * @generated
 	 */
+	@Override
 	public void setTooltip(String newTooltip) {
 		String oldTooltip = tooltip;
 		tooltip = newTooltip;
@@ -243,6 +251,27 @@ public abstract class MenuElementImpl extends UIElementImpl implements MMenuElem
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
+	public String getLocalizedLabel() {
+		return LocalizationHelper.getLocalizedFeature(UiPackageImpl.Literals.UI_LABEL__LABEL, this);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public String getLocalizedTooltip() {
+		return LocalizationHelper.getLocalizedFeature(UiPackageImpl.Literals.UI_LABEL__TOOLTIP, this);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
 	public String getMnemonics() {
 		return mnemonics;
 	}
@@ -252,6 +281,7 @@ public abstract class MenuElementImpl extends UIElementImpl implements MMenuElem
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public void setMnemonics(String newMnemonics) {
 		String oldMnemonics = mnemonics;
 		mnemonics = newMnemonics;
@@ -263,8 +293,9 @@ public abstract class MenuElementImpl extends UIElementImpl implements MMenuElem
 	 * <!-- begin-user-doc -->
 	 * This class does not support this feature.
 	 * <!-- end-user-doc -->
-	 * @generated NOT
+	 * @generated
 	 */
+	@Override
 	public String getLocalizedMnemonics() {
 		return null;
 	}
@@ -272,31 +303,18 @@ public abstract class MenuElementImpl extends UIElementImpl implements MMenuElem
 	/**
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.1
+	 * @generated
 	 */
 	@Override
 	public void updateLocalization() {
 		if (eNotificationRequired()) {
+			super.updateLocalization();
 			eNotify(new ENotificationImpl(
 					this, Notification.SET, MenuPackageImpl.MENU_ELEMENT__LOCALIZED_LABEL, null, getLocalizedLabel()));
 			eNotify(new ENotificationImpl(
 					this, Notification.SET, MenuPackageImpl.MENU_ELEMENT__LOCALIZED_TOOLTIP, null, getLocalizedTooltip()));
 		}
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 */
-	public String getLocalizedLabel() {
-		return LocalizationHelper.getLocalizedLabel(this);
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 */
-	public String getLocalizedTooltip() {
-		return LocalizationHelper.getLocalizedTooltip(this);
 	}
 
 	/**
@@ -441,10 +459,40 @@ public abstract class MenuElementImpl extends UIElementImpl implements MMenuElem
 	 * @generated
 	 */
 	@Override
+	public int eDerivedOperationID(int baseOperationID, Class<?> baseClass) {
+		if (baseClass == MLocalizable.class) {
+			switch (baseOperationID) {
+				case UiPackageImpl.LOCALIZABLE___UPDATE_LOCALIZATION: return MenuPackageImpl.MENU_ELEMENT___UPDATE_LOCALIZATION;
+				default: return super.eDerivedOperationID(baseOperationID, baseClass);
+			}
+		}
+		if (baseClass == MUIElement.class) {
+			switch (baseOperationID) {
+				case UiPackageImpl.UI_ELEMENT___UPDATE_LOCALIZATION: return MenuPackageImpl.MENU_ELEMENT___UPDATE_LOCALIZATION;
+				default: return super.eDerivedOperationID(baseOperationID, baseClass);
+			}
+		}
+		if (baseClass == MUILabel.class) {
+			switch (baseOperationID) {
+				default: return -1;
+			}
+		}
+		return super.eDerivedOperationID(baseOperationID, baseClass);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
 	public Object eInvoke(int operationID, EList<?> arguments) throws InvocationTargetException {
 		switch (operationID) {
 			case MenuPackageImpl.MENU_ELEMENT___GET_LOCALIZED_MNEMONICS:
 				return getLocalizedMnemonics();
+			case MenuPackageImpl.MENU_ELEMENT___UPDATE_LOCALIZATION:
+				updateLocalization();
+				return null;
 		}
 		return super.eInvoke(operationID, arguments);
 	}

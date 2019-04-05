@@ -13,7 +13,15 @@
  */
 package org.eclipse.e4.ui.model.application.commands.impl;
 
-import org.eclipse.e4.ui.model.application.commands.*;
+import org.eclipse.e4.ui.model.application.commands.MBindingContext;
+import org.eclipse.e4.ui.model.application.commands.MBindingTable;
+import org.eclipse.e4.ui.model.application.commands.MCategory;
+import org.eclipse.e4.ui.model.application.commands.MCommand;
+import org.eclipse.e4.ui.model.application.commands.MCommandParameter;
+import org.eclipse.e4.ui.model.application.commands.MCommandsFactory;
+import org.eclipse.e4.ui.model.application.commands.MHandler;
+import org.eclipse.e4.ui.model.application.commands.MKeyBinding;
+import org.eclipse.e4.ui.model.application.commands.MParameter;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EDataType;
 import org.eclipse.emf.ecore.EObject;
@@ -118,6 +126,7 @@ public class CommandsFactoryImpl extends EFactoryImpl implements MCommandsFactor
 	 * @since 1.0
 	 * @generated
 	 */
+	@Override
 	public MBindingContext createBindingContext() {
 		BindingContextImpl bindingContext = new BindingContextImpl();
 		return bindingContext;
@@ -129,6 +138,7 @@ public class CommandsFactoryImpl extends EFactoryImpl implements MCommandsFactor
 	 * @since 1.0
 	 * @generated
 	 */
+	@Override
 	public MBindingTable createBindingTable() {
 		BindingTableImpl bindingTable = new BindingTableImpl();
 		return bindingTable;
@@ -140,6 +150,7 @@ public class CommandsFactoryImpl extends EFactoryImpl implements MCommandsFactor
 	 * @since 1.0
 	 * @generated
 	 */
+	@Override
 	public MCommand createCommand() {
 		CommandImpl command = new CommandImpl();
 		return command;
@@ -151,6 +162,7 @@ public class CommandsFactoryImpl extends EFactoryImpl implements MCommandsFactor
 	 * @since 1.0
 	 * @generated
 	 */
+	@Override
 	public MCommandParameter createCommandParameter() {
 		CommandParameterImpl commandParameter = new CommandParameterImpl();
 		return commandParameter;
@@ -162,6 +174,7 @@ public class CommandsFactoryImpl extends EFactoryImpl implements MCommandsFactor
 	 * @since 1.0
 	 * @generated
 	 */
+	@Override
 	public MHandler createHandler() {
 		HandlerImpl handler = new HandlerImpl();
 		return handler;
@@ -173,6 +186,7 @@ public class CommandsFactoryImpl extends EFactoryImpl implements MCommandsFactor
 	 * @since 1.0
 	 * @generated
 	 */
+	@Override
 	public MKeyBinding createKeyBinding() {
 		KeyBindingImpl keyBinding = new KeyBindingImpl();
 		return keyBinding;
@@ -184,6 +198,7 @@ public class CommandsFactoryImpl extends EFactoryImpl implements MCommandsFactor
 	 * @since 1.0
 	 * @generated
 	 */
+	@Override
 	public MParameter createParameter() {
 		ParameterImpl parameter = new ParameterImpl();
 		return parameter;
@@ -195,6 +210,7 @@ public class CommandsFactoryImpl extends EFactoryImpl implements MCommandsFactor
 	 * @since 1.0
 	 * @generated
 	 */
+	@Override
 	public MCategory createCategory() {
 		CategoryImpl category = new CategoryImpl();
 		return category;

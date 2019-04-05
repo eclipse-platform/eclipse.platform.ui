@@ -88,17 +88,18 @@ public class BasicFactoryImpl extends EFactoryImpl implements MBasicFactory {
 	@Override
 	public EObject create(EClass eClass) {
 		switch (eClass.getClassifierID()) {
-		case BasicPackageImpl.PART: return (EObject)createPart();
-		case BasicPackageImpl.COMPOSITE_PART: return (EObject)createCompositePart();
-		case BasicPackageImpl.PART_STACK: return (EObject)createPartStack();
-		case BasicPackageImpl.PART_SASH_CONTAINER: return (EObject)createPartSashContainer();
-		case BasicPackageImpl.WINDOW: return (EObject)createWindow();
-		case BasicPackageImpl.TRIMMED_WINDOW: return (EObject)createTrimmedWindow();
-		case BasicPackageImpl.TRIM_BAR: return (EObject)createTrimBar();
-		case BasicPackageImpl.DIALOG: return (EObject)createDialog();
-		case BasicPackageImpl.WIZARD_DIALOG: return (EObject)createWizardDialog();
-		default:
-			throw new IllegalArgumentException("The class '" + eClass.getName() + "' is not a valid classifier"); //$NON-NLS-1$ //$NON-NLS-2$
+			case BasicPackageImpl.PART: return (EObject)createPart();
+			case BasicPackageImpl.COMPOSITE_PART: return (EObject)createCompositePart();
+			case BasicPackageImpl.INPUT_PART: return (EObject)createInputPart();
+			case BasicPackageImpl.PART_STACK: return (EObject)createPartStack();
+			case BasicPackageImpl.PART_SASH_CONTAINER: return (EObject)createPartSashContainer();
+			case BasicPackageImpl.WINDOW: return (EObject)createWindow();
+			case BasicPackageImpl.TRIMMED_WINDOW: return (EObject)createTrimmedWindow();
+			case BasicPackageImpl.TRIM_BAR: return (EObject)createTrimBar();
+			case BasicPackageImpl.DIALOG: return (EObject)createDialog();
+			case BasicPackageImpl.WIZARD_DIALOG: return (EObject)createWizardDialog();
+			default:
+				throw new IllegalArgumentException("The class '" + eClass.getName() + "' is not a valid classifier"); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 	}
 
@@ -108,6 +109,7 @@ public class BasicFactoryImpl extends EFactoryImpl implements MBasicFactory {
 	 * @since 1.0
 	 * @generated
 	 */
+	@Override
 	public MPart createPart() {
 		PartImpl part = new PartImpl();
 		return part;
@@ -119,24 +121,22 @@ public class BasicFactoryImpl extends EFactoryImpl implements MBasicFactory {
 	 * @since 1.1
 	 * @generated
 	 */
+	@Override
 	public MCompositePart createCompositePart() {
 		CompositePartImpl compositePart = new CompositePartImpl();
 		return compositePart;
 	}
 
 	/**
-	 * <!-- begin-user-doc --> <!-- end-user-doc -->
-	 * 
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
 	 * @since 1.0
 	 * @deprecated See {@link MInputPart model documentation} for details.
-	 * @generated NOT
-	 * @nooverride This method is not intended to be re-implemented or extended by
-	 *             clients.
-	 * @noreference This method is not intended to be referenced by clients.
-	 * @see <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=509868">Bug
-	 *      509868</a>
+	 * @noreference See {@link MInputPart model documentation} for details.
+	 * @generated
 	 */
 	@Deprecated
+	@Override
 	public MInputPart createInputPart() {
 		InputPartImpl inputPart = new InputPartImpl();
 		return inputPart;
@@ -148,6 +148,7 @@ public class BasicFactoryImpl extends EFactoryImpl implements MBasicFactory {
 	 * @since 1.0
 	 * @generated
 	 */
+	@Override
 	public MPartStack createPartStack() {
 		PartStackImpl partStack = new PartStackImpl();
 		return partStack;
@@ -159,6 +160,7 @@ public class BasicFactoryImpl extends EFactoryImpl implements MBasicFactory {
 	 * @since 1.0
 	 * @generated
 	 */
+	@Override
 	public MPartSashContainer createPartSashContainer() {
 		PartSashContainerImpl partSashContainer = new PartSashContainerImpl();
 		return partSashContainer;
@@ -170,6 +172,7 @@ public class BasicFactoryImpl extends EFactoryImpl implements MBasicFactory {
 	 * @since 1.0
 	 * @generated
 	 */
+	@Override
 	public MWindow createWindow() {
 		WindowImpl window = new WindowImpl();
 		return window;
@@ -181,6 +184,7 @@ public class BasicFactoryImpl extends EFactoryImpl implements MBasicFactory {
 	 * @since 1.0
 	 * @generated
 	 */
+	@Override
 	public MTrimmedWindow createTrimmedWindow() {
 		TrimmedWindowImpl trimmedWindow = new TrimmedWindowImpl();
 		return trimmedWindow;
@@ -192,22 +196,22 @@ public class BasicFactoryImpl extends EFactoryImpl implements MBasicFactory {
 	 * @since 1.0
 	 * @generated
 	 */
+	@Override
 	public MTrimBar createTrimBar() {
 		TrimBarImpl trimBar = new TrimBarImpl();
 		return trimBar;
 	}
 
 	/**
-	 * <!-- begin-user-doc --> <!-- end-user-doc -->
-	 * 
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
 	 * @since 1.1
-	 * @generated NOT
 	 * @deprecated
-	 * @noreference This method is not intended to be referenced by clients.
-	 * @see <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=531054">Bug
-	 *      531054</a>
+	 * @noreference See {@link MDialog model documentation} for details.
+	 * @generated  NOT
 	 */
 	@Deprecated
+	@Override
 	public MDialog createDialog() {
 		DialogImpl dialog = new DialogImpl();
 		Bundle bundle = FrameworkUtil.getBundle(getClass());
@@ -218,23 +222,21 @@ public class BasicFactoryImpl extends EFactoryImpl implements MBasicFactory {
 	}
 
 	/**
-	 * <!-- begin-user-doc --> <!-- end-user-doc -->
-	 * 
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
 	 * @since 1.1
-	 * @generated NOT
 	 * @deprecated
-	 * @noreference This method is not intended to be referenced by clients.
-	 * @see <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=531054">Bug
-	 *      531054</a>
+	 * @noreference See {@link MWizardDialog model documentation} for details.
+	 * @generated NOT
 	 */
 	@Deprecated
+	@Override
 	public MWizardDialog createWizardDialog() {
 		WizardDialogImpl wizardDialog = new WizardDialogImpl();
 		Bundle bundle = FrameworkUtil.getBundle(getClass());
 		Status s = new Status(IStatus.ERROR, bundle.getSymbolicName(), // $NON-NLS-1$
 				"Your application model still contains a deprecated WizardDialog instance. Please remove it to keep compatibility with future versions."); //$NON-NLS-1$
 		Platform.getLog(bundle).log(s);
-
 		return wizardDialog;
 	}
 

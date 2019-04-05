@@ -29,6 +29,7 @@ import org.eclipse.e4.ui.model.application.ui.menu.MMenuContributions;
 import org.eclipse.e4.ui.model.application.ui.menu.MToolBarContributions;
 import org.eclipse.e4.ui.model.application.ui.menu.MTrimContributions;
 
+
 /**
  * <!-- begin-user-doc -->
  * A representation of the model object '<em><b>Application</b></em>'.
@@ -67,6 +68,7 @@ import org.eclipse.e4.ui.model.application.ui.menu.MTrimContributions;
  * @model
  * @generated
  */
+@SuppressWarnings("deprecation")
 public interface MApplication extends MElementContainer<MWindow>, MContext, MHandlerContainer, MBindingTableContainer, MPartDescriptorContainer, MBindings, MMenuContributions, MToolBarContributions, MTrimContributions, MSnippetContainer {
 	/**
 	 * Returns the value of the '<em><b>Commands</b></em>' containment reference list.
@@ -87,14 +89,6 @@ public interface MApplication extends MElementContainer<MWindow>, MContext, MHan
 	 * @generated
 	 */
 	List<MCommand> getCommands();
-
-	/**
-	 * Returns the model element for the command identified via the elementId or
-	 * null if the element cannot be found
-	 *
-	 * @since 1.2
-	 */
-	MCommand getCommand(String elementId);
 
 	/**
 	 * Returns the value of the '<em><b>Addons</b></em>' containment reference list.
@@ -142,11 +136,29 @@ public interface MApplication extends MElementContainer<MWindow>, MContext, MHan
 	 * This is the ordered list of MDialogs for this model.
 	 * </p>
 	 * @since 1.1
+	 * @deprecated
+	 * @noreference  MDialog was provisional and will be removed.
+	 * @see <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=531054">Bug 531054</a>
 	 * <!-- end-model-doc -->
 	 * @return the value of the '<em>Dialogs</em>' reference list.
 	 * @model
 	 * @generated
 	 */
+	@Deprecated
 	List<MDialog> getDialogs();
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * <!-- begin-model-doc -->
+	 * Returns the model element for the command identified via the elementId or null if the element cannot be found.
+	 * @parameter elementId the ID of the command.
+	 * @return the model element for the command identified via the elementId or null if the element cannot be found.
+	 * @since 1.2
+	 * <!-- end-model-doc -->
+	 * @model
+	 * @generated
+	 */
+	MCommand getCommand(String elementId);
 
 } // MApplication

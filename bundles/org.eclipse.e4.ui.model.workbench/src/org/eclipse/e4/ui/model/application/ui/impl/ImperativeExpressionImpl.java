@@ -123,6 +123,7 @@ public class ImperativeExpressionImpl extends ExpressionImpl implements MImperat
 	 * @since 1.0
 	 * @generated
 	 */
+	@Override
 	public String getContributionURI() {
 		return contributionURI;
 	}
@@ -133,6 +134,7 @@ public class ImperativeExpressionImpl extends ExpressionImpl implements MImperat
 	 * @since 1.0
 	 * @generated
 	 */
+	@Override
 	public void setContributionURI(String newContributionURI) {
 		String oldContributionURI = contributionURI;
 		contributionURI = newContributionURI;
@@ -145,6 +147,7 @@ public class ImperativeExpressionImpl extends ExpressionImpl implements MImperat
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public Object getObject() {
 		return object;
 	}
@@ -154,6 +157,7 @@ public class ImperativeExpressionImpl extends ExpressionImpl implements MImperat
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public void setObject(Object newObject) {
 		Object oldObject = object;
 		object = newObject;
@@ -166,6 +170,7 @@ public class ImperativeExpressionImpl extends ExpressionImpl implements MImperat
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public boolean isTracking() {
 		return tracking;
 	}
@@ -175,6 +180,7 @@ public class ImperativeExpressionImpl extends ExpressionImpl implements MImperat
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public void setTracking(boolean newTracking) {
 		boolean oldTracking = tracking;
 		tracking = newTracking;

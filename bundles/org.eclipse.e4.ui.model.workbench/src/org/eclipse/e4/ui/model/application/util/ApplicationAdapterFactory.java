@@ -14,7 +14,10 @@
 package org.eclipse.e4.ui.model.application.util;
 
 import java.util.Map;
-import org.eclipse.e4.ui.model.application.*;
+import org.eclipse.e4.ui.model.application.MAddon;
+import org.eclipse.e4.ui.model.application.MApplication;
+import org.eclipse.e4.ui.model.application.MApplicationElement;
+import org.eclipse.e4.ui.model.application.MContribution;
 import org.eclipse.e4.ui.model.application.commands.MBindingTableContainer;
 import org.eclipse.e4.ui.model.application.commands.MBindings;
 import org.eclipse.e4.ui.model.application.commands.MHandlerContainer;
@@ -398,6 +401,7 @@ public class ApplicationAdapterFactory extends AdapterFactoryImpl {
 	 * @return the new adapter.
 	 * @see org.eclipse.e4.ui.model.application.ui.menu.MMenuContributions
 	 * @since 1.0
+	 * @noreference See {@link MMenuContributions model documentation} for details.
 	 * @generated
 	 */
 	public Adapter createMenuContributionsAdapter() {
@@ -413,6 +417,7 @@ public class ApplicationAdapterFactory extends AdapterFactoryImpl {
 	 * @return the new adapter.
 	 * @see org.eclipse.e4.ui.model.application.ui.menu.MToolBarContributions
 	 * @since 1.0
+	 * @noreference See {@link MToolBarContributions model documentation} for details.
 	 * @generated
 	 */
 	public Adapter createToolBarContributionsAdapter() {
@@ -428,6 +433,7 @@ public class ApplicationAdapterFactory extends AdapterFactoryImpl {
 	 * @return the new adapter.
 	 * @see org.eclipse.e4.ui.model.application.ui.menu.MTrimContributions
 	 * @since 1.0
+	 * @noreference See {@link MTrimContributions model documentation} for details.
 	 * @generated
 	 */
 	public Adapter createTrimContributionsAdapter() {

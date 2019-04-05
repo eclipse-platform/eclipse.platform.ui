@@ -78,6 +78,7 @@ public abstract class GenericTileImpl<T extends MUIElement> extends ElementConta
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public boolean isHorizontal() {
 		return horizontal;
 	}
@@ -87,6 +88,7 @@ public abstract class GenericTileImpl<T extends MUIElement> extends ElementConta
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public void setHorizontal(boolean newHorizontal) {
 		boolean oldHorizontal = horizontal;
 		horizontal = newHorizontal;

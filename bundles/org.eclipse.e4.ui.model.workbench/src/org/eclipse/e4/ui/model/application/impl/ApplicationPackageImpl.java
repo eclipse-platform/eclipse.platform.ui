@@ -30,6 +30,7 @@ import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EDataType;
 import org.eclipse.emf.ecore.EFactory;
 import org.eclipse.emf.ecore.EGenericType;
+import org.eclipse.emf.ecore.EOperation;
 import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.EReference;
 import org.eclipse.emf.ecore.impl.EPackageImpl;
@@ -41,6 +42,7 @@ import org.eclipse.emf.ecore.impl.EPackageImpl;
  * <ul>
  *   <li>each class,</li>
  *   <li>each feature of each class,</li>
+ *   <li>each operation of each class,</li>
  *   <li>each enum,</li>
  *   <li>and each data type</li>
  * </ul>
@@ -555,9 +557,12 @@ public class ApplicationPackageImpl extends EPackageImpl {
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @since 1.1
+	 * @deprecated
+	 * @noreference See {@link org.eclipse.e4.ui.model.application.MApplication#getDialogs() model documentation} for details.
 	 * @generated
 	 * @ordered
 	 */
+	@Deprecated
 	public static final int APPLICATION__DIALOGS = UiPackageImpl.ELEMENT_CONTAINER_FEATURE_COUNT + 15;
 
 	/**
@@ -581,6 +586,16 @@ public class ApplicationPackageImpl extends EPackageImpl {
 	public static final int APPLICATION___UPDATE_LOCALIZATION = UiPackageImpl.ELEMENT_CONTAINER___UPDATE_LOCALIZATION;
 
 	/**
+	 * The operation id for the '<em>Get Command</em>' operation.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @since 1.2
+	 * @generated
+	 * @ordered
+	 */
+	public static final int APPLICATION___GET_COMMAND__STRING = UiPackageImpl.ELEMENT_CONTAINER_OPERATION_COUNT + 0;
+
+	/**
 	 * The number of operations of the '<em>Application</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -588,7 +603,7 @@ public class ApplicationPackageImpl extends EPackageImpl {
 	 * @generated
 	 * @ordered
 	 */
-	public static final int APPLICATION_OPERATION_COUNT = UiPackageImpl.ELEMENT_CONTAINER_OPERATION_COUNT + 0;
+	public static final int APPLICATION_OPERATION_COUNT = UiPackageImpl.ELEMENT_CONTAINER_OPERATION_COUNT + 1;
 
 	/**
 	 * The meta object id for the '{@link org.eclipse.e4.ui.model.application.impl.ContributionImpl <em>Contribution</em>}' class.
@@ -1084,7 +1099,6 @@ public class ApplicationPackageImpl extends EPackageImpl {
 		return (EReference)applicationEClass.getEStructuralFeatures().get(2);
 	}
 
-
 	/**
 	 * Returns the meta object for the reference list '{@link org.eclipse.e4.ui.model.application.MApplication#getDialogs <em>Dialogs</em>}'.
 	 * <!-- begin-user-doc -->
@@ -1093,10 +1107,26 @@ public class ApplicationPackageImpl extends EPackageImpl {
 	 * @see org.eclipse.e4.ui.model.application.MApplication#getDialogs()
 	 * @see #getApplication()
 	 * @since 1.1
+	 * @deprecated
+	 * @noreference See {@link org.eclipse.e4.ui.model.application.MApplication#getDialogs() model documentation} for details.
 	 * @generated
 	 */
+	@Deprecated
 	public EReference getApplication_Dialogs() {
 		return (EReference)applicationEClass.getEStructuralFeatures().get(3);
+	}
+
+	/**
+	 * Returns the meta object for the '{@link org.eclipse.e4.ui.model.application.MApplication#getCommand(java.lang.String) <em>Get Command</em>}' operation.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the '<em>Get Command</em>' operation.
+	 * @see org.eclipse.e4.ui.model.application.MApplication#getCommand(java.lang.String)
+	 * @since 1.2
+	 * @generated
+	 */
+	public EOperation getApplication__GetCommand__String() {
+		return applicationEClass.getEOperations().get(0);
 	}
 
 
@@ -1141,7 +1171,6 @@ public class ApplicationPackageImpl extends EPackageImpl {
 		return (EReference)applicationElementEClass.getEStructuralFeatures().get(1);
 	}
 
-
 	/**
 	 * Returns the meta object for the attribute list '{@link org.eclipse.e4.ui.model.application.MApplicationElement#getTags <em>Tags</em>}'.
 	 * <!-- begin-user-doc -->
@@ -1170,7 +1199,6 @@ public class ApplicationPackageImpl extends EPackageImpl {
 		return (EAttribute)applicationElementEClass.getEStructuralFeatures().get(3);
 	}
 
-
 	/**
 	 * Returns the meta object for the map '{@link org.eclipse.e4.ui.model.application.MApplicationElement#getTransientData <em>Transient Data</em>}'.
 	 * <!-- begin-user-doc -->
@@ -1184,7 +1212,6 @@ public class ApplicationPackageImpl extends EPackageImpl {
 	public EReference getApplicationElement_TransientData() {
 		return (EReference)applicationElementEClass.getEStructuralFeatures().get(4);
 	}
-
 
 	/**
 	 * Returns the meta object for class '{@link org.eclipse.e4.ui.model.application.MContribution <em>Contribution</em>}'.
@@ -1254,7 +1281,6 @@ public class ApplicationPackageImpl extends EPackageImpl {
 		return stringToObjectMapEClass;
 	}
 
-
 	/**
 	 * Returns the meta object for the attribute '{@link java.util.Map.Entry <em>Key</em>}'.
 	 * <!-- begin-user-doc -->
@@ -1268,7 +1294,6 @@ public class ApplicationPackageImpl extends EPackageImpl {
 		return (EAttribute)stringToObjectMapEClass.getEStructuralFeatures().get(0);
 	}
 
-
 	/**
 	 * Returns the meta object for the attribute '{@link java.util.Map.Entry <em>Value</em>}'.
 	 * <!-- begin-user-doc -->
@@ -1281,7 +1306,6 @@ public class ApplicationPackageImpl extends EPackageImpl {
 	public EAttribute getStringToObjectMap_Value() {
 		return (EAttribute)stringToObjectMapEClass.getEStructuralFeatures().get(1);
 	}
-
 
 	/**
 	 * Returns the meta object for data type '{@link org.eclipse.e4.core.contexts.IEclipseContext <em>IEclipse Context</em>}'.
@@ -1335,6 +1359,7 @@ public class ApplicationPackageImpl extends EPackageImpl {
 		createEReference(applicationEClass, APPLICATION__ADDONS);
 		createEReference(applicationEClass, APPLICATION__CATEGORIES);
 		createEReference(applicationEClass, APPLICATION__DIALOGS);
+		createEOperation(applicationEClass, APPLICATION___GET_COMMAND__STRING);
 
 		applicationElementEClass = createEClass(APPLICATION_ELEMENT);
 		createEAttribute(applicationElementEClass, APPLICATION_ELEMENT__ELEMENT_ID);
@@ -1371,6 +1396,7 @@ public class ApplicationPackageImpl extends EPackageImpl {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@SuppressWarnings("deprecation")
 	public void initializePackageContents() {
 		if (isInitialized) return;
 		isInitialized = true;
@@ -1433,6 +1459,9 @@ public class ApplicationPackageImpl extends EPackageImpl {
 		initEReference(getApplication_Categories(), theCommandsPackage.getCategory(), null, "categories", null, 0, -1, MApplication.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
 		initEReference(getApplication_Dialogs(), theBasicPackage.getDialog(), null, "dialogs", null, 0, -1, MApplication.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
 
+		EOperation op = initEOperation(getApplication__GetCommand__String(), theCommandsPackage.getCommand(), "getCommand", 0, 1, IS_UNIQUE, IS_ORDERED); //$NON-NLS-1$
+		addEParameter(op, ecorePackage.getEString(), "elementId", 0, 1, IS_UNIQUE, IS_ORDERED); //$NON-NLS-1$
+
 		initEClass(applicationElementEClass, MApplicationElement.class, "ApplicationElement", IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS); //$NON-NLS-1$
 		initEAttribute(getApplicationElement_ElementId(), ecorePackage.getEString(), "elementId", null, 0, 1, MApplicationElement.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
 		initEReference(getApplicationElement_PersistedState(), this.getStringToStringMap(), null, "persistedState", null, 0, -1, MApplicationElement.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
@@ -1463,6 +1492,7 @@ public class ApplicationPackageImpl extends EPackageImpl {
 	 * <ul>
 	 *   <li>each class,</li>
 	 *   <li>each feature of each class,</li>
+	 *   <li>each operation of each class,</li>
 	 *   <li>each enum,</li>
 	 *   <li>and each data type</li>
 	 * </ul>
@@ -1539,9 +1569,21 @@ public class ApplicationPackageImpl extends EPackageImpl {
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
 		 * @since 1.1
+		 * @deprecated
+		 * @noreference See {@link org.eclipse.e4.ui.model.application.MApplication#getDialogs() model documentation} for details.
 		 * @generated
 		 */
+		@Deprecated
 		public static final EReference APPLICATION__DIALOGS = eINSTANCE.getApplication_Dialogs();
+
+		/**
+		 * The meta object literal for the '<em><b>Get Command</b></em>' operation.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @since 1.2
+		 * @generated
+		 */
+		public static final EOperation APPLICATION___GET_COMMAND__STRING = eINSTANCE.getApplication__GetCommand__String();
 
 		/**
 		 * The meta object literal for the '{@link org.eclipse.e4.ui.model.application.impl.ApplicationElementImpl <em>Element</em>}' class.

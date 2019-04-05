@@ -21,7 +21,29 @@ import org.eclipse.e4.ui.model.application.ui.MLocalizable;
 import org.eclipse.e4.ui.model.application.ui.MUIElement;
 import org.eclipse.e4.ui.model.application.ui.MUILabel;
 import org.eclipse.e4.ui.model.application.ui.basic.MTrimElement;
-import org.eclipse.e4.ui.model.application.ui.menu.*;
+import org.eclipse.e4.ui.model.application.ui.menu.MDirectMenuItem;
+import org.eclipse.e4.ui.model.application.ui.menu.MDirectToolItem;
+import org.eclipse.e4.ui.model.application.ui.menu.MDynamicMenuContribution;
+import org.eclipse.e4.ui.model.application.ui.menu.MHandledItem;
+import org.eclipse.e4.ui.model.application.ui.menu.MHandledMenuItem;
+import org.eclipse.e4.ui.model.application.ui.menu.MHandledToolItem;
+import org.eclipse.e4.ui.model.application.ui.menu.MItem;
+import org.eclipse.e4.ui.model.application.ui.menu.MMenu;
+import org.eclipse.e4.ui.model.application.ui.menu.MMenuContribution;
+import org.eclipse.e4.ui.model.application.ui.menu.MMenuContributions;
+import org.eclipse.e4.ui.model.application.ui.menu.MMenuElement;
+import org.eclipse.e4.ui.model.application.ui.menu.MMenuItem;
+import org.eclipse.e4.ui.model.application.ui.menu.MMenuSeparator;
+import org.eclipse.e4.ui.model.application.ui.menu.MPopupMenu;
+import org.eclipse.e4.ui.model.application.ui.menu.MToolBar;
+import org.eclipse.e4.ui.model.application.ui.menu.MToolBarContribution;
+import org.eclipse.e4.ui.model.application.ui.menu.MToolBarContributions;
+import org.eclipse.e4.ui.model.application.ui.menu.MToolBarElement;
+import org.eclipse.e4.ui.model.application.ui.menu.MToolBarSeparator;
+import org.eclipse.e4.ui.model.application.ui.menu.MToolControl;
+import org.eclipse.e4.ui.model.application.ui.menu.MToolItem;
+import org.eclipse.e4.ui.model.application.ui.menu.MTrimContribution;
+import org.eclipse.e4.ui.model.application.ui.menu.MTrimContributions;
 import org.eclipse.e4.ui.model.application.ui.menu.impl.MenuPackageImpl;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EPackage;
@@ -446,6 +468,7 @@ public class MenuSwitch<T1> extends Switch<T1> {
 	 * @return the result of interpreting the object as an instance of '<em>Contribution</em>'.
 	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
 	 * @since 1.0
+	 * @noreference See {@link MMenuContribution model documentation} for details.
 	 * @generated
 	 */
 	public T1 caseMenuContribution(MMenuContribution object) {
@@ -622,6 +645,7 @@ public class MenuSwitch<T1> extends Switch<T1> {
 	 * @return the result of interpreting the object as an instance of '<em>Contributions</em>'.
 	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
 	 * @since 1.0
+	 * @noreference See {@link MMenuContributions model documentation} for details.
 	 * @generated
 	 */
 	public T1 caseMenuContributions(MMenuContributions object) {
@@ -638,6 +662,7 @@ public class MenuSwitch<T1> extends Switch<T1> {
 	 * @return the result of interpreting the object as an instance of '<em>Tool Bar Contribution</em>'.
 	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
 	 * @since 1.0
+	 * @noreference See {@link MToolBarContribution model documentation} for details.
 	 * @generated
 	 */
 	public T1 caseToolBarContribution(MToolBarContribution object) {
@@ -654,6 +679,7 @@ public class MenuSwitch<T1> extends Switch<T1> {
 	 * @return the result of interpreting the object as an instance of '<em>Tool Bar Contributions</em>'.
 	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
 	 * @since 1.0
+	 * @noreference See {@link MToolBarContributions model documentation} for details.
 	 * @generated
 	 */
 	public T1 caseToolBarContributions(MToolBarContributions object) {
@@ -670,6 +696,7 @@ public class MenuSwitch<T1> extends Switch<T1> {
 	 * @return the result of interpreting the object as an instance of '<em>Trim Contribution</em>'.
 	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
 	 * @since 1.0
+	 * @noreference See {@link MTrimContribution model documentation} for details.
 	 * @generated
 	 */
 	public T1 caseTrimContribution(MTrimContribution object) {
@@ -686,6 +713,7 @@ public class MenuSwitch<T1> extends Switch<T1> {
 	 * @return the result of interpreting the object as an instance of '<em>Trim Contributions</em>'.
 	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
 	 * @since 1.0
+	 * @noreference See {@link MTrimContributions model documentation} for details.
 	 * @generated
 	 */
 	public T1 caseTrimContributions(MTrimContributions object) {
@@ -725,22 +753,6 @@ public class MenuSwitch<T1> extends Switch<T1> {
 	}
 
 	/**
-	 * Returns the result of interpreting the object as an instance of '<em>UI Element</em>'.
-	 * <!-- begin-user-doc -->
-	 * This implementation returns null;
-	 * returning a non-null result will terminate the switch.
-	 * <!-- end-user-doc -->
-	 * @param object the target of the switch.
-	 * @return the result of interpreting the object as an instance of '<em>UI Element</em>'.
-	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
-	 * @since 1.0
-	 * @generated
-	 */
-	public T1 caseUIElement(MUIElement object) {
-		return null;
-	}
-
-	/**
 	 * Returns the result of interpreting the object as an instance of '<em>Localizable</em>'.
 	 * <!-- begin-user-doc -->
 	 * This implementation returns null;
@@ -753,6 +765,22 @@ public class MenuSwitch<T1> extends Switch<T1> {
 	 * @generated
 	 */
 	public T1 caseLocalizable(MLocalizable object) {
+		return null;
+	}
+
+	/**
+	 * Returns the result of interpreting the object as an instance of '<em>UI Element</em>'.
+	 * <!-- begin-user-doc -->
+	 * This implementation returns null;
+	 * returning a non-null result will terminate the switch.
+	 * <!-- end-user-doc -->
+	 * @param object the target of the switch.
+	 * @return the result of interpreting the object as an instance of '<em>UI Element</em>'.
+	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+	 * @since 1.0
+	 * @generated
+	 */
+	public T1 caseUIElement(MUIElement object) {
 		return null;
 	}
 

@@ -42,6 +42,7 @@ public class TrimBarImpl extends GenericTrimContainerImpl<MTrimElement> implemen
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @see #getPendingCleanup()
+	 * @noreference
 	 * @generated
 	 * @ordered
 	 */
@@ -69,8 +70,10 @@ public class TrimBarImpl extends GenericTrimContainerImpl<MTrimElement> implemen
 	/**
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @noreference
 	 * @generated
 	 */
+	@Override
 	public List<MTrimElement> getPendingCleanup() {
 		if (pendingCleanup == null) {
 			pendingCleanup = new EObjectResolvingEList<MTrimElement>(MTrimElement.class, this, BasicPackageImpl.TRIM_BAR__PENDING_CLEANUP);

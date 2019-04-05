@@ -117,6 +117,7 @@ public class BindingContextImpl extends ApplicationElementImpl implements MBindi
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public String getName() {
 		return name;
 	}
@@ -126,6 +127,7 @@ public class BindingContextImpl extends ApplicationElementImpl implements MBindi
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public void setName(String newName) {
 		String oldName = name;
 		name = newName;
@@ -138,6 +140,7 @@ public class BindingContextImpl extends ApplicationElementImpl implements MBindi
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public String getDescription() {
 		return description;
 	}
@@ -147,6 +150,7 @@ public class BindingContextImpl extends ApplicationElementImpl implements MBindi
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public void setDescription(String newDescription) {
 		String oldDescription = description;
 		description = newDescription;
@@ -159,6 +163,7 @@ public class BindingContextImpl extends ApplicationElementImpl implements MBindi
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public List<MBindingContext> getChildren() {
 		if (children == null) {
 			children = new EObjectContainmentEList<MBindingContext>(MBindingContext.class, this, CommandsPackageImpl.BINDING_CONTEXT__CHILDREN);

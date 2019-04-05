@@ -14,6 +14,7 @@
  */
 package org.eclipse.e4.ui.model.fragment.impl;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.Collection;
 import java.util.List;
 import org.eclipse.e4.ui.model.application.MApplication;
@@ -75,6 +76,7 @@ public abstract class ModelFragmentImpl extends org.eclipse.emf.ecore.impl.Minim
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public List<MApplicationElement> getElements() {
 		if (elements == null) {
 			elements = new EObjectContainmentEList<MApplicationElement>(MApplicationElement.class, this, FragmentPackageImpl.MODEL_FRAGMENT__ELEMENTS);
@@ -87,6 +89,7 @@ public abstract class ModelFragmentImpl extends org.eclipse.emf.ecore.impl.Minim
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public List<MApplicationElement> merge(MApplication application) {
 		// TODO: implement this method
 		// Ensure that you remove @generated or mark it @generated NOT
@@ -165,6 +168,20 @@ public abstract class ModelFragmentImpl extends org.eclipse.emf.ecore.impl.Minim
 				return elements != null && !elements.isEmpty();
 		}
 		return super.eIsSet(featureID);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public Object eInvoke(int operationID, EList<?> arguments) throws InvocationTargetException {
+		switch (operationID) {
+			case FragmentPackageImpl.MODEL_FRAGMENT___MERGE__MAPPLICATION:
+				return merge((MApplication)arguments.get(0));
+		}
+		return super.eInvoke(operationID, arguments);
 	}
 
 } //ModelFragmentImpl

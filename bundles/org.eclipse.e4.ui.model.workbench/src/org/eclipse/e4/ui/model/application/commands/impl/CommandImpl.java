@@ -157,6 +157,7 @@ public class CommandImpl extends ApplicationElementImpl implements MCommand {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public String getCommandName() {
 		return commandName;
 	}
@@ -166,6 +167,7 @@ public class CommandImpl extends ApplicationElementImpl implements MCommand {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public void setCommandName(String newCommandName) {
 		String oldCommandName = commandName;
 		commandName = newCommandName;
@@ -178,6 +180,7 @@ public class CommandImpl extends ApplicationElementImpl implements MCommand {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public String getDescription() {
 		return description;
 	}
@@ -187,6 +190,7 @@ public class CommandImpl extends ApplicationElementImpl implements MCommand {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public void setDescription(String newDescription) {
 		String oldDescription = description;
 		description = newDescription;
@@ -199,6 +203,7 @@ public class CommandImpl extends ApplicationElementImpl implements MCommand {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public List<MCommandParameter> getParameters() {
 		if (parameters == null) {
 			parameters = new EObjectContainmentEList<MCommandParameter>(MCommandParameter.class, this, CommandsPackageImpl.COMMAND__PARAMETERS);
@@ -211,6 +216,7 @@ public class CommandImpl extends ApplicationElementImpl implements MCommand {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public MCategory getCategory() {
 		if (category != null && ((EObject)category).eIsProxy()) {
 			InternalEObject oldCategory = (InternalEObject)category;
@@ -237,6 +243,7 @@ public class CommandImpl extends ApplicationElementImpl implements MCommand {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public void setCategory(MCategory newCategory) {
 		MCategory oldCategory = category;
 		category = newCategory;
@@ -247,7 +254,9 @@ public class CommandImpl extends ApplicationElementImpl implements MCommand {
 	/**
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @generated
 	 */
+	@Override
 	public String getLocalizedCommandName() {
 		return LocalizationHelper.getLocalizedFeature(CommandsPackageImpl.Literals.COMMAND__COMMAND_NAME, this);
 	}
@@ -255,7 +264,9 @@ public class CommandImpl extends ApplicationElementImpl implements MCommand {
 	/**
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @generated
 	 */
+	@Override
 	public String getLocalizedDescription() {
 		return LocalizationHelper.getLocalizedFeature(CommandsPackageImpl.Literals.COMMAND__DESCRIPTION, this);
 	}
@@ -263,7 +274,10 @@ public class CommandImpl extends ApplicationElementImpl implements MCommand {
 	/**
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.1
+	 * @generated
 	 */
+	@Override
 	public void updateLocalization() {
 		if (eNotificationRequired()) {
 			eNotify(new ENotificationImpl(

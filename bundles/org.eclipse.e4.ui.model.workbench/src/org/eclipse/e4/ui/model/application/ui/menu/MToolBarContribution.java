@@ -42,7 +42,6 @@ import org.eclipse.e4.ui.model.application.ui.MElementContainer;
  * @generated
  */
 public interface MToolBarContribution extends MElementContainer<MToolBarElement> {
-
 	/**
 	 * Returns the value of the '<em><b>Parent Id</b></em>' attribute.
 	 * <!-- begin-user-doc -->
@@ -94,4 +93,5 @@ public interface MToolBarContribution extends MElementContainer<MToolBarElement>
 	 * @generated
 	 */
 	void setPositionInParent(String value);
+
 } // MToolBarContribution

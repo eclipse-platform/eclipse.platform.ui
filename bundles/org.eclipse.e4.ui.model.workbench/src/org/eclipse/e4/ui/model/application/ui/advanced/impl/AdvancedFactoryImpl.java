@@ -13,7 +13,11 @@
  */
 package org.eclipse.e4.ui.model.application.ui.advanced.impl;
 
-import org.eclipse.e4.ui.model.application.ui.advanced.*;
+import org.eclipse.e4.ui.model.application.ui.advanced.MAdvancedFactory;
+import org.eclipse.e4.ui.model.application.ui.advanced.MArea;
+import org.eclipse.e4.ui.model.application.ui.advanced.MPerspective;
+import org.eclipse.e4.ui.model.application.ui.advanced.MPerspectiveStack;
+import org.eclipse.e4.ui.model.application.ui.advanced.MPlaceholder;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EPackage;
@@ -87,6 +91,7 @@ public class AdvancedFactoryImpl extends EFactoryImpl implements MAdvancedFactor
 	 * @since 1.0
 	 * @generated
 	 */
+	@Override
 	public MPlaceholder createPlaceholder() {
 		PlaceholderImpl placeholder = new PlaceholderImpl();
 		return placeholder;
@@ -98,6 +103,7 @@ public class AdvancedFactoryImpl extends EFactoryImpl implements MAdvancedFactor
 	 * @since 1.0
 	 * @generated
 	 */
+	@Override
 	public MPerspective createPerspective() {
 		PerspectiveImpl perspective = new PerspectiveImpl();
 		return perspective;
@@ -109,6 +115,7 @@ public class AdvancedFactoryImpl extends EFactoryImpl implements MAdvancedFactor
 	 * @since 1.0
 	 * @generated
 	 */
+	@Override
 	public MPerspectiveStack createPerspectiveStack() {
 		PerspectiveStackImpl perspectiveStack = new PerspectiveStackImpl();
 		return perspectiveStack;
@@ -120,6 +127,7 @@ public class AdvancedFactoryImpl extends EFactoryImpl implements MAdvancedFactor
 	 * @since 1.0
 	 * @generated
 	 */
+	@Override
 	public MArea createArea() {
 		AreaImpl area = new AreaImpl();
 		return area;

@@ -52,6 +52,7 @@ import org.eclipse.emf.ecore.impl.EPackageImpl;
  * <ul>
  *   <li>each class,</li>
  *   <li>each feature of each class,</li>
+ *   <li>each operation of each class,</li>
  *   <li>each enum,</li>
  *   <li>and each data type</li>
  * </ul>
@@ -60,6 +61,7 @@ import org.eclipse.emf.ecore.impl.EPackageImpl;
  * @model kind="package"
  * @generated
  */
+@SuppressWarnings("deprecation")
 public class UiPackageImpl extends EPackageImpl {
 	/**
 	 * The package name.
@@ -196,63 +198,54 @@ public class UiPackageImpl extends EPackageImpl {
 	public static final int DIRTYABLE_OPERATION_COUNT = 0;
 
 	/**
-	 * The meta object id for the
-	 * '{@link org.eclipse.e4.ui.model.application.ui.MInput <em>Input</em>}' class.
-	 * <!-- begin-user-doc --> <!-- end-user-doc -->
-	 * 
+	 * The meta object id for the '{@link org.eclipse.e4.ui.model.application.ui.MInput <em>Input</em>}' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
 	 * @see org.eclipse.e4.ui.model.application.ui.MInput
 	 * @see org.eclipse.e4.ui.model.application.ui.impl.UiPackageImpl#getInput()
 	 * @since 1.0
 	 * @deprecated See {@link MInput model documentation} for details.
-	 * @generated NOT
-	 * @noreference This field is not intended to be referenced by clients.
-	 * @see <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=509868">Bug
-	 *      509868</a>
+	 * @noreference See {@link MInput model documentation} for details.
+	 * @generated
 	 */
 	@Deprecated
 	public static final int INPUT = 2;
 
 	/**
-	 * The feature id for the '<em><b>Input URI</b></em>' attribute. <!--
-	 * begin-user-doc --> <!-- end-user-doc -->
-	 * 
+	 * The feature id for the '<em><b>Input URI</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
 	 * @since 1.0
-	 * @deprecated See {@link MInput model documentation} for details.
-	 * @generated NOT
+	 * @deprecated See {@link org.eclipse.e4.ui.model.application.ui.MInput#getInputURI() model documentation} for details.
+	 * @noreference See {@link org.eclipse.e4.ui.model.application.ui.MInput#getInputURI() model documentation} for details.
+	 * @generated
 	 * @ordered
-	 * @noreference This field is not intended to be referenced by clients.
-	 * @see <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=509868">Bug
-	 *      509868</a>
 	 */
 	@Deprecated
 	public static final int INPUT__INPUT_URI = 0;
 
 	/**
-	 * The number of structural features of the '<em>Input</em>' class. <!--
-	 * begin-user-doc --> <!-- end-user-doc -->
-	 * 
+	 * The number of structural features of the '<em>Input</em>' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
 	 * @since 1.0
 	 * @deprecated See {@link MInput model documentation} for details.
-	 * @generated NOT
+	 * @noreference See {@link MInput model documentation} for details.
+	 * @generated
 	 * @ordered
-	 * @noreference This field is not intended to be referenced by clients.
-	 * @see <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=509868">Bug
-	 *      509868</a>
 	 */
 	@Deprecated
 	public static final int INPUT_FEATURE_COUNT = 1;
 
 	/**
-	 * The number of operations of the '<em>Input</em>' class. <!-- begin-user-doc
-	 * --> <!-- end-user-doc -->
-	 * 
+	 * The number of operations of the '<em>Input</em>' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
 	 * @since 1.0
 	 * @deprecated See {@link MInput model documentation} for details.
-	 * @generated NOT
+	 * @noreference See {@link MInput model documentation} for details.
+	 * @generated
 	 * @ordered
-	 * @noreference This field is not intended to be referenced by clients.
-	 * @see <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=509868">Bug
-	 *      509868</a>
 	 */
 	@Deprecated
 	public static final int INPUT_OPERATION_COUNT = 0;
@@ -446,7 +439,7 @@ public class UiPackageImpl extends EPackageImpl {
 	 * @generated
 	 * @ordered
 	 */
-	public static final int UI_ELEMENT___UPDATE_LOCALIZATION = ApplicationPackageImpl.APPLICATION_ELEMENT_OPERATION_COUNT + 0;
+	public static final int UI_ELEMENT___UPDATE_LOCALIZATION = ApplicationPackageImpl.APPLICATION_ELEMENT_OPERATION_COUNT + 1;
 
 	/**
 	 * The number of operations of the '<em>UI Element</em>' class.
@@ -456,18 +449,7 @@ public class UiPackageImpl extends EPackageImpl {
 	 * @generated
 	 * @ordered
 	 */
-	public static final int UI_ELEMENT_OPERATION_COUNT = ApplicationPackageImpl.APPLICATION_ELEMENT_OPERATION_COUNT + 1;
-
-	/**
-	 * The meta object id for the '{@link org.eclipse.e4.ui.model.application.ui.MUILabel <em>UI Label</em>}' class.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see org.eclipse.e4.ui.model.application.ui.MUILabel
-	 * @see org.eclipse.e4.ui.model.application.ui.impl.UiPackageImpl#getUILabel()
-	 * @since 1.0
-	 * @generated
-	 */
-	public static final int UI_LABEL = 5;
+	public static final int UI_ELEMENT_OPERATION_COUNT = ApplicationPackageImpl.APPLICATION_ELEMENT_OPERATION_COUNT + 2;
 
 	/**
 	 * The meta object id for the '{@link org.eclipse.e4.ui.model.application.ui.impl.ElementContainerImpl <em>Element Container</em>}' class.
@@ -691,72 +673,6 @@ public class UiPackageImpl extends EPackageImpl {
 	public static final int ELEMENT_CONTAINER_OPERATION_COUNT = UI_ELEMENT_OPERATION_COUNT + 0;
 
 	/**
-	 * The meta object id for the '{@link org.eclipse.e4.ui.model.application.ui.impl.GenericStackImpl <em>Generic Stack</em>}' class.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see org.eclipse.e4.ui.model.application.ui.impl.GenericStackImpl
-	 * @see org.eclipse.e4.ui.model.application.ui.impl.UiPackageImpl#getGenericStack()
-	 * @since 1.0
-	 * @generated
-	 */
-	public static final int GENERIC_STACK = 6;
-
-	/**
-	 * The meta object id for the '{@link org.eclipse.e4.ui.model.application.ui.impl.GenericTileImpl <em>Generic Tile</em>}' class.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see org.eclipse.e4.ui.model.application.ui.impl.GenericTileImpl
-	 * @see org.eclipse.e4.ui.model.application.ui.impl.UiPackageImpl#getGenericTile()
-	 * @since 1.0
-	 * @generated
-	 */
-	public static final int GENERIC_TILE = 7;
-
-	/**
-	 * The meta object id for the '{@link org.eclipse.e4.ui.model.application.ui.impl.GenericTrimContainerImpl <em>Generic Trim Container</em>}' class.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see org.eclipse.e4.ui.model.application.ui.impl.GenericTrimContainerImpl
-	 * @see org.eclipse.e4.ui.model.application.ui.impl.UiPackageImpl#getGenericTrimContainer()
-	 * @since 1.0
-	 * @generated
-	 */
-	public static final int GENERIC_TRIM_CONTAINER = 8;
-
-	/**
-	 * The meta object id for the '{@link org.eclipse.e4.ui.model.application.ui.impl.ExpressionImpl <em>Expression</em>}' class.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see org.eclipse.e4.ui.model.application.ui.impl.ExpressionImpl
-	 * @see org.eclipse.e4.ui.model.application.ui.impl.UiPackageImpl#getExpression()
-	 * @since 1.0
-	 * @generated
-	 */
-	public static final int EXPRESSION = 9;
-
-	/**
-	 * The meta object id for the '{@link org.eclipse.e4.ui.model.application.ui.impl.CoreExpressionImpl <em>Core Expression</em>}' class.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see org.eclipse.e4.ui.model.application.ui.impl.CoreExpressionImpl
-	 * @see org.eclipse.e4.ui.model.application.ui.impl.UiPackageImpl#getCoreExpression()
-	 * @since 1.0
-	 * @generated
-	 */
-	public static final int CORE_EXPRESSION = 10;
-
-	/**
-	 * The meta object id for the '{@link org.eclipse.e4.ui.model.application.ui.MSnippetContainer <em>Snippet Container</em>}' class.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see org.eclipse.e4.ui.model.application.ui.MSnippetContainer
-	 * @see org.eclipse.e4.ui.model.application.ui.impl.UiPackageImpl#getSnippetContainer()
-	 * @since 1.0
-	 * @generated
-	 */
-	public static final int SNIPPET_CONTAINER = 12;
-
-	/**
 	 * The meta object id for the '{@link org.eclipse.e4.ui.model.application.ui.MLocalizable <em>Localizable</em>}' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -796,6 +712,17 @@ public class UiPackageImpl extends EPackageImpl {
 	 * @ordered
 	 */
 	public static final int LOCALIZABLE_OPERATION_COUNT = 1;
+
+	/**
+	 * The meta object id for the '{@link org.eclipse.e4.ui.model.application.ui.MUILabel <em>UI Label</em>}' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see org.eclipse.e4.ui.model.application.ui.MUILabel
+	 * @see org.eclipse.e4.ui.model.application.ui.impl.UiPackageImpl#getUILabel()
+	 * @since 1.0
+	 * @generated
+	 */
+	public static final int UI_LABEL = 5;
 
 	/**
 	 * The feature id for the '<em><b>Label</b></em>' attribute.
@@ -876,6 +803,17 @@ public class UiPackageImpl extends EPackageImpl {
 	 * @ordered
 	 */
 	public static final int UI_LABEL_OPERATION_COUNT = LOCALIZABLE_OPERATION_COUNT + 0;
+
+	/**
+	 * The meta object id for the '{@link org.eclipse.e4.ui.model.application.ui.impl.GenericStackImpl <em>Generic Stack</em>}' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see org.eclipse.e4.ui.model.application.ui.impl.GenericStackImpl
+	 * @see org.eclipse.e4.ui.model.application.ui.impl.UiPackageImpl#getGenericStack()
+	 * @since 1.0
+	 * @generated
+	 */
+	public static final int GENERIC_STACK = 6;
 
 	/**
 	 * The feature id for the '<em><b>Element Id</b></em>' attribute.
@@ -1086,6 +1024,17 @@ public class UiPackageImpl extends EPackageImpl {
 	 * @ordered
 	 */
 	public static final int GENERIC_STACK_OPERATION_COUNT = ELEMENT_CONTAINER_OPERATION_COUNT + 0;
+
+	/**
+	 * The meta object id for the '{@link org.eclipse.e4.ui.model.application.ui.impl.GenericTileImpl <em>Generic Tile</em>}' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see org.eclipse.e4.ui.model.application.ui.impl.GenericTileImpl
+	 * @see org.eclipse.e4.ui.model.application.ui.impl.UiPackageImpl#getGenericTile()
+	 * @since 1.0
+	 * @generated
+	 */
+	public static final int GENERIC_TILE = 7;
 
 	/**
 	 * The feature id for the '<em><b>Element Id</b></em>' attribute.
@@ -1308,6 +1257,17 @@ public class UiPackageImpl extends EPackageImpl {
 	public static final int GENERIC_TILE_OPERATION_COUNT = ELEMENT_CONTAINER_OPERATION_COUNT + 0;
 
 	/**
+	 * The meta object id for the '{@link org.eclipse.e4.ui.model.application.ui.impl.GenericTrimContainerImpl <em>Generic Trim Container</em>}' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see org.eclipse.e4.ui.model.application.ui.impl.GenericTrimContainerImpl
+	 * @see org.eclipse.e4.ui.model.application.ui.impl.UiPackageImpl#getGenericTrimContainer()
+	 * @since 1.0
+	 * @generated
+	 */
+	public static final int GENERIC_TRIM_CONTAINER = 8;
+
+	/**
 	 * The feature id for the '<em><b>Element Id</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -1528,6 +1488,17 @@ public class UiPackageImpl extends EPackageImpl {
 	public static final int GENERIC_TRIM_CONTAINER_OPERATION_COUNT = ELEMENT_CONTAINER_OPERATION_COUNT + 0;
 
 	/**
+	 * The meta object id for the '{@link org.eclipse.e4.ui.model.application.ui.impl.ExpressionImpl <em>Expression</em>}' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see org.eclipse.e4.ui.model.application.ui.impl.ExpressionImpl
+	 * @see org.eclipse.e4.ui.model.application.ui.impl.UiPackageImpl#getExpression()
+	 * @since 1.0
+	 * @generated
+	 */
+	public static final int EXPRESSION = 9;
+
+	/**
 	 * The feature id for the '<em><b>Element Id</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -1596,6 +1567,17 @@ public class UiPackageImpl extends EPackageImpl {
 	 * @ordered
 	 */
 	public static final int EXPRESSION_OPERATION_COUNT = ApplicationPackageImpl.APPLICATION_ELEMENT_OPERATION_COUNT + 0;
+
+	/**
+	 * The meta object id for the '{@link org.eclipse.e4.ui.model.application.ui.impl.CoreExpressionImpl <em>Core Expression</em>}' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see org.eclipse.e4.ui.model.application.ui.impl.CoreExpressionImpl
+	 * @see org.eclipse.e4.ui.model.application.ui.impl.UiPackageImpl#getCoreExpression()
+	 * @since 1.0
+	 * @generated
+	 */
+	public static final int CORE_EXPRESSION = 10;
 
 	/**
 	 * The feature id for the '<em><b>Element Id</b></em>' attribute.
@@ -1795,6 +1777,17 @@ public class UiPackageImpl extends EPackageImpl {
 	public static final int IMPERATIVE_EXPRESSION_OPERATION_COUNT = EXPRESSION_OPERATION_COUNT + 0;
 
 	/**
+	 * The meta object id for the '{@link org.eclipse.e4.ui.model.application.ui.MSnippetContainer <em>Snippet Container</em>}' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see org.eclipse.e4.ui.model.application.ui.MSnippetContainer
+	 * @see org.eclipse.e4.ui.model.application.ui.impl.UiPackageImpl#getSnippetContainer()
+	 * @since 1.0
+	 * @generated
+	 */
+	public static final int SNIPPET_CONTAINER = 12;
+
+	/**
 	 * The feature id for the '<em><b>Snippets</b></em>' containment reference list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -1852,13 +1845,11 @@ public class UiPackageImpl extends EPackageImpl {
 	private EClass dirtyableEClass = null;
 
 	/**
-	 * <!-- begin-user-doc --> <!-- end-user-doc -->
-	 * 
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
 	 * @since 1.0
 	 * @deprecated See {@link MInput model documentation} for details.
-	 * @generated NOT
--	 * @see <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=509868">Bug
-	 *      509868</a>
+	 * @generated
 	 */
 	@Deprecated
 	private EClass inputEClass = null;
@@ -1877,7 +1868,7 @@ public class UiPackageImpl extends EPackageImpl {
 	 * @since 1.0
 	 * @generated
 	 */
-	private EClass uiLabelEClass = null;
+	private EClass elementContainerEClass = null;
 
 	/**
 	 * <!-- begin-user-doc -->
@@ -1885,7 +1876,7 @@ public class UiPackageImpl extends EPackageImpl {
 	 * @since 1.0
 	 * @generated
 	 */
-	private EClass elementContainerEClass = null;
+	private EClass uiLabelEClass = null;
 
 	/**
 	 * <!-- begin-user-doc -->
@@ -2129,18 +2120,15 @@ public class UiPackageImpl extends EPackageImpl {
 	}
 
 	/**
-	 * Returns the meta object for class
-	 * '{@link org.eclipse.e4.ui.model.application.ui.MInput <em>Input</em>}'. <!--
-	 * begin-user-doc --> <!-- end-user-doc -->
-	 * 
+	 * Returns the meta object for class '{@link org.eclipse.e4.ui.model.application.ui.MInput <em>Input</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
 	 * @return the meta object for class '<em>Input</em>'.
 	 * @see org.eclipse.e4.ui.model.application.ui.MInput
 	 * @since 1.0
 	 * @deprecated See {@link MInput model documentation} for details.
-	 * @generated NOT
-	 * @noreference This method is not intended to be referenced by clients.
-	 * @see <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=509868">Bug
-	 *      509868</a>
+	 * @noreference See {@link MInput model documentation} for details.
+	 * @generated
 	 */
 	@Deprecated
 	public EClass getInput() {
@@ -2148,19 +2136,16 @@ public class UiPackageImpl extends EPackageImpl {
 	}
 
 	/**
-	 * Returns the meta object for the attribute
-	 * '{@link org.eclipse.e4.ui.model.application.ui.MInput#getInputURI <em>Input
-	 * URI</em>}'. <!-- begin-user-doc --> <!-- end-user-doc -->
-	 * 
+	 * Returns the meta object for the attribute '{@link org.eclipse.e4.ui.model.application.ui.MInput#getInputURI <em>Input URI</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
 	 * @return the meta object for the attribute '<em>Input URI</em>'.
 	 * @see org.eclipse.e4.ui.model.application.ui.MInput#getInputURI()
 	 * @see #getInput()
 	 * @since 1.0
-	 * @deprecated See {@link MInput model documentation} for details.
-	 * @generated NOT
-	 * @noreference this method is not intended to be referenced by clients.
-	 * @see <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=509868">Bug
-	 *      509868</a>
+	 * @deprecated See {@link org.eclipse.e4.ui.model.application.ui.MInput#getInputURI() model documentation} for details.
+	 * @noreference See {@link org.eclipse.e4.ui.model.application.ui.MInput#getInputURI() model documentation} for details.
+	 * @generated
 	 */
 	@Deprecated
 	public EAttribute getInput_InputURI() {
@@ -2292,7 +2277,6 @@ public class UiPackageImpl extends EPackageImpl {
 		return (EReference)uiElementEClass.getEStructuralFeatures().get(7);
 	}
 
-
 	/**
 	 * Returns the meta object for the containment reference '{@link org.eclipse.e4.ui.model.application.ui.MUIElement#getVisibleWhen <em>Visible When</em>}'.
 	 * <!-- begin-user-doc -->
@@ -2306,7 +2290,6 @@ public class UiPackageImpl extends EPackageImpl {
 	public EReference getUIElement_VisibleWhen() {
 		return (EReference)uiElementEClass.getEStructuralFeatures().get(8);
 	}
-
 
 	/**
 	 * Returns the meta object for the attribute '{@link org.eclipse.e4.ui.model.application.ui.MUIElement#getAccessibilityPhrase <em>Accessibility Phrase</em>}'.
@@ -2322,7 +2305,6 @@ public class UiPackageImpl extends EPackageImpl {
 		return (EAttribute)uiElementEClass.getEStructuralFeatures().get(9);
 	}
 
-
 	/**
 	 * Returns the meta object for the attribute '{@link org.eclipse.e4.ui.model.application.ui.MUIElement#getLocalizedAccessibilityPhrase <em>Localized Accessibility Phrase</em>}'.
 	 * <!-- begin-user-doc -->
@@ -2337,6 +2319,60 @@ public class UiPackageImpl extends EPackageImpl {
 		return (EAttribute)uiElementEClass.getEStructuralFeatures().get(10);
 	}
 
+	/**
+	 * Returns the meta object for the '{@link org.eclipse.e4.ui.model.application.ui.MUIElement#updateLocalization() <em>Update Localization</em>}' operation.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the '<em>Update Localization</em>' operation.
+	 * @see org.eclipse.e4.ui.model.application.ui.MUIElement#updateLocalization()
+	 * @since 1.1
+	 * @generated
+	 */
+	public EOperation getUIElement__UpdateLocalization() {
+		return uiElementEClass.getEOperations().get(0);
+	}
+
+
+	/**
+	 * Returns the meta object for class '{@link org.eclipse.e4.ui.model.application.ui.MElementContainer <em>Element Container</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for class '<em>Element Container</em>'.
+	 * @see org.eclipse.e4.ui.model.application.ui.MElementContainer
+	 * @since 1.0
+	 * @generated
+	 */
+	public EClass getElementContainer() {
+		return elementContainerEClass;
+	}
+
+	/**
+	 * Returns the meta object for the containment reference list '{@link org.eclipse.e4.ui.model.application.ui.MElementContainer#getChildren <em>Children</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the containment reference list '<em>Children</em>'.
+	 * @see org.eclipse.e4.ui.model.application.ui.MElementContainer#getChildren()
+	 * @see #getElementContainer()
+	 * @since 1.0
+	 * @generated
+	 */
+	public EReference getElementContainer_Children() {
+		return (EReference)elementContainerEClass.getEStructuralFeatures().get(0);
+	}
+
+	/**
+	 * Returns the meta object for the reference '{@link org.eclipse.e4.ui.model.application.ui.MElementContainer#getSelectedElement <em>Selected Element</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the reference '<em>Selected Element</em>'.
+	 * @see org.eclipse.e4.ui.model.application.ui.MElementContainer#getSelectedElement()
+	 * @see #getElementContainer()
+	 * @since 1.0
+	 * @generated
+	 */
+	public EReference getElementContainer_SelectedElement() {
+		return (EReference)elementContainerEClass.getEStructuralFeatures().get(1);
+	}
 
 	/**
 	 * Returns the meta object for class '{@link org.eclipse.e4.ui.model.application.ui.MUILabel <em>UI Label</em>}'.
@@ -2407,7 +2443,6 @@ public class UiPackageImpl extends EPackageImpl {
 		return (EAttribute)uiLabelEClass.getEStructuralFeatures().get(3);
 	}
 
-
 	/**
 	 * Returns the meta object for the attribute '{@link org.eclipse.e4.ui.model.application.ui.MUILabel#getLocalizedTooltip <em>Localized Tooltip</em>}'.
 	 * <!-- begin-user-doc -->
@@ -2420,48 +2455,6 @@ public class UiPackageImpl extends EPackageImpl {
 	 */
 	public EAttribute getUILabel_LocalizedTooltip() {
 		return (EAttribute)uiLabelEClass.getEStructuralFeatures().get(4);
-	}
-
-
-	/**
-	 * Returns the meta object for class '{@link org.eclipse.e4.ui.model.application.ui.MElementContainer <em>Element Container</em>}'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return the meta object for class '<em>Element Container</em>'.
-	 * @see org.eclipse.e4.ui.model.application.ui.MElementContainer
-	 * @since 1.0
-	 * @generated
-	 */
-	public EClass getElementContainer() {
-		return elementContainerEClass;
-	}
-
-	/**
-	 * Returns the meta object for the containment reference list '{@link org.eclipse.e4.ui.model.application.ui.MElementContainer#getChildren <em>Children</em>}'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return the meta object for the containment reference list '<em>Children</em>'.
-	 * @see org.eclipse.e4.ui.model.application.ui.MElementContainer#getChildren()
-	 * @see #getElementContainer()
-	 * @since 1.0
-	 * @generated
-	 */
-	public EReference getElementContainer_Children() {
-		return (EReference)elementContainerEClass.getEStructuralFeatures().get(0);
-	}
-
-	/**
-	 * Returns the meta object for the reference '{@link org.eclipse.e4.ui.model.application.ui.MElementContainer#getSelectedElement <em>Selected Element</em>}'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return the meta object for the reference '<em>Selected Element</em>'.
-	 * @see org.eclipse.e4.ui.model.application.ui.MElementContainer#getSelectedElement()
-	 * @see #getElementContainer()
-	 * @since 1.0
-	 * @generated
-	 */
-	public EReference getElementContainer_SelectedElement() {
-		return (EReference)elementContainerEClass.getEStructuralFeatures().get(1);
 	}
 
 	/**
@@ -2544,7 +2537,6 @@ public class UiPackageImpl extends EPackageImpl {
 		return expressionEClass;
 	}
 
-
 	/**
 	 * Returns the meta object for class '{@link org.eclipse.e4.ui.model.application.ui.MCoreExpression <em>Core Expression</em>}'.
 	 * <!-- begin-user-doc -->
@@ -2557,7 +2549,6 @@ public class UiPackageImpl extends EPackageImpl {
 	public EClass getCoreExpression() {
 		return coreExpressionEClass;
 	}
-
 
 	/**
 	 * Returns the meta object for the attribute '{@link org.eclipse.e4.ui.model.application.ui.MCoreExpression#getCoreExpressionId <em>Core Expression Id</em>}'.
@@ -2573,7 +2564,6 @@ public class UiPackageImpl extends EPackageImpl {
 		return (EAttribute)coreExpressionEClass.getEStructuralFeatures().get(0);
 	}
 
-
 	/**
 	 * Returns the meta object for the attribute '{@link org.eclipse.e4.ui.model.application.ui.MCoreExpression#getCoreExpression <em>Core Expression</em>}'.
 	 * <!-- begin-user-doc -->
@@ -2588,7 +2578,6 @@ public class UiPackageImpl extends EPackageImpl {
 		return (EAttribute)coreExpressionEClass.getEStructuralFeatures().get(1);
 	}
 
-
 	/**
 	 * Returns the meta object for class '{@link org.eclipse.e4.ui.model.application.ui.MImperativeExpression <em>Imperative Expression</em>}'.
 	 * <!-- begin-user-doc -->
@@ -2600,7 +2589,6 @@ public class UiPackageImpl extends EPackageImpl {
 	public EClass getImperativeExpression() {
 		return imperativeExpressionEClass;
 	}
-
 
 	/**
 	 * Returns the meta object for the attribute '{@link org.eclipse.e4.ui.model.application.ui.MImperativeExpression#isTracking <em>Tracking</em>}'.
@@ -2615,7 +2603,6 @@ public class UiPackageImpl extends EPackageImpl {
 		return (EAttribute)imperativeExpressionEClass.getEStructuralFeatures().get(0);
 	}
 
-
 	/**
 	 * Returns the meta object for class '{@link org.eclipse.e4.ui.model.application.ui.MSnippetContainer <em>Snippet Container</em>}'.
 	 * <!-- begin-user-doc -->
@@ -2628,7 +2615,6 @@ public class UiPackageImpl extends EPackageImpl {
 	public EClass getSnippetContainer() {
 		return snippetContainerEClass;
 	}
-
 
 	/**
 	 * Returns the meta object for the containment reference list '{@link org.eclipse.e4.ui.model.application.ui.MSnippetContainer#getSnippets <em>Snippets</em>}'.
@@ -2644,7 +2630,6 @@ public class UiPackageImpl extends EPackageImpl {
 		return (EReference)snippetContainerEClass.getEStructuralFeatures().get(0);
 	}
 
-
 	/**
 	 * Returns the meta object for class '{@link org.eclipse.e4.ui.model.application.ui.MLocalizable <em>Localizable</em>}'.
 	 * <!-- begin-user-doc -->
@@ -2657,7 +2642,6 @@ public class UiPackageImpl extends EPackageImpl {
 	public EClass getLocalizable() {
 		return localizableEClass;
 	}
-
 
 	/**
 	 * Returns the meta object for the '{@link org.eclipse.e4.ui.model.application.ui.MLocalizable#updateLocalization() <em>Update Localization</em>}' operation.
@@ -2739,6 +2723,7 @@ public class UiPackageImpl extends EPackageImpl {
 		createEReference(uiElementEClass, UI_ELEMENT__VISIBLE_WHEN);
 		createEAttribute(uiElementEClass, UI_ELEMENT__ACCESSIBILITY_PHRASE);
 		createEAttribute(uiElementEClass, UI_ELEMENT__LOCALIZED_ACCESSIBILITY_PHRASE);
+		createEOperation(uiElementEClass, UI_ELEMENT___UPDATE_LOCALIZATION);
 
 		elementContainerEClass = createEClass(ELEMENT_CONTAINER);
 		createEReference(elementContainerEClass, ELEMENT_CONTAINER__CHILDREN);
@@ -2878,6 +2863,8 @@ public class UiPackageImpl extends EPackageImpl {
 		initEAttribute(getUIElement_AccessibilityPhrase(), ecorePackage.getEString(), "accessibilityPhrase", null, 0, 1, MUIElement.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
 		initEAttribute(getUIElement_LocalizedAccessibilityPhrase(), ecorePackage.getEString(), "localizedAccessibilityPhrase", null, 0, 1, MUIElement.class, IS_TRANSIENT, IS_VOLATILE, !IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
 
+		initEOperation(getUIElement__UpdateLocalization(), null, "updateLocalization", 0, 1, IS_UNIQUE, IS_ORDERED); //$NON-NLS-1$
+
 		initEClass(elementContainerEClass, MElementContainer.class, "ElementContainer", IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS); //$NON-NLS-1$
 		g1 = createEGenericType(elementContainerEClass_T);
 		initEReference(getElementContainer_Children(), g1, this.getUIElement_Parent(), "children", null, 0, -1, MElementContainer.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
@@ -2929,6 +2916,7 @@ public class UiPackageImpl extends EPackageImpl {
 	 * <ul>
 	 *   <li>each class,</li>
 	 *   <li>each feature of each class,</li>
+	 *   <li>each operation of each class,</li>
 	 *   <li>each enum,</li>
 	 *   <li>and each data type</li>
 	 * </ul>
@@ -2995,32 +2983,27 @@ public class UiPackageImpl extends EPackageImpl {
 		public static final EAttribute DIRTYABLE__DIRTY = eINSTANCE.getDirtyable_Dirty();
 
 		/**
-		 * The meta object literal for the
-		 * '{@link org.eclipse.e4.ui.model.application.ui.MInput <em>Input</em>}' class.
-		 * <!-- begin-user-doc --> <!-- end-user-doc -->
-		 * 
+		 * The meta object literal for the '{@link org.eclipse.e4.ui.model.application.ui.MInput <em>Input</em>}' class.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
 		 * @see org.eclipse.e4.ui.model.application.ui.MInput
 		 * @see org.eclipse.e4.ui.model.application.ui.impl.UiPackageImpl#getInput()
 		 * @since 1.0
 		 * @deprecated See {@link MInput model documentation} for details.
-		 * @generated NOT
-		 * @noreference This field is not intended to be referenced by clients.
-		 * @see <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=509868">Bug
-		 *      509868</a>
+		 * @noreference See {@link MInput model documentation} for details.
+		 * @generated
 		 */
 		@Deprecated
 		public static final EClass INPUT = eINSTANCE.getInput();
 
 		/**
-		 * The meta object literal for the '<em><b>Input URI</b></em>' attribute
-		 * feature. <!-- begin-user-doc --> <!-- end-user-doc -->
-		 * 
+		 * The meta object literal for the '<em><b>Input URI</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
 		 * @since 1.0
-		 * @deprecated See {@link MInput model documentation} for details.
-		 * @generated NOT
-		 * @noreference This field is not intended to be referenced by clients.
-		 * @see <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=509868">Bug
-		 *      509868</a>
+		 * @deprecated See {@link org.eclipse.e4.ui.model.application.ui.MInput#getInputURI() model documentation} for details.
+		 * @noreference See {@link org.eclipse.e4.ui.model.application.ui.MInput#getInputURI() model documentation} for details.
+		 * @generated
 		 */
 		@Deprecated
 		public static final EAttribute INPUT__INPUT_URI = eINSTANCE.getInput_InputURI();
@@ -3136,6 +3119,44 @@ public class UiPackageImpl extends EPackageImpl {
 		public static final EAttribute UI_ELEMENT__LOCALIZED_ACCESSIBILITY_PHRASE = eINSTANCE.getUIElement_LocalizedAccessibilityPhrase();
 
 		/**
+		 * The meta object literal for the '<em><b>Update Localization</b></em>' operation.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @since 1.1
+		 * @generated
+		 */
+		public static final EOperation UI_ELEMENT___UPDATE_LOCALIZATION = eINSTANCE.getUIElement__UpdateLocalization();
+
+		/**
+		 * The meta object literal for the '{@link org.eclipse.e4.ui.model.application.ui.impl.ElementContainerImpl <em>Element Container</em>}' class.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @see org.eclipse.e4.ui.model.application.ui.impl.ElementContainerImpl
+		 * @see org.eclipse.e4.ui.model.application.ui.impl.UiPackageImpl#getElementContainer()
+		 * @since 1.0
+		 * @generated
+		 */
+		public static final EClass ELEMENT_CONTAINER = eINSTANCE.getElementContainer();
+
+		/**
+		 * The meta object literal for the '<em><b>Children</b></em>' containment reference list feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @since 1.0
+		 * @generated
+		 */
+		public static final EReference ELEMENT_CONTAINER__CHILDREN = eINSTANCE.getElementContainer_Children();
+
+		/**
+		 * The meta object literal for the '<em><b>Selected Element</b></em>' reference feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @since 1.0
+		 * @generated
+		 */
+		public static final EReference ELEMENT_CONTAINER__SELECTED_ELEMENT = eINSTANCE.getElementContainer_SelectedElement();
+
+		/**
 		 * The meta object literal for the '{@link org.eclipse.e4.ui.model.application.ui.MUILabel <em>UI Label</em>}' class.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
@@ -3190,35 +3211,6 @@ public class UiPackageImpl extends EPackageImpl {
 		 * @generated
 		 */
 		public static final EAttribute UI_LABEL__LOCALIZED_TOOLTIP = eINSTANCE.getUILabel_LocalizedTooltip();
-
-		/**
-		 * The meta object literal for the '{@link org.eclipse.e4.ui.model.application.ui.impl.ElementContainerImpl <em>Element Container</em>}' class.
-		 * <!-- begin-user-doc -->
-		 * <!-- end-user-doc -->
-		 * @see org.eclipse.e4.ui.model.application.ui.impl.ElementContainerImpl
-		 * @see org.eclipse.e4.ui.model.application.ui.impl.UiPackageImpl#getElementContainer()
-		 * @since 1.0
-		 * @generated
-		 */
-		public static final EClass ELEMENT_CONTAINER = eINSTANCE.getElementContainer();
-
-		/**
-		 * The meta object literal for the '<em><b>Children</b></em>' containment reference list feature.
-		 * <!-- begin-user-doc -->
-		 * <!-- end-user-doc -->
-		 * @since 1.0
-		 * @generated
-		 */
-		public static final EReference ELEMENT_CONTAINER__CHILDREN = eINSTANCE.getElementContainer_Children();
-
-		/**
-		 * The meta object literal for the '<em><b>Selected Element</b></em>' reference feature.
-		 * <!-- begin-user-doc -->
-		 * <!-- end-user-doc -->
-		 * @since 1.0
-		 * @generated
-		 */
-		public static final EReference ELEMENT_CONTAINER__SELECTED_ELEMENT = eINSTANCE.getElementContainer_SelectedElement();
 
 		/**
 		 * The meta object literal for the '{@link org.eclipse.e4.ui.model.application.ui.impl.GenericStackImpl <em>Generic Stack</em>}' class.

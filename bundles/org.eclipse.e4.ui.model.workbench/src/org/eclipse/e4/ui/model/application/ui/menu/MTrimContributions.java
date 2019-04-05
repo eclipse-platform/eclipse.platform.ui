@@ -41,7 +41,6 @@ import java.util.List;
  * @generated
  */
 public interface MTrimContributions {
-
 	/**
 	 * Returns the value of the '<em><b>Trim Contributions</b></em>' containment reference list.
 	 * The list contents are of type {@link org.eclipse.e4.ui.model.application.ui.menu.MTrimContribution}.
@@ -60,4 +59,5 @@ public interface MTrimContributions {
 	 * @generated
 	 */
 	List<MTrimContribution> getTrimContributions();
+
 } // MTrimContributions

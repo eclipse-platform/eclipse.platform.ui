@@ -98,6 +98,7 @@ public class CoreExpressionImpl extends ExpressionImpl implements MCoreExpressio
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public String getCoreExpressionId() {
 		return coreExpressionId;
 	}
@@ -107,6 +108,7 @@ public class CoreExpressionImpl extends ExpressionImpl implements MCoreExpressio
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public void setCoreExpressionId(String newCoreExpressionId) {
 		String oldCoreExpressionId = coreExpressionId;
 		coreExpressionId = newCoreExpressionId;
@@ -119,6 +121,7 @@ public class CoreExpressionImpl extends ExpressionImpl implements MCoreExpressio
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public Object getCoreExpression() {
 		return coreExpression;
 	}
@@ -128,6 +131,7 @@ public class CoreExpressionImpl extends ExpressionImpl implements MCoreExpressio
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public void setCoreExpression(Object newCoreExpression) {
 		Object oldCoreExpression = coreExpression;
 		coreExpression = newCoreExpression;

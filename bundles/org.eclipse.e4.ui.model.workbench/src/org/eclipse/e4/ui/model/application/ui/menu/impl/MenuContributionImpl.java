@@ -37,6 +37,7 @@ import org.eclipse.emf.ecore.util.EObjectContainmentWithInverseEList;
  * </ul>
  *
  * @since 1.0
+ * @noreference See {@link MMenuContribution model documentation} for details.
  * @generated
  */
 public class MenuContributionImpl extends ElementContainerImpl<MMenuElement> implements MMenuContribution {
@@ -129,6 +130,7 @@ public class MenuContributionImpl extends ElementContainerImpl<MMenuElement> imp
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public String getPositionInParent() {
 		return positionInParent;
 	}
@@ -138,6 +140,7 @@ public class MenuContributionImpl extends ElementContainerImpl<MMenuElement> imp
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public void setPositionInParent(String newPositionInParent) {
 		String oldPositionInParent = positionInParent;
 		positionInParent = newPositionInParent;
@@ -150,6 +153,7 @@ public class MenuContributionImpl extends ElementContainerImpl<MMenuElement> imp
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public String getParentId() {
 		return parentId;
 	}
@@ -159,6 +163,7 @@ public class MenuContributionImpl extends ElementContainerImpl<MMenuElement> imp
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public void setParentId(String newParentId) {
 		String oldParentId = parentId;
 		parentId = newParentId;

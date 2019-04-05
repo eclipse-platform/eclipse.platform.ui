@@ -14,15 +14,10 @@
 package org.eclipse.e4.ui.model.application.ui.menu.impl;
 
 import org.eclipse.e4.ui.model.application.MContribution;
-
 import org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl;
-
 import org.eclipse.e4.ui.model.application.ui.menu.MDynamicMenuContribution;
-
 import org.eclipse.emf.common.notify.Notification;
-
 import org.eclipse.emf.ecore.EClass;
-
 import org.eclipse.emf.ecore.impl.ENotificationImpl;
 
 /**
@@ -108,6 +103,7 @@ public class DynamicMenuContributionImpl extends MenuItemImpl implements MDynami
 	 * @since 1.0
 	 * @generated
 	 */
+	@Override
 	public String getContributionURI() {
 		return contributionURI;
 	}
@@ -118,6 +114,7 @@ public class DynamicMenuContributionImpl extends MenuItemImpl implements MDynami
 	 * @since 1.0
 	 * @generated
 	 */
+	@Override
 	public void setContributionURI(String newContributionURI) {
 		String oldContributionURI = contributionURI;
 		contributionURI = newContributionURI;
@@ -130,6 +127,7 @@ public class DynamicMenuContributionImpl extends MenuItemImpl implements MDynami
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public Object getObject() {
 		return object;
 	}
@@ -139,6 +137,7 @@ public class DynamicMenuContributionImpl extends MenuItemImpl implements MDynami
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public void setObject(Object newObject) {
 		Object oldObject = object;
 		object = newObject;

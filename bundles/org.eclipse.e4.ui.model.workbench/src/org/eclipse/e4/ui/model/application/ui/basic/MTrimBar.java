@@ -41,7 +41,6 @@ import org.eclipse.e4.ui.model.application.ui.MUIElement;
  * @generated
  */
 public interface MTrimBar extends MGenericTrimContainer<MTrimElement>, MUIElement {
-
 	/**
 	 * Returns the value of the '<em><b>Pending Cleanup</b></em>' reference list.
 	 * The list contents are of type {@link org.eclipse.e4.ui.model.application.ui.basic.MTrimElement}.
@@ -58,4 +57,5 @@ public interface MTrimBar extends MGenericTrimContainer<MTrimElement>, MUIElemen
 	 * @generated
 	 */
 	List<MTrimElement> getPendingCleanup();
+
 } // MTrimBar

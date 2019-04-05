@@ -71,6 +71,7 @@ public class HandlerImpl extends ContributionImpl implements MHandler {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public MCommand getCommand() {
 		if (command != null && ((EObject)command).eIsProxy()) {
 			InternalEObject oldCommand = (InternalEObject)command;
@@ -97,6 +98,7 @@ public class HandlerImpl extends ContributionImpl implements MHandler {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public void setCommand(MCommand newCommand) {
 		MCommand oldCommand = command;
 		command = newCommand;

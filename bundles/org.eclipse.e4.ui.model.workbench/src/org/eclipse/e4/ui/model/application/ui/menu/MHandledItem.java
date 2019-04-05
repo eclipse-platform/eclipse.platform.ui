@@ -93,6 +93,7 @@ public interface MHandledItem extends MItem {
 	 * <!-- end-user-doc -->
 	 * @param value the new value of the '<em>Wb Command</em>' attribute.
 	 * @see #getWbCommand()
+	 * @noreference
 	 * @generated
 	 */
 	void setWbCommand(ParameterizedCommand value);

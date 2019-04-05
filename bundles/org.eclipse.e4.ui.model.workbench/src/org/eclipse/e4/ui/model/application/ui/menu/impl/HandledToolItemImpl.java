@@ -62,6 +62,7 @@ public class HandledToolItemImpl extends ToolItemImpl implements MHandledToolIte
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @see #getWbCommand()
+	 * @noreference
 	 * @generated
 	 * @ordered
 	 */
@@ -72,6 +73,7 @@ public class HandledToolItemImpl extends ToolItemImpl implements MHandledToolIte
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @see #getWbCommand()
+	 * @noreference
 	 * @generated
 	 * @ordered
 	 */
@@ -111,6 +113,7 @@ public class HandledToolItemImpl extends ToolItemImpl implements MHandledToolIte
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public MCommand getCommand() {
 		if (command != null && ((EObject)command).eIsProxy()) {
 			InternalEObject oldCommand = (InternalEObject)command;
@@ -137,6 +140,7 @@ public class HandledToolItemImpl extends ToolItemImpl implements MHandledToolIte
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public void setCommand(MCommand newCommand) {
 		MCommand oldCommand = command;
 		command = newCommand;
@@ -147,8 +151,10 @@ public class HandledToolItemImpl extends ToolItemImpl implements MHandledToolIte
 	/**
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @noreference
 	 * @generated
 	 */
+	@Override
 	public ParameterizedCommand getWbCommand() {
 		return wbCommand;
 	}
@@ -156,8 +162,10 @@ public class HandledToolItemImpl extends ToolItemImpl implements MHandledToolIte
 	/**
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @noreference
 	 * @generated
 	 */
+	@Override
 	public void setWbCommand(ParameterizedCommand newWbCommand) {
 		ParameterizedCommand oldWbCommand = wbCommand;
 		wbCommand = newWbCommand;
@@ -170,6 +178,7 @@ public class HandledToolItemImpl extends ToolItemImpl implements MHandledToolIte
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public List<MParameter> getParameters() {
 		if (parameters == null) {
 			parameters = new EObjectContainmentEList<MParameter>(MParameter.class, this, MenuPackageImpl.HANDLED_TOOL_ITEM__PARAMETERS);

@@ -13,12 +13,16 @@
  */
 package org.eclipse.e4.ui.model.application.ui.advanced.impl;
 
+import java.lang.reflect.InvocationTargetException;
 import org.eclipse.e4.ui.model.LocalizationHelper;
+import org.eclipse.e4.ui.model.application.ui.MLocalizable;
+import org.eclipse.e4.ui.model.application.ui.MUIElement;
 import org.eclipse.e4.ui.model.application.ui.MUILabel;
 import org.eclipse.e4.ui.model.application.ui.advanced.MArea;
 import org.eclipse.e4.ui.model.application.ui.basic.impl.PartSashContainerImpl;
 import org.eclipse.e4.ui.model.application.ui.impl.UiPackageImpl;
 import org.eclipse.emf.common.notify.Notification;
+import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.impl.ENotificationImpl;
 
@@ -152,6 +156,7 @@ public class AreaImpl extends PartSashContainerImpl implements MArea {
 	 * @since 1.0
 	 * @generated
 	 */
+	@Override
 	public String getLabel() {
 		return label;
 	}
@@ -162,6 +167,7 @@ public class AreaImpl extends PartSashContainerImpl implements MArea {
 	 * @since 1.0
 	 * @generated
 	 */
+	@Override
 	public void setLabel(String newLabel) {
 		String oldLabel = label;
 		label = newLabel;
@@ -175,6 +181,7 @@ public class AreaImpl extends PartSashContainerImpl implements MArea {
 	 * @since 1.0
 	 * @generated
 	 */
+	@Override
 	public String getIconURI() {
 		return iconURI;
 	}
@@ -185,6 +192,7 @@ public class AreaImpl extends PartSashContainerImpl implements MArea {
 	 * @since 1.0
 	 * @generated
 	 */
+	@Override
 	public void setIconURI(String newIconURI) {
 		String oldIconURI = iconURI;
 		iconURI = newIconURI;
@@ -198,6 +206,7 @@ public class AreaImpl extends PartSashContainerImpl implements MArea {
 	 * @since 1.0
 	 * @generated
 	 */
+	@Override
 	public String getTooltip() {
 		return tooltip;
 	}
@@ -208,6 +217,7 @@ public class AreaImpl extends PartSashContainerImpl implements MArea {
 	 * @since 1.0
 	 * @generated
 	 */
+	@Override
 	public void setTooltip(String newTooltip) {
 		String oldTooltip = tooltip;
 		tooltip = newTooltip;
@@ -218,26 +228,33 @@ public class AreaImpl extends PartSashContainerImpl implements MArea {
 	/**
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @generated
 	 */
+	@Override
 	public String getLocalizedLabel() {
-		return LocalizationHelper.getLocalizedLabel(this);
+		return LocalizationHelper.getLocalizedFeature(UiPackageImpl.Literals.UI_LABEL__LABEL, this);
 	}
 
 	/**
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @generated
 	 */
+	@Override
 	public String getLocalizedTooltip() {
-		return LocalizationHelper.getLocalizedTooltip(this);
+		return LocalizationHelper.getLocalizedFeature(UiPackageImpl.Literals.UI_LABEL__TOOLTIP, this);
 	}
 
 	/**
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.1
+	 * @generated
 	 */
 	@Override
 	public void updateLocalization() {
 		if (eNotificationRequired()) {
+			super.updateLocalization();
 			eNotify(new ENotificationImpl(
 					this, Notification.SET, AdvancedPackageImpl.AREA__LOCALIZED_LABEL, null, getLocalizedLabel()));
 			eNotify(new ENotificationImpl(
@@ -369,6 +386,48 @@ public class AreaImpl extends PartSashContainerImpl implements MArea {
 			}
 		}
 		return super.eDerivedStructuralFeatureID(baseFeatureID, baseClass);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public int eDerivedOperationID(int baseOperationID, Class<?> baseClass) {
+		if (baseClass == MLocalizable.class) {
+			switch (baseOperationID) {
+				case UiPackageImpl.LOCALIZABLE___UPDATE_LOCALIZATION: return AdvancedPackageImpl.AREA___UPDATE_LOCALIZATION;
+				default: return super.eDerivedOperationID(baseOperationID, baseClass);
+			}
+		}
+		if (baseClass == MUIElement.class) {
+			switch (baseOperationID) {
+				case UiPackageImpl.UI_ELEMENT___UPDATE_LOCALIZATION: return AdvancedPackageImpl.AREA___UPDATE_LOCALIZATION;
+				default: return super.eDerivedOperationID(baseOperationID, baseClass);
+			}
+		}
+		if (baseClass == MUILabel.class) {
+			switch (baseOperationID) {
+				default: return -1;
+			}
+		}
+		return super.eDerivedOperationID(baseOperationID, baseClass);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public Object eInvoke(int operationID, EList<?> arguments) throws InvocationTargetException {
+		switch (operationID) {
+			case AdvancedPackageImpl.AREA___UPDATE_LOCALIZATION:
+				updateLocalization();
+				return null;
+		}
+		return super.eInvoke(operationID, arguments);
 	}
 
 	/**

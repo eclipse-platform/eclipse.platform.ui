@@ -15,7 +15,6 @@ package org.eclipse.e4.ui.model.application.ui.basic;
 
 import org.eclipse.e4.ui.model.application.ui.MGenericTile;
 
-
 /**
  * <!-- begin-user-doc -->
  * A representation of the model object '<em><b>Composite Part</b></em>'.

@@ -14,7 +14,9 @@
  */
 package org.eclipse.e4.ui.model.fragment.impl;
 
-import org.eclipse.e4.ui.model.fragment.*;
+import org.eclipse.e4.ui.model.fragment.MFragmentFactory;
+import org.eclipse.e4.ui.model.fragment.MModelFragments;
+import org.eclipse.e4.ui.model.fragment.MStringModelFragment;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EPackage;
@@ -86,6 +88,7 @@ public class FragmentFactoryImpl extends EFactoryImpl implements MFragmentFactor
 	 * @since 1.0
 	 * @generated
 	 */
+	@Override
 	public MModelFragments createModelFragments() {
 		ModelFragmentsImpl modelFragments = new ModelFragmentsImpl();
 		return modelFragments;
@@ -97,6 +100,7 @@ public class FragmentFactoryImpl extends EFactoryImpl implements MFragmentFactor
 	 * @since 1.0
 	 * @generated
 	 */
+	@Override
 	public MStringModelFragment createStringModelFragment() {
 		StringModelFragmentImpl stringModelFragment = new StringModelFragmentImpl();
 		return stringModelFragment;

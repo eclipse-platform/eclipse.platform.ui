@@ -13,6 +13,7 @@
  */
 package org.eclipse.e4.ui.model.application.ui.basic.impl;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -28,6 +29,8 @@ import org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl;
 import org.eclipse.e4.ui.model.application.impl.StringToStringMapImpl;
 import org.eclipse.e4.ui.model.application.ui.MContext;
 import org.eclipse.e4.ui.model.application.ui.MDirtyable;
+import org.eclipse.e4.ui.model.application.ui.MLocalizable;
+import org.eclipse.e4.ui.model.application.ui.MUIElement;
 import org.eclipse.e4.ui.model.application.ui.MUILabel;
 import org.eclipse.e4.ui.model.application.ui.basic.MPart;
 import org.eclipse.e4.ui.model.application.ui.basic.MPartSashContainerElement;
@@ -400,6 +403,7 @@ public class PartImpl extends UIElementImpl implements MPart {
 	 * @since 1.0
 	 * @generated
 	 */
+	@Override
 	public String getContributionURI() {
 		return contributionURI;
 	}
@@ -410,6 +414,7 @@ public class PartImpl extends UIElementImpl implements MPart {
 	 * @since 1.0
 	 * @generated
 	 */
+	@Override
 	public void setContributionURI(String newContributionURI) {
 		String oldContributionURI = contributionURI;
 		contributionURI = newContributionURI;
@@ -422,6 +427,7 @@ public class PartImpl extends UIElementImpl implements MPart {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public Object getObject() {
 		return object;
 	}
@@ -431,6 +437,7 @@ public class PartImpl extends UIElementImpl implements MPart {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public void setObject(Object newObject) {
 		Object oldObject = object;
 		object = newObject;
@@ -443,6 +450,7 @@ public class PartImpl extends UIElementImpl implements MPart {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public IEclipseContext getContext() {
 		return context;
 	}
@@ -452,6 +460,7 @@ public class PartImpl extends UIElementImpl implements MPart {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public void setContext(IEclipseContext newContext) {
 		IEclipseContext oldContext = context;
 		context = newContext;
@@ -464,6 +473,7 @@ public class PartImpl extends UIElementImpl implements MPart {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public List<String> getVariables() {
 		if (variables == null) {
 			variables = new EDataTypeUniqueEList<String>(String.class, this, BasicPackageImpl.PART__VARIABLES);
@@ -476,6 +486,7 @@ public class PartImpl extends UIElementImpl implements MPart {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public Map<String, String> getProperties() {
 		if (properties == null) {
 			properties = new EcoreEMap<String,String>(ApplicationPackageImpl.Literals.STRING_TO_STRING_MAP, StringToStringMapImpl.class, this, BasicPackageImpl.PART__PROPERTIES);
@@ -489,6 +500,7 @@ public class PartImpl extends UIElementImpl implements MPart {
 	 * @since 1.0
 	 * @generated
 	 */
+	@Override
 	public String getLabel() {
 		return label;
 	}
@@ -499,6 +511,7 @@ public class PartImpl extends UIElementImpl implements MPart {
 	 * @since 1.0
 	 * @generated
 	 */
+	@Override
 	public void setLabel(String newLabel) {
 		String oldLabel = label;
 		label = newLabel;
@@ -512,6 +525,7 @@ public class PartImpl extends UIElementImpl implements MPart {
 	 * @since 1.0
 	 * @generated
 	 */
+	@Override
 	public String getIconURI() {
 		return iconURI;
 	}
@@ -522,6 +536,7 @@ public class PartImpl extends UIElementImpl implements MPart {
 	 * @since 1.0
 	 * @generated
 	 */
+	@Override
 	public void setIconURI(String newIconURI) {
 		String oldIconURI = iconURI;
 		iconURI = newIconURI;
@@ -535,6 +550,7 @@ public class PartImpl extends UIElementImpl implements MPart {
 	 * @since 1.0
 	 * @generated
 	 */
+	@Override
 	public String getTooltip() {
 		return tooltip;
 	}
@@ -545,6 +561,7 @@ public class PartImpl extends UIElementImpl implements MPart {
 	 * @since 1.0
 	 * @generated
 	 */
+	@Override
 	public void setTooltip(String newTooltip) {
 		String oldTooltip = tooltip;
 		tooltip = newTooltip;
@@ -557,6 +574,27 @@ public class PartImpl extends UIElementImpl implements MPart {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
+	public String getLocalizedLabel() {
+		return LocalizationHelper.getLocalizedFeature(UiPackageImpl.Literals.UI_LABEL__LABEL, this);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public String getLocalizedTooltip() {
+		return LocalizationHelper.getLocalizedFeature(UiPackageImpl.Literals.UI_LABEL__TOOLTIP, this);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
 	public List<MHandler> getHandlers() {
 		if (handlers == null) {
 			handlers = new EObjectContainmentEList<MHandler>(MHandler.class, this, BasicPackageImpl.PART__HANDLERS);
@@ -569,6 +607,7 @@ public class PartImpl extends UIElementImpl implements MPart {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public boolean isDirty() {
 		return dirty;
 	}
@@ -578,6 +617,7 @@ public class PartImpl extends UIElementImpl implements MPart {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public void setDirty(boolean newDirty) {
 		boolean oldDirty = dirty;
 		dirty = newDirty;
@@ -590,6 +630,7 @@ public class PartImpl extends UIElementImpl implements MPart {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public List<MBindingContext> getBindingContexts() {
 		if (bindingContexts == null) {
 			bindingContexts = new EObjectResolvingEList<MBindingContext>(MBindingContext.class, this, BasicPackageImpl.PART__BINDING_CONTEXTS);
@@ -602,6 +643,7 @@ public class PartImpl extends UIElementImpl implements MPart {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public List<MMenu> getMenus() {
 		if (menus == null) {
 			menus = new EObjectContainmentEList<MMenu>(MMenu.class, this, BasicPackageImpl.PART__MENUS);
@@ -614,6 +656,7 @@ public class PartImpl extends UIElementImpl implements MPart {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public MToolBar getToolbar() {
 		return toolbar;
 	}
@@ -638,6 +681,7 @@ public class PartImpl extends UIElementImpl implements MPart {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public void setToolbar(MToolBar newToolbar) {
 		if (newToolbar != toolbar) {
 			NotificationChain msgs = null;
@@ -657,6 +701,7 @@ public class PartImpl extends UIElementImpl implements MPart {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public boolean isCloseable() {
 		return closeable;
 	}
@@ -666,6 +711,7 @@ public class PartImpl extends UIElementImpl implements MPart {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public void setCloseable(boolean newCloseable) {
 		boolean oldCloseable = closeable;
 		closeable = newCloseable;
@@ -678,6 +724,7 @@ public class PartImpl extends UIElementImpl implements MPart {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public String getDescription() {
 		return description;
 	}
@@ -687,6 +734,7 @@ public class PartImpl extends UIElementImpl implements MPart {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public void setDescription(String newDescription) {
 		String oldDescription = description;
 		description = newDescription;
@@ -697,7 +745,9 @@ public class PartImpl extends UIElementImpl implements MPart {
 	/**
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @generated
 	 */
+	@Override
 	public String getLocalizedDescription() {
 		return LocalizationHelper.getLocalizedFeature(BasicPackageImpl.Literals.PART__DESCRIPTION, this);
 	}
@@ -709,6 +759,7 @@ public class PartImpl extends UIElementImpl implements MPart {
 	 * </p>
 	 * @generated
 	 */
+	@Override
 	public List<MTrimBar> getTrimBars() {
 		if (trimBars == null) {
 			trimBars = new EObjectContainmentEList<MTrimBar>(MTrimBar.class, this, BasicPackageImpl.PART__TRIM_BARS);
@@ -719,6 +770,8 @@ public class PartImpl extends UIElementImpl implements MPart {
 	/**
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.1
+	 * @generated
 	 */
 	@Override
 	public void updateLocalization() {
@@ -730,22 +783,6 @@ public class PartImpl extends UIElementImpl implements MPart {
 			eNotify(new ENotificationImpl(
 					this, Notification.SET, BasicPackageImpl.PART__LOCALIZED_DESCRIPTION, null, getLocalizedDescription()));
 		}
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 */
-	public String getLocalizedLabel() {
-		return LocalizationHelper.getLocalizedLabel(this);
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 */
-	public String getLocalizedTooltip() {
-		return LocalizationHelper.getLocalizedTooltip(this);
 	}
 
 	/**
@@ -1131,6 +1168,88 @@ public class PartImpl extends UIElementImpl implements MPart {
 			}
 		}
 		return super.eDerivedStructuralFeatureID(baseFeatureID, baseClass);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public int eDerivedOperationID(int baseOperationID, Class<?> baseClass) {
+		if (baseClass == MLocalizable.class) {
+			switch (baseOperationID) {
+				case UiPackageImpl.LOCALIZABLE___UPDATE_LOCALIZATION: return BasicPackageImpl.PART___UPDATE_LOCALIZATION;
+				default: return super.eDerivedOperationID(baseOperationID, baseClass);
+			}
+		}
+		if (baseClass == MUIElement.class) {
+			switch (baseOperationID) {
+				case UiPackageImpl.UI_ELEMENT___UPDATE_LOCALIZATION: return BasicPackageImpl.PART___UPDATE_LOCALIZATION;
+				default: return super.eDerivedOperationID(baseOperationID, baseClass);
+			}
+		}
+		if (baseClass == MPartSashContainerElement.class) {
+			switch (baseOperationID) {
+				default: return -1;
+			}
+		}
+		if (baseClass == MStackElement.class) {
+			switch (baseOperationID) {
+				default: return -1;
+			}
+		}
+		if (baseClass == MContribution.class) {
+			switch (baseOperationID) {
+				default: return -1;
+			}
+		}
+		if (baseClass == MContext.class) {
+			switch (baseOperationID) {
+				default: return -1;
+			}
+		}
+		if (baseClass == MUILabel.class) {
+			switch (baseOperationID) {
+				default: return -1;
+			}
+		}
+		if (baseClass == MHandlerContainer.class) {
+			switch (baseOperationID) {
+				default: return -1;
+			}
+		}
+		if (baseClass == MDirtyable.class) {
+			switch (baseOperationID) {
+				default: return -1;
+			}
+		}
+		if (baseClass == MBindings.class) {
+			switch (baseOperationID) {
+				default: return -1;
+			}
+		}
+		if (baseClass == MWindowElement.class) {
+			switch (baseOperationID) {
+				default: return -1;
+			}
+		}
+		return super.eDerivedOperationID(baseOperationID, baseClass);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public Object eInvoke(int operationID, EList<?> arguments) throws InvocationTargetException {
+		switch (operationID) {
+			case BasicPackageImpl.PART___UPDATE_LOCALIZATION:
+				updateLocalization();
+				return null;
+		}
+		return super.eInvoke(operationID, arguments);
 	}
 
 	/**

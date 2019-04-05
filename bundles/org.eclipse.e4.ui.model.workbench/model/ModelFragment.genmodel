@@ -1,11 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <genmodel:GenModel xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore"
     xmlns:genmodel="http://www.eclipse.org/emf/2002/GenModel" copyrightText="Copyright (c) 2010, 2018 BestSolution.at and others.&#xD;&#xA;&#xD;&#xA; This program and the accompanying materials&#xD;&#xA;are made available under the terms of the Eclipse Public License 2.0&#xD;&#xA;which accompanies this distribution, and is available at&#xD;&#xA;https://www.eclipse.org/legal/epl-2.0/&#xD;&#xA;SPDX-License-Identifier: EPL-2.0&#xD;&#xA;&#xD;&#xA;Contributors:&#xA;     Tom Schindl &lt;tom.schindl@bestsolution.at> - initial API and implementation&#xD;&#xA;     IBM Corporation - initial API and implementation"
-    modelDirectory="/org.eclipse.e4.ui.model.workbench/src" modelPluginID="org.eclipse.e4.ui.model.workbench"
-    modelName="ModelFragment" nonNLSMarkers="true" rootExtendsInterface="" rootExtendsClass="org.eclipse.emf.ecore.impl.MinimalEObjectImpl.Container"
-    suppressEMFTypes="true" suppressEMFMetaData="true" importerID="org.eclipse.emf.importer.ecore"
-    complianceLevel="5.0" copyrightFields="false" usedGenPackages="UIElements.genmodel#//application"
-    interfaceNamePattern="M{0}" importOrganizing="true">
+    modelDirectory="/org.eclipse.e4.ui.model.workbench/src" editDirectory="" editorDirectory=""
+    modelPluginID="org.eclipse.e4.ui.model.workbench" modelName="ModelFragment" updateClasspath="false"
+    nonNLSMarkers="true" rootExtendsInterface="" rootExtendsClass="org.eclipse.emf.ecore.impl.MinimalEObjectImpl.Container"
+    suppressEMFTypes="true" suppressEMFMetaData="true" testsDirectory="" importerID="org.eclipse.emf.importer.ecore"
+    complianceLevel="8.0" copyrightFields="false" usedGenPackages="UIElements.genmodel#//application"
+    interfaceNamePattern="M{0}" operationReflection="true" importOrganizing="true"
+    cleanup="true">
   <foreignModel>ModelFragment.ecore</foreignModel>
   <genPackages prefix="Fragment" basePackage="org.eclipse.e4.ui.model" disposableProviderFactory="true"
       ecorePackage="ModelFragment.ecore#/">

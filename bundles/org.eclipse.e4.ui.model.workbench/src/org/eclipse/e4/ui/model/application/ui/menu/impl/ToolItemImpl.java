@@ -70,6 +70,7 @@ public abstract class ToolItemImpl extends ItemImpl implements MToolItem {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public MMenu getMenu() {
 		return menu;
 	}
@@ -94,6 +95,7 @@ public abstract class ToolItemImpl extends ItemImpl implements MToolItem {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public void setMenu(MMenu newMenu) {
 		if (newMenu != menu) {
 			NotificationChain msgs = null;

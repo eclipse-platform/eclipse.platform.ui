@@ -41,7 +41,6 @@ import java.util.List;
  * @generated
  */
 public interface MToolBarContributions {
-
 	/**
 	 * Returns the value of the '<em><b>Tool Bar Contributions</b></em>' containment reference list.
 	 * The list contents are of type {@link org.eclipse.e4.ui.model.application.ui.menu.MToolBarContribution}.
@@ -60,4 +59,5 @@ public interface MToolBarContributions {
 	 * @generated
 	 */
 	List<MToolBarContribution> getToolBarContributions();
+
 } // MToolBarContributions

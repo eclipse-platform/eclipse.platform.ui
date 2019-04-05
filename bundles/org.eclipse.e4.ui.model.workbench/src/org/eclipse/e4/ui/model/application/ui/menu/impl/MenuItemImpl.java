@@ -14,6 +14,11 @@
 package org.eclipse.e4.ui.model.application.ui.menu.impl;
 
 import java.lang.reflect.InvocationTargetException;
+import org.eclipse.e4.ui.model.application.ui.MLocalizable;
+import org.eclipse.e4.ui.model.application.ui.MUIElement;
+import org.eclipse.e4.ui.model.application.ui.MUILabel;
+import org.eclipse.e4.ui.model.application.ui.impl.UiPackageImpl;
+import org.eclipse.e4.ui.model.application.ui.menu.MItem;
 import org.eclipse.e4.ui.model.application.ui.menu.MMenuElement;
 import org.eclipse.e4.ui.model.application.ui.menu.MMenuItem;
 import org.eclipse.emf.common.notify.Notification;
@@ -80,6 +85,7 @@ public abstract class MenuItemImpl extends ItemImpl implements MMenuItem {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public String getMnemonics() {
 		return mnemonics;
 	}
@@ -89,6 +95,7 @@ public abstract class MenuItemImpl extends ItemImpl implements MMenuItem {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public void setMnemonics(String newMnemonics) {
 		String oldMnemonics = mnemonics;
 		mnemonics = newMnemonics;
@@ -100,10 +107,22 @@ public abstract class MenuItemImpl extends ItemImpl implements MMenuItem {
 	 * <!-- begin-user-doc -->
 	 * This class does not support this feature.
 	 * <!-- end-user-doc -->
-	 * @generated NOT
+	 * @generated
 	 */
+	@Override
 	public String getLocalizedMnemonics() {
 		return null;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @since 1.1
+	 * @generated
+	 */
+	@Override
+	public void updateLocalization() {
+		super.updateLocalization();
 	}
 
 	/**
@@ -203,9 +222,34 @@ public abstract class MenuItemImpl extends ItemImpl implements MMenuItem {
 	 */
 	@Override
 	public int eDerivedOperationID(int baseOperationID, Class<?> baseClass) {
+		if (baseClass == MLocalizable.class) {
+			switch (baseOperationID) {
+				case UiPackageImpl.LOCALIZABLE___UPDATE_LOCALIZATION: return MenuPackageImpl.MENU_ITEM___UPDATE_LOCALIZATION;
+				default: return super.eDerivedOperationID(baseOperationID, baseClass);
+			}
+		}
+		if (baseClass == MUIElement.class) {
+			switch (baseOperationID) {
+				case UiPackageImpl.UI_ELEMENT___UPDATE_LOCALIZATION: return MenuPackageImpl.MENU_ITEM___UPDATE_LOCALIZATION;
+				default: return super.eDerivedOperationID(baseOperationID, baseClass);
+			}
+		}
+		if (baseClass == MUILabel.class) {
+			switch (baseOperationID) {
+				case UiPackageImpl.UI_LABEL___UPDATE_LOCALIZATION: return MenuPackageImpl.MENU_ITEM___UPDATE_LOCALIZATION;
+				default: return super.eDerivedOperationID(baseOperationID, baseClass);
+			}
+		}
+		if (baseClass == MItem.class) {
+			switch (baseOperationID) {
+				case MenuPackageImpl.ITEM___UPDATE_LOCALIZATION: return MenuPackageImpl.MENU_ITEM___UPDATE_LOCALIZATION;
+				default: return super.eDerivedOperationID(baseOperationID, baseClass);
+			}
+		}
 		if (baseClass == MMenuElement.class) {
 			switch (baseOperationID) {
 				case MenuPackageImpl.MENU_ELEMENT___GET_LOCALIZED_MNEMONICS: return MenuPackageImpl.MENU_ITEM___GET_LOCALIZED_MNEMONICS;
+				case MenuPackageImpl.MENU_ELEMENT___UPDATE_LOCALIZATION: return MenuPackageImpl.MENU_ITEM___UPDATE_LOCALIZATION;
 				default: return -1;
 			}
 		}
@@ -220,6 +264,9 @@ public abstract class MenuItemImpl extends ItemImpl implements MMenuItem {
 	@Override
 	public Object eInvoke(int operationID, EList<?> arguments) throws InvocationTargetException {
 		switch (operationID) {
+			case MenuPackageImpl.MENU_ITEM___UPDATE_LOCALIZATION:
+				updateLocalization();
+				return null;
 			case MenuPackageImpl.MENU_ITEM___GET_LOCALIZED_MNEMONICS:
 				return getLocalizedMnemonics();
 		}

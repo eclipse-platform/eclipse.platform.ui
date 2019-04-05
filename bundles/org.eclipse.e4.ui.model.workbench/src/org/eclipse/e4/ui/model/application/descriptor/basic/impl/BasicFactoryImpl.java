@@ -13,7 +13,8 @@
  */
 package org.eclipse.e4.ui.model.application.descriptor.basic.impl;
 
-import org.eclipse.e4.ui.model.application.descriptor.basic.*;
+import org.eclipse.e4.ui.model.application.descriptor.basic.MBasicFactory;
+import org.eclipse.e4.ui.model.application.descriptor.basic.MPartDescriptor;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EPackage;
@@ -84,6 +85,7 @@ public class BasicFactoryImpl extends EFactoryImpl implements MBasicFactory {
 	 * @since 1.0
 	 * @generated
 	 */
+	@Override
 	public MPartDescriptor createPartDescriptor() {
 		PartDescriptorImpl partDescriptor = new PartDescriptorImpl();
 		return partDescriptor;

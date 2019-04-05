@@ -29,7 +29,14 @@ import org.eclipse.emf.ecore.impl.EPackageImpl;
 
 /**
  * <!-- begin-user-doc -->
- * An implementation of the model <b>Package</b>.
+ * The <b>Package</b> for the model.
+ * It contains accessors for the meta objects to represent
+ * <ul>
+ *   <li>each class,</li>
+ *   <li>each feature of each class,</li>
+ *   <li>each enum,</li>
+ *   <li>and each data type</li>
+ * </ul>
  * <!-- end-user-doc -->
  * @see org.eclipse.e4.ui.model.fragment.MFragmentFactory
  * @model kind="package"
@@ -110,6 +117,16 @@ public class FragmentPackageImpl extends EPackageImpl {
 	public static final int MODEL_FRAGMENTS_FEATURE_COUNT = 2;
 
 	/**
+	 * The number of operations of the '<em>Model Fragments</em>' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @since 1.0
+	 * @generated
+	 * @ordered
+	 */
+	public static final int MODEL_FRAGMENTS_OPERATION_COUNT = 0;
+
+	/**
 	 * The meta object id for the '{@link org.eclipse.e4.ui.model.fragment.impl.ModelFragmentImpl <em>Model Fragment</em>}' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -139,6 +156,26 @@ public class FragmentPackageImpl extends EPackageImpl {
 	 * @ordered
 	 */
 	public static final int MODEL_FRAGMENT_FEATURE_COUNT = 1;
+
+	/**
+	 * The operation id for the '<em>Merge</em>' operation.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @since 1.0
+	 * @generated
+	 * @ordered
+	 */
+	public static final int MODEL_FRAGMENT___MERGE__MAPPLICATION = 0;
+
+	/**
+	 * The number of operations of the '<em>Model Fragment</em>' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @since 1.0
+	 * @generated
+	 * @ordered
+	 */
+	public static final int MODEL_FRAGMENT_OPERATION_COUNT = 1;
 
 	/**
 	 * The meta object id for the '{@link org.eclipse.e4.ui.model.fragment.impl.StringModelFragmentImpl <em>String Model Fragment</em>}' class.
@@ -200,6 +237,26 @@ public class FragmentPackageImpl extends EPackageImpl {
 	 * @ordered
 	 */
 	public static final int STRING_MODEL_FRAGMENT_FEATURE_COUNT = MODEL_FRAGMENT_FEATURE_COUNT + 3;
+
+	/**
+	 * The operation id for the '<em>Merge</em>' operation.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @since 1.0
+	 * @generated
+	 * @ordered
+	 */
+	public static final int STRING_MODEL_FRAGMENT___MERGE__MAPPLICATION = MODEL_FRAGMENT___MERGE__MAPPLICATION;
+
+	/**
+	 * The number of operations of the '<em>String Model Fragment</em>' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @since 1.0
+	 * @generated
+	 * @ordered
+	 */
+	public static final int STRING_MODEL_FRAGMENT_OPERATION_COUNT = MODEL_FRAGMENT_OPERATION_COUNT + 0;
 
 	/**
 	 * <!-- begin-user-doc -->
@@ -289,6 +346,7 @@ public class FragmentPackageImpl extends EPackageImpl {
 		return theFragmentPackage;
 	}
 
+
 	/**
 	 * Returns the meta object for class '{@link org.eclipse.e4.ui.model.fragment.MModelFragments <em>Model Fragments</em>}'.
 	 * <!-- begin-user-doc -->
@@ -356,6 +414,20 @@ public class FragmentPackageImpl extends EPackageImpl {
 	public EReference getModelFragment_Elements() {
 		return (EReference)modelFragmentEClass.getEStructuralFeatures().get(0);
 	}
+
+	/**
+	 * Returns the meta object for the '{@link org.eclipse.e4.ui.model.fragment.MModelFragment#merge(org.eclipse.e4.ui.model.application.MApplication) <em>Merge</em>}' operation.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the '<em>Merge</em>' operation.
+	 * @see org.eclipse.e4.ui.model.fragment.MModelFragment#merge(org.eclipse.e4.ui.model.application.MApplication)
+	 * @since 1.0
+	 * @generated
+	 */
+	public EOperation getModelFragment__Merge__MApplication() {
+		return modelFragmentEClass.getEOperations().get(0);
+	}
+
 
 	/**
 	 * Returns the meta object for class '{@link org.eclipse.e4.ui.model.fragment.MStringModelFragment <em>String Model Fragment</em>}'.
@@ -448,6 +520,7 @@ public class FragmentPackageImpl extends EPackageImpl {
 
 		modelFragmentEClass = createEClass(MODEL_FRAGMENT);
 		createEReference(modelFragmentEClass, MODEL_FRAGMENT__ELEMENTS);
+		createEOperation(modelFragmentEClass, MODEL_FRAGMENT___MERGE__MAPPLICATION);
 
 		stringModelFragmentEClass = createEClass(STRING_MODEL_FRAGMENT);
 		createEAttribute(stringModelFragmentEClass, STRING_MODEL_FRAGMENT__FEATURENAME);
@@ -488,7 +561,7 @@ public class FragmentPackageImpl extends EPackageImpl {
 		// Add supertypes to classes
 		stringModelFragmentEClass.getESuperTypes().add(this.getModelFragment());
 
-		// Initialize classes and features; add operations and parameters
+		// Initialize classes, features, and operations; add parameters
 		initEClass(modelFragmentsEClass, MModelFragments.class, "ModelFragments", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS); //$NON-NLS-1$
 		initEReference(getModelFragments_Imports(), theApplicationPackage.getApplicationElement(), null, "imports", null, 0, -1, MModelFragments.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
 		initEReference(getModelFragments_Fragments(), this.getModelFragment(), null, "fragments", null, 0, -1, MModelFragments.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
@@ -496,7 +569,7 @@ public class FragmentPackageImpl extends EPackageImpl {
 		initEClass(modelFragmentEClass, MModelFragment.class, "ModelFragment", IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS); //$NON-NLS-1$
 		initEReference(getModelFragment_Elements(), theApplicationPackage.getApplicationElement(), null, "elements", null, 0, -1, MModelFragment.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
 
-		EOperation op = addEOperation(modelFragmentEClass, theApplicationPackage.getApplicationElement(), "merge", 0, -1, IS_UNIQUE, IS_ORDERED); //$NON-NLS-1$
+		EOperation op = initEOperation(getModelFragment__Merge__MApplication(), theApplicationPackage.getApplicationElement(), "merge", 0, -1, IS_UNIQUE, IS_ORDERED); //$NON-NLS-1$
 		addEParameter(op, theApplicationPackage.getApplication(), "application", 0, 1, IS_UNIQUE, IS_ORDERED); //$NON-NLS-1$
 
 		initEClass(stringModelFragmentEClass, MStringModelFragment.class, "StringModelFragment", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS); //$NON-NLS-1$
@@ -569,6 +642,15 @@ public class FragmentPackageImpl extends EPackageImpl {
 		 * @generated
 		 */
 		public static final EReference MODEL_FRAGMENT__ELEMENTS = eINSTANCE.getModelFragment_Elements();
+
+		/**
+		 * The meta object literal for the '<em><b>Merge</b></em>' operation.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @since 1.0
+		 * @generated
+		 */
+		public static final EOperation MODEL_FRAGMENT___MERGE__MAPPLICATION = eINSTANCE.getModelFragment__Merge__MApplication();
 
 		/**
 		 * The meta object literal for the '{@link org.eclipse.e4.ui.model.fragment.impl.StringModelFragmentImpl <em>String Model Fragment</em>}' class.

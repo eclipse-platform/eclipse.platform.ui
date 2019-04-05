@@ -21,7 +21,29 @@ import org.eclipse.e4.ui.model.application.ui.MLocalizable;
 import org.eclipse.e4.ui.model.application.ui.MUIElement;
 import org.eclipse.e4.ui.model.application.ui.MUILabel;
 import org.eclipse.e4.ui.model.application.ui.basic.MTrimElement;
-import org.eclipse.e4.ui.model.application.ui.menu.*;
+import org.eclipse.e4.ui.model.application.ui.menu.MDirectMenuItem;
+import org.eclipse.e4.ui.model.application.ui.menu.MDirectToolItem;
+import org.eclipse.e4.ui.model.application.ui.menu.MDynamicMenuContribution;
+import org.eclipse.e4.ui.model.application.ui.menu.MHandledItem;
+import org.eclipse.e4.ui.model.application.ui.menu.MHandledMenuItem;
+import org.eclipse.e4.ui.model.application.ui.menu.MHandledToolItem;
+import org.eclipse.e4.ui.model.application.ui.menu.MItem;
+import org.eclipse.e4.ui.model.application.ui.menu.MMenu;
+import org.eclipse.e4.ui.model.application.ui.menu.MMenuContribution;
+import org.eclipse.e4.ui.model.application.ui.menu.MMenuContributions;
+import org.eclipse.e4.ui.model.application.ui.menu.MMenuElement;
+import org.eclipse.e4.ui.model.application.ui.menu.MMenuItem;
+import org.eclipse.e4.ui.model.application.ui.menu.MMenuSeparator;
+import org.eclipse.e4.ui.model.application.ui.menu.MPopupMenu;
+import org.eclipse.e4.ui.model.application.ui.menu.MToolBar;
+import org.eclipse.e4.ui.model.application.ui.menu.MToolBarContribution;
+import org.eclipse.e4.ui.model.application.ui.menu.MToolBarContributions;
+import org.eclipse.e4.ui.model.application.ui.menu.MToolBarElement;
+import org.eclipse.e4.ui.model.application.ui.menu.MToolBarSeparator;
+import org.eclipse.e4.ui.model.application.ui.menu.MToolControl;
+import org.eclipse.e4.ui.model.application.ui.menu.MToolItem;
+import org.eclipse.e4.ui.model.application.ui.menu.MTrimContribution;
+import org.eclipse.e4.ui.model.application.ui.menu.MTrimContributions;
 import org.eclipse.e4.ui.model.application.ui.menu.impl.MenuPackageImpl;
 import org.eclipse.emf.common.notify.Adapter;
 import org.eclipse.emf.common.notify.Notifier;
@@ -327,6 +349,7 @@ public class MenuAdapterFactory extends AdapterFactoryImpl {
 	 * @return the new adapter.
 	 * @see org.eclipse.e4.ui.model.application.ui.menu.MMenuContribution
 	 * @since 1.0
+	 * @noreference See {@link MMenuContribution model documentation} for details.
 	 * @generated
 	 */
 	public Adapter createMenuContributionAdapter() {
@@ -492,6 +515,7 @@ public class MenuAdapterFactory extends AdapterFactoryImpl {
 	 * @return the new adapter.
 	 * @see org.eclipse.e4.ui.model.application.ui.menu.MMenuContributions
 	 * @since 1.0
+	 * @noreference See {@link MMenuContributions model documentation} for details.
 	 * @generated
 	 */
 	public Adapter createMenuContributionsAdapter() {
@@ -507,6 +531,7 @@ public class MenuAdapterFactory extends AdapterFactoryImpl {
 	 * @return the new adapter.
 	 * @see org.eclipse.e4.ui.model.application.ui.menu.MToolBarContribution
 	 * @since 1.0
+	 * @noreference See {@link MToolBarContribution model documentation} for details.
 	 * @generated
 	 */
 	public Adapter createToolBarContributionAdapter() {
@@ -522,6 +547,7 @@ public class MenuAdapterFactory extends AdapterFactoryImpl {
 	 * @return the new adapter.
 	 * @see org.eclipse.e4.ui.model.application.ui.menu.MToolBarContributions
 	 * @since 1.0
+	 * @noreference See {@link MToolBarContributions model documentation} for details.
 	 * @generated
 	 */
 	public Adapter createToolBarContributionsAdapter() {
@@ -537,6 +563,7 @@ public class MenuAdapterFactory extends AdapterFactoryImpl {
 	 * @return the new adapter.
 	 * @see org.eclipse.e4.ui.model.application.ui.menu.MTrimContribution
 	 * @since 1.0
+	 * @noreference See {@link MTrimContribution model documentation} for details.
 	 * @generated
 	 */
 	public Adapter createTrimContributionAdapter() {
@@ -552,6 +579,7 @@ public class MenuAdapterFactory extends AdapterFactoryImpl {
 	 * @return the new adapter.
 	 * @see org.eclipse.e4.ui.model.application.ui.menu.MTrimContributions
 	 * @since 1.0
+	 * @noreference See {@link MTrimContributions model documentation} for details.
 	 * @generated
 	 */
 	public Adapter createTrimContributionsAdapter() {
@@ -589,21 +617,6 @@ public class MenuAdapterFactory extends AdapterFactoryImpl {
 	}
 
 	/**
-	 * Creates a new adapter for an object of class '{@link org.eclipse.e4.ui.model.application.ui.MUIElement <em>UI Element</em>}'.
-	 * <!-- begin-user-doc -->
-	 * This default implementation returns null so that we can easily ignore cases;
-	 * it's useful to ignore a case when inheritance will catch all the cases anyway.
-	 * <!-- end-user-doc -->
-	 * @return the new adapter.
-	 * @see org.eclipse.e4.ui.model.application.ui.MUIElement
-	 * @since 1.0
-	 * @generated
-	 */
-	public Adapter createUIElementAdapter() {
-		return null;
-	}
-
-	/**
 	 * Creates a new adapter for an object of class '{@link org.eclipse.e4.ui.model.application.ui.MLocalizable <em>Localizable</em>}'.
 	 * <!-- begin-user-doc -->
 	 * This default implementation returns null so that we can easily ignore cases;
@@ -615,6 +628,21 @@ public class MenuAdapterFactory extends AdapterFactoryImpl {
 	 * @generated
 	 */
 	public Adapter createLocalizableAdapter() {
+		return null;
+	}
+
+	/**
+	 * Creates a new adapter for an object of class '{@link org.eclipse.e4.ui.model.application.ui.MUIElement <em>UI Element</em>}'.
+	 * <!-- begin-user-doc -->
+	 * This default implementation returns null so that we can easily ignore cases;
+	 * it's useful to ignore a case when inheritance will catch all the cases anyway.
+	 * <!-- end-user-doc -->
+	 * @return the new adapter.
+	 * @see org.eclipse.e4.ui.model.application.ui.MUIElement
+	 * @since 1.0
+	 * @generated
+	 */
+	public Adapter createUIElementAdapter() {
 		return null;
 	}
 

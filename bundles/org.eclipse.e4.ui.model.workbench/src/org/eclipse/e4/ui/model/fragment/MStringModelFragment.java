@@ -87,7 +87,7 @@ public interface MStringModelFragment extends MModelFragment {
 	 * <pre>
 	 * xpath://*[@elementId='app.menu.primary' or @elementId='app.menu.secondary']
 	 * </pre>
-	 * @return The parentElementId expression.  Must not be null, but may be an empty string if the fragment did not specify a target.
+	 * The parentElementId expression must not be null, but may be an empty string if the fragment did not specify a target.
 	 * <!-- end-user-doc -->
 	 * <!-- begin-model-doc -->
 	 * <p>
@@ -97,6 +97,7 @@ public interface MStringModelFragment extends MModelFragment {
 	 * There is a GenModel/documentation node under each type and attribute.
 	 * </p>
 	 * <!-- end-model-doc -->
+	 * @return the value of the '<em>Parent Element Id</em>' attribute.
 	 * @see #setParentElementId(String)
 	 * @model required="true"
 	 * @generated
@@ -106,7 +107,6 @@ public interface MStringModelFragment extends MModelFragment {
 	/**
 	 * Sets the value of the '{@link org.eclipse.e4.ui.model.fragment.MStringModelFragment#getParentElementId <em>Parent Element Id</em>}' attribute.
 	 * <!-- begin-user-doc -->
-	 * @see setParentElementId
 	 * <!-- end-user-doc -->
 	 * @param value the new value of the '<em>Parent Element Id</em>' attribute.
 	 * @see #getParentElementId()

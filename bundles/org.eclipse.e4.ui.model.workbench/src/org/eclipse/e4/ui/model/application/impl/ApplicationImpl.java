@@ -13,6 +13,7 @@
  */
 package org.eclipse.e4.ui.model.application.impl;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
@@ -90,6 +91,7 @@ import org.eclipse.emf.ecore.util.InternalEList;
  * @since 1.0
  * @generated
  */
+@SuppressWarnings("deprecation")
 public class ApplicationImpl extends ElementContainerImpl<MWindow> implements MApplication {
 	/**
 	 * The default value of the '{@link #getContext() <em>Context</em>}' attribute.
@@ -257,9 +259,12 @@ public class ApplicationImpl extends ElementContainerImpl<MWindow> implements MA
 	 * <!-- end-user-doc -->
 	 * @see #getDialogs()
 	 * @since 1.1
+	 * @deprecated
+	 * @noreference See {@link org.eclipse.e4.ui.model.application.MApplication#getDialogs() model documentation} for details.
 	 * @generated
 	 * @ordered
 	 */
+	@Deprecated
 	protected EList<MDialog> dialogs;
 
 	protected Map<String, MCommand> elementIdToCommandMap;
@@ -313,6 +318,7 @@ public class ApplicationImpl extends ElementContainerImpl<MWindow> implements MA
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public IEclipseContext getContext() {
 		return context;
 	}
@@ -322,6 +328,7 @@ public class ApplicationImpl extends ElementContainerImpl<MWindow> implements MA
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public void setContext(IEclipseContext newContext) {
 		IEclipseContext oldContext = context;
 		context = newContext;
@@ -334,6 +341,7 @@ public class ApplicationImpl extends ElementContainerImpl<MWindow> implements MA
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public List<String> getVariables() {
 		if (variables == null) {
 			variables = new EDataTypeUniqueEList<String>(String.class, this, ApplicationPackageImpl.APPLICATION__VARIABLES);
@@ -346,6 +354,7 @@ public class ApplicationImpl extends ElementContainerImpl<MWindow> implements MA
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public Map<String, String> getProperties() {
 		if (properties == null) {
 			properties = new EcoreEMap<String,String>(ApplicationPackageImpl.Literals.STRING_TO_STRING_MAP, StringToStringMapImpl.class, this, ApplicationPackageImpl.APPLICATION__PROPERTIES);
@@ -358,6 +367,7 @@ public class ApplicationImpl extends ElementContainerImpl<MWindow> implements MA
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public List<MHandler> getHandlers() {
 		if (handlers == null) {
 			handlers = new EObjectContainmentEList<MHandler>(MHandler.class, this, ApplicationPackageImpl.APPLICATION__HANDLERS);
@@ -370,6 +380,7 @@ public class ApplicationImpl extends ElementContainerImpl<MWindow> implements MA
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public List<MBindingTable> getBindingTables() {
 		if (bindingTables == null) {
 			bindingTables = new EObjectContainmentEList<MBindingTable>(MBindingTable.class, this, ApplicationPackageImpl.APPLICATION__BINDING_TABLES);
@@ -382,6 +393,7 @@ public class ApplicationImpl extends ElementContainerImpl<MWindow> implements MA
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public List<MBindingContext> getRootContext() {
 		if (rootContext == null) {
 			rootContext = new EObjectContainmentEList<MBindingContext>(MBindingContext.class, this, ApplicationPackageImpl.APPLICATION__ROOT_CONTEXT);
@@ -394,6 +406,7 @@ public class ApplicationImpl extends ElementContainerImpl<MWindow> implements MA
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public List<MPartDescriptor> getDescriptors() {
 		if (descriptors == null) {
 			descriptors = new EObjectContainmentEList<MPartDescriptor>(MPartDescriptor.class, this, ApplicationPackageImpl.APPLICATION__DESCRIPTORS);
@@ -406,6 +419,7 @@ public class ApplicationImpl extends ElementContainerImpl<MWindow> implements MA
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public List<MBindingContext> getBindingContexts() {
 		if (bindingContexts == null) {
 			bindingContexts = new EObjectResolvingEList<MBindingContext>(MBindingContext.class, this, ApplicationPackageImpl.APPLICATION__BINDING_CONTEXTS);
@@ -418,6 +432,7 @@ public class ApplicationImpl extends ElementContainerImpl<MWindow> implements MA
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public List<MMenuContribution> getMenuContributions() {
 		if (menuContributions == null) {
 			menuContributions = new EObjectContainmentEList<MMenuContribution>(MMenuContribution.class, this, ApplicationPackageImpl.APPLICATION__MENU_CONTRIBUTIONS);
@@ -430,6 +445,7 @@ public class ApplicationImpl extends ElementContainerImpl<MWindow> implements MA
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public List<MToolBarContribution> getToolBarContributions() {
 		if (toolBarContributions == null) {
 			toolBarContributions = new EObjectContainmentEList<MToolBarContribution>(MToolBarContribution.class, this, ApplicationPackageImpl.APPLICATION__TOOL_BAR_CONTRIBUTIONS);
@@ -442,6 +458,7 @@ public class ApplicationImpl extends ElementContainerImpl<MWindow> implements MA
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public List<MTrimContribution> getTrimContributions() {
 		if (trimContributions == null) {
 			trimContributions = new EObjectContainmentEList<MTrimContribution>(MTrimContribution.class, this, ApplicationPackageImpl.APPLICATION__TRIM_CONTRIBUTIONS);
@@ -454,6 +471,7 @@ public class ApplicationImpl extends ElementContainerImpl<MWindow> implements MA
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public List<MUIElement> getSnippets() {
 		if (snippets == null) {
 			snippets = new EObjectContainmentEList<MUIElement>(MUIElement.class, this, ApplicationPackageImpl.APPLICATION__SNIPPETS);
@@ -466,6 +484,7 @@ public class ApplicationImpl extends ElementContainerImpl<MWindow> implements MA
 	 * <!-- end-user-doc -->
 	 * @generated NOT
 	 */
+	@Override
 	public List<MCommand> getCommands() {
 		if (commands == null) {
 			commands = new EObjectContainmentEList<MCommand>(MCommand.class, this,
@@ -483,26 +502,12 @@ public class ApplicationImpl extends ElementContainerImpl<MWindow> implements MA
 		return commands;
 	}
 
-	public MCommand getCommand(String elementId) {
-		if (elementIdToCommandMap == null) {
-			Map<String, MCommand> result = new HashMap<String, MCommand>();
-			for (MCommand command : getCommands()) {
-				MCommand otherCommand = result.put(command.getElementId(), command);
-				if (otherCommand != null) {
-					result.put(command.getElementId(), otherCommand);
-				}
-			}
-
-			elementIdToCommandMap = result;
-		}
-		return elementIdToCommandMap.get(elementId);
-	}
-
 	/**
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public List<MAddon> getAddons() {
 		if (addons == null) {
 			addons = new EObjectContainmentEList<MAddon>(MAddon.class, this, ApplicationPackageImpl.APPLICATION__ADDONS);
@@ -515,6 +520,7 @@ public class ApplicationImpl extends ElementContainerImpl<MWindow> implements MA
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public List<MCategory> getCategories() {
 		if (categories == null) {
 			categories = new EObjectContainmentEList<MCategory>(MCategory.class, this, ApplicationPackageImpl.APPLICATION__CATEGORIES);
@@ -526,13 +532,39 @@ public class ApplicationImpl extends ElementContainerImpl<MWindow> implements MA
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @since 1.1
+	 * @deprecated
+	 * @noreference See {@link org.eclipse.e4.ui.model.application.MApplication#getDialogs() model documentation} for details.
 	 * @generated
 	 */
+	@Deprecated
+	@Override
 	public List<MDialog> getDialogs() {
 		if (dialogs == null) {
 			dialogs = new EObjectResolvingEList<MDialog>(MDialog.class, this, ApplicationPackageImpl.APPLICATION__DIALOGS);
 		}
 		return dialogs;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @since 1.2
+	 * @generated
+	 */
+	@Override
+	public MCommand getCommand(final String elementId) {
+		if (elementIdToCommandMap == null) {
+			Map<String, MCommand> result = new HashMap<String, MCommand>();
+			for (MCommand command : getCommands()) {
+				MCommand otherCommand = result.put(command.getElementId(), command);
+				if (otherCommand != null) {
+					result.put(command.getElementId(), otherCommand);
+				}
+			}
+		
+			elementIdToCommandMap = result;
+		}
+		return elementIdToCommandMap.get(elementId);
 	}
 
 	/**
@@ -927,6 +959,20 @@ public class ApplicationImpl extends ElementContainerImpl<MWindow> implements MA
 			}
 		}
 		return super.eDerivedStructuralFeatureID(baseFeatureID, baseClass);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public Object eInvoke(int operationID, EList<?> arguments) throws InvocationTargetException {
+		switch (operationID) {
+			case ApplicationPackageImpl.APPLICATION___GET_COMMAND__STRING:
+				return getCommand((String)arguments.get(0));
+		}
+		return super.eInvoke(operationID, arguments);
 	}
 
 	/**

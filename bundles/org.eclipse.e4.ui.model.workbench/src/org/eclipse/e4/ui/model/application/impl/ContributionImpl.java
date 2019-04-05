@@ -101,6 +101,7 @@ public abstract class ContributionImpl extends ApplicationElementImpl implements
 	 * @since 1.0
 	 * @generated
 	 */
+	@Override
 	public String getContributionURI() {
 		return contributionURI;
 	}
@@ -111,6 +112,7 @@ public abstract class ContributionImpl extends ApplicationElementImpl implements
 	 * @since 1.0
 	 * @generated
 	 */
+	@Override
 	public void setContributionURI(String newContributionURI) {
 		String oldContributionURI = contributionURI;
 		contributionURI = newContributionURI;
@@ -123,6 +125,7 @@ public abstract class ContributionImpl extends ApplicationElementImpl implements
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public Object getObject() {
 		return object;
 	}
@@ -132,6 +135,7 @@ public abstract class ContributionImpl extends ApplicationElementImpl implements
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public void setObject(Object newObject) {
 		Object oldObject = object;
 		object = newObject;

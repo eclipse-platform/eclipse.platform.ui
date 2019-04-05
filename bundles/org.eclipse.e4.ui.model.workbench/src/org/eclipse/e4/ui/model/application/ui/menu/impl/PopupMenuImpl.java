@@ -115,6 +115,7 @@ public class PopupMenuImpl extends MenuImpl implements MPopupMenu {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public IEclipseContext getContext() {
 		return context;
 	}
@@ -124,6 +125,7 @@ public class PopupMenuImpl extends MenuImpl implements MPopupMenu {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public void setContext(IEclipseContext newContext) {
 		IEclipseContext oldContext = context;
 		context = newContext;
@@ -136,6 +138,7 @@ public class PopupMenuImpl extends MenuImpl implements MPopupMenu {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public List<String> getVariables() {
 		if (variables == null) {
 			variables = new EDataTypeUniqueEList<String>(String.class, this, MenuPackageImpl.POPUP_MENU__VARIABLES);
@@ -148,6 +151,7 @@ public class PopupMenuImpl extends MenuImpl implements MPopupMenu {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public Map<String, String> getProperties() {
 		if (properties == null) {
 			properties = new EcoreEMap<String,String>(ApplicationPackageImpl.Literals.STRING_TO_STRING_MAP, StringToStringMapImpl.class, this, MenuPackageImpl.POPUP_MENU__PROPERTIES);

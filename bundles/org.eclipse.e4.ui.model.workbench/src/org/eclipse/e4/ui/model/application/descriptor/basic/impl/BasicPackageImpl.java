@@ -24,6 +24,7 @@ import org.eclipse.e4.ui.model.application.ui.menu.impl.MenuPackageImpl;
 import org.eclipse.emf.ecore.EAttribute;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EFactory;
+import org.eclipse.emf.ecore.EOperation;
 import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.EReference;
 import org.eclipse.emf.ecore.impl.EPackageImpl;
@@ -35,6 +36,7 @@ import org.eclipse.emf.ecore.impl.EPackageImpl;
  * <ul>
  *   <li>each class,</li>
  *   <li>each feature of each class,</li>
+ *   <li>each operation of each class,</li>
  *   <li>each enum,</li>
  *   <li>and each data type</li>
  * </ul>
@@ -258,17 +260,14 @@ public class BasicPackageImpl extends EPackageImpl {
 	public static final int PART_DESCRIPTOR__CLOSEABLE = ApplicationPackageImpl.APPLICATION_ELEMENT_FEATURE_COUNT + 11;
 
 	/**
-	 * The feature id for the '<em><b>Dirtyable</b></em>' attribute. <!--
-	 * begin-user-doc --> <!-- end-user-doc -->
-	 * 
+	 * The feature id for the '<em><b>Dirtyable</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
 	 * @since 1.0
+	 * @deprecated See {@link org.eclipse.e4.ui.model.application.descriptor.basic.MPartDescriptor#isDirtyable() model documentation} for details.
+	 * @noreference See {@link org.eclipse.e4.ui.model.application.descriptor.basic.MPartDescriptor#isDirtyable() model documentation} for details.
 	 * @generated
 	 * @ordered
-	 * @deprecated dirtyable is managed by part
-	 * @noreference This constant is not intented to be referenced by clients.
-	 * @see <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=530887">Bug
-	 *      530887</a>
-	 * 
 	 */
 	@Deprecated
 	public static final int PART_DESCRIPTOR__DIRTYABLE = ApplicationPackageImpl.APPLICATION_ELEMENT_FEATURE_COUNT + 12;
@@ -352,7 +351,7 @@ public class BasicPackageImpl extends EPackageImpl {
 	 * @generated
 	 * @ordered
 	 */
-	public static final int PART_DESCRIPTOR___UPDATE_LOCALIZATION = ApplicationPackageImpl.APPLICATION_ELEMENT_OPERATION_COUNT + 0;
+	public static final int PART_DESCRIPTOR___UPDATE_LOCALIZATION = ApplicationPackageImpl.APPLICATION_ELEMENT_OPERATION_COUNT + 1;
 
 	/**
 	 * The number of operations of the '<em>Part Descriptor</em>' class.
@@ -362,7 +361,7 @@ public class BasicPackageImpl extends EPackageImpl {
 	 * @generated
 	 * @ordered
 	 */
-	public static final int PART_DESCRIPTOR_OPERATION_COUNT = ApplicationPackageImpl.APPLICATION_ELEMENT_OPERATION_COUNT + 1;
+	public static final int PART_DESCRIPTOR_OPERATION_COUNT = ApplicationPackageImpl.APPLICATION_ELEMENT_OPERATION_COUNT + 2;
 
 	/**
 	 * The meta object id for the '{@link org.eclipse.e4.ui.model.application.descriptor.basic.MPartDescriptorContainer <em>Part Descriptor Container</em>}' class.
@@ -593,19 +592,16 @@ public class BasicPackageImpl extends EPackageImpl {
 	}
 
 	/**
-	 * Returns the meta object for the attribute
-	 * '{@link org.eclipse.e4.ui.model.application.descriptor.basic.MPartDescriptor#isDirtyable
-	 * <em>Dirtyable</em>}'. <!-- begin-user-doc --> <!-- end-user-doc -->
-	 * 
+	 * Returns the meta object for the attribute '{@link org.eclipse.e4.ui.model.application.descriptor.basic.MPartDescriptor#isDirtyable <em>Dirtyable</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
 	 * @return the meta object for the attribute '<em>Dirtyable</em>'.
 	 * @see org.eclipse.e4.ui.model.application.descriptor.basic.MPartDescriptor#isDirtyable()
 	 * @see #getPartDescriptor()
 	 * @since 1.0
+	 * @deprecated See {@link org.eclipse.e4.ui.model.application.descriptor.basic.MPartDescriptor#isDirtyable() model documentation} for details.
+	 * @noreference See {@link org.eclipse.e4.ui.model.application.descriptor.basic.MPartDescriptor#isDirtyable() model documentation} for details.
 	 * @generated
-	 * @deprecated dirtyable is managed by Part
-	 * @noreference This method is not intended to be referenced by clients.
-	 * @see <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id= 530887">Bug
-	 *      530887</a>
 	 */
 	@Deprecated
 	public EAttribute getPartDescriptor_Dirtyable() {
@@ -640,7 +636,6 @@ public class BasicPackageImpl extends EPackageImpl {
 		return (EAttribute)partDescriptorEClass.getEStructuralFeatures().get(7);
 	}
 
-
 	/**
 	 * Returns the meta object for the attribute '{@link org.eclipse.e4.ui.model.application.descriptor.basic.MPartDescriptor#getLocalizedDescription <em>Localized Description</em>}'.
 	 * <!-- begin-user-doc -->
@@ -654,7 +649,6 @@ public class BasicPackageImpl extends EPackageImpl {
 	public EAttribute getPartDescriptor_LocalizedDescription() {
 		return (EAttribute)partDescriptorEClass.getEStructuralFeatures().get(8);
 	}
-
 
 	/**
 	 * Returns the meta object for the attribute list '{@link org.eclipse.e4.ui.model.application.descriptor.basic.MPartDescriptor#getVariables <em>Variables</em>}'.
@@ -670,7 +664,6 @@ public class BasicPackageImpl extends EPackageImpl {
 		return (EAttribute)partDescriptorEClass.getEStructuralFeatures().get(9);
 	}
 
-
 	/**
 	 * Returns the meta object for the map '{@link org.eclipse.e4.ui.model.application.descriptor.basic.MPartDescriptor#getProperties <em>Properties</em>}'.
 	 * <!-- begin-user-doc -->
@@ -685,7 +678,6 @@ public class BasicPackageImpl extends EPackageImpl {
 		return (EReference)partDescriptorEClass.getEStructuralFeatures().get(10);
 	}
 
-
 	/**
 	 * Returns the meta object for the containment reference list '{@link org.eclipse.e4.ui.model.application.descriptor.basic.MPartDescriptor#getTrimBars <em>Trim Bars</em>}'.
 	 * <!-- begin-user-doc -->
@@ -699,6 +691,19 @@ public class BasicPackageImpl extends EPackageImpl {
 	 */
 	public EReference getPartDescriptor_TrimBars() {
 		return (EReference)partDescriptorEClass.getEStructuralFeatures().get(11);
+	}
+
+	/**
+	 * Returns the meta object for the '{@link org.eclipse.e4.ui.model.application.descriptor.basic.MPartDescriptor#updateLocalization() <em>Update Localization</em>}' operation.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the '<em>Update Localization</em>' operation.
+	 * @see org.eclipse.e4.ui.model.application.descriptor.basic.MPartDescriptor#updateLocalization()
+	 * @since 1.1
+	 * @generated
+	 */
+	public EOperation getPartDescriptor__UpdateLocalization() {
+		return partDescriptorEClass.getEOperations().get(0);
 	}
 
 
@@ -772,6 +777,7 @@ public class BasicPackageImpl extends EPackageImpl {
 		createEAttribute(partDescriptorEClass, PART_DESCRIPTOR__VARIABLES);
 		createEReference(partDescriptorEClass, PART_DESCRIPTOR__PROPERTIES);
 		createEReference(partDescriptorEClass, PART_DESCRIPTOR__TRIM_BARS);
+		createEOperation(partDescriptorEClass, PART_DESCRIPTOR___UPDATE_LOCALIZATION);
 
 		partDescriptorContainerEClass = createEClass(PART_DESCRIPTOR_CONTAINER);
 		createEReference(partDescriptorContainerEClass, PART_DESCRIPTOR_CONTAINER__DESCRIPTORS);
@@ -832,6 +838,8 @@ public class BasicPackageImpl extends EPackageImpl {
 		initEReference(getPartDescriptor_Properties(), theApplicationPackage.getStringToStringMap(), null, "properties", null, 0, -1, MPartDescriptor.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
 		initEReference(getPartDescriptor_TrimBars(), theBasicPackage_1.getTrimBar(), null, "trimBars", null, 0, -1, MPartDescriptor.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
 
+		initEOperation(getPartDescriptor__UpdateLocalization(), null, "updateLocalization", 0, 1, IS_UNIQUE, IS_ORDERED); //$NON-NLS-1$
+
 		initEClass(partDescriptorContainerEClass, MPartDescriptorContainer.class, "PartDescriptorContainer", IS_ABSTRACT, IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS); //$NON-NLS-1$
 		initEReference(getPartDescriptorContainer_Descriptors(), this.getPartDescriptor(), null, "descriptors", null, 0, -1, MPartDescriptorContainer.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
 	}
@@ -842,6 +850,7 @@ public class BasicPackageImpl extends EPackageImpl {
 	 * <ul>
 	 *   <li>each class,</li>
 	 *   <li>each feature of each class,</li>
+	 *   <li>each operation of each class,</li>
 	 *   <li>each enum,</li>
 	 *   <li>and each data type</li>
 	 * </ul>
@@ -906,14 +915,13 @@ public class BasicPackageImpl extends EPackageImpl {
 		public static final EAttribute PART_DESCRIPTOR__CLOSEABLE = eINSTANCE.getPartDescriptor_Closeable();
 
 		/**
-		 * The meta object literal for the '<em><b>Dirtyable</b></em>' attribute
-		 * feature. <!-- begin-user-doc --> <!-- end-user-doc -->
-		 * 
+		 * The meta object literal for the '<em><b>Dirtyable</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
 		 * @since 1.0
-		 * @deprecated
-		 * @noreference This field is not intended to be referenced by clients.
-		 * @see <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id= 530887">Bug
-		 *      530887</a>
+		 * @deprecated See {@link org.eclipse.e4.ui.model.application.descriptor.basic.MPartDescriptor#isDirtyable() model documentation} for details.
+		 * @noreference See {@link org.eclipse.e4.ui.model.application.descriptor.basic.MPartDescriptor#isDirtyable() model documentation} for details.
+		 * @generated
 		 */
 		@Deprecated
 		public static final EAttribute PART_DESCRIPTOR__DIRTYABLE = eINSTANCE.getPartDescriptor_Dirtyable();
@@ -972,6 +980,15 @@ public class BasicPackageImpl extends EPackageImpl {
 		 * @generated
 		 */
 		public static final EReference PART_DESCRIPTOR__TRIM_BARS = eINSTANCE.getPartDescriptor_TrimBars();
+
+		/**
+		 * The meta object literal for the '<em><b>Update Localization</b></em>' operation.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @since 1.1
+		 * @generated
+		 */
+		public static final EOperation PART_DESCRIPTOR___UPDATE_LOCALIZATION = eINSTANCE.getPartDescriptor__UpdateLocalization();
 
 		/**
 		 * The meta object literal for the '{@link org.eclipse.e4.ui.model.application.descriptor.basic.MPartDescriptorContainer <em>Part Descriptor Container</em>}' class.

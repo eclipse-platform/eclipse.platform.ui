@@ -27,6 +27,7 @@ import org.eclipse.emf.ecore.EAttribute;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EFactory;
 import org.eclipse.emf.ecore.EGenericType;
+import org.eclipse.emf.ecore.EOperation;
 import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.EReference;
 import org.eclipse.emf.ecore.impl.EPackageImpl;
@@ -38,6 +39,7 @@ import org.eclipse.emf.ecore.impl.EPackageImpl;
  * <ul>
  *   <li>each class,</li>
  *   <li>each feature of each class,</li>
+ *   <li>each operation of each class,</li>
  *   <li>each enum,</li>
  *   <li>and each data type</li>
  * </ul>
@@ -630,7 +632,7 @@ public class AdvancedPackageImpl extends EPackageImpl {
 	 * @generated
 	 * @ordered
 	 */
-	public static final int PERSPECTIVE___UPDATE_LOCALIZATION = UiPackageImpl.ELEMENT_CONTAINER___UPDATE_LOCALIZATION;
+	public static final int PERSPECTIVE___UPDATE_LOCALIZATION = UiPackageImpl.ELEMENT_CONTAINER_OPERATION_COUNT + 0;
 
 	/**
 	 * The number of operations of the '<em>Perspective</em>' class.
@@ -640,7 +642,7 @@ public class AdvancedPackageImpl extends EPackageImpl {
 	 * @generated
 	 * @ordered
 	 */
-	public static final int PERSPECTIVE_OPERATION_COUNT = UiPackageImpl.ELEMENT_CONTAINER_OPERATION_COUNT + 0;
+	public static final int PERSPECTIVE_OPERATION_COUNT = UiPackageImpl.ELEMENT_CONTAINER_OPERATION_COUNT + 1;
 
 	/**
 	 * The meta object id for the '{@link org.eclipse.e4.ui.model.application.ui.advanced.impl.PerspectiveStackImpl <em>Perspective Stack</em>}' class.
@@ -1132,7 +1134,7 @@ public class AdvancedPackageImpl extends EPackageImpl {
 	 * @generated
 	 * @ordered
 	 */
-	public static final int AREA___UPDATE_LOCALIZATION = BasicPackageImpl.PART_SASH_CONTAINER___UPDATE_LOCALIZATION;
+	public static final int AREA___UPDATE_LOCALIZATION = BasicPackageImpl.PART_SASH_CONTAINER_OPERATION_COUNT + 0;
 
 	/**
 	 * The number of operations of the '<em>Area</em>' class.
@@ -1142,7 +1144,7 @@ public class AdvancedPackageImpl extends EPackageImpl {
 	 * @generated
 	 * @ordered
 	 */
-	public static final int AREA_OPERATION_COUNT = BasicPackageImpl.PART_SASH_CONTAINER_OPERATION_COUNT + 0;
+	public static final int AREA_OPERATION_COUNT = BasicPackageImpl.PART_SASH_CONTAINER_OPERATION_COUNT + 1;
 
 	/**
 	 * <!-- begin-user-doc -->
@@ -1305,7 +1307,6 @@ public class AdvancedPackageImpl extends EPackageImpl {
 		return (EAttribute)placeholderEClass.getEStructuralFeatures().get(1);
 	}
 
-
 	/**
 	 * Returns the meta object for class '{@link org.eclipse.e4.ui.model.application.ui.advanced.MPerspective <em>Perspective</em>}'.
 	 * <!-- begin-user-doc -->
@@ -1348,6 +1349,19 @@ public class AdvancedPackageImpl extends EPackageImpl {
 		return (EReference)perspectiveEClass.getEStructuralFeatures().get(1);
 	}
 
+	/**
+	 * Returns the meta object for the '{@link org.eclipse.e4.ui.model.application.ui.advanced.MPerspective#updateLocalization() <em>Update Localization</em>}' operation.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the '<em>Update Localization</em>' operation.
+	 * @see org.eclipse.e4.ui.model.application.ui.advanced.MPerspective#updateLocalization()
+	 * @since 1.1
+	 * @generated
+	 */
+	public EOperation getPerspective__UpdateLocalization() {
+		return perspectiveEClass.getEOperations().get(0);
+	}
+
 
 	/**
 	 * Returns the meta object for class '{@link org.eclipse.e4.ui.model.application.ui.advanced.MPerspectiveStack <em>Perspective Stack</em>}'.
@@ -1374,6 +1388,20 @@ public class AdvancedPackageImpl extends EPackageImpl {
 	public EClass getArea() {
 		return areaEClass;
 	}
+
+	/**
+	 * Returns the meta object for the '{@link org.eclipse.e4.ui.model.application.ui.advanced.MArea#updateLocalization() <em>Update Localization</em>}' operation.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the '<em>Update Localization</em>' operation.
+	 * @see org.eclipse.e4.ui.model.application.ui.advanced.MArea#updateLocalization()
+	 * @since 1.1
+	 * @generated
+	 */
+	public EOperation getArea__UpdateLocalization() {
+		return areaEClass.getEOperations().get(0);
+	}
+
 
 	/**
 	 * Returns the factory that creates the instances of the model.
@@ -1412,10 +1440,12 @@ public class AdvancedPackageImpl extends EPackageImpl {
 		perspectiveEClass = createEClass(PERSPECTIVE);
 		createEReference(perspectiveEClass, PERSPECTIVE__WINDOWS);
 		createEReference(perspectiveEClass, PERSPECTIVE__TRIM_BARS);
+		createEOperation(perspectiveEClass, PERSPECTIVE___UPDATE_LOCALIZATION);
 
 		perspectiveStackEClass = createEClass(PERSPECTIVE_STACK);
 
 		areaEClass = createEClass(AREA);
+		createEOperation(areaEClass, AREA___UPDATE_LOCALIZATION);
 	}
 
 	/**
@@ -1488,9 +1518,13 @@ public class AdvancedPackageImpl extends EPackageImpl {
 		initEReference(getPerspective_Windows(), theBasicPackage.getWindow(), null, "windows", null, 0, -1, MPerspective.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
 		initEReference(getPerspective_TrimBars(), theBasicPackage.getTrimBar(), null, "trimBars", null, 0, -1, MPerspective.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
 
+		initEOperation(getPerspective__UpdateLocalization(), null, "updateLocalization", 0, 1, IS_UNIQUE, IS_ORDERED); //$NON-NLS-1$
+
 		initEClass(perspectiveStackEClass, MPerspectiveStack.class, "PerspectiveStack", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS); //$NON-NLS-1$
 
 		initEClass(areaEClass, MArea.class, "Area", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS); //$NON-NLS-1$
+
+		initEOperation(getArea__UpdateLocalization(), null, "updateLocalization", 0, 1, IS_UNIQUE, IS_ORDERED); //$NON-NLS-1$
 	}
 
 	/**
@@ -1499,6 +1533,7 @@ public class AdvancedPackageImpl extends EPackageImpl {
 	 * <ul>
 	 *   <li>each class,</li>
 	 *   <li>each feature of each class,</li>
+	 *   <li>each operation of each class,</li>
 	 *   <li>each enum,</li>
 	 *   <li>and each data type</li>
 	 * </ul>
@@ -1566,6 +1601,15 @@ public class AdvancedPackageImpl extends EPackageImpl {
 		public static final EReference PERSPECTIVE__TRIM_BARS = eINSTANCE.getPerspective_TrimBars();
 
 		/**
+		 * The meta object literal for the '<em><b>Update Localization</b></em>' operation.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @since 1.1
+		 * @generated
+		 */
+		public static final EOperation PERSPECTIVE___UPDATE_LOCALIZATION = eINSTANCE.getPerspective__UpdateLocalization();
+
+		/**
 		 * The meta object literal for the '{@link org.eclipse.e4.ui.model.application.ui.advanced.impl.PerspectiveStackImpl <em>Perspective Stack</em>}' class.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
@@ -1586,6 +1630,15 @@ public class AdvancedPackageImpl extends EPackageImpl {
 		 * @generated
 		 */
 		public static final EClass AREA = eINSTANCE.getArea();
+
+		/**
+		 * The meta object literal for the '<em><b>Update Localization</b></em>' operation.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @since 1.1
+		 * @generated
+		 */
+		public static final EOperation AREA___UPDATE_LOCALIZATION = eINSTANCE.getArea__UpdateLocalization();
 
 	}
 

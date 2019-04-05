@@ -18,8 +18,6 @@ package org.eclipse.e4.ui.model.application.ui.basic;
  * <!-- begin-user-doc -->
  * The <b>Factory</b> for the model.
  * It provides a create method for each non-abstract class of the model.
- * @since 1.0
- * @noimplement This interface is not intended to be implemented by clients.
  * <!-- end-user-doc -->
  * @generated
  */
@@ -45,7 +43,6 @@ public interface MBasicFactory {
 	/**
 	 * Returns a new object of class '<em>Composite Part</em>'.
 	 * <!-- begin-user-doc -->
-	 * @since 1.1
 	 * <!-- end-user-doc -->
 	 * @return a new object of class '<em>Composite Part</em>'.
 	 * @since 1.1
@@ -54,16 +51,14 @@ public interface MBasicFactory {
 	MCompositePart createCompositePart();
 
 	/**
-	 * Returns a new object of class '<em>Input Part</em>'. <!-- begin-user-doc -->
+	 * Returns a new object of class '<em>Input Part</em>'.
+	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * 
 	 * @return a new object of class '<em>Input Part</em>'.
 	 * @since 1.0
-	 * @deprecated See {@link MInputPart model documentation} for details
-	 * @see <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=509868">Bug
-	 *      509868</a>
-	 * @generated NOT
-	 * @noreference This method is not intended to be referenced by clients.
+	 * @deprecated See {@link MInputPart model documentation} for details.
+	 * @noreference See {@link MInputPart model documentation} for details.
+	 * @generated
 	 */
 	@Deprecated
 	MInputPart createInputPart();
@@ -119,32 +114,27 @@ public interface MBasicFactory {
 	MTrimBar createTrimBar();
 
 	/**
-	 * Returns a new object of class '<em>Dialog</em>'. <!-- begin-user-doc -->
-	 * 
-	 * @since 1.1 <!-- end-user-doc -->
+	 * Returns a new object of class '<em>Dialog</em>'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
 	 * @return a new object of class '<em>Dialog</em>'.
 	 * @since 1.1
-	 * @generated NOT
 	 * @deprecated
-	 * @noreference This method is not intended to be referenced by clients.
-	 * @see <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=531054">Bug
-	 *      531054</a>
+	 * @noreference See {@link MDialog model documentation} for details.
+	 * @generated
 	 */
 	@Deprecated
 	MDialog createDialog();
 
 	/**
-	 * Returns a new object of class '<em>Wizard Dialog</em>'. <!-- begin-user-doc
-	 * -->
-	 * 
-	 * @since 1.1 <!-- end-user-doc -->
+	 * Returns a new object of class '<em>Wizard Dialog</em>'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
 	 * @return a new object of class '<em>Wizard Dialog</em>'.
 	 * @since 1.1
-	 * @generated NOT
 	 * @deprecated
-	 * @noreference This method is not intended to be referenced by clients.
-	 * @see <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=531054">Bug
-	 *      531054</a>
+	 * @noreference See {@link MWizardDialog model documentation} for details.
+	 * @generated
 	 */
 	@Deprecated
 	MWizardDialog createWizardDialog();

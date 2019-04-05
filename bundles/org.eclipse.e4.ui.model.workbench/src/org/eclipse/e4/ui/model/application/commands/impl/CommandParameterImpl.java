@@ -120,6 +120,7 @@ public class CommandParameterImpl extends ApplicationElementImpl implements MCom
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public String getName() {
 		return name;
 	}
@@ -129,6 +130,7 @@ public class CommandParameterImpl extends ApplicationElementImpl implements MCom
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public void setName(String newName) {
 		String oldName = name;
 		name = newName;
@@ -141,6 +143,7 @@ public class CommandParameterImpl extends ApplicationElementImpl implements MCom
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public String getTypeId() {
 		return typeId;
 	}
@@ -150,6 +153,7 @@ public class CommandParameterImpl extends ApplicationElementImpl implements MCom
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public void setTypeId(String newTypeId) {
 		String oldTypeId = typeId;
 		typeId = newTypeId;
@@ -162,6 +166,7 @@ public class CommandParameterImpl extends ApplicationElementImpl implements MCom
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public boolean isOptional() {
 		return optional;
 	}
@@ -171,6 +176,7 @@ public class CommandParameterImpl extends ApplicationElementImpl implements MCom
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public void setOptional(boolean newOptional) {
 		boolean oldOptional = optional;
 		optional = newOptional;

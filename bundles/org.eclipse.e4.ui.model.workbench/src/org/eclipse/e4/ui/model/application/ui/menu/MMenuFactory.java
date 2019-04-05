@@ -18,7 +18,6 @@ package org.eclipse.e4.ui.model.application.ui.menu;
  * <!-- begin-user-doc -->
  * The <b>Factory</b> for the model.
  * It provides a create method for each non-abstract class of the model.
- * @since 1.0
  * <!-- end-user-doc -->
  * @generated
  */
@@ -57,6 +56,7 @@ public interface MMenuFactory {
 	 * <!-- end-user-doc -->
 	 * @return a new object of class '<em>Contribution</em>'.
 	 * @since 1.0
+	 * @noreference See {@link MMenuContribution model documentation} for details.
 	 * @generated
 	 */
 	MMenuContribution createMenuContribution();
@@ -147,6 +147,7 @@ public interface MMenuFactory {
 	 * <!-- end-user-doc -->
 	 * @return a new object of class '<em>Tool Bar Contribution</em>'.
 	 * @since 1.0
+	 * @noreference See {@link MToolBarContribution model documentation} for details.
 	 * @generated
 	 */
 	MToolBarContribution createToolBarContribution();
@@ -157,6 +158,7 @@ public interface MMenuFactory {
 	 * <!-- end-user-doc -->
 	 * @return a new object of class '<em>Trim Contribution</em>'.
 	 * @since 1.0
+	 * @noreference See {@link MTrimContribution model documentation} for details.
 	 * @generated
 	 */
 	MTrimContribution createTrimContribution();

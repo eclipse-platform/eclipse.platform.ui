@@ -111,6 +111,7 @@ public class KeyBindingImpl extends ApplicationElementImpl implements MKeyBindin
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public String getKeySequence() {
 		return keySequence;
 	}
@@ -120,6 +121,7 @@ public class KeyBindingImpl extends ApplicationElementImpl implements MKeyBindin
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public void setKeySequence(String newKeySequence) {
 		String oldKeySequence = keySequence;
 		keySequence = newKeySequence;
@@ -132,6 +134,7 @@ public class KeyBindingImpl extends ApplicationElementImpl implements MKeyBindin
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public MCommand getCommand() {
 		if (command != null && ((EObject)command).eIsProxy()) {
 			InternalEObject oldCommand = (InternalEObject)command;
@@ -158,6 +161,7 @@ public class KeyBindingImpl extends ApplicationElementImpl implements MKeyBindin
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public void setCommand(MCommand newCommand) {
 		MCommand oldCommand = command;
 		command = newCommand;
@@ -170,6 +174,7 @@ public class KeyBindingImpl extends ApplicationElementImpl implements MKeyBindin
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public List<MParameter> getParameters() {
 		if (parameters == null) {
 			parameters = new EObjectContainmentEList<MParameter>(MParameter.class, this, CommandsPackageImpl.KEY_BINDING__PARAMETERS);

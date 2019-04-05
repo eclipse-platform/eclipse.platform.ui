@@ -40,7 +40,6 @@ import org.eclipse.e4.ui.model.application.ui.MUILabel;
  * @generated
  */
 public interface MMenuElement extends MUIElement, MUILabel {
-
 	/**
 	 * Returns the value of the '<em><b>Mnemonics</b></em>' attribute.
 	 * <!-- begin-user-doc -->
@@ -80,4 +79,5 @@ public interface MMenuElement extends MUIElement, MUILabel {
 	 * @generated
 	 */
 	String getLocalizedMnemonics();
+
 } // MMenuElement

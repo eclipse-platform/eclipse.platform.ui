@@ -13,6 +13,7 @@
  */
 package org.eclipse.e4.ui.model.application.ui.advanced.impl;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -26,6 +27,7 @@ import org.eclipse.e4.ui.model.application.commands.impl.CommandsPackageImpl;
 import org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl;
 import org.eclipse.e4.ui.model.application.impl.StringToStringMapImpl;
 import org.eclipse.e4.ui.model.application.ui.MContext;
+import org.eclipse.e4.ui.model.application.ui.MLocalizable;
 import org.eclipse.e4.ui.model.application.ui.MUIElement;
 import org.eclipse.e4.ui.model.application.ui.MUILabel;
 import org.eclipse.e4.ui.model.application.ui.advanced.MPerspective;
@@ -293,6 +295,7 @@ public class PerspectiveImpl extends ElementContainerImpl<MPartSashContainerElem
 	 * @since 1.0
 	 * @generated
 	 */
+	@Override
 	public String getLabel() {
 		return label;
 	}
@@ -303,6 +306,7 @@ public class PerspectiveImpl extends ElementContainerImpl<MPartSashContainerElem
 	 * @since 1.0
 	 * @generated
 	 */
+	@Override
 	public void setLabel(String newLabel) {
 		String oldLabel = label;
 		label = newLabel;
@@ -316,6 +320,7 @@ public class PerspectiveImpl extends ElementContainerImpl<MPartSashContainerElem
 	 * @since 1.0
 	 * @generated
 	 */
+	@Override
 	public String getIconURI() {
 		return iconURI;
 	}
@@ -326,6 +331,7 @@ public class PerspectiveImpl extends ElementContainerImpl<MPartSashContainerElem
 	 * @since 1.0
 	 * @generated
 	 */
+	@Override
 	public void setIconURI(String newIconURI) {
 		String oldIconURI = iconURI;
 		iconURI = newIconURI;
@@ -339,6 +345,7 @@ public class PerspectiveImpl extends ElementContainerImpl<MPartSashContainerElem
 	 * @since 1.0
 	 * @generated
 	 */
+	@Override
 	public String getTooltip() {
 		return tooltip;
 	}
@@ -349,6 +356,7 @@ public class PerspectiveImpl extends ElementContainerImpl<MPartSashContainerElem
 	 * @since 1.0
 	 * @generated
 	 */
+	@Override
 	public void setTooltip(String newTooltip) {
 		String oldTooltip = tooltip;
 		tooltip = newTooltip;
@@ -361,6 +369,27 @@ public class PerspectiveImpl extends ElementContainerImpl<MPartSashContainerElem
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
+	public String getLocalizedLabel() {
+		return LocalizationHelper.getLocalizedFeature(UiPackageImpl.Literals.UI_LABEL__LABEL, this);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public String getLocalizedTooltip() {
+		return LocalizationHelper.getLocalizedFeature(UiPackageImpl.Literals.UI_LABEL__TOOLTIP, this);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
 	public IEclipseContext getContext() {
 		return context;
 	}
@@ -370,6 +399,7 @@ public class PerspectiveImpl extends ElementContainerImpl<MPartSashContainerElem
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public void setContext(IEclipseContext newContext) {
 		IEclipseContext oldContext = context;
 		context = newContext;
@@ -382,6 +412,7 @@ public class PerspectiveImpl extends ElementContainerImpl<MPartSashContainerElem
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public List<String> getVariables() {
 		if (variables == null) {
 			variables = new EDataTypeUniqueEList<String>(String.class, this, AdvancedPackageImpl.PERSPECTIVE__VARIABLES);
@@ -394,6 +425,7 @@ public class PerspectiveImpl extends ElementContainerImpl<MPartSashContainerElem
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public Map<String, String> getProperties() {
 		if (properties == null) {
 			properties = new EcoreEMap<String,String>(ApplicationPackageImpl.Literals.STRING_TO_STRING_MAP, StringToStringMapImpl.class, this, AdvancedPackageImpl.PERSPECTIVE__PROPERTIES);
@@ -406,6 +438,7 @@ public class PerspectiveImpl extends ElementContainerImpl<MPartSashContainerElem
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public List<MHandler> getHandlers() {
 		if (handlers == null) {
 			handlers = new EObjectContainmentEList<MHandler>(MHandler.class, this, AdvancedPackageImpl.PERSPECTIVE__HANDLERS);
@@ -418,6 +451,7 @@ public class PerspectiveImpl extends ElementContainerImpl<MPartSashContainerElem
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public List<MBindingContext> getBindingContexts() {
 		if (bindingContexts == null) {
 			bindingContexts = new EObjectResolvingEList<MBindingContext>(MBindingContext.class, this, AdvancedPackageImpl.PERSPECTIVE__BINDING_CONTEXTS);
@@ -430,6 +464,7 @@ public class PerspectiveImpl extends ElementContainerImpl<MPartSashContainerElem
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public List<MWindow> getWindows() {
 		if (windows == null) {
 			windows = new EObjectContainmentEList<MWindow>(MWindow.class, this, AdvancedPackageImpl.PERSPECTIVE__WINDOWS);
@@ -444,6 +479,7 @@ public class PerspectiveImpl extends ElementContainerImpl<MPartSashContainerElem
 	 * </p>
 	 * @generated
 	 */
+	@Override
 	public List<MTrimBar> getTrimBars() {
 		if (trimBars == null) {
 			trimBars = new EObjectContainmentEList<MTrimBar>(MTrimBar.class, this, AdvancedPackageImpl.PERSPECTIVE__TRIM_BARS);
@@ -454,31 +490,18 @@ public class PerspectiveImpl extends ElementContainerImpl<MPartSashContainerElem
 	/**
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.1
+	 * @generated
 	 */
 	@Override
 	public void updateLocalization() {
 		if (eNotificationRequired()) {
+			super.updateLocalization();
 			eNotify(new ENotificationImpl(
 					this, Notification.SET, AdvancedPackageImpl.PERSPECTIVE__LOCALIZED_LABEL, null, getLocalizedLabel()));
 			eNotify(new ENotificationImpl(
 					this, Notification.SET, AdvancedPackageImpl.PERSPECTIVE__LOCALIZED_TOOLTIP, null, getLocalizedTooltip()));
 		}
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 */
-	public String getLocalizedLabel() {
-		return LocalizationHelper.getLocalizedLabel(this);
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 */
-	public String getLocalizedTooltip() {
-		return LocalizationHelper.getLocalizedTooltip(this);
 	}
 
 	/**
@@ -742,6 +765,63 @@ public class PerspectiveImpl extends ElementContainerImpl<MPartSashContainerElem
 			}
 		}
 		return super.eDerivedStructuralFeatureID(baseFeatureID, baseClass);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public int eDerivedOperationID(int baseOperationID, Class<?> baseClass) {
+		if (baseClass == MLocalizable.class) {
+			switch (baseOperationID) {
+				case UiPackageImpl.LOCALIZABLE___UPDATE_LOCALIZATION: return AdvancedPackageImpl.PERSPECTIVE___UPDATE_LOCALIZATION;
+				default: return super.eDerivedOperationID(baseOperationID, baseClass);
+			}
+		}
+		if (baseClass == MUIElement.class) {
+			switch (baseOperationID) {
+				case UiPackageImpl.UI_ELEMENT___UPDATE_LOCALIZATION: return AdvancedPackageImpl.PERSPECTIVE___UPDATE_LOCALIZATION;
+				default: return super.eDerivedOperationID(baseOperationID, baseClass);
+			}
+		}
+		if (baseClass == MUILabel.class) {
+			switch (baseOperationID) {
+				default: return -1;
+			}
+		}
+		if (baseClass == MContext.class) {
+			switch (baseOperationID) {
+				default: return -1;
+			}
+		}
+		if (baseClass == MHandlerContainer.class) {
+			switch (baseOperationID) {
+				default: return -1;
+			}
+		}
+		if (baseClass == MBindings.class) {
+			switch (baseOperationID) {
+				default: return -1;
+			}
+		}
+		return super.eDerivedOperationID(baseOperationID, baseClass);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public Object eInvoke(int operationID, EList<?> arguments) throws InvocationTargetException {
+		switch (operationID) {
+			case AdvancedPackageImpl.PERSPECTIVE___UPDATE_LOCALIZATION:
+				updateLocalization();
+				return null;
+		}
+		return super.eInvoke(operationID, arguments);
 	}
 
 	/**

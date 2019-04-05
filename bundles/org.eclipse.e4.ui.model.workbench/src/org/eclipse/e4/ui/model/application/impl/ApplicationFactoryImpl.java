@@ -14,7 +14,9 @@
 package org.eclipse.e4.ui.model.application.impl;
 
 import java.util.Map;
-import org.eclipse.e4.ui.model.application.*;
+import org.eclipse.e4.ui.model.application.MAddon;
+import org.eclipse.e4.ui.model.application.MApplication;
+import org.eclipse.e4.ui.model.application.MApplicationFactory;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EDataType;
 import org.eclipse.emf.ecore.EObject;
@@ -125,6 +127,7 @@ public class ApplicationFactoryImpl extends EFactoryImpl implements MApplication
 	 * @since 1.0
 	 * @generated
 	 */
+	@Override
 	public MApplication createApplication() {
 		ApplicationImpl application = new ApplicationImpl();
 		return application;
@@ -136,6 +139,7 @@ public class ApplicationFactoryImpl extends EFactoryImpl implements MApplication
 	 * @since 1.0
 	 * @generated
 	 */
+	@Override
 	public MAddon createAddon() {
 		AddonImpl addon = new AddonImpl();
 		return addon;

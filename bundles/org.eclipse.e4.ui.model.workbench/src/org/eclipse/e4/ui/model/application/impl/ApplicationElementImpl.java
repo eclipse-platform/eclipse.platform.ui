@@ -142,6 +142,7 @@ public abstract class ApplicationElementImpl extends org.eclipse.emf.ecore.impl.
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public String getElementId() {
 		return elementId;
 	}
@@ -151,6 +152,7 @@ public abstract class ApplicationElementImpl extends org.eclipse.emf.ecore.impl.
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public void setElementId(String newElementId) {
 		String oldElementId = elementId;
 		elementId = newElementId;
@@ -163,6 +165,7 @@ public abstract class ApplicationElementImpl extends org.eclipse.emf.ecore.impl.
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public Map<String, String> getPersistedState() {
 		if (persistedState == null) {
 			persistedState = new EcoreEMap<String,String>(ApplicationPackageImpl.Literals.STRING_TO_STRING_MAP, StringToStringMapImpl.class, this, ApplicationPackageImpl.APPLICATION_ELEMENT__PERSISTED_STATE);
@@ -175,6 +178,7 @@ public abstract class ApplicationElementImpl extends org.eclipse.emf.ecore.impl.
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public List<String> getTags() {
 		if (tags == null) {
 			tags = new EDataTypeUniqueEList<String>(String.class, this, ApplicationPackageImpl.APPLICATION_ELEMENT__TAGS);
@@ -187,6 +191,7 @@ public abstract class ApplicationElementImpl extends org.eclipse.emf.ecore.impl.
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public String getContributorURI() {
 		return contributorURI;
 	}
@@ -194,12 +199,18 @@ public abstract class ApplicationElementImpl extends org.eclipse.emf.ecore.impl.
 	/**
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @generated
 	 */
-	public void setContributorURI(String newContributorURI) {
+	private void setContributorURIGen(String newContributorURI) {
 		String oldContributorURI = contributorURI;
-		contributorURI = (newContributorURI == null) ? null : newContributorURI.intern();
+		contributorURI = newContributorURI;
 		if (eNotificationRequired())
 			eNotify(new ENotificationImpl(this, Notification.SET, ApplicationPackageImpl.APPLICATION_ELEMENT__CONTRIBUTOR_URI, oldContributorURI, contributorURI));
+	}
+
+	@Override
+	public void setContributorURI(String newContributorURI) {
+		setContributorURIGen(newContributorURI == null ? null : newContributorURI.intern());
 	}
 
 	/**
@@ -207,6 +218,7 @@ public abstract class ApplicationElementImpl extends org.eclipse.emf.ecore.impl.
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public Map<String, Object> getTransientData() {
 		if (transientData == null) {
 			transientData = new EcoreEMap<String,Object>(ApplicationPackageImpl.Literals.STRING_TO_OBJECT_MAP, StringToObjectMapImpl.class, this, ApplicationPackageImpl.APPLICATION_ELEMENT__TRANSIENT_DATA);
@@ -351,6 +363,7 @@ public abstract class ApplicationElementImpl extends org.eclipse.emf.ecore.impl.
 		return result.toString();
 	}
 
+	@Override
 	public String toString() {
 		String result = toStringGen();
 		if (elementId != null) {

@@ -192,41 +192,35 @@ public interface MPartDescriptor extends MApplicationElement, MUILabel, MHandler
 	void setCloseable(boolean value);
 
 	/**
-	 * Returns the value of the '<em><b>Dirtyable</b></em>' attribute. <!--
-	 * begin-user-doc --> <!-- end-user-doc --> <!-- begin-model-doc -->
+	 * Returns the value of the '<em><b>Dirtyable</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * <!-- begin-model-doc -->
 	 * <p>
 	 * Determines whether Parts generated from this template can participate in the
-	 * Dirty -> Save cycle. At best this is a hint since all Parts are inherently
-	 * dirtyable.
+	 * Dirty -> Save cycle. At best this is a hint since all Parts are inherently dirtyable.
 	 * </p>
+	 * @deprecated dirtyable is managed by part.
+	 * @noreference This method is not intended to be referenced by clients.
+	 * @see <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=530887">Bug 530887</a>
 	 * <!-- end-model-doc -->
-	 * 
 	 * @return the value of the '<em>Dirtyable</em>' attribute.
 	 * @see #setDirtyable(boolean)
 	 * @model
-	 * @generated NOT
-	 * @deprecated dirtyable is managed by part
-	 * @noreference This method is not intented to be referenced by clients.
-	 * @see <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=530887">Bug
-	 *      530887</a>
-	 * 
+	 * @generated
 	 */
 	@Deprecated
 	boolean isDirtyable();
 
 	/**
-	 * Sets the value of the
-	 * '{@link org.eclipse.e4.ui.model.application.descriptor.basic.MPartDescriptor#isDirtyable
-	 * <em>Dirtyable</em>}' attribute. <!-- begin-user-doc --> <!-- end-user-doc -->
-	 * 
-	 * @param value
-	 *            the new value of the '<em>Dirtyable</em>' attribute.
+	 * Sets the value of the '{@link org.eclipse.e4.ui.model.application.descriptor.basic.MPartDescriptor#isDirtyable <em>Dirtyable</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @param value the new value of the '<em>Dirtyable</em>' attribute.
 	 * @see #isDirtyable()
-	 * @generated NOT
-	 * @deprecated dirtyable is managed by part
-	 * @noreference This method is not intented to be referenced by clients.
-	 * @see <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=530887">Bug
-	 *      530887</a>
+	 * @deprecated See {@link org.eclipse.e4.ui.model.application.descriptor.basic.MPartDescriptor#isDirtyable() model documentation} for details.
+	 * @noreference See {@link org.eclipse.e4.ui.model.application.descriptor.basic.MPartDescriptor#isDirtyable() model documentation} for details.
+	 * @generated
 	 */
 	@Deprecated
 	void setDirtyable(boolean value);
@@ -294,20 +288,21 @@ public interface MPartDescriptor extends MApplicationElement, MUILabel, MHandler
 	String getLocalizedDescription();
 
 	/**
-	 * Returns the value of the '<em><b>Variables</b></em>' attribute list. The
-	 * list contents are of type {@link java.lang.String}. <!-- begin-user-doc
-	 * --> <!-- end-user-doc --> <!-- begin-model-doc -->
+	 * Returns the value of the '<em><b>Variables</b></em>' attribute list.
+	 * The list contents are of type {@link java.lang.String}.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * <!-- begin-model-doc -->
 	 * <p>
-	 * <strong>Developers</strong>: Add more detailed documentation by editing
-	 * this comment in org.eclipse.ui.model.workbench/model/UIElements.ecore.
+	 * <strong>Developers</strong>:
+	 * Add more detailed documentation by editing this comment in 
+	 * org.eclipse.ui.model.workbench/model/UIElements.ecore. 
 	 * There is a GenModel/documentation node under each type and attribute.
 	 * </p>
 	 * <!-- end-model-doc -->
-	 * 
 	 * @return the value of the '<em>Variables</em>' attribute list.
 	 * @model ordered="false"
 	 * @generated
-	 * @since 1.2
 	 */
 	List<String> getVariables();
 
@@ -315,7 +310,8 @@ public interface MPartDescriptor extends MApplicationElement, MUILabel, MHandler
 	 * Returns the value of the '<em><b>Properties</b></em>' map.
 	 * The key is of type {@link java.lang.String},
 	 * and the value is of type {@link java.lang.String},
-	 * <!-- begin-user-doc --> <!-- end-user-doc -->
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
 	 * <!-- begin-model-doc -->
 	 * <p>
 	 * <strong>Developers</strong>:

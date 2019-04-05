@@ -60,6 +60,7 @@ import org.eclipse.emf.ecore.impl.EPackageImpl;
  * <ul>
  *   <li>each class,</li>
  *   <li>each feature of each class,</li>
+ *   <li>each operation of each class,</li>
  *   <li>each enum,</li>
  *   <li>and each data type</li>
  * </ul>
@@ -370,7 +371,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * @generated
 	 * @ordered
 	 */
-	public static final int ITEM___UPDATE_LOCALIZATION = UiPackageImpl.UI_ELEMENT___UPDATE_LOCALIZATION;
+	public static final int ITEM___UPDATE_LOCALIZATION = UiPackageImpl.UI_ELEMENT_OPERATION_COUNT + 0;
 
 	/**
 	 * The number of operations of the '<em>Item</em>' class.
@@ -380,7 +381,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * @generated
 	 * @ordered
 	 */
-	public static final int ITEM_OPERATION_COUNT = UiPackageImpl.UI_ELEMENT_OPERATION_COUNT + 0;
+	public static final int ITEM_OPERATION_COUNT = UiPackageImpl.UI_ELEMENT_OPERATION_COUNT + 1;
 
 	/**
 	 * The meta object id for the '{@link org.eclipse.e4.ui.model.application.ui.menu.impl.HandledItemImpl <em>Handled Item</em>}' class.
@@ -648,6 +649,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @since 1.0
+	 * @noreference
 	 * @generated
 	 * @ordered
 	 */
@@ -935,16 +937,6 @@ public class MenuPackageImpl extends EPackageImpl {
 	public static final int MENU_ELEMENT_FEATURE_COUNT = UiPackageImpl.UI_ELEMENT_FEATURE_COUNT + 6;
 
 	/**
-	 * The operation id for the '<em>Update Localization</em>' operation.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @since 1.1
-	 * @generated
-	 * @ordered
-	 */
-	public static final int MENU_ELEMENT___UPDATE_LOCALIZATION = UiPackageImpl.UI_ELEMENT___UPDATE_LOCALIZATION;
-
-	/**
 	 * The operation id for the '<em>Get Localized Mnemonics</em>' operation.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -955,6 +947,16 @@ public class MenuPackageImpl extends EPackageImpl {
 	public static final int MENU_ELEMENT___GET_LOCALIZED_MNEMONICS = UiPackageImpl.UI_ELEMENT_OPERATION_COUNT + 0;
 
 	/**
+	 * The operation id for the '<em>Update Localization</em>' operation.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @since 1.1
+	 * @generated
+	 * @ordered
+	 */
+	public static final int MENU_ELEMENT___UPDATE_LOCALIZATION = UiPackageImpl.UI_ELEMENT_OPERATION_COUNT + 1;
+
+	/**
 	 * The number of operations of the '<em>Element</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -962,7 +964,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * @generated
 	 * @ordered
 	 */
-	public static final int MENU_ELEMENT_OPERATION_COUNT = UiPackageImpl.UI_ELEMENT_OPERATION_COUNT + 1;
+	public static final int MENU_ELEMENT_OPERATION_COUNT = UiPackageImpl.UI_ELEMENT_OPERATION_COUNT + 2;
 
 	/**
 	 * The meta object id for the '{@link org.eclipse.e4.ui.model.application.ui.menu.impl.MenuItemImpl <em>Item</em>}' class.
@@ -1236,16 +1238,6 @@ public class MenuPackageImpl extends EPackageImpl {
 	public static final int MENU_ITEM_FEATURE_COUNT = ITEM_FEATURE_COUNT + 1;
 
 	/**
-	 * The operation id for the '<em>Update Localization</em>' operation.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @since 1.1
-	 * @generated
-	 * @ordered
-	 */
-	public static final int MENU_ITEM___UPDATE_LOCALIZATION = ITEM___UPDATE_LOCALIZATION;
-
-	/**
 	 * The operation id for the '<em>Get Localized Mnemonics</em>' operation.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -1256,6 +1248,16 @@ public class MenuPackageImpl extends EPackageImpl {
 	public static final int MENU_ITEM___GET_LOCALIZED_MNEMONICS = ITEM_OPERATION_COUNT + 0;
 
 	/**
+	 * The operation id for the '<em>Update Localization</em>' operation.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @since 1.1
+	 * @generated
+	 * @ordered
+	 */
+	public static final int MENU_ITEM___UPDATE_LOCALIZATION = ITEM_OPERATION_COUNT + 2;
+
+	/**
 	 * The number of operations of the '<em>Item</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -1263,7 +1265,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * @generated
 	 * @ordered
 	 */
-	public static final int MENU_ITEM_OPERATION_COUNT = ITEM_OPERATION_COUNT + 1;
+	public static final int MENU_ITEM_OPERATION_COUNT = ITEM_OPERATION_COUNT + 3;
 
 	/**
 	 * The meta object id for the '{@link org.eclipse.e4.ui.model.application.ui.menu.impl.MenuSeparatorImpl <em>Separator</em>}' class.
@@ -1507,16 +1509,6 @@ public class MenuPackageImpl extends EPackageImpl {
 	public static final int MENU_SEPARATOR_FEATURE_COUNT = MENU_ELEMENT_FEATURE_COUNT + 0;
 
 	/**
-	 * The operation id for the '<em>Update Localization</em>' operation.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @since 1.1
-	 * @generated
-	 * @ordered
-	 */
-	public static final int MENU_SEPARATOR___UPDATE_LOCALIZATION = MENU_ELEMENT___UPDATE_LOCALIZATION;
-
-	/**
 	 * The operation id for the '<em>Get Localized Mnemonics</em>' operation.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -1525,6 +1517,16 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * @ordered
 	 */
 	public static final int MENU_SEPARATOR___GET_LOCALIZED_MNEMONICS = MENU_ELEMENT___GET_LOCALIZED_MNEMONICS;
+
+	/**
+	 * The operation id for the '<em>Update Localization</em>' operation.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @since 1.1
+	 * @generated
+	 * @ordered
+	 */
+	public static final int MENU_SEPARATOR___UPDATE_LOCALIZATION = MENU_ELEMENT___UPDATE_LOCALIZATION;
 
 	/**
 	 * The number of operations of the '<em>Separator</em>' class.
@@ -1808,16 +1810,6 @@ public class MenuPackageImpl extends EPackageImpl {
 	public static final int MENU_FEATURE_COUNT = MENU_ELEMENT_FEATURE_COUNT + 3;
 
 	/**
-	 * The operation id for the '<em>Update Localization</em>' operation.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @since 1.1
-	 * @generated
-	 * @ordered
-	 */
-	public static final int MENU___UPDATE_LOCALIZATION = MENU_ELEMENT___UPDATE_LOCALIZATION;
-
-	/**
 	 * The operation id for the '<em>Get Localized Mnemonics</em>' operation.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -1826,6 +1818,16 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * @ordered
 	 */
 	public static final int MENU___GET_LOCALIZED_MNEMONICS = MENU_ELEMENT___GET_LOCALIZED_MNEMONICS;
+
+	/**
+	 * The operation id for the '<em>Update Localization</em>' operation.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @since 1.1
+	 * @generated
+	 * @ordered
+	 */
+	public static final int MENU___UPDATE_LOCALIZATION = MENU_ELEMENT___UPDATE_LOCALIZATION;
 
 	/**
 	 * The number of operations of the '<em>Menu</em>' class.
@@ -1844,6 +1846,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * @see org.eclipse.e4.ui.model.application.ui.menu.impl.MenuContributionImpl
 	 * @see org.eclipse.e4.ui.model.application.ui.menu.impl.MenuPackageImpl#getMenuContribution()
 	 * @since 1.0
+	 * @noreference See {@link MMenuContribution model documentation} for details.
 	 * @generated
 	 */
 	public static final int MENU_CONTRIBUTION = 6;
@@ -2053,6 +2056,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @since 1.0
+	 * @noreference See {@link MMenuContribution model documentation} for details.
 	 * @generated
 	 * @ordered
 	 */
@@ -2073,6 +2077,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @since 1.0
+	 * @noreference See {@link MMenuContribution model documentation} for details.
 	 * @generated
 	 * @ordered
 	 */
@@ -2380,16 +2385,6 @@ public class MenuPackageImpl extends EPackageImpl {
 	public static final int POPUP_MENU_FEATURE_COUNT = MENU_FEATURE_COUNT + 3;
 
 	/**
-	 * The operation id for the '<em>Update Localization</em>' operation.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @since 1.1
-	 * @generated
-	 * @ordered
-	 */
-	public static final int POPUP_MENU___UPDATE_LOCALIZATION = MENU___UPDATE_LOCALIZATION;
-
-	/**
 	 * The operation id for the '<em>Get Localized Mnemonics</em>' operation.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -2398,6 +2393,16 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * @ordered
 	 */
 	public static final int POPUP_MENU___GET_LOCALIZED_MNEMONICS = MENU___GET_LOCALIZED_MNEMONICS;
+
+	/**
+	 * The operation id for the '<em>Update Localization</em>' operation.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @since 1.1
+	 * @generated
+	 * @ordered
+	 */
+	public static final int POPUP_MENU___UPDATE_LOCALIZATION = MENU___UPDATE_LOCALIZATION;
 
 	/**
 	 * The number of operations of the '<em>Popup Menu</em>' class.
@@ -2701,16 +2706,6 @@ public class MenuPackageImpl extends EPackageImpl {
 	public static final int DIRECT_MENU_ITEM_FEATURE_COUNT = MENU_ITEM_FEATURE_COUNT + 2;
 
 	/**
-	 * The operation id for the '<em>Update Localization</em>' operation.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @since 1.1
-	 * @generated
-	 * @ordered
-	 */
-	public static final int DIRECT_MENU_ITEM___UPDATE_LOCALIZATION = MENU_ITEM___UPDATE_LOCALIZATION;
-
-	/**
 	 * The operation id for the '<em>Get Localized Mnemonics</em>' operation.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -2719,6 +2714,16 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * @ordered
 	 */
 	public static final int DIRECT_MENU_ITEM___GET_LOCALIZED_MNEMONICS = MENU_ITEM___GET_LOCALIZED_MNEMONICS;
+
+	/**
+	 * The operation id for the '<em>Update Localization</em>' operation.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @since 1.1
+	 * @generated
+	 * @ordered
+	 */
+	public static final int DIRECT_MENU_ITEM___UPDATE_LOCALIZATION = MENU_ITEM___UPDATE_LOCALIZATION;
 
 	/**
 	 * The number of operations of the '<em>Direct Menu Item</em>' class.
@@ -3006,6 +3011,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @since 1.0
+	 * @noreference
 	 * @generated
 	 * @ordered
 	 */
@@ -3032,16 +3038,6 @@ public class MenuPackageImpl extends EPackageImpl {
 	public static final int HANDLED_MENU_ITEM_FEATURE_COUNT = MENU_ITEM_FEATURE_COUNT + 3;
 
 	/**
-	 * The operation id for the '<em>Update Localization</em>' operation.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @since 1.1
-	 * @generated
-	 * @ordered
-	 */
-	public static final int HANDLED_MENU_ITEM___UPDATE_LOCALIZATION = MENU_ITEM___UPDATE_LOCALIZATION;
-
-	/**
 	 * The operation id for the '<em>Get Localized Mnemonics</em>' operation.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -3050,6 +3046,16 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * @ordered
 	 */
 	public static final int HANDLED_MENU_ITEM___GET_LOCALIZED_MNEMONICS = MENU_ITEM___GET_LOCALIZED_MNEMONICS;
+
+	/**
+	 * The operation id for the '<em>Update Localization</em>' operation.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @since 1.1
+	 * @generated
+	 * @ordered
+	 */
+	public static final int HANDLED_MENU_ITEM___UPDATE_LOCALIZATION = MENU_ITEM___UPDATE_LOCALIZATION;
 
 	/**
 	 * The number of operations of the '<em>Handled Menu Item</em>' class.
@@ -4271,6 +4277,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @since 1.0
+	 * @noreference
 	 * @generated
 	 * @ordered
 	 */
@@ -4835,6 +4842,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * @see org.eclipse.e4.ui.model.application.ui.menu.MMenuContributions
 	 * @see org.eclipse.e4.ui.model.application.ui.menu.impl.MenuPackageImpl#getMenuContributions()
 	 * @since 1.0
+	 * @noreference See {@link MMenuContributions model documentation} for details.
 	 * @generated
 	 */
 	public static final int MENU_CONTRIBUTIONS = 17;
@@ -4854,6 +4862,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @since 1.0
+	 * @noreference See {@link MMenuContributions model documentation} for details.
 	 * @generated
 	 * @ordered
 	 */
@@ -4864,6 +4873,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @since 1.0
+	 * @noreference See {@link MMenuContributions model documentation} for details.
 	 * @generated
 	 * @ordered
 	 */
@@ -4876,6 +4886,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * @see org.eclipse.e4.ui.model.application.ui.menu.impl.ToolBarContributionImpl
 	 * @see org.eclipse.e4.ui.model.application.ui.menu.impl.MenuPackageImpl#getToolBarContribution()
 	 * @since 1.0
+	 * @noreference See {@link MToolBarContribution model documentation} for details.
 	 * @generated
 	 */
 	public static final int TOOL_BAR_CONTRIBUTION = 18;
@@ -5085,6 +5096,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @since 1.0
+	 * @noreference See {@link MToolBarContribution model documentation} for details.
 	 * @generated
 	 * @ordered
 	 */
@@ -5105,6 +5117,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @since 1.0
+	 * @noreference See {@link MToolBarContribution model documentation} for details.
 	 * @generated
 	 * @ordered
 	 */
@@ -5117,6 +5130,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * @see org.eclipse.e4.ui.model.application.ui.menu.MToolBarContributions
 	 * @see org.eclipse.e4.ui.model.application.ui.menu.impl.MenuPackageImpl#getToolBarContributions()
 	 * @since 1.0
+	 * @noreference See {@link MToolBarContributions model documentation} for details.
 	 * @generated
 	 */
 	public static final int TOOL_BAR_CONTRIBUTIONS = 19;
@@ -5136,6 +5150,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @since 1.0
+	 * @noreference See {@link MToolBarContributions model documentation} for details.
 	 * @generated
 	 * @ordered
 	 */
@@ -5146,6 +5161,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @since 1.0
+	 * @noreference See {@link MToolBarContributions model documentation} for details.
 	 * @generated
 	 * @ordered
 	 */
@@ -5158,6 +5174,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * @see org.eclipse.e4.ui.model.application.ui.menu.impl.TrimContributionImpl
 	 * @see org.eclipse.e4.ui.model.application.ui.menu.impl.MenuPackageImpl#getTrimContribution()
 	 * @since 1.0
+	 * @noreference See {@link MTrimContribution model documentation} for details.
 	 * @generated
 	 */
 	public static final int TRIM_CONTRIBUTION = 20;
@@ -5367,6 +5384,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @since 1.0
+	 * @noreference See {@link MTrimContribution model documentation} for details.
 	 * @generated
 	 * @ordered
 	 */
@@ -5387,6 +5405,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @since 1.0
+	 * @noreference See {@link MTrimContribution model documentation} for details.
 	 * @generated
 	 * @ordered
 	 */
@@ -5399,6 +5418,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * @see org.eclipse.e4.ui.model.application.ui.menu.MTrimContributions
 	 * @see org.eclipse.e4.ui.model.application.ui.menu.impl.MenuPackageImpl#getTrimContributions()
 	 * @since 1.0
+	 * @noreference See {@link MTrimContributions model documentation} for details.
 	 * @generated
 	 */
 	public static final int TRIM_CONTRIBUTIONS = 21;
@@ -5418,6 +5438,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @since 1.0
+	 * @noreference See {@link MTrimContributions model documentation} for details.
 	 * @generated
 	 * @ordered
 	 */
@@ -5428,6 +5449,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @since 1.0
+	 * @noreference See {@link MTrimContributions model documentation} for details.
 	 * @generated
 	 * @ordered
 	 */
@@ -5725,16 +5747,6 @@ public class MenuPackageImpl extends EPackageImpl {
 	public static final int DYNAMIC_MENU_CONTRIBUTION_FEATURE_COUNT = MENU_ITEM_FEATURE_COUNT + 2;
 
 	/**
-	 * The operation id for the '<em>Update Localization</em>' operation.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @since 1.1
-	 * @generated
-	 * @ordered
-	 */
-	public static final int DYNAMIC_MENU_CONTRIBUTION___UPDATE_LOCALIZATION = MENU_ITEM___UPDATE_LOCALIZATION;
-
-	/**
 	 * The operation id for the '<em>Get Localized Mnemonics</em>' operation.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -5743,6 +5755,16 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * @ordered
 	 */
 	public static final int DYNAMIC_MENU_CONTRIBUTION___GET_LOCALIZED_MNEMONICS = MENU_ITEM___GET_LOCALIZED_MNEMONICS;
+
+	/**
+	 * The operation id for the '<em>Update Localization</em>' operation.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @since 1.1
+	 * @generated
+	 * @ordered
+	 */
+	public static final int DYNAMIC_MENU_CONTRIBUTION___UPDATE_LOCALIZATION = MENU_ITEM___UPDATE_LOCALIZATION;
 
 	/**
 	 * The number of operations of the '<em>Dynamic Menu Contribution</em>' class.
@@ -6101,6 +6123,20 @@ public class MenuPackageImpl extends EPackageImpl {
 	}
 
 	/**
+	 * Returns the meta object for the '{@link org.eclipse.e4.ui.model.application.ui.menu.MItem#updateLocalization() <em>Update Localization</em>}' operation.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the '<em>Update Localization</em>' operation.
+	 * @see org.eclipse.e4.ui.model.application.ui.menu.MItem#updateLocalization()
+	 * @since 1.1
+	 * @generated
+	 */
+	public EOperation getItem__UpdateLocalization() {
+		return itemEClass.getEOperations().get(0);
+	}
+
+
+	/**
 	 * Returns the meta object for class '{@link org.eclipse.e4.ui.model.application.ui.menu.MHandledItem <em>Handled Item</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -6135,6 +6171,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * @see org.eclipse.e4.ui.model.application.ui.menu.MHandledItem#getWbCommand()
 	 * @see #getHandledItem()
 	 * @since 1.0
+	 * @noreference
 	 * @generated
 	 */
 	public EAttribute getHandledItem_WbCommand() {
@@ -6182,7 +6219,6 @@ public class MenuPackageImpl extends EPackageImpl {
 		return (EAttribute)menuElementEClass.getEStructuralFeatures().get(0);
 	}
 
-
 	/**
 	 * Returns the meta object for the '{@link org.eclipse.e4.ui.model.application.ui.menu.MMenuElement#getLocalizedMnemonics() <em>Get Localized Mnemonics</em>}' operation.
 	 * <!-- begin-user-doc -->
@@ -6198,6 +6234,20 @@ public class MenuPackageImpl extends EPackageImpl {
 
 
 	/**
+	 * Returns the meta object for the '{@link org.eclipse.e4.ui.model.application.ui.menu.MMenuElement#updateLocalization() <em>Update Localization</em>}' operation.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the '<em>Update Localization</em>' operation.
+	 * @see org.eclipse.e4.ui.model.application.ui.menu.MMenuElement#updateLocalization()
+	 * @since 1.1
+	 * @generated
+	 */
+	public EOperation getMenuElement__UpdateLocalization() {
+		return menuElementEClass.getEOperations().get(1);
+	}
+
+
+	/**
 	 * Returns the meta object for class '{@link org.eclipse.e4.ui.model.application.ui.menu.MMenuItem <em>Item</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -6209,6 +6259,20 @@ public class MenuPackageImpl extends EPackageImpl {
 	public EClass getMenuItem() {
 		return menuItemEClass;
 	}
+
+	/**
+	 * Returns the meta object for the '{@link org.eclipse.e4.ui.model.application.ui.menu.MMenuItem#updateLocalization() <em>Update Localization</em>}' operation.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the '<em>Update Localization</em>' operation.
+	 * @see org.eclipse.e4.ui.model.application.ui.menu.MMenuItem#updateLocalization()
+	 * @since 1.1
+	 * @generated
+	 */
+	public EOperation getMenuItem__UpdateLocalization() {
+		return menuItemEClass.getEOperations().get(0);
+	}
+
 
 	/**
 	 * Returns the meta object for class '{@link org.eclipse.e4.ui.model.application.ui.menu.MMenuSeparator <em>Separator</em>}'.
@@ -6257,12 +6321,12 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * @return the meta object for class '<em>Contribution</em>'.
 	 * @see org.eclipse.e4.ui.model.application.ui.menu.MMenuContribution
 	 * @since 1.0
+	 * @noreference See {@link MMenuContribution model documentation} for details.
 	 * @generated
 	 */
 	public EClass getMenuContribution() {
 		return menuContributionEClass;
 	}
-
 
 	/**
 	 * Returns the meta object for the attribute '{@link org.eclipse.e4.ui.model.application.ui.menu.MMenuContribution#getPositionInParent <em>Position In Parent</em>}'.
@@ -6278,7 +6342,6 @@ public class MenuPackageImpl extends EPackageImpl {
 		return (EAttribute)menuContributionEClass.getEStructuralFeatures().get(0);
 	}
 
-
 	/**
 	 * Returns the meta object for the attribute '{@link org.eclipse.e4.ui.model.application.ui.menu.MMenuContribution#getParentId <em>Parent Id</em>}'.
 	 * <!-- begin-user-doc -->
@@ -6293,7 +6356,6 @@ public class MenuPackageImpl extends EPackageImpl {
 		return (EAttribute)menuContributionEClass.getEStructuralFeatures().get(1);
 	}
 
-
 	/**
 	 * Returns the meta object for class '{@link org.eclipse.e4.ui.model.application.ui.menu.MPopupMenu <em>Popup Menu</em>}'.
 	 * <!-- begin-user-doc -->
@@ -6306,7 +6368,6 @@ public class MenuPackageImpl extends EPackageImpl {
 	public EClass getPopupMenu() {
 		return popupMenuEClass;
 	}
-
 
 	/**
 	 * Returns the meta object for class '{@link org.eclipse.e4.ui.model.application.ui.menu.MDirectMenuItem <em>Direct Menu Item</em>}'.
@@ -6360,7 +6421,6 @@ public class MenuPackageImpl extends EPackageImpl {
 	public EReference getToolItem_Menu() {
 		return (EReference)toolItemEClass.getEStructuralFeatures().get(0);
 	}
-
 
 	/**
 	 * Returns the meta object for class '{@link org.eclipse.e4.ui.model.application.ui.menu.MToolBar <em>Tool Bar</em>}'.
@@ -6447,12 +6507,12 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * @return the meta object for class '<em>Contributions</em>'.
 	 * @see org.eclipse.e4.ui.model.application.ui.menu.MMenuContributions
 	 * @since 1.0
+	 * @noreference See {@link MMenuContributions model documentation} for details.
 	 * @generated
 	 */
 	public EClass getMenuContributions() {
 		return menuContributionsEClass;
 	}
-
 
 	/**
 	 * Returns the meta object for the containment reference list '{@link org.eclipse.e4.ui.model.application.ui.menu.MMenuContributions#getMenuContributions <em>Menu Contributions</em>}'.
@@ -6468,7 +6528,6 @@ public class MenuPackageImpl extends EPackageImpl {
 		return (EReference)menuContributionsEClass.getEStructuralFeatures().get(0);
 	}
 
-
 	/**
 	 * Returns the meta object for class '{@link org.eclipse.e4.ui.model.application.ui.menu.MToolBarContribution <em>Tool Bar Contribution</em>}'.
 	 * <!-- begin-user-doc -->
@@ -6476,12 +6535,12 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * @return the meta object for class '<em>Tool Bar Contribution</em>'.
 	 * @see org.eclipse.e4.ui.model.application.ui.menu.MToolBarContribution
 	 * @since 1.0
+	 * @noreference See {@link MToolBarContribution model documentation} for details.
 	 * @generated
 	 */
 	public EClass getToolBarContribution() {
 		return toolBarContributionEClass;
 	}
-
 
 	/**
 	 * Returns the meta object for the attribute '{@link org.eclipse.e4.ui.model.application.ui.menu.MToolBarContribution#getParentId <em>Parent Id</em>}'.
@@ -6497,7 +6556,6 @@ public class MenuPackageImpl extends EPackageImpl {
 		return (EAttribute)toolBarContributionEClass.getEStructuralFeatures().get(0);
 	}
 
-
 	/**
 	 * Returns the meta object for the attribute '{@link org.eclipse.e4.ui.model.application.ui.menu.MToolBarContribution#getPositionInParent <em>Position In Parent</em>}'.
 	 * <!-- begin-user-doc -->
@@ -6512,7 +6570,6 @@ public class MenuPackageImpl extends EPackageImpl {
 		return (EAttribute)toolBarContributionEClass.getEStructuralFeatures().get(1);
 	}
 
-
 	/**
 	 * Returns the meta object for class '{@link org.eclipse.e4.ui.model.application.ui.menu.MToolBarContributions <em>Tool Bar Contributions</em>}'.
 	 * <!-- begin-user-doc -->
@@ -6520,12 +6577,12 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * @return the meta object for class '<em>Tool Bar Contributions</em>'.
 	 * @see org.eclipse.e4.ui.model.application.ui.menu.MToolBarContributions
 	 * @since 1.0
+	 * @noreference See {@link MToolBarContributions model documentation} for details.
 	 * @generated
 	 */
 	public EClass getToolBarContributions() {
 		return toolBarContributionsEClass;
 	}
-
 
 	/**
 	 * Returns the meta object for the containment reference list '{@link org.eclipse.e4.ui.model.application.ui.menu.MToolBarContributions#getToolBarContributions <em>Tool Bar Contributions</em>}'.
@@ -6541,7 +6598,6 @@ public class MenuPackageImpl extends EPackageImpl {
 		return (EReference)toolBarContributionsEClass.getEStructuralFeatures().get(0);
 	}
 
-
 	/**
 	 * Returns the meta object for class '{@link org.eclipse.e4.ui.model.application.ui.menu.MTrimContribution <em>Trim Contribution</em>}'.
 	 * <!-- begin-user-doc -->
@@ -6549,12 +6605,12 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * @return the meta object for class '<em>Trim Contribution</em>'.
 	 * @see org.eclipse.e4.ui.model.application.ui.menu.MTrimContribution
 	 * @since 1.0
+	 * @noreference See {@link MTrimContribution model documentation} for details.
 	 * @generated
 	 */
 	public EClass getTrimContribution() {
 		return trimContributionEClass;
 	}
-
 
 	/**
 	 * Returns the meta object for the attribute '{@link org.eclipse.e4.ui.model.application.ui.menu.MTrimContribution#getParentId <em>Parent Id</em>}'.
@@ -6570,7 +6626,6 @@ public class MenuPackageImpl extends EPackageImpl {
 		return (EAttribute)trimContributionEClass.getEStructuralFeatures().get(0);
 	}
 
-
 	/**
 	 * Returns the meta object for the attribute '{@link org.eclipse.e4.ui.model.application.ui.menu.MTrimContribution#getPositionInParent <em>Position In Parent</em>}'.
 	 * <!-- begin-user-doc -->
@@ -6585,7 +6640,6 @@ public class MenuPackageImpl extends EPackageImpl {
 		return (EAttribute)trimContributionEClass.getEStructuralFeatures().get(1);
 	}
 
-
 	/**
 	 * Returns the meta object for class '{@link org.eclipse.e4.ui.model.application.ui.menu.MTrimContributions <em>Trim Contributions</em>}'.
 	 * <!-- begin-user-doc -->
@@ -6593,12 +6647,12 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * @return the meta object for class '<em>Trim Contributions</em>'.
 	 * @see org.eclipse.e4.ui.model.application.ui.menu.MTrimContributions
 	 * @since 1.0
+	 * @noreference See {@link MTrimContributions model documentation} for details.
 	 * @generated
 	 */
 	public EClass getTrimContributions() {
 		return trimContributionsEClass;
 	}
-
 
 	/**
 	 * Returns the meta object for the containment reference list '{@link org.eclipse.e4.ui.model.application.ui.menu.MTrimContributions#getTrimContributions <em>Trim Contributions</em>}'.
@@ -6614,7 +6668,6 @@ public class MenuPackageImpl extends EPackageImpl {
 		return (EReference)trimContributionsEClass.getEStructuralFeatures().get(0);
 	}
 
-
 	/**
 	 * Returns the meta object for class '{@link org.eclipse.e4.ui.model.application.ui.menu.MDynamicMenuContribution <em>Dynamic Menu Contribution</em>}'.
 	 * <!-- begin-user-doc -->
@@ -6627,7 +6680,6 @@ public class MenuPackageImpl extends EPackageImpl {
 	public EClass getDynamicMenuContribution() {
 		return dynamicMenuContributionEClass;
 	}
-
 
 	/**
 	 * Returns the meta object for enum '{@link org.eclipse.e4.ui.model.application.ui.menu.ItemType <em>Item Type</em>}'.
@@ -6676,6 +6728,7 @@ public class MenuPackageImpl extends EPackageImpl {
 		createEAttribute(itemEClass, ITEM__ENABLED);
 		createEAttribute(itemEClass, ITEM__SELECTED);
 		createEAttribute(itemEClass, ITEM__TYPE);
+		createEOperation(itemEClass, ITEM___UPDATE_LOCALIZATION);
 
 		handledItemEClass = createEClass(HANDLED_ITEM);
 		createEReference(handledItemEClass, HANDLED_ITEM__COMMAND);
@@ -6685,8 +6738,10 @@ public class MenuPackageImpl extends EPackageImpl {
 		menuElementEClass = createEClass(MENU_ELEMENT);
 		createEAttribute(menuElementEClass, MENU_ELEMENT__MNEMONICS);
 		createEOperation(menuElementEClass, MENU_ELEMENT___GET_LOCALIZED_MNEMONICS);
+		createEOperation(menuElementEClass, MENU_ELEMENT___UPDATE_LOCALIZATION);
 
 		menuItemEClass = createEClass(MENU_ITEM);
+		createEOperation(menuItemEClass, MENU_ITEM___UPDATE_LOCALIZATION);
 
 		menuSeparatorEClass = createEClass(MENU_SEPARATOR);
 
@@ -6833,6 +6888,8 @@ public class MenuPackageImpl extends EPackageImpl {
 		initEAttribute(getItem_Selected(), ecorePackage.getEBoolean(), "selected", null, 0, 1, MItem.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
 		initEAttribute(getItem_Type(), this.getItemType(), "type", null, 1, 1, MItem.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
 
+		initEOperation(getItem__UpdateLocalization(), null, "updateLocalization", 0, 1, IS_UNIQUE, IS_ORDERED); //$NON-NLS-1$
+
 		initEClass(handledItemEClass, MHandledItem.class, "HandledItem", IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS); //$NON-NLS-1$
 		initEReference(getHandledItem_Command(), theCommandsPackage.getCommand(), null, "command", null, 0, 1, MHandledItem.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
 		initEAttribute(getHandledItem_WbCommand(), theCommandsPackage.getParameterizedCommand(), "wbCommand", null, 0, 1, MHandledItem.class, IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
@@ -6843,7 +6900,11 @@ public class MenuPackageImpl extends EPackageImpl {
 
 		initEOperation(getMenuElement__GetLocalizedMnemonics(), ecorePackage.getEString(), "getLocalizedMnemonics", 0, 1, IS_UNIQUE, IS_ORDERED); //$NON-NLS-1$
 
+		initEOperation(getMenuElement__UpdateLocalization(), null, "updateLocalization", 0, 1, IS_UNIQUE, IS_ORDERED); //$NON-NLS-1$
+
 		initEClass(menuItemEClass, MMenuItem.class, "MenuItem", IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS); //$NON-NLS-1$
+
+		initEOperation(getMenuItem__UpdateLocalization(), null, "updateLocalization", 0, 1, IS_UNIQUE, IS_ORDERED); //$NON-NLS-1$
 
 		initEClass(menuSeparatorEClass, MMenuSeparator.class, "MenuSeparator", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS); //$NON-NLS-1$
 
@@ -6907,6 +6968,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * <ul>
 	 *   <li>each class,</li>
 	 *   <li>each feature of each class,</li>
+	 *   <li>each operation of each class,</li>
 	 *   <li>each enum,</li>
 	 *   <li>and each data type</li>
 	 * </ul>
@@ -6953,6 +7015,15 @@ public class MenuPackageImpl extends EPackageImpl {
 		public static final EAttribute ITEM__TYPE = eINSTANCE.getItem_Type();
 
 		/**
+		 * The meta object literal for the '<em><b>Update Localization</b></em>' operation.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @since 1.1
+		 * @generated
+		 */
+		public static final EOperation ITEM___UPDATE_LOCALIZATION = eINSTANCE.getItem__UpdateLocalization();
+
+		/**
 		 * The meta object literal for the '{@link org.eclipse.e4.ui.model.application.ui.menu.impl.HandledItemImpl <em>Handled Item</em>}' class.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
@@ -6977,6 +7048,7 @@ public class MenuPackageImpl extends EPackageImpl {
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
 		 * @since 1.0
+		 * @noreference
 		 * @generated
 		 */
 		public static final EAttribute HANDLED_ITEM__WB_COMMAND = eINSTANCE.getHandledItem_WbCommand();
@@ -7020,6 +7092,15 @@ public class MenuPackageImpl extends EPackageImpl {
 		public static final EOperation MENU_ELEMENT___GET_LOCALIZED_MNEMONICS = eINSTANCE.getMenuElement__GetLocalizedMnemonics();
 
 		/**
+		 * The meta object literal for the '<em><b>Update Localization</b></em>' operation.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @since 1.1
+		 * @generated
+		 */
+		public static final EOperation MENU_ELEMENT___UPDATE_LOCALIZATION = eINSTANCE.getMenuElement__UpdateLocalization();
+
+		/**
 		 * The meta object literal for the '{@link org.eclipse.e4.ui.model.application.ui.menu.impl.MenuItemImpl <em>Item</em>}' class.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
@@ -7029,6 +7110,15 @@ public class MenuPackageImpl extends EPackageImpl {
 		 * @generated
 		 */
 		public static final EClass MENU_ITEM = eINSTANCE.getMenuItem();
+
+		/**
+		 * The meta object literal for the '<em><b>Update Localization</b></em>' operation.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @since 1.1
+		 * @generated
+		 */
+		public static final EOperation MENU_ITEM___UPDATE_LOCALIZATION = eINSTANCE.getMenuItem__UpdateLocalization();
 
 		/**
 		 * The meta object literal for the '{@link org.eclipse.e4.ui.model.application.ui.menu.impl.MenuSeparatorImpl <em>Separator</em>}' class.
@@ -7068,6 +7158,7 @@ public class MenuPackageImpl extends EPackageImpl {
 		 * @see org.eclipse.e4.ui.model.application.ui.menu.impl.MenuContributionImpl
 		 * @see org.eclipse.e4.ui.model.application.ui.menu.impl.MenuPackageImpl#getMenuContribution()
 		 * @since 1.0
+		 * @noreference See {@link MMenuContribution model documentation} for details.
 		 * @generated
 		 */
 		public static final EClass MENU_CONTRIBUTION = eINSTANCE.getMenuContribution();
@@ -7216,6 +7307,7 @@ public class MenuPackageImpl extends EPackageImpl {
 		 * @see org.eclipse.e4.ui.model.application.ui.menu.MMenuContributions
 		 * @see org.eclipse.e4.ui.model.application.ui.menu.impl.MenuPackageImpl#getMenuContributions()
 		 * @since 1.0
+		 * @noreference See {@link MMenuContributions model documentation} for details.
 		 * @generated
 		 */
 		public static final EClass MENU_CONTRIBUTIONS = eINSTANCE.getMenuContributions();
@@ -7236,6 +7328,7 @@ public class MenuPackageImpl extends EPackageImpl {
 		 * @see org.eclipse.e4.ui.model.application.ui.menu.impl.ToolBarContributionImpl
 		 * @see org.eclipse.e4.ui.model.application.ui.menu.impl.MenuPackageImpl#getToolBarContribution()
 		 * @since 1.0
+		 * @noreference See {@link MToolBarContribution model documentation} for details.
 		 * @generated
 		 */
 		public static final EClass TOOL_BAR_CONTRIBUTION = eINSTANCE.getToolBarContribution();
@@ -7265,6 +7358,7 @@ public class MenuPackageImpl extends EPackageImpl {
 		 * @see org.eclipse.e4.ui.model.application.ui.menu.MToolBarContributions
 		 * @see org.eclipse.e4.ui.model.application.ui.menu.impl.MenuPackageImpl#getToolBarContributions()
 		 * @since 1.0
+		 * @noreference See {@link MToolBarContributions model documentation} for details.
 		 * @generated
 		 */
 		public static final EClass TOOL_BAR_CONTRIBUTIONS = eINSTANCE.getToolBarContributions();
@@ -7285,6 +7379,7 @@ public class MenuPackageImpl extends EPackageImpl {
 		 * @see org.eclipse.e4.ui.model.application.ui.menu.impl.TrimContributionImpl
 		 * @see org.eclipse.e4.ui.model.application.ui.menu.impl.MenuPackageImpl#getTrimContribution()
 		 * @since 1.0
+		 * @noreference See {@link MTrimContribution model documentation} for details.
 		 * @generated
 		 */
 		public static final EClass TRIM_CONTRIBUTION = eINSTANCE.getTrimContribution();
@@ -7314,6 +7409,7 @@ public class MenuPackageImpl extends EPackageImpl {
 		 * @see org.eclipse.e4.ui.model.application.ui.menu.MTrimContributions
 		 * @see org.eclipse.e4.ui.model.application.ui.menu.impl.MenuPackageImpl#getTrimContributions()
 		 * @since 1.0
+		 * @noreference See {@link MTrimContributions model documentation} for details.
 		 * @generated
 		 */
 		public static final EClass TRIM_CONTRIBUTIONS = eINSTANCE.getTrimContributions();

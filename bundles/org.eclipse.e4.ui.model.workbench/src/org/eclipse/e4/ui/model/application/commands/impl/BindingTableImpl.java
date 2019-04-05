@@ -89,6 +89,7 @@ public class BindingTableImpl extends ApplicationElementImpl implements MBinding
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public List<MKeyBinding> getBindings() {
 		if (bindings == null) {
 			bindings = new EObjectContainmentEList<MKeyBinding>(MKeyBinding.class, this, CommandsPackageImpl.BINDING_TABLE__BINDINGS);
@@ -101,6 +102,7 @@ public class BindingTableImpl extends ApplicationElementImpl implements MBinding
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public MBindingContext getBindingContext() {
 		if (bindingContext != null && ((EObject)bindingContext).eIsProxy()) {
 			InternalEObject oldBindingContext = (InternalEObject)bindingContext;
@@ -127,6 +129,7 @@ public class BindingTableImpl extends ApplicationElementImpl implements MBinding
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public void setBindingContext(MBindingContext newBindingContext) {
 		MBindingContext oldBindingContext = bindingContext;
 		bindingContext = newBindingContext;

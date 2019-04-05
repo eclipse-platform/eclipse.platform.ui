@@ -16,8 +16,9 @@ package org.eclipse.e4.ui.model.application.ui;
 import org.eclipse.e4.ui.model.application.MContribution;
 
 /**
- * <!-- begin-user-doc --> A representation of the model object
- * '<em><b>Imperative Expression</b></em>'. <!-- end-user-doc -->
+ * <!-- begin-user-doc -->
+ * A representation of the model object '<em><b>Imperative Expression</b></em>'.
+ * <!-- end-user-doc -->
  *
  * <p>
  * The following features are supported:
@@ -30,14 +31,9 @@ import org.eclipse.e4.ui.model.application.MContribution;
  * @generated
  */
 public interface MImperativeExpression extends MExpression, MContribution {
-
 	/**
 	 * Returns the value of the '<em><b>Tracking</b></em>' attribute.
 	 * <!-- begin-user-doc -->
-	 * <p>
-	 * If the meaning of the '<em>Tracking</em>' attribute isn't clear,
-	 * there really should be more of a description here...
-	 * </p>
 	 * <!-- end-user-doc -->
 	 * @return the value of the '<em>Tracking</em>' attribute.
 	 * @see #setTracking(boolean)
@@ -55,4 +51,5 @@ public interface MImperativeExpression extends MExpression, MContribution {
 	 * @generated
 	 */
 	void setTracking(boolean value);
+
 } // MImperativeExpression

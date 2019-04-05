@@ -89,6 +89,7 @@ public abstract class ElementContainerImpl<T extends MUIElement> extends UIEleme
 	 * <!-- end-user-doc -->
 	 * @generated NOT
 	 */
+	@Override
 	public List<T> getChildren() {
 		if (children == null) {
 			EClassifier classifier = ModelUtils.getTypeArgument(eClass(), UiPackageImpl.Literals.ELEMENT_CONTAINER__CHILDREN.getEGenericType());
@@ -125,13 +126,13 @@ public abstract class ElementContainerImpl<T extends MUIElement> extends UIEleme
 		return children;
 	}
 
-
 	/**
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
 	@SuppressWarnings("unchecked")
+	@Override
 	public T getSelectedElement() {
 		if (selectedElement != null && ((EObject)selectedElement).eIsProxy()) {
 			InternalEObject oldSelectedElement = (InternalEObject)selectedElement;
@@ -156,25 +157,30 @@ public abstract class ElementContainerImpl<T extends MUIElement> extends UIEleme
 	/**
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @generated NOT
+	 * @generated
 	 */
-	public void setSelectedElement(T newSelectedElement) {
-		// Ensure that the new candidate is in *our* child list
-		if (newSelectedElement != null && newSelectedElement.getParent() != this) {
-			throw new IllegalArgumentException("The selected element "
-					+ newSelectedElement + " is not a child of this container");
-		}
-
-		// Ensure that the new candidate is visible in the UI
-		if (newSelectedElement != null && !newSelectedElement.isToBeRendered()) {
-			throw new IllegalArgumentException("The selected element "
-					+ newSelectedElement + " must be visible in the UI presentation");
-		}
-
+	private void setSelectedElementGen(T newSelectedElement) {
 		T oldSelectedElement = selectedElement;
 		selectedElement = newSelectedElement;
 		if (eNotificationRequired())
 			eNotify(new ENotificationImpl(this, Notification.SET, UiPackageImpl.ELEMENT_CONTAINER__SELECTED_ELEMENT, oldSelectedElement, selectedElement));
+	}
+
+	@Override
+	public void setSelectedElement(T newSelectedElement) {
+		// Ensure that the new candidate is in *our* child list
+		if (newSelectedElement != null && newSelectedElement.getParent() != this) {
+			throw new IllegalArgumentException(
+					"The selected element " + newSelectedElement + " is not a child of this container");
+		}
+
+		// Ensure that the new candidate is visible in the UI
+		if (newSelectedElement != null && !newSelectedElement.isToBeRendered()) {
+			throw new IllegalArgumentException(
+					"The selected element " + newSelectedElement + " must be visible in the UI presentation");
+		}
+
+		setSelectedElementGen(newSelectedElement);
 	}
 
 	/**

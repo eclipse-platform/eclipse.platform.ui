@@ -249,6 +249,7 @@ public abstract class UIElementImpl extends ApplicationElementImpl implements MU
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public Object getWidget() {
 		return widget;
 	}
@@ -258,6 +259,7 @@ public abstract class UIElementImpl extends ApplicationElementImpl implements MU
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public void setWidget(Object newWidget) {
 		Object oldWidget = widget;
 		widget = newWidget;
@@ -270,6 +272,7 @@ public abstract class UIElementImpl extends ApplicationElementImpl implements MU
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public Object getRenderer() {
 		return renderer;
 	}
@@ -279,6 +282,7 @@ public abstract class UIElementImpl extends ApplicationElementImpl implements MU
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public void setRenderer(Object newRenderer) {
 		Object oldRenderer = renderer;
 		renderer = newRenderer;
@@ -291,6 +295,7 @@ public abstract class UIElementImpl extends ApplicationElementImpl implements MU
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public boolean isToBeRendered() {
 		return toBeRendered;
 	}
@@ -300,6 +305,7 @@ public abstract class UIElementImpl extends ApplicationElementImpl implements MU
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public void setToBeRendered(boolean newToBeRendered) {
 		boolean oldToBeRendered = toBeRendered;
 		toBeRendered = newToBeRendered;
@@ -312,6 +318,7 @@ public abstract class UIElementImpl extends ApplicationElementImpl implements MU
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public boolean isOnTop() {
 		return onTop;
 	}
@@ -321,6 +328,7 @@ public abstract class UIElementImpl extends ApplicationElementImpl implements MU
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public void setOnTop(boolean newOnTop) {
 		boolean oldOnTop = onTop;
 		onTop = newOnTop;
@@ -333,6 +341,7 @@ public abstract class UIElementImpl extends ApplicationElementImpl implements MU
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public boolean isVisible() {
 		return visible;
 	}
@@ -342,6 +351,7 @@ public abstract class UIElementImpl extends ApplicationElementImpl implements MU
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public void setVisible(boolean newVisible) {
 		boolean oldVisible = visible;
 		visible = newVisible;
@@ -355,6 +365,7 @@ public abstract class UIElementImpl extends ApplicationElementImpl implements MU
 	 * @generated
 	 */
 	@SuppressWarnings("unchecked")
+	@Override
 	public MElementContainer<MUIElement> getParent() {
 		if (eContainerFeatureID() != UiPackageImpl.UI_ELEMENT__PARENT) return null;
 		return (MElementContainer<MUIElement>)eInternalContainer();
@@ -375,6 +386,7 @@ public abstract class UIElementImpl extends ApplicationElementImpl implements MU
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public void setParent(MElementContainer<MUIElement> newParent) {
 		if (newParent != eInternalContainer() || (eContainerFeatureID() != UiPackageImpl.UI_ELEMENT__PARENT && newParent != null)) {
 			if (EcoreUtil.isAncestor(this, (EObject)newParent))
@@ -396,6 +408,7 @@ public abstract class UIElementImpl extends ApplicationElementImpl implements MU
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public String getContainerData() {
 		return containerData;
 	}
@@ -405,6 +418,7 @@ public abstract class UIElementImpl extends ApplicationElementImpl implements MU
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public void setContainerData(String newContainerData) {
 		String oldContainerData = containerData;
 		containerData = newContainerData;
@@ -417,6 +431,7 @@ public abstract class UIElementImpl extends ApplicationElementImpl implements MU
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public MPlaceholder getCurSharedRef() {
 		if (curSharedRef != null && ((EObject)curSharedRef).eIsProxy()) {
 			InternalEObject oldCurSharedRef = (InternalEObject)curSharedRef;
@@ -443,6 +458,7 @@ public abstract class UIElementImpl extends ApplicationElementImpl implements MU
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public void setCurSharedRef(MPlaceholder newCurSharedRef) {
 		MPlaceholder oldCurSharedRef = curSharedRef;
 		curSharedRef = newCurSharedRef;
@@ -455,6 +471,7 @@ public abstract class UIElementImpl extends ApplicationElementImpl implements MU
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public MExpression getVisibleWhen() {
 		return visibleWhen;
 	}
@@ -479,6 +496,7 @@ public abstract class UIElementImpl extends ApplicationElementImpl implements MU
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public void setVisibleWhen(MExpression newVisibleWhen) {
 		if (newVisibleWhen != visibleWhen) {
 			NotificationChain msgs = null;
@@ -498,6 +516,7 @@ public abstract class UIElementImpl extends ApplicationElementImpl implements MU
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public String getAccessibilityPhrase() {
 		return accessibilityPhrase;
 	}
@@ -507,6 +526,7 @@ public abstract class UIElementImpl extends ApplicationElementImpl implements MU
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public void setAccessibilityPhrase(String newAccessibilityPhrase) {
 		String oldAccessibilityPhrase = accessibilityPhrase;
 		accessibilityPhrase = newAccessibilityPhrase;
@@ -517,7 +537,9 @@ public abstract class UIElementImpl extends ApplicationElementImpl implements MU
 	/**
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @generated
 	 */
+	@Override
 	public String getLocalizedAccessibilityPhrase() {
 		return LocalizationHelper.getLocalizedAccessibilityPhrase(this);
 	}
@@ -525,7 +547,10 @@ public abstract class UIElementImpl extends ApplicationElementImpl implements MU
 	/**
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @since 1.1
+	 * @generated
 	 */
+	@Override
 	public void updateLocalization() {
 		if (eNotificationRequired()) {
 			eNotify(new ENotificationImpl(

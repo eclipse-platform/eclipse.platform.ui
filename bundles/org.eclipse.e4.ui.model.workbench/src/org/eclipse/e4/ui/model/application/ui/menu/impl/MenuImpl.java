@@ -111,6 +111,7 @@ public class MenuImpl extends MenuElementImpl implements MMenu {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public List<MMenuElement> getChildren() {
 		if (children == null) {
 			children = new EObjectContainmentWithInverseEList<MMenuElement>(MMenuElement.class, this, MenuPackageImpl.MENU__CHILDREN, UiPackageImpl.UI_ELEMENT__PARENT) { private static final long serialVersionUID = 1L; @Override public Class<?> getInverseFeatureClass() { return MUIElement.class; } };
@@ -123,6 +124,7 @@ public class MenuImpl extends MenuElementImpl implements MMenu {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public MMenuElement getSelectedElement() {
 		if (selectedElement != null && ((EObject)selectedElement).eIsProxy()) {
 			InternalEObject oldSelectedElement = (InternalEObject)selectedElement;
@@ -149,6 +151,7 @@ public class MenuImpl extends MenuElementImpl implements MMenu {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public void setSelectedElement(MMenuElement newSelectedElement) {
 		MMenuElement oldSelectedElement = selectedElement;
 		selectedElement = newSelectedElement;
@@ -161,6 +164,7 @@ public class MenuImpl extends MenuElementImpl implements MMenu {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public boolean isEnabled() {
 		return enabled;
 	}
@@ -170,6 +174,7 @@ public class MenuImpl extends MenuElementImpl implements MMenu {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public void setEnabled(boolean newEnabled) {
 		boolean oldEnabled = enabled;
 		enabled = newEnabled;

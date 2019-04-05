@@ -14,7 +14,10 @@
 package org.eclipse.e4.ui.model.application.util;
 
 import java.util.Map;
-import org.eclipse.e4.ui.model.application.*;
+import org.eclipse.e4.ui.model.application.MAddon;
+import org.eclipse.e4.ui.model.application.MApplication;
+import org.eclipse.e4.ui.model.application.MApplicationElement;
+import org.eclipse.e4.ui.model.application.MContribution;
 import org.eclipse.e4.ui.model.application.commands.MBindingTableContainer;
 import org.eclipse.e4.ui.model.application.commands.MBindings;
 import org.eclipse.e4.ui.model.application.commands.MHandlerContainer;
@@ -377,6 +380,7 @@ public class ApplicationSwitch<T1> extends Switch<T1> {
 	 * @return the result of interpreting the object as an instance of '<em>Contributions</em>'.
 	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
 	 * @since 1.0
+	 * @noreference See {@link MMenuContributions model documentation} for details.
 	 * @generated
 	 */
 	public T1 caseMenuContributions(MMenuContributions object) {
@@ -393,6 +397,7 @@ public class ApplicationSwitch<T1> extends Switch<T1> {
 	 * @return the result of interpreting the object as an instance of '<em>Tool Bar Contributions</em>'.
 	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
 	 * @since 1.0
+	 * @noreference See {@link MToolBarContributions model documentation} for details.
 	 * @generated
 	 */
 	public T1 caseToolBarContributions(MToolBarContributions object) {
@@ -409,6 +414,7 @@ public class ApplicationSwitch<T1> extends Switch<T1> {
 	 * @return the result of interpreting the object as an instance of '<em>Trim Contributions</em>'.
 	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
 	 * @since 1.0
+	 * @noreference See {@link MTrimContributions model documentation} for details.
 	 * @generated
 	 */
 	public T1 caseTrimContributions(MTrimContributions object) {

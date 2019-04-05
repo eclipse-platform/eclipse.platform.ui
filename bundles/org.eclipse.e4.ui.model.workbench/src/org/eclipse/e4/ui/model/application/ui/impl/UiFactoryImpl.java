@@ -119,6 +119,7 @@ public class UiFactoryImpl extends EFactoryImpl implements MUiFactory {
 	 * @since 1.0
 	 * @generated
 	 */
+	@Override
 	public MCoreExpression createCoreExpression() {
 		CoreExpressionImpl coreExpression = new CoreExpressionImpl();
 		return coreExpression;
@@ -129,6 +130,7 @@ public class UiFactoryImpl extends EFactoryImpl implements MUiFactory {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public MImperativeExpression createImperativeExpression() {
 		ImperativeExpressionImpl imperativeExpression = new ImperativeExpressionImpl();
 		return imperativeExpression;

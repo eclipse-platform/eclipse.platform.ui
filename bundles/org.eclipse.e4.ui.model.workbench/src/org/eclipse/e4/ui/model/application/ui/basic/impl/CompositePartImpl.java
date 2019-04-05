@@ -112,6 +112,7 @@ public class CompositePartImpl extends PartImpl implements MCompositePart {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public List<MPartSashContainerElement> getChildren() {
 		if (children == null) {
 			children = new EObjectContainmentWithInverseEList<MPartSashContainerElement>(MPartSashContainerElement.class, this, BasicPackageImpl.COMPOSITE_PART__CHILDREN, UiPackageImpl.UI_ELEMENT__PARENT) { private static final long serialVersionUID = 1L; @Override public Class<?> getInverseFeatureClass() { return MUIElement.class; } };
@@ -124,6 +125,7 @@ public class CompositePartImpl extends PartImpl implements MCompositePart {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public MPartSashContainerElement getSelectedElement() {
 		if (selectedElement != null && ((EObject)selectedElement).eIsProxy()) {
 			InternalEObject oldSelectedElement = (InternalEObject)selectedElement;
@@ -150,6 +152,7 @@ public class CompositePartImpl extends PartImpl implements MCompositePart {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public void setSelectedElement(MPartSashContainerElement newSelectedElement) {
 		MPartSashContainerElement oldSelectedElement = selectedElement;
 		selectedElement = newSelectedElement;
@@ -162,6 +165,7 @@ public class CompositePartImpl extends PartImpl implements MCompositePart {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public boolean isHorizontal() {
 		return horizontal;
 	}
@@ -171,6 +175,7 @@ public class CompositePartImpl extends PartImpl implements MCompositePart {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public void setHorizontal(boolean newHorizontal) {
 		boolean oldHorizontal = horizontal;
 		horizontal = newHorizontal;

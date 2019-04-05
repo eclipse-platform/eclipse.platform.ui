@@ -57,6 +57,7 @@ public class PlaceholderImpl extends UIElementImpl implements MPlaceholder {
 	 * @ordered
 	 */
 	protected static final boolean CLOSEABLE_EDEFAULT = false;
+
 	/**
 	 * The cached value of the '{@link #isCloseable() <em>Closeable</em>}' attribute.
 	 * <!-- begin-user-doc -->
@@ -91,6 +92,7 @@ public class PlaceholderImpl extends UIElementImpl implements MPlaceholder {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public MUIElement getRef() {
 		if (ref != null && ((EObject)ref).eIsProxy()) {
 			InternalEObject oldRef = (InternalEObject)ref;
@@ -117,6 +119,7 @@ public class PlaceholderImpl extends UIElementImpl implements MPlaceholder {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public void setRef(MUIElement newRef) {
 		MUIElement oldRef = ref;
 		ref = newRef;
@@ -129,6 +132,7 @@ public class PlaceholderImpl extends UIElementImpl implements MPlaceholder {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public boolean isCloseable() {
 		return closeable;
 	}
@@ -138,6 +142,7 @@ public class PlaceholderImpl extends UIElementImpl implements MPlaceholder {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public void setCloseable(boolean newCloseable) {
 		boolean oldCloseable = closeable;
 		closeable = newCloseable;

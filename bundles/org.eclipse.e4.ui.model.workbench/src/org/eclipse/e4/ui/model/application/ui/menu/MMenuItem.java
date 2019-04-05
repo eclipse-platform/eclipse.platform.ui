@@ -32,5 +32,4 @@ package org.eclipse.e4.ui.model.application.ui.menu;
  * @generated
  */
 public interface MMenuItem extends MItem, MMenuElement {
-
 } // MMenuItem
